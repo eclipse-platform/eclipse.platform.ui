@@ -29,8 +29,4 @@ public class NameSorter extends ViewerSorter {
 	protected String getProperty(IResource resource) {
 		return resource.getName();
 	}
-
-	public boolean isSorterProperty(Object element, String property) {
-		return true;
-	}
 }

@@ -552,9 +552,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 				if (event.getViewer() instanceof TreeViewer && event.getSelection() instanceof IStructuredSelection) {
 					TreeViewer tv = (TreeViewer) event.getViewer();
 					Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
-					tv.setExpandedState(element, !tv.getExpandedState(element));
-					if (!hasCurrentMatch && getDisplayedMatchCount(element) > 0)
-						gotoNextMatch();
+					if (element != null) {
+						tv.setExpandedState(element, !tv.getExpandedState(element));
+						if (!hasCurrentMatch && getDisplayedMatchCount(element) > 0)
+							gotoNextMatch();
+					}
 					return;
 				} else if (!hasCurrentMatch) {
 					gotoNextMatch();
@@ -899,8 +901,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private synchronized void runBatchedUpdates() {
-		if (fBatchedUpdates.size() > 100) {
-			Object[] hundredUpdates= new Object[100];
+		if (false /*fBatchedUpdates.size() > 50*/) {
+			Object[] hundredUpdates= new Object[50];
 			Iterator elements= fBatchedUpdates.iterator();
 			for (int i= 0; i < hundredUpdates.length; i++) {
 				hundredUpdates[i]= elements.next();

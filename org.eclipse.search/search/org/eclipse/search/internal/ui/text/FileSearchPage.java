@@ -61,6 +61,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 	}
 
 	protected void configureTableViewer(TableViewer viewer) {
+		viewer.setUseHashlookup(true);
 		viewer.setLabelProvider(new DecoratingLabelProvider(new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		viewer.setContentProvider(new FileTableContentProvider(viewer));
 		setSortOrder(fCurrentSortAction);
@@ -68,6 +69,7 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 	}
 
 	protected void configureTreeViewer(TreeViewer viewer) {
+		viewer.setUseHashlookup(true);
 		viewer.setLabelProvider(new DecoratingLabelProvider(new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		viewer.setContentProvider(new FileTreeContentProvider(viewer));
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
