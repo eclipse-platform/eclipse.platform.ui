@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.console;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -41,6 +43,7 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
      * A list of Strings, every line in the Text Widget represents one String in this list.
      */
     private ArrayList lines;
+    private Pattern pattern = Pattern.compile("^.*", Pattern.MULTILINE); //$NON-NLS-1$
     
     public IOConsoleDocumentAdapter(IDocument doc, int width) {
         textChangeListeners = new ArrayList();
@@ -272,52 +275,14 @@ public class IOConsoleDocumentAdapter implements IDocumentAdapter, IDocumentList
      * @return The number of lines necessary to display the string in the viewer.
      */
     private int countLines(String string) {
-        String delimiter = getFirstDelimiter(string);
-        if (delimiter == null || string.equals(delimiter)) {
-            return 1;
+        Matcher matcher = pattern.matcher(string);
+        int count = 0;
+        while(matcher.find()) {
+            count++;
         }
-        int delimLength = delimiter.length();
-        int index = string.indexOf(delimiter);
-        if (index == -1) {
-            return consoleWidth > 0 ? string.length() / consoleWidth : 1;
-        } else if (index == string.length()-delimLength) {
-            int count = 0;
-            String firstLine = string.substring(0, index);
-            String rest = string.substring(index);
-            count += countLines(firstLine);
-            count += countLines(rest);
-            return count;
-        }else {
-            int count = 0;
-            String firstLine = string.substring(0, index + delimLength);
-            String rest = string.substring(index + delimLength);
-            count += countLines(firstLine);
-            count += countLines(rest);
-            return count;
-        }
+        return count;
     }
 
-    /**
-     * Returns the first line delimiter in the string
-     * @param string The String to be searched for line delimiters
-     * @return The first line delimiter in the string or null if the string does
-     * not contain any legal line delimiters.
-     */
-    private String getFirstDelimiter(String string) {
-        String[] lld = document.getLegalLineDelimiters();
-        String delimiter = null;
-        int index = Integer.MAX_VALUE;
-        
-        for (int i = 0; i < lld.length; i++) {
-            int newIndex = string.indexOf(lld[i]);
-            if (newIndex > -1 && newIndex < index) {
-                index = newIndex;
-                delimiter = lld[i];
-            }
-        }
-        
-        return delimiter;
-    }
 
     /* (non-Javadoc)
      * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
