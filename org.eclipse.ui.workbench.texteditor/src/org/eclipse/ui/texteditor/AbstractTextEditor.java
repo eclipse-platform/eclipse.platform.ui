@@ -24,15 +24,6 @@ import java.util.ResourceBundle;
 
 import org.osgi.framework.Bundle;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.ST;
@@ -64,6 +55,15 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -85,6 +85,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
@@ -133,6 +134,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ActionDescriptor;
 import org.eclipse.ui.internal.EditorPluginAction;
@@ -4173,37 +4175,37 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.MOVE_LINES_UP);
 		setAction(ITextEditorActionConstants.MOVE_LINE_UP, action);
 		
-		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLinesDown.", this, false, false); //$NON-NLS-1$
+		action= new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.MoveLinesDown.", this, false, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.MOVE_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.MOVE_LINES_DOWN);
 		setAction(ITextEditorActionConstants.MOVE_LINE_DOWN, action);
 		
-		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.CopyLineUp.", this, true, true); //$NON-NLS-1$
+		action= new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.CopyLineUp.", this, true, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.COPY_LINES_UP);
 		setAction(ITextEditorActionConstants.COPY_LINE_UP, action);
 		
-		action = new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.CopyLineDown.", this, false, true); //$NON-NLS-1$
+		action= new MoveLinesAction(EditorMessages.getResourceBundle(), "Editor.CopyLineDown.", this, false, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_LINES_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.COPY_LINES_DOWN);
 		setAction(ITextEditorActionConstants.COPY_LINE_DOWN, action);
 		
-		action = new CaseAction(EditorMessages.getResourceBundle(), "Editor.UpperCase.", this, true); //$NON-NLS-1$
+		action= new CaseAction(EditorMessages.getResourceBundle(), "Editor.UpperCase.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.UPPER_CASE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.UPPER_CASE);
 		setAction(ITextEditorActionConstants.UPPER_CASE, action);
 		
-		action = new CaseAction(EditorMessages.getResourceBundle(), "Editor.LowerCase.", this, false); //$NON-NLS-1$
+		action= new CaseAction(EditorMessages.getResourceBundle(), "Editor.LowerCase.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.LOWER_CASE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.LOWER_CASE);
 		setAction(ITextEditorActionConstants.LOWER_CASE, action);
 		
-		action = new InsertLineAction(EditorMessages.getResourceBundle(), "Editor.SmartEnter.", this, false); //$NON-NLS-1$
+		action= new InsertLineAction(EditorMessages.getResourceBundle(), "Editor.SmartEnter.", this, false); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SMART_ENTER_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SMART_ENTER);
 		setAction(ITextEditorActionConstants.SMART_ENTER, action);
 		
-		action = new InsertLineAction(EditorMessages.getResourceBundle(), "Editor.SmartEnterInverse.", this, true); //$NON-NLS-1$
+		action= new InsertLineAction(EditorMessages.getResourceBundle(), "Editor.SmartEnterInverse.", this, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SMART_ENTER_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SMART_ENTER_INVERSE);
 		setAction(ITextEditorActionConstants.SMART_ENTER_INVERSE, action);
@@ -4212,6 +4214,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.TOGGLE_INSERT_MODE_ACTION);
 		action.setActionDefinitionId(ITextEditorActionDefinitionIds.TOGGLE_INSERT_MODE);
 		setAction(ITextEditorActionConstants.TOGGLE_INSERT_MODE, action);
+
+		PropertyDialogAction openProperties= new PropertyDialogAction(
+				getSite().getShell(),
+				new ISelectionProvider() {
+					public void addSelectionChangedListener(ISelectionChangedListener listener) {
+					}
+					public ISelection getSelection() {
+						return new StructuredSelection(getEditorInput());
+					}
+					public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+					}
+					public void setSelection(ISelection selection) {
+					}
+				});
+		openProperties.setActionDefinitionId(ITextEditorActionDefinitionIds.PROPERTIES);
+		setAction(ITextEditorActionConstants.PROPERTIES, openProperties);
 		
 		markAsContentDependentAction(ITextEditorActionConstants.UNDO, true);
 		markAsContentDependentAction(ITextEditorActionConstants.REDO, true);
@@ -4255,7 +4273,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT_TAB,'\t', -1, SWT.NONE);
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', -1, SWT.SHIFT);
 	}
-	
+
 	/**
 	 * Convenience method to add the action installed under the given action id to the given menu.
 	 * @param menu the menu to add the action to
