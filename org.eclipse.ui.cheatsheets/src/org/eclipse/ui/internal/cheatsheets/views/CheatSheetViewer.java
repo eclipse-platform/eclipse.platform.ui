@@ -776,10 +776,9 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		// Set the current content to new content
 		contentElement = element;
 
-		if (element == null) {
-			currentID = null;
-			contentURL = null;
-		} else {
+		currentID = null;
+		contentURL = null;
+		if (element != null) {
 			currentID = element.getID();
 	
 			Bundle bundle = null;
