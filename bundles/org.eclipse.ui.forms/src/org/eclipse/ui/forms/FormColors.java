@@ -389,7 +389,7 @@ public class FormColors {
 	 * Tests if the background is white. White background has RGB value
 	 * 255,255,255.
 	 * 
-	 * @return <samp>true </samp> if background is white, <samp>false </samp>
+	 * @return <samp>true</samp> if background is white, <samp>false</samp>
 	 *         otherwise.
 	 */
 	public boolean isWhiteBackground() {
