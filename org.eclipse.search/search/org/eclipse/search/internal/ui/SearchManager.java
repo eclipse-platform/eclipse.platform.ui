@@ -17,7 +17,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -32,9 +31,10 @@ import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
-import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.SearchUI;
+
+import org.eclipse.search.internal.ui.util.ExceptionHandler;
 
 /**
  * Manage search results
@@ -322,47 +322,29 @@ public class SearchManager implements IResourceChangeListener {
 	 * display thread.
 	 */
 	public final void handleResourceChanged(final IResourceChangeEvent event) {
-		IResourceDelta delta= event.getDelta();
-		if (delta == null)
-			return;
-
 		if (fIsNewSearch) {
 			fIsNewSearch= false;
 			handleNewSearchResult();
 			return;
 		}
-		
-		IResourceDeltaVisitor visitor= new IResourceDeltaVisitor() {
-			public boolean visit(IResourceDelta delta) throws CoreException {
-				if ( (delta.getFlags() & IResourceDelta.MARKERS) == 0)
-					return true;
-				IMarkerDelta[] markers= delta.getMarkerDeltas();
-				if (markers == null)
-					return true;
-				for (int i= 0; i < markers.length; i++) {
-					IMarkerDelta markerDelta= markers[i];
-					int kind= markerDelta.getKind();
-					IMarker marker= markerDelta.getMarker();
-					if (markerDelta.isSubtypeOf(SearchUI.SEARCH_MARKER))
-						handleSearchMarkerChanged(kind, marker);
-				}
-				return true;
-			}
-		};
-		try {
-			delta.accept(visitor);
-		} catch (CoreException ex) {
-			ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.resourceChanged.title"), SearchMessages.getString("Search.Error.resourceChanged.message")); //$NON-NLS-2$ //$NON-NLS-1$
-		}
+
+		IMarkerDelta[] markerDeltas= event.findMarkerDeltas(SearchUI.SEARCH_MARKER, true);
+		if (markerDeltas == null)
+			return;
+
+		int deltasLength= markerDeltas.length;
+		for (int i=0; i < deltasLength; i++)
+			handleSearchMarkerChanged(markerDeltas[i]);
 	}
 
-	private void handleSearchMarkerChanged(int kind, IMarker marker) {
+	private void handleSearchMarkerChanged(IMarkerDelta markerDelta) {
+		int kind= markerDelta.getKind();
 		if ((kind & IResourceDelta.ADDED) != 0)
-			handleAddMatch(marker);
+			handleAddMatch(markerDelta.getMarker());
 		else if (((kind & IResourceDelta.REMOVED) != 0))
-			handleRemoveMatch(marker);
+			handleRemoveMatch(markerDelta.getMarker());
 		else if ((kind & IResourceDelta.CHANGED) != 0)
-			handleUpdateMatch(marker);
+			handleUpdateMatch(markerDelta.getMarker());
 	}
 
 	private void handleRemoveAll() {
