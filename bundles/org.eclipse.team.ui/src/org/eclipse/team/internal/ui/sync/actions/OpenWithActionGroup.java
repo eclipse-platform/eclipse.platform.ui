@@ -65,11 +65,12 @@ public class OpenWithActionGroup extends SyncViewerActionGroup {
 		if (!(resource instanceof IFile)) {
 			return;
 		}
+				
+		menu.add(openInCompareAction);
+		
 		if(!((resource.exists()))) {
 			return;
 		}
-		
-		menu.add(openInCompareAction);
 		
 		openFileAction.selectionChanged(selection);
 		menu.add(openFileAction);
