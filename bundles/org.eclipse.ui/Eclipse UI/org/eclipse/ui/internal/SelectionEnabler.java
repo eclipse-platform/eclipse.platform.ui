@@ -24,7 +24,6 @@ public class SelectionEnabler {
 	public static final int ONE_OR_MORE = -1;
 	private static final String ATT_NAME = "name";//$NON-NLS-1$
 	private static final String ATT_CLASS = "class";//$NON-NLS-1$
-	private static final String TAG_SELECTION = "selection";//$NON-NLS-1$
 	public static final int UNKNOWN = 0;
 	public static final int MULTIPLE = -5;
 	public static final int ANY_NUMBER =  -2;
@@ -170,7 +169,7 @@ private void parseClasses(IConfigurationElement config) {
 	}
 	
 	// Get selection block.
-	children = config.getChildren(TAG_SELECTION);
+	children = config.getChildren(PluginActionBuilder.TAG_SELECTION);
 	if (children.length > 0) {
 		classes = new ArrayList();
 		for (int i = 0; i < children.length; i++) {

@@ -27,6 +27,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 	public static final String TAG_FILTER="filter";//$NON-NLS-1$
 	public static final String TAG_VISIBILITY="visibility";//$NON-NLS-1$
 	public static final String TAG_ENABLEMENT="enablement";//$NON-NLS-1$
+	public static final String TAG_SELECTION="selection";//$NON-NLS-1$
 	
 	public static final String ATT_TARGET_ID = "targetID";//$NON-NLS-1$
 	public static final String ATT_ID="id";//$NON-NLS-1$
