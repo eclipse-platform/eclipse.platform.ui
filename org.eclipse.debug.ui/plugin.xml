@@ -53,7 +53,7 @@
 <extension
       point="org.eclipse.ui.views">
    <category
-         name="&amp;Debug"
+         name="%DebugViewsCategory.name"
          id="org.eclipse.debug.ui">
    </category>
    <view
