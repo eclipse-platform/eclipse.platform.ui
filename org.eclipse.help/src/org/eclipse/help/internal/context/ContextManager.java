@@ -191,7 +191,9 @@ public class ContextManager {
 								contextNode.getContributor().getPlugin().getUniqueIdentifier(),
 								description);
 						contextNode.setDescription(description);
-						contexts.put(contextNode.getPlugin(), contextNode);
+						// Set the plugin ID, so the context knows its full ID
+						contextNode.setPluginID(plugin);
+						contexts.put(contextNode.getShortId(), contextNode);
 					}
 				}
 			}
@@ -234,5 +236,30 @@ public class ContextManager {
 				}
 			}
 		}
+	}
+	/**
+	 * Registers context in the manager.
+	 * @return context ID
+	 */
+	public void addContext(String contextId, IContext context) {
+		if (contextId == null)
+			return;
+		String plugin = contextId;
+		String id = contextId;
+		int dot = contextId.lastIndexOf('.');
+		if (dot != -1) {
+			plugin = contextId.substring(0, dot);
+			id = contextId.substring(dot + 1);
+		}
+		Map contexts = (Map) pluginsContexts.get(plugin);
+		if (contexts == null) {
+			// parse the xml context contribution files and load the context
+			// defintion (NOTE: the side-effect is that all the contexts defined
+			// by this plugin get loaded)
+			contexts = loadContext(plugin);
+		}
+		if (contexts.get(id) != null)
+			return;
+		contexts.put(contextId, context);
 	}
 }
