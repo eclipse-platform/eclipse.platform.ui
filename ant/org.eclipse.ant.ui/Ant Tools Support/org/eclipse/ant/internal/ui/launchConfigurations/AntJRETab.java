@@ -215,6 +215,7 @@ public class AntJRETab extends JavaJRETab {
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		super.setDefaults(config);
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 		IVMInstall defaultVMInstall= getDefaultVMInstall(config);
 		if (defaultVMInstall != null) {
 			config.setAttribute(IAntUIConstants.ATTR_DEFAULT_VM_INSTALL, true);
