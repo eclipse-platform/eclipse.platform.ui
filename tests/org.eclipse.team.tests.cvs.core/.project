@@ -16,6 +16,7 @@
 		<project>org.eclipse.team.tests.core</project>
 		<project>org.eclipse.team.ui</project>
 		<project>org.eclipse.ui</project>
+		<project>org.eclipse.update.core</project>
 		<project>org.junit</project>
 	</projects>
 	<buildSpec>
