@@ -956,7 +956,9 @@ protected void moveInFileSystem(IPath destination, boolean force, boolean keepHi
 public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
-		String message = Policy.bind("resources.refreshing", getFullPath().toString()); //$NON-NLS-1$
+		String message = (getType() == ROOT) 
+			? Policy.bind("resources.refreshingRoot") //$NON-NLS-1$
+			: Policy.bind("resources.refreshing", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		boolean build = false;
 		try {
