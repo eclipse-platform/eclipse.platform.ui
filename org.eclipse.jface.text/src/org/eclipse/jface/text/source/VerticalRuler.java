@@ -319,11 +319,16 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		for (int layer= 0; layer < maxLayer; layer++) {
 			Iterator iter= fModel.getAnnotationIterator();
 			while (iter.hasNext()) {
+				IAnnotationPresentation annotationPresentation= null;
 				Annotation annotation= (Annotation) iter.next();
 				
-				int lay= IAnnotationAccessExtension.DEFAULT_LAYER; 
+				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
 				if (annotationAccessExtension != null)
 					lay= annotationAccessExtension.getLayer(annotation);
+				else if (annotation instanceof IAnnotationPresentation) {
+					annotationPresentation= (IAnnotationPresentation)annotation;
+					lay= annotationPresentation.getLayer();
+				}
 				maxLayer= Math.max(maxLayer, lay+1);	// dynamically update layer maximum
 				if (lay != layer)	// wrong layer: skip annotation
 					continue;
@@ -363,6 +368,8 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 					
 					if (r.y < d.y && annotationAccessExtension != null)  // annotation within visible area
 						annotationAccessExtension.paint(annotation, gc, fCanvas, r);
+					else if (annotationPresentation != null)
+						annotationPresentation.paint(gc, fCanvas, r);
 					
 				} catch (BadLocationException e) {
 				}
@@ -401,11 +408,16 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		for (int layer= 0; layer < maxLayer; layer++) {
 			Iterator iter= fModel.getAnnotationIterator();
 			while (iter.hasNext()) {
+				IAnnotationPresentation annotationPresentation= null;
 				Annotation annotation= (Annotation) iter.next();
-
+				
 				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
 				if (annotationAccessExtension != null)
 					lay= annotationAccessExtension.getLayer(annotation);
+				else if (annotation instanceof IAnnotationPresentation) {
+					annotationPresentation= (IAnnotationPresentation)annotation;
+					lay= annotationPresentation.getLayer();
+				}
 				maxLayer= Math.max(maxLayer, lay+1);	// dynamically update layer maximum
 				if (lay != layer)	// wrong layer: skip annotation
 					continue;
@@ -436,6 +448,8 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 
 				if (r.y < dimension.y && annotationAccessExtension != null)  // annotation within visible area
 					annotationAccessExtension.paint(annotation, gc, fCanvas, r);
+				else if (annotationPresentation != null)
+					annotationPresentation.paint(gc, fCanvas, r);
 			}
 		}
 	}
