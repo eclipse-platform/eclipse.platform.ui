@@ -363,7 +363,7 @@ public abstract class ViewItem {
 			return;
 		}
 
-		IContext context = HelpSystem.getContext(ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID+'.'+item.getContextId());
+		IContext context = HelpSystem.getContext(item.getContextId());
 
 		if (context != null) {
 			// determine a location in the upper right corner of the widget
