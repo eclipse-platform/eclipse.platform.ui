@@ -203,7 +203,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 				// Auto-add parents if they are not already managed
 				IContainer parent = currentResource.getParent();
 				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(currentResource);
-				while (parent.getType() != IResource.ROOT && parent.getType() != IResource.PROJECT && ! cvsResource.isManaged()) {
+				while (parent.getType() != IResource.ROOT && parent.getType() != IResource.PROJECT && ! cvsResource.getParent().isManaged()) {
 					folders.add(parent.getProjectRelativePath().toString());
 					parent = parent.getParent();
 				}
