@@ -512,7 +512,7 @@ public class DetailsForm extends PropertyWebForm {
 		return csite.isConfigured(feature);
 	}
 
-	private String getInstalledVersion(IFeature feature) {
+	private String getInstalledVersionText(IFeature feature) {
 		alreadyInstalled = false;
 		VersionedIdentifier vid = feature.getVersionedIdentifier();
 		PluginVersionIdentifier version = vid.getVersion();
@@ -520,8 +520,8 @@ public class DetailsForm extends PropertyWebForm {
 
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < installedFeatures.length; i++) {
-			boolean enabled = isConfigured(feature);
 			IFeature installedFeature = installedFeatures[i];
+			boolean enabled = isConfigured(installedFeature);
 			VersionedIdentifier ivid =
 				installedFeature.getVersionedIdentifier();
 			if (buf.length() > 0)
@@ -567,7 +567,7 @@ public class DetailsForm extends PropertyWebForm {
 		providerLabel.setText(feature.getProvider());
 		versionLabel.setText(
 			feature.getVersionedIdentifier().getVersion().toString());
-		String installedVersion = getInstalledVersion(feature);
+		String installedVersion = getInstalledVersionText(feature);
 		if (installedVersion == null)
 			installedVersion = UpdateUI.getString(KEY_NOT_INSTALLED);
 		installedVersionLabel.setText(installedVersion);
@@ -626,8 +626,6 @@ public class DetailsForm extends PropertyWebForm {
 		addButton.setSelection(
 			relatedJob != null && relatedJob.isProcessed() == false);
 		addBlock = false;
-		//uninstallButton.setVisible(getUninstallButtonVisibility());
-		//if (doButton.isVisible())
 		updateButtonText(newerVersion);
 		reflow();
 		updateSize();
