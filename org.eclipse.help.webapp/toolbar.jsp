@@ -134,30 +134,23 @@ BODY {
 				<td>
 					&nbsp;
 				</td>
-				<td align="middle" width="20">
-					<a href="#" onclick="parent.history.back();" onmouseover="window.status='<%=WebappResources.getString("back_tip", request)%>';return true;" onmouseout="window.status='';">
-						<img src="images/back.gif" alt='<%=WebappResources.getString("back_tip", request)%>' border="0" name="back">
-					</a>
+				<td align="middle" width="22">
+					<a href="#" onclick="parent.history.back();" onmouseover="window.status='<%=WebappResources.getString("back_tip", request)%>';return true;" onmouseout="window.status='';"><img src="images/back.gif" alt='<%=WebappResources.getString("back_tip", request)%>' border="0" name="back"></a>
 				</td>
-				<td align="middle" width="20">
-					<a href="#" onclick="parent.history.forward();" onmouseover="window.status='<%=WebappResources.getString("forward_tip", request)%>';return true;" onmouseout="window.status='';">
-						<img src="images/forward.gif" alt='<%=WebappResources.getString("forward_tip", request)%>' border="0" name="forward">
-					</a>
+				<td align="middle" width="22">
+					<a href="#" onclick="parent.history.forward();" onmouseover="window.status='<%=WebappResources.getString("forward_tip", request)%>';return true;" onmouseout="window.status='';"><img src="images/forward.gif" alt='<%=WebappResources.getString("forward_tip", request)%>' border="0" name="forward"></a>
 				</td>
-				<td align="middle" width="20">
-					<a href="#" onclick="toggleNav(this);" onmouseover="window.status='<%=WebappResources.getString("Toggle", request)%>';return true;" onmouseout="window.status='';">
-						<img src="images/hide_nav.gif" alt='<%=WebappResources.getString("Toggle", request)%>' border="0" name="hide_nav">
-					</a>
+				<td align="middle" width="9">
+					<img width="1" height=16 src="images/tool_separator.gif" alt='' border="0">
 				</td>
-				<td align="middle" width="20">
-					<a  href="#" onclick="resynch(this);" onmouseover="window.status= '<%=WebappResources.getString("Synch", request)%>'; return true;" onmouseout="window.status='';">
-					<img src="images/synch_toc_nav.gif" alt='<%=WebappResources.getString("Synch", request)%>' border="0" name="sync_nav">
-					</a>
+				<td align="middle" width="22">
+					<a href="#" onclick="toggleNav(this);" onmouseover="window.status='<%=WebappResources.getString("Toggle", request)%>';return true;" onmouseout="window.status='';"><img src="images/hide_nav.gif" alt='<%=WebappResources.getString("Toggle", request)%>' border="0" name="hide_nav"></a>
 				</td>
-				<td align="middle" width="20">
-					<a  href="#" onclick="printContent(this);" onmouseover="window.status='<%=WebappResources.getString("Print", request)%>' ;return true;"  onmouseout="window.status='';">
-					<img  src="images/print_edit.gif" alt='<%=WebappResources.getString("Print", request)%>' border="0" name="print">
-					</a>
+				<td align="middle" width="22">
+					<a  href="#" onclick="resynch(this);" onmouseover="window.status= '<%=WebappResources.getString("Synch", request)%>'; return true;" onmouseout="window.status='';"><img src="images/synch_toc_nav.gif" alt='<%=WebappResources.getString("Synch", request)%>' border="0" name="sync_nav"></a>
+				</td>
+				<td align="middle" width="22">
+					<a  href="#" onclick="printContent(this);" onmouseover="window.status='<%=WebappResources.getString("Print", request)%>' ;return true;"  onmouseout="window.status='';"><img  src="images/print_edit.gif" alt='<%=WebappResources.getString("Print", request)%>' border="0" name="print"></a>
 				</td>
 			</tr>
 		</table>

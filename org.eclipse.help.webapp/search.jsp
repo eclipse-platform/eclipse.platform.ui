@@ -89,7 +89,7 @@ INPUT {
 #advanced {
 	text-decoration:underline; 
 	text-align:right;
-	color:#0000ff; 
+	color:#0066FF; 
 	cursor:hand;
 	margin-left:4px;
 	border:0px;
