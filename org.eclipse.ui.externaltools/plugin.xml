@@ -66,6 +66,20 @@
 		</page>
 	</extension>
 
+	<extension point="org.eclipse.ui.preferencePages">
+		<page 
+			id="org.eclipse.ui.externaltools.ToolsPreferencePage" 
+			name="%PreferencePage.toolsPreferences"
+			class="org.eclipse.ui.externaltools.internal.ui.ToolsPreferencePage">
+		</page>
+		<page 
+			id="org.eclipse.ui.externaltools.AntPreferencePage" 
+			name="%PreferencePage.antPreferences"
+			class="org.eclipse.ui.externaltools.internal.ui.AntPreferencePage"
+			category="org.eclipse.ui.externaltools.ToolsPreferencePage">
+		</page>
+	</extension>
+
 	<extension point="org.eclipse.ui.views">
 		<category 
 			id="org.eclipse.ui.externaltools.views"
@@ -78,6 +92,15 @@
 			category="org.eclipse.ui.externaltools.views"
 			class="org.eclipse.ui.externaltools.internal.ui.LogConsoleView">
 		</view>
+	</extension>
+	
+<!-- Objects -->
+	<extension point="org.eclipse.ant.core.antObjects">
+		<antObject
+			name="org.eclipse.ui.externaltools.internal.ui.ant.AntBuildLogger"
+			class="org.eclipse.ui.externaltools.internal.ui.ant.AntBuildLogger"
+			library="lib/antlib.jar">
+		</antObject>
 	</extension>
 
 </plugin>

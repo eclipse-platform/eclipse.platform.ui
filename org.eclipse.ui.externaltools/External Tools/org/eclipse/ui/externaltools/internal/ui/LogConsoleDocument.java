@@ -9,14 +9,15 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import java.util.*;
+import java.util.ArrayList;
 
 import org.apache.tools.ant.Project;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.text.*;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.custom.StyleRange;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.core.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.core.IPreferenceConstants;
@@ -36,7 +37,7 @@ public class LogConsoleDocument {
 	static Font ANT_FONT;
 	
 	// class variables that handle the colors and the font;
-	private static AntPropertyChangeListener changeListener = AntPropertyChangeListener.getInstance();
+	private static LogPropertyChangeListener changeListener = LogPropertyChangeListener.getInstance();
 	private static LogConsoleDocument instance = null;
 	
 	/*package*/ ArrayList views = new ArrayList();
@@ -113,7 +114,7 @@ public class LogConsoleDocument {
 	}
 	
 	public boolean hasViews() {
-		return views.isEmpty();	
+		return (views.size() > 0);	
 	}
 	
 	public void initializeOutputStructure() {

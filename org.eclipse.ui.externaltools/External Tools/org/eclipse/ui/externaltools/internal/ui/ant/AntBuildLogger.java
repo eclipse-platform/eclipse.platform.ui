@@ -17,6 +17,7 @@ import org.apache.tools.ant.Project;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.externaltools.internal.core.AntUtil;
 import org.eclipse.ui.externaltools.internal.core.ToolMessages;
 import org.eclipse.ui.externaltools.internal.ui.BuildCanceledException;
 import org.eclipse.ui.externaltools.internal.ui.LogConsoleDocument;
@@ -25,18 +26,14 @@ import org.eclipse.ui.externaltools.internal.ui.OutputStructureElement;
 public class AntBuildLogger implements BuildLogger {
 
 	protected int priorityFilter = Project.MSG_INFO;
-	protected IProgressMonitor monitor = new NullProgressMonitor();
+	protected IProgressMonitor monitor;
 	private int logLength = 0;
 	private int lastTargetEndIndex = 0;
 
 	public AntBuildLogger() {
-		/*	AntUIPlugin plugin = AntUIPlugin.getPlugin();
-			if (plugin != null) { 
-				this.monitor = monitorFor(plugin.getCurrentProgressMonitor());
-			} else {
-				this.monitor = new NullProgressMonitor();	
-			}
-		*/
+		monitor = AntUtil.getCurrentProgressMonitor();
+		if (monitor == null)
+			monitor = new NullProgressMonitor();
 	}
 
 	/**
@@ -59,7 +56,11 @@ public class AntBuildLogger implements BuildLogger {
 		Throwable exception = event.getException();
 		if (exception == null)
 			return;
-		logMessage(ToolMessages.format("AntBuildLogger.buildException", new String[] { exception.toString()}), Project.MSG_ERR);
+		logMessage(
+			ToolMessages.format(
+				"AntBuildLogger.buildException", // $NON-NLS-1$
+				new String[] { exception.toString()}),
+			Project.MSG_ERR);	
 	}
 
 	/**
@@ -86,7 +87,11 @@ public class AntBuildLogger implements BuildLogger {
 
 	protected void createNewOutputStructureElement(String name, int index) {
 		LogConsoleDocument doc = LogConsoleDocument.getInstance();
-		OutputStructureElement newElement = new OutputStructureElement(name, doc.getCurrentOutputStructureElement(), index);
+		OutputStructureElement newElement =
+			new OutputStructureElement(
+				name,
+				doc.getCurrentOutputStructureElement(),
+				index);
 		doc.setCurrentOutputStructureElement(newElement);
 	}
 

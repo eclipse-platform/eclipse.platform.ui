@@ -9,12 +9,12 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -26,6 +26,9 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	
 	public static final String IMG_ANT_SCRIPT= "icons/full/obj16/ant_file.gif"; //$NON-NLS-1$;
 	public static final String IMG_BUILDER= "icons/full/obj16/builder.gif"; //$NON-NLS-1$;
+	public static final String IMG_JAR_FILE = "icons/full/obj16/jar_l_obj.gif"; //$NON-NLS-1$;
+	public static final String IMG_CLASSPATH = "icons/full/obj16/classpath.gif"; //$NON-NLS-1$;
+	public static final String IMG_TYPE = "icons/full/obj16/type.gif"; //$NON-NLS-1$;
 	
 	private static ExternalToolsPlugin plugin;
 	private ExternalToolsRegistry registry;
@@ -82,4 +85,20 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 			return null;
 		}
 	}
+	
+	/* (non-Javadoc)
+	 * Method declared in AbstractUIPlugin.
+	 */
+	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
+		prefs.setDefault(IPreferenceConstants.AUTO_SAVE, false);
+		prefs.setDefault(IPreferenceConstants.INFO_LEVEL, true);
+		prefs.setDefault(IPreferenceConstants.VERBOSE_LEVEL, false);
+		prefs.setDefault(IPreferenceConstants.DEBUG_LEVEL, false);
+	
+		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_ERROR_RGB, new RGB(255, 0, 0)); 		// red - exactly the same as debug Consol
+		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_WARNING_RGB, new RGB(255, 100, 0)); 	// orange
+		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_INFO_RGB, new RGB(0, 0, 255)); 		// blue
+		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_VERBOSE_RGB, new RGB(0, 200, 125));	// green
+		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_DEBUG_RGB, new RGB(0, 0, 0));			// black
+	}	
 }
