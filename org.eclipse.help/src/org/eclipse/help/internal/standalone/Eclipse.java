@@ -12,6 +12,7 @@ import java.util.List;
  * or org.eclipse.core.launcher.Main.
  */
 public class Eclipse extends Thread {
+	private static final int RESTART = 23;
 	File dir;
 	String[] cmdarray;
 	/**
@@ -66,12 +67,13 @@ public class Eclipse extends Thread {
 	public void run() {
 		prepareCommand();
 		try {
-			Process pr =
-				Runtime.getRuntime().exec(cmdarray, (String[]) null, dir);
-			(new StreamConsumer(pr.getInputStream())).start();
-			(new StreamConsumer(pr.getErrorStream())).start();
-			pr.waitFor();
-			//return pr.exitValue();
+			Process pr;
+			do {
+				pr = Runtime.getRuntime().exec(cmdarray, (String[]) null, dir);
+				(new StreamConsumer(pr.getInputStream())).start();
+				(new StreamConsumer(pr.getErrorStream())).start();
+				pr.waitFor();
+			} while (pr.exitValue() == RESTART);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
