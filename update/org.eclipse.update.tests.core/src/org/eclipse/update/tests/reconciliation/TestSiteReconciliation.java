@@ -13,9 +13,9 @@ import java.io.File;
 import java.net.URL;
 
 import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;
-import org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy;
-import org.eclipse.core.internal.boot.PlatformConfiguration;
+import org.eclipse.update.configurator.IPlatformConfiguration.ISiteEntry;
+import org.eclipse.update.configurator.IPlatformConfiguration.ISitePolicy;
+import org.eclipse.update.configurator.PlatformConfiguration;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.core.IFeatureReference;
