@@ -108,6 +108,7 @@ public class DocumentTemplateContext extends TemplateContext {
 	 */
 	protected void setCompletionOffset(int newOffset) {
 		fOriginalOffset= newOffset;
+		fPosition.setOffset(newOffset);
 	}
 	
 	/**
@@ -126,6 +127,7 @@ public class DocumentTemplateContext extends TemplateContext {
 	 */
 	protected void setCompletionLength(int newLength) {
 		fOriginalLength= newLength;
+		fPosition.setLength(newLength);
 	}
 	
 	/**
