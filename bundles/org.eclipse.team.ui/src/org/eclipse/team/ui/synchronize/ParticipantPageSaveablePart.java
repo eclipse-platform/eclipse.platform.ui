@@ -502,13 +502,13 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 					return toolbar;
 				}
 				public void setGlobalActionHandler(String actionId, IAction action) {
-					IHandler handler = new ActionHandler(action);
-		            HandlerSubmission handlerSubmission = new HandlerSubmission(null,
-		                    dialogShell, null, actionId, handler, Priority.MEDIUM);	
-					PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(handlerSubmission);
-					actionHandlers.add(handlerSubmission);
+					if (actionId != null && !"".equals(actionId)) {
+						IHandler handler = new ActionHandler(action);
+						HandlerSubmission handlerSubmission = new HandlerSubmission(null, dialogShell, null, actionId, handler, Priority.MEDIUM);
+						PlatformUI.getWorkbench().getCommandSupport().addHandlerSubmission(handlerSubmission);
+						actionHandlers.add(handlerSubmission);
+					}
 				}
-
 				public void updateActionBars() {
 				}
 			};
