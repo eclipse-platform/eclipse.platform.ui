@@ -44,6 +44,10 @@ public class WebappPreferences {
 			&& "true".equals(prefs.getString("bookmarksView"));
 	}
 
+	public boolean isBookmarksAction() {
+		return "true".equals(prefs.getString("bookmarksView"));
+	}
+
 	public boolean isLinksView() {
 		return BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER
 			&& "true".equals(prefs.getString("linksView"));

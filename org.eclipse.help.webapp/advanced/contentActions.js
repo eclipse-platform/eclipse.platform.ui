@@ -58,6 +58,35 @@ function bookmarkPage(button)
 	}
 }
 
+function bookmarkInfocenterPage(button)
+{
+	// Currently we pick up the url from the content page.
+	// If the page is from outside the help domain, a script
+	// exception is thrown. We need to catch it and ignore it.
+	try
+	{
+		// use the url from plugin id only
+		var url = parent.ContentViewFrame.location.href;
+		var i = url.indexOf("/topic/");
+		if (i >=0 )
+			url = url.substring(i+6);
+		// remove any query string
+		i = url.indexOf("?");
+		if (i >= 0)
+			url = url.substring(0, i);
+			
+		var title = parent.ContentViewFrame.document.title;
+		if (title == null || title == "")
+			title = url;
+
+		/********** HARD CODED VIEW NAME *************/
+		window.external.AddFavorite(parent.ContentViewFrame.location.href,title);
+	}catch (e) {}
+	if (isIE && button && document.getElementById(button)){
+		document.getElementById(button).blur();
+	}
+}
+
 function resynch(button)
 {
 	try

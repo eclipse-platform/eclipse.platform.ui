@@ -21,6 +21,10 @@
 		forwardImage = "forward.gif";
 		backImage = "back.gif";
 	}
+	boolean isBookmarkAction = prefs.isBookmarksView() 
+		|| prefs.isBookmarksAction() && data.isIE(); // for infocenter, add to favorites supported on IE
+	String bookmarkButtonState = isBookmarkAction?"off":"hidden";
+	String bookmarkAction = RequestData.MODE_INFOCENTER==data.getMode()?"bookmarkInfocenterPage":"bookmarkPage";
 %>
 <jsp:include page="toolbar.jsp">
 	<jsp:param name="script" value="contentActions.js"/>
@@ -53,8 +57,8 @@
 	<jsp:param name="name"     value="add_bkmrk"/>
 	<jsp:param name="tooltip"  value='BookmarkPage'/>
 	<jsp:param name="image"    value="add_bkmrk.gif"/>
-	<jsp:param name="action"   value="bookmarkPage"/>
-	<jsp:param name="state"    value='<%=(prefs.isBookmarksView()?"off":"hidden")%>'/>
+	<jsp:param name="action"   value="<%=bookmarkAction%>"/>
+	<jsp:param name="state"    value='<%=bookmarkButtonState%>'/>
 
 	<jsp:param name="name"     value="print"/>
 	<jsp:param name="tooltip"  value='Print'/>
