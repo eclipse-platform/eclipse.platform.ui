@@ -109,7 +109,7 @@ public void testRefreshFolder() throws Throwable {
 	/* test deletion of a child */
 	IFile file = project.getFile("file");
 	final IFile hackFile = file;
-	final Workspace workspace = (Workspace) this.getWorkspace();
+	final Workspace workspace = (Workspace) getWorkspace();
 	IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 		public void run(IProgressMonitor monitor) throws CoreException {
 			workspace.createResource(hackFile, false);

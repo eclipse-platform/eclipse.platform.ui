@@ -42,7 +42,7 @@ protected void createFiles(File folder, Hashtable set) throws CoreException {
 	}
 }
 protected void createFiles(final IContainer target, final Hashtable set) throws CoreException {
-	final Workspace workspace = (Workspace) this.getWorkspace();
+	final Workspace workspace = (Workspace) getWorkspace();
 	IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 		public void run(IProgressMonitor monitor) throws CoreException {
 			for (int i = 0; i < limit; i++) {

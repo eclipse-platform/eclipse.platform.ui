@@ -530,7 +530,7 @@ public void testMoveResource() throws Exception {
 	/* move a file that is not local but exists in the workspace */
 	file = projects[0].getFile("ghost");
 	final IFile hackFile = file;
-	final Workspace workspace = (Workspace) this.getWorkspace();
+	final Workspace workspace = (Workspace) getWorkspace();
 	IWorkspaceRunnable operation = new IWorkspaceRunnable() {
 		public void run(IProgressMonitor monitor) throws CoreException {
 			workspace.createResource(hackFile, false);
