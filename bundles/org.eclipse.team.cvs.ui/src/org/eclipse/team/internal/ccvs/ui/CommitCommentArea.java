@@ -240,6 +240,18 @@ public class CommitCommentArea extends DialogArea {
 	}
 	
 	private void finished() {
-		CVSUIPlugin.getPlugin().getRepositoryManager().addComment(comment);
+		// if the comment is the same as the template, ignore it
+		try {
+			if (comment.equals(getCommitTemplate())) {
+				comment = ""; //$NON-NLS-1$
+			}
+		} catch (CVSException e) {
+			// we couldn't get the commit template. Log the error and continue
+			CVSUIPlugin.log(e);
+		}
+		// if there is still a comment, remember it
+		if (comment.length() > 0) {
+			CVSUIPlugin.getPlugin().getRepositoryManager().addComment(comment);
+		}
 	}
 }
