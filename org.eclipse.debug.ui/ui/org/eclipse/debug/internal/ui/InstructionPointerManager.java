@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -131,10 +130,9 @@ public class InstructionPointerManager {
 		}
 		
 		// Remove annotations for all threads associated with the debug target
-		Set threadSet = threadMap.keySet();
-		Iterator threadIterator = threadSet.iterator();
-		while (threadIterator.hasNext()) {
-			IThread thread = (IThread) threadIterator.next();
+		Object[] threads = threadMap.keySet().toArray();
+		for (int i = 0; i < threads.length; i++) {
+			IThread thread = (IThread) threads[i];
 			removeAnnotations(thread, threadMap);
 		}
 	}
