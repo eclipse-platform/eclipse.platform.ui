@@ -36,7 +36,7 @@ public interface IDeferredWorkbenchAdapter extends IWorkbenchAdapter {
 	 * @param  monitor a progress monitor that will never be <code>null<code> to
  	 *                   support reporting and cancellation.
 	 */
-	public void fetchDeferredChildren(Object object, org.eclipse.jface.progress.IElementCollector collector, IProgressMonitor monitor);
+	public void fetchDeferredChildren(Object object, IElementCollector collector, IProgressMonitor monitor);
 
 	/**
 	 * Returns whether this adapter may have children. This is an optimized method
