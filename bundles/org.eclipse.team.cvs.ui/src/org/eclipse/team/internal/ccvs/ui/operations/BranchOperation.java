@@ -19,8 +19,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.CVSWorkspaceSubscriber;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -97,15 +99,21 @@ public class BranchOperation extends RepositoryProviderOperation {
 	 */
 	protected void execute(CVSTeamProvider provider, IResource[] providerResources, IProgressMonitor monitor) throws CVSException, InterruptedException {
 		try {
-			makeBranch(provider, providerResources, rootVersionTag, branchTag, update, monitor);										
-			updateRememberedags(providerResources);
+			monitor.beginTask(null, 100);
+			makeBranch(provider, providerResources, rootVersionTag, branchTag, update, Policy.subMonitorFor(monitor, 90));										
+			updateRememberedTags(providerResources);
+			if (update) {
+				updateWorkspaceSubscriber(provider, Policy.subMonitorFor(monitor, 10));
+			}
 			collectStatus(Status.OK_STATUS);
 		} catch (TeamException e) {
 			// Accumulate the status which will be displayed by CVSAction#endOperation(IAction)
 			collectStatus(e.getStatus());
+		} finally {
+			monitor.done();
 		}
 	}
-	
+
 	private void makeBranch(CVSTeamProvider provider, IResource[] resources, final CVSTag versionTag, final CVSTag branchTag, boolean moveToBranch, IProgressMonitor monitor) throws TeamException {
 		
 		// Determine the total amount of work
@@ -226,7 +234,7 @@ public class BranchOperation extends RepositoryProviderOperation {
 		}, monitor);
 	}
 	
-	private void updateRememberedags(IResource[] providerResources) throws CVSException {
+	private void updateRememberedTags(IResource[] providerResources) throws CVSException {
 		if (rootVersionTag != null || update) {
 			for (int i = 0; i < providerResources.length; i++) {
 				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(providerResources[i]);
@@ -242,6 +250,14 @@ public class BranchOperation extends RepositoryProviderOperation {
 		}
 	}
 
+	/*
+	 * Update the workspace subscriber by flushin any cahced remote bytes
+	 */
+	private void updateWorkspaceSubscriber(CVSTeamProvider provider, IProgressMonitor monitor) throws TeamException {
+		CVSWorkspaceSubscriber s = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber();
+		s.updateRemote(provider, monitor);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#getTaskName()
 	 */
