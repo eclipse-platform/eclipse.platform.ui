@@ -895,6 +895,7 @@ public class EclipseSynchronizer {
 	 */
 	private void setCachedSyncBytes(IResource resource, byte[] syncBytes) throws CVSException {
 		getSyncInfoCacheFor(resource).setCachedSyncBytes(resource, syncBytes);
+		changedResources.add(resource);
 	}
 		
 	/**
