@@ -13,10 +13,12 @@ package org.eclipse.search2.internal.ui;
 
 import java.util.HashMap;
 import java.util.Iterator;
+
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.search.internal.ui.SearchPluginImages;
 import org.eclipse.search.ui.IContextMenuConstants;
@@ -38,12 +40,16 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.ContributionItemFactory;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
+import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
+import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener {
@@ -341,6 +347,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		if (result != null) {
 			fSearchAgainAction.setEnabled(result.getQuery().canRerun());
 			menuManager.appendToGroup(IContextMenuConstants.GROUP_SEARCH, fSearchAgainAction);
+			MenuManager showInSubMenu = new MenuManager("Show in"); 
+			showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getViewSite().getWorkbenchWindow()));
+			menuManager.appendToGroup(IContextMenuConstants.GROUP_OPEN, showInSubMenu);
 		}
 	}
 
@@ -422,4 +431,18 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
         super.showBusy(busy);
         getProgressService().warnOfContentChange();
     }
+    
+	public Object getAdapter(Class adapter) {
+		Object superAdapter= super.getAdapter(adapter);
+		if (superAdapter != null)
+			return superAdapter;
+		if (adapter == IShowInSource.class) {
+			return new IShowInSource() {
+				public ShowInContext getShowInContext() {
+					return new ShowInContext(null, getSelectionProvider().getSelection());
+				}
+			};
+		}
+		return null;
+	}
 }
