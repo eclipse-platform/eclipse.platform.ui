@@ -19,7 +19,6 @@ import org.eclipse.help.internal.*;
  *  href - may be provided if comand==displayHelp
  */
 public class ControlServlet extends HttpServlet {
-	private static final String HELP_KEY = "org.eclipse.ui.help";
 	private static final String HELP_SYSTEM_EXTENSION_ID =
 		"org.eclipse.help.support";
 	private static final String HELP_SYSTEM_CLASS_ATTRIBUTE = "class";
