@@ -294,6 +294,8 @@ public class SynchronizeViewTestAdapter extends SyncInfoSource {
     private static SubscriberParticipantPage getPage(Subscriber subscriber) {
         try {
             SubscriberParticipant participant = getParticipant(subscriber);
+            if (participant == null)
+            	throw new AssertionFailedError("The participant for " + subscriber.getName() + " could not be retrieved");
             IWorkbenchPage activePage = TeamUIPlugin.getActivePage();
             ISynchronizeView view = (ISynchronizeView)activePage.showView(ISynchronizeView.VIEW_ID);
             IPage page = ((SynchronizeView)view).getPage(participant);

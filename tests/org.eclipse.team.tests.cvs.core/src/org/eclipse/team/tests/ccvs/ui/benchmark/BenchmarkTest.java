@@ -22,13 +22,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
 import org.eclipse.test.performance.*;
-import org.eclipse.test.performance.Performance;
-import org.eclipse.test.performance.PerformanceMeter;
 
 /**
  * Benchmark test superclass
@@ -185,7 +182,7 @@ public abstract class BenchmarkTest extends EclipseTest {
      */
     protected void syncCommitResources(IResource[] resources, String comment) throws TeamException, CoreException {
        startTask("Synchronize outgoing changes");
-       syncResources(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), resources);
+       syncResources(source.createWorkspaceSubscriber(), resources);
        endTask();
        // TODO: Commit all outgoing changes that are children of the given resource
        // by extracting them from the subscriber sync set
@@ -200,7 +197,7 @@ public abstract class BenchmarkTest extends EclipseTest {
      */
     protected void syncUpdateResources(IResource[] resources) throws TeamException {
         startTask("Synchronize incoming changes");
-        syncResources(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), resources);
+        syncResources(source.createWorkspaceSubscriber(), resources);
         endTask();
         // TODO: Update all incoming changes that are children of the given resource
         // by extracting them from the subscriber sync set
