@@ -288,11 +288,10 @@ public class PerspectivePresentation {
 	 */
 	public boolean bringPartToTop(LayoutPart part) {
 		ILayoutContainer container = part.getContainer();
-		if (container != null && container instanceof PartTabFolder) {
-			PartTabFolder folder = (PartTabFolder) container;
-			int nIndex = folder.indexOf(part);
-			if (folder.getSelection() != nIndex) {
-				folder.setSelection(nIndex);
+		if (container != null && container instanceof PartStack) {
+			PartStack folder = (PartStack) container;
+			if (folder.getVisiblePart() != part) {
+				folder.setSelection(part);
 				return true;
 			}
 		}

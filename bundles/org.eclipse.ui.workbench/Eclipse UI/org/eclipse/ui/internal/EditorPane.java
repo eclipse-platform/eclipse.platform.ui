@@ -15,7 +15,6 @@ import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -137,22 +136,6 @@ int getStyle() {
 public EditorWorkbook getWorkbook() {
 	return workbook;
 }
-/**
- * See LayoutPart
- */
-public boolean isDragAllowed(Point p) {
-	// See also similar restrictions in addMoveItems method
-	
-	if (workbook.isDragAllowed(/*this,*/p))
-		return false;
-		
-	int wbCount = workbook.getEditorArea().getEditorWorkbookCount();
-	int editorCount = workbook.getItemCount();
-	if (isZoomed())
-		return editorCount > 1;
-	else
-		return editorCount > 1 || wbCount > 1;
-}
 
 /**
  * Notify the workbook page that the part pane has
@@ -223,40 +206,6 @@ protected void addCloseAllItem (Menu menu) {
 	item.setEnabled(getPage().getEditors().length >= 1);
 }
 
-/**
- * Add the Editor and Tab Group items to the Move menu.
- */
-protected void addMoveItems(Menu moveMenu) {
-	// See also similar restrictions in isDragAllowed method
-	// No need to worry about mouse cursor over image.
-	
-	int wbCount = workbook.getEditorArea().getEditorWorkbookCount();
-	int editorCount = workbook.getItemCount();
-	
-	MenuItem item = new MenuItem(moveMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("EditorPane.moveEditor")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			workbook.openTracker(EditorPane.this);
-		}
-	});
-	if (isZoomed())
-		item.setEnabled(editorCount > 1);
-	else
-		item.setEnabled(editorCount > 1 || wbCount > 1);
-	
-	item = new MenuItem(moveMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("EditorPane.moveFolder")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			workbook.openTracker(getWorkbook());
-		}
-	});
-	if (isZoomed())
-		item.setEnabled(false);
-	else
-		item.setEnabled(wbCount > 1);
-}
 /**
  * Add the pin menu item on the editor system menu
  */

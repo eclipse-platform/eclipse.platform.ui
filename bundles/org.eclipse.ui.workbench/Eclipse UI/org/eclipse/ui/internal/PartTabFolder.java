@@ -11,177 +11,75 @@ package org.eclipse.ui.internal;
  * not use height ratios
  ******************************************************************************/
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.util.Geometry;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.graphics.Cursor;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.dnd.DragUtil;
-import org.eclipse.ui.internal.dnd.IDragOverListener;
-import org.eclipse.ui.internal.dnd.IDropTarget;
 import org.eclipse.ui.internal.presentations.SystemMenuFastView;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
 import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
-import org.eclipse.ui.presentations.IStackPresentationSite;
-import org.eclipse.ui.presentations.StackDropResult;
-import org.eclipse.ui.presentations.StackPresentation;
 
 /**
  * Manages a set of ViewPanes that are docked into the workbench window. The container for a PartTabFolder
- * is always a PartSashContainer (or null), and its children are always either PartPlaceholders or PartPanes.
+ * is always a PartSashContainer (or null), and its children are always either PartPlaceholders or ViewPanes.
  * 
- * TODO: write a common base class for EditorWorkbook and PartTabFolder.
- * TODO: remove the LayoutPart superclass. All code can either refer to PartPane, 
- * PartPlaceholder, PartSashContainer, or the common base class for EditorWorkbook and PartTabFolder.
- * The frequent downcasting is due to the fact that much of the code tries to use LayoutPart 
- * or ILayoutContainer references for many different purposes.
+ * TODO: eliminate PartTabFolder and EditorWorkbook. PartStack should be general enough to handle editors 
+ * and views without any specialization for editors and views. The differences should be in the 
+ * presentation and in the PartPanes themselves.
+ * 
+ * TODO: eliminate PartPlaceholder. Placeholders should not be children of the PartTabFolder.
+ *  
  */
-public class PartTabFolder extends LayoutPart implements ILayoutContainer {
+public class PartTabFolder extends PartStack {
 
-    private boolean active = false;
     private boolean allowStateChanges;
-
-    private List children = new ArrayList(3);
-
-    // inactiveCurrent is only used when restoring the persisted state of
-    // perspective on startup.
-    private LayoutPart current;
-
-    private int flags;
-
-    private LayoutPart inactiveCurrent;
-
     private WorkbenchPage page;
     
     private SystemMenuSize sizeItem = new SystemMenuSize(null);
     
-    private DefaultStackPresentationSite presentationSite = new DefaultStackPresentationSite() {
+	public void addSystemActions(IMenuManager menuManager) {
+		appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
+		sizeItem = new SystemMenuSize((PartPane)getVisiblePart());
+		appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
+	}
+    
+    public boolean isCloseable(IPresentablePart part) {
+    	if (part == null) {
+    		return canMoveFolder();
+    	}
+    	
+        ViewPane pane = (ViewPane)getPaneFor(part);
 
-        public void close(IPresentablePart part) {
-            PartTabFolder.this.close(part);
-        }
-
-        public void dragStart(IPresentablePart beingDragged,
-                Point initialLocation, boolean keyboard) {
-        	
-        	PartTabFolder.this.dragStart(beingDragged, initialLocation, keyboard);
-        }
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.eclipse.ui.internal.skins.IPresentationSite#dragStart(boolean)
-         */
-        public void dragStart(Point initialLocation, boolean keyboard) {
-        	PartTabFolder.this.dragStart(null, initialLocation, keyboard);
-        }
-
-        public boolean isCloseable(IPresentablePart part) {
-            ViewPane pane = (ViewPane) getPaneFor(part);
-
-            if (pane == null) {
-	            // Shouldn't happen -- this should only be called for ViewPanes
-	            // that are already in the tab folder
-	            return false; 
-            }
-            
-            return !isFixedView(pane);
-        }
-
-        public boolean isMoveable(IPresentablePart part) {
-        	if (part == null) {
-        		return canMoveFolder();
-        	}
-        	
-            return isCloseable(part);
-        }
-
-        public void selectPart(IPresentablePart toSelect) {
-            presentationSelectionChanged(toSelect);
-        }
-
-        public boolean supportsState(int state) {
-        	return allowStateChanges;
+        if (pane == null) {
+            // Shouldn't happen -- this should only be called for ViewPanes
+            // that are already in the tab folder
+            return false; 
         }
         
-        public void setState(int newState) {
-        	if (!allowStateChanges) {
-        		return;
-        	}
-            PartTabFolder.this.setState(newState);
-        }
-
-		public IPresentablePart getSelectedPart() {
-			if (current == null) {
-				return null;
-			}
-			
-			return current.getPresentablePart();
-		}
-		
-		public void addSystemActions(IMenuManager menuManager) {
-			appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(fastViewAction)); //$NON-NLS-1$
-			sizeItem = new SystemMenuSize((PartPane)current);
-			appendToGroupIfPossible(menuManager, "size", sizeItem); //$NON-NLS-1$
-		}
-		
-    };
-    
-    private static void appendToGroupIfPossible(IMenuManager m, String groupId, ContributionItem item) {
-    	try {
-    		m.appendToGroup(groupId, item);
-    	} catch (IllegalArgumentException e) {
-    		m.add(item);
-    	}
+        return !isFixedView(pane);
     }
     
-    private SystemMenuFastView fastViewAction = new SystemMenuFastView(presentationSite);
+    private SystemMenuFastView fastViewAction;
 
     public PartTabFolder(WorkbenchPage page) {
     	this(page, true);
     }
     
     public PartTabFolder(WorkbenchPage page, boolean allowsStateChanges) {
-        super("PartTabFolder"); //$NON-NLS-1$
 
+    	this.page = page;
         setID(this.toString());
         // Each folder has a unique ID so relative positioning is unambiguous.
 
-        // save off a ref to the page
-        //@issue is it okay to do this??
-        //I think so since a PartTabFolder is
-        //not used on more than one page.
-        this.page = page;
         this.allowStateChanges = allowsStateChanges;
+        fastViewAction = new SystemMenuFastView(getPresentationSite());
+    }
+    
+    protected WorkbenchPage getPage() {
+    	return page;
     }
 
-    /**
-     * See IVisualContainer#add
-     */
-    public void add(LayoutPart child) {
-
-        children.add(child);
-        if (active) {
-            showPart(child, null);
-        }
-    }
-
-    private boolean canMoveFolder() {
+    protected boolean canMoveFolder() {
         Perspective perspective = page.getActivePerspective();
 
         if (perspective == null) {
@@ -192,780 +90,33 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
     	
         return !perspective.isFixedLayout();    	
     }
-    
-    /**
-     * Add a part at a particular position
-     */
-    private void add(LayoutPart newChild, IPresentablePart position) {
-        LayoutPart targetPart = getPaneFor(position);
-        int childIdx = children.indexOf(targetPart);
-
-        if (childIdx == -1) {
-            children.add(newChild);
-        } else {
-            children.add(childIdx, newChild);
-        }
-
-        if (active) {
-            showPart(newChild, position);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.ILayoutContainer#allowsAutoFocus()
-     */
-    public boolean allowsAutoFocus() {
-        if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) { return false; }
-
-        ILayoutContainer parent = getContainer();
-
-        if (parent != null && !parent.allowsAutoFocus()) { return false; }
-
-        return true;
-    }
-
-    /**
-     * @param part
-     */
-    protected void close(IPresentablePart part) {
-        if (!presentationSite.isCloseable(part)) { return; }
-
-        LayoutPart layoutPart = getPaneFor(part);
-
-        if (layoutPart != null && layoutPart instanceof ViewPane) {
-            ViewPane viewPane = (ViewPane) layoutPart;
-
-            //getPresentation().removePart(part);
-            viewPane.doHide();
-        }
-    }
 
     public void createControl(Composite parent) {
-
-        if (presentationSite.getPresentation() != null) return;
-
-        AbstractPresentationFactory factory = ((WorkbenchWindow) page
-                .getWorkbenchWindow()).getWindowConfigurer()
-                .getPresentationFactory();
-        presentationSite.setPresentation(factory.createPresentation(parent,
-                presentationSite, AbstractPresentationFactory.ROLE_DOCKED_VIEW,
-                page.getPerspective().getId(), getID()));
-
-        active = true;
-
-        // Add all visible children to the presentation
-        Iterator iter = children.iterator();
-        while (iter.hasNext()) {
-            LayoutPart part = (LayoutPart) iter.next();
-
-            showPart(part, null);
-        }
-
-        // Set current page.
-        if (getItemCount() > 0) {
-            int newPage = 0;
-            if (current != null) newPage = indexOf(current);
-            setSelection(newPage);
-        }
-
-        Control ctrl = getPresentation().getControl();
-
-        // Add a drop target that lets us drag views directly to a particular
-        // tab
-        DragUtil.addDragTarget(ctrl, new IDragOverListener() {
-
-            public IDropTarget drag(Control currentControl,
-                    final Object draggedObject, Point position,
-                    Rectangle dragRectangle) {
-
-                if (!(draggedObject instanceof ViewPane)) { return null; }
-
-                final ViewPane pane = (ViewPane) draggedObject;
-
-                // Don't allow views to be dragged between windows
-                if (pane.getWorkbenchWindow() != getWorkbenchWindow()) { return null; }
-
-                final StackDropResult dropResult = getPresentation().dragOver(
-                        currentControl, position);
-
-                if (dropResult == null) { return null; }
-
-                if (dropResult.getInsertionPoint() == pane.getPresentablePart()) { return null; };
-                
-                return new IDropTarget() {
-
-                    public void drop() {
-                    	
-                        // If we're dragging a pane over itself do nothing
-                    	//if (draggedControl == pane.getPresentablePart()) { return; };
-                    	
-                        // Don't worry about reparenting the view if we're
-                        // simply
-                        // rearranging tabs within this folder
-                        if (pane.getContainer() != PartTabFolder.this) {
-                            page.getActivePerspective().getPresentation()
-                                    .derefPart(pane);
-                            pane.reparent(getParent());
-                        } else {
-                            remove(pane);
-                        }
-
-                        add(pane, dropResult.getInsertionPoint());
-                        setSelection(pane);
-                        pane.setFocus();
-                    }
-
-                    public Cursor getCursor() {
-                        return DragCursors.getCursor(DragCursors.CENTER);
-                    }
-
-                    public Rectangle getSnapRectangle() {
-                        return dropResult.getSnapRectangle();
-                    }
-                };
-            }
-
-        });
-
-        ctrl.setData(this);
-    }
-
-    /**
-     * See LayoutPart#dispose
-     */
-    public void dispose() {
-
-        if (!active) return;
-
-        StackPresentation presentation = presentationSite.getPresentation();
-
-        presentationSite.dispose();
-
-        Iterator iter = children.iterator();
-        while (iter.hasNext()) {
-            LayoutPart next = (LayoutPart) iter.next();
-
-            next.setContainer(null);
-        }
-
-        active = false;
-    }
-
-    public void findSashes(LayoutPart part, ViewPane.Sashes sashes) {
-        ILayoutContainer container = getContainer();
-
-        if (container != null) {
-            container.findSashes(this, sashes);
-        }
-    }
-
-    /**
-     * Forces the layout to be recomputed for all parts
-     */
-    private void forceLayout() {
-        PartSashContainer cont = (PartSashContainer) getContainer();
-        if (cont != null) {
-            LayoutTree tree = cont.getLayoutTree();
-            tree.setBounds(getParent().getClientArea());
-        }
-    }
-
-    /**
-     * Gets the presentation bounds.
-     */
-    public Rectangle getBounds() {
-        if (getPresentation() == null) { return new Rectangle(0, 0, 0, 0); }
-
-        return getPresentation().getControl().getBounds();
-    }
-
-    /**
-     * See IVisualContainer#getChildren
-     */
-    public LayoutPart[] getChildren() {
-        return (LayoutPart[]) children.toArray(new LayoutPart[children.size()]);
-    }
-
-    public Control getControl() {
-        StackPresentation presentation = getPresentation();
-
-        if (presentation == null) { 
-        	return null; 
-        }
-
-        return presentation.getControl();
-    }
-
-    /**
-     * Answer the number of children.
-     */
-    public int getItemCount() {
-        if (active) { return getPresentableParts().size(); }
-
-        return children.size();
-    }
-
-    /**
-     * Returns the layout part for the given presentable part
-     * 
-     * @param toFind
-     * @return
-     */
-    private LayoutPart getLayoutPart(IPresentablePart toFind) {
-        Iterator iter = children.iterator();
-        while (iter.hasNext()) {
-            LayoutPart next = (LayoutPart) iter.next();
-
-            if (next.getPresentablePart() == toFind) { return next; }
-        }
-
-        return null;
-    }
-
-    // getMinimumHeight() added by cagatayk@acm.org
-    /**
-     * @see LayoutPart#getMinimumHeight()
-     */
-    public int getMinimumHeight() {
-        if (getPresentation() == null) { return 0; }
-
-        return getPresentation().computeMinimumSize().y;
-    }
-
-    private LayoutPart getPaneFor(IPresentablePart part) {
-        Iterator iter = children.iterator();
-        while (iter.hasNext()) {
-            LayoutPart next = (LayoutPart) iter.next();
-
-            if (next.getPresentablePart() == part) { return next; }
-        }
-
-        return null;
-    }
-
-    /**
-     * Get the parent control.
-     */
-    public Composite getParent() {
-        return getControl().getParent();
-    }
-
-    private IPresentablePart getPresentablePartAtIndex(int idx) {
-        List presentableParts = getPresentableParts();
-
-        if (idx >= 0 && idx < presentableParts.size()) { return (IPresentablePart) presentableParts
-                .get(idx); }
-
-        return null;
-    }
-
-    /**
-     * Returns a list of IPresentablePart
-     * 
-     * @return
-     */
-    private List getPresentableParts() {
-        List result = new ArrayList(children.size());
-
-        Iterator iter = children.iterator();
-        while (iter.hasNext()) {
-            LayoutPart part = (LayoutPart) iter.next();
-
-            IPresentablePart presentablePart = part.getPresentablePart();
-
-            if (presentablePart != null) {
-                result.add(presentablePart);
-            }
-        }
-
-        return result;
-    }
-
-    private StackPresentation getPresentation() {
-        return presentationSite.getPresentation();
-    }
-
-    public int getSelection() {
-        if (!active) return 0;
-
-        return indexOf(current);
-    }
-
-    /**
-     * Returns the visible child.
-     */
-    public LayoutPart getVisiblePart() {
-        if (current == null) return inactiveCurrent;
-        return current;
-    }
-
-    private void hidePart(LayoutPart part) {
-        IPresentablePart presentablePart = part.getPresentablePart();
-
-        if (presentablePart == null) { return; }
-
-        getPresentation().removePart(presentablePart);
-        if (active) {
-            part.setContainer(null);
-        }
-    }
-
-    private int indexOf(IPresentablePart part) {
-        int result = getPresentableParts().indexOf(part);
-
-        if (result < 0) {
-            result = 0;
-        }
-
-        return result;
-    }
-
-    public int indexOf(LayoutPart item) {
-        return indexOf(item.getPresentablePart());
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.IWorkbenchDragSource#isDragAllowed(org.eclipse.swt.graphics.Point)
-     */
-    public boolean isDragAllowed(Point point) {
-        return true;
-    }
-
-    /**
-     * Open the tracker to allow the user to move the specified part using
-     * keyboard.
-     */
-    public void openTracker(LayoutPart part) {
-        DragUtil
-                .performDrag(part, DragUtil.getDisplayBounds(part.getControl()));
-    }
-
-    private void presentationSelectionChanged(IPresentablePart newSelection) {
-    	LayoutPart newPart = getLayoutPart(newSelection); 
-    	
-    	if (newPart == current) {
+    	if (!isDisposed()) {
     		return;
     	}
     	
-        setSelection(newPart);
-        
-        if (newPart != null) {
-        	newPart.setFocus();
-        }
-
-        // set the title of the detached window to reflect the active tab
-        Window window = getWindow();
-        if (window instanceof DetachedWindow) {
-            window.getShell().setText(newSelection.getTitle());
-        }
-    }
-
-    /**
-     * See IVisualContainer#remove
-     */
-    public void remove(LayoutPart child) {
-        IPresentablePart presentablePart = child.getPresentablePart();
-
-        // Need to remove it from the list of children before notifying the presentation
-        // since it may setVisible(false) on the part, leading to a partHidden notification,
-        // during which findView must not find the view being removed.  See bug 60039. 
-        children.remove(child);
-        
-        if (presentablePart != null) {
-            presentationSite.getPresentation().removePart(presentablePart);
-        }
-
-        if (active) {
-            child.setContainer(null);
-        }
-
-        updateContainerVisibleTab();
-    }
-
-    /**
-     * Reparent a part. Also reparent visible children...
-     */
-    public void reparent(Composite newParent) {
-        if (!newParent.isReparentable()) return;
-
-        Control control = getControl();
-        if ((control == null) || (control.getParent() == newParent)) return;
-
-        super.reparent(newParent);
-
-        Iterator iter = children.iterator();
-        while (iter.hasNext()) {
-            LayoutPart next = (LayoutPart) iter.next();
-            next.reparent(newParent);
-        }
-    }
-
-    /**
-     * See IVisualContainer#replace
-     */
-    public void replace(LayoutPart oldChild, LayoutPart newChild) {
-        IPresentablePart oldPart = oldChild.getPresentablePart();
-        IPresentablePart newPart = newChild.getPresentablePart();
-
-        int idx = children.indexOf(oldChild);
-        children.add(idx, newChild);
-
-        if (active) {
-            showPart(newChild, oldPart);
-        }
-
-        if (oldChild == inactiveCurrent) {
-            setSelection(newChild);
-            inactiveCurrent = null;
-        }
-
-        remove(oldChild);
-
-    }
-
-    public boolean resizesVertically() {
-        return presentationSite.getState() != IStackPresentationSite.STATE_MINIMIZED;
-    }
-
-    /**
-     * @see IPersistable
-     */
-    public IStatus restoreState(IMemento memento) {
-        // Read the active tab.
-        String activeTabID = memento
-                .getString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID);
-
-        // Read the page elements.
-        IMemento[] children = memento.getChildren(IWorkbenchConstants.TAG_PAGE);
-        if (children != null) {
-            // Loop through the page elements.
-            for (int i = 0; i < children.length; i++) {
-                // Get the info details.
-                IMemento childMem = children[i];
-                String partID = childMem
-                        .getString(IWorkbenchConstants.TAG_CONTENT);
-
-                // Create the part.
-                LayoutPart part = new PartPlaceholder(partID);
-				part.setContainer(this);            
-                add(part);
-                //1FUN70C: ITPUI:WIN - Shouldn't set Container when not active
-                //part.setContainer(this);
-                if (partID.equals(activeTabID)) {
-                    // Mark this as the active part.
-                    inactiveCurrent = part;
-                }
-            }
-        }
-
-        Integer expanded = memento.getInteger(IWorkbenchConstants.TAG_EXPANDED);
-        setState((expanded == null || expanded.intValue() != IStackPresentationSite.STATE_MINIMIZED) ? IStackPresentationSite.STATE_RESTORED
-                : IStackPresentationSite.STATE_MINIMIZED);
-
-        return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-    }
-
-    /**
-     * @see IPersistable
-     */
-    public IStatus saveState(IMemento memento) {
-
-        // Save the active tab.
-        if (current != null)
-                memento.putString(IWorkbenchConstants.TAG_ACTIVE_PAGE_ID,
-                        current.getID());
-
-        Iterator iter = children.iterator();
-        while (iter.hasNext()) {
-            LayoutPart next = (LayoutPart) iter.next();
-
-            IMemento childMem = memento
-                    .createChild(IWorkbenchConstants.TAG_PAGE);
-
-            IPresentablePart part = next.getPresentablePart();
-            String tabText = "LabelNotFound"; //$NON-NLS-1$ 
-            if (part != null) {
-                tabText = part.getName();
-            }
-            childMem.putString(IWorkbenchConstants.TAG_LABEL, tabText);
-            childMem.putString(IWorkbenchConstants.TAG_CONTENT, next.getID());
-        }
-
-        memento
-                .putInteger(
-                        IWorkbenchConstants.TAG_EXPANDED,
-                        (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) ? IStackPresentationSite.STATE_MINIMIZED
-                                : IStackPresentationSite.STATE_RESTORED);
-
-        return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-    }
-
-    /**
-     * Set the active appearence on the tab folder.
-     * 
-     * @param active
-     */
-    public void setActive(boolean activeState) {
-        if (activeState) {
-            if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) {
-                setState(IStackPresentationSite.STATE_RESTORED);
-            }
-            if (page.isZoomed()) {
-                presentationSite
-                        .setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);
-            }
-        }
-
-        getPresentation().setActive(activeState);
-    }
-
-    /**
-     * Sets the presentation bounds.
-     */
-    public void setBounds(Rectangle r) {
-        if (getPresentation() != null) {
-            getPresentation().setBounds(r);
-        }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.internal.LayoutPart#setContainer(org.eclipse.ui.internal.ILayoutContainer)
-     */
-    public void setContainer(ILayoutContainer container) {
-
-        super.setContainer(container);
-
-        if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
-            if (!page.isZoomed()) {
-                setState(IStackPresentationSite.STATE_RESTORED);
-            }
-        }
-    }
-
-    public void setSelection(int index) {
-        if (!active) return;
-
-        setSelection(getLayoutPart((IPresentablePart) getPresentableParts()
-                .get(index)));
+        AbstractPresentationFactory factory = ((WorkbenchWindow) page
+                .getWorkbenchWindow()).getWindowConfigurer()
+                .getPresentationFactory();
+        super.createControl(parent, factory.createPresentation(parent,
+                getPresentationSite(), AbstractPresentationFactory.ROLE_DOCKED_VIEW,
+                page.getPerspective().getId(), getID()));
     }
 
     public void setSelection(LayoutPart part) {
-        // TODO stefan: ok that i comment this out?
-        //		if (current == part) {
-        //			return;
-        //		}
+    	super.setSelection(part);
 
-        current = part;
-
-        fastViewAction.setPane((ViewPane) part);
-        
-        sizeItem.setPane((ViewPane) part);
-
-        if (part != null) {
-            IPresentablePart presentablePart = part.getPresentablePart();
-            StackPresentation presentation = getPresentation();
-
-            if (presentablePart != null && presentation != null) {
-                part.moveAbove(getPresentation().getControl());
-                
-                presentation.selectPart(presentablePart);
-            }
-        }
-    }
-
-    private void setState(int newState) {
-        if (newState == presentationSite.getState()) { return; }
-
-        int oldState = presentationSite.getState();
-
-        if (current != null) {
-            if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
-                ((PartPane) current).doZoom();
-            } else {
-                presentationSite.setPresentationState(newState);
-
-                WorkbenchPage page = ((PartPane) current).getPage();
-                if (page.isZoomed()) {
-                    page.zoomOut();
-                }
-
-                updateControlBounds();
-
-                if (oldState == IStackPresentationSite.STATE_MINIMIZED) {
-                    forceLayout();
-                }
-            }
-        }
-
-        if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) {
-            page.refreshActiveView();
-        }
-    }
-
-    public void setZoomed(boolean isZoomed) {
-    	super.setZoomed(isZoomed);
+    	ViewPane pane = null;
     	
-        if (isZoomed) {
-            presentationSite
-                    .setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);
-        } else if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
-        	presentationSite.setPresentationState(IStackPresentationSite.STATE_RESTORED);
-        }
+    	if (part instanceof ViewPane) {
+    		pane = (ViewPane)part;
+    	}
+    	
+        fastViewAction.setPane(pane);        
+        sizeItem.setPane(pane);
     }
-
-    //	/**
-    //	 * Sets the theme id.
-    //	 *
-    //	 * @param theme the theme id to set.
-    //	 */
-    //	public void setTheme(String theme) {
-    //		if ((theme != null) && (theme.length() > 0)) {
-    //			this.themeid = theme;
-    //			tabThemeDescriptor =
-    // WorkbenchThemeManager.getInstance().getTabThemeDescriptor(theme);
-    //		}
-    //	}
-
-    /**
-     * Makes the given part visible in the presentation
-     * 
-     * @param presentablePart
-     */
-    private void showPart(LayoutPart part, IPresentablePart position) {
-
-        part.setContainer(this);
-        
-        IPresentablePart presentablePart = part.getPresentablePart();
-
-        if (presentablePart == null) { return; }
-
-        part.createControl(getParent());
-        if (part.getControl().getParent() != getControl().getParent()) {
-        	part.reparent(getControl().getParent());
-        }
-        //part.moveAbove(getPresentation().getControl());
-
-        presentationSite.getPresentation().addPart(presentablePart, position);
-
-        if (current == null) {
-            setSelection(part);
-        }
-    }
-
-    /**
-     * Update the container to show the correct visible tab based on the
-     * activation list.
-     * 
-     * @param org.eclipse.ui.internal.ILayoutContainer
-     */
-    private void updateContainerVisibleTab() {
-        LayoutPart[] parts = getChildren();
-        
-        if (parts.length < 1) {
-            setSelection(null);
-            return;
-        }
-        
-        PartPane selPart = null;
-        int topIndex = 0;
-        IWorkbenchPartReference sortedPartsArray[] = page.getSortedParts();
-        List sortedParts = Arrays.asList(sortedPartsArray);
-        for (int i = 0; i < parts.length; i++) {
-            if (parts[i] instanceof PartPane) {
-                IWorkbenchPartReference part = ((PartPane) parts[i])
-                        .getPartReference();
-                int index = sortedParts.indexOf(part);
-                if (index >= topIndex) {
-                    topIndex = index;
-                    selPart = (PartPane) parts[i];
-                }
-            }
-        }
-
-        setSelection(selPart);
-    }
-
-    private void updateControlBounds() {
-        Rectangle bounds = getPresentation().getControl().getBounds();
-        int minimumHeight = getMinimumHeight();
-
-        if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED
-                && bounds.height != minimumHeight) {
-            bounds.width = getMinimumWidth();
-            bounds.height = minimumHeight;
-            getPresentation().setBounds(bounds);
-
-            forceLayout();
-        }
-    }
-
-	/**
-	 * 
-	 */
-	public void showSystemMenu() {
-		getPresentation().showSystemMenu();
-	}
 	
-	public void showPaneMenu() {
-		getPresentation().showPaneMenu();
-	}
-
-	/**
-	 * @param pane
-	 * @return
-	 */
-	public Control[] getTabList(LayoutPart part) {
-		if (part != null) {
-            IPresentablePart presentablePart = part.getPresentablePart();
-            StackPresentation presentation = getPresentation();
-
-            if (presentablePart != null && presentation != null) {
-                return presentation.getTabList(presentablePart);
-            }
-        }
-		
-		return new Control[0];
-	}
-	
-	/**
-	 * 
-	 * @param beingDragged
-	 * @param initialLocation
-	 * @param keyboard
-	 */
-	public void dragStart(IPresentablePart beingDragged, Point initialLocation, boolean keyboard) {
-		if (beingDragged == null) {
-	        if (canMoveFolder()) {
-	        	if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
-	        		setState(IStackPresentationSite.STATE_RESTORED);
-	        	}
-	        	
-	            DragUtil.performDrag(PartTabFolder.this, Geometry.toDisplay(
-	                    getParent(), getPresentation().getControl().getBounds()),
-	                    initialLocation, !keyboard);
-	        }	
-		} else {
-	    	if (presentationSite.isMoveable(beingDragged)) {
-	            LayoutPart pane = getPaneFor(beingDragged);
-	
-	            if (pane != null) {
-	            	if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
-	            		presentationSite.setState(IStackPresentationSite.STATE_RESTORED);
-	            	}
-	            	
-	                DragUtil.performDrag(pane, Geometry.toDisplay(getParent(),
-	                        getPresentation().getControl().getBounds()),
-	                        initialLocation, !keyboard);
-	            }
-	    	}
-		}    	
-	}
 	
 	public boolean isFixedView(ViewPane pane) {
         Perspective perspective = page.getActivePerspective();
@@ -977,5 +128,34 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         }
 
         return perspective.isFixedView(pane.getViewReference());
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartStack#isMoveable(org.eclipse.ui.presentations.IPresentablePart)
+	 */
+	protected boolean isMoveable(IPresentablePart part) {
+		return isCloseable(part);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartStack#supportsState(int)
+	 */
+	protected boolean supportsState(int newState) {
+		return allowStateChanges;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartStack#derefPart(org.eclipse.ui.internal.LayoutPart)
+	 */
+	protected void derefPart(LayoutPart toDeref) {
+		page.getActivePerspective().getPresentation()
+        	.derefPart(toDeref);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartStack#allowsDrop(org.eclipse.ui.internal.PartPane)
+	 */
+	protected boolean allowsDrop(PartPane part) {
+		return part instanceof ViewPane;
 	}
 }
