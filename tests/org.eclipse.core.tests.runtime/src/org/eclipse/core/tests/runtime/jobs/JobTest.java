@@ -76,6 +76,7 @@ public class JobTest extends TestCase {
 		try {
 			Thread.sleep(duration);
 		} catch (InterruptedException e) {
+			//ignore
 		}
 	}
 
@@ -689,6 +690,7 @@ public class JobTest extends TestCase {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
+				//ignore
 			}
 		}
 		assertTrue("1.0", timeout < 100);
@@ -717,6 +719,7 @@ public class JobTest extends TestCase {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
+				//ignore
 			}
 		}
 		assertTrue("1.0", timeout < 100);
@@ -761,6 +764,7 @@ public class JobTest extends TestCase {
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
+			//ignore
 		}
 		waitForState(job, Job.NONE);
 	}
@@ -895,6 +899,7 @@ public class JobTest extends TestCase {
 			//wait for the job to complete
 			shortJob.join();
 		} catch (InterruptedException e2) {
+			//ignore
 		}
 
 		//after the job has finished executing, the scheduling rule for it can once again be reset
@@ -972,6 +977,7 @@ public class JobTest extends TestCase {
 				Thread.sleep(100);
 				Thread.yield();
 			} catch (InterruptedException e) {
+				//ignore
 			}
 			//sanity test to avoid hanging tests
 			assertTrue("Timeout waiting for job to change state.", i++ < 100);
