@@ -84,7 +84,7 @@ public class UIProjectSetSerializationContext extends ProjectSetSerializationCon
 				return resources.contains(resource);
 			}
 			public String promptMessage(IResource resource) {
-				return "Overwrite " + resource.getName();
+				return Policy.bind("UIProjectSetSerializationContext.0", resource.getName()); //$NON-NLS-1$
 			}
 		};
 		PromptingDialog dialog =
@@ -92,7 +92,7 @@ public class UIProjectSetSerializationContext extends ProjectSetSerializationCon
 				(Shell)getShell(),
 				projects,
 				prompt,
-				"Overwrite projects?");
+				Policy.bind("UIProjectSetSerializationContext.1")); //$NON-NLS-1$
 		IResource[] resourcesToOverwrite;
 		try {
 			resourcesToOverwrite = dialog.promptForMultiple();

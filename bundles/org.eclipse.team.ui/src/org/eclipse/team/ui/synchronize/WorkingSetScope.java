@@ -74,7 +74,7 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 			IWorkingSet set = sets[i];
 			name.append(set.getName());
 			if (i < sets.length - 1) {
-				name.append(", ");
+				name.append(", "); //$NON-NLS-1$
 			}
 		}
 		return name.toString();

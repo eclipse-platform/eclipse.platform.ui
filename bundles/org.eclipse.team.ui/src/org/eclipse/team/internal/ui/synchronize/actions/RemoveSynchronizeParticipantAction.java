@@ -72,8 +72,8 @@ public class RemoveSynchronizeParticipantAction extends Action {
 					public void run() {
 						bail[0] = !MessageDialog.openQuestion(
 								view.getSite().getShell(), 
-								"Remove Pinned Synchronization?", 
-								"The current synchronization is pinned. Are you sure you want to remove it?");
+								Policy.bind("RemoveSynchronizeParticipantAction.0"),  //$NON-NLS-1$
+								Policy.bind("RemoveSynchronizeParticipantAction.1")); //$NON-NLS-1$
 
 					}
 				});

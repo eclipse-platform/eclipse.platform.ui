@@ -550,10 +550,10 @@ public class Utils {
 		StringBuffer  buffer = new StringBuffer();
 		for (int i = 0; i < resources.length && i < numElements; i++) {
 			IResource resource = resources[i];
-			if(i > 0) buffer.append(", ");
+			if(i > 0) buffer.append(", "); //$NON-NLS-1$
 			buffer.append(resource.getFullPath());
 		}
-		if(numElements < resources.length) buffer.append("...");
+		if(numElements < resources.length) buffer.append("..."); //$NON-NLS-1$
 		return buffer.toString();
 	}
 }
