@@ -13,11 +13,9 @@ import java.io.FilterInputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InterruptedIOException;
 import java.io.OutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
@@ -98,7 +96,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 		}
 		monitor.subTask(Policy.bind("CVSSSH2ServerConnection.open", location.getHost())); //$NON-NLS-1$
 		monitor.worked(1);
-		connectResponsively(monitor);
+		internalOpen(monitor);
 	}
 	/**
 	 * @param monitor
@@ -116,7 +114,7 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 			OutputStream channel_out;
 			InputStream channel_in;
 			while (true) {
-				session = JSchSession.getSession(location, username, password, hostname, port, new JSchSession.SimpleSocketFactory());
+				session = JSchSession.getSession(location, username, password, hostname, port, new JSchSession.ResponsiveSocketFacory(monitor));
 				channel = session.openChannel("exec"); //$NON-NLS-1$
 				((ChannelExec) channel).setCommand(COMMAND);
 				channel_out = channel.getOutputStream();
@@ -157,96 +155,6 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 				throw new CVSAuthenticationException(e.toString(), CVSAuthenticationException.NO_RETRY);
 			}
 			ssh1.open(monitor);
-		}
-	}
-	
-	/**
-	 * Helper method that will time out when making a connection.
-	 * This is required because there is no way to provide a timeout value
-	 * when creating a socket and in some instances, they don't seem to
-	 * timeout at all.
-	 * @throws CVSAuthenticationException
-	 * @throws IOException
-	 */
-	private void connectResponsively(final IProgressMonitor monitor) throws CVSAuthenticationException, IOException {
-		// Start a thread to open a connection
-		final Object lock = new Object();
-		final Exception[] exception = new Exception[] {null };
-		final boolean[] timedOut = new boolean[] { false };
-		final boolean[] connected = new boolean[] { false };
-		final Thread thread = new Thread(new Runnable() {
-			public void run() {
-				try {
-					// Attemp to make a connection
-					internalOpen(monitor);
-					connected[0] = true;
-					// Ensure that we were not cancelled while waiting
-					synchronized (lock) {
-						if (timedOut[0]) {
-							try {
-								// we we're either cancelled or timed out so just close
-								close();
-							} catch (IOException e) {
-								// Ignore close exception
-							}
-						}
-					}
-				} catch (CVSAuthenticationException e) {
-					exception[0] = e;
-				} catch (IOException e) {
-					exception[0] = e;
-				}
-			}
-		});
-		thread.start();
-		
-		// Wait the appropriate number of seconds
-		int timeout = CVSProviderPlugin.getPlugin().getTimeout();
-		if (timeout == 0) timeout = CVSProviderPlugin.DEFAULT_TIMEOUT;
-		for (int i = 0; i < timeout; i++) {
-			try {
-				// wait for the thread to complete or 1 second, which ever comes first
-				thread.join(1000);
-			} catch (InterruptedException e) {
-				// I think this means the thread was interupted but not necessarily timed out
-				// so we don't need to do anything
-			}
-			if (connected[0]) break;
-			synchronized (lock) {
-				// if the user cancelled, clean up before preempting the operation
-				if (monitor.isCanceled()) {
-					if (thread.isAlive()) {
-						timedOut[0] = true;
-						thread.interrupt();
-					}
-					if (session != null) {
-						try {
-							close();
-						} catch (IOException e) {
-							// Ignore close exception
-						}
-					}
-					// this method will throw the proper exception
-					Policy.checkCanceled(monitor);
-				}
-			}
-		}
-		// If the thread is still running (i.e. we timed out) signal that it is too late
-		synchronized (lock) {
-			if (thread.isAlive() && !connected[0]) {
-				timedOut[0] = true;
-				thread.interrupt();
-			}
-		}
-		if (exception[0] != null) {
-			if (exception[0] instanceof CVSAuthenticationException)
-				throw (CVSAuthenticationException)exception[0];
-			else
-				throw (IOException)exception[0];
-		}
-		if (!connected[0]) {
-			close();
-			throw new InterruptedIOException(Policy.bind("Util.timeout", location.getHost())); //$NON-NLS-1$
 		}
 	}
 }
