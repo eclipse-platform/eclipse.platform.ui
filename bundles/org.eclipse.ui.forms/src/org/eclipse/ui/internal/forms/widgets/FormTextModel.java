@@ -23,6 +23,7 @@ import org.xml.sax.*;
 public class FormTextModel {
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
+	private boolean whitespaceNormalized=true;
 	private Vector paragraphs;
 	private HyperlinkSegment[] hyperlinks;
 	private int selectedLinkIndex = -1;
@@ -75,6 +76,7 @@ public class FormTextModel {
 	public void parseInputStream(InputStream is, boolean expandURLs) {
 			
 		documentBuilderFactory.setNamespaceAware(true);
+		documentBuilderFactory.setIgnoringComments(true);
 	
 		reset();
 		try {
@@ -98,7 +100,7 @@ public class FormTextModel {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.TEXT_NODE) {
 				// Make an implicit paragraph
-				String text = child.getNodeValue();
+				String text = getSingleNodeText(child);
 				if (text != null && !isIgnorableWhiteSpace(text, true)) {
 					Paragraph p = new Paragraph(true);
 					p.parseRegularText(
@@ -208,7 +210,7 @@ public class FormTextModel {
 			ParagraphSegment segment = null;
 
 			if (child.getNodeType() == Node.TEXT_NODE) {
-				String value = child.getNodeValue();
+				String value = getSingleNodeText(child);
 
 				if (value != null && !isIgnorableWhiteSpace(value, false)) {
 					p.parseRegularText(
@@ -227,7 +229,7 @@ public class FormTextModel {
 				} else if (name.equalsIgnoreCase("span")) {
 					processTextSegment(p, expandURLs, child);
 				} else if (name.equalsIgnoreCase("b")) {
-					String text = getNodeText(child).trim();
+					String text = getNodeText(child);
 					String fontId = BOLD_FONT_ID;
 					p.parseRegularText(
 						text,
@@ -276,17 +278,57 @@ public class FormTextModel {
 		}
 		return segment;
 	}
+	
+	private void appendText(String value, StringBuffer buf, int [] spaceCounter) {
+		if (!whitespaceNormalized)
+			buf.append(value);
+		else {
+			for (int j=0; j<value.length(); j++) {
+				char c = value.charAt(j);
+				if (c==' ' || c=='\t') {
+					// space
+					if (++spaceCounter[0] == 1) {
+						buf.append(c);
+					}
+				}
+				else if (c=='\n' || c=='\r' || c=='\f') {
+					// new line
+					if (++spaceCounter[0]==1) {
+						buf.append(' ');
+					}
+				}
+				else {
+					// other characters
+					spaceCounter[0]=0;
+					buf.append(c);
+				}
+			}
+		}
+	}
+	
+	private String getSingleNodeText(Node node) {
+		int [] spaceCounter = new int[1];
+		StringBuffer buf = new StringBuffer();
+		
+		String value = node.getNodeValue();
+		if (value==null) return null;
+		appendText(value, buf, spaceCounter);
+		return buf.toString();
+	}
 
 	private String getNodeText(Node node) {
 		NodeList children = node.getChildNodes();
-		String text = "";
+		StringBuffer buf = new StringBuffer();
+		int [] spaceCounter=new int[1];
+
 		for (int i = 0; i < children.getLength(); i++) {
 			Node child = children.item(i);
 			if (child.getNodeType() == Node.TEXT_NODE) {
-				text += child.getNodeValue();
+				String value = child.getNodeValue();
+				appendText(value, buf, spaceCounter);
 			}
 		}
-		return text;
+		return buf.toString().trim();
 	}
 
 	private ParagraphSegment processHyperlinkSegment(
@@ -313,7 +355,7 @@ public class FormTextModel {
 		Paragraph p,
 		boolean expandURLs,
 		Node textNode) {
-		String text = getNodeText(textNode).trim();
+		String text = getNodeText(textNode);
 
 		NamedNodeMap atts = textNode.getAttributes();
 		Node font = atts.getNamedItem("font");
@@ -464,5 +506,17 @@ public class FormTextModel {
 		paragraphs = null;
 		selectedLinkIndex = -1;
 		hyperlinks = null;
+	}
+	/**
+	 * @return Returns the whitespaceNormalized.
+	 */
+	public boolean isWhitespaceNormalized() {
+		return whitespaceNormalized;
+	}
+	/**
+	 * @param whitespaceNormalized The whitespaceNormalized to set.
+	 */
+	public void setWhitespaceNormalized(boolean whitespaceNormalized) {
+		this.whitespaceNormalized = whitespaceNormalized;
 	}
 }

@@ -470,6 +470,33 @@ public final class FormText extends Canvas {
 		layout();
 	}
 	/**
+	 * Controls whether whitespace inside paragraph and list
+	 * items is normalized. 
+	 * <p>If normalized:
+	 * <ul>
+	 * <li>all white space characters will
+	 * be condensed into at most one when between words.</li> 
+	 * <li>new line characters will be ignored and replaced
+	 * with one white space character</li>
+	 * <li>white space characters after the opening
+	 * tags and before the closing tags will be trimmed</li>
+	 * @param value <code>true</code> if whitespace is
+	 * normalized, <code>false</code> otherwise.
+	 */
+	public void setWhitespaceNormalized(boolean value) {
+		model.setWhitespaceNormalized(value);
+	}
+	/**
+	 * Tests whether whitespace inside paragraph and
+	 * list item is normalized.
+	 * @see #setWhitespaceNormalized(boolean)
+	 * @return <code>true</code> if whitespace is
+	 * normalized, <code>false</code> otherwise.
+	 */
+	public boolean isWhitespaceNormalized() {
+		return model.isWhitespaceNormalized();
+	}
+	/**
 	 * Sets the focus to the first hyperlink, or the widget itself if there are
 	 * no hyperlinks.
 	 * 
