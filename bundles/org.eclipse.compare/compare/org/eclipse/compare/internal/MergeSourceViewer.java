@@ -12,6 +12,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.graphics.Font;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
@@ -88,6 +89,12 @@ public class MergeSourceViewer extends SourceViewer
 		te.setMenu(menu.createContextMenu(te));
 	}
 		
+	public void setFont(Font font) {
+		StyledText te= getTextWidget();
+		if (te != null)
+			te.setFont(font);
+	}
+	
 	public void setEnabled(boolean enabled) {
 		if (enabled != fEnabled) {
 			fEnabled= enabled;

@@ -21,6 +21,8 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.custom.*;
 
@@ -31,6 +33,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -123,6 +126,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private static final String SYNC_SCROLLING= "SYNC_SCROLLING";
 	
+	private static final String TEXT_FONT= ComparePreferencePage.TEXT_FONT;
+	
 	private static final String BUNDLE_NAME= "org.eclipse.compare.contentmergeviewer.TextMergeViewerResources";
 		
 	// constants
@@ -204,6 +209,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 	// SWT resources to be disposed
 	private Map fColors;
+	private Font fFont;
 
 
 	/**
@@ -355,8 +361,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	public TextMergeViewer(Composite parent, int style, CompareConfiguration configuration) {
 		super(style, ResourceBundle.getBundle(BUNDLE_NAME), configuration);
 		
-		buildControl(parent);
-
 		IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
 		if (ps != null) {
 			fPreferenceChangeListener= new IPropertyChangeListener() {
@@ -365,9 +369,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				}
 			};
 			ps.addPropertyChangeListener(fPreferenceChangeListener);
-			//fSynchronizedScrolling= ps.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
+			
+			updateFont(ps, parent);
 		}
-		//fSynchronizedScrolling= Utilities.getBoolean(configuration, SYNC_SCROLLING, fSynchronizedScrolling);
 		
 		fDocumentListener= new IDocumentListener() {
 			
@@ -378,7 +382,33 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				TextMergeViewer.this.documentChanged(e);
 			}
 		};
-	}	
+		
+		buildControl(parent);
+	}
+	
+	private void updateFont(IPreferenceStore ps, Control c) {
+		
+		Font oldFont= fFont;
+		
+		FontData fontData= null;
+		if (ps.contains(TEXT_FONT) && !ps.isDefault(TEXT_FONT))
+			fontData= PreferenceConverter.getFontData(ps, TEXT_FONT);
+		else
+			fontData= PreferenceConverter.getDefaultFontData(ps, TEXT_FONT);
+		if (fontData != null) {
+			fFont= new Font(c.getDisplay(), fontData);
+			
+			if (fAncestor != null)
+				fAncestor.setFont(fFont);
+			if (fLeft != null)
+				fLeft.setFont(fFont);
+			if (fRight != null)
+				fRight.setFont(fFont);
+				
+			if (oldFont != null)
+				oldFont.dispose();
+		}
+	}
 	
 	public String getTitle() {
 		return "Text Compare";
@@ -454,6 +484,11 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				if (!color.isDisposed())
 					color.dispose();
 			}
+		}
+		
+		if (fFont != null) {
+			fFont.dispose();
+			fFont= null;
 		}
 		
 		super.handleDispose(event);
@@ -597,6 +632,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				}
 			}
 		);
+		
+		if (fFont != null)
+			te.setFont(fFont);
 		
 		configureTextViewer(part);
 		
@@ -1442,6 +1480,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			updateVScrollBar();
 			
 			selectFirstDiff();
+			
+		} else if (key.equals(TEXT_FONT)) {
+			IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
+			if (ps != null) {
+				updateFont(ps, fComposite);
+				invalidateLines();
+			}
+			
 //		} else if (key.equals(SYNC_SCROLLING)) {
 //			
 //			boolean b= Utilities.getBoolean(getCompareConfiguration(), SYNC_SCROLLING, true);

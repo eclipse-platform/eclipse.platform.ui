@@ -444,9 +444,11 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 //	
 //			updateDirectionLabel();
 //		} else
+
 		if (key.equals(ANCESTOR_ENABLED)) {
 			fAncestorEnabled= Utilities.getBoolean(getCompareConfiguration(), ANCESTOR_ENABLED, fAncestorEnabled);
 			fComposite.layout(true);
+			return;
 		}
 	}
 		
