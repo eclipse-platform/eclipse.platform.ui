@@ -98,6 +98,7 @@ public abstract class TextConsole extends AbstractConsole {
      */
     protected void dispose() {
         super.dispose();
+        fFont = null;
 		synchronized(fAttributes) {
 		    fAttributes.clear();
 		}
