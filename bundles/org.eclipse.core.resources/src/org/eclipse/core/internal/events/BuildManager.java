@@ -340,10 +340,11 @@ protected IncrementalProjectBuilder instantiateBuilder(String builderName, IProj
 public void opening(IProject project) {
 }
 /**
- * We have renamed this project in the workspace so the build manager
- * must fix the project reference inside each of its builders.
+ * The given project is the destination of a copy or a move so the build manager
+ * must fix the project reference inside each of its builders since they still
+ * point to the source project.
  */
-public void renamedProject(IProject project) {
+public void fixBuildersFor(IProject project) {
 	ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(project.getFullPath(), false, true);
 	Hashtable builders = info.getBuilders();
 	for (Enumeration e = builders.keys(); e.hasMoreElements(); ) {
