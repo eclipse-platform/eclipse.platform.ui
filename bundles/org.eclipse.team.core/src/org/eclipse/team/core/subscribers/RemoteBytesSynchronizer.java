@@ -110,8 +110,8 @@ public abstract class RemoteBytesSynchronizer extends RemoteSynchronizer {
 			try {
 				if (depth != IResource.DEPTH_ZERO || internalGetSyncBytes(resource) != null) {
 					getSynchronizer().flushSyncInfo(getSyncName(), resource, depth);
+					return true;
 				}
-				return true;
 			} catch (CoreException e) {
 				throw TeamException.asTeamException(e);
 			}
