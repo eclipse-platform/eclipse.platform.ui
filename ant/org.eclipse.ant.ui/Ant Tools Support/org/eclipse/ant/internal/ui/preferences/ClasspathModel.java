@@ -179,9 +179,6 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		}
 	}
 
-	/**
-	 * @param urls
-	 */
 	public void setAntHomeEntries(IAntClasspathEntry[] entries) {
 		if (antHomeEntry == null) {
 			String name= AntPreferencesMessages.getString("ClasspathModel.2"); //$NON-NLS-1$

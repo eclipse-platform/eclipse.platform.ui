@@ -121,8 +121,8 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 		return false;
 	}
 
-	/**
-	 * @see IStructuredContentProvider#getElements(Object)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
 		return getChildren(inputElement);
