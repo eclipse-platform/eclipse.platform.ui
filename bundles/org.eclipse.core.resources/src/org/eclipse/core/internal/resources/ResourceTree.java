@@ -737,7 +737,7 @@ private void moveProjectContent(IProject source, IProjectDescription destDescrip
 		monitor.worked(9);
 		
 		//if this is a deep move, move the contents of any linked resources
-		if ((updateFlags & IResource.DEEP) != 0) {
+		if ((updateFlags & IResource.SHALLOW) == 0) {
 			IResource[] children = source.members();
 			for (int i = 0; i < children.length; i++) {
 				if (children[i].isLinked()) {
@@ -769,7 +769,7 @@ public void standardMoveFile(IFile source, IFile destination, int updateFlags, I
 	
 		boolean force = (updateFlags & IResource.FORCE) != 0;
 		boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
-		boolean isDeep = (updateFlags & IResource.DEEP) != 0;
+		boolean isDeep = (updateFlags & IResource.SHALLOW) == 0;
 	
 		// If the file is not in sync with the local file system and force is false,
 		// then signal that we have an error.
@@ -850,7 +850,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 			addToLocalHistory(source, IResource.DEPTH_INFINITE);
 			
 		//for linked resources, nothing needs to be moved in the file system
-		boolean isDeep = (updateFlags & IResource.DEEP) != 0;
+		boolean isDeep = (updateFlags & IResource.SHALLOW) == 0;
 		if (!isDeep && source.isLinked()) {
 			movedFolderSubtree(source, destination);
 			return;
@@ -1054,7 +1054,7 @@ public void standardMoveProject(IProject source, IProjectDescription description
 		// and we need to update the workspace tree.
 		movedProjectSubtree(source, description);
 		monitor.worked(Policy.totalWork*1/8);
-		boolean isDeep = (updateFlags & IResource.DEEP) != 0;
+		boolean isDeep = (updateFlags & IResource.SHALLOW) == 0;
 		updateTimestamps(source.getWorkspace().getRoot().getProject(description.getName()), isDeep);
 		monitor.worked(Policy.totalWork*1/8);
 	} finally {

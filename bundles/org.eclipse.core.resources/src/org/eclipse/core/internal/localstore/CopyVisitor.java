@@ -48,7 +48,7 @@ public CopyVisitor(IResource rootSource, IResource destination, int updateFlags,
 	this.rootDestination = destination;
 	this.rootDestinationLocalLocation = destination.getLocation();
 	this.updateFlags = updateFlags;
-	this.isDeep = (updateFlags & IResource.DEEP) != 0;
+	this.isDeep = (updateFlags & IResource.SHALLOW) == 0;
 	this.force = (updateFlags & IResource.FORCE) != 0;
 	this.monitor = monitor;
 	this.segmentsToDrop = rootSource.getFullPath().segmentCount();

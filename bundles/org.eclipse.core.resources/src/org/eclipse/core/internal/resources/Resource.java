@@ -175,7 +175,7 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType, int
 	
 	// ensure we aren't trying to copy a linked resource into a folder
 	Container parent = (Container)dest.getParent();
-	boolean isDeepCopy = (updateFlags & IResource.DEEP) != 0;
+	boolean isDeepCopy = (updateFlags & IResource.SHALLOW) == 0;
 	if (isLinked() && !isDeepCopy && (parent == null || parent.getType() != IResource.PROJECT)) {
 		message = Policy.bind("links.copyNotProject", getFullPath().toString(), destination.toString()); //$NON-NLS-1$
 		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));
@@ -301,7 +301,7 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType, 
 	
 	// ensure we aren't trying to shallow move a linked resource into a folder
 	Container parent = (Container)dest.getParent();
-	boolean isDeepMove = (updateFlags & IResource.DEEP) != 0;
+	boolean isDeepMove = (updateFlags & IResource.SHALLOW) == 0;
 	if (!isDeepMove && isLinked() && (parent == null || parent.getType() != IResource.PROJECT)) {
 		message = Policy.bind("links.moveNotProject", getFullPath().toString(), destination.toString()); //$NON-NLS-1$
 		throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), message));

@@ -193,14 +193,24 @@ public interface IResource extends IAdaptable {
 
 	/**
 	 * Update flag constant (bit mask value 32) indicating that a copy or move
-	 * operation should copy the underlying contents of linked resources rather
-	 * than just performing a shallow copy of the link.
+	 * operation should only copy the link, rather than copy the underlying
+	 * contents of the linked resource.
 	 *
 	 * @see #copy
 	 * @see #move
 	 * @since 2.1
 	 */
-	public static final int DEEP = 0x20;
+	public static final int SHALLOW = 0x20;
+	
+	/**
+	 * Update flag constant (bit mask value 64) indicating that a copy or move
+	 * operation should copy the underlying contents of the linked resource,
+	 * rather than just copy the link itself.
+	 * 
+	 * @deprecated This flag will has been superceded by IResource.SHALLOW.
+	 * This flag will be removed after the next integration build!
+	 */
+	public static final int DEEP = 0x40;
 
 	/*====================================================================
 	 * Other constants:
@@ -431,23 +441,23 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * overwritten.
  * </p>
  * <p>
- * The <code>DEEP</code> update flag controls how this method deals with linked
- * resources.  If <code>DEEP</code> is not specified when a linked resource is
- * copied into another project, a new linked resource is created in the
- * destination project that points to the same file system location.  When a
- * project containing linked resources is copied, the new project will contain
- * the same linked resources pointing to the same file system locations.  For
- * either of these cases, no files on disk under the linked resource are
- * actually copied.  Without the <code>DEEP</code> flag, copying of linked
- * resources into anything other than a project is not permitted. If
- * <code>DEEP</code> is specified, then the underlying contents of the linked
- * resource will always be copied in the file system.  In this case, the
- * destination of the copy will never be a linked resource or contain any linked
- * resources.  The <code>DEEP</code> update flag is ignored when copying non-
+ * The <code>SHALLOW</code> update flag controls how this method deals with linked
+ * resources.  If <code>SHALLOW</code> is not specified, then the underlying
+ * contents of the linked resource will always be copied in the file system.  In
+ * this case, the destination of the copy will never be a linked resource or
+ * contain any linked resources.  If <code>SHALLOW</code> is specified when a
+ * linked resource is copied into another project, a new linked resource is
+ * created in the destination project that points to the same file system
+ * location.  When a project containing linked resources is copied, the new
+ * project will contain the same linked resources pointing to the same file
+ * system locations.  For both of these shallow cases, no files on disk under
+ * the linked resource are actually copied.  With the <code>SHALLOW</code> flag,
+ * copying of linked resources into anything other than a project is not
+ * permitted.  The <code>SHALLOW</code> update flag is ignored when copying non-
  * linked resources.
  * </p>
  * <p> 
- * Update flags other than <code>FORCE</code> and <code>DEEP</code> are ignored.
+ * Update flags other than <code>FORCE</code> and <code>SHALLOW</code> are ignored.
  * </p>
  * <p> 
  * This operation changes resources; these changes will be reported in a
@@ -461,7 +471,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  *
  * @param destination the destination path 
  * @param updateFlags bit-wise or of update flag constants
- *   (<code>FORCE</code> and <code>DEEP</code>)
+ *   (<code>FORCE</code> and <code>SHALLOW</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @exception CoreException if this resource could not be copied. Reasons include:
@@ -474,7 +484,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> The resource corresponding to the parent destination path does not exist.</li>
  * <li> The resource corresponding to the parent destination path is a closed project.</li>
  * <li> The source is a linked resource, but the destination is not a project,
- *      and <code>DEEP</code> is not specified.</li>
+ *      and <code>SHALLOW</code> is specified.</li>
  * <li> A resource at destination path does exist.</li>
  * <li> This resource or one of its descendents is out of sync with the local file
  *      system and <code>FORCE</code> is not specified.</li>
@@ -486,8 +496,8 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
- * @see #DEEP
  * @see #FORCE
+ * @see #SHALLOW
  * @since 2.0
  */
 public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -556,19 +566,19 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  * ensures files in the file system cannot be accidentally overwritten.
  * </p>
  * <p>  
- * The <code>DEEP</code> update flag controls how this method deals with
- * linked resources.  If <code>DEEP</code> is not specified when a project
- * containing linked resources is copied, new linked resources are created in
- * the destination project that point to the same file system locations.  In
- * this case, no files on disk under linked resources are actually copied. If
- * <code>DEEP</code> is specified, then the underlying contents of any linked
- * resources in the project will always be copied in the file system.  In this
- * case, the destination of the copy will never contain any linked resources.
- * The <code>DEEP</code> update flag is ignored when copying non-linked
- * resources.
+ * The <code>SHALLOW</code> update flag controls how this method deals with
+ * linked resources.  If <code>SHALLOW</code> is not specified, then the
+ * underlying contents of any linked resources in the project will always be
+ * copied in the file system.  In this case, the destination of the copy will
+ * never contain any linked resources.  If <code>SHALLOW</code> is specified
+ * when a project containing linked resources is copied, new linked resources
+ * are created in the destination project that point to the same file system
+ * locations.  In this case, no files on disk under linked resources are
+ * actually copied. The <code>SHALLOW</code> update flag is ignored when copying
+ * non- linked resources.
  * </p>
  * <p>
- * Update flags other than <code>FORCE</code> or <code>DEEP</code> are ignored.
+ * Update flags other than <code>FORCE</code> or <code>SHALLOW</code> are ignored.
  * </p>
  * <p> 
  * This operation changes resources; these changes will be reported in a
@@ -582,7 +592,7 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  *
  * @param description the destination project description
  * @param updateFlags bit-wise or of update flag constants
- *   (<code>FORCE</code> and <code>DEEP</code>)
+ *   (<code>FORCE</code> and <code>SHALLOW</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @exception CoreException if this resource could not be copied. Reasons include:
@@ -598,8 +608,8 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  * <li> Resource changes are disallowed during certain types of resource change 
  *       event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
- * @see #DEEP
  * @see #FORCE
+ * @see #SHALLOW
  * @since 2.0
  */
 public void copy(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -1396,24 +1406,24 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * when moving files and folders, but not whole projects.
  * </p>
  * <p>
- * The <code>DEEP</code> update flag controls how this method deals with linked
- * resources.  If <code>DEEP</code> is not specified when a linked resource is
- * moved into another project, a new linked resource is created in the
- * destination project that points to the same file system location.  When a
- * project containing linked resources is moved, the new project will contain
- * the same linked resources pointing to the same file system locations.  For
- * either of these cases, no files on disk under the linked resource are
- * actually moved. Without the <code>DEEP</code> flag, moving of linked
- * resources into anything other than a project is not permitted. If
- * <code>DEEP</code> is specified, then the underlying contents of the linked
- * resource will always be moved in the file system.  In this case, the
- * destination of the move will never be a linked resource or contain any linked
- * resources. The <code>DEEP</code> update flag is ignored when moving non-
+ * The <code>SHALLOW</code> update flag controls how this method deals with linked
+ * resources.  If <code>SHALLOW</code> is not specified, then the underlying
+ * contents of the linked resource will always be moved in the file system.  In
+ * this case, the destination of the move will never be a linked resource or
+ * contain any linked resources. If <code>SHALLOW</code> is specified when a
+ * linked resource is moved into another project, a new linked resource is
+ * created in the destination project that points to the same file system
+ * location.  When a project containing linked resources is moved, the new
+ * project will contain the same linked resources pointing to the same file
+ * system locations.  For either of these cases, no files on disk under the
+ * linked resource are actually moved. With the <code>SHALLOW</code> flag,
+ * moving of linked resources into anything other than a project is not
+ * permitted.  The <code>SHALLOW</code> update flag is ignored when moving non-
  * linked resources.
  * </p>
  * <p> 
  * Update flags other than <code>FORCE</code>, <code>KEEP_HISTORY</code>and
- * <code>DEEP</code> are ignored.
+ * <code>SHALLOW</code> are ignored.
  * </p>
  * <p>
  * This method changes resources; these changes will be reported in a subsequent
@@ -1429,7 +1439,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  *
  * @param destination the destination path 
  * @param updateFlags bit-wise or of update flag constants
- *   (<code>FORCE</code>, <code>KEEP_HISTORY</code> and <code>DEEP</code>)
+ *   (<code>FORCE</code>, <code>KEEP_HISTORY</code> and <code>SHALLOW</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @exception CoreException if this resource could not be moved. Reasons include:
@@ -1443,7 +1453,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> The resource corresponding to the parent destination path is a closed 
  *      project.</li>
  * <li> The source is a linked resource, but the destination is not a project
- *      and  <code>DEEP</code> is not specified.</li>
+ *      and  <code>SHALLOW</code> is specified.</li>
  * <li> A resource at destination path does exist.</li>
  * <li> A resource of a different type exists at the destination path.</li>
  * <li> This resource or one of its descendents is out of sync with the local file system
@@ -1455,10 +1465,10 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  * <li> The source resource is a file and the destination path specifies a project.</li>
  * </ul>
  * @see IResourceDelta#getFlags
- * @see #DEEP
  * @see #FORCE
  * @see #KEEP_HISTORY
- * @since 2.0
+ * @see #SHALLOW
+ * @since  2.0
  */
 public void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
 /**
@@ -1554,19 +1564,20 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
  * when moving files and folders, but not whole projects.
  * </p>
  * <p>
- * The <code>DEEP</code> update flag controls how this method deals with linked
- * resources.  If <code>DEEP</code> is not specified when a project
- * containing linked resources is moved, new linked resources are created in the
- * destination project pointing to the same file system locations.  In this
- * case, no files on disk under any linked resource are actually moved.  If
- * <code>DEEP</code> is specified, then the underlying contents of any linked
- * resource will always be moved in the file system.  In this case, the
- * destination of the move will not contain any linked resources. The
- * <code>DEEP</code> update flag is ignored when moving non- linked resources.
+ * The <code>SHALLOW</code> update flag controls how this method deals with linked
+ * resources.  If <code>SHALLOW</code> is not specified, then the underlying
+ * contents of any linked resource will always be moved in the file system.  In
+ * this case, the destination of the move will not contain any linked resources.
+ * If  <code>SHALLOW</code> is specified when a project containing linked
+ * resources is moved, new linked resources are created in the destination
+ * project pointing to the same file system locations.  In this case, no files
+ * on disk under any linked resource are actually moved.  The
+ * <code>SHALLOW</code> update flag is ignored when moving non- linked
+ * resources.
  * </p>
  * <p>  
  * Update flags other than <code>FORCE</code>, <code>KEEP_HISTORY</code> and
- * <code>DEEP</code> are ignored.
+ * <code>SHALLOW</code> are ignored.
  * </p>
  * <p>
  * This method changes resources; these changes will be reported in a subsequent
@@ -1582,7 +1593,7 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
  *
  * @param description the destination project description
  * @param updateFlags bit-wise or of update flag constants
- *   (<code>FORCE</code>, <code>KEEP_HISTORY</code>, and <code>DEEP</code>)
+ *   (<code>FORCE</code>, <code>KEEP_HISTORY</code>, and <code>SHALLOW</code>)
  * @param monitor a progress monitor, or <code>null</code> if progress
  *    reporting and cancellation are not desired
  * @exception CoreException if this resource could not be moved. Reasons include:
@@ -1599,10 +1610,10 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
  *      event notification. See IResourceChangeEvent for more details.</li>
  * </ul>
  * @see IResourceDelta#getFlags
- * @see #DEEP
  * @see #FORCE
  * @see #KEEP_HISTORY
- * @since 2.0
+ * @see #SHALLOW
+ * @since  2.0
  */
 public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
 

@@ -171,21 +171,17 @@ public void close(IProgressMonitor monitor) throws CoreException {
 /**
  * @see IProject#copy
  */
-public void copy(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException {
+public void copy(IProjectDescription destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	// FIXME - the logic here for copying projects needs to be moved to Resource.copy
 	//   so that IResource.copy(IProjectDescription,int,IProgressMonitor) works properly for
 	//   projects and honours all update flags
 	Assert.isNotNull(destination);
-	internalCopy(destination, force, monitor);
-}
-public void copy(IProjectDescription destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
-	boolean force = (updateFlags | IResource.FORCE) != 0;
-	copy(destination, force, monitor);
+	internalCopy(destination, updateFlags, monitor);
 }
 /**
  * @see IResource#copy
  */
-public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
+public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	// FIXME - the logic here for copying projects needs to be moved to Resource.copy
 	//   so that IResource.copy(IPath,int,IProgressMonitor) works properly for
 	//   projects and honours all update flags
@@ -196,15 +192,11 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
 		IProjectDescription desc = getDescription();
 		desc.setName(projectName);
 		desc.setLocation(null);
-		internalCopy(desc, force, monitor);
+		internalCopy(desc, updateFlags, monitor);
 	} else {
 		// will fail since we're trying to copy a project to a non-project
-		checkCopyRequirements(destination, IResource.PROJECT, force ? IResource.FORCE : IResource.NONE);
+		checkCopyRequirements(destination, IResource.PROJECT, updateFlags);
 	}
-}
-public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
-	boolean force = (updateFlags | IResource.FORCE) != 0;
-	copy(destination, force, monitor);
 }
 protected void copyMetaArea(IProject source, IProject destination, IProgressMonitor monitor) throws CoreException {
 	java.io.File oldMetaArea = workspace.getMetaArea().locationFor(source).toFile();
@@ -415,7 +407,7 @@ protected void internalClose() throws CoreException {
 	info.setModificationStamp(IResource.NULL_STAMP);
 	info.setSyncInfo(null);
 }
-protected void internalCopy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
+protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("resources.copying", getFullPath().toString()); //$NON-NLS-1$
@@ -426,7 +418,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			IPath destPath = new Path(destName).makeAbsolute();
 			// The following assert method throws CoreExceptions as stated in the IProject.copy API
 			// and assert for programming errors. See checkCopyRequirements for more information.
-			assertCopyRequirements(destPath, IResource.PROJECT, force ? IResource.FORCE : IResource.NONE);
+			assertCopyRequirements(destPath, IResource.PROJECT, updateFlags);
 			Project destProject = (Project) workspace.getRoot().getProject(destName);
 			checkDescription(destProject, destDesc, false);
 			workspace.changing(this);
@@ -453,7 +445,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 			for (int i = 0; i < childCount; i++) {
 				IResource child = children[i];
 				if (!isProjectDescriptionFile(child))
-					child.copy(destProject.getFullPath().append(child.getName()), force, Policy.subMonitorFor(monitor, childWork));
+					child.copy(destProject.getFullPath().append(child.getName()), updateFlags, Policy.subMonitorFor(monitor, childWork));
 			}
 
 			// write out the new project description to the meta area
@@ -461,7 +453,7 @@ protected void internalCopy(IProjectDescription destDesc, boolean force, IProgre
 				destProject.writeDescription(IResource.FORCE);
 			} catch (CoreException e) {
 				try {
-					destProject.delete(force, null);
+					destProject.delete((updateFlags & IResource.FORCE) != 0, null);
 				} catch (CoreException e2) {
 					// ignore and rethrow the exception that got us here
 				}
@@ -602,19 +594,11 @@ protected boolean isProjectDescriptionFile(IResource resource) {
 		resource.getFullPath().segmentCount() == 2 &&
 		resource.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME);
 }
-
 /**
  * @see IProject#move
  */
 public void move(IProjectDescription destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	Assert.isNotNull(destination);
-	move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
-}
-
-/**
- * @see IResource#move
- */
-public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
 }
 /**
@@ -852,8 +836,4 @@ public void writeDescription(IProjectDescription description, int updateFlags) t
 		isWritingDescription = false;
 	}
 }
-
-
-
-
 }
