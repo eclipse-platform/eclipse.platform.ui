@@ -214,7 +214,7 @@ public class AnnotationModel implements IAnnotationModel {
 	 */
 	protected void cleanup(boolean fireModelChanged) {
 		ArrayList deleted= new ArrayList();
-		Iterator e= fAnnotations.keySet().iterator();
+		Iterator e= new ArrayList(fAnnotations.keySet()).iterator();
 		while (e.hasNext()) {
 			Annotation a= (Annotation) e.next();
 			Position p= (Position) fAnnotations.get(a);
