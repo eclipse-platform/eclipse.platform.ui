@@ -208,16 +208,19 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 				}
 			}
 		}
-		if (accelerator > 1) {
-			new MenuItem(menu, SWT.SEPARATOR);
-		}
+		
 		ILaunchGroup group = fGroup;
 		if (category != null) {
 			group = (ILaunchGroup) fGroupsByCategory.get(category);
 		}
-		IAction action = new OpenLaunchDialogAction(group.getIdentifier());
-		ActionContributionItem item= new ActionContributionItem(action);
-		item.fill(menu, -1);
+		if (group != null) {
+		    if (accelerator > 1) {
+				new MenuItem(menu, SWT.SEPARATOR);
+			}
+		    IAction action = new OpenLaunchDialogAction(group.getIdentifier());
+		    ActionContributionItem item= new ActionContributionItem(action);
+		    item.fill(menu, -1);
+		}
 	}
 
 	/**
