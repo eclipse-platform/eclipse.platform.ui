@@ -35,8 +35,10 @@ public void closePropertyStore(IResource target) throws CoreException {
 	PropertyStore store = info.getPropertyStore();
 	if (store == null)
 		return;
-	store.shutdown(null);
-	setPropertyStore(target, null);
+	synchronized (store) {
+		store.shutdown(null);
+		setPropertyStore(target, null);
+	}
 }
 public void closing(IProject target) throws CoreException {
 	closePropertyStore(target);
@@ -46,12 +48,16 @@ public void closing(IProject target) throws CoreException {
  * must have a property store available.
  */
 public void copy(IResource source, IResource destination, int depth) throws CoreException {
-	copyProperties(source, destination, depth);
 	// cache stores to avoid problems in concurrency
 	PropertyStore sourceStore = getPropertyStore(source);
 	PropertyStore destinationStore = getPropertyStore(destination);
-	sourceStore.commit();
-	destinationStore.commit();
+	synchronized (sourceStore) {
+		synchronized (destinationStore) {
+			copyProperties(source, destination, depth);
+			sourceStore.commit();
+			destinationStore.commit();
+		}
+	}
 }
 protected void copyProperties(IResource source, IResource destination, int depth) throws CoreException {
 	PropertyStore sourceStore = getPropertyStore(source);
@@ -80,8 +86,10 @@ public void deleteProperties(IResource target, int depth) throws CoreException {
 		case IResource.FILE :
 		case IResource.FOLDER :
 			PropertyStore store = getPropertyStore(target);
-			store.removeAll(getPropertyKey(target), depth);
-			store.commit();
+			synchronized (store) {
+				store.removeAll(getPropertyKey(target), depth);
+				store.commit();
+			}
 			break;
 		case IResource.PROJECT :
 		case IResource.ROOT :
@@ -100,8 +108,10 @@ public void deleting(IProject project) {
  */
 public String getProperty(IResource target, QualifiedName name) throws CoreException {
 	PropertyStore store = getPropertyStore(target);
-	StoredProperty result = store.get(getPropertyKey(target), name);
-	return result == null ? null : result.getStringValue();
+	synchronized (store) {
+		StoredProperty result = store.get(getPropertyKey(target), name);
+		return result == null ? null : result.getStringValue();
+	}
 }
 /**
  * Returns the resource which hosts the property store
@@ -155,13 +165,15 @@ protected PropertyStore openPropertyStore(IResource target) {
 }
 public void setProperty(IResource target, QualifiedName key, String value) throws CoreException {
 	PropertyStore store = getPropertyStore(target);
-	if (value == null) {
-		store.remove(getPropertyKey(target), key);
-	} else {
-		StoredProperty prop = new StoredProperty(key, value);
-		store.set(getPropertyKey(target), prop);
+	synchronized (store) {
+		if (value == null) {
+			store.remove(getPropertyKey(target), key);
+		} else {
+			StoredProperty prop = new StoredProperty(key, value);
+			store.set(getPropertyKey(target), prop);
+		}
+		store.commit();
 	}
-	store.commit();
 }
 protected void setPropertyStore(IResource target, PropertyStore value) {
 	// fetch the info but don't bother making it mutable even though we are going
