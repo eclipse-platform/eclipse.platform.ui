@@ -34,12 +34,6 @@ import org.eclipse.debug.internal.core.LaunchManager;
  * use.
  * <p>
  * Clients may instantiate this class. Clients may subclass this class.
- * Many of the methods in this class that are part of the <code>ILaunch</code> interface 
- * are final. Clients that subclass this class are not intended to change the behavior
- * or implementation of the provided methods. Subclassing is only intended
- * to add additional information to a specific launch. For example, a client that
- * implements a launch object representing a Java launch might store a classpath
- * with the launch.
  * </p>
  * @see ILaunch
  * @see ILaunchManager
@@ -111,7 +105,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
-	public final boolean canTerminate() {
+	public boolean canTerminate() {
 		List processes = getProcesses0();
 		for (int i = 0; i < processes.size(); i++) {
 			IProcess process = (IProcess)processes.get(i);
@@ -132,7 +126,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see ILaunch#getChildren()
 	 */
-	public final Object[] getChildren() {
+	public Object[] getChildren() {
 		ArrayList children = new ArrayList(getDebugTargets0());
 		children.addAll(getProcesses0());
 		return children.toArray();
@@ -141,7 +135,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see ILaunch#getDebugTarget()
 	 */
-	public final IDebugTarget getDebugTarget() {
+	public IDebugTarget getDebugTarget() {
 		if (!getDebugTargets0().isEmpty()) {
 			return (IDebugTarget)getDebugTargets0().get(0);
 		}
@@ -160,7 +154,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see ILaunch#getProcesses()
 	 */
-	public final IProcess[] getProcesses() {
+	public IProcess[] getProcesses() {
 		return (IProcess[])getProcesses0().toArray(new IProcess[getProcesses0().size()]);
 	}
 	
@@ -177,21 +171,21 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see ILaunch#getSourceLocator()
 	 */
-	public final ISourceLocator getSourceLocator() {
+	public ISourceLocator getSourceLocator() {
 		return fLocator;
 	}
 	
 	/**
 	 * @see ILaunch#setSourceLocator(ISourceLocator)
 	 */
-	public final void setSourceLocator(ISourceLocator sourceLocator) {
+	public void setSourceLocator(ISourceLocator sourceLocator) {
 		fLocator = sourceLocator;
 	}	
 
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
 	 */
-	public final boolean isTerminated() {
+	public boolean isTerminated() {
 		if (getProcesses0().isEmpty() && getDebugTargets0().isEmpty()) {
 			return false;
 		}
@@ -218,7 +212,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
 	 */
-	public final void terminate() throws DebugException {
+	public void terminate() throws DebugException {
 		MultiStatus status= 
 			new MultiStatus(DebugPlugin.getUniqueIdentifier(), DebugException.REQUEST_FAILED, DebugCoreMessages.getString("Launch.terminate_failed"), null); //$NON-NLS-1$
 		
@@ -270,7 +264,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see ILaunch#getLaunchMode()
 	 */
-	public final String getLaunchMode() {
+	public String getLaunchMode() {
 		return fMode;
 	}
 	
@@ -333,7 +327,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see ILaunch#addDebugTarget(IDebugTarget)
 	 */
-	public final void addDebugTarget(IDebugTarget target) {
+	public void addDebugTarget(IDebugTarget target) {
 		if (target != null) {
 			if (!getDebugTargets0().contains(target)) {
 				getDebugTargets0().add(target);
@@ -345,7 +339,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see ILaunch#removeDebugTarget(IDebugTarget)
 	 */
-	public final void removeDebugTarget(IDebugTarget target) {
+	public void removeDebugTarget(IDebugTarget target) {
 		if (target != null) {
 			if (getDebugTargets0().remove(target)) {
 				fireChanged();
@@ -356,7 +350,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see ILaunch#addProcess(IProcess)
 	 */
-	public final void addProcess(IProcess process) {
+	public void addProcess(IProcess process) {
 		if (process != null) {
 			if (!getProcesses0().contains(process)) {
 				getProcesses0().add(process);
@@ -368,7 +362,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	/**
 	 * @see ILaunch#removeProcess(IProcess)
 	 */
-	public final void removeProcess(IProcess process) {
+	public void removeProcess(IProcess process) {
 		if (process != null) {
 			if (getProcesses0().remove(process)) {
 				fireChanged();
