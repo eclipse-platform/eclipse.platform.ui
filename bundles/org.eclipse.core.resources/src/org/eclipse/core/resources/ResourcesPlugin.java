@@ -90,6 +90,15 @@ public final class ResourcesPlugin extends Plugin {
 	 * @since 3.0
 	 */
 	public static final Object FAMILY_AUTO_BUILD = new Object();
+	
+	/**
+	 * Constant identifying the job family identifier for the background auto-refresh job.
+	 * 
+	 * @see IJobManager#join(Object, IProgressMonitor)
+	 * @since 3.1
+	 */
+	public static final Object FAMILY_AUTO_REFRESH = new Object();	
+	
 	/**
 	 * Constant identifying the job family identifier for a background build job. All clients
 	 * that schedule background jobs for performing builds should include this job
