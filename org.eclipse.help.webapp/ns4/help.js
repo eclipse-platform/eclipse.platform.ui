@@ -139,7 +139,7 @@ function displayTocFor(topic)
 
 	if (!selected)
 	{
-		tocURL = "toc.jsp?topic="+topic;
+		tocURL = "toc.jsp?topic="+topic+"&synch=yes";
 		switchTab("toc");
 	}
 }

@@ -128,7 +128,7 @@ function switchTab(nav, newTitle)
 }
  
  
- /**
+/**
  * Shows the TOC frame, loads appropriate TOC, and selects the topic
  */
 function displayTocFor(topic)
@@ -147,7 +147,7 @@ function displayTocFor(topic)
 	} else	{
 		// save the current navigation, so we can retrieve it when synch does not work
 		saveNavigation();
-		NavFrame.toc.location = "toc.jsp?topic="+topic;		
+		NavFrame.toc.location = "toc.jsp?topic="+topic+"&synch=yes";		
 	}
 }
 

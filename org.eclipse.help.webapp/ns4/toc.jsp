@@ -122,6 +122,13 @@ if (document.layers){
 %>
 <body>
 <script>
+<%
+		if("yes".equalsIgnoreCase(request.getParameter("synch"))){
+%>
+alert('<%=UrlUtil.JavaScriptEncode(WebappResources.getString("CannotSync", null))%>');
+<%
+		}
+%>
 if (parent.parent.temp){
 	// Restore old navigation
 	document.body.innerHTML = parent.parent.temp;
