@@ -19,6 +19,15 @@
 <p>can also be contributed to a view</p>
 <h3>Variable Value Editors</h3>
 <h3>Launch Shortcut Keybindings</h3>
+<p>To register a key-binding for a launch shortcut, define a command with an <font face="Courier New, Courier, mono">id 
+  </font>the same as the launch shortcut <font face="Courier New, Courier, mono">id</font>, 
+  suffixed with the launch mode. For example, the id of the &quot;Java Application&quot; 
+  launch short cut is <font face="Courier New, Courier, mono">org.eclipse.jdt.debug.ui.localJavaShortcut</font>, 
+  so the command id for launching in debug mode is <font face="Courier New, Courier, mono">org.eclipse.jdt.debug.ui.localJavaShortcut.debug</font>. 
+  Then define a key-binding for your command.</p>
+<p>When the command is invoked via the key-binding, the selection or active editor 
+  will be used as the target for the launch shortcut's launch method. The shortcut 
+  is only invoked if the shortcut is enabled for the selection or editor.</p>
 <h3>Source Lookup Facility</h3>
 <h3>Watchpoints (IWatchpoint)</h3>
 <h3>Colors and Fonts for debug elements</h3>
@@ -26,7 +35,7 @@
 <h3>Abstract Debug Element</h3>
 <h2>Changes</h2>
 <h3>Debug Event Dispatch</h3>
-<p>Debug event set listeners are notified of fired debug events asychronously 
+<p>Debug event set listeners are notified of fired debug events asynchronously 
   in a different thread than the event is reported in.</p>
 <h3>Debug Actions in Background</h3>
 <h3>Background Content Providers</h3>
