@@ -33,8 +33,6 @@ public class DefaultPluginParser extends DefaultHandler {
 
 	private static final String PLUGIN = "plugin"; //$NON-NLS-1$
 	private static final String FRAGMENT = "fragment"; //$NON-NLS-1$
-	private static final String ID = "id"; //$NON-NLS-1$
-	private static final String VERSION = "version"; //$NON-NLS-1$
 
 	private class ParseCompleteException extends SAXException {
 		public ParseCompleteException(String arg0) {

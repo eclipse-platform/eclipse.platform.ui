@@ -13,7 +13,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
-import java.util.ResourceBundle;
 
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.runtime.CoreException;
@@ -32,13 +31,10 @@ public class InstallChangeParser extends DefaultHandler {
 
 	private SAXParser parser;
 	private SessionDelta change;
-	private File file;
 
 	public static final String CHANGE = "change"; //$NON-NLS-1$
 	public static final String NEW_FEATURE = "newFeatures"; //$NON-NLS-1$
 	public static final String REFERENCE = "reference"; //$NON-NLS-1$
-
-	private ResourceBundle bundle;
 
 	/**
 	 * Constructor for InstallChangeParser
@@ -50,7 +46,6 @@ public class InstallChangeParser extends DefaultHandler {
 		parser.setContentHandler(this);
 
 		InputStream changeStream = new FileInputStream(file);
-		this.file = file;
 
 		// DEBUG:		
 		if (UpdateCore.DEBUG

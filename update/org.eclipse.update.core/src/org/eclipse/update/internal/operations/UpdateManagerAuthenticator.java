@@ -40,7 +40,7 @@ public class UpdateManagerAuthenticator extends Authenticator {
 	 * The Map containing the userid and password
 	 * HashMap allows <code>null</code> as the value
 	 */
-	private Map result = new HashMap();
+	//private Map result = new HashMap();
 
 	/**
 	 *  

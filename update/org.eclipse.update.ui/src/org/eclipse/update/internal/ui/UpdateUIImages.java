@@ -42,9 +42,6 @@ public class UpdateUIImages {
 	private static final String PATH_LCL= ICONS_PATH+"elcl16/";
 	private static final String PATH_LCL_HOVER= ICONS_PATH+"clcl16/";
 	private static final String PATH_LCL_DISABLED= ICONS_PATH+"dlcl16/";
-	private static final String PATH_TOOL = ICONS_PATH + "etool16/";
-	private static final String PATH_TOOL_HOVER = ICONS_PATH + "ctool16/";
-	private static final String PATH_TOOL_DISABLED = ICONS_PATH + "dtool16/";
 	private static final String PATH_OVR = ICONS_PATH + "ovr16/";
 	private static final String PATH_WIZBAN = ICONS_PATH + "wizban/";
 	public static final String PATH_FORMS = ICONS_PATH + "forms/";

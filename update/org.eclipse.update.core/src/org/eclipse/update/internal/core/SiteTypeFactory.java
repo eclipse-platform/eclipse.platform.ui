@@ -86,12 +86,5 @@ public final class SiteTypeFactory {
 			return factories;
 	}
 
-	/**
-	 * Sets the actories.
-	 * @param actories The actories to set
-	 */
-	private void setFactories(Map factories) {
-		this.factories = factories;
-	}
 
 }

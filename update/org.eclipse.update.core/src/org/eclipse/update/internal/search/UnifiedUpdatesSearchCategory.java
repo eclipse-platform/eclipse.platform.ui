@@ -23,8 +23,6 @@ import org.eclipse.update.search.*;
 public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 	private static final String CATEGORY_ID =
 		"org.eclipse.update.core.new-updates";
-	private static final String KEY_CURRENT_SEARCH =
-		"UpdatesSearchCategory.currentSearch";
 	private IFeature [] features;
 
 	class Candidate {
@@ -269,7 +267,6 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 				if (monitor.isCanceled())
 					return;
 			}
-			IFeature[] result;
 			if (hits.size() > 0) {
 				collectValidHits(hits, filter, collector);
 			}
@@ -292,7 +289,6 @@ public class UnifiedUpdatesSearchCategory extends UpdateSearchCategory {
 		HitSorter sorter = new HitSorter();
 		sorter.sortInPlace(array);
 		IFeature topHit = null;
-		ArrayList result = new ArrayList();
 		for (int i = 0; i < array.length; i++) {
 			Hit hit = (Hit) array[i];
 			IInstallFeatureOperation job = hit.getJob();

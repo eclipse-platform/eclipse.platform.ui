@@ -15,10 +15,8 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.Date;
-import java.util.HashMap;
 
 import org.eclipse.core.boot.*;
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.update.configuration.IConfiguredSite;
@@ -59,7 +57,6 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 	private static final String INITIALIZE = "-initialize"; //$NON-NLS-1$
 	private static final String DUMPFILE = "-dumpfile"; //$NON-NLS-1$	
 	private static final String FIRSTUSE = "-firstuse"; //$NON-NLS-1$
-	private static final String NEWUPDATES = "-newUpdates"; //$NON-NLS-1$
 	private static final String CHANGES_MARKER = ".newupdates"; //$NON-NLS-1$
 
 	/**
@@ -230,35 +227,6 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 		return changes;
 	}
 
-	private boolean pluginPathChanged(IPlatformConfiguration cfg, URL[] originalPluginPath) {
-		URL[] currentPluginPath = cfg.getPluginPath();
-		HashMap originalMap = new HashMap();
-		HashMap currentMap = new HashMap();
-
-		// populate maps
-		for (int i = 0; i < originalPluginPath.length; i++) {
-			originalMap.put(originalPluginPath[i].toExternalForm(), null);
-		}
-		for (int i = 0; i < currentPluginPath.length; i++) {
-			currentMap.put(currentPluginPath[i].toExternalForm(), null);
-		}
-
-		// check for deletions
-		for (int i = 0; i < originalPluginPath.length; i++) {
-			String key = originalPluginPath[i].toExternalForm();
-			if (!currentMap.containsKey(key))
-				return true;
-		}
-
-		// check for additions
-		for (int i = 0; i < currentPluginPath.length; i++) {
-			String key = currentPluginPath[i].toExternalForm();
-			if (!originalMap.containsKey(key))
-				return true;
-		}
-
-		return false;
-	}
 
 	private void markChanges(IPlatformConfiguration cfg) {
 		// indicate we have changes in restart scenario ... converted to -newUpdates on restart
@@ -275,14 +243,6 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 				} catch (IOException e2) {
 				}
 		}
-	}
-
-	private String[] markChanges(String[] args) {
-		// indicate we have changes in continue-startup scenario ... adds -newUpdate
-		String[] newArgs = new String[args.length + 1];
-		newArgs[0] = NEWUPDATES;
-		System.arraycopy(args, 0, newArgs, 1, args.length);
-		return newArgs;
 	}
 
 	private String[] processCommandLine(String[] args) {
@@ -351,13 +311,6 @@ public class UpdateManagerReconciler implements IPlatformRunnable {
 				passThruArgs[j++] = args[i];
 		}
 		return passThruArgs;
-	}
-
-	private IPlatformRunnable getRunnable(String application) {
-		// NOTE: we need to get the runnable for the original application.
-		// We can either lookup the application extension point (duplicate
-		// the InternalPlatform logic here), or make the internal call
-		return InternalPlatform.loaderGetRunnable(application);
 	}
 
 	private void debug(String s) {

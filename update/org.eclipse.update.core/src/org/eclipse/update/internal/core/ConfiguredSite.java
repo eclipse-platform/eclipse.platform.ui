@@ -1088,7 +1088,6 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		}
 
 		String siteLocation = siteURL.getFile();
-		File productFile = getProductFile();
 		File file = new File(siteLocation, PRIVATE_SITE_MARKER);
 		boolean success = false;
 		if (file.exists()) {

@@ -35,7 +35,6 @@ public class JarVerificationResult implements IVerificationResult {
 	private String signerInfo;
 	private String verifierInfo;
 	private ContentReference contentReference;
-	private String text;
 	private IFeature feature;
 	private boolean featureVerification;
 	private boolean alreadySeen;
@@ -91,13 +90,6 @@ public class JarVerificationResult implements IVerificationResult {
 			certificates = new ArrayList();
 		certificates.add(certs);
 		rootCertificates = null;
-	}
-
-	/*
-	 * 
-	 */
-	private List getCertificates() {
-		return certificates;
 	}
 
 	/*
@@ -302,12 +294,6 @@ public class JarVerificationResult implements IVerificationResult {
 		return null;
 	}
 
-	/*
-	 * 
-	 */
-	public void setText(String text) {
-		this.text = text;
-	}
 
 	/*
 	 * 

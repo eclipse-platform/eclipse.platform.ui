@@ -19,8 +19,6 @@ import org.eclipse.update.core.*;
  */
 public class SiteFileContentProvider extends SiteContentProvider {
 	
-	private String path;
-	
 	public static final String SITE_TYPE = "org.eclipse.update.core.file";	 //$NON-NLS-1$
 
 	/**
@@ -28,17 +26,6 @@ public class SiteFileContentProvider extends SiteContentProvider {
 	 */
 	public SiteFileContentProvider(URL url) {
 		super(url);
-	}
-
-	
-	
-	/**
- 	 * move into contentSelector, comment to provider and consumer (SiteFile)
- 	 */
-	private String getFeaturePath(VersionedIdentifier featureIdentifier) {
-		String path = getURL().getFile();
-		String featurePath = path + Site.DEFAULT_INSTALLED_FEATURE_PATH + featureIdentifier.toString();
-		return featurePath;
 	}
 
 			

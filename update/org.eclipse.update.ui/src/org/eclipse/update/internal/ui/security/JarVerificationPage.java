@@ -31,7 +31,6 @@ public class JarVerificationPage extends BannerPage {
 	private String _strId = null;
 	private String _strProviderName = null;
 	private TitleAreaDialog _Dialog;
-	private boolean okToInstall = false;
 	private String componentVerified;
 
 	/*
@@ -45,7 +44,6 @@ public class JarVerificationPage extends BannerPage {
 		_strFeatureName = verificationResult.getFeature().getLabel();
 		_strProviderName = verificationResult.getFeature().getProvider();
 		componentVerified =	(verificationResult.isFeatureVerification()) ? ".Feature" : ".File";
-		okToInstall = false;
 	}
 
 	/* (non-Javadoc)
@@ -79,34 +77,6 @@ public class JarVerificationPage extends BannerPage {
 
 		return compositeClient;
 
-	}
-
-	/*
-	 * Continue install or cancel install
-	 */
-	private void createChoiceArea(Composite compositeClient) {
-		if (_VerificationResult.getVerificationCode()
-			!= IVerificationResult.TYPE_ENTRY_CORRUPTED) {
-
-			// Label: Instruction
-			//------------------
-			Label labelInstruction = new Label(compositeClient, SWT.NULL);
-			labelInstruction.setLayoutData(
-				new GridData(
-					GridData.VERTICAL_ALIGN_BEGINNING
-						| GridData.GRAB_VERTICAL
-						| GridData.FILL_HORIZONTAL));
-			if (_VerificationResult.isFeatureVerification()) {
-				labelInstruction.setText(
-					UpdateUI.getString("JarVerificationDialog.MayChooseToInstall"));
-				//$NON-NLS-1$
-			} else {
-				labelInstruction.setText(
-					UpdateUI.getString("JarVerificationDialog.MayChooseToContinue"));
-				//$NON-NLS-1$ 					
-			}
-			//$NON-NLS-1$
-		}
 	}
 
 	/*
@@ -228,34 +198,6 @@ public class JarVerificationPage extends BannerPage {
 		}
 	}
 	
-	/*
-	 * Caution Label and text
-	 */
-	private void createCautionArea(Composite compositeClient) {
-		// Composite: Caution
-		//------------------------------
-		Composite compositeCaution = new Composite(compositeClient, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginWidth = layout.marginHeight = 0;
-		compositeCaution.setLayout(layout);
-		compositeCaution.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
-		// Icon
-		//-----
-		Label label = new Label(compositeCaution,SWT.LEFT);
-		label.setImage(JFaceResources.getImage(TitleAreaDialog.DLG_IMG_MESSAGE_WARNING));
-		
-		// Text
-		//-----
-		Label labelInformationCaution =
-			new Label(compositeCaution, SWT.WRAP);
-		labelInformationCaution.setText(
-			UpdateUI.getFormattedMessage(
-				"JarVerificationDialog.Caution",
-				_strProviderName));
-		//$NON-NLS-1$
-	}
 
 	/*
 	 * Presents File & Feature information

@@ -12,7 +12,6 @@ package org.eclipse.update.core;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
@@ -30,7 +29,6 @@ import org.eclipse.update.internal.core.*;
  */
 public class FeatureReference extends FeatureReferenceModel implements IFeatureReference, IPlatformEnvironment {
 
-	private List categories;
 	private VersionedIdentifier versionId;
 
 	//PERF: new instance variable

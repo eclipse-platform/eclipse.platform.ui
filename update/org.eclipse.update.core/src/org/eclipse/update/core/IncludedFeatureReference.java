@@ -89,17 +89,6 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 		return false;
 	}
 
-
-	/*
-	 * Method retrieveEnabledFeatures.
-	 * @param site
-	 */
-	private IFeatureReference[] retrieveEnabledFeatures(ISite site) {
-		IConfiguredSite configuredSite = site.getCurrentConfiguredSite();
-		if (configuredSite == null)
-			return new IFeatureReference[0];
-		return configuredSite.getConfiguredFeatures();
-	}
 	
 	/*
 	 * Method isDisabled.

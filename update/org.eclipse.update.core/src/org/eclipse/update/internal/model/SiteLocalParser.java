@@ -17,7 +17,6 @@ import java.util.*;
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.configuration.ILocalSite;
-import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.internal.core.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
@@ -49,12 +48,10 @@ public class SiteLocalParser extends DefaultHandler {
 	private SAXParser parser;
 	private InputStream siteStream;
 	private SiteLocalModel site;
-	private String text;
 	public static final String SITE = "localsite"; //$NON-NLS-1$
 	public static final String CONFIG = "config"; //$NON-NLS-1$
 	public static final String PRESERVED_CONFIGURATIONS = "preservedConfigurations"; //$NON-NLS-1$
 	private ResourceBundle bundle;
-	private IFeatureReference feature;
 
 	// trus if we are now parsing preserved config
 	private boolean preserved = false;

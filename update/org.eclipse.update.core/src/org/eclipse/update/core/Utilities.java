@@ -27,7 +27,6 @@ import org.eclipse.update.internal.core.UpdateCore;
 public class Utilities {
 
 	private static Map entryMap;
-	private static Map timerMap = new HashMap();
 	private static Stack bufferPool;
 	private static final int BUFFER_SIZE = 4096; //256K
 	private static final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.getDefault());

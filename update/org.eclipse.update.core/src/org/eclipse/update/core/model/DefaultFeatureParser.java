@@ -582,33 +582,6 @@ public class DefaultFeatureParser extends DefaultHandler {
 		//$NON-NLS-1$
 	}
 
-	private void handleDescriptionState(String elementName, Attributes attributes) throws SAXException {
-		if (elementName.equals(COPYRIGHT)) {
-			stateStack.push(new Integer(STATE_COPYRIGHT));
-			processInfo(attributes);
-		} else if (elementName.equals(LICENSE)) {
-			stateStack.push(new Integer(STATE_LICENSE));
-			processInfo(attributes);
-		} else if (elementName.equals(URL)) {
-			stateStack.push(new Integer(STATE_URL));
-			//No process as URL tag does not contain any element itself
-		} else if (elementName.equals(INCLUDES)) {
-			stateStack.push(new Integer(STATE_INCLUDES));
-			processIncludes(attributes);
-		} else if (elementName.equals(REQUIRES)) {
-			stateStack.push(new Integer(STATE_REQUIRES));
-			processRequire(attributes);
-		} else if (elementName.equals(PLUGIN)) {
-			stateStack.push(new Integer(STATE_PLUGIN));
-			processPlugin(attributes);
-		} else if (elementName.equals(DATA)) {
-			stateStack.push(new Integer(STATE_DATA));
-			processData(attributes);
-		} else
-			internalErrorUnknownTag(Policy.bind("DefaultFeatureParser.UnknownElement", elementName, getState(currentState)));
-		//$NON-NLS-1$
-	}
-
 	private void handleURLState(String elementName, Attributes attributes) throws SAXException {
 		if (elementName.equals(UPDATE)) {
 			stateStack.push(new Integer(STATE_UPDATE));

@@ -22,14 +22,12 @@ public  class EnableCommand extends ScriptedCommand {
 
 	private IConfiguredSite targetSite;
 	private IFeature feature;
-	private int installCount = 0;
 
 	public EnableCommand(
 		String featureId,
 		String version,
 		String toSite) {
 		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
 			IConfiguredSite[] sites = config.getConfiguredSites();
 
 			// Get site to enable to

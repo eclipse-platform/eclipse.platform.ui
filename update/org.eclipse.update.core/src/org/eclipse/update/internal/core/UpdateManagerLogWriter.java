@@ -43,7 +43,6 @@ public class UpdateManagerLogWriter {
 	private static final String UNKNOWN = "unknown"; //$NON-NLS-1$	
 
 	private static final String LINE_SEPARATOR;
-	private static final String TAB_STRING = "\t"; //$NON-NLS-1$
 
 	static {
 		String s = System.getProperty("line.separator"); //$NON-NLS-1$
@@ -108,41 +107,6 @@ public class UpdateManagerLogWriter {
 		}
 	}
 	
-	/*
-	 * 
-	 */
-	private synchronized void log(IActivity activity) {
-		// thread safety: (Concurrency003)
-		if (logFile != null)
-			openLogFile();
-		if (log == null)
-			log = logForStream(System.err);
-		try {
-			try {
-				write(activity);
-			} finally {
-				if (logFile != null)
-					closeLogFile();
-				else
-					log.flush();
-			}
-		} catch (Exception e) {
-			System.err.println("An exception occurred while writing to the update manager log:"); //$NON-NLS-1$
-			e.printStackTrace(System.err);
-			System.err.println("Logging to the console instead."); //$NON-NLS-1$
-			//we failed to write, so dump log entry to console instead
-			try {
-				log = logForStream(System.err);
-				write(activity);
-				log.flush();
-			} catch (Exception e2) {
-				System.err.println("An exception occurred while logging to the console:"); //$NON-NLS-1$
-				e2.printStackTrace(System.err);
-			}
-		} finally {
-			log = null;
-		}
-	}	
 	
 	/*
 	 * 
@@ -182,13 +146,6 @@ public class UpdateManagerLogWriter {
 		}
 	}
 	
-	/*
-	 * Writes the given string to the log, followed by the line terminator string.
-	 */
-	private void writeln(String s) throws IOException {
-		write(s);
-		writeln();
-	}
 	
 	/*
 	 * Shuts down the update manager log.

@@ -3,8 +3,6 @@
  */
 package org.eclipse.update.internal.standalone;
 
-import java.util.*;
-
 import org.eclipse.core.boot.*;
 
 /**
@@ -12,7 +10,6 @@ import org.eclipse.core.boot.*;
  */
 public class StandaloneUpdateApplication implements IPlatformRunnable {
 
-	private HashMap options = new HashMap();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.boot.IPlatformRunnable#run(java.lang.Object)

@@ -42,9 +42,7 @@ public class JarVerifier extends Verifier {
 	private boolean acceptUnsignedFiles;
 	private List /* of KeyStore */
 	listOfKeystores;
-	private int entries;
 	private IProgressMonitor monitor;
-	private String jarFileName;
 	private File jarFile;
 
 	/*
@@ -124,7 +122,6 @@ public class JarVerifier extends Verifier {
 				// # of entries
 				if (!jarFile.exists()) throw new IOException();
 				JarFile jar = new JarFile(jarFile);
-				entries = jar.size();
 				if (jar !=null){
 					try {
 						jar.close();
@@ -132,7 +129,6 @@ public class JarVerifier extends Verifier {
 						// unchecked
 					}
 				}
-				jarFileName = jarFile.getName();
 			} catch (ZipException e){
 				throw Utilities.newCoreException(Policy.bind("JarVerifier.InvalidJar", jarReference.toString()), e); //$NON-NLS-1$				
 			} catch (IOException e) {

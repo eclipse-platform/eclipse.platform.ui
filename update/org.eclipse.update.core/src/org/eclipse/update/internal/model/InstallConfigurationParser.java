@@ -44,8 +44,6 @@ public class InstallConfigurationParser extends DefaultHandler {
 	// optimization: cache Site
 	private Map sites = new HashMap();
 
-	private ResourceBundle bundle;
-
 	/**
 	 * Constructor for DefaultSiteParser
 	 */
@@ -66,31 +64,7 @@ public class InstallConfigurationParser extends DefaultHandler {
 			UpdateCore.debug("Start parsing Configuration:" + (config).getURL().toExternalForm()); //$NON-NLS-1$
 		}
 
-		bundle = getResourceBundle();
-
 		parser.parse(new InputSource(this.siteStream));
-	}
-
-	/**
-	 * return the appropriate resource bundle for this sitelocal
-	 */
-	private ResourceBundle getResourceBundle() throws IOException, CoreException {
-		ResourceBundle bundle = null;
-		URL url = null;
-		try {
-			url = UpdateManagerUtils.asDirectoryURL(config.getURL());
-			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
-			bundle =
-				ResourceBundle.getBundle(
-					SiteLocalModel.SITE_LOCAL_FILE,
-					Locale.getDefault(),
-					l);
-		} catch (MissingResourceException e) {
-			UpdateCore.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
-		} catch (MalformedURLException e) {
-			UpdateCore.warn(e.getLocalizedMessage()); //$NON-NLS-1$
-		}
-		return bundle;
 	}
 
 	/**

@@ -64,8 +64,6 @@ public class FeatureModel extends ModelObject {
 	featureIncludes;
 	private List /*of NonPluginEntryModel*/
 	nonPluginEntries;
-	private List /*of ContentGroupModel*/
-	groupEntries;
 
 	// performance
 	private URL bundleURL;

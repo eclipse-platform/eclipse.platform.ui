@@ -41,7 +41,6 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 */
 	public class FileFilter {
 
-		private String filterString = null;
 		private IPath filterPath = null;
 
 		/**
@@ -49,7 +48,6 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		 */
 		public FileFilter(String filter) {
 			super();
-			this.filterString = filter;
 			this.filterPath = new Path(filter);
 		}
 

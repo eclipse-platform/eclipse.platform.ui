@@ -29,7 +29,6 @@ import org.eclipse.update.internal.core.UpdateCore;
 public class SiteFeatureReference extends SiteFeatureReferenceModel implements ISiteFeatureReference {
 
 	private List categories;
-	private VersionedIdentifier versionId;
 
 	/**
 	 * Feature reference default constructor

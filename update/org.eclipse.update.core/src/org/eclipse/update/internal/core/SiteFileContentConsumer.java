@@ -24,7 +24,6 @@ import org.eclipse.update.core.model.ArchiveReferenceModel;
  */
 public class SiteFileContentConsumer extends SiteContentConsumer {
 
-	private String path;
 	private IFeature feature;
 	private boolean closed = false;
 

@@ -24,8 +24,6 @@ public class JobTargetSites extends HashMap {
 
 	private IInstallConfiguration config;
 	private IInstallFeatureOperation[] jobs;
-	private HashSet added;
-
 
 	/**
 	 * Constructor for ReviewPage2
@@ -100,24 +98,6 @@ public class JobTargetSites extends HashMap {
 		}
 		return firstSite;
 	}
-
-
-	
-
-	private long computeRequiredSizeFor(IConfiguredSite site) {
-		long totalSize = 0;
-		for (int i = 0; i < jobs.length; i++) {
-			JobTargetSite jobSite = (JobTargetSite) get(jobs[i]);
-			if (site.equals(jobSite.targetSite)) {
-				long jobSize = site.getSite().getInstallSizeFor(jobs[i].getFeature());
-				if (jobSize == -1)
-					return -1;
-				totalSize += jobSize;
-			}
-		}
-		return totalSize;
-	}
-
 
 	public JobTargetSite findPatchedFeature(IFeature patch) {
 		for (Iterator enum = this.keySet().iterator(); enum.hasNext();) {

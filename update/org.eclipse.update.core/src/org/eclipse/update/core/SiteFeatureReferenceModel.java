@@ -27,8 +27,6 @@ public class SiteFeatureReferenceModel extends FeatureReference {
 	private List /* of String*/
 	categoryNames;
 
-	// [2.0.1]
-	private IncludedFeatureReference options;
 
 	/**
 	 * Creates an uninitialized feature reference model object.

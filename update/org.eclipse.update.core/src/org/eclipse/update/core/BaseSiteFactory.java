@@ -35,9 +35,6 @@ import org.eclipse.update.internal.core.*;
  */
 public abstract class BaseSiteFactory extends SiteModelFactory implements ISiteFactory {
 
-	// 
-	private URLConnection connection = null;
-	private IOException exception = null;
 
 	/**
 	 * Create site. Implementation of this method must be provided by 

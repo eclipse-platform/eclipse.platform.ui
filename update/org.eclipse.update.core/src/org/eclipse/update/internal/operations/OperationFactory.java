@@ -10,16 +10,11 @@
  *******************************************************************************/
 package org.eclipse.update.internal.operations;
 
-import java.util.*;
-
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.operations.*;
 
 public class OperationFactory implements IOperationFactory {
-
-	private Vector listeners = new Vector();
-	private Vector pendingOperations = new Vector();
 
 	public OperationFactory() {
 	}

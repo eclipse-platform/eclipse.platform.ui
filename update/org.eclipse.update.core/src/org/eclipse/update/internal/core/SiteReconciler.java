@@ -36,9 +36,6 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	private static final String DEFAULT_INSTALL_CHANGE_NAME = "delta.xml";
 	//$NON-NLS-1$	
 
-	// from SiteLocal
-	private static final String UPDATE_STATE_SUFFIX = ".metadata";
-
 	/**
 	 * 
 	 */
@@ -199,23 +196,6 @@ public class SiteReconciler extends ModelObject implements IWritable {
 		return saveNewFeatures(newInstallConfiguration);
 	}
 
-	/*
-	 * Get update state location relative to platform configuration
-	 */
-	private static URL getUpdateStateLocation(IPlatformConfiguration config) throws IOException {
-		// retrieves directory location for update state files. This
-		// directory name is constructed by adding a well-known suffix
-		// to the name of the corresponding platform  configuration. This
-		// way, we can have multiple platform configuration files in
-		// the same directory without ending up with update state conflicts.
-		// For example: platform configuration file:C:/platform.cfg results
-		// in update state location file:C:/platform.cfg.update/
-		URL configLocation = Platform.resolve(config.getConfigurationLocation());
-		String temp = configLocation.toExternalForm();
-		temp += UPDATE_STATE_SUFFIX + "/";
-		URL updateLocation = new URL(temp);
-		return updateLocation;
-	}
 
 	/**
 	* 
