@@ -71,15 +71,14 @@ import org.eclipse.ui.progress.WorkbenchJob;
 public class ProgressManager extends ProgressProvider
 		implements
 			IProgressService {
-	//The property for whether or not the job is running in the
-	//dialog.
-	private static final String IN_DIALOG = "inDialog"; //$NON-NLS-1$
-
 	/**
 	 * A property to determine if the job was run in the dialog.
+	 * Kept for backwards compatability.
+	 * @deprecated 
+	 * @see IProgressConstants#PROPERTY_IN_DIALOG
 	 */
-	public static final QualifiedName PROPERTY_IN_DIALOG = new QualifiedName(
-			IProgressConstants.PROPERTY_PREFIX, IN_DIALOG);
+	public static final QualifiedName PROPERTY_IN_DIALOG = IProgressConstants.PROPERTY_IN_DIALOG;
+	
 	private static ProgressManager singleton;
 	final private Map jobs = Collections.synchronizedMap(new HashMap());
 	final private Map familyListeners = Collections

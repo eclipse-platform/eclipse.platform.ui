@@ -91,4 +91,16 @@ public interface IProgressConstants {
 	 * Constant for the progress view id.
 	 */
 	public static String PROGRESS_VIEW_ID = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
+	
+	/**
+	 * This is a property set on a user job if the user has not decided to
+	 * run the job in the background. 
+	 * The value is set to <code>true</code> when the job starts and set to 
+	 * <code>false</code> if the user subsequently decides to complete the job in the 
+	 * background.
+	 * This property is not intended to be set by clients.
+	 * @see Job#isUser()
+	 */
+	public static final QualifiedName PROPERTY_IN_DIALOG = new QualifiedName(
+			IProgressConstants.PROPERTY_PREFIX, "inDialog"); //$NON-NLS-1$
 }

@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.WorkbenchJob;
 /**
  * The ProgressMonitorFocusJobDialog is a dialog that shows progress for a
@@ -86,7 +87,7 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				Rectangle shellPosition = getShell().getBounds();
-				job.setProperty(ProgressManager.PROPERTY_IN_DIALOG, new Boolean(false));
+				job.setProperty(IProgressConstants.PROPERTY_IN_DIALOG, Boolean.FALSE);
 				decrementNestingDepth();
 				close();
 				ProgressManagerUtil.animateDown(shellPosition);
@@ -325,8 +326,6 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	 */
 	public int open() {
 		int result = super.open();
-		//after the dialog is opened we can get access to its monitor
-		job.setProperty(ProgressManager.PROPERTY_IN_DIALOG, new Boolean(true));
 		
 		//add a listener that will close the dialog when the job completes.
 		IJobChangeListener listener = createCloseListener();
@@ -346,6 +345,8 @@ class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	 */
 	public void show(Job jobToWatch) {
 		job = jobToWatch;
+		//after the dialog is opened we can get access to its monitor
+		job.setProperty(IProgressConstants.PROPERTY_IN_DIALOG,Boolean.TRUE);
 		
 		ProgressManager.getInstance().progressFor(job).addProgressListener(
 				getBlockingProgressMonitor());
