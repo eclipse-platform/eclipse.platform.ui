@@ -31,7 +31,6 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.ui.subscriber.SubscriberConfirmMergedAction;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.ui.sync.SyncInfoSet;
 
