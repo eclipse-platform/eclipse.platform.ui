@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     channingwalton@mac.com - curved line code
  *******************************************************************************/
 package org.eclipse.compare.contentmergeviewer;
 
