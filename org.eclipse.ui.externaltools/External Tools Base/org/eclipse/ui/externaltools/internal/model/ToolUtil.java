@@ -14,6 +14,7 @@ Contributors:
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
@@ -126,10 +127,11 @@ public final class ToolUtil {
 			}
 			
 			// Expand the variable as text if possible
-			String text = variable.getExpander().getText(varDef.name, varDef.argument, context);
-			if (text == null) {
-				String msg = MessageFormat.format(ExternalToolsModelMessages.getString("ToolUtil.argumentVarExpandFailed"), new Object[] {varDef.name}); //$NON-NLS-1$
-				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
+			String text = null;
+			try {
+				text= variable.getExpander().getText(varDef.name, varDef.argument, context);
+			} catch (CoreException exception) {
+				status.merge(exception.getStatus());
 				return null;
 			}
 			buffer.append(text);
@@ -205,11 +207,11 @@ public final class ToolUtil {
 			}
 			
 			// Expand the variable into a IPath if possible
-			IPath path = variable.getExpander().getPath(varDef.name, varDef.argument, context);
-			if (path == null) {
-				String msg = MessageFormat.format(ExternalToolsModelMessages.getString("ToolUtil.dirLocVarExpandFailed"), new Object[] {varDef.name}); //$NON-NLS-1$
-				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
-				return null;
+			IPath path= null;
+			try {
+				path= variable.getExpander().getPath(varDef.name, varDef.argument, context);
+			} catch (CoreException exception) {
+				status.merge(exception.getStatus());
 			}
 			buffer.append(path.toOSString());
 			start= varDef.end;
@@ -265,10 +267,11 @@ public final class ToolUtil {
 			}
 		
 			// Expand the variable into a IPath if possible
-			IPath path = variable.getExpander().getPath(varDef.name, varDef.argument, context);
-			if (path == null) {
-				String msg = MessageFormat.format(ExternalToolsModelMessages.getString("ToolUtil.No_expansion"), new Object[] {varDef.name, varDef.argument}); //$NON-NLS-1$
-				status.merge(ExternalToolsPlugin.newErrorStatus(msg, null));
+			IPath path = null;
+			try {
+				path= variable.getExpander().getPath(varDef.name, varDef.argument, context);
+			} catch (CoreException exception) {
+				status.merge(exception.getStatus());
 				return null;
 			}
 			buffer.append(path.toOSString());

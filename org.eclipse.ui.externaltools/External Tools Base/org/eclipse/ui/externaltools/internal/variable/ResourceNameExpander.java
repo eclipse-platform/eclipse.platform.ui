@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Extracts the resource name from a variable context
@@ -17,11 +18,12 @@ public class ResourceNameExpander extends DefaultVariableExpander {
 	/**
 	 * @see IVariableTextExpander#getText(String, String, ExpandVariableContext)
 	 */
-	public String getText(String varTag, String varValue, ExpandVariableContext context) {
+	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
 		IResource resource= context.getSelectedResource();
 		if (resource != null) {
 			return resource.getName();
 		}
+		throwExpansionException(varTag, "No resource selected.");
 		return null;
 	}
 }

@@ -12,6 +12,7 @@ Contributors:
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
@@ -22,7 +23,7 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
  * This class is not intended to be extended by clients.
  * </p>
  */
-public class ResourceExpander implements IVariableExpander {
+public class ResourceExpander extends DefaultVariableExpander {
 
 	/**
 	 * Expands the variable to a resource.
@@ -56,7 +57,7 @@ public class ResourceExpander implements IVariableExpander {
 	/* (non-Javadoc)
 	 * Method declared on IVariableLocationExpander.
 	 */
-	public IPath getPath(String varTag, String varValue, ExpandVariableContext context) {
+	public IPath getPath(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
 		IResource resource = expand(varValue, context);
 		if (resource != null) {
 			if (isPathVariable(varTag)) {
@@ -64,9 +65,9 @@ public class ResourceExpander implements IVariableExpander {
 			} else {
 				return resource.getLocation();
 			}
-		} else {
-			return null;
 		}
+		throwExpansionException(varTag, "No resource selected.");
+		return null;
 	}
 	
 	/**
@@ -83,13 +84,13 @@ public class ResourceExpander implements IVariableExpander {
 	/* (non-Javadoc)
 	 * Method declared on IVariableResourceExpander.
 	 */
-	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context) {
+	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
 		IResource resource = expand(varValue, context);
 		if (resource != null) {
 			return new IResource[] {resource};
-		} else {
-			return null;
 		}
+		throwExpansionException(varTag, "No resource selected.");
+		return null;
 	}
 	
 	/**
@@ -105,11 +106,12 @@ public class ResourceExpander implements IVariableExpander {
 	 * 
 	 * @see IVariableTextExpander#getText(String, String, ExpandVariableContext)
 	 */
-	public String getText(String varTag, String varValue, ExpandVariableContext context) {
+	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
 		IPath path= getPath(varTag, varValue, context);
 		if (path != null) {
 			return path.toOSString();
 		}
+		throwExpansionException(varTag, "No resource selected.");
 		return null;
 	}
 

@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Extracts the container name from a variable context
@@ -18,14 +19,16 @@ public class ContainerNameExpander extends DefaultVariableExpander {
 	/**
 	 * @see IVariableTextExpander#getText(String, String, ExpandVariableContext)
 	 */
-	public String getText(String varTag, String varValue, ExpandVariableContext context) {
+	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
 		IResource resource= context.getSelectedResource();
 		if (resource != null) {
 			IContainer parent= resource.getParent();
 			if (parent != null) {
 				return parent.getName();
 			}
+			throwExpansionException(varTag, "No container could be determined for the selected resource.");
 		}
+		throwExpansionException(varTag, "No resource selected.");
 		return null;
 	}
 

@@ -39,9 +39,9 @@ public class ProjectExpander extends ResourceExpander {
 	 */
 	/*package*/ IResource expandToMember(String varValue) {
 		IResource member = super.expandToMember(varValue);
-		if (member != null)
+		if (member != null) {
 			return member.getProject();
-		else
-			return null;
+		}
+		return null;
 	}
 }

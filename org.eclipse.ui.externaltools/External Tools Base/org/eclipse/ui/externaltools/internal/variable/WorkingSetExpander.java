@@ -9,7 +9,10 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
@@ -33,13 +36,17 @@ public class WorkingSetExpander extends DefaultVariableExpander {
 	/* (non-Javadoc)
 	 * Method declared on IVariableResourceExpander.
 	 */
-	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context) {
-		if (varValue == null || varValue.length() == 0)
+	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
+		if (varValue == null || varValue.length() == 0) {
+			throwExpansionException(varTag, "No working set specified.");
 			return null;
+		}
 
 		IWorkingSet set = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(varValue);
-		if (set == null)
+		if (set == null) {
+			throwExpansionException(varTag, MessageFormat.format("No working set found with the name {0}.", new String[] {varValue}));
 			return null;
+		}
 			
 		IAdaptable[] elements = set.getElements();
 		IResource[] resources = new IResource[elements.length];

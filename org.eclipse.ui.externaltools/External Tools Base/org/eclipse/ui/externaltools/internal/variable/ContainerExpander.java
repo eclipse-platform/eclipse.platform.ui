@@ -32,9 +32,9 @@ public class ContainerExpander extends ResourceExpander {
 	 */
 	/*package*/ IResource expand(String varValue, ExpandVariableContext context) {
 		IResource resource = super.expand(varValue, context);
-		if (resource != null)
+		if (resource != null) {
 			return resource.getParent();
-		else
-			return null;
+		}
+		return null;
 	}
 }

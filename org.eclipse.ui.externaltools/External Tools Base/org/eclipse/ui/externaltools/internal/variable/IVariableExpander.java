@@ -12,6 +12,7 @@ package org.eclipse.ui.externaltools.internal.variable;
  ******************************************************************************/
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
 public interface IVariableExpander {
@@ -24,9 +25,9 @@ public interface IVariableExpander {
 	 * @param varValue the value for the variable
 	 * @param context the context the variable should use to expand itself
 	 * @return the <code>IPath</code> to a file/directory
-	 * 		or <code>null</code> if not possible
+	 * @throws CoreException if the given variable could not be expanded
 	 */
-	public IPath getPath(String varTag, String varValue, ExpandVariableContext context);
+	public IPath getPath(String varTag, String varValue, ExpandVariableContext context) throws CoreException;
 	/**
 	 * Returns the <code>IResource</code> list
 	 * for the given variable tag and value.
@@ -35,9 +36,9 @@ public interface IVariableExpander {
 	 * @param varValue the value for the variable
 	 * @param context the context the variable should use to expand itself
 	 * @return the list of <code>IResource</code> or <code>null</code> if not
-	 * 		possible (note, elements of the list can be <code>null</code>)
+	 * @throws CoreException if the given variable could not be expanded
 	 */
-	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context);
+	public IResource[] getResources(String varTag, String varValue, ExpandVariableContext context) throws CoreException;
 	/**
 	 * Returns the expanded text for the given variable
 	 * tag and value.
@@ -46,7 +47,7 @@ public interface IVariableExpander {
 	 * @param varValue the value for the variable
 	 * @param context the context the variable should use to expand itself
 	 * @return the text of the expanded variable
-	 * 		or <code>null</code> if not possible
+	 * @throws CoreException if the given variable could not be expanded
 	 */
-	public String getText(String varTag, String varValue, ExpandVariableContext context);
+	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException;
 }
