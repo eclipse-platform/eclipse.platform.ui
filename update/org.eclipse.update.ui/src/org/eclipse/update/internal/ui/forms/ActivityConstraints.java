@@ -1,7 +1,6 @@
 package org.eclipse.update.internal.ui.forms;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.*;
@@ -517,12 +516,12 @@ public class ActivityConstraints {
 
 		for (int i = 0; i < features.size(); i++) {
 			IFeature feature = (IFeature) features.get(i);
-			String fos = feature.getOS();
-			String fws = feature.getWS();
-			String farch = feature.getArch();
+			ArrayList fos = createList(feature.getOS());
+			ArrayList fws = createList(feature.getWS());
+			ArrayList farch = createList(feature.getArch());
 
-			if (fos != null && !fos.equals("")) {
-				if (!os.equals(fos)) {
+			if (fos.size() > 0) {
+				if (!fos.contains(os)) {
 					status.add(
 						createStatus(
 							feature,
@@ -531,8 +530,8 @@ public class ActivityConstraints {
 				}
 			}
 
-			if (fws != null && !fws.equals("")) {
-				if (!ws.equals(fws)) {
+			if (fws.size() > 0) {
+				if (!fws.contains(ws)) {
 					status.add(
 						createStatus(
 							feature,
@@ -541,8 +540,8 @@ public class ActivityConstraints {
 				}
 			}
 
-			if (farch != null && !farch.equals("")) {
-				if (!arch.equals(farch)) {
+			if (farch.size() > 0) {
+				if (!farch.contains(arch)) {
 					status.add(
 						createStatus(
 							feature,
@@ -761,5 +760,18 @@ public class ActivityConstraints {
 			IStatus.OK,
 			fullMessage,
 			null);
+	}
+	
+	private static ArrayList createList(String commaSeparatedList) {
+		ArrayList list = new ArrayList();
+		if (commaSeparatedList != null) {
+			StringTokenizer t = new StringTokenizer(commaSeparatedList.trim(), ",");
+			while(t.hasMoreTokens()) {
+				String token = t.nextToken().trim();
+				if (!token.equals(""))
+					list.add(token);
+			}
+		}
+		return list;
 	}
 }
