@@ -6,6 +6,7 @@ package org.eclipse.debug.internal.ui.views;
  */
  
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -44,8 +45,15 @@ public class ExpressionView extends VariablesView {
 	 * @return an event handler
 	 */
 	protected AbstractDebugEventHandler createEventHandler(Viewer viewer) {
-		return null;
+		return new ExpressionViewEventHandler(this, viewer);
 	}		
+	
+	/**
+	 * @see AbstractDebugView#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.EXPRESSION_VIEW;		
+	}	
 	
 	/**
 	 * Initializes the viewer input on creation

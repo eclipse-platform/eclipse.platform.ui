@@ -86,6 +86,13 @@
          id="org.eclipse.debug.ui.InspectorView">
    </view>
    <view
+         name="%ExpressionView.name"
+         icon="icons/full/cview16/watchlist_view.gif"
+         category="org.eclipse.debug.ui"
+         class="org.eclipse.debug.internal.ui.views.ExpressionView"
+         id="org.eclipse.debug.ui.ExpressionView">
+   </view>   
+   <view
          name="%ConsoleView.name"
          icon="icons/full/cview16/console_view.gif"
          category="org.eclipse.debug.ui"

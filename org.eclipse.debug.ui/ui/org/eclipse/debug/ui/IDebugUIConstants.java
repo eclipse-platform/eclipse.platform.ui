@@ -154,6 +154,7 @@ public interface IDebugUIConstants {
 	/**
 	 * Boolean preference controlling automatic removal of launches
 	 * when a new launch is registered.
+	 * @since 2.0
 	 */
 	public static final String PREF_AUTO_REMOVE_OLD_LAUNCHES= PLUGIN_ID + ".auto_remove_old_launches"; //$NON-NLS-1$
 		
@@ -182,9 +183,16 @@ public interface IDebugUIConstants {
 	public static final String ID_VARIABLE_VIEW= "org.eclipse.debug.ui.VariableView"; //$NON-NLS-1$
 	
 	/**
-	 * Inspector view identifier (value <code>"org.eclipse.debug.ui.InspectorView"</code>).
+	 * Expression view identifier (value <code>"org.eclipse.debug.ui.ExpressionView"</code>).
+	 * @since 2.0
 	 */
-	public static final String ID_INSPECTOR_VIEW= "org.eclipse.debug.ui.InspectorView"; //$NON-NLS-1$
+	public static final String ID_EXPRESSION_VIEW= "org.eclipse.debug.ui.ExpressionView"; //$NON-NLS-1$
+	
+	/**
+	 * Inspector view identifier (value <code>"org.eclipse.debug.ui.InspectorView"</code>).
+	 * @deprecated the inspector view has been replaced by the expression view
+	 */
+	public static final String ID_INSPECTOR_VIEW= "org.eclipse.debug.ui.InspectorView"; //$NON-NLS-1$	
 	
 	/**
 	 * Console view identifier (value <code>"org.eclipse.debug.ui.ConsoleView"</code>).
