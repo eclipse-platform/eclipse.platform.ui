@@ -19,7 +19,7 @@ public class DecoratorDefinition {
 	private String name;
 	private String objectClass;
 	private ILabelDecorator decorator;
-	private boolean enabled;
+	private boolean enabled = false;
 	private boolean adaptable;
 	private String id;
 	private IConfigurationElement element;
@@ -33,13 +33,11 @@ public class DecoratorDefinition {
 		String identifier,
 		String label,
 		String className,
-		boolean apply,
 		boolean isAdaptable,
 		IConfigurationElement configElement) {
 		id = identifier;
 		name = label;
 		objectClass = className;
-		enabled = apply;
 		adaptable = isAdaptable;
 		element = configElement;
 	}

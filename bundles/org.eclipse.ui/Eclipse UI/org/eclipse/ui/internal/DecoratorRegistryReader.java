@@ -22,7 +22,6 @@ class DecoratorRegistryReader extends RegistryReader {
 	private static String EXTENSION_ID = "decorators";
 	private static String ATT_OBJECT_CLASS = "objectClass";
 	private static String ATT_LABEL = "label";
-	private static String ATT_ENABLED = "state";
 	private static String ATT_ADAPTABLE = "adaptable";
 	private static String ATT_ID = "id";
 	private static String P_TRUE = "true";
@@ -45,11 +44,10 @@ class DecoratorRegistryReader extends RegistryReader {
 
 		String id = element.getAttribute(ATT_ID);
 
-		boolean enabled = P_TRUE.equals(element.getAttribute(ATT_ENABLED));
 		boolean adaptable = P_TRUE.equals(element.getAttribute(ATT_ADAPTABLE));
 
 		values.add(
-			new DecoratorDefinition(id, name, className, enabled, adaptable, element));
+			new DecoratorDefinition(id, name, className, adaptable, element));
 
 		return true;
 
