@@ -456,6 +456,8 @@ protected void hideEditorArea() {
  * before disappearing completely.
  */
 private void hideFastView(IViewPart part, int steps) {
+	setFastViewIconSelection(part, false);
+
 	// Get pane.
 	ViewPane pane = getPane(part);
 	// Hide the right side sash first
@@ -1120,6 +1122,19 @@ private void setAllPinsVisible(boolean visible) {
 	}
 }
 /**
+ * Sets the selection for the shortcut bar icon representing the givevn fast view.
+ */
+private void setFastViewIconSelection(IViewPart part, boolean selected) {
+	WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
+	ToolBar bar = window.getShortcutBar().getControl();
+	ToolItem[] items = bar.getItems();
+	for(int i=0; i<items.length; i++) {
+		if (items[i].getData(ShowFastViewContribution.FAST_VIEW) == part) {
+			items[i].setSelection(selected);
+		}
+	}	
+}
+/**
  * Sets the new wizard actions for the page.
  * This is List of Strings.
  */
@@ -1214,6 +1229,8 @@ private void showFastView(IViewPart part) {
 	pane.setFastViewSash(fastViewSash);
 	fastViewSash.setBounds(bounds.width - SASH_SIZE, bounds.y, SASH_SIZE, bounds.height - SASH_SIZE);
 	fastViewSash.moveAbove(null);
+	
+	setFastViewIconSelection(part, true);
 }
 /**
  * See IWorkbenchPage.

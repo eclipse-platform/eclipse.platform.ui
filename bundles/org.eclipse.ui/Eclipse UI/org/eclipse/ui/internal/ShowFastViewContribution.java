@@ -43,10 +43,18 @@ public class ShowFastViewContribution extends ContributionItem {
 		int size = views.length;
 		for (int nX = 0; nX < size; nX++) {
 			final IViewPart view = views[nX];
-			final ToolItem item = new ToolItem(parent, SWT.PUSH, index);
+			final ToolItem item = new ToolItem(parent, SWT.CHECK, index);
 			item.setImage(view.getTitleImage());
 			item.setToolTipText(view.getTitle());
 			item.setData(FAST_VIEW, view);
+			
+			// Select the active fast view's icon.
+			if (view == ((WorkbenchPage)window.getActivePage()).getActiveFastView()) {
+				item.setSelection(true);
+			} else {
+				item.setSelection(false);
+			}
+			
 			item.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					showView(view);
