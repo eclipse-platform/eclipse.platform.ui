@@ -16,15 +16,10 @@ import java.util.List;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.BackgroundEventHandler;
 import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.internal.core.ExceptionCollector;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.jobs.JobStatusHandler;
 import org.eclipse.team.ui.sync.SubscriberAction;
 
@@ -38,7 +33,7 @@ import org.eclipse.team.ui.sync.SubscriberAction;
  * OPTIMIZATION: look into provinding events with multiple resources instead of
  * one.
  */
-public class SubscriberEventHandler {
+public class SubscriberEventHandler extends BackgroundEventHandler {
 	// The number of events to process before feeding into the set.
 	private static final int NOTIFICATION_BATCHING_NUMBER = 10;
 
@@ -46,22 +41,13 @@ public class SubscriberEventHandler {
 	// has been calculated by the job.
 	private SyncSetInputFromSubscriber set;
 
-	// Events that need to be processed
-	private List awaitingProcessing = new ArrayList();
-
-	// Use to shutdown the job
-	private boolean shutdown = false;
-
-	// The job that runs when events need to be processed
-	Job eventHandlerJob;
-
-	// manages exceptions
-	private ExceptionCollector errors;
-
+	// Changes accumulated by the event handler
+	private List resultCache = new ArrayList();
+	
 	/**
 	 * Internal resource synchronization event. Can contain a result.
 	 */
-	class Event {
+	class SubscriberEvent extends Event{
 		static final int REMOVAL = 1;
 		static final int CHANGE = 2;
 		static final int INITIALIZE = 3;
@@ -70,27 +56,16 @@ public class SubscriberEventHandler {
 		int depth;
 		SyncInfo result;
 
-		Event(IResource resource, int type, int depth) {
-			this.resource = resource;
-			this.type = type;
-			this.depth = depth;
+		SubscriberEvent(IResource resource, int type, int depth) {
+			super(resource, type, depth);
 		}
-		public Event(
+		public SubscriberEvent(
 			IResource resource,
 			int type,
 			int depth,
 			SyncInfo result) {
-			this(resource, type, depth);
-			this.result = result;
-		}
-		public int getDepth() {
-			return depth;
-		}
-		public IResource getResource() {
-			return resource;
-		}
-		public int getType() {
-			return type;
+				this(resource, type, depth);
+				this.result = result;
 		}
 		public SyncInfo getResult() {
 			return result;
@@ -104,23 +79,16 @@ public class SubscriberEventHandler {
 	 */
 	public SubscriberEventHandler(SyncSetInputFromSubscriber set) {
 		this.set = set;
-		errors =
-			new ExceptionCollector(
-				Policy.bind("SubscriberEventHandler.errors"), //$NON-NLS-1$
-				TeamUIPlugin.ID,
-				IStatus.ERROR,
-				null /* don't log */
-		); //$NON-NLS-1$
-		reset(Event.INITIALIZE);
-		createEventHandlingJob();
-		schedule();
+		reset(SubscriberEvent.INITIALIZE);
 	}
+	
 	/**
 	 * Schedule the job or process the events now.
 	 */
 	public void schedule() {
-		JobStatusHandler.schedule(eventHandlerJob, SubscriberAction.SUBSCRIBER_JOB_TYPE);
+		JobStatusHandler.schedule(getEventHandlerJob(), SubscriberAction.SUBSCRIBER_JOB_TYPE);
 	}
+	
 	/**
 	 * Initialize all resources for the subscriber associated with the set. This will basically recalculate
 	 * all synchronization information for the subscriber.
@@ -128,8 +96,9 @@ public class SubscriberEventHandler {
 	 * @param depth
 	 */
 	public void initialize() {
-		reset(Event.CHANGE);
+		reset(SubscriberEvent.CHANGE);
 	}
+	
 	/**
 	 * Called by a client to indicate that a resource has changed and its synchronization state
 	 * should be recalculated.  
@@ -137,8 +106,9 @@ public class SubscriberEventHandler {
 	 * @param depth the depth of the change calculation
 	 */
 	public void change(IResource resource, int depth) {
-		queueEvent(new Event(resource, Event.CHANGE, depth));
+		queueEvent(new SubscriberEvent(resource, SubscriberEvent.CHANGE, depth));
 	}
+	
 	/**
 	 * Called by a client to indicate that a resource has been removed and should be removed. The
 	 * removal will propagate to the set.
@@ -146,131 +116,9 @@ public class SubscriberEventHandler {
 	 */
 	public void remove(IResource resource) {
 		queueEvent(
-			new Event(resource, Event.REMOVAL, IResource.DEPTH_INFINITE));
-	}
-	/**
-	 * Queue the event and start the job if it's not already doing work.
-	 */
-	synchronized private void queueEvent(Event event) {
-		awaitingProcessing.add(event);
-		if (shutdown
-			|| eventHandlerJob == null
-			|| eventHandlerJob.getState() != Job.NONE)
-			return;
-		else {
-			schedule();
-		}
-	}
-	/**
-	 * Returns the events handler job.
-	 * @return the job that calculates the synchronization state for a subscriber
-	 */
-	public Job getEventHandlerJob() {
-		return eventHandlerJob;
-	}
-	/**
-	 * Shutdown the event handler.
-	 */
-	void shutdown() {
-		shutdown = true;
-		eventHandlerJob.cancel();
-	}
-	/**
-	 * Get the next resource to be calculated.
-	 * @return Event to be processed
-	 */
-	synchronized Event nextElement() {
-		if (shutdown || awaitingProcessing.isEmpty()) {
-			return null;
-		}
-		return (Event) awaitingProcessing.remove(0);
-	}
-	/**
-	 * Create the job used for processing the events in the queue. The job stops working when
-	 * the queue is empty.
-	 */
-	private void createEventHandlingJob() {
-		eventHandlerJob = new Job(Policy.bind("SubscriberEventHandler.jobName")) {//$NON-NLS-1$	
-			public IStatus run(IProgressMonitor monitor) {
-					return processEvents(monitor);
-			}
-		};
-		eventHandlerJob.addJobChangeListener(new JobChangeAdapter() {
-			public void done(IJobChangeEvent event) {
-				// Make sure an unhandled event didn't squeak in unless we are shutdown
-				if (shutdown == false && hasUnprocessedEvents()) {
-					schedule();
-				} else {
-					synchronized(this) {
-						awaitingProcessing.clear();
-					}
-				}
-			}
-		});
-		eventHandlerJob.setPriority(Job.SHORT);
+			new SubscriberEvent(resource, SubscriberEvent.REMOVAL, IResource.DEPTH_INFINITE));
 	}
 	
-	/**
-	 * Process events from the events queue and dispatch results. 
-	 */
-	/* internal use only */ IStatus processEvents(IProgressMonitor monitor) {
-		List resultCache = new ArrayList();
-		Event event;
-		errors.clear();
-		try {
-			// It's hard to know how much work is going to happen
-			// since the queue can grow. Use the current queue size as a hint to
-			// an infinite progress monitor
-			monitor.beginTask(null, 100);
-			IProgressMonitor subMonitor = Policy.subInfiniteMonitorFor(monitor, 90);
-			subMonitor.beginTask(null, 1024);
-
-			while ((event = nextElement()) != null && ! shutdown) {
-				// Cancellation is dangerous because this will leave the sync info in a bad state.
-				// Purposely not checking -				 	
-				try {
-					int type = event.getType();
-					switch (type) {
-						case Event.REMOVAL :
-							resultCache.add(event);
-							break;
-						case Event.CHANGE :
-							List results = new ArrayList();
-							collect(
-								event.getResource(),
-								event.getDepth(),
-								subMonitor,
-								results);
-							resultCache.addAll(results);
-							break;
-						case Event.INITIALIZE :
-							monitor.subTask(Policy.bind("SubscriberEventHandler.2", event.getResource().getFullPath().toString())); //$NON-NLS-1$
-							Event[] events =
-								getAllOutOfSync(
-									new IResource[] { event.getResource()},
-									event.getDepth(),
-									Policy.subMonitorFor(subMonitor, 64));
-							resultCache.addAll(Arrays.asList(events));
-							break;
-					}
-				} catch (TeamException e) {
-					// handle exception but keep going
-					errors.handleException(e);
-				}
-
-				if (!hasUnprocessedEvents()
-					|| resultCache.size() > NOTIFICATION_BATCHING_NUMBER) {
-					dispatchEvents(
-						(Event[]) resultCache.toArray(
-							new Event[resultCache.size()]));
-					resultCache.clear();
-				}
-			}
-		} finally {
-			monitor.done();
-		}
-		return errors.getStatus();
-	}
 	/**
 	 * Collect the calculated synchronization information for the given resource at the given depth. The
 	 * results are added to the provided list.
@@ -302,13 +150,14 @@ public class SubscriberEventHandler {
 		// resource is no longer under the subscriber control
 		if (info == null) {
 			results.add(
-				new Event(resource, Event.REMOVAL, IResource.DEPTH_ZERO));
+				new SubscriberEvent(resource, SubscriberEvent.REMOVAL, IResource.DEPTH_ZERO));
 		} else {
 			results.add(
-				new Event(resource, Event.CHANGE, IResource.DEPTH_ZERO, info));
+				new SubscriberEvent(resource, SubscriberEvent.CHANGE, IResource.DEPTH_ZERO, info));
 		}
 		monitor.worked(1);
 	}
+	
 	/**
 	 * Called to initialize to calculate the synchronization information using the optimized subscriber method. For
 	 * subscribers that don't support the optimization, all resources in the subscriber are manually re-calculated. 
@@ -318,7 +167,7 @@ public class SubscriberEventHandler {
 	 * @return Event[] the change events
 	 * @throws TeamException
 	 */
-	private Event[] getAllOutOfSync(
+	private SubscriberEvent[] getAllOutOfSync(
 		IResource[] resources,
 		int depth,
 		IProgressMonitor monitor)
@@ -342,14 +191,14 @@ public class SubscriberEventHandler {
 						subMonitor,
 						events);
 				}
-				return (Event[]) events.toArray(new Event[events.size()]);
+				return (SubscriberEvent[]) events.toArray(new SubscriberEvent[events.size()]);
 				// The subscriber has returned the list of out-of-sync resources.
 			} else {
-				Event[] events = new Event[infos.length];
+				SubscriberEvent[] events = new SubscriberEvent[infos.length];
 				for (int i = 0; i < infos.length; i++) {
 					SyncInfo info = infos[i];
 					events[i] =
-						new Event(info.getLocal(), Event.CHANGE, depth, info);
+						new SubscriberEvent(info.getLocal(), SubscriberEvent.CHANGE, depth, info);
 				}
 				return events;
 			}
@@ -363,16 +212,16 @@ public class SubscriberEventHandler {
 	 * for each event type. 
 	 * @param events
 	 */
-	private void dispatchEvents(Event[] events) {
+	private void dispatchEvents(SubscriberEvent[] events) {
 		// this will batch the following set changes until endInput is called.
 		set.getSyncSet().beginInput();
 		for (int i = 0; i < events.length; i++) {
-			Event event = events[i];
+			SubscriberEvent event = events[i];
 			switch (event.getType()) {
-				case Event.CHANGE :
+				case SubscriberEvent.CHANGE :
 					set.collect(event.getResult());
 					break;
-				case Event.REMOVAL :
+				case SubscriberEvent.REMOVAL :
 					if (event.getDepth() == IResource.DEPTH_INFINITE) {
 						set.getSyncSet().removeAllChildren(event.getResource());
 					} else {
@@ -383,6 +232,7 @@ public class SubscriberEventHandler {
 		}
 		set.getSyncSet().endInput();
 	}
+	
 	/**
 	 * Initialize all resources for the subscriber associated with the set. This will basically recalculate
 	 * all synchronization information for the subscriber.
@@ -392,11 +242,62 @@ public class SubscriberEventHandler {
 	private void reset(int type) {
 		IResource[] resources = set.getSubscriber().roots();
 		for (int i = 0; i < resources.length; i++) {
-			queueEvent(new Event(resources[i], type, IResource.DEPTH_INFINITE));
+			queueEvent(new SubscriberEvent(resources[i], type, IResource.DEPTH_INFINITE));
 		}
 	}
 	
-	/* internal use only */ boolean hasUnprocessedEvents() {
-		return !awaitingProcessing.isEmpty();
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#getName()
+	 */
+	public String getName() {
+		return Policy.bind("SubscriberEventHandler.jobName"); //$NON-NLS-1$
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#getErrorsTitle()
+	 */
+	public String getErrorsTitle() {
+		return Policy.bind("SubscriberEventHandler.errors"); //$NON-NLS-1$;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.core.subscribers.BackgroundEventHandler#processEvent(org.eclipse.team.core.subscribers.BackgroundEventHandler.Event, org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	protected void processEvent(Event event, IProgressMonitor monitor) throws TeamException {
+		// Cancellation is dangerous because this will leave the sync info in a bad state.
+		// Purposely not checking -				 	
+		int type = event.getType();
+		switch (type) {
+			case SubscriberEvent.REMOVAL :
+				resultCache.add(event);
+				break;
+			case SubscriberEvent.CHANGE :
+				List results = new ArrayList();
+				collect(
+					event.getResource(),
+					event.getDepth(),
+					monitor,
+					results);
+				resultCache.addAll(results);
+				break;
+			case SubscriberEvent.INITIALIZE :
+				monitor.subTask(Policy.bind("SubscriberEventHandler.2", event.getResource().getFullPath().toString())); //$NON-NLS-1$
+				SubscriberEvent[] events =
+					getAllOutOfSync(
+						new IResource[] { event.getResource()},
+						event.getDepth(),
+						Policy.subMonitorFor(monitor, 64));
+				resultCache.addAll(Arrays.asList(events));
+				break;
+		}
+
+		if (!hasUnprocessedEvents()
+			|| resultCache.size() > NOTIFICATION_BATCHING_NUMBER) {
+			dispatchEvents(
+				(SubscriberEvent[]) resultCache.toArray(
+					new SubscriberEvent[resultCache.size()]));
+			resultCache.clear();
+		}
 	}
 }

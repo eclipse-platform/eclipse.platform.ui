@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.ExceptionCollector;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.TeamPlugin;
@@ -35,14 +35,14 @@ public abstract class BackgroundEventHandler {
 	// The job that runs when events need to be processed
 	private Job eventHandlerJob;
 	
-	// Indicate if the event handler has benn shutdown
+	// Indicate if the event handler has been shutdown
 	private boolean shutdown;
 
-	// manages exceptions
+	// Accumulate exceptions that occur
 	private ExceptionCollector errors;
 	
 	/**
-	 * Internal resource synchronization event. Can contain a result.
+	 * Resource event class. The type is specific to subclasses.
 	 */
 	public static class Event {
 		IResource resource;
@@ -73,24 +73,10 @@ public abstract class BackgroundEventHandler {
 				IStatus.ERROR,
 				null /* don't log */
 		);
-	}
-
-	/**
-	 * Create the event handling job and schedule it
-	 */
-	protected void initializeEventHandlingJob() {
 		createEventHandlingJob();
 		schedule();
 	}
 	
-	/**
-	 * Handle the exception by recording it in the errors list.
-	 * @param e
-	 */
-	protected void handleException(TeamException e) {
-		errors.handleException(e);
-		
-	}
 	/**
 	 * Create the job used for processing the events in the queue. The job stops working when
 	 * the queue is empty.
@@ -100,15 +86,45 @@ public abstract class BackgroundEventHandler {
 			public IStatus run(IProgressMonitor monitor) {
 				return processEvents(monitor);
 			}
+			public boolean shouldRun() {
+				return hasUnprocessedEvents();
+			}
+			public boolean shouldSchedule() {
+				return hasUnprocessedEvents();
+			}
 		};
 		eventHandlerJob.addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
-				jobDone();
+				jobDone(event);
 			}
 		});
 		eventHandlerJob.setPriority(Job.SHORT);
 	}
 
+	/**
+	 * This method is invoked when the processing job completes. The
+	 * default behavior of the handler is to restart the job if the queue
+	 * is no longer empty and to clear the queue if the handler was shut down.
+	 */
+	protected void jobDone(IJobChangeEvent event) {
+		if (isShutdown()) {
+			// The handler has been shutdown. Clean up the queue.
+			synchronized(this) {
+				awaitingProcessing.clear();
+			}
+		} else if (hasUnprocessedEvents()) {
+			// An event squeaked in as the job was finishing. Reschedule the job.
+			schedule();
+		}
+	}
+	
+	/**
+	 * Schedule the job to process the events now.
+	 */
+	protected void schedule() {
+		eventHandlerJob.schedule();
+	}
+	
 	/**
 	 * Return the name of the handler, which is used as the job name.
 	 * @return the name of the handler
@@ -119,15 +135,7 @@ public abstract class BackgroundEventHandler {
 	 * Return the text to be displayed as the title for any errors that occur.
 	 * @return
 	 */
-	public abstract String getErrorsTitle();
-	
-	/**
-	 * Process the event in the context of a background job.
-	 * 
-	 * @param event
-	 * @param monitor
-	 */
-	protected abstract void processEvent(Event event, IProgressMonitor monitor) throws TeamException;
+	protected abstract String getErrorsTitle();
 	
 	/**
 	 * Shutdown the event handler. Any events on the queue will be removed from the queue
@@ -139,15 +147,20 @@ public abstract class BackgroundEventHandler {
 	}
 	
 	/**
+	 * @return Returns whether the handle has been shutdown.
+	 */
+	public boolean isShutdown() {
+		return shutdown;
+	}
+	
+	/**
 	 * Queue the event and start the job if it's not already doing work.
 	 */
 	protected synchronized void queueEvent(Event event) {
 		awaitingProcessing.add(event);
-		if (shutdown
-			|| eventHandlerJob == null
-			|| eventHandlerJob.getState() != Job.NONE)
-			return;
-		else {
+		if (!isShutdown()
+			&& eventHandlerJob != null
+			&& eventHandlerJob.getState() == Job.NONE) {
 			schedule();
 		}
 	}
@@ -157,17 +170,27 @@ public abstract class BackgroundEventHandler {
 	 * @return Event to be processed
 	 */
 	private synchronized Event nextElement() {
-		if (shutdown || awaitingProcessing.isEmpty()) {
+		if (isShutdown() || !hasUnprocessedEvents()) {
 			return null;
 		}
 		return (Event) awaitingProcessing.remove(0);
 	}
 	
 	/**
-	 * Process events from the events queue and dispatch results. 
+	 * Return whether there are unprocessed events on the event queue.
+	 * @return whether there are unprocessed events on the queue
+	 */
+	protected synchronized boolean hasUnprocessedEvents() {
+		return !awaitingProcessing.isEmpty();
+	}
+	
+	/**
+	 * Process events from the events queue and dispatch results. This method does not
+	 * directly check for or handle cancelation of the provided monitor. However,
+	 * it does invoke <code>processEvent(Event)</code> which may check for and handle
+	 * cancelation by shuting down the receiver.
 	 */
 	protected IStatus processEvents(IProgressMonitor monitor) {
-		Event event;
 		errors.clear();
 		try {
 			// It's hard to know how much work is going to happen
@@ -177,12 +200,11 @@ public abstract class BackgroundEventHandler {
 			IProgressMonitor subMonitor = Policy.infiniteSubMonitorFor(monitor, 90);
 			subMonitor.beginTask(null, 1024);
 
-			while ((event = nextElement()) != null && ! shutdown) {
-				// Cancellation is dangerous because this will leave the sync info in a bad state.
-				// Purposely not checking -				 	
+			Event event;
+			while ((event = nextElement()) != null && ! isShutdown()) {			 	
 				try {
 					processEvent(event, subMonitor);
-				} catch (TeamException e) {
+				} catch (CoreException e) {
 					// handle exception but keep going
 					handleException(e);
 				}
@@ -194,31 +216,23 @@ public abstract class BackgroundEventHandler {
 	}
 
 	/**
-	 * This method is invoked when the processing job completes. The
-	 * default behavior of the handler is to restart the job if the queue
-	 * is no longer empty and to clear the queue if the handler was shut down.
-	 *
+	 * Handle the exception by recording it in the errors list.
+	 * @param e
 	 */
-	protected void jobDone() {
-		// Make sure an unhandled event didn't squeak in unless we are shutdown
-		if (shutdown == false && hasUnprocessedEvents()) {
-			schedule();
-		} else {
-			synchronized(this) {
-				awaitingProcessing.clear();
-			}
-		}
-	}
-	protected boolean hasUnprocessedEvents() {
-		return !awaitingProcessing.isEmpty();
+	protected void handleException(CoreException e) {
+		errors.handleException(e);
+		
 	}
 	
 	/**
-	 * Schedule the job or process the events now.
+	 * Process the event in the context of a running background job. Subclasses may
+	 * (but are not required to) check the provided monitor for cancelation and shut down the 
+	 * receiver by invoking the <code>shutdown()</code> method.
+	 * 
+	 * @param event
+	 * @param monitor
 	 */
-	protected void schedule() {
-		eventHandlerJob.schedule();
-	}
+	protected abstract void processEvent(Event event, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * @return Returns the eventHandlerJob.
@@ -226,5 +240,4 @@ public abstract class BackgroundEventHandler {
 	public Job getEventHandlerJob() {
 		return eventHandlerJob;
 	}
-
 }
