@@ -47,6 +47,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -776,6 +777,7 @@ public class ProgressManager extends ProgressProvider
 			public void run() {
 				try {
 					dialog.setOpenOnRun(false);
+					setUserInterfaceActive(false);
 					dialog.run(true, true, runnable);
 				} catch (InvocationTargetException e) {
 					invokes[0] = e;
@@ -785,10 +787,14 @@ public class ProgressManager extends ProgressProvider
 			}
 		};
 		busyCursorWhile(dialogWaitRunnable, dialog);
-		if (invokes[0] != null)
-			throw invokes[0];
-		if (interrupt[0] != null)
+		if (invokes[0] != null){
+			setUserInterfaceActive(true);
+			throw invokes[0];			
+		}
+		if (interrupt[0] != null){
+			setUserInterfaceActive(true);
 			throw interrupt[0];
+		}
 	}
 	/**
 	 * Show the busy cursor while the runnable is running. Schedule a job to
@@ -820,6 +826,8 @@ public class ProgressManager extends ProgressProvider
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
+				setUserInterfaceActive(true);
+				
 				if (ProgressManagerUtil.rescheduleIfModalShellOpen(this))
 					return Status.CANCEL_STATUS;
 				dialog.open();
@@ -966,30 +974,8 @@ public class ProgressManager extends ProgressProvider
 			dialog.run(fork, cancelable, runnable);
 			return;
 		}
-		final ProgressMonitorJobsDialog dialog = new ProgressMonitorJobsDialog(
-				null);
-		dialog.setOpenOnRun(false);
-		final InvocationTargetException[] invokes = new InvocationTargetException[1];
-		final InterruptedException[] interrupt = new InterruptedException[1];
-		//show a busy cursor until the dialog opens
-		final IRunnableWithProgress finalRunnable = runnable;
-		Runnable dialogWaitRunnable = new Runnable() {
-			public void run() {
-				try {
-					dialog.setOpenOnRun(false);
-					dialog.run(true, true, finalRunnable);
-				} catch (InvocationTargetException e) {
-					invokes[0] = e;
-				} catch (InterruptedException e) {
-					interrupt[0] = e;
-				}
-			}
-		};
-		busyCursorWhile(dialogWaitRunnable, dialog);
-		if (invokes[0] != null)
-			throw invokes[0];
-		if (interrupt[0] != null)
-			throw interrupt[0];
+		
+		busyCursorWhile(runnable);
 	}
 	/*
 	 * (non-Javadoc)
@@ -1024,5 +1010,18 @@ public class ProgressManager extends ProgressProvider
 						(String) imageKeyTable.get(next));
 		}
 		return null;
+	}
+	
+	/**
+	 * Iterate through all of the windows and set them to
+	 * be disabled or enabled as appropriate.'
+	 * @param active The set the windows will be set to.
+	 */
+	private void setUserInterfaceActive(boolean active){
+		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
+		for (int i = 0; i < windows.length; i++) {
+			IWorkbenchWindow window = windows[i];
+			window.getShell().setEnabled(active);
+		}
 	}
 }
