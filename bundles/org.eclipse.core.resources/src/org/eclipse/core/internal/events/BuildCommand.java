@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,8 +48,9 @@ public class BuildCommand extends ModelObject implements ICommand {
 	private static final int ALL_TRIGGERS = MASK_AUTO | MASK_CLEAN | MASK_FULL | MASK_INCREMENTAL;
 
 	protected HashMap arguments;
+	
 	/**
-	 * The builder instance for this comment. Null if the builder has
+	 * The builder instance for this command. Null if the builder has
 	 * not yet been instantiated.
 	 */
 	protected IncrementalProjectBuilder builder;
