@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
@@ -39,6 +40,7 @@ import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -88,6 +90,7 @@ public class BookmarkNavigator extends ViewPart {
 	private TableViewer viewer;
 	private OpenBookmarkAction openAction;
 	private CopyBookmarkAction copyAction;
+	private PasteBookmarkAction pasteAction;
 	private RemoveBookmarkAction removeAction;
 	private SelectAllAction selectAllAction;
 	private ShowInNavigatorAction showInNavigatorAction;
@@ -101,6 +104,7 @@ public class BookmarkNavigator extends ViewPart {
 	private TextCellEditor descriptionEditor;
 	private CellEditorActionHandler editorActionHandler;
 	private BookmarkSorter sorter;
+	private Clipboard clipboard;
 	
 	private final String columnHeaders[] = {
 		BookmarkMessages.getString("ColumnIcon.header"),//$NON-NLS-1$
@@ -189,6 +193,9 @@ public class BookmarkNavigator extends ViewPart {
 		copyAction = new CopyBookmarkAction(this);
 		copyAction.setImageDescriptor(getImageDescriptor("ctool16/copy_edit.gif"));//$NON-NLS-1$
 		
+		pasteAction = new PasteBookmarkAction(this);
+		pasteAction.setImageDescriptor(getImageDescriptor("ctool16/paste_edit.gif"));//$NON-NLS-1$
+		
 		removeAction = new RemoveBookmarkAction(this);
 		removeAction.setHoverImageDescriptor(getImageDescriptor("clcl16/remtsk_tsk.gif"));//$NON-NLS-1$
 		removeAction.setImageDescriptor(getImageDescriptor("elcl16/remtsk_tsk.gif"));//$NON-NLS-1$
@@ -222,6 +229,7 @@ public class BookmarkNavigator extends ViewPart {
 		// Register with action service.
 		IActionBars actionBars = getViewSite().getActionBars();
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.COPY, copyAction);
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PASTE, pasteAction);
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.DELETE, removeAction);
 		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.SELECT_ALL, selectAllAction);
 		
@@ -246,6 +254,7 @@ public class BookmarkNavigator extends ViewPart {
 	 * Method declared on IWorkbenchPart.
 	 */
 	public void createPartControl(Composite parent) {
+		clipboard = new Clipboard(parent.getDisplay());
 		createTable(parent);
 		viewer = new TableViewer(table);
 		createColumns();
@@ -268,6 +277,7 @@ public class BookmarkNavigator extends ViewPart {
 		createSortActions();
 		fillActionBars();
 		updateSortState();
+		updatePasteEnablement();
 	
 		getSite().setSelectionProvider(viewer);
 		
@@ -275,8 +285,13 @@ public class BookmarkNavigator extends ViewPart {
 		memento = null;
 	
 		WorkbenchHelp.setHelp(viewer.getControl(), IBookmarkHelpContextIds.BOOKMARK_VIEW);
-		
 	}
+	
+	public void dispose() {
+		if (clipboard != null)
+			clipboard.dispose();
+	}
+	
 	/**
 	 * Notifies this listener that the menu is about to be shown by
 	 * the given menu manager.
@@ -284,8 +299,21 @@ public class BookmarkNavigator extends ViewPart {
 	 * @param manager the menu manager
 	 */
 	void fillContextMenu(IMenuManager manager) {
+		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
+		
 		manager.add(openAction);
+		if (selection.size() == 1 && selection.getFirstElement() instanceof IMarker) {
+			IMarker marker = (IMarker) selection.getFirstElement();
+			IResource resource = marker.getResource();
+			if (resource instanceof IFile) {
+				MenuManager submenu = new MenuManager(BookmarkMessages.getString("OpenWithMenu.text"), null);//$NON-NLS-1$
+				submenu.add(new OpenBookmarkWithMenu(getSite().getPage(), marker));
+				manager.add(submenu);
+			}
+		}
 		manager.add(copyAction);
+		updatePasteEnablement();
+		manager.add(pasteAction);
 		manager.add(removeAction);
 		manager.add(selectAllAction);
 		manager.add(showInNavigatorAction);
@@ -593,4 +621,33 @@ public class BookmarkNavigator extends ViewPart {
 		}
 	}
 
+	/**
+	 * Updates the enablement of the paste action
+	 */
+	void updatePasteEnablement() {
+		// Paste if clipboard contains tasks
+		MarkerTransfer transfer = MarkerTransfer.getInstance();
+		IMarker[] markerData = (IMarker[]) getClipboard().getContents(transfer);
+		boolean canPaste = false;
+		if (markerData != null) {
+			for (int i = 0; i < markerData.length; i++) {
+				try {
+					if (markerData[i].getType().equals(IMarker.BOOKMARK)) {
+						canPaste = true;	
+						break;
+					}
+				}
+				catch (CoreException e) {
+					canPaste = false;
+				}
+			}
+		}
+		pasteAction.setEnabled(canPaste);
+	}
+	
+	Clipboard getClipboard() {
+		return clipboard;
+	}
+
 }
+ 

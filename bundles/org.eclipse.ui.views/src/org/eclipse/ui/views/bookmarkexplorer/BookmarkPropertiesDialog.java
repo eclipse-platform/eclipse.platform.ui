@@ -201,6 +201,10 @@ public class BookmarkPropertiesDialog extends Dialog {
 	 * @param composite
 	 */
 	private void createCreationTimeArea(Composite parent) {
+		String creation = BookmarkMessages.getString("MarkerCreationTime.text");//$NON-NLS-1$
+		if (creation == null || creation.equals(""))
+			return;
+		
 		Font font = parent.getFont();
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -208,7 +212,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 		composite.setLayout(layout);
 
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(BookmarkMessages.getString("MarkerCreationTime.text")); //$NON-NLS-1$
+		label.setText(creation); 
 		label.setFont(font);
 
 		creationTime = new Label(composite, SWT.NONE);
