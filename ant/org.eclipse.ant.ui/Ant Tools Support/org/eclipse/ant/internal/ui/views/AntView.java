@@ -159,7 +159,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		project.parseBuildFile();
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				projectViewer.refresh(project);
+				//must do a full refresh to re-sort
+				projectViewer.refresh();
 			}
 		});
 	}
