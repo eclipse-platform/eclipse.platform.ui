@@ -47,7 +47,9 @@ class ImplicitJobs {
 	/* (Non-javadoc) 
 	 * @see IJobManager#beginRule 
 	 */
-	ThreadJob begin(ISchedulingRule rule, IProgressMonitor monitor) {
+	void begin(ISchedulingRule rule, IProgressMonitor monitor, boolean suspend) {
+		if (JobManager.DEBUG_BEGIN_END)
+			JobManager.debug("Begin rule: " + rule); //$NON-NLS-1$
 		final Thread currentThread = Thread.currentThread();
 		ThreadJob threadJob;
 		synchronized (this) {
@@ -59,11 +61,11 @@ class ImplicitJobs {
 			if (threadJob != null) {
 				//nested rule, just push on stack and return
 				threadJob.push(rule);
-				return threadJob;
+				return;
 			}
 			//no need to schedule a thread job for a null rule
 			if (rule == null)
-				return null;
+				return;
 			//create a thread job for this thread, use the rule from the real job if it has one
 			Job realJob = manager.currentJob();
 			if (realJob != null && realJob.getRule() != null)
@@ -87,27 +89,38 @@ class ImplicitJobs {
 					threadJob.joinRun(monitor);
 			}
 		} finally {
-			//remember this thread job as the job for this thread - only do this
+			//remember this thread job  - only do this
 			//after the rule is acquired because it is ok for this thread to acquire
 			//and release other rules while waiting.
 			synchronized (this) {
-				threadJobs.put(currentThread, threadJob);
+				if (suspend) 
+					suspendedJobs.put(rule, threadJob);
+				else
+					threadJobs.put(currentThread, threadJob);
 			}
 		}
-		return threadJob;
 	}
 
 	/* (Non-javadoc) 
 	 * @see IJobManager#endRule 
 	 */
 	synchronized void end(ISchedulingRule rule) {
-		Thread currentThread = Thread.currentThread();
-		ThreadJob threadJob = (ThreadJob) threadJobs.get(currentThread);
+		if (JobManager.DEBUG_BEGIN_END)
+			JobManager.debug("End rule: " + rule); //$NON-NLS-1$
+		final Thread currentThread = Thread.currentThread();
+		//first check for a suspended job rule
+		ThreadJob threadJob = (ThreadJob) suspendedJobs.get(rule);
+		//next check for a thread job for this thread
+		if (threadJob == null)
+			threadJob = (ThreadJob) threadJobs.get(currentThread);
 		if (threadJob == null)
 			Assert.isLegal(rule == null, "endRule without matching beginRule: " + rule); //$NON-NLS-1$
 		else if (threadJob.pop(rule)) {
 			//clean up when last rule scope exits
-			threadJobs.remove(currentThread);
+			if (suspendedJobs.remove(rule) == null)
+				threadJobs.remove(currentThread);
+			else if (JobManager.DEBUG_BEGIN_END)
+				JobManager.debug("Resume rule: " + rule); //$NON-NLS-1$
 			//if this job had a rule, then we are essentially releasing a lock
 			//note it is safe to do this even if the acquire was aborted
 			if (threadJob.acquireRule)
@@ -155,9 +168,7 @@ class ImplicitJobs {
 	 * @param rule
 	 */
 	void resume(ISchedulingRule rule) {
-		synchronized (this) {
-			suspendedJobs.remove(rule);
-		}
+		//resume happens as a consequence of freeing the last rule in the stack
 		end(rule);
 	}
 
@@ -167,10 +178,9 @@ class ImplicitJobs {
 	 * @param monitor
 	 */
 	void suspend(ISchedulingRule rule, IProgressMonitor monitor) {
-		//begin the rule first, so we don't have a race condition
-		ThreadJob job = begin(rule, monitor);
-		synchronized (this) {
-			suspendedJobs.put(rule, job);
-		}
+		if (JobManager.DEBUG_BEGIN_END)
+			JobManager.debug("Suspend rule: " + rule); //$NON-NLS-1$
+		//the suspend job will be remembered once the rule is acquired
+		begin(rule, monitor, true);
 	}
 }

@@ -164,7 +164,7 @@ public class JobManager implements IJobManager {
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#beginRule(org.eclipse.core.runtime.jobs.ISchedulingRule, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public void beginRule(ISchedulingRule rule, IProgressMonitor monitor) {
-		implicitJobs.begin(rule, monitorFor(monitor));
+		implicitJobs.begin(rule, monitorFor(monitor), false);
 	}
 
 	/**
