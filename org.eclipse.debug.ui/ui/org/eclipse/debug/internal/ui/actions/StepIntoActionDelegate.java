@@ -16,14 +16,14 @@ import org.eclipse.jface.action.IAction;
 public class StepIntoActionDelegate extends StepActionDelegate {
 	
 	/**
-	 * @see StepActionDelegate
+	 * @see StepActionDelegate#checkCapability(IStep)
 	 */
 	protected boolean checkCapability(IStep element) {
 		return element.canStepInto();
 	}
 
 	/**
-	 * @see StepActionDelegate
+	 * @see StepActionDelegate#stepAction(IStep)
 	 */
 	protected void stepAction(IStep element) throws DebugException {
 		element.stepInto();
@@ -34,7 +34,7 @@ public class StepIntoActionDelegate extends StepActionDelegate {
 	}
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#setActionImages(IAction)
 	 */
 	protected void setActionImages(IAction action) {		
 		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_STEPINTO));

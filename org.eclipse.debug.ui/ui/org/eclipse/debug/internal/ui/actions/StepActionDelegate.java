@@ -12,7 +12,7 @@ import org.eclipse.debug.core.model.IStep;
 public abstract class StepActionDelegate extends ControlActionDelegate {
 	
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#doAction(Object)
 	 */
 	public void doAction(Object object) throws DebugException {
 		IDebugElement element= (IDebugElement)object;
@@ -24,7 +24,7 @@ public abstract class StepActionDelegate extends ControlActionDelegate {
 	}
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
 	public boolean isEnabledFor(Object element) {
 		if (element instanceof IStep) {
@@ -34,7 +34,7 @@ public abstract class StepActionDelegate extends ControlActionDelegate {
 	}
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#enableForMultiSelection()
 	 */
 	protected boolean enableForMultiSelection() {
 		return false;
@@ -52,5 +52,4 @@ public abstract class StepActionDelegate extends ControlActionDelegate {
 	 * @exception DebugException if the action fails
 	 */
 	protected abstract void stepAction(IStep element) throws DebugException;
-
 }
