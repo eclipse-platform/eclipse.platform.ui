@@ -86,7 +86,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			EditorPane visibleEditor = getVisibleEditor();
 			WorkbenchPage page = visibleEditor.getPage(); 
 	  	
-			if (page.isZoomed()) doZoom();
+			if (page != null && page.isZoomed()) doZoom();
 			
 			//forceLayout();
 		}
@@ -95,7 +95,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			EditorPane visibleEditor = getVisibleEditor();
 			WorkbenchPage page = visibleEditor.getPage(); 
 			
-			if (!page.isZoomed()) doZoom();
+			if (page != null && !page.isZoomed()) doZoom();
 		}
 	};
 	
