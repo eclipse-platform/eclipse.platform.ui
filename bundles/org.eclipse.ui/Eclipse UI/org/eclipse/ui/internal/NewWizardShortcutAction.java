@@ -12,6 +12,7 @@ Contributors:
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -67,7 +68,7 @@ public void run() {
 	IStructuredSelection selectionToPass = StructuredSelection.EMPTY;
 	if (selection instanceof IStructuredSelection) {
 		selectionToPass = wizardElement.adaptedSelection((IStructuredSelection) selection);
-	} else if (selection == null) {
+	} else {
 		// Build the selection from the IFile of the editor
 		IWorkbenchPart part = workbench.getActiveWorkbenchWindow().getPartService().getActivePart();
 		if (part instanceof IEditorPart) {
