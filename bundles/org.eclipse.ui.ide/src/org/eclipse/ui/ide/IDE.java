@@ -39,9 +39,10 @@ public final class IDE {
 	 * <p>
 	 * Example of retrieving the persisted editor id:
 	 * <pre><code>
+	 * IFile file = ...
 	 * IEditorDescriptor editorDesc = null;
 	 * try {
-	 * 	String editorID = input.getPersistentProperty(EDITOR_KEY);
+	 * 	String editorID = file.getPersistentProperty(EDITOR_KEY);
 	 * 	if (editorID != null) {
 	 * 		editorDesc = editorReg.findEditor(editorID);
 	 * 	}
@@ -243,6 +244,51 @@ public final class IDE {
 		return editor;
 	}
 	
+	/**
+	 * Sets the default editor id for a given file.  This value will be used
+	 * to determine the default editor descriptor for the file in future calls to
+	 * <code>getDefaultEditor(IFile)</code>.
+	 *
+	 * @param file the file
+	 * @param editorId the editor id
+	 */
+	public static void setDefaultEditor(IFile file, String editorID) {
+		try {
+			file.setPersistentProperty(EDITOR_KEY,editorID);
+		} catch (CoreException e) {}
+	}
+	
+	/**
+	 * Returns the default editor for a given file.
+	 * <p>
+	 * A default editor id may be registered for a specific file using
+	 * <code>setDefaultEditor</code>.  If the given file has a registered
+	 * default editor id the default editor will derived from it.  If not, 
+	 * the default editor is determined by taking the file name for the 
+	 * file and obtaining the default editor for that name.
+	 * </p>
+	 *
+	 * @param file the file
+	 * @return the descriptor of the default editor, or <code>null</code> if not
+	 *   found
+	 */
+	public static IEditorDescriptor getDefaultEditor(IFile file) {
+		// Try file specific editor.
+		IEditorRegistry editorReg = PlatformUI.getWorkbench().getEditorRegistry();
+		try {
+			String editorID = file.getPersistentProperty(EDITOR_KEY);
+			if (editorID != null) {
+				IEditorDescriptor desc = editorReg.findEditor(editorID);
+				if (desc != null)
+					return desc;
+			}
+		} catch (CoreException e) {
+		}
+		
+		// Try lookup with filename
+		return editorReg.getDefaultEditor(file.getName());
+	}
+
 	/**
 	 * Standard shared images defined by the IDE. These are over and about the
 	 * standard workbench images declared in {@link org.eclipse.ui.ISharedImages
