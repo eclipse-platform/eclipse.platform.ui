@@ -707,6 +707,42 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		return new CVSRemoteSyncElement(baseTree==null, resource, baseTree, remote);
 	}
 	
+	public ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {
+		checkIsChild(resource);
+		ICVSResource managed = getChild(resource);
+		ICVSRemoteResource remote = getRemoteResource(resource);
+		if (remote == null) {
+			// The resource doesn't have a remote base. 
+			// However, we still need to check to see if its been created remotely by a third party.
+			ICVSFolder parent = managed.getParent();
+			if (!parent.isCVSFolder())
+				throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree. Parent is not managed", null));
+			ICVSRepositoryLocation location = CVSRepositoryLocation.fromString(parent.getFolderSyncInfo().getRoot());
+			// XXX We build and fetch the whole tree from the parent. We could restrict the search to just the desired child
+			RemoteFolder remoteParent = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, parent, tag, progress);
+			if (remoteParent != null) {
+				try {
+					remote = (ICVSRemoteResource)remoteParent.getChild(resource.getName());
+					// The types need to match or we're in trouble
+					if (!(remote.isContainer() == managed.isFolder()))
+						throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree. Local and remote resource types differ", null));
+				} catch (CVSException e) {
+					// XXX Either need an exception or null to indicate child does not exist
+				}
+			}
+		} else if(resource.getType() == IResource.FILE) {
+			remote = RemoteFile.getLatest((RemoteFolder)getRemoteResource(resource.getParent()), (ICVSFile)managed, tag, progress);
+		} else {
+			try {
+				ICVSRepositoryLocation location = remote.getRepository();
+				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);		
+			} catch(CVSException e) {
+				throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree", e));
+			}
+		}
+		return remote;
+	}
+	
 	/**
 	 * Returns an IUserInfo instance that can be used to access and set the
 	 * user name and set the password. To have changes take place, the user must
