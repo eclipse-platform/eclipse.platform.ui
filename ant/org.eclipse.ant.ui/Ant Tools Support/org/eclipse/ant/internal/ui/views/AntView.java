@@ -286,7 +286,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * Create the viewer which displays the Ant projects
 	 */
 	private void createProjectViewer(Composite parent) {
-		projectViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL);
+		projectViewer = new TreeViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 		contentProvider = new AntViewContentProvider();
 		projectViewer.setContentProvider(contentProvider);
 		filterInternalTargetsAction.setChecked(filterInternalTargets);
