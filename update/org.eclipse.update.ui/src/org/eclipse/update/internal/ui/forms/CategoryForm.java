@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.update.core.*;
@@ -81,6 +82,7 @@ protected void createContents(Composite parent) {
 	factory.turnIntoHyperlink(link, listener);
 	link.setVisible(false);
 	setFocusControl(link);
+	WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.CategoryForm");
 }
 
 public void expandTo(Object obj) {

@@ -9,6 +9,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.IVerificationResult;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
@@ -44,7 +45,7 @@ public class JarVerificationPage extends BannerPage {
 	 * Method declared on Dialog.
 	 */
 	protected Control createContents(Composite compositeParent) {
-
+		WorkbenchHelp.setHelp(compositeParent, "org.eclipse.update.ui.JarVerificationPage");
 		// Composite: Client
 		//------------------
 		Composite compositeClient = new Composite(compositeParent, SWT.NULL);

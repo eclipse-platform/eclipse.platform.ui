@@ -46,20 +46,23 @@
                icon="icons/full/obj16/usearch_obj.gif"
                class="org.eclipse.update.internal.ui.NewUpdatesAction"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
-               id="org.eclipse.update.ui.newUpdates">
+               id="org.eclipse.update.ui.newUpdates"
+               helpContextId="org.eclipse.update.ui.newUpdates">
          </action>
          <action
                label="%actionSets.pendingChanges.label"
                class="org.eclipse.update.internal.ui.DeltaWizardAction"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group2"
-               id="org.eclipse.update.ui.pendingChanges">
+               id="org.eclipse.update.ui.pendingChanges"
+               helpContextId="org.eclipse.update.ui.pendingChanges">
          </action>
          <action
                label="%actionSets.updateManager.label"
                icon="icons/full/cview16/update_pers.gif"
                class="org.eclipse.update.internal.ui.UpdateManagerAction"
                menubarPath="help/org.eclipse.update.ui.updateMenu/group2"
-               id="org.eclipse.update.ui.updateManager">
+               id="org.eclipse.update.ui.updateManager"
+               helpContextId="org.eclipse.update.ui.updateManager">
          </action>
       </actionSet>
    </extension>
@@ -166,4 +169,8 @@
       </display>
    </extension>
 
+	<!-- Context Help contribution --> 
+	<extension point="org.eclipse.help.contexts"> 
+		<contexts file="contexts.xml"/> 
+	</extension>
 </plugin>

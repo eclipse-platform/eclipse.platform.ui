@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.IFeature;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.parts.SWTUtil;
@@ -210,6 +211,7 @@ public class LicensePage extends WizardPage {
 				setPageComplete(acceptButton.getSelection());
 			}
 		});
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.LicensePage");
 		setControl(client);
 	}
 	private void updateDirectionalButtons() {

@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.configuration.IVolume;
@@ -344,6 +345,7 @@ public class UpdatesView
 		viewer.setContentProvider(new SiteProvider());
 		viewer.setLabelProvider(new SiteLabelProvider());
 		viewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
+		WorkbenchHelp.setHelp(viewer.getControl(), "org.eclipse.update.ui.UpdatesView");
 	}
 
 	public void makeActions() {
@@ -357,6 +359,7 @@ public class UpdatesView
 				performNewBookmark();
 			}
 		};
+		WorkbenchHelp.setHelp(newAction, "org.eclipse.update.ui.UpdatesView_newAction");
 		newAction.setText(UpdateUIPlugin.getResourceString(KEY_NEW_SITE));
 
 		newFolderAction = new Action() {
@@ -364,6 +367,7 @@ public class UpdatesView
 				performNewBookmarkFolder();
 			}
 		};
+		WorkbenchHelp.setHelp(newFolderAction, "org.eclipse.update.ui.UpdatesView_newFolderAction");
 		newFolderAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_NEW_FOLDER));
 
@@ -372,6 +376,7 @@ public class UpdatesView
 				performNewSearch();
 			}
 		};
+		WorkbenchHelp.setHelp(newSearchAction, "org.eclipse.update.ui.UpdatesView_newSearchAction");
 		newSearchAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_NEW_SEARCH));
 
@@ -380,10 +385,12 @@ public class UpdatesView
 				performNewLocal();
 			}
 		};
+		WorkbenchHelp.setHelp(newLocalAction, "org.eclipse.update.ui.UpdatesView_newLocalAction");
 		newLocalAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_NEW_LOCAL_SITE));
 
 		deleteAction = new DeleteAction();
+		WorkbenchHelp.setHelp(deleteAction, "org.eclipse.update.ui.UpdatesView_deleteAction");
 		deleteAction.setText(UpdateUIPlugin.getResourceString(KEY_DELETE));
 
 		refreshAction = new Action() {
@@ -391,6 +398,7 @@ public class UpdatesView
 				performRefresh();
 			}
 		};
+		WorkbenchHelp.setHelp(refreshAction, "org.eclipse.update.ui.UpdatesView_refreshAction");
 		refreshAction.setText(UpdateUIPlugin.getResourceString(KEY_REFRESH));
 		refreshAction.setToolTipText(
 			UpdateUIPlugin.getResourceString(KEY_REFRESH_TOOLTIP));
@@ -408,6 +416,7 @@ public class UpdatesView
 					viewer.addFilter(fileFilter);
 			}
 		};
+		WorkbenchHelp.setHelp(fileFilterAction, "org.eclipse.update.ui.UpdatesView_fileFilterAction");
 		fileFilterAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_FILTER_FILES));
 		fileFilterAction.setChecked(false);
@@ -424,7 +433,7 @@ public class UpdatesView
 				setStoredEnvironmentValue(checked);
 			}
 		};
-
+		WorkbenchHelp.setHelp(filterEnvironmentAction, "org.eclipse.update.ui.UpdatesView_filterEnvironmentAction");
 		filterEnvironmentAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_FILTER_ENVIRONMENT));
 		boolean envValue = getStoredEnvironmentValue();
@@ -437,6 +446,7 @@ public class UpdatesView
 				showCategories(!showCategoriesAction.isChecked());
 			}
 		};
+		WorkbenchHelp.setHelp(showCategoriesAction, "org.eclipse.update.ui.UpdatesView_showCategoriesAction");
 		showCategoriesAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_SHOW_CATEGORIES));
 		showCategoriesAction.setChecked(true);
@@ -446,6 +456,7 @@ public class UpdatesView
 				linkProductExtension();
 			}
 		};
+		WorkbenchHelp.setHelp(linkExtensionAction, "org.eclipse.update.ui.UpdatesView_linkExtensionAction");
 		linkExtensionAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_LINK_EXTENSION));
 

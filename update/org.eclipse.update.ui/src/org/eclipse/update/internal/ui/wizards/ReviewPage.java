@@ -12,6 +12,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 public class ReviewPage extends BannerPage {
@@ -105,6 +106,7 @@ private static final String KEY_CORRECT_UNINSTALL = "InstallWizard.ReviewPage.co
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		label.setLayoutData(gd);
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.ReviewPage");
 		return client;
 	}
 }

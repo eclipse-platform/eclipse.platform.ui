@@ -15,6 +15,7 @@ import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.IFeature;
@@ -154,6 +155,7 @@ public class DetailsView extends MultiPageView {
 		history.add(HOME_PAGE, null);
 		makeActions();
 		fillActionBars();
+		WorkbenchHelp.setHelp(formWorkbook.getControl(), "org.eclipse.update.ui.DetailsView");
 	}
 
 	public void showPageWithInput(String pageId, Object input) {
@@ -245,7 +247,8 @@ public class DetailsView extends MultiPageView {
 		homeAction.setImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV);
 		homeAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV_H);
 		homeAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_HOME_NAV_D);
-
+		WorkbenchHelp.setHelp(homeAction, "org.eclipse.update.ui.DetailsView_homeAction");
+		
 		backAction = new UpdateAction() {
 			public void run() {
 				performBackward();
@@ -260,6 +263,7 @@ public class DetailsView extends MultiPageView {
 		backAction.setHoverImageDescriptor(UpdateUIPluginImages.DESC_BACKWARD_NAV_H);
 		backAction.setDisabledImageDescriptor(UpdateUIPluginImages.DESC_BACKWARD_NAV_D);
 		backAction.setEnabled(false);
+		WorkbenchHelp.setHelp(backAction, "org.eclipse.update.ui.DetailsView_backAction");
 
 		forwardAction = new UpdateAction() {
 			public void run() {
@@ -276,6 +280,7 @@ public class DetailsView extends MultiPageView {
 		forwardAction.setDisabledImageDescriptor(
 			UpdateUIPluginImages.DESC_FORWARD_NAV_D);
 		forwardAction.setEnabled(false);
+		WorkbenchHelp.setHelp(forwardAction, "org.eclipse.update.ui.DetailsView_forwardAction");
 	}
 
 	private void fillActionBars() {

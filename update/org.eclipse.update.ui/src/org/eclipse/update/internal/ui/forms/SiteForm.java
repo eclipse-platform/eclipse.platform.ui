@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.update.core.*;
@@ -119,6 +120,7 @@ public class SiteForm extends UpdateWebForm {
 		link = new SelectableFormLabel(parent, SWT.NULL);
 		link.setText(UpdateUIPlugin.getResourceString(KEY_LINK));
 		factory.turnIntoHyperlink(link, listener);
+		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.SiteForm");
 	}
 
 	public void expandTo(Object obj) {

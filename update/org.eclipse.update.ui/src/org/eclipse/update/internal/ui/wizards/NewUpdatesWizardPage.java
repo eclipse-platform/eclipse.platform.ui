@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.core.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.*;
 import java.net.URL;
@@ -182,6 +183,7 @@ public class NewUpdatesWizardPage extends BannerPage {
 		gd.horizontalSpan = 2;
 		counterLabel.setLayoutData(gd);
 		pageChanged();
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.NewUpdatesWizardPage");
 		return client;
 	}
 

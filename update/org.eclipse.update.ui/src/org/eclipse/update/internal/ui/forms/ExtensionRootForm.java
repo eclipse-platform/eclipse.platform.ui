@@ -12,6 +12,7 @@ import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.update.ui.forms.internal.engine.FormEngine;
 import org.eclipse.swt.layout.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.update.core.*;
@@ -65,6 +66,7 @@ public class ExtensionRootForm extends UpdateWebForm {
 		td.colspan = 3;
 		setFocusControl(engine);
 		engine.setLayoutData(td);
+		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.ExtensionRootForm");
 	}
 
 	public void expandTo(Object obj) {

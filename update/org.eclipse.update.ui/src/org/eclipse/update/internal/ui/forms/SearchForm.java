@@ -16,6 +16,7 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.model.UpdateModel;
@@ -365,6 +366,7 @@ public class SearchForm extends UpdateWebForm {
 		td.grabHorizontal = true;
 		control.setLayoutData(td);
 		searchResultSection.setFullMode(settings.getBoolean(S_FULL_MODE));
+		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.SearchForm");
 	}
 
 	private void fillQueryGroup(

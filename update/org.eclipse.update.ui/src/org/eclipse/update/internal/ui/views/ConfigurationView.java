@@ -16,6 +16,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
@@ -541,6 +542,7 @@ public class ConfigurationView
 			}
 		};
 		model.addUpdateModelChangedListener(modelListener);
+		WorkbenchHelp.setHelp(viewer.getControl(), "org.eclipse.update.ui.ConfigurationView");
 	}
 
 	private ILocalSite getLocalSite() {
@@ -655,6 +657,7 @@ public class ConfigurationView
 				viewer.refresh(getLocalSite());
 			}
 		};
+		WorkbenchHelp.setHelp(showUnconfFeaturesAction, "org.eclipse.update.ui.CofigurationView_showUnconfFeaturesAction");
 		showUnconfFeaturesAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_SHOW_UNCONF_FEATURES));
 		showUnconfFeaturesAction.setImageDescriptor(
@@ -673,6 +676,7 @@ public class ConfigurationView
 					RevertSection.performRevert(target);
 			}
 		};
+		WorkbenchHelp.setHelp(revertAction, "org.eclipse.update.ui.CofigurationView_revertAction");
 
 		showStatusAction = new Action() {
 			public void run() {
@@ -687,6 +691,7 @@ public class ConfigurationView
 				}
 			}
 		};
+		WorkbenchHelp.setHelp(showStatusAction, "org.eclipse.update.ui.CofigurationView_showStatusAction");
 		showStatusAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_SHOW_STATUS));
 		revertAction.setText(UpdateUIPlugin.getResourceString(KEY_RESTORE));
@@ -707,6 +712,7 @@ public class ConfigurationView
 				}
 			}
 		};
+		WorkbenchHelp.setHelp(preserveAction, "org.eclipse.update.ui.CofigurationView_preserveAction");
 		preserveAction.setText(UpdateUIPlugin.getResourceString(KEY_PRESERVE));
 		removePreservedAction = new Action() {
 			public void run() {
@@ -727,6 +733,7 @@ public class ConfigurationView
 				}
 			}
 		};
+		WorkbenchHelp.setHelp(removePreservedAction, "org.eclipse.update.ui.CofigurationView_removePreservedAction");
 		removePreservedAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_REMOVE_PRESERVED));
 
@@ -735,11 +742,13 @@ public class ConfigurationView
 				performUnlink();
 			}
 		};
+		WorkbenchHelp.setHelp(unlinkAction, "org.eclipse.update.ui.CofigurationView_unlinkAction");
 		unlinkAction.setText(UpdateUIPlugin.getResourceString(KEY_UNLINK));
 		propertiesAction =
 			new PropertyDialogAction(
 				UpdateUIPlugin.getActiveWorkbenchShell(),
 				viewer);
+		WorkbenchHelp.setHelp(propertiesAction, "org.eclipse.update.ui.CofigurationView_propertiesAction");
 	}
 
 	private void showFeatureStatus(IFeature feature) throws CoreException {

@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.update.core.*;
@@ -62,6 +63,7 @@ protected void createContents(Composite parent) {
 	td.align = TableData.FILL;
 	td.grabHorizontal=true;
 	desc.setLayoutData(td);
+	WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.InstallableSiteForm");
 }
 
 public void expandTo(Object obj) {

@@ -14,6 +14,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.ISessionDelta;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
@@ -238,6 +239,7 @@ public class InstallDeltaWizardPage extends WizardPage {
 		deltaViewer.setInput(this);
 		setFeaturesGray();
 		dialogChanged();
+		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.InstallDeltaWizardPage");
 		setControl(container);
 	}
 

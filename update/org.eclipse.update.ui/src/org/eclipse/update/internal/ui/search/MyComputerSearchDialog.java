@@ -12,6 +12,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.parts.*;
@@ -119,6 +120,7 @@ public class MyComputerSearchDialog extends Dialog {
 		gd.heightHint = 300;
 		viewer.getTable().setLayoutData(gd);
 		loadSettings();
+		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.MyComputerSearchDialog");
 		return container;
 	}
 

@@ -7,6 +7,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.Import;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
@@ -54,6 +55,7 @@ public class NewPluginEntryDialog extends Dialog {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = 200;
 		versionText.setLayoutData(gd);
+		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.NewPluginEntryDialog");
 		return container;
 	}
 	

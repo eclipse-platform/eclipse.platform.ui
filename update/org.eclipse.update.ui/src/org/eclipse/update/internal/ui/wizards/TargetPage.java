@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.core.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.internal.ui.*;
 import java.net.URL;
@@ -241,6 +242,7 @@ public class TargetPage extends BannerPage {
 
 		tableViewer.setInput(UpdateUIPlugin.getDefault().getUpdateModel());
 		selectFirstTarget();
+		WorkbenchHelp.setHelp(client, "org.eclipse.update.ui.ReviewPage");
 		return client;
 	}
 	private void createTableViewer(Composite parent) {

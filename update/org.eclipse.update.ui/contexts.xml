@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.contexts"?>
+
+<contexts>
+
+   <!-- Context IDs added in plugin.xml -->
+   
+   <context  id="newUpdates" >
+      <description>newUpdates</description>
+      <!-- To add related topics insert topic elements similar to
+       	<topic label="Related Toipic Label" href="dir/topic.html"/>
+      -->
+   </context>
+   
+   <context  id="pendingChanges" >
+      <description>pendingChanges</description>
+   </context>
+   
+   <context  id="updateManager" >
+      <description>updateManager</description>
+   </context>
+   
+   <!-- Context IDs added in the  code, ID is class name, where context ID is set -->
+   
+   <context  id="ConfigurationView" >
+      <description>ConfigurationView</description>
+   </context>
+   
+   <context  id="UpdatesView" >
+      <description>UpdatesView</description>
+   </context>
+   
+   <context  id="DetailsView" >
+      <description>DetailsView</description>
+   </context>
+   
+   <context  id="BaseTreeViewer_showDetailsAction" >
+      <description>BaseTreeViewer_showDetailsAction</description>
+   </context>
+   
+   <context  id="CofigurationView_showUnconfFeaturesAction" >
+      <description>CofigurationView_showUnconfFeaturesAction not working</description>
+   </context>
+   
+   <context  id="CofigurationView_revertAction" >
+      <description>CofigurationView_revertAction</description>
+   </context>
+   
+   <context  id="CofigurationView_showStatusAction" >
+      <description>CofigurationView_showStatusAction</description>
+   </context>
+   
+   <context  id="CofigurationView_preserveAction" >
+      <description>CofigurationView_preserveAction</description>
+   </context>
+   
+   <context  id="CofigurationView_removePreservedAction" >
+      <description>CofigurationView_removePreservedAction</description>
+   </context>
+   
+   <context  id="CofigurationView_unlinkAction" >
+      <description>CofigurationView_unlinkAction</description>
+   </context>
+   
+   <context  id="CofigurationView_propertiesAction" >
+      <description>CofigurationView_propertiesAction</description>
+   </context>
+   
+   <context  id="UpdatesView_newAction" >
+      <description>UpdatesView_newAction</description>
+   </context>
+   
+   <context  id="UpdatesView_newFolderAction" >
+      <description>UpdatesView_newFolderAction</description>
+   </context>
+   
+   <context  id="UpdatesView_newSearchAction" >
+      <description>UpdatesView_newSearchAction</description>
+   </context>
+   
+   <context  id="UpdatesView_newLocalAction" >
+      <description>UpdatesView_newLocalAction</description>
+   </context>
+   
+   <context  id="UpdatesView_deleteAction" >
+      <description>UpdatesView_deleteAction</description>
+   </context>
+   
+   <context  id="UpdatesView_refreshAction" >
+      <description>UpdatesView_refreshAction</description>
+   </context>
+   
+   <context  id="UpdatesView_fileFilterAction" >
+      <description>UpdatesView_fileFilterAction</description>
+   </context>
+   
+   <context  id="UpdatesView_filterEnvironmentAction" >
+      <description>UpdatesView_filterEnvironmentAction</description>
+   </context>
+   
+   <context  id="UpdatesView_showCategoriesAction" >
+      <description>UpdatesView_showCategoriesAction</description>
+   </context>
+   
+   <context  id="UpdatesView_linkExtensionAction" >
+      <description>UpdatesView_linkExtensionAction</description>
+   </context>
+   
+   <context  id="DetailsView_homeAction" >
+      <description>DetailsView_homeAction</description>
+   </context>
+   
+   <context  id="DetailsView_backAction" >
+      <description>DetailsView_backAction</description>
+   </context>
+   
+   <context  id="DetailsView_forwardAction" >
+      <description>DetailsView_forwardAction</description>
+   </context>
+   
+   <context  id="MainPreferencePage_getFieldEditorParent" >
+      <description>MainPreferencePage_getFieldEditorParent</description>
+   </context>
+   
+   <context  id="InstallDeltaWizardPage" >
+      <description>InstallDeltaWizardPage</description>
+   </context>
+   
+   <context  id="LicensePage" >
+      <description>LicensePage</description>
+   </context>
+   
+   <context  id="NewFolderWizardPage" >
+      <description>NewFolderWizardPage</description>
+   </context>
+   
+   <context  id="NewSearchWizardPage" >
+      <description>NewSearchWizardPage</description>
+   </context>
+   
+   <context  id="NewSiteBookmarkWizardPage" >
+      <description>NewSiteBookmarkWizardPage</description>
+   </context>
+   
+   <context  id="NewUpdatesWizardPage" >
+      <description>NewUpdatesWizardPage</description>
+   </context>
+   
+   <context  id="ReviewPage" >
+      <description>ReviewPage</description>
+   </context>
+   
+   <context  id="ReviewPage" >
+      <description>ReviewPage</description>
+   </context>
+   
+   <context  id="JarVerificationPage" >
+      <description>JarVerificationPage</description>
+   </context>
+   
+   <context  id="UserValidationDialog" >
+      <description>UserValidationDialog</description>
+   </context>
+   
+   <context  id="CategoryForm" >
+      <description>CategoryForm</description>
+   </context>
+   
+   <context  id="DetailsForm" >
+      <description>DetailsForm</description>
+   </context>
+   
+   <context  id="DiscoveryFolderForm" >
+      <description>DiscoveryFolderForm</description>
+   </context>
+   
+   <context  id="ExtensionRootForm" >
+      <description>ExtensionRootForm</description>
+   </context>
+   
+   <context  id="InstallableSiteForm" >
+      <description>InstallableSiteForm</description>
+   </context>
+   
+   <context  id="InstallConfigurationForm" >
+      <description>InstallConfigurationForm</description>
+   </context>
+   
+   <context  id="LocalSiteForm" >
+      <description>LocalSiteForm</description>
+   </context>
+   
+   <context  id="MainForm" >
+      <description>MainForm</description>
+   </context>
+   
+   <context  id="MyComputerForm" >
+      <description>MyComputerForm</description>
+   </context>
+   
+   <context  id="SearchForm" >
+      <description>SearchForm</description>
+   </context>
+   
+   <context  id="SiteForm" >
+      <description>SiteForm</description>
+   </context>
+   
+   <context  id="WebBrowserView" >
+      <description>WebBrowserView</description>
+   </context>
+   
+   <context  id="MyComputerSearchDialog" >
+      <description>MyComputerSearchDialog</description>
+   </context>
+   
+   <context  id="NewPluginEntryDialog" >
+      <description>NewPluginEntryDialog</description>
+   </context>
+   
+</contexts>

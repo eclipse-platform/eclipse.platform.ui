@@ -4,6 +4,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.search.*;
@@ -53,6 +54,7 @@ public class NewSearchWizardPage extends BaseNewWizardPage {
 		});
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		categoryCombo.setLayoutData(gd);
+		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.NewSearchWizardPage");
 	}
 
 	protected void validatePage() {

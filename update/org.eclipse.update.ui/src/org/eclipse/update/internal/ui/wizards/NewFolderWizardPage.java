@@ -1,6 +1,7 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.model.*;
 
@@ -28,6 +29,7 @@ public class NewFolderWizardPage extends BaseNewWizardPage {
 	 * @see BaseNewWizardPage#createClientControl(Composite, int)
 	 */
 	protected void createClientControl(Composite parent, int span) {
+		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.NewFolderWizardPage");
 	}
 
 	public boolean finish() {

@@ -8,6 +8,7 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.core.Utilities;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
@@ -100,6 +101,7 @@ public class InstallConfigurationForm extends PropertyWebForm {
 
 		registerSection(activitySection);
 		registerSection(revertSection);
+		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.InstallConfigurationForm");
 	}
 
 	protected Object createPropertyLayoutData() {

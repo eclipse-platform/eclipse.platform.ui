@@ -7,6 +7,7 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
@@ -60,6 +61,7 @@ public class MainPreferencePage
 	public void init(IWorkbench workbench) {
 	}
 	public void createFieldEditors() {
+		WorkbenchHelp.setHelp(getFieldEditorParent(), "org.eclipse.update.ui.MainPreferencePage_getFieldEditorParent");
 		IntegerFieldEditor maxLevel =
 			new IntegerFieldEditor(
 				P_HISTORY_SIZE,

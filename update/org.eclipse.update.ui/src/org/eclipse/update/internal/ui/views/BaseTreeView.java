@@ -4,6 +4,7 @@ package org.eclipse.update.internal.ui.views;
  * All Rights Reserved.
  */
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.jface.viewers.*;
@@ -113,6 +114,7 @@ public abstract class BaseTreeView extends ViewPart {
 				}
 			}
 		};
+		WorkbenchHelp.setHelp(showDetailsAction, "org.eclipse.update.ui.BaseTreeViewer_showDetailsAction");
 		showDetailsAction.setText(UpdateUIPlugin.getResourceString(KEY_SHOW_DETAILS));
 	}
 	

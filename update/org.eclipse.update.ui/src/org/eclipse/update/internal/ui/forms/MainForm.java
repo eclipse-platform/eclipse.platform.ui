@@ -12,6 +12,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.pages.UpdateFormPage;
 import org.eclipse.update.internal.ui.preferences.UpdateColors;
@@ -211,6 +212,7 @@ public class MainForm extends UpdateWebForm {
 		td = new TableData();
 		td.grabHorizontal = true;
 		text.setLayoutData(td);
+		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.MainForm");
 	}
 
 	private void addSeparator(Composite parent) {

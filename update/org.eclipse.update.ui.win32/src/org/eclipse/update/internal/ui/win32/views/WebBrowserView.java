@@ -11,6 +11,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.ole.win32.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.views.IEmbeddedWebBrowser;
@@ -94,6 +95,7 @@ public class WebBrowserView extends ViewPart implements IEmbeddedWebBrowser {
 				refreshAction.setEnabled(false);
 			}
 		});
+		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.WebBrowserView");
 	}
 
 	public void openTo(final String url) {

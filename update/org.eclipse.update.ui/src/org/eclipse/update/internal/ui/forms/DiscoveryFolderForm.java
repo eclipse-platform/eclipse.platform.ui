@@ -12,6 +12,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.update.core.*;
@@ -55,6 +56,7 @@ protected void createContents(Composite parent) {
 	
 	Label text = factory.createLabel(parent, null, SWT.WRAP);
 	text.setText(UpdateUIPlugin.getResourceString(KEY_DESC));
+	WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.DiscoveryFolderForm");
 }
 
 }

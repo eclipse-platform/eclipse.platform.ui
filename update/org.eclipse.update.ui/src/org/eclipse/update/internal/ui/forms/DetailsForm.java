@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
@@ -399,6 +400,8 @@ public class DetailsForm extends PropertyWebForm {
 					| GridData.VERTICAL_ALIGN_BEGINNING);
 		//gd.grabExcessHorizontalSpace = true;
 		doButton.setLayoutData(gd);
+		WorkbenchHelp.setHelp(container, "org.eclipse.update.ui.DetailsForm");
+
 	}
 
 	public void expandTo(final Object obj) {

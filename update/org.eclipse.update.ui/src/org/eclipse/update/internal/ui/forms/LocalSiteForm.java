@@ -8,6 +8,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.model.SiteBookmark;
@@ -84,6 +85,7 @@ public class LocalSiteForm extends UpdateWebForm {
 		data.heightHint = 1;
 		data.colspan = image != null ? 2 : 1;
 		sep.setLayoutData(data);
+		WorkbenchHelp.setHelp(parent, "org.eclipse.update.ui.LocalSiteForm");
 	}
 
 	public void expandTo(Object obj) {

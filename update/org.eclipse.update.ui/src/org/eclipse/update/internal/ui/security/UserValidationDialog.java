@@ -12,6 +12,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 
 
@@ -79,7 +80,7 @@ public class UserValidationDialog extends Dialog {
 
 		createUsernameFields(main);
 		createPasswordFields(main);
-
+		WorkbenchHelp.setHelp(main, "org.eclipse.update.ui.UserValidationDialog");
 		return main;
 	}
 	/**
