@@ -23,11 +23,16 @@ import org.eclipse.update.core.*;
  * for feature this key is feature_<id>_<version> and for plugins
  * key is plugin_<id>_<version>. Normally, getVersionedIdentifier() will
  * return <id>_<version>. Eg: feature_org.eclipse.platform_3.0.0
+ * 
  */
 public class InstallRegistry extends Properties {
 	private File file = null;
 	private final static String REGISTRY = "registry";
 	private static InstallRegistry instance;
+	
+	// plugins installed in this eclipse session
+	private HashMap justInstalledPlugins = new HashMap();
+	
 	/**
 	 * Creates empty Properties.
 	 * @param name name of the table;
@@ -130,6 +135,9 @@ public class InstallRegistry extends Properties {
 			// we save after each registration
 			InstallRegistry.getInstance().save();
 		}
+		
+		// add plugin to the list of just installed plugins .
+		InstallRegistry.getInstance().justInstalledPlugins.put(name,name);
 	}
 	
 	/**
@@ -148,5 +156,18 @@ public class InstallRegistry extends Properties {
 	public static synchronized void unregisterPlugin(IPluginEntry pluginEntry) {
 		String name = "plugin_"+pluginEntry.getVersionedIdentifier();
 		InstallRegistry.getInstance().remove(name);
+		
+		// remove the plugin from the list of just installed plugins (if needed).
+		InstallRegistry.getInstance().justInstalledPlugins.remove(name);
+	}
+	
+	/**
+	 * Returns true if the plugin was installed during this eclipse session
+	 * @param pluginEntry
+	 * @return
+	 */
+	public boolean isPluginJustInstalled(IPluginEntry pluginEntry) {
+		String name = "plugin_"+pluginEntry.getVersionedIdentifier();
+		return InstallRegistry.getInstance().justInstalledPlugins.get(name) != null;
 	}
 }
