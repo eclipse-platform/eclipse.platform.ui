@@ -74,6 +74,7 @@ protected Task[] extractTasks(Preferences prefs, String[] tasks) {
 			task.setLibrary(new URL(values[1]));
 			result.add(task);
 		} catch (MalformedURLException e) {
+			// if the URL does not have a valid format, just log and ignore the exception
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 		}
@@ -93,6 +94,7 @@ protected Type[] extractTypes(Preferences prefs, String[] types) {
 			type.setLibrary(new URL(values[1]));
 			result.add(type);
 		} catch (MalformedURLException e) {
+			// if the URL does not have a valid format, just log and ignore the exception
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 		}
@@ -106,6 +108,7 @@ protected URL[] extractURLs(Preferences prefs, String[] urls) {
 		try {
 			result.add(new URL(urls[i]));
 		} catch (MalformedURLException e) {
+			// if the URL does not have a valid format, just log and ignore the exception
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 		}
@@ -146,6 +149,7 @@ protected List computeDefaultTasks(Map tasks) {
 			task.setLibrary(url);
 			defaultURLs.add(url);
 		} catch (Exception e) {
+			// if the URL does not have a valid format, just log and ignore the exception
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
@@ -176,6 +180,7 @@ protected List computeDefaultTypes(Map types) {
 			type.setLibrary(url);
 			defaultURLs.add(url);
 		} catch (Exception e) {
+			// if the URL does not have a valid format, just log and ignore the exception
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
@@ -205,6 +210,7 @@ protected Map computeDefaultObjects(Map objects) {
 			URL url = Platform.asLocalURL(new URL(descriptor.getInstallURL(), library));
 			defaultURLs.add(url);
 		} catch (Exception e) {
+			// if the URL does not have a valid format, just log and ignore the exception
 			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
@@ -229,6 +235,7 @@ protected void addToolsJar(List destination) {
 	try {
 		destination.add(tools.toURL());
 	} catch (MalformedURLException e) {
+		// if the URL does not have a valid format, just log and ignore the exception
 		IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 		AntCorePlugin.getPlugin().getLog().log(status);
 	}
@@ -242,8 +249,8 @@ protected void addLibraries(IPluginDescriptor source, List destination) {
 			URL url = new URL(root, libraries[i].getPath().toString());
 			destination.add(Platform.asLocalURL(url));
 		} catch (Exception e) {
-			// FIXME: add error code and better message
-			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, -1, e.getMessage(), e);
+			// if the URL does not have a valid format, just log and ignore the exception
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, ERROR_MALFORMED_URL, Policy.bind("exception.malformedURL"), e);
 			AntCorePlugin.getPlugin().getLog().log(status);
 			continue;
 		}

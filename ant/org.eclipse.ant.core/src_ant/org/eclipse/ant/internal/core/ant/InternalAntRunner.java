@@ -570,6 +570,7 @@ protected boolean processCommandLine(List commands) {
 			out = new PrintStream(new FileOutputStream(logFile));
 			err = out;
 		} catch (IOException e) {
+			// just log message and ignore exception
 			logMessage(null, Policy.bind("exception.cannotWriteToLog"), Project.MSG_INFO);
 			return false;
 		}

@@ -39,6 +39,8 @@ protected Class loadClassParent(String name) {
 		if (parent != null)
 			return parent.loadClass(name);
 	} catch (ClassNotFoundException e) {
+		// Ignore exception now. If necessary we'll throw
+		// a ClassNotFoundException in loadClass(String)
 	}
 	return null;
 }
@@ -47,6 +49,8 @@ protected Class loadClassURLs(String name) {
 	try {
 		return super.loadClass(name);
 	} catch (ClassNotFoundException e) {
+		// Ignore exception now. If necessary we'll throw
+		// a ClassNotFoundException in loadClass(String)
 	}
 	return null;
 }
@@ -58,6 +62,8 @@ protected Class loadClassPlugins(String name) {
 			try {
 				result = pluginLoaders[i].loadClass(name);
 			} catch (ClassNotFoundException e) {
+				// Ignore exception now. If necessary we'll throw
+				// a ClassNotFoundException in loadClass(String)
 			}
 		}
 	}
