@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
+
 
 import java.util.Map;
 
@@ -17,8 +17,9 @@ import org.eclipse.jface.text.Position;
 
 
 /**
- * Extends <code>IAnnotationModel</code> with the ability to attach additional
- * annotation models to it.
+ * Extends {@link org.eclipse.jface.text.source.IAnnotationModel}with the
+ * ability piggyback other annotation models. It also introduces the concept of
+ * modification time stamps and adds methods for richer manipulation methods.
  * 
  * @since 3.0
  */
@@ -56,15 +57,14 @@ public interface IAnnotationModelExtension {
 	IAnnotationModel removeAnnotationModel(Object key);
 
 	/**
-	 * Replaces annotations with new annotations for this annotation model. The
-	 * new annotations are map entries where the annotation is the key and the
-	 * value is the position for the annotation. Each position describes the
-	 * range covered by the annotation. All registered annotation model
-	 * listeners are informed about the change (if any). If the model is
-	 * connected to a document, the positions are automatically updated on
-	 * document changes. For each annotation which is already managed by this
-	 * annotation model or is not associated with a valid position in the
-	 * connected document nothing happens.
+	 * Adds and removes annotations to/from this annotation model in a single
+	 * step. The annotations to remove are given in an array. The annotations to
+	 * add are provided in a map associating the annotations with the positions
+	 * at which they should be added. All registered annotation model listeners
+	 * are informed about the change. If the model is connected to a document,
+	 * the positions are automatically updated on document changes. Annotations
+	 * that are already managed by this annotation model or are not associated
+	 * with a valid position in the connected document have no effect.
 	 * 
 	 * @param annotationsToRemove the annotations to be removed, may be
 	 *            <code>null</code>
@@ -78,11 +78,11 @@ public interface IAnnotationModelExtension {
 	void replaceAnnotations(Annotation[] annotationsToRemove, Map annotationsToAdd) throws ClassCastException;
 	
 	/**
-	 * Modifies the position associated with the given annotation to the given
-	 * position. If the annotation is not yet managed by this annotation model,
-	 * the annotation is added. If the given position is <code>null</code> the
-	 * annotation is removed from the model. All annotation model change
-	 * listeners will be informed about the change.
+	 * Modifies the position associated with the given annotation to equal the
+	 * given position. If the annotation is not yet managed by this annotation
+	 * model, the annotation is added. If the given position is
+	 * <code>null</code> the annotation is removed from the model. All
+	 * annotation model change listeners will be informed about the change.
 	 * 
 	 * @param annotation the annotation whose associated position should be
 	 *            modified

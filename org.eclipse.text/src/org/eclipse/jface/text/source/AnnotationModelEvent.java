@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source;
+
 
 import org.eclipse.jface.text.Position;
 
@@ -18,17 +18,22 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+
 /**
- * Specification of changes applied to annotation models. 
- * The event carries the changed annotation model
- * as well as added, removed, and modified annotations.
- *
- * @see IAnnotationModel
+ * Specification of changes applied to annotation models. The event carries the
+ * changed annotation model as well as added, removed, and modified annotations.
+ * <p>
+ * An event can be sealed. Afterwards it can not be modified. Thus, the normal
+ * process is that an empty event is created, filled with the changed
+ * information, and before it is sent to the listeners, the event is sealed.
+ * 
+ * @see org.eclipse.jface.text.source.IAnnotationModel
+ * @see org.eclipse.jface.text.source.IAnnotationModelListenerExtension
  * @since 2.0
  */
 public class AnnotationModelEvent {
 	
-	/** The model this event refers to. For internal use only. */
+	/** The model this event refers to. */
 	private IAnnotationModel fAnnotationModel;
 	/**
 	 * The added annotations.

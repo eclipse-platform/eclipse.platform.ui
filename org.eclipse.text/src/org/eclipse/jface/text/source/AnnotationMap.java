@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,8 +18,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+
 /**
- * Internal implementation of <code>IAnnotationMap</code>.
+ * Internal implementation of {@link org.eclipse.jface.text.source.IAnnotationMap}.
  * 
  * @since 3.0
  */
@@ -26,7 +28,7 @@ class AnnotationMap implements IAnnotationMap {
 
     /**
      * The lock object used to synchronize the operations explicitly defined by
-     * IAnnotationMap
+     * <code>IAnnotationMap</code>
      */
     private Object fLockObject;
 

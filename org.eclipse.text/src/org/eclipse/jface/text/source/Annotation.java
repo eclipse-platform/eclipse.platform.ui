@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,20 +11,19 @@
 package org.eclipse.jface.text.source;
 
 
-
 /**
- * Annotation managed by an <code>IAnnotationModel</code>.
- * Annotations are considered being located at layers and are considered being painted
- * starting with layer 0 upwards. Thus an annotation of layer 5 will be drawn on top of
- * all co-located annotations at the layers 4 - 0. Subclasses must provide the annotations
- * paint method.
- *
- * @see IVerticalRuler
+ * Annotation managed by an
+ * {@link org.eclipse.jface.text.source.IAnnotationModel}.
+ * <p>
+ * Annotations are types, associated text, and can be marked as persistent and
+ * deleted. Annotations which are not explicitly initialized with an annotation
+ * type are of type <code>"org.eclipse.text.annotation.unknown"</code>.
  */
 public class Annotation {
 	
 	/**
-	 * Constant for unknown annotation types.
+	 * Constant for unknown annotation types.<p>
+	 * Value: <code>"org.eclipse.text.annotation.unknown"</code>
 	 * @since 3.0
 	 */
 	public final static String TYPE_UNKNOWN= "org.eclipse.text.annotation.unknown";  //$NON-NLS-1$	
@@ -75,7 +74,7 @@ public class Annotation {
 	}
 	
 	/**
-	 * Creates a new annotation.
+	 * Creates a new annotation with the given persistence state.
 	 * 
 	 * @param isPersistent <code>true</code> if persistent, <code>false</code> otherwise
 	 * @since 3.0

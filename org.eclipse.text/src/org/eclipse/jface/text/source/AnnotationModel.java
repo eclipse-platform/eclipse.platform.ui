@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,9 +27,12 @@ import org.eclipse.jface.text.Position;
 
 
 /**
- * Standard implementation of <code>IAnnotationModel</code>. This class can directly
- * be used by clients. Subclasses may adapt this annotation model to other existing 
- * annotation mechanisms.
+ * Standard implementation of {@link IAnnotationModel}and its extension
+ * interfaces. This class can directly be used by clients. Subclasses may adapt
+ * this annotation model to other existing annotation mechanisms. This class
+ * also implements {@link org.eclipse.jface.text.ISynchronizable}. All
+ * modifications of the model's internal annotation map are synchronized using
+ * the model's lock object.
  */
 public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtension, ISynchronizable {
 	
@@ -156,7 +159,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
     }
 
 	/*
-	 * @see IAnnotationModel#addAnnotation(Annotation, Position)
+	 * @see org.eclipse.jface.text.source.IAnnotationModel#addAnnotation(org.eclipse.jface.text.source.Annotation, org.eclipse.jface.text.Position)
 	 */
 	public void addAnnotation(Annotation annotation, Position position) {
 		try {
@@ -167,7 +170,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	}
 
 	/*
-	 * @see IAnnotationModelExtension#replaceAnnotations(Annotation[], Map)
+	 * @see org.eclipse.jface.text.source.IAnnotationModelExtension#replaceAnnotations(org.eclipse.jface.text.source.Annotation[], java.util.Map)
 	 * @since 3.0
 	 */
 	public void replaceAnnotations(Annotation[] annotationsToRemove, Map annotationsToAdd) {
@@ -236,7 +239,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	}
 
 	/*
-	 * @see IAnnotationModel#addAnnotationModelListener(IAnnotationModelListener)
+	 * @see org.eclipse.jface.text.source.IAnnotationModel#addAnnotationModelListener(org.eclipse.jface.text.source.IAnnotationModelListener)
 	 */
 	public void addAnnotationModelListener(IAnnotationModelListener listener) {
 		if (!fAnnotationModelListeners.contains(listener)) {
@@ -279,7 +282,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	}
 
 	/*
-	 * @see IAnnotationModel#connect(IDocument)
+	 * @see org.eclipse.jface.text.source.IAnnotationModel#connect(org.eclipse.jface.text.IDocument)
 	 */
 	public void connect(IDocument document) {
 		Assert.isTrue(fDocument == null || fDocument == document);
@@ -322,7 +325,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	}
 	
 	/*
-	 * @see IAnnotationModel#disconnect(IDocument)
+	 * @see org.eclipse.jface.text.source.IAnnotationModel#disconnect(org.eclipse.jface.text.IDocument)
 	 */
 	public void disconnect(IDocument document) {
 		
@@ -442,6 +445,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 *
 	 * @param fireModelChanged indicates whether to notify all model listeners
 	 * @param forkNotification <code>true</code> iff notification should be done in a new thread
+	 * @since 3.0
 	 */
 	private void cleanup(boolean fireModelChanged, boolean forkNotification) {
 		if (fDocumentChanged) {
@@ -472,7 +476,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	}
 	
 	/*
-	 * @see IAnnotationModel#getAnnotationIterator()
+	 * @see org.eclipse.jface.text.source.IAnnotationModel#getAnnotationIterator()
 	 */
 	public Iterator getAnnotationIterator() {
 		return getAnnotationIterator(true, true);
@@ -556,7 +560,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	}
 	
 	/*
-	 * @see IAnnotationModel#getPosition(Annotation)
+	 * @see org.eclipse.jface.text.source.IAnnotationModel#getPosition(org.eclipse.jface.text.source.Annotation)
 	 */
 	public Position getPosition(Annotation annotation) {
 		Position position= (Position) fAnnotations.get(annotation);
@@ -605,7 +609,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	}
 	
 	/*
-	 * @see IAnnotationModel#removeAnnotation(Annotation)
+	 * @see org.eclipse.jface.text.source.IAnnotationModel#removeAnnotation(org.eclipse.jface.text.source.Annotation)
 	 */
 	public void removeAnnotation(Annotation annotation) {
 		removeAnnotation(annotation, true);

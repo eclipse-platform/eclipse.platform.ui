@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.jface.text.source;
-
 
 
 import java.util.Iterator;
@@ -22,13 +21,24 @@ import org.eclipse.jface.text.Position;
  * This interface defines the model for managing annotations attached to a document.
  * The model maintains a set of annotations for a given document and notifies registered annotation 
  * model listeners about annotation model changes. It also provides methods
- * for inquerying the current offset and length of an annotation managed
+ * for querying the current position of an annotation managed
  * by this model.<p>
+ * 
+ * In order to provided backward compatibility for clients of <code>IAnnotationModel</code>, extension
+ * interfaces are used to provide a means of evolution. The following extension interfaces
+ * exist:
+ * <ul>
+ * <li> {@link org.eclipse.jface.text.source.IAnnotationModelExtension} since version 3.0 introducing the concept
+ *      of model piggybacking annotation models, modification time stamps, and enhanced manipulation methods.
+ * </li>
+ * </ul>
+ * 
  * Clients may implement this interface or use the default implementation provided
  * by <code>AnnotationModel</code>.
  *
- * @see Annotation
- * @see IAnnotationModelListener
+ * @see org.eclipse.jface.text.source.IAnnotationModelExtension
+ * @see org.eclipse.jface.text.source.Annotation
+ * @see org.eclipse.jface.text.source.IAnnotationModelListener
  */
 public interface IAnnotationModel {
 	
