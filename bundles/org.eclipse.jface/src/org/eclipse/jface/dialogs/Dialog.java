@@ -47,6 +47,11 @@ import org.eclipse.swt.widgets.Shell;
  * from disappearing behind the application's other windows, making it very
  * confusing for the user.
  * </p>
+ * <p>
+ * If there is more than one modal dialog is open the second one should be parented off
+ * of the shell of the first one otherwise it is possible that the OS will give focus to
+ * the first dialog potentially blocking the UI.
+ * </p>
  */
 public abstract class Dialog extends Window {
     /**

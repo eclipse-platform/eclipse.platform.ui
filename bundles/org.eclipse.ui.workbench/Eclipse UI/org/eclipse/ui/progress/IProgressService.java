@@ -62,7 +62,14 @@ public interface IProgressService extends IRunnableContext {
      * Note: Running long operations in the UI thread is generally not 
      * recommended. This can result in the UI becoming unresponsive for
      * the duration of the operation. Where possible, <tt>busyCursorWhile</tt>
-     * should be used instead.
+     * should be used instead.  
+     * </p>
+     * <p>
+     * Modal dialogs should also be avoided in the runnable as there will already
+     * be a modal progress dialog open when this operation runs.
+     * </p>
+     * @see org.eclipse.jface.dialogs.Dialog
+     * @see SWT#APPLICATION_MODAL
      * 
      * @param context The runnable context to run the operation in
      * @param runnable The operation to run
@@ -71,6 +78,7 @@ public interface IProgressService extends IRunnableContext {
      *  while running the runnable
      * @throws InterruptedException propagated by the context if the runnable 
      *  acknowledges cancelation by throwing this exception.
+     *  
      */
     public void runInUI(IRunnableContext context,
             IRunnableWithProgress runnable, ISchedulingRule rule)
