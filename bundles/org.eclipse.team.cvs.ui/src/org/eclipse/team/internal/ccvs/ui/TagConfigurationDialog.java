@@ -64,6 +64,7 @@ import org.eclipse.team.internal.ccvs.ui.model.CVSFileElement;
 import org.eclipse.team.internal.ccvs.ui.model.CVSFolderElement;
 import org.eclipse.team.internal.ccvs.ui.model.CVSRootFolderElement;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -154,7 +155,7 @@ public class TagConfigurationDialog extends Dialog {
 		gridLayout.numColumns = 2;
 		gridLayout.makeColumnsEqualWidth = true;
 		shell.setLayout (gridLayout);
-
+		
 		Label description = new Label(shell,SWT.WRAP);
 		description.setText(Policy.bind("TagConfigurationDialog.4")); //$NON-NLS-1$
 		data = new GridData (GridData.FILL_BOTH);
@@ -372,12 +373,15 @@ public class TagConfigurationDialog extends Dialog {
 						}
 					}
 				});			
+			WorkbenchHelp.setHelp(autoRefreshFileList, IHelpContextIds.TAG_CONFIGURATION_REFRESHLIST);
 		}
 			
 		Label seperator = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 		data = new GridData (GridData.FILL_BOTH);		
 		data.horizontalSpan = 2;
 		seperator.setLayoutData(data);
+
+		WorkbenchHelp.setHelp(shell, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);
 
 		updateEnablements();
 		return shell;
@@ -506,6 +510,7 @@ public class TagConfigurationDialog extends Dialog {
 			}
 		}
 		cvsDefinedTagsTree.refresh();
+		cvsDefinedTagsTree.getTree().setFocus();
 	}
 	
 	private boolean isTagSelectedInKnownTagTree() {
@@ -597,7 +602,6 @@ public class TagConfigurationDialog extends Dialog {
 	private static Button createTagRefreshButton(final Shell shell, Composite composite, String title, final ICVSFolder folder, final Runnable runnable) {
 		Button refreshButton = new Button(composite, SWT.PUSH);
 		refreshButton.setText (title);
-		updateToolTipHelpForRefreshButton(refreshButton, folder);
 		refreshButton.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
 					try {
@@ -620,19 +624,9 @@ public class TagConfigurationDialog extends Dialog {
 						}
 					}
 				}
-			});	
+			});
+		updateEnablementOnRefreshButton(refreshButton, folder);
 		return refreshButton;		
-	 }
-	 
-	private static void updateToolTipHelpForRefreshButton(Button button, ICVSFolder folder) {
-		StringBuffer tooltip = new StringBuffer(Policy.bind("TagConfigurationDialog.15")); //$NON-NLS-1$
-		String[] autoFiles = CVSUIPlugin.getPlugin().getRepositoryManager().getAutoRefreshFiles(folder);
-		tooltip.append("\n - .project\n"); //$NON-NLS-1$
-		for (int i = 0; i < autoFiles.length; i++) {
-			tooltip.append("-  " + autoFiles[i] + "\n"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		tooltip.append(Policy.bind("TagConfigurationDialog.19")); //$NON-NLS-1$
-		button.setToolTipText(tooltip.toString());
 	 }
 	 
 	 public static void createTagDefinitionButtons(final Shell shell, Composite composite, final ICVSFolder[] folders, int hHint, int wHint, final Runnable afterRefresh, final Runnable afterConfigure) {
@@ -655,7 +649,7 @@ public class TagConfigurationDialog extends Dialog {
 		}
 		data.horizontalAlignment = GridData.END;
 		data.horizontalSpan = 1;
-		refreshButton.setLayoutData (data);
+		refreshButton.setLayoutData (data);		
 
 		Button addButton = new Button(buttonComp, SWT.PUSH);
 		addButton.setText (Policy.bind("TagConfigurationDialog.21")); //$NON-NLS-1$
@@ -672,10 +666,18 @@ public class TagConfigurationDialog extends Dialog {
 				public void handleEvent(Event event) {
 					TagConfigurationDialog d = new TagConfigurationDialog(shell, folders);
 					d.open();
-					TagConfigurationDialog.updateToolTipHelpForRefreshButton(refreshButton, folders[0]);
+					updateEnablementOnRefreshButton(refreshButton, folders[0]);
 					afterConfigure.run();
 				}
 			});		
+		
+		WorkbenchHelp.setHelp(refreshButton, IHelpContextIds.TAG_CONFIGURATION_REFRESHACTION);
+		WorkbenchHelp.setHelp(addButton, IHelpContextIds.TAG_CONFIGURATION_OVERVIEW);
+	 }
+	 
+	 private static void updateEnablementOnRefreshButton(Button refreshButton, ICVSFolder project) {
+	 	String[] files = CVSUIPlugin.getPlugin().getRepositoryManager().getAutoRefreshFiles(project);
+ 		refreshButton.setEnabled(files.length != 0);
 	 }
 	 
 	/**
