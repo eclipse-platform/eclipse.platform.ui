@@ -48,7 +48,7 @@ public class UpdateMergableOnly extends Update {
 			String adjustedFileName = fileName;
 			if (ResourceSyncInfo.isMergedWithConflicts(entryBytes)) {
 				// for merged-with-conflict, return a temp file
-				adjustedFileName = ".##" + adjustedFileName; //$NON-NLS-1$
+				adjustedFileName = ".##" + adjustedFileName + " " + ResourceSyncInfo.getRevision(entryBytes); //$NON-NLS-1$ //$NON-NLS-2$
 				skippedFiles.add(((IContainer)mParent.getIResource()).getFile(new Path(fileName)));
 			}
 			return super.getTargetFile(mParent, adjustedFileName, entryBytes);
