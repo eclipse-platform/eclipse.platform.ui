@@ -8,11 +8,11 @@ package org.eclipse.team.internal.ccvs.core.resources;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.commands.FileNameMatcher;
@@ -124,7 +124,7 @@ class ManagedFolder extends ManagedResource implements IManagedFolder {
 	 */
 	private Object[] merge(Object[] array1, Object[] array2, Object[] resultArray) {
 		
-		Set mergeSet = new TreeSet();
+		Set mergeSet = new HashSet();
 		
 		for (int i=0; i<array1.length; i++) {
 			mergeSet.add(array1[i]);
