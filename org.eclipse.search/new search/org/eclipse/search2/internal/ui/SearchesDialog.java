@@ -14,20 +14,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.search.internal.ui.util.ListContentProvider;
-import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -37,7 +28,23 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+
 import org.eclipse.ui.dialogs.SelectionDialog;
+
+import org.eclipse.search.ui.ISearchResult;
+
+import org.eclipse.search.internal.ui.util.ListContentProvider;
+import org.eclipse.search.internal.ui.util.SWTUtil;
 
 /**
  * Dialog that shows a list of items with icon and label.
@@ -111,18 +118,14 @@ public class SearchesDialog extends SelectionDialog {
 		
 		GridLayout layout= new GridLayout();
 		layout.numColumns= 2;
+		layout.marginHeight= 0;
+		layout.marginWidth= 0;
 		parent.setLayout(layout);
 		
 
 		fViewer= new TableViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		fViewer.setContentProvider(new ListContentProvider());
 		
-		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				getButton(REMOVE_ID).setEnabled(!event.getSelection().isEmpty());
-			}
-		});
-
 		final Table table= fViewer.getTable();
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseDoubleClick(MouseEvent e) {
@@ -135,8 +138,22 @@ public class SearchesDialog extends SelectionDialog {
 		gd.widthHint= convertWidthInCharsToPixels(WIDTH_IN_CHARACTERS);
 		table.setLayoutData(gd);
 		
-		Button button= createButton(parent, REMOVE_ID, SearchMessages.getString("SearchesDialog.remove.label"), false); //$NON-NLS-1$
-		((GridData)button.getLayoutData()).verticalAlignment= GridData.BEGINNING;
+		
+        final Button button= new Button(parent, SWT.PUSH);
+        button.setText(SearchMessages.getString("SearchesDialog.remove.label")); //$NON-NLS-1$
+        button.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent event) {
+                buttonPressed(REMOVE_ID);
+            }
+        });
+		button.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
+		SWTUtil.setButtonDimensionHint(button);
+		
+		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				button.setEnabled(!event.getSelection().isEmpty());
+			}
+		});
 		
 		applyDialogFont(ancestor);
 
