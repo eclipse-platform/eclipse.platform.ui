@@ -129,9 +129,17 @@ public class RemoteFolderTreeBuilder {
 		return (LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]);
 	}
 	
-	public static RemoteFolderTree buildBaseTree(CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag, IProgressMonitor monitor) throws CVSException {
-		RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, root, tag);
- 		return builder.buildBaseTree(null, root, monitor);
+	public static RemoteFolderTree buildBaseTree(CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag, IProgressMonitor progress) throws CVSException {
+		try {
+			RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, root, tag);
+			progress.setTaskName(Policy.bind("RemoteFolderTreeBuilder.buildingBaseTree", root.getName()));
+			progress.beginTask(null, 100);
+			IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(progress, 100);
+			subProgress.beginTask(null, 512);  //$NON-NLS-1$
+	 		return builder.buildBaseTree(null, root, subProgress);
+		} finally {
+			progress.done();
+		}
 	}
 	
 	public static RemoteFolderTree buildRemoteTree(CVSRepositoryLocation repository, IContainer root, CVSTag tag, IProgressMonitor monitor) throws CVSException {
@@ -144,32 +152,44 @@ public class RemoteFolderTreeBuilder {
 	}
 	
 	private RemoteFolderTree buildTree(IProgressMonitor monitor) throws CVSException {
-		Session session = new Session(repository, root, false);
-		session.open(monitor);
+		
 		try {
-			fetchDelta(session, monitor);
-			if (projectDoesNotExist) {
-				return null;
+			monitor.setTaskName(Policy.bind("RemoteFolderTreeBuilder.buildingRemoteTree", root.getName()));
+			monitor.beginTask(null, 100);
+	
+			Session session = new Session(repository, root, false);
+			session.open(Policy.subMonitorFor(monitor, 10));
+			try {
+				fetchDelta(session, Policy.subMonitorFor(monitor, 50));
+				if (projectDoesNotExist) {
+					return null;
+				}
+			} finally {
+				session.close();
+			}
+			// FIXME: We need a second session because of the use of a different handle on the same remote resource
+			// We didn't need one before!!! Perhaps we could support the changing of a sessions root as long as
+			// the folder sync info is the same 
+			remoteRoot =
+				new RemoteFolderTree(null, root.getName(), repository,
+					new Path(root.getFolderSyncInfo().getRepository()),
+					tagForRemoteFolder(root, tag));
+			session = new Session(repository, remoteRoot, false);
+			session.open(Policy.subMonitorFor(monitor, 10));
+			try {
+				// Set up an infinite progress monitor for the recursive build
+				IProgressMonitor subProgress = Policy.infiniteSubMonitorFor(monitor, 30);
+				subProgress.beginTask(null, 512);
+				// Build the remote tree
+				buildRemoteTree(session, root, remoteRoot, Path.EMPTY, subProgress);
+				if (!changedFiles.isEmpty())
+					fetchFileRevisions(session, (String[])changedFiles.toArray(new String[changedFiles.size()]), Policy.subMonitorFor(monitor, 20));
+				return remoteRoot;
+			} finally {
+				session.close();
 			}
 		} finally {
-			session.close();
-		}
-		// FIXME: We need a second session because of the use of a different handle on the same remote resource
-		// We didn't need one before!!! Perhaps we could support the changing of a sessions root as long as
-		// the folder sync info is the same 
-		remoteRoot =
-			new RemoteFolderTree(null, root.getName(), repository,
-				new Path(root.getFolderSyncInfo().getRepository()),
-				tagForRemoteFolder(root, tag));
-		session = new Session(repository, remoteRoot, false);
-		session.open(monitor);
-		try {
-			buildRemoteTree(session, root, remoteRoot, Path.EMPTY, monitor);
-			if (!changedFiles.isEmpty())
-				fetchFileRevisions(session, (String[])changedFiles.toArray(new String[changedFiles.size()]), monitor);
-			return remoteRoot;
-		} finally {
-			session.close();
+			monitor.done();
 		}
 	}
 	
@@ -178,6 +198,7 @@ public class RemoteFolderTreeBuilder {
 	 * 
 	 * The localPath is used to retrieve deltas from the recorded deltas
 	 * 
+	 * Does 1 work for each managed file and folder
 	 */
 	private RemoteFolderTree buildBaseTree(RemoteFolderTree parent, ICVSFolder local, IProgressMonitor monitor) throws CVSException {
 		
@@ -191,6 +212,8 @@ public class RemoteFolderTreeBuilder {
 		ICVSFolder[] folders = local.getFolders();
 		for (int i=0;i<folders.length;i++) {
 			if (folders[i].isManaged() && folders[i].isCVSFolder()) {
+				monitor.subTask("Building base for " + folders[i].getRelativePath(root));
+				monitor.worked(1);
 				children.add(buildBaseTree(remote, folders[i], monitor));
 			}
 		}
@@ -210,6 +233,7 @@ public class RemoteFolderTreeBuilder {
 			if (info.isDeleted())
 				info = new ResourceSyncInfo(info.getName(), info.getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions());
 			children.add(new RemoteFile(remote, info));
+			monitor.worked(1);
 		}
 
 		// Add the children to the remote folder tree
@@ -223,6 +247,7 @@ public class RemoteFolderTreeBuilder {
 	 * 
 	 * The localPath is used to retrieve deltas from the recorded deltas
 	 * 
+	 * Does 1 work for each file and folder delta processed
 	 */
 	private void buildRemoteTree(Session session, ICVSFolder local, RemoteFolderTree remote, IPath localPath, IProgressMonitor monitor) throws CVSException {
 		
@@ -304,6 +329,7 @@ public class RemoteFolderTreeBuilder {
 			} else {
 				// We should never get here
 			}
+			monitor.worked(1);
 		}
 
 		// Add the children to the remote folder tree
@@ -358,7 +384,7 @@ public class RemoteFolderTreeBuilder {
 	 * 
 	 * Returns the list of changed files
 	 */
-	private List fetchDelta(Session session, IProgressMonitor monitor) throws CVSException {
+	private List fetchDelta(Session session, final IProgressMonitor monitor) throws CVSException {
 		
 		// Create an listener that will accumulate new and removed files and folders
 		final List newChildDirectories = new ArrayList();
@@ -367,6 +393,7 @@ public class RemoteFolderTreeBuilder {
 				if (newDirectory) {
 					// Record new directory with parent so it can be retrieved when building the parent
 					recordDelta(path, FOLDER, Update.STATE_NONE);
+					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", path.toString()));
 					// Record new directory to be used as a parameter to fetch its contents
 					newChildDirectories.add(path.toString());
 				}
@@ -377,6 +404,7 @@ public class RemoteFolderTreeBuilder {
 					projectDoesNotExist = true;
 				} else {
 					recordDelta(path, DELETED, Update.STATE_NONE);
+					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", path.toString()));
 				}
 			}
 			public void fileInformation(int type, String filename) {
@@ -400,11 +428,13 @@ public class RemoteFolderTreeBuilder {
 					case Update.STATE_REMOTE_CHANGES : // We have an remote change to an unmodified local file
 								changedFiles.add(filename);
 								recordDelta(new Path(filename), UNKNOWN, type);
+								monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", filename));
 								break;
 				}	
 			}
 			public void fileDoesNotExist(String filename) {
 				recordDelta(new Path(filename), DELETED, Update.STATE_NONE);
+				monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", filename));
 			}
 		};
 		
@@ -419,8 +449,12 @@ public class RemoteFolderTreeBuilder {
 			monitor);
 		return changedFiles;
 	}
-	
-	private void fetchNewDirectory(Session session, RemoteFolderTree newFolder, IPath localPath, IProgressMonitor monitor) throws CVSException {
+	/*
+	 * Fetch the children of a previously unknown directory.
+	 * 
+	 * The fetch may do up to 2 units of work in the provided monitor.
+	 */
+	private void fetchNewDirectory(Session session, RemoteFolderTree newFolder, IPath localPath, final IProgressMonitor monitor) throws CVSException {
 		
 		// Create an listener that will accumulate new files and folders
 		IUpdateMessageListener listener = new IUpdateMessageListener() {
@@ -429,6 +463,7 @@ public class RemoteFolderTreeBuilder {
 					// Record new directory with parent so it can be retrieved when building the parent
 					// NOTE: Check path prefix
 					recordDelta(path, FOLDER, Update.STATE_NONE);
+					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", path.toString()));
 				}
 			}
 			public void directoryDoesNotExist(IPath path) {
@@ -437,6 +472,7 @@ public class RemoteFolderTreeBuilder {
 				// NOTE: Check path prefix
 				changedFiles.add(filename);
 				recordDelta(new Path(filename), ADDED, type);
+				monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingDelta", filename));
 			}
 			public void fileDoesNotExist(String filename) {
 			}
@@ -449,7 +485,7 @@ public class RemoteFolderTreeBuilder {
 			updateLocalOptions,
 			new String[] { localPath.toString() },
 			new UpdateListener(listener),
-			monitor); 
+			Policy.subMonitorFor(monitor, 1)); 
 		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			// FIXME: This should be refactored (maybe static methods on CVSException?)
 			CVSServerException e = new CVSServerException(status);
@@ -464,7 +500,7 @@ public class RemoteFolderTreeBuilder {
 				getOptionsWithoutTag(),
 				new String[] { localPath.toString() },
 				new UpdateListener(listener),
-				monitor);
+				Policy.subMonitorFor(monitor, 1));
 			if (status.getCode() == CVSStatus.SERVER_ERROR) {
 				throw new CVSServerException(status);
 			}
@@ -472,7 +508,7 @@ public class RemoteFolderTreeBuilder {
 	}
 	
 	// Get the file revisions for the given filenames
-	private void fetchFileRevisions(Session session, String[] fileNames, IProgressMonitor monitor) throws CVSException {
+	private void fetchFileRevisions(Session session, String[] fileNames, final IProgressMonitor monitor) throws CVSException {
 		
 		// Create a listener for receiving the revision info
 		final int[] count = new int[] {0};
@@ -481,6 +517,7 @@ public class RemoteFolderTreeBuilder {
 			public void fileStatus(IPath path, String remoteRevision) {
 				try {
 					updateRevision(path, remoteRevision);
+					monitor.subTask(Policy.bind("RemoteFolderTreeBuilder.receivingRevision", path.toString()));
 					count[0]++;
 				} catch (CVSException e) {
 					// The count will be off which will trigger another exception

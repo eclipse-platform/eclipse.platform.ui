@@ -571,18 +571,22 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * wasn't added remotely by a third party
 	 */
 	private ICVSRemoteResource getRemoteTreeFromParent(IResource resource, ICVSResource managed, CVSTag tag, IProgressMonitor progress) throws TeamException {
+
 		// If the parent isn't mapped to CVS, there's nothing we can do
 		ICVSFolder parent = managed.getParent();
 		if (!parent.isCVSFolder()) {
 			// Check to make sure the project still has the CVS information
 			if (managedProject.getFolderSyncInfo() == null) {
 				// This is a catastrophic error. The project should have CVS information
-				TeamPlugin.getManager().removeProvider(project, Policy.monitorFor(null));
+				TeamPlugin.getManager().removeProvider(project, progress);
 				throw new CVSException(new CVSStatus(CVSStatus.ERROR, project.getFullPath(), Policy.bind("CVSTeamProvider.invalidProjectState", managedProject.getName()), null)); //$NON-NLS-1$
 			} else {
 				throw new CVSException(new CVSStatus(CVSStatus.ERROR, resource.getFullPath(), Policy.bind("CVSTeamProvider.unmanagedParent", resource.getFullPath().toString()), null)); //$NON-NLS-1$
 			}
 		}
+		
+		// Fetch the parent tree.
+		// The progress monitor is only passed to one method so no wrapping is needed
 		ICVSRepositoryLocation location = CVSProvider.getInstance().getRepository(parent.getFolderSyncInfo().getRoot());
 		// XXX We build and fetch the whole tree from the parent. We could restrict the search to just the desired child
 		RemoteFolder remoteParent = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, parent, tag, progress);
@@ -609,14 +613,22 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		// The resource doesn't have a remote base. 
 		// However, we still need to check to see if its been created remotely by a third party.
 		if (remote == null) {
+			// The progress monitor is only passed to one method so no wrapping is needed
 			remote = getRemoteTreeFromParent(resource, managed, tag, progress);
 		} else if(resource.getType() == IResource.FILE) {
+			// The progress monitor is only passed to one method so no wrapping is needed
 			baseTree = remote;
 			remote = RemoteFile.getLatest((RemoteFolder)getRemoteResource(resource.getParent()), (ICVSFile)managed, tag, progress);
 		} else {
-			ICVSRepositoryLocation location = remote.getRepository();
-			baseTree = RemoteFolderTreeBuilder.buildBaseTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
-			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
+			try {
+				progress.setTaskName(Policy.bind("CVSTeamProvider.fetchingRemote", resource.getFullPath().toString()));
+				progress.beginTask(null, 100);
+				ICVSRepositoryLocation location = remote.getRepository();
+				baseTree = RemoteFolderTreeBuilder.buildBaseTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, Policy.subMonitorFor(progress, 20));
+				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, Policy.subMonitorFor(progress, 80));
+			} finally {
+				progress.done();
+			}
 		}
 		return new CVSRemoteSyncElement(false, resource, baseTree, remote);
 	}
@@ -626,10 +638,13 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		ICVSResource managed = getChild(resource);
 		ICVSRemoteResource remote = getRemoteResource(resource);
 		if (remote == null) {
+			// The progress monitor is only passed to one method so no wrapping is needed
 			remote = getRemoteTreeFromParent(resource, managed, tag, progress);
 		} else if(resource.getType() == IResource.FILE) {
+			// The progress monitor is only passed to one method so no wrapping is needed
 			remote = RemoteFile.getLatest((RemoteFolder)getRemoteResource(resource.getParent()), (ICVSFile)managed, tag, progress);
 		} else {
+			// The progress monitor is only passed to one method so no wrapping is needed
 			ICVSRepositoryLocation location = remote.getRepository();
 			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);		
 		}
