@@ -596,6 +596,9 @@ public class ResourceSyncInfo {
 	public static boolean isBinary(byte[] syncBytes)  throws CVSException {
 		if (syncBytes == null) return false;
 		String mode = Util.getSubstring(syncBytes, SEPARATOR_BYTE, 4, false);
+		if (mode == null) {
+			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes))); //$NON-NLS-1$
+		}
 		return "-kb".equals(mode); //$NON-NLS-1$
 	}
 	
@@ -727,9 +730,12 @@ public class ResourceSyncInfo {
 	 * @param fileTimestamp
 	 * @return String
 	 */
-	public static String getTimestampToServer(byte[] syncBytes, Date fileTimestamp) {
+	public static String getTimestampToServer(byte[] syncBytes, Date fileTimestamp) throws CVSException {
 		if(fileTimestamp != null) {
 			String syncTimestamp = Util.getSubstring(syncBytes, SEPARATOR_BYTE, 3, false);
+			if (syncTimestamp == null) {
+				throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes))); //$NON-NLS-1$
+			}
 			int syncType = getSyncType(syncTimestamp);
 			if (syncType != TYPE_REGULAR) {
 				if (syncType == TYPE_MERGED_WITH_CONFLICTS && fileTimestamp.equals(getTimestamp(syncTimestamp))) {
@@ -855,8 +861,11 @@ public class ResourceSyncInfo {
 	 * @param syncBytes1
 	 * @return boolean
 	 */
-	public static boolean isMerge(byte[] syncBytes) {
+	public static boolean isMerge(byte[] syncBytes) throws CVSException {
 		String timestamp = Util.getSubstring(syncBytes, SEPARATOR_BYTE, 3, false);
+		if (timestamp == null) {
+			throw new CVSException(Policy.bind("ResourceSyncInfo.malformedSyncBytes", new String(syncBytes))); //$NON-NLS-1$
+		}
 		int syncType = getSyncType(timestamp);
 		return syncType == TYPE_MERGED || syncType == TYPE_MERGED_WITH_CONFLICTS;
 	}

@@ -258,7 +258,11 @@ public class Util {
 	 * @return String
 	 */
 	public static String getSubstring(byte[] bytes, byte delimiter, int index, boolean includeRest) {
-		return new String(getBytesForSlot(bytes, delimiter, index, includeRest));
+		byte[] bytesForSlot = getBytesForSlot(bytes, delimiter, index, includeRest);
+		if (bytesForSlot == null) {
+			return null;
+		}
+		return new String(bytesForSlot);
 	}
 	
 	/**
