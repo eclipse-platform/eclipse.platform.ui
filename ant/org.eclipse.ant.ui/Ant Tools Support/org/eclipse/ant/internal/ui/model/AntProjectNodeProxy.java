@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.ant.internal.ui.AntUtil;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 
 
@@ -23,6 +24,7 @@ public class AntProjectNodeProxy extends AntProjectNode {
 	
 	private String fBuildFileName;
 	private String fDefaultTargetName;
+	private boolean fParsed= false;
 
 	/**
 	 * Creates a new project node with the given name and the given build file
@@ -46,18 +48,23 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		this(null, buildFileName);
 	}
 	
-	public void parseBuildFile() {
-		
+	public void parseBuildFile(boolean force) {
+		if (fParsed && !force) {
+			return;
+		}
+		fParsed= true;
 		AntTargetNode[] nodes = null;
 		IPath buildFilePath= AntUtil.getFile(getBuildFileName()).getLocation();
 		if (buildFilePath == null) {
-			//setErrorMessage(AntViewElementsMessages.getString("ProjectNode.Build_file_not_found_1")); //$NON-NLS-1$
+			setProblemSeverity(AntModelProblem.SEVERITY_ERROR);
+			setProblemMessage(AntModelMessages.getString("AntProjectNodeProxy.0")); //$NON-NLS-1$
 			return;
 		}
 		nodes = AntUtil.getTargets(buildFilePath.toString());
 		
 		if (nodes.length < 1) {
-			//setErrorMessage(AntViewElementsMessages.getString("ProjectNode.No_targets")); //$NON-NLS-1$
+			setProblemSeverity(AntModelProblem.SEVERITY_ERROR);
+			setProblemMessage(AntModelMessages.getString("AntProjectNodeProxy.1")); //$NON-NLS-1$
 			return;
 		}
 		
@@ -65,15 +72,17 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		fChildNodes= Arrays.asList(nodes);
 		fModel= projectNode.getAntModel();
 		fProject= (AntModelProject)projectNode.getProject();
-		if (projectNode.isErrorNode()) {
-			//setErrorMessage(projectNode.getLabel());
-			return;
-		}
+		
 		String projectName = projectNode.getName();
 		if (projectName == null) {
-			projectName= AntModelMessages.getString("AntProjectNodeProxy.0");  //$NON-NLS-1$
+			projectName= AntModelMessages.getString("AntProjectNodeProxy.2"); //$NON-NLS-1$
 		}
 	}
+	
+	public void parseBuildFile() {
+		parseBuildFile(false);
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.model.AntProjectNode#getDescription()
 	 */
@@ -116,7 +125,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 
 	public void setDefaultTargetName(String defaultTarget) {
 		fDefaultTargetName= defaultTarget;
-		
 	}
 	
 	public String getDefaultTargetName() {
@@ -150,7 +158,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
         }
     }
     
-    
     /* (non-Javadoc)
      * @see org.eclipse.ant.internal.ui.model.AntElementNode#isErrorNode()
      */
@@ -158,16 +165,17 @@ public class AntProjectNodeProxy extends AntProjectNode {
         if (fProject == null) {
             return super.isErrorNode();
         } 
-        return fModel.getProjectNode().isErrorNode();
+        return getRealNode().isErrorNode();
     }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ant.internal.ui.model.AntElementNode#getProblemMessage()
      */
     public String getProblemMessage() {
        if (fProject == null) {
-           return null;
+           return super.getProblemMessage();
        }
-        return fModel.getProjectNode().getProblemMessage();
+        return getRealNode().getProblemMessage();
     }
     /* (non-Javadoc)
      * @see org.eclipse.ant.internal.ui.model.AntElementNode#isWarningNode()
@@ -176,9 +184,16 @@ public class AntProjectNodeProxy extends AntProjectNode {
         if (fProject == null) {
             return super.isWarningNode();
         } 
-        return fModel.getProjectNode().isWarningNode();
+        return getRealNode().isWarningNode();
     }
     
+	private AntProjectNode getRealNode() {
+		if (fModel != null) {
+			return fModel.getProjectNode();
+		}
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getAntModel()
 	 */
@@ -196,7 +211,11 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		if (fProject == null) {
 			parseBuildFile();
 		}
-		return fModel.getProjectNode().getLength();
+		AntProjectNode realNode= getRealNode();
+		if (realNode == null) {
+			return -1;
+		}
+		return realNode.getLength();
 	}
 	
 	/* (non-Javadoc)
@@ -206,7 +225,11 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		if (fProject == null) {
 			parseBuildFile();
 		}
-		return fModel.getProjectNode().getOffset();
+		AntProjectNode realNode= getRealNode();
+		if (realNode == null) {
+			return -1;
+		}
+		return realNode.getOffset();
 	}
 	
 	/* (non-Javadoc)
@@ -216,6 +239,23 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		if (fProject == null) {
 			parseBuildFile();
 		}
-		return fModel.getProjectNode().getSelectionLength();
+		AntProjectNode realNode= getRealNode();
+		if (realNode == null) {
+			return -1;
+		}
+		return realNode.getSelectionLength();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getBuildFileResource()
+	 */
+	public IFile getBuildFileResource() {
+		if (fProject == null) {
+			if (fBuildFileName != null) {
+				return AntUtil.getFile(fBuildFileName);
+			}
+		}
+		return super.getBuildFileResource();
+	}
+	
 }

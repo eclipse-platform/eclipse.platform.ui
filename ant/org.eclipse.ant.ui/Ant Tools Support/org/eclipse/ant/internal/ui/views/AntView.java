@@ -158,7 +158,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * structural changes.
 	 */
 	private void handleBuildFileChanged(AntProjectNode project) {
-		((AntProjectNodeProxy)project).parseBuildFile();
+		((AntProjectNodeProxy)project).parseBuildFile(true);
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				//must do a full refresh to re-sort
