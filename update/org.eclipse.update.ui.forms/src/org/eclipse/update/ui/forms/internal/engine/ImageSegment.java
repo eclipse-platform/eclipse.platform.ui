@@ -51,7 +51,7 @@ public class ImageSegment extends ParagraphSegment implements IImageSegment {
 		}
 		if (wHint != SWT.DEFAULT && loc.x + iwidth > wHint) {
 			// new line
-			loc.x = iwidth;
+			loc.x = loc.indent + iwidth;
 			loc.width = loc.x;
 			loc.y += loc.rowHeight;
 			loc.rowHeight = iheight;
@@ -80,7 +80,7 @@ public class ImageSegment extends ParagraphSegment implements IImageSegment {
 		
 		if (ix + iwidth > width) {
 			// new row
-			ix = loc.marginWidth;
+			ix = loc.indent + loc.marginWidth;
 			iy += loc.rowHeight;
 			loc.rowHeight = 0;
 		}

@@ -9,6 +9,7 @@ package org.eclipse.update.ui.forms.internal.engine;
  * @author
  */
 public interface IParagraph {
+	public int getIndent();
 	public IParagraphSegment [] getSegments();
 	public void addSegment(IParagraphSegment segment);
 	public boolean getAddVerticalSpace();

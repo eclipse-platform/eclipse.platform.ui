@@ -81,8 +81,14 @@ public class TextModel implements ITextModel {
 					paragraphs.add(p);
 				}
 			} else if (child.getNodeType() == Node.ELEMENT_NODE) {
-				if (child.getNodeName().equalsIgnoreCase("p")) {
+				String tag = child.getNodeName().toLowerCase();
+				if (tag.equals("p")) {
 					IParagraph p = processParagraph(child, expandURLs);
+					if (p != null)
+						paragraphs.add(p);
+				}
+				else if (tag.equals("li")) {
+					IParagraph p = processListItem(child, expandURLs);
 					if (p != null)
 						paragraphs.add(p);
 				}
@@ -100,6 +106,51 @@ public class TextModel implements ITextModel {
 			addSpace = value.equalsIgnoreCase("true");
 		}
 		Paragraph p = new Paragraph(addSpace);
+		
+		processSegments(p, children, expandURLs);
+		return p;
+	}
+	private IParagraph processListItem(Node listItem, boolean expandURLs) {
+		NodeList children = listItem.getChildNodes();
+		NamedNodeMap atts = listItem.getAttributes();
+		Node addSpaceAtt = atts.getNamedItem("addVerticalSpace");
+		Node styleAtt = atts.getNamedItem("style");
+		Node valueAtt = atts.getNamedItem("value");
+		Node indentAtt = atts.getNamedItem("indent");
+		int style = IBulletParagraph.CIRCLE;
+		int indent = -1;
+		String text = null;
+		boolean addSpace = true;
+		
+		if (addSpaceAtt != null) {
+			String value = addSpaceAtt.getNodeValue();
+			addSpace = value.equalsIgnoreCase("true");
+		}
+		if (styleAtt!=null) {
+			String value = styleAtt.getNodeValue();
+			if (value.equalsIgnoreCase("text")) {
+				style = IBulletParagraph.TEXT;
+			}
+			else if (value.equalsIgnoreCase("image")) {
+				style = IBulletParagraph.IMAGE;
+			}
+		}
+		if (valueAtt!=null) {
+			text = valueAtt.getNodeValue();
+		}
+		if (indentAtt!=null) {
+			String value = valueAtt.getNodeValue();
+			try {
+				indent =Integer.parseInt(value);
+			}
+			catch (NumberFormatException e) {
+			}
+		}
+				
+		BulletParagraph p = new BulletParagraph(addSpace);
+		p.setIndent(indent);
+		p.setBulletStyle(style);
+		p.setBulletText(text);
 		
 		processSegments(p, children, expandURLs);
 		return p;

@@ -9,6 +9,7 @@ package org.eclipse.update.ui.forms.internal.engine;
  * @author
  */
 public class Locator {
+	public int indent;
 	public int x, y;
 	public int width, height;
 	public int rowHeight;
@@ -16,8 +17,12 @@ public class Locator {
 	public int marginHeight;
 	
 	public void newLine() {
-		x = marginWidth;
+		resetCaret();
 		y += rowHeight;
 		rowHeight = 0;
+	}
+	
+	public void resetCaret() {
+		x = marginWidth + indent;
 	}
 }

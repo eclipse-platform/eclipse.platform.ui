@@ -53,10 +53,11 @@ public class FormEngineLayout extends Layout {
 			IParagraph p = paragraphs[i];
 
 			if (i > 0 && engine.paragraphsSeparated && p.getAddVerticalSpace())
-				loc.y += lineHeight;
+				loc.y += engine.getParagraphSpacing(lineHeight);
 
 			loc.rowHeight = 0;
-			loc.x = 0;
+			loc.indent = p.getIndent();
+			loc.x = p.getIndent();
 
 			IParagraphSegment[] segments = p.getSegments();
 			if (segments.length > 0) {

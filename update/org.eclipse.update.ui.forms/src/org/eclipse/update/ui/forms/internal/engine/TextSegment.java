@@ -107,7 +107,7 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 
 			if (locator.x + extent.x > wHint) {
 				// new line
-				locator.x = isSelectable()?1:0;
+				locator.x = isSelectable()?locator.indent+1:locator.indent;
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;
 			}
@@ -144,7 +144,7 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 
 				saved = last;
 				locator.rowHeight = Math.max(locator.rowHeight, lastExtent.y);
-				locator.x = isSelectable()?1:0;
+				locator.x = isSelectable()?locator.indent+1:locator.indent;
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;
 				width = Math.max(width, lineWidth);
@@ -195,7 +195,7 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 
 			if (locator.x + ewidth > width) {
 				// new line
-				locator.x = locator.marginWidth;
+				locator.resetCaret();
 				if (isSelectable()) locator.x += 1;
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;
@@ -268,7 +268,7 @@ public class TextSegment extends ParagraphSegment implements ITextSegment {
 				}
 				areaRectangles.add(br);
 				locator.rowHeight = Math.max(locator.rowHeight, prevExtent.y);
-				locator.x = locator.marginWidth;
+				locator.resetCaret();
 				if (isSelectable()) locator.x +=1;
 				locator.y += locator.rowHeight;
 				locator.rowHeight = 0;

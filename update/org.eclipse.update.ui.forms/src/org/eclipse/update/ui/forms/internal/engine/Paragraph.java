@@ -21,6 +21,10 @@ public class Paragraph implements IParagraph {
 		this.addVerticalSpace = addVerticalSpace;
 	}
 	
+	public int getIndent() {
+		return 0;
+	}
+	
 	public boolean getAddVerticalSpace() {
 		return addVerticalSpace;
 	}

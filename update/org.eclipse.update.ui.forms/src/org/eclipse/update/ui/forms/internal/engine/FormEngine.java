@@ -26,6 +26,10 @@ public class FormEngine extends Canvas {
 	public boolean getFocus() {
 		return hasFocus;
 	}
+	
+	public int getParagraphSpacing(int lineHeight) {
+		return lineHeight/2;
+	}
 
 	public void setParagraphsSeparated(boolean value) {
 		paragraphsSeparated = value;
@@ -241,10 +245,15 @@ public class FormEngine extends Canvas {
 			IParagraph p = paragraphs[i];
 
 			if (i > 0 && paragraphsSeparated && p.getAddVerticalSpace())
-				loc.y += lineHeight;
+				loc.y += getParagraphSpacing(lineHeight);
 
-			loc.x = marginWidth;
+			loc.indent = p.getIndent();
+			loc.resetCaret();
 			loc.rowHeight = 0;
+			
+			if (p instanceof IBulletParagraph) {
+				((IBulletParagraph)p).paintBullet(gc, loc, lineHeight, objectTable);
+			}
 
 			IParagraphSegment[] segments = p.getSegments();
 			if (segments.length > 0) {
