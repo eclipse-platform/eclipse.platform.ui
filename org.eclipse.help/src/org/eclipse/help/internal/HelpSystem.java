@@ -7,7 +7,9 @@ import java.util.*;
 
 import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.appserver.WebappManager;
+import org.eclipse.help.internal.browser.*;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.search.*;
 import org.eclipse.help.internal.toc.*;
@@ -42,6 +44,7 @@ public final class HelpSystem {
 	private int mode = MODE_WORKBENCH;
 	private boolean webappStarted = false;
 	private IErrorUtil defaultErrorMessenger;
+	private IBrowser browser;
 
 	private boolean webappRunning = false;
 	/**
@@ -253,4 +256,9 @@ public final class HelpSystem {
 		return "org.eclipse.help.webapp";
 	}
 
+	public static synchronized IBrowser getHelpBrowser() {
+		if (getInstance().browser == null)
+			getInstance().browser = BrowserManager.getInstance().createBrowser();
+		return getInstance().browser;
+	}
 }
