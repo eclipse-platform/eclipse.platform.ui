@@ -785,7 +785,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 		}
 		// clear any remembered data
 		rememberedPositions = new ArrayList();
-		relayout();		
 	}
 	/**
 	 */
@@ -813,11 +812,6 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	public IContributionItem remove(IContributionItem item) {
 		Assert.isTrue(item instanceof CoolBarContributionItem);
 		return super.remove(item);
-	}
-	/**
-	 */
-	private void relayout() {
-		coolBar.getParent().layout();
 	}
 	/**
 	 * Save the position of the given CoolItem for restoring the item later.
