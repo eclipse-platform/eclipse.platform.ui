@@ -671,6 +671,7 @@ public class RegistryResolver {
 		} catch (RuntimeException e) {
 			// if the version is invalid, an AssertionFailedException (not visible here) will be thrown
 			if (this.DEBUG_RESOLVE)
+				// only show if we are debugging
 				e.printStackTrace(System.out);
 			// Hopefully, we will never get here.  The version number
 			// has already been successfully converted from a string to
