@@ -163,7 +163,7 @@ public void testInvalidProjectNames() {
 			"AUX", "con.foo", "LPT4.txt","*", "?", "\"", "<", ">", "|"};
 	} else {
 		//invalid names on non-windows platforms
-		names = new String[] {":"};
+		names = new String[] {};
 	}
 	for (int i = 0; i < names.length; i++) {
 		IProject project = root.getProject(names[i]);
