@@ -797,12 +797,6 @@ public class SiteLocal
 		return bundle;
 	}
 
-	/*
-	 * @see ILocalSite#displayUpdateChange()
-	 */
-	public void displayUpdateChange() throws CoreException {
-		getReconciler().displayUpdateChange();
-	}
 
 	/**
 	 * compare two feature references
@@ -847,4 +841,13 @@ public class SiteLocal
 			}
 		}
 		return 0;
-	}}
+	}
+	
+	/**
+	 * @see ILocalSite#getSessionDeltas()
+	 */
+	public ISessionDelta[] getSessionDeltas() {
+		return getReconciler().getSessionDeltas();
+	}
+
+}

@@ -143,10 +143,10 @@ public interface ILocalSite extends IAdaptable {
 	
 	
 	/**
-	 * Prompt the user to configure or unconfigure
-	 * newly discoverd features.
-	 * @throws CoreException if an error occurs.
+	 * Returns the list of discovered Session Delta 
+	 * 
+	 * @return an arrey of Session Delta, or an empty array.
 	 * @since 2.0
 	 */
-	public void displayUpdateChange() throws CoreException;
+	public ISessionDelta[] getSessionDeltas();
 }

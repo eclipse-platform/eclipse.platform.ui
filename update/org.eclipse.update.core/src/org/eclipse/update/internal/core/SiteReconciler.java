@@ -25,11 +25,6 @@ public class SiteReconciler extends ModelObject implements IWritable {
 	private SiteLocal siteLocal;
 	private List newFoundFeatures;
 	private Date date;
-	private static final String SIMPLE_EXTENSION_ID = "deltaHandler";
-	//$NON-NLS-1$
-	private static final String INSTALL_DELTA_HANDLER =
-		"org.eclipse.update.core.deltaHandler.display";
-	//$NON-NLS-1$
 	private static final String DEFAULT_INSTALL_CHANGE_NAME = "delta.xml";
 	//$NON-NLS-1$	
 
@@ -420,10 +415,10 @@ public class SiteReconciler extends ModelObject implements IWritable {
 
 	/*
 	 * Do not cache, calculate everytime
-	 * because we delete the file in SessionDelta when teh session
-	 * has been seen
+	 * because we delete the file in SessionDelta when the session
+	 * has been seen and we do not change the List directly
 	 */
-	private ISessionDelta[] getSessionDeltas() {
+	public ISessionDelta[] getSessionDeltas() {
 		List sessionDeltas = new ArrayList();
 		IPath path = UpdateManagerPlugin.getPlugin().getStateLocation();
 		InputStream in;
@@ -494,41 +489,6 @@ public class SiteReconciler extends ModelObject implements IWritable {
 				Policy.bind("SiteReconciler.UnableToSaveStateIn", file.getAbsolutePath()),
 				e);
 			//$NON-NLS-1$
-		}
-	}
-
-	/*
-	 * @see ILocalSite#displayUpdateChange()
-	 */
-	public void displayUpdateChange() throws CoreException {
-		// find extension point
-		IInstallDeltaHandler handler = null;
-
-		String pluginID =
-			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
-		IConfigurationElement[] elements =
-			pluginRegistry.getConfigurationElementsFor(
-				pluginID,
-				SIMPLE_EXTENSION_ID,
-				INSTALL_DELTA_HANDLER);
-		if (elements == null || elements.length == 0) {
-			throw Utilities.newCoreException(
-				Policy.bind(
-					"SiteReconciler.UnableToFindInstallDeltaFactory",
-					INSTALL_DELTA_HANDLER),
-				null);
-			//$NON-NLS-1$
-		} else {
-			IConfigurationElement element = elements[0];
-			handler = (IInstallDeltaHandler) element.createExecutableExtension("class");
-			//$NON-NLS-1$
-		}
-
-		// instanciate and open
-		if (handler != null) {
-			handler.init(getSessionDeltas());
-			handler.open();
 		}
 	}
 
