@@ -84,7 +84,7 @@ public class ReplaceWithTagAction extends WorkspaceTraversalAction {
 					Policy.bind("ReplaceWithTagAction.message"), //$NON-NLS-1$
 					Policy.bind("TagSelectionDialog.Select_a_Tag_1"), //$NON-NLS-1$
 					TagSelectionDialog.INCLUDE_ALL_TAGS, 
-					true, /*show recurse*/
+					!isLogicalModel(getCVSResourceMappings()), /*show recurse*/
 					IHelpContextIds.REPLACE_TAG_SELECTION_DIALOG); //$NON-NLS-1$
 				dialog.setBlockOnOpen(true);
 				if (dialog.open() == Dialog.CANCEL) {
