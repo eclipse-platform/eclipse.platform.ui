@@ -11,12 +11,13 @@
 package org.eclipse.core.tools;
 
 import java.util.*;
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Represents a node (possibly containing children) in a tree content 
  * provider model. Every node has a name and optionally a value.
  */
-public class TreeContentProviderNode implements Comparable {
+public class TreeContentProviderNode implements Comparable, IAdaptable {
 
 	/**
 	 * A list containing this node's children. 
@@ -24,7 +25,7 @@ public class TreeContentProviderNode implements Comparable {
 	private List children;
 
 	/**
-	 * This node's name.
+	 * This node's name (may be null).
 	 */
 	private String name;
 
@@ -41,8 +42,8 @@ public class TreeContentProviderNode implements Comparable {
 	/**
 	 * Constructs a TreeContentProviderNode with the given name and value.
 	 * 
-	 * @param name this node's name
-	 * @param value this node's value (may be null)
+	 * @param name this node's name (may be null, if value is not null)
+	 * @param value this node's value (may be null, if name is not null)
 	 */
 	public TreeContentProviderNode(String name, Object value) {
 		this.name = name;
@@ -52,7 +53,7 @@ public class TreeContentProviderNode implements Comparable {
 	/**
 	 * Constructs a TreeContentProviderNode with the given name.
 	 * 
-	 * @param name this node's name. 
+	 * @param name this node's name (may not be null). 
 	 */
 	public TreeContentProviderNode(String name) {
 		this(name, null);
@@ -108,9 +109,11 @@ public class TreeContentProviderNode implements Comparable {
 	 * Returns a string representation of the object.
 	 * 
 	 * @see java.lang.Object#toString()
-	 */
+	 */	
 	public String toString() {
-		return name + (value == null ? "" : (" = " + value.toString())); //$NON-NLS-1$ //$NON-NLS-2$
+		if (value == null)
+			return name;
+		return name + " = " + value.toString(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -202,5 +205,34 @@ public class TreeContentProviderNode implements Comparable {
 	public TreeContentProviderNode getRoot() {
 		return this.getParent() == null ? this : this.getParent().getRoot();
 	}
+	
+	/**
+	 * Returns this node's immediate child that has the given value.
+	 * 
+	 * @return a tree node, or <code>null</code>
+	 */
+	public TreeContentProviderNode findNode(Object value) {
+		if (value.equals(this.value))
+			return this;
+		if (children == null || children.isEmpty())
+			return null;
+		for (Iterator i = children.iterator(); i.hasNext();) {
+			TreeContentProviderNode found = ((TreeContentProviderNode) i.next()).findNode(value);
+			if (found != null)
+				return found;
+		}
+		return null;
+	}	
 
+	/**
+	 * Returns this node's name.
+	 */
+	public String getName() {
+		return name;
+	}
+	
+	public Object getAdapter(Class adapter) {
+		return value instanceof IAdaptable ? ((IAdaptable) value).getAdapter(adapter) : null;
+	}
+	
 }

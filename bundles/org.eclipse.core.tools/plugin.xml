@@ -71,6 +71,13 @@
             category="org.eclipse.core.tools.runtime"
             class="org.eclipse.core.tools.runtime.PreferenceStatsView"
             id="org.eclipse.core.tools.runtime.PreferenceStatsView"/>
-   </extension>
+      <view
+            name="Content Types"
+            icon="icons/spy.gif"
+            category="org.eclipse.core.tools.runtime"
+            class="org.eclipse.core.tools.runtime.ContentTypeView"
+            id="org.eclipse.core.tools.runtime.ContentTypeView"/>            
 
+
+   </extension>
 </plugin>
