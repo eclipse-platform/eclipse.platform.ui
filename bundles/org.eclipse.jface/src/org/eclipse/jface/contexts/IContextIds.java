@@ -11,28 +11,35 @@
 package org.eclipse.jface.contexts;
 
 /**
+ * <p>
  * A list of well-known context identifiers. The context identifiers contain
  * "ui" for historical reasons. These contexts exist as part of JFace.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
  * @since 3.1
  */
 public interface IContextIds {
 
-    /**
-     * The identifier for the context that is active when a shell registered as
-     * a dialog.
-     */
-    public static final String CONTEXT_ID_DIALOG = "org.eclipse.ui.contexts.dialog"; //$NON-NLS-1$
+	/**
+	 * The identifier for the context that is active when a shell registered as
+	 * a dialog.
+	 */
+	public static final String CONTEXT_ID_DIALOG = "org.eclipse.ui.contexts.dialog"; //$NON-NLS-1$
 
-    /**
-     * The identifier for the context that is active when a shell is registered
-     * as either a window or a dialog.
-     */
-    public static final String CONTEXT_ID_DIALOG_AND_WINDOW = "org.eclipse.ui.contexts.dialogAndWindow"; //$NON-NLS-1$
+	/**
+	 * The identifier for the context that is active when a shell is registered
+	 * as either a window or a dialog.
+	 */
+	public static final String CONTEXT_ID_DIALOG_AND_WINDOW = "org.eclipse.ui.contexts.dialogAndWindow"; //$NON-NLS-1$
 
-    /**
-     * The identifier for the context that is active when a shell is registered
-     * as a window.
-     */
-    public static final String CONTEXT_ID_WINDOW = "org.eclipse.ui.contexts.window"; //$NON-NLS-1$
+	/**
+	 * The identifier for the context that is active when a shell is registered
+	 * as a window.
+	 */
+	public static final String CONTEXT_ID_WINDOW = "org.eclipse.ui.contexts.window"; //$NON-NLS-1$
 }

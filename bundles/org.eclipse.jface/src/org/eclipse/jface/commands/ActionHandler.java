@@ -15,7 +15,6 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.commands.IHandlerAttributes;
 import org.eclipse.core.commands.IHandlerListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -23,45 +22,19 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Event;
 
 /**
+ * <p>
  * This class adapts instances of <code>IAction</code> to
  * <code>IHandler</code>.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>. The commands architecture is currently under
+ * development for Eclipse 3.1. This class -- its existence, its name and its
+ * methods -- are in flux. Do not use this class yet.
+ * </p>
  * 
- * @since 3.0
+ * @since 3.1
  */
-public class ActionHandler extends AbstractHandler {
-
-	/**
-	 * The attribute name for the checked property of the wrapped action. This
-	 * indicates whether the action should be displayed with as a checked check
-	 * box.
-	 */
-	private final static String ATTRIBUTE_CHECKED = "checked"; //$NON-NLS-1$
-
-	/**
-	 * The attribute name for the enabled property of the wrapped action.
-	 */
-	private final static String ATTRIBUTE_ENABLED = "enabled"; //$NON-NLS-1$
-
-	/**
-	 * <p>
-	 * The name of the attribute indicating whether the wrapped instance of
-	 * <code>RetargetAction</code> has a handler.
-	 * </p>
-	 */
-	private final static String ATTRIBUTE_HANDLED = IHandlerAttributes.ATTRIBUTE_HANDLED;
-
-	/**
-	 * The attribute name for the identifier of the wrapped action. This is the
-	 * action identifier, and not the command identifier.
-	 */
-	private final static String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
-
-	/**
-	 * The attribute name for the visual style of the wrapped action. The style
-	 * can be things like a pull-down menu, a check box, a radio button or a
-	 * push button.
-	 */
-	private final static String ATTRIBUTE_STYLE = "style"; //$NON-NLS-1$
+public final class ActionHandler extends AbstractHandler {
 
 	/**
 	 * The wrapped action. This value is never <code>null</code>.
