@@ -3,13 +3,25 @@ package org.eclipse.ui;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 
+/**
+ * The IContributorResourceAdapter is an interface that defines
+ * the API required to get a resource that an object adapts to
+ * for use of object contributions, decorators and property
+ * pages that have adaptable = true.
+ * Implementors of this interface should be registered with the
+ * AdapterFactories for lookup via the getAdapter() mechanism.
+ */
+
 public interface IContributorResourceAdapter {
 	
 	/**
-	 * Get the resource that the supplied adaptable 
+	 * Return the resource that the supplied adaptable 
 	 * adapts to. An IContributorResourceAdapter assumes
 	 * that any object passed to it adapts to one equivalent
 	 * resource.
+	 * @return <code>IResource</cdoe> or <code>null</code> if there
+	 * 	is no adapted resource for this type.
+	 * @param IAdaptable the adaptable beign queried.
 	 */
 	
 	public IResource getAdaptedResource(IAdaptable adaptable);
