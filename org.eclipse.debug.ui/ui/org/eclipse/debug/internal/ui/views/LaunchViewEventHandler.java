@@ -238,7 +238,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	/**
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
-	public void launchChanged(final ILaunch launch) {
+	public void launchChanged(ILaunch launch) {
 	}
 
 	/**
