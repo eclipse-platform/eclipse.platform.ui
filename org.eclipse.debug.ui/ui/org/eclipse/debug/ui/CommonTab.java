@@ -358,7 +358,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			dialog.setInitialSelections(new Object[] {path});
 		}
 		
-		
+		dialog.showClosedProjects(false);
 		dialog.open();
 		Object[] results = dialog.getResult();		
 		if ((results != null) && (results.length > 0) && (results[0] instanceof IPath)) {
@@ -620,6 +620,9 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			if (container == null || container.equals(ResourcesPlugin.getWorkspace().getRoot())) {
 				setErrorMessage(LaunchConfigurationsMessages.getString("CommonTab.Invalid_shared_configuration_location_14")); //$NON-NLS-1$
 				return false;
+			} else if (!container.getProject().isOpen()) {
+				setErrorMessage(LaunchConfigurationsMessages.getString("CommonTab.Cannot_save_launch_configuration_in_a_closed_project._1")); //$NON-NLS-1$
+				return false;				
 			}
 		}
 		
