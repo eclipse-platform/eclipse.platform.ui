@@ -91,12 +91,11 @@ public class EditorList {
 		}
 	};
 
-	private IPartListener partListener = new IPartListener() {
+	private IPartListener2 partListener = new IPartListener2() {
 		int counter = 0;
-		private void updateEditorList(IWorkbenchPart part) {
-			if (part instanceof IEditorPart) { 
+		private void updateEditorList(IWorkbenchPartReference ref) {
+			if (ref instanceof IEditorReference) { 
 				final Display display = window.getShell().getDisplay();
-				final IWorkbenchPart fpart = part;
 				final int TIMER_INTERVAL = 100;
 				counter ++;				
 				display.timerExec(TIMER_INTERVAL, new Runnable() {
@@ -113,23 +112,27 @@ public class EditorList {
 			}
 		}
 		// select in navigator
-		public void partBroughtToTop(IWorkbenchPart part) {
-			updateEditorList(part);
+		public void partBroughtToTop(IWorkbenchPartReference ref) {
+			updateEditorList(ref);
 		}
 		// select tabs, open editor
-		public void partActivated(IWorkbenchPart part) {
-			updateEditorList(part);
+		public void partActivated(IWorkbenchPartReference ref) {
+			updateEditorList(ref);
 		}
 		// closeAll
-		public void partClosed(IWorkbenchPart part) {
-			updateEditorList(part);
+		public void partClosed(IWorkbenchPartReference ref) {
+			updateEditorList(ref);
 		}
 		// delete
-		public void partDeactivated(IWorkbenchPart part) {
-			updateEditorList(part);
+		public void partDeactivated(IWorkbenchPartReference ref) {
+			updateEditorList(ref);
 		}
-		public void partOpened(IWorkbenchPart part) {
+		public void partOpened(IWorkbenchPartReference ref) {
 		}
+		public void partHidden(IWorkbenchPartReference ref) {
+		}
+		public void partVisible(IWorkbenchPartReference ref) {
+		}				
 	};
 
 public EditorList(IWorkbenchWindow window, EditorWorkbook workbook) {

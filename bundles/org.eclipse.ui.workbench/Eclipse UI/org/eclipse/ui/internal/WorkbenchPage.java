@@ -53,6 +53,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private EditorManager editorMgr;
 	private EditorPresentation editorPresentation;
 	private PartListenerList partListeners = new PartListenerList();
+	private PartListenerList2 partListeners2 = new PartListenerList2();
 	private ListenerList propertyChangeListeners = new ListenerList();
 	private PageSelectionService selectionService = new PageSelectionService(this);
 	private IActionBars actionBars;
@@ -72,13 +73,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 				setWorkingSet(null);
 			} else if(LayoutPart.PROP_VISIBILITY.equals(property)) {
 				WorkbenchPartReference ref = (WorkbenchPartReference)((PartPane)event.getSource()).getPartReference();
-				IWorkbenchPart part = ref.getPart(Boolean.TRUE.equals(event.getNewValue()));
-				if(ref == null || part == null)
+				//Make sure the new visible part is restored.
+				ref.getPart(Boolean.TRUE.equals(event.getNewValue()));
+				if(ref == null)
 					return;
 				if(Boolean.TRUE.equals(event.getNewValue()))
-					partListeners.firePartVisible(part);
+					partListeners2.firePartVisible(ref);
 				else
-					partListeners.firePartHidden(part);
+					partListeners2.firePartHidden(ref);
 			}
 		}
 	};
@@ -397,6 +399,12 @@ public void addPartListener(IPartListener l) {
 	partListeners.addPartListener(l);
 }
 /**
+ * Adds an IPartListener to the part service.
+ */
+public void addPartListener(IPartListener2 l) {
+	partListeners2.addPartListener(l);
+}
+/**
  * Implements IWorkbenchPage
  * 
  * @see org.eclipse.ui.IWorkbenchPage#addPropertyChangeListener(IPropertyChangeListener)
@@ -636,10 +644,8 @@ public boolean closeAllSavedEditors() {
 			}
 			getEditorManager().closeEditor(editor);
 			activationList.remove(editor);
-			if(part != null) {
-				firePartClosed(part);
-				disposePart(part);
-			}
+			firePartClosed(editor);
+			disposePart(editor);
 		}
 	}
 	if (deactivated)
@@ -677,12 +683,10 @@ public boolean closeAllEditors(boolean save) {
 	IEditorReference[] editors = getEditorManager().getEditors();
 	getEditorManager().closeAll();
 	for (int i = 0; i < editors.length; i ++) {
-		IEditorPart editor = (IEditorPart)editors[i].getPart(false);
-		activationList.remove(editors[i]);
-		if(editor != null) {
-			firePartClosed(editor);
-			disposePart(editor);
-		}
+		IEditorReference editor = editors[i]; 
+		activationList.remove(editor);
+		firePartClosed(editor);
+		disposePart(editor);		
 	}
 	if (deactivate)
 		activate(activationList.getActive());
@@ -705,6 +709,7 @@ public boolean closeEditor(IEditorReference editorRef,boolean save) {
 		return closeEditor(editor,save);
 	getEditorManager().closeEditor(editorRef);
 	activationList.remove(editorRef);
+	firePartClosed(editorRef);
 	return true;
 }
 /**
@@ -734,8 +739,8 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 
 	// Close the part.
 	getEditorManager().closeEditor(ref);
-	firePartClosed(editor);
-	disposePart(editor);
+	firePartClosed(ref);
+	disposePart(ref);
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
 	
@@ -925,7 +930,10 @@ private void deactivatePart(IWorkbenchPart part) {
 		site.getPane().showFocus(false);
 	}
 }
-private void disposePart(final IWorkbenchPart part) {
+private void disposePart(IWorkbenchPartReference ref) {
+	final IWorkbenchPart part = ref.getPart(false);
+	if(part == null)
+		return;
 	Platform.run(new SafeRunnable() {
 		public void run() {
 			part.dispose();
@@ -964,8 +972,8 @@ public void dispose() {
 	final int errors[] = {0};
 	for (int i = 0; i < refs.length; i ++) {
 		final IViewPart view = (IViewPart)refs[i].getPart(false);
+		firePartClosed(refs[i]);
 		if(view != null) {
-			firePartClosed(view);
 			Platform.run(new SafeRunnable() {
 				public void run() {
 					view.dispose();
@@ -1015,10 +1023,10 @@ private void disposePerspective(Perspective persp) {
 		//If the part is no longer reference then dispose it.
 		boolean exists = viewFactory.hasView(ref.getId());
 		IViewPart view = (IViewPart)ref.getPart(false);
-		if (!exists && view != null) {
-			firePartClosed(view);
+		if (!exists) {
+			firePartClosed(ref);
 			activationList.remove(ref);
-			disposePart(view);
+			disposePart(ref);
 		}
 	}
 }
@@ -1082,6 +1090,7 @@ public IViewPart findView(String id) {
  */
 private void firePartActivated(IWorkbenchPart part) {
 	partListeners.firePartActivated(part);
+	partListeners2.firePartActivated(getReference(part));
 	selectionService.partActivated(part);
 }
 /**
@@ -1089,20 +1098,26 @@ private void firePartActivated(IWorkbenchPart part) {
  */
 private void firePartBroughtToTop(IWorkbenchPart part) {
 	partListeners.firePartBroughtToTop(part);
+	partListeners2.firePartBroughtToTop(getReference(part));
 	selectionService.partBroughtToTop(part);
 }
 /**
  * Fire part close out.
  */
-private void firePartClosed(IWorkbenchPart part) {
-	partListeners.firePartClosed(part);
-	selectionService.partClosed(part);
+private void firePartClosed(IWorkbenchPartReference ref) {
+	IWorkbenchPart part = ref.getPart(false);
+	if(part != null) {
+		partListeners.firePartClosed(part);
+		selectionService.partClosed(part);
+	}
+	partListeners2.firePartClosed(ref);
 }
 /**
  * Fire part deactivation out.
  */
 private void firePartDeactivated(IWorkbenchPart part) {
 	partListeners.firePartDeactivated(part);
+	partListeners2.firePartDeactivated(getReference(part));
 	selectionService.partDeactivated(part);
 }
 /**
@@ -1110,6 +1125,7 @@ private void firePartDeactivated(IWorkbenchPart part) {
  */
 public void firePartOpened(IWorkbenchPart part) {
 	partListeners.firePartOpened(part);
+	partListeners2.firePartOpened(getReference(part));
 	selectionService.partOpened(part);
 }
 /**
@@ -1152,10 +1168,18 @@ public IEditorPart getActiveEditor() {
 	return getEditorManager().getVisibleEditor();
 }
 /*
- * Returns the active part within the <code>IWorkbenchPage</code>
+ * (non-Javadoc)
+ * Method declared on IPartService
  */
 public IWorkbenchPart getActivePart() {
 	return activePart;
+}
+/*
+ * (non-Javadoc)
+ * Method declared on IPartService
+ */
+public IWorkbenchPartReference getActivePartReference() {
+	return getReference(activePart);
 }
 /**
  * Returns the active perspective for the page, <code>null</code>
@@ -1439,8 +1463,8 @@ public void hideView(IViewPart view) {
 	// If the part is no longer reference then dispose it.
 	boolean exists = viewFactory.hasView(view.getSite().getId());
 	if (!exists) {
-		firePartClosed(view);
-		disposePart(view);
+		firePartClosed(ref);
+		disposePart(ref);
 		activationList.remove(ref);		
 	}
 	
@@ -1935,7 +1959,12 @@ public void removeFastView(IViewReference ref) {
 public void removePartListener(IPartListener l) {
 	partListeners.removePartListener(l);
 }
-
+/**
+ * Removes an IPartListener from the part service.
+ */
+public void removePartListener(IPartListener2 l) {
+	partListeners2.removePartListener(l);
+}
 /**
  * Implements IWorkbenchPage
  * 

@@ -22,12 +22,21 @@ public interface IPartService {
  * @param listener a part listener
  */
 public void addPartListener(IPartListener listener);
+
+public void addPartListener(IPartListener2 listener);
 /*
  * Returns the active part.
  *
  * @return the active part, or <code>null</code> if no part is currently active
  */
 public IWorkbenchPart getActivePart();
+/*
+ * Returns the active part reference.
+ *
+ * @return the active part reference, or <code>null</code> if no part
+ * is currently active
+ */
+public IWorkbenchPartReference getActivePartReference();
 /**
  * Removes the given part listener.
  * Has no affect if an identical listener is not registered.
@@ -35,4 +44,5 @@ public IWorkbenchPart getActivePart();
  * @param listener a part listener
  */
 public void removePartListener(IPartListener listener);
+public void removePartListener(IPartListener2 listener);
 }

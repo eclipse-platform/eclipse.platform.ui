@@ -7,40 +7,36 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IWorkbenchPartReference;
 
 /**
  * Part listener list.
  */
-/*
- * This class should be deleted when IPartListener and IPartListener2 
- * renamed to IPartListener.
- */
-public class PartListenerList {
+public class PartListenerList2 {
 	private ListenerList listeners = new ListenerList();
 /**
  * PartNotifier constructor comment.
  */
-public PartListenerList() {
+public PartListenerList2() {
 	super();
 }
 /**
- * Adds an IPartListener to the part service.
+ * Adds an PartListener to the part service.
  */
-public void addPartListener(IPartListener l) {
+public void addPartListener(IPartListener2 l) {
 	listeners.add(l);
 }
 /**
  * Notifies the listener that a part has been activated.
  */
-public void firePartActivated(final IWorkbenchPart part) {
+public void firePartActivated(final IWorkbenchPartReference ref) {
 	Object [] array = listeners.getListeners();
 	for (int i = 0; i < array.length; i ++) {
-		final IPartListener l = (IPartListener)array[i];
+		final IPartListener2 l = (IPartListener2)array[i];
 		Platform.run(new SafeRunnable() {
 			public void run() {
-				l.partActivated(part);
+				l.partActivated(ref);
 			}
 			public void handleException(Throwable e) {
 				super.handleException(e);
@@ -54,13 +50,13 @@ public void firePartActivated(final IWorkbenchPart part) {
 /**
  * Notifies the listener that a part has been brought to top.
  */
-public void firePartBroughtToTop(final IWorkbenchPart part) {
+public void firePartBroughtToTop(final IWorkbenchPartReference ref) {
 	Object [] array = listeners.getListeners();
 	for (int i = 0; i < array.length; i ++) {
-		final IPartListener l = (IPartListener)array[i];
+		final IPartListener2 l = (IPartListener2)array[i];
 		Platform.run(new SafeRunnable() {
 			public void run() {
-				l.partBroughtToTop(part);
+				l.partBroughtToTop(ref);
 			}
 			public void handleException(Throwable e) {
 				super.handleException(e);
@@ -74,13 +70,13 @@ public void firePartBroughtToTop(final IWorkbenchPart part) {
 /**
  * Notifies the listener that a part has been closed
  */
-public void firePartClosed(final IWorkbenchPart part) {
+public void firePartClosed(final IWorkbenchPartReference ref) {
 	Object [] array = listeners.getListeners();
 	for (int i = 0; i < array.length; i ++) {
-		final IPartListener l = (IPartListener)array[i];
+		final IPartListener2 l = (IPartListener2)array[i];
 		Platform.run(new SafeRunnable() {
 			public void run() {
-				l.partClosed(part);
+				l.partClosed(ref);
 			}
 			public void handleException(Throwable e) {
 				super.handleException(e);
@@ -94,13 +90,13 @@ public void firePartClosed(final IWorkbenchPart part) {
 /**
  * Notifies the listener that a part has been deactivated.
  */
-public void firePartDeactivated(final IWorkbenchPart part) {
+public void firePartDeactivated(final IWorkbenchPartReference ref) {
 	Object [] array = listeners.getListeners();
 	for (int i = 0; i < array.length; i ++) {
-		final IPartListener l = (IPartListener)array[i];
+		final IPartListener2 l = (IPartListener2)array[i];
 		Platform.run(new SafeRunnable() {
 			public void run() {
-				l.partDeactivated(part);
+				l.partDeactivated(ref);
 			}
 			public void handleException(Throwable e) {
 				super.handleException(e);
@@ -114,13 +110,63 @@ public void firePartDeactivated(final IWorkbenchPart part) {
 /**
  * Notifies the listener that a part has been opened.
  */
-public void firePartOpened(final IWorkbenchPart part) {
+public void firePartOpened(final IWorkbenchPartReference ref) {
 	Object [] array = listeners.getListeners();
 	for (int i = 0; i < array.length; i ++) {
-		final IPartListener l = (IPartListener)array[i];
+		final IPartListener2 l = (IPartListener2)array[i];
 		Platform.run(new SafeRunnable() {
 			public void run() {
-				l.partOpened(part);
+				l.partOpened(ref);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removePartListener(l);
+			}
+		});
+	}
+}
+/**
+ * Notifies the listener that a part has been opened.
+ */
+public void firePartHidden(final IWorkbenchPartReference ref) {
+	Object [] array = listeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final IPartListener2 l;
+		if(array[i] instanceof IPartListener2)
+			l = (IPartListener2)array[i];
+		else
+			continue;
+			
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.partHidden(ref);
+			}
+			public void handleException(Throwable e) {
+				super.handleException(e);
+				//If and unexpected exception happens, remove it
+				//to make sure the workbench keeps running.
+				removePartListener(l);
+			}
+		});
+	}
+}
+/**
+ * Notifies the listener that a part has been opened.
+ */
+public void firePartVisible(final IWorkbenchPartReference ref) {
+	Object [] array = listeners.getListeners();
+	for (int i = 0; i < array.length; i ++) {
+		final IPartListener2 l;
+		if(array[i] instanceof IPartListener2)
+			l = (IPartListener2)array[i];
+		else
+			continue;
+			
+		Platform.run(new SafeRunnable() {
+			public void run() {
+				l.partVisible(ref);
 			}
 			public void handleException(Throwable e) {
 				super.handleException(e);
@@ -134,7 +180,7 @@ public void firePartOpened(final IWorkbenchPart part) {
 /**
  * Removes an IPartListener from the part service.
  */
-public void removePartListener(IPartListener l) {
+public void removePartListener(IPartListener2 l) {
 	listeners.remove(l);
 }
 }
