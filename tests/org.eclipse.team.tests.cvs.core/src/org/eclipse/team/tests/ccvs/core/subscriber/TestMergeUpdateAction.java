@@ -35,5 +35,8 @@ class TestMergeUpdateAction extends MergeUpdateAction {
 	public IRunnableWithProgress getRunnable(SyncInfoSet syncSet) {
 		return super.getRunnable(syncSet);
 	}
-
+	
+	protected boolean canRunAsJob() {
+		return false;
+	}
 }

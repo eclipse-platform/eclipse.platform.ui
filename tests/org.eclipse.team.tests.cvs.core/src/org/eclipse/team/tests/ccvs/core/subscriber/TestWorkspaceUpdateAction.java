@@ -48,4 +48,8 @@ class TestWorkspaceUpdateAction extends WorkspaceUpdateAction {
 	public IRunnableWithProgress getRunnable(SyncInfoSet syncSet) {
 		return super.getRunnable(syncSet);
 	}
+	
+	protected boolean canRunAsJob() {
+		return false;
+	}
 }
