@@ -222,7 +222,7 @@ public abstract class TextConsole extends AbstractConsole {
         if (newFont == null) {
             newFont = getDefaultFont();
         }
-        // fire property change if requried
+        // fire property change if required
         if (!fFont.equals(newFont)) {
             Font old = fFont;
             fFont = newFont;
