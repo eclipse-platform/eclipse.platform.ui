@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Widget;
 public abstract class AbstractTabItem {
 	public abstract Rectangle getBounds();
 	public abstract Widget getControl();
-	public abstract String getToolTip();
+	public abstract String getTitleToolTip();
 	public abstract String getTitle();
 	public abstract String getContentDescription();
 	public abstract String getPartName();
@@ -29,8 +29,9 @@ public abstract class AbstractTabItem {
 	public abstract void setContentDescription(String contentDescription);
 	public abstract void setPartName(String partName);
 	public abstract void setImage(Image titleImage);
+	public abstract void setTitleToolTip(String toolTip);
 	public void setBusyState(boolean isBusy, boolean isBold) {
 	}
-	public abstract boolean isVisible();
+	public abstract boolean isShowing();
 	public abstract void setCloseable(boolean isCloseable);
 }

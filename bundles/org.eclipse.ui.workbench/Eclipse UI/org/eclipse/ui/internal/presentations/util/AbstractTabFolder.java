@@ -23,24 +23,74 @@ import org.eclipse.swt.widgets.Control;
  */
 public abstract class AbstractTabFolder {
 	private List listeners = new ArrayList(1);
+	private Control toolbar;
 	
 	public abstract Point computeMinimumSize();
 	public abstract AbstractTabItem add(int index);
 	public abstract Rectangle getClientArea();
 	public abstract Control getControl();
 	public abstract AbstractTabItem getItem(Point location);
-	public abstract int indexOf(AbstractTabItem item);
+	public abstract AbstractTabItem[] getItems();
 	public abstract void layout(boolean flushCache);
 	public abstract void setSelection(AbstractTabItem toSelect);
 	public abstract void setTabPosition(int tabPosition);
-	public abstract void setTopCenter(Control topCenter);
-
+	public abstract void setActive(int activeState);
+	public abstract int getTabPosition();
+	
+	public abstract Point getPaneMenuLocation();
+	
+	public AbstractTabItem getItem(int idx) {
+		return getItems()[idx];
+	}
+	
+	/**
+	 * Returns the index of the given item, or -1 if the given item is
+	 * not found in this tab folder. Subclasses should override this if
+	 * the underlying SWT widget has an equivalent method
+	 * 
+	 * @param item item to find
+	 * @return the index of the given item or -1
+	 */
+	public int indexOf(AbstractTabItem item) {
+		AbstractTabItem[] items = getItems();
+		
+		for (int idx = 0; idx < items.length; idx++) {
+			AbstractTabItem next = items[idx];
+			
+			if (next == item) {
+				return idx;
+			}
+		}
+		
+		return -1;
+	}
+	
+	public int getItemCount() {
+		return getItems().length;
+	}
+	
 	/**
 	 * Enables or disables the maximized state
 	 * 
 	 * @param isVisible true iff the maximized state is supported
 	 */
 	public void allowMaximizeButton(boolean isVisible) {
+	}
+	
+	public Control[] getTabList() {
+		if (toolbar != null) {
+			return new Control[] {getControl(), toolbar};
+		} else {
+			return new Control[] {getControl()};
+		}
+	}
+
+	public void setToolbar(Control toolbarControl) {
+		this.toolbar = toolbarControl;
+	}
+
+	public final Control getToolbar() {
+		return toolbar;
 	}
 	
 	/**
@@ -64,7 +114,7 @@ public abstract class AbstractTabFolder {
 	 * 
 	 * @return
 	 */
-	public abstract Rectangle getTitleArea();
+	public abstract Rectangle getTabArea();
 	
 	/**
 	 * Called when the tab folder's control is disposed. If the subclass has
@@ -115,6 +165,14 @@ public abstract class AbstractTabFolder {
 		}
 	}
 	
+	protected final void fireDragStart(AbstractTabItem tab, Point displayLoc) {
+		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
+			AbstractTabFolderListener next = (AbstractTabFolderListener) iter.next();
+			
+			next.dragStart(tab, displayLoc);
+		}		
+	}
+	
 	/**
 	 * Fires a closeButtonPressed event to all AbstractTabFolderListeners. Convenience
 	 * method for subclasses.
@@ -138,6 +196,7 @@ public abstract class AbstractTabFolder {
 			AbstractTabFolderListener next = (AbstractTabFolderListener) iter.next();
 			
 			next.showList();
-		}		
+		}
 	}
+	
 }

@@ -47,4 +47,14 @@ public abstract class AbstractTabFolderListener {
 	 */
 	public void showPaneMenu(Point location) {	
 	}
+
+	/**
+	 * Called to indicate the start of a drag
+	 * 
+	 * @param beingDragged tab being dragged (or null if none)
+	 * @param initialLocation initial mouse location (display coordinates)
+	 */
+	public void dragStart(AbstractTabItem beingDragged, Point initialLocation) {
+	}
+
 }

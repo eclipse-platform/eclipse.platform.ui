@@ -15,10 +15,10 @@ import org.eclipse.ui.presentations.IPresentablePart;
 /**
  * @since 3.0
  */
-public abstract class TabList {
-	public abstract void add(IPresentablePart newPart);
-	public abstract void remove(IPresentablePart removed);
-	public abstract void select(IPresentablePart selected);
-	public abstract void insert(IPresentablePart added, int index);
-	public abstract IPresentablePart[] getParts();
+public interface IPresentablePartList {
+	public void insert(IPresentablePart part, int idx);
+	public void remove(IPresentablePart part);
+	public void move(IPresentablePart part, int newIndex);
+	public int size();
+	public void select(IPresentablePart part);
 }
