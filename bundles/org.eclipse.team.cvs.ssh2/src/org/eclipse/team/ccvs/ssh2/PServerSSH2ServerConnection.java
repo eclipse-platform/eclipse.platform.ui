@@ -106,15 +106,14 @@ public class PServerSSH2ServerConnection implements IServerConnection {
 					session.setPortForwardingL(lport, rhost, rport);
 				}
 			} catch (JSchException ee) {
-				if (!session.isConnected()) {
-					//System.out.println("sesssion is down");
-					retry--;
-					if (retry < 0) {
-						throw new CVSAuthenticationException(ee.toString());
-					}
-					continue;
-				}
-				throw new CVSAuthenticationException(ee.toString());
+				  retry--;
+				  if(retry<0){
+				    throw new CVSAuthenticationException(Policy.bind("CVSSSH2ServerConnection.3")); //$NON-NLS-1$
+				  }
+				  if(session.isConnected()){
+				    session.disconnect();
+				  }
+				  continue;
 			}
 			break;
 		}

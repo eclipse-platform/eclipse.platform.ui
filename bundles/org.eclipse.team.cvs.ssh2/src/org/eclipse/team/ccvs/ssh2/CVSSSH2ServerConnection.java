@@ -75,16 +75,14 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 				try {
 					channel.connect();
 				} catch (JSchException ee) {
-					if (!session.isConnected()) {
-						//System.out.println("sesssion is down");
-						//channel.disconnect();
-						retry--;
-						if (retry < 0) {
-							throw new CVSAuthenticationException(Policy.bind("CVSSSH2ServerConnection.3")); //$NON-NLS-1$
-						}
-						continue;
-					}
-					throw ee;
+				  retry--;
+				  if(retry<0){
+				    throw new CVSAuthenticationException(Policy.bind("CVSSSH2ServerConnection.3")); //$NON-NLS-1$
+				  }
+				  if(session.isConnected()){
+				    session.disconnect();
+				  }
+				  continue;
 				}
 				break;
 			}
