@@ -1,4 +1,4 @@
-package org.eclipse.ui.actions;
+package org.eclipse.ui.internal.dialogs;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -7,9 +7,11 @@ package org.eclipse.ui.actions;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.actions.*;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.dialogs.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.text.MessageFormat;
@@ -19,7 +21,7 @@ import java.text.MessageFormat;
  * some of which may be read only and queries the user as to whether or
  * not they wish to continue the operation on it.
  */
-class ReadOnlyStateChecker {
+public class ReadOnlyStateChecker {
 	private Shell shell;
 	private String titleMessage;
 	private String mainMessage;
@@ -35,7 +37,7 @@ class ReadOnlyStateChecker {
  * @param title the title for dialogs
  * @param message the message for a dialog - this will be prefaced with the name of the resource.
  */
-ReadOnlyStateChecker(Shell parent, String title, String message) {
+public ReadOnlyStateChecker(Shell parent, String title, String message) {
 	this.shell = parent;
 	this.titleMessage = title;
 	this.mainMessage = message;
@@ -73,7 +75,7 @@ private boolean checkAcceptedResource(
  * @return the resulting selected resources
  */
 /*package*/
-IResource[] checkReadOnlyResources(IResource[] itemsToCheck) {
+public IResource[] checkReadOnlyResources(IResource[] itemsToCheck) {
 
 	List selections = new ArrayList();
 	int result = IDialogConstants.CANCEL_ID;

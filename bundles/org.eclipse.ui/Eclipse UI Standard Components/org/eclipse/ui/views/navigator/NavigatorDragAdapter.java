@@ -4,15 +4,27 @@ package org.eclipse.ui.views.navigator;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.part.ResourceTransfer;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.widgets.Control;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.dialogs.ReadOnlyStateChecker;
+import org.eclipse.ui.part.ResourceTransfer;
 
 /**
  * Implements drag behaviour when items are dragged out of the
@@ -20,6 +32,10 @@ import java.util.List;
  */
 /* package */ class NavigatorDragAdapter extends DragSourceAdapter {
 	ISelectionProvider selectionProvider;
+
+private static final String CHECK_MOVE_TITLE = WorkbenchMessages.getString("MoveResourceAction.title"); //$NON-NLS-1$
+private static final String CHECK_MOVE_MESSAGE = WorkbenchMessages.getString("MoveResourceAction.checkMoveMessage"); //$NON-NLS-1$
+
 /**
  * NavigatorDragAction constructor comment.
  */
@@ -36,7 +52,12 @@ public void dragFinished(DragSourceEvent event) {
 	if (event.doit && event.detail == DND.DROP_MOVE) {
 		//delete the old elements
 		final int typeMask = IResource.FOLDER | IResource.FILE;
-		IResource[] resources = getSelectedResources(typeMask);
+		
+		DragSource dragSource = (DragSource)event.widget;
+		Control control = dragSource.getControl();
+		Shell shell = control.getShell();
+		
+		IResource[] resources = getSelectedResources(typeMask, shell);
 		if (resources == null)
 			return;
 		for (int i = 0; i < resources.length; i++) {
@@ -54,7 +75,12 @@ public void dragFinished(DragSourceEvent event) {
  */
 public void dragSetData(DragSourceEvent event) {
 	final int typeMask = IResource.FILE | IResource.FOLDER;
-	IResource[] resources = getSelectedResources(typeMask);
+	
+	DragSource dragSource = (DragSource)event.widget;
+	Control control = dragSource.getControl();
+	Shell shell = control.getShell();
+	
+	IResource[] resources = getSelectedResources(typeMask, shell);
 	if (resources == null || resources.length == 0)
 		return;
 
@@ -99,7 +125,7 @@ public void dragStart(DragSourceEvent event) {
 	}
 	event.doit = true;
 }
-protected IResource[] getSelectedResources(int resourceTypes) {
+protected IResource[] getSelectedResources(int resourceTypes, Shell shell) {
 	List resources = new ArrayList();
 	IResource[] result = new IResource[0];
 
@@ -124,6 +150,8 @@ protected IResource[] getSelectedResources(int resourceTypes) {
 	}
 	result = new IResource[resources.size()];
 	resources.toArray(result);
-	return result;
+	ReadOnlyStateChecker checker = new ReadOnlyStateChecker(shell,CHECK_MOVE_TITLE,CHECK_MOVE_MESSAGE); 
+
+	return checker.checkReadOnlyResources(result);
 }
 }
