@@ -39,10 +39,7 @@ public class MessageConsolePartition extends TypedRegion {
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(Object partition) {
-		if (super.equals(partition)) {
-			fStream.equals(((MessageConsolePartition)partition).getStream());
-		}
-		return false;
+		return super.equals(partition) && fStream.equals(((MessageConsolePartition)partition).getStream());
 	}
 
 	/**
