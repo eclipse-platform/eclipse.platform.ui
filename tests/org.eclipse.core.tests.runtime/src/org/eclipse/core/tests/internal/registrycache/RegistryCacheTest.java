@@ -11,9 +11,11 @@
 package org.eclipse.core.tests.internal.registrycache;
 
 import java.io.*;
+import java.util.ResourceBundle;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.registry.*;
+import org.eclipse.core.internal.runtime.ResourceTranslator;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.xml.sax.InputSource;
@@ -78,7 +80,7 @@ public class RegistryCacheTest extends EclipseWorkspaceTest {
 
 	private Namespace parseManifest(String symbolicName, Reader input) throws IOException, SAXException {
 		ExtensionsParser parser = new ExtensionsParser(new MultiStatus(Platform.PI_RUNTIME, 0, "", null));
-		Namespace result = parser.parseManifest(new InputSource(input), ExtensionsParser.PLUGIN, "plugin.xml");
+		Namespace result = parser.parseManifest(new InputSource(input), ExtensionsParser.PLUGIN, "plugin.xml", null);
 		result.setUniqueIdentifier(symbolicName);
 		return result;
 	}
