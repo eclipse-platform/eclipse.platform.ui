@@ -41,10 +41,6 @@ public class WWinKeyBindingService {
 	private IPropertyChangeListener propertyListener;
 	/* The current KeyBindindService */
 	private KeyBindingService activeService;
-	/* A number used to generate definition id for the action
-	 * without one 
-	 */
-	private long fakeDefinitionId = 0;
 	/* The window this service is managing the accelerators for.*/
 	private WorkbenchWindow window;
 	/**
@@ -122,12 +118,12 @@ public class WWinKeyBindingService {
 				for (int j = 0; j < actions.length; j++) {
 					Action action = (Action)actions[j];
 					String defId = action.getActionDefinitionId();
-					if(defId != null) {
+					String fake = "org.eclipse.ui.fakeDefinitionId"; //$NON-NLS-1$
+					if(defId != null && !defId.startsWith(fake)) {
 						actionSetDefIdToAction.put(action.getActionDefinitionId(),action);
 					} else if(action.getAccelerator() != 0) {
 						reinitScopes = true;
-						String fake = "org.eclipse.ui.fakeDefinitionId" + fakeDefinitionId; //$NON-NLS-1$
-						fakeDefinitionId++;
+						fake = fake + action.getId() + action.getAccelerator(); 
 						action.setActionDefinitionId(fake);
 						actionSetDefIdToAction.put(fake,action);
 						registry.addFakeAccelerator(fake,action.getAccelerator());
