@@ -46,7 +46,7 @@ public class SiteBookmark extends NamedModelObject
 	
 	public void setWebBookmark(boolean value) {
 		if (type==LOCAL_BOOKMARK) return;
-		this.webBookmark = webBookmark;
+		this.webBookmark = value;
 	}
 	
 	public boolean isWebBookmark() {

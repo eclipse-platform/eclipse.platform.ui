@@ -85,7 +85,7 @@ public final class SiteTypeFactory {
 	 * @param actories The actories to set
 	 */
 	private void setFactories(Map factories) {
-		factories = factories;
+		this.factories = factories;
 	}
 
 }
