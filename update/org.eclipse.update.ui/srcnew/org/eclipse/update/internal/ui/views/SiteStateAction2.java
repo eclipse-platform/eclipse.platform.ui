@@ -11,15 +11,12 @@
 package org.eclipse.update.internal.ui.views;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.update.configuration.IConfiguredSite;
-import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.internal.operations.UpdateManager;
 import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.internal.ui.forms.ActivityConstraints;
 
 /**
  * @author dejan
@@ -43,31 +40,25 @@ public class SiteStateAction2 extends Action {
 	}
 
 	public void run() {
-		if (site == null)
-			return;
-		boolean oldValue = site.isEnabled();
-		if (!confirm(!oldValue))
-			return;
-		site.setEnabled(!oldValue);
-		IStatus status = ActivityConstraints.validateCurrentState();
-		if (status != null) {
+		try {
+			if (site == null)
+				return;
+			boolean oldValue = site.isEnabled();
+			if (!confirm(!oldValue))
+				return;
+				
+			boolean restartNeeded =
+				UpdateManager.getOperationsManager().toggleSiteState(site);
+					
+			if (restartNeeded)
+				UpdateUI.informRestartNeeded();
+
+		} catch (CoreException e) {
 			ErrorDialog.openError(
 				UpdateUI.getActiveWorkbenchShell(),
 				null,
 				null,
-				status);
-			site.setEnabled(oldValue);
-			return;
-		} else {
-			// do a restart
-			try {
-				SiteManager.getLocalSite().save();
-				UpdateManager.getOperationsManager().fireObjectChanged(site, "");
-				UpdateUI.informRestartNeeded();
-			} catch (CoreException e) {
-				site.setEnabled(oldValue);
-				UpdateUI.logException(e);
-			}
+				e.getStatus());
 		}
 	}
 
