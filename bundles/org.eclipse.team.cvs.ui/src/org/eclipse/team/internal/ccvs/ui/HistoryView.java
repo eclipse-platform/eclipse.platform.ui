@@ -97,7 +97,10 @@ public class HistoryView extends ViewPart implements IMenuListener, ISelectionLi
 				case COL_AUTHOR:
 					return entry.getAuthor();
 				case COL_COMMENT:
-					return entry.getComment();
+					String comment = entry.getComment();
+					int index = comment.indexOf("\n");
+					if (index == -1) return comment;
+					return comment.substring(0, index) + "[...]";
 			}
 			return "";
 		}
