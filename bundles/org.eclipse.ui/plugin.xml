@@ -1496,7 +1496,7 @@
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            string="Ctrl+X Ctrl+K"
+            string="Ctrl+X K"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.ui.file.close"
             configuration="org.eclipse.ui.emacsAcceleratorConfiguration">
