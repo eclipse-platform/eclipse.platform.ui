@@ -41,7 +41,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.externaltools.internal.ant.view.actions.AddProjectAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.AddBuildFileAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveAllAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveProjectAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RunActiveTargetsAction;
@@ -122,7 +122,7 @@ public class AntView extends ViewPart {
 	 */
 	private List updateActions = new ArrayList();
 	// Actions
-	private AddProjectAction addProjectAction;
+	private AddBuildFileAction addBuildFileAction;
 	private RemoveProjectAction removeProjectAction;
 	private RunActiveTargetsAction runActiveTargetsAction;
 	private SearchForBuildFilesAction searchForBuildFilesAction;
@@ -174,7 +174,7 @@ public class AntView extends ViewPart {
 	 */
 	protected void fillContextMenu(Viewer viewer, IMenuManager menu) {
 		if (viewer == projectViewer) {
-			menu.add(addProjectAction);
+			menu.add(addBuildFileAction);
 			menu.add(new Separator());
 			menu.add(runTargetAction);
 			menu.add(activateTargetAction);
@@ -196,7 +196,7 @@ public class AntView extends ViewPart {
 	private void createToolbarActions() {
 		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
 		toolBarMgr.add(runActiveTargetsAction);
-		toolBarMgr.add(addProjectAction);
+		toolBarMgr.add(addBuildFileAction);
 		toolBarMgr.add(searchForBuildFilesAction);
 		
 		ToolBarManager projectManager= new ToolBarManager(projectToolBar);
@@ -216,7 +216,7 @@ public class AntView extends ViewPart {
 	 * Initialize the actions for this view
 	 */
 	private void initializeActions() {
-		addProjectAction = new AddProjectAction(this);
+		addBuildFileAction = new AddBuildFileAction(this);
 		removeProjectAction = new RemoveProjectAction(this);
 		updateActions.add(removeProjectAction);
 		removeAllAction = new RemoveAllAction(this);

@@ -21,11 +21,11 @@ import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
  * Action that prompts the user for a build file and adds the selected file to
  * an <code>AntView</code>
  */
-public class AddProjectAction extends Action {
+public class AddBuildFileAction extends Action {
 
 	private AntView view;
 
-	public AddProjectAction(AntView view) {
+	public AddBuildFileAction(AntView view) {
 		super("Add Build File", ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ADD));
 		this.view= view;
 		setToolTipText("Add build file");
