@@ -11,6 +11,7 @@
 package org.eclipse.team.core.sync;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -184,7 +185,8 @@ public class RemoteContentsCache {
 			// We will end up here if we couldn't read or delete the cache file
 			throw new TeamException(Policy.bind("RemoteContentsCache.fileError", ioFile.getAbsolutePath()), e); //$NON-NLS-1$
 		}
-		return null;
+		// This can occur when there is no remote contents
+		return new ByteArrayInputStream(new byte[0]);
 	}
 	
 	/**

@@ -14,7 +14,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
@@ -150,8 +150,8 @@ public class ContentComparisonCriteria extends ComparisonCriteria {
 
 	private InputStream getContents(Object resource, IProgressMonitor monitor) throws TeamException {
 		try {
-			if (resource instanceof IStorage) {
-				return new BufferedInputStream(((IStorage) resource).getContents());
+			if (resource instanceof IFile) {
+				return new BufferedInputStream(((IFile) resource).getContents());
 			} else if(resource instanceof IRemoteResource) {
 				IRemoteResource remote = (IRemoteResource)resource;
 				if (!remote.isContainer()) {
