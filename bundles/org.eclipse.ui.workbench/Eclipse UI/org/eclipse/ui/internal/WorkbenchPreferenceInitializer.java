@@ -71,7 +71,8 @@ public class WorkbenchPreferenceInitializer extends
         store.setDefault(IPreferenceConstants.SHOW_SHORTCUT_BAR, true);
         store.setDefault(IPreferenceConstants.SHOW_STATUS_LINE, true);
         store.setDefault(IPreferenceConstants.SHOW_TOOL_BAR, true);
-        store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST, false);
+        store.setDefault(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB, 0);
+        store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST, true);
         store.setDefault(IPreferenceConstants.MULTI_KEY_ASSIST_TIME, 1000);
 
         //Option to show user jobs in a dialog

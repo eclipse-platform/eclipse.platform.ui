@@ -24,6 +24,8 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
@@ -94,16 +96,6 @@ public final class WorkbenchKeyboard {
      * filter.
      */
     private static final boolean DEBUG_VERBOSE = Policy.DEBUG_KEY_BINDINGS_VERBOSE;
-
-    /**
-     * The maximum height of the multi-stroke key binding assistant shell.
-     */
-    private static final int MULTI_KEY_ASSIST_SHELL_MAX_HEIGHT = 175;
-
-    /**
-     * The maximum width of the multi-stroke key binding assistant shell.
-     */
-    private static final int MULTI_KEY_ASSIST_SHELL_MAX_WIDTH = 300;
 
     /**
      * The properties key for the key strokes that should be processed out of
@@ -275,6 +267,17 @@ public final class WorkbenchKeyboard {
     private Shell multiKeyAssistShell = null;
 
     /**
+     * Whether the last key assist dialog that was opened was both opened by
+     * someone external to <code>WorkbenchKeyboard</code> (i.e., by calling
+     * <code>openMultiKeyAssistShell(display, true)</code>) and the user
+     * preference for opening the multi-key assist shell is normally
+     * <code>false</code>. This is used to determine whether -- when
+     * narrowing down the multi-key assist shell in response to user key input --
+     * the multi-key assist shell needs to set this preference before opening.
+     */
+    private boolean setKeyAssistPreferenceOnOpen = false;
+
+    /**
      * The time at which the last timer was started. This is used to judge if a
      * sufficient amount of time has elapsed. This is simply the output of
      * <code>System.currentTimeMillis()</code>.
@@ -382,6 +385,7 @@ public final class WorkbenchKeyboard {
      * isn't already disposed.
      */
     private void closeMultiKeyAssistShell() {
+        setKeyAssistPreferenceOnOpen = false;
         if ((multiKeyAssistShell != null)
                 && (!multiKeyAssistShell.isDisposed())) {
             workbench.getContextSupport().unregisterShell(multiKeyAssistShell);
@@ -407,9 +411,10 @@ public final class WorkbenchKeyboard {
                     && !Boolean.TRUE.equals(attributeValuesByName
                             .get("enabled"))) { //$NON-NLS-1$
                 return false;
-            } else {
-                return true;
             }
+            
+            return true;
+            
         } catch (NotHandledException eNotHandled) {
             return false;
         }
@@ -682,10 +687,41 @@ public final class WorkbenchKeyboard {
      *            The display on which the shell should be opened; must not be
      *            <code>null</code>.
      */
-    private void openMultiKeyAssistShell(final Display display) {
+    public final void openMultiKeyAssistShell(final Display display) {
+        openMultiKeyAssistShell(display, false);
+    }
+
+    /**
+     * Opens a <code>Shell</code> to assist the user in completing a
+     * multi-stroke key binding. After this method completes,
+     * <code>multiKeyAssistShell</code> should point at the newly opened
+     * window.
+     * 
+     * @param notOpenedByKeyPress
+     *            Whether the key assist dialog is being opened by someone
+     *            external to <code>WorkbenchKeyboard</code>. This means it
+     *            could have been opened even though the user preference for the
+     *            key assist is not true. Normally, this would mean that the
+     *            shell would not update with subsequent key strokes (in a
+     *            multi-stroke key binding), but we would actually like it to
+     *            update in this special case.
+     * @param display
+     *            The display on which the shell should be opened; must not be
+     *            <code>null</code>.
+     */
+    public final void openMultiKeyAssistShell(final Display display,
+            boolean notOpenedByKeyPress) {
         // Safety check to close an already open shell, if there is one.
+        Point previousSize = null;
+        int previousWidth = -1;
         if (multiKeyAssistShell != null) {
-            multiKeyAssistShell.close();
+            if (this.setKeyAssistPreferenceOnOpen) {
+                notOpenedByKeyPress = true;
+            }
+            previousSize = multiKeyAssistShell.getSize();
+            previousWidth = ((Table) multiKeyAssistShell.getChildren()[0])
+                    .getColumn(0).getWidth();
+//            multiKeyAssistShell.close();
         }
 
         // Get the status line. If none, then abort.
@@ -693,19 +729,17 @@ public final class WorkbenchKeyboard {
         if (statusLine == null) {
             return;
         }
-        Point statusLineLocation = statusLine.getDisplayLocation();
-        if (statusLineLocation == null) {
-            return;
-        }
 
         // Set up the shell.
-        multiKeyAssistShell = new Shell(display, SWT.NO_TRIM);
-        GridLayout layout = new GridLayout();
-        layout.marginHeight = 0;
-        layout.marginWidth = 0;
-        multiKeyAssistShell.setLayout(layout);
-        multiKeyAssistShell.setBackground(display
-                .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+        if (multiKeyAssistShell == null) {
+            multiKeyAssistShell = new Shell(display, SWT.NO_TRIM);
+            GridLayout layout = new GridLayout();
+            layout.marginHeight = 0;
+            layout.marginWidth = 0;
+            multiKeyAssistShell.setLayout(layout);
+            multiKeyAssistShell.setBackground(display
+                    .getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+        }
 
         // Get the list of items.
         Map partialMatches = new TreeMap(new Comparator() {
@@ -732,6 +766,12 @@ public final class WorkbenchKeyboard {
                 partialMatchItr.remove();
             }
         }
+        
+        // Remove the previous controls (a bit wasteful, but cleaner code).
+        final Control[] children = multiKeyAssistShell.getChildren();
+        for (int i = 0; i < children.length; i++) {
+            children[i].dispose();
+        }
 
         // Layout the partial matches.
         if (partialMatches.isEmpty()) {
@@ -744,8 +784,9 @@ public final class WorkbenchKeyboard {
         } else {
             // Layout the table.
             final Table completionsTable = new Table(multiKeyAssistShell,
-                    SWT.SINGLE);
+                    SWT.BORDER | SWT.SINGLE);
             completionsTable.setBackground(multiKeyAssistShell.getBackground());
+            completionsTable.setLinesVisible(true);
             GridData gridData = new GridData(GridData.FILL_BOTH);
             completionsTable.setLayoutData(gridData);
             // Initialize the columns and rows.
@@ -770,6 +811,9 @@ public final class WorkbenchKeyboard {
                 }
             }
             columnKeySequence.pack();
+            if (previousWidth != -1) {
+                columnKeySequence.setWidth(previousWidth);
+            }
             columnCommandName.pack();
             // If you double-click on the table, it should execute the selected
             // command.
@@ -798,18 +842,29 @@ public final class WorkbenchKeyboard {
         // Size the shell.
         multiKeyAssistShell.pack();
         Point assistShellSize = multiKeyAssistShell.getSize();
-        if (assistShellSize.x > MULTI_KEY_ASSIST_SHELL_MAX_WIDTH) {
-            assistShellSize.x = MULTI_KEY_ASSIST_SHELL_MAX_WIDTH;
+        if (previousSize != null) {
+            assistShellSize.x = previousSize.x;
         }
-        if (assistShellSize.y > MULTI_KEY_ASSIST_SHELL_MAX_HEIGHT) {
-            assistShellSize.y = MULTI_KEY_ASSIST_SHELL_MAX_HEIGHT;
+        final Point workbenchWindowSize = state.getAssociatedWindow().getShell().getSize();
+        final int maxWidth = workbenchWindowSize.x * 2 / 5;
+        final int maxHeight = workbenchWindowSize.y;
+        if (assistShellSize.x > maxWidth) {
+            assistShellSize.x = maxWidth;
+        }
+        if (assistShellSize.y > maxHeight) {
+            assistShellSize.y = maxHeight;
         }
         multiKeyAssistShell.setSize(assistShellSize);
 
         // Position the shell.
-        Point assistShellLocation = new Point(statusLineLocation.x,
-                statusLineLocation.y - assistShellSize.y);
-        Rectangle displayBounds = display.getBounds();
+        final Rectangle workbenchWindowBounds = state.getAssociatedWindow()
+                .getShell().getBounds();
+        final int xCoord = workbenchWindowBounds.x
+                + workbenchWindowBounds.width - assistShellSize.x + 20;
+        final int yCoord = workbenchWindowBounds.y
+                + workbenchWindowBounds.height - assistShellSize.y + 20;
+        final Point assistShellLocation = new Point(xCoord, yCoord);
+        Rectangle displayBounds = display.getClientArea();
         final int displayRightEdge = displayBounds.x + displayBounds.width;
         if (assistShellLocation.x < displayBounds.x) {
             assistShellLocation.x = displayBounds.x;
@@ -835,6 +890,26 @@ public final class WorkbenchKeyboard {
         // Open the shell.
         workbench.getContextSupport().registerShell(multiKeyAssistShell,
                 IWorkbenchContextSupport.TYPE_WINDOW);
+        final IPreferenceStore store = WorkbenchPlugin.getDefault()
+                .getPreferenceStore();
+        final boolean previousValue = store
+                .getBoolean(IPreferenceConstants.MULTI_KEY_ASSIST);
+        if ((notOpenedByKeyPress) && (!previousValue)) {
+            setKeyAssistPreferenceOnOpen = true;
+            store.setValue(IPreferenceConstants.MULTI_KEY_ASSIST, true);
+            multiKeyAssistShell.addDisposeListener(new DisposeListener() {
+                /*
+                 * (non-Javadoc)
+                 * 
+                 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
+                 */
+                public void widgetDisposed(DisposeEvent e) {
+                    store
+                            .setValue(IPreferenceConstants.MULTI_KEY_ASSIST,
+                                    false);
+                }
+            });
+        }
         multiKeyAssistShell.open();
     }
 

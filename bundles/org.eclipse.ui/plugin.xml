@@ -472,6 +472,12 @@
             categoryId="org.eclipse.ui.category.window"
             id="org.eclipse.ui.window.savePerspective">
       </command>
+      <command
+      		name="%command.showKeyAssist.name"
+      		description="%command.showKeyAssist.description"
+      		categoryId="org.eclipse.ui.category.window"
+      		id="org.eclipse.ui.window.showKeyAssist">
+      </command>
       <handlerSubmission
             commandId="org.eclipse.ui.edit.copy"
             handler="org.eclipse.ui.internal.commands.ws.WidgetMethodHandler:copy">
@@ -487,6 +493,10 @@
       <handlerSubmission
             commandId="org.eclipse.ui.edit.selectAll"
             handler="org.eclipse.ui.internal.commands.ws.SelectAllHandler">
+      </handlerSubmission>
+      <handlerSubmission
+      		commandId="org.eclipse.ui.window.showKeyAssist"
+      		handler="org.eclipse.ui.internal.commands.ws.ShowKeyAssistHandler">
       </handlerSubmission>
       <keyBinding
             commandId="org.eclipse.ui.newWizard"
@@ -913,6 +923,12 @@
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             keySequence="Shift+Insert"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <keyBinding
+      		commandId="org.eclipse.ui.window.showKeyAssist"
+      		contextId="org.eclipse.ui.contexts.dialogAndWindow"
+      		keySequence="Ctrl+Shift+L"
+      		keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
             commandId="org.eclipse.ui.file.close"

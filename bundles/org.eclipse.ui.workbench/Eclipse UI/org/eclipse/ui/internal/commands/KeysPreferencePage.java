@@ -11,12 +11,16 @@
 
 package org.eclipse.ui.internal.commands;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,6 +32,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.FieldEditor;
@@ -36,6 +41,7 @@ import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -45,6 +51,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -54,6 +61,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -70,6 +78,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IKeyConfiguration;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextManager;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
@@ -149,6 +158,92 @@ public class KeysPreferencePage extends
         }
     }
 
+    /**
+     * A selection listener to be used on the columns in the table on the view
+     * tab. This selection listener modifies the sort order so that the
+     * appropriate column is in the first position.
+     * 
+     * @since 3.1
+     */
+    private class SortOrderSelectionListener extends SelectionAdapter {
+
+        /**
+         * The column to be put in the first position. This value should be one
+         * of the constants defined by <code>SORT_COLUMN_</code>.
+         */
+        private final int columnSelected;
+
+        /**
+         * Constructs a new instance of <code>SortOrderSelectionListener</code>.
+         * 
+         * @param columnSelected
+         *            The column to be given first priority in the sort order;
+         *            this value should be one of the constants defined as
+         *            <code>SORT_COLUMN_</code>.
+         */
+        private SortOrderSelectionListener(final int columnSelected) {
+            this.columnSelected = columnSelected;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+         */
+        public void widgetSelected(SelectionEvent e) {
+            // Change the sort order.
+            boolean columnPlaced = false;
+            boolean enoughRoom = false;
+            int bumpedColumn = -1;
+            for (int i = 0; i < sortOrder.length; i++) {
+                if (sortOrder[i] == columnSelected) {
+                    /*
+                     * We've found the place where the column existing in the
+                     * old sort order. No matter what at this point, we have
+                     * completed the reshuffling.
+                     */
+                    enoughRoom = true;
+                    if (bumpedColumn != -1) {
+                        // We have already started bumping things around, so
+                        // drop the last bumped column here.
+                        sortOrder[i] = bumpedColumn;
+                    } else {
+                        // The order has not changed.
+                        columnPlaced = true;
+                    }
+                    break;
+
+                } else if (columnPlaced) {
+                    // We are currently bumping, so just bump another.
+                    int temp = sortOrder[i];
+                    sortOrder[i] = bumpedColumn;
+                    bumpedColumn = temp;
+
+                } else {
+                    /*
+                     * We are not currently bumping, so drop the column and
+                     * start bumping.
+                     */
+                    bumpedColumn = sortOrder[i];
+                    sortOrder[i] = columnSelected;
+                    columnPlaced = true;
+                }
+            }
+
+            // Grow the sort order.
+            if (!enoughRoom) {
+                final int[] newSortOrder = new int[sortOrder.length + 1];
+                System.arraycopy(sortOrder, 0, newSortOrder, 0,
+                        sortOrder.length);
+                newSortOrder[sortOrder.length] = bumpedColumn;
+                sortOrder = newSortOrder;
+            }
+
+            // Update the view tab.
+            updateViewTab();
+        }
+    }
+
     private final static int DIFFERENCE_ADD = 0;
 
     private final static int DIFFERENCE_CHANGE = 1;
@@ -167,6 +262,46 @@ public class KeysPreferencePage extends
 
     private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
             .getBundle(KeysPreferencePage.class.getName());
+
+    /**
+     * The constant representing the category column within the sort order.
+     */
+    private final static int SORT_COLUMN_CATEGORY = 0;
+
+    /**
+     * The constant representing the command column within the sort order.
+     */
+    private final static int SORT_COLUMN_COMMAND = 1;
+
+    /**
+     * The constant representing the context column within the sort order.
+     */
+    private final static int SORT_COLUMN_CONTEXT = 3;
+
+    /**
+     * The constant representing the key sequence column within the sort order.
+     */
+    private final static int SORT_COLUMN_KEY_SEQUENCE = 2;
+
+    /**
+     * The index of the column on the view tab containing the category name.
+     */
+    private final static int VIEW_CATEGORY_COLUMN_INDEX = 0;
+
+    /**
+     * The index of the column on the view tab containing the command name.
+     */
+    private final static int VIEW_COMMAND_COLUMN_INDEX = 1;
+
+    /**
+     * The index of the column on the view tab containing the context name.
+     */
+    private final static int VIEW_CONTEXT_COLUMN_INDEX = 3;
+
+    /**
+     * The index of the column on the view tab containing the key sequence.
+     */
+    private final static int VIEW_KEY_SEQUENCE_COLUMN_INDEX = 2;
 
     private Map assignmentsByContextIdByKeySequence;
 
@@ -240,9 +375,27 @@ public class KeysPreferencePage extends
 
     private Color minusColour;
 
+    /**
+     * The sort order to be used on the view tab to display all of the key
+     * bindings. This sort order can be changed by the user. This array is never
+     * <code>null</code>, but may be empty.
+     */
+    private int[] sortOrder = { SORT_COLUMN_CATEGORY, SORT_COLUMN_COMMAND,
+            SORT_COLUMN_KEY_SEQUENCE, SORT_COLUMN_CONTEXT };
+
+    private TabFolder tabFolder;
+
     private Table tableAssignmentsForCommand;
 
     private Table tableAssignmentsForKeySequence;
+
+    /**
+     * A table of the key bindings currently defined. This table appears on the
+     * view tab; it is intended to be an easy way for users to learn the key
+     * bindings in Eclipse. This value is only <code>null</code> until the
+     * controls are first created.
+     */
+    private Table tableKeyBindings;
 
     private Text textKeySequence;
 
@@ -557,7 +710,43 @@ public class KeysPreferencePage extends
         return composite;
     }
 
-    private Composite createBasicTab(TabFolder parent) {
+    protected Control createContents(Composite parent) {
+        // Initialize the minus colour.
+        minusColour = getShell().getDisplay().getSystemColor(
+                SWT.COLOR_WIDGET_NORMAL_SHADOW);
+
+        tabFolder = new TabFolder(parent, SWT.NULL);
+
+        // View tab
+        final TabItem viewTab = new TabItem(tabFolder, SWT.NULL);
+        viewTab.setText(Util.translateString(RESOURCE_BUNDLE, "viewTab.Text")); //$NON-NLS-1$
+        viewTab.setControl(createViewTab(tabFolder));
+
+        // Modify tab
+        final TabItem modifyTab = new TabItem(tabFolder, SWT.NULL);
+        modifyTab.setText(Util.translateString(RESOURCE_BUNDLE,
+                "modifyTab.Text")); //$NON-NLS-1$
+        modifyTab.setControl(createModifyTab(tabFolder));
+
+        // Advanced tab
+        final TabItem advancedTab = new TabItem(tabFolder, SWT.NULL);
+        advancedTab.setText(Util.translateString(RESOURCE_BUNDLE,
+                "advancedTab.Text")); //$NON-NLS-1$
+        advancedTab.setControl(createAdvancedTab(tabFolder));
+
+        // Do some fancy stuff.
+        applyDialogFont(tabFolder);
+        final IPreferenceStore store = getPreferenceStore();
+        final int selectedTab = store
+                .getInt(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB);
+        if ((tabFolder.getItemCount() > selectedTab) && (selectedTab > 0)) {
+            tabFolder.setSelection(selectedTab);
+        }
+
+        return tabFolder;
+    }
+
+    private Composite createModifyTab(TabFolder parent) {
         Composite composite = new Composite(parent, SWT.NULL);
         composite.setLayout(new GridLayout());
         GridData gridData = new GridData(GridData.FILL_BOTH);
@@ -928,27 +1117,94 @@ public class KeysPreferencePage extends
         return composite;
     }
 
-    protected Control createContents(Composite parent) {
-        // Initialize the minus colour.
-        minusColour = getShell().getDisplay().getSystemColor(
-                SWT.COLOR_WIDGET_NORMAL_SHADOW);
+    /**
+     * Creates a tab on the main page for displaying an uneditable list of the
+     * current key bindings. This is intended as a discovery tool for new users.
+     * It shows all of the key bindings for the current key configuration,
+     * platform and locale.
+     * 
+     * @param parent
+     *            The tab folder in which the tab should be created; must not be
+     *            <code>null</code>.
+     * @return The newly created composite containing all of the controls; never
+     *         <code>null</code>.
+     * @since 3.1
+     */
+    private final Composite createViewTab(final TabFolder parent) {
+        GridData gridData = null;
 
-        final TabFolder tabFolder = new TabFolder(parent, SWT.NULL);
+        // Create the composite for the tab.
+        final Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+        composite.setLayout(new GridLayout());
 
-        // Basic tab
-        final TabItem basicTab = new TabItem(tabFolder, SWT.NULL);
-        basicTab
-                .setText(Util.translateString(RESOURCE_BUNDLE, "basicTab.Text")); //$NON-NLS-1$
-        basicTab.setControl(createBasicTab(tabFolder));
+        // Place a table inside the tab.
+        tableKeyBindings = new Table(composite, SWT.BORDER | SWT.FULL_SELECTION
+                | SWT.H_SCROLL | SWT.V_SCROLL);
+        tableKeyBindings.setHeaderVisible(true);
+        gridData = new GridData(GridData.FILL_BOTH);
+        gridData.widthHint = 800;
+        gridData.heightHint = 400;
+        tableKeyBindings.setLayoutData(gridData);
+        final TableColumn tableColumnCategory = new TableColumn(
+                tableKeyBindings, SWT.NONE, VIEW_CATEGORY_COLUMN_INDEX);
+        tableColumnCategory.setText(Util.translateString(RESOURCE_BUNDLE,
+                "tableColumnCategory")); //$NON-NLS-1$
+        tableColumnCategory
+                .addSelectionListener(new SortOrderSelectionListener(
+                        SORT_COLUMN_CATEGORY));
+        final TableColumn tableColumnCommand = new TableColumn(
+                tableKeyBindings, SWT.NONE, VIEW_COMMAND_COLUMN_INDEX);
+        tableColumnCommand.setText(Util.translateString(RESOURCE_BUNDLE,
+                "tableColumnCommand")); //$NON-NLS-1$
+        tableColumnCommand.addSelectionListener(new SortOrderSelectionListener(
+                SORT_COLUMN_COMMAND));
+        final TableColumn tableColumnKeySequence = new TableColumn(
+                tableKeyBindings, SWT.NONE, VIEW_KEY_SEQUENCE_COLUMN_INDEX);
+        tableColumnKeySequence.setText(Util.translateString(RESOURCE_BUNDLE,
+                "tableColumnKeySequence")); //$NON-NLS-1$
+        tableColumnKeySequence
+                .addSelectionListener(new SortOrderSelectionListener(
+                        SORT_COLUMN_KEY_SEQUENCE));
+        final TableColumn tableColumnContext = new TableColumn(
+                tableKeyBindings, SWT.NONE, VIEW_CONTEXT_COLUMN_INDEX);
+        tableColumnContext.setText(Util.translateString(RESOURCE_BUNDLE,
+                "tableColumnContext")); //$NON-NLS-1$
+        tableColumnContext.addSelectionListener(new SortOrderSelectionListener(
+                SORT_COLUMN_CONTEXT));
 
-        // Advanced tab
-        final TabItem advancedTab = new TabItem(tabFolder, SWT.NULL);
-        advancedTab.setText(Util.translateString(RESOURCE_BUNDLE,
-                "advancedTab.Text")); //$NON-NLS-1$
-        advancedTab.setControl(createAdvancedTab(tabFolder));
+        // A button for exporting the contents to a file.
+        final Button button = new Button(composite, SWT.PUSH);
+        gridData = new GridData();
+        gridData.horizontalAlignment = GridData.END;
+        gridData.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+        final int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+        gridData.widthHint = Math.max(widthHint, button.computeSize(
+                SWT.DEFAULT, SWT.DEFAULT, true).x) + 5;
+        button.setLayoutData(gridData);
+        button.setText(Util.translateString(RESOURCE_BUNDLE, "buttonExport")); //$NON-NLS-1$
+        button.addSelectionListener(new SelectionListener() {
 
-        applyDialogFont(tabFolder);
-        return tabFolder;
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+             */
+            public final void widgetDefaultSelected(final SelectionEvent event) {
+                selectedButtonExport();
+            }
+
+            /*
+             * (non-Javadoc)
+             * 
+             * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+             */
+            public void widgetSelected(SelectionEvent e) {
+                widgetDefaultSelected(e);
+            }
+        });
+
+        return composite;
     }
 
     protected IPreferenceStore doGetPreferenceStore() {
@@ -1003,6 +1259,14 @@ public class KeysPreferencePage extends
 
     private void modifiedTextKeySequence() {
         update();
+    }
+
+    public final boolean performCancel() {
+        // Save the selected tab for future reference.
+        IPreferenceStore store = getPreferenceStore();
+        store.setValue(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB,
+                tabFolder.getSelectionIndex());
+        return super.performCancel();
     }
 
     protected void performDefaults() {
@@ -1079,6 +1343,10 @@ public class KeysPreferencePage extends
                 checkBoxMultiKeyAssist.getSelection());
         store.setValue(IPreferenceConstants.MULTI_KEY_ASSIST_TIME,
                 textMultiKeyAssistTime.getIntValue());
+
+        // Save the selected tab for future reference.
+        store.setValue(IPreferenceConstants.KEYS_PREFERENCE_SELECTED_TAB,
+                tabFolder.getSelectionIndex());
         return super.performOk();
     }
 
@@ -1153,6 +1421,57 @@ public class KeysPreferencePage extends
                 KeySequence.getInstance(), 0,
                 preferenceKeySequenceBindingDefinitions);
         update();
+    }
+
+    /**
+     * Provides a facility for exporting the viewable list of key bindings to a
+     * file. Currently, this only supports exporting to a list of
+     * comma-separated values. The user is prompted for which file should
+     * receive our bounty.
+     * 
+     * @since 3.1
+     */
+    private final void selectedButtonExport() {
+        FileDialog fileDialog = new FileDialog(getShell());
+        fileDialog.setFilterExtensions(new String[] { "*.csv" }); //$NON-NLS-1$
+        fileDialog.setFilterNames(new String[] { Util.translateString(
+                RESOURCE_BUNDLE, "csvFilterName") }); //$NON-NLS-1$
+        final String filePath = fileDialog.open();
+        if (filePath == null) {
+            return;
+        }
+
+        final SafeRunnable runnable = new SafeRunnable() {
+            public final void run() throws IOException {
+                Writer fileWriter = null;
+                try {
+                    fileWriter = new BufferedWriter(new FileWriter(filePath));
+                    final TableItem[] items = tableKeyBindings.getItems();
+                    final int numColumns = tableKeyBindings.getColumnCount();
+                    for (int i = 0; i < items.length; i++) {
+                        final TableItem item = items[i];
+                        for (int j = 0; j < numColumns; j++) {
+                            fileWriter.write(item.getText(j));
+                            if (j < numColumns - 1) {
+                                fileWriter.write(',');
+                            }
+                        }
+                        fileWriter.write(System.getProperty("line.separator")); //$NON-NLS-1$
+                    }
+
+                } finally {
+                    if (fileWriter != null) {
+                        try {
+                            fileWriter.close();
+                        } catch (final IOException e) {
+                            // At least I tried.
+                        }
+                    }
+
+                }
+            }
+        };
+        Platform.run(runnable);
     }
 
     private void selectedButtonRemove() {
@@ -1771,6 +2090,7 @@ public class KeysPreferencePage extends
     }
 
     private void update() {
+        updateViewTab();
         setCommandsForCategory();
         setContextsForCommand();
         String keyConfigurationId = getKeyConfigurationId();
@@ -1868,6 +2188,209 @@ public class KeysPreferencePage extends
         }
 
         labelKeyConfigurationExtends.setText(Util.ZERO_LENGTH_STRING);
+    }
+
+    /**
+     * Updates the contents of the view tab. This queries the command manager
+     * for a list of key sequence binding definitions, and these definitions are
+     * then added to the table.
+     * 
+     * @since 3.1
+     */
+    private final void updateViewTab() {
+        // Clear out the existing table contents.
+        tableKeyBindings.removeAll();
+
+        // Get a sorted list of key binding contents.
+        final List bindings = new ArrayList(commandManager.getKeyBindings());
+        Collections.sort(bindings, new Comparator() {
+            /**
+             * Compares two instances of <code>KeySequenceBindingMachine</code>
+             * based on the current sort order.
+             * 
+             * @param object1
+             *            The first object to compare; must be an instance of
+             *            <code>KeySequenceBindingDefinition</code> (i.e., not
+             *            <code>null</code>).
+             * @param object2
+             *            The second object to compare; must be an instance of
+             *            <code>KeySequenceBindingDefinition</code> (i.e., not
+             *            <code>null</code>).
+             * @return The integer value representing the comparison. The
+             *         comparison is based on the current sort order.
+             * @since 3.1
+             */
+            public final int compare(final Object object1, final Object object2) {
+                final KeySequenceBindingDefinition binding1 = (KeySequenceBindingDefinition) object1;
+                final KeySequenceBindingDefinition binding2 = (KeySequenceBindingDefinition) object2;
+
+                /*
+                 * Get the category name, command name, formatted key sequence
+                 * and context name for the first binding.
+                 */
+                final String commandId1 = binding1.getCommandId();
+                String categoryName1 = Util.ZERO_LENGTH_STRING;
+                String commandName1 = Util.ZERO_LENGTH_STRING;
+                if (commandId1 != null) {
+                    final ICommand command = commandManager
+                            .getCommand(commandId1);
+                    try {
+                        commandName1 = command.getName();
+                        final String categoryId = command.getCategoryId();
+                        if (categoryId != null) {
+                            categoryName1 = commandManager.getCategory(
+                                    categoryId).getName();
+                        }
+                    } catch (final NotDefinedException e) {
+                        // Just use the zero-length string.
+                    }
+                }
+                final String keySequence1 = binding1.getKeySequence().format();
+                final String contextId1 = binding1.getContextId();
+                String contextName1 = Util.ZERO_LENGTH_STRING;
+                if (contextId1 != null) {
+                    final IContext context = contextManager
+                            .getContext(contextId1);
+                    try {
+                        contextName1 = context.getName();
+                    } catch (final org.eclipse.ui.contexts.NotDefinedException e) {
+                        // Just use the zero-length string.
+                    }
+                }
+
+                /*
+                 * Get the category name, command name, formatted key sequence
+                 * and context name for the first binding.
+                 */
+                final String commandId2 = binding2.getCommandId();
+                String categoryName2 = Util.ZERO_LENGTH_STRING;
+                String commandName2 = Util.ZERO_LENGTH_STRING;
+                if (commandId2 != null) {
+                    final ICommand command = commandManager
+                            .getCommand(commandId2);
+                    try {
+                        commandName2 = command.getName();
+                        final String categoryId = command.getCategoryId();
+                        if (categoryId != null) {
+                            categoryName2 = commandManager.getCategory(
+                                    categoryId).getName();
+                        }
+                    } catch (final NotDefinedException e) {
+                        // Just use the zero-length string.
+                    }
+                }
+                final String keySequence2 = binding2.getKeySequence().format();
+                final String contextId2 = binding2.getContextId();
+                String contextName2 = Util.ZERO_LENGTH_STRING;
+                if (contextId2 != null) {
+                    final IContext context = contextManager
+                            .getContext(contextId2);
+                    try {
+                        contextName2 = context.getName();
+                    } catch (final org.eclipse.ui.contexts.NotDefinedException e) {
+                        // Just use the zero-length string.
+                    }
+                }
+
+                // Compare the items in the current sort order.
+                int compare = 0;
+                for (int i = 0; i < sortOrder.length; i++) {
+                    switch (sortOrder[i]) {
+                    case SORT_COLUMN_CATEGORY:
+                        compare = Util.compare(categoryName1, categoryName2);
+                        if (compare != 0) {
+                            return compare;
+                        }
+                        break;
+                    case SORT_COLUMN_COMMAND:
+                        compare = Util.compare(commandName1, commandName2);
+                        if (compare != 0) {
+                            return compare;
+                        }
+                        break;
+                    case SORT_COLUMN_KEY_SEQUENCE:
+                        compare = Util.compare(keySequence1, keySequence2);
+                        if (compare != 0) {
+                            return compare;
+                        }
+                        break;
+                    case SORT_COLUMN_CONTEXT:
+                        compare = Util.compare(contextName1, contextName2);
+                        if (compare != 0) {
+                            return compare;
+                        }
+                        break;
+                    default:
+                        throw new Error(
+                                "Programmer error: added another sort column without modifying the comparator."); //$NON-NLS-1$
+                    }
+                }
+
+                return compare;
+            }
+
+            /**
+             * @see Object#equals(java.lang.Object)
+             */
+            public final boolean equals(final Object object) {
+                return super.equals(object);
+            }
+        });
+
+        // Add a table item for each item in the list.
+        final Iterator keyBindingItr = bindings.iterator();
+        while (keyBindingItr.hasNext()) {
+            final KeySequenceBindingDefinition keyBinding = (KeySequenceBindingDefinition) keyBindingItr
+                    .next();
+
+            // Get the command and category name.
+            final String commandId = keyBinding.getCommandId();
+            String commandName = Util.ZERO_LENGTH_STRING;
+            String categoryName = Util.ZERO_LENGTH_STRING;
+            if (commandId != null) {
+                final ICommand command = commandManager.getCommand(commandId);
+                try {
+                    commandName = command.getName();
+                    final String categoryId = command.getCategoryId();
+                    if (categoryId != null) {
+                        categoryName = commandManager.getCategory(categoryId)
+                                .getName();
+                    }
+                } catch (final NotDefinedException e) {
+                    // Just use the zero-length string.
+                }
+            }
+
+            // Ignore items with a meaningless command name.
+            if ((commandName == null) || (commandName.length() == 0)) {
+                continue;
+            }
+
+            // Get the context name.
+            final String contextId = keyBinding.getContextId();
+            String contextName = Util.ZERO_LENGTH_STRING;
+            if (contextId != null) {
+                final IContext context = contextManager.getContext(contextId);
+                try {
+                    contextName = context.getName();
+                } catch (final org.eclipse.ui.contexts.NotDefinedException e) {
+                    // Just use the zero-length string.
+                }
+            }
+
+            // Create the table item.
+            final TableItem item = new TableItem(tableKeyBindings, SWT.NONE);
+            item.setText(VIEW_CATEGORY_COLUMN_INDEX, categoryName);
+            item.setText(VIEW_COMMAND_COLUMN_INDEX, commandName);
+            item.setText(VIEW_KEY_SEQUENCE_COLUMN_INDEX, keyBinding
+                    .getKeySequence().format());
+            item.setText(VIEW_CONTEXT_COLUMN_INDEX, contextName);
+        }
+
+        // Pack the columns.
+        for (int i = 0; i < tableKeyBindings.getColumnCount(); i++) {
+            tableKeyBindings.getColumn(i).pack();
+        }
     }
 
     /*

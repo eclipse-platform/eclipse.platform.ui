@@ -130,6 +130,14 @@ public interface IWorkbenchContextSupport {
     public boolean isKeyFilterEnabled();
 
     /**
+     * Opens the key assistant dialog positioned near the key binding entry in
+     * the status bar.
+     * 
+     * @since 3.1
+     */
+    public void openKeyAssistDialog();
+
+    /**
      * <p>
      * Registers a shell to automatically promote or demote some basic types of
      * contexts. The "In Dialogs" and "In Windows" contexts are provided by the

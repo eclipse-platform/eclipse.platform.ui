@@ -46,7 +46,7 @@ public final class MutableCommandManager implements IMutableCommandManager {
 
     /**
      * Whether commands should print out information about which handlers are
-     * being executed.  Change this value if you want console output on command
+     * being executed. Change this value if you want console output on command
      * execution.
      */
     public static boolean DEBUG_COMMAND_EXECUTION = false;
@@ -346,6 +346,127 @@ public final class MutableCommandManager implements IMutableCommandManager {
 
     public Map getHandlersByCommandId() {
         return Collections.unmodifiableMap(handlersByCommandId);
+    }
+
+    /**
+     * Builds the collection of key binding definitions that are relevant for
+     * the current locale, platform and key configuration. This set is further
+     * reduced based on cancelling definitions (i.e., definitions with the same
+     * key sequence and context as another definition). Key binding definitions
+     * with no category name or no command name are also removed from the set.
+     * 
+     * @return The collection of key binding definitions for the current
+     *         environment (disregarding context). The collection may be empty,
+     *         but is never <code>null</code>. It contains only instances of
+     *         <code>KeySequenceBindingDefinition</code>.
+     * @since 3.1
+     */
+    final Collection getKeyBindings() {
+        final Set keyBindings = new HashSet();
+
+        // Get all of the defined key bindings.
+        keyBindings.addAll(keySequenceBindingMachine.getKeySequenceBindings0());
+        keyBindings.addAll(keySequenceBindingMachine.getKeySequenceBindings1());
+
+        // Get the current state of the system.
+        final String[] activeKeyConfigurationIds = extend(getKeyConfigurationIds(activeKeyConfigurationId));
+        final String[] activeLocales = extend(getPath(activeLocale, SEPARATOR));
+        final String[] activePlatforms = extend(getPath(activePlatform,
+                SEPARATOR));
+
+        // Filter out those key bindings that do not match this information.
+        Iterator keyBindingItr = keyBindings.iterator();
+        final Map definedPairs = new HashMap();
+        final Collection itemsToRemove = new HashSet();
+        while (keyBindingItr.hasNext()) {
+            final KeySequenceBindingDefinition keyBinding = (KeySequenceBindingDefinition) keyBindingItr
+                    .next();
+            boolean matchFound;
+
+            // Check the key configuration.
+            final String keyConfiguration = keyBinding.getKeyConfigurationId();
+            matchFound = false;
+            for (int i = 0; i < activeKeyConfigurationIds.length; i++) {
+                if ((keyConfiguration == null) ? activeKeyConfigurationIds[i] == null
+                        : keyConfiguration.equals(activeKeyConfigurationIds[i])) {
+                    matchFound = true;
+                    break;
+                }
+            }
+            if (!matchFound) {
+                keyBindingItr.remove();
+                continue;
+            }
+
+            // Check the platform.
+            final String platform = keyBinding.getPlatform();
+            matchFound = false;
+            for (int i = 0; i < activePlatforms.length; i++) {
+                if ((platform == null) ? activePlatforms[i] == null : platform
+                        .equals(activePlatforms[i])) {
+                    matchFound = true;
+                    break;
+                }
+            }
+            if (!matchFound) {
+                keyBindingItr.remove();
+                continue;
+            }
+
+            // Check the locale.
+            final String locale = keyBinding.getLocale();
+            matchFound = false;
+            for (int i = 0; i < activeLocales.length; i++) {
+                if ((locale == null) ? activeLocales[i] == null : locale
+                        .equals(activeLocales[i])) {
+                    matchFound = true;
+                    break;
+                }
+            }
+            if (!matchFound) {
+                keyBindingItr.remove();
+                continue;
+            }
+
+            /*
+             * Everything is okay, so keep track of the defined context and key
+             * binding pairs.
+             */
+            final KeySequence keySequence = keyBinding.getKeySequence();
+            final Map contexts;
+            if (definedPairs.containsKey(keySequence)) {
+                // This key sequence has been seen before.
+                contexts = (Map) definedPairs.get(keySequence);
+                final String contextId = keyBinding.getContextId();
+                if (contexts.containsKey(contextId)) {
+                    /*
+                     * A conflict or cancellation exists; remove this and the
+                     * original.
+                     */
+                    keyBindingItr.remove();
+                    itemsToRemove.add(contexts.get(contextId));
+                    continue;
+                }
+            } else {
+                // This key sequence has not been seen before.
+                contexts = new HashMap();
+                contexts.put(keyBinding.getContextId(), keyBinding);
+                definedPairs.put(keySequence, contexts);
+            }
+        }
+
+        // Remove those items flagged for removal.
+        final List bindings = new ArrayList();
+        keyBindingItr = keyBindings.iterator();
+        while (keyBindingItr.hasNext()) {
+            final KeySequenceBindingDefinition keyBinding = (KeySequenceBindingDefinition) keyBindingItr
+                    .next();
+            if (!itemsToRemove.contains(keyBinding)) {
+                bindings.add(keyBinding);
+            }
+        }
+
+        return bindings;
     }
 
     public IKeyConfiguration getKeyConfiguration(String keyConfigurationId) {

@@ -81,8 +81,10 @@ public interface IPreferenceConstants {
     //Boolean: true = keep cycle part dialog open when keys released
     public static final String STICKY_CYCLE = "STICKY_CYCLE"; //$NON-NLS-1$
 
-    //Boolean: true = close all editors before saving the workbench state when exiting
-    //Eclipse.  Will improve startup time for editors that have a long open time.
+    //Boolean: true = close all editors before saving the workbench state when
+    // exiting
+    //Eclipse. Will improve startup time for editors that have a long open
+    // time.
     public static final String CLOSE_EDITORS_ON_EXIT = "CLOSE_EDITORS_ON_EXIT"; //$NON-NLS-1$
 
     //List of plugins but that extends "startup" extension point but are
@@ -135,15 +137,32 @@ public interface IPreferenceConstants {
 
     /**
      * <p>
+     * The key for the preference indicating which tab is selected in the keys
+     * preference page when last okay was pressed. This value should never
+     * really be directly edited by a user.
+     * </p>
+     * <p>
+     * This preference is an <code>int</code> value. The default value is
+     * <code>0</code>.
+     * </p>
+     * 
+     * @since 3.1
+     */
+    public static final String KEYS_PREFERENCE_SELECTED_TAB = "KEYS_PREFERENCE_SELECTED_TAB"; //$NON-NLS-1$
+
+    /**
+     * <p>
      * The key for the preference indicating whether multi-stroke key sequences
-     * should provide assistance to the user. This means that if the user
-     * pauses after pressing the first key, a window will open showing the
-     * possible completions.
+     * should provide assistance to the user. This means that if the user pauses
+     * after pressing the first key, a window will open showing the possible
+     * completions.
      * </p>
      * <p>
      * This preference is a <code>boolean</code> value. The default value is
      * <code>false</code>.
      * </p>
+     * 
+     * @since 3.0
      */
     public static final String MULTI_KEY_ASSIST = "MULTI_KEY_ASSIST"; //$NON-NLS-1$
 
@@ -158,15 +177,18 @@ public interface IPreferenceConstants {
      * This preference is an <code>int</code> value. The default value is
      * <code>1000</code>.
      * </p>
+     * 
+     * @since 3.0
      */
     public static final String MULTI_KEY_ASSIST_TIME = "MULTI_KEY_ASSIST_TIME"; //$NON-NLS-1$
 
     /**
-     * Workbench preference id for whether the workbench should show multiple 
-     * editor tabs. 
+     * Workbench preference id for whether the workbench should show multiple
+     * editor tabs.
      * 
-     * Boolean-valued: <code>true</code> if editors should show mulitple editor tabs, and 
-     * <code>false</code> if editors should show a single editor tab (3.0 style)
+     * Boolean-valued: <code>true</code> if editors should show mulitple
+     * editor tabs, and <code>false</code> if editors should show a single
+     * editor tab (3.0 style)
      * <p>
      * The default value for this preference is: <code>true</code>
      * </p>
@@ -188,13 +210,15 @@ public interface IPreferenceConstants {
     public static String RUN_IN_BACKGROUND = "RUN_IN_BACKGROUND"; //$NON-NLS-1$
 
     /**
-     * Workbench preference id for determining whether the user will be prompted 
-     * for activity enablement.  If this is false then activities are enabled
-     * automatically.  If it is true, then the user is only prompted for activities
-     * that they have not already declared a disinterest in via the prompt dialog.
+     * Workbench preference id for determining whether the user will be prompted
+     * for activity enablement. If this is false then activities are enabled
+     * automatically. If it is true, then the user is only prompted for
+     * activities that they have not already declared a disinterest in via the
+     * prompt dialog.
      * <p>
      * The default value for this preference is: <code>true</code> (prompt)
      * </p>
+     * 
      * @since 3.0
      */
     public static final String SHOULD_PROMPT_FOR_ENABLEMENT = "shouldPromptForEnablement"; //$NON-NLS-1$
