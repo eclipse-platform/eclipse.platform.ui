@@ -46,7 +46,7 @@ public class MemoryRenderingManager implements IMemoryRenderingManager {
     private static MemoryRenderingManager fgDefault;
     
     // elements in the memory renderings extension point
-    public static final String ELEMENT_MEMORY_RENDERING_TYPE = "memoryRenderingType"; //$NON-NLS-1$
+    public static final String ELEMENT_MEMORY_RENDERING_TYPE = "renderingType"; //$NON-NLS-1$
     public static final String ELEMENT_RENDERING_BINDINGS = "renderingBindings"; //$NON-NLS-1$
     
     /**
