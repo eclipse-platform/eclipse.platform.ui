@@ -827,24 +827,24 @@ public class Main {
 		}
 
 		// reconstruct command line arguments for configuration elements
-		// (-boot and -application are not passed to BootLoader)
+		// (-boot and -application are not passed )
 		if (configURL == null && installLocation == null)
 			return passThruArgs;
 
 		ArrayList args = new ArrayList(Arrays.asList(passThruArgs));
 		if (configURL != null) {
-			args.add(CONFIGURATION);
-			args.add("file:" + configurationLocation);
+			args.add(0, CONFIGURATION);
+			args.add(1, "file:" + configurationLocation);
 		}
 
 		if (cmdFirstUse) {
-			args.add(FIRST_USE);
+			args.add(0, FIRST_USE);
 		}
 
 		// pass root location downstream
 		if (installLocation != null) {
-			args.add(INSTALL);
-			args.add(installLocation);
+			args.add(0, INSTALL);
+			args.add(1, installLocation);
 		}
 
 		return (String[]) args.toArray(new String[0]);
