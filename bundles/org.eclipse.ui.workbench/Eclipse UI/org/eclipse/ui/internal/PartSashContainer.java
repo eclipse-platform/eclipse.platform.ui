@@ -968,6 +968,14 @@ public abstract class PartSashContainer extends LayoutPart implements
                 final Rectangle targetBounds = DragUtil
                         .getDisplayBounds(targetControl);
 
+                // Disallow stacking of detached windows (allows us to drag detached windows
+                // over most of the workspace)
+                if (side == SWT.CENTER) {
+                    if (sourcePart.getWindow() instanceof DetachedWindow) {
+                        return null;
+                    }
+                }
+                
                 // Disallow stacking if this isn't a container
                 if (side == SWT.DEFAULT
                         || (side == SWT.CENTER && !isStackType(targetPart))) {

@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 
 public class DetachedWindow extends Window {
 
-    private DetachedViewStack folder;
+    private PartStack folder;
 
     private WorkbenchPage page;
 
@@ -52,7 +52,7 @@ public class DetachedWindow extends Window {
         setShellStyle( //SWT.CLOSE | SWT.MIN | SWT.MAX | 
         SWT.RESIZE);
         this.page = workbenchPage;
-        folder = new DetachedViewStack(page, false, PresentationFactoryUtil.ROLE_VIEW);
+        folder = new ViewStack(page, false, PresentationFactoryUtil.ROLE_VIEW);
     }
 
     /**
@@ -193,12 +193,6 @@ public class DetachedWindow extends Window {
         bigInt = memento.getInteger(IWorkbenchConstants.TAG_HEIGHT);
         int height = bigInt.intValue();
         bigInt = memento.getInteger(IWorkbenchConstants.TAG_FLOAT);
-        //float tag @since 3.1 - old workbench.xmls won't have it
-        int floatint = 0;
-        if(bigInt != null) {
-        	floatint = bigInt.intValue();
-        	folder.setFloatingState(floatint == 1);
-        }
 
         // Set the bounds.
         bounds = new Rectangle(x, y, width, height);
@@ -206,8 +200,6 @@ public class DetachedWindow extends Window {
             getShell().setText(title);
             getShell().setBounds(bounds);
         }
-        
-        
         
         // Create the folder.
         IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_FOLDER);
@@ -231,8 +223,6 @@ public class DetachedWindow extends Window {
         memento.putInteger(IWorkbenchConstants.TAG_Y, bounds.y);
         memento.putInteger(IWorkbenchConstants.TAG_WIDTH, bounds.width);
         memento.putInteger(IWorkbenchConstants.TAG_HEIGHT, bounds.height);
-        memento.putInteger(IWorkbenchConstants.TAG_FLOAT, 
-        		folder.isFloating() ? 1 : 0);
 
         // Save the views.	
         IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_FOLDER);
@@ -244,10 +234,6 @@ public class DetachedWindow extends Window {
      */
     public Control getControl() {
         return folder.getControl();
-    }
-
-    public void setFloatingState(boolean state) {
-        folder.setFloatingState(state);
     }
     
     /**

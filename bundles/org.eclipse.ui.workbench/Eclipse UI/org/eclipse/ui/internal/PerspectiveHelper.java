@@ -75,21 +75,6 @@ public class PerspectiveHelper {
 
         public IDropTarget drag(Control currentControl, Object draggedObject,
                 Point position, final Rectangle dragRectangle) {
-
-            // If we're dragging a floating detached window
-            if (draggedObject instanceof DetachedWindow) {
-                final DetachedWindow window = (DetachedWindow)draggedObject;
-                return new AbstractDropTarget() {
-                    public void drop() {
-                        window.getShell().setLocation(dragRectangle.x,
-                                dragRectangle.y);
-                    }
-
-                    public Cursor getCursor() {
-                        return DragCursors.getCursor(DragCursors.OFFSCREEN);
-                    }
-                };
-            }
             
             if (!(draggedObject instanceof ViewPane || draggedObject instanceof ViewStack)) {
                 return null;
@@ -821,7 +806,6 @@ public class PerspectiveHelper {
 //    	    		
 //    	    addDetachedPart(pane, bounds);
     	    detach(pane, bounds.x ,bounds.y);
-        	((DetachedWindow)pane.getWindow()).setFloatingState(true);
     	}
     }
 
