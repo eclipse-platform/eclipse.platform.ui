@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewActionDelegate;
@@ -134,8 +133,8 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		}
 	}
 	
-	/**
-	 * @see IWorkbenchWindowActionDelegate#dispose()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose(){
 		if (getWindow() != null) {
@@ -143,8 +142,8 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		}
 	}
 
-	/**
-	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window){
 		// listen to selection changes in the debug view
@@ -152,8 +151,8 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		window.getSelectionService().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 	}
 
-	/**
-	 * @see IActionDelegate#run(IAction)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action){
 		Iterator selectionIter= getSelection().iterator();
@@ -213,9 +212,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		reportErrors(status);
 	}
 
-	/**
-	 * @param ms
-	 */
 	private void reportErrors(final MultiStatus ms) {
 		if (!ms.isOK()) {
 			IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
@@ -252,7 +248,7 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * in the debug view only.
 	 * </p>
 	 * 
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection s) {
 		boolean wasInitialized= initialize(action, s);		
@@ -309,8 +305,8 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 		return ""; //$NON-NLS-1$
 	}
 
-	/**
-	 * @see IViewActionDelegate#init(IViewPart)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	public void init(IViewPart view) {
 		fViewPart = view;
@@ -382,9 +378,9 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	private void setSelection(IStructuredSelection selection) {
 		fSelection = selection;
 	}	
-	
-	/**
-	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		update(getAction(), selection);
