@@ -10,21 +10,17 @@
  *******************************************************************************/
 package org.eclipse.ui.cheatsheets;
 
-import org.eclipse.jface.action.IAction;
-
 /**
  * Cheat sheet-aware action.
  * <p>
- * This interface should be implemented by actions designed specifically
- * for use in cheat sheets. Unlike regular actions, these actions
- * can be given parameters and the invoking cheat sheet manager.
- * Note that cheat sheet actions are regular actions, and can be
- * invoked from outside a cheat sheet via <code>IAction.run</code>.
+ * This interface should be implemented by actions that provide extra support
+ * for use in cheat sheets. These actions can be given parameters and the
+ * invoking cheat sheet manager.
  * </p>
  *
  * @since 3.0
  */
-public interface ICheatSheetAction extends IAction {
+public interface ICheatSheetAction {
 
 	/**
 	 * Runs this Cheat sheet-aware action.
