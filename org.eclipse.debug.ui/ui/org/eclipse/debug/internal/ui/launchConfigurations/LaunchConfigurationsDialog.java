@@ -788,7 +788,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  					renamed = getLaunchManager().getMovedFrom(lc) != null;
  				}
 	 			if (getTabViewer().isDirty() && !deleted && !renamed) {
-	 				boolean canReplace = showSaveChangesDialog();
+	 				boolean canReplace = showUnsavedChangesDialog();
 	 				if (!canReplace) {
 	 					// restore the original selection
 	 					IStructuredSelection sel = new StructuredSelection(input);
