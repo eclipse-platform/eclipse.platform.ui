@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import java.net.URL;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -26,7 +27,7 @@ import org.eclipse.core.runtime.Path;
  */
 public abstract class AbstractAntTest extends TestCase {
 	
-	protected static final String BUILD_SUCCEESSFUL= "BUILD SUCCESSFUL";
+	protected static final String BUILD_SUCCESSFUL= "BUILD SUCCESSFUL";
 	public static final String ANT_TEST_BUILD_LOGGER = "org.eclipse.ant.tests.core.testloggers.TestBuildLogger"; //$NON-NLS-1$
 	public static final String ANT_TEST_BUILD_LISTENER= "org.eclipse.ant.tests.core.testloggers.TestBuildListener";
 	
@@ -38,9 +39,6 @@ public abstract class AbstractAntTest extends TestCase {
 	protected IProject getProject() {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject("AntTests");
 	}
-
-	public static final int DEFAULT_TIMEOUT = 30000;
-	
 	
 	public static IProject project;
 	
@@ -167,7 +165,9 @@ public abstract class AbstractAntTest extends TestCase {
 	}
 	
 	protected void assertSuccessful() {
-		assertTrue("Build was not flagged as successful: " + getLastMessageLogged(), BUILD_SUCCEESSFUL.equals(getLastMessageLogged()));
+		List messages= AntTestChecker.getDefault().getMessages();
+		String success= (String)messages.get(messages.size() - 2);
+		assertTrue("Build was not flagged as successful: " + success, BUILD_SUCCESSFUL.equals(success));
 	}
 	
 	protected String getPropertyFileName() {

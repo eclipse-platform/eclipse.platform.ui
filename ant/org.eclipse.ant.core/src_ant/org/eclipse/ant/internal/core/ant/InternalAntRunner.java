@@ -460,6 +460,8 @@ public class InternalAntRunner {
 	 * Note that the list passed to this method must support
 	 * List#remove(Object)	 */
 	protected void run(List argList) {
+		long startTime = System.currentTimeMillis();
+
 		setCurrentProject(new Project());
 		Throwable error = null;
 		PrintStream originalErr = System.err;
@@ -551,11 +553,41 @@ public class InternalAntRunner {
 			}
 			
 			fireBuildFinished(getCurrentProject(), error);
+			if (error == null && scriptExecuted) {
+				logMessage(getCurrentProject(), getTimeString(System.currentTimeMillis() - startTime), Project.MSG_INFO);
+			}
 		}
 	}
-	/**
-	 * Method validateDefaultTarget.
-	 */
+	
+	private String getTimeString(long milliseconds) {
+		long seconds = milliseconds / 1000;
+		seconds= seconds % 60;
+		long minutes = seconds / 60;
+		
+		StringBuffer result= new StringBuffer("Total time: ");
+		if (minutes > 0) {
+			result.append(minutes);
+			if (minutes > 1) {
+				result.append(" minutes");
+			} else {
+				result.append(" minute");
+			}
+		}
+		if (seconds > 0) {
+			result.append(seconds);
+			if (seconds > 1) {
+				result.append(" seconds");
+			} else {
+				result.append(" second");
+			} 
+		}
+		if (seconds == 0 && minutes == 0) {
+			result.append(milliseconds);
+			result.append(" milliseconds");		
+		}
+		return result.toString();
+	}
+	
 	private void validateDefaultTarget() {
 		defaultTarget = getCurrentProject().getDefaultTarget();
 		
