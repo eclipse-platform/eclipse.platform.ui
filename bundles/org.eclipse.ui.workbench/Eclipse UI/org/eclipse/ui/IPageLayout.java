@@ -383,39 +383,38 @@ public void setEditorAreaVisible(boolean showEditorArea);
 /**
  * Returns the number of open editors before reusing editors or -1 if the 
  * preference settings should be used instead.
- * 
- * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
  *
- * @return a int
+ * @return the number of open editors before reusing editors or -1 if the 
+ * preference settings should be used instead.
  * 
- * @deprecated
+ * @deprecated this always returns -1 as of Eclipse 2.1
  */
 public int getEditorReuseThreshold();
 /**
- * Set the number of open editors before reusing editors.
+ * Sets the number of open editors before reusing editors.
  * If < 0 the user preference settings will be used.
  * 
- * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
+ * @param openEditors the number of open editors
  * 
- * @param openEditors the number of open editors.
- * 
- * @deprecated
+ * @deprecated this method has no effect, as of Eclipse 2.1
  */
 public void setEditorReuseThreshold(int openEditors);
 /**
- * Sets the fixed state of the layout.
- * In a fixed layout, layout parts cannot be moved or zoomed.
+ * Sets whether this layout is fixed.
+ * In a fixed layout, layout parts cannot be moved or zoomed, and the initial
+ * set of views cannot be closed.
  *
- * @param isFixed the fixed state
+ * @param isFixed <code>true</code> if this layout is fixed, <code>false</code> if not
  * @since 3.0
  */
 public void setFixed(boolean isFixed);
 /**
- * Returns true if this layout is fixed.
- * In a fixed layout, layout parts cannot be moved or zoomed.
+ * Returns <code>true</code> if this layout is fixed, <code>false</code> if not.
+ * In a fixed layout, layout parts cannot be moved or zoomed, and the initial
+ * set of views cannot be closed.
  * The default is <code>false</code>.
  * 
- * @return isFixed
+ * @return <code>true</code> if this layout is fixed, <code>false</code> if not.
  * @since 3.0
  */
 public boolean isFixed();
