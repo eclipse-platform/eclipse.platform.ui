@@ -702,4 +702,21 @@ public class CVSWorkspaceRoot {
 		if (cvsResource.isIgnored()) return false;
 		return cvsResource.getParent().isCVSFolder();
 	}
+	
+	/**
+	 * Return whether the given container is an orphaned subtree. An orphaned subtree
+	 * is folder (i.e. non-project) that is a CVS folder but is not managed and is not
+	 * a linked resource. To know if the resource is a descendant of an orphaned subtree,
+	 * the client must invoked this method for each ancestor of a resource.
+	 * @param container the container being tested
+	 * @return whether the container is an orphaned CVS folder
+	 * @throws CVSException
+	 */
+	public static boolean isOrphanedSubtree(IContainer container) throws CVSException {
+		ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor(container);
+		return (mFolder.isCVSFolder() 
+				&& ! mFolder.isManaged() 
+				&& mFolder.getIResource().getType() == IResource.FOLDER
+				&& !isLinkedResource(container));
+	}
 }

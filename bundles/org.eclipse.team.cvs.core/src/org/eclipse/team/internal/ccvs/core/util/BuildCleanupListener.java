@@ -27,7 +27,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
@@ -80,23 +79,14 @@ public class BuildCleanupListener implements IResourceDeltaVisitor, IResourceCha
 	 */
 	private boolean handleOrphanedSubtree(IContainer container) {
 		try {
-			ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor(container);
-			if (mFolder.isCVSFolder() && ! mFolder.isManaged() && mFolder.getIResource().getParent().getType() != IResource.ROOT) {
-				// linked resources are not considered orphans even if they have CVS folders in them
-				if (isLinkedResource(mFolder)) return false;
+			if (CVSWorkspaceRoot.isOrphanedSubtree(container)) {
+				ICVSFolder mFolder = CVSWorkspaceRoot.getCVSFolderFor(container);
 				mFolder.unmanage(null);
 				return true;
 			}
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
 		}
-		return false;
-	}
-	
-	private boolean isLinkedResource(ICVSResource cvsResource) throws CVSException {
-		IResource iResource = cvsResource.getIResource();
-		if (iResource != null)
-			return CVSWorkspaceRoot.isLinkedResource(iResource);
 		return false;
 	}
 	
