@@ -154,14 +154,14 @@ abstract class EclipseResource implements ICVSResource {
 	 * @see ICVSResource#setIgnored()
 	 */
 	public void setIgnored() throws CVSException {
-		EclipseSynchronizer.getInstance().setIgnored(resource.getParent(), resource.getName());
+		EclipseSynchronizer.getInstance().addIgnored(resource.getParent(), resource.getName());
 	}
 	
 	/*
 	 * @see ICVSResource#setIgnoredAs(String)
 	 */
 	public void setIgnoredAs(String pattern) throws CVSException {
-		EclipseSynchronizer.getInstance().setIgnored(resource.getParent(), pattern);	
+		EclipseSynchronizer.getInstance().addIgnored(resource.getParent(), pattern);	
 	}
 
 	/*
@@ -236,8 +236,6 @@ abstract class EclipseResource implements ICVSResource {
 	 * @see ICVSResource#unmanage()
 	 */
 	public void unmanage() throws CVSException {
-		if(isManaged()) {
-			EclipseSynchronizer.getInstance().deleteResourceSync(resource, new NullProgressMonitor());
-		}
+		EclipseSynchronizer.getInstance().deleteResourceSync(resource);
 	}
 }
