@@ -10,14 +10,49 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDropToFrame;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 
 /**
  * Action delegate which performs a drop to frame.
  */
 public class DropToFrameActionDelegate extends AbstractListenerActionDelegate {
 
+    class UpdateJob extends Job {
+        IAction fAction;
+        ISelection fSelection;
+        
+        UpdateJob() {
+            super("Update Action Enablement"); //$NON-NLS-1$ System Job. Never intended to be seen by users.
+        }
+        
+        void setAction(IAction action) {
+            fAction = action;
+        }
+        void setSelection(ISelection selection) {
+            fSelection = selection;
+        }
+
+        protected IStatus run(IProgressMonitor monitor) {
+            DropToFrameActionDelegate.super.update(fAction, fSelection);
+            return Status.OK_STATUS;
+        }
+        
+    }
+    
+    private UpdateJob fUpdateJob = new UpdateJob();
+    
+    public DropToFrameActionDelegate() {
+        super();
+        fUpdateJob.setSystem(true);
+    }
+    
     /**
      * Performs the drop to frame.
      * @see AbstractDebugActionDelegate#doAction(Object)
@@ -46,4 +81,9 @@ public class DropToFrameActionDelegate extends AbstractListenerActionDelegate {
         return element instanceof IDropToFrame && ((IDropToFrame) element).canDropToFrame();
     }
 
+    protected void update(IAction action, ISelection selection) {
+        fUpdateJob.setAction(action);
+        fUpdateJob.setSelection(selection);
+        fUpdateJob.schedule();
+    }
 }
