@@ -34,10 +34,10 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 	private void addFileAssociation(IConfigurationElement fileAssociationElement, ContentType target) {
 		String[] fileNames = ContentType.parseItems(fileAssociationElement.getAttributeAsIs("file-names")); //$NON-NLS-1$
 		for (int i = 0; i < fileNames.length; i++)
-			target.internalAddFileSpec(fileNames[i], IContentType.FILE_NAME_SPEC | ContentType.PRE_DEFINED_SPEC);
+			target.internalAddFileSpec(fileNames[i], IContentType.FILE_NAME_SPEC | ContentType.SPEC_PRE_DEFINED);
 		String[] fileExtensions = ContentType.parseItems(fileAssociationElement.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
 		for (int i = 0; i < fileExtensions.length; i++)
-			target.internalAddFileSpec(fileExtensions[i], IContentType.FILE_EXTENSION_SPEC | ContentType.PRE_DEFINED_SPEC);
+			target.internalAddFileSpec(fileExtensions[i], IContentType.FILE_EXTENSION_SPEC | ContentType.SPEC_PRE_DEFINED);
 	}
 
 	/**
@@ -78,15 +78,15 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 
 	private byte parsePriority(String priority) {
 		if (priority == null)
-			return ContentType.NORMAL;
+			return ContentType.PRIORITY_NORMAL;
 		if (priority.equals("high")) //$NON-NLS-1$
-			return ContentType.HIGH;
+			return ContentType.PRIORITY_HIGH;
 		if (priority.equals("low")) //$NON-NLS-1$
-			return ContentType.LOW;
+			return ContentType.PRIORITY_LOW;
 		if (!priority.equals("normal")) //$NON-NLS-1$
-			return ContentType.NORMAL;
+			return ContentType.PRIORITY_NORMAL;
 		//TODO: should log - INVALID PRIORITY
-		return ContentType.NORMAL;
+		return ContentType.PRIORITY_NORMAL;
 	}
 
 	protected void registerContentType(IConfigurationElement contentTypeCE) {
@@ -102,6 +102,7 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		for (Iterator iter = orphans.iterator(); iter.hasNext();)
 			addFileAssociation((IConfigurationElement) iter.next(), contentType);
 	}
+
 	/* Checks whether the content type has all required pieces. */
 	private boolean isComplete(ContentType contentType) {
 		String message = null;

@@ -14,7 +14,7 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 
-public class ContentDescription implements IContentDescription {
+public final class ContentDescription implements IContentDescription {
 	private static final byte ALL_OPTIONS = 0x01;
 	private static final byte IMMUTABLE = 0x02;
 	private IContentType contentType;
@@ -58,9 +58,9 @@ public class ContentDescription implements IContentDescription {
 		if (keys instanceof QualifiedName)
 			return keys.equals(key) ? values : null;
 		// multiple properties may have been set
-		QualifiedName[] keys = (QualifiedName[]) this.keys;
-		for (int i = 0; i < keys.length; i++)
-			if (keys[i].equals(key))
+		QualifiedName[] tmpKeys = (QualifiedName[]) this.keys;
+		for (int i = 0; i < tmpKeys.length; i++)
+			if (tmpKeys[i].equals(key))
 				return ((Object[]) values)[i];
 		return null;
 	}
@@ -79,9 +79,21 @@ public class ContentDescription implements IContentDescription {
 		if (keys instanceof QualifiedName)
 			return keys.equals(propertyKey);
 		// some (but not all) options requested
-		QualifiedName[] keys = (QualifiedName[]) this.keys;
-		for (int i = 0; i < keys.length; i++)
-			if (keys[i].equals(propertyKey))
+		QualifiedName[] tmpKeys = (QualifiedName[]) this.keys;
+		for (int i = 0; i < tmpKeys.length; i++)
+			if (tmpKeys[i].equals(propertyKey))
+				return true;
+		return false;
+	}
+
+	boolean isSet() {
+		if (keys == null || values == null)
+			return false;
+		if (keys instanceof QualifiedName)
+			return true;
+		Object[] tmpValues = (Object[]) this.values;
+		for (int i = 0; i < tmpValues.length; i++)
+			if (tmpValues[i] != null)
 				return true;
 		return false;
 	}
@@ -119,9 +131,34 @@ public class ContentDescription implements IContentDescription {
 			}
 			return;
 		}
-		QualifiedName[] keys = (QualifiedName[]) this.keys;
-		for (int i = 0; i < keys.length; i++)
-			if (keys[i].equals(newKey))
+		QualifiedName[] tmpKeys = (QualifiedName[]) this.keys;
+		for (int i = 0; i < tmpKeys.length; i++)
+			if (tmpKeys[i].equals(newKey))
 				((Object[]) values)[i] = newValue;
+	}
+
+	public String toString() {
+		StringBuffer result = new StringBuffer("{"); //$NON-NLS-1$
+		if (keys != null)
+			if (keys instanceof QualifiedName)
+				if (values != null)
+					result.append(keys + "=" + values); //$NON-NLS-1$
+				else
+					;
+			else {
+				QualifiedName[] tmpKeys = (QualifiedName[]) keys;
+				Object[] tmpValues = (Object[]) values;
+				boolean any = false;
+				for (int i = 0; i < tmpKeys.length; i++)
+					if (tmpValues[i] != null) {
+						result.append(tmpKeys[i] + "=" + tmpValues[i] + ","); //$NON-NLS-1$ //$NON-NLS-2$
+						any = true;
+					}
+				if (any)
+					result.deleteCharAt(result.length() - 1);
+			}
+		result.append("} : "); //$NON-NLS-1$
+		result.append(contentType);
+		return result.toString();
 	}
 }

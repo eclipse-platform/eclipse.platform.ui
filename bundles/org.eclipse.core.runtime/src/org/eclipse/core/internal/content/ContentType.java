@@ -19,7 +19,8 @@ import org.eclipse.core.runtime.content.*;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-public class ContentType implements IContentType {
+public final class ContentType implements IContentType {
+	private static final String DESCRIBER_ELEMENT = "describer";	 //$NON-NLS-1$
 	/* A placeholder for missing/invalid describers. */
 	private class InvalidDescriber implements IContentDescriber {
 		public int describe(InputStream contents, IContentDescription description) throws IOException {
@@ -34,18 +35,18 @@ public class ContentType implements IContentType {
 	final static byte ASSOCIATED_BY_EXTENSION = 2;
 	final static byte ASSOCIATED_BY_NAME = 1;
 
-	final static String CONTENT_TYPE_CHARSET_PREF = "charset"; //$NON-NLS-1$	
-	final static String CONTENT_TYPE_FILE_EXTENSIONS_PREF = "file-extensions"; //$NON-NLS-1$
-	final static String CONTENT_TYPE_FILE_NAMES_PREF = "file-names"; //$NON-NLS-1$
-	final static byte HIGH = 1;
-	final static byte INVALID = 2;
-	final static byte LOW = -1;
-	final static byte NORMAL = 0;
+	final static String PREF_DEFAULT_CHARSET = "charset"; //$NON-NLS-1$	
+	final static String PREF_FILE_EXTENSIONS = "file-extensions"; //$NON-NLS-1$
+	final static String PREF_FILE_NAMES = "file-names"; //$NON-NLS-1$
 	final static byte NOT_ASSOCIATED = 0;
-	static final int PRE_DEFINED_SPEC = IGNORE_PRE_DEFINED;
-	final static byte UNKNOWN = 3;
-	private static final int USER_DEFINED_SPEC = IGNORE_USER_DEFINED;
-	final static byte VALID = 1;
+	final static byte PRIORITY_HIGH = 1;
+	final static byte PRIORITY_LOW = -1;
+	final static byte PRIORITY_NORMAL = 0;
+	final static int SPEC_PRE_DEFINED = IGNORE_PRE_DEFINED;
+	final static int SPEC_USER_DEFINED = IGNORE_USER_DEFINED;
+	final static byte STATUS_INVALID = 2;
+	final static byte STATUS_UNKNOWN = 3;
+	final static byte STATUS_VALID = 1;
 	private ContentType aliasTarget;
 	private String baseTypeId;
 	private IContentType[] children;
@@ -59,9 +60,11 @@ public class ContentType implements IContentType {
 	private byte priority;
 	private String simpleId;
 	private byte validation;
+	private IContentDescription defaultDescription;
 
 	public static ContentType createContentType(ContentTypeManager manager, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset, IConfigurationElement contentTypeElement) {
 		ContentType contentType = new ContentType(manager);
+		contentType.defaultDescription = new DefaultDescription(contentType);
 		contentType.simpleId = simpleId;
 		contentType.namespace = namespace;
 		contentType.name = name;
@@ -69,9 +72,9 @@ public class ContentType implements IContentType {
 		if ((fileExtensions != null && fileExtensions.length > 0) || (fileNames != null && fileNames.length > 0)) {
 			contentType.fileSpecs = new ArrayList(fileExtensions.length + fileNames.length);
 			for (int i = 0; i < fileNames.length; i++)
-				contentType.fileSpecs.add(createFileSpec(fileNames[i], FILE_NAME_SPEC | PRE_DEFINED_SPEC));
+				contentType.fileSpecs.add(createFileSpec(fileNames[i], FILE_NAME_SPEC | SPEC_PRE_DEFINED));
 			for (int i = 0; i < fileExtensions.length; i++)
-				contentType.fileSpecs.add(createFileSpec(fileExtensions[i], FILE_EXTENSION_SPEC | PRE_DEFINED_SPEC));
+				contentType.fileSpecs.add(createFileSpec(fileExtensions[i], FILE_EXTENSION_SPEC | SPEC_PRE_DEFINED));
 		}
 		contentType.defaultCharset = defaultCharset;
 		contentType.contentTypeElement = contentTypeElement;
@@ -85,9 +88,9 @@ public class ContentType implements IContentType {
 
 	private static String getPreferenceKey(int flags) {
 		if ((flags & FILE_EXTENSION_SPEC) != 0)
-			return CONTENT_TYPE_FILE_EXTENSIONS_PREF;
+			return PREF_FILE_EXTENSIONS;
 		if ((flags & FILE_NAME_SPEC) != 0)
-			return CONTENT_TYPE_FILE_NAMES_PREF;
+			return PREF_FILE_NAMES;
 		throw new IllegalArgumentException("Unknown type: " + flags); //$NON-NLS-1$
 	}
 
@@ -143,7 +146,7 @@ public class ContentType implements IContentType {
 		}
 		if (type != FILE_EXTENSION_SPEC && type != FILE_NAME_SPEC)
 			throw new IllegalArgumentException("Unknown type: " + type); //$NON-NLS-1$		
-		if (!internalAddFileSpec(fileSpec, type | USER_DEFINED_SPEC))
+		if (!internalAddFileSpec(fileSpec, type | SPEC_USER_DEFINED))
 			return;
 		// persist using preferences
 		String key = getPreferenceKey(type);
@@ -222,17 +225,9 @@ public class ContentType implements IContentType {
 		if (aliasTarget != null)
 			return getTarget().getDefaultCharset();
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
-		String currentCharset = contentTypeNode.get(CONTENT_TYPE_CHARSET_PREF, internalGetDefaultCharset());
+		String currentCharset = contentTypeNode.get(PREF_DEFAULT_CHARSET, internalGetDefaultCharset());
 		// an empty string as charset means: no default charset 
 		return "".equals(currentCharset) ? null : currentCharset; //$NON-NLS-1$
-	}
-
-	private String internalGetDefaultCharset() {
-		if (defaultCharset == null) {
-			ContentType baseType = (ContentType) getBaseType();
-			return baseType == null ? null : baseType.getDefaultCharset();
-		}
-		return defaultCharset;
 	}
 
 	public int getDepth() {
@@ -245,12 +240,15 @@ public class ContentType implements IContentType {
 	public IContentDescriber getDescriber() {
 		if (aliasTarget != null)
 			return getTarget().getDescriber();
+		// if "" is specified no describer should be created 
+		if ("".equals(contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT))) //$NON-NLS-1$
+			return null;
 		synchronized (this) {
 			if (describer != null)
 				return describer;
-			if (contentTypeElement.getChildren("describer").length > 0 || contentTypeElement.getAttributeAsIs("describer") != null) //$NON-NLS-1$ //$NON-NLS-2$				
+			if (contentTypeElement.getChildren(DESCRIBER_ELEMENT).length > 0 || contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT) != null)
 				try {
-					return describer = (IContentDescriber) contentTypeElement.createExecutableExtension("describer"); //$NON-NLS-1$
+					return describer = (IContentDescriber) contentTypeElement.createExecutableExtension(DESCRIBER_ELEMENT);
 				} catch (CoreException ce) {
 					// the content type definition was invalid. Ensure we don't try again, and this content type does not accept any contents					
 					return invalidateDescriber(ce);
@@ -266,7 +264,7 @@ public class ContentType implements IContentType {
 	public IContentDescription getDescriptionFor(InputStream contents, QualifiedName[] options) throws IOException {
 		ByteArrayInputStream buffer = ContentTypeManager.readBuffer(contents);
 		if (buffer == null)
-			return null;
+			return defaultDescription;
 		return internalGetDescriptionFor(buffer, options);
 	}
 
@@ -276,7 +274,7 @@ public class ContentType implements IContentType {
 	public IContentDescription getDescriptionFor(Reader contents, QualifiedName[] options) throws IOException {
 		CharArrayReader buffer = ContentTypeManager.readBuffer(contents);
 		if (buffer == null)
-			return null;
+			return defaultDescription;
 		return internalGetDescriptionFor(buffer, options);
 	}
 
@@ -356,13 +354,28 @@ public class ContentType implements IContentType {
 		return true;
 	}
 
+	private String internalGetDefaultCharset() {
+		if (defaultCharset == null) {
+			ContentType baseType = (ContentType) getBaseType();
+			return baseType == null ? null : baseType.getDefaultCharset();
+		}
+		return defaultCharset;
+	}
+
 	IContentDescription internalGetDescriptionFor(ByteArrayInputStream buffer, QualifiedName[] options) throws IOException {
 		if (aliasTarget != null)
 			return getTarget().internalGetDescriptionFor(buffer, options);
-		ContentDescription description = new ContentDescription(options);
+		if (buffer == null)
+			return defaultDescription;		
 		IContentDescriber describer = this.getDescriber();
-		if (describer != null)
-			describer.describe(buffer, description);
+		// no describer - just return the default description		
+		if (describer == null)
+			return defaultDescription;
+		ContentDescription description = new ContentDescription(options);
+		describer.describe(buffer, description);
+		// if the describer didn't add any details, just return the default description 
+		if (!description.isSet())
+			return defaultDescription;
 		// check if any of the defaults need to be applied
 		if (description.isRequested(IContentDescription.CHARSET) && description.getProperty(IContentDescription.CHARSET) == null)
 			description.setProperty(IContentDescription.CHARSET, getDefaultCharset());
@@ -370,16 +383,22 @@ public class ContentType implements IContentType {
 		return description;
 	}
 
-	IContentDescription internalGetDescriptionFor(CharArrayReader buffer, QualifiedName[] options) throws IOException {
+	IContentDescription internalGetDescriptionFor(CharArrayReader buffer, QualifiedName[] options) throws IOException {		
 		if (aliasTarget != null)
 			return getTarget().internalGetDescriptionFor(buffer, options);
-		ContentDescription description = new ContentDescription(options);
+		if (buffer == null)
+			return defaultDescription;
 		IContentDescriber describer = this.getDescriber();
-		if (describer != null) {
-			if (!(describer instanceof ITextContentDescriber))
-				throw new UnsupportedOperationException();
-			((ITextContentDescriber) describer).describe(buffer, description);
-		}
+		// no describer - just return the default description		
+		if (describer == null)
+			return defaultDescription;
+		ContentDescription description = new ContentDescription(options);
+		if (!(describer instanceof ITextContentDescriber))
+			throw new UnsupportedOperationException();
+		((ITextContentDescriber) describer).describe(buffer, description);
+		// if the describer didn't add any details, just return the default description 
+		if (!description.isSet())
+			return defaultDescription;
 		// check if any of the defaults need to be applied
 		if (description.isRequested(IContentDescription.CHARSET) && description.getProperty(IContentDescription.CHARSET) == null)
 			description.setProperty(IContentDescription.CHARSET, getDefaultCharset());
@@ -417,7 +436,7 @@ public class ContentType implements IContentType {
 	}
 
 	private IContentDescriber invalidateDescriber(Throwable reason) {
-		setValidation(INVALID);
+		setValidation(STATUS_INVALID);
 		String message = Policy.bind("content.invalidContentDescriber", getId()); //$NON-NLS-1$ 
 		// don't log CoreExceptions again
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 0, message, reason instanceof CoreException ? null : reason);
@@ -444,7 +463,7 @@ public class ContentType implements IContentType {
 	}
 
 	boolean isValid() {
-		return validation == VALID;
+		return validation == STATUS_VALID;
 	}
 
 	public synchronized void removeFileSpec(String fileSpec, int type) throws CoreException {
@@ -454,7 +473,7 @@ public class ContentType implements IContentType {
 		}
 		if (type != FILE_EXTENSION_SPEC && type != FILE_NAME_SPEC)
 			throw new IllegalArgumentException("Unknown type: " + type); //$NON-NLS-1$
-		internalRemoveFileSpec(fileSpec, type | USER_DEFINED_SPEC);
+		internalRemoveFileSpec(fileSpec, type | SPEC_USER_DEFINED);
 		// persist using preferences
 		String key = getPreferenceKey(type);
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
@@ -482,9 +501,9 @@ public class ContentType implements IContentType {
 	public void setDefaultCharset(String userCharset) throws CoreException {
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
 		if (userCharset == null)
-			contentTypeNode.remove(CONTENT_TYPE_CHARSET_PREF);
+			contentTypeNode.remove(PREF_DEFAULT_CHARSET);
 		else
-			contentTypeNode.put(CONTENT_TYPE_CHARSET_PREF, userCharset);
+			contentTypeNode.put(PREF_DEFAULT_CHARSET, userCharset);
 		try {
 			contentTypeNode.flush();
 		} catch (BackingStoreException bse) {
@@ -500,5 +519,11 @@ public class ContentType implements IContentType {
 
 	public String toString() {
 		return getId();
+	}
+
+	public IContentDescription getDefaultDescription() {
+		if (aliasTarget != null)
+			return getTarget().getDefaultDescription();
+		return defaultDescription;
 	}
 }

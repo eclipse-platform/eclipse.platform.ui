@@ -30,44 +30,50 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	private static final QualifiedName[] SUPPORTED_OPTIONS = new QualifiedName[] {IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK};
 	private static final String ENCODING = "encoding=\""; //$NON-NLS-1$
 	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
-	private static final byte[] XML_PREFIX_BYTES = new byte[] {'<', '?', 'x', 'm', 'l', ' '}; //$NON-NLS-1$
 
 	public int describe(InputStream input, IContentDescription description) throws IOException {
 		byte[] bom = getByteOrderMark(input);
+		String xmlDeclEncoding = "UTF-8"; //$NON-NLS-1$
 		input.reset();
-		if (bom != null) {
+		if (bom != null) {			
+			if (bom == IContentDescription.BOM_UTF_16BE)
+				xmlDeclEncoding = "UTF-16BE";
+			else if (bom == IContentDescription.BOM_UTF_16LE)
+				xmlDeclEncoding = "UTF-16LE";				
 			// skip BOM to make comparison simpler
 			input.skip(bom.length);
 			// set the BOM in the description if requested
 			if (description != null && description.isRequested(IContentDescription.BYTE_ORDER_MARK))
 				description.setProperty(IContentDescription.BYTE_ORDER_MARK, bom);
-		}
-		byte[] prefix = new byte[XML_PREFIX.length()];
+		}		
+		byte[] xmlPrefixBytes = XML_PREFIX.getBytes(xmlDeclEncoding);
+		byte[] prefix = new byte[xmlPrefixBytes.length];
 		if (input.read(prefix) < prefix.length)
 			// there is not enough info to say anything
 			return INDETERMINATE;
 		for (int i = 0; i < prefix.length; i++)
-			if (prefix[i] != XML_PREFIX_BYTES[i])
+			if (prefix[i] != xmlPrefixBytes[i])
 				// we don't have a XMLDecl... there is not enough info to say anything
 				return INDETERMINATE;
 		if (description == null)
 			return VALID;
 		// describe charset if requested
 		if (description.isRequested(IContentDescription.CHARSET)) {
-			String fullXMLDecl = readFullXMLDecl(input);
+			String fullXMLDecl = readFullXMLDecl(input, xmlDeclEncoding);
 			if (fullXMLDecl != null)
 				description.setProperty(IContentDescription.CHARSET, getCharset(fullXMLDecl));
 		}
 		return VALID;
 	}
 
-	private String readFullXMLDecl(InputStream input) throws IOException {
-		StringBuffer xmlDecl = new StringBuffer(50);
+	private String readFullXMLDecl(InputStream input, String unicodeEncoding) throws IOException {
+		byte[] xmlDecl = new byte[100];
 		int c;
 		// looks for XMLDecl ending char (?)
-		while (((c = input.read()) != -1 && c != '?'))
-			xmlDecl.append((char) c);
-		return c == '?' ? xmlDecl.toString() : null;
+		int read = 0;
+		while ((c = input.read()) != -1 && c != '?')
+			xmlDecl[read++] = (byte) c;
+		return c == '?' ? new String(xmlDecl, 0, read, unicodeEncoding) : null;
 	}
 
 	public int describe(Reader input, IContentDescription description) throws IOException {
@@ -89,10 +95,15 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 		int encodingPos = firstLine.indexOf(ENCODING);
 		if (encodingPos == -1)
 			return null;
-		int firstQuote = firstLine.indexOf('"', encodingPos);
+		char quoteChar = '"';
+		int firstQuote = firstLine.indexOf(quoteChar, encodingPos);		
+		if (firstQuote== -1) {
+			quoteChar = '\'';
+			firstQuote = firstLine.indexOf(quoteChar, encodingPos);
+		}			
 		if (firstQuote == -1 || firstLine.length() == firstQuote - 1)
 			return null;
-		int secondQuote = firstLine.indexOf('"', firstQuote + 1);
+		int secondQuote = firstLine.indexOf(quoteChar, firstQuote + 1);
 		if (secondQuote == -1)
 			return null;
 		return firstLine.substring(firstQuote + 1, secondQuote);
