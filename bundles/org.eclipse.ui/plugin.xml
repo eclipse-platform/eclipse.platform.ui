@@ -1806,6 +1806,9 @@
                label="%GoToResourceAction.label"
                retarget="true"
                menubarPath="navigate/goTo/"
+               icon="icons/full/elcl16/gotoobj_tsk.gif"
+               disabledIcon="icons/full/dlcl16/gotoobj_tsk.gif"
+               hoverIcon="icons/full/clcl16/gotoobj_tsk.gif"
                id="goToResource">
          </action>
          <action
