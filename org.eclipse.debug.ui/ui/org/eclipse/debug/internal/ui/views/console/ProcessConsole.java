@@ -174,7 +174,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             if (limitBufferSize) {
                 int highWater = store.getInt(IDebugPreferenceConstants.CONSOLE_HIGH_WATER_MARK);
                 int lowWater = store.getInt(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK);
-                setWaterMarks(lowWater, highWater);
+                if(highWater > lowWater) {
+                    setWaterMarks(lowWater, highWater);
+                }
             } else {
                 setWaterMarks(-2, -1);
             }
