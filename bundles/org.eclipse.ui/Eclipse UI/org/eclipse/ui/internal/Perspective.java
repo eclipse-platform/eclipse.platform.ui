@@ -998,7 +998,7 @@ public IViewPart showView(String viewID)
 	} else if (openViewMode == IPreferenceConstants.OVM_FAST) {
 		fastViews.add(part);
 		showFastView(part);
-	} else if (openViewMode == IPreferenceConstants.OVM_FLOAT) {
+	} else if (openViewMode == IPreferenceConstants.OVM_FLOAT && presentation.canDetach()) {
 		presentation.addDetachedPart(pane);
 	} else {
 		presentation.addPart(pane);

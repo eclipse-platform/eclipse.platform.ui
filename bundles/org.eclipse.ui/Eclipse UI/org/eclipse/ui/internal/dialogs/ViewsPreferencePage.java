@@ -208,15 +208,16 @@ private void createOpenViewButtonGroup(Composite composite) {
 		}
 	});
 
-	openFloatButton = new Button(buttonComposite, SWT.RADIO);
-	openFloatButton.setText(OVM_FLOAT);
-	openFloatButton.setSelection(openViewMode == IPreferenceConstants.OVM_FLOAT);
-	openFloatButton.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			openViewMode = IPreferenceConstants.OVM_FLOAT;
-		}
-	});
-
+	if (getShell().isReparentable()) {
+		openFloatButton = new Button(buttonComposite, SWT.RADIO);
+		openFloatButton.setText(OVM_FLOAT);
+		openFloatButton.setSelection(openViewMode == IPreferenceConstants.OVM_FLOAT);
+		openFloatButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				openViewMode = IPreferenceConstants.OVM_FLOAT;
+			}
+		});
+	}
 }
 /**
  * Create a group for encapsualting the buttons.
@@ -320,7 +321,8 @@ protected void performDefaults() {
 	int value = store.getDefaultInt(IPreferenceConstants.OPEN_VIEW_MODE);
 	openEmbedButton.setSelection(value == IPreferenceConstants.OVM_EMBED);
 	openFastButton.setSelection(value == IPreferenceConstants.OVM_FAST);
-	openFloatButton.setSelection(value == IPreferenceConstants.OVM_FLOAT);
+	if (openFloatButton != null) 
+		openFloatButton.setSelection(value == IPreferenceConstants.OVM_FLOAT);
 
 	super.performDefaults();
 }

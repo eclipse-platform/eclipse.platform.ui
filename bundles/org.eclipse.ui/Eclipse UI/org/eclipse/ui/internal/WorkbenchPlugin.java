@@ -320,7 +320,7 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
 	store.setDefault(IPreferenceConstants.VERSION_2_PERSPECTIVES, false);
 	store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, 
-		IPreferenceConstants.OVM_EMBED);
+		IPreferenceConstants.OVM_FAST);
 	store.setDefault(IPreferenceConstants.ENABLED_DECORATORS,"");
 		
 	FontRegistry registry = JFaceResources.getFontRegistry();

@@ -164,6 +164,12 @@ public void addPart(LayoutPart part) {
 	enableDrop(part);
 }
 /**
+ * Return whether detachable parts can be supported.
+ */
+public boolean canDetach() {
+	return detachable;
+}
+/**
  * Bring a part forward so it is visible.
  *
  * @return true if the part was brought to top, false if not.
