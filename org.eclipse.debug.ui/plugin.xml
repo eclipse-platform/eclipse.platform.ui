@@ -690,8 +690,8 @@
                class="org.eclipse.debug.internal.ui.actions.LinkBreakpointsWithDebugViewAction"
                icon="icons/full/elcl16/synced.gif"
                helpContextId="link_breakpoints_with_debug_view_action_context"
-               label="Link with Debug View"
-               tooltip="Link with Debug View">
+               label="%LinkWithDebugView.label"
+               tooltip="%LinkWithDebugView.tooltip">
          </action>
          <action
                id="org.eclipse.debug.ui.breakpointsView.toolbar.collapseAll"
@@ -699,8 +699,8 @@
                class="org.eclipse.debug.internal.ui.actions.BreakpointsCollapseAllAction"
                icon="icons/full/elcl16/collapseall.gif"
                helpContextId="breakpoints_collapse_all_action_context"
-               label="Collapse All"
-               tooltip="Collapse All">
+               label="%CollapseAll.label"
+               tooltip="%CollapseAll.tooltip">
          </action>
          <action
                id="org.eclipse.debug.ui.breakpointsView.toolbar.expandAll"
@@ -708,8 +708,8 @@
                class="org.eclipse.debug.internal.ui.actions.BreakpointsExpandAllAction"
                icon="icons/full/elcl16/expandall.gif"
                helpContextId="breakpoints_expand_all_action_context"
-               label="Expand All"
-               tooltip="Expand All">
+               label="%ExpandAll.label"
+               tooltip="%ExpandAll.tooltip">
          </action>
          <action
                id="org.eclipse.debug.ui.breakpointsView.toolbar.clearDefaultBreakpointGroup"
@@ -724,8 +724,8 @@
                menubarPath="defaultBreakpointGroup"
                class="org.eclipse.debug.internal.ui.actions.breakpointGroups.GroupBreakpointsByAction"
                helpContextId="group_breakpoints_by_action_context"
-               label="Group By"
-               tooltip="Choose how to group breakpoints">
+               label="%GroupBy.label"
+               tooltip="%GroupBy.tooltip">
          </action>
       </viewContribution>
 <!-- Contributions to Expression View Toolbar -->
