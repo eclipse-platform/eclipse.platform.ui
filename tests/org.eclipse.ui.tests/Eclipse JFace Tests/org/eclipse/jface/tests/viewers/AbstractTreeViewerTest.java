@@ -6,9 +6,6 @@ package org.eclipse.jface.tests.viewers;
  * (c) Copyright IBM Corp 1999, 2000
  */
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Widget;
 
