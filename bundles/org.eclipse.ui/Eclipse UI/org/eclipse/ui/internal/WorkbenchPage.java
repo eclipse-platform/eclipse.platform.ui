@@ -2075,6 +2075,10 @@ private void setPerspective(Perspective newPersp) {
 			if (findView(id) != null)
 				activate(oldActivePart);
 		}
+	} else {
+		IEditorPart ed = editorMgr.getVisibleEditor();	
+		if (ed != null) 
+			actionSwitcher.updateTopEditor(ed);	
 	}
 	
 	// Update the Coolbar layout.  Do this after the part is activated,
