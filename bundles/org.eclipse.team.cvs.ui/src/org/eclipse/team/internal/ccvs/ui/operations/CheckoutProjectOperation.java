@@ -465,7 +465,9 @@ public abstract class CheckoutProjectOperation extends CheckoutOperation {
 					throw CVSException.wrapException(e);
 				}
 				CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId());
-				provider.setWatchEditEnabled(CVSProviderPlugin.getPlugin().isWatchEditEnabled());
+				if (provider != null) {
+					provider.setWatchEditEnabled(CVSProviderPlugin.getPlugin().isWatchEditEnabled());
+				}
 			}
 		} finally {
 			monitor.done();
