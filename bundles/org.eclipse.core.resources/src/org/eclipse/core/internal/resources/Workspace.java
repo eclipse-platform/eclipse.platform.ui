@@ -1719,7 +1719,7 @@ protected void startup(IProgressMonitor monitor) throws CoreException {
 	fileSystemManager.startup(monitor);
 	propertyManager = new PropertyManager(this);
 	propertyManager.startup(monitor);
-	pathVariableManager = new PathVariableManager(this);
+	pathVariableManager = new PathVariableManager();
 	pathVariableManager.startup(null);
 	natureManager = new NatureManager();
 	natureManager.startup(null);
