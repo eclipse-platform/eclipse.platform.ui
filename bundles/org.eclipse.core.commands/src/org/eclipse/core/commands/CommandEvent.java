@@ -110,10 +110,15 @@ public class CommandEvent {
 				&& previousAttributeValuesByName != null)
 			throw new IllegalArgumentException();
 
-		if (attributeValuesByNameChanged)
-			this.previousAttributeValuesByName = Util.safeCopy(
-					previousAttributeValuesByName, String.class, Object.class,
-					false, true);
+		if (attributeValuesByNameChanged) {
+			if (previousAttributeValuesByName == null) {
+				this.previousAttributeValuesByName = null;
+			} else {
+				this.previousAttributeValuesByName = Util.safeCopy(
+						previousAttributeValuesByName, String.class,
+						Object.class, false, true);
+			}
+		}
 
 		this.command = command;
 		this.attributeValuesByNameChanged = attributeValuesByNameChanged;
