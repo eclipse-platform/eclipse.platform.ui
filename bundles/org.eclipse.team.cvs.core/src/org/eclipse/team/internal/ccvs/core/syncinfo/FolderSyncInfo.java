@@ -24,7 +24,7 @@ public class FolderSyncInfo {
 	public static final String VIRTUAL_DIRECTORY = "CVSROOT/Emptydir"; //$NON-NLS-1$
 
 	// relative path of this folder in the repository, project1/folder1/folder2
-	private String repository;
+	protected String repository;
 	
 	// :pserver:user@host:/home/user/repo
 	private String root;
@@ -206,7 +206,7 @@ public class FolderSyncInfo {
 	 * 
 	 * @param tag The tag to set
 	 */
-	private void setTag(CVSTag tag) {
+	protected void setTag(CVSTag tag) {
 		if (tag == null || tag.equals(CVSTag.DEFAULT)) {
 			this.tag = null;
 		} else {
@@ -218,5 +218,10 @@ public class FolderSyncInfo {
 	 */
 	public String toString() {
 		return getRoot() + "/" + getRepository() + "/" + getTag(); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+	
+	public MutableFolderSyncInfo cloneMutable() {
+		MutableFolderSyncInfo newSync = new MutableFolderSyncInfo(this);
+		return newSync;
 	}
 }
