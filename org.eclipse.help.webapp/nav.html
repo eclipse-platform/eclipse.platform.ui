@@ -33,6 +33,7 @@ function displayTocFor(topic)
  */ 
 function turnToFrame(nav)
 {
+	this.currentNavFrame=nav;
  	var iframe = document.getElementById(nav);
  	if (!iframe) return;
  
@@ -68,6 +69,7 @@ function turnToFrame(nav)
 }
  
 var tocTitle = null;
+var currentNavFrame;
 /**
  * Needs to be called from a subframe
  */

@@ -64,17 +64,19 @@ function switchTab(nav)
 {
 	// wait for parent.NavFrame.turnToFrame
 	if(!parent.NavFrame.turnToFrame)
+	{
 		if(!this.switchTabTimerSet)
 		{
 			this.switchTabArg=nav;
 			this.switchTabTimerSet=setInterval("switchTab(switchTabArg)", 10);
-			return;
 		}
-	if(this.switchTabTimer)
+		return;
+	}
+	if(this.switchTabTimerSet)
 		clearInterval(this.switchTabTimerSet);
 		
 	// show appropriate IFrame
- 	parent.NavFrame.turnToFrame(nav);
+	parent.NavFrame.turnToFrame(nav);
  
  	// show the appropriate pressed tab
   	var buttons = document.body.getElementsByTagName("A");

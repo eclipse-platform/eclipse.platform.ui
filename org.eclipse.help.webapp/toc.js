@@ -204,9 +204,10 @@ function selectTopic(topic)
 function onloadHandler(title)
 {
 	parent.tocTitle=title;
-	if(parent.document.getElementById("toc").style.visibility = "visible");
-		// the frame is visible and is being replaced
+	if(parent.currentNavFrame=="toc")
+	{
 		parent.setToolbarTitle(title);
+	}
 }
 
 // listen for clicks
