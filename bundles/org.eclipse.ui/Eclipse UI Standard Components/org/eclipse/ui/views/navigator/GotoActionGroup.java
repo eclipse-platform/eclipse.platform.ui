@@ -6,6 +6,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.views.framelist.*;
 
@@ -57,6 +58,19 @@ public class GotoActionGroup extends ActionGroup {
 	}
 	
 	public void fillActionBars(IActionBars actionBars) {
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.GO_INTO,
+			goIntoAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.BACK,
+			backAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.FORWARD,
+			forwardAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.UP,
+			upAction);
+			
 		IToolBarManager toolBar = actionBars.getToolBarManager();
 		toolBar.add(backAction);
 		toolBar.add(forwardAction);
@@ -64,7 +78,12 @@ public class GotoActionGroup extends ActionGroup {
 	}
 	
 	public void updateActionBars() {
-		goIntoAction.update();
+		IStructuredSelection selection =
+			(IStructuredSelection) getContext().getSelection();
+		goIntoAction.setEnabled(selection.size() == 1
+			&& ResourceSelectionUtil.allResourcesAreOfType(
+				selection,
+				IResource.PROJECT | IResource.FOLDER));
 		// the rest of the actions update by listening to frame list changes
 	}
 }

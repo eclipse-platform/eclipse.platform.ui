@@ -380,6 +380,11 @@ public void createPartControl(Composite parent) {
 	editorActionHandler.setDeleteAction(removeTaskAction);
 	editorActionHandler.setSelectAllAction(selectAllAction);
 	
+	getViewSite().getActionBars().setGlobalActionHandler(
+		IWorkbenchActionConstants.PROPERTIES,
+		propertiesAction);
+		
+	
 	if (memento != null) restoreState(memento);
 	memento = null;
 	

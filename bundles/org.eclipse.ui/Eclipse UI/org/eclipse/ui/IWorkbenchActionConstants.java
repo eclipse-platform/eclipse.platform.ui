@@ -141,6 +141,20 @@ public interface IWorkbenchActionConstants {
 	 */
 	public static final String M_WORKBENCH = MENU_PREFIX+"workbench"; //$NON-NLS-1$
 
+// menu reorg
+
+	/**
+	 * Name of standard Navigate menu (value <code>"navigate"</code>).
+	 */
+	public static final String M_NAVIGATE = MENU_PREFIX+"navigate"; //$NON-NLS-1$
+
+	/**
+	 * Name of standard Project menu (value <code>"project"</code>).
+	 */
+	public static final String M_PROJECT = MENU_PREFIX+"project"; //$NON-NLS-1$
+
+// end menu reorg
+
 	/**
 	 * Name of standard Window menu (value <code>"window"</code>).
 	 */
@@ -397,6 +411,100 @@ public interface IWorkbenchActionConstants {
 	 */
 	public static final String LAUNCH_EXT = MB_ADDITIONS;	// Group.
 	
+	
+// menu reorg
+	/**
+	 * Name of standard Revert global action
+	 * (value <code>"revert"</code>).
+	 */
+	public static final String REVERT = "revert";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Name of standard Refresh global action
+	 * (value <code>"refresh"</code>).
+	 */
+	public static final String REFRESH = "refresh";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Name of standard Properties global action
+	 * (value <code>"properties"</code>).
+	 */
+	public static final String PROPERTIES = "properties";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Name of standard Move global action
+	 * (value <code>"move"</code>).
+	 */
+	public static final String MOVE = "move";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Name of standard Rename global action
+	 * (value <code>"rename"</code>).
+	 */
+	public static final String RENAME = "rename";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Name of standard Add Task global action
+	 * (value <code>"addTask"</code>).
+	 */
+//	public static final String ADD_TASK = "addTask";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Name of standard Go Into global action
+	 * (value <code>"goInto"</code>).
+	 */
+	public static final String GO_INTO = "goInto";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Name of standard Go To submenu
+	 * (value <code>"goTo"</code>).
+	 */
+	public static final String GO_TO = "goTo";	//$NON-NLS-1$
+
+	/**
+	 * Name of standard Back global action
+	 * (value <code>"back"</code>).
+	 */
+	public static final String BACK = "back";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Name of standard Forward global action
+	 * (value <code>"forward"</code>).
+	 */
+	public static final String FORWARD = "forward";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Name of standard Up global action
+	 * (value <code>"up"</code>).
+	 */
+	public static final String UP = "up";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Name of standard Build Project global action
+	 * (value <code>"buildProject"</code>).
+	 */
+	public static final String BUILD_PROJECT = "buildProject";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Name of standard Rebuild Project global action
+	 * (value <code>"rebuildProject"</code>).
+	 */
+	public static final String REBUILD_PROJECT = "rebuildProject";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Name of standard Open Project global action
+	 * (value <code>"openProject"</code>).
+	 */
+	public static final String OPEN_PROJECT = "openProject";	// Global action. //$NON-NLS-1$
+
+	/**
+	 * Name of standard Close Project global action
+	 * (value <code>"closeProject"</code>).
+	 */
+	public static final String CLOSE_PROJECT = "closeProject";	// Global action. //$NON-NLS-1$
+// end menu reorg
+
+
 // Standard help actions:
 	/**
 	 * Help menu: name of group for start of menu

@@ -115,6 +115,9 @@ public class ResourceNavigatorActionGroup extends ActionGroup {
 	 */
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.PROPERTIES,
+			propertyDialogAction);
+		actionBars.setGlobalActionHandler(
 			IWorkbenchActionConstants.BOOKMARK,
 			addBookmarkAction);
 			
@@ -131,6 +134,8 @@ public class ResourceNavigatorActionGroup extends ActionGroup {
 	public void updateActionBars() {
 		IStructuredSelection selection =
 			(IStructuredSelection) getContext().getSelection();
+		propertyDialogAction.setEnabled(
+			propertyDialogAction.isApplicableForSelection(selection));
 		addBookmarkAction.selectionChanged(selection);
 		
 		gotoGroup.updateActionBars();

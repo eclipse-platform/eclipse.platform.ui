@@ -7,6 +7,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.resources.IResource;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -27,13 +28,12 @@ public class RefactorActionGroup extends ActionGroup {
 	private Clipboard clipboard;
 
 	private CopyAction copyAction;
-	private DeleteResourceAction deleteResourceAction;
-	private MoveProjectAction moveProjectAction;
+	private DeleteResourceAction deleteAction;
 	private PasteAction pasteAction;
-	private ResourceNavigatorRenameAction renameResourceAction;
-	private ResourceNavigatorMoveAction moveResourceAction;
+	private ResourceNavigatorRenameAction renameAction;
+	private ResourceNavigatorMoveAction moveAction;
 	private TextActionHandler textActionHandler;
-
+	
 	public RefactorActionGroup(IResourceNavigatorPart navigator) {
 		this.navigator = navigator;
 		makeActions();
@@ -45,10 +45,9 @@ public class RefactorActionGroup extends ActionGroup {
 		clipboard = new Clipboard(shell.getDisplay());
 		pasteAction = new PasteAction(shell, clipboard);
 		copyAction = new CopyAction(shell, clipboard, pasteAction);
-		moveResourceAction = new ResourceNavigatorMoveAction(shell, treeViewer);
-		moveProjectAction = new MoveProjectAction(shell);
-		renameResourceAction = new ResourceNavigatorRenameAction(shell, treeViewer);
-		deleteResourceAction = new DeleteResourceAction(shell);
+		moveAction = new ResourceNavigatorMoveAction(shell, treeViewer);
+		renameAction = new ResourceNavigatorRenameAction(shell, treeViewer);
+		deleteAction = new DeleteResourceAction(shell);
 	}
 
 	public void fillContextMenu(IMenuManager menu) {
@@ -60,22 +59,6 @@ public class RefactorActionGroup extends ActionGroup {
 				&& ResourceSelectionUtil.allResourcesAreOfType(
 					selection,
 					IResource.PROJECT | IResource.FOLDER | IResource.FILE);
-		boolean onlyFoldersOrFilesSelected =
-			!selection.isEmpty()
-				&& ResourceSelectionUtil.allResourcesAreOfType(
-					selection,
-					IResource.FOLDER | IResource.FILE);
-		boolean onlyProjectsSelected =
-			!selection.isEmpty()
-				&& ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT);
-
-		if (onlyFoldersOrFilesSelected) {
-			moveResourceAction.selectionChanged(selection);
-			menu.add(moveResourceAction);
-		} else if (onlyProjectsSelected) {
-			moveProjectAction.selectionChanged(selection);
-			menu.add(moveProjectAction);
-		}
 
 		copyAction.selectionChanged(selection);
 		menu.add(copyAction);
@@ -83,19 +66,24 @@ public class RefactorActionGroup extends ActionGroup {
 		menu.add(pasteAction);
 
 		if (anyResourceSelected) {
-			renameResourceAction.selectionChanged(selection);
-			menu.add(renameResourceAction);
-			deleteResourceAction.selectionChanged(selection);
-			menu.add(deleteResourceAction);
+			deleteAction.selectionChanged(selection);
+			menu.add(deleteAction);
+			moveAction.selectionChanged(selection);
+			menu.add(moveAction);
+			renameAction.selectionChanged(selection);
+			menu.add(renameAction);
 		}
 	}
 
 	public void fillActionBars(IActionBars actionBars) {
-		textActionHandler = new TextActionHandler(actionBars);
+		textActionHandler = new TextActionHandler(actionBars); // hooks handlers
 		textActionHandler.setCopyAction(copyAction);
 		textActionHandler.setPasteAction(pasteAction);
-		textActionHandler.setDeleteAction(deleteResourceAction);
-		renameResourceAction.setTextActionHandler(textActionHandler);
+		textActionHandler.setDeleteAction(deleteAction);
+		renameAction.setTextActionHandler(textActionHandler);
+		
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.MOVE, moveAction);
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.RENAME, renameAction);
 	}
 
 	public void updateActionBars() {
@@ -104,7 +92,9 @@ public class RefactorActionGroup extends ActionGroup {
 
 		copyAction.selectionChanged(selection);
 		pasteAction.selectionChanged(selection);
-		deleteResourceAction.selectionChanged(selection);
+		deleteAction.selectionChanged(selection);
+		moveAction.selectionChanged(selection);
+		renameAction.selectionChanged(selection);
 	}
 	
 	/**
@@ -112,13 +102,13 @@ public class RefactorActionGroup extends ActionGroup {
  	 */
 	public void handleKeyPressed(KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
-			if (deleteResourceAction.isEnabled()) {
-				deleteResourceAction.run();
+			if (deleteAction.isEnabled()) {
+				deleteAction.run();
 			}
 		}
 		else if (event.keyCode == SWT.F2 && event.stateMask == 0) {
-			if (renameResourceAction.isEnabled()) {
-				renameResourceAction.run();
+			if (renameAction.isEnabled()) {
+				renameAction.run();
 			}
 		}
 	}

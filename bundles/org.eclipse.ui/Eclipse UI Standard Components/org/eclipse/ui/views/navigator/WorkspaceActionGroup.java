@@ -9,8 +9,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.*;
 
 /**
@@ -21,10 +24,10 @@ public class WorkspaceActionGroup extends ActionGroup {
 
 	private IResourceNavigatorPart navigator;
 	private BuildAction buildAction;
-	private BuildAction rebuildAllAction;
+	private BuildAction rebuildAction;
 	private OpenResourceAction openProjectAction;
 	private CloseResourceAction closeProjectAction;
-	private RefreshAction localRefreshAction;
+	private RefreshAction refreshAction;
 
 	public WorkspaceActionGroup(IResourceNavigatorPart navigator) {
 		this.navigator = navigator;
@@ -35,14 +38,13 @@ public class WorkspaceActionGroup extends ActionGroup {
 		Shell shell = navigator.getSite().getShell();
 		openProjectAction = new OpenResourceAction(shell);
 		closeProjectAction = new CloseResourceAction(shell);
-		localRefreshAction = new RefreshAction(shell);
+		refreshAction = new RefreshAction(shell);
 		buildAction =
 			new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
-		rebuildAllAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
+		rebuildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
 	}
 	
 	public void fillContextMenu(IMenuManager menu) {
-		// Update the selections of those who need a refresh before filling
 		IStructuredSelection selection =
 			(IStructuredSelection) getContext().getSelection();
 		
@@ -50,6 +52,16 @@ public class WorkspaceActionGroup extends ActionGroup {
 			!selection.isEmpty()
 				&& ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT);
 
+		if (!selection.isEmpty()) {
+			// Allow manual incremental build only if auto build is off.
+			if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
+				buildAction.selectionChanged(selection);
+				menu.add(buildAction);
+			}
+			rebuildAction.selectionChanged(selection);
+			menu.add(rebuildAction);
+		}
+		
 		if (onlyProjectsSelected) {
 			openProjectAction.selectionChanged(selection);
 			menu.add(openProjectAction);
@@ -57,18 +69,38 @@ public class WorkspaceActionGroup extends ActionGroup {
 			menu.add(closeProjectAction);
 		}
 		
-		if (!selection.isEmpty()) {
-			// Allow manual incremental build only if auto build is off.
-			if (!ResourcesPlugin.getWorkspace().isAutoBuilding()) {
-				buildAction.selectionChanged(selection);
-				menu.add(buildAction);
-			}
-			rebuildAllAction.selectionChanged(selection);
-			menu.add(rebuildAllAction);
-		}
+		menu.add(new Separator());
 		
-		localRefreshAction.selectionChanged(selection);
-		menu.add(localRefreshAction);
+		refreshAction.selectionChanged(selection);
+		menu.add(refreshAction);
+	}
+	
+	public void fillActionBars(IActionBars actionBars) {
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.REFRESH,
+			refreshAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.BUILD_PROJECT,
+			buildAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.REBUILD_PROJECT,
+			rebuildAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.OPEN_PROJECT,
+			openProjectAction);
+		actionBars.setGlobalActionHandler(
+			IWorkbenchActionConstants.CLOSE_PROJECT,
+			closeProjectAction);
+	}
+	
+	public void updateActionBars() {
+		IStructuredSelection selection =
+			(IStructuredSelection) getContext().getSelection();
+		refreshAction.selectionChanged(selection);
+		buildAction.selectionChanged(selection);
+		rebuildAction.selectionChanged(selection);
+		openProjectAction.selectionChanged(selection);
+		closeProjectAction.selectionChanged(selection);
 	}
 	
 	/**
@@ -76,7 +108,7 @@ public class WorkspaceActionGroup extends ActionGroup {
  	 */
 	public void handleKeyPressed(KeyEvent event) {
 		if (event.keyCode == SWT.F5) {
-			localRefreshAction.refreshAll();
+			refreshAction.refreshAll();
 		}
 	}
 }

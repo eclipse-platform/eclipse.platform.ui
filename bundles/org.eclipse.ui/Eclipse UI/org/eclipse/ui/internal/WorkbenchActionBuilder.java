@@ -25,6 +25,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * This is used to add actions to the workbench.
  */
 public class WorkbenchActionBuilder implements IPropertyChangeListener {
+	
 	private static final String saveActionDefId = "org.eclipse.ui.file.save";
 	private static final String saveAllActionDefId = "org.eclipse.ui.file.saveAll";
 	private static final String printActionDefId = "org.eclipse.ui.file.print";
@@ -46,7 +47,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private static final String nextPartActionDefId = "org.eclipse.ui.window.nextView";
 	private static final String prevPartActionDefId = "org.eclipse.ui.window.previousView";
 	private static final String activateEditorActionDefId = "org.eclipse.ui.window.activateEditor";
-	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor";
+	private static final String workbenchEditorsActionDefId = "org.eclipse.ui.window.switchToEditor";	
 	
 	//pin editor group in the toolbar
 	private static final String pinEditorGroup = "pinEditorGroup";
@@ -76,7 +77,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private SavePerspectiveAction savePerspectiveAction;
 	private ResetPerspectiveAction resetPerspectiveAction;
 	private EditActionSetsAction editActionSetAction;
-	private ClosePerspectiveAction closePerpsAction;
+	private ClosePerspectiveAction closePerspAction;
 	private CloseAllPerspectivesAction closeAllPerspsAction;
 	private PinEditorAction pinEditorAction;
 	private ShowViewMenuAction showViewMenuAction;
@@ -87,7 +88,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private CycleEditorAction prevEditorAction;
 	private ActivateEditorAction activateEditorAction;
 	private WorkbenchEditorsAction workbenchEditorsAction;
-
+	
 	// retarget actions.
 	private RetargetAction undoAction;
 	private RetargetAction redoAction;
@@ -99,6 +100,26 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private RetargetAction findAction;
 	private RetargetAction addBookmarkAction;
 	private RetargetAction printAction;
+	
+// menu reorg
+	private boolean usingMenuReorg = 
+		WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean("ENABLE_NEW_MENUS");
+	
+	private RetargetAction revertAction;
+	private RetargetAction refreshAction;
+	private RetargetAction propertiesAction;
+	private RetargetAction moveAction;
+	private RetargetAction renameAction;
+//	private RetargetAction addTaskAction;
+	private RetargetAction goIntoAction;
+	private RetargetAction backAction;
+	private RetargetAction forwardAction;
+	private RetargetAction upAction;
+	private RetargetAction buildProjectAction;
+	private RetargetAction rebuildProjectAction;
+	private RetargetAction openProjectAction;
+	private RetargetAction closeProjectAction;
+// end menu reorg	
 
 	/**
 	 * WorkbenchActionBuilder constructor comment.
@@ -201,7 +222,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		savePerspectiveAction.setEnabled(value);
 		resetPerspectiveAction.setEnabled(value);
 		editActionSetAction.setEnabled(value);
-		closePerpsAction.setEnabled(value);
+		closePerspAction.setEnabled(value);
 		closeAllPerspsAction.setEnabled(value);
 		newWizardMenu.setEnabled(value);
 		newWizardDropDownAction.setEnabled(value);
@@ -215,14 +236,24 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private void createMenuBar() {
 		// Get main menu.
 		MenuManager menubar = window.getMenuBarManager();
-		menubar.add(createFileMenu());
-		menubar.add(createEditMenu());
-		menubar.add(createPerspectiveMenu());
-		menubar.add(createWorkbenchMenu());
-		// Define section for additions.
-		menubar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-		menubar.add(createWindowMenu());
-		menubar.add(createHelpMenu());
+		if (usingMenuReorg) {
+			menubar.add(createFileMenu());
+			menubar.add(createEditMenu());
+			menubar.add(createNavigateMenu());
+			menubar.add(createProjectMenu());
+			menubar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+			menubar.add(createWindowMenu());
+			menubar.add(createHelpMenu());
+		}
+		else {
+			menubar.add(createFileMenu());
+			menubar.add(createEditMenu());
+			menubar.add(createPerspectiveMenu());
+			menubar.add(createWorkbenchMenu());
+			menubar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+			menubar.add(createWindowMenu());
+			menubar.add(createHelpMenu());
+		}
 	}
 
 	/**
@@ -251,6 +282,13 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(saveAction);
 		menu.add(saveAsAction);
 		menu.add(saveAllAction);
+		
+		if (usingMenuReorg) {
+			menu.add(revertAction);
+			menu.add(new Separator());
+			menu.add(refreshAction);
+		}
+		
 		menu.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
 		menu.add(new Separator());
 		menu.add(printAction);
@@ -262,6 +300,12 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		// next to the additions group
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MRU));  
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		
+		if (usingMenuReorg) {
+			menu.add(new Separator());
+			menu.add(propertiesAction);
+		}
+		
 		menu.add(new Separator());
 		menu.add(new QuitAction(window.getWorkbench()));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_END));
@@ -284,6 +328,12 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		menu.add(new GroupMarker(IWorkbenchActionConstants.CUT_EXT));
 		menu.add(new Separator());
 		menu.add(deleteAction);
+		
+		if (usingMenuReorg) {
+			menu.add(moveAction);
+			menu.add(renameAction);
+		}
+		
 		menu.add(selectAllAction);
 		menu.add(new Separator());
 		menu.add(findAction);
@@ -294,13 +344,63 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		return menu;
 	}
 
+// menu reorg
+
 	/**
-	 * Creates and returns the Perspective menu.
+	 * Creates and returns the Navigate menu.
 	 */
-	private MenuManager createPerspectiveMenu() {
-		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.perspective"), IWorkbenchActionConstants.M_VIEW); //$NON-NLS-1$
+	private MenuManager createNavigateMenu() {
+		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.navigate"), IWorkbenchActionConstants.M_NAVIGATE); //$NON-NLS-1$
+		menu.add(goIntoAction);
+
+		MenuManager goToSubMenu = new MenuManager(WorkbenchMessages.getString("Workbench.goTo"), IWorkbenchActionConstants.GO_TO); //$NON-NLS-1$
+		menu.add(goToSubMenu);
+		goToSubMenu.add(backAction);
+		goToSubMenu.add(forwardAction);
+		goToSubMenu.add(upAction);
+		goToSubMenu.add(new Separator());
+		goToSubMenu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+
+		menu.add(new Separator());
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		return menu;
+	}
+
+	/**
+	 * Creates and returns the Project menu.
+	 */
+	private MenuManager createProjectMenu() {
+		boolean autoBuild = ResourcesPlugin.getWorkspace().isAutoBuilding();
+		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.project"), IWorkbenchActionConstants.M_PROJECT); //$NON-NLS-1$
+		// Only add the manual incremental build if auto build off
+		if (!autoBuild)
+			menu.add(buildProjectAction);
+		menu.add(rebuildProjectAction);
+		if (!autoBuild) {
+			menu.add(buildAction);
+		}
+		menu.add(rebuildAllAction);
+		menu.add(new Separator());
+		menu.add(openProjectAction);
+		menu.add(closeProjectAction);
+		menu.add(new Separator());
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		return menu;
+	}
+
+// end menu reorg
+	
+
+	/**
+	 * Adds the perspective actions to the specified menu.
+	 */
+	private void addPerspectiveActions(MenuManager menu) {
 		{
-			MenuManager changePerspMenuMgr = new MenuManager(WorkbenchMessages.getString("Workbench.change")); //$NON-NLS-1$
+			String openText = 
+				usingMenuReorg
+					? WorkbenchMessages.getString("Workbench.openPerspective") //$NON-NLS-1$
+					: WorkbenchMessages.getString("Workbench.open"); //$NON-NLS-1$
+			MenuManager changePerspMenuMgr = new MenuManager(openText); //$NON-NLS-1$
 			ChangeToPerspectiveMenu changePerspMenuItem = new ChangeToPerspectiveMenu(window);
 			changePerspMenuMgr.add(changePerspMenuItem);
 			menu.add(changePerspMenuMgr);
@@ -310,22 +410,37 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(subMenu);
 			new ShowViewMenu(subMenu, window, true);
 		}
-		menu.add(hideShowEditorAction = new ToggleEditorsVisibilityAction(window));	
-		menu.add(new Separator());
-		menu.add(savePerspectiveAction = new SavePerspectiveAction(window));
-		menu.add(editActionSetAction = new EditActionSetsAction(window));
-		menu.add(resetPerspectiveAction = new ResetPerspectiveAction(window));
-		menu.add(new Separator());
-		menu.add(closePerpsAction = new ClosePerspectiveAction(window));
-		menu.add(closeAllPerspsAction = new CloseAllPerspectivesAction(window));
-		menu.add(new Separator(IWorkbenchActionConstants.VIEW_EXT));
-		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new Separator());
-		menu.add(new OpenedPerspectivesMenu(window, false));
-		return menu;
+		if (usingMenuReorg) {
+			menu.add(new Separator());
+			menu.add(savePerspectiveAction);
+			menu.add(editActionSetAction);
+			menu.add(hideShowEditorAction);
+			menu.add(resetPerspectiveAction);
+			menu.add(new Separator());
+			menu.add(closePerspAction);	
+			menu.add(closeAllPerspsAction);
+		}
+		else {
+			menu.add(hideShowEditorAction);	
+			menu.add(new Separator());
+			menu.add(savePerspectiveAction);
+			menu.add(editActionSetAction);
+			menu.add(resetPerspectiveAction);
+			menu.add(new Separator());
+			menu.add(closePerspAction);
+			menu.add(closeAllPerspsAction);
+		}
 	}
 	
-	
+	/**
+	 * Creates and returns the Perspective menu.
+	 */
+	private MenuManager createPerspectiveMenu() {
+		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.perspective"), IWorkbenchActionConstants.M_VIEW); //$NON-NLS-1$
+		addPerspectiveActions(menu);
+		return menu;
+	}
+
 	/**
 	 * Creates and returns the Workbench menu.
 	 */
@@ -344,16 +459,9 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	}
 
 	/**
-	 * Creates and returns the Window menu.
+	 * Adds the keyboard navigation submenu to the specified menu.
 	 */
-	private MenuManager createWindowMenu() {
-		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
-		menu.add(new OpenNewWindowAction(window));
-		MenuManager launchWindowMenu = new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
-		launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
-		menu.add(launchWindowMenu);
-
-		//Navigation submenu
+	private void addNavigationSubMenu(MenuManager menu) {
 		MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.navigation")); //$NON-NLS-1$
 		menu.add(subMenu);
 		subMenu.add(activateEditorAction);
@@ -363,23 +471,54 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		subMenu.add(prevEditorAction);
 		subMenu.add(nextPartAction);
 		subMenu.add(prevPartAction);
-
-
-		menu.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
-		menu.add(workbenchEditorsAction);
-		selectWorkingSetAction = new SelectWorkingSetAction(window);
-		clearWorkingSetAction = new ClearWorkingSetAction(window);
+	}
+	
+	/**
+	 * Adds the working set actions to the specified menu.
+	 */
+	private void addWorkingSetActions(MenuManager menu) {
 		// Temporary option to enable working sets
-		org.eclipse.jface.preference.IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		if (store.getBoolean("ENABLE_WORKING_SETS")) {
 			menu.add(selectWorkingSetAction);
 			menu.add(clearWorkingSetAction);
 		}
-		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new SwitchToWindowMenu(window, true));
-		
-		return menu;
 	}
+	
+	/**
+	 * Creates and returns the Window menu.
+	 */
+	private MenuManager createWindowMenu() {
+		MenuManager menu = new MenuManager(WorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
+		
+		if (usingMenuReorg) {
+			menu.add(new OpenNewWindowAction(window));
+			menu.add(new Separator());
+			addPerspectiveActions(menu);
+			menu.add(new Separator());
+			addWorkingSetActions(menu);
+			menu.add(new Separator());
+			addNavigationSubMenu(menu);
+			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "end")); //$NON-NLS-1$
+			menu.add(openPreferencesAction);
+			menu.add(new SwitchToWindowMenu(window, true));
+		}
+		else {
+			menu.add(new OpenNewWindowAction(window));
+			MenuManager launchWindowMenu = new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
+			launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
+			menu.add(launchWindowMenu);
+			addNavigationSubMenu(menu);
+			menu.add(new Separator());
+			menu.add(workbenchEditorsAction);
+			menu.add(new Separator());
+			addWorkingSetActions(menu);
+			menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+			menu.add(new SwitchToWindowMenu(window, true));
+		}
+		return menu;
+	}	
 
 	/**
 	 * Creates and returns the Help menu.
@@ -686,7 +825,68 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		workbenchEditorsAction = new WorkbenchEditorsAction(window);
 		workbenchEditorsAction.setActionDefinitionId(workbenchEditorsActionDefId);
 		keyBindingService.registerGlobalAction(workbenchEditorsAction);
+		
+		hideShowEditorAction = new ToggleEditorsVisibilityAction(window);
+		savePerspectiveAction = new SavePerspectiveAction(window);
+		editActionSetAction = new EditActionSetsAction(window);
+		resetPerspectiveAction = new ResetPerspectiveAction(window);
+		closePerspAction = new ClosePerspectiveAction(window);
+		closeAllPerspsAction = new CloseAllPerspectivesAction(window);
+		
+		selectWorkingSetAction = new SelectWorkingSetAction(window);
+		clearWorkingSetAction = new ClearWorkingSetAction(window);
+				
+		// menu reorg
+		if (usingMenuReorg) {
+			// create the new actions needed for the reorg
+			revertAction = createGlobalAction(IWorkbenchActionConstants.REVERT, "file", false); //$NON-NLS-1$
+			refreshAction = createGlobalAction(IWorkbenchActionConstants.REFRESH, "file", false); //$NON-NLS-1$
+			propertiesAction = createGlobalAction(IWorkbenchActionConstants.PROPERTIES, "file", false); //$NON-NLS-1$
+			moveAction = createGlobalAction(IWorkbenchActionConstants.MOVE, "edit", false); //$NON-NLS-1$
+			renameAction = createGlobalAction(IWorkbenchActionConstants.RENAME, "edit", false); //$NON-NLS-1$
+	//		addTaskAction = createGlobalAction(IWorkbenchActionConstants.ADD_TASK, "edit", false); //$NON-NLS-1$
+			goIntoAction = createGlobalAction(IWorkbenchActionConstants.GO_INTO, "navigate", false); //$NON-NLS-1$
+			backAction = createGlobalAction(IWorkbenchActionConstants.BACK, "navigate", true); //$NON-NLS-1$
+			forwardAction = createGlobalAction(IWorkbenchActionConstants.FORWARD, "navigate", true); //$NON-NLS-1$
+			upAction = createGlobalAction(IWorkbenchActionConstants.UP, "navigate", true); //$NON-NLS-1$
+			buildProjectAction = createGlobalAction(IWorkbenchActionConstants.BUILD_PROJECT, "project", false); //$NON-NLS-1$
+			rebuildProjectAction = createGlobalAction(IWorkbenchActionConstants.REBUILD_PROJECT, "project", false); //$NON-NLS-1$
+			openProjectAction = createGlobalAction(IWorkbenchActionConstants.OPEN_PROJECT, "project", false); //$NON-NLS-1$
+			closeProjectAction = createGlobalAction(IWorkbenchActionConstants.CLOSE_PROJECT, "project", false); //$NON-NLS-1$
+			closeProjectAction.setAccelerator(SWT.ALT | SWT.CR);
+
+			// override the text and tooltip for certain actions,
+			// either to get the new text or a different mnemonic
+			savePerspectiveAction.setText(WorkbenchMessages.getString("Workbench.savePerspectiveAs")); //$NON-NLS-1$
+			editActionSetAction.setText(WorkbenchMessages.getString("Workbench.customizePerspective")); //$NON-NLS-1$
+			resetPerspectiveAction.setText(WorkbenchMessages.getString("Workbench.resetPerspective")); //$NON-NLS-1$
+			closePerspAction.setText(WorkbenchMessages.getString("Workbench.closePerspective")); //$NON-NLS-1$
+			closeAllPerspsAction.setText(WorkbenchMessages.getString("Workbench.closeAllPerspectives")); //$NON-NLS-1$
+			buildAction.setText(WorkbenchMessages.getString("Workbench.buildAll")); //$NON-NLS-1$
+			buildAction.setToolTipText(WorkbenchMessages.getString("Workbench.buildAllToolTip")); //$NON-NLS-1$
+			rebuildAllAction.setText(WorkbenchMessages.getString("Workbench.rebuildAll")); //$NON-NLS-1$
+			rebuildAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.rebuildAllToolTip")); //$NON-NLS-1$
+		}
+		// end menu reorg
 	}
+	
+// menu reorg	
+	private RetargetAction createGlobalAction(String id, String actionDefPrefix, boolean labelRetarget) {
+		RetargetAction action;
+		if (labelRetarget) {
+			action = new LabelRetargetAction(id, WorkbenchMessages.getString("Workbench." + id)); //$NON-NLS-1$
+		}
+		else {
+			action = new RetargetAction(id, WorkbenchMessages.getString("Workbench." + id)); //$NON-NLS-1$
+		}
+		action.setToolTipText(WorkbenchMessages.getString("Workbench." + id + "ToolTip")); //$NON-NLS-1$   //$NON-NLS-2$
+		window.getPartService().addPartListener(action);
+		action.setActionDefinitionId(PlatformUI.PLUGIN_ID + "." + actionDefPrefix + "." + id); //$NON-NLS-1$   //$NON-NLS-2$
+		window.getKeyBindingService().registerGlobalAction(action);
+		return action;
+	}
+// end menu reorg
+	
 	/**
 	 * Update the menubar and toolbar when
 	 * changes to the preferences are done.

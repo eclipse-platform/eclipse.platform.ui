@@ -24,6 +24,8 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 	private Button capabilityButton;
 	// Temporary option to enable working sets
 	private Button workingSetsButton;
+	// Temporary option to enable new menu structure
+	private Button newMenusButton;
 	
 	/**
 	 *	@see IWorkbenchPreferencePage
@@ -34,6 +36,29 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		//Call commented out on WorkbenchPreferencePage. 
 		acceleratorInit(aWorkbench);
 	}
+	
+	/**
+	 * Creates a temporary option checkbox.
+	 */
+	private Button createTempOption(Composite parent, String text, String prefId, boolean restartNeeded) {
+		// create composite needed to get tab order right
+		Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(new GridLayout());
+		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+		
+		Button button = new Button(composite, SWT.CHECK);
+		button.setText(text);
+		IPreferenceStore store = getPreferenceStore();
+		button.setSelection(store.getBoolean(prefId)); //$NON-NLS-1$
+		
+		if (restartNeeded) {
+			Label label = new Label(composite, SWT.NONE);
+			label.setText("Note: This preference will only take effect after restarting.");
+		}
+		
+		return button;
+	}
+	
 	/*
 	 * @see PreferencePage#createContents(Composite)
 	 */
@@ -42,25 +67,33 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 
-		//Call commented out on WorkbenchPreferencePage. 
-		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
+		// Call commented out on WorkbenchPreferencePage. 
+		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration")); //$NON-NLS-1$
 
 		// Temporary option to enable wizard for project capability work
-		createSpace(composite);
-		capabilityButton = new Button(composite, SWT.CHECK);
-		capabilityButton.setText("Enable new configurable project wizard (work in progress of project capabilities)"); //$NON-NLS-1$
-		Label label = new Label(composite, SWT.NONE);
-		label.setText("Note: The new configurable project option will only take effect after restarting.");
+		capabilityButton = 
+			createTempOption(
+				composite,
+				"Enable new configurable project wizard (work in progress of project capabilities)", 
+				"ENABLE_CONFIGURABLE_PROJECT_WIZARD",
+				true);
 
-		createSpace(composite);
-		workingSetsButton = new Button(composite, SWT.CHECK);
-		workingSetsButton.setText("Enable workbench working sets"); //$NON-NLS-1$
+		// Temporary option to enable workbench working sets
+		workingSetsButton =
+			createTempOption(
+				composite,
+				"Enable workbench working sets (adds two items to Window menu)",
+				"ENABLE_WORKING_SETS",
+				true);
+			
+		// Temporary option to enable the new menu organization
+		newMenusButton = 
+			createTempOption(
+				composite,
+				"Enable new menu organization",
+				"ENABLE_NEW_MENUS",
+				true);
 
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-				
-		// Temporary option to enable wizard for project capability
-		capabilityButton.setSelection(store.getBoolean("ENABLE_CONFIGURABLE_PROJECT_WIZARD")); //$NON-NLS-1$
-		workingSetsButton.setSelection(store.getBoolean("ENABLE_WORKING_SETS")); //$NON-NLS-1$
 		return composite;
 	}
 	/**
@@ -69,12 +102,12 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 	protected void performDefaults() {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 
-		// Temporary option to enable wizard for project capability
-		capabilityButton.setSelection(store.getDefaultBoolean("ENABLE_CONFIGURABLE_PROJECT_WIZARD")); //$NON-NLS-1$
-		
-		workingSetsButton.setSelection(store.getDefaultBoolean("ENABLE_WORKING_SETS")); //$NON-NLS-1$				
 		//Call commented out on WorkbenchPreferencePage. 
 		acceleratorPerformDefaults(store);
+
+		capabilityButton.setSelection(store.getDefaultBoolean("ENABLE_CONFIGURABLE_PROJECT_WIZARD")); //$NON-NLS-1$	
+		workingSetsButton.setSelection(store.getDefaultBoolean("ENABLE_WORKING_SETS")); //$NON-NLS-1$				
+		newMenusButton.setSelection(store.getDefaultBoolean("ENABLE_NEW_MENUS")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -83,9 +116,9 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 	public boolean performOk() {
 		IPreferenceStore store = getPreferenceStore();
 
-		// Temporary option to enable wizard for project capability
 		store.setValue("ENABLE_CONFIGURABLE_PROJECT_WIZARD", capabilityButton.getSelection()); //$NON-NLS-1$
 		store.setValue("ENABLE_WORKING_SETS", workingSetsButton.getSelection()); //$NON-NLS-1$
+		store.setValue("ENABLE_NEW_MENUS", newMenusButton.getSelection()); //$NON-NLS-1$
 		
 		//Call commented out on WorkbenchPreferencePage. 
 		acceleratorPerformOk(store);
