@@ -53,12 +53,12 @@ import org.eclipse.compare.structuremergeviewer.*;
 public final class CompareUIPlugin extends AbstractUIPlugin {
 	
 	public static final String DTOOL_NEXT= "dlcl16/next_nav.gif";	//$NON-NLS-1$
-	public static final String CTOOL_NEXT= "clcl16/next_nav.gif";	//$NON-NLS-1$
 	public static final String ETOOL_NEXT= "elcl16/next_nav.gif";	//$NON-NLS-1$
+	public static final String CTOOL_NEXT= ETOOL_NEXT;
 	
 	public static final String DTOOL_PREV= "dlcl16/prev_nav.gif";	//$NON-NLS-1$
-	public static final String CTOOL_PREV= "clcl16/prev_nav.gif";	//$NON-NLS-1$
 	public static final String ETOOL_PREV= "elcl16/prev_nav.gif";	//$NON-NLS-1$
+	public static final String CTOOL_PREV= ETOOL_PREV;
 				
 	/** Status code describing an internal error */
 	public static final int INTERNAL_ERROR= 1;
@@ -151,7 +151,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 						try {
 							return (IStructureCreator) conf.createExecutableExtension(CLASS_ATTRIBUTE);
 						} catch (CoreException ex) {
-							// NeedWork
+							log(ex.getStatus());
 						}
 						return null;
 					}
