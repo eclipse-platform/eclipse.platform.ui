@@ -7,13 +7,13 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -56,16 +56,12 @@ public class ReleaseCommentDialog extends Dialog {
 		text.setLayoutData(data);
 		text.setText(comment);
 		text.selectAll();
-		text.addListener(SWT.KeyDown, new Listener() {
-			public void handleEvent(Event e) {
-				if (((e.stateMask & SWT.CTRL) != 0) && (e.character == '\n')) {
+		text.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				if (e.detail == SWT.TRAVERSE_RETURN && (e.stateMask & SWT.CTRL) != 0) {
+					e.doit = false;
 					okPressed();
 				}
-			}
-		});
-		// Hack: need to add the verify to make the key listener work. Don't know why.
-		text.addListener(SWT.Verify, new Listener() {
-			public void handleEvent(Event e) {
 			}
 		});
 		return composite;
