@@ -396,7 +396,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		Object firstSelected = selection.getFirstElement();
 		if (firstSelected instanceof IFile) {
 			IFile file = (IFile) firstSelected;
-			if (file.getFileExtension().equals(ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION)) {
+			if (ILaunchConfiguration.LAUNCH_CONFIGURATION_FILE_EXTENSION.equals(file.getFileExtension())) {
 				return getLaunchManager().getLaunchConfiguration(file);
 			}
 		}
