@@ -1939,7 +1939,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		getStatusLineManager().getControl().setLayoutData(statusLineData);
 		FormData clientAreaData = new FormData();
 
-		clientAreaData.top = new FormAttachment(topBar, 0);
+		clientAreaData.top = new FormAttachment(topBar, 4);
 		clientAreaData.left = new FormAttachment(getFastViewBar().getControl(), 0);
 		clientAreaData.bottom = new FormAttachment(getStatusLineManager().getControl(), 0);
 		clientAreaData.right = new FormAttachment(100);
