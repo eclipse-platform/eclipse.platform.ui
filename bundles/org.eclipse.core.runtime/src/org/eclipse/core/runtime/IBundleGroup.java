@@ -27,13 +27,13 @@ import org.osgi.framework.Bundle;
  * @see IBundleGroupProvider
  * @since 3.0
  */
-//TODO Put a reference to org.ecli[se.ui.branding.IBundleGroupConstants
+//TODO Put a reference to org.eclipse.ui.branding.IBundleGroupConstants
 public interface IBundleGroup {
 
 	/**
 	 * Returns the identifier of this bundle group.  Bundle groups are uniquely identified by the combination of
 	 * their identifier and their version.
-	 * @see getVersion()
+	 * @see #getVersion()
 	 * @return the identifier for this bundle group
 	 */
 	public String getIdentifier();
@@ -48,7 +48,7 @@ public interface IBundleGroup {
 	 * Returns the version of this bundle group. Bundle group version strings have the same format as 
 	 * bundle versions (i.e., major.minor.service.qualifier).  Bundle groups are uniquely identified 
 	 * by the combination of their identifier and their version.
-	 * @see getIdentifier
+	 * @see #getIdentifier()
 	 * @return the string form of this bundle group's version
 	 */
 	public String getVersion();

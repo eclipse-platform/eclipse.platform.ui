@@ -18,8 +18,8 @@ import java.util.EventListener;
  * Clients may implement this interface.
  * </p>
  *
- * @see ILog#addLogListener
- * @see Platform#addLogListener
+ * @see ILog#addLogListener(ILogListener)
+ * @see Platform#addLogListener(ILogListener)
  */
 public interface ILogListener extends EventListener {
 	/**

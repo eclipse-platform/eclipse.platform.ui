@@ -91,7 +91,7 @@ public class Path implements IPath, Cloneable {
 	 * are replaced with forward slashes. ('/')
 	 *
 	 * @param fullPath the string path
-	 * @see #isValidPath
+	 * @see #isValidPath(String)
 	 */
 	public Path(String fullPath) {
 		// no segment validations are done for performance reasons 
@@ -106,8 +106,8 @@ public class Path implements IPath, Cloneable {
 	 *
 	 * @param device the device id
 	 * @param path the string path
-	 * @see #isValidPath
-	 * @see #setDevice
+	 * @see #isValidPath(String)
+	 * @see #setDevice(String)
 	 */
 	public Path(String device, String path) {
 		// no segment validations are done for performance reasons

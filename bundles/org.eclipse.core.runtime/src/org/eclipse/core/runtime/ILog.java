@@ -27,7 +27,7 @@ public interface ILog {
 	 * This method has no affect if the identical listener is already registered on this log.
 	 *
 	 * @param listener the listener to add to this log
-	 * @see Platform#addLogListener
+	 * @see Platform#addLogListener(ILogListener)
 	 */
 	public void addLogListener(ILogListener listener);
 	/**
@@ -56,7 +56,7 @@ public interface ILog {
 	 * no longer receive notification of log events passing through this log.  
 	 * This method has no affect if the identical listener is not registered on this log.
 	 *
-	 * @see Platform#removeLogListener
+	 * @see Platform#removeLogListener(ILogListener)
 	 */
 	public void removeLogListener(ILogListener listener);
 }

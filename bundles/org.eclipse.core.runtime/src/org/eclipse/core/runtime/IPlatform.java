@@ -64,8 +64,8 @@ public interface IPlatform {
 	 * The preference value must be an integer between the constant values
 	 * MIN_PERFORMANCE and MAX_PERFORMANCE
 	 * </p>
-	 * @see #MIN_PERFORMANCE
-	 * @see #MAX_PERFORMANCE
+	 * @see Platform#MIN_PERFORMANCE
+	 * @see Platform#MAX_PERFORMANCE
 	 * @since 3.0
 	 */
 	public static final String PREF_PLATFORM_PERFORMANCE = "runtime.performance"; //$NON-NLS-1$
@@ -171,8 +171,8 @@ public interface IPlatform {
 	 * </p>
 	 *
 	 * @param listener the listener to register
-	 * @see ILog#addLogListener
-	 * @see #removeLogListener
+	 * @see ILog#addLogListener(ILogListener)
+	 * @see #removeLogListener(ILogListener)
 	 */
 	public void addLogListener(ILogListener listener);
 
@@ -211,9 +211,9 @@ public interface IPlatform {
 	 * @param url original plug-in-relative URL.
 	 * @return the resolved URL
 	 * @exception IOException if unable to resolve URL
-	 * @see #resolve, #find
-	 * @see IPluginDescriptor#getInstallURL
-	 * @see Bundle#getEntry
+	 * @see #resolve(URL), #find
+	 * @see IPluginDescriptor#getInstallURL()
+	 * @see Bundle#getEntry(String)
 	 */
 	public URL asLocalURL(URL url) throws IOException;
 
@@ -308,8 +308,8 @@ public interface IPlatform {
 	 * of the platform.  If no such listener exists, no action is taken.
 	 *
 	 * @param listener the listener to deregister
-	 * @see ILog#removeLogListener
-	 * @see #addLogListener
+	 * @see ILog#removeLogListener(ILogListener)
+	 * @see #addLogListener(ILogListener)
 	 */
 	public void removeLogListener(ILogListener listener);
 
@@ -331,9 +331,9 @@ public interface IPlatform {
 	 * @param url original plug-in-relative URL.
 	 * @return the resolved URL
 	 * @exception IOException if unable to resolve URL
-	 * @see #asLocalURL, #find
-	 * @see IPluginDescriptor#getInstallURL
-	 * @see Bundle#getEntry
+	 * @see #asLocalURL(URL), #find
+	 * @see IPluginDescriptor#getInstallURL()
+	 * @see Bundle#getEntry(String)
 	 */
 	public URL resolve(URL url) throws IOException;
 
@@ -366,7 +366,7 @@ public interface IPlatform {
 	 * This is superceded by <code>getInstallLocation().getURL()</code>
 	 *
 	 * @return the URL indicating where the platform runtime is installed.
-	 * @see #getInstallLocation
+	 * @see #getInstallLocation()
 	 */	
 	public URL getInstallURL();
 
@@ -474,7 +474,7 @@ public interface IPlatform {
 	 * necessary to perform a 'resolve' on this URL.
 	 * @since 3.0
 	 */
-	public URL find(Bundle b, IPath path, Map override);
+	public URL find(Bundle bundle, IPath path, Map override);
 	
 	/**
 	 * Returns the location in the local file system of the 
@@ -528,7 +528,7 @@ public interface IPlatform {
 	 *
 	 * @param value the value
 	 * @return the resource string
-	 * @see #getResourceBundle
+	 * @see #getResourceBundle(Bundle)
 	 */
 	public String getResourceString(Bundle bundle, String value);
 	/**
@@ -561,7 +561,7 @@ public interface IPlatform {
 	 * @param value the value
 	 * @param bundle the resource bundle
 	 * @return the resource string
-	 * @see #getResourceBundle
+	 * @see #getResourceBundle(Bundle)
 	 */
 	public String getResourceString(Bundle bundle, String value, ResourceBundle resourceBundle);
 	/**
@@ -591,7 +591,7 @@ public interface IPlatform {
 	 * the operating system name is specified on the command line.
 	 *
 	 * @return the string name of the current operating system
-	 * @see #knownOSValues
+	 * @see Platform#knownOSValues
 	 * 
 	 */
 	public String getOS();

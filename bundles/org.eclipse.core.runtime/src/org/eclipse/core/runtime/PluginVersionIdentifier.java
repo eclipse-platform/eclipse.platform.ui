@@ -48,8 +48,8 @@ import org.eclipse.core.internal.runtime.*;
  * <p>
  * Clients may instantiate; not intended to be subclassed by clients.
  * </p>
- * @see IPluginDescriptor#getVersionIdentifier
- * @see java.lang.String#compareTo 
+ * @see IPluginDescriptor#getVersionIdentifier()
+ * @see java.lang.String#compareTo(java.lang.String) 
  */
 public final class PluginVersionIdentifier {
 
@@ -288,7 +288,7 @@ public final class PluginVersionIdentifier {
 	 * string comparison), or all components are equal.
 	 * </p>
 	 *
-	 * @param versionId the other version identifier
+	 * @param id the other version identifier
 	 * @return <code>true</code> is this version identifier
 	 *    is compatible with the given version identifier, and
 	 *    <code>false</code> otherwise
@@ -322,7 +322,7 @@ public final class PluginVersionIdentifier {
 	 * string comparison).
 	 * </p>
 	 *
-	 * @param versionId the other version identifier
+	 * @param id the other version identifier
 	 * @return <code>true</code> is this version identifier
 	 *    is compatible with the given version identifier, and
 	 *    <code>false</code> otherwise
@@ -357,7 +357,7 @@ public final class PluginVersionIdentifier {
 	 * 
 	 * </p>
 	 *
-	 * @param versionId the other version identifier
+	 * @param id the other version identifier
 	 * @return <code>true</code> is this version identifier
 	 *    is equivalent to the given version identifier, and
 	 *    <code>false</code> otherwise
@@ -385,7 +385,7 @@ public final class PluginVersionIdentifier {
 	 * major, minor, service and qualifier components are equal
 	 * </p>
 	 *
-	 * @param versionId the other version identifier
+	 * @param id the other version identifier
 	 * @return <code>true</code> is this version identifier
 	 *    is perfectly equal to the given version identifier, and
 	 *    <code>false</code> otherwise
@@ -403,7 +403,7 @@ public final class PluginVersionIdentifier {
 	 * Compares two version identifiers for order using multi-decimal
 	 * comparison. 
 	 *
-	 * @param versionId the other version identifier
+	 * @param id the other version identifier
 	 * @return <code>true</code> is this version identifier
 	 *    is greater than the given version identifier, and
 	 *    <code>false</code> otherwise
@@ -411,7 +411,7 @@ public final class PluginVersionIdentifier {
 	public boolean isGreaterThan(PluginVersionIdentifier id) {
 
 		if (id == null) {
-			if (major == 0 && minor == 0 && service == 0 && qualifier.equals(""))
+			if (major == 0 && minor == 0 && service == 0 && qualifier.equals("")) //$NON-NLS-1$
 				return false; //$NON-NLS-1$
 			else
 				return true;
