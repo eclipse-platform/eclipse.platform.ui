@@ -651,6 +651,17 @@ public void setPreferenceStore(IPreferenceStore store) {
 	preferenceStore = store;
 }
 /**
+ * Changes the shell size to the given size, ensuring that
+ * it is no larger than the display bounds.
+ * 
+ * @param width the shell width
+ * @param height the shell height
+ */
+private void setShellSize(int width, int height) {
+	Rectangle bounds = getShell().getDisplay().getBounds();
+	getShell().setSize(Math.min(width, bounds.width), Math.min(height, bounds.height));
+}
+/**
  * Shows the preference page corresponding to the given preference node.
  * Does nothing if that page is already current.
  *
@@ -707,7 +718,7 @@ protected boolean showPage(IPreferenceNode node) {
 			vdiff= Math.max(0, vdiff);
 			Shell shell= getShell();
 			Point shellSize= shell.getSize();
-			shell.setSize(shellSize.x + hdiff, shellSize.y + vdiff);
+			setShellSize(shellSize.x + hdiff, shellSize.y + vdiff);
 		} else if (hdiff < 0 || vdiff < 0) {
 			newPage.setSize(containerSize);
 		}

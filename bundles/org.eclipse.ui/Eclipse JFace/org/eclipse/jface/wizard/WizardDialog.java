@@ -1001,6 +1001,17 @@ public void updateMessage() {
 	setErrorMessage(currentPage.getErrorMessage());
 }
 /**
+ * Changes the shell size to the given size, ensuring that
+ * it is no larger than the display bounds.
+ * 
+ * @param width the shell width
+ * @param height the shell height
+ */
+private void setShellSize(int width, int height) {
+	Rectangle bounds = getShell().getDisplay().getBounds();
+	getShell().setSize(Math.min(width, bounds.width), Math.min(height, bounds.height));
+}
+/**
  * Computes the correct dialog size for the given page and resizes 
  * its shell if nessessary.
  *
@@ -1014,7 +1025,7 @@ private void updateSizeForPage(IWizardPage page) {
 	    // increase the size of the shell 
 		Shell shell = getShell();
 		Point shellSize = shell.getSize();
-		shell.setSize(shellSize.x + delta.x, shellSize.y + delta.y);
+		setShellSize(shellSize.x + delta.x, shellSize.y + delta.y);
 	}
 }
 /**
@@ -1038,7 +1049,7 @@ private void updateSizeForWizard(IWizard wizard) {
 	    // increase the size of the shell 
 		Shell shell = getShell();
 		Point shellSize = shell.getSize();
-		shell.setSize(shellSize.x + delta.x, shellSize.y + delta.y);
+		setShellSize(shellSize.x + delta.x, shellSize.y + delta.y);
 	}
 }
 /* (non-Javadoc)
