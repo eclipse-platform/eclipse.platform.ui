@@ -460,6 +460,11 @@
 	&lt;/fileset&gt;
 ">
       </antTemplate>
+       <antTemplate
+            name="property"
+            description="%propertyTemplate.description"
+            pattern="&lt;property name=&quot;${name}&quot; value=&quot;${value}&quot;/&gt;">
+      </antTemplate>
     </extension>
     
 	<extension id="buildFileProblem" name="%Ant.marker.label" point="org.eclipse.core.resources.markers">
