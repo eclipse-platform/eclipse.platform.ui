@@ -5,60 +5,46 @@ package org.eclipse.update.core;
  */
 
 /**
- * a Category is used by the User Interface to categorize Features.
- * They are declared in the <code>site.xml</code> file of the Site.
- * The association between a DefaultFeature and a category is also done
- * In this file.
- * 
+ * Feature category definition.
+ * A site can organize its features into categories. Categories
+ * can be further organized into hierarchies. Each category name
+ * is a composed of the name of its parent and a simple identifier
+ * separated by a slash ("/"). For example <code>tools/utilities/print</code>
+ * defines a category that is a child of <code>tools/utilities</code> and
+ * grandchild of <code>tools</code>.
  * <p>
- * a Category name is of the form:
- * <code> ParentCategory1/ParentCategory2/Category </code>
- * where <code> ParentCategory1 </code> and <code> ParentCategory2 </code>
- * are defined Category.
+ * Clients may implement this interface. However, in most cases clients should 
+ * directly instantiate or subclass the provided implementation of this 
+ * interface.
  * </p>
- * 
- * <p>
- * The label of a category can be translated in the <code>site.properties</code>
- * file.
- * </p>
- * 
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
- * 
- * @see DefaultCategory
+ * @see org.eclipse.update.core.Category
+ * @since 2.0
  */
-
-
 public interface ICategory {
-	
+
 	/** 
-	 * The name or identifier of the category.
-	 * The identifier is of the form:
-	 * <code> ParentCategory1/ParentCategory2/Category </code>
-	 * where <code> ParentCategory1 </code> and <code> ParentCategory2 </code>
-	 * are defined Category.
+	 * Retrieve the name of the category. The name can be a simple
+	 * token (root category) or a number of slash-separated ("/") 
+	 * tokens.
 	 * 
-	 * @return the identifier of the category
+	 * @return the category name
 	 * @since 2.0 
 	 */
-
 	String getName();
-	
+
 	/**
-	 * returns the translated Label of this category.
-	 * @return the translated, user-friendly, name of the category.
+	 * Retrieve the displayable label for the category
+	 * 
+	 * @return displayable category label, or <code>null</code>
 	 * @since 2.0 
 	 */
-
 	String getLabel();
-	
+
 	/** 
-	 * returns the description associated with the category
-	 * @return teh description of the category
+	 * Retrieve the detailed category description
+	 * 
+	 * @return category description, or <code>null</code>
 	 * @since 2.0 
 	 */
-
 	IURLEntry getDescription();
 }
-
