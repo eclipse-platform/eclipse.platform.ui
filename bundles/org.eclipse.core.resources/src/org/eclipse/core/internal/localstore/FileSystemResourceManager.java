@@ -698,6 +698,7 @@ public void write(IFile target, IPath location, InputStream content, boolean for
 		try {
 			content.close();
 		} catch (IOException e) {
+			// ignore
 		}
 	}
 }
@@ -761,6 +762,7 @@ public void writeSilently(IProject target) throws CoreException {
 			try {
 				fout.close();
 			} catch (IOException e) {
+				// ignore
 			}
 		}
 	}

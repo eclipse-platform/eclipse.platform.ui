@@ -23,6 +23,7 @@ public class TestingSupport {
 	 * Class cannot be instantiated.
 	 */
 	private TestingSupport() {
+		// not allowed
 	}
 	/**
 	 * Call HistoryStore.accept().

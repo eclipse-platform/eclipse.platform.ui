@@ -27,6 +27,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 	private final byte[] buffer = new byte[8192];
 	
 public FileSystemStore() {
+	super();
 }
 public void copy(File source, File destination, int depth, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -345,11 +346,13 @@ public void transferStreams(InputStream source, OutputStream destination, String
 		try {
 			source.close();
 		} catch (IOException e) {
+			// ignore
 		} finally {
 			//close destination in finally in case source.close fails
 			try {
 				destination.close();
 			} catch (IOException e) {
+				// ignore
 			}
 		}
 	}
@@ -369,6 +372,7 @@ public void write(File target, InputStream content, boolean append, IProgressMon
 		try {
 			content.close();
 		} catch (IOException e) {
+			// ignore
 		}
 	}
 }

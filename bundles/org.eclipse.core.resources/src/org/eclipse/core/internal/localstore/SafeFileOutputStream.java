@@ -109,10 +109,12 @@ protected void transferStreams(InputStream source, OutputStream destination) thr
 		try {
 			source.close();
 		} catch (IOException e) {
+			// ignore
 		}
 		try {
 			destination.close();
 		} catch (IOException e) {
+			// ignore
 		}
 	}
 }

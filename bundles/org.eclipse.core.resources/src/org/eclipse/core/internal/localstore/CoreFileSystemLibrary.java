@@ -90,9 +90,9 @@ public abstract class CoreFileSystemLibrary {
 	}
 	private static void logMissingNativeLibrary(UnsatisfiedLinkError e) {
 		String libName = System.mapLibraryName(LIBRARY_NAME);
-	String message = Policy.bind("localstore.couldNotLoadLibrary", libName); //$NON-NLS-1$
-	ResourceStatus status = new ResourceStatus(IStatus.INFO, null, message, null);
-	ResourcesPlugin.getPlugin().getLog().log(status);
+		String message = Policy.bind("localstore.couldNotLoadLibrary", libName); //$NON-NLS-1$
+		ResourceStatus status = new ResourceStatus(IStatus.INFO, null, message, null);
+		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 	
 	/**

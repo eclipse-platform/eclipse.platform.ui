@@ -46,6 +46,7 @@ public class UnifiedTree {
 	/** special node to mark the separation of a node's children */
 	protected static final UnifiedTreeNode childrenMarker = new UnifiedTreeNode(null, null, 0, null, null, false);
 public UnifiedTree() {
+	super();
 }
 /**
  * The root must only be a file or a folder.

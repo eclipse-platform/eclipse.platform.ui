@@ -41,7 +41,7 @@ public DeleteVisitor(List skipList, boolean force, boolean convertToPhantom, boo
 /**
  * Deletes a file from both the workspace resource tree and the file system.
  */
-protected void delete(UnifiedTreeNode node, boolean deleteLocalFile, boolean keepHistory) {
+protected void delete(UnifiedTreeNode node, boolean deleteLocalFile, boolean shouldKeepHistory) {
 	Resource target = (Resource) node.getResource();
 	try {
 		deleteLocalFile = deleteLocalFile && !target.isLinked() && node.existsInFileSystem();
@@ -49,12 +49,12 @@ protected void delete(UnifiedTreeNode node, boolean deleteLocalFile, boolean kee
 		// if it is a folder in the file system, delete its children first
 		if (target.getType() == IResource.FOLDER) {
 			for (Enumeration children = node.getChildren(); children.hasMoreElements();)
-				delete((UnifiedTreeNode) children.nextElement(), deleteLocalFile, keepHistory);			
+				delete((UnifiedTreeNode) children.nextElement(), deleteLocalFile, shouldKeepHistory);			
 			node.removeChildrenFromTree();
 			delete(node.existsInWorkspace() ? target : null, localFile);
 			return;
 		}
-		if (keepHistory) {
+		if (shouldKeepHistory) {
 			HistoryStore store = target.getLocalManager().getHistoryStore();
 			store.addState(target.getFullPath(), localFile, node.getLastModified(), true);
 		}
