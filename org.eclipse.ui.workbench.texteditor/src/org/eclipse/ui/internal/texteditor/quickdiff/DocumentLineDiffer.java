@@ -1039,7 +1039,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			fDocument.removeDocumentListener(this);
 		fDocument= null;
 		fReferenceListener.installDocument(null);
-		setReferenceProvider(null);
+		if (fReferenceProvider != null) {
+			fReferenceProvider.dispose();
+			fReferenceProvider= null;
+		}
+		
 		fLines.clear();
 	}
 
