@@ -11,6 +11,72 @@
 <h1>
 Eclipse Platform Build Notes<br>
 Workbench</h1>
+Eclipse Integration Build 20011120
+<h2>
+What's new in this drop</h2>
+Object contributions on resources show up in browsers that show objects
+that adapt to IResource.
+<br>The ObjectContribution mechanism has been changed such that the actions
+defined on IResource will also be applied to objects that adapt to IResource
+(like IJavaElement) thereby eliminating the need to specify the same actions
+in multiple plug-ins due to a wrappered type being displayed in different
+views.
+<br>As a result, there will be some duplication for certain compare and
+vcm functions using the current plug-in definitions. These will eventually
+have to be removed.
+<br>Although this does not change any existing APIs or extension points,
+it does change the behavior of object contributions which contribute to
+IResource.
+<br>This may cause duplication if a contribution applies to both IResource
+and to a class which wrappers IResource via the IAdaptable mechanism.
+<h3>
+API changes</h3>
+
+<h3>
+API additions</h3>
+
+<h3>
+Other highlights</h3>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+The following PRs were fixed by the UI team (includes PRs fixed since build
+207):
+<p>Bug 1824&nbsp; [JFace Text] 50 reconciling threads for 4 editors opened
+(1GFXMV8)
+<br>Bug 1847&nbsp; Work with help team for example integration (1G5T6A8)
+<br>Bug 1850&nbsp; EditableTable (1G5T6MC)
+<br>Bug 1851&nbsp; WALBAKCK - Long Operation (1G5T6TP)
+<br>Bug 1974&nbsp; 5 line file takes 7 seconds to open (1GD0KY4)
+<br>Bug 2074&nbsp; PropertySheet should expand categories by default (1GE36VQ)
+<br>Bug 2569&nbsp; [JFace Text] Content assist list truncated (1GG1W9B)
+<br>Bug 2577&nbsp; [Standard Components] Property sheet: up/down arrow
+causes a
+<br>Bug 2904&nbsp; [JFace Text] PropagatingFontFieldEditor has moved (1GKKL13)
+<br>Bug 4975&nbsp; Status area too short
+<br>Bug 5456&nbsp; Esc doesn't cancel code assist anymore
+<br>Bug 5462&nbsp; Can't cancel code assist anymore
+<br>Bug 5560&nbsp; ESC on rename dialog renames the file
+<br>Bug 5586&nbsp; problem with PageBookView code changes
+<br>Bug 5721&nbsp; Welcome not disabled
+<br>Bug 5922&nbsp; Property page ordering broken because of info page
+<br>Bug 5993&nbsp; Widget has the wrong parent
+<br>Bug 6030&nbsp; Need to allow filenames with no extensions when registering
+<p>The following PRs were closed with no action by the UI team (includes
+PRs closed since build 207):
+<p>Bug 1839&nbsp; No support for 640x480 resolution (1GELIAS)
+<br>Bug 2042&nbsp; SEVERE: Perspective lost (1GDSH6F)
+<br>Bug 5753&nbsp; Make dialogs modal on with respect to a single perspective
+<br>Bug 5788&nbsp; EC: Build on save preference text unclear...
+<br>Bug 5869&nbsp; eclipse.exe throwing and exception
+<p>
+<hr SIZE=0 WIDTH="100%">
+<h1>
+Eclipse Platform Build Notes<br>
+Workbench</h1>
 Eclipse Integration Build 20011113
 <h2>
 What's new in this drop</h2>
@@ -419,6 +485,5 @@ appear as empty
 <br>1GFFR4B: ITPUI:WIN98 - local history is misleading
 <br>1GEUX0D: ITPJUI:ALL - not state aware toolbar button in compare
 <br>1GBM0IL: ITPUI:WINNT - CompareEditorInput#save should throw CoreException
-<p>
 </body>
 </html>
