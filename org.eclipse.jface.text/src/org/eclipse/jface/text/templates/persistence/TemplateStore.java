@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 
 import org.xml.sax.SAXException;
 
@@ -56,12 +58,14 @@ public final class TemplateStore {
 	
 	private static final String INCLUDE= "include"; //$NON-NLS-1$
 	private static final String FILE= "file"; //$NON-NLS-1$
+	private static final String TRANSLATIONS= "templates"; //$NON-NLS-1$
 
 	/** The stored templates. */
 	private final List fTemplates= new ArrayList();
 	
 	private IPreferenceStore fPreferenceStore;
 	private String fKey;
+
 
 	/**
 	 * Creates a new template store.
@@ -80,8 +84,10 @@ public final class TemplateStore {
 	
 	/**
 	 * Loads the templates from contributions and preferences.
+	 * 
+	 * @throws IOException if a contributed templates file cannot be read
 	 */
-	public void load() {
+	public void load() throws IOException {
 		fTemplates.clear();
 		loadDefaultTemplates();
 		loadCustomTemplates();
@@ -89,8 +95,10 @@ public final class TemplateStore {
 	
 	/**
 	 * Saves the templates to the preferences.
+	 * 
+	 * @throws IOException if the templates cannot be written
 	 */
-	public void save() {
+	public void save() throws IOException {
 		ArrayList custom= new ArrayList();
 		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
 			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
@@ -200,7 +208,7 @@ public final class TemplateStore {
 		return (TemplatePersistenceData[]) datas.toArray(new TemplatePersistenceData[datas.size()]);
 	}
 	
-	private void loadCustomTemplates() {
+	private void loadCustomTemplates() throws IOException {
 		try {
 			String pref= fPreferenceStore.getString(fKey);
 			if (pref != null && pref.trim().length() > 0) {
@@ -213,20 +221,17 @@ public final class TemplateStore {
 				}
 			}
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// won't happen unless someone messes with our preferences.
+			throw (IOException) new IOException("Illegal XML content: " + e.getLocalizedMessage()).fillInStackTrace(); //$NON-NLS-1$
 		}
 	}
 	
-	private void loadDefaultTemplates() {
+	private void loadDefaultTemplates() throws IOException {
 		IConfigurationElement[] extensions= getTemplateExtensions();
 		fTemplates.addAll(readContributedTemplates(extensions));
 	}
 	
-	private static Collection readContributedTemplates(IConfigurationElement[] extensions) {
+	private static Collection readContributedTemplates(IConfigurationElement[] extensions) throws IOException {
 		Collection templates= new ArrayList();
 		for (int i= 0; i < extensions.length; i++) {
 			if (extensions[i].getName().equals(TEMPLATE))
@@ -239,28 +244,34 @@ public final class TemplateStore {
 		return templates;
 	}
 
-	private static void readIncludedTemplates(Collection templates, IConfigurationElement element) {
+	private static void readIncludedTemplates(Collection templates, IConfigurationElement element) throws IOException {
 		String file= element.getAttributeAsIs(FILE);
 		if (file != null) {
 			IPluginDescriptor descriptor= element.getDeclaringExtension().getDeclaringPluginDescriptor();
 			URL url= descriptor.find(new Path(file));
 			if (url != null) {
 				try {
+					ResourceBundle bundle= null;
+					String translations= element.getAttributeAsIs(TRANSLATIONS);
+					if (translations != null) {
+						URL bundleURL= descriptor.find(new Path(translations));
+						if (url != null) {
+							bundle= new PropertyResourceBundle(bundleURL.openStream());
+						}
+					}
+					
 					InputStream stream= url.openStream();
 					Reader input= new InputStreamReader(stream);
 					TemplateReaderWriter reader= new TemplateReaderWriter();
-					TemplatePersistenceData[] datas= reader.read(input);
+					TemplatePersistenceData[] datas= reader.read(input, bundle);
 					for (int i= 0; i < datas.length; i++) {
 						TemplatePersistenceData data= datas[i];
 						if (!data.isCustom())
 							templates.add(data);
 					}
-				} catch (IOException e) {
-					// TODO log
-					e.printStackTrace();
 				} catch (SAXException e) {
-					// TODO handle exception
-					e.printStackTrace();
+					// someone contributed an xml template file with invalid syntax. Propagate as IOException
+					throw (IOException) new IOException("Illegal XML content: " + e.getLocalizedMessage()).fillInStackTrace(); //$NON-NLS-1$
 				}
 			}
 		}
@@ -296,7 +307,7 @@ public final class TemplateStore {
 	}
 	
 	private static boolean isValidTemplateId(String id) {
-		return id != null && id.trim().length() != 0; // TODO test validity
+		return id != null && id.trim().length() != 0; // TODO test validity?
 	}
 }
 

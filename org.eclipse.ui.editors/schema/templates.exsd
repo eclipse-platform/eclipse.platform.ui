@@ -224,6 +224,16 @@
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="translations" type="string">
+            <annotation>
+               <documentation>
+                  An optional properties file with resources for the templates specified in &lt;tt&gt;file&lt;/tt&gt;.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="resource"/>
+               </appInfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

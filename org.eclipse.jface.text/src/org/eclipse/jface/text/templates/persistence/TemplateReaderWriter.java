@@ -149,8 +149,9 @@ public class TemplateReaderWriter {
 	 * 
 	 * @param templates the templates to save
 	 * @param writer the writer to write the templates to in XML
+	 * @throws IOException if writing the templates fails 
 	 */
-	public void save(TemplatePersistenceData[] templates, Writer writer) {
+	public void save(TemplatePersistenceData[] templates, Writer writer) throws IOException {
 		try {
 			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder= factory.newDocumentBuilder();		
@@ -219,6 +220,8 @@ public class TemplateReaderWriter {
 		} catch (ParserConfigurationException e) {
 			Assert.isTrue(false);
 		} catch (TransformerException e) {
+			if (e.getException() instanceof IOException)
+				throw (IOException) e.getException();
 			Assert.isTrue(false);
 		}		
 	}
