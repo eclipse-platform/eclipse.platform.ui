@@ -135,17 +135,17 @@ public class XMLNavGenerator extends XMLGenerator implements Visitor {
 		}
 	}
 	/**
-	 * Simplifies url path by removing "/.." with the parent directory from the path
-	 * @return java.lang.String
-	 * @param url java.lang.String
+	 * Simplifies url path by removing "string/.." from the path
+	 * @return reduced url String
+	 * @param url String
 	 */
 	protected static String reduceURL(String url) {
 		if (url == null)
 			return url;
 		while (true) {
-			int index = url.lastIndexOf("/../");
+			int index = url.indexOf("/..", 1);
 			if (index <= 0)
-				break; //there is no "/../" or nothing before "/../" to simplify
+				break; //there is no "/.." or nothing before "/.." to simplify
 			String part1 = url.substring(0, index);
 			String part2 = url.substring(index + "/..".length());
 			index = part1.lastIndexOf("/");
@@ -156,5 +156,4 @@ public class XMLNavGenerator extends XMLGenerator implements Visitor {
 		}
 		return url;
 	}
-
 }
