@@ -28,12 +28,6 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.RGB;
-
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.JFacePreferences;
@@ -43,7 +37,10 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.OpenStrategy;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -122,8 +119,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private PreferenceManager preferenceManager;
 	private ViewRegistry viewRegistry;
 	private PerspectiveRegistry perspRegistry;
-	private org.eclipse.ui.internal.commands.Registry actionRegistry;
-	private org.eclipse.ui.internal.commands.keys.Registry keyBindingRegistry;
 	private CapabilityRegistry capabilityRegistry;
 	private ActionSetRegistry actionSetRegistry;
 	private SharedImages sharedImages;

@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.commands.gestures;
 
 import java.util.Arrays;
 
+import org.eclipse.ui.internal.commands.*;
+
 public final class Gesture implements Comparable {
 
 	private final static int HASH_INITIAL = 27;

@@ -9,18 +9,17 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.internal.commands.keys;
+package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.internal.commands.Util;
-
 public final class State implements Comparable {
 
 	final static int MAXIMUM_PATHS = 8;
+
 	private final static int HASH_INITIAL = 117;
 	private final static int HASH_FACTOR = 127;
 
@@ -50,8 +49,29 @@ public final class State implements Comparable {
 				throw new IllegalArgumentException();
 	}
 
+	public int compareTo(Object object) {
+		return Util.compare(paths, ((State) object).paths);
+	}
+	
+	public boolean equals(Object object) {
+		if (!(object instanceof State)) 
+			return false;
+		
+		return paths.equals(((State) object).paths); 
+	}
+
 	public List getPaths() {
 		return paths;	
+	}
+
+	public int hashCode() {
+		int result = HASH_INITIAL;
+		Iterator iterator = paths.iterator();
+		
+		while (iterator.hasNext())
+			result = result * HASH_FACTOR + ((Path) iterator.next()).hashCode();
+
+		return result;
 	}
 
 	public int match(State state) {
@@ -71,25 +91,8 @@ public final class State implements Comparable {
 		
 		return match;
 	}
-
-	public int compareTo(Object object) {
-		return Util.compare(paths, ((State) object).paths);
-	}
 	
-	public boolean equals(Object object) {
-		if (!(object instanceof State)) 
-			return false;
-		
-		return paths.equals(((State) object).paths); 
-	}
-
-	public int hashCode() {
-		int result = HASH_INITIAL;
-		Iterator iterator = paths.iterator();
-		
-		while (iterator.hasNext())
-			result = result * HASH_FACTOR + ((Path) iterator.next()).hashCode();
-
-		return result;
+	public String toString() {
+		return paths.toString();	
 	}
 }

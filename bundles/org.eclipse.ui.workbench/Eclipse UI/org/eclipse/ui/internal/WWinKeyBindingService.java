@@ -30,11 +30,11 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.commands.keys.KeyMachine;
-import org.eclipse.ui.internal.commands.keys.KeyManager;
-import org.eclipse.ui.internal.commands.keys.KeySequence;
-import org.eclipse.ui.internal.commands.keys.KeyStroke;
-import org.eclipse.ui.internal.commands.keys.Match;
+import org.eclipse.ui.internal.commands.KeyBindingMatch;
+import org.eclipse.ui.internal.commands.KeyMachine;
+import org.eclipse.ui.internal.commands.KeyManager;
+import org.eclipse.ui.internal.commands.KeySequence;
+import org.eclipse.ui.internal.commands.KeyStroke;
 import org.eclipse.ui.internal.commands.Util;
 import org.eclipse.ui.internal.registry.IActionSet;
 
@@ -78,7 +78,7 @@ public class WWinKeyBindingService {
 					stringBuffer.append(' ');
 	
 				KeyStroke keyStroke = (KeyStroke) iterator.next();
-				int accelerator = keyStroke.getAccelerator();
+				int accelerator = keyStroke.getValue();
 				stringBuffer.append(
 					org.eclipse.jface.action.Action.convertAccelerator(
 					accelerator));					
@@ -112,8 +112,8 @@ public class WWinKeyBindingService {
 		
 		if (matchSet != null && matchSet.size() == 1) {
 			clear();
-			Match match = (Match) matchSet.iterator().next();				
-			invoke(match.getBinding().getAction(), event);					
+			KeyBindingMatch match = (KeyBindingMatch) matchSet.iterator().next();				
+			invoke(match.getKeyBinding().getCommand(), event);					
 		} else {
 			keyMachine.setMode(keySequence);
 			setStatusLineMessage(keySequence);
@@ -297,8 +297,8 @@ public class WWinKeyBindingService {
 		SortedSet matchSet = (SortedSet) keySequenceMapForMode.get(keySequence);
 
 		if (matchSet != null && matchSet.size() == 1) {
-			Match match = (Match) matchSet.iterator().next();				
-			return match.getBinding().getAction();
+			KeyBindingMatch match = (KeyBindingMatch) matchSet.iterator().next();				
+			return match.getKeyBinding().getCommand();
 		}
 		
 		return null;
@@ -331,7 +331,7 @@ public class WWinKeyBindingService {
 			   	
 	   	while (iterator.hasNext()) {
 	   		KeyStroke keyStroke = (KeyStroke) iterator.next();
-	   		accelerators[i++] = keyStroke.getAccelerator();	   		
+	   		accelerators[i++] = keyStroke.getValue();	   		
 	   	}
 
 		if (accMenu == null || accMenu.isDisposed()) {		

@@ -9,7 +9,7 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.internal.commands.keys;
+package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,11 +28,11 @@ public final class KeyMachine {
 		return new KeyMachine();
 	}
 
-	private Map actionMap;
-	private Map actionMapForMode;
-	private SortedSet bindingSet;
-	private String configuration;
-	private SortedMap configurationMap;
+	private Map commandMap;
+	private Map commandMapForMode;
+	private SortedSet keyBindingSet;
+	private String keyConfiguration;
+	private SortedMap keyConfigurationMap;
 	private Map keySequenceMap;
 	private Map keySequenceMapForMode;
 	private SortedSet matchSet;	
@@ -45,50 +45,50 @@ public final class KeyMachine {
 
 	private KeyMachine() {
 		super();
-		configurationMap = new TreeMap();
+		keyConfigurationMap = new TreeMap();
 		scopeMap = new TreeMap();
-		bindingSet = new TreeSet();		
-		configuration = "org.eclipse.ui.defaultConfiguration";
+		keyBindingSet = new TreeSet();		
+		keyConfiguration = "org.eclipse.ui.defaultConfiguration";
 		scopes = new String[] { "org.eclipse.ui.globalScope" };
 		mode = KeySequence.create();	
 	}
 
 	public Map getActionMap() {
-		if (actionMap == null)
-			actionMap = Collections.unmodifiableMap(Node.toActionMap(getMatchSet()));				
+		if (commandMap == null)
+			commandMap = Collections.unmodifiableMap(KeyNode.toActionMap(getMatchSet()));				
 		
-		return actionMap;
+		return commandMap;
 	}
 	
 	public Map getActionMapForMode() {
-		if (actionMapForMode == null)
-			actionMapForMode = Collections.unmodifiableMap(Node.toActionMap(getMatchSetForMode()));				
+		if (commandMapForMode == null)
+			commandMapForMode = Collections.unmodifiableMap(KeyNode.toActionMap(getMatchSetForMode()));				
 		
-		return actionMapForMode;
+		return commandMapForMode;
 	}
 
-	public SortedSet getBindingSet() {
-		return bindingSet;	
+	public SortedSet getKeyBindingSet() {
+		return keyBindingSet;	
 	}
 
-	public String getConfiguration() {
-		return configuration;
+	public String getKeyConfiguration() {
+		return keyConfiguration;
 	}		
 
-	public SortedMap getConfigurationMap() {
-		return configurationMap;	
+	public SortedMap getKeyConfigurationMap() {
+		return keyConfigurationMap;	
 	}
 
 	public Map getKeySequenceMap() {
 		if (keySequenceMap == null)
-			keySequenceMap = Collections.unmodifiableMap(Node.toKeySequenceMap(getMatchSet()));				
+			keySequenceMap = Collections.unmodifiableMap(KeyNode.toKeySequenceMap(getMatchSet()));				
 		
 		return keySequenceMap;
 	}
 
 	public Map getKeySequenceMapForMode() {
 		if (keySequenceMapForMode == null)
-			keySequenceMapForMode = Collections.unmodifiableMap(Node.toKeySequenceMap(getMatchSetForMode()));				
+			keySequenceMapForMode = Collections.unmodifiableMap(KeyNode.toKeySequenceMap(getMatchSetForMode()));				
 		
 		return keySequenceMapForMode;
 	}
@@ -97,7 +97,7 @@ public final class KeyMachine {
 		if (matchSet == null) {
 			solve();
 			SortedSet matchSet = new TreeSet();			
-			Node.toMatchSet(tree, matchSet);
+			KeyNode.toMatchSet(tree, matchSet);
 			this.matchSet = Collections.unmodifiableSortedSet(matchSet);
 		}
 		
@@ -110,10 +110,10 @@ public final class KeyMachine {
 			Iterator iterator = getMatchSet().iterator();
 			
 			while (iterator.hasNext()) {
-				Match match = (Match) iterator.next();
+				KeyBindingMatch keyBindingMatch = (KeyBindingMatch) iterator.next();
 
-				if (match.getBinding().getKeySequence().isChildOf(mode, false))
-					matchSetForMode.add(match);				
+				if (keyBindingMatch.getKeyBinding().getKeySequence().isChildOf(mode, false))
+					matchSetForMode.add(keyBindingMatch);				
 			}
 
 			this.matchSetForMode = Collections.unmodifiableSortedSet(matchSetForMode);
@@ -134,45 +134,45 @@ public final class KeyMachine {
 		return (String[]) scopes.clone();
 	}		
 
-	public boolean setBindingSet(SortedSet bindingSet)
+	public boolean setKeyBindingSet(SortedSet keyBindingSet)
 		throws IllegalArgumentException {
-		if (bindingSet == null)
+		if (keyBindingSet == null)
 			throw new IllegalArgumentException();
 		
-		bindingSet = new TreeSet(bindingSet);
-		Iterator iterator = bindingSet.iterator();
+		keyBindingSet = new TreeSet(keyBindingSet);
+		Iterator iterator = keyBindingSet.iterator();
 		
 		while (iterator.hasNext())
-			if (!(iterator.next() instanceof Binding))
+			if (!(iterator.next() instanceof KeyBinding))
 				throw new IllegalArgumentException();
 
-		if (this.bindingSet.equals(bindingSet))
+		if (this.keyBindingSet.equals(keyBindingSet))
 			return false;
 		
-		this.bindingSet = Collections.unmodifiableSortedSet(bindingSet);
+		this.keyBindingSet = Collections.unmodifiableSortedSet(keyBindingSet);
 		invalidateTree();
 		return true;
 	}
 
-	public boolean setConfiguration(String configuration) {
-		if (configuration == null)
+	public boolean setKeyConfiguration(String keyConfiguration) {
+		if (keyConfiguration == null)
 			throw new IllegalArgumentException();
 			
-		if (this.configuration.equals(configuration))
+		if (this.keyConfiguration.equals(keyConfiguration))
 			return false;
 		
-		this.configuration = configuration;
+		this.keyConfiguration = keyConfiguration;
 		invalidateSolution();
 		return true;
 	}
 
-	public boolean setConfigurationMap(SortedMap configurationMap)
+	public boolean setKeyConfigurationMap(SortedMap keyConfigurationMap)
 		throws IllegalArgumentException {
-		if (configurationMap == null)
+		if (keyConfigurationMap == null)
 			throw new IllegalArgumentException();
 			
-		configurationMap = new TreeMap(configurationMap);
-		Iterator iterator = configurationMap.entrySet().iterator();
+		keyConfigurationMap = new TreeMap(keyConfigurationMap);
+		Iterator iterator = keyConfigurationMap.entrySet().iterator();
 		
 		while (iterator.hasNext()) {
 			Map.Entry entry = (Map.Entry) iterator.next();
@@ -181,10 +181,10 @@ public final class KeyMachine {
 				throw new IllegalArgumentException();			
 		}
 
-		if (this.configurationMap.equals(configurationMap))
+		if (this.keyConfigurationMap.equals(keyConfigurationMap))
 			return false;
 					
-		this.configurationMap = Collections.unmodifiableSortedMap(configurationMap);
+		this.keyConfigurationMap = Collections.unmodifiableSortedMap(keyConfigurationMap);
 		invalidateTree();
 		return true;
 	}
@@ -247,37 +247,37 @@ public final class KeyMachine {
 	private void build() {
 		if (tree == null) {		
 			tree = new TreeMap();		
-			Iterator iterator = bindingSet.iterator();
+			Iterator iterator = keyBindingSet.iterator();
 		
 			while (iterator.hasNext()) {
-				Binding binding = (Binding) iterator.next();
-				Path scope = (Path) scopeMap.get(binding.getScope());
+				KeyBinding keyBinding = (KeyBinding) iterator.next();
+				Path scope = (Path) scopeMap.get(keyBinding.getScope());
 		
 				if (scope == null)
 					continue;
 
-				Path configuration = (Path) configurationMap.get(binding.getConfiguration());
+				Path keyConfiguration = (Path) keyConfigurationMap.get(keyBinding.getKeyConfiguration());
 					
-				if (configuration == null)
+				if (keyConfiguration == null)
 					continue;
 	
 				List listPaths = new ArrayList();
 				listPaths.add(scope);
-				listPaths.add(configuration);					
-				Node.add(tree, binding, State.create(listPaths));
+				listPaths.add(keyConfiguration);					
+				KeyNode.add(tree, keyBinding, State.create(listPaths));
 			}
 		}
 	}
 
 	private void invalidateMode() {
-		actionMapForMode = null;
+		commandMapForMode = null;
 		keySequenceMapForMode = null;
 		matchSetForMode = null;
 	}
 
 	private void invalidateSolution() {
 		solved = false;
-		actionMap = null;	
+		commandMap = null;	
 		keySequenceMap = null;
 		matchSet = null;
 		invalidateMode();
@@ -292,10 +292,10 @@ public final class KeyMachine {
 		if (!solved) {
 			build();
 			State[] states = new State[scopes.length];
-			Path configuration = (Path) configurationMap.get(this.configuration);
+			Path keyConfiguration = (Path) keyConfigurationMap.get(this.keyConfiguration);
 			
-			if (configuration == null)
-				configuration = Path.create();
+			if (keyConfiguration == null)
+				keyConfiguration = Path.create();
 							
 			for (int i = 0; i < scopes.length; i++) {
 				Path scope = (Path) scopeMap.get(scopes[i]);
@@ -305,11 +305,11 @@ public final class KeyMachine {
 
 				List paths = new ArrayList();
 				paths.add(scope);			
-				paths.add(configuration);					
+				paths.add(keyConfiguration);					
 				states[i] = State.create(paths);
 			}
 			
-			Node.solve(tree, states);
+			KeyNode.solve(tree, states);
 			solved = true;
 		}
 	}

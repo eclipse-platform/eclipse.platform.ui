@@ -11,6 +11,9 @@ Contributors:
 
 package org.eclipse.ui.internal.commands;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -136,6 +139,21 @@ public final class Util {
 
 	public static int hashCode(Object object) {
 		return object != null ? object.hashCode() : 0;	
+	}
+
+	public static List safeCopy(List list, Class c)
+		throws IllegalArgumentException {
+		if (list == null || c == null)
+			throw new IllegalArgumentException();
+			
+		list = Collections.unmodifiableList(new ArrayList(list));
+		Iterator iterator = list.iterator();
+	
+		while (iterator.hasNext())
+			if (!c.isInstance(iterator.next()))
+				throw new IllegalArgumentException();		
+
+		return list;
 	}
 
 	private Util() {

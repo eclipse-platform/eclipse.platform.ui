@@ -9,13 +9,16 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.internal.commands.keys;
+package org.eclipse.ui.internal.commands;
 
+import java.io.IOException;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -37,9 +40,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.Item;
 
-public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
+public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePage
 	implements IWorkbenchPreferencePage {
 	
 	private final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
@@ -94,7 +96,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 		gridData.widthHint += 8;
 
 		buttonCustomize.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				DialogCustomize dialogCustomize = new DialogCustomize(getShell(), IWorkbenchConstants.DEFAULT_ACCELERATOR_CONFIGURATION_ID, 
 					IWorkbenchConstants.DEFAULT_ACCELERATOR_SCOPE_ID, preferenceBindingSet);
 				
@@ -113,13 +115,53 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 
 	public void init(IWorkbench workbench) {
 		this.workbench = workbench;
+		keyManager = KeyManager.getInstance();
 		preferenceStore = getPreferenceStore();
 		configurationId = loadConfiguration();		
-		keyManager = KeyManager.getInstance();
-		preferenceBindingSet = keyManager.getPreferenceBindingSet();
-		registryBindingSet = keyManager.getRegistryBindingSet();
-		registryConfigurationMap = keyManager.getRegistryConfigurationMap();
-		registryScopeMap = keyManager.getRegistryScopeMap();	
+
+		List pathItems = new ArrayList();
+		pathItems.add(KeyManager.systemPlatform());
+		pathItems.add(KeyManager.systemLocale());
+		State[] states = new State[] { State.create(pathItems) };	
+
+		CoreRegistry coreRegistry = CoreRegistry.getInstance();
+		LocalRegistry localRegistry = LocalRegistry.getInstance();
+		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+
+		SortedSet coreRegistryKeyBindingSet = new TreeSet();
+		coreRegistryKeyBindingSet.addAll(coreRegistry.getKeyBindings());	
+		SortedSet coreRegistryRegionalKeyBindingSet = new TreeSet();
+		coreRegistryRegionalKeyBindingSet.addAll(coreRegistry.getRegionalKeyBindings());
+		coreRegistryKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(coreRegistryRegionalKeyBindingSet, states));
+
+		SortedSet localRegistryKeyBindingSet = new TreeSet();
+		localRegistryKeyBindingSet.addAll(localRegistry.getKeyBindings());	
+		SortedSet localRegistryRegionalKeyBindingSet = new TreeSet();
+		localRegistryRegionalKeyBindingSet.addAll(localRegistry.getRegionalKeyBindings());
+		localRegistryKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(localRegistryRegionalKeyBindingSet, states));
+
+		SortedSet preferenceRegistryKeyBindingSet = new TreeSet();
+		preferenceRegistryKeyBindingSet.addAll(preferenceRegistry.getKeyBindings());	
+	
+		List registryKeyConfigurations = new ArrayList();
+		registryKeyConfigurations.addAll(coreRegistry.getKeyConfigurations());
+		registryKeyConfigurations.addAll(localRegistry.getKeyConfigurations());
+		registryKeyConfigurations.addAll(preferenceRegistry.getKeyConfigurations());
+		registryConfigurationMap = Item.sortedMap(registryKeyConfigurations);
+		
+		List registryScopes = new ArrayList();
+		registryScopes.addAll(coreRegistry.getScopes());
+		registryScopes.addAll(localRegistry.getScopes());
+		registryScopes.addAll(preferenceRegistry.getScopes());
+		registryScopeMap = Item.sortedMap(registryScopes);
+
+		registryBindingSet = new TreeSet();		
+		registryBindingSet.addAll(coreRegistryKeyBindingSet);
+		registryBindingSet.addAll(localRegistryKeyBindingSet);
+
+		preferenceBindingSet = new TreeSet();
+		preferenceBindingSet.addAll(preferenceRegistryKeyBindingSet);
+
 		nameToConfigurationMap = new HashMap();	
 		Collection configurations = registryConfigurationMap.values();
 		Iterator iterator = configurations.iterator();
@@ -172,8 +214,17 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 						configurationId = configuration.getId();
 						saveConfiguration(configurationId);					
 	
-						keyManager.setPreferenceBindingSet(preferenceBindingSet);
-						keyManager.savePreference();					
+						List preferenceKeyBindings = new ArrayList();
+						preferenceKeyBindings.addAll(preferenceBindingSet);
+
+						PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+						preferenceRegistry.setKeyBindings(preferenceKeyBindings);
+
+						try {
+							preferenceRegistry.save();
+						} catch (IOException eIO) {
+						}
+							
 						keyManager.update();
 	
 						if (workbench instanceof Workbench) {

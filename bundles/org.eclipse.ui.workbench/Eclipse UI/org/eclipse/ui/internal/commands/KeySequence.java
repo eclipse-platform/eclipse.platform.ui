@@ -9,22 +9,20 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.internal.commands.keys;
+package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.internal.commands.Util;
+import java.util.StringTokenizer;
 
 public final class KeySequence implements Comparable {
 
-	public final static String ELEMENT = "keysequence"; //$NON-NLS-1$
 	private final static int HASH_INITIAL = 47;
 	private final static int HASH_FACTOR = 57;
+	private final static String KEY_STROKE_SEPARATOR = " "; //$NON-NLS-1$
 
 	public static KeySequence create() {
 		return new KeySequence(Collections.EMPTY_LIST);
@@ -44,23 +42,19 @@ public final class KeySequence implements Comparable {
 		throws IllegalArgumentException {
 		return new KeySequence(keyStrokes);
 	}
-	
-	public static KeySequence read(IMemento memento)
+
+	public static KeySequence parse(String string)
 		throws IllegalArgumentException {
-		if (memento == null)
+		if (string == null)
 			throw new IllegalArgumentException();
+
+		List keyStrokes = new ArrayList();
+		StringTokenizer stringTokenizer = new StringTokenizer(string);
+				
+		while (stringTokenizer.hasMoreTokens())
+			keyStrokes.add(KeyStroke.parse(stringTokenizer.nextToken()));
 			
-		IMemento[] mementos = memento.getChildren(KeyStroke.ELEMENT);
-		
-		if (mementos == null)
-			throw new IllegalArgumentException();
-		
-		List keyStrokes = new ArrayList(mementos.length);
-		
-		for (int i = 0; i < mementos.length; i++)
-			keyStrokes.add(KeyStroke.read(mementos[i]));
-		
-		return KeySequence.create(keyStrokes);
+		return create(keyStrokes);
 	}
 
 	private List keyStrokes;
@@ -68,38 +62,7 @@ public final class KeySequence implements Comparable {
 	private KeySequence(List keyStrokes)
 		throws IllegalArgumentException {
 		super();
-		
-		if (keyStrokes == null)
-			throw new IllegalArgumentException();
-			
-		this.keyStrokes = Collections.unmodifiableList(new ArrayList(keyStrokes));
-		Iterator iterator = this.keyStrokes.iterator();
-		
-		while (iterator.hasNext())
-			if (!(iterator.next() instanceof KeyStroke))
-				throw new IllegalArgumentException();
-	}
-
-	public List getKeyStrokes() {
-		return keyStrokes;
-	}
-
-	public boolean isChildOf(KeySequence keySequence, boolean equals) {
-		if (keySequence == null)
-			return false;
-		
-		return Util.isChildOf(keyStrokes, keySequence.keyStrokes, equals);
-	}
-
-	public void write(IMemento memento)
-		throws IllegalArgumentException {
-		if (memento == null)
-			throw new IllegalArgumentException();
-			
-		Iterator iterator = keyStrokes.iterator();
-		
-		while (iterator.hasNext())
-			((KeyStroke) iterator.next()).write(memento.createChild(KeyStroke.ELEMENT));
+		this.keyStrokes = Collections.unmodifiableList(Util.safeCopy(keyStrokes, KeyStroke.class));
 	}
 
 	public int compareTo(Object object) {
@@ -108,6 +71,10 @@ public final class KeySequence implements Comparable {
 	
 	public boolean equals(Object object) {
 		return object instanceof KeySequence && keyStrokes.equals(((KeySequence) object).keyStrokes);
+	}
+	
+	public List getKeyStrokes() {
+		return keyStrokes;
 	}
 
 	public int hashCode() {
@@ -118,5 +85,28 @@ public final class KeySequence implements Comparable {
 			result = result * HASH_FACTOR + ((KeyStroke) iterator.next()).hashCode();
 
 		return result;
+	}
+
+	public boolean isChildOf(KeySequence keySequence, boolean equals) {
+		if (keySequence == null)
+			return false;
+		
+		return Util.isChildOf(keyStrokes, keySequence.keyStrokes, equals);
+	}
+
+	public String toString() {
+		StringBuffer stringBuffer = new StringBuffer();
+		Iterator iterator = keyStrokes.iterator();
+		int i = 0;
+		
+		while (iterator.hasNext()) {
+			if (i != 0)
+				stringBuffer.append(KEY_STROKE_SEPARATOR);
+
+			stringBuffer.append(iterator.next());
+			i++;
+		}
+
+		return stringBuffer.toString();
 	}
 }

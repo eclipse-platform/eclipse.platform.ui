@@ -9,7 +9,7 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.internal.commands.gestures;
+package org.eclipse.ui.internal.commands;
 
 public final class Point implements Comparable {
 

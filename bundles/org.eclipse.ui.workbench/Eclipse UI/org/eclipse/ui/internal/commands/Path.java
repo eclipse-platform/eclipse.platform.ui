@@ -9,7 +9,7 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.internal.commands.keys;
+package org.eclipse.ui.internal.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,11 +17,10 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.ui.internal.commands.Util;
-
 public final class Path implements Comparable {
 
 	final static int MAXIMUM_PATH_ITEMS = 16;
+
 	private final static int HASH_INITIAL = 87;
 	private final static int HASH_FACTOR = 97;
 	
@@ -65,8 +64,26 @@ public final class Path implements Comparable {
 				throw new IllegalArgumentException();
 	}
 
+	public int compareTo(Object object) {
+		return Util.compare(pathItems, ((Path) object).pathItems);
+	}
+	
+	public boolean equals(Object object) {
+		return object instanceof Path && pathItems.equals(((Path) object).pathItems);
+	}
+
 	public List getPathItems() {
 		return pathItems;
+	}
+
+	public int hashCode() {
+		int result = HASH_INITIAL;
+		Iterator iterator = pathItems.iterator();
+		
+		while (iterator.hasNext())
+			result = result * HASH_FACTOR + iterator.next().hashCode();
+
+		return result;
 	}
 
 	public boolean isChildOf(Path path, boolean equals) {
@@ -85,24 +102,6 @@ public final class Path implements Comparable {
 			return path.pathItems.size() - pathItems.size();
 		else 
 			return -1;
-	}
-
-	public int compareTo(Object object) {
-		return Util.compare(pathItems, ((Path) object).pathItems);
-	}
-	
-	public boolean equals(Object object) {
-		return object instanceof Path && pathItems.equals(((Path) object).pathItems);
-	}
-
-	public int hashCode() {
-		int result = HASH_INITIAL;
-		Iterator iterator = pathItems.iterator();
-		
-		while (iterator.hasNext())
-			result = result * HASH_FACTOR + iterator.next().hashCode();
-
-		return result;
 	}
 
 	public String toString() {

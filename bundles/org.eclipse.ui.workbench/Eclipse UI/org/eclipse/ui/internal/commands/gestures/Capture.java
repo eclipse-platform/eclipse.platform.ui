@@ -19,6 +19,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.internal.commands.*;
 
 public final class Capture {
 
@@ -40,24 +41,24 @@ public final class Capture {
 		captureListeners = new ArrayList();
 
 		mouseListener = new MouseListener() {
-			public void mouseDoubleClick(MouseEvent e) {
+			public void mouseDoubleClick(MouseEvent mouseEvent) {
 			}
 
-			public void mouseDown(MouseEvent e) {
+			public void mouseDown(MouseEvent mouseEvent) {
 				if (!capturing) {
 					capturing = true;
-					data = e.stateMask;
-					pen = e.button;
+					data = mouseEvent.stateMask;
+					pen = mouseEvent.button;
 					points.clear();
-					points.add(Point.create(e.x, e.y));
+					points.add(Point.create(mouseEvent.x, mouseEvent.y));
 					control.addMouseMoveListener(mouseMoveListener);
 				}
 			}
 
-			public void mouseUp(MouseEvent e) {
-				if (capturing && e.button == pen) {
+			public void mouseUp(MouseEvent mouseEvent) {
+				if (capturing && mouseEvent.button == pen) {
 					control.removeMouseMoveListener(mouseMoveListener);
-					points.add(Point.create(e.x, e.y));
+					points.add(Point.create(mouseEvent.x, mouseEvent.y));
 					Gesture gesture = Gesture.create(data, pen, (Point[]) points.toArray(new Point[points.size()]));
 					capturing = false;
 					data = 0;
@@ -72,9 +73,9 @@ public final class Capture {
 		};
 
 		mouseMoveListener = new MouseMoveListener() {
-			public void mouseMove(MouseEvent e) {
+			public void mouseMove(MouseEvent mouseEvent) {
 				if (capturing)
-					points.add(Point.create(e.x, e.y));
+					points.add(Point.create(mouseEvent.x, mouseEvent.y));
 			}
 		};	
 		

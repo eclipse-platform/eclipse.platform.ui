@@ -14,7 +14,7 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
-  
+
 import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
@@ -37,14 +37,13 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin; 
+import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.IDialogConstants; 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -92,9 +91,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.commands.Item;
+import org.eclipse.ui.internal.commands.KeyManager;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.fonts.FontDefinition;
-import org.eclipse.ui.internal.commands.keys.KeyManager;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.misc.UIStats;
@@ -813,7 +812,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			configuration = ""; //$NON-NLS-1$
 
 		KeyManager keyManager = KeyManager.getInstance();
-		keyManager.getKeyMachine().setConfiguration(configuration);
+		keyManager.getKeyMachine().setKeyConfiguration(configuration);
 		keyManager.update();
 	}
 	/**
@@ -1297,7 +1296,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			acceleratorConfiguration = configuration;
 			String id = configuration.getId();
 			KeyManager keyManager = KeyManager.getInstance();
-			keyManager.getKeyMachine().setConfiguration(id);
+			keyManager.getKeyMachine().setKeyConfiguration(id);
 			keyManager.update();
 			IWorkbenchWindow workbenchWindow = getActiveWorkbenchWindow();
 

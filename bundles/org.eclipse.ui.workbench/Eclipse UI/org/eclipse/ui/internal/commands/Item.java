@@ -13,9 +13,13 @@ package org.eclipse.ui.internal.commands;
 
 import java.text.Collator;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public final class Item implements Comparable {
-	
+
 	private final static int HASH_INITIAL = 11;
 	private final static int HASH_FACTOR = 21;
 
@@ -30,13 +34,34 @@ public final class Item implements Comparable {
 		if (nameComparator == null)
 			nameComparator = new Comparator() {
 				public int compare(Object left, Object right) {
-					return Collator.getInstance().compare(((Item) left).getName(), ((Item) right).getName());
+					return Collator.getInstance().compare(((Item) left).name, ((Item) right).name);
 				}	
 			};		
 		
 		return nameComparator;
 	}
-	
+
+	public static SortedMap sortedMap(List items)
+		throws IllegalArgumentException {
+		if (items == null)
+			throw new IllegalArgumentException();
+
+		SortedMap sortedMap = new TreeMap();			
+		Iterator iterator = items.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			
+			if (!(object instanceof Item))
+				throw new IllegalArgumentException();
+				
+			Item item = (Item) object;
+			sortedMap.put(item.id, item);									
+		}			
+		
+		return sortedMap;
+	}
+
 	private String description;
 	private String icon;
 	private String id;

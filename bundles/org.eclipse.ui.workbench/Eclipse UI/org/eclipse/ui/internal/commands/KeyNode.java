@@ -9,7 +9,7 @@ Contributors:
 	IBM - Initial implementation
 ************************************************************************/
 
-package org.eclipse.ui.internal.commands.keys;
+package org.eclipse.ui.internal.commands;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,19 +21,19 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-final class Node {
+final class KeyNode {
 
-	static void add(SortedMap tree, Binding binding, State state) {
+	static void add(SortedMap tree, KeyBinding binding, State state) {
 		List keyStrokes = binding.getKeySequence().getKeyStrokes();		
 		SortedMap root = tree;
-		Node node = null;
+		KeyNode node = null;
 	
 		for (int i = 0; i < keyStrokes.size(); i++) {
 			KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
-			node = (Node) root.get(keyStroke);
+			node = (KeyNode) root.get(keyStroke);
 			
 			if (node == null) {
-				node = new Node();	
+				node = new KeyNode();	
 				root.put(keyStroke, node);
 			}
 			
@@ -48,7 +48,7 @@ final class Node {
 		Iterator iterator = prefix.getKeyStrokes().iterator();
 	
 		while (iterator.hasNext()) {
-			Node node = (Node) tree.get(iterator.next());
+			KeyNode node = (KeyNode) tree.get(iterator.next());
 			
 			if (node == null)
 				return null;
@@ -59,14 +59,14 @@ final class Node {
 		return tree;			
 	}
 
-	static void remove(SortedMap tree, Binding binding, State state) {
+	static void remove(SortedMap tree, KeyBinding binding, State state) {
 		List keyStrokes = binding.getKeySequence().getKeyStrokes();		
 		SortedMap root = tree;
-		Node node = null;
+		KeyNode node = null;
 	
 		for (int i = 0; i < keyStrokes.size(); i++) {
 			KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
-			node = (Node) root.get(keyStroke);
+			node = (KeyNode) root.get(keyStroke);
 			
 			if (node == null)
 				break;
@@ -82,15 +82,15 @@ final class Node {
 		Iterator iterator = tree.values().iterator();	
 		
 		while (iterator.hasNext()) {
-			Node node = (Node) iterator.next();			
+			KeyNode node = (KeyNode) iterator.next();			
 			node.match = solveStateMap(node.stateMap, stack);
 			solve(node.childMap, stack);								
 			node.bestChildMatch = null;			
 			Iterator iterator2 = node.childMap.values().iterator();	
 			
 			while (iterator2.hasNext()) {
-				Node child = (Node) iterator2.next();
-				Match childMatch = child.match;				
+				KeyNode child = (KeyNode) iterator2.next();
+				KeyBindingMatch childMatch = child.match;				
 				
 				if (childMatch != null && (node.bestChildMatch == null || childMatch.getValue() < node.bestChildMatch.getValue())) 
 					node.bestChildMatch = childMatch;
@@ -98,7 +98,7 @@ final class Node {
 		}		
 	}
 
-	static Binding solveActionMap(Map actionMap) {	
+	static KeyBinding solveActionMap(Map actionMap) {	
 		Set bindingSet = (Set) actionMap.get(null);
 			
 		if (bindingSet == null) {
@@ -109,10 +109,10 @@ final class Node {
 				bindingSet.addAll((Set) iterator.next());
 		}
 
-		return bindingSet.size() == 1 ? (Binding) bindingSet.iterator().next() : null;		
+		return bindingSet.size() == 1 ? (KeyBinding) bindingSet.iterator().next() : null;		
 	}
 
-	static Binding solvePluginMap(Map pluginMap) {	
+	static KeyBinding solvePluginMap(Map pluginMap) {	
 		Map actionMap = (Map) pluginMap.get(null);
 		
 		if (actionMap != null)
@@ -124,12 +124,12 @@ final class Node {
 			while (iterator.hasNext())
 				bindingSet.add(solveActionMap((Map) iterator.next()));	
 			
-			return bindingSet.size() == 1 ? (Binding) bindingSet.iterator().next() : null;	
+			return bindingSet.size() == 1 ? (KeyBinding) bindingSet.iterator().next() : null;	
 		}			
 	}
 	
-	static Match solveStateMap(SortedMap stateMap, State state) {
-		Match match = null;
+	static KeyBindingMatch solveStateMap(SortedMap stateMap, State state) {
+		KeyBindingMatch match = null;
 		Iterator iterator = stateMap.entrySet().iterator();
 		
 		while (iterator.hasNext()) {
@@ -138,16 +138,16 @@ final class Node {
 			Map testPluginMap = (Map) entry.getValue();
 
 			if (testPluginMap != null) {
-				Binding testBinding = solvePluginMap(testPluginMap);
+				KeyBinding testBinding = solvePluginMap(testPluginMap);
 			
 				if (testBinding != null) {
 					int testMatch = testState.match(state);
 					
 					if (testMatch >= 0) {
 						if (testMatch == 0)
-							return Match.create(testBinding, 0);
+							return KeyBindingMatch.create(testBinding, 0);
 						else if (match == null || testMatch < match.getValue())
-							match = Match.create(testBinding, testMatch);
+							match = KeyBindingMatch.create(testBinding, testMatch);
 					}
 				}
 			}
@@ -156,9 +156,9 @@ final class Node {
 		return match;	
 	}
 
-	static Match solveStateMap(SortedMap stateMap, State[] stack) {
+	static KeyBindingMatch solveStateMap(SortedMap stateMap, State[] stack) {
 		for (int i = 0; i < stack.length; i++) {
-			Match match = solveStateMap(stateMap, stack[i]);
+			KeyBindingMatch match = solveStateMap(stateMap, stack[i]);
 				
 			if (match != null)
 				return match;
@@ -172,8 +172,8 @@ final class Node {
 		Iterator iterator = matches.iterator();
 		
 		while (iterator.hasNext()) {
-			Match match = (Match) iterator.next();
-			String action = match.getBinding().getAction();
+			KeyBindingMatch match = (KeyBindingMatch) iterator.next();
+			String action = match.getKeyBinding().getCommand();
 			Set matchSet = (Set) actionMap.get(action);
 			
 			if (matchSet == null) {
@@ -191,10 +191,10 @@ final class Node {
 		Iterator iterator = tree.values().iterator();	
 			
 		while (iterator.hasNext())
-			toBindingSet((Node) iterator.next(), bindingSet);
+			toBindingSet((KeyNode) iterator.next(), bindingSet);
 	}
 
-	static void toBindingSet(Node node, Set bindingSet) {
+	static void toBindingSet(KeyNode node, Set bindingSet) {
 		toBindingSet(node.childMap, bindingSet);		
 		Iterator iterator = node.stateMap.values().iterator();
 		
@@ -216,10 +216,10 @@ final class Node {
 		Iterator iterator = tree.values().iterator();	
 			
 		while (iterator.hasNext())
-			toMatchSet((Node) iterator.next(), matchSet);		
+			toMatchSet((KeyNode) iterator.next(), matchSet);		
 	}
 
-	static void toMatchSet(Node node, SortedSet matchSet) {
+	static void toMatchSet(KeyNode node, SortedSet matchSet) {
 		if (node.bestChildMatch != null && (node.match == null || node.bestChildMatch.getValue() < node.match.getValue()))
 			toMatchSet(node.childMap, matchSet);
 		else if (node.match != null)
@@ -231,8 +231,8 @@ final class Node {
 		Iterator iterator = matches.iterator();
 		
 		while (iterator.hasNext()) {
-			Match match = (Match) iterator.next();
-			KeySequence keySequence = match.getBinding().getKeySequence();
+			KeyBindingMatch match = (KeyBindingMatch) iterator.next();
+			KeySequence keySequence = match.getKeyBinding().getKeySequence();
 			Set matchSet = (Set) keySequenceMap.get(keySequence);
 			
 			if (matchSet == null) {
@@ -246,16 +246,16 @@ final class Node {
 		return keySequenceMap;
 	}
 
-	Match bestChildMatch = null;
+	KeyBindingMatch bestChildMatch = null;
 	SortedMap childMap = new TreeMap();	
-	Match match = null;
+	KeyBindingMatch match = null;
 	SortedMap stateMap = new TreeMap();
 	
-	private Node() {
+	private KeyNode() {
 		super();
 	}
 
-	void add(Binding binding, State state) {			
+	void add(KeyBinding binding, State state) {			
 		Map pluginMap = (Map) stateMap.get(state);
 		
 		if (pluginMap == null) {
@@ -271,7 +271,7 @@ final class Node {
 			pluginMap.put(plugin, actionMap);
 		}	
 	
-		String action = binding.getAction();
+		String action = binding.getCommand();
 		Set bindingSet = (Set) actionMap.get(action);
 		
 		if (bindingSet == null) {
@@ -282,7 +282,7 @@ final class Node {
 		bindingSet.add(binding);
 	}
 
-	void remove(Binding binding, State state) {		
+	void remove(KeyBinding binding, State state) {		
 		Map pluginMap = (Map) stateMap.get(state);
 		
 		if (pluginMap != null) {
@@ -290,7 +290,7 @@ final class Node {
 			Map actionMap = (Map) pluginMap.get(plugin);
 			
 			if (actionMap != null) {
-				String action = binding.getAction();
+				String action = binding.getCommand();
 				Set bindingSet = (Set) actionMap.get(action);
 				
 				if (bindingSet != null) {

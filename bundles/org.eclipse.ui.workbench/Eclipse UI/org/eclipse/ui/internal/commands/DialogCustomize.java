@@ -10,7 +10,7 @@ Contributors:
 	Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346
 ************************************************************************/
 
-package org.eclipse.ui.internal.commands.keys;
+package org.eclipse.ui.internal.commands;
 
 import java.text.Collator;
 import java.util.ArrayList;
@@ -54,8 +54,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.internal.commands.Item;
-import org.eclipse.ui.internal.commands.Util;
+import org.eclipse.ui.internal.commands.*;
 
 final class DialogCustomize extends Dialog {
 
@@ -184,7 +183,7 @@ final class DialogCustomize extends Dialog {
 		Iterator iterator = preferenceBindingSet.iterator();
 		
 		while (iterator.hasNext())
-			if (!(iterator.next() instanceof Binding))
+			if (!(iterator.next() instanceof KeyBinding))
 				throw new IllegalArgumentException();
 	
 		this.preferenceBindingSet = preferenceBindingSet;
@@ -192,19 +191,69 @@ final class DialogCustomize extends Dialog {
 		keyManager = KeyManager.getInstance();
 		keyMachine = keyManager.getKeyMachine();
 
-		registryActionMap = org.eclipse.ui.internal.commands.Registry.getInstance().getCommandMap();
+		SortedMap commandMap = new TreeMap();
+		List commands = org.eclipse.ui.internal.commands.CoreRegistry.getInstance().getCommands();
+		iterator = commands.iterator();
+		Item item;
+		
+		while (iterator.hasNext()) {
+			item = (Item) iterator.next();
+			commandMap.put(item.getId(), item);			
+		}
+
+		registryActionMap = commandMap;
 		actions = new ArrayList();
 		actions.addAll(registryActionMap.values());
 		Collections.sort(actions, Item.nameComparator());				
+
+
+
+		List pathItems = new ArrayList();
+		pathItems.add(KeyManager.systemPlatform());
+		pathItems.add(KeyManager.systemLocale());
+		State[] states = new State[] { State.create(pathItems) };	
+
+		CoreRegistry coreRegistry = CoreRegistry.getInstance();
+		LocalRegistry localRegistry = LocalRegistry.getInstance();
+		PreferenceRegistry preferenceRegistry = PreferenceRegistry.getInstance();
+
+		SortedSet coreRegistryKeyBindingSet = new TreeSet();
+		coreRegistryKeyBindingSet.addAll(coreRegistry.getKeyBindings());	
+		SortedSet coreRegistryRegionalKeyBindingSet = new TreeSet();
+		coreRegistryRegionalKeyBindingSet.addAll(coreRegistry.getRegionalKeyBindings());
+		coreRegistryKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(coreRegistryRegionalKeyBindingSet, states));
+
+		SortedSet localRegistryKeyBindingSet = new TreeSet();
+		localRegistryKeyBindingSet.addAll(localRegistry.getKeyBindings());	
+		SortedSet localRegistryRegionalKeyBindingSet = new TreeSet();
+		localRegistryRegionalKeyBindingSet.addAll(localRegistry.getRegionalKeyBindings());
+		localRegistryKeyBindingSet.addAll(KeyManager.solveRegionalKeyBindingSet(localRegistryRegionalKeyBindingSet, states));
+
+		SortedSet preferenceRegistryKeyBindingSet = new TreeSet();
+		preferenceRegistryKeyBindingSet.addAll(preferenceRegistry.getKeyBindings());	
 	
-		registryBindingSet = keyManager.getRegistryBindingSet();
+		List registryKeyConfigurations = new ArrayList();
+		registryKeyConfigurations.addAll(coreRegistry.getKeyConfigurations());
+		registryKeyConfigurations.addAll(localRegistry.getKeyConfigurations());
+		registryKeyConfigurations.addAll(preferenceRegistry.getKeyConfigurations());
+		registryConfigurationMap = Item.sortedMap(registryKeyConfigurations);
 		
-		registryConfigurationMap = keyManager.getRegistryConfigurationMap();
+		List registryScopes = new ArrayList();
+		registryScopes.addAll(coreRegistry.getScopes());
+		registryScopes.addAll(localRegistry.getScopes());
+		registryScopes.addAll(preferenceRegistry.getScopes());
+		registryScopeMap = Item.sortedMap(registryScopes);
+
+		registryBindingSet = new TreeSet();		
+		registryBindingSet.addAll(coreRegistryKeyBindingSet);
+		registryBindingSet.addAll(localRegistryKeyBindingSet);
+
+
 		configurations = new ArrayList();
 		configurations.addAll(registryConfigurationMap.values());	
 		Collections.sort(configurations, Item.nameComparator());				
 		
-		registryScopeMap = keyManager.getRegistryScopeMap();	
+
 		scopes = new ArrayList();
 		scopes.addAll(registryScopeMap.values());	
 		Collections.sort(scopes, Item.nameComparator());				
@@ -232,7 +281,7 @@ final class DialogCustomize extends Dialog {
 		iterator = bindingSet.iterator();
 		
 		while (iterator.hasNext()) {
-			Binding binding = (Binding) iterator.next();				
+			KeyBinding binding = (KeyBinding) iterator.next();				
 			set(tree, binding, false);			
 		}
 
@@ -242,7 +291,7 @@ final class DialogCustomize extends Dialog {
 
 		while (iterator.hasNext()) {
 			KeySequence keySequence = (KeySequence) iterator.next();
-			String name = keyManager.getTextForKeySequence(keySequence);
+			String name = keySequence.toString();
 			
 			if (!nameToKeySequenceMap.containsKey(name))
 				nameToKeySequenceMap.put(name, keySequence);
@@ -382,34 +431,34 @@ final class DialogCustomize extends Dialog {
 			Set customSet = actionRecord.customSet;
 			Set defaultSet = actionRecord.defaultSet;
 			int difference = DIFFERENCE_NONE;
-			String actionId = null;
+			//String actionId = null;
 			boolean actionConflict = false;
 			String alternateActionId = null;
 			boolean alternateActionConflict = false;
 	
 			if (customSet.isEmpty()) {
 				if (defaultSet.contains(actionRecord.actionId)) {												
-					actionId = actionRecord.actionId;
+					//actionId = actionRecord.actionId;
 					actionConflict = actionRecord.defaultConflict;					
 				}
 			} else {
 				if (defaultSet.isEmpty()) {									
 					if (customSet.contains(actionRecord.actionId)) {													
 						difference = DIFFERENCE_ADD;
-						actionId = actionRecord.actionId;
+						//actionId = actionRecord.actionId;
 						actionConflict = actionRecord.customConflict;
 					}
 				} else {
 					if (customSet.contains(actionRecord.actionId)) {
 						difference = DIFFERENCE_CHANGE;
-						actionId = actionRecord.actionId;
+						//actionId = actionRecord.actionId;
 						actionConflict = actionRecord.customConflict;		
 						alternateActionId = actionRecord.defaultActionId;
 						alternateActionConflict = actionRecord.defaultConflict;
 					} else {
 						if (defaultSet.contains(actionRecord.actionId)) {	
 							difference = DIFFERENCE_MINUS;
-							actionId = actionRecord.actionId;
+							//actionId = actionRecord.actionId;
 							actionConflict = actionRecord.defaultConflict;		
 							alternateActionId = actionRecord.customActionId;
 							alternateActionConflict = actionRecord.customConflict;
@@ -441,7 +490,7 @@ final class DialogCustomize extends Dialog {
 			StringBuffer stringBuffer = new StringBuffer();
 
 			if (actionRecord.keySequence != null)
-				stringBuffer.append(keyManager.getTextForKeySequence(actionRecord.keySequence));
+				stringBuffer.append(actionRecord.keySequence.toString());
 
 			if (actionConflict)
 				stringBuffer.append(" " + ACTION_CONFLICT);
@@ -825,89 +874,89 @@ final class DialogCustomize extends Dialog {
 		setAction(Collections.EMPTY_SET, Collections.EMPTY_SET);
 
 		comboAction.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedComboAction();
 			}	
 		});
 
 		tableAction.addMouseListener(new MouseAdapter() {
-			public void mouseDoubleClick(MouseEvent e) {
+			public void mouseDoubleClick(MouseEvent mouseEvent) {
 				selectedButtonDetails();	
 			}			
 		});		
 
 		tableAction.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedTableAction();
 			}	
 		});
 
 		/*
 		buttonDetails.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedButtonDetails();
 			}	
 		});
 		*/		
 
 		comboKeySequence.addModifyListener(new ModifyListener() {			
-			public void modifyText(ModifyEvent e) {
+			public void modifyText(ModifyEvent modifyEvent) {
 				modifiedComboKeySequence();
 			}	
 		});
 
 		comboKeySequence.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedComboKeySequence();
 			}	
 		});
 
 		tableKeySequence.addMouseListener(new MouseAdapter() {
-			public void mouseDoubleClick(MouseEvent e) {
+			public void mouseDoubleClick(MouseEvent mouseEvent) {
 				selectedButtonBrowseSelectedAction();	
 			}			
 		});		
 
 		tableKeySequence.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {			
+			public void widgetSelected(SelectionEvent selectionEvent) {			
 				selectedTableKeySequence();
 			}	
 		});
 
 		/*
 		buttonBrowseSelectedAction.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedButtonBrowseSelectedAction();
 			}	
 		});
 		*/
 
 		comboScope.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedComboScope();
 			}	
 		});
 
 		comboConfiguration.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedComboConfiguration();
 			}	
 		});
 
 		buttonDefault.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedButtonDefault();
 			}	
 		});
 
 		buttonCustom.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedButtonCustom();
 			}	
 		});
 		
 		comboCustom.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent selectionEvent) {
 				selectedComboCustom();
 			}	
 		});
@@ -1008,7 +1057,7 @@ final class DialogCustomize extends Dialog {
 		}
 	}
 
-	private void set(SortedMap tree, Binding binding, boolean consolidate) {			
+	private void set(SortedMap tree, KeyBinding binding, boolean consolidate) {			
 		Map scopeMap = (Map) tree.get(binding.getKeySequence());
 		
 		if (scopeMap == null) {
@@ -1023,11 +1072,11 @@ final class DialogCustomize extends Dialog {
 			scopeMap.put(binding.getScope(), configurationMap);
 		}
 		
-		Map pluginMap = (Map) configurationMap.get(binding.getConfiguration());
+		Map pluginMap = (Map) configurationMap.get(binding.getKeyConfiguration());
 		
 		if (pluginMap == null) {
 			pluginMap = new HashMap();	
-			configurationMap.put(binding.getConfiguration(), pluginMap);
+			configurationMap.put(binding.getKeyConfiguration(), pluginMap);
 		}
 
 		Map actionMap = consolidate ? null : (Map) pluginMap.get(binding.getPlugin());
@@ -1037,11 +1086,11 @@ final class DialogCustomize extends Dialog {
 			pluginMap.put(binding.getPlugin(), actionMap);
 		}
 
-		Set bindingSet = (Set) actionMap.get(binding.getAction());
+		Set bindingSet = (Set) actionMap.get(binding.getCommand());
 		
 		if (bindingSet == null) {
 			bindingSet = new TreeSet();
-			actionMap.put(binding.getAction(), bindingSet);	
+			actionMap.put(binding.getCommand(), bindingSet);	
 		}
 
 		if (consolidate)
@@ -1226,7 +1275,7 @@ final class DialogCustomize extends Dialog {
 				comboKeySequence.deselectAll();
 		
 				if (actionRecord.keySequence != null) {
-					String name = keyManager.getTextForKeySequence(actionRecord.keySequence);
+					String name = actionRecord.keySequence.toString();
 			
 					if (name != null)
 						comboKeySequence.setText(name);
@@ -1259,8 +1308,7 @@ final class DialogCustomize extends Dialog {
 		keySequence = (KeySequence) nameToKeySequenceMap.get(name);
 			
 		if (keySequence == null)
-			// TBD review. still not strict enough. convertAccelerator says 'Ctrl+Ax' is valid.				
-			keySequence = KeyManager.parseKeySequenceStrict(name);
+			keySequence = KeySequence.parse(name);
 
 		keySequenceRecords.clear();
 		buildKeySequenceRecords(tree, keySequence, keySequenceRecords);
@@ -1358,7 +1406,7 @@ final class DialogCustomize extends Dialog {
 			keySequence = (KeySequence) nameToKeySequenceMap.get(name);
 			
 			if (keySequence == null)
-				keySequence = KeyManager.parseKeySequenceStrict(name);
+				keySequence = KeySequence.parse(name);
 		}				
 
 		String scopeId = getScopeId();
@@ -1381,7 +1429,7 @@ final class DialogCustomize extends Dialog {
 					actionId = action.getId();
 				}				
 
-				set(tree, Binding.create(actionId, configurationId, keySequence, null, 0, scopeId), true);				
+				set(tree, KeyBinding.create(actionId, configurationId, keySequence, null, 0, scopeId), true);				
 				/*
 				name = keyManager.getTextForKeySequence(keySequence);			
 				
@@ -1415,7 +1463,7 @@ final class DialogCustomize extends Dialog {
 			keySequence = (KeySequence) nameToKeySequenceMap.get(name);
 			
 			if (keySequence == null)
-				keySequence = KeyManager.parseKeySequenceStrict(name);
+				keySequence = KeySequence.parse(name);
 		}				
 
 		boolean bValidKeySequence = keySequence != null && keySequence.getKeyStrokes().size() >= 1;
