@@ -128,10 +128,8 @@ class ImplicitJobs {
 			ruleStack[top--] = null;
 			return top < 0;
 		}
-		void push(ISchedulingRule rule) {
-			ISchedulingRule baseRule = getRule();
-			if (baseRule != null && rule != null && !baseRule.contains(rule))
-				illegalPush(rule, baseRule);
+		void push(final ISchedulingRule rule) {
+			final ISchedulingRule baseRule = getRule();
 			if (++top >= ruleStack.length) {
 				ISchedulingRule[] newStack = new ISchedulingRule[ruleStack.length * 2];
 				System.arraycopy(ruleStack, 0, newStack, 0, ruleStack.length);
@@ -140,6 +138,9 @@ class ImplicitJobs {
 			ruleStack[top] = rule;
 			if (JobManager.DEBUG_BEGIN_END)
 				lastPush = (RuntimeException) new RuntimeException().fillInStackTrace();
+			//check for containment last because we don't want to fail again on endRule
+			if (baseRule != null && rule != null && !baseRule.contains(rule))
+				illegalPush(rule, baseRule);
 		}
 		public void recycle() {
 			//clear and reset all fields
