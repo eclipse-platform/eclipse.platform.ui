@@ -106,8 +106,8 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	public ContentReference asLocalReference(ContentReference ref, IProgressMonitor monitor) throws IOException {
-		
+	public ContentReference asLocalReference(ContentReference ref, InstallMonitor monitor) throws IOException {
+				
 		// check to see if this is already a local reference
 		if (ref.isLocalReference())
 			return ref;
@@ -123,6 +123,13 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		InputStream is = null;
 		OutputStream os = null;
 		try {
+			if (monitor != null) {
+				monitor.saveState();
+				monitor.setTaskName("Downloading ");
+				monitor.subTask(ref.getIdentifier() + " ");
+				monitor.setTotalCount(ref.getInputSize());
+				monitor.showCopyDetails(true);
+			}
 			is = ref.getInputStream();
 			os = new FileOutputStream(localFile);
 			copy(is, os, monitor);
@@ -132,6 +139,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		} finally {
 			if (is != null) try { is.close(); } catch(IOException e) {}
 			if (os != null) try { os.close(); } catch(IOException e) {}
+			if (monitor != null) monitor.restoreState();
 		}
 		return ref.newContentReference(ref.getIdentifier(), localFile);
 	}
@@ -143,7 +151,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	public File asLocalFile(ContentReference ref, IProgressMonitor monitor) throws IOException {
+	public File asLocalFile(ContentReference ref, InstallMonitor monitor) throws IOException {
 		File file = ref.asFile();
 		if (file != null)
 			return file;
@@ -198,6 +206,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			// create file with temp name
 			temp = File.createTempFile("eclipse",null,tmpDir);
 		}
+		temp.deleteOnExit();
 		verifyPath(temp, true);
 		
 		// create file association 
@@ -226,7 +235,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */	
-	protected void copy(InputStream is, OutputStream os, IProgressMonitor monitor) throws IOException {
+	protected void copy(InputStream is, OutputStream os, InstallMonitor monitor) throws IOException {
 		byte[] buf = getBuffer();
 		try {
 			long currentLen = 0;
@@ -234,8 +243,8 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 			while(len != -1) {
 				currentLen += len;
 				os.write(buf,0,len);
-				if (monitor != null && monitor instanceof Feature.ProgressMonitor)
-					((Feature.ProgressMonitor)monitor).workedCopy(currentLen);
+				if (monitor != null)
+					monitor.setCopyCount(currentLen);
 				len = is.read(buf);
 			}
 		} finally {
@@ -250,7 +259,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	protected ContentReference[] unpack(JarContentReference jarReference, ContentSelector selector, IProgressMonitor monitor) throws IOException {
+	protected ContentReference[] unpack(JarContentReference jarReference, ContentSelector selector, InstallMonitor monitor) throws IOException {
 		
 		// make sure we have a selector
 		if (selector == null)
@@ -260,33 +269,43 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 		JarFile jarArchive = jarReference.asJarFile();
 		List content = new ArrayList();
 		Enumeration entries = jarArchive.entries();
-		
+			
 		// run through the entries and unjar
 		String entryId;
 		JarEntry entry;
 		InputStream is;
 		OutputStream os;
 		File localFile;
-		while(entries.hasMoreElements()) {
-			entry = (JarEntry) entries.nextElement();
-			if (entry != null && selector.include(entry)) {
-				is = null;
-				os = null;
-				entryId = selector.defineIdentifier(entry);
-				localFile = createLocalFile(null/*key*/, entryId); // create temp file w/o a key map
-				if (!entry.isDirectory()) { 
-					try {
-						is = jarArchive.getInputStream(entry);
-						os = new FileOutputStream(localFile);
-						copy(is, os, monitor);
-					} finally {
-						if (is != null) try { is.close(); } catch(IOException e) {}
-						if (os != null) try { os.close(); } catch(IOException e) {}
-					}
-					content.add(new ContentReference(entryId, localFile));
-				}
+		try {			
+			if (monitor != null) {
+				monitor.saveState();
+				monitor.setTaskName("Unpacking ");
+				monitor.subTask(jarReference.getIdentifier());
+				monitor.showCopyDetails(false);
 			}
-		}		
+			while(entries.hasMoreElements()) {
+				entry = (JarEntry) entries.nextElement();
+				if (entry != null && selector.include(entry)) {
+					is = null;
+					os = null;
+					entryId = selector.defineIdentifier(entry);
+					localFile = createLocalFile(null/*key*/, entryId); // create temp file w/o a key map
+					if (!entry.isDirectory()) { 
+						try {
+							is = jarArchive.getInputStream(entry);
+							os = new FileOutputStream(localFile);
+							copy(is, os, monitor);
+						} finally {
+							if (is != null) try { is.close(); } catch(IOException e) {}
+							if (os != null) try { os.close(); } catch(IOException e) {}
+						}
+						content.add(new ContentReference(entryId, localFile));
+					}
+				}
+			}	
+		} finally {
+			if (monitor != null) monitor.restoreState();
+		}	
 		return (ContentReference[]) content.toArray(new ContentReference[0]);
 	}
 	
@@ -297,7 +316,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	protected ContentReference unpack(JarContentReference jarReference, String entryName, ContentSelector selector, IProgressMonitor monitor) throws IOException {
+	protected ContentReference unpack(JarContentReference jarReference, String entryName, ContentSelector selector, InstallMonitor monitor) throws IOException {
 						
 		// make sure we have a selector
 		if (selector == null)		
@@ -335,7 +354,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	protected ContentReference[] peek(JarContentReference jarReference, ContentSelector selector, IProgressMonitor monitor) throws IOException {
+	protected ContentReference[] peek(JarContentReference jarReference, ContentSelector selector, InstallMonitor monitor) throws IOException {
 						
 		// make sure we have a selector
 		if (selector == null)		
@@ -365,7 +384,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	protected ContentReference peek(JarContentReference jarReference, String entryName, ContentSelector selector, IProgressMonitor monitor) throws IOException {
+	protected ContentReference peek(JarContentReference jarReference, String entryName, ContentSelector selector, InstallMonitor monitor) throws IOException {
 				
 		// make sure we have a selector
 		if (selector == null)
@@ -385,7 +404,7 @@ public abstract class FeatureContentProvider implements IFeatureContentProvider 
 	 * 
 	 * @since 2.0
 	 */
-	protected String[] peek(JarContentReference jarReference, IProgressMonitor monitor) throws IOException {
+	protected String[] peek(JarContentReference jarReference, InstallMonitor monitor) throws IOException {
 		
 		// get archive content
 		JarFile jarArchive = jarReference.asJarFile();

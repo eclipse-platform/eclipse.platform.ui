@@ -3,14 +3,26 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.net.URL;
-import java.util.*;
-import java.util.jar.JarFile;
-import java.util.zip.ZipEntry;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.ContentReference;
+import org.eclipse.update.core.Feature;
+import org.eclipse.update.core.FeatureContentProvider;
+import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.INonPluginEntry;
+import org.eclipse.update.core.IPluginEntry;
+import org.eclipse.update.core.InstallMonitor;
+import org.eclipse.update.core.JarContentReference;
+import org.eclipse.update.core.Site;
 
 /**
  * Parse the default feature.xml
@@ -58,7 +70,7 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getFeatureManifestReference()
 	 */
-	public ContentReference getFeatureManifestReference(IProgressMonitor monitor) throws CoreException {
+	public ContentReference getFeatureManifestReference(InstallMonitor monitor) throws CoreException {
 
 		// check to see if we already have local copy of the manifest
 		if (localManifest != null)
@@ -92,7 +104,7 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getArchiveReferences()
 	 */
-	public ContentReference[] getArchiveReferences(IProgressMonitor monitor) throws CoreException {
+	public ContentReference[] getArchiveReferences(InstallMonitor monitor) throws CoreException {
 		IPluginEntry[] entries = feature.getPluginEntries();
 		INonPluginEntry[] nonEntries = feature.getNonPluginEntries();
 		List listAllContentRef = new ArrayList();
@@ -122,7 +134,7 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getFeatureEntryArchiveReferences()
 	 */
-	public ContentReference[] getFeatureEntryArchiveReferences(IProgressMonitor monitor) throws CoreException {
+	public ContentReference[] getFeatureEntryArchiveReferences(InstallMonitor monitor) throws CoreException {
 		//1 jar file <-> 1 feature
 		ContentReference[] references = new ContentReference[1]; 		
 		try {
@@ -141,7 +153,7 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getPluginEntryArchiveReferences(IPluginEntry)
 	 */
-	public ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry, IProgressMonitor monitor) throws CoreException {
+	public ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException {
 		ContentReference[] references = new ContentReference[1];
 		String archiveID = getPluginEntryArchiveID(pluginEntry);
 		URL url = feature.getSite().getSiteContentProvider().getArchiveReference(archiveID);
@@ -152,7 +164,7 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getNonPluginEntryArchiveReferences(INonPluginEntry)
 	 */
-	public ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry, IProgressMonitor monitor) throws CoreException {
+	public ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry, InstallMonitor monitor) throws CoreException {
 		// VK: shouldn't htis be returning the non-plugin entries ???
 		return null;
 	}
@@ -160,7 +172,7 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getFeatureEntryContentReferences()
 	 */
-	public ContentReference[] getFeatureEntryContentReferences(IProgressMonitor monitor) throws CoreException {
+	public ContentReference[] getFeatureEntryContentReferences(InstallMonitor monitor) throws CoreException {
 		
 		return localFeatureFiles; // return cached feature references
 		// Note: assumes this content provider is always called first to
@@ -171,11 +183,11 @@ public class FeaturePackagedContentProvider  extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getPluginEntryContentReferences(IPluginEntry)
 	 */
-	public ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry, IProgressMonitor monitor) throws CoreException {
+	public ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException {
 		ContentReference[] references = getPluginEntryArchiveReferences(pluginEntry, monitor);
 		ContentReference[] pluginReferences = new ContentReference[0];
 		try {
-			JarContentReference localRef =	(JarContentReference)asLocalReference(references[0],null);
+			JarContentReference localRef =	(JarContentReference)asLocalReference(references[0],monitor);
 			pluginReferences = peek(localRef,null,monitor);
 		} catch (IOException e){
 			throw newCoreException( "Error retrieving plugin Entry Archive Reference :" + pluginEntry.getIdentifier().toString(), e);			

@@ -8,7 +8,6 @@ package org.eclipse.update.core;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
  
  /**
   * Provides 
@@ -33,7 +32,7 @@ public interface IFeatureContentProvider {
 	 * @return the feature manifest
 	 * @since 2.0
 	 */
-	ContentReference getFeatureManifestReference(IProgressMonitor monitor) throws CoreException;
+	ContentReference getFeatureManifestReference(InstallMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of content references for the whole DefaultFeature
@@ -44,7 +43,7 @@ public interface IFeatureContentProvider {
 	 * @since 2.0 
 	 */
 
-	ContentReference[] getArchiveReferences(IProgressMonitor monitor) throws CoreException;
+	ContentReference[] getArchiveReferences(InstallMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of content references for the IPluginEntry
@@ -55,7 +54,7 @@ public interface IFeatureContentProvider {
 	 * @since 2.0 
 	 */
 
-	ContentReference[] getFeatureEntryArchiveReferences(IProgressMonitor monitor) throws CoreException;
+	ContentReference[] getFeatureEntryArchiveReferences(InstallMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of content references for the IPluginEntry
@@ -66,7 +65,7 @@ public interface IFeatureContentProvider {
 	 * @since 2.0 
 	 */
 
-	ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry, IProgressMonitor monitor) throws CoreException;
+	ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of content references for the INONPluginEntry
@@ -77,7 +76,7 @@ public interface IFeatureContentProvider {
 	 * @since 2.0 
 	 */
 
-	ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry, IProgressMonitor monitor) throws CoreException;
+	ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry, InstallMonitor monitor) throws CoreException;
 	/**
 	 * Returns an array of content references composing the IPluginEntry
 	 * 
@@ -87,7 +86,7 @@ public interface IFeatureContentProvider {
 	 * @since 2.0 
 	 */
 
-	ContentReference[] getFeatureEntryContentReferences(IProgressMonitor monitor) throws CoreException;
+	ContentReference[] getFeatureEntryContentReferences(InstallMonitor monitor) throws CoreException;
 
 	/**
 	 * Returns an array of content references composing the IPluginEntry
@@ -98,7 +97,7 @@ public interface IFeatureContentProvider {
 	 * @since 2.0 
 	 */
 
-	ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry, IProgressMonitor monitor) throws CoreException;
+	ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException;
 	
 	/**
 	 * sets the feature for this content provider

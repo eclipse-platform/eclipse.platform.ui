@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.ContentReference;
@@ -21,6 +20,7 @@ import org.eclipse.update.core.IFeature;
 import org.eclipse.update.core.INonPluginEntry;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.ISiteContentProvider;
+import org.eclipse.update.core.InstallMonitor;
 import org.eclipse.update.core.Site;
 
 /**
@@ -125,7 +125,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getFeatureManifestReference()
 	 */
-	public ContentReference getFeatureManifestReference(IProgressMonitor monitor) throws CoreException {
+	public ContentReference getFeatureManifestReference(InstallMonitor monitor) throws CoreException {
 		ContentReference result = null;
 		try {
 			result = new ContentReference(null, new URL(getURL(), Feature.FEATURE_XML));
@@ -141,7 +141,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getArchiveReferences()
 	 */
-	public ContentReference[] getArchiveReferences(IProgressMonitor monitor) throws CoreException {
+	public ContentReference[] getArchiveReferences(InstallMonitor monitor) throws CoreException {
 		// VK: ???? should it not return something?
 		return null;
 	}
@@ -149,7 +149,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getPluginEntryArchiveReferences(IPluginEntry)
 	 */
-	public ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry, IProgressMonitor monitor) throws CoreException {
+	public ContentReference[] getPluginEntryArchiveReferences(IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException {
 		ContentReference[] result = new ContentReference[1];
 		try {
 			// get the URL of the Archive file that contains the plugin entry
@@ -177,7 +177,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getNonPluginEntryArchiveReferences(INonPluginEntry)
 	 */
-	public ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry, IProgressMonitor monitor) throws CoreException {
+	public ContentReference[] getNonPluginEntryArchiveReferences(INonPluginEntry nonPluginEntry, InstallMonitor monitor) throws CoreException {
 		ContentReference[] result = new ContentReference[1];
 		try {
 			// get the URL of the Archive file that contains the plugin entry
@@ -201,7 +201,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getFeatureEntryArchiveReferences()
 	 */
-	public ContentReference[] getFeatureEntryArchiveReferences(IProgressMonitor monitor) throws CoreException {
+	public ContentReference[] getFeatureEntryArchiveReferences(InstallMonitor monitor) throws CoreException {
 		ContentReference[] contentReferences = new ContentReference[1];
 		contentReferences[0] = new ContentReference(null,getURL());
 		return contentReferences;
@@ -210,7 +210,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getFeatureEntryArchivesContentReferences()
 	 */
-	public ContentReference[] getFeatureEntryContentReferences(IProgressMonitor monitor) throws CoreException {
+	public ContentReference[] getFeatureEntryContentReferences(InstallMonitor monitor) throws CoreException {
 		ContentReference[] result = new ContentReference[0];
 		try {
 			File featureDir = new File(getFeaturePath());
@@ -231,7 +231,7 @@ public class FeatureExecutableContentProvider extends FeatureContentProvider {
 	/*
 	 * @see IFeatureContentProvider#getPluginEntryContentReferences(IPluginEntry)
 	 */
-	public ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry, IProgressMonitor monitor) throws CoreException {
+	public ContentReference[] getPluginEntryContentReferences(IPluginEntry pluginEntry, InstallMonitor monitor) throws CoreException {
 
 		ContentReference[] result = new ContentReference[0];
 

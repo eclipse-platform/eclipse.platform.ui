@@ -3,17 +3,33 @@ package org.eclipse.update.core;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-import java.io.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.model.*;
-import org.eclipse.update.internal.core.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.model.ArchiveReferenceModel;
+import org.eclipse.update.core.model.FeatureModel;
+import org.eclipse.update.core.model.FeatureReferenceModel;
+import org.eclipse.update.core.model.SiteCategoryModel;
+import org.eclipse.update.core.model.SiteMapModel;
+import org.eclipse.update.core.model.URLEntryModel;
+import org.eclipse.update.internal.core.FeatureReference;
+import org.eclipse.update.internal.core.FeatureTypeFactory;
+import org.eclipse.update.internal.core.IWritable;
+import org.eclipse.update.internal.core.ListenersList;
+import org.eclipse.update.internal.core.SiteParser;
+import org.eclipse.update.internal.core.UpdateManagerPlugin;
+import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.internal.core.Writer;
 
 public class Site extends SiteMapModel implements ISite, IWritable {
@@ -103,8 +119,18 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	/*
 	 * @see ISite#install(IFeature, IProgressMonitor)
 	 */
-	public IFeatureReference install(IFeature sourceFeature, IProgressMonitor monitor) throws CoreException {
-		// should start Unit Of Work and manage Progress Monitor
+	public IFeatureReference install(IFeature sourceFeature, IProgressMonitor progress) throws CoreException {
+		
+		// make sure we have an InstallMonitor		
+		InstallMonitor monitor;
+		if (progress == null)
+			monitor = null;
+		else if (progress instanceof InstallMonitor)
+			monitor = (InstallMonitor)progress;
+		else
+			monitor = new InstallMonitor(progress);
+		
+		// create new executable feature and install source content into it
 		IFeature localFeature = createExecutableFeature(sourceFeature);
 		IFeatureReference localFeatureReference = sourceFeature.install(localFeature, monitor);
 		this.addFeatureReference(localFeatureReference);
@@ -128,8 +154,17 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 	/*
 	 * @see ISite#remove(IFeature, IProgressMonitor)
 	 */
-	public void remove(IFeature feature, IProgressMonitor monitor) throws CoreException {
-
+	public void remove(IFeature feature, IProgressMonitor progress) throws CoreException {
+	
+		// make sure we have an InstallMonitor		
+		InstallMonitor monitor;
+		if (progress == null)
+			monitor = null;
+		else if (progress instanceof InstallMonitor)
+			monitor = (InstallMonitor)progress;
+		else
+			monitor = new InstallMonitor(progress);
+		
 		// remove the feature and the plugins if they are not used and not activated
 		// get the plugins from the feature
 		IPluginEntry[] pluginsToRemove = SiteManager.getLocalSite().getUnusedPluginEntries(feature);
@@ -172,7 +207,7 @@ public class Site extends SiteMapModel implements ISite, IWritable {
 
 	}
 	
-	private void remove(IFeature feature,IPluginEntry pluginEntry, IProgressMonitor monitor)  throws CoreException{
+	private void remove(IFeature feature,IPluginEntry pluginEntry, InstallMonitor monitor)  throws CoreException{
 		
 		if (pluginEntry==null)
 			return;

@@ -5,10 +5,20 @@ package org.eclipse.update.core;
  */
 import java.io.InputStream;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Stack;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.model.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.update.core.model.FeatureModel;
+import org.eclipse.update.core.model.ImportModel;
+import org.eclipse.update.core.model.NonPluginEntryModel;
+import org.eclipse.update.core.model.PluginEntryModel;
+import org.eclipse.update.core.model.URLEntryModel;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
 /**
  * Abstract Class that implements most of the behavior of a feature
@@ -16,81 +26,6 @@ import org.eclipse.update.internal.core.UpdateManagerPlugin;
  */
 public class Feature extends FeatureModel implements IFeature {
 
-	/**
-	 * Delegating wrapper for IProgressMonitor used for feature
-	 * installation handling.
-	 * 
-	 * NOTE: currently is just a straight delegating wrapper.
-	 *       Extended handling function TBA 
-	 * 
-	 * @since 2.0
-	 */
-	public static class ProgressMonitor implements IProgressMonitor {
-
-		private IProgressMonitor monitor;
-
-		public ProgressMonitor(IProgressMonitor monitor) {
-			this.monitor = monitor;
-		}
-		/*
-		 * @see IProgressMonitor#beginTask(String, int)
-		 */
-		public void beginTask(String name, int totalWork) {
-			monitor.beginTask(name, totalWork);
-		}
-
-		/*
-		* @see IProgressMonitor#done()
-		*/
-		public void done() {
-			monitor.done();
-		}
-
-		/*
-		 * @see IProgressMonitor#internalWorked(double)
-		 */
-		public void internalWorked(double work) {
-			monitor.internalWorked(work);
-		}
-
-		/*
-		 * @see IProgressMonitor#isCanceled()
-		 */
-		public boolean isCanceled() {
-			return monitor.isCanceled();
-		}
-
-		/*
-		 * @see IProgressMonitor#setCanceled(boolean)
-		 */
-		public void setCanceled(boolean value) {
-			monitor.setCanceled(value);
-		}
-
-		/*
-		 * @see IProgressMonitor#setTaskName(String)
-		 */
-		public void setTaskName(String name) {
-			monitor.setTaskName(name);
-		}
-
-		/*
-		 * @see IProgressMonitor#subTask(String)
-		 */
-		public void subTask(String name) {
-			monitor.subTask(name);
-		}
-
-		/*
-		 * @see IProgressMonitor#worked(int)
-		 */
-		public void worked(int work) {
-			monitor.worked(work);
-		}
-		
-		protected void workedCopy(long size) {
-		}
-	}
 
 	/**
 	 * 
@@ -316,53 +251,75 @@ public class Feature extends FeatureModel implements IFeature {
 	/*
 	 * @see IFeature#install(IFeature, IProgressMonitor) throws CoreException
 	 */
-	public IFeatureReference install(IFeature targetFeature, IProgressMonitor monitor) throws CoreException {
-
-		// get a feature progress monitor
-		monitor = new Feature.ProgressMonitor(monitor);
+	public IFeatureReference install(IFeature targetFeature, IProgressMonitor progress) throws CoreException {
 		
-		//
+		// make sure we have an InstallMonitor		
+		InstallMonitor monitor;
+		if (progress == null)
+			monitor = null;
+		else if (progress instanceof InstallMonitor)
+			monitor = (InstallMonitor)progress;
+		else
+			monitor = new InstallMonitor(progress);
+		
+		// do the install
 		IFeatureContentConsumer consumer = targetFeature.getContentConsumer();
 
 		try {
-			//finds the contentReferences for this IFeature
-			ContentReference[] references = getFeatureContentProvider().getFeatureEntryContentReferences(monitor);
-			for (int i = 0; i < references.length; i++) {
-				consumer.store(references[i], monitor);
-			}
-
 			// determine list of plugins to install
 			// find the intersection between the two arrays of IPluginEntry...
-			// The one teh site contains and teh one the feature contains
+			// The one the site contains and the one the feature contains
 			IPluginEntry[] sourceFeaturePluginEntries = getPluginEntries();
 			ISite targetSite = targetFeature.getSite();
 			IPluginEntry[] targetSitePluginEntries = (targetSite != null) ? site.getPluginEntries() : new IPluginEntry[0];
 			IPluginEntry[] pluginsToInstall = intersection(sourceFeaturePluginEntries, targetSitePluginEntries);
+	
+			// determine number of monitor tasks
+			int taskCount = 1 // one task for all feature files (already downloaded)
+							+ pluginsToInstall.length // one task for each plugin to install
+							+ getNonPluginEntries().length;  // one task for each non-plugin file to install
+			monitor.beginTask("",taskCount); 
+			
+			//finds the contentReferences for this IFeature
+			monitor.setTaskName("Installing feature files: ");
+			ContentReference[] references = getFeatureContentProvider().getFeatureEntryContentReferences(monitor);
+			for (int i = 0; i < references.length; i++) {
+				monitor.subTask(references[i].getIdentifier());
+				consumer.store(references[i], monitor);
+			}
+			monitor.worked(1);
 
-			//finds the contentReferences for this IPluginEntry
+			// download and install plugin plugin files
 			for (int i = 0; i < pluginsToInstall.length; i++) {
+				monitor.setTaskName("Installing plug-in [" + pluginsToInstall[i].getIdentifier().getIdentifier() + "]: ");
 				IContentConsumer pluginConsumer = consumer.open(pluginsToInstall[i]);
 				references = getFeatureContentProvider().getPluginEntryContentReferences(pluginsToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
+					monitor.subTask(references[j].getIdentifier());
 					pluginConsumer.store(references[j], monitor);
 				}
 				pluginConsumer.close();
+				monitor.worked(1);
 			}
 
 			// download and install non plugins bundles
 			INonPluginEntry[] nonPluginsContentReferencesToInstall = getNonPluginEntries();
 			for (int i = 0; i < nonPluginsContentReferencesToInstall.length; i++) {
+				monitor.setTaskName("Installing non-plug-in files: ");
 				IContentConsumer nonPluginConsumer = consumer.open(nonPluginsContentReferencesToInstall[i]);
 				references = getFeatureContentProvider().getNonPluginEntryArchiveReferences(nonPluginsContentReferencesToInstall[i], monitor);
 				for (int j = 0; j < references.length; j++) {
+					monitor.subTask(references[j].getIdentifier());
 					nonPluginConsumer.store(references[j], monitor);
 				}
 				nonPluginConsumer.close();
+				monitor.worked(1);
 			}
 		} finally {
 			// an error occured, abort
 			// VK: this is wrong .... would end up ALWAYS backing out !!!!!!!!!!
 			consumer.abort();
+			monitor.done();
 		}
 		return consumer.close();
 
@@ -371,7 +328,17 @@ public class Feature extends FeatureModel implements IFeature {
 	/*
 	 * @see IFeature#remove(IProgressMonitor) throws CoreException
 	 */
-	public void remove(IProgressMonitor monitor) throws CoreException {
+	public void remove(IProgressMonitor progress) throws CoreException {
+		// make sure we have an InstallMonitor		
+		InstallMonitor monitor;
+		if (progress == null)
+			monitor = null;
+		else if (progress instanceof InstallMonitor)
+			monitor = (InstallMonitor)progress;
+		else
+			monitor = new InstallMonitor(progress);
+		
+		// remove feature from site
 		getSite().remove(this, monitor);
 	}
 
