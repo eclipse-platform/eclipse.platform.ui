@@ -13,6 +13,7 @@ package org.eclipse.core.tests.harness;
 import java.io.*;
 
 import junit.framework.*;
+import org.eclipse.core.internal.resources.TestingSupport;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -273,7 +274,7 @@ public IResource[] buildResources(IContainer root, String[] hierarchy) {
 				result[i] = getWorkspace().getRoot().getProject(fullPath.segment(0));
 				break;
 			default :
-				if (hierarchy[i].charAt(hierarchy[i].length()-1) == Path.SEPARATOR)
+				if (hierarchy[i].charAt(hierarchy[i].length()-1) == IPath.SEPARATOR)
 					result[i] = (IResource) root.getFolder(path);
 				else
 					result[i] = (IResource) root.getFile(path);
@@ -379,7 +380,7 @@ public IResource[] createHierarchy() throws CoreException {
  * resource hierarchy for this test.  In the string forms, folders are
  * represented as having trailing separators ('/').  All other resources
  * are files.  It is generally assumed that this hierarchy will be 
- * inserted under some solution and project structure.
+ * inserted under some project structure.
  * For example, 	
  * <pre>
  *    return new String[] {"/", "/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1"};
@@ -848,6 +849,8 @@ protected void setUp() throws Exception {
 		deltaListener = new DeltaDebugListener();
 		getWorkspace().addResourceChangeListener(deltaListener);
 	}
+	//decrease the minimum notification delay to speed up tests
+	ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_MIN_NOTIFICATION_DELAY, 10);
 }
 /**
  * Returns the test suite for this test class.
@@ -906,5 +909,12 @@ protected void tearDown() throws Exception {
 	// Session tests should overwrite it.
 	ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
 	getWorkspace().save(true, null);
+}
+protected void waitForNotify() {
+	try {
+		TestingSupport.getListenerNotifyJob().join();
+	} catch (InterruptedException e) {
+		Assert.fail("Unable to join listener job: " + e);
+	}
 }
 }
