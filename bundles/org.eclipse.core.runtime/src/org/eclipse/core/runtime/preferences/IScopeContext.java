@@ -18,6 +18,10 @@ import org.eclipse.core.runtime.IPath;
  * passed to the <code>IPreferencesService</code> for use in 
  * preference searching.
  * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
+ * 
  * @see IPreferencesService
  * @since 3.0
  */

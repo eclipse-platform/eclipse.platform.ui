@@ -22,6 +22,8 @@ import org.osgi.service.prefs.Preferences;
  * accessing the root of the preference store node hierarchy, and importing/exporting
  * preferences.
  * 
+ * This interface is not intended to be implemented by clients.
+ * 
  * @since 3.0
  */
 public interface IPreferencesService {

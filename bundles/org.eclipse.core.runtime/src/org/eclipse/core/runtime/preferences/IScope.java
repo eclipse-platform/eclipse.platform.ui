@@ -15,6 +15,8 @@ package org.eclipse.core.runtime.preferences;
  * implement this interface to aid Eclipse in creating a new node for the
  * hierarchy.
  * <p>
+ * Clients may implement this interface.
+ * </p>
  * @since 3.0
  */
 public interface IScope {

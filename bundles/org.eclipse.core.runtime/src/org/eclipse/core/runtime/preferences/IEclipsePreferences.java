@@ -21,6 +21,10 @@ import org.osgi.service.prefs.Preferences;
  * listeners as well as providing node navigation APIs which deal
  * in <code>IPath</code> objects.
  * 
+ * <p>
+ * Clients may implement this interface.
+ * </p>
+ * 
  * @see org.osgi.service.prefs.Preferences
  * @since 3.0
  */

@@ -32,7 +32,7 @@ import org.eclipse.osgi.service.datalocation.Location;
  * @see IPlatform#getConfigurationLocation()
  * @since 3.0
  */
-public class ConfigurationScope extends AbstractScope {
+public final class ConfigurationScope extends AbstractScope {
 
 	/**
 	 * String constant (value of <code>"configuration"</code>) used for the 

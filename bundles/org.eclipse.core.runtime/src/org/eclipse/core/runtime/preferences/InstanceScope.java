@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.IPath;
  * @see org.eclipse.core.runtime.IPlatform#getInstanceLocation()
  * @since 3.0
  */
-public class InstanceScope extends AbstractScope {
+public final class InstanceScope extends AbstractScope {
 
 	/**
 	 * String constant (value of <code>"instance"</code>) used for the 

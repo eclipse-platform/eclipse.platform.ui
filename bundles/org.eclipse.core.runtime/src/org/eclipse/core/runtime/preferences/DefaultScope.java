@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IPath;
  * </p>
  * @since 3.0
  */
-public class DefaultScope extends AbstractScope {
+public final class DefaultScope extends AbstractScope {
 
 	/**
 	 * String constant (value of <code>"default"</code>) used for the 
