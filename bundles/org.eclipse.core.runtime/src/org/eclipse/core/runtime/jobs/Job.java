@@ -255,12 +255,12 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * <li>Job.NONE - in all other cases.</li>
 	 * </ul>
 	 * <p>
-	 * Note that job state is inherently volatile, and in most cases you cannot
-	 * rely on the result of this method being valid by the time the result is obtained.  
-	 * For example, if <tt>getState</tt> returns <tt>RUNNING</tt>, the job may 
-	 * have actually completed by the time the <tt>getState</tt> method returns.
-	 * All you can ascertain from invoking this method is that the job was recently
-	 * in the returned state.
+	 * Note that job state is inherently volatile, and in most cases clients 
+	 * cannot rely on the result of this method being valid by the time the 
+	 * result is obtained.  For example, if <tt>getState</tt> returns 
+	 * <tt>RUNNING</tt>,  the job may have actually completed by the 
+	 * time the <tt>getState</tt> method returns.  All clients can infer from 
+	 * invoking this method is that  the job was recently in the returned state.
 	 * 
 	 * @return the job state
 	 */

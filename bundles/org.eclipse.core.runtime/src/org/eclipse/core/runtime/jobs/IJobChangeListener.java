@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,12 +19,19 @@ package org.eclipse.core.runtime.jobs;
  * receive duplicate notifications).
  * </p>
  * <p>
+ * Clients should not rely on the result of the <code>Job#getState()</code> 
+ * method on jobs for which notification is occurring. Listeners are notified of 
+ * all job state changes, but whether the state change occurs before, during, or 
+ * after listeners are notified is unspecified.
+ * </p>
+ * <p>
  * Clients may implement this interface.
  * </p>
  * @see JobChangeAdapter
  * @see IJobManager#addJobChangeListener(IJobChangeListener)
  * @see IJobManager#removeJobChangeListener(IJobChangeListener)
  * @see Job#addJobChangeListener(IJobChangeListener)
+ * @see Job#getState()
  * @see Job#removeJobChangeListener(IJobChangeListener)
  * @since 3.0
  */
