@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -27,6 +28,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ITextOperationTarget;
@@ -74,7 +76,6 @@ public class Console extends ViewPart {
 	private Color commandColor;
 	private Color messageColor;
 	private Color errorColor;
-	private Font consoleFont;
 	
 	private IDocumentListener documentListener;
 	private IPropertyChangeListener propertyChangeListener;
@@ -82,11 +83,23 @@ public class Console extends ViewPart {
 	private TextViewerAction selectAllAction;
 	private Action clearOutputAction;
 
+	//For buffering console content prior to flushing to view
+	private static class PendingConsoleLine {
+		public int type;
+		public String line;
+		public PendingConsoleLine(int type, String line) {
+			this.type = type;
+			this.line = line;
+		}
+	}
+	private static Vector pendingConsoleData = new Vector();
+	private static Runnable aSyncRunnable;
+	private static final int MAX_BUFFER_SIZE = 200; //maximum size of buffer if console not open
+	
 	/*
 	 * Called on UI plugin startup.
 	 */
 	public static void startup() {
-		document = new ConsoleDocument();
 		instances = new ArrayList();
 		CVSProviderPlugin.getPlugin().setConsoleListener(new ConsoleListener());
 	}
@@ -133,10 +146,6 @@ public class Console extends ViewPart {
 			errorColor.dispose();
 			errorColor = null;
 		}
-		if (consoleFont != null) {
-			consoleFont.dispose();
-			consoleFont = null;
-		}
 	}
 	
 	/*
@@ -150,6 +159,10 @@ public class Console extends ViewPart {
 	 * @see WorkbenchPart#createPartControl(Composite)
 	 */
 	public void createPartControl(Composite parent) {
+		if(document == null) {
+			document = new ConsoleDocument();
+		}
+
 		Composite composite = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
@@ -168,8 +181,8 @@ public class Console extends ViewPart {
 		viewer.getControl().setLayoutData(data);
 		viewer.setEditable(false);
 		viewer.setDocument(document);
-		viewer.getTextWidget().setFont(consoleFont);
-		
+		viewer.getTextWidget().setFont(JFaceResources.getFont(ICVSUIConstants.PREF_CONSOLE_FONT));
+				
 		// add a selection listener to control enablement of the copy action
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -214,6 +227,7 @@ public class Console extends ViewPart {
 
 		// we're open -- remember us
 		instances.add(this);
+		flushConsoleBuffer();	//in case there's anything in the buffer
 	}
 	
 	/**
@@ -317,14 +331,9 @@ public class Console extends ViewPart {
 		}
 		// update the console font
 		if (property == null ||
-			property.equals(ICVSUIConstants.PREF_CONSOLE_FONT)) {
-			Font oldConsoleFont = consoleFont;
-			consoleFont = createFont(display, ICVSUIConstants.PREF_CONSOLE_FONT);
-			if (oldConsoleFont != null) {
-				if (viewer != null && ! viewer.getControl().isDisposed()) {
-					viewer.getTextWidget().setFont(consoleFont);
-				}
-				oldConsoleFont.dispose();
+				property.equals(ICVSUIConstants.PREF_CONSOLE_FONT)) {
+			if (viewer != null && ! viewer.getControl().isDisposed()) {
+				viewer.getTextWidget().setFont(JFaceResources.getFont(ICVSUIConstants.PREF_CONSOLE_FONT));
 			}
 		}
 	}
@@ -349,17 +358,56 @@ public class Console extends ViewPart {
 	 * Appends a line to the console if any views are open.
 	 */
 	private static void appendConsoleLine(final int type, final String line) {
+		if (Policy.DEBUG_CONSOLE_BUFFERING) {
+			System.out.println("<<Console buffering [" + String.valueOf(type) + "] :" + line);	//$NON-NLS-1$ //$NON-NLS-2$
+		}
+
+		//add to end of buffer
+		pendingConsoleData.add(
+			new PendingConsoleLine(type, line));
+
+		//If no document, ensure buffer size doesn't grow too long, don't flush
+		if (document == null) {
+			if(pendingConsoleData.size() > MAX_BUFFER_SIZE) {
+				//remove extra from front of buffer
+				pendingConsoleData.remove(0);
+			}				
+			return;
+		} 
+		
+		//Do nothing if there is already an aSyncRunnable emptying the buffer
+		if(aSyncRunnable != null) return;
+
+		flushConsoleBuffer();
+	}
+	
+	private static void flushConsoleBuffer() {			
 		Display display = Display.getCurrent();
 		if (display == null) {
 			display = Display.getDefault();
 		}
-		display.asyncExec(new Runnable() {
+		
+		if (Policy.DEBUG_CONSOLE_BUFFERING) {
+			System.out.println("++Console creating runnable");	//$NON-NLS-1$
+		}
+
+		display.asyncExec(aSyncRunnable = new Runnable() {
 			public void run() {
-				if (getPreferenceStore().getBoolean(ICVSUIConstants.PREF_CONSOLE_AUTO_OPEN)) {
-					findInActivePerspective();
+				if (Policy.DEBUG_CONSOLE_BUFFERING) {
+					System.out.println("==Console running runnable");	//$NON-NLS-1$
 				}
-				if (document == null) return;
-				document.appendConsoleLine(type, line, instances.isEmpty());
+				//if we don't have a console open and the pref is to open one, then do so
+				while (! pendingConsoleData.isEmpty()) {
+					PendingConsoleLine consoleLine = (PendingConsoleLine) pendingConsoleData.remove(0);
+					if (Policy.DEBUG_CONSOLE_BUFFERING) {
+						System.out.println(">>Console flushing ["  + String.valueOf(consoleLine.type) + "] :" + consoleLine.line);	//$NON-NLS-1$ //$NON-NLS-2$
+					}
+					document.appendConsoleLine(consoleLine.type, consoleLine.line);					
+				}
+				if (Policy.DEBUG_CONSOLE_BUFFERING) {
+					System.out.println("--Console discarding runnable");	//$NON-NLS-1$
+				}
+				aSyncRunnable = null;	//flush the instance so that a new one will be created when required
 			}
 		});
 	}
