@@ -116,19 +116,28 @@ public abstract class FeatureContentProvider
 				monitor.setTotalCount(ref.getInputSize());
 				monitor.showCopyDetails(true);
 			}
-			
+
 			try {
-				is = ref.getInputStream();
-				os = new FileOutputStream(localFile);
+				try {
+					is = ref.getInputStream();
+				} catch (IOException e){
+					throw Utilities.newCoreException(Policy.bind("FeatureContentProvider.UnableToRetrieve",new Object[]{ref}),e);									
+				}
+				
+				try {
+					os = new FileOutputStream(localFile);
+				} catch (FileNotFoundException e){
+					throw Utilities.newCoreException(Policy.bind("FeatureContentProvider.UnableToCreate",new Object[]{localFile}),e);									
+				}
+				
 				Utilities.copy(is, os, monitor);
 				sucess = true;
 			} catch (CoreException e) {
 				Utilities.removeLocalFile(key);
 				throw e;
-			} catch (Exception e){
+			} catch (ClassCastException e){
 				Utilities.removeLocalFile(key);
-				UpdateManagerPlugin.warn("Unable to create file "+localFile);
-				throw Utilities.newCoreException(Policy.bind("FeatureContentProvider.UnableToCreate",new Object[]{ref}),e);				
+				throw Utilities.newCoreException(Policy.bind("FeatureContentProvider.UnableToCreate",new Object[]{localFile}),e);				
 			} finally {
 				//Do not close IS if user cancel,
 				//closing IS will read the entire Stream until the end
