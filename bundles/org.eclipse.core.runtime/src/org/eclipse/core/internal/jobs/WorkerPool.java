@@ -11,7 +11,10 @@ package org.eclipse.core.internal.jobs;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.osgi.service.prefs.Preferences;
 
 /**
  * Maintains a pool of worker threads. Threads are constructed lazily as
@@ -57,9 +60,11 @@ class WorkerPool {
 	protected WorkerPool(JobManager manager) {
 		this.manager = manager;
 		computeMaxThreads();
-		Platform.getPlugin(IPlatform.PI_RUNTIME).getPluginPreferences().addPropertyChangeListener(new Preferences.IPropertyChangeListener() {
-			public void propertyChange(Preferences.PropertyChangeEvent event) {
-				if (event.getProperty().equalsIgnoreCase(IPlatform.PREF_PLATFORM_PERFORMANCE))
+		Preferences node = Platform.getPreferencesService().getRootNode().node(InstanceScope.SCOPE).node(IPlatform.PI_RUNTIME);
+		IEclipsePreferences eclipseNode = (IEclipsePreferences)node;
+		eclipseNode.addPreferenceChangeListener(new IEclipsePreferences.IPreferenceChangeListener() {
+			public void preferenceChange(PreferenceChangeEvent event) {
+				if (event.getKey().equalsIgnoreCase(IPlatform.PREF_PLATFORM_PERFORMANCE))
 					computeMaxThreads();
 			}
 		});
