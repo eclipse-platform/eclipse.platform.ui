@@ -746,12 +746,12 @@ private ArrayList getArrayList(String args) {
 	for (StringTokenizer tokens = new StringTokenizer(args, ", \"", true); tokens.hasMoreTokens();) { //$NON-NLS-1$
 		String token = tokens.nextToken();
 		if (waitingForQuote) {
-			sb.append(token);
 			if (token.equals("\"")) { //$NON-NLS-1$
 				result.add(sb.toString());
 				sb.setLength(0);
 				waitingForQuote = false;
-			}
+			} else
+				sb.append(token);
 		} else {
 			if (token.equals("\"")) { //$NON-NLS-1$
 				// test if we have something like -Dproperty="value"
@@ -763,7 +763,6 @@ private ArrayList getArrayList(String args) {
 						sb.append(last);
 					}
 				}
-				sb.append(token);
 				waitingForQuote = true;
 			} else {
 				if (!(token.equals(",") || token.equals(" "))) //$NON-NLS-1$ //$NON-NLS-2$
