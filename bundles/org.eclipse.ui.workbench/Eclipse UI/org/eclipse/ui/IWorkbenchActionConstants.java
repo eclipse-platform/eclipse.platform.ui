@@ -284,6 +284,7 @@ public interface IWorkbenchActionConstants {
 	
 	/**
 	 * File menu: name of group for extra Print-like actions (value <code>"print.ext"</code>).
+	 * @since 3.0
 	 */
 	public static final String PRINT_EXT = "print.ext";		// Group. //$NON-NLS-1$
 
