@@ -564,4 +564,11 @@
    <extension point="org.eclipse.core.runtime.preferences">
 		<initializer class="org.eclipse.ant.internal.ui.AntUIPreferenceInitializer"/>
 	</extension>
+   <extension
+         point="org.eclipse.core.filebuffers.annotationModelCreation">
+      <factory
+            contentTypeId="org.eclipse.ant.core.antBuildFile"
+            class="org.eclipse.ant.internal.ui.editor.text.AnnotationModelFactory"
+            extensions="xml, ant, ent, macrodef"/>
+   </extension>
 </plugin>
