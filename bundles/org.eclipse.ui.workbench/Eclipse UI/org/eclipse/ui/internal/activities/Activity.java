@@ -203,6 +203,10 @@ final class Activity implements IActivity {
 	public boolean isEnabled() {
 		return enabled;
 	}
+	
+	public boolean isMatch(String string) {
+		return match(string);
+	}
 
 	public boolean match(String string) {
 		if (isDefined())

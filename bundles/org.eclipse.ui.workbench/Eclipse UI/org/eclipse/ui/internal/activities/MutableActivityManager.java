@@ -175,6 +175,10 @@ public final class MutableActivityManager
 			getRequiredActivityIds(childActivityIds, requiredActivityIds);
 		}
 	}
+	
+	public boolean isMatch(String string, Set activityIds) {
+		return isMatch(string, activityIds);
+	}
 
 	public boolean match(String string, Set activityIds) {
 		activityIds = Util.safeCopy(activityIds, String.class);

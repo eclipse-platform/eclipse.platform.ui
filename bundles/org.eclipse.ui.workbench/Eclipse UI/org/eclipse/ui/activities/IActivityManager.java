@@ -123,6 +123,15 @@ public interface IActivityManager {
 	IIdentifier getIdentifier(String identifierId);	
 	
 	/**
+	 * This method is only included to fix compile errors in I20031125
+	 * @param string
+	 * @param activityIds
+	 * @return
+	 * @deprecated
+	 */
+	boolean isMatch(String string, Set activityIds);
+	
+	/**
 	 * TODO javadoc
 	 * 
 	 * @deprecated

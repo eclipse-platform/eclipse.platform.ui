@@ -181,6 +181,14 @@ public interface IActivity extends Comparable {
 	 * @return <code>true</code>, iff this activity is enabled.
 	 */
 	boolean isEnabled();
+	
+	/**
+	 * This method is only included to prevent compile errors in I20031125.
+	 * @param string
+	 * @return
+	 * @deprecated
+	 */
+	boolean isMatch(String string);
 
 	/**
 	 * TODO javadoc
