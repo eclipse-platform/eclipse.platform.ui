@@ -10,13 +10,21 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize.subscribers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,11 +32,20 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.dialogs.ContainerCheckedTreeViewer;
@@ -127,7 +144,10 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 	public void createControl(Composite parent2) {
 		Composite top = new Composite(parent2, SWT.NULL);
 		top.setLayout(new GridLayout());
-		top.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = 50;
+		top.setLayoutData(data);
 		setControl(top);
 		
 		if (participant.getSubscriber().roots().length == 0) {
@@ -140,9 +160,9 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			
 			// The viewer
 			fViewer = new ContainerCheckedTreeViewer(top, SWT.BORDER);
-			GridData data = new GridData(GridData.FILL_BOTH);
-			data.widthHint = 250;
-			data.heightHint = 200;
+			data = new GridData(GridData.FILL_HORIZONTAL);
+			//data.widthHint = 200;
+			data.heightHint = 100;
 			fViewer.getControl().setLayoutData(data);
 			fViewer.setContentProvider(new MyContentProvider());
 			fViewer.setLabelProvider( new DecoratingLabelProvider(
@@ -164,6 +184,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			layout.makeColumnsEqualWidth = false;
 			scopeGroup.setLayout(layout);
 			data = new GridData(GridData.FILL_HORIZONTAL);
+			data.widthHint = 50;
 			scopeGroup.setLayoutData(data);
 			
 			participantScope = new Button(scopeGroup, SWT.RADIO); 
@@ -225,8 +246,6 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			updateWorkingSetLabel();
 			initializeScopingHint();
 		}
-		
-		//updateOKStatus();
 		Dialog.applyDialogFont(top);
 	}
 	
@@ -295,7 +314,13 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 					updateSelectedResourcesScope();
 				}
 		}
-		fViewer.reveal(areAnyElementsChecked());
+	}
+	
+	private void intializeSelectionInViewer(IResource[] resources) {
+		if(resources.length > 0) {
+//			fViewer.setExpandedElements(resources);
+			fViewer.setSelection(new StructuredSelection(Arrays.asList(resources)), true);
+		}
 	}
 	
 	private void updateEnclosingProjectScope() {
@@ -322,6 +347,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 			IResource[] resources = getResourcesFromSelection();
 			fViewer.setCheckedElements(resources);
 			setPageComplete(resources.length > 0);
+			intializeSelectionInViewer(resources);
 		}
 	}
 	
@@ -349,7 +375,9 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		if(workingSet != null) {
 				List resources = IDE.computeSelectedResources(new StructuredSelection(workingSet.getElements()));
 				if(! resources.isEmpty()) {
-					fViewer.setCheckedElements((IResource[])resources.toArray(new IResource[resources.size()]));
+					IResource[] resources2 = (IResource[])resources.toArray(new IResource[resources.size()]);
+					fViewer.setCheckedElements(resources2);
+					intializeSelectionInViewer(resources2);
 					setPageComplete(true);
 				}
 		} else {

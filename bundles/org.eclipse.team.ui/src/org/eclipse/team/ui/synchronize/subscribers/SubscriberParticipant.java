@@ -174,9 +174,27 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * 
 	 * @param resources the resources to be refreshed.
 	 */
-	public void refresh(IResource[] resources, IRefreshSubscriberListener listener, String taskName, IWorkbenchSite site) {
-		ISynchronizeView view = TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
-		refreshHelper(view.getSite(), taskName, resources, getSubscriberSyncInfoCollector(), listener);
+	public void refresh(IResource[] resources, final IRefreshSubscriberListener listener, String taskName, IWorkbenchSite site) {
+		RefreshSubscriberJob job = new RefreshSubscriberJob(taskName, resources, collector.getSubscriber());
+		job.setSubscriberCollector(collector);
+		IRefreshSubscriberListener autoListener = new IRefreshSubscriberListener() {
+			public void refreshStarted(IRefreshEvent event) {
+				if(listener != null) {
+					listener.refreshStarted(event);
+				}
+			}
+			public void refreshDone(IRefreshEvent event) {
+				if(listener != null) {
+					listener.refreshDone(event);
+					RefreshSubscriberJob.removeRefreshListener(this);
+				}
+			}
+		};
+		
+		if (listener != null) {
+			RefreshSubscriberJob.addRefreshListener(autoListener);
+		}	
+		Utils.schedule(job, site);
 	}
 	
 	public IRefreshSubscriberListenerFactory getRefreshListeners() {
@@ -350,28 +368,5 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 			}
 		}
 		return null;
-	}
-	
-	private void refreshHelper(IWorkbenchSite site, String taskName, IResource[] resources, final SubscriberSyncInfoCollector collector, final IRefreshSubscriberListener listener) {
-		RefreshSubscriberJob job = new RefreshSubscriberJob(taskName, resources, collector.getSubscriber());
-		job.setSubscriberCollector(collector);
-		IRefreshSubscriberListener autoListener = new IRefreshSubscriberListener() {
-			public void refreshStarted(IRefreshEvent event) {
-				if(listener != null) {
-					listener.refreshStarted(event);
-				}
-			}
-			public void refreshDone(IRefreshEvent event) {
-				if(listener != null) {
-					listener.refreshDone(event);
-					RefreshSubscriberJob.removeRefreshListener(this);
-				}
-			}
-		};
-		
-		if (listener != null) {
-			RefreshSubscriberJob.addRefreshListener(autoListener);
-		}	
-		Utils.schedule(job, site);
 	}
 }

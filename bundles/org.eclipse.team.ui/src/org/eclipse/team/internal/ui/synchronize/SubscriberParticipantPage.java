@@ -108,13 +108,12 @@ public final class SubscriberParticipantPage implements IPageBookViewPage, IProp
 			refreshAllAction = new Action() {
 				public void run() {
 					// Prime the refresh wizard with an appropriate initial selection
-					SubscriberRefreshWizard wizard = new SubscriberRefreshWizard(participant);
-					int scopeHint = SubscriberRefreshWizard.SCOPE_PARTICIPANT_ROOTS;
+					final SubscriberRefreshWizard wizard = new SubscriberRefreshWizard(participant);
 					IWorkingSet set = participant.getWorkingSet();
 					if(set != null) {
-						scopeHint = SubscriberRefreshWizard.SCOPE_WORKING_SET;
-					}
-					wizard.setScopeHint(scopeHint);
+						int scopeHint = SubscriberRefreshWizard.SCOPE_WORKING_SET;
+						wizard.setScopeHint(scopeHint);
+					}					
 					WizardDialog dialog = new WizardDialog(getShell(), wizard);
 					dialog.open();
 				}

@@ -49,8 +49,8 @@ public class SubscriberRefreshWizard extends Wizard {
 	 */
 	public void addPages() {
 		selectionPage = new GlobalRefreshResourceSelectionPage(participant, scopeHint);
-		schedulePage = new GlobalRefreshSchedulePage(participant);
 		addPage(selectionPage);
+		schedulePage = new GlobalRefreshSchedulePage(participant);
 		addPage(schedulePage);
 	}
 	

@@ -8,6 +8,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
 import org.eclipse.team.ui.synchronize.SyncInfoCompareInput;
 import org.eclipse.team.ui.synchronize.subscribers.*;
 import org.eclipse.ui.PlatformUI;
@@ -31,6 +33,14 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 	 * @see org.eclipse.team.internal.ui.jobs.IRefreshSubscriberListener#refreshStarted(org.eclipse.team.internal.ui.jobs.IRefreshEvent)
 	 */
 	public void refreshStarted(IRefreshEvent event) {
+		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+			public void run() {			
+				ISynchronizeView view = TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage();
+				if(view != null) {
+					view.display(participant);
+				}
+			}
+		});
 	}
 
 	/*

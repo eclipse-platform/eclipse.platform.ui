@@ -13,10 +13,15 @@ package org.eclipse.team.internal.ui.wizards;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardPage;
+import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.*;
+import org.eclipse.team.ui.ISharedImages;
+import org.eclipse.team.ui.TeamImages;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeManager;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.IWorkbench;
@@ -35,13 +40,17 @@ public class GlobalSynchronizeWizard extends Wizard {
 	private String pluginId = TeamUIPlugin.PLUGIN_ID;
 
 	public GlobalSynchronizeWizard() {
-		setNeedsProgressMonitor(true);
-		setWindowTitle("Synchronize"); //$NON-NLS-1$
+		setWindowTitle(Policy.bind("GlobalSynchronizeWizard.11")); //$NON-NLS-1$
 		setDefaultPageImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_WIZBAN_SHARE));
 		setForcePreviousAndNextButtons(true);
 		setNeedsProgressMonitor(false);
 	}
 
+	public GlobalSynchronizeWizard(ISynchronizeParticipant participant) {
+		this();
+		this.participant = participant;
+	}
+	
 	/*
 	 * @see Wizard#addPages
 	 */
@@ -52,25 +61,28 @@ public class GlobalSynchronizeWizard extends Wizard {
 			// Only skip the first page if the one wizard has at least one
 			// page.
 			participant = participants[0];
-			IWizard wizard = participants[0].createSynchronizeWizard();
-			wizard.addPages();
-			if (wizard.getPageCount() > 0) {
-				wizard.setContainer(getContainer());
-				IWizardPage[] pages = wizard.getPages();
-				for (int i = 0; i < pages.length; i++) {
-					addPage(pages[i]);
-				}
-				return;
-			}
 		}
-		mainPage = new GlobalRefreshParticipantSelectionPage();
-		addPage(mainPage);
+		if (participant != null) {
+			wizard = participants[0].createSynchronizeWizard();
+			addWizardPages(participant.createSynchronizeWizard());
+		} else {
+			mainPage = new GlobalRefreshParticipantSelectionPage();
+			addPage(mainPage);
+		}
 	}
 
-	public IWizardPage getNextPage(IWizardPage page) {
-		if (wizard != null) {
-			return wizard.getNextPage(page);
+	private void addWizardPages(IWizard wizard) {
+		wizard.addPages();
+		if (wizard.getPageCount() > 0) {
+			wizard.setContainer(getContainer());
+			IWizardPage[] pages = wizard.getPages();
+			for (int i = 0; i < pages.length; i++) {
+				addPage(pages[i]);
+			}
 		}
+	}
+	
+	public IWizardPage getNextPage(IWizardPage page) {
 		return super.getNextPage(page);
 	}
 	

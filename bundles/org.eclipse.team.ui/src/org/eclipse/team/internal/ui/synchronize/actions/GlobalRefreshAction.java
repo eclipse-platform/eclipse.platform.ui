@@ -10,13 +10,20 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.wizards.GlobalSynchronizeWizard;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
@@ -40,14 +47,6 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	private Action synchronizeAction;
 	private IWorkbenchWindow window;
 
-	static class SynchronizeWizardDialog extends WizardDialog {
-		SynchronizeWizardDialog(Shell parent, IWizard wizard) {
-			super(parent, wizard);
-			setShellStyle(getShellStyle());
-			//setMinimumPageSize(500, 300);
-		}
-	}
-	
 	class RefreshParticipantAction extends Action {
 		private ISynchronizeParticipant participant;
 
@@ -157,9 +156,11 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 				wizard = participants[0].createSynchronizeWizard();
 			}
 		}
-		WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
-		dialog.open();
-		updateTooltipMessage();
+		if(wizard != null) {
+			WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
+			dialog.open();
+			updateTooltipMessage();
+		}
 	}
 
 	/*
