@@ -214,6 +214,9 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	public String[] getElementIdentifiers() {
 		return (String[]) elements.keySet().toArray(new String[elements.size()]);
 	}
+	public String[] getNamespaces() {
+		return (String[]) elements.keySet().toArray(new String[elements.size()]);
+	}
 	public IConfigurationElement[] getConfigurationElementsFor(String extensionPointId) {
 		int lastdot = extensionPointId.lastIndexOf('.');
 		if (lastdot == -1)

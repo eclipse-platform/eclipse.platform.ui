@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003 IBM Corporation and others.
+ * Copyright (c) 2003, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,15 +13,16 @@ package org.eclipse.core.runtime;
 
 /**
  * The extension registry holds the master list of all
- * discovered elements, extension points and extensions. 
+ * discovered namespaces, extension points and extensions. 
  * <p>
  * The extension registry can be queried, by name, for 
  * extension points and extensions.  
  * </p>
  * <p>
  * Extensions and extension points are declared by generic entities called 
- * <cite>elements</cite>. The only fact known about elements is that they have unique 
- * string-based identifiers. 
+ * <cite>namespaces</cite>. The only fact known about namespaces is that they 
+ * have unique string-based identifiers. One example of a namespace 
+  * is a plug-in, for which the namespace id is the plug-in id.
  * </p>
  * <p>
  * This interface is not intended to be implemented by clients.
@@ -30,23 +31,24 @@ package org.eclipse.core.runtime;
  */
 public interface IExtensionRegistry {
 	/**
-	* Adds the given listener for registry change events related to the given element.
+	* Adds the given listener for registry change events related to the given 
+	* namespace.
 	* Has no effect if an identical listener is already registered. After 
 	* completion of this method, the given listener will be registered for events 
-	* related to the exactly the specified element. If no element identifier is specified,
-	* the listener will receive notifications for changes to any element.  
+	* related to the specified namespace. If no namespace is specified,
+	* the listener will receive notifications for changes in any namespace.  
 	* <p>
 	* Once registered, a listener starts receiving notification of changes to
 	*  the registry. Registry change notifications are sent asynchronously.
 	* The listener continues to receive notifications until it is removed. 
 	* </p>
 	* @param listener the listener
-	* @param elementId the identifier of the element to which to listen for changes
+	* @param namespace the namespace in which to listen for changes
 	* @see IRegistryChangeListener
 	* @see IRegistryChangeEvent
 	* @see #removeRegistryChangeListener 
 	*/
-	public void addRegistryChangeListener(IRegistryChangeListener listener, String elementId);
+	public void addRegistryChangeListener(IRegistryChangeListener listener, String namespace);
 	/**
 	* Adds the given listener for registry change events.
 	* Has no effect if an identical listener is already registered.
@@ -82,19 +84,19 @@ public interface IExtensionRegistry {
 	 * point does not exist, has no extensions configured, or none of the extensions 
 	 * contain configuration elements.
 	 *
-	 * @param elementId the unique identifier of the element 
+	 * @param namespace the namespace for the extension point 
 	 *		(e.g. <code>"org.eclipse.core.resources"</code>)
 	 * @param extensionPointName the simple identifier of the 
 	 *		extension point (e.g. <code>"builders"</code>)
 	 * @return the configuration elements
 	 */
-	public IConfigurationElement[] getConfigurationElementsFor(String elementId, String extensionPointName);
+	public IConfigurationElement[] getConfigurationElementsFor(String namespace, String extensionPointName);
 	/**
 	 * Returns all configuration elements from the identified extension.
 	 * Returns an empty array if the extension does not exist or 
 	 * contains no configuration elements.
 	 *
-	 * @param elementId the unique identifier of the element 
+	 * @param namespace the namespace for the extension point 
 	 *		(e.g. <code>"org.eclipse.core.resources"</code>)
 	 * @param extensionPointName the simple identifier of the 
 	 *		extension point (e.g. <code>"builders"</code>)
@@ -102,7 +104,7 @@ public interface IExtensionRegistry {
 	 *		(e.g. <code>"com.example.acme.coolbuilder</code>)
 	 * @return the configuration elements
 	 */
-	public IConfigurationElement[] getConfigurationElementsFor(String elementId, String extensionPointName, String extensionId);
+	public IConfigurationElement[] getConfigurationElementsFor(String namespace, String extensionPointName, String extensionId);
 	/**
 	 * Returns the specified extension in this extension registry, 
 	 * or <code>null</code> if there is no such extension.
@@ -122,7 +124,7 @@ public interface IExtensionRegistry {
 	 * The first two parameters identify the extension point, and the third
 	 * parameter identifies an extension plugged in to that extension point.
 	 *
-	 * @param elementId the unique identifier of the element 
+	 * @param namespace the namespace for the extension point 
 	 *		(e.g. <code>"org.eclipse.core.resources"</code>)
 	 * @param extensionPointName the simple identifier of the 
 	 *		extension point (e.g. <code>"builders"</code>)
@@ -130,7 +132,7 @@ public interface IExtensionRegistry {
 	 *		(e.g. <code>"com.example.acme.coolbuilder"</code>)
 	 * @return the extension, or <code>null</code>
 	 */
-	public IExtension getExtension(String elementId, String extensionPointName, String extensionId);
+	public IExtension getExtension(String namespace, String extensionPointName, String extensionId);
 
 	/**
 	 * Returns the extension point with the given extension point identifier
@@ -144,16 +146,16 @@ public interface IExtensionRegistry {
 	public IExtensionPoint getExtensionPoint(String extensionPointId);
 	/**
 	 * Returns the extension point in this extension registry
-	 * with the given element identifier and extension point simple identifier,
+	 * with the given namespace and extension point simple identifier,
 	 * or <code>null</code> if there is no such extension point.
 	 *
-	 * @param elementId the unique identifier of the element 
+	 * @param namespace the namespace for the given extension point 
 	 *		(e.g. <code>"org.eclipse.core.resources"</code>)
 	 * @param extensionPointName the simple identifier of the 
 	 *		extension point (e.g. <code>" builders"</code>)
 	 * @return the extension point, or <code>null</code>
 	 */
-	public IExtensionPoint getExtensionPoint(String elementId, String extensionPointName);
+	public IExtensionPoint getExtensionPoint(String namespace, String extensionPointName);
 
 	/**
 	 * Returns all extension points known to this extension registry.
@@ -163,30 +165,38 @@ public interface IExtensionRegistry {
 	 */
 	public IExtensionPoint[] getExtensionPoints();
 	/**
-	 * Returns all extension points declared by the given element. Returns an empty array if 
-	 * the given element does not declare any extension points.
+	 * Returns all extension points declared in the given namespace. Returns an empty array if 
+	 * there are no extension points declared in the namespace.
 	 * 
-	 * @param elementId the unique identifier of the element 
+	 * @param namespace the namespace for the extension points 
 	 *		(e.g. <code>"org.eclipse.core.resources"</code>) 
-	 * @return the extension points in this registry declared by the given element 
+	 * @return the extension points in this registry declared in the given namespace 
 	 */
-	public IExtensionPoint[] getExtensionPoints(String elementId);
+	public IExtensionPoint[] getExtensionPoints(String namespace);
 	/**
-	 * Returns all extensions declared by the given element. Returns an empty array if 
-	 * the given element does not declare any extensions.
+	 * Returns all extensions declared in the given namespace. Returns an empty array if 
+	 * no extensions are declared in the namespace.
 	 * 
-	 * @param elementId the unique identifier of the element 
+	 * @param namespace the namespace for the extensions 
 	 *		(e.g. <code>"org.eclipse.core.resources"</code>)
-	 * @return the extensions in this registry declared by the given element 
+	 * @return the extensions in this registry declared in the given namespace 
 	 */
-	public IExtension[] getExtensions(String elementId);
+	public IExtension[] getExtensions(String namespace);
 	/**
 	 * Returns all elements that declare extensions and/or extension points. Returns an 
-	 * empty array if there is no known extension/extension point elements in this registry.
+	 * empty array if there are no known extensions/extension points in this registry.
 	 * 
 	 * @return the identifiers of all elements known to this registry
+	 * @deprecated use getNamespaces instead
 	 */
 	public String[] getElementIdentifiers();
+	/**
+	 * Returns all namespaces where extensions and/or extension points. Returns an 
+	 * empty array if there are no known extensions/extension points in this registry.
+	 * 
+	 * @return all namespaces known to this registry
+	 */	
+	public String[] getNamespaces();
 	/** 
 	 * Removes the given registry change listener from this registry.
 	 * Has no effect if an identical listener is not registered.

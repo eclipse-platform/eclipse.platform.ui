@@ -25,32 +25,32 @@ public interface IRegistryChangeEvent {
 	 */
 	public IExtensionDelta[] getExtensionDeltas();
 	/** 
-	 * Returns all extension deltas for the given element. Returns an empty array if there are
-	 * no deltas in this event for any extension points provided by the given element. 
+	 * Returns all extension deltas for the given namespace. Returns an empty array if there are
+	 * no deltas in this event for any extension points provided in the given namespace. 
 	 * 
-	 * @param elementId the element identifier 
-	 * @return all extension deltas for the given element 
+	 * @param namespace the namespace for the extension deltas 
+	 * @return all extension deltas for the given namespace 
 	 */
-	public IExtensionDelta[] getExtensionDeltas(String elementId);
+	public IExtensionDelta[] getExtensionDeltas(String namespace);
 	/** 
-	 * Returns all the extension deltas for the given element and extension point. Returns an 
+	 * Returns all the extension deltas for the given namespace and extension point. Returns an 
 	 * empty array if there are no deltas in this event for the given extension point.
 	 *  
-	 * @param elementId the element identifier
+	 * @param names the namespace for the extension point
 	 * @param extensionPoint the simple identifier of the 
 	 * extension point (e.g. <code>"builders"</code>)
 	 * @return all extension deltas for the given extension point
 	 */
-	public IExtensionDelta[] getExtensionDeltas(String elementId, String extensionPoint);
+	public IExtensionDelta[] getExtensionDeltas(String namespace, String extensionPoint);
 	/** 
-	 * Returns the delta for the given element, extension point and extension. 
+	 * Returns the delta for the given namespace, extension point and extension. 
 	 * Returns <code>null</code> if none exists in this event.
 	 * 
-	 * @param elementId the element identifier
+	 * @param namespace the namespace for the extension point
 	 * @param extensionPoint the simple identifier of the 
 	 * extension point (e.g. <code>"builders"</code>)
 	 * @param extension the unique identifier of the extension
 	 * @return the extension delta, or <code>null</code>
 	 */
-	public IExtensionDelta getExtensionDelta(String elementId, String extensionPoint, String extension);
+	public IExtensionDelta getExtensionDelta(String namespace, String extensionPoint, String extension);
 }
