@@ -500,8 +500,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	*/
 	protected void fillDetailContextMenu(IMenuManager menu) {
 		
+		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));		
 		menu.add(getAction("ContentAssist")); //$NON-NLS-1$
-		menu.add(new Separator());		
+		menu.add(new Separator());
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
 
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
