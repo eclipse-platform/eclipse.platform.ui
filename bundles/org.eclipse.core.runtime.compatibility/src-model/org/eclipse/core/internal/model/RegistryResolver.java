@@ -433,13 +433,6 @@ public class RegistryResolver {
 			return true;
 		}
 
-		private void removeConstraint(Constraint c) {
-			ConstraintsEntry cie = getConstraintsEntryFor(c);
-			cie.removeConstraint(c);
-			if (concurrentList.get(0) != cie && cie.constraintCount() == 0)
-				concurrentList.remove(cie);
-		}
-
 		private void removeConstraintFor(PluginPrerequisiteModel prereq) {
 			for (Iterator list = concurrentList.iterator(); list.hasNext();)
 				((ConstraintsEntry) list.next()).removeConstraintFor(prereq);
@@ -521,11 +514,6 @@ public class RegistryResolver {
 
 		private List getChanges() {
 			return changes;
-		}
-
-		private void clearChanges() {
-			if (changes.size() >= 0)
-				changes = new ArrayList();
 		}
 
 		private boolean isOk() {
@@ -961,24 +949,6 @@ public class RegistryResolver {
 		}
 		newValues[newValues.length - 1] = ext;
 		extPt.setDeclaredExtensions(newValues);
-	}
-
-	private void resolveFragments() {
-		PluginFragmentModel[] fragments = reg.getFragments();
-		HashSet seen = new HashSet(5);
-		for (int i = 0; i < fragments.length; i++) {
-			PluginFragmentModel fragment = fragments[i];
-			if (!requiredFragment(fragment))
-				continue;
-			if (seen.contains(fragment.getId()))
-				continue;
-			seen.add(fragment.getId());
-			PluginDescriptorModel plugin = reg.getPlugin(fragment.getPluginId(), fragment.getPluginVersion());
-			if (plugin == null)
-				// XXX log something here?
-				continue;
-			resolvePluginFragments(plugin);
-		}
 	}
 
 	private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPrerequisiteModel prq, Cookie cookie, Set orphans) {

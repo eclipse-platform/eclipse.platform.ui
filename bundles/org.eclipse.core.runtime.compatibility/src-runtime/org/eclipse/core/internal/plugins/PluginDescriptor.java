@@ -115,10 +115,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 		return classLoader;
 	}
 
-	public PluginRegistry getPluginRegistry() {
-		return (PluginRegistry) org.eclipse.core.internal.plugins.InternalPlatform.getPluginRegistry();
-	}
-
 	/**
 	 * @see IPluginDescriptor
 	 */
@@ -220,16 +216,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 	}
 
 	/**
-	 * Returns true if the plugin is active or is currently in the process of being 
-	 * activated, and false otherwse.
-	 * NOTE: This method is not synchronized because it is called from within a
-	 * sync block in PluginClassLoader.
-	 */
-	boolean hasActivationStarted() {
-		return activePending || active;
-	}
-
-	/**
 	 * @see IPluginDescriptor
 	 */
 	public synchronized boolean isPluginActivated() {
@@ -240,14 +226,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 		//would break the registry shutdown procedure, because a
 		//plugin being activated during shutdown would never be shut down.
 		return bundleOsgi.getState() == Bundle.ACTIVE;
-	}
-
-	/*
-	 * NOTE: This method is not synchronized because it is called from within a
-	 * sync block in PluginClassLoader.
-	 */
-	public boolean isPluginDeactivated() {
-		return deactivated;
 	}
 
 	private void logError(IStatus status) {
@@ -434,14 +412,6 @@ public class PluginDescriptor implements IPluginDescriptor {
 
 	public void setPlugin(Plugin object) {
 		pluginObject = object;
-	}
-
-	public synchronized void setActive() {
-		this.active = true;
-	}
-	
-	public boolean hasPluginObject() {
-		return pluginObject!=null;
 	}
 
 	public void markAsDeactivated() {
