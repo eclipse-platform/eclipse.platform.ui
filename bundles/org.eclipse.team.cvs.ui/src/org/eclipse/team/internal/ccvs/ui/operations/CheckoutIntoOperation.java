@@ -18,6 +18,9 @@ import java.util.Set;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -110,8 +113,25 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.operations.CheckoutOperation#checkout(org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder, org.eclipse.core.runtime.IProgressMonitor)
 	 */
-	protected IStatus checkout(ICVSRemoteFolder folder, IProgressMonitor monitor) throws CVSException {
-		return checkout(folder, getLocalFolder(), isRecursive(), monitor);
+	protected IStatus checkout(final ICVSRemoteFolder folder, IProgressMonitor monitor) throws CVSException {
+		final IStatus[] result = new IStatus[] { null };
+		try {
+			// Wrap in a workspace runnable to avoid auto-build.
+			// This is necessary because CVS has a POST_BUILD
+			// listener that will clear the sync info from
+			// orphaned (i.e. unmanaged) subtrees and we will
+			// purposely create some which we subsequently manage
+			// from their parent (see manageFolders())
+			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					result[0] = checkout(folder, getLocalFolder(), isRecursive(), monitor);
+
+				}
+			}, getLocalFolder().getIResource().getProject(), monitor);
+		} catch (CoreException e) {
+			result[0] = CVSException.wrapException(e).getStatus();
+		}
+		return result[0];
 	}
 	
 	/* (non-Javadoc)
@@ -322,7 +342,7 @@ public class CheckoutIntoOperation extends CheckoutOperation {
 		return OK;
 	}
 
-	private IStatus checkout(final ICVSRemoteFolder remoteFolder, ICVSFolder parentFolder, boolean recurse, IProgressMonitor monitor) throws CVSException {
+	/* private */ IStatus checkout(final ICVSRemoteFolder remoteFolder, ICVSFolder parentFolder, boolean recurse, IProgressMonitor monitor) throws CVSException {
 		// Open a connection session to the repository
 		monitor.beginTask(null, 100);
 		ICVSRepositoryLocation repository = remoteFolder.getRepository();
