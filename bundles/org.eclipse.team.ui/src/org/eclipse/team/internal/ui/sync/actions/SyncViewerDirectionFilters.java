@@ -20,7 +20,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
@@ -28,6 +27,7 @@ import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.team.internal.ui.Policy;
 
 /**
  * This ActionGroup provides filtering of a sync set by change direction.
@@ -36,7 +36,7 @@ import org.eclipse.ui.actions.ActionContext;
  */
 public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 
-	private static final String MEMENTO_KEY = "SyncViewerDirectionFilters";
+	private static final String MEMENTO_KEY = "SyncViewerDirectionFilters"; //$NON-NLS-1$
 	
 	// An array of the selection actions for the modes (indexed by mode constant)	
 	private List actions = new ArrayList(3);
@@ -49,22 +49,16 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 	class DirectionFilterAction extends Action {
 		// The sync mode that this action enables
 		private int syncMode;
-		// the title to be used for the view when this mode is active
-		private String viewTitle;
-		public DirectionFilterAction(String title, ImageDescriptor image, int mode, String viewTitle) {
+		public DirectionFilterAction(String title, ImageDescriptor image, int mode) {
 			super(title, SWT.TOGGLE);
 			setImageDescriptor(image);
 			this.syncMode = mode;
-			this.viewTitle = viewTitle;
 		}
 		public void run() {
 			updateFilter(this);
 		}
 		public int getFilter() {
 			return syncMode;
-		}
-		public String getViewTitle() {
-			return viewTitle;
 		}
 	}
 	
@@ -80,31 +74,28 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 	private void createActions() {
 		// Create the actions
 		DirectionFilterAction incomingMode = new DirectionFilterAction(
-			Policy.bind("SyncView.incomingModeAction"), //$NON-NLS-1$
+			Policy.bind("SyncViewerDirectionFilters.incomingTitle"), //$NON-NLS-1$
 			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP_ENABLED),
-			SyncInfo.INCOMING,
-			Policy.bind("SyncView.incomingModeTitle"));
-		incomingMode.setToolTipText(Policy.bind("SyncView.incomingModeToolTip")); //$NON-NLS-1$
+			SyncInfo.INCOMING);
+		incomingMode.setToolTipText(Policy.bind("SyncViewerDirectionFilters.incomingToolTip")); //$NON-NLS-1$
 		incomingMode.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP_DISABLED));
 		incomingMode.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP));
 		actions.add(incomingMode);
 					
 		DirectionFilterAction outgoingMode = new DirectionFilterAction(
-			Policy.bind("SyncView.outgoingModeAction"), //$NON-NLS-1$
+			Policy.bind("SyncViewerDirectionFilters.outgoingTitle"), //$NON-NLS-1$
 			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE_ENABLED),
-			SyncInfo.OUTGOING,
-			Policy.bind("SyncView.outgoingModeTitle"));
-		outgoingMode.setToolTipText(Policy.bind("SyncView.outgoingModeToolTip")); //$NON-NLS-1$
+			SyncInfo.OUTGOING);
+		outgoingMode.setToolTipText(Policy.bind("SyncViewerDirectionFilters.outgoingToolTip")); //$NON-NLS-1$
 		outgoingMode.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE_DISABLED));
 		outgoingMode.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE));
 		actions.add(outgoingMode);
 		
 		DirectionFilterAction conflictsMode = new DirectionFilterAction(
-			Policy.bind("CatchupReleaseViewer.showOnlyConflictsAction"), //$NON-NLS-1$
+			Policy.bind("SyncViewerDirectionFilters.conflictingTitle"),  //$NON-NLS-1$
 			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING_ENABLED),
-			SyncInfo.CONFLICTING,
-			"Synchronize - Conflict Mode");
-		conflictsMode.setToolTipText(Policy.bind("CatchupReleaseViewer.showOnlyConflictsAction")); //$NON-NLS-1$
+			SyncInfo.CONFLICTING);
+		conflictsMode.setToolTipText(Policy.bind("SyncViewerDirectionFilters.conflictingToolTip")); //$NON-NLS-1$
 		conflictsMode.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING_DISABLED));
 		conflictsMode.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING));
 		actions.add(conflictsMode);
