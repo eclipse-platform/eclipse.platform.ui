@@ -278,7 +278,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	public void propertyChange(PropertyChangeEvent event) {
 		String propertyName= event.getProperty();
 		if (propertyName.equals(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION)) {
-			setDetailPaneOrientation((String)event.getNewValue());
+			setDetailPaneOrientation(DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION));
 		} else if (propertyName.equals(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB)) {
 			getEventHandler().refresh();
 		}
