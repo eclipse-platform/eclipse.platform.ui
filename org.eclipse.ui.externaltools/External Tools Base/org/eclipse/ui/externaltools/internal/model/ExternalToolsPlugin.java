@@ -175,6 +175,20 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	}
 
 	/**
+	 * @see org.eclipse.core.runtime.Plugin#startup()
+	 */
+	public void startup() throws CoreException {
+		super.startup();
+		getStandardDisplay().asyncExec(
+			new Runnable() {
+				public void run() {
+					//initialize the variable context manager
+					VariableContextManager.getDefault();
+				}
+			});	
+	}
+
+	/**
 	 * @see org.eclipse.core.runtime.Plugin#shutdown()
 	 */
 	public void shutdown() throws CoreException {

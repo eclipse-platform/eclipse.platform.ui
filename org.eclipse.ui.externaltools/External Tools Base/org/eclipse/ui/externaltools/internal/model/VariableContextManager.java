@@ -12,10 +12,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -28,16 +29,26 @@ import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
  * the selected resource, unless a build is in progress - in which case
  * the context is based on the project being built..
  */
-public class VariableContextManager {
+public class VariableContextManager implements IWindowListener, ISelectionListener {
 
 	// singleton
 	private static VariableContextManager fgDefault;
+	
+	private IResource fSelectedResource = null;
 	
 	private boolean fBuilding = false;
 	private IProject fProject = null;
 	private int fKind;
 	
 	private VariableContextManager() {
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench != null) { //may be running headless
+			workbench.addWindowListener(this);
+			IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
+			if (activeWindow != null) {
+				windowActivated(activeWindow);
+			}
+		} 
 	}
 	
 	/**
@@ -51,59 +62,81 @@ public class VariableContextManager {
 		return fgDefault;
 	}
 	
-	private IResource getSelectedResource() {
-		IResource selectedResource= null;
-		IWorkbench workbench = PlatformUI.getWorkbench();
-		if (workbench != null) { //may be running headless
-			IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
-			if (activeWindow == null) {
-				return null;
-			}
-			ISelectionService service = activeWindow.getSelectionService();
-			IWorkbenchPage page = activeWindow.getActivePage();
-			if (page == null) {
-				return null;
-			}
+	/**
+	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
+	 */
+	public void windowActivated(IWorkbenchWindow window) {
+		fSelectedResource = null;
+		ISelectionService service = window.getSelectionService(); 
+		service.addSelectionListener(this);
+		IWorkbenchPage page = window.getActivePage();
+		if (page != null) {
 			IWorkbenchPart part = page.getActivePart();
-			if (part == null) {
-				return null;
-			}
-			ISelection selection = service.getSelection();
-			if (selection instanceof IStructuredSelection) {
-				Object result = ((IStructuredSelection)selection).getFirstElement();
-				if (result instanceof IResource) {
-					selectedResource = (IResource) result;
-				} else if (result instanceof IAdaptable) {
-					selectedResource = (IResource)((IAdaptable) result).getAdapter(IResource.class);
+			if (part != null) {				
+				ISelection selection = service.getSelection();
+				if (selection != null) {
+					selectionChanged(part, selection);
 				}
 			}
-			if (selectedResource == null && part instanceof IEditorPart) {
-					// If the active part is an editor, get the file resource used as input.
-					IEditorPart editorPart = (IEditorPart) part;
-					IEditorInput input = editorPart.getEditorInput();
-					selectedResource = (IResource) input.getAdapter(IResource.class);
-				}
+		}
+	}
+
+	/**
+	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
+	 */
+	public void windowClosed(IWorkbenchWindow window) {
+		window.getSelectionService().removeSelectionListener(this);
+	}
+
+	/**
+	 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
+	 */
+	public void windowDeactivated(IWorkbenchWindow window) {
+		window.getSelectionService().removeSelectionListener(this);
+	}
+
+	/**
+	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
+	 */
+	public void windowOpened(IWorkbenchWindow window) {
+	}
+
+	/**
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
+	 */
+	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+		IResource selectedResource = null;
+		if (selection instanceof IStructuredSelection) {
+			Object result = ((IStructuredSelection)selection).getFirstElement();
+			if (result instanceof IResource) {
+				selectedResource = (IResource) result;
+			} else if (result instanceof IAdaptable) {
+				selectedResource = (IResource)((IAdaptable) result).getAdapter(IResource.class);
 			}
-			
-		return selectedResource;
+		}
+		
+		if (selectedResource == null) {
+			// If the active part is an editor, get the file resource used as input.
+			if (part instanceof IEditorPart) {
+				IEditorPart editorPart = (IEditorPart) part;
+				IEditorInput input = editorPart.getEditorInput();
+				selectedResource = (IResource) input.getAdapter(IResource.class);
+			} 
+		}
+		
+		fSelectedResource = selectedResource;
 	}
 	
 	/**
-	 * Returns the active variable context. The build context is that of the
-	 * seleted resource, or a project being built.
+	 * Returns the active variable context. The context is that of the selected
+	 * resource, or a project being built.
 	 * 
 	 * @return variable context	 */
 	public ExpandVariableContext getVariableContext() {
 		if (fBuilding) {
 			return new ExpandVariableContext(fProject, fKind);
 		} else {
-			final IResource[] resource= new IResource[1];
-			Display.getDefault().syncExec(new Runnable() {
-				public void run() {
-					resource[0]= getSelectedResource();
-				}
-			});
-			return new ExpandVariableContext(resource[0]);
+			return new ExpandVariableContext(fSelectedResource);
 		}
 	}
 	
@@ -124,5 +157,6 @@ public class VariableContextManager {
 	 */
 	public void buildEnded() {
 		fBuilding = false;
+		fProject= null;
 	}
 }
