@@ -49,8 +49,8 @@ public String getBuilderName();
  * build spec using <code>IProjectDescription.setBuildSpec</code>.
  * </p>
  *
- * @param args a table of command arguments (key type : <code>String</code> 
- *		value type : <code>String</code>), or <code>null</code>
+ * @param args a table of command arguments (keys and values must
+ *   both be of type <code>String</code>), or <code>null</code>
  * @see #getArguments
  */
 public void setArguments(Map args);
