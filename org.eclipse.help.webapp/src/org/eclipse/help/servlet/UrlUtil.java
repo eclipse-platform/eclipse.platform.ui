@@ -186,7 +186,15 @@ public class UrlUtil {
 		str.getChars(0, str.length(), wordChars, 0);
 		StringBuffer jsEncoded = new StringBuffer();
 		for (int j = 0; j < wordChars.length; j++) {
-			String charInHex = Integer.toString((int) wordChars[j], 16).toUpperCase();
+			int unicode = (int) wordChars[j];
+			// to enhance readability, do not encode A-Z,a-z
+			if (((int) 'A' <= unicode && unicode <= (int) 'Z')
+				|| ((int) 'a' <= unicode && unicode <= (int) 'z')) {
+				jsEncoded.append(wordChars[j]);
+				continue;
+			}
+			// encode the character
+			String charInHex = Integer.toString(unicode, 16).toUpperCase();
 			switch (charInHex.length()) {
 				case 1 :
 					jsEncoded.append("\\u000").append(charInHex);
