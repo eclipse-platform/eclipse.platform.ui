@@ -65,7 +65,7 @@ public final class DiffRegion extends Annotation implements ILineDiffInfo {
 			case ADDED:
 				return "org.eclipse.ui.workbench.texteditor.quickdiffAddition"; //$NON-NLS-1$
 			case UNCHANGED:
-				// fall through to unknown
+				return "org.eclipse.ui.workbench.texteditor.quickdiffUnchanged"; //$NON-NLS-1$
 			default:
 				return TYPE_UNKNOWN;
 		}
