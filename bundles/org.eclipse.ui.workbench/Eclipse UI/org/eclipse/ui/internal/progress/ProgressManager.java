@@ -95,13 +95,13 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	private class DefaultMonitor extends NullProgressMonitor implements IProgressMonitorWithBlocking {
 		private ProgressMonitorJobsDialog dialog;
 		private EventLoopProgressMonitor eventLoopMonitor;
-		private String taskName = "";
+		private String taskName = ""; //$NON-NLS-1$
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
 		 */
 		public void beginTask(String name, int totalWork) {
 			//remember the task name for use when the operation is blocked
-			this.taskName = name == null ? "" : name;
+			this.taskName = name == null ? "" : name; //$NON-NLS-1$
 		}
 		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
@@ -434,10 +434,15 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	public IProgressMonitor getDefaultMonitor() {
 		//only need a default monitor for operations the UI thread
-		if (Display.getDefault() == null)
-			return super.getDefaultMonitor();
-		else
-			return new DefaultMonitor();
+		//and only there is a display
+		Display display;
+		if(PlatformUI.isWorkbenchRunning()){
+			display = PlatformUI.getWorkbench().getDisplay();
+			if (display.getThread() == Thread.currentThread())
+				return new DefaultMonitor();
+		}
+		return super.getDefaultMonitor();
+			
 			
 	}
 
