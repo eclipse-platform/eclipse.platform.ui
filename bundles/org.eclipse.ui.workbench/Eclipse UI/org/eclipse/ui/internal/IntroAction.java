@@ -48,7 +48,7 @@ public class IntroAction extends Action implements
      */
     public IntroAction(IWorkbenchWindow window) {
 
-        super(IntroMessages.getString("Intro.action_text")); //$NON-NLS-1$
+        super(IntroMessages.Intro_action_text); 
         if (window == null) {
             throw new IllegalArgumentException();
         }

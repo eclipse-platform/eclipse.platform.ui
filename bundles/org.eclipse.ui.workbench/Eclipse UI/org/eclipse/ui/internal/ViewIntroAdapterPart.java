@@ -144,8 +144,7 @@ public final class ViewIntroAdapterPart extends ViewPart {
         } catch (CoreException e) {
             WorkbenchPlugin
                     .log(
-                            IntroMessages
-                                    .getString("Intro.could_not_create_proxy"), new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.getString("Intro.could_not_create_proxy"), e)); //$NON-NLS-1$ //$NON-NLS-2$
+                            IntroMessages.Intro_could_not_create_proxy, new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, IStatus.ERROR, IntroMessages.Intro_could_not_create_proxy, e)); 
         }
     }
 

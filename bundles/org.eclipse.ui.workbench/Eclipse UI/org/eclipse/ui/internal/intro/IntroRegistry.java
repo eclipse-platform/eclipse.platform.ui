@@ -76,8 +76,7 @@ public class IntroRegistry implements IIntroRegistry {
 						// log an error since its not safe to open a dialog here
 						WorkbenchPlugin
 								.log(
-										IntroMessages
-												.getString("Intro.could_not_create_descriptor"), e.getStatus());//$NON-NLS-1$
+										IntroMessages.Intro_could_not_create_descriptor, e.getStatus());
 					}
 				}
 			}
