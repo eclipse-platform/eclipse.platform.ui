@@ -21,7 +21,7 @@ public class AllTests extends TestCase {
 	 * Returns the test suite called by AutomatedTests and by JUnit test runners.
 	 */
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(ModelObjectReaderWriterTest.suite());
 		suite.addTest(ProjectPreferencesTest.suite());
 		suite.addTest(ResourceInfoTest.suite());

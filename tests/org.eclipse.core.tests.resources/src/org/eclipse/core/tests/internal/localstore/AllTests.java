@@ -23,7 +23,7 @@ public class AllTests extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(BlobStoreTest.suite());
 		suite.addTest(CaseSensitivityTest.suite());
 		suite.addTest(CopyTest.suite());

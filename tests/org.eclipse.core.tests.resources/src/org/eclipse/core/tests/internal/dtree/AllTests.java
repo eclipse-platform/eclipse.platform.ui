@@ -22,7 +22,7 @@ public class AllTests extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(DataTreeTest.suite());
 		suite.addTest(DeltaDataTreeTest.suite());
 		return suite;
