@@ -4,6 +4,7 @@ package org.eclipse.help.internal.util;
  * All Rights Reserved.
  */
 import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.HelpPlugin;
 /**
@@ -13,24 +14,25 @@ public class PluginVersionInfo extends HelpProperties {
 	Plugin basePlugin = HelpPlugin.getDefault();
 	boolean doComparison = true;
 	boolean hasChanged = false;
+	boolean ignoreSavedVersions;
 	Collection added = new ArrayList();
 	Collection removed = new ArrayList();
-	/**
-	 * Creates table of current contributing plugins and their version.
-	 * @param it iterator of current contributions (IConfigurationElement type)
-	 */
-	public PluginVersionInfo(String name, Iterator it) {
-		this(name, it, HelpPlugin.getDefault());
-	}
 	/**
 	 * Creates table of current contributing plugins and their version.
 	 * @param name the name of the file to serialize the data to
 	 * @param it iterator of current contributions (IConfigurationElement type)
 	 * @param basePlugin use this plugin's state location to store the data
+	 * @param ignoreSavedVersion if true, will cause detect change
+	 *  to ignore saved plugin version and behave like there was nothing saved
 	 */
-	public PluginVersionInfo(String name, Iterator it, Plugin basePlugin) {
+	public PluginVersionInfo(
+		String name,
+		Iterator it,
+		Plugin basePlugin,
+		boolean ignoreSavedVersions) {
 		super(name, basePlugin);
 		this.basePlugin = basePlugin;
+		this.ignoreSavedVersions = ignoreSavedVersions;
 		if (it == null)
 			return;
 		// create table of current contributions
@@ -51,7 +53,9 @@ public class PluginVersionInfo extends HelpProperties {
 			return hasChanged;
 		// Create table of contributions present before last save()
 		HelpProperties oldContrs = new HelpProperties(this.name, basePlugin);
-		oldContrs.restore();
+		if (!ignoreSavedVersions) {
+			oldContrs.restore();
+		}
 		// check if contributions changed
 		hasChanged = false;
 		//
@@ -102,6 +106,7 @@ public class PluginVersionInfo extends HelpProperties {
 		if (super.save()) {
 			doComparison = false;
 			hasChanged = false;
+			ignoreSavedVersions = false;
 			added = new ArrayList();
 			removed = new ArrayList();
 			return true;
