@@ -16,8 +16,14 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -27,12 +33,18 @@ import org.eclipse.ui.PlatformUI;
  * This class provides a facility for subclasses to define annotations
  * on the labels and icons of adaptable objects.
  */
-public class WorkbenchLabelProvider extends LabelProvider {
+public class WorkbenchLabelProvider extends LabelProvider implements IColorProvider {
 	/**
 	 * The cache of images that have been dispensed by this provider.
 	 * Maps ImageDescriptor->Image.
 	 */
 	private Map imageTable;
+	
+	/**
+	 * The cache of colors that have been dispensed by this provider.
+	 * Maps RGB->Color.
+	 */
+	private Map colorTable;
 
 	/**
 	 * Returns a workbench label provider that is hooked up to the decorator
@@ -50,6 +62,7 @@ public class WorkbenchLabelProvider extends LabelProvider {
 	 * Creates a new workbench label provider.
 	 */
 	public WorkbenchLabelProvider() {
+	    // no-op
 	}
 
 	/**
@@ -89,6 +102,12 @@ public class WorkbenchLabelProvider extends LabelProvider {
 				((Image) i.next()).dispose();
 			}
 			imageTable = null;
+		}
+		if (colorTable != null) {
+			for (Iterator i = colorTable.values().iterator(); i.hasNext();) {
+				((Color) i.next()).dispose();
+			}
+			colorTable = null;		    
 		}
 	}
 	/**
@@ -145,5 +164,43 @@ public class WorkbenchLabelProvider extends LabelProvider {
 		//return the decorated label
 		return decorateText(label, element);
 	}
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+     */
+    public Color getForeground(Object element) {
+        return getColor(element, true);
+    }
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+     */
+    public Color getBackground(Object element) {
+        return getColor(element, false);
+    }
+    
+    private Color getColor(Object element, boolean forground) {
+		IWorkbenchAdapter adapter = getAdapter(element);
+		if (adapter == null) {
+			return null;
+		}
+		RGB descriptor = 
+		    forground ? 
+		            adapter.getForeground(element) 
+		            : adapter.getBackground(element);
+		if (descriptor == null) {
+			return null;
+		}
+
+		//obtain the cached color corresponding to the descriptor
+		if (colorTable == null) {
+			colorTable = new Hashtable(7);
+		}
+		Color color = (Color) colorTable.get(descriptor);
+		if (color == null) {
+			color = new Color(Display.getCurrent(), descriptor);
+			colorTable.put(descriptor, color);
+		}
+		return color;
+        
+    }
 
 }

@@ -10,17 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.registry.*;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class ViewLabelProvider extends LabelProvider {
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
+import org.eclipse.ui.internal.WorkbenchImages;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.registry.Category;
+import org.eclipse.ui.internal.registry.IViewDescriptor;
+import org.eclipse.ui.internal.registry.ViewDescriptor;
+
+public class ViewLabelProvider extends LabelProvider implements IColorProvider {
 	private HashMap images;
 Image cacheImage(ImageDescriptor desc) {
 	if (images == null)
@@ -32,6 +38,9 @@ Image cacheImage(ImageDescriptor desc) {
 	}
 	return image;
 }
+/* (non-Javadoc)
+ * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+ */
 public void dispose() {
 	if (images != null) {
 		for (Iterator i = images.values().iterator(); i.hasNext();) {
@@ -41,6 +50,9 @@ public void dispose() {
 	}
 	super.dispose();
 }
+/* (non-Javadoc)
+ * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+ */
 public Image getImage(Object element) {
 	if (element instanceof IViewDescriptor) {
 		ImageDescriptor desc = ((IViewDescriptor)element).getImageDescriptor();
@@ -52,6 +64,9 @@ public Image getImage(Object element) {
 	}
 	return null;
 }
+/* (non-Javadoc)
+ * @see org.eclipse.jface.viewers.ILabelProvider#getText(java.lang.Object)
+ */
 public String getText(Object element) {
 	String label = WorkbenchMessages.getString("ViewLabel.unknown"); //$NON-NLS-1$
 	if (element instanceof Category)
@@ -59,5 +74,20 @@ public String getText(Object element) {
 	else if (element instanceof IViewDescriptor)
 		label = ((ViewDescriptor)element).getLabel();
 	return DialogUtil.removeAccel(label);
+}
+/* (non-Javadoc)
+ * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+ */
+public Color getForeground(Object element) {
+    return null;
+}
+/* (non-Javadoc)
+ * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+ */
+public Color getBackground(Object element) {
+    if (WorkbenchActivityHelper.filterItem(element)) {
+        return WorkbenchActivityHelper.getFilterColor();
+    }
+    return null;
 }
 }

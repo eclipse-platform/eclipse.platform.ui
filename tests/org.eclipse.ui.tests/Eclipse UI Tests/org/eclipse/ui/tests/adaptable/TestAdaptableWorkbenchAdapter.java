@@ -15,6 +15,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -153,4 +154,18 @@ public class TestAdaptableWorkbenchAdapter
 		//return the decorated label
 		return decorateText(label, element);
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter#getForeground(java.lang.Object)
+     */
+    public RGB getForeground(Object element) {
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.model.IWorkbenchAdapter#getBackground(java.lang.Object)
+     */
+    public RGB getBackground(Object element) {
+        return null;
+    }
 }

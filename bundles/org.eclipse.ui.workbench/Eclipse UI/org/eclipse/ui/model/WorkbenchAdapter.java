@@ -11,6 +11,7 @@
 package org.eclipse.ui.model;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.RGB;
 
 /**
  * Abstract base class with basic implementations of the IWorkbenchAdapter
@@ -57,4 +58,19 @@ public abstract class WorkbenchAdapter implements IWorkbenchAdapter {
 		return null;
 	}
 
+	/**
+	 * The default implementation of this <code>IWorkbenchAdapter</code> method
+	 * returns <code>null</code>. Subclasses may override.
+	 */
+    public RGB getBackground(Object element) {
+        return null;
+    }
+    
+	/**
+	 * The default implementation of this <code>IWorkbenchAdapter</code> method
+	 * returns <code>null</code>. Subclasses may override.
+	 */
+    public RGB getForeground(Object element) {
+        return null;
+    }
 }

@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.activities;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 
 /**
  * A utility class that contains helpful methods for interacting with the
- * activities API.
+ * activities API.  The methods in this class are experimental and may change.
  * 
  * @since 3.0
  */
@@ -35,7 +38,31 @@ public final class WorkbenchActivityHelper {
 			return contribution.getPluginId() + '/' + contribution.getLocalId();
 		return contribution.getLocalId();
 	}
+	
+    /**
+     * @return the <code>RGB</code> that should be used to highlight filtered 
+     * contributions.
+     */
+    public static RGB getFilterRGB() {
+        return PlatformUI
+		.getWorkbench()
+		.getDisplay()
+		.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW)
+		.getRGB();
+    }
+	
 
+    /**
+     * @return the <code>Color</code> that should be used to highlight filtered 
+     * contributions.
+     */
+    public static Color getFilterColor() {
+        return PlatformUI
+        		.getWorkbench()
+        		.getDisplay()
+        		.getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW);
+    }	
+	
 	/**
 	 * Answers whether the provided object should be filtered from the UI based
 	 * on activity state. Returns false except when the object is an instance
@@ -85,5 +112,6 @@ public final class WorkbenchActivityHelper {
 	 * Not intended to be instantiated.
 	 */
 	private WorkbenchActivityHelper() {
+	    // no-op
 	}
 }
