@@ -42,6 +42,7 @@ public static Test suite() {
 }
 protected void tearDown() throws Exception {
 	super.tearDown();
+	//FIXME: This refresh may fail in the future if the .project file has been deleted
 	getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);
 	ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
 }
@@ -2106,39 +2107,47 @@ public void testProjectMoveContent() {
 	IResource[] resources = buildResources(project, children);
 	ensureExistsInWorkspace(project, true);
 	ensureExistsInWorkspace(resources, true);
+	Set pathsToDelete = new HashSet(5);
 
-	// move the project content
-	IProjectDescription destination = null;
 	try {
-		destination = project.getDescription();
-	} catch (CoreException e) {
-		fail("1.0", e);
-	}
-	IPath oldPath = project.getLocation();
-	IPath newPath = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
-	destination.setLocation(newPath);
-	try {
-		project.move(destination, false, getMonitor());
-	} catch (CoreException e) {
-		fail("1.1", e);
-	}
-	newPath = project.getLocation();
-	
-	// ensure that the new description was set correctly and the locations
-	// aren't the same
-	assertTrue("2.0", !oldPath.equals(newPath));
-
-	// make sure all the resources still exist.	
-	IResourceVisitor visitor = new IResourceVisitor() {
-		public boolean visit(IResource resource) throws CoreException {
-			assertExistsInWorkspace("2.1." + resource.getFullPath(), resource);
-			return true;
+		// move the project content
+		IProjectDescription destination = null;
+		try {
+			destination = project.getDescription();
+		} catch (CoreException e) {
+			fail("1.0", e);
 		}
-	};
-	try {
-		getWorkspace().getRoot().accept(visitor);
-	} catch (CoreException e) {
-		fail("2.2", e);
+		IPath oldPath = project.getLocation();
+		IPath newPath = new Path(System.getProperty("user.dir")).append(Long.toString(System.currentTimeMillis()));
+		pathsToDelete.add(newPath);
+		destination.setLocation(newPath);
+		try {
+			project.move(destination, false, getMonitor());
+		} catch (CoreException e) {
+			fail("1.1", e);
+		}
+		newPath = project.getLocation();
+		
+		// ensure that the new description was set correctly and the locations
+		// aren't the same
+		assertTrue("2.0", !oldPath.equals(newPath));
+	
+		// make sure all the resources still exist.	
+		IResourceVisitor visitor = new IResourceVisitor() {
+			public boolean visit(IResource resource) throws CoreException {
+				assertExistsInWorkspace("2.1." + resource.getFullPath(), resource);
+				return true;
+			}
+		};
+		try {
+			getWorkspace().getRoot().accept(visitor);
+		} catch (CoreException e) {
+			fail("2.2", e);
+		}
+	} finally {
+		for (Iterator i=pathsToDelete.iterator(); i.hasNext();) {
+			Workspace.clear(((IPath) i.next()).toFile());
+		}
 	}
 }
 public void testProjectMoveVariations() {
