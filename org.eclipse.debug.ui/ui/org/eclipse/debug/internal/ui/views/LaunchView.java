@@ -382,7 +382,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				if (selection instanceof IStructuredSelection) {
 					obj= ((IStructuredSelection) selection).getFirstElement();
 				}
-				if (obj == null || !(obj instanceof IStackFrame)) {
+				if (!(obj instanceof IStackFrame)) {
 					return;
 				}
 				
