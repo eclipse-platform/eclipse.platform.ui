@@ -258,6 +258,9 @@ public int getMinimumHeight() {
 	
 	int topHeight = Math.max(leftHeight, Math.max(centerHeight, rightHeight));
 	
+	// account for the borders
+	topHeight = control.computeTrim(0, 0, 0, topHeight).height;
+	
 	/* add +1 for highlight line. ViewForm adds this *inside* client area
 	 * even though it's arguably an inset; see ViewForm.layout for details.
 	 */
