@@ -33,7 +33,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IProjectSetSerializer;
+import org.eclipse.team.core.ProjectSetCapability;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.RepositoryProviderType;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.ui.TeamImages;
@@ -89,6 +91,26 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 							return;
 						}
 					}
+					
+					// Hash the projects by provider
+					IProject[] projects = mainPage.getSelectedProjects();
+					Map map = new HashMap();
+					for (int i = 0; i < projects.length; i++) {
+						IProject project = projects[i];
+						RepositoryProvider provider = RepositoryProvider.getProvider(project);
+						if (provider != null) {
+							String id = provider.getID();
+							List list = (List)map.get(id);
+							if (list == null) {
+								list = new ArrayList();
+								map.put(id, list);
+							}
+							list.add(project);
+						}
+					}
+					
+					Shell shell = getShell();
+					
 					BufferedWriter writer = null;
 					try {
 						writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")); //$NON-NLS-1$
@@ -97,26 +119,8 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 						writer.newLine();
 						writer.write("<psf version=\"2.0\">"); //$NON-NLS-1$
 						writer.newLine();
-						IProject[] projects = mainPage.getSelectedProjects();
-						
-						// Hash the projects by provider
-						Map map = new HashMap();
-						for (int i = 0; i < projects.length; i++) {
-							IProject project = projects[i];
-							RepositoryProvider provider = RepositoryProvider.getProvider(project);
-							if (provider != null) {
-								String id = provider.getID();
-								List list = (List)map.get(id);
-								if (list == null) {
-									list = new ArrayList();
-									map.put(id, list);
-								}
-								list.add(project);
-							}
-						}
 						
 						// For each provider id, do the writing
-						Shell shell = getShell();
 						Iterator it = map.keySet().iterator();
 						monitor.beginTask(null, 1000 * map.keySet().size());
 						while (it.hasNext()) {
@@ -129,7 +133,7 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 							IProject[] projectArray = (IProject[])list.toArray(new IProject[list.size()]);
 							IProjectSetSerializer serializer = Team.getProjectSetSerializer(id);
 							if (serializer != null) {
-								String[] references = serializer.asReference(projectArray, shell, new SubProgressMonitor(monitor, 1000));
+								String[] references = serializer.asReference(projectArray, shell, new SubProgressMonitor(monitor, 990));
 								for (int i = 0; i < references.length; i++) {
 									writer.write("\t\t<project reference=\""); //$NON-NLS-1$
 									writer.write(references[i]);
@@ -148,7 +152,6 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					} finally {
-						monitor.done();
 						if (writer != null) {
 							try {
 								writer.close();
@@ -157,6 +160,20 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 							}
 						}
 					}
+					
+					// notify provider types of the project set write
+					for (Iterator iter = map.keySet().iterator();iter.hasNext();) {
+						String id = (String) iter.next();
+						RepositoryProviderType type = RepositoryProviderType.getProviderType(id);
+						if (type != null) {
+							ProjectSetCapability capability = type.getProjectSetCapability();
+							if (capability != null) {
+								capability.projectSetCreated(file, shell, new SubProgressMonitor(monitor, 10));
+							}
+						}
+					}
+					
+					monitor.done();
 				}
 			});
 		} catch (InterruptedException e) {

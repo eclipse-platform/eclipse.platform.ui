@@ -46,6 +46,7 @@
          point="org.eclipse.team.core.repository">
       <repository
             class="org.eclipse.team.internal.ccvs.core.CVSTeamProvider"
+            typeClass="org.eclipse.team.internal.ccvs.core.CVSTeamProviderType"
             id="org.eclipse.team.cvs.core.cvsnature">
       </repository>
 	</extension>
