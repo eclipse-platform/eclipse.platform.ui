@@ -57,9 +57,10 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         3.0
+         3.0 (originally added in release 2.1 as org.eclipse.help.webapp)
       </documentation>
    </annotation>
+
 
    <annotation>
       <appInfo>
