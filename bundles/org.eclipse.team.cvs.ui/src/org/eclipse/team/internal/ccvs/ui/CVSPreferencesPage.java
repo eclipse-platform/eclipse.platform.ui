@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSCommandOptions.QuietOption;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -238,12 +239,12 @@ public class CVSPreferencesPage
 		return CVSUIPlugin.getPlugin().getPreferenceStore();
 	}
 	
-	protected static String getQuietnessOptionFor(int option) {
+	protected static QuietOption getQuietnessOptionFor(int option) {
 		switch (option) {
-			case 0: return "";
-			case 1: return "-q";
-			case 2: return "-Q";
+			case 0: return null;
+			case 1: return QuietOption.PARTLY_QUIET;
+			case 2: return QuietOption.SILENT;
 		}
-		return "";
+		return null;
 	}
 }
