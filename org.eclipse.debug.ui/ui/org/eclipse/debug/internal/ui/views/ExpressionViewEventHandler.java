@@ -49,9 +49,11 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 	public void expressionAdded(final IExpression expression) {
 		Runnable r = new Runnable() {
 			public void run() {
-				insert(expression);
-				selectAndReveal(expression);
-				getTreeViewer().expandToLevel(expression, 1);
+				if (isAvailable()) {
+					insert(expression);
+					selectAndReveal(expression);
+					getTreeViewer().expandToLevel(expression, 1);
+				}
 			}
 		};
 		getView().asyncExec(r);
@@ -63,14 +65,16 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 	public void expressionRemoved(final IExpression expression) {
 		Runnable r = new Runnable() {
 			public void run() {
-				remove(expression);
-				IContentProvider provider= getTreeViewer().getContentProvider();
-				if (provider instanceof ExpressionViewContentProvider) {
-					ExpressionViewContentProvider expressionProvider= (ExpressionViewContentProvider) provider;
-					List decendants = expressionProvider.getCachedDecendants(expression);
-					decendants.add(expression);
-					// Remove the parent cache for the expression and its children
-					expressionProvider.removeCache(decendants.toArray());
+				if (isAvailable()) {
+					remove(expression);
+					IContentProvider provider= getTreeViewer().getContentProvider();
+					if (provider instanceof ExpressionViewContentProvider) {
+						ExpressionViewContentProvider expressionProvider= (ExpressionViewContentProvider) provider;
+						List decendants = expressionProvider.getCachedDecendants(expression);
+						decendants.add(expression);
+						// Remove the parent cache for the expression and its children
+						expressionProvider.removeCache(decendants.toArray());
+					}
 				}
 			}
 		};
@@ -88,5 +92,4 @@ public class ExpressionViewEventHandler extends VariablesViewEventHandler implem
 		};
 		getView().asyncExec(r);			
 	}
-
 }

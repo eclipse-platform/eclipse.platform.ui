@@ -201,24 +201,26 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	public void launchRemoved(final ILaunch launch) {
 		Runnable r= new Runnable() {
 			public void run() {
-				remove(launch);
-				ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
-				IDebugTarget[] targets= lm.getDebugTargets();
-				if (targets.length > 0) {
-					IDebugTarget target= targets[targets.length - 1];
-					try {
-						IThread[] threads= target.getThreads();
-						for (int i=0; i < threads.length; i++) {
-							if (threads[i].isSuspended()) {
-								getLaunchView().autoExpand(threads[i], false, true);
-								return;
-							}
-						}						
-					} catch (DebugException de) {
-						DebugUIPlugin.logError(de);
+				if (isAvailable()) {
+					remove(launch);
+					ILaunchManager lm= DebugPlugin.getDefault().getLaunchManager();
+					IDebugTarget[] targets= lm.getDebugTargets();
+					if (targets.length > 0) {
+						IDebugTarget target= targets[targets.length - 1];
+						try {
+							IThread[] threads= target.getThreads();
+							for (int i=0; i < threads.length; i++) {
+								if (threads[i].isSuspended()) {
+									getLaunchView().autoExpand(threads[i], false, true);
+									return;
+								}
+							}						
+						} catch (DebugException de) {
+							DebugUIPlugin.logError(de);
+						}
+						
+						getLaunchView().autoExpand(target.getLaunch(), false, true);
 					}
-					
-					getLaunchView().autoExpand(target.getLaunch(), false, true);
 				}
 			}
 		};
@@ -237,10 +239,12 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 */
 	public void launchAdded(final ILaunch newLaunch) {
 		Runnable r= new Runnable() {
-			public void run() {		
-				removeTerminatedLaunches(newLaunch);
-				insert(newLaunch);
-				getLaunchView().autoExpand(newLaunch, false, true);
+			public void run() {
+				if (isAvailable()) {		
+					removeTerminatedLaunches(newLaunch);
+					insert(newLaunch);
+					getLaunchView().autoExpand(newLaunch, false, true);
+				}
 			}
 		};
 
