@@ -161,12 +161,16 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 	public boolean equals(Object other) {
 		if(other == this) return true;
 		if(other instanceof SyncInfoCompareInput) {
-			return node.equals(((SyncInfoCompareInput)other).getCompareResult());
+			return equals(node, (SyncInfoDiffNode)((SyncInfoCompareInput)other).getCompareResult());
 		} else if(other instanceof SyncInfoCompareInputFinder) {
 			return true;
 		}
 		return false;
 	}	
+	
+	private boolean equals(SyncInfoDiffNode node1, SyncInfoDiffNode node2) {
+		return ((LocalResourceTypedElement)node1.getLeft()).getResource().equals(((LocalResourceTypedElement)node2.getLeft()).getResource());
+	}
 	
 	/* (non-Javadoc)
 	 * @see CompareEditorInput#saveChanges(org.eclipse.core.runtime.IProgressMonitor)
