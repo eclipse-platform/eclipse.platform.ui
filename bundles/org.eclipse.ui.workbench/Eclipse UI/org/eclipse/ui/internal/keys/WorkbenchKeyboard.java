@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -59,6 +60,8 @@ import org.eclipse.ui.keys.SWTKeySupport;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.commands.ws.WorkbenchCommandSupport;
+import org.eclipse.ui.internal.contexts.ws.WorkbenchContextSupport;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.internal.util.Util;
@@ -819,7 +822,25 @@ public final class WorkbenchKeyboard {
                     .println("KEYS >>> WorkbenchKeyboard.press(potentialKeyStrokes = " //$NON-NLS-1$
                             + potentialKeyStrokes + ")"); //$NON-NLS-1$
         }
-
+        
+        /* 
+         * TODO Kludge.  A partial workaround for Bug 56231.  This should be
+         * removed once SWT fixes Bug 56231 such that activation works properly
+         * on all platforms.
+         */
+        if ("gtk".equals(SWT.getPlatform())) { //$NON-NLS-1$
+            final Widget widget = event.widget;
+            final Shell shell;
+            if ((widget instanceof Control) && (!widget.isDisposed())) {
+                shell = ((Control) widget).getShell();
+            } else {
+                shell = event.display.getActiveShell();
+            }
+            
+            ((WorkbenchCommandSupport) workbench.getCommandSupport()).processHandlerSubmissions(false, shell);
+            ((WorkbenchContextSupport) workbench.getContextSupport()).processEnabledSubmissions(false, shell);
+        }
+        
         KeySequence sequenceBeforeKeyStroke = state.getCurrentSequence();
         for (Iterator iterator = potentialKeyStrokes.iterator(); iterator
                 .hasNext();) {

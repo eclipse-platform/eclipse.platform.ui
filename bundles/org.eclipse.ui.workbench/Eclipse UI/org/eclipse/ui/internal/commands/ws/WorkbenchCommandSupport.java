@@ -263,7 +263,13 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
                 .getActiveShell());
     }
 
-    private void processHandlerSubmissions(boolean force,
+    /**
+     * If you use this method, I will break your legs.
+     * 
+     * TODO See WorkbenchKeyboard.  Switch to private when Bug 56231 is 
+     * resolved.
+     */
+    public void processHandlerSubmissions(boolean force,
             final Shell newActiveShell) {
         IWorkbenchSite newWorkbenchSite = null;
         IWorkbenchWindow newWorkbenchWindow = workbench
