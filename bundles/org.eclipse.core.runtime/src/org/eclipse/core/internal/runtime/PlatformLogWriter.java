@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.FrameworkLogEntry;
 
@@ -22,25 +24,37 @@ public class PlatformLogWriter implements ILogListener {
 	 * @see ILogListener#logging.
 	 */
 	public synchronized void logging(IStatus status, String plugin) {
-		writeLog(status, 0);
+		FrameworkLogEntry logEntry = getLog(status);
+		InternalPlatform.getDefault().getFrameworkLog().log(logEntry);
 	}
-	protected void writeLog(IStatus status, int depth) {
+	protected FrameworkLogEntry getLog(IStatus status) {
 		StringBuffer entry = new StringBuffer();
 		entry.append(status.getPlugin()).append(" "); //$NON-NLS-1$
 		entry.append(Integer.toString(status.getSeverity())).append(" "); //$NON-NLS-1$
 		entry.append(Integer.toString(status.getCode()));
 		Throwable t = status.getException();
+		ArrayList childlist = new ArrayList();
+		
 		int stackCode = t instanceof CoreException ? 1 : 0;
-		FrameworkLogEntry logEntry = new FrameworkLogEntry(depth,entry.toString(),status.getMessage(),stackCode,t);
-		InternalPlatform.getDefault().getFrameworkLog().log(logEntry);
 		// ensure a substatus inside a CoreException is properly logged 
-		if (stackCode == 1)
-			writeLog(((CoreException)t).getStatus(),0);
+		if (stackCode == 1) {
+			IStatus coreStatus = ((CoreException)t).getStatus();
+			if (coreStatus != null) {
+				childlist.add(getLog(coreStatus));
+			}
+		}
+
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();
 			for (int i = 0; i < children.length; i++) {
-				writeLog(children[i], depth + 1);
+				childlist.add(getLog(children[i]));
 			}
 		}
+
+		FrameworkLogEntry[] children = (FrameworkLogEntry[]) 
+			(childlist.size()==0 ? null :
+				childlist.toArray(new FrameworkLogEntry[childlist.size()]));
+
+		return new FrameworkLogEntry(entry.toString(),status.getMessage(),stackCode,t,children);
 	}
 }
