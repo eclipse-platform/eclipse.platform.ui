@@ -238,10 +238,12 @@ public void run();
  * The default implementation of this method in <code>Action</code>
  * simply calls <code>run()</code> for backwards compatibility.
  * 
+ * NOTE: This is experimental API, which may change in the future.
+ * 
  * @param event the SWT event which triggered this action being run 
  * @since 2.0
  */
-public void run(Event event);
+public void runWithEvent(Event event);
 
 /**
  * Sets the checked status of this action.

@@ -125,7 +125,7 @@ protected void propogateChange(PropertyChangeEvent event) {
  */
 public void run(Event event) {
 	if (handler != null)
-		handler.run(event);
+		handler.runWithEvent(event);
 }
 /**
  * Set the action handler.  Update self.

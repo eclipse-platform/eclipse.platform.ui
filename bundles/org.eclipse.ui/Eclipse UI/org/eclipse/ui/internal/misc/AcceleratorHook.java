@@ -175,7 +175,7 @@ private int getAccel(Event e) {
 public void handleEvent(Event event) {
 	ActionItem item = findItem(event);
 	if (item != null)
-		item.action.run(event);
+		item.action.runWithEvent(event);
 }
 
 /**

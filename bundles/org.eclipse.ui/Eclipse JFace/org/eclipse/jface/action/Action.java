@@ -443,9 +443,11 @@ public void run() {
  * Subclasses should override this method if they need information 
  * from the triggering event, or override <code>run()</code> if not.
  * 
+ * NOTE: This is experimental API, which may change in the future.
+ *
  * @since 2.0
  */
-public void run(Event event) {
+public void runWithEvent(Event event) {
 	run();
 }
 
