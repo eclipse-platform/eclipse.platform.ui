@@ -12,6 +12,7 @@ package org.eclipse.search.ui.text;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
@@ -55,6 +56,8 @@ import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.SearchMessages;
+import org.eclipse.search2.internal.ui.basic.views.CollapseAllAction;
+import org.eclipse.search2.internal.ui.basic.views.ExpandAllAction;
 import org.eclipse.search2.internal.ui.basic.views.INavigate;
 import org.eclipse.search2.internal.ui.basic.views.RemoveAllMatchesAction;
 import org.eclipse.search2.internal.ui.basic.views.RemoveMatchAction;
@@ -218,7 +221,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			SearchPluginImages.setImageDescriptors(fHierarchicalAction, SearchPluginImages.T_LCL, SearchPluginImages.IMG_LCL_SEARCH_HIERARCHICAL_LAYOUT);
 		}
 	}
-
+	
 	private int countBits(int layoutFlags) {
 		int bitCount = 0;
 		for (int i = 0; i < 32; i++) {
@@ -841,6 +844,15 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			actionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), fShowPreviousAction);
 			actionBars.setGlobalActionHandler(ActionFactory.DELETE.getId(), fRemoveSelectedMatches);
 		}
+		if (getLayout() == FLAG_LAYOUT_TREE) {
+			addTreeActions(tbm);
+		}
+	}
+
+	private void addTreeActions(IToolBarManager tbm) {
+		// create new actions, new viewer created
+		tbm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, new ExpandAllAction((TreeViewer)getViewer()));
+		tbm.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, new CollapseAllAction((TreeViewer)getViewer()));
 	}
 
 	private void addLayoutActions(IMenuManager menuManager) {
