@@ -164,7 +164,8 @@ public class UndoManager2 implements IUndoManager {
 				IStatus.ERROR, "Top most undoable operation doesn't represent a refactoring change", null));
 		if (query == null)
 			query= new NullQuery();
-		fOperationHistroy.undoOperation(op, pm, new QueryAdapter(query));
+		// TODO handle exception
+		// fOperationHistroy.undoOperation(op, pm, new QueryAdapter(query));
 	}
 
 	public boolean anythingToRedo() {
@@ -185,7 +186,8 @@ public class UndoManager2 implements IUndoManager {
 				IStatus.ERROR, "Top most redoable operation doesn't represent a refactoring change", null));
 		if (query == null)
 			query= new NullQuery();
-		fOperationHistroy.redoOperation(op, pm, new QueryAdapter(query));
+		// TODO handle exception
+		// fOperationHistroy.redoOperation(op, pm, new QueryAdapter(query));
 	}
 
 	public void flush() {
