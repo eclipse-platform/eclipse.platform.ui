@@ -191,7 +191,13 @@ public void update(boolean force) {
 				// add new
 				IContributionItem src, dest;
 				ws= statusLine.getChildren();
-				int srcIx= 1;
+				
+				// scrIx is used to skip over the standard status line widgets
+				// (label, stop button and progress bar). There is thus a dependency
+				// between this code and the creation and layout of the standard widgets
+				// in the StatusLine constructor and in StatusLineLayout.layout
+				
+				int srcIx= 3;
 				int destIx= 0;
 				int oldChildCount = ws.length;
 				for (int i = 0; i < items.length; ++i) {
