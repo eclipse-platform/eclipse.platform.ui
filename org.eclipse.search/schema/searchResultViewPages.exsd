@@ -40,7 +40,7 @@
                   The fully qualified class name of the &lt;code&gt;ISearchResult&lt;/code&gt; implementation this search result page supposed to show.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.search.ui.ISearchResult"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -50,7 +50,7 @@
                   the fully qualified class name implementing this search result page. The class must implement &lt;code&gt;org.eclipse.search.ui.ISearchResultPage&lt;/code&gt;.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.search.ui.ISearchResultPage"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -83,13 +83,13 @@
 &lt;p&gt;
 &lt;pre&gt;
 &lt;extension
-	id=&quot;FileSearchPage&quot;
+ id=&quot;FileSearchPage&quot;
     point=&quot;org.eclipse.search.searchResultViewPages&quot;&gt;
-	&lt;viewPage
-		id=&quot;org.eclipse.search.text.FileSearchResultPage&quot;
-		searchResultClass=&quot;org.eclipse.search.internal.ui.text.FileSearchResult&quot;
-		class=&quot;org.eclipse.search.internal.ui.text.FileSearchPage&quot;&gt;
-	&lt;/viewPage&gt;
+ &lt;viewPage
+  id=&quot;org.eclipse.search.text.FileSearchResultPage&quot;
+  searchResultClass=&quot;org.eclipse.search.internal.ui.text.FileSearchResult&quot;
+  class=&quot;org.eclipse.search.internal.ui.text.FileSearchPage&quot;&gt;
+ &lt;/viewPage&gt;
 &lt;/extension&gt;
 &lt;/pre&gt;
 &lt;/p&gt;
