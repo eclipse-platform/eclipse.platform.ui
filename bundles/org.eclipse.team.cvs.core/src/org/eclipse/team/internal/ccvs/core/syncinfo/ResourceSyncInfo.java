@@ -157,15 +157,26 @@ public class ResourceSyncInfo {
 	}
 	
 	/**
+	 * Answers if this sync information is for a resource that has been merged with conflicts by the 
+	 * cvs server.
+	 * 
+	 * @return <code>true</code> if the sync information is for a file that has been merged and
+	 * <code>false</code> for folders and for files that have not been merged.
+	 */
+	public boolean isMergedWithConflicts() {
+		return syncType == TYPE_MERGED_WITH_CONFLICTS;
+	}
+	
+	/**
 	 * Answers if this sync information is for a resource that has been merged by the cvs server.
 	 * 
 	 * @return <code>true</code> if the sync information is for a file that has been merged and
 	 * <code>false</code> for folders and for files that have not been merged.
 	 */
 	public boolean isMerged() {
-		return syncType == TYPE_MERGED || syncType == TYPE_MERGED_WITH_CONFLICTS;
+		return syncType == TYPE_MERGED || isMergedWithConflicts();
 	}
-		
+	
 	/**
 	 * Answers if this sync information is for a file that has been added but not comitted
 	 * to the CVS repository yet.
@@ -212,7 +223,7 @@ public class ResourceSyncInfo {
 	 */
 	public String getServerEntryLine(Date fileTimestamp) {
 		String serverTimestamp;
-		if(fileTimestamp != null && isMerged()) {
+		if(fileTimestamp != null && (isMerged() || isMergedWithConflicts())) {
 			if(isNeedsMerge(fileTimestamp)) {
 				serverTimestamp = TIMESTAMP_SERVER_MERGED_WITH_CONFLICT;
 			} else {

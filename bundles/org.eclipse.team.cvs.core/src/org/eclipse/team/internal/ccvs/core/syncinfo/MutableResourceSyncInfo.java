@@ -100,4 +100,14 @@ public class MutableResourceSyncInfo extends ResourceSyncInfo {
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
+	
+	/**
+	 * Sets that this resource sync is a result of a non-conflicting merge
+	 */
+	public void setMerged() {
+		// if already merged state then ignore
+		if(syncType==TYPE_REGULAR) {			
+			this.syncType = TYPE_MERGED;
+		}
+	}
 }
