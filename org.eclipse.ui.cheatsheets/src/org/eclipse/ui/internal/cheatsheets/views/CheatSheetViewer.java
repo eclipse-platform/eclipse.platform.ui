@@ -19,7 +19,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	//CS Elements
 	private CheatSheetElement contentElement;
 	private URL contentURL;
-	private float csversion = 1.0f;
 	private String currentID;
 	private int currentItemNum;
 	private boolean hascontent = false;
@@ -109,7 +108,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 //		fireManagerItemEvent(ICheatSheetItemEvent.ITEM_ACTIVATED, nextItem);
 		collapseAllButCurrent(false);
 		
-		saveHelper.removeState(contentURL.toString());
+//		saveHelper.removeState(contentURL.toString());
 		saveCurrentSheet();
 
 
@@ -257,7 +256,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	}
 
 	private void checkDynamicModel() {
-		Properties props = saveHelper.getSavedStateProperties(contentURL, csversion);
+		Properties props = saveHelper.loadState(currentID);
 		if (props == null)
 			return;
 
@@ -353,7 +352,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	private void checkSavedState() {
 		Properties props = null;
 		if (savedProps == null) {
-			props = saveHelper.getSavedStateProperties(contentURL, csversion);
+			props = saveHelper.loadState(currentID);
 		} else {
 			props = savedProps;
 		}
@@ -372,7 +371,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		ArrayList completedStatesList = (ArrayList) props.get(IParserTags.COMPLETED);
 		ArrayList expandedStatesList = (ArrayList) props.get(IParserTags.EXPANDED);
 		expandRestoreList = (ArrayList) props.get(IParserTags.EXPANDRESTORE);
-		String cid = (String) props.get(IParserTags.CHEATSHEETID);
+		String cid = (String) props.get(IParserTags.ID);
 		Hashtable completedSubItems = (Hashtable) props.get(IParserTags.SUBITEMCOMPLETED);
 		Hashtable skippedSubItems = (Hashtable) props.get(IParserTags.SUBITEMSKIPPED);
 		Hashtable csmData = (Hashtable) props.get(IParserTags.MANAGERDATA);
@@ -644,13 +643,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	}
 
 	/**
-	 * @return
-	 */
-	private float getCsversion() {
-		return csversion;
-	}
-
-	/**
 	 * Returns the hascontent.
 	 * true if the cheatsheet has content loaded and displayed.
 	 * @return boolean
@@ -881,7 +873,7 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 			boolean expandRestoreActionState = false;
 			if(expandRestoreAction != null)
 				expandRestoreActionState = expandRestoreAction.isCollapsed();			
-			saveHelper.saveThisState(contentURL, currentItemNum, getViewItemArray(), expandRestoreActionState, expandRestoreList, currentID, getCheatsheetManager());
+			saveHelper.saveState(currentItemNum, getViewItemArray(), expandRestoreActionState, expandRestoreList, currentID, getCheatsheetManager());
 		}
 	}
 
