@@ -26,9 +26,10 @@ public static void main(String[] args) {
 	junit.textui.TestRunner.run(suite());
 }
 public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new CipherTest("test1"));
-	return suite;
+	return new TestSuite(CipherTest.class);
+//	TestSuite suite = new TestSuite();
+//	suite.addTest(new CipherTest("test1"));
+//	return suite;
 }
 public void test1(){
 	try {
@@ -44,6 +45,38 @@ public void test1(){
 		fail("04", e);
 	}
 }
+public void testDifferentChunkSizes() {
+	//read and write different chunk sizes at once.  Should still decrypt to
+	//be the same bytes
+	byte[] inputBytes = "This is the message that will be encrypted.".getBytes();	
+	String password = "music";
+	
+	//encrypt first ten bytes, then remaining bytes
+	try {
+		Cipher cipher = new Cipher(Cipher.ENCRYPT_MODE, password);
+		byte[] encrypted1 = cipher.cipher(inputBytes, 0, 10);
+		//introduce some noise by encrypting an empty array
+		cipher.cipher(new byte[0]);
+		byte[] encrypted2 = cipher.cipher(inputBytes, 10, inputBytes.length-10);
+		byte[] fullEncrypted = new byte[encrypted1.length + encrypted2.length];
+		System.arraycopy(encrypted1, 0, fullEncrypted, 0, encrypted1.length);
+		System.arraycopy(encrypted2, 0, fullEncrypted, encrypted1.length, encrypted2.length);
+
+		cipher = new Cipher(Cipher.DECRYPT_MODE, password);
+		//introduce some noise by decrypting an empty array
+		cipher.cipher(new byte[0]);
+		//now decrypt all at once
+		byte[] result = cipher.cipher(fullEncrypted);
+		
+		assertEquals("1.0", inputBytes.length, result.length);
+		for (int i = 0; i < inputBytes.length; i++) {
+			assertEquals("2." + i, inputBytes[i], result[i]);
+		}
+	} catch (Exception e) {
+		fail("1.99", e);
+	}
+}
+	
 protected String[] getMessages() {
 	return new String[] {
 		"This is a test a test!",
