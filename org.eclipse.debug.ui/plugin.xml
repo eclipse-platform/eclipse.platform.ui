@@ -1266,7 +1266,7 @@
             overviewRulerPreferenceKey="breakpointIndicationInOverviewRuler">
       </specification>
       <specification
-            colorPreferenceValue="0,255,0"
+            colorPreferenceValue="217,255,226"
             annotationType="org.eclipse.debug.core.currentIP"
             colorPreferenceKey="currentIPColor"
             verticalRulerPreferenceKey="currentIPVerticalRuler"
@@ -1276,14 +1276,14 @@
             highlightPreferenceKey="currentIPHighlight"
             highlightPreferenceValue="true"
             markerType="org.eclipse.debug.ui.instructionPointer.current"
-            presentationLayer="6"
+            presentationLayer="0"
             textPreferenceValue="false"
             label="%debugCurrentInstructionPointer"
             textPreferenceKey="currentIPIndication"
             markerSeverity="0">
       </specification>      
       <specification
-            colorPreferenceValue="0,160,0"
+            colorPreferenceValue="217,255,226"
             annotationType="org.eclipse.debug.core.secondaryIP"
             colorPreferenceKey="secondaryIPColor"
             verticalRulerPreferenceKey="secondaryIPVerticalRuler"
@@ -1293,7 +1293,7 @@
             highlightPreferenceKey="secondaryIPHighlight"
             highlightPreferenceValue="true"
             markerType="org.eclipse.debug.ui.instructionPointer.secondary"
-            presentationLayer="6"
+            presentationLayer="0"
             textPreferenceValue="false"
             label="%debugCallStack"
             textPreferenceKey="secondaryIPIndication"
