@@ -294,13 +294,14 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 * @param input the input on which to open the compare editor
 	 * @see CompareEditorInput
 	 */
-	public void openCompareEditor(CompareEditorInput input) {
+	public void openCompareEditor(CompareEditorInput input, IWorkbenchPage page) {
 		
-		if (compareResultOK(input)) {				
-			IWorkbenchPage activePage= getActivePage();
-			if (activePage != null) {
+		if (compareResultOK(input)) {
+			if (page == null)
+				page= getActivePage();
+			if (page != null) {
 				try {
-					activePage.openEditor(input, COMPARE_EDITOR);
+					page.openEditor(input, COMPARE_EDITOR);
 				} catch (PartInitException e) {
 					MessageDialog.openError(getShell(), Utilities.getString("CompareUIPlugin.openEditorError"), e.getMessage()); //$NON-NLS-1$
 				}

@@ -7,19 +7,25 @@ package org.eclipse.compare.internal;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 
-import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 
 
-public class CompareAction implements IActionDelegate {
+/*
+ * The "Compare with each other" action
+ */
+public class CompareAction implements IObjectActionDelegate {
 
 	private ResourceCompareInput fInput;
+	private IWorkbenchPage fWorkbenchPage;
 
 	public void run(IAction action) {
 		if (fInput != null) {
 			fInput.initializeCompareConfiguration();
-			CompareUI.openCompareEditor(fInput);
+			CompareUI.openCompareEditorOnPage(fInput, fWorkbenchPage);
 			fInput= null;	// don't reuse this input!
 		}
 	}
@@ -34,5 +40,9 @@ public class CompareAction implements IActionDelegate {
 			fInput= new ResourceCompareInput(cc);
 		}
 		action.setEnabled(fInput.setSelection(selection));
+	}
+
+	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
+		fWorkbenchPage= targetPart.getSite().getPage();
 	}
 }

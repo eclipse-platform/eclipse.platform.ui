@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.Viewer;
 
 import org.eclipse.core.runtime.IAdaptable;
 
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.compare.internal.CompareUIPlugin;
@@ -101,14 +102,26 @@ public final class CompareUI {
 	
 	/**
 	 * Performs the comparison described by the given input and opens a
-	 * compare editor on the result.
+	 * compare editor on the result in the currently active workbench page.
 	 *
 	 * @param input the input on which to open the compare editor
 	 */
 	public static void openCompareEditor(CompareEditorInput input) {
+		openCompareEditorOnPage(input, null);
+	}
+			
+	/**
+	 * Performs the comparison described by the given input and opens a
+	 * compare editor on the result in the given workbench page.
+	 *
+	 * @param input the input on which to open the compare editor
+	 * @param page the workbench page in which to open the compare editor
+	 * @since 2.1
+	 */
+	public static void openCompareEditorOnPage(CompareEditorInput input, IWorkbenchPage page) {
 		CompareUIPlugin plugin= CompareUIPlugin.getDefault();
 		if (plugin != null)
-			plugin.openCompareEditor(input);
+			plugin.openCompareEditor(input, page);
 	}
 			
 	/**
