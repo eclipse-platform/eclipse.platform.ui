@@ -11,12 +11,11 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.text.DateFormat;
-import java.util.*;
+import java.util.Date;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.*;
@@ -24,21 +23,17 @@ import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.resources.*;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation.LogEntryCache;
-import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.*;
 
 /**
  * Collector that fetches the log for incoming CVS change sets
  */
-public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector {
+public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector implements LogEntryCacheUpdateHandler.ILogsFetchedListener {
 
     /*
      * Constant used to add the collector to the configuration of a page so
@@ -46,16 +41,18 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector {
      */
     public static final String CVS_CHECKED_IN_COLLECTOR = CVSUIPlugin.ID + ".CVSCheckedInCollector"; //$NON-NLS-1$
     
-	// Log operation that is used to fetch revision histories from the server. It also
-	// provides caching so we keep it around.
-    private LogEntryCache logs;
-	
-	// Job that builds the layout in the background.
-	private boolean shutdown = false;
-	private FetchLogEntriesJob fetchLogEntriesJob;
-
+    /*
+     * Constant used to store the log entry handler in the configuration so it can
+     * be kept around over layout changes
+     */
+    private static final String LOG_ENTRY_HANDLER = CVSUIPlugin.ID + ".LogEntryHandler"; //$NON-NLS-1$
+    
     private static final String DEFAULT_INCOMING_SET_NAME = "Unassigned Remote Changes";
+    
+    boolean disposed = false;
 
+    private LogEntryCache logEntryCache;
+    
 	/* *****************************************************************************
 	 * Special sync info that has its kind already calculated.
 	 */
@@ -70,45 +67,6 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector {
 			return kind;
 		}
 	}
-	
-	/* *****************************************************************************
-	 * Background job to fetch commit comments and update view
-	 */
-	private class FetchLogEntriesJob extends Job {
-		private Set syncSets = new HashSet();
-		public FetchLogEntriesJob() {
-			super(Policy.bind("CVSChangeSetCollector.4"));  //$NON-NLS-1$
-			setUser(false);
-		}
-		public boolean belongsTo(Object family) {
-			return family == ISynchronizeManager.FAMILY_SYNCHRONIZE_OPERATION;
-		}
-		public IStatus run(IProgressMonitor monitor) {
-			
-				if (syncSets != null && !shutdown) {
-					// Determine the sync sets for which to fetch comment nodes
-					SyncInfoSet[] updates;
-					synchronized (syncSets) {
-						updates = (SyncInfoSet[]) syncSets.toArray(new SyncInfoSet[syncSets.size()]);
-						syncSets.clear();
-					}
-					for (int i = 0; i < updates.length; i++) {
-						calculateRoots(updates[i], monitor);
-					}
-				}
-				return Status.OK_STATUS;
-		
-		}
-		public void add(SyncInfoSet set) {
-			synchronized(syncSets) {
-				syncSets.add(set);
-			}
-			schedule();
-		}
-		public boolean shouldRun() {
-			return !syncSets.isEmpty();
-		}
-	};
 	
 	private class DefaultCheckedInChangeSet extends CheckedInChangeSet {
 
@@ -178,282 +136,81 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector {
         configuration.setProperty(CVSChangeSetCollector.CVS_CHECKED_IN_COLLECTOR, this);
     }
 
+    public synchronized LogEntryCacheUpdateHandler getLogEntryHandler() {
+        LogEntryCacheUpdateHandler handler = (LogEntryCacheUpdateHandler)getConfiguration().getProperty(LOG_ENTRY_HANDLER);
+        if (handler == null) {
+            handler = initializeLogEntryHandler(getConfiguration());
+        }
+        handler.setListener(this);
+        return handler;
+    }
+    
+    /*
+     * Initialize the log entry handler and place it in the configuration
+     */
+    private LogEntryCacheUpdateHandler initializeLogEntryHandler(ISynchronizePageConfiguration configuration) {
+        final LogEntryCacheUpdateHandler logEntryHandler = new LogEntryCacheUpdateHandler(configuration);
+        configuration.setProperty(LOG_ENTRY_HANDLER, logEntryHandler);
+        // Use an action group to get notified when the configuration is disposed
+        configuration.addActionContribution(new SynchronizePageActionGroup() {
+            public void dispose() {
+                super.dispose();
+                LogEntryCacheUpdateHandler handler = (LogEntryCacheUpdateHandler)getConfiguration().getProperty(LOG_ENTRY_HANDLER);
+                if (handler != null) {
+                    handler.shutdown();
+                    getConfiguration().setProperty(LOG_ENTRY_HANDLER, null);
+                }
+            }
+        });
+        return logEntryHandler;
+    }
+
     /* (non-Javadoc)
      * @see org.eclipse.team.core.subscribers.SyncInfoSetChangeSetCollector#add(org.eclipse.team.core.synchronize.SyncInfo[])
      */
     protected void add(SyncInfo[] infos) {
-        startUpdateJob(new SyncInfoSet(infos));
+        LogEntryCacheUpdateHandler handler = getLogEntryHandler();
+        if (handler != null)
+            handler.fetch(infos);
     }
 
     /* (non-Javadoc)
      * @see org.eclipse.team.ui.synchronize.SyncInfoSetChangeSetCollector#reset(org.eclipse.team.core.synchronize.SyncInfoSet)
      */
     public void reset(SyncInfoSet seedSet) {
-        // Cancel any currently running job
-        if (fetchLogEntriesJob != null) {
-	        try {
-	            fetchLogEntriesJob.cancel();
-	            fetchLogEntriesJob.join();
-	        } catch (InterruptedException e) {
-	        }
+        // Notify thet handler to stop any fetches in progress
+        LogEntryCacheUpdateHandler handler = getLogEntryHandler();
+        if (handler != null) {
+            handler.stopFetching();
         }
         super.reset(seedSet);
     }
-    
-	private synchronized void startUpdateJob(SyncInfoSet set) {
-		if(fetchLogEntriesJob == null) {
-			fetchLogEntriesJob = new FetchLogEntriesJob();
-		}
-		fetchLogEntriesJob.add(set);
-	}
 	
-	private void calculateRoots(SyncInfoSet set, IProgressMonitor monitor) {
-		try {
-			monitor.beginTask(null, 100);
-			// Decide which nodes we have to fetch log histories
-			SyncInfo[] infos = set.getSyncInfos();
-			ArrayList remoteChanges = new ArrayList();
-			for (int i = 0; i < infos.length; i++) {
-				SyncInfo info = infos[i];
-				if(isRemoteChange(info)) {
-					remoteChanges.add(info);
-				}
-			}	
-			handleRemoteChanges((SyncInfo[]) remoteChanges.toArray(new SyncInfo[remoteChanges.size()]), monitor);
-		} catch (CVSException e) {
-			Utils.handle(e);
-		} catch (InterruptedException e) {
-		} finally {
-			monitor.done();
-		}
-	}
-	
-	/*
-	 * Return if this sync info should be considered as part of a remote change
-	 * meaning that it can be placed inside an incoming commit set (i.e. the
-	 * set is determined using the comments from the log entry of the file). 
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.views.HierarchicalModelProvider#dispose()
 	 */
-	private boolean isRemoteChange(SyncInfo info) {
-		int kind = info.getKind();
-		if(info.getLocal().getType() != IResource.FILE) return false;
-		if(info.getComparator().isThreeWay()) {
-			return (kind & SyncInfo.DIRECTION_MASK) != SyncInfo.OUTGOING;
-		}
-		// For two-way, the change is only remote if it has a remote or has a base locally
-		if (info.getRemote() != null) return true;
-		ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile)info.getLocal());
-		try {
-            return file.getSyncBytes() != null;
-        } catch (CVSException e) {
-            // Log the error and exclude the file from consideration
-            CVSUIPlugin.log(e);
-            return false;
-        }
+	public void dispose() {
+	    // No longer listen for log entry changes
+	    // (The handler is disposed with the page)
+	    disposed = true;
+        LogEntryCacheUpdateHandler handler = getLogEntryHandler();
+        if (handler != null) handler.setListener(null);
+		getConfiguration().setProperty(CVSChangeSetCollector.CVS_CHECKED_IN_COLLECTOR, null);
+		logEntryCache = null;
+		super.dispose();
 	}
 	
 	/**
 	 * Fetch the log histories for the remote changes and use this information
 	 * to add each resource to an appropriate commit set.
      */
-    private void handleRemoteChanges(final SyncInfo[] infos, final IProgressMonitor monitor) throws CVSException, InterruptedException {
-        monitor.beginTask(null, 100);
-        final LogEntryCache logs = getSyncInfoComment(infos, Policy.subMonitorFor(monitor, 80));
+    private void handleRemoteChanges(final SyncInfo[] infos, final LogEntryCache logEntries, final IProgressMonitor monitor) {
         performUpdate(new IWorkspaceRunnable() {
             public void run(IProgressMonitor monitor) {
-                addLogEntries(infos, logs, monitor);
+                addLogEntries(infos, logEntries, monitor);
             }
-        }, true  /* preserver expansion */, Policy.subMonitorFor(monitor, 20));
-        monitor.done();
+        }, true  /* preserver expansion */, monitor);
     }
-    
-	/**
-	 * How do we tell which revision has the interesting log message? Use the later
-	 * revision, since it probably has the most up-to-date comment.
-	 */
-	private LogEntryCache getSyncInfoComment(SyncInfo[] infos, IProgressMonitor monitor) throws CVSException, InterruptedException {
-		if (logs == null) {
-		    logs = new LogEntryCache();
-		}
-	    if (isTagComparison()) {
-	        CVSTag tag = getCompareSubscriber().getTag();
-            if (tag != null) {
-	            // This is a comparison against a single tag
-                // TODO: The local tags could be different per root or even mixed!!!
-                fetchLogs(infos, logs, getLocalResourcesTag(infos), tag, monitor);
-	        } else {
-	            // Perform a fetch for each root in the subscriber
-	            Map rootToInfosMap = getRootToInfosMap(infos);
-	            monitor.beginTask(null, 100 * rootToInfosMap.size());
-	            for (Iterator iter = rootToInfosMap.keySet().iterator(); iter.hasNext();) {
-                    IResource root = (IResource) iter.next();
-                    List infoList = ((List)rootToInfosMap.get(root));
-                    SyncInfo[] infoArray = (SyncInfo[])infoList.toArray(new SyncInfo[infoList.size()]);
-                    fetchLogs(infoArray, logs, getLocalResourcesTag(infoArray), getCompareSubscriber().getTag(root), Policy.subMonitorFor(monitor, 100));
-                }
-	            monitor.done();
-	        }
-	        
-	    } else {
-	        // Run the log command once with no tags
-			fetchLogs(infos, logs, null, null, monitor);
-	    }
-		return logs;
-	}
-	
-	private void fetchLogs(SyncInfo[] infos, LogEntryCache cache, CVSTag localTag, CVSTag remoteTag, IProgressMonitor monitor) throws CVSException, InterruptedException {
-	    ICVSRemoteResource[] remoteResources = getRemotes(infos);
-	    if (remoteResources.length > 0) {
-			RemoteLogOperation logOperation = new RemoteLogOperation(getConfiguration().getSite().getPart(), remoteResources, localTag, remoteTag, cache);
-			logOperation.execute(monitor);
-	    }    
-	}
-	
-	private ICVSRemoteResource[] getRemotes(SyncInfo[] infos) {
-		List remotes = new ArrayList();
-		for (int i = 0; i < infos.length; i++) {
-			CVSSyncInfo info = (CVSSyncInfo)infos[i];
-			if (info.getLocal().getType() != IResource.FILE) {
-				continue;
-			}	
-			ICVSRemoteResource remote = getRemoteResource(info);
-			if(remote != null) {
-				remotes.add(remote);
-			}
-		}
-		return (ICVSRemoteResource[]) remotes.toArray(new ICVSRemoteResource[remotes.size()]);
-	}
-	
-    private boolean isTagComparison() {
-        return getCompareSubscriber() != null;
-    }
-    
-	/*
-     * Return a map of IResource -> List of SyncInfo where the resource
-     * is a root of the compare subscriber and the SyncInfo are children
-     * of that root
-     */
-    private Map getRootToInfosMap(SyncInfo[] infos) {
-        Map rootToInfosMap = new HashMap();
-        IResource[] roots = getCompareSubscriber().roots();
-        for (int i = 0; i < infos.length; i++) {
-            SyncInfo info = infos[i];
-            IPath localPath = info.getLocal().getFullPath();
-            for (int j = 0; j < roots.length; j++) {
-                IResource resource = roots[j];
-                if (resource.getFullPath().isPrefixOf(localPath)) {
-                    List infoList = (List)rootToInfosMap.get(resource);
-                    if (infoList == null) {
-                        infoList = new ArrayList();
-                        rootToInfosMap.put(resource, infoList);
-                    }
-                    infoList.add(info);
-                    break; // out of inner loop
-                }
-            }
-            
-        }
-        return rootToInfosMap;
-    }
-
-    private CVSTag getLocalResourcesTag(SyncInfo[] infos) {
-		try {
-			for (int i = 0; i < infos.length; i++) {
-				IResource local = infos[i].getLocal();
-                ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(local);
-				CVSTag tag = null;
-				if(cvsResource.isFolder()) {
-					FolderSyncInfo info = ((ICVSFolder)cvsResource).getFolderSyncInfo();
-					if(info != null) {
-						tag = info.getTag();									
-					}
-					if (tag != null && tag.getType() == CVSTag.BRANCH) {
-						tag = Util.getAccurateFolderTag(local, tag);
-					}
-				} else {
-					tag = Util.getAccurateFileTag(cvsResource);
-				}
-				if(tag == null) {
-					tag = new CVSTag();
-				}
-				return tag;
-			}
-			return new CVSTag();
-		} catch (CVSException e) {
-			return new CVSTag();
-		}
-	}
-	
-    private CVSCompareSubscriber getCompareSubscriber() {
-        ISynchronizeParticipant participant = getConfiguration().getParticipant();
-        if (participant instanceof CompareParticipant) {
-            return ((CompareParticipant)participant).getCVSCompareSubscriber();
-        }
-        return null;
-    }
-
-    private ICVSRemoteResource getRemoteResource(CVSSyncInfo info) {
-		try {
-			ICVSRemoteResource remote = (ICVSRemoteResource) info.getRemote();
-			ICVSRemoteResource local = CVSWorkspaceRoot.getRemoteResourceFor(info.getLocal());
-			if(local == null) {
-				local = (ICVSRemoteResource)info.getBase();
-			}
-			
-			boolean useRemote = true;
-			if (local != null && remote != null) {
-				String remoteRevision = getRevisionString(remote);
-				String localRevision = getRevisionString(local);
-				useRemote = useRemote(localRevision, remoteRevision);
-			} else if (remote == null) {
-				useRemote = false;
-			}
-			if (useRemote) {
-				return remote;
-			} else if (local != null) {
-				return local;
-			}
-			return null;
-		} catch (CVSException e) {
-			CVSUIPlugin.log(e);
-			return null;
-		}
-	}
-	
-    private boolean useRemote(String localRevision, String remoteRevision) {
-        boolean useRemote;
-        if (remoteRevision == null && localRevision == null) {
-            useRemote = true;
-        } else if (localRevision == null) {
-            useRemote = true;
-        } else if (remoteRevision == null) {
-            useRemote = false;
-        } else {
-            useRemote = ResourceSyncInfo.isLaterRevision(remoteRevision, localRevision);
-        }
-        return useRemote;
-    }
-
-    private String getRevisionString(ICVSRemoteResource remoteFile) {
-		if(remoteFile instanceof RemoteFile) {
-			return ((RemoteFile)remoteFile).getRevision();
-		}
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.views.HierarchicalModelProvider#dispose()
-	 */
-	public void dispose() {
-		shutdown = true;
-		if(fetchLogEntriesJob != null && fetchLogEntriesJob.getState() != Job.NONE) {
-			fetchLogEntriesJob.cancel();
-		}
-		if (logs != null) {
-		    logs.clearEntries();
-		}
-		getConfiguration().setProperty(CVSChangeSetCollector.CVS_CHECKED_IN_COLLECTOR, null);
-		super.dispose();
-	}
 	
     /*
 	 * Add the following sync info elements to the viewer. It is assumed that these elements have associated
@@ -480,12 +237,15 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector {
 	 * @param log the cvs log for this node
 	 */
 	private void addSyncInfoToCommentNode(SyncInfo info, LogEntryCache logs) {
-		ICVSRemoteResource remoteResource = getRemoteResource((CVSSyncInfo)info);
-		if(isTagComparison() && remoteResource != null) {
-			addMultipleRevisions(info, logs, remoteResource);
-		} else {
-			addSingleRevision(info, logs, remoteResource);
-		}
+	    LogEntryCacheUpdateHandler handler = getLogEntryHandler();
+	    if (handler != null) {
+			ICVSRemoteResource remoteResource = handler.getRemoteResource(info);
+			if(handler.getSubscriber() instanceof CVSCompareSubscriber && remoteResource != null) {
+				addMultipleRevisions(info, logs, remoteResource);
+			} else {
+				addSingleRevision(info, logs, remoteResource);
+			}
+	    }
 	}
 	
 	/*
@@ -549,7 +309,8 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector {
      * Add the remote change to an incoming commit set
      */
     private void addRemoteChange(SyncInfo info, ICVSRemoteResource remoteResource, ILogEntry logEntry) {
-        if(remoteResource != null && logEntry != null && isRemoteChange(info)) {
+        LogEntryCacheUpdateHandler handler = getLogEntryHandler();
+        if(handler != null && remoteResource != null && logEntry != null && handler.isRemoteChange(info)) {
 	        if(requiresCustomSyncInfo(info, remoteResource, logEntry)) {
 	        	info = new CVSUpdatableSyncInfo(info.getKind(), info.getLocal(), info.getBase(), (RemoteResource)logEntry.getRemoteFile(), ((CVSSyncInfo)info).getSubscriber());
 	        	try {
@@ -639,17 +400,33 @@ public class CVSChangeSetCollector extends SyncInfoSetChangeSetCollector {
         super.waitUntilDone(monitor);
 		monitor.worked(1);
 		// wait for the event handler to process changes.
-		while(fetchLogEntriesJob.getState() != Job.NONE) {
-			monitor.worked(1);
-			try {
-				Thread.sleep(10);		
-			} catch (InterruptedException e) {
+        LogEntryCacheUpdateHandler handler = getLogEntryHandler();
+        if (handler != null) {
+			while(handler.getEventHandlerJob().getState() != Job.NONE) {
+				monitor.worked(1);
+				try {
+					Thread.sleep(10);		
+				} catch (InterruptedException e) {
+				}
+				Policy.checkCanceled(monitor);
 			}
-			Policy.checkCanceled(monitor);
-		}
+        }
 		monitor.worked(1);
     }
-    public LogEntryCache getLogs() {
-        return logs;
+
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.ui.subscriber.LogEntryCacheUpdateHandler.ILogsFetchedListener#logEntriesFetched(org.eclipse.team.core.synchronize.SyncInfoSet, org.eclipse.core.runtime.IProgressMonitor)
+     */
+    public void logEntriesFetched(SyncInfoSet set, LogEntryCache logEntryCache, IProgressMonitor monitor) {
+        if (disposed) return;
+        // Hold on to the cache so we can use it while commit sets are visible
+        this.logEntryCache = logEntryCache;
+        handleRemoteChanges(set.getSyncInfos(), logEntryCache, monitor);
+    }
+
+    public ICVSRemoteFile getImmediatePredecessor(ICVSRemoteFile file) throws TeamException {
+        if (logEntryCache != null)
+            return logEntryCache.getImmediatePredecessor(file);
+        return null;
     }
 }

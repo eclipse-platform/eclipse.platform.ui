@@ -15,9 +15,7 @@ import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 import org.eclipse.team.internal.core.BackgroundEventHandler;
 
@@ -60,7 +58,7 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	}
 
 	public void ignoreFileChanged(IFile file) {
-		queueEvent(new Event(file, IGNORE_FILE_CHANGED, IResource.DEPTH_ZERO), false);
+		queueEvent(new ResourceEvent(file, IGNORE_FILE_CHANGED, IResource.DEPTH_ZERO), false);
 	}
 	
 	/**
@@ -70,7 +68,7 @@ public class DeferredResourceChangeHandler extends BackgroundEventHandler {
 	 * @param resource the recently add resource
 	 */
 	public void recreated(IResource resource) {
-		queueEvent(new Event(resource, RECREATED_CVS_RESOURCE, IResource.DEPTH_ZERO), false);
+		queueEvent(new ResourceEvent(resource, RECREATED_CVS_RESOURCE, IResource.DEPTH_ZERO), false);
 	}
 	
 	/* (non-Javadoc)

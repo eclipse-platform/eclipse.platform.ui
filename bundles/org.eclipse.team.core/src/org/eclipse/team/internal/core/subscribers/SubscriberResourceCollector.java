@@ -95,7 +95,7 @@ public abstract class SubscriberResourceCollector implements IResourceChangeList
      * Subclasses can accumulate removals and changes and handle them
      * at this point to allow batched change events.
      */
-    private void endInput() {
+    protected void endInput() {
         // Do nothing by default
     }
     
@@ -123,23 +123,14 @@ public abstract class SubscriberResourceCollector implements IResourceChangeList
 		int kind = delta.getKind();
 
 		if (resource.getType() == IResource.PROJECT) {
-			// Handle a deleted project
-			if (((kind & IResourceDelta.REMOVED) != 0)) {
-				remove(resource);
-				return;
-			}
-			// Handle a closed project
-			if ((delta.getFlags() & IResourceDelta.OPEN) != 0 && !((IProject) resource).isOpen()) {
-				remove(resource);
-				return;
-			}
-			// Only interested in projects mapped to the provider
-			if (!isAncestorOfRoot(resource, roots)) {
+			// Handle projects that should be removed from the collector
+			if (((kind & IResourceDelta.REMOVED) != 0) /* deleted project */ 
+			        || (delta.getFlags() & IResourceDelta.OPEN) != 0 && !((IProject) resource).isOpen() /* closed project */
+			        || !isAncestorOfRoot(resource, roots)) /* not within subscriber roots */ {
 				// If the project has any entries in the sync set, remove them
 				if (hasMembers(resource)) {
 					remove(resource);
 				}
-				return;
 			}
 		}
 
@@ -205,13 +196,16 @@ public abstract class SubscriberResourceCollector implements IResourceChangeList
     }
     
     /**
-     * Remove the resource from any sets since it is no longer relevant,
-     * @param resource the resource to be removed.
+     * The resource is no longer of concern to the subscriber.
+     * Remove the resource and any of it's descendants
+     * from the set of resources being collected.
+     * @param resource the resource to be removed along with its
+     * descendants.
      */
     protected abstract void remove(IResource resource);
 
     /**
-     * The resource sync state has changed to the depth specified
+     * The resource sync state has changed to the depth specified.
      * @param resource the resource
      * @param depth the depth
      */

@@ -251,6 +251,23 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 					TeamPlugin.log(e);
 				}
 			}
+		} else if (resource == null) {
+		    // For non-resource elements, show the same propogaqted marker as the children
+		    IDiffElement[] children = element.getChildren();
+		    for (int i = 0; i < children.length; i++) {
+                IDiffElement child = children[i];
+                if (child instanceof ISynchronizeModelElement) {
+                    ISynchronizeModelElement childElement = (ISynchronizeModelElement)child;
+                    if (childElement.getProperty(ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY)) {
+                        property = ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY;
+                        break;
+                    } else if (childElement.getProperty(ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY)) {
+						property = ISynchronizeModelElement.PROPAGATED_WARNING_MARKER_PROPERTY;
+						// Keep going because there may be errors on other resources
+					}
+                    
+                }   
+            }
 		}
 		return property;
 	}
@@ -700,6 +717,9 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		String property = calculateProblemMarker(node);
 		if (property != null) {
 			node.setProperty(property, true);
+			// Parent resource nodes would have been properly calculated when they were added.
+			// However, non-resource nodes would not so we need to propogate the marker to them
+			propogateMarkerPropertyToParent(node, property);
 		}
 		if (Utils.canUpdateViewer(getViewer())) {
 			doAdd((SynchronizeModelElement)node.getParent(), node);
@@ -707,7 +727,21 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 		updateHandler.nodeAdded(node, this);
 	}
 	
-	/**
+	/*
+     * Propogate the marker property to the parent if it is not already there.
+     * Only propogate warnings if the parent isn't an error already.
+     */
+    private void propogateMarkerPropertyToParent(ISynchronizeModelElement node, String property) {
+        ISynchronizeModelElement parent = (ISynchronizeModelElement)node.getParent();
+        if (parent != null 
+                && !parent.getProperty(property) 
+                && !parent.getProperty(ISynchronizeModelElement.PROPAGATED_ERROR_MARKER_PROPERTY)) {
+            parent.setProperty(property, true);
+            propogateMarkerPropertyToParent(parent, property);
+        }
+    }
+
+    /**
 	 * Remove any traces of the model element and any of it's descendants in the
 	 * hiearchy defined by the content provider from the content provider and
 	 * the viewer it is associated with.

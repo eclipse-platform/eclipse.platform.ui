@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.*;
+import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogListener;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.util.Util;
@@ -39,24 +40,34 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 	 * remote log operation.
 	 */
 	public static class LogEntryCache {
-		private Map entries = new HashMap();
-		private Map allEntries = new HashMap();
+	    
+	    /*
+	     * Map that is used for the single revision cases
+	     */
+		private Map entries = new HashMap(); /* Map ICVSRemoteFile->ILogEntry */
+		
+		/*
+		 * Map that is used to cache multiple ILogEntry for a single resource
+		 */
+		private Map allEntries = new HashMap(); /* Map String->ILogEntry[] */
+		
 		/**
 		 * Return the log entry that was fetch for the given resource
 		 * or <code>null</code> if no entry was fetched.
 		 * @param getFullPath(resource) the resource
 		 * @return the fetched log entry or <code>null</code>
 		 */
-		public ILogEntry getLogEntry(ICVSRemoteResource resource) {
+		public synchronized ILogEntry getLogEntry(ICVSRemoteResource resource) {
 			return (ILogEntry)entries.get(resource);
 		}
+		
 		/**
 		 * Return the log entries that were fetched for the given resource
 		 * or an empty list if no entry was fetched.
 		 * @param getFullPath(resource) the resource
 		 * @return the fetched log entries or an empty list is none were found
 		 */
-		public ILogEntry[] getLogEntries(ICVSRemoteResource resource) {
+		public synchronized ILogEntry[] getLogEntries(ICVSRemoteResource resource) {
 			return (ILogEntry[])allEntries.get(getFullPath(resource));
 		}
 		
@@ -69,22 +80,13 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
         private String getFullPath(ICVSRemoteResource resource) {
             return Util.appendPath(resource.getRepository().getLocation(), resource.getRepositoryRelativePath());
         }
-        
-        /**
-		 * Clear all the cached entries associated with the given resource
-		 * @param getFullPath(resource) the remote resource
-		 */
-		public void clearEntriesFor(ICVSRemoteResource resource) {
-			entries.remove(resource);
-			allEntries.remove(getFullPath(resource));
-		}
 		
-		public void clearEntries() {
+		public synchronized void clearEntries() {
 			entries.clear();
 			allEntries.clear();
 		}
 
-	    public void cacheEntries(ICVSRemoteResource[] remotes, LogListener listener) {
+	    public synchronized void cacheEntries(ICVSRemoteResource[] remotes, LogListener listener) {
 	        // Record the log entries for the files we want
 	        for (int i = 0; i < remotes.length; i++) {
 	        	ICVSRemoteResource resource = remotes[i];
@@ -100,7 +102,7 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
 	        }
 	    }
 	    
-	    public ICVSRemoteFile getImmediatePredecessor(ICVSRemoteFile file) throws TeamException {
+	    public synchronized ICVSRemoteFile getImmediatePredecessor(ICVSRemoteFile file) throws TeamException {
 	        ILogEntry[] allLogs = (ILogEntry[])allEntries.get(getFullPath(file));
             String revision = file.getRevision();
             // First decrement the last digit and see if that revision exists
@@ -177,6 +179,20 @@ public class RemoteLogOperation extends RepositoryLocationOperation {
                 }
             }
             return buffer.toString();
+        }
+        /**
+         * Remove any entries for the remote resources
+         * @param resource the remote resource
+         */
+        public synchronized void clearEntries(ICVSRemoteResource resource) {
+            String remotePath = getFullPath(resource);
+            LogEntry[] entries = (LogEntry[])allEntries.remove(remotePath);
+            if (entries != null) {
+                for (int i = 0; i < entries.length; i++) {
+                    LogEntry entry = entries[i];
+                    this.entries.remove(entry.getRemoteFile());
+                }
+            }
         }
 	}
 	

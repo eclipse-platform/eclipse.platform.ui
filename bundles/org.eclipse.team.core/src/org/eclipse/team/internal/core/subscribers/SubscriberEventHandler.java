@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.subscribers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -21,7 +22,6 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.*;
-import org.eclipse.team.internal.core.Policy;
 
 /**
  * This handler collects changes and removals to resources and calculates their
@@ -50,7 +50,7 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	/**
 	 * Internal resource synchronization event. Can contain a result.
 	 */
-	class SubscriberEvent extends Event{
+	class SubscriberEvent extends ResourceEvent{
 		static final int REMOVAL = 1;
 		static final int CHANGE = 2;
 		static final int INITIALIZE = 3;
@@ -97,7 +97,7 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 		private IWorkspaceRunnable runnable;
 		private boolean preemtive;
 		public RunnableEvent(IWorkspaceRunnable runnable, boolean preemtive) {
-			super(ResourcesPlugin.getWorkspace().getRoot(), RUNNABLE, IResource.DEPTH_ZERO);
+			super(RUNNABLE);
 			this.runnable = runnable;
 			this.preemtive = preemtive;
 		}
@@ -274,6 +274,7 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	 * Handle the exception by returning it as a status from the job but also by
 	 * dispatching it to the sync set input so any down stream views can react
 	 * accordingly.
+	 * The resource passed may be null.
 	 */
 	private void handleException(CoreException e, IResource resource, int code, String message) {
 		handleException(e);
@@ -400,15 +401,15 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 					break;
 				case SubscriberEvent.CHANGE :
 					collect(
-						event.getResource(),
-						event.getDepth(),
+					    event.getResource(),
+					    ((ResourceEvent)event).getDepth(),
 						monitor);
 					break;
 				case SubscriberEvent.INITIALIZE :
 					monitor.subTask(Policy.bind("SubscriberEventHandler.2", event.getResource().getFullPath().toString())); //$NON-NLS-1$
 					collectAll(
-							event.getResource(),
-							event.getDepth(),
+					        event.getResource(),
+					        ((ResourceEvent)event).getDepth(),
 							Policy.subMonitorFor(monitor, 64));
 					break;
 			}
@@ -431,12 +432,12 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 			// Dispatch any queued results to clear pending output events
 			dispatchEvents(Policy.subMonitorFor(monitor, 1));
 		} catch (TeamException e) {
-			handleException(e, event.getResource(), ITeamStatus.SYNC_INFO_SET_ERROR, e.getMessage());
+			handleException(e, null, ITeamStatus.SYNC_INFO_SET_ERROR, e.getMessage());
 		}
 		try {
 			((RunnableEvent)event).run(Policy.subMonitorFor(monitor, 1));
 		} catch (CoreException e) {
-			handleException(e, event.getResource(), ITeamStatus.SYNC_INFO_SET_ERROR, e.getMessage());
+			handleException(e, null, ITeamStatus.SYNC_INFO_SET_ERROR, e.getMessage());
 		}
 	}
 

@@ -265,4 +265,13 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
     public CVSTag getTag(IResource root) {
         return tree.getTag(root);
     }
+    
+    /**
+     * Return <code>true</code> if the tag against which each
+     * root is compared may differ. 
+     * @return whether the tag on each root may differ.
+     */
+    public boolean isMultipleTagComparison() {
+        return getTag() == null;
+    }
 }

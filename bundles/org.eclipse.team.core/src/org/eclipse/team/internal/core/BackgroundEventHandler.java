@@ -14,12 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.TeamException;
 
 /**
@@ -70,15 +66,39 @@ public abstract class BackgroundEventHandler {
 	private String jobName;
 	
 	/**
-	 * Resource event class. The type is specific to subclasses.
+	 * General event class. The type is specific to subclasses.
 	 */
 	public static class Event {
-		IResource resource;
-		int type;
-		int depth;
-		public Event(IResource resource, int type, int depth) {
-			this.resource = resource;
+	    private int type;
+		public Event(int type) {
 			this.type = type;
+		}
+		public int getType() {
+			return type;
+		}
+		public String toString() {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("Background Event: "); //$NON-NLS-1$
+			buffer.append(getTypeString());
+			return buffer.toString();
+		}
+		public IResource getResource() {
+		    return null;
+		}
+		protected String getTypeString() {
+			return String.valueOf(type);
+		}
+	}
+	
+	/**
+	 * Resource event class. The type is specific to subclasses.
+	 */
+	public static class ResourceEvent extends Event {
+		private IResource resource;
+		private int depth;
+		public ResourceEvent(IResource resource, int type, int depth) {
+		    super(type);
+			this.resource = resource;
 			this.depth = depth;
 		}
 		public int getDepth() {
@@ -86,9 +106,6 @@ public abstract class BackgroundEventHandler {
 		}
 		public IResource getResource() {
 			return resource;
-		}
-		public int getType() {
-			return type;
 		}
 		public String toString() {
 			StringBuffer buffer = new StringBuffer();
@@ -111,9 +128,6 @@ public abstract class BackgroundEventHandler {
 				default :
 					return "INVALID"; //$NON-NLS-1$
 			}
-		}
-		protected String getTypeString() {
-			return String.valueOf(type);
 		}
 	}
 	
@@ -145,6 +159,9 @@ public abstract class BackgroundEventHandler {
 			public boolean shouldSchedule() {
 				return ! isQueueEmpty();
 			}
+			public boolean belongsTo(Object family) {
+				return family == getJobFamiliy();
+			}
 		};
 		eventHandlerJob.addJobChangeListener(new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
@@ -156,6 +173,16 @@ public abstract class BackgroundEventHandler {
 	}
 
 	/**
+	 * Return the family that the background job for this
+	 * event handler belongs to.
+     * @return the family that the background job for this
+	 * event handler belongs to
+     */
+    protected Object getJobFamiliy() {
+        return null;
+    }
+
+    /**
 	 * This method is invoked when the processing job completes. The
 	 * default behavior of the handler is to restart the job if the queue
 	 * is no longer empty and to clear the queue if the handler was shut down.
@@ -374,7 +401,6 @@ public abstract class BackgroundEventHandler {
 	 */
 	protected void handleException(CoreException e) {
 		errors.handleException(e);
-		
 	}
 	
 	/**

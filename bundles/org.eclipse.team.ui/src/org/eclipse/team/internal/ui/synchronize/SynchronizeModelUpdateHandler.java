@@ -16,11 +16,9 @@ import java.util.*;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Control;
@@ -29,8 +27,6 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.BackgroundEventHandler;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 
 /**
@@ -67,7 +63,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 	class MarkerChangeEvent extends Event {
         private final ISynchronizeModelElement[] elements;
         public MarkerChangeEvent(ISynchronizeModelElement[] elements) {
-            super(ROOT, MARKERS_CHANGED, IResource.DEPTH_INFINITE);
+            super(MARKERS_CHANGED);
             this.elements = elements;
         }
         public ISynchronizeModelElement[] getElements() {
@@ -83,7 +79,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
         private final ISynchronizeModelElement element;
         private final boolean isBusy;
         public BusyStateChangeEvent(ISynchronizeModelElement element, boolean isBusy) {
-            super(ROOT, BUSY_STATE_CHANGED, IResource.DEPTH_INFINITE);
+            super(BUSY_STATE_CHANGED);
             this.element = element;
             this.isBusy = isBusy;
         }
@@ -101,7 +97,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 	class SyncInfoSetChangeEvent extends Event {
         private final ISyncInfoSetChangeEvent event;
         public SyncInfoSetChangeEvent(ISyncInfoSetChangeEvent event) {
-            super(ROOT, SYNC_INFO_SET_CHANGED, IResource.DEPTH_INFINITE);
+            super(SYNC_INFO_SET_CHANGED);
             this.event = event;
         }
         public ISyncInfoSetChangeEvent getEvent() {
@@ -121,7 +117,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 		private IWorkspaceRunnable runnable;
 		private boolean preemtive;
 		public RunnableEvent(IWorkspaceRunnable runnable, boolean preemtive) {
-			super(ResourcesPlugin.getWorkspace().getRoot(), RUNNABLE, IResource.DEPTH_ZERO);
+			super(RUNNABLE);
 			this.runnable = runnable;
 			this.preemtive = preemtive;
 		}
@@ -406,7 +402,7 @@ public class SynchronizeModelUpdateHandler extends BackgroundEventHandler implem
 	 * Queue an event that will reset the provider
 	 */
     private void reset() {
-        queueEvent(new Event(ROOT, RESET, IResource.DEPTH_INFINITE), false);
+        queueEvent(new ResourceEvent(ROOT, RESET, IResource.DEPTH_INFINITE), false);
     }
     
     public void dispose() {

@@ -27,7 +27,6 @@ import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteCompareOperation.CompareTreeBuilder;
-import org.eclipse.team.internal.ccvs.ui.operations.RemoteLogOperation.LogEntryCache;
 import org.eclipse.team.internal.ui.synchronize.ChangeSetDiffNode;
 import org.eclipse.team.ui.synchronize.*;
 
@@ -204,9 +203,7 @@ class OpenChangeSetAction extends SynchronizeModelAction {
     private ICVSRemoteFile getImmediatePredecessor(IResourceVariant remote) throws TeamException {
         CVSChangeSetCollector changeSetCollector = getChangeSetCollector();
         if (changeSetCollector != null) {
-	        LogEntryCache logs = changeSetCollector.getLogs();
-	        if (logs != null)
-	            return logs.getImmediatePredecessor((ICVSRemoteFile)remote);
+	        return changeSetCollector.getImmediatePredecessor((ICVSRemoteFile)remote);
         }
         return null;
     }

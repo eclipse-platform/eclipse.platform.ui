@@ -636,4 +636,15 @@ public class SyncInfoSet {
 	public ITeamStatus[] getErrors() {
 		return (ITeamStatus[]) errors.values().toArray(new ITeamStatus[errors.size()]);
 	}
+
+    /**
+     * Return an interator over all <code>SyncInfo</code>
+     * contained in this set.
+     * @return an interator over all <code>SyncInfo</code>
+     * contained in this set.
+     * @since 3.1
+     */
+    public Iterator iterator() {
+        return resources.values().iterator();
+    }
 }

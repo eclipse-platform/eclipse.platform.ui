@@ -75,7 +75,7 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
 	                    handleRemove(event.getResource());
 	                    break;
 	                case RESOURCE_CHANGE:
-	                    handleChange(event.getResource(), event.getDepth());
+	                    handleChange(event.getResource(), ((ResourceEvent)event).getDepth());
 	                    break;
 	                default:
 	                    break;
@@ -243,14 +243,14 @@ public class SubscriberChangeSetCollector extends ChangeSetCollector implements 
          * @see org.eclipse.team.internal.core.subscribers.SubscriberResourceCollector#remove(org.eclipse.core.resources.IResource)
          */
         protected void remove(IResource resource) {
-            handler.queueEvent(new BackgroundEventHandler.Event(resource, RESOURCE_REMOVAL, IResource.DEPTH_INFINITE), false);
+            handler.queueEvent(new BackgroundEventHandler.ResourceEvent(resource, RESOURCE_REMOVAL, IResource.DEPTH_INFINITE), false);
         }
 
         /* (non-Javadoc)
          * @see org.eclipse.team.internal.core.subscribers.SubscriberResourceCollector#change(org.eclipse.core.resources.IResource, int)
          */
         protected void change(IResource resource, int depth) {
-            handler.queueEvent(new BackgroundEventHandler.Event(resource, RESOURCE_CHANGE, depth), false);
+            handler.queueEvent(new BackgroundEventHandler.ResourceEvent(resource, RESOURCE_CHANGE, depth), false);
         }
         
     }
