@@ -261,7 +261,7 @@ public class LaunchConfigurationInfo {
 	}
 	
 	/**
-	 * Returns a copy of this info's attriubte map.
+	 * Returns a copy of this info's attribute map.
 	 * 
 	 * @return a copy of this info's attribute map
 	 */
@@ -274,7 +274,7 @@ public class LaunchConfigurationInfo {
 	 * working copy's should use this API.
 	 * 
 	 * @param key attribute key
-	 * @param value attribuet value
+	 * @param value attribute value
 	 */
 	protected void setAttribute(String key, Object value) {
 		if (value == null) {
