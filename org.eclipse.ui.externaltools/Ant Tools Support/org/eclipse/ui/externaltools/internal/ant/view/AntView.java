@@ -12,21 +12,18 @@ Contributors:
 *********************************************************************/
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -177,58 +174,10 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	private TargetMoveDownAction moveDownAction;
 
 	/**
-	 * Map of build files (IFile) to project nodes (ProjectNode)
+	 * The given build file has changed. Refresh the view to pick up any
+	 * structural changes.
 	 */
-	private Map buildFilesToProjects = new HashMap();
-	private IResourceDeltaVisitor visitor = null;
-
-	/**
-	 * Visits a resource delta to determine if a file in the Ant view has
-	 * changed
-	 */
-	class AntViewVisitor implements IResourceDeltaVisitor {
-		/**
-		 * Returns whether children should be visited
-		 */
-		public boolean visit(IResourceDelta delta) throws CoreException {
-			if (delta == null || (0 == (delta.getKind() & IResourceDelta.CHANGED) && 0 == (delta.getKind() & IResourceDelta.REMOVED))) {
-				return false;
-			}
-			IResource resource = delta.getResource();
-			if (resource.getType() == IResource.FILE) {
-				if ("xml".equalsIgnoreCase(((IFile) resource).getFileExtension())) { //$NON-NLS-1$
-					if ((delta.getKind() & IResourceDelta.CHANGED) != 0 && delta.getFlags() == IResourceDelta.CONTENT) {
-						handleXMLFileChanged((IFile) resource);
-					} else if ((delta.getKind() & IResourceDelta.REMOVED) != 0) {
-						handleXMLFileRemoved((IFile) resource);
-					}
-				}
-				return false;
-			} else if (resource.getType() == IResource.PROJECT) {
-				if ((delta.getFlags() & IResourceDelta.OPEN) != 0) {
-					IProject project = resource.getProject();
-					if (!project.isOpen()) {
-						handleProjectRemoved();
-						return false;
-					}
-				} else if ((delta.getKind() & IResourceDelta.REMOVED) != 0) {
-					handleProjectRemoved();
-					return false;
-				}
-			}
-			return true;
-		}
-	}
-
-	/**
-	 * The given XML file has changed. If it is present in the view, refresh the
-	 * view to pick up any structural changes.
-	 */
-	private void handleXMLFileChanged(IFile file) {
-		final ProjectNode project = (ProjectNode) buildFilesToProjects.get(file.getLocation().toString());
-		if (project == null) {
-			return;
-		}
+	private void handleBuildFileChanged(final ProjectNode project) {
 		project.parseBuildFile();
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
@@ -262,45 +211,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				targetViewer.refresh();
 			}
 		});
-	}
-
-	/**
-	 * The given XML file has been removed from the workspace. If the file is
-	 * present in the view, remove it.
-	 */
-	private void handleXMLFileRemoved(IFile file) {
-		final ProjectNode project = (ProjectNode) buildFilesToProjects.get(file.getLocation().toString());
-		if (project == null) {
-			return;
-		}
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-				removeProject(project);
-			}
-		});
-	}
-
-	/**
-	 * If any files present in the view no longer exist, remove them from the
-	 * view.
-	 */
-	private void handleProjectRemoved() {
-		ProjectNode[] projects = projectContentProvider.getRootNode().getProjects();
-		final List projectsToRemove = new ArrayList();
-		for (int i = 0; i < projects.length; i++) {
-			ProjectNode projectNode = projects[i];
-			IFile file= AntUtil.getFile(projectNode.getBuildFileName());
-			if (file == null || !file.exists()) {
-				projectsToRemove.add(projectNode);
-			}
-		}
-		if (!projectsToRemove.isEmpty()) {
-			Display.getDefault().asyncExec(new Runnable() {
-				public void run() {
-					removeProjects(projectsToRemove);
-				}
-			});
-		}
 	}
 
 	/**
@@ -680,7 +590,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 */
 	public void addProject(ProjectNode project) {
 		projectContentProvider.addProject(project);
-		buildFilesToProjects.put(project.getBuildFileName(), project);
 		projectViewer.refresh();
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 	}
@@ -760,8 +669,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			}
 		}
 		projectContentProvider.getRootNode().removeProject(project);
-		// Clear the file to project mapping for this project
-		buildFilesToProjects.remove(project.getBuildFileName());
 		if (!projectContentProvider.getRootNode().hasProjects()) {
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		}
@@ -775,8 +682,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		targetContentProvider.getTargets().clear();
 		// Remove all projects
 		projectContentProvider.getRootNode().removeAllProjects();
-		// Clear the file to project map
-		buildFilesToProjects.clear();
 		// Refresh the viewers
 		projectViewer.refresh();
 		targetViewer.refresh();
@@ -861,7 +766,6 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				project.setIsErrorNode(true);
 			}
 			projectNodes.add(project);
-			buildFilesToProjects.put(project.getBuildFileName(), project);
 		}
 		restoredRoot = new RootNode((ProjectNode[]) projectNodes.toArray(new ProjectNode[projectNodes.size()]));
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
@@ -960,13 +864,43 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
 		if (delta != null) {
-			if (visitor == null) {
-				visitor = new AntViewVisitor();
+			IPath rootPath= ResourcesPlugin.getWorkspace().getRoot().getLocation();
+			ProjectNode projects[]= projectContentProvider.getRootNode().getProjects();
+			IPath buildFilePath;
+			for (int i = 0; i < projects.length; i++) {
+				String buildFileName= projects[i].getBuildFileName();
+				buildFilePath= new Path(buildFileName);
+				// Trim the file system relative path to be workspace relative 
+				int matchingSegments= rootPath.matchingFirstSegments(buildFilePath);
+				buildFilePath= buildFilePath.removeFirstSegments(matchingSegments);
+				IResourceDelta change= delta.findMember(buildFilePath);
+				if (change != null) {
+					handleChangeDelta(change, projects[i]);
+				}
 			}
-			try {
-				delta.accept(visitor);
-			} catch (CoreException e) {
-			}
+		}
+	}
+	
+	/**
+	 * Update the view for the given resource delta. The delta is a resource
+	 * delta for the given build file in the view
+	 * 
+	 * @param delta a delta for a build file in the view
+	 * @param project the project node that has changed
+	 */
+	private void handleChangeDelta(IResourceDelta delta, final ProjectNode project) {
+		IResource resource= delta.getResource();
+		if (resource.getType() != IResource.FILE) {
+			return;
+		}
+		if (delta.getKind() == IResourceDelta.REMOVED) {
+			Display.getDefault().asyncExec(new Runnable() {
+				public void run() {
+					removeProject(project);
+				}
+			});
+		} else if (delta.getKind() == IResourceDelta.CHANGED && (delta.getFlags() & IResourceDelta.CONTENT) != 0) {
+			handleBuildFileChanged(project);
 		}
 	}
 	
