@@ -254,7 +254,7 @@ public class AntEditor extends TextEditor {
 	 * @see org.eclipse.ui.texteditor.AbstractTextEditor#handlePreferenceStoreChanged(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	protected void handlePreferenceStoreChanged(PropertyChangeEvent event) {
-		if (event.getProperty() == AntEditorPreferenceConstants.RESOLVE_BUILDFILES) {
+		if (event.getProperty() == AntEditorPreferenceConstants.VALIDATE_BUILDFILES) {
 			setResolveFully(((Boolean)event.getNewValue()).booleanValue());
 			return;
 		}

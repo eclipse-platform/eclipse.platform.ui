@@ -12,6 +12,8 @@
 package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,6 +25,8 @@ import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
@@ -71,7 +75,7 @@ public class AntModel {
 	private boolean fIsDirty= true;
 	private IDocumentListener fListener;
 	
-	private boolean fResolveFully= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.RESOLVE_BUILDFILES);
+	private boolean fValidateFully= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.VALIDATE_BUILDFILES);
 	
 	/**
      * The find replace adapter for the document
@@ -165,6 +169,9 @@ public class AntModel {
 			return;
 		}
     	Project project = new Project();
+    	if (fValidateFully) {
+    		project.setCoreLoader(getClassLoader());
+    	}
     	project.init();
     	
     	/* 
@@ -199,7 +206,8 @@ public class AntModel {
 		Iterator iter= nodes.iterator();
 		while (iter.hasNext()) {
 			AntTaskNode node = (AntTaskNode) iter.next();
-			if (fResolveFully) {
+			if (fValidateFully && !(node.getParentNode() instanceof AntTaskNode)) {
+				//only configure task nodes and not nested elements
 				node.configure();
 			} else if (node instanceof AntPropertyNode) {
 				((AntPropertyNode)node).configure();
@@ -753,7 +761,14 @@ public class AntModel {
 	 * @param resolveFully
 	 */
 	public void setResolveFully(boolean resolveFully) {
-		fResolveFully= resolveFully;
+		fValidateFully= resolveFully;
 		resolveBuildfile();
+	}
+	
+	private ClassLoader getClassLoader() {
+		AntCorePreferences corePreferences = AntCorePlugin.getPlugin().getPreferences();
+		URL[] urls = corePreferences.getURLs();
+		//ClassLoader[] pluginLoaders = corePreferences.getPluginClassLoaders();
+		return new URLClassLoader(urls, this.getClass().getClassLoader());
 	}
 }

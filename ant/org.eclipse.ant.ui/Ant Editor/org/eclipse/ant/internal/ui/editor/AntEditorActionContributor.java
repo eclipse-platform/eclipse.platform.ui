@@ -32,15 +32,12 @@ import org.eclipse.ui.texteditor.RetargetTextEditorAction;
 public class AntEditorActionContributor extends TextEditorActionContributor {
 
 	protected RetargetTextEditorAction fContentAssistProposal;
-	private ResolveBuildfileAction fResolveAction;
+	private ValidateBuildfileAction fValidateAction;
 
-	/**
-	 * Default constructor.
-	 */
 	public AntEditorActionContributor() {
 		super();
 		fContentAssistProposal= new RetargetTextEditorAction(ResourceBundle.getBundle("org.eclipse.ant.internal.ui.editor.AntEditorMessages"), "ContentAssistProposal."); //$NON-NLS-1$ //$NON-NLS-2$
-		fResolveAction= new ResolveBuildfileAction();
+		fValidateAction= new ValidateBuildfileAction();
 	}
 	
 	private void doSetActiveEditor(IEditorPart part) {
@@ -73,7 +70,7 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
      * @see org.eclipse.ui.part.EditorActionBarContributor#contributeToToolBar(org.eclipse.jface.action.IToolBarManager)
      */
 	public void contributeToToolBar(IToolBarManager toolBarManager) {
-		toolBarManager.add(fResolveAction);
+		toolBarManager.add(fValidateAction);
 		toolBarManager.update(false);
 	}
     

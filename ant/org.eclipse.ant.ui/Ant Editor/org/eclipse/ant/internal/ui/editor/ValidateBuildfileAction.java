@@ -18,18 +18,18 @@ import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
 import org.eclipse.jface.action.Action;
 
 
-public class ResolveBuildfileAction extends Action {
+public class ValidateBuildfileAction extends Action {
 	
-	public ResolveBuildfileAction() {
-		super(AntEditorMessages.getString("ResolveBuildfileAction.0"),  AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT)); //$NON-NLS-1$
-		setToolTipText(AntEditorMessages.getString("ResolveBuildfileAction.1")); //$NON-NLS-1$
-		setChecked(AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.RESOLVE_BUILDFILES));
+	public ValidateBuildfileAction() {
+		super(AntEditorMessages.getString("ValidateBuildfileAction.0"),  AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT)); //$NON-NLS-1$
+		setToolTipText(AntEditorMessages.getString("ValidateBuildfileAction.1")); //$NON-NLS-1$
+		setChecked(AntUIPlugin.getDefault().getPreferenceStore().getBoolean(AntEditorPreferenceConstants.VALIDATE_BUILDFILES));
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		AntUIPlugin.getDefault().getPreferenceStore().setValue(AntEditorPreferenceConstants.RESOLVE_BUILDFILES, isChecked());
+		AntUIPlugin.getDefault().getPreferenceStore().setValue(AntEditorPreferenceConstants.VALIDATE_BUILDFILES, isChecked());
 	}
 }

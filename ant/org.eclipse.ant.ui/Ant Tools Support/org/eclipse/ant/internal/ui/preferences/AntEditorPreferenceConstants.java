@@ -84,9 +84,9 @@ public class AntEditorPreferenceConstants {
 	
 	/**
 	 * Boolean preference identifier constant which specifies whether the Ant editor should
-	 * fully resolve the current Ant build file to check for errors.
+	 * fully validate the current Ant build file to check for errors.
 	 */
-	public static final String RESOLVE_BUILDFILES = "resolveBuildFiles"; //$NON-NLS-1$
+	public static final String VALIDATE_BUILDFILES = "validate_Buildfiles"; //$NON-NLS-1$
 
 	public static void initializeDefaultValues(IPreferenceStore store) {
 		TextEditorPreferenceConstants.initializeDefaultValues(store);
@@ -98,6 +98,6 @@ public class AntEditorPreferenceConstants {
 		PreferenceConverter.setDefault(store, AntEditorPreferenceConstants.CODEASSIST_PROPOSALS_FOREGROUND, new RGB(0, 0, 0));
 		store.setDefault(AntEditorPreferenceConstants.CODEASSIST_AUTOACTIVATION_TRIGGERS, "<${"); //$NON-NLS-1$
 		
-		store.setDefault(AntEditorPreferenceConstants.RESOLVE_BUILDFILES, false);
+		store.setDefault(AntEditorPreferenceConstants.VALIDATE_BUILDFILES, false);
 	}
 }
