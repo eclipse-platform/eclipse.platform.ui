@@ -33,6 +33,7 @@ import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
+import org.eclipse.ui.console.TextConsoleViewer;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
@@ -153,10 +154,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	    // update console actions
 	    if (fPinAction != null) {
 	        fPinAction.update();
-	    }
-	    IPage page = getCurrentPage();
-	    if (page instanceof IOConsolePage) {
-	        ((IOConsolePage)page).setAutoScroll(!fScrollLock);
 	    }
 	}
 	
