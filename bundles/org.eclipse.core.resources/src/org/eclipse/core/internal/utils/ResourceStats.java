@@ -170,10 +170,10 @@ public static int getSnapcount() {
  * Returns the stats object for the given plugin ID.
  */
 public static PluginStats getStats(String pluginID) {
-	PluginStats stats = (PluginStats) pluginTable.get(currentPlugin);
+	PluginStats stats = (PluginStats) pluginTable.get(pluginID);
 	if (stats == null) {
 		stats = new PluginStats(pluginID);
-		pluginTable.put(currentPlugin, stats);
+		pluginTable.put(pluginID, stats);
 	}
 	return stats;
 }
