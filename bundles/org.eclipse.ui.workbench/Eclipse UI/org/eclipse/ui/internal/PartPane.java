@@ -390,6 +390,8 @@ public void setZoomed(boolean isZoomed) {
 	if (this.isZoomed == isZoomed)
 		return; // do nothing if we're already in the right state.
 	
+	super.setZoomed(isZoomed);
+	
 	this.isZoomed = isZoomed;
 	
 	final Object[] listeners = getPropertyListeners().getListeners();

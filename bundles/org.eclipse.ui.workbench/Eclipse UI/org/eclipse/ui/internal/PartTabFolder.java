@@ -841,9 +841,13 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer,
     }
 
     public void setZoomed(boolean isZoomed) {
+    	super.setZoomed(isZoomed);
+    	
         if (isZoomed) {
             presentationSite
                     .setPresentationState(IStackPresentationSite.STATE_MAXIMIZED);
+        } else if (presentationSite.getState() == IStackPresentationSite.STATE_MAXIMIZED) {
+        	presentationSite.setPresentationState(IStackPresentationSite.STATE_RESTORED);
         }
     }
 

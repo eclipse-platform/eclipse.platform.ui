@@ -322,6 +322,14 @@ abstract public class LayoutPart implements IWorkbenchDropTarget {
 		return true;
 	}
 	
+	public void setZoomed(boolean isZoomed) {
+		ILayoutContainer container = getContainer();
+		
+		if (container != null) {
+			container.setZoomed(isZoomed);
+		}
+	}
+	
 /**
  * @return Returns the propertyListeners.
  */

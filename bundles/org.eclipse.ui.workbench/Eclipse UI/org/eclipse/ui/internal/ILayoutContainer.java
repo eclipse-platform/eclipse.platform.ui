@@ -48,6 +48,8 @@ public void findSashes(LayoutPart toFind, PartPane.Sashes result);
  */
 public boolean allowsAutoFocus();
 
+public void setZoomed(boolean isZoomed);
+
 /**
  * Gets the parent for this container.
  */
