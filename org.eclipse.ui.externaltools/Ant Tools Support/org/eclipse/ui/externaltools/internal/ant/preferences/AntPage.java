@@ -98,7 +98,7 @@ public abstract class AntPage {
 		button.setText(AntPreferencesMessages.getString(labelKey));
 		button.setData(new Integer(buttonId));
 		button.addSelectionListener(selectionAdapter);
-		preferencePage.setButtonGridData(button, GridData.FILL_HORIZONTAL);
+		preferencePage.setButtonLayoutData(button);
 		return button;
 	}
 	

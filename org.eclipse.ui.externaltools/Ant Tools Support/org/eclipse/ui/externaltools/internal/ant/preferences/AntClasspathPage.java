@@ -383,7 +383,7 @@ public class AntClasspathPage extends AntPage {
 		browseAntHomeButton.setText(AntPreferencesMessages.getString("AntClasspathPage.&Browse..._10")); //$NON-NLS-1$
 		browseAntHomeButton.setData(new Integer(BROWSE_ANT_HOME));
 		browseAntHomeButton.addSelectionListener(selectionAdapter);
-		getPreferencePage().setButtonGridData(browseAntHomeButton, GridData.HORIZONTAL_ALIGN_BEGINNING);
+		getPreferencePage().setButtonLayoutData(browseAntHomeButton);
 		browseAntHomeButton.setEnabled(false);
 		
 		label = new Label(top, SWT.NONE);
