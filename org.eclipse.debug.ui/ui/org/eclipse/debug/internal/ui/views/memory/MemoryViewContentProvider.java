@@ -258,7 +258,7 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				int numBytes = 0;
 				
 				// number of bytes need to prefill
-				if (!startingAddress.toString(16).endsWith("0"))
+				if (!startingAddress.toString(16).endsWith("0")) //$NON-NLS-1$
 				{
 					adjustedAddress = startingAddress.toString(16).substring(0, adjustedAddress.length() - 1);
 					adjustedAddress += "0"; //$NON-NLS-1$

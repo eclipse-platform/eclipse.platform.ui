@@ -21,7 +21,7 @@ import org.eclipse.debug.internal.core.memory.MemoryByte;
  */
 public class ASCIIRenderer extends AbstractTextRenderer{
 	
-	private final static String ASCII_CODE_PAGE = "Cp1252";
+	private final static String ASCII_CODE_PAGE = "Cp1252"; //$NON-NLS-1$
 	private final int numCharsPerByte = 1;
 	
 

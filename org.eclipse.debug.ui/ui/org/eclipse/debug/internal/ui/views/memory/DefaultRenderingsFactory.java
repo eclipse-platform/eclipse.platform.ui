@@ -23,9 +23,9 @@ import org.eclipse.debug.internal.core.memory.IMemoryRenderingFactory;
  */
 public class DefaultRenderingsFactory implements IMemoryRenderingFactory {
 
-	public static final String RENDERING_ID_SIGNED_INT = "org.eclipse.debug.ui.rendering.signedint";
-	public static final String RENDERING_ID_UNSIGNED_INT = "org.eclipse.debug.ui.rendering.unsignedint";
-	public static final String RENDERING_ID_ASCII = "org.eclipse.debug.ui.rendering.ascii";
+	public static final String RENDERING_ID_SIGNED_INT = "org.eclipse.debug.ui.rendering.signedint"; //$NON-NLS-1$
+	public static final String RENDERING_ID_UNSIGNED_INT = "org.eclipse.debug.ui.rendering.unsignedint"; //$NON-NLS-1$
+	public static final String RENDERING_ID_ASCII = "org.eclipse.debug.ui.rendering.ascii"; //$NON-NLS-1$
 	
 	/* (non-Javadoc)
 	 * @see com.ibm.debug.extended.ui.IMemoryRenderingFactory#createRendering(org.eclipse.debug.core.model.IMemoryBlock, java.lang.String)
