@@ -36,6 +36,7 @@ public class ComboBoxCellEditor extends CellEditor {
 	 * The custom combo box control.
 	 */
 	private CCombo comboBox;
+
 /**
  * Creates a new cell editor with a combo containing the given 
  * list of choices and parented under the given control. The cell
@@ -110,6 +111,18 @@ protected Object doGetValue() {
  */
 protected void doSetFocus() {
 	comboBox.setFocus();
+}
+/**
+ * The <code>ComboBoxCellEditor</code> implementation of
+ * this <code>CellEditor</code> framework method sets the 
+ * minimum width of the cell to 30 pixels to make sure the
+ * arrow button is visible even when the list contains long
+ * strings.
+ */
+public LayoutData getLayoutData() {
+	LayoutData layoutData = new LayoutData();
+	layoutData.minimumWidth = 30;
+	return layoutData;
 }
 /**
  * The <code>ComboBoxCellEditor</code> implementation of
