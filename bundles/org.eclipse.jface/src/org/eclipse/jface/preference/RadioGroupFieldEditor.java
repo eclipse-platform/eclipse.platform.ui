@@ -314,9 +314,11 @@ private void updateValue(String selectedValue) {
  * @see FieldEditor.setEnabled(boolean,Composite).
  */
 public void setEnabled(boolean enabled, Composite parent){
-	super.setEnabled(enabled,parent);
+	if(!useGroup)
+		super.setEnabled(enabled,parent);
 	for(int i = 0; i < radioButtons.length; i ++){
 		radioButtons[i].setEnabled(enabled);
 	}
+
 }
 }
