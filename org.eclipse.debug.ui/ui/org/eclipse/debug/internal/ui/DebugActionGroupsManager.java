@@ -104,14 +104,16 @@ public class DebugActionGroupsManager implements IMenuListener {
 	 *  the extensions
 	 */
 	private void initialize() throws CoreException {
-		fDebugActionGroups = new HashMap(10);
 		IPluginDescriptor descriptor = DebugUIPlugin.getDefault().getDescriptor();
 		IExtensionPoint extensionPoint =
 			descriptor.getExtensionPoint(IDebugUIConstants.EXTENSION_POINT_DEBUG_ACTION_GROUPS);
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
-		if (infos.length > 0) {
-			fDebugActionGroupActionIds = new HashMap();
+		if (infos.length == 0) {
+			return;
 		}
+		
+		fDebugActionGroupActionIds = new HashMap();
+		fDebugActionGroups = new HashMap(10);
 		List userEnabledGroups= persistedEnabledActionGroups();
 		List userDisabledGroups= persistedDisabledActionGroups();
 		
@@ -217,7 +219,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 	 * previously registered.
 	 */
 	public void registerView(final IDebugView view) {
-		if (fDebugViews.contains(view)) {
+		if (fDebugActionGroupActionIds == null || fDebugViews.contains(view)) {
 			return;
 		}
 		final IMenuManager menu= view.getContextMenuManager();
@@ -254,7 +256,7 @@ public class DebugActionGroupsManager implements IMenuListener {
 	 * not previously registered.
 	 */
 	public void deregisterView(IDebugView view) {
-		if (fDebugViews.remove(view)) {
+		if (fDebugActionGroupActionIds != null && fDebugViews.remove(view)) {
 			IMenuManager manager= view.getContextMenuManager();
 			if (manager != null) {
 				manager.removeMenuListener(this);
