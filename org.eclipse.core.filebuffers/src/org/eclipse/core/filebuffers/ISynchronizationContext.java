@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2003 IBM Corp. and others.
+Copyright (c) 2000, 2004 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -11,9 +11,11 @@ Contributors:
 package org.eclipse.core.filebuffers;
 
 /**
- * Executes runnables that describe how to synchronize a file buffer with its underlying file. 
- *
- * @since 3.0 
+ * Executes <code>Runnables</code> according to a certain synchronization
+ * policy. This could be that all given <code>Runnables</code> are executed in
+ * a specific thread or environment.
+ * 
+ * @since 3.0
  */
 public interface ISynchronizationContext {
 	

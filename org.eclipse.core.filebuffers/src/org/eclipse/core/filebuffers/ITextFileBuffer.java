@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2003 IBM Corp. and others.
+Copyright (c) 2000, 2004 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -15,10 +15,10 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
- * A text file buffer is a file buffer for text files.  The contents of a text file buffe is
- * given in the form of a document. Also, the text file buffer provides methods to
- * manage the character encoding used to read and write the buffer's underlying
- * text file.
+ * A text file buffer is a file buffer for text files. The contents of a text
+ * file buffer is given in the form of a document and an associated annotation
+ * model. Also, the text file buffer provides methods to manage the character
+ * encoding used to read and write the buffer's underlying text file.
  * 
  * @since 3.0
  */

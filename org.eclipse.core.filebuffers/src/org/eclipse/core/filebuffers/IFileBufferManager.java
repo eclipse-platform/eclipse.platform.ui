@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2003 IBM Corp. and others.
+Copyright (c) 2000, 2004 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -8,19 +8,20 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 	IBM Corporation - Initial implementation
 **********************************************************************/
-
 package org.eclipse.core.filebuffers;
+
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 
 /**
  * A file buffer manager manages file buffers for files while the files are
  * connected to the file buffer manager. In order to connect a file to a file
  * buffer manager call <code>connect</code>. After that call has
  * successfully completed the file buffer can be obtained by <code>getFileBuffer</code>.
- * The file buffer is created on the first connect and destroyed on the last
+ * The file buffer is created on the first connect and diposed on the last
  * disconnect. I.e. the file buffer manager keeps track of how often a file is
  * connected and returns the same file buffer to each client as long as the
  * file is connected.
@@ -88,13 +89,13 @@ public interface IFileBufferManager {
 	void setSynchronizationContext(ISynchronizationContext context);
 
 	/**
-	 * Requests that the synchronization context is used to synchronize the
-	 * given location with its file buffer. This call as no effect if there is
-	 * no file buffer managed for the given location.
+	 * The caller requests that the synchronization context is used to
+	 * synchronize the given location with its file buffer. This call as no
+	 * effect if there is no file buffer managed for the given location.
 	 * <p>
-	 * The provided location is either a full path of a workspace resource or
-	 * an absolute path in the local file system. The file buffer manager does
-	 * not resolve the location of workspace resources in the case of linked
+	 * The provided location is either a full path of a workspace resource or an
+	 * absolute path in the local file system. The file buffer manager does not
+	 * resolve the location of workspace resources in the case of linked
 	 * resources.
 	 * </p>
 	 * 
@@ -103,13 +104,13 @@ public interface IFileBufferManager {
 	void requestSynchronizationContext(IPath location);
 
 	/**
-	 * No longer requests the synchronization context for the filebuffer for
-	 * the given location. This method has no effect if there is no file buffer
-	 * managed for this location.
+	 * The caller no longer requests the synchronization context for the file
+	 * buffer managed for the given location. This method has no effect if there
+	 * is no file buffer managed for this location.
 	 * <p>
-	 * The provided location is either a full path of a workspace resource or
-	 * an absolute path in the local file system. The file buffer manager does
-	 * not resolve the location of workspace resources in the case of linked
+	 * The provided location is either a full path of a workspace resource or an
+	 * absolute path in the local file system. The file buffer manager does not
+	 * resolve the location of workspace resources in the case of linked
 	 * resources.
 	 * </p>
 	 * 
@@ -119,8 +120,8 @@ public interface IFileBufferManager {
 
 	/**
 	 * Adds the given listener to the list of file buffer listeners. After that
-	 * call the listener is informated about changes related to this file
-	 * buffer. If the listener is already registered with the file buffer, this
+	 * call the listener is informed about changes related to this file
+	 * buffer manager. If the listener is already registered with the file buffer, this
 	 * call has no effect.
 	 * 
 	 * @param listener the listener to be added

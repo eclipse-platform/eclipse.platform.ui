@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2003 IBM Corp. and others.
+Copyright (c) 2000, 2004 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -8,8 +8,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 	IBM Corporation - Initial implementation
 **********************************************************************/
-
 package org.eclipse.core.filebuffers;
+
 
 import org.eclipse.core.runtime.IPath;
 
@@ -19,7 +19,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
  * A text file buffer manager manages text file buffers for files whose contents
- * could be considered text.
+ * is considered text.
  * 
  * @since 3.0
  */

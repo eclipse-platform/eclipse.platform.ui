@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2003 IBM Corp. and others.
+Copyright (c) 2000, 2004 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -10,19 +10,26 @@ Contributors:
 **********************************************************************/
 package org.eclipse.core.filebuffers;
 
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
+
 /**
- * A file buffer represents a file that can be edited by more than one client. Editing is
- * session oriented. This means that editing is a sequence of modification steps. The
- * start of the sequence and the end of the sequence are explicitly indicated. There are
- * no time constraints connected with the sequence of modification steps. A file buffer
- * reifies editing sessions and allows them to interleave.<p>
- * It is not specified whether simultaneous editing sessions can be owned by different
- * threads.
+ * A file buffer represents a file that can be edited by more than one client.
+ * Editing is session oriented. This means that editing is a sequence of
+ * modification steps. The start of the sequence and the end of the sequence are
+ * explicitly indicated. There are no time constraints connected with the
+ * sequence of modification steps. A file buffer reifies editing sessions and
+ * allows them to interleave.
+ * <p>
+ * It is not specified whether simultaneous editing sessions can be owned by
+ * different threads.
+ * <p>
+ * Clients are not supposed to implement that interface. Instances of this type
+ * are obtained from a {@link org.eclipse.core.filebuffers.IFileBufferManager}.
  * 
  * @since 3.0
  */
@@ -41,7 +48,7 @@ public interface IFileBuffer {
 
 	/**
 	 * Returns whether this file buffer is synchronized with the file system. This is when
-	 * the file buffer's underlying file is in sync with the file system and the file buffer
+	 * the file buffer's underlying file is in synchronization with the file system and the file buffer
 	 * has been initialized after the underlying files has been modified the last time.
 	 * 
 	 * @return <code>true</code> if the file buffer is synchronized with the file system

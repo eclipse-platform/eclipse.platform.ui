@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2003 IBM Corp. and others.
+Copyright (c) 2000, 2004 IBM Corp. and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@ Contributors:
 **********************************************************************/
 package org.eclipse.core.filebuffers;
 
+
 import java.io.File;
 
 import org.eclipse.core.internal.filebuffers.FileBuffersPlugin;
@@ -19,9 +20,11 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 
+
 /**
  * Facade for the file buffers plug-in. Provides access to the
- * text file buffer manager.
+ * text file buffer manager and helper methods for location 
+ * handling.
  * 
  * @since 3.0
  */
@@ -35,9 +38,10 @@ public final class FileBuffers {
 
 	/**
 	 * Returns the text file buffer manager. May return <code>null</code> if
-	 * the file buffers plug-in may no be activated.
+	 * the file buffers plug-in may no be activated. This is, for example, the
+	 * case when the method is called on plug-in shutdown.
 	 * 
-	 * @return the text file buffer manager
+	 * @return the text file buffer manager or <code>null</code>
 	 */
 	public static ITextFileBufferManager getTextFileBufferManager()  {
 		FileBuffersPlugin plugin= FileBuffersPlugin.getDefault();
@@ -92,7 +96,7 @@ public final class FileBuffers {
 	 * absolute path in the local file system.
 	 * </p>
 	 * 
-	 * @param location
+	 * @param location the location
 	 * @return the {@link File} in the local file system for the given location
 	 */
 	public static File getSystemFileAtLocation(IPath location) {
