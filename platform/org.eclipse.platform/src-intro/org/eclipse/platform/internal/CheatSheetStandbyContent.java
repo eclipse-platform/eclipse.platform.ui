@@ -82,6 +82,6 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
      * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#dispose()
      */
     public void dispose() {
-    	viewer.dispose();
+    	// do nothing
     }
 }
