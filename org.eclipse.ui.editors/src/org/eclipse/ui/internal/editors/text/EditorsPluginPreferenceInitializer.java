@@ -36,6 +36,12 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 		migrateOverviewRulerPreference(store);
 	}
 	
+	/**
+	 * Migrates the overview ruler preference by re-enabling it.
+	 * 
+	 * @param store the preference store to migrate
+	 * @since 3.1
+	 */
 	private void migrateOverviewRulerPreference(IPreferenceStore store) {
 		String preference= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
 		String postfix= "_migration"; //$NON-NLS-1$
