@@ -62,6 +62,31 @@ public abstract class BackgroundEventHandler {
 		public int getType() {
 			return type;
 		}
+		public String toString() {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("resource: "); //$NON-NLS-1$
+			buffer.append(resource.getFullPath());
+			buffer.append(" type: "); //$NON-NLS-1$
+			buffer.append(getTypeString());
+			buffer.append(" depth: "); //$NON-NLS-1$
+			buffer.append(getDepthString());
+			return buffer.toString();
+		}
+		protected String getDepthString() {
+			switch (depth) {
+				case IResource.DEPTH_ZERO :
+					return "DEPTH_ZERO"; //$NON-NLS-1$
+				case IResource.DEPTH_ONE :
+					return "DEPTH_ONE"; //$NON-NLS-1$
+				case IResource.DEPTH_INFINITE :
+					return "DEPTH_INFINITE"; //$NON-NLS-1$
+				default :
+					return "INVALID"; //$NON-NLS-1$
+			}
+		}
+		protected String getTypeString() {
+			return String.valueOf(type);
+		}
 	}
 	
 	
@@ -157,6 +182,9 @@ public abstract class BackgroundEventHandler {
 	 * Queue the event and start the job if it's not already doing work.
 	 */
 	protected synchronized void queueEvent(Event event) {
+		if (Policy.DEBUG_BACKGROUND_EVENTS) {
+			System.out.println("Event queued on " + getName() + ":" + event.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+		}
 		awaitingProcessing.add(event);
 		if (!isShutdown()
 			&& eventHandlerJob != null
@@ -204,6 +232,9 @@ public abstract class BackgroundEventHandler {
 			while ((event = nextElement()) != null && ! isShutdown()) {			 	
 				try {
 					processEvent(event, subMonitor);
+					if (Policy.DEBUG_BACKGROUND_EVENTS) {
+						System.out.println("Event processed on " + getName() + ":" + event.toString()); //$NON-NLS-1$ //$NON-NLS-2$
+					}
 				} catch (CoreException e) {
 					// handle exception but keep going
 					handleException(e);

@@ -26,12 +26,14 @@ public class Policy {
 	//debug constants
 	public static boolean DEBUG_STREAMS = false;
 	public static boolean DEBUG_REFRESH_JOB = true;
+	public static boolean DEBUG_BACKGROUND_EVENTS = false;
 
 	static {
 		//init debug options
 		if (TeamPlugin.getPlugin().isDebugging()) {
 			DEBUG_STREAMS = "true".equalsIgnoreCase(Platform.getDebugOption(TeamPlugin.ID + "/streams"));//$NON-NLS-1$ //$NON-NLS-2$
 			DEBUG_REFRESH_JOB = "true".equalsIgnoreCase(Platform.getDebugOption(TeamPlugin.ID + "/refreshjob"));//$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_BACKGROUND_EVENTS = "true".equalsIgnoreCase(Platform.getDebugOption(TeamPlugin.ID + "/backgroundevents"));//$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
