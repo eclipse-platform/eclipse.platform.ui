@@ -6,6 +6,7 @@ package org.eclipse.help.internal.webapp.servlet;
 
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.HelpSystem;
 
 /**
  * Preferences for availiable to webapp
@@ -34,11 +35,13 @@ public class WebappPreferences {
 	}
 
 	public boolean isBookmarksView() {
-		return "true".equals(prefs.getString("bookmarksView"));
+		return HelpSystem.getMode() != HelpSystem.MODE_INFOCENTER
+			&& "true".equals(prefs.getString("bookmarksView"));
 	}
 
 	public boolean isLinksView() {
-		return "true".equals(prefs.getString("linksView"));
+		return HelpSystem.getMode() != HelpSystem.MODE_INFOCENTER
+			&& "true".equals(prefs.getString("linksView"));
 	}
 
 	public String getImagesDirectory() {

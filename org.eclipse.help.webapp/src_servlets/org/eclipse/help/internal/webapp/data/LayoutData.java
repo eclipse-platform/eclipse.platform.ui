@@ -3,7 +3,6 @@ package org.eclipse.help.internal.webapp.data;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.webapp.servlet.*;
 
 /*
@@ -83,31 +82,30 @@ public class LayoutData extends RequestData {
 
 		View linksview = null;
 		View bookmarksview = null;
-		if (HelpSystem.getMode() != HelpSystem.MODE_INFOCENTER) {
-			if (preferences.isLinksView())
-				linksview =
-					new View(
-						"links",
-						"",
-						preferences.getImagesDirectory() + "/links_view.gif");
-			if (preferences.isBookmarksView())
-				bookmarksview =
-					new View(
-						"bookmarks",
-						"",
-						preferences.getImagesDirectory()
-							+ "/bookmarks_view.gif");
-		}
+
+		if (preferences.isLinksView())
+			linksview =
+				new View(
+					"links",
+					"",
+					preferences.getImagesDirectory() + "/links_view.gif");
+		if (preferences.isBookmarksView())
+			bookmarksview =
+				new View(
+					"bookmarks",
+					"",
+					preferences.getImagesDirectory() + "/bookmarks_view.gif");
 
 		if (linksview != null && bookmarksview != null)
-			views = new View[] {tocview,searchview,linksview,bookmarksview};
+			views =
+				new View[] { tocview, searchview, linksview, bookmarksview };
 		else if (linksview != null)
-			views = new View[] {tocview,searchview,linksview};
+			views = new View[] { tocview, searchview, linksview };
 		else if (bookmarksview != null)
-			views = new View[] {tocview, searchview,bookmarksview};
+			views = new View[] { tocview, searchview, bookmarksview };
 		else
-			views = new View[] {tocview,searchview};
-			
+			views = new View[] { tocview, searchview };
+
 		return views;
 	}
 
