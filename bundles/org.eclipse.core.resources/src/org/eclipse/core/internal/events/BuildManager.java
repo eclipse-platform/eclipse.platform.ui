@@ -302,8 +302,17 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		return !building;
 	}
 	public void interrupt() {
-		if (autoBuildJob.checkCancel() && building)
+		if (autoBuildJob.checkCancel() && building) {
 			interrupted = true;
+			try {
+				//wait until the build completes, otherwise we will fail to
+				//re-schedule the autobuild job if it is still running when this
+				//operation ends
+				autoBuildJob.join();
+			} catch (InterruptedException e) {
+				//break out when interrupted
+			}
+		}
 	}
 	/**
 	 * Cancel the build if the user has canceled or if an auto-build has been interrupted.

@@ -1514,8 +1514,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @param rule the scheduling rule that describes what this operation intends to modify.
 	 */
 	public void prepareOperation(ISchedulingRule rule, IProgressMonitor monitor) throws CoreException {
-		//ask the autobuild to cancel, and it should quickly give up its lock
-		buildManager.interrupt();
+		//if this operation needs to lock resources, ask the autobuild to interrupt
+		if (rule != null)
+			buildManager.interrupt();
 		getWorkManager().checkIn(rule, monitor);
 		if (!isOpen()) {
 			String message = Policy.bind("resources.workspaceClosed"); //$NON-NLS-1$
