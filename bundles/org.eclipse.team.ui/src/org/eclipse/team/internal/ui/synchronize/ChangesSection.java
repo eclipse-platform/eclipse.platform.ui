@@ -13,28 +13,26 @@ package org.eclipse.team.internal.ui.synchronize;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.team.core.ITeamStatus;
-import org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent;
-import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipant;
 import org.eclipse.team.ui.synchronize.subscriber.SubscriberParticipantPage;
 import org.eclipse.team.ui.synchronize.viewers.ISynchronizeModelChangeListener;
 import org.eclipse.team.ui.synchronize.viewers.SynchronizeModelElement;
+import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.part.PageBook;
 
@@ -49,6 +47,7 @@ public class ChangesSection extends Composite {
 	private SubscriberParticipant participant;
 	private Composite parent;
 	private SubscriberParticipantPage page;
+	private FormToolkit forms;
 			
 	/**
 	 * Page book either shows the diff tree viewer if there are changes or
@@ -137,6 +136,11 @@ public class ChangesSection extends Composite {
 		data.grabExcessVerticalSpace = true;
 		setLayoutData(data);
 		
+		forms = new FormToolkit(parent.getDisplay());
+		forms.setBackground(getBackgroundColor());
+		HyperlinkGroup group = forms.getHyperlinkGroup();
+		group.setBackground(getBackgroundColor());
+		
 		changesSectionContainer = new PageBook(this, SWT.NONE);
 		data = new GridData(GridData.FILL_BOTH);
 		data.grabExcessHorizontalSpace = true;
@@ -208,7 +212,7 @@ public class ChangesSection extends Composite {
 	
 	private Composite getEmptyChangesComposite(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		composite.setBackground(getBackgroundColor());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
@@ -247,29 +251,25 @@ public class ChangesSection extends Composite {
 			Label warning = new Label(composite, SWT.NONE);
 			warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING));
 			
-			Hyperlink link = new Hyperlink(composite, SWT.WRAP);
-			link.setText(Policy.bind("ChangesSection.filterChange", Utils.modeToString(newMode))); //$NON-NLS-1$
+			Hyperlink link = forms.createHyperlink(composite, Policy.bind("ChangesSection.filterChange", Utils.modeToString(newMode)), SWT.WRAP); //$NON-NLS-1$
 			link.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					participant.setMode(newMode);
 				}
 			});
-			link.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-			link.setUnderlined(true);
+			forms.getHyperlinkGroup().add(link);
 			createDescriptionLabel(composite, text.toString());
 		} else if(changesInFilter == 0 && changesInWorkingSet == 0 && changesInWorkspace != 0) {
 			Label warning = new Label(composite, SWT.NONE);
 			warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING));
 			
-			Hyperlink link = new Hyperlink(composite, SWT.WRAP);
-			link.setText(Policy.bind("ChangesSection.workingSetRemove")); //$NON-NLS-1$
+			Hyperlink link = forms.createHyperlink(composite, Policy.bind("ChangesSection.workingSetRemove"), SWT.WRAP);
 			link.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
 					participant.setWorkingSet(null);
 				}
 			});
-			link.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-			link.setUnderlined(true);
+			forms.getHyperlinkGroup().add(link);
 			createDescriptionLabel(composite,Policy.bind("ChangesSection.workingSetHiding", Utils.workingSetToString(participant.getWorkingSet(), 50)));	 //$NON-NLS-1$
 		} else {
 			createDescriptionLabel(composite,Policy.bind("ChangesSection.noChanges", participant.getName()));	 //$NON-NLS-1$
@@ -284,7 +284,7 @@ public class ChangesSection extends Composite {
 		data.widthHint = 100;
 		description.setLayoutData(data);
 		description.setText(text);
-		description.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		description.setBackground(getBackgroundColor());
 		return description;
 	}
 	
@@ -296,7 +296,7 @@ public class ChangesSection extends Composite {
 	
 	private Composite getErrorComposite(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		composite.setBackground(getBackgroundColor());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		composite.setLayout(layout);
@@ -311,7 +311,7 @@ public class ChangesSection extends Composite {
 				showErrors();
 			}
 		});
-		link.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		link.setBackground(getBackgroundColor());
 		link.setUnderlined(true);
 		
 		link = new Hyperlink(composite, SWT.WRAP);
@@ -321,7 +321,7 @@ public class ChangesSection extends Composite {
 				participant.getSubscriberSyncInfoCollector().reset();
 			}
 		});
-		link.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		link.setBackground(getBackgroundColor());
 		link.setUnderlined(true);
 		
 		createDescriptionLabel(composite, "Errors have occurred calculating the synchronization state for {0}" + participant.getName());
@@ -338,5 +338,9 @@ public class ChangesSection extends Composite {
 			MultiStatus multi = new MultiStatus(TeamUIPlugin.ID, 0, status, "Multiple errors occurred while attempting to populate the view.", null);
 			ErrorDialog.openError(getShell(), title, null, multi);
 		}
+	}
+	
+	protected Color getBackgroundColor() {
+		return JFaceColors.getSchemeBackground(parent.getDisplay());
 	}
 }
