@@ -69,13 +69,13 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	protected Control createDialogArea(Composite parent) {
 		if (Policy.SHOW_PREFERENCES_NEWLOOK)
 			return createNewLookTab(parent);
-		else
-			return super.createDialogArea(parent);
+		return super.createDialogArea(parent);
 	}	
 
 	/**
 	 * Create a tabbed list for the new and classic looks in the composite.
 	 * @param composite
+	 * @return Control
 	 */
 	private Control createNewLookTab(Composite composite) {
 		TabFolder tabFolder = new TabFolder(composite, SWT.NONE);
@@ -83,6 +83,13 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		// TODO Remove this before 3.1 ships
 	
 
+		final TabItem newItem = new TabItem(tabFolder, SWT.NONE);
+		newItem.setText("New Look");//$NON-NLS-1$
+		Composite newParent = new Composite(tabFolder, SWT.NONE);
+		newItem.setControl(newParent);
+		newParent.setLayout(new GridLayout());
+		createNewPreferencesArea(newParent);
+		
 		TabItem classicItem = new TabItem(tabFolder, SWT.NONE);
 		classicItem.setText("Classic");//$NON-NLS-1$
 		Composite classicParent = new Composite(tabFolder, SWT.NONE);
@@ -90,12 +97,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		classicParent.setLayout(new GridLayout());
 		super.createDialogArea(classicParent);
 		
-		final TabItem newItem = new TabItem(tabFolder, SWT.NONE);
-		newItem.setText("New Look");//$NON-NLS-1$
-		Composite newParent = new Composite(tabFolder, SWT.NONE);
-		newItem.setControl(newParent);
-		newParent.setLayout(new GridLayout());
-		createNewPreferencesArea(newParent);
+		newLookSelected = true;
 	
 		
 		GridData folderData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
@@ -127,7 +129,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			 * @param node
 			 */
 			private void clear(IPreferenceNode node) {
-				node.disposeResources();
+				if(node.getPage() != null)
+					node.getPage().dispose();
 				IPreferenceNode [] nodes = node.getSubNodes();
 				for (int i = 0; i < nodes.length; i++) {
 					clear( nodes[i]);			
@@ -153,7 +156,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @return GenericListViewer
 	 */
 	private GenericListViewer createListViewer(Composite composite) {
-		final GenericListViewer viewer = new GenericListViewer(composite, SWT.BORDER){
+		final GenericListViewer listViewer = new GenericListViewer(composite, SWT.BORDER){
 			
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.viewers.GenericListViewer#createListItem(java.lang.Object, org.eclipse.swt.graphics.Color, org.eclipse.jface.viewers.GenericListViewer)
@@ -174,10 +177,10 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			}
 		};
 		
-		viewer.getControl().setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		listViewer.getControl().setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		
 		//Register help listener on the tree to use context sensitive help
-		viewer.getControl().addHelpListener(new HelpListener() {
+		listViewer.getControl().addHelpListener(new HelpListener() {
 			public void helpRequested(HelpEvent event) {
 				// call perform help on the current page
 				if (getCurrentPage() != null) {
@@ -185,16 +188,16 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 				}
 			}
 		});
-		viewer.setLabelProvider(new PreferenceLabelProvider());
-		viewer.setContentProvider(new FilteredPreferenceContentProvider());
+		listViewer.setLabelProvider(new PreferenceLabelProvider());
+		listViewer.setContentProvider(new FilteredPreferenceContentProvider());
 		
-		viewer.setInput(getPreferenceManager());
+		listViewer.setInput(getPreferenceManager());
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
 		gd.widthHint = getLastRightWidth();
 		gd.verticalSpan = 1;
-		viewer.getControl().setLayoutData(gd);
+		listViewer.getControl().setLayoutData(gd);
 		
-		return viewer;
+		return listViewer;
 	}
 
 	/* (non-Javadoc)

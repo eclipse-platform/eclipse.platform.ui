@@ -28,6 +28,10 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  */
 public class WorkbenchPreferenceNode extends PreferenceNode implements
         IPluginContribution {
+	
+	/**
+	 * The attribute for class name.
+	 */
     public final static String ATT_CONTRIBUTOR_CLASS = "class"; //$NON-NLS-1$
 
     private String category;
@@ -36,6 +40,15 @@ public class WorkbenchPreferenceNode extends PreferenceNode implements
 
     private IWorkbench workbench;
 
+    /**
+     * Create a new instance of the receiver.
+     * @param nodeId
+     * @param nodeLabel
+     * @param category
+     * @param nodeImage
+     * @param element
+     * @param newWorkbench
+     */
     public WorkbenchPreferenceNode(String nodeId, String nodeLabel,
             String category, ImageDescriptor nodeImage,
             IConfigurationElement element, IWorkbench newWorkbench) {
@@ -70,9 +83,11 @@ public class WorkbenchPreferenceNode extends PreferenceNode implements
         setPage(page);
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
-     */
+    /**
+     * Return whether or not the receiver was contributed by 
+     * a plug-in.
+     * @return boolean
+     */    
     public boolean fromPlugin() {
         return true;
     }
@@ -105,4 +120,5 @@ public class WorkbenchPreferenceNode extends PreferenceNode implements
     public ImageDescriptor getDescriptor(){
     	return getImageDescriptor();
     }
+ 
 }

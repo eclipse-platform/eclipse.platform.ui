@@ -192,7 +192,6 @@ public class PreferencesPageContainer implements IPreferencePageContainer{
 	 * @param node
 	 * @return <code>true</code> if the page selection was sucessful
 	 *         <code>false</code> is unsuccessful
-	 * @see org.eclipse.jface.preference.PreferenceDialog#showPage(IPreferenceNode)
 	 */
 	boolean show(IPreferenceNode node) {
 		createGeneralEntry(node);		
@@ -269,7 +268,7 @@ public class PreferencesPageContainer implements IPreferencePageContainer{
 		
 		Point size = control.getSize();
 		scrolled.setMinHeight(size.y + contentSize.y);
-		scrolled.setMinWidth(size.x + contentSize.x);
+		scrolled.setMinWidth(Math.max(size.x,contentSize.x));
 	}
 
 }

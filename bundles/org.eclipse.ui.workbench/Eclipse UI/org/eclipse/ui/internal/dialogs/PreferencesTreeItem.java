@@ -39,6 +39,9 @@ public class PreferencesTreeItem extends GenericListItem {
 	private CLabel textLabel;
 	
 	private Color gradientColor;
+	
+	//Keep a reference for the life of the instance.
+	private Image cachedImage;
 
 	/**
 	 * Create a new instance of the receiver for displaying
@@ -53,7 +56,7 @@ public class PreferencesTreeItem extends GenericListItem {
 	 * @see org.eclipse.jface.viewers.GenericListItem#dispose()
 	 */
 	public void dispose() {
-		
+		cachedImage.dispose();
 
 	}
 
@@ -78,8 +81,10 @@ public class PreferencesTreeItem extends GenericListItem {
 		ImageDescriptor desc = ((WorkbenchPreferenceNode) node).getDescriptor();
 		if (desc == null)
 			image = JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_INFO);
-		else
-			image = desc.createImage();
+		else{
+			cachedImage = desc.createImage(true);
+			image = cachedImage;
+		}
 		
 		imageLabel = new CLabel(control, SWT.CENTER);
 		imageLabel.setImage(image);
@@ -97,6 +102,7 @@ public class PreferencesTreeItem extends GenericListItem {
 	/**
 	 * Set the colors of the receiver based on whether or
 	 * not it is selected.
+	 * @param selected whether or not the receiver is selected
 	 */
 	private void setColors(boolean selected) {
 		
