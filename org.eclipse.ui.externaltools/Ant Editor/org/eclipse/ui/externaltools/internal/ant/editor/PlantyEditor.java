@@ -47,6 +47,7 @@ import org.eclipse.ui.externaltools.internal.ant.preferences.AntEditorPreference
 import org.eclipse.ui.externaltools.internal.model.ColorManager;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.texteditor.ContentAssistAction;
+import org.eclipse.ui.texteditor.DefaultRangeIndicator;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
@@ -86,8 +87,8 @@ public class PlantyEditor extends TextEditor {
      */
     public PlantyEditor() {
         super();
-	setDocumentProvider(new PlantyDocumentProvider(XMLCore.getDefault()));
-	setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
+		setDocumentProvider(new PlantyDocumentProvider(XMLCore.getDefault()));
+		setPreferenceStore(ExternalToolsPlugin.getDefault().getPreferenceStore());
     }
 
 
@@ -108,6 +109,7 @@ public class PlantyEditor extends TextEditor {
     public void initializeEditor() {
         // That is where the assistant and its processor is defined
 		setSourceViewerConfiguration(new PlantySourceViewerConfiguration(this));
+		setRangeIndicator(new DefaultRangeIndicator());
     }
    
 	/* (non-Javadoc)
