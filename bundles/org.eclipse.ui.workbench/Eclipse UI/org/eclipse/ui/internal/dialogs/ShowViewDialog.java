@@ -111,6 +111,7 @@ public class ShowViewDialog extends Dialog implements
                 IDialogConstants.OK_LABEL, true);
         createButton(parent, IDialogConstants.CANCEL_ID,
                 IDialogConstants.CANCEL_LABEL, false);
+        updateButtons();
     }
 
     /**
@@ -259,7 +260,7 @@ public class ShowViewDialog extends Dialog implements
      * Update the button enablement state.
      */
     protected void updateButtons() {
-        okButton.setEnabled(getSelection() != null);
+        okButton.setEnabled(getSelection().length > 0);
     }
 
     /**
