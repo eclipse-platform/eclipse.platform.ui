@@ -44,7 +44,8 @@ public class BrowserManager {
 				setDefaultBrowserID("org.eclipse.help.ui.netscapeSolaris");
 			} else if (System.getProperty("os.name").startsWith("AIX")) {
 				setDefaultBrowserID("org.eclipse.help.ui.netscapeAIX");
-			} else if (System.getProperty("os.name").toLowerCase().startsWith("hp")) {
+			} else if (
+				System.getProperty("os.name").toLowerCase().startsWith("hp")) {
 				setDefaultBrowserID("org.eclipse.help.ui.netscapeAIX");
 			} else {
 				setDefaultBrowserID("org.eclipse.help.ui.mozillaLinux");
@@ -59,7 +60,10 @@ public class BrowserManager {
 		if (defaultBrowserDesc == null) {
 			// If no browsers at all, use the Null Browser Adapter
 			defaultBrowserDesc =
-				new BrowserDescriptor("", "Null Browser", new IBrowserFactory() {
+				new BrowserDescriptor(
+					"",
+					"Null Browser",
+					new IBrowserFactory() {
 				public boolean isAvailable() {
 					return true;
 				}
@@ -68,8 +72,15 @@ public class BrowserManager {
 						public void close() {
 						}
 						public void displayURL(String url) {
-							Logger.logError(WorkbenchResources.getString("no_browsers", url), null);
-							ErrorUtil.displayErrorDialog(WorkbenchResources.getString("no_browsers", url));
+							Logger.logError(
+								WorkbenchResources.getString(
+									"no_browsers",
+									url),
+								null);
+							ErrorUtil.displayErrorDialog(
+								WorkbenchResources.getString(
+									"no_browsers",
+									url));
 						}
 						public boolean isCloseSupported() {
 							return false;
@@ -119,11 +130,16 @@ public class BrowserManager {
 			if (label == null)
 				continue;
 			try {
-				Object adapter = configElements[i].createExecutableExtension("factoryclass");
+				Object adapter =
+					configElements[i].createExecutableExtension("factoryclass");
 				if (!(adapter instanceof IBrowserFactory))
 					continue;
 				if (((IBrowserFactory) adapter).isAvailable()) {
-					bDescriptors.add(new BrowserDescriptor(id, label, (IBrowserFactory) adapter));
+					bDescriptors.add(
+						new BrowserDescriptor(
+							id,
+							label,
+							(IBrowserFactory) adapter));
 				}
 			} catch (CoreException ce) {
 			}
@@ -166,6 +182,14 @@ public class BrowserManager {
 	 * Creates web browser
 	 */
 	public IBrowser createBrowser() {
+		return new DefaultBrowser(
+			createBrowserAdapter(),
+			getDefaultBrowserID());
+	}
+	/**
+	 * Creates web browser
+	 */
+	IBrowser createBrowserAdapter() {
 		IBrowser browser = defaultBrowserDesc.getFactory().createBrowser();
 		browsers.add(browser);
 		return browser;
