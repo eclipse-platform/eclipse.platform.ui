@@ -995,22 +995,18 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		if (event.getProperty().equals(IPreferenceConstants.AUTO_BUILD)) {
 			// Auto build is stored in core. It is also in the preference store for use by import/export.
 			IWorkspaceDescription description = ResourcesPlugin.getWorkspace().getDescription();
-			boolean oldAutoBuildSetting = description.isAutoBuilding();
+			boolean autoBuildSetting = description.isAutoBuilding();
 			boolean newAutoBuildSetting = store.getBoolean(IPreferenceConstants.AUTO_BUILD);
 			
-			if(oldAutoBuildSetting != newAutoBuildSetting){
+			if(autoBuildSetting != newAutoBuildSetting){
 				description.setAutoBuilding(newAutoBuildSetting);
+				autoBuildSetting = newAutoBuildSetting;
 				try {
 					ResourcesPlugin.getWorkspace().setDescription(description);
 				} catch (CoreException e) {
 					WorkbenchPlugin.log("Error changing autobuild pref", e.getStatus());
 				}
-						
-				if (newAutoBuildSetting)
-					removeManualIncrementalBuildAction();
-				else
-					addManualIncrementalBuildAction();
-					
+									
 				// If auto build is turned on, then do a global incremental
 				// build on all the projects.
 				if (newAutoBuildSetting) {
@@ -1018,6 +1014,12 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 					action.doBuild();
 				}								
 			}
+			
+					
+			if (autoBuildSetting)
+				removeManualIncrementalBuildAction();
+			else
+				addManualIncrementalBuildAction();
 			
 		} else if (event.getProperty().equals(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)) {
 			if(store.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN))

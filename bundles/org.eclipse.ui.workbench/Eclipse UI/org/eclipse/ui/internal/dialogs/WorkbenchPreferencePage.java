@@ -337,14 +337,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		// store the auto build in the preference store so that we can enable import and export
 		store.setValue(IPreferenceConstants.AUTO_BUILD, newAutoBuildSetting);
 
-		if (oldAutoBuildSetting != newAutoBuildSetting) {
-			// fire off a property change notification so interested
-			// parties can know about the auto build setting change
-			// since it is not kept in the preference store.
-			store.firePropertyChangeEvent(IPreferenceConstants.AUTO_BUILD, new Boolean(oldAutoBuildSetting), new Boolean(newAutoBuildSetting));
-
-		}
-
 		// store the save all prior to build setting
 		store.setValue(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, autoSaveAllButton.getSelection());
 
