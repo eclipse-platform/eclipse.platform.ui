@@ -113,27 +113,27 @@ public class RegistryCacheReader {
 	// parsed and added to the plugin registry.  Therefore, 'location'
 	// will not appear in plugin.xml (and not in IModel either) but
 	// will appear in the registry cache.
-	public static final String RESOLVED = "resolved"; //$NON-NLS-1$
-	public static final String READONLY = "readonly"; //$NON-NLS-1$
-	public static final String LOCATION = "location"; //$NON-NLS-1$
-	public static final String ENABLED = "enabled"; //$NON-NLS-1$
-	public static final String RESOLVED_VERSION = "resolved_version"; //$NON-NLS-1$
-	public static final String END = "end"; //$NON-NLS-1$
-	public static final String EXPORTS_lENGTH = "<length of export list>"; //$NON-NLS-1$
-	public static final String SUBELEMENTS_LENGTH = "<length of subelement list>"; //$NON-NLS-1$
-	public static final String PROPERTIES_LENGTH = "<length of properties list>"; //$NON-NLS-1$
-	public static final String PARENT_REGISTRY = "<index of parent registry>"; //$NON-NLS-1$
-	public static final String CONFIGURATION_ELEMENT_PARENT = "<index of element parent>"; //$NON-NLS-1$
-	public static final String PLUGIN_INDEX = "<index of plugin>"; //$NON-NLS-1$
-	public static final String EXTENSION_INDEX = "<index of extension>"; //$NON-NLS-1$
-	public static final String EXT_PT_PARENT_INDEX = "<index of extension point parent>"; //$NON-NLS-1$
-	public static final String EXT_PT_EXTENSION_LENGTH = "<length of extension list>"; //$NON-NLS-1$
-	public static final String EXT_LIST = "<list of extensions>"; //$NON-NLS-1$
-	public static final String EXTENSION_PARENT = "<index of extension parent>"; //$NON-NLS-1$
-	public static final String ELEMENT_INDEX = "<index of element>"; //$NON-NLS-1$
-	public static final String REGISTRY_INDEX = "<index of registry>"; //$NON-NLS-1$
-	public static final String FRAGMENT_INDEX = "<index of fragment>"; //$NON-NLS-1$
-	public static final String UNKNOWN = "<unknown label>"; //$NON-NLS-1$
+	private static final String RESOLVED = "resolved"; //$NON-NLS-1$
+	private static final String READONLY = "readonly"; //$NON-NLS-1$
+	private static final String LOCATION = "location"; //$NON-NLS-1$
+	private static final String ENABLED = "enabled"; //$NON-NLS-1$
+	private static final String RESOLVED_VERSION = "resolved_version"; //$NON-NLS-1$
+	private static final String END = "end"; //$NON-NLS-1$
+	private static final String EXPORTS_lENGTH = "<length of export list>"; //$NON-NLS-1$
+	private static final String SUBELEMENTS_LENGTH = "<length of subelement list>"; //$NON-NLS-1$
+	private static final String PROPERTIES_LENGTH = "<length of properties list>"; //$NON-NLS-1$
+	private static final String PARENT_REGISTRY = "<index of parent registry>"; //$NON-NLS-1$
+	private static final String CONFIGURATION_ELEMENT_PARENT = "<index of element parent>"; //$NON-NLS-1$
+	private static final String PLUGIN_INDEX = "<index of plugin>"; //$NON-NLS-1$
+	private static final String EXTENSION_INDEX = "<index of extension>"; //$NON-NLS-1$
+	private static final String EXT_PT_PARENT_INDEX = "<index of extension point parent>"; //$NON-NLS-1$
+	private static final String EXT_PT_EXTENSION_LENGTH = "<length of extension list>"; //$NON-NLS-1$
+	private static final String EXT_LIST = "<list of extensions>"; //$NON-NLS-1$
+	private static final String EXTENSION_PARENT = "<index of extension parent>"; //$NON-NLS-1$
+	private static final String ELEMENT_INDEX = "<index of element>"; //$NON-NLS-1$
+	private static final String REGISTRY_INDEX = "<index of registry>"; //$NON-NLS-1$
+	private static final String FRAGMENT_INDEX = "<index of fragment>"; //$NON-NLS-1$
+	private static final String UNKNOWN = "<unknown label>"; //$NON-NLS-1$
 
 public RegistryCacheReader(Factory factory) {
 	super();
