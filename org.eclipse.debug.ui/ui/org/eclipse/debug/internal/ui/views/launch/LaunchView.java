@@ -472,7 +472,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		clearStatusLine();
 		updateObjects();
 		showEditorForCurrentSelection();
-		fContextListener.updateForSelection(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
+		if (isActive()) {
+		    fContextListener.updateForSelection(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
+		}
 	}
 
 	/**
