@@ -9,18 +9,51 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.preference.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.externaltools.internal.registry.ArgumentVariableRegistry;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolRegistry;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolTypeRegistry;
-import org.eclipse.ui.externaltools.internal.registry.PathLocationVariableRegistry;
-import org.eclipse.ui.externaltools.internal.registry.RefreshScopeVariableRegistry;
+import org
+	.eclipse
+	.ui
+	.externaltools
+	.internal
+	.registry
+	.PathLocationVariableRegistry;
+import org
+	.eclipse
+	.ui
+	.externaltools
+	.internal
+	.registry
+	.RefreshScopeVariableRegistry;
+import org
+	.eclipse
+	.ui
+	.externaltools
+	.internal
+	.ui
+	.launchConfigurations
+	.ExternalToolsLaunchConfigurationFilter;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
@@ -48,6 +81,13 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	public ExternalToolsPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		plugin = this;
+	}
+	
+	/**
+	 * Returns whether the external tools plug-in is in "launch config" mode
+	 * @return boolean	 */
+	public static boolean isLaunchConfigurationMode() {
+		return getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.LAUNCH_CONFIG_MODE);
 	}
 	
 	/**
@@ -169,4 +209,43 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_VERBOSE_RGB, new RGB(0, 200, 125));	// green
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_DEBUG_RGB, new RGB(0, 0, 0));			// black
 	}	
+	
+	public static IWorkbenchWindow getActiveWorkbenchWindow() {
+		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+	}	
+	
+	/**
+	 * Returns the standard display to be used. The method first checks, if
+	 * the thread calling this method has an associated display. If so, this
+	 * display is returned. Otherwise the method returns the default display.
+	 */
+	public static Display getStandardDisplay() {
+		Display display= Display.getCurrent();
+		if (display == null) {
+			display= Display.getDefault();
+		}
+		return display;		
+	}		
+	
+	/**
+	 * Opens the external tools dialog
+	 */
+	public static void openExternalToolsDialog(IStructuredSelection selection) {
+		IWorkbenchWindow window = getActiveWorkbenchWindow();
+		if (window != null) {
+			ViewerFilter filter = new ExternalToolsLaunchConfigurationFilter();
+			Image image = ExternalToolsImages.getImage(IExternalToolConstants.IMG_WIZBAN_EXTERNAL_TOOLS);
+			DebugUITools.openLaunchConfigurationDialog(window.getShell(), selection, ILaunchManager.RUN_MODE, ToolMessages.getString("ExternalToolsDialog.External_Tools_1"), ToolMessages.getString("ExternalToolsDialog.Create,_manage,_and_run_external_tools_2"), image, filter); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+			
+	}
+
+	
+	/**
+	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#createImageRegistry()
+	 */
+	protected ImageRegistry createImageRegistry() {
+		return ExternalToolsImages.initializeImageRegistry();
+	}
+
 }

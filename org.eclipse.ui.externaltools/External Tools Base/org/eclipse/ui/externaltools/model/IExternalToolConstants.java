@@ -213,4 +213,10 @@ public interface IExternalToolConstants {
 	 * the external tool running as a builder (value <code>none</code>).
 	 */
 	public static final String BUILD_TYPE_NONE = "none"; //$NON-NLS-1$
+	
+	// ------- Images -------
+	/**
+	 * External tools wizard banner image
+	 */
+	public static final String IMG_WIZBAN_EXTERNAL_TOOLS = PLUGIN_ID + ".IMG_WIZBAN_EXTERNAL_TOOLS";
 }

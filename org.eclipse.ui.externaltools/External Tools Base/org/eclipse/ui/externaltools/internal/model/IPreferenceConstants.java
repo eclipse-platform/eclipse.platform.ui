@@ -24,4 +24,7 @@ public interface IPreferenceConstants {
  	public static final String CONSOLE_VERBOSE_RGB = "externaltools.console.verboseColor"; // $NON-NLS-1$
  	public static final String CONSOLE_DEBUG_RGB = "externaltools.console.debugColor"; // $NON-NLS-1$
  	public static final String CONSOLE_FONT = "externaltools.console.font"; // $NON-NLS-1$
+ 	
+ 	// temporary work-in-progress preference (a boolean)
+ 	public static final String LAUNCH_CONFIG_MODE = "externaltools.launch_config_mode"; // $NON-NLS-1$
 }

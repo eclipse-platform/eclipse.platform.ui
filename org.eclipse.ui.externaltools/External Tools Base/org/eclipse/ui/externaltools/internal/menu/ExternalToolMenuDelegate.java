@@ -12,6 +12,7 @@ Contributors:
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
@@ -168,6 +169,18 @@ public class ExternalToolMenuDelegate extends ActionDelegate implements IWorkben
 				showView();
 			}
 		});
+		
+		
+		if (ExternalToolsPlugin.isLaunchConfigurationMode()) {
+			// Add a menu item to show the external tools dialog
+			MenuItem configure = new MenuItem(menu, SWT.NONE);
+			configure.setText(ToolMessages.getString("ExternalToolMenuDelegate.configure")); //$NON-NLS-1$
+			configure.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					ExternalToolsPlugin.openExternalToolsDialog(new StructuredSelection());
+				}
+			});
+		}		
 	}
 
 	/**

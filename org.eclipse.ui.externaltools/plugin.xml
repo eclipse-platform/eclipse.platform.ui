@@ -17,6 +17,8 @@
       <import plugin="org.eclipse.ant.core"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="org.eclipse.debug.ui"/>      
    </requires>
 
 
@@ -327,6 +329,23 @@
          	library="lib/antrunner.jar">
       	</extraClasspathEntry>
     </extension>
+    
+    <extension point="org.eclipse.debug.core.launchConfigurationTypes"
+    	id = "org.eclipse.ant.AntLaunchConfigurationType"
+    	name = "Ant Script"
+    	delegate = "org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchDelegate"
+    	modes = "run"
+    	category = "org.eclipse.ui.externaltools">
+    </extension>
+    
+	<extension point="org.eclipse.ui.preferencePages">
+		<page 
+			id="org.eclipse.ui.externaltools.WorkInProgressPreferencePage" 
+			name="Work In Progress"
+			class="org.eclipse.ui.externaltools.internal.ui.WorkInProgressPreferencePage"
+			category="org.eclipse.ui.externaltools.ToolsPreferencePage">
+		</page>
+	</extension>    
 
 <!-- Old Stuff -->
 <!-- Old Stuff -->
