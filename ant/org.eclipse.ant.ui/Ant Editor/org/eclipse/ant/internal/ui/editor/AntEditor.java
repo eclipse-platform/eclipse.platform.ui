@@ -732,6 +732,9 @@ public class AntEditor extends TextEditor {
 	}
 
 	public void synchronizeOutlinePage(boolean checkIfOutlinePageActive) {
+		if (getSelectionProvider() == null) {
+			return;
+		}
 		AntElementNode node= null;
 		ISelection selection= getSelectionProvider().getSelection();
 		if (selection instanceof ITextSelection) {
