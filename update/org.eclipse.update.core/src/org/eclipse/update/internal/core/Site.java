@@ -30,9 +30,9 @@ public abstract class Site implements ISite, IWritable {
 
 
 	/**
-	 * default path, under site, where features will be installed
+	 * default path, under site, where featuresConfigured will be installed
 	 */
-	public static final String DEFAULT_FEATURE_PATH = "features/";
+	public static final String DEFAULT_FEATURE_PATH = "featuresConfigured/";
 
 	public static final String SITE_FILE = "site";
 	public static final String SITE_XML= SITE_FILE+".xml";
@@ -225,7 +225,7 @@ public abstract class Site implements ISite, IWritable {
 	}
 
 	/**
-	 * Gets the features
+	 * Gets the featuresConfigured
 	 * @return Returns a IFeatureReference[]
 	 */
 	public IFeatureReference[] getFeatureReferences() {

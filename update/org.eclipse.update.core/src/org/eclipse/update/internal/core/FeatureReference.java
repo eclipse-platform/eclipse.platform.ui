@@ -101,7 +101,7 @@ public class FeatureReference implements IFeatureReference, IWritable {
 		if (feature == null) {
 			if (featureType != null && !featureType.equals("")) {
 				feature = createFeature(featureType);
-				Assert.isTrue(false,"Type not available yet for features in Site.XML...");
+				Assert.isTrue(false,"Type not available yet for featuresConfigured in Site.XML...");
 			} else {
 				if (url.toExternalForm().endsWith(FeaturePackaged.JAR_EXTENSION)) {
 					// if it ends with JAR, guess it is a FeaturePackaged

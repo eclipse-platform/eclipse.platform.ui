@@ -1,6 +1,8 @@
 package org.eclipse.update.core;
 
 import java.io.File;
+import java.net.URL;
+import org.eclipse.core.runtime.CoreException;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -24,7 +26,7 @@ public interface ILocalSite {
 	
 	
 	/**
-	 * return the label of teh local site
+	 * return the label of the local site
 	 * 
 	 * @return teh label
 	 */
@@ -32,7 +34,8 @@ public interface ILocalSite {
 	
 
 	/**
-	 * Return the current configuration object
+	 * Return the current configuration object.
+	 * This is the Configuration that will be saved.
 	 * 
 	 * @return IInstallConfiguration
 	 */	
@@ -48,16 +51,43 @@ public interface ILocalSite {
 	IInstallConfiguration [] getConfigurationHistory();
 	
 	/**
-	 * Reverts the Current Configuration to the 
+	 * Reverts the Current Configuration to an old configuration.
+	 * 
+	 * Creates a new configuration based on the old one
+	 * and calculate the delta between the old configuration and the current one
+	 * Then set the newly created configuration as the current one
 	 * 
 	 * @param IInstallConfiguration the configuration to use
 	 */
-	void setCurrentConfiguration(IInstallConfiguration configuration);
+	void revertTo(IInstallConfiguration configuration) throws CoreException;
 	
 	/**
-	 * Creates a configuration from a File
+	 * Creates a configuration from a File.
+	 * The configuration is not added to the LocalSite
 	 */
 	IInstallConfiguration importConfiguration(File importFile);
+	
+	/**
+	 * creates a new currentConfiguration based on the current configuration
+	 * The newly created configuration is not added to the local site
+	 * After the change have been made add it to the local site
+	 * 
+	 * If <code>name</code> is <code>null</code> we'll create a name based on the creation date
+	 * if <code>newFile</code> is <code>null</code> we'll create a new file based on the creation date 
+	 */
+	IInstallConfiguration createConfiguration(URL newFile,String name) throws CoreException;
+	
+	/**
+	 * Adds a new configuration to the LocalSite
+	 * The new configuration becomes the current one
+	 */
+	void addConfiguration(IInstallConfiguration config);
+	
+	/**
+	 * Saves and persists the localSite. Also saves and persists the current Configuration
+	 */
+	void save() throws CoreException;
+	
 	
 	void addLocalSiteChangedListener(ISiteLocalChangedListener listener);
 	void removeLocalSiteChangedListener(ISiteLocalChangedListener listener);

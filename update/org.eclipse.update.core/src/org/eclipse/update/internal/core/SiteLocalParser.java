@@ -51,7 +51,7 @@ public class SiteLocalParser extends DefaultHandler {
 		parser.setContentHandler(this);
 
 		this.siteStream = siteStream;
-		Assert.isTrue(site instanceof Site);
+		Assert.isTrue(site instanceof SiteLocal);
 		this.site = (SiteLocal) site;
 
 		// DEBUG:		
@@ -59,7 +59,7 @@ public class SiteLocalParser extends DefaultHandler {
 			UpdateManagerPlugin.getPlugin().debug("Start parsing localsite:" + ((SiteLocal)site).getLocation().toExternalForm());
 		}
 
-		bundle = ((Site) site).getResourceBundle();
+		bundle = getResourceBundle();
 
 		parser.parse(new InputSource(this.siteStream));
 	}

@@ -8,6 +8,7 @@ package org.eclipse.update.internal.core;
 
 import java.io.PrintWriter;
 
+import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.ILocalSite;
 
@@ -16,26 +17,14 @@ public Writer() {
 	super();
 }
 
-public void writeSite(ISite site, PrintWriter w) {
+public void writeSite(IWritable element, PrintWriter w) {
 
 	w.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	w.println("");
 	w.println("<!-- File written by Update manager 2.0 -->");
 	w.println("<!-- comments in this file are not preserved -->");
 	w.println("");
-	((Site)site).write(0,w);
-
-}
-
-
-public void writeSite(ILocalSite site, PrintWriter w) {
-
-	w.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-	w.println("");
-	w.println("<!-- File written by Update manager 2.0 -->");
-	w.println("<!-- comments in this file are not preserved -->");
-	w.println("");
-	((SiteLocal)site).write(0,w);
+	((IWritable)element).write(0,w);
 
 }
 

@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import org.eclipse.core.internal.plugins.ConfigurationProperty;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.internal.core.*;
 
@@ -80,19 +81,24 @@ public class SiteManager {
 		return UpdateManagerUtils.resolveAsLocal(url);
 	}
 	
-	
 	/**
-	 * Creates a new local site on the file system
+	 * Creates a new site on the file system
 	 * This is the only Site we can create.
 	 * 
-	 * Also adds the new Site into the LocalSite
+	 * Does not add the Site to the LocalSite
 	 * 
 	 * @param siteLocation
 	 * @throws CoreException
 	 */
-	public static ISite createSite(URL siteLocation) throws CoreException {
-		ISite createdSite = InternalSiteManager.createSite(siteLocation);
-		getLocalSite().getCurrentConfiguration().addInstallSite(createdSite);
-		return createdSite;
+	public static ISite createSite(File siteLocation) throws CoreException {
+		return InternalSiteManager.createSite(siteLocation);	
+	}
+	
+	/**
+	 * Creates a Configuration Site for an  ISite
+	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
+	 */
+	public static IConfigurationSite createConfigurationSite(ISite site,int policy){
+		return InternalSiteManager.createConfigurationSite(site,policy);
 	}
 }

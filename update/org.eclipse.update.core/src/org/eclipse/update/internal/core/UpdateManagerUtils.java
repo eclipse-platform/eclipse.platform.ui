@@ -170,17 +170,31 @@ public class UpdateManagerUtils {
 	}
 
 	/**
-	 * Returns a random fiel name for teh local system
+	 * Returns a random file name for the local system
+	 * attempt to conserve the extension if there is a '.' in the path
+	 * and no File.Seperator after the '.'
+	 * 
+	 * \a\b\c.txt -> c987659385.txt
+	 * c.txt -> c3854763.txt
+	 * c	-> c953867549
 	 */
-	private static String getLocalRandomIdentifier(String remotePath) {
+	public static String getLocalRandomIdentifier(String remotePath) {
 		int dotIndex = remotePath.lastIndexOf(".");
 		int fileIndex = remotePath.lastIndexOf(File.separator);
-
+		
 		// if there is a separator after the dot
 		// do not consider it as an extension
 		// FIXME: LINUX ???
 		String ext = (dotIndex != -1 && fileIndex < dotIndex) ? "." + remotePath.substring(dotIndex) : "";
-		String name = (fileIndex != -1 && fileIndex < dotIndex) ? remotePath.substring(fileIndex, dotIndex) : "Eclipse_Update_TMP_";
+
+		// the name is teh string between the separator and the dot
+		// if there is no separator, it is the string up to the dot		
+		// if there is no dot, go to the end of the string 
+		if (fileIndex==-1) fileIndex=0;
+		if (dotIndex==-1) dotIndex=remotePath.length();
+		// if I have a separator and no dot: /a/b/c -> c
+		// if my separator is the last /a/b/c/, fileIndex and dotIndex are the same, so it will return teh default temp name
+		String name = (fileIndex < dotIndex) ? remotePath.substring(fileIndex, dotIndex) : "Eclipse_Update_TMP_";
 
 		Date date = new Date();
 		String result = name + date.getTime() + ext;

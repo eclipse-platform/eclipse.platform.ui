@@ -54,10 +54,10 @@ public interface IInstallConfiguration {
 	 * must be read-write accessible from the current client, otherwise
 	 * subsequent installation attampts will fail.
 	 * 
-	 * @return ISite[] local install sites. Returns an empty array
+	 * @return IConfigurationSite[] local install sites. Returns an empty array
 	 * if there are no local install sites
 	 */
-	public ISite[] getInstallSites();
+	public IConfigurationSite[] getInstallSites();
 	
 	/**
 	 * Adds an additional local install site to this configuration.
@@ -68,37 +68,37 @@ public interface IInstallConfiguration {
 	 * 
 	 * @param site local install site
 	 */
-	public void addInstallSite(ISite site);
+	public void addInstallSite(IConfigurationSite site);
 	
 	/**
 	 * Removes a local install site from this configuration.
 	 * 
 	 * @param site local install site
 	 */
-	public void removeInstallSite(ISite site);
+	public void removeInstallSite(IConfigurationSite site);
 	
 	/**
 	 * Returns an array of sites (generally read-only) used for accessing
 	 * additional features
 	 * 
-	 * @return ISite[] array of linked sites. Returns an empty array
+	 * @return IConfigurationSite[] array of linked sites. Returns an empty array
 	 * if there are no linked sites
 	 */
-	public ISite[] getLinkedSites();
+	public IConfigurationSite[] getLinkedSites();
 	
 	/**
 	 * Adds an additional linked site to this configuration
 	 * 
 	 * @param site linked site
 	 */
-	public void addLinkedSite(ISite site);
+	public void addLinkedSite(IConfigurationSite site);
 	
 	/**
 	 * Removes a linked site from this configuration
 	 * 
 	 * @param site linked site
 	 */
-	public void removeLinkedSite(ISite site);	
+	public void removeLinkedSite(IConfigurationSite site);	
 	
 	void addInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);
 	void removeInstallConfigurationChangedListener(IInstallConfigurationChangedListener listener);
@@ -122,17 +122,6 @@ public interface IInstallConfiguration {
 	 * The date is the local date from the machine that created the Configuration.
 	 */
 	Date getCreationDate();
-	
-	
-	/**
-	 * Configure the Feature to be available at next startup
-	 */
-	void configure(IFeature feature);
-	
-	/**
-	 * Unconfigure the feature from the execution path
-	 */
-	void unconfigure(IFeature feature);
 	
 	/**
 	 * returns the URL of where the configuration is declared

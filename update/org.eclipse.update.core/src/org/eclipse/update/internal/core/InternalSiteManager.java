@@ -1,5 +1,5 @@
 package org.eclipse.update.internal.core;
-
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -13,8 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.update.core.ILocalSite;
-import org.eclipse.update.core.ISite;
+import org.eclipse.update.core.*;
 
 /**
  * 
@@ -23,7 +22,7 @@ import org.eclipse.update.core.ISite;
 public class InternalSiteManager {
 
 	private static ISite TEMP_SITE;
-	public static final String TEMP_NAME="update_tmp";
+	public static final String TEMP_NAME = "update_tmp";
 
 	private Map sites;
 	private Map sitesTypes;
@@ -49,11 +48,10 @@ public class InternalSiteManager {
 	 * the user has access to (either read only or read write)
 	 */
 	public static ILocalSite getLocalSite() throws CoreException {
-		if (localSite==null) localSite = new SiteLocal();
+		if (localSite == null)
+			localSite = new SiteLocal();
 		return localSite;
 	}
-
-
 
 	/** 
 	 * Returns an ISite based on teh protocol of the URL
@@ -74,14 +72,14 @@ public class InternalSiteManager {
 				Object objArgs[] = { siteURL };
 				site = (ISite) constructor.newInstance(objArgs);
 
-			} catch (Exception e){
+			} catch (Exception e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"cannot create an instance of the Site Object",e);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "cannot create an instance of the Site Object", e);
 				throw new CoreException(status);
-			} 
+			}
 		} else {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-			IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"The protocol of the URL is not recognized",null);
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "The protocol of the URL is not recognized", null);
 			throw new CoreException(status);
 		}
 		return site;
@@ -94,11 +92,12 @@ public class InternalSiteManager {
 		if (TEMP_SITE == null) {
 			try {
 				String tempDir = System.getProperty("java.io.tmpdir");
-				if (!tempDir.endsWith(File.separator)) tempDir += File.separator;
-				TEMP_SITE =	new SiteFile(new URL("file",null,tempDir+TEMP_NAME+'/')); 	// URL must end with '/' if they refer to a path/directory
+				if (!tempDir.endsWith(File.separator))
+					tempDir += File.separator;
+				TEMP_SITE = new SiteFile(new URL("file", null, tempDir + TEMP_NAME + '/')); // URL must end with '/' if they refer to a path/directory
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-				IStatus status = new Status(IStatus.ERROR,id,IStatus.OK,"Cannot create Temporary Site",e);
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot create Temporary Site", e);
 				throw new CoreException(status);
 			}
 		}
@@ -135,12 +134,34 @@ public class InternalSiteManager {
 	}
 
 	/**
+	 * Creates a new site on the file system
+	 * This is the only Site we can create.
 	 * 
+	 * @param siteLocation
+	 * @throws CoreException
 	 */
-	public static ISite createSite(URL siteLocation) throws CoreException {
-		Site site = (Site)getSite(siteLocation);
-		site.save();
+	public static ISite createSite(File siteLocation) throws CoreException {
+		Site site = null;
+		if (siteLocation != null) {
+			try {
+				URL siteURL = new URL("file", null, siteLocation.getAbsolutePath());
+				site = (Site) getSite(siteURL);
+				site.save();
+			} catch (MalformedURLException e) {
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "cannot create a URL from:"+siteLocation.getAbsolutePath(), e);
+				throw new CoreException(status);
+			}
+		}
 		return site;
+	}
+
+	/**
+	 * Creates a Configuration Site for an  ISite
+	 * The policy is from <code> org.eclipse.core.boot.IPlatformConfiguration</code>
+	 */
+	public static IConfigurationSite createConfigurationSite(ISite site, int policy) {
+		return new ConfigurationSite(site, new ConfigurationPolicy(policy));
 	}
 
 }

@@ -23,7 +23,7 @@ public class SiteFile extends SiteURL {
 	
 	private String path;
 	
-	public static final String INSTALL_FEATURE_PATH = "install/features/";
+	public static final String INSTALL_FEATURE_PATH = "install/featuresConfigured/";
 
 	/**
 	 * Constructor for FileSite
@@ -160,7 +160,7 @@ public class SiteFile extends SiteURL {
 			String newFilePath = null;
 		
 			try {
-				// handle teh installed features under features subdirectory
+				// handle teh installed featuresConfigured under featuresConfigured subdirectory
 				dir = featureDir.list();
 				for (int index = 0; index < dir.length; index++) {
 					// teh URL must ends with '/' for teh bundle to be resolved
@@ -195,7 +195,7 @@ public class SiteFile extends SiteURL {
 			String newFilePath = null;
 		
 			try {
-				// handle teh installed features under features subdirectory
+				// handle teh installed featuresConfigured under featuresConfigured subdirectory
 				dir = featureDir.list(FeaturePackaged.filter);
 				for (int index = 0; index < dir.length; index++) {
 					newFilePath = featurePath + dir[index];

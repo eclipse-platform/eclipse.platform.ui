@@ -9,8 +9,10 @@ import java.util.Date;
 
 public interface IActivity {
 	
-	public static final String ACTION_INSTALL = "install";
-	public static final String ACTION_UNINSTALL = "uninstall";
+	public static final String ACTION_FEATURE_INSTALL = "feature_install";
+	public static final String ACTION_FEATURE_REMOVE = "feature_uninstall";
+	public static final String ACTION_SITE_INSTALL = "site_install";
+	public static final String ACTION_SITE_REMOVE = "site_uninstall";
 	public static final String ACTION_UNCONFIGURE = "unconfigure";
 	public static final String ACTION_CONFIGURE = "configure";
 	

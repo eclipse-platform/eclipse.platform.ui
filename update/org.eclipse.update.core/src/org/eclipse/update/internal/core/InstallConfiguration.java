@@ -3,30 +3,24 @@ package org.eclipse.update.internal.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.File;
+import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import org.eclipse.update.core.IActivity;
-import org.eclipse.update.core.IFeature;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.IInstallConfiguration;
-import org.eclipse.update.core.IInstallConfigurationChangedListener;
-import org.eclipse.update.core.ISite;
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.core.*;
 
-public class InstallConfiguration implements IInstallConfiguration {
+public class InstallConfiguration implements IInstallConfiguration, IWritable {
 
 	private ListenersList listeners = new ListenersList();
 	private boolean isCurrent;
 	private URL location;
+	private Date date;
 	private String label;
 	private List installSites;
 	private List linkedSites;
-	private List features;
+	private List featuresConfigured;
+	private List featuresUnconfigured;
 
 	/*
 	 * default constructor. Create
@@ -38,38 +32,51 @@ public class InstallConfiguration implements IInstallConfiguration {
 	}
 
 	/*
-	 * @see IInstallConfiguration#getFeatures()
+	 * copy constructor
+	 */
+	public InstallConfiguration(IInstallConfiguration config,URL newLocation, String label) {
+		this.location = newLocation;
+		this.label = label;
+		// do not copy list of listeners
+		installSites = Arrays.asList(config.getInstallSites());
+		linkedSites = Arrays.asList(config.getLinkedSites());
+		featuresConfigured = Arrays.asList(config.getConfiguredFeatures());
+		featuresUnconfigured = Arrays.asList(config.getUnconfiguredFeatures());
+		this.isCurrent = false;
+	}
+	/**
+	 * Returns all the featuresConfigured of all teh sites
 	 */
 	private IFeatureReference[] getFeatures() {
 
 		IFeatureReference[] result = new IFeatureReference[0];
 
 		// initialize if needed
-		if (features == null) {
-			features = new ArrayList();
-			//FIXME: what about startup
-			//don't they resolve the plugin list
+		if (featuresConfigured == null) {
+			featuresConfigured = new ArrayList();
+
 			if (installSites != null) {
 				Iterator iter = installSites.iterator();
 				while (iter.hasNext()) {
 					ISite currentSite = (ISite) iter.next();
-					features.addAll(Arrays.asList(currentSite.getFeatureReferences()));
+					featuresConfigured.addAll(Arrays.asList(currentSite.getFeatureReferences()));
 				}
 			}
+
 			if (linkedSites != null) {
 				Iterator iter = linkedSites.iterator();
 				while (iter.hasNext()) {
 					ISite currentSite = (ISite) iter.next();
-					features.addAll(Arrays.asList(currentSite.getFeatureReferences()));
+					featuresConfigured.addAll(Arrays.asList(currentSite.getFeatureReferences()));
 				}
 			}
 		}
 
-		System.out.println(features);
-		if (features != null && !features.isEmpty()) {
+		System.out.println(featuresConfigured);
+		if (featuresConfigured != null && !featuresConfigured.isEmpty()) {
 			// move List in Array
-			result = new IFeatureReference[features.size()];
-			features.toArray(result);
+			result = new IFeatureReference[featuresConfigured.size()];
+			featuresConfigured.toArray(result);
 		}
 
 		return result;
@@ -78,19 +85,19 @@ public class InstallConfiguration implements IInstallConfiguration {
 	/*
 	 * @see IInstallConfiguration#getInstallSites()
 	 */
-	public ISite[] getInstallSites() {
-		ISite[] sites = new ISite[0];
+	public IConfigurationSite[] getInstallSites() {
+		IConfigurationSite[] sites = new IConfigurationSite[0];
 		if (installSites != null && !installSites.isEmpty()) {
-			sites = new ISite[installSites.size()];
+			sites = new IConfigurationSite[installSites.size()];
 			installSites.toArray(sites);
 		}
 		return sites;
 	}
 
 	/*
-	 * @see IInstallConfiguration#addInstallSite(ISite)
+	 * @see IInstallConfiguration#addInstallSite(IConfigurationSite)
 	 */
-	public void addInstallSite(ISite site) {
+	public void addInstallSite(IConfigurationSite site) {
 		if (!isCurrent)
 			return;
 		if (installSites == null) {
@@ -106,9 +113,9 @@ public class InstallConfiguration implements IInstallConfiguration {
 	}
 
 	/*
-	 * @see IInstallConfiguration#removeInstallSite(ISite)
+	 * @see IInstallConfiguration#removeInstallSite(IConfigurationSite)
 	 */
-	public void removeInstallSite(ISite site) {
+	public void removeInstallSite(IConfigurationSite site) {
 		if (!isCurrent)
 			return;
 		//FIXME: remove should make sure we synchronize
@@ -126,19 +133,19 @@ public class InstallConfiguration implements IInstallConfiguration {
 	/*
 	 * @see IInstallConfiguration#getLinkedSites()
 	 */
-	public ISite[] getLinkedSites() {
-		ISite[] sites = new ISite[0];
+	public IConfigurationSite[] getLinkedSites() {
+		IConfigurationSite[] sites = new IConfigurationSite[0];
 		if (linkedSites != null) {
-			sites = new ISite[linkedSites.size()];
+			sites = new IConfigurationSite[linkedSites.size()];
 			linkedSites.toArray(sites);
 		}
 		return sites;
 	}
 
 	/*
-	 * @see IInstallConfiguration#addLinkedSite(ISite)
+	 * @see IInstallConfiguration#addLinkedSite(IConfigurationSite)
 	 */
-	public void addLinkedSite(ISite site) {
+	public void addLinkedSite(IConfigurationSite site) {
 		if (!isCurrent)
 			return;
 		if (linkedSites == null) {
@@ -151,11 +158,11 @@ public class InstallConfiguration implements IInstallConfiguration {
 			((IInstallConfigurationChangedListener) configurationListeners[i]).linkedSiteAdded(site);
 		}
 	}
-
+	
 	/*
-	 * @see IInstallConfiguration#removeLinkedSite(ISite)
+	 * @see IInstallConfiguration#removeLinkedSite(IConfigurationSite)
 	 */
-	public void removeLinkedSite(ISite site) {
+	public void removeLinkedSite(IConfigurationSite site) {
 		if (!isCurrent)
 			return;
 		//FIXME: remove should make sure we synchronize
@@ -207,6 +214,7 @@ public class InstallConfiguration implements IInstallConfiguration {
 	 */
 	public IFeatureReference[] getConfiguredFeatures() {
 		// FIXME: 
+		//if (featuresConfigured==null) featuresConfigured = getFeatures();
 		return getFeatures();
 	}
 
@@ -236,22 +244,10 @@ public class InstallConfiguration implements IInstallConfiguration {
 	 * @see IInstallConfiguration#getCreationDate()
 	 */
 	public Date getCreationDate() {
-		return null;
+		return date;
 	}
 
 	/*
-	 * @see IInstallConfiguration#configure(IFeature)
-	 */
-	public void configure(IFeature feature) {
-	}
-
-	/*
-	 * @see IInstallConfiguration#unconfigure(IFeature)
-	 */
-	public void unconfigure(IFeature feature) {
-	}
-
-		/*
 	 * @see IInstallConfiguration#getURL()
 	 */
 	public URL getURL() {
@@ -279,6 +275,62 @@ public class InstallConfiguration implements IInstallConfiguration {
 	 */
 	public void setLabel(String label) {
 		this.label = label;
+	}
+	
+	/**
+	 * Saves the configuration into its URL/location
+	 */
+	public void save() throws CoreException {
+		
+		// save the configuration
+		if (location.getProtocol().equalsIgnoreCase("file")) {
+			// the location points to a file
+			File file = new File(location.getFile());
+			try {
+				PrintWriter fileWriter = new PrintWriter(new FileOutputStream(file));
+				Writer writer = new Writer();
+				writer.writeSite(this, fileWriter);
+				fileWriter.close(); 
+			} catch (FileNotFoundException e) {
+				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+				IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Cannot save configuration into " + file.getAbsolutePath(), e);
+				throw new CoreException(status);
+			}
+		}
+	}
+
+
+	/*
+	 * @see IWritable#write(int, PrintWriter)
+	 */
+	public void write(int indent, PrintWriter w) {
+		
+		String gap = "";
+		for (int i = 0; i < indent; i++)
+			gap += " ";
+		String increment = "";
+		for (int i = 0; i < IWritable.INDENT; i++)
+			increment += " ";
+		
+		
+		w.print(gap + "<" + SiteLocalParser.CONFIG + " ");
+		//String URLInfoString = UpdateManagerUtils.getURLAsString(getLocation(),config.getURL());
+		//w.print("url=\"" + Writer.xmlSafe(URLInfoString) + "\" ");
+
+		//if (config.getLabel() != null) {
+		//	w.print("label=\"" + Writer.xmlSafe(config.getLabel()) + "\"");
+		//}
+
+		w.println("/>");
+		
+	}
+
+	/**
+	 * Sets the date.
+	 * @param date The date to set
+	 */
+	public void setCreationDate(Date date) {
+		this.date = date;
 	}
 
 }
