@@ -417,7 +417,7 @@
             description="%category.project.description"
             id="org.eclipse.ui.category.project">
       </category>
-   <!--   <command
+      <command
             name="%Views.Problem"
             description="%command.showProblemsView.description"
             category="org.eclipse.ui.category.views"
@@ -429,7 +429,7 @@
             category="org.eclipse.ui.category.views"
             id="org.eclipse.ui.views.ResourceNavigator">
       </command>  
-    -->  <command
+      <command
             name="%command.openWorkspace.name"
             description="%command.openWorkspace.description"
             categoryId="org.eclipse.ui.category.file"
