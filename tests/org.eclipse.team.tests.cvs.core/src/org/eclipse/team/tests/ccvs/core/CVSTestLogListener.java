@@ -26,7 +26,6 @@ public class CVSTestLogListener implements ILogListener {
 	 * @see org.eclipse.core.runtime.ILogListener#logging(org.eclipse.core.runtime.IStatus, java.lang.String)
 	 */
 	public void logging(IStatus status, String plugin) {
-		if (!CVSTestSetup.FAIL_IF_EXCEPTION_LOGGED) return;
 		List pluginErrors = (List)errors.get(plugin);
 		if (pluginErrors == null) {
 			pluginErrors = new ArrayList();
@@ -36,7 +35,6 @@ public class CVSTestLogListener implements ILogListener {
 	}
 
 	public void checkErrors() throws CoreException {
-		if (!CVSTestSetup.FAIL_IF_EXCEPTION_LOGGED) return;
 		if (errors.isEmpty()) return;
 		List allErrors = new ArrayList();
 		for (Iterator iter = errors.values().iterator(); iter.hasNext();) {

@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -805,7 +806,16 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		if (CVSTestSetup.logListener != null) {
-			CVSTestSetup.logListener.checkErrors();
+			try {
+				CVSTestSetup.logListener.checkErrors();
+			} catch (CoreException e) {
+				if (CVSTestSetup.FAIL_IF_EXCEPTION_LOGGED) {
+					fail("Exception written to log: ", e);
+				} else {
+					// Write the log to standard out so it can be more easily seen
+					write(e.getStatus(), 0);
+				}
+			}
 		}
 	}
 
@@ -839,6 +849,20 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			}
 		}
 		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.tests.harness.EclipseWorkspaceTest#ensureDoesNotExistInWorkspace(org.eclipse.core.resources.IResource)
+	 */
+	public void ensureDoesNotExistInWorkspace(IResource resource) {
+		// Overridden to change how the workspace is deleted on teardown
+		if (resource.getType() == IResource.ROOT) {
+			// Delete each project individually
+			IProject[] projects = ((IWorkspaceRoot)resource).getProjects();
+			ensureDoesNotExistInWorkspace(projects);
+		} else {
+			super.ensureDoesNotExistInWorkspace(resource);
+		}
 	}
 
 }

@@ -170,7 +170,7 @@ public class CVSTestSetup extends TestSetup {
 		}
 		CVSProviderPlugin.getPlugin().setCompressionLevel(COMPRESSION_LEVEL);
 		// Add a log listener so we can ensure that nothing is logged during a test
-		if (CVSTestSetup.FAIL_IF_EXCEPTION_LOGGED && logListener == null) {
+		if (logListener == null) {
 			logListener = new CVSTestLogListener();
 			Platform.addLogListener(logListener);
 		}
