@@ -131,7 +131,7 @@ public class OverviewRuler implements IOverviewRuler {
 					continue;
 					
 				fNext= next;
-				if (fType == null || fType == annotationType) {
+				if (fType == null || fType.equals(annotationType)) {
 					if (fTemporary == IGNORE) return;
 					boolean temporary= fAnnotationAccess.isTemporary(fNext);
 					if (fTemporary == TEMPORARY && temporary) return;
