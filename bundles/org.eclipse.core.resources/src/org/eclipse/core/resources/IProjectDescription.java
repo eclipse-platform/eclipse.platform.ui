@@ -115,6 +115,13 @@ public void setComment(String comment);
  * intended for use on descriptions for new projects or for destination 
  * projects for <code>copy</code> and <code>move</code>.
  * </p>
+ * <p>
+ * This operation maps the root folder of the project to the exact location
+ * provided.  For example, if the location for project named "P" is set
+ * to the path c:\my_plugins\Project1, the file resource at workspace path
+ * /P/index.html  would be stored in the local file system at 
+ * c:\my_plugins\Project1\index.html.
+ * </p>
  *
  * @param location the location for the described project or <code>null</code>
  * @see #getLocation
