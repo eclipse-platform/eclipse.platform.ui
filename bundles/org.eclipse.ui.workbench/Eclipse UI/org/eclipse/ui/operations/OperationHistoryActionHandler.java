@@ -120,6 +120,9 @@ public abstract class OperationHistoryActionHandler extends Action implements
 		undoContext = context;
 		site.getPage().addPartListener(partListener);
 		getHistory().addOperationHistoryListener(this);
+        // An update must be forced in case the undo limit is 0.
+        // see bug #89707
+        update();
 	}
 
 	/**
