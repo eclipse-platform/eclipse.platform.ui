@@ -37,7 +37,7 @@ import org.eclipse.ui.WorkbenchException;
  * @see IDebugUIContants.ATTR_RUN_PERSPECTIVE
  * @see IDebugUIContants.ATTR_DEBUG_PERSPECTIVE
  */
-public class PerspectiveManager implements ILaunchListener, IDebugEventListener {
+public class PerspectiveManager implements ILaunchListener {
 	
 	/**
 	 * Singleton perspective manager
@@ -63,23 +63,21 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 	/**
 	 * Called by the debug ui plug-in on startup.
 	 * The perspective manager starts listening for
-	 * launches to be registered, and for debug events.
+	 * launches to be registered.
 	 */
 	public void startup() {
 		DebugPlugin plugin = DebugPlugin.getDefault();
 		plugin.getLaunchManager().addLaunchListener(this);
-		plugin.addDebugEventListener(this);
 	}
 
 	/**
 	 * Called by the debug ui plug-in on shutdown.
 	 * The perspective manager de-registers as a 
-	 * launch listener, and debug event listener
+	 * launch listener.
 	 */
 	public void shutdown() {
 		DebugPlugin plugin = DebugPlugin.getDefault();
 		plugin.getLaunchManager().removeLaunchListener(this);
-		plugin.removeDebugEventListener(this);
 	}
 
 	/**
@@ -159,36 +157,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 			
 		}
 	}
-	
-	/**
-	 * Shows the debug view in the current perspective
-	 * 
-	 * [Issue: finding a view is expensive] 
-	 */
-	protected void showDebugView() {
-		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-		if (window != null) {
-			final IWorkbenchPage page = window.getActivePage();
-			if (page != null) {
-				async(new Runnable() {
-					public void run() {
-						try {
-							IWorkbenchPart view = page.showView(IDebugUIConstants.ID_DEBUG_VIEW);
-							if (view != null) {
-								page.bringToTop(view);
-							}
-						} catch (PartInitException e) {
-							DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(),
-							"Error", 
-							"Unable to show Debug View.",
-							e.getStatus());
-						}
-					}
-				});
-			}
-		}
-	}	
-	
+		
 	/**
 	 * Returns a page in the current workbench window with the
 	 * given identifier, or <code>null</code> if none.
@@ -228,37 +197,6 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 			d.syncExec(r);
 		}
 	}	
-	
-	/**
-	 * When a thread suspends, switch perspectives as defined by
-	 * the associated lanuch configuration.
-	 * 
-	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
-	 */
-	public void handleDebugEvent(DebugEvent event) {
-		if (event.getKind() == DebugEvent.SUSPEND) {
-			Object source = event.getSource();
-			if (source instanceof IDebugElement) {
-				ILaunch launch = ((IDebugElement)source).getLaunch();
-				if (launch != null) {
-					ILaunchConfiguration config = launch.getLaunchConfiguration();
-					if (config != null) {
-						String perspectiveId = null;
-						try {
-							perspectiveId = config.getAttribute(IDebugUIConstants.ATTR_TARGET_SUSPEND_PERSPECTIVE, null);
-						} catch (CoreException e) {
-							switchFailed(e.getStatus(), config.getName());
-						}
-						if (perspectiveId != null) {
-							switchToPerspective(perspectiveId);
-						} else {
-							showDebugView();
-						}
-					}
-				}
-			}
-		}
-	}
 
 	/**
 	 * Reports failure to switch perspectives to the user

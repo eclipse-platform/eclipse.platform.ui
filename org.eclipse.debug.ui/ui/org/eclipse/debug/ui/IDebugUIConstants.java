@@ -464,16 +464,4 @@ public interface IDebugUIConstants {
 	 */
 	public static final String ATTR_TARGET_DEBUG_PERSPECTIVE = PLUGIN_ID + ".target_debug_perspective";		
 	
-	/**
-	 * Launch configuartion attribute - the perspective to
-	 * switch to when a thread suspends
-	 * (value <code>org.eclipse.debug.ui.target_suspend_perspective</code>).
-	 * Value is a string corresponding to a perspective identifier,
-	 * or <code>null</code> indicating no perspective change.
-	 * When there is no perspective change, the a debug view is opened
-	 * in the current perspective.
-	 * 
-	 * @since 2.0
-	 */
-	public static final String ATTR_TARGET_SUSPEND_PERSPECTIVE = PLUGIN_ID + ".target_suspend_perspective";	
 }
