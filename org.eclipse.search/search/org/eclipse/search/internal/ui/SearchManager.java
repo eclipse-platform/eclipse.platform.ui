@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2002.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
@@ -187,7 +187,7 @@ public class SearchManager implements IResourceChangeListener {
 			while (attrPerMarkerIter.hasNext()) {
 				IMarker newMarker= null;
 				try {
-					newMarker= entry.getResource().createMarker(SearchUI.SEARCH_MARKER);
+					newMarker= entry.getResource().createMarker(entry.getMarkerType());
 				} catch (CoreException ex) {
 					ExceptionHandler.handle(ex, SearchMessages.getString("Search.Error.createMarker.title"), SearchMessages.getString("Search.Error.createMarker.message")); //$NON-NLS-2$ //$NON-NLS-1$
 					continue;

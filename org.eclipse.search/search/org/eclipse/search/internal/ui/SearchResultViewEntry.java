@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2003.
  * All Rights Reserved.
  */
 package org.eclipse.search.internal.ui;
@@ -29,6 +29,7 @@ public class SearchResultViewEntry extends PlatformObject implements ISearchResu
 	private ArrayList fAttributes;
 	private int fSelectedMarkerIndex;
 	private long fModificationStamp= IResource.NULL_STAMP;
+	private String fMarkerType;
 	
 	public SearchResultViewEntry(Object groupByKey, IResource resource) {
 		fGroupByKey= groupByKey;
@@ -81,6 +82,14 @@ public class SearchResultViewEntry extends PlatformObject implements ISearchResu
 	}
 		
 	void add(IMarker marker) {
+		if (marker != null && fMarkerType == null) {
+			try {
+				fMarkerType= marker.getType();
+			} catch (CoreException ex) {
+				// will default to org.eclipse.search.searchmarker
+			}
+		}
+
 		if (fMarker == null) {
 			fMarker= marker;
 			if (fMarkers != null)
@@ -116,6 +125,13 @@ public class SearchResultViewEntry extends PlatformObject implements ISearchResu
 			return markers;
 		}
 		return fMarkers;
+	}
+
+	String getMarkerType() {
+		if (fMarkerType == null)
+			return SearchUI.SEARCH_MARKER;
+		else
+			return fMarkerType;
 	}
 	
 	boolean contains(IMarker marker) {
