@@ -1476,4 +1476,36 @@
       </workingSet>
    </extension>
 
+   <extension
+      point="org.eclipse.ui.actionSets">
+   <actionSet
+         label="%Support"
+         id="org.eclipse.ui.internal.systemSummary">
+      <action
+            label="%SystemSummary"
+            tooltip="%SystemSummary"
+            class="org.eclipse.ui.internal.SystemSummaryActionDelegate"
+            menubarPath="help/helpEnd"
+            id="org.eclipse.ui.internal.systemSummary">
+      </action>
+   </actionSet>
+
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            name="%SystemSummary"
+            class="org.eclipse.ui.internal.SystemSummaryEditor"
+            icon="icons/diag.gif"
+            id="org.eclipse.ui.SystemSummaryEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.elementFactories">
+      <factory
+            class="org.eclipse.ui.internal.SystemSummaryEditorInputFactory"
+            id="org.eclipse.ui.SystemSummaryEditorInputFactory">
+      </factory>
+   </extension>
+
 </plugin>
