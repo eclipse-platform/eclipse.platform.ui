@@ -43,33 +43,34 @@ import org.eclipse.core.internal.commands.util.Util;
  */
 public abstract class HandleObject {
 
+	/**
+	 * The constant integer hash code value meaning the hash code has not yet
+	 * been computed.
+	 */
+	private static final int HASH_CODE_NOT_COMPUTED = -1;
+	
     /**
      * A factor for computing the hash code for all schemes.
      */
-    private final static int HASH_FACTOR = 89;
+    private static final int HASH_FACTOR = 89;
 
     /**
      * The seed for the hash code for all schemes.
      */
-    private final static int HASH_INITIAL = HandleObject.class.getName()
+    private static final int HASH_INITIAL = HandleObject.class.getName()
             .hashCode();
 
     /**
      * Whether this object is defined. A defined object is one that has been
      * fully initialized. By default, all objects start as undefined.
      */
-    protected boolean defined = false;
+    protected transient boolean defined = false;
 
     /**
      * The hash code for this object. This value is computed lazily, and marked
      * as invalid when one of the values on which it is based changes.
      */
     private transient int hashCode;
-
-    /**
-     * Whether <code>hashCode</code> still contains a valid value.
-     */
-    private transient boolean hashCodeComputed = false;
 
     /**
      * The identifier for this object. This identifier should be unique across
@@ -127,11 +128,13 @@ public abstract class HandleObject {
      * @return The hash code for this object.
      */
     public final int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(id);
-            hashCodeComputed = true;
-        }
-        return hashCode;
+        if (hashCode == HASH_CODE_NOT_COMPUTED) {
+			hashCode = HASH_INITIAL * HASH_FACTOR + Util.hashCode(id);
+			if (hashCode == HASH_CODE_NOT_COMPUTED) {
+				hashCode++;
+			}
+		}
+		return hashCode;
     }
 
     /**
