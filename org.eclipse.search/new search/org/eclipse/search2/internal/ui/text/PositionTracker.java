@@ -142,7 +142,7 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 			fMatchesToPositions.put(match, position);
 			addFileBufferMapping(fb, match);
 		} catch (BadLocationException e) {
-			SearchPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, e.getLocalizedMessage(), e));
+			SearchPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, "BadLocationException when trying to track position", e)); //$NON-NLS-1$
 		}
 	}
 
