@@ -262,24 +262,6 @@
             adaptable="true"
             id="org.eclipse.team.ccvs.ui.IProjectContributions">
          <filter
-               name="projectNature"
-               value="org.eclipse.team.cvs.core.cvsnature">
-         </filter>
-         <action
-               label="%ConvertNature.label"
-               tooltip="%ConvertNature.tooltip"
-               class="org.eclipse.team.internal.ui.NatureToPropertyAction"
-               menubarPath="team.main/projectGroup"
-               helpContextId="org.eclipse.team.cvs.ui.team_nature_to_property_action_context"
-               id="org.eclipse.team.ccvs.ui.convertNature">
-         </action>
-      </objectContribution>
-
-      <objectContribution
-            objectClass="org.eclipse.core.resources.IProject"
-            adaptable="true"
-            id="org.eclipse.team.ccvs.ui.IProjectContributions">
-         <filter
                name="projectPersistentProperty"
                value="org.eclipse.team.core.repository=org.eclipse.team.cvs.core.cvsnature">
          </filter>

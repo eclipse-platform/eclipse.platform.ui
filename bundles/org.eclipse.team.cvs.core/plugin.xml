@@ -53,7 +53,6 @@
 		<runtime>
 			<run class="org.eclipse.team.internal.ccvs.core.CVSTeamProvider"/>
 		</runtime>
-		<one-of-nature id="org.eclipse.team.repository-provider"/>
 	</extension>
  
  	<!-- *************** Resource patterns ignored by CVS **************** -->
