@@ -1246,6 +1246,21 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return false;	// could not set focus
 	}
 	
+	
+	class Resizer2 extends Resizer {
+		Canvas fCanvas;
+		public Resizer2(Canvas c, int dir) {
+			super(c, dir);
+			fCanvas= c;
+		}
+		public void mouseMove(MouseEvent e) {
+			if (showResolveUI())
+				handleMouseMoveOverCenter(fCanvas, e.x, e.y);
+			else
+				super.mouseMove(e);
+		}
+	}
+	
 	/**
 	 * Creates the central Canvas.
 	 * Called from ContentMergeViewer.
@@ -1260,14 +1275,17 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			if (!fUseResolveUI) {
 				new Resizer(canvas, HORIZONTAL);
 			} else {
-				canvas.addMouseMoveListener(
-					new MouseMoveListener() {
-						public void mouseMove(MouseEvent e) {
-							if (showResolveUI())
-								handleMouseMoveOverCenter(canvas, e.x, e.y);
-						}
-					}
-				);
+				
+				new Resizer2(canvas, HORIZONTAL);
+				
+//				canvas.addMouseMoveListener(
+//					new MouseMoveListener() {
+//						public void mouseMove(MouseEvent e) {
+//							if (showResolveUI())
+//								handleMouseMoveOverCenter(canvas, e.x, e.y);
+//						}
+//					}
+//				);
 				
 				fCenterButton= new Button(canvas, "carbon".equals(SWT.getPlatform()) ? SWT.FLAT : SWT.PUSH);	//$NON-NLS-1$
 				fCenterButton.setText("<");	 //$NON-NLS-1$
