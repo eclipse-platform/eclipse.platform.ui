@@ -8,50 +8,54 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 package org.eclipse.ui.internal.actions.keybindings;
 
+import java.util.Comparator;
+
+import org.eclipse.ui.internal.actions.Label;
 import org.eclipse.ui.internal.actions.Util;
 
 public final class Scope implements Comparable {
 
-	private final static int HASH_INITIAL = 107;
-	private final static int HASH_FACTOR = 117;
+	private final static int HASH_INITIAL = 217;
+	private final static int HASH_FACTOR = 237;
 
-	public static Scope create(String id, String name, String description, String parent, String plugin)
+	private static Comparator nameComparator;
+
+	public static Scope create(Label label, String parent, String plugin)
 		throws IllegalArgumentException {
-		return new Scope(id, name, description, parent, plugin);
+		return new Scope(label, parent, plugin);
 	}
 
-	private String id;
-	private String name;
-	private String description;
+	public static Comparator nameComparator() {
+		if (nameComparator == null)
+			nameComparator = new Comparator() {
+				public int compare(Object left, Object right) {
+					return Label.nameComparator().compare(((Scope) left).getLabel(), ((Scope) right).getLabel());
+				}	
+			};		
+		
+		return nameComparator;		
+	}
+	
+	private Label label;
 	private String parent;
 	private String plugin;
-		
-	private Scope(String id, String name, String description, String parent, String plugin)
+	
+	private Scope(Label label, String parent, String plugin)
 		throws IllegalArgumentException {
 		super();
 		
-		if (id == null || name == null)
+		if (label == null)
 			throw new IllegalArgumentException();
 
-		this.id = id;
-		this.name = name;
-		this.description = description;
+		this.label = label;		
 		this.parent = parent;
 		this.plugin = plugin;
 	}
 
-	public String getId() {
-		return id;	
+	public Label getLabel() {
+		return label;	
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public String getDescription() {
-		return description;	
-	}
-	
 	public String getParent() {
 		return parent;
 	}
@@ -59,52 +63,34 @@ public final class Scope implements Comparable {
 	public String getPlugin() {
 		return plugin;
 	}
-	
+
 	public int compareTo(Object object) {
-		if (!(object instanceof Configuration))
-			throw new ClassCastException();
+		Scope scope = (Scope) object;		
+		int compareTo = label.compareTo(scope.label);
+
+		if (compareTo == 0) {			
+			compareTo = Util.compare(parent, scope.parent);
 			
-		Scope scope = (Scope) object;
-		int compareTo = id.compareTo(scope.id);
-		
-		if (compareTo == 0) {
-			compareTo = name.compareTo(scope.name);	
-		
-			if (compareTo == 0) {
-				compareTo = Util.compare(description, scope.description);	
-
-				if (compareTo == 0) {
-					compareTo = Util.compare(parent, scope.parent);	
-
-					if (compareTo == 0)
-						compareTo = Util.compare(plugin, scope.plugin);
-				}
-			}
+			if (compareTo == 0)
+				compareTo = Util.compare(plugin, scope.plugin);
 		}
 		
 		return compareTo;	
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof Configuration))
+		if (!(object instanceof Scope))
 			return false;
 
 		Scope scope = (Scope) object;		
-		return id.equals(scope.id) && name.equals(scope.name) && Util.equals(description, scope.description) && Util.equals(parent, scope.parent) && 
-			Util.equals(plugin, scope.plugin);
+		return label.equals(scope.label) && Util.equals(parent, scope.parent) && Util.equals(plugin, scope.plugin);
 	}
 
 	public int hashCode() {
 		int result = HASH_INITIAL;
-		result = result * HASH_FACTOR + id.hashCode();
-		result = result * HASH_FACTOR + name.hashCode();
-		result = result * HASH_FACTOR + Util.hashCode(description);
+		result = result * HASH_FACTOR + label.hashCode();		
 		result = result * HASH_FACTOR + Util.hashCode(parent);
 		result = result * HASH_FACTOR + Util.hashCode(plugin);
 		return result;
-	}	
-
-	public String toString() {
-		return name + '(' + id + ')';	
 	}
 }

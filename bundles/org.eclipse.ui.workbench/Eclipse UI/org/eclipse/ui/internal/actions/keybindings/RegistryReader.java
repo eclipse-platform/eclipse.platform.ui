@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.internal.actions.Label;
 
 final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryReader {
 	
@@ -154,7 +155,7 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 
 		String parent = element.getAttribute(ATTRIBUTE_PARENT_CONFIGURATION);
 		String plugin = getPlugin(element);
-		Configuration configuration = Configuration.create(id, name, description, parent, plugin);
+		Configuration configuration = Configuration.create(Label.create(description, null, id, name), parent, plugin);
 		registry.addConfiguration(configuration);
 		return true;
 	}
@@ -177,7 +178,7 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 			
 		String parent = element.getAttribute(ATTRIBUTE_PARENT_SCOPE);
 		String plugin = getPlugin(element);		
-		Scope scope = Scope.create(id, name, description, parent, plugin);
+		Scope scope = Scope.create(Label.create(description, null, id, name), parent, plugin);
 		registry.addScope(scope);
 		return true;		
 	}

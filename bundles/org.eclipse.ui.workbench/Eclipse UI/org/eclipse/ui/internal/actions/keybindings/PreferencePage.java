@@ -76,7 +76,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 			Configuration configuration = (Configuration) registryConfigurationMap.get(configurationId);
 
 			if (configuration != null)
-				comboConfiguration.select(comboConfiguration.indexOf(configuration.getName()));
+				comboConfiguration.select(comboConfiguration.indexOf(configuration.getLabel().getName()));
 		}
 
 		Composite compositeCustomize = new Composite(composite, SWT.NULL);		
@@ -121,7 +121,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 
 		while (iterator.hasNext()) {
 			Configuration configuration = (Configuration) iterator.next();
-			String name = configuration.getName();
+			String name = configuration.getLabel().getName();
 			
 			if (!nameToConfigurationMap.containsKey(name))
 				nameToConfigurationMap.put(name, configuration);
@@ -146,7 +146,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 				Configuration configuration = (Configuration) registryConfigurationMap.get(configurationId);
 
 				if (configuration != null)
-					comboConfiguration.select(comboConfiguration.indexOf(configuration.getName()));
+					comboConfiguration.select(comboConfiguration.indexOf(configuration.getLabel().getName()));
 			}
 
 			preferenceBindingSet = new TreeSet();
@@ -161,7 +161,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 				Configuration configuration = (Configuration) nameToConfigurationMap.get(configurationName);
 				
 				if (configuration != null) {
-					configurationId = configuration.getId();
+					configurationId = configuration.getLabel().getId();
 					saveConfiguration(configurationId);					
 
 					keyManager.setPreferenceBindingSet(preferenceBindingSet);

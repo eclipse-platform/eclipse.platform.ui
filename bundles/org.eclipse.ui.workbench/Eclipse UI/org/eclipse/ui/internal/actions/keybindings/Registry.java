@@ -56,7 +56,7 @@ public final class Registry {
 		if (configuration == null)
 			throw new IllegalArgumentException();
 		
-		configurationMap.put(configuration.getId(), configuration);	
+		configurationMap.put(configuration.getLabel().getId(), configuration);	
 	}
 
 	void addRegionalBinding(RegionalBinding regionalBinding)
@@ -72,6 +72,6 @@ public final class Registry {
 		if (scope == null)
 			throw new IllegalArgumentException();
 		
-		scopeMap.put(scope.getId(), scope);
+		scopeMap.put(scope.getLabel().getId(), scope);
 	}
 }

@@ -42,6 +42,6 @@ public final class Registry {
 		if (action == null)
 			throw new IllegalArgumentException();
 		
-		actionMap.put(action.getId(), action);	
+		actionMap.put(action.getLabel().getId(), action);	
 	}
 }

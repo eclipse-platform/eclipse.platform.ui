@@ -82,7 +82,7 @@ final class RegistryReader extends org.eclipse.ui.internal.registry.RegistryRead
 		}
 		
 		String plugin = getPlugin(element);
-		Action action = Action.create(id, name, description, icon, plugin);			
+		Action action = Action.create(Label.create(description, icon, id, name), plugin);			
 		registry.addAction(action);
 		return true;
 	}

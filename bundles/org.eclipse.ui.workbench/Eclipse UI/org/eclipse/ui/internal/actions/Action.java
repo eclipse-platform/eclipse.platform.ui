@@ -8,50 +8,47 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 package org.eclipse.ui.internal.actions;
 
+import java.util.Comparator;
+
 public final class Action implements Comparable {
 	
-	private final static int HASH_INITIAL = 17;
-	private final static int HASH_FACTOR = 27;
+	private final static int HASH_INITIAL = 11;
+	private final static int HASH_FACTOR = 21;
 
-	public static Action create(String id, String name, String description, String icon, String plugin)
+	private static Comparator nameComparator;
+
+	public static Action create(Label label, String plugin)
 		throws IllegalArgumentException {
-		return new Action(id, name, description, icon, plugin);
+		return new Action(label, plugin);
+	}
+
+	public static Comparator nameComparator() {
+		if (nameComparator == null)
+			nameComparator = new Comparator() {
+				public int compare(Object left, Object right) {
+					return Label.nameComparator().compare(((Action) left).getLabel(), ((Action) right).getLabel());
+				}	
+			};		
+		
+		return nameComparator;		
 	}
 	
-	private String id;
-	private String name;
-	private String description;
-	private String icon;
+	private Label label;
 	private String plugin;
 	
-	private Action(String id, String name, String description, String icon, String plugin)
+	private Action(Label label, String plugin)
 		throws IllegalArgumentException {
 		super();
 		
-		if (id == null || name == null)
+		if (label == null)
 			throw new IllegalArgumentException();
 		
-		this.id = id;
-		this.name = name;
-		this.description = description;
-		this.icon = icon;
+		this.label = label; 
 		this.plugin = plugin;
 	}
 	
-	public String getId() {
-		return id;	
-	}
-	
-	public String getName() {
-		return name;
-	}		
-	
-	public String getDescription() {
-		return description;	
-	}
-	
-	public String getIcon() {
-		return icon;
+	public Label getLabel() {
+		return label;	
 	}
 	
 	public String getPlugin() {
@@ -59,26 +56,11 @@ public final class Action implements Comparable {
 	}
 	
 	public int compareTo(Object object) {
-		if (!(object instanceof Action))
-			throw new ClassCastException();
-			
-		Action action = (Action) object;
-		int compareTo = id.compareTo(action.id);
-		
-		if (compareTo == 0) {
-			compareTo = name.compareTo(action.name);	
-		
-			if (compareTo == 0) {
-				compareTo = Util.compare(description, action.description);	
+		Action action = (Action) object;		
+		int compareTo = label.compareTo(action.label);
 
-				if (compareTo == 0) {
-					compareTo = Util.compare(icon, action.icon);	
-
-					if (compareTo == 0)
-						compareTo = Util.compare(plugin, action.plugin);
-				}
-			}
-		}
+		if (compareTo == 0)
+			compareTo = Util.compare(plugin, action.plugin);
 		
 		return compareTo;	
 	}
@@ -88,21 +70,13 @@ public final class Action implements Comparable {
 			return false;
 
 		Action action = (Action) object;		
-		return id.equals(action.id) && name.equals(action.name) && Util.equals(description, action.description) && Util.equals(icon, action.icon) && 
-			Util.equals(plugin, action.plugin);
+		return label.equals(action.label) && Util.equals(plugin, action.plugin);
 	}
 
 	public int hashCode() {
 		int result = HASH_INITIAL;
-		result = result * HASH_FACTOR + id.hashCode();
-		result = result * HASH_FACTOR + name.hashCode();
-		result = result * HASH_FACTOR + Util.hashCode(description);
-		result = result * HASH_FACTOR + Util.hashCode(icon);
+		result = result * HASH_FACTOR + label.hashCode();		
 		result = result * HASH_FACTOR + Util.hashCode(plugin);
 		return result;
-	}
-	
-	public String toString() {
-		return name + '(' + id + ')';	
 	}
 }

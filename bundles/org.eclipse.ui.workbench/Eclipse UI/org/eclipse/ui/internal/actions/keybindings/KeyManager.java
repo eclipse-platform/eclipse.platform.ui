@@ -61,7 +61,7 @@ public class KeyManager {
 				StringTokenizer spaceTokenizer = new StringTokenizer(orTokenizer.nextToken());
 				
 				while (spaceTokenizer.hasMoreTokens()) {
-					int accelerator = org.eclipse.jface.action.Action.convertAccelerator(spaceTokenizer.nextToken());
+					int accelerator = Action.convertAccelerator(spaceTokenizer.nextToken());
 					
 					if (accelerator != 0)
 						keyStrokes.add(KeyStroke.create(accelerator));
@@ -74,6 +74,26 @@ public class KeyManager {
 
 		return keySequences;
 	}
+
+	public static KeySequence parseKeySequenceStrict(String keys) {
+		if (keys != null) {
+			List keyStrokes = new ArrayList();
+			StringTokenizer spaceTokenizer = new StringTokenizer(keys);
+				
+			while (spaceTokenizer.hasMoreTokens()) {
+				int accelerator = Action.convertAccelerator(spaceTokenizer.nextToken());
+					
+				if (accelerator != 0)
+					keyStrokes.add(KeyStroke.create(accelerator));
+				else
+					return null;
+			}
+
+			return KeySequence.create(keyStrokes);
+		}
+		
+		return null;
+	}		
 
 	private static Path pathForConfiguration(String id, Map configurationMap) {
 		Path path = null;

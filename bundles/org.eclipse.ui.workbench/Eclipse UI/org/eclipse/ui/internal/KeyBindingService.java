@@ -167,7 +167,7 @@ public class KeyBindingService implements IKeyBindingService {
 	 * @see IKeyBindingService#getActiveAcceleratorConfigurationId()
 	 */
     public String getActiveAcceleratorConfigurationId() {
-    	return ((Workbench) PlatformUI.getWorkbench()).getActiveAcceleratorConfiguration().getId();
+    	return ((Workbench) PlatformUI.getWorkbench()).getActiveAcceleratorConfiguration().getLabel().getId();
     }
 
 	/*

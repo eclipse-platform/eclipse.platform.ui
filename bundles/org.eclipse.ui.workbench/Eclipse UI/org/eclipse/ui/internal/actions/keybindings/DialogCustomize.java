@@ -24,19 +24,12 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ColumnLayoutData;
-import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -49,287 +42,72 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.actions.Action;
 import org.eclipse.ui.internal.actions.Util;
 
 final class DialogCustomize extends Dialog {
 
-	private final static int BUTTON_SET_ID = IDialogConstants.CLIENT_ID + 0;
 	private final static int DOUBLE_SPACE = 16;
 	private final static int HALF_SPACE = 4;
 	private final static int SPACE = 8;	
-	private final static String ACTION_DO_NOTHING = "(do nothing)";
-	private final static String ACTION_UNDEFINED = "(undefined)";
-
-	private final static ColumnLayoutData columnLayouts[] = {
-		new ColumnPixelData(20, false),
-		new ColumnPixelData(100, false),
-		new ColumnPixelData(100, false),
-		new ColumnPixelData(250, false) 
-	};	
-
-	private final static String columnHeaders[] = {
-		"",
-		"Scope",
-		"Configuration",
-		"Action"
-	};
+	private final static String ACTION_CONFLICT = Messages.getString("DialogCustomize.ActionConflict"); //$NON-NLS-1$
+	private final static String ACTION_UNDEFINED = Messages.getString("DialogCustomize.ActionUndefined"); //$NON-NLS-1$
+	private final static String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
 	private final class Record {
 
-		String scope;
-		String configuration;
-
-		boolean preferenceAction;
-		//boolean preferenceActionConflict;
-		String preferenceActionString;
-
-		boolean registryAction;
-		//boolean registryActionConflict;
-		String registryActionString;
+		String scopeId;
+		String configurationId;
+		Map pluginMap;
 	}
 
-	private final class ViewContentProvider implements IStructuredContentProvider {
-		
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-		}
-		
-		public void dispose() {
-		}
-		
-		public Object[] getElements(Object parent) {
-			List records = new ArrayList();
-			
-			if (tree != null) {
-				Iterator iterator = tree.entrySet().iterator();
-				
-				while (iterator.hasNext()) {
-					Map.Entry entry = (Map.Entry) iterator.next();
-					KeySequence keySequence = (KeySequence) entry.getKey();
-					
-					if (!keySequence.equals(DialogCustomize.this.keySequence))
-						continue;
-					
-					Map scopeMap = (Map) entry.getValue();
-					Iterator iterator2 = scopeMap.entrySet().iterator();
-					
-					while (iterator2.hasNext()) {
-						Map.Entry entry2 = (Map.Entry) iterator2.next();
-						String scope = (String) entry2.getKey();					
-						Map configurationMap = (Map) entry2.getValue();						
-						Iterator iterator3 = configurationMap.entrySet().iterator();
-						
-						while (iterator3.hasNext()) {
-							Map.Entry entry3 = (Map.Entry) iterator3.next();
-							String configuration = (String) entry3.getKey();					
-							Map pluginMap = (Map) entry3.getValue();			
-							Record record = new Record();
-							record.scope = scope;
-							record.configuration = configuration;
-							solve(pluginMap, record);							
-							Scope scope2 = (Scope) registryScopeMap.get(record.scope);
-
-							if (scope2 != null)
-								record.scope = scope2.getName();
-
-							Configuration configuration2 = (Configuration) registryConfigurationMap.get(record.configuration);
-
-							if (configuration2 != null)
-								record.configuration = configuration2.getName();
-
-							if (record.preferenceActionString != null) {	
-								Action action = (Action) registryActionMap.get(record.preferenceActionString);
-	
-								if (action != null)
-									record.preferenceActionString = action.getName();
-							}
-
-							if (record.registryActionString != null) {							
-								Action action = (Action) registryActionMap.get(record.registryActionString);
-	
-								if (action != null)
-									record.registryActionString = action.getName();
-							}
-							
-							records.add(record);
-						}
-					}		
-				}
-			}
-
-			return records.toArray();
-		}
-
-		private void solve(Map pluginMap, Record record) {		
-			Set preferenceBindingSet = new TreeSet();
-			Set registryBindingSet = new TreeSet();
-			Iterator iterator = pluginMap.entrySet().iterator();
-			
-			while (iterator.hasNext()) {
-				Map.Entry entry = (Map.Entry) iterator.next();
-				String plugin = (String) entry.getKey();
-				Map actionMap = (Map) entry.getValue();				
-			
-				if (plugin == null) {
-					record.preferenceAction = true;
-					Binding binding = Node.solveActionMap(actionMap);
-					
-					if (binding != null)	
-						preferenceBindingSet.add(binding);
-				} else {
-					record.registryAction = true;					
-					Binding binding = Node.solveActionMap(actionMap);
-					
-					if (binding != null)	
-						registryBindingSet.add(binding);
-				}
-			}
-			
-			Binding preferenceBinding = preferenceBindingSet.size() == 1 ? (Binding) preferenceBindingSet.iterator().next() : null;				
-			record.preferenceActionString = preferenceBinding != null ? preferenceBinding.getAction() : null;						
-			Binding registryBinding = registryBindingSet.size() == 1 ? (Binding) registryBindingSet.iterator().next() : null;	
-			record.registryActionString = registryBinding != null ? registryBinding.getAction() : null;					
-		}
-	}
-	
-	private final class ViewLabelProvider extends LabelProvider implements ITableLabelProvider {
-		
-		public String getColumnText(Object obj, int index) {
-			if (obj instanceof Record) {
-				Record record = (Record) obj;			
-				
-				switch (index) {
-					case 0:	
-						return "";
-					case 1:
-						return record.scope != null && record.scope.length() != 0 ? record.scope : "-";
-					case 2:
-						return record.configuration != null && record.configuration.length() != 0 ? record.configuration : "-";
-					case 3:
-						if (record.preferenceAction) {
-							if (record.preferenceActionString == null)
-								return ACTION_UNDEFINED;
-							else if (record.preferenceActionString.length() == 0)
-								return ACTION_DO_NOTHING;
-							else
-								return record.preferenceActionString;							
-						} else if (record.registryAction) {
-							if (record.registryActionString == null)
-								return ACTION_UNDEFINED;
-							else if (record.registryActionString.length() == 0)
-								return ACTION_DO_NOTHING;
-							else
-								return record.registryActionString;							
-						} else
-							return "?";	
-				}					
-			}
-
-			return getText(obj);
-		}
-		
-		public Image getColumnImage(Object obj, int index) {
-			if (obj instanceof Record) {
-				Record record = (Record) obj;			
-				
-				switch (index) {
-					case 0:	
-						if (record.preferenceAction && !record.registryAction) {
-							return ImageFactory.getImage("plus");	
-						} else if (record.preferenceAction && record.registryAction) {
-							return ImageFactory.getImage("change");								
-						} else
-							return null;
-					case 1:
-						return null;
-					case 2:
-						return null;
-					case 3:
-						/*
-						if (record.preferenceAction && record.preferenceActionConflict) {
-							return ImageFactory.getImage("attention");	
-						} else if (record.registryAction && record.registryActionConflict) {
-							return ImageFactory.getImage("attention");								
-						} else
-						*/
-							return null;
-				}					
-			}
-
-			return getImage(obj);
-		}
-	}
-	
-	private final class NameSorter extends ViewerSorter {
-		public int compare(Viewer viewer, Object e1, Object e2) {
-			Record left = (Record) e1;
-			Record right = (Record) e2;			
-			int compare = Util.compare(left.scope, right.scope);
-			
-			if (compare == 0) {
-				compare = Util.compare(left.configuration, right.configuration);
-				
-				if (compare == 0) {
-					compare = Util.compare(left.preferenceActionString, right.preferenceActionString);
-
-					if (compare == 0)
-						compare = Util.compare(left.registryActionString, right.registryActionString);
-				}
-			}
-			
-			return compare;
-		}
-	}
-
-	private String defaultConfiguration;
-	private String defaultScope;
-	private SortedSet preferenceBindingSet;
+	private String defaultConfigurationId;
+	private String defaultScopeId;
+	private SortedSet preferenceBindingSet;	
 	
 	private KeyManager keyManager;
 	private KeyMachine keyMachine;
-
 	private SortedMap registryActionMap;
 	private SortedSet registryBindingSet;
 	private SortedMap registryConfigurationMap;
 	private SortedMap registryScopeMap;
+	
+	private List actions;
+	private List configurations;
+	private List scopes;
 
-	private SortedMap tree;
-	private KeySequence keySequence;
+	private String[] actionNames;
+	private String[] configurationNames;	
+	private String[] scopeNames;
 
-	private HashMap nameToActionMap;
-	private HashMap nameToKeySequenceMap;
-	private HashMap nameToConfigurationMap;
-	private HashMap nameToScopeMap;
-
-	private Image imageError;
-	private Image imageInfo;
-	private Image imageWarning;	
-	private Label labelKeySequence;
-	private Combo comboKeySequence;
-	private Label labelPromptImage;
-	private Label labelPromptText;
-	private Button buttonDefault;
-	private Text textDefault;
 	private Button buttonCustom; 
+	private Button buttonDefault;
+	private Combo comboConfiguration;
 	private Combo comboCustom;
-	private Label labelScope; 
+	private Combo comboKeySequence;
 	private Combo comboScope;
 	private Label labelConfiguration; 
-	private Combo comboConfiguration;
-	private Button buttonSet;
+	private Label labelKeySequence;
+	private Label labelPromptImage;
+	private Label labelPromptText;
+	private Label labelScope; 
 	private Table table;
-	private TableViewer viewer;
-	private Button buttonOptions;	
+	private Text textDefault;
 
-	public DialogCustomize(Shell parentShell, String defaultConfiguration, String defaultScope, SortedSet preferenceBindingSet)
+	private SortedMap tree;
+	private Map nameToKeySequenceMap;
+	private List records = new ArrayList();
+
+	public DialogCustomize(Shell parentShell, String defaultConfigurationId, String defaultScopeId, SortedSet preferenceBindingSet)
 		throws IllegalArgumentException {
 		super(parentShell);
-		if (defaultConfiguration == null || defaultScope == null || preferenceBindingSet == null)
+		if (defaultConfigurationId == null || defaultScopeId == null || preferenceBindingSet == null)
 			throw new IllegalArgumentException();
 			
-		this.defaultConfiguration = defaultConfiguration;
-		this.defaultScope = defaultScope;
+		this.defaultConfigurationId = defaultConfigurationId;
+		this.defaultScopeId = defaultScopeId;
 		preferenceBindingSet = new TreeSet(preferenceBindingSet);
 		Iterator iterator = preferenceBindingSet.iterator();
 		
@@ -338,14 +116,43 @@ final class DialogCustomize extends Dialog {
 				throw new IllegalArgumentException();
 	
 		this.preferenceBindingSet = preferenceBindingSet;
+
 		keyManager = KeyManager.getInstance();
 		keyMachine = keyManager.getKeyMachine();
 
 		registryActionMap = org.eclipse.ui.internal.actions.Registry.getInstance().getActionMap();
+		actions = new ArrayList();
+		actions.addAll(registryActionMap.values());
+		Collections.sort(actions, Action.nameComparator());				
+	
 		registryBindingSet = keyManager.getRegistryBindingSet();
+		
 		registryConfigurationMap = keyManager.getRegistryConfigurationMap();
+		configurations = new ArrayList();
+		configurations.addAll(registryConfigurationMap.values());	
+		Collections.sort(configurations, Configuration.nameComparator());				
+		
 		registryScopeMap = keyManager.getRegistryScopeMap();	
+		scopes = new ArrayList();
+		scopes.addAll(registryScopeMap.values());	
+		Collections.sort(scopes, Scope.nameComparator());				
 
+		actionNames = new String[1 + actions.size()];
+		actionNames[0] = ACTION_UNDEFINED;
+		
+		for (int i = 0; i < actions.size(); i++)
+			actionNames[i + 1] = ((Action) actions.get(i)).getLabel().getName();
+
+		configurationNames = new String[configurations.size()];
+		
+		for (int i = 0; i < configurations.size(); i++)
+			configurationNames[i] = ((Configuration) configurations.get(i)).getLabel().getName();
+
+		scopeNames = new String[scopes.size()];
+		
+		for (int i = 0; i < scopes.size(); i++)
+			scopeNames[i] = ((Scope) scopes.get(i)).getLabel().getName();
+		
 		tree = new TreeMap();
 		SortedSet bindingSet = new TreeSet();
 		bindingSet.addAll(preferenceBindingSet);
@@ -357,30 +164,6 @@ final class DialogCustomize extends Dialog {
 			set(tree, binding, false);			
 		}
 
-		nameToActionMap = new HashMap();	
-		Collection actions = registryActionMap.values();
-		iterator = actions.iterator();
-
-		while (iterator.hasNext()) {
-			Action action = (Action) iterator.next();
-			String name = action.getName();
-			
-			if (!nameToActionMap.containsKey(name))
-				nameToActionMap.put(name, action);
-		}	
-
-		nameToConfigurationMap = new HashMap();	
-		Collection configurations = registryConfigurationMap.values();
-		iterator = configurations.iterator();
-
-		while (iterator.hasNext()) {
-			Configuration configuration = (Configuration) iterator.next();
-			String name = configuration.getName();
-			
-			if (!nameToConfigurationMap.containsKey(name))
-				nameToConfigurationMap.put(name, configuration);
-		}	
-
 		nameToKeySequenceMap = new HashMap();	
 		Collection keySequences = tree.keySet();
 		iterator = keySequences.iterator();
@@ -391,64 +174,11 @@ final class DialogCustomize extends Dialog {
 			
 			if (!nameToKeySequenceMap.containsKey(name))
 				nameToKeySequenceMap.put(name, keySequence);
-		}	
-
-		nameToScopeMap = new HashMap();	
-		Collection scopes = registryScopeMap.values();
-		iterator = scopes.iterator();
-
-		while (iterator.hasNext()) {
-			Scope scope = (Scope) iterator.next();
-			String name = scope.getName();
-			
-			if (!nameToScopeMap.containsKey(name))
-				nameToScopeMap.put(name, scope);
-		}	
+		}
 	}
 
 	public SortedSet getPreferenceBindingSet() {
 		return Collections.unmodifiableSortedSet(preferenceBindingSet);	
-	}
-
-	protected void buttonPressed(int buttonId) {
-		if (buttonId == BUTTON_SET_ID) {
-			if (keySequence != null) {
-				Scope scope = 
-					(Scope) nameToScopeMap.get(comboScope.getItem(comboScope.getSelectionIndex()));
-				String scopeName = scope.getId();
-				Configuration configuration = 
-					(Configuration) nameToConfigurationMap.get(comboConfiguration.getItem(comboConfiguration.getSelectionIndex()));
-				String configurationName = configuration.getId();
-
-				if (buttonDefault.getSelection()) {
-					clear(tree, keySequence, scopeName, configurationName);						
-					viewer.refresh();
-					update();
-				} else if (buttonCustom.getSelection()) {
-					int i = comboCustom.getSelectionIndex();
-					String actionName = i != -1 ? comboCustom.getItem(i) : null;					
-					
-					if (ACTION_UNDEFINED.equals(actionName))
-						actionName = null;
-					else if (ACTION_DO_NOTHING.equals(actionName))
-						actionName = "";
-					else {
-						Action action = (Action) nameToActionMap.get(actionName);
-						
-						if (action == null)
-							actionName = null;
-						else
-							actionName = action.getId(); 	
-					} 
-									
-					set(tree, Binding.create(actionName, configurationName, keySequence, null, 0, scopeName), true);				
-					viewer.refresh();
-					update();
-				}
-			}
-		}
-		else
-			super.buttonPressed(buttonId);
 	}
 
 	protected void configureShell(Shell shell) {
@@ -457,228 +187,42 @@ final class DialogCustomize extends Dialog {
 	}
 
 	protected Control createDialogArea(Composite parent) {
-		imageError = getImage(DLG_IMG_MESSAGE_ERROR);
-		imageInfo = getImage(DLG_IMG_MESSAGE_INFO);
-		imageWarning = getImage(DLG_IMG_MESSAGE_WARNING);
-		
 		Composite composite = (Composite) super.createDialogArea(parent);
-		GridLayout gridLayoutComposite = new GridLayout();
-		gridLayoutComposite.marginHeight = SPACE;
-		composite.setLayout(gridLayoutComposite);
-
-		Composite compositeKeySequence = new Composite(composite, SWT.NONE);		
-		GridLayout gridLayoutCompositeKeySequence = new GridLayout();
-		gridLayoutCompositeKeySequence.numColumns = 3;
-		gridLayoutCompositeKeySequence.marginWidth = SPACE;	
-		gridLayoutCompositeKeySequence.horizontalSpacing = SPACE;
-		compositeKeySequence.setLayout(gridLayoutCompositeKeySequence);
-		
-		labelKeySequence = new Label(compositeKeySequence, SWT.LEFT);
-		labelKeySequence.setFont(parent.getFont());
-		labelKeySequence.setText(Messages.getString("&Key Sequence:"));
-
-		comboKeySequence = new Combo(compositeKeySequence, /*SWT.NONE*/ SWT.READ_ONLY);
-		GridData gridDataComboKeySequence = new GridData();
-		gridDataComboKeySequence.widthHint = 200;
-		comboKeySequence.setLayoutData(gridDataComboKeySequence);		
-		comboKeySequence.setFont(parent.getFont());
-		comboKeySequence.setItems(getKeySequences());
-
-		comboKeySequence.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				buttonSet.setEnabled(true);
-				String name = comboKeySequence.getItem(comboKeySequence.getSelectionIndex());
-				keySequence = (KeySequence) nameToKeySequenceMap.get(name);
-				viewer.refresh();
-				DialogCustomize.this.update();
-			}	
-		});
-
-		Composite compositePrompt = new Composite(compositeKeySequence, SWT.NONE);		
-		GridLayout gridLayoutCompositePrompt = new GridLayout();
-		gridLayoutCompositePrompt.numColumns = 2;
-		gridLayoutCompositePrompt.marginWidth = 0;
-		gridLayoutCompositePrompt.marginHeight = 0;
-		gridLayoutCompositePrompt.horizontalSpacing = HALF_SPACE;
-		gridLayoutCompositePrompt.verticalSpacing = HALF_SPACE;
-		compositePrompt.setLayout(gridLayoutCompositePrompt);
-		
-		//compositePrompt.setBackground(new Color(parent.getDisplay(), new RGB(230, 226, 221)));
-
-		labelPromptImage = new Label(compositePrompt, SWT.LEFT);	
-		labelPromptImage.setFont(parent.getFont());
-		//labelPromptImage.setImage(imageInfo);
-		//labelPromptImage.setImage(imageError);
-
-		labelPromptText = new Label(compositePrompt, SWT.LEFT);		
-		labelPromptText.setFont(parent.getFont());
-		//labelPromptText.setText("Select or Type a Key Sequence");
-		//labelPromptText.setText("Invalid Key Sequence");
-
-		Composite compositeStateAndAction = new Composite(composite, SWT.NONE);
-		GridLayout gridLayoutCompositeStateAndAction = new GridLayout();
-		gridLayoutCompositeStateAndAction.numColumns = 2;
-		//gridLayoutCompositeStateAndAction.makeColumnsEqualWidth = true;
-		gridLayoutCompositeStateAndAction.horizontalSpacing = SPACE;
-		compositeStateAndAction.setLayout(gridLayoutCompositeStateAndAction);
-
-		Group groupState = new Group(compositeStateAndAction, SWT.NONE);	
-		groupState.setLayoutData(new GridData(GridData.FILL_BOTH));
-		GridLayout gridLayoutGroupState = new GridLayout();
-		gridLayoutGroupState.numColumns = 2;
-		gridLayoutGroupState.marginWidth = SPACE;
-		gridLayoutGroupState.marginHeight = SPACE;
-		gridLayoutGroupState.horizontalSpacing = SPACE;
-		gridLayoutGroupState.verticalSpacing = SPACE;
-		groupState.setLayout(gridLayoutGroupState);
-		groupState.setFont(parent.getFont());
-		groupState.setText(Messages.getString("When"));	
-
-		labelScope = new Label(groupState, SWT.LEFT);
-		labelScope.setFont(parent.getFont());
-		labelScope.setText(Messages.getString("Sco&pe:"));
-
-		comboScope = new Combo(groupState, SWT.READ_ONLY);
-		GridData gridDataComboScope = new GridData();
-		gridDataComboScope.widthHint = 100;
-		comboScope.setLayoutData(gridDataComboScope);
-		comboScope.setFont(parent.getFont());
-		comboScope.setItems(getScopes());
-
-		Scope scope = (Scope) registryScopeMap.get(defaultScope);
-
-		if (scope != null)
-			comboScope.select(comboScope.indexOf(scope.getName()));
-
-		comboScope.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				DialogCustomize.this.update();
-			}	
-		});
-
-		labelConfiguration = new Label(groupState, SWT.LEFT);
-		labelConfiguration.setFont(parent.getFont());
-		labelConfiguration.setText(Messages.getString("Co&nfiguration:"));
-
-		comboConfiguration = new Combo(groupState, SWT.READ_ONLY);
-		GridData gridDataComboConfiguration = new GridData(GridData.FILL_HORIZONTAL);
-		gridDataComboConfiguration.widthHint = 100;
-		comboConfiguration.setLayoutData(gridDataComboConfiguration);
-		comboConfiguration.setFont(parent.getFont());
-		comboConfiguration.setItems(getConfigurations());
-
-		Configuration configuration = (Configuration) registryConfigurationMap.get(defaultConfiguration);
-
-		if (configuration != null)
-			comboConfiguration.select(comboConfiguration.indexOf(configuration.getName()));
-
-		comboConfiguration.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				DialogCustomize.this.update();
-			}	
-		});
-
-		Group groupAction = new Group(compositeStateAndAction, SWT.NONE);	
-		groupAction.setLayoutData(new GridData(GridData.FILL_BOTH));		
-		GridLayout gridLayoutGroupAction = new GridLayout();
-		gridLayoutGroupAction.numColumns = 2;
-		gridLayoutGroupAction.marginWidth = SPACE;
-		gridLayoutGroupAction.marginHeight = SPACE;
-		gridLayoutGroupAction.horizontalSpacing = SPACE;
-		gridLayoutGroupAction.verticalSpacing = SPACE;
-		groupAction.setLayout(gridLayoutGroupAction);
-		groupAction.setFont(parent.getFont());
-		groupAction.setText(Messages.getString("Action"));			
-
-		buttonDefault = new Button(groupAction, SWT.LEFT | SWT.RADIO);
-		buttonDefault.setFont(parent.getFont());
-		buttonDefault.setText(Messages.getString("&Default:"));
-		buttonDefault.setSelection(true);
-
-		textDefault = new Text(groupAction, SWT.BORDER | SWT.READ_ONLY);
-		GridData gridDataTextDefault = new GridData(GridData.FILL_HORIZONTAL);
-		gridDataTextDefault.widthHint = 150;
-		textDefault.setLayoutData(gridDataTextDefault);
-		textDefault.setFont(parent.getFont());
-
-		buttonCustom = new Button(groupAction, SWT.LEFT | SWT.RADIO);
-		buttonCustom.setFont(parent.getFont());
-		buttonCustom.setText(Messages.getString("&Custom:"));
-
-		buttonDefault.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				buttonCustom.setSelection(false);;
-			}	
-		});
-
-		buttonCustom.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				buttonDefault.setSelection(false);;
-			}	
-		});
-
-		comboCustom = new Combo(groupAction, SWT.READ_ONLY);
-		GridData gridDataComboCustom = new GridData(GridData.FILL_HORIZONTAL);
-		gridDataComboCustom.widthHint = 150;
-		comboCustom.setLayoutData(gridDataComboCustom);
-		comboCustom.setFont(parent.getFont());
-		comboCustom.setItems(getActions());
-		comboCustom.select(1);
-
-		comboCustom.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				buttonDefault.setSelection(false);
-				buttonCustom.setSelection(true);
-			}	
-		});
-
-		Composite compositeSet = new Composite(composite, SWT.NONE);		
-		GridLayout gridLayoutCompositeSet = new GridLayout();
-		gridLayoutCompositeSet.marginWidth = DOUBLE_SPACE;
-		compositeSet.setLayout(gridLayoutCompositeSet);
-
-		buttonSet = createButton(compositeSet, BUTTON_SET_ID, "&Set", false); 
-		buttonSet.setEnabled(false);
-
-		Composite compositeTable = new Composite(composite, SWT.NONE);		
-		compositeTable.setLayoutData(new GridData(GridData.FILL_BOTH));
-		GridLayout gridLayoutCompositeTable = new GridLayout();
-		compositeTable.setLayout(gridLayoutCompositeTable);
-
-		table = new Table(compositeTable, SWT.BORDER | SWT.HIDE_SELECTION/*SWT.FULL_SELECTION*/ | SWT.H_SCROLL | SWT.V_SCROLL);
-		GridData gridDataTable = new GridData(GridData.FILL_BOTH);
-		gridDataTable.heightHint = 100;		
-		table.setLayoutData(gridDataTable);
-
-		TableLayout layout = new TableLayout();
-		table.setLayout(layout);
-		table.setHeaderVisible(true);
-		
-		for (int i = 0; i < columnHeaders.length; i++) {
-			layout.addColumnData(columnLayouts[i]);
-			TableColumn tc = new TableColumn(table, SWT.NONE, i);
-			tc.setResizable(columnLayouts[i].resizable);
-			tc.setText(columnHeaders[i]);
-			//tc.addSelectionListener(headerListener);
-		}
-
-		viewer = new TableViewer(table);
-		viewer.setContentProvider(new ViewContentProvider());
-		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setSorter(new NameSorter());
-		viewer.setInput(new Object());
-		update();		
-		
-		//TableItem[] tableItems = table.getItems();
-		//Color background = tableItems[0].getBackground();
-		//tableItems[0].setBackground(new Color(parent.getDisplay(), new RGB(background.getRed() - 15, background.getGreen(), background.getBlue() - 15)));
-
+		createUI(composite);
 		return composite;		
 	}	
 
 	protected void okPressed() {
 		preferenceBindingSet = solve(tree);
 		super.okPressed();
+	}
+
+	private void clear(SortedMap tree, KeySequence keySequence, String scope, String configuration) {			
+		Map scopeMap = (Map) tree.get(keySequence);
+		
+		if (scopeMap != null) {
+			Map configurationMap = (Map) scopeMap.get(scope);
+		
+			if (configurationMap != null) {
+				Map pluginMap = (Map) configurationMap.get(configuration);
+	
+				if (pluginMap != null) {
+					pluginMap.remove(null);
+					
+					if (pluginMap.isEmpty()) {
+						configurationMap.remove(configuration);
+						
+						if (configurationMap.isEmpty()) {
+							scopeMap.remove(scope);	
+
+							if (scopeMap.isEmpty()) {
+								tree.remove(keySequence);	
+							}							
+						}	
+					}	
+				}	
+			}
+		}
 	}
 
 	private void set(SortedMap tree, Binding binding, boolean consolidate) {			
@@ -723,34 +267,6 @@ final class DialogCustomize extends Dialog {
 		bindingSet.add(binding);
 	}
 
-	private void clear(SortedMap tree, KeySequence keySequence, String scope, String configuration) {			
-		Map scopeMap = (Map) tree.get(keySequence);
-		
-		if (scopeMap != null) {
-			Map configurationMap = (Map) scopeMap.get(scope);
-		
-			if (configurationMap != null) {
-				Map pluginMap = (Map) configurationMap.get(configuration);
-	
-				if (pluginMap != null) {
-					pluginMap.remove(null);
-					
-					if (pluginMap.isEmpty()) {
-						configurationMap.remove(configuration);
-						
-						if (configurationMap.isEmpty()) {
-							scopeMap.remove(scope);	
-
-							if (scopeMap.isEmpty()) {
-								tree.remove(keySequence);	
-							}							
-						}	
-					}	
-				}	
-			}
-		}
-	}
-
 	private SortedSet solve(SortedMap tree) {
 		SortedSet bindingSet = new TreeSet();
 		Iterator iterator = tree.values().iterator();
@@ -780,19 +296,33 @@ final class DialogCustomize extends Dialog {
 		return bindingSet;
 	}
 
-	private String[] getActions() {
-		SortedSet actionSet = new TreeSet(nameToActionMap.keySet());
-		actionSet.add(ACTION_UNDEFINED);
-		actionSet.add(ACTION_DO_NOTHING);
-		String[] items = (String[]) actionSet.toArray(new String[actionSet.size()]);
-		Arrays.sort(items, Collator.getInstance());
-		return items;
+
+	private String getActionId() {
+		int selection = comboCustom.getSelectionIndex();
+		
+		if (selection == 0)
+			return null;
+		else {
+			selection--;
+			
+			if (selection >= 0 && selection < actions.size()) {
+				Action action = (Action) actions.get(selection);
+				return action.getLabel().getId();
+			}				
+		}
+	
+		return null;
 	}
 
-	private String[] getConfigurations() {
-		String[] items = (String[]) nameToConfigurationMap.keySet().toArray(new String[nameToConfigurationMap.size()]);
-		Arrays.sort(items, Collator.getInstance());
-		return items;
+	private String getConfigurationId() {
+		int selection = comboConfiguration.getSelectionIndex();
+		
+		if (selection >= 0 && selection < configurations.size()) {
+			Configuration configuration = (Configuration) configurations.get(selection);
+			return configuration.getLabel().getId();				
+		}
+		
+		return null;
 	}
 
 	private String[] getKeySequences() {
@@ -801,53 +331,548 @@ final class DialogCustomize extends Dialog {
 		return items;
 	}
 
-	private String[] getScopes() {
-		String[] items = (String[]) nameToScopeMap.keySet().toArray(new String[nameToScopeMap.size()]);
-		Arrays.sort(items, Collator.getInstance());
-		return items;
-	}	
-	
-	private void update() {
-		buttonDefault.setSelection(true);
-		textDefault.setText(ACTION_UNDEFINED);
-		buttonCustom.setSelection(false);	
-		comboCustom.select(1);	
-		Scope scope = 
-			(Scope) nameToScopeMap.get(comboScope.getItem(comboScope.getSelectionIndex()));
-		String scopeName = scope.getId();
-		// TBD ^?
+	private String getScopeId() {
+		int selection = comboScope.getSelectionIndex();
 		
-		scopeName = comboScope.getItem(comboScope.getSelectionIndex());
+		if (selection >= 0 && selection < scopes.size()) {
+			Scope scope = (Scope) scopes.get(selection);
+			return scope.getLabel().getId();				
+		}
 		
-		Configuration configuration = 
-			(Configuration) nameToConfigurationMap.get(comboConfiguration.getItem(comboConfiguration.getSelectionIndex()));
-		String configurationName = configuration.getId();
-		// TBD ^?
-		
-		configurationName = comboConfiguration.getItem(comboConfiguration.getSelectionIndex());
+		return null;
+	}
 
-		Object[] elements = ((IStructuredContentProvider) viewer.getContentProvider()).getElements(new Object());
+	private void change(boolean custom) {
+		KeySequence keySequence = null;
+		String name = comboKeySequence.getText();
 		
-		for (int i = 0; i < elements.length; i++) {
-			Record record = (Record) elements[i];
+		if (name != null || name.length() > 0) {
+			keySequence = (KeySequence) nameToKeySequenceMap.get(name);
 			
-			if (Util.equals(scopeName, record.scope) && Util.equals(configurationName, record.configuration)) {
-				if (record.preferenceAction) {
-					buttonDefault.setSelection(false);
-					buttonCustom.setSelection(true);
-					
-					if (record.preferenceActionString == null)					
-						comboCustom.select(1);
-					else if (record.preferenceActionString.equals(""))
-						comboCustom.select(0);
-					else
-						comboCustom.select(comboCustom.indexOf(record.preferenceActionString));										
-				} else if (record.registryAction) {	
-					textDefault.setText(record.registryActionString);
-				}
+			if (keySequence == null)
+				keySequence = KeyManager.parseKeySequenceStrict(name);
+		}				
+
+		if (keySequence != null) {
+			String scopeId = getScopeId();
+			String configurationId = getConfigurationId();
+
+			if (!custom)
+				clear(tree, keySequence, scopeId, configurationId);						
+			else { 
+				set(tree, Binding.create(getActionId(), configurationId, keySequence, null, 0, scopeId), true);				
+				/*
+				name = keyManager.getTextForKeySequence(keySequence);			
 				
-				return;				
+				if (!nameToKeySequenceMap.containsKey(name))
+					nameToKeySequenceMap.put(name, keySequence);
+	
+				comboKeySequence.setItems(getKeySequences());
+				*/					
 			}
 		}
+				
+		update();
+	}
+
+	private void modifiedComboKeySequence() {
+		update();
+	}
+
+	private void selectedButtonCustom() {
+		change(true);
+	}
+
+	private void selectedButtonDefault() {
+		change(false);
+	}
+
+	private void selectedComboConfiguration() {
+		update();				
+	}
+
+	private void selectedComboCustom() {
+		change(true);
+	}
+
+	private void selectedComboKeySequence() {			
+		update();
+	}
+	
+	private void selectedComboScope() {
+		update();	
+	}
+
+	private void selectedTable() {
+		update();	
+	}
+
+	private void setPrompt(Image image, String string)
+		throws IllegalArgumentException {
+		labelPromptImage.setImage(image);
+		labelPromptText.setText(string);	
+	}
+	
+	private void update() {
+		KeySequence keySequence = null;
+		String name = comboKeySequence.getText();
+		
+		if (name == null || name.length() == 0)
+			setPrompt(getImage(DLG_IMG_MESSAGE_INFO), "Select or Type a Key Sequence");	
+		else {		
+			setPrompt(null, ZERO_LENGTH_STRING);
+			keySequence = (KeySequence) nameToKeySequenceMap.get(name);
+			
+			if (keySequence == null) {
+				// TBD: review! still not strict enough! convertAccelerator says 'Ctrl+Ax' is valid!				
+				keySequence = KeyManager.parseKeySequenceStrict(name);
+				
+				if (keySequence == null)
+					setPrompt(getImage(DLG_IMG_MESSAGE_ERROR), "Invalid Key Sequence");
+			}
+		}		
+
+		String scopeId = getScopeId();
+		String configurationId = getConfigurationId();
+
+		boolean setPluginMap = false;
+		records.clear();
+	
+		if (tree != null && keySequence != null) {
+			Map scopeMap = (Map) tree.get(keySequence);
+			
+			if (scopeMap != null) {
+				Iterator iterator = scopeMap.entrySet().iterator();
+			
+				while (iterator.hasNext()) {
+					Map.Entry entry = (Map.Entry) iterator.next();
+					String scopeId2 = (String) entry.getKey();					
+					Map configurationMap = (Map) entry.getValue();						
+					Iterator iterator2 = configurationMap.entrySet().iterator();
+							
+					while (iterator2.hasNext()) {
+						Map.Entry entry2 = (Map.Entry) iterator2.next();
+						String configurationId2 = (String) entry2.getKey();					
+						Map pluginMap = (Map) entry2.getValue();			
+						Record record = new Record();
+						record.scopeId = scopeId2;
+						record.configurationId = configurationId2;
+						record.pluginMap = pluginMap;
+						
+						if (Util.equals(scopeId, record.scopeId) && Util.equals(configurationId, record.configurationId)) {							
+							setPluginMap(record.pluginMap);
+							setPluginMap = true;	
+						}
+						
+						records.add(record);
+					}												
+				}	
+			}
+		}
+
+		if (!setPluginMap)
+			setPluginMap(Collections.EMPTY_MAP);
+
+		table.removeAll();
+		int select = -1;
+
+		for (int i = 0; i < records.size(); i++) {
+			Record record = (Record) records.get(i);
+
+			if (Util.equals(scopeId, record.scopeId) && Util.equals(configurationId, record.configurationId))
+				select = i;				
+
+			Scope scope = (Scope) registryScopeMap.get(record.scopeId);
+			Configuration configuration = (Configuration) registryConfigurationMap.get(record.configurationId);			
+			TableItem tableItem = new TableItem(table, SWT.NULL);					
+			tableItem.setText(1, scope != null ? scope.getLabel().getName() : "(" + record.scopeId + ")");
+			tableItem.setText(2, configuration != null ? configuration.getLabel().getName() : "(" + record.configurationId + ")");
+			Map pluginMap = record.pluginMap;
+
+			boolean customConflict = false;
+			String customAction = null;
+			
+			Map actionMap = (Map) pluginMap.get(null);							
+
+			if (actionMap != null) {
+				Set bindingSet = (Set) actionMap.values().iterator().next();
+				
+				if (actionMap.size() > 1 || bindingSet.size() > 1) {
+					customConflict = true;
+					customAction = ACTION_CONFLICT;
+				} else {
+					Binding binding = (Binding) bindingSet.iterator().next();	
+					String actionId = binding.getAction();
+				
+					if (actionId == null)
+						customAction = ACTION_UNDEFINED;
+					else
+						for (int j = 0; j < actions.size(); j++) {
+							Action action = (Action) actions.get(j);		
+							
+							if (action.getLabel().getId().equals(actionId)) {
+								customAction = action.getLabel().getName();
+								break;		
+							}
+						}		
+				}
+			}
+
+			boolean defaultConflict = false;
+			String defaultAction = null;
+			
+			pluginMap = new HashMap(pluginMap);
+			pluginMap.remove(null);
+	
+			if (pluginMap.size() > 0) {
+				actionMap = (Map) pluginMap.values().iterator().next();	
+				Set bindingSet = (Set) actionMap.values().iterator().next();
+						
+				if (pluginMap.size() > 1 || actionMap.size() > 1 || bindingSet.size() > 1) {
+					defaultConflict = true;
+					defaultAction = ACTION_CONFLICT;				
+				} else {
+					Binding binding = (Binding) bindingSet.iterator().next();	
+					String actionId = binding.getAction();
+				
+					if (actionId == null)
+						defaultAction = ACTION_UNDEFINED;
+					else
+						for (int j = 0; j < actions.size(); j++) {
+							Action action = (Action) actions.get(j);		
+							
+							if (action.getLabel().getId().equals(actionId)) {
+								defaultAction = action.getLabel().getName();
+								break;		
+							}
+						}		
+				}
+			}
+				
+			if (defaultAction == null && customAction != null)
+				tableItem.setImage(0, ImageFactory.getImage("plus"));
+			else if (defaultAction != null && customAction != null)
+				tableItem.setImage(0, ImageFactory.getImage("change"));
+				
+			if (customAction != null) {				
+				tableItem.setText(3, customAction);
+			
+				if (customConflict)
+					tableItem.setImage(3, ImageFactory.getImage("exclamation"));			
+			} else if (defaultAction != null) {
+				tableItem.setText(3, defaultAction);
+			
+				if (defaultConflict)
+					tableItem.setImage(3, ImageFactory.getImage("exclamation"));			
+			} 
+		}
+		
+		if (select >= 0)
+			table.select(select);
+	}
+		
+	private void createUI(Composite composite) {
+		Font font = composite.getFont();
+		GridLayout gridLayoutComposite = new GridLayout();
+		gridLayoutComposite.marginHeight = SPACE;
+		composite.setLayout(gridLayoutComposite);
+
+		Composite compositeKeySequence = new Composite(composite, SWT.NULL);		
+		GridLayout gridLayoutCompositeKeySequence = new GridLayout();
+		gridLayoutCompositeKeySequence.numColumns = 3;
+		gridLayoutCompositeKeySequence.marginWidth = SPACE;	
+		gridLayoutCompositeKeySequence.horizontalSpacing = SPACE;
+		compositeKeySequence.setLayout(gridLayoutCompositeKeySequence);
+		
+		labelKeySequence = new Label(compositeKeySequence, SWT.LEFT);
+		labelKeySequence.setFont(font);
+		labelKeySequence.setText(Messages.getString("DialogCustomize.LabelKeySequence"));
+
+		comboKeySequence = new Combo(compositeKeySequence, SWT.NULL);
+		comboKeySequence.setFont(font);
+		GridData gridDataComboKeySequence = new GridData();
+		gridDataComboKeySequence.widthHint = 200;
+		comboKeySequence.setLayoutData(gridDataComboKeySequence);		
+
+		Composite compositePrompt = new Composite(compositeKeySequence, SWT.NULL);		
+		GridLayout gridLayoutCompositePrompt = new GridLayout();
+		gridLayoutCompositePrompt.numColumns = 2;
+		gridLayoutCompositePrompt.marginWidth = 0;
+		gridLayoutCompositePrompt.marginHeight = 0;
+		gridLayoutCompositePrompt.horizontalSpacing = HALF_SPACE;
+		gridLayoutCompositePrompt.verticalSpacing = HALF_SPACE;
+		compositePrompt.setLayout(gridLayoutCompositePrompt);
+
+		labelPromptImage = new Label(compositePrompt, SWT.LEFT);
+		labelPromptImage.setFont(font);
+		GridData gridDataPromptImage = new GridData();
+		gridDataPromptImage.widthHint = 16;
+		labelPromptImage.setLayoutData(gridDataPromptImage);
+			
+		labelPromptText = new Label(compositePrompt, SWT.LEFT);		
+		labelPromptText.setFont(font);
+
+		Composite compositeStateAndAction = new Composite(composite, SWT.NULL);
+		GridLayout gridLayoutCompositeStateAndAction = new GridLayout();
+		gridLayoutCompositeStateAndAction.numColumns = 2;
+		gridLayoutCompositeStateAndAction.horizontalSpacing = SPACE;
+		compositeStateAndAction.setLayout(gridLayoutCompositeStateAndAction);
+
+		Group groupState = new Group(compositeStateAndAction, SWT.NULL);	
+		groupState.setFont(font);
+		GridLayout gridLayoutGroupState = new GridLayout();
+		gridLayoutGroupState.numColumns = 2;
+		gridLayoutGroupState.marginWidth = SPACE;
+		gridLayoutGroupState.marginHeight = SPACE;
+		gridLayoutGroupState.horizontalSpacing = SPACE;
+		gridLayoutGroupState.verticalSpacing = SPACE;
+		groupState.setLayout(gridLayoutGroupState);
+		groupState.setLayoutData(new GridData(GridData.FILL_BOTH));
+		groupState.setText(Messages.getString("DialogCustomize.GroupState"));	
+
+		labelScope = new Label(groupState, SWT.LEFT);
+		labelScope.setFont(font);
+		labelScope.setText(Messages.getString("DialogCustomize.LabelScope"));
+
+		comboScope = new Combo(groupState, SWT.READ_ONLY);
+		comboScope.setFont(font);
+		GridData gridDataComboScope = new GridData();
+		gridDataComboScope.widthHint = 100;
+		comboScope.setLayoutData(gridDataComboScope);
+
+		labelConfiguration = new Label(groupState, SWT.LEFT);
+		labelConfiguration.setFont(font);
+		labelConfiguration.setText(Messages.getString("DialogCustomize.LabelConfiguration"));
+
+		comboConfiguration = new Combo(groupState, SWT.READ_ONLY);
+		comboConfiguration.setFont(font);
+		GridData gridDataComboConfiguration = new GridData(GridData.FILL_HORIZONTAL);
+		gridDataComboConfiguration.widthHint = 100;
+		comboConfiguration.setLayoutData(gridDataComboConfiguration);
+
+		Group groupAction = new Group(compositeStateAndAction, SWT.NULL);	
+		groupAction.setFont(font);
+		GridLayout gridLayoutGroupAction = new GridLayout();
+		gridLayoutGroupAction.numColumns = 2;
+		gridLayoutGroupAction.marginWidth = SPACE;
+		gridLayoutGroupAction.marginHeight = SPACE;
+		gridLayoutGroupAction.horizontalSpacing = SPACE;
+		gridLayoutGroupAction.verticalSpacing = SPACE;
+		groupAction.setLayout(gridLayoutGroupAction);
+		groupAction.setLayoutData(new GridData(GridData.FILL_BOTH));		
+		groupAction.setText(Messages.getString("DialogCustomize.GroupAction"));			
+
+		buttonDefault = new Button(groupAction, SWT.LEFT | SWT.RADIO);
+		buttonDefault.setFont(font);
+		buttonDefault.setText(Messages.getString("DialogCustomize.ButtonDefault"));
+
+		textDefault = new Text(groupAction, SWT.BORDER | SWT.READ_ONLY);
+		textDefault.setFont(font);
+		GridData gridDataTextDefault = new GridData(GridData.FILL_HORIZONTAL);
+		gridDataTextDefault.widthHint = 150;
+		textDefault.setLayoutData(gridDataTextDefault);
+
+		buttonCustom = new Button(groupAction, SWT.LEFT | SWT.RADIO);
+		buttonCustom.setFont(font);
+		buttonCustom.setText(Messages.getString("DialogCustomize.ButtonCustom"));
+
+		comboCustom = new Combo(groupAction, SWT.READ_ONLY);
+		comboCustom.setFont(font);
+		GridData gridDataComboCustom = new GridData(GridData.FILL_HORIZONTAL);
+		gridDataComboCustom.widthHint = 150;
+		comboCustom.setLayoutData(gridDataComboCustom);
+
+		Composite compositeTable = new Composite(composite, SWT.NULL);		
+		GridLayout gridLayoutCompositeTable = new GridLayout();
+		compositeTable.setLayout(gridLayoutCompositeTable);
+		compositeTable.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		table = new Table(compositeTable, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		table.setHeaderVisible(true);
+		GridData gridDataTable = new GridData(GridData.FILL_BOTH);
+		gridDataTable.heightHint = 100;		
+		table.setLayoutData(gridDataTable);
+
+		TableColumn tableColumn = new TableColumn(table, SWT.NULL, 0);
+		tableColumn.setResizable(false);
+		tableColumn.setText(ZERO_LENGTH_STRING);
+		tableColumn.setWidth(20);
+
+		tableColumn = new TableColumn(table, SWT.NULL, 1);
+		tableColumn.setResizable(true);
+		tableColumn.setText(Messages.getString("DialogCustomize.HeaderScope"));
+		tableColumn.setWidth(100);
+
+		tableColumn = new TableColumn(table, SWT.NULL, 2);
+		tableColumn.setResizable(true);
+		tableColumn.setText(Messages.getString("DialogCustomize.HeaderConfiguration"));
+		tableColumn.setWidth(100);
+
+		tableColumn = new TableColumn(table, SWT.NULL, 3);
+		tableColumn.setResizable(true);
+		tableColumn.setText(Messages.getString("DialogCustomize.HeaderAction"));
+		tableColumn.setWidth(250);	
+
+		comboKeySequence.setItems(getKeySequences());			
+		comboScope.setItems(scopeNames);
+		comboConfiguration.setItems(configurationNames);
+		comboCustom.setItems(actionNames);
+		
+		setConfigurationId(defaultConfigurationId);
+		setScopeId(defaultScopeId);
+
+		comboKeySequence.addModifyListener(new ModifyListener() {			
+			public void modifyText(ModifyEvent e) {
+				modifiedComboKeySequence();
+			}	
+		});
+
+		comboKeySequence.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				selectedComboKeySequence();
+			}	
+		});
+
+		comboScope.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				selectedComboScope();
+			}	
+		});
+
+		comboConfiguration.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				selectedComboConfiguration();
+			}	
+		});
+
+		buttonDefault.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				selectedButtonDefault();
+			}	
+		});
+
+		buttonCustom.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				selectedButtonCustom();
+			}	
+		});
+		
+		comboCustom.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				selectedComboCustom();
+			}	
+		});
+
+		table.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				int i = table.getSelectionIndex();
+				
+				if (i >= 0) {
+					Record record = (Record) records.get(i);						
+					
+					if (record != null) {
+						setScopeId(record.scopeId);
+						setConfigurationId(record.configurationId);	
+					}
+				}
+				
+				selectedTable();
+			}	
+		});
+
+		update();
+	}
+
+	
+	private void setConfigurationId(String configurationId) {				
+		comboConfiguration.clearSelection();
+		comboConfiguration.deselectAll();
+		
+		if (configurationId != null)	
+			for (int i = 0; i < configurations.size(); i++) {
+				Configuration configuration = (Configuration) configurations.get(i);		
+				
+				if (configuration.getLabel().getId().equals(configurationId)) {
+					comboConfiguration.select(i);
+					break;		
+				}
+			}
+	}	
+	
+	private void setPluginMap(Map pluginMap) {		
+		//textDefault.clearSelection();
+		//comboCustom.clearSelection();
+		comboCustom.deselectAll();	
+
+		Map actionMap = (Map) pluginMap.get(null);
+		buttonDefault.setSelection(actionMap == null);
+		buttonCustom.setSelection(!buttonDefault.getSelection());									
+
+		if (actionMap != null) {
+			Set bindingSet = (Set) actionMap.values().iterator().next();
+			
+			if (actionMap.size() > 1 || bindingSet.size() > 1)
+				comboCustom.setText(ACTION_CONFLICT);
+			else {
+				Binding binding = (Binding) bindingSet.iterator().next();	
+				String actionId = binding.getAction();
+			
+				if (actionId == null)
+					comboCustom.select(0);
+				else
+					for (int i = 0; i < actions.size(); i++) {
+						Action action = (Action) actions.get(i);		
+						
+						if (action.getLabel().getId().equals(actionId)) {
+							comboCustom.select(i + 1);
+							break;		
+						}
+					}		
+			}
+		} else
+			comboCustom.select(0);
+
+		pluginMap = new HashMap(pluginMap);
+		pluginMap.remove(null);
+
+		if (pluginMap.size() > 0) {
+			actionMap = (Map) pluginMap.values().iterator().next();	
+			Set bindingSet = (Set) actionMap.values().iterator().next();
+					
+			if (pluginMap.size() > 1 || actionMap.size() > 1 || bindingSet.size() > 1)
+				textDefault.setText(ACTION_CONFLICT);
+			else {
+				Binding binding = (Binding) bindingSet.iterator().next();	
+				String actionId = binding.getAction();
+			
+				if (actionId == null)
+					textDefault.setText(ACTION_UNDEFINED);
+				else
+					for (int i = 0; i < actions.size(); i++) {
+						Action action = (Action) actions.get(i);		
+						
+						if (action.getLabel().getId().equals(actionId)) {
+							textDefault.setText(action.getLabel().getName());
+							break;		
+						}
+					}		
+			}
+		} else
+			textDefault.setText(ACTION_UNDEFINED);	
+	}
+
+	private void setScopeId(String scopeId) {				
+		comboScope.clearSelection();
+		comboScope.deselectAll();
+		
+		if (scopeId != null)	
+			for (int i = 0; i < scopes.size(); i++) {
+				Scope scope = (Scope) scopes.get(i);		
+				
+				if (scope.getLabel().getId().equals(scopeId)) {
+					comboScope.select(i);
+					break;		
+				}
+			}
 	}
 }
