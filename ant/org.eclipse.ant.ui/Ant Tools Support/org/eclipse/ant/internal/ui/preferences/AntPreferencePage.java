@@ -45,7 +45,6 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	private ColorEditor fAppearanceColorEditor;
 	
 	private BooleanFieldEditor toolsWarningEditor= null;
-	private BooleanFieldEditor xercesWarningEditor= null;
 	
 	// Array containing the message to display, the preference key, and the 
 	// default value (initialized in storeInitialValues()) for each color preference
@@ -90,8 +89,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			toolsWarningEditor= new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntPreferencePage.10"), getFieldEditorParent());  //$NON-NLS-1$
 			addField(toolsWarningEditor);
 		}
-		xercesWarningEditor= new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntPreferencePage.11"), getFieldEditorParent()); //$NON-NLS-1$
-		addField(xercesWarningEditor);
+		
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_CLASSPATH_WARNING, AntPreferencesMessages.getString("AntPreferencePage.13"), getFieldEditorParent())); //$NON-NLS-1$
 		
 		addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, AntPreferencesMessages.getString("AntPreferencePage.12"), getFieldEditorParent())); //$NON-NLS-1$
@@ -264,8 +262,6 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			if (toolsWarningEditor != null) {
 				toolsWarningEditor.load();
 			}
-		} else if (event.getProperty().equals(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING)) {
-			xercesWarningEditor.load();
 		} else {
 			super.propertyChange(event);
 		}

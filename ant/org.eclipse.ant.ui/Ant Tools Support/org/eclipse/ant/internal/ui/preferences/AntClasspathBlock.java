@@ -13,7 +13,6 @@ package org.eclipse.ant.internal.ui.preferences;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,7 +67,6 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
 
 public class AntClasspathBlock {
 
-	private static final String[] XERCES= new String[] {"xercesImpl.jar", "xml-apis.jar", "xmlParserAPIs.jar"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	private static final String[] TOOLS= new String[] {"tools.jar"}; //$NON-NLS-1$
 
 	private TreeViewer treeViewer;
@@ -96,7 +94,7 @@ public class AntClasspathBlock {
 	
 	private IAntBlockContainer container;
 	
-	private int validated= 3;
+	private int validated= 2;
 	
 	private IClasspathEntry currentParent;
 	
@@ -589,11 +587,11 @@ public class AntClasspathBlock {
 			rootDir = new File(path, "lib"); //$NON-NLS-1$
 			if (!rootDir.exists()) {
 				container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.Specified_ANT_HOME_does_not_contain_a___lib___directory_7")); //$NON-NLS-1$
-				validated= 3;
+				setValidated();
 				return null;
 			}
 		} else {
-			validated= 3;
+			setValidated();
 			container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.Specified_ANT_HOME_does_not_contain_a___lib___directory_7")); //$NON-NLS-1$
 			return null;
 		}
@@ -690,48 +688,13 @@ public class AntClasspathBlock {
 			}
 			if (!valid) {
 				container.setErrorMessage(AntPreferencesMessages.getString("AntClasspathBlock.34")); //$NON-NLS-1$
-				validated= 3;
+				setValidated();
 			}
 			return valid;
-			}
+		}
 		return true;
 	}
 
-	public boolean validateXerces(boolean sameVM) {
-		boolean valid= true;
-		validated++;
-		boolean check= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING);
-		if (check) {
-			Object[] antHomeEntries= antContentProvider.getModel().getEntries(ClasspathModel.ANT_HOME);
-			List suffixes= JARPresent(antHomeEntries, XERCES);
-			if (suffixes.isEmpty()) {
-				Object[] userEntries=  antContentProvider.getModel().getEntries(ClasspathModel.GLOBAL_USER);
-				suffixes= JARPresent(userEntries, XERCES);
-				if (suffixes.isEmpty()) {
-					userEntries=  antContentProvider.getModel().getEntries(ClasspathModel.USER);
-					suffixes= JARPresent(userEntries, XERCES);
-				}
-			}
-			if (sameVM && !suffixes.isEmpty()) {
-				valid= MessageDialogWithToggle.openQuestion(treeViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), MessageFormat.format(AntPreferencesMessages.getString("AntClasspathBlock.36"), new Object[]{suffixes.get(0)}), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			} else if (!sameVM && suffixes.size() < 2) {
-				valid= MessageDialogWithToggle.openQuestion(treeViewer.getControl().getShell(), AntPreferencesMessages.getString("AntClasspathBlock.35"), AntPreferencesMessages.getString("AntClasspathBlock.52"), IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, AntPreferencesMessages.getString("AntClasspathBlock.33"), AntUIPlugin.getDefault().getPreferenceStore()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			} else {
-				valid= true;
-			}
-			if (!valid) {
-				String message;
-				if (sameVM) {
-					message= MessageFormat.format(AntPreferencesMessages.getString("AntClasspathBlock.38"), new Object[]{suffixes.get(0)}); //$NON-NLS-1$
-				} else {
-					message= AntPreferencesMessages.getString("AntClasspathBlock.53"); //$NON-NLS-1$
-				}
-				container.setErrorMessage(message);
-			}
-		}
-		return valid;
-	}
-	
 	private List JARPresent(Object[] classpathEntries, String[] suffixes) {
 		if (classpathEntries == null) {
 			return Collections.EMPTY_LIST;
@@ -756,10 +719,10 @@ public class AntClasspathBlock {
 	}
 	
 	public boolean isValidated() {
-		return validated >= 3;
+		return validated >= 2;
 	}
 	
 	public void setValidated() {
-		validated= 3;
+		validated= 2;
 	}
 }

@@ -152,9 +152,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 		if (valid) {
 			valid= antClasspathBlock.validateToolsJAR();
 		}
-		if (valid) {
-			valid= antClasspathBlock.validateXerces(true);
-		}
+		
 		preferencePage.setValid(valid);
 	}
 	

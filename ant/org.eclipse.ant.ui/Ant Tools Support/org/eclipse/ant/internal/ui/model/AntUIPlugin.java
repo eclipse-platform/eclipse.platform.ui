@@ -141,7 +141,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 		} else {
 			prefs.setDefault(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, true);
 		}
-		prefs.setDefault(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, true);
+		
 		prefs.setDefault(IAntUIPreferenceConstants.ANT_ERROR_DIALOG, true);
 		prefs.setDefault(IAntUIPreferenceConstants.ANT_CLASSPATH_WARNING, true);
 		

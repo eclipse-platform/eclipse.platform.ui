@@ -23,7 +23,6 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -135,15 +134,6 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		}
 		if (valid){
 			valid= antClasspathBlock.validateToolsJAR();
-		}
-		if (valid) {
-			String vmTypeID= null;
-			try {
-				vmTypeID = launchConfig.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
-			} catch (CoreException ce) {		
-			}
-			
-			valid= antClasspathBlock.validateXerces(vmTypeID == null);
 			antClasspathBlock.setValidated();
 		}
 
