@@ -14,6 +14,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -35,6 +38,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.SearchUI;
 
 import org.eclipse.search.internal.ui.util.SWTUtil;
 
@@ -99,15 +103,6 @@ public class ScopePart {
 		return scope;
 	}
 
-	/**
-	 * Returns a new scope part with an initial scope.
-	 * The part is not yet created.
-	 * 
-	 * @see #createPart(Composite)
-	 * @param initialScope the initial scope
-	 */
-	public ScopePart(int initialScope, boolean searchEnclosingProjects) {
-	}
 
 	private void restoreState() {
 		String[] lruWorkingSetNames= fgSettingsStore.getArray(STORE_LRU_WORKING_SET_NAMES);
@@ -155,45 +150,36 @@ public class ScopePart {
 		Assert.isNotNull(fUseWorkspace);
 		Assert.isNotNull(fUseSelection);
 		Assert.isNotNull(fUseWorkingSet);
-		if (fCanSearchEnclosingProjects)
-			Assert.isNotNull(fUseProject);
+		Assert.isNotNull(fUseProject);
 		fScope= scope;
+		if (fScope == ISearchPageContainer.SELECTED_PROJECTS_SCOPE && !fCanSearchEnclosingProjects) {
+			SearchPlugin.log(new Status(IStatus.WARNING, SearchUI.PLUGIN_ID, IStatus.WARNING, "Enclosing projects scope set on search page that does not support it", null));
+			fScope= ISearchPageContainer.WORKSPACE_SCOPE;
+		}
 		switch (fScope) {
 			case ISearchPageContainer.WORKSPACE_SCOPE :
 				fUseWorkspace.setSelection(true);
 				fUseSelection.setSelection(false);
-				if (fCanSearchEnclosingProjects)
-					fUseProject.setSelection(false);
+				fUseProject.setSelection(false);
 				fUseWorkingSet.setSelection(false);
 				break;
 			case ISearchPageContainer.SELECTION_SCOPE :
 				fUseWorkspace.setSelection(false);
 				fUseSelection.setSelection(true);
-				if (fCanSearchEnclosingProjects)
-					fUseProject.setSelection(false);
+				fUseProject.setSelection(false);
 				fUseWorkingSet.setSelection(false);
 				break;
 			case ISearchPageContainer.WORKING_SET_SCOPE :
 				fUseWorkspace.setSelection(false);
 				fUseSelection.setSelection(false);
-				if (fCanSearchEnclosingProjects)
-					fUseProject.setSelection(false);
+				fUseProject.setSelection(false);
 				fUseWorkingSet.setSelection(true);
 				break;
 			case ISearchPageContainer.SELECTED_PROJECTS_SCOPE :
-				if (fCanSearchEnclosingProjects) {
-					fUseWorkspace.setSelection(false);
-					fUseSelection.setSelection(false);
-					fUseProject.setSelection(true);
-					fUseWorkingSet.setSelection(false);
-				} else {
-					fScope= ISearchPageContainer.WORKSPACE_SCOPE;
-					fUseWorkspace.setSelection(true);
-					fUseSelection.setSelection(false);
-					if (fCanSearchEnclosingProjects)
-						fUseProject.setSelection(false);
-					fUseWorkingSet.setSelection(false);
-				}
+				fUseWorkspace.setSelection(false);
+				fUseSelection.setSelection(false);
+				fUseProject.setSelection(true);
+				fUseWorkingSet.setSelection(false);
 				break;
 		}
 
@@ -272,10 +258,7 @@ public class ScopePart {
 		fPart.setText(SearchMessages.getString("ScopePart.group.text")); //$NON-NLS-1$
 
 		GridLayout layout= new GridLayout();
-		if (fCanSearchEnclosingProjects)
-			layout.numColumns= 4;
-		else
-			layout.numColumns= 3;
+		layout.numColumns= 4;
 		fPart.setLayout(layout);
 		fPart.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
@@ -291,23 +274,21 @@ public class ScopePart {
 			selection instanceof IStructuredSelection && !fSearchPageContainer.getSelection().isEmpty());
 
 		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		if (!fCanSearchEnclosingProjects)
-			gd.horizontalSpan= 2;
 		gd.horizontalIndent= 8;
 		fUseSelection.setLayoutData(gd);
 
-		if (fCanSearchEnclosingProjects) {
-			fUseProject= new Button(fPart, SWT.RADIO);
-			fUseProject.setData(new Integer(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
-			fUseProject.setText(SearchMessages.getString("ScopePart.enclosingProjectsScope.text")); //$NON-NLS-1$
-			fUseProject.setEnabled(
-				selection instanceof IStructuredSelection && !fSearchPageContainer.getSelection().isEmpty());
+		fUseProject= new Button(fPart, SWT.RADIO);
+		fUseProject.setData(new Integer(ISearchPageContainer.SELECTED_PROJECTS_SCOPE));
+		fUseProject.setText(SearchMessages.getString("ScopePart.enclosingProjectsScope.text")); //$NON-NLS-1$
+		fUseProject.setEnabled(
+			selection instanceof IStructuredSelection && !fSearchPageContainer.getSelection().isEmpty());
 
-			gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-			gd.horizontalSpan= 2;
-			gd.horizontalIndent= 8;
-			fUseProject.setLayoutData(gd);
-		}
+		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalSpan= 2;
+		gd.horizontalIndent= 8;
+		fUseProject.setLayoutData(gd);
+		if (!fCanSearchEnclosingProjects)
+			fUseProject.setVisible(false);
 
 		fUseWorkingSet= new Button(fPart, SWT.RADIO);
 		fUseWorkingSet.setData(new Integer(ISearchPageContainer.WORKING_SET_SCOPE));
@@ -326,8 +307,7 @@ public class ScopePart {
 		});
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalIndent= 8;
-		if (fCanSearchEnclosingProjects)
-			gd.horizontalSpan= 2;
+		gd.horizontalSpan= 2;
 		gd.widthHint= SWTUtil.convertWidthInCharsToPixels(30, fWorkingSetText);
 		fWorkingSetText.setLayoutData(gd);
 
@@ -339,8 +319,7 @@ public class ScopePart {
 		};
 		fUseWorkspace.addSelectionListener(scopeChangedLister);
 		fUseSelection.addSelectionListener(scopeChangedLister);
-		if (fCanSearchEnclosingProjects)
-			fUseProject.addSelectionListener(scopeChangedLister);
+		fUseProject.addSelectionListener(scopeChangedLister);
 		fUseWorkingSet.addSelectionListener(scopeChangedLister);
 
 		// Set initial scope
