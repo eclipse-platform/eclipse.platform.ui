@@ -19,6 +19,8 @@ import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -50,7 +52,6 @@ import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
@@ -171,7 +172,8 @@ public final class WorkbenchKeyboard {
      */
     private static void initializeOutOfOrderKeys() {
         // Get the key strokes which should be out of order.
-        String keysText = WorkbenchMessages.getString(OUT_OF_ORDER_KEYS);
+        String keysText = Util.translateString(RESOURCE_BUNDLE,
+                OUT_OF_ORDER_KEYS);
         outOfOrderKeys = KeySequence.getInstance();
 
         try {
@@ -410,7 +412,7 @@ public final class WorkbenchKeyboard {
             return true;
         } catch (NotHandledException eNotHandled) {
             return false;
-        } 
+        }
     }
 
     /**
@@ -428,8 +430,14 @@ public final class WorkbenchKeyboard {
      *            This value should not be <code>null</code>.
      * @return <code>true</code> if there was a handler; <code>false</code>
      *         otherwise.
+     * @throws CommandException
+     *             if the handler does not complete execution for some reason.
+     *             It is up to the caller of this method to decide whether to
+     *             log the message, display a dialog, or ignore this exception
+     *             entirely.
      */
-    private boolean executeCommand(String commandId, Event event) {
+    private boolean executeCommand(String commandId, Event event)
+            throws CommandException {
         if (DEBUG) {
             System.out
                     .println("KEYS >>> WorkbenchKeyboard.executeCommand(commandId = '" //$NON-NLS-1$
@@ -464,14 +472,7 @@ public final class WorkbenchKeyboard {
         }
 
         if (command.isDefined() && command.isHandled() && isEnabled(command)) {
-            try {
-                command.execute(event);
-            } catch (CommandException eCommand) {
-                String message = "Command '" + commandId //$NON-NLS-1$
-                        + "' failed to execute properly."; //$NON-NLS-1$               
-                WorkbenchPlugin.log(message, new Status(IStatus.ERROR,
-                        WorkbenchPlugin.PI_WORKBENCH, 0, message, eCommand));
-            }
+            command.execute(event);
         }
 
         return (command.isDefined() && command.isHandled());
@@ -660,6 +661,23 @@ public final class WorkbenchKeyboard {
     }
 
     /**
+     * Logs the given exception, and opens a dialog explaining the failure.
+     * 
+     * @param e
+     *            The exception to log; must not be <code>null</code>.
+     */
+    private final void logException(CommandException e) {
+        String message = Util.translateString(RESOURCE_BUNDLE,
+                "ExecutionError.message"); //$NON-NLS-1$
+        String title = Util.translateString(RESOURCE_BUNDLE, "NoMatches.Title"); //$NON-NLS-1$
+        IStatus status = new Status(IStatus.ERROR,
+                WorkbenchPlugin.PI_WORKBENCH, 0, message, e.getCause());
+        ErrorDialog.openError(workbench.getActiveWorkbenchWindow().getShell(),
+                title, message, status);
+        WorkbenchPlugin.log(message, status);
+    }
+
+    /**
      * Opens a <code>Shell</code> to assist the user in completing a
      * multi-stroke key binding. After this method completes, <code>multiKeyAssistShell</code>
      * should point at the newly opened window.
@@ -757,16 +775,20 @@ public final class WorkbenchKeyboard {
             // command.
             completionsTable.addSelectionListener(new SelectionListener() {
 
-                public void widgetDefaultSelected(SelectionEvent e) {
+                public void widgetDefaultSelected(SelectionEvent event) {
                     int selectionIndex = completionsTable.getSelectionIndex();
                     if (selectionIndex >= 0) {
                         ICommand command = (ICommand) commands
                                 .get(selectionIndex);
-                        executeCommand(command.getId(), new Event());
+                        try {
+                            executeCommand(command.getId(), new Event());
+                        } catch (CommandException e) {
+                            logException(e);
+                        }
                     }
                 }
 
-                public void widgetSelected(SelectionEvent e) {
+                public void widgetSelected(SelectionEvent event) {
                     // Do nothing
                 }
             });
@@ -830,9 +852,14 @@ public final class WorkbenchKeyboard {
      *            dialog commands.
      * @return <code>true</code> if a command is executed; <code>false</code>
      *         otherwise.
+     * @throws CommandException
+     *             if the handler does not complete execution for some reason.
+     *             It is up to the caller of this method to decide whether to
+     *             log the message, display a dialog, or ignore this exception
+     *             entirely.
      */
     public boolean press(List potentialKeyStrokes, Event event,
-            boolean dialogOnly) {
+            boolean dialogOnly) throws CommandException {
         // TODO remove event parameter once key-modified actions are removed
         if (DEBUG && DEBUG_VERBOSE) {
             System.out
@@ -862,9 +889,9 @@ public final class WorkbenchKeyboard {
                     && ((event.keyCode == SWT.ARROW_DOWN)
                             || (event.keyCode == SWT.ARROW_UP)
                             || (event.keyCode == SWT.ARROW_LEFT)
-                            || (event.keyCode == SWT.ARROW_RIGHT) || (event.keyCode == SWT.CR))) { 
+                            || (event.keyCode == SWT.ARROW_RIGHT) || (event.keyCode == SWT.CR))) {
             // We don't want to swallow keyboard navigation keys.
-            return false; 
+            return false;
 
             }
         }
@@ -896,7 +923,17 @@ public final class WorkbenchKeyboard {
      */
     void processKeyEvent(List keyStrokes, Event event, boolean dialogOnly) {
         // Dispatch the keyboard shortcut, if any.
-        if ((!keyStrokes.isEmpty()) && (press(keyStrokes, event, dialogOnly))) {
+        boolean eatKey = false;
+        if (!keyStrokes.isEmpty()) {
+            try {
+                eatKey = press(keyStrokes, event, dialogOnly);
+            } catch (CommandException e) {
+                logException(e);
+                eatKey = true;
+            }
+        }
+
+        if (eatKey) {
             switch (event.type) {
             case SWT.KeyDown:
                 event.doit = false;
