@@ -15,6 +15,17 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.ITextContentDescriber;
 
+/**
+ * This class provides internal basis for text-based content describers. 
+ * 
+ * <p>
+ * Note: do not add protected/public members to this class if you don't intend to 
+ * make them public API.
+ * </p>  
+ * 
+ * @see org.eclipse.core.runtime.content.XMLRootElementContentDescriber
+ * @since 3.0
+ */
 public class TextContentDescriber implements ITextContentDescriber {
 
 	private final static QualifiedName[] SUPPORTED_OPTIONS = {IContentDescription.BYTE_ORDER_MARK};
@@ -50,7 +61,7 @@ public class TextContentDescriber implements ITextContentDescriber {
 		return SUPPORTED_OPTIONS;
 	}
 
-	protected byte[] getByteOrderMark(InputStream input) throws IOException {
+	byte[] getByteOrderMark(InputStream input) throws IOException {
 		int first = (input.read() & 0xFF);//converts unsigned byte to int
 		int second = (input.read() & 0xFF);
 		if (first == -1 || second == -1)
