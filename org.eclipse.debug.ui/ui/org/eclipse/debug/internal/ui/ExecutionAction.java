@@ -45,10 +45,26 @@ import org.eclipse.ui.IWorkbenchWindow;
  * This is the debug action which appears in the desktop menu and toolbar.
  */
 public abstract class ExecutionAction extends Action implements IActionDelegate {
+	
 	/**
 	 * @see Action#run()
 	 */
 	public void run() {
+		/*
+		 * Switch to run new launch configurations - OFF
+		 */
+		//runLaunchConfiguration();
+		runOldStyleLaunch();
+	}
+	
+	private void runLaunchConfiguration() {
+		IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
+		IStructuredSelection selection= resolveSelection(dwindow);
+		LaunchConfigurationDialog lcd = new LaunchConfigurationDialog(DebugUIPlugin.getShell(), selection, getMode());		
+		lcd.open();
+	}
+	
+	private void runOldStyleLaunch() {
 		
 		final IWorkbenchWindow dwindow= DebugUIPlugin.getActiveWorkbenchWindow();
 		final IStructuredSelection selection= resolveSelection(dwindow);
@@ -58,11 +74,6 @@ public abstract class ExecutionAction extends Action implements IActionDelegate 
 			return;
 		}
 
-		// hook for launch configurations - OFF
-//		if (runLaunchConfiguration(selection)) {
-//			return;
-//		}
-		
 		if (!DebugUIPlugin.saveAndBuild()) {
 			return;
 		}
@@ -313,19 +324,6 @@ public abstract class ExecutionAction extends Action implements IActionDelegate 
 		if (display != null) {
 			display.beep();
 		}
-	}
-	
-	/**
-	 * Hook to invoke launch configuration dialog.
-	 * 
-	 * @return whether to cancel
-	 */
-	private boolean runLaunchConfiguration(IStructuredSelection selection) {
-		LaunchConfigurationDialog lcd = new LaunchConfigurationDialog(DebugUIPlugin.getShell(), selection, getMode());		
-		if (lcd.open() == Window.CANCEL) {
-			return true;
-		}		
-		return false;
 	}
 	
 	/**

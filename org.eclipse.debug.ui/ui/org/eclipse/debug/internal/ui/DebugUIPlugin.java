@@ -1125,7 +1125,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDebugEventListen
 	public void launchRegistered(final ILaunch launch) {
 		if (launch.getLaunchConfiguration() != null) {
 			// new launch configuration processing
-			return;
+			//return;
 		} else {		
 			// old launcher processing
 			updateHistories(launch);

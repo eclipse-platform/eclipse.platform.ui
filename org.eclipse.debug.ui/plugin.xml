@@ -290,7 +290,7 @@
 		name="Team">
 	</launchConfigurationTab>
 	<launchConfigurationTab
-		id="org.eclipse.debug.ui.launchConfigurationTab.team"
+		id="org.eclipse.debug.ui.launchConfigurationTab.perspective"
 		class="org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveTab"
 		name="Perspective">
 	</launchConfigurationTab>	

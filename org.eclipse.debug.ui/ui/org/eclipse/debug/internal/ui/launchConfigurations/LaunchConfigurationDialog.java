@@ -5,11 +5,16 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  * All Rights Reserved.
  */
  
+import java.util.Arrays;
+
+import java.util.Comparator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -113,7 +118,11 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * The text widget displaying the name of the
 	 * lanuch configuration under edit
 	 */
-	private Text fNameText;	
+	private Text fNameText;
+	
+	private String fLastSavedName = null;
+	
+	private String[] fSortedConfigNames = null;
 	
 	/**
 	 * The tab folder
@@ -237,7 +246,10 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		// Build the launch configuration banner area
 		// and put it into the composite.
 		Composite launchConfigBannerArea = createLaunchConfigurationBannerArea(composite);		
-
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		launchConfigBannerArea.setLayoutData(gd);
+		
 		// Build the launch configuration selection area
 		// and put it into the composite.
 		Composite launchConfigSelectionArea = createLaunchConfigurationSelectionArea(composite);
@@ -279,7 +291,6 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 			return;
 		}
 		
-		Object selectee = null;
 		if (fWorkbenchSelection instanceof ILaunchConfiguration) {
 			initializeFirstConfigForConfiguration();
 		} else {
@@ -395,17 +406,26 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		}
 		return ILaunchManager.RUN_MODE;
 	}
+
+	private void setLastSavedName(String lastSavedName) {
+		this.fLastSavedName = lastSavedName;
+	}
+
+	private String getLastSavedName() {
+		return fLastSavedName;
+	}
 	
 	/**
-	 * If the verify fails, we catch a <code>CoreException</code>, in which
+	 * If verifying fails, we catch a <code>CoreException</code>, in which
 	 * case we extract the error message and set it in the status area.
-	 * Otherwise, we set the "OK to launch" message in the status area.
+	 * Otherwise, we set the "ready to launch" message in the status area.
 	 * 
 	 * @see ILaunchConfigurationDialog#refreshStatus()
 	 */
 	public void refreshStatus() {
 		try {
 			getWorkingCopy().verify(getMode());
+			verifyStandardAttributes();
 		} catch (CoreException ce) {
 			String message = ce.getStatus().getMessage();
 			setStatusErrorMessage(message);
@@ -414,6 +434,81 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		}
 		setStatusOKMessage();
 		enableStatusDependentButtons(true);
+	}
+	
+	/**
+	 * Verify the attributes common to all launch configuration.
+	 * To be consistent with <code>ILaunchConfiguration.verify</code>,
+	 * indicate failure by throwing a <code>CoreException</code>.
+	 */
+	protected void verifyStandardAttributes() throws CoreException {
+		verifyName();
+	}
+	
+	/**
+	 * Verify that there are no name collisions.
+	 */
+	protected void verifyName() throws CoreException {
+		String currentName = getNameTextWidget().getText();
+
+		// If there is no name, complain
+		if (currentName.trim().length() < 1) {
+			throw new CoreException(new Status(IStatus.ERROR,
+												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+												 0,
+												 "Name required for launch configuration.",
+												 null));			
+		}
+
+		// If the name hasn't changed from the last saved name, do nothing
+		if (currentName.equals(getLastSavedName())) {
+			return;
+		}				
+		
+		// Otherwise, if there's already a config with the current name, complain
+		if (configExists(currentName)) {
+			throw new CoreException(new Status(IStatus.ERROR,
+												 DebugUIPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+												 0,
+												 "Launch configuration already exists with this name.",
+												 null));						
+		}						
+	}
+	
+	/**
+	 * Return whether or not there is an existing launch configuration with
+	 * the specified name.
+	 */
+	protected boolean configExists(String name) {
+		String[] sortedConfigNames = getAllSortedConfigNames();
+		int index = Arrays.binarySearch(sortedConfigNames, name);
+		if (index < 0) {
+			return false;
+		} 
+		return true;
+	}
+	
+	protected void updateConfigFromName() {
+		if (getWorkingCopy() != null) {
+			getWorkingCopy().rename(getNameTextWidget().getText());
+			refreshStatus();
+		}
+	}
+	
+	/**
+	 * Return a sorted array of the names of all <code>ILaunchConfiguration</code>s in 
+	 * the workspace.
+	 */
+	protected String[] getAllSortedConfigNames() {
+		if (fSortedConfigNames == null) {
+			ILaunchConfiguration[] configs = getLaunchManager().getLaunchConfigurations();
+			fSortedConfigNames = new String[configs.length];
+			for (int i = 0; i < configs.length; i++) {
+				fSortedConfigNames[i] = configs[i].getName();
+			}
+			Arrays.sort(fSortedConfigNames);
+		}
+		return fSortedConfigNames;
 	}
 	
 	protected void setStatusErrorMessage(String message) {
@@ -429,8 +524,9 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	}
 	
 	protected void enableStatusDependentButtons(boolean enable) {
-		getSaveButton().setEnabled(enable);
-		getSaveAndLaunchButton().setEnabled(enable);
+		boolean dirty = getWorkingCopy().isDirty();
+		getSaveButton().setEnabled(enable && dirty);
+		getSaveAndLaunchButton().setEnabled(enable && dirty);
 		getLaunchButton().setEnabled(enable);
 	}
 	
@@ -486,17 +582,17 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 			}
 		);				
 		
-		Button removeButton = new Button(c, SWT.PUSH | SWT.CENTER);
-		removeButton.setText("&Delete");
+		Button deleteButton = new Button(c, SWT.PUSH | SWT.CENTER);
+		deleteButton.setText("&Delete");
 		gd = new GridData(GridData.CENTER);
 		gd.horizontalSpan = 1;
-		removeButton.setLayoutData(gd);
-		setDeleteButton(removeButton);
+		deleteButton.setLayoutData(gd);
+		setDeleteButton(deleteButton);
 		
-		removeButton.addSelectionListener(
+		deleteButton.addSelectionListener(
 			new SelectionAdapter() { 
 				public void widgetSelected(SelectionEvent event) {
-					handleRemovePressed();
+					handleDeletePressed();
 				}
 			}
 		);			
@@ -545,10 +641,10 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		nameText.setLayoutData(gd);
 		setNameTextWidget(nameText);
 		
-		nameText.addModifyListener(
+		getNameTextWidget().addModifyListener(
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
-					getWorkingCopy().rename(getNameTextWidget().getText());
+					updateConfigFromName();
 				}
 			}
 		);		
@@ -572,6 +668,11 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		gd.horizontalSpan = 2;
 		saveButton.setLayoutData(gd);
 		setSaveButton(saveButton);
+		getSaveButton().addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent evt) {
+				handleSavePressed();
+			}
+		});
 		
 		return c;
 	}	
@@ -590,10 +691,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		topLayout.marginWidth = 0;
 		topLayout.numColumns = 4;
 		comp.setLayout(topLayout);
-		
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		comp.setLayoutData(gd);
+		GridData gd;
 		
 		fModeLabel = new Label(comp, SWT.NONE);
 		
@@ -691,6 +789,9 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 		 */
 		public Object getParent(Object element) {
 			if (element instanceof ILaunchConfiguration) {
+				if (!((ILaunchConfiguration)element).exists()) {
+					return null;
+				}
 				try {
 					return ((ILaunchConfiguration)element).getType();
 				} catch (CoreException e) {
@@ -720,7 +821,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 			return getLaunchManager().getLaunchConfigurationTypes();
 		}
 
-		/*
+		/**
 		 * @see IContentProvider#dispose()
 		 */
 		public void dispose() {
@@ -773,10 +874,11 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  		// enable buttons
 		getCopyButton().setEnabled(configSelected);
 		getDeleteButton().setEnabled(configSelected);
- 		 		
- 		
+ 		 		 		
  		if (singleSelection && firstSelectedElement instanceof ILaunchConfiguration) {
- 			setLaunchConfiguration((ILaunchConfiguration)firstSelectedElement);
+ 			ILaunchConfiguration config = (ILaunchConfiguration) firstSelectedElement; 			
+ 			setLastSavedName(config.getName());
+ 			setLaunchConfiguration(config);
  		} else if (singleSelection && firstSelectedElement instanceof ILaunchConfigurationType) {
 			handleNewPressed();
  		} else {
@@ -988,17 +1090,12 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 			return;
 		}
 						
-		// dispose the current tabs and replace with new ones 
-		TabItem[] oldTabs = getTabFolder().getItems();
-		ILaunchConfigurationTab[] tabs = getTabs();
-		for (int i = 0; i < oldTabs.length; i++) {
-			oldTabs[i].dispose();
-			tabs[i].dispose();
-		}
-		
+		// dispose the current tabs
+		disposeExistingTabs();
+
 		// build the new tabs
  		LaunchConfigurationTabExtension[] exts = LaunchConfigurationPresentationManager.getDefault().getTabs(configType);
- 		tabs = new ILaunchConfigurationTab[exts.length];
+ 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[exts.length];
  		for (int i = 0; i < exts.length; i++) {
  			TabItem tab = new TabItem(getTabFolder(), SWT.NONE);
  			String name = exts[i].getName();
@@ -1019,6 +1116,21 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
  		}
  		setTabs(tabs);	
  		fWorkingType = configType;	
+ 	}
+ 	
+ 	protected void resetTabs() {
+ 		disposeExistingTabs();
+ 		fWorkingType = null;
+ 	}
+ 	
+ 	protected void disposeExistingTabs() {
+		TabItem[] oldTabs = getTabFolder().getItems();
+		ILaunchConfigurationTab[] tabs = getTabs();
+		for (int i = 0; i < oldTabs.length; i++) {
+			oldTabs[i].dispose();
+			tabs[i].dispose();
+		} 		
+		setTabs(null);
  	}
  	
  	/**
@@ -1111,7 +1223,8 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * @see ILaunchConfigurationListener#launchConfigurationAdded(ILaunchConfiguration)
 	 */
 	public void launchConfigurationAdded(ILaunchConfiguration configuration) {
-		getTreeViewer().refresh();
+		fSortedConfigNames = null;
+		getTreeViewer().refresh();		
 	}
 
 	/**
@@ -1129,7 +1242,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * @see ILaunchConfigurationListener#launchConfigurationRemoved(ILaunchConfiguration)
 	 */
 	public void launchConfigurationRemoved(ILaunchConfiguration configuration) {
-		getTreeViewer().refresh();
+		getTreeViewer().remove(configuration);		
 	}
 
 	/**
@@ -1168,6 +1281,7 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 			if (fWorkbenchSelection != null) {
 				wc.initializeDefaults(fWorkbenchSelection);
 			}
+			setLastSavedName(null);
 			setLaunchConfiguration(wc);
 		} catch (CoreException ce) {
 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred creating new launch configuration.", ce.getStatus());
@@ -1176,9 +1290,23 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	}	
 	
 	/**
-	 * Notification the 'remove' button has been pressed
+	 * Notification the 'delete' button has been pressed
 	 */
-	protected void handleRemovePressed() {
+	protected void handleDeletePressed() {
+		try {
+			IStructuredSelection selection = getTreeViewerSelection();
+			if (selection != null) {
+				Object firstElement = selection.getFirstElement();
+				if (firstElement != null) {
+					if (firstElement instanceof ILaunchConfiguration) {
+						resetTabs();
+						ILaunchConfiguration config = (ILaunchConfiguration) firstElement;
+						config.delete();
+					}
+				}
+			}
+		} catch (CoreException ce) {
+		}
 	}	
 	
 	/**
@@ -1191,11 +1319,20 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 	 * Notification the 'save & launch' button has been pressed
 	 */
 	protected void handleSaveAndLaunchPressed() {
+		handleSavePressed();
+		handleLaunchPressed();
+	}
+	
+	/**
+	 * Notification that the 'save' button has been pressed
+	 */
+	protected void handleSavePressed() {
 		try {
 			getWorkingCopy().doSave();
 		} catch (CoreException ce) {			
-		}
-		handleLaunchPressed();
+		}	
+		setLastSavedName(getWorkingCopy().getName());	
+		enableStatusDependentButtons(true);
 	}
 	
 	/**
@@ -1207,11 +1344,8 @@ public class LaunchConfigurationDialog extends Dialog implements ISelectionChang
 			launch = getWorkingCopy().launch(getMode());
 		} catch (CoreException ce) {
 			return;
-		}
-		
-		if (launch != null) {
-			getLaunchManager().registerLaunch(launch);
-		}
+		}		
+		close();
 	}
 }
 
