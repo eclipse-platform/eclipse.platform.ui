@@ -31,7 +31,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements IAdaptab
 	private String name;
 	private ImageDescriptor imageDescriptor;
 	private String description;
-	// @issue SelectionEnabler 
+	// @issue SelectionEnabler is private class in generic workbench project
 	private SelectionEnabler selectionEnabler;
 	private IConfigurationElement configurationElement;
 /**

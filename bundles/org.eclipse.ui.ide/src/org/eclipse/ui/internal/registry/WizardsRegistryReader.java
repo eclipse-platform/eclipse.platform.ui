@@ -30,7 +30,8 @@ public class WizardsRegistryReader extends RegistryReader {
 	protected final static String TAG_WIZARD = "wizard";//$NON-NLS-1$
 
 	protected final static String ATT_NAME = "name";//$NON-NLS-1$
-	protected final static String ATT_CLASS = "class";//$NON-NLS-1$
+	// @issue we should have an IExtensionConstants class with all these attribute names, element names, attribute values (like true, false, etc).
+	public final static String ATT_CLASS = "class";//$NON-NLS-1$
 	protected final static String ATT_ICON = "icon";//$NON-NLS-1$
 	protected final static String ATT_ID = "id";//$NON-NLS-1$
 	protected final static String trueString = "TRUE";//$NON-NLS-1$
