@@ -65,13 +65,14 @@ public class SearchResults implements ISearchHitCollector {
 				toc = getTocForTopic(href, locale);
 			} else {
 				scope = getScopeForTopic(href);
-				if (scope == null)
+				if (scope == null){
 					// topic outside of scope
 					continue;
-				else if (scope instanceof AdaptableToc)
+				}else if (scope instanceof AdaptableToc){
 					toc = (IToc) scope.getAdapter(IToc.class);
-				else // scope is AdaptableTopic
+				}else{ // scope is AdaptableTopic
 					toc = (IToc) scope.getParent().getAdapter(IToc.class);
+				}
 			}
 
 			// adjust score
@@ -88,14 +89,19 @@ public class SearchResults implements ISearchHitCollector {
 			// Set the document label
 			String label = doc.get("raw_title");
 			if ("".equals(label) && toc != null) {
+				ITopic t;
 				if (scope != null) {
-					label = scope.getTopic(href).getLabel();
-				} else
-					// TODO can getTopic() return null?
-					label = toc.getTopic(href).getLabel();
+					t = scope.getTopic(href);
+				} else{
+					t = toc.getTopic(href);
+				}
+				if(t!=null){
+					label=t.getLabel();
+				}
 			}
-			if (label == null || "".equals(label))
+			if (label == null || "".equals(label)){
 				label = href;
+			}
 
 			// Set document href
 			href = href + "?resultof=" + urlEncodedWords;
