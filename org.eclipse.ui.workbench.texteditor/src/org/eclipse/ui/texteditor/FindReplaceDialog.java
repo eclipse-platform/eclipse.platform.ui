@@ -217,7 +217,7 @@ class FindReplaceDialog extends Dialog {
 		
 		super.create();
 		
-		Shell shell= getShell();		
+		Shell shell= getShell();
 		shell.addShellListener(fActivationListener);
 		if (fLocation != null)
 			shell.setLocation(fLocation);
@@ -352,6 +352,8 @@ class FindReplaceDialog extends Dialog {
 		setGridData(statusBar, GridData.FILL, true, GridData.CENTER, false);
 		
 		updateButtonState();
+		
+		applyDialogFont(panel);
 		
 		return panel;
 	}
