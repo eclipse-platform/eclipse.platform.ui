@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.awtui.TestRunner;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -33,11 +31,6 @@ public class DocumentTest extends TestCase {
 	}
 	
 	
-	public static void main(String args[]) {
-		String a[] = { "org.eclipse.jface.text.tests.DocumentTest"};
-		TestRunner.main(a);
-	}
-
 	protected void checkPositions(Position[] expected) {
 	
 		try {

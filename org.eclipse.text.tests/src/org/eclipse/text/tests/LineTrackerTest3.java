@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.awtui.TestRunner;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ConfigurableLineTracker;
@@ -30,11 +28,6 @@ public class LineTrackerTest3 extends TestCase {
 	
 	public LineTrackerTest3(String name) {
 		super(name);
-	}
-	
-	public static void main(String args[]) {
-		String a[] = { "org.eclipse.jface.text.tests.LineTrackerTest3"};
-		TestRunner.main(a);
 	}
 	
 	protected int getLineOffset(int line, int[] lines) {

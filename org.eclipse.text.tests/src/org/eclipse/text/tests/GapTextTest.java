@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.awtui.TestRunner;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -48,11 +47,6 @@ public class GapTextTest extends TestCase {
 	
 	public GapTextTest(String name) {
 		super(name);
-	}
-	
-	public static void main(String args[]) {
-		String a[] = { "org.eclipse.jface.ui.text.tests.GapTextTest" };
-		TestRunner.main(a);
 	}
 	
 	protected String printGap() {

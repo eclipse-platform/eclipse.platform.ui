@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
-import junit.awtui.TestRunner;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -23,11 +22,6 @@ public class TextHoverPopupTest extends TestCase {
 		super(name);
 	}
 	
-	public static void main(String args[]) {
-		String a[] = { "org.eclipse.jface.text.tests.TextHoverPopupTest" };
-		TestRunner.main(a);
-	}
-						
 	protected void setUp() {
 	}
 		

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.awtui.TestRunner;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -33,11 +32,6 @@ public class PositionUpdatingCornerCasesTest extends TestCase {
 	}
 	
 	
-	public static void main(String args[]) {
-		String a[] = { "org.eclipse.jface.text.tests.PositionUpdatingCornerCasesTest"};
-		TestRunner.main(a);
-	}
-
 	protected void checkPositions(Position[] expected) {
 	
 		try {

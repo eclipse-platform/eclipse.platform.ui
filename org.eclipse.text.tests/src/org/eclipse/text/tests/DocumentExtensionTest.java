@@ -14,7 +14,6 @@ package org.eclipse.text.tests;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.awtui.TestRunner;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -137,11 +136,6 @@ public class DocumentExtensionTest extends TestCase {
 		super(name);
 	}
 	
-	
-	public static void main(String args[]) {
-		String a[] = { "org.eclipse.jface.text.tests.DocumentExtensionTest"};
-		TestRunner.main(a);
-	}
 	
 	public static Test suite() {
 		return new TestSuite(DocumentExtensionTest.class); 

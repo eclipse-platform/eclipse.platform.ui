@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.awtui.TestRunner;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -31,11 +30,6 @@ public class LineTrackerTest4 extends TestCase {
 	
 	public LineTrackerTest4(String name) {
 		super(name);
-	}
-	
-	public static void main(String args[]) {
-		String a[] = { "org.eclipse.jface.text.tests.LineTrackerTest4" };
-		TestRunner.main(a);
 	}
 	
 	protected int getLineOffset(int line, int[] lines) {

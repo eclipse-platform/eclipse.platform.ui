@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.text.tests;
 
-import junit.awtui.TestRunner;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -37,11 +36,6 @@ public class ChildDocumentTest extends TestCase {
 	}
 	
 	
-	public static void main(String args[]) {
-		String a[] = { "org.eclipse.jface.text.tests.ChildDocumentTest"};
-		TestRunner.main(a);
-	}
-
 	protected void checkPositions(Position[] positions) {
 	
 		try {

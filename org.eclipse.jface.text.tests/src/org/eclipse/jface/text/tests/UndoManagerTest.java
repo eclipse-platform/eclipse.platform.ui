@@ -10,6 +10,10 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
@@ -21,10 +25,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Test for DefaultUndoManager
