@@ -30,6 +30,7 @@ public class LaunchShortcutAction extends Action {
 		super(shortcut.getLabel(), shortcut.getImageDescriptor());
 		fMode = mode;
 		fShortcut = shortcut;
+		updateEnablement();
 	}
 	
 	
@@ -55,6 +56,30 @@ public class LaunchShortcutAction extends Action {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Since these actions are re-created each time the run/debug as menu is
+	 * filled, the enablement of this action is static.
+	 */
+	private void updateEnablement() {
+		IWorkbenchWindow wb = DebugUIPlugin.getActiveWorkbenchWindow();
+		boolean enabled = false;
+		if (wb != null) {
+			IWorkbenchPage page = wb.getActivePage();
+			if (page != null) {
+				ISelection selection = page.getSelection();
+				if (selection instanceof IStructuredSelection) {
+					enabled = !((IStructuredSelection)selection).isEmpty();
+				} else {
+					IEditorPart editor = page.getActiveEditor();
+					if (editor != null) {
+						enabled = true;
+					}
+				}
+			}
+		}		
+		setEnabled(enabled);
 	}
 
 }
