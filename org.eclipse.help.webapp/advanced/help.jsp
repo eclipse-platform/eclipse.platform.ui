@@ -39,8 +39,8 @@ if (data.isMozilla()){
 <script language="JavaScript">
 
 // vars to keep track of frame sizes before max/restore
-var leftCols = "28.5%";
-var rightCols = "71.5%";
+var leftCols = "29.5%";
+var rightCols = "70.5%";
 
 function toggleFrame(title)
 {
@@ -87,7 +87,7 @@ if (data.isIE()) {
 <%
 }
 %> 
-    id="helpFrameset" cols='28.5%,71.5%' framespacing="3" border="6"  frameborder="1"   scrolling="no">
+    id="helpFrameset" cols='29.5%,70.5%' framespacing="3" border="6"  frameborder="1"   scrolling="no">
    	<frame class="nav" name="NavFrame" title="<%=ServletResources.getString("ignore", "NavFrame", request)%>" src='<%="nav.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="1" resize=yes>
    	<frame name="ContentFrame" title="<%=ServletResources.getString("ignore", "ContentFrame", request)%>" class="content" src='<%="content.jsp"+data.getQuery()%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" resize=yes>
 </frameset>
