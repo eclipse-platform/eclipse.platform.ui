@@ -168,9 +168,9 @@ public String getName();
 /**
  * Returns the element which contains this element.  If this element
  * is an immediate child of an extension, the
- * returned value can be downcast to <code>ExtensionModel</code>.
+ * returned value can be downcast to <code>IExtension</code>.
  * Otherwise the returned value can be downcast to 
- * <code>ConfigurationElementModel</code>.
+ * <code>IConfigurationElement</code>.
  *
  * @return the parent of this configuration element
  *  or <code>null</code>
