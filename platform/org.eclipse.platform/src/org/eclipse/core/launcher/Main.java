@@ -204,12 +204,13 @@ public class Main {
 	private static final String PROP_SPLASHLOCATION = "osgi.splashLocation"; //$NON-NLS-1$
 	private static final String PROP_CLASSPATH = "osgi.frameworkClassPath"; //$NON-NLS-1$
 	private static final String PROP_EOF = "eof"; //$NON-NLS-1$
+	private static final String PROP_EXITCODE = "eclipse.exitcode"; //$NON-NLS-1$
 
 	// Data mode constants for user, configuration and data locations.
-	private static final String NONE = "<none>"; //$NON-NLS-1$
-	private static final String NO_DEFAULT = "<noDefault>"; //$NON-NLS-1$
-	private static final String USER_HOME = "<user.home>"; //$NON-NLS-1$
-	private static final String USER_DIR = "<user.dir>"; //$NON-NLS-1$
+	private static final String NONE = "@none>"; //$NON-NLS-1$
+	private static final String NO_DEFAULT = "@noDefault>"; //$NON-NLS-1$
+	private static final String USER_HOME = "@user.home>"; //$NON-NLS-1$
+	private static final String USER_DIR = "@user.dir>"; //$NON-NLS-1$
 
 	// log file handling
 	protected static final String SESSION = "!SESSION"; //$NON-NLS-1$
@@ -720,22 +721,25 @@ public class Main {
 	* @param args the command line arguments
 	*/	
 	public int run(String[] args) {
-		Object result = null;
 		arguments = args;
-		// Check to see if we are running with a compatible VM.
-		// If not, then return exit code "14" which will be recognized
-		// by the executable and an appropriate message will be displayed
-		// to the user.
-		if (!isCompatible())
-			return 14;
-		// Check to see if there is already a platform running in
-		// this workspace. If there is, then return an exit code of "15" which
-		// will be recognized by the executable and an appropriate message
-		// will be displayed to the user.
-		if (isAlreadyRunning())
-			return 15;
+		// TODO remove this code before M8.  It is left here until the UI guys implement 
+		// their versions of these tests.
+		if (System.getProperty("eclipse.ui.testing") == null) {
+			// Check to see if we are running with a compatible VM.
+			// If not, then return exit code "14" which will be recognized
+			// by the executable and an appropriate message will be displayed
+			// to the user.
+			if (!isCompatible())
+				return 14;
+			// Check to see if there is already a platform running in
+			// this workspace. If there is, then return an exit code of "15" which
+			// will be recognized by the executable and an appropriate message
+			// will be displayed to the user.
+			if (isAlreadyRunning())
+				return 15;
+		}
 		try {
-			result = basicRun(args);
+			basicRun(args);
 		} catch (Throwable e) {
 			// try and take down the splash screen.
 			takeDownSplash();
@@ -746,7 +750,13 @@ public class Main {
 			// there is information in their log file.
 			return 13;
 		}
-		return result instanceof Integer ? ((Integer) result).intValue() : 0;
+		// Return an int exit code.
+		String exitCode = System.getProperty(PROP_EXITCODE);
+		try {
+			return exitCode == null ? 0: Integer.parseInt(exitCode);
+		} catch (NumberFormatException e) {
+			return 17;
+		}
 	}
 	/**
 	 * Processes the command line arguments.  The general principle is to NOT
