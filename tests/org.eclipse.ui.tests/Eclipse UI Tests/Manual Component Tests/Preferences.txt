@@ -1,0 +1,44 @@
+This is a test list for the preferences dialog.
+
+Presentation
+	Verify that the listbox on the left shows appropriate scrollbars 
+		when its contents extends beyond its client area.
+	Verify that the window grows to fit the content page of the 
+		selected item.
+	Verify that you can traverse all widget groups by pressing TAB.
+
+Actions
+	Clicking on a item in the tree shows the corresponding page on 
+		the right, including the page title.
+	Verify that Defaults sets all fields to the default values for 
+		the current content page ONLY.
+	Verify that OK stores all changes made to fields by doing the following:
+		- make some changes to checkboxes, option buttons, and textboxes.
+		- click OK.
+		- open the dialog again and ensure that all the changes were saved.
+	Verify that Cancel discards all changes made to fields by doing 
+		the following:
+		- make some changes to checkboxes, option buttons, and textboxes.
+		- click Cancel.
+		- open the dialog again and ensure that all the field values 
+			are the same as before the change.
+	Verify that ESC maps to Cancel.
+	Verify that Apply stores all changes made to values by doing the 
+		following:
+		- make some changes to checkboxes, option buttons, and textboxes.
+		- click Apply and then Cancel.
+		- open the dialog again and ensure that all the changes were saved.
+	Verify that Apply immediately updates the workbench settings by 
+		doing the following:
+		- open a text file with the default text editor.
+		- type something in the editor
+		- open the preferences dialog, and click on Workbench | Default 
+			Text Editor
+		- click Change... At the Font dialog, select a different font 
+			and a different font size. Click OK.
+		- at the preferences dialog, Click Apply
+		- without closing the preferences dialog, ensure that the 
+			settings for the text editor are updated.
+
+Persistence
+	Verify that all field values are persistent all the time.

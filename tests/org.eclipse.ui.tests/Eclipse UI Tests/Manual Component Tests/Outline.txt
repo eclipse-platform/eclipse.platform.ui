@@ -1,0 +1,14 @@
+This is a test list for the outline view. The outine view is a container for pages contributed by open editors. 
+We test the contribution and activation of those pages.
+
+Presentation
+	Verify that the view shows appropriate scrollbars when its contents extends beyond its client area.
+
+Activation
+	If you open a java editor or activate one, its outline contents appears in outline view.	
+	Switch between two or more java editors to verify the view is updated.
+	Switching between java editors updates the outline view's local toolbar and context menu.
+	Close one java editor, activating another, and see page in outline change.
+	Switching from a java editor to a text editor shows blank in the outline view.
+	Close last java editor to see the default blank page in outline.
+

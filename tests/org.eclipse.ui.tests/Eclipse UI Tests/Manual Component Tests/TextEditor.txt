@@ -1,0 +1,18 @@
+This is a test list for the text editor.
+
+Presentation
+	Verify that appropriate strings appear in all menu items and text fields.
+	Verify that the view shows appropriate scrollbars when its contents extends beyond its client area.
+
+Editor Actions
+	Verify that Cut and Copy are enabled iff there is selected text.
+	Verify that Paste is enabled iff there is text in the clipboard buffer.
+	Verify that Cut, Copy, Paste, Select-All work correctly.
+	Verify that Revert is enabled only if is the file dirty and works correctly.
+
+Edit Menu Actions
+	Verify that the enablement and action of Cut, Copy, Paste, and Select-All in the Edit menu are consistent with those in the editor's context menu.
+
+Persistence	
+	The editor is marked dirty if the text is modified by either the keyboard OR the editor actions.
+	The editor is marked clean after either saving the file or reverting it.

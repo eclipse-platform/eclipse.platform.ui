@@ -1,0 +1,48 @@
+This is a test list for the tasks view.
+
+Presentation
+	Verify that appropriate strings appear in all menu items and text fields.
+	Verify icons for task items and problem items.
+	Verify that the title bar shows the correct number of filtered items and total items.
+	Verify that the view shows appropriate scrollbars when its contents extends beyond its client area.
+
+Common Actions
+	Verify that header buttons in the table sort records by their respective column values in ascending/descending order alternatively.
+	Verify that items that belong to files such as compile time errors are displayed only if their projects are open.
+	Verify that Go To File is enabled only on file-bound items.
+	Verify that double-click or Go To File on a file-bound item opens the file, if not alreadly open, and locates the code in the editor.
+
+Task Actions in Tasks View
+	Verify that New Task, Delete, Delete Completed Tasks work.
+	Verify that Delete is enabled only on task items.
+	Verify that invoking Delete on a task item in an open file deletes the task marker from the editor.
+	Verify that the enablement and action of the New Task and Delete buttons are consistent with those in the context menu.
+	Verify that the DELETE button on the keyboard maps to Delete.
+	Verify that the task status( completion ) and priority can be set for task items only.
+
+Problem Actions in Tasks View
+	Verify that selecting a problem item displays its description message in the status bar of the workbench window.
+
+Filter Tasks Dialog
+	Change the values then verify that the Reset button sets those values to default.
+	Verify that tasks are filtered by the corresponding criterion of the On-any-resouce, On-selected-resouce-only, and 
+		On-selected-resouce-and-its-children radio buttons.
+	Verify that tasks are filtered based on query word iff the description text box is not empty.
+	Verify that only those tasks that contain( do not contain ) the query string show in the task view if the description combo-box 
+		has the value "Contains"( Does not contain ).
+	Verify that the Where-problem-severity-is checkbox is enabled iff at least one of Build-path-Problem and Java-Problem in the tree is checked.
+	Verify that the Where-task-priority-is and Where-task-status-is check boxes are enabled iff Task in the tree is checked.
+	Verify that the enablement of the Where~ checkboxes determines the enablement of their option check boxes.
+	Verify that a newly created task by New Task is affected by the current setting of the filter.
+
+Actions in Text Editor
+	Verify that for a line that doesn't have a task, you can add one. It should appear in the vertical ruler and in the view
+		with adequate values set in the Resouce, In Folder, and Location fields.
+	Verify that for a line that has a task. you can remove the task. It disappears from the vertical ruler and from the view.
+	Verify that selecting a task item from the view opens the file, if not already open, and locates the code. 
+
+Persistence
+	Verify that the view retains its items after being closed and reopened.
+	Verify that the view maintains the sort order and filtering between sessions.
+	Verify that the top index and the selection of the view are consistent between sessions, and after inserting or detaching the view.
+	

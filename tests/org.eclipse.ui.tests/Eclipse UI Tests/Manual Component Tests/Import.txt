@@ -1,0 +1,79 @@
+This is a test list for the import wizard.
+
+Common Properties for All Pages
+	Verify that all listboxes show appropriate scrollbars when 
+		their contents extends beyond their client area.
+	The Cancel button is enabled all the time.
+	Verify that Cancel discards all changes made to the wizard by doing 
+		the following:
+		- on the Select page, choose any one of items in the list and 
+			click Next.
+		- make change to the destination or the option settings or both.
+		- cancel the wizard.
+		- open the wizard again and ensure that the preselection of 
+			the Select page( if there was any ), and the values of 
+			the destination and the options remain the same as before 
+			the change.
+
+Select Page( first page )
+	The Next button is enabled only if there is selection in the list.
+	Verify that the source from the most recent import, regardless 
+		of session, is preselected in the listbox.
+	Verify icons for items in the list.
+
+Common Properties for Import Pages( second page )
+* Please run this test separately for each of the pages
+	[Presentation]
+		The source combo listbox stores the five most recent 
+			sources from which resources were imported.
+		Verify icons for files in the file listbox.
+	[Enablement]
+		The Back button is enabled and the Next button is greyed out all the time.
+		Both of the Browse buttons are enabled.
+		The 'Select Types', 'Select All', and 'Deselect All' buttons are enabled only if there is at least one item in the folder tree.
+		Finish is enabled only if there is one or more resources selected and the destination folder is not empty.
+	[Selection Action]		
+		Verify that 'Select All' and 'Deselect All' work.
+		Selecting a folder resource shows all files it has in the file listbox.
+		Checking a folder resource checks all of its subfolders and its files, and always grey-checks its ancestor folders.
+		Unchecking a folder unchecks files and subfolders underneath it. It unchecks its ancestor folder recursively if 
+			it is last resource checked. Otherwise, it grey-checks its ancestor recursively.
+		Checking a file always grey-checks the folder it is in.
+		Unchecking a file unchecks its ancestor folder recursively if it is last file selected. Otherwise, it grey-checks its ancestor recursively.
+	[Select Types Dialog]
+		Verify that the 'Other Extensions' text box shows only those user-defined file types that are not in the list.
+		e.g. 
+			- type in *.java and click OK
+			- open the dialog again and ensure that the .java check box is checked and the textbox does NOT have .java in it.
+			- in the dialog, type in *.eclipse and click OK
+			- open the dialog again and ensure that the textbox has .eclipse in it.
+		Verify that the filter selects files by both checked file types and specified types among the selected resources only.
+		Verify that invoking the filter updates appropriate checkboxes of files and folders.
+		Verify that invoking the filter by one type and then immediately by a different type leaves all resources unchecked.
+	[Destination Folder Selection Dialog]
+		Go-into is enabled only if the selected folder has a subfolder.
+		If the root of the tree widget is the same as the root of the workspace, Home is enabled and Back is not.
+		If the root of the tree widget is NOT the same as the root of the workspace, Home is disabled and Back is enabled.
+		Verify that Home, Back, and Go-Into work.
+		Selecting a folder shows its complete path in the text box.
+		Clicking on OK in the dialog updates the contents of the Folder textbox in the wizard.
+	[Options]
+		The setting for common options are shared by pages.
+		If the Overwrite checkbox is unchecked, importing a resource to the same destination twice pops up the Confirm Overwrite dialog.
+		If the Overwrite checkbox is checked, you can import a resource to the same destination twice without confirming it.
+	[Navigator View]
+		Verify that the navigator view is updated after importing.
+	[Persistence]
+		Verify that the five most recent sources stored in the source combo listbox are persistent between sessions.
+		Verify that the settings of the options are persistent between sessions.
+
+File System Page
+	Selecting a source directory shows its folder structure using itself as the root in the left tree.
+	Verify that all of the selected resources are imported successfully.	
+	If the 'Complete folder structure' checkbox is unchecked, importing a resource creates a folder structure relative 
+		to the root of the tree widget in the destination folder.
+	If the 'Complete folder structure' checkbox is checked, importing a resource creates a folder structure using the 
+		source's absolute path in the destination folder.
+
+Zip File Page
+	Selecting a source archive shows its folder structure in the left tree AND checks all of resources in it.

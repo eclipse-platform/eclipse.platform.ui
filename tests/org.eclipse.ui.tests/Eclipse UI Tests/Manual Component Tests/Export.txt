@@ -1,0 +1,105 @@
+This is a test script for the export wizard.
+
+Common Properties for All Pages
+	Verify that all listboxes show appropriate scrollbars when 
+		their contents extends beyond their client area.
+	The Cancel button is enabled all the time.
+	Verify that Cancel discards all changes made to the wizard by 
+		doing the following:
+		- on the Select page, choose any one of items in the list and click Next.
+		- make change to the destination or the option settings or both.
+		- cancel the wizard.
+		- open the wizard again and ensure that the preselection of the Select page( if there was any ), and the values of 
+			the destination and the options remain the same as before the change.
+
+Select Page( first page )
+	The Next button is enabled only if there is selection in the list.
+	Verify that the destination from the most recent export, regardless 	
+		of session, is preselected in the listbox.
+	Verify icons for items in the list.
+
+Common Properties for the File System Page and the Zip File Page( second page )
+* Please run this test separately for each of the pages.
+	[Presentation]
+		The folder tree shows open projects only.
+		Verify icons for files in the file listbox.
+	[Enablement]
+		The Back and Browse button are enabled and the Next button 
+			is disabled all the time.
+		Finish is disabled if the destination folder is empty.
+		If nothing is selected when Finish is pressed a warning dialog 
+			appears.
+		The 'Select Types', 'Select All', and 'Deselect All' buttons 
+			are always enabled.
+	[Selection Action]
+		Verify that 'Select All' and 'Deselect All' work.
+		Selecting a folder resource shows all files it has in the 
+			file listbox.
+		Checking a folder resource checks all of its subfolders and 
+			its files, and always grey-checks its ancestor folders.
+		Unchecking a folder unchecks files and subfolders underneath it. 
+			It unchecks its ancestor folder recursively. 
+			If it is last resource checked. Otherwise, it grey-checks 
+				its ancestor recursively.
+		Checking a file always grey-checks the folder it is in.
+		Unchecking a file unchecks its ancestor folder recursively 
+			if it is last resource selected. 
+			Otherwise, it grey-checks its ancestor recursively.
+	[Select Types Dialog]
+		Verify that the 'Other Extensions' text box shows only those 
+			user-defined file types that are not in the list.
+			e.g. 
+			- type in *.java and click OK
+			- open the dialog again and ensure that the .java check box is checked and the textbox does NOT have .java in it.
+			- in the dialog, type in *.eclipse and click OK
+			- open the dialog again and ensure that the textbox has .eclipse in it.
+		The filter selects files by both checked file types and 
+			specified types from entire resources.
+		Invoking the filter updates appropriate checkboxes of files and 
+			folders.
+	[Destination]
+		The destination combo listbox is preselected with the most 
+			recent destination to which the user exported.
+		The destination combo listbox in the wizard stores the five 
+			most recent destinations to which resources were exported.
+	[Options]
+		The setting for common options are shared by pages.
+		If the Overwrite checkbox is unchecked, exporting a resource 
+			to the same destination twice pops up the Confirm Overwrite 
+			dialog.
+		If the Overwrite checkbox is checked, exporting a resource 
+			to the same destination twice does not invoke confirmation.
+	[Persistence]
+		Verify that the five most recent destinations stored in 
+			the destination listbox are persistent between sessions.
+		Verify that the settings of the options are persistent 
+			between sessions.
+	[Navigator View]
+		If the wizard is invoked while there is a resource(s) selected 
+			in the navigator view, those resource(s) are checked in the folder tree.
+
+File System Page
+	[Export]
+		Verify that all files are exported successfully to the 
+			specified destination.
+		If the 'Create directory structure' checkbox is unchecked, 
+			exporting creates a directory structure that roots from 
+			the root of the folder tree within the destination directory.
+		If the 'Create directory structure' checkbox is checked, 
+			exporting creates the same directory structure as the 
+			workspace within the destination directory.
+	[Browse for Folder Dialog]
+		The destination textbox of the dialog is preselected with 
+			the current destination folder from the dialog.
+		Specifying the destination in the dialog and then clicking OK 
+			updates the destination textbox of the wizard. Otherwise, 
+			the wizard is not updated.
+
+Zip File Page
+	Verify that a .zip file is exported successfully to the 
+		specified destination.	
+	Use an external ZIP program to verify the following:
+		- the ZIP file is extracted successfully by the ZIP program.
+		- the ZIP file made with the 'Create directory structure' 
+			checkbox turned on has the same directory structure 
+			as the workspace.		

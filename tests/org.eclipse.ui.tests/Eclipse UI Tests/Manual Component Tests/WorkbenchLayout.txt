@@ -1,0 +1,94 @@
+This is a test script for layout in the workbench.
+
+Folder Creation ..
+	- DnD view over view
+	- DnD view over folder
+	- DnD view over view in floating window
+	- NEG TEST - DnD view over editor area. 
+	- DnD editor over editor
+	- DnD editor over editor folder
+	- NEG TEST - DnD editor over view area.  
+
+Folder Breakdown ..
+	- DnD view out of folder with 2
+	- DnD view out of folder with 3.  Folder should remain.
+	- DnD view out of folder in floating window
+	- DnD editor out of editor folder with 2
+	- DnD editor out of editor folder with 3.  Folder should remain
+
+Relative Drag and Drop ..
+	- DnD view to top, right, bottom, left of another view
+	- DnD view to top, right, bottom, left of folder
+	- DnD view to top, right, bottom, left of editor area. 
+	- DnD editor within editor area
+
+Detached Windows ..
+	- DnD view out of window, open detached window
+	- DnD view back into window, close detached window
+	- DnD second view over floating window 
+	- DnD second view out of floating window to create second 
+		detached window
+	- DnD second view out of floating window onto main.  
+
+Tab Items
+	- reorder items in view folder by dragging tabs
+	- reorder itmes in editor folder by dragging tabs
+
+Fast Views
+	- DnD view over shortcut bar.  It should become fast view
+	- Open fast view.  Unpin.  It should return to last position in 
+		root layout.
+
+Page Switch
+	- Verify layout persistance of main window when switching pages
+	- Verify layout persistance of detached windows when switching pages
+
+Zoom
+	- zoom / unzoom view in root layout
+	- zoom / unzoom view in folder.  Verify folder not visible
+	- zoom / unzoom editor in single folder.  Verify no other 
+		editors visible
+	- zoom / unzoom editor in mult-folder editor area.  Verify no 
+		other editors visible
+	- NEG TEST - zoom / unzoom view in detached window.  Should have 
+		no effect
+
+The following actions should maintain zoom
+	- Show View ( if it is zoomed View )
+	- Show View ( if view is visible in Detached Window )
+	- switch to another page and back
+	- click on any visible view or editor
+	- Show / hide fast view
+
+The following actions should cause unzoom
+	- Open editor
+	- Close editor
+	- Close all editors
+	- Show / Hide editor area
+	- Show view / editor which is not visible
+	- Activate view / editor which is not visible
+	- Reset perspective
+	- Save perspective
+	- Change perspective
+	- DnD zoom view out of main window to detached window
+	- DnD view in detached window onto zoom view
+
+The following actions cause unzoom now, but it would be convenient 
+if they didn't in future
+	- Close detached view.
+	- All DnD
+
+Persistance Between Sessions
+	- ensure layout is persisted between sessions
+	- fast views
+	- view layout
+	- detached windows
+	- open editors
+
+Placeholders
+	- Drag view to new position, close, reopen.
+	- Drag view to folder, close, reopen.
+	- Drag view to detached, close, reopen.
+	- Close all views in folder, reopen one by one.
+	- Make view fast, restore.
+	- Make folder fast, restore views one by one.

@@ -1,0 +1,20 @@
+This is a test list for the welcome editor.
+
+Presentation
+	Verify that the editor appears when the workbench runs for the first time.
+	Verify that the editor shows appropriate scrollbars when its contents extends beyond its client area.
+	Verify that if the editor is closed when the workbench closes, the editor remains closed in next session.
+	Verify that modifying the editor's entry in the product.ini file updates the workbench by following the steps below.
+		1. Make sure the editor is closed when exiting Eclipse.
+		2. Open product.ini with a text editor and remove the wecome editor's entry from the file, which is:
+			welcomePage = welcome.xml
+		3. Restart Eclipse.
+		4. Verify that Welcome doesn't show under Help in the workbench pulldown menu.
+		5. Exit Eclipse
+		6. Add the entry as in step 2 back to product.ini
+		7. Resart Eclipse
+		8. Verify that Welcome shows again under Help.
+
+Actions
+	Verify that Help->Welcome invokes the editor.
+	Verify that all links invoke their corresponding actions.

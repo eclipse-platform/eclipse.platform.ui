@@ -1,0 +1,34 @@
+This is a test script for the properties dialog.
+
+Presentation
+	Verify that the listbox on the left shows appropriate scrollbars 
+		when its contents extends beyond its client area.
+	Verify that the window grows to fit the content page of the 
+		selected item.
+	Verify that you can traverse all widget groups by pressing TAB.
+	Verify that the title bar shows the name of the resource about 
+		which the dialog shows information.
+
+Actions
+	Clicking on a item that contributes in the tree shows the 
+		corresponding page on the right, including the page title.
+	Clicking on a item that does not contribute in the tree shows 
+		the default page on the right.
+		e.g. In the packages view, open the dialog on a package. The 
+			Team page should show the default page.
+	Verify that OK stores all changes made to fields by doing the following:
+		- make some changes to checkboxes, option buttons, and textboxes.
+		- click OK.
+		- open the dialog again and ensure that all the changes were saved.
+	Verify that Cancel discards all changes made to fields by doing 
+	the following:
+		- make some changes to checkboxes, option buttons, and textboxes.
+		- click Cancel.
+		- open the dialog again and ensure that all the field values 
+			are the same as before the change.
+	Verify that ESC maps to Cancel.
+	Verify that Apply stores all changes made to values by doing 
+	the following:
+		- make some changes to checkboxes, option buttons, and textboxes.
+		- click Apply and then Cancel.
+		- open the dialog again and ensure that all the changes were saved.
