@@ -1,0 +1,56 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.update.internal.operations;
+
+import java.lang.reflect.*;
+
+import org.eclipse.core.runtime.*;
+import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
+import org.eclipse.update.operations.*;
+
+public class RevertConfigurationOperation extends Operation {
+
+	private static final String KEY_INSTALLING = "OperationsManager.installing";
+	private IInstallConfiguration config;
+	private IProblemHandler problemHandler;
+
+	public RevertConfigurationOperation(
+		IInstallConfiguration config,
+		IProblemHandler problemHandler,
+		IOperationListener listener) {
+		super(listener);
+		this.config = config;
+		this.problemHandler = problemHandler;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.update.operations.IOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public boolean execute(IProgressMonitor monitor)
+		throws CoreException, InvocationTargetException {
+		IStatus status =
+			UpdateManager.getValidator().validatePendingRevert(config);
+		if (status != null) {
+			throw new CoreException(status);
+		}
+
+		try {
+			ILocalSite localSite = SiteManager.getLocalSite();
+			localSite.revertTo(config, monitor, problemHandler);
+			localSite.save();
+			return true;
+		} catch (CoreException e) {
+			UpdateManager.logException(e);
+			throw e;
+		}
+	}
+}

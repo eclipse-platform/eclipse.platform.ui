@@ -113,6 +113,8 @@ public class UnifiedInstallWizard
 					installOperation.execute(monitor);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
+				} finally {
+					monitor.done();
 				}
 			}
 		};
