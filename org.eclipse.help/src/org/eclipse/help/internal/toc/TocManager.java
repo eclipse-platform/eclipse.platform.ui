@@ -28,6 +28,7 @@ public class TocManager {
 		try {
 			tocsByLang = new HashMap();
 			// build TOCs for machine locale at startup
+			// Note: this can be removed, and build on first invocation...
 			build(Locale.getDefault().toString());
 		} catch (Exception e) {
 			Logger.logError("", e);
@@ -38,6 +39,10 @@ public class TocManager {
 	 * Returns the list of TOC's available in the help system
 	 */
 	public IToc[] getTocs(String locale) {
+		
+		if (locale == null) 
+			return new IToc[0];
+			
 		IToc[] tocs = (IToc[]) tocsByLang.get(locale);
 		if (tocs == null) {
 			build(locale);
@@ -51,10 +56,8 @@ public class TocManager {
 	public IToc getToc(String href, String locale) {
 		if (href == null || href.equals(""))
 			return null;
-		IToc[] tocs = (IToc[]) tocsByLang.get(locale);
-		if (tocs == null) {
-			build(locale);
-		}
+		IToc[] tocs = getTocs(locale);
+		
 		for (int i = 0; i < tocs.length; i++) {
 			if (tocs[i].getHref().equals(href))
 				return tocs[i];
