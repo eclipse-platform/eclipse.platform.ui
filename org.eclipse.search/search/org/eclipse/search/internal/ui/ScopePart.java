@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.Assert;
 
 import org.eclipse.ui.dialogs.SelectionDialog;
@@ -34,6 +35,11 @@ public class ScopePart {
 	public static final int WORKING_SET_SCOPE= 2;
 
 	private static String	fgLRUsedWorkingSetName;
+
+	// Settings store
+	private static final String DIALOG_SETTINGS_KEY= "SearchDialog.ScopePart"; //$NON-NLS-1$
+	private static final String STORE_LRU_WORKING_SET_NAME= "lastUsedWorkingSetName"; //$NON-NLS-1$
+	private static IDialogSettings fgSettingsStore;
 
 	// Scope radio buttons
 	private Button fUseWorkspace;
@@ -75,9 +81,11 @@ public class ScopePart {
 	public ScopePart(int initialScope) {
 		Assert.isLegal(initialScope >= 0 && initialScope <= 3);
 		fScope= initialScope;
-		fWorkingSet= SearchUI.findWorkingSet(fgLRUsedWorkingSetName);
-		if (fWorkingSet == null && SearchUI.getWorkingSets().length > 0)
-			fWorkingSet= SearchUI.getWorkingSets()[0];
+		fgSettingsStore= SearchPlugin.getDefault().getDialogSettings().getSection(DIALOG_SETTINGS_KEY);
+		if (fgSettingsStore == null)
+			fgSettingsStore= SearchPlugin.getDefault().getDialogSettings().addNewSection(DIALOG_SETTINGS_KEY);
+		String lruWorkingSetName= fgSettingsStore.get(STORE_LRU_WORKING_SET_NAME);
+		fWorkingSet= SearchUI.findWorkingSet(lruWorkingSetName);
 	}
 
 	/**
@@ -167,9 +175,9 @@ public class ScopePart {
 		workingSet= SearchUI.findWorkingSet(name);
 		if (workingSet != null) {
 			fWorkingSet= workingSet;
-			fgLRUsedWorkingSetName= name;
+			fgSettingsStore.put(STORE_LRU_WORKING_SET_NAME, workingSet.getName());
 		} else {
-			name= "";
+			name= ""; //$NON-NLS-1$
 			fWorkingSet= null;
 		}
 		if (fWorkingSetText != null)
@@ -258,7 +266,6 @@ public class ScopePart {
 		if (dialog.open() == dialog.OK) {
 			IWorkingSet workingSet= (IWorkingSet)dialog.getResult()[0];
 			setSelectedWorkingSet(workingSet);
-			fgLRUsedWorkingSetName= workingSet.getName();
 			return true;
 		} else {
 			// test if selected working set has been removed
