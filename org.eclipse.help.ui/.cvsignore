@@ -1,4 +1,5 @@
 bin
+build.xml
 helpworkbench.jar
 helpworkbench.jar.bin.log
 org.eclipse.help.ui_*
