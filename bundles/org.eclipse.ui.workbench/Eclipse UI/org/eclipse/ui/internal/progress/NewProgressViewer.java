@@ -379,34 +379,34 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			gc.dispose();
 			return new Point(extent.x + 2 * MARGINWIDTH, extent.y + 2 * MARGINHEIGHT);
 		}
+		private Color getFGColor() {
+			if (jobitem.selected) 
+				return selectedTextColor;
+
+			if (linkEnabled) {
+				if (mouseOver) {
+					if (isError)
+						return errorColor2;
+					return linkColor2;
+				}
+				if (isError)
+					return errorColor;
+				return linkColor;
+			}
+			return textColor;
+		}
 		protected void paint(GC gc) {
 			Rectangle clientArea= getClientArea();
-			
-			Color fg, bg= getBackground();
-			if (jobitem.selected) {
-				fg= selectedTextColor;
+			Color fg= getFGColor(), bg= getBackground();
+			if (jobitem.selected)
 				bg= selectedColor;
-			} else {
-				if (linkEnabled) {
-					if (mouseOver) {
-						if (isError)
-							fg= errorColor2;
-						else	
-							fg= linkColor2;
-					} else {
-						if (isError)
-							fg= errorColor;
-						else
-							fg= linkColor;
-					}
-				} else {
-					fg= textColor;
-				}
+			Image buffer= null;
+			GC bufferGC= gc;
+			if (!isCarbon) {
+			    buffer= new Image(getDisplay(), clientArea.width, clientArea.height);
+			    buffer.setBackground(bg);
+				bufferGC= new GC(buffer, gc.getStyle());
 			}
-			
-			Image buffer= new Image(getDisplay(), clientArea.width, clientArea.height);
-			buffer.setBackground(bg);
-			GC bufferGC= new GC(buffer, gc.getStyle());
 			bufferGC.setForeground(fg);
 			bufferGC.setBackground(bg);
 			bufferGC.fillRectangle(0, 0, clientArea.width, clientArea.height);
@@ -421,9 +421,11 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				if (hasFocus)
 					bufferGC.drawFocus(0, 0, sw, clientArea.height);
 			}
-			gc.drawImage(buffer, 0, 0);
-			bufferGC.dispose();
-			buffer.dispose();
+			if (buffer != null) {
+			    gc.drawImage(buffer, 0, 0);
+			    bufferGC.dispose();
+			    buffer.dispose();
+			}
 		}
 		protected void handleActivate() {
 			if (linkEnabled && gotoAction != null && gotoAction.isEnabled())
