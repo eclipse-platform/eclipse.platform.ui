@@ -304,10 +304,12 @@ public class IOConsolePartitioner implements IDocumentPartitioner, IDocumentPart
 	 * low water mark.
 	 */
 	private void checkBufferSize() {
-		int length = document.getLength();
-		if (length > highWaterMark) {
-		    trimJob.setOffset(length - lowWaterMark);
-		    trimJob.schedule();
+		if (document != null) {
+			int length = document.getLength();
+			if (length > highWaterMark) {
+			    trimJob.setOffset(length - lowWaterMark);
+			    trimJob.schedule();
+			}
 		}
 	}
 	
