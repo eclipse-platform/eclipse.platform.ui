@@ -4,17 +4,14 @@ package org.eclipse.ui.actions;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.*;
 
 /**
  * A menu for window creation in the workbench.  
@@ -125,10 +122,14 @@ private String openPerspectiveSetting() {
  */
 protected void run(IPerspectiveDescriptor desc) {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	String perspectiveSetting =
-		store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
-
-	runWithPerspectiveValue(desc, perspectiveSetting);
+	boolean version2 = store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
+	if (version2) {
+		runVersion2(desc);
+	} else {
+		String perspectiveSetting =
+			store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
+		runWithPerspectiveValue(desc, perspectiveSetting);
+	}
 }
 /**
  * Runs an action for a particular perspective. Check for shift or control events
@@ -138,22 +139,48 @@ protected void run(IPerspectiveDescriptor desc) {
  * @param event SelectionEvent - the event send along with the selection callback
  */
 protected void run(IPerspectiveDescriptor desc, SelectionEvent event) {
-
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	String perspectiveSetting =
-		store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
-
-	int stateMask = event.stateMask & (SWT.CONTROL | SWT.SHIFT | SWT.ALT);
-	if (stateMask == alternateMask())
-		perspectiveSetting =
-			store.getString(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE);
-	else {
-		if (stateMask == SWT.SHIFT)
+	boolean version2 = store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
+	if (version2) {
+		runVersion2(desc);
+	} else {
+		String perspectiveSetting =
+			store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
+	
+		int stateMask = event.stateMask & (SWT.CONTROL | SWT.SHIFT | SWT.ALT);
+		if (stateMask == alternateMask())
 			perspectiveSetting =
-				store.getString(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE);
+				store.getString(IWorkbenchPreferenceConstants.ALTERNATE_OPEN_NEW_PERSPECTIVE);
+		else {
+			if (stateMask == SWT.SHIFT)
+				perspectiveSetting =
+					store.getString(IWorkbenchPreferenceConstants.SHIFT_OPEN_NEW_PERSPECTIVE);
+		}
+		runWithPerspectiveValue(desc, perspectiveSetting);
+	}
+}
+/* (non-Javadoc)
+ * Opens a new page with a particular perspective and input.
+ */
+private void runVersion2(IPerspectiveDescriptor desc) {
+	// Verify page input.
+	if (pageInput == null) {
+		MessageDialog.openError(
+			getWindow().getShell(),
+			PAGE_PROBLEMS_TITLE,
+			PAGE_PROBLEMS_MESSAGE);
+		return;
 	}
 
-	runWithPerspectiveValue(desc, perspectiveSetting);
+	// Open the page.
+	try {
+		getWindow().getWorkbench().openPage(desc.getId(), pageInput);
+	} catch (WorkbenchException e) {
+		MessageDialog.openError(
+			getWindow().getShell(),
+			PAGE_PROBLEMS_TITLE,
+			e.getMessage());
+	}
 }
 /* (non-Javadoc)
  * Opens a new page with a particular perspective and input.
@@ -219,9 +246,9 @@ protected void runReplaceCurrent(IPerspectiveDescriptor desc) {
  * @param desc the descriptor used to build the menu
  * @param perspectiveSetting the selected perspective
  */
-private void runWithPerspectiveValue(
-	IPerspectiveDescriptor desc,
-	String perspectiveSetting) {
+private void runWithPerspectiveValue(IPerspectiveDescriptor desc,
+	String perspectiveSetting) 
+{
 	if (perspectiveSetting
 		.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW))
 		runInNewWindow(desc);

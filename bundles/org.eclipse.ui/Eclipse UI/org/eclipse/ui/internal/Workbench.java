@@ -577,8 +577,8 @@ public IWorkbenchPage openPage(final String perspID, final IAdaptable input)
 {
 	// If "reuse" and a window already exists for the input reuse it.
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean reuse = store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
-	if (reuse) {
+	boolean version2 = store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
+	if (version2) {
 		IWorkbenchPage page = findPage(input);
 		if (page != null) {
 			IWorkbenchWindow win = page.getWorkbenchWindow();
@@ -593,6 +593,12 @@ public IWorkbenchPage openPage(final String perspID, final IAdaptable input)
 		}
 	}
 
+	// If version 2 demo, ignore "Open Perspective" preference.
+	if (version2) {
+		IWorkbenchWindow window = openWorkbenchWindow(perspID, input);
+		return window.getActivePage();
+	}
+	
 	// The page does not already exists.  Open it for real.	
 	String setting = store.getString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
 	if (setting.equals(IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE)) {
@@ -620,7 +626,7 @@ public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptab
 {
 	// If "reuse" and a window already exists for the input reuse it.
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean reuse = store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
+	boolean reuse = store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
 	if (reuse) {
 		IWorkbenchPage page = findPage(input);
 		if (page != null) {

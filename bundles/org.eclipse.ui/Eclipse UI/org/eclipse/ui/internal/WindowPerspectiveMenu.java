@@ -25,9 +25,9 @@ public class WindowPerspectiveMenu extends OpenPerspectiveMenu {
 	public void fill(Menu menu, int index) 
 	{
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		boolean smart = 
-			store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
-		showActive(smart);
+		boolean version2 = 
+			store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
+		showActive(version2);
 		super.fill(menu, index);
 	}
 	
@@ -39,9 +39,9 @@ public class WindowPerspectiveMenu extends OpenPerspectiveMenu {
 	 */
 	protected void run(IPerspectiveDescriptor desc) {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		boolean smart = 
-			store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
-		if (smart) {
+		boolean version2 = 
+			store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
+		if (version2) {
 			runReplaceCurrent(desc);
 		} else {
 			super.run(desc);
@@ -57,9 +57,9 @@ public class WindowPerspectiveMenu extends OpenPerspectiveMenu {
 	 */
 	protected void run(IPerspectiveDescriptor desc, SelectionEvent event) {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-		boolean smart = 
-			store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
-		if (smart) {
+		boolean version2 = 
+			store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
+		if (version2) {
 			runReplaceCurrent(desc);
 		} else {
 			super.run(desc, event);

@@ -316,8 +316,7 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 	store.setDefault(
 		IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
-	store.setDefault(IPreferenceConstants.REUSE_PERSPECTIVES, false);
-	store.setDefault(IPreferenceConstants.OPEN_PERSPECTIVE_MRU, false);
+	store.setDefault(IPreferenceConstants.VERSION_2_PERSPECTIVES, false);
 	store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, 
 		IPreferenceConstants.OVM_EMBED);
 		

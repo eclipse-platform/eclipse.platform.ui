@@ -138,9 +138,9 @@ public void fill(Menu menu, int index)
 private ArrayList getShortcuts() 
 {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean smart = 
-		store.getBoolean(IPreferenceConstants.OPEN_PERSPECTIVE_MRU);
-	if (smart)
+	boolean mru = 
+		store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
+	if (mru)
 		return getMruShortcuts();
 	else
 		return getLocalShortcuts();

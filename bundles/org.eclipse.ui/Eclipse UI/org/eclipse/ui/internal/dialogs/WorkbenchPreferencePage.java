@@ -29,8 +29,7 @@ public class WorkbenchPreferencePage
 	private Button openInNewPageButton;
 	private Button replaceButton;
 	private Button switchOnNewProjectButton;
-	private Button reusePerspectivesButton;
-	private Button openPerspectiveMruButton;
+	private Button version2PerspectivesButton;
 	private Text openInNewWindowText;
 	private Text openInNewPageText;
 	private Text replaceText;
@@ -224,16 +223,11 @@ private void createPerspectiveGroup(Composite composite) {
 	this.replaceText = new Text(buttonComposite, SWT.NONE);
 	this.replaceText.setEditable(false);
 
-	reusePerspectivesButton = new Button(composite, SWT.CHECK);
-	reusePerspectivesButton.setText(WorkbenchMessages.getString("WorkbenchPreference.reusePerspectives")); //$NON-NLS-1$
+	version2PerspectivesButton = new Button(composite, SWT.CHECK);
+	version2PerspectivesButton.setText(WorkbenchMessages.getString("WorkbenchPreference.version2Perspectives")); //$NON-NLS-1$
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	reusePerspectivesButton.setSelection(
-		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES));
-
-	openPerspectiveMruButton = new Button(composite, SWT.CHECK);
-	openPerspectiveMruButton.setText(WorkbenchMessages.getString("WorkbenchPreference.openPerspectiveMru")); //$NON-NLS-1$
-	openPerspectiveMruButton.setSelection(
-		store.getBoolean(IPreferenceConstants.OPEN_PERSPECTIVE_MRU));
+	version2PerspectivesButton.setSelection(
+		store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES));
 
 	setTextValuesForPerspective();
 }
@@ -411,12 +405,9 @@ protected void performDefaults() {
 	replaceButton.setSelection(
 		defaultPreference.equals(
 			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
-	reusePerspectivesButton.setSelection(
+	version2PerspectivesButton.setSelection(
 		store.getDefaultBoolean(
-			IPreferenceConstants.REUSE_PERSPECTIVES));
-	openPerspectiveMruButton.setSelection(
-		store.getDefaultBoolean(
-			IPreferenceConstants.OPEN_PERSPECTIVE_MRU));
+			IPreferenceConstants.VERSION_2_PERSPECTIVES));
 
 	//Project perspective preferences
 	String projectPreference =
@@ -486,14 +477,8 @@ public boolean performOk() {
 	reuseEditors.store();
 		
 	// store reuse perspctives setting
-	store.setValue(
-		IPreferenceConstants.REUSE_PERSPECTIVES,
-		reusePerspectivesButton.getSelection());
-		
-	// store open perspctive mru setting
-	store.setValue(
-		IPreferenceConstants.OPEN_PERSPECTIVE_MRU,
-		openPerspectiveMruButton.getSelection());
+	store.setValue(IPreferenceConstants.VERSION_2_PERSPECTIVES,
+		version2PerspectivesButton.getSelection());
 		
 	// store the open in new window settings
 	store.setValue(

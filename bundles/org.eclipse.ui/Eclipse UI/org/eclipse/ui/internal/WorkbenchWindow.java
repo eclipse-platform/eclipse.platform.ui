@@ -618,8 +618,7 @@ public IWorkbenchPage openPage(final String perspID, final IAdaptable input)
 {
 	// If "reuse" and a page already exists for the input reuse it.
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean reuse = 
-		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
+	boolean reuse = store.getBoolean(IPreferenceConstants.VERSION_2_PERSPECTIVES);
 	if (reuse) {
 		// If a window already exists for the input then
 		// reuse it.
