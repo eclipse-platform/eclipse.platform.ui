@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source.projection;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextContent;
@@ -99,13 +102,26 @@ public class ProjectionSupport {
 	}
 	
 	private final static Object PROJECTION= new Object();
+	private List fSummarizableTypes;
 	
-	private static RGB getColor() {
-		// TODO read out preference settings
-		Color c= Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
-		return c.getRGB();
+	public ProjectionSupport() {
 	}
 	
+	public void addSummarizableAnnotationType(String annotationType) {
+		if (fSummarizableTypes == null) {
+			fSummarizableTypes= new ArrayList();
+			fSummarizableTypes.add(annotationType);
+		} else if (!fSummarizableTypes.contains(annotationType))
+			fSummarizableTypes.add(annotationType);
+	}
+	
+	public void removeSummarizableAnnotationType(String annotationType) {
+		if (fSummarizableTypes != null)
+			fSummarizableTypes.remove(annotationType);
+		if (fSummarizableTypes.size() == 0)
+			fSummarizableTypes= null;
+	}
+		
 	/**
 	 * Enable projection for the given viewer
 	 * 
@@ -113,10 +129,12 @@ public class ProjectionSupport {
 	 * @param annotationAccess the annotation access
 	 * @param sharedTextColors the shared text colors
 	 */
-	public static void enableProjection(ISourceViewer viewer, IAnnotationAccess annotationAccess, ISharedTextColors sharedTextColors) {
+	public void enableProjection(ISourceViewer viewer, IAnnotationAccess annotationAccess, ISharedTextColors sharedTextColors) {
 		
 		if (viewer instanceof ProjectionViewer) {
 			ProjectionViewer projectionViewer= (ProjectionViewer) viewer;
+			
+			projectionViewer.setProjectionSummary(createProjectionSummary(projectionViewer, annotationAccess));
 			
 			AnnotationPainter painter= new ProjectionAnnotationsPainter(projectionViewer, annotationAccess);
 			painter.addDrawingStrategy(PROJECTION, new ProjectionDrawingStrategy());
@@ -126,15 +144,26 @@ public class ProjectionSupport {
 			
 			ProjectionRulerColumn column= new ProjectionRulerColumn(projectionViewer.getProjectionAnnotationModel(), 9, annotationAccess);
 			column.addAnnotationType(ProjectionAnnotation.TYPE);
+			// TODO make hover configurable from outside
 			column.setHover(new ProjectionAnnotationHover());
 			projectionViewer.addVerticalRulerColumn(column);
 		}
+	}
+	
+	private ProjectionSummary createProjectionSummary(ProjectionViewer projectionViewer, IAnnotationAccess annotationAccess) {
+		ProjectionSummary summary= new ProjectionSummary(projectionViewer, annotationAccess);
+		if (fSummarizableTypes != null) {
+			int size= fSummarizableTypes.size();
+			for (int i= 0; i < size; i++)
+				summary.addAnnotationType((String) fSummarizableTypes.get(i));
+		}
+		return summary;
 	}
 
 	/**
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
-	public static Object getAdapter(ISourceViewer viewer, Class required) {
+	public Object getAdapter(ISourceViewer viewer, Class required) {
 		if (ProjectionAnnotationModel.class.equals(required)) {
 			if (viewer instanceof ProjectionViewer) {
 				ProjectionViewer projectionViewer= (ProjectionViewer) viewer;
@@ -142,5 +171,11 @@ public class ProjectionSupport {
 			}
 		}
 		return null;
+	}
+	
+	private RGB getColor() {
+		// TODO read out preference settings
+		Color c= Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
+		return c.getRGB();
 	}
 }
