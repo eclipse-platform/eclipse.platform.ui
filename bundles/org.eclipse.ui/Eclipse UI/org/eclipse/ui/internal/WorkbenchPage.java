@@ -697,10 +697,12 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 		else
 			setActivePart(null);
 	} else if(partWasVisible) {
-		IWorkbenchPart top = activationList.getTopEditor();
+		IEditorPart top = activationList.getTopEditor();
 		zoomOutIfNecessary(top);
 		if (top != null)
 			bringToTop(top);
+		else
+			actionSwitcher.updateTopEditor(top);
 	}
 	
 	// Return true on success.
@@ -1635,9 +1637,10 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 			// The previous openEditor call may create a new editor
 			// and make it visible, so send the notification.
 			IEditorPart visibleEditor = getEditorManager().getVisibleEditor();
-			if ((visibleEditor == editor) && (oldVisibleEditor != editor))
+			if ((visibleEditor == editor) && (oldVisibleEditor != editor)) {
+				actionSwitcher.updateTopEditor(editor);
 				firePartBroughtToTop(editor);
-			else
+			} else
 				bringToTop(editor);
 		}
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
