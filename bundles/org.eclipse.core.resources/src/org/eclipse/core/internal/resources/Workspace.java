@@ -298,12 +298,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			monitor.subTask(msg);
 			//this operation will never end because the world is going away
 			try {
+				//shutdown save manager now so a last snapshot can be taken before we close
+				//note: you can't call #save() from within a nested operation
+				saveManager.shutdown(null);				
 				prepareOperation(getRoot(), monitor);
 				//shutdown notification first to avoid calling third parties during shutdown
 				notificationManager.shutdown(null);
 				beginOperation(true);
-				//shutdown save manager now so a last snapshot can be taken before we close
-				saveManager.shutdown(null);
 				IProject[] projects = getRoot().getProjects();
 				for (int i = 0; i < projects.length; i++) {
 					//notify managers of closing so they can cleanup
