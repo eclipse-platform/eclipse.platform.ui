@@ -15,7 +15,7 @@ package org.eclipse.jface.text;
  * A <code>IDocumentInformationMapping</code>  represents a mapping between the coordinates of two 
  * <code>IDocument</code> objects: the original and the image. The document information mapping
  * can translate document information such as line numbers or character ranges given for the original into
- * the corresponding information of the image and wise versa.
+ * the corresponding information of the image and vice versa.
  * 
  * @since 2.1
  */
