@@ -136,7 +136,7 @@ abstract public class DetailsDialog extends Dialog {
 		// create composite
 		Composite composite = (Composite)super.createDialogArea(parent);
 		if (!isMainGrabVertical()) {
-		    composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		    composite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		}
 		
 		// create image

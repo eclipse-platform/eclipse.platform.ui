@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.ui.tags;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -23,6 +22,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
+import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -57,23 +57,15 @@ public class BranchPromptDialog extends DetailsDialog {
 	 * @see DetailsDialog#createMainDialogArea(Composite)
 	 */
 	protected void createMainDialogArea(Composite composite) {
-		// create message
-		Label label = new Label(composite, SWT.WRAP);
-		String message;
-		if(allStickyResources) {
-			message = Policy.bind("BranchWizardPage.pageDescriptionVersion"); //$NON-NLS-1$
-		} else {
-			message = Policy.bind("BranchWizardPage.pageDescription"); //$NON-NLS-1$
-		}
-		label.setText(message);
-		GridData data = new GridData(
-			GridData.GRAB_HORIZONTAL |
-			GridData.HORIZONTAL_ALIGN_FILL |
-			GridData.VERTICAL_ALIGN_CENTER);
-		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
-		label.setLayoutData(data);
-		
-		CVSWizardPage.createLabel(composite, Policy.bind("BranchWizardPage.branchName")); //$NON-NLS-1$
+        
+        final int areaWidth= convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
+        
+        final Label description= SWTUtils.createLabel(composite, allStickyResources ? Policy.bind("BranchWizardPage.pageDescriptionVersion") : Policy.bind("BranchWizardPage.pageDescription"));  //$NON-NLS-1$//$NON-NLS-2$
+        description.setLayoutData(SWTUtils.createGridData(areaWidth, SWT.DEFAULT, true, false));
+        
+		final Label name= SWTUtils.createLabel(composite, Policy.bind("BranchWizardPage.branchName")); //$NON-NLS-1$
+        name.setLayoutData(SWTUtils.createGridData(areaWidth, SWT.DEFAULT, true, false));
+        
 		branchText = CVSWizardPage.createTextField(composite);
 		branchText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
@@ -84,11 +76,7 @@ public class BranchPromptDialog extends DetailsDialog {
 		});
 		addBranchContentAssist();
 
-		final Button check = new Button(composite, SWT.CHECK);
-		data = new GridData();
-		data.horizontalSpan = 2;
-		check.setLayoutData(data);
-		check.setText(Policy.bind("BranchWizardPage.startWorking")); //$NON-NLS-1$
+		final Button check = SWTUtils.createCheckBox(composite, Policy.bind("BranchWizardPage.startWorking")); //$NON-NLS-1$
 		check.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				update = check.getSelection();
@@ -97,17 +85,12 @@ public class BranchPromptDialog extends DetailsDialog {
 		check.setSelection(true);		
 		update = true;
 		
-		label = new Label(composite, SWT.WRAP);
-		label.setText(Policy.bind("BranchWizardPage.specifyVersion")); //$NON-NLS-1$
-		data = new GridData(
-				GridData.GRAB_HORIZONTAL |
-				GridData.HORIZONTAL_ALIGN_FILL |
-				GridData.VERTICAL_ALIGN_CENTER);
-		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
-		data.horizontalSpan = 2;
-		label.setLayoutData(data);
-			
-		CVSWizardPage.createLabel(composite, Policy.bind("BranchWizardPage.versionName")); //$NON-NLS-1$
+		final Label versionLabel1= SWTUtils.createLabel(composite, Policy.bind("BranchWizardPage.specifyVersion")); //$NON-NLS-1$
+        versionLabel1.setLayoutData(SWTUtils.createGridData(areaWidth, SWT.DEFAULT, true, false));
+
+		final Label versionLabel2= SWTUtils.createLabel(composite, Policy.bind("BranchWizardPage.versionName")); //$NON-NLS-1$
+		versionLabel2.setLayoutData(SWTUtils.createGridData(areaWidth, SWT.DEFAULT, true, false));
+        
 		versionText = CVSWizardPage.createTextField(composite);
 		versionText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
@@ -123,7 +106,7 @@ public class BranchPromptDialog extends DetailsDialog {
 
 		// F1 Help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.BRANCH_DIALOG);
-		Dialog.applyDialogFont(composite);
+		applyDialogFont(composite);
 		branchText.setFocus();
 	}
 
@@ -154,8 +137,8 @@ public class BranchPromptDialog extends DetailsDialog {
 		// create a composite with standard margins and spacing
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);

@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -29,6 +30,7 @@ import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.team.internal.ccvs.ui.repo.NewDateTagAction;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter.ProjectElementSorter;
+import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -111,8 +113,12 @@ public class TagSelectionArea extends DialogArea {
      * @see org.eclipse.team.internal.ui.dialogs.DialogArea#createArea(org.eclipse.swt.widgets.Composite)
      */
     public void createArea(Composite parent) {
+        initializeDialogUnits(parent);
         // Create a composite for the entire area
-		Composite outer = createComposite(parent, 1, true);
+        Composite outer= new Composite(parent, SWT.NONE);
+        outer.setLayoutData(SWTUtils.createHVFillGridData());
+        outer.setLayout(SWTUtils.createGridLayout(1, convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN), convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN)));
+        
 		initializeDialogUnits(outer);
 		// Add F1 help
 		if (helpContext != null) {

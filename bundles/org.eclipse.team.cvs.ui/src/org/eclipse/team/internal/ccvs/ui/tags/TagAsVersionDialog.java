@@ -100,16 +100,16 @@ public class TagAsVersionDialog extends DetailsDialog {
 	 */
 	protected Composite createDropDownDialogArea(Composite parent) {
 		// create a composite with standard margins and spacing
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		composite.setLayout(layout);
-		GridData gridData = new GridData(GridData.FILL_BOTH);
-		gridData.heightHint = TAG_AREA_HEIGHT_HINT;
-        composite.setLayoutData(gridData);
+	    Composite composite = new Composite(parent, SWT.NONE);
+	    GridLayout layout = new GridLayout();
+	    layout.marginHeight = 0;
+	    layout.marginWidth = 0;
+	    layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+	    layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+	    composite.setLayout(layout);
+	    final GridData gridData = new GridData(GridData.FILL_BOTH);
+	    gridData.heightHint = TAG_AREA_HEIGHT_HINT;
+	    composite.setLayoutData(gridData);
 		
 		tagArea = new TagSelectionArea(getShell(), tagSource, TagSelectionArea.INCLUDE_VERSIONS, null);
 		tagArea.setTagAreaLabel(Policy.bind("TagAction.existingVersions"));  //$NON-NLS-1$

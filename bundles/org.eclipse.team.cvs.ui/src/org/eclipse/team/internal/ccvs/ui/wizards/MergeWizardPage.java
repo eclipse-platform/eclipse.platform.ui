@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -20,6 +21,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.tags.*;
+import org.eclipse.team.internal.ui.SWTUtils;
 
 public class MergeWizardPage extends CVSWizardPage {
 
@@ -44,7 +46,8 @@ public class MergeWizardPage extends CVSWizardPage {
      * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
      */
     public void createControl(Composite parent) {
-        Composite composite = createComposite(parent, 1, true);
+        initializeDialogUnits(parent);
+        Composite composite = SWTUtils.createGridComposite(parent, 1);
         
         Composite mainArea = createComposite(composite, 2, true);
         createEndTagArea(mainArea);
@@ -81,6 +84,7 @@ public class MergeWizardPage extends CVSWizardPage {
     private void createEndTagArea(Composite parent) {
         createWrappingLabel(parent, Policy.bind("MergeWizardPage.2"), 0, 2); //$NON-NLS-1$
         endTagField = createTextField(parent);
+        endTagField.setLayoutData(SWTUtils.createHFillGridData());
         endTagField.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 updateEndTag(endTagField.getText());
@@ -89,6 +93,8 @@ public class MergeWizardPage extends CVSWizardPage {
         final int endTagIncludeFlags = TagSelectionArea.INCLUDE_VERSIONS | TagSelectionArea.INCLUDE_BRANCHES | TagSelectionArea.INCLUDE_HEAD_TAG;
         TagContentAssistProcessor.createContentAssistant(endTagField, tagSource, endTagIncludeFlags);
         endTagBrowseButton = createPushButton(parent, Policy.bind("MergeWizardPage.3")); //$NON-NLS-1$
+        endTagBrowseButton.setLayoutData(getButtonData());
+        
         endTagBrowseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 TagSelectionDialog dialog = new TagSelectionDialog(getShell(), getTagSource(), 
@@ -103,10 +109,17 @@ public class MergeWizardPage extends CVSWizardPage {
             }
         });
     }
+    
+    private GridData getButtonData() {
+        final GridData gd= new GridData(SWT.FILL, SWT.FILL, false, false);
+        gd.widthHint= convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+        return gd;
+    }
 
     private void createStartTagArea(Composite parent) {
         createWrappingLabel(parent, Policy.bind("MergeWizardPage.6"), 0, 2); //$NON-NLS-1$
         startTagField = createTextField(parent);
+        startTagField.setLayoutData(SWTUtils.createHFillGridData());
         startTagField.addModifyListener(new ModifyListener() {
             public void modifyText(ModifyEvent e) {
                 updateStartTag(startTagField.getText());
@@ -114,6 +127,7 @@ public class MergeWizardPage extends CVSWizardPage {
         });
         TagContentAssistProcessor.createContentAssistant(startTagField, tagSource, TagSelectionArea.INCLUDE_VERSIONS);
         startTagBrowseButton = createPushButton(parent, Policy.bind("MergeWizardPage.7")); //$NON-NLS-1$
+        startTagBrowseButton.setLayoutData(getButtonData());
         startTagBrowseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
                 TagSelectionDialog dialog = new TagSelectionDialog(getShell(), getTagSource(), 
@@ -250,5 +264,10 @@ public class MergeWizardPage extends CVSWizardPage {
 
     public boolean isPreview() {
         return preview;
+    }
+    
+    public void setVisible(boolean visible) {
+        endTagField.setFocus();
+        super.setVisible(visible);
     }
 }

@@ -14,7 +14,7 @@ package org.eclipse.team.internal.ui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.*;
 
 /**
  * 
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 public class SWTUtils {
 
     public static GridData createGridData(int width, int height, boolean hFill, boolean vFill) {
-        return createGridData(width, height, hFill ? SWT.FILL : SWT.BEGINNING, vFill ? SWT.FILL : SWT.BEGINNING, hFill, vFill);
+        return createGridData(width, height, hFill ? SWT.FILL : SWT.BEGINNING, vFill ? SWT.FILL : SWT.TOP, hFill, vFill);
     }
     
     public static GridData createGridData(int width, int height, int hAlign, int vAlign, boolean hGrab, boolean vGrab) {
@@ -32,9 +32,8 @@ public class SWTUtils {
         return gd;
     }
 
-    
     public static GridData createHFillGridData() {
-        return createGridData(0, SWT.DEFAULT, true, false);
+        return createHFillGridData(1);
     }
     
     public static GridData createHFillGridData(int span) {
@@ -44,8 +43,15 @@ public class SWTUtils {
     }
     
     public static GridData createHVFillGridData() {
-        return createGridData(0, 0, true, true);
+        return createHVFillGridData(1);
     }
+    
+    public static GridData createHVFillGridData(int span) {
+        final GridData gd= createGridData(0, 0, true, true);
+        gd.horizontalSpan= span;
+        return gd;
+    }
+
     
     public static Composite createGridComposite(Composite parent, int numColumns) {
         final Composite composite= new Composite(parent, SWT.NONE);
@@ -60,4 +66,25 @@ public class SWTUtils {
         return layout;
     }
     
+    public static Label createLabel(Composite parent, String message) {
+        return createLabel(parent, message, 1);
+    }
+
+    public static Label createLabel(Composite parent, String message, int span) {
+        final Label label= new Label(parent, SWT.WRAP);
+        label.setText(message);
+        label.setLayoutData(createHFillGridData(span));
+        return label;
+    }
+    
+    public static Button createCheckBox(Composite parent, String message) {
+        return createCheckBox(parent, message, 1);
+    }
+
+    public static Button createCheckBox(Composite parent, String message, int span) {
+        final Button button= new Button(parent, SWT.CHECK);
+        button.setText(message);
+        button.setLayoutData(createHFillGridData(span));
+        return button;
+    }
 }

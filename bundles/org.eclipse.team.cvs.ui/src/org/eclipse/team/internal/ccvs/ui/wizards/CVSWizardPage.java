@@ -124,7 +124,7 @@ public abstract class CVSWizardPage extends WizardPage {
 	protected Composite createComposite(Composite parent, int numColumns, boolean grabExcess) {
 		final Composite composite = new Composite(parent, SWT.NULL);
 		composite.setLayout(new GridLayout(numColumns, false));
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, grabExcess, grabExcess));
 		return composite;
 	}
 	
