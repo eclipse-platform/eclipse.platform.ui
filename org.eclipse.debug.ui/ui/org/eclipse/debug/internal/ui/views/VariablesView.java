@@ -26,7 +26,7 @@ import org.eclipse.debug.internal.ui.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.debug.internal.ui.actions.ChangeVariableValueAction;
 import org.eclipse.debug.internal.ui.actions.ShowTypesAction;
-import org.eclipse.debug.internal.ui.actions.ShowVariableDetailPaneAction;
+import org.eclipse.debug.internal.ui.actions.ShowDetailPaneAction;
 import org.eclipse.debug.internal.ui.actions.TextViewerAction;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -481,7 +481,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		setAction("ChangeVariableValue", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
 		
-		action = new ShowVariableDetailPaneAction(this);
+		action = new ShowDetailPaneAction(this);
 		action.setChecked(false);
 		setAction("ShowDetailPane", action); //$NON-NLS-1$
 	
@@ -539,6 +539,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		menu.add(getAction("ShowTypeNames")); //$NON-NLS-1$
+		menu.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
+		menu.add(getAction("ShowDetailPane")); //$NON-NLS-1$
 		
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -558,7 +560,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.FIND));
-		
+		menu.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
+		menu.add(getAction("ShowDetailPane")); //$NON-NLS-1$
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
@@ -794,7 +797,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		return fSelectionProvider;
 	}
 	/** 
-	 * The <code>VariablesView</code> listens for selection changes in the <code>LaunchesView</code>
+	 * The <code>VariablesView</code> listens for selection changes in the <code>LaunchView</code>
 	 *
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
