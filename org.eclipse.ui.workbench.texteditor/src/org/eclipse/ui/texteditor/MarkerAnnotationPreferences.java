@@ -12,7 +12,10 @@
 package org.eclipse.ui.texteditor;
 
 
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -52,6 +55,7 @@ public class MarkerAnnotationPreferences {
 	public List getAnnotationPreferences() {
 		if (fPreferences == null)
 			initialize();
+		
 		return fPreferences;
 	}
 	
@@ -74,6 +78,34 @@ public class MarkerAnnotationPreferences {
 					fPreferences.add(createSpec(elements[i]));
 			}
 		}
+
+		final Collator collator= Collator.getInstance();
+		Collections.sort(fPreferences, new Comparator() {
+			/*
+			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+			 */
+			public int compare(Object o1, Object o2) {
+				if (o1 == o2)
+					return 0;
+					
+				AnnotationPreference ap1= (AnnotationPreference)o1;
+				AnnotationPreference ap2= (AnnotationPreference)o2;
+
+				String label1= ap1.getPreferenceLabel();
+				String label2= ap2.getPreferenceLabel();
+				
+				if (label1 == null && label2 == null)
+					return 0;
+				
+				if (label1 == null)
+					return -1;
+				
+				if (label2 == null)
+					return 1;
+
+				return collator.compare(label1, label2);
+			}
+		});
 	}
 	
 	/**
