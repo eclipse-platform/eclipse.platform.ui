@@ -42,6 +42,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
@@ -170,10 +171,15 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	private SourceViewerConfiguration fSourceViewerConfiguration;
 	
 	/**
-	 * Value currently computing details for
+	 * Selection currently computing details for
 	 * (workaround for bug 12938)
 	 */
-	private IValue fValueBeingComputed = null;
+	private IStructuredSelection fValueSelection = null;
+	
+	/**
+	 * Iterator for multi-selection details computation
+	 */
+	private Iterator fSelectionIterator = null;	
 	
 	/**
 	 * Various listeners used to update the enabled state of actions and also to
@@ -635,7 +641,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	protected void populateDetailPaneFromSelection(IStructuredSelection selection) {
 		try {
-			if (!selection.isEmpty() && selection.size() == 1) {
+			getDetailDocument().set(""); //$NON-NLS-1$
+			if (!selection.isEmpty()) {
 				IValue val = null;
 				Object obj = selection.getFirstElement();
 				if (obj instanceof IVariable) {
@@ -645,16 +652,16 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				}
 				
 				// workaroud for bug 12938
-				if (fValueBeingComputed != null && fValueBeingComputed.equals(val)) {
+				if (fValueSelection != null && fValueSelection.equals(selection)) {
 					return;
 				}
 				
 				setDebugModel(val.getModelIdentifier());
-				fValueBeingComputed = val;
+				fValueSelection = selection;
+				fSelectionIterator = selection.iterator();
+				fSelectionIterator.next();
 				getModelPresentation().computeDetail(val, this);
-			} else {
-				getDetailDocument().set(""); //$NON-NLS-1$
-			}
+			} 
 		} catch (DebugException de) {
 			DebugUIPlugin.log(de);
 			getDetailDocument().set(DebugUIViewsMessages.getString("VariablesView.<error_occurred_retrieving_value>_18")); //$NON-NLS-1$
@@ -668,9 +675,35 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		Runnable runnable = new Runnable() {
 			public void run() {
 				if (isAvailable()) {
-					getDetailDocument().set(result);
-					// workaround for bug 12938
-					fValueBeingComputed = null;
+					String insert = result;
+					int length = getDetailDocument().get().length();
+					if (length > 0) {
+						insert = "\n" + result; //$NON-NLS-1$
+					}
+					try {
+						getDetailDocument().replace(length, 0,insert);
+					} catch (BadLocationException e) {
+						DebugUIPlugin.log(e);
+					}
+					
+					if (fSelectionIterator.hasNext()) {
+						Object obj = fSelectionIterator.next();
+						IValue val = null;
+						try {
+							if (obj instanceof IVariable) {
+								val = ((IVariable)obj).getValue();
+							} else if (obj instanceof IExpression) {
+								val = ((IExpression)obj).getValue();
+							}	
+							getModelPresentation().computeDetail(val, VariablesView.this);
+						} catch (DebugException e) {
+							DebugUIPlugin.log(e);
+							getDetailDocument().set(DebugUIViewsMessages.getString("VariablesView.<error_occurred_retrieving_value>_18")); //$NON-NLS-1$	
+						}
+					} else {
+						fValueSelection = null;
+						fSelectionIterator = null;
+					}							
 				}
 			}
 		};
