@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.internal.model.VariableContextManager;
@@ -273,55 +272,6 @@ public class ExternalToolsUtil {
 	 */
 	public static boolean isBackground(ILaunchConfiguration configuration) throws CoreException {
 		return configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, false);
-	}
-
-	/**
-	 * Returns an array of targets to be run, or <code>null</code> if none are
-	 * specified (indicating the default target should be run).
-	 * 
-	 * @param configuration launch configuration
-	 * @return array of target names, or <code>null</code>
-	 * @throws CoreException if unable to access the associated attribute
-	 */
-	public static String[] getTargets(ILaunchConfiguration configuration) throws CoreException {
-		String attribute = configuration.getAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String) null);
-		if (attribute == null) {
-			return null;
-		} else {
-			return AntUtil.parseRunTargets(attribute);
-		}
-	}
-
-	/**
-	 * Returns an array of property files to be used for the build, or
-	 * <code>null</code> if none are specified (indicating no additional
-	 * property files specified for the build).
-	 * 
-	 * @param configuration launch configuration
-	 * @return array of property file names, or <code>null</code>
-	 * @throws CoreException if unable to access the associated attribute
-	 */
-	public static String[] getPropertyFiles(ILaunchConfiguration configuration) throws CoreException {
-		String attribute = configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTY_FILES, (String) null);
-		if (attribute == null) {
-			return null;
-		} else {
-			return AntUtil.parseString(attribute, ","); //$NON-NLS-1$
-		}
-	}
-
-	/**
-	 * Returns a map of properties to be defined for the build, or
-	 * <code>null</code> if none are specified (indicating no additional
-	 * properties specified for the build).
-	 * 
-	 * @param configuration launch configuration
-	 * @return map of properties (name --> value), or <code>null</code>
-	 * @throws CoreException if unable to access the associated attribute
-	 */
-	public static Map getProperties(ILaunchConfiguration configuration) throws CoreException {
-		Map map = configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTIES, (Map) null);
-		return map;
 	}
 
 	/**

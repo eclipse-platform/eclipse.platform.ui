@@ -9,11 +9,13 @@ http://www.eclipse.org/legal/cpl-v10.html
 Contributors:
 **********************************************************************/
 
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -55,6 +57,55 @@ public final class AntUtil {
 		}
 		buf.append(targets[targets.length - 1]);
 		return buf.toString();
+	}
+
+	/**
+	 * Returns an array of targets to be run, or <code>null</code> if none are
+	 * specified (indicating the default target should be run).
+	 *
+	 * @param configuration launch configuration
+	 * @return array of target names, or <code>null</code>
+	 * @throws CoreException if unable to access the associated attribute
+	 */
+	public static String[] getTargetsFromConfig(ILaunchConfiguration configuration) throws CoreException {
+		String attribute = configuration.getAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String) null);
+		if (attribute == null) {
+			return null;
+		} else {
+			return AntUtil.parseRunTargets(attribute);
+		}
+	}
+	
+	/**
+	 * Returns a map of properties to be defined for the build, or
+	 * <code>null</code> if none are specified (indicating no additional
+	 * properties specified for the build).
+	 *
+	 * @param configuration launch configuration
+	 * @return map of properties (name --> value), or <code>null</code>
+	 * @throws CoreException if unable to access the associated attribute
+	 */
+	public static Map getProperties(ILaunchConfiguration configuration) throws CoreException {
+		Map map = configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTIES, (Map) null);
+		return map;
+	}
+
+	/**
+	 * Returns an array of property files to be used for the build, or
+	 * <code>null</code> if none are specified (indicating no additional
+	 * property files specified for the build).
+	 *
+	 * @param configuration launch configuration
+	 * @return array of property file names, or <code>null</code>
+	 * @throws CoreException if unable to access the associated attribute
+	 */
+	public static String[] getPropertyFiles(ILaunchConfiguration configuration) throws CoreException {
+		String attribute = configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTY_FILES, (String) null);
+		if (attribute == null) {
+			return null;
+		} else {
+			return AntUtil.parseString(attribute, ","); //$NON-NLS-1$
+		}
 	}
 	
 	/**

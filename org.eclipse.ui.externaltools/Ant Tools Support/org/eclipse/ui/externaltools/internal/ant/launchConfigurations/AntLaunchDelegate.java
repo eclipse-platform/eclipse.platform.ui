@@ -21,14 +21,8 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
-import org
-	.eclipse
-	.ui
-	.externaltools
-	.internal
-	.program
-	.launchConfigurations
-	.BackgroundResourceRefresher;
+import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
+import org.eclipse.ui.externaltools.internal.program.launchConfigurations.BackgroundResourceRefresher;
 import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
@@ -114,8 +108,8 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 		runnerArgs[runnerArgs.length -1] = idProperty;
 		
-		Map userProperties= ExternalToolsUtil.getProperties(configuration);
-		String[] propertyFiles= ExternalToolsUtil.getPropertyFiles(configuration);
+		Map userProperties= AntUtil.getProperties(configuration);
+		String[] propertyFiles= AntUtil.getPropertyFiles(configuration);
 		
 		final AntRunner runner = new AntRunner();
 		runner.setBuildFileLocation(location.toOSString());
@@ -130,7 +124,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			runner.setPropertyFiles(propertyFiles);
 		}
 		
-		String[] targets = ExternalToolsUtil.getTargets(configuration);
+		String[] targets = AntUtil.getTargetsFromConfig(configuration);
 		if (targets != null) {
 			runner.setExecutionTargets(targets);
 		}
