@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Common Public License v0.5
  * which accompanies this distribution, and is available at
@@ -10,8 +10,7 @@
  **********************************************************************/
 package org.eclipse.core.resources.ant;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
+import org.apache.tools.ant.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -74,7 +73,7 @@ public RefreshLocalTask() {
  */
 public void execute() throws BuildException {
 	if (resource == null)
-		throw new BuildException("exception.resourceNotSpecified");
+		throw new BuildException(Policy.bind("exception.resourceNotSpecified"));
 	try {
 		resource.refreshLocal(depth, null);
 	} catch (CoreException e) {
@@ -108,9 +107,16 @@ public void setDepth(String value) {
 public void setResource(String value) {
 	IPath path = new Path(value);
 	resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-	// if it does not exist we guess it is a folder
-	if (resource == null)
-		resource = ResourcesPlugin.getWorkspace().getRoot().getFolder(path);
+	if (resource == null) {
+		// if it does not exist we guess it is a folder or a project
+		if (path.segmentCount() > 1)
+			resource = ResourcesPlugin.getWorkspace().getRoot().getFolder(path);
+		else {
+			resource = ResourcesPlugin.getWorkspace().getRoot().getProject(value);
+			if (!resource.exists())
+				log(Policy.bind("warning.projectDoesNotExist", value), Project.MSG_WARN);
+		}
+	}
 }
 
 }
