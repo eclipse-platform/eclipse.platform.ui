@@ -42,6 +42,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.presentations.PresentablePart;
+import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.presentations.IPresentablePart;
 
 /**
@@ -128,8 +129,13 @@ public abstract class PartPane extends LayoutPart implements Listener {
             return;
 
         Assert.isNotNull(control);
+        
+        int style = SWT.NONE;
+        if(part[0] instanceof WorkbenchPart){
+        	style = ((WorkbenchPart) part[0]).getOrientation();
+        }
 
-        final Composite content = new Composite(control, SWT.NONE);
+        final Composite content = new Composite(control, style);
         content.setLayout(new FillLayout());
 
         String error = WorkbenchMessages

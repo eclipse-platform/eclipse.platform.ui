@@ -246,7 +246,7 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
 	 * @see org.eclipse.ui.part.WorkbenchPart#getOrientation()
 	 */
 	public int getOrientation() {
-		return SWT.RIGHT_TO_LEFT;
+		return SWT.LEFT_TO_RIGHT; //Editors are always left to right by default
 	}
 
     private void setDefaultPartName() {
@@ -257,6 +257,9 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
         internalSetPartName(getTitle());
     }
 
+    /**
+     * Set the default title for the receiver.
+     */
     void setDefaultTitle() {
         setTitle(getPartName());
     }
