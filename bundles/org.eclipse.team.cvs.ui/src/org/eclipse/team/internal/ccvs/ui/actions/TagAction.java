@@ -66,10 +66,16 @@ public class TagAction extends TeamAction {
 						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						IStatus status = provider.tag(providerResources, IResource.DEPTH_INFINITE, new CVSTag(result[0], CVSTag.VERSION), subMonitor);
+						CVSTag tag = new CVSTag(result[0], CVSTag.VERSION);
+						IStatus status = provider.tag(providerResources, IResource.DEPTH_INFINITE, tag, subMonitor);
 						if (status.getCode() != CVSStatus.OK) {
 							messages.add(status);
 						}
+						// Cache the new tag creation even if the tag may of has warnings.
+						CVSUIPlugin.getPlugin().getRepositoryManager().addVersionTags(
+										CVSWorkspaceRoot.getCVSFolderFor(provider.getProject()), 
+										new CVSTag[] {tag});
+
 					}	
 					previousTag = result[0];				
 				} catch (TeamException e) {
