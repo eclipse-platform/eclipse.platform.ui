@@ -36,9 +36,9 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
 public class BranchPromptDialog extends DetailsDialog {
 
 	private ICVSFolder folder;
-	private String branchTag = "";
-	private String versionTag= "";
-	private String versionName= "";		
+	private String branchTag = ""; //$NON-NLS-1$
+	private String versionTag= ""; //$NON-NLS-1$
+	private String versionName= "";		 //$NON-NLS-1$
 
 	private boolean allStickyResources;	
 	private boolean update;
@@ -153,7 +153,7 @@ public class BranchPromptDialog extends DetailsDialog {
 		composite.setFont(parent.getFont());
 		
 		Label label = new Label(composite, SWT.WRAP);
-		label.setText(Policy.bind("BranchWizardPage.existingVersionsAndBranches"));
+		label.setText(Policy.bind("BranchWizardPage.existingVersionsAndBranches")); //$NON-NLS-1$
 		GridData data = new GridData(
 			GridData.GRAB_HORIZONTAL |
 			GridData.GRAB_VERTICAL |
@@ -208,7 +208,7 @@ public class BranchPromptDialog extends DetailsDialog {
 		boolean complete = false;
 		
 		if (branchTag.length() == 0) {
-			message = "";
+			message = ""; //$NON-NLS-1$
 		} else {
 			IStatus status = CVSTag.validateTagName(branchTag);
 			if (!status.isOK()) {

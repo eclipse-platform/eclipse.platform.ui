@@ -61,7 +61,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 				}
 				// Check for the existance of the .project file
 				try {
-					folders[0].getFile(".project");
+					folders[0].getFile(".project"); //$NON-NLS-1$
 					hasProjectMetaFile[0] = true;
 				} catch (TeamException e) {
 					// We couldn't retrieve the meta file so assume it doesn't exist
@@ -70,7 +70,7 @@ public class CheckoutAsAction extends AddToWorkspaceAction {
 				// If the above failed, look for the old .vcm_meta file
 				if (! hasProjectMetaFile[0]) {
 					try {
-						folders[0].getFile(".vcm_meta");
+						folders[0].getFile(".vcm_meta"); //$NON-NLS-1$
 						hasProjectMetaFile[0] = true;
 					} catch (TeamException e) {
 						// We couldn't retrieve the meta file so assume it doesn't exist

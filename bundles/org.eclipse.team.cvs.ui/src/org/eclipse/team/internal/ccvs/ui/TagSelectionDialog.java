@@ -15,12 +15,15 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -48,6 +51,9 @@ public class TagSelectionDialog extends Dialog {
 	private String title;
 	private String message;
 	
+	private boolean recurse = true;
+	private boolean showRecurse;
+	
 	// constants
 	private static final int SIZING_DIALOG_WIDTH = 400;
 	private static final int SIZING_DIALOG_HEIGHT = 250;
@@ -56,8 +62,8 @@ public class TagSelectionDialog extends Dialog {
 	 * Creates a new TagSelectionDialog.
 	 * @param resource The resource to select a version for.
 	 */
-	public TagSelectionDialog(Shell parentShell, IProject[] projects, String title) {
-		this(parentShell, getCVSFoldersFor(projects), title, Policy.bind("TagSelectionDialog.Select_a_Tag_1"), true); //$NON-NLS-1$
+	public TagSelectionDialog(Shell parentShell, IProject[] projects, String title, String message, boolean showHead, boolean showRecurse) {
+		this(parentShell, getCVSFoldersFor(projects), title, message, showHead, showRecurse); //$NON-NLS-1$		
 	}
 	
 	private static ICVSFolder[] getCVSFoldersFor(IProject[] projects) {
@@ -72,12 +78,13 @@ public class TagSelectionDialog extends Dialog {
 	 * Creates a new TagSelectionDialog.
 	 * @param resource The resource to select a version for.
 	 */
-	public TagSelectionDialog(Shell parentShell, ICVSFolder[] folders, String title, String message, boolean showHEAD) {
+	public TagSelectionDialog(Shell parentShell, ICVSFolder[] folders, String title, String message, boolean showHEAD, boolean showRecurse) {
 		super(parentShell);
 		this.folders = folders;
 		this.title = title;
 		this.message = message;
 		this.showHEAD = showHEAD;
+		this.showRecurse = showRecurse;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 	
@@ -156,6 +163,19 @@ public class TagSelectionDialog extends Dialog {
 				});
 			}
 		};
+
+		if(showRecurse) {
+			final Button recurseCheck = new Button(top, SWT.CHECK);
+			recurseCheck.setText(Policy.bind("TagSelectionDialog.recurseOption")); //$NON-NLS-1$
+			recurseCheck.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event) {
+					recurse = recurseCheck.getSelection();
+				}
+			});
+			recurseCheck.setSelection(true);
+		}
+
+		
 		TagConfigurationDialog.createTagDefinitionButtons(getShell(), top, folders, 
 														  convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT), 
 														  convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH),
@@ -220,6 +240,10 @@ public class TagSelectionDialog extends Dialog {
 	 */
 	public CVSTag getResult() {
 		return result;
+	}
+	
+	public boolean getRecursive() {
+		return recurse;
 	}
 
 	/**

@@ -46,6 +46,7 @@ public class ReplaceWithTagAction extends CVSAction {
 		// Setup the holders
 		final IResource[] resource = new IResource[] {null};
 		final CVSTag[] tag = new CVSTag[] {null};
+		final boolean[] recurse = new boolean[] {true};
 		
 		// Show a busy cursor while display the tag selection dialog
 		run(new IRunnableWithProgress() {
@@ -63,12 +64,14 @@ public class ReplaceWithTagAction extends CVSAction {
 				for (int i = 0; i < resources.length; i++) {
 					projects[i] = resources[i].getProject();
 				}
-				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, Policy.bind("ReplaceWithTagAction.message")); //$NON-NLS-1$
+				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, Policy.bind("ReplaceWithTagAction.message"), Policy.bind("TagSelectionDialog.Select_a_Tag_1"),  //$NON-NLS-1$ //$NON-NLS-2$
+													true /*show HEAD*/, true /*show recurse*/); //$NON-NLS-1$
 				dialog.setBlockOnOpen(true);
 				if (dialog.open() == Dialog.CANCEL) {
 					return;
 				}
 				tag[0] = dialog.getResult();
+				recurse[0] = dialog.getRecursive();
 				
 				// For non-projects determine if the tag being loaded is the same as the resource's parent
 				// If it's not, warn the user that they will have strange sync behavior
@@ -89,6 +92,7 @@ public class ReplaceWithTagAction extends CVSAction {
 		run(new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				try {
+					int depth = recurse[0] ? IResource.DEPTH_INFINITE : IResource.DEPTH_ONE;
 					Hashtable table = getProviderMapping();
 					Set keySet = table.keySet();
 					monitor.beginTask("", keySet.size() * 1000); //$NON-NLS-1$
@@ -99,7 +103,7 @@ public class ReplaceWithTagAction extends CVSAction {
 						CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 						List list = (List)table.get(provider);
 						IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-						provider.get(providerResources, IResource.DEPTH_INFINITE, tag[0], Policy.subMonitorFor(monitor, 100));
+						provider.get(providerResources, depth, tag[0], Policy.subMonitorFor(monitor, 100));
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);

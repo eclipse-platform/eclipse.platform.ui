@@ -29,7 +29,7 @@ public class CompareWithTagAction extends CVSAction {
 		for (int i = 0; i < resources.length; i++) {
 			projects[i] = resources[i].getProject();
 		}
-		TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, Policy.bind("CompareWithTagAction.message")); //$NON-NLS-1$
+		TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, Policy.bind("CompareWithTagAction.message"), Policy.bind("TagSelectionDialog.Select_a_Tag_1"), true, false); //$NON-NLS-1$ //$NON-NLS-2$
 		dialog.setBlockOnOpen(true);
 		int result = dialog.open();
 		if (result == Dialog.CANCEL || dialog.getResult() == null) {

@@ -47,7 +47,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 	
 	private Text tagText;
 	
-	private String tagName = "";
+	private String tagName = ""; //$NON-NLS-1$
 	
 	private static final int TABLE_HEIGHT_HINT = 150;
 	
@@ -64,7 +64,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 	protected void createMainDialogArea(Composite parent) {
 		// create message
 		Label label = new Label(parent, SWT.WRAP);
-		label.setText(Policy.bind("TagAction.enterTag"));
+		label.setText(Policy.bind("TagAction.enterTag")); //$NON-NLS-1$
 		GridData data = new GridData(
 			GridData.GRAB_HORIZONTAL |
 			GridData.GRAB_VERTICAL |
@@ -118,7 +118,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 		composite.setFont(parent.getFont());
 		
 		Label label = new Label(composite, SWT.WRAP);
-		label.setText(Policy.bind("TagAction.existingVersions"));
+		label.setText(Policy.bind("TagAction.existingVersions")); //$NON-NLS-1$
 		GridData data = new GridData(
 			GridData.GRAB_HORIZONTAL |
 			GridData.GRAB_VERTICAL |
@@ -188,7 +188,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 	protected void updateEnablements() {
 		String message = null;
 		if(tagName.length() == 0) {
-			message = "";
+			message = ""; //$NON-NLS-1$
 		} else {		
 			IStatus status = CVSTag.validateTagName(tagName);
 			if (!status.isOK()) {

@@ -155,7 +155,7 @@ public class CVSSyncCompareInput extends SyncCompareInput {
 					});
 				}
 			} catch (CoreException e) {
-				ErrorDialog.openError(getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), e.getStatus());
+				ErrorDialog.openError(getShell(), Policy.bind("simpleInternal"), Policy.bind("internal"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 				CVSUIPlugin.log(e.getStatus());
 				return new IRemoteSyncElement[0];
 			}

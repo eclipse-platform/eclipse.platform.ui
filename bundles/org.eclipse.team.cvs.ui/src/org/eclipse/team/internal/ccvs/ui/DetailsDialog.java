@@ -172,7 +172,7 @@ abstract public class DetailsDialog extends Dialog {
 	final protected void setErrorMessage(String error) {
 		if(errorMessageLabel != null) {
 			if(error == null || error.length() == 0) {
-				errorMessageLabel.setText("");
+				errorMessageLabel.setText(""); //$NON-NLS-1$
 			} else {
 				errorMessageLabel.setText(error);
 			}

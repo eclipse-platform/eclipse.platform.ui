@@ -168,7 +168,7 @@ public class TagAction extends TeamAction {
 	 */
 	protected String promptForTag(ICVSFolder folder) {
 		TagAsVersionDialog dialog = new TagAsVersionDialog(getShell(),
-											Policy.bind("TagAction.tagResources"),
+											Policy.bind("TagAction.tagResources"), //$NON-NLS-1$
 											folder);
 		if (dialog.open() != InputDialog.OK) return null;
 		return dialog.getTagName();

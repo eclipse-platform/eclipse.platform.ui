@@ -380,7 +380,7 @@ public class EclipsePhantomSynchronizer extends EclipseSynchronizer {
 			dos.writeUTF(info.getRepository());
 			CVSEntryLineTag tag = info.getTag();
 			if (tag == null) {
-				dos.writeUTF(""); // $NON-NLS-1$
+				dos.writeUTF(""); //$NON-NLS-1$
 			} else {
 				dos.writeUTF(tag.toString());
 			}

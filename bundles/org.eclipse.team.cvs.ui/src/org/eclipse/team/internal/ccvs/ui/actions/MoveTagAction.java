@@ -81,6 +81,7 @@ public class MoveTagAction extends TeamAction {
 		// Setup the holders
 		final CVSTag[] tag = new CVSTag[] {null};
 		final ICVSFolder[] folders = getSelectedFolders();
+		final boolean[] recursive = new boolean[] {false};
 		
 		// Show a busy cursor while display the tag selection dialog
 		run(new IRunnableWithProgress() {
@@ -93,12 +94,13 @@ public class MoveTagAction extends TeamAction {
 
 				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), folders, 
 					Policy.bind("MoveTagAction.title"), //$NON-NLS-1$
-					Policy.bind("MoveTagAction.message"), false); //$NON-NLS-1$
+					Policy.bind("MoveTagAction.message"), false, true); //$NON-NLS-1$
 				dialog.setBlockOnOpen(true);
 				if (dialog.open() == Dialog.CANCEL) {
 					return;
 				}
 				tag[0] = dialog.getResult();
+				recursive[0] = dialog.getRecursive();
 				
 			}
 		}, Policy.bind("MoveTagAction.errorMessage"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
@@ -109,8 +111,14 @@ public class MoveTagAction extends TeamAction {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					monitor.beginTask(null, 1000 * folders.length);
+					LocalOption[] options;
+					if(recursive[0]) {
+						options = new LocalOption[] {RTag.FORCE_REASSIGNMENT, RTag.CLEAR_FROM_REMOVED};
+					} else {
+						options = new LocalOption[] {RTag.FORCE_REASSIGNMENT, RTag.CLEAR_FROM_REMOVED, Command.DO_NOT_RECURSE};
+					}
 					for (int i = 0; i < folders.length; i++) {
-						((ICVSRemoteFolder)folders[i]).tag(tag[0], new LocalOption[] {RTag.FORCE_REASSIGNMENT, RTag.CLEAR_FROM_REMOVED}, new SubProgressMonitor(monitor, 1000));
+						((ICVSRemoteFolder)folders[i]).tag(tag[0], options, new SubProgressMonitor(monitor, 1000));
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
