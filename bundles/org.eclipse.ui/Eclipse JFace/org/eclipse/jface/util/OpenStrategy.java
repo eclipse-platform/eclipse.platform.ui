@@ -166,6 +166,8 @@ public class OpenStrategy {
 	 * Fire the selection event to all selectionEventListeners
 	 */ 
 	private void fireSelectionEvent(SelectionEvent e) {
+		if(e.item != null && e.item.isDisposed())
+			return;
 		Object l[] = selectionEventListeners.getListeners();
 		for (int i = 0; i < l.length; i++) {
 			((SelectionListener)l[i]).widgetSelected(e);
@@ -184,6 +186,8 @@ public class OpenStrategy {
 	 * Fire the post selection event to all postSelectionEventListeners
 	 */ 
 	private void firePostSelectionEvent(SelectionEvent e) {
+		if(e.item != null && e.item.isDisposed())
+			return;
 		Object l[] = postSelectionEventListeners.getListeners();
 		for (int i = 0; i < l.length; i++) {
 			((SelectionListener)l[i]).widgetSelected(e);
@@ -193,6 +197,8 @@ public class OpenStrategy {
 	 * Fire the open event to all openEventListeners
 	 */ 
 	private void fireOpenEvent(SelectionEvent e) {
+		if(e.item != null && e.item.isDisposed())
+			return;
 		Object l[] = openEventListeners.getListeners();
 		for (int i = 0; i < l.length; i++) {
 			((IOpenEventListener)l[i]).handleOpen(e);
