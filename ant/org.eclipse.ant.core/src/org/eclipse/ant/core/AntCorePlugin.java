@@ -71,12 +71,12 @@ public class AntCorePlugin extends Plugin {
 	public static final String PT_PROPERTIES = "antProperties"; //$NON-NLS-1$
 	
 	/**
-	 * Simple identifier constant (value <code>"contentTypes.antBuildFile"</code>)
+	 * Simple identifier constant (value <code>"org.eclipse.ant.core.antBuildFile"</code>)
 	 * for the content type of an Ant BuildFile
 	 * 
 	 * @since 3.0
 	 */
-	public static final String ANT_BUILDFILE_CONTENT_TYPE = PI_ANTCORE + ".contentTypes.antBuildFile"; //$NON-NLS-1$
+	public static final String ANT_BUILDFILE_CONTENT_TYPE = PI_ANTCORE + ".antBuildFile"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"class"</code>)

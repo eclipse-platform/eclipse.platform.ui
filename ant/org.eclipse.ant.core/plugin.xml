@@ -56,7 +56,7 @@
 	<extension 
 		point="org.eclipse.core.runtime.contentTypes"> 
 		<content-type  
-			id="contentTypes.antBuildFile" 
+			id="antBuildFile" 
 			name="%antBuildFileContentType.name" 
 			base-type="org.eclipse.core.runtime.xml" 
 			priority="high"> 

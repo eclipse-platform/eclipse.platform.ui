@@ -312,7 +312,7 @@
                <iterate>
                  <and>
                    <test property="org.eclipse.debug.ui.matchesPattern" value="*.xml"/>
-                   <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.contentTypes.antBuildFile"/>
+                   <test property="org.eclipse.debug.ui.matchesContentType" value="org.eclipse.ant.core.antBuildFile"/>
                  </and>
                </iterate>
              </with>
