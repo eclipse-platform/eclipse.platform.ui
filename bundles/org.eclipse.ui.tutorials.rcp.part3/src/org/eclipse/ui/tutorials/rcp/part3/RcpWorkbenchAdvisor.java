@@ -93,7 +93,7 @@ public class RcpWorkbenchAdvisor extends WorkbenchAdvisor {
 		menu.add(ActionFactory.OPEN_NEW_WINDOW.create(window));
 
 		menu.add(new Separator());
-		MenuManager perspectiveMenu = new MenuManager(Messages.getString("Open_Perspective"), "openPerspective"); //$NON-NLS-1$ $NON-NLS-2$
+		MenuManager perspectiveMenu = new MenuManager(Messages.getString("Open_Perspective"), "openPerspective"); //$NON-NLS-1$ //$NON-NLS-2$
 		IContributionItem perspectiveList = ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(window);
 		perspectiveMenu.add(perspectiveList);
 		menu.add(perspectiveMenu);
