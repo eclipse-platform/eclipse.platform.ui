@@ -47,11 +47,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.PartSite;
-import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.Workbench; 
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.UIJob;
 
