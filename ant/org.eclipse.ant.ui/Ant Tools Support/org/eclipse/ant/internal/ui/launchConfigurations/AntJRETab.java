@@ -33,9 +33,11 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab;
 import org.eclipse.jdt.internal.debug.ui.jres.DefaultJREDescriptor;
+import org.eclipse.jdt.internal.debug.ui.launcher.VMArgumentsBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.swt.SWT;
@@ -47,6 +49,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntJRETab extends JavaJRETab {
@@ -58,11 +61,17 @@ public class AntJRETab extends JavaJRETab {
 	
 	private Button updateClasspathButton;
 	private IVMInstall previousJRE;
+	protected VMArgumentsBlock fVMArgumentsBlock;
+	protected AntWorkingDirectoryBlock fWorkingDirectoryBlock;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
+		
+		fVMArgumentsBlock =  new VMArgumentsBlock();
+		fWorkingDirectoryBlock = new AntWorkingDirectoryBlock();
+		
 		super.createControl(parent);
 		Font font= parent.getFont();
 		WorkbenchHelp.setHelp(getControl(), IAntUIHelpContextIds.ANT_JRE_TAB);
@@ -70,28 +79,39 @@ public class AntJRETab extends JavaJRETab {
 		
 		createVerticalSpacer(comp, 3);
 		
-		Composite updateComp = new Composite(comp, SWT.NONE);
+		Composite lowerComp = new Composite(comp, SWT.NONE);
 				
 		GridLayout updateLayout = new GridLayout();
 		updateLayout.numColumns = 2;
 		updateLayout.marginHeight=0;
 		updateLayout.marginWidth=0;
-		updateComp.setLayout(updateLayout);
+		lowerComp.setLayout(updateLayout);
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.horizontalSpan= 3;
-		updateComp.setLayoutData(gd);
-		updateComp.setFont(font);
+		lowerComp.setLayoutData(gd);
+		lowerComp.setFont(font);
 		
-		Label label= new Label(updateComp, SWT.NULL);
+		Label label= new Label(lowerComp, SWT.NULL);
 		label.setText(AntLaunchConfigurationMessages.getString("AntJRETab.9")); //$NON-NLS-1$
 		label.setFont(font);
+		gd = new GridData(GridData.GRAB_HORIZONTAL);
+		label.setLayoutData(gd);
 		
-		updateClasspathButton= createPushButton(updateComp, AntLaunchConfigurationMessages.getString("AntJRETab.10"), null); //$NON-NLS-1$
+		updateClasspathButton= createPushButton(lowerComp, AntLaunchConfigurationMessages.getString("AntJRETab.10"), null); //$NON-NLS-1$
 		updateClasspathButton.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				updateClasspath(getLaunchConfigurationWorkingCopy());
 			}
 		});
+		
+		createVerticalSpacer(lowerComp, 2);
+		
+		fVMArgumentsBlock.createControl(lowerComp);
+		((GridData)fVMArgumentsBlock.getControl().getLayoutData()).horizontalSpan= 2;
+		createVerticalSpacer(lowerComp, 2);
+						
+		fWorkingDirectoryBlock.createControl(lowerComp);		
+		((GridData)fWorkingDirectoryBlock.getControl().getLayoutData()).horizontalSpan= 2;
 	}
 
 	/* (non-Javadoc)
@@ -127,11 +147,15 @@ public class AntJRETab extends JavaJRETab {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);			
+			fVMArgumentsBlock.setDefaults(configuration);
+			fWorkingDirectoryBlock.setDefaults(configuration);
 		} else {
 			super.performApply(configuration);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, MAIN_TYPE_NAME);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 			configuration.setAttribute(DebugPlugin.ATTR_PROCESS_FACTORY_ID, IAntUIConstants.REMOTE_ANT_PROCESS_FACTORY_ID);
+			fVMArgumentsBlock.performApply(configuration);
+			fWorkingDirectoryBlock.performApply(configuration);
 		}
 		setLaunchConfigurationWorkingCopy(configuration);
 	}
@@ -298,5 +322,20 @@ public class AntJRETab extends JavaJRETab {
 			return true;
 		}
 		return false;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void initializeFrom(ILaunchConfiguration configuration) {
+		super.initializeFrom(configuration);
+		fVMArgumentsBlock.initializeFrom(configuration);
+		fWorkingDirectoryBlock.initializeFrom(configuration);
+	}
+	
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(ILaunchConfiguration)
+	 */
+	public boolean isValid(ILaunchConfiguration config) {
+		return fWorkingDirectoryBlock.isValid(config);
 	}
 }
