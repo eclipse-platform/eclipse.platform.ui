@@ -386,6 +386,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		JFacePreferences.setPreferenceStore(store);
 		store.setDefault(IPreferenceConstants.AUTO_BUILD, true);
 		store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
+		store.setDefault(IPreferenceConstants.SAVE_INTERVAL, 5); //5 minutes
 		store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
 		store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
 		store.setDefault(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, false);

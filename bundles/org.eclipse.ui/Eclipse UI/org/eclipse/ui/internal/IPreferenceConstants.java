@@ -75,4 +75,7 @@ public interface IPreferenceConstants {
 	//Preference key for default editors
 	public final static String DEFAULT_EDITORS = "defaultEditors"; //$NON-NLS-1$
 	
+	//Workspace save interval in minutes
+	public final static String SAVE_INTERVAL = "saveInterval";
+	public static final int MAX_SAVE_INTERVAL = 9999;
 }
