@@ -35,7 +35,7 @@ public class AntProjectNode extends AntElementNode {
 	 */
 	public String getLabel() {
 		String projectName= fProject.getName();
-		if (projectName == null) {
+		if (projectName == null || projectName.length() == 0) {
 			projectName= "project"; //$NON-NLS-1$
 		}
 		return projectName;
@@ -64,6 +64,9 @@ public class AntProjectNode extends AntElementNode {
 	public void reset() {
 		super.reset();
 		fProject.getTargets().clear();
+		fProject.setDefault(null);
+		fProject.setDescription(null);
+		fProject.setName(""); //$NON-NLS-1$
 		setProblemSeverity(XMLProblem.NO_PROBLEM);
 	}
 }

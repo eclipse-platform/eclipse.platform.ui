@@ -14,6 +14,7 @@ package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.io.File;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -428,6 +429,41 @@ public class AntModel {
 			}
 		}
 		fNodeBeingResolved= null;
+		
+		checkTargets();
+	}
+
+	/**
+	 * Check that we have a default target defined and that the 
+	 * target dependencies exist. 
+	 */
+	private void checkTargets() {
+		String defaultTargetName= fProjectNode.getProject().getDefaultTarget();
+		if (defaultTargetName == null || fProjectNode.getProject().getTargets().get(defaultTargetName) == null) {
+			//no default target
+			String message= MessageFormat.format(AntOutlineMessages.getString("AntModel.43"), new String[]{defaultTargetName}); //$NON-NLS-1$
+			IProblem problem= createProblem(message, fProjectNode.getOffset(), fProjectNode.getSelectionLength(), XMLProblem.SEVERITY_ERROR);
+			acceptProblem(problem);
+			markHierarchy(fProjectNode, XMLProblem.SEVERITY_ERROR);
+		}
+		if (!fProjectNode.hasChildren()) {
+			return;
+		}
+		List children= fProjectNode.getChildNodes();
+		Iterator iter= children.iterator();
+		while (iter.hasNext()) {
+			AntElementNode node = (AntElementNode) iter.next();
+			if (node instanceof AntTargetNode) {
+				String missing= ((AntTargetNode)node).checkDependencies();
+				if (missing != null) {
+					String message= MessageFormat.format(AntOutlineMessages.getString("AntModel.44"), new String[]{missing}); //$NON-NLS-1$
+					IProblem problem= createProblem(message, node.getOffset(), node.getSelectionLength(), XMLProblem.SEVERITY_ERROR);
+					acceptProblem(problem);
+					markHierarchy(node, XMLProblem.SEVERITY_ERROR);
+				}
+			}
+		}
+		
 	}
 
 	private void resolveProperties() {
@@ -787,7 +823,11 @@ public class AntModel {
 	}
 
 	private IProblem createProblem(Exception exception, int offset, int length,  int severity) {
-		return new XMLProblem(exception.getMessage(), severity, offset, length, getLine(offset));
+		return createProblem(exception.getMessage(), offset, length, severity);
+	}
+	
+	private IProblem createProblem(String message, int offset, int length, int severity) {
+		return new XMLProblem(message, severity, offset, length, getLine(offset));
 	}
 
 	protected void notifyProblemRequestor(Exception exception, AntElementNode element, int severity) {

@@ -11,6 +11,7 @@
 
 package org.eclipse.ant.internal.ui.editor.model;
 
+import java.util.Enumeration;
 import java.util.Map;
 
 import org.apache.tools.ant.Target;
@@ -91,5 +92,20 @@ public class AntTargetNode extends AntElementNode {
 		 if (currentTargets.get(fTarget.getName()) != null) {
 		 	currentTargets.remove(fTarget.getName());
 		 }
+	}
+
+	/**
+	 * Returns the name of a missing dependency or <code>null</code> if all
+	 * dependencies exist in the project.
+	 */
+	public String checkDependencies() {
+		Enumeration dependencies= fTarget.getDependencies();
+		while (dependencies.hasMoreElements()) {
+			String dependency = (String) dependencies.nextElement();
+			 if (fTarget.getProject().getTargets().get(dependency) == null) {
+			 	return dependency;
+			 }
+		}
+		return null;
 	}
 }
