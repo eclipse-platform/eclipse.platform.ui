@@ -33,13 +33,13 @@
   type and launch mode. This allows third parties to extend an existing launch 
   configuration user interface. For example, a client contributing a launch delegate 
   to profile a Java Application would also contribute a set of tabs to configure 
-  the profiler. The launchMode element defines a perpsective attribute to specify 
-  the default perspective assocaited with the launch configuration type and mode. 
-  This controls the perspective that is switched to/opened, by default, when a 
-  configuration is launched in the associated mode. For example, a client contributing 
-  a profiler may also contribute a profiling perspective that should be displayed 
-  when an application is profiled.</p>
-<p>For backwards compatibility, the tab group contributed for a launch confiugration 
+  the profiler. The <code>launchMode</code> element defines a <code>perspective</code> 
+  attribute to specify the default perspective associated with the launch configuration 
+  type and mode. This controls the perspective that is switched to/opened, by 
+  default, when a configuration is launched in the associated mode. For example, 
+  a client contributing a profiler may also contribute a profiling perspective 
+  that should be displayed when an application is profiled.</p>
+<p>For backwards compatibility, the tab group contributed for a launch configuration 
   type (specifying no launch mode), is used for all launch modes for which a specific 
   launch tab group is not contributed. Thus, when a mode is not specified by a 
   tab group, the tab group effectively becomes the default tab group.</p>
@@ -64,7 +64,7 @@
 <p>In release 3.0, debug model presentations can control the positioning of editors 
   opened by the debugger for a stack frame, and may add extra decorations to the 
   editor for a stack frame (for example, custom background coloring, etc.). This 
-  can be acheived by having a debug model presentation implement the new interface 
+  can be achieved by having a debug model presentation implement the new interface 
   <code>IDebugEditorPresentation</code>, and implementing the appropriate methods 
   - <code>selectAndReveal</code>,<code> decorateEditor</code>, and <code>removeDecorations</code>.</p>
 <h3>Extensible Watch Expressions</h3>
@@ -82,12 +82,12 @@
   A launch configuration can reference a process factory to use when creating 
   a process, via the launch configuration attribute <code>DebugPlugin.ATTR_PROCESS_FACTORY_ID</code>.</p>
 <h3>Automatic Array Partitioning</h3>
-<p>The debug plug-in now supports automatic array patitioning in the variables, 
-  which paritiontions large arrays into subranges in the variables view. This 
-  is supported with the introduction of a new interface in the debug model representing 
+<p>The debug plug-in now supports automatic array partitioning in the variables, 
+  which partitions large arrays into sub-ranges in the variables view. This is 
+  supported with the introduction of a new interface in the debug model representing 
   an indexed value - <code>org.eclipse.core.debug.model.IIndexedValue</code>. 
   If a value implements this interface, the variables view will automatically 
-  paritition its elements as required, into subranges.</p>
+  partition its elements as required, into sub-ranges</p>
 <h3>Logical Structure Types</h3>
 <p>Often, it is convenient to navigate complex data structures in terms of a logical 
   structure, rather than an implementation structure. For example, no matter how 
@@ -119,6 +119,24 @@
   with the introduction of background launching, this method can no longer be 
   called, as the launch dialog is be closed before the resulting launch object 
   exists.</p>
+<h3>Perspective Switching</h3>
+<p>In prior releases, perspective switching was specified on a launch configuration, 
+  via the launch configuration attributes <code>ATTR_TARGET_DEBUG_PERSPECTIVE</code> 
+  and <code>ATTR_TARGET_RUN_PERSPECTIVE</code>. With the addition of extensible 
+  launch modes in 3.0, this approach no longer scales. Perspective switching is 
+  now specified on launch configuration type basis, per launch mode that a launch 
+  configuration type supports. API has been added to <code>DebugUITools</code> 
+  to set and get the perspective associated with a launch configuration type for 
+  a specific launch mode.</p>
+<p>An additional, optional, <code>launchMode</code> element has been added to 
+  the <code>launchConfigurationTabGroup</code> extension point, allowing a contributed 
+  tab group to specify a default perspective for a launch configuration type and 
+  mode.</p>
+<p>From the Eclipse user interface, users can edit the perspective associated 
+  with a launch configuration type by opening the launch configuration dialog, 
+  and selecting a launch configuration type node in the tree (rather than an individual 
+  configuration). A tab is displayed allowing the user to set a perspective with 
+  each supported launch mode.</p>
 <h3>Generic Console</h3>
 <p>With the work for the generic console support <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=37263"> 
   (Bug 37263)</a>, the view id for the Eclipse (formerly debug) console has changed. 
@@ -129,9 +147,9 @@
   The generic console is available via the Window>Show View>Basic>Console and 
   is used by the Eclipse debug and Ant integration. </p>
 <h3>Console Line Tracker Extension</h3>
-<p>A console line tracker (IConsoleLineTracker) can be notified when its associated 
-  console is closed (i.e. all of its streams are closed), by implementing the 
-  new interface IConsoleLineTrackerExtension. The notification indicates that 
-  no more output will be appended to the console.</p>
+<p>A console line tracker (<code>IConsoleLineTracker</code>) can be notified when 
+  its associated console is closed (i.e. all of its streams are closed), by implementing 
+  the new interface <code>IConsoleLineTrackerExtension</code>. The notification 
+  indicates that no more output will be appended to the console.</p>
 </body>
 </html>
