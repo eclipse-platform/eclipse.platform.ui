@@ -46,7 +46,7 @@ public class AntClassLoader extends URLClassLoader {
 			return super.findClass(name);
 		} catch (ClassNotFoundException e) {
 			// Ignore exception now. If necessary we'll throw
-			// a ClassNotFoundException in loadClass(String)
+			// a ClassNotFoundException in findClass(String)
 		}
 		return null;
 	}
