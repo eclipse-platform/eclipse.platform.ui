@@ -69,7 +69,7 @@ import org.eclipse.compare.internal.*;
 	}
 	
 	void setTargets(IResource[] targets) {
-		if (targets != null)
+		if (targets != null && targets.length > 0)
 			fTarget= targets[0];	// right now we can only deal with a single selection
 	}
 	
