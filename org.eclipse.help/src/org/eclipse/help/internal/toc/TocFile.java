@@ -30,7 +30,7 @@ public class TocFile {
 	/**
 	 * Toc File Constructor
 	 */
-	protected TocFile(String plugin, String href, boolean primary,
+	public TocFile(String plugin, String href, boolean primary,
 			String locale, String extraDir) {
 		this.plugin = plugin;
 		this.href = href;
