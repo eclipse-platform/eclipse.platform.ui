@@ -13,6 +13,7 @@ package org.eclipse.ant.ui.internal.launchConfigurations;
 
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -288,7 +289,13 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		}
 		
 		//global
-		List properties= prefs.getProperties();
+		List properties= null;
+		if (!separateVM) {
+			properties= prefs.getProperties();
+		} else {
+			properties= Arrays.asList(prefs.getCustomProperties());
+		}
+		
 		String key;
 		for (Iterator iter = properties.iterator(); iter.hasNext();) {
 			Property property = (Property) iter.next();
@@ -314,23 +321,24 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			commandLine.append(ANT_LOGGER_CLASS);
 		}
 		commandLine.append(" -buildfile \""); //$NON-NLS-1$
-		commandLine.append(location.toOSString() + "\""); //$NON-NLS-1$
+		commandLine.append(location.toOSString() + '\"');
 		
 		if (targets != null) {
 			for (int i = 0; i < targets.length; i++) {
 				commandLine.append(" \""); //$NON-NLS-1$
 				commandLine.append(targets[i]);
-				commandLine.append("\""); //$NON-NLS-1$
+				commandLine.append('\"');
 			}
 		}
 		return commandLine;
 	}
 	
 	private void appendProperty(StringBuffer commandLine, String name, String value){
-		commandLine.append(" -D"); //$NON-NLS-1$
+		commandLine.append(" \"-D"); //$NON-NLS-1$
 		commandLine.append(name);
 		commandLine.append('='); 
 		commandLine.append(value);
+		commandLine.append('\"');
 	}
 	
 	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, int port, StringBuffer commandLine) throws CoreException {
@@ -347,8 +355,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		delegate.launch(copy, ILaunchManager.RUN_MODE, launch, monitor);
 		IProcess[] processes= launch.getProcesses();
 		for (int i = 0; i < processes.length; i++) {
-			IProcess process = processes[i];
-			setProcessAttributes(process, idStamp, null);
+			setProcessAttributes(processes[i], idStamp, null);
 		}
 	}
 }
