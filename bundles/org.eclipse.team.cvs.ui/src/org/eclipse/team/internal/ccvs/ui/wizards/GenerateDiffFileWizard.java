@@ -25,6 +25,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -244,6 +245,8 @@ public class GenerateDiffFileWizard extends Wizard {
             setupClipboardControls(composite);    			
             setupFilesystemControls(composite);
             setupWorkspaceControls(composite);
+            
+            Dialog.applyDialogFont(parent);
             
             initializeDefaultValues();
             
@@ -518,6 +521,8 @@ public class GenerateDiffFileWizard extends Wizard {
             contextDiffOption.setText(Policy.bind("Context_14")); //$NON-NLS-1$
             regularDiffOption = new Button(diffTypeGroup, SWT.RADIO);
             regularDiffOption.setText(Policy.bind("Standard_15")); //$NON-NLS-1$
+            
+            Dialog.applyDialogFont(parent);
         }
         
         /**
