@@ -17,7 +17,8 @@ import org.eclipse.help.internal.ui.util.*;
  * The methods on this class interact with the actual
  * UI component handling the display
  */
-public class DefaultHelp implements IHelp {
+public class DefaultHelp implements IHelp
+ {
 	private static DefaultHelp instance;
 	private ContextHelpDialog f1Dialog = null;
 	private int idCounter = 0;
@@ -29,9 +30,67 @@ public class DefaultHelp implements IHelp {
 		instance = this;
 	}
 	
-					
+	/**
+	 * Singleton method
+	 */				
 	public static DefaultHelp getInstance() {
 		return instance;
+	}
+
+	/**
+	 * Displays help.
+	 */
+	public void displayHelp() {
+		displayHelp(null);
+	}
+	
+	/**
+	 * Displays the specified table of contents.
+	 */
+	public void displayHelp(String tocFileHref) {
+		displayHelp(tocFileHref, null);
+	}
+	/**
+	 * Display help and selected specified topic.
+	 */
+	public void displayHelp(String toc, String topic) {
+		// Do not start help view if documentaton is not available, display error
+		if (getTocs().length == 0) {
+			// There is no documentation
+			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
+			//Documentation is not installed.
+			return;
+		}
+		
+		if (!AppServer.isRunning())
+			return; // may want to display an error message
+			
+		String base = "http://"
+				+ AppServer.getHost()
+				+ ":"
+				+ AppServer.getPort();
+				
+		String query = "";
+		if (toc != null)
+		{
+			query="?toc="+toc;
+			if (topic != null)
+				query = query + "&topic="+encodeTopicParameter(topic);
+		}
+		else
+		{
+			if (topic != null)
+				query = "?topic="+encodeTopicParameter(topic);
+		}
+		
+		String url ="http://"
+				+ AppServer.getHost()
+				+ ":"
+				+ AppServer.getPort()
+				+"/help"
+				+ query;
+				  
+		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
 	}
 	
 	/**
@@ -87,69 +146,7 @@ public class DefaultHelp implements IHelp {
 				+ topic.getHref();
 		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
 	}
-	/**
-	 * Display help.
-	 */
-	public void displayHelp(String tocFileHref) {
-		displayHelp(tocFileHref, null);
-	}
-	/**
-	 * Display help and selected specified topic.
-	 */
-	public void displayHelp(String toc, String topic) {
-		// Do not start help view if documentaton is not available, display error
-		if (getTocs().length == 0) {
-			// There is no documentation
-			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
-			//Documentation is not installed.
-			return;
-		}
-		
-		if (!AppServer.isRunning())
-			return; // may want to display an error message
-			
-		String base = "http://"
-				+ AppServer.getHost()
-				+ ":"
-				+ AppServer.getPort();
-				
-		String query = "";
-		if (toc != null)
-		{
-			query="?toc="+toc;
-			if (topic != null)
-				query = query + "&topic="+encodeTopicParameter(topic);
-		}
-		else
-		{
-			if (topic != null)
-				query = "?topic="+encodeTopicParameter(topic);
-		}
-		
-		String url ="http://"
-				+ AppServer.getHost()
-				+ ":"
-				+ AppServer.getPort()
-				+"/help"
-				+ query;
-				  
-		WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
-	}
 	
-	/**
-	 * Display search results
-	 */
-	public void displaySearch(String query)
-	{
-		displaySearch(query, null);
-	}
-	
-	/**
-	 * Displays search results and selects specified topic
-	 */
-	public void displaySearch(String query, String selectedResult)
-	{
-	}
 	
 	/**
 	 * Computes context information for a given context ID.
@@ -184,7 +181,7 @@ public class DefaultHelp implements IHelp {
 			if (topic == null)
 				return null;
 				
-			if (topic.startsWith("http://"))
+			if (topic.startsWith("http://") || topic.startsWith("file:"))
 				return topic;
 				
 			if (topic.startsWith("../"))

@@ -5,18 +5,17 @@ package org.eclipse.help.internal.ui;
  */
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.ui.*;
+import org.eclipse.ui.help.*;
 
 /**
  * ShowHelp
  */
 public class HelpContentsAction //extends Action
 implements IWorkbenchWindowActionDelegate, IExecutableExtension {
-	private String topicsURL;
 	
 	public HelpContentsAction() {
 	}
@@ -39,17 +38,7 @@ implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 		BusyIndicator.showWhile(null, new Runnable() {
 			public void run() {
 				try {
-					//Help.displayHelp(topicsURL);
-					if (!AppServer.isRunning())
-						return; // may want to display an error message
-						
-					String url = 
-						"http://"
-							+ AppServer.getHost()
-							+ ":"
-							+ AppServer.getPort()
-							+ "/help";
-					WorkbenchHelpPlugin.getDefault().getHelpBrowser().displayURL(url);
+					WorkbenchHelp.getHelpSupport().displayHelp();
 				} catch (Exception e) {
 				}
 			}
@@ -80,6 +69,5 @@ implements IWorkbenchWindowActionDelegate, IExecutableExtension {
 		IConfigurationElement cfig,
 		String propertyName,
 		Object data) {
-		topicsURL = (String) data;
 	}
 }
