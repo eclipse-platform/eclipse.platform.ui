@@ -22,19 +22,19 @@ package org.eclipse.ui.contexts;
  */
 public final class NotDefinedException extends Exception {
 
-	/**
-	 * Creates a new instance of this class with no specified detail message.
-	 */
-	public NotDefinedException() {
-	}
+    /**
+     * Creates a new instance of this class with no specified detail message.
+     */
+    public NotDefinedException() {
+    }
 
-	/**
-	 * Creates a new instance of this class with the specified detail message.
-	 * 
-	 * @param s
-	 *            the detail message.
-	 */
-	public NotDefinedException(String s) {
-		super(s);
-	}
+    /**
+     * Creates a new instance of this class with the specified detail message.
+     * 
+     * @param s
+     *            the detail message.
+     */
+    public NotDefinedException(String s) {
+        super(s);
+    }
 }

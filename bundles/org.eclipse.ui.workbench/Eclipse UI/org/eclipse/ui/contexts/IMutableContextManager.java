@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.eclipse.ui.internal.contexts.ContextManagerFactory;
 
-
 /**
  * An instance of this interface allows clients to manage contexts, as defined
  * by the extension point <code>org.eclipse.ui.contexts</code>.
@@ -28,13 +27,14 @@ import org.eclipse.ui.internal.contexts.ContextManagerFactory;
  */
 public interface IMutableContextManager extends IContextManager {
 
-	/**
-	 * Sets the set of identifiers to enabled contexts.
-	 * 
-	 * @param enabledContextIds
-	 *            the set of identifiers to enabled contexts. This set may be
-	 *            empty, but it must not be <code>null</code>. If this set
-	 *            is not empty, it must only contain instances of <code>String</code>.
-	 */
-	void setEnabledContextIds(Set enabledContextIds);
+    /**
+     * Sets the set of identifiers to enabled contexts.
+     * 
+     * @param enabledContextIds
+     *            the set of identifiers to enabled contexts. This set may be
+     *            empty, but it must not be <code>null</code>. If this set is
+     *            not empty, it must only contain instances of
+     *            <code>String</code>.
+     */
+    void setEnabledContextIds(Set enabledContextIds);
 }

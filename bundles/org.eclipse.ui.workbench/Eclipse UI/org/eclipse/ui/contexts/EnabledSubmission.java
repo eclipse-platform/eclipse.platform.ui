@@ -71,8 +71,8 @@ public final class EnabledSubmission implements Comparable {
      * @param contextId
      * @param activeShell
      */
-    public EnabledSubmission(Shell activeShell, IWorkbenchSite activeWorkbenchSite,
-            String contextId) {
+    public EnabledSubmission(Shell activeShell,
+            IWorkbenchSite activeWorkbenchSite, String contextId) {
         if (contextId == null) throw new NullPointerException();
 
         this.activeShell = activeShell;

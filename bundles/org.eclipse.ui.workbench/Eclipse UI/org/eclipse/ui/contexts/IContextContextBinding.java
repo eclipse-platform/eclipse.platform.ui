@@ -23,20 +23,19 @@ package org.eclipse.ui.contexts;
  */
 public interface IContextContextBinding extends Comparable {
 
-	/**
-	 * Returns the identifier of the child context represented in this binding.
-	 * 
-	 * @return the identifier of the child context represented in this binding.
-	 *         Guaranteed not to be <code>null</code>.
-	 */
-	String getChildContextId();
+    /**
+     * Returns the identifier of the child context represented in this binding.
+     * 
+     * @return the identifier of the child context represented in this binding.
+     *         Guaranteed not to be <code>null</code>.
+     */
+    String getChildContextId();
 
-	/**
-	 * Returns the identifier of the parent context represented in this
-	 * binding.
-	 * 
-	 * @return the identifier of the parent context represented in this
-	 *         binding. Guaranteed not to be <code>null</code>.
-	 */
-	String getParentContextId();
+    /**
+     * Returns the identifier of the parent context represented in this binding.
+     * 
+     * @return the identifier of the parent context represented in this binding.
+     *         Guaranteed not to be <code>null</code>.
+     */
+    String getParentContextId();
 }
