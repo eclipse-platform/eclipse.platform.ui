@@ -34,6 +34,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Location;
@@ -57,7 +60,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.ext.LexicalHandler;
 
 /**
- * Derived from the original Ant ProjectHelper2 class
+ * Derived from the original Ant ProjectHelper2 with help from the JAXPUtils class.
  * This class provides parsing for using a String as a source and provides
  * handlers that will continue parsing to completion upon hitting errors.
  */
@@ -66,7 +69,7 @@ public class ProjectHelper extends ProjectHelper2 {
 	/**
 	 * helper for path -> URI and URI -> path conversions.
 	 */
-	private static FileUtils fu = FileUtils.newFileUtils();
+	private static FileUtils fu= null;
 	
 	/**
 	 * The buildfile that is to be parsed. Must be set if parsing is to
@@ -385,7 +388,7 @@ public class ProjectHelper extends ProjectHelper2 {
 		public InputSource resolveEntity(String publicId, String systemId) {
 			InputSource source= super.resolveEntity(publicId, systemId);
 			if (source != null) {
-				String path = fu.fromURI(source.getSystemId());
+				String path = getFileUtils().fromURI(source.getSystemId());
 				getAntModel().addEntity(currentEntityName, path);
 			}
 			return source;
@@ -485,11 +488,18 @@ public class ProjectHelper extends ProjectHelper2 {
             /**
              * SAX 2 style parser used to parse the given file.
              */
-            XMLReader parser = JAXPUtils.getNamespaceXMLReader();
-
+            
+        	//We cannot use the JAXPUtils support here as the underlying parser factory is cached and 
+        	//will not reflect classpath changes that effect which XML parser will be returned.
+        	//see bug 59764
+        	//XMLReader parser = JAXPUtils.getNamespaceXMLReader();
+        	XMLReader parser= getNamespaceXMLReader();
+        	if (parser == null) {
+        		throw new BuildException(ProjectHelperMessages.getString("ProjectHelper.0")); //$NON-NLS-1$
+        	}
             String uri = null;
             if (buildFile != null) {
-                uri = fu.toURI(buildFile.getAbsolutePath());
+                uri = getFileUtils().toURI(buildFile.getAbsolutePath());
             }
 
             inputSource = new InputSource(stream);
@@ -576,9 +586,64 @@ public class ProjectHelper extends ProjectHelper2 {
 	public static void setAntModel(AntModel antModel) {
 		fgAntModel= antModel;
 		((ProjectHelper.ElementHandler)elementHandler).reset();
+		fu= null;
 	}
 
 	public static AntModel getAntModel() {
 		return fgAntModel;
 	}
+	
+	private static FileUtils getFileUtils() {
+		if (fu == null) {
+			fu= FileUtils.newFileUtils();
+		}
+		return fu;
+	}
+	
+	 /**
+     * Returns a newly created SAX 2 XMLReader, which is namespace aware
+     *
+     * @return a SAX 2 XMLReader.
+     * @since Ant 1.6 from org.apache.tools.ant.util.JAXPUtils
+     */
+    private XMLReader getNamespaceXMLReader() throws BuildException {
+        try {
+            return newSAXParser(getNSParserFactory()).getXMLReader();
+        } catch (SAXException e) {
+        }
+        return null;
+    }
+    
+    /**
+     * Returns the parser factory to use to create namespace aware parsers.
+     *
+     * @return a SAXParserFactory to use which supports manufacture of
+     * namespace aware parsers
+     *
+     * @since Ant 1.6 from org.apache.tools.ant.util.JAXPUtils
+     */
+    private SAXParserFactory getNSParserFactory() throws BuildException {
+
+    	SAXParserFactory nsParserFactory = JAXPUtils.newParserFactory();
+        nsParserFactory.setNamespaceAware(true);
+        
+        return nsParserFactory;
+    }
+    
+    /**
+     * @return a new SAXParser instance as helper for getParser and
+     * getXMLReader.
+     *
+     * @since Ant 1.5 from org.apache.tools.ant.util.JAXPUtils
+     */
+    private SAXParser newSAXParser(SAXParserFactory factory) {
+        try {
+            return factory.newSAXParser();
+        } catch (ParserConfigurationException e) {
+          
+        } catch (SAXException e) {
+           
+        }
+        return null;
+    }
 }

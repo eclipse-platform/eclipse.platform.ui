@@ -213,6 +213,9 @@ public class AntModel {
 			parsed= false;
 			return;
 		}
+		ClassLoader parsingClassLoader= getClassLoader();
+		ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
+		Thread.currentThread().setContextClassLoader(parsingClassLoader);
 		boolean incremental= false;
 		Project project= null;
     	try {
@@ -222,7 +225,7 @@ public class AntModel {
 				if (fProjectNode == null || !fProjectNode.hasChildren()) {
 					fProjectNode= null;
 					project = new AntModelProject();
-					projectHelper= prepareForFullParse(project);
+					projectHelper= prepareForFullParse(project, parsingClassLoader);
 					textToParse= input.get(); //the entire document
 				} else {
 					project= fProjectNode.getProject();
@@ -248,6 +251,7 @@ public class AntModel {
     	} catch(BuildException e) {
 			handleBuildException(e, null);
     	} finally {
+    		Thread.currentThread().setContextClassLoader(originalClassLoader);
     		if (parsed) {
     			if (incremental) {
     	    		updateAfterIncrementalChange(region, true);
@@ -291,8 +295,8 @@ public class AntModel {
 		}
 	}
 
-	private ProjectHelper prepareForFullParse(Project project) {
-		initializeProject(project);
+	private ProjectHelper prepareForFullParse(Project project, ClassLoader parsingClassLoader) {
+		initializeProject(project, parsingClassLoader);
     	// Ant's parsing facilities always works on a file, therefore we need
     	// to determine the actual location of the file. Though the file 
     	// contents will not be parsed. We parse the passed document string
@@ -394,9 +398,8 @@ public class AntModel {
 		return editAdjustment;
 	}
 
-	private void initializeProject(Project project) {
+	private void initializeProject(Project project, ClassLoader loader) {
 		project.init();
-		ClassLoader loader= getClassLoader();
 		setTasks(project, loader);
 		setTypes(project, loader);
 	}
