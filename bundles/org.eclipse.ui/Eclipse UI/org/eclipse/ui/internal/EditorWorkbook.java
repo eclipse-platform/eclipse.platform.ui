@@ -316,7 +316,7 @@ private void doZoom() {
 			}
 			break;
 		case ACTIVE_NOFOCUS :
-			fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_BLACK);
+			fgColor = WorkbenchColors.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 			bgColors = WorkbenchColors.getActiveNoFocusEditorGradient();
 			bgPercents = WorkbenchColors.getActiveNoFocusEditorGradientPercents();
 			break;
