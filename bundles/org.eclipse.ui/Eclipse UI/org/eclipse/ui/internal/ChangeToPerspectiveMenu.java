@@ -6,7 +6,9 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
@@ -32,19 +34,39 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 	 * @see PerspectiveMenu#run(IPerspectiveDescriptor)
 	 */
 	protected void run(IPerspectiveDescriptor desc) {
-		IWorkbenchPage page = getWindow().getActivePage();
-		if (page != null)
-			page.setPerspective(desc);
-		else {
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		int mode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
+		
+		if (IPreferenceConstants.OPM_NEW_WINDOW == mode) {
 			try {
 				IAdaptable input = WorkbenchPlugin.getPluginWorkspace().getRoot();
-				getWindow().openPage(desc.getId(), input);
-			} catch(WorkbenchException e) {
-				MessageDialog.openError(
-					getWindow().getShell(),
-					WorkbenchMessages.getString("ChangeToPerspectiveMenu.errorTitle"), //$NON-NLS-1$,
-					e.getMessage());
+				IWorkbench workbench = getWindow().getWorkbench();
+				workbench.openWorkbenchWindow(desc.getId(), input);
+			} catch (WorkbenchException e) {
+				handleWorkbenchException(e);
+			}
+		} else {
+			IWorkbenchPage page = getWindow().getActivePage();
+			if (page != null) {
+				page.setPerspective(desc);
+			} else {
+				try {
+					IAdaptable input = WorkbenchPlugin.getPluginWorkspace().getRoot();
+					getWindow().openPage(desc.getId(), input);
+				} catch(WorkbenchException e) {
+					handleWorkbenchException(e);
+				}
 			}
 		}
+	}
+	
+	/**
+	 * Handles workbench exception
+	 */
+	private void handleWorkbenchException(WorkbenchException e) {
+		MessageDialog.openError(
+			getWindow().getShell(),
+			WorkbenchMessages.getString("ChangeToPerspectiveMenu.errorTitle"), //$NON-NLS-1$,
+			e.getMessage());
 	}
 }
