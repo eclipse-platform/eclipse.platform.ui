@@ -19,17 +19,39 @@ import org.osgi.framework.Bundle;
  * @since 3.0
  */
 public class Policy {
+	
+	/**
+	 * Constant for the the default setting for debug options.
+	 */
 	public static final boolean DEFAULT = false;
+	/**
+	 * Constant for the first segment of jface debug option
+	 * names.
+	 */
 	public static final String JFACE = "org.eclipse.jface";//$NON-NLS-1$
 	private static ILog log;
+	
+	/**
+	 * A flag to indicate whether unparented dialogs should
+	 * be checked.
+	 */
 	public static boolean DEBUG_DIALOG_NO_PARENT = DEFAULT;
+	
+	/**
+	 * A flag to indicate whether actions are being traced.
+	 */
 	public static boolean TRACE_ACTIONS = DEFAULT;
+	
+	/**
+	 * A flag to indicate whether toolbars are being traced.
+	 */
+	
 	public static boolean TRACE_TOOLBAR = DEFAULT;
 	static {
 		if (getDebugOption("/debug")) { //$NON-NLS-1$
 			DEBUG_DIALOG_NO_PARENT = getDebugOption("/debug/dialog/noparent"); //$NON-NLS-1$
-			TRACE_ACTIONS = getDebugOption("/trace/actions");
-			TRACE_TOOLBAR = getDebugOption("/trace/toolbarDisposal");
+			TRACE_ACTIONS = getDebugOption("/trace/actions"); //$NON-NLS-1$
+			TRACE_TOOLBAR = getDebugOption("/trace/toolbarDisposal"); //$NON-NLS-1$
 		}
 	}
 	
@@ -77,8 +99,7 @@ public class Policy {
 	private static boolean getDebugOption(String option) {
 		if(Platform.isRunning())
 			return "true".equalsIgnoreCase(Platform.getDebugOption(JFACE + option)); //$NON-NLS-1$
-		else
-			return false;
+		return false;
 	}
 	
 	/**
