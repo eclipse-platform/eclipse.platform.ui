@@ -35,7 +35,7 @@ public class SearchObject extends NamedModelObject {
 	private boolean searchInProgress;
 	private BackgroundProgressMonitor backgroundProgress;
 	private BackgroundThread searchThread;
-	private ISite[] myComputerSites = null;
+	private SiteBookmark[] myComputerSites = null;
 	private String categoryId;
 	private boolean categoryFixed;
 	private Hashtable settings = new Hashtable();
@@ -348,7 +348,7 @@ public class SearchObject extends NamedModelObject {
 		MyComputerSearchSettings settings = new MyComputerSearchSettings(this);
 		myComputer.collectSites(sites, settings, monitor);
 		if (sites.size() > 0) {
-			myComputerSites = (ISite[]) sites.toArray(new ISite[sites.size()]);
+			myComputerSites = (SiteBookmark[]) sites.toArray(new SiteBookmark[sites.size()]);
 		} else
 			myComputerSites = null;
 	}
