@@ -15,8 +15,10 @@ import java.util.Comparator;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 /**
@@ -32,8 +34,11 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 	private IFile lChildOverlap;
 	private IFile lOverlap;
 	private IFolder fLinked;
+	private IFolder fLinkOverlap1;
+	private IFolder fLinkOverlap2;
 	private IFile lLinked;
 	private IFile lChildLinked;
+	private IPath linkOverlapLocation;
 	
 	public static Test suite() {
 		return new TestSuite(BasicAliasTest.class);
@@ -48,7 +53,7 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 	 * Asserts that the two given resources are duplicates in the file system.
 	 * Asserts that both have same location, and same members.  Also asserts
 	 * that both resources are in sync with the file system.  The resource names
-	 * in the tree may be different.
+	 * in the tree may be different.  The resources may not necessarily exist.
 	 */
 	public void assertOverlap(String message, IResource resource1, IResource resource2) {
 		String errMsg = message + resource1.getFullPath().toString();
@@ -109,6 +114,8 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 		pLinked= root.getProject("LinkProject");
 		ensureExistsInWorkspace(pLinked, true);
 		fLinked = pLinked.getFolder("LinkedFolder");
+		fLinkOverlap1 = pLinked.getFolder("LinkOverlap1");
+		fLinkOverlap2 = pLinked.getFolder("LinkOverlap2");
 		lLinked = pLinked.getFile("LinkedFile");
 		lChildLinked = fLinked.getFile(lChildOverlap.getName());
 		fLinked.createLink(fOverlap.getLocation(), IResource.NONE, null);
@@ -116,9 +123,15 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 		ensureExistsInWorkspace(lChildLinked, true);
 		ensureExistsInWorkspace(buildResources(pLinked, new String[] {"/a/", "/a/a", "/a/b"}), true);
 		ensureExistsInWorkspace(buildResources(fLinked, new String[] {"/a/", "/a/a", "/a/b"}), true);
+		
+		linkOverlapLocation = getRandomLocation();
+		linkOverlapLocation.toFile().mkdirs();
+		fLinkOverlap1.createLink(linkOverlapLocation, IResource.NONE, null);
+		fLinkOverlap2.createLink(linkOverlapLocation, IResource.NONE, null);
 	}
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		Workspace.clear(linkOverlapLocation.toFile());
 	}
 	public void testCloseOpenProject() {
 	}
@@ -184,6 +197,41 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 		}
 	}
 	public void testCopyFolder() {
+		IFolder source = pNoOverlap.getFolder("CopyFolder");
+		ensureExistsInWorkspace(source, true);
+		
+		IFolder destFolder1 = fLinkOverlap1.getFolder(source.getName());
+		IFolder destFolder2 = fLinkOverlap2.getFolder(source.getName());
+		IResource[] allDest = new IResource[] {destFolder1, destFolder2};
+		assertDoesNotExistInWorkspace("1.0", allDest);
+		
+		//copy to dest 1
+		try {
+			source.copy(destFolder1.getFullPath(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.1");
+		}
+		assertExistsInWorkspace("1.2", allDest);
+		
+		try {
+			destFolder2.delete(IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.3", e);
+		}
+
+		//copy to dest 2
+		try {
+			source.copy(destFolder2.getFullPath(), IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.4");
+		}
+		assertExistsInWorkspace("1.5", allDest);
+		
+		try {
+			destFolder1.delete(IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.6", e);
+		}
 	}
 	public void testCreateDeleteFile() {
 		//file in linked folder
@@ -225,6 +273,50 @@ public class BasicAliasTest extends EclipseWorkspaceTest {
 		}
 	}
 	public void testCreateDeleteFolder() {
+		//folder in overlapping project
+		try {
+			fOverlap.delete(IResource.NONE, getMonitor());
+			//linked resources don't disappear on deletion of underlying file
+			assertTrue("1.0", fLinked.exists());
+			assertTrue("1.1", !fLinked.getLocation().toFile().exists());
+
+			fOverlap.create(IResource.NONE, true, getMonitor());
+			assertOverlap("1.2", fOverlap, fLinked);
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		//linked folder
+		try {
+			fLinked.delete(IResource.NONE, getMonitor());
+			//deleting a link should not delete file system contents
+			assertTrue("2.0", fOverlap.exists());
+			assertTrue("2.1", fOverlap.getLocation().toFile().exists());
+			
+			fLinked.createLink(fOverlap.getLocation(), IResource.NONE, getMonitor());
+			assertOverlap("1.4", fOverlap, fLinked);
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		
+		//child of linked folders
+		IFolder child1 = fLinkOverlap1.getFolder("LinkChild");
+		IFolder child2 = fLinkOverlap2.getFolder(child1.getName());
+		
+		try {
+			child1.create(IResource.NONE, true, getMonitor());
+			assertOverlap("3.0", child1, child2);
+			child1.delete(IResource.NONE, getMonitor());
+			assertTrue("3.1", !child1.exists());
+			assertTrue("3.2", !child2.exists());
+			
+			child2.create(IResource.NONE, true, getMonitor());
+			assertOverlap("3.3", child1, child2);
+			child2.delete(IResource.NONE, getMonitor());
+			assertTrue("3.4", !child1.exists());
+			assertTrue("3.5", !child2.exists());
+		} catch (CoreException e) {
+			fail("3.99", e);
+		}
 	}
 	public void testCreateDeleteLink() {
 	}
