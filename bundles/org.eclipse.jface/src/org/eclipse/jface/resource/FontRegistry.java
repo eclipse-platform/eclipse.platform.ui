@@ -244,6 +244,8 @@ public void addListener(IPropertyChangeListener listener) {
  * If none are valid return the first one regardless.
  * If the list is empty return null.
  * Return null if one cannot be found.
+ * @deprecated use bestDataArray in order to support 
+ * Motif multiple entry fonts.
  */
 public FontData bestData(FontData[] fonts, Display display) {
 	for (int i = 0; i < fonts.length; i++) {
@@ -271,6 +273,23 @@ public FontData bestData(FontData[] fonts, Display display) {
 		//Nothing specified 
 		return null;
 }
+
+/**
+ * Find the first valid fontData in the provided list. 
+ * If none are valid return the first one regardless.
+ * If the list is empty return null.
+ */
+public FontData[] bestDataArray(FontData[] fonts, Display display) {
+	
+	FontData bestData = bestData(fonts,display);
+	if(bestData == null)
+		return null;
+	else{
+		FontData[] datas = new FontData[1];
+		datas[0] = bestData;
+		return datas;
+	}
+}
 	
 /**
  * Creates a new font with the given font datas or nulk
@@ -278,17 +297,14 @@ public FontData bestData(FontData[] fonts, Display display) {
  */
 private Font createFont(String symbolicName, FontData[] fonts) {
 	Display display = Display.getCurrent();
-	FontData validData = bestData(fonts,display);
+	FontData[] validData = bestDataArray(fonts,display);
 	if(validData == null){
 		//Nothing specified 
 		return null;
 	}
 	else {
-		//Create a font data for updating the registry
-		FontData[] newEntry = new FontData[1];
-		newEntry[0] = validData;
 		//Do not fire the update from creation as it is not a property change
-		put(symbolicName,newEntry,false);
+		put(symbolicName,validData,false);
 		return new Font(display, validData);
 	}
 }
