@@ -106,9 +106,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 */
 	private IMarker fInstructionPointer;
 	private boolean fShowingEditor = false;
-	private int fLastCharStart= -1;
-	private int fLastCharEnd= -1;
-	private int fLastLine= -1;
 	
 	// marker attributes
 	private final static String[] fgStartEnd = 
@@ -688,10 +685,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				InstructionPointerManager.getDefault().addAnnotation((ITextEditor)editor, stackFrame);
 			}
 			// decorate the editor
-			decorateEditor(editor, stackFrame);
-			fLastCharStart= charStart;
-			fLastCharEnd= charEnd;
-			fLastLine= lineNumber;			
+			decorateEditor(editor, stackFrame);		
 		} finally {
 			fShowingEditor= false;
 		}
