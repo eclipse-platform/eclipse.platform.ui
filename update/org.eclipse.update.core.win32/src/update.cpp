@@ -1,8 +1,13 @@
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
-
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 
 # include <update.h>
 # include <windows.h>
@@ -66,6 +71,7 @@ jstring getLabel(TCHAR driveLetter[],JNIEnv * jnienv){
 	TCHAR buf[128];	
 	
 	// always return null as UNICODE is not implemented
+	// how can we get the label of a volume as UNICODE char ?
 	return result;
 	
 	int err = GetVolumeInformation(
@@ -218,6 +224,7 @@ jlong getFloppy(TCHAR driveLetter[]){
  	jstring result = NULL;
  	
  	// always return NULL as UNICODE not implemented
+	// how can we get the label of a remote network name as UNICODE char ? 	
  	return result;
  	
 	sprintf(drivePath, "%c:", driveLetter[0]); 	
