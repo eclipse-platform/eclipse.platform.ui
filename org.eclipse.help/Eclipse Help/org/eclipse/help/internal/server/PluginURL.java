@@ -137,10 +137,25 @@ public class PluginURL extends HelpURL {
 			}
 		}
 		
-		// first try finding the file in doc.zip
+		// first try finding the file inside nl tree in doc.zip
 		if(inputStream == null){
-			//IPath zipFilePath = new Path("$nl$/doc.zip");
-			// bug in core, $nl$ does not work
+			IPath zipFilePath = new Path("$nl$/doc.zip");
+			try{
+				URL zipFileURL = plugin.getPlugin().find(zipFilePath);
+				if(zipFileURL!=null){
+					try{
+						URL jurl =	new URL("jar", "", zipFileURL.toExternalForm()+"!/"+fileWithoutLocalePath);
+						inputStream = jurl.openStream();
+					}catch (IOException ioe){
+						inputStream = null;
+					}
+				}
+			}catch(CoreException ce){
+			}
+		}
+		
+		// second try finding the file in <plugin>/doc.zip
+		if(inputStream == null){
 			IPath zipFilePath = new Path("doc.zip");
 			try{
 				URL zipFileURL = plugin.getPlugin().find(zipFilePath);
@@ -156,10 +171,24 @@ public class PluginURL extends HelpURL {
 			}
 		}	
 		
-		// find file on a filesystem
+		// third find file on a filesystem inside nl tree
 		if(inputStream == null){
-			//IPath flatFilePath = new Path("$nl$/" + getFile()); 
-			// bug in core, $nl$ does not work
+			IPath flatFilePath = new Path("$nl$/" + getFile()); 
+			try{
+				URL flatFileURL = plugin.getPlugin().find(flatFilePath);
+				if(flatFileURL!=null)
+					try{
+						inputStream=flatFileURL.openStream();
+					} catch (IOException e){
+						inputStream = null;
+					}
+
+			}catch(CoreException ce){
+			}
+		}
+		
+		// forth find file on a filesystem outside of nl directory
+		if(inputStream == null){
 			IPath flatFilePath = new Path(getFile()); 
 			try{
 				URL flatFileURL = plugin.getPlugin().find(flatFilePath);
