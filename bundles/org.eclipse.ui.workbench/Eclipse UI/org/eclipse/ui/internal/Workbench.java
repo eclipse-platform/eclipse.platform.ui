@@ -41,7 +41,6 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
@@ -1711,8 +1710,7 @@ public final class Workbench implements IWorkbench {
 		Platform.getExtensionRegistry().removeRegistryChangeListener(extensionEventHandler);
 
 		// shutdown the rest of the workbench
-		WorkbenchColors.shutdown();
-		JFaceColors.disposeColors();
+		WorkbenchColors.shutdown();		
 		if (getDecoratorManager() != null) {
 			((DecoratorManager) getDecoratorManager()).shutdown();
 		}
@@ -1722,7 +1720,8 @@ public final class Workbench implements IWorkbench {
 		uninitializeImages();
 		if (WorkbenchPlugin.getDefault() != null) {
 			WorkbenchPlugin.getDefault().reset();
-		}		
+		}
+		WorkbenchThemeManager.getInstance().dispose();
 	}
 
 	/*

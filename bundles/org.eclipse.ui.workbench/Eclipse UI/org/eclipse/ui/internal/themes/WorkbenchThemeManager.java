@@ -17,7 +17,6 @@ import java.util.Map;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -39,14 +38,7 @@ public class WorkbenchThemeManager implements IThemeManager {
 	 * Call dispose when we close
 	 */
 	private WorkbenchThemeManager () {
-		Display display = Display.getDefault();
-		if (display != null) {
-			display.disposeExec(new Runnable() {
-				public void run() {
-					WorkbenchThemeManager.this.dispose();
-				}	
-			});
-		}		
+		//no-op
 	}
 	
 	/**
