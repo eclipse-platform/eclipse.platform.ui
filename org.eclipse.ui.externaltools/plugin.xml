@@ -135,22 +135,10 @@
 			class="org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramTabGroup">
 		</launchConfigurationTabGroup>
 		<launchConfigurationTabGroup
-			id="org.eclipse.ui.externaltools.launchConfigurationTabGroup.ant"
-			type ="org.eclipse.ant.AntLaunchConfigurationType"
-			helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant"
-			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntTabGroup">
-		</launchConfigurationTabGroup>
-		<launchConfigurationTabGroup
 			id="org.eclipse.ui.externaltools.launchConfigurationTabGroup.program.builder"
 			type ="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType"
 			helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.program_builder"
 			class="org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramBuilderTabGroup">
-		</launchConfigurationTabGroup>
-		<launchConfigurationTabGroup
-			id="org.eclipse.ui.externaltools.launchConfigurationTabGroup.ant.builder"
-			type ="org.eclipse.ant.AntBuilderLaunchConfigurationType"
-			helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant_builder"
-			class="org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntBuilderTabGroup">
 		</launchConfigurationTabGroup>
 	</extension>
 	
