@@ -30,7 +30,7 @@ public class UMEclipseTree  {
 	public static final String BIN_DIR = "bin";
 
 	public static final String URL_PROTOCOL_FILE = "file";
-	public static final String DEVICE_SEPARATOR = ":";  // assuming windoze only - that we'll not run into dfs
+	public static final String DEVICE_SEPARATOR = ":";  
 /**
  * Returns the given URL with a trailing slash appended to it. If the URL
  * already has a trailing slash the URL is returned unchanged.

@@ -1714,30 +1714,6 @@ private void synchPlugins(String[] dirlist) {
 	synch(list, pluginsPendingDelete);
 }
 
-public static void todo() {
-/*
-	* delta computation ... ignore pendingDelete, compute additions, deletions
-	*
-	* launchInfo should not do discovery/etc in a R/O install tree (only read the profile and go, must include unmanaged items)
-	*    also should have a mechanism for detecting update in flight (? ... only rewriting the profile)
-	*
-	* detecting bad failure and recovering from it	*
-	* need to hook in error recovery that recomputes all from scratch (when I can't trust state)
-	* ... but how do we know which plugins comps should be inactive vs. be reinstalled?
-	*
-	* batch uninstall
-	*
-	* time stamps on debug(), not on debugDetail()
-	*
-	* "reliability" sweep ... handling hard errors at critical points in processing
-	*    - harden state on flush (but only create new history on shutdown)
-	*    - write pending deletes before deleting
-	*    - startup - cleanup lists wrt. file state (computeAdd/ computeMissing)
-	*    - startup - bad config.properties
-	*    - backup for install.properties (needs to be manually renamed)
-	*    - startup - no state (recompute from scratch)
-*/
-}
 synchronized public void uninstall() {
 
 	// do history-based deletion sweep
