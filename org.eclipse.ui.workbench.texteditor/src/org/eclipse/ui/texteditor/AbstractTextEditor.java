@@ -2794,14 +2794,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		IExtensionPoint extensionPoint= Platform.getPluginRegistry().getExtensionPoint(PlatformUI.PLUGIN_ID, "editorActions"); //$NON-NLS-1$
 		if (extensionPoint != null) {
 			IConfigurationElement[] elements= extensionPoint.getConfigurationElements();			
-
+	
 			List actions= new ArrayList();
 			for (int i= 0; i < elements.length; i++) {
 				IConfigurationElement element= elements[i];				
 				if (TAG_CONTRIBUTION_TYPE.equals(element.getName())) {
 					if (!getSite().getId().equals(element.getAttribute("targetID"))) //$NON-NLS-1$
 						continue;
-
+	
 					IConfigurationElement[] children= element.getChildren("action"); //$NON-NLS-1$
 					for (int j= 0; j < children.length; j++) {
 						IConfigurationElement child= children[j];
@@ -2811,11 +2811,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				}
 			}
 			Collections.sort(actions, new ConfigurationElementComparator());
-
+	
 			if (actions.size() != 0) {
 				IConfigurationElement element= (IConfigurationElement) actions.get(0);
-				String defId = element.getAttribute(ActionDescriptor.ATT_DEFINITION_ID);
-				return new EditorPluginAction(element, "class", this,defId); //$NON-NLS-1$			
+				return new EditorPluginAction(element, "class", this); //$NON-NLS-1$
 			}
 		}
 		
