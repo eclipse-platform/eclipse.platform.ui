@@ -163,7 +163,9 @@ public class AnnotationPreference {
 	
 
 	/**
-	 * Creates a new uninitialized annotation preference.
+	 * Creates a new uninitialized annotation preference. Note that instances
+	 * with a <code>null</code> annotation type are invalid and should not be
+	 * used.
 	 */
 	public AnnotationPreference() {
 	}
@@ -174,7 +176,8 @@ public class AnnotationPreference {
 	 * @param annotationType the annotation type
 	 * @param colorKey the preference key for the presentation color
 	 * @param textKey the preference key for the visibility inside text
-	 * @param overviewRulerKey the preference key for the visibility in the overview ruler
+	 * @param overviewRulerKey the preference key for the visibility in the
+	 *        overview ruler
 	 * @param presentationLayer the presentation layer
 	 */
 	public AnnotationPreference(Object annotationType, String colorKey, String textKey, String overviewRulerKey, int presentationLayer) {
@@ -300,9 +303,11 @@ public class AnnotationPreference {
 	}
 	
 	/**
-	 * Returns the annotation type.
+	 * Returns the annotation type. Should not be null in a completely set up
+	 * instance.
 	 * 
-	 * @return the annotation type
+	 * @return the annotation type, <code>null</code> if the receiver has not
+	 *         been initialized yet
 	 */
 	public Object getAnnotationType() {
 		return fAnnotationType;
@@ -311,7 +316,7 @@ public class AnnotationPreference {
 	/**
 	 * Returns the marker type.
 	 * 
-	 * @return the marker type
+	 * @return the marker type, or <code>null</code> if none is set
 	 * @deprecated since 3.0
 	 */
 	public String getMarkerType() {
@@ -329,7 +334,9 @@ public class AnnotationPreference {
 	}
 	
 	/**
-	 * Sets the annotation type.
+	 * Sets the annotation type. Note that instances with a <code>null</code>
+	 * annotation type are considered invalid and should not be used with the
+	 * framework.
 	 * 
 	 * @param annotationType the annotation type
 	 */
@@ -347,7 +354,7 @@ public class AnnotationPreference {
 	}
 	
 	/**
-	 * Sets the marker serverity.
+	 * Sets the marker severity.
 	 * 
 	 * @param severity the marker severity
 	 */
@@ -358,7 +365,8 @@ public class AnnotationPreference {
 	/**
 	 * Returns the preference key for the presentation color.
 	 * 
-	 * @return the preference key for the presentation color
+	 * @return the preference key for the presentation color or <code>null</code>
+	 *         if none is set
 	 */
 	public String getColorPreferenceKey() {
 		return getStringValue(COLOR_PREFERENCE_KEY);
@@ -367,7 +375,8 @@ public class AnnotationPreference {
 	/**
 	 * Returns the default presentation color.
 	 * 
-	 * @return the default presentation color.
+	 * @return the default presentation color or <code>null</code> if none is
+	 *         set
 	 */
 	public RGB getColorPreferenceValue() {
 		return (RGB) getValue(COLOR_PREFERENCE_VALUE);
@@ -376,7 +385,8 @@ public class AnnotationPreference {
 	/**
 	 * Returns the presentation string for this annotation type.
 	 * 
-	 * @return the presentation string for this annotation type
+	 * @return the presentation string for this annotation type or <code>null</code>
+	 *         if none is set
 	 */
 	public String getPreferenceLabel() {
 		return getStringValue(PREFERENCE_LABEL);
@@ -385,7 +395,8 @@ public class AnnotationPreference {
 	/**
 	 * Returns the preference key for the visibility in the overview ruler.
 	 * 
-	 * @return the preference key for the visibility in the overview ruler
+	 * @return the preference key for the visibility in the overview ruler or
+	 *         <code>null</code> if none is set
 	 */
 	public String getOverviewRulerPreferenceKey() {
 		return getStringValue(OVERVIEW_RULER_PREFERENCE_KEY);
@@ -403,7 +414,8 @@ public class AnnotationPreference {
 	/**
 	 * Returns the preference key for the visibility in the vertical ruler.
 	 * 
-	 * @return the preference key for the visibility in the vertical ruler
+	 * @return the preference key for the visibility in the vertical ruler or
+	 *         <code>null</code> if none is set
 	 * @since 3.0
 	 */
 	public String getVerticalRulerPreferenceKey() {
@@ -432,7 +444,8 @@ public class AnnotationPreference {
 	/**
 	 * Returns the preference key for the visibility inside text.
 	 * 
-	 * @return the preference key for the visibility inside text
+	 * @return the preference key for the visibility inside text or <code>null</code>
+	 *         if none is set
 	 */
 	public String getTextPreferenceKey() {
 		return getStringValue(TEXT_PREFERENCE_KEY);
@@ -450,7 +463,8 @@ public class AnnotationPreference {
 	/**
 	 * Returns the preference key for highlighting inside text.
 	 * 
-	 * @return the preference key for highlighting inside text
+	 * @return the preference key for highlighting inside text or <code>null</code>
+	 *         if none is set
 	 * @since 3.0
 	 */
 	public String getHighlightPreferenceKey() {
@@ -723,7 +737,7 @@ public class AnnotationPreference {
 	 * 
 	 * @return the image descriptor or <code>null</code>
 	 * @since 3.0
-	 **/
+	 */
 	public ImageDescriptor getImageDescriptor() {
 		return (ImageDescriptor) getValue(IMAGE_DESCRIPTOR);
 	}

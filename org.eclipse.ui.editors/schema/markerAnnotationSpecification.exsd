@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.editors" id="markerAnnotationSpecification" name="Marker Annotation Specification"/>
       </appInfo>
       <documentation>
-         This extension point is used to define presentation properties of markers. Extensions provided for this extension point can be accessed using org.eclipse.ui.texteditor.MarkerAnnotationPreferences.
+         This extension point is used to define presentation properties of markers. Extensions provided for this extension point can be accessed using org.eclipse.ui.texteditor.AnnotationPreferenceLookup; using the older org.eclipse.ui.texteditor.MarkerAnnotationPreferences is not encouraged.
       </documentation>
    </annotation>
 
@@ -51,14 +51,14 @@
          <attribute name="colorPreferenceKey" type="string">
             <annotation>
                <documentation>
-                  
+                  The color preference key must be provided by either the annotation specification itself or by its parent specification, otherwise it will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences().
                </documentation>
             </annotation>
          </attribute>
          <attribute name="overviewRulerPreferenceKey" type="string">
             <annotation>
                <documentation>
-                  
+                  The overview ruler preference key must be provided by either the annotation specification itself or by its parent specification, otherwise it will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences().
                </documentation>
             </annotation>
          </attribute>
@@ -73,7 +73,7 @@ since: 3.0
          <attribute name="textPreferenceKey" type="string">
             <annotation>
                <documentation>
-                  
+                  The text preference key must be provided by either the annotation specification itself or by its parent specification, otherwise it will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences().
                </documentation>
             </annotation>
          </attribute>
@@ -102,7 +102,7 @@ since: 3.0
          <attribute name="colorPreferenceValue" type="string">
             <annotation>
                <documentation>
-                  
+                  The color preference value must be provided by either the annotation specification itself or by its parent specification, otherwise it will not be included in the List returned from MarkerAnnotationPreferences.getAnnotationPreferences().
                </documentation>
             </annotation>
          </attribute>

@@ -129,7 +129,7 @@ public class MarkerAnnotationPreferences {
 				AnnotationPreference spec= createSpec(elements[i]);
 				if (spec != null)
 					fFragments.add(spec);
-				if (spec.getColorPreferenceKey() != null)
+				if (isComplete(spec))
 					fPreferences.add(spec);
 			}
 		}
@@ -163,6 +163,21 @@ public class MarkerAnnotationPreferences {
 		});
 	}
 	
+	/**
+	 * Checks if <code>spec</code> has all the attributes previously required
+	 * by the marker annotation preference extension point. These are: color, text
+	 * and overview ruler preference keys.
+	 * 
+	 * @param spec the <code>AnnotationPreference</code> to check
+	 * @return <code>true</code> if <code>spec</code> is complete, <code>false</code> otherwise
+	 */
+	private boolean isComplete(AnnotationPreference spec) {
+		return spec.getColorPreferenceKey() != null
+				&& spec.getColorPreferenceValue() != null
+				&& spec.getTextPreferenceKey() != null
+				&& spec.getOverviewRulerPreferenceKey() != null;
+	}
+
 	/**
 	 * Creates a <code>AnnotationPreference</code> the given configuration element.
 	 * 
