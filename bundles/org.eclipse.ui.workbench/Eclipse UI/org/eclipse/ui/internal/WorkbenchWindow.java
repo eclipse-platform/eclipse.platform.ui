@@ -81,9 +81,6 @@ import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.commands.IMutableCommandHandlerService;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.IWorkbenchWindowCommandSupport;
-import org.eclipse.ui.contexts.ContextActivationServiceFactory;
-import org.eclipse.ui.contexts.IMutableContextActivationService;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.contexts.IWorkbenchWindowContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
@@ -485,8 +482,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	void setHandlersByCommandId() {
 		Map handlersByCommandId = new HashMap();
 		handlersByCommandId.putAll(actionSetHandlersByCommandId);
-		handlersByCommandId.putAll(globalActionHandlersByCommandId);		
-		actionSetAndGlobalActionCommandHandlerService.setHandlersByCommandId(handlersByCommandId);		
+		handlersByCommandId.putAll(globalActionHandlersByCommandId);
+		actionSetAndGlobalActionCommandHandlerService.setHandlersByCommandId(handlersByCommandId);
 	}	
 	
 	/*
@@ -934,46 +931,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	public IPartService getPartService() {
 		return partService;
 	}
-
-	/* TODO remove these methods:
-	private KeyBindingService getKeyBindingService() {
-		if (keyBindingService == null) {
-			IMutableCommandHandlerService mutableCommandHandlerService =
-				CommandHandlerServiceFactory.getMutableCommandHandlerService();
-			IWorkbenchCommandSupport workbenchCommandSupport =
-				(IWorkbenchCommandSupport) getWorkbenchImpl()
-					.getCommandSupport();
-			workbenchCommandSupport
-				.getCompoundCommandHandlerService()
-				.addCommandHandlerService(mutableCommandHandlerService);
-			IMutableContextActivationService mutableContextActivationService =
-				ContextActivationServiceFactory
-					.getMutableContextActivationService();
-			IWorkbenchContextSupport workbenchContextSupport =
-				(IWorkbenchContextSupport) getWorkbenchImpl()
-					.getContextSupport();
-			workbenchContextSupport
-				.getCompoundContextActivationService()
-				.addContextActivationService(mutableContextActivationService);
-			keyBindingService =
-				new KeyBindingService(
-					mutableCommandHandlerService,
-					mutableContextActivationService);
-			updateActiveActions();
-		}
-
-		return keyBindingService;
-	}
-
-	private void updateActiveActions() {
-		if (keyBindingService == null)
-			getKeyBindingService();
-		else {
-			IActionSet actionSets[] = actionPresentation.getActionSets();
-			registerActionSets(actionSets);
-		}
-	}
-	*/
 
 	/**
 	 * Returns the layout for the shell.

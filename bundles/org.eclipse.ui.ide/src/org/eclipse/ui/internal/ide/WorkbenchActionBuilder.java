@@ -986,7 +986,7 @@ public final class WorkbenchActionBuilder {
 		registerGlobalAction(cutAction);
 
 		copyAction = ActionFactory.COPY.create(getWindow());
-		registerGlobalAction(redoAction);
+		registerGlobalAction(copyAction);
 
 		pasteAction = ActionFactory.PASTE.create(getWindow());
 		registerGlobalAction(pasteAction);
