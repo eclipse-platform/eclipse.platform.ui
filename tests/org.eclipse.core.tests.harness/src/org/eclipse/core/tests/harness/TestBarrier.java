@@ -72,6 +72,7 @@ public class TestBarrier {
 				Thread.sleep(100);
 				Thread.yield();
 			} catch (InterruptedException e) {
+				//ignore
 			}
 			//sanity test to avoid hanging tests
 			Assert.assertTrue("Timeout waiting for status to change from "
@@ -115,6 +116,6 @@ public class TestBarrier {
 	 * that are explicitly very long running.
 	 */
 	public static void waitForStatusNoFail(int[] location, int index, int status) {
-		doWaitForStatus(location, index, status, 10000);
+		doWaitForStatus(location, index, status, 100000);
 	}
 }
