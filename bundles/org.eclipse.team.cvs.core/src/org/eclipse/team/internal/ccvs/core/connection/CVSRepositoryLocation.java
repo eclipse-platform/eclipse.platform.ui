@@ -96,6 +96,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		try {
 			temp = new URL("http://org.eclipse.team.cvs.core");//$NON-NLS-1$ 
 		} catch (MalformedURLException e) {
+			// Should never fail
 		}
 		FAKE_URL = temp;
 	} 
@@ -213,7 +214,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				return RemoteModule.getRemoteModules(this, tag, progress);
 			} else {
 				RemoteFolder root = new RemoteFolder(null, this, ICVSRemoteFolder.REPOSITORY_ROOT_FOLDER_NAME, tag);
-				ICVSRemoteResource[] resources = (ICVSRemoteResource[])root.members(progress);
+				ICVSRemoteResource[] resources = root.members(progress);
 				// There is the off chance that there is a file in the root of the repository.
 				// This is not supported by cvs so we need to make sure there are no files
 				List folders = new ArrayList(resources.length);
@@ -279,10 +280,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	public String getUsername() {
 		// If the username is mutable, get it from the cache if it's there
 		if (user == null && isUsernameMutable()) {
-			try {
-				retrievePassword();
-			} catch (CVSException e) {
-			}
+			retrievePassword();
 		}
 		return user == null ? "" : user; //$NON-NLS-1$
 	}
@@ -329,7 +327,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 					String password = retrievePassword();
 					if (user == null) {
 						// This is possible if the cache was cleared somehow for a location with a mutable username
-						throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, CVSAuthenticationException.RETRY, Policy.bind("CVSRepositoryLocation.usernameRequired"))); //$NON-NLS-1$
+						throw new CVSAuthenticationException(new CVSStatus(IStatus.ERROR, CVSAuthenticationException.RETRY, Policy.bind("CVSRepositoryLocation.usernameRequired"))); //$NON-NLS-1$
 					}
 					if (password == null)
 						password = "";//$NON-NLS-1$ 
@@ -337,16 +335,12 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 				} catch (CVSAuthenticationException ex) {
 					if (ex.getStatus().getCode() == CVSAuthenticationException.RETRY) {
 						String message = ex.getMessage();
-						try {
-							IUserAuthenticator authenticator = getAuthenticator();
-							if (authenticator == null) {
-								throw new CVSAuthenticationException(Policy.bind("Client.noAuthenticator"), CVSAuthenticationException.NO_RETRY);//$NON-NLS-1$ 
-							}
-							authenticator.promptForUserInfo(this, this, message);
-							updateCache();
-						} catch (OperationCanceledException e) {
-							throw new CVSAuthenticationException(new CVSStatus(CVSStatus.ERROR, CVSAuthenticationException.NO_RETRY, message));
+						IUserAuthenticator authenticator = getAuthenticator();
+						if (authenticator == null) {
+							throw new CVSAuthenticationException(Policy.bind("Client.noAuthenticator"), CVSAuthenticationException.NO_RETRY);//$NON-NLS-1$ 
 						}
+						authenticator.promptForUserInfo(this, this, message);
+						updateCache();
 					} else {
 						throw ex;
 					}
@@ -376,7 +370,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	 * Return the cached password from the keyring. 
 	 * Also, set the username of the receiver if the username is mutable
 	 */
-	private String retrievePassword() throws CVSException {
+	private String retrievePassword() {
 		Map map = Platform.getAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
 		if (map != null) {
 			String username = (String) map.get(INFO_USERNAME);
@@ -605,8 +599,8 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		} catch (CVSException e) {
 			// Parsing failed. Include a status that
 			// shows the passed location and the proper form
-			MultiStatus error = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.invalidFormat", new Object[] {location}), null);//$NON-NLS-1$ 
-			error.merge(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.locationForm")));//$NON-NLS-1$ 
+			MultiStatus error = new MultiStatus(CVSProviderPlugin.ID, IStatus.ERROR, Policy.bind("CVSRepositoryLocation.invalidFormat", new Object[] {location}), null);//$NON-NLS-1$ 
+			error.merge(new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.locationForm")));//$NON-NLS-1$ 
 			error.merge(e.getStatus());
 			throw new CVSException(error);
 		}
@@ -653,7 +647,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			
 			IConnectionMethod method = getPluggedInConnectionMethod(methodName);
 			if (method == null)
-				throw new CVSException(new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.methods", new Object[] {getPluggedInConnectionMethodNames()})));//$NON-NLS-1$ 
+				throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.methods", new Object[] {getPluggedInConnectionMethodNames()})));//$NON-NLS-1$ 
 			
 			// Get the user name and password (if provided)
 			partId = "CVSRepositoryLocation.parsingUser";//$NON-NLS-1$ 
@@ -710,7 +704,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			String root = location.substring(start).replace('\\', '/');
 			
 			if (validateOnly)
-				throw new CVSException(new CVSStatus(CVSStatus.OK, Policy.bind("ok")));//$NON-NLS-1$ 
+				throw new CVSException(new CVSStatus(IStatus.OK, Policy.bind("ok")));//$NON-NLS-1$ 
 				
 			return new CVSRepositoryLocation(method, user, password, host, port, root, (user != null), (password != null));
 		}
@@ -817,13 +811,13 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		
 		// Check some simple things that are not checked in creation
 		if (location == null)
-			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.nullLocation"));//$NON-NLS-1$ 
+			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.nullLocation"));//$NON-NLS-1$ 
 		if (location.equals(""))//$NON-NLS-1$ 
-			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.emptyLocation"));//$NON-NLS-1$ 
+			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.emptyLocation"));//$NON-NLS-1$ 
 		if (location.endsWith(" ") || location.endsWith("\t"))//$NON-NLS-1$  //$NON-NLS-2$ 
-			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.endWhitespace"));//$NON-NLS-1$ 
+			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.endWhitespace"));//$NON-NLS-1$ 
 		if (!location.startsWith(":") || location.indexOf(COLON, 1) == -1)//$NON-NLS-1$ 
-			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSRepositoryLocation.startOfLocation"));//$NON-NLS-1$ 
+			return new CVSStatus(IStatus.ERROR, Policy.bind("CVSRepositoryLocation.startOfLocation"));//$NON-NLS-1$ 
 
 		// Do some quick checks to provide geberal feedback
 		String formatError = Policy.bind("CVSRepositoryLocation.locationForm");//$NON-NLS-1$ 
@@ -832,18 +826,18 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		if (at != -1) {
 			String user = location.substring(secondColon + 1, at);
 			if (user.equals(""))//$NON-NLS-1$ 
-				return new CVSStatus(CVSStatus.ERROR, formatError);
+				return new CVSStatus(IStatus.ERROR, formatError);
 		} else
 			at = secondColon;
 		int colon = location.indexOf(COLON, at + 1);
 		if (colon == -1)
-			return new CVSStatus(CVSStatus.ERROR, formatError);
+			return new CVSStatus(IStatus.ERROR, formatError);
 		String host = location.substring(at + 1, colon);
 		if (host.equals(""))//$NON-NLS-1$ 
-				return new CVSStatus(CVSStatus.ERROR, formatError);
+				return new CVSStatus(IStatus.ERROR, formatError);
 		String path = location.substring(colon + 1, location.length());
 		if (path.equals(""))//$NON-NLS-1$ 
-				return new CVSStatus(CVSStatus.ERROR, formatError);
+				return new CVSStatus(IStatus.ERROR, formatError);
 				
 		// Do a full parse and see if it passes
 		try {
