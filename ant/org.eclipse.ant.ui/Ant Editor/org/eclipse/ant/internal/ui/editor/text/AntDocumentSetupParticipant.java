@@ -39,10 +39,8 @@ public class AntDocumentSetupParticipant  implements IDocumentSetupParticipant {
 			if (document instanceof IDocumentExtension3) {
 				IDocumentExtension3 extension3= (IDocumentExtension3) document;
 				extension3.setDocumentPartitioner(ANT_PARTITIONING, partitioner);
-			} else {
-				document.setDocumentPartitioner(partitioner);
-			}
-			partitioner.connect(document);
+				partitioner.connect(document);
+			} 
 		}
 	}
 	
