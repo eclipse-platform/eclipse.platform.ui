@@ -61,7 +61,7 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 				if (paths != null) {
 					for (int i = 0; i < paths.length; i++) {
 						String path = paths[i].getValue();
-						URL url = Platform.find(b, new Path(path));
+						URL url = b.getEntry(path);
 						if (url != null)
 							try {
 								urls.add(Platform.asLocalURL(url));
@@ -70,17 +70,15 @@ public class PluginClassLoaderWrapper extends URLClassLoader {
 					}
 				}
 				// dev classpath
-				String prop = System.getProperty("osgi.dev");
-				if (prop != null) {
-					String[] devpaths = prop.split(",");
-					for (int i = 0; i < devpaths.length; i++) {
-						URL url = Platform.find(b, new Path(devpaths[i]));
-						if (url != null)
-							try {
-								urls.add(Platform.asLocalURL(url));
-							} catch (IOException ioe) {
-							}
-					}
+				String[] devpaths = DevClassPathHelper
+						.getDevClassPath(pluginId);
+				for (int i = 0; i < devpaths.length; i++) {
+					URL url = b.getEntry("/");
+					if (url != null)
+						try {
+							urls.add(Platform.asLocalURL(url));
+						} catch (IOException ioe) {
+						}
 				}
 			} catch (BundleException e) {
 			}
