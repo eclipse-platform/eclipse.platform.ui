@@ -519,9 +519,9 @@ private void busySetPerspective(IPerspectiveDescriptor desc) {
 	Perspective newPersp = findPerspective(realDesc);
 	if (newPersp == null) {
 		newPersp = createPerspective(realDesc);
-		window.addPerspectiveShortcut(realDesc, this);
 		if (newPersp == null)
 			return;
+		window.addPerspectiveShortcut(realDesc, this);			
 	}
 
 	// Change layout.
@@ -860,6 +860,12 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 		}
 		return persp;
 	} catch (WorkbenchException e) {
+		if(!((Workbench)window.getWorkbench()).isStarting()) {
+			MessageDialog.openError(
+				window.getShell(), 
+				WorkbenchMessages.getString("Error"), //$NON-NLS-1$
+				WorkbenchMessages.format("Workbench.showPerspectiveError",new String[]{desc.getId()}));
+		}
 		return null;
 	}
 }
@@ -1480,6 +1486,8 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 		if (desc == null)
 			throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
 		Perspective persp = createPerspective(desc);
+		if(persp == null)
+			return;
 		perspList.setActive(persp);
 		window.firePerspectiveActivated(this, desc);
 		
@@ -2577,6 +2585,15 @@ public IWorkbenchPartReference getReference(IWorkbenchPart part) {
 	if(pane instanceof MultiEditorInnerPane) {
 		MultiEditorInnerPane innerPane = (MultiEditorInnerPane)pane;
 		return innerPane.getParentPane().getPartReference();
+	}
+	if(pane == null) { 
+		/* An error has occurred while creating the view.
+		   Reference is needed during clean up. */
+		IViewReference refs[] = getViewReferences();
+		for (int i = 0; i < refs.length; i++) {
+			if(refs[i].getPart(false) == part)
+				return refs[i];
+		}
 	}
 	return pane.getPartReference();
 }

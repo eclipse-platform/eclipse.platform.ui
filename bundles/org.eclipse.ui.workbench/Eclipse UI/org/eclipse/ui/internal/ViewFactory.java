@@ -88,6 +88,7 @@ public IStatus busyRestoreView(final IViewReference ref) {
 	final IMemento stateMem = (IMemento)mementoTable.get(viewID);
 	mementoTable.remove(viewID);
 	
+	final boolean resetPart[] = {true};
 	final IStatus result[] = new IStatus[]{new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null)};
 	Platform.run(new SafeRunnable() {
 		public void run() {
@@ -145,10 +146,15 @@ public IStatus busyRestoreView(final IViewReference ref) {
 			}
 			site.setPane(pane);
 			site.setActionBars(new ViewActionBars(page.getActionBars(), (ViewPane)pane));
+			resetPart[0] = false;
 			site.getPane().createChildControl();
 			result[0] =  new Status(IStatus.OK,PlatformUI.PLUGIN_ID,0,"",null);
 		}
 		public void handleException(Throwable e) {
+			if(resetPart[0]) {
+				((ViewReference)ref).setPart(null);
+				page.hideView(ref);
+			}
 			//Execption is already logged.
 			result[0] = new Status(
 				IStatus.ERROR,PlatformUI.PLUGIN_ID,0,
@@ -268,6 +274,8 @@ public void releaseView(String id) {
 }
 
 private class ViewReference extends WorkbenchPartReference implements IViewReference {
+	
+	boolean failedToCreate = false;
 
 	public ViewReference(String id) {
 		ViewDescriptor desc = (ViewDescriptor)viewReg.find(id);
@@ -305,9 +313,12 @@ private class ViewReference extends WorkbenchPartReference implements IViewRefer
 	public IWorkbenchPart getPart(boolean restore) {
 		if(part != null)
 			return part;
+		if(failedToCreate)
+			return null;
 		if(restore) {
 			IStatus status = restoreView(this);
 			if(status.getSeverity() == IStatus.ERROR) {
+				failedToCreate = true;
 				Workbench workbench = (Workbench)PlatformUI.getWorkbench();
 				if(!workbench.isStarting()) {
 					ErrorDialog.openError(

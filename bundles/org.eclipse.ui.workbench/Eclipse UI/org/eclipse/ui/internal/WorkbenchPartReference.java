@@ -105,6 +105,8 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference 
 	}	
 	public void setPart(IWorkbenchPart part) {
 		this.part = part;
+		if(part == null)
+			return;
 		Object listeners[] = propChangeListeners.getListeners();
 		for (int i = 0; i < listeners.length; i++) {
 			part.addPropertyListener((IPropertyListener)listeners[i]);
