@@ -61,7 +61,7 @@ public class HelpProperties extends Properties {
 			loaded = true;
 		} catch (IOException ioe00) {
 			HelpPlugin.logError(
-				HelpBaseResources.getString("File4", file.getName()),
+				HelpBaseResources.getString("File4", file.getName()), //$NON-NLS-1$
 				null);
 		} finally {
 			if (in != null)
@@ -81,12 +81,12 @@ public class HelpProperties extends Properties {
 		boolean ret = false;
 		try {
 			out = new FileOutputStream(file);
-			super.store(out, "This is a generated file; do not edit.");
+			super.store(out, "This is a generated file; do not edit."); //$NON-NLS-1$
 			ret = true;
 		} catch (IOException ioe00) {
 			HelpPlugin.logError(
 				HelpBaseResources.getString(
-					"Exception_occurred",
+					"Exception_occurred", //$NON-NLS-1$
 					name,
 					file.getAbsolutePath()),
 				ioe00);

@@ -22,7 +22,7 @@ import org.osgi.framework.*;
  */
 public class HelpBasePlugin extends Plugin {
 
-	public final static String PLUGIN_ID = "org.eclipse.help.base";
+	public final static String PLUGIN_ID = "org.eclipse.help.base"; //$NON-NLS-1$
 	// debug options
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_SEARCH = false;
@@ -58,7 +58,7 @@ public class HelpBasePlugin extends Plugin {
 	 */
 	public static synchronized void logError(String message, Throwable ex) {
 		if (message == null)
-			message = "";
+			message = ""; //$NON-NLS-1$
 		Status errorStatus =
 			new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
 		HelpBasePlugin.getDefault().getLog().log(errorStatus);
@@ -71,7 +71,7 @@ public class HelpBasePlugin extends Plugin {
 	public static synchronized void logWarning(String message) {
 		if (HelpBasePlugin.DEBUG) {
 			if (message == null)
-				message = "";
+				message = ""; //$NON-NLS-1$
 			Status warningStatus =
 				new Status(
 					IStatus.WARNING,
@@ -109,14 +109,14 @@ public class HelpBasePlugin extends Plugin {
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {
-			DEBUG_SEARCH = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/search")); //$NON-NLS-1$
+			DEBUG_SEARCH = "true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID + "/debug/search")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
 		// determine configuration location for this plug-in
 		Location location = Platform.getConfigurationLocation();
 		if(location != null){
 			URL configURL = location.getURL();
-			if(configURL != null &configURL.getProtocol().startsWith("file")){
+			if(configURL != null &configURL.getProtocol().startsWith("file")){ //$NON-NLS-1$
 				configurationDirectory = new File (configURL.getFile(), PLUGIN_ID);
 			}
 		}

@@ -25,15 +25,15 @@ public class HelpBasePreferenceInitializer
 	public void initializeDefaultPreferences() {
 		Preferences prefs = HelpBasePlugin.getDefault().getPluginPreferences();
 
-		String os = System.getProperty("os.name").toLowerCase();
-		boolean isWindows = os.indexOf("windows") != -1;
+		String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+		boolean isWindows = os.indexOf("windows") != -1; //$NON-NLS-1$
 
 		if (isWindows)
 			prefs.setDefault(
-				"custom_browser_path",
-				"\"C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE\" %1");
+				"custom_browser_path", //$NON-NLS-1$
+				"\"C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE\" %1"); //$NON-NLS-1$
 		else
-			prefs.setDefault("custom_browser_path", "mozilla %1");
+			prefs.setDefault("custom_browser_path", "mozilla %1"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 }

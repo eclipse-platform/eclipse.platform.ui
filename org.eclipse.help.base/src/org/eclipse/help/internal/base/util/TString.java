@@ -18,10 +18,10 @@ import org.eclipse.help.internal.base.*;
  */
 public class TString {
 	private static final String ALPHABET =
-		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"; //$NON-NLS-1$
 	private static final String ALPHANUMERIC =
-		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	private static final String NUMERIC = "0123456789";
+		"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; //$NON-NLS-1$
+	private static final String NUMERIC = "0123456789"; //$NON-NLS-1$
 	// change all occurrences of oldPat to newPat
 	public static String change(String in, String oldPat, String newPat) {
 		if (oldPat.length() == 0)
@@ -87,7 +87,7 @@ public class TString {
 	//   srcString = "a  m"
 	//   return = true
 	public static boolean containsDoubleBlanks(String srcString) {
-		String bb = "  ";
+		String bb = "  "; //$NON-NLS-1$
 		char b = bb.charAt(0);
 		if (srcString.length() > 0) {
 			for (int i = 0; i < (srcString.length() - 1); i++) {
@@ -178,7 +178,7 @@ public class TString {
 		if (in.startsWith(token))
 			return in.substring(token.length(), in.length());
 		else
-			throw new Exception(HelpBaseResources.getString("E019", token, word(in, 1)));
+			throw new Exception(HelpBaseResources.getString("E019", token, word(in, 1))); //$NON-NLS-1$
 		//Expected: %1 but got: %2
 	}
 	public static int numWords(String in) {
@@ -216,7 +216,7 @@ public class TString {
 		return result;
 	}
 	public static String stripSpace(String srcString) {
-		String b1 = " ";
+		String b1 = " "; //$NON-NLS-1$
 		int lastIndex = 0;
 		int newIndex = 0;
 		StringBuffer newString = new StringBuffer();
@@ -251,7 +251,7 @@ public class TString {
 	public static String stripTrailingBlanks(String src) {
 		if (src != null) {
 			while (src.length() > 0) {
-				if (src.endsWith(" "))
+				if (src.endsWith(" ")) //$NON-NLS-1$
 					src = src.substring(0, src.length() - 1);
 				else
 					break;
@@ -262,7 +262,7 @@ public class TString {
 	public static String word(String in, int i) {
 		StringTokenizer st = new StringTokenizer(in);
 		if (i <= 0 || i > st.countTokens())
-			return "";
+			return ""; //$NON-NLS-1$
 		else {
 			String ret = new String();
 			while (st.hasMoreTokens()) {
@@ -271,12 +271,12 @@ public class TString {
 					return ret;
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	public static String words(String in, int i) {
 		StringTokenizer st = new StringTokenizer(in);
 		if (i <= 0 || i > st.countTokens())
-			return "";
+			return ""; //$NON-NLS-1$
 		else {
 			while (st.hasMoreTokens()) {
 				if (--i == 0)
@@ -284,9 +284,9 @@ public class TString {
 				st.nextToken();
 			}
 			if (st.hasMoreTokens())
-				return st.nextToken("");
+				return st.nextToken(""); //$NON-NLS-1$
 			else
-				return "";
+				return ""; //$NON-NLS-1$
 		}
 	}
 	/**
@@ -303,16 +303,16 @@ public class TString {
 			String charInHex = Integer.toString(chars[j], 16).toUpperCase();
 			switch (charInHex.length()) {
 				case 1 :
-					encodedChars.append("\\u000").append(charInHex);
+					encodedChars.append("\\u000").append(charInHex); //$NON-NLS-1$
 					break;
 				case 2 :
-					encodedChars.append("\\u00").append(charInHex);
+					encodedChars.append("\\u00").append(charInHex); //$NON-NLS-1$
 					break;
 				case 3 :
-					encodedChars.append("\\u0").append(charInHex);
+					encodedChars.append("\\u0").append(charInHex); //$NON-NLS-1$
 					break;
 				default :
-					encodedChars.append("\\u").append(charInHex);
+					encodedChars.append("\\u").append(charInHex); //$NON-NLS-1$
 					break;
 			}
 		}

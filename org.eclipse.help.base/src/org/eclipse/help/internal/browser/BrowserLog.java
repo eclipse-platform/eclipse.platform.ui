@@ -23,8 +23,8 @@ public class BrowserLog {
 	private static BrowserLog instance;
 	private String logFileName;
 	private boolean newSession;
-	DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy kk:mm:ss.SS");
-	String LN=System.getProperty("line.separator");
+	DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy kk:mm:ss.SS"); //$NON-NLS-1$
+	String LN=System.getProperty("line.separator"); //$NON-NLS-1$
 	/**
 	 * Constructor
 	 */
@@ -35,7 +35,7 @@ public class BrowserLog {
 				HelpBasePlugin
 					.getDefault()
 					.getStateLocation()
-					.append("browser.log")
+					.append("browser.log") //$NON-NLS-1$
 					.toOSString();
 		} catch (Exception e) {
 			// can get here if platform is shutting down
@@ -66,14 +66,14 @@ public class BrowserLog {
 				new BufferedWriter(
 					new OutputStreamWriter(
 						new FileOutputStream(logFileName, true),
-						"UTF-8"));
+						"UTF-8")); //$NON-NLS-1$
 			if (newSession) {
 				newSession = false;
 				outWriter.write(
-					LN + formatter.format(new Date()) + " NEW SESSION"+LN);
+					LN + formatter.format(new Date()) + " NEW SESSION"+LN); //$NON-NLS-1$
 			}
 			outWriter.write(
-				formatter.format(new Date()) + " " + message + LN);
+				formatter.format(new Date()) + " " + message + LN); //$NON-NLS-1$
 			outWriter.flush();
 			outWriter.close();
 		} catch (Exception e) {

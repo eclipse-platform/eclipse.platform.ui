@@ -33,7 +33,7 @@ public class StreamConsumer extends Thread {
 			}
 			bReader.close();
 		} catch (IOException ioe) {
-			HelpBasePlugin.logError(HelpBaseResources.getString("WE001"), ioe);
+			HelpBasePlugin.logError(HelpBaseResources.getString("WE001"), ioe); //$NON-NLS-1$
 		}
 	}
 	/**

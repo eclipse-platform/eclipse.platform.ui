@@ -39,7 +39,7 @@ public class HelpDisplay {
 		if (HelpSystem.getTocs().length == 0) {
 			// There is no documentation
 			BaseHelpSystem.getDefaultErrorUtil().displayError(
-				HelpBaseResources.getString("WW001"));
+				HelpBaseResources.getString("WW001")); //$NON-NLS-1$
 			//Documentation is not installed.
 			return;
 		}
@@ -64,26 +64,26 @@ public class HelpDisplay {
 		if (toc != null)
 			try {
 				displayHelpURL(
-					"toc=" + URLEncoder.encode(toc.getHref(), "UTF-8"), forceExternal);
+					"toc=" + URLEncoder.encode(toc.getHref(), "UTF-8"), forceExternal); //$NON-NLS-1$ //$NON-NLS-2$
 			} catch (UnsupportedEncodingException uee) {
 			} else if (
 				href != null
-					&& (href.startsWith("tab=")
-						|| href.startsWith("toc=")
-						|| href.startsWith("topic=")
+					&& (href.startsWith("tab=") //$NON-NLS-1$
+						|| href.startsWith("toc=") //$NON-NLS-1$
+						|| href.startsWith("topic=") //$NON-NLS-1$
 						|| href.startsWith(
-							"contextId="))) { // assume it is a query string
+							"contextId="))) { // assume it is a query string //$NON-NLS-1$
 			displayHelpURL(href, forceExternal);
 		} else { // assume this is a topic
 			if (getNoframesURL(href) == null) {
 				try {
-					displayHelpURL("topic=" + URLEncoder.encode(href, "UTF-8"), forceExternal);
+					displayHelpURL("topic=" + URLEncoder.encode(href, "UTF-8"), forceExternal); //$NON-NLS-1$ //$NON-NLS-2$
 				} catch (UnsupportedEncodingException uee) {
 				}
-			} else if (href.startsWith("jar:file:")) {
+			} else if (href.startsWith("jar:file:")) { //$NON-NLS-1$
 				// topic from a jar to display without frames
 				displayHelpURL(
-					getBaseURL() + "nftopic/" + getNoframesURL(href), forceExternal);
+					getBaseURL() + "nftopic/" + getNoframesURL(href), forceExternal); //$NON-NLS-1$
 			} else {
 				displayHelpURL(getNoframesURL(href), forceExternal);
 			}
@@ -102,19 +102,19 @@ public class HelpDisplay {
 		if (getNoframesURL(topicURL) == null) {
 			try {
 				String url =
-					"tab=links"
-						+ "&contextId="
-						+ URLEncoder.encode(getContextID(context), "UTF-8")
-						+ "&topic="
-						+ URLEncoder.encode(topicURL, "UTF-8");
+					"tab=links" //$NON-NLS-1$
+						+ "&contextId=" //$NON-NLS-1$
+						+ URLEncoder.encode(getContextID(context), "UTF-8") //$NON-NLS-1$
+						+ "&topic=" //$NON-NLS-1$
+						+ URLEncoder.encode(topicURL, "UTF-8"); //$NON-NLS-1$
 				displayHelpURL(url, forceExternal);
 			} catch (UnsupportedEncodingException uee) {
 			}
 
-		} else if (topicURL.startsWith("jar:file:")) {
+		} else if (topicURL.startsWith("jar:file:")) { //$NON-NLS-1$
 			// topic from a jar to display without frames
 			displayHelpURL(
-				getBaseURL() + "nftopic/" + getNoframesURL(topicURL), forceExternal);
+				getBaseURL() + "nftopic/" + getNoframesURL(topicURL), forceExternal); //$NON-NLS-1$
 		} else {
 			displayHelpURL(getNoframesURL(topicURL), forceExternal);
 		}
@@ -131,10 +131,10 @@ public class HelpDisplay {
 		if (getNoframesURL(topic) == null) {
 			try {
 				String url =
-					"tab=search&"
+					"tab=search&" //$NON-NLS-1$
 						+ searchQuery
-						+ "&topic="
-						+ URLEncoder.encode(getTopicURL(topic), "UTF-8");
+						+ "&topic=" //$NON-NLS-1$
+						+ URLEncoder.encode(getTopicURL(topic), "UTF-8"); //$NON-NLS-1$
 				displayHelpURL(url, forceExternal);
 			} catch (UnsupportedEncodingException uee) {
 			}
@@ -156,22 +156,22 @@ public class HelpDisplay {
 			if (helpURL == null || helpURL.length() == 0) {
 				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(getFramesetURL());
 			} else if (
-				helpURL.startsWith("tab=")
-					|| helpURL.startsWith("toc=")
-					|| helpURL.startsWith("topic=")
-					|| helpURL.startsWith("contextId=")) {
+				helpURL.startsWith("tab=") //$NON-NLS-1$
+					|| helpURL.startsWith("toc=") //$NON-NLS-1$
+					|| helpURL.startsWith("topic=") //$NON-NLS-1$
+					|| helpURL.startsWith("contextId=")) { //$NON-NLS-1$
 				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(
-					getFramesetURL() + "?" + helpURL);
+					getFramesetURL() + "?" + helpURL); //$NON-NLS-1$
 			} else {
 				BaseHelpSystem.getHelpBrowser(forceExternal).displayURL(helpURL);
 			}
 		} catch (Exception e) {
 			BaseHelpSystem.getDefaultErrorUtil().displayError(
 				HelpBaseResources.getString(
-					"HelpDisplay.exceptionMessage"));
+					"HelpDisplay.exceptionMessage")); //$NON-NLS-1$
 			HelpBasePlugin.logError(
 				HelpBaseResources.getString(
-					"HelpDisplay.exception",
+					"HelpDisplay.exception", //$NON-NLS-1$
 					e.getMessage()),
 				e);
 		}
@@ -183,21 +183,21 @@ public class HelpDisplay {
 	}
 
 	private String getBaseURL() {
-		return "http://"
+		return "http://" //$NON-NLS-1$
 			+ WebappManager.getHost()
-			+ ":"
+			+ ":" //$NON-NLS-1$
 			+ WebappManager.getPort()
-			+ "/help/";
+			+ "/help/"; //$NON-NLS-1$
 	}
 
 	private String getFramesetURL() {
-		return getBaseURL() + "index.jsp";
+		return getBaseURL() + "index.jsp"; //$NON-NLS-1$
 	}
 
 	private String getTopicURL(String topic) {
 		if (topic == null)
 			return null;
-		if (topic.startsWith("../"))
+		if (topic.startsWith("../")) //$NON-NLS-1$
 			topic = topic.substring(2);
 		/*
 		if (topic.startsWith("/")) {
@@ -219,18 +219,18 @@ public class HelpDisplay {
 		if (href == null) {
 			return null;
 		}
-		int ix = href.indexOf("?noframes=true&");
+		int ix = href.indexOf("?noframes=true&"); //$NON-NLS-1$
 		if (ix >= 0) {
 			//remove noframes=true&
 			return href.substring(0, ix + 1)
-				+ href.substring(ix + "?noframes=true&".length());
+				+ href.substring(ix + "?noframes=true&".length()); //$NON-NLS-1$
 
 		}
-		ix = href.indexOf("noframes=true");
+		ix = href.indexOf("noframes=true"); //$NON-NLS-1$
 		if (ix > 0) {
 			//remove &noframes=true
 			return href.substring(0, ix - 1)
-				+ href.substring(ix + "noframes=true".length());
+				+ href.substring(ix + "noframes=true".length()); //$NON-NLS-1$
 		}
 		// can be displayed in frames
 		return null;

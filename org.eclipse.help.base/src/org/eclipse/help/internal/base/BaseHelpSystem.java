@@ -25,12 +25,12 @@ public final class BaseHelpSystem {
 	protected static final BaseHelpSystem instance = new BaseHelpSystem();
 
 	private final static String WEBAPP_EXTENSION_ID =
-		HelpBasePlugin.PLUGIN_ID + ".webapp";
-	private static final String WEBAPP_DEFAULT_ATTRIBUTE = "default";
+		HelpBasePlugin.PLUGIN_ID + ".webapp"; //$NON-NLS-1$
+	private static final String WEBAPP_DEFAULT_ATTRIBUTE = "default"; //$NON-NLS-1$
 
-	public final static String BOOKMARKS = "bookmarks";
-	public final static String WORKING_SETS = "workingSets";
-	public final static String WORKING_SET = "workingSet";
+	public final static String BOOKMARKS = "bookmarks"; //$NON-NLS-1$
+	public final static String WORKING_SETS = "workingSets"; //$NON-NLS-1$
+	public final static String WORKING_SET = "workingSet"; //$NON-NLS-1$
 	public final static int MODE_WORKBENCH = 0;
 	public final static int MODE_INFOCENTER = 1;
 	public final static int MODE_STANDALONE = 2;
@@ -111,7 +111,7 @@ public final class BaseHelpSystem {
 	 */
 	public static void shutdown() throws CoreException {
 		if (HelpBasePlugin.DEBUG) {
-			System.out.println("Base Help System is shutting down.");
+			System.out.println("Base Help System is shutting down."); //$NON-NLS-1$
 		}
 		// close any browsers created
 		BrowserManager.getInstance().closeAll();
@@ -120,12 +120,12 @@ public final class BaseHelpSystem {
 			getInstance().searchManager.close();
 		}
 		// stop the web apps
-		WebappManager.stop("help");
+		WebappManager.stop("help"); //$NON-NLS-1$
 		if (getMode() != MODE_WORKBENCH)
-			WebappManager.stop("helpControl");
+			WebappManager.stop("helpControl"); //$NON-NLS-1$
 
 		if (HelpBasePlugin.DEBUG) {
-			System.out.println("Help System is shut down.");
+			System.out.println("Help System is shut down."); //$NON-NLS-1$
 		}
 	}
 	/**
@@ -150,11 +150,11 @@ public final class BaseHelpSystem {
 					IStatus.ERROR,
 					HelpBasePlugin.PLUGIN_ID,
 					0,
-					HelpBaseResources.getString("E005"),
+					HelpBaseResources.getString("E005"), //$NON-NLS-1$
 					e));
 		}
 		if (HelpBasePlugin.DEBUG) {
-			System.out.println("Base Help System started.");
+			System.out.println("Base Help System started."); //$NON-NLS-1$
 		}
 	}
 	public static boolean ensureWebappRunning() {
@@ -167,22 +167,22 @@ public final class BaseHelpSystem {
 				// start the help control web app
 				try {
 					WebappManager.start(
-						"helpControl",
+						"helpControl", //$NON-NLS-1$
 						webappPlugin,
 						Path.EMPTY);
 				} catch (CoreException e) {
 					HelpBasePlugin.logError(
-						HelpBaseResources.getString("E042"),
+						HelpBaseResources.getString("E042"), //$NON-NLS-1$
 						e);
 					return false;
 				}
 			}
 			// start the help web app
 			try {
-				WebappManager.start("help", webappPlugin, Path.EMPTY);
+				WebappManager.start("help", webappPlugin, Path.EMPTY); //$NON-NLS-1$
 			} catch (CoreException e) {
-				HelpBasePlugin.logError(HelpBaseResources.getString("E043"), e);
-				BaseHelpSystem.getDefaultErrorUtil().displayError(HelpBaseResources.getString("E043"));
+				HelpBasePlugin.logError(HelpBaseResources.getString("E043"), e); //$NON-NLS-1$
+				BaseHelpSystem.getDefaultErrorUtil().displayError(HelpBaseResources.getString("E043")); //$NON-NLS-1$
 				return false;
 			}
 			getInstance().webappRunning = true;
@@ -241,7 +241,7 @@ public final class BaseHelpSystem {
 				for (int i = 0; i < elements.length; i++) {
 					String defaultValue =
 						elements[i].getAttribute(WEBAPP_DEFAULT_ATTRIBUTE);
-					if (defaultValue == null || defaultValue.equals("false")) {
+					if (defaultValue == null || defaultValue.equals("false")) { //$NON-NLS-1$
 						return elements[i]
 							.getDeclaringExtension()
 							.getNamespace();
@@ -256,7 +256,7 @@ public final class BaseHelpSystem {
 		}
 
 		// if all fails
-		return "org.eclipse.help.webapp";
+		return "org.eclipse.help.webapp"; //$NON-NLS-1$
 	}
 
 	/**
@@ -267,10 +267,10 @@ public final class BaseHelpSystem {
 	public static String getProductName() {
 		IProduct product = Platform.getProduct();
 		if (product == null) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		String name = product.getName();
-		return name == null ? "" : name;
+		return name == null ? "" : name; //$NON-NLS-1$
 	}
 
 }
