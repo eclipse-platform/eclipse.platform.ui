@@ -121,7 +121,7 @@ a file association extends an existing content type by associating new file name
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  the fully-qualified name of a class that implements &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescriber&lt;/samp&gt; or &lt;samp&gt;org.eclipse.core.runtime.content.ITextContentDescriber&lt;/samp&gt;
+                  the fully qualified name of a class that implements &lt;samp&gt;org.eclipse.core.runtime.content.IContentDescriber&lt;/samp&gt; or &lt;samp&gt;org.eclipse.core.runtime.content.ITextContentDescriber&lt;/samp&gt;
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.runtime.content.IContentDescriber"/>
@@ -191,7 +191,6 @@ a file association extends an existing content type by associating new file name
       </appInfo>
       <documentation>
          Following is an example of a XML-based content type declaration using the &lt;code&gt;XMLRootElementContentDescriber&lt;/code&gt; (a built-in describer): 
-&lt;/p&gt;
 &lt;p&gt;
 &lt;pre&gt;
    &lt;extension point=&quot;org.eclipse.core.runtime.contentTypes&quot;&gt; 
@@ -235,7 +234,7 @@ In a case like the example above, when we are just trying to associate new file 
       <documentation>
          The value of the class attribute in the describer element must represent an 
 implementor of 
-&lt;samp&gt;org.eclipse.core.runtime.content.IContentDescriber&lt;/samp&gt;.
+&lt;samp&gt;org.eclipse.core.runtime.content.IContentDescriber&lt;/samp&gt; or &lt;samp&gt;org.eclipse.core.runtime.content.ITextContentDescriber&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -255,6 +254,7 @@ Also, the org.eclipse.core.runtime plug-in provides ready-to-use implementations
 &lt;li&gt;org.eclipse.core.runtime.content.XMLRootElementContentDescriber&lt;/li&gt;
 &lt;li&gt;org.eclipse.core.runtime.content.BinarySignatureDescriber&lt;/li&gt;
 &lt;/ul&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
