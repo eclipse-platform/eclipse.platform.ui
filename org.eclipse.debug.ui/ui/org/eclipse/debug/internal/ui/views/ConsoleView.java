@@ -195,7 +195,6 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		fSelectionActions.add(ITextEditorActionConstants.CUT);
 		fSelectionActions.add(ITextEditorActionConstants.COPY);
 		fSelectionActions.add(ITextEditorActionConstants.PASTE);
-		updateAction(ITextEditorActionConstants.FIND);
 				
 		// initialize input, after viewer has been created
 		setViewerInput(DebugUITools.getCurrentProcess());
@@ -277,13 +276,13 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 				}
 			};
 	}
-
+
 	protected void updateSelectionDependentActions() {
 		Iterator iterator= fSelectionActions.iterator();
 		while (iterator.hasNext())
 			updateAction((String)iterator.next());		
 	}
-
+
 	protected void updateAction(String actionId) {
 		IAction action= (IAction)fGlobalActions.get(actionId);
 		if (action instanceof IUpdate) {
@@ -302,6 +301,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		super.dispose();
 	}
+	
 	/**
 	 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
 	 */
