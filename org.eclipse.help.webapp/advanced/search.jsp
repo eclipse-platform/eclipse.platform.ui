@@ -5,6 +5,7 @@
 <%@ include file="header.jsp"%>
 
 <% 
+	TocData tocData = new TocData(application, request);
 	SearchData data = new SearchData(application, request);
 	WebappPreferences prefs = data.getPrefs();
 %>
@@ -109,14 +110,28 @@ var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && pa
 // create list of books initilize selectedBooks variable used by advances search
 // when no filtering, selectedBooks needs to be null
 <%
-	String selectedTocsList = data.getSelectedTocsList();
-	if (selectedTocsList.equals("")) {
+	List selectedBooks=new ArrayList();
+	for (int toc=0; toc<tocData.getTocCount(); toc++) {
+		if( data.isTocSelected(toc) ){
+			selectedBooks.add(tocData.getTocHref(toc));
+		}
+	}
+	if( selectedBooks.size() < tocData.getTocCount() ) {
+	 	StringBuffer booksList = new StringBuffer();
+	 	for(Iterator it=selectedBooks.iterator(); it.hasNext();){
+			if(booksList.length()>0){
+				booksList.append(',');
+			}
+			booksList.append('"');
+			booksList.append(UrlUtil.JavaScriptEncode((String)it.next()));
+			booksList.append('"');
+		}
 %>
-var selectedBooks = null;
+var selectedBooks=new Array(<%=booksList.toString()%>);
 <%
 	} else {
 %>
-var selectedBooks=new Array(<%=selectedTocsList%>);
+var selectedBooks = null;
 <%
 	}
 %>

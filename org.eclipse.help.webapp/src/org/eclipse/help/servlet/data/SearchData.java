@@ -139,32 +139,16 @@ public class SearchData extends RequestData {
 	}
 
 	/**
-	 * Returns the list of selected TOC's as a comma-separated list
-	 */
-	public String getSelectedTocsList() {
-		String[] books = request.getParameterValues("scope");
-		StringBuffer booksList = new StringBuffer();
-		if (books != null && books.length > 0) {
-			booksList.append('"');
-			booksList.append(UrlUtil.JavaScriptEncode(books[0]));
-			booksList.append('"');
-			for (int i = 1; i < books.length; i++) {
-				booksList.append(',');
-				booksList.append('"');
-				booksList.append(UrlUtil.JavaScriptEncode(books[i]));
-				booksList.append('"');
-			}
-		}
-		return booksList.toString();
-	}
-
-	/**
 	 * Returns true if book is within a search scope
 	 */
 	public boolean isTocSelected(int toc) {
 		TocData tocData = new TocData(context, request);
 		String href = tocData.getTocHref(toc);
 		String[] books = request.getParameterValues("scope");
+		if(books==null){
+			// all books selected
+			return true;
+		}
 		for (int i = 0; i < books.length; i++) {
 			if (books[i].equals(href)) {
 				return true;
