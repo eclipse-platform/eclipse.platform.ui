@@ -152,11 +152,4 @@ public abstract class ContainerSourceContainer extends AbstractSourceContainer {
 		return fSubfolders;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
-	 */
-	public void dispose() {
-		fContainer = null;
-	}
-
 }

@@ -33,4 +33,13 @@ public abstract class AbstractSourceContainer implements ISourceContainer {
 	protected void abort(String message, Throwable exception) throws CoreException {
 		SourceLookupUtils.abort(message, exception);
 	}
+	
+	/* (non-Javadoc)
+	 * 
+	 * By default, do nothing. Subclasses should override as requried.
+	 * 
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
+	 */
+	public void dispose() {
+	}	
 }

@@ -65,10 +65,4 @@ public class WorkspaceSourceContainer extends CompositeSourceContainer {
 		return containers;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
-	 */
-	public void dispose() {
-	}
-
 }

@@ -107,11 +107,4 @@ public class DefaultSourceContainer extends CompositeSourceContainer {
 		return SourceLookupMessages.getString("DefaultSourceContainer.0"); //$NON-NLS-1$
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceContainer#dispose()
-	 */
-	public void dispose() {
-		// TODO:
-	}
 }
