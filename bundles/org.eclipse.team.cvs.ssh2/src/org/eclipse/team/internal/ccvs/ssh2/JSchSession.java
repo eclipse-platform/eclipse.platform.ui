@@ -46,22 +46,6 @@ class JSchSession {
 	private static JSch jsch=new JSch();
 	private static java.util.Hashtable pool = new java.util.Hashtable();
 
-	static String default_ssh_home = null;
-	static {
-		String ssh_dir_name = ".ssh"; //$NON-NLS-1$
-		
-		// Windows doesn't like files or directories starting with a dot.
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			ssh_dir_name = "ssh"; //$NON-NLS-1$
-		}
-		default_ssh_home = System.getProperty("user.home"); //$NON-NLS-1$
-		if (default_ssh_home != null) {
-			default_ssh_home = default_ssh_home + java.io.File.separator + ssh_dir_name;
-		} else {
-			
-		}
-	}
-
 	private static String current_ssh_home = null;
 
 	public static class SimpleSocketFactory implements SocketFactory {
@@ -233,19 +217,19 @@ class JSchSession {
 			port = SSH_DEFAULT_PORT;
 
 		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
-		String ssh_home = store.getString(CVSSSH2PreferencePage.KEY_SSH2HOME);
+		String ssh_home = store.getString(ISSHContants.KEY_SSH2HOME);
 
 		if (current_ssh_home == null || 
 			!current_ssh_home.equals(ssh_home)) {
 			current_ssh_home = ssh_home;
 			if (ssh_home.length() == 0)
-				ssh_home = default_ssh_home;
+				ssh_home = CVSSSH2Plugin.SSH_HOME_DEFAULT;
 
 			try {
 			  loadKnownHosts();
 			  
 			  java.io.File file;
-			  String pkeys=store.getString(CVSSSH2PreferencePage.KEY_PRIVATEKEY);
+			  String pkeys=store.getString(ISSHContants.KEY_PRIVATEKEY);
 			  String[] pkey=pkeys.split(","); //$NON-NLS-1$
 			  for(int i=0; i<pkey.length;i++){
 			    file = new java.io.File(ssh_home, pkey[i]);
@@ -268,31 +252,31 @@ class JSchSession {
 			if (session == null) {
 				session = jsch.getSession(username, hostname, port);
 
-				boolean useProxy = store.getString(CVSSSH2PreferencePage.KEY_PROXY).equals("true"); //$NON-NLS-1$
+				boolean useProxy = store.getString(ISSHContants.KEY_PROXY).equals("true"); //$NON-NLS-1$
 				if (useProxy) {
-					String _type = store.getString(CVSSSH2PreferencePage.KEY_PROXY_TYPE);
-					String _host = store.getString(CVSSSH2PreferencePage.KEY_PROXY_HOST);
-					String _port = store.getString(CVSSSH2PreferencePage.KEY_PROXY_PORT);
+					String _type = store.getString(ISSHContants.KEY_PROXY_TYPE);
+					String _host = store.getString(ISSHContants.KEY_PROXY_HOST);
+					String _port = store.getString(ISSHContants.KEY_PROXY_PORT);
 
-					boolean useAuth = store.getString(CVSSSH2PreferencePage.KEY_PROXY_AUTH).equals("true"); //$NON-NLS-1$
+					boolean useAuth = store.getString(ISSHContants.KEY_PROXY_AUTH).equals("true"); //$NON-NLS-1$
 					String _user = ""; //$NON-NLS-1$
 					String _pass = ""; //$NON-NLS-1$
 					
 					// Retrieve username and password from keyring.
 					Map map = Platform.getAuthorizationInfo(CVSSSH2PreferencePage.FAKE_URL, "proxy", CVSSSH2PreferencePage.AUTH_SCHEME); //$NON-NLS-1$
 				    if(map!=null){
-				      _user=(String) map.get(CVSSSH2PreferencePage.KEY_PROXY_USER);
-				      _pass=(String) map.get(CVSSSH2PreferencePage.KEY_PROXY_PASS);
+				      _user=(String) map.get(ISSHContants.KEY_PROXY_USER);
+				      _pass=(String) map.get(ISSHContants.KEY_PROXY_PASS);
 				    }
 
 					Proxy proxy = null;
 					String proxyhost = _host + ":" + _port; //$NON-NLS-1$
-					if (_type.equals(CVSSSH2PreferencePage.HTTP)) {
+					if (_type.equals(ISSHContants.HTTP)) {
 						proxy = new ProxyHTTP(proxyhost);
 						if (useAuth) {
 							((ProxyHTTP) proxy).setUserPasswd(_user, _pass);
 						}
-					} else if (_type.equals(CVSSSH2PreferencePage.SOCKS5)) {
+					} else if (_type.equals(ISSHContants.SOCKS5)) {
 						proxy = new ProxySOCKS5(proxyhost);
 						if (useAuth) {
 							((ProxySOCKS5) proxy).setUserPasswd(_user, _pass);
@@ -326,10 +310,10 @@ class JSchSession {
 
 	static void loadKnownHosts(){
 		IPreferenceStore store = CVSSSH2Plugin.getDefault().getPreferenceStore();
-		String ssh_home = store.getString(CVSSSH2PreferencePage.KEY_SSH2HOME);
+		String ssh_home = store.getString(ISSHContants.KEY_SSH2HOME);
 
 		if (ssh_home.length() == 0)
-			ssh_home = default_ssh_home;
+			ssh_home = CVSSSH2Plugin.SSH_HOME_DEFAULT;
 
 		try {
 		  java.io.File file;

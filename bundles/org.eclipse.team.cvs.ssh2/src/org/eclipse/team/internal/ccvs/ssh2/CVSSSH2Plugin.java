@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ccvs.ssh2;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -21,6 +22,22 @@ public class CVSSSH2Plugin extends AbstractUIPlugin {
 	public static String ID = "org.eclipse.team.cvs.ssh2"; //$NON-NLS-1$
 	private static CVSSSH2Plugin plugin;
 
+	static String SSH_HOME_DEFAULT = null;
+	static {
+		String ssh_dir_name = ".ssh"; //$NON-NLS-1$
+		
+		// Windows doesn't like files or directories starting with a dot.
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			ssh_dir_name = "ssh"; //$NON-NLS-1$
+		}
+		SSH_HOME_DEFAULT = System.getProperty("user.home"); //$NON-NLS-1$
+		if (SSH_HOME_DEFAULT != null) {
+		    SSH_HOME_DEFAULT = SSH_HOME_DEFAULT + java.io.File.separator + ssh_dir_name;
+		} else {
+			
+		}
+	}
+	
 	public CVSSSH2Plugin() {
 		super();
 		plugin = this;
@@ -48,7 +65,11 @@ public class CVSSSH2Plugin extends AbstractUIPlugin {
 
 	private void initializeDefaultPreferences() {
 	    IPreferenceStore store = getPreferenceStore();
-	    CVSSSH2PreferencePage.initDefaults(store);
+	    store.setDefault(ISSHContants.KEY_SSH2HOME, SSH_HOME_DEFAULT);
+	    store.setDefault(ISSHContants.KEY_PRIVATEKEY, ISSHContants.PRIVATE_KEYS_DEFAULT);
+	    store.setDefault(ISSHContants.KEY_PROXY_TYPE, ISSHContants.HTTP);
+	    store.setDefault(ISSHContants.KEY_PROXY_PORT, ISSHContants.HTTP_DEFAULT_PORT);
+	    store.setDefault(ISSHContants.KEY_PROXY_AUTH, "false"); //$NON-NLS-1$
 	}
 	
 	public void start(BundleContext context) throws Exception {
