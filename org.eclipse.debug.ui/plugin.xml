@@ -1872,10 +1872,6 @@
            viewId="org.eclipse.debug.ui.BreakpointView"
            contextId="org.eclipse.debug.ui.debugging">
      </contextViewBinding>
-     <contextViewBinding
-           viewId="org.eclipse.ui.console.ConsoleView"
-           contextId="org.eclipse.debug.ui.debugging">
-     </contextViewBinding>
   </extension>
   
    <extension
