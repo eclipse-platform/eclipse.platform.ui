@@ -110,6 +110,11 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 	 */
 	public IConfiguredSite createConfiguredSite(File file) throws CoreException {
 
+		if (!file.getName().equals("eclipse")) {
+			file = new File(file, "eclipse");
+			file.mkdirs();
+		}
+		
 		if (isDuplicateSite(file))
 			throw Utilities.newCoreException(UpdateUtils.getFormattedMessage("InstallConfiguration.location.exists", file.getPath()),null);
 		ISite site = InternalSiteManager.createSite(file);
@@ -119,7 +124,15 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 		BaseSiteLocalFactory factory = new BaseSiteLocalFactory();
 		ConfiguredSite configSite = (ConfiguredSite) factory.createConfigurationSiteModel((SiteModel) site, getDefaultPolicy());
 
-		if (site != null && configSite.verifyUpdatableStatus().isOK()) {
+		if (configSite.isNativelyLinked()) {
+			throw Utilities.newCoreException("InstallConfiguration.AlreadyNativelyLinked", null);
+		}
+		
+		if (configSite.isProductSite()) {
+			throw Utilities.newCoreException("InstallConfiguration.AlreadyProductSite", null);
+		}
+		
+		if (site != null) {
 			configSite.setPlatformURLString(site.getURL().toExternalForm());
 
 			// obtain the list of plugins
@@ -259,10 +272,7 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 				IInstallConfigurationChangedListener listener = ((IInstallConfigurationChangedListener) configurationListeners[i]);
 				listener.installSiteRemoved(site);
 			}
-
-			// remove marker and directory if we just created it
-			((ConfiguredSite)site).removePrivateSiteMarker();
-
+			
 			//activity
 			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_SITE_REMOVE);
 			activity.setLabel(site.getSite().getURL().toExternalForm());
@@ -322,8 +332,6 @@ public class InstallConfiguration extends InstallConfigurationModel implements I
 			runtimeConfiguration.unconfigureFeatureEntry(configuredFeatureEntries[i]);
 		}
 
-		URL[] oldBundlePaths = runtimeConfiguration.getPluginPath();
-		
 		// [19958] remember sites currently configured by runtime (use
 		// temp configuration object rather than a straight list to ensure
 		// correct lookup)

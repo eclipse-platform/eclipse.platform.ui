@@ -225,7 +225,7 @@ public class SiteLocalModel extends ModelObject {
 	 * @see org.eclipse.update.core.model.ModelObject#getPropertyName()
 	 */
 	protected String getPropertyName() {
-		return SiteLocalModel.CONFIG_FILE;
+		return "platform";
 	}
 
 	/*

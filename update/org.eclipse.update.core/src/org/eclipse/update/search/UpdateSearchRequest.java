@@ -313,8 +313,8 @@ public class UpdateSearchRequest {
 			// rethrow the exception, causing the search
 			// to terminate.
 			IStatus status = e.getStatus();
-			if (status == null
-				|| status.getCode() != ISite.SITE_ACCESS_EXCEPTION)
+			if (status == null)
+//				|| status.getCode() != ISite.SITE_ACCESS_EXCEPTION)
 				throw e;
 			monitor.worked(10);
 			return status;

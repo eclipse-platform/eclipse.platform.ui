@@ -30,7 +30,6 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 
 	private static final String PRODUCT_SITE_MARKER = ".eclipseproduct";
 	private static final String EXTENSION_SITE_MARKER = ".eclipseextension";
-	private static final String PRIVATE_SITE_MARKER = ".eclipseUM";
 
 	// listeners	
 	private ListenersList listeners = new ListenersList();
@@ -909,13 +908,13 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			File extensionFile = new File(file, EXTENSION_SITE_MARKER);
 			if (productFile.exists() || extensionFile.exists())
 				return file;
-			// do not check if a marker exists in the current but start from the parent
-			// the current is analyze by getProductname()
-			if (file.getParentFile() != null) {
-				File privateFile = new File(file.getParentFile(), PRIVATE_SITE_MARKER);
-				if (privateFile.exists())
-					return file.getParentFile();
-			}
+//			// do not check if a marker exists in the current but start from the parent
+//			// the current is analyze by getProductname()
+//			if (file.getParentFile() != null) {
+//				File privateFile = new File(file.getParentFile(), PRIVATE_SITE_MARKER);
+//				if (privateFile.exists())
+//					return file.getParentFile();
+//			}
 		}
 		return getSiteContaining(file.getParentFile());
 	}
@@ -930,7 +929,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		if (file == null)
 			return null;
 
-		File markerFile = new File(file, PRIVATE_SITE_MARKER);
+		File markerFile = new File(file, EXTENSION_SITE_MARKER );
 		if (!markerFile.exists()) {
 			return null;
 		}
@@ -1034,7 +1033,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			String productName = getProductIdentifier("name", productFile);
 			String productVer = getProductIdentifier("version", productFile);
 			if (productId != null) {
-				File file = new File(siteLocation, PRIVATE_SITE_MARKER);
+				File file = new File(siteLocation, EXTENSION_SITE_MARKER);
 				if (!file.exists()) {
 					OutputStream out = null;
 					OutputStreamWriter outWriter = null;
@@ -1068,40 +1067,6 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		return success;
 	}
 
-	/*
-	 * 
-	 */
-	/*package*/
-	boolean removePrivateSiteMarker() {
-
-		if (!justCreated) {
-			UpdateCore.warn("Unable to remove marker. The site was not created during this activity.");
-			return false;
-		}
-
-		URL siteURL = getSite().getURL();
-		if (siteURL == null) {
-			UpdateCore.warn("Unable to remove marker. The Site url is null.");
-			return false;
-		}
-
-		if (!"file".equalsIgnoreCase(siteURL.getProtocol())) {
-			UpdateCore.warn("Unable to remove private marker. The Site is not on the local file system.");
-			return false;
-		}
-
-		String siteLocation = siteURL.getFile();
-		File file = new File(siteLocation, PRIVATE_SITE_MARKER);
-		boolean success = false;
-		if (file.exists()) {
-			try {
-				success = file.delete();
-			} catch (Exception e) {
-				UpdateCore.warn("Unable to remove private Marker at:" + file, e);
-			}
-		}
-		return success;
-	}
 
 	/*
 	 * Returns true if the directory of the Site contains
@@ -1124,7 +1089,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * .eclipseextension
 	 */
 	public boolean isPrivateSite() {
-		return containsMarker(PRIVATE_SITE_MARKER);
+		return isExtensionSite();
 	}
 
 	/*

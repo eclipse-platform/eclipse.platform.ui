@@ -40,7 +40,7 @@ public class SiteLocalParser {
 		try {
 			url = UpdateManagerUtils.asDirectoryURL(site.getLocationURL());
 			ClassLoader l = new URLClassLoader(new URL[] { url }, null);
-			bundle = ResourceBundle.getBundle(SiteLocalModel.CONFIG_FILE, Locale.getDefault(), l);
+			bundle = ResourceBundle.getBundle("platform", Locale.getDefault(), l);
 		} catch (MissingResourceException e) {
 			UpdateCore.warn(e.getLocalizedMessage() + ":" + url.toExternalForm()); //$NON-NLS-1$
 		} catch (MalformedURLException e) {

@@ -84,7 +84,7 @@ public interface IInstallConfiguration extends IAdaptable {
 	 * configuration as a result of this call.
 	 * The linked site is only created if the directory is an
 	 * already existing extension site and if it is not already
-	 * natively linked to teh local site.
+	 * natively linked to the local site.
 	 * 
 	 * @param directory file directory
 	 * @return new linked site

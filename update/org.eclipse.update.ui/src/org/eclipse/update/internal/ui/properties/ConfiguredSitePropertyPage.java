@@ -37,8 +37,6 @@ public class ConfiguredSitePropertyPage extends PropertyPage implements IWorkben
 	}
 	
 	private String getLocationType(IConfiguredSite csite) {
-		if (csite.isPrivateSite())
-			return UpdateUI.getString("ConfiguredSitePropertyPage.private"); //$NON-NLS-1$
 		if (csite.isExtensionSite())
 			return UpdateUI.getString("ConfiguredSitePropertyPage.extension"); //$NON-NLS-1$
 		if (csite.isProductSite())
