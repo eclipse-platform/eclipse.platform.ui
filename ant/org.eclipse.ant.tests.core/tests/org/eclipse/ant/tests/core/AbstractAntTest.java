@@ -9,8 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import junit.framework.TestCase;
 
-import org.eclipse.ant.core.AntRunner;
-import org.eclipse.ant.core.TargetInfo;
+import org.eclipse.ant.core.*;
 import org.eclipse.ant.tests.core.testplugin.AntFileRunner;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.core.resources.*;
@@ -169,6 +168,13 @@ public abstract class AbstractAntTest extends TestCase {
 	
 	protected String getPropertyFileName() {
 		return getProject().getFolder("support").getFile("test.properties").getLocation().toFile().getAbsolutePath();
+	}
+	
+	protected void restorePreferenceDefaults() {
+		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
+		prefs.setCustomURLs(prefs.getDefaultCustomURLs());
+		prefs.setCustomTasks(new Task[]{});
+		prefs.setCustomTypes(new Type[]{});
 	}
 }
 
