@@ -177,16 +177,23 @@ List pruneResources(List resourceCollection) {
 	String[] orderedNames = ResourcesPlugin.getWorkspace().getDescription().getBuildOrder();
 	if (orderedNames != null) {
 		List orderedProjects = new ArrayList(resourceCollection.size());
+		//Projects may not be in the build order but should be built if selected
+		List unorderedProjects = new ArrayList(resourceCollection.size());
+		unorderedProjects.addAll(resourceCollection);
+	
 		for (int i = 0; i < orderedNames.length; i++) {
 			String projectName = orderedNames[i];
 			for (int j = 0; j < resourceCollection.size(); j++) {
 				IProject project = (IProject) resourceCollection.get(j);
 				if (project.getName().equals(projectName)) {
 					orderedProjects.add(project);
+					unorderedProjects.remove(project);
 					break;
 				}
 			}
 		}
+		//Add anything not specified before we return
+		orderedProjects.addAll(unorderedProjects);
 		return orderedProjects;
 	}
 
