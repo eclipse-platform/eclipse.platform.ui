@@ -83,8 +83,9 @@ public interface IProgressService extends IRunnableContext {
 	public Image getIconFor(Job job);
 
 	/**
-	 * Set the cursor to busy and run runnable within the UI Thread. After the
-	 * cursor has been running for <code>getLongOperationTime()<code> replace it with
+	 * Set the cursor to busy and run the runnable in the Thread that it
+	 * is called in. After the cursor has been running for 
+	 * <code>getLongOperationTime()<code> replace it with
 	 * a ProgressMonitorDialog so that the user may cancel.
 	 * Do not open the ProgressMonitorDialog if there is already a modal
 	 * dialog open.
