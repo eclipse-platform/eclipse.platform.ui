@@ -250,12 +250,14 @@ public boolean isDynamic() {
  */
 private void openEditor(IEditorDescriptor editor) {
 	IFile file = getFileResource();
+	if (file == null) {
+		return;
+	}
 	try {
-		if (editor == null) {
-			page.openEditor(new FileEditorInput(file), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
-		} else {
-			page.openEditor(new FileEditorInput(file), editor.getId());
-		}
+		String editorId = editor == null ? IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID : editor.getId();
+		page.openEditor(new FileEditorInput(file), editorId);
+		// only remember the default editor if the open succeeds
+		IDE.setDefaultEditor(file, editorId);
 	} catch (PartInitException e) {
 		DialogUtil.openError(
 			page.getWorkbenchWindow().getShell(),
