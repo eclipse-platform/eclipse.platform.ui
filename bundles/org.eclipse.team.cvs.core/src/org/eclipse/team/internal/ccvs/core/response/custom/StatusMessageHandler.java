@@ -52,23 +52,23 @@ public class StatusMessageHandler extends ResponseHandler {
 				// This is the full location on the server (e.g. /home/cvs/repo/project/file.txt)
 				String fileLocation = line.substring(separatingTabIndex + 1, line.length() - 2);
 
-				// This is the project relative path (e.g. /project/file.txt)
+				// This is the path relatrive to the ICVSResource used as the root of the command (mRoot)
 				IPath fullPath =
-					new Path(fileLocation.substring(context.getRootDirectory().length() + 1));
+					new Path(fileLocation.substring(mRoot.getRemoteLocation(mRoot).length() + 1));
 
 				// If the status returns that the file is in the Attic, then remove the
 				// Attic segment. This is because files added to a branch that are not in
 				// the main trunk (HEAD) are added to the Attic but cvs does magic on update
 				// to put them in the correct location.
 				// (e.g. /project/Attic/file.txt -> /project/file.txt)
-				if (fullPath.segment(fullPath.segmentCount() - 2).equals("Attic")) {
+				if ((fullPath.segmentCount() >= 2) && (fullPath.segment(fullPath.segmentCount() - 2).equals("Attic"))) {
 					String filename = fullPath.lastSegment();
 					fullPath = fullPath.removeLastSegments(2);
 					fullPath = fullPath.append(filename);
 				}
 
 				// Try and get the tags from the end of the status output
-				statusListener.fileStatus(fullPath.removeFirstSegments(1), remoteRevision);
+				statusListener.fileStatus(fullPath, remoteRevision);
 			}
 		}
 		return;

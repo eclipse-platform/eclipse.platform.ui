@@ -104,7 +104,8 @@ public class RemoteFolderTreeBuilder {
 			fetchDelta(connection, monitor);
 			remoteRoot = new RemoteFolderTree(null, repository, new Path(root.getFolderSyncInfo().getRepository()), tag);
 			buildRemoteTree(connection, root, remoteRoot, Path.EMPTY, monitor);
-			fetchFileRevisions(connection, remoteRoot, (String[])changedFiles.toArray(new String[changedFiles.size()]), monitor);
+			if (!changedFiles.isEmpty())
+				fetchFileRevisions(connection, remoteRoot, (String[])changedFiles.toArray(new String[changedFiles.size()]), monitor);
 			return remoteRoot;
 		} catch (CVSException e) {
 			if (!errors.isEmpty()) {

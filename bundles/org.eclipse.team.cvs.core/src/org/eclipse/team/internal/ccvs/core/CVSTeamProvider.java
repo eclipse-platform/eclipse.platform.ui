@@ -12,6 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -233,7 +235,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		
 		// Visit the children of the resources using the depth in order to
 		// determine which folders, text files and binary files need to be added
-		final Set folders = new HashSet(resources.length);
+		final SortedSet folders = new TreeSet();
 		final List textfiles = new ArrayList(resources.length);
 		final List binaryfiles = new ArrayList(resources.length);
 		final IFileTypeRegistry registry = TeamPlugin.getFileTypeRegistry();
