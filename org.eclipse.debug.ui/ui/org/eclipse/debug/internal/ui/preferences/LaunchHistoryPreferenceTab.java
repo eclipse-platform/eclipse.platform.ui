@@ -108,7 +108,7 @@ public abstract class LaunchHistoryPreferenceTab {
 		addFav.setText(DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Add_&Config_1")); //$NON-NLS-1$
 		addFav.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				handleAddFavoriteButtonSelected();
+				handleAddConfigButtonSelected();
 			}
 		});
 		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
@@ -292,14 +292,13 @@ public abstract class LaunchHistoryPreferenceTab {
 	}	
 	
 	/**
-	 * The 'add favorites' button has been pressed
+	 * The 'add config' button has been pressed
 	 */
-	protected void handleAddFavoriteButtonSelected() {
-		
+	protected void handleAddConfigButtonSelected() {
 		
 		ListSelectionDialog dialog = new ListSelectionDialog(fFavoritesTable.getControl().getShell(),
-		 getMode(), new LaunchConfigurationContentProvider(), DebugUITools.newDebugModelPresentation(),
-		 DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Select_Launch_Configurations_7")); //$NON-NLS-1$
+			getMode(), new LaunchConfigurationContentProvider(), DebugUITools.newDebugModelPresentation(),
+			DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Select_Launch_Configurations_7")); //$NON-NLS-1$
 		dialog.open();
 		Object[] selection = dialog.getResult();
 		if (selection != null) {
@@ -307,8 +306,8 @@ public abstract class LaunchHistoryPreferenceTab {
 				getFavorites().add(selection[i]);
 				getRecents().remove(selection[i]);
 			}
+			updateStatus();
 		}
-		updateStatus();
 	}	
 	
 	/**
