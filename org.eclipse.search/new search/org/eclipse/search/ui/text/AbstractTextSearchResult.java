@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.search.ui.ISearchResult;
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
@@ -134,21 +135,25 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 			matches.add(match);
 			return;
 		}
-		int insertIndex= getInsertIndex(matches, match, 0, matches.size());
+		int insertIndex= getInsertIndex(matches, match);
 		matches.add(insertIndex, match);
 	}
-	
-	private static int getInsertIndex(List matches, Match match, int min, int max) {
-		if (min == max)
-			return min;
-		int middle= (min+max)/2;
-		int compareResult= compare(match, (Match) matches.get(middle));
-		if (compareResult == 0)
-			return middle+1;
-		if (compareResult > 0)
-			return getInsertIndex(matches, match, min, middle);
-		return getInsertIndex(matches, match, middle+1, max);
+		
+	private static int getInsertIndex(List matches, Match match) {
+		int count= matches.size();
+		int min = 0, max = count - 1;
+		while (min <= max) {
+			int mid = (min + max) / 2;
+			Match data = (Match) matches.get(mid);
+			int compare = compare(match, data);
+			if (compare > 0)
+				max = mid - 1;
+			else
+				min = mid + 1;
+		}
+		return min;
 	}
+
 
 	private static int compare(Match match1, Match match2) {
 		int diff= match2.getOffset()-match1.getOffset();
