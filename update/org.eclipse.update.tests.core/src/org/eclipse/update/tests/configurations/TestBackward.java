@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.tests.configurations;
 import java.io.File;
-import java.net.URL;
+
 
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
