@@ -27,9 +27,9 @@
     <attributes>
       <attribute name="antfile" type="java.lang.String"
                  briefType="String" required="NOTDEFINED">
-        <short-description><![CDATA[The build file to use.]]></short-description>
+        <short-description><![CDATA[The buildfile to use.]]></short-description>
         <description><![CDATA[
-          The build file to use.
+          The buildfile to use.
  Defaults to "build.xml". This file is expected to be a filename relative
  to the dir attribute given.
         ]]></description>
@@ -3959,10 +3959,10 @@
                briefType=""
                required="NOTDEFINED">
         <short-description><![CDATA[Allows the manifest for the archive file to be provided inline
- in the build file rather than in an external file.]]></short-description>
+ in the buildfile rather than in an external file.]]></short-description>
         <description>
           <![CDATA[Allows the manifest for the archive file to be provided inline
- in the build file rather than in an external file.]]>
+ in the buildfile rather than in an external file.]]>
         </description>
       </element>
 
@@ -5855,10 +5855,10 @@
                briefType=""
                required="NOTDEFINED">
         <short-description><![CDATA[Allows the manifest for the archive file to be provided inline
- in the build file rather than in an external file.]]></short-description>
+ in the buildfile rather than in an external file.]]></short-description>
         <description>
           <![CDATA[Allows the manifest for the archive file to be provided inline
- in the build file rather than in an external file.]]>
+ in the buildfile rather than in an external file.]]>
         </description>
       </element>
 
@@ -6126,9 +6126,9 @@
       <element name="ant" type="org.apache.tools.ant.taskdefs.optional.extension.resolvers.AntResolver"
                briefType=""
                required="NOTDEFINED">
-        <short-description><![CDATA[Adds Ant resolver to run an Ant build file to generate a library.]]></short-description>
+        <short-description><![CDATA[Adds Ant resolver to run an Ant buildfile to generate a library.]]></short-description>
         <description>
-          <![CDATA[Adds Ant resolver to run an Ant build file to generate a library.]]>
+          <![CDATA[Adds Ant resolver to run an Ant buildfile to generate a library.]]>
         </description>
       </element>
 
@@ -14708,7 +14708,7 @@ a newline delimiter character.]]>
         <short-description><![CDATA[Name of the SQL file to be run.]]></short-description>
         <description><![CDATA[
           Set the name of the SQL file to be run.
- Required unless statements are enclosed in the build file
+ Required unless statements are enclosed in the buildfile
         ]]></description>
       </attribute>
       <attribute name="url" type="java.lang.String"
@@ -17717,10 +17717,10 @@ the parent directory is used instead
                briefType=""
                required="NOTDEFINED">
         <short-description><![CDATA[Allows the manifest for the archive file to be provided inline
- in the build file rather than in an external file.]]></short-description>
+ in the buildfile rather than in an external file.]]></short-description>
         <description>
           <![CDATA[Allows the manifest for the archive file to be provided inline
- in the build file rather than in an external file.]]>
+ in the buildfile rather than in an external file.]]>
         </description>
       </element>
 

@@ -2006,7 +2006,7 @@ to move to the &lt;var&gt;todir&lt;/var&gt; directory.&lt;/p&gt;
 	<TASK NAME="parallel">
 		<DESCRIPTION>&lt;p&gt;Parallel is a container task - it can contain other Ant tasks. Each nested
 task within the parallel task will be executed in its own thread. &lt;/p&gt;
-&lt;p&gt;Parallel tasks have a number of uses in an Ant build file including:&lt;/p&gt;
+&lt;p&gt;Parallel tasks have a number of uses in an Ant buildfile including:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Taking advantage of available processing resources to reduce build time&lt;/li&gt;
 &lt;li&gt;Testing servers, where the server can be run in one thread and the test
@@ -3481,7 +3481,7 @@ sent to a file if desired. You can also specify a subset of properties
 to save by naming a prefix: only properties starting with this
 prefix will be saved. This task can be used as a somewhat contrived
 means of returning data from an &lt;tt&gt;&amp;lt;ant&amp;gt;&lt;/tt&gt; invocation,
-but is really for debugging build files.&lt;/p&gt;
+but is really for debugging buildfiles.&lt;/p&gt;
 </DESCRIPTION>
 		<ATTRIBUTE NAME="destfile" REQUIRED="no">
 			<DESCRIPTION>If specified, the value indicates the name of thefile to send the output of the statement to.  The generated output fileis compatible for loading by any Java application as a property file.If not specified, then the output will go to the Ant log</DESCRIPTION>
@@ -4182,7 +4182,7 @@ include their locations in your &lt;code&gt;CLASSPATH&lt;/code&gt; environment v
 &lt;/li&gt;
 &lt;li&gt;
 Do neither of the above, and instead, specify their locations using
-a &lt;code&gt;&amp;lt;classpath&amp;gt;&lt;/code&gt; element in the build file.
+a &lt;code&gt;&amp;lt;classpath&amp;gt;&lt;/code&gt; element in the buildfile.
 See &lt;a href=&quot;../../faq.html#delegating-classloader&quot; target=&quot;_top&quot;&gt;the
 FAQ&lt;/a&gt; for details.
 &lt;/ol&gt;
