@@ -394,12 +394,16 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 		} else {
 			comp = (IComponentDescriptor) getData();
 		}
-		IPluginEntryDescriptor[] plugins = comp.getPluginEntries();
-		for (int i=0; i<plugins.length; i++) 
-			dirNames.addElement( UMEclipseTree.PLUGINS_DIR + "/" + plugins[i].getDirName());
-		IFragmentEntryDescriptor[] fragments = comp.getFragmentEntries();
-		for (int i=0; i<fragments.length; i++) 
-			dirNames.addElement( UMEclipseTree.FRAGMENTS_DIR + "/" + fragments[i].getDirName());	
+		if (comp != null) {
+			IPluginEntryDescriptor[] plugins = comp.getPluginEntries();
+			for (int i=0; i<plugins.length; i++) 
+				dirNames.addElement( UMEclipseTree.PLUGINS_DIR + "/" + plugins[i].getDirName());
+			IFragmentEntryDescriptor[] fragments = comp.getFragmentEntries();
+			for (int i=0; i<fragments.length; i++) 
+				dirNames.addElement( UMEclipseTree.FRAGMENTS_DIR + "/" + fragments[i].getDirName());	
+		} else {
+			strErrorMessage = UpdateManagerStrings.getString("S_Error_in_registry");
+		}
 	} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_INSTALL) {
 		IInstallable desc = (IInstallable) getData();
 		if (getData() instanceof IProductDescriptor) 
@@ -469,8 +473,10 @@ public boolean doUnzip(IProgressMonitor progressMonitor) {
 					if (progressMonitor != null) progressMonitor.worked(1);
 					continue;
 				}
+				String prefix = entryName;
 				int second_slash = entryName.indexOf("/", (entryName.indexOf("/")+1));
-				String prefix = entryName.substring(0,second_slash);
+				if (second_slash > 0) 
+					prefix = entryName.substring(0,second_slash);
 				if (!dirNames.contains(prefix)) 
 					continue;
 			} else if (getAction() == UpdateManagerConstants.OPERATION_UNZIP_INSTALL) {
