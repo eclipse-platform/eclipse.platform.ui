@@ -882,6 +882,9 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			return;
 		}
 		ISynchronizable doc= (ISynchronizable) provider.getDocument(getEditorInput());
+		if (doc == null) {
+		    return; //disposed
+		}
 		//ensure to synchronize so that the AntModel is not nulled out underneath in the AntEditorDocumentProvider
 		//when the editor/doc provider are disposed
 	    synchronized (doc.getLockObject()) {
