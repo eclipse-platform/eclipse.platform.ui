@@ -20,6 +20,7 @@ import org.eclipse.update.tests.mirror.*;
 import org.eclipse.update.tests.model.AllModelTests;
 import org.eclipse.update.tests.nestedfeatures.AllNestedTests;
 import org.eclipse.update.tests.parser.AllParserTests;
+import org.eclipse.update.tests.perfms.*;
 import org.eclipse.update.tests.reconciliation.AllReconciliationTests;
 import org.eclipse.update.tests.regularInstall.AllRegularInstallTests;
 //import org.eclipse.update.tests.regularRemove.AllRegularRemoveTests;
@@ -50,6 +51,7 @@ public class AllTests extends TestSuite {
 		suite.addTest(AllModelTests.suite());
 		suite.addTest(AllBrandingTests.suite());
 		//suite.addTest(AllStandaloneTests.suite());
+		suite.addTest(AllPerformanceTests.suite());
 		return suite;
 	}
 }
