@@ -10,11 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.internal.widgets;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 
-import org.eclipse.jface.resource.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
@@ -60,9 +65,7 @@ public class WidgetTest {
 		//layout.numColumns = 2;
 		//layout.makeColumnsEqualWidth = true;
 		form.getBody().setLayout(layout);
-
-		Label label;
-		Button b;
+		
 		TableWrapData td;
 		Hyperlink link =
 			toolkit.createHyperlink(
@@ -102,7 +105,7 @@ public class WidgetTest {
 
 	private static void createExpandable(
 		final Form form,
-		FormToolkit toolkit) {
+		final FormToolkit toolkit) {
 		ExpandableComposite exp =
 			toolkit
 				.createExpandableComposite(
@@ -118,7 +121,12 @@ public class WidgetTest {
 		TableWrapLayout elayout = new TableWrapLayout();
 		client.setLayout(elayout);
 		elayout.leftMargin = elayout.rightMargin = 0;
-		Button button = toolkit.createButton(client, "Button", SWT.PUSH);
+		final Button button = toolkit.createButton(client, "Button", SWT.PUSH);
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				openFormWizard(button.getShell(), toolkit.getColors());
+			}
+		});
 		exp.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
 				form.reflow(false);
@@ -130,6 +138,123 @@ public class WidgetTest {
 		td.align = TableWrapData.LEFT;
 		//td.align = TableWrapData.FILL;
 		exp.setLayoutData(td);
+	}
+	
+	static class FormWizard extends Wizard {
+		private FormToolkit toolkit;
+		public FormWizard(FormColors colors) {
+			toolkit = new FormToolkit(colors); 
+			setNeedsProgressMonitor(true);
+			URL banner = WidgetTest.class.getResource("migrate_30_wiz.gif");
+			ImageDescriptor bd = ImageDescriptor.createFromURL(banner);
+			setDefaultPageImageDescriptor(bd);
+			setForcePreviousAndNextButtons(true);
+		}
+		
+		public  void addPages() {
+			addPage(new FormWizardPage(toolkit));
+		}
+		public boolean performFinish() {
+			try {
+			getContainer().run(false, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InterruptedException {
+					monitor.beginTask("Processing...", 100);
+					for (int i=0; i<100; i++) {
+						Thread.sleep(100);
+						monitor.worked(1);
+					}
+					monitor.done();
+				}
+			});
+			}
+			catch (InterruptedException e) {
+				return false;
+			}
+			catch (InvocationTargetException e) {
+				return false;
+			}
+			return true;
+		}
+		
+	}
+	
+	static class FormWizardPage extends WizardPage {
+		private FormToolkit toolkit;
+		public FormWizardPage(FormToolkit toolkit) {
+			super("formPage");
+			this.toolkit = toolkit;
+			setTitle("Sample Form Page");
+			setDescription("This is a sample of a form in the wizard");
+		}
+		public void createControl(Composite parent) {
+			Form form = toolkit.createForm(parent);
+			TableWrapLayout layout = new TableWrapLayout();
+			//layout.leftMargin = 0;
+			//layout.rightMargin = 0;
+			//layout.bottomMargin = 0;
+			//layout.topMargin = 0;
+			form.getBody().setLayout(layout);
+			toolkit.createButton(form.getBody(), "An option to select", SWT.CHECK);
+			toolkit.createButton(form.getBody(), "Choice 1", SWT.RADIO);
+			toolkit.createButton(form.getBody(), "Choice 2", SWT.RADIO);
+			createExpandable(form, toolkit);
+			RichText rtext = toolkit.createRichText(form.getBody(), false);
+			loadRichText(rtext, toolkit);
+			TableWrapData td = new TableWrapData();
+			td.align = TableWrapData.FILL;
+			td.grabHorizontal = true;
+			rtext.setLayoutData(td);
+			setControl(form);
+		}
+	}
+	
+	static class ResizableWizardDialog extends WizardDialog {
+		FormColors colors;
+		public ResizableWizardDialog(Shell shell, Wizard wizard, FormColors colors) {
+			super(shell, wizard);
+			setShellStyle(getShellStyle() | SWT.RESIZE);
+			this.colors = colors;
+		}
+		protected Control createDialogArea(Composite parent) {
+			Composite c = (Composite)super.createDialogArea(parent);
+			setChildColors(c);
+			c.setBackground(colors.getBackground());
+			c.setForeground(colors.getForeground());
+			return c;
+		}
+		protected Control createButtonBar(Composite parent) {
+			Control bar = super.createButtonBar(parent);
+			bar.setBackground(colors.getBackground());
+			bar.setForeground(colors.getForeground());
+			parent.setBackground(colors.getBackground());
+			parent.setForeground(colors.getForeground());
+			return bar;
+		}
+		private void setChildColors(Composite parent) {
+			Control [] children = parent.getChildren();
+			for (int i=0; i<children.length; i++) {
+				Control child = children[i];
+				child.setBackground(colors.getBackground());
+				if (child instanceof ProgressMonitorPart)
+					setChildColors((ProgressMonitorPart)child);
+				if (child instanceof Composite) {
+					Layout l = ((Composite)child).getLayout();
+					if (l instanceof PageContainerFillLayout) {
+						PageContainerFillLayout pl = (PageContainerFillLayout)l;
+						pl.marginWidth = 0;
+						pl.marginHeight = 0;
+					}
+				}
+			}
+		}
+	}
+	
+	private static void openFormWizard(Shell shell, FormColors colors) {
+		FormWizard wizard = new FormWizard(colors);
+		WizardDialog wd = new ResizableWizardDialog(shell, wizard, colors);
+		wd.create();
+		wd.getShell().setSize(600, 500);
+		wd.open();
 	}
 
 	private static void createRichTextSection(final Form form, FormToolkit toolkit) {
@@ -152,7 +277,7 @@ public class WidgetTest {
 		});
 		section.setText("Section title");
 		section.setDescription(
-			"This is a section description that should be rendered below the separator.");
+		"This is a section description that should be rendered below the separator.");
 		TableWrapData td = new TableWrapData();
 		td.align = TableWrapData.FILL;
 		td.grabHorizontal = true;
