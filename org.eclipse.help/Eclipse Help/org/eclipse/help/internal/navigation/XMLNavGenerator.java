@@ -36,7 +36,7 @@ public class XMLNavGenerator extends XMLGenerator implements Visitor {
 	/**
 	 */
 	public void visit(InfoSet infoSet) {
-		println("<?xml-stylesheet href=\"tree.xsl\" type=\"text/xsl\"?>");
+		//println("<?xml-stylesheet href=\"tree.xsl\" type=\"text/xsl\"?>");
 
 		println("");
 
