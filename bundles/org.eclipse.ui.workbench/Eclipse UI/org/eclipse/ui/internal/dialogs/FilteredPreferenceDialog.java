@@ -103,6 +103,11 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 					if( match(words[i]))
 						return true;
 				}	
+				// if the text contained spaces, we already tried matching on each individual
+				// word but now try and match on the whole phrase.
+				if (words.length > 1 && match(node.getLabelText())) 
+					return true;
+				
 				if (filter(viewer, element, children).length > 0)
 					return true;
 				
