@@ -574,12 +574,15 @@
          </perspectiveShortcut>
            <view id="org.eclipse.team.ccvs.ui.console"
                 relative="org.eclipse.ui.views.TaskList"
+                visible="false"
                 relationship="stack"/>
            <view id="org.eclipse.team.ccvs.ui.HistoryView"
                 relative="org.eclipse.ui.views.TaskList"
+                visible="false"
                 relationship="stack"/>
            <view id="org.eclipse.team.ccvs.ui.RepositoriesView"
                 relative="org.eclipse.ui.views.ResourceNavigator"
+                visible="false"
                 relationship="stack"/>
       </perspectiveExtension>
    </extension>
