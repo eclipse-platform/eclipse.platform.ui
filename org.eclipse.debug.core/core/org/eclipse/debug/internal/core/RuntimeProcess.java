@@ -87,6 +87,15 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * launch.
 	 */
 	public RuntimeProcess(ILaunch launch, Process process, String name, Map attributes) {
+		this(launch, process, name, attributes, true);
+	}
+	
+	/**
+	 * Constructs a RuntimeProcess on the given system process
+	 * with the given name, adding this process to the given
+	 * launch.
+	 */
+	protected RuntimeProcess(ILaunch launch, Process process, String name, Map attributes, boolean creationCompleted) {
 		setLaunch(launch);
 		fAttributes = attributes;
 		fProcess= process;
@@ -99,8 +108,11 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		}
 		fStreamsProxy = new StreamsProxy(this);
 		fMonitor = new ProcessMonitorJob(this);
-		launch.addProcess(this);
-		fireCreationEvent();
+		
+		if (creationCompleted) {
+			launch.addProcess(this);
+			fireCreationEvent();
+		}
 	}
 
 	/**
@@ -228,19 +240,15 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	
 	/**
 	 * Sets the underlying streams proxy for this process.
-	 * Used by the Ant launching in separate VM.
 	 */
-	public void setStreamsProxy(IStreamsProxy streamsProxy) {
-		if (fStreamsProxy instanceof StreamsProxy) {
-			((StreamsProxy)fStreamsProxy).kill();
-		}
+	protected void setStreamsProxy(IStreamsProxy streamsProxy) {
 		fStreamsProxy= streamsProxy;
 	}
 	
 	/**
 	 * Fire a debug event marking the creation of this element.
 	 */
-	private void fireCreationEvent() {
+	protected void fireCreationEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.CREATE));
 	}
 

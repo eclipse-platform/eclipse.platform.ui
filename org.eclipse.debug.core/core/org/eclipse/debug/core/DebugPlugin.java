@@ -135,6 +135,14 @@ public class DebugPlugin extends Plugin {
 	 * @since 3.0
 	 */
 	public static final String EXTENSION_POINT_REFRESH_LAUNCH_VARIABLES = "refreshLaunchVariables"; //$NON-NLS-1$
+	
+	/**
+	 * Simple identifier constant (value <code>"processFactories"</code>) for the
+	 * process factories extension point.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String EXTENSION_POINT_PROCESS_FACTORIES = "processFactories"; //$NON-NLS-1$
 		
 	/**
 	 * Status code indicating an unexpected internal error.
@@ -152,6 +160,14 @@ public class DebugPlugin extends Plugin {
 	 * </p>
 	 */
 	public static final int ERR_WORKING_DIRECTORY_NOT_SUPPORTED = 115;
+	
+	/**
+	 * The launch configuration attribute that designates the process factory ID
+	 * for the process factory to be used when creating a new process as a result of launching
+	 * the launch configuration.
+	 * @since 3.0
+	 */
+	public static final String ATTR_PROCESS_FACTORY_ID = "process_factory_id"; //$NON-NLS-1$
 	
 	/**
 	 * The singleton debug plug-in instance.
@@ -221,6 +237,13 @@ public class DebugPlugin extends Plugin {
 	 * pairs, and values are associated <code>IConfigurationElement</code>s.
 	 */
 	private HashMap fStatusHandlers = null;
+	
+	/**
+	 * Map of process factories. Keys are process factory IDs
+	 * and values are associated <code>IConfigurationElement</code>s.
+	 * @since 3.0
+	 */
+	private HashMap fProcessFactories = null;
 	
 	/**
 	 * Mode constants for the event notifier
@@ -462,14 +485,14 @@ public class DebugPlugin extends Plugin {
 	 * for the I/O streams in the system process. The process
 	 * is added to the given launch.
 	 *
-	 * @param launch the launch the process is conatined in
+	 * @param launch the launch the process is contained in
 	 * @param process the system process to wrap
 	 * @param label the label assigned to the process
 	 * @return the process
 	 * @see IProcess
 	 */
 	public static IProcess newProcess(ILaunch launch, Process process, String label) {
-		return new RuntimeProcess(launch, process, label, null);
+		return newProcess(launch, process, label, null);
 	}
 	
 	/**
@@ -478,17 +501,54 @@ public class DebugPlugin extends Plugin {
 	 * for the I/O streams in the system process. The process
 	 * is added to the given launch, and the process is initialized
 	 * with the given attribute map.
-	 *
-	 * @param launch the launch the process is conatined in
+	 * 
+	 * The process will be created by the <code>IProcessFactory<code> if it has been 
+	 * designated via the org.eclipse.debug.core.processFactories extension point for the
+	 * process factory id indicated in the launch configuration associated with the launch.
+	 * 
+	 * @param launch the launch the process is contained in
 	 * @param process the system process to wrap
 	 * @param label the label assigned to the process
 	 * @param initial values for the attribute map
-	 * @return the process
+	 * @return the process <code>null</code> can be returned if errors occur dealing with the process factory
+	 * designated to create the process.
 	 * @see IProcess
 	 * @since 2.1
 	 */
 	public static IProcess newProcess(ILaunch launch, Process process, String label, Map attributes) {
-		return new RuntimeProcess(launch, process, label, attributes);
+		ILaunchConfiguration config= launch.getLaunchConfiguration();
+		String processFactoryID= null;
+		if (config != null) {
+			try {
+				processFactoryID= config.getAttribute(ATTR_PROCESS_FACTORY_ID, (String)null);
+			} catch (CoreException e) {
+			}
+		}
+		if (processFactoryID != null) {
+			DebugPlugin plugin= DebugPlugin.getDefault();
+			if (plugin.fProcessFactories == null) {
+				try {
+					plugin.initializeProcessFactories();
+				} catch (CoreException exception) {
+					log(exception);
+					return null;
+				}
+			}
+			IConfigurationElement element= (IConfigurationElement) plugin.fProcessFactories.get(processFactoryID);
+			if (element == null) {
+				return null;
+			}
+			IProcessFactory processFactory= null;
+			try {
+				processFactory = (IProcessFactory)element.createExecutableExtension("class"); //$NON-NLS-1$
+			} catch (CoreException exception) {
+				log(exception);
+				return null;
+			}
+			return processFactory.newProcess(launch, process, label, attributes);
+		} else {
+			return new RuntimeProcess(launch, process, label, attributes);
+		}
 	}	
 	
 	/**
@@ -695,6 +755,30 @@ public class DebugPlugin extends Plugin {
 			} else {
 				// invalid status handler
 				invalidStatusHandler(null, configurationElement.getAttribute("id")); //$NON-NLS-1$
+			}
+		}			
+	}
+	
+	/**
+	 * Register process factories.
+	 * 
+	 * @exception CoreException if an exception occurs reading
+	 *  the extensions
+	 */
+	private void initializeProcessFactories() throws CoreException {
+		IExtensionPoint extensionPoint= getDescriptor().getExtensionPoint(EXTENSION_POINT_PROCESS_FACTORIES);
+		IConfigurationElement[] infos= extensionPoint.getConfigurationElements();
+		fProcessFactories = new HashMap(infos.length);
+		for (int i= 0; i < infos.length; i++) {
+			IConfigurationElement configurationElement = infos[i];
+			String id = configurationElement.getAttribute("id"); //$NON-NLS-1$
+			String clss = configurationElement.getAttribute("class"); //$NON-NLS-1$
+			if (id != null && clss != null) {
+					fProcessFactories.put(id, configurationElement);
+			} else {
+				// invalid process factory
+				String badDefiner= infos[i].getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier();
+				log(new Status(IStatus.ERROR, getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, MessageFormat.format(DebugCoreMessages.getString("DebugPlugin.31"), new String[] {badDefiner, id}), null)); //$NON-NLS-1$
 			}
 		}			
 	}
