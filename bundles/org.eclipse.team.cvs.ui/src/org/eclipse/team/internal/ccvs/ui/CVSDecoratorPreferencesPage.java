@@ -13,12 +13,12 @@ package org.eclipse.team.internal.ccvs.ui;
 
 import java.util.*;
 import java.util.List;
+
 import org.eclipse.compare.internal.TabFolderLayout;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -257,9 +257,6 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		b.setText(buttonText);
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
-		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
-		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
-		data.widthHint = Math.max(widthHint, b.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		b.setLayoutData(data);
 		final Text formatToInsert = format;
 		b.addListener(SWT.Selection, new Listener() {
