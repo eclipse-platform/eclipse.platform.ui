@@ -170,6 +170,7 @@ public class IEBrowserAdapter implements IBrowser, Runnable {
 		}
 		try {
 			commandWriter.println(command);
+			Logger.logInfo("Sending the following command to the IE browser: "+command);
 		} catch (Exception e) {
 			Logger.logWarning(WorkbenchResources.getString("WW003"));
 		}
