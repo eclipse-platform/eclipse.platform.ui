@@ -323,6 +323,15 @@ public class FormUtil {
 		boolean wrap=isWrapControl(c);
 		return wrap ? wHint : SWT.DEFAULT;
 	}
+	
+	static int getHeightHint(int hHint, Control c) {
+		if (c instanceof Composite) {
+			Layout layout = ((Composite)c).getLayout();
+			if (layout instanceof ColumnLayout)
+				return hHint;
+		}
+		return SWT.DEFAULT;
+	}
 
 	static int computeMinimumWidth(Control c, boolean changed) {
 		if (c instanceof Composite) {

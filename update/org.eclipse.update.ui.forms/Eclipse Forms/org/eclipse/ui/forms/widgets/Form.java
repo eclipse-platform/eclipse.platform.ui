@@ -87,10 +87,14 @@ public class Form extends ScrolledComposite {
 				height += TITLE_VMARGIN * 2;
 				width += TITLE_HMARGIN * 2;
 			}
+			int ihHint = hHint;
+			if (ihHint>0 && ihHint!=SWT.DEFAULT)
+				ihHint -= height;
+
 			Point bsize =
 				body.computeSize(
 					FormUtil.getWidthHint(wHint, body),
-					SWT.DEFAULT,
+					FormUtil.getHeightHint(ihHint, body),
 					flushCache);
 			width = Math.max(bsize.x, width);
 			height += bsize.y;
@@ -278,7 +282,7 @@ public class Form extends ScrolledComposite {
 		Point newSize =
 			c.computeSize(
 				FormUtil.getWidthHint(clientArea.width, c),
-				SWT.DEFAULT,
+				FormUtil.getHeightHint(clientArea.height, c),
 				flushCache);
 		c.setSize(newSize);
 		setMinSize(newSize);
