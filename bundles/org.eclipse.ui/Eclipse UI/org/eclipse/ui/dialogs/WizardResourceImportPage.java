@@ -441,8 +441,36 @@ protected final boolean validateDestinationGroup() {
 			return false;
 		}
 	}
-
+	
+	if(sourceConflictsWithDestination(containerPath)){
+		setErrorMessage(getSourceConflictMessage());
+		return false;
+	}
+			
 	return true;
 
 }
+
+/**
+ * Get the error message for when the source conf;icts
+ * with the destination.
+ */
+protected final String getSourceConflictMessage(){
+	return(
+		WorkbenchMessages.getString(
+			"WizardImportPage.importOnReceiver"));
+}
+
+
+/**
+ * Return whether or not the source location conflicts
+ * with the destination resource. By default this is not
+ * checked.
+ * @return boolean
+ * @param IPath. The path being checked.
+ */
+protected boolean sourceConflictsWithDestination(IPath sourcePath){
+	return false;
+}
+
 }

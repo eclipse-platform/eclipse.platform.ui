@@ -9,6 +9,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.dialogs.*;
 import org.eclipse.ui.model.*;
 import org.eclipse.ui.wizards.datatransfer.*;
@@ -764,9 +765,27 @@ protected boolean validateSourceGroup() {
 		setMessage(SOURCE_EMPTY_MESSAGE);
 		enableButtonGroup(false);
 		return false;
-	} else {
-		enableButtonGroup(true);
-		return true;
 	}
+	
+	if(sourceConflictsWithDestination(new Path(sourceDirectory.getPath()))){
+		setErrorMessage(getSourceConflictMessage()); //$NON-NLS-1$
+		enableButtonGroup(false);
+		return false;
+	}
+	
+	enableButtonGroup(true);
+	return true;
+}
+
+/**
+ * Return whether or not the source location conflicts
+ * with the destination resource. This will occur if
+ * the source is already under the destination.
+ * @return boolean
+ * @param IPath. The path being checked.
+ */
+protected boolean sourceConflictsWithDestination(IPath sourcePath){
+	
+	return getSpecifiedContainer().getLocation().isPrefixOf(sourcePath);
 }
 }
