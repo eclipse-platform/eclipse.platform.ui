@@ -15,7 +15,6 @@ configured automatically when a project is opened and deconfigured
 when a project is closed.  For example, the Java nature 
 might install a Java builder and do other project 
 configuration when added to a project
-&lt;/p&gt;
 &lt;p&gt;
 The natures extension-point allows nature writers 
 to register their nature implementation under a 
