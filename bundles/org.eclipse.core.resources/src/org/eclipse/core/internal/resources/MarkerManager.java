@@ -341,7 +341,7 @@ protected void restoreFromSave(IResource resource, boolean generateDeltas) throw
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
 	}
 }
-protected void restoreFromSnap(IResource resource) throws CoreException {
+protected void restoreFromSnap(IResource resource) {
 	IPath sourceLocation = workspace.getMetaArea().getMarkersSnapshotLocationFor(resource);
 	try {
 		DataInputStream input = new DataInputStream(new SafeChunkyInputStream(sourceLocation.toOSString()));
@@ -356,9 +356,10 @@ protected void restoreFromSnap(IResource resource) throws CoreException {
 		}
 	} catch (FileNotFoundException e) {
 		// ignore if no markers saved
-	} catch (IOException e) {
+	} catch (Exception e) {
+		// only log the exception, we should not fail restoring the snapshot
 		String msg = Policy.bind("readMeta", new String[] { sourceLocation.toString()});
-		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
+		ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
 	}
 }
 public void save(IResource resource, DataOutputStream output, List list) throws IOException {
