@@ -185,6 +185,16 @@ public class CharsetManager implements IManager {
 		return getCharsetFor(resourcePath, false);
 	}
 
+	/**
+	 * Returns the charset explicitly set by the user for the given resource, 
+	 * or <code>null</code>. If no setting exists for the given resource and 
+	 * <code>recurse</code> is <code>true</code>, every parent up to the 
+	 * workspace root will be checked until a charset setting can be found.
+	 * 
+	 * @param resourcePath the path for the resource
+	 * @param recurse whether the parent should be queried
+	 * @return the charset setting for the given resource
+	 */
 	public String getCharsetFor(IPath resourcePath, boolean recurse) {
 		Assert.isLegal(resourcePath.segmentCount() >= 1);
 		IProject project = workspace.getRoot().getProject(resourcePath.segment(0));
