@@ -518,6 +518,8 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					if (monitor != null && monitor.isCanceled() || actual == null)
 						return Status.CANCEL_STATUS;
 					
+					fStoredEvents.clear();
+					
 					// set the reference document
 					reference.addDocumentListener(DocumentLineDiffer.this);
 					fLeftDocument= reference;
@@ -1216,5 +1218,30 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			else
 				l.modelChanged(this);
 		}
+	}
+	
+	/**
+	 * Stops diffing of this differ. All differences are cleared.
+	 */
+	public synchronized void suspend() {
+		if (fInitializationJob != null) {
+			fInitializationJob.cancel();
+			fInitializationJob= null;
+		}
+		if (fRightDocument != null)
+			fRightDocument.removeDocumentListener(this);
+		if (fLeftDocument != null)
+			fLeftDocument.removeDocumentListener(this);
+		
+		fDifferences.clear();
+		
+		fireModelChanged();
+	}
+	
+	/**
+	 * Resumes diffing of this differ. Must only be called after suspend.
+	 */
+	public synchronized void resume() {
+		initialize();
 	}
 }

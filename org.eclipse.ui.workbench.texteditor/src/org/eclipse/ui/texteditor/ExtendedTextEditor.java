@@ -42,6 +42,7 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
+import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
 
 /**
  * An intermediate editor comprising functionality not present in the leaner <code>AbstractTextEditor</code>,
@@ -322,6 +323,9 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			ruler.removeAnnotationType("org.eclipse.ui.workbench.texteditor.quickdiffDeletion"); //$NON-NLS-1$
 			ruler.update();
 		}
+		IAnnotationModel model= getOrCreateDiffer();
+		if (model instanceof DocumentLineDiffer)
+			((DocumentLineDiffer)model).suspend();
 	}
 
 	/**
@@ -375,7 +379,8 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 			differ= new QuickDiff().createQuickDiffAnnotationModel(this, defaultId);
 			if (differ != null)
 				model.addAnnotationModel(IChangeRulerColumn.QUICK_DIFF_MODEL_ID, differ);
-		}
+		} else if (differ instanceof DocumentLineDiffer)
+			((DocumentLineDiffer)differ).resume();
 		
 		return differ;
 	}
