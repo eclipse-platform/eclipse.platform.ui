@@ -1,23 +1,23 @@
-/*
- * Created on Jul 7, 2003
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
- */
+/*******************************************************************************
+ * Copyright (c) 2003 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Tree;
 
 /**
- * @author tod
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
+ * The ProgressTreeViewer is a tree viewer that handles the coloring 
+ * of text.
  */
 class ProgressTreeViewer extends TreeViewer {
 
@@ -50,29 +50,15 @@ class ProgressTreeViewer extends TreeViewer {
 
 	}
 
-	/**
-	 * @param parent
-	 */
-	public ProgressTreeViewer(Composite parent) {
-		super(parent);
-		// XXX Auto-generated constructor stub
-	}
 
 	/**
+	 * Create a new instance of the receiver with the supplied parent
+	 * and style.
 	 * @param parent
 	 * @param style
 	 */
 	public ProgressTreeViewer(Composite parent, int style) {
 		super(parent, style);
-		// XXX Auto-generated constructor stub
-	}
-
-	/**
-	 * @param tree
-	 */
-	public ProgressTreeViewer(Tree tree) {
-		super(tree);
-		// XXX Auto-generated constructor stub
 	}
 
 }
