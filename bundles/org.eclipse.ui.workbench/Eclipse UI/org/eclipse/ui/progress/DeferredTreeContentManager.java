@@ -166,7 +166,10 @@ public class DeferredTreeContentManager {
         Job job = new Job(jobName) {
             public IStatus run(IProgressMonitor monitor) {
                 adapter.fetchDeferredChildren(parent, collector, monitor);
-                return Status.OK_STATUS;
+                if(monitor.isCanceled())
+                	return Status.CANCEL_STATUS;
+				else
+					return Status.OK_STATUS;
             }
 
             /**
