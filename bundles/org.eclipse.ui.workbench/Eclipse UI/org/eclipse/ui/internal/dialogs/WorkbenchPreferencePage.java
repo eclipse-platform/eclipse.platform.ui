@@ -57,8 +57,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements
     private boolean selectOnHover;
 
     private boolean openAfterDelay;
-
-    private Button activityPromptButton;
     
 
     /*
@@ -127,18 +125,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements
                 IPreferenceConstants.STICKY_CYCLE));
     }
     
-    protected void createActivityPromptPref(Composite composite) {
-        activityPromptButton = new Button(composite, SWT.CHECK);
-        activityPromptButton.setText(WorkbenchMessages
-                .getString("WorkbenchPreference.activityPromptButton")); //$NON-NLS-1$
-        activityPromptButton.setToolTipText(WorkbenchMessages
-                .getString("WorkbenchPreference.activityPromptToolTip")); //$NON-NLS-1$
-        
-        activityPromptButton.setFont(composite.getFont());
-        activityPromptButton.setSelection(getPreferenceStore().getBoolean(
-                IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT));
-    }    
-
     protected void createOpenModeGroup(Composite composite) {
 
         Font font = composite.getFont();
@@ -346,10 +332,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements
         // store the keep cycle part dialogs sticky preference
         store.setValue(IPreferenceConstants.STICKY_CYCLE, stickyCycleButton
                 .getSelection());
-
-        store.setValue(IPreferenceConstants.SHOULD_PROMPT_FOR_ENABLEMENT, activityPromptButton
-                .getSelection());
-        
         store.setValue(IPreferenceConstants.OPEN_ON_SINGLE_CLICK,
                 openOnSingleClick);
         store.setValue(IPreferenceConstants.SELECT_ON_HOVER, selectOnHover);
