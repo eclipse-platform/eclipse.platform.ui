@@ -7,7 +7,7 @@
 <body lang="EN-US">
 <h2>Eclipse RCP Browser Example</h2>
  
-<p>Last updated January 11, 2004</p>	
+<p>Last updated May 21, 2004</p>	
 
 <h3>Description</h3>
 <p>This is an example of a simple Eclipse Rich Client Platform (RCP) application.
@@ -17,7 +17,7 @@ It is a bare bones web browser, using the SWT Browser control.
 The code is in package <code>org.eclipse.ui.examples.browser</code>, and consists
 of an application class (<code>BrowserApp</code>), a workbench advisor for 
 configuring the workbench (<code>BrowserAdvisor</code>), and a single perspective 
-(<code>BrowserPerspectiveFactory</code>) containing a single view (BrowserView).
+(<code>BrowserPerspectiveFactory</code>) containing a single view (<code>BrowserView</code>).
 </p>
 <p>
 The application defines several built-in actions in the menu and toolbar that are
@@ -38,25 +38,14 @@ To run the RCP Browser example:
 <li>Load project org.eclipse.ui.examples.rcp.browser
 from the Eclipse repository into a self-hosting workspace.</li>
 <li>Create a new "Run-time workbench" launch configuration called "Browser Example".</li>
-<li>Add "-application org.eclipse.ui.examples.rcp.browser.app" to the Program
-  Arguments field of the config.</li>
+<li>On the "Arguments" tab, in the "Application Name" drop-down, select "org.eclipse.ui.examples.rcp.browser.app".</li>
 <li>On the "Plug-ins and Fragments" tab, configure it to include only the 
-  following plug-ins:
+  required plug-ins:
   <ul>
-  <li>org.eclipse.jface</li>
-  <li>org.eclipse.ui</li>
-  <li>org.eclipse.ui.examples.rcp.browser</li>
-  <li>org.eclipse.ui.workbench</li>
-  <li>org.eclipse.core.runtime</li>
-  <li>org.eclipse.core.runtime.compatibility</li>
-  <li>org.eclipse.help</li>
-  <li>org.eclipse.osgi</li>
-  <li>org.eclipse.osgi.services</li>
-  <li>org.eclipse.osgi.util</li>
-  <li>org.eclipse.platform</li>
-  <li>org.eclipse.swt</li>
-  <li>org.eclipse.swt.&lt;os&gt; (e.g. swt.win32)</li>
-  <li>org.eclipse.update.configurator</li>
+  <li>Press "Deselect All"</li>
+  <li>Check "org.eclipse.ui.examples.rcp.browser"</li>
+  <li>Press "Add Required Plug-ins"</li>
+  <li>Check "org.eclipse.update.configurator"</li>
   </ul>
 </li>
 <li>Run or debug the launch config.</li>
