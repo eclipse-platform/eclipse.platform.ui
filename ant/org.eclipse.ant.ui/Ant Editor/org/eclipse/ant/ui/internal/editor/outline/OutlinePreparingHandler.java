@@ -173,22 +173,22 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
                 public String getDisplayName() {
                     XmlAttribute tempXmlAttr = getAttributeNamed(IAntEditorConstants.ATTR_NAME);
                     if(tempXmlAttr != null) {
-                    	StringBuffer name= new StringBuffer(tempXmlAttr.getValue());
-						XmlElement parent= getParentNode();
-						XmlAttribute type= parent != null ? parent.getAttributeNamed(IAntEditorConstants.ATTR_TYPE) : null;
-						while (parent != null && (type == null || !type.getValue().equals(IAntEditorConstants.TYPE_PROJECT))){
-							parent= parent.getParentNode();
-							if (parent != null) {
-								type= parent.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
+                    	StringBuffer nodeName= new StringBuffer(tempXmlAttr.getValue());
+						XmlElement parentNode= getParentNode();
+						XmlAttribute type= parentNode != null ? parentNode.getAttributeNamed(IAntEditorConstants.ATTR_TYPE) : null;
+						while (parentNode != null && (type == null || !type.getValue().equals(IAntEditorConstants.TYPE_PROJECT))){
+							parentNode= parentNode.getParentNode();
+							if (parentNode != null) {
+								type= parentNode.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
 							}
 						}
-						if (parent != null) {
-                    		XmlAttribute defaultTarget= parent.getAttributeNamed(IAntEditorConstants.ATTR_DEFAULT);
+						if (parentNode != null) {
+                    		XmlAttribute defaultTarget= parentNode.getAttributeNamed(IAntEditorConstants.ATTR_DEFAULT);
                     		if (defaultTarget != null && defaultTarget.getValue().equals(tempXmlAttr.getValue())) {
-                    			name.append(AntOutlineMessages.getString("OutlinePreparingHandler._[default]_2")); //$NON-NLS-1$
+                    			nodeName.append(AntOutlineMessages.getString("OutlinePreparingHandler._[default]_2")); //$NON-NLS-1$
                     		}
 						}
-                    	return name.toString();
+                    	return nodeName.toString();
                     }
                     return super.getDisplayName();
                 }

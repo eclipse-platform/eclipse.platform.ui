@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.ant.ui.internal.model.AntUtil;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
@@ -289,7 +290,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		String newLocation= null;
 		fOrderedTargets = new ArrayList();
 		try {
-			configTargets= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
+			configTargets= configuration.getAttribute(IAntUIConstants.ATTR_ANT_TARGETS, (String)null);
 			newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log(AntLaunchConfigurationMessages.getString("AntTargetsTab.Error_reading_configuration_12"), ce); //$NON-NLS-1$
@@ -355,7 +356,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (fOrderedTargets.size() == 1) {
 			TargetInfo item = (TargetInfo)fOrderedTargets.get(0);
 			if (item.isDefault()) {
-				configuration.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String)null);
+				configuration.setAttribute(IAntUIConstants.ATTR_ANT_TARGETS, (String)null);
 				return;
 			}
 		} else if (fOrderedTargets.size() == 0) {
@@ -374,7 +375,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			targets= buff.toString();
 		}  
 
-		configuration.setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, targets);
+		configuration.setAttribute(IAntUIConstants.ATTR_ANT_TARGETS, targets);
 	}
 
 	/**
@@ -388,7 +389,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
-		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_ANT_TARGETS);
+		return ExternalToolsImages.getImage(IAntUIConstants.IMG_TAB_ANT_TARGETS);
 	}
 
 	/**

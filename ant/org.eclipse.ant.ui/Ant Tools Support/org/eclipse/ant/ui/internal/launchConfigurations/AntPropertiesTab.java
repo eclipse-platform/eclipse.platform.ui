@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.ui.internal.model.AntUtil;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.ant.ui.internal.preferences.AntPropertiesBlock;
 import org.eclipse.ant.ui.internal.preferences.IAntBlockContainer;
@@ -79,14 +80,14 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		setMessage(null);
 		Map properties= null;
 		try {
-			properties= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTIES, (Map)null);
+			properties= configuration.getAttribute(IAntUIConstants.ATTR_ANT_PROPERTIES, (Map)null);
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
 		}
 		
 		String propertyFiles= null;
 		try {
-			propertyFiles= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
+			propertyFiles= configuration.getAttribute(IAntUIConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log(AntLaunchConfigurationMessages.getString("AntPropertiesTab.Error_reading_configuration_9"), ce); //$NON-NLS-1$
 		}
@@ -115,7 +116,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 			}
 		}
 		
-		configuration.setAttribute(IExternalToolConstants.ATTR_ANT_PROPERTIES, properties);
+		configuration.setAttribute(IAntUIConstants.ATTR_ANT_PROPERTIES, properties);
 		
 		items= antPropertiesBlock.getPropertyFiles();
 		String files= null;
@@ -129,7 +130,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 			files= buff.toString();
 		}
 		
-		configuration.setAttribute(IExternalToolConstants.ATTR_ANT_PROPERTY_FILES, files);
+		configuration.setAttribute(IAntUIConstants.ATTR_ANT_PROPERTY_FILES, files);
 	}
 
 	/**

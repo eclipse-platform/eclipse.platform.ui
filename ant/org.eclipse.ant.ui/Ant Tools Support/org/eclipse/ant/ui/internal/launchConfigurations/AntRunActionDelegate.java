@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.ui.internal.launchConfigurations;
 
-
-import org.eclipse.ant.ui.internal.launchConfigurations.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.IAction;

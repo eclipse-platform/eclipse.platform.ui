@@ -20,6 +20,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.TargetInfo;
+import org.eclipse.ant.ui.internal.views.AntView;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -29,14 +30,12 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ant.ui.internal.views.AntView;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * General utility class dealing with Ant build files
  */
 public final class AntUtil {
-	public static final String RUN_TARGETS_ATTRIBUTE = IExternalToolConstants.TOOL_TYPE_ANT_BUILD + ".runTargets"; //$NON-NLS-1$;
+	public static final String RUN_TARGETS_ATTRIBUTE = IAntUIConstants.TOOL_TYPE_ANT_BUILD + ".runTargets"; //$NON-NLS-1$;
 	public static final String ATTRIBUTE_SEPARATOR = ","; //$NON-NLS-1$;
 	
 	/**
@@ -78,7 +77,7 @@ public final class AntUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String[] getTargetsFromConfig(ILaunchConfiguration configuration) throws CoreException {
-		String attribute = configuration.getAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, (String) null);
+		String attribute = configuration.getAttribute(IAntUIConstants.ATTR_ANT_TARGETS, (String) null);
 		if (attribute == null) {
 			return null;
 		} else {
@@ -96,7 +95,7 @@ public final class AntUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static Map getProperties(ILaunchConfiguration configuration) throws CoreException {
-		Map map = configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTIES, (Map) null);
+		Map map = configuration.getAttribute(IAntUIConstants.ATTR_ANT_PROPERTIES, (Map) null);
 		return map;
 	}
 	
@@ -109,7 +108,7 @@ public final class AntUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String getAntHome(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IExternalToolConstants.ATTR_ANT_HOME, (String) null);
+		return configuration.getAttribute(IAntUIConstants.ATTR_ANT_HOME, (String) null);
 	}
 
 	/**
@@ -122,7 +121,7 @@ public final class AntUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String[] getPropertyFiles(ILaunchConfiguration configuration) throws CoreException {
-		String attribute = configuration.getAttribute(IExternalToolConstants.ATTR_ANT_PROPERTY_FILES, (String) null);
+		String attribute = configuration.getAttribute(IAntUIConstants.ATTR_ANT_PROPERTY_FILES, (String) null);
 		if (attribute == null) {
 			return null;
 		} else {
@@ -183,7 +182,7 @@ public final class AntUtil {
 	 * @throws CoreException if file does not exist, IO problems, or invalid format.
 	 */
 	public static URL[] getCustomClasspath(ILaunchConfiguration config) throws CoreException {
-		String classpathString= config.getAttribute(IExternalToolConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
+		String classpathString= config.getAttribute(IAntUIConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
 		if (classpathString == null) {
 			return null;
 		}
@@ -198,7 +197,7 @@ public final class AntUtil {
 	public static void getCustomClasspaths(ILaunchConfiguration config, List antURLs, List userURLs) {
 		String classpathString= null;
 		try {
-			classpathString = config.getAttribute(IExternalToolConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
+			classpathString = config.getAttribute(IAntUIConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
 		} catch (CoreException e) {
 		}
 		if (classpathString == null) {
@@ -247,7 +246,7 @@ public final class AntUtil {
 		if (window != null) {
 			IWorkbenchPage page= window.getActivePage(); 
 			if (page != null) {
-				return (AntView) page.findView(IExternalToolConstants.ANT_VIEW_ID);
+				return (AntView) page.findView(IAntUIConstants.ANT_VIEW_ID);
 			}
 		}
 		return null;

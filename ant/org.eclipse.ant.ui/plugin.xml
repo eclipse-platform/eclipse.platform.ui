@@ -65,23 +65,23 @@
 	
 	<extension point="org.eclipse.ui.views">
 		<category 
-			id="org.eclipse.ui.externaltools.ant.views"
+			id="org.eclipse.ant.ui.views"
 			name="%CategoryView.antViews">
 		</category>
       <view
-            id="org.eclipse.ui.externaltools.AntView"
+            id="org.eclipse.ant.ui.views.AntView"
             name="%View.antView"
             icon="icons/full/cview16/ant_view.gif"
-            category="org.eclipse.ui.externaltools.ant.views"
+            category="org.eclipse.ant.ui.views"
             fastViewWidthRatio="0.40"
-            class="org.eclipse.ui.externaltools.internal.ant.view.AntView">
+            class="org.eclipse.ant.ui.internal.views.AntView">
       </view>
 	</extension>
 	
 	<extension point="org.eclipse.ui.perspectiveExtensions">
 		<perspectiveExtension 
     		targetID="org.eclipse.ui.resourcePerspective">
-    		<view id="org.eclipse.ui.externaltools.AntView" 
+    		<view id="org.eclipse.ant.ui.views.AntView" 
        		 	relative="org.eclipse.ui.views.ContentOutline" 
     			relationship="stack"
     			visible="false"/> 
@@ -89,7 +89,7 @@
 	    </perspectiveExtension>
     	<perspectiveExtension 
     		targetID="org.eclipse.jdt.ui.JavaBrowsingPerspective">
-    		<view id="org.eclipse.ui.externaltools.AntView" 
+    		<view id="org.eclipse.ant.ui.views.AntView" 
        		 	relative="org.eclipse.ui.views.ContentOutline" 
     			relationship="stack"
     			visible="false"/> 
@@ -97,7 +97,7 @@
 	    </perspectiveExtension>
     	<perspectiveExtension 
     		targetID="org.eclipse.jdt.ui.JavaPerspective">
-	    	<view id="org.eclipse.ui.externaltools.AntView" 
+	    	<view id="org.eclipse.ant.ui.views.AntView" 
 	        	relative="org.eclipse.ui.views.ContentOutline" 
 	    		relationship="stack"
 	    		visible="false"/> 
@@ -105,7 +105,7 @@
 	    </perspectiveExtension>
 	    <perspectiveExtension 
 	    	targetID="org.eclipse.jdt.ui.JavaHierarchyPerspective">
-	    	<view id="org.eclipse.ui.externaltools.AntView" 
+	    	<view id="org.eclipse.ant.ui.views.AntView" 
 	        	relative="org.eclipse.ui.views.ContentOutline" 
 	    		relationship="stack"
 	    		visible="false"/> 
@@ -113,7 +113,7 @@
 	    </perspectiveExtension>
 	    <perspectiveExtension 
 	    	targetID="org.eclipse.debug.ui.DebugPerspective">
-	    	<view id="org.eclipse.ui.externaltools.AntView" 
+	    	<view id="org.eclipse.ant.ui.views.AntView" 
 	        	relative="org.eclipse.ui.views.ContentOutline" 
 	    		relationship="stack"
 	    		visible="false"/> 
@@ -123,32 +123,32 @@
 	
 	<extension point="org.eclipse.ui.preferencePages">
 		<page 
-			id="org.eclipse.ui.externaltools.AntPreferencePage" 
+			id="org.eclipse.ant.ui.AntPreferencePage" 
 			name="%PreferencePage.antPreferences"
-			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntPreferencePage">
+			class="org.eclipse.ant.ui.internal.preferences.AntPreferencePage">
 		</page>
 		<page 
-			id="org.eclipse.ui.externaltools.AntRuntimePreferencePage" 
+			id="org.eclipse.ant.ui.AntRuntimePreferencePage" 
 			name="%PreferencePage.antRuntimePreferences"
-			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntRuntimePreferencePage"
-			category="org.eclipse.ui.externaltools.AntPreferencePage">
+			class="org.eclipse.ant.ui.internal.preferences.AntRuntimePreferencePage"
+			category="org.eclipse.ant.ui.AntPreferencePage">
 		</page>
 		<page
 			id="org.eclipse.ui.externaltools.AntEditorPreferencePage"
 			name="%PreferencePage.antEditorPreferences"
-			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntEditorPreferencePage"
-			category="org.eclipse.ui.externaltools.AntPreferencePage">
+			class="org.eclipse.ant.ui.internal.preferences.AntEditorPreferencePage"
+			category="org.eclipse.ant.ui.AntPreferencePage">
 		</page>
 	</extension>
 	
 	<extension point="org.eclipse.ui.popupMenus">
 		<objectContribution
-			id="org.eclipse.ui.externaltools.RunAnt"
+			id="org.eclipse.ant.ui.RunAnt"
 			objectClass="org.eclipse.core.resources.IFile"
 			adaptable="true"
 			nameFilter="*.xml">
 			<action
-				id="org.eclipse.ui.externaltools.RunAntAction"
+				id="org.eclipse.ant.ui.RunAntAction"
 				label="%PopupMenu.runAnt"
 				tooltip="%PopupMenu.runAntTip"
 				menubarPath="additions"
@@ -160,8 +160,8 @@
 	
 	<extension point="org.eclipse.ui.popupMenus">
 		<viewerContribution
-			targetID="org.eclipse.ui.externaltools.internal.ant.editor.AntEditor.RulerContext"
-            id="org.eclipse.ui.externaltools.internal.ant.editor.AntEditor.RulerContext">
+			targetID="org.eclipse.ant.ui.internal.editor.AntEditor.RulerContext"
+            id="org.eclipse.ant.ui.internal.editor.AntEditor.RulerContext">
 			<action
 				label="%AddTask.label"
 				helpContextId="org.eclipse.ui.AddTask_action_context"

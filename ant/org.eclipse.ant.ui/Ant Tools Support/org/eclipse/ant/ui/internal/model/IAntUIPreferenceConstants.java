@@ -15,10 +15,10 @@ package org.eclipse.ant.ui.internal.model;
  */
 public interface IAntUIPreferenceConstants {
 
-	public static final String ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS = "externaltools.antview.includeErrorSearchResults"; //$NON-NLS-1$
-	public static final String ANTVIEW_LAST_SEARCH_STRING = "externaltools.antview.lastSearchString"; //$NON-NLS-1$
-	public static final String ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE = "externaltools.antview.lastSearchScope"; //$NON-NLS-1$
-	public static final String ANTVIEW_USE_WORKINGSET_SEARCH_SCOPE = "externaltools.antview.useWorkingSetSearchScope"; //$NON-NLS-1$
+	public static final String ANTVIEW_INCLUDE_ERROR_SEARCH_RESULTS = "antview.includeErrorSearchResults"; //$NON-NLS-1$
+	public static final String ANTVIEW_LAST_SEARCH_STRING = "antview.lastSearchString"; //$NON-NLS-1$
+	public static final String ANTVIEW_LAST_WORKINGSET_SEARCH_SCOPE = "antview.lastSearchScope"; //$NON-NLS-1$
+	public static final String ANTVIEW_USE_WORKINGSET_SEARCH_SCOPE = "antview.useWorkingSetSearchScope"; //$NON-NLS-1$
 	
 	public static final String ANT_FIND_BUILD_FILE_NAMES = "ant.findBuildFileNames"; //$NON-NLS-1$
 }

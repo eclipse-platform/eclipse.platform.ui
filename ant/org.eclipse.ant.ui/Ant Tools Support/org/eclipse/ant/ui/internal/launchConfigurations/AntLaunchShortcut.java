@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ant.ui.internal.model.AntUtil;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.model.IAntUIPreferenceConstants;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -141,14 +142,14 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 
 		if (configuration != null) {
 			if (fShowDialog) {
-				IStatus status = new Status(IStatus.INFO, IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.STATUS_INIT_RUN_ANT, "", null); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.INFO, IExternalToolConstants.PLUGIN_ID, IAntUIConstants.STATUS_INIT_RUN_ANT, "", null); //$NON-NLS-1$
 				DebugUITools.openLaunchConfigurationDialog(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), configuration, IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP, status);
 			} else {
 				if (targetAttribute != null) {
 					String newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configuration.getName());
 					try {
 						configuration= configuration.copy(newName);
-						((ILaunchConfigurationWorkingCopy) configuration).setAttribute(IExternalToolConstants.ATTR_ANT_TARGETS, targetAttribute);
+						((ILaunchConfigurationWorkingCopy) configuration).setAttribute(IAntUIConstants.ATTR_ANT_TARGETS, targetAttribute);
 					} catch (CoreException exception) {
 						reportError(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Exception_launching"), new String[] {file.getName()}), exception); //$NON-NLS-1$
 						return;
@@ -207,7 +208,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 */
 	public static ILaunchConfiguration createDefaultLaunchConfiguration(IFile file) {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IExternalToolConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntUIConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		StringBuffer buffer = new StringBuffer(file.getProject().getName());
 		buffer.append(' ');
 		buffer.append(file.getName());
@@ -239,7 +240,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	 */
 	public static List findExistingLaunchConfigurations(IFile file) {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IExternalToolConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntUIConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		List validConfigs= new ArrayList();
 		if (type != null) {
 				ILaunchConfiguration[] configs = null;
@@ -323,7 +324,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		if (throwable instanceof CoreException) {
 			status = ((CoreException)throwable).getStatus();
 		} else {
-			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, message, throwable);
+			status = new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 0, message, throwable);
 		}
 		ErrorDialog.openError(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Error_7"), AntLaunchConfigurationMessages.getString("AntLaunchShortcut.Build_Failed_2"), status); //$NON-NLS-1$ //$NON-NLS-2$
 	}

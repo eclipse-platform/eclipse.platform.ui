@@ -52,6 +52,7 @@ import org.eclipse.ant.ui.internal.editor.xml.IAntEditorConstants;
 import org.eclipse.ant.ui.internal.editor.xml.XmlAttribute;
 import org.eclipse.ant.ui.internal.editor.xml.XmlElement;
 import org.eclipse.ant.ui.internal.model.AntUtil;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ui.ant.internal.views.actions.AntOpenWithMenu;
 import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
@@ -180,11 +181,11 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 				}
 				if (isDefaultTargetNode(tempElement)) {
 					flags = flags | AntImageDescriptor.DEFAULT_TARGET;
-					base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_DEFAULT_TARGET);
+					base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_DEFAULT_TARGET);
 				} else if (tempElement.getAttributeNamed(IAntEditorConstants.ATTR_DESCRIPTION) == null) {
-					base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET_PRIVATE);
+					base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET_PRIVATE);
 				} else {
-					base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_TARGET);
+					base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET);
 				}
 				return ExternalToolsImages.getImage(new AntImageDescriptor(base, flags));				
 			}
@@ -211,14 +212,14 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			}
 
 			if (tempElement.isErrorNode()) {
-				return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR);
+				return ExternalToolsImages.getImage(IAntUIConstants.IMG_ANT_TARGET_ERROR);
 			}
 			return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK);
 		}
 		
 		private Image getProjectImage(XmlElement tempElement) {
 			int flags = 0;
-			ImageDescriptor base = ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ANT_PROJECT);
+			ImageDescriptor base = ExternalToolsImages.getImageDescriptor(IAntUIConstants.IMG_ANT_PROJECT);
 			if (tempElement.isErrorNode()) {
 				flags = flags | AntImageDescriptor.HAS_ERRORS;
 			}
@@ -323,8 +324,8 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		MenuManager manager= new MenuManager("#PopUp"); //$NON-NLS-1$
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
-				contextMenuAboutToShow(manager);
+			public void menuAboutToShow(IMenuManager menuManager) {
+				contextMenuAboutToShow(menuManager);
 			}
 		});
 		menu= manager.createContextMenu(viewer.getTree());
@@ -424,14 +425,14 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		}
 	}
 	
-	private void contextMenuAboutToShow(IMenuManager menu) {	
+	private void contextMenuAboutToShow(IMenuManager menuManager) {	
 		if (shouldAddOpenWithMenu()) {
-			addOpenWithMenu(menu);
+			addOpenWithMenu(menuManager);
 		}
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 	
-	private void addOpenWithMenu(IMenuManager menu) {
+	private void addOpenWithMenu(IMenuManager menuManager) {
 		IStructuredSelection selection= (IStructuredSelection)getSelection();
 		XmlElement element= (XmlElement)selection.getFirstElement();
 		String path = getElementPath(element);
@@ -441,11 +442,11 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 			IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 			IResource resource= root.getFileForLocation(resourcePath);
 			if (resource != null && resource.getType() == IResource.FILE && resource.exists()) {
-				menu.add(new Separator("group.open")); //$NON-NLS-1$
+				menuManager.add(new Separator("group.open")); //$NON-NLS-1$
 				IMenuManager submenu= new MenuManager(AntOutlineMessages.getString("AntEditorContentOutlinePage.Open_With_1"));  //$NON-NLS-1$
 				openWithMenu.setFile((IFile)resource);
 				submenu.add(openWithMenu);
-				menu.appendToGroup("group.open", submenu); //$NON-NLS-1$
+				menuManager.appendToGroup("group.open", submenu); //$NON-NLS-1$
 				
 			}
 		}

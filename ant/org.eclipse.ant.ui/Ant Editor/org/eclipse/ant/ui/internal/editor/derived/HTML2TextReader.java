@@ -31,8 +31,6 @@ import org.eclipse.swt.custom.StyleRange;
  */
 public class HTML2TextReader extends SubstitutionTextReader {
 	
-	
-	private static final String LINE_DELIM= System.getProperty("line.separator", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
 	private static final Map fgEntityLookup;
 	private static final Set fgTags;

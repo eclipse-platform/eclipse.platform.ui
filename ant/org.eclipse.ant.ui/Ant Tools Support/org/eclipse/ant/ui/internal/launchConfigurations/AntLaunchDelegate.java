@@ -35,6 +35,7 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ant.ui.internal.model.AntUIPlugin;
 import org.eclipse.ant.ui.internal.model.AntUtil;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
@@ -224,7 +225,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 
 	private void setProcessAttributes(IProcess process, ILaunch launch, String idStamp, StringBuffer commandLine) {
 		// link the process to its build logger via a timestamp
-		process.setAttribute(IProcess.ATTR_PROCESS_TYPE, IExternalToolConstants.ID_ANT_PROCESS_TYPE);
+		process.setAttribute(IProcess.ATTR_PROCESS_TYPE, IAntUIConstants.ID_ANT_PROCESS_TYPE);
 		process.setAttribute(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
 		
 		// create "fake" command line for the process

@@ -75,7 +75,6 @@ public class AddCustomDialog extends StatusDialog {
 	protected Combo sourceNameField;
 
 	private String title;
-	private String description;
 	private List libraryUrls;
 	private List existingNames;
 	
@@ -96,10 +95,9 @@ public class AddCustomDialog extends StatusDialog {
 	/**
 	 * Creates a new dialog with the given shell and title.
 	 */
-	public AddCustomDialog(Shell parent, List libraryUrls, List existingNames, String title, String description, String customLabel) {
+	public AddCustomDialog(Shell parent, List libraryUrls, List existingNames, String title, String customLabel) {
 		super(parent);
 		this.title = title;
-		this.description = description;
 		this.libraryUrls = libraryUrls;
 		this.existingNames= existingNames;
 		this.customLabel= customLabel;
@@ -109,35 +107,35 @@ public class AddCustomDialog extends StatusDialog {
 	 * Method declared on Dialog.
 	 */
 	protected Control createDialogArea(Composite parent) {
-		Composite dialogArea = new Composite(parent, SWT.NULL);
-		dialogArea.setLayout(new GridLayout());
-		dialogArea.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-		dialogArea.setSize(dialogArea.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		dialogArea.setFont(parent.getFont());
+		Composite topComposite = new Composite(parent, SWT.NULL);
+		topComposite.setLayout(new GridLayout());
+		topComposite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+		topComposite.setSize(topComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		topComposite.setFont(parent.getFont());
 
-		createNameGroup(dialogArea);
-		new Label(dialogArea, SWT.NULL);
-		createRootDirectoryGroup(dialogArea);
-		createFileSelectionGroup(dialogArea);
+		createNameGroup(topComposite);
+		new Label(topComposite, SWT.NULL);
+		createRootDirectoryGroup(topComposite);
+		createFileSelectionGroup(topComposite);
 		
 		if (library != null) {
 			setSourceName(library.getFile());
 		}
-		return dialogArea;
+		return topComposite;
 	}
 	
-	private void createNameGroup(Composite dialogArea) {
-		Composite nameContainerGroup = new Composite(dialogArea, SWT.NONE);
+	private void createNameGroup(Composite topComposite) {
+		Composite nameContainerGroup = new Composite(topComposite, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		nameContainerGroup.setLayout(layout);
-		nameContainerGroup.setFont(dialogArea.getFont());
+		nameContainerGroup.setFont(topComposite.getFont());
 		nameContainerGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 		
 		Label label = new Label(nameContainerGroup, SWT.NONE);
-		label.setFont(dialogArea.getFont());
+		label.setFont(topComposite.getFont());
 		label.setText(AntPreferencesMessages.getString("AddCustomDialog.&Name__3")); //$NON-NLS-1$
 		
 		nameField = new Text(nameContainerGroup, SWT.BORDER);
@@ -145,7 +143,7 @@ public class AddCustomDialog extends StatusDialog {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 	
 		nameField.setLayoutData(data);
-		nameField.setFont(dialogArea.getFont());
+		nameField.setFont(topComposite.getFont());
 		nameField.setText(name);
 		nameField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
@@ -219,8 +217,8 @@ public class AddCustomDialog extends StatusDialog {
 
 		Iterator libraries= libraryUrls.iterator();
 		while (libraries.hasNext()) {
-			URL library = (URL) libraries.next();
-			sourceNameField.add(library.getFile());
+			URL srcLibrary = (URL) libraries.next();
+			sourceNameField.add(srcLibrary.getFile());
 		}
 
 		sourceNameField.addKeyListener(new KeyAdapter() {
@@ -261,15 +259,15 @@ public class AddCustomDialog extends StatusDialog {
 	 */
 	private void updateStatus() {
 		StatusInfo status= new StatusInfo();
-		String name= nameField.getText().trim();
-		if (name.length() == 0) {
+		String customName= nameField.getText().trim();
+		if (customName.length() == 0) {
 			status.setError(MessageFormat.format(AntPreferencesMessages.getString("AddCustomDialog.name"), new String[]{customLabel})); //$NON-NLS-1$
 		} else if (!editing){
 			Iterator names= existingNames.iterator();
 			while (names.hasNext()) {
 				String aName = (String) names.next();
-				if(aName.equals(name)) {
-					status.setError(MessageFormat.format(AntPreferencesMessages.getString("AddCustomDialog.exists"), new String[]{customLabel, name})); //$NON-NLS-1$
+				if(aName.equals(customName)) {
+					status.setError(MessageFormat.format(AntPreferencesMessages.getString("AddCustomDialog.exists"), new String[]{customLabel, customName})); //$NON-NLS-1$
 					updateStatus(status);
 					return;
 				}

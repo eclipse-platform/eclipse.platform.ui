@@ -64,7 +64,6 @@ public class AntTasksPage extends AntPage {
 	 */
 	private void addTask() {
 		String title = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogTitle"); //$NON-NLS-1$
-		String msg = AntPreferencesMessages.getString("AntTasksPage.addTaskDialogDescription"); //$NON-NLS-1$
 
 		Iterator tasks= getContents(true).iterator();
 		List names= new ArrayList();
@@ -72,7 +71,7 @@ public class AntTasksPage extends AntPage {
 			Task task = (Task) tasks.next();
 			names.add(task.getTaskName());	
 		}
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, title, msg, AntPreferencesMessages.getString("AntTasksPage.task_1")); //$NON-NLS-1$
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, title, AntPreferencesMessages.getString("AntTasksPage.task_1")); //$NON-NLS-1$
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
@@ -127,7 +126,6 @@ public class AntTasksPage extends AntPage {
 			return;
 		}
 		String title = AntPreferencesMessages.getString("AntTasksPage.editTaskDialogTitle"); //$NON-NLS-1$
-		String msg = AntPreferencesMessages.getString("AntTasksPage.editTaskDialogDescription"); //$NON-NLS-1$
 		
 		Iterator tasks= getContents(true).iterator();
 		List names= new ArrayList();
@@ -135,7 +133,7 @@ public class AntTasksPage extends AntPage {
 			Task aTask = (Task) tasks.next();
 			names.add(aTask.getTaskName());
 		}
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, title, msg, AntPreferencesMessages.getString("AntTasksPage.task_1")); //$NON-NLS-1$
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), getPreferencePage().getLibraryURLs(), names, title, AntPreferencesMessages.getString("AntTasksPage.task_1")); //$NON-NLS-1$
 		
 		dialog.setClassName(task.getClassName());
 		dialog.setName(task.getTaskName());

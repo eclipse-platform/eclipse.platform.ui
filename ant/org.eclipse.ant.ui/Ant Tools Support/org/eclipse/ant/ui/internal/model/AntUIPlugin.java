@@ -11,6 +11,7 @@
 package org.eclipse.ant.ui.internal.model;
 
 
+import org.eclipse.ant.ui.internal.editor.text.IAntEditorColorConstants;
 import org.eclipse.ant.ui.internal.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -19,7 +20,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.ant.ui.internal.editor.text.IAntEditorColorConstants;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * The plug-in runtime class for the Ant Core plug-in.
@@ -98,4 +99,18 @@ public class AntUIPlugin extends Plugin {
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_XML_COMMENT, IAntEditorColorConstants.XML_COMMENT);
 		AntEditorPreferenceConstants.initializeDefaultValues(prefs);
 	}
+	
+	/**
+	 * Returns the standard display to be used. The method first checks, if
+	 * the thread calling this method has an associated display. If so, this
+	 * display is returned. Otherwise the method returns the default display.
+	 */
+	public static Display getStandardDisplay() {
+		Display display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+		}
+		return display;
+	}
+
 }

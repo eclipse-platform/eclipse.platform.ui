@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ant.ui.internal.model.AntUtil;
+import org.eclipse.ant.ui.internal.model.IAntUIConstants;
 import org.eclipse.ant.ui.internal.model.IAntUIHelpContextIds;
 import org.eclipse.ant.ui.internal.preferences.AntClasspathBlock;
 import org.eclipse.ant.ui.internal.preferences.IAntBlockContainer;
@@ -33,7 +34,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntClasspathTab extends AbstractLaunchConfigurationTab implements IAntBlockContainer {
@@ -102,7 +102,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		String urlStrings= null;
 		try {
-			urlStrings = configuration.getAttribute(IExternalToolConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
+			urlStrings = configuration.getAttribute(IAntUIConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String) null);
 		} catch (CoreException e) {
 		}
 		if (urlStrings == null) {
@@ -112,7 +112,7 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 		} else {
 			String antHomeString= null;
 			try {
-				antHomeString= configuration.getAttribute(IExternalToolConstants.ATTR_ANT_HOME, (String)null);
+				antHomeString= configuration.getAttribute(IAntUIConstants.ATTR_ANT_HOME, (String)null);
 			} catch (CoreException e) {
 			}
 			antClasspathBlock.initializeAntHome(antHomeString);
@@ -134,8 +134,8 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (useDefaultButton.getSelection()) {
-			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
-			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_HOME, (String)null);
+			configuration.setAttribute(IAntUIConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
+			configuration.setAttribute(IAntUIConstants.ATTR_ANT_HOME, (String)null);
 			return;
 		}
 		List antUrls= antClasspathBlock.getAntURLs();
@@ -157,13 +157,13 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 			urlString.append(',');
 		}
 		if (urlString.length() > 0) {
-			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.substring(0, urlString.length() - 1));
+			configuration.setAttribute(IAntUIConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.substring(0, urlString.length() - 1));
 		} else {
-			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
+			configuration.setAttribute(IAntUIConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
 		}
 		
 		String antHomeText= antClasspathBlock.getAntHome();
-		configuration.setAttribute(IExternalToolConstants.ATTR_ANT_HOME, antHomeText);
+		configuration.setAttribute(IAntUIConstants.ATTR_ANT_HOME, antHomeText);
 	}
 
 	/**

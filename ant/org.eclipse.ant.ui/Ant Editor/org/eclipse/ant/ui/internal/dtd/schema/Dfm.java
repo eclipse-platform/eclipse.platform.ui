@@ -148,14 +148,16 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 	 * @see com.objfac.xml.schema.IDfm#getAtom(String)
 	 */
 	public IAtom getAtom(String name) {
-		Object[] keys = getKeys();
-		if (empty || keys == null)
+		Object[] allKeys = getKeys();
+		if (empty || allKeys == null){
 			return null;
+		}
 		SortedMap map = getIndirectStringMap(this);
 		int index = map.keyIndex(name);
-		if (index < 0)
+		if (index < 0) {
 			return null;
-		return (IAtom) keys[index];
+		}
+		return (IAtom) allKeys[index];
 	}
 
 	/**
