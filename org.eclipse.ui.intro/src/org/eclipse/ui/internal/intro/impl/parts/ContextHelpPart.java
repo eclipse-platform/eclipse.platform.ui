@@ -225,7 +225,7 @@ public class ContextHelpPart implements IStandbyContentPart {
             title.setText(IntroPlugin
                     .getString("ContextHelpPart.whatIsArea.Title")
                     + " \"" + part.getSite().getRegisteredName() + "\"?");
-            String helpText = createContextHelp(ref);
+            String helpText = createContextHelp(part);
             text.setText(helpText != null ? helpText : "", helpText != null,
                     false);
         } else {
@@ -237,9 +237,8 @@ public class ContextHelpPart implements IStandbyContentPart {
         form.reflow(true);
     }
 
-    private String createContextHelp(IWorkbenchPartReference ref) {
+    private String createContextHelp(IWorkbenchPart part) {
         String text = null;
-        IWorkbenchPart part = ref.getPart(false);
         if (part != null) {
             Display display = part.getSite().getShell().getDisplay();
             Control c = display.getFocusControl();
@@ -270,7 +269,7 @@ public class ContextHelpPart implements IStandbyContentPart {
         StringBuffer sbuf = new StringBuffer();
         sbuf.append("<form>");
         sbuf.append("<p>");
-        sbuf.append(context.getText());
+        sbuf.append(decodeContextBoldTags(context.getText()));
         sbuf.append("</p>");
         IHelpResource[] links = context.getRelatedTopics();
         if (links.length > 0) {
@@ -290,6 +289,12 @@ public class ContextHelpPart implements IStandbyContentPart {
         }
         sbuf.append("</form>");
         return sbuf.toString();
+    }
+
+    private String decodeContextBoldTags(String contextString) {
+        String decodedString = contextString.replaceAll("<@#\\$b>", "<b>");
+        decodedString = decodedString.replaceAll("</@#\\$b>", "</b>");
+        return decodedString;
     }
 
     private void openLink(Object href) {
