@@ -17,12 +17,10 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 
 /**
  * Provides the generic implementation for a sub-page in the
@@ -46,7 +45,7 @@ public abstract class AntPage {
 	};
 	private AntPreferencePage preferencePage;
 	private TableViewer tableViewer;
-	private AntPageContentProvider contentProvider;
+	private ExternalToolsContentProvider contentProvider;
 	
 	protected Button editButton;
 	protected Button removeButton;
@@ -153,8 +152,8 @@ public abstract class AntPage {
 	 * 
 	 * @return AntPageContentProvider
 	 */
-	protected AntPageContentProvider getContentProvider() {
-		return new AntPageContentProvider();
+	protected ExternalToolsContentProvider getContentProvider() {
+		return new ExternalToolsContentProvider();
 	}
 
 	/**
@@ -207,7 +206,7 @@ public abstract class AntPage {
 	}
 	
 	protected void remove(TableViewer viewer) {
-		AntPageContentProvider antContentProvider= (AntPageContentProvider)viewer.getContentProvider();
+		ExternalToolsContentProvider antContentProvider= (ExternalToolsContentProvider)viewer.getContentProvider();
 		IStructuredSelection sel = (IStructuredSelection) viewer.getSelection();
 		Iterator enum = sel.iterator();
 		while (enum.hasNext()) {
@@ -253,44 +252,6 @@ public abstract class AntPage {
 		createButtonGroup(top);
 		
 		return top;
-	}
-
-
-	/**
-	 * Content provider that maintains a generic list of objects which
-	 * are shown in a table viewer.
-	 */
-	protected static class AntPageContentProvider implements IStructuredContentProvider {
-		protected List elements = new ArrayList();
-		protected TableViewer viewer;
-	
-		public void add(Object o) {
-			if (elements.contains(o)) {
-				return;
-			}
-			elements.add(o);
-			viewer.add(o);
-		}
-		
-		public void dispose() {
-		}
-		
-		public Object[] getElements(Object inputElement) {
-			return (Object[]) elements.toArray(new Object[elements.size()]);
-		}
-		
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			this.viewer = (TableViewer) viewer;
-			elements.clear();
-			if (newInput != null) {
-				elements.addAll((List) newInput);
-			}
-		}
-		
-		public void remove(Object o) {
-			elements.remove(o);
-			viewer.remove(o);
-		}
 	}
 	
 	protected AntPreferencePage getPreferencePage() {

@@ -17,15 +17,12 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -34,9 +31,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
 /**
@@ -59,7 +55,7 @@ public class AntPropertiesPage extends AntPage {
 	private Button removeFileButton;
 	
 	private TableViewer fileTableViewer;
-	private AntPageContentProvider fileContentProvider;
+	private ExternalToolsContentProvider fileContentProvider;
 	
 	private final AntPropertiesLabelProvider labelProvider = new AntPropertiesLabelProvider();
 	
@@ -214,81 +210,6 @@ public class AntPropertiesPage extends AntPage {
 		updateContent(prop);
 	}
 
-	/**
-	 * Label provider for classpath elements
-	 */
-	private static final class AntPropertiesLabelProvider extends LabelProvider implements ITableLabelProvider {
-		private static final String IMG_CLASSPATH = "icons/full/obj16/classpath.gif"; //$NON-NLS-1$;
-		private static final String IMG_PROPERTY = "icons/full/obj16/prop_ps.gif"; //$NON-NLS-1$;
-
-		private Image classpathImage;
-		private Image fileImage;
-		private Image propertyImage;
-	
-		/**
-		 * Creates an instance.
-		 */
-		public AntPropertiesLabelProvider() {
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on IBaseLabelProvider.
-		 */
-		public void dispose() {
-			// file image is shared, do not dispose.
-			fileImage = null;
-			if (classpathImage != null) {
-				classpathImage.dispose();
-				classpathImage = null;
-			}
-			if (propertyImage != null) {
-				propertyImage.dispose();
-				propertyImage = null;
-			}
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on ITableLabelProvider.
-		 */
-		public Image getColumnImage(Object element, int columnIndex) {
-			if (element instanceof Property) {
-				return getPropertyImage();
-			} else {
-				return getFileImage();
-			}
-		}
-		
-		/* (non-Javadoc)
-		 * Method declared on ITableLabelProvider.
-		 */
-		public String getColumnText(Object element, int columnIndex) {
-			return element.toString();
-		}
-
-		private Image getFileImage() {
-			if (fileImage == null) {
-				fileImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
-			}
-			return fileImage;
-		}
-		
-		private Image getPropertyImage() {
-			if (propertyImage == null) {
-				ImageDescriptor desc= ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_PROPERTY);
-				propertyImage = desc.createImage();
-			} 
-			return propertyImage;
-		}
-		
-		private Image getClasspathImage() {
-			if (classpathImage == null) {
-				ImageDescriptor desc = ExternalToolsPlugin.getDefault().getImageDescriptor(IMG_CLASSPATH);
-				classpathImage = desc.createImage();
-			}
-			return classpathImage;
-		}
-	}
-	
 	/**
 	 * Handles selection changes in the Property file table viewer.
 	 */

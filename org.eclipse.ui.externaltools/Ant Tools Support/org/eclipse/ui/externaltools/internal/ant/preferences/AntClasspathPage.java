@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
 /**
@@ -84,7 +85,7 @@ public class AntClasspathPage extends AntPage {
 	private Button browseAntHomeButton;
 	
 	private TableViewer userTableViewer;
-	private AntPageContentProvider userContentProvider;
+	private ExternalToolsContentProvider userContentProvider;
 
 	private IDialogSettings fDialogSettings;
 	private final AntClasspathLabelProvider labelProvider = new AntClasspathLabelProvider();
@@ -119,7 +120,7 @@ public class AntClasspathPage extends AntPage {
 	/**
 	 * Allows the user to enter a folder as a classpath.
 	 */
-	private void addFolder(AntPageContentProvider contentProvider, String message) {
+	private void addFolder(ExternalToolsContentProvider contentProvider, String message) {
 		DirectoryDialog dialog = new DirectoryDialog(getShell());
 		dialog.setMessage(message);
 		
@@ -133,7 +134,7 @@ public class AntClasspathPage extends AntPage {
 		}
 	}
 	
-	private void addJars(AntPageContentProvider contentProvider) {
+	private void addJars(ExternalToolsContentProvider contentProvider) {
 		String lastUsedPath= fDialogSettings.get(IExternalToolsUIConstants.DIALOGSTORE_LASTEXTJAR);
 		if (lastUsedPath == null) {
 			lastUsedPath= ""; //$NON-NLS-1$
@@ -167,10 +168,10 @@ public class AntClasspathPage extends AntPage {
 	protected void buttonPressed(int buttonId) {
 		switch (buttonId) {
 			case ADD_JARS_BUTTON :
-				addJars((AntPageContentProvider)getTableViewer().getContentProvider());
+				addJars((ExternalToolsContentProvider)getTableViewer().getContentProvider());
 				break;
 			case ADD_FOLDER_BUTTON :
-				addFolder((AntPageContentProvider)getTableViewer().getContentProvider(), AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
+				addFolder((ExternalToolsContentProvider)getTableViewer().getContentProvider(), AntPreferencesMessages.getString("AntClasspathPage.&Choose_a_folder_to_add_to_the_classpath__1")); //$NON-NLS-1$
 				break;
 			case UP_BUTTON :
 				handleMove(-1, getTableViewer());
@@ -423,7 +424,7 @@ public class AntClasspathPage extends AntPage {
 			
 	private void userTableSelectionChanged(IStructuredSelection newSelection) {
 		IStructuredSelection selection = (IStructuredSelection)userTableViewer.getSelection();
-		AntPageContentProvider contentProvider= (AntPageContentProvider)userTableViewer.getContentProvider();
+		ExternalToolsContentProvider contentProvider= (ExternalToolsContentProvider)userTableViewer.getContentProvider();
 		Object[] elements = contentProvider.getElements(null);
 		List files= new ArrayList(elements.length);
 		for (int i = 0; i < elements.length; i++) {
@@ -462,9 +463,9 @@ public class AntClasspathPage extends AntPage {
 	/**
 	 * Returns the content provider to use for the table viewer
 	 * 
-	 * @return AntPageContentProvider
+	 * @return ExternalToolsContentProvider
 	 */
-	protected AntPageContentProvider getContentProvider() {
+	protected ExternalToolsContentProvider getContentProvider() {
 		return new AntClasspathContentProvider();
 	}
 	
@@ -497,7 +498,7 @@ public class AntClasspathPage extends AntPage {
 	private void handleMove(int direction, TableViewer viewer) {
 		IStructuredSelection sel = (IStructuredSelection)viewer.getSelection();
 		List selList= sel.toList();
-		Object[] elements = ((AntPageContentProvider)viewer.getContentProvider()).getElements(viewer.getInput());
+		Object[] elements = ((ExternalToolsContentProvider)viewer.getContentProvider()).getElements(viewer.getInput());
 		List contents= new ArrayList(elements.length);
 		for (int i = 0; i < elements.length; i++) {
 			contents.add(elements[i]);
@@ -599,7 +600,7 @@ public class AntClasspathPage extends AntPage {
 	 * Content provider that maintains a generic list of objects which
 	 * are shown in a table viewer.
 	 */
-	private static class AntClasspathContentProvider extends AntPageContentProvider {
+	private static class AntClasspathContentProvider extends ExternalToolsContentProvider {
 		public void add(Object o) {
 			URL newURL= (URL)o;
 			Iterator itr= elements.iterator();
