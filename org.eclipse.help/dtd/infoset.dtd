@@ -1,0 +1,10 @@
+
+<!ELEMENT infoset (view)*  >
+<!ATTLIST infoset  id  ID  #REQUIRED >
+<!ATTLIST infoset  label  CDATA  #REQUIRED >
+<!ATTLIST infoset  href  CDATA  #IMPLIED >
+<!ATTLIST infoset  standalone (true | false) false #IMPLIED >
+
+<!ELEMENT infoview EMPTY>
+<!ATTLIST infoview id ID #REQUIRED >
+<!ATTLIST infoview label CDATA #IMPLIED >

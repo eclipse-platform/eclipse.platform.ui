@@ -1,0 +1,30 @@
+
+<!--
+BODY {
+    background-color: ActiveBorder;
+    color:WindowText;
+    font-size:smaller;
+    margin-top:0px;
+    }
+
+
+IMG {
+/*
+    width:16;
+    height:16; 
+*/
+    padding:5px;
+    border-width:2px; 
+    border-style:solid;
+}
+
+.normal {
+    border-color:ActiveBorder;
+}
+
+.hover {
+    border-style: outset;
+}
+
+
+-->

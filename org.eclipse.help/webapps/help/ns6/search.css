@@ -1,0 +1,21 @@
+BODY {
+	background-color: Window;
+	font-size:smaller;
+	margin:0;
+}
+FORM {
+	margin:0;
+}
+.txtInput {
+	width:100%;
+}
+.normal {
+	border-style:solid;
+	border-color:ActiveBorder;
+	border-width:2px; 
+}
+.hover {
+	border-style: outset;
+	border-width:2px; 
+}
+	

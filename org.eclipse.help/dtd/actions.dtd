@@ -1,0 +1,10 @@
+
+<!ELEMENT actions (insert)* >
+<!ATTLIST actions  infoview CDATA #REQUIRED >
+<!ATTLIST actions  standalone (true | false) false #IMPLIED >
+
+<!ELEMENT insert (insert) >
+<!ATTLIST insert from CDATA #REQUIRED >
+<!ATTLIST insert to CDATA #REQUIRED >
+<!ATTLIST insert as (child | first-child | last-child | alpha | prev-sib | next-sib) "child" >
+<!ATTLIST insert label CDATA #IMPLIED >

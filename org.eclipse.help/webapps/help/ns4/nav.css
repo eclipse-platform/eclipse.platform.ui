@@ -1,0 +1,17 @@
+
+    BODY  {
+          background-color:#FFFFFF;
+          font-size:smaller;
+          margin-left:0;
+      }
+ 
+      A   {
+          text-decoration:none; 
+          color:#000000; 
+	  height:20;
+      }
+ 
+      .expanded {
+         display:block;
+      }
+	

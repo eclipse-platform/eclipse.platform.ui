@@ -16,6 +16,7 @@
    <requires>
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.apache.xerces"/>
+      <import plugin="org.eclipse.tomcat"/>
    </requires>
 
    <runtime>
