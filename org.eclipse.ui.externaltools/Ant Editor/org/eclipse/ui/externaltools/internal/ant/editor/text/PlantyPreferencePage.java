@@ -1,5 +1,17 @@
 package org.eclipse.ui.externaltools.internal.ant.editor.text;
 
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ * Initial: GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien
+ * mbH, Berlin, Duesseldorf, Frankfurt (Germany) 2002
+ * ****************************************************************************/
+
 import org.eclipse.jface.preference.ColorFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
