@@ -11,16 +11,28 @@
 package org.eclipse.core.runtime.compatibility;
 
 import org.eclipse.core.internal.plugins.PluginDescriptor;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.runtime.*;
 import org.osgi.framework.*;
+import org.osgi.service.startlevel.StartLevel;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class PluginActivator implements BundleActivator {
 
 	private static final String PI_APPLICATION_RUNNER = "org.eclipse.core.applicationrunner"; //$NON-NLS-1$
 	private BundleContext context;
 	private Plugin plugin;
-
+	
+	private static ServiceTracker startLevelTracker = null;
+	
+	public static StartLevel getStartLevel(BundleContext context) {
+		if (startLevelTracker == null) {
+			startLevelTracker = new ServiceTracker(context, StartLevel.class.getName(), null);
+			startLevelTracker.open();
+		}
+		return (StartLevel)startLevelTracker.getService();
+	}
+	
 	public BundleContext getBundleContext() {
 		return context;
 	}
@@ -31,7 +43,6 @@ public class PluginActivator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		// will bail if it is not time to start
 		ensureNormalStartup(context);
-
 		this.context = context;
 		PluginDescriptor pd = (PluginDescriptor) Platform.getPluginRegistry().getPluginDescriptor(context.getBundle().getGlobalName());
 		pd.setPluginActivator(this);
@@ -39,13 +50,17 @@ public class PluginActivator implements BundleActivator {
 		plugin.startup();
 	}
 	private void ensureNormalStartup(BundleContext context) throws BundleException {
-// TODO change to look for startlevel 
-//		Bundle applicationRunnerBundle = context.getBundle(PI_APPLICATION_RUNNER);
-//		if (applicationRunnerBundle != null && (applicationRunnerBundle.getState() & (Bundle.ACTIVE | Bundle.STARTING)) == 0) {
-//			IStatus status = new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, org.eclipse.core.internal.plugins.Policy.bind("activator.applicationNotStarted", context.getBundle().getGlobalName()), null); //$NON-NLS-1$
-//			InternalPlatform.getDefault().log(status);
-//			throw new BundleException(status.getMessage());
-//		}
+		// TODO look at other ways of doing this to make it faster (getService is not as fast 
+		// as we might like but it is not horrible.  Also, we never close the tracker.
+		StartLevel startLevel = getStartLevel(context);
+		if (startLevel == null)
+			return;
+		int bundleLevel = startLevel.getBundleStartLevel(context.getBundle());
+		if (startLevel.getStartLevel() <= startLevel.getBundleStartLevel(context.getBundle())) {
+			IStatus status = new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, org.eclipse.core.internal.plugins.Policy.bind("activator.applicationNotStarted", context.getBundle().getGlobalName()), null); //$NON-NLS-1$
+			InternalPlatform.getDefault().log(status);
+			throw new BundleException(status.getMessage());
+		}
 	}
 	public void stop(BundleContext context) throws Exception {
 		try {
