@@ -115,9 +115,8 @@ class JSchSession {
 				String _password=promptSecret(message);
 				if(_password!=null){
 					password=_password;
-					// Cache the password with the repository location
+					// Cache the password with the repository location on the memory.
 					((CVSRepositoryLocation)location).setPassword(password);
-					((CVSRepositoryLocation)location).updateCache();
 				}
 				return _password!=null;
 			}
