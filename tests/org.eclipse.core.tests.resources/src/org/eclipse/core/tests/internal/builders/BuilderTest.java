@@ -741,7 +741,7 @@ public void testTurnOnAutobuild() throws CoreException {
 	} catch (CoreException e) {
 		fail("3.2", e);
 	}
-
+	
 	// Now make a change and then turn autobuild on.  Turning it on should cause a build.
 	IWorkspaceRunnable r = new IWorkspaceRunnable() {
 		public void run(IProgressMonitor monitor) throws CoreException {
@@ -751,6 +751,7 @@ public void testTurnOnAutobuild() throws CoreException {
 			getWorkspace().setDescription(desc);
 		}
 	};
+	waitForBuild();
 	getWorkspace().run(r, getMonitor());
 	waitForBuild();
 	verifier.addExpectedLifecycleEvent(TestBuilder.DEFAULT_BUILD_ID);
