@@ -11,6 +11,9 @@
 
 package org.eclipse.jface.action;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.swt.SWT;
@@ -329,24 +332,15 @@ public class ToolBarContributionItem extends ContributionItem {
         Control control = item.getControl();
         if ((control instanceof ToolBar) == false) { return; }
         CoolBar coolBar = item.getParent();
-        Point chevronPosition = coolBar.toDisplay(new Point(event.x, event.y));
         ToolBar toolBar = (ToolBar) control;
-        ToolItem[] tools = toolBar.getItems();
-        int toolCount = tools.length;
-        int visibleItemCount = 0;
-        while (visibleItemCount < toolCount) {
-            Rectangle toolBounds = tools[visibleItemCount].getBounds();
-            Point point = toolBar.toDisplay(new Point(toolBounds.x,
-                    toolBounds.y));
-            toolBounds.x = point.x;
-            toolBounds.y = point.y;
-            // stop if the tool is at least partially hidden by the drop down
-            // chevron
-            if (chevronPosition.x >= toolBounds.x
-                    && chevronPosition.x - toolBounds.x <= toolBounds.width) {
-                break;
+        Rectangle toolBarBounds = toolBar.getBounds();
+        ToolItem[] items = toolBar.getItems();
+        ArrayList hidden = new ArrayList();
+        for (int i = 0; i < items.length; ++i) {
+            Rectangle itemBounds = items[i].getBounds();
+            if (!((itemBounds.x + itemBounds.width <= toolBarBounds.width) && (itemBounds.y + itemBounds.height <= toolBarBounds.height))) {
+                hidden.add(items[i]);
             }
-            visibleItemCount++;
         }
 
         // Create a pop-up menu with items for each of the hidden buttons.
@@ -354,8 +348,9 @@ public class ToolBarContributionItem extends ContributionItem {
             chevronMenuManager.dispose();
         }
         chevronMenuManager = new MenuManager();
-        for (int i = visibleItemCount; i < toolCount; i++) {
-            IContributionItem data = (IContributionItem) tools[i].getData();
+        for (Iterator i = hidden.iterator(); i.hasNext(); ) {
+            ToolItem toolItem = (ToolItem) i.next();
+            IContributionItem data = (IContributionItem) toolItem.getData();
             if (data instanceof ActionContributionItem) {
                 ActionContributionItem contribution = new ActionContributionItem(
                         ((ActionContributionItem) data).getAction());
@@ -373,6 +368,7 @@ public class ToolBarContributionItem extends ContributionItem {
             }
         }
         Menu popup = chevronMenuManager.createContextMenu(coolBar);
+        Point chevronPosition = coolBar.toDisplay(event.x, event.y);
         popup.setLocation(chevronPosition.x, chevronPosition.y);
         popup.setVisible(true);
     }
@@ -574,7 +570,7 @@ public class ToolBarContributionItem extends ContributionItem {
      *            the preferred size, <code>false</code> to not change the
      *            current size
      */
-    public void updateSize(boolean changeCurrentSize) {
+    private void updateSize(boolean changeCurrentSize) {
         if (checkDisposed()) { return; }
         // cannot set size if coolItem is null
         if (coolItem == null || coolItem.isDisposed()) { return; }
@@ -583,7 +579,7 @@ public class ToolBarContributionItem extends ContributionItem {
         try {
             // Fix odd behaviour with locked tool bars
             if (coolBar != null) {
-                if (coolBar.getLocked() == true) {
+                if (coolBar.getLocked()) {
                     coolBar.setLocked(false);
                     locked = true;
                 }
@@ -608,22 +604,22 @@ public class ToolBarContributionItem extends ContributionItem {
                 Point toolBarSize = toolBar.computeSize(SWT.DEFAULT,
                         SWT.DEFAULT);
                 // Set the preffered size to the size of the toolbar plus trim
-                Point prefferedSize = coolItem.computeSize(toolBarSize.x,
+                Point preferredSize = coolItem.computeSize(toolBarSize.x,
                         toolBarSize.y);
-                coolItem.setPreferredSize(prefferedSize);
+                coolItem.setPreferredSize(preferredSize);
                 // note setMinimumSize must be called before setSize, see PR
                 // 15565
                 // Set minimum size
                 if (getMinimumItemsToShow() != SHOW_ALL_ITEMS) {
-                    int toolItemWidth = toolBar.getItems()[1].getWidth();
+                    int toolItemWidth = toolBar.getItems()[0].getWidth();
                     int minimumWidth = toolItemWidth * getMinimumItemsToShow();
                     coolItem.setMinimumSize(minimumWidth, toolBarSize.y);
                 } else {
                     coolItem.setMinimumSize(toolBarSize.x, toolBarSize.y);
                 }
                 if (changeCurrentSize) {
-                    // Set current size to preffered size
-                    coolItem.setSize(prefferedSize);
+                    // Set current size to preferred size
+                    coolItem.setSize(preferredSize);
                 }
             }
         } finally {
