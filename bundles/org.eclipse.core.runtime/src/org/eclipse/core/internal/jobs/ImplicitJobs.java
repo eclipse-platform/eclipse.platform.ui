@@ -27,47 +27,43 @@ class ImplicitJobs {
 	 */
 	class ThreadJob extends Job {
 		/**
+		 * Set to true if this thread job is running in a thread that did
+		 * not own a rule already.  This means it needs to acquire the
+		 * rule during beginRule, and must release the rule during endRule.
+		 */
+		protected boolean acquireRule = false;
+		/**
 		 * Used for diagnosing mismatched begin/end pairs. This field
 		 * is only used when in debug mode, to capture the stack trace
 		 * of the last call to beginRule.
 		 */
 		private RuntimeException lastPush = null;
 		/**
-		 * True if this job was queued for execution, as opposed to being
-		 * executed immediately. A ThreadJob is only queued if it cannot
-		 * run immediately due to a conflicting job that is currently running.
-		 * Once set, this flag remains true for the life-time of the thread job.
+		 * The actual job that is running in the thread that this 
+		 * ThreadJob represents.  This will be null if this thread
+		 * job is capturing a rule acquired outside of a job.
 		 */
-		protected boolean queued = false;
+		protected Job realJob;
 		/**
 		 * The stack of rules that have been begun in this thread, but not yet ended.
 		 */
 		private ISchedulingRule[] ruleStack;
 		/**
-		 * True if this ThreadJob has entered its run method.
+		 * True if this ThreadJob has begun execution
 		 */
 		protected boolean running = false;
+		/**
+		 * Rule stack pointer.
+		 */
 		private int top;
-		/**
-		 * The actual job that is running in the thread that this 
-		 * ThreadJob represents.  This will be null if this thread
-		 * job is capturing a rule acquired outside of a job.
-		 */
-		private Job realJob;
-		/**
-		 * Set to true if this thread job is running in a thread that did
-		 * not own a rule already.  This means it needs to acquire the
-		 * rule during beginRule, and must release the rule during endRule.
-		 */
-		protected boolean acquireRule = false;
 
 		ThreadJob(ISchedulingRule rule) {
-			super("Implicit job"); //$NON-NLS-1$
+			super("Implicit Job"); //$NON-NLS-1$
 			setSystem(true);
-			setPriority(INTERACTIVE);
-			setRule(rule);
+			setPriority(Job.INTERACTIVE);
 			ruleStack = new ISchedulingRule[2];
 			top = -1;
+			setRule(rule);
 		}
 
 		/**
@@ -118,32 +114,52 @@ class ImplicitJobs {
 		}
 
 		/**
+		 * Returns true if the monitor is canceled, and false otherwise.
+		 * Protects the caller from exception in the monitor implementation.
+		 */
+		private boolean isCanceled(IProgressMonitor monitor) {
+			try {
+				return monitor.isCanceled();
+			} catch (RuntimeException e) {
+				String msg = Policy.bind("jobs.internalError"); //$NON-NLS-1$
+				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.PLUGIN_ERROR, msg, e);
+				InternalPlatform.getDefault().log(status);
+			}
+			return false;
+		}
+
+		/**
+		 * Returns true if this thread job was scheduled and actually started running.
+		 */
+		synchronized boolean isRunning() {
+			return running;
+		}
+
+		/**
 		 * Schedule the job and block the calling thread until the job starts running
 		 */
 		void joinRun(IProgressMonitor monitor) {
 			if (isCanceled(monitor))
 				throw new OperationCanceledException();
-			running = false;
-			//check if there is a blocking thread before trying to schedule
+			//check if there is a blocking thread before waiting
 			InternalJob blockingJob = manager.findBlockingJob(this);
 			Thread blocker = blockingJob == null ? null : blockingJob.getThread();
 			//lock listener decided to grant immediate access
 			if (!manager.getLockManager().aboutToWait(blocker)) {
 				try {
 					reportBlocked(monitor, blockingJob);
-					queued = true;
-					schedule();
-					while (!running) {
-						if (isCanceled(monitor)) {
-							//cancel the running job
-							running = !cancel();
+					while (true) {
+						if (isCanceled(monitor))
 							throw new OperationCanceledException();
-						}
-						blocker = manager.getBlockingThread(this);
+						//try to run the job 
+						if (manager.runNow(this))
+							break;
+						//update blocking job
+						blockingJob = manager.findBlockingJob(this);
+						blocker = blockingJob == null ? null : blockingJob.getThread();
 						if (manager.getLockManager().aboutToWait(blocker))
 							break;
-						//must lock instance before calling wait, and also to ensure
-						//local thread cache of 'running' field is reconciled
+						//must lock instance before calling wait
 						synchronized (this) {
 							try {
 								wait(250);
@@ -157,23 +173,6 @@ class ImplicitJobs {
 				}
 			}
 			manager.getLockManager().aboutToRelease();
-			running = true;
-			setThread(Thread.currentThread());
-		}
-
-		/**
-		 * Returns true if the monitor is canceled, and false otherwise.
-		 * Protects the caller from exception in the monitor implementation.
-		 */
-		private boolean isCanceled(IProgressMonitor monitor) {
-			try {
-				return monitor.isCanceled();
-			} catch (RuntimeException e) {
-				String msg = Policy.bind("jobs.internalError"); //$NON-NLS-1$
-				IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.PLUGIN_ERROR, msg, e);
-				InternalPlatform.getDefault().log(status);
-			}
-			return false;
 		}
 
 		/**
@@ -216,7 +215,8 @@ class ImplicitJobs {
 			if (getState() != Job.NONE)
 				return false;
 			//clear and reset all fields
-			running = queued = acquireRule = false;
+			acquireRule = running = false;
+			realJob = null;
 			setRule(null);
 			setThread(null);
 			if (ruleStack.length != 2)
@@ -253,7 +253,7 @@ class ImplicitJobs {
 		 * @param monitor The monitor to report unblocking to.
 		 */
 		private void reportUnblocked(IProgressMonitor monitor) {
-			if (running) {
+			if (isRunning()) {
 				manager.getLockManager().addLockThread(Thread.currentThread(), getRule());
 				//need to reaquire any locks that were suspended while this thread was blocked on the rule
 				manager.getLockManager().resumeSuspendedLocks(Thread.currentThread());
@@ -271,9 +271,8 @@ class ImplicitJobs {
 		public IStatus run(IProgressMonitor monitor) {
 			synchronized (this) {
 				running = true;
-				notifyAll();
 			}
-			return Job.ASYNC_FINISH;
+			return ASYNC_FINISH;
 		}
 
 		/**
@@ -294,15 +293,16 @@ class ImplicitJobs {
 	}
 
 	/**
-	 * Maps (Thread->ThreadJob), threads to the currently running job for that
-	 * thread.
-	 */
-	private final Map threadJobs = new HashMap(20);
-	/**
 	 * Cached of unused instance that can be reused 
 	 */
 	private ThreadJob jobCache = null;
 	protected JobManager manager;
+
+	/**
+	 * Maps (Thread->ThreadJob), threads to the currently running job for that
+	 * thread.
+	 */
+	private final Map threadJobs = new HashMap(20);
 
 	ImplicitJobs(JobManager manager) {
 		this.manager = manager;
@@ -337,11 +337,11 @@ class ImplicitJobs {
 			threadJob.setThread(currentThread);
 			threadJob.push(rule);
 		}
-		//join the thread job outside sync block
 		try {
+			//join the thread job outside sync block
 			if (threadJob.acquireRule) {
 				//no need to reaquire any locks because the thread did not wait to get this lock
-				if (manager.runNow(threadJob))
+				if (manager.runNow(threadJob)) 
 					manager.getLockManager().addLockThread(Thread.currentThread(), rule);
 				else
 					threadJob.joinRun(monitor);
@@ -372,8 +372,8 @@ class ImplicitJobs {
 			if (threadJob.acquireRule)
 				manager.getLockManager().removeLockThread(Thread.currentThread(), threadJob.getRule());
 			//if the job was started, we need to notify job manager to end it
-			if (threadJob.running)
-				manager.endJob(threadJob, Status.OK_STATUS, threadJob.queued);
+			if (threadJob.isRunning())
+				manager.endJob(threadJob, Status.OK_STATUS, false);
 			recycle(threadJob);
 		}
 	}
@@ -394,6 +394,7 @@ class ImplicitJobs {
 			ThreadJob job = jobCache;
 			job.setRule(rule);
 			job.acquireRule = job.running = false;
+			job.realJob = null;
 			jobCache = null;
 			return job;
 		}

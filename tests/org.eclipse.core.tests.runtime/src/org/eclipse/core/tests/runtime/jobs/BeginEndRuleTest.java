@@ -92,7 +92,6 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 
 			} finally {
 				monitor.done();
-				Thread.yield();
 			}
 			return Status.OK_STATUS;
 		}
@@ -179,7 +178,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		//test how the manager reacts when several different threads try to begin conflicting rules
 		final int NUM_THREADS = 3;
 		//array to communicate with the launched threads
-		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};//, TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START };
+		final int[] status = {TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START, TestBarrier.STATUS_WAIT_FOR_START};
 		//number of times to start each rule
 		int NUM_REPEATS = 10;
 
@@ -187,18 +186,14 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		jobs[0] = new JobRuleRunner("ComplexJob1", new PathRule("/A"), status, 0, NUM_REPEATS, true);
 		jobs[1] = new JobRuleRunner("ComplexJob2", new PathRule("/A/B"), status, 1, NUM_REPEATS, true);
 		jobs[2] = new JobRuleRunner("ComplexJob3", new PathRule("/A/B/C"), status, 2, NUM_REPEATS, true);
-		//jobs[3] = new JobRuleRunner("Job4", new RuleSetD(), status, 3, NUM_REPEATS, true);
-		//jobs[4] = new JobRuleRunner("Job5", new RuleSetE(), status, 4, NUM_REPEATS, true);
 
 		//schedule the jobs
-		for (int i = 0; i < jobs.length; i++) {
+		for (int i = 0; i < jobs.length; i++) 
 			jobs[i].schedule();
-		}
 
 		//wait until all the jobs start
-		for (int i = 0; i < jobs.length; i++) {
+		for (int i = 0; i < jobs.length; i++) 
 			TestBarrier.waitForStatus(status, i, TestBarrier.STATUS_START);
-		}
 
 		//all jobs should be running
 		//the status flag should be set to START
@@ -208,7 +203,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		}
 
 		//the order that the jobs will be executed
-		int[] order = {0, 1, 2};//, 3, 4 };
+		int[] order = {0, 1, 2};
 
 		for (int j = 0; j < NUM_REPEATS; j++) {
 			//let the first job in the order run
@@ -217,42 +212,41 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			TestBarrier.waitForStatus(status, order[0], TestBarrier.STATUS_RUNNING);
 
 			//let all subsequent jobs run (they will be blocked)
-			//before starting next job, wait until previous job is blocked by JobManager (to preserve order)
+			//before starting next job, wait until previous job is blocked by JobManager
 			for (int i = 1; i < order.length; i++) {
 				status[order[i]] = TestBarrier.STATUS_WAIT_FOR_RUN;
 				TestBarrier.waitForStatus(status, order[i], TestBarrier.STATUS_BLOCKED);
 			}
 
-			for (int k = 0; k < order.length; k++) {
-				//the current job should be running, the next jobs should be waiting
-				assertEquals((3 + k) + ".0", TestBarrier.STATUS_RUNNING, status[order[k]]);
-				for (int i = k + 1; i < order.length; i++) {
-					assertEquals((3 + k) + "." + i, TestBarrier.STATUS_BLOCKED, status[order[i]]);
+			//the first job should be running, the remaining jobs should be waiting
+			assertEquals("3.0", TestBarrier.STATUS_RUNNING, status[order[0]]);
+			assertEquals("3.0", TestBarrier.STATUS_BLOCKED, status[order[1]]);
+			assertEquals("3.0", TestBarrier.STATUS_BLOCKED, status[order[2]]);
+
+			//let the first job finish			
+			status[order[0]] = TestBarrier.STATUS_WAIT_FOR_DONE;
+			TestBarrier.waitForStatus(status, order[0], TestBarrier.STATUS_DONE);
+			
+			//the remaining jobs will now compete for execution (order NOT guaranteed)
+			//let them both start and wait until they complete
+			int doneCount = 0;
+			while (doneCount < 2) {
+				if (status[order[1]] == TestBarrier.STATUS_RUNNING) {
+					status[order[1]] = TestBarrier.STATUS_WAIT_FOR_DONE;
+					TestBarrier.waitForStatus(status, order[1], TestBarrier.STATUS_DONE);
+					doneCount++;
 				}
-				//let the current job finish			
-				status[order[k]] = TestBarrier.STATUS_WAIT_FOR_DONE;
-				//current job is done
-				TestBarrier.waitForStatus(status, order[k], TestBarrier.STATUS_DONE);
-
-				//wait until the next job runs
-				if (k < order.length - 1)
-					TestBarrier.waitForStatus(status, order[k + 1], TestBarrier.STATUS_RUNNING);
-			}
-
-			if (j < NUM_REPEATS - 1) {
-				for (int i = 0; i < status.length; i++) {
-					assertEquals("7." + (i + 1), TestBarrier.STATUS_DONE, status[i]);
-					assertEquals("8." + (i + 1), Job.RUNNING, jobs[i].getState());
+				if (status[order[2]] == TestBarrier.STATUS_RUNNING) {
+					status[order[2]] = TestBarrier.STATUS_WAIT_FOR_DONE;
+					TestBarrier.waitForStatus(status, order[2], TestBarrier.STATUS_DONE);
+					doneCount++;
 				}
-
-				//don't change order on last iteration
-				//change the order of the jobs, nothing should change in the execution
-				int temp = order[0];
-
-				order[0] = order[2];
-				order[2] = order[1];
-				order[1] = temp;
 			}
+			//change the order of the jobs, nothing should change in the execution
+			int temp = order[0];
+			order[0] = order[2];
+			order[2] = order[1];
+			order[1] = temp;
 		}
 
 		//wait until all jobs are done
@@ -543,6 +537,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
+			//ignore
 		}
 		//cancel the monitor
 		monitor.setCanceled(true);
@@ -605,6 +600,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 		try {
 			endingThread.join();
 		} catch (InterruptedException e) {
+			//ignore
 		}
 		//the thread should be dead now
 		assertTrue("1.0", !endingThread.isAlive());
@@ -629,6 +625,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			try {
 				t.join();
 			} catch (InterruptedException e1) {
+				//ignore
 			}
 			//the thread should be dead now
 			assertTrue("2." + i, !t.isAlive());
@@ -643,6 +640,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			try {
 				t.join();
 			} catch (InterruptedException e1) {
+				//ignore
 			}
 			//the thread should be dead now
 			assertTrue("3." + i, !t.isAlive());
@@ -658,6 +656,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			try {
 				t.join();
 			} catch (InterruptedException e1) {
+				//ignore
 			}
 			//the thread should be dead now
 			assertTrue("4." + i, !t.isAlive());
@@ -674,6 +673,7 @@ public class BeginEndRuleTest extends AbstractJobManagerTest {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
+				//ignore
 			}
 			Thread.yield();
 			//sanity test to avoid hanging tests
