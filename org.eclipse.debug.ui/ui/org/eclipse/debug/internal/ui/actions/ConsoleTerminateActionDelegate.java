@@ -9,6 +9,8 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.views.ConsoleView;
 import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IViewPart;
@@ -47,4 +49,7 @@ public class ConsoleTerminateActionDelegate extends TerminateActionDelegate {
 		DebugSelectionManager.getDefault().removeSelectionChangedListener(this, getWindow(), IDebugUIConstants.ID_DEBUG_VIEW);	
 	}
 	
+	protected void update(IAction action, ISelection s) {
+		super.update(action, getSelection());
+	}
 }
