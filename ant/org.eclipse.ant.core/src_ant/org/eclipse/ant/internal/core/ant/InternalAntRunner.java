@@ -980,4 +980,11 @@ public class InternalAntRunner {
 	protected void setCurrentProject(Project currentProject) {
 		fCurrentProject = currentProject;
 	}
+	
+	public String getBuildExceptionErrorMessage(Throwable t) {
+		if (t instanceof BuildException) {
+			return t.toString();
+		}
+		return null;
+	}
 }

@@ -199,10 +199,12 @@ public class AntRunner implements IPlatformRunnable {
 	 * @since 2.1
 	 */
 	public TargetInfo[] getAvailableTargets() throws CoreException {
+		Class classInternalAntRunner= null;
+		Object runner= null;
 		try {
 			ClassLoader loader = getClassLoader();
-			Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
-			Object runner = classInternalAntRunner.newInstance();
+			classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
+			runner = classInternalAntRunner.newInstance();
 			// set build file
 			Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
 			setBuildFileLocation.invoke(runner, new Object[] { fBuildFileLocation });
@@ -229,9 +231,9 @@ public class AntRunner implements IPlatformRunnable {
 		} catch (ClassNotFoundException e) {
 			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, InternalCoreAntMessages.getString("AntRunner.Could_not_find_one_or_more_classes._Please_check_the_Ant_classpath._1"), e)); //$NON-NLS-1$
 		} catch (InvocationTargetException e) {
-			Throwable realException = e.getTargetException();
-			String message = (realException.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : realException.getMessage(); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, realException));
+			handleInvocationTargetException(runner, classInternalAntRunner, e);
+			//not possible to reach this line
+			return new TargetInfo[0];
 		} catch (Exception e) {
 			String message = (e.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : e.getMessage(); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, e));
@@ -254,10 +256,12 @@ public class AntRunner implements IPlatformRunnable {
 		if (IAntCoreConstants.DEBUG_BUILDFILE_TIMING) {
 			startTime = System.currentTimeMillis();
 		}
+		Object runner= null;
+		Class classInternalAntRunner= null;
 		try {
 			ClassLoader loader = getClassLoader();
-			Class classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
-			Object runner = classInternalAntRunner.newInstance();
+			classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
+			runner = classInternalAntRunner.newInstance();
 			// set build file
 			Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
 			setBuildFileLocation.invoke(runner, new Object[] { fBuildFileLocation });
@@ -300,14 +304,7 @@ public class AntRunner implements IPlatformRunnable {
 		} catch (ClassNotFoundException e) {
 			problemLoadingClass(e);
 		} catch (InvocationTargetException e) {
-			Throwable realException = e.getTargetException();
-			// J9 throws NoClassDefFoundError nested in a InvocationTargetException
-			if ((realException instanceof NoClassDefFoundError) || (realException instanceof ClassNotFoundException)) {
-				problemLoadingClass(e);
-				return;
-			}
-			String message = (realException.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : realException.getMessage(); //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, realException));
+			handleInvocationTargetException(runner, classInternalAntRunner, e);
 		} catch (Exception e) {
 			String message = (e.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : e.getMessage(); //$NON-NLS-1$
 			IStatus status= new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, e);
@@ -318,6 +315,33 @@ public class AntRunner implements IPlatformRunnable {
 				System.out.println(InternalCoreAntMessages.getString("AntRunner.Buildfile_run_took___9") + (finishTime - startTime) + InternalCoreAntMessages.getString("AntRunner._milliseconds._10")); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
+	}
+
+	/**
+	 * Handles exceptions that are loaded by the Ant Class Loader by
+	 * asking the Internal Ant Runner class for the correct error message.
+	 * 
+	 * Handles nested NoClassDefFoundError and nested ClassNotFoundException	 */
+	protected void handleInvocationTargetException(Object runner, Class classInternalAntRunner, InvocationTargetException e) throws CoreException {
+		Throwable realException = e.getTargetException();
+		String message= null;
+		if (runner != null) {
+			try {
+				Method getBuildErrorMessage = classInternalAntRunner.getMethod("getBuildExceptionErrorMessage", new Class[] { Throwable.class }); //$NON-NLS-1$
+				message= (String)getBuildErrorMessage.invoke(runner, new Object[] { realException });
+			} catch (Exception ex) {
+				//do nothing as already in error state
+			}
+		}
+		// J9 throws NoClassDefFoundError nested in a InvocationTargetException
+		if (message == null && ((realException instanceof NoClassDefFoundError) || (realException instanceof ClassNotFoundException))) {
+			problemLoadingClass(e);
+			return;
+		}
+		if (message == null) {
+			message = (realException.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : realException.getMessage(); //$NON-NLS-1$
+		}
+		throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_SCRIPT, message, realException));
 	}
 
 	protected void problemLoadingClass(Throwable e) throws CoreException {
