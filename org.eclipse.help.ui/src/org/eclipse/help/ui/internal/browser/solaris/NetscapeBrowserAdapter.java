@@ -5,8 +5,10 @@
 package org.eclipse.help.ui.internal.browser.solaris;
 import java.io.IOException;
 
+import org.eclipse.help.internal.util.Logger;
 import org.eclipse.help.ui.browser.IBrowser;
-import org.eclipse.help.ui.internal.util.StreamConsumer;
+import org.eclipse.help.ui.internal.util.*;
+import org.eclipse.swt.widgets.Display;
 public class NetscapeBrowserAdapter implements IBrowser {
 	// delay that it takes the browser to start responding
 	// to remote command after browser command has been called
@@ -14,9 +16,12 @@ public class NetscapeBrowserAdapter implements IBrowser {
 	private static long browserFullyOpenedAt = 0;
 	private static boolean opened = false;
 	private static NetscapeBrowserAdapter instance;
+	private static Thread mainThread;
 	/**
+	 * Constructor
 	 */
 	private NetscapeBrowserAdapter() {
+		mainThread=Thread.currentThread();
 	}
 	public static NetscapeBrowserAdapter getInstance() {
 		if (instance == null)
@@ -101,6 +106,20 @@ public class NetscapeBrowserAdapter implements IBrowser {
 			pr.waitFor();
 		} catch (InterruptedException e) {
 		} catch (IOException e) {
+				Logger.logError(
+					WorkbenchResources.getString(
+						"NetscapeBrowserAdapter.executeFailed"),
+					e);
+				try {
+					Display.findDisplay(mainThread).asyncExec(new Runnable() {
+						public void run() {
+							ErrorUtil.displayErrorDialog(
+								WorkbenchResources.getString(
+									"NetscapeBrowserAdapter.executeFailed"));
+						}
+					});
+				} catch (Exception e2) {
+				}
 		} finally {
 			opened = false;
 		}
