@@ -482,14 +482,18 @@ private void busyResetPerspective() {
 	if (desc == null)		
 		return;
 
+	IContributionItem item = window.findPerspectiveShortcut(oldPersp.getDesc(), this);
+	if(item == null)
+		return;
+		
 	// Create new persp from original template.
 	Perspective newPersp = createPerspective(desc);
 	if (newPersp == null)
 		return;
-
+	
 	// Update the perspective list and shortcut
 	perspList.swap(oldPersp, newPersp);
-	IContributionItem item = window.findPerspectiveShortcut(oldPersp.getDesc(), this);
+	
 	SetPagePerspectiveAction action = (SetPagePerspectiveAction) ((ActionContributionItem)item).getAction();
 	action.setPerspective(newPersp.getDesc());
 
