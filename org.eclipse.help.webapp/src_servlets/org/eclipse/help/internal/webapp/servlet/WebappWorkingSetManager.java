@@ -14,10 +14,8 @@ import java.io.*;
 
 import javax.servlet.http.*;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.workingset.*;
-import org.osgi.framework.*;
 
 /**
  * Proxy for WorkingSetManager or InfocenterWorkingSetManager.
@@ -42,28 +40,7 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 					locale);
 		} else {
 			wSetManager = BaseHelpSystem.getWorkingSetManager();
-			// upon startup in workbench mode, make sure working sets are in
-			// synch with those from UI
-			if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_WORKBENCH) {
-				synchronized (workingSetsSyncLock) {
-					if (!workingSetsSynchronized) {
-						workingSetsSynchronized = true;
-						Bundle b = Platform.getBundle("org.eclipse.help.ide"); //$NON-NLS-1$
-						if (b != null) {
-							try {
-								b
-										.loadClass("org.eclipse.help.ui.internal.ide.HelpIdePlugin"); //$NON-NLS-1$
-							} catch (ClassNotFoundException cnfe) {
-							}
-						}
-						((WorkingSetManager) wSetManager)
-								.synchronizeWorkingSets();
-					}
-				}
-				//
-			}
 		}
-
 	}
 
 	public AdaptableTocsArray getRoot() {

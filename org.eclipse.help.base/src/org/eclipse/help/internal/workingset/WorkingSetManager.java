@@ -21,7 +21,6 @@ import javax.xml.transform.stream.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
-import org.eclipse.help.internal.workingset.PropertyChange.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
@@ -34,60 +33,10 @@ import org.xml.sax.*;
 public class WorkingSetManager implements IHelpWorkingSetManager,
 		ITocsChangedListener {
 
-	// Note: keep the following constants in sych with the values defined in
-	// IWorkingSetManager.
-	//       They are needed to synch the ui and the help working sets, as help should
-	// run w/o ui plugins.
-
-	/**
-	 * Change event id when a working set is added newValue of the
-	 * PropertyChangeEvent will be the added working set. oldValue will be null.
-	 * 
-	 * @see IPropertyChangeListener
-	 */
-	public static final String CHANGE_WORKING_SET_ADD = "workingSetAdd"; //$NON-NLS-1$
-
-	/**
-	 * Change event id when a working set is removed newValue of the
-	 * PropertyChangeEvent will be null. oldValue will be the removed working
-	 * set.
-	 * 
-	 * @see IPropertyChangeListener
-	 */
-	public static final String CHANGE_WORKING_SET_REMOVE = "workingSetRemove"; //$NON-NLS-1$
-
-	/**
-	 * Change event id when the working set contents changed newValue of the
-	 * PropertyChangeEvent will be the changed working set. oldValue will be
-	 * null.
-	 * 
-	 * @see IPropertyChangeListener
-	 */
-	public static final String CHANGE_WORKING_SET_CONTENT_CHANGE = "workingSetContentChange"; //$NON-NLS-1$
-
-	/**
-	 * Change event id when the working set name changed. newValue of the
-	 * PropertyChangeEvent will be the changed working set. oldValue will be
-	 * null.
-	 * 
-	 * @see IPropertyChangeListener
-	 */
-	public static final String CHANGE_WORKING_SET_NAME_CHANGE = "workingSetNameChange"; //$NON-NLS-1$	
-
-	/**
-	 * Synchronize event id. When other working sets repositories are used, one
-	 * may want to keep things in synch.
-	 * 
-	 * @see IPropertyChangeListener
-	 */
-	public static final String CHANGE_WORKING_SETS_SYNCH = "workingSetsSynch"; //$NON-NLS-1$
-
 	// Working set persistence
 	private static final String WORKING_SET_STATE_FILENAME = "workingsets.xml"; //$NON-NLS-1$
 
 	private SortedSet workingSets = new TreeSet(new WorkingSetComparator());
-
-	private PropertyChange.ListenerList propertyChangeListeners = new PropertyChange.ListenerList();
 
 	private AdaptableTocsArray root;
 
@@ -120,14 +69,6 @@ public class WorkingSetManager implements IHelpWorkingSetManager,
 			return;
 		workingSets.add(workingSet);
 		saveState();
-		firePropertyChange(CHANGE_WORKING_SET_ADD, null, workingSet);
-	}
-
-	/**
-	 */
-	public void addPropertyChangeListener(
-			PropertyChange.IPropertyChangeListener listener) {
-		propertyChangeListeners.add(listener);
 	}
 
 	/**
@@ -155,33 +96,6 @@ public class WorkingSetManager implements IHelpWorkingSetManager,
 			return workingSetManager.workingSets.equals(workingSets);
 		}
 		return false;
-	}
-
-	/**
-	 * Notify property change listeners about a change to the list of working
-	 * sets.
-	 * 
-	 * @param changeId
-	 *            one of CHANGE_WORKING_SET_ADD CHANGE_WORKING_SET_REMOVE
-	 *            CHANGE_WORKING_SET_CONTENT_CHANGE
-	 *            CHANGE_WORKING_SET_NAME_CHANGE
-	 * @param oldValue
-	 *            the removed working set or null if a working set was added or
-	 *            changed.
-	 * @param newValue
-	 *            the new or changed working set or null if a working set was
-	 *            removed.
-	 */
-	private void firePropertyChange(String changeId, Object oldValue,
-			Object newValue) {
-		final PropertyChange.PropertyChangeEvent event = new PropertyChange.PropertyChangeEvent(
-				this, changeId, oldValue, newValue);
-
-		Object[] listeners = propertyChangeListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			((PropertyChange.IPropertyChangeListener) listeners[i])
-					.propertyChange(event);
-		}
 	}
 
 	/**
@@ -237,7 +151,6 @@ public class WorkingSetManager implements IHelpWorkingSetManager,
 	public void removeWorkingSet(WorkingSet workingSet) {
 		workingSets.remove(workingSet);
 		saveState();
-		firePropertyChange(CHANGE_WORKING_SET_REMOVE, workingSet, null);
 	}
 
 	/**
@@ -357,13 +270,6 @@ public class WorkingSetManager implements IHelpWorkingSetManager,
 	}
 
 	/**
-	 */
-	public void removePropertyChangeListener(
-			PropertyChange.IPropertyChangeListener listener) {
-		propertyChangeListeners.remove(listener);
-	}
-
-	/**
 	 * Saves the working sets in the persistence store
 	 */
 	public synchronized boolean saveState() {
@@ -430,18 +336,6 @@ public class WorkingSetManager implements IHelpWorkingSetManager,
 	 */
 	public void workingSetChanged(WorkingSet changedWorkingSet) {
 		saveState();
-		firePropertyChange(CHANGE_WORKING_SET_NAME_CHANGE, null,
-				changedWorkingSet);
-		firePropertyChange(CHANGE_WORKING_SET_CONTENT_CHANGE, null,
-				changedWorkingSet);
-	}
-
-	/**
-	 * Synchronizes the working sets. Should only be called by the webapp
-	 * working set manager dialog.
-	 */
-	public void synchronizeWorkingSets() {
-		firePropertyChange(CHANGE_WORKING_SETS_SYNCH, null, null);
 	}
 
 	public AdaptableToc getAdaptableToc(String href) {
@@ -498,15 +392,6 @@ public class WorkingSetManager implements IHelpWorkingSetManager,
 		root = null;
 		workingSets = new TreeSet(new WorkingSetComparator());
 		restoreState();
-		List newWorkingSets = new ArrayList(workingSets);
-		for (Iterator it = oldWorkingSets.iterator(); it.hasNext();) {
-			WorkingSet ws = (WorkingSet) it.next();
-			firePropertyChange(CHANGE_WORKING_SET_REMOVE, ws, null);
-		}
-		for (Iterator it = newWorkingSets.iterator(); it.hasNext();) {
-			WorkingSet ws = (WorkingSet) it.next();
-			firePropertyChange(CHANGE_WORKING_SET_ADD, null, ws);
-		}
 	}
 
 }
