@@ -13,6 +13,8 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
@@ -24,6 +26,7 @@ import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.*;
@@ -33,9 +36,7 @@ import org.eclipse.ui.views.internal.framelist.FrameList;
 /**
  * Implements the Resource Navigator view.
  */
-public class ResourceNavigator
-	extends ViewPart
-	implements ISetSelectionTarget, IResourceTreeNavigatorPart {
+public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, IResourceTreeNavigatorPart {
 	private TreeViewer viewer;
 	private IDialogSettings settings;
 	private IMemento memento;
@@ -45,12 +46,12 @@ public class ResourceNavigator
 
 	protected PropertyDialogAction propertyDialogAction;
 	protected NewWizardAction newWizardAction;
-	
+
 	protected ResourceNavigatorActionFactory actionFactory;
-	
+
 	//The filter the resources are cleared up on
 	private ResourcePatternFilter patternFilter = new ResourcePatternFilter();
-	
+
 	private Clipboard clipboard;
 
 	/** Property store constant for sort order. */
@@ -60,8 +61,7 @@ public class ResourceNavigator
 	/**
 	 * No longer used but preserved to avoid an api change.
 	 */
-	public static final String NAVIGATOR_VIEW_HELP_ID =
-		INavigatorHelpContextIds.RESOURCE_VIEW;
+	public static final String NAVIGATOR_VIEW_HELP_ID = INavigatorHelpContextIds.RESOURCE_VIEW;
 
 	/**
 	 * Preference name constant for linking editor switching to navigator selection.
@@ -71,8 +71,7 @@ public class ResourceNavigator
 	 * preference page with this preference on it, instead of on the Workbench's.
 	 * The value must be the same as IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR.]
 	 */
-	private static final String LINK_NAVIGATOR_TO_EDITOR =
-		"LINK_NAVIGATOR_TO_EDITOR";
+	private static final String LINK_NAVIGATOR_TO_EDITOR = "LINK_NAVIGATOR_TO_EDITOR";
 	//$NON-NLS-1$
 
 	// Persistance tags.
@@ -102,6 +101,19 @@ public class ResourceNavigator
 		public void partDeactivated(IWorkbenchPart part) {
 		}
 		public void partOpened(IWorkbenchPart part) {
+		}
+	};
+	private IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			String property = event.getProperty();
+			if (IWorkbenchPage.CHANGE_WORKING_SET_CHANGE.equals(property) || IWorkbenchPage.CHANGE_WORKING_SET_REPLACE.equals(property)) {
+				IWorkingSet workingSet = (IWorkingSet) event.getNewValue();
+				if (workingSet == null) {
+					workingSet = getInitialInput();
+				}
+				getTreeViewer().setInput(workingSet);
+				updateTitle();
+			}
 		}
 	};
 	/**
@@ -147,10 +159,7 @@ public class ResourceNavigator
 		//	initDrillDownAdapter(viewer);
 		viewer.setUseHashlookup(true);
 		viewer.setContentProvider(new WorkbenchContentProvider());
-		viewer.setLabelProvider(
-			new DecoratingLabelProvider(
-				new WorkbenchLabelProvider(), 
-				getViewSite().getDecoratorManager()));
+		viewer.setLabelProvider(new DecoratingLabelProvider(new WorkbenchLabelProvider(), getViewSite().getDecoratorManager()));
 		viewer.addFilter(this.patternFilter);
 		if (memento != null)
 			restoreFilters();
@@ -201,15 +210,15 @@ public class ResourceNavigator
 
 		getSite().setSelectionProvider(viewer);
 
-		getSite().getPage().addPartListener(partListener);
+		IWorkbenchPage page = getSite().getPage();
+		page.addPartListener(partListener);
+		page.addPropertyChangeListener(propertyChangeListener);
 
 		if (memento != null)
 			restoreState(memento);
 		memento = null;
 		// Set help for the view 
-		WorkbenchHelp.setHelp(
-			viewer.getControl(),
-			INavigatorHelpContextIds.RESOURCE_VIEW);
+		WorkbenchHelp.setHelp(viewer.getControl(), INavigatorHelpContextIds.RESOURCE_VIEW);
 	}
 	/* (non-Javadoc)
 	 * Method declared on IWorkbenchPart.
@@ -244,20 +253,18 @@ public class ResourceNavigator
 	 * Called when the context menu is about to open.
 	 */
 	void fillContextMenu(IMenuManager menu) {
-		IStructuredSelection selection =
-			(IStructuredSelection) getResourceViewer().getSelection();
+		IStructuredSelection selection = (IStructuredSelection) getResourceViewer().getSelection();
 
 		propertyDialogAction.selectionChanged(selection);
 		actionFactory.updateGlobalActions(selection);
 
-		MenuManager newMenu =
-			new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.new"));
+		MenuManager newMenu = new MenuManager(ResourceNavigatorMessages.getString("ResourceNavigator.new"));
 		//$NON-NLS-1$
 		menu.add(newMenu);
 		new NewWizardMenu(newMenu, getSite().getWorkbenchWindow(), false);
-		
-		actionFactory.fillPopUpMenu(menu,selection);
-		
+
+		actionFactory.fillPopUpMenu(menu, selection);
+
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end"));
 		//$NON-NLS-1$
@@ -274,28 +281,30 @@ public class ResourceNavigator
 	 * If the resource is a file, it uses its parent folder.
 	 * If a resource could not be obtained, it uses the workspace root.
 	 */
-	IContainer getInitialInput() {
-		IAdaptable input = getSite().getPage().getInput();
-		IResource resource = null;
-		if (input instanceof IResource) {
-			resource = (IResource) input;
-		} else {
-			resource = (IResource) input.getAdapter(IResource.class);
-		}
-		if (resource != null) {
-			switch (resource.getType()) {
-				case IResource.FILE :
-					return resource.getParent();
-				case IResource.FOLDER :
-				case IResource.PROJECT :
-				case IResource.ROOT :
-					return (IContainer) resource;
-				default :
-					// Unknown resource type.  Fall through.
-					break;
-			}
-		}
-		return ResourcesPlugin.getWorkspace().getRoot();
+	IWorkingSet getInitialInput() {
+		return getSite().getPage().getWorkingSet();
+		/*		
+				IAdaptable input = getSite().getPage().getInput();
+				IResource resource = null;
+				if (input instanceof IResource) {
+					resource = (IResource) input;
+				} else {
+					resource = (IResource) input.getAdapter(IResource.class);
+				}
+				if (resource != null) {
+					switch (resource.getType()) {
+						case IResource.FILE :
+							return resource.getParent();
+						case IResource.FOLDER :
+						case IResource.PROJECT :
+						case IResource.ROOT :
+							return (IContainer) resource;
+						default :
+							// Unknown resource type.  Fall through.
+							break;
+					}
+				}
+				return ResourcesPlugin.getWorkspace().getRoot();*/
 	}
 	/**
 	 * Returns the pattern filter for this view.
@@ -325,7 +334,7 @@ public class ResourceNavigator
 	public Viewer getResourceViewer() {
 		return getTreeViewer();
 	}
-	
+
 	/**
 	 * Returns the tree viewer which shows the resource hierarchy.
 	 * @since 2.0
@@ -349,9 +358,10 @@ public class ResourceNavigator
 	 * @return a clipboard
 	 * @since 2.0
 	 */
-	/*package*/ Clipboard getClipboard() {
+	/*package*/
+	Clipboard getClipboard() {
 		return clipboard;
-	} 
+	}
 	/**
 	 * Returns the message to show in the status line.
 	 *
@@ -369,9 +379,7 @@ public class ResourceNavigator
 			}
 		}
 		if (selection.size() > 1) {
-			return ResourceNavigatorMessages.format(
-				"ResourceNavigator.statusLine",
-				new Object[] { new Integer(selection.size())});
+			return ResourceNavigatorMessages.format("ResourceNavigator.statusLine", new Object[] { new Integer(selection.size())});
 			//$NON-NLS-1$
 		}
 		return ""; //$NON-NLS-1$
@@ -389,8 +397,7 @@ public class ResourceNavigator
 				return path.makeRelative().toString();
 			}
 		} else {
-			return ((ILabelProvider) getTreeViewer().getLabelProvider()).getText(
-				element);
+			return ((ILabelProvider) getTreeViewer().getLabelProvider()).getText(element);
 		}
 	}
 	/**
@@ -401,7 +408,7 @@ public class ResourceNavigator
 	protected void handleDoubleClick(DoubleClickEvent event) {
 		IStructuredSelection selection = (IStructuredSelection) event.getSelection();
 		Object element = selection.getFirstElement();
-		
+
 		actionFactory.handleDoubleClick(selection);
 
 		// 1GBZIA0: ITPUI:WIN2000 - Double-clicking in navigator should expand/collapse containers
@@ -423,22 +430,22 @@ public class ResourceNavigator
 		actionFactory.selectionChanged(sel);
 		linkToEditor(sel);
 	}
-	
+
 	/**
 	 * Handles a key press in viewer. By default do nothing.
 	 */
 	protected void handleKeyPressed(KeyEvent event) {
-		
+
 	}
-	
+
 	/**
 	 * Handles a key release in viewer.
 	 */
 	protected void handleKeyReleased(KeyEvent event) {
 		actionFactory.handleKeyReleased(event);
-		
+
 	}
-	
+
 	/* (non-Javadoc)
 	 * Method declared on IViewPart.
 	 */
@@ -451,15 +458,8 @@ public class ResourceNavigator
 	 */
 	protected void initDragAndDrop() {
 		int ops = DND.DROP_COPY | DND.DROP_MOVE;
-		Transfer[] transfers =
-			new Transfer[] {
-				ResourceTransfer.getInstance(),
-				FileTransfer.getInstance(),
-				PluginTransfer.getInstance()};
-		viewer.addDragSupport(
-			ops,
-			transfers,
-			new NavigatorDragAdapter((ISelectionProvider) viewer));
+		Transfer[] transfers = new Transfer[] { ResourceTransfer.getInstance(), FileTransfer.getInstance(), PluginTransfer.getInstance()};
+		viewer.addDragSupport(ops, transfers, new NavigatorDragAdapter((ISelectionProvider) viewer));
 		viewer.addDropSupport(ops, transfers, new NavigatorDropAdapter(viewer));
 	}
 	/**
@@ -474,8 +474,7 @@ public class ResourceNavigator
 				updateTitle();
 			}
 		};
-		drillDownAdapter.addNavigationActions(
-			getViewSite().getActionBars().getToolBarManager());
+		drillDownAdapter.addNavigationActions(getViewSite().getActionBars().getToolBarManager());
 	}
 	protected void initFrameList() {
 		frameSource = new NavigatorFrameSource(this);
@@ -527,8 +526,7 @@ public class ResourceNavigator
 			for (int i = 0; i < editorArray.length; ++i) {
 				IEditorPart editor = editorArray[i];
 				IEditorInput input = editor.getEditorInput();
-				if (input instanceof IFileEditorInput
-					&& file.equals(((IFileEditorInput) input).getFile())) {
+				if (input instanceof IFileEditorInput && file.equals(((IFileEditorInput) input).getFile())) {
 					page.bringToTop(editor);
 					return;
 				}
@@ -542,18 +540,12 @@ public class ResourceNavigator
 		Shell shell = getShell();
 
 		newWizardAction = new NewWizardAction();
-		
-		actionFactory = 
-			new ResourceNavigatorActionFactory(
-				frameList,
-				shell,
-				getClipboard(),
-				this);
-				
+
+		actionFactory = new ResourceNavigatorActionFactory(frameList, shell, getClipboard(), this);
+
 		actionFactory.makeActions();
-		propertyDialogAction =
-			new PropertyDialogAction(getShell(), getResourceViewer());
-	
+		propertyDialogAction = new PropertyDialogAction(getShell(), getResourceViewer());
+
 	}
 	public void restoreFilters() {
 		IMemento filtersMem = memento.getChild(TAG_FILTERS);
@@ -568,13 +560,13 @@ public class ResourceNavigator
 			getPatternFilter().setPatterns(new String[0]);
 		}
 	}
-	
+
 	/**
 	 * Restore the state of the receiver to the state described in
 	 * momento.
 	 * @since 2.0
 	 */
-	
+
 	protected void restoreState(IMemento memento) {
 		IContainer container = ResourcesPlugin.getWorkspace().getRoot();
 		IMemento childMem = memento.getChild(TAG_EXPANDED);
@@ -646,9 +638,7 @@ public class ResourceNavigator
 			IMemento expandedMem = memento.createChild(TAG_EXPANDED);
 			for (int i = 0; i < expandedElements.length; i++) {
 				IMemento elementMem = expandedMem.createChild(TAG_ELEMENT);
-				elementMem.putString(
-					TAG_PATH,
-					((IResource) expandedElements[i]).getFullPath().toString());
+				elementMem.putString(TAG_PATH, ((IResource) expandedElements[i]).getFullPath().toString());
 			}
 		}
 
@@ -658,9 +648,7 @@ public class ResourceNavigator
 			IMemento selectionMem = memento.createChild(TAG_SELECTION);
 			for (int i = 0; i < elements.length; i++) {
 				IMemento elementMem = selectionMem.createChild(TAG_ELEMENT);
-				elementMem.putString(
-					TAG_PATH,
-					((IResource) elements[i]).getFullPath().toString());
+				elementMem.putString(TAG_PATH, ((IResource) elements[i]).getFullPath().toString());
 			}
 		}
 
@@ -695,9 +683,8 @@ public class ResourceNavigator
 	 * @param decorator a label decorator or <code>null</code> for no decorations.
 	 */
 	public void setLabelDecorator(ILabelDecorator decorator) {
-		DecoratingLabelProvider provider =
-			(DecoratingLabelProvider) getTreeViewer().getLabelProvider();
-		if(decorator == null)
+		DecoratingLabelProvider provider = (DecoratingLabelProvider) getTreeViewer().getLabelProvider();
+		if (decorator == null)
 			provider.setLabelDecorator(getViewSite().getDecoratorManager());
 		else
 			provider.setLabelDecorator(decorator);
@@ -714,8 +701,7 @@ public class ResourceNavigator
 		settings.put(STORE_SORT_TYPE, sorter.getCriteria());
 		actionFactory.updateSortActions();
 	}
-	
-	
+
 	/**
 	 * Updates the message shown in the status line.
 	 *
@@ -730,34 +716,28 @@ public class ResourceNavigator
 	 * Called whenever the input of the viewer changes.
 	 */
 	void updateTitle() {
-		Object input = getResourceViewer().getInput();
-		String viewName = getConfigurationElement().getAttribute("name");
-		//$NON-NLS-1$
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		if (input == null
-			|| input.equals(workspace)
-			|| input.equals(workspace.getRoot())) {
+		IWorkingSet input = (IWorkingSet) getResourceViewer().getInput();
+		String viewName = getConfigurationElement().getAttribute("name"); //$NON-NLS-1$
+
+		if (input == null || input.getName().length() == 0) {
 			setTitle(viewName);
 			setTitleToolTip(""); //$NON-NLS-1$
 		} else {
-			ILabelProvider labelProvider =
-				(ILabelProvider) getTreeViewer().getLabelProvider();
-			setTitle(
-				ResourceNavigatorMessages.format(
-					"ResourceNavigator.title",
-					new Object[] { viewName, labelProvider.getText(input)}));
-			//$NON-NLS-1$
+			ILabelProvider labelProvider = (ILabelProvider) getTreeViewer().getLabelProvider();
+			setTitle(ResourceNavigatorMessages.format(
+				"ResourceNavigator.title", //$NON-NLS-1$
+				new Object[] { viewName, labelProvider.getText(input)}));
 			setTitleToolTip(getToolTipText(input));
 		}
 	}
 
 	/**
- 	* Set the values of the filter preference to be the 
- 	* strings in preference values
- 	*/
+		* Set the values of the filter preference to be the 
+		* strings in preference values
+		*/
 
-	public void setFiltersPreference(String[] patterns){
-	
+	public void setFiltersPreference(String[] patterns) {
+
 		StringWriter writer = new StringWriter();
 
 		for (int i = 0; i < patterns.length; i++) {
@@ -766,10 +746,8 @@ public class ResourceNavigator
 			writer.write(patterns[i]);
 		}
 
-		getPlugin().getPreferenceStore().setValue(
-			ResourcePatternFilter.FILTERS_TAG,
-			writer.toString());
-	
+		getPlugin().getPreferenceStore().setValue(ResourcePatternFilter.FILTERS_TAG, writer.toString());
+
 	}
-		
+
 }

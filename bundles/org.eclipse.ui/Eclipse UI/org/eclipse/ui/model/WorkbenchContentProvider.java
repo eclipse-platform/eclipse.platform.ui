@@ -4,10 +4,12 @@ package org.eclipse.ui.model;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.internal.model.WorkbenchWorkingSet;
 
 /**
  * Provides tree contents for objects that have the IWorkbenchAdapter
@@ -46,6 +48,9 @@ protected IWorkbenchAdapter getAdapter(Object o) {
  * Method declared on ITreeContentProvider.
  */
 public Object[] getChildren(Object element) {
+	if (element instanceof WorkbenchWorkingSet) {
+		return ((WorkbenchWorkingSet) element).getChildren(element);
+	}
 	IWorkbenchAdapter adapter = getAdapter(element);
 	if (adapter != null) {
 	    return adapter.getChildren(element);
@@ -62,6 +67,12 @@ public Object[] getElements(Object element) {
  * Method declared on ITreeContentProvider.
  */
 public Object getParent(Object element) {
+	if (element instanceof IWorkingSet) {
+		IAdaptable[] items = ((IWorkingSet) element).getItems();
+		if (items.length > 0) {
+			return items[0];
+		}
+	}
 	IWorkbenchAdapter adapter = getAdapter(element);
 	if (adapter != null) {
 	    return adapter.getParent(element);
@@ -81,15 +92,31 @@ public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 	this.viewer = viewer;
 	IWorkspace oldWorkspace = null;
 	IWorkspace newWorkspace = null;
+	if (oldInput instanceof IWorkingSet) {
+		IWorkingSet workingSet = (IWorkingSet) oldInput;
+		
+		if (workingSet.getItems().length > 0) {
+			oldInput = workingSet.getItems()[0];
+		}
+	}
 	if (oldInput instanceof IWorkspace) {
 		oldWorkspace = (IWorkspace) oldInput;
 	}
 	else if (oldInput instanceof IContainer) {
 		oldWorkspace = ((IContainer) oldInput).getWorkspace();
 	}
+
+	if (newInput instanceof IWorkingSet) {
+		IWorkingSet workingSet = (IWorkingSet) newInput;
+		
+		if (workingSet.getItems().length > 0) {
+			newInput = workingSet.getItems()[0];
+		}
+	}
 	if (newInput instanceof IWorkspace) {
 		newWorkspace = (IWorkspace) newInput;
-	} else if (newInput instanceof IContainer) {
+	}
+	else if (newInput instanceof IContainer) {
 		newWorkspace = ((IContainer) newInput).getWorkspace();
 	}
 	if (oldWorkspace != newWorkspace) {

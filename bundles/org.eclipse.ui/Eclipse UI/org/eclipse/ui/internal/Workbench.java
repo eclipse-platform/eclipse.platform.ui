@@ -8,19 +8,12 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.boot.IPlatformRunnable;
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
@@ -28,7 +21,11 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.window.WindowManager;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
@@ -811,9 +808,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				if (page != null) {
 					boolean inputSame = false;
 					if (input == null)
-						inputSame = (page.getInput() == null);
-					else
-						inputSame = input.equals(page.getInput());
+						inputSame = (page.getWorkingSet() == null);
+					else {
+						IAdaptable[] items = page.getWorkingSet().getItems();
+						if (items.length > 0) {
+							IResource resource = (IResource) items[0].getAdapter(IResource.class);
+							if (resource != null) {
+								inputSame = input.equals(resource.getParent());
+							}
+						}
+					}
 					if (inputSame) {
 						Perspective persp = page.getActivePerspective();
 						if (perspectiveId.equals(persp.getDesc().getId())) {
@@ -862,9 +866,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			if (page != null) {
 				boolean inputSame = false;
 				if (input == null)
-					inputSame = (page.getInput() == null);
-				else
-					inputSame = input.equals(page.getInput());
+					inputSame = (page.getWorkingSet() == null);
+				else {
+					IAdaptable[] items = page.getWorkingSet().getItems();
+					if (items.length > 0) {
+						IResource resource = (IResource) items[0].getAdapter(IResource.class);
+						if (resource != null) {
+							inputSame = input.equals(resource.getParent());
+						}
+					}
+				}
 				if (inputSame) {
 					inputSameAsWindow = true;
 					Iterator enum = page.getOpenedPerspectives();
@@ -890,9 +901,16 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				if (page != null) {
 					boolean inputSame = false;
 					if (input == null)
-						inputSame = (page.getInput() == null);
-					else
-						inputSame = input.equals(page.getInput());
+						inputSame = (page.getWorkingSet() == null);
+					else {
+						IAdaptable[] items = page.getWorkingSet().getItems();
+						if (items.length > 0) {
+							IResource resource = (IResource) items[0].getAdapter(IResource.class);
+							if (resource != null) {
+								inputSame = input.equals(resource.getParent());
+							}
+						}
+					}
 					if (inputSame) {
 						Perspective persp = page.getActivePerspective();
 						if (perspectiveId.equals(persp.getDesc().getId())) {

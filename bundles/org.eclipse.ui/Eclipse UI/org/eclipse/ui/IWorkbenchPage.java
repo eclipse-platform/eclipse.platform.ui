@@ -6,7 +6,8 @@ package org.eclipse.ui;
  */
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IAdaptable; 
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.IPropertyChangeListener; 
 
 /**
  * A workbench page consists of an arrangement of views and editors intended to
@@ -119,6 +120,10 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 * @see IPerspectiveListener
 	 */
 	 public static final String CHANGE_FAST_VIEW_REMOVE = "fastViewRemove"; //$NON-NLS-1$
+	 
+	 public static final String CHANGE_WORKING_SET_CHANGE = "workingSetChange";	//$NON-NLS-1$
+	 public static final String CHANGE_WORKING_SET_REPLACE = "workingSetReplace";	//$NON-NLS-1$	 
+	 
 /**
  * Activates the given part. The part will be brought to the front and given
  * focus. The part must belong to this page.
@@ -126,6 +131,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
  * @param part the part to activate
  */
 public void activate(IWorkbenchPart part);
+public void addPropertyChangeListener(IPropertyChangeListener listener);
 /**
  * Moves the given part forward in the Z order of this page so as to make
  * it visible. The part must belong to this page.
@@ -202,6 +208,8 @@ public IEditorPart[] getEditors();
  * Returns the input for this page.
  *
  * @return the input for this page, or <code>null</code> if none 
+ * 
+ * @deprecated use getWorkingSet instead
  */
 public IAdaptable getInput();
 /**
@@ -234,6 +242,8 @@ public IViewPart[] getViews();
  * @return the workbench window
  */
 public IWorkbenchWindow getWorkbenchWindow();
+
+public IWorkingSet getWorkingSet();
 /**
  * Hides an action set in this page.
  * <p>
@@ -398,6 +408,7 @@ public IEditorPart openEditor(IEditorInput input, String editorId, boolean activ
  * @exception PartInitException if the editor could not be opened.
  */
 public void openSystemEditor(IFile input) throws PartInitException;
+public void removePropertyChangeListener(IPropertyChangeListener listener);
 /**
  * Changes the visible views, their layout, and the visible action sets 
  * within the page to match the current perspective descriptor.  This is a 

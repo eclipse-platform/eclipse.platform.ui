@@ -4,22 +4,17 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.SWT;
-
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
-
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.actions.GlobalBuildAction;
 
 /**
  * This is used to add actions to the workbench.
@@ -45,6 +40,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private QuickStartAction quickStartAction;
 	private SaveAsAction saveAsAction;
 	private ToggleEditorsVisibilityAction hideShowEditorAction;
+	private SelectWorkingSetAction selectWorkingSetAction;
+	private RemoveWorkingSetAction removeWorkingSetAction;
 	private SavePerspectiveAction savePerspectiveAction;
 	private ResetPerspectiveAction resetPerspectiveAction;
 	private EditActionSetsAction editActionSetAction;
@@ -121,17 +118,30 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.addPropertyChangeListener(this);
 
+		final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				String property = event.getProperty();
+				if (IWorkbenchPage.CHANGE_WORKING_SET_REPLACE.equals(property)) {
+					removeWorkingSetAction.setEnabled(event.getNewValue() != null);
+				}
+			}
+		};
 		// Listen to workbench page lifecycle methods to enable
 		// and disable the perspective menu items as needed.
 		window.addPageListener(new IPageListener() {
 			public void pageActivated(IWorkbenchPage page) {
 				enableActions(page.getPerspective() != null);
+				removeWorkingSetAction.setEnabled(page.getWorkingSet().getName().length() > 0);
 			}
 			public void pageClosed(IWorkbenchPage page) {
 				IWorkbenchPage pg = window.getActivePage();
 				enableActions(pg != null && pg.getPerspective() != null);
+				removeWorkingSetAction.setEnabled(false);
+				((WorkbenchPage) page).removePropertyChangeListener(propertyChangeListener);				
 			}
 			public void pageOpened(IWorkbenchPage page) {
+				removeWorkingSetAction.setEnabled(page.getWorkingSet().getName().length() > 0);
+				((WorkbenchPage) page).addPropertyChangeListener(propertyChangeListener);
 			}
 		});
 							
@@ -159,6 +169,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	 */
 	private void enableActions(boolean value) {
 		hideShowEditorAction.setEnabled(value);
+		selectWorkingSetAction.setEnabled(value);		
 		savePerspectiveAction.setEnabled(value);
 		resetPerspectiveAction.setEnabled(value);
 		editActionSetAction.setEnabled(value);
@@ -269,6 +280,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			new ShowViewMenu(subMenu, window, true);
 		}
 		menu.add(hideShowEditorAction = new ToggleEditorsVisibilityAction(window));
+		menu.add(selectWorkingSetAction = new SelectWorkingSetAction(window));
+		menu.add(removeWorkingSetAction = new RemoveWorkingSetAction(window));
 		menu.add(new Separator());
 		menu.add(savePerspectiveAction = new SavePerspectiveAction(window));
 		menu.add(editActionSetAction = new EditActionSetsAction(window));
