@@ -220,6 +220,14 @@ public void endElement(String uri, String elementName, String qName) {
 				((ConfigurationElementModel) parent).setSubElements(newValues);
 			}
 			break;
+		case DESCRIPTION_STATE:
+			if (elementName.equals(COMPONENT_DESCRIPTION) || elementName.equals(CONFIGURATION_DESCRIPTION))
+				stateStack.pop();
+			break;
+		case URL_STATE:
+			if (elementName.equals(COMPONENT_URL) || elementName.equals(CONFIGURATION_URL)) 
+				stateStack.pop();
+			break;
 	}
 }
 public void error(SAXParseException ex) {
