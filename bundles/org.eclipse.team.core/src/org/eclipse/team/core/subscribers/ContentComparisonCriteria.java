@@ -65,10 +65,27 @@ public class ContentComparisonCriteria extends ComparisonCriteria {
 				return true;
 			}
 
-			return contentsEqual(
-				getContents(e1, Policy.subMonitorFor(monitor, 45)), 
-				getContents(e2, Policy.subMonitorFor(monitor, 45)),
-				shouldIgnoreWhitespace());
+			InputStream is1 = null;
+			InputStream is2 = null;
+			try {
+				is1 = getContents(e1, Policy.subMonitorFor(monitor, 45));
+				is2 = getContents(e2, Policy.subMonitorFor(monitor, 45));
+				return contentsEqual(is1, is2, shouldIgnoreWhitespace());
+			} finally {
+				try {
+					try {
+						if (is1 != null) {
+							is1.close();
+						}
+					} finally {
+						if (is2 != null) {
+							is2.close();
+						}
+					}
+				} catch (IOException e) {
+					// Ignore
+				}
+			}
 		} finally {
 			monitor.done();
 		}
@@ -86,13 +103,13 @@ public class ContentComparisonCriteria extends ComparisonCriteria {
 	 * @return <code>true</code> if content is equal
 	 */
 	private boolean contentsEqual(InputStream is1, InputStream is2, boolean ignoreWhitespace) {
-		if (is1 == is2)
-			return true;
-
-		if (is1 == null && is2 == null) // no byte contents
-			return true;
-
 		try {
+			if (is1 == is2)
+				return true;
+	
+			if (is1 == null && is2 == null) // no byte contents
+				return true;
+
 			if (is1 == null || is2 == null) // only one has contents
 				return false;
 	
@@ -109,17 +126,18 @@ public class ContentComparisonCriteria extends ComparisonCriteria {
 			}
 		} catch (IOException ex) {
 		} finally {
-			if (is1 != null) {
+			try {
 				try {
-					is1.close();
-				} catch (IOException ex) {
+					if (is1 != null) {
+						is1.close();
+					}
+				} finally {
+					if (is2 != null) {
+						is2.close();
+					}
 				}
-			}
-			if (is2 != null) {
-				try {
-					is2.close();
-				} catch (IOException ex) {
-				}
+			} catch (IOException e) {
+				// Ignore
 			}
 		}
 		return false;
@@ -131,18 +149,18 @@ public class ContentComparisonCriteria extends ComparisonCriteria {
 	}
 
 	private InputStream getContents(Object resource, IProgressMonitor monitor) throws TeamException {
-			try {
-				if (resource instanceof IStorage) {
-					return new BufferedInputStream(((IStorage) resource).getContents());
-				} else if(resource instanceof IRemoteResource) {
-					IRemoteResource remote = (IRemoteResource)resource;
-					if (!remote.isContainer()) {
-						return new BufferedInputStream(remote.getContents(monitor));
-					}
+		try {
+			if (resource instanceof IStorage) {
+				return new BufferedInputStream(((IStorage) resource).getContents());
+			} else if(resource instanceof IRemoteResource) {
+				IRemoteResource remote = (IRemoteResource)resource;
+				if (!remote.isContainer()) {
+					return new BufferedInputStream(remote.getContents(monitor));
 				}
-				return null;
-			} catch (CoreException e) {
-				throw TeamException.asTeamException(e);
 			}
+			return null;
+		} catch (CoreException e) {
+			throw TeamException.asTeamException(e);
 		}
+	}
 }
