@@ -798,8 +798,10 @@ public class R21BasicStackPresentation extends StackPresentation {
      * @see org.eclipse.ui.internal.skins.StackPresentation#removePart(org.eclipse.ui.internal.skins.IPresentablePart)
      */
     public void removePart(IPresentablePart oldPart) {
-        if (current == oldPart)
+        if (current == oldPart) {
+        	titleLabel.setImage(null);
             current = null;
+        }
 
         CTabItem item = getTab(oldPart);
         if (item == null) {
