@@ -27,9 +27,9 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 /**
  * Represents a composite change. Composite changes can be marked
- * as generic. Generic composite changes will not be shown in the
- * user interface. When rendering a change tree the children of
- * a generic composite change will be shown as children of the
+ * as synthetic. Synthetic composite changes will not be shown in the
+ * refactoring preview tree. When rendering the change tree the children 
+ * of a synthetic composite change will be shown as children of the
  * parent change.
  * 
  * @see Change
@@ -40,23 +40,14 @@ public class CompositeChange extends Change {
 
 	private String fName;
 	private List fChanges;
-	private boolean fIsGeneric;
+	private boolean fIsSynthetic;
 	private Change fUndoUntilException;
 	
-	/**
-	 * Creates a new composite change with a generic name. The change
-	 * is marked as generic and should therefore not be presented in
-	 * the user interface.
-	 */
-	public CompositeChange() {
-		this(RefactoringCoreMessages.getString("CompositeChange.name")); //$NON-NLS-1$
-		markAsGeneric();
-	}
 
 	/**
 	 * Creates a new composite change with the given name.
 	 * 
-	 * @param name the name of the composite change
+	 * @param name the human readable name of the change 
 	 */
 	public CompositeChange(String name) {
 		this(name, new ArrayList(5));
@@ -66,8 +57,8 @@ public class CompositeChange extends Change {
 	 * Creates a new composite change with the given name and array
 	 * of children.
 	 * 
-	 * @param name the change's name
-	 * @param children the initialize array of children
+	 * @param name the human readable name of the change
+	 * @param children the initial array of children
 	 */
 	public CompositeChange(String name, Change[] children) {
 		this(name, new ArrayList(children.length));
@@ -79,7 +70,23 @@ public class CompositeChange extends Change {
 		Assert.isNotNull(name);
 		fChanges= changes;
 		fName= name;
-		fIsGeneric= false;
+	}
+	
+	/**
+	 * Returns whether this change is synthetic or not.
+	 * 
+	 * @return <code>true</code>if this change is synthetic; otherwise
+	 *  <code>false</code>
+	 */
+	public boolean isSynthetic() {
+		return fIsSynthetic;
+	}
+
+	/**
+	 * Marks this change as synthetic.
+	 */
+	public void markAsSynthetic() {
+		fIsSynthetic= true;
 	}
 	
 	/**
@@ -87,23 +94,6 @@ public class CompositeChange extends Change {
 	 */
 	public String getName() {
 		return fName;
-	}
-	
-	/**
-	 * Returns whether this change is generic or not.
-	 * 
-	 * @return <code>true</code>if this change is generic; otherwise
-	 *  <code>false</code>
-	 */
-	public boolean isGeneric() {
-		return fIsGeneric;
-	}
-	
-	/**
-	 * Marks this change as generic.
-	 */
-	public void markAsGeneric() {
-		fIsGeneric= true;
 	}
 	
 	/**
@@ -190,8 +180,7 @@ public class CompositeChange extends Change {
 	 * {@inheritDoc}
 	 * <p>
 	 * The composite change sends <code>initializeValidationData</code> to all its 
-	 * children. If one of the children throws an exception the remaining children
-	 * will not receive the <code>initializeValidationData</code> call.
+	 * children.
 	 * </p>
 	 */
 	public void initializeValidationData(IProgressMonitor pm) {
@@ -239,13 +228,13 @@ public class CompositeChange extends Change {
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		fUndoUntilException= null;
 		List undos= new ArrayList(fChanges.size());
-		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
+		pm.beginTask("", fChanges.size() * 2); //$NON-NLS-1$
 		pm.setTaskName(RefactoringCoreMessages.getString("CompositeChange.performingChangesTask.name")); //$NON-NLS-1$
 		Change change= null;
 		try {
 			for (Iterator iter= fChanges.iterator(); iter.hasNext();) {
 				change= (Change)iter.next();
-				if (change.isEnabled()) {
+				if (change.isEnabled() && canPerformChange(change, new SubProgressMonitor(pm, 1))) {
 					Change undoChange= change.perform(new SubProgressMonitor(pm, 1));
 					if (undos != null) {
 						if (undoChange == null) {
@@ -340,6 +329,20 @@ public class CompositeChange extends Change {
 	}
 	
 	/**
+	 * This method is a framework internal method and shouldn't 
+	 * therefore not be overridden or extended by normal clients.
+	 * 
+	 * @param child the child change to be performed
+	 * @param pm a progress monitor to report progress
+	 * 
+	 * @return <code>true</code> if the change can be performed;
+	 *  other <code>false</code> is returned 
+	 */
+	protected boolean canPerformChange(Change child, IProgressMonitor pm) {
+		return true;
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 */
 	public Object getModifiedElement() {
@@ -355,5 +358,4 @@ public class CompositeChange extends Change {
 		}
 		return buff.toString();
 	}
-	
 }

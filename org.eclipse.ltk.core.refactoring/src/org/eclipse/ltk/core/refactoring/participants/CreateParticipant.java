@@ -10,29 +10,21 @@
  ******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
-
-
 public abstract class CreateParticipant extends RefactoringParticipant {
 	
 	private CreateArguments fArguments;
-	
-	/**
-	 * Sets the create arguments as provided by the corresponding
-	 * refactoring processor.
-	 * 
-	 * @param arguments the create arguments
-	 */
-	public void setArguments(CreateArguments arguments) {
-		Assert.isNotNull(arguments);
-		fArguments= arguments;
-	}
 
 	/**
-	 * Returns the create arguments or <code>null</code> if the arguments
-	 * haven't been initialized yet.
+	 * {@inheritDoc}
+	 */
+	protected void initialize(RefactoringArguments arguments) {
+		fArguments= (CreateArguments)arguments;
+	}
+	
+	/**
+	 * Returns the create arguments.
 	 * 
-	 * @return the create arguments or <code>null</code>
+	 * @return the create arguments
 	 */
 	public CreateArguments getArguments() {
 		return fArguments;

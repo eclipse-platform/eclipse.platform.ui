@@ -18,7 +18,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * 
  * @since 3.0
  */
-public class RenameArguments {
+public class RenameArguments extends RefactoringArguments {
 	
 	private String fNewName;
 	private boolean fUpdateReferences;

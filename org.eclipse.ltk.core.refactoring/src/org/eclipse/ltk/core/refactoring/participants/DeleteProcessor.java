@@ -10,23 +10,7 @@
  ******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
-import org.eclipse.core.runtime.CoreException;
 
 public abstract class DeleteProcessor extends RefactoringProcessor {
 
-	private SharableParticipants fSharedParticipants= new SharableParticipants();
-	
-	public abstract DeleteParticipant[] loadElementParticipants() throws CoreException;
-	
-	public void setArgumentsTo(DeleteParticipant participant) throws CoreException {
-		participant.setArguments(getArguments());
-	}
-	
-	protected DeleteArguments getArguments() {
-		return new DeleteArguments();
-	}
-	
-	protected SharableParticipants getSharedParticipants() {
-		return fSharedParticipants;
-	}
 }

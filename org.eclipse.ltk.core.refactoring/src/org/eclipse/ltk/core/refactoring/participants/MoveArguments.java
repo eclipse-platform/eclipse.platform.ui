@@ -18,7 +18,7 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * 
  * @since 3.0
  */
-public class MoveArguments {
+public class MoveArguments extends RefactoringArguments {
 	
 	private Object fDestination;
 	private boolean fUpdateReferences;

@@ -10,15 +10,15 @@
  ******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
-
 public abstract class RenameParticipant extends RefactoringParticipant {
 
 	private RenameArguments fArguments;
-	
-	public void setArguments(RenameArguments arguments) {
-		Assert.isNotNull(arguments);
-		fArguments= arguments;
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected void initialize(RefactoringArguments arguments) {
+		fArguments= (RenameArguments)arguments;
 	}
 	
 	public RenameArguments getArguments() {

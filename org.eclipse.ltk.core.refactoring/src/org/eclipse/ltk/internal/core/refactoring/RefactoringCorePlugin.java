@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
@@ -55,6 +56,17 @@ public class RefactoringCorePlugin extends Plugin {
 			IRefactoringCoreStatusCodes.INTERNAL_ERROR, 
 			RefactoringCoreMessages.getString("RefactoringCorePlugin.listener_removed"),  //$NON-NLS-1$
 			t);
+		ResourcesPlugin.getPlugin().getLog().log(status);
+	}
+	
+	public static void logRemovedParticipant(ParticipantDescriptor descriptor, CoreException e) {
+		IStatus status= new Status(
+			IStatus.ERROR, getPluginId(), 
+			IRefactoringCoreStatusCodes.INTERNAL_ERROR, 
+			RefactoringCoreMessages.getFormattedString(
+				"RefactoringCorePlugin.participant_removed",  //$NON-NLS-1$
+				descriptor.getId()),
+			e);
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 }

@@ -24,9 +24,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.expressions.EvaluationContext;
 
 import org.eclipse.ltk.internal.core.refactoring.Assert;
+import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
-/* package */ class ExtensionManager {
+/* package */ class ParticipantExtensionPoint {
 	
 	private String fName;
 		
@@ -48,7 +49,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 	}
 	*/
 	
-	public ExtensionManager(String name, String participantId) {
+	public ParticipantExtensionPoint(String name, String participantId) {
 		Assert.isNotNull(name);
 		Assert.isNotNull(participantId);
 		fName= name;
@@ -59,7 +60,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 		return fName;
 	}
 
-	public RefactoringParticipant[] getParticipants2(RefactoringProcessor processor, Object element, String[] affectedNatures, SharableParticipants shared) throws CoreException {
+	public RefactoringParticipant[] getParticipants(RefactoringProcessor processor, Object element, RefactoringArguments arguments, String[] affectedNatures, SharableParticipants shared) {
 		if (fParticipants == null)
 			init();
 		
@@ -67,24 +68,28 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 		List result= new ArrayList();
 		for (Iterator iter= fParticipants.iterator(); iter.hasNext();) {
 			ParticipantDescriptor descriptor= (ParticipantDescriptor)iter.next();
-			try {
-				if (descriptor.matches(evalContext)) {
-					RefactoringParticipant participant= shared.get(descriptor);
-					if (participant != null) {
-						((ISharableParticipant)participant).addElement(element);
-					} else {
-						participant= descriptor.createParticipant();
-						participant.initialize(processor, element);
-						if (participant.isApplicable()) {
-							result.add(participant);
-							if (participant instanceof ISharableParticipant)
-								shared.put(descriptor, participant);
+			if (!descriptor.isEnabled()) {
+				iter.remove();
+			} else {
+				try {
+					if (descriptor.matches(evalContext)) {
+						RefactoringParticipant participant= shared.get(descriptor);
+						if (participant != null) {
+							((ISharableParticipant)participant).addElement(element, arguments);
+						} else {
+							participant= descriptor.createParticipant();
+							if (participant.initialize(processor, element, arguments)) {
+								participant.setDescriptor(descriptor);
+								result.add(participant);
+								if (participant instanceof ISharableParticipant)
+									shared.put(descriptor, participant);
+							}
 						}
 					}
+				} catch (CoreException e) {
+					RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
+					iter.remove();
 				}
-			} catch (CoreException e) {
-				RefactoringCorePlugin.log(e.getStatus());
-				iter.remove();
 			}
 		}
 		
@@ -116,7 +121,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 	
 	//---- Helper methods ------------------------------------------------------------------
 	
-	private static EvaluationContext createEvaluationContext(RefactoringProcessor processor, Object element, String[] affectedNatures) throws CoreException {
+	private static EvaluationContext createEvaluationContext(RefactoringProcessor processor, Object element, String[] affectedNatures) {
 		EvaluationContext result= new EvaluationContext(null, element);
 		result.addVariable("element", element); //$NON-NLS-1$
 		result.addVariable("affectedNatures", Arrays.asList(affectedNatures)); //$NON-NLS-1$

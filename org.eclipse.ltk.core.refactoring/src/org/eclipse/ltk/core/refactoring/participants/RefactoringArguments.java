@@ -10,17 +10,23 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
+
 /**
- * Delete arguments describes the data that a processor provides 
- * to its delete participants.
- *  
+ * A generic super class of all refactoring specific argument
+ * classes.
+ * <p>
+ * The main purpose of this class is to not use <code>Object</code>
+ * in signatures. This helps to distinguish between the element to
+ * be refactored and the arguments needed to carry out the refactoring.
+ * </p>
+ * 
  * @since 3.0
  */
-public class DeleteArguments extends RefactoringArguments {
-	
+public abstract class RefactoringArguments {
+
 	/**
-	 * Creates a new delete arguments object.
+	 * Creates new refactoring arguments.
 	 */
-	public DeleteArguments() {
-	}	
+	protected RefactoringArguments() {
+	}
 }

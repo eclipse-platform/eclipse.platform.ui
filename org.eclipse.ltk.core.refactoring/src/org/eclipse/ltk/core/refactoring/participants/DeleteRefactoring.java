@@ -23,7 +23,6 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 public class DeleteRefactoring extends ProcessorBasedRefactoring {
 
 	private DeleteProcessor fProcessor;
-	private DeleteParticipant[] fElementParticipants;
 	
 	/**
 	 * Constructs a new delete refactoring for the given processor.
@@ -40,23 +39,5 @@ public class DeleteRefactoring extends ProcessorBasedRefactoring {
 	 */
 	public RefactoringProcessor getProcessor() {
 		return fProcessor;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected RefactoringParticipant[] getElementParticipants(boolean setArguments) throws CoreException {
-		if (fElementParticipants == null)
-			fElementParticipants= fProcessor.loadElementParticipants();
-		if (setArguments) {
-			for (int i= 0; i < fElementParticipants.length; i++) {
-				fProcessor.setArgumentsTo(fElementParticipants[i]);
-			}
-		}
-		RefactoringParticipant[]result= new RefactoringParticipant[fElementParticipants.length];
-		for (int i= 0; i < result.length; i++) {
-			result[i]= fElementParticipants[i];
-		}
-		return result;
 	}
 }

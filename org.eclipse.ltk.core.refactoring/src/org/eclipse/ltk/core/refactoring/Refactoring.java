@@ -16,7 +16,16 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
- * Abstract super class for all refactorings.
+ * Abstract super class for all refactorings. Refactorings are used to perform
+ * behaviour preseving work space transformations. A refactoring offers two 
+ * different kind of methods:
+ * <ol> 
+ *   <li>methods to check conditions to determine if the refactoring can be carried out 
+ *       in general and if transformation will be bahavioural persevering.
+ *   </li>
+ *   <li>a method to create a {@link org.eclipse.ltk.core.refactoring.Change} object
+ *       that represents the actual work space modifications.
+ *   </li> 
  * <p>
  * The life cycle of a refactoring is as follows:
  * <ul>
@@ -37,6 +46,12 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  *       return a refactoring status of severity {@link RefactoringStatus#FATAL}.
  *       </li>
  * </ul>
+ * 
+ * <p>
+ * A refactoring can not assume that all resources are saved before any methods
+ * are called on it. Therefore a refactoring must be able to deal with unsaved
+ * resources.
+ * </p>
  * 
  * @since 3.0
  */
@@ -74,14 +89,15 @@ public abstract class Refactoring extends PlatformObject {
 	
 	/**
 	 * Checks some initial conditions based on the element to be refactored. The 
-	 * method is typically called by the UI to perform a initial checks after an 
+	 * method is typically called by the UI to perform an initial checks after an 
 	 * action has been executed.
 	 * <p>
 	 * The refactoring is considered as not being executable if the returned status
 	 * has the severity <code>RefactoringStatus#FATAL</code>.
 	 * </p>
-	 * This method can be called more than once.
 	 * <p>
+	 * This method can be called more than once.
+	 * </p>
 	 * 
 	 * @param pm a progress monitor to report progress. Although availability checks 
 	 *  are supposed to execute fast, there can be certain situations where progress
@@ -106,13 +122,11 @@ public abstract class Refactoring extends PlatformObject {
 	 * The refactoring is considered as not being executable if the returned status
 	 * has the severity <code>RefactoringStatus#FATAL</code>.
 	 * </p>
-	 * This method can be called more than once.
 	 * <p>
+	 * This method can be called more than once.
+	 * </p>
 	 * 
-	 * @param pm a progress monitor to report progress. Although availability checks 
-	 *  are supposed to execute fast, there can be certain situations where progress
-	 *  reporting is necessary. For example rebuilding a corrupted index may report
-	 *  progress.
+	 * @param pm a progress monitor to report progress
 	 * 
 	 * @return a refactoring status. If the status is <code>RefactoringStatus#FATAL</code>
 	 *  the refactoring is considered as not being executable.

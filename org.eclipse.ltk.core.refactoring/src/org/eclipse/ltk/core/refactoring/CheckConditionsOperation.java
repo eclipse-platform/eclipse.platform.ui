@@ -21,6 +21,14 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * Operation that, when run, check preconditions of the {@link Refactoring}
  * passed on creation.
  * 
+ * <p> 
+ * Note: this class is not intented to be subclassed by clients.
+ * </p>
+ * 
+ * @see org.eclipse.ltk.core.refactoring.Refactoring#checkInitialConditions(IProgressMonitor)
+ * @see org.eclipse.ltk.core.refactoring.Refactoring#checkFinalConditions(IProgressMonitor)
+ * @see org.eclipse.ltk.core.refactoring.Refactoring#checkAllConditions(IProgressMonitor)
+ * 
  * @since 3.0
  */
 public class CheckConditionsOperation implements IWorkspaceRunnable {
@@ -29,10 +37,15 @@ public class CheckConditionsOperation implements IWorkspaceRunnable {
 	private int fStyle;
 	private RefactoringStatus fStatus;
 	
+	/** Flag indicating that no conditions will be checked */
 	public final static int NONE=				0;
+	/** Flag indicating that only initial conditions will be checked*/
 	public final static int INITIAL_CONDITONS=	1 << 1;
+	/** Flag indicating that ony final conditiions will be checked */
 	public final static int FINAL_CONDITIONS=	1 << 2;
+	/** Flag indicating that all conditions will be checked */
 	public final static int ALL_CONDITIONS=		INITIAL_CONDITONS | FINAL_CONDITIONS;
+	
 	private final static int LAST=          	1 << 3;
 	
 	/**
@@ -41,7 +54,8 @@ public class CheckConditionsOperation implements IWorkspaceRunnable {
 	 * @param refactoring the refactoring for which the preconditions are to
 	 *  be checked.
 	 * @param style style to define which conditions to check. Must be one of
-	 *  <code>ACTIVATION</code>, <code>INPUT</code> or <code>PRECONDITIONS</code>
+	 *  <code>INITIAL_CONDITONS</code>, <code>FINAL_CONDITIONS</code> or 
+	 *  <code>ALL_CONDITIONS</code>
 	 */
 	public CheckConditionsOperation(Refactoring refactoring, int style) {
 		Assert.isNotNull(refactoring);
@@ -69,7 +83,7 @@ public class CheckConditionsOperation implements IWorkspaceRunnable {
 
 	/**
 	 * Returns the outcome of the operation or <code>null</code> if an exception 
-	 * has occurred when performing the operation.
+	 * has occurred while performing the operation.
 	 * 
 	 * @return the {@link RefactoringStatus} of the condition checking
 	 */
@@ -98,5 +112,4 @@ public class CheckConditionsOperation implements IWorkspaceRunnable {
 	private boolean checkStyle(int style) {
 		return style > NONE && style < LAST;
 	}
-
 }

@@ -16,12 +16,20 @@ import org.eclipse.ltk.internal.core.refactoring.UndoManager;
  * Central access point to access resources managed by the refactoring
  * core plug-in.
  * 
+ * <p> 
+ * Note: this class is not intented to be subclassed by clients.
+ * </p>
+ * 
  * @since 3.0
  */
 public class RefactoringCore {
 
 	private static IUndoManager fgUndoManager= null;
 
+	private RefactoringCore() {
+		// no instance
+	}
+	
 	/**
 	 * Creates a new empty undo manager.
 	 * 

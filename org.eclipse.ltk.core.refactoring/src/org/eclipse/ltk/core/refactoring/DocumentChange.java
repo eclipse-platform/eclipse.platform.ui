@@ -19,9 +19,14 @@ import org.eclipse.jface.text.IDocument;
 
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 import org.eclipse.ltk.internal.core.refactoring.TextChanges;
+import org.eclipse.ltk.internal.core.refactoring.UndoDocumentChange;
 
 /**
  * A text change that operates directly on instances of {@link IDocument}.
+ * 
+ * <p> 
+ * Note: this class is not intented to be subclassed by clients.
+ * </p>
  * 
  * @since 3.0
  */

@@ -76,8 +76,8 @@ public interface IUndoManager {
 	/**
 	 * Returns the name of the top most undo.
 	 * 
-	 * @return the top most undo name. The main purpose of the name is to
-	 * render it in the UI. Returns <code>null</code> if there aren't any changes to undo
+	 * @return the top most undo name. Returns <code>null</code> if there 
+	 * aren't any changes to undo
 	 */
 	public String peekUndoName();
 	
@@ -102,8 +102,8 @@ public interface IUndoManager {
 	/**
 	 * Returns the name of the top most redo.
 	 * 
-	 * @return the top most redo name. The main purpose of the name is to
-	 * render it in the UI. Returns <code>null</code> if there are no any changes to redo.
+	 * @return the top most redo name. Returns <code>null</code> if there 
+	 * are no any changes to redo.
 	 */
 	public String peekRedoName();
 	

@@ -11,20 +11,16 @@
 package org.eclipse.ltk.core.refactoring.participants;
 
 /**
- * Create arguments describes the data that a processor provides to its 
- * create participants.
- * <p>
- * As of version 3.0 there aren't any special arguments passed to a create 
- * participant. This may change in the future.
- * </p>
+ * Create arguments describes the data that a processor 
+ * provides to its create participants.
  *  
  * @since 3.0
  */
-public class CreateArguments {
+public class CreateArguments extends RefactoringArguments {
 	
 	/**
-	 * Creates empty create arguments.
+	 * Creates a new create arguments object.
 	 */
 	public CreateArguments() {
-	}
+	}	
 }

@@ -17,6 +17,14 @@ import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 
+/**
+ * 
+ * <p>
+ * A refactoring processor can not assume that all resources are saved before any 
+ * methods are called on it. Therefore a processor must be able to deal with unsaved
+ * resources.
+ * </p>
+ */
 public abstract class RefactoringProcessor extends PlatformObject {
 	
 	private static final RefactoringParticipant[] EMPTY_PARTICIPANT_ARRAY= new RefactoringParticipant[0];
@@ -31,7 +39,7 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	
 	public abstract boolean isApplicable() throws CoreException;
 	
-	public abstract RefactoringStatus checkInitialConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException;
+	public abstract RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException;
 	
 	public abstract RefactoringStatus checkFinalConditions(IProgressMonitor pm, CheckConditionsContext context) throws CoreException;
 	
@@ -66,7 +74,13 @@ public abstract class RefactoringProcessor extends PlatformObject {
 	 * 
 	 * @throws CoreException if creating or loading of the participants failed
 	 */
-	public RefactoringParticipant[] loadDerivedParticipants() throws CoreException {
+	public abstract RefactoringParticipant[] loadParticipants(SharableParticipants sharedParticipants) throws CoreException;
+	
+	/**
+	 * FIXME
+	 * Must go away before 3.0
+	 */
+	private final RefactoringParticipant[] loadDerivedParticipants() throws CoreException {
 		return EMPTY_PARTICIPANT_ARRAY;
 	}	
 }

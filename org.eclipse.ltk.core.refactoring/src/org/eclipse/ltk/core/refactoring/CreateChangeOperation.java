@@ -32,6 +32,10 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * to initialize the change's validation data.
  * </p>
  * 
+ * <p> 
+ * Note: this class is not intented to be subclassed by clients.
+ * </p>
+ * 
  * @since 3.0
  */
 public class CreateChangeOperation implements IWorkspaceRunnable {
@@ -51,7 +55,6 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 	 * yet.
 	 *
 	 * @param refactoring the refactoring for which the change is to be created
-	 * @param style style to define which conditions to check
 	 */
 	public CreateChangeOperation(Refactoring refactoring) {
 		Assert.isNotNull(refactoring);
@@ -154,6 +157,5 @@ public class CreateChangeOperation implements IWorkspaceRunnable {
 		if (fCheckConditionOperation != null)
 			return fCheckConditionOperation.getStyle(); 
 		return CheckConditionsOperation.NONE;
-		
 	}
 }

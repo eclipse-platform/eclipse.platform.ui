@@ -49,6 +49,18 @@ public class UndoTextFileChange extends Change {
 	private boolean fDirty;
 	private BufferValidationState fValidationState;
 	
+	/**
+	 * Create a new undo text file change object.
+	 * 
+	 * @param name the human readable name of the change 
+	 * @param file the file the change is working on
+	 * @param undo the edit representing the undo modifications 
+	 * @param saveMode the save mode as specified by {@link TextFileChange}
+	 * 
+	 * @see TextFileChange#KEEP_SAVE_STATE
+	 * @see TextFileChange#FORCE_SAVE
+	 * @see TextFileChange#LEAVE_DIRTY
+	 */
 	protected UndoTextFileChange(String name, IFile file, UndoEdit undo, int saveMode) {
 		Assert.isNotNull(name);
 		Assert.isNotNull(undo);
@@ -59,14 +71,23 @@ public class UndoTextFileChange extends Change {
 	}
 	
 	/**
+	 * Returns the change's save mode.
+	 * 
+	 * @return the change's save mode
+	 * 
+	 * @see TextFileChange#KEEP_SAVE_STATE
+	 * @see TextFileChange#FORCE_SAVE
+	 * @see TextFileChange#LEAVE_DIRTY
+	 */
+	public int getSaveMode() {
+		return fSaveMode;
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 */
 	public String getName() {
 		return fName;
-	}
-	
-	public int getSaveMode() {
-		return fSaveMode;
 	}
 	
 	/**

@@ -23,5 +23,4 @@
       <import plugin="org.eclipse.core.runtime.compatibility"/>
       <import plugin="org.eclipse.ltk.core.refactoring"/>
    </requires>
-
 </plugin>

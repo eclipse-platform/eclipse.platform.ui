@@ -10,28 +10,22 @@
  ******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 public abstract class CopyParticipant extends RefactoringParticipant {
 
 	private CopyArguments fArguments;
-	
-	/**
-	 * Sets the copy arguments as provided by the corresponding
-	 * refactoring processor.
-	 * 
-	 * @param arguments the copy arguments
-	 */
-	public void setArguments(CopyArguments arguments) {
-		Assert.isNotNull(arguments);
-		fArguments= arguments;
-	}
 
 	/**
-	 * Returns the copy arguments or <code>null</code> if the arguments
-	 * haven't been initialized yet.
+	 * {@inheritDoc}
+	 */
+	protected void initialize(RefactoringArguments arguments) {
+		fArguments= (CopyArguments)arguments;
+	}
+	
+	/**
+	 * Returns the copy arguments.
 	 * 
-	 * @return the copy arguments or <code>null</code>
+	 * @return the copy arguments
 	 */
 	public CopyArguments getArguments() {
 		return fArguments;

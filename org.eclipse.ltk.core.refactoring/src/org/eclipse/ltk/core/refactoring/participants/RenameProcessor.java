@@ -29,8 +29,12 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class RenameProcessor extends RefactoringProcessor {
 
 	private int fStyle;
-	private SharableParticipants fSharedParticipants= new SharableParticipants();
 	
+	/**
+	 * Create a new rename processor with the style bit set to
+	 * <code>RefactoringStyles.NEEDS_PREVIEW</code> and <code>
+	 * </code>
+	 */
 	protected RenameProcessor() {
 		fStyle= RefactoringStyles.NEEDS_PREVIEW;	
 	}
@@ -39,19 +43,11 @@ public abstract class RenameProcessor extends RefactoringProcessor {
 		fStyle= style;	
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public int getStyle() {
 		return fStyle;
-	}
-	
-	/**
-	 * Forwards the current rename arguments to the passed participant.
-	 *  
-	 * @param participant the participant to set the arguments to
-	 * 
-	 * @throws CoreException if the arguments can't be set
-	 */
-	public void setArgumentsTo(RenameParticipant participant) throws CoreException {
-		participant.setArguments(getArguments());
 	}
 	
 	/**
@@ -67,38 +63,7 @@ public abstract class RenameProcessor extends RefactoringProcessor {
 	 * 
 	 * @throws CoreException if creating or loading of the participants failed
 	 */
-	public abstract RenameParticipant[] loadElementParticipants() throws CoreException;
-	
-	/**
-	 * Returns the shared participants. ????
-	 * 
-	 * @return
-	 */
-	protected SharableParticipants getSharedParticipants() {
-		return fSharedParticipants;
-	}
-	
-	/**
-	 * Returns the arguments of the rename.
-	 * 
-	 * @return the rename arguments
-	 */
-	protected RenameArguments getArguments() {
-		return new RenameArguments(getNewElementName(), getUpdateReferences());
-	}
-	
-	/**
-	 * Returns the new name of the element to be renamed. The 
-	 * method must not return <code>null</code>.
-	 * 
-	 * @return the new element name.
-	 */
-	protected abstract String getNewElementName();
-	
-	/**
-	 * Returns whether reference updating is requested or not.
-	 * 
-	 * @return whether reference updating is requested or not
-	 */
-	protected abstract boolean getUpdateReferences();
+	public final RenameParticipant[] loadElementParticipants() throws CoreException {
+		return null;
+	}	
 }

@@ -13,6 +13,6 @@ package org.eclipse.ltk.core.refactoring.participants;
 
 public interface ISharableParticipant {
 
-	public void addElement(Object element);
+	public void addElement(Object element, RefactoringArguments arguments);
 
 }

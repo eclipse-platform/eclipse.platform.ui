@@ -56,6 +56,11 @@ import org.eclipse.ltk.internal.core.refactoring.Changes;
  * executed edit can then be used to determine its position in the preview.
  * </p>
  * 
+ * <p> 
+ * Note: this class is not intented to be subclassed outside the refactoring
+ * framework.
+ * </p>
+ * 
  * @since 3.0
  */
 public abstract class TextChange extends Change {

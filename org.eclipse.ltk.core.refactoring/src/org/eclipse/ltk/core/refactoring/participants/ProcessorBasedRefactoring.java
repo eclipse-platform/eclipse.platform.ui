@@ -18,13 +18,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.Refactoring;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.internal.core.refactoring.ParticipantDescriptor;
+import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
 public abstract class ProcessorBasedRefactoring extends Refactoring {
 	
-	private RefactoringParticipant[] fDerivedParticipants;
+	private RefactoringParticipant[] fParticipants;
+	private SharableParticipants fSharedParticipants= new SharableParticipants();
 
 	/**
 	 * Creates a new processor based refactoring.
@@ -39,8 +41,6 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	 * @return the processor associated with this refactoring
 	 */
 	public abstract RefactoringProcessor getProcessor();
-	
-	protected abstract RefactoringParticipant[] getElementParticipants(boolean setArguments) throws CoreException;
 	
 	public boolean isAvailable() throws CoreException {
 		return getProcessor().isApplicable();
@@ -63,24 +63,13 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	public RefactoringStatus checkInitialConditions(IProgressMonitor pm) throws CoreException {
 		RefactoringStatus result= new RefactoringStatus();
 		CheckConditionsContext context= createCheckConditionsContext();
-		pm.beginTask("", 5); //$NON-NLS-1$
-		result.merge(getProcessor().checkInitialConditions(new SubProgressMonitor(pm, 3), context));
+		pm.beginTask("", 10); //$NON-NLS-1$
+		result.merge(getProcessor().checkInitialConditions(new SubProgressMonitor(pm, 8)));
 		if (result.hasFatalError()) {
 			pm.done();
 			return result;
 		}
-		RefactoringParticipant[] elementParticipants= getElementParticipants(false);
-		IProgressMonitor sm= new SubProgressMonitor(pm, 1);
-		sm.beginTask("", elementParticipants.length); //$NON-NLS-1$
-		for (int i= 0; i < elementParticipants.length; i++) {
-			result.merge(elementParticipants[i].checkInitialConditions(new SubProgressMonitor(sm, 1), context));
-		}
-		sm.done();
-		if (result.hasFatalError()) {
-			pm.done();
-			return result;
-		}
-		result.merge(context.check(new SubProgressMonitor(pm, 1)));
+		result.merge(context.check(new SubProgressMonitor(pm, 2)));
 		pm.done();
 		return result;
 	}
@@ -100,41 +89,17 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 			return result;
 		}
 		
-		RefactoringParticipant[] elementParticipants= getElementParticipants(true);
-		IProgressMonitor sm= new SubProgressMonitor(pm, 1);
-		sm.beginTask("", elementParticipants.length); //$NON-NLS-1$
-		for (int i= 0; i < elementParticipants.length; i++) {
-			result.merge(elementParticipants[i].checkFinalConditions(new SubProgressMonitor(sm, 1), context));
+		fParticipants= getProcessor().loadParticipants(fSharedParticipants);
+		IProgressMonitor sm= new SubProgressMonitor(pm, 2);
+		sm.beginTask("", fParticipants.length); //$NON-NLS-1$
+		for (int i= 0; i < fParticipants.length; i++) {
+			result.merge(fParticipants[i].checkConditions(new SubProgressMonitor(sm, 1), context));
 		}
 		sm.done();
 		if (result.hasFatalError()) {
 			pm.done();
 			return result;
 		}
-		
-		fDerivedParticipants= getProcessor().loadDerivedParticipants();
-		sm= new SubProgressMonitor(pm, 1);
-		sm.beginTask("", fDerivedParticipants.length); //$NON-NLS-1$
-		for (int i= 0; i < fDerivedParticipants.length; i++) {
-			result.merge(fDerivedParticipants[i].checkInitialConditions(new SubProgressMonitor(sm, 1), context));
-		}
-		sm.done();
-		if (result.hasFatalError()) {
-			pm.done();
-			return result;
-		}
-		
-		sm= new SubProgressMonitor(pm, 1);
-		sm.beginTask("", fDerivedParticipants.length); //$NON-NLS-1$
-		for (int i= 0; i < fDerivedParticipants.length; i++) {
-			result.merge(fDerivedParticipants[i].checkFinalConditions(new SubProgressMonitor(sm, 1), context));
-		}
-		sm.done();
-		if (result.hasFatalError()) {
-			pm.done();
-			return result;
-		}
-		
 		result.merge(context.check(new SubProgressMonitor(pm, 1)));
 		pm.done();
 		return result;		
@@ -144,19 +109,23 @@ public abstract class ProcessorBasedRefactoring extends Refactoring {
 	 * {@inheritDoc}
 	 */
 	public Change createChange(IProgressMonitor pm) throws CoreException {
-		RefactoringParticipant[] elementParticipants= getElementParticipants(false);
-		
-		pm.beginTask("", elementParticipants.length + fDerivedParticipants.length + 1); //$NON-NLS-1$
+		pm.beginTask("", fParticipants.length + 1); //$NON-NLS-1$
 		List changes= new ArrayList();
 		changes.add(getProcessor().createChange(new SubProgressMonitor(pm, 1)));
 		
-		for (int i= 0; i < elementParticipants.length; i++) {
-			changes.add(elementParticipants[i].createChange(new SubProgressMonitor(pm, 1)));
+		List descriptors= new ArrayList();
+		for (int i= 0; i < fParticipants.length; i++) {
+			RefactoringParticipant participant= fParticipants[i];
+			descriptors.add(participant.getDescriptor());
+			try {
+				changes.add(participant.createChange(new SubProgressMonitor(pm, 1)));
+			} catch (CoreException e) {
+				ParticipantDescriptor descriptor= participant.getDescriptor();
+				descriptor.disable();
+				RefactoringCorePlugin.logRemovedParticipant(descriptor, e);
+			}
 		}
-		for (int i= 0; i < fDerivedParticipants.length; i++) {
-			changes.add(fDerivedParticipants[i].createChange(new SubProgressMonitor(pm, 1)));
-		}
-		CompositeChange result= new CompositeChange();
+		ProcessorChange result= new ProcessorChange(getName());
 		result.addAll((Change[]) changes.toArray(new Change[changes.size()]));
 		return result;
 	}

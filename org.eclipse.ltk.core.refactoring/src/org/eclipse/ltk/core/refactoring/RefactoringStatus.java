@@ -21,12 +21,12 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
  * A <code>RefactoringStatus</code> object represents the outcome of a
- * precondition checking operation. It manages a list of <code>
+ * condition checking operation. It manages a list of <code>
  * RefactoringStatusEntry</code> objects. Each <code>RefactoringStatusEntry
  * </code> object describes one particilar problem detected during
- * precondition checking.
+ * condition checking.
  * <p>
- * Additionally a problem severityis managed. Severities are ordered as follows: 
+ * Additionally a problem severity is managed. Severities are ordered as follows: 
  * <code>OK</code> &lt; <code>INFO</code> &lt; <code>WARNING</code> &lt; <code>
  * ERROR</code>. The status's problem severity is the maximum of the severities 
  * of all entries. If the status doesn't have any entry the status's severity 

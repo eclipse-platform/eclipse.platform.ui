@@ -18,26 +18,26 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
  * 
  * @since 3.0
  */
-public class CopyArguments {
+public class CopyArguments extends RefactoringArguments {
 	
-	private Object fTarget;
+	private Object fDestination;
 	
 	/**
 	 * Creates new copy arguments.
 	 * 
-	 * @param target the target location of the copy operation
+	 * @param destination the destination of the copy operation
 	 */
-	public CopyArguments(Object target) {
-		Assert.isNotNull(target);
-		fTarget= target;
+	public CopyArguments(Object destination) {
+		Assert.isNotNull(destination);
+		fDestination= destination;
 	}
 	
 	/**
-	 * Returns the target location of the copy operation
+	 * Returns the destination of the copy operation
 	 * 
-	 * @return the copy's target location
+	 * @return the copy's destination
 	 */
-	public Object getTargetLocation() {
-		return fTarget;
+	public Object getDestination() {
+		return fDestination;
 	}
 }

@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
-
 /**
  * TODO Write Java doc
  * @since 3.0
@@ -21,21 +19,16 @@ public abstract class DeleteParticipant extends RefactoringParticipant {
 	private DeleteArguments fArguments;
 	
 	/**
-	 * Sets the delete arguments as provided by the corresponding
-	 * refactoring processor.
-	 * 
-	 * @param arguments the delete arguments
+	 * {@inheritDoc}
 	 */
-	public void setArguments(DeleteArguments arguments) {
-		Assert.isNotNull(arguments);
-		fArguments= arguments;
+	protected void initialize(RefactoringArguments arguments) {
+		fArguments= (DeleteArguments)arguments;
 	}
-
+	
 	/**
-	 * Returns the delete arguments or <code>null</code> if the arguments
-	 * haven't been initialized yet.
+	 * Returns the delete arguments.
 	 * 
-	 * @return the delete arguments or <code>null</code>
+	 * @return the delete arguments
 	 */
 	public DeleteArguments getArguments() {
 		return fArguments;

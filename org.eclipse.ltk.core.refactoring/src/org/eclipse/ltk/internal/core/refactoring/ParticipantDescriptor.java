@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
-package org.eclipse.ltk.core.refactoring.participants;
+package org.eclipse.ltk.internal.core.refactoring;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -21,18 +21,20 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
-import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
+import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
 
 public class ParticipantDescriptor {
 	
 	private IConfigurationElement fConfigurationElement;
+	private boolean fEnabled;
 
 	private static final String ID= "id"; //$NON-NLS-1$
+	private static final String NAME= "name";  //$NON-NLS-1$
 	private static final String CLASS= "class"; //$NON-NLS-1$
 	
 	public ParticipantDescriptor(IConfigurationElement element) {
 		fConfigurationElement= element;
+		fEnabled= true;
 	}
 	
 	public String getId() {
@@ -40,24 +42,22 @@ public class ParticipantDescriptor {
 	}
 	
 	public IStatus checkSyntax() {
-//		IConfigurationElement[] children= fConfigurationElement.getChildren(SCOPE_STATE);
-//		switch(children.length) {
-//			case 0:
-//				return new Status(IStatus.ERROR, JavaPlugin.getPluginId(), IStatus.ERROR,
-//					"Mandantory element <scopeState> missing. Disabling rename participant " + getId(), null);
-//			case 1:
-//				break;
-//			default:
-//				return new Status(IStatus.ERROR, JavaPlugin.getPluginId(), IStatus.ERROR,
-//					"Only one <scopeState> element allowed. Disabling rename participant " + getId(), null);
-//		}
-//		children= fConfigurationElement.getChildren(OBJECT_STATE);
-//		if (children.length > 1) {
-//			return new Status(IStatus.ERROR, JavaPlugin.getPluginId(), IStatus.ERROR,
-//				"Only one <objectState> element allowed. Disabling rename participant " + getId(), null);
-//		}
+		if (fConfigurationElement.getAttribute(ID) == null) {
+			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR,
+				RefactoringCoreMessages.getString("ParticipantDescriptor.error.id_missing"), null); //$NON-NLS-1$
+		}
+		if (fConfigurationElement.getAttribute(NAME) == null) {
+			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR,
+				RefactoringCoreMessages.getFormattedString( "ParticipantDescriptor.error.name_missing", getId()),  //$NON-NLS-1$
+				null);
+		}
+		if (fConfigurationElement.getAttribute(CLASS) == null) {
+			return new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IStatus.ERROR,
+				RefactoringCoreMessages.getFormattedString( "ParticipantDescriptor.error.class_missing", getId()),  //$NON-NLS-1$
+				null);
+		}
 		return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), IStatus.OK, 
-			"Syntactically correct rename participant element", null);
+			RefactoringCoreMessages.getString("ParticipantDescriptor.correct"), null); //$NON-NLS-1$
 	}
 	
 	public boolean matches(IEvaluationContext context) throws CoreException {
@@ -71,6 +71,14 @@ public class ParticipantDescriptor {
 
 	public RefactoringParticipant createParticipant() throws CoreException {
 		return (RefactoringParticipant)fConfigurationElement.createExecutableExtension(CLASS);
+	}
+	
+	public boolean isEnabled() {
+		return fEnabled;
+	}
+	
+	public void disable() {
+		fEnabled= false;
 	}
 	
 	private boolean convert(EvaluationResult eval) {

@@ -10,8 +10,6 @@
  ******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
@@ -23,7 +21,6 @@ import org.eclipse.ltk.internal.core.refactoring.Assert;
 public class RenameRefactoring extends ProcessorBasedRefactoring {
 
 	private RenameProcessor fProcessor;
-	private RenameParticipant[] fElementParticipants;
 	
 	/**
 	 * Creates a new rename refactoring with the given rename processor.
@@ -40,23 +37,5 @@ public class RenameRefactoring extends ProcessorBasedRefactoring {
 	 */
 	public RefactoringProcessor getProcessor() {
 		return fProcessor;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected RefactoringParticipant[] getElementParticipants(boolean setArguments) throws CoreException {
-		if (fElementParticipants == null)
-			fElementParticipants= fProcessor.loadElementParticipants();
-		if (setArguments) {
-			for (int i= 0; i < fElementParticipants.length; i++) {
-				fProcessor.setArgumentsTo(fElementParticipants[i]);
-			}
-		}
-		RefactoringParticipant[]result= new RefactoringParticipant[fElementParticipants.length];
-		for (int i= 0; i < result.length; i++) {
-			result[i]= fElementParticipants[i];
-		}
-		return result;
 	}
 }

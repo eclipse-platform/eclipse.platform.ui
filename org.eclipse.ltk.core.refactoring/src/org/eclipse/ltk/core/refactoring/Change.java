@@ -216,7 +216,7 @@ public abstract class Change implements IAdaptable {
 	 
 	/**
 	 * Returns the element modified by this <code>Change</code>. The method may return 
-	 * <code>null</code> if the change isn't related to a element.
+	 * <code>null</code> if the change isn't related to an element.
 	 * 
 	 * @return the element modified by this change
 	 */

@@ -10,28 +10,21 @@
  ******************************************************************************/
 package org.eclipse.ltk.core.refactoring.participants;
 
-import org.eclipse.ltk.internal.core.refactoring.Assert;
-
 public abstract class MoveParticipant extends RefactoringParticipant {
 
 	private MoveArguments fArguments;
 	
 	/**
-	 * Sets the move arguments as provided by the corresponding
-	 * refactoring processor.
-	 * 
-	 * @param arguments the move arguments
+	 * {@inheritDoc}
 	 */
-	public void setArguments(MoveArguments arguments) {
-		Assert.isNotNull(arguments);
-		fArguments= arguments;
+	protected void initialize(RefactoringArguments arguments) {
+		fArguments= (MoveArguments)arguments;
 	}
-
+	
 	/**
-	 * Returns the move arguments or <code>null</code> if the arguments
-	 * haven't been initialized yet.
+	 * Returns the move arguments.
 	 * 
-	 * @return the move arguments or <code>null</code>
+	 * @return the move arguments
 	 */
 	public MoveArguments getArguments() {
 		return fArguments;

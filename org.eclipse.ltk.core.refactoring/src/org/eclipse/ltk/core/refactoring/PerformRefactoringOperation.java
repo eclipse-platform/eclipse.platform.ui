@@ -19,9 +19,13 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
- * Creates a new operation to perform a refactoring.
+ * Operation that, when run, executes a refactoring. This includes
+ * condition checking, change creation, change execution and remembering
+ * of the undo change on the refactoring's undo stack.
  * 
- * The undo change isn't initialized.
+ * <p> 
+ * Note: this class is not intented to be subclassed by clients.
+ * </p>
  * 
  * @since 3.0 
  */
@@ -35,9 +39,13 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 	private Change fUndo;
 	
 	/**
+	 * Create a new perform refactoring operation. The operation will not
+	 * perform the refactoring if the refactoring's condition checking returns 
+	 * an error	of severity {@link RefactoringStatus#FATAL}. 
 	 * 
-	 * @param refactoring
-	 * @param style either ACTIVATION, INPUT or PRECONDITIONS.
+	 * @param refactoring the refactoring to perform
+	 * @param style the condidition checking style as defined by 
+	 *  {@link CheckConditionsOperation} 
 	 */
 	public PerformRefactoringOperation(Refactoring refactoring, int style) {
 		Assert.isNotNull(refactoring);
@@ -45,18 +53,38 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 		fStyle= style;
 	}
 	
+	/**
+	 * Return the refactoring status of the condition checking.
+	 * 
+	 * @return the refactoring status of the condition checking
+	 */
 	public RefactoringStatus getConditionStatus() {
 		return fPreconditionStatus;
 	}
 	
+	/**
+	 * Returns the refactoring status of the change's validation checking
+	 * or <code>null</code> if no change could be created.  
+	 *
+	 * @return the refactoring status of the change's validation checking
+	 */
 	public RefactoringStatus getValidationStatus() {
 		return fValidationStatus;
 	}
 	
+	/**
+	 * The undo object or <code>null</code> if no undo exists. The undo
+	 * object is initialize via the call {@link Change#initializeValidationData(IProgressMonitor)}
+	 * 
+	 * @return the undo object or <code>null</code>
+	 */
 	public Change getUndoChange() {
 		return fUndo;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void run(IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("", 10); //$NON-NLS-1$
 		CreateChangeOperation create= new CreateChangeOperation(

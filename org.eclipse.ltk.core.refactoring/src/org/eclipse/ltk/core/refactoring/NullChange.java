@@ -20,6 +20,10 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
  * A refactoring change that does nothing. The reverse change of a
  * <code>NullChange</code> is a <code>NullChange</code>.
  * 
+ * <p> 
+ * Note: this class is not intented to be subclassed by clients.
+ * </p>
+ * 
  * @since 3.0
  */
 public class NullChange extends Change {

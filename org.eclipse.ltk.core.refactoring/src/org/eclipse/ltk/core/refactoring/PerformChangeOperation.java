@@ -20,7 +20,22 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ltk.internal.core.refactoring.Assert;
 
 /**
- * Operation that, when performed, performs a change to the workbench.
+ * Operation that, when run, performs a {@link Change} object. The operation
+ * can be created in two different ways: with a given change or wiht a
+ * {@link CreateChangeOperation}. If create the second way the given create
+ * change operation will be used to create the actual change to perform.
+ * 
+ * <p>
+ * If an undo change has been provided by the change to execute then the operation 
+ * calls {@link Change#initializeValidationData(IProgressMonitor)} to initialize the 
+ * undo change's validation data.
+ * </p>
+ * 
+ * <p> 
+ * Note: this class is not intented to be subclassed by clients.
+ * </p>
+ * 
+ * @since 3.0 
  */
 public class PerformChangeOperation implements IWorkspaceRunnable {
 
