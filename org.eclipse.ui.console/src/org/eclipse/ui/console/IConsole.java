@@ -20,9 +20,10 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * views.
  * <p>
  * The console implementations provided by this plug-in are textual
- * (<code>MessageConsole</code> and <code>IOConsole</code>). However a client
- * can provide alternate presentations since a console implementation is responsible
- * for providing is page for the page book views in which consoles are displayed.
+ * (<code>TextConsole</code>, <code>MessageConsole</code> and <code>IOConsole</code>).
+ * However a client can provide alternate presentations since a console implementation
+ * is responsible for providing is page for the page book views in which consoles are
+ * displayed.
  * </p>
  * <p>
  * This interface is not intended to be implemented directly by clients. 
