@@ -383,11 +383,15 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			
 			FileInfo info= (FileInfo) getElementInfo(element);
 			if (info != null) {
-					
-				info.fFileSynchronizer.uninstall();
-				refreshFile(input.getFile());
-				info.fFileSynchronizer.install();			
 				
+				if (info.fFileSynchronizer != null) { 
+					info.fFileSynchronizer.uninstall();
+					refreshFile(input.getFile());
+					info.fFileSynchronizer.install();			
+				} else {
+					refreshFile(input.getFile());
+				}
+
 				handleElementContentChanged((IFileEditorInput) element);
 			}
 			return;
