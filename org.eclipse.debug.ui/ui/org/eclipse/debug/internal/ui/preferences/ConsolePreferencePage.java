@@ -16,10 +16,8 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
-import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -81,8 +79,8 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 		setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
 	}
 
-	/**
-	 * @see PreferencePage#createControl(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferencePage#createControl(Composite)
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
@@ -143,8 +141,8 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	public void init(IWorkbench workbench) {
 	}
 		
-	/**
-	 * @see IPreferencePage#performOk()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	public boolean performOk() {
 		boolean ok= super.performOk();

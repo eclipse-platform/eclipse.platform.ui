@@ -47,10 +47,8 @@ import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewInterimLabelProvider;
 import org.eclipse.debug.internal.ui.views.DebugViewLabelDecorator;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
-import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -79,7 +77,6 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -97,7 +94,6 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -118,7 +114,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
-import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -520,8 +515,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		}
 	}
 	
-	/**
-	 * @see AbstractDebugView#createViewer(Composite)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(Composite)
 	 */
 	public Viewer createViewer(Composite parent) {
 		TreeViewer variablesViewer = createTreeViewer(parent);
@@ -596,8 +591,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		variablesViewer.setLabelProvider(createLabelProvider());
 		variablesViewer.setUseHashlookup(true);
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
-			/**
-			 * @see FocusListener#focusGained(FocusEvent)
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.FocusListener#focusGained(FocusEvent)
 			 */
 			public void focusGained(FocusEvent e) {
 				getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(variablesViewer);
@@ -652,8 +647,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		detailsViewer.getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
 		detailsViewer.getControl().addFocusListener(new FocusAdapter() {
-			/**
-			 * @see FocusListener#focusGained(FocusEvent)
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.FocusListener#focusGained(FocusEvent)
 			 */
 			public void focusGained(FocusEvent e) {
 				getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(getDetailViewer().getSelectionProvider());
@@ -691,8 +686,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		return new VariablesViewEventHandler(this);
 	}	
 		
-	/**
-	 * @see AbstractDebugView#getHelpContextId()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
 	 */
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.VARIABLE_VIEW;		
@@ -801,8 +796,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		addContextMenuManager(menuMgr);
 	}
 	
-	/**
-	 * @see AbstractDebugView#createActions()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
 		IAction action = new ShowTypesAction(this);
@@ -1149,8 +1144,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		fSashForm = sashForm;
 	}
 	
-	/**
-	 * @see WorkbenchPart#getAdapter(Class)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.WorkbenchPart#getAdapter(Class)
 	 */
 	public Object getAdapter(Class required) {
 		if (IFindReplaceTarget.class.equals(required)) {
@@ -1230,8 +1225,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		return fSourceViewerConfiguration;
 	}
 	
-	/**
-	 * @see AbstractDebugView#getDefaultControl()
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#getDefaultControl()
 	 */
 	protected Control getDefaultControl() {
 		return getSashForm();
@@ -1271,7 +1266,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * Delegate to the <code>DOUBLE_CLICK_ACTION</code>,
 	 * if any.
 	 *  
-	 * @see IDoubleClickListener#doubleClick(DoubleClickEvent)
+	 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(DoubleClickEvent)
 	 */
 	public void doubleClick(DoubleClickEvent event) {
 		IAction action = getAction(DOUBLE_CLICK_ACTION);
@@ -1321,8 +1316,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		return fFocusViewer;
 	}
 
-	/**
-	 * @see IDebugView#getPresentation(String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IDebugView#getPresentation(String)
 	 */
 	public IDebugModelPresentation getPresentation(String id) {
 		if (getViewer() instanceof StructuredViewer) {
