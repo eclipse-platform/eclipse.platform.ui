@@ -131,6 +131,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		if (participant.getSubscriber().roots().length == 0) {
 			Label l = new Label(top, SWT.NULL);
 			l.setText(Policy.bind("GlobalRefreshResourceSelectionPage.4")); //$NON-NLS-1$
+			setPageComplete(false);
 		} else {
 			Label l = new Label(top, SWT.NULL);
 			l.setText(Policy.bind("GlobalRefreshResourceSelectionPage.5")); //$NON-NLS-1$
@@ -237,7 +238,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		if(fViewer != null) {
 			setPageComplete(fViewer.getCheckedElements().length > 0);
 		} else {
-			setPageComplete(true);
+			setPageComplete(false);
 		}
 	}
 	
@@ -268,7 +269,10 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 				updateWorkingSetScope();
 				break;
 			default:
-				if(getResourcesFromSelection().length == 0) {
+				if(workingSet != null) {
+					workingSetScope.setSelection(true);
+					updateWorkingSetScope();
+				} else if(getResourcesFromSelection().length == 0) {
 					participantScope.setSelection(true);
 					updateParticipantScope();
 				} else {
