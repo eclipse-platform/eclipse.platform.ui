@@ -60,7 +60,7 @@ public class DefaultAnalyzer extends Analyzer {
 		if (localeString != null && localeString.length() >= 2) {
 			String language = localeString.substring(0,2);
 			String country;
-			if (localeString.indexOf('_') == 2 && localeString.length() >= 5) 
+			if (localeString.length() >= 5 && localeString.indexOf('_') == 2) 
 				country = localeString.substring(3,5);
 			else
 				country = "";

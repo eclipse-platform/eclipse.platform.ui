@@ -128,7 +128,7 @@ public class HelpURL {
 		if (clientLocale != null && clientLocale.length() >= 2) {
 			String language = clientLocale.substring(0,2);
 			String country;
-			if (clientLocale.indexOf('_') == 2 && clientLocale.length() >= 5) 
+			if (clientLocale.length() >= 5 && clientLocale.indexOf('_') == 2) 
 				country = clientLocale.substring(3,5);
 			else
 				country = "";
