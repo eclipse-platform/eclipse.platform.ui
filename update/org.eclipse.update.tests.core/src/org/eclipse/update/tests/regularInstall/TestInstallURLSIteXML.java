@@ -9,15 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.tests.regularInstall;
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.update.core.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.tests.UpdateManagerTestCase;
+import org.eclipse.update.tests.*;
 
 public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 
@@ -39,9 +38,9 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		}
 
 		public void featureConfigured(IFeature feature) {
-		};
+		}
 		public void featureUnconfigured(IFeature feature) {
-		};
+		}
 
 		public boolean isNotified() {
 			return notified;
@@ -62,18 +61,18 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		ref.setURLString("features/org.eclipse.update.core.tests.feature1_1.0.4.jar");
 		ref.setType(ISite.DEFAULT_PACKAGED_FEATURE_TYPE);
 		ref.resolve(site.getURL(), null);
-		return ref.getFeature();
+		return ref.getFeature(null);
 	}
 
 	public void testFileSite() throws Exception {
 
 		ISite remoteSite =
-			SiteManager.getSite(new URL(SOURCE_FILE_SITE, Site.SITE_XML));
+			SiteManager.getSite(new URL(SOURCE_FILE_SITE, Site.SITE_XML),true,null);
 		IFeature remoteFeature = getFeature1(remoteSite);
 		URL url = TARGET_FILE_SITE;
 		File file = new File(TARGET_FILE_SITE.getFile());
 		if (!file.exists()) file.mkdirs();
-		ISite localSite = SiteManager.getSite(url);
+		ISite localSite = SiteManager.getSite(url,true,null);
 		remove(remoteFeature,localSite);
 		localSite.install(remoteFeature, null, null);
 
@@ -101,7 +100,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		//cleanup
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
 		UpdateManagerUtils.removeFromFileSystem(new File(localSite.getURL().getFile()));
-
+		InstallRegistry.cleanup();
 	}
 
 	/**
@@ -112,9 +111,10 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		// clean
 		File targetFile  = new File(TARGET_FILE_SITE.getFile());
 		UpdateManagerUtils.removeFromFileSystem(targetFile);
+		InstallRegistry.cleanup();
 
 		ISite remoteSite =
-			SiteManager.getSite(new URL(SOURCE_HTTP_SITE, Site.SITE_XML));
+			SiteManager.getSite(new URL(SOURCE_HTTP_SITE, Site.SITE_XML),true,null);
 		IFeatureReference[] features = remoteSite.getFeatureReferences();
 		IFeature remoteFeature = null;
 
@@ -123,7 +123,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getURL().toExternalForm().endsWith("features2.jar")) {
-				remoteFeature = features[i].getFeature();
+				remoteFeature = features[i].getFeature(null);
 				break;
 			}
 		}
@@ -132,7 +132,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		URL url = TARGET_FILE_SITE;
 		File file = new File(TARGET_FILE_SITE.getFile());
 		if (!file.exists()) file.mkdirs();
-		ISite localSite = SiteManager.getSite(url);
+		ISite localSite = SiteManager.getSite(url,true,null);
 		localSite.install(remoteFeature, null, null);
 
 		// feature2.jar should not be in the local site
@@ -173,6 +173,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 		//cleanup
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
 		UpdateManagerUtils.removeFromFileSystem(new File(localSite.getURL().getFile()));
+		InstallRegistry.cleanup();
 	}
 
 	public void testInstall() throws Exception {
@@ -199,7 +200,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 			e.printStackTrace();
 		}
 
-		ISite remoteSite = SiteManager.getSite(INSTALL_SITE);
+		ISite remoteSite = SiteManager.getSite(INSTALL_SITE,true,null);
 		IFeatureReference[] features = remoteSite.getFeatureReferences();
 		IFeature remoteFeature = null;
 
@@ -208,7 +209,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 
 		for (int i = 0; i < features.length; i++) {
 			if (features[i].getURL().toExternalForm().endsWith("helpFeature.jar")) {
-				remoteFeature = features[i].getFeature();
+				remoteFeature = features[i].getFeature(null);
 				break;
 			}
 		}
@@ -252,7 +253,8 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 				((InstallConfiguration) localSite.getCurrentConfiguration())
 					.getURL()
 					.getFile()));
-
+		InstallRegistry.cleanup();
+		
 		site.removeConfiguredSiteChangedListener(listener);
 		assertTrue("Listener hasn't received notification", listener.isNotified());
 	}
@@ -260,7 +262,7 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 	public void testFileSiteWithoutSiteXML() throws Exception {
 
 		ISite remoteSite =
-			SiteManager.getSite(new URL(SOURCE_FILE_SITE, Site.SITE_XML));
+			SiteManager.getSite(new URL(SOURCE_FILE_SITE, Site.SITE_XML),true,null);
 		IFeature remoteFeature = getFeature1(remoteSite);
 		IConfiguredSite localSite =
 			SiteManager.getLocalSite().getCurrentConfiguration().getConfiguredSites()[0];
@@ -307,17 +309,17 @@ public class TestInstallURLSIteXML extends UpdateManagerTestCase {
 	/**
 	* 
 	*/
-	private Feature createPackagedFeature(URL url, ISite site)
-		throws CoreException {
-		String packagedFeatureType = ISite.DEFAULT_PACKAGED_FEATURE_TYPE;
-		Feature result = null;
-		if (packagedFeatureType != null) {
-			IFeatureFactory factory =
-				FeatureTypeFactory.getInstance().getFactory(packagedFeatureType);
-			result = (Feature) factory.createFeature(url, site);
-		}
-		return result;
-	}
+//	private Feature createPackagedFeature(URL url, ISite site)
+//		throws CoreException {
+//		String packagedFeatureType = ISite.DEFAULT_PACKAGED_FEATURE_TYPE;
+//		Feature result = null;
+//		if (packagedFeatureType != null) {
+//			IFeatureFactory factory =
+//				FeatureTypeFactory.getInstance().getFactory(packagedFeatureType);
+//			result = (Feature) factory.createFeature(url, site);
+//		}
+//		return result;
+//	}
 	/*
 	 * @see ISite#getDefaultInstallableFeatureType()
 	 */

@@ -28,6 +28,12 @@ public class TestInstall extends UpdateManagerTestCase {
 	}
 
 	public void testFileSite() throws Exception {
+		
+		//cleanup target 
+		File target = new File(TARGET_FILE_SITE.getFile());
+		UpdateManagerUtils.removeFromFileSystem(target);		
+		InstallRegistry.cleanup();
+		
 
 		ISite remoteSite =
 			SiteManager.getSite(new URL(SOURCE_FILE_SITE, "nestedFeatureSiteTest/site.xml"));
@@ -61,9 +67,10 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		// clean plugins & feature
 		for (int i = 0; i < entries.length; i++) {
-			pluginName = entries[0].getVersionedIdentifier().toString();
+			pluginName = entries[i].getVersionedIdentifier().toString();
 			pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 			UpdateManagerUtils.removeFromFileSystem(pluginFile);
+			InstallRegistry.unregisterPlugin(entries[i]);
 		}
 		UpdateManagerUtils.removeFromFileSystem(featureFile);
 
@@ -102,6 +109,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		// clean features
 		UpdateManagerUtils.removeFromFileSystem(featureFile);
 		UpdateManagerUtils.removeFromFileSystem(new File(localSite.getURL().getFile()));
+		InstallRegistry.cleanup();
 	}
 
 	/**
@@ -169,9 +177,10 @@ public class TestInstall extends UpdateManagerTestCase {
 
 		// clean plugins & feature
 		for (int i = 0; i < entries.length; i++) {
-			pluginName = entries[0].getVersionedIdentifier().toString();
+			pluginName = entries[i].getVersionedIdentifier().toString();
 			pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
 			UpdateManagerUtils.removeFromFileSystem(pluginFile);
+			InstallRegistry.unregisterPlugin(entries[i]);
 		}
 		UpdateManagerUtils.removeFromFileSystem(featureFile);
 
@@ -219,6 +228,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		File localFile =
 			new File(new URL(localURL, SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
+		InstallRegistry.cleanup();
 
 		URL INSTALL_SITE = null;
 		try {

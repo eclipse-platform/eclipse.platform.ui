@@ -227,6 +227,7 @@ public class TestInstall extends UpdateManagerTestCase {
 					+ remoteFeature.getVersionedIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
 		UpdateManagerUtils.removeFromFileSystem(pluginFile);
+		InstallRegistry.unregisterPlugin(entries[0]);
 		UpdateManagerUtils.removeFromFileSystem(localFile);
 		UpdateManagerUtils.removeFromFileSystem(
 			new File(

@@ -82,6 +82,8 @@ public abstract class UpdateManagerTestCase extends TestCase {
 		//cleanup target 
 		File target = new File(homePath + "/target/");
 		UpdateManagerUtils.removeFromFileSystem(target);
+		// cleanup info about just installed plugins
+		InstallRegistry.cleanup();
 
 		// setup cache site to false
 		InternalSiteManager.globalUseCache = false;
@@ -154,6 +156,7 @@ public abstract class UpdateManagerTestCase extends TestCase {
 			file = new File(sitePath, "plugins" + File.separator + name);
 			System.out.println("****************************************Removing :" + file);
 			UpdateManagerUtils.removeFromFileSystem(file);
+			InstallRegistry.unregisterPlugin(entries[i]);
 		}
 	}
 }

@@ -13,6 +13,7 @@ package org.eclipse.update.tests.regularInstall;
 import java.io.File;
 
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
@@ -33,6 +34,7 @@ public class TestExecutableInstall extends UpdateManagerTestCase {
 		//cleanup target 
 		File target = new File(TARGET_FILE_SITE.getFile());
 		UpdateManagerUtils.removeFromFileSystem(target);		
+		InstallRegistry.cleanup();
 		
 		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE_INSTALLED);
 		IFeatureReference[] remoteFeatureReference = remoteSite.getFeatureReferences();

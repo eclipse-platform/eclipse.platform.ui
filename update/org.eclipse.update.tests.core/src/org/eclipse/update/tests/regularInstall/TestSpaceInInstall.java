@@ -36,11 +36,11 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 		UpdateManagerUtils.removeFromFileSystem(target);
 		
 		URL newURL = new File(dataPath + "Site with space/site.xml").toURL();
-		ISite remoteSite = SiteManager.getSite(newURL);
+		ISite remoteSite = SiteManager.getSite(newURL,true,null);
 		IFeatureReference[] featuresRef = remoteSite.getFeatureReferences();
 		File file = new File(testURL.getFile());
 		if (!file.exists()) file.mkdirs();
-		ISite localSite = SiteManager.getSite(testURL);
+		ISite localSite = SiteManager.getSite(testURL,true,null);
 		IFeature remoteFeature = null;
 		
 		// at least one executable feature and on packaged
@@ -50,7 +50,7 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 		if (featuresRef.length==0) fail ("no feature found");
 	
 		for (int i = 0; i < featuresRef.length; i++) {
-			remoteFeature = featuresRef[i].getFeature();
+			remoteFeature = featuresRef[i].getFeature(null);
 			remove(remoteFeature,localSite); 
 			localSite.install(remoteFeature, null,null);
 			
@@ -91,11 +91,12 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 		//cleanup target  
 		File target = new File(TARGET_FILE_SITE.getFile());
 		UpdateManagerUtils.removeFromFileSystem(target);
+		InstallRegistry.cleanup();
 		
 		String path = bundle.getString("HTTP_PATH_3");
-		ISite remoteSite = SiteManager.getSite(new URL("http",getHttpHost(),getHttpPort(),path));		
+		ISite remoteSite = SiteManager.getSite(new URL("http",getHttpHost(),getHttpPort(),path),true,null);		
 		IFeatureReference[] featuresRef = remoteSite.getFeatureReferences();
-		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE);
+		ISite localSite = SiteManager.getSite(TARGET_FILE_SITE,true,null);
 		IFeature remoteFeature = null;
 		
 		// at least one executable feature and on packaged
@@ -105,7 +106,7 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 		if (featuresRef.length==0) fail ("no feature found");
 	
 		for (int i = 0; i < featuresRef.length; i++) {
-			remoteFeature = featuresRef[i].getFeature();
+			remoteFeature = featuresRef[i].getFeature(null);
 			localSite.install(remoteFeature, null,null);
 			
 			if (remoteFeature.getFeatureContentProvider() instanceof FeaturePackagedContentProvider) packFeature = true;
@@ -132,7 +133,7 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 
 		//cleanup target 
 		UpdateManagerUtils.removeFromFileSystem(target);
-
+		InstallRegistry.cleanup();
 
 	}
 		
