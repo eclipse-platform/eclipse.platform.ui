@@ -170,7 +170,7 @@ final class Persistence {
 		return list;				
 	}
 
-	static IContextBindingDefinition readContextBindingDefinition(IMemento memento, String pluginIdOverride) {
+	static IActivityBindingDefinition readContextBindingDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();			
 
@@ -184,7 +184,7 @@ final class Persistence {
 		// TODO deprecated end			
 		
 		String pluginId = pluginIdOverride != null ? pluginIdOverride : memento.getString(TAG_PLUGIN_ID);
-		return new ContextBindingDefinition(commandId, contextId, pluginId);
+		return new ActivityBindingDefinition(commandId, contextId, pluginId);
 	}
 
 	static List readContextBindingDefinitions(IMemento memento, String name, String pluginIdOverride) {
@@ -447,13 +447,13 @@ final class Persistence {
 			writeCommandDefinition(memento.createChild(name), (ICommandDefinition) iterator.next());
 	}
 	
-	static void writeContextBindingDefinition(IMemento memento, IContextBindingDefinition contextBindingDefinition) {
+	static void writeContextBindingDefinition(IMemento memento, IActivityBindingDefinition contextBindingDefinition) {
 		if (memento == null || contextBindingDefinition == null)
 			throw new NullPointerException();
 
 		memento.putString(TAG_COMMAND_ID, contextBindingDefinition.getCommandId());		
 		// TODO change to activityId
-		memento.putString("contextId", contextBindingDefinition.getContextId()); //$NON-NLS-1$
+		memento.putString("contextId", contextBindingDefinition.getActivityId()); //$NON-NLS-1$
 		memento.putString(TAG_PLUGIN_ID, contextBindingDefinition.getPluginId());
 	}
 
@@ -465,12 +465,12 @@ final class Persistence {
 		Iterator iterator = contextBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IContextBindingDefinition.class);
+			Util.assertInstance(iterator.next(), IActivityBindingDefinition.class);
 
 		iterator = contextBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) 
-			writeContextBindingDefinition(memento.createChild(name), (IContextBindingDefinition) iterator.next());
+			writeContextBindingDefinition(memento.createChild(name), (IActivityBindingDefinition) iterator.next());
 	}
 	
 	static void writeImageBindingDefinition(IMemento memento, IImageBindingDefinition imageBindingDefinition) {

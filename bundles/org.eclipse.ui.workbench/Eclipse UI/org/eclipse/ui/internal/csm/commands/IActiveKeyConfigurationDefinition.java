@@ -11,32 +11,9 @@
 
 package org.eclipse.ui.internal.csm.commands;
 
-/**
- * <p>
- * JAVADOC
- * </p>
- * <p>
- * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
 public interface IActiveKeyConfigurationDefinition extends Comparable {
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
 	String getKeyConfigurationId();
 	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
 	String getPluginId();
 }

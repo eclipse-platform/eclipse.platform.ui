@@ -13,17 +13,17 @@ package org.eclipse.ui.internal.csm.commands;
 
 import org.eclipse.ui.commands.IContextBinding;
 
-final class ContextBinding implements IContextBinding {
+final class ActivityBinding implements IContextBinding {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ContextBinding.class.getName().hashCode();
+	private final static int HASH_INITIAL = ActivityBinding.class.getName().hashCode();
 
 	private String contextId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	
-	ContextBinding(String contextId) {	
+	ActivityBinding(String contextId) {	
 		if (contextId == null)
 			throw new NullPointerException();
 
@@ -31,16 +31,16 @@ final class ContextBinding implements IContextBinding {
 	}
 
 	public int compareTo(Object object) {
-		ContextBinding contextBinding = (ContextBinding) object;
+		ActivityBinding contextBinding = (ActivityBinding) object;
 		int compareTo = contextId.compareTo(contextBinding.contextId);			
 		return compareTo;	
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof ContextBinding))
+		if (!(object instanceof ActivityBinding))
 			return false;
 
-		ContextBinding contextBinding = (ContextBinding) object;	
+		ActivityBinding contextBinding = (ActivityBinding) object;	
 		boolean equals = true;
 		equals &= contextId.equals(contextBinding.contextId);
 		return equals;

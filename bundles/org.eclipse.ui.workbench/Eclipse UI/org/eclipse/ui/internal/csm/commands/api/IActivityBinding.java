@@ -9,19 +9,27 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.commands;
+package org.eclipse.ui.internal.csm.commands.api;
 
-public interface IImageBindingDefinition extends Comparable {
+/**
+ * <p>
+ * An instance of <code>IActivityBinding</code> represents a binding between 
+ * a command and an activity.
+ * </p>
+ * <p>
+ * This interface is not intended to be extended or implemented by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ * @see org.eclipse.ui.commands.ICommand
+ */
+public interface IActivityBinding extends Comparable {
 
-	String getCommandId();
-
-	String getImageStyle();
-
-	String getImageUri();
-
-	String getLocale();
-
-	String getPlatform();
-	
-	String getPluginId();	
+	/**
+	 * TODO
+	 */	
+	String getActivityId();
 }

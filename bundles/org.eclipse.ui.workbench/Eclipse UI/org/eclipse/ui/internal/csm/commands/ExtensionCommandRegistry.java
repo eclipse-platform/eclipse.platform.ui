@@ -194,7 +194,7 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private void readContextBindingDefinition(IConfigurationElement configurationElement) {
-		IContextBindingDefinition contextBindingDefinition = Persistence.readContextBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
+		IActivityBindingDefinition contextBindingDefinition = Persistence.readContextBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
 	
 		if (contextBindingDefinition != null)
 			contextBindingDefinitions.add(contextBindingDefinition);	

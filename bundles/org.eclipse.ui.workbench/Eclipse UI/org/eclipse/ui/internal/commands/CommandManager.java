@@ -48,7 +48,7 @@ import org.eclipse.ui.internal.csm.commands.ICommandDefinition;
 import org.eclipse.ui.internal.csm.commands.ICommandRegistry;
 import org.eclipse.ui.internal.csm.commands.ICommandRegistryEvent;
 import org.eclipse.ui.internal.csm.commands.ICommandRegistryListener;
-import org.eclipse.ui.internal.csm.commands.IContextBindingDefinition;
+import org.eclipse.ui.internal.csm.commands.IActivityBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IImageBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.csm.commands.IKeySequenceBindingDefinition;
@@ -92,7 +92,7 @@ public final class CommandManager implements ICommandManager {
 		Iterator iterator = contextBindingDefinitions.iterator();
 		
 		while (iterator.hasNext()) {
-			IContextBindingDefinition contextBindingDefinition = (IContextBindingDefinition) iterator.next();
+			IActivityBindingDefinition contextBindingDefinition = (IActivityBindingDefinition) iterator.next();
 			
 			if (contextBindingDefinition.getCommandId() == null)
 				iterator.remove();
@@ -482,9 +482,9 @@ public final class CommandManager implements ICommandManager {
 		Iterator iterator = contextBindingDefinitions.iterator();
 			
 		while (iterator.hasNext()) {
-			IContextBindingDefinition contextBindingDefinition = (IContextBindingDefinition) iterator.next();			
+			IActivityBindingDefinition contextBindingDefinition = (IActivityBindingDefinition) iterator.next();			
 			String commandId = contextBindingDefinition.getCommandId();
-			String contextId = contextBindingDefinition.getContextId();			
+			String contextId = contextBindingDefinition.getActivityId();			
 			SortedSet sortedSet = (SortedSet) contextBindingsByCommandId.get(commandId);
 						
 			if (sortedSet == null) {

@@ -9,11 +9,12 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.commands;
+package org.eclipse.ui.internal.csm.commands.api;
 
 /**
  * <p>
- * JAVADOC
+ * An instance of <code>IImageBinding</code> represents a binding between 
+ * a command and an image
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -23,27 +24,17 @@ package org.eclipse.ui.internal.csm.commands;
  * </p>
  * 
  * @since 3.0
+ * @see org.eclipse.ui.commands.ICommand
  */
-public interface IContextBindingDefinition extends Comparable {
+public interface IImageBinding extends Comparable {
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
+	 * TODO
 	 */	
-	String getCommandId();
+	String getImageStyle();
 
 	/**
-	 * JAVADOC
-	 * 
-	 * @return
+	 * TODO
 	 */	
-	String getContextId();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();		
+	String getImageUri();
 }

@@ -11,17 +11,11 @@
 
 package org.eclipse.ui.internal.csm.commands;
 
-public interface IImageBindingDefinition extends Comparable {
+public interface IActivityBindingDefinition extends Comparable {
+
+	String getActivityId();
 
 	String getCommandId();
 
-	String getImageStyle();
-
-	String getImageUri();
-
-	String getLocale();
-
-	String getPlatform();
-	
-	String getPluginId();	
+	String getPluginId();		
 }

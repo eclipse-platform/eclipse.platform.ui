@@ -66,7 +66,7 @@ import org.eclipse.ui.internal.csm.commands.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.csm.commands.ICategoryDefinition;
 import org.eclipse.ui.internal.csm.commands.ICommandDefinition;
 import org.eclipse.ui.internal.csm.commands.ICommandRegistry;
-import org.eclipse.ui.internal.csm.commands.IContextBindingDefinition;
+import org.eclipse.ui.internal.csm.commands.IActivityBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IImageBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IKeyConfigurationDefinition;
 import org.eclipse.ui.internal.csm.commands.IKeySequenceBindingDefinition;
@@ -315,8 +315,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			activityIdsByCommandId = new HashMap();
 			
 			for (Iterator iterator = contextBindingDefinitions.iterator(); iterator.hasNext();) {
-				IContextBindingDefinition contextBindingDefinition = (IContextBindingDefinition) iterator.next();
-				String activityId = contextBindingDefinition.getContextId();
+				IActivityBindingDefinition contextBindingDefinition = (IActivityBindingDefinition) iterator.next();
+				String activityId = contextBindingDefinition.getActivityId();
 				String commandId = contextBindingDefinition.getCommandId();
 				boolean validActivityId = activityId == null || activityManager.getDefinedActivityIds().contains(activityId);
 				boolean validCommandId = commandDefinitionsById.containsKey(commandId);

@@ -13,10 +13,10 @@ package org.eclipse.ui.internal.csm.commands;
 
 import org.eclipse.ui.internal.util.Util;
 
-public final class ContextBindingDefinition implements IContextBindingDefinition {
+public final class ActivityBindingDefinition implements IActivityBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = ContextBindingDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL = ActivityBindingDefinition.class.getName().hashCode();
 
 	private String commandId;
 	private String contextId;
@@ -26,14 +26,14 @@ public final class ContextBindingDefinition implements IContextBindingDefinition
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	public ContextBindingDefinition(String commandId, String contextId, String pluginId) {
+	public ActivityBindingDefinition(String commandId, String contextId, String pluginId) {
 		this.commandId = commandId;
 		this.contextId = contextId;
 		this.pluginId = pluginId;
 	}
 	
 	public int compareTo(Object object) {
-		ContextBindingDefinition contextBindingDefinition = (ContextBindingDefinition) object;
+		ActivityBindingDefinition contextBindingDefinition = (ActivityBindingDefinition) object;
 		int compareTo = Util.compare(commandId, contextBindingDefinition.commandId);
 		
 		if (compareTo == 0) {		
@@ -47,10 +47,10 @@ public final class ContextBindingDefinition implements IContextBindingDefinition
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof ContextBindingDefinition))
+		if (!(object instanceof ActivityBindingDefinition))
 			return false;
 
-		ContextBindingDefinition contextBindingDefinition = (ContextBindingDefinition) object;	
+		ActivityBindingDefinition contextBindingDefinition = (ActivityBindingDefinition) object;	
 		boolean equals = true;
 		equals &= Util.equals(commandId, contextBindingDefinition.commandId);
 		equals &= Util.equals(contextId, contextBindingDefinition.contextId);
@@ -62,7 +62,7 @@ public final class ContextBindingDefinition implements IContextBindingDefinition
 		return commandId;
 	}
 
-	public String getContextId() {
+	public String getActivityId() {
 		return contextId;
 	}
 

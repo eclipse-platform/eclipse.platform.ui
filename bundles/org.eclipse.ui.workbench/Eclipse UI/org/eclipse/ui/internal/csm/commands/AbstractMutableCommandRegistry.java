@@ -15,8 +15,8 @@ import java.util.List;
 
 import org.eclipse.ui.internal.util.Util;
 
-// TODO default..
-public abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry implements IMutableCommandRegistry {
+public abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry 
+	implements IMutableCommandRegistry {
 
 	protected AbstractMutableCommandRegistry() {
 	}
@@ -49,7 +49,7 @@ public abstract class AbstractMutableCommandRegistry extends AbstractCommandRegi
 	}
 
 	public void setContextBindingDefinitions(List contextBindingDefinitions) {
-		contextBindingDefinitions = Util.safeCopy(contextBindingDefinitions, IContextBindingDefinition.class);	
+		contextBindingDefinitions = Util.safeCopy(contextBindingDefinitions, IActivityBindingDefinition.class);	
 		
 		if (!contextBindingDefinitions.equals(this.contextBindingDefinitions)) {
 			this.contextBindingDefinitions = contextBindingDefinitions;			
