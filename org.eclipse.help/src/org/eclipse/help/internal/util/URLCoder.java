@@ -18,7 +18,7 @@ public class URLCoder {
 			if (s.indexOf("%u") < 0) {
 				return new String(urlDecode(s), "UTF8");
 			} else {
-				// String was encoded pre 1.5 javascript
+				// String was escaped in javascript 1.3
 				// need to use slower unescape method
 				return unescape(s);
 			}
