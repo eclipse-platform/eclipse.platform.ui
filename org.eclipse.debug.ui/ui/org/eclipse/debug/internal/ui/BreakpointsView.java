@@ -5,7 +5,24 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.IMarker;import org.eclipse.debug.core.DebugPlugin;import org.eclipse.debug.core.IBreakpointManager;import org.eclipse.debug.ui.IDebugModelPresentation;import org.eclipse.debug.ui.IDebugUIConstants;import org.eclipse.jface.action.*;import org.eclipse.jface.viewers.*;import org.eclipse.swt.SWT;import org.eclipse.swt.events.KeyAdapter;import org.eclipse.swt.events.KeyEvent;import org.eclipse.swt.widgets.Composite;import org.eclipse.ui.*;import org.eclipse.ui.help.ViewContextComputer;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.model.WorkbenchViewerSorter;
+import java.util.*;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManager;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.ViewContextComputer;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.model.WorkbenchViewerSorter;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * This view shows the breakpoints registered with the breakpoint manager
@@ -22,6 +39,7 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 	private RemoveAllBreakpointsAction fRemoveAllBreakpointsAction;
 	private EnableDisableBreakpointAction fEnableDisableBreakpointAction;
 	private ShowQualifiedAction fShowQualifiedNamesAction;
+	private List fContributedActions = new ArrayList(0);
 	
 	/**
 	 * @see IWorkbenchPart
@@ -151,6 +169,7 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 	 * Adds items to the context menu
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
+		updateContributedActions();
 		menu.add(new Separator(IDebugUIConstants.EMPTY_NAVIGATION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.NAVIGATION_GROUP));
 		menu.add(fOpenMarkerAction);
@@ -165,6 +184,25 @@ public class BreakpointsView extends AbstractDebugView implements IDoubleClickLi
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
+	/**
+	 * Add an action to the contributed actions collection
+	 */
+	public void addContributedAction(IUpdate update) {
+		fContributedActions.add(update);
+	}
+
+	/**
+	 * Update the contributed actions that the BreakpointsView knows about.
+	 * This gives contributed actions a chance to refresh their state.
+	 */
+	protected void updateContributedActions() {
+		Iterator actions= fContributedActions.iterator();
+		while (actions.hasNext()) {
+			IUpdate update= (IUpdate)actions.next();
+			update.update();
+		}
+	}
+	
 	/**
 	 * @see IDoubleClickListener
 	 */
