@@ -20,7 +20,7 @@ import org.eclipse.core.boot.BootLoader;
 
 public abstract class DelegatingURLClassLoader extends URLClassLoader {
 
-	// table to hold the set of all class loader prefixs.  This is a temporary solution until
+	// table to hold the set of all class loader prefixes.  This is a temporary solution until
 	// we can integrate this value into the plugin's library declaration.
 	protected static Properties prefixTable = new Properties();
 	static {
@@ -30,8 +30,8 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 	// loader base
 	protected URL base;
 	
-	// class name prefixs that this loader can load
-	protected String[] prefixs = null;
+	// class name prefixes that this loader can load
+	protected String[] prefixes = null;
 	
 	// delegation chain
 	protected DelegateLoader[] imports = null;
@@ -44,7 +44,7 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 
 	// development mode class path additions
 	public static String devClassPath = null;
-
+	
 	// control class load tracing
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_SHOW_CREATE = true;
@@ -56,7 +56,11 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 	public static String[] DEBUG_FILTER_LOADER = new String[0];
 	public static String[] DEBUG_FILTER_RESOURCE = new String[0];
 	public static String[] DEBUG_FILTER_NATIVE = new String[0];
-	
+	public static boolean DEBUG_PROPERTIES = false;
+	public static boolean DEBUG_PACKAGE_PREFIXES = false;
+	public static boolean DEBUG_PACKAGE_PREFIXES_SUCCESS = false;
+	public static boolean DEBUG_PACKAGE_PREFIXES_FAILURE = false;
+
 	// flag and file name for the runtime spy
 	public static boolean MONITOR_PLUGINS = false;
 	public static boolean MONITOR_CLASSES = false;
@@ -485,12 +489,17 @@ protected Class findClassParents(String name, boolean resolve) {
  * @return the resulting class
  */
 protected Class findClassParentsSelf(final String name, boolean resolve, DelegatingURLClassLoader requestor, boolean checkParents) {
-	if (prefixs == null || prefixs.length == 0)
+	if (prefixes == null || prefixes.length == 0)
 		return internalFindClassParentsSelf(name, resolve, requestor, checkParents);
-	for (int i = 0; i < prefixs.length; i++) {
-		if (name.startsWith(prefixs[i]))
+	for (int i = 0; i < prefixes.length; i++) {
+		if (name.startsWith(prefixes[i])) {
+			if (DEBUG_PACKAGE_PREFIXES_SUCCESS)
+				System.out.println("prefix: matched class: \"" + name + "\" with prefix: \"" + prefixes[i] + "\" loader: \"" + getPrefixId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			return internalFindClassParentsSelf(name, resolve, requestor, checkParents);
+		}
 	}
+	if (DEBUG_PACKAGE_PREFIXES_FAILURE)
+		System.out.println("prefix: no match for class: \"" + name + "\" loader: \"" + getPrefixId() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	if (checkParents)
 		return findClassParents(name, resolve);
 	return null;
@@ -782,7 +791,7 @@ public URL getResource(String name) {
 }
 
 /**
- * Returns the id to use to lookup class prefixs for this loader
+ * Returns the id to use to lookup class prefixes for this loader
  */
 protected abstract String getPrefixId();
 private URL getURLforClass(Class clazz) {

@@ -50,7 +50,7 @@ public final class InternalBootLoader {
 	private static Properties options = null;
 	private static boolean inDevelopmentMode = false;	
 	private static PlatformConfiguration currentPlatformConfiguration = null;
-
+	
 	// state for tracking the Platform context (e.g., the OS, Window system, locale, architecture, ...)
 	private static String nl = null;
 	private static String ws = null;
@@ -91,6 +91,10 @@ public final class InternalBootLoader {
 	private static final String OPTION_STARTTIME = PI_RUNTIME + "/starttime"; //$NON-NLS-1$
 	private static final String OPTION_LOADER_DEBUG = PI_RUNTIME + "/loader/debug"; //$NON-NLS-1$
 	private static final String OPTION_LOADER_SHOW_CREATE = PI_RUNTIME + "/loader/debug/create"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_PROPERTIES = PI_RUNTIME + "/loader/debug/properties"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_PACKAGE_PREFIXES = PI_RUNTIME + "/loader/debug/prefixes"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_PACKAGE_PREFIXES_SUCCESS = OPTION_LOADER_PACKAGE_PREFIXES + "/success"; //$NON-NLS-1$
+	private static final String OPTION_LOADER_PACKAGE_PREFIXES_FAILURE = OPTION_LOADER_PACKAGE_PREFIXES + "/failure"; //$NON-NLS-1$
 	private static final String OPTION_LOADER_SHOW_ACTIVATE = PI_RUNTIME + "/loader/debug/activateplugin"; //$NON-NLS-1$
 	private static final String OPTION_LOADER_SHOW_ACTIONS = PI_RUNTIME + "/loader/debug/actions"; //$NON-NLS-1$
 	private static final String OPTION_LOADER_SHOW_SUCCESS = PI_RUNTIME + "/loader/debug/success"; //$NON-NLS-1$
@@ -595,7 +599,7 @@ public static boolean isStarting() {
  * Return a boolean value indicating whether or not the user requested
  * to read the classloader properties file for performance enhancement.
  */
-static boolean useClassLoaderProperties() {
+public static boolean useClassLoaderProperties() {
 	return useClassLoaderProperties;
 }
 /**
@@ -883,7 +887,12 @@ public static void setupOptions() {
 	DelegatingURLClassLoader.TRACE_FILENAME = options.getProperty(OPTION_TRACE_FILENAME, DelegatingURLClassLoader.TRACE_FILENAME); 
 	DelegatingURLClassLoader.TRACE_FILTERS = options.getProperty(OPTION_TRACE_FILTERS, DelegatingURLClassLoader.TRACE_FILTERS);
 	DelegatingURLClassLoader.TRACE_CLASSES = getBooleanOption(OPTION_TRACE_CLASSES, DelegatingURLClassLoader.TRACE_CLASSES);		
-	DelegatingURLClassLoader.TRACE_PLUGINS = getBooleanOption(OPTION_TRACE_PLUGINS, DelegatingURLClassLoader.TRACE_PLUGINS);		
+	DelegatingURLClassLoader.TRACE_PLUGINS = getBooleanOption(OPTION_TRACE_PLUGINS, DelegatingURLClassLoader.TRACE_PLUGINS);
+
+	DelegatingURLClassLoader.DEBUG_PROPERTIES = getBooleanOption(OPTION_LOADER_PROPERTIES, DelegatingURLClassLoader.DEBUG_PROPERTIES);
+	DelegatingURLClassLoader.DEBUG_PACKAGE_PREFIXES = getBooleanOption(OPTION_LOADER_PACKAGE_PREFIXES, DelegatingURLClassLoader.DEBUG_PACKAGE_PREFIXES);
+	DelegatingURLClassLoader.DEBUG_PACKAGE_PREFIXES_SUCCESS = getBooleanOption(OPTION_LOADER_PACKAGE_PREFIXES_SUCCESS, DelegatingURLClassLoader.DEBUG_PACKAGE_PREFIXES_SUCCESS);
+	DelegatingURLClassLoader.DEBUG_PACKAGE_PREFIXES_FAILURE = getBooleanOption(OPTION_LOADER_PACKAGE_PREFIXES_FAILURE, DelegatingURLClassLoader.DEBUG_PACKAGE_PREFIXES_FAILURE);
 }
 /**
  * Initializes the execution context for this run of the platform.  The context
