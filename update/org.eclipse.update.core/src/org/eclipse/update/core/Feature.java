@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -394,12 +394,26 @@ public class Feature extends FeatureModel implements IFeature {
 					monitor.worked(1);
 					continue;
 				}
-				references =
-					provider.getPluginEntryContentReferences(
-						pluginsToInstall[i],
-						monitor);
 				IContentConsumer pluginConsumer =
 					consumer.open(pluginsToInstall[i]);
+				// TODO consumer.open returns either
+				// SiteFilePackedPluginContentConsumer or SiteFilePluginContentConsumer
+				// and they are fed either
+				// PluginEntryArchiveReference or PluginEntryContentReferences
+				// it would be better to have one that is given PluginEntryArchiveReference
+				// but it would break external IContentConsumers
+
+				if(pluginsToInstall[i] instanceof PluginEntryModel && !((PluginEntryModel)pluginsToInstall[i]).isUnpack()){
+					// plugin can run from a jar
+					references = provider.getPluginEntryArchiveReferences(
+							pluginsToInstall[i], monitor);
+				} else{
+					// plugin must be unpacked
+					references =
+						provider.getPluginEntryContentReferences(
+							pluginsToInstall[i],
+							monitor);
+				}
 
 				String msg = "";
 				subMonitor = new SubProgressMonitor(monitor, 1);

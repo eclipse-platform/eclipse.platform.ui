@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ public class ErrorRecoveryLog {
 	public static final String PLUGIN_ENTRY = 		"PLUGIN";
 	public static final String FRAGMENT_ENTRY = 		"FRAGMENT";	
 	public static final String BUNDLE_MANIFEST_ENTRY = 		"BUNDLE_MANIFEST";	
+	public static final String BUNDLE_JAR_ENTRY = 			"BUNDLE";	
 	public static final String FEATURE_ENTRY = 		"FEATURE";
 	public static final String ALL_INSTALLED = 		"ALL_FEATURES_INSTALLED";
 	public static final String RENAME_ENTRY = 		"RENAME";
@@ -390,6 +391,8 @@ public class ErrorRecoveryLog {
 	  	} else if (val.startsWith(FEATURE_ENTRY)){
 	  		index = FEATURE_ENTRY.length();
 	  		newFileName= "feature.xml";
+	  	} else if (val.startsWith(BUNDLE_JAR_ENTRY)){
+	  		index = BUNDLE_JAR_ENTRY.length();
 	  	}
 	  	
 	  	if (index==-1){
@@ -397,9 +400,15 @@ public class ErrorRecoveryLog {
 	  	}
 	  	
 	  	String oldName = val.substring(index+1);
+	  	// oldname is com.pid/plugin#####.xml
+	  	// or oldname is com.pid/pid_pver.jar######.tmp
 	  	File oldFile = new File(oldName);
-	  	File parentFile = oldFile.getParentFile();
-	  	File newFile = new File(parentFile,newFileName);
+	  	File newFile;
+	  	if(val.startsWith(BUNDLE_JAR_ENTRY)){
+	  		newFile = new File(oldFile.getAbsolutePath().substring(0, oldFile.getAbsolutePath().lastIndexOf(".jar")+".jar".length()));
+	  	}else{
+	  		newFile = new File(oldFile.getParentFile(),newFileName);
+	  	}
 	  	if (!oldFile.exists()){
 	  		if (newFile.exists()){
 	  			// ok the file has been renamed apparently
@@ -434,14 +443,8 @@ public class ErrorRecoveryLog {
 	  	
 		// get the path
 		int index = -1;
-	  	if (val.startsWith(PLUGIN_ENTRY)){
-	  		index = PLUGIN_ENTRY.length();
-	  	}
-	  	if (val.startsWith(FRAGMENT_ENTRY)){
-	  		index = FRAGMENT_ENTRY.length();
-	  	}
-	  	if (val.startsWith(FEATURE_ENTRY)){
-	  		index = FEATURE_ENTRY.length();
+		if (val.startsWith(BUNDLE_JAR_ENTRY)){
+	  		index = BUNDLE_JAR_ENTRY.length();
 	  	}
 	  	
 	  	if (index==-1){
@@ -450,14 +453,13 @@ public class ErrorRecoveryLog {
 	  	
 	  	String oldName = val.substring(index+1);
 	  	File oldFile = new File(oldName);
-	  	File parentFile = oldFile.getParentFile();
-	  	if (!parentFile.exists()){
-  			// the directory doesn't exist, log as problem, and force the removal of the feature
+	  	if (!oldFile.exists()){
+  			// the jar or directory doesn't exist, log as problem, and force the removal of the feature
 	  		multi.add(createStatus(IStatus.ERROR,"Unable to find file:"+oldFile,null));	  			
 	  		return multi;
-	  	} 	
-	  	
-		multi.addAll(removeFromFileSystem(parentFile));
+	  	} 		  	
+		multi.addAll(removeFromFileSystem(oldFile));
+
 		return multi;
 	  }	
 	  

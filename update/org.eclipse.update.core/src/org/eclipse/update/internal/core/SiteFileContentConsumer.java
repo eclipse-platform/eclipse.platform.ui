@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,7 +74,14 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	 * @see ISiteContentConsumer#open(IPluginEntry)
 	 */
 	public IContentConsumer open(IPluginEntry pluginEntry) throws CoreException {
-		SiteFilePluginContentConsumer cons = new SiteFilePluginContentConsumer(pluginEntry, getSite());
+		ContentConsumer cons;
+		if(pluginEntry instanceof PluginEntryModel && !((PluginEntryModel)pluginEntry).isUnpack()){
+			// plugin can run from a jar
+			 cons = new SiteFilePackedPluginContentConsumer(pluginEntry, getSite());
+		} else{
+			// plugin must be unpacked
+			cons = new SiteFilePluginContentConsumer(pluginEntry, getSite());
+		}
 		addContentConsumers(cons);
 		return cons;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ public class PluginEntryModel extends ContentEntryModel {
 	private String pluginId;
 	private String pluginVersion;
 	private boolean isFragment = false;
+	private boolean unpack = true;
 	
 	/**
 	 * Creates a uninitialized plug-in entry model object.
@@ -120,6 +121,27 @@ public class PluginEntryModel extends ContentEntryModel {
 	public void isFragment(boolean isFragment) {
 		assertIsWriteable();
 		this.isFragment = isFragment;
+	}
+
+	/**
+	 * @return Indicates whether plugin should be unpacked during installation
+	 * or can run from a jar
+	 * @since 3.0
+	 */
+	public boolean isUnpack() {
+		// TODO this is a candidate for IPluginEntry API
+		return unpack;
+	}
+	/**
+	 * @param Sets whether plugin should be unpacked during installation
+	 * or can run from a jar
+	 * @since 3.0
+	 *
+	 */
+	public void setUnpack(boolean unpack) {
+		// TODO this is a candidate for IPluginEntry API
+		assertIsWriteable();
+		this.unpack = unpack;
 	}
 
 	/**

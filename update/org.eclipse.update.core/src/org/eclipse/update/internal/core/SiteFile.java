@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -411,21 +411,13 @@ public class SiteFile extends Site {
 			}
 			// log pluginEntry URL
 			IPluginEntry[] pluginsToRemove = getPluginEntriesOnlyReferencedBy(feature);
-			IPluginEntry pluginEntry;
 			for (int i = 0; i < pluginsToRemove.length; i++) {
-				pluginEntry = pluginsToRemove[i];
-
-				references = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(pluginEntry, null);
+				references = feature.getFeatureContentProvider().getPluginEntryArchiveReferences(pluginsToRemove[i], null);
 				for (int j = 0; j < references.length; j++) {
 					try {
-						String entry = null;
-						if (pluginEntry.isFragment())
-							entry = ErrorRecoveryLog.FRAGMENT_ENTRY;
-						else
-							entry = ErrorRecoveryLog.PLUGIN_ENTRY;
-						recoveryLog.appendPath(entry, references[j].asFile().getAbsolutePath());
+						recoveryLog.appendPath(ErrorRecoveryLog.BUNDLE_JAR_ENTRY, references[j].asFile().getAbsolutePath());
 					} catch (IOException e) {
-						throw Utilities.newCoreException(Policy.bind("SiteFile.CannotRemovePlugin", pluginEntry.getVersionedIdentifier().toString(), getURL().toExternalForm()), e);
+						throw Utilities.newCoreException(Policy.bind("SiteFile.CannotRemovePlugin", pluginsToRemove[i].getVersionedIdentifier().toString(), getURL().toExternalForm()), e);
 						//$NON-NLS-1$
 					}
 				}
