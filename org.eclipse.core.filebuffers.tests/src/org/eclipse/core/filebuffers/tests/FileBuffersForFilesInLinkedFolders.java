@@ -12,16 +12,23 @@ package org.eclipse.core.filebuffers.tests;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.filebuffers.FileBuffers;
 
+import org.eclipse.jface.text.source.IAnnotationModel;
+
 /**
- * FileBuffersForExternalFiles
+ * FileBuffersForLinkedFiles
  */
-public class FileBuffersForExternalFiles extends FileBufferFunctions {
+public class FileBuffersForFilesInLinkedFolders extends FileBufferFunctions {
+	
+	private File fExternalDir;
 	
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#tearDown()
@@ -29,6 +36,7 @@ public class FileBuffersForExternalFiles extends FileBufferFunctions {
 	protected void tearDown() throws Exception {
 		File file= FileBuffers.getSystemFileAtLocation(getPath());
 		FileTool.delete(file);
+		FileTool.delete(fExternalDir);
 		super.tearDown();
 	}
 	
@@ -36,38 +44,53 @@ public class FileBuffersForExternalFiles extends FileBufferFunctions {
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#createPath(org.eclipse.core.resources.IProject)
 	 */
 	protected IPath createPath(IProject project) throws Exception {
-		File sourceFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/ExternalFile"));
-		File externalFile= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("externalResources/ExternalFile"));
-		FileTool.copy(sourceFile, externalFile);
-		return new Path(externalFile.getAbsolutePath());
+		File sourceDir= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/linkedFolderTarget"));
+		fExternalDir= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("externalResources/linkedFolderTarget"));
+		fExternalDir.mkdirs();
+		FileTool.copy(sourceDir, fExternalDir);
+		
+		IFolder folder= ResourceHelper.createLinkedFolder(project, new Path("LinkedFolder"), fExternalDir);
+		IFile file= folder.getFile(new Path("FileInLinkedFolder"));
+		return file.getFullPath();
 	}
 	
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#markReadOnly()
 	 */
 	protected void markReadOnly() throws Exception {
-		File file= FileBuffers.getSystemFileAtLocation(getPath());
-		file.setReadOnly();
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
+		file.setReadOnly(true);
 	}
 
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#isStateValidationSupported()
 	 */
 	protected boolean isStateValidationSupported() {
-		return false;
+		return true;
 	}
-
+	
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#deleteUnderlyingFile()
 	 */
 	protected boolean deleteUnderlyingFile() throws Exception {
-		return false;
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
+		file.delete(true, false, null);
+		return file.exists();
 	}
-
+	
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#moveUnderlyingFile()
 	 */
 	protected IPath moveUnderlyingFile() throws Exception {
+		IFile file= FileBuffers.getWorkspaceFileAtLocation(getPath());
+		ResourceHelper.createFolder("project/folderA");
+		IPath path= new Path("/project/folderA/MovedLinkedFile");
+		file.move(path, true, false, null);
+		
+		file= FileBuffers.getWorkspaceFileAtLocation(path);
+		if (file != null && file.exists())
+			return path;
+		
 		return null;
 	}
 
@@ -75,13 +98,18 @@ public class FileBuffersForExternalFiles extends FileBufferFunctions {
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#modifyUnderlyingFile()
 	 */
 	protected boolean modifyUnderlyingFile() throws Exception {
-		return false;
+		File file= FileBuffers.getSystemFileAtLocation(getPath());
+		FileTool.write(file.getAbsolutePath(), new StringBuffer("Changed content of file in linked folder"));
+		file.setLastModified(1000);
+		IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());
+		iFile.refreshLocal(IResource.DEPTH_INFINITE, null);
+		return true;
 	}
-	
+
 	/*
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#getAnnotationModelClass()
 	 */
 	protected Class getAnnotationModelClass() throws Exception {
-		return null;
+		return IAnnotationModel.class;
 	}
 }

@@ -73,4 +73,11 @@ public class FileBuffersForNonExistingExternalFiles extends FileBufferFunctions 
 	protected boolean modifyUnderlyingFile() throws Exception {
 		return false;
 	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#getAnnotationModelClass()
+	 */
+	protected Class getAnnotationModelClass() throws Exception {
+		return null;
+	}
 }

@@ -14,10 +14,13 @@ import java.io.File;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
 import org.eclipse.core.filebuffers.FileBuffers;
+
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
  * FileBuffersForLinkedFiles
@@ -39,8 +42,8 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#createPath(org.eclipse.core.resources.IProject)
 	 */
 	protected IPath createPath(IProject project) throws Exception {
-		File sourceFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/LinkTarget"));
-		fExternalFile= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("externalResources/LinkTarget"));
+		File sourceFile= FileTool.getFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("testResources/LinkedFileTarget"));
+		fExternalFile= FileTool.createTempFileInPlugin(FileBuffersTestPlugin.getDefault(), new Path("externalResources/LinkedFileTarget"));
 		FileTool.copy(sourceFile, fExternalFile);
 		IFile file= ResourceHelper.createLinkedFile(project, new Path("LinkedFile"), fExternalFile);
 		return file.getFullPath();
@@ -90,7 +93,17 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#modifyUnderlyingFile()
 	 */
 	protected boolean modifyUnderlyingFile() throws Exception {
-		// TODO Auto-generated method stub
-		return false;
+		FileTool.write(fExternalFile.getAbsolutePath(), new StringBuffer("Changed content of linked file"));
+		fExternalFile.setLastModified(1000);
+		IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());
+		iFile.refreshLocal(IResource.DEPTH_INFINITE, null);
+		return true;
+	}
+
+	/*
+	 * @see org.eclipse.core.filebuffers.tests.FileBufferFunctions#getAnnotationModelClass()
+	 */
+	protected Class getAnnotationModelClass() throws Exception {
+		return IAnnotationModel.class;
 	}
 }

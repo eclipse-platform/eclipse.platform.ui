@@ -101,23 +101,28 @@ public class ResourceHelper {
 		return file;
 	}
 	
-	public static IFile createLinkedFile(IContainer container, IPath linkedFilePath, File linkTarget) throws CoreException {
-		IFile iFile= container.getFile(linkedFilePath);
-		iFile.createLink(new Path(linkTarget.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
+	public static IFile createLinkedFile(IContainer container, IPath linkPath, File linkedFileTarget) throws CoreException {
+		IFile iFile= container.getFile(linkPath);
+		iFile.createLink(new Path(linkedFileTarget.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		return iFile;
-
 	}
 	
-	public static IFile createLinkedFile(IContainer container, IPath filePath, Plugin plugin, IPath linkPath) throws CoreException {
-		IFile iFile= container.getFile(filePath);
-		File file= FileTool.getFileInPlugin(plugin, linkPath);
+	public static IFile createLinkedFile(IContainer container, IPath linkPath, Plugin plugin, IPath linkedFileTargetPath) throws CoreException {
+		File file= FileTool.getFileInPlugin(plugin, linkedFileTargetPath);
+		IFile iFile= container.getFile(linkPath);
 		iFile.createLink(new Path(file.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		return iFile;
 	}
 	
-	public static IFolder createLinkedFolder(IContainer container, IPath folderPath, Plugin plugin, IPath linkPath) throws CoreException {
-		IFolder iFolder= container.getFolder(folderPath);
-		File file= FileTool.getFileInPlugin(plugin, linkPath);
+	public static IFolder createLinkedFolder(IContainer container, IPath linkPath, File linkedFolderTarget) throws CoreException {
+		IFolder folder= container.getFolder(linkPath);
+		folder.createLink(new Path(linkedFolderTarget.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
+		return folder;
+	}
+	
+	public static IFolder createLinkedFolder(IContainer container, IPath linkPath, Plugin plugin, IPath linkedFolderTargetPath) throws CoreException {
+		File file= FileTool.getFileInPlugin(plugin, linkedFolderTargetPath);
+		IFolder iFolder= container.getFolder(linkPath);
 		iFolder.createLink(new Path(file.getAbsolutePath()), IResource.ALLOW_MISSING_LOCAL, NULL_MONITOR);
 		return iFolder;
 	}

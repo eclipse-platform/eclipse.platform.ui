@@ -24,6 +24,7 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.IAnnotationModel;
 
 /**
  * FileBufferFunctions
@@ -46,6 +47,8 @@ public abstract class FileBufferFunctions extends TestCase {
 	protected abstract IPath moveUnderlyingFile() throws Exception;
 	
 	protected abstract boolean isStateValidationSupported();
+	
+	protected abstract Class getAnnotationModelClass() throws Exception;
 	
 
 	protected void setUp() throws Exception {
@@ -1031,6 +1034,27 @@ public abstract class FileBufferFunctions extends TestCase {
 			
 		} finally {
 			fManager.removeFileBufferListener(listener);
+		}
+	}
+	
+	/*
+	 * Test annotation model existence. 
+	 * ATTENTION: This test only works as is in a workspace that contains the "org.eclipse.ui.editors" plug-in.
+	 */
+	public void test18() throws Exception {
+		fManager.connect(fPath, null);
+		try {
+			ITextFileBuffer buffer= fManager.getTextFileBuffer(fPath);
+			assertNotNull(buffer);
+			
+			Class clazz= getAnnotationModelClass();
+			if (clazz != null) {
+				IAnnotationModel model= buffer.getAnnotationModel();
+				assertTrue(clazz.isInstance(model));
+			}
+			
+		} finally {
+			fManager.disconnect(fPath, null);
 		}
 	}
 }

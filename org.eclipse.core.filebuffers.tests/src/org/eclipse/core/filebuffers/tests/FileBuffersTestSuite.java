@@ -29,6 +29,7 @@ public class FileBuffersTestSuite {
 		suite.addTestSuite(FileBuffersForWorkspaceFiles.class);
 		suite.addTestSuite(FileBuffersForExternalFiles.class);
 		suite.addTestSuite(FileBuffersForLinkedFiles.class);
+		suite.addTestSuite(FileBuffersForFilesInLinkedFolders.class);
 		suite.addTestSuite(FileBuffersForNonExistingExternalFiles.class);
 		suite.addTestSuite(FileBuffersForNonExistingWorkspaceFiles.class);
 		//$JUnit-END$

@@ -37,6 +37,7 @@ public class FileBufferCreation extends TestCase {
 	private final static String CONTENT1= "This is the content of the workspace file.";
 	private final static String CONTENT2= "This is the content of the link target.";
 	private final static String CONTENT3= "This is the content of the external file.";
+	private final static String CONTENT4= "This is the content of a file in a linked folder.";
 	
 	
 	private IProject fProject;
@@ -54,9 +55,14 @@ public class FileBufferCreation extends TestCase {
 		ResourceHelper.deleteProject("project");
 	}
 	
-	private IPath createLinkedFile(String fileName, String linkTarget) throws CoreException {
-		IFile file= ResourceHelper.createLinkedFile(fProject, new Path(fileName), FileBuffersTestPlugin.getDefault(), new Path(linkTarget));
-		return file != null ? file.getFullPath() : null;
+	private IPath createLinkedFile(String linkedFileName, String linkedFileTarget) throws CoreException {
+		IFile linkedFile= ResourceHelper.createLinkedFile(fProject, new Path(linkedFileName), FileBuffersTestPlugin.getDefault(), new Path(linkedFileTarget));
+		return linkedFile != null ? linkedFile.getFullPath() : null;
+	}
+
+	private IPath createLinkedFolder(String linkedFolderName, String linkedFolderTarget) throws CoreException {
+		IFolder linkedFolder= ResourceHelper.createLinkedFolder(fProject, new Path(linkedFolderName), FileBuffersTestPlugin.getDefault(), new Path(linkedFolderTarget));
+		return linkedFolder != null ? linkedFolder.getFullPath() : null;
 	}
 	
 	/*
@@ -135,8 +141,8 @@ public class FileBufferCreation extends TestCase {
 	/*
 	 * Tests the creation of a file buffer for a linked file.
 	 */
-	public void test3() throws Exception {
-		IPath path= createLinkedFile("file", "testResources/LinkTarget");
+	public void test3_1() throws Exception {
+		IPath path= createLinkedFile("file", "testResources/LinkedFileTarget");
 		assertNotNull(path);
 		
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
@@ -153,14 +159,35 @@ public class FileBufferCreation extends TestCase {
 	}
 	
 	/*
+	 * Tests the creation of a file buffer for a file in a linked folder.
+	 */
+	public void test3_2() throws Exception {
+		IPath path= createLinkedFolder("linkedFolder", "testResources/linkedFolderTarget");
+		assertNotNull(path);
+		path= path.append("FileInLinkedFolder");
+		
+		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
+		manager.connect(path, null);
+		ITextFileBuffer buffer= manager.getTextFileBuffer(path);
+		Assert.assertNotNull(buffer);
+		
+		IDocument document= buffer.getDocument();
+		Assert.assertNotNull(document);
+		Assert.assertTrue(CONTENT4.equals(document.get()));
+		
+		manager.disconnect(path, null);
+		assertNull(manager.getTextFileBuffer(path));
+	}
+	
+	/*
 	 * Tests that two different files linked to the same target file result
 	 * in two different, independent file buffers.
 	 */
 	public void test4() throws Exception {
 		
-		IPath path1= createLinkedFile("file1", "testResources/LinkTarget");
+		IPath path1= createLinkedFile("file1", "testResources/LinkedFileTarget");
 		assertNotNull(path1);
-		IPath path2= createLinkedFile("file2", "testResources/LinkTarget");
+		IPath path2= createLinkedFile("file2", "testResources/LinkedFileTarget");
 		assertNotNull(path2);
 
 		ITextFileBufferManager manager= FileBuffers.getTextFileBufferManager();
