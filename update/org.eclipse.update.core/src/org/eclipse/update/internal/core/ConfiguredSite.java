@@ -777,9 +777,11 @@ public class ConfiguredSite
 			MultiStatus multi = new MultiStatus(featureStatus.getPlugin(),IFeature.STATUS_UNHAPPY,msg,null);				
 				
 			for (int k = 0; k < result.length; k++) {
-				String[] values =
-					new String[] {
-						result[k].getVersionedIdentifier().toString()};
+				VersionedIdentifier id = result[k].getVersionedIdentifier();
+				Object[] values = new String[]{"",""};
+				if (id!=null){
+					values=	new Object[] {id.getIdentifier(),id.getVersion()};
+				}
 				String msg1 =
 						Policy.bind(
 							"ConfiguredSite.MissingPluginsBrokenFeature",
