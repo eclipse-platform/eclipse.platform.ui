@@ -383,14 +383,6 @@
       <objectContribution
             objectClass="org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder"
             id="org.eclipse.team.ccvs.ui.RemoteFolderContributions">
-          <action
-               label="%CheckoutIntoAction.label"
-               tooltip="%CheckoutIntoAction.tooltip"
-               menubarPath="checkoutGroup"
-               class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutIntoAction"
-               helpContextId="org.eclipse.team.cvs.ui.checkout_into_action_context"
-               id="org.eclipse.team.ccvs.ui.checkoutInto">
-         </action>
          <action
                label="%CheckoutAsAction.label"
                tooltip="%CheckoutAsAction.tooltip"
