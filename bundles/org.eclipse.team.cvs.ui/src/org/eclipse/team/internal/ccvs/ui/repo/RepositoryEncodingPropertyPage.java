@@ -340,6 +340,8 @@ public class RepositoryEncodingPropertyPage extends PropertyPage implements IPro
 		encoding.load();
 		encoding.setPropertyChangeListener(this);
 		
+		createWrappingLabel(composite, Policy.bind("RepositoryEncodingPropertyPage.4"), 1); //$NON-NLS-1$
+		
 		Dialog.applyDialogFont(parent);
 		return composite;
 	}
