@@ -205,15 +205,6 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PREF_AUTO_REFRESH = "refresh.enabled"; //$NON-NLS-1$
 
 	/**
-	 * Name of a preference for configuring how often the workspace performs 
-	 * auto-refresh.
-	 * TODO: remove this before 3.0 release
-	 * @deprecated - to be removed before 3.0 release
-	 * @since 3.0
-	 */
-	public static final String PREF_REFRESH_POLLING_DELAY = "refresh.delay";	 //$NON-NLS-1$
-
-	/**
 	 * The single instance of this plug-in runtime class.
 	 */
 	private static ResourcesPlugin plugin;
