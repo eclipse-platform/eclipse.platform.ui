@@ -24,7 +24,7 @@
    </requires>
 
 <!-- quick diff reference provider extension point -->
-   <extension-point id="quickdiffreferenceprovider" name="Reference Provider" schema="schema/quickdiff.referenceprovider.exsd"/>
+   <extension-point id="quickdiffreferenceprovider" name="%referenceProvider" schema="schema/quickdiff.referenceprovider.exsd"/>
 
 <!-- add the quick diff context menu -->
    <extension
@@ -73,7 +73,7 @@
    <extension
          point="org.eclipse.ui.editors.quickdiffreferenceprovider">
       <referenceprovider
-            label="Version on Disk"
+            label="%lastSaveReferenceProvider.label"
             default="true"
             class="org.eclipse.ui.internal.editors.quickdiff.providers.LastSaveReferenceProvider"
             id="org.eclipse.ui.internal.editors.quickdiff.providers.LastSaveReferenceProvider">
