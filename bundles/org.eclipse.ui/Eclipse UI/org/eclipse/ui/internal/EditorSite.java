@@ -30,6 +30,13 @@ public EditorSite(IEditorPart editor, WorkbenchPage page,
 		setConfigurationElement(desc.getConfigurationElement());
 	}
 }
+
+public void dispose() {
+	if (keyBindingService != null) {
+		keyBindingService.dispose();
+	}
+	super.dispose();
+}
 /**
  * Returns the editor action bar contributor for this editor.
  * <p>
