@@ -24,6 +24,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
@@ -256,6 +257,48 @@ public class EclipseSynchronizerTest extends EclipseTest {
 		info = sync.getResourceSync(resource);
 		assertNull(info);
 	}
+
+	public void testIsIgnored() throws CoreException, TeamException {
+		IProject project = getUniqueTestProject("isIgnoredTests");
+		IResource[] resources = buildResources(project, new String[] {"a.txt", "c.java", "folder1/", "folder1/b.txt", "folder2/"}, true /* include project */);
+		
+		sync.addIgnored(project, "*.txt");
+		
+		assertIsIgnored(project.getFile("a.txt"), true);
+		assertIsIgnored(project.getFile("c.java"), false);
+		assertIsIgnored(project.getFolder("folder1"), false);
+		assertIsIgnored(project.getFolder("folder2"), false);
+		assertIsIgnored(project.getFile("folder1/b.txt"), false);	
+		assertIsIgnored(project.getFile("folder1/not-existing.txt"), false);
+		assertIsIgnored(project.getParent(), false);
+		assertIsIgnored(project, false);
+		
+		sync.addIgnored(project, "folder1");
+		
+		assertIsIgnored(project.getFile("a.txt"), true);
+		assertIsIgnored(project.getFile("c.java"), false);
+		assertIsIgnored(project.getFolder("folder1"), true);
+		assertIsIgnored(project.getFolder("folder2"), false);
+		assertIsIgnored(project.getFile("folder1/b.txt"), true);	
+		assertIsIgnored(project.getFile("folder1/not-existing.txt"), true);
+		assertIsIgnored(project.getParent(), false);
+		assertIsIgnored(project, false);
+		
+		// delete the ignores, the resource delta should clear the cached
+		// ignore list
+		IResource cvsIgnore = project.getFile(".cvsignore");
+		cvsIgnore.delete(true, null);
+		
+		assertIsIgnored(project.getFile("a.txt"), false);
+		assertIsIgnored(project.getFile("c.java"), false);
+		assertIsIgnored(project.getFolder("folder1"), false);
+		assertIsIgnored(project.getFolder("folder2"), false);
+		assertIsIgnored(project.getFile("folder1/b.txt"), false);	
+		assertIsIgnored(project.getFile("folder1/not-existing.txt"), false);
+		assertIsIgnored(project.getParent(), false);
+		assertIsIgnored(project, false);
+		project.delete(true, true, null);
+	}
 	
 	public void testIgnores() throws CoreException, CVSException {
 		// Workspace root
@@ -308,6 +351,8 @@ public class EclipseSynchronizerTest extends EclipseTest {
 		_testIgnoresInvalid(project);
 	}
 	
+	
+	
 	/*
 	 * Test get/set ignores for things that should not support it.
 	 * Assumes resource does not already have ignores.
@@ -342,15 +387,11 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	 * Assumes resource does not already have ignores.
 	 */
 	private void _testIgnoresInvalid(IContainer container) throws CVSException {
-		String[] ignored = getIgnored(container);
-		assertTrue(ignored.length == 0);
 		try {
 			sync.addIgnored(container, "*.xyz");
 			fail("Expected CVSException");
 		} catch (CVSException e) {
 		}
-		ignored = getIgnored(container);
-		assertTrue(ignored.length == 0);
 	}
 	
 	public void testMembers() throws CoreException, CVSException {

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launchConfiguration type="org.eclipse.pde.ui.RuntimeWorkbench">
-    <stringAttribute key="location2" value="D:\dev\runtime-workspace"/>
-    <stringAttribute key="location1" value="D:\dev\benchmark-workspace"/>
+    <stringAttribute key="location3" value="D:\dev\runtime-workspace"/>
+    <stringAttribute key="location2" value="D:\dev\benchmark-workspace"/>
+    <stringAttribute key="location1" value="C:\Eclipse\Workspaces\benchmark-workspace"/>
     <stringAttribute key="location0" value="C:\Eclipse\Workspaces\benchmark-workspace"/>
     <stringAttribute key="progargs" value="-os win32 -ws win32 -arch x86 -nl en_US -test cvsui.benchmark.workflow -log c:\eclipse\test_log.xml"/>
-    <booleanAttribute key="askclear" value="false"/>
     <stringAttribute key="vmargs" value="-Declipse.cvs.properties=c:\eclipse"/>
-    <stringAttribute key="application" value="org.eclipse.team.tests.cvs.core.harness"/>
+    <booleanAttribute key="askclear" value="false"/>
     <stringAttribute key="org.eclipse.debug.ui.target_debug_perspective" value="perspective_default"/>
+    <stringAttribute key="application" value="org.eclipse.team.tests.cvs.core.harness"/>
     <stringAttribute
         key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
     <booleanAttribute key="clearws" value="true"/>

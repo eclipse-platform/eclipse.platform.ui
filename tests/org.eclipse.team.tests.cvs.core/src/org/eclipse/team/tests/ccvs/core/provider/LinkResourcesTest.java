@@ -65,7 +65,7 @@ public class LinkResourcesTest extends EclipseTest {
 		IProject project = createProject("testLinkFailure", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt" });
 		IFolder folder = project.getFolder("link");
 		folder.createLink(new Path("C:/temp"), IResource.ALLOW_MISSING_LOCAL, null);
-		assertIsIgnored(folder);
+		assertIsIgnored(folder, true);
 	}
 	
 	public void testLinkCVSFolder() throws CoreException, TeamException, IOException {
