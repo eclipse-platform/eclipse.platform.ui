@@ -10,48 +10,26 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.core.runtime.jobs.ProgressProvider;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.progress.WorkbenchJob;
+import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
+import org.eclipse.ui.progress.*;
 
 /**
  * JobProgressManager provides the progress monitor to the job manager and
@@ -109,6 +87,58 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		return singleton;
 	}
 
+	/**
+	 * A default progress monitor that is used when an operation is running in the UI
+	 * thread outside of any runnable context.  This allows for feedback and cancelation
+	 * when the UI operation is blocked by ongoing activity in a background job.
+	 */
+	private class DefaultMonitor extends NullProgressMonitor implements IProgressMonitorWithBlocking {
+		private ProgressMonitorJobsDialog dialog;
+		private EventLoopProgressMonitor eventLoopMonitor;
+		private String taskName = "";
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitor#beginTask(java.lang.String, int)
+		 */
+		public void beginTask(String name, int totalWork) {
+			//remember the task name for use when the operation is blocked
+			this.taskName = name == null ? "" : name;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
+		 */
+		public void clearBlocked() {
+			//the UI operation is no longer blocked so get rid of the progress dialog
+			eventLoopMonitor = null;
+			if (dialog == null || dialog.getShell() == null || dialog.getShell().isDisposed())
+				return;
+			dialog.close();
+			dialog = null;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitor#isCanceled()
+		 */
+		public boolean isCanceled() {
+			if (eventLoopMonitor != null)
+				return eventLoopMonitor.isCanceled();
+			return false;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
+		 */
+		public void setBlocked(IStatus reason) {
+			//The UI operation has been blocked.  Open a progress dialog
+			//to report the situation and give the user an opportunity to cancel.
+			dialog = new ProgressMonitorJobsDialog(null);
+			dialog.setBlockOnOpen(false);
+			dialog.setCancelable(true);
+			dialog.open();
+			IProgressMonitor monitor = dialog.getProgressMonitor();
+			eventLoopMonitor = new EventLoopProgressMonitor(monitor);
+			monitor.beginTask(taskName, IProgressMonitor.UNKNOWN);
+			if (monitor instanceof IProgressMonitorWithBlocking) 
+				((IProgressMonitorWithBlocking)monitor).setBlocked(reason);
+		}
+	}
 	/**
 	 * The JobMonitor is the inner class that handles the IProgressMonitor
 	 * integration with the ProgressMonitor.
@@ -393,10 +423,20 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.core.runtime.jobs.IProgressProvider#createMonitor(org.eclipse.core.runtime.jobs.Job)
+	 * @see org.eclipse.core.runtime.jobs.ProgressProvider#createMonitor(org.eclipse.core.runtime.jobs.Job)
 	 */
 	public IProgressMonitor createMonitor(Job job) {
 		return progressFor(job);
+	}
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.ProgressProvider#getDefaultMonitor()
+	 */
+	public IProgressMonitor getDefaultMonitor() {
+		//only need a default monitor for operations the UI thread
+		if (Display.getCurrent() == null)
+			return super.getDefaultMonitor();
+		return new DefaultMonitor();
 	}
 
 	/**
