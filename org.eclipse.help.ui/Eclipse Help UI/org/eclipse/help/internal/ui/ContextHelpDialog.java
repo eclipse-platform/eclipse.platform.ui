@@ -200,7 +200,7 @@ public class ContextHelpDialog implements Runnable {
 		int margin = 0;
 		if (System.getProperty("os.name").startsWith("Win"))
 			margin = 28; // for the Windows task bar in the ussual place;
-		Rectangle screen = Display.getCurrent().getBounds();
+		Rectangle screen = display.getBounds();
 		x = x + width <= screen.width ? x : screen.width - width;
 		y = y + height <= screen.height - margin ? y : screen.height - margin - height;
 
@@ -272,7 +272,7 @@ public class ContextHelpDialog implements Runnable {
 			// no description found in context objects.
 			styledText = WorkbenchResources.getString("WW002");
 		StyledText text = new StyledText(composite, SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
-		text.setCaret(null);
+		text.getCaret().setVisible(false);
 		text.setBackground(backgroundColour);
 		text.setForeground(foregroundColour);
 		StyledLineWrapper content = new StyledLineWrapper(styledText);
