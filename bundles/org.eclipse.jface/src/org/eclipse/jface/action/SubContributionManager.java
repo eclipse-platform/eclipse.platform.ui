@@ -60,6 +60,7 @@ public abstract class SubContributionManager implements IContributionManager {
      * Method declared on IContributionManager.
      */
     public void add(IContributionItem item) {
+        item.setParent(this);
         SubContributionItem wrap = wrap(item);
         wrap.setVisible(visible);
         parentMgr.add(wrap);
@@ -77,6 +78,7 @@ public abstract class SubContributionManager implements IContributionManager {
      * Method declared on IContributionManager.
      */
     public void appendToGroup(String groupName, IContributionItem item) {
+        item.setParent(this);
         SubContributionItem wrap = wrap(item);
         wrap.setVisible(visible);
         parentMgr.appendToGroup(groupName, wrap);
@@ -154,6 +156,7 @@ public abstract class SubContributionManager implements IContributionManager {
      * Method declared on IContributionManager.
      */
     public void insertAfter(String id, IContributionItem item) {
+        item.setParent(this);
         SubContributionItem wrap = wrap(item);
         wrap.setVisible(visible);
         parentMgr.insertAfter(id, wrap);
@@ -171,6 +174,7 @@ public abstract class SubContributionManager implements IContributionManager {
      * Method declared on IContributionManager.
      */
     public void insertBefore(String id, IContributionItem item) {
+        item.setParent(this);
         SubContributionItem wrap = wrap(item);
         wrap.setVisible(visible);
         parentMgr.insertBefore(id, wrap);
@@ -213,7 +217,6 @@ public abstract class SubContributionManager implements IContributionManager {
      *      contributed by the client
      */
     protected void itemAdded(IContributionItem item, SubContributionItem wrap) {
-        item.setParent(this);
         mapItemToWrapper.put(item, wrap);
     }
 
@@ -227,7 +230,6 @@ public abstract class SubContributionManager implements IContributionManager {
      */
     protected void itemRemoved(IContributionItem item) {
         mapItemToWrapper.remove(item);
-        item.setParent(null);
     }
 
     /**
@@ -264,6 +266,7 @@ public abstract class SubContributionManager implements IContributionManager {
      * Method declared on IContributionManager.
      */
     public void prependToGroup(String groupName, IContributionItem item) {
+        item.setParent(this);
         SubContributionItem wrap = wrap(item);
         wrap.setVisible(visible);
         parentMgr.prependToGroup(groupName, wrap);
@@ -275,11 +278,8 @@ public abstract class SubContributionManager implements IContributionManager {
      */
     public IContributionItem remove(String id) {
         IContributionItem result = parentMgr.remove(id);
-        // result is the wrapped item
-        if (result != null) {
-            IContributionItem item = unwrap(result);
-            itemRemoved(item);
-        }
+        if (result != null)
+            itemRemoved(result);
         return result;
     }
 
@@ -304,12 +304,8 @@ public abstract class SubContributionManager implements IContributionManager {
     public void removeAll() {
         Iterator it = mapItemToWrapper.values().iterator();
         while (it.hasNext()) {
-            IContributionItem wrapper = (IContributionItem) it.next();
-            parentMgr.remove(wrapper);
-            IContributionItem item = unwrap(wrapper);
-            if (item != null) {
-                itemRemoved(item);
-            }
+            IContributionItem item = (IContributionItem) it.next();
+            parentMgr.remove(item);
         }
         mapItemToWrapper.clear();
     }
