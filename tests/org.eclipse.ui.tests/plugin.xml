@@ -1100,6 +1100,27 @@
             A lightweight test decorator for multiple quadrants
          </description>
       </decorator>
+      <decorator
+            lightweight="true"
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.IResource"
+            label="Background Decorator"
+            class="org.eclipse.ui.tests.navigator.BackgroundColorDecorator"
+            id="org.eclipse.ui.tests.backgroundDecorator"/>
+      <decorator
+            lightweight="true"
+            objectClass="org.eclipse.core.resources.IResource"
+            adaptable="true"
+            label="Foreground Decorator"
+            class="org.eclipse.ui.tests.navigator.ForegroundColorDecorator"
+            id="org.eclipse.ui.tests.foregroundDecorator"/>
+      <decorator
+            lightweight="true"
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.IResource"
+            label="Font Decorator"
+            class="org.eclipse.ui.tests.navigator.FontDecorator"
+            id="org.eclipse.ui.tests.fontDecorator"/>
    </extension>
 <!-- Working set tests -->
    <extension

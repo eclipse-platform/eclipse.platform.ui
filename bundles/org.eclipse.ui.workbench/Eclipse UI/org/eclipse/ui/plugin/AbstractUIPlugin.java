@@ -543,7 +543,7 @@ public abstract class AbstractUIPlugin extends Plugin {
      * @see #getImageRegistry
      */
     protected ImageRegistry createImageRegistry() {
-        return new ImageRegistry();
+        return new ImageRegistry(Display.getDefault());
     }
 
     /**

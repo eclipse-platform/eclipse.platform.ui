@@ -26,7 +26,7 @@ public interface IDelayedLabelDecorator extends ILabelDecorator {
      * return true. If decoration is pending return false.
      * @param element The element to be decorated
      * @param originalText The starting text. 
-     * @return boolean true if the decoration is ready for this element
+     * @return boolean <code>true</code> if the decoration is ready for this element
      */
 
     public boolean prepareDecoration(Object element, String originalText);

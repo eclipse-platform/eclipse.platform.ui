@@ -28,11 +28,15 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IColorDecorator;
 import org.eclipse.jface.viewers.IDelayedLabelDecorator;
+import org.eclipse.jface.viewers.IFontDecorator;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.PlatformUI;
@@ -50,7 +54,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * @since 2.0
  */
 public class DecoratorManager implements IDelayedLabelDecorator,
-        ILabelProviderListener, IDecoratorManager {
+        ILabelProviderListener, IDecoratorManager, IFontDecorator, IColorDecorator {
 
     /**
      * The family for the decorate job.
@@ -151,7 +155,6 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * update the cache.
      * @return Collection of DecoratorDefinition.
      * @param element. The element being tested.
-     * @param cachedDecorators. The cache for decorator lookup.
      * @param enabledDefinitions. The definitions currently defined for this decorator.
      */
 
@@ -245,13 +248,9 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
     }
 
-    /**
-     * Decorate the image provided for the element type.
-     * Then look for an IResource that adapts to it an apply
-     * all of the adaptable decorators.
-     * @return String or null if there are none defined for this type.
-     * @param Image
-     * @param Object
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ILabelDecorator#decorateText(java.lang.String, java.lang.Object)
      */
     public String decorateText(String text, Object element) {
 
@@ -289,7 +288,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * @param element The element we are decorating
      * @param start The currently decorated String
      * @param decorator The decorator to run.
-     * @return
+     * @return String
      */
     private String safeDecorateText(Object element, String start,
             FullDecoratorDefinition decorator) {
@@ -299,13 +298,9 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         return newResult;
     }
 
-    /**
-     * Decorate the image provided for the element type.
-     * Then look for an IResource that adapts to it an apply
-     * all of the adaptable decorators.
-     * @return Image or null if there are none defined for this type.
-     * @param Image
-     * @param Object
+    /*
+     *  (non-Javadoc)
+     * @see org.eclipse.jface.viewers.ILabelDecorator#decorateImage(org.eclipse.swt.graphics.Image, java.lang.Object)
      */
     public Image decorateImage(Image image, Object element) {
 
@@ -357,7 +352,9 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
     /**
      * Get the resource adapted object for the supplied
-     * element. Return null if there isn't one.
+     * element. Return <code>null</code>. if there isn't one.
+     * @param element
+     * @return Object or <code>null</code>.
      */
     private Object getResourceAdapter(Object element) {
 
@@ -414,6 +411,11 @@ public class DecoratorManager implements IDelayedLabelDecorator,
      * Return whether or not the decorator registered for element
      * has a label property called property name.
      * Check for an adapted resource if checkAdapted is true.
+     * @param element 
+     * @param property
+     * @param checkAdapted
+     * @return boolean <code>true</code> if there is a label property
+     * for element or its adapted value
      */
     public boolean isLabelProperty(Object element, String property,
             boolean checkAdapted) {
@@ -503,6 +505,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
     /**
      * Get the DecoratorDefinitions defined on the receiver.
+     * @return DecoratorDefinition[]
      */
     public DecoratorDefinition[] getAllDecoratorDefinitions() {
         LightweightDecoratorDefinition[] lightweightDefinitions = lightweightManager
@@ -638,8 +641,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         DecoratorDefinition definition = getDecoratorDefinition(decoratorId);
         if (definition == null)
             return false;
-        else
-            return definition.isEnabled();
+        return definition.isEnabled();
     }
 
     /**
@@ -669,8 +671,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         IBaseLabelProvider fullProvider = getLabelDecorator(decoratorId);
         if (fullProvider == null)
             return getLightweightLabelDecorator(decoratorId);
-        else
-            return fullProvider;
+        return fullProvider;
     }
 
     /*
@@ -709,8 +710,7 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         DecoratorDefinition returnValue = getFullDecoratorDefinition(decoratorId);
         if (returnValue == null)
             return lightweightManager.getDecoratorDefinition(decoratorId);
-        else
-            return returnValue;
+        return returnValue;
     }
 
     /**
@@ -729,6 +729,8 @@ public class DecoratorManager implements IDelayedLabelDecorator,
 
     /**
      * Get the full decorator definitions registered for elements of this type.
+     * @param element The element to look up
+     * @return FullDecoratorDefinition[]
      */
     private FullDecoratorDefinition[] getDecoratorsFor(Object element) {
 
@@ -805,5 +807,24 @@ public class DecoratorManager implements IDelayedLabelDecorator,
         return fullDefinitions.length > 0;
 
     }
-
+    
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IFontDecorator#decorateFont(java.lang.Object)
+	 */
+	public Font decorateFont(Object element) {
+		return scheduler.getFont(element, getResourceAdapter(element));
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorDecorator#decorateBackground(java.lang.Object)
+	 */
+	public Color decorateBackground(Object element) {
+		return scheduler.getBackgroundColor(element, getResourceAdapter(element));
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorDecorator#decorateForeground(java.lang.Object)
+	 */
+	public Color decorateForeground(Object element) {
+		return scheduler.getForegroundColor(element, getResourceAdapter(element));
+	}
 }

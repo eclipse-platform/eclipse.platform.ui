@@ -12,15 +12,18 @@ package org.eclipse.jface.viewers;
 
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.ListenerList;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 /**
  * A decorating label provider is a label provider which combines 
  * a nested label provider and an optional decorator.
- * The decorator decorates the label text and image provided by the nested label provider.
+ * The decorator decorates the label text, image, font and colors provided by 
+ * the nested label provider.
  */
 public class DecoratingLabelProvider extends LabelProvider implements
-        ILabelProvider, IViewerLabelProvider {
+        ILabelProvider, IViewerLabelProvider, IColorProvider, IFontProvider {
     private ILabelProvider provider;
 
     private ILabelDecorator decorator;
@@ -181,16 +184,6 @@ public class DecoratingLabelProvider extends LabelProvider implements
         }
     }
 
-    /**
-     * Return whether the two image handles are equal.
-     * @param oldImage
-     * @param newImage
-     * @return
-     */
-    private boolean equals(Image oldImage, Image newImage) {
-        return ((oldImage == null && newImage == null) || (oldImage != null
-                && newImage != null && oldImage.equals(newImage)));
-    }
 
     /*
      *  (non-Javadoc)
@@ -218,7 +211,56 @@ public class DecoratingLabelProvider extends LabelProvider implements
         if (decorationReady || oldImage == null) {
             settings.setImage(getImage(element));
         }
+ 
+        if(decorationReady)
+        	updateForDecorationReady(settings,element);
 
     }
+
+	/**
+	 * Decoration is ready. Update anything else for the settings.
+	 * @param settings The object collecting the settings.
+	 * @param element The Object being decorated.
+	 * @since 3.1
+	 */
+	protected void updateForDecorationReady(ViewerLabel settings, Object element) {
+		
+		if(decorator instanceof IColorDecorator){
+			IColorDecorator colorDecorator = (IColorDecorator) decorator;
+			settings.setBackground(colorDecorator.decorateBackground(element));
+			settings.setForeground(colorDecorator.decorateForeground(element));
+		}
+		
+		if(decorator instanceof IFontDecorator)
+			settings.setFont(((IFontDecorator) decorator).decorateFont(element));
+		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorProvider#getBackground(java.lang.Object)
+	 */
+	public Color getBackground(Object element) {
+		if(provider instanceof IColorProvider)
+			return ((IColorProvider) provider).getBackground(element);
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+	 */
+	public Font getFont(Object element) {
+		if(provider instanceof IFontProvider)
+			return ((IFontProvider) provider).getFont(element);
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+	 */
+	public Color getForeground(Object element) {
+		if(provider instanceof IColorProvider)
+			return ((IColorProvider) provider).getForeground(element);
+		return null;
+	}
 
 }

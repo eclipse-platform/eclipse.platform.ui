@@ -13,19 +13,22 @@ package org.eclipse.jface.viewers;
 import org.eclipse.swt.graphics.Font;
 
 /**
- * Interface to provide font representation for a given element.
- * @see org.eclipse.jface.viewers.IFontDecorator
+ * The IFontDecorator is an interface for objects that return a font to
+ * decorate an object.
  * 
- * @since 3.0
+ * If an IFontDecorator decorates a font in an object that also has
+ * an IFontProvider the IFontDecorator will take precendence.
+ * @see IFontProvider
  */
-public interface IFontProvider {
+public interface IFontDecorator {
+	
+	/**
+	 * Return the font for element or <code>null</code> if there
+	 * is not one.
+	 * 
+	 * @param element
+	 * @return Font or <code>null</code>
+	 */
+	public Font decorateFont(Object element);
 
-    /**
-     * Provides a font for the given element.
-     * 
-     * @param element the element
-     * @return the font for the element, or <code>null</code> 
-     *   to use the default font
-     */
-    public Font getFont(Object element);
 }

@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.ListIterator;
 
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
 /** 
@@ -26,15 +28,27 @@ class DecorationResult {
     private List suffixes;
 
     private ImageDescriptor[] descriptors;
+    
+    private Color foregroundColor;
+    
+    private Color backgroundColor;
+    
+    private Font font;
 
     DecorationResult(List prefixList, List suffixList,
-            ImageDescriptor[] imageDescriptors) {
+            ImageDescriptor[] imageDescriptors,
+			Color resultForegroundColor,
+			Color resultBackgroundColor,
+			Font resultFont) {
         prefixes = prefixList;
         suffixes = suffixList;
 
         //Don't set the field if there are no entries
         if (hasOverlays(imageDescriptors))
             descriptors = imageDescriptors;
+        foregroundColor = resultForegroundColor;
+        backgroundColor = resultBackgroundColor;
+        font = resultFont;
     }
 
     /**
@@ -54,6 +68,9 @@ class DecorationResult {
 
     /**
      * Decorate the Image supplied with the overlays.
+     * @param image
+     * @param overlayCache
+     * @return Image
      */
     Image decorateWithOverlays(Image image, OverlayCache overlayCache) {
 
@@ -66,6 +83,8 @@ class DecorationResult {
 
     /**
      * Decorate the String supplied with the prefixes and suffixes.
+     * @param text 
+     * @return String
      */
     String decorateWithText(String text) {
 
@@ -115,4 +134,25 @@ class DecorationResult {
         return suffixes;
     }
 
+	/**
+	 * Return the background Color for the result.
+	 * @return Color
+	 */
+	Color getBackgroundColor() {
+		return backgroundColor;
+	}
+	/**
+	 * Return the font for the result.
+	 * @return Font
+	 */
+	Font getFont() {
+		return font;
+	}
+	/**
+	 * Return the foreground color for the result.
+	 * @return Color
+	 */
+	Color getForegroundColor() {
+		return foregroundColor;
+	}
 }

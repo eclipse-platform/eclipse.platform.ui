@@ -17,6 +17,8 @@ import java.util.List;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -101,21 +103,45 @@ public class TreeViewer extends AbstractTreeViewer {
             Assert.isTrue(!item.isDisposed(),
                     "Update to disposed element " + element.toString());//$NON-NLS-1$
             return;
-        }
-
+        }        
         // update icon and label
         IBaseLabelProvider baseProvider = getLabelProvider();
+        
+        Color background = null;
+        Color foreground = null;
+        Font font = null;
+        boolean decorating = false;
+        
+        if (baseProvider instanceof IColorProvider) {
+            IColorProvider cp = (IColorProvider) baseProvider;
+            foreground = cp.getForeground(element);
+            background = cp.getBackground(element);
+        }
+        if (baseProvider instanceof IFontProvider) {
+            font = ((IFontProvider) baseProvider).getFont(element);
+        }
+        
         if (baseProvider instanceof IViewerLabelProvider) {
             IViewerLabelProvider provider = (IViewerLabelProvider) baseProvider;
 
             ViewerLabel updateLabel = new ViewerLabel(item.getText(), item
                     .getImage());
             provider.updateLabel(updateLabel, element);
+            
+            decorating = true;
 
             if (updateLabel.hasNewImage())
                 item.setImage(updateLabel.getImage());
             if (updateLabel.hasNewText())
                 item.setText(updateLabel.getText());
+            if(updateLabel.hasNewBackground())
+            	background = updateLabel.getBackground();
+            
+            if(updateLabel.hasNewForeground())
+            	foreground = updateLabel.getForeground();
+            
+            if(updateLabel.hasNewFont())
+            	font = updateLabel.getFont();            	
 
         } else {
             if (baseProvider instanceof ILabelProvider) {
@@ -130,17 +156,24 @@ public class TreeViewer extends AbstractTreeViewer {
                     item.setImage(image);
             }
         }
-        if (baseProvider instanceof IColorProvider) {
-            IColorProvider cp = (IColorProvider) baseProvider;
-            TreeItem treeItem = (TreeItem) item;
-            treeItem.setForeground(cp.getForeground(element));
-            treeItem.setBackground(cp.getBackground(element));
+        
+        
+        //Update fonts and colors. If a decorator is being used
+        //always update the tree items as they may get cleared
+        //by decorator enablement.
+        if(item instanceof TreeItem){
+        	TreeItem treeItem = (TreeItem) item;
+			
+			if(decorating || background != null)
+				treeItem.setBackground(background);
+			
+			if(decorating || foreground != null)
+				treeItem.setForeground(foreground);
+			
+			if(decorating || font != null)
+				treeItem.setFont(font);
         }
-        if (baseProvider instanceof IFontProvider) {
-            IFontProvider fprov = (IFontProvider) baseProvider;
-            TreeItem treeItem = (TreeItem) item;
-            treeItem.setFont(fprov.getFont(element));
-        }
+       
     }
 
     /* (non-Javadoc)

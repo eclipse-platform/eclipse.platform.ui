@@ -12,6 +12,7 @@ package org.eclipse.ui;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IDelayedLabelDecorator;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
@@ -21,7 +22,7 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
  * decorator returned by <code>getLabelDecorator()</code>.This class is not
  * intended to be implemented by clients.
  */
-public interface IDecoratorManager {
+public interface IDecoratorManager extends IDelayedLabelDecorator{
 
     /**
      * Returns the label decorator which applies the decorations from all
