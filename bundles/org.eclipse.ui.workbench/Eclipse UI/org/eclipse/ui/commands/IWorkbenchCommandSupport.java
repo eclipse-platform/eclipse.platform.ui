@@ -24,14 +24,6 @@ public interface IWorkbenchCommandSupport {
 	ICommandManager getCommandManager();
 
 	/**
-	 * Returns the command handler service for the workbench.
-	 * 
-	 * @return the command handler for the workbench. Guaranteed not to be
-	 *         <code>null</code>.
-	 */
-	ICommandHandlerService getCommandHandlerService();
-
-	/**
 	 * Returns the compound command handler service for the workbench.
 	 * 
 	 * @return the compound command handler service for the workbench.

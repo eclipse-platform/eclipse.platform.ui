@@ -46,16 +46,14 @@ import org.eclipse.ui.internal.util.StatusLineContributionItem;
  */
 public final class WorkbenchActionBuilder {
 
-
 	private IWorkbenchWindow window;
 
-	/** 
-	 * A convience variable and method so that the actionConfigurer doesn't need to
-	 * get passed into registerGlobalAction every time it's called.
+	/**
+	 * A convience variable and method so that the actionConfigurer doesn't
+	 * need to get passed into registerGlobalAction every time it's called.
 	 */
 	private IActionBarConfigurer actionBarConfigurer;
-	
-	
+
 	// generic actions
 	private IWorkbenchAction closeAction;
 	private IWorkbenchAction closeAllAction;
@@ -108,11 +106,11 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction upAction;
 	private IWorkbenchAction nextAction;
 	private IWorkbenchAction previousAction;
-    private IWorkbenchAction categoryAction;
+	private IWorkbenchAction categoryAction;
 
 	// @issue editorsDropDownAction should be provided by ActionFactory
 	private EditorsDropDownAction editorsDropDownAction;
-	
+
 	// IDE-specific actions
 	private IWorkbenchAction projectPropertyDialogAction;
 	private IWorkbenchAction newWizardAction;
@@ -124,7 +122,7 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchAction buildAllAction; // Incremental build
 	private IWorkbenchAction quickStartAction;
 	private IWorkbenchAction tipsAndTricksAction;
-	
+
 	// IDE-specific retarget actions
 	private IWorkbenchAction addBookmarkAction;
 	private IWorkbenchAction addTaskAction;
@@ -136,17 +134,18 @@ public final class WorkbenchActionBuilder {
 	// contribution items
 	// @issue should obtain from ContributionItemFactory
 	private NewWizardMenu newWizardMenu;
-	
+
 	// @issue class is workbench internal
 	private StatusLineContributionItem statusLineItem;
-	
+
 	private Preferences.IPropertyChangeListener prefListener;
-	
+
 	/**
-	 * Constructs a new action builder which contributes actions
-	 * to the given window.
+	 * Constructs a new action builder which contributes actions to the given
+	 * window.
 	 * 
-	 * @param window the window
+	 * @param window
+	 *            the window
 	 */
 	public WorkbenchActionBuilder(IWorkbenchWindow window) {
 		this.window = window;
@@ -158,9 +157,10 @@ public final class WorkbenchActionBuilder {
 	private IWorkbenchWindow getWindow() {
 		return window;
 	}
-	
+
 	/**
-	 * Hooks listeners on the preference store and the window's page, perspective and selection services.
+	 * Hooks listeners on the preference store and the window's page,
+	 * perspective and selection services.
 	 */
 	private void hookListeners() {
 
@@ -180,26 +180,38 @@ public final class WorkbenchActionBuilder {
 		});
 
 		getWindow().addPerspectiveListener(new IPerspectiveListener() {
-			public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+			public void perspectiveActivated(
+				IWorkbenchPage page,
+				IPerspectiveDescriptor perspective) {
 				enableActions(true);
 			}
-			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+			public void perspectiveChanged(
+				IWorkbenchPage page,
+				IPerspectiveDescriptor perspective,
+				String changeId) {
 				// do nothing
 			}
 		});
-		
+
 		prefListener = new Preferences.IPropertyChangeListener() {
 			public void propertyChange(Preferences.PropertyChangeEvent event) {
-				if (event.getProperty().equals(ResourcesPlugin.PREF_AUTO_BUILDING)) {
-					final boolean autoBuild = ResourcesPlugin.getWorkspace().isAutoBuilding();
-					if (window.getShell() != null && !window.getShell().isDisposed()) {
-						// this property change notification could be from a non-ui thread
-						window.getShell().getDisplay().syncExec(new Runnable() {
+				if (event
+					.getProperty()
+					.equals(ResourcesPlugin.PREF_AUTO_BUILDING)) {
+					final boolean autoBuild =
+						ResourcesPlugin.getWorkspace().isAutoBuilding();
+					if (window.getShell() != null
+						&& !window.getShell().isDisposed()) {
+						// this property change notification could be from a
+						// non-ui thread
+						window
+							.getShell()
+							.getDisplay()
+							.syncExec(new Runnable() {
 							public void run() {
 								if (autoBuild) {
 									removeManualIncrementalBuildAction();
-								}
-								else {
+								} else {
 									addManualIncrementalBuildAction();
 								}
 							}
@@ -208,15 +220,18 @@ public final class WorkbenchActionBuilder {
 				}
 			}
 		};
-		ResourcesPlugin.getPlugin().getPluginPreferences().addPropertyChangeListener(prefListener);
-		
+		ResourcesPlugin
+			.getPlugin()
+			.getPluginPreferences()
+			.addPropertyChangeListener(
+			prefListener);
+
 	}
 
 	/**
-	 * Enables the menu items dependent on an active
-	 * page and perspective.
-	 * Note, the show view action already does its own 
-	 * listening so no need to do it here.
+	 * Enables the menu items dependent on an active page and perspective.
+	 * Note, the show view action already does its own listening so no need to
+	 * do it here.
 	 */
 	private void enableActions(boolean value) {
 		hideShowEditorAction.setEnabled(value);
@@ -231,11 +246,13 @@ public final class WorkbenchActionBuilder {
 		importResourcesAction.setEnabled(value);
 		exportResourcesAction.setEnabled(value);
 	}
-	
+
 	/**
 	 * Builds the actions and contributes them to the given window.
 	 */
-	public void makeAndPopulateActions(IWorkbenchConfigurer windowConfigurer, IActionBarConfigurer actionBarConfigurer) {
+	public void makeAndPopulateActions(
+		IWorkbenchConfigurer windowConfigurer,
+		IActionBarConfigurer actionBarConfigurer) {
 		makeActions(windowConfigurer, actionBarConfigurer);
 		populateMenuBar(actionBarConfigurer);
 		populateCoolBar(actionBarConfigurer);
@@ -246,40 +263,74 @@ public final class WorkbenchActionBuilder {
 		populateStatusLine(actionBarConfigurer);
 		hookListeners();
 	}
-	
+
 	/**
 	 * Fills the coolbar with the workbench actions.
 	 */
 	public void populateCoolBar(IActionBarConfigurer configurer) {
-		configurer.addToToolBarMenu(new ActionContributionItem(lockToolBarAction));
-		configurer.addToToolBarMenu(new ActionContributionItem(editActionSetAction));
+		configurer.addToToolBarMenu(
+			new ActionContributionItem(lockToolBarAction));
+		configurer.addToToolBarMenu(
+			new ActionContributionItem(editActionSetAction));
 
-		IToolBarManager tBarMgr = configurer.addToolBar(IWorkbenchActionConstants.TOOLBAR_FILE);
-		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.NEW_GROUP, true);
+		IToolBarManager tBarMgr =
+			configurer.addToolBar(IWorkbenchActionConstants.TOOLBAR_FILE);
+		configurer.addToolBarGroup(
+			tBarMgr,
+			IWorkbenchActionConstants.NEW_GROUP,
+			true);
 		tBarMgr.add(newWizardDropDownAction);
-		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.NEW_EXT, false);
-		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.SAVE_GROUP, false);
+		configurer.addToolBarGroup(
+			tBarMgr,
+			IWorkbenchActionConstants.NEW_EXT,
+			false);
+		configurer.addToolBarGroup(
+			tBarMgr,
+			IWorkbenchActionConstants.SAVE_GROUP,
+			false);
 		tBarMgr.add(saveAction);
 		tBarMgr.add(saveAsAction);
-		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.SAVE_EXT, false);
+		configurer.addToolBarGroup(
+			tBarMgr,
+			IWorkbenchActionConstants.SAVE_EXT,
+			false);
 		tBarMgr.add(printAction);
-		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.PRINT_EXT, false);
-		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.BUILD_GROUP, true);
-		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.BUILD_EXT, false);
-		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.MB_ADDITIONS, true);
+		configurer.addToolBarGroup(
+			tBarMgr,
+			IWorkbenchActionConstants.PRINT_EXT,
+			false);
+		configurer.addToolBarGroup(
+			tBarMgr,
+			IWorkbenchActionConstants.BUILD_GROUP,
+			true);
+		configurer.addToolBarGroup(
+			tBarMgr,
+			IWorkbenchActionConstants.BUILD_EXT,
+			false);
+		configurer.addToolBarGroup(
+			tBarMgr,
+			IWorkbenchActionConstants.MB_ADDITIONS,
+			true);
 
-		tBarMgr = configurer.addToolBar(IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
-		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.HISTORY_GROUP, true);
+		tBarMgr =
+			configurer.addToolBar(IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
+		configurer.addToolBarGroup(
+			tBarMgr,
+			IWorkbenchActionConstants.HISTORY_GROUP,
+			true);
 		tBarMgr.add(backwardHistoryAction);
 		tBarMgr.add(forwardHistoryAction);
-		configurer.addToolBarGroup(tBarMgr, IWorkbenchActionConstants.PIN_GROUP, true);
+		configurer.addToolBarGroup(
+			tBarMgr,
+			IWorkbenchActionConstants.PIN_GROUP,
+			true);
 		tBarMgr.add(ContributionItemFactory.PIN_EDITOR.create(getWindow()));
 	}
-	
+
 	/**
 	 * Fills the menu bar with the workbench actions.
 	 */
-	public void populateMenuBar(IActionBarConfigurer configurer) {		
+	public void populateMenuBar(IActionBarConfigurer configurer) {
 		IMenuManager menubar = configurer.getMenuManager();
 		menubar.add(createFileMenu());
 		menubar.add(createEditMenu());
@@ -289,7 +340,7 @@ public final class WorkbenchActionBuilder {
 		menubar.add(createWindowMenu());
 		menubar.add(createHelpMenu());
 	}
-	
+
 	/**
 	 * Creates and returns the File menu.
 	 */
@@ -400,7 +451,8 @@ public final class WorkbenchActionBuilder {
 		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
 		{
 			MenuManager showInSubMenu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showIn")); //$NON-NLS-1$
-			showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN.create(getWindow()));
+			showInSubMenu.add(
+				ContributionItemFactory.VIEWS_SHOW_IN.create(getWindow()));
 			menu.add(showInSubMenu);
 		}
 		for (int i = 2; i < 5; ++i) {
@@ -448,7 +500,8 @@ public final class WorkbenchActionBuilder {
 	private MenuManager createWindowMenu() {
 		MenuManager menu = new MenuManager(IDEWorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
 
-		IWorkbenchAction action = ActionFactory.OPEN_NEW_WINDOW.create(getWindow());
+		IWorkbenchAction action =
+			ActionFactory.OPEN_NEW_WINDOW.create(getWindow());
 		action.setText(IDEWorkbenchMessages.getString("Workbench.openNewWindow")); //$NON-NLS-1$
 		menu.add(action);
 		menu.add(new Separator());
@@ -460,12 +513,12 @@ public final class WorkbenchActionBuilder {
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "end")); //$NON-NLS-1$
 
-        //Only add it if role filtering is on
-        if (categoryAction != null) 
-            menu.add(categoryAction);
+		//Only add it if role filtering is on
+		if (categoryAction != null)
+			menu.add(categoryAction);
 
-        menu.add(openPreferencesAction);
-                
+		menu.add(openPreferencesAction);
+
 		menu.add(ContributionItemFactory.OPEN_WINDOWS.create(getWindow()));
 		return menu;
 	}
@@ -477,14 +530,16 @@ public final class WorkbenchActionBuilder {
 		{
 			String openText = IDEWorkbenchMessages.getString("Workbench.openPerspective"); //$NON-NLS-1$
 			MenuManager changePerspMenuMgr = new MenuManager(openText);
-			IContributionItem changePerspMenuItem = 
-				ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(getWindow());
+			IContributionItem changePerspMenuItem =
+				ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(
+					getWindow());
 			changePerspMenuMgr.add(changePerspMenuItem);
 			menu.add(changePerspMenuMgr);
 		}
 		{
 			MenuManager showViewMenuMgr = new MenuManager(IDEWorkbenchMessages.getString("Workbench.showView")); //$NON-NLS-1$
-			IContributionItem showViewMenu = ContributionItemFactory.VIEWS_SHORTLIST.create(getWindow());
+			IContributionItem showViewMenu =
+				ContributionItemFactory.VIEWS_SHORTLIST.create(getWindow());
 			showViewMenuMgr.add(showViewMenu);
 			menu.add(showViewMenuMgr);
 		}
@@ -532,85 +587,196 @@ public final class WorkbenchActionBuilder {
 		if (quickStartAction != null)
 			menu.add(quickStartAction);
 
-        // See if a tips and tricks page is specified
+		// See if a tips and tricks page is specified
 		if (tipsAndTricksAction != null)
 			menu.add(tipsAndTricksAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_START));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.HELP_END));
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-		// about should always be at the bottom				
+		// about should always be at the bottom
 		menu.add(new Separator());
 		menu.add(aboutAction);
-			
+
 		/*
 		menu.add(new Separator());
-		
-		final IMutableContextActivationService workbenchContextActivationService = ContextActivationServiceFactory.getMutableContextActivationService();
-		workbenchContextActivationService.setActiveContextIds(new HashSet(Collections.singletonList("A")));
 
-		final IMutableContextActivationService workbenchPageContextActivationService = ContextActivationServiceFactory.getMutableContextActivationService();
-		workbenchPageContextActivationService.setActiveContextIds(new HashSet(Collections.singletonList("B")));				
-		
-		menu.add(new Action("Add A to the workbench") {
+		IHandler handler = new IHandler() {
+			public void execute() {
+			}
+			public void execute(Event event) {
+			}
+			public boolean isEnabled() {
+				return false;
+			}
+		};
+
+		final IMutableCommandHandlerService workbenchCommandHandlerService =
+			CommandHandlerServiceFactory.getMutableCommandHandlerService();
+		workbenchCommandHandlerService.setHandlersByCommandId(
+			new HashMap(Collections.singletonMap("A", handler)));
+
+		final IMutableCommandHandlerService workbenchPageCommandHandlerService =
+			CommandHandlerServiceFactory.getMutableCommandHandlerService();
+		workbenchPageCommandHandlerService.setHandlersByCommandId(
+			new HashMap(Collections.singletonMap("B", handler)));
+
+		menu.add(new Action("Add A handler to the workbench") {
 			public void run() {
 				IWorkbench workbench = PlatformUI.getWorkbench();
-				IWorkbenchContextSupport workbenchContextSupport = (IWorkbenchContextSupport) workbench.getAdapter(IWorkbenchContextSupport.class);
-				workbenchContextSupport.getCompoundContextActivationService().addContextActivationService(workbenchContextActivationService);
+				IWorkbenchCommandSupport workbenchCommandSupport =
+					workbench.getCommandSupport();
+				workbenchCommandSupport
+					.getCompoundCommandHandlerService()
+					.addCommandHandlerService(workbenchCommandHandlerService);
 			}
 		});
 
-		menu.add(new Action("Remove A from the workbench") {
+		menu.add(new Action("Remove A handler from the workbench") {
 			public void run() {
 				IWorkbench workbench = PlatformUI.getWorkbench();
-				IWorkbenchContextSupport workbenchContextSupport = (IWorkbenchContextSupport) workbench.getAdapter(IWorkbenchContextSupport.class);
-				workbenchContextSupport.getCompoundContextActivationService().removeContextActivationService(workbenchContextActivationService);
+				IWorkbenchCommandSupport workbenchCommandSupport =
+					workbench.getCommandSupport();
+				workbenchCommandSupport
+					.getCompoundCommandHandlerService()
+					.removeCommandHandlerService(workbenchCommandHandlerService);
 			}
 		});
-		
-		menu.add(new Action("Add B to the workbench page") {
+
+		menu.add(new Action("Add B handler to the workbench page") {
 			public void run() {
 				IWorkbench workbench = PlatformUI.getWorkbench();
-				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+				IWorkbenchWindow workbenchWindow =
+					workbench.getActiveWorkbenchWindow();
 
 				if (workbenchWindow != null) {
-					IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
-					
-					if (workbenchPage != null) {					
-						IWorkbenchPageContextSupport workbenchPageContextSupport = (IWorkbenchPageContextSupport) workbenchPage.getAdapter(IWorkbenchPageContextSupport.class);
-						workbenchPageContextSupport.getCompoundContextActivationService().addContextActivationService(workbenchPageContextActivationService);
+					IWorkbenchPage workbenchPage =
+						workbenchWindow.getActivePage();
+
+					if (workbenchPage != null) {
+						IWorkbenchPageCommandSupport workbenchPageCommandSupport =
+							workbenchPage.getCommandSupport();
+						workbenchPageCommandSupport
+							.getCompoundCommandHandlerService()
+							.addCommandHandlerService(workbenchPageCommandHandlerService);
 					}
 				}
 			}
 		});
 
-		menu.add(new Action("Remove B from the workbench page") {
+		menu.add(new Action("Remove B handler from the workbench page") {
 			public void run() {
 				IWorkbench workbench = PlatformUI.getWorkbench();
-				IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+				IWorkbenchWindow workbenchWindow =
+					workbench.getActiveWorkbenchWindow();
 
 				if (workbenchWindow != null) {
-					IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
-					
-					if (workbenchPage != null) {					
-						IWorkbenchPageContextSupport workbenchPageContextSupport = (IWorkbenchPageContextSupport) workbenchPage.getAdapter(IWorkbenchPageContextSupport.class);
-						workbenchPageContextSupport.getCompoundContextActivationService().removeContextActivationService(workbenchPageContextActivationService);
+					IWorkbenchPage workbenchPage =
+						workbenchWindow.getActivePage();
+
+					if (workbenchPage != null) {
+						IWorkbenchPageCommandSupport workbenchPageCommandSupport =
+							workbenchPage.getCommandSupport();
+						workbenchPageCommandSupport
+							.getCompoundCommandHandlerService()
+							.removeCommandHandlerService(workbenchPageCommandHandlerService);
 					}
 				}
 			}
-		});	
-		*/	
-		
+		});
+
+		menu.add(new Separator());
+
+		final IMutableContextActivationService workbenchContextActivationService =
+			ContextActivationServiceFactory
+				.getMutableContextActivationService();
+		workbenchContextActivationService.setActiveContextIds(
+			new HashSet(Collections.singletonList("A")));
+
+		final IMutableContextActivationService workbenchPageContextActivationService =
+			ContextActivationServiceFactory
+				.getMutableContextActivationService();
+		workbenchPageContextActivationService.setActiveContextIds(
+			new HashSet(Collections.singletonList("B")));
+
+		menu.add(new Action("Add A context to the workbench") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchContextSupport workbenchContextSupport =
+					workbench.getContextSupport();
+				workbenchContextSupport
+					.getCompoundContextActivationService()
+					.addContextActivationService(workbenchContextActivationService);
+			}
+		});
+
+		menu.add(new Action("Remove A context from the workbench") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchContextSupport workbenchContextSupport =
+					workbench.getContextSupport();
+				workbenchContextSupport
+					.getCompoundContextActivationService()
+					.removeContextActivationService(workbenchContextActivationService);
+			}
+		});
+
+		menu.add(new Action("Add B context to the workbench page") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow workbenchWindow =
+					workbench.getActiveWorkbenchWindow();
+
+				if (workbenchWindow != null) {
+					IWorkbenchPage workbenchPage =
+						workbenchWindow.getActivePage();
+
+					if (workbenchPage != null) {
+						IWorkbenchPageContextSupport workbenchPageContextSupport =
+							workbenchPage.getContextSupport();
+						workbenchPageContextSupport
+							.getCompoundContextActivationService()
+							.addContextActivationService(workbenchPageContextActivationService);
+					}
+				}
+			}
+		});
+
+		menu.add(new Action("Remove B context from the workbench page") {
+			public void run() {
+				IWorkbench workbench = PlatformUI.getWorkbench();
+				IWorkbenchWindow workbenchWindow =
+					workbench.getActiveWorkbenchWindow();
+
+				if (workbenchWindow != null) {
+					IWorkbenchPage workbenchPage =
+						workbenchWindow.getActivePage();
+
+					if (workbenchPage != null) {
+						IWorkbenchPageContextSupport workbenchPageContextSupport =
+							workbenchPage.getContextSupport();
+						workbenchPageContextSupport
+							.getCompoundContextActivationService()
+							.removeContextActivationService(workbenchPageContextActivationService);
+					}
+				}
+			}
+		});
+		*/
+
 		return menu;
 	}
 
 	/**
-	 * Disposes any resources and unhooks any listeners that are no longer needed.
-	 * Called when the window is closed.
+	 * Disposes any resources and unhooks any listeners that are no longer
+	 * needed. Called when the window is closed.
 	 */
 	public void dispose() {
 		actionBarConfigurer.getStatusLineManager().remove(statusLineItem);
 		if (prefListener != null) {
-			ResourcesPlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(
+			ResourcesPlugin
+				.getPlugin()
+				.getPluginPreferences()
+				.removePropertyChangeListener(
 				prefListener);
 		}
 		closeAction.dispose();
@@ -666,7 +832,7 @@ public final class WorkbenchActionBuilder {
 			categoryAction.dispose();
 		}
 
-		// editorsDropDownAction is not currently an IWorkbenchAction		
+		// editorsDropDownAction is not currently an IWorkbenchAction
 		// editorsDropDownAction.dispose();
 		projectPropertyDialogAction.dispose();
 		newWizardAction.dispose();
@@ -694,9 +860,8 @@ public final class WorkbenchActionBuilder {
 	}
 
 	/**
-	 * Returns true if the menu with the given ID should
-	 * be considered as an OLE container menu. Container menus
-	 * are preserved in OLE menu merging.
+	 * Returns true if the menu with the given ID should be considered as an
+	 * OLE container menu. Container menus are preserved in OLE menu merging.
 	 */
 	public boolean isContainerMenu(String menuId) {
 		if (menuId.equals(IWorkbenchActionConstants.M_FILE))
@@ -710,12 +875,14 @@ public final class WorkbenchActionBuilder {
 		return false;
 	}
 	/**
-	 * Return whether or not given id matches the id of the coolitems that
-	 * the workbench creates.
+	 * Return whether or not given id matches the id of the coolitems that the
+	 * workbench creates.
 	 */
 	public boolean isWorkbenchCoolItemId(String id) {
-		if (IWorkbenchActionConstants.TOOLBAR_FILE.equalsIgnoreCase(id)) return true;
-		if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE.equalsIgnoreCase(id)) return true;
+		if (IWorkbenchActionConstants.TOOLBAR_FILE.equalsIgnoreCase(id))
+			return true;
+		if (IWorkbenchActionConstants.TOOLBAR_NAVIGATE.equalsIgnoreCase(id))
+			return true;
 		return false;
 	}
 
@@ -726,30 +893,35 @@ public final class WorkbenchActionBuilder {
 		IStatusLineManager statusLine = configurer.getStatusLineManager();
 		statusLine.add(statusLineItem);
 	}
-	
-	/**
-	 * Creates actions (and contribution items) for the menu bar, toolbar and status line.
-	 */
-	private void makeActions(IWorkbenchConfigurer workbenchConfigurer, IActionBarConfigurer actionBarConfigurer) {
 
-		// The actions in jface do not have menu vs. enable, vs. disable vs. color
-		// There are actions in here being passed the workbench - problem 
+	/**
+	 * Creates actions (and contribution items) for the menu bar, toolbar and
+	 * status line.
+	 */
+	private void makeActions(
+		IWorkbenchConfigurer workbenchConfigurer,
+		IActionBarConfigurer actionBarConfigurer) {
+
+		// The actions in jface do not have menu vs. enable, vs. disable vs.
+		// color
+		// There are actions in here being passed the workbench - problem
 		setCurrentActionBarConfigurer(actionBarConfigurer);
-		
+
 		// @issue should obtain from ConfigurationItemFactory
 		statusLineItem = new StatusLineContributionItem("ModeContributionItem"); //$NON-NLS-1$
-		
+
 		newWizardAction = ActionFactory.NEW.create(getWindow());
 		registerGlobalAction(newWizardAction);
 
-		newWizardDropDownAction = IDEActionFactory.NEW_WIZARD_DROP_DOWN.create(getWindow());
+		newWizardDropDownAction =
+			IDEActionFactory.NEW_WIZARD_DROP_DOWN.create(getWindow());
 
 		importResourcesAction = ActionFactory.IMPORT.create(getWindow());
 		registerGlobalAction(importResourcesAction);
 
 		exportResourcesAction = ActionFactory.EXPORT.create(getWindow());
 		registerGlobalAction(exportResourcesAction);
-		
+
 		rebuildAllAction = IDEActionFactory.REBUILD_ALL.create(getWindow());
 		registerGlobalAction(rebuildAllAction);
 
@@ -764,7 +936,7 @@ public final class WorkbenchActionBuilder {
 
 		saveAllAction = ActionFactory.SAVE_ALL.create(getWindow());
 		registerGlobalAction(saveAllAction);
-		
+
 		undoAction = ActionFactory.UNDO.create(getWindow());
 		registerGlobalAction(undoAction);
 
@@ -785,7 +957,7 @@ public final class WorkbenchActionBuilder {
 
 		selectAllAction = ActionFactory.SELECT_ALL.create(getWindow());
 		registerGlobalAction(selectAllAction);
-		
+
 		findAction = ActionFactory.FIND.create(getWindow());
 		registerGlobalAction(findAction);
 
@@ -808,7 +980,7 @@ public final class WorkbenchActionBuilder {
 			productName = ""; //$NON-NLS-1$
 		}
 		aboutAction.setText(IDEWorkbenchMessages.format("AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
-		aboutAction.setToolTipText(IDEWorkbenchMessages.format("AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$
+		aboutAction.setToolTipText(IDEWorkbenchMessages.format("AboutAction.toolTip", new Object[] { productName })); //$NON-NLS-1$
 		aboutAction.setImageDescriptor(
 			IDEInternalWorkbenchImages.getImageDescriptor(
 				IDEInternalWorkbenchImages.IMG_OBJS_DEFAULT_PROD));
@@ -825,7 +997,7 @@ public final class WorkbenchActionBuilder {
 
 		deleteAction = ActionFactory.DELETE.create(getWindow());
 		// don't register the delete action with the key binding service.
-		// doing so would break cell editors that listen for keyPressed SWT 
+		// doing so would break cell editors that listen for keyPressed SWT
 		// events.
 		// registerGlobalAction(deleteAction);
 
@@ -833,7 +1005,8 @@ public final class WorkbenchActionBuilder {
 		// See if a welcome page is specified
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getWelcomePageURL() != null) {
-				quickStartAction = IDEActionFactory.QUICK_START.create(getWindow());
+				quickStartAction =
+					IDEActionFactory.QUICK_START.create(getWindow());
 				registerGlobalAction(quickStartAction);
 				break;
 			}
@@ -841,7 +1014,8 @@ public final class WorkbenchActionBuilder {
 		// See if a tips and tricks page is specified
 		for (int i = 0; i < infos.length; i++) {
 			if (infos[i].getTipsAndTricksHref() != null) {
-				tipsAndTricksAction = IDEActionFactory.TIPS_AND_TRICKS.create(getWindow());
+				tipsAndTricksAction =
+					IDEActionFactory.TIPS_AND_TRICKS.create(getWindow());
 				registerGlobalAction(tipsAndTricksAction);
 				break;
 			}
@@ -851,7 +1025,8 @@ public final class WorkbenchActionBuilder {
 		showViewMenuAction = ActionFactory.SHOW_VIEW_MENU.create(getWindow());
 		registerGlobalAction(showViewMenuAction);
 
-		showPartPaneMenuAction = ActionFactory.SHOW_PART_PANE_MENU.create(getWindow());
+		showPartPaneMenuAction =
+			ActionFactory.SHOW_PART_PANE_MENU.create(getWindow());
 		registerGlobalAction(showPartPaneMenuAction);
 
 		nextEditorAction = ActionFactory.NEXT_EDITOR.create(getWindow());
@@ -866,40 +1041,52 @@ public final class WorkbenchActionBuilder {
 		registerGlobalAction(nextPartAction);
 		registerGlobalAction(prevPartAction);
 
-		nextPerspectiveAction = ActionFactory.NEXT_PERSPECTIVE.create(getWindow());
-		prevPerspectiveAction = ActionFactory.PREVIOUS_PERSPECTIVE.create(getWindow());
-		ActionFactory.linkCycleActionPair(nextPerspectiveAction, prevPerspectiveAction);
+		nextPerspectiveAction =
+			ActionFactory.NEXT_PERSPECTIVE.create(getWindow());
+		prevPerspectiveAction =
+			ActionFactory.PREVIOUS_PERSPECTIVE.create(getWindow());
+		ActionFactory.linkCycleActionPair(
+			nextPerspectiveAction,
+			prevPerspectiveAction);
 		registerGlobalAction(nextPerspectiveAction);
 		registerGlobalAction(prevPerspectiveAction);
 
-		activateEditorAction = ActionFactory.ACTIVATE_EDITOR.create(getWindow());
+		activateEditorAction =
+			ActionFactory.ACTIVATE_EDITOR.create(getWindow());
 		registerGlobalAction(activateEditorAction);
 
 		maximizePartAction = ActionFactory.MAXIMIZE.create(getWindow());
 		registerGlobalAction(maximizePartAction);
-		
-		workbenchEditorsAction = ActionFactory.SHOW_OPEN_EDITORS.create(getWindow());
+
+		workbenchEditorsAction =
+			ActionFactory.SHOW_OPEN_EDITORS.create(getWindow());
 		registerGlobalAction(workbenchEditorsAction);
 
 		hideShowEditorAction = ActionFactory.SHOW_EDITOR.create(getWindow());
 		registerGlobalAction(hideShowEditorAction);
-		savePerspectiveAction = ActionFactory.SAVE_PERSPECTIVE.create(getWindow());
+		savePerspectiveAction =
+			ActionFactory.SAVE_PERSPECTIVE.create(getWindow());
 		registerGlobalAction(savePerspectiveAction);
-		editActionSetAction = ActionFactory.EDIT_ACTION_SETS.create(getWindow());
+		editActionSetAction =
+			ActionFactory.EDIT_ACTION_SETS.create(getWindow());
 		registerGlobalAction(editActionSetAction);
 		lockToolBarAction = ActionFactory.LOCK_TOOL_BAR.create(getWindow());
 		registerGlobalAction(lockToolBarAction);
-		resetPerspectiveAction = ActionFactory.RESET_PERSPECTIVE.create(getWindow());
+		resetPerspectiveAction =
+			ActionFactory.RESET_PERSPECTIVE.create(getWindow());
 		registerGlobalAction(resetPerspectiveAction);
 		closePerspAction = ActionFactory.CLOSE_PERSPECTIVE.create(getWindow());
 		registerGlobalAction(closePerspAction);
-		closeAllPerspsAction = ActionFactory.CLOSE_ALL_PERSPECTIVES.create(getWindow());
+		closeAllPerspsAction =
+			ActionFactory.CLOSE_ALL_PERSPECTIVES.create(getWindow());
 		registerGlobalAction(closeAllPerspsAction);
 
-		forwardHistoryAction = ActionFactory.FORWARD_HISTORY.create(getWindow());
+		forwardHistoryAction =
+			ActionFactory.FORWARD_HISTORY.create(getWindow());
 		registerGlobalAction(forwardHistoryAction);
 
-		backwardHistoryAction = ActionFactory.BACKWARD_HISTORY.create(getWindow());
+		backwardHistoryAction =
+			ActionFactory.BACKWARD_HISTORY.create(getWindow());
 		registerGlobalAction(backwardHistoryAction);
 
 		revertAction = ActionFactory.REVERT.create(getWindow());
@@ -946,8 +1133,9 @@ public final class WorkbenchActionBuilder {
 
 		buildProjectAction = IDEActionFactory.BUILD_PROJECT.create(getWindow());
 		registerGlobalAction(buildProjectAction);
-		
-		rebuildProjectAction = IDEActionFactory.REBUILD_PROJECT.create(getWindow());
+
+		rebuildProjectAction =
+			IDEActionFactory.REBUILD_PROJECT.create(getWindow());
 		registerGlobalAction(rebuildProjectAction);
 
 		openProjectAction = IDEActionFactory.OPEN_PROJECT.create(getWindow());
@@ -955,20 +1143,25 @@ public final class WorkbenchActionBuilder {
 
 		closeProjectAction = IDEActionFactory.CLOSE_PROJECT.create(getWindow());
 		registerGlobalAction(closeProjectAction);
-		
-		projectPropertyDialogAction = IDEActionFactory.OPEN_PROJECT_PROPERTIES.create(getWindow());
+
+		projectPropertyDialogAction =
+			IDEActionFactory.OPEN_PROJECT_PROPERTIES.create(getWindow());
 		registerGlobalAction(projectPropertyDialogAction);
 
 		//Only add the role manager action if we are using role support
-		
-		IWorkbenchActivitySupport workbenchActivitySupport = (IWorkbenchActivitySupport) getWindow().getWorkbench().getAdapter(IWorkbenchActivitySupport.class);
+
+		IWorkbenchActivitySupport workbenchActivitySupport =
+			(IWorkbenchActivitySupport) getWindow().getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
 
 		if (workbenchActivitySupport != null) {
-			IActivityManager activityManager = workbenchActivitySupport.getActivityManager();
-					
-			if (!activityManager.getDefinedCategoryIds().isEmpty()) { 
-				categoryAction = ActionFactory.CONFIGURE_ACTIVITIES.create(getWindow());
-            	registerGlobalAction(categoryAction);
+			IActivityManager activityManager =
+				workbenchActivitySupport.getActivityManager();
+
+			if (!activityManager.getDefinedCategoryIds().isEmpty()) {
+				categoryAction =
+					ActionFactory.CONFIGURE_ACTIVITIES.create(getWindow());
+				registerGlobalAction(categoryAction);
 			}
 		}
 
@@ -978,49 +1171,57 @@ public final class WorkbenchActionBuilder {
 		}
 	}
 
-	private void setCurrentActionBarConfigurer(IActionBarConfigurer actionBarConfigurer)
-	{
+	private void setCurrentActionBarConfigurer(IActionBarConfigurer actionBarConfigurer) {
 		this.actionBarConfigurer = actionBarConfigurer;
 	}
-	
+
 	private void registerGlobalAction(IAction action) {
 		actionBarConfigurer.registerGlobalAction(action);
 	}
-	
+
 	/**
-	 * Add the manual incremental build action
-	 * to both the menu bar and the tool bar.
+	 * Add the manual incremental build action to both the menu bar and the
+	 * tool bar.
 	 */
 	private void addManualIncrementalBuildAction() {
 		IMenuManager menubar = actionBarConfigurer.getMenuManager();
-		IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
+		IMenuManager manager =
+			menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
 		if (manager != null) {
 			try {
-				manager.insertBefore(IWorkbenchActionConstants.REBUILD_PROJECT, buildProjectAction);
-				manager.insertBefore(IWorkbenchActionConstants.REBUILD_ALL, buildAllAction);
+				manager.insertBefore(
+					IWorkbenchActionConstants.REBUILD_PROJECT,
+					buildProjectAction);
+				manager.insertBefore(
+					IWorkbenchActionConstants.REBUILD_ALL,
+					buildAllAction);
 			} catch (IllegalArgumentException e) {
 				// action not found!
 			}
 			manager.update(false);
 		}
 		IToolBarManager tBarMgr =
-			actionBarConfigurer.getToolBar(IWorkbenchActionConstants.TOOLBAR_FILE);
+			actionBarConfigurer.getToolBar(
+				IWorkbenchActionConstants.TOOLBAR_FILE);
 		if (tBarMgr == null) {
 			// error if this happens, file toolbar assumed to always exist
 			IDEWorkbenchPlugin.log("File toolbar is missing"); //$NON-NLS-1$
 			return;
 		}
-		tBarMgr.appendToGroup(IWorkbenchActionConstants.BUILD_GROUP, buildAllAction);
+		tBarMgr.appendToGroup(
+			IWorkbenchActionConstants.BUILD_GROUP,
+			buildAllAction);
 		tBarMgr.update(false);
 	}
-	
+
 	/**
-	 * Remove the manual incremental build action
-	 * from both the menu bar and the tool bar.
+	 * Remove the manual incremental build action from both the menu bar and
+	 * the tool bar.
 	 */
 	private void removeManualIncrementalBuildAction() {
 		IMenuManager menubar = actionBarConfigurer.getMenuManager();
-		IMenuManager manager = menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
+		IMenuManager manager =
+			menubar.findMenuUsingPath(IWorkbenchActionConstants.M_PROJECT);
 		if (manager != null) {
 			try {
 				manager.remove(IWorkbenchActionConstants.BUILD);
@@ -1031,7 +1232,8 @@ public final class WorkbenchActionBuilder {
 			manager.update(false);
 		}
 		IToolBarManager tBarMgr =
-			actionBarConfigurer.getToolBar(IWorkbenchActionConstants.TOOLBAR_FILE);
+			actionBarConfigurer.getToolBar(
+				IWorkbenchActionConstants.TOOLBAR_FILE);
 		if (tBarMgr != null) {
 			try {
 				tBarMgr.remove(IWorkbenchActionConstants.BUILD);

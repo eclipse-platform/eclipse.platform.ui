@@ -1,7 +1,8 @@
 package org.eclipse.ui.internal.contexts.ws;
 
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.ui.IPageListener;
@@ -14,19 +15,23 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.ContextActivationServiceEvent;
-import org.eclipse.ui.contexts.ContextActivationServiceFactory;
-import org.eclipse.ui.contexts.ICompoundContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.contexts.IWorkbenchPageContextSupport;
 import org.eclipse.ui.contexts.IWorkbenchPartSiteContextSupport;
 import org.eclipse.ui.internal.contexts.AbstractContextActivationService;
+import org.eclipse.ui.internal.util.Util;
 
 final class WorkbenchWindowContextActivationService
 	extends AbstractContextActivationService {
-	private ICompoundContextActivationService compoundContextActivationService =
-		ContextActivationServiceFactory.getCompoundContextActivationService();
+	private Set activeContextIds = new HashSet();
+	private final IContextActivationServiceListener contextActivationServiceListener =
+		new IContextActivationServiceListener() {
+		public void contextActivationServiceChanged(ContextActivationServiceEvent contextActivationServiceEvent) {
+			update();
+		}
+	};
 	private IPageListener pageListener = new IPageListener() {
 		public void pageActivated(IWorkbenchPage workbenchPage) {
 			update();
@@ -77,6 +82,7 @@ final class WorkbenchWindowContextActivationService
 		}
 	};
 	private IWorkbench workbench;
+	private IContextActivationService workbenchCompoundContextActivationService;
 	private IContextActivationService workbenchPageCompoundContextActivationService;
 	private IContextActivationService workbenchPartSiteMutableContextActivationService;
 	private IWorkbenchWindow workbenchWindow;
@@ -92,28 +98,6 @@ final class WorkbenchWindowContextActivationService
 
 		this.workbenchWindow = workbenchWindow;
 		this.workbench = workbench;
-
-		compoundContextActivationService
-			.addContextActivationServiceListener(
-				new IContextActivationServiceListener() {
-			public void contextActivationServiceChanged(ContextActivationServiceEvent contextActivationServiceEvent) {
-				ContextActivationServiceEvent proxyContextActivationServiceEvent =
-					new ContextActivationServiceEvent(
-						WorkbenchWindowContextActivationService.this,
-						contextActivationServiceEvent
-							.haveActiveContextIdsChanged());
-				fireContextActivationServiceChanged(
-					(proxyContextActivationServiceEvent));
-			}
-		});
-
-		IWorkbenchContextSupport workbenchContextSupport =
-			workbench.getContextSupport();
-
-		if (workbenchContextSupport != null)
-			compoundContextActivationService.addContextActivationService(
-				workbenchContextSupport.getCompoundContextActivationService());
-
 		workbenchWindow.addPageListener(pageListener);
 		workbenchWindow.addPerspectiveListener(perspectiveListener);
 		workbenchWindow.getPartService().addPartListener(partListener);
@@ -121,10 +105,26 @@ final class WorkbenchWindowContextActivationService
 	}
 
 	public Set getActiveContextIds() {
-		return compoundContextActivationService.getActiveContextIds();
+		return Collections.unmodifiableSet(activeContextIds);
+	}
+
+	private void setActiveContextIds(Set activeContextIds) {
+		activeContextIds = Util.safeCopy(activeContextIds, String.class);
+		boolean contextActivationServiceChanged = false;
+		Map contextEventsByContextId = null;
+
+		if (!this.activeContextIds.equals(activeContextIds)) {
+			this.activeContextIds = activeContextIds;
+			System.out.println(
+				getClass().getName() + ": " + this.activeContextIds);
+			fireContextActivationServiceChanged(
+				new ContextActivationServiceEvent(this, true));
+		}
 	}
 
 	private void update() {
+		IContextActivationService workbenchCompoundContextActivationService =
+			null;
 		IWorkbenchPage workbenchPage = workbenchWindow.getActivePage();
 		IContextActivationService workbenchPageCompoundContextActivationService =
 			null;
@@ -132,16 +132,17 @@ final class WorkbenchWindowContextActivationService
 		IWorkbenchPartSite workbenchPartSite = null;
 		IContextActivationService workbenchPartSiteMutableContextActivationService =
 			null;
+		IWorkbenchContextSupport workbenchContextSupport =
+			workbench.getContextSupport();
+		workbenchCompoundContextActivationService =
+			workbenchContextSupport.getCompoundContextActivationService();
 
 		if (workbenchPage != null) {
 			IWorkbenchPageContextSupport workbenchPageContextSupport =
 				workbenchPage.getContextSupport();
-
-			if (workbenchPageContextSupport != null)
-				workbenchPageCompoundContextActivationService =
-					workbenchPageContextSupport
-						.getCompoundContextActivationService();
-
+			workbenchPageCompoundContextActivationService =
+				workbenchPageContextSupport
+					.getCompoundContextActivationService();
 			workbenchPart = workbenchPage.getActivePart();
 		}
 
@@ -161,49 +162,71 @@ final class WorkbenchWindowContextActivationService
 						.getMutableContextActivationService();
 		}
 
-		Set removals = new HashSet();
+		if (this.workbenchCompoundContextActivationService
+			!= workbenchCompoundContextActivationService) {
+			if (this.workbenchCompoundContextActivationService != null)
+				this
+					.workbenchCompoundContextActivationService
+					.removeContextActivationServiceListener(contextActivationServiceListener);
+
+			this.workbenchCompoundContextActivationService =
+				workbenchCompoundContextActivationService;
+
+			if (this.workbenchCompoundContextActivationService != null)
+				this
+					.workbenchCompoundContextActivationService
+					.addContextActivationServiceListener(contextActivationServiceListener);
+		}
 
 		if (this.workbenchPageCompoundContextActivationService
 			!= workbenchPageCompoundContextActivationService) {
 			if (this.workbenchPageCompoundContextActivationService != null)
-				removals.add(
-					this.workbenchPageCompoundContextActivationService);
+				this
+					.workbenchPageCompoundContextActivationService
+					.removeContextActivationServiceListener(contextActivationServiceListener);
 
 			this.workbenchPageCompoundContextActivationService =
 				workbenchPageCompoundContextActivationService;
+
+			if (this.workbenchPageCompoundContextActivationService != null)
+				this
+					.workbenchPageCompoundContextActivationService
+					.addContextActivationServiceListener(contextActivationServiceListener);
 		}
 
 		if (this.workbenchPartSiteMutableContextActivationService
 			!= workbenchPartSiteMutableContextActivationService) {
 			if (this.workbenchPartSiteMutableContextActivationService != null)
-				removals.add(
-					this.workbenchPartSiteMutableContextActivationService);
+				this
+					.workbenchPartSiteMutableContextActivationService
+					.removeContextActivationServiceListener(contextActivationServiceListener);
 
 			this.workbenchPartSiteMutableContextActivationService =
 				workbenchPartSiteMutableContextActivationService;
+
+			if (this.workbenchPartSiteMutableContextActivationService != null)
+				this
+					.workbenchPartSiteMutableContextActivationService
+					.addContextActivationServiceListener(contextActivationServiceListener);
 		}
 
-		for (Iterator iterator = removals.iterator(); iterator.hasNext();) {
-			IContextActivationService contextActivationService =
-				(IContextActivationService) iterator.next();
-			compoundContextActivationService.removeContextActivationService(
-				contextActivationService);
-		}
+		Set activeContextIds = new HashSet();
 
-		Set additions = new HashSet();
+		if (this.workbenchCompoundContextActivationService != null)
+			activeContextIds.addAll(
+				workbenchCompoundContextActivationService
+					.getActiveContextIds());
 
 		if (this.workbenchPageCompoundContextActivationService != null)
-			additions.add(this.workbenchPageCompoundContextActivationService);
+			activeContextIds.addAll(
+				workbenchPageCompoundContextActivationService
+					.getActiveContextIds());
 
 		if (this.workbenchPartSiteMutableContextActivationService != null)
-			additions.add(
-				this.workbenchPartSiteMutableContextActivationService);
+			activeContextIds.addAll(
+				workbenchPartSiteMutableContextActivationService
+					.getActiveContextIds());
 
-		for (Iterator iterator = additions.iterator(); iterator.hasNext();) {
-			IContextActivationService contextActivationService =
-				(IContextActivationService) iterator.next();
-			compoundContextActivationService.addContextActivationService(
-				contextActivationService);
-		}
+		setActiveContextIds(activeContextIds);
 	}
 }

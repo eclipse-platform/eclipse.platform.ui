@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
-
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 public final class ExtensionCommandRegistry extends AbstractCommandRegistry {

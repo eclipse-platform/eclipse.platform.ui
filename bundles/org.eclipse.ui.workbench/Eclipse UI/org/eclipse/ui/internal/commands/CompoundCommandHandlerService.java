@@ -22,7 +22,6 @@ import org.eclipse.ui.commands.ICommandHandlerService;
 import org.eclipse.ui.commands.ICommandHandlerServiceListener;
 import org.eclipse.ui.commands.ICompoundCommandHandlerService;
 import org.eclipse.ui.commands.IHandler;
-
 import org.eclipse.ui.internal.util.Util;
 
 public final class CompoundCommandHandlerService
@@ -31,7 +30,7 @@ public final class CompoundCommandHandlerService
 	private final ICommandHandlerServiceListener commandHandlerServiceListener =
 		new ICommandHandlerServiceListener() {
 		public void commandHandlerServiceChanged(CommandHandlerServiceEvent commandHandlerServiceEvent) {
-			refreshHandlersByCommandId();
+			update();
 		}
 	};
 	private final HashSet commandHandlerServices = new HashSet();
@@ -47,28 +46,11 @@ public final class CompoundCommandHandlerService
 		commandHandlerService.addCommandHandlerServiceListener(
 			commandHandlerServiceListener);
 		commandHandlerServices.add(commandHandlerService);
-		refreshHandlersByCommandId();
+		update();
 	}
 
 	public Map getHandlersByCommandId() {
 		return Collections.unmodifiableMap(handlersByCommandId);
-	}
-
-	private void refreshHandlersByCommandId() {
-		Map handlersByCommandId = new HashMap();
-
-		for (Iterator iterator = commandHandlerServices.iterator();
-			iterator.hasNext();
-			) {
-			ICommandHandlerService commandHandlerService =
-				(ICommandHandlerService) iterator.next();
-
-			// TODO: should do the intersection here!
-			handlersByCommandId.putAll(
-				commandHandlerService.getHandlersByCommandId());
-		}
-
-		setHandlersByCommandId(handlersByCommandId);
 	}
 
 	public void removeCommandHandlerService(ICommandHandlerService commandHandlerService) {
@@ -78,10 +60,10 @@ public final class CompoundCommandHandlerService
 		commandHandlerServices.remove(commandHandlerService);
 		commandHandlerService.removeCommandHandlerServiceListener(
 			commandHandlerServiceListener);
-		refreshHandlersByCommandId();
+		update();
 	}
 
-	public void setHandlersByCommandId(Map handlersByCommandId) {
+	private void setHandlersByCommandId(Map handlersByCommandId) {
 		handlersByCommandId =
 			Util.safeCopy(handlersByCommandId, String.class, IHandler.class);
 		boolean commandHandlerServiceChanged = false;
@@ -92,5 +74,35 @@ public final class CompoundCommandHandlerService
 			fireCommandHandlerServiceChanged(
 				new CommandHandlerServiceEvent(this, true));
 		}
+	}
+
+	private void update() {
+		Map handlersByCommandId = new HashMap();
+
+		for (Iterator iterator = commandHandlerServices.iterator();
+			iterator.hasNext();
+			) {
+			ICommandHandlerService commandHandlerService =
+				(ICommandHandlerService) iterator.next();
+
+			for (Iterator iterator2 =
+				commandHandlerService
+					.getHandlersByCommandId()
+					.entrySet()
+					.iterator();
+				iterator2.hasNext();
+				) {
+				Map.Entry entry = (Map.Entry) iterator2.next();
+				String commandId = (String) entry.getKey();
+				IHandler handler = (IHandler) entry.getValue();
+
+				if (handlersByCommandId.containsKey(commandId))
+					handlersByCommandId.put(commandId, null);
+				else
+					handlersByCommandId.put(commandId, handler);
+			}
+		}
+
+		setHandlersByCommandId(handlersByCommandId);
 	}
 }

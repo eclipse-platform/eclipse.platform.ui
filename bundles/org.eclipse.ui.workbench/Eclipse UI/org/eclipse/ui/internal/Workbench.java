@@ -82,7 +82,6 @@ import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.application.WorkbenchAdvisor;
-import org.eclipse.ui.commands.CommandManagerFactory;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeySequenceBinding;
@@ -763,8 +762,8 @@ public final class Workbench implements IWorkbench {
 		// begin the initialization of the activity, command, and context mangers
 		
 		workbenchActivitySupport = new WorkbenchActivitySupport();
-		workbenchCommandSupport = new WorkbenchCommandSupport(this);
-		workbenchContextSupport = new WorkbenchContextSupport(this);
+		workbenchCommandSupport = new WorkbenchCommandSupport();
+		workbenchContextSupport = new WorkbenchContextSupport();
 		
 		workbenchCommandSupport.getCommandManager().addCommandManagerListener(
 				workbenchCommandsAndContexts.commandManagerListener);
@@ -844,7 +843,7 @@ public final class Workbench implements IWorkbench {
 		display.addFilter(SWT.KeyUp, keyboard.getKeyUpFilter());
 		addWindowListener(workbenchCommandsAndContexts.windowListener);
 		workbenchCommandsAndContexts.updateActiveIds();		
-		
+
 		// end the initialization of the activity, command, and context managers
 
 		

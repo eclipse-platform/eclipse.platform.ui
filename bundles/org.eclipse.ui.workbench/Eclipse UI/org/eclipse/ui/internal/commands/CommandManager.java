@@ -28,9 +28,7 @@ import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.swt.SWT;
-
 import org.eclipse.ui.commands.CategoryEvent;
 import org.eclipse.ui.commands.CommandEvent;
 import org.eclipse.ui.commands.CommandManagerEvent;
@@ -42,10 +40,9 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.commands.KeyConfigurationEvent;
 import org.eclipse.ui.commands.NotDefinedException;
-import org.eclipse.ui.keys.KeySequence;
-
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.KeySequence;
 
 public final class CommandManager implements ICommandManager {
 
@@ -152,11 +149,14 @@ public final class CommandManager implements ICommandManager {
 		while (iterator.hasNext()) {
 			KeySequenceBindingDefinition keySequenceBindingDefinition =
 				(KeySequenceBindingDefinition) iterator.next();
-			String keyConfigurationId = keySequenceBindingDefinition.getKeyConfigurationId();
+			String keyConfigurationId =
+				keySequenceBindingDefinition.getKeyConfigurationId();
 			KeySequence keySequence =
 				keySequenceBindingDefinition.getKeySequence();
 
-			if (keyConfigurationId == null || keySequence == null || !validateKeySequence(keySequence))
+			if (keyConfigurationId == null
+				|| keySequence == null
+				|| !validateKeySequence(keySequence))
 				iterator.remove();
 		}
 	}
@@ -606,12 +606,15 @@ public final class CommandManager implements ICommandManager {
 				activeKeyConfigurationId = null;
 		}
 
-		// TODO - if null, pick the first key configuration in sorted order by id?
-		if (activeKeyConfigurationId == null && !keyConfigurationDefinitionsById.isEmpty()) {
-			SortedSet sortedSet = new TreeSet(keyConfigurationDefinitionsById.keySet());
-			activeKeyConfigurationId = (String) sortedSet.first(); 
-		}		
-		
+		// TODO - if null, pick the first key configuration in sorted order by
+		// id?
+		if (activeKeyConfigurationId == null
+			&& !keyConfigurationDefinitionsById.isEmpty()) {
+			SortedSet sortedSet =
+				new TreeSet(keyConfigurationDefinitionsById.keySet());
+			activeKeyConfigurationId = (String) sortedSet.first();
+		}
+
 		this.categoryDefinitionsById = categoryDefinitionsById;
 		this.commandDefinitionsById = commandDefinitionsById;
 		this.keyConfigurationDefinitionsById = keyConfigurationDefinitionsById;
@@ -768,7 +771,7 @@ public final class CommandManager implements ICommandManager {
 		}
 	}
 
-	public void setActiveActivityIds(Set activeActivityIds) {		
+	public void setActiveActivityIds(Set activeActivityIds) {
 		activeActivityIds = Util.safeCopy(activeActivityIds, String.class);
 		boolean commandManagerChanged = false;
 		Map commandEventsByCommandId = null;

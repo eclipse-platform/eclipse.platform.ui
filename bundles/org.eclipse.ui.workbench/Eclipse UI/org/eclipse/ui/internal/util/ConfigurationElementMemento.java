@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.util;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.ui.IMemento;
 
 public final class ConfigurationElementMemento implements IMemento {

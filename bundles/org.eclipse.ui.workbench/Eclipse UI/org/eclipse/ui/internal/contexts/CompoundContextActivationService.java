@@ -21,18 +21,16 @@ import org.eclipse.ui.contexts.ContextActivationServiceEvent;
 import org.eclipse.ui.contexts.ICompoundContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
-
 import org.eclipse.ui.internal.util.Util;
 
 public final class CompoundContextActivationService
 	extends AbstractContextActivationService
 	implements ICompoundContextActivationService {
 	private Set activeContextIds = new HashSet();
-
 	private final IContextActivationServiceListener contextActivationServiceListener =
 		new IContextActivationServiceListener() {
 		public void contextActivationServiceChanged(ContextActivationServiceEvent contextActivationServiceEvent) {
-			refreshActiveContextIds();
+			update();
 		}
 	};
 	private final HashSet contextActivationServices = new HashSet();
@@ -47,26 +45,11 @@ public final class CompoundContextActivationService
 		contextActivationService.addContextActivationServiceListener(
 			contextActivationServiceListener);
 		contextActivationServices.add(contextActivationService);
-		refreshActiveContextIds();
+		update();
 	}
 
 	public Set getActiveContextIds() {
 		return Collections.unmodifiableSet(activeContextIds);
-	}
-
-	private void refreshActiveContextIds() {
-		Set activeContextIds = new HashSet();
-
-		for (Iterator iterator = contextActivationServices.iterator();
-			iterator.hasNext();
-			) {
-			IContextActivationService contextActivationService =
-				(IContextActivationService) iterator.next();
-			activeContextIds.addAll(
-				contextActivationService.getActiveContextIds());
-		}
-
-		setActiveContextIds(activeContextIds);
 	}
 
 	public void removeContextActivationService(IContextActivationService contextActivationService) {
@@ -76,7 +59,7 @@ public final class CompoundContextActivationService
 		contextActivationServices.remove(contextActivationService);
 		contextActivationService.removeContextActivationServiceListener(
 			contextActivationServiceListener);
-		refreshActiveContextIds();
+		update();
 	}
 
 	private void setActiveContextIds(Set activeContextIds) {
@@ -89,5 +72,20 @@ public final class CompoundContextActivationService
 			fireContextActivationServiceChanged(
 				new ContextActivationServiceEvent(this, true));
 		}
+	}
+
+	private void update() {
+		Set activeContextIds = new HashSet();
+
+		for (Iterator iterator = contextActivationServices.iterator();
+			iterator.hasNext();
+			) {
+			IContextActivationService contextActivationService =
+				(IContextActivationService) iterator.next();
+			activeContextIds.addAll(
+				contextActivationService.getActiveContextIds());
+		}
+
+		setActiveContextIds(activeContextIds);
 	}
 }
