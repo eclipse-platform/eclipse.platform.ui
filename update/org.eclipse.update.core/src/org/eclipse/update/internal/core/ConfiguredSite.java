@@ -1036,24 +1036,31 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 			if (productId != null) {
 				File file = new File(siteLocation, PRIVATE_SITE_MARKER);
 				if (!file.exists()) {
-					PrintWriter w = null;
+					OutputStream out = null;
+					OutputStreamWriter outWriter = null;
 					try {
-						OutputStream out = new FileOutputStream(file);
-						OutputStreamWriter outWriter = new OutputStreamWriter(out, "UTF8"); //$NON-NLS-1$
-						BufferedWriter buffWriter = new BufferedWriter(outWriter);
-						w = new PrintWriter(buffWriter);
-						w.println("id=" + productId);
+						out = new FileOutputStream(file);
+						outWriter = new OutputStreamWriter(out, "UTF8"); //$NON-NLS-1$
+						outWriter.write("id=" + productId+"\n");
 						if (productName != null)
-							w.println("name=" + productName);
+							outWriter.write("name=" + productName+"\n");
 						if (productVer != null)
-							w.println("version=" + productVer);
+							outWriter.write("version=" + productVer+"\n");
 						success = true;
 						justCreated = true;
 					} catch (Exception e) {
 						UpdateCore.warn("Unable to create private Marker at:" + file, e);
 					} finally {
-						if (w != null)
-							w.close();
+						try {
+							if (outWriter != null)
+								outWriter.close();
+						} catch (IOException e1) {
+						}
+						try {
+							if (out != null)
+								out.close();
+						} catch (IOException e2) {
+						}
 					}
 				}
 			}
