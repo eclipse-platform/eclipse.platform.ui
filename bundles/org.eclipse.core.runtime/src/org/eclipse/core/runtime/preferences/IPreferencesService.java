@@ -547,4 +547,46 @@ public interface IPreferencesService {
 	 */
 	public void setDefaultLookupOrder(String qualifier, String key, String[] order);
 
+	/**
+	 * Export the preference tree rooted at the given node, to the specified output
+	 * stream. Apply the given list of preference transfers as filters, only exporting
+	 * preference node and keys which are applicable to at least one transfer in the list.
+	 * <p>
+	 * If the list of transfers is <code>null</code> or empty then do nothing.
+	 * </p>
+	 * <p>
+	 * It is the responsibility of the client to close the given output stream.
+	 * </p>
+	 * 
+	 * @param tree the tree to export
+	 * @param transfers the list of transfers to export
+	 * @param stream the stream to export to
+	 * @throws CoreException
+	 */
+	public void exportPreferences(IEclipsePreferences tree, OutputStream stream, IPreferenceTransfer[] transfers) throws CoreException;
+
+	/**
+	 * Return a list of transfers which match the given tree. If the specified list of transfers is
+	 * <code>null</code>, empty, or there are no matches, then return an empty list.
+	 * 
+	 * @param tree the tree to match against
+	 * @param transfers the list of transfers to match against
+	 * @return the array of matching transfers
+	 * @throws CoreException
+	 */
+	public IPreferenceTransfer[] matches(IEclipsePreferences tree, IPreferenceTransfer[] transfers) throws CoreException;
+
+	/**
+	 * Apply the preference tree rooted at the given node, to the system's preference tree.
+	 * The list of preference transfers will act as a filter and only preferences in the tree which
+	 * apply to at least one transfer in the list, will be applied.
+	 * <p>
+	 * If the list of transfers is <code>null</code> or empty then do nothing.
+	 * </p>
+	 * 
+	 * @param tree the tree to consider applying
+	 * @param transfers the filters to use
+	 * @throws CoreException
+	 */
+	public void applyPreferences(IEclipsePreferences tree, IPreferenceTransfer[] transfers) throws CoreException;
 }

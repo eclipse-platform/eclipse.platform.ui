@@ -1205,7 +1205,7 @@ public class EclipsePreferencesTest extends RuntimeTest {
 			fail("0.0", e);
 		}
 		try {
-			service.exportPreferences(rootPreferences, new FileOutputStream(file), null);
+			service.exportPreferences(rootPreferences, new FileOutputStream(file), (String[]) null);
 		} catch (FileNotFoundException e) {
 			fail("1.0", e);
 		} catch (CoreException e) {

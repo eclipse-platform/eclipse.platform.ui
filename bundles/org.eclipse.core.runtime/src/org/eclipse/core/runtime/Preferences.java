@@ -322,7 +322,7 @@ public class Preferences {
 		try {
 			output = new BufferedOutputStream(new FileOutputStream(file));
 			IEclipsePreferences node = (IEclipsePreferences) service.getRootNode().node(Plugin.PLUGIN_PREFERENCE_SCOPE);
-			service.exportPreferences(node, output, null);
+			service.exportPreferences(node, output, (String[]) null);
 		} catch (FileNotFoundException e) {
 			String message = NLS.bind(Messages.preferences_errorWriting, file, e.getMessage());
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
