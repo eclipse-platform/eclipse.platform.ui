@@ -433,4 +433,17 @@ public DecoratorManager getDecoratorManager(){
 		decoratorManager = new DecoratorManager();
 	return decoratorManager;
 }
+
+/**
+ * @see AbstractUIPlugin.
+ */
+protected void refreshPluginActions() {
+	/* 
+	 * This method overrides the default implementation.  
+	 * When it is called, the WorkbenchPlugin itself is not 
+	 * available, so we can't refresh our actions.  Besides, there is 
+	 * no reason to because we are the workbench.
+	 */
+}	
+
 }

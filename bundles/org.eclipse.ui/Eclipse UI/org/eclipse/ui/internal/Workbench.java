@@ -967,8 +967,12 @@ private boolean asyncRestoreSnapshot(final File stateFile) {
 	}
 }
 
-	/*
-	 * @see IWorkbench#refreshPluginActions(String)
+	/**
+	 * Creates the action delegate for each action extension contributed by
+	 * a particular plugin.  The delegates are only created if the
+	 * plugin itself has been activated.
+	 * 
+	 * @param pluginId the plugin id.
 	 */
 	public void refreshPluginActions(String pluginId) {
 		WWinPluginAction.refreshActionList();

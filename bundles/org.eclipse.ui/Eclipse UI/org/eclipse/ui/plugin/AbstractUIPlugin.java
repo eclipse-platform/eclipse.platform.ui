@@ -371,7 +371,15 @@ protected void loadPreferenceStore() {
 	}
 	return;
 }
-	
+/**
+ * Refreshes the actions for the plugin.
+ * This method is called from <code>startup</code>.
+ * Subclasses may extend this, but are not expected to.
+ */
+protected void refreshPluginActions() {
+	Workbench wb = (Workbench)PlatformUI.getWorkbench();
+	wb.refreshPluginActions(getDescriptor().getUniqueIdentifier());
+}	
 /**
  * Saves this plug-in's dialog settings.
  * Any problems which arise are silently ignored.
@@ -401,6 +409,15 @@ protected void savePreferenceStore() {
 	}
 	catch (IOException e) {
 	}
+}
+
+/**
+ * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
+ * method refreshes the plugin actions.  Subclasses may extend this method,
+ * but must send super first.
+ */
+public void startup() throws CoreException {
+	refreshPluginActions();
 }
 /**
  * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
