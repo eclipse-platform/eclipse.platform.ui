@@ -1686,11 +1686,20 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	/**
 	 * Notification the 'delete' button has been pressed
 	 */
-	protected void handleDeletePressed() {
+	protected void handleDeletePressed() {		
 		IStructuredSelection selection = getTreeViewerSelection();
+		
 		// The 'Delete' button is disabled if the selection contains anything other than configurations (no types)
 		ILaunchConfiguration firstSelectedConfig = (ILaunchConfiguration) selection.getFirstElement();
 		ILaunchConfigurationType firstSelectedConfigType = null;
+
+		// Make the user confirm the deletion
+		String dialogMessage = selection.size() > 1 ? LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Do_you_wish_to_delete_the_selected_launch_configurations__1") : LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Do_you_wish_to_delete_the_selected_launch_configuration__2"); //$NON-NLS-1$ //$NON-NLS-2$
+		boolean ok = MessageDialog.openQuestion(this.getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Confirm_Launch_Configuration_Deletion_3"), dialogMessage); //$NON-NLS-1$
+		if (!ok) {
+			return;
+		}
+
 		try {
 			firstSelectedConfigType = firstSelectedConfig.getType();
 		} catch (CoreException ce) {
