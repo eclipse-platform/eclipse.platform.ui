@@ -123,7 +123,7 @@ function doAdvancedSearch()
 		}
 		
 		// persist selection
-		//window.opener.saveSelectedBooks(getSelectedBooks());
+		window.opener.saveSelectedBooks(getSelectedBooks());
 		
 		window.opener.document.forms["searchForm"].searchWord.value = searchWord;
 		var query = "searchWord="+escape(searchWord)+"&maxHits="+maxHits + scope;

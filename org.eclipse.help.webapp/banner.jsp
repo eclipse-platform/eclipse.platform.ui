@@ -98,7 +98,7 @@ function saveSelectedBooks(books)
 {
 	selectedBooks = new Array(books.length);
 	for (var i=0; i<selectedBooks.length; i++){
-		selectedBooks[i] = books[i];
+		selectedBooks[i] = new String(books[i]);
 	}
 }
 
