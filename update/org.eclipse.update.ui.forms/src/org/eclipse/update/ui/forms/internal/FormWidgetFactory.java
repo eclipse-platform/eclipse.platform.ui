@@ -17,14 +17,11 @@ import org.eclipse.update.ui.forms.internal.engine.FormEngine;
 
 public class FormWidgetFactory {
 	public static final String DEFAULT_HEADER_COLOR = "__default__header__";
-	public static final String COLOR_BACKGROUND = "__bg";
 	public static final String COLOR_BORDER = "__border";
 	public static final String COLOR_COMPOSITE_SEPARATOR = "__compSep";
-	public static final String COLOR_HYPERLINK = "__hyperlink";
 
 	private Hashtable colorRegistry = new Hashtable();
 	private Color backgroundColor;
-	private Color clientAreaColor;
 	private KeyListener deleteListener;
 	private Color foregroundColor;
 	private Display display;
@@ -274,7 +271,7 @@ public class FormWidgetFactory {
 		Text text = new Text(parent, style);
 		if (value != null)
 			text.setText(value);
-		text.setBackground(clientAreaColor);
+		text.setBackground(backgroundColor);
 		text.setForeground(foregroundColor);
 		text.addFocusListener(visibilityHandler);
 		return text;
@@ -318,9 +315,6 @@ public class FormWidgetFactory {
 	public Cursor getBusyCursor() {
 		return hyperlinkHandler.getBusyCursor();
 	}
-	public Color getClientAreaColor() {
-		return clientAreaColor;
-	}
 	public Color getColor(String key) {
 		return (Color) colorRegistry.get(key);
 	}
@@ -355,12 +349,10 @@ public class FormWidgetFactory {
 		control.addKeyListener(deleteListener);
 	}
 	private void initialize() {
-		clientAreaColor = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		backgroundColor = display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		registerColor(COLOR_BORDER, 195, 191, 179);
 		registerColor(COLOR_COMPOSITE_SEPARATOR, 152, 170, 203);
 		registerColor(DEFAULT_HEADER_COLOR, 0x48, 0x70, 0x98);
-		backgroundColor = clientAreaColor;
-		//borderColor = getColor(COLOR_BORDER);
 		if (isWhiteBackground())
 			borderColor = getColor(COLOR_BORDER);
 		else
@@ -396,6 +388,9 @@ public class FormWidgetFactory {
 		Color c = new Color(display, r, g, b);
 		colorRegistry.put(key, c);
 		return c;
+	}
+	public void setBackgroundColor(Color color) {
+		backgroundColor = color;
 	}
 	public void setHyperlinkColor(Color color) {
 		hyperlinkHandler.setForeground(color);
