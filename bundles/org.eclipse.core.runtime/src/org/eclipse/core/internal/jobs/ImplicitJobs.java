@@ -89,7 +89,7 @@ class ImplicitJobs {
 		/**
 		 * Schedule the job and block the calling thread until the job starts running
 		 */
-		synchronized void joinRun(IProgressMonitor monitor) {
+		void joinRun(IProgressMonitor monitor) {
 			if (monitor.isCanceled())
 				throw new OperationCanceledException();
 			running = false;
@@ -111,9 +111,13 @@ class ImplicitJobs {
 						blocker = manager.getBlockingThread(this);
 						if (manager.getLockManager().aboutToWait(blocker))
 							break;
-						try {
-							wait(250);
-						} catch (InterruptedException e) {
+						//must lock instance before calling wait, and also to ensure
+						//local thread cache of 'running' field is reconciled
+						synchronized (this) {
+							try {
+								wait(250);
+							} catch (InterruptedException e) {
+							}
 						}
 					}
 				} finally {
