@@ -708,7 +708,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
     }
 
 
-    String openNode(AntElementNode node) {
+    private String openNode(AntElementNode node) {
 		String errorMessage= null;
 		if (node.isExternal()) {
 			String path= node.getFilePath();
