@@ -30,7 +30,6 @@ import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -43,7 +42,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
@@ -331,7 +329,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 */
 	private void setExecuteInput(Object input) {
 		fTableViewer.setInput(input);
-		updateItemColoring(fTableViewer);
 		updateSelectionCount();
 	}
 
@@ -369,21 +366,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 */
 	public String getName() {
 		return AntLaunchConfigurationMessages.getString("AntTargetsTab.Tar&gets_14"); //$NON-NLS-1$
-	}
-
-	private void updateItemColoring(TableViewer viewer) {
-		if (viewer != null &&  !viewer.getTable().isDisposed()) {
-			TableItem[] items = viewer.getTable().getItems();
-			for (int i = 0; i < items.length; i++) {
-				TableItem item = items[i];
-				TargetInfo info = (TargetInfo) item.getData();
-				if (info.isDefault()) {
-					item.setForeground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_BLUE));
-				} else {
-					item.setForeground(null);
-				}
-			}
-		}
 	}
 		
 	/**

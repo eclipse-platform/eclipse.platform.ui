@@ -5,16 +5,10 @@ package org.eclipse.debug.internal.ui.views.variables;
  * All Rights Reserved.
  */
  
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -63,18 +57,7 @@ public class VariablesViewer extends TreeViewer {
 	 * @see Viewer#refresh()
 	 */
 	public void refresh() {
-		getControl().setRedraw(false);
 		super.refresh();
-		
-		Item[] children = getChildren(getControl());
-		if (children != null) {
-			Color c= DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB);
-			for (int i = 0; i < children.length; i++) {
-				updateColor((TreeItem)children[i], c);
-			}
-		}
-		
-		getControl().setRedraw(true);
 		
 		if (getSelection().isEmpty() && getNewItem() != null) {
 			if (!getNewItem().isDisposed()) {
@@ -82,35 +65,6 @@ public class VariablesViewer extends TreeViewer {
 				showItem(getNewItem());
 			}
 			setNewItem(null);
-		}
-	}
-	
-	/**
-	 * Updates the color of the given item as well
-	 * as all of its children. If the item corresponds
-	 * to a variable that has changed in value,
-	 * it is rendered with the <code>CHANGED_VARIABLE_RGB</code>
-	 * generated foreground color, otherwise the default system 
-	 * color is used.
-	 * 
-	 * @param item tree item
-	 */
-	protected void updateColor(TreeItem item, Color c) {
-		if (item.getData() instanceof IVariable) {
-			IVariable var = (IVariable)item.getData();
-			try {
-				if (var.hasValueChanged()) {
-					item.setForeground(c);
-				} else {
-					item.setForeground(null);
-				}
-			} catch (DebugException e) {
-				DebugUIPlugin.log(e);
-			}
-		}
-		TreeItem[] children = item.getItems();
-		for (int i = 0; i < children.length; i++) {
-			updateColor(children[i], c);
 		}
 	}
 	

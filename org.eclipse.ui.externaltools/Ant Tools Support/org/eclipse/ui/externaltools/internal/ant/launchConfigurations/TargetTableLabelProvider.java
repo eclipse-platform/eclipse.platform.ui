@@ -11,9 +11,13 @@ Contributors:
 **********************************************************************/
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.model.AntImageDescriptor;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
@@ -21,7 +25,7 @@ import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 /**
  * Ant target label provider
  */
-public class TargetTableLabelProvider extends LabelProvider implements ITableLabelProvider {
+public class TargetTableLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider {
 
 	public TargetTableLabelProvider() {
 		super();
@@ -81,6 +85,21 @@ public class TargetTableLabelProvider extends LabelProvider implements ITableLab
 			return ""; //$NON-NLS-1$
 		}
 		return desc;
+	}
+
+	public Color getForeground(Object element) {
+		if (!(element instanceof TargetInfo)) {
+			return null;
+		}
+		TargetInfo info = (TargetInfo) element;
+		if (info.isDefault()) {
+			return Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
+		}
+		return null;
+	}
+
+	public Color getBackground(Object element) {
+		return null;
 	}
 
 }

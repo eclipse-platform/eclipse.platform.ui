@@ -63,7 +63,10 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -76,6 +79,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -96,6 +101,58 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 																	IValueDetailListener,
 																	IDebugExceptionHandler,
 																	INullSelectionListener {
+
+	/**
+	 * A label provider that delegates to a debug model
+	 * presentation and adds coloring to variables to
+	 * reflect their changed state
+	 */
+	class VariablesViewLabelProvider implements ILabelProvider, IColorProvider {
+		
+		private IDebugModelPresentation presentation;
+
+		public VariablesViewLabelProvider(IDebugModelPresentation presentation) {
+			this.presentation= presentation;
+		}
+		public Image getImage(Object element) {
+			return presentation.getImage(element);
+		}
+		public String getText(Object element) {
+			return presentation.getText(element);
+		}
+		public void addListener(ILabelProviderListener listener) {
+			presentation.addListener(listener);
+		}
+		public void dispose() {
+			presentation.dispose();
+		}
+		public boolean isLabelProperty(Object element, String property) {
+			return presentation.isLabelProperty(element, property);
+		}
+		public void removeListener(ILabelProviderListener listener) {
+			presentation.removeListener(listener);
+		}
+
+		public Color getForeground(Object element) {
+			if (element instanceof IVariable) {
+				IVariable variable = (IVariable) element;
+				try {
+					if (variable.hasValueChanged()) {
+						return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB);
+					}
+				} catch (DebugException e) {
+					DebugUIPlugin.log(e);
+				}
+			}
+			return null;
+		}
+
+		public Color getBackground(Object element) {
+			return null;
+		}
+	
+	}
+																		
 	/**
 	 * The selection provider for the variables view changes depending on whether
 	 * the variables viewer or detail pane source viewer have focus. This "super" 
@@ -428,7 +485,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		// add tree viewer
 		final TreeViewer variablesViewer = new VariablesViewer(getSashForm(), SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL);
 		variablesViewer.setContentProvider(createContentProvider());
-		variablesViewer.setLabelProvider(getModelPresentation());
+		variablesViewer.setLabelProvider(new VariablesViewLabelProvider(getModelPresentation()));
 		variablesViewer.setUseHashlookup(true);
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
 			/**

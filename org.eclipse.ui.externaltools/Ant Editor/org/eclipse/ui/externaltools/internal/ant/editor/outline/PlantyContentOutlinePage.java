@@ -41,6 +41,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -50,12 +51,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.TreeEvent;
-import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.DynamicReconciling;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
@@ -147,7 +147,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 	/**
 	 * The label provider for the objects shown in the outline view.
 	 */
-	private class PlantyLabelProvider implements ILabelProvider {
+	private class PlantyLabelProvider implements ILabelProvider, IColorProvider {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(ILabelProviderListener)
 		 */
@@ -229,6 +229,17 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 				displayName.append(AntOutlineMessages.getString("PlantyContentOutlinePage._[external]_1")); //$NON-NLS-1$
 			}
 			return displayName.toString();
+		}
+
+		public Color getForeground(Object element) {
+			if (isDefaultTargetNode((XmlElement) element)) {
+				return Display.getDefault().getSystemColor(SWT.COLOR_BLUE);
+			}
+			return null;
+		}
+
+		public Color getBackground(Object element) {
+			return null;
 		}
 	}
 	
@@ -315,18 +326,9 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 
 		IPageSite site= getSite();
 		site.registerContextMenu(IExternalToolConstants.PLUGIN_ID + ".antEditorOutline", manager, viewer); //$NON-NLS-1$
-				
-		updateColor();
+		
 		openWithMenu= new AntOpenWithMenu(this.getSite().getPage());
 		
-		viewer.getTree().addTreeListener(new TreeListener() {
-			public void treeCollapsed(TreeEvent e) {
-			}
-
-			public void treeExpanded(TreeEvent e) {
-				updateColor((TreeItem)e.item);
-			}
-		});
 	}
 	
 	private void contextMenuAboutToShow(IMenuManager menu) {	
@@ -710,36 +712,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage implements ISho
 		getControl().setRedraw(false);
 		getTreeViewer().setInput(contentOutline);
 		getTreeViewer().expandToLevel(2);
-		updateColor();
 		getControl().setRedraw(true);
-	}
-	
-	/**
-	 * Recolors the tree items for the default target coloring
-	 */
-	private void updateColor() {
-		TreeItem[] items= getTreeViewer().getTree().getItems();
-		for (int i = 0; i < items.length; i++) {
-			updateColor(items[i]);
-		}
-	}
-	
-	/**
-	 * Recolors a tree item and all its children for the default target coloring
-	 */
-	private void updateColor(TreeItem item) {
-		if (item.getData() == null) {
-			return;
-		}
-		if (isDefaultTargetNode((XmlElement) item.getData())) {
-			item.setForeground(getControl().getDisplay().getSystemColor(SWT.COLOR_BLUE));
-		} else {
-			item.setForeground(null);
-		}
-		TreeItem[] children= item.getItems();
-		for (int i = 0; i < children.length; i++) {
-			updateColor(children[i]);
-		}
 	}
 
 	/* (non-Javadoc)
