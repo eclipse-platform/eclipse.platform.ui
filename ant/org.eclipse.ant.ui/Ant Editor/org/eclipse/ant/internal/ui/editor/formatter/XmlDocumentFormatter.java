@@ -18,6 +18,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
 import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
@@ -373,20 +374,17 @@ public class XmlDocumentFormatter {
 
     }
 
-    public void format(TemplateBuffer templateBuffer, AntContext antContext, FormattingPreferences prefs) {
-    	
-		//IPreferenceStore prefs= AntUIPlugin.getDefault().getPreferenceStore();
-		//boolean useCodeFormatter= prefs.getBoolean(IAntUIPreferenceConstants.TEMPLATES_USE_CODEFORMATTER);		
-    	
+    public void format(TemplateBuffer templateBuffer, AntContext antContext, FormattingPreferences prefs) {	
     	String templateString= templateBuffer.getString();
     	IDocument fullDocument= antContext.getDocument();
     	
     	int completionOffset= antContext.getCompletionOffset();
     	try {
+    		//trim any starting whitespace
 			IRegion lineRegion= fullDocument.getLineInformationOfOffset(completionOffset);
 			String lineString= fullDocument.get(lineRegion.getOffset(), lineRegion.getLength());
 			lineString.trim();
-			fullDocument.replace(lineRegion.getOffset(), completionOffset, lineString);
+			fullDocument.replace(lineRegion.getOffset(), lineRegion.getLength(), lineString);
 		} catch (BadLocationException e1) {
 			return;
 		}

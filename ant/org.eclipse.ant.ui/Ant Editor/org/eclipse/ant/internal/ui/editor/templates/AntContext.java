@@ -40,7 +40,7 @@ public class AntContext extends DocumentTemplateContext {
 
 		TemplateBuffer templateBuffer= super.evaluate(template);
 		
-		if (template == null) {
+		if (templateBuffer == null) {
 			return null;
 		}
 	
