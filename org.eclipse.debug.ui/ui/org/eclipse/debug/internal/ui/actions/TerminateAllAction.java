@@ -6,37 +6,53 @@ package org.eclipse.debug.internal.ui.actions;
  */
  
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.action.Action;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 
 /**
  * Terminates all launches.
  */
-public class TerminateAllAction extends Action implements IUpdate {
+public class TerminateAllAction extends AbstractListenerActionDelegate {
 	
 	public TerminateAllAction() {
-		super(ActionMessages.getString("TerminateAllAction.Termi&nate_All_1")); //$NON-NLS-1$
-		setToolTipText(ActionMessages.getString("TerminateAllAction.Terminate_All_2")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.TERMINATE_ALL_ACTION);
-		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TERMINATE_ALL));
-		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_ALL));
-		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_ALL));
+	}
+	
+	protected void doAction(Object element) {
+	}
+	
+	protected void update() {
+		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
+		ILaunch[] launches= lManager.getLaunches();
+		for (int i= 0; i< launches.length; i++) {
+			ILaunch launch= launches[i];
+			if (!launch.isTerminated()) {
+				getAction().setEnabled(true);
+				return;
+			}
+		}
+		getAction().setEnabled(false);
 	}
 
 	/**
-	 * @see Action#run()
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
-	public void run() {
+	public void selectionChanged(IAction action, ISelection selection) {
+		setAction(action);
+	}
+
+	/**
+	 * @see IActionDelegate#run(IAction)
+	 */
+	public void run(IAction action) {
 		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
 		ILaunch[] launches= lManager.getLaunches();
 		MultiStatus ms = new MultiStatus(DebugPlugin.getDefault().getDescriptor().getUniqueIdentifier(), 
@@ -57,18 +73,29 @@ public class TerminateAllAction extends Action implements IUpdate {
 	}
 
 	/**
-	 * Updates the enabled state of this action.
+	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
 	 */
-	public void update() {
-		ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-		ILaunch[] launches= lManager.getLaunches();
-		for (int i= 0; i< launches.length; i++) {
-			ILaunch launch= launches[i];
-			if (!launch.isTerminated()) {
-				setEnabled(true);
-				return;
-			}
-		}
-		setEnabled(false);
+	protected boolean isEnabledFor(Object element) {
+		return true;
 	}
+
+	/**
+	 * @see AbstractDebugActionDelegate#setActionImages(IAction)
+	 */
+	protected void setActionImages(IAction action) {
+		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_TERMINATE_ALL));
+		action.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_TERMINATE_ALL));
+		action.setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_TERMINATE_ALL));
+	}
+
+	protected void doHandleDebugEvent(DebugEvent event) {
+		switch (event.getKind()) {
+			case DebugEvent.TERMINATE :
+				update();
+				break;
+			case DebugEvent.CREATE :
+				update();
+				break;
+		}
+	}		
 }

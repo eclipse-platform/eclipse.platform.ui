@@ -22,7 +22,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.actions.TerminateAllAction;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ISourcePresentation;
 import org.eclipse.jface.action.GroupMarker;
@@ -116,7 +115,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @see AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
-		setAction("TerminateAll", new TerminateAllAction()); //$NON-NLS-1$
 		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider())); //$NON-NLS-1$
 				
 		// submit an async exec to update the selection once the
@@ -600,7 +598,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		menu.add(new Separator(IDebugUIConstants.THREAD_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_LAUNCH_GROUP));
 		menu.add(new Separator(IDebugUIConstants.LAUNCH_GROUP));
-		menu.add(getAction("TerminateAll")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.PROPERTY_GROUP));
