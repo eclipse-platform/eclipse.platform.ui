@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
 public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 	ImportProjectSetMainPage mainPage;
 	public static String lastFile;
-		
+
 	public ProjectSetImportWizard() {
 		setNeedsProgressMonitor(true);
 		setWindowTitle(Policy.bind("ProjectSetImportWizard.Project_Set_1")); //$NON-NLS-1$
@@ -49,7 +49,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 	public boolean performFinish() {
 		final boolean[] result = new boolean[] {false};
 		try {
-			getContainer().run(false, false, new IRunnableWithProgress() {
+			getContainer().run(true, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					InputStreamReader reader = null;
 					try {

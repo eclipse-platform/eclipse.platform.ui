@@ -99,13 +99,15 @@ public class ProjectSetExportWizard extends Wizard implements IExportWizard {
 						for (int i = 0; i < projects.length; i++) {
 							IProject project = projects[i];
 							RepositoryProvider provider = RepositoryProvider.getProvider(project);
-							String id = provider.getID();
-							List list = (List)map.get(id);
-							if (list == null) {
-								list = new ArrayList();
-								map.put(id, list);
+							if (provider != null) {
+								String id = provider.getID();
+								List list = (List)map.get(id);
+								if (list == null) {
+									list = new ArrayList();
+									map.put(id, list);
+								}
+								list.add(project);
 							}
-							list.add(project);
 						}
 						
 						// For each provider id, do the writing

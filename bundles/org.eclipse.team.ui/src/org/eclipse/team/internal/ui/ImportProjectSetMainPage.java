@@ -41,16 +41,15 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		Composite composite = createComposite(parent, 1);
 		initializeDialogUnits(composite);
 		
-		createLabel(composite, Policy.bind("ImportProjectSetMainPage.Project_Set_File_Name__2")); //$NON-NLS-1$
-		
 		Composite inner = new Composite(composite, SWT.NULL);
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		inner.setLayout(layout);
 		
+		createLabel(inner, Policy.bind("ImportProjectSetMainPage.Project_Set_File_Name__2")); //$NON-NLS-1$
 		fileText = createTextField(inner);
 		if (file != null) fileText.setText(file);
 		fileText.addListener(SWT.Modify, new Listener() {
