@@ -19,7 +19,6 @@ import java.util.Map;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -27,7 +26,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -50,13 +48,11 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.ide.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.part.EditorInputTransfer;
 import org.eclipse.ui.part.MarkerTransfer;
@@ -532,27 +528,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         label.setText(msg);
         ToolBarManager toolBarManager = new ToolBarManager();
         // TODO: should obtain the open perspective action from ActionFactory
-        IAction openPerspectiveAction = new Action() {
-            { setToolTipText(IDEWorkbenchMessages.IDEWorkbenchAdvisor_openPerspective);
-              setImageDescriptor(WorkbenchImages.getImageDescriptor(
-                    IWorkbenchGraphicConstants.IMG_ETOOL_NEW_PAGE));
-            }
-            public void run() {
-                SelectPerspectiveDialog dlg = new SelectPerspectiveDialog(window.getShell(),
-                        window.getWorkbench().getPerspectiveRegistry());
-                dlg.open();
-                if (dlg.getReturnCode() == Window.CANCEL)
-                    return;
-                IPerspectiveDescriptor desc = dlg.getSelection();
-                if (desc != null) {
-                    try {
-                        window.openPage(desc.getId(), wbAdvisor.getDefaultPageInput());
-                    } catch (WorkbenchException e) {
-                        IDEWorkbenchPlugin.log("Error opening page", e); //$NON-NLS-1$
-                    }
-                }
-            }
-        };
+        IAction openPerspectiveAction = ActionFactory.OPEN_PERSPECTIVE_DIALOG.create(window);
         toolBarManager.add(openPerspectiveAction);
         ToolBar toolBar = toolBarManager.createControl(composite);
         toolBar.setBackground(bgCol);

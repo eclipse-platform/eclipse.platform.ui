@@ -16,7 +16,6 @@ public class IDEWorkbenchMessages extends NLS {
 	// package: org.eclipse.ui.ide
 
 	public static String IDEWorkbenchAdvisor_noPerspective;
-	public static String IDEWorkbenchAdvisor_openPerspective;
 
 	public static String IDE_noFileEditorFound;
 

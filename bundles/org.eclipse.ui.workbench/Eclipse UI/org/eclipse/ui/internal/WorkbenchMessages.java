@@ -123,8 +123,10 @@ public class WorkbenchMessages extends NLS {
 	public static String SelectPerspective_shellTitle;
 	public static String Workbench_showPerspectiveError;
 	public static String ChangeToPerspectiveMenu_errorTitle;
+    public static String OpenPerspectiveDialogAction_text;
+    public static String OpenPerspectiveDialogAction_tooltip;
 
-	public static String ShowView_title;
+    public static String ShowView_title;
 	public static String ShowView_shellTitle;
 	public static String ShowView_errorTitle;
 
