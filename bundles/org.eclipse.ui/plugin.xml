@@ -436,7 +436,7 @@
                id="org.eclipse.ui.file.properties">
          </accelerator>
          <accelerator
-               key="F9||Ctrl+X U||Ctrl+_"
+               key="F9||Ctrl+X U||Ctrl+Shift+-"
                id="org.eclipse.ui.edit.undo">
          </accelerator>
          <accelerator
@@ -1298,7 +1298,7 @@
          </accelerator>
          <accelerator
                platform="carbon"
-               key="Command+G"
+               key="Command+K"
                id="org.eclipse.ui.edit.findNext">
          </accelerator>
          <accelerator
