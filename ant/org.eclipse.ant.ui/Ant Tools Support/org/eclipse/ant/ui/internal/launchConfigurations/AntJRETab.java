@@ -169,7 +169,7 @@ public class AntJRETab extends JavaJRETab {
 		
 		//look for the tools.jar and xerces in the additional classpath entries
 		boolean foundInAdditional= lookForToolsAndXerces(urlString, userURLs, oldToolsURL, newToolsURL, xercesFlags);
-		if (!found && !foundInAdditional) {
+		if (newToolsURL != null && !found && !foundInAdditional) {
 			urlString.append(newToolsURL.getFile());
 			urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
 		}
@@ -209,7 +209,8 @@ public class AntJRETab extends JavaJRETab {
 			URL url = (URL) iter.next();
 			if (sameURL(oldToolsURL, url)) {
 				url= newToolsURL;
-				found= true;
+				found= newToolsURL != null;
+				include= found;
 			} else if (sameURL(newToolsURL, url)) {
 				found= true;
 			} else if (url.getFile().endsWith(XERCES_API)) {
@@ -263,6 +264,9 @@ public class AntJRETab extends JavaJRETab {
 	}
 	
 	private boolean sameURL(URL first, URL second) {
+		if (first == null || second == null) {
+			return false;
+		}
 		File newFile= new File(first.getFile());
 		File existingFile= new File(second.getFile());
 		if (existingFile.equals(newFile)) {
