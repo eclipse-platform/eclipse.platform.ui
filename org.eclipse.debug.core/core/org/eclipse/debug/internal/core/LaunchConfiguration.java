@@ -102,7 +102,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			if (local) {
 				location = LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.append(path);
 			} else {
-				location = new Path(path);
+				location = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path)).getLocation();
 			}
 			setLocation(location);
 			return;
@@ -380,7 +380,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			relativePath = configPath.removeFirstSegments(rootPath.segmentCount());
 			relativePath = relativePath.setDevice(null);
 		} else {
-			relativePath = getLocation();
+			relativePath = getFile().getFullPath();
 		}
 		
 		Document doc = new DocumentImpl();
