@@ -185,8 +185,9 @@ class JobInfo extends JobTreeElement {
 		if (!(arg0 instanceof JobInfo))
 			return super.compareTo(arg0);
 		JobInfo element = (JobInfo) arg0;
-		if (element.getJob().getState() == getJob().getState())
-			return getJob().getName().compareTo(getJob().getName());
+		if (element.getJob().getState() == getJob().getState()){
+			return compareJobs(getJob(),element.getJob());
+		}
 		else { //If the receiver is running and the other isn't show it higer
 			if (getJob().getState() == Job.RUNNING)
 				return -1;
@@ -302,4 +303,24 @@ class JobInfo extends JobTreeElement {
 	public boolean isCancellable() {
 		return super.isCancellable();
 	}
+	
+	/**
+	 * Compare the two jobs to see which should be higher.
+	 * @param job1
+	 * @param job2
+	 * @return
+	 */
+	private int compareJobs(Job job1, Job job2){
+		
+		if (job1.getPriority() == job2.getPriority()){
+			return job1.getName().compareTo(job2.getName());
+		}
+		
+		if (job1.getPriority() > job2.getPriority())
+			return 1;
+		else
+			return -1;
+	}
+	
+	
 }

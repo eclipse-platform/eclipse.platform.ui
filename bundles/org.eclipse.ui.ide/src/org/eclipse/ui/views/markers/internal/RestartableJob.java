@@ -96,6 +96,8 @@ public final class RestartableJob {
 				}
 			}
 		};
+		
+		theJob.setPriority(Job.DECORATE);
 	}
 	
 	/**

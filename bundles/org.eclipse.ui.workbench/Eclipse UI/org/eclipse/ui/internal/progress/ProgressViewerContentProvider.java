@@ -63,8 +63,6 @@ public class ProgressViewerContentProvider extends ProgressContentProvider
 		HashSet showing = new HashSet();
 		
 		for (int i = 0; i < elements.length; i++) {
-			if(showing.size() == progressViewer.getNumShowItems())
-				break;
 			JobTreeElement element = (JobTreeElement) elements[i];
 			if(element.isActive()){
 				if(element.isJobInfo() && ((JobInfo)element).getJob().getState() != Job.RUNNING)

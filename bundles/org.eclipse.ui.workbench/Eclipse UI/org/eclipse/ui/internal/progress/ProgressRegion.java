@@ -94,11 +94,11 @@ public class ProgressRegion {
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 		viewer.setLabelProvider(new ProgressViewerLabelProvider(viewerControl));
-		
+		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
 		return region;
 	}
 	/**
-	 * Set the info colors opf the control
+	 * Set the info colors of the control
 	 * 
 	 * @param control
 	 *            The Control to color.

@@ -149,10 +149,10 @@ public class ProgressViewer extends StructuredViewer {
 				GC gc = event.gc;
 				ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
 				
-				int itemCount = displayedItems.length;
+				int itemCount = Math.min(displayedItems.length,numShowItems);
 				
 				int yOffset = 0;
-				if(numShowItems == 1){//If there is a single item try to center it
+				if(itemCount == 1){//If there is a single item try to center it
 					Rectangle clientArea = canvas.getParent().getClientArea();
 					int size = clientArea.height;
 					yOffset = size - (fontMetrics.getHeight() * itemCount);
@@ -200,12 +200,5 @@ public class ProgressViewer extends StructuredViewer {
 		return new Point(fontWidth, fontHeight);
 	}
 	
-	/**
-	 * Get the number of items that this viewer is 
-	 * designed to show.
-	 * @return the number of items we are showing
-	 */
-	public int getNumShowItems() {
-		return numShowItems;
-	}
+
 }
