@@ -227,12 +227,12 @@ public final class IDE {
 	}
 
 	/**
-	 * Finds an editor descriptor on the given file resource.  
+	 * Returns an editor descriptor appropriate for opening the given file resource.
 	 * <p>
-	 * An appropriate editor descriptor for the file input is determined using a multistep process.
+	 * The editor descriptor is determined using a multistep process.
 	 * </p>
 	 * <ol>
-	 *   <li>The file input is consulted for a persistent property named
+	 *   <li>The file is consulted for a persistent property named
 	 *       <code>IDE.EDITOR_KEY</code> containing the preferred editor id
 	 *       to be used.</li>
 	 *   <li>The workbench editor registry is consulted to determine if an editor 
@@ -245,27 +245,27 @@ public final class IDE {
 	 * 		editor is available.</li>
 	 * </ol>
 	 * </p>
-	 * @param input The file to open the editor on.
-	 * @return IEditorDescriptor 
-	 * @throws PartInitException if no editor can be found.
+	 * @param file the file
+	 * @return an editor descriptor, appropriate for opening the file
+	 * @throws PartInitException if no editor can be found
 	 */
-	public static IEditorDescriptor getEditorDescriptor(IFile input) throws PartInitException {
+	public static IEditorDescriptor getEditorDescriptor(IFile file) throws PartInitException {
 		
-		if (input == null) {
+		if (file == null) {
 			throw new IllegalArgumentException();
 		}	
 		IEditorRegistry editorReg = PlatformUI.getWorkbench().getEditorRegistry();
 		
 		// check for a default editor
-		IEditorDescriptor editorDesc = getDefaultEditor(input);
+		IEditorDescriptor editorDesc = getDefaultEditor(file);
 		
 		// next check the OS for in-place editor (OLE on Win32)
-		if (editorDesc == null && editorReg.isSystemInPlaceEditorAvailable(input.getName())) {
+		if (editorDesc == null && editorReg.isSystemInPlaceEditorAvailable(file.getName())) {
 			editorDesc = editorReg.findEditor(IEditorRegistry.SYSTEM_INPLACE_EDITOR_ID);
 		}
 		
 		// next check with the OS for an external editor
-		if (editorDesc == null && editorReg.isSystemExternalEditorAvailable(input.getName())) {
+		if (editorDesc == null && editorReg.isSystemExternalEditorAvailable(file.getName())) {
 			editorDesc = editorReg.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 		}
 		
