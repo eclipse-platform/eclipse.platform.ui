@@ -140,7 +140,6 @@ public class InspectorView extends AbstractDebugView {
 	 */
 	public void removeAllFromInspector() {
 		fContentProvider.removeAll();
-		fViewer.setInput(null);
 	}
 	
 	/**
