@@ -43,10 +43,10 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	/** The currently shown text hover. */
 	private volatile ITextHover fTextHover;
 	/**
-	 * The current information control creator.
+	 * The custom information control creator.
 	 * @since 3.0
 	 */
-	private volatile IInformationControlCreator fCurrentInformationControlCreator;	
+	private volatile IInformationControlCreator fCustomInformationControlCreator;	
 	/**
 	 * Tells whether a custom information control is in use.
 	 * @since 3.0
@@ -129,9 +129,9 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 							information= null;
 						}
 						
-						fCurrentInformationControlCreator= null;
+						fCustomInformationControlCreator= null;
 						if (hover instanceof ITextHoverExtension)
-							fCurrentInformationControlCreator= ((ITextHoverExtension)hover).getInformationControlCreator();	
+							fCustomInformationControlCreator= ((ITextHoverExtension) hover).getInformationControlCreator();	
 						setInformation(information, area);
 						if (information != null && area != null)
 							fTextHover= hover;
@@ -334,12 +334,12 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	}
 
 	/*
-	 * @see #getInformationControl()
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#getInformationControl()
 	 * @since 3.0
 	 */
 	protected IInformationControl getInformationControl() {
 		
-		if (fCurrentInformationControlCreator == null || fDisposed) {
+		if (fCustomInformationControlCreator == null || fDisposed) {
 			if (fIsCustomInformtionControl) {
 				fInformationControl.dispose();
 				fInformationControl= null;
@@ -348,14 +348,14 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 			return super.getInformationControl();
 		}
 
-		if ((fCurrentInformationControlCreator instanceof IInformationControlCreatorExtension)
-				&& ((IInformationControlCreatorExtension)fCurrentInformationControlCreator).canBeReused(fInformationControl))
+		if ((fCustomInformationControlCreator instanceof IInformationControlCreatorExtension)
+				&& ((IInformationControlCreatorExtension) fCustomInformationControlCreator).canBeReused(fInformationControl))
 			return fInformationControl;
 
 		if (fInformationControl != null)
 			fInformationControl.dispose();
 			
-		fInformationControl= fCurrentInformationControlCreator.createInformationControl(getSubjectControl().getShell());
+		fInformationControl= fCustomInformationControlCreator.createInformationControl(getSubjectControl().getShell());
 		fIsCustomInformtionControl= true;
 		fInformationControl.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {

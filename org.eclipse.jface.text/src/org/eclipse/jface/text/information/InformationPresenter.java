@@ -63,8 +63,7 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	 * Internal information control closer. Listens to several events issued by its subject control
 	 * and closes the information control when necessary.
 	 */
-	class Closer implements IInformationControlCloser, ControlListener, MouseListener, 
-							FocusListener, IViewportListener, KeyListener {
+	class Closer implements IInformationControlCloser, ControlListener, MouseListener, FocusListener, IViewportListener, KeyListener {
 		
 		/** The subject control */
 		private Control fSubjectControl;
@@ -215,10 +214,10 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	/** The offset to override selection. */
 	private int fOffset= -1;
 	/**
-	 * The current information control creator.
+	 * The custom information control creator.
 	 * @since 3.0
 	 */
-	private IInformationControlCreator fCurrentInformationControlCreator;	
+	private IInformationControlCreator fCustomInformationControlCreator;	
 	/**
 	 * Tells whether a custom information control is in use.
 	 * @since 3.0
@@ -308,9 +307,9 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 		if (subject == null)
 			return;
 
-		fCurrentInformationControlCreator= null;
+		fCustomInformationControlCreator= null;
 		if (provider instanceof IInformationProviderExtension2)
-			fCurrentInformationControlCreator= ((IInformationProviderExtension2)provider).getInformationPresenterControlCreator();	
+			fCustomInformationControlCreator= ((IInformationProviderExtension2) provider).getInformationPresenterControlCreator();	
 
 		if (provider instanceof IInformationProviderExtension) {
 			IInformationProviderExtension extension= (IInformationProviderExtension) provider;
@@ -447,12 +446,12 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 	}
 	
 	/*
-	 * @see #getInformationControl()
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#getInformationControl()
 	 * @since 3.0
 	 */
 	protected IInformationControl getInformationControl() {
 		
-		if (fCurrentInformationControlCreator == null || fDisposed) {
+		if (fCustomInformationControlCreator == null || fDisposed) {
 			if (fIsCustomInformtionControl) {
 				fInformationControl.dispose();
 				fInformationControl= null;
@@ -461,14 +460,14 @@ public class InformationPresenter extends AbstractInformationControlManager impl
 			return super.getInformationControl();
 		}
 
-		if ((fCurrentInformationControlCreator instanceof IInformationControlCreatorExtension)
-				&& ((IInformationControlCreatorExtension)fCurrentInformationControlCreator).canBeReused(fInformationControl))
+		if ((fCustomInformationControlCreator instanceof IInformationControlCreatorExtension)
+				&& ((IInformationControlCreatorExtension) fCustomInformationControlCreator).canBeReused(fInformationControl))
 			return fInformationControl;
 
 		if (fInformationControl != null)
 			fInformationControl.dispose();
 			
-		fInformationControl= fCurrentInformationControlCreator.createInformationControl(getSubjectControl().getShell());
+		fInformationControl= fCustomInformationControlCreator.createInformationControl(getSubjectControl().getShell());
 		fIsCustomInformtionControl= true;
 		fInformationControl.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
