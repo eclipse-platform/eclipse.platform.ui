@@ -1071,7 +1071,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				public void mouseMove(MouseEvent e) {
 					Cursor cursor= null;
 					Diff diff= handlemouseInBirdsEyeView(fBirdsEyeCanvas, e.y);
-					if (diff != null && diff.fDirection != Differencer.NO_CHANGE)
+					if (diff != null && diff.fDirection != RangeDifference.NOCHANGE)
 						cursor= fBirdsEyeCursor;
 					if (fLastCursor != cursor) {
 						fBirdsEyeCanvas.setCursor(cursor);
@@ -1119,7 +1119,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 
 	private void setCurrentDiff2(Diff diff, boolean reveal) {
-		if (diff != null && diff.fDirection != Differencer.NO_CHANGE) {
+		if (diff != null && diff.fDirection != RangeDifference.NOCHANGE) {
 			//fCurrentDiff= null;
 			setCurrentDiff(diff, reveal);
 		}
@@ -1769,7 +1769,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 * on the other side. The method returns the position where the subdocument is placed into the base document.
 	 * This default implementation determines the position by using the text range differencer.
 	 * However this position is not always optimal for specific types of text.
-	 * So subclasses (which are awrae of the type of text they are dealing with) 
+	 * So subclasses (which are aware of the type of text they are dealing with) 
 	 * may override this method to find a better position where to insert a newly added
 	 * piece of text.
 	 * @param type the side for which the insertion position should be determined: 'A' for ancestor, 'L' for left hand side, 'R' for right hand side.
