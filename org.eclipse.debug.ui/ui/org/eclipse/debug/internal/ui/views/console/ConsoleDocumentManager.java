@@ -32,7 +32,6 @@ import org.eclipse.debug.internal.ui.console.IConsole;
 import org.eclipse.debug.internal.ui.console.IConsoleManager;
 import org.eclipse.debug.internal.ui.console.IConsoleView;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
-import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.IConsoleColorProvider;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
@@ -288,11 +287,11 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		IConfigurationElement extension = (IConfigurationElement)fColorProviders.get(type);
 		if (extension != null) {
 			try {
-				Object contentProvider = extension.createExecutableExtension("class"); //$NON-NLS-1$
-				if (contentProvider instanceof IConsoleColorProvider) {
-					return (IConsoleColorProvider)contentProvider;
+				Object colorProvider = extension.createExecutableExtension("class"); //$NON-NLS-1$
+				if (colorProvider instanceof IConsoleColorProvider) {
+					return (IConsoleColorProvider)colorProvider;
 				} else {
-					DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugUIViewsMessages.getString("ConsoleDocumentManager.Invalid_extension_{0}_-_class_must_be_an_instance_of_IConsoleDocumentContentProvider._1"),new String[]{extension.getDeclaringExtension().getUniqueIdentifier()} )); //$NON-NLS-1$
+					DebugUIPlugin.logErrorMessage(MessageFormat.format(ConsoleMessages.getString("ConsoleDocumentManager.1"),new String[]{extension.getDeclaringExtension().getUniqueIdentifier()} )); //$NON-NLS-1$
 				}
 			} catch (CoreException e) {
 				DebugUIPlugin.log(e);
@@ -338,7 +337,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 					if (tracker instanceof IConsoleLineTracker) {
 						lineNotifier.addConsoleListener((IConsoleLineTracker)tracker);
 					} else {
-						DebugUIPlugin.logErrorMessage(MessageFormat.format(DebugUIViewsMessages.getString("ConsoleDocumentManager.Invalid_extension"),new String[]{extension.getDeclaringExtension().getUniqueIdentifier()})); //$NON-NLS-1$
+						DebugUIPlugin.logErrorMessage(MessageFormat.format(ConsoleMessages.getString("ConsoleDocumentManager.2"),new String[]{extension.getDeclaringExtension().getUniqueIdentifier()})); //$NON-NLS-1$
 					}
 				} catch (CoreException e) {
 					DebugUIPlugin.log(e);

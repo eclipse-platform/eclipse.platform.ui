@@ -56,7 +56,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	private boolean fKilled= false;
 
 	protected IProcess fProcess;
-	protected IConsoleColorProvider fContentProvider;
+	protected IConsoleColorProvider fColorProvider;
 	private IStreamsProxy fProxy;
 	protected List fStreamListeners = new ArrayList(2);
 	
@@ -225,7 +225,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		fWrap = store.getBoolean(IDebugPreferenceConstants.CONSOLE_WRAP);
 		fMaxLineLength = store.getInt(IDebugPreferenceConstants.CONSOLE_WIDTH);
 		store.addPropertyChangeListener(this);		
-		fContentProvider.connect(fProcess, this);
+		fColorProvider.connect(fProcess, this);
 	}
 
 	/**
@@ -236,7 +236,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		if (fLineNotifier != null) {
 			fLineNotifier.disconnect();
 		}
-		fContentProvider.disconnect();
+		fColorProvider.disconnect();
 		fDocument.setDocumentPartitioner(null);
 	}
 
@@ -460,9 +460,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		}
 	}
 	
-	public ConsoleDocumentPartitioner(IProcess process, IConsoleColorProvider contentProvider) {
+	public ConsoleDocumentPartitioner(IProcess process, IConsoleColorProvider colorProvider) {
 		fProcess= process;
-		fContentProvider = contentProvider;
+		fColorProvider = colorProvider;
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 		boolean limit = store.getBoolean(IDebugPreferenceConstants.CONSOLE_LIMIT_CONSOLE_OUTPUT);
 		if (limit) {
@@ -834,8 +834,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 		return fProcess.isTerminated();
 	}
 
-	protected IConsoleColorProvider getContentProvider() {
-		return fContentProvider;
+	protected IConsoleColorProvider getColorProvider() {
+		return fColorProvider;
 	}
 
 	/**

@@ -342,13 +342,13 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			if (linkRegion != null) {
 				int start = linkRegion.getOffset();
 				int end = start + linkRegion.getLength();
-				IConsoleColorProvider contentProvider = partitioner.getContentProvider();
+				IConsoleColorProvider colorProvider = partitioner.getColorProvider();
 				try {
 					ITypedRegion partition = doc.getPartition(start);
 					Color fontColor = e.gc.getForeground();
 					if (partition instanceof StreamPartition) {
 						StreamPartition streamPartition = (StreamPartition)partition;
-						fontColor = contentProvider.getColor(streamPartition.getStreamIdentifier());
+						fontColor = colorProvider.getColor(streamPartition.getStreamIdentifier());
 					}
 					int startLine = doc.getLineOfOffset(start);
 					int endLine = doc.getLineOfOffset(end);
@@ -423,12 +423,12 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 		if (document != null) {
 			ConsoleDocumentPartitioner partitioner = (ConsoleDocumentPartitioner)document.getDocumentPartitioner();
 			if (partitioner != null) {
-				IConsoleColorProvider contentProvider = partitioner.getContentProvider();
+				IConsoleColorProvider colorProvider = partitioner.getColorProvider();
 				ITypedRegion[] regions = partitioner.computePartitioning(event.lineOffset, event.lineOffset + event.lineText.length());
 				StyleRange[] styles = new StyleRange[regions.length];
 				for (int i = 0; i < regions.length; i++) {
 					StreamPartition partition = (StreamPartition)regions[i];
-					Color color = contentProvider.getColor(partition.getStreamIdentifier());
+					Color color = colorProvider.getColor(partition.getStreamIdentifier());
 					styles[i] = new StyleRange(partition.getOffset(), partition.getLength(), color, null);
 				}	
 				event.styles = styles;

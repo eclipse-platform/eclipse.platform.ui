@@ -33,9 +33,9 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 	protected IDocument createDocument(Object element) throws CoreException {
 		if (element instanceof IProcess) {
 			IProcess process = (IProcess)element;
-			IConsoleColorProvider contentProvider = getContentProvider(process);
-			ConsoleDocument doc= new ConsoleDocument(contentProvider);
-			ConsoleDocumentPartitioner partitioner = new ConsoleDocumentPartitioner(process, contentProvider);
+			IConsoleColorProvider colorProvider = getColorProvider(process);
+			ConsoleDocument doc= new ConsoleDocument(colorProvider);
+			ConsoleDocumentPartitioner partitioner = new ConsoleDocumentPartitioner(process, colorProvider);
 			ConsoleLineNotifier lineNotifier = getLineNotifier(process);
 			partitioner.connect(doc);
 			if (lineNotifier != null) {
@@ -75,21 +75,21 @@ public class ConsoleDocumentProvider extends AbstractDocumentProvider {
 	}
 
 	/**
-	 * Returns a content provider for the given process.
+	 * Returns a color provider for the given process.
 	 *  
 	 * @param process
 	 * @return IConsoleColorProvider
 	 */
-	protected IConsoleColorProvider getContentProvider(IProcess process) {
+	protected IConsoleColorProvider getColorProvider(IProcess process) {
 		String type = process.getAttribute(IProcess.ATTR_PROCESS_TYPE);
-		IConsoleColorProvider contentProvider = null;
+		IConsoleColorProvider colorProvider = null;
 		if (type != null) {
-			contentProvider = getConsoleDocumentManager().getColorProvider(type);
+			colorProvider = getConsoleDocumentManager().getColorProvider(type);
 		}
-		if (contentProvider == null) {
-			contentProvider = new ConsoleColorProvider();
+		if (colorProvider == null) {
+			colorProvider = new ConsoleColorProvider();
 		}
-		return contentProvider;
+		return colorProvider;
 	}
 	
 	/**
