@@ -4,7 +4,6 @@ package org.eclipse.help.internal.navigation;
  * All Rights Reserved.
  */
 
-
 import java.io.*;
 import java.util.*;
 import org.eclipse.help.internal.util.*;
@@ -14,34 +13,28 @@ import org.eclipse.help.internal.contributions.xml.HelpContribution;
 /**
  * This generates the XML file for the help navigation.
  */
-public class XMLNavGenerator extends XMLGenerator {
+public class XMLNavGenerator extends XMLGenerator implements Visitor {
 	protected StringBuffer pad = new StringBuffer();
 	protected final static String indent = "  "; // two blanks indentation 
 	protected Vector viewNames = new Vector();
+	protected InfoSet infoSet = null;
 
 	protected static final String NAV_XML_FILENAME = "_nav.xml";
-	
-	// XML escape constants
-	protected static final int AMP			= '&';
-	protected static final int GT			= '>';
-	protected static final int LT			= '<';
-	protected static final int QUOT			= '\"';
-	protected static final int APOS			= '\'';
-	
-	protected static final String XML_AMP	= "&amp;";
-	protected static final String XML_GT	= "&gt;";
-	protected static final String XML_LT	= "&lt;";
-	protected static final String XML_QUOT	= "&quot;";
-	protected static final String XML_APOS	= "&apos;";
-
 
 	/**
 	 * @param viewSet com.ibm.itp.ua.view.ViewSet
 	 * @param outputDir java.io.File
 	 */
 	public XMLNavGenerator(InfoSet infoSet, File outputDir) {
-		super(infoSet, outputDir);
-		viewChar = 'a';
+		super(outputDir);
+		this.infoSet = infoSet;
+	}
+	/**
+	 */
+	public void generate() {
+		// The html generator is a visitor that needs to start from the view set
+		// and will descend to children, etc....
+		infoSet.accept(this);
 	}
 	/**
 	 * @param view com.ibm.itp.ua.view.View
@@ -50,10 +43,11 @@ public class XMLNavGenerator extends XMLGenerator {
 		try {
 			File outputFile = new File(outputDir, NAV_XML_FILENAME);
 			out =
-				new PrintWriter(new BufferedWriter(
-					new OutputStreamWriter(
-						new BufferedOutputStream(new FileOutputStream(outputFile)),
-						"UTF-8")));
+				new PrintWriter(
+					new BufferedWriter(
+						new OutputStreamWriter(
+							new BufferedOutputStream(new FileOutputStream(outputFile)),
+							"UTF-8")));
 
 			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			out.println("<?xml-stylesheet href=\"tree.xsl\" type=\"text/xsl\"?>");
@@ -70,7 +64,7 @@ public class XMLNavGenerator extends XMLGenerator {
 			options.append(infoSet.getID());
 			options.append("\" label=\"");
 			String infosetLabel = ((HelpContribution) infoSet).getRawLabel();
-			options.append(getValidXMLString(infosetLabel));
+			options.append(xmlEscape(infosetLabel));
 			options.append("\" ");
 			if (!"".equals(href)) {
 				options.append("href=\"");
@@ -109,16 +103,11 @@ public class XMLNavGenerator extends XMLGenerator {
 		options.append(view.getID());
 		options.append("\" label=\"");
 		String viewLabel = ((HelpContribution) view).getRawLabel();
-		viewLabel = getValidXMLString(viewLabel);
+		viewLabel = xmlEscape(viewLabel);
 		options.append(viewLabel);
 		options.append("\" ");
 
-		out.println(
-			"<!-- "
-				+ viewLabel
-				+ " infoview ["
-				+ view.getID()
-				+ "] -->");
+		out.println("<!-- " + viewLabel + " infoview [" + view.getID() + "] -->");
 		out.print("<infoview ");
 		out.print(options.toString());
 		out.println(">");
@@ -127,12 +116,10 @@ public class XMLNavGenerator extends XMLGenerator {
 		visitChildren(view);
 
 		out.println("</infoview>"); // close the view division 
-		out.println(
-			"<!-- End of " + viewLabel + " infoview -->");
+		out.println("<!-- End of " + viewLabel + " infoview -->");
 		out.println();
 
 		// Use a new character for the identifiers in next view
-		viewChar++;
 	}
 	/**
 	 * @param viewNode com.ibm.itp.ua.view.ViewNode
@@ -151,10 +138,10 @@ public class XMLNavGenerator extends XMLGenerator {
 			*/
 			StringBuffer anchor = new StringBuffer();
 			pad.append(indent);
-			
+
 			String topicLabel = ((HelpContribution) topic).getRawLabel();
-			topicLabel = getValidXMLString(topicLabel);
-			
+			topicLabel = xmlEscape(topicLabel);
+
 			anchor
 				.append(pad)
 				.append("<topic href=\"")
@@ -181,35 +168,33 @@ public class XMLNavGenerator extends XMLGenerator {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	// returns a String that is a valid XML string
-	public static String getValidXMLString (String aLabel) {
-		StringBuffer buffer = new StringBuffer(aLabel);
-		updateXMLBuffer(buffer, AMP,  XML_AMP);
-		updateXMLBuffer(buffer, GT,  XML_GT);
-		updateXMLBuffer(buffer, LT,  XML_LT);
-		updateXMLBuffer(buffer, APOS, XML_APOS);
-		updateXMLBuffer(buffer, QUOT, XML_QUOT);
-		
-		return buffer.toString();
-	} 
-	
-	
-	private static void updateXMLBuffer(StringBuffer buffer, int invalidXMLChar, String validXMLString ) {
-		String label = buffer.toString();
-		int x = label.indexOf(invalidXMLChar);
-		while (x != -1) {
-			buffer.deleteCharAt(x);
-			buffer.insert(x, validXMLString);
-			label = buffer.toString();
-			x = label.indexOf(invalidXMLChar, x+1);
+	public void visitChildren(Contribution con) {
+		for (Iterator e = con.getChildren(); e.hasNext();) {
+			Contribution c = (Contribution) e.next();
+			c.accept(this);
 		}
-		
-		return;		
-	
+	}
+	/**
+	 * Simplifies url path by removing "/.." with the parent directory from the path
+	 * @return java.lang.String
+	 * @param url java.lang.String
+	 */
+	protected static String reduceURL(String url) {
+		if (url == null)
+			return url;
+		while (true) {
+			int index = url.lastIndexOf("/../");
+			if (index <= 0)
+				break; //there is no "/../" or nothing before "/../" to simplify
+			String part1 = url.substring(0, index);
+			String part2 = url.substring(index + "/..".length());
+			index = part1.lastIndexOf("/");
+			if (index >= 0)
+				url = part1.substring(0, index) + part2;
+			else
+				url = part2;
+		}
+		return url;
 	}
 
-	
-	
 }
