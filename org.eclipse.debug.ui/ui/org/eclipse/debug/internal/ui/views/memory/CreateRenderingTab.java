@@ -318,6 +318,9 @@ public class CreateRenderingTab implements IMemoryViewTab, IDebugEventSetListene
 			standardMemRetrieval = debugTarget;
 		}
 		
+		if (standardMemRetrieval == null)
+			return;
+		
 		// add memory renderings to Memory Rendering Manager
 		for (int i=0; i<renderings.length; i++)
 		{	

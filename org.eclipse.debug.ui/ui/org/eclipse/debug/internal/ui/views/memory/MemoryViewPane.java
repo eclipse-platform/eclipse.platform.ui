@@ -153,6 +153,9 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 			retrieve = debugTarget;
 		
 		fKey = retrieve;	
+		
+		if (fKey == null)
+			return;
 
 		if (debugTarget == null ||debugTarget.isTerminated() || debugTarget.isDisconnected()) {
 			emptyFolder();
@@ -504,7 +507,10 @@ public class MemoryViewPane extends AbstractMemoryViewPane {
 			{
 				// if debug element returns null from getAdapter, assume its debug target is going to retrieve memory blocks
 				memRetrieval = debugTarget;
-			}					
+			}	
+			
+			if (memRetrieval == null)
+				return;
 									
 			if (fTabFolderForDebugView.containsKey(memRetrieval))
 			{

@@ -71,6 +71,9 @@ public class AddMemoryRenderingAction extends AddMemoryBlockAction {
 				standardMemRetrieval = debugTarget;
 			}
 			
+			if (standardMemRetrieval == null)
+				return;
+			
 			// add memory renderings to Memory Rendering Manager
 			for (int i=0; i<renderings.length; i++)
 			{	

@@ -742,6 +742,9 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	
 	private void handleDebugElementSelection(final IMemoryViewTab lastViewTab, final IDebugElement element)
 	{
+		if (element.getDebugTarget() == null)
+			return;
+		
 		// don't do anything if the debug target is already terminated
 		if (element.getDebugTarget().isDisconnected() ||
 			element.getDebugTarget().isTerminated())

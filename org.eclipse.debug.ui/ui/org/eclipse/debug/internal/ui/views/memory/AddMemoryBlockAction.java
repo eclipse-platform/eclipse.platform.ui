@@ -152,6 +152,9 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 			standardMemRetrieval = debugTarget;
 		}
 		
+		if (standardMemRetrieval == null)
+			return;
+		
 		Shell shell= DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
 		
 		// create dialog to ask for expression/address to block

@@ -219,6 +219,9 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 			memRetrieval = debugTarget;
 		}	
 		
+		if (memRetrieval == null)
+			return;
+		
 		//if we've got a tabfolder to go with the IMemoryBlockRetrieval, display it
 		if (fTabFolderForDebugView.containsKey(memRetrieval)) {
 			if (fStackLayout.topControl != (TabFolder)fTabFolderForDebugView.get(memRetrieval)) {

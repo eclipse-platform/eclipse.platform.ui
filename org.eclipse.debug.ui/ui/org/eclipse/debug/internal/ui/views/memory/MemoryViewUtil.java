@@ -57,6 +57,9 @@ public class MemoryViewUtil {
 			memRetrieval = debugTarget;
 		}
 		
+		if (debugTarget == null)
+			return false;
+		
 		// not valid if the debug target is already terminated
 		if (debugTarget.isTerminated() || debugTarget.isDisconnected())
 			return false;
