@@ -62,10 +62,26 @@ public interface IResourceNavigator extends IViewPart {
 	FrameList getFrameList();
 	
 	/**
+	 * Returns whether this navigator's selection automatically tracks the active editor.
+	 * 
+	 * @return <code>true</code> if linking is enabled, <code>false</code> if not
+	 * @since 2.1
+	 */
+	boolean isLinkingEnabled();
+	
+	/**
 	 * Sets the working set for this view, or <code>null</code> to clear it.
 	 * 
 	 * @param workingSet the working set, or <code>null</code> to clear it
 	 * @since 2.0
 	 */
 	void setWorkingSet(IWorkingSet workingSet);
+	
+	/**
+	 * Sets whether this navigator's selection automatically tracks the active editor.
+	 * 
+	 * @param enabled <code>true</code> to enable, <code>false</code> to disable
+	 * @since 2.1
+	 */
+	void setLinkingEnabled(boolean enabled);
 }

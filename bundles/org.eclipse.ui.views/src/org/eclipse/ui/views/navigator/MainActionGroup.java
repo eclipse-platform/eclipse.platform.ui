@@ -51,6 +51,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	protected ImportResourcesAction importAction;
 	protected ExportResourcesAction exportAction;
 	protected CollapseAllAction collapseAllAction;
+	protected ToggleLinkingAction toggleLinkingAction;
 	
 	protected GotoActionGroup gotoGroup;
 	protected OpenActionGroup openGroup;
@@ -93,6 +94,16 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		collapseAllAction.setToolTipText(ResourceNavigatorMessages.getString("CollapseAllAction.toolTip")); //$NON-NLS-1$
 		collapseAllAction.setImageDescriptor(getImageDescriptor("elcl16/collapseall.gif")); //$NON-NLS-1$
 		collapseAllAction.setHoverImageDescriptor(getImageDescriptor("clcl16/collapseall.gif")); //$NON-NLS-1$
+
+		toggleLinkingAction = new ToggleLinkingAction(
+			navigator, 
+			ResourceNavigatorMessages.getString("ToggleLinkingAction.text")); //$NON-NLS-1$
+		toggleLinkingAction.setToolTipText(
+			ResourceNavigatorMessages.getString("ToggleLinkingAction.toolTip")); //$NON-NLS-1$
+		// TODO: fix up images for linking
+//		toggleLinkingAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/synced.gif"));//$NON-NLS-1$
+//		toggleLinkingAction.setImageDescriptor(getImageDescriptor("elcl16/synced.gif"));//$NON-NLS-1$
+		toggleLinkingAction.setHoverImageDescriptor(getImageDescriptor("clcl16/synced.gif"));//$NON-NLS-1$
 	}
 	
 	/**
@@ -211,10 +222,13 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 		sortAndFilterGroup.fillActionBars(actionBars);
 		workspaceGroup.fillActionBars(actionBars);
 		
-		IToolBarManager toolBar = actionBars.getToolBarManager();
+		IMenuManager menu = actionBars.getMenuManager();
+		menu.add(toggleLinkingAction);
 		
+		IToolBarManager toolBar = actionBars.getToolBarManager();
 		toolBar.add(new Separator());
 		toolBar.add(collapseAllAction);		
+		toolBar.add(toggleLinkingAction);
 	}
 	
 	/**
