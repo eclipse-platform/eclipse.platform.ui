@@ -226,6 +226,7 @@ boolean isGrowingColumn(int col) {
 int [] calculateExtraSpace(int tableWidth, int maxWidth, int minWidth) {
 	int fixedPart = leftMargin + rightMargin + (numColumns-1)*horizontalSpacing;
 	int D = maxWidth - minWidth;
+	
 	int W = tableWidth -fixedPart - minWidth;
 	
 	int extraSpace [] = new int [numColumns];
@@ -235,7 +236,7 @@ int [] calculateExtraSpace(int tableWidth, int maxWidth, int minWidth) {
 		int cmin = minColumnWidths[i];
 		int cmax = maxColumnWidths[i];
 		int d = cmax - cmin;
-		int extra = (d * W)/D;
+		int extra = D!=0 ? (d * W)/D : 0;
 		if (i<numColumns-1) {
 			extraSpace [i] = extra;
 			rem += extra;
