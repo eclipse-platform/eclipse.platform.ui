@@ -15,20 +15,14 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.context.IStyledContext;
 import org.eclipse.help.ui.internal.*;
-import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.jface.wizard.WizardDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
+import org.eclipse.ui.forms.widgets.*;
 
 public class ContextHelpPart extends SectionPart implements IHelpPart {
 	private ReusableHelpPart parent;
@@ -36,8 +30,6 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	private static final String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$	
 
 	private FormText text;
-
-	private Button quickSearchButton;
 	private Control lastControl;
 	private IContextProvider lastProvider;
 	private IContext lastContext;
@@ -85,17 +77,6 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			}
 		});
 		text.setText(defaultText, false, false);
-		quickSearchButton = toolkit.createButton(container,
-				HelpUIResources.getString("ContextHelpPart.dynamicHelp"), SWT.CHECK); //$NON-NLS-1$
-		quickSearchButton.setSelection(true);
-		quickSearchButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (quickSearchButton.getSelection()) {
-					// run search now
-					updateQuickSearch();
-				}
-			}
-		});
 	}
 
 	/*
@@ -160,13 +141,19 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		String helpText = createContextHelp(c);
 		if (getSection().isExpanded())
 			updateText(helpText);
-		if (quickSearchButton.getSelection())
-			updateQuickSearch();
+		updateDynamicHelp();
 	}
 
-	private void updateQuickSearch() {
+	private void updateDynamicHelp() {
+		/*
+		SearchPart part = (SearchPart) parent
+		.findPart(IHelpUIConstants.HV_SEARCH);
+		if (part!=null) {
+			part.doClear();
+		}
+		*/
 		if (lastProvider!=null || lastControl!=null)
-			updateQuickSearch(lastProvider!=null?lastProvider.getSearchExpression(lastControl):null, lastControl);		
+			updateDynamicHelp(lastProvider!=null?lastProvider.getSearchExpression(lastControl):null, lastControl);		
 	}
 
 	public void handleActivation(IContextProvider provider, Control c, IWorkbenchPart part) {
@@ -179,8 +166,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		updateTitle();
 		if (getSection().isExpanded())
 			updateText(helpText);
-		if (quickSearchButton.getSelection())
-			updateQuickSearch();
+		updateDynamicHelp();
 	}
 	
 	private void updateTitle() {
@@ -198,12 +184,12 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		parent.reflow();
 	}
 
-	private void updateQuickSearch(String expression, Control c) {
+	private void updateDynamicHelp(String expression, Control c) {
 		if (expression == null) {
 			expression = computeDefaultSearchExpression(c);
 		}
-		SearchPart part = (SearchPart) parent
-				.findPart(IHelpUIConstants.HV_SEARCH);
+		DynamicHelpPart part = (DynamicHelpPart) parent
+				.findPart(IHelpUIConstants.HV_SEARCH_RESULT);
 		if (part != null) {
 			if (expression != null)
 				part.startSearch(expression, lastContext);

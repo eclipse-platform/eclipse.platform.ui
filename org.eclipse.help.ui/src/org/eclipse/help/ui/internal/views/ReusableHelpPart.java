@@ -343,7 +343,6 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		// context help page
 		page = new HelpPartPage(HV_CONTEXT_HELP_PAGE, HelpUIResources.getString("ReusableHelpPart.contextHelpPage.name")); //$NON-NLS-1$
 		page.addPart(HV_CONTEXT_HELP, false);
-		page.addPart(HV_SEARCH, false);
 		page.addPart(HV_SEARCH_RESULT, false, true);
 		page.addPart(HV_SEE_ALSO, false);
 		pages.add(page);
@@ -459,6 +458,13 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			page.setFocus();
 		return page;
 	}
+	
+	public void startSearch(String phrase) {
+		showPage(IHelpUIConstants.HV_FSEARCH_PAGE, true);
+		FederatedSearchPart part = (FederatedSearchPart)findPart(IHelpUIConstants.HV_FSEARCH);
+		if (part!=null)
+			part.startSearch(phrase);
+	}
 
 	private void flipPages(HelpPartPage oldPage, HelpPartPage newPage) {
 		if (oldPage!=null)
@@ -558,9 +564,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		if (part!=null)
 			return part;
 
-		if (id.equals(HV_SEARCH)) {
-			part = new SearchPart(parent, mform.getToolkit());
-		} else if (id.equals(HV_TOPIC_TREE)) {
+		if (id.equals(HV_TOPIC_TREE)) {
 			part = new AllTopicsPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_CONTEXT_HELP)) {
 			part = new ContextHelpPart(parent, mform.getToolkit());
@@ -568,7 +572,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		} else if (id.equals(HV_BROWSER)) {
 			part = new BrowserPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_SEARCH_RESULT)) {
-			part = new SearchResultsPart(parent, mform.getToolkit());
+			part = new DynamicHelpPart(parent, mform.getToolkit());
 		} else if (id.equals(HV_FSEARCH_RESULT)) {
 			part = new FederatedSearchResultsPart(parent, mform.getToolkit(), tbm);
 		} else if (id.equals(HV_SEE_ALSO)) {
@@ -679,15 +683,20 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		fillOpenActions(provider, manager);
 		return true;
 	}
-	private void fillOpenActions(Object target, IMenuManager manager) {
-		openAction.setTarget(target);
-		openInHelpAction.setTarget(target);
-		manager.add(openAction);
-		manager.add(openInHelpAction);
+	private boolean fillOpenActions(Object target, IMenuManager manager) {
+		String href = getHref(target);
+		if (href!=null && !href.startsWith("__")) {
+			openAction.setTarget(target);
+			openInHelpAction.setTarget(target);
+			manager.add(openAction);
+			manager.add(openInHelpAction);
+			return true;
+		}
+		return false;
 	}
 	boolean fillFormContextMenu(FormText text, IMenuManager manager) {
-		fillOpenActions(text, manager);
-		manager.add(new Separator());
+		if (fillOpenActions(text, manager))
+			manager.add(new Separator());
 		manager.add(copyAction);
 		copyAction.setTarget(text);
 		return true;

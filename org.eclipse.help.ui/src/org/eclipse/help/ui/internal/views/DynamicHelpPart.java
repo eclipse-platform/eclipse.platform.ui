@@ -10,16 +10,15 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.help.*;
-import org.eclipse.help.IContext;
-import org.eclipse.help.internal.search.SearchHit;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.search.*;
+import org.eclipse.help.internal.search.federated.IndexerJob;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.events.*;
@@ -27,7 +26,7 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 
-public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
+public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	private static final String CANCEL_HREF = "__cancel__"; //$NON-NLS-1$
 
 	private static final String MORE_HREF = "__more__"; //$NON-NLS-1$
@@ -43,6 +42,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	private String phrase;
 
 	private Job runningJob;
+	private IContext context;
 
 	private JobListener jobListener;
 	public static final int SHORT_COUNT = 8;
@@ -75,12 +75,41 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	 * @param toolkit
 	 * @param style
 	 */
-	public SearchResultsPart(Composite parent, FormToolkit toolkit) {
-		// stext = new ScrolledFormText(parent, false);
-		// toolkit.adapt(stext);
+	public DynamicHelpPart(Composite parent, FormToolkit toolkit) {
+		super(parent, toolkit, Section.EXPANDED | Section.TWISTIE
+				| Section.TITLE_BAR);
+		// configure section
+		Section section = getSection();
+		section.setText(HelpUIResources.getString("SearchPart.title")); //$NON-NLS-1$
+		section.marginWidth = 5;
+		section.addExpansionListener(new IExpansionListener() {
+			public void expansionStateChanging(ExpansionEvent e) {
+			}
+			public void expansionStateChanged(ExpansionEvent e) {
+				if (e.getState()) {
+					if (phrase.length() > 0)
+						startInPlaceSearch(phrase, context);
+				}
+			}
+		});
+		// create 'clear' hyperlink on the section tool bar
+		ImageHyperlink clearLink = new ImageHyperlink(section, SWT.NULL);
+		toolkit.adapt(clearLink, true, true);
+		clearLink.setToolTipText(HelpUIResources
+				.getString("SearchPart.clearResults")); //$NON-NLS-1$
+		clearLink.setImage(HelpUIResources
+				.getImage(IHelpUIConstants.IMAGE_CLEAR));
+		clearLink.setBackground(section.getTitleBarGradientBackground());
+		clearLink.addHyperlinkListener(new HyperlinkAdapter() {
+			public void linkActivated(HyperlinkEvent e) {
+				clearResults();
+			}
+		});
+		section.setTextClient(clearLink);		
 		resultSorter = new SorterByScore();
-		searchResults = toolkit.createFormText(parent, true);
+		searchResults = toolkit.createFormText(section, true);
 		searchResults.marginWidth = 10;
+		section.setClient(searchResults);
 		// stext.setFormText(searchResults);
 		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));
@@ -113,6 +142,10 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 
 	public void dispose() {
 		Platform.getJobManager().removeJobChangeListener(jobListener);
+		if (runningJob!=null) {
+			runningJob.cancel();
+			runningJob=null;
+		}
 		super.dispose();
 	}
 
@@ -122,7 +155,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#getControl()
 	 */
 	public Control getControl() {
-		return searchResults;
+		return getSection();
 	}
 
 	/*
@@ -145,7 +178,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#setVisible(boolean)
 	 */
 	public void setVisible(boolean visible) {
-		searchResults.setVisible(visible);
+		getSection().setVisible(visible);
 	}
 
 	void clearResults() {
@@ -156,8 +189,51 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		searchResults.setText("", false, false); //$NON-NLS-1$
 		parent.reflow();
 	}
+	
+	public void startSearch(String newPhrase, IContext excludeContext) {
+		if (phrase!=null && phrase.equals(newPhrase))
+			return;
+		this.phrase = newPhrase;
+		this.context = excludeContext;
+		if (getSection().isExpanded())
+			startInPlaceSearch(phrase, excludeContext);
+	}
+	
+	private void startInPlaceSearch(final String phrase,
+			final IContext excludeContext) {
+		Job job = new Job(HelpUIResources.getString("SearchPart.dynamicJob")) { //$NON-NLS-1$
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					try {
+						Platform.getJobManager().join(IndexerJob.FAMILY,
+								monitor);
+					} catch (InterruptedException e) {
+						// TODO should we do someting here?
+					}
+					performSearch(phrase, excludeContext, monitor);
+					return Status.OK_STATUS;
+				} catch (OperationCanceledException e) {
+					// it is ok to cancel the search
+					return Status.OK_STATUS;
+				}
+			}
+		};
+		scheduleSearch(job);
+	}
+	
+	private void performSearch(String phrase, IContext excludeContext,
+			IProgressMonitor monitor) {
+		SearchQuery searchQuery = new SearchQuery();
+		searchQuery.setSearchWord(phrase);
+		SearchResults localResults = new SearchResults(null,
+				DynamicHelpPart.SHORT_COUNT * 2, Platform.getNL());
+		BaseHelpSystem.getSearchManager().search(searchQuery, localResults,
+				monitor);
+		SearchHit[] hits = localResults.getSearchHits();
+		updateResults(phrase, excludeContext, new StringBuffer(), hits);
+	}
 
-	void startNewSearch(Job job) {
+	void scheduleSearch(Job job) {
 		if (runningJob != null) {
 			runningJob.cancel();
 		}
@@ -179,8 +255,18 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		runningJob = job;
 		job.schedule();
 	}
+	
+	private void updateResults(final String phrase,
+			final IContext excludeContext, final StringBuffer buffer,
+			final SearchHit[] hits) {
+		getSection().getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				doUpdateResults(phrase, excludeContext, buffer, hits);
+			}
+		});
+	}	
 
-	void updateResults(String phrase, IContext excludeContext, StringBuffer buff, SearchHit[] hits) {
+	private void doUpdateResults(String phrase, IContext excludeContext, StringBuffer buff, SearchHit[] hits) {
 		if (runningJob != null) {
 			runningJob.cancel();
 		}
@@ -253,6 +339,7 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 	}
 
 	private void doMore() {
+		/*
 		try {
 			String ephrase = URLEncoder.encode(phrase, "UTF-8"); //$NON-NLS-1$
 			String query = "tab=search&searchWord=" + ephrase; //$NON-NLS-1$
@@ -260,6 +347,8 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		} catch (UnsupportedEncodingException e) {
 			System.out.println(e);
 		}
+		*/
+		parent.startSearch(phrase);
 	}
 
 	private void doOpenLink(Object href) {

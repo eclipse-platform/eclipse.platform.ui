@@ -58,6 +58,10 @@ public class EngineResultSection {
 		hits = new ArrayList();
 		sorter = new FederatedSearchSorter();
 	}
+	
+	public boolean hasControl(Control control) {
+		return searchResults.equals(control);
+	}
 
 	public boolean matches(EngineDescriptor desc) {
 		return this.desc == desc;
@@ -66,7 +70,7 @@ public class EngineResultSection {
 	public Control createControl(Composite parent, final FormToolkit toolkit) {
 		section = toolkit.createSection(parent, Section.CLIENT_INDENT
 				| Section.COMPACT | Section.TWISTIE | Section.EXPANDED);
-		//section.marginHeight = 10;
+		// section.marginHeight = 10;
 		createFormText(section, toolkit);
 		section.setClient(searchResults);
 		updateSectionTitle();
@@ -93,7 +97,8 @@ public class EngineResultSection {
 		searchResults.setImage(topicKey, HelpUIResources.getImage(topicKey));
 		searchResults.setImage(nwKey, HelpUIResources.getImage(nwKey));
 		searchResults.setImage(searchKey, HelpUIResources.getImage(searchKey));
-		searchResults.setColor("summary", parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+		searchResults.setColor("summary", parent.getDisplay().getSystemColor(
+				SWT.COLOR_WIDGET_DARK_SHADOW));
 		searchResults.setImage(ISharedImages.IMG_TOOL_FORWARD, PlatformUI
 				.getWorkbench().getSharedImages().getImage(
 						ISharedImages.IMG_TOOL_FORWARD));
@@ -165,6 +170,7 @@ public class EngineResultSection {
 		buff.append("<form>"); //$NON-NLS-1$
 		IHelpResource oldCat = null;
 		boolean earlyExit = false;
+		addNavigation(buff);
 
 		for (int i = resultOffset; i < hits.size(); i++) {
 			if (i - resultOffset == HITS_PER_PAGE) {
@@ -210,7 +216,7 @@ public class EngineResultSection {
 			buff.append("</a>"); //$NON-NLS-1$
 			if (part.getShowDescription()) {
 				String summary = getSummary(hit);
-				if (summary!=null) {
+				if (summary != null) {
 					buff.append("<br/>");
 					buff.append("<span color=\"summary\">");
 					buff.append(summary);
@@ -229,6 +235,15 @@ public class EngineResultSection {
 			 */
 			buff.append("</li>"); //$NON-NLS-1$
 		}
+		addNavigation(buff);
+		buff.append("</form>"); //$NON-NLS-1$
+		searchResults.setText(buff.toString(), true, false);
+		section.layout();
+		if (reflow)
+			part.reflow();
+	}
+
+	private void addNavigation(StringBuffer buff) {
 		if (hits.size() > HITS_PER_PAGE) {
 			buff.append("<p>");
 			if (resultOffset > 0) {
@@ -250,31 +265,25 @@ public class EngineResultSection {
 				buff.append("Next ");
 				buff.append("<img href=\"");
 				buff.append(ISharedImages.IMG_TOOL_FORWARD);
-				buff.append("\"/>");				
+				buff.append("\"/>");
 				buff.append("</a>");
 			}
 			buff.append("</p>");
 		}
-		//buff.append("<p/>");
-		buff.append("</form>"); //$NON-NLS-1$
-		searchResults.setText(buff.toString(), true, false);
-		section.layout();
-		if (reflow)
-			part.reflow();
 	}
-	
+
 	private String getSummary(ISearchEngineResult hit) {
 		String desc = hit.getDescription();
-		if (desc!=null) {
+		if (desc != null) {
 			String edesc = escapeSpecialChars(desc);
 			if (!edesc.equals(hit.getLabel())) {
 				String label = hit.getLabel();
-				if (edesc.length()>label.length()) {
+				if (edesc.length() > label.length()) {
 					String ldesc = edesc.substring(0, label.length());
 					if (ldesc.equalsIgnoreCase(label))
-						edesc = edesc.substring(label.length()+1);
+						edesc = edesc.substring(label.length() + 1);
 				}
-				return edesc;				
+				return edesc;
 			}
 		}
 		return null;
@@ -313,17 +322,17 @@ public class EngineResultSection {
 			section.setText(HelpUIResources.getString(
 					"EngineResultSection.sectionTitle.hit", desc.getLabel(), ""
 							+ hits.size()));
-		else if (hits.size()<=HITS_PER_PAGE)
+		else if (hits.size() <= HITS_PER_PAGE)
 			section.setText(HelpUIResources.getString(
 					"EngineResultSection.sectionTitle.hits", desc.getLabel(),
 					"" + hits.size()));
 		else {
-			int from = (resultOffset+1);
-			int to = (resultOffset+HITS_PER_PAGE);
+			int from = (resultOffset + 1);
+			int to = (resultOffset + HITS_PER_PAGE);
 			to = Math.min(to, hits.size());
 			section.setText(HelpUIResources.getString(
-					"EngineResultSection.sectionTitle.hitsRange", desc.getLabel(),
-					""+from, ""+to, "" + hits.size()));
+					"EngineResultSection.sectionTitle.hitsRange", desc
+							.getLabel(), "" + from, "" + to, "" + hits.size()));
 		}
 	}
 

@@ -34,9 +34,17 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 	protected static java.util.List previousSearchQueryData = new java.util.ArrayList(
 			20);
 
+	private static final String HREF_TOGGLE = "__toggle__";
+
+	private static final String HREF_SEARCH_HELP = "/org.eclipse.platform.doc.user/tasks/tsearch.htm";
+
 	private String id;
 
 	private Composite container;
+
+	private FormText searchWordText;
+
+	private boolean searchWordTextExpanded = false;
 
 	private Combo searchWordCombo;
 
@@ -55,29 +63,38 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 	 * @param toolkit
 	 * @param style
 	 */
-	public FederatedSearchPart(Composite parent, FormToolkit toolkit) {
+	public FederatedSearchPart(final Composite parent, FormToolkit toolkit) {
 		container = toolkit.createComposite(parent);
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.numColumns = 2;
 		container.setLayout(layout);
 		// Search Expression
-		Hyperlink expressionLabel = toolkit.createHyperlink(container, null, SWT.WRAP);
-		expressionLabel.setText(HelpUIResources.getString("expression")); //$NON-NLS-1$
-		expressionLabel.addHyperlinkListener(new HyperlinkAdapter() {
+		searchWordText = toolkit.createFormText(container, true);
+		searchWordText.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				FederatedSearchPart.this.parent.showURL("/org.eclipse.platform.doc.user/tasks/tsearch.htm", true);
+				Object href = e.getHref();
+				if (href.equals(HREF_TOGGLE)) {
+					parent.getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							toggleSearchWordText();
+						}
+					});
+				} else
+					FederatedSearchPart.this.parent.showURL(HREF_SEARCH_HELP,
+							true);
 			}
 		});
+		searchWordText.setImage(IHelpUIConstants.IMAGE_FILE_F1TOPIC,
+				HelpUIResources.getImage(IHelpUIConstants.IMAGE_FILE_F1TOPIC));
+		updateSearchWordText();
 		TableWrapData td = new TableWrapData();
 		td.colspan = 2;
-		expressionLabel.setLayoutData(td);
+		searchWordText.setLayoutData(td);
 		// Pattern combo
 		searchWordCombo = new Combo(container, SWT.SINGLE | SWT.BORDER);
 		td = new TableWrapData(TableWrapData.FILL_GRAB);
-		// td.widthHint = 50;//convertWidthInCharsToPixels(30);
+		td.maxWidth = 100;
 		searchWordCombo.setLayoutData(td);
-		// Not done here to prevent page from resizing
-		// fPattern.setItems(getPreviousSearchPatterns());
 		searchWordCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (searchWordCombo.getSelectionIndex() < 0)
@@ -117,23 +134,6 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 				}
 			}
 		});
-		// Syntax description
-		/*
-		Label label = toolkit.createLabel(container, null, SWT.WRAP);
-		label.setText(HelpUIResources
-				.getString("expression_label").replace('\n', ' ')); //$NON-NLS-1$
-		td = new TableWrapData(TableWrapData.FILL);
-		label.setLayoutData(td);
-		*/
-
-		//toolkit.createLabel(container, null);
-
-		// space
-		// label = toolkit.createLabel(container, null);
-		// td = new TableWrapData();
-		// td.colspan = 2;
-		// label.setLayoutData(td);
-		// Filtering group
 		scopeSection = toolkit.createSection(container, Section.TWISTIE
 				| Section.COMPACT | Section.LEFT_TEXT_CLIENT_ALIGNMENT);
 		scopeSection.setText(HelpUIResources.getString("limit_to")); //$NON-NLS-1$
@@ -146,13 +146,13 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 		createScopeSet(scopeSection, toolkit);
 		TableWrapLayout flayout = new TableWrapLayout();
 		flayout.numColumns = 2;
-		//flayout.verticalSpacing = 2;
 		filteringGroup.setLayout(flayout);
 
 		toolkit.paintBordersFor(filteringGroup);
 		loadEngines(filteringGroup, toolkit);
-		Hyperlink advanced = toolkit.createHyperlink(filteringGroup,
-				HelpUIResources.getString("FederatedSearchPart.advanced"), SWT.NULL); //$NON-NLS-1$
+		Hyperlink advanced = toolkit
+				.createHyperlink(filteringGroup, HelpUIResources
+						.getString("FederatedSearchPart.advanced"), SWT.NULL); //$NON-NLS-1$
 		advanced.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				doAdvanced();
@@ -171,10 +171,51 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 				doChangeScopeSet();
 			}
 		});
-		scopeSetLink.setToolTipText(HelpUIResources.getString("FederatedSearchPart.changeScopeSet")); //$NON-NLS-1$
+		scopeSetLink.setToolTipText(HelpUIResources
+				.getString("FederatedSearchPart.changeScopeSet")); //$NON-NLS-1$
 		section.setTextClient(scopeSetLink);
 		ScopeSet active = scopeSetManager.getActiveSet();
 		setActiveScopeSet(active);
+	}
+
+	private void toggleSearchWordText() {
+		searchWordTextExpanded = !searchWordTextExpanded;
+		updateSearchWordText();
+		FederatedSearchPart.this.parent.reflow();
+		searchWordText.setFocus();
+	}
+
+	private void updateSearchWordText() {
+		StringBuffer buff = new StringBuffer();
+		buff.append("<form>");
+		buff.append("<p>");
+		buff.append(HelpUIResources.getString("expression"));
+		if (searchWordTextExpanded) {
+			buff.append(" <a href=\"");
+			buff.append(HREF_TOGGLE);
+			buff.append("\" alt=\"");
+			buff.append("Collapse");
+			buff.append("\">&lt;&lt;</a>");
+			buff.append("</p><p>");
+			buff.append(HelpUIResources.getString("expression_label"));
+			buff.append("</p><p>");
+			buff.append("<img href=\"");
+			buff.append(IHelpUIConstants.IMAGE_FILE_F1TOPIC);
+			buff.append("\"/> ");
+			buff.append("<a href=\"");
+			buff.append(HREF_SEARCH_HELP);
+			buff.append("\">Learn more");
+			buff.append("</a>");
+		} else {
+			buff.append(" <a href=\"");
+			buff.append(HREF_TOGGLE);
+			buff.append("\" alt=\"");
+			buff.append("Expand");
+			buff.append("\">&gt;&gt;</a>");
+		}
+		buff.append("</p>");
+		buff.append("</form>");
+		searchWordText.setText(buff.toString(), true, false);
 	}
 
 	private void setActiveScopeSet(ScopeSet set) {
@@ -237,14 +278,9 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 							FormColors.TITLE));
 			dlabel.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
 		}
-//		Label slabel = toolkit.createLabel(container, null);
-//		TableWrapData td = new TableWrapData();
-//		td.colspan = 2;
-//		slabel.setLayoutData(td);
-//		
 		return edesc;
 	}
-	
+
 	public void startSearch(String text) {
 		searchWordCombo.setText(text);
 		doSearch(text);
@@ -254,22 +290,25 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 		ScopeSet set = scopeSetManager.getActiveSet();
 		ArrayList entries = new ArrayList();
 		final FederatedSearchResultsPart results = (FederatedSearchResultsPart) parent
-		.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
+				.findPart(IHelpUIConstants.HV_FSEARCH_RESULT);
 		ArrayList eds = new ArrayList();
 		for (int i = 0; i < engineDescriptors.size(); i++) {
-			final EngineDescriptor ed = (EngineDescriptor) engineDescriptors.get(i);
+			final EngineDescriptor ed = (EngineDescriptor) engineDescriptors
+					.get(i);
 			if (set.getEngineEnabled(ed) && ed.getEngine() != null) {
 				ISearchScope scope = ed.createSearchScope(set
 						.getPreferenceStore());
 				FederatedSearchEntry entry = new FederatedSearchEntry(ed
-						.getId(), ed.getLabel(), scope, ed.getEngine(), new ISearchEngineResultCollector() {
+						.getId(), ed.getLabel(), scope, ed.getEngine(),
+						new ISearchEngineResultCollector() {
 							public void add(ISearchEngineResult searchResult) {
 								results.add(ed, searchResult);
 							}
+
 							public void add(ISearchEngineResult[] searchResults) {
 								results.add(ed, searchResults);
 							}
-						} );
+						});
 				entries.add(entry);
 				eds.add(ed);
 			}
@@ -284,7 +323,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 		}
 		results.clearResults();
 		results.startNewSearch(text, eds);
-		BaseHelpSystem.getSearchManager().search(text, array);		
+		BaseHelpSystem.getSearchManager().search(text, array);
 	}
 
 	private void doAdvanced() {
@@ -365,6 +404,7 @@ public class FederatedSearchPart extends AbstractFormPart implements IHelpPart,
 	public boolean hasFocusControl(Control control) {
 		return false;
 	}
+
 	public void setFocus() {
 		searchWordCombo.setFocus();
 	}

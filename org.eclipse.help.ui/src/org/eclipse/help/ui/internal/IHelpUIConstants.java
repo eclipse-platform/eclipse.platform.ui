@@ -35,6 +35,7 @@ public interface IHelpUIConstants {
 	public static final String IMAGE_NW = "nw.gif"; //$NON-NLS-1$
 	public static final String IMAGE_SHOW_CATEGORIES = "show_categories.gif"; //$NON-NLS-1$
 	public static final String IMAGE_SHOW_DESC = "desc_obj.gif";
+	public static final String IMAGE_REMOVE_ALL = "search_remall.gif";
 	// Help view constants
 	public static final String HV_SEARCH = "search";
 	public static final String HV_FSEARCH = "fsearch";
