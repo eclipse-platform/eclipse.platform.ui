@@ -162,7 +162,7 @@ public abstract class Window {
 	 * 
 	 * @see #setShellStyle
 	 */
-	private int shellStyle = SWT.SHELL_TRIM | getDefaultOrientation();
+	private int shellStyle = SWT.SHELL_TRIM;
 
 	/**
 	 * Window manager, or <code>null</code> if none.
@@ -228,9 +228,12 @@ public abstract class Window {
 	 *            the parent shell, or <code>null</code> to create a top-level
 	 *            shell
 	 * @see #setBlockOnOpen
+	 * @see #getDefaultOrientation()
 	 */
 	protected Window(Shell parentShell) {
 		this.parentShell = parentShell;
+		if(parentShell == null)//Inherit the style from the parent if there is one
+			setShellStyle(getShellStyle() | getDefaultOrientation());
 	}
 
 	/**
@@ -924,14 +927,14 @@ public abstract class Window {
 	}
 
 	/**
-	 * Get the default orientation for widget. If the locale is Hebrew (iw or
-	 * he), Arabic (ar), Persian (fa) or Urdu (ur) then return
-	 * SWT.RIGHT_TO_LEFT, otherwise return SWT.LEFT_TO_RIGHT.
+	 * Gets the default orientation for windows. If it is not
+	 * set the default value will be unspecified (SWT#NONE).
+	 * 
 	 * <strong>NOTE</strong> This API is experimental and may 
 	 * be subject to change during the development cycle for
 	 * Eclipse 3.1.
 	 * 
-	 * @return int SWT.RIGHT_TO_LEFT or SWT.LEFT_TO_RIGHT
+	 * @return SWT#NONE, SWT.RIGHT_TO_LEFT or SWT.LEFT_TO_RIGHT
 	 * @see SWT#RIGHT_TO_LEFT
 	 * @see SWT#LEFT_TO_RIGHT
 	 * @see SWT#NONE
@@ -943,8 +946,9 @@ public abstract class Window {
 	}
 
 	/**
-	 * Set the default orientation of windows.
-	 * @param defaultOrientation
+	 * Sets the default orientation of windows.
+	 * @param defaultOrientation one of 
+	 * 	SWT#RIGHT_TO_LEFT, SWT#LEFT_TO_RIGHT ,SWT#NONE
 	 * @see SWT#RIGHT_TO_LEFT
 	 * @see SWT#LEFT_TO_RIGHT
 	 * @see SWT#NONE
