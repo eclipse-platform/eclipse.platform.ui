@@ -33,8 +33,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.ViewRegistry;
+import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -230,7 +230,7 @@ public class ShowViewDialog extends Dialog implements
         ViewRegistry reg = (ViewRegistry) viewReg;
         ArrayList categoriesToExpand = new ArrayList(expandedCategoryIds.length);
         for (int i = 0; i < expandedCategoryIds.length; i++) {
-            Category category = reg.findCategory(expandedCategoryIds[i]);
+            IViewCategory category = reg.findCategory(expandedCategoryIds[i]);
             if (category != null) // ie.- it still exists
                 categoriesToExpand.add(category);
         }
@@ -258,7 +258,7 @@ public class ShowViewDialog extends Dialog implements
         Object[] expandedElements = tree.getExpandedElements();
         String[] expandedCategoryIds = new String[expandedElements.length];
         for (int i = 0; i < expandedElements.length; ++i)
-            expandedCategoryIds[i] = ((Category) expandedElements[i]).getId();
+            expandedCategoryIds[i] = ((IViewCategory) expandedElements[i]).getId();
 
         // Save them for next time.
         settings.put(STORE_EXPANDED_CATEGORIES_ID, expandedCategoryIds);

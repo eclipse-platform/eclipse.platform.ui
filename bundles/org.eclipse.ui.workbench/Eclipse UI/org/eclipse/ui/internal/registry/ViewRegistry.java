@@ -236,9 +236,12 @@ public class ViewRegistry implements IViewRegistry, IExtensionRemovalHandler, IE
      * @param id the id to search for
      * @return the category or <code>null</code>
      */
-    public Category findCategory(String id) {
+    public IViewCategory findCategory(String id) {
     	mapViewsToCategories();
-        return internalFindCategory(id);
+        Category category = internalFindCategory(id);
+        if (category == null)
+            return null;
+        return new ViewCategoryProxy(category);
     }
 
     /**

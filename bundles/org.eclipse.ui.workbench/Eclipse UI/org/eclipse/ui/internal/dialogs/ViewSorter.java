@@ -12,8 +12,8 @@ package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.ViewRegistry;
+import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 
 /**
@@ -42,13 +42,13 @@ public class ViewSorter extends ViewerSorter {
             String str2 = DialogUtil.removeAccel(((IViewDescriptor) e2)
                     .getLabel());
             return collator.compare(str1, str2);
-        } else if (e1 instanceof Category) {
-            if (e1 == viewReg.getMiscCategory())
+        } else if (e1 instanceof IViewCategory) {
+            if (((IViewCategory)e1).getId().equals(viewReg.getMiscCategory().getId()))
                 return 1;
-            if (e2 == viewReg.getMiscCategory())
+            if (((IViewCategory)e2).getId().equals(viewReg.getMiscCategory().getId()))
                 return -1;
-            String str1 = DialogUtil.removeAccel(((Category) e1).getLabel());
-            String str2 = DialogUtil.removeAccel(((Category) e2).getLabel());
+            String str1 = DialogUtil.removeAccel(((IViewCategory) e1).getLabel());
+            String str2 = DialogUtil.removeAccel(((IViewCategory) e2).getLabel());
             return collator.compare(str1, str2);
         }
         return 0;

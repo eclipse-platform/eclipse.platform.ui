@@ -23,11 +23,11 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.registry.Category;
 import org.eclipse.ui.internal.registry.ViewDescriptor;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.tests.leaks.LeakTests;
 import org.eclipse.ui.views.IStickyViewDescriptor;
+import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
@@ -154,11 +154,11 @@ public class ViewTests extends DynamicTestCase {
 		
 		IViewDescriptor desc = registry.find(VIEW_ID);
 		assertNotNull(desc);	    
-		Category category = registry.findCategory(CATEGORY_ID);
+		IViewCategory category = registry.findCategory(CATEGORY_ID);
 		assertNotNull(category);
 		
-		testCategoryProperties(category);		
-		assertTrue(category.getElements().contains(desc));
+		testCategoryProperties(category);
+		assertTrue(category.getViews()[0] == desc);
 
 		removeBundle();	
 		assertNull(registry.find(VIEW_ID));
@@ -176,10 +176,10 @@ public class ViewTests extends DynamicTestCase {
 	/**
 	 * @param category
 	 */
-	private void testCategoryProperties(Category desc) {
+	private void testCategoryProperties(IViewCategory desc) {
 		assertNotNull(desc.getId());
 		assertNotNull(desc.getLabel());
-		assertEquals(1, desc.getElements().size());
+		assertEquals(1, desc.getViews().length);
 	}
 
 	/**
