@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
@@ -32,7 +33,7 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 		fView= view;
 		Utils.initAction(this, "action.refreshSubscriber."); //$NON-NLS-1$
 		
-		synchronizeAction = new Action(Policy.bind("GlobalRefreshAction.4")) { //$NON-NLS-1$
+		synchronizeAction = new Action(TeamUIMessages.GlobalRefreshAction_4) { //$NON-NLS-1$
 			public void run() {
 				IWizard wizard = new GlobalSynchronizeWizard();
 				WizardDialog dialog = new WizardDialog(fView.getViewSite().getShell(), wizard);
@@ -152,11 +153,11 @@ public class SynchronizePageDropDownAction extends Action implements IMenuCreato
 		ISynchronizeParticipantReference[] refs = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 		String text = null;
 		if(current != null && refs.length > 0) {
-			text = Policy.bind("GlobalRefreshAction.5", Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, current.getName())); //$NON-NLS-1$
+			text = NLS.bind(TeamUIMessages.GlobalRefreshAction_5, new String[] { Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, current.getName()) }); //$NON-NLS-1$
 			setToolTipText(text);
 			setText(text);
 		} else {
-			text = Policy.bind("GlobalRefreshAction.4"); //$NON-NLS-1$
+			text = TeamUIMessages.GlobalRefreshAction_4; //$NON-NLS-1$
 			setToolTipText(text);
 			setText(text);
 		}

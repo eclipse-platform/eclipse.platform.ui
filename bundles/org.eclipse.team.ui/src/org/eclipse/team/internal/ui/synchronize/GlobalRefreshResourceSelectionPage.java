@@ -113,11 +113,11 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 	 * @param participant the participant to synchronize
 	 */
 	public GlobalRefreshResourceSelectionPage(IResource[] resources) {
-		super(Policy.bind("GlobalRefreshResourceSelectionPage.1")); //$NON-NLS-1$
+		super(TeamUIMessages.GlobalRefreshResourceSelectionPage_1); //$NON-NLS-1$
 		// Caching the roots so that the decorator doesn't have to recompute all the time.
 		this.resources = Arrays.asList(resources);
-		setDescription(Policy.bind("GlobalRefreshResourceSelectionPage.2")); //$NON-NLS-1$
-		setTitle(Policy.bind("GlobalRefreshResourceSelectionPage.3")); //$NON-NLS-1$
+		setDescription(TeamUIMessages.GlobalRefreshResourceSelectionPage_2); //$NON-NLS-1$
+		setTitle(TeamUIMessages.GlobalRefreshResourceSelectionPage_3); //$NON-NLS-1$
 		IDialogSettings s = TeamUIPlugin.getPlugin().getDialogSettings();
 		this.settings = s.getSection(STORE_SECTION);
 		if(settings == null) {
@@ -141,7 +141,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.SYNC_RESOURCE_SELECTION_PAGE);
 		
 		Label l = new Label(top, SWT.NULL);
-		l.setText(Policy.bind("GlobalRefreshResourceSelectionPage.5")); //$NON-NLS-1$
+		l.setText(TeamUIMessages.GlobalRefreshResourceSelectionPage_5); //$NON-NLS-1$
 
 		// The viewer
 		fViewer = new ContainerCheckedTreeViewer(top, SWT.BORDER);
@@ -171,7 +171,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		selectGroup.setLayoutData(data);
 
 		Button selectAll = new Button(selectGroup, SWT.NULL);
-		selectAll.setText(Policy.bind("GlobalRefreshResourceSelectionPage.12")); //$NON-NLS-1$
+		selectAll.setText(TeamUIMessages.GlobalRefreshResourceSelectionPage_12); //$NON-NLS-1$
 		selectAll.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -187,7 +187,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		setButtonLayoutData(selectAll);
 
 		Button deSelectAll = new Button(selectGroup, SWT.NULL);
-		deSelectAll.setText(Policy.bind("GlobalRefreshResourceSelectionPage.13")); //$NON-NLS-1$
+		deSelectAll.setText(TeamUIMessages.GlobalRefreshResourceSelectionPage_13); //$NON-NLS-1$
 		deSelectAll.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -199,7 +199,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 
 		// Scopes
 		Group scopeGroup = new Group(top, SWT.NULL);
-		scopeGroup.setText(Policy.bind("GlobalRefreshResourceSelectionPage.6")); //$NON-NLS-1$
+		scopeGroup.setText(TeamUIMessages.GlobalRefreshResourceSelectionPage_6); //$NON-NLS-1$
 		layout = new GridLayout();
 		layout.numColumns = 3;
 		layout.makeColumnsEqualWidth = false;
@@ -209,7 +209,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		scopeGroup.setLayoutData(data);
 
 		participantScope = new Button(scopeGroup, SWT.RADIO);
-		participantScope.setText(Policy.bind("GlobalRefreshResourceSelectionPage.7")); //$NON-NLS-1$
+		participantScope.setText(TeamUIMessages.GlobalRefreshResourceSelectionPage_7); //$NON-NLS-1$
 		participantScope.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -218,7 +218,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		});
 
 		selectedResourcesScope = new Button(scopeGroup, SWT.RADIO);
-		selectedResourcesScope.setText(Policy.bind("GlobalRefreshResourceSelectionPage.8")); //$NON-NLS-1$
+		selectedResourcesScope.setText(TeamUIMessages.GlobalRefreshResourceSelectionPage_8); //$NON-NLS-1$
 		selectedResourcesScope.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -230,7 +230,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		selectedResourcesScope.setLayoutData(data);
 
 		workingSetScope = new Button(scopeGroup, SWT.RADIO);
-		workingSetScope.setText(Policy.bind("GlobalRefreshResourceSelectionPage.10")); //$NON-NLS-1$
+		workingSetScope.setText(TeamUIMessages.GlobalRefreshResourceSelectionPage_10); //$NON-NLS-1$
 		workingSetScope.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -246,7 +246,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 		workingSetLabel.setLayoutData(data);
 
 		Button selectWorkingSetButton = new Button(scopeGroup, SWT.NULL);
-		selectWorkingSetButton.setText(Policy.bind("GlobalRefreshResourceSelectionPage.11")); //$NON-NLS-1$
+		selectWorkingSetButton.setText(TeamUIMessages.GlobalRefreshResourceSelectionPage_11); //$NON-NLS-1$
 		selectWorkingSetButton.addSelectionListener(new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
@@ -427,7 +427,7 @@ public class GlobalRefreshResourceSelectionPage extends WizardPage {
 	
 	private void updateWorkingSetLabel() {
 		if (workingSets == null) {
-			workingSetLabel.setText(Policy.bind("StatisticsPanel.noWorkingSet")); //$NON-NLS-1$
+			workingSetLabel.setText(TeamUIMessages.StatisticsPanel_noWorkingSet); //$NON-NLS-1$
 		} else {
 			workingSetLabel.setText(makeWorkingSetLabel());
 		}

@@ -11,9 +11,10 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 
@@ -28,7 +29,7 @@ public class ConfigureRefreshScheduleDialog extends DetailsDialog {
 	private SubscriberRefreshSchedule schedule;
 
 	public ConfigureRefreshScheduleDialog(Shell parentShell, SubscriberRefreshSchedule schedule) {
-		super(parentShell, Policy.bind("ConfigureRefreshScheduleDialog.0", Utils.getTypeName(schedule.getParticipant()))); //$NON-NLS-1$
+		super(parentShell, NLS.bind(TeamUIMessages.ConfigureRefreshScheduleDialog_0, new String[] { Utils.getTypeName(schedule.getParticipant()) })); //$NON-NLS-1$
 		this.schedule = schedule;
 	}
 

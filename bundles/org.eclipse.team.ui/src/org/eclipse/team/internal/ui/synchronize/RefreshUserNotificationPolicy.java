@@ -14,6 +14,7 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.synchronize.actions.OpenInCompareAction;
@@ -93,9 +94,9 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 			public String getToolTipText() {
 				boolean prompt = (event.getStatus().getCode() == IRefreshEvent.STATUS_NO_CHANGES);
 				if(prompt) {
-					return Policy.bind("RefreshSubscriberJob.2a"); //$NON-NLS-1$
+					return TeamUIMessages.RefreshSubscriberJob_2a; //$NON-NLS-1$
 				} else {
-					return Policy.bind("RefreshSubscriberJob.2b", Utils.shortenText(100, participant.getName())); //$NON-NLS-1$
+					return NLS.bind(TeamUIMessages.RefreshSubscriberJob_2b, new String[] { Utils.shortenText(100, participant.getName()) }); //$NON-NLS-1$
 				}
 			}
 		};
@@ -105,8 +106,8 @@ public class RefreshUserNotificationPolicy implements IRefreshSubscriberListener
 		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
 				String title = (event.getRefreshType() == IRefreshEvent.SCHEDULED_REFRESH ?
-						Policy.bind("RefreshCompleteDialog.4a", Utils.getTypeName(participant)) : //$NON-NLS-1$
-							Policy.bind("RefreshCompleteDialog.4", Utils.getTypeName(participant)) //$NON-NLS-1$
+						NLS.bind(TeamUIMessages.RefreshCompleteDialog_4a, new String[] { Utils.getTypeName(participant) }) : //$NON-NLS-1$
+							NLS.bind(TeamUIMessages.RefreshCompleteDialog_4, new String[] { Utils.getTypeName(participant) }) //$NON-NLS-1$
 							);
 				MessageDialog.openInformation(Utils.getShell(null), title, event.getStatus().getMessage());
 			}

@@ -240,7 +240,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 		IMenuManager menu = actionBars.getMenuManager();
 		IContributionItem group = findGroup(menu, ISynchronizePageConfiguration.LAYOUT_GROUP);
 		if(menu != null && group != null) {
-			MenuManager layout = new MenuManager(Policy.bind("action.layout.label")); //$NON-NLS-1$
+			MenuManager layout = new MenuManager(Utils.getString("action.layout.label", Policy.getActionBundle())); //$NON-NLS-1$
 			menu.appendToGroup(group.getId(), layout);	
 			appendToMenu(null, layout);
 		} else if(toolbar != null) {

@@ -28,7 +28,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ui.IHelpContextIds;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -62,7 +62,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 	 * @param wizards  the wizards to populate the table with
 	 */
 	public ConfigureProjectWizardMainPage(String pageName, String title, ImageDescriptor titleImage, AdaptableList wizards, AdaptableList disabledWizards) {
-		this(pageName,title,titleImage,wizards,disabledWizards, Policy.bind("ConfigureProjectWizardMainPage.selectRepository")); //$NON-NLS-1$
+		this(pageName,title,titleImage,wizards,disabledWizards, TeamUIMessages.ConfigureProjectWizardMainPage_selectRepository); //$NON-NLS-1$
 	}
 	
 	/**
@@ -152,7 +152,7 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		
 		if(disabledWizards.size() > 0) {
 			showAllToggle = new Button(composite, SWT.CHECK);
-			showAllToggle.setText(Policy.bind("ConfigureProjectWizard.showAll")); //$NON-NLS-1$
+			showAllToggle.setText(TeamUIMessages.ConfigureProjectWizard_showAll); //$NON-NLS-1$
 			showAllToggle.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					ArrayList all = new ArrayList(Arrays.asList(wizards.getChildren()));

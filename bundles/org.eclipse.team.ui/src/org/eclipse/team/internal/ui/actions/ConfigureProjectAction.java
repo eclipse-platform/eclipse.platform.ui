@@ -22,7 +22,7 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.wizards.ConfigureProjectWizard;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -57,7 +57,7 @@ public class ConfigureProjectAction extends TeamAction implements IWorkbenchWind
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("ConfigureProjectAction.configureProject"), PROGRESS_BUSYCURSOR); //$NON-NLS-1$
+		}, TeamUIMessages.ConfigureProjectAction_configureProject, PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
 	/**
 	 * @see TeamAction#isEnabled()

@@ -14,7 +14,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.ui.*;
 
 /**
@@ -51,7 +51,7 @@ public class ParticipantPageDialog extends SaveablePartDialog {
 		Composite parent = (Composite) super.createDialogArea(parent2);	
 		if (participant != null && ! particantRegisteredWithSynchronizeManager(participant)) {
 			rememberParticipantButton = new Button(parent, SWT.CHECK);
-			rememberParticipantButton.setText(Policy.bind("ParticipantCompareDialog.1")); //$NON-NLS-1$
+			rememberParticipantButton.setText(TeamUIMessages.ParticipantCompareDialog_1); //$NON-NLS-1$
 		}
 		Dialog.applyDialogFont(parent2);
 		return parent;

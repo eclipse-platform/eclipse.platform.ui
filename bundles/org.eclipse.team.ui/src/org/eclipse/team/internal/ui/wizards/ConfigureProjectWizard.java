@@ -52,15 +52,15 @@ public class ConfigureProjectWizard extends Wizard implements IConfigurationWiza
 	}
 	
 	protected String getWizardWindowTitle() {
-		return Policy.bind("ConfigureProjectWizard.title"); //$NON-NLS-1$
+		return TeamUIMessages.ConfigureProjectWizard_title; //$NON-NLS-1$
 	}
 	
 	protected String getWizardLabel() {
-		return Policy.bind("ConfigureProjectWizard.configureProject"); //$NON-NLS-1$
+		return TeamUIMessages.ConfigureProjectWizard_configureProject; //$NON-NLS-1$
 	}
 	
 	protected String getWizardDescription() {
-		return Policy.bind("ConfigureProjectWizard.description"); //$NON-NLS-1$
+		return TeamUIMessages.ConfigureProjectWizard_description; //$NON-NLS-1$
 	}
 	
 	/*

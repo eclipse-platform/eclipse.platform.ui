@@ -31,7 +31,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 	private Button addButton;
 	private Button removeButton;
 	public void init(IWorkbench workbench) {
-		setDescription(Policy.bind("IgnorePreferencePage.description")); //$NON-NLS-1$
+		setDescription(TeamUIMessages.IgnorePreferencePage_description); //$NON-NLS-1$
 	}
 	
 	/**
@@ -56,7 +56,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.IGNORE_PREFERENCE_PAGE);
 		
 		Label l1 = new Label(parent, SWT.NULL);
-		l1.setText(Policy.bind("IgnorePreferencePage.ignorePatterns")); //$NON-NLS-1$
+		l1.setText(TeamUIMessages.IgnorePreferencePage_ignorePatterns); //$NON-NLS-1$
 		data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
 		data.horizontalSpan = 2;
 		l1.setLayoutData(data);
@@ -80,7 +80,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		buttons.setLayout(layout);
 		
 		addButton = new Button(buttons, SWT.PUSH);
-		addButton.setText(Policy.bind("IgnorePreferencePage.add")); //$NON-NLS-1$
+		addButton.setText(TeamUIMessages.IgnorePreferencePage_add); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
@@ -95,7 +95,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		
 		
 		removeButton = new Button(buttons, SWT.PUSH);
-		removeButton.setText(Policy.bind("IgnorePreferencePage.remove")); //$NON-NLS-1$
+		removeButton.setText(TeamUIMessages.IgnorePreferencePage_remove); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
@@ -151,7 +151,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 	}
 
 	private void addIgnore() {
-		InputDialog dialog = new InputDialog(getShell(), Policy.bind("IgnorePreferencePage.enterPatternShort"), Policy.bind("IgnorePreferencePage.enterPatternLong"), null, null); //$NON-NLS-1$ //$NON-NLS-2$
+		InputDialog dialog = new InputDialog(getShell(), TeamUIMessages.IgnorePreferencePage_enterPatternShort, TeamUIMessages.IgnorePreferencePage_enterPatternLong, null, null); //$NON-NLS-1$ //$NON-NLS-2$
 		dialog.open();
 		if (dialog.getReturnCode() != InputDialog.OK) return;
 		String pattern = dialog.getValue();
@@ -160,7 +160,7 @@ public class IgnorePreferencePage extends PreferencePage implements IWorkbenchPr
 		TableItem[] items = ignoreTable.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getText().equals(pattern)) {
-				MessageDialog.openWarning(getShell(), Policy.bind("IgnorePreferencePage.patternExistsShort"), Policy.bind("IgnorePreferencePage.patternExistsLong")); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openWarning(getShell(), TeamUIMessages.IgnorePreferencePage_patternExistsShort, TeamUIMessages.IgnorePreferencePage_patternExistsLong); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 		}

@@ -19,7 +19,6 @@ import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.preferences.SyncViewerPreferencePage;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantDescriptor;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
@@ -70,7 +69,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
-			TeamUIPlugin.log(IStatus.ERROR, Policy.bind("AbstractSynchronizeParticipant.5"), exception); //$NON-NLS-1$
+			TeamUIPlugin.log(IStatus.ERROR, TeamUIMessages.AbstractSynchronizeParticipant_5, exception); //$NON-NLS-1$
 		}
 
 		/**
@@ -248,7 +247,7 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 		if(descriptor instanceof SynchronizeParticipantDescriptor) {
 			setInitializationData(((SynchronizeParticipantDescriptor)descriptor).getConfigurationElement(), null, null);
 		} else {
-			throw new TeamException(Policy.bind("AbstractSynchronizeParticipant.4")); //$NON-NLS-1$
+			throw new TeamException(TeamUIMessages.AbstractSynchronizeParticipant_4); //$NON-NLS-1$
 		}
 	}
 

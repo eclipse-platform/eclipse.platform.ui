@@ -21,8 +21,8 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.core.subscribers.WorkingSetFilteredSyncInfoCollector;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.IPreferenceIds;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage;
@@ -38,7 +38,7 @@ public class RemoveFromViewAction extends SynchronizeModelAction {
 
 	public RemoveFromViewAction(ISynchronizePageConfiguration configuration) {
 		super(null, configuration);
-		Utils.initAction(this, "action.removeFromView.", Policy.getBundle()); //$NON-NLS-1$
+		Utils.initAction(this, "action.removeFromView."); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -94,9 +94,9 @@ public class RemoveFromViewAction extends SynchronizeModelAction {
 		} else {
 			MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(
 					getConfiguration().getSite().getShell(),
-					Policy.bind("RemoveFromView.warningTitle"), //$NON-NLS-1$
-					Policy.bind("RemoveFromView.warningMessage"), //$NON-NLS-1$
-					Policy.bind("RemoveFromView.warningDontShow"), //$NON-NLS-1$
+					TeamUIMessages.RemoveFromView_warningTitle, //$NON-NLS-1$
+					TeamUIMessages.RemoveFromView_warningMessage, //$NON-NLS-1$
+					TeamUIMessages.RemoveFromView_warningDontShow, //$NON-NLS-1$
 					false,
 					null,
 					null);

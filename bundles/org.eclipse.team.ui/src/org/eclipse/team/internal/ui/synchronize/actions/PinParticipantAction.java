@@ -17,7 +17,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.ui.PlatformUI;
@@ -31,7 +30,7 @@ public class PinParticipantAction extends Action implements IPropertyChangeListe
 
 	public PinParticipantAction() {
 		super();
-		Utils.initAction(this, "action.pinParticipant.", Policy.getBundle()); //$NON-NLS-1$
+		Utils.initAction(this, "action.pinParticipant."); //$NON-NLS-1$
 	}
 
 	public void setParticipant(ISynchronizeParticipant participant) {

@@ -161,7 +161,7 @@ public final class ParticipantPagePane {
 		shell = parent.getShell();
 		
 		fEditionPane = new CompareViewerPane(top, SWT.BORDER | SWT.FLAT);		
-		fEditionPane.setText(Policy.bind("ParticipantPageSaveablePart.0")); //$NON-NLS-1$		
+		fEditionPane.setText(TeamUIMessages.ParticipantPageSaveablePart_0); //$NON-NLS-1$		
 		
 		fEditionPane.setLayoutData(SWTUtils.createHVFillGridData());
 		
@@ -172,7 +172,7 @@ public final class ParticipantPagePane {
 		try {
 			((ISynchronizePage)fPage).init(pageConfiguration.getSite());
 		} catch (PartInitException e1) {
-		   TeamUIPlugin.log(IStatus.ERROR, Policy.bind("ParticipantPagePane.0"), e1); //$NON-NLS-1$
+		   TeamUIPlugin.log(IStatus.ERROR, TeamUIMessages.ParticipantPagePane_0, e1); //$NON-NLS-1$
 		}
 
 		fPage.createControl(fEditionPane);

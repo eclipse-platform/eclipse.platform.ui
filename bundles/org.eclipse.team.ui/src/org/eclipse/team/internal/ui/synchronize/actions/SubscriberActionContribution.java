@@ -65,7 +65,7 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 				}
 			};
 			String participantName = Utils.shortenText(SynchronizeView.MAX_NAME_LENGTH, configuration.getParticipant().getName());
-			Utils.initAction(configureSchedule, "action.configureSchedulel.", new String[] {participantName}); //$NON-NLS-1$
+			Utils.initAction(configureSchedule, "action.configureSchedulel."); //$NON-NLS-1$
 		}
 		
 		showPreferences = new SyncViewerShowPreferencesAction(configuration);

@@ -14,6 +14,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
@@ -220,7 +221,7 @@ public class ChangesSection extends Composite {
 		composite.setLayoutData(data);
 		
 		if(! isThreeWay()) {
-			createDescriptionLabel(composite,Policy.bind("ChangesSection.noChanges", participant.getName()));	 //$NON-NLS-1$
+			createDescriptionLabel(composite,NLS.bind(TeamUIMessages.ChangesSection_noChanges, new String[] { participant.getName() }));	 //$NON-NLS-1$
 			return composite;
 		}
 		
@@ -236,17 +237,17 @@ public class ChangesSection extends Composite {
 				long numChanges = getChangesInMode(participantSet, candidateMode);
 				if (numChanges > 0) {
 					StringBuffer text = new StringBuffer();
-					text.append(Policy.bind("ChangesSection.filterHides", Utils.modeToString(configuration.getMode()))); //$NON-NLS-1$
+					text.append(NLS.bind(TeamUIMessages.ChangesSection_filterHides, new String[] { Utils.modeToString(configuration.getMode()) })); //$NON-NLS-1$
 					if(numChanges > 1) {
-						text.append(Policy.bind("ChangesSection.filterHidesPlural", Long.toString(numChanges), Utils.modeToString(candidateMode))); //$NON-NLS-1$
+						text.append(NLS.bind(TeamUIMessages.ChangesSection_filterHidesPlural, new String[] { Long.toString(numChanges), Utils.modeToString(candidateMode) })); //$NON-NLS-1$
 					} else {
-						text.append(Policy.bind("ChangesSection.filterHidesSingular", Long.toString(numChanges), Utils.modeToString(candidateMode))); //$NON-NLS-1$
+						text.append(NLS.bind(TeamUIMessages.ChangesSection_filterHidesSingular, new String[] { Long.toString(numChanges), Utils.modeToString(candidateMode) })); //$NON-NLS-1$
 					}
 					
 					Label warning = new Label(composite, SWT.NONE);
 					warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING_OVR));
 					
-					Hyperlink link = forms.createHyperlink(composite, Policy.bind("ChangesSection.filterChange", Utils.modeToString(candidateMode)), SWT.WRAP); //$NON-NLS-1$
+					Hyperlink link = forms.createHyperlink(composite, NLS.bind(TeamUIMessages.ChangesSection_filterChange, new String[] { Utils.modeToString(candidateMode) }), SWT.WRAP); //$NON-NLS-1$
 					link.addHyperlinkListener(new HyperlinkAdapter() {
 						public void linkActivated(HyperlinkEvent e) {
 							configuration.setMode(candidateMode);
@@ -259,7 +260,7 @@ public class ChangesSection extends Composite {
 			}
 		}
 		// There is no other mode that can be shown so just indicate that there are no changes
-		createDescriptionLabel(composite,Policy.bind("ChangesSection.noChanges", participant.getName()));	 //$NON-NLS-1$	
+		createDescriptionLabel(composite,NLS.bind(TeamUIMessages.ChangesSection_noChanges, new String[] { participant.getName() }));	 //$NON-NLS-1$	
 		return composite;
 	}
 
@@ -340,7 +341,7 @@ public class ChangesSection extends Composite {
 		composite.setLayoutData(data);	
 
 		Hyperlink link = new Hyperlink(composite, SWT.WRAP);
-		link.setText(Policy.bind("ChangesSection.8")); //$NON-NLS-1$
+		link.setText(TeamUIMessages.ChangesSection_8); //$NON-NLS-1$
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				showErrors();
@@ -350,7 +351,7 @@ public class ChangesSection extends Composite {
 		link.setUnderlined(true);
 		
 		link = new Hyperlink(composite, SWT.WRAP);
-		link.setText(Policy.bind("ChangesSection.9")); //$NON-NLS-1$
+		link.setText(TeamUIMessages.ChangesSection_9); //$NON-NLS-1$
 		link.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				page.reset();
@@ -359,18 +360,18 @@ public class ChangesSection extends Composite {
 		link.setBackground(getBackgroundColor());
 		link.setUnderlined(true);
 		
-		createDescriptionLabel(composite, Policy.bind("ChangesSection.10", participant.getName())); //$NON-NLS-1$
+		createDescriptionLabel(composite, NLS.bind(TeamUIMessages.ChangesSection_10, new String[] { participant.getName() })); //$NON-NLS-1$
 
 		return composite;
 	}
 	
 	/* private */ void showErrors() {
 		ITeamStatus[] status = getVisibleSyncInfoSet().getErrors();
-		String title = Policy.bind("ChangesSection.11"); //$NON-NLS-1$
+		String title = TeamUIMessages.ChangesSection_11; //$NON-NLS-1$
 		if (status.length == 1) {
 			ErrorDialog.openError(getShell(), title, status[0].getMessage(), status[0]);
 		} else {
-			MultiStatus multi = new MultiStatus(TeamUIPlugin.ID, 0, status, Policy.bind("ChangesSection.12"), null); //$NON-NLS-1$
+			MultiStatus multi = new MultiStatus(TeamUIPlugin.ID, 0, status, TeamUIMessages.ChangesSection_12, null); //$NON-NLS-1$
 			ErrorDialog.openError(getShell(), title, null, multi);
 		}
 	}

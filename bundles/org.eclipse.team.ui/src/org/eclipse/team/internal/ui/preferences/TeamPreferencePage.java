@@ -26,7 +26,7 @@ public class TeamPreferencePage extends PreferencePage implements IWorkbenchPref
 	Button syncModeButton;
 	
 	public TeamPreferencePage() {
-		setDescription(Policy.bind("TeamPreferencePage.General_settings_for_Team_support_1")); //$NON-NLS-1$
+		setDescription(TeamUIMessages.TeamPreferencePage_General_settings_for_Team_support_1); //$NON-NLS-1$
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public class TeamPreferencePage extends PreferencePage implements IWorkbenchPref
 		composite.setLayoutData(data);
 			
 		// Create the checkbox for sync mode
-		syncModeButton = createCheckBox(composite, Policy.bind("TeamPreferencePage.&Use_Incoming/Outgoing_mode_when_synchronizing_2")); //$NON-NLS-1$
+		syncModeButton = createCheckBox(composite, TeamUIMessages.TeamPreferencePage__Use_Incoming_Outgoing_mode_when_synchronizing_2); //$NON-NLS-1$
 
 		Dialog.applyDialogFont(parent);
 		return composite;

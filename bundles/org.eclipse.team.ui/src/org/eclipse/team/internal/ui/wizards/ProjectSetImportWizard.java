@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.*;
 import org.eclipse.team.internal.core.TeamPlugin;
 import org.eclipse.team.internal.ui.*;
@@ -36,11 +37,11 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 
 	public ProjectSetImportWizard() {
 		setNeedsProgressMonitor(true);
-		setWindowTitle(Policy.bind("ProjectSetImportWizard.Project_Set_1")); //$NON-NLS-1$
+		setWindowTitle(TeamUIMessages.ProjectSetImportWizard_Project_Set_1); //$NON-NLS-1$
 	}
 	
 	public void addPages() {
-		mainPage = new ImportProjectSetMainPage("projectSetMainPage", Policy.bind("ProjectSetImportWizard.Import_a_Project_Set_3"), TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PROJECTSET_IMPORT_BANNER)); //$NON-NLS-1$ //$NON-NLS-2$
+		mainPage = new ImportProjectSetMainPage("projectSetMainPage", TeamUIMessages.ProjectSetImportWizard_Import_a_Project_Set_3, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_PROJECTSET_IMPORT_BANNER)); //$NON-NLS-1$ //$NON-NLS-2$
 		mainPage.setFileName(lastFile);
 		addPage(mainPage);
 	}
@@ -51,7 +52,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 		if (workingSetName != null) {
 			IWorkingSet existingSet = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
 			if (existingSet != null && 
-				!MessageDialog.openConfirm(getShell(), Policy.bind("ProjectSetImportWizard.workingSetExistsTitle"), Policy.bind("ProjectSetImportWizard.workingSetExistsMessage", workingSetName))) //$NON-NLS-1$ //$NON-NLS-2$
+				!MessageDialog.openConfirm(getShell(), TeamUIMessages.ProjectSetImportWizard_workingSetExistsTitle, NLS.bind(TeamUIMessages.ProjectSetImportWizard_workingSetExistsMessage, new String[] { workingSetName }))) //$NON-NLS-1$ //$NON-NLS-2$
 					return false;
 		}
 		
@@ -94,7 +95,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
                                         providerType = TeamPlugin.getAliasType(id);
                                     }
                                     if (providerType == null) {
-                                        throw new TeamException(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, Policy.bind("ProjectSetImportWizard.0", id), null)); //$NON-NLS-1$
+                                        throw new TeamException(new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, NLS.bind(TeamUIMessages.ProjectSetImportWizard_0, new String[] { id }), null)); //$NON-NLS-1$
                                     }
                                 	ProjectSetCapability serializer = providerType.getProjectSetCapability();
                                 	ProjectSetCapability.ensureBackwardsCompatible(providerType, serializer);
@@ -116,7 +117,7 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 							        for (int i = 0; i < exceptions.length; i++) {
                                         status[i] = exceptions[i].getStatus();
                                     }
-							        throw new TeamException(new MultiStatus(TeamUIPlugin.ID, 0, status, Policy.bind("ProjectSetImportWizard.1"), null)); //$NON-NLS-1$
+							        throw new TeamException(new MultiStatus(TeamUIPlugin.ID, 0, status, TeamUIMessages.ProjectSetImportWizard_1, null)); //$NON-NLS-1$
 							    }
 							}
 						}
@@ -157,10 +158,10 @@ public class ProjectSetImportWizard extends Wizard implements IImportWizard {
 				throw (Error)target;
 			}
 			if (target instanceof SAXException) {
-			    ErrorDialog.openError(getShell(), null, null, new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, Policy.bind("ProjectSetImportWizard.0", target.getMessage()), target)); //$NON-NLS-1$
+			    ErrorDialog.openError(getShell(), null, null, new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, NLS.bind(TeamUIMessages.ProjectSetImportWizard_2, new String[] { target.getMessage() }), target)); //$NON-NLS-1$
 			    return false;
 			}
-			ErrorDialog.openError(getShell(), null, null, new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, Policy.bind("ProjectSetImportWizard.1", target.getMessage()), target)); //$NON-NLS-1$
+			ErrorDialog.openError(getShell(), null, null, new Status(IStatus.ERROR, TeamUIPlugin.ID, 0, NLS.bind(TeamUIMessages.ProjectSetImportWizard_3, new String[] { target.getMessage() }), target)); //$NON-NLS-1$
 		}
 		return result[0];
 	}

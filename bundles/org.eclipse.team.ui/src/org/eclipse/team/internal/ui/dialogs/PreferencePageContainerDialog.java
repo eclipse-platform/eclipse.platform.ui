@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 
@@ -145,7 +145,7 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 		gd.horizontalSpan = 2;
 		separator.setLayoutData(gd);
 	
-		setTitle(Policy.bind("PreferencePageContainerDialog.6")); //$NON-NLS-1$
+		setTitle(TeamUIMessages.PreferencePageContainerDialog_6); //$NON-NLS-1$
 		applyDialogFont(parent);
 		return composite;
 	}
@@ -383,7 +383,7 @@ public class PreferencePageContainerDialog extends Dialog implements IPreference
 			// Set the message and error message	
 			if (pageMessage == null) {
 			    if (isSinglePage()) {
-			        setMessage(Policy.bind("PreferencePageContainerDialog.6")); //$NON-NLS-1$
+			        setMessage(TeamUIMessages.PreferencePageContainerDialog_6); //$NON-NLS-1$
 			    } else {
 			    	//remove mnemonic see bug 75886
 			    	String title = currentPage.getTitle();

@@ -11,8 +11,7 @@
 package org.eclipse.team.internal.ui;
 
 
-import java.text.MessageFormat;
-import java.util.MissingResourceException;
+
 import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.*;
@@ -22,106 +21,27 @@ import org.eclipse.core.runtime.*;
  * makes progress monitor policy decisions
  */
 public class Policy {
-	private static String bundleName = "org.eclipse.team.internal.ui.messages"; //$NON-NLS-1$
-	private static ResourceBundle bundle = null;
-	
 	//debug constants
 	public static boolean DEBUG_SYNC_MODELS = false;
+    
+    private static String ACTION_BUNDLE = "org.eclipse.team.internal.ui.actions.actions"; //$NON-NLS-1$
+    private static ResourceBundle actionBundle = null;
 
+    /*
+     * Returns a resource bundle, creating one if it none is available. 
+     */
+    public static ResourceBundle getActionBundle() {
+        // thread safety
+        ResourceBundle tmpBundle = actionBundle;
+        if (tmpBundle != null)
+            return tmpBundle;
+        return actionBundle = ResourceBundle.getBundle(ACTION_BUNDLE);
+    }
+    
 	static {
 		//init debug options
 		if (TeamUIPlugin.getPlugin().isDebugging()) {
 			DEBUG_SYNC_MODELS = "true".equalsIgnoreCase(Platform.getDebugOption(TeamUIPlugin.ID + "/syncmodels"));//$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	/*
-	 * Returns a resource bundle, creating one if it none is available. 
-	 */
-	private static ResourceBundle getResourceBundle() {
-		// thread safety
-		ResourceBundle tmpBundle = bundle;
-		if (tmpBundle != null)
-			return tmpBundle;
-		// always create a new classloader to be passed in 
-		// in order to prevent ResourceBundle caching
-		return bundle = ResourceBundle.getBundle(bundleName);
-	}
-	
-	/**
-	 * Lookup the message with the given ID in this catalog and bind its
-	 * substitution locations with the given string.
-	 * 
-	 * @param id  the id to look up
-	 * @param binding  the string to bind to the result
-	 * @return the bound string
-	 */
-	public static String bind(String id, String binding) {
-		return bind(id, new String[] { binding });
-	}
-	
-	/**
-	 * Lookup the message with the given ID in this catalog and bind its
-	 * substitution locations with the given strings.
-	 * 
-	 * @param id  the id to look up
-	 * @param binding1  the first string to bind to the result
-	 * @param binding2  the second string to bind to the result
-	 * @return the bound string
-	 */
-	public static String bind(String id, String binding1, String binding2) {
-		return bind(id, new String[] { binding1, binding2 });
-	}
-	
-	/**
-	 * Gets a string from the resource bundle. We don't want to crash because of a missing String.
-	 * Returns the key if not found.
-	 * 
-	 * @param key  the id to look up
-	 * @return the string with the given key
-	 */
-	public static String bind(String key, ResourceBundle b) {
-		try {
-			return b.getString(key);
-		} catch (MissingResourceException e) {
-			return key;
-		} catch (NullPointerException e) {
-			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	/**
-	 * Gets a string from the resource bundle. We don't want to crash because of a missing String.
-	 * Returns the key if not found.
-	 * 
-	 * @param key  the id to look up
-	 * @return the string with the given key
-	 */
-	public static String bind(String key) {
-		try {
-			return getResourceBundle().getString(key);
-		} catch (MissingResourceException e) {
-			return key;
-		} catch (NullPointerException e) {
-			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
-		}
-	}
-	
-	/**
-	 * Gets a string from the resource bundle and binds it with the given arguments. If the key is 
-	 * not found, return the key.
-	 * 
-	 * @param key  the id to look up
-	 * @param args  the strings to bind to the result
-	 * @return the bound string
-	 */
-	public static String bind(String key, Object[] args) {
-		try {
-			return MessageFormat.format(bind(key), args);
-		} catch (MissingResourceException e) {
-			return key;
-		} catch (NullPointerException e) {
-			return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
@@ -143,9 +63,5 @@ public class Policy {
 		if (monitor instanceof NullProgressMonitor)
 			return monitor;
 		return new SubProgressMonitor(monitor, ticks);
-	}
-
-	public static ResourceBundle getBundle() {
-		return getResourceBundle();
 	}
 }

@@ -13,9 +13,10 @@ package org.eclipse.team.internal.ui.synchronize;
 import java.text.DateFormat;
 import java.util.Date;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 import org.eclipse.ui.IMemento;
@@ -122,7 +123,7 @@ public class SubscriberRefreshSchedule {
 		}
 		if(job == null) {
 			SubscriberParticipant participant = getParticipant();
-			job = new RefreshSubscriberJob(participant, Policy.bind("RefreshSchedule.14"), Policy.bind("RefreshSchedule.15", participant.getName(), getRefreshIntervalAsString()), participant.getResources(), new RefreshUserNotificationPolicy(getParticipant())); //$NON-NLS-1$ //$NON-NLS-2$
+			job = new RefreshSubscriberJob(participant, TeamUIMessages.RefreshSchedule_14, NLS.bind(TeamUIMessages.RefreshSchedule_15, new String[] { participant.getName(), getRefreshIntervalAsString() }), participant.getResources(), new RefreshUserNotificationPolicy(getParticipant())); //$NON-NLS-1$ //$NON-NLS-2$
 			job.setUser(false);
 		} else if(job.getState() != Job.NONE){
 			stopJob();
@@ -167,23 +168,23 @@ public class SubscriberRefreshSchedule {
 
 	public static String refreshEventAsString(IRefreshEvent event) {
 		if(event == null) {
-			return Policy.bind("SyncViewPreferencePage.lastRefreshRunNever"); //$NON-NLS-1$
+			return TeamUIMessages.SyncViewPreferencePage_lastRefreshRunNever; //$NON-NLS-1$
 		}
 		long stopMills = event.getStopTime();
 		StringBuffer text = new StringBuffer();
 		if(stopMills <= 0) {
-			text.append(Policy.bind("SyncViewPreferencePage.lastRefreshRunNever")); //$NON-NLS-1$
+			text.append(TeamUIMessages.SyncViewPreferencePage_lastRefreshRunNever); //$NON-NLS-1$
 		} else {
 			Date lastTimeRun = new Date(stopMills);
 			text.append(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastTimeRun));
 		}
 		SyncInfo[] changes = event.getChanges();
 		if (changes.length == 0) {
-			text.append(Policy.bind("RefreshSchedule.7")); //$NON-NLS-1$
+			text.append(TeamUIMessages.RefreshSchedule_7); //$NON-NLS-1$
 		} else if (changes.length == 1) {
-			text.append(Policy.bind("RefreshSchedule.changesSingular", Integer.toString(changes.length))); //$NON-NLS-1$
+			text.append(NLS.bind(TeamUIMessages.RefreshSchedule_changesSingular, new String[] { Integer.toString(changes.length) })); //$NON-NLS-1$
 		} else {
-			text.append(Policy.bind("RefreshSchedule.changesPlural", Integer.toString(changes.length))); //$NON-NLS-1$
+			text.append(NLS.bind(TeamUIMessages.RefreshSchedule_changesPlural, new String[] { Integer.toString(changes.length) })); //$NON-NLS-1$
 		}
 		return text.toString();
 	} 
@@ -205,10 +206,10 @@ public class SubscriberRefreshSchedule {
 		}		
 		String unit;
 		if(minutes >= 1) {
-			unit = (hours ? Policy.bind("RefreshSchedule.9") : Policy.bind("RefreshSchedule.10")); //$NON-NLS-1$ //$NON-NLS-2$
+			unit = (hours ? TeamUIMessages.RefreshSchedule_9 : TeamUIMessages.RefreshSchedule_10); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
-			unit = (hours ? Policy.bind("RefreshSchedule.11") : Policy.bind("RefreshSchedule.12")); //$NON-NLS-1$ //$NON-NLS-2$
+			unit = (hours ? TeamUIMessages.RefreshSchedule_11 : TeamUIMessages.RefreshSchedule_12); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return Policy.bind("RefreshSchedule.13", Long.toString(minutes), unit); //$NON-NLS-1$
+		return NLS.bind(TeamUIMessages.RefreshSchedule_13, new String[] { Long.toString(minutes), unit }); //$NON-NLS-1$
 	}
 }

@@ -14,7 +14,7 @@ import java.util.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.*;
 
@@ -72,7 +72,7 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 	 */
 	public String getName() {
 		if (sets.length == 0) {
-			return Policy.bind("WorkingSetScope.0"); //$NON-NLS-1$
+			return TeamUIMessages.WorkingSetScope_0; //$NON-NLS-1$
 		}
 		StringBuffer name = new StringBuffer();
 		for (int i = 0; i < sets.length; i++) {

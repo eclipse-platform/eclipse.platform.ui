@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.*;
@@ -113,14 +114,14 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 						incoming.setText(new Integer(workspaceIncoming).toString()); //$NON-NLS-1$
 						outgoing.setText(new Integer(workspaceOutgoing).toString()); //$NON-NLS-1$
 	
-						conflicting.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.conflicting"))); //$NON-NLS-1$ //$NON-NLS-2$
-						outgoing.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.outgoing"))); //$NON-NLS-1$ //$NON-NLS-2$
-						incoming.setTooltip(Policy.bind("StatisticsPanel.numbersTooltip", Policy.bind("StatisticsPanel.incoming"))); //$NON-NLS-1$ //$NON-NLS-2$
+						conflicting.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_conflicting })); //$NON-NLS-1$ //$NON-NLS-2$
+						outgoing.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_outgoing })); //$NON-NLS-1$ //$NON-NLS-2$
+						incoming.setTooltip(NLS.bind(TeamUIMessages.StatisticsPanel_numbersTooltip, new String[] { TeamUIMessages.StatisticsPanel_incoming })); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
 						if (total == 1) {
-							totalChanges.setText(Policy.bind("StatisticsPanel.numberTotalSingular", Integer.toString(total))); //$NON-NLS-1$
+							totalChanges.setText(NLS.bind(TeamUIMessages.StatisticsPanel_numberTotalSingular, new String[] { Integer.toString(total) })); //$NON-NLS-1$
 						} else {
-							totalChanges.setText(Policy.bind("StatisticsPanel.numberTotalPlural", Integer.toString(total))); //$NON-NLS-1$
+							totalChanges.setText(NLS.bind(TeamUIMessages.StatisticsPanel_numberTotalPlural, new String[] { Integer.toString(total) })); //$NON-NLS-1$
 						}
 					}
 				}

@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
@@ -181,7 +182,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 */
 	public String getName() {
 		String name = super.getName();
-		return Policy.bind("SubscriberParticipant.namePattern", name, scope.getName()); //$NON-NLS-1$
+		return NLS.bind(TeamUIMessages.SubscriberParticipant_namePattern, new String[] { name, scope.getName() }); //$NON-NLS-1$
 	}
 	
 	/**
@@ -347,7 +348,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * @return the short task name to show in the status line.
 	 */
 	protected String getShortTaskName() {
-		return Policy.bind("Participant.synchronizing"); //$NON-NLS-1$
+		return TeamUIMessages.Participant_synchronizing; //$NON-NLS-1$
 	}
 	
 	/**
@@ -359,7 +360,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * @deprecated use <code>getLongTaskName(IResource[]) instead</code>
 	 */
 	protected String getLongTaskName() {
-		return Policy.bind("Participant.synchronizing"); //$NON-NLS-1$
+		return TeamUIMessages.Participant_synchronizing; //$NON-NLS-1$
 	}
 	
 	/**
@@ -383,12 +384,12 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
             resourceCount = resources.length;
         }
         if (resourceCount == 1) {
-            return Policy.bind("Participant.synchronizingMoreDetails", getShortName(), resources[0].getFullPath().toString()); //$NON-NLS-1$
+            return NLS.bind(TeamUIMessages.Participant_synchronizingMoreDetails, new String[] { getShortName(), resources[0].getFullPath().toString() }); //$NON-NLS-1$
         } else if (resourceCount > 1) {
-            return Policy.bind("Participant.synchronizingResources", getShortName(), Integer.toString(resourceCount)); //$NON-NLS-1$
+            return NLS.bind(TeamUIMessages.Participant_synchronizingResources, new String[] { getShortName(), Integer.toString(resourceCount) }); //$NON-NLS-1$
         }
         // A resource count of zero means that it is a non-resource scope so we can print the scope name
-        return Policy.bind("Participant.synchronizingDetails", getName()); //$NON-NLS-1$
+        return NLS.bind(TeamUIMessages.Participant_synchronizingDetails, new String[] { getName() }); //$NON-NLS-1$
     }
 
     /**

@@ -16,7 +16,7 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 
 /**
  * A dialog that displays a {@link org.eclipse.team.ui.ISaveableWorkbenchPart} and
@@ -75,8 +75,8 @@ public class SaveablePartDialog extends ResizableDialog {
 	 */
 	private void saveChanges() {
 		MessageDialog dialog = new MessageDialog(
-				getShell(), Policy.bind("ParticipantCompareDialog.2"), null,  //$NON-NLS-1$
-				Policy.bind("ParticipantCompareDialog.3"), MessageDialog.QUESTION, new String[]{IDialogConstants.YES_LABEL, //$NON-NLS-1$
+				getShell(), TeamUIMessages.ParticipantCompareDialog_2, null,  //$NON-NLS-1$
+				TeamUIMessages.ParticipantCompareDialog_3, MessageDialog.QUESTION, new String[]{IDialogConstants.YES_LABEL, //$NON-NLS-1$
 				IDialogConstants.NO_LABEL}, 0); // YES is the default
 			
 		if (input.isDirty() && dialog.open() == IDialogConstants.OK_ID) {

@@ -38,9 +38,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.core.IFileContentManager;
 import org.eclipse.team.core.IStringMapping;
 import org.eclipse.team.core.Team;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.PixelConverter;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.preferences.FileTypeTable.Item;
@@ -61,9 +61,9 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 				return ""; //$NON-NLS-1$
 			newText = strip(newText);
 			if (newText.indexOf('*') >= 0)
-				return Policy.bind("TextPreferencePage.2"); //$NON-NLS-1$
+				return TeamUIMessages.TextPreferencePage_2; //$NON-NLS-1$
 			if (newText.indexOf('.') >= 0)
-				return Policy.bind("TextPreferencePage.3"); //$NON-NLS-1$
+				return TeamUIMessages.TextPreferencePage_3; //$NON-NLS-1$
 			return null;
 		}
 
@@ -86,7 +86,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 			if (newText.trim().length() == 0)
 				return ""; //$NON-NLS-1$
 			if (newText.indexOf('*') >= 0)
-				return Policy.bind("TextPreferencePage.5"); //$NON-NLS-1$
+				return TeamUIMessages.TextPreferencePage_5; //$NON-NLS-1$
 			return null;
 		}
 	}
@@ -183,15 +183,15 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		buttonsComposite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
 		
 		final Button addExtensionButton = new Button(buttonsComposite, SWT.PUSH);
-		addExtensionButton.setText(Policy.bind("TextPreferencePage.add")); //$NON-NLS-1$
+		addExtensionButton.setText(TeamUIMessages.TextPreferencePage_add); //$NON-NLS-1$
 		final Button addNameButton = new Button(buttonsComposite, SWT.PUSH);
-		addNameButton.setText(Policy.bind("TextPreferencePage.0"));  //$NON-NLS-1$
+		addNameButton.setText(TeamUIMessages.TextPreferencePage_0);  //$NON-NLS-1$
 		fChangeButton = new Button(buttonsComposite, SWT.PUSH);
-		fChangeButton.setText(Policy.bind("TextPreferencePage.change")); //$NON-NLS-1$
+		fChangeButton.setText(TeamUIMessages.TextPreferencePage_change); //$NON-NLS-1$
 		fRemoveButton= new Button(buttonsComposite, SWT.PUSH);
-		fRemoveButton.setText(Policy.bind("TextPreferencePage.remove")); //$NON-NLS-1$
+		fRemoveButton.setText(TeamUIMessages.TextPreferencePage_remove); //$NON-NLS-1$
 		
-		SWTUtils.createLabel(composite, Policy.bind("TextPreferencePage.1"), 2); //$NON-NLS-1$
+		SWTUtils.createLabel(composite, TeamUIMessages.TextPreferencePage_1, 2); //$NON-NLS-1$
 		
 		/**
 		 * Calculate and set the button size 
@@ -290,7 +290,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	 */
 	void addExtension() {
 		final ExtensionValidator validator = new ExtensionValidator();
-		final InputDialog dialog = new InputDialog(getShell(), Policy.bind("TextPreferencePage.enterExtensionShort"), Policy.bind("TextPreferencePage.enterExtensionLong"), null, validator); //$NON-NLS-1$ //$NON-NLS-2$
+		final InputDialog dialog = new InputDialog(getShell(), TeamUIMessages.TextPreferencePage_enterExtensionShort, TeamUIMessages.TextPreferencePage_enterExtensionLong, null, validator); //$NON-NLS-1$ //$NON-NLS-2$
 		if (dialog.open() != Window.OK) 
 			return;
 		
@@ -301,7 +301,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		while (it.hasNext()) {
 			final FileTypeTable.Item item= (FileTypeTable.Item)it.next();
 			if (item instanceof FileTypeTable.Extension && item.name.equals(extension)) {
-				MessageDialog.openWarning(getShell(), Policy.bind("TextPreferencePage.extensionExistsShort"), Policy.bind("TextPreferencePage.extensionExistsLong")); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openWarning(getShell(), TeamUIMessages.TextPreferencePage_extensionExistsShort, TeamUIMessages.TextPreferencePage_extensionExistsLong); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 		}
@@ -314,7 +314,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	 * Add a new item to the table with the default type of Text.
 	 */
 	void addName() {
-		final InputDialog dialog = new InputDialog(getShell(), Policy.bind("TextPreferencePage.6"), Policy.bind("TextPreferencePage.7"), null, new FilenameValidator()); //$NON-NLS-1$ //$NON-NLS-2$
+		final InputDialog dialog = new InputDialog(getShell(), TeamUIMessages.TextPreferencePage_6, TeamUIMessages.TextPreferencePage_7, null, new FilenameValidator()); //$NON-NLS-1$ //$NON-NLS-2$
 		if (dialog.open() != Window.OK) 
 			return;
 		
@@ -325,7 +325,7 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		while (it.hasNext()) {
 			final FileTypeTable.Item item= (FileTypeTable.Item)it.next();
 			if (item instanceof FileTypeTable.Name && item.name.equals(name)) {
-				MessageDialog.openWarning(getShell(), Policy.bind("TextPreferencePage.extensionExistsShort"), Policy.bind("TextPreferencePage.extensionExistsLong")); //$NON-NLS-1$ //$NON-NLS-2$
+				MessageDialog.openWarning(getShell(), TeamUIMessages.TextPreferencePage_extensionExistsShort, TeamUIMessages.TextPreferencePage_extensionExistsLong); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 		}

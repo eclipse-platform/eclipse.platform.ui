@@ -12,8 +12,9 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.wizard.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ui.ITeamUIImages;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
@@ -35,7 +36,7 @@ public abstract class SubscriberParticipantWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#getWindowTitle()
 	 */
 	public String getWindowTitle() {
-		return Policy.bind("GlobalRefreshSubscriberPage.0"); //$NON-NLS-1$
+		return TeamUIMessages.GlobalRefreshSubscriberPage_0; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -48,13 +49,13 @@ public abstract class SubscriberParticipantWizard extends Wizard {
 			importWizard.addPages();
 			IWizardPage startingPage = importWizard.getStartingPage();
 			if (startingPage != null) {
-				startingPage.setTitle(Policy.bind("SubscriberParticipantWizard.0", getName())); //$NON-NLS-1$
-				startingPage.setDescription(Policy.bind("SubscriberParticipantWizard.1", importWizard.getWindowTitle())); //$NON-NLS-1$
+				startingPage.setTitle(NLS.bind(TeamUIMessages.SubscriberParticipantWizard_0, new String[] { getName() })); //$NON-NLS-1$
+				startingPage.setDescription(NLS.bind(TeamUIMessages.SubscriberParticipantWizard_1, new String[] { importWizard.getWindowTitle() })); //$NON-NLS-1$
 			}
 		} else {
 			selectionPage = new GlobalRefreshResourceSelectionPage(getRootResources());
-			selectionPage.setTitle(Policy.bind("GlobalRefreshSubscriberPage.1", getName())); //$NON-NLS-1$
-			selectionPage.setMessage(Policy.bind("GlobalRefreshSubscriberPage.2")); //$NON-NLS-1$
+			selectionPage.setTitle(NLS.bind(TeamUIMessages.GlobalRefreshSubscriberPage_1, new String[] { getName() })); //$NON-NLS-1$
+			selectionPage.setMessage(TeamUIMessages.GlobalRefreshSubscriberPage_2); //$NON-NLS-1$
 			addPage(selectionPage);
 		}
 	}

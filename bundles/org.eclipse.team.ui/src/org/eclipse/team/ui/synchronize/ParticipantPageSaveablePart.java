@@ -34,7 +34,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Assert;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.SaveablePartAdapter;
@@ -271,7 +271,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 				feedInput2(e.getSelection());
 			}
 		});
-		fEditionPane.setText(Policy.bind("ParticipantPageSaveablePart.0")); //$NON-NLS-1$
+		fEditionPane.setText(TeamUIMessages.ParticipantPageSaveablePart_0); //$NON-NLS-1$
 		
 		page = participant.createPage(pageConfiguration);
 		((SynchronizePageConfiguration)pageConfiguration).setSite(new CompareViewerPaneSite());

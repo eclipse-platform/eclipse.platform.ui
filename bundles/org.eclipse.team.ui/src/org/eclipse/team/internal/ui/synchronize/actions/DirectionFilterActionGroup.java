@@ -10,15 +10,11 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.actions;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IToolBarManager;
+import java.util.*;
+
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.ui.IActionBars;
@@ -54,7 +50,7 @@ public class DirectionFilterActionGroup extends ActionGroup implements IProperty
 		public DirectionFilterAction(String prefix,String commandId, int modeId) {
 			super("", AS_RADIO_BUTTON); //$NON-NLS-1$
 			this.modeId = modeId;
-			Utils.initAction(this, prefix, Policy.getBundle());
+			Utils.initAction(this, prefix);
 		}
 		public void run() {
 			if(isChecked()) {

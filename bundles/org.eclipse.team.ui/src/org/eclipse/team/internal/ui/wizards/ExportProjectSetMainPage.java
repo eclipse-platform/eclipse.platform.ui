@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ui.IHelpContextIds;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -59,7 +59,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 
 	public ExportProjectSetMainPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
-		setDescription(Policy.bind("ExportProjectSetMainPage.description")); //$NON-NLS-1$
+		setDescription(TeamUIMessages.ExportProjectSetMainPage_description); //$NON-NLS-1$
 	}
 
 	/*
@@ -72,7 +72,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.EXPORT_PROJECT_SET_PAGE);
 				
-		createLabel(composite, Policy.bind("ExportProjectSetMainPage.Select_the_projects_to_include_in_the_project_set__2")); //$NON-NLS-1$
+		createLabel(composite, TeamUIMessages.ExportProjectSetMainPage_Select_the_projects_to_include_in_the_project_set__2); //$NON-NLS-1$
 
 		table = new Table(composite, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		tableViewer = new CheckboxTableViewer(table);
@@ -93,7 +93,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 				updateEnablement();
 			}
 		});
-		createLabel(composite, Policy.bind("ExportProjectSetMainPage.Project_Set_File_Name__3")); //$NON-NLS-1$
+		createLabel(composite, TeamUIMessages.ExportProjectSetMainPage_Project_Set_File_Name__3); //$NON-NLS-1$
 
 		Composite inner = new Composite(composite, SWT.NULL);
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -103,7 +103,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		layout.marginWidth = 0;
 		inner.setLayout(layout);
 
-		createLabel(inner, Policy.bind("ExportProjectSetMainPage.&File_name__1")); //$NON-NLS-1$
+		createLabel(inner, TeamUIMessages.ExportProjectSetMainPage__File_name__1); //$NON-NLS-1$
 		fileText = createTextField(inner);
 		if (file != null) fileText.setText(file);
 		fileText.addListener(SWT.Modify, new Listener() {
@@ -114,7 +114,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		});
 
 		browseButton = new Button(inner, SWT.PUSH);
-		browseButton.setText(Policy.bind("ExportProjectSetMainPage.Browse_4")); //$NON-NLS-1$
+		browseButton.setText(TeamUIMessages.ExportProjectSetMainPage_Browse_4); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
@@ -125,8 +125,8 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 			public void handleEvent(Event event) {
 				FileDialog d = new FileDialog(getShell(), SWT.SAVE);
 				d.setFilterExtensions(new String[] {"*.psf"}); //$NON-NLS-1$
-				d.setFilterNames(new String[] {Policy.bind("ExportProjectSetMainPage.Project_Set_Files_3")}); //$NON-NLS-1$
-				d.setFileName(Policy.bind("ExportProjectSetMainPage.default")); //$NON-NLS-1$
+				d.setFilterNames(new String[] {TeamUIMessages.ExportProjectSetMainPage_Project_Set_Files_3}); //$NON-NLS-1$
+				d.setFileName(TeamUIMessages.ExportProjectSetMainPage_default); //$NON-NLS-1$
 				d.setFilterPath(new File(".").getAbsolutePath()); //$NON-NLS-1$
 				String f = d.open();
 				if (f != null) {
@@ -167,7 +167,7 @@ public class ExportProjectSetMainPage extends TeamWizardPage {
 		} else {
 			File f = new File(file);
 			if (f.isDirectory()) {
-				setMessage(Policy.bind("ExportProjectSetMainPage.You_have_specified_a_folder_5"), ERROR); //$NON-NLS-1$
+				setMessage(TeamUIMessages.ExportProjectSetMainPage_You_have_specified_a_folder_5, ERROR); //$NON-NLS-1$
 				complete = false;
 			} else {
 				complete = true;

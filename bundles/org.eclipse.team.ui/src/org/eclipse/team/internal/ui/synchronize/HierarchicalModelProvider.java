@@ -45,7 +45,7 @@ public class HierarchicalModelProvider extends SynchronizeModelProvider {
 			return ID;
 		}		
 		public String getName() {
-			return Policy.bind("HierarchicalModelProvider.0"); //$NON-NLS-1$
+			return TeamUIMessages.HierarchicalModelProvider_0; //$NON-NLS-1$
 		}		
 		public ImageDescriptor getImageDescriptor() {
 			return TeamImages.getImageDescriptor(ITeamUIImages.IMG_HIERARCHICAL);

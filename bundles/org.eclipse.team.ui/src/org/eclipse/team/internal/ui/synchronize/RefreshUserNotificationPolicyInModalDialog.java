@@ -14,7 +14,7 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
@@ -50,7 +50,7 @@ public class RefreshUserNotificationPolicyInModalDialog implements IRefreshSubsc
 			public void run() {		
 					// If there are no changes
 					if (event.getStatus().getCode() == IRefreshEvent.STATUS_NO_CHANGES) {
-						MessageDialog.openInformation(shell, Policy.bind("OpenComparedDialog.noChangeTitle"), Policy.bind("OpenComparedDialog.noChangesMessage")); //$NON-NLS-1$ //$NON-NLS-2$
+						MessageDialog.openInformation(shell, TeamUIMessages.OpenComparedDialog_noChangeTitle, TeamUIMessages.OpenComparedDialog_noChangesMessage); //$NON-NLS-1$ //$NON-NLS-2$
 						return;
 					}
 					compareAndOpenDialog(event, participant);

@@ -29,8 +29,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.IHelpContextIds;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -50,7 +50,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 
 	public ImportProjectSetMainPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
-		setDescription(Policy.bind("ImportProjectSetMainPage.description")); //$NON-NLS-1$
+		setDescription(TeamUIMessages.ImportProjectSetMainPage_description); //$NON-NLS-1$
 	}
 	
 	/*
@@ -71,7 +71,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		layout.marginWidth = 0;
 		inner.setLayout(layout);
 		
-		createLabel(inner, Policy.bind("ImportProjectSetMainPage.Project_Set_File_Name__2")); //$NON-NLS-1$
+		createLabel(inner, TeamUIMessages.ImportProjectSetMainPage_Project_Set_File_Name__2); //$NON-NLS-1$
 		fileText = createTextField(inner);
 		if (file != null) fileText.setText(file);
 		fileText.addListener(SWT.Modify, new Listener() {
@@ -82,7 +82,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		});
 
 		browseButton = new Button(inner, SWT.PUSH);
-		browseButton.setText(Policy.bind("ImportProjectSetMainPage.Browse_3")); //$NON-NLS-1$
+		browseButton.setText(TeamUIMessages.ImportProjectSetMainPage_Browse_3); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
 		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
@@ -93,7 +93,7 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 			public void handleEvent(Event event) {
 				FileDialog d = new FileDialog(getShell());
 				d.setFilterExtensions(new String[] {"*.psf", "*"}); //$NON-NLS-1$ //$NON-NLS-2$
-				d.setFilterNames(new String[] {Policy.bind("ImportProjectSetMainPage.Project_Set_Files_2"), Policy.bind("ImportProjectSetMainPage.allFiles")}); //$NON-NLS-1$  //$NON-NLS-2$
+				d.setFilterNames(new String[] {TeamUIMessages.ImportProjectSetMainPage_Project_Set_Files_2, TeamUIMessages.ImportProjectSetMainPage_allFiles}); //$NON-NLS-1$  //$NON-NLS-2$
 				d.setFilterPath(new File(".").getAbsolutePath()); //$NON-NLS-1$
 				String f = d.open();
 				if (f != null) {
@@ -116,14 +116,14 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 	private void createWorkinSetCreationArea(Composite composite, int numColumns) {
 		
 		createWorkingSetButton = new Button(composite, SWT.CHECK | SWT.RIGHT);
-		createWorkingSetButton.setText(Policy.bind("ImportProjectSetMainPage.createWorkingSetLabel")); //$NON-NLS-1$
+		createWorkingSetButton.setText(TeamUIMessages.ImportProjectSetMainPage_createWorkingSetLabel); //$NON-NLS-1$
 		createWorkingSetButton.setSelection(createWorkingSet);
 		GridData data = new GridData();
 		data.horizontalSpan = numColumns;
 		createWorkingSetButton.setLayoutData(data);
 
 		final Label label = new Label(composite, SWT.NONE);
-		label.setText(Policy.bind("ImportProjectSetMainPage.workingSetLabel")); //$NON-NLS-1$
+		label.setText(TeamUIMessages.ImportProjectSetMainPage_workingSetLabel); //$NON-NLS-1$
 		data = new GridData();
 		data.horizontalSpan = 1;
 		label.setLayoutData(data);
@@ -155,13 +155,13 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 		if (createWorkingSet) {
 			workingSetName =  workingSetNameField.getText();
 			if (workingSetName.length() == 0) {
-				setMessage(Policy.bind("ImportProjectSetMainPage.workingSetNameEmpty"), ERROR); //$NON-NLS-1$
+				setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameEmpty, ERROR); //$NON-NLS-1$
 				return false;
 			} else {
 				// todo: verify name doesn't already exist
 				IWorkingSet existingSet = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager().getWorkingSet(workingSetName);
 				if (existingSet != null) {
-					setMessage(Policy.bind("ImportProjectSetMainPage.workingSetNameExists"), WARNING); //$NON-NLS-1$
+					setMessage(TeamUIMessages.ImportProjectSetMainPage_workingSetNameExists, WARNING); //$NON-NLS-1$
 					return true;
 				}
 			}
@@ -179,10 +179,10 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 			// See if the file exists
 			File f = new File(file);
 			if (!f.exists()) {
-				setMessage(Policy.bind("ImportProjectSetMainPage.The_specified_file_does_not_exist_4"), ERROR); //$NON-NLS-1$
+				setMessage(TeamUIMessages.ImportProjectSetMainPage_The_specified_file_does_not_exist_4, ERROR); //$NON-NLS-1$
 				complete = false;
 			} else if (f.isDirectory()) {
-				setMessage(Policy.bind("ImportProjectSetMainPage.You_have_specified_a_folder_5"), ERROR); //$NON-NLS-1$
+				setMessage(TeamUIMessages.ImportProjectSetMainPage_You_have_specified_a_folder_5, ERROR); //$NON-NLS-1$
 				complete = false;
 			} else {
 				complete = validateWorkingSetName();

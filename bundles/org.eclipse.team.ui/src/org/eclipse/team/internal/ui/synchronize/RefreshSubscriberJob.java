@@ -21,6 +21,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.SyncInfo;
@@ -113,7 +114,7 @@ public final class RefreshSubscriberJob extends Job {
         private IStatus status;
         public void run() {
             if (status != null && !status.isOK()) {
-                ErrorDialog.openError(Utils.getShell(null), null, Policy.bind("RefreshSubscriberJob.3"), status); //$NON-NLS-1$
+                ErrorDialog.openError(Utils.getShell(null), null, TeamUIMessages.RefreshSubscriberJob_3, status); //$NON-NLS-1$
             } else if(gotoAction != null) {
         		gotoAction.run();
         	}
@@ -416,22 +417,22 @@ public final class RefreshSubscriberJob extends Job {
 				// New changes found
 					String numNewChanges = Integer.toString(event.getChanges().length);
 					if (event.getChanges().length == 1) {
-							text.append(Policy.bind("RefreshCompleteDialog.newChangesSingular", new Object[]{getName(), numNewChanges})); //$NON-NLS-1$
+							text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesSingular, (new Object[]{getName(), numNewChanges}))); //$NON-NLS-1$
 					} else {
-							text.append(Policy.bind("RefreshCompleteDialog.newChangesPlural", new Object[]{getName(), numNewChanges})); //$NON-NLS-1$
+							text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_newChangesPlural, (new Object[]{getName(), numNewChanges}))); //$NON-NLS-1$
 						}
 				} else {
 					// Refreshed resources contain changes
 					if (numChanges == 1) {
-						text.append(Policy.bind("RefreshCompleteDialog.changesSingular", new Object[]{getName(), new Integer(numChanges)})); //$NON-NLS-1$
+						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesSingular, (new Object[]{getName(), new Integer(numChanges)}))); //$NON-NLS-1$
 					} else {
-						text.append(Policy.bind("RefreshCompleteDialog.changesPlural", new Object[]{getName(), new Integer(numChanges)})); //$NON-NLS-1$
+						text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_changesPlural, (new Object[]{getName(), new Integer(numChanges)}))); //$NON-NLS-1$
 					}
 				}
 			} else {
 				// No changes found
 				code = IRefreshEvent.STATUS_NO_CHANGES;
-				text.append(Policy.bind("RefreshCompleteDialog.6", getName())); //$NON-NLS-1$
+				text.append(NLS.bind(TeamUIMessages.RefreshCompleteDialog_6, new String[] { getName() })); //$NON-NLS-1$
 			}
 			return new Status(IStatus.OK, TeamUIPlugin.ID, code, text.toString(), null);
 		}

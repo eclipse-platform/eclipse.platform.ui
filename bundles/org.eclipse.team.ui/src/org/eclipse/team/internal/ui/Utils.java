@@ -27,6 +27,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
@@ -144,7 +145,7 @@ public class Utils {
 			} else if (t instanceof InterruptedException) {
 				return;
 			} else {
-				status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("TeamAction.internal"), t); //$NON-NLS-1$
+				status = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.TeamAction_internal, t); //$NON-NLS-1$
 				log = true;
 				dialog = true;
 			}
@@ -255,13 +256,13 @@ public class Utils {
 				} else if (t instanceof TeamException) {
 					error = ((TeamException) t).getStatus();
 				} else {
-					error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal"), t); //$NON-NLS-1$
+					error = new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, TeamUIMessages.simpleInternal, t); //$NON-NLS-1$
 				}
 				Shell shell = new Shell(Display.getDefault());
 				if (error.getSeverity() == IStatus.INFO) {
-					MessageDialog.openInformation(shell, Policy.bind("information"), error.getMessage()); //$NON-NLS-1$
+					MessageDialog.openInformation(shell, TeamUIMessages.information, error.getMessage()); //$NON-NLS-1$
 				} else {
-					ErrorDialog.openError(shell, Policy.bind("exception"), null, error); //$NON-NLS-1$
+					ErrorDialog.openError(shell, TeamUIMessages.exception, null, error); //$NON-NLS-1$
 				}
 				shell.dispose();
 				// Let's log non-team exceptions
@@ -282,15 +283,11 @@ public class Utils {
 	}
 
 	public static void initAction(IAction a, String prefix) {
-		Utils.initAction(a, prefix, Policy.getBundle(), null);
+		Utils.initAction(a, prefix, Policy.getActionBundle());
 	}
 	
 	public static void initAction(IAction a, String prefix, ResourceBundle bundle) {
 		Utils.initAction(a, prefix, bundle, null);
-	}
-
-	public static void initAction(IAction a, String prefix, String[] bindings) {
-		Utils.initAction(a, prefix, Policy.getBundle(), bindings);
 	}
 	
 	public static void updateLabels(SyncInfo sync, CompareConfiguration config) {
@@ -298,19 +295,19 @@ public class Utils {
 		final IResourceVariant base = sync.getBase();
 		String localContentId = sync.getLocalContentIdentifier();
 		if (localContentId != null) {
-			config.setLeftLabel(Policy.bind("SyncInfoCompareInput.localLabelExists", localContentId)); //$NON-NLS-1$
+			config.setLeftLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_localLabelExists, new String[] { localContentId })); //$NON-NLS-1$
 		} else {
-			config.setLeftLabel(Policy.bind("SyncInfoCompareInput.localLabel")); //$NON-NLS-1$
+			config.setLeftLabel(TeamUIMessages.SyncInfoCompareInput_localLabel); //$NON-NLS-1$
 		}
 		if (remote != null) {
-			config.setRightLabel(Policy.bind("SyncInfoCompareInput.remoteLabelExists", remote.getContentIdentifier())); //$NON-NLS-1$
+			config.setRightLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_remoteLabelExists, new String[] { remote.getContentIdentifier() })); //$NON-NLS-1$
 		} else {
-			config.setRightLabel(Policy.bind("SyncInfoCompareInput.remoteLabel")); //$NON-NLS-1$
+			config.setRightLabel(TeamUIMessages.SyncInfoCompareInput_remoteLabel); //$NON-NLS-1$
 		}
 		if (base != null) {
-			config.setAncestorLabel(Policy.bind("SyncInfoCompareInput.baseLabelExists", base.getContentIdentifier())); //$NON-NLS-1$
+			config.setAncestorLabel(NLS.bind(TeamUIMessages.SyncInfoCompareInput_baseLabelExists, new String[] { base.getContentIdentifier() })); //$NON-NLS-1$
 		} else {
-			config.setAncestorLabel(Policy.bind("SyncInfoCompareInput.baseLabel")); //$NON-NLS-1$
+			config.setAncestorLabel(TeamUIMessages.SyncInfoCompareInput_baseLabel); //$NON-NLS-1$
 		}
 	}
 
@@ -330,19 +327,19 @@ public class Utils {
 		}
 		String s = null;
 		if(bindings != null) {
-			s = Policy.bind(Policy.bind(labelKey, bundle), bindings);
+			s = NLS.bind(getString(labelKey, bundle), bindings);
 		} else {
-			s = Policy.bind(labelKey, bundle);
+			s = getString(labelKey, bundle);
 		}
 		if (s != null)
 			a.setText(s);
-		s = Policy.bind(tooltipKey, bundle);
+		s = getString(tooltipKey, bundle);
 		if (s != null)
 			a.setToolTipText(s);
-		s = Policy.bind(descriptionKey, bundle);
+		s = getString(descriptionKey, bundle);
 		if (s != null)
 			a.setDescription(s);
-		String relPath = Policy.bind(imageKey, bundle);
+		String relPath = getString(imageKey, bundle);
 		if (relPath != null && !relPath.equals(imageKey) && relPath.trim().length() > 0) {
 			String dPath;
 			String ePath;
@@ -362,19 +359,29 @@ public class Utils {
 				a.setImageDescriptor(id);
 		}
 	}
+    
+    public static String getString(String key, ResourceBundle b) {
+        try {
+            return b.getString(key);
+        } catch (MissingResourceException e) {
+            return key;
+        } catch (NullPointerException e) {
+            return "!" + key + "!"; //$NON-NLS-1$ //$NON-NLS-2$
+        }
+    }
 
 	public static String modeToString(int mode) {
 		switch (mode) {
 			case ISynchronizePageConfiguration.INCOMING_MODE :
-				return Policy.bind("Utils.22"); //$NON-NLS-1$
+				return TeamUIMessages.Utils_22; //$NON-NLS-1$
 			case ISynchronizePageConfiguration.OUTGOING_MODE :
-				return Policy.bind("Utils.23"); //$NON-NLS-1$
+				return TeamUIMessages.Utils_23; //$NON-NLS-1$
 			case ISynchronizePageConfiguration.BOTH_MODE :
-				return Policy.bind("Utils.24"); //$NON-NLS-1$
+				return TeamUIMessages.Utils_24; //$NON-NLS-1$
 			case ISynchronizePageConfiguration.CONFLICTING_MODE :
-				return Policy.bind("Utils.25"); //$NON-NLS-1$
+				return TeamUIMessages.Utils_25; //$NON-NLS-1$
 		}
-		return Policy.bind("Utils.26"); //$NON-NLS-1$
+		return TeamUIMessages.Utils_26; //$NON-NLS-1$
 	}
 
 	/**

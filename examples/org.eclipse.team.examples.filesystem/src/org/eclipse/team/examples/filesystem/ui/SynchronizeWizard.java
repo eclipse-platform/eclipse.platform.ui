@@ -15,7 +15,7 @@ import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.examples.filesystem.subscriber.FileSystemSubscriber;
 import org.eclipse.team.internal.ui.ITeamUIImages;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.synchronize.GlobalRefreshResourceSelectionPage;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.team.ui.TeamUI;
@@ -35,7 +35,7 @@ public class SynchronizeWizard extends Wizard {
 	 * @see org.eclipse.jface.wizard.Wizard#getWindowTitle()
 	 */
 	public String getWindowTitle() {
-		return Policy.bind("GlobalRefreshSubscriberPage.0"); //$NON-NLS-1$
+		return TeamUIMessages.GlobalRefreshSubscriberPage_0; //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

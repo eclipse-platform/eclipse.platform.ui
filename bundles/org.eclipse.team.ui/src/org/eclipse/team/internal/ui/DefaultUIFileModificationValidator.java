@@ -18,6 +18,7 @@ import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -42,7 +43,7 @@ public class DefaultUIFileModificationValidator extends DefaultFileModificationV
         }
         
         public FileListDialog(Shell parentShell, IFile[] files) {
-            super(parentShell, Policy.bind("DefaultUIFileModificationValidator.0")); //$NON-NLS-1$
+            super(parentShell, TeamUIMessages.DefaultUIFileModificationValidator_0); //$NON-NLS-1$
             this.files = files;
 			setImageKey(DLG_IMG_WARNING);
         }
@@ -51,7 +52,7 @@ public class DefaultUIFileModificationValidator extends DefaultFileModificationV
          * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#createMainDialogArea(org.eclipse.swt.widgets.Composite)
          */
         protected void createMainDialogArea(Composite parent) {
-			createWrappingLabel(parent, Policy.bind("DefaultUIFileModificationValidator.1")); //$NON-NLS-1$
+			createWrappingLabel(parent, TeamUIMessages.DefaultUIFileModificationValidator_1); //$NON-NLS-1$
         }
 
         /* (non-Javadoc)
@@ -59,7 +60,7 @@ public class DefaultUIFileModificationValidator extends DefaultFileModificationV
          */
         protected Composite createDropDownDialogArea(Composite parent) {
 			Composite composite = createComposite(parent);
-			createWrappingLabel(composite, Policy.bind("DefaultUIFileModificationValidator.2")); //$NON-NLS-1$
+			createWrappingLabel(composite, TeamUIMessages.DefaultUIFileModificationValidator_2); //$NON-NLS-1$
 			org.eclipse.swt.widgets.List fileList = new org.eclipse.swt.widgets.List(composite, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);	 
 			GridData data = new GridData ();		
 			data.heightHint = 75;
@@ -127,7 +128,7 @@ public class DefaultUIFileModificationValidator extends DefaultFileModificationV
             if (readOnlyFiles.length == 1) {
                 shell.getDisplay().syncExec(new Runnable() {
                     public void run() {
-                        ok[0] = MessageDialog.openQuestion(shell, Policy.bind("DefaultUIFileModificationValidator.3"), Policy.bind("DefaultUIFileModificationValidator.4", readOnlyFiles[0].getFullPath().toString())); //$NON-NLS-1$ //$NON-NLS-2$
+                        ok[0] = MessageDialog.openQuestion(shell, TeamUIMessages.DefaultUIFileModificationValidator_3, NLS.bind(TeamUIMessages.DefaultUIFileModificationValidator_4, new String[] { readOnlyFiles[0].getFullPath().toString() })); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 });
             } else {

@@ -20,7 +20,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.ui.model.*;
 
 /**
@@ -122,7 +122,7 @@ public class ResourceMappingSelectionArea extends DialogArea {
         Composite buttons = createEmbeddedButtonComposite(composite);
         
         Button selectAll = new Button(buttons, SWT.PUSH);
-        selectAll.setText(Policy.bind("ResourceMappingSelectionArea.0")); //$NON-NLS-1$
+        selectAll.setText(TeamUIMessages.ResourceMappingSelectionArea_0); //$NON-NLS-1$
         selectAll.setLayoutData(new GridData(GridData.FILL_BOTH));
         selectAll.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
@@ -131,7 +131,7 @@ public class ResourceMappingSelectionArea extends DialogArea {
         });
         
         Button deselectAll = new Button(buttons, SWT.PUSH);
-        deselectAll.setText(Policy.bind("ResourceMappingSelectionArea.1")); //$NON-NLS-1$
+        deselectAll.setText(TeamUIMessages.ResourceMappingSelectionArea_1); //$NON-NLS-1$
         deselectAll.setLayoutData(new GridData(GridData.FILL_BOTH));
         deselectAll.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {

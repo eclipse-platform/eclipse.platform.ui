@@ -15,7 +15,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
@@ -34,8 +33,8 @@ public class ChangeSetModelManager extends HierarchicalModelManager implements I
 	
 	private class ToggleCommitSetAction extends Action {
         public ToggleCommitSetAction() {
-            super(Policy.bind("ChangeLogModelManager.0"), TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_CHANGE_SET)); //$NON-NLS-1$
-            setToolTipText(Policy.bind("ChangeLogModelManager.0")); //$NON-NLS-1$
+            super(TeamUIMessages.ChangeLogModelManager_0, TeamUIPlugin.getImageDescriptor(ITeamUIImages.IMG_CHANGE_SET)); //$NON-NLS-1$
+            setToolTipText(TeamUIMessages.ChangeLogModelManager_0); //$NON-NLS-1$
             update();
         }
         public void run() {

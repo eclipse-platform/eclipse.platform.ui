@@ -14,6 +14,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
@@ -63,7 +64,7 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	}
 
 	public GlobalRefreshAction() {
-		synchronizeAction = new Action(Policy.bind("GlobalRefreshAction.4")) { //$NON-NLS-1$
+		synchronizeAction = new Action(TeamUIMessages.GlobalRefreshAction_4) { //$NON-NLS-1$
 			public void run() {
 				IWizard wizard = new GlobalSynchronizeWizard();
 				WizardDialog dialog = new WizardDialog(window.getShell(), wizard);
@@ -229,11 +230,11 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 			if (!id.equals(NO_DEFAULT_PARTICPANT)) {
 				ISynchronizeParticipantReference ref = TeamUI.getSynchronizeManager().get(id, secondaryId);
 				if (ref != null) {
-					actionProxy.setToolTipText(Policy.bind("GlobalRefreshAction.5", ref.getDisplayName())); //$NON-NLS-1$
+					actionProxy.setToolTipText(NLS.bind(TeamUIMessages.GlobalRefreshAction_5, new String[] { ref.getDisplayName() })); //$NON-NLS-1$
 					return;
 				}
 			}
-			actionProxy.setToolTipText(Policy.bind("GlobalRefreshAction.4")); //$NON-NLS-1$
+			actionProxy.setToolTipText(TeamUIMessages.GlobalRefreshAction_4); //$NON-NLS-1$
 		}
 	}
 }

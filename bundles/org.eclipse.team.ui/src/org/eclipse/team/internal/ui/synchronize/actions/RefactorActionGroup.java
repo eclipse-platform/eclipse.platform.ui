@@ -18,7 +18,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.ui.*;
@@ -44,7 +44,7 @@ public class RefactorActionGroup extends ActionGroup {
 
 	public void fillContextMenu(IMenuManager parentMenu, String groupId) {
 
-		final MenuManager menu = new MenuManager(Policy.bind("RefactorActionGroup.0")); //$NON-NLS-1$
+		final MenuManager menu = new MenuManager(TeamUIMessages.RefactorActionGroup_0); //$NON-NLS-1$
 
 		final IStructuredSelection selection= getSelection();
 		final boolean anyResourceSelected =	!selection.isEmpty() && allResourcesAreOfType(selection, IResource.PROJECT | IResource.FOLDER | IResource.FILE);

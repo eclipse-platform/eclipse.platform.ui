@@ -19,7 +19,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
@@ -38,9 +38,9 @@ public class RemoveSynchronizeParticipantAction extends Action {
 		this.view = view;
 		this.removeAll = removeAll;
 		if (removeAll) {
-			Utils.initAction(this, "action.removeAllPage.", Policy.getBundle()); //$NON-NLS-1$
+			Utils.initAction(this, "action.removeAllPage."); //$NON-NLS-1$
 		} else {
-			Utils.initAction(this, "action.removePage.", Policy.getBundle()); //$NON-NLS-1$
+			Utils.initAction(this, "action.removePage."); //$NON-NLS-1$
 		}
 	}
 
@@ -71,8 +71,8 @@ public class RemoveSynchronizeParticipantAction extends Action {
 					public void run() {
 						bail[0] = !MessageDialog.openQuestion(
 								view.getSite().getShell(), 
-								Policy.bind("RemoveSynchronizeParticipantAction.0"),  //$NON-NLS-1$
-								Policy.bind("RemoveSynchronizeParticipantAction.1")); //$NON-NLS-1$
+								TeamUIMessages.RemoveSynchronizeParticipantAction_0,  //$NON-NLS-1$
+								TeamUIMessages.RemoveSynchronizeParticipantAction_1); //$NON-NLS-1$
 
 					}
 				});

@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
@@ -225,7 +226,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	 * @see org.eclipse.compare.CompareEditorInput#getTitle()
 	 */
 	public String getTitle() {
-		return Policy.bind("SyncInfoCompareInput.title", node.getName()); //$NON-NLS-1$
+		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_title, new String[] { node.getName() }); //$NON-NLS-1$
 	}
 
 	/*
@@ -241,7 +242,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 	 * @see org.eclipse.ui.IEditorInput#getToolTipText()
 	 */
 	public String getToolTipText() {
-		return Policy.bind("SyncInfoCompareInput.tooltip", Utils.shortenText(30, description), node.getResource().getFullPath().toString()); //$NON-NLS-1$
+		return NLS.bind(TeamUIMessages.SyncInfoCompareInput_tooltip, new String[] { Utils.shortenText(30, description), node.getResource().getFullPath().toString() }); //$NON-NLS-1$
 	}
 
 	/*
@@ -286,12 +287,12 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		if(newTimestamp != timestamp) {
 			final MessageDialog dialog = 
 				new MessageDialog(TeamUIPlugin.getStandardDisplay().getActiveShell(), 
-						Policy.bind("SyncInfoCompareInput.0"),  //$NON-NLS-1$
+						TeamUIMessages.SyncInfoCompareInput_0,  //$NON-NLS-1$
 						null, 
-						Policy.bind("SyncInfoCompareInput.1"),  //$NON-NLS-1$
+						TeamUIMessages.SyncInfoCompareInput_1,  //$NON-NLS-1$
 						MessageDialog.QUESTION,
 					new String[] {
-						Policy.bind("SyncInfoCompareInput.2"), //$NON-NLS-1$
+						TeamUIMessages.SyncInfoCompareInput_2, //$NON-NLS-1$
 						IDialogConstants.CANCEL_LABEL}, 
 					0);
 			

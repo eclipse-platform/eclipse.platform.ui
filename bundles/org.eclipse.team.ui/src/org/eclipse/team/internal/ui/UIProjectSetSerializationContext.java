@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.ProjectSetSerializationContext;
 import org.eclipse.team.core.TeamException;
@@ -84,7 +85,7 @@ public class UIProjectSetSerializationContext extends ProjectSetSerializationCon
 				return resources.contains(resource);
 			}
 			public String promptMessage(IResource resource) {
-				return Policy.bind("UIProjectSetSerializationContext.0", resource.getName()); //$NON-NLS-1$
+				return NLS.bind(TeamUIMessages.UIProjectSetSerializationContext_0, new String[] { resource.getName() }); //$NON-NLS-1$
 			}
 		};
 		PromptingDialog dialog =
@@ -92,7 +93,7 @@ public class UIProjectSetSerializationContext extends ProjectSetSerializationCon
 				(Shell)getShell(),
 				projects,
 				prompt,
-				Policy.bind("UIProjectSetSerializationContext.1")); //$NON-NLS-1$
+				TeamUIMessages.UIProjectSetSerializationContext_1); //$NON-NLS-1$
 		IResource[] resourcesToOverwrite;
 		try {
 			resourcesToOverwrite = dialog.promptForMultiple();

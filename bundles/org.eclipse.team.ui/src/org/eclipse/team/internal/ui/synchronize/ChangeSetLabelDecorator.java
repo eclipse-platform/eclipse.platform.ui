@@ -12,10 +12,11 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.team.internal.core.subscribers.*;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
@@ -40,7 +41,7 @@ public class ChangeSetLabelDecorator extends LabelProvider implements ILabelDeco
 		if (element instanceof ChangeSetDiffNode) {
 		    ChangeSet set = ((ChangeSetDiffNode)element).getSet();
 		    if (set instanceof ActiveChangeSet && isDefaultActiveSet((ActiveChangeSet)set)) {
-		        text = Policy.bind("CommitSetDiffNode.0", text); //$NON-NLS-1$
+		        text = NLS.bind(TeamUIMessages.CommitSetDiffNode_0, new String[] { text }); //$NON-NLS-1$
 		    }
 		}
 		return text;

@@ -42,14 +42,14 @@ public class ProjectSetContentHandler extends DefaultHandler {
 		}
 		if (isVersionOne) return;
 		if (elementName.equals("provider")) { //$NON-NLS-1$ //$NON-NLS-2$
-			if (!inPsf) throw new SAXException(Policy.bind("ProjectSetContentHandler.Element_provider_must_be_contained_in_element_psf_4")); //$NON-NLS-1$
+			if (!inPsf) throw new SAXException(TeamUIMessages.ProjectSetContentHandler_Element_provider_must_be_contained_in_element_psf_4); //$NON-NLS-1$
 			inProvider = true;
 			id = atts.getValue("id"); //$NON-NLS-1$
 			references = new ArrayList();
 			return;
 		}
 		if (elementName.equals("project")) { //$NON-NLS-1$ //$NON-NLS-2$
-			if (!inProvider) throw new SAXException(Policy.bind("ProjectSetContentHandler.Element_project_must_be_contained_in_element_provider_7")); //$NON-NLS-1$
+			if (!inProvider) throw new SAXException(TeamUIMessages.ProjectSetContentHandler_Element_project_must_be_contained_in_element_provider_7); //$NON-NLS-1$
 			inProject = true;
 			String reference = atts.getValue("reference"); //$NON-NLS-1$
 			references.add(reference);

@@ -23,7 +23,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.registry.SynchronizeWizardDescription;
@@ -83,9 +83,9 @@ public class GlobalRefreshWizardSelectionPage extends WizardPage implements IDou
 	}
 		
 	public GlobalRefreshWizardSelectionPage() {
-		super(Policy.bind("GlobalRefreshParticipantSelectionPage.0")); //$NON-NLS-1$
-		setDescription(Policy.bind("GlobalRefreshParticipantSelectionPage.1")); //$NON-NLS-1$
-		setTitle(Policy.bind("GlobalRefreshParticipantSelectionPage.2")); //$NON-NLS-1$
+		super(TeamUIMessages.GlobalRefreshParticipantSelectionPage_0); //$NON-NLS-1$
+		setDescription(TeamUIMessages.GlobalRefreshParticipantSelectionPage_1); //$NON-NLS-1$
+		setTitle(TeamUIMessages.GlobalRefreshParticipantSelectionPage_2); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -123,7 +123,7 @@ public class GlobalRefreshWizardSelectionPage extends WizardPage implements IDou
 		setControl(top);
 		
 		Label l = new Label(top, SWT.NULL);
-		l.setText(Policy.bind("GlobalRefreshParticipantSelectionPage.3")); //$NON-NLS-1$
+		l.setText(TeamUIMessages.GlobalRefreshParticipantSelectionPage_3); //$NON-NLS-1$
 		fViewer = new TableViewer(top, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		fViewer.getControl().setLayoutData(data);
