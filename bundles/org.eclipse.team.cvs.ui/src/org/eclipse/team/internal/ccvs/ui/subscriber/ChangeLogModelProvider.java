@@ -22,8 +22,12 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.variants.IResourceVariant;
 import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.resources.*;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
@@ -194,6 +198,18 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		public String getName() {
 			IResource resource = getResource();
 			return resource.getName() + " - " + resource.getFullPath().toString(); //$NON-NLS-1$
+		}
+	}
+	
+	public class CVSUpdatableSyncInfo extends CVSSyncInfo {
+		public int kind;
+		public CVSUpdatableSyncInfo(int kind, IResource local, IResourceVariant base, IResourceVariant remote, Subscriber s) {
+			super(local, base, remote, s);
+			this.kind = kind;
+		}
+
+		protected int calculateKind() throws TeamException {
+			return kind;
 		}
 	}
 	
@@ -382,12 +398,10 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			if (changeRoot == null) {
 				changeRoot = new ChangeLogDiffNode(getModelRoot(), logEntry);
 				commentRoots.put(dateComment, changeRoot);
-				try {
-				setAllowRefreshViewer(false);
 				addToViewer(changeRoot);
-				} finally {
-					setAllowRefreshViewer(true);
-				}
+			}
+			if(info instanceof CVSSyncInfo) {
+				info = new CVSUpdatableSyncInfo(info.getKind(), info.getLocal(), info.getBase(), (RemoteResource)logEntry.getRemoteFile(), ((CVSSyncInfo)info).getSubscriber());
 			}
 			element = new FullPathSyncInfoElement(changeRoot, info);
 		} else {
@@ -395,12 +409,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			// additions.
 			element = new FullPathSyncInfoElement(getModelRoot(), info);
 		}	
-		try {
-			setAllowRefreshViewer(false);
-			addToViewer(element);
-		} finally {
-			setAllowRefreshViewer(true);
-		}
+		addToViewer(element);
 	}
 
 	private boolean isInterestingChange(SyncInfo info) {
@@ -408,7 +417,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		if(info.getComparator().isThreeWay()) {
 			return (kind & SyncInfo.DIRECTION_MASK) != SyncInfo.OUTGOING;
 		}
-		return kind != SyncInfo.DELETION;
+		return true;
 	}
 
 	/**

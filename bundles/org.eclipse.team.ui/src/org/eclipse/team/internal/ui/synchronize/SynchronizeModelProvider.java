@@ -24,6 +24,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.core.Assert;
@@ -337,33 +338,28 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	protected abstract void handleResourceRemovals(ISyncInfoTreeChangeEvent event);
 
 	protected void reset() {
-		try {
-			setAllowRefreshViewer(false);
-			// save expansion state
-			if(! resourceMap.isEmpty()) {
-				saveViewerState();
-			}
-			
-			// Clear existing model, but keep the root node
-			resourceMap.clear();
-			clearModelObjects(getModelRoot());
-			// remove all from tree viewer
-			IDiffElement[] elements = getModelRoot().getChildren();
-			for (int i = 0; i < elements.length; i++) {
-				doRemove((ISynchronizeModelElement)elements[i]);
-			}
-			
-			// Rebuild the model
-			associateDiffNode(getModelRoot());
-			buildModelObjects(getModelRoot());
-			
-			// Notify listeners that model has changed
-			ISynchronizeModelElement root = getModelRoot();
-			if(root instanceof SynchronizeModelElement) {
-				((SynchronizeModelElement)root).fireChanges();
-			}
-		} finally {
-			setAllowRefreshViewer(true);
+		// save expansion state
+		if(! resourceMap.isEmpty()) {
+			saveViewerState();
+		}
+		
+		// Clear existing model, but keep the root node
+		resourceMap.clear();
+		clearModelObjects(getModelRoot());
+		// remove all from tree viewer
+		IDiffElement[] elements = getModelRoot().getChildren();
+		for (int i = 0; i < elements.length; i++) {
+			doRemove((ISynchronizeModelElement)elements[i]);
+		}
+		
+		// Rebuild the model
+		associateDiffNode(getModelRoot());
+		buildModelObjects(getModelRoot());
+		
+		// Notify listeners that model has changed
+		ISynchronizeModelElement root = getModelRoot();
+		if(root instanceof SynchronizeModelElement) {
+			((SynchronizeModelElement)root).fireChanges();
 		}
 		TeamUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
 			public void run() {
@@ -547,17 +543,17 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		pendingLabelUpdates.add(diffNode);
 	}
 	
+	/*
+	 * The viewer will only be updated if the viewer is not null, the control is not disposed, and
+	 * this code is being run from the UI thread.
+	 */
 	private boolean canUpdateViewer() {
 		StructuredViewer viewer = getViewer();
-		return getAllowRefreshViewer() && viewer != null && ! viewer.getControl().isDisposed();
-	}
-	
-	protected void setAllowRefreshViewer(boolean allowRefresh) {
-		this.refreshViewer = allowRefresh;
-	}
-	
-	protected boolean getAllowRefreshViewer() {
-		return this.refreshViewer;
+		if(viewer == null) return false;
+		Display display = viewer.getControl().getDisplay();
+		if (display == null) return false;
+		if (display.getThread() != Thread.currentThread ()) return false;
+		return true;
 	}
 	
 	/**
