@@ -87,6 +87,12 @@ public class ErrorWizardPage extends RefactoringWizardPage {
 	public void setVisible(boolean visible) {
 		if (visible) {
 			fViewer.setStatus(fStatus);
+		} else {
+			// the page was not complete if we show a fatal error. In this
+			// case we can finish anyway. To enable the OK and Preview button
+			// on the user input page we have to mark the page as complete again.
+			if (!isPageComplete() && fStatus.hasFatalError())
+				setPageComplete(true);
 		}
 		super.setVisible(visible);
 	}
