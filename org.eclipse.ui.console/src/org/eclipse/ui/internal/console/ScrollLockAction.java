@@ -23,10 +23,10 @@ public class ScrollLockAction extends Action {
     private IConsoleView fConsoleView;
 	
 	public ScrollLockAction(IConsoleView consoleView) {
-		super(ConsoleMessages.getString("ScrollLockAction.0")); //$NON-NLS-1$
+		super(ConsoleMessages.ScrollLockAction_0); //$NON-NLS-1$
         fConsoleView = consoleView;
 		
-		setToolTipText(ConsoleMessages.getString("ScrollLockAction.1"));  //$NON-NLS-1$
+		setToolTipText(ConsoleMessages.ScrollLockAction_1);  //$NON-NLS-1$
 		setHoverImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_LCL_LOCK));		
 		setDisabledImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_DLCL_LOCK));
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_LOCK));
