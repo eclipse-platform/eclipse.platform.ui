@@ -199,6 +199,7 @@ public final class FormText extends Canvas {
 			int width = wHint != SWT.DEFAULT ? wHint : 0;
 			FontMetrics fm = gc.getFontMetrics();
 			int lineHeight = fm.getHeight();
+			boolean linksInTheLastRow = false;
 			for (int i = 0; i < paragraphs.length; i++) {
 				Paragraph p = paragraphs[i];
 				if (i > 0 && getParagraphsSeparated()
@@ -209,11 +210,14 @@ public final class FormText extends Canvas {
 				loc.x = p.getIndent();
 				ParagraphSegment[] segments = p.getSegments();
 				if (segments.length > 0) {
+					linksInTheLastRow = false;
 					for (int j = 0; j < segments.length; j++) {
 						ParagraphSegment segment = segments[j];
 						segment.advanceLocator(gc, wHint, loc, resourceTable,
 								false);
 						width = Math.max(width, loc.width);
+						if (segment instanceof IHyperlinkSegment)
+							linksInTheLastRow = true;
 					}
 					loc.y += loc.rowHeight;
 				} else {
@@ -222,6 +226,8 @@ public final class FormText extends Canvas {
 				}
 			}
 			gc.dispose();
+			if (linksInTheLastRow)
+				loc.y += 1; 
 			return new Point(width, loc.y);
 		}
 
