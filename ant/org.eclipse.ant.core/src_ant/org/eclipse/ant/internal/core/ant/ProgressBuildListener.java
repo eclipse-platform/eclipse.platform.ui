@@ -93,7 +93,7 @@ public class ProgressBuildListener implements BuildListener {
 			String targetName = (String) targetNames.get(i);
 			targets[i] = (Target) fMainProject.getTargets().get(targetName);
 		}
-		int work = computeWork(fMainProject, targets);
+		int work = computeWork(targets);
 		monitors.getMainMonitor().beginTask("", work);  //$NON-NLS-1$
 	}
 
@@ -104,7 +104,7 @@ public class ProgressBuildListener implements BuildListener {
 		checkCanceled();
 	}
 
-	protected int computeWork(Project project, Target[] targets) {
+	protected int computeWork(Target[] targets) {
 		int result = 0;
 		for (int i = 0; i < targets.length; i++) {
 			result = result + countTarget(targets[i]);
@@ -172,7 +172,7 @@ public class ProgressBuildListener implements BuildListener {
 		ProjectMonitors monitors = new ProjectMonitors();
 		// remember the target so we can remove this monitors object later
 		monitors.setMainTarget(target);
-		int work = computeWork(currentProject, new Target[] { target });
+		int work = computeWork(new Target[] { target });
 		ProjectMonitors parentMonitors = null;
 		if (fParentProject == null) {
 			parentMonitors = (ProjectMonitors) fProjects.get(fMainProject);
