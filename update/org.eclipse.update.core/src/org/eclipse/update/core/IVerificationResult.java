@@ -19,45 +19,19 @@ public interface IVerificationResult {
 	static final int VERIFICATION_CANCELLED = 7;
 	static final int TYPE_ENTRY_UNRECOGNIZED = 8;
 		
-		
-	/**
-	 * Sets the exception that may have occured while verifying
-	 */
-	public void setResultException(Exception ex);
+	
 
-
-	/**
-	 * Sets the result code
-	 * @see IVerificationNotifier#CANCEL_INSTALL
-	 * @see IVerificationNotifier#ERROR_INSTALL
-	 * @see IVerificationNotifier#static final int OK_TO_INSTALL
-	 */ 
-	public void setResultCode(int code);
-
-
-	/**
-	 * Sets the type of notification. 
-	 * @see IVerificationNotifier#TYPE_FEATURE_NOT_SIGNED
-	 * @see IVerificationNotifier#TYPE_FEATURE_CORRUPTED
-	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_RECOGNIZED
-	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_UNRECOGNIZED
-	 * @see IVerificationNotifier#TYPE_FEATURE_NOT_SIGNED
-	 * @see IVerificationNotifier#TYPE_FEATURE_CORRUPTED
-	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_RECOGNIZED
-	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_UNRECOGNIZED
-	 */
-	public void setVerificationCode(int type);
-
-	/**
-	 * 		
-	 */
-	public void isFeatureVerification(boolean verification);
 	
 	/**
-	 * 		
+	 * Returns the content reference that is verified 
 	 */
-	public boolean isFeatureVerification();
+	public ContentReference getContentReference();
 
+	
+	/**
+	 * Returns the feature
+	 */
+	public IFeature getFeature();
 	
 	
 	/**
@@ -73,21 +47,6 @@ public interface IVerificationResult {
 	 */
 	public int getVerificationCode();
 
-	
-		
-	/**
-	 * Returns the result code
-	 * @see IVerificationNotifier#CANCEL_INSTALL
-	 * @see IVerificationNotifier#ERROR_INSTALL
-	 * @see IVerificationNotifier#static final int OK_TO_INSTALL
-	 */ 
-	public int getResultCode();	
-	
-		
-	/**
-	 * Returns the exception that may have occured while verifying
-	 */
-	public Exception getResultException();
 	
 	
 		
@@ -112,14 +71,53 @@ public interface IVerificationResult {
 	
 	
 	/**
-	 * Returns the content reference that is verified 
+	 * 		
 	 */
-	public ContentReference getContentReference();
+	public boolean isFeatureVerification();
 
+		
+	/**
+	 * Sets the type of notification. 
+	 * @see IVerificationNotifier#TYPE_FEATURE_NOT_SIGNED
+	 * @see IVerificationNotifier#TYPE_FEATURE_CORRUPTED
+	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_RECOGNIZED
+	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_UNRECOGNIZED
+	 * @see IVerificationNotifier#TYPE_FEATURE_NOT_SIGNED
+	 * @see IVerificationNotifier#TYPE_FEATURE_CORRUPTED
+	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_RECOGNIZED
+	 * @see IVerificationNotifier#TYPE_FEATURE_SIGNED_UNRECOGNIZED
+	 */
+	public void setVerificationCode(int type);
+
+	/**
+	 * 		
+	 */
+	public void isFeatureVerification(boolean verification);
+		
+	/**
+	 * @deprecated will be removed
+	 */ 
+	public int getResultCode();	
+	
+		
+	/**
+	 * Returns the exception that may have occured while verifying
+	 */
+	public Exception getResultException();
+
+
+	/**
+	 * Sets the result code
+	 * @see IVerificationNotifier#CANCEL_INSTALL
+	 * @see IVerificationNotifier#ERROR_INSTALL
+	 * @see IVerificationNotifier#static final int OK_TO_INSTALL
+	 */ 
+	public void setResultCode(int code);
 	
 	/**
-	 * Returns the feature
+	 * Sets the exception that may have occured while verifying
 	 */
-	public IFeature getFeature();
+	public void setResultException(Exception ex);
+
 
 }
