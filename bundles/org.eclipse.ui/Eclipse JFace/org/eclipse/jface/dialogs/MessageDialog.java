@@ -225,10 +225,10 @@ protected Control createCustomArea(Composite parent) {
 protected Control createDialogArea(Composite parent) {
 	
 	// create message area
-	createMessageArea(parent);
+	Control messageArea = createMessageArea(parent);
 	
 	// create the top level composite for the dialog area
-	Composite composite = new Composite(parent, SWT.NONE);
+	Composite composite = new Composite(parent, SWT.NULL);
 	GridLayout layout = new GridLayout();
 	layout.marginHeight = 0;
 	layout.marginWidth = 0;
@@ -236,14 +236,21 @@ protected Control createDialogArea(Composite parent) {
 	
 	GridData data = new GridData(GridData.FILL_BOTH);
 	data.horizontalSpan = 2;
-	
 	composite.setLayoutData(data);
+	
 	composite.setFont(parent.getFont());
 
 	// allow subclasses to add custom controls
-	createCustomArea(composite);
-
-	return composite;
+	Control custom = createCustomArea(composite);
+	
+	//If there is no custom area then return the message area
+	//as the one to attach to and delete the unnecessary Composite.
+	if(custom == null && (composite.getChildren().length == 0)){
+		composite.dispose();
+		return messageArea;	
+	}
+	else
+		return composite;
 }
 /**
  * Creates and returns the contents of the message area
