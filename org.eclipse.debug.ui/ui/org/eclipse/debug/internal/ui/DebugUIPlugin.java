@@ -215,10 +215,16 @@ public class DebugUIPlugin extends AbstractUIPlugin {
 	public void shutdown() throws CoreException {
 		
 		// shutdown the perspective manager
-		PerspectiveManager.getDefault().shutdown();		
-		DebugActionGroupsManager.getDefault().shutdown();
-		LaunchConfigurationManager.getDefault().shutdown();
-		ConsoleDocumentManager.getDefault().shutdown();
+		PerspectiveManager.getDefault().shutdown();
+		if (DebugActionGroupsManager.defaultExists()) {
+			DebugActionGroupsManager.getDefault().shutdown();
+		}
+		if (LaunchConfigurationManager.defaultExists()) {
+			LaunchConfigurationManager.getDefault().shutdown();
+		}
+		if (ConsoleDocumentManager.defaultExists()) {
+			ConsoleDocumentManager.getDefault().shutdown();
+		}
 		
 		ColorManager.getDefault().dispose();
 		if (fgPresentation != null) {

@@ -158,6 +158,13 @@ public class LaunchConfigurationManager implements ILaunchListener,
 		return fgLaunchConfigurationManager;
 	}
 	
+	/**
+	 * Returns whether the singleton instance of the manager exists
+	 */
+	public static boolean defaultExists() {
+		return fgLaunchConfigurationManager != null;
+	}
+	
 	public void shutdown() throws CoreException {
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);

@@ -63,6 +63,13 @@ public class DebugActionGroupsManager implements IMenuListener {
 	}
 	
 	/**
+	 * Returns whether the singleton instance of the manager exists
+	 */
+	public static boolean defaultExists() {
+		return fgManager != null;
+	}
+	
+	/**
 	 * Called by the debug ui plug-in on startup.
 	 */
 	public void startup() {

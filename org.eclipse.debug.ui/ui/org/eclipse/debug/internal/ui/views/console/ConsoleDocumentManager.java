@@ -51,6 +51,13 @@ public class ConsoleDocumentManager implements ILaunchListener {
 		return fgConsoleDocumentManager;
 	}
 	
+	/**
+	 * Returns whether the singleton instance of the manager exists
+	 */
+	public static boolean defaultExists() {
+		return fgConsoleDocumentManager != null;
+	}
+	
 	private ConsoleDocumentManager() {
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(this);	
