@@ -44,15 +44,13 @@ public class EditorCoolBar {
 	private boolean firstResize = true; // infw cheezy workaround
 	private boolean mouseDownListenerAdded = false;
 	private boolean editorListLostFocusByButton = false;
-	private boolean singleClick = false;
-	private boolean dragEvent = false;
-	private boolean doubleClick = false;
 	
+	private boolean mouseDown = false;
 	private int xAnchor = 0;
 	private int yAnchor = 0;
+	private static final int HYSTERESIS = 10;
 	private static final int MAX_ITEMS = 11;
-	private static final int HYSTERESIS = 8;
-	
+
 	private Point chevronPosition;
 	private ToolBar chevronToolBar;
 			
@@ -249,21 +247,20 @@ public class EditorCoolBar {
 		listComposite.moveAbove(null);
 		listComposite.setLocation(point);
 		editorListControl.setVisible(true);
+		editorListControl.setFocus();
 			 
- 		editorListControl.addListener(SWT.Deactivate, new Listener() {
-			public void handleEvent(Event event) {
-				listComposite.getDisplay().asyncExec(new Runnable() {
-					public void run() {
-						if (singleClick) return;
-						if (editorList.keepListOpen) return;
-						if (listComposite != null) {
-							closeEditorList();
-						}
+		editorListControl.addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e) {
+				if (editorList.keepListOpen) {
+					editorList.getControl().setFocus();
+					return;
+				} else {
+					if (listComposite != null) {
+						closeEditorList();
 					}
-				});
-
-			}
- 		});
+				}
+			}			
+		});
 	}
 	
 	public Control createControl(Composite parent) {	
@@ -293,96 +290,62 @@ public class EditorCoolBar {
 		Point p1 = dropDownComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		Point p = dropDownItem.computeSize(p1.x, p1.y);
 		dropDownItem.setSize(0,p.y);
-		
+	
 		dropDownLabel.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
-				if(activateVisibleEditor())
-					return; 
+				mouseDown = true;
 				xAnchor = e.x;
-				yAnchor = e.y;				
-				singleClick = true;
-			}
-			public void mouseDoubleClick(MouseEvent e) {
-				doubleClick = true;
-			}			
-			public void mouseUp(final MouseEvent e) {
-				final int doubleClickTime = dropDownLabel.getDisplay().getDoubleClickTime();
+				yAnchor = e.y;
+				if(activateVisibleEditor()) {
+					return;
+				}
 				final EditorPane visibleEditor = workbook.getVisibleEditor();
 				final boolean overImage = overImage(visibleEditor, e.x);
 
-				if (doubleClick) {
-					// double Click
-					doubleClick = false;
-					singleClick = false;
- 		
-	 				if ((visibleEditor != null) && !overImage) {
-	 					if (listComposite != null) {
-							closeEditorList();
-						}
-	 					visibleEditor.getPage().toggleZoom(visibleEditor.getPartReference());
-	 				}					
+				if (listComposite != null) {
+					if (overImage) {
+						return;
+					} else if (e.button == 1) {
+						closeEditorList();
+					}
 				} else {
-					// Could be a single click, need to wait, but first what we can do  ...	
-					if (listComposite != null && overImage) {
-						singleClick = false;
-						return;
-					}
-					if ((e.button == 3)  && (listComposite == null)) {
-						singleClick = false;
-						visibleEditor.showPaneMenu(dropDownLabel, new Point(e.x, e.y));
-						return;
-					}
-					if ((e.button == 1) && overImage && (listComposite == null)) {
-						singleClick = false;
-						visibleEditor.showPaneMenu();
-						return;
-					} else {
-	 					Thread t = new Thread() {
-							public void run() {
-								try {
-									Thread.sleep(doubleClickTime);
-								} catch (InterruptedException e){}
-								if (singleClick) {
-									Display.getDefault().asyncExec(new Runnable() {
-										public void run() {						
-											if (singleClick) {
-												singleClick = false;
-												if (listComposite != null) { 
-													if (e.button == 1) {
-														closeEditorList();
-													}
-												} else {
-													if (e.button == 1) {
-														openEditorList();
-													} else {
-														visibleEditor.showPaneMenu();
-													}
-												}
-																								
-
-											}
-										}												
-									});
-								}
-							}
-						};
-						t.start();
+					if (e.button == 3) {
+						visibleEditor.showPaneMenu(dropDownLabel, new Point(e.x, e.y));	
+					} else if (e.button ==1) {
+						if (overImage) {
+							visibleEditor.showPaneMenu();
+						} else {
+							openEditorList();
+						}
 					}
 				}
-			}	
+			}
+			public void mouseDoubleClick(MouseEvent e) {
+				mouseDown = true;
+				final EditorPane visibleEditor = workbook.getVisibleEditor();
+				final boolean overImage = overImage(visibleEditor, e.x);
+
+ 				if ((visibleEditor != null) && !overImage) {
+ 					if (listComposite != null) {
+						closeEditorList();
+					}
+ 					visibleEditor.getPage().toggleZoom(visibleEditor.getPartReference());
+	 			}	
+			}
+			public void mouseUp(MouseEvent e) {
+				mouseDown = false;
+			}
 		});	
 		
 
 		dropDownLabel.addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent e) {
-				if (!singleClick) {
-					return;
-				}
-				if (hasMovedEnough(e)) {
-					singleClick = false;
-					if (listComposite != null) {
-						closeEditorList();
-					}					
+				if (mouseDown) {
+					if (hasMovedEnough(e)) {
+						if (listComposite != null) {
+							closeEditorList();
+						}					
+					}															
 				}
 			}
 		});

@@ -245,10 +245,12 @@ public class EditorList {
 			if(items.length == 0) {
 				return;
 			}
+			keepListOpen = true;
 			if (dirtyEditorList != null) {
 				EditorManager.saveAll(dirtyEditorList, false, window);
 			}
-			destroyControl();
+			updateItems();
+			keepListOpen = false;
 		}
 	}
 
@@ -272,11 +274,16 @@ public class EditorList {
 			if(items.length == 0) {
 				return;
 			}
+			
+			// TODO: Need a way to resize the shell, and close if null
+			//
+			keepListOpen = true;
 			for (int i = 0; i < items.length; i++) {
 				Adapter e = (Adapter)items[i].getData();
 				e.close();
 			}
-			destroyControl();
+			keepListOpen = false;
+			updateItems();		
 		}
 	}
 
@@ -304,7 +311,6 @@ public class EditorList {
 				Adapter e = (Adapter)items[i].getData();
 				e.close();
 			}
-			destroyControl();
 		}
 	}
 	
@@ -410,10 +416,6 @@ public class EditorList {
 			displayFullPath = !displayFullPath;
 			setChecked(displayFullPath);
 			updateItems();
-			TableItem[] items = editorsTable.getItems();
-			if(items.length == 0) {
-				return;
-			}
 		}
 	}
 	
@@ -529,7 +531,6 @@ public class EditorList {
 				}
 			}
 			keepListOpen = false;
-			destroyControl();
 		}
 		
 		/**
