@@ -15,6 +15,7 @@ import java.util.*;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
+//import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -78,6 +79,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 			list.add(resource);
 			return true;
 		}
+
 		/**
 		 * Method clear.
 		 */
@@ -515,7 +517,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 		//this linked resource is being deleted
 		IPath location = linkedResource.getLocation();
 		if (location != null)
-			if (locationsMap.remove(location, linkedResource));
+			if (locationsMap.remove(location, linkedResource))
 				linkedResourceCount--;
 	}
 	/**
