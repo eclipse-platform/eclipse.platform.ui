@@ -78,8 +78,6 @@ public class NewConfigurationView
 		"ConfigurationView.statusDefault";
 	private static final String KEY_MISSING_FEATURE =
 		"ConfigurationView.missingFeature";
-	private static final String KEY_SAVING_ERRORS =
-		"ConfigurationView.savingErrors";
 
 
 	class ConfigurationSorter extends ViewerSorter {
@@ -453,75 +451,28 @@ public class NewConfigurationView
 
 	private void doPreserve() {
 		ISelection selection = getTreeViewer().getSelection();
-		ILocalSite localSite;
-		ArrayList errors = new ArrayList();
-		int nsaved = 0;
-		try {
-			localSite = SiteManager.getLocalSite();
-		} catch (CoreException e) {
-			UpdateUI.logException(e);
-			return;
-		}
+
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
 			if (ssel.isEmpty())
 				return;
-			for (Iterator iter = ssel.iterator(); iter.hasNext();) {
-				Object obj = iter.next();
+			Object obj = ssel.getFirstElement();
+			if (obj instanceof ILocalSite) {
 				IInstallConfiguration target =
-					getSelectedConfiguration(obj, false);
+					((ILocalSite) obj).getCurrentConfiguration();
 				if (target == null)
-					continue;
+					return;
 				try {
+					ILocalSite localSite = SiteManager.getLocalSite();
 					localSite.addToPreservedConfigurations(target);
-					nsaved++;
+					localSite.save();
 				} catch (CoreException e) {
-					errors.add(
-						new Status(
-							IStatus.ERROR,
-							UpdateUI.getPluginId(),
-							IStatus.OK,
-							null,
-							e));
+					UpdateUI.logException(e);
 				}
 			}
 		}
-		if (nsaved > 0) {
-			try {
-				localSite.save();
-			} catch (CoreException e) {
-				UpdateUI.logException(e);
-			}
-		}
-		if (errors.size() > 0) {
-			IStatus[] children =
-				(IStatus[]) errors.toArray(new IStatus[errors.size()]);
-			String message = UpdateUI.getString(KEY_SAVING_ERRORS);
-			MultiStatus status =
-				new MultiStatus(
-					UpdateUI.getPluginId(),
-					IStatus.OK,
-					children,
-					message,
-					null);
-			CoreException e = new CoreException(status);
-			UpdateUI.logException(e);
-		}
 	}
 
-	private IInstallConfiguration getSelectedConfiguration(
-		Object obj,
-		boolean onlyPreserved) {
-		if (!onlyPreserved) {
-			if (obj instanceof IInstallConfiguration)
-				return (IInstallConfiguration) obj;
-			if (obj instanceof ILocalSite)
-				return ((ILocalSite) obj).getCurrentConfiguration();
-		}
-		if (obj instanceof PreservedConfiguration)
-			return ((PreservedConfiguration) obj).getConfiguration();
-		return null;
-	}
 
 	protected void makeActions() {
 		super.makeActions();
@@ -757,17 +708,18 @@ public class NewConfigurationView
 		} else if (obj instanceof IConfiguredSiteAdapter) {
 			manager.add(disableSiteAction);
 			manager.add(new Separator());
-		} else if (obj instanceof IConfiguredFeatureAdapter) {
-			IConfiguredFeatureAdapter adapter = (IConfiguredFeatureAdapter)obj;
-			if (adapter.isConfigured()) {
+		} else if (obj instanceof ConfiguredFeatureAdapter) {
+			ConfiguredFeatureAdapter adapter = (ConfiguredFeatureAdapter)obj;
+			if (adapter.isOptional() || !adapter.isIncluded()) {
 				manager.add(swapVersionAction);
+				if (!adapter.isConfigured()) {
+					manager.add(enableFeatureAction);
+				} else {
+					manager.add(disableFeatureAction);
+				}
+				manager.add(uninstallFeatureAction);
 				manager.add(new Separator());
-				manager.add(disableFeatureAction);
-			} else {
-				manager.add(enableFeatureAction);
 			}
-			manager.add(uninstallFeatureAction);
-			manager.add(new Separator());
 		}
 		
 		addDrillDownAdapter(manager);
