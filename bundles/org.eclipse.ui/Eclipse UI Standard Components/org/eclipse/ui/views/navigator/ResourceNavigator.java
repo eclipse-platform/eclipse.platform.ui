@@ -255,7 +255,7 @@ public class ResourceNavigator
 		actionFactory.fillPopUpMenu(menu,selection);
 		
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end"));
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS + IWorkbenchActionConstants.MB_ADDITIONS_END));
 		//$NON-NLS-1$
 		menu.add(new Separator());
 
