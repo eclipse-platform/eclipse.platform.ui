@@ -19,6 +19,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -45,6 +46,7 @@ import org.eclipse.ui.commands.IActionService;
 import org.eclipse.ui.commands.IActionServiceEvent;
 import org.eclipse.ui.commands.IActionServiceListener;
 import org.eclipse.ui.commands.ICommandManagerListener;
+import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.contexts.IContextActivationService;
 import org.eclipse.ui.contexts.IContextActivationServiceEvent;
 import org.eclipse.ui.contexts.IContextActivationServiceListener;
@@ -60,43 +62,21 @@ import org.eclipse.ui.internal.util.StatusLineContributionItem;
 import org.eclipse.ui.internal.util.Util;
 
 /**
+ * <p>
  * Controls the keyboard input into the workbench key binding architecture.
+ * This allows key events to be programmatically pushed into the key binding
+ * architecture -- potentially triggering the execution of commands. It is used
+ * by the <code>Workbench</code> to listen for events on the <code>Display</code>.
+ * </p>
+ * <p>
+ * This class is not designed to be thread-safe. It is assumed that all access
+ * to the <code>press</code> method is done through the event loop. Accessing
+ * this method outside the event loop can cause corruption of internal state.
+ * </p>
  * 
  * @since 3.0
  */
 public class WorkbenchActivitiesCommandsAndRoles {
-	
-	/**
-	 * The current mode of the workbench.  A mode contains the key sequence that
-	 * is currently waiting in the system.  A key sequence is waiting if there
-	 * are key bindings which partially match, or if the key sequence perfectly 
-	 * matches a key binding and a command is executing.  The command name is 
-	 * the name of the currently executing command, if any.
-	 */
-	private class Mode {
-		/**
-		 * The key sequence waiting in the system.  This value should never be
-		 * <code>null</code>.
-		 */
-		private KeySequence keySequence;
-		/**
-		 * The currently executing command; <code>null</code> if none.
-		 */
-		private String executingCommandName;
-		
-		Mode(KeySequence sequence, String commandName) {
-			keySequence = sequence;
-			executingCommandName = commandName;
-		}
-		
-		KeySequence getKeySequence() {
-			return keySequence;
-		}
-		
-		String getExecutingCommandName() {
-			return executingCommandName;
-		}
-	}
 
 	/**
 	 * A listener that makes sure that global key bindings are processed if no
@@ -311,6 +291,11 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		}
 	};
 
+	/**
+	 * The mode is the current state of the key binding architecture. In the
+	 * case of multi-stroke key bindings, this can be a partially complete key
+	 * binding.
+	 */
 	private KeySequence mode = KeySequence.getInstance();
 
 	final Listener modeCleaner = new Listener() {
@@ -507,22 +492,22 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		KeySequence modeBeforeKeyStroke = getMode();
 
 		for (Iterator iterator = potentialKeyStrokes.iterator(); iterator.hasNext();) {
-			KeySequence modeAfterKeyStroke =
+			final KeySequence modeAfterKeyStroke =
 				KeySequence.getInstance(modeBeforeKeyStroke, (KeyStroke) iterator.next());
 
 			if (isPartialMatch(modeAfterKeyStroke)) {
 				setMode(modeAfterKeyStroke);
 				return true;
-				
+
 			} else if (isPerfectMatch(modeAfterKeyStroke)) {
-				String commandId = getPerfectMatch(modeAfterKeyStroke);
-				Map actionsById = ((CommandManager) workbench.getCommandManager()).getActionsById();
+				final String commandId = getPerfectMatch(modeAfterKeyStroke);
+				final CommandManager commandManager =
+					(CommandManager) workbench.getCommandManager();
+				Map actionsById = commandManager.getActionsById();
 				org.eclipse.ui.commands.IAction action =
 					(org.eclipse.ui.commands.IAction) actionsById.get(commandId);
 
 				if (action != null && action.isEnabled()) {
-					setMode(modeAfterKeyStroke);
-
 					try {
 						action.execute(event);
 					} catch (Exception e) {
@@ -535,7 +520,7 @@ public class WorkbenchActivitiesCommandsAndRoles {
 
 				setMode(KeySequence.getInstance());
 				return action != null || modeBeforeKeyStroke.isEmpty();
-				
+
 			}
 		}
 
@@ -571,11 +556,17 @@ public class WorkbenchActivitiesCommandsAndRoles {
 		}
 	}
 
-	private void setMode(KeySequence mode) {
+	/**
+	 * A mutator for the current internal key binding state.
+	 * 
+	 * @param sequence
+	 *            The current key sequence
+	 */
+	private void setMode(KeySequence sequence) {
 		if (mode == null)
 			throw new NullPointerException();
 
-		this.mode = mode;
+		mode = sequence;
 		updateModeStatusLines();
 	}
 
