@@ -161,9 +161,18 @@ protected Control createDialogArea(Composite parent) {
 	if (getInitialSelections() != null && !getInitialSelections().isEmpty())
 		checkInitialSelections();
 
-	
 	return composite;
 }
+
+/**
+ * Returns the viewer used to show the list.
+ * 
+ * @return the viewer, or <code>null</code> if not yet created
+ */
+protected CheckboxTableViewer getViewer() {
+	return listViewer;
+}
+
 /**
  * Initializes this dialog's viewer after it has been laid out.
  */
