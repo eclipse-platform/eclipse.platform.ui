@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal.progress;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -28,17 +26,13 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.part.ViewPart;
-
 /**
  * The ProgressView is the class that shows the details of the current
  * workbench progress.
  */
-
 public class ProgressView extends ViewPart implements IViewPart {
-
 	ProgressTreeViewer viewer;
 	Action cancelAction;
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -48,14 +42,12 @@ public class ProgressView extends ViewPart implements IViewPart {
 		viewer = new ProgressTreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(ProgressManagerUtil.getProgressViewerSorter());
-
 		initContentProvider();
 		ProgressManagerUtil.initLabelProvider(viewer);
 		initContextMenu();
 		initPulldownMenu();
 		getSite().setSelectionProvider(viewer);
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -72,63 +64,50 @@ public class ProgressView extends ViewPart implements IViewPart {
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 	}
-
 	/**
 	 * Initialize the context menu for the receiver.
 	 */
-
 	private void initContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
-
 		Menu menu = menuMgr.createContextMenu(viewer.getTree());
-
 		createCancelAction();
 		menuMgr.add(cancelAction);
-
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
-
 				JobInfo info = getSelectedInfo();
 				if (info == null)
 					return;
 			}
 		});
-
 		menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		getSite().registerContextMenu(menuMgr, viewer);
 		viewer.getTree().setMenu(menu);
-
 	}
-
 	private void initPulldownMenu() {
 		IMenuManager menuMgr = ((ViewSite) getSite()).getActionBars().getMenuManager();
-		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.VerboseAction"), IAction.AS_CHECK_BOX) { //$NON-NLS-1$
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.action.Action#run()
-			 */
-			public void run() {
-				ProgressViewUpdater updater = ProgressViewUpdater.getSingleton();
-				updater.debug = !updater.debug;
-				setChecked(updater.debug);
-				updater.refreshAll();
-			}
-
-		});
-		
-		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.ToggleWindowMessage")){ //$NON-NLS-1$
-			/* (non-Javadoc)
-			 * @see org.eclipse.jface.action.Action#run()
-			 */
-			public void run() {
-				AnimationManager.getInstance().toggleFloatingWindow();
-			}
-		});
-
+		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.VerboseAction"), //$NON-NLS-1$
+				IAction.AS_CHECK_BOX) {
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.jface.action.Action#run()
+					 */
+					public void run() {
+						ProgressViewUpdater updater = ProgressViewUpdater.getSingleton();
+						updater.debug = !updater.debug;
+						setChecked(updater.debug);
+						updater.refreshAll();
+					}
+				});
+		menuMgr.add(new Action(ProgressMessages.getString("ProgressView.ToggleWindowMessage")) { //$NON-NLS-1$
+					/* (non-Javadoc)
+					 * @see org.eclipse.jface.action.Action#run()
+					 */
+					public void run() {
+						AnimationManager.getInstance().toggleFloatingWindow();
+					}
+				});
 	}
-
 	/**
 	 * Return the selected objects. If any of the selections are not JobInfos
 	 * or there is no selection then return null.
@@ -136,7 +115,6 @@ public class ProgressView extends ViewPart implements IViewPart {
 	 * @return JobInfo[] or <code>null</code>.
 	 */
 	private IStructuredSelection getSelection() {
-
 		//If the provider has not been set yet move on.
 		ISelectionProvider provider = getSite().getSelectionProvider();
 		if (provider == null)
@@ -147,7 +125,6 @@ public class ProgressView extends ViewPart implements IViewPart {
 		}
 		return null;
 	}
-
 	/**
 	 * Get the currently selected job info. Only return it if it is the only
 	 * item selected and it is a JobInfo.
@@ -162,33 +139,23 @@ public class ProgressView extends ViewPart implements IViewPart {
 				return (JobInfo) element;
 		}
 		return null;
-
 	}
-
 	/**
 	 * Create the cancel action for the receiver.
 	 * 
 	 * @return Action
 	 */
 	private void createCancelAction() {
-			cancelAction = new Action(ProgressMessages.getString("ProgressView.CancelAction")) {//$NON-NLS-1$
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.Action#run()
-	 */
+		cancelAction = new Action(ProgressMessages.getString("ProgressView.CancelAction")) {//$NON-NLS-1$
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.jface.action.Action#run()
+			 */
 			public void run() {
-				JobInfo element = getSelectedInfo();
-				//Check it case it got removed after enablement
-				if (element == null) {
-					return;
-				}
-				element.cancel();
-				ProgressManager.getInstance().refreshJobInfo(element);
-
+				viewer.cancelSelection();
 			}
-
 		};
+		
 	}
-
 }
