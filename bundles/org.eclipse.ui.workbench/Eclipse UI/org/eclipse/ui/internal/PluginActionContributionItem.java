@@ -13,7 +13,6 @@ package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.ActionContributionItem;
 
-import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 

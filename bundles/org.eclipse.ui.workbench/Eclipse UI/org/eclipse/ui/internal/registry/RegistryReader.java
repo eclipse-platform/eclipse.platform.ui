@@ -13,9 +13,13 @@ package org.eclipse.ui.internal.registry;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Hashtable;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.IPluginRegistry;
+
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**

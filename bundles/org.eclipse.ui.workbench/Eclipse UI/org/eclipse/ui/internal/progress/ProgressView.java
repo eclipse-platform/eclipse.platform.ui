@@ -21,7 +21,6 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -31,8 +30,9 @@ import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.part.ViewPart;
+
+import org.eclipse.ui.internal.ViewSite;
 
 /**
  * The ProgressView is the class that shows the details of the
