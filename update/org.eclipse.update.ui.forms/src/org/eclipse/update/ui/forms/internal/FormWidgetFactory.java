@@ -175,8 +175,17 @@ public class FormWidgetFactory {
 		return composite;
 	}
 	public Composite createCompositeSeparator(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setBackground(getColor(COLOR_COMPOSITE_SEPARATOR));
+		final Composite composite = new Composite(parent, SWT.NONE);
+		composite.addListener(SWT.Paint, new Listener() {
+			public void handleEvent(Event e) {
+				if (composite.isDisposed()) return;
+				Rectangle bounds = composite.getBounds();
+				GC gc = e.gc;
+				gc.setForeground(getColor(COLOR_COMPOSITE_SEPARATOR));
+				gc.setBackground(getBackgroundColor());
+				gc.fillGradientRectangle(0, 0, bounds.width, bounds.height, false);	
+			}
+		});
 		return composite;
 	}
 
