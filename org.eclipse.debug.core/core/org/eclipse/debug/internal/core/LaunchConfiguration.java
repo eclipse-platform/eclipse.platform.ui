@@ -24,6 +24,7 @@ import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -33,6 +34,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -145,41 +147,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see ILaunchConfiguration#launch(String, IProgressMonitor)
 	 */
 	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException {
-		// bug 28245 - force the delegate to load in case it is interested in launch notifications
-		ILaunchConfigurationDelegate delegate= getDelegate(mode);
-		// allow the delegate to provide a launch implementation
-		ILaunch launch = null;
-		if (delegate instanceof ILaunchConfigurationDelegate2) {
-			launch = ((ILaunchConfigurationDelegate2)delegate).getLaunch(this, mode);
-		}
-		if (launch == null) {
-			launch = new Launch(this, mode, null);
-		} else {
-			// ensure the launch mode is valid
-			if (!mode.equals(launch.getLaunchMode())) {
-				IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, 
-						MessageFormat.format(DebugCoreMessages.getString("LaunchConfiguration.13"), new String[]{mode, launch.getLaunchMode()}), null); //$NON-NLS-1$
-				throw new CoreException(status);
-			}
-		}
-		getLaunchManager().addLaunch(launch);
-		if (monitor == null) {
-			monitor= new NullProgressMonitor();
-		}
-		try {
-			initializeSourceLocator(launch);
-			delegate.launch(this, mode, launch, monitor);
-		} catch (CoreException e) {
-			// if there was an exception, and the launch is empty, remove it
-			if (!launch.hasChildren()) {
-				getLaunchManager().removeLaunch(launch);
-			}
-			throw e;
-		}
-		if (monitor.isCanceled()) {
-			getLaunchManager().removeLaunch(launch);
-		}
-		return launch;
+		return launch(mode, monitor, false);
 	}
 	
 	/**
@@ -192,8 +160,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		if (launch.getSourceLocator() == null) {
 			String type = getAttribute(ATTR_SOURCE_LOCATOR_ID, (String)null);
 			if (type == null) {
-				// TODO: make API on config type?
-				type = getType().getAttribute("sourceLocatorId"); //$NON-NLS-1$
+				type = getType().getSourceLocatorId();
 			}
 			if (type != null) {
 				IPersistableSourceLocator locator = getLaunchManager().newSourceLocator(type);
@@ -539,5 +506,79 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		return info.getAttributes();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#launch(java.lang.String, org.eclipse.core.runtime.IProgressMonitor, boolean)
+	 */
+	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build) throws CoreException {
+		// bug 28245 - force the delegate to load in case it is interested in launch notifications
+		ILaunchConfigurationDelegate delegate= getDelegate(mode);
+		ILaunchConfigurationDelegate2 delegate2 = null;
+		if (delegate instanceof ILaunchConfigurationDelegate2) {
+			delegate2 = (ILaunchConfigurationDelegate2) delegate;
+		}
+		// allow the delegate to provide a launch implementation
+		ILaunch launch = null;
+		if (delegate2 != null) {
+			launch = delegate2.getLaunch(this, mode);
+		}
+		if (launch == null) {
+			launch = new Launch(this, mode, null);
+		} else {
+			// ensure the launch mode is valid
+			if (!mode.equals(launch.getLaunchMode())) {
+				IStatus status = new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, 
+						MessageFormat.format(DebugCoreMessages.getString("LaunchConfiguration.13"), new String[]{mode, launch.getLaunchMode()}), null); //$NON-NLS-1$
+				throw new CoreException(status);
+			}
+		}
+		// perform initial pre-launch sanity checks
+		if (delegate2 != null) {
+			if (!(delegate2.preLaunchCheck(this, mode, monitor))) {
+				// canceled
+				monitor.setCanceled(true);
+				return launch;
+			}
+		}
+		// preform pre-launch build
+		if (monitor == null) {
+			monitor= new NullProgressMonitor();
+		}
+		IProgressMonitor subMonitor = monitor;
+		if (build) {
+			subMonitor = new SubProgressMonitor(monitor, 100);
+			if (delegate2 != null) {
+				build = delegate2.buildForLaunch(this, mode, subMonitor);
+			}
+			if (build) {
+				ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, subMonitor);				
+			}
+			subMonitor = new SubProgressMonitor(monitor, 100);
+		}
+		// final validation
+		if (delegate2 != null) {
+			if (!(delegate2.finalLaunchCheck(this, mode, subMonitor))) {
+				// canceled
+				monitor.setCanceled(true);
+				return launch;
+			}
+		}
+		
+		getLaunchManager().addLaunch(launch);
+		try {
+			initializeSourceLocator(launch);
+			delegate.launch(this, mode, launch, subMonitor);
+		} catch (CoreException e) {
+			// if there was an exception, and the launch is empty, remove it
+			if (!launch.hasChildren()) {
+				getLaunchManager().removeLaunch(launch);
+			}
+			throw e;
+		}
+		if (monitor.isCanceled()) {
+			getLaunchManager().removeLaunch(launch);
+		}
+		return launch;
+
+	}
 }
 

@@ -11,13 +11,15 @@
 package org.eclipse.debug.core.model;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
- * Optional enhancements to the launch configuration delegate interface
- * that launch delegates may optionally implement. Allows launch delegates
- * to create the launch object to be used in a launch.
+ * Optional enhancements to the launch configuration delegate interface.
+ * Allows launch delegates to abort a launch, build relevant projects in
+ * the workspace before a launch, and create the launch object to be used
+ * in a launch.
  * <p>
  * Clients implementing <code>ILaunchConfigurationDelegate</code> may also
  * implement this interface.
@@ -39,4 +41,52 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 * @throws CoreException if unable to launch
 	 */
 	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException;
+	
+	/**
+	 * Optionally performs any required building before launching the given
+	 * configuration in the specified mode, and returns whether the debug platform
+	 * should perform an incremental workspace build before the launch continues.
+	 * If <code>false</code> is returned the launch will proceed without further
+	 * building, and if <code>true</code> is returned an incremental build will
+	 * be performed on the workspace before launching.
+	 * <p>
+	 * This method is only called if the launch is invoked with flag indicating
+	 * building should take place before the launch. This is done via the    
+	 * method
+	 * <code>ILaunchConfiguration.launch(String mode, IProgressMonitor monitor, boolean build)</code>.
+	 * </p> 
+	 * @param configuration the configuration being launched
+	 * @param mode the mode the configuration is being launched in
+	 * @param monitor progress monitor
+	 * @return whether the debug platform should perform an incremental workspace
+	 *  build before the launch
+	 * @throws CoreException if an exception occurrs while building
+	 */
+	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Returns whether a launch should proceed. This method is called after
+	 * <code>preLaunchCheck()</code> and <code>buildForLaunch()</code> providing
+	 * a final chance for this launch delegate to abort a launch if required.
+	 * For example, a delegate could cancel a launch if it discovered compilation
+	 * errors that would prevent the launch from succeeding.
+	 * 
+	 * @param configuration
+	 * @param mode
+	 * @param monitor
+	 * @return whether the launch should proceed
+	 */
+	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor);
+	
+	/**
+	 * Returns whether a launch should proceed. This method is called first
+	 * in the launch sequence providing an opportunity for this launch delegate
+	 * to abort the launch.
+	 * 
+	 * @param configuration configuration being lanuched
+	 * @param mode launch mode
+	 * @param monitor progress monitor
+	 * @return whether the launch should proceed
+	 */
+	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor);
 }

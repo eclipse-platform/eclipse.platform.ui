@@ -742,9 +742,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		String message = MessageFormat.format("{0}...", new String[]{configuration.getName()}); //$NON-NLS-1$
 		if (!autobuilding && buildBeforeLaunch) {
 			monitor.beginTask(message, 200);
-			subMonitor = new SubProgressMonitor(monitor, 100);
-			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, subMonitor);
-			subMonitor = new SubProgressMonitor(monitor, 100);
+			return configuration.launch(mode, monitor, true);	
 		} else {
 			Job[] build = Platform.getJobManager().find(ResourcesPlugin.FAMILY_AUTO_BUILD); 
 			if (build.length == 1) {
@@ -772,8 +770,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 					subMonitor.beginTask(message, 100);
 				}
 			}
+			return configuration.launch(mode, subMonitor); 
 		}
-		return configuration.launch(mode, subMonitor);
 	}
 	
 	/**

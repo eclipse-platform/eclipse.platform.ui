@@ -86,11 +86,41 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * Launches this configuration in the specified mode by delegating to
 	 * this configuration's launch configuration delegate, and returns the
 	 * resulting launch.
-	 * A new launch object is created and registered with the launch manager
-	 * before passing it to this configuration's delegate for contributions
-	 * (debug targets and processes). The delegate is then told to launch in
-	 * a platform org.eclipse.core.runtime.jobs.Job, which provides a
-	 * cancellable progress monitor.
+	 * <p>
+	 * Equivalent to calling <code>launch(String, IProgressMontitor, boolean)</code>
+	 * with a <code>build</code> flag of <code>false</code>.
+	 * </p>
+	 * @param mode the mode in which to launch, one of the mode constants
+	 *  defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
+	 * @param monitor progress monitor, or <code>null</code>. Since 3.0, this
+	 *  parameter is ignored. A cancellable progress monitor is provided by the Job
+	 *  framework.
+	 * @return the resulting launch
+	 * @exception CoreException if this method fails. Reasons include:<ul>
+	 * <li>unable to instantiate the underlying launch configuration delegate</li>
+	 * <li>the launch fails (in the delegate)</code>
+	 * </ul>
+	 */
+	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Launches this configuration in the specified mode by delegating to
+	 * this configuration's launch configuration delegate, and returns the
+	 * resulting launch.
+	 * <p>
+	 * If this configuration's launch delegate implements
+	 * <code>ILaunchConfigurationDelegate2</code>, the launch delegate will
+	 * be consulted to provide a launch object for the launch,
+	 * perform pre-launch checks, and build before the launch.
+	 * If <code>build</code> is <code>true</code> and the associated launch
+	 * delegate does not implement <code>ILaunchConfigurationDelegate2</code>
+	 * an incremental workspace build will be performed before the launch
+	 * by the debug platform.
+	 * The resulting launch object is registered with the launch manager
+	 * before passing it to this configuration's delegate launch method, for
+	 * contributions (debug targets and processes).
+	 * </p>
+	 * <p>
 	 * If the delegate contributes a source locator to the launch, that
 	 * source locator is used. Otherwise an appropriate source locator is
 	 * contributed to the launch  based on the values of
@@ -100,19 +130,18 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * manager. The launch is returned whether cancelled or not. Invoking this
 	 * method causes the underlying launch configuration delegate to be
 	 * instantiated (if not already).
-	 * 
+	 * </p>
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *  defined by <code>ILaunchManager</code> - <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
 	 * @param monitor progress monitor, or <code>null</code>. Since 3.0, this
 	 *  parameter is ignored. A cancellable progress monitor is provided by the Job
 	 *  framework.
-	 * @return the resulting launch.
-	 * @exception CoreException if this method fails. Reasons include:<ul>
-	 * <li>unable to instantiate the underlying launch configuration delegate</li>
-	 * <li>the launch fails (in the delegate)</code>
-	 * </ul>
+	 * @param build whether the workspace should be built before the launch
+	 * @return resulting launch
+	 * @throws CoreException if an exception occurrs during the launch sequence
+	 * @since 3.0
 	 */
-	public ILaunch launch(String mode, IProgressMonitor monitor) throws CoreException;
+	public ILaunch launch(String mode, IProgressMonitor monitor, boolean build) throws CoreException;
 	
 	/**
 	 * Returns whether this launch configuration supports the
