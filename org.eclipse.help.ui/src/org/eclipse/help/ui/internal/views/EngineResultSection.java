@@ -18,6 +18,8 @@ import org.eclipse.help.internal.search.federated.ISearchEngineResult;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.forms.FormColors;
@@ -35,6 +37,8 @@ public class EngineResultSection {
 
 	private Section section;
 
+	private Composite container;
+
 	private FormText searchResults;
 
 	private ImageHyperlink prevLink;
@@ -50,19 +54,20 @@ public class EngineResultSection {
 	private static final String HREF_PREV = "__prev__";
 
 	private static final String HREF_NEXT = "__next__";
+
 	private static final String HREF_PROGRESS = "__progress__";
+
 	private static final String PROGRESS_VIEW = "org.eclipse.ui.views.ProgressView";
 
 	private int resultOffset = 0;
 
-	public EngineResultSection(SearchResultsPart part,
-			EngineDescriptor desc) {
+	public EngineResultSection(SearchResultsPart part, EngineDescriptor desc) {
 		this.part = part;
 		this.desc = desc;
 		hits = new ArrayList();
 		sorter = new FederatedSearchSorter();
 	}
-	
+
 	public boolean hasControl(Control control) {
 		return searchResults.equals(control);
 	}
@@ -72,11 +77,21 @@ public class EngineResultSection {
 	}
 
 	public Control createControl(Composite parent, final FormToolkit toolkit) {
-		section = toolkit.createSection(parent, Section.CLIENT_INDENT
-				| Section.COMPACT | Section.TWISTIE | Section.EXPANDED);
+		section = toolkit.createSection(parent, Section.COMPACT
+				| Section.TWISTIE | Section.EXPANDED);
 		// section.marginHeight = 10;
-		createFormText(section, toolkit);
-		section.setClient(searchResults);
+		container = toolkit.createComposite(section);
+		TableWrapLayout layout = new TableWrapLayout();
+		layout.topMargin = 0;
+		layout.bottomMargin = 0;
+		layout.leftMargin = 0;
+		layout.rightMargin = 0;
+		layout.verticalSpacing = 0;
+		container.setLayout(layout);
+		createFormText(container, toolkit);
+		searchResults.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		// searchResults.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_CYAN));
+		section.setClient(container);
 		updateSectionTitle();
 		section.addExpansionListener(new IExpansionListener() {
 			public void expansionStateChanging(ExpansionEvent e) {
@@ -128,10 +143,10 @@ public class EngineResultSection {
 		initializeText();
 		needsUpdating = true;
 	}
-	
+
 	private void initializeText() {
 		Bundle bundle = Platform.getBundle("org.eclipse.ui.views");
-		if (bundle!=null) {
+		if (bundle != null) {
 			StringBuffer buff = new StringBuffer();
 			buff.append("<form>");
 			buff.append("<p><a href=\"");
@@ -142,21 +157,20 @@ public class EngineResultSection {
 			buff.append("Search in progress...");
 			buff.append("</a></p></form>");
 			searchResults.setText(buff.toString(), true, false);
-		}
-		else {
+		} else {
 			searchResults.setText("Search in progress...", false, false);
 		}
 	}
-	
+
 	private void showProgressView() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (window!=null) {
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		if (window != null) {
 			IWorkbenchPage page = window.getActivePage();
-			if (page!=null) {
+			if (page != null) {
 				try {
 					page.showView(PROGRESS_VIEW);
-				}
-				catch (PartInitException e) {
+				} catch (PartInitException e) {
 					HelpUIPlugin.logError("Error opening the progress view", e);
 				}
 			}
@@ -208,7 +222,7 @@ public class EngineResultSection {
 		buff.append("<form>"); //$NON-NLS-1$
 		IHelpResource oldCat = null;
 		boolean earlyExit = false;
-		addNavigation(buff);
+		// addNavigation(buff);
 
 		for (int i = resultOffset; i < hits.size(); i++) {
 			if (i - resultOffset == HITS_PER_PAGE) {
@@ -273,7 +287,7 @@ public class EngineResultSection {
 			 */
 			buff.append("</li>"); //$NON-NLS-1$
 		}
-		addNavigation(buff);
+		updateNavigation();
 		buff.append("</form>"); //$NON-NLS-1$
 		searchResults.setText(buff.toString(), true, false);
 		section.layout();
@@ -281,33 +295,63 @@ public class EngineResultSection {
 			part.reflow();
 	}
 
-	private void addNavigation(StringBuffer buff) {
+	private void updateNavigation() {
 		if (hits.size() > HITS_PER_PAGE) {
-			buff.append("<p>");
-			if (resultOffset > 0) {
-				// add prev
-				buff.append("<a href=\"");
-				buff.append(HREF_PREV);
-				buff.append("\">");
-				buff.append("<img href=\"");
-				buff.append(ISharedImages.IMG_TOOL_BACK);
-				buff.append("\"/>");
-				buff.append(" Prev");
-				buff.append("</a>   ");
+			if (prevLink == null) {
+				FormToolkit toolkit = part.getManagedForm().getToolkit();
+				Composite navContainer = toolkit.createComposite(container);
+				TableWrapData td = new TableWrapData(TableWrapData.FILL_GRAB);
+				navContainer.setLayoutData(td);
+				// navContainer.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_GREEN));
+				GridLayout glayout = new GridLayout();
+				glayout.numColumns = 3;
+				// glayout.makeColumnsEqualWidth=true;
+				navContainer.setLayout(glayout);
+				Label sep = toolkit.createLabel(navContainer, null,
+						SWT.SEPARATOR | SWT.HORIZONTAL);
+				GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+				gd.horizontalSpan = 3;
+				sep.setLayoutData(gd);
+				prevLink = toolkit.createImageHyperlink(navContainer, SWT.NULL);
+
+				prevLink.setText("Previous " + HITS_PER_PAGE + " hits");
+				prevLink.setImage(PlatformUI.getWorkbench().getSharedImages()
+						.getImage(ISharedImages.IMG_TOOL_BACK));
+				prevLink.addHyperlinkListener(new HyperlinkAdapter() {
+					public void linkActivated(HyperlinkEvent e) {
+						resultOffset -= HITS_PER_PAGE;
+						asyncUpdateResults(false);
+					}
+				});
+				Label space = toolkit.createLabel(navContainer, null);
+				space.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+				nextLink = toolkit
+						.createImageHyperlink(navContainer, SWT.RIGHT);
+				int remainder = Math.min(hits.size() - resultOffset
+						- HITS_PER_PAGE, HITS_PER_PAGE);
+				nextLink.setText("Next " + remainder + " hits");
+				nextLink.setImage(PlatformUI.getWorkbench().getSharedImages()
+						.getImage(ISharedImages.IMG_TOOL_FORWARD));
+				nextLink.setLayoutData(new GridData(
+						GridData.HORIZONTAL_ALIGN_END));
+				nextLink.addHyperlinkListener(new HyperlinkAdapter() {
+					public void linkActivated(HyperlinkEvent e) {
+						resultOffset += HITS_PER_PAGE;
+						asyncUpdateResults(false);
+					}
+				});
 			}
-			if (hits.size() - resultOffset > HITS_PER_PAGE) {
-				// add next
-				buff.append("<a href=\"");
-				buff.append(HREF_NEXT);
-				buff.append("\">");
-				buff.append("Next ");
-				buff.append("<img href=\"");
-				buff.append(ISharedImages.IMG_TOOL_FORWARD);
-				buff.append("\"/>");
-				buff.append("</a>");
+			prevLink.setVisible(resultOffset > 0);
+			nextLink.setVisible(hits.size() >= resultOffset + HITS_PER_PAGE);
+		} else {
+			if (prevLink != null) {
+				prevLink.getParent().setMenu(null);
+				prevLink.getParent().dispose();
 			}
-			buff.append("</p>");
 		}
+	}
+
+	private void addArrow(Composite parent, boolean left, boolean visible) {
 	}
 
 	private String getSummary(ISearchEngineResult hit) {
