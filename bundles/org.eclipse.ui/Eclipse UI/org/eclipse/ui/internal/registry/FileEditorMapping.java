@@ -22,6 +22,7 @@ public class FileEditorMapping extends Object
 	// Collection of EditorDescriptor, where the first one
 	// if considered the default one.
 	private List editors = new ArrayList();
+	private List deletedEditors = new ArrayList();
 /**
  *  Create an instance of this class.
  *
@@ -53,6 +54,7 @@ public FileEditorMapping(String name, String extension) {
  */
 public void addEditor(EditorDescriptor editor) {
 	editors.add(editor);
+	deletedEditors.remove(editor);
 }
 /**
  * Clone the receiver.
@@ -81,6 +83,14 @@ public IEditorDescriptor getDefaultEditor() {
 public IEditorDescriptor[] getEditors() {
 	IEditorDescriptor[] array = new IEditorDescriptor[editors.size()];
 	editors.toArray(array);
+	return array;   
+}
+/* (non-Javadoc)
+ * Method declared on IFileEditorMapping.
+ */
+public IEditorDescriptor[] getDeletedEditors() {
+	IEditorDescriptor[] array = new IEditorDescriptor[deletedEditors.size()];
+	deletedEditors.toArray(array);
 	return array;   
 }
 /* (non-Javadoc)
@@ -117,6 +127,7 @@ public String getName() {
  */
 public void removeEditor(EditorDescriptor editor) {
 	editors.remove(editor);
+	deletedEditors.add(editor);
 }
 /**
  * Set the default editor registered for file type
@@ -131,11 +142,21 @@ public void setDefaultEditor(EditorDescriptor editor) {
  * registered for the file type described by this mapping.
  * Typically an editor is registered either through a plugin or explicitly by
  * the user modifying the associations in the preference pages.
- * This modifies the internal vector to share the passed vector.
- * (hence the clear indication of Vector in the method name)
+ * This modifies the internal list to share the passed list.
+ * (hence the clear indication of list in the method name)
  */
-public void setEditorsVector(List newEditors) {
+public void setEditorsList(List newEditors) {
 	editors = newEditors;
+}
+/**
+ * Set the collection of all editors (EditorDescriptor)
+ * formally registered for the file type described by this mapping 
+ * which have been deleted by the user.
+ * This modifies the internal list to share the passed list.
+ * (hence the clear indication of list in the method name)
+ */
+public void setDeletedEditorsList(List newDeletedEditors) {
+	deletedEditors = newDeletedEditors;
 }
 /**
  * Set the file's extension.

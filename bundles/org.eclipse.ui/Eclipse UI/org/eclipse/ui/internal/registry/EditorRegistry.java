@@ -38,13 +38,13 @@ public class EditorRegistry implements IEditorRegistry {
 	 */
 	private List sortedEditorsFromPlugins = new ArrayList();
 
-	// Hashtable of EditorDescriptor - map editor id to editor.
+	// Map of EditorDescriptor - map editor id to editor.
 	private Map mapIDtoEditor = initialIdToEditorMap(10);
 
-	// Vector of FileEditorMapping (extension to collection of EditorDescriptor)
+	// Map of FileEditorMapping (extension to FileEditorMapping)
 	private Map typeEditorMappings;
 
-	// Vector for prop changed listeners.
+	// List for prop changed listeners.
 	private ListenerList propChangeListeners = new ListenerList();
 
 	// Key for the EditorID save as a IFile persistent property
@@ -459,7 +459,7 @@ private boolean loadAssociations() {
 			editor.loadValues(edMementos[i]);
 
 			if (editor.getPluginID() != null) {
-				//If the editor is prom a plugin we use its ID to look it up in the mapping of editors we
+				//If the editor is from a plugin we use its ID to look it up in the mapping of editors we
 				//have obtained from plugins. This allows us to verify that the editor is still valid
 				//and allows us to get the editor description from the mapping table which has
 				//a valid config element field.
@@ -509,6 +509,12 @@ private boolean loadAssociations() {
 			for (int j = 0; j < idMementos.length; j++) {
 				editorIDs[j] = idMementos[j].getString(IWorkbenchConstants.TAG_ID);
 			}
+			idMementos =
+				extMementos[i].getChildren(IWorkbenchConstants.TAG_DELETED_EDITOR);
+			String[] deletedEditorIDs = new String[idMementos.length];
+			for (int j = 0; j < idMementos.length; j++) {
+				deletedEditorIDs[j] = idMementos[j].getString(IWorkbenchConstants.TAG_ID);
+			}
 			FileEditorMapping mapping = getMappingFor(name + "." + extension);//$NON-NLS-1$
 			if (mapping == null) {
 				mapping = new FileEditorMapping(name, extension);
@@ -522,16 +528,27 @@ private boolean loadAssociations() {
 					}
 				}
 			}
+			List deletedEditors = new ArrayList();
+			for (int j = 0; j < deletedEditorIDs.length; j++) {
+				if (deletedEditorIDs[j] != null) {
+					EditorDescriptor editor = (EditorDescriptor) editorTable.get(deletedEditorIDs[j]);
+					if (editor != null) {
+						deletedEditors.add(editor);
+					}
+				}
+			}
 
-			//Add any new editors that have already been resd from the registry
+			// Add any new editors that have already been read from the registry
+			// which were not deleted.
 			IEditorDescriptor[] editorsArray = mapping.getEditors();
 			for (int j = 0; j < editorsArray.length; j++) {
-				if (!editors.contains(editorsArray[j])) {
+				if (!editors.contains(editorsArray[j]) && !deletedEditors.contains(editorsArray[j])) {
 					editors.add(editorsArray[j]);
 				}
 			}
 
-			mapping.setEditorsVector(editors);
+			mapping.setEditorsList(editors);
+			mapping.setDeletedEditorsList(deletedEditors);
 			typeEditorMappings.put(mappingKeyFor(mapping), mapping);
 		}
 	} catch (IOException e) {
@@ -619,6 +636,15 @@ public void saveAssociations () {
 				editors.add(editor); 
 			}
 			IMemento idMemento = editorMemento.createChild(IWorkbenchConstants.TAG_EDITOR);
+			idMemento.putString(IWorkbenchConstants.TAG_ID,editorArray[i].getId());
+		}
+		editorArray = type.getDeletedEditors();
+		for (int i = 0; i < editorArray.length; i++){
+			EditorDescriptor editor = (EditorDescriptor)editorArray[i];
+			if (!editors.contains(editor)) {
+				editors.add(editor); 
+			}
+			IMemento idMemento = editorMemento.createChild(IWorkbenchConstants.TAG_DELETED_EDITOR);
 			idMemento.putString(IWorkbenchConstants.TAG_ID,editorArray[i].getId());
 		}
 	}

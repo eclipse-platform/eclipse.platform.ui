@@ -80,6 +80,7 @@ public interface IWorkbenchConstants {
 	public static final String TAG_ID = "id"; //$NON-NLS-1$
 	public static final String TAG_FOCUS = "focus"; //$NON-NLS-1$
 	public static final String TAG_EDITOR = "editor"; //$NON-NLS-1$
+	public static final String TAG_DELETED_EDITOR = "deletedEditor"; //$NON-NLS-1$
 	public static final String TAG_EDITORS = "editors"; //$NON-NLS-1$
 	public static final String TAG_WORKBOOK = "workbook"; //$NON-NLS-1$
 	public static final String TAG_ACTIVE_WORKBOOK = "activeWorkbook"; //$NON-NLS-1$
