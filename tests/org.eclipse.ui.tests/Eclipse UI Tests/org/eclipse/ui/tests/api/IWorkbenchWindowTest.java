@@ -13,11 +13,7 @@ public class IWorkbenchWindowTest extends AbstractTestCase {
 	}
 
 	public void setUp() {
-		try {
-			fWin = openTestWindow();
-		} catch (WorkbenchException e) {
-			fail();
-		}
+		fWin = openTestWindow();
 	}
 
 	public void testClose() throws Throwable {		

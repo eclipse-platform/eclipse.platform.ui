@@ -53,8 +53,8 @@ public class Tool {
 	}
 
 	public static boolean arrayHas(Object[] array, Object element) {
-		if (array == null)
-			return false;
+		if (array == null || element == null)
+			return false;		
 		else {
 			for (int i = 0; i < array.length; i++)
 				if( array[ i ] == element )
@@ -63,7 +63,17 @@ public class Tool {
 		}
 	}
 
-	public static IFile getIFile(String name) throws Throwable {
+	private static IProject createProject( String name )
+	{
+		return null;
+	}
+	
+	private static IFolder createFolder( String name )
+	{
+		return null;
+	}
+	
+	public static IFile createFile(String name) throws Throwable {
 		File localFile = new File(name);
 
 		localFile.createNewFile();

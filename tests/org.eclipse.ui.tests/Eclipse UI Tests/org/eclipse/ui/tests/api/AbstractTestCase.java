@@ -37,13 +37,18 @@ public abstract class AbstractTestCase extends TestCase {
 	/** 
 	 * Open a test window.
 	 */
-	public IWorkbenchWindow openTestWindow() throws WorkbenchException {
-		IWorkbenchWindow win =
-			fWorkbench.openWorkbenchWindow(
-				EmptyPerspective.PERSP_ID,
-				ResourcesPlugin.getWorkspace());
-		testWindows.add(win);
-		return win;
+	public IWorkbenchWindow openTestWindow() {
+		try {
+			IWorkbenchWindow win =
+				fWorkbench.openWorkbenchWindow(
+					EmptyPerspective.PERSP_ID,
+					ResourcesPlugin.getWorkspace());
+			testWindows.add(win);
+			return win;
+		} catch (WorkbenchException e) {
+			fail();
+			return null;
+		}
 	}
 
 	/**
@@ -60,33 +65,40 @@ public abstract class AbstractTestCase extends TestCase {
 	}
 
 	public IWorkbenchPage openTestPage(IWorkbenchWindow win)
-		throws WorkbenchException {
+		{
 		IWorkbenchPage[] pages = openTestPage(win, 1);
-		return pages[0];
+		if( pages != null )
+			return pages[0];
+		else
+			return null;
 	}
 
 	/**
 	 * opens test pages in an existing Workbench window
 	 */
-	public IWorkbenchPage[] openTestPage(IWorkbenchWindow win, int pageTotal)
-		throws WorkbenchException {
-		IWorkbenchPage[] pages = new IWorkbenchPage[pageTotal];
-		IWorkspace work = ResourcesPlugin.getWorkspace();
+	public IWorkbenchPage[] openTestPage(IWorkbenchWindow win, int pageTotal) {		
+		try{
+			IWorkbenchPage[] pages = new IWorkbenchPage[pageTotal];
+			IWorkspace work = ResourcesPlugin.getWorkspace();
 
-		for (int i = 0; i < pageTotal; i++) {
-			pages[i] = win.openPage(EmptyPerspective.PERSP_ID, work);
+			for (int i = 0; i < pageTotal; i++) 			
+				pages[i] = win.openPage(EmptyPerspective.PERSP_ID, work);
+			return pages;
 		}
-
-		return pages;
+		catch( WorkbenchException e )
+		{
+			fail();
+			return null;
+		}		
 	}
 
 	/**
 	 * @param window a TestWindow
 	 */
-	public void closeAllPages( IWorkbenchWindow window ) {
+	public void closeAllPages(IWorkbenchWindow window) {
 
 		IWorkbenchPage[] pages = window.getPages();
-		for( int i = 0; i < pages.length; i ++ )
-			pages[ i ].close();
+		for (int i = 0; i < pages.length; i++)
+			pages[i].close();
 	}
 }

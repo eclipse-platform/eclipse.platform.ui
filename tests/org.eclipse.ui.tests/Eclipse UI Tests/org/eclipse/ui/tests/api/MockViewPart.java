@@ -1,22 +1,17 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 
-public class MockViewPart extends MockWorkbenchPart implements IViewPart {
-	
-	public static final String ID_MOCK_VIEW_1 = "org.eclipse.ui.tests.api.mockView1";
-	public static final String ID_MOCK_VIEW_2 = "org.eclipse.ui.tests.api.mockView2";
-	public static final String ID_MOCK_VIEW_3 = "org.eclipse.ui.tests.api.mockView3";
-	public static final String ID_MOCK_VIEW_4 = "org.eclipse.ui.tests.api.mockView4";
-	public static final String ID_MOCK_VIEW_5 = "org.eclipse.ui.tests.api.mockView5";
-	
-	public MockViewPart() {
+public class MockViewPart extends MockWorkbenchPart implements IViewPart {	
+	public static String ID = "org.eclipse.ui.tests.api.MockViewPart";
+	public static String ID2 = ID + "2";
+	public static String ID3 = ID + "3";
+
+	public MockViewPart()
+	{
 		super();
+		callTrace = new CallHistory();
 	}
 	
 	/**
@@ -30,16 +25,16 @@ public class MockViewPart extends MockWorkbenchPart implements IViewPart {
 	 * @see IViewPart#init(IViewSite)
 	 */
 	public void init(IViewSite site) throws PartInitException {
-		initCalled = true;
 		setSite(site);
+		callTrace.add( this, "init" );		
 	}
 
 	/**
 	 * @see IViewPart#init(IViewSite, IMemento)
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
-		initCalled = true;
 		setSite(site);
+		callTrace.add( this, "init" );
 	}
 
 	/**

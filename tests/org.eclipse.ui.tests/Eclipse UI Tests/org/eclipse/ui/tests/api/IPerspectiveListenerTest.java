@@ -17,12 +17,7 @@ public class IPerspectiveListenerTest extends AbstractTestCase implements IPersp
 	public void setUp()
 	{
 		fEvent = Tool.NONE;		
-		try{
-			fWindow = openTestWindow();		
-		}catch( WorkbenchException e )
-		{
-			fail();
-		}
+		fWindow = openTestWindow();		
 		fWindow.addPerspectiveListener( this );
 	}
 	

@@ -42,5 +42,6 @@ public class EmptyPerspective implements IPerspectiveFactory {
 	 * @param factory the factory used to add views to the perspective
 	 */
 	public void createInitialLayout(IPageLayout layout) {
+		//layout.addView( MockViewPart.ID, IPageLayout.BOTTOM, 0.5f, layout.getEditorArea() );
 	}
 }

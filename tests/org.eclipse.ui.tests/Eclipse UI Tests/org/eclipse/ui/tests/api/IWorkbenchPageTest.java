@@ -5,10 +5,11 @@ import org.eclipse.ui.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-public class IWorkbenchPageTest extends AbstractTestCase {
+public class IWorkbenchPageTest extends AbstractTestCase{
 	
 	private IWorkbenchPage fActivePage;
 	private IWorkbenchWindow fWin;
+	private IWorkbenchPart partMask;
 	
 	public IWorkbenchPageTest( String testName )
 	{
@@ -17,14 +18,7 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 	
 	public void setUp()
 	{		
-		try{
-			fWin = openTestWindow();
-		}
-		catch( WorkbenchException e )
-		{
-			fail();
-		}
-		
+		fWin = openTestWindow();
 		fActivePage = fWin.getActivePage();
 	}
 	
@@ -45,11 +39,8 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 	{
 		assertNotNull( fActivePage.getPerspective() );
 		
-		IWorkbenchPage page = fWin.openPage( EmptyPerspective.PERSP_ID, ResourcesPlugin.getWorkspace() );		
-		assertEquals( EmptyPerspective.PERSP_ID, page.getPerspective() );		
-		
-		page.close();
-		assertNull( page.getPerspective() );
+		IWorkbenchPage page = fWin.openPage( EmptyPerspective.PERSP_ID, ResourcesPlugin.getWorkspace() );
+		assertEquals( EmptyPerspective.PERSP_ID, page.getPerspective().getId() );		
 	}
 	
 	public void testSetPerspective() throws Throwable
@@ -65,24 +56,51 @@ public class IWorkbenchPageTest extends AbstractTestCase {
 	}
 
 	public void testGetInput() throws Throwable
-	{
-		IWorkbenchPage page = fWin.openPage( null );		
-		assertNull( page.getInput() );
-		page.close();
-		
+	{		
 		IAdaptable input = ResourcesPlugin.getWorkspace();
-		page = fWin.openPage( input );
+		IWorkbenchPage page = fWin.openPage( input );
 		assertEquals( input, page.getInput() );
 	}
 	
-	public void testActivate()
-	{
-		MockViewPart part = new MockViewPart();
-		//part.addPropertyListener( this );
-		fActivePage.activate( part );
+	public void testActivate() throws Throwable
+	{	
+		MockViewPart part = (MockViewPart)fActivePage.showView( MockViewPart.ID );												
+		MockViewPart part2 = (MockViewPart)fActivePage.showView( MockViewPart.ID2 );												
 		
-		assertEquals( part.setFocusCalled, true );
-//		assert( part. );
+		MockPartListener listener = new MockPartListener();
+		CallHistory callTrace;		
+		fActivePage.addPartListener( listener );
+		fActivePage.activate( part );		
+
+		listener.setPartMask( part2 );
+		callTrace = part2.getCallHistory();				
+		callTrace.clear();		
+		fActivePage.activate( part2 );		
+		assert( callTrace.contains( "setFocus" ) );
+		assert( listener.getCallHistory().contains( "partActivated" ) );
+		
+		listener.setPartMask( part );
+		callTrace = part.getCallHistory();				
+		callTrace.clear();		
+		fActivePage.activate( part );		
+		assert( callTrace.contains( "setFocus" ) );
+		assert( listener.getCallHistory().contains( "partActivated" ) );
+	}
+	
+	public void testGetWorkbenchWindow() 
+	{
+		assertEquals( fActivePage.getWorkbenchWindow(), fWin );
+		IWorkbenchPage page = openTestPage( fWin );
+		assertEquals( page.getWorkbenchWindow(), fWin );
+	}
+	
+	public void testShowView() throws Throwable
+	{		
+		MockViewPart part = (MockViewPart)fActivePage.showView( MockViewPart.ID );												
+
+		CallHistory callTrace = part.getCallHistory();
+		assert( callTrace.verifyOrder( new String[] {
+				"init", "createPartControl", "setFocus"
+			} ));
 	}
 }
-

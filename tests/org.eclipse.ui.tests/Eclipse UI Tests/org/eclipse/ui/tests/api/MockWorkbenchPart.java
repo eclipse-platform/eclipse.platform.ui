@@ -1,28 +1,34 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	IExecutableExtension
 {	
-	public boolean 
-		createPartControlCalled = false,
-		disposeCalled = false,
-		setFocusCalled = false,
-		initCalled = false;
+	protected CallHistory callTrace;
 		
-	private Composite myParent;
 	private IPropertyListener myListener;
-	private String title;
+	private Composite myParent;		
 	private IWorkbenchPartSite site;
+	private String title;
 	
 	public MockWorkbenchPart()
-	{
+	{		
 	}
+	
+	public CallHistory getCallHistory()
+	{
+		return callTrace;
+	}	
 
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		title = (String)config.getAttribute("name");
@@ -48,7 +54,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	 */
 	public void createPartControl(Composite parent) {
 		myParent = parent;
-		createPartControlCalled = true;
+		callTrace.add( this, "createPartControl" );
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(title);
 	}
@@ -57,7 +63,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		disposeCalled = true;
+		callTrace.add( this, "dispose" );
 	}
 
 	/**
@@ -92,7 +98,7 @@ public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		setFocusCalled = true;
+		callTrace.add( this,"setFocus" );
 	}
 
 	/**

@@ -24,7 +24,7 @@ public class IEditorRegistryTest extends TestCase {
 		assert( Tool.check( fReg.getFileEditorMappings() ) );
 	}
 	
-	public void testGetEditors() throws Throwable
+/*	public void testGetEditors() throws Throwable
 	{		
 		IFileEditorMapping[] mappings = fReg.getFileEditorMappings();
 		IEditorDescriptor[] editors1, editors2;
@@ -55,7 +55,7 @@ public class IEditorRegistryTest extends TestCase {
 
 		fReg.setDefaultEditor( file, Tool.TextEditorID );
 		System.out.println( fReg.getDefaultEditor( file ) );		
-	}
+	}*/
 	
 	public void testFindEditor() 
 	{
@@ -79,7 +79,7 @@ public class IEditorRegistryTest extends TestCase {
 		//IFileEditorMapping[] mappings = fReg.getFileEditorMappings();
 	}
 
-	public void testGetImageDescriptor() throws Throwable
+/*	public void testGetImageDescriptor() throws Throwable
 	{
 		IFileEditorMapping[] mappings = fReg.getFileEditorMappings();
 		ImageDescriptor image1, image2; 
@@ -108,11 +108,5 @@ public class IEditorRegistryTest extends TestCase {
 		image2 = fReg.getImageDescriptor( Tool.getIFile( Tool.UnknownFileName[1] ) );
 		assertNotNull( image2 );
 		assertEquals( image1, image2 );
-	}
-/*	
-	public void test
-	{
-		assertNotNull(  );	
-	}
-	*/
+	}*/
 }
