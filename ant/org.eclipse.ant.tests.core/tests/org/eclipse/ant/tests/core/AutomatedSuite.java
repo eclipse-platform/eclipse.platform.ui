@@ -50,7 +50,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(ProjectTests.class));
 		addTest(new TestSuite(OptionTests.class));
 		addTest(new TestSuite(TaskTests.class));
-		//addTest(new TestSuite(TypeTests.class));
+		addTest(new TestSuite(TypeTests.class));
 	}
 
 	/**
