@@ -865,11 +865,27 @@ class FindReplaceDialog extends Dialog {
 			return fTarget.findAndSelect(offset, findString, forwardSearch, caseSensitive, wholeWord);
 	}
 
-	void replaceSelection(String replaceString, boolean regExReplace) {
+	/**
+	 * Replaces the selection with <code>replaceString</code>. If
+	 * <code>regExReplace</code> is <code>true</code>,
+	 * <code>replaceString</code> is a regex replace pattern which will get
+	 * expanded if the underlying target supports it. Returns the region of the
+	 * inserted text; note that the returned selection covers the expanded
+	 * pattern in case of regex replace.
+	 * 
+	 * @param replaceString the replace string (or a regex pattern)
+	 * @param regExReplace <code>true</code> if <code>replaceString</code>
+	 *        is a pattern
+	 * @return the selection after replacing, i.e. the inserted text
+	 * @since 3.0
+	 */
+	Point replaceSelection(String replaceString, boolean regExReplace) {
 		if (fTarget instanceof IFindReplaceTargetExtension3)
 			((IFindReplaceTargetExtension3)fTarget).replaceSelection(replaceString, regExReplace);
 		else
 			fTarget.replaceSelection(replaceString);
+		
+		return fTarget.getSelection();
 	}
 	
 	/**
@@ -1444,13 +1460,13 @@ class FindReplaceDialog extends Dialog {
 			while (index != -1) {
 				index= findAndSelect(findReplacePosition, findString, forwardSearch, caseSensitive, wholeWord, regExSearch);
 				if (index != -1) { // substring not contained from current position
-					replaceSelection(replaceString, regExSearch);
+					Point selection= replaceSelection(replaceString, regExSearch);
 					replaceCount++;
 					
 					if (forwardSearch)
-						findReplacePosition= index + replaceString.length();					
+						findReplacePosition= selection.x + selection.y;					
 					else {
-						findReplacePosition= index - replaceString.length();
+						findReplacePosition= selection.x;
 						if (findReplacePosition == -1)
 							break;
 					}
