@@ -499,7 +499,7 @@ public class JobManager implements IJobManager {
 			//if any job is queued behind this one, it is blocked by it
 			InternalJob previous = running.previous();
 			while (previous != null) {
-				if (!previous.isSystem() && !(previous instanceof ThreadJob))
+				if (!previous.isSystem())
 					return true;
 				previous = previous.previous();
 			}

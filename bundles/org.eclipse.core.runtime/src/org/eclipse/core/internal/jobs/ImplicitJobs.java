@@ -252,6 +252,8 @@ class ImplicitJobs {
 				threadJob = newThreadJob(rule);
 				threadJob.acquireRule = true;
 			}
+			//indicate if it is a system job to ensure isBlocking works correctly
+			threadJob.setSystem(realJob != null ? realJob.isSystem() : false);
 			threadJob.setThread(currentThread);
 			threadJob.push(rule);
 		}
