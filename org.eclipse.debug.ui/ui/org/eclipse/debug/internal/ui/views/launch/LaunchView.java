@@ -574,12 +574,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * provided by the source locator, or the default debug model
      * presentation.
      */
-	private void lookupEditorInput() {
+	private void lookupEditorInput(IStackFrame stackFrame) {
 		setEditorId(null);
 		setEditorInput(null);
 		setSourceElement(null);
 		Object sourceElement= null;
-		IStackFrame stackFrame= getStackFrame();
 		ILaunch launch = stackFrame.getLaunch();
 		if (launch == null) {
 			return;
@@ -590,7 +589,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		sourceElement = locator.getSourceElement(stackFrame);
 		if (sourceElement == null) {
-			sourceNotFound();
+			sourceNotFound(stackFrame);
 			return;
 		}
 		
@@ -617,8 +616,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	/**
 	 * Sets editor id and input for the "source not found" editor.
 	 */
-	private void sourceNotFound() {
-		setEditorInput(new SourceNotFoundEditorInput(getStackFrame()));
+	private void sourceNotFound(IStackFrame frame) {
+		setEditorInput(new SourceNotFoundEditorInput(frame));
 		setEditorId(IInternalDebugUIConstants.ID_SOURCE_NOT_FOUND_EDITOR);
 	}
 
@@ -639,11 +638,11 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 
 			if (stackFrame.equals(getStackFrame())) {
 				if (getEditorInput() == null || getEditorId() == null) {
-					lookupEditorInput();
+					lookupEditorInput(stackFrame);
 				}
 			} else {
 				setStackFrame(stackFrame);
-				lookupEditorInput();
+				lookupEditorInput(stackFrame);
 			}
 			if (getEditorInput() == null || getEditorId() == null) {
 				return;
