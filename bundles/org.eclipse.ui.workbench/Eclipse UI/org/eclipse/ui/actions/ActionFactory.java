@@ -92,7 +92,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new ActivateEditorAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.activateEditor"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -128,7 +127,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new NavigationHistoryAction(window, false);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.navigate.backwardHistory"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -145,7 +143,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new CloseEditorAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.file.close"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -162,7 +159,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new CloseAllAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.file.closeAll"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -179,7 +175,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new CloseAllPerspectivesAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.closeAllPerspectives"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -212,7 +207,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new ClosePerspectiveAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.closePerspective"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -332,7 +326,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new ExportResourcesAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.file.export"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -391,7 +384,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new NavigationHistoryAction(window, true);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.navigate.forwardHistory"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -427,7 +419,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new ImportResourcesAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.file.import"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -444,7 +435,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new LockToolBarAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.lockToolBar"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -461,7 +451,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new MaximizePartAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.maximizePart"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -497,7 +486,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new NewWizardAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.newWizard"); //$NON-NLS-1$
 			// indicate that a new wizard submenu has been created
 			 ((WorkbenchWindow) window).addSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU);
 			return action;
@@ -541,7 +529,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new CycleEditorAction(window, true);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.nextEditor"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -564,7 +551,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new CyclePartAction(window, true);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.nextView"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -587,7 +573,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new CyclePerspectiveAction(window, true);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.nextPerspective"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -644,7 +629,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new OpenPreferencesAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.preferences"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -686,7 +670,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new CycleEditorAction(window, false);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.previousEditor"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -709,7 +692,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new CyclePartAction(window, false);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.previousView"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -732,7 +714,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new CyclePerspectiveAction(window, false);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.previousPerspective"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -793,7 +774,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new QuitAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.file.exit"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -871,7 +851,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new ResetPerspectiveAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.resetPerspective"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -907,7 +886,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new SaveAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.file.save"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -924,7 +902,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new SaveAllAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.file.save"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -941,7 +918,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new SaveAsAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.file.saveAll"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -958,7 +934,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new SavePerspectiveAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.savePerspective"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -994,7 +969,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new ToggleEditorsVisibilityAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.hideShowEditors"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -1027,7 +1001,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new ShowPartPaneMenuAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.showSystemMenu"); //$NON-NLS-1$
 			return action;
 		}
 	};
@@ -1044,7 +1017,6 @@ public abstract class ActionFactory {
 			}
 			IWorkbenchAction action = new ShowViewMenuAction(window);
 			action.setId(getId());
-			action.setActionDefinitionId("org.eclipse.ui.window.showViewMenu"); //$NON-NLS-1$
 			return action;
 		}
 	};
