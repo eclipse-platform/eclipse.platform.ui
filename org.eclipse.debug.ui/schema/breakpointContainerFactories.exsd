@@ -43,14 +43,14 @@
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Unique identifier for this breakpoint container factory.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Implementation of org.eclipse.debug.internal.ui.views.breakpoints.IBreakpointContainerFactory
                </documentation>
                <appInfo>
                   <meta.attribute kind="java"/>
@@ -60,7 +60,14 @@
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
-                  
+                  Optional label for this container factory which is suitable for presentation to the user.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Path to an optional icon which can be shown for this container factory
                </documentation>
             </annotation>
          </attribute>
