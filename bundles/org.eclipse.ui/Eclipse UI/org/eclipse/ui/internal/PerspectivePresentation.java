@@ -888,29 +888,29 @@ private void onPartDragOver(PartDropEvent e) {
 			// Reject stack onto same view
 			if (e.relativePosition == PartDragDrop.CENTER) {
 				e.dropTarget = null;
-				e.relativePosition = offScreenPosition;
+				e.relativePosition = PartDragDrop.INVALID;
 				return;
 			}
 			// Reject attach & detach to ourself
 			ILayoutContainer container = e.dragSource.getContainer();
 			if (!(container instanceof PartTabFolder)) {
 				e.dropTarget = null;
-				e.relativePosition = offScreenPosition;
+				e.relativePosition = PartDragDrop.INVALID;
 				return;
 			}
 			if (((PartTabFolder)container).getItemCount() == 1) {
 				e.dropTarget = null;
-				e.relativePosition = offScreenPosition;
+				e.relativePosition = PartDragDrop.INVALID;
 				return;
 			}
 		}
 
-		// If drop source's folder same as target
+		// If drag source's folder same as target
 		if (e.dragSource.getContainer() == e.dropTarget) {
 			// Reject stack/detach/attach to ourself
 			if (((PartTabFolder)e.dropTarget).getItemCount() == 1) {
 				e.dropTarget = null;
-				e.relativePosition = offScreenPosition;
+				e.relativePosition = PartDragDrop.INVALID;
 				return;
 			}
 		}
@@ -926,12 +926,12 @@ private void onPartDragOver(PartDropEvent e) {
 		return;
 	}
 
-	// If drop source is tab folder..
+	// If drag source is tab folder..
 	if (e.dragSource instanceof PartTabFolder) {
 		// Reject stack in same tab folder
 		if (e.dragSource == e.dropTarget) {
 			e.dropTarget = null;
-			e.relativePosition = offScreenPosition;
+			e.relativePosition = PartDragDrop.INVALID;
 			return;
 		}
 		
@@ -939,7 +939,7 @@ private void onPartDragOver(PartDropEvent e) {
 		if (e.dropTarget instanceof ViewPane) {
 			if (e.dropTarget.getContainer() == e.dragSource) {
 				e.dropTarget = null;
-				e.relativePosition = offScreenPosition;
+				e.relativePosition = PartDragDrop.INVALID;
 				return;
 			}
 		}
