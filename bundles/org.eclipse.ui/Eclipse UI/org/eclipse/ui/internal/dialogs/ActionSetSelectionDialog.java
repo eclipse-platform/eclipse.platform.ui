@@ -175,7 +175,7 @@ protected Control createDialogArea(Composite parent) {
 	actionLabel.setText(WorkbenchMessages.getString("ActionSetSelection.details")); //$NON-NLS-1$
 
 	// ...third the list of actions
-	Table actionTable = new Table(actionGroup, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+	Table actionTable = new Table(actionGroup, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 	actionTable.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 	data = new GridData(GridData.FILL_BOTH);
 	data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
