@@ -63,11 +63,10 @@ public class ExternalToolsUtil {
 	
 	/**
 	 * Expands and returns the location attribute of the given launch
-	 * configuration, based on the given variable context. The location is
+	 * configuration. The location is
 	 * verified to point to an existing file, in the local file system.
 	 * 
 	 * @param configuration launch configuration
-	 * @param context context used to expand variables
 	 * @return an absolute path to a file in the local file system  
 	 * @throws CoreException if unable to retrieve the associated launch
 	 * configuration attribute, if unable to resolve any variables, or if the
