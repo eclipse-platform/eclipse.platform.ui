@@ -2711,14 +2711,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			provider.connect(input);
 			
 			initializeTitle(input);
-			if (fSourceViewer != null)
-				initializeSourceViewer(input);
-				
-			updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
+
 			if (fIsOverwriting)
 				toggleOverwriteMode();
 			setInsertMode((InsertMode) getLegalInsertModes().get(0));
 			updateCaret();
+			
+			if (fSourceViewer != null)
+				initializeSourceViewer(input);
+				
+			updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
 			
 			if (fSelectionListener != null)
 				fSelectionListener.setDocument(getDocumentProvider().getDocument(input));
