@@ -42,10 +42,15 @@ public final class SearchUI {
 	 */
 	public static final String LINE= "line"; //$NON-NLS-1$
 	/** 
-	 * Id of the search result view
+	 * Id of the Search result view
 	 * (value <code>"org.eclipse.search.SearchResultView"</code>).
 	 */
 	public static final String SEARCH_RESULT_VIEW_ID= PLUGIN_ID + ".SearchResultView"; //$NON-NLS-1$
+	/**
+	 * Id of the Search action set
+	 * (value <code>"org.eclipse.search.searchActionSet"</code>).
+	 */
+	public static final String ACTION_SET_ID= PLUGIN_ID + ".searchActionSet"; //$NON-NLS-1$
 	/**
 	 * Activates the search result view in the active page of the
 	 * active workbench window. This call has no effect (but returns <code>true</code>
