@@ -27,14 +27,15 @@ public class GotoResourceAction extends ResourceNavigatorAction {
  * Collect all resources in the workbench and add them to the <code>resources</code>
  * list.
  */
-private void collectAllResources(IContainer container,ArrayList resources) {
+private void collectAllResources(IContainer container,ArrayList resources,ResourcePatternFilter filter) {
 	try {
 		IResource members[] = container.members();
 		for (int i = 0; i < members.length; i++){
 			IResource r = members[i];
-			resources.add(r);
+			if(filter.select(getNavigator().getResourceViewer(),null,r))
+				resources.add(r);
 			if(r.getType() != IResource.FILE)
-				collectAllResources((IContainer)r,resources);
+				collectAllResources((IContainer)r,resources,filter);
 		}
 	} catch (CoreException e) {
 	}
@@ -47,7 +48,7 @@ private void collectAllResources(IContainer container,ArrayList resources) {
 public void run() {
 	IContainer cont = (IContainer)getResourceViewer().getInput();
 	ArrayList resources = new ArrayList();
-	collectAllResources(cont,resources);
+	collectAllResources(cont,resources,getNavigator().getPatternFilter());
 	IResource resourcesArray[] = new IResource[resources.size()];
 	resources.toArray(resourcesArray);
 	GotoResourceDialog dialog = new GotoResourceDialog(getShell(),resourcesArray);
