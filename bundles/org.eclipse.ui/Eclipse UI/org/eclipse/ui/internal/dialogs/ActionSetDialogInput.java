@@ -43,6 +43,25 @@ public ActionSetDialogInput() {
  	initPerspectives();
 */
 }
+
+/**
+ * Add the action sets for the given categories
+ */
+private void addActionSets(Object[] cats) {
+	for (int nX = 0; nX < cats.length; nX ++) {
+		WizardCollectionElement cat = (WizardCollectionElement)cats[nX];
+		Object [] wizards = cat.getWizards();
+		for (int nY = 0; nY < wizards.length; nY ++) {
+			WorkbenchWizardElement wiz = (WorkbenchWizardElement)wizards[nY];
+			FakeWizardActionSet actionSet = new FakeWizardActionSet(wiz);
+			wizardCat.addActionSet(actionSet);
+		}
+		Object[] subCats = cat.getChildren();
+		addActionSets(subCats);
+	}
+}
+
+
 /**
  * Returns the category with a given id.
  */
@@ -101,20 +120,11 @@ private void initNewWizards() {
 	wizardCat = new FakeActionSetCategory(ID_WIZARD, 
 		WorkbenchMessages.getString("ActionSetDialogInput.wizardCategory")); //$NON-NLS-1$
 	categories.add(wizardCat);
-
 	// Get wizards categories.
 	NewWizardsRegistryReader rdr = new NewWizardsRegistryReader();
 	WizardCollectionElement wizardCollection = (WizardCollectionElement)rdr.getWizards();
 	Object [] cats = wizardCollection.getChildren();
-	for (int nX = 0; nX < cats.length; nX ++) {
-		WizardCollectionElement cat = (WizardCollectionElement)cats[nX];
-		Object [] wizards = cat.getWizards();
-		for (int nY = 0; nY < wizards.length; nY ++) {
-			WorkbenchWizardElement wiz = (WorkbenchWizardElement)wizards[nY];
-			FakeWizardActionSet actionSet = new FakeWizardActionSet(wiz);
-			wizardCat.addActionSet(actionSet);
-		}
-	}
+	addActionSets(cats);
 }
 /**
  * Initialize the perspective action sets.
