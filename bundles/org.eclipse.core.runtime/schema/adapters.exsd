@@ -44,7 +44,7 @@
    <element name="factory">
       <complexType>
          <sequence>
-            <element ref="adapter"/>
+            <element ref="adapter" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="adaptableType" type="string" use="required">
             <annotation>
