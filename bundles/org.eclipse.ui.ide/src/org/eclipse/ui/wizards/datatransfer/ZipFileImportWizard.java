@@ -95,7 +95,7 @@ public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 	this.workbench = workbench;
 	this.selection = currentSelection;
 	List selectedResources = IDE.computeSelectedResources(currentSelection);
-	if (selectedResources != null && !selectedResources.isEmpty()) {
+	if (!selectedResources.isEmpty()) {
 		this.selection = new StructuredSelection(selectedResources);
 	}
 

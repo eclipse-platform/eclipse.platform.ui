@@ -93,7 +93,7 @@ private ImageDescriptor getImageDescriptor(String relativePath) {
 public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 	this.selection = currentSelection;
 	List selectedResources = IDE.computeSelectedResources(currentSelection);
-	if (selectedResources != null && !selectedResources.isEmpty()) {
+	if (!selectedResources.isEmpty()) {
 		this.selection = new StructuredSelection(selectedResources);
 	}
 
