@@ -15,7 +15,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
@@ -33,10 +32,6 @@ import org.eclipse.ui.PlatformUI;
  */
 public class SelectedResourceManager implements IWindowListener, ISelectionListener {
 
-	//debug tracing added to diagnose bug 57642
-	public static boolean DEBUG= false;
-	private static IWorkbenchWindow fActiveWindow;
-	
 	// singleton
 	private static SelectedResourceManager fgDefault;
 	
@@ -44,14 +39,10 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	private String fSelectedText = null;
 	
 	private SelectedResourceManager() {
-		System.out.println("SelectedResourceManager() -- Display is: " +
-				Display.getCurrent());
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench != null) { //may be running headless
 			workbench.addWindowListener(this);
 			IWorkbenchWindow activeWindow = workbench.getActiveWorkbenchWindow();
-			System.out.println("SelectedResourceManager() -- activeWindow is: " +
-					activeWindow);
 			if (activeWindow != null) {
 				windowActivated(activeWindow);
 			}
@@ -74,11 +65,6 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 * @see org.eclipse.ui.IWindowListener#windowActivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowActivated(IWorkbenchWindow window) {
-		fActiveWindow= window;
-		if (DEBUG) {
-			System.out.println("windowActivated(IWorkbenchWindow); window: " + window);
-			Thread.dumpStack();	
-		}
 		ISelectionService service = window.getSelectionService(); 
 		service.addSelectionListener(this);
 		IWorkbenchPage page = window.getActivePage();
@@ -97,10 +83,6 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowClosed(IWorkbenchWindow window) {
-		if (DEBUG) {
-			System.out.println("windowClosed(IWorkbenchWindow); window: " + window);
-			Thread.dumpStack();	
-		}
 		window.getSelectionService().removeSelectionListener(this);
 	}
 
@@ -108,13 +90,6 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowDeactivated(IWorkbenchWindow window) {
-		if (DEBUG) {
-			System.out.println("windowDeactivated(IWorkbenchWindow); window: " + window);
-			Thread.dumpStack();	
-		}
-		if (fActiveWindow == window) {
-			fActiveWindow= null;
-		}
 		window.getSelectionService().removeSelectionListener(this);
 	}
 
@@ -122,20 +97,12 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 * @see org.eclipse.ui.IWindowListener#windowOpened(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void windowOpened(IWorkbenchWindow window) {
-		if (DEBUG) {
-			System.out.println("windowOpened(IWorkbenchWindow); window: " + window);
-			Thread.dumpStack();	
-		}
 	}
 
 	/**
 	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (DEBUG) {
-			System.out.println("selectionChanged(IWorkbenchPart, ISelection); part: " + part + " selection: " + selection);
-			Thread.dumpStack();	
-		}
 		IResource selectedResource = null;
 		if (selection instanceof IStructuredSelection) {
 			Object result = ((IStructuredSelection)selection).getFirstElement();
@@ -162,12 +129,6 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 		if (selection instanceof ITextSelection) {
 			fSelectedText = ((ITextSelection)selection).getText();
 		}
-		
-		if (DEBUG) {
-			System.out.println("after selection changed; selected resource is: " +
-				selectedResource);
-		}
-
 	}
 	
 	/**
@@ -178,10 +139,6 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 * @return selected resource or <code>null</code>
 	 */
 	public IResource getSelectedResource() {
-		if (DEBUG) {
-			System.out.println("getSelectedResource; fSelectedResource: " + fSelectedResource);
-			Thread.dumpStack();	
-		}
 		return fSelectedResource;
 	}
 	
@@ -192,16 +149,6 @@ public class SelectedResourceManager implements IWindowListener, ISelectionListe
 	 * @return the current text selection as a <code>String</code> or <code>null</code>
 	 */
 	public String getSelectedText() {
-		if (DEBUG) {
-			System.out.println("getSelectedText");
-			Thread.dumpStack();	
-		}
 		return fSelectedText;
-	}
-	
-	public static void setDebug(boolean debug) {
-		DEBUG= debug;
-		System.out.println("setDebug; active window is: " +
-				fActiveWindow);
 	}
 }
