@@ -203,13 +203,13 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	 */
 	protected void doHandleSuspendEvent(DebugEvent event) {
 		if (event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
+			// Don't refresh everytime an implicit evaluation finishes
 			if (event.getSource() instanceof ISuspendResume) {
 				if (!((ISuspendResume)event.getSource()).isSuspended()) {
 					// no longer suspended
 					return;
 				}
-			}						
-			// Don't refresh everytime an implicit evaluation finishes
+			}
 			refresh();
 			if (event.getDetail() == DebugEvent.STEP_END) {
 				getVariablesView().populateDetailPane();
