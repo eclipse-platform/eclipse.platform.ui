@@ -22,15 +22,6 @@ import org.eclipse.ui.IService;
 public interface IBindingService extends IService {
 
 	/**
-	 * Returns the collection of all active bindings. When building this
-	 * collection, the effect of contexts should be disregarded.
-	 * 
-	 * @return The collection of active bindings (<code>Binding</code>).
-	 *         This collection may be empty, but it is never <code>null</code>.
-	 */
-	public Collection getActiveBindingsDisregardingContext();
-
-	/**
 	 * Returns the currently active scheme.
 	 * 
 	 * @return The currently active scheme. This value may (in certain rare

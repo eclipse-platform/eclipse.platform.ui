@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.keys;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.jface.bindings.BindingManager;
@@ -43,27 +41,6 @@ public class BindingService implements IBindingService {
 					"Cannot create a binding service with a null manager"); //$NON-NLS-1$
 		}
 		this.bindingManager = bindingManager;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.keys.IBindingService#getActiveBindingsDisregardingContext()
-	 */
-	public Collection getActiveBindingsDisregardingContext() {
-		final Collection bindingCollections = bindingManager
-				.getActiveBindingsDisregardingContext().values();
-		final Collection mergedBindings = new ArrayList();
-		final Iterator bindingCollectionItr = bindingCollections.iterator();
-		while (bindingCollectionItr.hasNext()) {
-			final Collection bindingCollection = (Collection) bindingCollectionItr
-					.next();
-			if ((bindingCollection != null) && (!bindingCollection.isEmpty())) {
-				mergedBindings.addAll(bindingCollection);
-			}
-		}
-
-		return mergedBindings;
 	}
 
 	/*
