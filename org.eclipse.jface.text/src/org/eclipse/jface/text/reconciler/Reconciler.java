@@ -99,7 +99,7 @@ public class Reconciler extends AbstractReconciler implements IReconcilerExtensi
 			fStrategies.remove(contentType);
 		else {
 			fStrategies.put(contentType, strategy);
-			if (strategy instanceof IReconcilingStrategyExtension && getProgressMonitor() == null) {
+			if (strategy instanceof IReconcilingStrategyExtension && getProgressMonitor() != null) {
 				IReconcilingStrategyExtension extension= (IReconcilingStrategyExtension) strategy;
 				extension.setProgressMonitor(getProgressMonitor());
 			}
