@@ -1,4 +1,3 @@
 bin
-build.xml
 org.eclipse.help.webapp_*
 *.class
