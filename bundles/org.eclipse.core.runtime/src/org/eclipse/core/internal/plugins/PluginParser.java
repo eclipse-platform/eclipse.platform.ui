@@ -274,6 +274,10 @@ public void handleConfigurationState(String elementName, Attributes attributes) 
 	}
 	if (elementName.equals(CONFIGURATION_COMPONENT)) {
 		parseComponentAttributes(attributes);
+		ComponentModel component = (ComponentModel)objectStack.pop();
+		ConfigurationModel config = (ConfigurationModel)objectStack.peek();
+		Object components = addObject(component, config.getComponents());
+		config.setComponents((ComponentModel[])components);
 		return;
 	}
 	// If we get to this point, the element name is one we don't currently accept.
@@ -452,6 +456,13 @@ public void handleRuntimeState(String elementName, Attributes attributes) {
 	stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 }
 
+private Object addObject(Object newElement, Object[] container) {
+	Object[] result = new ComponentModel[container == null ? 1 : container.length + 1];
+	if (container != null) 
+		System.arraycopy(container, 0, result, 0, container.length);
+	result[result.length - 1] = newElement;
+	return result;
+}
 private URLModel[] addURLElement(URLModel newElement, URLModel[] container) {
 	URLModel[] result = new URLModel[container == null ? 1 : container.length + 1];
 	if (container != null) 
