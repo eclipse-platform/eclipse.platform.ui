@@ -69,8 +69,8 @@ public class RoleManager implements IActivityListener {
 	};
 
 	/**
-	 * Get the static instance. Create a default one if it has
-	 * not been set.
+	 * Get the static instance. Create a default one if it has not been set.
+	 * 
 	 * @return RoleManager
 	 */
 	public static RoleManager getInstance() {
@@ -80,25 +80,23 @@ public class RoleManager implements IActivityListener {
 		return singleton;
 
 	}
-	
-	/**
-	 * Set the singleton. This can only be done once so 
-	 * any subsequent called will throw IllegalArgumentException.
-	 * @param manager
-	 */
-	public static void setManager(RoleManager manager){
-		if(singleton != null)
-			throw new IllegalArgumentException(RoleMessages.getString("RoleManager.alreadySet")); //$NON-NLS-1$
-		singleton = manager;
-		
-	}
-	
-	
 
 	/**
-	 * Shutdown the current manager if it exists.
-	 *
+	 * Set the singleton. This can only be done once so any subsequent called
+	 * will throw IllegalArgumentException.
+	 * 
+	 * @param manager
 	 */
+	public static void setManager(RoleManager manager) {
+		if (singleton != null)
+			throw new IllegalArgumentException(RoleMessages.getString("RoleManager.alreadySet")); //$NON-NLS-1$
+		singleton = manager;
+		manager.startup();
+
+	}
+
+	/**
+	 * Shutdown the current manager if it exists. */
 	public static void shutdown() {
 		if (singleton == null)
 			return;
@@ -107,11 +105,10 @@ public class RoleManager implements IActivityListener {
 	}
 
 	/**
-	 * Shutdown the receiver. 
-	 */
+	 * Shutdown the receiver. */
 	public void shutdownManager() {
 
-		if (getRecentActivityManager() != null) 
+		if (getRecentActivityManager() != null)
 			getRecentActivityManager().shutdown();
 	}
 
@@ -145,8 +142,7 @@ public class RoleManager implements IActivityListener {
 		}
 
 		for (Iterator i = listenersCopy.iterator(); i.hasNext();) {
-			IActivityManagerListener listener =
-				(IActivityManagerListener) i.next();
+			IActivityManagerListener listener = (IActivityManagerListener) i.next();
 			listener.activityManagerChanged(event);
 		}
 	}
@@ -184,16 +180,12 @@ public class RoleManager implements IActivityListener {
 	public void applyPatternBindings(ObjectActivityManager manager) {
 		Set keys = manager.getObjectIds();
 		for (Iterator i = keys.iterator(); i.hasNext();) {
-			ObjectContributionRecord record =
-				(ObjectContributionRecord) i.next();
+			ObjectContributionRecord record = (ObjectContributionRecord) i.next();
 			String objectKey = record.toString();
-			for (Iterator j = patternBindings.entrySet().iterator();
-				j.hasNext();
-				) {
+			for (Iterator j = patternBindings.entrySet().iterator(); j.hasNext();) {
 				Map.Entry patternEntry = (Map.Entry) j.next();
 				if (objectKey.matches((String) patternEntry.getKey())) {
-					Collection activityIds =
-						(Collection) patternEntry.getValue();
+					Collection activityIds = (Collection) patternEntry.getValue();
 					for (Iterator k = activityIds.iterator(); k.hasNext();) {
 						String activityId = (String) k.next();
 						if (getActivity(activityId) != null) {
@@ -213,19 +205,16 @@ public class RoleManager implements IActivityListener {
 	 * @return boolean true if successful
 	 */
 	private boolean readRoles() {
-		IPlatformConfiguration config =
-			BootLoader.getCurrentPlatformConfiguration();
+		IPlatformConfiguration config = BootLoader.getCurrentPlatformConfiguration();
 		String id = config.getPrimaryFeatureIdentifier();
 		if (id == null)
 			return false;
-		IPlatformConfiguration.IFeatureEntry entry =
-			config.findConfiguredFeatureEntry(id);
+		IPlatformConfiguration.IFeatureEntry entry = config.findConfiguredFeatureEntry(id);
 		String plugInId = entry.getFeaturePluginIdentifier();
 		if (plugInId == null)
 			return false;
 
-		IPluginDescriptor desc =
-			Platform.getPluginRegistry().getPluginDescriptor(plugInId);
+		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor(plugInId);
 		if (desc == null)
 			return false;
 
@@ -245,8 +234,7 @@ public class RoleManager implements IActivityListener {
 			}
 			FileReader reader = new FileReader(xmlDefinition);
 			XMLMemento memento = XMLMemento.createReadRoot(reader);
-			Activity[] activityArray =
-				RoleParser.readActivityDefinitions(memento);
+			Activity[] activityArray = RoleParser.readActivityDefinitions(memento);
 			for (int i = 0; i < activityArray.length; i++) {
 				activityArray[i].addListener(this);
 				activities.put(activityArray[i].getId(), activityArray[i]);
@@ -272,24 +260,26 @@ public class RoleManager implements IActivityListener {
 	 * @param e
 	 */
 	private void reportError(Exception e) {
-		IStatus error =
-			new Status(
-				IStatus.ERROR,
-				PlatformUI.PLUGIN_ID,
-				IStatus.ERROR,
-				e.getLocalizedMessage(),
-				e);
+		IStatus error = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, e.getLocalizedMessage(), e);
 		WorkbenchPlugin.getDefault().getLog().log(error);
 		filterRoles = false;
 	}
 
 	protected RoleManager() {
+	}
+
+	//Initialize all of the state in the receiver. This must be
+	//done after creation to prevent problems with dependant
+	//classes referring to the startup state.
+	protected void startup() {
+		
 		if (readRoles()) {
-			// recent activities expire after an hour - create this irre
-			recentActivities = new RecentActivityManager( 3600000L);
+			//recent activities expire after an hour - create this irre
+			recentActivities = new RecentActivityManager(3600000L);
 			loadEnabledStates();
 			connectToPlatform();
 		}
+
 	}
 
 	/**
@@ -300,8 +290,7 @@ public class RoleManager implements IActivityListener {
 	/**
 	 * Loads the enabled states from the preference store. */
 	void loadEnabledStates() {
-		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 
 		//Do not set it if the store is not set so as to
 		//allow for switching off and on of roles
@@ -318,8 +307,7 @@ public class RoleManager implements IActivityListener {
 	/**
 	 * Save the enabled states in he preference store. */
 	void saveEnabledStates() {
-		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		store.setValue(PREFIX + FILTERING_ENABLED, isFiltering());
 
 		Iterator values = activities.values().iterator();
@@ -357,11 +345,9 @@ public class RoleManager implements IActivityListener {
 		while (bindingsPatterns.hasMoreElements()) {
 			String next = (String) bindingsPatterns.nextElement();
 			if (id.matches(next)) {
-				Iterator activityIds =
-					((Collection) patternBindings.get(next)).iterator();
+				Iterator activityIds = ((Collection) patternBindings.get(next)).iterator();
 				while (activityIds.hasNext()) {
-					Activity activity =
-						getActivity((String) activityIds.next());
+					Activity activity = getActivity((String) activityIds.next());
 					if (activity != null)
 						return activity.isEnabled();
 				}
@@ -447,8 +433,7 @@ public class RoleManager implements IActivityListener {
 		while (patternIterator.hasNext()) {
 			String next = (String) patternIterator.next();
 			if (id.matches(next)) {
-				Iterator mappingIds =
-					((Collection) patternBindings.get(next)).iterator();
+				Iterator mappingIds = ((Collection) patternBindings.get(next)).iterator();
 				while (mappingIds.hasNext()) {
 					String mappingId = (String) mappingIds.next();
 					Activity activity = getActivity(mappingId);

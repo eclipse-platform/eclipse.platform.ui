@@ -140,18 +140,21 @@ public class ObjectActivityManager implements IActivityListener{
      * Add a given id-&gt;object mapping.  A given object should be added to 
      * the reciever only once.
      * 
-     * @param record The record of the contribution
+     * @param pluginId The plugin id
+     * @param localId The local id
      * @param object The object being added
      * @since 3.0
      */
-    public void addObject(ObjectContributionRecord record, Object object ) {
-        if (record == null || object == null) {
+    public void addObject(String pluginId, String localId, Object object ) {
+    	
+        if (pluginId == null || localId == null || object == null) {
             throw new IllegalArgumentException();
         }
 
+        ObjectContributionRecord record = new ObjectContributionRecord(pluginId, localId);
         Object oldObject = objectMap.put(record, object);
 
-        if (!oldObject.equals(object)) {
+        if (!object.equals(oldObject)) {
             // dirty the cache if the old entry is not the same as the new one.
             invalidateCache();
         }            

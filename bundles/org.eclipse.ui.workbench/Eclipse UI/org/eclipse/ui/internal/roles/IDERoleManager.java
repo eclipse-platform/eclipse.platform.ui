@@ -10,13 +10,21 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.roles;
 
+import java.util.Iterator;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceManager;
+
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 
 /**
  * The IDERoleManager is the class that implements the IDE specific behaviour
@@ -34,14 +42,14 @@ public class IDERoleManager extends RoleManager {
 	}
 
 	/*
-	 * (non-Javadoc) @see
-	 * org.eclipse.ui.internal.roles.RoleManager#connectToPlatform()
+	 * (non-Javadoc) 
+	 * @see org.eclipse.ui.internal.roles.RoleManager#connectToPlatform()
 	 */
 	protected void connectToPlatform() {
 
 		listener = getChangeListener();
-		WorkbenchPlugin.getPluginWorkspace().addResourceChangeListener(
-			listener);
+		WorkbenchPlugin.getPluginWorkspace().addResourceChangeListener(listener);
+		createPreferenceMappings();
 
 	}
 
@@ -67,16 +75,12 @@ public class IDERoleManager extends RoleManager {
 					&& mainDelta.getResource().getType() == IResource.ROOT) {
 
 					try {
-						IResourceDelta[] children =
-							mainDelta.getAffectedChildren();
+						IResourceDelta[] children = mainDelta.getAffectedChildren();
 						for (int i = 0; i < children.length; i++) {
 							IResourceDelta delta = children[i];
-							if (delta.getResource().getType()
-								== IResource.PROJECT) {
-								IProject project =
-									(IProject) delta.getResource();
-								String[] ids =
-									project.getDescription().getNatureIds();
+							if (delta.getResource().getType() == IResource.PROJECT) {
+								IProject project = (IProject) delta.getResource();
+								String[] ids = project.getDescription().getNatureIds();
 								for (int j = 0; j < ids.length; j++) {
 									enableActivities(ids[j]);
 								}
@@ -99,9 +103,27 @@ public class IDERoleManager extends RoleManager {
 	public void shutdownManager() {
 		super.shutdownManager();
 		if (listener != null) {
-			WorkbenchPlugin.getPluginWorkspace().removeResourceChangeListener(
-				listener);
+			WorkbenchPlugin.getPluginWorkspace().removeResourceChangeListener(listener);
 		}
 	}
 
+	/**
+	 * Create the mappings for the object activity manager. 
+	 */
+	private void createPreferenceMappings() {
+		
+		PreferenceManager preferenceManager = WorkbenchPlugin.getDefault().getPreferenceManager();
+		//add all WorkbenchPreferenceNodes to the manager
+		ObjectActivityManager objectManager =
+			ObjectActivityManager.getManager(IWorkbenchConstants.PL_PREFERENCES, true);
+		for (Iterator i = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator(); i.hasNext();) {
+			IPreferenceNode node = (IPreferenceNode) i.next();
+			if (node instanceof WorkbenchPreferenceNode) {
+				WorkbenchPreferenceNode workbenchNode = ((WorkbenchPreferenceNode) node);
+				objectManager.addObject(workbenchNode.getPluginId(), workbenchNode.getExtensionLocalId(), node);
+			}
+		}
+		// and then apply the default bindings
+		RoleManager.getInstance().applyPatternBindings(objectManager);
+	}
 }
