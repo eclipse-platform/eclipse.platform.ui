@@ -292,7 +292,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
                             false,
                             null,
                             null);
-            if (dlg.getReturnCode() == IDialogConstants.CANCEL_ID) {
+            if (dlg.getReturnCode() != IDialogConstants.OK_ID) {
                 return false;
             }
             if (dlg.getToggleState()) {
