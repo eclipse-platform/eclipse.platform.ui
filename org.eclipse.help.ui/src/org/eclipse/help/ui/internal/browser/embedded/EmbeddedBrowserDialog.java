@@ -69,11 +69,11 @@ public class EmbeddedBrowserDialog {
 		webBrowser.setLayoutData(data);
 		shell.pack();
 		shell.setLocation(x, y);
-		webBrowser.addVisibilityListener(new VisibilityListener() {
-			public void hide(VisibilityEvent event) {
+		webBrowser.addVisibilityWindowListener(new VisibilityWindowListener() {
+			public void hide(WindowEvent event) {
 				shell.setVisible(false);
 			}
-			public void show(VisibilityEvent event) {
+			public void show(WindowEvent event) {
 				shell.open();
 			}
 		});
@@ -83,7 +83,7 @@ public class EmbeddedBrowserDialog {
 			 * 
 			 * @see org.eclipse.swt.browser.NewWindowListener#newWindow(org.eclipse.swt.browser.NewWindowEvent)
 			 */
-			public void open(OpenWindowEvent event) {
+			public void open(WindowEvent event) {
 				int dw = 300;
 				int dh = 500;
 				int dx = x + (w - dw) / 2;
@@ -105,7 +105,7 @@ public class EmbeddedBrowserDialog {
 
 		});
 		webBrowser.addCloseWindowListener(new CloseWindowListener() {
-			public void close(CloseWindowEvent event) {
+			public void close(WindowEvent event) {
 				Browser browser = (Browser) event.widget;
 				browser.getShell().close();
 			}

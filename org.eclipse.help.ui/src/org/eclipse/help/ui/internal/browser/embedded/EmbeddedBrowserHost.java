@@ -263,7 +263,7 @@ public class EmbeddedBrowserHost implements Runnable {
 			 * 
 			 * @see org.eclipse.swt.browser.NewWindowListener#newWindow(org.eclipse.swt.browser.NewWindowEvent)
 			 */
-			public void open(OpenWindowEvent event) {
+			public void open(WindowEvent event) {
 				int dw = 300;
 				int dh = 300;
 				int dx = x + (w - dw) / 2;
