@@ -22,25 +22,11 @@
 // workaround for netscape resize bug
 window.onresize = function (evt) { location.reload(); };
 
-var navVisible = true;
-
-
-function resynch(button)
-{
-	//try
-	{
-		var topic = parent.MainFrame.window.location.href;
-		parent.displayTocFor(topic);
-	}
-	//catch(e)
-	{
-	}
-}
 
 function printContent(button)
 {
 	parent.MainFrame.focus();
-	print();
+	parent.MainFrame.print();
 }
 
 function setTitle(label)
@@ -88,9 +74,6 @@ TABLE {
 	<tr border=1>
 	<td align=left valign=center ><div id="toolbarTitle" style="position:relative; text-indent:4px; font-weight:bold;"> &nbsp;<%=WebappResources.getString("Content", request)%> </div></td>
 	<td align=right >
-	<!--
-		<a  href="#" onclick="parent.resynch(this);"><img src="../images/synch_toc_nav.gif" alt='<%=WebappResources.getString("Synch", request)%>' border="0" ></a>&nbsp;
-	-->
 		<a  href="#" onclick="printContent(this);" onmouseover="window.status='<%=WebappResources.getString("Print", request)%>';return true;" onmouseout="window.status=''"><img src="../images/print_edit.gif" alt='<%=WebappResources.getString("Print", request)%>' border="0" ></a>&nbsp;
 	</td>
 	</tr>
