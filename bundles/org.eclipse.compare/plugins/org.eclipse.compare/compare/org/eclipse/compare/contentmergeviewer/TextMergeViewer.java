@@ -287,7 +287,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		private Color fSeparatorColor;
 		
 		public HeaderPainter() {
-			fSeparatorColor= getColor(fSummaryHeader.getDisplay(), ViewForm.borderInsideRGB);
+			fSeparatorColor= fSummaryHeader.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
 		}
 		
 		/**

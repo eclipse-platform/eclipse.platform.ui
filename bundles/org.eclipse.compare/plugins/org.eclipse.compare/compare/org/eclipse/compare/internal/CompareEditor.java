@@ -124,7 +124,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 		CompareEditorInput cei= (CompareEditorInput) input;
 
 		setTitleImage(cei.getTitleImage());
-		setTitle(cei.getTitle());
+		setPartName(cei.getTitle());	// was setTitle(cei.getTitle());
 				
 		if (input instanceof IPropertyChangeNotifier)
 			((IPropertyChangeNotifier)input).addPropertyChangeListener(fPropertyChangeListener);
