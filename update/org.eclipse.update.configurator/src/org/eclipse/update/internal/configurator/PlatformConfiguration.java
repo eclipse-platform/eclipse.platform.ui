@@ -261,8 +261,14 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		SiteEntry defaultSite = config.getSiteEntry(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR + "/" + "base" + "/");
 		if (defaultSite != null) {
 			defaultSite.addFeatureEntry(entry);
+		} else {
+			// pick up the first site
+			SiteEntry[] sites = config.getSites();
+			if (sites.length > 0) {
+				sites[0].addFeatureEntry(entry);
+			}
+			// else, do nothing (we need a site)
 		}
-		// else, do nothing (we need a site)
 	}
 
 	/*
