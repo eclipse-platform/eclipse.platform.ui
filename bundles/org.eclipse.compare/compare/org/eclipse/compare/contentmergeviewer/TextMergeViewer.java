@@ -43,7 +43,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.CoreException;
 
@@ -1015,7 +1014,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		
 		fScrollCanvas= new Canvas(composite, SWT.V_SCROLL);
-		//Rectangle trim= fScrollCanvas.computeTrim(0, 0, 0, 0);
 		Rectangle trim= fLeft.getTextWidget().computeTrim(0, 0, 0, 0);
 		fTopInset= trim.y;
 		
@@ -1036,7 +1034,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				paintBirdsEyeView(this, gc);
 			}
 		};
-		//fBirdsEyeCanvas.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_YELLOW));
 		fBirdsEyeCanvas.addMouseListener(
 			new MouseAdapter() {
 				public void mouseDown(MouseEvent e) {
@@ -1337,7 +1334,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				
 				new HoverResizer(canvas, HORIZONTAL);
 								
-				fCenterButton= new Button(canvas, "carbon".equals(SWT.getPlatform()) ? SWT.FLAT : SWT.PUSH);	//$NON-NLS-1$
+				fCenterButton= new Button(canvas, fIsCarbon ? SWT.FLAT : SWT.PUSH);
+				if (fNormalCursor == null) fNormalCursor= new Cursor(canvas.getDisplay(), SWT.CURSOR_ARROW);
+				fCenterButton.setCursor(fNormalCursor);
 				fCenterButton.setText("<");	 //$NON-NLS-1$
 				fCenterButton.pack();
 				fCenterButton.setVisible(false);
@@ -1950,7 +1949,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	/**
-	 * Returns the contents of the underlying document as an array of bytes.
+	 * Returns the contents of the underlying document as an array of bytes using the current workbench encoding.
 	 * 
 	 * @param left if <code>true</code> the contents of the left side is returned; otherwise the right side
 	 * @return the contents of the left or right document or null
@@ -1964,7 +1963,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				if (contents != null) {
 					byte[] bytes;
 					try {
-						bytes= contents.getBytes(ResourcesPlugin.getEncoding());
+						bytes= contents.getBytes("UTF-16");	//$NON-NLS-1$
 					} catch(UnsupportedEncodingException ex) {
 						// use default encoding
 						bytes= contents.getBytes();
@@ -1976,6 +1975,33 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		return null;	
 	}
 				
+//	/**
+//	 * Returns the contents of the underlying document as an array of bytes.
+//	 * 
+//	 * @param left if <code>true</code> the contents of the left side is returned; otherwise the right side
+//	 * @return the contents of the left or right document or null
+//	 */
+//	protected byte[] getContents(boolean left, String encoding) {
+//		MergeSourceViewer v= left ? fLeft : fRight;
+//		if (v != null) {
+//			IDocument d= v.getDocument();
+//			if (d != null) {
+//				String contents= d.get();
+//				if (contents != null) {
+//					byte[] bytes;
+//					try {
+//						bytes= contents.getBytes(encoding);
+//					} catch(UnsupportedEncodingException ex) {
+//						// use default encoding
+//						bytes= contents.getBytes();
+//					}
+//					return bytes;
+//				}
+//			}
+//		}	
+//		return null;	
+//	}
+	
 	private IRegion normalizeDocumentRegion(IDocument doc, IRegion region) {
 		
 		if (region == null || doc == null)
