@@ -517,7 +517,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		String newName= config.getName() + ExternalToolsUIMessages.getString("BuilderPropertyPage._[Builder]_6"); //$NON-NLS-1$
 		newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(newName);
 		ILaunchConfigurationType newType= getConfigurationDuplicationType(config);
-		ILaunchConfigurationWorkingCopy newWorkingCopy= newType.newInstance(getBuilderFolder(), newName);
+		ILaunchConfigurationWorkingCopy newWorkingCopy= newType.newInstance(getBuilderFolder(true), newName);
 		newWorkingCopy.setAttributes(attributes);
 		return newWorkingCopy.doSave();
 	}
@@ -581,7 +581,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = null;
 			String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(ExternalToolsUIMessages.getString("BuilderPropertyPage.New_Builder_7")); //$NON-NLS-1$
-			workingCopy = type.newInstance(getBuilderFolder(), name);		
+			workingCopy = type.newInstance(getBuilderFolder(true), name);		
 			workingCopy.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, IDebugUIConstants.PERSPECTIVE_NONE);
 			
 			StringBuffer buffer= new StringBuffer(IExternalToolConstants.BUILD_TYPE_FULL);
@@ -727,7 +727,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * new launch configuration
 	 */
 	private ILaunchConfiguration migrateBuilderConfiguration(ILaunchConfigurationWorkingCopy workingCopy) throws CoreException {
-		workingCopy.setContainer(getBuilderFolder());
+		workingCopy.setContainer(getBuilderFolder(true));
 		// Before saving, make sure the name is valid
 		String name= workingCopy.getName();
 		name.replace('/', '.');
@@ -767,9 +767,9 @@ public final class BuilderPropertyPage extends PropertyPage {
 	 * Returns the folder where project builders should be stored or
 	 * <code>null</code> if the folder could not be created
 	 */
-	private IFolder getBuilderFolder() {
+	private IFolder getBuilderFolder(boolean create) {
 		IFolder folder = getInputProject().getFolder(".externalToolBuilders"); //$NON-NLS-1$
-		if (!folder.exists()) {
+		if (!folder.exists() && create) {
 			try {
 				folder.create(true, true, new NullProgressMonitor());
 			} catch (CoreException e) {
@@ -1020,9 +1020,10 @@ public final class BuilderPropertyPage extends PropertyPage {
 			}
 		}
 		try {
-			if (getBuilderFolder() != null && getBuilderFolder().members().length == 0) {
+			IFolder builderFolder= getBuilderFolder(false);
+			if (builderFolder != null && builderFolder.exists() && builderFolder.members().length == 0) {
 				// All files in the builder folder were newly created. Clean up
-				getBuilderFolder().delete(true, false, null);
+				builderFolder.delete(true, false, null);
 			}
 		} catch (CoreException e) {
 			handleException(e);
