@@ -569,10 +569,12 @@ public boolean hideView(IViewReference ref) {
 	// Remove the view from the current presentation.
 	if (isFastView(ref)) {
 		fastViews.remove(ref);
-		pane.setFast(false);		//force an update of the toolbar
+		if(pane != null)
+			pane.setFast(false);		//force an update of the toolbar
 		if (activeFastView == ref)
 			setActiveFastView(null);
-		pane.getControl().setEnabled(true);
+		if(pane != null)
+			pane.getControl().setEnabled(true);
 	} else { 
 		presentation.removePart(pane);
 	}

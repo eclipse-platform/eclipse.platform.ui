@@ -1568,8 +1568,11 @@ public void hideActionSet(String actionSetID) {
 
 public void hideView(IViewReference ref) {
 	IWorkbenchPart part = ref.getPart(false);
-	if(part != null)
+	if(part != null) {
 		hideView((IViewPart)part);
+	} else if(isFastView(ref)){
+		hideView(getActivePerspective(),ref);		
+	}
 }
 /**
  * See IPerspective
@@ -1598,12 +1601,16 @@ public void hideView(IViewPart view) {
 			setActivePart(null);
 	}
 		
+	hideView(persp, ref);
+	
+}
+private void hideView(Perspective persp, IViewReference ref) {
 	// Hide the part.  
 	persp.hideView(ref);
 	
-
+	
 	// If the part is no longer reference then dispose it.
-	boolean exists = viewFactory.hasView(view.getSite().getId());
+	boolean exists = viewFactory.hasView(ref.getId());
 	if (!exists) {
 		firePartClosed(ref);
 		disposePart(ref);
@@ -1618,7 +1625,6 @@ public void hideView(IViewPart view) {
 	
 	//if it was the last part, close the perspective
 	lastPartClosePerspective();
-	
 }
 
 /*
