@@ -1,5 +1,10 @@
 package org.eclipse.ui.internal.dialogs;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+
 import java.io.IOException;
 import java.net.URL;
 import java.text.Collator;
