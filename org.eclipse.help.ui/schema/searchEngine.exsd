@@ -7,14 +7,14 @@
       </appInfo>
       <documentation>
          This extension point is used to plug in search participants in the federated help search. Each search engine can be configured individually. When search is initiated, each search engine is executed as a background job, and the results are collated in the help view immediately under the query.
-&lt;p&gt;Search engines defined here will not automatically show up as federated search participants until engine product binding is established. Only engines bound to a particular product will show up when that product is running.
+&lt;p&gt;Search engines defined here may not show up will not automatically show up as federated search participants until engine product binding is established. Only engines bound to a particular product will show up when that product is running.
 &lt;p&gt;
-Search engines can simply compose a URL and fire only one hit containing that URL as href. Popular search engines for which API support requires license can be plugged in like this. On the other end of the spectrum, search engines can communicate with the server and receive individual hits with information like label, href, short description, score etc. Local help engine can produce hits this way.
+Search engines can simply compose a URL and provide only one hit containing that URL as href. Popular search engines for which API support requires license can be plugged in like this. On the other end of the spectrum, search engines can communicate with the server and receive individual hits with information like label, href, short description, score etc. Local help engine can produce hits this way.
 &lt;p&gt;Regardless of the search mechanism, engines can provide various search scope settings using JFace preference pages. These pages are shown when &apos;Advanced Settings&apos; link is followed from the Help view. In addition to root preference pages defined with the engine, additional preference sub-pages can be plugged in for more advanced settings.
-&lt;p&gt;Scope settings are loaded and stored using &lt;code&gt;IPreferenceStore&lt;/code&gt; objects. Scope settings for all engines are grouped together under a named &lt;b&gt;scope set&lt;/b&gt;. When first opened, default scope set (Default) is created, but users can define more scope sets and flip between them.
-&lt;p&gt;Since federated search support is part of &lt;code&gt;org.eclipse.help.base&lt;/code&gt;, a factory is needed to create search scope objects from the data in the preference store. Clients that plug in scope preference pages are required to plug in a scope factory as well.
+&lt;p&gt;Scope settings are loaded and stored using &lt;code&gt;IPreferenceStore&lt;/code&gt; objects. Scope settings for all engines are grouped together under a named &lt;b&gt;scope set&lt;/b&gt;. When first opened, default scope set (&apos;Default&apos;) is created, but users can define more scope sets and flip between them.
+&lt;p&gt;Since federated search support is part of &lt;code&gt;org.eclipse.help.base&lt;/code&gt; plug-in, a factory is needed to create search scope objects from the data in the preference store. Clients that plug in scope preference pages are required to plug in scope factories as well.
 &lt;p&gt;Engines defined in this extension point do not show up in the UI by default. What is shown there is a concrete &lt;b&gt;instance&lt;/b&gt;
-of a search engine that can be individually modified. Products can preconfigure the system with a number of instances of the registered engine types, possibly parametrized to perform in a desired way. In addition, users can add their own instances of the registered engines and configure them to their liking.
+of a search engine that can be individually modified. Products can preconfigure the help system with a number of instances of the registered engine types, possibly parametrized to perform in a desired way. In addition, users can add their own instances of the registered engines and configure them to their liking.
       </documentation>
    </annotation>
 
@@ -95,17 +95,17 @@ of a search engine that can be individually modified. Products can preconfigure 
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  a fully qualified name of the class that implements &lt;code&gt;org.eclipse.help.internal.search.federated.ISearchEngine&lt;/code&gt;. The class is responsible for searching based on a given query and scope.
+                  a fully qualified name of the class that implements &lt;code&gt;org.eclipse.help.search.ISearchEngine&lt;/code&gt;. The class is responsible for searching based on a given query and scope.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.help.internal.search.federated.ISearchEngine"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.search.ISearchEngine"/>
                </appInfo>
             </annotation>
          </attribute>
          <attribute name="pageClass" type="string">
             <annotation>
                <documentation>
-                  a fully qualified name of the class that extends &lt;code&gt;org.eclipse.help.ui.RootScopePage&lt;/code&gt; class. This page holds the master switch for the search engine and is responsible for creating search scope object from the preference store.
+                  a fully qualified name of the class that extends &lt;code&gt;org.eclipse.help.ui.RootScopePage&lt;/code&gt; class. This page holds the master switch for the search engine and is typically used to host widgets used to narrow down the search scope for the engine.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.ui.RootScopePage"/>
@@ -115,7 +115,7 @@ of a search engine that can be individually modified. Products can preconfigure 
          <attribute name="scopeFactory" type="string">
             <annotation>
                <documentation>
-                  a fully qualified name of the class that implements &lt;code&gt;org.eclipse.help.ui.ISearchScopeFactory&lt;/code&gt;. The factory is responsible for creating ISearchScope objects out of settings stored in IPreferenceStore class. If &lt;code&gt;pageClass&lt;/code&gt; is specified, scope factory must be specified as well.
+                  a fully qualified name of the class that implements &lt;code&gt;org.eclipse.help.ui.ISearchScopeFactory&lt;/code&gt;. The factory is responsible for creating ISearchScope objects from settings stored in &lt;code&gt;IPreferenceStore&lt;/code&gt; class. If &lt;code&gt;pageClass&lt;/code&gt; is specified, scope factory must be specified as well.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.ui.ISearchScopeFactory"/>
@@ -186,7 +186,7 @@ of a search engine that can be individually modified. Products can preconfigure 
    <element name="engine">
       <annotation>
          <documentation>
-            Specifies a concrete instance of a particular search engine type. Instance must be bound to the product in order to show up when that product is active. Engine can have its own label and description. If not specified, the one on the engine type will be used. Finally, each engine type defines a valid set of parameters that can be passed to it to configure it. Engines can specify values of these parameters.
+            Specifies a concrete instance of a particular search engine type. Instance may be bound to the product in order to show up only when that product is active. Engine can have its own label and description. If not specified, engine type data will be used. Finally, each engine type defines a valid set of parameters that can be passed to it to configure it. Engines can specify values of these parameters.
          </documentation>
       </annotation>
       <complexType>
@@ -218,7 +218,7 @@ of a search engine that can be individually modified. Products can preconfigure 
          <attribute name="label" type="string">
             <annotation>
                <documentation>
-                  an optional label for this engine. If not specified, the name of the engine type will be used
+                  an optional label for this engine. If not specified, the label of the engine type will be used
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -240,6 +240,9 @@ of a search engine that can be individually modified. Products can preconfigure 
          <appInfo>
             <meta.element labelAttribute="name"/>
          </appInfo>
+         <documentation>
+            an optional parameter that is used to configure this instance of a search engine type. Valid parameters are defined by the engine type.
+         </documentation>
       </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
@@ -291,7 +294,7 @@ of a search engine that can be individually modified. Products can preconfigure 
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         Help UI plug-in provides a search engine for local help documentation search.
+         Help UI plug-in provides search engine types for local help documentation, InfoCenter and Web search, as well as local help search engine.
       </documentation>
    </annotation>
 

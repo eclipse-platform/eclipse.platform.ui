@@ -89,7 +89,7 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 			}
 			public void expansionStateChanged(ExpansionEvent e) {
 				if (e.getState()) {
-					if (phrase.length() > 0)
+					if (phrase!=null && phrase.length() > 0)
 						startInPlaceSearch(phrase, context);
 				}
 			}
@@ -110,12 +110,9 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 		section.setTextClient(clearLink);		
 		resultSorter = new SorterByScore();
 		searchResults = toolkit.createFormText(section, true);
-		//searchResults.marginWidth = 10;
 		section.setClient(searchResults);
-		// stext.setFormText(searchResults);
 		searchResults.setColor(FormColors.TITLE, toolkit.getColors().getColor(
 				FormColors.TITLE));
-		// searchResults.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 		String topicKey = IHelpUIConstants.IMAGE_FILE_F1TOPIC;
 		String nwKey = IHelpUIConstants.IMAGE_NW;
 		String searchKey = IHelpUIConstants.IMAGE_HELP_SEARCH;
@@ -302,17 +299,6 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 				buff.append("\">"); //$NON-NLS-1$
 				buff.append(hit.getLabel());
 				buff.append("</a>"); //$NON-NLS-1$
-				/*
-				 * buff.append(" <a href=\""); //$NON-NLS-1$ buff.append("nw:");
-				 * //$NON-NLS-1$ buff.append(hit.getHref()); buff.append("\">
-				 * <img href=\""); //$NON-NLS-1$
-				 * buff.append(IHelpUIConstants.IMAGE_NW); buff.append("\"
-				 * alt=\""); //$NON-NLS-1$
-				 * buff.append(HelpUIResources.getString("SearchResultsPart.nwtooltip"));
-				 * //$NON-NLS-1$ buff.append("\""); //$NON-NLS-1$
-				 * buff.append("/>"); //$NON-NLS-1$ buff.append(" </a>");
-				 * //$NON-NLS-1$
-				 */
 				buff.append("</li>"); //$NON-NLS-1$
 			}
 			if (hits.length > 0) {
@@ -343,15 +329,6 @@ public class DynamicHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	private void doMore() {
-		/*
-		try {
-			String ephrase = URLEncoder.encode(phrase, "UTF-8"); //$NON-NLS-1$
-			String query = "tab=search&searchWord=" + ephrase; //$NON-NLS-1$
-			WorkbenchHelp.displayHelpResource(query);
-		} catch (UnsupportedEncodingException e) {
-			System.out.println(e);
-		}
-		*/
 		parent.startSearch(phrase);
 	}
 

@@ -79,7 +79,6 @@ public class EngineResultSection {
 				| Section.TWISTIE | Section.EXPANDED | Section.LEFT_TEXT_CLIENT_ALIGNMENT);
 		// section.marginHeight = 10;
 		container = toolkit.createComposite(section);
-		//container.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 		TableWrapLayout layout = new TableWrapLayout();
 		layout.topMargin = 0;
 		layout.bottomMargin = 0;
@@ -89,7 +88,7 @@ public class EngineResultSection {
 		container.setLayout(layout);
 		createFormText(container, toolkit);
 		searchResults.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
-		//searchResults.setColor("summary", toolkit.getColors().getColor(FormColors.TITLE));
+		searchResults.setColor("summary", toolkit.getColors().getColor(FormColors.TITLE)); //$NON-NLS-1$
 		section.setClient(container);
 		updateSectionTitle();
 		section.addExpansionListener(new IExpansionListener() {
@@ -297,9 +296,9 @@ public class EngineResultSection {
 				String summary = getSummary(hit);
 				if (summary != null) {
 					buff.append("<br/>"); //$NON-NLS-1$
-					//buff.append("<span color=\"summary\">");
+					buff.append("<span color=\"summary\">"); //$NON-NLS-1$
 					buff.append(summary);
-					//buff.append("</span>");
+					buff.append("</span>"); //$NON-NLS-1$
 				}
 			}
 			buff.append("</li>"); //$NON-NLS-1$

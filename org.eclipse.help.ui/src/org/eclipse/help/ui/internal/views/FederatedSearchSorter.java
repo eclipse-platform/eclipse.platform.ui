@@ -25,7 +25,7 @@ public class FederatedSearchSorter extends ViewerSorter {
 			IHelpResource c1 = r1.getCategory();
 			IHelpResource c2 = r2.getCategory();
 			if (c1!=null && c2!=null) {
-				int cat = compare(viewer, r1.getCategory(), r2.getCategory());
+				int cat = super.compare(viewer, c1.getLabel(), c2.getLabel());
 				if (cat!=0) return cat;
 			}
 			float rank1 = ((ISearchEngineResult) e1).getScore();

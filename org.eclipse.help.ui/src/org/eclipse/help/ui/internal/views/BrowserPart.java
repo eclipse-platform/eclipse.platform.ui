@@ -77,7 +77,7 @@ public class BrowserPart extends AbstractFormPart implements IHelpPart {
 				IStatusLineManager statusLine = BrowserPart.this.parent
 						.getStatusLineManager();
 				statusLine.setMessage(event.text);
-				if (event.text.indexOf("://")!= -1)
+				if (event.text.indexOf("://")!= -1) //$NON-NLS-1$
 					statusURL = event.text;
 			}
 		});

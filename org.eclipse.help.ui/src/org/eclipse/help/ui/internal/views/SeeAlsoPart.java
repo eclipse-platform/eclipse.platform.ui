@@ -96,7 +96,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 	
 	private void addSpace(StringBuffer buf, int count) {
 		for (int i=0; i<count; i++) {
-			buf.append(" ");
+			buf.append(" "); //$NON-NLS-1$
 		}
 	}
 

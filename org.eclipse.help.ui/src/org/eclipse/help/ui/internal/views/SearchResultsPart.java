@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.help.search.ISearchEngineResult;
+import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.*;
@@ -21,6 +22,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -36,6 +38,8 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
+	private static final String S_DESCRIPTION_OFF = "no-description"; //$NON-NLS-1$
+	private static final String S_SHOW_CATEGORIES = "show-categories"; //$NON-NLS-1$
 	ReusableHelpPart parent;
 
 	private Composite separator;
@@ -69,6 +73,8 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		layout.marginWidth = layout.marginHeight = 0;
 		layout.verticalSpacing = 0;
 		innerToolkit = new FormToolkit(parent.getDisplay());
+		innerToolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(
+				toolkit.getHyperlinkGroup().getHyperlinkUnderlineMode());
 		container = innerToolkit.createComposite(parent);
 		container.setLayout(layout);
 		separator = innerToolkit.createCompositeSeparator(container);
@@ -97,14 +103,18 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		 * removeAllAction); tbm.insertAfter("removeAll", new Separator());
 		 */
 
+		IDialogSettings settings = HelpUIPlugin.getDefault().getDialogSettings();
+		boolean descOff = settings.getBoolean(S_DESCRIPTION_OFF);
+		boolean showCategories = settings.getBoolean(S_SHOW_CATEGORIES);
 		showCategoriesAction = new Action() {
 			public void run() {
 				updateResultSections();
+				HelpUIPlugin.getDefault().getDialogSettings().put(S_SHOW_CATEGORIES, showCategoriesAction.isChecked());
 			}
 		};
 		showCategoriesAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_CATEGORIES));
-		showCategoriesAction.setChecked(false);
+		showCategoriesAction.setChecked(showCategories);
 		showCategoriesAction.setToolTipText(HelpUIResources
 				.getString("SearchResultsPart.showCategoriesAction.tooltip")); //$NON-NLS-1$
 		showCategoriesAction.setId("categories"); //$NON-NLS-1$
@@ -113,11 +123,12 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		showDescriptionAction = new Action() {
 			public void run() {
 				updateResultSections();
+				HelpUIPlugin.getDefault().getDialogSettings().put(S_DESCRIPTION_OFF, !showDescriptionAction.isChecked());
 			}
 		};
 		showDescriptionAction.setImageDescriptor(HelpUIResources
 				.getImageDescriptor(IHelpUIConstants.IMAGE_SHOW_DESC));
-		showDescriptionAction.setChecked(true);
+		showDescriptionAction.setChecked(!descOff);
 		showDescriptionAction.setToolTipText(HelpUIResources
 				.getString("SearchResultsPart.showDescriptionAction.tooltip")); //$NON-NLS-1$
 		showDescriptionAction.setId("description"); //$NON-NLS-1$
@@ -253,9 +264,8 @@ public class SearchResultsPart extends AbstractFormPart implements IHelpPart {
 		EngineResultSection ers = findEngineResult(ed);
 		ers.add(matches);
 	}
-	
-	public synchronized void error(EngineDescriptor ed, 
-			IStatus status) {
+
+	public synchronized void error(EngineDescriptor ed, IStatus status) {
 		EngineResultSection ers = findEngineResult(ed);
 		ers.error(status);
 	}

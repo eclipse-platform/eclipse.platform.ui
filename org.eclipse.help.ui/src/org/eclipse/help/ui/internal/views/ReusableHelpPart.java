@@ -910,7 +910,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			if (href!=null)
 				href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
 			if (label!=null && href!=null) {
-				String message = HelpUIResources.getString("ReusableHelpPart.status", label, href);
+				String message = HelpUIResources.getString("ReusableHelpPart.status", label, href); //$NON-NLS-1$
 				mng.setMessage(message);
 			}
 			else if (label!=null)

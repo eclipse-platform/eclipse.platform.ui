@@ -12,28 +12,12 @@ package org.eclipse.help.ui.internal.views;
 
 import java.util.Hashtable;
 
-import org.eclipse.help.IContext;
-import org.eclipse.help.IContextProvider;
-import org.eclipse.help.ui.internal.HelpUIResources;
-import org.eclipse.help.ui.internal.IHelpUIConstants;
-import org.eclipse.jface.viewers.IPostSelectionProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.help.*;
+import org.eclipse.help.ui.internal.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.forms.HyperlinkGroup;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
 
@@ -58,11 +42,10 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 	 */
 	public void createPartControl(Composite parent) {
 		toolkit = new FormToolkit(parent.getDisplay());
-		//toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkGroup.UNDERLINE_HOVER);
-    	//toolkit.setBackground(toolkit.getColors().createNoContentColor());
+		toolkit.getHyperlinkGroup().setHyperlinkUnderlineMode(HyperlinkGroup.UNDERLINE_HOVER);
+    	//toolkit.setBackground(toolkit.getColors().createNoContentBackground());
 		toolkit.getColors().initializeSectionToolBarColors();
 		reusableHelpPart.createControl(parent, toolkit);
-		//reusableHelpPart.setShowDocumentsInPlace(false);
 		reusableHelpPart
 				.setDefaultContextHelpText(HelpUIResources.getString("HelpView.defaultText")); //$NON-NLS-1$
 		reusableHelpPart.showPage(getFirstPage());

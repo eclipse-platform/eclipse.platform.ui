@@ -247,7 +247,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 		}
 		for (int i=1; i<Integer.MAX_VALUE; i++) {
 			if (!isUsed(i, used)) {
-				return typeId+"."+"user."+i;
+				return typeId+"."+"user."+i; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return typeId;
