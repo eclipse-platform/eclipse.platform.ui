@@ -57,18 +57,13 @@ public class SimpleVariableRegistry implements ISimpleVariableRegistry {
 	private static final String ELEMENT_VARIABLE="variable"; //$NON-NLS-1$
 	private static final String ATTR_NAME= "name"; //$NON-NLS-1$
 	private static final String ATTR_INITIAL_VALUE= "initialValue"; //$NON-NLS-1$
+	private static final String ATTR_DESCRIPTION="description"; //$NON-NLS-1$
 	private static final String ATTR_INITIALIZER_CLASS= "initializerClass"; //$NON-NLS-1$
 	// Persisted variable XML constants
 	private static final String SIMPLE_VARIABLES_TAG= "simpleVariables"; //$NON-NLS-1$
 	private static final String VARIABLE_TAG= "variable"; //$NON-NLS-1$
 	private static final String NAME_TAG= "name"; //$NON-NLS-1$
 	private static final String VALUE_TAG= "value"; //$NON-NLS-1$
-	
-	private static final class VariableDefinition {
-		public String name;
-		public String value;
-		public int end;
-	}
 
 	private Map fVariables= new HashMap(); 
 	
@@ -147,7 +142,8 @@ public class SimpleVariableRegistry implements ISimpleVariableRegistry {
 				}
 			}
 			String initialValue= element.getAttribute(ATTR_INITIAL_VALUE);
-			ISimpleLaunchVariable variable= new SimpleLaunchVariable(name, initializer, initialValue);
+			String description= element.getAttribute(ATTR_DESCRIPTION);
+			ISimpleLaunchVariable variable= new SimpleLaunchVariable(name, initializer, initialValue, description);
 			fVariables.put(variable.getName(), variable);
 		}
 	}

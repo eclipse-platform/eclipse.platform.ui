@@ -13,12 +13,7 @@ package org.eclipse.debug.core.variables;
 /**
  * A variable that can be assigned a value.
  */
-public interface ISimpleLaunchVariable {
-	/**
-	 * Returns this variable's name.
-	 * @return
-	 */
-	public String getName();
+public interface ISimpleLaunchVariable extends ILaunchVariable {
 	/**
 	 * Returns the value of this variable. If no value has been assigned
 	 * to this variable, it will attempt to use the variable's initializer if

@@ -50,7 +50,7 @@ import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
 import org.eclipse.debug.internal.ui.views.variables.VariablesContentProviderManager;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.debug.ui.launchVariables.IContextVariableComponentManager;
+import org.eclipse.debug.ui.launchVariables.ILaunchVariableComponentManager;
 import org.eclipse.debug.ui.launchVariables.VariableContextManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -163,7 +163,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		return fVariablesContentProviderManager;
 	}
 	
-	public IContextVariableComponentManager getVariableComponentManager() {
+	public ILaunchVariableComponentManager getVariableComponentManager() {
 		if (fVariableComponentManager == null) {
 			fVariableComponentManager = new ContextVariableComponentManager();
 		}

@@ -10,6 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.launchVariables;
 
-public interface IContextVariableComponentManager {
+public interface ILaunchVariableComponentManager {
 	public IVariableComponent getComponent(String variableName);
 }

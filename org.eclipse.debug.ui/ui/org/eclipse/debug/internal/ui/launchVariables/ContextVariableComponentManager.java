@@ -19,9 +19,14 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.launchVariables.IVariableComponent;
-import org.eclipse.debug.ui.launchVariables.IContextVariableComponentManager;
+import org.eclipse.debug.ui.launchVariables.ILaunchVariableComponentManager;
 
-public class ContextVariableComponentManager implements IContextVariableComponentManager {
+/**
+ * Manager which returns the variable editing component associated with
+ * a context variable. If the variable is not a context variable or no
+ * component is associated with a variable, a default (empty) component is returned.
+ */
+public class ContextVariableComponentManager implements ILaunchVariableComponentManager {
 	
 	private HashMap fVariableMap= new HashMap();
 	private static final IVariableComponent defaultComponent = new DefaultVariableComponent(false);

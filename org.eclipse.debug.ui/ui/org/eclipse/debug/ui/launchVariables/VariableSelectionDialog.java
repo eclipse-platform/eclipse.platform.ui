@@ -11,7 +11,7 @@
 package org.eclipse.debug.ui.launchVariables;
 
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.variables.IContextLaunchVariable;
+import org.eclipse.debug.core.variables.ILaunchVariable;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -35,6 +35,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  */
 public class VariableSelectionDialog extends SelectionDialog {
 	private LaunchConfigurationVariableForm form;
+	private Composite formComposite;
 	public VariableSelectionDialog(Shell parent) {
 		super(parent);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
@@ -56,7 +57,7 @@ public class VariableSelectionDialog extends SelectionDialog {
 		contextVariables.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (contextVariables.getSelection()) {
-					addVariableFormComposite();
+					replaceVariableComposite(DebugPlugin.getDefault().getContextVariableRegistry().getVariables());
 				}
 			}
 		});
@@ -64,41 +65,22 @@ public class VariableSelectionDialog extends SelectionDialog {
 		simpleVariables.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			if (simpleVariables.getSelection()) {
-				addSimpleVariableComposite();
+				replaceVariableComposite(DebugPlugin.getDefault().getSimpleVariableRegistry().getVariables());
 			}
 		}
 	});
-		createVariableFormComposite(composite);
+		createVariableFormComposite(composite, DebugPlugin.getDefault().getContextVariableRegistry().getVariables());
 		return composite;
 	}
+	
 	/**
-	 * Adds the context variable composite to the dialog,
-	 * replacing the simple variable composite.
+	 * Replaces the variable form with a form containing the given variables.
 	 */
-	protected void addVariableFormComposite() {
-		if (simpleVariableComposite != null) {
-			simpleVariableComposite.dispose();
+	private void replaceVariableComposite(ILaunchVariable[] variables) {
+		if (formComposite != null) {
+			formComposite.dispose();
 		}
-		createVariableFormComposite((Composite) getDialogArea());
-		redraw();
-	}
-	
-	/**
-	 * Adds the simple variable composite to the dialog,
-	 * replacing the context variable composite.
-	 */
-	protected void addSimpleVariableComposite() {
-		if (contextVariableComposite != null) {
-			contextVariableComposite.dispose();
-		} 
-		createSimpleVariableComposite((Composite) getDialogArea());
-		redraw();
-	}
-	
-	/**
-	 * Redraws the dialog area.
-	 */
-	private void redraw() {
+		createVariableFormComposite((Composite) getDialogArea(), variables);
 		((Composite) getDialogArea()).layout(true);
 		getDialogArea().redraw();
 	}
@@ -110,19 +92,11 @@ public class VariableSelectionDialog extends SelectionDialog {
 		return button;
 	}
 	
-	private Composite contextVariableComposite= null;
-	private Composite simpleVariableComposite= null;
-	
-	protected void createSimpleVariableComposite(Composite parent) {
-		simpleVariableComposite= new Composite(parent, SWT.NONE);
-	}
-	
-	protected void createVariableFormComposite(Composite parent) {
-		contextVariableComposite= new Composite(parent, SWT.NONE);
-		contextVariableComposite.setLayout(new GridLayout());
-		IContextLaunchVariable[] variables= DebugPlugin.getDefault().getContextVariableRegistry().getVariables();
+	protected void createVariableFormComposite(Composite parent, ILaunchVariable[] variables) {
+		formComposite= new Composite(parent, SWT.NONE);
+		formComposite.setLayout(new GridLayout());
 		form= new LaunchConfigurationVariableForm(LaunchConfigurationsMessages.getString("VariableSelectionDialog.Choose_a_variable__2"), variables); //$NON-NLS-1$
-		form.createContents(contextVariableComposite, new IVariableComponentContainer() {
+		form.createContents(formComposite, new IVariableComponentContainer() {
 			
 			public void setErrorMessage(String errorMessage) {
 				VariableSelectionDialog.this.setMessage(errorMessage);

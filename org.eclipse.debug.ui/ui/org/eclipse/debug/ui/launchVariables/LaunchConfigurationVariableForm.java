@@ -11,7 +11,8 @@
 package org.eclipse.debug.ui.launchVariables;
 
 
-import org.eclipse.debug.core.variables.*;
+import org.eclipse.debug.core.variables.ILaunchVariable;
+import org.eclipse.debug.core.variables.VariableUtil;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -36,7 +37,7 @@ public class LaunchConfigurationVariableForm {
 	private static final int VISIBLE_ITEM_COUNT = 6;
 	
 	private String variableListLabelText;
-	private IContextLaunchVariable[] variables;
+	private ILaunchVariable[] variables;
 	private IVariableComponent[] components;
 	private IVariableComponentContainer dialogPage;
 	
@@ -52,7 +53,7 @@ public class LaunchConfigurationVariableForm {
 	 * @param variableListLabelText the label text to use for identifying the list of variables
 	 * @param variables the collection of variables to display to the user
 	 */
-	public LaunchConfigurationVariableForm(String variableListLabelText, IContextLaunchVariable[] variables) {
+	public LaunchConfigurationVariableForm(String variableListLabelText, ILaunchVariable[] variables) {
 		super();
 		this.variableListLabelText = variableListLabelText;
 		this.variables = variables;
@@ -161,9 +162,9 @@ public class LaunchConfigurationVariableForm {
 	 * can be layout properly.
 	 */
 	private void createVariableComponents() {
-		IContextVariableComponentManager manager = DebugUIPlugin.getDefault().getVariableComponentManager();
+		ILaunchVariableComponentManager manager = DebugUIPlugin.getDefault().getVariableComponentManager();
 		for (int i = 0; i < variables.length; i++) {
-			IContextLaunchVariable var = variables[i];
+			ILaunchVariable var = variables[i];
 			components[i] = manager.getComponent(var.getName());
 			components[i].createContents(variableComposite, var.getName(), dialogPage);
 		}

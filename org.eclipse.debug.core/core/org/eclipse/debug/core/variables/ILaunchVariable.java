@@ -11,11 +11,24 @@
 package org.eclipse.debug.core.variables;
 
 /**
- * @since 3.0
+ * The common variable interface shared by <code>ISimpleLaunchVariable</code>s
+ * and <code>IContextLaunchVariable</code>s.
+ * <p>
+ * This interface is not intended to be implemented by clients. Clients
+ * should implement either <code>IContextLaunchVariable</code> or
+ * <code>ISimpleLaunchVariable</code>.
+ * </p>
  */
-public interface IContextLaunchVariable extends ILaunchVariable {
+public interface ILaunchVariable {
 	/**
-	 * Returns the object that can expand the variable.
+	 * Returns this variable's name.
+	 * @return
 	 */
-	public IVariableExpander getExpander();
+	public String getName();
+
+	/**
+	 * Returns this variable's description.
+	 * @return
+	 */
+	public String getDescription();
 }

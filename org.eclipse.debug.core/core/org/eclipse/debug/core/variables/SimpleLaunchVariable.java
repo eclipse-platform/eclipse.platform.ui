@@ -16,6 +16,7 @@ public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 	protected IVariableInitializer fVariableInitializer= null;
 	protected String fName= null;
 	protected String fValue= null;
+	protected String fDescription= null;
 	
 	/**
 	 * Creates a new launch configuration variable with the given initializer or <code>null</code>
@@ -24,11 +25,14 @@ public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 	 * value if no value is set or <code>null</code> if no initializer is defined.
 	 * @param initialValue the variable's initial value or <code>null</code> if no initial value
 	 * should be set.
+	 * @param description the variable's description or <code>null</code> if no
+	 * description is specified.
 	 */
-	public SimpleLaunchVariable(String name, IVariableInitializer initializer, String initialValue) {
+	public SimpleLaunchVariable(String name, IVariableInitializer initializer, String initialValue, String description) {
 		this(name);
 		fVariableInitializer= initializer;
 		fValue= initialValue;
+		fDescription= description;
 	}
 	
 	/**
@@ -57,6 +61,10 @@ public class SimpleLaunchVariable implements ISimpleLaunchVariable {
 	 */
 	public String getName() {
 		return fName;
+	}
+	
+	public String getDescription() {
+		return fDescription != null ? fDescription : ""; //$NON-NLS-1$
 	}
 
 	/**
