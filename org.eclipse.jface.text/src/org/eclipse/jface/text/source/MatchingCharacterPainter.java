@@ -166,10 +166,17 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 		}
 		
 		if (fIsActive) {
-			// only if different
-			if (pair.getOffset() != fPairPosition.getOffset() || 
+			
+			if (IPainter.CONFIGURATION == reason) {
+				
+				// redraw current highlighting
+				handleDrawRequest(null);
+			
+			} else if (pair.getOffset() != fPairPosition.getOffset() || 
 					pair.getLength() != fPairPosition.getLength() || 
 					fMatcher.getAnchor() != fAnchor) {
+				
+				// otherwise only do something if position is different
 				
 				// remove old highlighting
 				handleDrawRequest(null);
