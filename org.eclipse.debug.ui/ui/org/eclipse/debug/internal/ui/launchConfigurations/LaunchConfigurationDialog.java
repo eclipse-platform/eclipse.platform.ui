@@ -979,6 +979,8 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		IStructuredSelection selection = (IStructuredSelection)event.getSelection();
  		if (selection.isEmpty()) {
  			getEditArea().setVisible(false);
+ 			setWorkingCopy(null);
+ 			setSelectedTreeObject(null);
  			updateButtons();
  			return;
  		}
