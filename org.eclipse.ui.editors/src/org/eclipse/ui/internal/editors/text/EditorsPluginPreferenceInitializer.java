@@ -13,7 +13,10 @@ package org.eclipse.ui.internal.editors.text;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
 import org.eclipse.ui.editors.text.TextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
 
 /**
@@ -28,6 +31,22 @@ public class EditorsPluginPreferenceInitializer extends AbstractPreferenceInitia
 	 * @since 3.1
 	 */
 	public void initializeDefaultPreferences() {
-		TextEditorPreferenceConstants.initializeDefaultValues(EditorsPlugin.getDefault().getPreferenceStore());
+		IPreferenceStore store= EditorsPlugin.getDefault().getPreferenceStore();
+		TextEditorPreferenceConstants.initializeDefaultValues(store);
+		migrateOverviewRulerPreference(store);
+	}
+	
+	private void migrateOverviewRulerPreference(IPreferenceStore store) {
+		String preference= AbstractDecoratedTextEditorPreferenceConstants.EDITOR_OVERVIEW_RULER;
+		String postfix= "_migration"; //$NON-NLS-1$
+		String MIGRATED= "migrated_3.1"; //$NON-NLS-1$
+		String migrationKey= preference + postfix;
+		
+		String migrationValue= store.getString(migrationKey);
+		if (!MIGRATED.equals(migrationValue)) {
+			store.setValue(migrationKey, MIGRATED);
+			if (!store.getBoolean(preference))
+				store.setValue(preference, true);
+		}
 	}
 }
