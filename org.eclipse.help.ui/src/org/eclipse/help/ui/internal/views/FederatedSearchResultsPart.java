@@ -55,6 +55,7 @@ public class FederatedSearchResultsPart extends AbstractFormPart implements IHel
 		gd.heightHint = 1;
 		separator.setLayoutData(gd);
 		innerForm = toolkit.createScrolledForm(container);
+		innerForm.setDelayedReflow(true);
 		innerForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 		TableWrapLayout tlayout = new TableWrapLayout();
 		//tlayout.leftMargin = tlayout.rightMargin = 0;
