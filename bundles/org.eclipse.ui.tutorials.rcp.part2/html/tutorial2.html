@@ -37,7 +37,7 @@ that let you take control of much of the layout and
 functionality of an RCP application.
 </p>
 <p><b>By Ed Burnette, SAS</b><br>
-<font size="-1">July 28, 2004</font></p>
+<font size="-1">August 9, 2004</font></p>
 <hr width="100%">
 
 <h2>Introduction</h2>
@@ -225,8 +225,7 @@ Workbench lifecycle hooks provided by <code>org.eclipse.ui.application.Workbench
 		
 	<tr><td>initialize
 		<td>Called first to perform any setup such as
-		parsing the command line, registering adapters, declaring images, and
-		showing a required login screen.
+		parsing the command line, registering adapters, declaring images, etc..
 		<td><code>IWorkbenchConfigurer<code>
 		
 	<tr><td>preStartup
@@ -295,7 +294,6 @@ Workbench window lifecycle hooks provided by <code>org.eclipse.ui.application.Wo
 	<tr><td>openIntro
 		<td>Called immediately before a window is opened
 		in order to create the Intro component (if any).
-		Could be used for other things like an optional login page.
 		<td><code>IWorkbenchWindowConfigurer</code>
 		
 	<tr><td>postWindowOpen
