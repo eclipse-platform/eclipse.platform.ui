@@ -35,6 +35,7 @@ import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamProvider;
 import org.eclipse.team.core.sync.IRemoteResource;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MergedSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.RemoteSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.RemoteTagSynchronizer;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSynchronizer;
@@ -106,7 +107,7 @@ public class CVSMergeSubscriber extends CVSSyncTreeSubscriber implements IResour
 		String syncKeyPrefix = id.getLocalName();
 		remoteSynchronizer = new RemoteTagSynchronizer(syncKeyPrefix + end.getName(), end);
 		baseSynchronizer = new RemoteTagSynchronizer(syncKeyPrefix + start.getName(), start);
-		mergedSynchronizer = new RemoteSynchronizer(syncKeyPrefix + "0merged"); //$NON-NLS-1$
+		mergedSynchronizer = new MergedSynchronizer(syncKeyPrefix + "0merged"); //$NON-NLS-1$
 		
 		try {
 			setCurrentComparisonCriteria(ContentComparisonCriteria.ID_IGNORE_WS);

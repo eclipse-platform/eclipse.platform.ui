@@ -19,6 +19,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
@@ -63,11 +65,19 @@ public class RemoteSynchronizer extends ResourceSynchronizer {
 		byte[] oldBytes = getSyncBytes(resource);
 		if (oldBytes != null && Util.equals(oldBytes, bytes)) return;
 		try {
+			if (!parentHasSyncBytes(resource)) {
+				CVSProviderPlugin.log(new CVSException(Policy.bind("ResourceSynchronizer.missingParentBytesOnSet", getSyncName().toString(), resource.getFullPath().toString()))); //$NON-NLS-1$
+			}
 			getSynchronizer().setSyncInfo(getSyncName(), resource, bytes);
 		} catch (CoreException e) {
 			throw CVSException.wrapException(e);
 		}
 		changedResources.add(resource);
+	}
+
+	protected boolean parentHasSyncBytes(IResource resource) throws CVSException {
+		if (resource.getType() == IResource.PROJECT) return true;
+		return (getSyncBytes(resource.getParent()) != null);
 	}
 
 	public void removeSyncBytes(IResource resource, int depth, boolean silent) throws CVSException {
