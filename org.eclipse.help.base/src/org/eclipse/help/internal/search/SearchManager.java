@@ -106,7 +106,21 @@ public class SearchManager implements ITocsChangedListener{
 		
 		ProgressDistributor progressDistrib = index.getProgressDistributor();
 		progressDistrib.addMonitor(pm);
+		boolean useLock = BaseHelpSystem.MODE_INFOCENTER!= BaseHelpSystem.getMode();
+		boolean configurationLocked = false;;
+		if(useLock){
+			configurationLocked = index.tryLock();
+		}
 		try {
+			if(useLock && !configurationLocked){
+				if (useLock && !configurationLocked) {
+					pm.beginTask("", 1);
+					pm.worked(1);
+					pm.done();
+					return;
+				}
+				
+			}
 			// Only one index update occurs in VM at a time,
 			// but progress SearchProgressMonitor for other locales
 			// are waiting until we know if indexing is needed
@@ -126,6 +140,9 @@ public class SearchManager implements ITocsChangedListener{
 			updateIndex(pm, index, progressDistrib);
 		} finally {
 			progressDistrib.removeMonitor(pm);
+			if(configurationLocked){
+				index.releaseLock();
+			}
 		}
 	}
 	/**

@@ -11,6 +11,7 @@
 package org.eclipse.help.internal.search;
 import java.io.*;
 import java.net.*;
+import java.nio.channels.*;
 import java.util.*;
 import java.util.zip.*;
 import org.apache.lucene.document.*;
@@ -48,6 +49,7 @@ public class SearchIndex {
 	private boolean closed = false;
 	// Collection of searches occuring now
 	private Collection searches = new ArrayList();
+	private FileLock lock;
 	/**
 	 * Constructor.
 	 * 
@@ -67,7 +69,14 @@ public class SearchIndex {
 				+ ".inconsistent");
 		parser = new HTMLDocParser();
 		if (!exists()) {
-			unzipProductIndex();
+			if (tryLock()) {
+				// don't block or unzip when another instance is indexing
+				try {
+					unzipProductIndex();
+				} finally {
+					releaseLock();
+				}
+			}
 		}
 	}
 	/**
@@ -517,5 +526,29 @@ public class SearchIndex {
 	 */
 	public boolean isClosed() {
 		return closed;
+	}
+	public boolean tryLock() {
+		File lockFile = new File(indexDir.getParentFile(), locale
+				+ ".lock");
+		lockFile.getParentFile().mkdirs();
+		try {
+			RandomAccessFile raf = new RandomAccessFile(lockFile, "rw");
+			FileLock l = raf.getChannel().tryLock();
+			if(l!=null){
+				lock = l;
+				return true;
+			}
+		} catch (IOException ioe) {
+			lock = null;
+		}
+		return false;
+	}
+	public void releaseLock() {
+		if (lock != null) {
+			try {
+				lock.channel().close();
+			} catch (IOException ioe) {
+			}
+		}
 	}
 }
