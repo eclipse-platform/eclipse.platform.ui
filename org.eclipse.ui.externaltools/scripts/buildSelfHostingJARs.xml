@@ -1,0 +1,14 @@
+<project name="exportplugins" default="Create extra JARs" basedir=".">
+	<target name="init">
+		<tstamp/>
+	</target>
+
+	<target name="Create extra JARs" depends="init">
+		<ant antfile="scripts/buildExtraJAR.xml" dir="../../org.eclipse.ant.core" target="clean"/>
+		<ant antfile="scripts/buildExtraJAR.xml" dir="../../org.eclipse.ant.core" target="lib/antsupportlib.jar"/>
+		<ant antfile="scripts/buildExtraJAR.xml" dir="../../org.eclipse.ant.core" target="refresh"/>
+		<ant antfile="scripts/buildExtraJAR.xml" dir="../../org.eclipse.ui.externalTools" target="clean"/>
+		<ant antfile="scripts/buildExtraJAR.xml" dir="../../org.eclipse.ui.externalTools" target="lib/antbuilderlib.jar"/>
+		<ant antfile="scripts/buildExtraJAR.xml" dir="../../org.eclipse.ui.externalTools" target="refresh"/>
+	</target>
+</project>
