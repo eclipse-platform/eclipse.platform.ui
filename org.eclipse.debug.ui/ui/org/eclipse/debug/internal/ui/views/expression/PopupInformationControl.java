@@ -43,6 +43,7 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
+import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 
 /**
@@ -223,7 +224,7 @@ public abstract class PopupInformationControl implements IInformationControl, II
 		IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
 		IWorkbenchCommandSupport commandSupport = workbench.getCommandSupport();
 		
-		submissions = Collections.singletonList(new HandlerSubmission(null, commandId, closeHandler, 4, null));
+		submissions = Collections.singletonList(new HandlerSubmission(null, null, null, commandId, closeHandler, Priority.MEDIUM));
 		
 		commandSupport.addHandlerSubmissions(submissions);
 		
@@ -381,7 +382,8 @@ public abstract class PopupInformationControl implements IInformationControl, II
 	 * @see org.eclipse.jface.text.IInformationControl#isFocusControl()
 	 */
 	public boolean isFocusControl() {
-		return control.isFocusControl();
+		return true;
+		//return control.isFocusControl();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.IInformationControl#setFocus()
