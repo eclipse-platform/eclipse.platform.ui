@@ -296,6 +296,12 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	        int lowWater = store.getInt(IDebugPreferenceConstants.CONSOLE_LOW_WATER_MARK);
 	        setWaterMarks(lowWater, highWater);
         }
+        
+        DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+            public void run() {
+                setFont(JFaceResources.getFont(IDebugPreferenceConstants.CONSOLE_FONT));        
+            }
+        });	   
 	}
 	
 	/**
