@@ -116,6 +116,7 @@ public class ContentTypeManager implements IContentTypeManager {
 	 * Constructs a new content type manager.
 	 */
 	protected ContentTypeManager() {
+		// just to set visibility 
 	}
 
 	protected void addContentType(IContentType contentType) {
