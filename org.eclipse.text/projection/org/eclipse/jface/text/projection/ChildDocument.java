@@ -38,6 +38,8 @@ public class ChildDocument extends ProjectionDocument {
 		/**
 		 * If offset is the end of the visible region and the length is 0,
 		 * the offset is considered overlapping with the visible region.
+		 * 
+		 * @see org.eclipse.jface.text.Position#overlapsWith(int, int)
 		 */
 		public boolean overlapsWith(int offset, int length) {
 			boolean appending= (offset == this.offset + this.length) && length == 0;
@@ -70,6 +72,7 @@ public class ChildDocument extends ProjectionDocument {
 	 * 
 	 * @param offset the offset of the range
 	 * @param length the length of the range
+	 * @throws BadLocationException if the given range is not valid
 	 */
 	public void setParentDocumentRange(int offset, int length) throws BadLocationException {
 		replaceMasterDocumentRanges(offset, length);

@@ -422,6 +422,7 @@ public class ProjectionDocument extends AbstractDocument {
 	 * 
 	 * @param offsetInMaster the offset of the master document range
 	 * @param lengthInMaster the length of the master document range
+	 * @throws BadLocationException in case the master event is not valid
 	 */
 	public void addMasterDocumentRange(int offsetInMaster, int lengthInMaster) throws BadLocationException {
 		
@@ -441,6 +442,7 @@ public class ProjectionDocument extends AbstractDocument {
 	 * 
 	 * @param offsetInMaster the offset of the master document range
 	 * @param lengthInMaster the length of the master document range
+	 * @throws BadLocationException in case the master event is not valid
 	 */
 	public void removeMasterDocumentRange(int offsetInMaster, int lengthInMaster) throws BadLocationException {
 		
@@ -509,6 +511,7 @@ public class ProjectionDocument extends AbstractDocument {
 	 * 
 	 * @param masterEvent the master document event
 	 * @return the slave document event
+	 * @throws BadLocationException in case the master event is not valid
 	 */
 	private ProjectionDocumentEvent normalize(DocumentEvent masterEvent) throws BadLocationException {
 		if (!isUpdating()) {
@@ -739,6 +742,8 @@ public class ProjectionDocument extends AbstractDocument {
 	
 	/** 
 	 * Sets the auto expand mode for this document.
+	 * 
+	 * @param autoExpandMode <code>true</code> if auto-expanding
 	 */
 	public void setAutoExpandMode(boolean autoExpandMode) {
 		fIsAutoExpanding= autoExpandMode;
