@@ -39,7 +39,7 @@ public class AnimationItem {
 
 	WorkbenchWindow window;
 	private ProgressFloatingWindow floatingWindow;
-	private boolean showingDetails = false;
+	private boolean showingDetails = true;
 	Canvas imageCanvas;
 	GC imageCanvasGC;
 	//An object used to preven concurrent modification issues
