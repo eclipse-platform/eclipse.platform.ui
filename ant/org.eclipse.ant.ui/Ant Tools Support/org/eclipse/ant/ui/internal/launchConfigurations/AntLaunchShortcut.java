@@ -244,28 +244,28 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntUIConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		List validConfigs= new ArrayList();
 		if (type != null) {
-				ILaunchConfiguration[] configs = null;
-				try {
-					configs = manager.getLaunchConfigurations(type);
-				} catch (CoreException e) {
-					reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.An_exception_occurred_while_retrieving_Ant_launch_configurations._3"), e); //$NON-NLS-1$
-				}
-				if (configs != null && configs.length > 0) {
-					IPath filePath = file.getLocation();
-					ExpandVariableContext context = ExternalToolsUtil.getVariableContext();
-					for (int i = 0; i < configs.length; i++) {
-						ILaunchConfiguration configuration = configs[i];
-						IPath location;
-						try {
-							location = ExternalToolsUtil.getLocation(configuration, context);
-							if (filePath.equals(location)) {
-								validConfigs.add(configuration);
-							}
-						} catch (CoreException e) {
-							// error occurred in variable expand - ignore
+			ILaunchConfiguration[] configs = null;
+			try {
+				configs = manager.getLaunchConfigurations(type);
+			} catch (CoreException e) {
+				reportError(AntLaunchConfigurationMessages.getString("AntLaunchShortcut.An_exception_occurred_while_retrieving_Ant_launch_configurations._3"), e); //$NON-NLS-1$
+			}
+			if (configs != null && configs.length > 0) {
+				IPath filePath = file.getLocation();
+				ExpandVariableContext context = ExternalToolsUtil.getVariableContext();
+				for (int i = 0; i < configs.length; i++) {
+					ILaunchConfiguration configuration = configs[i];
+					IPath location;
+					try {
+						location = ExternalToolsUtil.getLocation(configuration, context);
+						if (filePath.equals(location)) {
+							validConfigs.add(configuration);
 						}
+					} catch (CoreException e) {
+						// error occurred in variable expand - ignore
 					}
 				}
+			}
 		}
 		return validConfigs;
 	}
