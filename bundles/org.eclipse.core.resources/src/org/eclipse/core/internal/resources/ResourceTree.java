@@ -58,9 +58,9 @@ public void addToLocalHistory(IFile file) {
 }
 
 /**
- * @see IResourceTree#movedFile(IFile, IFile, long)
+ * @see IResourceTree#movedFile(IFile, IFile)
  */
-public void movedFile(IFile source, IFile destination, long timestamp) {
+public void movedFile(IFile source, IFile destination) {
 	Assert.isLegal(isValid);
 	// Do nothing if the resource doesn't exist.
 	if (!source.exists())
@@ -95,19 +95,6 @@ public void movedFile(IFile source, IFile destination, long timestamp) {
 		// log the status but don't return until we try and move the rest of the resource information.
 		failed(status);
 	}
-	// Update the timestamp in the tree.
-	if (timestamp == NULL_TIMESTAMP) {
-		timestamp = internalComputeTimestamp(destination.getLocation().toOSString());
-	}
-	ResourceInfo info = ((Resource) destination).getResourceInfo(false, true);
-	// should never be null since we just moved the resource in the tree
-	if (info == null) {
-		String message = Policy.bind("resources.errorTimestamp", destination.getFullPath().toString());
-		IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
-		failed(status);
-	} else {
-		((Resource) destination).getLocalManager().updateLocalSync(info, timestamp, true);
-	}
 
 	// Generate the marker deltas.
 	try {
@@ -123,39 +110,21 @@ public void movedFile(IFile source, IFile destination, long timestamp) {
  */
 public void movedFolderSubtree(IFolder source, IFolder destination) {
 	Assert.isLegal(isValid);
-	movedFolder((Folder) source, (Folder) destination, false);
-}
-/**
- * The given source resource has been moved in the file system to the location of the given
- * destination resource and we need to update the workspace tree accordingly. If the overwrite
- * flag is <code>true</code>, then got here from a begin/end call so the functions that we are
- * about to perform are to be treated as <code>IResource.DEPTH_ZERO</code> functions.
- * Otherwise the functions apply to the whole subtree.
- */
-private void movedFolder(Folder source, Folder destination, boolean overwrite) {
+
 	// Do nothing if the source resource doesn't exist.
 	if (!source.exists())
 		return;
-	// The destination resource may or may not exist, depending on the overwrite flag.
-	if (overwrite) {
-		if (!destination.exists()) {
-			String message = Policy.bind("resources.mustExist", destination.getFullPath().toString());
-			IStatus status= new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
-			failed(status);
-			return;
-		}
-	} else {
-		if (destination.exists()) {
-			String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString());
-			IStatus status= new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
-			failed(status);
-			return;
-		}
+	// If the destination already exists then we have an error.
+	if (destination.exists()) {
+		String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString());
+		IStatus status= new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
+		failed(status);
+		return;
 	}
 
 	// Move the folder properties.
-	int depth = overwrite ? IResource.DEPTH_ZERO : IResource.DEPTH_INFINITE;
-	PropertyManager propertyManager = source.getPropertyManager();
+	int depth = IResource.DEPTH_INFINITE;
+	PropertyManager propertyManager = ((Resource) source).getPropertyManager();
 	try {
 		propertyManager.copy(source, destination, depth);
 		propertyManager.deleteProperties(source, depth);
@@ -169,7 +138,7 @@ private void movedFolder(Folder source, Folder destination, boolean overwrite) {
 	// Create the destination node in the tree.
 	Workspace workspace = (Workspace) source.getWorkspace();
 	try {
-		workspace.move(source, destination.getFullPath(), depth, overwrite);
+		workspace.move((Resource) source, destination.getFullPath(), depth, false);
 	} catch (CoreException e) {
 		String message = Policy.bind("resources.errorMoving", source.getFullPath().toString(), destination.getFullPath().toString());
 		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
@@ -186,14 +155,15 @@ private void movedFolder(Folder source, Folder destination, boolean overwrite) {
 		failed(status);
 	}
 }
+
 /**
  * @see IResourceTree#movedProject(IProject, IProject)
  */
-public void movedProjectSubtree(IProject project, IProjectDescription destDescription) {
+public boolean movedProjectSubtree(IProject project, IProjectDescription destDescription) {
 	Assert.isLegal(isValid);
 	// Do nothing if the source resource doesn't exist.
 	if (!project.exists())
-		return;
+		return true;
 
 	Project source = (Project) project;
 	Project destination = (Project) source.getWorkspace().getRoot().getProject(destDescription.getName());
@@ -208,7 +178,7 @@ public void movedProjectSubtree(IProject project, IProjectDescription destDescri
 			String message = Policy.bind("resources.mustNotExist", destination.getFullPath().toString());
 			IStatus status = new ResourceStatus(IStatus.ERROR, destination.getFullPath(), message);
 			failed(status);
-			return;
+			return false;
 		}
 
 		// Rename the project metadata area. Close the property store so bogus values 
@@ -296,23 +266,28 @@ public void movedProjectSubtree(IProject project, IProjectDescription destDescri
 		String message = Policy.bind("resources.errorRefresh", destination.getFullPath().toString());
 		IStatus status = new ResourceStatus(IResourceStatus.ERROR, destination.getFullPath(), message, e);
 		failed(status);
-		return;
+		return false;
 	}
+	return true;
 }
 
-/**
- * @see IResourceTree#endMoveProject(IProject, IProjectDescription)
- */
-public void endMoveProject(IProject source, IProjectDescription description) {
-	throw new UnsupportedOperationException("#endMoveProject is not yet supported.");
-}
+
 /**
  * Returns the status object held onto by this resource tree.
  */
 protected IStatus getStatus() {
 	return status;
 }
-
+/**
+ * @see IResourceTree#getTimestamp
+ */
+public long getTimestamp(IFile file) {
+	Assert.isLegal(isValid);
+	if (!file.exists())
+		return NULL_TIMESTAMP;
+	ResourceInfo info = ((File) file).getResourceInfo(false, false);
+	return info == null ? NULL_TIMESTAMP : info.getLocalSyncInfo();
+}
 /**
  * @see IResourceTree#deletedFile(IFile)
  */
@@ -396,34 +371,6 @@ public void failed(IStatus reason) {
 	status.add(reason);
 }
 /**
- * @see IResourceTree#beginMoveFolder(IFolder, IFolder)
- */
-public void beginMoveFolder(IFolder source, IFolder destination) {
-	Assert.isLegal(isValid);
-	// Create node in workspace tree.
-	try {
-		((Workspace) source.getWorkspace()).createResource(destination, false);
-		destination.setLocal(source.isLocal(IResource.DEPTH_ZERO), IResource.DEPTH_ZERO, null);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorCreating", destination.getFullPath().toString());
-		IStatus status = new ResourceStatus(IResourceStatus.ERROR, destination.getFullPath(), message, e);
-		failed(status);
-	}
-}
-/**
- * @see IResourceTree#endMoveFolder(IFolder, IFolder)
- */
-public void endMoveFolder(IFolder source, IFolder destination) {
-	Assert.isLegal(isValid);
-	movedFolder((Folder) source, (Folder) destination, true);
-}
-/**
- * @see IResourceTree#beginMoveProject(IProject, IProjectDescription)
- */
-public void beginMoveProject(IProject project, IProjectDescription description) {
-	throw new UnsupportedOperationException("#beginMoveProject is not yet supported.");
-}
-/**
  * Return <code>true</code> if there is a change in the name of the project.
  */
 private boolean isNameChange(IProject project, IProjectDescription description) {
@@ -449,8 +396,6 @@ private boolean isCaseChange(IProject project, IProjectDescription description) 
  */
 public boolean isSynchronized(IResource resource, int depth) {
 	Assert.isLegal(isValid);
-	if (!resource.exists())
-		return true;
 	UnifiedTree tree = new UnifiedTree(resource);
 	String message = Policy.bind("resources.errorRefresh", resource.getFullPath().toString());
 	// FIXME: this visitor does too much work because it collects statuses for all
@@ -470,15 +415,9 @@ public boolean isSynchronized(IResource resource, int depth) {
  */
 public long computeTimestamp(IFile file) {
 	Assert.isLegal(isValid);
-	if (!file.exists())
+	if (!file.getProject().exists())
 		return NULL_TIMESTAMP;
-	IPath location = file.getLocation();
-	// FIXME: Can potentially remove this call once we clarify
-	// the exact behaviour with #getLocation w.r.t. resources
-	// which don't exist in the workspace.
-	if (location == null)
-		return NULL_TIMESTAMP;
-	return internalComputeTimestamp(location.toOSString());
+	return internalComputeTimestamp(file.getLocation().toOSString());
 }
 /**
  * Return the timestamp of the file at the given location.
@@ -501,10 +440,21 @@ private boolean internalDeleteFile(IFile file, int updateFlags, IProgressMonitor
 	try {
 		String message = Policy.bind("resources.deleting", file.getFullPath().toString());
 		monitor.beginTask(message, Policy.totalWork);
-		// Do nothing if the file doesn't exist.
-		if (!file.exists())
+
+		// Do nothing if the file doesn't exist in the workspace.
+		if (!file.exists()) {
+			// Indicate that the delete was successful.
 			return true;
-	
+		}
+		// If the file doesn't exist on disk then signal to the workspace to delete the
+		// file and return.
+		java.io.File fileOnDisk = file.getLocation().toFile();
+		if (!fileOnDisk.exists()) {
+			deletedFile(file);
+			// Indicate that the delete was successful.
+			return true;
+		}
+		
 		boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 		boolean force = (updateFlags & IResource.FORCE) != 0;
 	
@@ -522,17 +472,14 @@ private boolean internalDeleteFile(IFile file, int updateFlags, IProgressMonitor
 				message = Policy.bind("localstore.resourceIsOutOfSync", file.getFullPath().toString());
 				IStatus status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, file.getFullPath(), message);
 				failed(status);
+				// Indicate that the delete was unsuccessful.
 				return false;
 			}
 		}
 		monitor.worked(Policy.totalWork/4);
 	
 		// Try to delete the file from the file system.
-		java.io.File fileOnDisk = file.getLocation().toFile();
 		boolean success = fileOnDisk.delete();
-		// might have failed because didn't exist on disk in the first place
-		if (!success && !fileOnDisk.exists())
-			success = true;
 		monitor.worked(Policy.totalWork/4);
 	
 		// If the file was successfully deleted from the file system the
@@ -540,11 +487,13 @@ private boolean internalDeleteFile(IFile file, int updateFlags, IProgressMonitor
 		// we need to signal that a problem occurred.
 		if (success) {
 			deletedFile(file);
+			// Indicate that the delete was successful.
 			return true;
 		} else {
 			message = Policy.bind("resources.couldnotDelete", file.getLocation().toOSString());
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, file.getFullPath(), message);
 			failed(status);
+			// Indicate that the delete was unsuccessful.
 			return false;
 		}
 	} finally {
@@ -559,9 +508,17 @@ public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonit
 	try {
 		String message = Policy.bind("resources.deleting", folder.getFullPath().toString());
 		monitor.beginTask(message, Policy.totalWork);
+
 		// Do nothing if the folder doesn't exist in the workspace.
 		if (!folder.exists())
 			return;
+
+		// If the folder doesn't exist on disk then update the tree and return.
+		java.io.File folderOnDisk = folder.getLocation().toFile();
+		if (!folderOnDisk.exists()) {
+			deletedFolder(folder);
+			return;
+		}
 
 		// Check to see if we are synchronized with the local file system. If we are in sync then
 		// we can short circuit this operation and delete all the files on disk, otherwise we have
@@ -635,6 +592,7 @@ private boolean internalDeleteFolder(IFolder folder, int updateFlags, IProgressM
 		String message = Policy.bind("resources.errorMembers", folder.getFullPath().toString());
 		IStatus status = new ResourceStatus(IStatus.ERROR, folder.getFullPath(), message, e);
 		failed(status);
+		// Indicate that the delete was unsuccessful.
 		return false;
 	}
 	boolean deletedChildren = true;
@@ -652,8 +610,10 @@ private boolean internalDeleteFolder(IFolder folder, int updateFlags, IProgressM
 	// Check to see if the children were deleted ok. If there was a problem
 	// just return as the problem should have been logged by the recursive
 	// call to the child.
-	if (!deletedChildren)
+	if (!deletedChildren) {
+		// Indicate that the delete was unsuccessful.
 		return false;
+	}
 	
 	// Try to delete the folder from the local file system. This will fail
 	// if the folder is not empty. No need to check the force flag since this is
@@ -661,16 +621,19 @@ private boolean internalDeleteFolder(IFolder folder, int updateFlags, IProgressM
 	java.io.File folderOnDisk = folder.getLocation().toFile();
 	boolean success = folderOnDisk.delete();
 	if (!success && !folderOnDisk.exists()) {
+		// Indicate that the delete was successful.
 		success = true;
 	}
 
 	if (success) {
 		deletedFolder(folder);
+		// Indicate that the delete was successful.
 		return true;
 	} else {
 		String message = Policy.bind("resources.couldnotDelete", folder.getLocation().toOSString());
 		IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, folder.getFullPath(), message);
 		failed(status);
+		// Indicate that the delete was unsuccessful.
 		return false;
 	}
 }
@@ -775,19 +738,13 @@ private void moveProjectContent(IProject source, IProjectDescription destDescrip
  */
 public void standardMoveFile(IFile source, IFile destination, int updateFlags, IProgressMonitor monitor) {
 	Assert.isLegal(isValid);
-	internalMoveFile(source, destination, updateFlags, monitor);
-}
-/**
- * Helper method for standardMoveFile. Returns a <code>true</code> if the 
- * deletion of the file was successful and <code>false</code> otherwise.
- */
-private boolean internalMoveFile(IFile source, IFile destination, int updateFlags, IProgressMonitor monitor) {
 	try {
 		String message = Policy.bind("resources.moving", source.getFullPath().toString());
 		monitor.beginTask(message, Policy.totalWork);
-		// Do nothing if the source doesn't exist in the workspace tree
-		if (!source.exists())
-			return true;
+
+		// These pre-conditions should all be ok but just in case...
+		if (!source.exists() || destination.exists() || !destination.getParent().isAccessible())
+			throw new IllegalArgumentException();
 	
 		boolean force = (updateFlags & IResource.FORCE) != 0;
 		boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
@@ -798,14 +755,14 @@ private boolean internalMoveFile(IFile source, IFile destination, int updateFlag
 			message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString());
 			IStatus status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, source.getFullPath(), message);
 			failed(status);
-			return false;
+			return;
 		} else {
 			boolean inSync = isSynchronized(source, IResource.DEPTH_ZERO);
 			if (!inSync) {
 				message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString());
 				IStatus status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, source.getFullPath(), message);
 				failed(status);
-				return false;
+				return;
 			}
 		}
 		monitor.worked(Policy.totalWork/4);
@@ -825,15 +782,17 @@ private boolean internalMoveFile(IFile source, IFile destination, int updateFlag
 			message = Policy.bind("localstore.couldNotMove", source.getFullPath().toString());
 			IStatus status = new ResourceStatus(IResourceStatus.ERROR, source.getFullPath(), message, e);
 			failed(status);
-			return false;
+			return;
 		}
-		movedFile(source, destination, computeTimestamp(destination));
+		movedFile(source, destination);
+		updateMovedFileTimestamp(destination, computeTimestamp(destination));
 		monitor.worked(Policy.totalWork/4);
-		return true;
+		return;
 	} finally {
 		monitor.done();
 	}
 }
+
 /**
  * @see IResourceTree#standardMoveFolder(IFolder, IFolder, int, IProgressMonitor)
  */
@@ -843,21 +802,18 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 		String message = Policy.bind("resources.moving", source.getFullPath().toString());
 		monitor.beginTask(message, Policy.totalWork);
 			
-		// Do nothing if the source doesn't exist in the workspace tree.
-		if (!source.exists()) 
-			return;
+		// These pre-conditions should all be ok but just in case...
+		if (!source.exists() || destination.exists() || !destination.getParent().isAccessible())
+			throw new IllegalArgumentException();
 
 		// Check to see if we are synchronized with the local file system. If we are in sync then we can
 		// short circuit this method and do a file system only move. Otherwise we have to recursively
 		// try and move all resources, doing it in a best-effort manner.
 		boolean force = (updateFlags & IResource.FORCE) != 0;
 		if (!force && !isSynchronized(source, IResource.DEPTH_INFINITE)) {
-			boolean success = internalMoveFolder(source, (Folder) destination, updateFlags, monitor);
-			if (!success) {
-				message = "Failed to move this resource or one of its children.";
-				IStatus status = new ResourceStatus(IResourceStatus.ERROR, source.getFullPath(), message);
-				failed(status);
-			}
+			message = "localstore.resourceIsOutOfSync";
+			IStatus status = new ResourceStatus(IResourceStatus.ERROR, source.getFullPath(), message);
+			failed(status);
 			return;
 		}
 
@@ -880,6 +836,7 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 		success &= !source.getLocation().toFile().exists();
 		if (success) {
 			movedFolderSubtree(source, destination);
+			updateTimestamps(destination);
 		} else {
 			message = Policy.bind("localstore.couldNotCreateFolder", destination.getLocation().toOSString());
 			IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message);
@@ -890,159 +847,28 @@ public void standardMoveFolder(IFolder source, IFolder destination, int updateFl
 	}
 }
 /**
- * Helper method for standardMoveFolder. Returns <code>true</code> if the specified
- * folder was moved successfully, and <code>false</code> otherwise. This method does
- * a best-effort recursive move on all the children, and doesn't try and move a whole 
- * subtree at once.
+ * Helper method to update all the timestamps in the tree to match
+ * those in the file system. Used after a #move.
  */
-private boolean internalMoveFolder(IFolder source, IFolder destination, int updateFlags, IProgressMonitor monitor) {
-	// Do nothing if the source doesn't exist in the workspace tree.
-	if (!source.exists())
-		return true;
-
-	boolean createdFolder = destination.getLocation().toFile().mkdirs();
-	if (!createdFolder) {
-		String message = Policy.bind("localstore.couldNotCreateFolder", destination.getLocation().toOSString());
-		IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message);
-		failed(status);
-		return false;
-	}
-	beginMoveFolder(source, destination);
-
-	// Recursively move each member of the folder.
-	IResource[] members = null;
+private void updateTimestamps(IResource root) {
+	IResourceVisitor visitor = new IResourceVisitor() {
+		public boolean visit(IResource resource) {
+			if (resource.getType() == IResource.FILE) {
+				IFile file = (IFile) resource;
+				long timestamp = computeTimestamp(file);
+				updateMovedFileTimestamp(file, timestamp);
+			}
+			return true;
+		}
+	};
 	try {
-		members = source.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorMembers", source.getFullPath().toString());
-		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
-		failed(status);
-		return false;
-	}
-	boolean deletedChildren = true;
-	for (int i=0; i<members.length; i++) {
-		IResource child = members[i];
-		switch (child.getType()) {
-			case IResource.FILE:
-				IResource dest = destination.getFile(child.getName());
-				deletedChildren &= internalMoveFile((IFile) child, (IFile) dest, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork*3/4/members.length));
-				break;
-			case IResource.FOLDER:
-				dest = destination.getFolder(child.getName());
-				deletedChildren &= internalMoveFolder((IFolder) child, (IFolder) dest, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork*3/4/members.length));
-				break;
-		}
-	}
-	// Check to see if the children were moved ok. If there was a problem
-	// just return as the problem should have been logged by the recursive
-	// call to the child.
-	if (!deletedChildren)
-		return false;
-
-	// Try to delete the source folder. (will fail if it still contains children)
-	boolean deletedFolder = source.getLocation().toFile().delete();
-	if (deletedFolder) {
-		endMoveFolder(source, destination);
-		return true;
-	} else {
-		String message;
-		IStatus status;
-		if (isSynchronized(source, IResource.DEPTH_INFINITE)) {
-			message = Policy.bind("localstore.couldnotDelete", source.getLocation().toOSString());
-			status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, source.getFullPath(), message);
-		} else {
-			message = Policy.bind("localstore.resourceIsOutOfSync", source.getFullPath().toString());
-			status = new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, source.getFullPath(), message);
-		}
-		failed(status);
-		return false;
+		root.accept(visitor);
+	} catch(CoreException e) {
+		// No exception should be thrown.
 	}
 }
-/**
- */
-private boolean internalMoveProject(IProject source, IProjectDescription destinationDescription, int updateFlags, IProgressMonitor monitor) {
-	// Do nothing if the source doesn't exist in the workspace tree.
-	if (!source.exists()) 
-		return true;
-	IProjectDescription sourceDescription = null;
-	try {
-		sourceDescription = source.getDescription();
-	} catch (CoreException e) {
-		// ignore
-	}
-	if (sourceDescription == null)
-		return true;
 
-	IPath destinationLocation = destinationDescription.getLocation();
-	IProject destination = source.getWorkspace().getRoot().getProject(destinationDescription.getName());
-	if (destinationLocation == null) {
-		destinationLocation = Platform.getLocation().append(destinationDescription.getName());
-	}
-	
-	// Create the root for the content area for the destination project.
-	boolean createdFolder = destinationLocation.toFile().mkdirs();
-	if (!createdFolder && !destinationLocation.toFile().exists()) {
-		String message = Policy.bind("localstore.couldNotCreateFolder", destination.getLocation().toOSString());
-		IStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message);
-		failed(status);
-		return false;
-	}
-	beginMoveProject(source, destinationDescription);
 
-	// Recursively move each member of the project.
-	IResource[] members = null;
-	try {
-		members = source.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-	} catch (CoreException e) {
-		String message = Policy.bind("resources.errorMembers", source.getFullPath().toString());
-		IStatus status = new ResourceStatus(IStatus.ERROR, source.getFullPath(), message, e);
-		failed(status);
-		return false;
-	}
-	boolean deletedChildren = true;
-	for (int i=0; i<members.length; i++) {
-		IResource child = members[i];
-		switch (child.getType()) {
-			case IResource.FILE:
-				IResource dest = destination.getFile(child.getName());
-				deletedChildren &= internalMoveFile((IFile) child, (IFile)dest, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork*3/4/members.length));
-				break;
-			case IResource.FOLDER:
-				dest = destination.getFolder(child.getName());
-				deletedChildren &= internalMoveFolder((IFolder) child, (IFolder) dest, updateFlags, Policy.subMonitorFor(monitor, Policy.totalWork*3/4/members.length));
-				break;
-		}
-	}
-	// Check to see if the children were moved ok. If there was a problem
-	// just return as the problem should have been logged by the recursive
-	// call to the child.
-	if (!deletedChildren)
-		return false;
-
-	// If the content area is in the default location then delete the directory and all its
-	// children. If it is specified by the user then leave the directory itself but delete the children.
-	// Don't have to check the force flag here since this is an internal method and
-	// force is always false by the code path we got here.
-	java.io.File root = source.getLocation().toFile();
-	// If we have a user-defined location don't delete the root.
-	boolean deletedFolder = true;
-	if (sourceDescription.getLocation() == null) {
-		deletedFolder = root.delete();
-		if (!deletedFolder && !root.exists()) {
-			deletedFolder = true;
-		}
-	}
-
-	if (deletedFolder) {
-		endMoveProject(source, destinationDescription);
-		return true;
-	} else {
-		String message = Policy.bind("localstore.couldnotDelete", source.getLocation().toOSString());
-		IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, source.getFullPath(), message);
-		failed(status);
-		return false;
-	}
-}
 /**
  * Does a best-effort delete on this resource and all its children.
  */
@@ -1056,6 +882,7 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 		String message = Policy.bind("resources.errorMembers", project.getFullPath().toString());
 		IStatus status = new ResourceStatus(IStatus.ERROR, project.getFullPath(), message, e);
 		failed(status);
+		// Indicate that the delete was unsuccessful.
 		return false;
 	}
 	boolean deletedChildren = true;
@@ -1089,6 +916,7 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 				String message = Policy.bind("resources.couldnotDelete", file.getFullPath().toString());
 				IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, file.getFullPath(), message);
 				failed(status);
+				// Indicate that the delete was unsuccessful.
 				return false;
 			} else {
 				boolean deletedProjectFile = internalDeleteFile((IFile) file, updateFlags, Policy.monitorFor(null));
@@ -1096,11 +924,13 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 					String message = Policy.bind("resources.couldnotDelete", file.getFullPath().toString());
 					IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, file.getFullPath(), message);
 					failed(status);
+					// Indicate that the delete was unsuccessful.
 					return false;
 				}
 			}
 		}
 	} else {
+		// Indicate that the delete was unsuccessful.
 		return false;
 	}
 	
@@ -1124,11 +954,13 @@ private boolean internalDeleteProject(IProject project, int updateFlags, IProgre
 
 	if (success) {
 		deletedProject(project);
+		// Indicate that the delete was successful.
 		return true;
 	} else {
 		String message = Policy.bind("resources.couldnotDelete", project.getLocation().toOSString());
 		IStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, project.getFullPath(), message);
 		failed(status);
+		// Indicate that the delete was unsuccessful.
 		return false;
 	}
 }
@@ -1142,9 +974,9 @@ public void standardMoveProject(IProject source, IProjectDescription description
 		String message = Policy.bind("resources.moving", source.getFullPath().toString());
 		monitor.beginTask(message, Policy.totalWork);
 
-		// Do nothing if the source resource doesn't exist in the workspace.
-		if (!source.exists())
-			return;
+		// Double-check this pre-condition.
+		if (!source.isAccessible())
+			throw new IllegalArgumentException();
 
 		// If there is nothing to do on disk then signal to make the workspace tree
 		// changes.
@@ -1176,6 +1008,7 @@ public void standardMoveProject(IProject source, IProjectDescription description
 		// If we got this far the project content has been moved on disk (if necessary)
 		// and we need to update the workspace tree.
 		movedProjectSubtree(source, description);
+		updateTimestamps(source.getWorkspace().getRoot().getProject(description.getName()));
 	} finally {
 		monitor.done();
 	}
@@ -1191,5 +1024,18 @@ private void moveInFileSystem(java.io.File source, java.io.File destination, int
 	FileSystemStore store = ((Resource) ResourcesPlugin.getWorkspace().getRoot()).getLocalManager().getStore();
 	boolean force = (updateFlags & IResource.FORCE) != 0;
 	store.move(source, destination, force, Policy.monitorFor(null));
+}
+/**
+ * @see IResourceTree#updateMovedFileTimestamp(IFile, long)
+ */
+public void updateMovedFileTimestamp(IFile file, long timestamp) {
+	Assert.isLegal(isValid);
+	// Do nothing if the file doesn't exist in the workspace tree.
+	if (!file.exists())
+		return;
+	// Update the timestamp in the tree.
+	ResourceInfo info = ((Resource) file).getResourceInfo(false, true);
+	// The info should never be null since we just checked that the resource exists in the tree.
+	((Resource) file).getLocalManager().updateLocalSync(info, timestamp, true);
 }
 }
