@@ -163,7 +163,10 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 		if (fPresentation != null) {
 			getPresentation().removeListener(listener);
 		}
-		fListeners.remove(listener);
+		ListenerList listeners = fListeners;
+		if (listeners != null) {
+		    listeners.remove(listener);
+		}
 	}
 	
 	/**
