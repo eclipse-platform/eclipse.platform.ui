@@ -186,6 +186,10 @@ public abstract class CVSOperation extends TeamOperation {
 			buttons = new String[] {IDialogConstants.OK_LABEL, IDialogConstants.CANCEL_LABEL};
 		}	
 		Shell displayShell = getShell();
+		if (displayShell == null) {
+			// We couldn't get a shell (perhaps due to shutdown)
+			return false;
+		}
 		final MessageDialog dialog = 
 			new MessageDialog(displayShell, title, null, msg, MessageDialog.QUESTION, buttons, 0);
 
