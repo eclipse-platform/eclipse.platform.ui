@@ -12,7 +12,6 @@ import java.net.URL;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
-import org.eclipse.ant.core.Task;
 import org.eclipse.ant.core.Type;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
@@ -30,17 +29,9 @@ public class TypeTests extends AbstractAntTest {
 		String path= getProject().getFolder("lib").getFile("antTestsSupport.jar").getLocation().toFile().getAbsolutePath();
 		URL url= new URL("file:" + path);
 		newType.setLibrary(url);
-		newType.setTypeName("AntTestType");
-		newType.setClassName("org.eclipse.ant.tests.core.types.AntTestType");
+		newType.setTypeName("anttestpath");
+		newType.setClassName("org.eclipse.ant.tests.core.types.AntTestPath");
 		prefs.setCustomTypes(new Type[]{newType});
-		
-		Task newTask= new Task();
-		path= getProject().getFolder("lib").getFile("antTestsSupport.jar").getLocation().toFile().getAbsolutePath();
-		url= new URL("file:" + path);
-		newTask.setLibrary(url);
-		newTask.setTaskName("AntTestTaskWithCustomType");
-		newTask.setClassName("org.eclipse.ant.tests.core.tasks.AntTestTaskWithCustomType");
-		prefs.setCustomTasks(new Task[]{newTask});
 		
 		run("CustomType.xml");
 		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
@@ -48,7 +39,7 @@ public class TypeTests extends AbstractAntTest {
 		assertSuccessful();
 	}
 	
-	/*public void testRemoveType() throws CoreException {
+	public void testRemoveType() throws CoreException {
 		AntCorePreferences prefs =AntCorePlugin.getPlugin().getPreferences();
 		prefs.setCustomTypes(new Type[]{});
 		try {
@@ -59,5 +50,5 @@ public class TypeTests extends AbstractAntTest {
 		}
 		assertTrue("Build should have failed as type no longer defined", false);
 		restorePreferenceDefaults();
-	}*/
+	}
 }

@@ -8,12 +8,15 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.types.Path;
 
-public class AntTestType {
+public class AntTestPath extends Path {
 	
 	String message;
 	
-	public AntTestType() {
+	public AntTestPath(Project project) {
+		super(project);
 	}
 	
 	public void setMessage(String message) {
