@@ -380,8 +380,10 @@ public class IOConsole extends AbstractConsole {
      * @param stream stream that closed
      */
     void streamClosed(IOConsoleOutputStream stream) {
-        openStreams.remove(stream);
-        checkFinished();
+    	synchronized (openStreams) {
+            openStreams.remove(stream);
+            checkFinished();
+		}
     }
     
     /**
@@ -390,8 +392,10 @@ public class IOConsole extends AbstractConsole {
      * @param stream stream that closed
      */
     void streamClosed(IOConsoleInputStream stream) {
-        openStreams.remove(stream);
-        checkFinished();
+    	synchronized (openStreams) {
+            openStreams.remove(stream);
+            checkFinished();
+		}
     }
     
     /**
