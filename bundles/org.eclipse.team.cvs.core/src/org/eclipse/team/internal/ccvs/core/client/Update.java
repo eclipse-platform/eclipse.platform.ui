@@ -110,9 +110,11 @@ public class Update extends Command {
 			return status;
 		}
 
-		// If we are pruning (-P) or getting a sticky copy using -D, then prune empty directories
-		if (PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions) ||
-			findOption(localOptions, "-D") != null) { //$NON-NLS-1$
+		// If we are pruning (-P), then prune empty directories
+		// Note, the CVS spec says that Date (-D) and version (-r) updates
+		// should automatically prune but this is a problem for remote CVS handles
+		// which fetch a level at a time
+		if (PRUNE_EMPTY_DIRECTORIES.isElementOf(localOptions)) { //$NON-NLS-1$
 			// Delete empty directories
 			new PruneFolderVisitor().visit(session, resources);
 			
