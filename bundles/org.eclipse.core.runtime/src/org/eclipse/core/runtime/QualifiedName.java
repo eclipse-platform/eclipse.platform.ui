@@ -11,8 +11,8 @@ import org.eclipse.core.internal.runtime.Assert;
  * Qualified names are two-part names: qualifier and local name.
  * The qualifier must be in URI form (see RFC2396).  
  * Note however that the qualifier may be <code>null</code> if
- * the default name space is being used.  The empty space is
- * not a valid qualifier.
+ * the default name space is being used.  The empty string is not 
+ * a valid local name.
  * <p>
  * This class is not intended to be subclassed by clients.
  * </p>

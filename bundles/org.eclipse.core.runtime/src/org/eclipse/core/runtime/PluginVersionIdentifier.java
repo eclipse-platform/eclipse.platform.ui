@@ -12,7 +12,7 @@ import org.eclipse.core.internal.runtime.Assert;
 /**
  * <p>
  * Version identifier for a plug-in. In its string representation, 
- * it consists of up to 3 integer numbers separated by decimal point.
+ * it consists of up to 3 positive integer numbers separated by decimal point.
  * For example, the following are valid version identifiers 
  * (as strings):
  * <ul>
@@ -121,6 +121,14 @@ public boolean equals(Object object) {
 		return false;
 	PluginVersionIdentifier v = (PluginVersionIdentifier) object;
 	return v.getMajorComponent() == major && v.getMinorComponent() == minor && v.getServiceComponent() == service;
+}
+/**
+ * Returns a hash code value for the object. 
+ *
+ * @return an integer which is a hash code value for this object.
+ */
+public int hashCode() {
+	return major + minor + service;
 }
 /**
  * Returns the major (incompatible) component of this 
