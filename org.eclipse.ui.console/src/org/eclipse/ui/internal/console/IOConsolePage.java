@@ -271,7 +271,7 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 	 * @param menu menu
 	 */
 	protected void contextMenuAboutToShow(IMenuManager menu) {
-		IDocument doc= (IDocument)viewer.getDocument();
+		IDocument doc= viewer.getDocument();
 		if (doc == null) {
 			return;
 		}
