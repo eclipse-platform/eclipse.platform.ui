@@ -177,6 +177,9 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			return result;
 		}
 		public Image getColumnImage(Object element, int columnIndex) {
+			if (columnIndex == 0) {
+				return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_ENVIRONMENT);
+			}
 			return null;
 		}
 	}
@@ -435,7 +438,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	private ILabelProvider createSelectionDialogLabelProvider() {
 		return new ILabelProvider() {
 			public Image getImage(Object element) {
-				return null;
+				return DebugPluginImages.getImage(IDebugUIConstants.IMG_OBJS_ENVIRONMENT);
 			}
 			public String getText(Object element) {
 				EnvironmentVariable var = (EnvironmentVariable) element;
