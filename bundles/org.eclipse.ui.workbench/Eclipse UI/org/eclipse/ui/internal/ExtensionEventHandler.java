@@ -73,6 +73,8 @@ import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.eclipse.ui.internal.registry.ViewRegistryReader;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.internal.registry.WorkingSetRegistryReader;
+import org.eclipse.ui.internal.themes.ThemeRegistry;
+import org.eclipse.ui.internal.themes.ThemeRegistryReader;
 
 public class ExtensionEventHandler implements IRegistryChangeListener {
 	private static final String TAG_CATEGORY="category";//$NON-NLS-1$
@@ -220,15 +222,22 @@ public class ExtensionEventHandler implements IRegistryChangeListener {
 		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_DECORATORS)) {
 			loadDecorators(ext);
 			return;
-		}		
+		}
+		if (name.equalsIgnoreCase(IWorkbenchConstants.PL_THEMES)) {
+			loadThemes(ext);
+			return;
+		}				
 	}	
 
-	/**
-	 * @param ext
-	 * @since 3.0
-	 */
+	private void loadThemes(IExtension ext) {
+		ThemeRegistryReader reader = new ThemeRegistryReader();
+		reader.setRegistry((ThemeRegistry) WorkbenchPlugin.getDefault().getThemeRegistry());
+		IConfigurationElement [] elements = ext.getConfigurationElements();
+		for (int i = 0; i < elements.length; i++) 
+			reader.readElement(elements[i]);	
+	}
+
 	private void loadDecorators(IExtension ext) {
-		ColorDefinition.clearCache();
 		DecoratorRegistryReader reader = new DecoratorRegistryReader();
 		IConfigurationElement [] elements = ext.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {
