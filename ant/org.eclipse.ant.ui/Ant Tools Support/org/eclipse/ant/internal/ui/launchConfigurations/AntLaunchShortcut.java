@@ -264,7 +264,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		}
 		
 		String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(buffer.toString());
-		return name.toString();
+		return name;
 	}
 	
 	/**
