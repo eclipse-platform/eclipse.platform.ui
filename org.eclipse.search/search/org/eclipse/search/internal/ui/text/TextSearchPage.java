@@ -572,8 +572,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		if (isProjectScope) {
 			if (elementCount > 1)
 				scope.setDescription(SearchMessages.getFormattedString("EnclosingProjectsScope", firstProject.getName())); //$NON-NLS-1$
-			else
+			else if (elementCount == 1)
 				scope.setDescription(SearchMessages.getFormattedString("EnclosingProjectScope", firstProject.getName())); //$NON-NLS-1$
+			else 
+				scope.setDescription(SearchMessages.getFormattedString("EnclosingProjectScope", "")); //$NON-NLS-1$ //$NON-NLS-2$
 		} 
 		return scope;
 	}
