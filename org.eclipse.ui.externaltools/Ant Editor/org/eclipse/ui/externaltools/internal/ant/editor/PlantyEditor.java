@@ -44,12 +44,6 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 public class PlantyEditor extends TextEditor {
 
 	/**
-	 * Hack that helps run the tests outside of a running workbench. 
-	 * TODO: very ugly Junit Flag. better way should be found
-	 */
-	public static boolean junitTestRun = false;
-
-	/**
 	 * The tab width
 	 */
 	public static final int TAB_WIDTH = 4;

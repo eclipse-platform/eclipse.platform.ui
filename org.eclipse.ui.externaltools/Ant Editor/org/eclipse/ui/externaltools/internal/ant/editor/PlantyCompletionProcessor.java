@@ -529,7 +529,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
                  
                 String tempReplacementString = "${"+tempPropertyName+"}"; //$NON-NLS-1$ //$NON-NLS-2$
                 org.eclipse.swt.graphics.Image tempImage = null;
-                if(!PlantyEditor.junitTestRun) {
+                if(ExternalToolsPlugin.getDefault() != null) { //not running test suite
 	                tempImage = ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY);
                 }
                 
@@ -568,7 +568,7 @@ public class PlantyCompletionProcessor implements IContentAssistProcessor {
 		// 1.5 DTD but not in general. I kept the assumption. bf
         LinkedList tempProposals = new LinkedList();
         Image tempImage = null;
-        if(!PlantyEditor.junitTestRun) {
+        if(ExternalToolsPlugin.getDefault() != null) { //not running test suite
 	        ExternalToolsImages.getImage(IExternalToolsUIConstants.IMAGE_ID_TASK);
         }
 
