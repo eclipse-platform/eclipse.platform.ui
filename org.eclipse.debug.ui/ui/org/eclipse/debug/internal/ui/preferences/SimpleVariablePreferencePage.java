@@ -60,12 +60,19 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 	protected Button envAddButton;
 	protected Button envEditButton;
 	protected Button envRemoveButton;
-	
-	protected static final String PROPERTY_VARIABLE= "variable"; //$NON-NLS-1$
-	protected static final String PROPERTY_VALUE= "value"; //$NON-NLS-1$
-	protected static String[] variableTableColumnProperties= {PROPERTY_VARIABLE, PROPERTY_VALUE};
-	protected String[] variableTableColumnHeaders= {DebugPreferencesMessages.getString("SimpleVariablePreferencePage.3"),	DebugPreferencesMessages.getString("SimpleVariablePreferencePage.4")}; //$NON-NLS-1$ //$NON-NLS-2$
-	protected ColumnLayoutData[] variableTableColumnLayouts= {new ColumnWeightData(50), new ColumnWeightData(50)};
+	 
+	protected static String[] variableTableColumnProperties= {
+		"variable", //$NON-NLS-1$
+		"value"//$NON-NLS-1$
+	};
+	protected String[] variableTableColumnHeaders= {
+		DebugPreferencesMessages.getString("SimpleVariablePreferencePage.3"), //$NON-NLS-1$
+		DebugPreferencesMessages.getString("SimpleVariablePreferencePage.4") //$NON-NLS-1$
+	};
+	protected ColumnLayoutData[] variableTableColumnLayouts= {
+		new ColumnWeightData(50),
+		new ColumnWeightData(50)
+	};
 	
 	private ISimpleLaunchVariable[] originalVariableState= new ISimpleLaunchVariable[0];
 	
@@ -77,7 +84,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		originalVariableState= getVariableRegistry().getVariables();
 		Font font= parent.getFont();
 		//The main composite
-		Composite composite = new Composite(parent, SWT.NULL);
+		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight=0;
 		layout.marginWidth=0;
@@ -101,6 +108,7 @@ public class SimpleVariablePreferencePage extends PreferencePage implements IWor
 		layout.numColumns = 1;
 		GridData gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 150;
+		gridData.widthHint = 300;
 		tableComposite.setLayout(layout);
 		tableComposite.setLayoutData(gridData);
 		tableComposite.setFont(font);
