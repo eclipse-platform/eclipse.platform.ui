@@ -213,23 +213,35 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * with italic font.
 	 */
     private class LaunchViewLabelProvider extends DebugViewDecoratingLabelProvider {
+    	
+    	// The cached italic font used for pending launches
+    	private Font fItalicFont= null;
+    	
         public LaunchViewLabelProvider(StructuredViewer viewer, IDebugModelPresentation presentation) {
             super(viewer, new DebugViewInterimLabelProvider(presentation), new DebugViewLabelDecorator(presentation));
         }
         
         public Font getFont(Object element) {
             if (element instanceof DebugUIPlugin.PendingLaunch) {
-                Control control = getViewer().getControl();
-                Font originalFont = control.getFont();
-                FontData fontData[] = originalFont.getFontData();
-                // Add the italic attribute
-                for (int i = 0; i < fontData.length; i++) {
-                    fontData[i].setStyle(fontData[i].getStyle() | SWT.ITALIC);
-                }
-                return new Font(control.getDisplay(), fontData);
+            	if (fItalicFont == null) {
+	                Control control = getViewer().getControl();
+	                Font originalFont = control.getFont();
+	                FontData fontData[] = originalFont.getFontData();
+	                // Add the italic attribute
+	                for (int i = 0; i < fontData.length; i++) {
+	                    fontData[i].setStyle(fontData[i].getStyle() | SWT.ITALIC);
+	                }
+	                fItalicFont= new Font(control.getDisplay(), fontData);
+            	}
+            	return fItalicFont;
             }
             return super.getFont(element);
         }
+
+		public void dispose() {
+			fItalicFont.dispose();
+			super.dispose();
+		}
     }
 	
 	/**
