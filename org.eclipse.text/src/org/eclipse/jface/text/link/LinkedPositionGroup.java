@@ -229,6 +229,8 @@ public class LinkedPositionGroup {
 				length= eventEnd - relativeOffset - fLastRegion.getOffset();
 						
 			String text= event.getText(); //$NON-NLS-1$
+			if (text == null)
+				text= ""; //$NON-NLS-1$
 
 			for (Iterator it= fPositions.iterator(); it.hasNext(); ) {
 				LinkedPosition p= (LinkedPosition) it.next();
