@@ -127,7 +127,7 @@ class JSchSession{
     }
   }
 
-  private static class MyUserInfo implements UserInfo{
+  private static class MyUserInfo implements UserInfo, UIKeyboardInteractive{
     private String username;
     private String password;
     private String passphrase;
@@ -167,6 +167,23 @@ class JSchSession{
 	  }
 	});
     }
+    public String[] promptKeyboardInteractive(String destination,
+					      String name,
+					      String instruction,
+					      String lang,
+					      String[] prompt,
+					      boolean[] echo){
+      KeyboardInteractivePrompt _prompt=new KeyboardInteractivePrompt(destination,
+								      name,
+								      instruction,
+								      lang,
+								      prompt,
+								      echo);
+      Display.getDefault().syncExec(_prompt);
+      String[] result=_prompt.getResult();
+      return result;
+    }
+
     private class YesNoPrompt implements Runnable{
       private String prompt;
       private int result;
@@ -217,6 +234,45 @@ class JSchSession{
       }
       public String getPassphrase(){
 	return passphrase;
+      }
+    }
+    private class KeyboardInteractivePrompt implements Runnable{
+      private String destination;
+      private String name;
+      private String instruction;
+      private String lang;
+      private String[] prompt;
+      private boolean[] echo;
+      private String[] result;
+      KeyboardInteractivePrompt(String destination,
+				String name,
+				String instruction,
+				String lang,
+				String[] prompt,
+				boolean[] echo){
+	this.destination=destination;
+	this.name=name;
+	this.instruction=instruction;
+	this.lang=lang;
+	this.prompt=prompt;
+	this.echo=echo;
+      }
+      public void run(){
+	Display display=Display.getCurrent();
+	Shell shell=new Shell(display);
+	KeyboardInteractiveDialog dialog=new KeyboardInteractiveDialog(shell,
+								       destination,
+								       name,
+								       instruction,
+								       lang,
+								       prompt,
+								       echo);
+	dialog.open();
+	shell.dispose();
+	result=dialog.getResult();
+      }
+      public String[] getResult(){
+	return result;
       }
     }
   }
