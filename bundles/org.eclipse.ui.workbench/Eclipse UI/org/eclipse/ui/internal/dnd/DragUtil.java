@@ -57,8 +57,19 @@ public class DragUtil {
 		if (control == null) {
 			defaultTargets.add(target);
 		} else {
-			control.setData(DROP_TARGET_ID, target);
+			List targetList = getTargetList(control);
+			
+			if (targetList == null) {
+				targetList = new ArrayList(1);
+			}
+			targetList.add(target);
+			control.setData(DROP_TARGET_ID, targetList);
 		}
+	}
+	
+	private static List getTargetList(Control control) {
+		List result = (List)control.getData(DROP_TARGET_ID);
+		return result;
 	}
 	
 	/**
@@ -71,7 +82,11 @@ public class DragUtil {
 		if (control == null) {
 			defaultTargets.remove(target);
 		} else {
-			control.setData(DROP_TARGET_ID, null);
+			List targetList = getTargetList(control);
+			targetList.remove(target);
+			if (targetList.isEmpty()) {
+				control.setData(DROP_TARGET_ID, null);
+			}
 		}
 	}
 	
@@ -229,22 +244,49 @@ public class DragUtil {
 	} 
 	
 	/**
+	 * Given a list of IDragOverListeners and a description of what is being dragged, it returns
+	 * a IDropTarget for the current drop.
+	 * 
+	 * @param toSearch
+	 * @param mostSpecificControl
+	 * @param draggedObject
+	 * @param position
+	 * @param dragRectangle
+	 * @return
+	 */
+	private static IDropTarget getDropTarget(List toSearch, Control mostSpecificControl, Object draggedObject, Point position, Rectangle dragRectangle) {
+		if (toSearch == null) {
+			return null;
+		}
+		
+		Iterator iter = toSearch.iterator();
+		while (iter.hasNext()) {
+			IDragOverListener next = (IDragOverListener)iter.next();
+
+			IDropTarget dropTarget = next.drag(mostSpecificControl, draggedObject, position, dragRectangle);
+			
+			if (dropTarget != null) {
+				return dropTarget;
+			}			
+		}
+		
+		return null;
+	}
+	
+	/**
 	 * Returns the drag target for the given control or null if none. 
 	 * 
 	 * @param toSearch
 	 * @param e
 	 * @return
 	 */
-	public static IDropTarget getDropTarget(Control toSearch, Object draggedObject, Point position, Rectangle dragRectangle) {		
+	public static IDropTarget getDropTarget(Control toSearch, Object draggedObject, Point position, Rectangle dragRectangle) {
+		
 		for (Control current = toSearch; current != null; current = current.getParent()) {
-			IDragOverListener target = (IDragOverListener)current.getData(DROP_TARGET_ID);
-						
-			if (target != null) {
-				IDropTarget dropTarget = target.drag(toSearch, draggedObject, position, dragRectangle);
-				
-				if (dropTarget != null) {
-					return dropTarget;
-				}
+			IDropTarget dropTarget = getDropTarget(getTargetList(current), toSearch, draggedObject, position, dragRectangle);
+			
+			if (dropTarget != null) {
+				return dropTarget;
 			}
 			
 			// Don't look to parent shells for drop targets
@@ -254,20 +296,7 @@ public class DragUtil {
 		}
 		
 		// No controls could handle this event -- check for default targets
-		Iterator iter = defaultTargets.iterator();
-		while (iter.hasNext()) {
-			IDragOverListener next = (IDragOverListener)iter.next();
-
-			IDropTarget dropTarget = next.drag(toSearch, draggedObject, position, dragRectangle);
-			
-			if (dropTarget != null) {
-				return dropTarget;
-			}			
-		}
-		
-		// No default targets found either.
-		
-		return null;
+		return getDropTarget(defaultTargets, toSearch, draggedObject, position, dragRectangle);
 	}
 	
 }

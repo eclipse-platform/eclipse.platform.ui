@@ -253,10 +253,4 @@ protected void derefPart(LayoutPart sourcePart) {
 	page.getActivePerspective().getPresentation().derefPart(sourcePart);
 }
 
-/* (non-Javadoc)
- * @see org.eclipse.ui.internal.PartSashContainer#getVisibleChildrenCount(org.eclipse.ui.internal.ILayoutContainer)
- */
-protected int getVisibleChildrenCount(ILayoutContainer container) {
-	return ((PartTabFolder)container).getItemCount();
-}
 }

@@ -89,6 +89,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 	            LayoutPart pane = getPaneFor(beingDragged);
 	
 	            if (pane != null) {
+	            	if (getState() == STATE_MAXIMIZED) {
+	            		setState(STATE_RESTORED);
+	            	}
+	            	
 	                DragUtil.performDrag(pane, Geometry.toDisplay(getParent(),
 	                        getPresentation().getControl().getBounds()),
 	                        initialLocation, !keyboard);
@@ -103,6 +107,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
          */
         public void dragStart(Point initialPosition, boolean keyboard) {
             if (canMoveFolder()) {
+            	if (getState() == STATE_MAXIMIZED) {
+            		setState(STATE_RESTORED);
+            	}
+            	
 	            DragUtil.performDrag(PartTabFolder.this, Geometry.toDisplay(
 	                    getParent(), getPresentation().getControl().getBounds()),
 	                    initialPosition, !keyboard);
@@ -152,7 +160,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
         			return;
         		}
         	}
-        	if (newState == STATE_MINIMIZED) {
+        	if (newState == STATE_MAXIMIZED) {
         		if ((flags & SWT.MAX) == 0) {
         			return;
         		}
@@ -372,16 +380,16 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
 
                 if (dropResult == null) { return null; }
 
-                IPresentablePart draggedControl = getPresentablePartAtIndex(dropResult
+                final IPresentablePart draggedControl = getPresentablePartAtIndex(dropResult
                         .getDropIndex());
-
-                // If we're dragging a pane over itself do nothing
-                if (draggedControl == pane.getPresentablePart()) { return null; }
 
                 return new IDropTarget() {
 
                     public void drop() {
-
+                    	
+                        // If we're dragging a pane over itself do nothing
+                    	if (draggedControl == pane.getPresentablePart()) { return; };
+                    	
                         // Don't worry about reparenting the view if we're
                         // simply
                         // rearranging tabs within this folder

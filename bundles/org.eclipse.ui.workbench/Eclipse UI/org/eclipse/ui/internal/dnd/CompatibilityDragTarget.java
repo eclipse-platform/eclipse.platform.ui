@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Control;
 public class CompatibilityDragTarget {
 
 	// Define width of part's "hot" border	
-	private final static int MARGIN = 20;
+	private final static int MARGIN = 30;
 			
 	/**
 	 * Returns the relative position of the given point (in display coordinates)

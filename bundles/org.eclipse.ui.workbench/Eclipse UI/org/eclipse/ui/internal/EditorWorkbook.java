@@ -92,6 +92,10 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
             LayoutPart pane = getPaneFor(beingDragged);
 
             if (pane != null) {
+            	if (getState() == STATE_MAXIMIZED) {
+            		setState(STATE_RESTORED);
+            	}
+            	
                 DragUtil.performDrag(pane, Geometry.toDisplay(getParent(),
                         getPresentation().getControl().getBounds()),
                         initialLocation, !keyboard);
@@ -99,7 +103,11 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
         }
         
         public void dragStart(Point initialLocation, boolean keyboard) {
-            DragUtil.performDrag(EditorWorkbook.this, Geometry.toDisplay(getParent(),
+        	if (getState() == STATE_MAXIMIZED) {
+        		setState(STATE_RESTORED);
+        	}
+        	
+        	DragUtil.performDrag(EditorWorkbook.this, Geometry.toDisplay(getParent(),
                     getPresentation().getControl().getBounds()),
                     initialLocation, !keyboard);
         }
@@ -187,6 +195,10 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
             systemMenuMoveEditor.dispose();
             systemMenuRestore.dispose();
             systemMenuSize.dispose();
+        }
+        
+        public boolean isDynamic() {
+        	return true;
         }
     }
     
@@ -414,16 +426,15 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
 
                 if (dropResult == null) { return null; }
 
-                IPresentablePart draggedControl = getPresentablePartAtIndex(dropResult
+                final IPresentablePart draggedControl = getPresentablePartAtIndex(dropResult
                         .getDropIndex());
-
-                // If we're dragging a pane over itself do nothing
-                if (draggedControl == pane.getPresentablePart()) { return null; }
 
                 return new IDropTarget() {
 
                     public void drop() {
-
+                        // If we're dragging a pane over itself do nothing
+                        if (draggedControl == pane.getPresentablePart()) { return; }
+                    	
                         // Don't worry about reparenting the view if we're
                         // simply
                         // rearranging tabs within this folder
@@ -444,6 +455,9 @@ public class EditorWorkbook extends LayoutPart implements ILayoutContainer {
                     }
 
                     public Rectangle getSnapRectangle() {
+//                    	if (draggedControl == pane.getPresentablePart()) { 
+//                    		return DragUtil.getDisplayBounds(getControl()); 
+//                    	};
                         return dropResult.getSnapRectangle();
                     }
                 };

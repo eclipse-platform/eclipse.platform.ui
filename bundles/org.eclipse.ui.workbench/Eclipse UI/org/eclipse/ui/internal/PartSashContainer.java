@@ -60,6 +60,49 @@ public abstract class PartSashContainer extends LayoutPart implements ILayoutCon
 		protected int relationship;
 		protected float ratio;
 	}
+
+	private class SashContainerDropTarget extends AbstractDropTarget {
+		private int side;
+		private int cursor;
+		private LayoutPart targetPart;
+		private LayoutPart sourcePart;
+		
+		public SashContainerDropTarget(LayoutPart sourcePart, int side, int cursor, LayoutPart targetPart) {
+			this.side = side;
+			this.targetPart = targetPart;
+			this.sourcePart = sourcePart;
+			this.cursor = cursor;
+		}
+
+		public void drop() {
+			if (side != SWT.NONE) {
+				dropObject(sourcePart, targetPart, side);
+			}
+		}
+
+		public Cursor getCursor() {			
+			return DragCursors.getCursor(DragCursors.positionToDragCursor(cursor));
+		}
+
+		public Rectangle getSnapRectangle() {
+			Rectangle targetBounds;
+			
+			if (targetPart != null) {
+				targetBounds = DragUtil.getDisplayBounds(targetPart.getControl());
+			} else {
+				targetBounds = DragUtil.getDisplayBounds(getParent());
+			}
+			
+			if (side == SWT.CENTER || side == SWT.NONE) {
+				return targetBounds;
+			}
+			
+			int distance = Geometry.getDimension(targetBounds, !Geometry.isHorizontal(side));
+			
+			return Geometry.getExtrudedEdge(targetBounds, (int) (distance
+					* getDockingRatio(sourcePart, targetPart)), side);
+		}
+	}
 	
 public PartSashContainer(String id,final WorkbenchPage page) {
 	super(id);
@@ -248,7 +291,8 @@ public void createControl(Composite parentWidget) {
 	parent.addControlListener(resizeListener);
 	
 	DragUtil.addDragTarget(parent, this);
-		
+	DragUtil.addDragTarget(parent.getShell(), this);
+	
 	ArrayList children = (ArrayList)this.children.clone();
 	for (int i = 0, length = children.size(); i < length; i++) {
 		LayoutPart child = (LayoutPart)children.get(i);
@@ -272,6 +316,9 @@ protected abstract Composite createParent(Composite parentWidget);
 public void dispose() {
 	if (!active)
 		return;
+
+	DragUtil.removeDragTarget(parent, this);
+	DragUtil.removeDragTarget(parent.getShell(), this);
 	
 	// remove all Listeners
 	if (resizeListener != null && parent != null){
@@ -577,74 +624,83 @@ public IDropTarget drag(Control currentControl, Object draggedObject,
 		return null;
 	}
 	
+	if (isStackType(sourcePart) && !(sourcePart.getContainer() == this)) {
+		return null;
+	}
+	
 	if (sourcePart.getWorkbenchWindow() != getWorkbenchWindow()) {
 		return null;
 	}
 	
-	final LayoutPart targetPart = root.findPart(parent.toControl(position));
+	Rectangle containerBounds = DragUtil.getDisplayBounds(parent);
+	LayoutPart targetPart = null;
+	ILayoutContainer sourceContainer = isStackType(sourcePart) ? (ILayoutContainer)sourcePart : sourcePart.getContainer();
 	
-	if (targetPart != null) {
-		final Control targetControl = targetPart.getControl();
+	if (containerBounds.contains(position)) {
+		targetPart = root.findPart(parent.toControl(position));
 		
-		int side = CompatibilityDragTarget.getRelativePosition(targetControl, position);
-		
-		final Rectangle targetBounds = DragUtil.getDisplayBounds(targetControl);
-		
-		// Disallow stacking if this isn't a container
-		if (side == SWT.DEFAULT || (side == SWT.CENTER && !isStackType(targetPart))) {
-			side = Geometry.getClosestSide(targetBounds, position);
-		}
-		
-		// A "pointless drop" would be one that will put the dragged object back where it started.
-		// Note that it should be perfectly valid to drag an object back to where it came from -- however,
-		// the drop should be ignored.
-		
-		boolean pointlessDrop = false;
-
-		if (sourcePart == targetPart) {
-			pointlessDrop = true;
-		}
-		
-		ILayoutContainer sourceContainer = sourcePart.getContainer();
-		if ((sourceContainer == targetPart) && getVisibleChildrenCount(sourceContainer) <= 1) {
-			pointlessDrop = true;
-		}
-		
-		if (side == SWT.CENTER && sourcePart.getContainer() == targetPart) {
-			pointlessDrop = true;
-		}
-		
-		if (pointlessDrop) {
-			side = SWT.CENTER;
-		}
-		
-		final int finalSide = side;
-		final boolean finalPointlessDrop = pointlessDrop;
-		
-		return new AbstractDropTarget() {
-			public void drop() {
-				if (!finalPointlessDrop) {
-					dropObject(sourcePart, targetPart, finalSide);
-				}
+		if (targetPart != null) {
+			final Control targetControl = targetPart.getControl();
+			
+			int side = CompatibilityDragTarget.getRelativePosition(targetControl, position);
+			
+			final Rectangle targetBounds = DragUtil.getDisplayBounds(targetControl);
+			
+			// Disallow stacking if this isn't a container
+			if (side == SWT.DEFAULT || (side == SWT.CENTER && !isStackType(targetPart))) {
+				side = Geometry.getClosestSide(targetBounds, position);
 			}
-
-			public Cursor getCursor() {
-				return DragCursors.getCursor(DragCursors.positionToDragCursor(finalSide));
+			
+			// A "pointless drop" would be one that will put the dragged object back where it started.
+			// Note that it should be perfectly valid to drag an object back to where it came from -- however,
+			// the drop should be ignored.
+			
+			boolean pointlessDrop = isZoomed();
+	
+			if (sourcePart == targetPart) {
+				pointlessDrop = true;
 			}
-
-			public Rectangle getSnapRectangle() {
-				if (finalSide == SWT.CENTER) {
-					return targetBounds;
-				}
-				
-				int distance = Geometry.getDimension(targetBounds, !Geometry.isHorizontal(finalSide));
-				
-				return Geometry.getExtrudedEdge(targetBounds, (int) (distance
-						* getDockingRatio(sourcePart, targetPart)), finalSide);
+			
+			if ((sourceContainer == targetPart) && getVisibleChildrenCount(sourceContainer) <= 1) {
+				pointlessDrop = true;
+			}
+			
+			if (side == SWT.CENTER && sourcePart.getContainer() == targetPart) {
+				pointlessDrop = true;
+			}
+			
+			int cursor = side;
+			
+			if (pointlessDrop) {
+				side = SWT.NONE;
+				cursor = SWT.CENTER;
+			}
+			
+			return new SashContainerDropTarget(sourcePart, side, cursor, targetPart);
+		}
+	} else {
+		
+		int side = Geometry.getClosestSide(containerBounds, position);
+		
+		boolean pointlessDrop = isZoomed();
+		
+		if (isStackType(sourcePart) 
+				|| (isPaneType(sourcePart) && getVisibleChildrenCount(sourcePart.getContainer()) <= 1)) {			
+			if (root == null || getVisibleChildrenCount(this) <= 1) {
+				pointlessDrop = true;
 			}
 		};
+		
+		int cursor = Geometry.getOppositeSide(side);
+		
+		if (pointlessDrop) {
+			side = SWT.NONE;
+			//cursor = SWT.CENTER;			
+		}
+		
+		return new SashContainerDropTarget(sourcePart, side, cursor, null);
 	}
-	
+		
 	return null;
 }
 
@@ -754,7 +810,16 @@ protected void derefPart(LayoutPart sourcePart) {
 }
 
 protected int getVisibleChildrenCount(ILayoutContainer container) {
-	return container.getChildren().length;
+	LayoutPart[] children = container.getChildren();
+	
+	int count = 0;
+	for (int idx = 0; idx < children.length; idx++) {
+		if (!(children[idx] instanceof PartPlaceholder)) {
+			count++;
+		}
+	}
+	
+	return count;
 }
 
 protected float getDockingRatio(LayoutPart dragged, LayoutPart target) {
