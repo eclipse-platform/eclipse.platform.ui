@@ -23,6 +23,7 @@ public class Tag extends CVSModelElement implements IAdaptable {
 	
 	public Tag(String tag, boolean isBranch, ICVSRepositoryLocation root) {
 		this.tag = tag;
+		this.isBranch = isBranch;
 		this.root = root;
 	}
 	public Object getAdapter(Class adapter) {
