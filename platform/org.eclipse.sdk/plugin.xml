@@ -76,7 +76,11 @@
       <activityPatternBinding
             activityId="org.eclipse.team"
             pattern="org\.eclipse\.team\.ui/org.*">
-      </activityPatternBinding>            
+      </activityPatternBinding> 
+      <activityPatternBinding
+            activityId="org.eclipse.team"
+            pattern="org\.eclipse\.compare/compareWithPatch">
+      </activityPatternBinding>           
       <activityPatternBinding
             activityId="org.eclipse.team.cvs"
             pattern="org\.eclipse\.team\.cvs\.ui/.*">
