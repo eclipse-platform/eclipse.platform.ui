@@ -10,6 +10,8 @@ import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.PluginDescriptorModel;
+import org.eclipse.core.runtime.model.PluginFragmentModel;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
@@ -25,13 +27,9 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 
 	private ListenersList listeners = new ListenersList();
 	private SiteReconciler reconciler;
+	private SiteStatusAnalyzer siteStatusAnalyzer;	
 	private boolean isTransient = false;
-	private List /* of IFeature */
-	allConfiguredFeatures;
 	
-	//
-	private static List allRunningPlugins; /*VersionedIdentifier */
-
 	private static final String UPDATE_STATE_SUFFIX = ".metadata";
 
 	/*
@@ -745,56 +743,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 		}
 		return bundle;
 	}
-
-	/**
-	 * compare two feature references
-	 * returns 0 if the feature are different
-	 * returns 1 if the version of feature 1 is greater than version of feature 2
-	 * returns 2 if opposite
-	 */
-	private int compare(IFeatureReference featureRef1, IFeatureReference featureRef2) throws CoreException {
-		if (featureRef1 == null)
-			return 0;
-
-		IFeature feature1 = null;
-		IFeature feature2 = null;
-		try {
-			feature1 = featureRef1.getFeature();
-			feature2 = featureRef2.getFeature();
-		} catch (CoreException e) {
-			UpdateManagerPlugin.warn(null, e);
-			return 0;
-		}
-
-		if (feature1 == null || feature2 == null) {
-			return 0;
-		}
-
-		VersionedIdentifier id1 = feature1.getVersionedIdentifier();
-		VersionedIdentifier id2 = feature2.getVersionedIdentifier();
-
-		if (id1 == null || id2 == null) {
-			return 0;
-		}
-
-		if (id1.getIdentifier() != null && id1.getIdentifier().equals(id2.getIdentifier())) {
-			PluginVersionIdentifier version1 = id1.getVersion();
-			PluginVersionIdentifier version2 = id2.getVersion();
-			if (version1 != null) {
-				boolean greaterOrEqual = (version1.isGreaterOrEqualTo(version2));
-				if (greaterOrEqual) {
-					return 1;
-				} else {
-					return 2;
-				}
-			} else {
-				return 2;
-			}
-		}
-		return 0;
-	}
-
-	/*
+/*
 	 * Compares two URL for equality
 	 * Return false if one of them is null
 	 */
@@ -803,7 +752,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			return false;
 		if (url1.equals(url2))
 			return true;
-
+	
 		// check if URL are file: URL as we may
 		// have 2 URL pointing to the same featureReference
 		// but with different representation
@@ -812,65 +761,24 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 			return false;
 		if (!"file".equalsIgnoreCase(url2.getProtocol()))
 			return false;
-
+	
 		File file1 = new File(url1.getFile());
 		File file2 = new File(url2.getFile());
-
+	
 		if (file1 == null)
 			return false;
-
+	
 		return (file1.equals(file2));
 	}
 
+
 	/*
-	 *  check if the Plugins of the feature are on the plugin path
-	 *  If all the plugins are on the plugin path, and the version match and there is no other version -> HAPPY
-	 *  If all the plugins are on the plugin path, and the version match and there is other version -> AMBIGUOUS
-	 *  If some of the plugins are on the plugin path, but not all -> UNHAPPY
-	 * 	Check on all ConfiguredSites
+	 * 
 	 */
-	private IStatus getStatus(IFeature feature) {
-
-		// check if broken first
-		IConfiguredSite[] configuredSites = getCurrentConfiguration().getConfiguredSites();
-		ISite featureSite = feature.getSite();
-		if (featureSite == null) {
-			String msg = Policy.bind("SiteLocal.UnableToDetermineFeatureStatusSiteNull",new Object[]{feature.getURL()});
-			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
-				UpdateManagerPlugin.debug("Cannot determine status of feature:" + feature.getLabel() + ". Site is NULL.");
-			return createStatus(IStatus.ERROR,IFeature.STATUS_AMBIGUOUS,msg,null);
-		}
-
-		ConfiguredSite cSite = null;
-		for (int i = 0; i < configuredSites.length && cSite==null; i++) {
-			if (featureSite.equals(configuredSites[i].getSite())) {
-				cSite = (ConfiguredSite)configuredSites[i];
-				IStatus status = cSite.getBrokenStatus(feature);
-				if (status.getSeverity()!=IStatus.OK) {
-					if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION)
-						UpdateManagerPlugin.debug("Feature broken:" + feature.getLabel() + ".Site:" + cSite.toString());
-					return status;
-				}
-			}
-		}
-
-		// if unconfigured, do not check if ambiguous
-		if(cSite!=null){
-			IFeatureReference ref = cSite.getSite().getFeatureReference(feature);
-			if (ref!=null){
-				if (!cSite.getConfigurationPolicy().isConfigured(ref)){
-					return createStatus(IStatus.OK,IFeature.STATUS_HAPPY,"",null);
-				} else {
-					UpdateManagerPlugin.warn("Unable to find reference for feature"+feature+" in site "+cSite.getSite());
-				}
-			}
-		} else {
-			UpdateManagerPlugin.warn("Unable to find the configured site in which "+feature+" resides.");
-		}
-
-		// not broken, check against registry [17015]
-		IPluginEntry[] featuresEntries = feature.getPluginEntries();
-		return status(featuresEntries);
+	private SiteStatusAnalyzer getSiteStatusAnalyzer() {
+		if (siteStatusAnalyzer == null)
+			siteStatusAnalyzer = new SiteStatusAnalyzer(this);
+		return siteStatusAnalyzer;
 	}
 
 	/*
@@ -881,165 +789,6 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	 * 	Check on all ConfiguredSites
 	 */
 	public IStatus getFeatureStatus(IFeature feature) throws CoreException {
-		
-		IStatus featureStatus = getStatus(feature);
-		IFeatureReference[] children = feature.getIncludedFeatureReferences();
-		IFeature childFeature = null;		
-		IStatus childStatus;
-		
-		String msg = Policy.bind("SiteLocal.FeatureHappy");
-		int code = IFeature.STATUS_HAPPY;
-		MultiStatus multiTemp = new MultiStatus(featureStatus.getPlugin(),code,msg,null);
-		if (featureStatus.getSeverity()==IStatus.ERROR){
-			if (featureStatus.isMultiStatus()){
-				multiTemp.addAll(featureStatus);	
-			} else {
-				multiTemp.add(featureStatus);					
-			}
-		}
-		if (featureStatus.getCode()>code) code = featureStatus.getCode();
-		
-		for (int i = 0; i < children.length; i++) {
-			try {
-				childFeature = children[i].getFeature();
-			} catch (CoreException e){
-				UpdateManagerPlugin.warn("Error retrieving feature:"+children[i],new Exception());
-			}
-			if (childFeature==null){
-				UpdateManagerPlugin.warn("Feature is null for:"+children[i],new Exception());
-				// Unable to find children feature, broken
-				String msg1 = Policy.bind("SiteLocal.NestedFeatureUnavailable",new Object[]{children[i].getURL()});
-				multiTemp.add(createStatus(IStatus.ERROR,IFeature.STATUS_UNHAPPY,msg1,null));
-				if (IFeature.STATUS_UNHAPPY>code) code = IFeature.STATUS_UNHAPPY;					
-			} else {
-				childStatus = getFeatureStatus(childFeature);	
-				// do not add the status, add the children status as getFeatureStatus
-				// returns a multiStatus 
-				if (childStatus.getSeverity()!=IStatus.OK){
-					VersionedIdentifier versionID = childFeature.getVersionedIdentifier();
-					String featureVer = (versionID==null)?"":versionID.getVersion().toString();
-					String msg1 = Policy.bind("SiteLocal.NestedFeatureUnHappy",childFeature.getLabel(),featureVer);
-					multiTemp.add(createStatus(IStatus.ERROR,childStatus.getCode(),msg1,null));
-					if (childStatus.getCode()>code) code = childStatus.getCode();					
-				}
-			}
-		}
-		
-		if (code==IFeature.STATUS_UNHAPPY)
-			msg = Policy.bind("SiteLocal.FeatureUnHappy");
-		if (code==IFeature.STATUS_AMBIGUOUS)
-			msg = Policy.bind("SiteLocal.FeatureAmbiguous");		
-		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(),code,msg,null);
-		multi.addAll(multiTemp);
-		return multi; 
+		return getSiteStatusAnalyzer().getFeatureStatus(feature);
 	}
-
-	/*
-	 * compute the status based on getStatus() rules 
-	 */
-	private IStatus status(IPluginEntry[] featurePlugins) {
-		VersionedIdentifier featureID;
-		VersionedIdentifier compareID;
-
-		String happyMSG = Policy.bind("SiteLocal.FeatureHappy");
-		String ambiguousMSG = Policy.bind("SiteLocal.FeatureAmbiguous");		
-		IStatus featureStatus = createStatus(IStatus.OK,IFeature.STATUS_HAPPY,"",null);
-		MultiStatus multi = new MultiStatus(featureStatus.getPlugin(),IFeature.STATUS_AMBIGUOUS,ambiguousMSG,null);
-
-		
-		VersionedIdentifier[] ids = getAllRunningPlugins();
-		
-		// is Ambigous if we find a plugin from the feature
-		// with a different version and not the one we are looking
-		for (int i = 0; i < featurePlugins.length; i++) {
-			MultiStatus tempmulti = new MultiStatus(featureStatus.getPlugin(),IFeature.STATUS_AMBIGUOUS,ambiguousMSG,null);			
-			featureID = featurePlugins[i].getVersionedIdentifier();
-			boolean found = false;			
-			for (int k = 0; k < ids.length && !found; k++) {
-				compareID = ids[i];
-				if (featureID.getIdentifier().equals(compareID.getIdentifier())) {
-					if (featureID.getVersion().equals(compareID.getVersion())) {
-						found = true;
-						UpdateManagerPlugin.warn("Found the plugin plugin on the path:" + compareID.toString());						
-					} else {
-						// there is a plugin with a different version on the path
-						IFeature feature = getFeatureForId(compareID);
-						
-						String msg = null;
-						if (feature==null){
-							Object[] values = new Object[]{featureID.getIdentifier(),featureID.getVersion()};						
-							msg = Policy.bind("SiteLocal.TwoVersionSamePlugin1",values);
-						} else {
-							String label = feature.getLabel();
-							String version = feature.getVersionedIdentifier().getVersion().toString();
-							Object[] values = new Object[]{featureID.getIdentifier(),featureID.getVersion(),compareID.getVersion(),label,version};						
-							msg = Policy.bind("SiteLocal.TwoVersionSamePlugin2",values);
-						}						
-						
-						
-						UpdateManagerPlugin.warn("Found another version of the same plugin on the path:" + compareID.toString());
-						tempmulti.add(createStatus(IStatus.ERROR,IFeature.STATUS_AMBIGUOUS,msg,null));							
-					}
-				}
-			}
-			
-			if (!found){
-				multi.addAll(tempmulti);
-			}
-		}
-		
-		if (!multi.isOK())
-			return multi;
-		
-		// we return happy as we consider the isBroken verification has been done
-		return createStatus(IStatus.OK,IFeature.STATUS_HAPPY,happyMSG,null);
-	}
-	/*
-	 * creates a Status
-	 */
-	public IStatus createStatus(int statusSeverity, int statusCode, String msg, Exception e){
-		String id =
-			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-	
-		StringBuffer completeString = new StringBuffer("");
-		if (msg!=null)
-			completeString.append(msg);
-		if (e!=null){
-			completeString.append("\r\n[");
-			completeString.append(e.toString());
-			completeString.append("]\r\n");
-		}
-		return new Status(statusSeverity, id, statusCode, completeString.toString(), e);
-	}
-	
-	/*
-	 * returns all the configured plugins from the registry
-	 */
-	 private VersionedIdentifier[] getAllRunningPlugins(){
-		if (allRunningPlugins==null){
-			allRunningPlugins = new ArrayList();
-			IPluginRegistry reg = Platform.getPluginRegistry();
-			IPluginDescriptor[] desc = reg.getPluginDescriptors();
-			for (int i = 0; i < desc.length; i++) {
-				String id = desc[i].getUniqueIdentifier();
-				String ver = desc[i].getVersionIdentifier().toString();
-				VersionedIdentifier versionID = new VersionedIdentifier(id,ver);
-				allRunningPlugins.add(versionID);
-			}
-		}	
-		
-		VersionedIdentifier[] ids = new VersionedIdentifier[allRunningPlugins.size()];
-		if (allRunningPlugins.size()>0){
-			allRunningPlugins.toArray(ids);
-		}
-		return ids;
-	 }	
-	 
-	 /*
-	  * returns the Feature that declares this versionedIdentifier or null if none found
-	  */
-	  private Feature getFeatureForId(VersionedIdentifier id){
-	  	
-	  	return null;
-	  }	
 }
