@@ -87,12 +87,12 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		// set F1 help
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.FILE_TYPE_PREFERENCE_PAGE);
 		initializeDialogUnits(parent);	
-
+		
+		final PixelConverter converter= SWTUtils.createDialogPixelConverter(parent);
 		final Composite composite= new Composite(parent, SWT.NONE);
-		composite.setLayout(SWTUtils.createGridLayout(2, 0, 0));
+		composite.setLayout(SWTUtils.createGridLayout(2, converter, SWTUtils.MARGINS_NONE));
 		
 		fTable= new FileTypeTable(composite, this, fItems, false);
-		
 
 		fTable.getViewer().getControl().addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -112,32 +112,38 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 
 		final Composite buttonsComposite = new Composite(composite, SWT.NONE);
 		buttonsComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false));
-		buttonsComposite.setLayout(SWTUtils.createGridLayout(1, 0, 0));
-		
-		final int buttonWidth= (3 *convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH)) / 2;
+		buttonsComposite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
 		
 		final Button addExtensionButton = new Button(buttonsComposite, SWT.PUSH);
 		addExtensionButton.setText(Policy.bind("TextPreferencePage.add")); //$NON-NLS-1$
+		final Button addNameButton = new Button(buttonsComposite, SWT.PUSH);
+		addNameButton.setText(Policy.bind("TextPreferencePage.0"));  //$NON-NLS-1$
+		fChangeButton = new Button(buttonsComposite, SWT.PUSH);
+		fChangeButton.setText(Policy.bind("TextPreferencePage.change")); //$NON-NLS-1$
+		fRemoveButton= new Button(buttonsComposite, SWT.PUSH);
+		fRemoveButton.setText(Policy.bind("TextPreferencePage.remove")); //$NON-NLS-1$
+		
+		/**
+		 * Calculate and set the button size 
+		 */
+		applyDialogFont(composite);
+		final int buttonWidth= SWTUtils.calculateButtonSize(converter, new Button [] { addExtensionButton, addNameButton, fChangeButton, fRemoveButton });
 		addExtensionButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.FILL, false, false));
+		addNameButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.FILL, false, false));
+		fChangeButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.FILL, false, false));
+		fRemoveButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.FILL, false, false));
+		
 		addExtensionButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				addExtension();
 			}
 		});
-		
-		final Button addNameButton = new Button(buttonsComposite, SWT.PUSH);
-		addNameButton.setText(Policy.bind("TextPreferencePage.0"));  //$NON-NLS-1$
-		addNameButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.FILL, false, false));
 		addNameButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
 				addName();
 			}
 		});
 
-		
-		fChangeButton = new Button(buttonsComposite, SWT.PUSH);
-		fChangeButton.setText(Policy.bind("TextPreferencePage.change")); //$NON-NLS-1$
-		fChangeButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.FILL, false, false));
 		fChangeButton.setEnabled(false);
 		fChangeButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {
@@ -145,9 +151,6 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 			}
 		});
 		
-		fRemoveButton= new Button(buttonsComposite, SWT.PUSH);
-		fRemoveButton.setText(Policy.bind("TextPreferencePage.remove")); //$NON-NLS-1$
-		fRemoveButton.setLayoutData(SWTUtils.createGridData(buttonWidth, SWT.DEFAULT, SWT.FILL, SWT.FILL, false, false));
 		fRemoveButton.setEnabled(false);
 		fRemoveButton.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event e) {

@@ -16,33 +16,53 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.IWizardContainer;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.subscribers.ChangeSet;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSDecoration;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.CommitCommentArea;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction;
-import org.eclipse.team.internal.ccvs.ui.subscriber.*;
+import org.eclipse.team.internal.ccvs.ui.subscriber.CVSActionDelegateWrapper;
+import org.eclipse.team.internal.ccvs.ui.subscriber.CVSParticipantLabelDecorator;
+import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
+import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ChangeSetCapability;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizeScope;
+import org.eclipse.team.ui.synchronize.ParticipantPagePane;
+import org.eclipse.team.ui.synchronize.ResourceScope;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 
 /**
  * This wizard page shows a preview of the commit operation and allows entering
@@ -204,9 +224,11 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
      */
     public void createControl(Composite parent) {
         initializeDialogUnits(parent);
+        Dialog.applyDialogFont(parent);
+        final PixelConverter converter= new PixelConverter(parent);
         
         final Composite composite= new Composite(parent, SWT.NONE);
-        composite.setLayout(new GridLayout(1, true));
+        composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_DEFAULT));
         
         /**
          * A sash for the comment area and the changes.
@@ -214,8 +236,8 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         fSashForm= new SashForm(composite, SWT.VERTICAL);
         fSashForm.setLayoutData(SWTUtils.createHVFillGridData());
         
-        createCommentArea(fSashForm);
-        createChangesArea(fSashForm);
+        createCommentArea(fSashForm, converter);
+        createChangesArea(fSashForm, converter);
                 
         fSashForm.setWeights(fSettingsSaver.loadWeights());
         setControl(composite);
@@ -224,10 +246,10 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         validatePage(false);
     }
     
-    private void createCommentArea(Composite parent) {
+    private void createCommentArea(Composite parent, PixelConverter converter) {
         
         final Composite composite= new Composite(parent, SWT.NONE);
-        composite.setLayout(SWTUtils.createGridLayout(1, 0, 0));
+        composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
         
         fCommentArea.createArea(composite);
         fCommentArea.getComposite().setLayoutData(SWTUtils.createGridData(SWT.DEFAULT, convertHeightInCharsToPixels(8), SWT.FILL, SWT.FILL, true, true));
@@ -236,10 +258,10 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         createPlaceholder(composite);
     }
     
-    private void createChangesArea(Composite parent) {
+    private void createChangesArea(Composite parent, PixelConverter converter) {
 
         final Composite composite= new Composite(parent, SWT.NONE);
-        composite.setLayout(SWTUtils.createGridLayout(1, 0, 0));
+        composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_NONE));
         composite.setLayoutData(SWTUtils.createHVFillGridData());
         
         createPlaceholder(composite);

@@ -11,19 +11,19 @@
 package org.eclipse.team.internal.ccvs.ui.tags;
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
+import org.eclipse.team.internal.ui.PixelConverter;
+import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
 
@@ -53,20 +53,14 @@ public class TagAsVersionDialog extends DetailsDialog {
 	 * @see DetailsDialog#createMainDialogArea(Composite)
 	 */
 	protected void createMainDialogArea(Composite parent) {
-		// create message
-		Label label = new Label(parent, SWT.WRAP);
-		label.setText(Policy.bind("TagAction.enterTag")); //$NON-NLS-1$
-		GridData data = new GridData(
-			GridData.GRAB_HORIZONTAL |
-			GridData.HORIZONTAL_ALIGN_FILL |
-			GridData.VERTICAL_ALIGN_CENTER);
-		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
-		label.setLayoutData(data);
+		
+		final int width= convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);;
+		
+		final Label label = SWTUtils.createLabel(parent, Policy.bind("TagAction.enterTag")); //$NON-NLS-1$
+		label.setLayoutData(SWTUtils.createGridData(width, SWT.DEFAULT, true, false));
 
 		tagText = new Text(parent, SWT.SINGLE | SWT.BORDER);
-		tagText.setLayoutData(new GridData(
-			GridData.GRAB_HORIZONTAL |
-			GridData.HORIZONTAL_ALIGN_FILL));
+		tagText.setLayoutData(SWTUtils.createHFillGridData());
 		tagText.addModifyListener(
 			new ModifyListener() {
 				public void modifyText(ModifyEvent e) {
@@ -76,10 +70,7 @@ public class TagAsVersionDialog extends DetailsDialog {
 			}
 		);
 		
-		moveTagButton = new Button(parent, SWT.CHECK);
-		moveTagButton.setText(Policy.bind("TagAction.moveTag")); //$NON-NLS-1$
-		moveTagButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		
+		moveTagButton= SWTUtils.createCheckBox(parent, Policy.bind("TagAction.moveTag")); //$NON-NLS-1$
 		moveTagButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				moveTag = moveTagButton.getSelection();
@@ -88,7 +79,6 @@ public class TagAsVersionDialog extends DetailsDialog {
 		
 		// Add F1 help
 		WorkbenchHelp.setHelp(parent, IHelpContextIds.TAG_AS_VERSION_DIALOG);
-		Dialog.applyDialogFont(parent);
 	}
 
 	public boolean shouldMoveTag()  {
@@ -99,14 +89,12 @@ public class TagAsVersionDialog extends DetailsDialog {
 	 * @see DetailsDialog#createDropDownDialogArea(Composite)
 	 */
 	protected Composite createDropDownDialogArea(Composite parent) {
-		// create a composite with standard margins and spacing
-	    Composite composite = new Composite(parent, SWT.NONE);
-	    GridLayout layout = new GridLayout();
-	    layout.marginHeight = 0;
-	    layout.marginWidth = 0;
-	    layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-	    layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-	    composite.setLayout(layout);
+		
+		final PixelConverter converter= SWTUtils.createDialogPixelConverter(parent);
+		
+		final Composite composite = new Composite(parent, SWT.NONE);
+	    composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_DIALOG));
+	    
 	    final GridData gridData = new GridData(GridData.FILL_BOTH);
 	    gridData.heightHint = TAG_AREA_HEIGHT_HINT;
 	    composite.setLayoutData(gridData);

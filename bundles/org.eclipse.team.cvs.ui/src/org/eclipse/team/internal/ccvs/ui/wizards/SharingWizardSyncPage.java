@@ -13,9 +13,13 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -26,13 +30,24 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamStatus;
-import org.eclipse.team.core.synchronize.*;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent;
+import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.internal.ui.PixelConverter;
+import org.eclipse.team.internal.ui.SWTUtils;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ParticipantPageSaveablePart;
+import org.eclipse.team.ui.synchronize.ResourceScope;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.PageBook;
 
@@ -58,6 +73,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	private int width;
 	private int height;
 	private SharingWizardPageActionGroup sharingWizardPageActionGroup;
+	private Button fCheckbox;
 	
 	public SharingWizardSyncPage(String pageName, String title, ImageDescriptor titleImage, String description) {
 		super(pageName, title, titleImage, description);
@@ -71,17 +87,16 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
-		Composite composite = createComposite(parent, 1, false);
+		
+		final PixelConverter converter= SWTUtils.createDialogPixelConverter(parent);
+		
+		final Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_DEFAULT));
 		setControl(composite);
 		
-		// set F1 help
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_SYNC_PAGE);
 		
 		pageBook = new PageBook(composite, SWT.NONE);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.grabExcessHorizontalSpace = true;
-		data.grabExcessVerticalSpace = true;
-		pageBook.setLayoutData(data);
+		pageBook.setLayoutData(SWTUtils.createHVFillGridData());
 		
 		input = createCompareInput();
 		input.createPartControl(pageBook);
@@ -90,13 +105,21 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 		infos.addSyncSetChangedListener(this);
 		
 		noChangesPage = createNoChangesPage(pageBook);
-		noChangesPage.setLayoutData(new GridData(GridData.FILL_BOTH));
+		noChangesPage.setLayoutData(SWTUtils.createHVFillGridData());
 		
 		errorPage = createErrorPage(pageBook);
-		errorPage.setLayoutData(new GridData(GridData.FILL_BOTH));
+		errorPage.setLayoutData(SWTUtils.createHVFillGridData());
+		
+		SWTUtils.createPlaceholder(composite, converter, 1);
+		
+		fCheckbox= new Button(composite, SWT.CHECK);
+		fCheckbox.setLayoutData(SWTUtils.createHFillGridData());
+		fCheckbox.setText(Policy.bind("SharingWizardSyncPage.12")); //$NON-NLS-1$
+		fCheckbox.setSelection(true);
 		
 		updatePage();
 		
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_SYNC_PAGE);
 		Dialog.applyDialogFont(parent);	
 	}
 	
@@ -262,18 +285,14 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 		}
 	}
 	
+	public boolean commitChanges() {
+		return fCheckbox != null ? fCheckbox.getSelection() : false;
+	}
+	
 	/**
-	 * Prompt to commit any leftovers
+	 * @return Returns the project.
 	 */
-	public void promptToCommit() {
-		if (sharingWizardPageActionGroup != null) {
-			if (sharingWizardPageActionGroup.getCommitAction().isEnabled()) {
-				if (MessageDialog.openQuestion(getShell(), Policy.bind("SharingWizardSyncPage.10"), Policy.bind("SharingWizardSyncPage.11"))) { //$NON-NLS-1$ //$NON-NLS-2$
-					// Null the context so the commit will run in the background
-					configuration.setRunnableContext(null);
-					sharingWizardPageActionGroup.getCommitAction().run();
-				}
-			}
-		}
+	public IProject getProject() {
+		return project;
 	}
 }

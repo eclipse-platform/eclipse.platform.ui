@@ -159,7 +159,11 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
 	 * @return the dialog area control
 	 */
 	protected Control createDialogArea(Composite parent) {
-		Composite top = (Composite)super.createDialogArea(parent);
+		
+		applyDialogFont(parent);
+		initializeDialogUnits(parent);
+		
+		final Composite top = (Composite)super.createDialogArea(parent);
 		
 		// Delegate most of the dialog to the tag selection area
         tagSelectionArea = new TagSelectionArea(getShell(), tagSource, includeFlags, helpContext) {
@@ -183,13 +187,13 @@ public class TagSelectionDialog extends Dialog implements IPropertyChangeListene
 		tagSelectionArea.setRunnableContext(getRunnableContext());
 		
 		// Create a separator between the tag area and the button area
-		Label seperator = new Label(top, SWT.SEPARATOR | SWT.HORIZONTAL);
-		GridData data = new GridData (GridData.FILL_HORIZONTAL);		
+		final Label seperator = new Label(top, SWT.SEPARATOR | SWT.HORIZONTAL);
+		final GridData data = new GridData (GridData.FILL_HORIZONTAL);		
 		data.horizontalSpan = 2;
 		seperator.setLayoutData(data);
 		
 		updateEnablement();
-        Dialog.applyDialogFont(parent);
+        applyDialogFont(parent);
         
 		return top;
 	}

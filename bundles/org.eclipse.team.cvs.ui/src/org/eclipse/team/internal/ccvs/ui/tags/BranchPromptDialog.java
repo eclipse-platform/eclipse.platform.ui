@@ -16,12 +16,18 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.CVSWizardPage;
+import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -57,7 +63,10 @@ public class BranchPromptDialog extends DetailsDialog {
 	 * @see DetailsDialog#createMainDialogArea(Composite)
 	 */
 	protected void createMainDialogArea(Composite composite) {
-        
+		
+		applyDialogFont(composite);
+		initializeDialogUnits(composite);
+		
         final int areaWidth= convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
         
         final Label description= SWTUtils.createLabel(composite, allStickyResources ? Policy.bind("BranchWizardPage.pageDescriptionVersion") : Policy.bind("BranchWizardPage.pageDescription"));  //$NON-NLS-1$//$NON-NLS-2$
@@ -134,15 +143,12 @@ public class BranchPromptDialog extends DetailsDialog {
 	 */
 	protected Composite createDropDownDialogArea(Composite parent) {
 		
-		// create a composite with standard margins and spacing
-		Composite composite = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		composite.setLayout(layout);
-		GridData gridData = new GridData(GridData.FILL_BOTH);
+		applyDialogFont(parent);
+		final PixelConverter converter= new PixelConverter(parent);
+		
+		final Composite composite = new Composite(parent, SWT.NONE);
+		composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_DIALOG));
+		final GridData gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = TAG_AREA_HEIGHT_HINT;
 		composite.setLayoutData(gridData);
 		

@@ -23,20 +23,29 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.operations.*;
+import org.eclipse.team.internal.ccvs.ui.operations.DisconnectOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ReconcileProjectOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ShareProjectOperation;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
-import org.eclipse.team.internal.ccvs.ui.tags.*;
-import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionWizardPage;
 import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSourceWorkbenchAdapter;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -249,9 +258,21 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		if (result[0] && isNewLocation) {
 			KnownRepositories.getInstance().addRepository(location, true /* broadcast */);
 		}
+		
+		final Shell parentShell= getShell().getParent().getShell();
 		if (getContainer().getCurrentPage() == syncPage) {
 			syncPage.saveSettings();
-			syncPage.promptToCommit();
+			if (syncPage.commitChanges()) {
+				Display.getCurrent().asyncExec(new Runnable() {
+					public void run() {
+						try {
+							CommitWizard.run(parentShell, new IResource[] { syncPage.getProject() });
+						} catch (CVSException e) {
+							//TODO:handle
+						}
+					}
+				});
+			}
 		}
 		return result[0];
 	}

@@ -14,13 +14,23 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.tags.*;
+import org.eclipse.team.internal.ccvs.ui.tags.TagContentAssistProcessor;
+import org.eclipse.team.internal.ccvs.ui.tags.TagRefreshButtonArea;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionArea;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSelectionDialog;
+import org.eclipse.team.internal.ccvs.ui.tags.TagSource;
+import org.eclipse.team.internal.ui.PixelConverter;
 import org.eclipse.team.internal.ui.SWTUtils;
 
 public class MergeWizardPage extends CVSWizardPage {
@@ -47,17 +57,24 @@ public class MergeWizardPage extends CVSWizardPage {
      */
     public void createControl(Composite parent) {
         initializeDialogUnits(parent);
-        Composite composite = SWTUtils.createGridComposite(parent, 1);
+        Dialog.applyDialogFont(parent);
         
-        Composite mainArea = createComposite(composite, 2, true);
+        final PixelConverter converter= new PixelConverter(parent);
+        
+        final Composite composite = new Composite(parent, SWT.NONE);
+        composite.setLayout(SWTUtils.createGridLayout(1, converter, SWTUtils.MARGINS_DEFAULT));
+        setControl(composite);
+        
+        final Composite mainArea = new Composite(composite, SWT.NONE);
+        mainArea.setLayoutData(SWTUtils.createHVFillGridData());
+        mainArea.setLayout(SWTUtils.createGridLayout(2, converter, SWTUtils.MARGINS_NONE));
+        
         createEndTagArea(mainArea);
         createStartTagArea(mainArea);
         createPreviewOptionArea(mainArea);
-        
         createTagRefreshArea(composite);
 
         Dialog.applyDialogFont(composite);
-        setControl(composite);
     }
 
     private void createPreviewOptionArea(Composite mainArea) {

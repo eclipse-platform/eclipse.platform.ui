@@ -133,6 +133,10 @@ abstract public class DetailsDialog extends Dialog {
 	 * of the dialog (above the button bar).
 	 */
 	final protected Control createDialogArea(Composite parent) {
+		
+		applyDialogFont(parent);
+		initializeDialogUnits(parent);
+		
 		// create composite
 		Composite composite = (Composite)super.createDialogArea(parent);
 		if (!isMainGrabVertical()) {
