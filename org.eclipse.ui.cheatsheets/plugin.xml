@@ -68,11 +68,10 @@
             visible="true"
             id="org.eclipse.ui.cheatsheets.actionSet">
          <action
-               label="%CHEAT_SHEETS"
-               style="pulldown"
-               class="org.eclipse.ui.internal.cheatsheets.actions.CheatSheetMenuAction"
+               label="%CHEAT_SHEETS_MENU"
+               class="org.eclipse.ui.internal.cheatsheets.actions.CheatSheetHelpMenuAction"
                menubarPath="help/helpStart"
-               id="org.eclipse.ui.cheatsheets.actions.CheatSheetMenuAction">
+               id="org.eclipse.ui.cheatsheets.actions.CheatSheetHelpMenuAction">
          </action>
       </actionSet>
    </extension>
