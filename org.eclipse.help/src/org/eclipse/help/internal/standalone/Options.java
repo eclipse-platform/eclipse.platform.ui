@@ -243,9 +243,10 @@ public class Options {
 				}
 				// found the option, remove option
 				options.remove(i);
+				// remove option parameters
 				while (i < options.size()) {
 					if (((String) options.get(i)).startsWith("-")
-						&& !"-vmargs".equals((String) options.get(i))) {
+						&& !optionName.equals("-vmargs")) {
 						// start of next option
 						break;
 					}
@@ -275,9 +276,10 @@ public class Options {
 				if (values == null) {
 					values = new ArrayList(1);
 				}
+				// read option parameters
 				for (int j = i + 1; j < options.size(); j++) {
 					if (((String) options.get(j)).startsWith("-")
-						&& !"-vmargs".equals((String) options.get(j))) {
+						&& !optionName.equals("-vmargs")) {
 						// start of next option
 						i = j;
 						break;
