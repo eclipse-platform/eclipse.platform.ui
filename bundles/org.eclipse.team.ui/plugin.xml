@@ -307,65 +307,29 @@
             category="org.eclipse.team.ui.commands.category"
             id="org.eclipse.team.ui.syncview.incomingFilter">
       </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.team.ui.syncview.incomingFilter"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%Command.outgoingFilter.name"
             description="%Command.outgoingFilter.description"
             category="org.eclipse.team.ui.commands.category"
             id="org.eclipse.team.ui.syncview.outgoingFilter">
       </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.team.ui.syncview.outgoingFilter"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%Command.bothFilter.name"
             description="%Command.bothFilter.description"
             category="org.eclipse.team.ui.commands.category"
             id="org.eclipse.team.ui.syncview.bothFilter">
       </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.team.ui.syncview.bothFilter"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>         
       <command
             name="%Command.conflictsFilter.name"
             description="%Command.conflictsFilter.description"
             category="org.eclipse.team.ui.commands.category"
             id="org.eclipse.team.ui.syncview.conflictsFilter">
       </command>
-      <keyBinding
-            string=""
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.team.ui.syncview.conflictsFilter"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%Command.syncAll.name"
             description="%Command.syncAll.description"
             category="org.eclipse.team.ui.commands.category"
             id="org.eclipse.team.ui.syncview.syncAll">
-      </command>
-      <command
-      		name="%Command.selectPreviousChange.name"
-      		description="%Command.selectPreviousChange.description"
-      		category="org.eclipse.team.ui.commands.category"
-      		id="org.eclipse.team.ui.syncview.selectPreviousChange">
-      </command>
-      <command
-      		name="%Command.selectNextChange.name"
-      		description="%Command.selectNextChange.description"
-      		category="org.eclipse.team.ui.commands.category"
-      		id="org.eclipse.team.ui.syncview.selectNextChange">
       </command>
    </extension>
 <!-- ***************** Action sets ********************** -->

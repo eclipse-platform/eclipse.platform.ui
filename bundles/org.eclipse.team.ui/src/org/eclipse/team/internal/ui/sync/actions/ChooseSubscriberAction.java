@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ui.sync.actions;
 
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.ui.IKeyBindingService;
 
 class ChooseSubscriberAction extends SyncViewerToolbarDropDownAction {
 	private final SyncViewerActions actions;
@@ -24,5 +25,7 @@ class ChooseSubscriberAction extends SyncViewerToolbarDropDownAction {
 		super(actionGroup);
 		this.actions = actions;
 		Utils.initAction(this, "action.refreshSubscriber."); //$NON-NLS-1$
+		IKeyBindingService kbs = actions.getSyncView().getSite().getKeyBindingService();
+		Utils.registerAction(kbs, this, "org.eclipse.team.ui.syncview.syncAll"); //$NON-NLS-1$
 	}		
 }
