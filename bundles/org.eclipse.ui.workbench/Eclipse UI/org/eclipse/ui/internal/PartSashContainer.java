@@ -575,6 +575,16 @@ public boolean isZoomed() {
 	return (unzoomRoot != null);
 }
 
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.LayoutPart#forceLayout(org.eclipse.ui.internal.LayoutPart)
+ */
+public void resizeChild(LayoutPart childThatChanged) {
+	forceLayout();
+	
+	if (root != null) {
+		root.setBounds(getParent().getClientArea());
+	}
+}
 /**
  * Remove a part.
  */ 
@@ -960,6 +970,16 @@ void add(LayoutPart child, int relationship, int left, int right, LayoutPart rel
 	info.right = right;
 	info.relative = relative;
 	addChild(info);
+}
+
+/* (non-Javadoc)
+ * @see org.eclipse.ui.internal.LayoutPart#resizesVertically()
+ */
+public boolean resizesVertically() {
+	if (root == null) {
+		return true;
+	}
+	return !root.fixedHeight();
 }
 
 /* (non-Javadoc)

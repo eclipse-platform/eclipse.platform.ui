@@ -45,6 +45,14 @@ public boolean allowsAutoFocus();
 public void setZoomed(boolean isZoomed);
 
 /**
+ * Called when the preferred size of the given child has changed, requiring a
+ * layout to be triggered.
+ * 
+ * @param childThatChanged the child that triggered the new layout
+ */
+public void resizeChild(LayoutPart childThatChanged);
+
+/**
  * Gets the parent for this container.
  */
 //public ILayoutContainer getContainer();

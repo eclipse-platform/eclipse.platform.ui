@@ -335,14 +335,14 @@ public void setBounds(Rectangle bounds) {
 		sashBounds.width = SASH_WIDTH;
 		
 		if (children[0].fixedHeight()) {
-			leftBounds.height = children[0].getBounds().height;
+			leftBounds.height = children[0].getMinimumHeight();
 		}
 		
 		rightBounds.x = sashBounds.x + sashBounds.width;
 		rightBounds.width = bounds.x + bounds.width - rightBounds.x;
 		
 		if (children[1].fixedHeight()) {
-			rightBounds.height = children[1].getBounds().height;
+			rightBounds.height = children[1].getMinimumHeight();
 		}
 		
 		adjustWidths(bounds, leftBounds, rightBounds, sashBounds);
@@ -351,9 +351,9 @@ public void setBounds(Rectangle bounds) {
 		int redistribute = bounds.height - SASH_WIDTH - total;
 
 		if (children[0].fixedHeight()) {
-			leftBounds.height = children[0].getBounds().height;
+			leftBounds.height = children[0].getMinimumHeight();
 		} else if (children[1].fixedHeight()) {
-			leftBounds.height = bounds.height - children[1].getBounds().height - SASH_WIDTH;
+			leftBounds.height = bounds.height - children[1].getMinimumHeight() - SASH_WIDTH;
 		} else {
 			leftBounds.height = left + (int)Math.round(redistribute * wLeft / wTotal);
 		}
@@ -362,7 +362,7 @@ public void setBounds(Rectangle bounds) {
 		rightBounds.y = sashBounds.y + sashBounds.height;
 		
 		if (children[1].fixedHeight()) {
-			rightBounds.height = children[1].getBounds().height;
+			rightBounds.height = children[1].getMinimumHeight();
 		} else {
 			rightBounds.height = bounds.y + bounds.height - rightBounds.y;
 		}

@@ -86,7 +86,8 @@ public class EditorStack extends PartStack {
 	public boolean supportsState(int state) {
 	    if (page.isFixedLayout())
 	        return false;
-		return state == IStackPresentationSite.STATE_MAXIMIZED || state == IStackPresentationSite.STATE_RESTORED;
+	    
+	    return true;
 	}
 
     /**

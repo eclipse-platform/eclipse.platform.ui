@@ -68,7 +68,6 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -3309,21 +3308,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		private IWorkbenchPart getActive(int start) {
 			IWorkbenchPartReference[] views = getViewReferences();
 			for (int i = start; i >= 0; i--) {
-				IWorkbenchPartReference ref =
-					(IWorkbenchPartReference) parts.get(i);
+				WorkbenchPartReference ref =
+					(WorkbenchPartReference) parts.get(i);
 				
 				// Skip parts whose containers have disabled auto-focus
-				IWorkbenchPart part = ref.getPart(false);
+				PartPane pane = ref.getPane();
 				
-				if (part != null) {
-					IWorkbenchPartSite site = part.getSite();
-					if (site instanceof PartSite) {
-						PartSite partSite = (PartSite)site;
-						
-						ILayoutContainer container = partSite.getPane().getContainer();
-						if ((container != null) && (!container.allowsAutoFocus())) {
-							continue;
-						}
+				if (pane != null) {
+					ILayoutContainer container = pane.getContainer();
+					if ((container != null) && (!container.allowsAutoFocus())) {
+						continue;
 					}
 				}
 				

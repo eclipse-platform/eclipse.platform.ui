@@ -77,14 +77,6 @@ abstract public class LayoutPart {
 	public Rectangle getBounds() {
 		return new Rectangle(0, 0, 0, 0);
 	}
-//	/**
-//	 * Gets root container for this part.
-//	 */
-//	public ViewSashContainer getRootContainer() {
-//		if (container != null)
-//			return container.getRootContainer();
-//		return null;
-//	}
 	
 	/**
 	 * Gets the parent for this part.
@@ -368,6 +360,17 @@ public void describeLayout(StringBuffer buf) {
  */
 public String getPlaceHolderId() {
     return getID();
+}
+
+public void resizeChild(LayoutPart childThatChanged) {
+
+}
+
+public void forceLayout() {
+	ILayoutContainer container = getContainer();
+	if (getContainer() != null) {
+		container.resizeChild(this);
+	}
 }
 
 /**

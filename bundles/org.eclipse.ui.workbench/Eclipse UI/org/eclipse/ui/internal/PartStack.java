@@ -465,16 +465,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
         
         refreshPresentationSelection();
-        
-        Rectangle bounds = presentation.getControl().getBounds();
-        int minimumHeight = getMinimumHeight();
-
-        if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED
-                && bounds.height != minimumHeight) {
-            bounds.width = getMinimumWidth();
-            bounds.height = minimumHeight;
-            getPresentation().setBounds(bounds);
-        }
     }
 
     /**
@@ -523,17 +513,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         if (container != null) {
             container.findSashes(this, sashes);
-        }
-    }
-
-    /**
-     * Forces the layout to be recomputed for all parts
-     */
-    private void forceLayout() {
-        PartSashContainer cont = (PartSashContainer) getContainer();
-        if (cont != null) {
-            LayoutTree tree = cont.getLayoutTree();
-            tree.setBounds(getParent().getClientArea());
         }
     }
 
@@ -886,7 +865,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
      */
     public void setActive(int activeState) {
     	
-        if (activeState != StackPresentation.AS_INACTIVE) {
+        if (activeState == StackPresentation.AS_ACTIVE_FOCUS) {
             if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED) {
                 setState(IStackPresentationSite.STATE_RESTORED);
             }            
@@ -968,11 +947,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 	                    page.zoomOut();
 	                }
 	
-	                updateControlBounds();
-	
-	                if (oldState == IStackPresentationSite.STATE_MINIMIZED) {
-	                    forceLayout();
-	                }
+	                forceLayout();
                 }
             }
         }
@@ -1066,24 +1041,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
         
         setSelection(selPart);
-    }
-
-    private void updateControlBounds() {
-    	StackPresentation presentation = getPresentation();
-    	
-    	if (presentation != null) {
-	        Rectangle bounds = presentation.getControl().getBounds();
-	        int minimumHeight = getMinimumHeight();
-	
-	        if (presentationSite.getState() == IStackPresentationSite.STATE_MINIMIZED
-	                && bounds.height != minimumHeight) {
-	            bounds.width = getMinimumWidth();
-	            bounds.height = minimumHeight;
-	            getPresentation().setBounds(bounds);
-	
-	            forceLayout();
-	        }
-    	}
     }
 
 	/**
