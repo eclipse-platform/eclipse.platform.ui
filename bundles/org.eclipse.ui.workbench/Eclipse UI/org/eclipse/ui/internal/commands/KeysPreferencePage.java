@@ -1070,6 +1070,31 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		update();
 	}
 
+	private void selectAssignmentForCommand(String contextId) {	
+		if (tableAssignmentsForCommand.getSelectionCount() > 1)
+			tableAssignmentsForCommand.deselectAll();
+	
+		int i = 0;
+		int selection = -1;
+		KeySequence keySequence = getKeySequence();
+
+		for (Iterator iterator = commandAssignments.iterator(); iterator.hasNext(); i++) {
+			CommandAssignment commandAssignment = (CommandAssignment) iterator.next();
+
+			if (Util.equals(contextId, commandAssignment.contextId) && Util.equals(keySequence, commandAssignment.keySequence)) {
+				selection = i;
+				break;
+			}
+		}
+
+		if (selection != tableAssignmentsForCommand.getSelectionIndex()) {
+			if (selection == -1 || selection >= tableAssignmentsForCommand.getItemCount())
+				tableAssignmentsForCommand.deselectAll();
+			else
+				tableAssignmentsForCommand.select(selection);
+		}
+	}
+
 	private void selectAssignmentForKeySequence(String contextId) {	
 		if (tableAssignmentsForKeySequence.getSelectionCount() > 1)
 			tableAssignmentsForKeySequence.deselectAll();
@@ -1324,7 +1349,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		String commandId = getCommandId();
 		String contextId = getContextId();
 		selectAssignmentForKeySequence(contextId);
-		// TODO selectAssignmentForCommand(contextId);
+		selectAssignmentForCommand(contextId);
 		updateLabelKeyConfigurationExtends();		
 		updateLabelContextExtends();
 		labelAssignmentsForKeySequence.setEnabled(keySequence != null && !keySequence.getKeyStrokes().isEmpty());
