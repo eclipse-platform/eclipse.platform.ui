@@ -8,7 +8,7 @@
 <runtime>
    <library name="boot.jar">
       <export name="*"/>
-      <packages prefixes="com.ibm.oti,org.eclipse.core"/>
+      <packages prefixes="org.eclipse.core"/>
    </library>
 </runtime>
 
