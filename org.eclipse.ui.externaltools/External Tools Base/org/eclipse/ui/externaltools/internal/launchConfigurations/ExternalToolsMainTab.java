@@ -88,7 +88,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	
 	protected WidgetListener fListener= new WidgetListener();
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createControl(Composite parent) {
@@ -235,20 +235,20 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		variableButton.addSelectionListener(fListener);
 
 		Label instruction = new Label(parent, SWT.NONE);
-		instruction.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Note__Enclose_an_argument_containing_spaces_using_double-quotes_(__)._Not_applicable_for_variables._3")); //$NON-NLS-1$
+		instruction.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.3")); //$NON-NLS-1$
 		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		data.horizontalSpan = 2;
 		instruction.setLayoutData(data);
 		instruction.setFont(font);
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
@@ -290,7 +290,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		argumentField.setText(arguments);
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
@@ -469,7 +469,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		}
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
