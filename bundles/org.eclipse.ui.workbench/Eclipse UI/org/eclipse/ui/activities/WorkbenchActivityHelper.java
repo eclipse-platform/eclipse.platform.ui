@@ -158,18 +158,15 @@ public final class WorkbenchActivityHelper {
 	public static final boolean filterItem(Object object) {
 		if (object instanceof IPluginContribution) {
 			IPluginContribution contribution = (IPluginContribution) object;
-			if (contribution.getPluginId() != null) {
-				IWorkbenchActivitySupport workbenchActivitySupport =
-				PlatformUI.getWorkbench().getActivitySupport();
-				IIdentifier identifier =
-					workbenchActivitySupport
-						.getActivityManager()
-						.getIdentifier(
-						createUnifiedId(contribution));
-				if (!identifier.isEnabled())
-					return true;
-
-			}
+			IWorkbenchActivitySupport workbenchActivitySupport =
+			PlatformUI.getWorkbench().getActivitySupport();
+			IIdentifier identifier =
+				workbenchActivitySupport
+					.getActivityManager()
+					.getIdentifier(
+					createUnifiedId(contribution));
+			if (!identifier.isEnabled())
+				return true;
 		}
 		return false;
 	}
