@@ -205,9 +205,12 @@ public class SessionTestRunner {
 	 * @return a status object indicating the outcome 
 	 */
 	private IStatus launch(Setup setup) {
+		// to prevent changes in the protocol from breaking us, 
+		// force the version we know we can work with 
+		setup.setEclipseArgument("version", "3");
 		if (SetupManager.inDebugMode()) {
 			System.out.print("Command line: ");
-			System.out.println(setup);
+			System.out.println(setup.toCommandLineString());
 		}
 		IStatus outcome = Status.OK_STATUS;
 		try {
