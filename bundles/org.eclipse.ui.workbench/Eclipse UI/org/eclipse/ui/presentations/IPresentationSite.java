@@ -59,7 +59,7 @@ public interface IPresentationSite {
 	 * @param keyboard true iff the drag was initiated via mouse dragging,
 	 * and false if the drag may be using the keyboard	 
 	 */
-	public void dragStart(boolean keyboard);
+	public void dragStart(Point initialPosition, boolean keyboard);
 
 	/**
 	 * Returns true iff this site will allow the given part to be closed
