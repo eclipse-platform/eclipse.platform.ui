@@ -215,6 +215,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
+			DebugPlugin.log(exception);
 		}
 
 		/**
