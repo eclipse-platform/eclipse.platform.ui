@@ -8,6 +8,7 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -64,7 +65,6 @@ import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
-import org.eclipse.ui.externaltools.internal.model.ToolMessages;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
 import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
@@ -298,7 +298,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		topLevel.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Label description = new Label(topLevel, SWT.WRAP);
-		description.setText(ToolMessages.getString("BuilderPropertyPage.description")); //$NON-NLS-1$
+		description.setText(ExternalToolsUIMessages.getString("BuilderPropertyPage.description")); //$NON-NLS-1$
 		description.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		description.setFont(font);
 
@@ -330,13 +330,13 @@ public final class BuilderPropertyPage extends PropertyPage {
 		buttonArea.setLayout(layout);
 		buttonArea.setFont(font);
 		buttonArea.setLayoutData(new GridData(GridData.FILL_VERTICAL));
-		newButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.newButton")); //$NON-NLS-1$
+		newButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.newButton")); //$NON-NLS-1$
 		copyButton = createButton(buttonArea, "&Copy...");
-		editButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.editButton")); //$NON-NLS-1$
-		removeButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.removeButton")); //$NON-NLS-1$
+		editButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.editButton")); //$NON-NLS-1$
+		removeButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.removeButton")); //$NON-NLS-1$
 		new Label(buttonArea, SWT.LEFT);
-		upButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.upButton")); //$NON-NLS-1$
-		downButton = createButton(buttonArea, ToolMessages.getString("BuilderPropertyPage.downButton")); //$NON-NLS-1$
+		upButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.upButton")); //$NON-NLS-1$
+		downButton = createButton(buttonArea, ExternalToolsUIMessages.getString("BuilderPropertyPage.downButton")); //$NON-NLS-1$
 
 		newButton.setEnabled(true);
 		copyButton.setEnabled(true);
@@ -736,10 +736,10 @@ public final class BuilderPropertyPage extends PropertyPage {
 		if (e instanceof CoreException) {
 			status = ((CoreException) e).getStatus();
 		} else {
-			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, ToolMessages.getString("BuilderPropertyPage.statusMessage"), e); //$NON-NLS-1$
+			status = new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsUIMessages.getString("BuilderPropertyPage.statusMessage"), e); //$NON-NLS-1$
 		}
-		ErrorDialog.openError(getShell(), ToolMessages.getString("BuilderPropertyPage.errorTitle"), //$NON-NLS-1$
-				ToolMessages.getString("BuilderPropertyPage.errorMessage"), //$NON-NLS-1$
+		ErrorDialog.openError(getShell(), ExternalToolsUIMessages.getString("BuilderPropertyPage.errorTitle"), //$NON-NLS-1$
+				ExternalToolsUIMessages.getString("BuilderPropertyPage.errorMessage"), //$NON-NLS-1$
 				status);
 	}
 
@@ -907,7 +907,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		if (builderID.equals(ExternalToolBuilder.ID)) {
 			ILaunchConfiguration config = ExternalToolsUtil.configFromBuildCommandArgs(command.getArguments());
 			if (config == null) {
-				item.setText(ToolMessages.getString("BuilderPropertyPage.invalidBuildTool")); //$NON-NLS-1$
+				item.setText(ExternalToolsUIMessages.getString("BuilderPropertyPage.invalidBuildTool")); //$NON-NLS-1$
 				item.setImage(invalidBuildToolImage);
 				return;
 			}
@@ -923,10 +923,11 @@ public final class BuilderPropertyPage extends PropertyPage {
 			// Get the human-readable name of the builder
 			IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderID);
 			String builderName;
-			if (extension != null)
+			if (extension != null) {
 				builderName = extension.getLabel();
-			else
-				builderName = ToolMessages.format("BuilderPropertyPage.missingBuilder", new Object[] { builderID }); //$NON-NLS-1$
+			} else {
+				builderName = MessageFormat.format(ExternalToolsUIMessages.getString("BuilderPropertyPage.missingBuilder"), new Object[] { builderID }); //$NON-NLS-1$
+			}
 			item.setText(builderName);
 			item.setImage(builderImage);
 		}

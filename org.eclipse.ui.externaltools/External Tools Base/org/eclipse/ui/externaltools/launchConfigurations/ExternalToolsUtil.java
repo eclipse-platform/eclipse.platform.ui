@@ -92,7 +92,7 @@ public class ExternalToolsUtil {
 		if (location == null) {
 			abort(MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Location_not_specified_by_{0}_1"), new String[] { configuration.getName()}), null, 0); //$NON-NLS-1$
 		} else {
-			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ToolMessages.getString("RunExternalToolAction.runProblem"), null); //$NON-NLS-1$;
+			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.runProblem"), null); //$NON-NLS-1$;
 			String expandedLocation = ToolUtil.expandFileLocation(location, context, status);
 			if (status.isOK()) {
 				if (expandedLocation == null || expandedLocation.length() == 0) {
@@ -134,7 +134,7 @@ public class ExternalToolsUtil {
 	public static IPath getWorkingDirectory(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
 		String location = configuration.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) null);
 		if (location != null) {
-			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ToolMessages.getString("RunExternalToolAction.runProblem"), null); //$NON-NLS-1$;
+			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.runProblem"), null); //$NON-NLS-1$;
 			String expandedLocation = ToolUtil.expandDirectoryLocation(location, context, status);
 			if (status.isOK()) {
 				if (expandedLocation != null && expandedLocation.length() > 0) {
@@ -168,7 +168,7 @@ public class ExternalToolsUtil {
 	public static String[] getArguments(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
 		String args = configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null);
 		if (args != null) {
-			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ToolMessages.getString("RunExternalToolAction.runProblem"), null); //$NON-NLS-1$;
+			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.runProblem"), null); //$NON-NLS-1$;
 			String[] expandedArgs = ToolUtil.expandArguments(args, context, status);
 			if (status.isOK()) {
 				return expandedArgs;
