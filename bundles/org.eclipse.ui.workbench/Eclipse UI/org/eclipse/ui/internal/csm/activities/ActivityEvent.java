@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.csm.activities;
 
-import org.eclipse.ui.internal.csm.activities.api.IActivity;
-import org.eclipse.ui.internal.csm.activities.api.IActivityEvent;
+import org.eclipse.ui.activities.IActivity;
+import org.eclipse.ui.activities.IActivityEvent;
 
 final class ActivityEvent implements IActivityEvent {
 

@@ -27,10 +27,10 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.csm.roles.api.IRole;
-import org.eclipse.ui.internal.csm.roles.api.IRoleManager;
-import org.eclipse.ui.internal.csm.roles.api.IRoleManagerEvent;
-import org.eclipse.ui.internal.csm.roles.api.IRoleManagerListener;
+import org.eclipse.ui.roles.IRole;
+import org.eclipse.ui.roles.IRoleManager;
+import org.eclipse.ui.roles.IRoleManagerEvent;
+import org.eclipse.ui.roles.IRoleManagerListener;
 import org.eclipse.ui.internal.util.Util;
 
 public final class RoleManager implements IRoleManager {

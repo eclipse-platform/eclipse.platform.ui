@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles.api;
+package org.eclipse.ui.roles;
 
 import java.util.Set;
 
@@ -21,8 +21,8 @@ import java.util.Set;
  * </p>
  * <p>
  * An instance of <code>IRole</code> can be obtained from an instance of 
- * <code>IRoleManager</code> for any identifier, whether or not the role 
- * represented by this handle is defined in the plugin registry.
+ * <code>IRoleManager</code> for any identifier, whether or not a role 
+ * with that identifier is defined in the plugin registry.
  * </p>
  * <p>
  * The handle-based nature of this API allows it to work well with runtime 
@@ -38,6 +38,7 @@ import java.util.Set;
  * </p>
  * 
  * @since 3.0
+ * @see IActivityBinding
  * @see IRoleListener
  * @see IRoleManager
  */

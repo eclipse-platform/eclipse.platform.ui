@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles.api;
+package org.eclipse.ui.roles;
 
 import org.eclipse.ui.internal.csm.roles.RoleManager;
 

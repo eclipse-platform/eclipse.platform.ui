@@ -9,38 +9,30 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.activities.api;
+package org.eclipse.ui.roles;
 
 /**
  * <p>
- * Signals that an attempt was made to access the attributes of an undefined
- * activity.
+ * An instance of <code>IActivityBinding</code> represents a binding between a 
+ * role and an activity.
  * </p>
  * <p>
- * This class is not intended to be extended by clients.
- * </p> 
+ * This interface is not intended to be extended or implemented by clients.
+ * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
+ * @see org.eclipse.ui.roles.IRole
  */
-public class ActivityNotDefinedException extends Exception {
+public interface IActivityBinding extends Comparable {
 
 	/**
-	 * Constructs a <code>ActivityNotDefinedException</code> with no specified 
-	 * detail message. 
+	 * Returns the identifier of the activity represented in this binding.
+	 * 
+	 * @return the identifier of the activity. Guaranteed not to be 
+	 *         <code>null</code>.
 	 */	
-	public ActivityNotDefinedException() {
-	}
-
-	/**
-	 * Constructs a <code>ActivityNotDefinedException</code> with the specified 
-	 * detail message. 
-	 *
-	 * @param s	the detail message.
-	 */	
-	public ActivityNotDefinedException(String s) {
-		super(s);
-	}
+	String getActivityId();
 }

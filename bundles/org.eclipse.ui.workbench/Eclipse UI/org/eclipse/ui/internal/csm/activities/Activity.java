@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.eclipse.ui.internal.csm.activities.api.ActivityNotDefinedException;
-import org.eclipse.ui.internal.csm.activities.api.IActivity;
-import org.eclipse.ui.internal.csm.activities.api.IActivityEvent;
-import org.eclipse.ui.internal.csm.activities.api.IActivityListener;
+import org.eclipse.ui.activities.ActivityNotDefinedException;
+import org.eclipse.ui.activities.IActivity;
+import org.eclipse.ui.activities.IActivityEvent;
+import org.eclipse.ui.activities.IActivityListener;
 import org.eclipse.ui.internal.util.Util;
 
 final class Activity implements IActivity {

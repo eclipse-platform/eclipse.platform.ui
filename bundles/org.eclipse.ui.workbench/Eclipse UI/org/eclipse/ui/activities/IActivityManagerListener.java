@@ -9,13 +9,13 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles.api;
+package org.eclipse.ui.activities;
 
 /**
  * <p>
- * An instance of <code>IRoleManagerListener</code> can be used by clients 
+ * An instance of <code>IActivityManagerListener</code> can be used by clients 
  * to receive notification of changes to one or more instances of 
- * <code>IRoleManager</code>.
+ * <code>IActivityManager</code>.
  * </p>
  * <p>
  * This interface may be implemented by clients.
@@ -25,19 +25,19 @@ package org.eclipse.ui.internal.csm.roles.api;
  * </p>
  * 
  * @since 3.0
- * @see IRoleManager#addRoleManagerListener
- * @see IRoleManager#removeRoleManagerListener
- * @see IRoleManagerEvent
+ * @see IActivityManager#addActivityManagerListener
+ * @see IActivityManager#removeActivityManagerListener
+ * @see IActivityManagerEvent
  */
-public interface IRoleManagerListener {
+public interface IActivityManagerListener {
 
 	/**
 	 * Notifies that one or more attributes of an instance of 
-	 * <code>IRoleManager</code> have changed. Specific details are 
-	 * described in the <code>IRoleManagerEvent</code>.
+	 * <code>IActivityManager</code> have changed. Specific details are 
+	 * described in the <code>IActivityManagerEvent</code>.
 	 *
-	 * @param roleManagerEvent the role manager event. Guaranteed not to be 
-	 *                         <code>null</code>.
+	 * @param activityManagerEvent the activity manager event. Guaranteed not to 
+	 * 							   be <code>null</code>.
 	 */
-	void roleManagerChanged(IRoleManagerEvent roleManagerEvent);
+	void activityManagerChanged(IActivityManagerEvent activityManagerEvent);
 }

@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.csm.roles;
 
-import org.eclipse.ui.internal.csm.roles.api.IRole;
-import org.eclipse.ui.internal.csm.roles.api.IRoleEvent;
+import org.eclipse.ui.roles.IRole;
+import org.eclipse.ui.roles.IRoleEvent;
 
 final class RoleEvent implements IRoleEvent {
 

@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.activities.api;
+package org.eclipse.ui.activities;
 
 /**
  * <p>
- * An instance of <code>IPatternBinding</code> represents a binding between
- * an activity and a pattern.
+ * An instance of <code>IPatternBinding</code> represents a binding between an
+ * activity and a pattern.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.activities.api;
+package org.eclipse.ui.activities;
 
 import org.eclipse.ui.internal.csm.activities.ActivityManager;
 

@@ -27,10 +27,10 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.csm.activities.api.IActivity;
-import org.eclipse.ui.internal.csm.activities.api.IActivityManager;
-import org.eclipse.ui.internal.csm.activities.api.IActivityManagerEvent;
-import org.eclipse.ui.internal.csm.activities.api.IActivityManagerListener;
+import org.eclipse.ui.activities.IActivity;
+import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IActivityManagerEvent;
+import org.eclipse.ui.activities.IActivityManagerListener;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ActivityManager implements IActivityManager {
@@ -118,6 +118,11 @@ public final class ActivityManager implements IActivityManager {
 		return Collections.unmodifiableSortedSet(definedActivityIds);
 	}
 
+	public Set getEnabledActivityIds() {
+		// TODO
+		return Collections.unmodifiableSet(activeActivityIds);
+	}	
+	
 	public void removeActivityManagerListener(IActivityManagerListener activityManagerListener) {
 		if (activityManagerListener == null)
 			throw new NullPointerException();
@@ -143,6 +148,26 @@ public final class ActivityManager implements IActivityManager {
 		if (updatedActivityIds != null)
 			notifyActivitys(updatedActivityIds);	
 	}
+	
+	public void setEnabledActivityIds(Set activeActivityIds) {
+		// TODO
+		
+		activeActivityIds = Util.safeCopy(activeActivityIds, String.class);
+		boolean activityManagerChanged = false;
+		SortedSet updatedActivityIds = null;
+
+		if (!this.activeActivityIds.equals(activeActivityIds)) {
+			this.activeActivityIds = activeActivityIds;
+			activityManagerChanged = true;	
+			updatedActivityIds = updateActivitys(this.definedActivityIds);	
+		}
+		
+		if (activityManagerChanged)
+			fireActivityManagerChanged();
+
+		if (updatedActivityIds != null)
+			notifyActivitys(updatedActivityIds);	
+	}	
 
 	// TODO private
 	public IActivityRegistry getPluginActivityRegistry() {

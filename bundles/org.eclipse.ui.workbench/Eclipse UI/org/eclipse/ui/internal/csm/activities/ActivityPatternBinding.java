@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.csm.activities;
 
-import org.eclipse.ui.internal.csm.activities.api.IPatternBinding;
+import org.eclipse.ui.activities.IPatternBinding;
 
 final class ActivityPatternBinding implements IPatternBinding {
 

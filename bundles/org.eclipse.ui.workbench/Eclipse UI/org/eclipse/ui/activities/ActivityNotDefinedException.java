@@ -9,12 +9,12 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles.api;
+package org.eclipse.ui.activities;
 
 /**
  * <p>
  * Signals that an attempt was made to access the attributes of an undefined
- * role.
+ * activity.
  * </p>
  * <p>
  * This class is not intended to be extended by clients.
@@ -25,22 +25,22 @@ package org.eclipse.ui.internal.csm.roles.api;
  * 
  * @since 3.0
  */
-public final class RoleNotDefinedException extends Exception {
+public class ActivityNotDefinedException extends Exception {
 
 	/**
-	 * Constructs a <code>RoleNotDefinedException</code> with no specified 
+	 * Constructs a <code>ActivityNotDefinedException</code> with no specified 
 	 * detail message. 
 	 */	
-	public RoleNotDefinedException() {
+	public ActivityNotDefinedException() {
 	}
 
 	/**
-	 * Constructs a <code>RoleNotDefinedException</code> with the specified 
+	 * Constructs a <code>ActivityNotDefinedException</code> with the specified 
 	 * detail message. 
 	 *
 	 * @param s	the detail message.
 	 */	
-	public RoleNotDefinedException(String s) {
+	public ActivityNotDefinedException(String s) {
 		super(s);
 	}
 }

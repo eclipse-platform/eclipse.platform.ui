@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.activities.api;
+package org.eclipse.ui.activities;
 
 import java.util.Set;
 
@@ -21,8 +21,8 @@ import java.util.Set;
  * </p>
  * <p>
  * An instance of <code>IActivity</code> can be obtained from an instance of 
- * <code>IActivityManager</code> for any identifier, whether or not the 
- * activity represented by this handle is defined in the plugin registry.
+ * <code>IActivityManager</code> for any identifier, whether or not an 
+ * activity with that identifier defined in the plugin registry.
  * </p>
  * <p>
  * The handle-based nature of this API allows it to work well with runtime 
@@ -40,6 +40,7 @@ import java.util.Set;
  * @since 3.0
  * @see IActivityListener
  * @see IActivityManager
+ * @see IPatternBinding
  */
 public interface IActivity extends Comparable {
 

@@ -9,18 +9,18 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles.api;
+package org.eclipse.ui.activities;
 
 /**
  * <p>
- * An instance of <code>IRoleManagerEvent</code> describes changes to an 
- * instance of <code>IRoleManager</code>. 
+ * An instance of <code>IActivityEvent</code> describes changes to an instance 
+ * of <code>IActivity</code>. 
  * </p>
  * <p>
- * An instance of <code>IRoleManagerEvent</code> specifies the instance of 
- * <code>IRoleManager</code> that changed, but otherwise does not specify the 
+ * An instance of <code>IActivityEvent</code> specifies the instance of 
+ * <code>IActivity</code> that changed, but otherwise does not specify the 
  * nature of that change. Clients can only assume that one or more attributes of 
- * the particular instance of <code>IRoleManager</code> have changed. In the 
+ * the particular instance of <code>IActivity</code> have changed. In the 
  * future, this interface may be extended to be more specific about the nature 
  * of the change.
  * </p>
@@ -32,16 +32,16 @@ package org.eclipse.ui.internal.csm.roles.api;
  * </p>
  * 
  * @since 3.0
- * @see IRoleManager
- * @see IRoleManagerListener#roleManagerChanged
+ * @see IActivity
+ * @see IActivityListener#activityChanged
  */
-public interface IRoleManagerEvent {
+public interface IActivityEvent {
 
 	/**
-	 * Returns the instance of <code>IRoleManager</code> that has changed.
+	 * Returns the instance of <code>IActivity</code> that has changed.
 	 *
-	 * @return the instance of <code>IRoleManager</code> that has changed. 
+	 * @return the instance of <code>IActivity</code> that has changed. 
 	 *         Guaranteed not to be <code>null</code>.
 	 */
-	IRoleManager getRoleManager();
+	IActivity getActivity();
 }

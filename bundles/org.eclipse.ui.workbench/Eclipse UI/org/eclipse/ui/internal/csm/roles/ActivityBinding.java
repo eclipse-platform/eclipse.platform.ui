@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.internal.csm.roles;
 
-import org.eclipse.ui.internal.csm.roles.api.IActivityBinding;
+import org.eclipse.ui.roles.IActivityBinding;
 
 final class ActivityBinding implements IActivityBinding {
 
