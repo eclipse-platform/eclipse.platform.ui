@@ -37,17 +37,30 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public final class TextEditorPlugin extends AbstractUIPlugin {
 
+	/** The plugin instance */
 	private static TextEditorPlugin fgPlugin;
 	
+	/** The last edit position */
 	private EditPosition fLastEditPosition;
+	/** The action which goes to the last edit position */
 	private Set fLastEditPositionDependentActions;
 
+	/**
+	 * Creates a plug-in instance.
+	 * 
+	 * @param descriptor the plug-in descriptor
+	 */
 	public TextEditorPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
 		Assert.isTrue(fgPlugin == null);
 		fgPlugin= this;
 	}
 
+	/**
+	 * Returns the plug-in instance.
+	 * 
+	 * @return the text editor plug-in instance
+	 */
 	public static TextEditorPlugin getDefault() {
 		return fgPlugin;
 	}
@@ -67,6 +80,12 @@ public final class TextEditorPlugin extends AbstractUIPlugin {
 		return fLastEditPosition;
 	}
 
+	/**
+	 * Sets the last edit position.
+	 *
+	 * @param lastEditPosition	the last edit position
+	 * @see EditPosition
+	 */
 	public void setLastEditPosition(EditPosition lastEditPosition) {
 		fLastEditPosition= lastEditPosition;
 		if (fLastEditPosition != null && fLastEditPositionDependentActions != null) {
@@ -77,6 +96,11 @@ public final class TextEditorPlugin extends AbstractUIPlugin {
 		}
 	}
 	
+	/**
+	 * Adds the given action to the last edit position dependent actions.
+	 * 
+	 * @param action the goto last edit position action
+	 */
 	void addLastEditPositionDependentAction(IAction action) {
 		if (fLastEditPosition != null)
 			return;
@@ -85,6 +109,11 @@ public final class TextEditorPlugin extends AbstractUIPlugin {
 		fLastEditPositionDependentActions.add(action);
 	}
 
+	/**
+	 * Removes the given action from the last edit position dependent actions.
+	 * 
+	 * @param action the action that depends on the last edit position
+	 */
 	void removeLastEditPositionDependentAction(IAction action) {
 		if (fLastEditPosition != null)
 			return;

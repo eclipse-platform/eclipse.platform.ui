@@ -23,11 +23,23 @@ import org.eclipse.ui.IEditorInput;
  */
 public final class EditPosition {
 
+	/** The editor input */
 	private final IEditorInput fEditorInput;
+	/** The editor ID */
 	private final String fEditorId;
+	/** The selection */
 	private final ISelection fSelection;
+	/** The position */
 	private final Position fPosition;
 	
+	/**
+	 * Creates a new edit position.
+	 * 
+	 * @param editorInput the editor input
+	 * @param editorId the editor ID
+	 * @param selection the selection
+	 * @param pos the position
+	 */
 	public EditPosition(IEditorInput editorInput, String editorId, ISelection selection, Position pos) {
 		Assert.isNotNull(editorInput);
 		Assert.isNotNull(editorId);
@@ -64,6 +76,11 @@ public final class EditPosition {
 		return fSelection;
 	}
 
+	/**
+	 * Returns the the position.
+	 * 
+	 * @return the position
+	 */
 	Position getPosition() {
 		return fPosition;
 	}

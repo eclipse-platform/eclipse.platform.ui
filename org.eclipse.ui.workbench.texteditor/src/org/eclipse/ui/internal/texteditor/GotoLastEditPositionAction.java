@@ -49,9 +49,14 @@ import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
  */
 public class GotoLastEditPositionAction extends Action implements IWorkbenchWindowActionDelegate {
 
+	/** The worbench window */
 	private IWorkbenchWindow fWindow;
+	/** The action */
 	private IAction fAction;
 
+	/**
+	 * Creates a goto last edit action.
+	 */
 	public GotoLastEditPositionAction() {
 		WorkbenchHelp.setHelp(this, IAbstractTextEditorHelpContextIds.GOTO_LAST_EDIT_POSITION_ACTION);
 		setId(ITextEditorActionDefinitionIds.GOTO_LAST_EDIT_POSITION);
@@ -59,14 +64,23 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 		setEnabled(false);
 	}
 
+	/*
+	 * @see IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
+	 */
 	public void init(IWorkbenchWindow window) {
 		fWindow= window;
 	}
 
+	/*
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
+	 */
 	public void run(IAction action) {
 		run();
 	}
 
+	/*
+	 * @see IAction#run()
+	 */
 	public void run() {
 		EditPosition editPosition= TextEditorPlugin.getDefault().getLastEditPosition();
 		if (editPosition == null)
@@ -138,6 +152,9 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 		}
 	}
 
+	/*
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		boolean enabled= TextEditorPlugin.getDefault().getLastEditPosition() != null;
 		setEnabled(enabled);
@@ -152,12 +169,20 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 		}
 	}
 
+	/**
+	 * Returns the workbench window.
+	 * 
+	 * @return the workbench window
+	 */
 	private IWorkbenchWindow getWindow() {
 		if (fWindow == null)
 			fWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		return fWindow;
 	}
 
+	/*
+	 * @see IWorkbenchWindowActionDelegate#dispose()
+	 */
 	public void dispose() {
 		fWindow= null;
 		TextEditorPlugin.getDefault().removeLastEditPositionDependentAction(fAction);
