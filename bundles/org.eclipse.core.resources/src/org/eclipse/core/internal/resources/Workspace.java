@@ -1821,6 +1821,10 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 		result = getTeamHook().validateCreateLink((IFolder)resource, IResource.NONE, location);
 	if (!result.isOK())
 		return result;
+	if (location.isEmpty()) {
+		message = Policy.bind("links.noPath");//$NON-NLS-1$
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
+	}
 	//check the standard path name restrictions
 	int segmentCount = location.segmentCount();
 	for (int i = 0; i < segmentCount; i++) {
@@ -1841,10 +1845,6 @@ public IStatus validateLinkLocation(IResource resource, IPath unresolvedLocation
 	testLocation = resource.getProject().getLocation();
 	if (isOverlapping(location, testLocation)) {
 		message = Policy.bind("links.locationOverlapsProject", location.toOSString()); //$NON-NLS-1$
-		return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
-	}
-	if (location.isEmpty()) {
-		message = Policy.bind("links.noPath");//$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 	}
 	//warnings (all errors must be checked before all warnings)
