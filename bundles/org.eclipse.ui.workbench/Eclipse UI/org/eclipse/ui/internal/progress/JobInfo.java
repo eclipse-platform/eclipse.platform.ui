@@ -23,7 +23,6 @@ class JobInfo extends JobTreeElement {
 	private ArrayList children = new ArrayList();
 	private Job job;
 	private TaskInfo taskInfo;
-	private IStatus errorStatus;
 	private IStatus blockedStatus;
 	private boolean canceled = false;
 
@@ -34,15 +33,6 @@ class JobInfo extends JobTreeElement {
 	 */
 	Job getJob() {
 		return job;
-	}
-
-	/**
-	 * Return the current status of the receiver. If there is
-	 * no error return null.
-	 * @return IStatus or <code>null</code>
-	 */
-	IStatus getErrorStatus() {
-		return errorStatus;
 	}
 
 	/**
@@ -97,9 +87,6 @@ class JobInfo extends JobTreeElement {
 			return ProgressMessages.format("JobInfo.Blocked", //$NON-NLS-1$
 				new Object[] { getJob().getName(), blockedStatus.getMessage()});
 		
-		if (errorStatus != null)
-			return ProgressMessages.format("JobInfo.Error", //$NON-NLS-1$
-			new Object[] { getJob().getName(), errorStatus.getMessage()});
 
 		if (getJob().getState() == Job.RUNNING) {
 			if (taskInfo == null)
@@ -167,13 +154,6 @@ class JobInfo extends JobTreeElement {
 	 */
 	Object getParent() {
 		return null;
-	}
-
-	/**
-	 * Set the status to error.
-	 */
-	void setError(IStatus status) {
-		errorStatus = status;
 	}
 
 	/* (non-Javadoc)

@@ -10,26 +10,51 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
+import org.eclipse.core.runtime.jobs.ProgressProvider;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.Workbench;
+
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.progress.WorkbenchJob;
+
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
-import org.eclipse.ui.progress.*;
 
 /**
  * JobProgressManager provides the progress monitor to the job manager and
@@ -41,6 +66,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	private Map jobs = Collections.synchronizedMap(new HashMap());
 	private Collection listeners = Collections.synchronizedList(new ArrayList());
 	Object listenerKey = new Object();
+	ErrorNotificationManager errorManager = new ErrorNotificationManager();
 	private WorkbenchMonitorProvider monitorProvider;
 	private ProgressFeedbackManager feedbackManager = new ProgressFeedbackManager();
 	IJobChangeListener changeListener;
@@ -56,7 +82,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 	private static final String SLEEPING_JOB = "sleeping.gif"; //$NON-NLS-1$
 	private static final String WAITING_JOB = "waiting.gif"; //$NON-NLS-1$
-	private static final String ERROR_JOB = "errorstate.gif"; //$NON-NLS-1$
 	private static final String BLOCKED_JOB = "lockedstate.gif"; //$NON-NLS-1$
 
 	private static final String PROGRESS_20_KEY = "PROGRESS_20"; //$NON-NLS-1$
@@ -67,7 +92,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 	private static final String SLEEPING_JOB_KEY = "SLEEPING_JOB"; //$NON-NLS-1$
 	private static final String WAITING_JOB_KEY = "WAITING_JOB"; //$NON-NLS-1$
-	private static final String ERROR_JOB_KEY = "ERROR_JOB"; //$NON-NLS-1$
 	private static final String BLOCKED_JOB_KEY = "LOCKED_JOB"; //$NON-NLS-1$
 
 	//A list of keys for looking up the images in the image registry
@@ -312,8 +336,10 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 			setUpImage(iconsRoot, SLEEPING_JOB, SLEEPING_JOB_KEY);
 			setUpImage(iconsRoot, WAITING_JOB, WAITING_JOB_KEY);
-			setUpImage(iconsRoot, ERROR_JOB, ERROR_JOB_KEY);
 			setUpImage(iconsRoot, BLOCKED_JOB, BLOCKED_JOB_KEY);
+			
+			//Let the error manager set up its own icons
+			errorManager.setUpImages(iconsRoot);
 
 		} catch (MalformedURLException e) {
 			ProgressManagerUtil.logException(e);
@@ -349,33 +375,10 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 						return;
 					JobInfo info = getJobInfo(event.getJob());
 					if (event.getResult().getSeverity() == IStatus.ERROR) {
-						info.setError(event.getResult());
-							WorkbenchJob job = new WorkbenchJob(ProgressMessages.getString("JobProgressManager.OpenProgressJob")) {//$NON-NLS-1$
-							/*
-							 * (non-Javadoc)
-							 * 
-							 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-							 */
-							public IStatus runInUIThread(IProgressMonitor monitor) {
-	
-								IWorkbench workbench = PlatformUI.getWorkbench();
-	
-								//Abort on shutdown
-								if (workbench instanceof Workbench && ((Workbench) workbench).isClosing())
-									return Status.CANCEL_STATUS;
-								IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
-	
-								if (window == null)
-									return Status.CANCEL_STATUS;
-								ProgressManagerUtil.openProgressView(window);
-								return Status.OK_STATUS;
-							}
-						};
-						job.schedule();
-						refresh(info);
-	
-					} else {
-						jobs.remove(event.getJob());
+						errorManager.addError(event.getResult(),event.getJob().getName());	
+					} 
+					
+					jobs.remove(event.getJob());
 						//Only refresh if we are showing it
 						remove(info);
 	
@@ -383,7 +386,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 						if (hasNoRegularJobInfos() 
 								&& !isNonDisplayableJob(event.getJob(),false))
 							refreshAll();
-					}
+					
 				}
 				
 				/*
@@ -657,52 +660,10 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 */
 	void clearJob(Job job) {
 		JobInfo info = (JobInfo) jobs.get(job);
-		if (info != null && info.getErrorStatus() != null) {
+		if (info != null) {
 			jobs.remove(job);
 			remove(info);
 		}
-	}
-
-	/**
-	 * Clear all of the errors from the list.
-	 */
-	void clearAllErrors() {
-		Collection jobsToDelete = new ArrayList();
-		synchronized (jobs) {
-			Iterator keySet = jobs.keySet().iterator();
-			while (keySet.hasNext()) {
-				Object job = keySet.next();
-				JobInfo info = (JobInfo) jobs.get(job);
-				if (info.getErrorStatus() != null)
-					jobsToDelete.add(job);
-			}
-		}
-
-		Iterator deleteSet = jobsToDelete.iterator();
-		while (deleteSet.hasNext()) {
-			jobs.remove(deleteSet.next());
-		}
-		refreshAll();
-	}
-
-	/**
-	 * Return whether or not there are any errors displayed.
-	 * 
-	 * @return
-	 */
-	boolean hasErrorsDisplayed() {
-
-		synchronized (jobs) {
-			Iterator keySet = jobs.keySet().iterator();
-			while (keySet.hasNext()) {
-				Object job = keySet.next();
-				JobInfo info = (JobInfo) jobs.get(job);
-				if (info.getErrorStatus() != null)
-					return true;
-			}
-		}
-
-		return false;
 	}
 
 	/**
@@ -757,8 +718,6 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			} else {
 				if (info.isBlocked())
 					return JFaceResources.getImage(BLOCKED_JOB_KEY);
-				if (info.getErrorStatus() != null)
-					return JFaceResources.getImage(ERROR_JOB_KEY);
 				int state = info.getJob().getState();
 				if (state == Job.SLEEPING)
 					return JFaceResources.getImage(SLEEPING_JOB_KEY);
