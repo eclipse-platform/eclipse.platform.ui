@@ -251,13 +251,6 @@ public interface IExternalToolConstants {
 	 * external tool when run. Default value is <code>true</code>.
 	 */
 	public static final String ATTR_CAPTURE_OUTPUT = PLUGIN_ID + ".ATTR_CAPTURE_OUTPUT"; //$NON-NLS-1$
-
-	/**
-	 * String attribute corresponding to the perspective identifier of the
-	 * perspective to display when an external tool is run. Default value is
-	 * <code>null</code>, indicating no perspective changes.
-	 */
-	public static final String ATTR_RUN_PERSPECTIVE_ID = PLUGIN_ID + ".ATTR_RUN_PERSPECTIVE_ID"; //$NON-NLS-1$
 	
 	/**
 	 * Boolean attribute indicating whether an external tool should be placed
