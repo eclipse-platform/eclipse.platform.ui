@@ -28,3 +28,13 @@ org.eclipse.core.resources/natures=false
 
 # Report history store debugging.
 org.eclipse.core.resources/history=false
+
+# Report timings for restoring the workspace state
+org.eclipse.core.resources/restore=false
+org.eclipse.core.resources/restore/markers=false
+org.eclipse.core.resources/restore/syncinfo=false
+org.eclipse.core.resources/restore/tree=false
+org.eclipse.core.resources/restore/metainfo=false
+org.eclipse.core.resources/restore/snapshots=false
+org.eclipse.core.resources/restore/mastertable=false
+

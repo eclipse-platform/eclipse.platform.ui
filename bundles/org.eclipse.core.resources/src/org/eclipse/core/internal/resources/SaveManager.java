@@ -421,6 +421,9 @@ public void requestSnapshot() {
  * an exception if the project could not be restored.
  */
 protected void restore(Project project, IProgressMonitor monitor) throws CoreException {
+	if (Policy.DEBUG_RESTORE)
+		System.out.println("Restore project " + project.getFullPath() + ": starting..."); //$NON-NLS-1$ //$NON-NLS-2$
+	long start = System.currentTimeMillis();
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(null, 40);
@@ -436,12 +439,17 @@ protected void restore(Project project, IProgressMonitor monitor) throws CoreExc
 	} finally {
 		monitor.done();
 	}
+	if (Policy.DEBUG_RESTORE)
+		System.out.println("Restore project " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 }
 /**
  * Restores the state of this workspace by opening the projects
  * which were open when it was last saved.
  */
 protected void restore(IProgressMonitor monitor) throws CoreException {
+	if (Policy.DEBUG_RESTORE)
+		System.out.println("Restore workspace: starting..."); //$NON-NLS-1$
+	long start = System.currentTimeMillis();
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(null, 50);
@@ -482,6 +490,8 @@ protected void restore(IProgressMonitor monitor) throws CoreException {
 	} finally {
 		monitor.done();
 	}
+	if (Policy.DEBUG_RESTORE)
+		System.out.println("Restore workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 }
 /**
  * Reads the markers which were originally saved
@@ -489,6 +499,7 @@ protected void restore(IProgressMonitor monitor) throws CoreException {
  */
 protected void restoreMarkers(IResource resource, boolean generateDeltas, IProgressMonitor monitor) throws CoreException {
 	Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
+	long start = System.currentTimeMillis();
 	MarkerManager markerManager = workspace.getMarkerManager();
 	// when restoring a project, only load markers if it is open
 	if (resource.isAccessible())
@@ -501,8 +512,12 @@ protected void restoreMarkers(IResource resource, boolean generateDeltas, IProgr
 	for (int i = 0; i < projects.length; i++)
 		if (projects[i].isAccessible())
 			markerManager.restore(projects[i], generateDeltas, monitor);
+	if (Policy.DEBUG_RESTORE_MARKERS) {
+		System.out.println("Restore Markers for " + resource.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 }
 protected void restoreMasterTable() throws CoreException {
+	long start = System.currentTimeMillis();
 	masterTable = new Properties();
 	String pluginId = ResourcesPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 	IPath location = workspace.getMetaArea().getSafeTableLocationFor(pluginId);
@@ -524,12 +539,15 @@ protected void restoreMasterTable() throws CoreException {
 		String message = Policy.bind("resources.exMasterTable"); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 	}
+	if (Policy.DEBUG_RESTORE_MASTERTABLE)
+		System.out.println("Restore master table for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 }
 /**
  * Restores the contents of this project.  Throw an exception if the 
  * project description could not be restored.
  */
 protected void restoreMetaInfo(Project project, IProgressMonitor monitor) throws CoreException {
+	long start = System.currentTimeMillis();
 	ProjectDescription description = null;
 	CoreException failure = null;
 	try {
@@ -559,13 +577,18 @@ protected void restoreMetaInfo(Project project, IProgressMonitor monitor) throws
 		project.internalClose();
 		throw failure;
 	}
+	if (Policy.DEBUG_RESTORE_METAINFO)
+		System.out.println("Restore metainfo for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 }
 /**
  * Restores the state of this workspace by opening the projects
  * which were open when it was last saved.
  */
 protected void restoreMetaInfo(Workspace workspace, MultiStatus problems, IProgressMonitor monitor) {
+	if (Policy.DEBUG_RESTORE_METAINFO)
+		System.out.println("Restore workspace metainfo: starting..."); //$NON-NLS-1$
 	// FIXME: read the meta info for the workspace?
+	long start = System.currentTimeMillis();
 	IProject[] roots = workspace.getRoot().getProjects();
 	for (int i = 0; i < roots.length; i++) {
 		//fatal to throw exceptions during startup
@@ -575,6 +598,8 @@ protected void restoreMetaInfo(Workspace workspace, MultiStatus problems, IProgr
 			problems.merge(e.getStatus());
 		}
 	}
+	if (Policy.DEBUG_RESTORE_METAINFO)
+		System.out.println("Restore workspace metainfo: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 }
 /**
  * Restores the workspace tree from snapshot files in the event
@@ -584,6 +609,7 @@ protected void restoreMetaInfo(Workspace workspace, MultiStatus problems, IProgr
  * the next successful save.
  */
 protected void restoreSnapshots(IProgressMonitor monitor) throws CoreException {
+	long start = System.currentTimeMillis();
 	monitor = Policy.monitorFor(monitor);
 	String message;
 	try {
@@ -623,6 +649,8 @@ protected void restoreSnapshots(IProgressMonitor monitor) throws CoreException {
 	} finally {
 		monitor.done();
 	}
+	if (Policy.DEBUG_RESTORE_SNAPSHOTS)
+		System.out.println("Restore snapshots for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 }
 /**
  * Reads the sync info which was originally saved
@@ -630,6 +658,7 @@ protected void restoreSnapshots(IProgressMonitor monitor) throws CoreException {
  */
 protected void restoreSyncInfo(IResource resource, IProgressMonitor monitor) throws CoreException {
 	Assert.isLegal(resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT);
+	long start = System.currentTimeMillis();
 	Synchronizer synchronizer = (Synchronizer) workspace.getSynchronizer();
 	// when restoring a project, only load sync info if it is open
 	if (resource.isAccessible())
@@ -642,6 +671,9 @@ protected void restoreSyncInfo(IResource resource, IProgressMonitor monitor) thr
 	for (int i = 0; i < projects.length; i++)
 		if (projects[i].isAccessible())
 			synchronizer.restore(projects[i], monitor);
+	if (Policy.DEBUG_RESTORE_SYNCINFO) {
+		System.out.println("Restore SyncInfo for " + resource.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 }
 /**
  * Restores the trees for the builders of this project from the local disk.
@@ -652,6 +684,7 @@ protected void restoreSyncInfo(IResource resource, IProgressMonitor monitor) thr
  * @exception if the project could not be restored.
  */
 protected void restoreTree(Project project, IProgressMonitor monitor) throws CoreException {
+	long start = System.currentTimeMillis();
 	monitor = Policy.monitorFor(monitor);
 	String message;
 	try {
@@ -680,6 +713,9 @@ protected void restoreTree(Project project, IProgressMonitor monitor) throws Cor
 	} finally {
 		monitor.done();
 	}
+	if (Policy.DEBUG_RESTORE_TREE) {
+		System.out.println("Restore Tree for " + project.getFullPath() + ": " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	}
 }
 /**
  * Reads the contents of the tree rooted by the given resource from the 
@@ -688,6 +724,7 @@ protected void restoreTree(Project project, IProgressMonitor monitor) throws Cor
  * @exception if the workspace could not be restored.
  */
 protected void restoreTree(Workspace workspace, IProgressMonitor monitor) throws CoreException {
+	long start = System.currentTimeMillis();
 	IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), false);
 	IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
 	if (!treeLocation.toFile().exists() && !tempLocation.toFile().exists()) {
@@ -712,6 +749,9 @@ protected void restoreTree(Workspace workspace, IProgressMonitor monitor) throws
 	} catch (IOException e) {
 		String msg = Policy.bind("resources.readMeta", treeLocation.toOSString()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, treeLocation, msg, e);
+	}
+	if (Policy.DEBUG_RESTORE_TREE) {
+		System.out.println("Restore Tree for workspace: " + (System.currentTimeMillis() - start) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
 protected void saveMasterTable() throws CoreException {
@@ -1225,7 +1265,7 @@ public IStatus save(int kind, Project project, IProgressMonitor monitor) throws 
  * Visit the given resource (to depth infinite) and write out extra information
  * like markers and sync info. To be called during a full save and project save.
  * 
- * This method is ugly. Fix it up and look at merging with #visitAndSnap
+ * FIXME: This method is ugly. Fix it up and look at merging with #visitAndSnap
  */
 public void visitAndSave(IResource root) throws CoreException {
 	// Ensure we have either a project or the workspace root
@@ -1324,7 +1364,7 @@ public void visitAndSave(IResource root) throws CoreException {
  * Visit the given resource (to depth infinite) and write out extra information
  * like markers and sync info. To be called during a snapshot
  * 
- * This method is ugly. Fix it up and look at merging with #visitAndSnap
+ * FIXME: This method is ugly. Fix it up and look at merging with #visitAndSnap
  */
 public void visitAndSnap(IResource root) throws CoreException {
 	// Ensure we have either a project or the workspace root

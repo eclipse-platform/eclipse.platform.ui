@@ -49,6 +49,15 @@ public class Policy {
 
 	public static boolean MONITOR_BUILDERS = false;
 	public static boolean MONITOR_LISTENERS = false;
+	
+	// Get timing information
+	public static boolean DEBUG_RESTORE = false;
+	public static boolean DEBUG_RESTORE_MARKERS = false;
+	public static boolean DEBUG_RESTORE_SYNCINFO = false;
+	public static boolean DEBUG_RESTORE_TREE = false;
+	public static boolean DEBUG_RESTORE_METAINFO = false;
+	public static boolean DEBUG_RESTORE_SNAPSHOTS = false;
+	public static boolean DEBUG_RESTORE_MASTERTABLE = false;
 
 	static {
 		setupAutoBuildProgress(defaultAutoBuild);
@@ -64,6 +73,14 @@ public class Policy {
 
 			MONITOR_BUILDERS = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/monitor/builders")); //$NON-NLS-1$ //$NON-NLS-2$
 			MONITOR_LISTENERS = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/monitor/listeners")); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			DEBUG_RESTORE_MARKERS = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/markers")); //$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_RESTORE_SYNCINFO = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/syncinfo")); //$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_RESTORE_TREE = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/tree")); //$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_RESTORE_METAINFO = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/metainfo")); //$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_RESTORE_SNAPSHOTS = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/snapshots")); //$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_RESTORE_MASTERTABLE = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore/mastertable")); //$NON-NLS-1$ //$NON-NLS-2$
+			DEBUG_RESTORE = "true".equalsIgnoreCase(Platform.getDebugOption(ResourcesPlugin.PI_RESOURCES + "/restore")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 	
