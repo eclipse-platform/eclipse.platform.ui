@@ -69,6 +69,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 	ILogEntry[] editions;
 	TableViewer viewer;
 	Action getRevisionAction;	
+	Action getContentsAction;
 	Shell shell;
 	
 	// Provide the widget for the history table
@@ -220,6 +221,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 		mm.addMenuListener(
 			new IMenuListener() {
 				public void menuAboutToShow(IMenuManager mm) {
+					mm.add(getContentsAction);
 					mm.add(getRevisionAction);
 				}
 			}
@@ -230,10 +232,12 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 				ISelection selection = event.getSelection();
 				if (!(selection instanceof IStructuredSelection)) {
 					getRevisionAction.setEnabled(false);
+					getContentsAction.setEnabled(false);
 					return;
 				}
 				IStructuredSelection ss = (IStructuredSelection)selection;
 				getRevisionAction.setEnabled(ss.size() == 1);
+				getContentsAction.setEnabled(ss.size() == 1);
 			}	
 		});
 		
@@ -295,6 +299,15 @@ public class CVSCompareRevisionsInput extends CompareEditorInput implements ISav
 				left.fireChange();
 				// recompute the labels on the viewer
 				viewer.refresh();
+			}
+		};
+		getContentsAction = new Action(Policy.bind("HistoryView.getContentsAction")) { //$NON-NLS-1$
+			public void run() {
+				try {
+					replaceLocalWithCurrentlySelectedRevision();
+				} catch (CoreException e) {
+					Utils.handle(e);
+				}
 			}
 		};
 	}
