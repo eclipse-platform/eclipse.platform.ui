@@ -71,6 +71,14 @@
    <extension
          point="org.eclipse.help.base.browser">
       <browser
+            factoryclass="org.eclipse.help.ui.internal.browser.embedded.EmbeddedBrowserFactory"
+            name="%embedded_browser"
+            id="org.eclipse.help.ui.embeddedbrowser">
+      </browser>
+   </extension>
+   <extension
+         point="org.eclipse.help.base.browser">
+      <browser
             factoryclass="org.eclipse.help.ui.internal.browser.SystemBrowserFactory"
             name="%system_browser"
             id="org.eclipse.help.ui.systembrowser">
