@@ -50,9 +50,12 @@ public PluginDescriptor() {
  * concatenates start and end.  If end has a '.' construct at the beginning
  * trim off any leading '.' constructs.  Since the libSpec was a path, we
  * know that it was canonicalized and will only have at most one set
- * of '.' constructs at the beginning.
+ * of '.' constructs at the beginning.  Returns <code>null</code> if the 
+ * end is null or starts with '..'.
  */
 private String concat(String start, String end) {
+	if (end == null)
+		return null;
 	if (end.startsWith(".."))
 		// ISSUE: should log an error here
 		// error case.  Can't '..' out of the scope of a plugin.  Signal that this
@@ -294,10 +297,6 @@ private Object[] getPluginClassLoaderPath(boolean eclipseURLs) {
 	// applied to the corresponding loader search path entries
 
 	Properties jarDefinitions = loadJarDefinitions();
-	ArrayList resourcePath = new ArrayList(5);
-	ArrayList resourceFilters = new ArrayList(5);
-	ArrayList codePath = new ArrayList(5);
-	ArrayList codeFilters = new ArrayList(5);
 	// compute the base of the classpath urls.  If <code>eclipseURLs</code> is
 	// true, we should use eclipse: URLs.  Otherwise the native URLs are used.
 	URL install = eclipseURLs ? getInstallURL() : getInstallURLInternal();
@@ -308,22 +307,24 @@ private Object[] getPluginClassLoaderPath(boolean eclipseURLs) {
 	else
 		devBase = execBase;
 
-	// build a list alternating lib spec and export spec
-	ArrayList libSpecs = new ArrayList(5);
 	String[] exportAll = new String[] { "*" };
+	ArrayList[] result = new ArrayList[4];
+	result[0] = new ArrayList();
+	result[1] = new ArrayList();
+	result[2] = new ArrayList();
+	result[3] = new ArrayList();
 
 	// add in any development mode class paths and the export all filter
 	if (DelegatingURLClassLoader.devClassPath != null) {
 		String[] specs = getArrayFromList(DelegatingURLClassLoader.devClassPath);
 		// convert dev class path into url strings
 		for (int j = 0; j < specs.length; j++) {
-			String spec = devBase + specs[j];
+			String spec = specs[j];
 			char lastChar = spec.charAt(spec.length() - 1);
-			if ((spec.endsWith(".jar") || (lastChar == '/' || lastChar == '\\')))
-				libSpecs.add(spec);
-			else
-				libSpecs.add(spec + "/");
-			libSpecs.add(exportAll);
+			// if the spec is not a jar and does not have a trailing slash, add one
+			if (!(spec.endsWith(".jar") || (lastChar == '/' || lastChar == '\\')))
+				spec = spec + "/";
+			resolveAndAddLibrary(devBase, spec, exportAll, ILibrary.CODE, false, result);
 		}
 	}
 
@@ -338,75 +339,101 @@ private Object[] getPluginClassLoaderPath(boolean eclipseURLs) {
 		String[] filters = library.isFullyExported() ? exportAll : library.getContentFilters();
 		// add in the plugin.jars entries
 		String libSpec = library.getPath().toString();
-		libSpec = resolveLibraryPath(libSpec);
 		String jarDefinition = null;
 		if (jarDefinitions != null && libSpec != null) {
 			jarDefinition = jarDefinitions.getProperty(libSpec);
 			String[] specs = getArrayFromList(jarDefinition);
 			// convert jar spec into url strings
-			for (int j = 0; j < specs.length; j++) {
-				libSpecs.add(devBase + specs[j] + "/");
-				libSpecs.add(filters);
-			}
+			for (int j = 0; j < specs.length; j++)
+				resolveAndAddLibrary(devBase, specs[j] + "/", filters, library.getType(), true, result);
 		}
 
-		libSpec = concat(execBase, libSpec);
-		if (libSpec != null) {
-			// if the libspec is NOT considered a directory, treat as a jar
-			if (!libSpec.endsWith("/")) {
-				// if running in VAJ or VAME and there was a plugin.jars definition, ignore the plugin.xml
-				// library entry (assume the plugin.jars entries covered all the bases.  Otherwise, 
-				// convert the plugin.xml entry into a URL.
-				if ((InternalPlatform.inVAJ() || InternalPlatform.inVAME()) && jarDefinition != null) {
-					libSpec = null;
-				} else {
-					if (libSpec.startsWith(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR))
-						libSpec += PlatformURLHandler.JAR_SEPARATOR;
-					else
-						libSpec = PlatformURLHandler.JAR + PlatformURLHandler.PROTOCOL_SEPARATOR + libSpec + PlatformURLHandler.JAR_SEPARATOR;
-				}
-			}
-			// if we still have a libspec, add it to the list of classpath entries
-			if (libSpec != null) {
-				if (library.getType().equals(ILibrary.CODE)) {
-					libSpecs.add(libSpec);
-					libSpecs.add(filters);
-				} else
-					if (library.getType().equals(ILibrary.RESOURCE)) {
-						resourcePath.add(libSpec);
-						resourceFilters.add(filters);
-					}
-			}
-		}
+		resolveAndAddLibrary(execBase, libSpec, filters, library.getType(), jarDefinition != null, result);
 	}
 
+	Object[] array = new Object[4];
+	array[0] = result[0].toArray(new URL[result[0].size()]);
+	array[1] = result[1].toArray(new URLContentFilter[result[1].size()]);
+	array[2] = result[2].toArray(new URL[result[2].size()]);
+	array[3] = result[3].toArray(new URLContentFilter[result[3].size()]);
+	return array;
+}
+
+private boolean resolveAndAddLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+	if (spec.charAt(0) == '$') {
+		IPath path = new Path(spec);
+		String first = path.segment(0);
+		if (first.equalsIgnoreCase("$ws$"))
+			return resolveAndAddWSLibrary(base, spec, filters, type, hasJarSpec, result);
+		if (first.equalsIgnoreCase("$os$"))
+			return resolveAndAddOSLibrary(base, spec, filters, type, hasJarSpec, result);
+		if (first.equalsIgnoreCase("$nl$"))
+			return resolveAndAddNLLibrary(base, spec, filters, type, hasJarSpec, result);
+	}
+	addLibrary(base, spec, filters, type, hasJarSpec, result);
+	return true;
+}
+
+private boolean addLibrary (String base, String libSpec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
 	// create path entries for all libraries except those which are files
 	// and do not exist.
-	for (Iterator it = libSpecs.iterator(); it.hasNext();) {
-		String spec = (String) it.next();
-		String[] filter = (String[]) it.next();
+	String spec = concat(base, libSpec);
+	if (spec == null)
+		return false;
+
+	// if the libspec is NOT considered a directory, treat as a jar
+	if (!spec.endsWith("/")) {
+		// if running in VAJ or VAME and there was a plugin.jars definition, ignore the plugin.xml
+		// library entry (assume the plugin.jars entries covered all the bases.  Otherwise, 
+		// convert the plugin.xml entry into a URL.
+		if ((InternalPlatform.inVAJ() || InternalPlatform.inVAME()) && hasJarSpec)
+			return false;
+		if (spec.startsWith(PlatformURLHandler.PROTOCOL + PlatformURLHandler.PROTOCOL_SEPARATOR))
+			spec += PlatformURLHandler.JAR_SEPARATOR;
+		else
+			spec = PlatformURLHandler.JAR + PlatformURLHandler.PROTOCOL_SEPARATOR + spec + PlatformURLHandler.JAR_SEPARATOR;
+	}
+	try {
+		URL entry = new URL(spec);
+		URL resolved = Platform.resolve(entry);
+		boolean add = true;
+		String file = getFileFromURL (resolved);
+		if (file != null)
+			add = new File(file).exists();
+		if (add) {
+			if (type.equals(ILibrary.CODE)) {
+				result[0].add(entry);
+				result[1].add(new URLContentFilter(filters));
+			} else
+				if (type.equals(ILibrary.RESOURCE)) {
+					result[2].add(entry);
+					result[3].add(new URLContentFilter(filters));
+				}
+			return true;
+		}
+	} catch (IOException e) {
+		// skip bad URLs
+	}
+	return false;
+}
+
+private String getFileFromURL(URL target) {
+	String protocol = target.getProtocol();
+	if (protocol.equals(PlatformURLHandler.FILE))
+		return target.getFile();
+	if (protocol.equals(PlatformURLHandler.JAR)) {
+		// strip off the jar separator at the end of the url then do a recursive call
+		// to interpret the sub URL.
+		String file = target.getFile();
+		file = file.substring(0, file.length() - PlatformURLHandler.JAR_SEPARATOR.length());
 		try {
-			URL entry = new URL(spec);
-			URL resolved = Platform.resolve(entry);
-			boolean add = true;
-			if (resolved.getProtocol().equals(PlatformURLHandler.FILE))
-				add = new File(resolved.getFile()).exists();
-			if (add) {
-				codePath.add(entry);
-				codeFilters.add(new URLContentFilter(filter));
-			}
-		} catch (IOException e) {
-			// skip bad URLs
+			return getFileFromURL(new URL(file));
+		} catch (MalformedURLException e) {
 		}
 	}
-
-	Object[] result = new Object[4];
-	result[0] = codePath.toArray(new URL[codePath.size()]);
-	result[1] = codeFilters.toArray(new URLContentFilter[codeFilters.size()]);
-	result[2] = resourcePath.toArray(new URL[resourcePath.size()]);
-	result[3] = resourceFilters.toArray(new URLContentFilter[resourceFilters.size()]);
-	return result;
+	return null;
 }
+
 /**
  * @see IPluginDescriptor
  */
@@ -668,19 +695,34 @@ private void pluginActivationExit(boolean errorExit) {
 	} else
 		active = true;
 }
-private String resolveLibraryPath(String spec) {
-	if (spec.charAt(0) != '$')
-		return spec;
+private boolean resolveAndAddOSLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
 	IPath path = new Path(spec);
-	String first = path.segment(0);
-	if (first.equalsIgnoreCase("$ws$"))
-		return new Path("ws/" + BootLoader.getWS()).append(path.removeFirstSegments(1)).toString();
-	if (first.equalsIgnoreCase("$os$"))
-		return new Path("os/" + BootLoader.getOS()).append(path.removeFirstSegments(1)).toString();
-	if (first.equalsIgnoreCase("$nl$"))
-		return new Path("nl/" + BootLoader.getNL()).append(path.removeFirstSegments(1)).toString();
-	return spec;
+	String location = new Path("os/" + BootLoader.getOS()).append(path.removeFirstSegments(1)).toString();
+	return addLibrary(base, location, filters, type, hasJarSpec, result);
 }
+
+private boolean resolveAndAddWSLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+	IPath path = new Path(spec);
+	String location = new Path("ws/" + BootLoader.getWS()).append(path.removeFirstSegments(1)).toString();
+	return addLibrary(base, location, filters, type, hasJarSpec, result);
+}
+
+private boolean resolveAndAddNLLibrary(String base, String spec, String[] filters, String type, boolean hasJarSpec, ArrayList[] result) {
+	IPath path = new Path(spec).removeFirstSegments(1);
+	String nl = BootLoader.getNL();
+	boolean added = false;
+	while (!added && nl.length() > 0) {
+		String location = new Path("nl/" + nl).append(path).toString();
+		added = addLibrary(base, location, filters, type, hasJarSpec, result);
+		int i = nl.lastIndexOf('_');
+		if (i < 0)
+			nl = "";
+		else
+			nl = nl.substring(0, i);
+	}
+	return added;
+}
+
 public void setPluginClassLoader(DelegatingURLClassLoader value) {
 	loader = value;
 }

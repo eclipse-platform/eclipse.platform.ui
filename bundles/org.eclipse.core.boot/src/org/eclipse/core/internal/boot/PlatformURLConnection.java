@@ -257,6 +257,38 @@ private URL getURLInCache() throws IOException {
 protected URL resolve() throws IOException {
 	throw new IOException();
 }
+
+private String resolvePath(String spec) {
+	if (spec.length() == 0 || spec.charAt(0) != '$')
+		return spec;
+	int i = spec.indexOf('/', 1);
+	String first = "";
+	String rest = "";
+	if (i == -1)
+		first = spec;
+	else {	
+		first = spec.substring(0, i);
+		rest = spec.substring(i);
+	}
+	if (first.equalsIgnoreCase("$ws$"))
+		return "ws/" + InternalBootLoader.getWS() + rest;
+	if (first.equalsIgnoreCase("$os$"))
+		return "os/" + InternalBootLoader.getOS() + rest;
+	if (first.equalsIgnoreCase("$nl$"))
+		return "nl/" + InternalBootLoader.getNL() + rest;
+	return spec;
+}
+
+protected String getId(String spec) {
+	int i = spec.lastIndexOf('_');
+	return i >= 0 ? spec.substring(i) : spec;
+}
+
+protected String getVersion(String spec) {
+	int i = spec.lastIndexOf('_');
+	return i >= 0 ? spec.substring(i, spec.length() - i) : "";
+}
+
 void setResolvedURL(URL url) throws IOException {
 	if (resolvedURL==null) {
 		int ix = url.getFile().lastIndexOf(PlatformURLHandler.JAR_SEPARATOR);

@@ -52,15 +52,6 @@ protected URL resolve() throws IOException {
 		return new URL(result, spec.substring(ix+1));
 }
 
-private String getId(String spec) {
-	int i = spec.lastIndexOf('_');
-	return i >= 0 ? spec.substring(i) : spec;
-}
-
-private String getVersion(String spec) {
-	int i = spec.lastIndexOf('_');
-	return i >= 0 ? spec.substring(i, spec.length() - i) : "";
-}
 public static void startup() {
 	
 	// register connection type for platform:/fragment handling
