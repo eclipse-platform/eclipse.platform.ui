@@ -1038,8 +1038,11 @@ public class EditorManager {
 			IEditorReference editorReference = (IEditorReference)editors[i];
 			final IEditorPart editor = editorReference.getEditor(false);
 			if(editor == null) {
-				IMemento editorMem = memento.createChild(IWorkbenchConstants.TAG_EDITOR);
-				editorMem.putMemento(((Editor)editorReference).getMemento());
+				Editor e = (Editor)editorReference;
+				if(e.getMemento() != null) {
+					IMemento editorMem = memento.createChild(IWorkbenchConstants.TAG_EDITOR);
+					editorMem.putMemento(e.getMemento());
+				}
 				continue;
 			}
 			final EditorSite site = (EditorSite)editor.getEditorSite();
