@@ -93,6 +93,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private LockToolBarAction lockToolBarAction;
 	private CloseAllPerspectivesAction closeAllPerspsAction;
 	private PinEditorAction pinEditorAction;
+	
+	/* removed keyboard shortcuts menu
 	private ShowViewMenuAction showViewMenuAction;
 	private ShowPartPaneMenuAction showPartPaneMenuAction;
 	private CyclePartAction nextPartAction;
@@ -102,6 +104,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private CyclePerspectiveAction nextPerspectiveAction;
 	private CyclePerspectiveAction prevPerspectiveAction;
 	private ActivateEditorAction activateEditorAction;
+	*/
+	
 	private WorkbenchEditorsAction workbenchEditorsAction;
 	
 	// retarget actions.
@@ -523,6 +527,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	/**
 	 * Adds the keyboard navigation submenu to the specified menu.
 	 */
+	/*
 	private void addKeyboardShortcuts(MenuManager menu) {
 		MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.shortcuts")); //$NON-NLS-1$
 		menu.add(subMenu);
@@ -539,6 +544,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		subMenu.add(nextPerspectiveAction);
 		subMenu.add(prevPerspectiveAction);
 	}
+	*/
 	
 	/**
 	 * Creates and returns the Window menu.
@@ -553,8 +559,8 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(new Separator());
 			addPerspectiveActions(menu);
 			menu.add(new Separator());
-			addKeyboardShortcuts(menu);
-			menu.add(new Separator());
+			//addKeyboardShortcuts(menu);
+			//menu.add(new Separator());
 			menu.add(workbenchEditorsAction);
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 			menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "end")); //$NON-NLS-1$
@@ -568,7 +574,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			MenuManager launchWindowMenu = new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 			launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
 			menu.add(launchWindowMenu);
-			addKeyboardShortcuts(menu);
+			//addKeyboardShortcuts(menu);
 			menu.add(new Separator());
 			menu.add(workbenchEditorsAction);
 			menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -870,6 +876,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		}
 
 		// Actions for invisible accelerators
+		/*
 		showViewMenuAction = new ShowViewMenuAction(window);
 		showViewMenuAction.setActionDefinitionId(showViewMenuActionDefId);
 		keyBindingService.registerGlobalAction(showViewMenuAction);
@@ -905,6 +912,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		activateEditorAction = new ActivateEditorAction(window);
 		activateEditorAction.setActionDefinitionId(activateEditorActionDefId);
 		keyBindingService.registerGlobalAction(activateEditorAction);
+		*/
 		
 		workbenchEditorsAction = new WorkbenchEditorsAction(window);
 		workbenchEditorsAction.setActionDefinitionId(workbenchEditorsActionDefId);
