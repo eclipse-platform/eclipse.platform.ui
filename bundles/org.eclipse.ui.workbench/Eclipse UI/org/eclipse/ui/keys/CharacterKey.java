@@ -350,6 +350,9 @@ public final class CharacterKey extends NaturalKey {
 
 			if (DEL_NAME.equals(name))
 				return Character.toString('\u2326');
+			
+			if (SPACE_NAME.equals(name))
+				return Character.toString('\u2423');
 		}
 
 		return Util.translateString(RESOURCE_BUNDLE, name, name, false, false);
