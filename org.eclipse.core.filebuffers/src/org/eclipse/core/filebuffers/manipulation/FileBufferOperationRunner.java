@@ -220,7 +220,7 @@ public class FileBufferOperationRunner {
 	}
 
 	private IFileBuffer[] createFileBuffers(IPath[] locations, IProgressMonitor progressMonitor) throws CoreException {
-		progressMonitor.beginTask("connecting file buffers", locations.length);
+		progressMonitor.beginTask(Messages.getString("FileBufferOperationRunner.task.connecting"), locations.length); //$NON-NLS-1$
 		try {
 			IFileBuffer[] fileBuffers= new ITextFileBuffer[locations.length];
 			for (int i= 0; i < locations.length; i++) {
@@ -243,7 +243,7 @@ public class FileBufferOperationRunner {
 	}
 	
 	private void releaseFileBuffers(IPath[] locations, IProgressMonitor progressMonitor) throws CoreException {
-		progressMonitor.beginTask("disconnecting file buffers", locations.length);
+		progressMonitor.beginTask(Messages.getString("FileBufferOperationRunner.task.disconnecting"), locations.length); //$NON-NLS-1$
 		try {
 			final ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
 			for (int i= 0; i < locations.length; i++) {
@@ -290,7 +290,7 @@ public class FileBufferOperationRunner {
 		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) throws CoreException {
 				monitor= Progress.getMonitor(monitor);
-				monitor.beginTask("committing", fileBuffers.length);
+				monitor.beginTask(Messages.getString("FileBufferOperationRunner.task.committing"), fileBuffers.length); //$NON-NLS-1$
 				try {
 					for (int i= 0; i < fileBuffers.length; i++) {
 						IProgressMonitor subMonitor= Progress.getSubMonitor(monitor, 1);
