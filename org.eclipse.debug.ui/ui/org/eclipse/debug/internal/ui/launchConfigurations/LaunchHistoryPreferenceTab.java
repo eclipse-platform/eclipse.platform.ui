@@ -150,7 +150,6 @@ public abstract class LaunchHistoryPreferenceTab {
 		fMoveDownButton.setEnabled(false);					
 	
 		createSpacer(topComp, 1);
-		createSpacer(topComp, 2);
 	
 		Label recent = new Label(topComp, SWT.LEFT);
 		recent.setText(getRecentLabel());

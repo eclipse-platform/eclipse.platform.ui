@@ -5,7 +5,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
  * All Rights Reserved.
  */
 
-
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,12 +17,18 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.internal.ui.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.preference.FieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
@@ -33,10 +39,9 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 /**
  * Preference page to manage launch history & favorites
  */
-public class LaunchHistoryPreferencePage
-	extends PreferencePage
-	implements IWorkbenchPreferencePage {
-		
+public class LaunchHistoryPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+	
+	private IntegerFieldEditor fHistoryMaxEditor;
 	/**
 	 * Debug tab.
 	 */
@@ -48,8 +53,33 @@ public class LaunchHistoryPreferencePage
 	protected LaunchHistoryPreferenceTab fRunTab;
 	
 	protected Control createContents(Composite parent) {
-		TabFolder tabFolder = new TabFolder(parent, SWT.NONE);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		Composite composite = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
+		
+		fHistoryMaxEditor = new IntegerFieldEditor(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, LaunchConfigurationsMessages.getString("LaunchHistoryPreferencePage.Maximum_launch_history_size_1"), composite); //$NON-NLS-1$
+		int historyMax = IDebugPreferenceConstants.MAX_LAUNCH_HISTORY_SIZE;
+		fHistoryMaxEditor.setPreferenceStore(DebugUIPlugin.getDefault().getPreferenceStore());
+		fHistoryMaxEditor.setPreferencePage(this);
+		fHistoryMaxEditor.setTextLimit(Integer.toString(historyMax).length());
+		fHistoryMaxEditor.setErrorMessage(MessageFormat.format(LaunchConfigurationsMessages.getString("LaunchHistoryPreferencePage.The_size_of_the_launch_history_should_be_between_{0}_and_{1}_1"), new Object[] { new Integer(1), new Integer(historyMax)})); //$NON-NLS-1$
+		fHistoryMaxEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		fHistoryMaxEditor.setValidRange(1, historyMax);
+		fHistoryMaxEditor.load();
+		fHistoryMaxEditor.setPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals(FieldEditor.IS_VALID)) 
+					setValid(fHistoryMaxEditor.isValid());
+			}
+		});
+		fHistoryMaxEditor.fillIntoGrid(composite, 2);
+
+		TabFolder tabFolder = new TabFolder(composite, SWT.NONE);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan= 2;
 		tabFolder.setLayoutData(gd);
 		
 		TabItem tab = new TabItem(tabFolder, SWT.NONE);
@@ -62,8 +92,7 @@ public class LaunchHistoryPreferencePage
 		tab.setImage(DebugPluginImages.getImage(IDebugUIConstants.IMG_ACT_RUN));
 		tab.setControl(createRunTab(tabFolder));
 				
-		return tabFolder;
-		
+		return composite;
 	}
 	
 	/**
@@ -157,6 +186,7 @@ public class LaunchHistoryPreferencePage
 		current = getRunTab().getFavorites();
 		updateAttributes(runOriginals, current, IDebugUIConstants.ATTR_RUN_FAVORITE);			
 		
+		fHistoryMaxEditor.store();
 		return true;
 	}
 	
@@ -221,7 +251,11 @@ public class LaunchHistoryPreferencePage
 	protected void performDefaults() {
 		getDebugTab().performDefaults();
 		getRunTab().performDefaults();
+		fHistoryMaxEditor.loadDefault();
 		super.performDefaults();
 	}
-
+	
+	public static void initDefaults(IPreferenceStore store) {
+		store.setDefault(IDebugUIConstants.PREF_MAX_HISTORY_SIZE, 5);	
+	}
 }

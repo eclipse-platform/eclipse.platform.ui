@@ -50,6 +50,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
+import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistoryPreferencePage;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.views.ConsoleDocument;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -449,13 +450,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	public ColorManager getColorManager() {
 		return fColorManager;
 	}
-
+
 	/**
 	 * @see AbstractUIPlugin#initializeDefaultPreferences
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
 		DebugPreferencePage.initDefaults(prefs);
 		ConsolePreferencePage.initDefaults(prefs);
+		LaunchHistoryPreferencePage.initDefaults(prefs);
 		VariableViewsPreferencePage.initDefaults(prefs);
 	}
 

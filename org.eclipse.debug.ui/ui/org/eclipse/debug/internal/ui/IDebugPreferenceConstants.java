@@ -70,6 +70,11 @@ public interface IDebugPreferenceConstants {
 	 * Serialized list of the disabled debug action groups
 	 */	
 	public static final String PREF_DISABLED_DEBUG_ACTION_GROUPS = IDebugUIConstants.PLUGIN_ID + "disabledDebugActionGroups"; //$NON-NLS-1$
+	
+	/**
+	 * The maximum size of the launch history list
+	 */
+	public static int MAX_LAUNCH_HISTORY_SIZE= 15;
 }
 
 
