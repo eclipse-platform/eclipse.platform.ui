@@ -200,12 +200,19 @@ class AnimationManager {
 
 		boolean startErrorState = showingError;
 		Display display = animationItems[0].getControl().getDisplay();
+
 		ImageData[] imageDataArray = getImageData();
 		ImageData imageData = imageDataArray[0];
 		Image image = JobProgressManager.getInstance().getImage(imageData);
 		int imageDataIndex = 0;
 
 		ImageLoader loader = getLoader();
+
+		if (display.isDisposed()) {
+			monitor.setCanceled(true);
+			setAnimated(false);
+			return;
+		}
 
 		Image offScreenImage =
 			new Image(
@@ -240,8 +247,8 @@ class AnimationManager {
 				while (isAnimated()
 					&& !monitor.isCanceled()
 					&& (startErrorState == showingError)) {
-						
-					if(display.isDisposed()){
+
+					if (display.isDisposed()) {
 						monitor.setCanceled(true);
 						continue;
 					}
@@ -404,7 +411,8 @@ class AnimationManager {
 				JobInfo[] currentInfos = manager.getJobInfos();
 				for (int i = 0; i < currentInfos.length; i++) {
 					JobInfo info = currentInfos[i];
-					if (manager.isNonDisplayableJob(info.getJob(),showsDebug()))
+					if (manager
+						.isNonDisplayableJob(info.getJob(), showsDebug()))
 						continue;
 					add(currentInfos[i]);
 				}
@@ -420,7 +428,7 @@ class AnimationManager {
 				}
 
 			}
-			
+
 			/* (non-Javadoc)
 			 * @see org.eclipse.ui.internal.progress.IJobProgressManagerListener#showsDebug()
 			 */
@@ -456,8 +464,7 @@ class AnimationManager {
 					return job.getState() != Job.RUNNING
 						|| job == clearJob
 						|| job == animateJob;
-				}
-				else
+				} else
 					return false;
 			}
 		};
