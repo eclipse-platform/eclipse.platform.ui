@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
@@ -56,18 +57,36 @@ public class RepositoriesView extends ViewPart {
 	private DrillDownAdapter drillPart;
 	
 	// Listener
+	// This listener can be called from outside the UI thread.
 	IRepositoryListener listener = new IRepositoryListener() {
+		Display display = viewer.getControl().getDisplay();
 		public void repositoryAdded(ICVSRepositoryLocation root) {
-			viewer.refresh();
+			display.syncExec(new Runnable() {
+				public void run() {
+					viewer.refresh();
+				}
+			});
 		}
 		public void repositoryRemoved(ICVSRepositoryLocation root) {
-			viewer.refresh();
+			display.syncExec(new Runnable() {
+				public void run() {
+					viewer.refresh();
+				}
+			});
 		}
-		public void tagAdded(Tag tag, ICVSRepositoryLocation root) {
-			viewer.refresh(root);
+		public void tagAdded(Tag tag, final ICVSRepositoryLocation root) {
+			display.syncExec(new Runnable() {
+				public void run() {
+					viewer.refresh(root);
+				}
+			});
 		}
-		public void tagRemoved(Tag tag, ICVSRepositoryLocation root) {
-			viewer.refresh(root);
+		public void tagRemoved(Tag tag, final ICVSRepositoryLocation root) {
+			display.syncExec(new Runnable() {
+				public void run() {
+					viewer.refresh(root);
+				}
+			});
 		}
 	};
 
