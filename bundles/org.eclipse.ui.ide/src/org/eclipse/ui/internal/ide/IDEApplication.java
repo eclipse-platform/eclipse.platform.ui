@@ -40,11 +40,11 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 		// create and startup the display for the workbench
 		Display display = PlatformUI.createDisplay();
 		
-		// create the workbench with this adviser and run it until it exits
-		// N.B. createWorkbench remembers the adviser, and also registers the
+		// create the workbench with this advisor and run it until it exits
+		// N.B. createWorkbench remembers the advisor, and also registers the
 		// workbench globally so that all UI plug-ins can find it using
 		// PlatformUI.getWorkbench() or AbstractUIPlugin.getWorkbench()
-		int returnCode = PlatformUI.createAndRunWorkbench(display, new IDEWorkbenchAdviser());
+		int returnCode = PlatformUI.createAndRunWorkbench(display, new IDEWorkbenchAdvisor());
 		
 		// exit the application with an appropriate return code
 		if (returnCode == PlatformUI.RETURN_RESTART) {

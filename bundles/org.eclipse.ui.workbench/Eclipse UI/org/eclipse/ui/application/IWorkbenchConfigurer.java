@@ -25,7 +25,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see WorkbenchAdviser#initialize
+ * @see WorkbenchAdvisor#initialize
  * @since 3.0
  */
 public interface IWorkbenchConfigurer {
@@ -96,10 +96,10 @@ public interface IWorkbenchConfigurer {
 	 * continue, and cannot even risk a normal workbench close (think "out of
 	 * memory" or "unable to create shell"). When this method is called, an
 	 * abbreviated workbench shutdown sequence is performed (less critical
-	 * steps may be skipped). The workbench adviser is still called; however,
+	 * steps may be skipped). The workbench advisor is still called; however,
 	 * it must not attempt to communicate with the user. While an emergency
 	 * close is in progress, <code>emergencyClosing</code> returns
-	 * <code>true</code>. Workbench adviser methods should always check this
+	 * <code>true</code>. Workbench advisor methods should always check this
 	 * flag before communicating with the user.
 	 * 
 	 * @see #emergencyClosing
@@ -110,7 +110,7 @@ public interface IWorkbenchConfigurer {
 	 * Returns whether the workbench is being closed due to an emergency.
 	 * When this method returns <code>true</code>, the workbench is in dire
 	 * straights and cannot continue. Indeed, things are so bad that we cannot
-	 * even risk a normal workbench close. Workbench adviser methods should
+	 * even risk a normal workbench close. Workbench advisor methods should
 	 * always check this flag before attempting to communicate with the user.
 	 * 
 	 * @return <code>true</code> if the workbench is in the process of being

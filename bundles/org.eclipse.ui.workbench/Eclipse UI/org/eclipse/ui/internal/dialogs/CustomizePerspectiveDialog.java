@@ -29,7 +29,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.application.WorkbenchAdviser;
+import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.IndentedTableViewer.IIndentedTableLabelProvider;
@@ -582,7 +582,7 @@ public CustomizePerspectiveDialog(Shell parentShell, Perspective persp) {
 	
 	// Fill current actionBars in the "fake" workbench actionbars
 	window.fillActionBars(customizeWorkbenchActionBars, 
-		WorkbenchAdviser.FILL_PROXY | WorkbenchAdviser.FILL_MENU_BAR | WorkbenchAdviser.FILL_TOOL_BAR );
+		WorkbenchAdvisor.FILL_PROXY | WorkbenchAdvisor.FILL_MENU_BAR | WorkbenchAdvisor.FILL_TOOL_BAR );
 	
 	initializeActionSetInput();
 	initializeShortcutMenuInput();

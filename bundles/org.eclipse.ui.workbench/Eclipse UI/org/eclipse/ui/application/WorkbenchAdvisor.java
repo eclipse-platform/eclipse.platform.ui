@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 /**
  * Public base class for configuring the workbench.
  * <p>
- * Note that the workbench adviser object is created in advance of creating the
+ * Note that the workbench advisor object is created in advance of creating the
  * workbench. However, by the time the workbench starts calling methods on this
  * class, <code>PlatformUI.getWorkbench</code> is guaranteed to have been
  * properly initialized.
@@ -37,9 +37,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <code>
  * public class MyApplication implements IPlatformRunnable {
  *   public Object run(Object args) {
- *     WorkbenchAdviser workbenchAdviser = new MyWorkbenchAdviser();
+ *     WorkbenchAdvisor workbenchAdvisor = new MyWorkbenchAdvisor();
  *     Display display = PlatformUI.createDisplay();
- *     int returnCode = PlatformUI.createAndRunWorkbench(display, workbenchAdviser);
+ *     int returnCode = PlatformUI.createAndRunWorkbench(display, workbenchAdvisor);
  *     if (returnCode == PlatformUI.RETURN_RESTART) {
  *        return IPlatformRunnable.EXIT_RESTART;
  *     } else {
@@ -50,7 +50,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * </pre>
  * </p>
  * <p>
- * An application should declare a subclass of <code>WorkbenchAdviser</code>
+ * An application should declare a subclass of <code>WorkbenchAdvisor</code>
  * and override methods to configure the workbench to suit the needs of the
  * particular application.
  * </p>
@@ -96,7 +96,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * 
  * @since 3.0
  */
-public abstract class WorkbenchAdviser {
+public abstract class WorkbenchAdvisor {
 	
 	/**
 	 * Bit flag for {@link #fillActionBars fillActionBars} indicating that the
@@ -127,9 +127,9 @@ public abstract class WorkbenchAdviser {
 	public static final int FILL_STATUS_LINE = 0x08;
 
 	/**
-	 * Creates and initializes a new workbench adviser instance.
+	 * Creates and initializes a new workbench advisor instance.
 	 */
-	protected WorkbenchAdviser() {
+	protected WorkbenchAdvisor() {
 		// do nothing
 	}
 
@@ -372,7 +372,7 @@ public abstract class WorkbenchAdviser {
 	 * and {@link #FILL_PROXY FILL_PROXY}</code>
 	 * @issue should 1st param be IWorkbenchWindowConfigurer to be more consistent with other methods?
 	 * @issue suggest adding ActionBuilder as API, to encapsulate the action building outside 
-	 *   of the adviser, and to handle the common pattern of hanging onto the action builder
+	 *   of the advisor, and to handle the common pattern of hanging onto the action builder
 	 *   in order to properly handle FILL_PROXY 
 	 */
 	public void fillActionBars(IWorkbenchWindow window, IActionBarConfigurer configurer, int flags) {
@@ -429,7 +429,7 @@ public abstract class WorkbenchAdviser {
 	 * Typical clients may use the configurer passed in to access the
 	 * workbench window being closed. If this method
 	 * returns <code>false</code>, then the user's request to close the shell is
-	 * ignored. This gives the workbench adviser an opportunity to query the user
+	 * ignored. This gives the workbench advisor an opportunity to query the user
 	 * and/or veto the closing of a window under some circumstances.
 	 * </p>
 	 * 

@@ -75,7 +75,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
-import org.eclipse.ui.application.WorkbenchAdviser;
+import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
@@ -91,7 +91,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 import org.eclipse.update.core.SiteManager;
 
 /**
- * IDE-specified workbench adviser which configures the workbench for use as
+ * IDE-specified workbench advisor which configures the workbench for use as
  * an IDE.
  * <p>
  * Note: This class replaces <code>org.eclipse.ui.internal.Workbench</code>.
@@ -99,7 +99,7 @@ import org.eclipse.update.core.SiteManager;
  * 
  * @since 3.0
  */
-public class IDEWorkbenchAdviser extends WorkbenchAdviser {
+public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private static final String ACTION_BUILDER = "ActionBuilder"; //$NON-NLS-1$
 	private static final String WELCOME_EDITOR_ID = "org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"; //$NON-NLS-1$
 	private static final String WORKBENCH_PREFERENCE_CATEGORY_ID = "org.eclipse.ui.preferencePages.Workbench"; //$NON-NLS-1$
@@ -110,7 +110,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	 */
 	private static final String INSTALLED_FEATURES = "installedFeatures"; //$NON-NLS-1$
 	
-	private static IDEWorkbenchAdviser workbenchAdviser = null;
+	private static IDEWorkbenchAdvisor workbenchAdvisor = null;
 
 	/**
 	 * Special object for configuring the workbench.
@@ -118,7 +118,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private IWorkbenchConfigurer configurer;	
 
 	/**
-	 * Event loop exception handler for the adviser.
+	 * Event loop exception handler for the advisor.
 	 */
 	private IDEExceptionHandler exceptionHandler = null;
 	
@@ -163,34 +163,34 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	private IDEWorkbenchActivityHelper activityHelper = null;
 	
 	/**
-	 * Creates a new workbench adviser instance.
+	 * Creates a new workbench advisor instance.
 	 */
-	protected IDEWorkbenchAdviser() {
+	protected IDEWorkbenchAdvisor() {
 		super();
-		if (workbenchAdviser != null) {
+		if (workbenchAdvisor != null) {
 			throw new IllegalStateException();
 		}
-		workbenchAdviser = this;
+		workbenchAdvisor = this;
 	}
 
 	/**
-	 * Returns the single instance for this adviser. Can
+	 * Returns the single instance for this advisor. Can
 	 * be <code>null</code> if not created yet.
 	 */
-	/* package */ static final IDEWorkbenchAdviser getAdviser() {
-		return workbenchAdviser;
+	/* package */ static final IDEWorkbenchAdvisor getAdvisor() {
+		return workbenchAdvisor;
 	}
 	
 	/**
-	 * Returns the workbench configurer for the adviser. Can
-	 * be <code>null</code> if adviser not initialized yet.
+	 * Returns the workbench configurer for the advisor. Can
+	 * be <code>null</code> if advisor not initialized yet.
 	 */
 	/* package */ IWorkbenchConfigurer getWorkbenchConfigurer() {
 		return configurer;
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#initialize
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#initialize
 	 */
 	public void initialize(IWorkbenchConfigurer configurer) {
 		// remember for future reference
@@ -230,7 +230,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#preStartup()
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preStartup()
 	 */
 	public void preStartup() {
 		disableAutoBuild();
@@ -251,7 +251,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#postStartup()
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#postStartup()
 	 */
 	public void postStartup() {
 		refreshFromLocal();
@@ -265,7 +265,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#postShutdown
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#postShutdown
 	 */
 	public void postShutdown() {
 		if (activityHelper != null) {
@@ -278,7 +278,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#eventLoopException
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#eventLoopException
 	 */
 	public void eventLoopException(Throwable exception) {
 		super.eventLoopException(exception);
@@ -292,7 +292,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#preWindowShellClose
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preWindowShellClose
 	 */
 	public boolean preWindowShellClose(IWorkbenchWindowConfigurer windowConfigurer) {
 		if (configurer.getWorkbench().getWorkbenchWindowCount() > 1) {
@@ -338,7 +338,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#preWindowOpen
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preWindowOpen
 	 */
 	public void preWindowOpen(IWorkbenchWindowConfigurer windowConfigurer) {
 		
@@ -392,7 +392,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#postWindowRestore
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#postWindowRestore
 	 */
 	public void postWindowRestore(IWorkbenchWindowConfigurer windowConfigurer) throws WorkbenchException {
 		int index = PlatformUI.getWorkbench().getWorkbenchWindowCount() - 1;
@@ -426,7 +426,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#postWindowClose
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#postWindowClose
 	 */
 	public void postWindowClose(IWorkbenchWindowConfigurer windowConfigurer) {
 		WorkbenchActionBuilder a = (WorkbenchActionBuilder) windowConfigurer.getData(ACTION_BUILDER);
@@ -654,7 +654,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#isApplicationMenu
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#isApplicationMenu
 	 */
 	public boolean isApplicationMenu(IWorkbenchWindowConfigurer windowConfigurer, String menuID) {
 		WorkbenchActionBuilder a = (WorkbenchActionBuilder) windowConfigurer.getData(ACTION_BUILDER);
@@ -662,14 +662,14 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#getDefaultWindowInput
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getDefaultWindowInput
 	 */
 	public IAdaptable getDefaultWindowInput() {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor
 	 */
 	public String getInitialWindowPerspectiveId() {
 		int index = PlatformUI.getWorkbench().getWorkbenchWindowCount() - 1;
@@ -1123,7 +1123,7 @@ public class IDEWorkbenchAdviser extends WorkbenchAdviser {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.application.WorkbenchAdviser#getMainPreferencePageId
+	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getMainPreferencePageId
 	 */
 	public String getMainPreferencePageId() {
 		// indicate that we want the Workench preference page to be prominent

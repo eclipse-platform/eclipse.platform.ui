@@ -178,7 +178,7 @@ public class PreferencePageRegistryReader extends RegistryReader {
 		StringTokenizer tokenizer;
 		String currentToken;
 
-		// Make the adviser's favorite the first category
+		// Make the advisor's favorite the first category
 		IPreferenceNode favorite = null;
 		String favoriteId = ((Workbench) workbench).getMainPreferencePageId();
 		if (favoriteId != null) {

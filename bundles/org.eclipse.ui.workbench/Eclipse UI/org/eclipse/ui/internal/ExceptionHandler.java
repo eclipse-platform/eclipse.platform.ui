@@ -13,10 +13,10 @@ package org.eclipse.ui.internal;
 import org.eclipse.jface.window.Window;
 
 /**
- * This handler will past along to the workbench adviser exceptions
+ * This handler will past along to the workbench advisor exceptions
  * and errors thrown while running the event loop. However, the
  * <code>ThreadDeath</code> error is simply thrown again, and not pass
- * along to the workbench adviser.
+ * along to the workbench advisor.
  */
 class ExceptionHandler implements Window.IExceptionHandler {
 	private int exceptionCount = 0; // To avoid recursive errors
@@ -47,10 +47,10 @@ class ExceptionHandler implements Window.IExceptionHandler {
 					throw (Error) t;
 			}
 
-			// Let the adviser handle this now
+			// Let the advisor handle this now
 			Workbench wb = Workbench.getInstance();
 			if (wb != null) {
-				wb.getAdviser().eventLoopException(t);
+				wb.getAdvisor().eventLoopException(t);
 			}
 		} finally {
 			exceptionCount--;

@@ -27,7 +27,7 @@ import org.eclipse.jface.action.IToolBarManager;
  * This interface is not intended to be implemented by clients.
  * </p>
  * 
- * @see org.eclipse.ui.application.WorkbenchAdviser#fillActionBars
+ * @see org.eclipse.ui.application.WorkbenchAdvisor#fillActionBars
  * @since 3.0
  */
 public interface IActionBarConfigurer {

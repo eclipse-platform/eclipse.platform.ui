@@ -74,7 +74,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.activities.service.IActivityService;
 import org.eclipse.ui.application.IActionBarConfigurer;
-import org.eclipse.ui.application.WorkbenchAdviser;
+import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.commands.ActionHandler;
 import org.eclipse.ui.internal.misc.Assert;
@@ -208,9 +208,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * 
 	 * @since 3.0
 	 */
-	private static final int FILL_ALL_ACTION_BARS = WorkbenchAdviser.FILL_MENU_BAR
-		| WorkbenchAdviser.FILL_TOOL_BAR
-		| WorkbenchAdviser.FILL_STATUS_LINE;
+	private static final int FILL_ALL_ACTION_BARS = WorkbenchAdvisor.FILL_MENU_BAR
+		| WorkbenchAdvisor.FILL_TOOL_BAR
+		| WorkbenchAdvisor.FILL_STATUS_LINE;
 
 	/**
 	 * The layout for the workbench window's shell.
@@ -468,9 +468,9 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		};
 		
 		// let the application do further configuration
-		getAdviser().preWindowOpen(getWindowConfigurer());
+		getAdvisor().preWindowOpen(getWindowConfigurer());
 		// Fill the action bars	
-		getAdviser().fillActionBars(this, getWindowConfigurer().getActionBarConfigurer(), FILL_ALL_ACTION_BARS);
+		getAdvisor().fillActionBars(this, getWindowConfigurer().getActionBarConfigurer(), FILL_ALL_ACTION_BARS);
 
 		workbenchWindowActivityService = new WorkbenchWindowActivityService(this);
 		workbenchWindowActivityService.start();
@@ -642,7 +642,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	public int open() {
 		int result = super.open();
 		getWorkbenchImpl().fireWindowOpened(this);
-		getAdviser().postWindowOpen(getWindowConfigurer());
+		getAdvisor().postWindowOpen(getWindowConfigurer());
 		return result;
 	}
 	
@@ -653,8 +653,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		if (!super.canHandleShellCloseEvent()) {
 			return false;
 		}
-		// let the adviser veto the user's explicit request to close the window
-		return getAdviser().preWindowShellClose(getWindowConfigurer());
+		// let the advisor veto the user's explicit request to close the window
+		return getAdvisor().preWindowShellClose(getWindowConfigurer());
 	}
 	
 	/**
@@ -1182,7 +1182,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			actionPresentation.clearActionSets();
 			closeAllPages();
 			// let the application do further deconfiguration
-			getAdviser().postWindowClose(getWindowConfigurer());
+			getAdvisor().postWindowClose(getWindowConfigurer());
 			getWorkbenchImpl().fireWindowClosed(this);
 		} finally {
 			return super.close();
@@ -1192,8 +1192,8 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * @see IWorkbenchWindow
 	 */
 	public boolean isApplicationMenu(String menuID) {
-		// delegate this question to the workbench adviser
-		return getAdviser().isApplicationMenu(getWindowConfigurer(), menuID);
+		// delegate this question to the workbench advisor
+		return getAdvisor().isApplicationMenu(getWindowConfigurer(), menuID);
 	}
 	
 	/**
@@ -1409,7 +1409,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 			try {
 				String defPerspID = getWorkbenchImpl().getPerspectiveRegistry().getDefaultPerspective();
 				WorkbenchPage newPage =
-					new WorkbenchPage(this, defPerspID, getAdviser().getDefaultWindowInput());
+					new WorkbenchPage(this, defPerspID, getAdvisor().getDefaultWindowInput());
 				pageList.add(newPage);
 				firePageOpened(newPage);
 			} catch (WorkbenchException e) {
@@ -1978,17 +1978,17 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	}
 	
 	/**
-	 * Returns the workbench adviser. Assumes the workbench
+	 * Returns the workbench advisor. Assumes the workbench
 	 * has been created already.
 	 * <p>
 	 * IMPORTANT This method is declared private to prevent regular
 	 * plug-ins from downcasting IWorkbenchWindow to WorkbenchWindow and getting
-	 * hold of the workbench adviser that would allow them to tamper with the
-	 * workbench. The workbench adviser is internal to the application.
+	 * hold of the workbench advisor that would allow them to tamper with the
+	 * workbench. The workbench advisor is internal to the application.
 	 * </p>
 	 */
-	private /* private - DO NOT CHANGE */ WorkbenchAdviser getAdviser() {
-		return getWorkbenchImpl().getAdviser();
+	private /* private - DO NOT CHANGE */ WorkbenchAdvisor getAdvisor() {
+		return getWorkbenchImpl().getAdvisor();
 	}
 	
 	/*
@@ -2004,6 +2004,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 * @param flags indicate which actions to load and whether its a proxy fill
 	 */
 	public void fillActionBars(IActionBarConfigurer configurer, int flags) {
-		getAdviser().fillActionBars(this,configurer,flags);
+		getAdvisor().fillActionBars(this,configurer,flags);
 	}
 }
