@@ -11,8 +11,14 @@ Contributors:
 **********************************************************************/
 import java.io.*;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.*;
+import javax.xml.parsers.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.XMLMemento;
+import org.w3c.dom.*;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * General utility class dealing with Ant files
@@ -48,13 +54,39 @@ public final class AntUtil {
 	private static IMemento getMemento(IPath path) {
 		try {
 			Reader reader = new FileReader(path.toFile());
-			return XMLMemento.createReadRoot(reader);
+			return createReadRoot(reader);
 		} catch (FileNotFoundException e) {
 			ExternalToolsPlugin.getDefault().log("Error: Ant file not found.", e); // $NON-NLS-1$
 			return null;
 		}
 	}
 
+	/**
+	 * Creates a <code>Document</code> from the <code>Reader</code>
+	 * and returns a root memento for reading the document.
+	 * 
+	 * @param reader the reader used to create the memento's document
+	 * @return the root memento for reading the document
+	 */
+	private static XMLMemento createReadRoot(Reader reader) {
+		Document document = null;
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder parser = factory.newDocumentBuilder();
+			document = parser.parse(new InputSource(reader));
+			NodeList list = document.getChildNodes();
+			for(int i=0; i < list.getLength(); i++) {
+				Node node = list.item(i);
+				if (node instanceof Element)
+					return new XMLMemento(document, (Element) node);
+			}
+		} catch (ParserConfigurationException e) {
+		} catch (IOException e) {
+		} catch (SAXException e) {
+		}
+		return null;
+	}
+	
 	/**
 	 * Returns the list of targets of the Ant file represented by the
 	 * supplied IMemento, or <code>null</code> if the memento is null or
