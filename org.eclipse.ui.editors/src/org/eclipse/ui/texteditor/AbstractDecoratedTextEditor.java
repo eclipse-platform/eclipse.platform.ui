@@ -70,9 +70,11 @@ import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.texteditor.quickdiff.QuickDiff;
 
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
+import org.eclipse.ui.internal.editors.quickdiff.CompositeRevertAction;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.internal.texteditor.quickdiff.DocumentLineDiffer;
+import org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction;
 import org.eclipse.ui.internal.texteditor.quickdiff.RestoreAction;
 import org.eclipse.ui.internal.texteditor.quickdiff.RevertBlockAction;
 import org.eclipse.ui.internal.texteditor.quickdiff.RevertLineAction;
@@ -1130,10 +1132,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		action= new RestoreAction(this);
 		setAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION, action);
 
-		IAction action2= new CombineAction(new IAction[] { 
+		IAction action2= new CompositeRevertAction(new IAction[] { 
 		                                       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTSELECTION),
 		                                       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTBLOCK),
-										       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION)});
+										       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION),
+										       getAction(ITextEditorActionConstants.QUICKDIFF_REVERTLINE)});
 		action2.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICKDIFF_REVERT);
 		setAction(ITextEditorActionConstants.QUICKDIFF_REVERT, action2);
 
@@ -1245,15 +1248,15 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, quickdiffAction);
 		
 		if (isChangeInformationShowing()) {
-			TextEditorAction revertSelection= (TextEditorAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTSELECTION);
-			TextEditorAction revertBlock= (TextEditorAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTBLOCK);
-			TextEditorAction revertLine= (TextEditorAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTLINE);
-			TextEditorAction revertDeletion= (TextEditorAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION);
+			QuickDiffRestoreAction revertSelection= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTSELECTION);
+			QuickDiffRestoreAction revertBlock= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTBLOCK);
+			QuickDiffRestoreAction revertLine= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTLINE);
+			QuickDiffRestoreAction revertDeletion= (QuickDiffRestoreAction) getAction(ITextEditorActionConstants.QUICKDIFF_REVERTDELETION);
 			
-			revertSelection.update();
-			revertBlock.update();
-			revertLine.update();
-			revertDeletion.update();
+			revertSelection.update(true);
+			revertBlock.update(true);
+			revertLine.update(true);
+			revertDeletion.update(true);
 			
 			// only add block action if selection action is not enabled
 			if (revertSelection.isEnabled())

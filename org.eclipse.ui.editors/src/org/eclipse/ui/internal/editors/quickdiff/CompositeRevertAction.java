@@ -8,12 +8,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.texteditor;
+package org.eclipse.ui.internal.editors.quickdiff;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 
 import org.eclipse.jface.text.Assert;
+
+import org.eclipse.ui.texteditor.IUpdate;
 
 
 /**
@@ -22,7 +24,7 @@ import org.eclipse.jface.text.Assert;
  * 
  * @since 3.1
  */
-final class CombineAction extends Action implements IUpdate {
+public final class CompositeRevertAction extends Action implements IUpdate {
 
 	/**
 	 * The actions.
@@ -34,7 +36,7 @@ final class CombineAction extends Action implements IUpdate {
 	 * 
 	 * @param actions the list of actions
 	 */
-	public CombineAction(IAction[] actions) {
+	public CompositeRevertAction(IAction[] actions) {
 		fActions= new IAction[actions.length];
 		for (int i= 0; i < actions.length; i++) {
 			Assert.isNotNull(actions[i]);
@@ -48,17 +50,21 @@ final class CombineAction extends Action implements IUpdate {
 	 */
 	public void update() {
 		for (int i= 0; i < fActions.length; i++) {
-			update(fActions[i]);
+			if (fActions[i] instanceof IUpdate)
+				((IUpdate) fActions[i]).update();
 		}
 		IAction action= getEnabledAction();
 		
-		if (action == null) {
-			setEnabled(false);
+		if (action == null)
 			return;
-		}
-		setEnabled(true);
 		setText(action.getText());
 		setToolTipText(action.getToolTipText());
+	}
+	
+	
+	public boolean isEnabled() {
+		update();
+		return getEnabledAction() != null;
 	}
 	
 	/*
@@ -70,16 +76,6 @@ final class CombineAction extends Action implements IUpdate {
 			action.run();
 	}
 	
-	/**
-	 * Updates <code>action</code> if it implements <code>IUpdate</code>.
-	 * 
-	 * @param action the action to update
-	 */
-	private void update(IAction action) {
-		if (action instanceof IUpdate)
-			((IUpdate) action).update();
-	}
-
 	/**
 	 * Returns the first enabled action, or <code>null</code> if none is
 	 * enabled.

@@ -38,6 +38,8 @@ import org.eclipse.ui.texteditor.TextEditorAction;
  */
 public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	
+	private int fLastLine= -1;
+
 	/**
 	 * Creates a new instance.
 	 * 
@@ -76,10 +78,28 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 	/*
 	 * @see org.eclipse.ui.texteditor.TextEditorAction#update()
 	 */
-	public void update() {
+	public final void update() {
+		update(false);
+	}
+	
+	/**
+	 * Updates the receiver. If <code>useRulerInfo</code> is <code>true</code>,
+	 * the line of the last ruler activity is taken into account, if
+	 * <code>false</code>, only the textual selection is used.
+	 * 
+	 * @param useRulerInfo <code>true</code> if the ruler mouse activity
+	 *        should be taken into account
+	 * @since 3.1
+	 */
+	public void update(boolean useRulerInfo) {
 		super.update();
 		if (isEnabled())
 			setEnabled(canModifyEditor());
+		
+		if (isEnabled())
+			fLastLine= computeLine(useRulerInfo);
+		else
+			fLastLine= -1;
 	}
 
 	/**
@@ -97,6 +117,41 @@ public abstract class QuickDiffRestoreAction extends TextEditorAction {
 		if (s instanceof ITextSelection)
 			return (ITextSelection)s;
 		return null;
+	}
+	
+	/**
+	 * Returns the current line of activity
+	 * 
+	 * @return the currently active line
+	 * @since 3.1
+	 */
+	protected int getLastLine() {
+		return fLastLine;
+	}
+	
+	/**
+	 * Returns the active line
+	 * 
+	 * @param useRulerInfo
+	 * @return the line of interest.
+	 * @since 3.1
+	 */
+	private int computeLine(boolean useRulerInfo) {
+		int lastLine;
+		if (useRulerInfo) {
+			IVerticalRulerInfo ruler= getRuler();
+			if (ruler == null)
+				lastLine= -1;
+			else
+				lastLine= ruler.getLineOfLastMouseButtonActivity();
+		} else {
+			ITextSelection selection= getSelection();
+			if (selection == null)
+				lastLine= -1;
+			else
+				lastLine= selection.getEndLine();
+		}
+		return lastLine;
 	}
 
 	/**

@@ -15,7 +15,6 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
-import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -41,44 +40,47 @@ public class RevertSelectionAction extends QuickDiffRestoreAction {
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#update(boolean)
 	 */
-	public void update() {
-		super.update();
+	public void update(boolean useRulerInfo) {
+		super.update(useRulerInfo);
 		
 		if (!isEnabled())
 			return;
 		
-		setEnabled(false);
+		if (!computeEnablement())
+			setEnabled(false);
+	}
 
+	/**
+	 * Computes the enablement state and sets the line numbers.
+	 * 
+	 * @return the enablement state
+	 */
+	private boolean computeEnablement() {
 		ITextSelection selection= getSelection();
 		if (selection == null)
-			return;
+			return false;
 		fStartLine= selection.getStartLine();
 		fEndLine= selection.getEndLine();
-
 		// only enable if mouse activity is inside line range
-		IVerticalRulerInfo ruler= getRuler();
-		if (ruler == null)
-			return;
-		int activityLine= ruler.getLineOfLastMouseButtonActivity();
+		int activityLine= getLastLine();
 		if (activityLine < fStartLine || activityLine > fEndLine + 1)
 			// + 1 to cover the case where the selection goes to the offset of the next line
-			return;
-
+			return false;
 		ILineDiffer differ= getDiffer();
 		if (differ == null)
-			return;
-
+			return false;
 		// only enable if selection covers at least two lines
 		if (fEndLine > fStartLine) {
 			for (int i= fStartLine; i <= fEndLine; i++) {
 				ILineDiffInfo info= differ.getLineInfo(i);
 				if (info != null && info.hasChanges()) {
-					setEnabled(true);
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 
 	/*

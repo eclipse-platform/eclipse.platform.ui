@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.texteditor.quickdiff;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.source.ILineDiffInfo;
 import org.eclipse.jface.text.source.ILineDiffer;
-import org.eclipse.jface.text.source.IVerticalRulerInfo;
 
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -41,22 +40,28 @@ public class RevertBlockAction extends QuickDiffRestoreAction {
 	}
 
 	/*
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
+	 * @see org.eclipse.ui.internal.texteditor.quickdiff.QuickDiffRestoreAction#update(boolean)
 	 */
-	public void update() {
-		super.update();
+	public void update(boolean useRulerInfo) {
+		super.update(useRulerInfo);
 		
 		if (!isEnabled())
 			return;
 		
-		setEnabled(false);
-		IVerticalRulerInfo ruler= getRuler();
-		if (ruler == null)
-			return;
-		fLine= ruler.getLineOfLastMouseButtonActivity();
+		fLine= getLastLine();
+		if (!computeEnablement())
+			setEnabled(false);
+	}
+
+	/**
+	 * Computes the enablement state.
+	 * 
+	 * @return the enablement state
+	 */
+	private boolean computeEnablement() {
 		ILineDiffer differ= getDiffer();
 		if (differ == null)
-			return;
+			return false;
 		ILineDiffInfo info= differ.getLineInfo(fLine);
 		if (info != null && info.getChangeType() != ILineDiffInfo.UNCHANGED) {
 			boolean hasBlock= false;
@@ -69,8 +74,9 @@ public class RevertBlockAction extends QuickDiffRestoreAction {
 				hasBlock= info != null && info.hasChanges();
 			}
 			if (hasBlock)
-				setEnabled(true);
+				return true;
 		}
+		return false;
 	}
 
 	/*
