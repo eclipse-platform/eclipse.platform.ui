@@ -137,7 +137,7 @@ public abstract void gotoMarker(IMarker marker);
  *		if (!(input instanceof IFileEditorInput))
  *			throw new PartInitException("Invalid Input: Must be IFileEditorInput");
  *		setSite(site);
- *		setInput(editorInput);
+ *		setInput(input);
  * </pre>
  */
 public abstract void init(IEditorSite site, IEditorInput input) throws PartInitException;
