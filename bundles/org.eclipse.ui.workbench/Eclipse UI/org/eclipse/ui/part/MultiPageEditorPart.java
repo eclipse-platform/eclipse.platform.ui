@@ -142,7 +142,9 @@ public int addPage(IEditorPart editor, IEditorInput input) throws PartInitExcept
  * @return a new container
  */
 private CTabFolder createContainer(Composite parent) {
-	final CTabFolder newContainer = new CTabFolder(parent, SWT.BOTTOM);
+	// use SWT.FLAT style so that an extra 1 pixel border is not reserved
+	// inside the folder
+	final CTabFolder newContainer = new CTabFolder(parent, SWT.BOTTOM | SWT.FLAT);
 	newContainer.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
 			int newPageIndex = newContainer.indexOf((CTabItem) e.item);
