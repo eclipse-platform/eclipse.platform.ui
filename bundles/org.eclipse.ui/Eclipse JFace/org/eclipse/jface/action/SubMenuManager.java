@@ -127,11 +127,6 @@ public IContributionItem find(String id) {
 	if (item instanceof IMenuManager) {
 		// if it is a menu manager wrap it before returning
 		IMenuManager menu = (IMenuManager)item;
-		if (menu instanceof SubMenuManager)
-			// it it is already wrapped then remover the wrapper and 
-			// rewrap. We have a table of wrappers so we reuse wrappers
-			// we create.
-			menu = (IMenuManager) ((SubMenuManager)menu).getParent();
 		item = getWrapper(menu);
 	}
 
@@ -159,7 +154,7 @@ public boolean getRemoveAllWhenShown() {
  *
  * @return the menu wrapper
  */
-private IMenuManager getWrapper(IMenuManager mgr) {
+protected IMenuManager getWrapper(IMenuManager mgr) {
 	if (mapMenuToWrapper == null) {
 		mapMenuToWrapper = new HashMap(4);
 	}

@@ -25,6 +25,32 @@ public ActionSetMenuManager(IMenuManager mgr, String actionSetId) {
 }
 /* (non-Javadoc)
  * Method declared on IContributionManager.
+ *
+ * Returns the item passed to us, not the wrapper.
+ * In the case of menu's not added by this manager,
+ * ensure that we return a wrapper for the menu.
+ */
+public IContributionItem find(String id) {
+	IContributionItem item = parentMgr.find(id);
+	if (item instanceof SubContributionItem)
+		// Return the item passed to us, not the wrapper.
+		item = unwrap(item);
+		
+	if (item instanceof IMenuManager) {
+		// if it is a menu manager wrap it before returning
+		IMenuManager menu = (IMenuManager)item;
+		if (menu instanceof SubMenuManager)
+			// it it is already wrapped then remover the wrapper and 
+			// rewrap. We have a table of wrappers so we reuse wrappers
+			// we create.
+			menu = (IMenuManager) ((SubMenuManager)menu).getParent();
+		item = getWrapper(menu);
+	}
+
+	return item;
+}
+/* (non-Javadoc)
+ * Method declared on IContributionManager.
  */
 public IContributionItem[] getItems() {
 	return parentMgr.getItems();
