@@ -31,7 +31,10 @@ public abstract class RemoteCommand extends Command {
 	protected ICVSResource[] sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {
+			
 		// do nothing
+		monitor.beginTask(null, 100);
+		monitor.done();
 		return resources;
 	}
 	
