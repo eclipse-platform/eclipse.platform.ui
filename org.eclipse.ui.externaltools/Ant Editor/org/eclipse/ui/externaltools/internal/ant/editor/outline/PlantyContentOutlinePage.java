@@ -266,7 +266,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
         // Create the handler
         OutlinePreparingHandler tempHandler = null;
         try {
-            tempHandler = new OutlinePreparingHandler();
+            tempHandler = new OutlinePreparingHandler(tempFile.getLocation().toFile().getParentFile());
         } catch (ParserConfigurationException e) {
 			ExternalToolsPlugin.getDefault().log(e);
             return null;

@@ -384,8 +384,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
 	/**
 	 * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
 	 */
-	public InputSource resolveEntity(String publicId, String systemId)
-		throws SAXException {
+	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
 			int index= systemId.indexOf(':');
 			if (index > 0) {
 				//remove file:
