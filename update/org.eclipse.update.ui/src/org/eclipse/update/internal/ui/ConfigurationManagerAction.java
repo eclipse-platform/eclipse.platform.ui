@@ -14,8 +14,6 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.*;
 import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.ui.*;
 
@@ -41,34 +39,11 @@ public class ConfigurationManagerAction implements IWorkbenchWindowActionDelegat
 		BusyIndicator
 			.showWhile(window.getShell().getDisplay(), new Runnable() {
 			public void run() {
-				openConfigurationManager();
+				UpdateManagerUI.openConfigurationManager(window.getShell());
 			}
 		});
 	}
 
-	private void openConfigurationManager() {
-		if (applicationWindow!=null) {
-			restoreConfigurationWindow();
-			return;
-		}
-		ApplicationWindow cwindow = UpdateManagerUI.createConfigurationManagerWindow(window.getShell());
-		cwindow.create();
-		cwindow.getShell().setSize(800, 600);
-		cwindow.getShell().addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				applicationWindow = null;
-			}
-		});
-		applicationWindow = cwindow;
-		cwindow.open();
-	}
-	
-	private void restoreConfigurationWindow() {
-		Shell shell = applicationWindow.getShell();
-		if (shell.getMinimized())
-			shell.setMinimized(false);
-		shell.open();
-	}
 
 	/**
 	 */

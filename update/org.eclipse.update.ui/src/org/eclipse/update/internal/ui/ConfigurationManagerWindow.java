@@ -164,6 +164,7 @@ public class ConfigurationManagerWindow
 		super.create();
 		// set the title
 		getShell().setText(UpdateUI.getString("ConfigurationManagerAction.title")); //$NON-NLS-1$
+		getShell().setSize(800, 600);
 	}
 	
 	/* (non-Javadoc)

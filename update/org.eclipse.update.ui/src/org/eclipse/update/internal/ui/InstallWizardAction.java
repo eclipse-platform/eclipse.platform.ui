@@ -12,7 +12,6 @@ package org.eclipse.update.internal.ui;
 
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.ui.*;
@@ -40,29 +39,21 @@ public class InstallWizardAction extends Action implements IWorkbenchWindowActio
 		BusyIndicator
 			.showWhile(window.getShell().getDisplay(), new Runnable() {
 			public void run() {
-				openNewUpdatesWizard();
+				UpdateManagerUI.openInstallWizard(window.getShell());
 			}
 		});
 	}
 	
-	private void openNewUpdatesWizard() {
-		WizardDialog dialog = UpdateManagerUI.createInstallWizardDialog(window.getShell());
-		dialog.create();
-		dialog.open();
-	}
-
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
 	/**
-	 * Insert the method's description here.
 	 * @see IWorkbenchWindowActionDelegate#dispose
 	 */
 	public void dispose() {
 	}
 
 	/**
-	 * Insert the method's description here.
 	 * @see IWorkbenchWindowActionDelegate#init
 	 */
 	public void init(IWorkbenchWindow window) {
