@@ -85,24 +85,9 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 				// For non-projects determine if the tag being loaded is the same as the resource's parent
 				// If it's not, warn the user that they will have strange sync behavior
 				try {
-					for (int i = 0; i < resources.length; i++) {
-						if (resources[i].getType() != IResource.PROJECT) {
-							ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
-							CVSTag parentTag = cvsResource.getParent().getFolderSyncInfo().getTag();
-							if ( ! equalTags(tag[0], parentTag)) {
-								final Shell shell = getShell();
-								final boolean[] result = new boolean[] { false };
-								shell.getDisplay().syncExec(new Runnable() {
-									public void run() {
-										result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("question"), Policy.bind("ReplaceWithTagAction.mixingTags")); //$NON-NLS-1$ //$NON-NLS-2$
-									}
-								});
-								if (!result[0]) tag[0] = null;
-								// Only ask once!
-								return;
-							}
-						}
-						
+					if(!CVSAction.checkForMixingTags(getShell(), resources, tag[0])) {
+						tag[0] = null;
+						return;
 					}
 				} catch (CVSException e) {
 					throw new InvocationTargetException(e);

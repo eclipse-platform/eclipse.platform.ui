@@ -6,35 +6,27 @@ package org.eclipse.team.internal.ccvs.ui.merge;
  */
 
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
-import org.eclipse.team.ui.sync.CatchupReleaseViewer;
 import org.eclipse.team.ui.sync.SyncView;
-import org.eclipse.team.ui.sync.TeamFile;
 
 public class MergeEditorInput extends CVSSyncCompareInput {
-	IProject project;
 	CVSTag start;
 	CVSTag end;
 	
-	public MergeEditorInput(IProject project, CVSTag start, CVSTag end) {
-		super(new IResource[] {project});
-		this.project = project;
+	public MergeEditorInput(IResource[] resources, CVSTag start, CVSTag end) {
+		super(resources);
 		this.start = start;
 		this.end = end;
 	}
@@ -44,14 +36,21 @@ public class MergeEditorInput extends CVSSyncCompareInput {
 		return viewer;
 	}
 	protected IRemoteSyncElement[] createSyncElements(IProgressMonitor monitor) throws TeamException {
-		monitor.beginTask(null, 100);
+		IResource[] resources = getResources();
+		IRemoteSyncElement[] trees = new IRemoteSyncElement[resources.length];
+		int work = 100 * resources.length;
+		monitor.beginTask(null, work);
 		try {
-			IRemoteResource base = CVSWorkspaceRoot.getRemoteTree(project, start, Policy.subMonitorFor(monitor, 50));
-			IRemoteResource remote = CVSWorkspaceRoot.getRemoteTree(project, end, Policy.subMonitorFor(monitor, 50));
-			return new IRemoteSyncElement[] {new CVSRemoteSyncElement(true /*three way*/, project, base, remote)};
+			for (int i = 0; i < trees.length; i++) {
+				IResource resource = resources[i];
+				IRemoteResource base = CVSWorkspaceRoot.getRemoteTree(resource, start, Policy.subMonitorFor(monitor, 50));
+				IRemoteResource remote = CVSWorkspaceRoot.getRemoteTree(resource, end, Policy.subMonitorFor(monitor, 50));
+				trees[i] = new CVSRemoteSyncElement(true /*three way*/, resource, base, remote);				 
+			}
 		} finally {
 			monitor.done();
 		}
+		return trees;
 	}
 	public CVSTag getStartTag() {
 		return start;

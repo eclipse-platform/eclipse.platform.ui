@@ -20,10 +20,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
@@ -41,6 +39,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
+import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 
 public class BranchWizard extends Wizard {
 	BranchWizardPage mainPage;
@@ -86,7 +85,15 @@ public class BranchWizard extends Wizard {
 						if (versionString != null) {
 							rootVersionTag = new CVSTag(versionString, CVSTag.VERSION);
 						}
-						
+												
+						// For non-projects determine if the tag being loaded is the same as the resource's parent
+						// If it's not, warn the user that they will have strange sync behavior
+						if (update) {
+							if(!CVSAction.checkForMixingTags(getShell(), resources, branchTag)) {
+								return;
+							}
+						}
+										
 						RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 						Hashtable table = getProviderMapping(resources);
 						Set keySet = table.keySet();
@@ -97,31 +104,7 @@ public class BranchWizard extends Wizard {
 							IProgressMonitor subMonitor = new SubProgressMonitor(monitor, 1000);
 							CVSTeamProvider provider = (CVSTeamProvider)iterator.next();
 							List list = (List)table.get(provider);
-							IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);
-							// For non-projects determine if the tag being loaded is the same as the resource's parent
-							// If it's not, warn the user that they will have strange sync behavior
-							if (update) {
-								for (int i = 0; i < resources.length; i++) {
-									if (providerResources[i].getType() != IResource.PROJECT) {
-										ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
-										CVSTag parentTag = cvsResource.getParent().getFolderSyncInfo().getTag();
-										if (!equalTags(branchTag, parentTag)) {
-											final Shell shell = getShell();
-											final boolean[] result = new boolean[] { false };
-											shell.getDisplay().syncExec(new Runnable() {
-												public void run() {
-													result[0] = MessageDialog.openQuestion(getShell(), Policy.bind("question"), Policy.bind("BranchWizard.mixingTags", branchTag.getName())); //$NON-NLS-1$ //$NON-NLS-2$
-												}
-											});
-											if (!result[0]) return;
-											// Only ask once!
-											break;
-										}
-									}
-									
-								}
-							}
-				
+							IResource[] providerResources = (IResource[])list.toArray(new IResource[list.size()]);											
 							ICVSRepositoryLocation root = provider.getCVSWorkspaceRoot().getRemoteLocation();
 							try {
 								if (!areAllResourcesSticky(resources)) {													
@@ -220,11 +203,5 @@ public class BranchWizard extends Wizard {
 			return false;
 		}
 		return false;
-	}
-	
-	protected boolean equalTags(CVSTag tag1, CVSTag tag2) {
-		if (tag1 == null) tag1 = CVSTag.DEFAULT;
-		if (tag2 == null) tag2 = CVSTag.DEFAULT;
-		return tag1.equals(tag2);
 	}
 }

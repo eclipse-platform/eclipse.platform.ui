@@ -5,8 +5,9 @@ package org.eclipse.team.internal.ccvs.ui.sync;
  * All Rights Reserved.
  */
  
+import java.util.Map;
+
 import org.eclipse.compare.CompareConfiguration;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -29,15 +30,13 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
-import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
-import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
-import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSDecoration;
+import org.eclipse.team.internal.ccvs.ui.CVSDecorationRunnable;
+import org.eclipse.team.internal.ccvs.ui.CVSDecoratorConfiguration;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.HistoryView;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -98,10 +97,16 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 			ICVSRemoteFile baseFile = (ICVSRemoteFile)remoteSyncElement.getBase();
 			
 			// can only show history if remote exists or local has a base.
+			String currentRevision = null;
+			try {
+				currentRevision = baseFile!=null ? baseFile.getRevision(): null;
+			} catch(TeamException e) {
+				CVSUIPlugin.log(e.getStatus());
+			}
 			if(remoteFile!=null) {
-				view.showHistory(remoteFile);
+				view.showHistory(remoteFile, currentRevision);
 			} else if(baseFile!=null) {
-				view.showHistory(baseFile);
+				view.showHistory(baseFile, currentRevision);
 			}
 		}
 		public void selectionChanged(SelectionChangedEvent event) {
@@ -176,31 +181,14 @@ public class CVSCatchupReleaseViewer extends CatchupReleaseViewer {
 			}
 			public String getText(Object element) {
 				if (element instanceof ITeamNode) {					
-					ITeamNode node = (ITeamNode)element;
+					ITeamNode node = (ITeamNode)element;					
 					IResource resource = node.getResource();
 					if (resource.exists()) {
-						try {
-							if (resource.getType() == IResource.FILE) {
-								ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
-								ResourceSyncInfo info = cvsFile.getSyncInfo();
-								KSubstOption option = info != null && info.getKeywordMode() != null ?
-									info.getKeywordMode() :
-									KSubstOption.fromFile((IFile)resource);
-								return Policy.bind("CVSCatchupReleaseViewer.fileDecoration", oldProvider.getText(element), option.getShortDisplayText()); //$NON-NLS-1$
-							} else if (resource instanceof IContainer) {
-								ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor((IContainer)resource);
-								FolderSyncInfo info = cvsFolder.getFolderSyncInfo();
-								if (info != null) {
-									CVSTag tag = info.getTag();
-									if (tag != null) {
-										return Policy.bind("CVSCatchupReleaseViewer.folderDecoration", oldProvider.getText(element), tag.getName()); //$NON-NLS-1$
-									}
-								}
-							}
-							
-						} catch (CVSException e) {
-							ErrorDialog.openError(getControl().getShell(), null, null, e.getStatus());
-						}
+						CVSDecoration decoration = CVSDecorationRunnable.computeTextLabelFor(resource, false /*don't show dirty*/);
+						String format = decoration.getFormat();
+						Map bindings = decoration.getBindings();
+						bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, oldProvider.getText(element));
+						return CVSDecoratorConfiguration.bind(format, bindings);
 					}
 				}								
 				return oldProvider.getText(element);

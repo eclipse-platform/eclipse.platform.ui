@@ -13,11 +13,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
@@ -136,75 +132,68 @@ public class CVSDecorationRunnable implements Runnable {
 		return decoration;
 	}
 	
-	private CVSDecoration computeTextLabelFor(IResource resource, boolean isDirty) {
-		Map bindings = new HashMap(3);
-		String format = ""; //$NON-NLS-1$
-		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-		
-		IPath resourceLocation = resource.getLocation();
-		int type = resource.getType();
-		
-		// if the resource does not have a location then return. This can happen if the resource
-		// has been deleted after we where asked to decorate it.
-		if(resourceLocation==null) {
-			return new CVSDecoration(format, bindings, null);
-		}
-		
-		if(type==IResource.FOLDER) {
-			format = store.getString(ICVSUIConstants.PREF_FOLDERTEXT_DECORATION);
-		} else if(type==IResource.PROJECT) {
-			format = store.getString(ICVSUIConstants.PREF_PROJECTTEXT_DECORATION);
-		} else {
-			format = store.getString(ICVSUIConstants.PREF_FILETEXT_DECORATION);
-		}
-		
-		if(isDirty) {
-			bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, store.getString(ICVSUIConstants.PREF_DIRTY_FLAG));
-		}
-			
+	public static CVSDecoration computeTextLabelFor(IResource resource, boolean isDirty) {
 		try {
-			switch (type) {
-				case IResource.FOLDER : 
-				case IResource.PROJECT :
-					ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
-					FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
-					if (folderInfo != null) {
-						CVSTag tag = folderInfo.getTag();
-						if(tag!=null) {
-							bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, tag.getName());
-						}
-						ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().getRepository(folderInfo.getRoot());
-						bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, location.getHost());
-						bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, location.getMethod().getName());
-						bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, location.getUsername());
-						bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, location.getRootDirectory());
-						bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, folderInfo.getRepository());
-					}
-					break;
-				case IResource.FILE :
-					format = store.getString(ICVSUIConstants.PREF_FILETEXT_DECORATION);
-					ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
-					ResourceSyncInfo fileInfo = file.getSyncInfo();
-					if (fileInfo != null) {
-						CVSTag tag = fileInfo.getTag();
-						if(fileInfo.isAdded()) {
-							bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, store.getString(ICVSUIConstants.PREF_ADDED_FLAG));
-						} else {
-							bindings.put(CVSDecoratorConfiguration.FILE_REVISION, fileInfo.getRevision());
-						}
-						KSubstOption option = fileInfo.getKeywordMode() != null ?
-							fileInfo.getKeywordMode() :
-							KSubstOption.fromFile((IFile) resource);
-						bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, option.getShortDisplayText());
-						if (tag != null && (tag.getType() != CVSTag.HEAD)) {
-							bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, tag.getName());
-						}
+			Map bindings = new HashMap(3);
+			String format = ""; //$NON-NLS-1$
+			IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
+			
+			IPath resourceLocation = resource.getLocation();
+			int type = resource.getType();
+			
+			// if the resource does not have a location then return. This can happen if the resource
+			// has been deleted after we where asked to decorate it.
+			if(resourceLocation==null) {
+				return new CVSDecoration(format, bindings, null);
+			}
+			
+			if(type==IResource.FOLDER) {
+				format = store.getString(ICVSUIConstants.PREF_FOLDERTEXT_DECORATION);
+			} else if(type==IResource.PROJECT) {
+				format = store.getString(ICVSUIConstants.PREF_PROJECTTEXT_DECORATION);
+			} else {
+				format = store.getString(ICVSUIConstants.PREF_FILETEXT_DECORATION);
+			}
+			
+			if(isDirty) {
+				bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, store.getString(ICVSUIConstants.PREF_DIRTY_FLAG));
+			}
+	
+			CVSTag tag = getTagToShow(resource);
+			if(tag != null) {
+				bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, tag.getName());
+			}
+			
+			if(type != IResource.FILE) {
+				ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
+				FolderSyncInfo folderInfo = folder.getFolderSyncInfo();
+				if (folderInfo != null) {
+					ICVSRepositoryLocation location = CVSProviderPlugin.getProvider().getRepository(folderInfo.getRoot());
+					bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_HOST, location.getHost());
+					bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_METHOD, location.getMethod().getName());
+					bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_USER, location.getUsername());
+					bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_ROOT, location.getRootDirectory());
+					bindings.put(CVSDecoratorConfiguration.REMOTELOCATION_REPOSITORY, folderInfo.getRepository());
+				}
+			} else {
+				format = store.getString(ICVSUIConstants.PREF_FILETEXT_DECORATION);
+				ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile) resource);
+				ResourceSyncInfo fileInfo = file.getSyncInfo();
+				if (fileInfo != null) {
+					if(fileInfo.isAdded()) {
+						bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, store.getString(ICVSUIConstants.PREF_ADDED_FLAG));
 					} else {
-						// only show the type that cvs will use when comitting the file
-						KSubstOption option = KSubstOption.fromFile((IFile) resource);
-						bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, option.getShortDisplayText());
+						bindings.put(CVSDecoratorConfiguration.FILE_REVISION, fileInfo.getRevision());
 					}
-					break;
+					KSubstOption option = fileInfo.getKeywordMode() != null ?
+						fileInfo.getKeywordMode() :
+						KSubstOption.fromFile((IFile) resource);
+					bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, option.getShortDisplayText());
+				} else {
+					// only show the type that cvs will use when comitting the file
+					KSubstOption option = KSubstOption.fromFile((IFile) resource);
+					bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, option.getShortDisplayText());
+				}
 			}			
 			return new CVSDecoration(format, bindings, null);
 		} catch (CVSException e) {
@@ -212,7 +201,47 @@ public class CVSDecorationRunnable implements Runnable {
 			return new CVSDecoration();
 		}
 	}
-
+	
+	/**
+	 * Only show the tag if the resources tag is different than the parents. Or else, tag
+	 * names will clutter the text decorations.
+	 */
+	protected static CVSTag getTagToShow(IResource resource) throws CVSException {
+		ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+		CVSTag tag = null;
+		boolean useParentTag = false;
+		if(cvsResource.isFolder()) {
+			FolderSyncInfo folderInfo = ((ICVSFolder)cvsResource).getFolderSyncInfo();
+			if(folderInfo != null) {
+				tag = folderInfo.getTag();
+			}  
+		} else {
+			ResourceSyncInfo info = ((ICVSFile)cvsResource).getSyncInfo();
+			if(info != null) {
+				tag = info.getTag();
+			}  
+			if(info == null || info.isAdded()) {
+				useParentTag = true;
+			}
+		}
+		
+		ICVSFolder parent = cvsResource.getParent();
+		if(parent != null) {
+			FolderSyncInfo parentInfo = parent.getFolderSyncInfo();
+			if(parentInfo != null) {												
+				CVSTag parentTag = parentInfo.getTag();
+				parentTag = (parentTag == null ? CVSTag.DEFAULT : parentTag);
+				tag = (tag == null ? CVSTag.DEFAULT : tag);
+				if( parentTag.equals(tag) || useParentTag ) {
+					return null;
+				} else {
+					return tag;
+				}
+			}
+		}
+		return tag;
+	}
+		
 	private List computeLabelOverlaysFor(IResource resource, boolean isDirty, CVSTeamProvider provider) {
 		List overlays = new ArrayList(3);
 		

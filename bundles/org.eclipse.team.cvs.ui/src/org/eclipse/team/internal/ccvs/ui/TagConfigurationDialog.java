@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/cpl-v05.html
  * 
  * Contributors:
- * IBM - Initial API and implementation
+ * IBM - Initial implementation
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 

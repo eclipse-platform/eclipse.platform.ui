@@ -141,6 +141,20 @@
                id="org.eclipse.team.ccvs.ui.setKeywordSubstitution">
          </action>
          <action
+               label="%MergeAction.label"
+               tooltip="%MergeAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.MergeAction"
+               menubarPath="team.main/group2"
+               id="org.eclipse.team.ccvs.ui.merge">
+         </action>
+         <action
+               label="%BranchAction.label"
+               tooltip="%BranchAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"
+               menubarPath="team.main/group2"
+               id="org.eclipse.team.ccvs.ui.branch">
+         </action>
+         <action
                label="%TagAction.label"
                tooltip="%TagAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.TagAction"
@@ -189,6 +203,13 @@
                menubarPath="team.main/group1"
                id="org.eclipse.team.ccvs.ui.sync">
          </action>
+         <action
+               label="%ReplaceWithTagAction.label"
+               tooltip="%ReplaceWithTagAction.tooltip"
+               class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"
+               menubarPath="replaceWithMenu/replaceWithGroup"
+               id="org.eclipse.team.ccvs.ui.replaceWithTag">
+         </action>
       </objectContribution>
       <objectContribution
             objectClass="org.eclipse.core.resources.IProject"
@@ -204,27 +225,6 @@
                class="org.eclipse.team.internal.ccvs.ui.actions.UnmanageAction"
                menubarPath="team.main/projectGroup"
                id="org.eclipse.team.ccvs.ui.unmanage">
-         </action>
-         <action
-               label="%MergeAction.label"
-               tooltip="%MergeAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.MergeAction"
-               menubarPath="team.main/group2"
-               id="org.eclipse.team.ccvs.ui.merge">
-         </action>
-         <action
-               label="%BranchAction.label"
-               tooltip="%BranchAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.BranchAction"
-               menubarPath="team.main/group2"
-               id="org.eclipse.team.ccvs.ui.branch">
-         </action>
-         <action
-               label="%ReplaceWithTagAction.label"
-               tooltip="%ReplaceWithTagAction.tooltip"
-               class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithTagAction"
-               menubarPath="replaceWithMenu/replaceWithGroup"
-               id="org.eclipse.team.ccvs.ui.replaceWithTag">
          </action>
       </objectContribution>
       <objectContribution

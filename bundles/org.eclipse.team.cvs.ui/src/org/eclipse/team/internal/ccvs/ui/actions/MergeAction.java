@@ -1,19 +1,22 @@
+/*******************************************************************************
+ * Copyright (c) 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.actions;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
-
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.merge.MergeWizard;
-import org.eclipse.team.ui.actions.TeamAction;
 
-public class MergeAction extends TeamAction {
+public class MergeAction extends CVSAction {
 	/*
 	 * @see IActionDelegate#run(IAction)
 	 */
@@ -22,7 +25,7 @@ public class MergeAction extends TeamAction {
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				MergeWizard wizard = new MergeWizard();
-				wizard.setProject(getSelectedProjects()[0]);
+				wizard.setResources(getSelectedResources());
 				WizardDialog dialog = new WizardDialog(shell, wizard);
 				dialog.open();
 			}
@@ -32,7 +35,6 @@ public class MergeAction extends TeamAction {
 	 * @see TeamAction#isEnabled()
 	 */
 	protected boolean isEnabled() throws TeamException {
-		IProject[] projects = getSelectedProjects();
-		return projects.length == 1;
+		return isSelectionNonOverlapping();
 	}
 }

@@ -66,7 +66,7 @@ public class ShowHistoryAction extends TeamAction {
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
 				HistoryView view = HistoryView.openInActivePerspective();
 				if (view != null) {
-					view.showHistory(files[0]);
+					view.showHistory(files[0], null /* no current revision */);
 				}
 			}
 		}, Policy.bind("ShowHistoryAction.showHistory"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$

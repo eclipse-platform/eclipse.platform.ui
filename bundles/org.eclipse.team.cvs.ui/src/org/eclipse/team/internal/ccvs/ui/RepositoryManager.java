@@ -97,18 +97,24 @@ public class RepositoryManager {
 	 * Get the list of known version tags for a given project.
 	 */
 	public CVSTag[] getKnownVersionTags(ICVSFolder project) {
-		ICVSRepositoryLocation location = getRepositoryLocationFor(project);
-		Set result = new HashSet();
-		Hashtable table = (Hashtable)versionTags.get(location);
-		if (table == null) {
-			return (CVSTag[])result.toArray(new CVSTag[result.size()]);
+		try {
+			ICVSRepositoryLocation location = getRepositoryLocationFor(project);
+			String name = new Path(project.getFolderSyncInfo().getRepository()).segment(0);
+			Set result = new HashSet();
+			Hashtable table = (Hashtable)versionTags.get(location);
+			if (table == null) {
+				return (CVSTag[])result.toArray(new CVSTag[result.size()]);
+			}
+			Set set = (Set)table.get(name);
+			if (set == null) {
+				return (CVSTag[])result.toArray(new CVSTag[result.size()]);
+			}
+			result.addAll(set);
+			return (CVSTag[])result.toArray(new CVSTag[0]);
+		} catch(CVSException e) {
+			CVSUIPlugin.log(e.getStatus());
+			return new CVSTag[0];
 		}
-		Set set = (Set)table.get(project.getName());
-		if (set == null) {
-			return (CVSTag[])result.toArray(new CVSTag[result.size()]);
-		}
-		result.addAll(set);
-		return (CVSTag[])result.toArray(new CVSTag[0]);
 	}
 	
 	public Map getKnownProjectsAndVersions(ICVSRepositoryLocation location) {

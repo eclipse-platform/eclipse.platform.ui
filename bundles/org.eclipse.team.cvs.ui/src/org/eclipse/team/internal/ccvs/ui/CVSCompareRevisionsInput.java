@@ -52,6 +52,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
@@ -59,7 +60,9 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 public class CVSCompareRevisionsInput extends CompareEditorInput {
@@ -67,7 +70,8 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 	ICVSRemoteFile currentEdition;
 	ILogEntry[] editions;
 	TableViewer viewer;
-	Action loadAction;
+	Action getContentsAction;
+	Action getRevisionAction;
 	Shell shell;
 	
 	/**
@@ -270,7 +274,8 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		mm.addMenuListener(
 			new IMenuListener() {
 				public void menuAboutToShow(IMenuManager mm) {
-					mm.add(loadAction);
+					mm.add(getContentsAction);
+					mm.add(getRevisionAction);
 				}
 			}
 		);
@@ -279,11 +284,13 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
 				if (!(selection instanceof IStructuredSelection)) {
-					loadAction.setEnabled(false);
+					getContentsAction.setEnabled(false);
+					getRevisionAction.setEnabled(false);
 					return;
 				}
 				IStructuredSelection ss = (IStructuredSelection)selection;
-				loadAction.setEnabled(ss.size() == 1);
+				getContentsAction.setEnabled(ss.size() == 1);
+				getRevisionAction.setEnabled(ss.size() == 1);
 			}	
 		});
 		return viewer;
@@ -340,7 +347,7 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 		cc.setRightLabel(rightLabel);
 	}
 	private void initializeActions() {
-		loadAction = new Action(Policy.bind("CVSCompareRevisionsInput.addToWorkspace"), null) { //$NON-NLS-1$
+		getContentsAction = new Action(Policy.bind("HistoryView.getContentsAction"), null) { //$NON-NLS-1$
 			public void run() {
 				try {
 					new ProgressMonitorDialog(shell).run(false, true, new WorkspaceModifyOperation() {
@@ -376,8 +383,42 @@ public class CVSCompareRevisionsInput extends CompareEditorInput {
 				viewer.refresh();
 			}
 		};
-		// set F1 help
-//		WorkbenchHelp.setHelp(loadAction, new Object[] {IVCMHelpContextIds.CATCHUPRELEASE_CATCHUP_ACTION});
+		
+		getRevisionAction = new Action(Policy.bind("HistoryView.getRevisionAction"), null) { //$NON-NLS-1$
+			public void run() {
+				try {
+					new ProgressMonitorDialog(shell).run(false, true, new WorkspaceModifyOperation() {
+						protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+							IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+							if (selection.size() != 1) return;
+							VersionCompareDiffNode node = (VersionCompareDiffNode)selection.getFirstElement();
+							ResourceEditionNode right = (ResourceEditionNode)node.getRight();
+							ICVSRemoteResource edition = right.getRemoteResource();
+							// Do the load. This just consists of setting the local contents. We don't
+							// actually want to change the base.
+							try {
+								CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject());
+								CVSTag revisionTag = new CVSTag(((ICVSRemoteFile)edition).getRevision(), CVSTag.VERSION);
+								if(CVSAction.checkForMixingTags(shell, new IResource[] {resource}, revisionTag)) {							
+									provider.update(new IResource[] {resource}, new Command.LocalOption[] {Command.UPDATE.IGNORE_LOCAL_CHANGES}, 
+								 				    revisionTag, true /*create backups*/, monitor);
+									currentEdition = (ICVSRemoteFile)edition;
+								}
+							} catch (TeamException e) {
+								throw new InvocationTargetException(e);
+							}
+						}
+					});
+				} catch (InterruptedException e) {
+					// Do nothing
+					return;
+				} catch (InvocationTargetException e) {
+					handle(e);
+				}
+				// recompute the labels on the viewer
+				viewer.refresh();
+			}
+		};		
 	}
 	public boolean isSaveNeeded() {
 		return false;
