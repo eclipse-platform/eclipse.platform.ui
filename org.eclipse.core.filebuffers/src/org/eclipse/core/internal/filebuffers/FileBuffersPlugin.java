@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.filebuffers;
 
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
-
 import org.eclipse.core.runtime.Plugin;
 
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -31,8 +28,6 @@ public class FileBuffersPlugin extends Plugin {
 	
 	/** The shared plug-in instance */
 	private static FileBuffersPlugin fgPlugin;
-	/** The resource bundle */
-	private ResourceBundle fResourceBundle;
 	/** The file buffer manager */
 	private ITextFileBufferManager fTextFileBufferManager;
 	
@@ -42,11 +37,6 @@ public class FileBuffersPlugin extends Plugin {
 	public FileBuffersPlugin() {
 		Assert.isTrue(fgPlugin == null);
 		fgPlugin= this;
-		try {
-			fResourceBundle= ResourceBundle.getBundle("org.eclipse.core.internal.filebuffers.FileBuffersPlugin");  //$NON-NLS-1$
-		} catch (MissingResourceException x) {
-			fResourceBundle = null;
-		}
 	}
 
 	/**
@@ -58,31 +48,6 @@ public class FileBuffersPlugin extends Plugin {
 		return fgPlugin;
 	}
 
-	/**
-	 * Returns the string from the plugin's resource bundle,
-	 * or 'key' if not found.
-	 * 
-	 * @param key the resource string key
-	 * @return the resource string for the given key
-	 */
-	public static String getResourceString(String key) {
-		ResourceBundle bundle= FileBuffersPlugin.getDefault().getResourceBundle();
-		try {
-			return (bundle!=null ? bundle.getString(key) : key);
-		} catch (MissingResourceException e) {
-			return key;
-		}
-	}
-
-	/**
-	 * Returns the plugin's resource bundle.
-	 * 
-	 * @return the resource bundle
-	 */
-	private ResourceBundle getResourceBundle() {
-		return fResourceBundle;
-	}
-	
 	/**
 	 * Returns the text file buffer manager of this plug-in.
 	 * 
