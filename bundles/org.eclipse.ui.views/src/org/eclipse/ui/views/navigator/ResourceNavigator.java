@@ -33,6 +33,9 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
@@ -107,6 +110,8 @@ public class ResourceNavigator
 	private ResourceWorkingSetFilter workingSetFilter =
 		new ResourceWorkingSetFilter();
 	private boolean linkingEnabled;
+	private boolean dragDetected;
+	private Listener dragDetectListener;
 
 	/** 
 	 * Settings constant for section name (value <code>ResourceNavigator</code>).
@@ -407,6 +412,10 @@ public class ResourceNavigator
 		if (getActionGroup() != null) {
 			getActionGroup().dispose();
 		}
+		Control control = viewer.getControl();
+		if (dragDetectListener != null && control != null && control.isDisposed() == false) {
+			control.removeListener(SWT.DragDetect, dragDetectListener);
+		}
 		super.dispose();
 	}
 
@@ -640,11 +649,20 @@ public class ResourceNavigator
 	 * @since 2.0
 	 */
 	protected void handleSelectionChanged(SelectionChangedEvent event) {
-		IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+		final IStructuredSelection sel = (IStructuredSelection) event.getSelection();
 		updateStatusLine(sel);
 		updateActionBars(sel);
+		dragDetected = false;
 		if (isLinkingEnabled()) {
-			linkToEditor(sel);
+			getShell().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					if (dragDetected == false) {
+						// only synchronize with editor when the selection is not the result 
+						// of a drag. Fixes bug 22274.
+						linkToEditor(sel);
+					}
+				}
+			});
 		}
 	}
 
@@ -697,6 +715,12 @@ public class ResourceNavigator
 		NavigatorDropAdapter adapter = new NavigatorDropAdapter(viewer);
 		adapter.setFeedbackEnabled(false);
 		viewer.addDropSupport(ops | DND.DROP_DEFAULT, transfers, adapter);
+		dragDetectListener = new Listener() {
+			public void handleEvent(Event event) {
+				dragDetected = true;
+			}
+		};
+		viewer.getControl().addListener(SWT.DragDetect, dragDetectListener);
 	}
 
 	/**
