@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclispe.ant.core">
+<schema targetNamespace="org.eclipse.ant.core">
 <annotation>
    <appInfo>
-      <meta.schema plugin="org.eclispe.ant.core" id="extraClasspathEntries" name="Extra Ant Classpath Entries"/>
+      <meta.schema plugin="org.eclipse.ant.core" id="extraClasspathEntries" name="Extra Ant Classpath Entries"/>
    </appInfo>
    <documentation>
       Allows plug-ins to define arbitrary JARs for use by the Ant infrastructure.
