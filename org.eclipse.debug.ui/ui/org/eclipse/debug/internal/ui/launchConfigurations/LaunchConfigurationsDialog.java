@@ -93,11 +93,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private Label fTreeLabel;
 	
 	/**
-	 * The workbench context present when this dialog is opened.
-	 */
-	private Object fContext;
-	
-	/**
 	 * The Composite used to insert an adjustable 'sash' between the tree and the tabs.
 	 */
 	private SashForm fSashForm;
@@ -174,7 +169,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private ProgressMonitorPart fProgressMonitorPart;
 	private Cursor waitCursor;
 	private Cursor arrowCursor;
-	private MessageDialog fWindowClosingDialog;
 	
 	/**
 	 * The number of 'long-running' operations currently taking place in this dialog
@@ -1496,8 +1490,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 */
 	private void setDisplayCursor(Cursor cursor) {
 		Shell[] shells = getShell().getDisplay().getShells();
-		for (int i = 0; i < shells.length; i++)
+		for (int i = 0; i < shells.length; i++) {
 			shells[i].setCursor(cursor);
+		}
 	}
 
 	/**

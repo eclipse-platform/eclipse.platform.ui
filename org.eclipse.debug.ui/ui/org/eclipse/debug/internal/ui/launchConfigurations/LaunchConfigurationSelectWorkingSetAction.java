@@ -21,7 +21,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class LaunchConfigurationSelectWorkingSetAction extends Action{
 	
 	private Shell fShell;
-	private IWorkingSet fWorkingSet;
 	private LaunchConfigurationWorkingSetActionManager fActionMgr;
 
 	public LaunchConfigurationSelectWorkingSetAction(LaunchConfigurationWorkingSetActionManager actionMgr, Shell shell) {
