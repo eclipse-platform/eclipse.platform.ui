@@ -187,6 +187,10 @@ public class Session {
 		return (validRequests == null) ||
 			(validRequests.indexOf(" " + request + " ") != -1); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	
+	public boolean isCVSNT() {
+		return location.getRootDirectory().indexOf(':') >= 0;
+	}
 
 	/**
 	 * Returns the local root folder for this session.

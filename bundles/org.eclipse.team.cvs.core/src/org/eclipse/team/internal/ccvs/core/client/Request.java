@@ -97,7 +97,11 @@ public abstract class Request {
 		int currentIncrement = 4;
 		int nextProgress = currentIncrement;
 		int worked = 0;
-		boolean isCVSNT = CVSProviderPlugin.getPlugin().isCustomizeForCVSNT();
+		
+		// If the session is connected to a CVSNT server (1.11.1.1), we'll need to do some special handling for
+		// some errors. Unfortunately, CVSNT 1.11.1.1 will drop the connection after so some functionality is
+		// still effected
+		boolean isCVSNT = session.isCVSNT();
 
 		List accumulatedStatus = new ArrayList();
 		for (;;) {
