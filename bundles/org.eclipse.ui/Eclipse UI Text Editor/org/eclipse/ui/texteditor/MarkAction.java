@@ -67,5 +67,4 @@ public class MarkAction extends TextEditorAction {
 			break;
 		}		
 	}
-
 }

@@ -2568,6 +2568,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsStateDependentAction(ITextEditorActionConstants.SHIFT_RIGHT, true);
 		markAsStateDependentAction(ITextEditorActionConstants.SHIFT_LEFT, true);
 		markAsStateDependentAction(ITextEditorActionConstants.FIND, true);
+		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE, true);
+		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE_TO_BEGINNING, true);
+		markAsStateDependentAction(ITextEditorActionConstants.DELETE_LINE_TO_END, true);
 		
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, SWT.SHIFT);
@@ -2651,20 +2654,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));		
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_FIND));	
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_ADD));
-		menu.add(new Separator(ITextEditorActionConstants.GROUP_SAVE));
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 		menu.add(new Separator(ITextEditorActionConstants.MB_ADDITIONS));
+		menu.add(new Separator(ITextEditorActionConstants.GROUP_SAVE));
 		
 		if (isEditable()) {
+			addAction(menu, ITextEditorActionConstants.GROUP_UNDO, ITextEditorActionConstants.UNDO);
+			addAction(menu, ITextEditorActionConstants.GROUP_UNDO, ITextEditorActionConstants.REVERT_TO_SAVED);			
 			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.CUT);
 			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.COPY);
 			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.PASTE);
-			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.SELECT_ALL);
+			addAction(menu, ITextEditorActionConstants.GROUP_SAVE, ITextEditorActionConstants.SAVE);
 		} else {
 			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.COPY);
-			addAction(menu, ITextEditorActionConstants.GROUP_COPY, ITextEditorActionConstants.SELECT_ALL);
 		}
-
 	}
 
 	private IStatusLineManager getStatusLineManager() {

@@ -238,16 +238,8 @@ public class TextEditor extends StatusTextEditor {
 	 * @see AbstractTextEditor#editorContextMenuAboutToShow(IMenuManager)
 	 */
 	protected void editorContextMenuAboutToShow(IMenuManager menu) {
-		
 		super.editorContextMenuAboutToShow(menu);
-		
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, ITextEditorActionConstants.SHIFT_RIGHT);
 		addAction(menu, ITextEditorActionConstants.GROUP_EDIT, ITextEditorActionConstants.SHIFT_LEFT);
-		
-		String label= TextEditorMessages.getString("Editor.AddMenu.label"); //$NON-NLS-1$
-		MenuManager submenu= new MenuManager(label, ITextEditorActionConstants.GROUP_ADD);
-		addAction(submenu, ITextEditorActionConstants.BOOKMARK);
-		addAction(submenu, ITextEditorActionConstants.ADD_TASK);
-		menu.appendToGroup(ITextEditorActionConstants.GROUP_ADD, submenu);
 	}
 }

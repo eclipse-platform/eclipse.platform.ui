@@ -136,4 +136,20 @@ public class DeleteLineAction extends TextEditorAction {
 			document.replace(offset, length, ""); //$NON-NLS-1$
 	}
 
+	/*
+	 * @see IUpdate#update()
+	 */
+	public void update() {
+		
+		ITextEditor editor= getTextEditor();
+		if (editor instanceof ITextEditorExtension) {
+			ITextEditorExtension extension= (ITextEditorExtension) editor;
+			if (extension.isEditorInputReadOnly()) {
+				setEnabled(false);
+				return;
+			}
+		}
+		
+		super.update();
+	}
 }
