@@ -39,18 +39,23 @@ public class MultipleSelectionForm extends UpdateWebForm {
 	}
 
 	public void objectChanged(Object object, String property) {
-		if (selection==null) return;
+		if (selection == null)
+			return;
 		for (Iterator iter = selection.iterator(); iter.hasNext();) {
 			Object obj = iter.next();
 			if (object.equals(obj)) {
-				expandTo(selection);
+				getControl().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						expandTo(selection);
+					}
+				});
 				break;
 			}
 		}
 	}
 
 	public void initialize(Object modelObject) {
-		setHeadingText("Multiple Selection");
+		setHeadingText(UpdateUI.getString("MultipleSelectionForm.title"));
 		super.initialize(modelObject);
 	}
 
@@ -70,8 +75,7 @@ public class MultipleSelectionForm extends UpdateWebForm {
 		counter.setLayoutData(td);
 		tableViewer = new TableViewer(factory.createTable(parent, SWT.NULL));
 		tableViewer.setContentProvider(new ViewProvider());
-		tableViewer.setLabelProvider(
-			UpdateUI.getDefault().getLabelProvider());
+		tableViewer.setLabelProvider(UpdateUI.getDefault().getLabelProvider());
 		td = new TableData();
 		td.align = TableData.FILL;
 		td.valign = TableData.FILL;
@@ -91,7 +95,10 @@ public class MultipleSelectionForm extends UpdateWebForm {
 	}
 	private void refresh() {
 		int size = selection.size();
-		counter.setText(size + " items selected.");
+		counter.setText(
+			UpdateUI.getFormattedMessage(
+				"MultipleSelectionForm.counter",
+				"" + size));
 		tableViewer.setInput(selection);
 	}
 }
