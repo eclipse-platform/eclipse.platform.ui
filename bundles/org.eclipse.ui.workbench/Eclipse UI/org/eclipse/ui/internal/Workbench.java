@@ -1455,9 +1455,10 @@ public final class Workbench implements IWorkbench {
 	 * Returns the unique object that applications use to configure the
 	 * workbench.
 	 * <p>
-	 * This method is declared package-private to prevent a client from 
-	 * downcasting IWorkbench to Workbench and getting hold of
-	 * a configurer that would allow them to tamper with the workbench.
+	 * IMPORTANT This method is declared package-private to prevent regular
+	 * plug-ins from downcasting IWorkbench to Workbench and getting
+	 * hold of the workbench configurer that would allow them to tamper with the
+	 * workbench. The workbench configurer is available only to the application.
 	 * </p>
 	 */
 	/* package */ WorkbenchConfigurer getWorkbenchConfigurer() {
@@ -1470,8 +1471,10 @@ public final class Workbench implements IWorkbench {
 	/**
 	 * Returns the workbench adviser that created this workbench.
 	 * <p>
-	 * This method is declared package-private to prevent a client from 
-	 * downcasting IWorkbench to Workbench and getting hold of the adviser.
+	 * IMPORTANT This method is declared package-private to prevent regular
+	 * plug-ins from downcasting IWorkbench to Workbench and getting
+	 * hold of the workbench adviser that would allow them to tamper with the
+	 * workbench. The workbench adviser is internal to the application.
 	 * </p>
 	 */
 	/* package */ WorkbenchAdviser getAdviser() {
