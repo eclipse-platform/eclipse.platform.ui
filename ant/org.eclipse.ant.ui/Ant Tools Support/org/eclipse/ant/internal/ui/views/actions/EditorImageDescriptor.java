@@ -46,9 +46,8 @@ public class EditorImageDescriptor extends ImageDescriptor {
 		String otherName = other.program.getName();
 		if (otherName == null) {
 			return other.program.equals(program);
-		} else {
-			return otherName.equals(program.getName());
-		}
+		} 
+		return otherName.equals(program.getName());
 	}
 	/**
 	 * Returns an SWT Image that is described by the information
@@ -87,8 +86,7 @@ public class EditorImageDescriptor extends ImageDescriptor {
 		String programName = program.getName();
 		if (programName == null) {
 			return program.hashCode();
-		} else {
-			return programName.hashCode();
-		}
+		} 
+		return programName.hashCode();
 	}
 }

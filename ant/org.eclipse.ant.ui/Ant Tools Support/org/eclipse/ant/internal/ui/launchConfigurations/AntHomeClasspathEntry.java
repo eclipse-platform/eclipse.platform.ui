@@ -139,10 +139,10 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	public String getName() {
 		if (antHomeLocation == null) {
 			return AntLaunchConfigurationMessages.getString("AntHomeClasspathEntry.8"); //$NON-NLS-1$
-		} else {
-			return MessageFormat.format(AntLaunchConfigurationMessages.getString("AntHomeClasspathEntry.9"), new String[]{antHomeLocation}); //$NON-NLS-1$
 		}
+		return MessageFormat.format(AntLaunchConfigurationMessages.getString("AntHomeClasspathEntry.9"), new String[]{antHomeLocation}); //$NON-NLS-1$
 	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getType()
 	 */
@@ -175,9 +175,8 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 	private boolean equalsOrNull(String s1, String s2) {
 		if (s1 == null || s2 == null) {
 			return s1 == s2;
-		} else {
-			return s1.equalsIgnoreCase(s2);
-		}
+		} 
+		return s1.equalsIgnoreCase(s2);
 	}
 
 	/* (non-Javadoc)

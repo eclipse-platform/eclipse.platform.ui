@@ -468,10 +468,9 @@ public class AntClasspathBlock {
 		if (invalid) {
 			setValidated();
 			return null;
-		} else {
-			container.setErrorMessage(null);
-			return rootDir;
-		}
+		} 
+		container.setErrorMessage(null);
+		return rootDir;
 	}
 	
 	private void browseAntHome() {

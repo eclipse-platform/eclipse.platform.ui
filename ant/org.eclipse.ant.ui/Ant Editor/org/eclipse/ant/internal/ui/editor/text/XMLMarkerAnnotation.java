@@ -51,10 +51,11 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 	 */
 	public String getMessage() {
 		IMarker marker= getMarker();
-		if (marker == null || !marker.exists())
+		if (marker == null || !marker.exists()) {
 			return ""; //$NON-NLS-1$
-		else
-			return marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
+		}
+		
+		return marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

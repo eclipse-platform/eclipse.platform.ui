@@ -156,9 +156,8 @@ public class XmlTagFormatter {
                     && lineRequiresWrap(indent + tag.toString(), prefs
                             .getMaximumLineWidth(), prefs.getTabWidth())) {
                 return wrapTag(tag, prefs, indent);
-            } else {
-                return tag.toString();
             }
+            return tag.toString();
         }
 
         /**
@@ -435,14 +434,13 @@ public class XmlTagFormatter {
         if (tagText.startsWith("</") || tagText.startsWith("<%") //$NON-NLS-1$ //$NON-NLS-2$
                 || tagText.startsWith("<?") || tagText.startsWith("<[")) { //$NON-NLS-1$ //$NON-NLS-2$
             return tagText;
-        } else {
-            try {
-                tag = new TagParser().parse(tagText);
-            } catch (ParseException e) {
-                // if we can't parse the tag, give up and leave the text as is.
-                return tagText;
-            }
-            return new TagFormatter().format(tag, prefs, indent);
+        } 
+    	try {
+            tag = new TagParser().parse(tagText);
+        } catch (ParseException e) {
+            // if we can't parse the tag, give up and leave the text as is.
+            return tagText;
         }
+        return new TagFormatter().format(tag, prefs, indent);
     }
 }

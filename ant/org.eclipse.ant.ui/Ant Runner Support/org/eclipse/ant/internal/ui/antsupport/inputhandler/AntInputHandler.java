@@ -55,9 +55,8 @@ public class AntInputHandler extends DefaultInputHandler {
 						request.setInput(value);
 						if (request.isInputValid()) {
 							return null;
-						} else {
-							return AntSupportMessages.getString("AntInputHandler.Invalid_input_2"); //$NON-NLS-1$
-						}
+						} 
+						return AntSupportMessages.getString("AntInputHandler.Invalid_input_2"); //$NON-NLS-1$
 					}
 				};
 		

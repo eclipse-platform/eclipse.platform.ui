@@ -337,11 +337,10 @@ public class AntPropertiesBlock {
 				if (property.isDefault()) {
 					MessageDialog.openError(propertyTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntPropertiesBlock.17"), MessageFormat.format(AntPreferencesMessages.getString("AntPropertiesBlock.18"), new String[]{propertyName, property.getPluginLabel()})); //$NON-NLS-1$ //$NON-NLS-2$
 					return false;
-				} else {
-					boolean overWrite= MessageDialog.openQuestion(propertyTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntPropertiesBlock.15"), MessageFormat.format(AntPreferencesMessages.getString("AntPropertiesBlock.16"), new String[] {name}));  //$NON-NLS-1$ //$NON-NLS-2$
-					if (!overWrite) {
-						return false;
-					}
+				} 
+				boolean overWrite= MessageDialog.openQuestion(propertyTableViewer.getControl().getShell(), AntPreferencesMessages.getString("AntPropertiesBlock.15"), MessageFormat.format(AntPreferencesMessages.getString("AntPropertiesBlock.16"), new String[] {name}));  //$NON-NLS-1$ //$NON-NLS-2$
+				if (!overWrite) {
+					return false;
 				}
 				((AntContentProvider)propertyTableViewer.getContentProvider()).remove(property);
 				break;

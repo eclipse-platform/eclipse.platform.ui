@@ -82,9 +82,8 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 	public String getLabel() {
 		if (entry == null) {
 			return toString();
-		} else {
-			return entry.getLabel();
 		}
+		return entry.getLabel();
 	}
 
 	/* (non-Javadoc)

@@ -206,11 +206,10 @@ public class AntEditorSourceViewerConfiguration extends AbstractAntSourceViewerC
 	public IAutoIndentStrategy getAutoIndentStrategy(ISourceViewer sourceViewer, String contentType) {
 		if (AntEditorPartitionScanner.XML_COMMENT.equals(contentType)) {
 			return super.getAutoIndentStrategy(sourceViewer, contentType);
-		} else {
-			if (autoIndentStrategy == null) {
-				autoIndentStrategy= new AntAutoIndentStrategy(fEditor.getAntModel());
-			}
-			return autoIndentStrategy;
+		} 
+		if (autoIndentStrategy == null) {
+			autoIndentStrategy= new AntAutoIndentStrategy(fEditor.getAntModel());
 		}
+		return autoIndentStrategy;
 	}
 }

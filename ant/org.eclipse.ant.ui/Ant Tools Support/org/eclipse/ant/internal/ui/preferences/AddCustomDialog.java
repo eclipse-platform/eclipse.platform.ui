@@ -539,12 +539,12 @@ public class AddCustomDialog extends StatusDialog {
 			public boolean hasChildren(Object o) {
 				if (o instanceof MinimizedFileSystemElement) {
 					MinimizedFileSystemElement element = (MinimizedFileSystemElement) o;
-					if (element.isPopulated())
+					if (element.isPopulated()) {
 						return getChildren(element).length > 0;
-					else {
-						//If we have not populated then wait until asked
-						return true;
 					}
+					
+					//If we have not populated then wait until asked
+					return true;
 				}
 				return false;
 			}

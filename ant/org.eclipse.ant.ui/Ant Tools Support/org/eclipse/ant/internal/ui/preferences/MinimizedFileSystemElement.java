@@ -194,9 +194,8 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 	public ImageDescriptor getImageDescriptor(Object object) {
 		if (isDirectory()) {
 			return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
-		} else {
-			return PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(name);
 		}
+		return PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(name);
 	}
 
 	/**

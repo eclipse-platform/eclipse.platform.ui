@@ -74,20 +74,18 @@ public class SortedSet {
 			array[0] = obj;
 			return 0;
 		}
-		else {
-			int i = 0;
-			int comp = -1;
-			
-			for (; i < array.length; i++) {
-				if ((comp = fComp.compare(obj, array[i])) <= 0) {
-					break;
-				}
+		int i = 0;
+		int comp = -1;
+		
+		for (; i < array.length; i++) {
+			if ((comp = fComp.compare(obj, array[i])) <= 0) {
+				break;
 			}
-			if (comp == 0 && !always)
-				return -1;
-			internalAdd(i, obj);
-			return i;
 		}
+		if (comp == 0 && !always)
+			return -1;
+		internalAdd(i, obj);
+		return i;
 	}
 	protected void internalAdd(int i, Object obj) {
 		Object[] array = fKeyHolder.getKeys();

@@ -93,9 +93,8 @@ public class Model implements IModel {
 		if (fMax == UNBOUNDED) {
 			return Nfm.getUnbounded(nfm, fMin);
 		}
-		else {
-			return Nfm.getMinMax(nfm, fMin, fMax);
-		}
+		
+		return Nfm.getMinMax(nfm, fMin, fMax);
 	}
 
 	public Model shallowCopy() {

@@ -142,9 +142,8 @@ public class AntOpenWithMenu extends ContributionItem {
 		}
 		if (externalProgram == null) {
 			return null;
-		} else {
-			return new EditorImageDescriptor(externalProgram);
-		}
+		} 
+		return new EditorImageDescriptor(externalProgram);
 	}
 	/**
 	 * Creates the menu item for the editor descriptor.
@@ -248,11 +247,10 @@ public class AntOpenWithMenu extends ContributionItem {
 	private IFile getFileResource() {
 		if (this.file instanceof IFile) {
 			return (IFile) this.file;
-		} else {
-			IResource resource = (IResource) this.file.getAdapter(IResource.class);
-			if (resource instanceof IFile) {
-				return (IFile) resource;
-			}
+		}
+		IResource resource = (IResource) this.file.getAdapter(IResource.class);
+		if (resource instanceof IFile) {
+			return (IFile) resource;
 		}
 		return null;
 	}
@@ -312,9 +310,8 @@ public class AntOpenWithMenu extends ContributionItem {
 				if (column > -1) {
 					 //column marks the length..adjust to 0 index and to be within the element's source range
 					return document.getLineOffset(line - 1) + column - 1 - 2;
-				} else {
-					return document.getLineOffset(line - 1);
-				}
+				} 
+				return document.getLineOffset(line - 1);
 			}
 		} catch (BadLocationException e) {
 		} finally {

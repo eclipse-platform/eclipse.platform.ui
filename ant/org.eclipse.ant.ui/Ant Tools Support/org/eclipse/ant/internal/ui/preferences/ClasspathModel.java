@@ -40,22 +40,21 @@ public class ClasspathModel extends AbstractClasspathEntry {
 				return entry;
 			}
 			return null;
-		} else {
-			ClasspathEntry newEntry= createEntry(entry, null);
-			Iterator entries= childEntries.iterator();
-			while (entries.hasNext()) {
-				Object element = entries.next();
-				if (element instanceof GlobalClasspathEntries) {
-					if(((GlobalClasspathEntries)element).contains(newEntry)) {
-						return null;
-					}
-				} else if (element.equals(newEntry)) {
+		} 
+		ClasspathEntry newEntry= createEntry(entry, null);
+		Iterator entries= childEntries.iterator();
+		while (entries.hasNext()) {
+			Object element = entries.next();
+			if (element instanceof GlobalClasspathEntries) {
+				if(((GlobalClasspathEntries)element).contains(newEntry)) {
 					return null;
 				}
+			} else if (element.equals(newEntry)) {
+				return null;
 			}
-			childEntries.add(newEntry);
-			return newEntry;
 		}
+		childEntries.add(newEntry);
+		return newEntry;
 	}
 	
 	public Object addEntry(int entryType, Object entry) {
@@ -259,9 +258,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 		}
 		if (buff.length() > 0) {
 			return buff.substring(0, buff.length() - 1);
-		} else {
-			return ""; //$NON-NLS-1$
 		}
+		return ""; //$NON-NLS-1$
 	}
 	
 	private boolean isSameAsDefaultAntHome() {

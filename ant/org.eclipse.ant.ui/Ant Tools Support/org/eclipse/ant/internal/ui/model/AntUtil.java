@@ -101,9 +101,8 @@ public final class AntUtil {
 		String attribute = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String) null);
 		if (attribute == null) {
 			return null;
-		} else {
-			return AntUtil.parseRunTargets(attribute);
-		}
+		} 
+		return AntUtil.parseRunTargets(attribute);
 	}
 	
 	/**
@@ -155,15 +154,14 @@ public final class AntUtil {
 		String attribute = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES, (String) null);
 		if (attribute == null) {
 			return null;
-		} else {
-			String[] propertyFiles= AntUtil.parseString(attribute, ","); //$NON-NLS-1$
-			for (int i = 0; i < propertyFiles.length; i++) {
-				String propertyFile = propertyFiles[i];
-				propertyFile= expandVariableString(propertyFile, AntUIModelMessages.getString("AntUtil.6")); //$NON-NLS-1$ //$NON-NLS-2$
-				propertyFiles[i]= propertyFile;
-			}
-			return propertyFiles;
 		}
+		String[] propertyFiles= AntUtil.parseString(attribute, ","); //$NON-NLS-1$
+		for (int i = 0; i < propertyFiles.length; i++) {
+			String propertyFile = propertyFiles[i];
+			propertyFile= expandVariableString(propertyFile, AntUIModelMessages.getString("AntUtil.6")); //$NON-NLS-1$ //$NON-NLS-2$
+			propertyFiles[i]= propertyFile;
+		}
+		return propertyFiles;
 	}
 	
 	/**
@@ -311,10 +309,9 @@ public final class AntUtil {
 		if (expandedString == null || expandedString.length() == 0) {
 			String msg = MessageFormat.format(invalidMessage, new String[] {variableString});
 			throw new CoreException(new Status(IStatus.ERROR, IAntUIConstants.PLUGIN_ID, 0, msg, null));
-		} else {
-			variableString= expandedString;
-		}
-		return variableString;
+		} 
+		
+		return expandedString;
 	}
 
 	/**

@@ -145,10 +145,10 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
     protected boolean isKnownElement(String elementName) {
     	if (antModel != null) {
     		return super.isKnownElement(elementName);
-    	} else {
-    		return dtd.getElement(elementName) != null ;
-    	}
+    	} 
+    	return dtd.getElement(elementName) != null ;
     }
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getProposalsFromDocument(org.eclipse.jface.text.IDocument, java.lang.String)
 	 */

@@ -241,9 +241,8 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 	private String getProjectNameFieldValue() {
 		if (projectNameField == null) {
 			return ""; //$NON-NLS-1$
-		} else {
-			return projectNameField.getText().trim();
-		}
+		} 
+		return projectNameField.getText().trim();
 	}
 	/**
 	 * Returns the value of the project location field
@@ -312,12 +311,11 @@ public class ExternalAntBuildfileImportPage extends WizardPage {
 		if (getProjectNameFieldValue().length() == 0) {
 			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.18")); //$NON-NLS-1$
 			return false;
-		} else {
-			IProject existingProject= ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectNameFieldValue());
-			if (existingProject.exists()) {
-				setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.19")); //$NON-NLS-1$
-				return false;
-			}
+		} 
+		IProject existingProject= ResourcesPlugin.getWorkspace().getRoot().getProject(getProjectNameFieldValue());
+		if (existingProject.exists()) {
+			setErrorMessage(DataTransferMessages.getString("ExternalAntBuildfileImportPage.19")); //$NON-NLS-1$
+			return false;
 		}
 
 		setErrorMessage(null);

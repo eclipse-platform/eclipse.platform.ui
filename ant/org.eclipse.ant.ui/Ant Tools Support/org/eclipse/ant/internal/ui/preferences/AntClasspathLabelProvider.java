@@ -58,9 +58,8 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
 			file= entry.toString();
 			if (file.endsWith("/")) { //$NON-NLS-1$
 				return getFolderImage();
-			} else {
-				return getJarImage();
-			}
+			} 
+			return getJarImage();
 		}
 		
 		return getClasspathImage();

@@ -47,27 +47,26 @@ public class AntTargetContentProvider implements IStructuredContentProvider {
 		fNumFilteredTargets= 0;
 		if (fNumTotalTargets == 0) {
 			return new Object[0];
-		} else {
-			if (!fFilterInternalTargets) {
-				return elements.toArray(new Object[fNumTotalTargets]);
-			}
-			Iterator iter= elements.iterator();
-			while (iter.hasNext()) { 
-				if (isInternal((TargetInfo) iter.next())) {
-					fNumFilteredTargets++;
-				}
-			}
-			Object[] targets= new Object[getNumTargets()];
-			iter= elements.iterator();
-			int i= 0;
-			while (iter.hasNext()) {
-				TargetInfo target= (TargetInfo) iter.next(); 
-				if (!isInternal(target)) {
-					targets[i++]= target;  
-				}
-			}
-			return targets;
 		}
+		if (!fFilterInternalTargets) {
+			return elements.toArray(new Object[fNumTotalTargets]);
+		}
+		Iterator iter= elements.iterator();
+		while (iter.hasNext()) { 
+			if (isInternal((TargetInfo) iter.next())) {
+				fNumFilteredTargets++;
+			}
+		}
+		Object[] targets= new Object[getNumTargets()];
+		iter= elements.iterator();
+		int i= 0;
+		while (iter.hasNext()) {
+			TargetInfo target= (TargetInfo) iter.next(); 
+			if (!isInternal(target)) {
+				targets[i++]= target;  
+			}
+		}
+		return targets;
 	}
 	
 	/**

@@ -70,9 +70,8 @@ public class TagRule extends MultiLineRule {
                 if (sequenceDetected(scanner, fEndSequence, true)) {
                     if (fEndSequence[0] == '>') {
                         return endOfTagDetected(scanner);
-                    } else {
-                        return true;
-                    }
+                    } 
+                    return true;
                 }
             } else if (fBreaksOnEOL) {
                 // Check for end of line since it can be used to terminate the

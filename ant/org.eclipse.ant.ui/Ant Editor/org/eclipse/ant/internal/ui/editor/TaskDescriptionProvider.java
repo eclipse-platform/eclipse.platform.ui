@@ -286,9 +286,7 @@ public class TaskDescriptionProvider {
     		return getChildNodeNamedOfTypeFromNode(XML_TAG_ELEMENTS, Node.ELEMENT_NODE,
     												tmpStructureNode);
     	}
-    	else {
-    		return null;
-    	}
+    	return null;
     }
     
     /**
@@ -304,9 +302,8 @@ public class TaskDescriptionProvider {
         if(tmpStructureNode != null){
         	return getChildNodeNamedOfTypeFromNode(XML_TAG_ATTRIBUTES, Node.ELEMENT_NODE,
                                                              tmpStructureNode);
-    	} else {
-    		return null;
-    	}
+    	} 
+        return null;
     }
 
     /**
@@ -323,9 +320,7 @@ public class TaskDescriptionProvider {
         	                                                     taskElement);
         	return structureNode;
         }
-        else {
-        	return null;
-        }
+        return null;
     }
     
     /**

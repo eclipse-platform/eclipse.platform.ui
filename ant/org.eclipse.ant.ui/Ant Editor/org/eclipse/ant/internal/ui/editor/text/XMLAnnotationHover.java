@@ -99,10 +99,10 @@ public class XMLAnnotationHover implements IAnnotationHover {
 
 			if (value instanceof List) {
 				List messages= (List)value;
-				if  (messages.contains(message))
+				if  (messages.contains(message)) {
 					return true;
-				else
-					messages.add(message);
+				}
+				messages.add(message);
 			} else {
 				ArrayList messages= new ArrayList();
 				messages.add(value);
