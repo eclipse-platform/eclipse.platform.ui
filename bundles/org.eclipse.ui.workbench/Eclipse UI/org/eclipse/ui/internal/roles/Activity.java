@@ -15,9 +15,8 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * An Activity is a definition of a class of operations
- * within the workbench. It is defined with respect to 
- * a role.
+ * An Activity is a definition of a class of operations within the workbench.
+ * It is defined with respect to a role.
  */
 public class Activity {
 
@@ -25,15 +24,15 @@ public class Activity {
 	private String name;
 	private String parent;
 	boolean enabled;
-    
-    /**
-     * Set of IActivityListeners
-     */
-    private Set listeners = new HashSet();
 
 	/**
-	 * Create a new activity with the suppled id and name.
-	 * This will be a top level Activity with no parent.
+	 * Set of IActivityListeners */
+	private Set listeners = new HashSet();
+
+	/**
+	 * Create a new activity with the suppled id and name. This will be a top
+	 * level Activity with no parent.
+	 * 
 	 * @param newId
 	 * @param newName
 	 */
@@ -44,6 +43,7 @@ public class Activity {
 
 	/**
 	 * Create a new instance of activity with a parent.
+	 * 
 	 * @param newId
 	 * @param newName
 	 * @param newParent
@@ -53,28 +53,27 @@ public class Activity {
 		parent = newParent;
 	}
 
-    /**
-     * 
-     * @param listener
-     */
-    public void addListener(IActivityListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-    
-    /**
-     * 
-     * @param listener
-     */
-    public void removeListener(IActivityListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }        
-    }
+	/**
+	 * 
+	 * @param listener */
+	public void addListener(IActivityListener listener) {
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
+
+	/**
+	 * 
+	 * @param listener */
+	public void removeListener(IActivityListener listener) {
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+	}
 
 	/**
 	 * Return the id of the receiver.
+	 * 
 	 * @return String
 	 */
 	public String getId() {
@@ -83,6 +82,7 @@ public class Activity {
 
 	/**
 	 * Return the name of the receiver.
+	 * 
 	 * @return String
 	 */
 	public String getName() {
@@ -91,6 +91,7 @@ public class Activity {
 
 	/**
 	 * Return the id of the parent of the receiver.
+	 * 
 	 * @return String
 	 */
 	public String getParent() {
@@ -99,6 +100,7 @@ public class Activity {
 
 	/**
 	 * Return whether or not this activity is enabled.
+	 * 
 	 * @return
 	 */
 	public boolean isEnabled() {
@@ -106,49 +108,49 @@ public class Activity {
 	}
 
 	/**
-	 * Set the enabled state of this activity.  If this activity has a parent 
-     * and the enabled state is true then the parent is also activated.  
-     * TBD:  how should we do this?  Turning off enablement of a child shouldn't
-     * effect the parent so this behaviour is lopsided. 
+	 * Set the enabled state of this activity. If this activity has a parent
+	 * and the enabled state is true then the parent is also activated. TBD:
+	 * how should we do this? Turning off enablement of a child shouldn't
+	 * effect the parent so this behaviour is lopsided.
+	 * 
 	 * @param enabled
 	 */
 	public void setEnabled(boolean enabled) {
-        boolean fireEvent = false;
-        if (this.enabled != enabled) {
-            fireEvent = true;
-        }
-		this.enabled = enabled;        
-//      if (enabled && parent != null) {
-//          Activity parentActivity = RoleManager.getInstance().getActivity(parent);
-//          if (parentActivity != null) {
-//              parentActivity.setEnabled(enabled);
-//          }
-//      }
-        if (fireEvent) {
-            fireActivityEvent(new ActivityEvent(this));
-        }
+		boolean fireEvent = false;
+		if (this.enabled != enabled) {
+			fireEvent = true;
+		}
+		this.enabled = enabled;
+		if (enabled && parent != null) {
+			Activity parentActivity =
+				RoleManager.getInstance().getActivity(parent);
+			if (parentActivity != null) {
+				parentActivity.setEnabled(enabled);
+			}
+		}
+		if (fireEvent) {
+			fireActivityEvent(new ActivityEvent(this));
+		}
 	}
 
 	/**
-     * Fire the given event to all listeners.
-     * 
+	 * Fire the given event to all listeners.
+	 * 
 	 * @param event
 	 */
 	private void fireActivityEvent(ActivityEvent event) {
-        Set listenersCopy;
-        synchronized (listeners) {
-            listenersCopy = new HashSet(listeners);
-        }
-        
+		Set listenersCopy;
+		synchronized (listeners) {
+			listenersCopy = new HashSet(listeners);
+		}
+
 		for (Iterator i = listenersCopy.iterator(); i.hasNext();) {
 			IActivityListener listener = (IActivityListener) i.next();
-            listener.activityChanged(event);
+			listener.activityChanged(event);
 		}
 	}
-    
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+
+	/* (non-Javadoc) @see java.lang.Object#toString() */
 	public String toString() {
 		return getId();
 	}

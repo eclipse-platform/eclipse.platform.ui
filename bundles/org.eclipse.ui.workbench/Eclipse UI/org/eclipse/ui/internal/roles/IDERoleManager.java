@@ -72,8 +72,7 @@ public class IDERoleManager extends RoleManager {
 						for (int i = 0; i < children.length; i++) {
 							IResourceDelta delta = children[i];
 							if (delta.getResource().getType()
-								== IResource.PROJECT
-								&& delta.getKind() == IResourceDelta.ADDED) {
+								== IResource.PROJECT) {
 								IProject project =
 									(IProject) delta.getResource();
 								String[] ids =
