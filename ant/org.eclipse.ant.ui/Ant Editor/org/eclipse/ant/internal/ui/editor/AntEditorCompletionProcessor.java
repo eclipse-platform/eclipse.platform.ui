@@ -184,6 +184,12 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
      */
 	protected String currentPrefix= null;
 	
+	/**
+	 * The current task string for content assist
+	 * @see determineProposalMode(IDocument, int, String)
+	 */
+	protected String currentTaskString= null;
+	
 	public AntEditorCompletionProcessor(AntModel model) {
 		super();
 		if(dtd == null) {
@@ -309,21 +315,19 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		}
 	
 		ICompletionProposal[] proposals = getProposalsFromDocument(doc, prefix);
+		currentTaskString= null;
 		return proposals;
-		
 	}
 
     /**
      * Returns the proposals for the specified document.
      */
     protected ICompletionProposal[] getProposalsFromDocument(IDocument document, String prefix) {
-        String taskString = null;
 		ICompletionProposal[] proposals= null;
 		currentProposalMode= determineProposalMode(document, cursorPosition, prefix);
         switch (currentProposalMode) {
             case PROPOSAL_MODE_ATTRIBUTE_PROPOSAL:
-                taskString = getTaskStringFromDocumentStringToPrefix(document.get().substring(0, cursorPosition-prefix.length()));
-                proposals= getAttributeProposals(taskString, prefix);
+                proposals= getAttributeProposals(currentTaskString, prefix);
                 if (proposals.length == 0) {
                 	errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.28"); //$NON-NLS-1$
                 }
@@ -357,15 +361,13 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
                 break;
             case PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL:
             	String textToSearch= document.get().substring(0, cursorPosition-prefix.length());
-                taskString = getTaskStringFromDocumentStringToPrefix(textToSearch);
                 String attributeString = getAttributeStringFromDocumentStringToPrefix(textToSearch);
-                if ("target".equalsIgnoreCase(taskString)) { //$NON-NLS-1$
+                if ("target".equalsIgnoreCase(currentTaskString)) { //$NON-NLS-1$
                 	proposals= getTargetAttributeValueProposals(document, textToSearch, prefix, attributeString);
                 } else if ("refid".equalsIgnoreCase(attributeString)) { //$NON-NLS-1$
                 	proposals= getReferencesValueProposals(prefix);
-
                 } else {
-                	proposals=getAttributeValueProposals(taskString, attributeString, prefix);
+                	proposals=getAttributeValueProposals(currentTaskString, attributeString, prefix);
                 }
 				if (proposals.length == 0) {
 				   errorMessage= AntEditorMessages.getString("AntEditorCompletionProcessor.31"); //$NON-NLS-1$
@@ -1193,15 +1195,15 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
              
             // Attribute proposal
             if(lastChar != '>' && lastChar != '<') {
-                String taskString= getTaskStringFromDocumentStringToPrefix(trimmedString);
-                if(taskString != null && isKnownElement(taskString)) {
+               currentTaskString= getTaskStringFromDocumentStringToPrefix(trimmedString);
+                if(currentTaskString != null && isKnownElement(currentTaskString)) {
                     return PROPOSAL_MODE_ATTRIBUTE_PROPOSAL;
                 }
             }                
         } else if(stringToPrefix.charAt(stringToPrefix.length()-1) == '"' || trimmedString.charAt(trimmedString.length()-1) == ',') {
 			// Attribute value proposal
-            String taskString= getTaskStringFromDocumentStringToPrefix(trimmedString);
-            if (taskString != null && isKnownElement(taskString)) {
+        	currentTaskString= getTaskStringFromDocumentStringToPrefix(trimmedString);
+            if (currentTaskString != null && isKnownElement(currentTaskString)) {
                 return PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL;
             }
         } else {  // Possibly a Task proposal
