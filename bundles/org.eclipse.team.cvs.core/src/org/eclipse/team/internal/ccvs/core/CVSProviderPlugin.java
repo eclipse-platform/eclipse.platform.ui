@@ -65,6 +65,7 @@ public class CVSProviderPlugin extends Plugin {
 	private boolean promptOnFileDelete = true;
 	private boolean promptOnFolderDelete = true;
 	private boolean showTasksOnAddAndDelete = false;
+	private boolean customizeForCVSNT = false;
 	private String cvsRshCommand = DEFAULT_CVS_RSH;
 	private String cvsServer = DEFAULT_CVS_SERVER;
 	private IConsoleListener consoleListener;
@@ -381,6 +382,22 @@ public class CVSProviderPlugin extends Plugin {
 	 */
 	public void setShowTasksOnAddAndDelete(boolean showTasksOnAddAndDelete) {
 		this.showTasksOnAddAndDelete = showTasksOnAddAndDelete;
+	}
+
+	/**
+	 * Gets the customizeForCVSNT.
+	 * @return Returns a boolean
+	 */
+	public boolean isCustomizeForCVSNT() {
+		return customizeForCVSNT;
+	}
+
+	/**
+	 * Sets the customizeForCVSNT.
+	 * @param customizeForCVSNT The customizeForCVSNT to set
+	 */
+	public void setCustomizeForCVSNT(boolean customizeForCVSNT) {
+		this.customizeForCVSNT = customizeForCVSNT;
 	}
 
 }

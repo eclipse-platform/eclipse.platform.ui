@@ -97,6 +97,7 @@ public abstract class Request {
 		int currentIncrement = 4;
 		int nextProgress = currentIncrement;
 		int worked = 0;
+		boolean isCVSNT = CVSProviderPlugin.getPlugin().isCustomizeForCVSNT();
 
 		List accumulatedStatus = new ArrayList();
 		for (;;) {
@@ -127,7 +128,7 @@ public abstract class Request {
 			// handle completion responses
 			if (response.equals("ok")) {  //$NON-NLS-1$
 				break;
-			} else if (response.equals("error")) {  //$NON-NLS-1$
+			} else if (response.equals("error") || (isCVSNT && response.equals(""))) {  //$NON-NLS-1$
 				if (argument.trim().length() == 0) {
 					argument = Policy.bind("Command.serverError", Policy.bind("Command." + getRequestId()));  //$NON-NLS-1$  //$NON-NLS-2$
 				}
