@@ -2,7 +2,6 @@
 <classpath>
     <classpathentry kind="src" path="src"/>
     <classpathentry kind="src" output="WEB-INF/classes" path="src_servlets"/>
-    <classpathentry kind="src" path="/org.apache.xerces"/>
     <classpathentry kind="src" path="/org.eclipse.help"/>
     <classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
     <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
