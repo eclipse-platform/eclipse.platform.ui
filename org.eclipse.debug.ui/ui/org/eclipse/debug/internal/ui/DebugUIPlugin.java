@@ -1455,13 +1455,13 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 * 
 	 * @return whether all saving was completed
 	 */
-	protected static boolean saveAllPages() {
+	protected static boolean saveAllPages(boolean confirm) {
 		IWorkbench wb = getActiveWorkbenchWindow().getWorkbench();
 		IWorkbenchWindow[] windows = wb.getWorkbenchWindows();
 		for (int i = 0; i < windows.length; i++) {
 			IWorkbenchPage[] pages = windows[i].getPages();
 			for (int j = 0; j < pages.length; j++) {
-				if (!pages[j].saveAllEditors(true)) {
+				if (!pages[j].saveAllEditors(confirm)) {
 					return false;
 				};
 			}
@@ -1470,28 +1470,32 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	}	
 	
 	/**
-	 * If the "build before launch" preference is on, save
-	 * and build. This prompts the user to save any editors
-	 * with unsaved changes. Returns whether the operation
-	 * succeeded.
-	 * 
-	 * @return whether saving and building was completed
+	 * Save & build the workspace according to the user-specified preferences.  Return <code>false</code> if
+	 * any problems were encountered, <code>true</code> otherwise.
 	 */
 	public static boolean saveAndBuild() {
-		if (!getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_BUILD_BEFORE_LAUNCH)) {
-			return true;
-		}
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		if (workspace.isAutoBuilding()) {
-			// if auto-building, saving will trigger a build for us
-			return saveAllPages();
-		}
+		boolean status = true;
+		String saveDirty = getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO);
+		boolean buildBeforeLaunch = getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH);
+		boolean autobuilding = ResourcesPlugin.getWorkspace().isAutoBuilding();
 		
-		// prompt for save and then do build if required
-		if (saveAllPages()) {
-			return doBuild();
+		// If we're ignoring dirty editors, check if we need to build
+		if (saveDirty.equals(IDebugUIConstants.PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH)) {
+			if (buildBeforeLaunch) {
+				return doBuild();
+			}
+		} else {
+			boolean prompt = false;
+			if (saveDirty.equals(IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH)) {
+				prompt = true;				
+			} 
+			status = saveAllPages(prompt);
+			if (status && !autobuilding && buildBeforeLaunch) {
+				status = doBuild();
+			}
 		}
-		return false;	
+				
+		return status;
 	}
 	
 	private static boolean doBuild() {

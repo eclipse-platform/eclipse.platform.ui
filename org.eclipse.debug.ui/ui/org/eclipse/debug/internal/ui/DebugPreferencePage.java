@@ -12,9 +12,12 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -23,6 +26,8 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * The page for setting the default debugger preferences.
  */
 public class DebugPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage, IDebugPreferenceConstants {
+
+	private RadioGroupFieldEditor fSaveRadioFieldEditor;
 
 	public DebugPreferencePage() {
 		super(GRID);
@@ -54,8 +59,9 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 												{"C&onfiguration-based", IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS} 
 											},
 											getFieldEditorParent()));
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_BUILD_BEFORE_LAUNCH, DebugUIMessages.getString("DebugPreferencePage.auto_build_before_launch"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, DebugUIMessages.getString("DebugPreferencePage.Enable_&single-click_launching_1"), SWT.NONE, getFieldEditorParent()));  //$NON-NLS-1$
+		createSaveBeforeLaunchEditors(getFieldEditorParent());
+		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, DebugUIMessages.getString("DebugPreferencePage.auto_build_before_launch"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$		
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW, DebugUIMessages.getString("DebugPreferencePage.Show_Debug_Perspective_when_a_program_is_launched_in_de&bug_mode_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW, DebugUIMessages.getString("DebugPreferencePage.Show_Debug_Perspective_when_a_program_is_launched_in_&run_mode_2"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
 		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, DebugUIMessages.getString("DebugPreferencePage.Remove_terminated_launches_when_a_new_launch_is_created_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
@@ -79,13 +85,27 @@ public class DebugPreferencePage extends FieldEditorPreferencePage implements IW
 	
 	protected static void initDefaults(IPreferenceStore store) {
 		store.setDefault(IDebugPreferenceConstants.LAUNCHING_STYLE, IDebugPreferenceConstants.LAUNCHING_STYLE_CONFIGURATIONS);
-		store.setDefault(IDebugUIConstants.PREF_AUTO_BUILD_BEFORE_LAUNCH, true);
 		store.setDefault(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING, false);
+		
+		
+		store.setDefault(IDebugUIConstants.PREF_BUILD_BEFORE_LAUNCH, true);	
+		store.setDefault(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO, IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW, true);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW, true);
 		store.setDefault(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, false);
 		store.setDefault(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
 		PreferenceConverter.setDefault(store, CHANGED_VARIABLE_RGB, new RGB(255, 0, 0));
 	}
+	
+	private void createSaveBeforeLaunchEditors(Composite parent) {
+		fSaveRadioFieldEditor = new RadioGroupFieldEditor(IDebugUIConstants.PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO, "Save dirty editors before launching", 1, 
+										new String[][] {{"Never", IDebugUIConstants.PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH},
+														{"Prompt", IDebugUIConstants.PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH},
+														{"Auto-save", IDebugUIConstants.PREF_AUTOSAVE_DIRTY_EDITORS_BEFORE_LAUNCH}},
+										parent);
+		addField(fSaveRadioFieldEditor);
+		
+			
+	}						
 }
 

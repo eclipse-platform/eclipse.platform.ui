@@ -143,10 +143,28 @@ public interface IDebugUIConstants {
 	public static final String PREF_AUTO_SHOW_PROCESS_VIEW= PLUGIN_ID + ".auto_show_process_view";	 //$NON-NLS-1$
 
 	/**
-	 * Boolean preference controlling automatic build before
-	 * launching a program.
+	 * Boolean preference controlling whether a build is done before
+	 * launching a program (if one is needed).
 	 */
-	public static final String PREF_AUTO_BUILD_BEFORE_LAUNCH= PLUGIN_ID + ".auto_build_before_launch"; //$NON-NLS-1$
+	public static final String PREF_BUILD_BEFORE_LAUNCH= PLUGIN_ID + ".build_before_launch"; //$NON-NLS-1$
+	/**
+	 * Identifier for the radio button group that consists of the following two preferences.
+	 */
+	public static final String PREF_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH_RADIO= PLUGIN_ID + ".save_dirty_editors_before_launch_radio"; //$NON-NLS-1$
+	/**
+	 * Radio button preference specifying that dirty editors should be autosaved (no prompting)
+	 * before launching.
+	 */
+	public static final String PREF_AUTOSAVE_DIRTY_EDITORS_BEFORE_LAUNCH= PLUGIN_ID + ".auto_save_dirty_editors_before_launch"; //$NON-NLS-1$
+	/**
+	 * Radio button preference specifying that dirty editors should cause a prompt to appear to the
+	 * user asking if they wish to save.
+	 */
+	public static final String PREF_PROMPT_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH= PLUGIN_ID + ".prompt_save_dirty_editors_before_launch"; //$NON-NLS-1$
+	/**
+	 * Radio button preference specifyig that dirty editors should never be saved before launching.
+	 */
+	public static final String PREF_NEVER_SAVE_DIRTY_EDITORS_BEFORE_LAUNCH= PLUGIN_ID + ".never_save_dirty_editors_before_launch"; //$NON-NLS-1$
 	/**
 	 * Boolean preference controlling automatic removal of terminated launches
 	 * when a new launch is registered.
