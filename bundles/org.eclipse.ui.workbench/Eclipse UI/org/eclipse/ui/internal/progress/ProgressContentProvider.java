@@ -32,6 +32,8 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	private Collection updates = Collections.synchronizedSet(new HashSet());
 	private boolean updateAll = false;
 	private Job updateJob;
+	
+	boolean debug = false;
 
 	public ProgressContentProvider(TreeViewer mainViewer) {
 		listener = new JobChangeAdapter() {
@@ -56,6 +58,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 					refreshViewer(null);
 				}
 			}
+						
 
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
@@ -155,7 +158,9 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * @return
 	 */
 	private boolean isNonDisplayableJob(Job job) {
-		return job == null || job.isSystem();
+		if(job == null)
+			return true;
+		return !debug && job.isSystem();
 	}
 	/**
 	 * Reset the name of the task to task name.
@@ -215,7 +220,7 @@ public class ProgressContentProvider implements ITreeContentProvider {
 	 * Refresh the viewer as a result of a change in info.
 	 * @param info
 	 */
-	private void refreshViewer(final JobInfo info) {
+	void refreshViewer(final JobInfo info) {
 		
 		if(updateJob == null)
 			createUpdateJob();
@@ -248,6 +253,9 @@ public class ProgressContentProvider implements ITreeContentProvider {
 			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
+				
+				if(viewer.getControl().isDisposed())
+					return Status.CANCEL_STATUS;
 				if(updateAll){
 					viewer.refresh(null,true);
 					updateAll = false;

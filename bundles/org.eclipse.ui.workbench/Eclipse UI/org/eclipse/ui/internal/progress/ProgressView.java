@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.part.ViewPart;
 
 public class ProgressView extends ViewPart implements IViewPart {
@@ -32,6 +33,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 		initContentProvider();
 		initLabelProvider();
 		initContextMenu();
+		initPulldownMenu();
 		getSite().setSelectionProvider(viewer);
 	}
 
@@ -98,6 +100,25 @@ public class ProgressView extends ViewPart implements IViewPart {
 		menuMgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		getSite().registerContextMenu(menuMgr, viewer);
 		viewer.getTree().setMenu(menu);
+
+	}
+
+	private void initPulldownMenu() {
+		IMenuManager menuMgr =
+			((ViewSite) getSite()).getActionBars().getMenuManager();
+		menuMgr.add(new Action("Verbose", IAction.AS_CHECK_BOX) {
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.action.Action#run()
+			 */
+			public void run() {
+				ProgressContentProvider provider = (ProgressContentProvider) viewer.getContentProvider();
+				provider.debug = !provider.debug;
+				setChecked(provider.debug);
+				provider.refreshViewer(null);
+			}
+			
+		});
 
 	}
 
