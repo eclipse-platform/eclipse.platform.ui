@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.jobs.*;
  * operation. This includes prepared and running operation depth, auto-build
  * strategy and cancel state.
  */
-class WorkManager implements IManager {
+public class WorkManager implements IManager {
 	/**
 	 * Scheduling rule for use during resource change notification. This rule
 	 * must always be allowed to nest within a resource rule of any granularity

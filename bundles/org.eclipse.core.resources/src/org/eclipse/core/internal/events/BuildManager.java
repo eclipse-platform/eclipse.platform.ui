@@ -18,6 +18,7 @@ import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ILock;
 
 public class BuildManager implements ICoreConstants, IManager, ILifecycleListener {
 
@@ -112,10 +113,12 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	//used for debug/trace timing
 	private long timeStamp = -1;
 	protected Workspace workspace;
+	private ILock lock;
 
-	public BuildManager(Workspace workspace) {
+	public BuildManager(Workspace workspace, ILock workspaceLock) {
 		this.workspace = workspace;
 		this.autoBuildJob = new AutoBuildJob(workspace);
+		this.lock = workspaceLock;
 	}
 
 	protected void basicBuild(int trigger, IncrementalProjectBuilder builder, Map args, MultiStatus status, IProgressMonitor monitor) {
@@ -132,6 +135,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			boolean fullBuild = trigger == IncrementalProjectBuilder.FULL_BUILD;
 			// Grab a pointer to the current state before computing the delta
 			currentTree = fullBuild ? null : workspace.getElementTree();
+			int depth = -1;
 			try {
 				//short-circuit if none of the projects this builder cares about have changed.
 				if (!clean && !fullBuild && !needsBuild(currentBuilder))
@@ -144,9 +148,13 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					message = Policy.bind("events.invoking.1", builder.getProject().getFullPath().toString()); //$NON-NLS-1$
 				monitor.subTask(message);
 				hookStartBuild(builder, trigger);
+				//release workspace lock while calling builders
+				depth = getWorkManager().beginUnprotected();
 				//do the build
 				Platform.run(getSafeRunnable(trigger, args, status, monitor));
 			} finally {
+				if (depth >= 0)
+					getWorkManager().endUnprotected(depth);
 				// Be sure to clean up after ourselves.
 				if (clean || currentBuilder.wasForgetStateRequested()) {
 					currentBuilder.setLastBuiltTree(null);
@@ -164,6 +172,19 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			lastBuiltTree = null;
 			currentDelta = null;
 		}
+	}
+	/**
+	 * We know the work manager is always available in the middle of
+	 * a build.
+	 */
+	private WorkManager getWorkManager() {
+		try {
+			return workspace.getWorkManager();
+		} catch (CoreException e) {
+			//cannot happen
+		}
+		//avoid compile error
+		return null;
 	}
 
 	protected void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
@@ -457,42 +478,47 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	}
 
 	protected IResourceDelta getDelta(IProject project) {
-		if (currentTree == null) {
-			if (Policy.DEBUG_BUILD_FAILURE)
-				Policy.debug("Build: no tree for delta " + debugBuilder() + " [" + debugProject() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			return null;
-		}
-		//check if this builder has indicated it cares about this project
-		if (!isInterestingProject(project)) {
-			if (Policy.DEBUG_BUILD_FAILURE)
-				Policy.debug("Build: project not interesting for this builder " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			return null;
-		}
-		//check if this project has changed
-		if (currentDelta != null && currentDelta.findNodeAt(project.getFullPath()) == null) {
-			//if the project never existed (not in delta and not in current tree), return null
-			if (!project.exists())
+		try {
+			lock.acquire();
+			if (currentTree == null) {
+				if (Policy.DEBUG_BUILD_FAILURE)
+					Policy.debug("Build: no tree for delta " + debugBuilder() + " [" + debugProject() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				return null;
-			//just return an empty delta rooted at this project
-			return ResourceDeltaFactory.newEmptyDelta(project);
-		}
-		//now check against the cache
-		IResourceDelta result = (IResourceDelta) deltaCache.getDelta(project.getFullPath(), lastBuiltTree, currentTree);
-		if (result != null)
+			}
+			//check if this builder has indicated it cares about this project
+			if (!isInterestingProject(project)) {
+				if (Policy.DEBUG_BUILD_FAILURE)
+					Policy.debug("Build: project not interesting for this builder " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				return null;
+			}
+			//check if this project has changed
+			if (currentDelta != null && currentDelta.findNodeAt(project.getFullPath()) == null) {
+				//if the project never existed (not in delta and not in current tree), return null
+				if (!project.exists())
+					return null;
+				//just return an empty delta rooted at this project
+				return ResourceDeltaFactory.newEmptyDelta(project);
+			}
+			//now check against the cache
+			IResourceDelta result = (IResourceDelta) deltaCache.getDelta(project.getFullPath(), lastBuiltTree, currentTree);
+			if (result != null)
+				return result;
+	
+			long startTime = 0L;
+			if (Policy.DEBUG_BUILD_DELTA) {
+				startTime = System.currentTimeMillis();
+				Policy.debug("Computing delta for project: " + project.getName()); //$NON-NLS-1$
+			}
+			result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, project.getFullPath(), -1);
+			deltaCache.cache(project.getFullPath(), lastBuiltTree, currentTree, result);
+			if (Policy.DEBUG_BUILD_FAILURE && result == null)
+				Policy.debug("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			if (Policy.DEBUG_BUILD_DELTA)
+				Policy.debug("Finished computing delta, time: " + (System.currentTimeMillis() - startTime) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
 			return result;
-
-		long startTime = 0L;
-		if (Policy.DEBUG_BUILD_DELTA) {
-			startTime = System.currentTimeMillis();
-			Policy.debug("Computing delta for project: " + project.getName()); //$NON-NLS-1$
+		} finally {
+			lock.release();
 		}
-		result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, project.getFullPath(), -1);
-		deltaCache.cache(project.getFullPath(), lastBuiltTree, currentTree, result);
-		if (Policy.DEBUG_BUILD_FAILURE && result == null)
-			Policy.debug("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		if (Policy.DEBUG_BUILD_DELTA)
-			Policy.debug("Finished computing delta, time: " + (System.currentTimeMillis() - startTime) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$
-		return result;
 	}
 
 	/**

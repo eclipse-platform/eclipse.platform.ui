@@ -1809,7 +1809,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		pathVariableManager.startup(null);
 		natureManager = new NatureManager();
 		natureManager.startup(null);
-		buildManager = new BuildManager(this);
+		buildManager = new BuildManager(this, getWorkManager().getLock());
 		buildManager.startup(null);
 		notificationManager = new NotificationManager(this);
 		notificationManager.startup(null);
