@@ -78,7 +78,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -296,8 +295,36 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * 
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager
 	 * @see IFileMatchAdapter
+	 * @deprecated
 	 */
-	protected abstract void showMatch(Match match, int currentOffset, int currentLength) throws PartInitException;
+	protected void showMatch(Match match, int currentOffset, int currentLength) throws PartInitException {
+	}
+
+	/**
+	 * Opens an editor on the given element and selects the given range of text.
+	 * If a search results implements a <code>IFileMatchAdapter</code>, match
+	 * locations will be tracked and the current match range will be passed into
+	 * this method.
+	 * If the <code>activate</code> parameter is <code>true</code> the opened editor
+	 * shoud have be activated. Otherwise the focus should not be changed.
+	 * 
+	 * @param match
+	 *            the match to show
+	 * @param currentOffset
+	 *            the current start offset of the match
+	 * @param currentLength
+	 *            the current length of the selection
+	 * @param activate 
+	 * 			  whether to activate the editor.
+	 * @throws PartInitException
+	 *             if an editor can't be opened
+	 * 
+	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager
+	 * @see IFileMatchAdapter
+	 */
+	protected void showMatch(Match match, int currentOffset, int currentLength, boolean activate) throws PartInitException {
+		showMatch(match, currentOffset, currentLength);
+	}
 
 	/**
 	 * This method is called whenever the set of matches for the given elements
@@ -681,13 +708,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			public void run() throws Exception {
 				Position currentPosition = InternalSearchUI.getInstance().getPositionTracker().getCurrentPosition(match);
 				if (currentPosition != null) {
-					showMatch(match, currentPosition.getOffset(), currentPosition.getLength());
+					showMatch(match, currentPosition.getOffset(), currentPosition.getLength(), activateEditor);
 				} else {
-					showMatch(match, match.getOffset(), match.getLength());
-				}
-				IEditorPart newEditor= SearchPlugin.getActivePage().getActiveEditor();
-				if (activateEditor && newEditor != null) {
-					SearchPlugin.getActivePage().activate(newEditor);
+					showMatch(match, match.getOffset(), match.getLength(), activateEditor);
 				}
 			}
 		};
@@ -1041,14 +1064,14 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			ITreeContentProvider cp = (ITreeContentProvider) viewer.getContentProvider();
 			collectAllMatchesBelow(result, set, cp, selection.toArray());
 		} else {
-			collectAllMatches(result, set, selection.toArray());
+			collectAllMatches(set, selection.toArray());
 		}
 		Match[] matches = new Match[set.size()];
 		set.toArray(matches);
 		result.removeMatches(matches);
 	}	
 
-	private void collectAllMatches(AbstractTextSearchResult result, HashSet set, Object[] elements) {
+	private void collectAllMatches(HashSet set, Object[] elements) {
 		for (int j = 0; j < elements.length; j++) {
 			Match[] matches = getDisplayedMatches(elements[j]);
 			for (int i = 0; i < matches.length; i++) {

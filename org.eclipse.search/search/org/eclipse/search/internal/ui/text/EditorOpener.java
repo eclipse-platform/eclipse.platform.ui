@@ -38,7 +38,6 @@ public class EditorOpener {
 	}
 	
 	private IEditorPart showWithoutReuse(Match match, IWorkbenchPage wbPage) throws PartInitException {
-		IEditorPart editor= null;
 		return IDE.openEditor(wbPage, (IFile) match.getElement(), false);
 	}
 

@@ -78,9 +78,11 @@ public class FileSearchPage extends AbstractTextSearchViewPage {
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
 	}
 
-	protected void showMatch(Match match, int offset, int length) throws PartInitException {
+	protected void showMatch(Match match, int offset, int length, boolean activate) throws PartInitException {
 		IFile file= (IFile) match.getElement();
 		IEditorPart editor= fEditorOpener.open(match);
+		if (editor != null && activate)
+			editor.getEditorSite().getPage().activate(editor);
 		if (editor instanceof ITextEditor) {
 			ITextEditor textEditor= (ITextEditor) editor;
 			textEditor.selectAndReveal(offset, length);
