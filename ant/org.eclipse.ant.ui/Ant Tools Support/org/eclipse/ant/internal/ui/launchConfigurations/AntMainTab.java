@@ -33,10 +33,6 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class AntMainTab extends ExternalToolsMainTab {
 
 	protected Button captureOutputButton;
-	
-	public AntMainTab(boolean runInBackgroundDefaultValue) {
-		super(runInBackgroundDefaultValue);
-	}
 
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
@@ -71,7 +67,6 @@ public class AntMainTab extends ExternalToolsMainTab {
 		createWorkDirectoryComponent(mainComposite);
 		createArgumentComponent(mainComposite);
 		createVerticalSpacer(mainComposite, 2);
-		createRunBackgroundComponent(mainComposite);
 		createCaptureOutputComponent(mainComposite);
 	}
 	

@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
@@ -74,7 +75,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
 		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/AntUITests/buildfiles/" + launchConfigName + ".xml}");
-		config.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
+		config.setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, true);
 		 
 		setVM(config);
 		setClasspath(config);		
@@ -108,7 +109,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 	
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
 		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/AntUITests/buildfiles/" + launchConfigName + ".xml}");
-		config.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
+		config.setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, true);
 	 
 		//setClasspath(config);		
 	

@@ -23,7 +23,7 @@ public class AntBuilderTabGroup extends AbstractLaunchConfigurationTabGroup {
 	 */
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
-			new AntMainTab(false),
+			new AntMainTab(),
 			new RefreshTab(),
 			new AntTargetsTab(),
 			new AntPropertiesTab(),

@@ -38,6 +38,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
+import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.launchVariables.RefreshTab;
 import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
@@ -73,7 +74,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			AntUIPlugin.log(ce);			
 		}
 		
-		if (ExternalToolsUtil.isBackground(configuration)) {
+		if (CommonTab.isRunInBackground(configuration)) {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Launching_{0}_1"), new String[] {configuration.getName()}), 10); //$NON-NLS-1$
 		} else {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Running_{0}_2"), new String[] {configuration.getName()}), 100); //$NON-NLS-1$
@@ -195,7 +196,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		final AntProcess process = new AntProcess(location.toOSString(), launch, attributes);
 		setProcessAttributes(process, idStamp, commandLine);
 		
-		if (ExternalToolsUtil.isBackground(configuration)) {
+		if (CommonTab.isRunInBackground(configuration)) {
 			final AntRunner finalRunner= runner;
 			Runnable r = new Runnable() {
 				public void run() {
