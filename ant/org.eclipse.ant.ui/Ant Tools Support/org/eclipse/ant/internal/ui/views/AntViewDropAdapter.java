@@ -15,6 +15,7 @@ import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntProjectNodeProxy;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetAdapter;
 import org.eclipse.swt.dnd.DropTargetEvent;
 
@@ -74,5 +75,21 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 		}
 		AntProjectNode project = new AntProjectNodeProxy(buildFileName);
 		view.addProject(project);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
+	 */
+	public void dragEnter(DropTargetEvent event) {
+		event.detail= DND.DROP_COPY;
+		super.dragEnter(event);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.swt.dnd.DropTargetListener#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
+	 */
+	public void dragOperationChanged(DropTargetEvent event) {
+		event.detail= DND.DROP_COPY;
+		super.dragOperationChanged(event);
 	}
 }

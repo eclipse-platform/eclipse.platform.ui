@@ -190,7 +190,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	}
 	
 	private void initializeDragAndDrop() {
-		int ops = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_DEFAULT;
+		int ops = DND.DROP_COPY | DND.DROP_DEFAULT;
 		Transfer[] transfers = new Transfer[] { FileTransfer.getInstance() };
 		TreeViewer viewer = getViewer();
 		AntViewDropAdapter adapter = new AntViewDropAdapter(this);
