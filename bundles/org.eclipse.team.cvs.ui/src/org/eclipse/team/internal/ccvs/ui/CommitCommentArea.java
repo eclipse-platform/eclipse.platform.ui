@@ -99,6 +99,12 @@ public class CommitCommentArea extends DialogArea {
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		previousCommentsCombo.setLayoutData(data);
+		
+		// Initialize the values before we register any listeners so
+		// we don't get any platform specific selection behavior
+		// (see bug 32078: http://bugs.eclipse.org/bugs/show_bug.cgi?id=32078)
+		initializeValues();
+		
 		previousCommentsCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int index = previousCommentsCombo.getSelectionIndex();
@@ -107,8 +113,6 @@ public class CommitCommentArea extends DialogArea {
 			}
 		});
 		
-		
-		initializeValues();
 		return composite;
 	}
 
@@ -121,6 +125,10 @@ public class CommitCommentArea extends DialogArea {
 		for (int i = 0; i < comments.length; i++) {
 			previousCommentsCombo.add(flattenText(comments[i]));
 		}
+		
+		// We don't want to have an initial selection
+		// (see bug 32078: http://bugs.eclipse.org/bugs/show_bug.cgi?id=32078)
+		previousCommentsCombo.setText(""); //$NON-NLS-1$
 		
 		// determine the initial comment text
 		String initialComment;
