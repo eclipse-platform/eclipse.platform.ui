@@ -74,7 +74,6 @@ public abstract class AbstractDebugActionDelegate implements IWorkbenchWindowAct
 	 * @see IActionDelegate#run(IAction)
 	 */
 	public void run(IAction action){
-		setAction(action);
 		IStructuredSelection selection= getSelection();
 		
 		final Iterator enum= selection.iterator();
