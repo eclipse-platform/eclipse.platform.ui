@@ -173,8 +173,8 @@
  <package name="org.eclipse.ui.browser">
   <type name="AbstractWebBrowser"/>
   <type name="AbstractWorkbenchBrowserSupport"/>
-  <type name="IWebBrowser"/>
-  <type name="IWorkbenchBrowserSupport"/>
+  <type name="IWebBrowser" implement="false"/>
+  <type name="IWorkbenchBrowserSupport" implement="false"/>
 </package>
  
  <package name="org.eclipse.ui.commands">
