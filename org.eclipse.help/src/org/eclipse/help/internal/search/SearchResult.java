@@ -20,11 +20,15 @@ import org.w3c.dom.*;
 public class SearchResult {
 	private Document factory;
 	private String urlEncodedQuery;
+	private List scope;
 	/**
 	 * Constructor
+	 * @param query user query
+	 * @param scope list of books to search
 	 */
-	public SearchResult(String query) {
+	public SearchResult(String query, List scope) {
 		this.urlEncodedQuery = URLCoder.encode(query);
+		this.scope = scope;
 		// instantiate the xml factory and create the root element
 		factory = new DocumentImpl();
 		factory.appendChild(factory.createElement(IToc.TOC));
@@ -41,23 +45,19 @@ public class SearchResult {
 			} catch (IOException ioe) {
 				return;
 			}
+			String href = doc.get("name");
+			ITopic topic = findTopic(href);
+			if (topic == null)
+				continue;
+			// Create topic
 			Element e = factory.createElement(ITopic.TOPIC);
 			factory.getDocumentElement().appendChild(e);
-			// Set the document href
-			String href = doc.get("name");
+			// Set document href
 			e.setAttribute(ITopic.HREF, href + "?resultof=" + urlEncodedQuery);
 			// Set the document label
 			String label = doc.get("title");
 			if ("".equals(label)) {
-				// Title does not exist, use label from the TOC
-				ITopic topic = null;
-				IToc[] tocs = HelpSystem.getTocManager().getTocs();
-				for (int i = 0; topic == null && i < tocs.length; i++) {
-					topic = tocs[i].getTopic(href);
-				}
-				if (topic != null) {
-					label = topic.getLabel();
-				}
+				label = topic.getLabel();
 			}
 			if (label == null || "".equals(label))
 				label = href;
@@ -65,53 +65,20 @@ public class SearchResult {
 		}
 	}
 	/**
-	 * Filters search results according to the user selections if filtering is enabled
-	 * @paream allResults array of Documents returned by search engine
-	 * @return Document[] - subset of allResults
+	 * Finds a topic in a bookshelf
+	 * or within a scope if specified
 	 */
-	protected void filterTopicsFromExcludedCategories(List excludedCategories) {
-		/********
-		if (getSize() == 0)
-			return;
-		if (excludedCategories == null)
-			return;
-		
-		Element resultsRoot = factory.getDocumentElement();
-		NodeList results =
-			resultsRoot.getElementsByTagName(ITopic.TOPIC);
-		for (int i = 0; i < results.getLength(); i++) {
-			Element result = (Element) results.item(i);
-			String url = result.getAttribute(ITopic.HREF);
-		
-			Topic[] topics =
-				(Topic[]) HelpSystem
-					.getNavigationManager()
-					.getCurrentNavigationModel()
-					.getTopicsWithURL(url);
-			if (topics == null)
-				continue; // should never happen
-		
-			// for all topics corresponding to the found document's URL
-			boolean excludedFromAllViews=true;
-			for (int j = 0; j < topics.length; j++) {
-				// Find main level topic in the hierarchy
-				Contribution parent = topics[j];
-				while (parent.getParent() instanceof Topic) {
-					parent = parent.getParent();
-				}
-				// if parent belongs to mainTopics, then this
-				// search result may need to be filtered out
-				if (!excludedCategories.contains(parent.getID())) {
-					excludedFromAllViews=false;
-					break;
-				}
-			}
-			if(excludedFromAllViews){
-				resultsRoot.removeChild(result);
-				i--;
-			}
+	protected ITopic findTopic(String href) {
+		IToc[] tocs = HelpSystem.getTocManager().getTocs();
+		for (int i = 0; i < tocs.length; i++) {
+			if (scope != null)
+				if (!scope.contains(tocs[i].getHref()))
+					continue;
+			ITopic topic = tocs[i].getTopic(href);
+			if (topic != null)
+				return topic;
 		}
-		*****************************/
+		return null;
 	}
 	public int getSize() {
 		if (factory == null || factory.getDocumentElement() == null)

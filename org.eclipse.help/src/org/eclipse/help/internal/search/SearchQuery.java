@@ -13,17 +13,17 @@ public class SearchQuery {
 	public SearchQuery(String query) {
 		parseQuery(query);
 	}
-	public List getExcludedCategories() {
+	public List getScope() {
 		if (terms == null)
 			return null;
-		Object excluded = terms.get("exclude");
-		if (excluded == null)
+		Object scope = terms.get("scope");
+		if (scope == null)
 			return null;
-		if (excluded instanceof List)
-			return (List) excluded;
+		if (scope instanceof List)
+			return (List) scope;
 		else {
 			List l = new ArrayList(1);
-			l.add(excluded);
+			l.add(scope);
 			return l;
 		}
 	}
@@ -42,11 +42,7 @@ public class SearchQuery {
 		}
 	}
 	public String getKey() {
-		try {
-			return URLCoder.decode((String) terms.get("keyword"));
-		} catch (Exception e) {
-			return (String) terms.get("keyword");
-		}
+		return (String) terms.get("keyword");
 	}
 	public int getMaxHits() {
 		try {
@@ -78,6 +74,10 @@ public class SearchQuery {
 				if (equalsPosition > -1) { // well formed name/value pair
 					String arg = aQuery.substring(0, equalsPosition);
 					String val = aQuery.substring(equalsPosition + 1);
+					try {
+						val = URLCoder.decode(val);
+					} catch (Exception e) {
+					}
 					Object existing = terms.get(arg);
 					if (existing == null)
 						terms.put(arg, val);
@@ -100,7 +100,7 @@ public class SearchQuery {
 	public SearchResult search(SearchIndex index) {
 		Logger.logInfo(Resources.getString("Searching_for", getKey()));
 		// Create the xml document for search results
-		SearchResult xmlResults = new SearchResult(getKey());
+		SearchResult xmlResults = new SearchResult(getKey(), getScope());
 		index.search(
 			getKey(),
 			getFieldNames(),
