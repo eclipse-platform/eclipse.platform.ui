@@ -418,7 +418,7 @@ public void setDebugging(boolean value) {
  * of the plug-in environment. The platform may terminate invocations
  * that do not complete in a timely fashion.
  * </p>
- * <b>Cliens must never explicitly call this method.</b>
+ * <b>Clients must never explicitly call this method.</b>
  *
  * @exception CoreException if this method fails to shut down
  *   this plug-in 
