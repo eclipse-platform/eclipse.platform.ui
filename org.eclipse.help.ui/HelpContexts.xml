@@ -1,97 +1,98 @@
 <contexts>
+
+<!-- F1 on F1 -->
    <context  id="f1Shell" >
-      <description>Pressing <b>F1</b> provides context sensitive help.</description>
-      <topic href="contexts/f1Shell1.html"  label="f1Shell Related Topic 1"/>
-      <topic href="contexts/f1Shell2.html"  label="f1Shell Related Topic 2"/>
+      <description>%f1Shell</description>
    </context>
+
+<!-- not used, but picked up by most contexts -->
    <context  id="embeddedHelpView" >
-      <description><b>Navigate</b> to the desired topic in the <b>left</b> part of Help view.  <b>Topics</b> will be displayed on the <b>right</b>.</description>
-      <topic href="contexts/embeddedHelpView1.html"  label="embeddedHelpView Related Topic 1"/>
-      <topic href="contexts/embeddedHelpView2.html"  label="embeddedHelpView Related Topic 2"/>
+      <description>%embeddedHelpView</description>
    </context>
+
+<!-- not used -->
    <context  id="browser" >
-      <description>This displays <b>content of the document</b> that you select to view.</description>
-      <topic href="contexts/browser1.html"  label="browser Related Topic 1"/>
-      <topic href="contexts/browser2.html"  label="browser Related Topic 2"/>
+      <description>%browser</description>
    </context>
+
+<!-- Information Set drop-down menu; inherited by things on the left-hand side  -->
    <context  id="navigationViewer" >
-      <description>Select an <b>Information Set</b> from the drop down, and choose a tab with the <b>View</b> you prefer.</description>
-      <topic href="contexts/navigationViewer1.html"  label="navigationViewer Related Topic 1"/>
-      <topic href="contexts/navigationViewer2.html"  label="navigationViewer Related Topic 2"/>
+      <description>%navigationViewer</description>
    </context>
+
+<!-- Navigation trees -->
    <context  id="topicsViewer" >
-      <description>Expand <b>topic tree</b> to the desired topic and click on the topic to select it.</description>
-      <topic href="contexts/topicsViewer1.html"  label="topicsViewer Related Topic 1"/>
-      <topic href="contexts/topicsViewer2.html"  label="topicsViewer Related Topic 2"/>
+      <description>%topicsViewer</description>
    </context>
+
+<!-- Search field, Go button, Advanced button, and all Advanced window options -->
    <context  id="searchPage" >
-      <description><b>Type your query</b> in the text field, then select <b>GO</b> to perform search.</description>
-      <topic href="contexts/searchPage1.html"  label="searchPage Related Topic 1"/>
-      <topic href="contexts/searchPage2.html"  label="searchPage Related Topic 2"/>
+      <description>%searchPage</description>
    </context>
+
+<!-- Search results tree; inherits searchPage, topicsViewer, embeddedHelpView -->
    <context  id="resultsViewer" >
-      <description>Expand <b>topic tree</b> to the desired topic and click on the topic to select it.</description>
-      <topic href="contexts/resultsViewer1.html"  label="resultsViewer Related Topic 1"/>
-      <topic href="contexts/resultsViewer2.html"  label="resultsViewer Related Topic 2"/>
+      <description>%resultsViewer</description>
    </context>
+
+<!-- Help page in preferences dialog, Default and Apply buttons -->
    <context  id="prefPage" >
-      <description>This options change <b>help configuration</b>.</description>
-      <topic href="contexts/prefPage1.html"  label="prefPage Related Topic 1"/>
-      <topic href="contexts/prefPage2.html"  label="prefPage Related Topic 2"/>
+      <description>%prefPage</description>
    </context>
+
+<!-- Doc location group, including browser path -->
    <context  id="installOptions" >
-      <description>This options allow you to specify <b>location of your documentation</b>.</description>
-      <topic href="contexts/installOptions1.html"  label="installOptions Related Topic 1"/>
-      <topic href="contexts/installOptions2.html"  label="installOptions Related Topic 2"/>
+      <description>%installOptions</description>
    </context>
+
+<!-- not used -->
    <context  id="browserPath" >
-      <description>This options allow you to specify <b>path to your browser</b>.</description>
-      <topic href="contexts/browserPath1.html"  label="browserPath Related Topic 1"/>
-      <topic href="contexts/browserPath2.html"  label="browserPath Related Topic 2"/>
+      <description>%browserPath</description>
    </context>
+
+<!-- Logging options group -->
    <context  id="loggingOptions" >
-      <description>This options allow you to specify <b>level of logging</b>.</description>
-      <topic href="contexts/loggingOptions1.html"  label="loggingOptions Related Topic 1"/>
-      <topic href="contexts/loggingOptions2.html"  label="loggingOptions Related Topic 2"/>
+      <description>%loggingOptions</description>
    </context>
+
+<!-- Help server config group -->
    <context  id="localServerConfig" >
-      <description>This options allow you to override <b>network address that help will use internally</b>.</description>
-      <topic href="contexts/localServerConfig1.html"  label="localServerConfig Related Topic 1"/>
-      <topic href="contexts/localServerConfig2.html"  label="localServerConfig Related Topic 2"/>
+      <description>%localServerConfig</description>
    </context>
+
+<!-- not used -->
    <context  id="synchronizeAction" >
-      <description>This action will <b>synchrozie navigation</b> with the document presently viewed.</description>
-      <topic href="contexts/synchronizeAction1.html"  label="synchronizeAction Related Topic 1"/>
-      <topic href="contexts/synchronizeAction2.html"  label="synchronizeAction Related Topic 2"/>
+      <description>%synchronizeAction</description>
    </context>
+
+<!-- not used -->
    <context  id="copyAction" >
-      <description>This action <b>copies selected document</b> fragment onto the clipboard.</description>
-      <topic href="contexts/copyAction1.html"  label="copyAction Related Topic 1"/>
-      <topic href="contexts/copyAction2.html"  label="copyAction Related Topic 2"/>
+      <description>%copyAction</description>
    </context>
+
+<!-- not used -->
    <context  id="printAction" >
-      <description>This action will display <b>print dialog</b> that allows printing of the current topic.</description>
-      <topic href="contexts/printAction1.html"  label="printAction Related Topic 1"/>
-      <topic href="contexts/printAction2.html"  label="printAction Related Topic 2"/>
+      <description>%printAction</description>
    </context>
+
+<!-- not used -->
    <context  id="backAction" >
-      <description>This action navigates to the <b>last viewed topic</b>.</description>
-      <topic href="contexts/backAction1.html"  label="backAction Related Topic 1"/>
-      <topic href="contexts/backAction2.html"  label="backAction Related Topic 2"/>
+      <description>%backAction</description>
    </context>
+
+<!-- not used -->
    <context  id="forwardAction" >
-      <description>This action navigates to the topics viewed <b>before using Back</b> Action.</description>
-      <topic href="contexts/forwardAction1.html"  label="forwardAction Related Topic 1"/>
-      <topic href="contexts/forwardAction2.html"  label="forwardAction Related Topic 2"/>
+      <description>%forwardAction</description>
    </context>
+
+<!-- not used -->
    <context  id="homeAction" >
-      <description>This loads the <b>default</b> document.</description>
-      <topic href="contexts/homeAction1.html"  label="homeAction Related Topic 1"/>
-      <topic href="contexts/homeAction2.html"  label="homeAction Related Topic 2"/>
+      <description>%homeAction</description>
    </context>
+
+<!-- not used -->
    <context  id="showHideAction" >
-      <description>This action <b>hides or shows navigation</b> part of the help view.</description>
-      <topic href="contexts/showHideAction1.html"  label="showHideAction Related Topic 1"/>
-      <topic href="contexts/showHideAction2.html"  label="showHideAction Related Topic 2"/>
+      <description>%showHideAction</description>
    </context>
+
 </contexts>

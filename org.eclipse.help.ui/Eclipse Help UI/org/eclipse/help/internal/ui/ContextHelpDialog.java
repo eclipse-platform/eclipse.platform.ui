@@ -258,43 +258,13 @@ public class ContextHelpDialog implements Runnable {
 					| GridData.HORIZONTAL_ALIGN_CENTER
 					| GridData.VERTICAL_ALIGN_CENTER);
 		composite.setLayoutData(data);
-		/*
-			// Create the text field.    
-			StyledText text = new StyledText(composite, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP );
-			text.setBackground(backgroundColour);
-			text.setForeground(foregroundColour);
 		
-			// Text with possibly <b> .. </b> styles
-			String styledText = cmgr.getDescription(contexts);
-			
-			if (styledText != null) {   
-				text.setText(getStrippedText(styledText));
-				text.setStyleRanges(getStyleRanges(styledText));
-			} else {
-				// no description found in context objects.
-				String msg = WorkbenchResources.getString("WW002");
-				text.setText(msg);
-			}
-			
-		
-			data = new GridData();
-			// Use the shell bounds here...
-			//data.heightHint = HEIGHT-100;
-			//data.widthHint = WIDTH-10;
-			data.horizontalAlignment = data.FILL;
-			data.grabExcessHorizontalSpace = true;
-			data.verticalAlignment = data.FILL;
-			data.grabExcessVerticalSpace = true;
-			text.setLayoutData(data);
-		*/
-
 		// Create the text field.    
 		InfopopText text =
 			new InfopopText(composite, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
 		text.setBackground(backgroundColour);
 		text.setForeground(foregroundColour);
 
-		//String styledText = "This is some sample <b>code</b> with <b>bold</b>";
 		String styledText = cmgr.getDescription(contexts);
 
 		if (styledText != null) {
@@ -306,9 +276,6 @@ public class ContextHelpDialog implements Runnable {
 		}
 
 		data = new GridData();
-		// Use the shell bounds here...
-		//data.heightHint = HEIGHT-100;
-		//data.widthHint = WIDTH-10;
 		data.horizontalAlignment = data.FILL;
 		data.grabExcessHorizontalSpace = true;
 		data.verticalAlignment = data.FILL;
@@ -317,14 +284,13 @@ public class ContextHelpDialog implements Runnable {
 
 		return composite;
 	}
+	
 	protected Control createLink(Composite parent, IHelpTopic topic) {
 		Label link = new Label(parent, SWT.NONE);
 		link.setText(topic.getLabel());
 		link.setBackground(backgroundColour);
 		link.setForeground(linkColour);
 
-		// RGB colors do not need be disposed
-		//link.setFont(regularFont);
 		GridData data = new GridData();
 		data.horizontalAlignment = data.HORIZONTAL_ALIGN_BEGINNING;
 		data.verticalAlignment = data.VERTICAL_ALIGN_BEGINNING;
@@ -363,16 +329,13 @@ public class ContextHelpDialog implements Runnable {
 		Label label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		label.setBackground(backgroundColour);
 		label.setForeground(foregroundColour);
-		//label.setText(WorkbenchResources.getString("Related_Topics"));
+
 		data =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_BEGINNING
 					| GridData.VERTICAL_ALIGN_BEGINNING
 					| GridData.FILL_HORIZONTAL);
-		/*
-		data.horizontalAlignment = data.HORIZONTAL_ALIGN_BEGINNING;
-		data.verticalAlignment = data.VERTICAL_ALIGN_BEGINNING;
-		*/
+
 		label.setLayoutData(data);
 
 		// Create related links
@@ -387,8 +350,6 @@ public class ContextHelpDialog implements Runnable {
 		// Create Show More button
 		CLabel showMoreButton = new CLabel(parent, SWT.NONE);
 		showMoreButton.setBackground(backgroundColour);
-		//showMoreButton.setText(WorkbenchResources.getString("Show_More_Related"));
-		//showMoreButton.setFont(italicFont);
 		showMoreButton.setImage(imgRegistry.get(IMAGE_MORE));
 
 		Listener l = new ShowMoreListener();
