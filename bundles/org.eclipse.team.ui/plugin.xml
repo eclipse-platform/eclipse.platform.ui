@@ -282,5 +282,9 @@
                id="org.eclipse.team.ui.ConfigureProject"/>
       </actionSet>
    </extension>
+   <extension
+         point="org.eclipse.team.core.defaultFileModificationValidator">
+      <validator class="org.eclipse.team.internal.ui.DefaultUIFileModificationValidator"/>
+   </extension>
 
 </plugin>

@@ -270,7 +270,6 @@ abstract public class DetailsDialog extends Dialog {
 		this.imageKey = imageKey;
 	}
 
-	protected static final int LABEL_WIDTH_HINT = 400;
 	protected Label createWrappingLabel(Composite parent, String text) {
 		Label label = new Label(parent, SWT.LEFT | SWT.WRAP);
 		label.setText(text);
@@ -279,8 +278,9 @@ abstract public class DetailsDialog extends Dialog {
 		data.horizontalAlignment = GridData.FILL;
 		data.horizontalIndent = 0;
 		data.grabExcessHorizontalSpace = true;
-		data.widthHint = LABEL_WIDTH_HINT;
+		data.widthHint = convertHorizontalDLUsToPixels(IDialogConstants.MINIMUM_MESSAGE_AREA_WIDTH);
 		label.setLayoutData(data);
+		label.setFont(parent.getFont());
 		return label;
 	}
 	
@@ -293,6 +293,7 @@ abstract public class DetailsDialog extends Dialog {
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setFont(parent.getFont());
 		return composite;
 	}
 	

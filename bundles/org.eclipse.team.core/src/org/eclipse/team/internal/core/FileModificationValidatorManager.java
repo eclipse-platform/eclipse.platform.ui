@@ -18,13 +18,13 @@ import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFileModificationValidator;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.core.RepositoryProvider;
 
 public class FileModificationValidatorManager implements IFileModificationValidator {
-	private static final IFileModificationValidator DEFAULT_VALIDATOR =
-		new DefaultFileModificationValidator();
+	private IFileModificationValidator defaultValidator;
 	
 	/*
 	 * @see IFileModificationValidator#validateEdit(IFile[], Object)
@@ -59,7 +59,7 @@ public class FileModificationValidatorManager implements IFileModificationValida
 			RepositoryProvider provider = (RepositoryProvider)providersIterator.next();
 			ArrayList filesList = (ArrayList)providersToFiles.get(provider);
 			IFile[] filesArray = (IFile[])filesList.toArray(new IFile[filesList.size()]);
-			IFileModificationValidator validator = DEFAULT_VALIDATOR;
+			IFileModificationValidator validator = getDefaultValidator();
 
 			//if no provider or no validator use the default validator
 			if (provider != null) {
@@ -93,7 +93,7 @@ public class FileModificationValidatorManager implements IFileModificationValida
 	 */
 	public IStatus validateSave(IFile file) {
 		RepositoryProvider provider = RepositoryProvider.getProvider(file.getProject());
-		IFileModificationValidator validator = DEFAULT_VALIDATOR;
+		IFileModificationValidator validator = getDefaultValidator();
 
 		//if no provider or no validator use the default validator
 		if (provider != null) {
@@ -103,4 +103,32 @@ public class FileModificationValidatorManager implements IFileModificationValida
 
 		return validator.validateSave(file);
 	}
+	
+	private synchronized IFileModificationValidator getDefaultValidator() {
+	    if (defaultValidator == null) {
+	        loadDefaultValidator();
+	    }
+	    return defaultValidator;
+	}
+
+    private void loadDefaultValidator() {
+        defaultValidator = new DefaultFileModificationValidator();
+        IExtensionPoint extension = Platform.getExtensionRegistry().getExtensionPoint(TeamPlugin.ID, TeamPlugin.DEFAULT_FILE_MODIFICATION_VALIDATOR_EXTENSION);
+		if (extension != null) {
+			IExtension[] extensions =  extension.getExtensions();
+			if (extensions.length > 0) {
+				IConfigurationElement[] configElements = extensions[0].getConfigurationElements();
+				if (configElements.length > 0) {
+					try {
+                        Object o = configElements[0].createExecutableExtension("class"); //$NON-NLS-1$
+                        if (o instanceof IFileModificationValidator) {
+                            defaultValidator = (IFileModificationValidator)o;
+                        }
+                    } catch (CoreException e) {
+                        TeamPlugin.log(e);
+                    }
+				}
+			}
+		}
+    }
 }

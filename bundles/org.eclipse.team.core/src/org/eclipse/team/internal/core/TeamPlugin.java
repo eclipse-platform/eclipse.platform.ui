@@ -44,8 +44,10 @@ final public class TeamPlugin extends Plugin {
 	public static final String IGNORE_EXTENSION = "ignore"; //$NON-NLS-1$
 	// The id of the project set extension point
 	public static final String PROJECT_SET_EXTENSION = "projectSets"; //$NON-NLS-1$
-	// The id of the targets extension point
+	// The id of the repository extension point
 	public static final String REPOSITORY_EXTENSION = "repository"; //$NON-NLS-1$
+	// The id of the default file modification vaidator extension point
+	public static final String DEFAULT_FILE_MODIFICATION_VALIDATOR_EXTENSION = "defaultFileModificationValidator"; //$NON-NLS-1$
 
 
 	// The one and only plug-in instance
