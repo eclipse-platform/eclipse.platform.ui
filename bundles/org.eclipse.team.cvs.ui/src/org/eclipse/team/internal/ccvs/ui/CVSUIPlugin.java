@@ -104,6 +104,10 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 */
 	public CVSUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
+		// Initialize the images before the singleton is set
+		// to avoid accesses before they are initialized
+		initializeImages();
+		initializePreferences();
 		plugin = this;
 	}
 	
@@ -677,9 +681,6 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRemoteFolder.class);
 		Platform.getAdapterManager().registerAdapters(factory, ICVSRepositoryLocation.class);
 		Platform.getAdapterManager().registerAdapters(factory, RepositoryRoot.class);
-		
-		initializeImages();
-		initializePreferences();
 		
 		console = new CVSOutputConsole();
 		ConsolePlugin.getDefault().getConsoleManager().addConsoles(new IConsole[] {console});
