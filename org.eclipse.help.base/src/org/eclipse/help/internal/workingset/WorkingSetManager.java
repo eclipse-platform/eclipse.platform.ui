@@ -18,7 +18,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.base.*;
@@ -93,7 +92,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 	 * @param locale
 	 */
 	public WorkingSetManager(String locale) {
-		this.locale = locale != null ? locale : BootLoader.getNL();
+		this.locale = locale != null ? locale : Platform.getNL();
 		restoreState();
 	}
 

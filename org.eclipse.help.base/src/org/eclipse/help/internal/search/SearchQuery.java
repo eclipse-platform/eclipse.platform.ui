@@ -12,7 +12,7 @@ package org.eclipse.help.internal.search;
 
 import java.util.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.*;
 
 /**
  * An implementation of ISearchQuery.
@@ -23,7 +23,7 @@ public class SearchQuery implements ISearchQuery {
 	String locale;
 	String searchWord;
 	public SearchQuery() {
-		this("", false, new ArrayList(), BootLoader.getNL());
+		this("", false, new ArrayList(), Platform.getNL());
 	}
 	public SearchQuery(
 		String searchWord,

@@ -235,7 +235,7 @@ public class EmbeddedBrowser {
 			URL windowIconURL;
 			// find icon under pluginID/nl/ directory
 			Map override = new HashMap(1);
-			override.put("$nl$", BootLoader.getNL());
+			override.put("$nl$", Platform.getNL());
 			windowIconURL = pfd.find(windowIconPath, override);
 			if (windowIconURL == null)
 				return null;

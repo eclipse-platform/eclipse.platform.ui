@@ -74,7 +74,7 @@ public final class BaseHelpSystem {
 	 * @return instance of WorkingSetManager
 	 */
 	public static WorkingSetManager getWorkingSetManager() {
-		return getWorkingSetManager(BootLoader.getNL());
+		return getWorkingSetManager(Platform.getNL());
 	}
 
 	public static synchronized WorkingSetManager getWorkingSetManager(String locale) {

@@ -13,7 +13,6 @@ package org.eclipse.help.internal.search;
 import java.util.*;
 
 import org.apache.lucene.search.*;
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
 

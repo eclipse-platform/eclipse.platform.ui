@@ -12,7 +12,6 @@ package org.eclipse.help.internal.browser;
 
 import java.util.*;
 
-import org.eclipse.core.boot.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.base.*;

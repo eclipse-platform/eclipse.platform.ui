@@ -15,7 +15,7 @@ import java.util.*;
 
 import javax.servlet.http.*;
 
-import org.eclipse.core.boot.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.base.*;
 import org.eclipse.help.internal.base.util.*;
 
@@ -313,7 +313,7 @@ public class UrlUtil {
 			return;
 		}
 		// initialize default locale
-		defaultLocale = BootLoader.getNL();
+		defaultLocale = Platform.getNL();
 		if (defaultLocale == null) {
 			defaultLocale = Locale.getDefault().toString();
 		}
@@ -325,7 +325,7 @@ public class UrlUtil {
 		List infocenterLocales = null;
 
 		// first check if locales passed as command line arguments
-		String[] args = BootLoader.getCommandLineArgs();
+		String[] args = Platform.getCommandLineArgs();
 		boolean localeOption = false;
 		for (int i = 0; i < args.length; i++) {
 			if ("-locales".equalsIgnoreCase(args[i])) {
