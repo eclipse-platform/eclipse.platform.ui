@@ -31,7 +31,7 @@ FRAMESET {
 
 function onloadHandler(e)
 {
-	window.frames[0].document.getElementById("searchWord").focus();
+	window.frames["SearchFrame"].document.getElementById("searchWord").focus();
 }
 
 </script>
