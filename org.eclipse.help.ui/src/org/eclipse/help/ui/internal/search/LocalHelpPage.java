@@ -297,7 +297,7 @@ public class LocalHelpPage extends RootScopePage{
         });
     }    
        
-    public WorkingSet getScope() {
+    public WorkingSet getWorkingSet() {
         ArrayList elements = new ArrayList(10);
         findCheckedElements(elements, tree.getInput());
         if (workingSet == null) {
@@ -317,7 +317,12 @@ public class LocalHelpPage extends RootScopePage{
      * @see org.eclipse.jface.preference.IPreferencePage#performOk()
      */
     public boolean performOk() {
-        getPreferenceStore().setValue(getEngineId(), getScopeSetName()); 
+        if (searchSelected.isEnabled()) {
+            BaseHelpSystem.getWorkingSetManager().addWorkingSet(getWorkingSet());
+            getPreferenceStore().setValue(getEngineId(), getScopeSetName());
+        } else {
+            BaseHelpSystem.getWorkingSetManager().removeWorkingSet(getWorkingSet());
+        }
         return super.performOk();
     }
 }

@@ -116,13 +116,13 @@ public class EngineDescriptor {
 			String fclass = config.getAttribute(IHelpUIConstants.ATT_SCOPE_FACTORY);
 			if (fclass!=null) {
 				try {
-					Object obj = config.createExecutableExtension(fclass);
+					Object obj = config.createExecutableExtension(IHelpUIConstants.ATT_SCOPE_FACTORY);
 					if (obj instanceof ISearchScopeFactory) {
 						factory = (ISearchScopeFactory)obj;
 					}
 				}
 				catch (CoreException e) {
-					// Handle this
+                    HelpUIPlugin.logWarning("Scope factory " + fclass + " cannot be instantiated");
 				}
 			}
 		}
