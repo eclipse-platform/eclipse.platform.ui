@@ -3,7 +3,12 @@ package org.eclipse.ui.examples.jobs.views;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -13,8 +18,13 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.examples.jobs.TestJob;
 import org.eclipse.ui.examples.jobs.UITestJob;
 import org.eclipse.ui.part.ViewPart;
@@ -243,6 +253,17 @@ public class JobsView extends ViewPart {
 				joinTestJobs();
 			}
 		});
+		
+		//join the running test jobs
+		Button window = new Button(body, SWT.PUSH);
+		window.setText("Runnable in Window"); //$NON-NLS-1$
+		window.setToolTipText("Using a runnable context in the workbench window"); //$NON-NLS-1$
+		window.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		window.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				runnableInWindow();
+			}
+		});
 
 	}
 
@@ -372,5 +393,48 @@ public class JobsView extends ViewPart {
 				}
 			});
 		}
+	}
+	
+	/**
+	 * Run a workspace runnable in the application window.
+	 *
+	 */
+	
+	public void runnableInWindow(){
+		
+		final long time = getDuration();
+		final long sleep = 10;
+		IRunnableWithProgress runnableTest = new WorkspaceModifyOperation(){
+			
+			/* (non-Javadoc)
+			 * @see org.eclipse.ui.actions.WorkspaceModifyOperation#execute(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected void execute(IProgressMonitor monitor)
+					throws CoreException, InvocationTargetException,
+					InterruptedException {
+				int ticks = (int) (time / sleep);
+				monitor.beginTask("Spinning inside ApplicationWindow.run()", ticks); //$NON-NLS-1$
+				monitor.setTaskName("Spinning inside ApplicationWindow.run()"); //$NON-NLS-1$
+				for (int i = 0; i < ticks; i++) {
+					monitor.subTask("Processing tick #" + i); //$NON-NLS-1$
+					if (monitor.isCanceled())
+						return;
+					try {
+						Thread.sleep(sleep);
+					} catch (InterruptedException e) {
+						//ignore
+					}
+					monitor.worked(1);
+				}
+			}
+			
+		};
+		try {
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().run(true, true, runnableTest);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 }
