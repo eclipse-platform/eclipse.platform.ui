@@ -140,6 +140,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		selected.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				searchQueryData.setBookFiltering(true);
+				updateSearchButtonState();
 			}
 		});
 		//
@@ -172,7 +173,8 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 					all.setSelection(false);
 					selected.setSelection(true);
 					searchQueryData.setBookFiltering(true);
-					searchQueryData.setSelectedWorkingSets(dialog.getSelection());
+					searchQueryData.setSelectedWorkingSets(
+						dialog.getSelection());
 					displaySelectedBooks();
 				}
 			}
@@ -240,8 +242,9 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 	private void displaySelectedBooks() {
 		String workingSetNames = "";
 		if (searchQueryData.isBookFiltering()) {
-			IWorkingSet[] workingSets = searchQueryData.getSelectedWorkingSets();
-			for (int i=0; i<workingSets.length; i++) {
+			IWorkingSet[] workingSets =
+				searchQueryData.getSelectedWorkingSets();
+			for (int i = 0; i < workingSets.length; i++) {
 				String workingSet = workingSets[i].getName();
 				if (workingSetNames.length() <= 0)
 					workingSetNames = workingSet;
@@ -255,5 +258,18 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 			workingSetNames = "";
 		}
 		selectedWorkingSetsText.setText(workingSetNames);
+		updateSearchButtonState();
+	}
+
+	private void updateSearchButtonState() {
+		boolean searchWordValid =
+			searchWordCombo.getText() != null
+				&& searchWordCombo.getText().trim().length() > 0;
+		boolean workingSetValid =
+			selectedWorkingSetsText.getText() != null
+				&& selectedWorkingSetsText.getText().length() > 0;
+
+		scontainer.setPerformActionEnabled(
+			searchWordValid && (all.getSelection() || workingSetValid));
 	}
 }
