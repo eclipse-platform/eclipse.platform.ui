@@ -175,16 +175,17 @@ protected Control createDialogArea(Composite parent) {
 	actionLabel.setText(WorkbenchMessages.getString("ActionSetSelection.details")); //$NON-NLS-1$
 
 	// ...third the list of actions
-	actionViewer = new TableViewer(actionGroup, SWT.BORDER);
+	Table actionTable = new Table(actionGroup, SWT.BORDER | SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+	actionTable.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 	data = new GridData(GridData.FILL_BOTH);
 	data.heightHint = SIZING_SELECTION_WIDGET_HEIGHT;
 	data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
-	actionViewer.getTable().setLayoutData(data);
+	actionTable.setLayoutData(data);
+
+	actionViewer = new TableViewer(actionTable);
 	actionViewer.setLabelProvider(new WorkbenchLabelProvider());
 	actionViewer.setContentProvider(new WorkbenchContentProvider());
 	actionViewer.setSorter(new WorkbenchViewerSorter());
-	actionViewer.getTable().setEnabled(false);
-	actionViewer.getTable().setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 	
 	// initialize page
 	checkInitialSelections();

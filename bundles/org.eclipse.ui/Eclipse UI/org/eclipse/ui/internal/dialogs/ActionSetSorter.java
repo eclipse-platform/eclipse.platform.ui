@@ -31,10 +31,10 @@ public int compare(Viewer viewer, Object e1, Object e2) {
 	} else if (e1 instanceof ActionSetCategory) {
 		ActionSetCategory cat1 = (ActionSetCategory)e1;
 		ActionSetCategory cat2 = (ActionSetCategory)e2;
-//		if (cat1.getId().equals(ActionSetRegistry.OTHER_CATEGORY))
-//			return 1;
-//		if (cat2.getId().equals(ActionSetRegistry.OTHER_CATEGORY))
-//			return -1;
+		if (cat1.getId().equals(ActionSetRegistry.OTHER_CATEGORY))
+			return 1;
+		if (cat2.getId().equals(ActionSetRegistry.OTHER_CATEGORY))
+			return -1;
 		String str1 = cat1.getLabel();
 		String str2 = cat2.getLabel();
 		return collator.compare(str1, str2);
