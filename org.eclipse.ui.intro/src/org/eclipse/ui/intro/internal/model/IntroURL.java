@@ -17,6 +17,8 @@ import java.util.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.ui.intro.*;
@@ -82,6 +84,15 @@ public class IntroURL {
      *  
      */
     public void execute() {
+    	Display display = Display.getCurrent();
+    	BusyIndicator.showWhile(display, new Runnable() {
+    		public void run() {
+    			doExecute();
+    		}
+    	});
+    }
+    
+    private void doExecute() {
         // check to see if we have a custom action
         // if (action.indexOf("/") != -1)
         //   handleCustomAction();
@@ -264,6 +275,9 @@ public class IntroURL {
     }
     
     private void showMessage(String message) {
+    	
+    	//TODO some of the actions run UI code yet they are in 
+    	// model package.
     	if (message==null) message = "";
     	else
     		message = URLDecoder.decode(message);
