@@ -45,6 +45,10 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 		model.removeUpdateModelChangedListener(this);
 		super.dispose();
 	}
+	
+	public Control getScrollingControl() {
+		return scrollComposite;
+	}
 
 	public void objectsAdded(Object parent, Object [] children) {
 	}
@@ -55,13 +59,13 @@ public class ConfigurationPreviewForm extends WebForm implements IUpdateModelCha
 
 	public void initialize(Object model) {
 		super.initialize(model);
-		/*
 		if (isWhiteBackground()) {
-			setHeadingImage(UpdateUIImages.get(UpdateUIImages.IMG_FORM_BANNER));
+			setHeadingImage(UpdateUIImages.get(UpdateUIImages.IMG_FORM_BANNER_SHORT));
+/*
 			setHeadingUnderlineImage(
 				UpdateUIImages.get(UpdateUIImages.IMG_FORM_UNDERLINE));
+*/
 		}
-		*/
 		refreshSize();
 	}
 	private boolean isWhiteBackground() {

@@ -20,9 +20,9 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.configuration.*;
@@ -770,11 +770,34 @@ public class NewConfigurationView
 	
 	public void createPartControl(Composite parent) {
 		splitter = new SashForm(parent, SWT.HORIZONTAL);
-		super.createPartControl(splitter);
+		Composite leftContainer = createLineContainer(splitter);
+		Composite rightContainer = createLineContainer(splitter);
+		super.createPartControl(leftContainer);
+		super.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		createVerticalLine(leftContainer);
+		createVerticalLine(rightContainer);
 		preview = new ConfigurationPreview(this);
-		preview.createControl(splitter);
+		preview.createControl(rightContainer);
+		preview.getScrollingControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		splitter.setWeights(new int [] {1, 2});
 		getTreeViewer().expandToLevel(2);
+	}
+	
+	private Composite createLineContainer(Composite parent) {
+		Composite container = new Composite(parent, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = layout.marginHeight = 0;
+		layout.horizontalSpacing = 0;
+		container.setLayout(layout);
+		return container;
+	}
+	
+	private void createVerticalLine(Composite parent) {
+		Label line = new Label(parent, SWT.SEPARATOR | SWT.VERTICAL);
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_FILL);
+		gd.widthHint = 1;
+		line.setLayoutData(gd);
 	}
 	
 	public Control getControl() {

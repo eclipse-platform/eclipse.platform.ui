@@ -56,6 +56,7 @@ public class UpdateUIImages {
 	 * Frequently used images
 	 */
 	public static final String IMG_FORM_BANNER = NAME_PREFIX+"FORM_BANNER";
+	public static final String IMG_FORM_BANNER_SHORT = NAME_PREFIX+"FORM_BANNER_SHORT";
 	public static final String IMG_FORM_UNDERLINE = NAME_PREFIX + "FORM_UNDERLINE";
 
 	/**
@@ -147,6 +148,7 @@ public class UpdateUIImages {
 	public static final ImageDescriptor DESC_UNINSTALL_WIZ  = create(PATH_WIZBAN, "uninstall_wiz.gif");
 	public static final ImageDescriptor DESC_INSTALL_BANNER  = create(PATH_WIZBAN, "def_wizban.jpg");
 	public static final ImageDescriptor DESC_FORM_BANNER  = create(PATH_FORMS, "form_banner.jpg");
+	public static final ImageDescriptor DESC_FORM_BANNER_SHORT  = create(PATH_FORMS, "form_banner.gif");
 	public static final ImageDescriptor DESC_FORM_UNDERLINE  = create(PATH_FORMS, "form_underline.jpg");
 	public static final ImageDescriptor DESC_PROVIDER = create(PATH_FORMS, "def_provider.jpg");
 	public static final ImageDescriptor DESC_ITEM = create(PATH_FORMS, "topic.gif");
@@ -202,6 +204,7 @@ public static Image getImageFromPlugin(
 /* package */
 private static final void initialize() {
 	PLUGIN_REGISTRY = new ImageRegistry();
+	manage(IMG_FORM_BANNER_SHORT, DESC_FORM_BANNER_SHORT);
 	manage(IMG_FORM_BANNER, DESC_FORM_BANNER);
 	manage(IMG_FORM_UNDERLINE, DESC_FORM_UNDERLINE);
 }

@@ -206,9 +206,12 @@ public class ConfigurationManagerWindow
 		layout.verticalSpacing = 0;
 		container.setLayout(layout);
 
+		GridData gd;
 		Label separator = new Label(container, SWT.SEPARATOR | SWT.HORIZONTAL);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.heightHint = 1;
 		separator.setLayoutData(gd);
+
 		view.createPartControl(container);
 		Control viewControl = view.getControl();
 		gd = new GridData(GridData.FILL_BOTH);

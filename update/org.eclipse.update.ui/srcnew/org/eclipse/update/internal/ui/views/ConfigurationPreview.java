@@ -10,10 +10,17 @@ public class ConfigurationPreview {
 	public ConfigurationPreview(NewConfigurationView configView) {
 		form = new ConfigurationPreviewForm(configView);
 	}
-	public Control createControl(Composite parent) {
+	public void createControl(Composite parent) {
 		form.createControl(parent);
 		form.initialize(null);
+	}
+	
+	public Control getControl() {
 		return form.getControl();
+	}
+	
+	public Control getScrollingControl() {
+		return form.getScrollingControl();
 	}
 	
 	public void setSelection(IStructuredSelection selection) {
