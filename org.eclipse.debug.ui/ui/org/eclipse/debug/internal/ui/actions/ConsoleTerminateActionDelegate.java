@@ -6,7 +6,7 @@ package org.eclipse.debug.internal.ui.actions;
  */
  
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.internal.ui.views.ConsoleView;
+import org.eclipse.debug.internal.ui.views.console.ConsoleView;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;

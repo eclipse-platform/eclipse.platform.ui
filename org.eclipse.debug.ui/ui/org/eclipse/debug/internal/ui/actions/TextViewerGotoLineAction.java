@@ -8,7 +8,7 @@ package org.eclipse.debug.internal.ui.actions;
 import java.text.MessageFormat;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.views.ConsoleViewer;
+import org.eclipse.debug.internal.ui.views.console.ConsoleViewer;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.text.BadLocationException;

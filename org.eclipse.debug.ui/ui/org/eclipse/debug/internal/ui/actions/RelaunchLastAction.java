@@ -35,7 +35,7 @@ public class RelaunchLastAction implements IWorkbenchWindowActionDelegate {
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action){
-		final LaunchConfigurationHistoryElement recent= DebugUIPlugin.getDefault().getLastLaunch();
+		final LaunchConfigurationHistoryElement recent= DebugUIPlugin.getLaunchConfigurationManager().getLastLaunch();
 		if (recent == null) {
 			Display.getCurrent().beep();
 		} else {

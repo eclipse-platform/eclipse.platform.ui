@@ -29,8 +29,8 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
@@ -490,9 +490,9 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	protected ILaunchConfiguration getLastLaunchedWorkbenchConfigurationForMode() {
 		LaunchConfigurationHistoryElement[] history;
 		if (getMode() == ILaunchManager.DEBUG_MODE) {
-			history = DebugUIPlugin.getDefault().getDebugHistory();
+			history = DebugUIPlugin.getLaunchConfigurationManager().getDebugHistory();
 		} else {
-			history = DebugUIPlugin.getDefault().getRunHistory();
+			history = DebugUIPlugin.getLaunchConfigurationManager().getRunHistory();
 		}
 		if ((history != null) && (history.length > 0)) {
 			LaunchConfigurationHistoryElement element = history[0];

@@ -32,20 +32,27 @@ public class DebugDropDownAction extends LaunchDropDownAction {
 	 * @see LaunchDropDownAction#getHistory()
 	 */
 	public LaunchConfigurationHistoryElement[] getHistory() {
-		return DebugUIPlugin.getDefault().getDebugHistory();
+		return DebugUIPlugin.getLaunchConfigurationManager().getDebugHistory();
 	}
 	
 	/**
 	 * @see LaunchDropDownAction#getFavorites()
 	 */
 	public LaunchConfigurationHistoryElement[] getFavorites() {
-		return DebugUIPlugin.getDefault().getDebugFavorites();
+		return DebugUIPlugin.getLaunchConfigurationManager().getDebugFavorites();
 	}	
 
 	/**
+	 * @see LaunchDropDownAction#getLastLaunchPrefix()
+	 */
+	protected String getLastLaunchPrefix() {
+		return ActionMessages.getString("DebugDropDownAction.Debug_last_launched_1"); //$NON-NLS-1$
+	}
+	
+	/**
 	 * @see LaunchDropDownAction#getTooltipPrefix()
 	 */
-	protected String getTooltipPrefix() {
+	protected String getStaticTooltip() {
 		return ActionMessages.getString("DebugDropDownAction.Debug__1"); //$NON-NLS-1$
 	}
 }

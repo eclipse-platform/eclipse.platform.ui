@@ -8,6 +8,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.preferences.*;
 
 /**
  * Run favorites and history
@@ -32,7 +33,7 @@ public class RunHistoryPreferenceTab extends LaunchHistoryPreferenceTab {
 	 * @see LaunchHistoryPreferenceTab#getInitialFavorites()
 	 */
 	protected ILaunchConfiguration[] getInitialFavorites() {
-		LaunchConfigurationHistoryElement[] favs = DebugUIPlugin.getDefault().getRunFavorites();
+		LaunchConfigurationHistoryElement[] favs = DebugUIPlugin.getLaunchConfigurationManager().getRunFavorites();
 		ILaunchConfiguration[] configs = new ILaunchConfiguration[favs.length];
 		for (int i = 0; i < favs.length; i++) {
 			configs[i] = favs[i].getLaunchConfiguration();
@@ -44,7 +45,7 @@ public class RunHistoryPreferenceTab extends LaunchHistoryPreferenceTab {
 	 * @see LaunchHistoryPreferenceTab#getInitialRecents()
 	 */
 	protected ILaunchConfiguration[] getInitialRecents() {
-		LaunchConfigurationHistoryElement[] favs = DebugUIPlugin.getDefault().getRunHistory();
+		LaunchConfigurationHistoryElement[] favs = DebugUIPlugin.getLaunchConfigurationManager().getRunHistory();
 		ILaunchConfiguration[] configs = new ILaunchConfiguration[favs.length];
 		for (int i = 0; i < favs.length; i++) {
 			configs[i] = favs[i].getLaunchConfiguration();

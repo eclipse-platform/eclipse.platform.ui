@@ -8,7 +8,7 @@ package org.eclipse.debug.internal.ui.actions;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
-import org.eclipse.debug.internal.ui.views.ConsoleViewer;
+import org.eclipse.debug.internal.ui.views.console.ConsoleViewer;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.help.WorkbenchHelp;

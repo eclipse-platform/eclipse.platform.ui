@@ -8,6 +8,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.preferences.*;
 
 /**
  * Debug favorites and history
@@ -32,7 +33,7 @@ public class DebugHistoryPreferenceTab extends LaunchHistoryPreferenceTab {
 	 * @see LaunchHistoryPreferenceTab#getInitialFavorites()
 	 */
 	protected ILaunchConfiguration[] getInitialFavorites() {
-		LaunchConfigurationHistoryElement[] favs = DebugUIPlugin.getDefault().getDebugFavorites();
+		LaunchConfigurationHistoryElement[] favs = DebugUIPlugin.getLaunchConfigurationManager().getDebugFavorites();
 		ILaunchConfiguration[] configs = new ILaunchConfiguration[favs.length];
 		for (int i = 0; i < favs.length; i++) {
 			configs[i] = favs[i].getLaunchConfiguration();
@@ -44,7 +45,7 @@ public class DebugHistoryPreferenceTab extends LaunchHistoryPreferenceTab {
 	 * @see LaunchHistoryPreferenceTab#getIntialRecents()
 	 */
 	protected ILaunchConfiguration[] getInitialRecents() {
-		LaunchConfigurationHistoryElement[] favs = DebugUIPlugin.getDefault().getDebugHistory();
+		LaunchConfigurationHistoryElement[] favs = DebugUIPlugin.getLaunchConfigurationManager().getDebugHistory();
 		ILaunchConfiguration[] configs = new ILaunchConfiguration[favs.length];
 		for (int i = 0; i < favs.length; i++) {
 			configs[i] = favs[i].getLaunchConfiguration();

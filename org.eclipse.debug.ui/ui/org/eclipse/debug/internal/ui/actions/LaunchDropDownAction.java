@@ -7,6 +7,7 @@ package org.eclipse.debug.internal.ui.actions;
  
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.ILaunchHistoryChangedListener;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.jface.action.ActionContributionItem;
@@ -83,23 +84,25 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * Initialize this action so that it can dynamically set its tooltip.
 	 */
 	protected void initialize(IAction action) {
-		DebugUIPlugin.getDefault().addLaunchHistoryListener(this);
+		DebugUIPlugin.getLaunchConfigurationManager().addLaunchHistoryListener(this);
 		fOriginalTooltip = action.getToolTipText();
-		setActionProxy(action);		
+		setActionProxy(action);
 		updateTooltip();		
 		isInitialized = true;
 	}
 	
 	/**
-	 * Set this action's tooltip to correspond to the most recent launch from the appropriate history.
+	 * Updates this action's tooltip to correspond to the most recent launch from the appropriate history.
 	 */
 	protected void updateTooltip() {
 		LaunchConfigurationHistoryElement[] history = getHistory();
-		String newTooltip = fOriginalTooltip;
+		String tooltip= fOriginalTooltip;
 		if ((history != null) && (history.length > 0)) {
-			newTooltip = getTooltipPrefix() + history[0].getLaunchConfiguration().getName();
+			tooltip= getLastLaunchPrefix() + history[0].getLaunchConfiguration().getName();
+		} else {
+			tooltip= getStaticTooltip();
 		}
-		getActionProxy().setToolTipText(newTooltip);
+		getActionProxy().setToolTipText(tooltip);
 	}
 	
 	/**
@@ -113,7 +116,7 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	 * @see IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
-		DebugUIPlugin.getDefault().removeLaunchHistoryListener(this);
+		DebugUIPlugin.getLaunchConfigurationManager().removeLaunchHistoryListener(this);
 	}
 
 	/**
@@ -233,9 +236,16 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 	public abstract String getMode();
 	
 	/**
-	 * Return the String to use as the first part of the tooltip for this action.
+	 * Return the String to use as the first part of the tooltip for this action
+	 * when there is no launch history.
 	 */
-	protected abstract String getTooltipPrefix();
+	protected abstract String getStaticTooltip();
+	
+	/**
+	 * Return the String to use as the first part of the tooltip for this action
+	 * when there is a launch history.
+	 */
+	protected abstract String getLastLaunchPrefix();
 	
 	protected ExecutionAction getLaunchAction() {
 		return fLaunchAction;

@@ -109,7 +109,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	/**
 	 * Refresh the viewer - must be called in UI thread.
 	 */
-	protected void refresh() {
+	public void refresh() {
 		if (isAvailable()) {
 			 getView().showViewer();
 			 getTreeViewer().refresh();

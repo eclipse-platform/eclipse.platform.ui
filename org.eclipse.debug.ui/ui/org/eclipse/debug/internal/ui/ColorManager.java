@@ -18,6 +18,18 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ColorManager {	
 	
+	private static ColorManager fgColorManager;
+	
+	private ColorManager() {
+	}
+	
+	public static ColorManager getDefault() {
+		if (fgColorManager == null) {
+			fgColorManager= new ColorManager();
+		}
+		return fgColorManager;
+	}
+	
 	protected Map fColorTable= new HashMap(10);
 	
 	public Color getColor(RGB rgb) {

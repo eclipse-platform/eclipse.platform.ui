@@ -6,7 +6,6 @@ package org.eclipse.debug.internal.ui.actions;
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -107,7 +105,7 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 		
 		// Retrieve the current perspective and the registered shortcuts
 		String activePerspID = getActivePerspectiveID();
-		Map shortcutMap = DebugUIPlugin.getDefault().getLaunchConfigurationShortcuts();
+		Map shortcutMap = DebugUIPlugin.getLaunchConfigurationManager().getLaunchConfigurationShortcuts();
 	
 		// Look through the shortcut map and for each config type, see if the active perspective's
 		// ID is listed.  If it is, add a shortcut for creating a new configuration of that type

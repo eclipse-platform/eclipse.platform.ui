@@ -31,21 +31,27 @@ public class RunDropDownAction extends LaunchDropDownAction {
 	 * @see LaunchDropDownAction#getHistory()
 	 */
 	public LaunchConfigurationHistoryElement[] getHistory() {
-		return DebugUIPlugin.getDefault().getRunHistory();
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getRunHistory();
 	}
 	
 	/**
 	 * @see LaunchDropDownAction#getFavorites()
 	 */
 	public LaunchConfigurationHistoryElement[] getFavorites() {
-		return DebugUIPlugin.getDefault().getRunFavorites();
+		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getRunFavorites();
 	}		
 
 	/**
+	 * @see LaunchDropDownAction#getLastLaunchPrefix()
+	 */
+	protected String getLastLaunchPrefix() {
+		return ActionMessages.getString("RunDropDownAction.Run_last_launched_1"); //$NON-NLS-1$
+	}
+	/**
 	 * @see LaunchDropDownAction#getTooltipPrefix()
 	 */
-	protected String getTooltipPrefix() {
-		return ActionMessages.getString("RunDropDownAction.Run__1"); //$NON-NLS-1$
+	protected String getStaticTooltip() {
+		return ActionMessages.getString("RunDropDownAction.Run_1"); //$NON-NLS-1$
 	}
 }
 
