@@ -822,6 +822,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				ResourceSyncInfo info = resource.getSyncInfo();
 				info = new ResourceSyncInfo(info.getName(), ((RemoteResource)element.getRemote()).getSyncInfo().getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions());
 				resource.setSyncInfo(info);
+				Synchronizer.getInstance().save();
 			}
 		}
 	}
