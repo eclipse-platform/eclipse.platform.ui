@@ -23,7 +23,11 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
@@ -94,12 +98,11 @@ import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.progress.UIJob;
 
 public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener2, IPageListener, IPropertyChangeListener, IResourceChangeListener, IShowInTarget, IShowInSource, IShowInTargetList, IPartListener2 {
 	
 	public static final String ID_CONTEXT_ACTIVITY_BINDINGS = "contextActivityBindings"; //$NON-NLS-1$
-
-	private boolean fShowingEditor = false;
 			
 	/**s
 	 * Cache of the stack frame that source was displayed
@@ -137,6 +140,74 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * based on debug contexts.
 	 */
 	private LaunchViewContextListener fContextListener;
+	
+	/**
+	 * A job to perform source lookup on the currently selected stack frame.
+	 */
+	class SourceLookupJob extends Job {
+
+		/**
+		 * Constructs a new source lookup job.
+		 */
+		public SourceLookupJob() {
+			super(DebugUIViewsMessages.getString("LaunchView.0")); //$NON-NLS-1$
+			setPriority(Job.INTERACTIVE);
+			setSystem(true);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		protected IStatus run(IProgressMonitor monitor) {
+			if (!monitor.isCanceled()) {
+				IStackFrame frame = getStackFrame();
+				ISourceLookupResult result = null;
+				if (frame != null) {
+					result = DebugUITools.lookupSource(frame, null);
+				}
+				setSourceLookupResult(result);
+				scheduleSourceDisplay();
+			}
+			return Status.OK_STATUS;
+		}
+		
+	}
+	
+	/**
+	 * Source lookup job.
+	 */
+	private Job fSourceLookupJob = null;
+	
+	class SourceDisplayJob extends UIJob {
+
+		/**
+		 * Constructs a new source display job
+		 */
+		public SourceDisplayJob() {
+			super(DebugUIViewsMessages.getString("LaunchView.1")); //$NON-NLS-1$
+			setSystem(true);
+			setPriority(Job.INTERACTIVE);
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+		 */
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+			if (!monitor.isCanceled()) {
+				ISourceLookupResult result = getSourceLookupResult();
+				if (result != null) {
+					DebugUITools.displaySource(result, getSite().getPage());
+				}
+			}
+			return Status.OK_STATUS;
+		}
+		
+	}
+	
+	/**
+	 * Job used for source display.
+	 */
+	private Job fSourceDisplayJob = null;
 	
 	/**
 	 * Creates a launch view and an instruction pointer marker for the view
@@ -580,26 +651,38 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * frame. Selection is based on the line number OR the char start and end.
 	 */
 	protected void openEditorForStackFrame(IStackFrame stackFrame) {
-		if (fShowingEditor) {
+		if (!stackFrame.isSuspended()) {
 			return;
 		}
-		try {
-			fShowingEditor = true;
-
-			if (!stackFrame.isSuspended()) {
-				return;
-			}
-
-			if (!stackFrame.equals(getStackFrame()) || (getEditorInput() == null || getEditorId() == null)) {
-				setSourceLookupResult(DebugUITools.lookupSource(stackFrame, null));
-			}
+		if (!stackFrame.equals(getStackFrame()) || (getEditorInput() == null || getEditorId() == null)) {
 			setStackFrame(stackFrame);
-			DebugUITools.displaySource(getSourceLookupResult(), getSite().getPage());
-		} finally {
-			fShowingEditor= false;
+			scheduleSourceLookup();
+		} else {
+			setStackFrame(stackFrame);
+			scheduleSourceDisplay();
 		}
 	}
 	
+	/**
+	 * Schedules a source lookup job.
+	 */
+	private void scheduleSourceLookup() {
+		if (fSourceLookupJob == null) {
+			fSourceLookupJob = new SourceLookupJob();
+		}
+		fSourceLookupJob.schedule();
+	}
+	
+	/**
+	 * Schedules a source display job.
+	 */
+	private void scheduleSourceDisplay() {
+		if (fSourceDisplayJob == null) {
+			fSourceDisplayJob = new SourceDisplayJob();
+		}
+		fSourceDisplayJob.schedule();
+	}	
+
 	private IEditorInput getEditorInput() {
 		if (fResult != null) {
 			return fResult.getEditorInput();
