@@ -23,10 +23,11 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.jface.text.contentassist.AbstractControlContentAssistSubjectAdapter;
-import org.eclipse.jface.text.contentassist.ComboContentAssistSubjectAdapter;
-import org.eclipse.jface.text.contentassist.ContentAssistant;
-import org.eclipse.jface.text.contentassist.TextContentAssistSubjectAdapter;
+
+import org.eclipse.jface.contentassist.AbstractControlContentAssistSubjectAdapter;
+import org.eclipse.jface.contentassist.ComboContentAssistSubjectAdapter;
+import org.eclipse.jface.contentassist.ContentAssistant;
+import org.eclipse.jface.contentassist.TextContentAssistSubjectAdapter;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 
@@ -149,9 +150,7 @@ public class ContentAssistHandler {
 	 */
 	private void enable() {
 		if (! fControl.isDisposed()) {
-			//TODO: Should not have to register dialog.
-			//TODO: workaround for bug 58661: Contexts Activated Asynchronously
-			//registerShell is not honored (see also bug 58078). Only applied to next sub-shell. Example: CMS, Edit.
+			//TODO: workaround for bug 59049
 			PlatformUI.getWorkbench().getContextSupport().registerShell(fControl.getShell(), IWorkbenchContextSupport.TYPE_DIALOG);
 			
 			fContentAssistant.install(fContentAssistSubjectAdapter);
