@@ -342,6 +342,15 @@ public abstract class Job extends InternalJob implements IAdaptable {
 		super.schedule(delay);
 	}
 	/**
+	 * Changes the name of this job.  The job name is a human-readable
+	 * value that is displayed to users.  The name does not need to be unique, but it
+	 * must not be <code>null</code>.
+	 * @param name the name of the job.
+	 */
+	public final void setName(String name) {
+		super.setName(name);
+	}
+	/**
 	 * Sets the priority of the job.  This will not affect the execution of
 	 * a running job, but it will affect how the job is scheduled while
 	 * it is waiting to be run.
