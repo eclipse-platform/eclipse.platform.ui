@@ -1,9 +1,15 @@
-package org.eclipse.ui.internal.registry;
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
+
+package org.eclipse.ui.internal.registry;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,17 +23,17 @@ import java.util.Set;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+
 import org.eclipse.ui.IMarkerHelpRegistry;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolutionGenerator;
+import org.eclipse.ui.IMarkerResolutionGenerator2;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * This class is a registry for marker help
  * contexts and resolutions.
  */
-
-
 public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	/**
 	 * Table of queries for marker F1 help.
@@ -129,10 +135,16 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 							WorkbenchPlugin.log("Unable to instantiate resolution generator", e.getStatus()); //$NON-NLS-1$
 						}
 						if (generator != null) {
-							IMarkerResolution[] resolutions = generator.getResolutions(marker);
-							if (resolutions.length > 0)
-								// there is at least one resolution
-								return true;
+							if (generator instanceof IMarkerResolutionGenerator2) {
+								if (((IMarkerResolutionGenerator2) generator).hasResolutions(marker))
+									return true;
+							}
+							else {
+								IMarkerResolution[] resolutions = generator.getResolutions(marker);
+								if (resolutions.length > 0)
+									// there is at least one resolution
+									return true;
+							}
 						}
 					} else {
 						// The element's plugin in not loaded so we assume 
