@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.csm.roles;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 
 import org.eclipse.ui.internal.csm.roles.api.IRole;
 import org.eclipse.ui.internal.csm.roles.api.IRoleEvent;
@@ -26,13 +28,13 @@ final class Role implements IRole {
 	private final static int HASH_INITIAL = Role.class.getName().hashCode();
 
 	private boolean active;
+	private SortedSet activityBindings;
 	private IRoleEvent roleEvent;
 	private List roleListeners;
 	private boolean defined;
 	private String description;
 	private String id;
 	private String name;
-	private String parentId;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
@@ -69,12 +71,8 @@ final class Role implements IRole {
 				if (compareTo == 0) {		
 					compareTo = id.compareTo(role.id);			
 				
-					if (compareTo == 0) {
+					if (compareTo == 0)
 						compareTo = Util.compare(name, role.name);
-						
-						if (compareTo == 0)
-							compareTo = Util.compare(parentId, role.parentId);		
-					}
 				}
 			}
 		}
@@ -93,8 +91,12 @@ final class Role implements IRole {
 		equals &= Util.equals(description, role.description);
 		equals &= id.equals(role.id);
 		equals &= Util.equals(name, role.name);
-		equals &= Util.equals(parentId, role.parentId);
 		return equals;
+	}
+
+	public Set getActivityBindings() {
+		// TODO 
+		return null;
 	}
 
 	public String getDescription()
@@ -117,14 +119,6 @@ final class Role implements IRole {
 		return name;
 	}	
 
-	public String getParentId()
-		throws NotDefinedException {
-		if (!defined)
-			throw new NotDefinedException();
-
-		return parentId;
-	}
-
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
@@ -133,7 +127,6 @@ final class Role implements IRole {
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + id.hashCode();
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
 			hashCodeComputed = true;
 		}
 			
@@ -169,8 +162,6 @@ final class Role implements IRole {
 			stringBuffer.append(id);
 			stringBuffer.append(',');
 			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(parentId);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
@@ -228,18 +219,6 @@ final class Role implements IRole {
 	boolean setName(String name) {
 		if (!Util.equals(name, this.name)) {
 			this.name = name;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}		
-
-		return false;
-	}
-
-	boolean setParentId(String parentId) {
-		if (!Util.equals(parentId, this.parentId)) {
-			this.parentId = parentId;
 			hashCodeComputed = false;
 			hashCode = 0;
 			string = null;

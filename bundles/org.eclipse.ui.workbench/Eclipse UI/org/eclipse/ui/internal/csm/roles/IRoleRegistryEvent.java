@@ -9,11 +9,27 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles.api;
+package org.eclipse.ui.internal.csm.roles;
 
-import java.util.List;
+/**
+ * <p>
+ * JAVADOC
+ * </p>
+ * <p>
+ * This interface is not intended to be extended or implemented by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
+public interface IRoleRegistryEvent {
 
-public interface IMutableRoleRegistry extends IRoleRegistry {
-
-	void setRoleDefinitions(List roleDefinitions);
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	IRoleRegistry getRoleRegistry();
 }

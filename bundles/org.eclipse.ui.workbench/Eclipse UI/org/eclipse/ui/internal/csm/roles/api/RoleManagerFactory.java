@@ -1,8 +1,18 @@
 package org.eclipse.ui.internal.csm.roles.api;
 
-public class RoleManagerFactory {
+import org.eclipse.ui.internal.csm.roles.RoleManager;
 
-	IRoleManager getRoleManager() {
-		return null;
+public final class RoleManagerFactory {
+
+	private static IRoleManager roleManager;
+
+	public static IRoleManager getRoleManager() {
+		if (roleManager == null)
+			roleManager = new RoleManager();
+		
+		return roleManager;
+	}
+	
+	private RoleManagerFactory() {		
 	}
 }

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.roles.api;
+package org.eclipse.ui.internal.csm.roles;
 
 /**
  * <p>
@@ -24,12 +24,26 @@ package org.eclipse.ui.internal.csm.roles.api;
  * 
  * @since 3.0
  */
-public interface IRoleRegistryEvent {
+public interface IActivityBindingDefinition extends Comparable {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	IRoleRegistry getRoleRegistry();
+	String getActivityId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getRoleId();	
 }

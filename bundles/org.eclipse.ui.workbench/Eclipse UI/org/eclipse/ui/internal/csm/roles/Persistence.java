@@ -16,10 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.internal.csm.roles.api.ActivityBindingDefinition;
-import org.eclipse.ui.internal.csm.roles.api.IActivityBindingDefinition;
-import org.eclipse.ui.internal.csm.roles.api.IRoleDefinition;
-import org.eclipse.ui.internal.csm.roles.api.RoleDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 final class Persistence {

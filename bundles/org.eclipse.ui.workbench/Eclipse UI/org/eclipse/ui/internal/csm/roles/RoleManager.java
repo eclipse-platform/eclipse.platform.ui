@@ -28,26 +28,12 @@ import java.util.TreeSet;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.csm.roles.api.IRole;
-import org.eclipse.ui.internal.csm.roles.api.IRoleDefinition;
 import org.eclipse.ui.internal.csm.roles.api.IRoleManager;
 import org.eclipse.ui.internal.csm.roles.api.IRoleManagerEvent;
 import org.eclipse.ui.internal.csm.roles.api.IRoleManagerListener;
-import org.eclipse.ui.internal.csm.roles.api.IRoleRegistry;
-import org.eclipse.ui.internal.csm.roles.api.IRoleRegistryEvent;
-import org.eclipse.ui.internal.csm.roles.api.IRoleRegistryListener;
-import org.eclipse.ui.internal.csm.roles.api.RoleDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 public final class RoleManager implements IRoleManager {
-
-	private static RoleManager instance;
-
-	public static RoleManager getInstance() {
-		if (instance == null)
-			instance = new RoleManager();
-			
-		return instance;
-	}
 
 	public static boolean isRoleDefinitionChildOf(String ancestor, String id, Map roleDefinitionsById) {
 		Set visited = new HashSet();
@@ -72,7 +58,7 @@ public final class RoleManager implements IRoleManager {
 	private PluginRoleRegistry pluginRoleRegistry;
 	private PreferenceRoleRegistry preferenceRoleRegistry;
 
-	private RoleManager() {
+	public RoleManager() {
 		if (pluginRoleRegistry == null)
 			pluginRoleRegistry = new PluginRoleRegistry(Platform.getPluginRegistry());
 			
@@ -250,7 +236,6 @@ public final class RoleManager implements IRoleManager {
 		updated |= role.setDefined(roleDefinition != null);
 		updated |= role.setDescription(roleDefinition != null ? roleDefinition.getDescription() : null);
 		updated |= role.setName(roleDefinition != null ? roleDefinition.getName() : null);
-		updated |= role.setParentId(roleDefinition != null ? roleDefinition.getParentId() : null);
 		return updated;
 	}
 

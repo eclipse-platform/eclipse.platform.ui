@@ -11,19 +11,25 @@
 
 package org.eclipse.ui.internal.csm.roles;
 
+/**
+ * <p>
+ * JAVADOC
+ * </p>
+ * <p>
+ * This interface is not intended to be extended by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
+public interface IRoleRegistryListener {
 
-final class RoleRegistryEvent implements IRoleRegistryEvent {
-
-	private IRoleRegistry roleRegistry;
-
-	RoleRegistryEvent(IRoleRegistry roleRegistry) {
-		if (roleRegistry == null)
-			throw new NullPointerException();
-		
-		this.roleRegistry = roleRegistry;
-	}
-
-	public IRoleRegistry getRoleRegistry() {
-		return roleRegistry;
-	}
+	/**
+	 * JAVADOC
+	 * 
+	 * @param roleRegistryEvent
+	 */
+	void roleRegistryChanged(IRoleRegistryEvent roleRegistryEvent);
 }

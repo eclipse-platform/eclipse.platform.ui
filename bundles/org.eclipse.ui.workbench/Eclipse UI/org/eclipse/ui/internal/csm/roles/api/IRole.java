@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.csm.roles.api;
 
+import java.util.Set;
+
 /**
  * <p>
  * JAVADOC
@@ -38,6 +40,13 @@ public interface IRole extends Comparable {
 	 * 
 	 * @return
 	 */	
+	Set getActivityBindings();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
 	String getDescription()
 		throws NotDefinedException;
 	
@@ -54,14 +63,6 @@ public interface IRole extends Comparable {
 	 * @return
 	 */	
 	String getName()
-		throws NotDefinedException;
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getParentId()
 		throws NotDefinedException;
 
 	/**

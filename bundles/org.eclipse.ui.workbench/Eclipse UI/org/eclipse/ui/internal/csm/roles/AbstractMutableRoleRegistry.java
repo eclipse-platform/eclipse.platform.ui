@@ -13,8 +13,6 @@ package org.eclipse.ui.internal.csm.roles;
 
 import java.util.List;
 
-import org.eclipse.ui.internal.csm.roles.api.IMutableRoleRegistry;
-import org.eclipse.ui.internal.csm.roles.api.IRoleDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 abstract class AbstractMutableRoleRegistry extends AbstractRoleRegistry implements IMutableRoleRegistry {
