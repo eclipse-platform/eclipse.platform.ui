@@ -22,16 +22,20 @@ public BadPluginsTest(String name) {
 }
 
 public static Test suite() {
-	TestSuite suite = new TestSuite();
-	suite.addTest(new BadPluginsTest("badElements"));
-	suite.addTest(new BadPluginsTest("badAttributes"));
-	suite.addTest(new BadPluginsTest("badPlugins"));
-	suite.addTest(new BadPluginsTest("badFragment"));
-	suite.addTest(new BadPluginsTest("failedFragment"));
-	return suite;
+
+	return new TestSuite(BadPluginsTest.class);
+
+//	TestSuite suite = new TestSuite();
+//	suite.addTest(new BadPluginsTest("badElements"));
+//	suite.addTest(new BadPluginsTest("badAttributes"));
+//	suite.addTest(new BadPluginsTest("badPlugins"));
+//	suite.addTest(new BadPluginsTest("badFragment"));
+//	suite.addTest(new BadPluginsTest("failedFragment"));
+//	suite.addTest(new BadPluginsTest("duplicatePlugin"));
+//	return suite;
 }
 
-public void badElements() {
+public void testBadElements() {
 	String[] badElements = {
 		"badTopLevelElementsTest", 
 		"badPluginElementsTest", 
@@ -91,7 +95,7 @@ public void badElements() {
 	} catch (Exception e) {}
 }
 
-public void badAttributes() {
+public void testBadAttributes() {
 	String[] badAttrs = {
 		"badPluginAttributesTest", 
 		"badFragment1AttributesTest", 
@@ -159,7 +163,7 @@ public void badAttributes() {
 	} catch (Exception e) {}
 }
 
-public void badPlugins() {
+public void testBadPlugins() {
 	String[] badTests = {
 		"noPluginIdTest", 
 		"blankPluginIdTest",
@@ -185,6 +189,7 @@ public void badPlugins() {
 		"Plugin version identifier, ..., must not start with a separator character.",
 		"The major (1st) component of plugin version identifier, one, must be numeric.",
 		"Plugin version identifier, 1.2.3.4.5, can contain a maximum of four components.",
+		"",
 	};
 	
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -219,12 +224,14 @@ public void badPlugins() {
 	}
 }
 
-public void badFragment() {
+public void testBadFragment() {
 	String[] badAttrs = {
 		"badFragmentsTest",
+		"fragment10799",
 	};
 	String[] errorMessages = {
 		"Plugin descriptor org.eclipse.not.there not found for fragment badFragmentsTest.  Fragment ignored.",
+		"Fragment Fragment 10799 requires non-existant plugin org.apache.something.which.does.not.exist.  Fragment ignored.",
 	};
 	
 	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
@@ -269,7 +276,7 @@ public void badFragment() {
 	}
 }
 
-public void failedFragment() {
+public void testFailedFragment() {
 	String[] badAttrs = {
 		"noFragmentIdTest", 
 		"blankFragmentIdTest",
@@ -324,6 +331,37 @@ public void failedFragment() {
 			} else {
 				assertTrue(i + ".1 Got the right errors", problems.toString().indexOf(errorMessages[i]) != -1);
 			}
+		}
+	} catch (Exception e) {
+		fail("0.2 Unexpected exception - " + e.getMessage());
+	}
+}
+public void testDuplicatePlugin() {
+	PluginDescriptor tempPlugin = (PluginDescriptor)Platform.getPluginRegistry().getPluginDescriptor("org.eclipse.core.tests.runtime");
+	String errorMessage = "Two plugins found with the same id: duplicatePluginTest. Ignoring duplicate at file:";
+	try {
+		MultiStatus problems = new MultiStatus(Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, "badPluginsTestProblems", null);
+		InternalFactory factory = new InternalFactory(problems);
+		String[] pluginPath = new String[2];
+		pluginPath[0] = tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/duplicatePlugin1.xml");
+		pluginPath[1] = tempPlugin.getLocation().concat("Plugin_Testing/badPluginsTest/duplicatePlugin2.xml");
+		URL pluginURLs[] = new URL[2];
+		for (int j = 0; j < pluginURLs.length; j++) {
+			URL pURL = null;
+			try {
+				pURL = new URL (pluginPath[j]);
+			} catch (java.net.MalformedURLException e) {
+				assertTrue("Bad URL for " + pluginPath[j], true);
+			}
+			pluginURLs[j] = pURL;
+		}
+		IPluginRegistry registry = ParseHelper.doParsing (factory, pluginURLs, false);
+		PluginDescriptorModel[] pluginDescriptors = ((PluginRegistryModel)registry).getPlugins();
+		assertTrue("1.0 One plugin found", pluginDescriptors.length == 1);
+		if (errorMessage.equals("")) {
+			System.out.println(problems.toString());
+		} else {
+			assertTrue("1.1 Got the right errors", problems.toString().indexOf(errorMessage) != -1);
 		}
 	} catch (Exception e) {
 		fail("0.2 Unexpected exception - " + e.getMessage());

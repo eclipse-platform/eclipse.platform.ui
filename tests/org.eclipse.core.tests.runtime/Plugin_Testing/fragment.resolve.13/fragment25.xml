@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragment
+  name="Fragment Two"
+  id="fragmentTwo"
+  version="1.7.2"
+  plugin-id="pluginOne"
+  plugin-version="1.2.5">
+
+  <runtime>
+     <library name="lib21.jar"/>
+     <library name="lib22.jar"/>
+     <library name="lib23.jar"/>
+     <library name="lib24.jar"/>
+     <library name="lib25.jar"/>
+  </runtime>
+
+</fragment>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Plugin One"
+  id="pluginOne"
+  version="1.2.5"
+  vendor-name="IBM">
+
+</plugin>

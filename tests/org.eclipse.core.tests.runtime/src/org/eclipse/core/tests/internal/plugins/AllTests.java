@@ -106,6 +106,9 @@ public static Test suite() {
 	suite.addTest(FragmentResolveTest_8.suite());
 	suite.addTest(FragmentResolveTest_9.suite());
 	suite.addTest(FragmentResolveTest_10.suite());
+	suite.addTest(FragmentResolveTest_11.suite());
+	suite.addTest(FragmentResolveTest_12.suite());
+	suite.addTest(FragmentResolveTest_13.suite());
 	return suite;
 }
 }

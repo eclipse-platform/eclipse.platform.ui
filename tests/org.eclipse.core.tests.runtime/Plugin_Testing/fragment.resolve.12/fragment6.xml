@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragment
+  name="Fragment One"
+  id="fragmentOne"
+  version="1.2.0"
+  plugin-id="pluginOne"
+  plugin-version="1.2.5">
+
+  <runtime>
+     <library name="lib1.jar"/>
+     <library name="lib2.jar"/>
+     <library name="lib3.jar"/>
+     <library name="lib4.jar"/>
+     <library name="lib5.jar"/>
+     <library name="lib6.jar"/>
+  </runtime>
+
+</fragment>

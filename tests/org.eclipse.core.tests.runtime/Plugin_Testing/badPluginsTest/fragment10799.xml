@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragment
+   name="Fragment 10799"
+   id="fragment10799"
+   version="1.0.0"
+   plugin-id="badFragmentsPluginTest"
+   plugin-version="1.2.0">
+
+  <requires>
+    <import plugin="org.apache.something.which.does.not.exist"/>
+  </requires>
+
+</fragment>

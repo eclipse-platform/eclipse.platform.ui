@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragment
+  name="Fragment Two"
+  id="fragmentTwo"
+  version="3.0.0"
+  plugin-id="pluginOne"
+  plugin-version="1.2.5">
+
+  <runtime>
+     <library name="lib21.jar"/>
+  </runtime>
+
+</fragment>
