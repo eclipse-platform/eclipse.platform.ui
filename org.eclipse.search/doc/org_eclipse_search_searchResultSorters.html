@@ -15,66 +15,54 @@ Result Sorters</h1></center>
 contribute search result sorters to the search result view's <i>Sort</i>
 context menu.
 <p><b><i>Configuration Markup:</i></b>
-<p><tt>&nbsp;&nbsp; &lt;!ELEMENT page EMPTY></tt>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT page EMPTY&gt;</tt>
 <br><tt>&nbsp;&nbsp; &lt;!ATTLIST page</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pageId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #REQUIRED</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #REQUIRED</tt>
-<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tooltip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #IMPLIED</font></tt>
-<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #IMPLIED</font></tt>
-<br><tt><font color="#000000">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-CDATA #REQUIRED</font></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pageId&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tooltip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
 <ul>
 <li>
-<tt><b>id</b> - a unique name that will be used to identify this search
-result sorter.</tt></li>
+<b>id</b> - a unique name that will be used to identify this search
+result sorter.</li>
 
 <li>
-<tt><b>pageId</b> - the ID of a registered search page for which the sorter
-will be activated. "*" activates the sorter for all pages.</tt></li>
+<b>pageId</b> - the ID of a registered search page for which the sorter
+will be activated. "*" activates the sorter for all pages.</li>
 
 <li>
-<tt><b>label</b> - a translatable label that will be used as the menu item's
-label.</tt></li>
+<b>label</b> - a translatable label that will be used as the menu item's
+label.</li>
 
 <li>
-<tt><b>tooltip</b> - a translatable text that will be used as the menu
-item's tool tip . If omitted, the menu item will have no tool tip.</tt></li>
+<b>tooltip</b> - a translatable text that will be used as the menu
+item's tool tip . If omitted, the menu item will have no tool tip.</li>
 
 <li>
-<tt><b>icon</b> - a relative name of the image that will be shown in the
+<b>icon</b> - a relative name of the image that will be shown in the
 context menu along with the label. If omitted, the menu entry will only
-contain a label.</tt></li>
+contain a label.</li>
 
 <li>
-<tt><b>class</b> - a name of the class that extends&nbsp;<org.eclipse.jface.viewers.ViewerSorter</tt>.</tt></li>
+<b>class</b> - a name of the class that extends&nbsp;<tt>org.eclipse.jface.viewers.ViewerSorter</tt>.</li>
 </ul>
-<b><i><tt>Examples:</tt></i></b>
-<p><tt>The following is an example of a search page extension definition:</tt><extension point="org.eclipse.search.searchPages"><page id="org.eclipse.search.ui.text.TextSearchPage"
-   		icon="icons/full/obj16/tsearch_pref.gif"
-   		label="Text Search"
-		sizeHint="250,160"
-		tabPosition="1"
-		extensions="*:1"
-		class="org.eclipse.search.ui.text.TextSearchPage"></page></extension>
-<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.search.searchResultSorters"></tt>
+<b><i>Examples:</i></b>
+<p><tt>The following is an example of a search page extension definition:</tt>
+<p><tt>&nbsp;&nbsp; &lt;extension point="org.eclipse.search.searchResultSorters"&gt;</tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;sorter</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id="org.eclipse.search.internal.ui.FileNameSorter"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; pageId="*"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label="%FileNameSorter.label"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tooltip="%FileNameSorter.tooltip"</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon="icons/full/ecl16/search_sort.gif"</tt>
-<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.search.internal.ui.FileNameSorter"></tt>
-<br><tt>&nbsp;&nbsp;&nbsp; &lt;/sorter></tt>
-<br><tt>&nbsp;&nbsp; &lt;/extension></tt>
-<p><b><i><tt>API Information:</tt></i></b>
-<p><tt><b><i>Supplied Implementation: </i></b>The search infrastructure
-provides a sorter that sorts the matches by the resource name.</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.search.internal.ui.FileNameSorter"&gt;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;/sorter&gt;</tt>
+<br><tt>&nbsp;&nbsp; &lt;/extension&gt;</tt>
+
+<p><b><i>Supplied Implementation: </i></b>The search infrastructure
+provides a sorter that sorts the matches by the resource name.
 <p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corporation 2000" BORDER=0 height=12 width=195></a>
 </body>
 </html>
