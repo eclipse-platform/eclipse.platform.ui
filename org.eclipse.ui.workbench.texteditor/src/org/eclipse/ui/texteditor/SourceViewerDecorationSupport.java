@@ -54,7 +54,7 @@ public class SourceViewerDecorationSupport {
 		 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 		 */
 		public void propertyChange(PropertyChangeEvent event) {
-			if (fSymbolicFontName != null && fSymbolicFontName.equals(event.getProperty()))
+			if (fMarginPainter != null && fSymbolicFontName != null && fSymbolicFontName.equals(event.getProperty()))
 				fMarginPainter.initialize();
 		}
 	}
@@ -338,7 +338,7 @@ public class SourceViewerDecorationSupport {
 			return;
 		}
 		
-		if (fCursorLinePainterEnableKey.equals(p)) {
+		if (fCursorLinePainterEnableKey != null && fCursorLinePainterEnableKey.equals(p)) {
 			if (isCursorLineShown())
 				showCursorLine();
 			else
@@ -346,7 +346,7 @@ public class SourceViewerDecorationSupport {
 			return;
 		}
 		
-		if (fCursorLinePainterColorKey.equals(p)) {
+		if (fCursorLinePainterColorKey != null && fCursorLinePainterColorKey.equals(p)) {
 			if (fCursorLinePainter != null) {
 				hideCursorLine();
 				showCursorLine();
@@ -354,7 +354,7 @@ public class SourceViewerDecorationSupport {
 			return;
 		}
 		
-		if (fMarginPainterEnableKey.equals(p)) {
+		if (fMarginPainterEnableKey != null && fMarginPainterEnableKey.equals(p)) {
 			if (isMarginShown())
 				showMargin();
 			else
@@ -362,7 +362,7 @@ public class SourceViewerDecorationSupport {
 			return;
 		}
 		
-		if (fMarginPainterColorKey.equals(p)) {
+		if (fMarginPainterColorKey != null && fMarginPainterColorKey.equals(p)) {
 			if (fMarginPainter != null) {
 				fMarginPainter.setMarginRulerColor(getColor(fMarginPainterColorKey));
 				fMarginPainter.paint(IPainter.CONFIGURATION);
@@ -370,7 +370,7 @@ public class SourceViewerDecorationSupport {
 			return;
 		}
 		
-		if (fMarginPainterColumnKey.equals(p)) {
+		if (fMarginPainterColumnKey != null && fMarginPainterColumnKey.equals(p)) {
 			if (fMarginPainter != null && fPreferenceStore != null) {
 				fMarginPainter.setMarginRulerColumn(fPreferenceStore.getInt(fMarginPainterColumnKey));
 				fMarginPainter.paint(IPainter.CONFIGURATION);
@@ -545,7 +545,7 @@ public class SourceViewerDecorationSupport {
 	 * @return <code>true</code> f the cursor line is shown
 	 */
 	private boolean isCursorLineShown() {
-		if (fPreferenceStore != null)
+		if (fPreferenceStore != null && fCursorLinePainterEnableKey != null)
 			return fPreferenceStore.getBoolean(fCursorLinePainterEnableKey);
 		return false;
 	}
@@ -593,7 +593,7 @@ public class SourceViewerDecorationSupport {
 	 * @return <code>true</code> if the margin is shown
 	 */	
 	private boolean isMarginShown() {
-		if (fPreferenceStore != null)
+		if (fPreferenceStore != null && fMarginPainterEnableKey != null)
 			return fPreferenceStore.getBoolean(fMarginPainterEnableKey);
 		return false;
 	}
@@ -698,12 +698,10 @@ public class SourceViewerDecorationSupport {
 	 * @return <code>true</code> if the annotation overview is shown
 	 */	
 	private boolean isAnnotationOverviewShown(Object annotationType) {
-		if (fPreferenceStore != null) {
-			if (fOverviewRuler != null) {
-				AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
-				if (info != null)
-					return fPreferenceStore.getBoolean(info.getOverviewRulerPreferenceKey());
-			}
+		if (fPreferenceStore != null && fOverviewRuler != null) {
+			AnnotationPreference info= (AnnotationPreference) fAnnotationTypeKeyMap.get(annotationType);
+			if (info != null)
+				return fPreferenceStore.getBoolean(info.getOverviewRulerPreferenceKey());
 		}
 		return false;
 	}
