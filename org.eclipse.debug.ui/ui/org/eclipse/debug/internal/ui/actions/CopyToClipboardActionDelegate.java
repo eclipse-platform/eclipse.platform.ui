@@ -14,6 +14,7 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
@@ -21,8 +22,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Display;
@@ -119,12 +122,28 @@ public class CopyToClipboardActionDelegate extends AbstractDebugActionDelegate {
 				}
 				TextTransfer plainTextTransfer = TextTransfer.getInstance();
 				Clipboard clipboard= new Clipboard(getViewer().getControl().getDisplay());		
-				clipboard.setContents(
-					new String[]{buffer.toString()}, 
-					new Transfer[]{plainTextTransfer});
-				clipboard.dispose();
+				try {
+					doCopy(clipboard, plainTextTransfer, buffer);
+				} finally {
+					clipboard.dispose();
+				}
 			}
 		});
+	}
+	
+	protected void doCopy(Clipboard clipboard, TextTransfer plainTextTransfer, StringBuffer buffer) {
+		try {
+			clipboard.setContents(
+					new String[]{buffer.toString()}, 
+					new Transfer[]{plainTextTransfer});
+		} catch (SWTError e){
+			if (e.code != DND.ERROR_CANNOT_SET_CLIPBOARD) {
+				throw e;
+			}
+			if (MessageDialog.openQuestion(getViewer().getControl().getShell(), ActionMessages.getString("CopyToClipboardActionDelegate.Problem_Copying_to_Clipboard_1"), ActionMessages.getString("CopyToClipboardActionDelegate.There_was_a_problem_when_accessing_the_system_clipboard._Retry__2"))) { //$NON-NLS-1$ //$NON-NLS-2$
+				doCopy(clipboard, plainTextTransfer, buffer);
+			}
+		}	
 	}
 	
 	/**
