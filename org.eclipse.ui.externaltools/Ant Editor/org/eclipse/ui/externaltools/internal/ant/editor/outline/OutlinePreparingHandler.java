@@ -34,6 +34,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
@@ -51,8 +52,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * @version 25.11.2002
  * @author Alf Schiefelbein
  */
-public class OutlinePreparingHandler extends DefaultHandler {
-
+public class OutlinePreparingHandler extends DefaultHandler implements LexicalHandler {
 
     /**
      * The locator that tells us the location of the currently parsed element 
@@ -113,6 +113,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
         } else {  // Add it as child to parent
             XmlElement tempLastOpenedElement = (XmlElement)stillOpenElements.peek();
             tempLastOpenedElement.addChildNode(tempElement);
+            tempElement.setExternal(tempLastOpenedElement.isExternal());
         }
     
         stillOpenElements.push(tempElement);
@@ -124,7 +125,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
     /**
      * Creates an <code>XmlElement</code> instance from the specified parameters.
      */
-    protected XmlElement createXmlElement(String aLocalName, String aQualifiedName, Attributes anAttributes) {
+    protected XmlElement createXmlElement(String aLocalName, String aQualifiedName, Attributes attributes) {
 		String tempElementName = null;
 
         XmlElement tempElement = null;
@@ -315,18 +316,20 @@ public class OutlinePreparingHandler extends DefaultHandler {
 	        tempElement = new XmlElement(tempElementName);
         }
 
-		// Add all attributes
-		for(int i=0; i<anAttributes.getLength(); i++) {
-			String tempAttrName = anAttributes.getLocalName(i);
-			if(tempAttrName == null || tempAttrName.length() == 0) {
-				tempAttrName = anAttributes.getQName(i);
+		if (attributes != null) { 
+			// Add all attributes
+			for(int i=0; i < attributes.getLength(); i++) {
+				String tempAttrName = attributes.getLocalName(i);
+				if(tempAttrName == null || tempAttrName.length() == 0) {
+					tempAttrName = attributes.getQName(i);
+				}
+				String tempAttrValue = attributes.getValue(i);
+				tempElement.addAttribute(new XmlAttribute(tempAttrName, tempAttrValue));				
 			}
-			String tempAttrValue = anAttributes.getValue(i);
-			tempElement.addAttribute(new XmlAttribute(tempAttrName, tempAttrValue));				
 		}
 		// Add the type attribute
 		tempElement.addAttribute(new XmlAttribute(IAntEditorConstants.ATTR_TYPE, elementType));
-         
+        tempElement.setFilePath(locator.getSystemId());
         return tempElement;
     }
 
@@ -344,11 +347,6 @@ public class OutlinePreparingHandler extends DefaultHandler {
             tempLastStillOpenElement.setEndingRow(locator.getLineNumber());
             tempLastStillOpenElement.setEndingColumn(locator.getColumnNumber());
             stillOpenElements.pop();
-            
-//            if(!stillOpenElements.empty()) {
-//                XmlElement tempSecondLastStillOpenElement = (XmlElement)stillOpenElements.peek();
-//                tempSecondLastStillOpenElement.addChildNode(tempLastStillOpenElement);
-//            }
         }
     }
 
@@ -433,7 +431,7 @@ public class OutlinePreparingHandler extends DefaultHandler {
 			int index= systemId.indexOf(':');
 			if (index > 0) {
 				//remove file:
-				systemId= systemId.substring(index+1, systemId.length());
+				systemId= systemId.substring(index + 1, systemId.length());
 			}
 			File resolvedFile= null;
 			IPath filePath= new Path(systemId);
@@ -452,12 +450,61 @@ public class OutlinePreparingHandler extends DefaultHandler {
 		
 			if (resolvedFile != null && resolvedFile.exists()) {
 				try {
-					return new InputSource(new FileReader(resolvedFile));
+					InputSource inputSource= new InputSource(new FileReader(resolvedFile));
+					inputSource.setSystemId(resolvedFile.getAbsolutePath());
+					return inputSource;
 				} catch (FileNotFoundException e) {
 					return null;
 				}
 			}
 					
 		return super.resolveEntity(publicId, systemId);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
+	 */
+	public void comment(char[] ch, int start, int length) throws SAXException {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#endCDATA()
+	 */
+	public void endCDATA() throws SAXException {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#endDTD()
+	 */
+	public void endDTD() throws SAXException {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#endEntity(java.lang.String)
+	 */
+	public void endEntity(String name) throws SAXException {
+		endElement(null, name, ""); //$NON-NLS-1$
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#startCDATA()
+	 */
+	public void startCDATA() throws SAXException {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#startDTD(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public void startDTD(String name, String publicId, String systemId) throws SAXException {
+	}
+
+	/* (non-Javadoc)
+	 * @see org.xml.sax.ext.LexicalHandler#startEntity(java.lang.String)
+	 */
+	public void startEntity(String name) throws SAXException {
+		startElement(null, name, "", null); //$NON-NLS-1$
+		XmlElement external= (XmlElement)stillOpenElements.peek();
+		external.setExternal(true);
+		external.setRootExternal(true);
 	}
 }

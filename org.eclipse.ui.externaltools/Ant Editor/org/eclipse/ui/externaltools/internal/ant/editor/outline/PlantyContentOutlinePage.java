@@ -33,6 +33,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -41,14 +46,18 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.PlantyException;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.IAntEditorConstants;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlAttribute;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
+import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -60,6 +69,8 @@ import org.xml.sax.SAXParseException;
 public class PlantyContentOutlinePage extends ContentOutlinePage {
 	
 	private IFile file;
+	private Menu menu;
+	private IAction openEditorAction;
 	
 	/**
 	 * The content provider for the objects shown in the outline view.
@@ -71,6 +82,9 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 		 */
 		public void dispose() {
+			if (menu != null) {
+				menu.dispose();
+			}
 		}
 
         
@@ -190,7 +204,12 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		 * @see org.eclipse.jface.viewers.ILabelProvider#getText(Object)
 		 */
 		public String getText(Object aNode) {
-			return ((XmlElement)aNode).getDisplayName();
+			XmlElement element= (XmlElement) aNode;
+			StringBuffer displayName= new StringBuffer(element.getDisplayName());
+			if (element.isExternal() && !element.isRootExternal()) {
+				displayName.append(AntOutlineMessages.getString("PlantyContentOutlinePage._[external]_1")); //$NON-NLS-1$
+			}
+			return displayName.toString();
 		}
 	}
 	
@@ -237,13 +256,35 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		viewer.setLabelProvider(new PlantyLabelProvider());
 		viewer.setInput(getContentOutline(file));
 		viewer.expandToLevel(2);
+		
+		MenuManager manager= new MenuManager("#PopUp"); //$NON-NLS-1$
+		manager.setRemoveAllWhenShown(true);
+		manager.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				contextMenuAboutToShow(manager);
+			}
+		});
+		menu= manager.createContextMenu(viewer.getTree());
+		viewer.getTree().setMenu(menu);
+
+		IPageSite site= getSite();
+		site.registerContextMenu(IExternalToolConstants.PLUGIN_ID + ".antEditorOutline", manager, viewer); //$NON-NLS-1$
+				
 		updateColor();
+		openEditorAction= new OpenEditorForExternalEntityAction(this);
+	}
+	
+	private void contextMenuAboutToShow(IMenuManager menu) {	
+		if (openEditorAction.isEnabled()) {
+			menu.add(openEditorAction);
+		}
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
     
 	/**
 	 * Gets the content outline for a given input element.
-	 * Returns the outline (a list of MarkElements), or null
-	 * if the outline could not be generated.
+	 * Returns the root XmlElement, or null if the
+	 * outline could not be generated.
 	 */
 	private XmlElement getContentOutline(IAdaptable input) {
 		/*
@@ -295,6 +336,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 				//needed for resolving relative external entities
 				tempInputSource.setSystemId(location.toOSString());
 			}
+			tempParser.setProperty("http://xml.org/sax/properties/lexical-handler", tempHandler); //$NON-NLS-1$
 			tempParser.parse(tempInputSource, tempHandler);
 		} catch(SAXParseException e) {
 			// ignore that on purpose
@@ -358,14 +400,13 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 			return;
 		}
 				
-		// Determine all line lenghts
+		// Determine all line lengths
 		int [] tempLineLengths = new int [tempLineList.size()];
 		tempLineLengths[0] = ((String)tempLineList.get(0)).length();
 		for (int i = 1; i < tempLineLengths.length; i++) {
 			tempLineLengths[i] = ((String)tempLineList.get(i)).length() + tempLineLengths[i-1];
 		}
 
-        
 		XmlElement tempElement = aRootElement;
 		while(tempElement != null) {
 			/*
@@ -378,7 +419,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 			tempLine = (String)tempLineList.get(--tempStartingRow);
 			if(tempStartingColumn > 0) {
 				try {
-				tempLine = tempLine.substring(0, tempStartingColumn-1);
+					tempLine = tempLine.substring(0, tempStartingColumn-1);
 				}
 				catch(StringIndexOutOfBoundsException e) {
 					// This case happens due to a bug in the xerces parser.
@@ -402,7 +443,7 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 			tempElement.setStartingColumn(tempLessThanIndex+1); // 0-based -> 1-based
 			tempElement.setStartingRow(tempStartingRow+1);
 			int tempStartingIndex = (tempStartingRow > 0 ? tempLineLengths[tempStartingRow-1] : 0);
-			tempStartingIndex = (isLineSeparatorMulticharacter()) ? tempStartingIndex+tempStartingRow : tempStartingIndex; // add one char for ever \r
+			tempStartingIndex = (isLineSeparatorMulticharacter()) ? tempStartingIndex + tempStartingRow : tempStartingIndex; // add one char for ever \r
 			tempStartingIndex += tempLessThanIndex;
 			int tempOffset = tempStartingIndex;
 			if (!tempElement.isErrorNode()) {
@@ -415,13 +456,11 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 			int tempLength;
 			if(tempElement.getEndingRow() <= 0) {
 				tempLength = -1;
-			}
-			else {
+			} else {
 				tempStartingIndex = tempElement.getEndingRow() - 1;
 				if(tempElement.getEndingColumn() > 0) {
 					tempStartingIndex += tempElement.getEndingColumn();
-				}
-				else {
+				} else {
 					tempStartingIndex += ((String)tempLineList.get(tempElement.getEndingRow()-1)).length();
 				}
 				tempStartingIndex += -2;
@@ -469,8 +508,8 @@ public class PlantyContentOutlinePage extends ContentOutlinePage {
 		if(tempParent != null) {
 			tempChildNodes = tempParent.getChildNodes();
 			int tempIndex = tempChildNodes.indexOf(anElement);
-			if(tempIndex+1 < tempChildNodes.size()) {
-				return (XmlElement)tempChildNodes.get(tempIndex+1);
+			if(tempIndex + 1 < tempChildNodes.size()) {
+				return (XmlElement)tempChildNodes.get(tempIndex + 1);
 			}
 			return findNextElementToFixAfter(tempParent, false);
 		}
