@@ -291,14 +291,21 @@ public class AntCorePreferences {
 		}
 		path = path.append("lib").append("tools.jar"); //$NON-NLS-1$ //$NON-NLS-2$
 		File tools = path.toFile();
-		if (tools.exists()) {
-			try {
-				return new URL("file:" + tools.getAbsolutePath());
-			} catch (MalformedURLException e) {
-				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
-				AntCorePlugin.getPlugin().getLog().log(status);
+		if (!tools.exists()) {
+			//attempt to find in the older 1.1.* 
+			path= path.removeLastSegments(1);
+			path= path.append("classes.zip");
+			tools = path.toFile();
+			if (!tools.exists()) {
+				return null;
 			}
+		}
+		try {
+			return new URL("file:" + tools.getAbsolutePath());
+		} catch (MalformedURLException e) {
+			// if the URL does not have a valid format, just log and ignore the exception
+			IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e);  //$NON-NLS-1$
+			AntCorePlugin.getPlugin().getLog().log(status);
 		}
 		return null;
 	}
