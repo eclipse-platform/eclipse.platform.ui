@@ -13,13 +13,17 @@ package org.eclipse.ui.editors.tests;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.filebuffers.tests.TestHelper;
+
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+
+import org.eclipse.core.filebuffers.tests.TestHelper;
+
 import org.eclipse.jface.text.IDocument;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
