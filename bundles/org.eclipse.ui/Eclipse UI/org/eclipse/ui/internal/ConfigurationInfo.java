@@ -43,17 +43,17 @@ public abstract class ConfigurationInfo {
 	/**
 	 * R1.0 platform.ini handling using "main" plugin and fragments for NL
 	 */
-	public boolean readINIFile() throws CoreException {
+	public void readINIFile() throws CoreException {
 		// determine the identifier of the "dominant" application 
 		IInstallInfo ii = BootLoader.getInstallationInfo();
 		String configName = ii.getApplicationConfigurationIdentifier();
 		if (configName == null)
-			return false;
+			reportINIFailure(null, "Unknown configuration identifier"); //$NON-NLS-1$
 
 		// attempt to locate its corresponding "main" plugin
 		IPluginRegistry reg = Platform.getPluginRegistry();
 		if (reg == null)
-			return false;
+			reportINIFailure(null, "Plugin registry is null"); //$NON-NLS-1$
 		int index = configName.lastIndexOf("_");
 		if (index == -1)
 			this.desc = reg.getPluginDescriptor(configName);
@@ -64,12 +64,12 @@ public abstract class ConfigurationInfo {
 				mainPluginVersion =
 					new PluginVersionIdentifier(configName.substring(index + 1));
 			} catch (Exception e) {
-				return false;
+				reportINIFailure(e, "Unknown plugin version"); //$NON-NLS-1$
 			}
 			this.desc = reg.getPluginDescriptor(mainPluginName, mainPluginVersion);
 		}
 		if (this.desc == null)
-			return false;
+			reportINIFailure(null, "Plugin descriptor is null"); //$NON-NLS-1$
 		this.baseURL = desc.getInstallURL();
 
 		// load the platform.ini and platform.properties file	
@@ -77,9 +77,8 @@ public abstract class ConfigurationInfo {
 		URL propertiesURL =
 			PluginFileFinder.getResource(this.desc, propertiesFilename);
 		if (iniURL == null)
-			return false;
+			reportINIFailure(null, "Plugin file not found"); //$NON-NLS-1$
 		readINIFile(iniURL, propertiesURL);
-		return true;
 	}	
 	/**
 	 * Gets the descriptor
