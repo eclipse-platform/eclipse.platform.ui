@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.ui.preferences;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.preference.*;
@@ -22,6 +23,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.jface.dialogs.Dialog;
 
@@ -35,8 +37,6 @@ public class MainPreferencePage
 	private static final String KEY_DESCRIPTION =
 		"MainPreferencePage.description";
 	private static final String PREFIX = UpdateUI.getPluginId();
-	public static final String P_HISTORY_SIZE = PREFIX + ".historySize";
-	public static final String P_CHECK_SIGNATURE = PREFIX + ".checkSignature";
 	public static final String P_BROWSER = PREFIX + ".browser";
 	public static final String EMBEDDED_VALUE = "embedded";
 	private static final String SYSTEM_VALUE = "system";
@@ -52,16 +52,12 @@ public class MainPreferencePage
 		"MainPreferencePage.browserChoice.embedded";
 	private static final String KEY_BROWSER_CHOICE_SYSTEM =
 		"MainPreferencePage.browserChoice.system";
-
-	public static final String P_UPDATE_VERSIONS = PREFIX + ".updateVersions";
 	private static final String KEY_UPDATE_VERSIONS =
 		"MainPreferencePage.updateVersions";
 	private static final String KEY_UPDATE_VERSIONS_EQUIVALENT =
 		"MainPreferencePage.updateVersions.equivalent";
 	private static final String KEY_UPDATE_VERSIONS_COMPATIBLE =
 		"MainPreferencePage.updateVersions.compatible";
-	public static final String EQUIVALENT_VALUE = "equivalent";
-	public static final String COMPATIBLE_VALUE = "compatible";
 
 	private BooleanFieldEditor checkSignatureEditor;
 	private Label httpProxyHostLabel;
@@ -76,6 +72,10 @@ public class MainPreferencePage
 	private static final String KEY_HTTP_PROXY_PORT =
 		"MainPreferencePage.httpProxyPort";
 
+	// these two values are for compatibility with old code
+	public static final String EQUIVALENT_VALUE = "equivalent";
+	public static final String COMPATIBLE_VALUE = "compatible";
+	
 	/**
 	 * The constructor.
 	 */
@@ -97,14 +97,14 @@ public class MainPreferencePage
 			"org.eclipse.update.ui.MainPreferencePage");
 		IntegerFieldEditor maxLevel =
 			new IntegerFieldEditor(
-				P_HISTORY_SIZE,
+				UpdateCore.P_HISTORY_SIZE,
 				UpdateUI.getString(KEY_HISTORY_SIZE),
 				getFieldEditorParent());
 		maxLevel.setValidRange(1, Integer.MAX_VALUE);
 		addField(maxLevel);
 		checkSignatureEditor =
 			new BooleanFieldEditor(
-				P_CHECK_SIGNATURE,
+				UpdateCore.P_CHECK_SIGNATURE,
 				UpdateUI.getString(KEY_CHECK_SIGNATURE),
 				getFieldEditorParent());
 		addField(checkSignatureEditor);
@@ -128,16 +128,16 @@ public class MainPreferencePage
 
 		RadioGroupFieldEditor updateVersions =
 			new RadioGroupFieldEditor(
-				P_UPDATE_VERSIONS,
+				UpdateCore.P_UPDATE_VERSIONS,
 				UpdateUI.getString(KEY_UPDATE_VERSIONS),
 				1,
 				new String[][] {
 					{
 						UpdateUI.getString(KEY_UPDATE_VERSIONS_EQUIVALENT),
-						EQUIVALENT_VALUE },
+						UpdateCore.EQUIVALENT_VALUE },
 					{
 				UpdateUI.getString(KEY_UPDATE_VERSIONS_COMPATIBLE),
-					COMPATIBLE_VALUE }
+				UpdateCore.COMPATIBLE_VALUE }
 		}, getFieldEditorParent(), true);
 		addField(updateVersions);
 
@@ -216,13 +216,13 @@ public class MainPreferencePage
 
 	}
 	private int getHistorySize() {
-		IPreferenceStore store = UpdateUI.getDefault().getPreferenceStore();
-		return store.getInt(P_HISTORY_SIZE);
+		Preferences store = UpdateCore.getPlugin().getPluginPreferences();
+		return store.getInt(UpdateCore.P_HISTORY_SIZE);
 	}
 
 	public static boolean getCheckDigitalSignature() {
-		IPreferenceStore store = UpdateUI.getDefault().getPreferenceStore();
-		return store.getBoolean(P_CHECK_SIGNATURE);
+		Preferences store = UpdateCore.getPlugin().getPluginPreferences();
+		return store.getBoolean(UpdateCore.P_CHECK_SIGNATURE);
 	}
 
 	public static boolean getUseEmbeddedBrowser() {
@@ -231,8 +231,8 @@ public class MainPreferencePage
 	}
 
 	public static String getUpdateVersionsMode() {
-		IPreferenceStore store = UpdateUI.getDefault().getPreferenceStore();
-		return store.getString(P_UPDATE_VERSIONS);
+		Preferences store = UpdateCore.getPlugin().getPluginPreferences();
+		return store.getString(UpdateCore.P_UPDATE_VERSIONS);
 	}
 
 	public boolean performOk() {

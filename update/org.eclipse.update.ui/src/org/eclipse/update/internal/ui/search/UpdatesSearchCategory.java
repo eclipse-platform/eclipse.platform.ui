@@ -20,6 +20,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.ui.UpdateUI;
 import org.eclipse.update.internal.ui.forms.ActivityConstraints;
 import org.eclipse.update.internal.ui.model.*;
@@ -433,9 +434,9 @@ public class UpdatesSearchCategory extends SearchCategory {
 		boolean greater = cv.isGreaterThan(fv);
 		if (!greater)
 			return false;
-		if (mode.equals(MainPreferencePage.EQUIVALENT_VALUE))
+		if (mode.equals(UpdateCore.EQUIVALENT_VALUE))
 			return cv.isEquivalentTo(fv);
-		else if (mode.equals(MainPreferencePage.COMPATIBLE_VALUE))
+		else if (mode.equals(UpdateCore.COMPATIBLE_VALUE))
 			return cv.isCompatibleWith(fv);
 		else
 			return false;
@@ -454,9 +455,9 @@ public class UpdatesSearchCategory extends SearchCategory {
 		if (!greater)
 			return false;
 		int userMatch = IImport.RULE_GREATER_OR_EQUAL;
-		if (mode.equals(MainPreferencePage.EQUIVALENT_VALUE))
+		if (mode.equals(UpdateCore.EQUIVALENT_VALUE))
 			userMatch = IImport.RULE_EQUIVALENT;
-		else if (mode.equals(MainPreferencePage.COMPATIBLE_VALUE))
+		else if (mode.equals(UpdateCore.COMPATIBLE_VALUE))
 			userMatch = IImport.RULE_COMPATIBLE;			
 		// By default, use match rule defined in the preferences
 		int resultingMatch = userMatch;

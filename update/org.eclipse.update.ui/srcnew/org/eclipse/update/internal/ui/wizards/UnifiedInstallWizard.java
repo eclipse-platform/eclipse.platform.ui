@@ -247,14 +247,7 @@ public class UnifiedInstallWizard extends Wizard {
 			targetSite = targetPage.getTargetSite(job);
 		}
 
-		if (job instanceof InstallOperation) {
-			InstallOperation installJob = (InstallOperation) job;
-			installJob.setInstallConfiguration(config);
-			installJob.setTargetSite(targetSite);
-			installJob.setOptionalFeatures(optionalFeatures);
-			installJob.setVerificationListener(getVerificationListener());
-			installJob.execute(monitor);
-		}
+		UpdateManager.getOperationsManager().installFeature(job, config, targetSite, optionalFeatures, getVerificationListener(), monitor);
 
 		IFeature oldFeature = job.getOldFeature();
 		if (oldFeature != null

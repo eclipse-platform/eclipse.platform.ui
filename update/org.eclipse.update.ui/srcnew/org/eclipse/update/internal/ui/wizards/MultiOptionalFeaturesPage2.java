@@ -40,43 +40,6 @@ public class MultiOptionalFeaturesPage2 extends BannerPage2 implements IDynamicP
 	private IInstallConfiguration config;
 	private JobRoot[] jobRoots;
 
-	class JobRoot {
-		private PendingOperation job;
-		private Object[] elements;
-		public JobRoot(PendingOperation job) {
-			this.job = job;
-		}
-
-		public PendingOperation getJob() {
-			return job;
-		}
-
-		public Object[] getElements() {
-			if (elements == null)
-				computeElements();
-			return elements;
-		}
-
-		private void computeElements() {
-			IFeature oldFeature = job.getOldFeature();
-			IFeature newFeature = job.getFeature();
-			ArrayList list = new ArrayList();
-			boolean patch = UpdateUI.isPatch(newFeature);
-			FeatureHierarchyElement2.computeElements(
-				oldFeature,
-				newFeature,
-				oldFeature != null,
-				patch,
-				config,
-				list);
-			elements = list.toArray();
-			for (int i = 0; i < elements.length; i++) {
-				FeatureHierarchyElement2 element =
-					(FeatureHierarchyElement2) elements[i];
-				element.setRoot(this);
-			}
-		}
-	}
 
 	class TreeContentProvider
 		extends DefaultContentProvider
@@ -152,7 +115,7 @@ public class MultiOptionalFeaturesPage2 extends BannerPage2 implements IDynamicP
 	public void setJobs(PendingOperation[] jobs) {
 		jobRoots = new JobRoot[jobs.length];
 		for (int i = 0; i < jobs.length; i++) {
-			jobRoots[i] = new JobRoot(jobs[i]);
+			jobRoots[i] = new JobRoot(config, jobs[i]);
 		}
 	}
 
