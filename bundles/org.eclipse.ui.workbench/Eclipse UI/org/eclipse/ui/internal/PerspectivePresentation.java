@@ -1558,7 +1558,7 @@ private void updateContainerVisibleTab(ILayoutContainer container) {
 	if (parts.length < 1)
 		return;
 		
-	LayoutPart selPart = null;
+	PartPane selPart = null;
 	int topIndex = 0;
 	IWorkbenchPartReference sortedPartsArray[] = ((WorkbenchPage)page).getSortedParts();
 	List sortedParts = Arrays.asList(sortedPartsArray);
@@ -1568,12 +1568,15 @@ private void updateContainerVisibleTab(ILayoutContainer container) {
 			int index = sortedParts.indexOf(part);
 			if (index >= topIndex) {
 				topIndex = index;
-				selPart = parts[i];
+				selPart = (PartPane)parts[i];
 			}
 		}
 	}
-
+	
 	if (selPart != null) {
+		//Make sure the new visible part is restored.
+		//If part can't be restored an error part is created.
+		selPart.getPartReference().getPart(true);		
 		int selIndex = folder.indexOf(selPart);
 		if (folder.getSelection() != selIndex)
 			folder.setSelection(selIndex);
