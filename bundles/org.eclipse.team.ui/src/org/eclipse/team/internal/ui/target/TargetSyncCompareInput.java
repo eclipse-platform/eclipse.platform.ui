@@ -22,7 +22,6 @@ import org.eclipse.team.internal.core.target.ITargetRunnable;
 import org.eclipse.team.internal.core.target.TargetManager;
 import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.sync.CatchupReleaseViewer;
 import org.eclipse.team.internal.ui.sync.SyncCompareInput;
 
