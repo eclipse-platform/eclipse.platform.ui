@@ -146,6 +146,15 @@ plug-in org.eclipse.ui.editors
 	- moved UISynchronizationContext to package org.eclipse.ui.internal.editors.text
 	
 	
+--------------------------------------------------
+
+plug-in org.eclipse.core.filebuffers
+- extension point org.eclipse.core.filebuffers.documentSetup now supports the attribute 'fileNames'. The union of
+  'fileNames' and 'extensions' is used for setting up a document.
+- extension point org.eclipse.core.filebuffers.documentCreation now supports the attribute 'fileNames'.
+  'fileName' has precedence over any matching criterion of 'extensions' when creating a document.
+	
+	
 </pre>
 ========== Eclipse Build Input March 23rd 2004 ==========<br>
 <pre>
