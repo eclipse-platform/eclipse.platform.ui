@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -212,6 +213,10 @@ public class RefactoringStatusViewer extends SashForm {
 		});
 		fTableViewer.setSorter(new RefactoringStatusSorter());	
 		Table tableControl= fTableViewer.getTable();
+		// must set the dialog font here since we pack the table and this
+		// might otherwise happen with the wrong font resulting in clipped
+		// messages.
+		tableControl.setFont(JFaceResources.getDialogFont());
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		tableControl.setLayoutData(gd);
 		// Add a column so that we can pack it in setVisible.
