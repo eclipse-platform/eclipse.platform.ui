@@ -19,8 +19,6 @@ public final class CommandResolver {
 	
 		String getAcceleratorText(String commandId);
 
-		boolean isAcceleratorInUse(int accelerator);
-
 		boolean isActive(String commandId);
 	}
 
