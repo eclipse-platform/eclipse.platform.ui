@@ -1752,10 +1752,11 @@ M4 = Platform-specific fourth key
             keySequence="CTRL+Z">
      </keyBinding>
      <keyBinding
-		    commandId="org.eclipse.debug.ui.commands.eof"
-            contextId="org.eclipse.debug.ui.console"
-            keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="CTRL+D">
+           commandId="org.eclipse.debug.ui.commands.eof"
+           contextId="org.eclipse.debug.ui.console"
+           keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
+           keySequence="CTRL+D"
+           platform="gtk, motif, carbon">
       </keyBinding>
 <!-- views -->
       <command
