@@ -85,6 +85,7 @@ import org.eclipse.ui.internal.registry.IViewRegistry;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.part.MultiEditor;
+import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
  * A collection of views and editors in a workbench.
@@ -3139,9 +3140,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     }
 
     /**
-     * Zoom in on a part. If the part is already in zoom then zoom out.
+     * Sets the state of the given part.
+     * 
+     * @param ref part whose state should be modified (not null)
+     * @param newState one of the IStackPresentationSite.STATE_* constants
      */
-    public void toggleZoom(IWorkbenchPartReference ref) {
+    public void setState(IWorkbenchPartReference ref, int newState) {
         Perspective persp = getActivePerspective();
         if (persp == null)
             return;
@@ -3153,25 +3157,70 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         // intro state changes.  We may want to introduce the notion of a zoomed
         // (fullscreen) detached view at a later time.
         if (pane.getWindow() instanceof DetachedWindow) {
-            pane.setZoomed(!pane.isZoomed());
+            pane.setZoomed(newState == IStackPresentationSite.STATE_MAXIMIZED);
             return;
         }
 
         if (ref instanceof IViewReference
                 && persp.isFastView((IViewReference) ref)) {
-            persp.toggleFastViewZoom();
+            persp.setFastViewState(newState);
             return;
         }
 
+        boolean wasZoomed = isZoomed();
+        boolean isZoomed = newState == IStackPresentationSite.STATE_MAXIMIZED;
+		
         // Update zoom status.
-        if (isZoomed()) {
+        if (wasZoomed && !isZoomed) {
             zoomOut();
-
-            return;
-        } else {
+        } else if (!wasZoomed && isZoomed) {
             persp.getPresentation().zoomIn(ref);
             activate(ref.getPart(true));
         }
+    	
+        PartStack parent = ((PartStack)pane.getContainer());
+        
+        if (parent != null) {
+        	parent.setState(newState);
+        }
+    }
+    
+    /**
+     * Returns the maximized/minimized/restored state of the given part reference
+     * 
+     * @param ref part to query (not null)
+     * @return one of the IStackPresentationSite.STATE_* constants
+     */
+    int getState(IWorkbenchPartReference ref) {
+        Perspective persp = getActivePerspective();
+        if (persp == null)
+            return IStackPresentationSite.STATE_RESTORED;
+
+        PartPane pane = ((WorkbenchPartReference) ref).getPane();
+    	
+        if (ref instanceof IViewReference
+                && persp.isFastView((IViewReference) ref)) {
+            return persp.getFastViewState();
+        }    	
+        
+        PartStack parent = ((PartStack)pane.getContainer());
+        
+        if (parent != null) {
+        	return parent.getState();
+        }
+        
+        return IStackPresentationSite.STATE_RESTORED;
+    }
+    
+    /**
+     * Zoom in on a part. If the part is already in zoom then zoom out.
+     */
+    public void toggleZoom(IWorkbenchPartReference ref) {
+    	int oldState = getState(ref);
+    	boolean shouldZoom = oldState != IStackPresentationSite.STATE_MAXIMIZED;
+    	int newState = shouldZoom ? IStackPresentationSite.STATE_MAXIMIZED : IStackPresentationSite.STATE_RESTORED;
+    	
+    	setState(ref, newState);
     }
 
     /**

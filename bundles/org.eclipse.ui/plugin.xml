@@ -377,6 +377,12 @@
             id="org.eclipse.ui.window.maximizePart">
       </command>
       <command
+            name="%command.minimizePart.name"
+            description="%command.minimizePart.description"
+            categoryId="org.eclipse.ui.category.window"
+            id="org.eclipse.ui.window.minimizePart">
+      </command>  
+      <command
             name="%command.nextEditor.name"
             description="%command.nextEditor.description"
             categoryId="org.eclipse.ui.category.window"

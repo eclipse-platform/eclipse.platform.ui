@@ -110,6 +110,8 @@ public final class WorkbenchActionBuilder {
     private IWorkbenchAction activateEditorAction;
 
     private IWorkbenchAction maximizePartAction;
+    
+    private IWorkbenchAction minimizePartAction;
 
     private IWorkbenchAction workbenchEditorsAction;
 
@@ -704,6 +706,7 @@ public final class WorkbenchActionBuilder {
         subMenu.add(showViewMenuAction);
         subMenu.add(new Separator());
         subMenu.add(maximizePartAction);
+        subMenu.add(minimizePartAction);
         subMenu.add(new Separator());
         subMenu.add(activateEditorAction);
         subMenu.add(nextEditorAction);
@@ -1030,6 +1033,7 @@ public final class WorkbenchActionBuilder {
         prevPerspectiveAction.dispose();
         activateEditorAction.dispose();
         maximizePartAction.dispose();
+        minimizePartAction.dispose();
         workbenchEditorsAction.dispose();
         workbookEditorsAction.dispose();
         backwardHistoryAction.dispose();
@@ -1113,6 +1117,7 @@ public final class WorkbenchActionBuilder {
         prevPerspectiveAction = null;
         activateEditorAction = null;
         maximizePartAction = null;
+        minimizePartAction = null;
         workbenchEditorsAction = null;
         workbookEditorsAction = null;
         backwardHistoryAction = null;
@@ -1356,6 +1361,9 @@ public final class WorkbenchActionBuilder {
         maximizePartAction = ActionFactory.MAXIMIZE.create(getWindow());
         registerGlobalAction(maximizePartAction);
 
+		minimizePartAction = ActionFactory.MINIMIZE.create(getWindow());
+		registerGlobalAction(minimizePartAction);
+        
         workbenchEditorsAction = ActionFactory.SHOW_OPEN_EDITORS
                 .create(getWindow());
         registerGlobalAction(workbenchEditorsAction);

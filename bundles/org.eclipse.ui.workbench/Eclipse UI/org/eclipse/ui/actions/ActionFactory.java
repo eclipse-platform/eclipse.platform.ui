@@ -31,6 +31,7 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IntroAction;
 import org.eclipse.ui.internal.LockToolBarAction;
 import org.eclipse.ui.internal.MaximizePartAction;
+import org.eclipse.ui.internal.MinimizePartAction;
 import org.eclipse.ui.internal.NavigationHistoryAction;
 import org.eclipse.ui.internal.OpenPreferencesAction;
 import org.eclipse.ui.internal.QuitAction;
@@ -521,6 +522,22 @@ public abstract class ActionFactory {
         }
     };
 
+    /**
+     * Workbench action (id "minimize"): Minimizes the active part. This
+     * action maintains its enablement state.
+     */
+    public static final ActionFactory MINIMIZE = new ActionFactory("minimize") {//$NON-NLS-1$
+        /* (non-javadoc) method declared on ActionFactory */
+        public IWorkbenchAction create(IWorkbenchWindow window) {
+            if (window == null) {
+                throw new IllegalArgumentException();
+            }
+            IWorkbenchAction action = new MinimizePartAction(window);
+            action.setId(getId());
+            return action;
+        }
+    };
+    
     /**
      * Workbench action (id "move"): Move. This action is a
      * {@link RetargetAction} with id "move". This action maintains

@@ -1835,8 +1835,12 @@ public class Perspective {
 
     }
 
-    public void toggleFastViewZoom() {
-        fastViewPane.toggleZoom();
+    public void setFastViewState(int newState) {
+        fastViewPane.setState(newState);
+    }
+    
+    public int getFastViewState() {
+    	return fastViewPane.getState();
     }
 
     /**

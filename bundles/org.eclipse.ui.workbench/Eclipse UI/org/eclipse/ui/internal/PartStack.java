@@ -979,6 +979,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
     }
 
+    public int getState() {
+    	return presentationSite.getState();
+    }
+    
     protected void setState(int newState) {
         if (!supportsState(newState) || newState == presentationSite.getState()) {
             return;

@@ -260,6 +260,9 @@ public interface IHelpContextIds {
     public static final String MAXIMIZE_PART_ACTION = PREFIX
             + "maximize_part_action_context"; //$NON-NLS-1$
 
+    public static final String MINIMIZE_PART_ACTION = PREFIX
+    		+ "minimize_part_action_context"; //$NON-NLS-1$
+    
     public static final String OPEN_WORKSPACE_FILE_ACTION = PREFIX
             + "open_workspace_file_action_context"; //$NON-NLS-1$
 
