@@ -13,6 +13,9 @@ import java.util.ArrayList;
 
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.ui.externaltools.model.IExternalToolConstants;
 
 /**
  * Ant target label provider
@@ -51,6 +54,13 @@ public class AntTargetLabelProvider extends LabelProvider {
 	 */
 	public void setDefaultTargetName(String name) {
 		defaultTargetName = name;
+	}
+
+	/**
+	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
+	 */
+	public Image getImage(Object element) {
+		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_ANT_TARGETS);
 	}
 
 }
