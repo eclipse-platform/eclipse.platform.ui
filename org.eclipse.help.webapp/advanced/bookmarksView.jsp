@@ -63,6 +63,18 @@ function removeBookmark()
 }
 
 /**
+ * Removes all bookmarks
+ */
+function removeAllBookmarks() 
+{
+	hidePopupMenu();
+	if(!confirm("<%=ServletResources.getString("confirmDeleteAllBookmarks",request)%>"))
+		return true;
+	window.location.replace("bookmarksView.jsp?operation=removeAll");
+	return true;
+}
+
+/**
  * If the Del key was pressed, remove the bookmark
  */
 function bookmarkKeyDownHandler(e) {
@@ -126,6 +138,7 @@ if(data.getBookmarks().length == 0) {
 </table>
 <div id="menu">
 	<div class="unselectedMenuItem" onmouseover="this.className='selectedMenuItem'" onmouseout="this.className='unselectedMenuItem'" onclick="removeBookmark()" ><%=ServletResources.getString("RemoveBookmark",request)%></div>
+	<div class="unselectedMenuItem" onmouseover="this.className='selectedMenuItem'" onmouseout="this.className='unselectedMenuItem'" onclick="removeAllBookmarks()" ><%=ServletResources.getString("RemoveAllBookmarks",request)%></div>
 </div>
 
 <%

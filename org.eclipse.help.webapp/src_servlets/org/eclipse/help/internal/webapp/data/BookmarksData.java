@@ -26,6 +26,7 @@ public class BookmarksData extends RequestData {
 	public final static int NONE = 0;
 	public final static int ADD = 1;
 	public final static int REMOVE = 2;
+	public final static int REMOVE_ALL = 3;
 
 	public BookmarksData(ServletContext context, HttpServletRequest request) {
 		super(context, request);
@@ -36,6 +37,9 @@ public class BookmarksData extends RequestData {
 				break;
 			case REMOVE :
 				removeBookmark();
+				break;
+			case REMOVE_ALL :
+				removeAllBookmarks();
 				break;
 			default :
 				break;
@@ -89,6 +93,12 @@ public class BookmarksData extends RequestData {
 			HelpPlugin.getDefault().savePluginPreferences();
 		}
 	}
+	
+	public void removeAllBookmarks() {
+		Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
+		prefs.setValue(HelpSystem.BOOKMARKS, "");
+		HelpPlugin.getDefault().savePluginPreferences();
+	}
 
 	public Topic[] getBookmarks() {
 		// sanity test for infocenter, but this could not work anyway...
@@ -121,6 +131,8 @@ public class BookmarksData extends RequestData {
 			return ADD;
 		else if ("remove".equals(op))
 			return REMOVE;
+		else if ("removeAll".equals(op))
+			return REMOVE_ALL;
 		else
 			return NONE;
 	}
