@@ -174,7 +174,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		setSharedEnabled(false);
 		
 		Group favComp = new Group(comp, SWT.NONE);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.FILL_BOTH);
 		favComp.setLayoutData(gd);
 		GridLayout favLayout = new GridLayout();
 		favComp.setLayout(favLayout);
