@@ -257,7 +257,10 @@ private static final String KEY_REFRESH = "BrowserPage.refresh";
 	public Control getControl() {
 		return control;
 	}
-
+
+	public void setFocus() {
+		if (control!=null) control.setFocus();
+	}
 	/**
 	 * @see IFormPage#getLabel()
 	 */

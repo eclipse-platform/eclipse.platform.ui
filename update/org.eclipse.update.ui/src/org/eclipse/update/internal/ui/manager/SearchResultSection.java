@@ -45,11 +45,24 @@ public class SearchResultSection {
 	private Label descLabel;
 	private Image featureImage;
 	private UpdateFormPage page;
+	private String searchString;
 
 	public SearchResultSection(UpdateFormPage page) {
 		this.page = page;
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
 	}
+	
+	public void setSearchString(String text) {
+		this.searchString = text;
+		updateTitle();
+	}
+	
+	private void updateTitle() {
+		String text = UpdateUIPlugin.getResourceString(KEY_TITLE);
+		if (searchString!=null)
+			text += ": "+searchString;
+		header.setText(text);
+	}	
 
 	public Composite createControl(Composite parent, FormWidgetFactory factory) {
 		HTMLTableLayout layout = new HTMLTableLayout();

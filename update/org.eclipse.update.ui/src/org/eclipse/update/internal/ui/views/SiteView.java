@@ -3,31 +3,25 @@ package org.eclipse.update.internal.ui.views;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.part.ViewPart;
-import org.eclipse.swt.SWT;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
-import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
-import org.eclipse.update.internal.ui.manager.NewFolderDialog;
-import org.eclipse.update.internal.ui.manager.NewSiteDialog;
-import org.eclipse.update.internal.ui.model.*;
-import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.core.*;
-import org.eclipse.update.core.VersionedIdentifier;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.graphics.Image;
-
-import java.net.Authenticator;
 import java.util.*;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.dialogs.*;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.update.core.*;
+import org.eclipse.update.internal.ui.*;
+import org.eclipse.update.internal.ui.manager.*;
+import org.eclipse.update.internal.ui.model.*;
+import org.eclipse.update.internal.ui.parts.DefaultContentProvider;
+import org.eclipse.update.internal.ui.security.AuthorizationDatabase;
+import org.eclipse.update.internal.ui.search.SearchObject;
 
 /**
  * Insert the type's description here.
@@ -39,6 +33,7 @@ public class SiteView
 	private static final String KEY_NEW = "SiteView.Popup.new";
 	private static final String KEY_NEW_SITE = "SiteView.Popup.newSite";
 	private static final String KEY_NEW_FOLDER = "SiteView.Popup.newFolder";
+	private static final String KEY_NEW_SEARCH = "SiteView.Popup.newSearch";
 	private static final String KEY_NEW_LOCAL_SITE = "SiteView.Popup.newLocalSite";
 	private static final String KEY_DELETE = "SiteView.Popup.delete";
 	private static final String KEY_REFRESH = "SiteView.Popup.refresh";
@@ -48,6 +43,7 @@ public class SiteView
 	private Action propertiesAction;
 	private Action newAction;
 	private Action newFolderAction;
+	private Action newSearchAction;
 	private Action newLocalAction;
 	private DeleteAction deleteAction;
 	private Action fileFilterAction;
@@ -112,6 +108,9 @@ public class SiteView
 			if (parent instanceof SiteBookmark) {
 				return getSiteCatalog((SiteBookmark) parent);
 			}
+			if (parent instanceof SearchObject) {
+				return ((SearchObject)parent).getChildren(null);
+			}
 			if (parent instanceof MyComputer) {
 				return ((MyComputer) parent).getChildren(parent);
 			}
@@ -149,6 +148,9 @@ public class SiteView
 			}
 			if (parent instanceof BookmarkFolder) {
 				return ((BookmarkFolder) parent).hasChildren();
+			}
+			if (parent instanceof SearchObject) {
+				return ((SearchObject) parent).hasResults();
 			}
 			if (parent instanceof MyComputerDirectory) {
 				return ((MyComputerDirectory) parent).hasChildren(parent);
@@ -209,6 +211,9 @@ public class SiteView
 				return PlatformUI.getWorkbench().getSharedImages().getImage(
 					ISharedImages.IMG_OBJ_FOLDER);
 			}
+			if (obj instanceof SearchObject) {
+				return ((SearchObject)obj).getImage();
+			}
 			if (obj instanceof IFeature || obj instanceof FeatureReferenceAdapter) {
 				return featureImage;
 			}
@@ -263,6 +268,13 @@ public class SiteView
 			}
 		};
 		newFolderAction.setText(UpdateUIPlugin.getResourceString(KEY_NEW_FOLDER));
+
+		newSearchAction = new Action() {
+			public void run() {
+				performNewSearch();
+			}
+		};
+		newSearchAction.setText(UpdateUIPlugin.getResourceString(KEY_NEW_SEARCH));
 
 		newLocalAction = new Action() {
 			public void run() {
@@ -326,6 +338,7 @@ public class SiteView
 			new MenuManager(UpdateUIPlugin.getResourceString(KEY_NEW));
 		newMenu.add(newAction);
 		newMenu.add(newFolderAction);
+		newMenu.add(newSearchAction);
 		manager.add(newMenu);
 		if (obj instanceof SiteBookmark) {
 			SiteBookmark site = (SiteBookmark) obj;
@@ -380,6 +393,19 @@ public class SiteView
 		dialog.getShell().setSize(400, 150);
 		if (dialog.open() == NewFolderDialog.OK) {
 			updateBookmarks(dialog.getNewFolder());
+		}
+	}
+	
+	private void performNewSearch() {
+		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
+		Shell shell = UpdateUIPlugin.getActiveWorkbenchShell();
+		NewSearchDialog dialog = new NewSearchDialog(shell);
+		dialog.create();
+		dialog.getShell().setText(
+			UpdateUIPlugin.getResourceString(NewSearchDialog.KEY_TITLE));
+		dialog.getShell().setSize(400, 150);
+		if (dialog.open() == NewSearchDialog.OK) {
+			updateBookmarks(dialog.getNewSearch());
 		}
 	}
 

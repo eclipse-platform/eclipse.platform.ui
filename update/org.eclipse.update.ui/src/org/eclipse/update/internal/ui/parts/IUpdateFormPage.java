@@ -15,6 +15,7 @@ public interface IUpdateFormPage extends IFormPage {
 	void init(Object model);
 	void update();
 	void dispose();
+	void setFocus();
 	MultiPageView getView();
 }
 

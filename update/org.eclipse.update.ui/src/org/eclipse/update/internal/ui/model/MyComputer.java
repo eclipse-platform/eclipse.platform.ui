@@ -125,7 +125,7 @@ public class MyComputer extends ModelObject implements IWorkbenchAdapter {
 				SiteBookmark bookmark = MyComputerDirectory.createSite(child);
 				if (bookmark!=null) {
 					ISite site = bookmark.getSite(false);
-					if (site!=null) sites.add(site);
+					if (site!=null) sites.add(bookmark);
 				}
 				else 
 					collectSites(child, sites, driveSettings, monitor);

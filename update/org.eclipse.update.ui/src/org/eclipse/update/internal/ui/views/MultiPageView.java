@@ -3,7 +3,7 @@ package org.eclipse.update.internal.ui.views;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.widgets.*;
@@ -40,13 +40,14 @@ import org.eclipse.jface.viewers.ISelection;
 	}
 	
 	public abstract void createPages();
-
+
 	/**
 	 * @see WorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
+		getCurrentPage().setFocus();
 	}
-
+
 	/**
 	 * @see WorkbenchPart#createPartControl(Composite)
 	 */
@@ -67,7 +68,7 @@ public void createPartControl(Composite parent) {
 	manager.setRemoveAllWhenShown(true);
 	manager.addMenuListener(listener);
 	contextMenu = manager.createContextMenu(formWorkbook.getControl());
-
+
 	for (Iterator iter = pages.iterator(); iter.hasNext();) {
 		IFormPage page = (IFormPage) iter.next();
 		formWorkbook.addPage(page);
@@ -75,7 +76,7 @@ public void createPartControl(Composite parent) {
     if (firstPageId != null)
 	    showPage(firstPageId);
 }
-
+
 public void contextMenuAboutToShow(IMenuManager menu) {
 /*
 	PDEEditorContributor contributor = getContributor();
@@ -86,30 +87,30 @@ public void contextMenuAboutToShow(IMenuManager menu) {
 public IUpdateFormPage getPage(String pageId) {
 	return (IUpdateFormPage)table.get(pageId);
 }
-
+
 public IUpdateFormPage getCurrentPage() {
 	return (IUpdateFormPage)formWorkbook.getCurrentPage();
 }
-
+
 public Menu getContextMenu() {
 	return contextMenu;
 }
-
+
 public IAction getAction(String id) {
 	//return getContributor().getGlobalAction(id);
 	return null;
 }
-
+
 public IFormPage showPage(String id) {
 	return showPage(getPage(id));
 }
-
+
 public void showPage(String id, Object openToObject) {
 	IUpdateFormPage page = showPage(getPage(id));
 	if (page != null)
 		page.openTo(openToObject);
 }
-
+
 public IUpdateFormPage showPage(final IUpdateFormPage page) {
 	IUpdateFormPage oldPage = getCurrentPage();
 	formWorkbook.selectPage(page);

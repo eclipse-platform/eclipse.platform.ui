@@ -94,6 +94,7 @@ public abstract class BaseTreeView extends ViewPart {
 	}
 
 	public void setFocus() {
+		viewer.getTree().setFocus();
 	}
 
 	protected void fillContextMenu(IMenuManager manager) {

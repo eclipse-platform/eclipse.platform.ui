@@ -45,6 +45,7 @@ public static final String INSTALL_CONFIGURATION_PAGE = "InstallConfiguration";
 public static final String INSTALL_SITE_PAGE = "InstallSite";
 public static final String CDROM_PAGE = "MyComputer";
 public static final String UPDATES_PAGE = "Updates";
+public static final String SEARCH_PAGE = "Search";
 public static final String DISCOVERY_PAGE = "Discovery";
 public static final String UNKNOWN_PAGE = "Unknown";
 
@@ -84,6 +85,7 @@ public void createPages() {
 	addPage(INSTALL_SITE_PAGE, new InstallableSitePage(this, "Install Location"));
 	addPage(CDROM_PAGE, new MyComputerPage(this, "MyComputer"));
 	addPage(UPDATES_PAGE, new UpdatesPage(this, "Available Updates"));
+	addPage(SEARCH_PAGE, new SearchPage(this, "Search"));
 	addPage(DISCOVERY_PAGE, new DiscoveryFolderPage(this, "Discovery Sites"));
 	addPage(UNKNOWN_PAGE, new UnknownObjectPage(this, "Unknown Object"));
 	if (SWT.getPlatform().equals("win32")) {
@@ -203,6 +205,10 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 			}
 			if (el instanceof AvailableUpdates) {
 				showPageWithInput(UPDATES_PAGE, el);
+				return;
+			}
+			if (el instanceof SearchObject) {
+				showPageWithInput(SEARCH_PAGE, el);
 				return;
 			}
 			if (el instanceof UpdateSearchSite) {

@@ -8,7 +8,7 @@ import java.net.URL;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.views.properties.*;
 import org.eclipse.ui.model.*;
 import java.util.*;
@@ -16,84 +16,83 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.model.ModelObject;
-import org.eclipse.update.internal.ui.model.MonitorAdapter;
-import org.eclipse.update.internal.ui.model.MyComputer;
-import org.eclipse.update.internal.ui.model.SimpleFeatureAdapter;
-import org.eclipse.update.internal.ui.model.UpdateModel;
+import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 
-public class SearchObject
-	extends ModelObject
-	implements IWorkbenchAdapter {
+public class SearchObject extends NamedModelObject {
 	public static final String P_REFRESH = "p_refresh";
-	
+
 	private static final String KEY_NAME = "Search.name";
 	private static final String KEY_BEGIN = "Search.begin";
 	private static final String KEY_MY_COMPUTER = "Search.myComputer";
-	private static final String KEY_CONTACTING ="Search.contacting";
+	private static final String KEY_CONTACTING = "Search.contacting";
 	private static final String KEY_CHECKING = "Search.checking";
 	private static final String SETTINGS_SECTION = "search";
 	private static final String S_MY_COMPUTER = "searchMyComputer";
 
 	private Vector result = new Vector();
-	private String name;	
 	private boolean searchInProgress;
 	private BackgroundProgressMonitor backgroundProgress;
 	private BackgroundThread searchThread;
 	private boolean debug = false;
-	private ISite [] myComputerSites = null;
-	private ISearchQuery query;
-	
+	private ISite[] myComputerSites = null;
+	private String categoryId;
+	private Hashtable settings = new Hashtable();
+	private Image image;
+
 	class SearchAdapter extends MonitorAdapter {
 		public void done() {
 			searchInProgress = false;
 		}
 	}
+	
+	public SearchObject() {
+		backgroundProgress = new BackgroundProgressMonitor();
+		backgroundProgress.addProgressMonitor(new SearchAdapter());
+	}
 
-	public SearchObject(String name, ISearchQuery query) {
-		this.name = name;
+	public SearchObject(String name, SearchCategoryDescriptor descriptor) {
+		super(name);
+		this.categoryId = descriptor.getId();
+		this.image = descriptor.getImage();
 		backgroundProgress = new BackgroundProgressMonitor();
 		backgroundProgress.addProgressMonitor(new SearchAdapter());
 	}
 	
-	public ISearchQuery getQuery() {
-		return query;
+	public void dispose() {
+		if (image!=null)
+			image.dispose();
+	}
+
+	public String getCategoryId() {
+		return categoryId;
 	}
 	
-	public void setSearchQuery(ISearchQuery query) {
-		this.query = query;
+	public void setCategoryId(String id) {
+		if (categoryId!=null && !categoryId.equals(id)) {
+			settings.clear();
+		}
+		this.categoryId = id;
 	}
-	
+
+	public Hashtable getSettings() {
+		return settings;
+	}
+
 	public static boolean getSearchMyComputer() {
 		return getSettingsSection().getBoolean(S_MY_COMPUTER);
 	}
-	
+
 	public static void setSearchMyComputer(boolean value) {
 		getSettingsSection().put(S_MY_COMPUTER, value);
 	}
-	
+
 	private static IDialogSettings getSettingsSection() {
 		IDialogSettings master = UpdateUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section = master.getSection(SETTINGS_SECTION);
-		if (section==null) 
-		   section = master.addNewSection(SETTINGS_SECTION);
+		if (section == null)
+			section = master.addNewSection(SETTINGS_SECTION);
 		return section;
-	}	
-
-	public Object getAdapter(Class adapter) {
-		if (adapter.equals(IWorkbenchAdapter.class)) {
-			return this;
-		}
-		return super.getAdapter(adapter);
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String toString() {
-		return getName();
 	}
 
 	/**
@@ -102,30 +101,13 @@ public class SearchObject
 	public Object[] getChildren(Object parent) {
 		return result.toArray();
 	}
+	
+	public Image getImage() {
+		return image;
+	}
 
 	public boolean hasResults() {
 		return result.size() > 0;
-	}
-
-	/**
-	 * @see IWorkbenchAdapter#getImageDescriptor(Object)
-	 */
-	public ImageDescriptor getImageDescriptor(Object obj) {
-		return UpdateUIPluginImages.DESC_UPDATES_OBJ;
-	}
-
-	/**
-	 * @see IWorkbenchAdapter#getLabel(Object)
-	 */
-	public String getLabel(Object obj) {
-		return getName();
-	}
-
-	/**
-	 * @see IWorkbenchAdapter#getParent(Object)
-	 */
-	public Object getParent(Object arg0) {
-		return getModel();
 	}
 
 	public void attachProgressMonitor(IProgressMonitor monitor) {
@@ -135,12 +117,12 @@ public class SearchObject
 		backgroundProgress.removeProgressMonitor(monitor);
 	}
 
-	public void startSearch(Display display)
+	public void startSearch(Display display, ISearchQuery[] queries)
 		throws InvocationTargetException, InterruptedException {
 		if (searchInProgress)
 			return;
 		backgroundProgress.setDisplay(display);
-		IRunnableWithProgress operation = getSearchOperation();
+		IRunnableWithProgress operation = getSearchOperation(queries);
 		searchThread =
 			new BackgroundThread(operation, backgroundProgress, Display.getDefault());
 		searchInProgress = true;
@@ -178,94 +160,90 @@ public class SearchObject
 		backgroundProgress.setCanceled(true);
 	}
 
-	public IRunnableWithProgress getSearchOperation() {
+	public IRunnableWithProgress getSearchOperation(final ISearchQuery[] queries) {
 		return new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
-				doSearch(monitor);
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
+				try {
+					doSearch(queries, monitor);
+				} catch (CoreException e) {
+					throw new InvocationTargetException(e);
+				}
 			}
 		};
 	}
 
-	private void doSearch(IProgressMonitor monitor) {
-	/*
+	private void doSearch(ISearchQuery[] queries, IProgressMonitor monitor)
+		throws CoreException {
 		result.clear();
 		asyncFireObjectChanged(this, P_REFRESH);
-		
+
+		ArrayList candidates = new ArrayList();
+
 		backgroundProgress.beginTask(
 			UpdateUIPlugin.getResourceString(KEY_BEGIN),
-			candidates.length);
-		
-		if (getSearchMyComputer()) {
-			backgroundProgress.setTaskName(UpdateUIPlugin.getResourceString(KEY_MY_COMPUTER));
-			initializeMyComputerSites(monitor);
-			backgroundProgress.setTaskName(UpdateUIPlugin.getResourceString(KEY_BEGIN));
-		}
+			IProgressMonitor.UNKNOWN);
 
-		for (int i = 0; i < candidates.length; i++) {
-			if (monitor.isCanceled()) {
-				break;
+		if (getSearchMyComputer()) {
+			backgroundProgress.setTaskName(
+				UpdateUIPlugin.getResourceString(KEY_MY_COMPUTER));
+			initializeMyComputerSites(monitor);
+		}
+		computeSearchSources(candidates);
+		int ntasks = queries.length * (1 + candidates.size());
+
+		backgroundProgress.beginTask(
+			UpdateUIPlugin.getResourceString(KEY_BEGIN),
+			ntasks);
+
+		for (int i = 0; i < queries.length; i++) {
+			ISearchQuery query = queries[i];
+			ISiteAdapter site = query.getSearchSite();
+			if (site != null) {
+				searchOneSite(site, query, monitor);
+				if (monitor.isCanceled())
+					break;
 			}
-			IFeature feature = candidates[i];
-			String versionedLabel = feature.getLabel();
-			String version = feature.getVersionedIdentifier().getVersion().toString();
-			versionedLabel += " " + version + ":";
-			backgroundProgress.setTaskName(versionedLabel);
-			findUpdates(candidates[i]);
-			backgroundProgress.worked(1);
+			monitor.worked(1);
+
+			for (int j = 0; j < candidates.size(); j++) {
+				if (monitor.isCanceled()) {
+					break;
+				}
+				Object source = candidates.get(i);
+				searchOneSite((ISiteAdapter) source, query, monitor);
+				monitor.worked(1);
+			}
 		}
 		searchInProgress = false;
 		monitor.done();
-		UpdateModel model = getModel();
 		asyncFireObjectChanged(this, P_REFRESH);
-	*/
 	}
-	
-/*	
-	public ArrayList computeSearchSources() {
-		addMyComputerSites(searchSources);
 
-		try {
-			for (int i = 0; i < searchSources.size(); i++) {
-				Object source = searchSources.get(i);
-				if (source instanceof URL)
-					searchOneSite(feature, (URL) source, backgroundProgress);
-				else if (source instanceof ISite)
-					searchOneSite(feature, (ISite) source, backgroundProgress);
-			}
-		} catch (CoreException e) {
-			UpdateUIPlugin.logException(e, false);
-
-		}
+	public void computeSearchSources(ArrayList sources) {
+		addMyComputerSites(sources);
 	}
-*/
 
 	private void searchOneSite(
-		IFeature feature,
-		URL updateURL,
+		ISiteAdapter siteAdapter,
+		ISearchQuery query,
 		IProgressMonitor monitor)
 		throws CoreException {
 		String pattern = UpdateUIPlugin.getResourceString(KEY_CONTACTING);
-		String text = UpdateUIPlugin.getFormattedMessage(pattern, updateURL.toString());
+		String text =
+			UpdateUIPlugin.getFormattedMessage(pattern, siteAdapter.getLabel());
 		monitor.subTask(text);
-		ISite site = SiteManager.getSite(updateURL);
-		searchOneSite(feature, site, monitor);
-	}
+		URL siteURL = siteAdapter.getURL();
+		ISite site = SiteManager.getSite(siteURL);
 
-	private void searchOneSite(
-		IFeature feature,
-		ISite site,
-		IProgressMonitor monitor)
-		throws CoreException {
-		IURLEntry updateInfo = feature.getUpdateSiteEntry();
 		monitor.subTask(UpdateUIPlugin.getResourceString(KEY_CHECKING));
 		IFeatureReference[] refs = site.getFeatureReferences();
 		UpdateSearchSite searchSite = null;
 		for (int i = 0; i < refs.length; i++) {
 			IFeature candidate = refs[i].getFeature();
-			if (isNewerVersion(feature, candidate)) {
+			if (query.matches(candidate)) {
 				// bingo - add this
 				if (searchSite == null) {
-					searchSite = new UpdateSearchSite(updateInfo.getAnnotation(), site);
+					searchSite = new UpdateSearchSite(siteAdapter.getLabel(), site);
 					result.add(searchSite);
 					asyncFireObjectAdded(this, searchSite);
 				}
@@ -274,21 +252,13 @@ public class SearchObject
 			}
 		}
 	}
-	
-	private boolean isNewerVersion(IFeature feature, IFeature candidate) {
-		VersionedIdentifier fvi = feature.getVersionedIdentifier();
-		VersionedIdentifier cvi = candidate.getVersionedIdentifier();
-		Version fv = fvi.getVersion();
-		Version cv = cvi.getVersion();
-		return cv.compare(fv) > 0;
-	}
 
 	private void asyncFireObjectAdded(final Object parent, final Object child) {
 		Display display = backgroundProgress.getDisplay();
 		final UpdateModel model = getModel();
 		display.asyncExec(new Runnable() {
 			public void run() {
-				model.fireObjectsAdded(parent, new Object[]{child});
+				model.fireObjectsAdded(parent, new Object[] { child });
 			}
 		});
 	}
@@ -308,16 +278,15 @@ public class SearchObject
 		MyComputer myComputer = new MyComputer();
 		MyComputerSearchSettings settings = new MyComputerSearchSettings();
 		myComputer.collectSites(sites, settings, monitor);
-		if (sites.size()>0) {
-			myComputerSites = (ISite[])sites.toArray(new ISite[sites.size()]);
-		}
-		else 
-		   myComputerSites = null;
+		if (sites.size() > 0) {
+			myComputerSites = (ISite[]) sites.toArray(new ISite[sites.size()]);
+		} else
+			myComputerSites = null;
 	}
 
-	private void addMyComputerSites(Vector result) {
-		if (myComputerSites!=null && getSearchMyComputer()) {
-			for (int i=0; i<myComputerSites.length; i++) {
+	private void addMyComputerSites(ArrayList result) {
+		if (myComputerSites != null && getSearchMyComputer()) {
+			for (int i = 0; i < myComputerSites.length; i++) {
 				result.add(myComputerSites[i]);
 			}
 		}

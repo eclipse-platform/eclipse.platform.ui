@@ -5,7 +5,6 @@ package org.eclipse.update.internal.ui.manager;
  */
 
 import org.eclipse.update.internal.ui.parts.*;
-import org.eclipse.update.internal.ui.views.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.ui.forms.internal.*;
@@ -21,6 +20,7 @@ import java.net.MalformedURLException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.ui.forms.internal.engine.FormEngine;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.update.internal.ui.views.*;
 
 public class SiteForm extends UpdateWebForm {
 	private static final String KEY_DESC = "SitePage.desc";
