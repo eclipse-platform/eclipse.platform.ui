@@ -95,7 +95,7 @@ public class CleanDialog extends MessageDialog {
 				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
 					new WorkspaceModifyOperation() {
 						protected void execute(IProgressMonitor monitor) throws CoreException {
-							doClean(cleanAll);
+							doClean(cleanAll,monitor);
 						}
 					});
 				//see if a build was requested
@@ -182,15 +182,16 @@ public class CleanDialog extends MessageDialog {
 	/**
 	 * Performs the actual clean operation.
 	 * @param cleanAll if <code>true</true> clean all projects
+	 * @param monitor The monitor that the build will report to
 	 * @throws CoreException thrown if there is a problem from the
 	 * core builder.
 	 */
-	protected void doClean(boolean cleanAll) throws CoreException {
+	protected void doClean(boolean cleanAll, IProgressMonitor monitor) throws CoreException {
 		if (cleanAll)
-			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
 		else
 			for (int i = 0; i < selection.length; i++)
-				((IProject)selection[i]).build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+				((IProject)selection[i]).build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
 	}
 	/**
 	 * Fills in the name of the project in the text area.
