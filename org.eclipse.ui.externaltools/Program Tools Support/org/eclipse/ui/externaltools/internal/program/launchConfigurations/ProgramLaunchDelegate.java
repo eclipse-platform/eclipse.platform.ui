@@ -21,9 +21,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
 
 /**
@@ -31,6 +38,53 @@ import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
  */
 public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 
+	private static IWindowListener windowListener;
+
+	/**
+	 * A window listener that warns the user about any running programs when
+	 * the workbench closes. Programs are killed when the VM exits.
+	 */
+	private class ProgramLaunchWindowListener implements IWindowListener {
+		public void windowActivated(IWorkbenchWindow window) {
+		}
+		public void windowDeactivated(IWorkbenchWindow window) {
+		}
+		public void windowClosed(IWorkbenchWindow window) {
+			IWorkbenchWindow windows[]= PlatformUI.getWorkbench().getWorkbenchWindows();
+			if (windows.length > 1) {
+				// There are more windows still open.
+				return;
+			}
+			ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
+			ILaunchConfigurationType programType= manager.getLaunchConfigurationType(IExternalToolConstants.ID_PROGRAM_LAUNCH_CONFIGURATION_TYPE);
+			if (programType == null) {
+				return;
+			}
+			ILaunch launches[]= manager.getLaunches();
+			ILaunchConfigurationType configType;
+			ILaunchConfiguration config;
+			for (int i = 0; i < launches.length; i++) {
+				try {
+					config= launches[i].getLaunchConfiguration();
+					if (config == null) {
+						continue;
+					}
+					configType= config.getType();
+				} catch (CoreException e) {
+					continue;
+				}
+				if (configType.equals(programType)) {
+					if (!launches[i].isTerminated()) {
+						MessageDialog.openWarning(window.getShell(), "Workbench Closing", "The workbench is exiting and a program launched from an external tool appears to still be running. These programs will be terminated when the workbench exits. It is recommended that you exit any external programs launched from the workbench before you proceed.\n\nClick OK to continue exiting the workbench.");
+						break;
+					}
+				}
+			}
+		}
+		public void windowOpened(IWorkbenchWindow window) {
+		}
+	}
+	
 	/**
 	 * Constructor for ProgramLaunchDelegate.
 	 */
@@ -93,7 +147,11 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		if (monitor.isCanceled()) {
 			return;
 		}
-				
+		
+		if (windowListener == null) {
+			windowListener= new ProgramLaunchWindowListener();
+			PlatformUI.getWorkbench().addWindowListener(windowListener);
+		}
 		Process p = DebugPlugin.exec(cmdLine, workingDir);
 		IProcess process = null;
 		
@@ -134,8 +192,6 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 			// refresh resources
 			ExternalToolsUtil.refreshResources(configuration, resourceContext, monitor);
 		}
-		
-	
 	}
 	
 	protected static String renderCommandLine(String[] commandLine) {
