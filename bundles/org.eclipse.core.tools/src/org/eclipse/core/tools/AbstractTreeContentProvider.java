@@ -10,6 +10,8 @@
  **********************************************************************/
 package org.eclipse.core.tools;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -151,7 +153,7 @@ public abstract class AbstractTreeContentProvider implements ITreeContentProvide
 	 * has been switched to a different element.
 	 * Rebuilds this content provider's state from a given resource.
 	 * 
-	 * @param viewer ignored
+	 * @param viewer the viewer
 	 * @param oldInput ignored
 	 * @param input the new input. If null, clears this content provider. If not,
 	 * is passed in a call to <code>rebuild(Object)</code>. 
@@ -170,15 +172,16 @@ public abstract class AbstractTreeContentProvider implements ITreeContentProvide
 			return;
 
 		rootNode = createNode("root"); //$NON-NLS-1$	    
-		rebuild(input);
+		rebuild(viewer, input);
 	}
 
 	/**
 	 * Reconstructs this content provider data model upon the provided input object.
 	 *  
 	 * @param input the new input object - must not be null
+	 * @param viewer the corresponding viewer
 	 */
-	protected abstract void rebuild(Object input);
+	protected abstract void rebuild(Viewer viewer, Object input);
 
 	/**
 	 * Returns true if the provided input is accepted by this content provider.

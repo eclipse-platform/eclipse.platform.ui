@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <plugin>
+
+   <extension-point id="metadataDumpers" name="Metadata Dumpers"/>
+
 <!--  Perspectives -->
    <extension
          point="org.eclipse.ui.perspectives">
@@ -20,6 +23,45 @@
             id="org.eclipse.core.tools.runtime.RuntimeSpyPerspective">
       </perspective>
    </extension>
+<!--  Metadata Perspective -->
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            name="Metadata"
+            icon="icons/spy.gif"
+            class="org.eclipse.core.tools.metadata.MetadataPerspective"
+            id="org.eclipse.core.tools.metadata.MetadataPerspective">
+      </perspective>
+   </extension>
+<!-- Metadata Views  -->
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Metadata Tools"
+            id="org.eclipse.core.tools.metadata">
+      </category>
+      <view
+            name="Dump Contents"
+            icon="icons/spy.gif"
+            category="org.eclipse.core.tools.metadata"
+            class="org.eclipse.core.tools.metadata.DumpContentsView"
+            id="org.eclipse.core.tools.metadata.DumpContentsView">
+      </view>
+      <view
+            name="Dump Summary"
+            icon="icons/spy.gif"
+            category="org.eclipse.core.tools.metadata"
+            class="org.eclipse.core.tools.metadata.DumpSummaryView"
+            id="org.eclipse.core.tools.metadata.DumpSummaryView">
+      </view>
+      <view
+            name="Metadata Tree"
+            icon="icons/spy.gif"
+            category="org.eclipse.core.tools.metadata"
+            class="org.eclipse.core.tools.metadata.MetadataTreeView"
+            id="org.eclipse.core.tools.metadata.MetadataTreeView">
+      </view>
+   </extension>   
 <!-- Runtime Views -->
    <extension point="org.eclipse.ui.views">
       <category name="Runtime Tools" id="org.eclipse.core.tools.runtime"/>
