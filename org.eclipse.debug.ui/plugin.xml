@@ -147,7 +147,6 @@
             class="org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage"
             id="org.eclipse.debug.ui.StringVariablePreferencePage">
       </page>
-      <!-- WORK IN PROGRESS PAGE TO BE REMOVED -->
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
