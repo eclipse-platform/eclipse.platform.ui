@@ -57,7 +57,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	/**
 	 * Sets the integer-valued attribute with the given name.  
 	 *
-	 * @param attributeName the name of the attribute
+	 * @param attributeName the name of the attribute, cannot be <code>null</code>
 	 * @param value the value
 	 */
 	public void setAttribute(String attributeName, int value);
@@ -67,7 +67,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * If the value is <code>null</code>, the attribute is removed from
 	 * this launch configuration.
 	 *
-	 * @param attributeName the name of the attribute
+	 * @param attributeName the name of the attribute, cannot be <code>null</code>
 	 * @param value the value, or <code>null</code> if the attribute is to be undefined
 	 */
 	public void setAttribute(String attributeName, String value);
@@ -78,7 +78,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * If the value is <code>null</code>, the attribute is removed from
 	 * this launch configuration.
 	 *
-	 * @param attributeName the name of the attribute
+	 * @param attributeName the name of the attribute, cannot be <code>null</code>
 	 * @param value the value, or <code>null</code> if the attribute is to be undefined
 	 */
 	public void setAttribute(String attributeName, List value);
@@ -89,7 +89,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * If the value is <code>null</code>, the attribute is removed from
 	 * this launch configuration.
 	 *
-	 * @param attributeName the name of the attribute
+	 * @param attributeName the name of the attribute, cannot be <code>null</code>
 	 * @param value the value, or <code>null</code> if the attribute is to be undefined
 	 */
 	public void setAttribute(String attributeName, Map value);
@@ -97,7 +97,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	/**
 	 * Sets the boolean-valued attribute with the given name.  
 	 *
-	 * @param attributeName the name of the attribute
+	 * @param attributeName the name of the attribute, cannot be <code>null</code>
 	 * @param value the value
 	 */
 	public void setAttribute(String attributeName, boolean value);	
@@ -156,7 +156,8 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * map are considered to be removals. Setting the given map to be
 	 * <code>null</code> is equivalent to removing all attributes.
 	 *
-	 * @param attributes a map of attribute names to attribute values
+	 * @param attributes a map of attribute names to attribute values.
+	 *  Attribute names are not allowed to be <code>null</code>
 	 * @since 2.1
 	 */
 	public void setAttributes(Map attributes);
