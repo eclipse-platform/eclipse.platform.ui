@@ -231,7 +231,8 @@ public class DecorationScheduler {
 									.getLightweightManager()
 									.getDecorations(
 									adapted,
-									cacheResult);
+									cacheResult,
+									true);
 								if (cacheResult.hasValue()) {
 									adaptedResult = cacheResult.createResult();
 								}
@@ -251,7 +252,8 @@ public class DecorationScheduler {
 							.getLightweightManager()
 							.getDecorations(
 							element,
-							cacheResult);
+							cacheResult,
+							false);
 
 						//If we should update regardless then put a result anyways
 						if (cacheResult.hasValue()
