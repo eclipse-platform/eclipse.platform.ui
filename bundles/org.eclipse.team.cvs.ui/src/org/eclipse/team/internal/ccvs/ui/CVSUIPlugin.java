@@ -24,6 +24,7 @@ import org.eclipse.team.ccvs.core.IRemoteRoot;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -85,7 +86,9 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 	 * @return the active workbench page
 	 */
 	public static IWorkbenchPage getActivePage() {
-		return getPlugin().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchWindow window = getPlugin().getWorkbench().getActiveWorkbenchWindow();
+		if (window == null) return null;
+		return window.getActivePage();
 	}
 	
 	/**

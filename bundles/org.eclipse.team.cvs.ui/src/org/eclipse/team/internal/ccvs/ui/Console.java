@@ -21,6 +21,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
@@ -118,7 +119,10 @@ public class Console extends ViewPart {
 	public static void appendAll(String message) {
 		// Show the console
 		try {
-			CVSUIPlugin.getActivePage().showView(CONSOLE_ID);
+			IWorkbenchPage page = CVSUIPlugin.getActivePage();
+			if (page != null) {
+				page.showView(CONSOLE_ID);
+			}
 		} catch (PartInitException e) {
 			CVSUIPlugin.log(e.getStatus());
 		}
@@ -133,7 +137,7 @@ public class Console extends ViewPart {
 			}
 		}
 	}
-
+	
 	/**
 	 * Clear the output of the console
 	 */
