@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.*;
@@ -116,30 +119,42 @@ public class DefaultUIFileModificationValidator extends DefaultFileModificationV
     /* (non-Javadoc)
      * @see org.eclipse.team.internal.core.DefaultFileModificationValidator#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
      */
-    public IStatus validateEdit(final IFile[] files, Object context) {
-        if (files.length > 0 && context != null && context instanceof Shell) {
+    public IStatus validateEdit(final IFile[] allFiles, Object context) {
+    	final IFile[] readOnlyFiles = getReadOnlyFiles(allFiles);
+        if (readOnlyFiles.length > 0 && context != null && context instanceof Shell) {
             final Shell shell = (Shell)context;
             final boolean[] ok = new boolean[] { false };
-            if (files.length == 1) {
+            if (readOnlyFiles.length == 1) {
                 shell.getDisplay().syncExec(new Runnable() {
                     public void run() {
-                        ok[0] = MessageDialog.openQuestion(shell, Policy.bind("DefaultUIFileModificationValidator.3"), Policy.bind("DefaultUIFileModificationValidator.4", files[0].getFullPath().toString())); //$NON-NLS-1$ //$NON-NLS-2$
+                        ok[0] = MessageDialog.openQuestion(shell, Policy.bind("DefaultUIFileModificationValidator.3"), Policy.bind("DefaultUIFileModificationValidator.4", readOnlyFiles[0].getFullPath().toString())); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 });
             } else {
                 shell.getDisplay().syncExec(new Runnable() {
                     public void run() {
-                        ok[0] = FileListDialog.openQuestion(shell, files);
+                        ok[0] = FileListDialog.openQuestion(shell, readOnlyFiles);
                     }
                 });
             }
             if (ok[0]) {
-                setWritable(files);
+                setWritable(readOnlyFiles);
             };
         }
-        return getStatus(files);
+        return getStatus(readOnlyFiles);
     }
     
+	private IFile[] getReadOnlyFiles(IFile[] files) {
+		List result = new ArrayList();
+		for (int i = 0; i < files.length; i++) {
+			IFile file = files[i];
+			if (file.isReadOnly()) {
+				result.add(file);
+			}
+		}
+		return (IFile[]) result.toArray(new IFile[result.size()]);
+	}
+
 	protected IStatus setWritable(final IFile[] files) {
         for (int i = 0; i < files.length; i++) {
         	IFile file = files[i];
