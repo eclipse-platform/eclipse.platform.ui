@@ -86,7 +86,7 @@ public class LaunchWizard extends Wizard {
 	}
 	
 	public LaunchWizard(Object[] allLaunchers, IStructuredSelection selection, String mode) {
-		this(allLaunchers, selection, mode, allLaunchers.length > 1);
+		this(allLaunchers, selection, mode, true);
 	}
 
 	protected void initialize() {
