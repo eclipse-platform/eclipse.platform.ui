@@ -101,6 +101,10 @@ public class OverviewRuler implements IOverviewRuler {
 			this(null, IGNORE);
 		}
 		
+		public FilterIterator(Object annotationType) {
+			this(annotationType, IGNORE);
+		}
+		
 		public FilterIterator(Object annotationType, boolean temporary) {
 			this(annotationType, temporary ? TEMPORARY : PERSISTENT);
 		}
@@ -168,6 +172,8 @@ public class OverviewRuler implements IOverviewRuler {
 	private ITextViewer fTextViewer;
 	/** The ruler's canvas */
 	private Canvas fCanvas;
+	/** The ruler's header */
+	private Canvas fHeader;
 	/** The drawable for double buffering */
 	private Image fBuffer;
 	/** The internal listener */
@@ -191,6 +197,10 @@ public class OverviewRuler implements IOverviewRuler {
 	private Map fAnnotationTypes2Layers= new HashMap();
 	private Map fAnnotationTypes2Colors= new HashMap();
 	private ISharedTextColors fSharedTextColors;
+	
+	private Set fHeaderAnnotationTypes= new HashSet();
+	private Color fHeaderColor;
+	
 	
 	/**
 	 * Constructs a vertical ruler with the given width.
@@ -244,6 +254,7 @@ public class OverviewRuler implements IOverviewRuler {
 		
 		fHitDetectionCursor= new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
 		fCanvas= new Canvas(parent, SWT.NO_BACKGROUND);
+		fHeader= new Canvas(parent, SWT.NONE);
 		
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
@@ -517,6 +528,7 @@ public class OverviewRuler implements IOverviewRuler {
 				d.asyncExec(new Runnable() {
 					public void run() {
 						redraw();
+						updateHeader();
 					}
 				});
 			}	
@@ -789,5 +801,52 @@ public class OverviewRuler implements IOverviewRuler {
 	 */
 	public boolean hasAnnotation(int y) {
 		return findBestMatchingLineNumber(toLineNumbers(y)) != -1;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IOverviewRuler#getHeaderControl()
+	 */
+	public Control getHeaderControl() {
+		return fHeader;
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IOverviewRuler#addHeaderAnnotationType(java.lang.Object)
+	 */
+	public void addHeaderAnnotationType(Object annotationType) {
+		fHeaderAnnotationTypes.add(annotationType);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IOverviewRuler#removeHeaderAnnotationType(java.lang.Object)
+	 */
+	public void removeHeaderAnnotationType(Object annotationType) {
+		fHeaderAnnotationTypes.remove(annotationType);
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.source.IOverviewRuler#setHeaderColor(org.eclipse.swt.graphics.Color)
+	 */
+	public void setHeaderColor(Color color) {
+		fHeaderColor= color;
+	}
+	
+	private void updateHeader() {
+		
+		if (fHeader == null || fHeader.isDisposed())
+			return;
+		
+		boolean hasHeaderAnnotations= false;
+		outer: for (Iterator typeIterator= fHeaderAnnotationTypes.iterator(); typeIterator.hasNext();) {
+			for (Iterator annotationIterator= new FilterIterator(typeIterator.next()); annotationIterator.hasNext();) {
+				if (annotationIterator.next() != null) {
+					hasHeaderAnnotations= true;
+					break outer;
+				}
+			}
+		}
+		
+		Color c= hasHeaderAnnotations && fHeaderColor != null && !fHeaderColor.isDisposed() ? fHeaderColor : null;
+		fHeader.setBackground(c);
 	}
 }

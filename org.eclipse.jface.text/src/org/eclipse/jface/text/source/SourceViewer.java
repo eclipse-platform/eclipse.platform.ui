@@ -89,7 +89,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				int overviewRulerWidth= 0;
 				if (fOverviewRuler != null && fIsOverviewRulerVisible) {
 					overviewRulerWidth= fOverviewRuler.getWidth();
-					fOverviewRuler.getControl().setBounds(clArea.width - overviewRulerWidth, scrollbarHeight, overviewRulerWidth, clArea.height - 3*scrollbarHeight);
+					fOverviewRuler.getControl().setBounds(clArea.width - overviewRulerWidth -1, scrollbarHeight, overviewRulerWidth, clArea.height - 3*scrollbarHeight);
+					fOverviewRuler.getHeaderControl().setBounds(clArea.width - overviewRulerWidth -1, 0, overviewRulerWidth, scrollbarHeight);
 				}				
 				
 				getTextWidget().setBounds(verticalRulerWidth + fGap, 0, clArea.width - verticalRulerWidth - overviewRulerWidth - 2*fGap, clArea.height);

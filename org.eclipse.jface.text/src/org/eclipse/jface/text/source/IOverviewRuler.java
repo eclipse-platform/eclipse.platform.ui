@@ -11,6 +11,7 @@ Contributors:
 package org.eclipse.jface.text.source;
 
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Control;
 
 /**
  * @since 2.1
@@ -63,4 +64,38 @@ public interface IOverviewRuler extends IVerticalRuler {
 	 * of the given type are no longer shown in the overview ruler.
 	 */
 	void removeAnnotationType(Object annotationType);
+	
+	/**
+	 * Adds the given annotation type to the header of this ruler. Starting with
+	 * this call, the presence of annotations is tracked and the header is drawn
+	 * in the configured color.
+	 * 
+	 * @param annotationType the annotation type to be tracked
+	 */
+	void addHeaderAnnotationType(Object annotationType);
+	
+	/**
+	 * Removes the given annotation type from the header of this ruler. The
+	 * presence of annotations of the given type is no longer tracked and the
+	 * header is drawn in the default color, depending on the other configured
+	 * configured annotation types.
+	 * 
+	 * @param annotationType the annotation type to be removed
+	 */
+	void removeHeaderAnnotationType(Object annotationType);
+	
+	/**
+	 * Sets the color of the header. The header is drawn in this color if there
+	 * are annotations of any of the annotation types added to the header.
+	 * 
+	 * @param color
+	 */
+	void setHeaderColor(Color color);
+	
+	/**
+	 * Returns this rulers header control. This is the little area between the
+	 * top of the text widget and the top of this overview ruler.
+	 * @return the header control of this overview ruler.
+ 	 */
+	Control getHeaderControl();
 }

@@ -461,13 +461,19 @@ public class TextEditor extends StatusTextEditor {
 	protected ISourceViewer createSourceViewer(Composite parent, IVerticalRuler ruler, int styles) {
 		ISharedTextColors sharedColors= EditorsPlugin.getDefault().getSharedTextColors();
 		fOverviewRuler= new OverviewRuler(fAnnotationAccess, VERTICAL_RULER_WIDTH, sharedColors);
+		fOverviewRuler.addHeaderAnnotationType(AnnotationType.WARNING);
+		fOverviewRuler.addHeaderAnnotationType(AnnotationType.ERROR);
+		fOverviewRuler.setHeaderColor(sharedColors.getColor(new RGB(251, 70, 102)));
+		
 		ISourceViewer sourceViewer= new SourceViewer(parent, ruler, fOverviewRuler, isOverviewRulerVisible(), styles);
 		fSourceViewerDecorationSupport= new SourceViewerDecorationSupport(sourceViewer, fOverviewRuler, fAnnotationAccess, sharedColors);
 		configureSourceViewerDecorationSupport();
+		
 		return sourceViewer;
 	}
 
 	private void configureSourceViewerDecorationSupport() {
+		
 		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.UNKNOWN, UNKNOWN_INDICATION_COLOR, UNKNOWN_INDICATION, UNKNOWN_INDICATION_IN_OVERVIEW_RULER, 0);
 		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.BOOKMARK, BOOKMARK_INDICATION_COLOR, BOOKMARK_INDICATION, BOOKMARK_INDICATION_IN_OVERVIEW_RULER, 1);
 		fSourceViewerDecorationSupport.setAnnotationPainterPreferenceKeys(AnnotationType.TASK, TASK_INDICATION_COLOR, TASK_INDICATION, TASK_INDICATION_IN_OVERVIEW_RULER, 2);
