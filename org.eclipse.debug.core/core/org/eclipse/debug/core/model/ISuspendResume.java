@@ -34,14 +34,14 @@ public interface ISuspendResume {
 	 */
 	public boolean canSuspend();
 	/**
-	 * Returns whether this element is currently suspened.
+	 * Returns whether this element is currently suspended.
 	 *
-	 * @return whether this element is currently suspened
+	 * @return whether this element is currently suspended
 	 */
 	public boolean isSuspended();
 	/**
-	 * Causes this element to resume its execution. Has no effect
-	 * on an element that is not suspended. This call is non-blocking.
+	 * Causes this element to resume its execution, generating a <code>RESUME</code> event. 
+	 * Has no effect on an element that is not suspended. This call is non-blocking.
 	 *
 	 * @exception DebugException on failure. Reasons include:<ul>
 	 * <li>TARGET_REQUEST_FAILED - The request failed in the target
@@ -50,8 +50,8 @@ public interface ISuspendResume {
 	 */
 	public void resume() throws DebugException;
 	/**
-	 * Causes this element to suspend its execution.
-	 * Has no effect on an already suspened element.
+	 * Causes this element to suspend its execution, generating a <code>SUSPEND</code> event.
+	 * Has no effect on an already suspended element.
 	 * Implementations may be blocking or non-blocking.
 	 *
 	 * @exception DebugException on failure. Reasons include:<ul>

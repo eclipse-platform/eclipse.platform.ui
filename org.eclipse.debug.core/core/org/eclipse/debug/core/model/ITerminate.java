@@ -26,7 +26,7 @@ public interface ITerminate {
 	 *
 	 * @return whether this element can be terminated
 	 */
-	boolean canTerminate();
+	public boolean canTerminate();
 	/**
 	 * Returns whether this element is terminated.
 	 *
@@ -34,8 +34,8 @@ public interface ITerminate {
 	 */
 	public boolean isTerminated();
 	/**
-	 * Causes this element to terminate.  Implementations may be
-	 * blocking or non-blocking.
+	 * Causes this element to terminate, generating a <code>TERMINATE</code> event.  
+	 * Implementations may be blocking or non-blocking.
 	 *
 	 * @exception DebugException on failure. Reasons include:<ul>
 	 * <li>TARGET_REQUEST_FAILED - The request failed in the target
