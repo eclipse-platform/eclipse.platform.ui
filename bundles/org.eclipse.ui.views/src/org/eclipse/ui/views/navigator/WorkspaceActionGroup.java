@@ -13,7 +13,10 @@ package org.eclipse.ui.views.navigator;
 
 import java.util.Iterator;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.ICommand;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
@@ -23,7 +26,10 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.actions.*;
+import org.eclipse.ui.actions.BuildAction;
+import org.eclipse.ui.actions.CloseResourceAction;
+import org.eclipse.ui.actions.OpenResourceAction;
+import org.eclipse.ui.actions.RefreshAction;
 
 /**
  * This is the action group for workspace actions such as Build, Refresh Local,
@@ -41,13 +47,6 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 		super(navigator);
 	}
 
-	public void dispose() {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		workspace.removeResourceChangeListener(openProjectAction);
-		workspace.removeResourceChangeListener(closeProjectAction);
-		super.dispose();
-	}
-	
 	public void fillActionBars(IActionBars actionBars) {
 		actionBars.setGlobalActionHandler(
 			IWorkbenchActionConstants.REFRESH,
@@ -171,18 +170,14 @@ public class WorkspaceActionGroup extends ResourceNavigatorActionGroup {
 	
 	protected void makeActions() {
 		Shell shell = navigator.getSite().getShell();
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		openProjectAction = new OpenResourceAction(shell);
-		workspace.addResourceChangeListener(openProjectAction, IResourceChangeEvent.POST_CHANGE);
 		closeProjectAction = new CloseResourceAction(shell);
-		workspace.addResourceChangeListener(closeProjectAction, IResourceChangeEvent.POST_CHANGE);
 		refreshAction = new RefreshAction(shell);
 		refreshAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.gif"));//$NON-NLS-1$
 		refreshAction.setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.gif"));//$NON-NLS-1$
 		refreshAction.setHoverImageDescriptor(getImageDescriptor("clcl16/refresh_nav.gif"));//$NON-NLS-1$		
 		
-		buildAction =
-			new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		buildAction = new BuildAction(shell, IncrementalProjectBuilder.INCREMENTAL_BUILD);
 		rebuildAction = new BuildAction(shell, IncrementalProjectBuilder.FULL_BUILD);
 	}
 

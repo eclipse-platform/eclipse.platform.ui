@@ -11,14 +11,20 @@
 package org.eclipse.ui.views.navigator;
 
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.ui.views.framelist.*;
+import org.eclipse.ui.views.framelist.BackAction;
+import org.eclipse.ui.views.framelist.ForwardAction;
+import org.eclipse.ui.views.framelist.FrameList;
+import org.eclipse.ui.views.framelist.GoIntoAction;
+import org.eclipse.ui.views.framelist.UpAction;
 
 /**
  * This is the action group for the goto actions.
@@ -30,26 +36,9 @@ public class GotoActionGroup extends ResourceNavigatorActionGroup {
 	private GoIntoAction goIntoAction;
 	private UpAction upAction;
 	private GotoResourceAction goToResourceAction;
-	private IResourceChangeListener resourceChangeListener;
 	
 	public GotoActionGroup(IResourceNavigator navigator) {
 		super(navigator);
-	
-		// Listen for project open/close changes. Fixes bug 5958
-		resourceChangeListener = new IResourceChangeListener() {
-			public void resourceChanged(IResourceChangeEvent event) {
-				updateActionBars();
-			}
-		};
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceChangeListener);
-	}
-
-	/**
-	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
-	 */
-	public void dispose() {
-		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceChangeListener);
-		super.dispose();
 	}
 
 	public void fillContextMenu(IMenuManager menu) {

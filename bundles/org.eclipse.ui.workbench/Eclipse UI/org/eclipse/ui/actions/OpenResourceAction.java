@@ -11,16 +11,13 @@
 package org.eclipse.ui.actions;
 
 import java.util.Iterator;
-import java.util.List;
 
-import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.jface.viewers.IStructuredSelection;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
@@ -36,7 +33,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
  */
-public class OpenResourceAction extends WorkspaceAction implements IResourceChangeListener {
+public class OpenResourceAction extends WorkspaceAction {
 
 	/**
 	 * The id of this action.
@@ -103,30 +100,4 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 		}
 		return false;
 	}
-
-	/**
-	 * Handles a resource changed event by updating the enablement
-	 * if one of the selected projects is opened or closed.
-	 */
-	public void resourceChanged(IResourceChangeEvent event) {
-		// Warning: code duplicated in CloseResourceAction
-		List sel = getSelectedResources();
-		// don't bother looking at delta if selection not applicable
-		if (selectionIsOfType(IResource.PROJECT)) {
-			IResourceDelta delta = event.getDelta();
-			if (delta != null) {
-				IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
-				for (int i = 0; i < projDeltas.length; ++i) {
-					IResourceDelta projDelta = projDeltas[i];
-					if ((projDelta.getFlags() & IResourceDelta.OPEN) != 0) {
-						if (sel.contains(projDelta.getResource())) {
-							selectionChanged(getStructuredSelection());
-							return;
-						}
-					}
-				}
-			}
-		}
-	}
-
 }

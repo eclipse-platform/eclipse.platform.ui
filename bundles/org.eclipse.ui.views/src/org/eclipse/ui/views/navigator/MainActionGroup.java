@@ -12,7 +12,13 @@
 ************************************************************************/
 package org.eclipse.ui.views.navigator;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -56,13 +62,55 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	protected SortAndFilterActionGroup sortAndFilterGroup;
 	protected WorkspaceActionGroup workspaceGroup;
 
+	private IResourceChangeListener resourceChangeListener;
+	
 	/**
 	 * Constructs the main action group.
 	 */
 	public MainActionGroup(IResourceNavigator navigator) {
 		super(navigator);
+		resourceChangeListener = new IResourceChangeListener() {
+			public void resourceChanged(IResourceChangeEvent event) {
+				handleResourceChanged(event);
+			}
+		};
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceChangeListener, IResourceChangeEvent.POST_CHANGE);
 		makeSubGroups();
 	}
+
+	/**
+	 * Handles a resource changed event by updating the enablement
+	 * if one of the selected projects is opened or closed.
+	 */
+	protected void handleResourceChanged(IResourceChangeEvent event) {
+		ActionContext context = getContext();
+		if (context == null) {
+			return;
+		}
+		
+		IStructuredSelection selection = (IStructuredSelection) context.getSelection();
+		if (ResourceSelectionUtil.allResourcesAreOfType(selection, IResource.PROJECT) == false) {
+			return;
+		}			
+		List sel = selection.toList();
+		IResourceDelta delta = event.getDelta();
+		if (delta == null) {
+			return;
+		}
+		IResourceDelta[] projDeltas = delta.getAffectedChildren(IResourceDelta.CHANGED);
+		for (int i = 0; i < projDeltas.length; ++i) {
+			IResourceDelta projDelta = projDeltas[i];
+			if ((projDelta.getFlags() & IResourceDelta.OPEN) != 0) {
+				if (sel.contains(projDelta.getResource())) {
+					addTaskAction.selectionChanged(selection);
+					gotoGroup.updateActionBars();
+					refactorGroup.updateActionBars();
+					workspaceGroup.updateActionBars();
+					return;
+				}
+			}
+		}
+	}	
 
 	/**
 	 * Makes the actions contained directly in this action group.
@@ -263,6 +311,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	 * Extends the superclass implementation to dispose the subgroups.
 	 */
 	public void dispose() {
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(resourceChangeListener);
 		gotoGroup.dispose();
 		openGroup.dispose();
 		refactorGroup.dispose();

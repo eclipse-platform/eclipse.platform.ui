@@ -170,9 +170,9 @@ protected boolean updateSelection(IStructuredSelection selection) {
 		&& resourceData.length > 0
 		&& resourceData[0].getType() == IResource.PROJECT;
 	if (isProjectRes) {
-		for (int i = 1; i < resourceData.length; i++) {
-			// make sure all resource data are projects
-			if (resourceData[i].getType() != IResource.PROJECT)
+		for (int i = 0; i < resourceData.length; i++) {
+			// make sure all resource data are open projects
+			if (resourceData[i].getType() != IResource.PROJECT || ((IProject) resourceData[i]).isOpen() == false)
 				return false;
 		}
 		return true;
