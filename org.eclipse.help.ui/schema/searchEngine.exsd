@@ -6,14 +6,20 @@
          <meta.schema plugin="org.eclipse.help.ui" id="searchEngine" name="Search Engine"/>
       </appInfo>
       <documentation>
-         This extension point is used to plug in search participants in the federated help search. Each search engine can be configured individually. When search is initiated, each search engine is executed in parallel, and the results are collated in the joint search results view.
+         This extension point is used to plug in search participants in the federated help search. Each search engine can be configured individually. When search is initiated, each search engine is executed as a background job, and the results are collated in the help view immediately under the query.
+&lt;p&gt;Search engines defined here will not automatically show up as federated search participants until engine product binding is established. Only engines bound to a particular product will show up when that product is running.
+&lt;p&gt;
+Search engines can simply compose a URL and fire only one hit containing that URL as href. Popular search engines for which API support requires license can be plugged in like this. On the other end of the spectrum, search engines can communicate with the server and receive individual hits with information like label, href, short description, score etc. Local help engine can produce hits this way.
+&lt;p&gt;Regardless of the search mechanism, engines can provide various search scope settings using JFace preference pages. These pages are shown when &apos;Advanced Settings&apos; link is followed from the Help view. In addition to root preference pages defined with the engine, additional preference sub-pages can be plugged in for more advanced settings.
+&lt;p&gt;Scope settings are loaded and stored using &lt;code&gt;IPreferenceStore&lt;/code&gt; objects. Scope settings for all engines are grouped together under a named &lt;b&gt;scope set&lt;/b&gt;. When first opened, default scope set (Default) is created, but users can define more scope sets and flip between them.
+&lt;p&gt;Since federated search support is part of &lt;code&gt;org.eclipse.help.base&lt;/code&gt;, a factory is needed to create search scope objects from the data in the preference store. Clients that plug in scope preference pages are required to plug in a scope factory as well.
       </documentation>
    </annotation>
 
    <element name="extension">
       <complexType>
          <sequence>
-            <element ref="engine" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="engine" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -110,7 +116,7 @@
                   a fully qualified name of the class that implements &lt;code&gt;org.eclipse.help.ui.ISearchScopeFactory&lt;/code&gt;. The factory is responsible for creating ISearchScope objects out of settings stored in IPreferenceStore class. If &lt;code&gt;pageClass&lt;/code&gt; is specified, scope factory must be specified as well.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.ui.ISearchScopeFactory"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -134,7 +140,7 @@
             <meta.element labelAttribute="label"/>
          </appInfo>
          <documentation>
-            a child page to the root page defined in the &lt;code&gt;engine&lt;/code&gt; element. Child pages cannot be defined if &lt;code&gt;pageClass&lt;/code&gt; engine attribute is not defined.
+            a child page to the root scope preference page defined in the &lt;code&gt;engine&lt;/code&gt; element. If &lt;code&gt;pageClass&lt;/code&gt; engine attribute is not defined, sub-pages will be ignored.
          </documentation>
       </annotation>
       <complexType>
@@ -158,7 +164,7 @@
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  a fully qualified name of a class that implements &lt;code&gt;ISearchScopePage&lt;/code&gt; interface.
+                  a fully qualified name of a class that implements &lt;code&gt;org.eclipse.help.ui.ISearchScopePage&lt;/code&gt; interface.
                </documentation>
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.ui.ISearchScopePage"/>
@@ -168,7 +174,31 @@
          <attribute name="category" type="string" use="required">
             <annotation>
                <documentation>
-                  id of a parent subpage or engine id if the parent is the root page.
+                  id of the parent subpage or engine id if the parent is the root page.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="engineProductBinding">
+      <annotation>
+         <documentation>
+            Specifies a binding between a product and a search engine. These bindings determine which engine is appropriate for the current product (as defined by org.eclipse.core.runtime.Platform.getProduct()).
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="productId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the identifier of the product
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="engineId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the engine identifier
                </documentation>
             </annotation>
          </attribute>
