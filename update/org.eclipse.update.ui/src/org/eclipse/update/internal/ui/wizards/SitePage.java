@@ -1,6 +1,7 @@
 package org.eclipse.update.internal.ui.wizards;
 
 import java.lang.reflect.*;
+import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -18,6 +19,7 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.api.search.*;
+import org.eclipse.update.internal.core.*;
 
 public class SitePage extends BannerPage implements ISearchProvider {
 
@@ -366,12 +368,20 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		IStructuredSelection ssel =
 			(IStructuredSelection) treeViewer.getSelection();
 		SiteBookmark bookmark = (SiteBookmark) ssel.getFirstElement();
+		URL oldURL = bookmark.getURL();
 		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark);
 		dialog.create();
 		String title = bookmark.isLocal() ? UpdateUI.getString("SitePage.dialogEditLocal") : UpdateUI.getString("SitePage.dialogEditUpdateSite"); //$NON-NLS-1$
 																																				  // //$NON-NLS-2$
 		dialog.getShell().setText(title);
-		dialog.open();
+		if (dialog.open() == EditSiteDialog.OK ) {
+			URL newURL = bookmark.getURL();
+			if (!UpdateManagerUtils.sameURL(oldURL, newURL)) {
+				UpdateModel model = UpdateUI.getDefault().getUpdateModel();
+				model.fireObjectChanged(bookmark, null);
+				updateSearchRequest();	
+			}
+		}
 	}
 
 	private void handleSiteChecked(SiteBookmark bookmark, boolean checked) {
