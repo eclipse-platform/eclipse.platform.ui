@@ -151,6 +151,36 @@ public class UndoManagerTest extends TestCase {
 
 		assertEquals(original, reverted);		
 	}
+	
+	/**
+	 * Test case for https://bugs.eclipse.org/bugs/show_bug.cgi?id=88172
+	 */
+	public void testRandomAccessAsUnclosedCompound() {
+
+		final int RANDOM_STRING_LENGTH= 50;
+		final int RANDOM_REPLACE_COUNT= 100;
+		
+		assertTrue(RANDOM_REPLACE_COUNT >= 1);
+		assertTrue(RANDOM_REPLACE_COUNT <= MAX_UNDO_LEVEL);
+		
+		String original= createRandomString(RANDOM_STRING_LENGTH);
+		final IDocument document= new Document(original);
+		fTextViewer.setDocument(document);
+
+		fUndoManager.beginCompoundChange();		
+		doChange(document, RANDOM_REPLACE_COUNT);
+		// do not close the compound.
+		// fUndoManager.endCompoundChange();
+
+		assertTrue(fUndoManager.undoable());
+		while (fUndoManager.undoable())
+			fUndoManager.undo();
+		assertTrue(!fUndoManager.undoable());
+			
+		final String reverted= document.get();
+
+		assertEquals(original, reverted);		
+	}
 
 	private static String createRandomString(int length) {
 		final StringBuffer buffer= new StringBuffer();

@@ -674,21 +674,35 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 				return Status.OK_STATUS;
 			/*
 			 * IMPORTANT:  fCurrent actually holds the most recent undoable
-			 * changes.  If it is valid, than we should undo it instead and cancel
-			 * the undo of the proposed operation.
+			 * changes.  If it is valid, than we should add it to the command stack and invoke
+			 * another undo, cancelling the proposed operation.
 			 */
-			fCurrent.pretendCommit();
-			if (op != fCurrent && op.hasContext(fUndoContext) && fCurrent.isValid()) {
-				commit();
-				
-				// now that fCurrent is on the stack, invoke undo.  Returning CANCEL_STATUS 
-				// from this method will cause the original command to stay on the stack.
-				try {
-					history.undo(fUndoContext, null, uiInfo);
-				} catch (ExecutionException ex) {
-					openErrorDialog(JFaceTextMessages.getString("DefaultUndoManager.error.undoFailed.title"), ex); //$NON-NLS-1$
+			if (op != fCurrent && op.hasContext(fUndoContext)) {
+				fCurrent.pretendCommit();
+				// Once we are on the path to commit fCurrent, we are no longer folding any compound commands.
+				// This flag is normally set to false in the ABOUT_TO_UNDO notification, but we do it earlier here
+				// because it affects the validity check for compound changes.
+				fFoldingIntoCompoundChange = false;
+				if (fCurrent.isValid()) {
+					commit();
+					// double check that the commit succeeded or else we will infinitely loop through
+					// the approval sequence.  See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=88172
+					if (history.getUndoOperation(fUndoContext) != op)
+					{
+						// now we know that fCurrent is valid and has been added to the undo history.  We want 
+						// to invoke undo on this one instead of the current operation.  We return a CANCEL_STATUS 
+						// from this method in order to cause the originally proposed command to stay on the stack.
+						try {
+							history.undo(fUndoContext, null, uiInfo);
+						} catch (ExecutionException ex) {
+							openErrorDialog(JFaceTextMessages.getString("DefaultUndoManager.error.undoFailed.title"), ex); //$NON-NLS-1$
+						}
+						return Status.CANCEL_STATUS;
+					} 
+					// fCurrent was valid but for some reason should not be committed.  This is unexpected.
+					// Create a new one for future edits and allow the suggested undo to proceed.
+					fCurrent = fCurrent.createCurrent();
 				}
-				return Status.CANCEL_STATUS;	
 			} 
 			return Status.OK_STATUS;
 		}
