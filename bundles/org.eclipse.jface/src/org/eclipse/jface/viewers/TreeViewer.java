@@ -120,7 +120,11 @@ protected void doUpdateItem(final Item item, Object element) {
 		treeItem.setForeground(cp.getForeground(element));
 		treeItem.setBackground(cp.getBackground(element));
 	}
-	
+	if (baseProvider instanceof IFontProvider) {
+	    IFontProvider fprov = (IFontProvider) baseProvider;
+	    TreeItem treeItem = (TreeItem) item;
+	    treeItem.setFont(fprov.getFont(element));
+	}			
 }
 /* (non-Javadoc)
  * Method declared in AbstractTreeViewer.
