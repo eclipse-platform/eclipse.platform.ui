@@ -103,7 +103,11 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 	monitor = Policy.monitorFor(monitor);
 	try {
 		monitor.beginTask(Policy.bind("localstore.moving", source.getAbsolutePath()), 2);
-		if (destination.exists()) {
+		// are we renaming the case only?
+		boolean caseRenaming = false;
+		if (!CoreFileSystemLibrary.isCaseSensitive())
+			caseRenaming = source.getAbsolutePath().equalsIgnoreCase(destination.getAbsolutePath());
+		if (!caseRenaming && destination.exists()) {
 			if (!force) {
 				String message = Policy.bind("localstore.resourceExists", destination.getAbsolutePath());
 				throw new ResourceException(IResourceStatus.EXISTS_LOCAL, new Path(destination.getAbsolutePath()), message, null);
@@ -118,7 +122,7 @@ public void move(File source, File destination, boolean force, IProgressMonitor 
 		if (source.renameTo(destination)) {
 			// double-check to ensure we really did move
 			// since java.io.File#renameTo sometimes lies
-			if (source.exists()) {
+			if (!caseRenaming && source.exists()) {
 				if (destination.exists()) {
 					// couldn't delete the source so remove the destination
 					// and throw an error

@@ -106,8 +106,7 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType) thr
 	checkLocal(flags, DEPTH_INFINITE);
 
 	Resource dest = (Resource) workspace.newResource(destination, destinationType);
-	info = dest.getResourceInfo(false, false);
-	dest.checkDoesNotExist(getFlags(info), false);
+	dest.checkDoesNotExist();
 
 	// ensure we aren't trying to copy a file to a project
 	if (getType() == IResource.FILE && dest.getType() == IResource.PROJECT) {
@@ -204,8 +203,11 @@ protected IStatus checkMoveRequirements(IPath destination, int destinationType) 
 	checkLocal(flags, DEPTH_INFINITE);
 
 	Resource dest = (Resource) workspace.newResource(destination, destinationType);
-	info = dest.getResourceInfo(false, false);
-	dest.checkDoesNotExist(getFlags(info), false);
+	
+	// check if we are only changing case
+	IResource variant = CoreFileSystemLibrary.isCaseSensitive() ? null : findExistingResourceVariant(destination);
+	if (variant == null || !this.equals(variant))
+		dest.checkDoesNotExist();
 
 	// ensure we aren't trying to move a file to a project
 	if (getType() == IResource.FILE && dest.getType() == IResource.PROJECT) {
@@ -957,5 +959,45 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 	} finally {
 		monitor.done();
 	}
+}
+/**
+ * Helper method that considers case insensitive file systems. The parameter
+ * renaming is used for the last segment. It was added to handle cases when we are only
+ * renaming a resource.
+ */
+protected void checkDoesNotExist() throws CoreException {
+	// should consider getting the ResourceInfo as a paramenter to reduce tree lookups
+	if (CoreFileSystemLibrary.isCaseSensitive()) {
+		checkDoesNotExist(getFlags(getResourceInfo(false, false)), false);
+		return;
+	}
+	IResource variant = findExistingResourceVariant(getFullPath());
+	if (variant == null)
+		return;
+	String message = Policy.bind("resources.mustNotExist", variant.getFullPath().toString());
+	throw new ResourceException(IResourceStatus.RESOURCE_EXISTS, variant.getFullPath(), message, null);
+}
+/**
+ * Helper method for case insensitive file systems.
+ */
+public IResource findExistingResourceVariant(IPath target) {
+	IPath result = Path.ROOT;
+	String[] segments = target.segments();
+	for (int i = 0; i < segments.length; i++) {
+		IPath[] children = workspace.tree.getChildren(result);
+		String name = findVariant(segments[i], children);
+		if (name == null)
+			return null;
+		result = result.append(name);
+	}
+	return workspace.getRoot().findMember(result);
+}
+private String findVariant(String target, IPath[] list) {
+	for (int i = 0; i < list.length; i++) {
+		String variant = list[i].lastSegment();
+		if (target.equalsIgnoreCase(variant))
+			return variant;
+	}
+	return null;
 }
 }

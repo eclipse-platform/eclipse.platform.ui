@@ -13,6 +13,9 @@ import java.io.File;
 
 public abstract class CoreFileSystemLibrary {
 
+	/** Indicates whether or not this FS is case sensitive */
+	private static final boolean caseSensitive = new File("a").compareTo(new File("A")) != 0;
+
 	/**
 	 * The following masks are used to represent the bits
 	 * returned by the getStat() and internalGetStat() methods.
@@ -22,7 +25,7 @@ public abstract class CoreFileSystemLibrary {
 	 * The lower bits represent the last modified timestamp of the
 	 * given file and the higher bits represent some relevant flags.
 	 */
-	
+
 	/** reserved, should not be used */
 	private static final long STAT_RESERVED 	= 0x8000000000000000l;
 	/** indicates if this is a valid stat or some problem happened when 
@@ -109,5 +112,8 @@ public static boolean setReadOnly(String fileName, boolean readOnly) {
 	if (!readOnly)
 		return false; // unsupported
 	return new File(fileName).setReadOnly();
+}
+public static boolean isCaseSensitive() {
+	return caseSensitive;
 }
 }

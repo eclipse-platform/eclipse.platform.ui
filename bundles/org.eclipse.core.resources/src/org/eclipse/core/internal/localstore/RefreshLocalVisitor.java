@@ -18,6 +18,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 	protected static final int RL_UNKNOWN 		= 0;
 	protected static final int RL_IN_SYNC 		= 1;
 	protected static final int RL_NOT_IN_SYNC 	= 2;
+
 public RefreshLocalVisitor(IProgressMonitor monitor) {
 	this.monitor = monitor;
 	workspace = (Workspace) ResourcesPlugin.getWorkspace();
@@ -50,7 +51,7 @@ protected void deleteResource(UnifiedTreeNode node, Resource target) throws Core
 	ResourceInfo info = target.getResourceInfo(false, false);
 	int flags = target.getFlags(info);
 	if (target.exists(flags, false))
-		target.delete(true, null);
+		target.deleteResource(true, null);
 	node.setExistsWorkspace(false);
 }
 protected void fileToFolder(UnifiedTreeNode node, Resource target) throws CoreException {
@@ -96,10 +97,18 @@ public boolean resourcesChanged() {
 	return resourceChanged;
 }
 /**
- * deletion or creation
+ * deletion or creation -- Returns true if existence was not in sync.
  */
 protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int level) throws CoreException {
-	if (node.existsInWorkspace()) {
+	boolean existsInWorkspace = node.existsInWorkspace();
+	if (!existsInWorkspace && !CoreFileSystemLibrary.isCaseSensitive() && level == 0) {
+		// do we have any alphabetic variants on the workspace?
+		IResource variant = target.findExistingResourceVariant(target.getFullPath());
+		if (variant != null)
+			return RL_UNKNOWN;
+	}
+	
+	if (existsInWorkspace) {
 		if (!node.existsInFileSystem()) {
 			if (target.isLocal(IResource.DEPTH_ZERO)) {
 				deleteResource(node, target);
@@ -110,6 +119,18 @@ protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int le
 		}
 	} else {
 		if (node.existsInFileSystem()) {
+			if (!CoreFileSystemLibrary.isCaseSensitive()) {
+				Container parent = (Container) target.getParent();
+				if (!parent.exists()) {
+					parent.getLocalManager().refresh(parent, IResource.DEPTH_ZERO, null);
+					if (!parent.exists())
+						return RL_NOT_IN_SYNC;
+				}
+				IPath location = node.getLocalLocation();
+				String name = target.getLocalManager().getLocalName(location.toFile());
+				if (!target.getName().equals(name))
+					return RL_IN_SYNC;
+			}
 			createResource(node, target);
 			resourceChanged = true;
 			return RL_NOT_IN_SYNC;
@@ -118,7 +139,7 @@ protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int le
 	return RL_UNKNOWN;
 }
 /**
- * gender change
+ * gender change -- Returns true if gender was not in sync.
  */
 protected boolean synchronizeGender(UnifiedTreeNode node, Resource target) throws CoreException {
 	if (target.getType() == IResource.FILE) {
@@ -139,18 +160,19 @@ protected boolean synchronizeGender(UnifiedTreeNode node, Resource target) throw
 /**
  * lastModified
  */
-protected boolean synchronizeLastModified(UnifiedTreeNode node, Resource target) throws CoreException {
+protected void synchronizeLastModified(UnifiedTreeNode node, Resource target) throws CoreException {
 	if (target.isLocal(IResource.DEPTH_ZERO))
 		resourceChanged(target, node.getLastModified());
 	else
 		contentAdded(target, node.getLastModified());
 	resourceChanged = true;
-	return false;
 }
 public boolean visit(UnifiedTreeNode node) throws CoreException {
 	Policy.checkCanceled(monitor);
 	try {
 		Resource target = (Resource) node.getResource();
+		if (target.getType() == IResource.PROJECT)
+			return true;
 		if (node.existsInWorkspace() && node.existsInFileSystem()) {
 			/* we don't care about folder last modified */
 			if (node.isFolder() && target.getType() == IResource.FOLDER)

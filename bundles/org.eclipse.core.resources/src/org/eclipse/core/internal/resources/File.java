@@ -7,6 +7,7 @@ package org.eclipse.core.internal.resources;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import java.io.InputStream;
@@ -71,32 +72,39 @@ public void create(InputStream content, boolean force, IProgressMonitor monitor)
 		checkValidPath(path, FILE);
 		try {
 			workspace.prepareOperation();
-			boolean local = content != null;
-			ResourceInfo info = getResourceInfo(false, false);
-			int flags = getFlags(info);
-			checkDoesNotExist(flags, false);
+			checkDoesNotExist();
 
 			workspace.beginOperation(true);
-			Container parent = (Container) getParent();
-			parent.refreshLocal(DEPTH_ZERO, null);
-			refreshLocal(DEPTH_ZERO, null);
-
-			info = parent.getResourceInfo(false, false);
-			flags = getFlags(info);
-			parent.checkAccessible(flags);
-
-			info = getResourceInfo(false, false);
-			flags = getFlags(info);
+			IPath location = getLocation();
+			java.io.File localFile = location.toFile();
 			if (force) {
-				// if the resource exists (i.e. was just discovered in the local refresh)
-				// then we delete what we just discovered and create the new resource
-				if (exists(flags, false))
-					delete(true, Policy.subMonitorFor(monitor, Policy.opWork * 40 / 100));
+				if (!CoreFileSystemLibrary.isCaseSensitive()) {
+					if (localFile.exists()) {
+						String name = getLocalManager().getLocalName(localFile);
+						if (localFile.getName().equals(name)) {
+							delete(true, null);
+						} else {
+							// The file system is not case sensitive and there is already a file
+							// under this location.
+							String msg = Policy.bind("resources.existsDifferentCase", location.removeLastSegments(1).append(name).toOSString());
+							throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), msg, null);
+						}
+					}
+				}
 			} else {
-				monitor.worked(Policy.opWork * 40 / 100);
-				checkDoesNotExist(flags, false);
+				if (localFile.exists()) {
+					String msg = Policy.bind("resources.fileExists", localFile.getAbsolutePath());
+					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), msg, null);
+				}
 			}
+			monitor.worked(Policy.opWork * 40 / 100);
+
+			Container parent = (Container) getParent();
+			ResourceInfo info = parent.getResourceInfo(false, false);
+			parent.checkAccessible(getFlags(info));
+
 			workspace.createResource(this, false);
+			boolean local = content != null;
 			if (local) {
 				try {
 					internalSetContents(content, force, false, false, Policy.subMonitorFor(monitor, Policy.opWork * 40 / 100));

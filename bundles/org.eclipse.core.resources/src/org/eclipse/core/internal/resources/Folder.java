@@ -7,6 +7,7 @@ package org.eclipse.core.internal.resources;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.utils.Policy;
 
 public class Folder extends Container implements IFolder {
@@ -41,25 +42,36 @@ public void create(boolean force, boolean local, IProgressMonitor monitor) throw
 		checkValidPath(path, FOLDER);
 		try {
 			workspace.prepareOperation();
-			ResourceInfo info = getResourceInfo(false, false);
-			int flags = getFlags(info);
-			checkDoesNotExist(flags, false);
+			checkDoesNotExist();
 
 			workspace.beginOperation(true);
-			refreshLocal(DEPTH_ZERO, null);
-			Container parent = (Container) getParent();
-			info = parent.getResourceInfo(false, false);
-			flags = getFlags(info);
-			parent.checkAccessible(flags);
-
-			info = getResourceInfo(false, false);
-			flags = getFlags(info);
+			IPath location = getLocation();
+			java.io.File localFile = location.toFile();
 			if (force) {
-				if (exists(flags, false))
-					return;
+				if (!CoreFileSystemLibrary.isCaseSensitive()) {
+					if (localFile.exists()) {
+						String name = getLocalManager().getLocalName(localFile);
+						if (localFile.getName().equals(name)) {
+							delete(true, null);
+						} else {
+							// The file system is not case sensitive and there is already a file
+							// under this location.
+							String msg = Policy.bind("resources.existsDifferentCase", location.removeLastSegments(1).append(name).toOSString());
+							throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), msg, null);
+						}
+					}
+				}
 			} else {
-				checkDoesNotExist(flags, false);
+				if (localFile.exists()) {
+					String msg = Policy.bind("resources.fileExists", localFile.getAbsolutePath());
+					throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), msg, null);
+				}
 			}
+
+			Container parent = (Container) getParent();
+			ResourceInfo info = parent.getResourceInfo(false, false);
+			parent.checkAccessible(getFlags(info));
+
 			internalCreate(force, local, Policy.subMonitorFor(monitor, Policy.opWork));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();

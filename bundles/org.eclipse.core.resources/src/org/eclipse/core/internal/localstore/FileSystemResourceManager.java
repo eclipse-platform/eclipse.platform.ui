@@ -69,11 +69,7 @@ public void delete(IResource target, boolean force, boolean convertToPhantom, bo
 		monitor.beginTask(title, totalWork);
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("localstore.deleteProblem"), null);
 		List skipList = null;
-		UnifiedTree tree = null;
-		if (target.getType() == IResource.PROJECT)
-			tree = new ProjectUnifiedTree((IProject) target);
-		else
-			tree = new UnifiedTree(target);
+		UnifiedTree tree = new UnifiedTree(target);
 		if (!force) {
 			IProgressMonitor sub = Policy.subMonitorFor(monitor, totalWork / 2);
 			sub.beginTask("", 10000);
@@ -209,7 +205,7 @@ protected boolean refreshProject(IProject project, int depth, IProgressMonitor m
 		if (!project.isAccessible())
 			return false;
 		RefreshLocalVisitor visitor = new RefreshLocalVisitor(monitor);
-		ProjectUnifiedTree tree = new ProjectUnifiedTree(project);
+		UnifiedTree tree = new UnifiedTree(project);
 		tree.accept(visitor, depth);
 		return visitor.resourcesChanged();
 	} finally {
@@ -342,13 +338,11 @@ public void write(IFile target, InputStream content, boolean force, boolean keep
 				// test if timestamp is the same since last synchronization
 				ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
 				if (lastModified != info.getLocalSyncInfo()) {
-//					refresh(target, IResource.DEPTH_ZERO, monitor);
 					String message = Policy.bind("localstore.resourceWasOutOfSync", target.getFullPath().toString());
 					throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 				}
 			} else
 				if (localFile.exists()) {
-//					refresh(target, IResource.DEPTH_ZERO, monitor);
 					String message = Policy.bind("localstore.resourceExists", target.getFullPath().toString());
 					throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), message, null);
 				}
@@ -420,5 +414,20 @@ private void addFilesToHistoryStore(IPath key, IPath localLocation, boolean move
 		return;
 	for (int i = 0; i < children.length; i++)
 		addFilesToHistoryStore(key.append(children[i]), localLocation.append(children[i]), move);
+}
+/** 
+ * Returns the real name of the resource on disk. It is useful when dealing with
+ * case insensitive file systems.
+ */
+public String getLocalName(java.io.File target) {
+	java.io.File root = target.getParentFile();
+	String[] list = root.list();
+	if (list == null)
+		return null;
+	String targetName = target.getName();
+	for (int i = 0; i < list.length; i++)
+		if (targetName.equalsIgnoreCase(list[i]))
+			return list[i];
+	return null;
 }
 }

@@ -76,7 +76,7 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
 	int index = 0;
 
 	/* get the list of resources in the workspace */
-	if (node.existsInWorkspace() && parent.getType() == IResource.FOLDER) {
+	if (node.existsInWorkspace() && (parent.getType() == IResource.FOLDER || parent.getType() == IResource.PROJECT)) {
 		IResource target = null;
 		boolean next = true;
 		UnifiedTreeNode child = null;
@@ -278,7 +278,6 @@ protected void removeNodeChildrenFromQueue(UnifiedTreeNode node) throws CoreExce
 	node.setFirstChild(null);
 }
 public void setRoot(IResource root) {
-	Assert.isLegal(root.getType() != IResource.PROJECT);
 	this.root = root;
 	this.rootLocalLocation = root.getLocation();
 }

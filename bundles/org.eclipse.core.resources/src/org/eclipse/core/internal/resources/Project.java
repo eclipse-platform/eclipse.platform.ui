@@ -264,7 +264,7 @@ public void create(IProjectDescription description, IProgressMonitor monitor) th
 		try {
 			workspace.prepareOperation();
 			ProjectInfo info = (ProjectInfo) getResourceInfo(false, false);
-			checkDoesNotExist(getFlags(info), true);
+			checkDoesNotExist();
 			if (description != null)
 				checkDescription(this, description);
 
@@ -739,8 +739,6 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 			monitor.worked(Policy.opWork * 10 / 100);
 
 			monitor.subTask(Policy.bind("resources.syncTree"));
-			// refresh local
-			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -941,7 +939,10 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
 		IProjectDescription desc = getDescription();
 		desc.setName(projectName);
 		desc.setLocation(null);
-		internalMove(desc, force, monitor);
+		if (!CoreFileSystemLibrary.isCaseSensitive() && getName().equalsIgnoreCase(projectName))
+			internalChangeCase(desc, force, monitor);
+		else
+			internalMove(desc, force, monitor);
 	} else {
 		// move project to folder
 		internalMoveToFolder(destination, force, monitor);
@@ -1055,6 +1056,62 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 
 			workspace.beginOperation(true);
 			super.touch(Policy.subMonitorFor(monitor, Policy.opWork));
+		} catch (OperationCanceledException e) {
+			workspace.getWorkManager().operationCanceled();
+			throw e;
+		} finally {
+			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+		}
+	} finally {
+		monitor.done();
+	}
+}
+protected void internalChangeCase(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
+	monitor = Policy.monitorFor(monitor);
+	try {
+		String message = Policy.bind("resources.renaming", getFullPath().toString());
+		monitor.beginTask(message, Policy.totalWork);
+		try {
+			workspace.prepareOperation();
+			String destName = destDesc.getName();
+			IPath destPath = new Path(destName).makeAbsolute();
+			// The following assert method throws CoreExceptions as stated in the IProject.move API
+			// and assert for programming errors. See checkMoveRequirements for more information.
+			assertMoveRequirements(destPath, IResource.PROJECT);
+			Project destProject = (Project) workspace.getRoot().getProject(destName);
+			checkDescription(destProject, destDesc);
+			IProjectDescription sourceDesc = internalGetDescription();
+			workspace.changing(this);
+
+			workspace.beginOperation(true);
+			// flush the build order early in case there is a problem
+			workspace.flushBuildOrder();
+
+			// set the description
+			workspace.copyTree(this, destPath, IResource.DEPTH_INFINITE, false);
+			destProject.internalSetDescription(destDesc, false);
+
+			// Fix for 1FVU2FV: ITPCORE:WINNT - WALKBACK - Renaming project does not update project natures
+			// Remove session property for active project natures, causing them to be reactivated.
+			// Leave persistent property (list of nature IDs) alone.
+			ProjectInfo info = (ProjectInfo) workspace.getResourceInfo(destProject.getFullPath(), false, true);
+			// FIXME: should we be deconfiguring natures here? why do we clear it at all
+			info.clearNatures();
+
+			// write out the project info to the meta area
+			getLocalManager().write(destProject, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
+
+			// fix up the builders for the project (they currently point to the source)
+			workspace.getBuildManager().fixBuildersFor(destProject);
+
+			// delete source handle
+			workspace.deleteResource(this);
+
+			// tell the marker manager that we moved so the marker deltas are ok
+			getMarkerManager().moved(this, destProject, IResource.DEPTH_ZERO);
+			monitor.worked(Policy.opWork * 10 / 100);
+
+			monitor.subTask(Policy.bind("resources.syncTree"));
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;

@@ -96,6 +96,8 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 	Policy.checkCanceled(monitor);
 	Resource target = (Resource) node.getResource();
 	try {
+		if (target.getType() == IResource.PROJECT)
+			return true;
 		if (shouldSkip(target)) {
 			removeFromSkipList(target);
 			int ticks = target.countResources(IResource.DEPTH_INFINITE, false);
