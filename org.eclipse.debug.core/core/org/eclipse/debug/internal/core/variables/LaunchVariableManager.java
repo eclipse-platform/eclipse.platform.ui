@@ -16,9 +16,9 @@ import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
 
 public class LaunchVariableManager implements ILaunchVariableManager {
 	
-	private static SimpleLaunchVariableRegistry fgSimpleVariableRegistry;
-	private static ContextLaunchVariableRegistry fgContextVariableRegistry;
-	private static RefreshLaunchVariableRegistry fgRefreshVariableRegistry;
+	private static SimpleLaunchVariableRegistry fgSimpleVariableRegistry= new SimpleLaunchVariableRegistry();
+	private static ContextLaunchVariableRegistry fgContextVariableRegistry= new ContextLaunchVariableRegistry();
+	private static RefreshLaunchVariableRegistry fgRefreshVariableRegistry= new RefreshLaunchVariableRegistry();
 
 	public IContextLaunchVariable getContextVariable(String name) {
 		return fgContextVariableRegistry.getVariable(name);
