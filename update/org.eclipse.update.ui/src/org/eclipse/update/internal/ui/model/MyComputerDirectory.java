@@ -12,6 +12,7 @@ package org.eclipse.update.internal.ui.model;
 
 import java.io.*;
 import java.net.*;
+import java.util.zip.*;
 
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.custom.*;
@@ -98,31 +99,32 @@ public class MyComputerDirectory
 				if (volume != null && showSites) {
 					// This is volume.
 					// Test if the volume itself is a site
-					SiteBookmark rootSite = createSite(getFile(), true);
-					if (rootSite != null) {
+					if (isDirSite(getFile())) {
 						children = new Object[1];
-						children[0] = rootSite;
-						return;
+						children[0] = createDirSite(getFile(), true);
 					}
+					return;
 				}
 
 				children = new Object[files.length];
 				for (int i = 0; i < files.length; i++) {
 					File file = files[i];
-					if (!file.isDirectory()) {
-						children[i] = new MyComputerFile(MyComputerDirectory.this, file);
+					if (file.isDirectory()) {
+						if (showSites && isDirSite(file)) 
+							children[i] = createDirSite(file, false);
+						else if (showExtensionRoots && ExtensionRoot.isExtensionRoot(file))
+							children[i] = new ExtensionRoot(MyComputerDirectory.this, file);
+						
+						if (children[i] == null)
+							children[i] = new MyComputerDirectory(MyComputerDirectory.this, file);
 					} else {
-						children[i] =
-							new MyComputerDirectory(MyComputerDirectory.this, file);
-						if (showSites) {
-							SiteBookmark site = createSite(file, false);
-							if (site != null)
-								children[i] = site;
-						}
-						if (showExtensionRoots && ExtensionRoot.isExtensionRoot(file)) {
-							children[i] =
-								new ExtensionRoot(MyComputerDirectory.this, file);
-						}
+						if (showSites && isZipSite(file))
+							children[i] = createZipSite(file);
+						else if (showExtensionRoots && ExtensionRoot.isExtensionRoot(file)) 
+							children[i] = new ExtensionRoot(MyComputerDirectory.this, file);
+						
+						if (children[i] == null)
+							children[i] = new MyComputerFile(MyComputerDirectory.this, file);
 					}
 				}
 			}
@@ -134,13 +136,61 @@ public class MyComputerDirectory
 		return getChildren(parent, true, true);
 	}
 
-	static SiteBookmark createSite(File file, boolean root) {
+	/**
+	 * Returns true the zip file contains an update site
+	 * @param file
+	 * @return
+	 */
+	static boolean isZipSite(File file) {
 		try {
-			File siteXML = new File(file, "site.xml"); //$NON-NLS-1$
-			if (siteXML.exists() == false)
-				return null;
-			URL url =
-				new URL("file:" + file.getAbsolutePath() + File.separator); //$NON-NLS-1$
+			if (file.getName().endsWith(".zip") || file.getName().endsWith(".ZIP")) {
+				// check if the zip file contains site.xml
+				ZipFile siteZip = new ZipFile(file);
+				return siteZip.getEntry("site.xml") != null;
+			} else {
+				return false;
+			} 
+		} catch(Exception e) {
+			return false;
+		}
+	}
+	
+	/**
+	 * Returns true if the specified dir contains an update site
+	 * @param dir
+	 * @return
+	 */
+	static boolean isDirSite(File dir) {
+		File siteXML = new File(dir, "site.xml"); //$NON-NLS-1$
+		return siteXML.exists();
+	}
+	
+	/**
+	 * Creates a bookmark to a zipped site
+	 * @param file
+	 * @return
+	 */
+	static SiteBookmark createZipSite(File file) {
+		try {
+			URL fileURL = new URL("file", null, file.getAbsolutePath());
+			URL url = new URL("jar:"+fileURL.toExternalForm().replace('\\','/')+"!/" );
+			SiteBookmark site = new SiteBookmark(file.getName(), url, false);
+			site.setLocal(true);
+			return site;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	/**
+	 * Creates a bookmark to a site on the file system
+	 * @param file
+	 * @param root
+	 * @return
+	 */
+	static SiteBookmark createDirSite(File file, boolean root) {
+		try {
+			URL url = new URL("file:" + file.getAbsolutePath() + File.separator); //$NON-NLS-1$
 			String siteName = root?file.getAbsolutePath():file.getName();
 			SiteBookmark site = new SiteBookmark(siteName, url, false);
 			site.setLocal(true);
