@@ -18,7 +18,25 @@ import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.DialogMessageArea;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.ControlAdapter;
@@ -53,30 +71,7 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
-
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.DialogMessageArea;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.Policy;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 
 /**
  * A preference dialog is a hierarchical presentation of preference pages. Each
@@ -357,49 +352,46 @@ public class PreferenceDialog extends Dialog implements
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-		Composite composite = (Composite) super.createDialogArea(parent);
-		
-		if(Policy.SHOW_PREFERENCES_NEWLOOK)
-			createNewLookTab(composite);
-		else
-			createClassicPreferencesArea(composite);
+		final Composite composite = (Composite) super.createDialogArea(parent);
+		((GridLayout) composite.getLayout()).numColumns = 3;
+		Control treeControl = createTreeAreaContents(composite);
+		createSash(composite,treeControl);
+		Composite pageAreaComposite = new Composite(composite, SWT.NONE);
+		pageAreaComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridLayout layout = new GridLayout(1, true);
+		layout.marginHeight = 0;
+		layout.marginWidth = 10;
+		pageAreaComposite.setLayout(layout);
+		// Build the title area and separator line
+		Composite titleComposite = new Composite(pageAreaComposite, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+		layout.horizontalSpacing = 0;
+		titleComposite.setLayout(layout);
+		titleComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		createTitleArea(titleComposite);
+		// Build the Page container
+		pageContainer = createPageContainer(pageAreaComposite);
+		pageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		// Build the separator line
+		Label separator = new Label(pageAreaComposite, SWT.HORIZONTAL
+				| SWT.SEPARATOR);
+		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		separator.setLayoutData(gd);
 		return composite;
 	}
 
 	/**
-	 * Create a tabbed list for the new and classic looks in the composite.
+	 * Create the sash with right control on the right. Note 
+	 * that this method assumes GridData for the layout data
+	 * of the rightControl.
 	 * @param composite
+	 * @param rightControl
+	 * @return Sash
 	 */
-	private void createNewLookTab(Composite composite) {
-		TabFolder tabFolder = new TabFolder(composite,SWT.NONE);
-		
-		// TODO Remove this before 3.1 ships
-		TabItem classicItem = new TabItem(tabFolder,SWT.NONE);
-		classicItem.setText("Classic");//$NON-NLS-1$
-		Composite classicParent = new Composite(tabFolder,SWT.NONE);
-		classicItem.setControl(classicParent);
-		classicParent.setLayout(new GridLayout());
-		createClassicPreferencesArea(classicParent);
-
-		TabItem newItem = new TabItem(tabFolder,SWT.NONE);
-		newItem.setText("New Look");//$NON-NLS-1$
-		Composite newParent = new Composite(tabFolder,SWT.NONE);
-		newItem.setControl(newParent);
-		newParent.setLayout(new GridLayout());
-		
-		GridData folderData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
-		tabFolder.setLayoutData(folderData);
-		
-		
-	}
-
-	/**
-	 * Create the preferences area with the pre 3.1 look.
-	 * @param composite
-	 */
-	private void createClassicPreferencesArea(final Composite composite) {
-		((GridLayout) composite.getLayout()).numColumns = 3;
-		final Control treeControl = createTreeAreaContents(composite);
+	protected Sash createSash(final Composite composite, final Control rightControl){
 		final Sash sash = new Sash(composite, SWT.VERTICAL);
 		sash.setLayoutData(new GridData(GridData.FILL_VERTICAL));
 		// the following listener resizes the tree control based on sash deltas.
@@ -414,7 +406,7 @@ public class PreferenceDialog extends Dialog implements
 				if (event.detail == SWT.DRAG)
 					return;
 				int shift = event.x - sash.getBounds().x;
-				GridData data = (GridData) treeControl.getLayoutData();
+				GridData data = (GridData) rightControl.getLayoutData();
 				int newWidthHint = data.widthHint + shift;
 				if (newWidthHint < 20)
 					return;
@@ -440,32 +432,8 @@ public class PreferenceDialog extends Dialog implements
 				lastShellSize = getShell().getSize();
 			}
 		});
-		Composite pageAreaComposite = new Composite(composite, SWT.NONE);
-		pageAreaComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-		GridLayout layout = new GridLayout(1, true);
-		layout.marginHeight = 0;
-		layout.marginWidth = 10;
-		pageAreaComposite.setLayout(layout);
-		// Build the title area and separator line
-		Composite titleComposite = new Composite(pageAreaComposite, SWT.NONE);
-		layout = new GridLayout();
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.verticalSpacing = 0;
-		layout.horizontalSpacing = 0;
-		titleComposite.setLayout(layout);
-		titleComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		createTitleArea(titleComposite);
-		// Build the Page container
-		pageContainer = createPageContainer(pageAreaComposite);
-		pageContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
-		// Build the separator line
-		Label separator = new Label(pageAreaComposite, SWT.HORIZONTAL
-				| SWT.SEPARATOR);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		separator.setLayoutData(gd);
+		return sash;
 	}
-
 	/**
 	 * Creates the inner page container.
 	 * 
@@ -681,11 +649,11 @@ public class PreferenceDialog extends Dialog implements
 	}
 
 	/**
-	 * Get the last known tree width.
+	 * Get the last known right side width.
 	 * 
 	 * @return the width.
 	 */
-	private int getLastTreeWidth() {
+	protected int getLastRightWidth() {
 		return lastTreeWidth;
 	}
 
@@ -823,7 +791,7 @@ public class PreferenceDialog extends Dialog implements
 	 */
 	protected void layoutTreeAreaControl(Control control) {
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
-		gd.widthHint = getLastTreeWidth();
+		gd.widthHint = getLastRightWidth();
 		gd.verticalSpan = 1;
 		control.setLayoutData(gd);
 	}
@@ -1331,4 +1299,18 @@ public class PreferenceDialog extends Dialog implements
 		getTreeViewer().getControl().setFont(dialogFont);
 	}
 
+	/**
+	 * Returns the currentPage.
+	 * @return 
+	 */
+	protected IPreferencePage getCurrentPage() {
+		return currentPage;
+	}
+	/**
+	 * Sets the current page.
+	 * @param currentPage
+	 */
+	protected void setCurrentPage(IPreferencePage currentPage) {
+		this.currentPage = currentPage;
+	}
 }
