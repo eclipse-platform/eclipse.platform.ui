@@ -13,7 +13,8 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
 import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
- * 
+ * Factory which produces <code>IBreakpointContainer</code>s based on some
+ * factory-specific criteria.
  */
 public interface IBreakpointContainerFactory {
 	
