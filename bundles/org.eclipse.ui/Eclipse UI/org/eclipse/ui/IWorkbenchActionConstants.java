@@ -217,6 +217,12 @@ public interface IWorkbenchActionConstants {
 	 * File menu: name of group for extra Save-like actions (value <code>"save.ext"</code>).
 	 */
 	public static final String SAVE_EXT = "save.ext";		// Group. //$NON-NLS-1$
+
+	/**
+	 * File menu: name of standard Print global action 
+	 * (value <code>"print"</code>).
+	 */
+	public static final String PRINT = "print"; 			// Global action. //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of standard Import action (value <code>"import"</code>).
@@ -419,6 +425,7 @@ public interface IWorkbenchActionConstants {
 		CUT,
 		COPY,
 		PASTE,
+		PRINT,
 		DELETE,
 		FIND,
 		SELECT_ALL,
