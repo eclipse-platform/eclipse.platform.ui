@@ -6,13 +6,15 @@ package org.eclipse.search.internal.ui;
 import java.util.Collections;
 import java.util.Iterator;
 
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -47,8 +49,14 @@ public class CopyToClipboardAction extends Action {
 			buf.append(labelProvider.getText(iter.next()));
 		}
 		
-		if (buf.length() > 0)
-			copyToClipbard(shell.getDisplay(), buf.toString());
+		if (buf.length() > 0) {
+			Clipboard clipboard= new Clipboard(shell.getDisplay());
+			try {
+				copyToClipbard(clipboard, buf.toString(), shell);
+			} finally {
+				clipboard.dispose();
+			}
+		}
 	}
 
 	private Iterator getSelection() {
@@ -58,8 +66,16 @@ public class CopyToClipboardAction extends Action {
 		return Collections.EMPTY_LIST.iterator();
 	}
 
-	private void copyToClipbard(Display display, String str) {
-		Clipboard clipboard = new Clipboard(display);
-		clipboard.setContents(new String[] { str },	new Transfer[] { TextTransfer.getInstance()});			
+	private void copyToClipbard(Clipboard clipboard, String str, Shell shell) {
+		try {
+			clipboard.setContents(new String[] { str },	new Transfer[] { TextTransfer.getInstance() });			
+		} catch (SWTError ex) {
+			if (ex.code != DND.ERROR_CANNOT_SET_CLIPBOARD)
+				throw ex;
+			String title= SearchMessages.getString("CopyToClipboardAction.error.title");  //$NON-NLS-1$
+			String message= SearchMessages.getString("CopyToClipboardAction.error.title"); //$NON-NLS-1$
+			if (MessageDialog.openQuestion(shell, title, message))
+				copyToClipbard(clipboard, str, shell);
+		}	
 	}
 }
