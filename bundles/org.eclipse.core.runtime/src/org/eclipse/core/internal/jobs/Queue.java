@@ -211,7 +211,6 @@ public class Queue {
 
 	/**
 	 * Removes an returns the item at the head of the queue.
-	 * @return
 	 */
 	public Object dequeue() {
 		if (isEmpty())
