@@ -30,13 +30,6 @@
             class="org.eclipse.core.tests.internal.preferences.TestScope"/>
    </extension>
    <extension
-         point="org.eclipse.core.runtime.urlHandlers">
-      <handler
-            class="org.eclipse.core.tests.runtime.stream.Handler"
-            protocol="stream">
-      </handler>
-   </extension>
-   <extension
          point="org.eclipse.core.runtime.contentTypes">      
       <content-type      
             name="My Content Type"
