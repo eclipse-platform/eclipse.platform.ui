@@ -31,7 +31,7 @@ public BuildManager(Workspace workspace) {
 	}
 }
 
-void basicBuild(final IProject project, final int trigger, final IncrementalProjectBuilder builder, final Map args, final MultiStatus status, final IProgressMonitor monitor) {
+void basicBuild(final int trigger, final IncrementalProjectBuilder builder, final Map args, final MultiStatus status, final IProgressMonitor monitor) {
 	try {
 		// want to invoke some methods not accessible via IncrementalProjectBuilder
 		currentBuilder = (InternalBuilder) builder;
@@ -137,7 +137,7 @@ void basicBuild(IProject project, int trigger, String builderName, Map args, Mul
 	if (message == null)
 		message = Policy.bind("events.invoking.1", project.getFullPath().toString());
 	monitor.subTask(message);
-	basicBuild(project, trigger, builder, args, status, monitor);
+	basicBuild(trigger, builder, args, status, monitor);
 }
 public void build(IProject project, int trigger, IProgressMonitor monitor) throws CoreException {
 	if (!canRun(trigger))
@@ -200,7 +200,6 @@ public Map createBuildersPersistentInfo(IProject project) throws CoreException {
 	Hashtable instantiatedBuilders = getBuilders(project);
 	for (int i = 0; i < buildCommands.length; i++) {
 		String builderName = buildCommands[i].getBuilderName();
-		ElementTree tree = null;
 		BuilderPersistentInfo info = null;
 		IncrementalProjectBuilder builder = (IncrementalProjectBuilder) instantiatedBuilders.get(builderName);
 		if (builder == null) {

@@ -239,8 +239,6 @@ protected void rehashTo(int anIndex) {
  * nothing if no such node exists in the map.
  */
 public void remove(long idToRemove) {
-	int hash = hashFor(idToRemove) % ids.length;
-	
 	int indexToRemove = getIndex(idToRemove);
 	if (indexToRemove < 0)
 		return;

@@ -425,7 +425,6 @@ public static int findOldest(ElementTree[] trees) {
 
 		/* remove all of this element's parents from the list of candidates*/
 		ElementTree parent = current.getParent();
-		int count = 0;
 
 		/* walk up chain until we hit the root or a tree we have already tested */
 		while (parent != null && parent != oldestSoFar) {

@@ -185,7 +185,7 @@ protected void collapseTrees() throws CoreException {
 		return;
 
 	for (int i = 1; i < sorted.length; i++) {
-		ElementTree oldTree = sorted[i].collapseTo(sorted[i - 1]);
+		sorted[i].collapseTo(sorted[i - 1]);
 	}
 }
 protected void commit(Map contexts) throws CoreException {
@@ -927,7 +927,6 @@ protected void writeTree(Project project, int depth) throws CoreException {
 	try {
 		SafeFileOutputStream safe = new SafeFileOutputStream(treeLocation.toOSString(), tempLocation.toOSString());
 		try {
-			ElementTreeWriter writer = new ElementTreeWriter(this);
 			DataOutputStream output = new DataOutputStream(safe);
 			output.writeInt(ICoreConstants.WORKSPACE_TREE_VERSION_2);
 			writeTree(project, output, null);

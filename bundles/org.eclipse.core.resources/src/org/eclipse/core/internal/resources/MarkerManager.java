@@ -63,7 +63,6 @@ private void basicAdd(IResource resource, MarkerSet markers, MarkerInfo[] newMar
 	IMarkerDelta[] changes = new IMarkerDelta[newMarkers.length];
 	for (int i = 0; i < newMarkers.length; i++) {
 		MarkerInfo newMarker = newMarkers[i];
-		MarkerInfo original = null;
 		// should always be a new marker.
 		if (newMarker.getId() != MarkerInfo.UNDEFINED_ID) {
 			String message = Policy.bind("resources.changeInAdd");

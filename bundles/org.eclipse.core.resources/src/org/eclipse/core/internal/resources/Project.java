@@ -644,7 +644,6 @@ protected void internalCopyToFolder(IPath destPath, boolean force, IProgressMoni
 			// and assert for programming errors. See checkCopyRequirements for more information.
 			assertCopyRequirements(destPath, IResource.FOLDER);
 			IFolder destFolder = workspace.getRoot().getFolder(destPath);
-			IProjectDescription description = internalGetDescription();
 			workspace.changing(this);
 
 			workspace.beginOperation(true);
@@ -826,7 +825,6 @@ protected void internalMoveToFolder(IPath destPath, boolean force, IProgressMoni
 			// and assert for programming errors. See checkMoveRequirements for more information.
 			assertMoveRequirements(destPath, IResource.FOLDER);
 			IFolder destFolder = workspace.getRoot().getFolder(destPath);
-			IProjectDescription description = internalGetDescription();
 			workspace.changing(this);
 
 			workspace.beginOperation(true);

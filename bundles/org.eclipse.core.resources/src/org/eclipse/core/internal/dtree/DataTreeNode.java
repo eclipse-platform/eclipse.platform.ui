@@ -199,7 +199,6 @@ protected static AbstractDataTreeNode[] forwardDeltaWith(AbstractDataTreeNode[] 
 	// do a merge
 	int oldIndex = 0;
 	int newIndex = 0;
-	int resultIndex = 0;
 	while (oldIndex < oldNodes.length && newIndex < newNodes.length) {
 		String oldName = oldNodes[oldIndex].name;
 		String newName = newNodes[newIndex].name;
