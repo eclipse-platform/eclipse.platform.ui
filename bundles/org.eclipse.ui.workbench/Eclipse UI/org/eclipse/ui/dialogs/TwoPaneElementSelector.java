@@ -249,12 +249,6 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 		
 		return null;
 	}
-		
-	private void updateOkState() {
-		Button okButton= getOkButton();
-		if (okButton != null)
-			okButton.setEnabled(getSelectedElements().length != 0);
-	}
 	
 	private void updateLowerListWidget(Object[] elements) {
 		int length= elements.length;

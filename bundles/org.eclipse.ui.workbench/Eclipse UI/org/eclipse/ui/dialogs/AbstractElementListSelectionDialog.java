@@ -9,9 +9,14 @@
  *   IBM Corporation - initial API and implementation 
  *   Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  *     font should be activated and used by other components.
- ******************************************************************************/ 
+ ******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.KeyEvent;
@@ -19,20 +24,13 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.ILabelProvider;
-
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -467,6 +465,17 @@ public abstract class AbstractElementListSelectionDialog
 		fMessage.setEnabled(false);
 		fFilterText.setEnabled(false);
 		fFilteredList.setEnabled(false);
+		updateOkState();
 	}
 
+	/**
+		 * Update the enablement of the OK button based on whether or not there
+		 * is a selection.
+		 *
+		 */
+	protected void updateOkState() {
+		Button okButton = getOkButton();
+		if (okButton != null)
+			okButton.setEnabled(getSelectedElements().length != 0);
+	}
 }
