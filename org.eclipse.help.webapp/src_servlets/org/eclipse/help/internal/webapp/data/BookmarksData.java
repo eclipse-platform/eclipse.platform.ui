@@ -121,12 +121,12 @@ public class BookmarksData extends RequestData {
 	 */
 	private static String encode(String s) {
 		s = TString.change(s, "\\", "\\escape");
-		s = TString.change(s, ",", "\\coma");
+		s = TString.change(s, ",", "\\comma");
 		return TString.change(s, "|", "\\pipe");
 	}
 	private static String decode(String s) {
 		s = TString.change(s, "\\pipe", "|");
-		s = TString.change(s, "\\coma", ",");
+		s = TString.change(s, "\\comma", ",");
 		return TString.change(s, "\\escape", "\\");
 	}
 }
