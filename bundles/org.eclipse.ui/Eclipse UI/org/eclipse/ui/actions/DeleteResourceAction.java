@@ -75,10 +75,12 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			String text1;
 			if (projects.size() == 1) {
 				IProject project = (IProject) projects.get(0);
-				text1 = WorkbenchMessages.format("DeleteResourceAction.deleteContents1", new Object[] { project.getLocation().toOSString() });  //$NON-NLS-1$
-			}
-			else {
-				text1 = WorkbenchMessages.format("DeleteResourceAction.deleteContentsN", new Object[] { new Integer(projects.size()) });  //$NON-NLS-1$
+				if(project == null || project.getLocation() == null)
+					text1 = WorkbenchMessages.getString("DeleteResourceAction.deleteContentsN");  //$NON-NLS-1$
+				else
+					text1 = WorkbenchMessages.format("DeleteResourceAction.deleteContents1", new Object[] { project.getLocation().toOSString() });  //$NON-NLS-1$
+			} else {
+				text1 = WorkbenchMessages.getString("DeleteResourceAction.deleteContentsN");  //$NON-NLS-1$
 			}
 			radio1.setText(text1);
 
