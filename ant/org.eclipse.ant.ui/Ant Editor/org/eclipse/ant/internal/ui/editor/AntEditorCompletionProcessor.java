@@ -796,7 +796,6 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
      * @param anOffset the cursor position
      */
     protected String getPrefixFromDocument(String aDocumentText, int anOffset) {
-        
         int startOfWordToken = anOffset;
         
         char token= 'a';
@@ -811,6 +810,9 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
         			|| ';' == token)
                 && !('$' == token)) {
             startOfWordToken--;
+            if (startOfWordToken == 0) {
+            	break; //word goes right to the beginning of the doc
+            }
 			token= aDocumentText.charAt(startOfWordToken - 1);
         }
         
