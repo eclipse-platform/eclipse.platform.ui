@@ -35,10 +35,14 @@ public class NewExtensionLocationAction extends Action {
 		String dir = dialog.open();
 		while (dir != null) {
 			File dirFile = new File(dir);
-			boolean valid = isExtensionRoot(dirFile);
-			if (valid) {
-				addExtensionLocation(dirFile);
-				return;
+			if (isExtensionRoot(dirFile)) {
+				if (addExtensionLocation(dirFile))
+					return;
+				else {
+					// re-open the directory dialog
+					dialog.setFilterPath(dir);
+					dir = dialog.open();
+				}	
 			} else {
 				MessageDialog.openInformation(
 					UpdateUI.getActiveWorkbenchShell(),
@@ -46,6 +50,7 @@ public class NewExtensionLocationAction extends Action {
 						"NewExtensionLocationAction.extInfoTitle"),
 					UpdateUI.getString(
 						"NewExtensionLocationAction.extInfoMessage"));
+				// re-open the directory dialog
 				dialog.setFilterPath(dir);
 				dir = dialog.open();
 			}
@@ -59,7 +64,7 @@ public class NewExtensionLocationAction extends Action {
 		return true;
 	}
 
-	private void addExtensionLocation(File dir) {
+	private boolean addExtensionLocation(File dir) {
 		try {
 			IInstallConfiguration config =
 			UpdateUtils.createInstallConfiguration();
@@ -68,11 +73,12 @@ public class NewExtensionLocationAction extends Action {
 			UpdateUtils.makeConfigurationCurrent(config, null);
 			UpdateUtils.saveLocalSite();
 			UpdateUI.requestRestart();
-			
+			return true;
 		} catch (CoreException e) {
 			String title = UpdateUI.getString("InstallWizard.TargetPage.location.error.title"); //$NON-NLS-1$
 			ErrorDialog.openError(UpdateUI.getActiveWorkbenchShell(), title, null, e.getStatus());
 			UpdateUI.logException(e,false);
+			return false;
 		}
 	}
 
