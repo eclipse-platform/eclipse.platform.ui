@@ -441,7 +441,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (this.activeWorkbenchPartContextActivationService != null)
 			activeContextIds.addAll(this.activeWorkbenchPartContextActivationService.getActiveContextIds());
 			
-		((ContextManager) getContextManager()).setActiveContextIds(activeContextIds);
+		((ContextManager) getContextManager()).setActiveContextIds(new ArrayList(activeContextIds));
 	}
 	
 	/* end command and context support */

@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.contexts;
 
+import java.util.List;
 import java.util.SortedSet;
 
 /**
@@ -41,7 +42,7 @@ public interface IContextManager {
 	 *
 	 * @return
 	 */
-	SortedSet getActiveContextIds();
+	List getActiveContextIds();
 
 	/**
 	 * JAVADOC

@@ -11,7 +11,7 @@
 
 package org.eclipse.ui.commands;
 
-import java.util.SortedSet;
+import java.util.List;
 
 /**
  * <p>
@@ -51,7 +51,7 @@ public interface ICommand extends Comparable {
 	 * 
 	 * @return
 	 */	
-	SortedSet getContextBindingSet()
+	List getContextBindings()
 		throws NotDefinedException;
 
 	/**
@@ -82,7 +82,7 @@ public interface ICommand extends Comparable {
 	 * 
 	 * @return
 	 */	
-	SortedSet getImageBindingSet()
+	List getImageBindings()
 		throws NotDefinedException;
 
 	/**
@@ -90,7 +90,7 @@ public interface ICommand extends Comparable {
 	 * 
 	 * @return
 	 */	
-	SortedSet getKeyBindingSet()
+	List getKeyBindings()
 		throws NotDefinedException;	
 	
 	/**
@@ -106,7 +106,7 @@ public interface ICommand extends Comparable {
 	 * 
 	 * @return
 	 */	
-	// TODO: remove: boolean isActive();
+	boolean isActive();
 
 	/**
 	 * JAVADOC
@@ -114,13 +114,6 @@ public interface ICommand extends Comparable {
 	 * @return
 	 */	
 	boolean isDefined();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isInContext();
 	
 	/**
 	 * Unregisters an ICommandListener instance with this command.

@@ -180,8 +180,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 	}
 
 	public void update() {
-		SortedSet activeContextIds = contextManager.getActiveContextIds();
-		List contexts = new ArrayList(activeContextIds);
+		List contexts = new ArrayList(contextManager.getActiveContextIds());
 		// TODO: contexts should be sorted somehow to resolve conflicts
 		SequenceMachine keyMachine = Manager.getInstance().getKeyMachine();      		
 			
@@ -292,7 +291,7 @@ public class ContextAndHandlerManager implements IContextResolver {
 			Set contextIds = (Set) contextsByCommand.get(commandId);
 		
 			if (contextIds != null) {
-				SortedSet activeContextIds = contextManager.getActiveContextIds();			
+				List activeContextIds = contextManager.getActiveContextIds();			
 				Iterator iterator = contextIds.iterator();
 				
 				while (iterator.hasNext()) {

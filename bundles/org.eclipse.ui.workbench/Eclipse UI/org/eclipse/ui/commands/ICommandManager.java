@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.commands;
 
+import java.util.List;
 import java.util.SortedSet;
 
 /**
@@ -41,14 +42,7 @@ public interface ICommandManager {
 	 *
 	 * @return
 	 */
-	// TODO: remove, keybindings should not distinguish between inactive and active commands: SortedSet getActiveCommandIds();
-
-	/**
-	 * JAVADOC
-	 *
-	 * @return
-	 */
-	SortedSet getActiveContextIds();
+	List getActiveContextIds();
 
 	/**
 	 * JAVADOC

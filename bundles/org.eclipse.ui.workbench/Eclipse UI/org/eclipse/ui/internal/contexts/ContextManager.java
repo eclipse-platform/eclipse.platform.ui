@@ -47,7 +47,7 @@ public final class ContextManager implements IContextManager {
 		return instance;
 	}
 
-	private SortedSet activeContextIds = new TreeSet();
+	private List activeContextIds = new ArrayList();
 	private IContextManagerEvent contextManagerEvent;
 	private List contextManagerListeners;
 	private SortedMap contextDefinitionsById = new TreeMap();
@@ -92,8 +92,8 @@ public final class ContextManager implements IContextManager {
 			contextManagerListeners.add(contextManagerListener);
 	}
 
-	public SortedSet getActiveContextIds() {
-		return Collections.unmodifiableSortedSet(activeContextIds);
+	public List getActiveContextIds() {
+		return Collections.unmodifiableList(activeContextIds);
 	}
 
 	public IContext getContext(String contextId) {
@@ -127,10 +127,10 @@ public final class ContextManager implements IContextManager {
 		}
 	}
 
-	public void setActiveContextIds(SortedSet activeContextIds) {
+	public void setActiveContextIds(List activeContextIds) {
 		activeContextIds = Util.safeCopy(activeContextIds, String.class);
 		SortedSet contextChanges = new TreeSet();
-		Util.diff(activeContextIds, this.activeContextIds, contextChanges, contextChanges);
+		Util.diff(new TreeSet(activeContextIds), new TreeSet(this.activeContextIds), contextChanges, contextChanges);
 		
 		if (!contextChanges.isEmpty()) {
 			this.activeContextIds = activeContextIds;	
