@@ -52,12 +52,6 @@ public class VariableViewsPreferencePage extends FieldEditorPreferencePage imple
 		
 		createSpacer(getFieldEditorParent(), 1);
 		
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SHOW_TYPE_NAMES, DebugPreferencesMessages.getString("VariableViewPreferencePage.Show_type_&names_by_default_2"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_SHOW_DETAIL_PANE, DebugPreferencesMessages.getString("VariableViewPreferencePage.&Show_detail_pane_by_default_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
-		addField(new BooleanFieldEditor(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP, DebugPreferencesMessages.getString("VariableViewsPreferencePage.Use_word_&wrap_in_detail_pane_1"), SWT.NONE, getFieldEditorParent())); //$NON-NLS-1$
-		
-		createSpacer(getFieldEditorParent(), 1);
-		
 		addField(new RadioGroupFieldEditor(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION,
 					DebugPreferencesMessages.getString("VariableViewsPreferencePage.Orientation_of_detail_pane_in_variables_view_1"), //$NON-NLS-1$
 					1,

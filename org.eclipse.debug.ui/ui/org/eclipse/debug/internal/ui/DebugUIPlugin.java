@@ -299,7 +299,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		prefs.setDefault(IDebugUIConstants.PREF_SHOW_DEBUG_PERSPECTIVE_DEFAULT, IDebugUIConstants.ID_DEBUG_PERSPECTIVE);
 		prefs.setDefault(IDebugUIConstants.PREF_SHOW_RUN_PERSPECTIVE_DEFAULT, IDebugUIConstants.PERSPECTIVE_NONE);
 		prefs.setDefault(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES, false);
-		prefs.setDefault(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, false);
+		prefs.setDefault(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, true);
 		prefs.setDefault(IDebugUIConstants.PREF_REUSE_EDITOR, true);
 		
 		//ConsolePreferencePage
@@ -320,10 +320,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		
 		//VariableViewsPreferencePage
 		prefs.setDefault(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION, IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_UNDERNEATH);
-		prefs.setDefault(IDebugUIConstants.PREF_SHOW_DETAIL_PANE, false);
-		prefs.setDefault(IDebugUIConstants.PREF_SHOW_TYPE_NAMES, false);
-		prefs.setDefault(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP, false);
 		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CHANGED_VARIABLE_RGB, new RGB(255, 0, 0));
+		prefs.setDefault(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP, false);
+		
+		// Variable/Expression view default settings
+		prefs.setDefault(IDebugUIConstants.ID_VARIABLE_VIEW + '+' + "org.eclipse.debug.ui.ShowDetailPaneAction", true); //$NON-NLS-1$
+		prefs.setDefault(IDebugUIConstants.ID_EXPRESSION_VIEW + '+' + "org.eclipse.debug.ui.ShowDetailPaneAction", true); //$NON-NLS-1$
+		prefs.setDefault(IDebugUIConstants.ID_VARIABLE_VIEW + '+' + "org.eclipse.debug.ui.ShowTypeNamesAction", false); //$NON-NLS-1$
+		prefs.setDefault(IDebugUIConstants.ID_EXPRESSION_VIEW + '+' + "org.eclipse.debug.ui.ShowTypeNamesAction", false);		 //$NON-NLS-1$
 	}
 
 	protected IProcess getProcessFromInput(Object input) {

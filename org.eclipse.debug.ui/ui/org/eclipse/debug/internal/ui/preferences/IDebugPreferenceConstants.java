@@ -98,7 +98,16 @@ public interface IDebugPreferenceConstants {
 	public static final String DIALOG_HEIGHT = IDebugUIConstants.PLUGIN_ID + ".DIALOG_HEIGHT"; //$NON-NLS-1$
 	public static final String DIALOG_SASH_WEIGHTS_1 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_1"; //$NON-NLS-1$
 	public static final String DIALOG_SASH_WEIGHTS_2 = IDebugUIConstants.PLUGIN_ID + ".DIALOG_SASH_WEIGHTS_2"; //$NON-NLS-1$
-	
+
+
+	/**
+	 * Boolean preference controlling whether the text in the detail panes is
+	 * wrapped. When <code>true</code> the text in the detail panes will be
+	 * wrapped in new variable view.
+	 *
+	 * @since 2.1
+	 */
+	public static final String PREF_DETAIL_PANE_WORD_WRAP = IDebugUIConstants.PLUGIN_ID + ".detail_pane_word_wrap"; //$NON-NLS-1$	
 }
 
 

@@ -469,8 +469,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			setDetailPaneOrientation(DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugPreferenceConstants.VARIABLES_DETAIL_PANE_ORIENTATION));
 		} else if (propertyName.equals(IDebugPreferenceConstants.CHANGED_VARIABLE_RGB)) {
 			getEventHandler().refresh();
-		} else if (propertyName.equals(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP)) {
-			toggleDetailPaneWordWrap(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
 		} else if (propertyName.equals(IInternalDebugUIConstants.DETAIL_PANE_FONT)) {
 			getDetailViewer().getTextWidget().setFont(JFaceResources.getFont(IInternalDebugUIConstants.DETAIL_PANE_FONT));			
 		}
@@ -519,7 +517,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		getDetailDocument().addDocumentListener(getDetailDocumentListener());
 		detailsViewer.setEditable(false);
 		getSashForm().setMaximizedControl(variablesViewer.getControl());
-		toggleDetailPaneWordWrap(DebugUIPlugin.getDefault().getPluginPreferences().getBoolean(IDebugUIConstants.PREF_DETAIL_PANE_WORD_WRAP));
 		
 		detailsViewer.getSelectionProvider().addSelectionChangedListener(getDetailSelectionChangedListener());
 
@@ -681,7 +678,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	protected void createActions() {
 		IAction action = new ShowTypesAction(this);
-		action.setChecked(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SHOW_TYPE_NAMES));
 		setAction("ShowTypeNames",action); //$NON-NLS-1$
 				
 		action = new ChangeVariableValueAction(getViewer());
@@ -690,7 +686,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		setAction(DOUBLE_CLICK_ACTION, action);
 		
 		action = new ShowDetailPaneAction(this);
-		action.setChecked(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SHOW_DETAIL_PANE));
 		setAction("ShowDetailPane", action); //$NON-NLS-1$
 	
 		//detail specific actions

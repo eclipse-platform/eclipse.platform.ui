@@ -534,9 +534,10 @@
                label="%DetailPaneWordWrapAction.label"
                helpContextId="java_variables_detail_pane_word_wrap_action_context"
                tooltip="%DetailPaneWordWrapAction.tooltip"
-               class="org.eclipse.debug.internal.ui.views.variables.JavaVariablesDetailPaneWordWrapAction"
+               class="org.eclipse.debug.internal.ui.views.variables.DetailPaneWordWrapAction"
                menubarPath="viewActions"
-               id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap">
+               id="org.eclipse.debug.ui.variableViewActions.toolbar.detailPaneWordWrap"
+               state="false">
          </action>
       </viewContribution>
       <viewContribution
@@ -574,9 +575,10 @@
                label="%DetailPaneWordWrapAction.label"
                helpContextId="java_variables_detail_pane_word_wrap_action_context"
                tooltip="%DetailPaneWordWrapAction.tooltip"
-               class="org.eclipse.debug.internal.ui.views.variables.JavaVariablesDetailPaneWordWrapAction"
+               class="org.eclipse.debug.internal.ui.views.variables.DetailPaneWordWrapAction"
                menubarPath="viewActions"
-               id="org.eclipse.debug.ui.expresssionsView.toolbar.detailPaneWordWrap">
+               id="org.eclipse.debug.ui.expresssionsView.toolbar.detailPaneWordWrap"
+               state="false">
          </action>
       </viewContribution>
    </extension>

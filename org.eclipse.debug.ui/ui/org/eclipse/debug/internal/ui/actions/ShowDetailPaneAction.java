@@ -21,7 +21,7 @@ public class ShowDetailPaneAction extends Action {
 	private VariablesView fVariablesView;
 
 	public ShowDetailPaneAction(VariablesView view) {
-		super(ActionMessages.getString("ShowDetailPaneAction.Show_Variable_Detail_Pane_1")); //$NON-NLS-1$
+		super(ActionMessages.getString("ShowDetailPaneAction.Show_Variable_Detail_Pane_1"), Action.AS_CHECK_BOX); //$NON-NLS-1$
 		setVariablesView(view);
 		setToolTipText(ActionMessages.getString("ShowDetailPaneAction.Show_detail_pane_2")); //$NON-NLS-1$
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE));
