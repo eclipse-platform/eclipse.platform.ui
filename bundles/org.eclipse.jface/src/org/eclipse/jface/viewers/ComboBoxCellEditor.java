@@ -1,14 +1,15 @@
-package org.eclipse.jface.viewers;
-
-/**********************************************************************
-Copyright (c) 2000, 2002 International Business Machines Corp and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
+/************************************************************************
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
+http://www.eclipse.org/legal/cpl-v10.html
+
 Contributors:
-**********************************************************************/
+	IBM - Initial implementation
+************************************************************************/
+
+package org.eclipse.jface.viewers;
 
 import java.text.MessageFormat;
 
@@ -16,6 +17,7 @@ import org.eclipse.jface.util.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -179,13 +181,21 @@ protected void doSetFocus() {
 /**
  * The <code>ComboBoxCellEditor</code> implementation of
  * this <code>CellEditor</code> framework method sets the 
- * minimum width of the cell to 50 pixels to make sure the
- * arrow button and some text is visible. The list of CCombo
- * will be wide enough to show its longest item.
+ * minimum width of the cell.  The minimum width is 10 characters
+ * if <code>comboBox</code> is not <code>null</code> or <code>disposed</code>
+ * eles it is 60 pixels to make sure the arrow button and some text is visible.
+ * The list of CCombo will be wide enough to show its longest item.
  */
 public LayoutData getLayoutData() {
 	LayoutData layoutData = super.getLayoutData();
-	layoutData.minimumWidth = 50;
+	if ((comboBox == null) || comboBox.isDisposed())
+		layoutData.minimumWidth = 60;
+	else {
+		// make the comboBox 10 characters wide
+		GC gc = new GC(comboBox);
+		layoutData.minimumWidth = (gc.getFontMetrics().getAverageCharWidth() * 10) + 10;
+		gc.dispose();
+	}
 	return layoutData;
 }
 
