@@ -70,12 +70,21 @@ public class UpdateErrorHandler extends ResponseHandler {
 					String filename = message.substring(0, message.indexOf(' '));
 					updateMessageListener.fileDoesNotExist(filename);
 				}
-			} else if (message.startsWith("conflict:") && message.endsWith("created independently by second party")) {
-				// cvs server: conflict: folder/file.ext created independently by second party 
-				// If we get the above line, we have conflicting additions and we can expect a server error.
-				// We still get "C foler/file.ext" so we don't need to do anything else
+			} else if (message.startsWith("conflict:")) {
+				/*
+				 * We can get the following conflict warnings
+				 *    cvs server: conflict: folder/file.ext created independently by second party 
+				 *    cvs server: conflict: removed file.txt was modified by second party
+				 *    cvs server: conflict: file.txt is modified but no longer in the repository
+				 * If we get the above line, we have conflicting additions and we can expect a server error.
+				 * We still get "C foler/file.ext" so we don't need to do anything else
+				 */
 				if (updateMessageListener != null) {
 					updateMessageListener.expectError();
+					if (message.endsWith("is modified but no longer in the repository")) {
+						String filename = message.substring(10, message.indexOf(' ', 10));
+						updateMessageListener.fileDoesNotExist(filename);
+					}
 				}
 			} else if (!message.startsWith("cannot open directory")
 					&& !message.startsWith("nothing known about")) {

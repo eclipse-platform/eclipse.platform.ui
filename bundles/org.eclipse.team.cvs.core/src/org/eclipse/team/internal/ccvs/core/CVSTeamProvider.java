@@ -672,6 +672,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 		checkIsChild(resource);
 		ICVSResource managed = getChild(resource);
 		ICVSRemoteResource remote = getRemoteResource(resource);
+		ICVSRemoteResource baseTree = null;
 		if (remote == null) {
 			// The resource doesn't have a remote base. 
 			// However, we still need to check to see if its been created remotely by a third party.
@@ -692,19 +693,18 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				}
 			}
 		} else if(resource.getType() == IResource.FILE) {
-			if(!((RemoteFile)remote).updateRevision(tag, progress)) {
-				// If updateRevision returns false then the resource no longer exists remotely
-				remote = null;
-			}
+			baseTree = remote;
+			remote = RemoteFile.getLatest((RemoteFolder)getRemoteResource(resource.getParent()), (ICVSFile)managed, tag, progress);
 		} else {
 			try {
 				ICVSRepositoryLocation location = remote.getRepository();
+				baseTree = RemoteFolderTreeBuilder.buildBaseTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
 				remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);		
 			} catch(CVSException e) {
 				throw new TeamException(new CVSStatus(IStatus.ERROR, 0, resource.getProjectRelativePath(), "Error retrieving remote resource tree", e));
 			}
 		}
-		return new CVSRemoteSyncElement(true /* ignore base tree */, resource, null, remote);
+		return new CVSRemoteSyncElement(baseTree==null, resource, baseTree, remote);
 	}
 	
 	/**

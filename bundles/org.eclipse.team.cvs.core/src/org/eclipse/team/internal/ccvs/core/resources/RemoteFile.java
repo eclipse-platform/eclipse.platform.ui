@@ -58,6 +58,28 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 	}
 	
 	/**
+	 * Static method which creates a file as a single child of its parent.
+	 * This should only be used when one is only interested in the file alone.
+	 * 
+	 * The returned RemoteFile represents the latest remote revision corresponding to the local resource.
+	 * If the local resource does not have a base, then null is returned
+	 * even if the resource does exists remotely (e.g. created by another party).
+	 */
+	public static RemoteFile getLatest(RemoteFolder parent, ICVSFile managed, CVSTag tag, IProgressMonitor monitor) throws CVSException {
+		ResourceSyncInfo info = managed.getSyncInfo();
+		if ((info == null) || info.isAdded()) {
+			// Either the file is unmanaged or has just been added (i.e. doesn't necessarily have a remote)
+			return null;
+		}
+		RemoteFile file = new RemoteFile(parent, managed.getSyncInfo());
+		parent.setChildren(new ICVSRemoteResource[] {file});
+		if( ! file.updateRevision(tag, monitor)) {
+			// If updateRevision returns false then the resource no longer exists remotely
+			return null;
+		}
+		return file;
+	}
+	/**
 	 * Constructor for RemoteFile that should be used when nothing is know about the
 	 * file ahead of time.
 	 */

@@ -90,6 +90,11 @@ public class RemoteFolderTreeBuilder {
 		updateLocalOptions = (String[])localOptions.toArray(new String[localOptions.size()]);
 	}
 	
+	public static RemoteFolderTree buildBaseTree(CVSRepositoryLocation repository, ICVSFolder root, CVSTag tag, IProgressMonitor monitor) throws CVSException {
+		RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, root, tag);
+ 		return builder.buildBaseTree(null, root, monitor);
+	}
+	
 	public static RemoteFolderTree buildRemoteTree(CVSRepositoryLocation repository, IContainer root, CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		return buildRemoteTree(repository, Client.getManagedFolder(root.getLocation().toFile()), tag, monitor);
 	}
@@ -98,7 +103,7 @@ public class RemoteFolderTreeBuilder {
 		RemoteFolderTreeBuilder builder = new RemoteFolderTreeBuilder(repository, root, tag);
  		return builder.buildTree(monitor);
 	}
-	 
+	
 	private RemoteFolderTree buildTree(IProgressMonitor monitor) throws CVSException {
 		Connection connection = repository.openConnection();
 		try {
@@ -118,6 +123,48 @@ public class RemoteFolderTreeBuilder {
 		} finally {
 			connection.close();
 		}
+	}
+	
+	/*
+	 * Build the base remote tree from the local tree.
+	 * 
+	 * The localPath is used to retrieve deltas from the recorded deltas
+	 * 
+	 */
+	private RemoteFolderTree buildBaseTree(RemoteFolderTree parent, ICVSFolder local, IProgressMonitor monitor) throws CVSException {
+		
+		// Create a remote folder tree corresponding to the local resource
+		RemoteFolderTree remote = new RemoteFolderTree(parent, repository, new Path(local.getFolderSyncInfo().getRepository()), tag);
+		
+		// Create a List to contain the created children
+		List children = new ArrayList();
+		
+		// Build the child folders corresponding to local folders base
+		ICVSFolder[] folders = local.getFolders();
+		for (int i=0;i<folders.length;i++) {
+			if (folders[i].isCVSFolder()) {
+				children.add(buildBaseTree(remote, folders[i], monitor));
+			}
+		}
+		
+		// Build the child files corresponding to local files base
+		ICVSFile[] files = local.getFiles();
+		for (int i=0;i<files.length;i++) {
+			ICVSFile file = files[i];
+			ResourceSyncInfo info = file.getSyncInfo();
+			// if there is no sync info then there is no base
+			if (info==null)
+				continue;
+			// There is no remote if the file was added
+			if (info.isAdded())
+				continue;
+			children.add(new RemoteFile(remote, info));
+		}
+
+		// Add the children to the remote folder tree
+		remote.setChildren((ICVSRemoteResource[])children.toArray(new ICVSRemoteResource[children.size()]));
+		
+		return remote;
 	}
 	
 	/*
@@ -217,7 +264,9 @@ public class RemoteFolderTreeBuilder {
 				buildRemoteTree(connection, localFolder, remoteFolder, localPath.append(name), monitor);
 				// Record any children that are empty
 				if (pruneEmptyDirectories() && remoteFolder.getChildren().length == 0) {
-					emptyChildren.add(remoteFolder);
+					// Only attempt to prune if the local folder is also empty
+					if ((localFolder == null) || (localFolder.getFiles().length == 0 && localFolder.getFolders().length == 0))
+						emptyChildren.add(remoteFolder);
 				}
 			}
 		}
