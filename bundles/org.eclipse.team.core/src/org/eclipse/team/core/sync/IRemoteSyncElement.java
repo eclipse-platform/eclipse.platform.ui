@@ -34,4 +34,11 @@ public interface IRemoteSyncElement extends ILocalSyncElement {
 	 * return <code>false</code>.
 	 */
 	public boolean isOutOfDate();
+	
+	/**
+	 * Answers <code>true</code> if the base tree is not to be considered during sync
+	 * comparisons and <code>false</code> if it should. If the base tree is ignored the
+	 * sync comparison can be based on isOutOfDate and isDirty methods only.
+	 */
+	public boolean ignoreBaseTree();
 }

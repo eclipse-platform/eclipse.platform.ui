@@ -48,7 +48,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 	 * 
 	 * @return a client specific sync element.
 	 */
-	public abstract IRemoteSyncElement create(IResource local, IRemoteResource base, IRemoteResource remote, Object data);
+	public abstract IRemoteSyncElement create(boolean ignoreBaseTree, IResource local, IRemoteResource base, IRemoteResource remote, Object data);
 		
 	/*
 	 * @see ILocalSyncElement#members()
@@ -63,7 +63,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 			remote != null ? remote.members(progress) : new IRemoteResource[0];
 			
 		IRemoteResource[] baseChildren =
-			base != null ? base.members(progress) : new IRemoteResource[0];
+			base != null && !ignoreBaseTree() ? base.members(progress) : new IRemoteResource[0];
 			
 		IResource[] localChildren;			
 		try {	
@@ -143,7 +143,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 				}
 
 				if(!localChild.exists() || !isIgnored(localChild)) {
-					syncChildren.add(create(localChild, baseChild, remoteChild, getData()));
+					syncChildren.add(create(ignoreBaseTree(), localChild, baseChild, remoteChild, getData()));
 				}
 			}
 			return (IRemoteSyncElement[]) syncChildren.toArray(new IRemoteSyncElement[syncChildren.size()]);
@@ -167,7 +167,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 		boolean isDirty = isDirty();
 		boolean isOutOfDate = isOutOfDate();
 	
-		boolean threeWay = (base != null ? true : false);
+		boolean threeWay = (base != null && !ignoreBaseTree() ? true : false);
 	
 
 		// XXX projects are always in sync.
