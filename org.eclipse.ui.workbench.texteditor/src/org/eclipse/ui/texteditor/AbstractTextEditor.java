@@ -4105,6 +4105,19 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see ITextEditor#selectAndReveal(int, int)
 	 */
 	public void selectAndReveal(int start, int length) {
+		selectAndReveal(start, length, start, length);
+	}
+	
+	/**
+	 * Selects and reveals the specified ranges in this text editor.
+	 * 
+	 * @param selectionStart the offset of the selection
+	 * @param selectionLength the length of the selection
+	 * @param revealStart the offset of the revealed range
+	 * @param revealLength the length of the revealed range
+	 * @since 3.0
+	 */
+	protected void selectAndReveal(int selectionStart, int selectionLength, int revealStart, int revealLength) {
 		if (fSourceViewer == null)
 			return;
 			
@@ -4118,10 +4131,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		StyledText widget= fSourceViewer.getTextWidget();
 		widget.setRedraw(false);
 		{
-			adjustHighlightRange(start, length);
+			adjustHighlightRange(revealStart, revealLength);
+			fSourceViewer.revealRange(revealStart, revealLength);
 			
-			fSourceViewer.revealRange(start, length);
-			fSourceViewer.setSelectedRange(start, length);
+			fSourceViewer.setSelectedRange(selectionStart, selectionLength);
 			
 			markInNavigationHistory();
 		}
