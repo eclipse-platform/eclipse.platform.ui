@@ -73,16 +73,12 @@ class SiteProvider extends DefaultContentProvider
 
 class SiteLabelProvider extends LabelProvider {
 	public String getText(Object obj) {
-		try {
 		if (obj instanceof IFeature) {
 			IFeature feature = (IFeature)obj;
 			return feature.getLabel();
 		}
 		if (obj instanceof CategorizedFeature) {
 			return ((CategorizedFeature)obj).getFeature().getLabel();
-		}
-		}
-		catch (CoreException e) {
 		}
 		return super.getText(obj);
 	}

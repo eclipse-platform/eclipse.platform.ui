@@ -99,12 +99,8 @@ public class SiteBookmark extends ModelObject implements IWorkbenchAdapter {
 		catalog = new Vector();
 		// Add all the categories
 		ICategory [] categories;
-		try {
-			categories = site.getCategories();
-		}
-		catch (CoreException e) {
-			categories = new ICategory[0];
-		}
+		categories = site.getCategories();
+
 		for (int i=0; i<categories.length; i++) {
 			ICategory category = categories[i];
 			addCategoryToCatalog(category);
@@ -151,12 +147,8 @@ public class SiteBookmark extends ModelObject implements IWorkbenchAdapter {
 	}
 	private void addFeatureToCatalog(IFeature feature) {
 		ICategory [] categories;
-		try {
-			categories = feature.getCategories();
-		}
-		catch (CoreException e) {
-			return;
-		}
+		categories = feature.getCategories();
+
 		for (int i=0; i<categories.length; i++) {
 			ICategory category = categories[i];
 			String name = category.getName();

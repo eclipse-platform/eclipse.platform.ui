@@ -251,7 +251,6 @@ private void inputChanged(IFeature feature) {
 	if (feature==null) feature = currentFeature;
 	if (feature==null) return;
 	
-	try {
 	setHeadingText(feature.getLabel());
 	providerLabel.setText(feature.getProvider());
 	versionLabel.setText(feature.getIdentifier().getVersion().toString());
@@ -281,9 +280,7 @@ private void inputChanged(IFeature feature) {
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 	doButton.setEnabled(!model.checklistContains(feature));
 	doButton.setVisible(true);
-	}
-	catch (CoreException e) {
-	}
+
 	currentFeature = feature;
 }
 

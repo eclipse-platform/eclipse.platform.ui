@@ -30,28 +30,9 @@ public class BrowserControlSite extends OleControlSite {
 	private Label webStatus;
 	private String presentationURL;
 	private boolean redirection;
-	private Vector navigateUpdate = new Vector();
 	
 	void setBrowser(WebBrowser browser) {
 		this.browser = browser;
-	}
-	
-	public void addUpdate(IUpdate update) {
-		if (navigateUpdate.contains(update)==false)
-		   navigateUpdate.add(update);
-	}
-	
-	public void removeUpdate(IUpdate update) {
-		if (navigateUpdate.contains(update))
-		   navigateUpdate.remove(update);
-	}
-	
-	void notifyUpdates() {
-		for (Iterator iter=navigateUpdate.iterator();
-			iter.hasNext();) {
-			IUpdate update = (IUpdate)iter.next();
-			update.update();
-		}
 	}
 	
 	void setStatusContainer(Composite statusContainer) {
@@ -98,7 +79,6 @@ public class BrowserControlSite extends OleControlSite {
 				   redirection = false;
 				else
 				   presentationURL = browser.getLocationURL();
-				notifyUpdates();
 			}
 		});
 

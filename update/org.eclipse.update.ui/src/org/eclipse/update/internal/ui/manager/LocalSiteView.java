@@ -16,6 +16,7 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.ICategory;
 import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.IImport;
 import org.eclipse.update.core.IInfo;
 import org.eclipse.update.core.IInstallConfiguration;
 import org.eclipse.update.core.IPluginEntry;
@@ -350,6 +351,13 @@ class FakeFeature implements IFeature {
 	 * @see IFeature#getCategories()
 	 */
 	public ICategory[] getCategories() {
+		return null;
+	}
+
+	/**
+	 * @see IFeature#getImports()
+	 */
+	public IImport[] getImports() {
 		return null;
 	}
 

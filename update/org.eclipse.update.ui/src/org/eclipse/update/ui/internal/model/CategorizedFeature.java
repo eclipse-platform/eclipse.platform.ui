@@ -14,11 +14,6 @@ public class CategorizedFeature extends PlatformObject {
 	}
 	
 	public String toString() {
-		try {
-			return feature.getLabel();
-		}
-		catch (CoreException e) {
-			return "??";
-		}
+		return feature.getLabel();
 	}
 }

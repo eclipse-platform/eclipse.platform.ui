@@ -133,7 +133,7 @@ public class BrowserPage implements IUpdateFormPage {
 		site.setStatusContainer(statusContainer);
 		site.addEventListener(WebBrowser.DownloadComplete, new OleListener() {
 			public void handleEvent(OleEvent event) {
-				String url = site.getPresentationURL();
+				String url = browser.getLocationURL();
 				if (url!=null) {
 			   		addressCombo.setText(url);
 			   		if (listener!=null)

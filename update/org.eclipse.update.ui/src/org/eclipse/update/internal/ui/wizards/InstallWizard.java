@@ -24,13 +24,8 @@ public class InstallWizard extends Wizard {
 	
 	private boolean hasLicense() {
 		IFeature feature = job.getFeature();
-		try {
-			IInfo info = feature.getLicense();
-			return info!=null;
-		}
-		catch (CoreException e) {
-			return false;
-		}
+		IInfo info = feature.getLicense();
+		return info!=null;
 	}
 
 	

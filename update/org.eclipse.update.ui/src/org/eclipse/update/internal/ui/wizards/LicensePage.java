@@ -35,12 +35,7 @@ public class LicensePage extends WizardPage {
 		
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		text.setLayoutData(gd);
-		try {
-			text.setText(job.getFeature().getLicense().getText());
-		}
-		catch (CoreException e) {
-			System.out.println(e);
-		}
+		text.setText(job.getFeature().getLicense().getText());
 		
 		final Button button = new Button(client, SWT.PUSH);
 		button.setText("&Accept");

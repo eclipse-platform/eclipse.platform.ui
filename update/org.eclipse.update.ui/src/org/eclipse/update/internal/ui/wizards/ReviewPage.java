@@ -48,36 +48,24 @@ public class ReviewPage extends WizardPage {
 		
 		label = new Label(client, SWT.NULL);
 		label.setFont(JFaceResources.getBannerFont());
-		try {
-			label.setText(job.getFeature().getLabel());
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			label.setLayoutData(gd);
-		}
-		catch (CoreException e) {
-		}
+		label.setText(job.getFeature().getLabel());
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		label.setLayoutData(gd);
 		label = new Label(client, SWT.NULL);
 		label.setText("Provider:");
 		label = new Label(client, SWT.NULL);
 		label.setFont(JFaceResources.getBannerFont());
-		try {
-			label.setText(job.getFeature().getProvider());
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			label.setLayoutData(gd);
-		}
-		catch (CoreException e) {
-		}
+		label.setText(job.getFeature().getProvider());
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		label.setLayoutData(gd);
 		label = new Label(client, SWT.NULL);
 		label.setText("Version:");
 		label = new Label(client, SWT.NULL);
 		label.setFont(JFaceResources.getBannerFont());
-		try {
-			label.setText(job.getFeature().getIdentifier().getVersion().toString());
-			gd = new GridData(GridData.FILL_HORIZONTAL);
-			label.setLayoutData(gd);
-		}
-		catch (CoreException e) {
-		}
-		
+		label.setText(job.getFeature().getIdentifier().getVersion().toString());
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		label.setLayoutData(gd);
+
 		label = new Label(client, SWT.NULL);
 		label.setText("\nIf that is correct, select Next to continue.");
 		gd = new GridData(GridData.FILL_HORIZONTAL);
