@@ -3,9 +3,8 @@
 	<name>org.eclipse.core.tests.harness</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.boot</project>
 		<project>org.eclipse.core.resources</project>
-		<project>org.eclipse.core.runtime</project>
+		<project>org.eclipse.core.runtime.compatibility</project>
 		<project>org.junit</project>
 	</projects>
 	<buildSpec>
