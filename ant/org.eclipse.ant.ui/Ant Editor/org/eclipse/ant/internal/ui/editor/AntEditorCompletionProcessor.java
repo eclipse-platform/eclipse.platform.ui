@@ -1287,12 +1287,16 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 
     /**
      * Returns the last occuring attribute string in the specified string.
+     * <code>null</code> is returned if no attribute string is available.
      * <P>
      * Calling this method is only safe if the current proposal mode is really
      * <code>PROPOSAL_MODE_ATTRIBUTE_VALUE_PROPOSAL</code>.
      */
     public static String getAttributeStringFromDocumentStringToPrefix(String docStringToPrefix) {
         int index = docStringToPrefix.lastIndexOf('=');
+        if (index == -1) {
+        	return null;
+        }
         String subString = docStringToPrefix.substring(0, index);
         subString = subString.trim();
         

@@ -116,9 +116,11 @@ public class AntPropertyNode extends AntTaskNode {
 	public String getReferencedElement(int offset) {
 		if (fReferencedName != null) {
 			String textToSearch= getAntModel().getText(getOffset(), offset - getOffset());
-			String attributeString = AntEditorCompletionProcessor.getAttributeStringFromDocumentStringToPrefix(textToSearch);
-			if ("file".equals(attributeString) || "resource".equals(attributeString)) {  //$NON-NLS-1$//$NON-NLS-2$
-				return fReferencedName;
+			if (textToSearch != null && textToSearch.length() != 0) {
+				String attributeString = AntEditorCompletionProcessor.getAttributeStringFromDocumentStringToPrefix(textToSearch);
+				if ("file".equals(attributeString) || "resource".equals(attributeString)) {  //$NON-NLS-1$//$NON-NLS-2$
+					return fReferencedName;
+				}
 			}
         }
         return null;
