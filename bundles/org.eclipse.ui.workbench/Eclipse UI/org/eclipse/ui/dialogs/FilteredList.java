@@ -16,6 +16,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -24,7 +29,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
@@ -32,7 +36,10 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.ILabelProvider;
 
+import org.eclipse.ui.progress.WorkbenchJob;
+
 import org.eclipse.ui.internal.misc.StringMatcher;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * A composite widget which holds a list of elements for user selection.
@@ -101,7 +108,7 @@ public class FilteredList extends Composite {
 	private FilterMatcher fFilterMatcher = new DefaultFilterMatcher();
 	Comparator fComparator;
 
-	UpdateThread fUpdateThread;
+	TableUpdateJob fUpdateJob;
 
 	private static class Label {
 		public final String string;
@@ -130,10 +137,10 @@ public class FilteredList extends Composite {
 	}
 
 	private final class LabelComparator implements Comparator {
-		private boolean fIgnoreCase;
+		private boolean labelIgnoreCase;
 
 		LabelComparator(boolean ignoreCase) {
-			fIgnoreCase = ignoreCase;
+			labelIgnoreCase = ignoreCase;
 		}
 
 		public int compare(Object left, Object right) {
@@ -144,7 +151,7 @@ public class FilteredList extends Composite {
 
 			if (fComparator == null) {
 				value =
-					fIgnoreCase
+					labelIgnoreCase
 						? leftLabel.string.compareToIgnoreCase(rightLabel.string)
 						: leftLabel.string.compareTo(rightLabel.string);
 			} else {
@@ -198,8 +205,8 @@ public class FilteredList extends Composite {
 		fList.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				fLabelProvider.dispose();
-				if (fUpdateThread != null)
-					fUpdateThread.requestStop();
+				if (fUpdateJob != null)
+					fUpdateJob.cancel();
 			}
 		});
 
@@ -296,11 +303,11 @@ public class FilteredList extends Composite {
 			fList.deselectAll();
 		else {
 			//If there is a current working update defer the setting
-			if (fUpdateThread == null || fUpdateThread.fStop) {
+			if (fUpdateJob == null || fUpdateJob.getState() != Job.RUNNING) {
 				fList.setSelection(selection);
 				fList.notifyListeners(SWT.Selection, new Event());
 			} else
-				fUpdateThread.selectIndices(selection);
+				fUpdateJob.updateSelection(selection);
 		}
 	}
 
@@ -400,10 +407,10 @@ public class FilteredList extends Composite {
 		fFilteredCount = filter();
 		fFoldedCount = fold();
 
-		if (fUpdateThread != null)
-			fUpdateThread.requestStop();
-		fUpdateThread = new UpdateThread(new TableUpdater(fList, fFoldedCount));
-		fUpdateThread.start();
+		if (fUpdateJob != null)
+			fUpdateJob.cancel();
+		fUpdateJob = new TableUpdateJob(fList, fFoldedCount);
+		fUpdateJob.schedule();
 	}
 
 	/**
@@ -485,92 +492,89 @@ public class FilteredList extends Composite {
 		return k;
 	}
 
-	private interface IncrementalRunnable extends Runnable {
-		public int getCount();
-		public void cancel();
-		public void updateSelection(int[] indices);
-		public void defaultSelect();
-	}
-
-	private class TableUpdater implements IncrementalRunnable {
-		private final Display fDisplay;
+	private class TableUpdateJob extends WorkbenchJob {
 		final Table fTable;
 		final int fCount;
-		private int fIndex;
+		private int currentIndex = 0 ;
+		int [] indicesToSelect;
 
-		public TableUpdater(Table table, int count) {
+		public TableUpdateJob(Table table, int count) {
+			super(WorkbenchMessages.getString("FilteredList.UpdateJobName")); //$NON-NLS-1$
+			setSystem(true);
 			fTable = table;
-			fDisplay = table.getDisplay();
 			fCount = count;
 		}
 
-		/*
-		 * @see IncrementalRunnable#getCount()
+		/* (non-Javadoc)
+		 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
 		 */
-		public int getCount() {
-			return fCount + 1;
+		public IStatus runInUIThread(IProgressMonitor monitor) {
+
+			if (fTable.isDisposed())
+				return Status.CANCEL_STATUS;
+
+			int itemCount = fTable.getItemCount();
+			
+			//Remove excess items
+			if (fCount < itemCount) {
+				fTable.setRedraw(false);
+				fTable.remove(fCount, itemCount - 1);
+				fTable.setRedraw(true);
+				itemCount = fTable.getItemCount();
+			}
+
+			// table empty -> no selection
+			if (fCount == 0){
+				fTable.notifyListeners(SWT.Selection, new Event());
+				return Status.OK_STATUS;
+			}
+		
+			
+			//How many we are going to do this time.
+			int iterations = Math.min(50, fCount - currentIndex);
+			
+			for (int i  = 0; i < iterations; i++) {
+				
+				final TableItem item =
+					(currentIndex < itemCount)
+						? fTable.getItem(currentIndex)
+						: new TableItem(fTable, SWT.NONE);
+
+				final Label label =
+					fLabels[fFilteredIndices[fFoldedIndices[currentIndex]]];
+
+				item.setText(label.string);
+				item.setImage(label.image);
+
+				currentIndex ++;
+			}		
+			
+			if(currentIndex < fCount)
+				schedule(100);
+			else{
+				if (indicesToSelect == null) {
+					if (fCount > 0)
+						defaultSelect();
+				} else
+					updateSelection(indicesToSelect);
+			}
+				
+			return Status.OK_STATUS;
+		
 		}
-
-		/*
-		 * @see IncrementalRunnable#cancel()
-		 */
-		public void cancel() {
-			fIndex = 0;
-		}
-
-		/*
-		 * @see Runnable#run()
-		 */
-		public void run() {
-			final int index = fIndex++;
-
-			fDisplay.syncExec(new Runnable() {
-				public void run() {
-					if (fTable.isDisposed())
-						return;
-
-					final int itemCount = fTable.getItemCount();
-
-					if (index < fCount) {
-						final TableItem item =
-							(index < itemCount)
-								? fTable.getItem(index)
-								: new TableItem(fTable, SWT.NONE);
-
-						final Label label =
-							fLabels[fFilteredIndices[fFoldedIndices[index]]];
-
-						item.setText(label.string);
-						item.setImage(label.image);
-
-						// finish
-					} else {
-						if (fCount < itemCount) {
-							fTable.setRedraw(false);
-							fTable.remove(fCount, itemCount - 1);
-							fTable.setRedraw(true);
-						}
-
-						// table empty -> no selection
-						if (fCount == 0)
-							fTable.notifyListeners(SWT.Selection, new Event());
-					}
-				}
-			});
-		}
-
+		
 		/**
 		 * Update the selection for the supplied indices.
 		 */
-		public void updateSelection(final int[] indices) {
+		void updateSelection(final int[] indices) {
 
-			selectAndNotify(indices);
+			indicesToSelect = indices;
 		}
 
 		/**
 		 * Select the first element if there is no selection
 		 */
-		public void defaultSelect() {
+		private void defaultSelect() {
 
 			/**
 			* Reset to the first selection if no
@@ -587,83 +591,19 @@ public class FilteredList extends Composite {
 		 */
 		private void selectAndNotify(final int[] indices) {
 
-			fDisplay.syncExec(new Runnable() {
-				public void run() {
-					//It is possible that the table was disposed
-					//before the update finished. If so then leave
-					if (fTable.isDisposed())
-						return;
-					fTable.setSelection(indices);
-					fTable.notifyListeners(SWT.Selection, new Event());
-				}
-
-			});
+			//It is possible that the table was disposed
+			//before the update finished. If so then leave
+			if (fTable.isDisposed())
+				return;
+			fTable.setSelection(indices);
+			fTable.notifyListeners(SWT.Selection, new Event());
+				
 
 		}
 
 	}
 
-	private static class UpdateThread extends Thread {
-
-		/** The incremental runnable */
-		private final IncrementalRunnable fRunnable;
-		/** A flag indicating a thread stop request */
-		boolean fStop;
-		/** The indices to select*/
-		int[] indices;
-
-		/**
-		 * Creates an update thread.
-		 */
-		public UpdateThread(IncrementalRunnable runnable) {
-			fRunnable = runnable;
-		}
-
-		/**
-		 * Requests the thread to stop.
-		 */
-		public void requestStop() {
-			fStop = true;
-		}
-
-		/**
-		 * @see Runnable#run()
-		 */
-		public void run() {
-			final int count = fRunnable.getCount();
-			for (int i = 0; i != count; i++) {
-				if (i % 50 == 0)
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-					}
-
-				if (fStop) {
-					fRunnable.cancel();
-					break;
-				}
-
-				fRunnable.run();
-			}
-
-			if (indices == null) {
-				if (count > 0)
-					fRunnable.defaultSelect();
-			} else
-				fRunnable.updateSelection(indices);
-			requestStop();
-
-		}
-
-		/**
-		 * Set the indices we wish to select after running.
-		 * @param indicesToSelect
-		 */
-		public void selectIndices(int[] indicesToSelect) {
-			indices = indicesToSelect;
-		}
-	}
-
+	
 	/**
 	 * Returns whether or not duplicates are allowed.
 	 * 
