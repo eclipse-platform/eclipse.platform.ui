@@ -98,11 +98,11 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
             StringBuffer actionLabel= new StringBuffer();
     		if (i >= 0 && i < 10) {
     			// add the numerical accelerator, starting with 1
-    			actionLabel.append('&');
                 if (i < 9) {
-                    actionLabel.append(i + 1); // Append 1 -> 9
+                    actionLabel.append('&');
+                    actionLabel.append(i + 1);
                 } else {
-                    actionLabel.append(0); // Append 0 as the last (10th) entry
+                    actionLabel.append("1&0"); //$NON-NLS-1$
                 }
     			actionLabel.append(' ');
     		}
