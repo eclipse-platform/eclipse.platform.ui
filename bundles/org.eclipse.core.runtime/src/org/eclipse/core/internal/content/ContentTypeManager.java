@@ -123,22 +123,6 @@ public class ContentTypeManager implements IContentTypeManager {
 		return new ContentTypeBuilder(this);
 	}
 
-	private int describe(final IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description) throws IOException {
-		try {
-			return selectedDescriber.describe(contents, description);
-		} finally {
-			contents.reset();
-		}
-	}
-
-	private int describe(final IContentDescriber selectedDescriber, CharArrayReader contents, ContentDescription description) throws IOException {
-		try {
-			return ((ITextContentDescriber) selectedDescriber).describe(contents, description);
-		} finally {
-			contents.reset();
-		}
-	}
-
 	/**
 	 * A content type will be valid if:
 	 * <ol>
@@ -159,7 +143,7 @@ public class ContentTypeManager implements IContentTypeManager {
 			return false;
 		}
 		// set this type temporarily as invalid to prevent cycles
-		// all types in the cycle will be marked as invalid
+		// all types in a cycle would stay as invalid
 		type.setValidation(ContentType.INVALID);
 		ensureValid(baseType);
 		// base type is either valid or invalid - type will have the same status
@@ -321,17 +305,18 @@ public class ContentTypeManager implements IContentTypeManager {
 		List appropriate = new ArrayList();
 		int valid = 0;
 		for (int i = 0; i < subset.length; i++) {
-			IContentDescriber describer = ((ContentType) subset[i]).getDescriber();
+			ContentType current = (ContentType) subset[i];
+			IContentDescriber describer = current.getDescriber();
 			int status = IContentDescriber.INDETERMINATE;
 			if (describer != null) {
-				status = describe(describer, buffer, null);
+				status = current.describe(describer, buffer, null);
 				if (status == IContentDescriber.INVALID)
 					continue;
 			}
 			if (status == IContentDescriber.VALID)
-				appropriate.add(valid++, subset[i]);
+				appropriate.add(valid++, current);
 			else
-				appropriate.add(subset[i]);
+				appropriate.add(current);
 		}
 		IContentType[] result = (IContentType[]) appropriate.toArray(new IContentType[appropriate.size()]);
 		if (valid > 1)
@@ -345,17 +330,18 @@ public class ContentTypeManager implements IContentTypeManager {
 		List appropriate = new ArrayList();
 		int valid = 0;
 		for (int i = 0; i < subset.length; i++) {
-			IContentDescriber describer = ((ContentType) subset[i]).getDescriber();
+			ContentType current = (ContentType) subset[i];
+			IContentDescriber describer = current.getDescriber();
 			int status = IContentDescriber.INDETERMINATE;
 			if (describer != null) {
-				status = describe(describer, buffer, null);
+				status = current.describe(describer, buffer, null);
 				if (status == IContentDescriber.INVALID)
 					continue;
 			}
 			if (status == IContentDescriber.VALID)
-				appropriate.add(valid++, subset[i]);
+				appropriate.add(valid++, current);
 			else
-				appropriate.add(subset[i]);
+				appropriate.add(current);
 		}
 		IContentType[] result = (IContentType[]) appropriate.toArray(new IContentType[appropriate.size()]);
 		if (valid > 1)

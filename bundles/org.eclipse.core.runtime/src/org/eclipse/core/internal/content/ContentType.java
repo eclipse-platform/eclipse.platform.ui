@@ -151,6 +151,38 @@ public class ContentType implements IContentType {
 		contentTypeNode.put(key, toListString(fileSpecs));
 	}
 
+	int describe(IContentDescriber selectedDescriber, ByteArrayInputStream contents, ContentDescription description) throws IOException {
+		try {
+			return selectedDescriber.describe(contents, description);
+		} catch (IOException ioe) {
+			throw ioe;
+		} catch (RuntimeException re) {
+			invalidateDescriber(re);
+			throw re;
+		} catch (Error e) {
+			invalidateDescriber(e);
+			throw e;
+		} finally {
+			contents.reset();
+		}
+	}
+
+	int describe(IContentDescriber selectedDescriber, CharArrayReader contents, ContentDescription description) throws IOException {
+		try {
+			return ((ITextContentDescriber) selectedDescriber).describe(contents, description);
+		} catch (IOException ioe) {
+			throw ioe;
+		} catch (RuntimeException re) {
+			invalidateDescriber(re);
+			throw re;
+		} catch (Error e) {
+			invalidateDescriber(e);
+			throw e;
+		} finally {
+			contents.reset();
+		}
+	}
+
 	public IContentType getBaseType() {
 		if (aliasTarget != null)
 			return getTarget().getBaseType();
@@ -191,17 +223,13 @@ public class ContentType implements IContentType {
 		synchronized (this) {
 			if (describer != null)
 				return describer;
-			if (contentTypeElement.getChildren("describer").length > 0 || contentTypeElement.getAttributeAsIs("describer") != null) { //$NON-NLS-1$ //$NON-NLS-2$
+			if (contentTypeElement.getChildren("describer").length > 0 || contentTypeElement.getAttributeAsIs("describer") != null) //$NON-NLS-1$ //$NON-NLS-2$				
 				try {
 					return describer = (IContentDescriber) contentTypeElement.createExecutableExtension("describer"); //$NON-NLS-1$
 				} catch (CoreException ce) {
-					String message = Policy.bind("content.invalidContentDescriber", getId()); //$NON-NLS-1$ 
-					IStatus status = new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, 0, message, ce);
-					InternalPlatform.getDefault().log(status);
-				}
-				// the content type definition was invalid. Ensure we don't try again, and this content type does not accept any contents
-				return describer = new InvalidDescriber();
-			}
+					// the content type definition was invalid. Ensure we don't try again, and this content type does not accept any contents					
+					return invalidateDescriber(ce);
+				}				
 		}
 		ContentType baseType = (ContentType) getBaseType();
 		return baseType == null ? null : baseType.getDescriber();
@@ -343,6 +371,14 @@ public class ContentType implements IContentType {
 				return;
 			}
 		}
+	}
+
+	private IContentDescriber invalidateDescriber(Throwable reason) {
+		setValidation(INVALID);
+		String message = Policy.bind("content.invalidContentDescriber", getId()); //$NON-NLS-1$ 
+		IStatus status = new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 0, message, reason);
+		InternalPlatform.getDefault().log(status);
+		return describer = new InvalidDescriber();
 	}
 
 	public boolean isAssociatedWith(String fileName) {
