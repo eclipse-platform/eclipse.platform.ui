@@ -561,7 +561,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
                 // as is.
                 String msg = StringUtil.concat("Could not find resource: ", //$NON-NLS-1$
                         resource, " in ", ModelLoaderUtil.getBundleHeader( //$NON-NLS-1$
-                                bundle, Constants.BUNDLE_NAME));
+                                bundle, Constants.BUNDLE_NAME)).toString();
                 Log.warning(msg);
                 return resource;
             }
@@ -570,7 +570,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         } catch (Exception e) {
             String msg = StringUtil.concat("Failed to load resource: ", //$NON-NLS-1$
                     resource, " from ", ModelLoaderUtil.getBundleHeader(bundle, //$NON-NLS-1$
-                            Constants.BUNDLE_NAME));
+                            Constants.BUNDLE_NAME)).toString();
             Log.error(msg, e);
             return resource;
         }

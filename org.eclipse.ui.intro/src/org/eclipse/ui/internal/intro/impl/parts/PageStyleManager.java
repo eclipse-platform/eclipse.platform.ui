@@ -120,7 +120,7 @@ public class PageStyleManager extends SharedStyleManager {
 
 
     public int getNumberOfColumns(IntroDiv group) {
-        String key = createGroupKey(group) + ".layout.ncolumns";
+        String key = createPathKey(group).append(".layout.ncolumns").toString();
         return getIntProperty(key);
     }
 
@@ -160,20 +160,8 @@ public class PageStyleManager extends SharedStyleManager {
      * @return
      */
     public String getDescription(IntroDiv group) {
-        String key = createGroupKey(group) + ".description-id";
+        String key = createPathKey(group).append(".description-id").toString();
         return doGetDescription(group, key);
-    }
-
-    private String createGroupKey(IntroDiv group) {
-        StringBuffer buffer = new StringBuffer(group.getId());
-        AbstractBaseIntroElement parent = (AbstractBaseIntroElement) group
-                .getParent();
-        while (parent != null
-                && !parent.isOfType(AbstractIntroElement.MODEL_ROOT)) {
-            buffer.insert(0, parent.getId() + ".");
-            parent = (AbstractBaseIntroElement) parent.getParent();
-        }
-        return buffer.toString();
     }
 
 

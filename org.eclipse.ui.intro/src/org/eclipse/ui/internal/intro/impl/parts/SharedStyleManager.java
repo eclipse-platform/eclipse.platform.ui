@@ -130,7 +130,8 @@ public class SharedStyleManager {
 
     private String createColorKey(AbstractIntroPage page, String qualifier) {
         if (page != null)
-                return StringUtil.concat(page.getId(), ".", qualifier); //$NON-NLS-1$
+                return StringUtil
+                        .concat(page.getId(), ".", qualifier).toString(); //$NON-NLS-1$
         return qualifier;
     }
 
@@ -150,16 +151,30 @@ public class SharedStyleManager {
 
     private String createImageKey(AbstractIntroPage page, IntroLink link,
             String qualifier) {
-        StringBuffer buff = new StringBuffer();
-        buff.append(page.getId());
-        if (link != null) {
-            buff.append("."); //$NON-NLS-1$
-            buff.append(link.getId());
+        StringBuffer buff = null;
+        if (link != null)
+            buff = createPathKey(link);
+        else {
+            buff = new StringBuffer();
+            buff.append(page.getId());
         }
         buff.append("."); //$NON-NLS-1$
         buff.append(qualifier);
         return buff.toString();
     }
+
+    protected StringBuffer createPathKey(AbstractIntroIdElement element) {
+        StringBuffer buffer = new StringBuffer(element.getId());
+        AbstractBaseIntroElement parent = (AbstractBaseIntroElement) element
+                .getParent();
+        while (parent != null
+                && !parent.isOfType(AbstractIntroElement.MODEL_ROOT)) {
+            buffer.insert(0, parent.getId() + ".");
+            parent = (AbstractBaseIntroElement) parent.getParent();
+        }
+        return buffer;
+    }
+
 
     /**
      * Retrieve an image from this page's properties, given a key.
@@ -169,7 +184,7 @@ public class SharedStyleManager {
      * @param defaultKey
      * @return
      */
-    public Image getImage(String key, String defaultPageKey, String defaultKey) {
+    private Image getImage(String key, String defaultPageKey, String defaultKey) {
         String currentKey = key;
         String value = getProperty(currentKey);
         if (value == null && defaultPageKey != null) {

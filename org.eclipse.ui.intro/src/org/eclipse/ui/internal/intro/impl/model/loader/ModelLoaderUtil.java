@@ -56,14 +56,14 @@ public class ModelLoaderUtil {
 
         int arraySize = configElements.length;
         if (arraySize == 0)
-            // No one contributed to extension. return null.
-            return null;
+                // No one contributed to extension. return null.
+                return null;
 
         // we should only have one, so use first one.
         IConfigurationElement configElement = configElements[0];
         String msg = StringUtil.concat("Loaded ", //$NON-NLS-1$
                 configElement.getName(), " from ", getLogString(configElement, //$NON-NLS-1$
-                        logAttribute));
+                        logAttribute)).toString();
         Log.info(msg);
 
         if (arraySize != 1) {
@@ -113,13 +113,13 @@ public class ModelLoaderUtil {
 
         int arraySize = elements.length;
         if (arraySize == 0)
-            // element list in empty. return null.
-            return null;
+                // element list in empty. return null.
+                return null;
 
         // we should only have one, so use first one.
         Element element = (Element) elements[0];
         String msg = StringUtil.concat("Loaded ", element.getNodeName(), //$NON-NLS-1$
-                " from ", getLogString(element, logAttribute)); //$NON-NLS-1$
+                " from ", getLogString(element, logAttribute)).toString(); //$NON-NLS-1$
         Log.info(msg);
 
         if (arraySize != 1) {
@@ -168,8 +168,8 @@ public class ModelLoaderUtil {
             // we know that the nodelist is of elements.
             Element aElement = (Element) allChildElements.item(i);
             if (aElement.getParentNode().equals(parent))
-                // first level child element. add it.
-                vector.add(aElement);
+                    // first level child element. add it.
+                    vector.add(aElement);
         }
         Element[] filteredElements = new Element[vector.size()];
         vector.copyInto(filteredElements);
@@ -186,8 +186,9 @@ public class ModelLoaderUtil {
             // we know that the nodelist is of elements.
             Element aElement = (Element) allChildElements.item(i);
             if (aElement.getParentNode().equals(dom.getDocumentElement()))
-                // first level child element. add it. Cant use getParent here.
-                vector.add(aElement);
+                    // first level child element. add it. Cant use getParent
+                    // here.
+                    vector.add(aElement);
         }
         Element[] filteredElements = new Element[vector.size()];
         vector.copyInto(filteredElements);
@@ -210,11 +211,13 @@ public class ModelLoaderUtil {
             if (bundle == null)
                 Log.error("Intro tried accessing a NULL bundle.", null); //$NON-NLS-1$
             else {
-                String msg = StringUtil.concat(
-                        "Intro tried accessing Bundle: ", getBundleHeader( //$NON-NLS-1$
-                                bundle, Constants.BUNDLE_NAME), " vendor: ", //$NON-NLS-1$
-                        getBundleHeader(bundle, Constants.BUNDLE_VENDOR),
-                        " bundle state: ", String.valueOf(bundle.getState())); //$NON-NLS-1$
+                String msg = StringUtil
+                        .concat(
+                                "Intro tried accessing Bundle: ", getBundleHeader( //$NON-NLS-1$
+                                        bundle, Constants.BUNDLE_NAME),
+                                " vendor: ", //$NON-NLS-1$
+                                getBundleHeader(bundle, Constants.BUNDLE_VENDOR),
+                                " bundle state: ", String.valueOf(bundle.getState())).toString(); //$NON-NLS-1$
                 Log.error(msg, null);
             }
             return false;
