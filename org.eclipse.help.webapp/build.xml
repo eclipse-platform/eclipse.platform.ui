@@ -91,7 +91,7 @@
   <target name="bin" depends="init">
     <property name="destroot" value="${basedir}"/>
     <ant antfile="${template}" target="bin">
-      <property name="includes" value="images/,ns4/,WEB-INF/,*.css,*.html,*.js,*.jsp,plugin.properties,plugin.xml"/>
+      <property name="includes" value="images/,ns4/,WEB-INF/,*.css,*.html,*.js,*.jsp,plugin.properties,plugin.xml,webapp.properties"/>
       <property name="excludes" value="src/"/>
       <property name="dest" value="${destroot}"/>
     </ant>
