@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
@@ -32,12 +31,8 @@ import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
 import org.osgi.framework.Bundle;
 
 /**
- * This project builder implementation will run an external tool or tools during the
+ * This project builder implementation will run an external tool during the
  * build process. 
- * <p>
- * Note that there is only ever one instance of ExternalToolBuilder per project,
- * and the external tool to run is specified in the builder's arguments.
- * </p>
  */
 public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	public static final String ID = "org.eclipse.ui.externaltools.ExternalToolBuilder"; //$NON-NLS-1$;
@@ -71,59 +66,14 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			return null;
 		}
 		
-		if (kind == FULL_BUILD) {
-			ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), args, new String[1]);
-			if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
-				launchBuild(kind, config, monitor);
-			}
-			if (shouldForgetBuildState(args)) {
-				forgetLastBuiltState();
-			}
-			return getProjectsWithinScope();
-		}
-		//need to build all external tools from one builder (see bug 39713)
-		//if not a full build
-		ICommand[] commands = getProject().getDescription().getBuildSpec();
 		projectsWithinScope= new ArrayList();
-		for (int i = 0; i < commands.length; i++) {
-			if (ID.equals(commands[i].getBuilderName())){
-				ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), commands[i].getArguments(), new String[1]);
-				if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
-					doBuildBasedOnScope(kind, config, monitor);
-				}
-			}
+		ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), args, new String[1]);
+		if (config != null && buildKindCompatible(kind, config) && configEnabled(config)) {
+			doBuildBasedOnScope(kind, config, monitor);
 		}
 		return getProjectsWithinScope();
 	}
 	
-	private boolean shouldForgetBuildState(Map args) throws CoreException {
-		//if I am not the last external tool builder and there are other full build external tool builders after me I need
-		//to forget the last build state so that these builders will be called.
-
-		ICommand[] commands = getProject().getDescription().getBuildSpec();
-		int currentBuilderIndex= -1;
-		for (int i = 0; i < commands.length; i++) {
-			ICommand command= commands[i];
-			if (ID.equals(command.getBuilderName())){
-				if (command.getArguments().equals(args)) {
-					if (i + 1 == commands.length) {
-						//last builder
-						return false;
-					}
-					currentBuilderIndex= i;
-				} else if (currentBuilderIndex > -1 && i > currentBuilderIndex) {
-					ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), command.getArguments(), new String[1]);
-					if (config != null && buildKindCompatible(FULL_BUILD, config) && configEnabled(config)) {
-						//another full build external tool builder needs to be triggered
-						return true;
-					}
-				}
-			}
-		}
-		
-		return false;
-	}
-
 	/**
 	 * Returns whether the given builder config is enabled or not.
 	 * 
@@ -149,13 +99,15 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 
 	private void doBuildBasedOnScope(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
 		boolean buildForChange = true;
-		IResource[] resources = ExternalToolsUtil.getResourcesForBuildScope(config);
-		if (resources != null && resources.length > 0) {
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
-				projectsWithinScope.add(resource.getProject());
+		if (kind != FULL_BUILD) { //scope not applied for full builds
+			IResource[] resources = ExternalToolsUtil.getResourcesForBuildScope(config);
+			if (resources != null && resources.length > 0) {
+				for (int i = 0; i < resources.length; i++) {
+					IResource resource = resources[i];
+					projectsWithinScope.add(resource.getProject());
+				}
+				buildForChange = buildScopeIndicatesBuild(resources);
 			}
-			buildForChange = buildScopeIndicatesBuild(resources);
 		}
 
 		if (buildForChange) {
