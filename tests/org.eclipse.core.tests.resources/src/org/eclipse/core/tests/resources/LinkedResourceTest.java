@@ -168,7 +168,10 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		}
 	
 		//try to create with local path that can never exist
-		location = new Path("b:\\does\\not\\exist");
+		if (BootLoader.getOS().equals(BootLoader.OS_WIN32))
+			location = new Path("b:\\does\\not\\exist");
+		else
+			location = new Path("/dev/null/does/not/exist");
 		try {
 			folder.createLink(location, IResource.NONE, getMonitor());
 			fail("2.1");
@@ -185,12 +188,9 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 		// creating child should fail when the OS is Windows
 		try {
 			folder.getFile("abc.txt").create(getRandomContents(), IResource.NONE, getMonitor());
-			if (BootLoader.getOS().equals(BootLoader.OS_WIN32))
 			fail("2.5");
 		} catch (CoreException e) {
-			// catch this failure for non-Windows OSes
-			if (!BootLoader.getOS().equals(BootLoader.OS_WIN32))
-				fail("2.6");
+			//should fail
 		}
 	}
 	/**
