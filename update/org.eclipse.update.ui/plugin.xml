@@ -78,12 +78,12 @@
                id="org.eclipse.update.ui.updateManager">
          </action>
          <action
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
                label="%actionSets.configManager.label"
                icon="icons/full/eview16/configs.gif"
+               helpContextId="org.eclipse.update.ui.newUpdates"
                class="org.eclipse.update.internal.ui.ConfigurationManagerAction"
-               id="org.eclipse.update.ui.configManager"
-               helpContextId="org.eclipse.update.ui.newUpdates">
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group0"
+               id="org.eclipse.update.ui.configManager">
          </action>
       </actionSet>
    </extension>
@@ -127,13 +127,6 @@
             category="org.eclipse.update.ui"
             class="org.eclipse.update.internal.ui.views.SelectedUpdatesView"
             id="org.eclipse.update.ui.ItemsView">
-      </view>
-      <view
-            name="%views.new-configuration.label"
-            icon="icons/full/cview16/configs.gif"
-            category="org.eclipse.update.ui"
-            class="org.eclipse.update.internal.ui.views.NewConfigurationView"
-            id="org.eclipse.update.ui.newConfigurationView">
       </view>
    </extension>
    <extension
