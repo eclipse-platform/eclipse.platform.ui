@@ -24,7 +24,6 @@ import org.eclipse.ui.PlatformUI;
  * Label provider for property elements
  */
 final class AntPropertiesLabelProvider extends LabelProvider implements ITableLabelProvider {
-	private static final String IMG_CLASSPATH = "icons/full/obj16/classpath.gif"; //$NON-NLS-1$;
 
 	private Image classpathImage;
 	private Image fileImage;
@@ -70,9 +69,5 @@ final class AntPropertiesLabelProvider extends LabelProvider implements ITableLa
 			fileImage = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 		}
 		return fileImage;
-	}
-	
-	public Image getClasspathImage() {
-		return AntUIImages.getImage(AntPropertiesLabelProvider.IMG_CLASSPATH);
 	}
 }
