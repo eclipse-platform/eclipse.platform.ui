@@ -305,7 +305,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			return;
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String msg = Policy.bind("resources.closing.0"); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_closing_0);
 			int rootCount = tree.getChildCount(Path.ROOT);
 			monitor.beginTask(msg, rootCount + 2);
 			monitor.subTask(msg);
@@ -527,7 +527,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		try {
 			int opWork = Math.max(resources.length, 1);
 			int totalWork = Policy.totalWork * opWork / Policy.opWork;
-			String message = Policy.bind("resources.copying.0"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_copying_0);
 			monitor.beginTask(message, totalWork);
 			Assert.isLegal(resources != null);
 			if (resources.length == 0)
@@ -535,7 +535,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// to avoid concurrent changes to this array
 			resources = (IResource[]) resources.clone();
 			IPath parentPath = null;
-			message = Policy.bind("resources.copyProblem"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_copyProblem);
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 			try {
 				prepareOperation(getRoot(), monitor);
@@ -571,7 +571,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 						}
 					} else {
 						monitor.worked(1);
-						message = Policy.bind("resources.notChild", resources[i].getFullPath().toString(), parentPath.toString()); //$NON-NLS-1$
+						message = Messages.bind(Messages.resources_notChild, resources[i].getFullPath(), parentPath);
 						status.merge(new ResourceStatus(IResourceStatus.OPERATION_FAILED, resources[i].getFullPath(), message));
 					}
 				}
@@ -738,7 +738,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				info.set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 				tree.setElementData(resource.getFullPath(), info);
 			} else {
-				String message = Policy.bind("resources.mustNotExist", resource.getFullPath().toString()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.resources_mustNotExist, resource.getFullPath());
 				throw new ResourceException(IResourceStatus.RESOURCE_EXISTS, resource.getFullPath(), message, null);
 			}
 		}
@@ -778,9 +778,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		try {
 			int opWork = Math.max(resources.length, 1);
 			int totalWork = Policy.totalWork * opWork / Policy.opWork;
-			String message = Policy.bind("resources.deleting.0"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_deleting_0);
 			monitor.beginTask(message, totalWork);
-			message = Policy.bind("resources.deleteProblem"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_deleteProblem);
 			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 			if (resources.length == 0)
 				return result;
@@ -801,7 +801,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 						// Don't really care about the exception unless the resource is still around.
 						ResourceInfo info = resource.getResourceInfo(false, false);
 						if (resource.exists(resource.getFlags(info), false)) {
-							message = Policy.bind("resources.couldnotDelete", resource.getFullPath().toString()); //$NON-NLS-1$
+							message = Messages.bind(Messages.resources_couldnotDelete, resource.getFullPath());
 							result.merge(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, resource.getFullPath(), message));
 							result.merge(e.getStatus());
 						}
@@ -1192,7 +1192,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public WorkManager getWorkManager() throws CoreException {
 		if (_workManager == null) {
-			String message = Policy.bind("resources.shutdown"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_shutdown);
 			throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, null, message));
 		}
 		return _workManager;
@@ -1215,7 +1215,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// the #setContents (e.g. don't throw an exception)
 		if (configs.length > 1) {
 			//XXX: shoud provide a meaningful status code
-			IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.oneValidator"), null); //$NON-NLS-1$
+			IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.bind(Messages.resources_oneValidator), null);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 			return;
 		}
@@ -1229,7 +1229,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			//ignore the failure if we are shutting down (expected since extension
 			//provider plugin has probably already shut down
 			if (canCreateExtensions()) {//$NON-NLS-1$
-				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initValidator"), e); //$NON-NLS-1$
+				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.bind(Messages.resources_initValidator), e);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
 		}
@@ -1252,7 +1252,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// can only have one defined at a time. log a warning
 			if (configs.length > 1) {
 				//XXX: shoud provide a meaningful status code
-				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.oneHook"), null); //$NON-NLS-1$
+				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.bind(Messages.resources_oneHook), null);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 				return;
 			}
@@ -1265,7 +1265,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//ignore the failure if we are shutting down (expected since extension
 				//provider plugin has probably already shut down
 				if (canCreateExtensions()) {//$NON-NLS-1$
-					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initHook"), e); //$NON-NLS-1$
+					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.bind(Messages.resources_initHook), e);
 					ResourcesPlugin.getPlugin().getLog().log(status);
 				}
 			}
@@ -1293,7 +1293,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// can only have one defined at a time. log a warning
 			if (configs.length > 1) {
 				//XXX: shoud provide a meaningful status code
-				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.oneTeamHook"), null); //$NON-NLS-1$
+				IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.bind(Messages.resources_oneTeamHook), null);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 				return;
 			}
@@ -1306,7 +1306,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				//ignore the failure if we are shutting down (expected since extension
 				//provider plugin has probably already shut down
 				if (canCreateExtensions()) {//$NON-NLS-1$
-					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Policy.bind("resources.initTeamHook"), e); //$NON-NLS-1$
+					IStatus status = new ResourceStatus(IStatus.ERROR, 1, null, Messages.bind(Messages.resources_initTeamHook), e);
 					ResourcesPlugin.getPlugin().getLog().log(status);
 				}
 			}
@@ -1401,7 +1401,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			e = ex;
 		}
 		if (result == null || e != null) {
-			String message = Policy.bind("resources.errorReadProject", path.toOSString()); //$NON-NLS1 //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_errorReadProject, path.toOSString());
 			IStatus status = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, message, e);
 			throw new ResourceException(status);
 		}
@@ -1416,14 +1416,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		try {
 			int opWork = Math.max(resources.length, 1);
 			int totalWork = Policy.totalWork * opWork / Policy.opWork;
-			String message = Policy.bind("resources.moving.0"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_moving_0);
 			monitor.beginTask(message, totalWork);
 			Assert.isLegal(resources != null);
 			if (resources.length == 0)
 				return Status.OK_STATUS;
 			resources = (IResource[]) resources.clone(); // to avoid concurrent changes to this array
 			IPath parentPath = null;
-			message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_moveProblem);
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 			try {
 				prepareOperation(getRoot(), monitor);
@@ -1458,7 +1458,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 						}
 					} else {
 						monitor.worked(1);
-						message = Policy.bind("resources.notChild", resource.getFullPath().toString(), parentPath.toString()); //$NON-NLS-1$
+						message = Messages.bind(Messages.resources_notChild, resource.getFullPath(), parentPath);
 						status.merge(new ResourceStatus(IResourceStatus.OPERATION_FAILED, resource.getFullPath(), message));
 					}
 				}
@@ -1607,10 +1607,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public IStatus open(IProgressMonitor monitor) throws CoreException {
 		// This method is not inside an operation because it is the one responsible for
 		// creating the WorkManager object (who takes care of operations).
-		String message = Policy.bind("resources.workspaceOpen"); //$NON-NLS-1$
+		String message = Messages.bind(Messages.resources_workspaceOpen);
 		Assert.isTrue(!isOpen(), message);
 		if (!getMetaArea().hasSavedWorkspace()) {
-			message = Policy.bind("resources.readWorkspaceMeta"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_readWorkspaceMeta);
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, Platform.getLocation(), message, null);
 		}
 		description = new WorkspacePreferences();
@@ -1657,7 +1657,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			buildManager.interrupt();
 		getWorkManager().checkIn(rule, monitor);
 		if (!isOpen()) {
-			String message = Policy.bind("resources.workspaceClosed"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_workspaceClosed);
 			throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, null);
 		}
 	}
@@ -1731,7 +1731,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (full) {
 			//according to spec it is illegal to start a full save inside another operation
 			if (getWorkManager().isLockAlreadyAcquired()) {
-				message = Policy.bind("resources.saveOp"); //$NON-NLS-1$
+				message = Messages.bind(Messages.resources_saveOp);
 				throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, new IllegalStateException());
 			}
 			return saveManager.save(ISaveContext.FULL_SAVE, null, monitor);
@@ -1742,7 +1742,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			prepareOperation(getRoot(), monitor);
 			beginOperation(false);
 			saveManager.requestSnapshot();
-			message = Policy.bind("resources.snapRequest"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_snapRequest);
 			return new ResourceStatus(IStatus.OK, message);
 		} finally {
 			endOperation(getRoot(), false, null);
@@ -1784,7 +1784,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		try {
 			IManager[] managers = {buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager, markerManager, _workManager, aliasManager, refreshManager, contentDescriptionManager};
 			monitor.beginTask(null, managers.length);
-			String message = Policy.bind("resources.shutdownProblems"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_shutdownProblems);
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 			// best effort to shutdown every object and free resources
 			for (int i = 0; i < managers.length; i++) {
@@ -1795,7 +1795,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					try {
 						manager.shutdown(Policy.subMonitorFor(monitor, 1));
 					} catch (Exception e) {
-						message = Policy.bind("resources.shutdownProblems"); //$NON-NLS-1$
+						message = Messages.bind(Messages.resources_shutdownProblems);
 						status.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
 					}
 				}
@@ -1891,12 +1891,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public IStatus validateEdit(final IFile[] files, final Object context) {
 		// if validation is turned off then just return
 		if (!shouldValidate) {
-			String message = Policy.bind("resources.readOnly2"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_readOnly2);
 			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.READ_ONLY_LOCAL, message, null);
 			for (int i = 0; i < files.length; i++) {
 				if (files[i].isReadOnly()) {
 					IPath filePath = files[i].getFullPath();
-					message = Policy.bind("resources.readOnly", filePath.toString()); //$NON-NLS-1$
+					message = Messages.bind(Messages.resources_readOnly, filePath);
 					result.add(new ResourceStatus(IResourceStatus.READ_ONLY_LOCAL, filePath, message));
 				}
 			}
@@ -1917,7 +1917,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 
 			public void handleException(Throwable exception) {
-				status[0] = new ResourceStatus(IStatus.ERROR, null, Policy.bind("resources.errorValidator"), exception); //$NON-NLS-1$
+				status[0] = new ResourceStatus(IStatus.ERROR, null, Messages.bind(Messages.resources_errorValidator), exception);
 			}
 		};
 		Platform.run(body);
@@ -1931,17 +1931,17 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		String message;
 		//check if resource linking is disabled
 		if (ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING)) {
-			message = Policy.bind("links.workspaceVeto", resource.getName()); //$NON-NLS-1$
+			message = Messages.bind(Messages.links_workspaceVeto, resource.getName());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		//check that the resource has a project as its parent
 		IContainer parent = resource.getParent();
 		if (parent == null || parent.getType() != IResource.PROJECT) {
-			message = Policy.bind("links.parentNotProject", resource.getName()); //$NON-NLS-1$
+			message = Messages.bind(Messages.links_parentNotProject, resource.getName());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		if (!parent.isAccessible()) {
-			message = Policy.bind("links.parentNotAccessible", resource.getFullPath().toString()); //$NON-NLS-1$
+			message = Messages.bind(Messages.links_parentNotAccessible, resource.getFullPath());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		IPath location = getPathVariableManager().resolvePath(unresolvedLocation);
@@ -1959,7 +1959,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (!result.isOK())
 			return result;
 		if (location.isEmpty()) {
-			message = Policy.bind("links.noPath"); //$NON-NLS-1$
+			message = Messages.bind(Messages.links_noPath);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		//check the standard path name restrictions
@@ -1975,20 +1975,20 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// test if the given location overlaps the platform metadata location
 		IPath testLocation = getMetaArea().getLocation();
 		if (isOverlapping(location, testLocation, true)) {
-			message = Policy.bind("links.invalidLocation", location.toOSString()); //$NON-NLS-1$
+			message = Messages.bind(Messages.links_invalidLocation, location.toOSString());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		//test if the given path overlaps the location of the given project
 		testLocation = resource.getProject().getLocation();
 		if (testLocation != null && isOverlapping(location, testLocation, false)) {
-			message = Policy.bind("links.locationOverlapsProject", location.toOSString()); //$NON-NLS-1$
+			message = Messages.bind(Messages.links_locationOverlapsProject, location.toOSString());
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), message);
 		}
 		//warnings (all errors must be checked before all warnings)
 		//check that the location is absolute
 		if (!location.isAbsolute()) {
 			//we know there is at least one segment, because of previous isEmpty check
-			message = Policy.bind("pathvar.undefined", location.toOSString(), location.segment(0)); //$NON-NLS-1$
+			message = Messages.bind(Messages.pathvar_undefined, location.toOSString(), location.segment(0));
 			return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED_WARNING, resource.getFullPath(), message);
 		}
 		// Iterate over each known project and ensure that the location does not
@@ -2001,7 +2001,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			IProjectDescription desc = ((Project) project).internalGetDescription();
 			testLocation = desc.getLocation();
 			if (testLocation != null && isOverlapping(location, testLocation, true)) {
-				message = Policy.bind("links.overlappingResource", location.toOSString()); //$NON-NLS-1$
+				message = Messages.bind(Messages.links_overlappingResource, location.toOSString());
 				return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
 			}
 			//iterate over linked resources and check for overlap
@@ -2019,7 +2019,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				if (children[j].isLinked()) {
 					testLocation = children[j].getLocation();
 					if (testLocation != null && isOverlapping(location, testLocation, true)) {
-						message = Policy.bind("links.overlappingResource", location.toOSString()); //$NON-NLS-1$
+						message = Messages.bind(Messages.links_overlappingResource, location.toOSString());
 						return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, resource.getFullPath(), message);
 					}
 				}
@@ -2036,13 +2036,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 		/* segment must not be null */
 		if (segment == null) {
-			message = Policy.bind("resources.nameNull"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_nameNull);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
 		// cannot be an empty string
 		if (segment.length() == 0) {
-			message = Policy.bind("resources.nameEmpty"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_nameEmpty);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
@@ -2050,13 +2050,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		char[] chars = OS.INVALID_RESOURCE_CHARACTERS;
 		for (int i = 0; i < chars.length; i++)
 			if (segment.indexOf(chars[i]) != -1) {
-				message = Policy.bind("resources.invalidCharInName", String.valueOf(chars[i]), segment); //$NON-NLS-1$
+				message = Messages.bind(Messages.resources_invalidCharInName, String.valueOf(chars[i]), segment);
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 
 		/* test invalid OS names */
 		if (!OS.isNameValid(segment)) {
-			message = Policy.bind("resources.invalidName", segment); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_invalidName, segment);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		return Status.OK_STATUS;
@@ -2075,7 +2075,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public IStatus validatePath(String path, int type) {
 		/* path must not be null */
 		if (path == null) {
-			String message = Policy.bind("resources.pathNull"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_pathNull);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		return validatePath(Path.fromOSString(path), type, false);
@@ -2093,25 +2093,25 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 		/* path must not be null */
 		if (path == null) {
-			message = Policy.bind("resources.pathNull"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_pathNull);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
 		/* path must not have a device separator */
 		if (path.getDevice() != null) {
-			message = Policy.bind("resources.invalidCharInPath", String.valueOf(IPath.DEVICE_SEPARATOR), path.toString()); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_invalidCharInPath, String.valueOf(IPath.DEVICE_SEPARATOR), path);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
 		/* path must not be the root path */
 		if (path.isRoot()) {
-			message = Policy.bind("resources.invalidRoot"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_invalidRoot);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
 		/* path must be absolute */
 		if (!path.isAbsolute()) {
-			message = Policy.bind("resources.mustBeAbsolute", path.toString()); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_mustBeAbsolute, path);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
@@ -2121,13 +2121,13 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (numberOfSegments == ICoreConstants.PROJECT_SEGMENT_LENGTH) {
 				return validateName(path.segment(0), IResource.PROJECT);
 			} else if (type == IResource.PROJECT) {
-				message = Policy.bind("resources.projectPath", path.toString()); //$NON-NLS-1$
+				message = Messages.bind(Messages.resources_projectPath, path);
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 		}
 		if ((type & (IResource.FILE | IResource.FOLDER)) != 0) {
 			if (numberOfSegments < ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH) {
-				message = Policy.bind("resources.resourcePath", path.toString()); //$NON-NLS-1$
+				message = Messages.bind(Messages.resources_resourcePath, path);
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 			int fileFolderType = type &= ~IResource.PROJECT;
@@ -2145,7 +2145,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 			return Status.OK_STATUS;
 		}
-		message = Policy.bind("resources.invalidPath", path.toString()); //$NON-NLS-1$
+		message = Messages.bind(Messages.resources_invalidPath, path);
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
 
@@ -2169,9 +2169,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		//check that the location is absolute
 		if (!location.isAbsolute()) {
 			if (location.segmentCount() > 0)
-				message = Policy.bind("pathvar.undefined", location.toOSString(), location.segment(0)); //$NON-NLS-1$
+				message = Messages.bind(Messages.pathvar_undefined, location.toOSString(), location.segment(0));
 			else
-				message = Policy.bind("links.noPath"); //$NON-NLS-1$
+				message = Messages.bind(Messages.links_noPath);
 			return new ResourceStatus(IResourceStatus.VARIABLE_NOT_DEFINED, null, message);
 		}
 		//if the location doesn't have a device, see if the OS will assign one
@@ -2180,7 +2180,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// test if the given location overlaps the default default location
 		IPath defaultDefaultLocation = Platform.getLocation();
 		if (isOverlapping(location, defaultDefaultLocation, true)) {
-			message = Policy.bind("resources.overlapLocal", location.toString(), defaultDefaultLocation.toString()); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_overlapLocal, location, defaultDefaultLocation);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		// Iterate over each known project and ensure that the location does not
@@ -2199,7 +2199,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (project.equals(context) && definedLocalLocation.equals(location))
 				continue;
 			if (isOverlapping(location, definedLocalLocation, true)) {
-				message = Policy.bind("resources.overlapLocal", location.toString(), definedLocalLocation.toString()); //$NON-NLS-1$
+				message = Messages.bind(Messages.resources_overlapLocal, location, definedLocalLocation);
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 		}
@@ -2217,7 +2217,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 					if (children[i].isLinked()) {
 						IPath testLocation = children[i].getLocation();
 						if (testLocation != null && isOverlapping(testLocation, location, false)) {
-							message = Policy.bind("links.locationOverlapsLink", location.toOSString()); //$NON-NLS-1$
+							message = Messages.bind(Messages.links_locationOverlapsLink, location.toOSString());
 							return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, context.getFullPath(), message);
 						}
 					}
@@ -2256,7 +2256,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			}
 
 			public void handleException(Throwable exception) {
-				status[0] = new ResourceStatus(IStatus.ERROR, null, Policy.bind("resources.errorValidator"), exception); //$NON-NLS-1$
+				status[0] = new ResourceStatus(IStatus.ERROR, null, Messages.bind(Messages.resources_errorValidator), exception);
 			}
 		};
 		Platform.run(body);

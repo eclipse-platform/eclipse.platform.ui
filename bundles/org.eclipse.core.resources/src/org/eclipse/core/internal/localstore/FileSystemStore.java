@@ -13,6 +13,7 @@ package org.eclipse.core.internal.localstore;
 import java.io.*;
 import java.io.File;
 import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -32,7 +33,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 	public void copy(File source, File destination, int depth, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(Policy.bind("localstore.copying", source.getAbsolutePath()), 1); //$NON-NLS-1$
+			monitor.beginTask(Messages.bind(Messages.localstore_copying, source.getAbsolutePath()), 1);
 			Policy.checkCanceled(monitor);
 			if (source.isDirectory())
 				copyDirectory(source, destination, depth, Policy.subMonitorFor(monitor, 1));
@@ -51,7 +52,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 				children = new String[0];
 			}
 
-			monitor.beginTask(Policy.bind("localstore.copying", source.getAbsolutePath()), children.length); //$NON-NLS-1$
+			monitor.beginTask(Messages.bind(Messages.localstore_copying, source.getAbsolutePath()), children.length);
 			// create directory
 			writeFolder(destination);
 
@@ -73,7 +74,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			int totalWork = 1 + ((int) target.length() / 8192);
-			monitor.beginTask(Policy.bind("localstore.copying", target.getAbsolutePath()), totalWork); //$NON-NLS-1$
+			monitor.beginTask(Messages.bind(Messages.localstore_copying, target.getAbsolutePath()), totalWork);
 			try {
 				write(destination, read(target), false, monitor);
 			} catch (CoreException e) {
@@ -108,19 +109,19 @@ public class FileSystemStore implements ILocalStoreConstants {
 			// throw an exception with a more specific message and error code.
 			String parent = target.getParent();
 			if (parent != null && CoreFileSystemLibrary.isReadOnly(parent)) {
-				message = Policy.bind("localstore.readOnlyParent", path); //$NON-NLS-1$
+				message = Messages.bind(Messages.localstore_readOnlyParent, path);
 				code = IResourceStatus.PARENT_READ_ONLY;
 			} else if (target.isDirectory())
-				message = Policy.bind("localstore.notAFile", path); //$NON-NLS-1$
+				message = Messages.bind(Messages.localstore_notAFile, path);
 			else
-				message = Policy.bind("localstore.couldNotWrite", path); //$NON-NLS-1$
+				message = Messages.bind(Messages.localstore_couldNotWrite, path);
 			throw new ResourceException(code, new Path(path), message, e);
 		}
 	}
 
 	public void delete(File target) throws CoreException {
 		if (!Workspace.clear(target)) {
-			String message = Policy.bind("localstore.couldnotDelete", target.getAbsolutePath()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.localstore_couldnotDelete, target.getAbsolutePath());
 			throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, new Path(target.getAbsolutePath()), message, null);
 		}
 	}
@@ -163,16 +164,16 @@ public class FileSystemStore implements ILocalStoreConstants {
 				failedThis = !root.delete();
 		} catch (Exception e) {
 			// we caught a runtime exception so log it
-			String message = Policy.bind("localstore.couldnotDelete", root.getAbsolutePath()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.localstore_couldnotDelete, root.getAbsolutePath());
 			status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, new Path(root.getAbsolutePath()), message, e));
 			return false;
 		}
 		if (failedThis) {
 			String message = null;
 			if (CoreFileSystemLibrary.isReadOnly(root.getAbsolutePath()))
-				message = Policy.bind("localstore.couldnotDeleteReadOnly", root.getAbsolutePath()); //$NON-NLS-1$
+				message = Messages.bind(Messages.localstore_couldnotDeleteReadOnly, root.getAbsolutePath());
 			else
-				message = Policy.bind("localstore.couldnotDelete", root.getAbsolutePath()); //$NON-NLS-1$
+				message = Messages.bind(Messages.localstore_couldnotDelete, root.getAbsolutePath());
 			status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, new Path(root.getAbsolutePath()), message, null));
 		}
 		return !(failedRecursive || failedThis);
@@ -204,7 +205,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 				return IFile.ENCODING_UTF_8;
 			return IFile.ENCODING_UNKNOWN;
 		} catch (IOException e) {
-			String message = Policy.bind("localstore.couldNotRead", target.getAbsolutePath()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.localstore_couldNotRead, target.getAbsolutePath());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(target.getAbsolutePath()), message, e);
 		} finally {
 			if (input != null) {
@@ -220,7 +221,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 	public void move(File source, File destination, boolean force, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(Policy.bind("localstore.moving", source.getAbsolutePath()), 2); //$NON-NLS-1$
+			monitor.beginTask(Messages.bind(Messages.localstore_moving, source.getAbsolutePath()), 2);
 			//this flag captures case renaming on a case-insensitive OS, or moving
 			//two equivalent files in an environment that supports symbolic links.
 			//in these cases we NEVER want to delete anything
@@ -228,11 +229,11 @@ public class FileSystemStore implements ILocalStoreConstants {
 			try {
 				sourceEqualsDest = source.getCanonicalFile().equals(destination.getCanonicalFile());
 			} catch (IOException e) {
-				String message = Policy.bind("localstore.couldNotMove", source.getAbsolutePath()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.localstore_couldNotMove, source.getAbsolutePath());
 				throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, e));
 			}
 			if (!sourceEqualsDest && !force && destination.exists()) {
-				String message = Policy.bind("localstore.resourceExists", destination.getAbsolutePath()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.localstore_resourceExists, destination.getAbsolutePath());
 				throw new ResourceException(IResourceStatus.EXISTS_LOCAL, new Path(destination.getAbsolutePath()), message, null);
 			}
 			if (source.renameTo(destination)) {
@@ -245,7 +246,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 						// and throw an error
 						// XXX: if we fail deleting the destination, the destination (root) may still exist
 						Workspace.clear(destination);
-						String message = Policy.bind("localstore.couldnotDelete", source.getAbsolutePath()); //$NON-NLS-1$
+						String message = Messages.bind(Messages.localstore_couldnotDelete, source.getAbsolutePath());
 						throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 					} else {
 						// source exists but destination doesn't so try to copy below
@@ -256,7 +257,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 						return;
 					} else {
 						// neither the source nor the destination exist. this is REALLY bad
-						String message = Policy.bind("localstore.failedMove", source.getAbsolutePath(), destination.getAbsolutePath()); //$NON-NLS-1$
+						String message = Messages.bind(Messages.localstore_failedMove, source.getAbsolutePath(), destination.getAbsolutePath());
 						throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 					}
 				}
@@ -264,7 +265,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 			// for some reason we couldn't move - workaround: copy and delete the source
 			// but if just case-renaming on a case-insensitive FS, there is no workaround 
 			if (sourceEqualsDest) {
-				String message = Policy.bind("localstore.couldNotMove", source.getAbsolutePath()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.localstore_couldNotMove, source.getAbsolutePath());
 				throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 			}
 			boolean success = false;
@@ -278,7 +279,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 			} finally {
 				if (success) {
 					// fail if source cannot be successfully deleted
-					String message = Policy.bind("localstore.deleteProblemDuringMove"); //$NON-NLS-1$ 
+					String message = Messages.bind(Messages.localstore_deleteProblemDuringMove); 
 					MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, message, null);
 					if (!delete(source, result))
 						throw new ResourceException(result);
@@ -287,7 +288,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 						// We do not want to delete the destination in case of failure. It might
 						// the case where we already had contents in the destination, so we would
 						// be deleting resources we don't know about and the user might lose data.
-						String message = Policy.bind("localstore.couldNotMove", source.getAbsolutePath()); //$NON-NLS-1$
+						String message = Messages.bind(Messages.localstore_couldNotMove, source.getAbsolutePath());
 						throw new ResourceException(new ResourceStatus(IResourceStatus.FAILED_WRITE_LOCAL, new Path(source.getAbsolutePath()), message, null));
 					}
 				}
@@ -312,11 +313,11 @@ public class FileSystemStore implements ILocalStoreConstants {
 		} catch (FileNotFoundException e) {
 			String message;
 			if (!target.exists())
-				message = Policy.bind("localstore.fileNotFound", target.getAbsolutePath()); //$NON-NLS-1$
+				message = Messages.bind(Messages.localstore_fileNotFound, target.getAbsolutePath());
 			else if (target.isDirectory())
-				message = Policy.bind("localstore.notAFile", target.getAbsolutePath()); //$NON-NLS-1$
+				message = Messages.bind(Messages.localstore_notAFile, target.getAbsolutePath());
 			else
-				message = Policy.bind("localstore.couldNotRead", target.getAbsolutePath()); //$NON-NLS-1$
+				message = Messages.bind(Messages.localstore_couldNotRead, target.getAbsolutePath());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, new Path(target.getAbsolutePath()), message, e);
 		}
 	}
@@ -340,7 +341,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 					try {
 						bytesRead = source.read(buffer);
 					} catch (IOException e) {
-						String msg = Policy.bind("localstore.failedReadDuringWrite", new String[] {path}); //$NON-NLS-1$
+						String msg = Messages.bind(Messages.localstore_failedReadDuringWrite, path);
 						IPath p = path == null ? null : new Path(path);
 						throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, p, msg, e);
 					}
@@ -349,7 +350,7 @@ public class FileSystemStore implements ILocalStoreConstants {
 					try {
 						destination.write(buffer, 0, bytesRead);
 					} catch (IOException e) {
-						String msg = Policy.bind("localstore.couldNotWrite", new String[] {path}); //$NON-NLS-1$
+						String msg = Messages.bind(Messages.localstore_couldNotWrite, path);
 						IPath p = path == null ? null : new Path(path);
 						throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, p, msg, e);
 					}
@@ -397,12 +398,12 @@ public class FileSystemStore implements ILocalStoreConstants {
 		if (!target.isDirectory()) {
 			String path = target.getAbsolutePath();
 			int code = IResourceStatus.FAILED_WRITE_LOCAL;
-			String message = Policy.bind("localstore.couldNotCreateFolder", path); //$NON-NLS-1$		
+			String message = Messages.bind(Messages.localstore_couldNotCreateFolder, path);		
 			// Check to see if the parent is a read-only folder and if so then
 			// throw an exception with a more specific message and error code.
 			String parent = target.getParent();
 			if (parent != null && CoreFileSystemLibrary.isReadOnly(parent)) {
-				message = Policy.bind("localstore.readOnlyParent", path); //$NON-NLS-1$
+				message = Messages.bind(Messages.localstore_readOnlyParent, path);
 				code = IResourceStatus.PARENT_READ_ONLY;
 			}
 			throw new ResourceException(code, new Path(path), message, null);

@@ -527,7 +527,7 @@ public class DeltaDataTree extends AbstractDataTree {
 		if (childNodes != null) {
 			// Some deltas carry info about children, but there is
 			// no complete node against which they describe deltas.
-			Assert.isTrue(false, Policy.bind("dtree.malformedTree")); //$NON-NLS-1$
+			Assert.isTrue(false, Messages.bind(Messages.dtree_malformedTree));
 		}
 
 		// Node is missing or has been deleted.
@@ -777,7 +777,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	 */
 	public DeltaDataTree newEmptyDeltaTree() {
 		if (!isImmutable())
-			throw new IllegalArgumentException(Policy.bind("dtree.notImmutable")); //$NON-NLS-1$
+			throw new IllegalArgumentException(Messages.bind(Messages.dtree_notImmutable));
 		DeltaDataTree newTree = (DeltaDataTree) this.copy();
 		newTree.setParent(this);
 		newTree.emptyDelta();
@@ -816,7 +816,7 @@ public class DeltaDataTree extends AbstractDataTree {
 	 */
 	protected void reroot(DeltaDataTree sourceTree) {
 		if (!sourceTree.isImmutable())
-			throw new IllegalArgumentException(Policy.bind("dtree.parentsNotImmutable")); //$NON-NLS-1$
+			throw new IllegalArgumentException(Messages.bind(Messages.dtree_parentsNotImmutable));
 		DeltaDataTree parent = sourceTree.getParent();
 		if (parent == null)
 			return;

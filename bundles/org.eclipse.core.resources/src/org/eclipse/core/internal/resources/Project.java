@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.util.*;
 import org.eclipse.core.internal.events.LifecycleEvent;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
@@ -31,7 +32,7 @@ public class Project extends Container implements IProject {
 	 * some description fields to change value after project creation. (e.g. project location)
 	 */
 	protected MultiStatus basicSetDescription(ProjectDescription description, int updateFlags) {
-		String message = Policy.bind("resources.projectDesc"); //$NON-NLS-1$
+		String message = Messages.bind(Messages.resources_projectDesc);
 		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_WRITE_METADATA, message, null);
 		ProjectDescription current = internalGetDescription();
 		current.setComment(description.getComment());
@@ -122,7 +123,7 @@ public class Project extends Container implements IProject {
 	public void checkAccessible(int flags) throws CoreException {
 		super.checkAccessible(flags);
 		if (!isOpen(flags)) {
-			String message = Policy.bind("resources.mustBeOpen", getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_mustBeOpen, getFullPath());
 			throw new ResourceException(IResourceStatus.PROJECT_NOT_OPEN, getFullPath(), message, null);
 		}
 	}
@@ -134,7 +135,7 @@ public class Project extends Container implements IProject {
 		IPath location = desc.getLocation();
 		if (location == null)
 			return;
-		String message = Policy.bind("resources.invalidProjDesc"); //$NON-NLS-1$
+		String message = Messages.bind(Messages.resources_invalidProjDesc);
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INVALID_VALUE, message, null);
 		status.merge(workspace.validateName(desc.getName(), IResource.PROJECT));
 		if (moving) {
@@ -162,7 +163,7 @@ public class Project extends Container implements IProject {
 	public void close(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String msg = Policy.bind("resources.closing.1", getName()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_closing_1, getName());
 			monitor.beginTask(msg, Policy.totalWork);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 			try {
@@ -242,7 +243,7 @@ public class Project extends Container implements IProject {
 	public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(Policy.bind("resources.create"), Policy.totalWork); //$NON-NLS-1$
+			monitor.beginTask(Messages.bind(Messages.resources_create), Policy.totalWork);
 			checkValidPath(path, PROJECT, false);
 			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 			try {
@@ -502,7 +503,7 @@ public class Project extends Container implements IProject {
 	protected void internalCopy(IProjectDescription destDesc, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Policy.bind("resources.copying", getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_copying, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			String destName = destDesc.getName();
 			IPath destPath = new Path(destName).makeAbsolute();
@@ -533,7 +534,7 @@ public class Project extends Container implements IProject {
 
 				// call super.copy for each child (excluding project description file)
 				//make it a best effort copy
-				message = Policy.bind("resources.copyProblem"); //$NON-NLS-1$
+				message = Messages.bind(Messages.resources_copyProblem);
 				MultiStatus problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
 
 				IResource[] children = members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
@@ -564,7 +565,7 @@ public class Project extends Container implements IProject {
 				monitor.worked(Policy.opWork * 10 / 100);
 
 				// refresh local
-				monitor.subTask(Policy.bind("resources.updating")); //$NON-NLS-1$
+				monitor.subTask(Messages.bind(Messages.resources_updating));
 				getLocalManager().refresh(destination, DEPTH_INFINITE, true, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 				if (!problems.isOK())
 					throw new ResourceException(problems);
@@ -719,7 +720,7 @@ public class Project extends Container implements IProject {
 		Assert.isNotNull(description);
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Policy.bind("resources.moving", getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_moving, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			IProject destination = workspace.getRoot().getProject(description.getName());
 			final ISchedulingRule rule = workspace.getRuleFactory().moveRule(this, destination);
@@ -733,7 +734,7 @@ public class Project extends Container implements IProject {
 				}
 				checkDescription(destination, description, true);
 				workspace.beginOperation(true);
-				message = Policy.bind("resources.moveProblem"); //$NON-NLS-1$
+				message = Messages.bind(Messages.resources_moveProblem);
 				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, null);
 				WorkManager workManager = workspace.getWorkManager();
 				ResourceTree tree = new ResourceTree(workManager.getLock(), status, updateFlags);
@@ -768,7 +769,7 @@ public class Project extends Container implements IProject {
 	public void open(int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String msg = Policy.bind("resources.opening.1", getName()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_opening_1, getName());
 			monitor.beginTask(msg, Policy.totalWork);
 			monitor.subTask(msg);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
@@ -847,7 +848,7 @@ public class Project extends Container implements IProject {
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
-		String msg = Policy.bind("links.errorLinkReconcile"); //$NON-NLS-1$
+		String msg = Messages.bind(Messages.links_errorLinkReconcile);
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.OPERATION_FAILED, msg, null);
 		//walk over old linked resources and remove those that are no longer defined
 		for (int i = 0; i < children.length; i++) {
@@ -904,7 +905,7 @@ public class Project extends Container implements IProject {
 		//    FORCE means overwrite any existing .project file 
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(Policy.bind("resources.setDesc"), Policy.totalWork); //$NON-NLS-1$
+			monitor.beginTask(Messages.bind(Messages.resources_setDesc), Policy.totalWork);
 			final ISchedulingRule rule = workspace.getRoot();
 			try {
 				//need to use root rule because nature configuration calls third party code
@@ -925,7 +926,7 @@ public class Project extends Container implements IProject {
 				if (((updateFlags & IResource.FORCE) == 0)) {
 					hadSavedDescription = getLocalManager().hasSavedProject(this);
 					if (hadSavedDescription && !getLocalManager().isDescriptionSynchronized(this)) {
-						String message = Policy.bind("resources.projectDescSync", getName()); //$NON-NLS-1$
+						String message = Messages.bind(Messages.resources_projectDescSync, getName());
 						throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, getFullPath(), message, null);
 					}
 				}
@@ -944,7 +945,7 @@ public class Project extends Container implements IProject {
 				info.incrementContentId();
 				workspace.updateModificationStamp(info);
 				if (!hadSavedDescription) {
-					String msg = Policy.bind("resources.missingProjectMetaRepaired", getName()); //$NON-NLS-1$
+					String msg = Messages.bind(Messages.resources_missingProjectMetaRepaired, getName());
 					status.merge(new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, getFullPath(), msg));
 				}
 				if (!status.isOK())
@@ -983,7 +984,7 @@ public class Project extends Container implements IProject {
 	public void touch(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Policy.bind("resource.touch", getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_touch, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 			try {

@@ -15,7 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -43,7 +43,7 @@ public class PlatformURLResourceConnection extends PlatformURLConnection {
 	protected URL resolve() throws IOException {
 		IPath spec = new Path(url.getFile().trim()).makeRelative();
 		if (!spec.segment(0).equals(RESOURCE))
-			throw new IOException(Policy.bind("url.badVariant", url.toString())); //$NON-NLS-1$
+			throw new IOException(Messages.bind(Messages.url_badVariant, url));
 		int count = spec.segmentCount();
 		// if there is only one segment then we are talking about the workspace root.
 		if (count == 1)
@@ -51,7 +51,7 @@ public class PlatformURLResourceConnection extends PlatformURLConnection {
 		// if there are two segments then the second is a project name.
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(spec.segment(1));
 		if (!project.exists()) {
-			String message = Policy.bind("url.couldNotResolve", project.getName(), url.toExternalForm()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.url_couldNotResolve, project.getName(), url.toExternalForm());
 			throw new IOException(message);
 		}
 		IPath result = null;

@@ -12,7 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.util.*;
 import org.eclipse.core.internal.events.PathVariableChangeEvent;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -194,20 +194,20 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	public IStatus validateName(String name) {
 		String message = null;
 		if (name.length() == 0) {
-			message = Policy.bind("pathvar.length"); //$NON-NLS-1$
+			message = Messages.bind(Messages.pathvar_length);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
 		char first = name.charAt(0);
 		if (!Character.isLetter(first) && first != '_') {
-			message = Policy.bind("pathvar.beginLetter", String.valueOf(first)); //$NON-NLS-1$
+			message = Messages.bind(Messages.pathvar_beginLetter, String.valueOf(first));
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 
 		for (int i = 1; i < name.length(); i++) {
 			char following = name.charAt(i);
 			if (!Character.isLetter(following) && !Character.isDigit(following) && following != '_') {
-				message = Policy.bind("pathvar.invalidChar", String.valueOf(following)); //$NON-NLS-1$
+				message = Messages.bind(Messages.pathvar_invalidChar, String.valueOf(following));
 				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 			}
 		}
@@ -219,7 +219,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	 */
 	public IStatus validateValue(IPath value) {
 		if (value != null && (!value.isValidPath(value.toString()) || !value.isAbsolute())) {
-			String message = Policy.bind("pathvar.invalidValue"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.pathvar_invalidValue);
 			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 		}
 		return Status.OK_STATUS;

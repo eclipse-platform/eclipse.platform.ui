@@ -10,10 +10,12 @@
 package org.eclipse.core.internal.resources;
 
 import java.io.DataInputStream;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.watson.ElementTree;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Default tree reader that does not read anything. This is used in cases
@@ -32,7 +34,7 @@ public abstract class WorkspaceTreeReader {
 				return new WorkspaceTreeReader_2(workspace);
 			default :
 				// Unknown tree version - fail to read the tree
-				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, Policy.bind("resources.format"), null); //$NON-NLS-1$
+				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, Messages.bind(Messages.resources_format), null);
 		}
 	}
 

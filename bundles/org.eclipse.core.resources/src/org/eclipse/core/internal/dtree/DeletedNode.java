@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.dtree;
 
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.IPath;
 
 /**
@@ -42,7 +42,7 @@ public class DeletedNode extends AbstractDataTreeNode {
 	 */
 	AbstractDataTreeNode childAt(String localName) {
 		/* deleted nodes do not have children */
-		throw new ObjectNotFoundException(Policy.bind("dtree.missingChild", localName)); //$NON-NLS-1$
+		throw new ObjectNotFoundException(Messages.bind(Messages.dtree_missingChild, localName));
 	}
 
 	/**

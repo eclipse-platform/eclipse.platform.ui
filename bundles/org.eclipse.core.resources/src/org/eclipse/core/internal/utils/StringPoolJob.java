@@ -28,7 +28,7 @@ public class StringPoolJob extends Job {
 	private Map participants = Collections.synchronizedMap(new HashMap(10));
 
 	public StringPoolJob() {
-		super(Policy.bind("utils.stringJobName")); //$NON-NLS-1$
+		super(Messages.bind(Messages.utils_stringJobName));
 		setSystem(true);
 		setPriority(DECORATE);
 	}

@@ -14,7 +14,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.*;
 import org.eclipse.core.internal.plugins.PluginClassLoader;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -67,7 +67,7 @@ public class EventStats {
 	public static void buildException(Exception e) {
 		if (currentStats == null) {
 			if (DEBUG)
-				System.out.println(Policy.bind("utils.buildException")); //$NON-NLS-1$
+				System.out.println(Messages.bind(Messages.utils_buildException));
 		} else
 			currentStats.addException(e);
 	}
@@ -103,30 +103,30 @@ public class EventStats {
 		}
 		//dump stats
 		out.println("---------------------------------------------------------------"); //$NON-NLS-1$
-		out.println(Policy.bind("utils.snapshots", Integer.toString(snapshotCount), Long.toString(snapshotTime))); //$NON-NLS-1$
+		out.println(Messages.bind(Messages.utils_snapshots, Integer.toString(snapshotCount), Long.toString(snapshotTime)));
 		for (int i = 0; i < allStats.length; i++) {
 			EventStats stats = allStats[i];
-			out.println(Policy.bind("utils.stats", stats.getName())); //$NON-NLS-1$
+			out.println(Messages.bind(Messages.utils_stats, stats.getName()));
 
 			int notifyCount = stats.getNotifyCount();
 			if (notifyCount > 0)
-				out.println(Policy.bind("utils.notifications", Integer.toString(notifyCount), Integer.toString((int) (notifyCount * 100.0 / totalNotifications)))); //$NON-NLS-1$
+				out.println(Messages.bind(Messages.utils_notifications, Integer.toString(notifyCount), Integer.toString((int) (notifyCount * 100.0 / totalNotifications))));
 
 			long notifyTime = stats.getNotifyRunningTime();
 			if (notifyTime > 0)
-				out.println(Policy.bind("utils.notifyTime", Long.toString(notifyTime), Integer.toString((int) (notifyTime * 100.0 / totalNotifyTime)))); //$NON-NLS-1$
+				out.println(Messages.bind(Messages.utils_notifyTime, Long.toString(notifyTime), Integer.toString((int) (notifyTime * 100.0 / totalNotifyTime))));
 
 			int buildCount = stats.getBuildCount();
 			if (buildCount > 0)
-				out.println(Policy.bind("utils.builds", Integer.toString(buildCount), Integer.toString((int) (buildCount * 100.0 / totalBuilds)))); //$NON-NLS-1$
+				out.println(Messages.bind(Messages.utils_builds, Integer.toString(buildCount), Integer.toString((int) (buildCount * 100.0 / totalBuilds))));
 
 			long buildTime = stats.getBuildRunningTime();
 			if (buildTime > 0)
-				out.println(Policy.bind("utils.buildTime", Long.toString(buildTime), Integer.toString((int) (buildTime * 100.0 / totalBuildTime)))); //$NON-NLS-1$
+				out.println(Messages.bind(Messages.utils_buildTime, Long.toString(buildTime), Integer.toString((int) (buildTime * 100.0 / totalBuildTime))));
 
 			int exceptions = stats.getExceptionCount();
 			if (exceptions > 0)
-				out.println(Policy.bind("utils.exceptions", Integer.toString(exceptions), Integer.toString((int) (exceptions * 100.0 / totalExceptions)))); //$NON-NLS-1$
+				out.println(Messages.bind(Messages.utils_exceptions, Integer.toString(exceptions), Integer.toString((int) (exceptions * 100.0 / totalExceptions))));
 
 			out.println(""); //$NON-NLS-1$
 		}
@@ -136,7 +136,7 @@ public class EventStats {
 		long end = System.currentTimeMillis();
 		if (currentStats == null || currentStart == -1) {
 			if (DEBUG)
-				System.err.println(Policy.bind("utils.endBuild")); //$NON-NLS-1$
+				System.err.println(Messages.bind(Messages.utils_endBuild));
 			return;
 		}
 		currentStats.addBuild(end - currentStart);
@@ -148,7 +148,7 @@ public class EventStats {
 		long end = System.currentTimeMillis();
 		if (currentStats == null || currentStart == -1) {
 			if (DEBUG)
-				System.err.println(Policy.bind("utils.endNotify")); //$NON-NLS-1$
+				System.err.println(Messages.bind(Messages.utils_endNotify));
 			return;
 		}
 		currentStats.addNotify(end - currentStart);
@@ -271,7 +271,7 @@ public class EventStats {
 	public static void notifyException(Exception e) {
 		if (currentStats == null) {
 			if (DEBUG)
-				System.out.println(Policy.bind("utils.buildException")); //$NON-NLS-1$
+				System.out.println(Messages.bind(Messages.utils_buildException));
 			return;
 		}
 		currentStats.addException(e);

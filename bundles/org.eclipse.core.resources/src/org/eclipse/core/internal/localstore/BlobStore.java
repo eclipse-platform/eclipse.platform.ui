@@ -55,7 +55,7 @@ public class BlobStore {
 		File dir = folderFor(uuid);
 		if (!dir.exists())
 			if (!dir.mkdirs()) {
-				String message = Policy.bind("localstore.couldNotCreateFolder", dir.getAbsolutePath()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.localstore_couldNotCreateFolder, dir.getAbsolutePath());
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, new Path(dir.getAbsolutePath()), message, null);
 			}
 		File destination = fileFor(uuid);

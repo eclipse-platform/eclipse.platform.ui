@@ -14,6 +14,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;
 import org.eclipse.core.internal.events.BuilderPersistentInfo;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.IProject;
@@ -68,7 +69,7 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 		monitor = Policy.monitorFor(monitor);
 		String message;
 		try {
-			message = Policy.bind("resources.reading"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_reading);
 			monitor.beginTask(message, 10);
 
 			/* read in the builder infos */
@@ -82,7 +83,7 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 			linkBuildersToTrees(infos, trees, 0, Policy.subMonitorFor(monitor, 1));
 
 		} catch (IOException e) {
-			message = Policy.bind("resources.readProjectTree"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_readProjectTree);
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, message, e);
 		} finally {
 			monitor.done();

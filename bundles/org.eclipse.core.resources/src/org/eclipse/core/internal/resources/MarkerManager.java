@@ -14,7 +14,7 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -76,7 +76,7 @@ public class MarkerManager implements IManager {
 	private void basicAdd(IResource resource, MarkerSet markers, MarkerInfo newMarker) throws CoreException {
 		// should always be a new marker.
 		if (newMarker.getId() != MarkerInfo.UNDEFINED_ID) {
-			String message = Policy.bind("resources.changeInAdd"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_changeInAdd);
 			throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, resource.getFullPath(), message));
 		}
 		newMarker.setId(workspace.nextMarkerId());
@@ -451,7 +451,7 @@ public class MarkerManager implements IManager {
 				input.close();
 			}
 		} catch (IOException e) {
-			String msg = Policy.bind("resources.readMeta", sourceLocation.toString()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_readMeta, sourceLocation);
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
 		}
 	}
@@ -473,7 +473,7 @@ public class MarkerManager implements IManager {
 			}
 		} catch (Exception e) {
 			// only log the exception, we should not fail restoring the snapshot
-			String msg = Policy.bind("resources.readMeta", sourceLocation.toString()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_readMeta, sourceLocation);
 			ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
 		}
 	}

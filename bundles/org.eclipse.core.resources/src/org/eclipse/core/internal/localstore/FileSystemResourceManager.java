@@ -14,6 +14,7 @@ import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.resources.File;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -124,16 +125,16 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			int totalWork = ((Resource) target).countResources(IResource.DEPTH_INFINITE, false);
-			String title = Policy.bind("localstore.copying", target.getFullPath().toString()); //$NON-NLS-1$
+			String title = Messages.bind(Messages.localstore_copying, target.getFullPath());
 			monitor.beginTask(title, totalWork);
 			// use locationFor() instead of getLocation() to avoid null 
 			IPath location = locationFor(destination);
 			if (location == null) {
-				String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.localstore_locationUndefined, target.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 			}
 			if (location.toFile().exists()) {
-				String message = Policy.bind("localstore.resourceExists", destination.getFullPath().toString()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.localstore_resourceExists, destination.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), message, null);
 			}
 			CopyVisitor visitor = new CopyVisitor(target, destination, updateFlags, monitor);
@@ -174,17 +175,17 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			int totalWork = resource.countResources(IResource.DEPTH_INFINITE, false);
 			if (!force)
 				totalWork *= 2;
-			String title = Policy.bind("localstore.deleting", resource.getFullPath().toString()); //$NON-NLS-1$
+			String title = Messages.bind(Messages.localstore_deleting, resource.getFullPath());
 			monitor.beginTask(title, totalWork);
 			monitor.subTask(""); //$NON-NLS-1$
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("localstore.deleteProblem"), null); //$NON-NLS-1$
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.bind(Messages.localstore_deleteProblem), null);
 			List skipList = null;
 			UnifiedTree tree = new UnifiedTree(target);
 			if (!force) {
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, totalWork/2);
 				sub.beginTask("", 1000); //$NON-NLS-1$
 				try {
-					CollectSyncStatusVisitor refreshVisitor = new CollectSyncStatusVisitor(Policy.bind("localstore.deleteProblem"), sub); //$NON-NLS-1$
+					CollectSyncStatusVisitor refreshVisitor = new CollectSyncStatusVisitor(Messages.bind(Messages.localstore_deleteProblem), sub);
 					tree.accept(refreshVisitor, IResource.DEPTH_INFINITE);
 					status.merge(refreshVisitor.getSyncStatus());
 					skipList = refreshVisitor.getAffectedResources();
@@ -232,12 +233,12 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			((Project) target.getProject()).checkExists(NULL_FLAG, true);
 		//location can be null if based on an undefined variable
 		if (location == null) {
-			String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.localstore_locationUndefined, target.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 		}
 		java.io.File localFile = location.toFile();
 		if (!localFile.exists()) {
-			String message = Policy.bind("localstore.fileNotFound", localFile.getAbsolutePath()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.localstore_fileNotFound, localFile.getAbsolutePath());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 		}
 		return getStore().getEncoding(localFile);
@@ -274,7 +275,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	public boolean internalWrite(IProject target, IProjectDescription description, int updateFlags, boolean hasPublicChanges, boolean hasPrivateChanges) throws CoreException {
 		IPath location = locationFor(target);
 		if (location == null) {
-			String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.localstore_locationUndefined, target.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
 		}
 		getStore().writeFolder(location.toFile());
@@ -292,7 +293,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		try {
 			new ModelObjectWriter().write(description, out);
 		} catch (IOException e) {
-			String msg = Policy.bind("resources.writeMeta", target.getFullPath().toString()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_writeMeta, target.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), msg, e);
 		}
 		byte[] newContents = out.toByteArray();
@@ -521,12 +522,12 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			((Project) target.getProject()).checkExists(NULL_FLAG, true);
 		//location can be null if based on an undefined variable
 		if (location == null) {
-			String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.localstore_locationUndefined, target.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 		}
 		java.io.File localFile = location.toFile();
 		if (!localFile.exists()) {
-			String message = Policy.bind("localstore.fileNotFound", localFile.getAbsolutePath()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.localstore_fileNotFound, localFile.getAbsolutePath());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
 		}
 		if (!force) {
@@ -534,7 +535,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			int flags = ((Resource) target).getFlags(info);
 			((Resource) target).checkExists(flags, true);
 			if (CoreFileSystemLibrary.getLastModified(localFile.getAbsolutePath()) != info.getLocalSyncInfo()) {
-				String message = Policy.bind("localstore.resourceIsOutOfSync", target.getFullPath().toString()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.localstore_resourceIsOutOfSync, target.getFullPath());
 				throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 			}
 		}
@@ -576,7 +577,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			//try the legacy location in the meta area
 			description = getWorkspace().getMetaArea().readOldDescription(target);
 			if (description == null) {
-				String msg = Policy.bind("resources.missingProjectMeta", target.getName()); //$NON-NLS-1$
+				String msg = Messages.bind(Messages.resources_missingProjectMeta, target.getName());
 				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, null);
 			}
 			return description;
@@ -586,11 +587,11 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		try {
 			description = new ProjectDescriptionReader().read(descriptionPath);
 		} catch (IOException e) {
-			String msg = Policy.bind("resources.readProjectMeta", target.getName()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_readProjectMeta, target.getName());
 			error = new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e);
 		}
 		if (error == null && description == null) {
-			String msg = Policy.bind("resources.readProjectMeta", target.getName()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_readProjectMeta, target.getName());
 			error = new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, null);
 		}
 		if (description != null) {
@@ -644,7 +645,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	protected boolean refreshResource(IResource target, int depth, boolean updateAliases, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		int totalWork = RefreshLocalVisitor.TOTAL_WORK;
-		String title = Policy.bind("localstore.refreshing", target.getFullPath().toString()); //$NON-NLS-1$
+		String title = Messages.bind(Messages.localstore_refreshing, target.getFullPath());
 		try {
 			monitor.beginTask(title, totalWork);
 			RefreshLocalVisitor visitor = updateAliases ? new RefreshLocalAliasVisitor(monitor) : new RefreshLocalVisitor(monitor);
@@ -669,7 +670,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		monitor = Policy.monitorFor(monitor);
 		IProject[] projects = target.getProjects();
 		int totalWork = projects.length;
-		String title = Policy.bind("localstore.refreshingRoot"); //$NON-NLS-1$
+		String title = Messages.bind(Messages.localstore_refreshingRoot);
 		try {
 			monitor.beginTask(title, totalWork);
 			// if doing depth zero, there is nothing to do (can't refresh the root).  
@@ -711,7 +712,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 	public long setLocalTimeStamp(IResource target, ResourceInfo info, long value) throws CoreException {
 		IPath location = target.getLocation();
 		if (location == null) {
-			String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.localstore_locationUndefined, target.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
 		}
 		java.io.File localFile = location.toFile();
@@ -755,13 +756,13 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		try {
 			//location can be null if based on an undefined variable
 			if (location == null) {
-				String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.localstore_locationUndefined, target.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
 			}
 			final String locationString = location.toOSString();
 			long stat = CoreFileSystemLibrary.getStat(locationString);
 			if (CoreFileSystemLibrary.isReadOnly(stat)) {
-				String message = Policy.bind("localstore.couldNotWriteReadOnly", target.getFullPath().toString()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.localstore_couldNotWriteReadOnly, target.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
 			}
 			long lastModified = CoreFileSystemLibrary.getLastModified(stat);
@@ -769,7 +770,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			if (force) {
 				if (append && !target.isLocal(IResource.DEPTH_ZERO) && !localFile.exists()) {
 					// force=true, local=false, existsInFileSystem=false
-					String message = Policy.bind("resources.mustBeLocal", target.getFullPath().toString()); //$NON-NLS-1$
+					String message = Messages.bind(Messages.resources_mustBeLocal, target.getFullPath());
 					throw new ResourceException(IResourceStatus.RESOURCE_NOT_LOCAL, target.getFullPath(), message, null);
 				}
 			} else {
@@ -777,16 +778,16 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 					// test if timestamp is the same since last synchronization
 					ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
 					if (lastModified != info.getLocalSyncInfo()) {
-						String message = Policy.bind("localstore.resourceIsOutOfSync", target.getFullPath().toString()); //$NON-NLS-1$
+						String message = Messages.bind(Messages.localstore_resourceIsOutOfSync, target.getFullPath());
 						throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 					}
 				} else {
 					if (localFile.exists()) {
-						String message = Policy.bind("localstore.resourceExists", target.getFullPath().toString()); //$NON-NLS-1$
+						String message = Messages.bind(Messages.localstore_resourceExists, target.getFullPath());
 						throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), message, null);
 					}
 					if (append) {
-						String message = Policy.bind("resources.mustBeLocal", target.getFullPath().toString()); //$NON-NLS-1$
+						String message = Messages.bind(Messages.resources_mustBeLocal, target.getFullPath());
 						throw new ResourceException(IResourceStatus.RESOURCE_NOT_LOCAL, target.getFullPath(), message, null);
 					}
 				}
@@ -817,17 +818,17 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		IPath location = locationFor(target);
 		//location can be null if based on an undefined variable
 		if (location == null) {
-			String message = Policy.bind("localstore.locationUndefined", target.getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.localstore_locationUndefined, target.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), message, null);
 		}
 		java.io.File file = location.toFile();
 		if (!force) {
 			if (file.isDirectory()) {
-				String message = Policy.bind("localstore.resourceExists", target.getFullPath().toString()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.localstore_resourceExists, target.getFullPath());
 				throw new ResourceException(IResourceStatus.EXISTS_LOCAL, target.getFullPath(), message, null);
 			}
 			if (file.exists()) {
-				String message = Policy.bind("localstore.fileExists", target.getFullPath().toString()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.localstore_fileExists, target.getFullPath());
 				throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
 			}
 		}
@@ -862,7 +863,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			fout = new FileOutputStream(file);
 			new ModelObjectWriter().write(desc, fout);
 		} catch (IOException e) {
-			String msg = Policy.bind("resources.writeMeta", target.getFullPath().toString()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_writeMeta, target.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), msg, e);
 		} finally {
 			if (fout != null) {

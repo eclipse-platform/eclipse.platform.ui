@@ -222,7 +222,7 @@ public class ElementTree {
 
 	public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparator comparator) {
 		if (olderTree == null || comparator == null) {
-			throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.computeDeltaWith")); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new IllegalArgumentException(Messages.bind(Messages.watson_nullArg, "ElementTree.computeDeltaWith")); //$NON-NLS-1$
 		}
 
 		return new ElementTreeDelta(olderTree, this, comparator);
@@ -249,7 +249,7 @@ public class ElementTree {
 
 	public ElementTreeDelta computeDeltaWith(ElementTree olderTree, IElementComparator comparator, IPath path) {
 		if (olderTree == null || comparator == null)
-			throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.computeDeltaWith")); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new IllegalArgumentException(Messages.bind(Messages.watson_nullArg, "ElementTree.computeDeltaWith")); //$NON-NLS-1$
 		/* can optimize certain cases when computing deltas on the whole tree */
 		if (path.isRoot())
 			return new ElementTreeDelta(olderTree, this, comparator);
@@ -296,7 +296,7 @@ public class ElementTree {
 	public synchronized void createSubtree(IPath key, ElementTree subtree) {
 		/* don't allow creating subtrees at the root */
 		if (key.isRoot()) {
-			throw new IllegalArgumentException(Policy.bind("watson.noModify")); //$NON-NLS-1$
+			throw new IllegalArgumentException(Messages.bind(Messages.watson_noModify));
 		}
 
 		// Clear the child IDs cache in case it's referring to this parent.
@@ -309,7 +309,7 @@ public class ElementTree {
 			/* don't copy the implicit root node of the subtree */
 			IPath[] children = subtree.getChildren(subtree.getRoot());
 			if (children.length != 1) {
-				throw new IllegalArgumentException(Policy.bind("watson.illegalSubtree")); //$NON-NLS-1$
+				throw new IllegalArgumentException(Messages.bind(Messages.watson_illegalSubtree));
 			}
 
 			/* get the subtree for the specified key */
@@ -369,7 +369,7 @@ public class ElementTree {
 	 * Complains that an element was not found
 	 */
 	protected void elementNotFound(IPath key) {
-		throw new IllegalArgumentException(Policy.bind("watson.elementNotFound", key.toString())); //$NON-NLS-1$
+		throw new IllegalArgumentException(Messages.bind(Messages.watson_elementNotFound, key));
 	}
 
 	/**
@@ -750,12 +750,12 @@ public class ElementTree {
 	 */
 	public ElementTree mergeDeltaChain(IPath path, ElementTree[] trees) {
 		if (path == null || trees == null) {
-			throw new IllegalArgumentException(Policy.bind("watson.nullArg", "ElementTree.mergeDeltaChain")); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new IllegalArgumentException(Messages.bind(Messages.watson_nullArg, "ElementTree.mergeDeltaChain")); //$NON-NLS-1$
 		}
 
 		/* The tree has to be open */
 		if (isImmutable()) {
-			throw new IllegalArgumentException(Policy.bind("watson.immutable")); //$NON-NLS-1$
+			throw new IllegalArgumentException(Messages.bind(Messages.watson_immutable));
 		}
 		ElementTree current = this;
 		if (trees.length > 0) {

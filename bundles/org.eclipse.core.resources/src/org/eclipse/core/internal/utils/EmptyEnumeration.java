@@ -46,6 +46,6 @@ public class EmptyEnumeration implements Enumeration {
 	 * @see Enumeration#nextElement()
 	 */
 	public Object nextElement() {
-		throw new java.util.NoSuchElementException(Policy.bind("utils.noElements")); //$NON-NLS-1$
+		throw new java.util.NoSuchElementException(Messages.bind(Messages.utils_noElements));
 	}
 }

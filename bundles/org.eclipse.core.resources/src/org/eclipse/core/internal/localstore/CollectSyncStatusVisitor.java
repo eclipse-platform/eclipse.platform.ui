@@ -13,7 +13,7 @@ package org.eclipse.core.internal.localstore;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -39,7 +39,7 @@ public class CollectSyncStatusVisitor extends RefreshLocalVisitor {
 	}
 
 	protected void changed(Resource target) {
-		String message = Policy.bind("localstore.resourceIsOutOfSync", target.getFullPath().toString()); //$NON-NLS-1$
+		String message = Messages.bind(Messages.localstore_resourceIsOutOfSync, target.getFullPath());
 		status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message));
 		affectedResources.add(target);
 		resourceChanged = true;

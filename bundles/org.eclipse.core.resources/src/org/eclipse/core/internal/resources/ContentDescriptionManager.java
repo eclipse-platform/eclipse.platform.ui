@@ -13,7 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import org.eclipse.core.internal.content.ContentType;
 import org.eclipse.core.internal.utils.Cache;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
@@ -138,7 +138,7 @@ public class ContentDescriptionManager implements IManager {
 			IContentTypeManager contentTypeManager = Platform.getContentTypeManager();			
 			return contentTypeManager.getDescriptionFor(contents, file.getName(), IContentDescription.ALL);
 		} catch (IOException e) {
-			String message = Policy.bind("resources.errorContentDescription", file.getFullPath().toString()); //$NON-NLS-1$		
+			String message = Messages.bind(Messages.resources_errorContentDescription, file.getFullPath());		
 			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, file.getFullPath(), message, e);
 		} finally {
 			file.ensureClosed(contents);

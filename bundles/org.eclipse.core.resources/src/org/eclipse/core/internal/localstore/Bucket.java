@@ -15,7 +15,7 @@ import java.util.*;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.resources.ResourceStatus;
 import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 
@@ -235,7 +235,7 @@ public abstract class Bucket {
 				int version = source.readByte();
 				if (version != getVersion()) {
 					// unknown version
-					String message = Policy.bind("resources.readMetaWrongVersion", location.getAbsolutePath(), Integer.toString(version)); //$NON-NLS-1$
+					String message = Messages.bind(Messages.resources_readMetaWrongVersion, location.getAbsolutePath(), Integer.toString(version));
 					ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, message);
 					throw new ResourceException(status);
 				}
@@ -246,7 +246,7 @@ public abstract class Bucket {
 				source.close();
 			}
 		} catch (IOException ioe) {
-			String message = Policy.bind("resources.readMeta", location.getAbsolutePath()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_readMeta, location.getAbsolutePath());
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, null, message, ioe);
 			throw new ResourceException(status);
 		}
@@ -279,7 +279,7 @@ public abstract class Bucket {
 			}
 			needSaving = false;
 		} catch (IOException ioe) {
-			String message = Policy.bind("resources.writeMeta", location.getAbsolutePath()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_writeMeta, location.getAbsolutePath());
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_WRITE_METADATA, null, message, ioe);
 			throw new ResourceException(status);
 		}

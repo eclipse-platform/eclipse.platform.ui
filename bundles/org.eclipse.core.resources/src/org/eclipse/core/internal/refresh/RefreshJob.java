@@ -10,6 +10,7 @@
 package org.eclipse.core.internal.refresh;
 
 import java.util.*;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -32,7 +33,7 @@ public class RefreshJob extends WorkspaceJob {
 	private final List fRequests;
 
 	public RefreshJob() {
-		super(Policy.bind("refresh.jobName")); //$NON-NLS-1$
+		super(Messages.bind(Messages.refresh_jobName));
 		fRequests = new ArrayList(1);
 	}
 
@@ -113,7 +114,7 @@ public class RefreshJob extends WorkspaceJob {
 	 */
 	public IStatus runInWorkspace(IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
-		String msg = Policy.bind("refresh.refreshErr"); //$NON-NLS-1$
+		String msg = Messages.bind(Messages.refresh_refreshErr);
 		MultiStatus errors = new MultiStatus(ResourcesPlugin.PI_RESOURCES, 1, msg, null);
 		long longestRefresh = 0;
 		try {
@@ -135,7 +136,7 @@ public class RefreshJob extends WorkspaceJob {
 						longestRefresh = refreshTime;
 					//show occasional progress
 					if (refreshCount % 100 == 0)
-						monitor.subTask(Policy.bind("refresh.task", Integer.toString(fRequests.size()))); //$NON-NLS-1$
+						monitor.subTask(Messages.bind(Messages.refresh_task, Integer.toString(fRequests.size())));
 					if (refreshCount % 1000 == 0) {
 						//be polite to other threads (no effect on some platforms)
 						Thread.yield();

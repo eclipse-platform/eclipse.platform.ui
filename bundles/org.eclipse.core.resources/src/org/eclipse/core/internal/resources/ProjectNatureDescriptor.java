@@ -11,7 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.ArrayList;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IProjectNatureDescriptor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -40,7 +40,7 @@ public class ProjectNatureDescriptor implements IProjectNatureDescriptor {
 	}
 
 	protected void fail() throws CoreException {
-		fail(Policy.bind("natures.invalidDefinition", id)); //$NON-NLS-1$
+		fail(Messages.bind(Messages.natures_invalidDefinition, id));
 	}
 
 	protected void fail(String reason) throws CoreException {
@@ -97,7 +97,7 @@ public class ProjectNatureDescriptor implements IProjectNatureDescriptor {
 		//read the extension
 		id = natureExtension.getUniqueIdentifier();
 		if (id == null) {
-			fail(Policy.bind("natures.missingIdentifier")); //$NON-NLS-1$
+			fail(Messages.bind(Messages.natures_missingIdentifier));
 		}
 		label = natureExtension.getLabel();
 		IConfigurationElement[] elements = natureExtension.getConfigurationElements();

@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import org.eclipse.core.internal.events.EventStats;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.ISaveContext;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -22,7 +23,7 @@ import org.eclipse.core.runtime.jobs.Job;
  */
 public class DelayedSnapshotJob extends Job {
 
-	private static final String MSG_SNAPSHOT = Policy.bind("resources.snapshot"); //$NON-NLS-1$
+	private static final String MSG_SNAPSHOT = Messages.bind(Messages.resources_snapshot);
 	private SaveManager saveManager;
 
 	public DelayedSnapshotJob(SaveManager manager) {

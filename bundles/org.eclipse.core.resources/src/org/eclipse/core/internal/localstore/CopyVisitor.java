@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.localstore;
 
 import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -53,7 +54,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 		this.force = (updateFlags & IResource.FORCE) != 0;
 		this.monitor = monitor;
 		this.segmentsToDrop = rootSource.getFullPath().segmentCount();
-		this.status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.INFO, Policy.bind("localstore.copyProblem"), null); //$NON-NLS-1$
+		this.status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.INFO, Messages.bind(Messages.localstore_copyProblem), null);
 	}
 
 	protected boolean copy(UnifiedTreeNode node) {
@@ -156,7 +157,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 			if (node.getLocalLocation() == null) {
 				//should still be a best effort copy
 				IPath path = node.getResource().getFullPath();
-				String message = Policy.bind("localstore.locationUndefined", path.toString()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.localstore_locationUndefined, path);
 				status.add(new ResourceStatus(IResourceStatus.FAILED_READ_LOCAL, path, message, null));
 				return false;
 			}
@@ -169,14 +170,14 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 				//if source still doesn't exist, then fail because we can't copy a missing resource
 				if (!node.existsInFileSystem()) {
 					IPath path = node.getResource().getFullPath();
-					String message = Policy.bind("resources.mustExist", path.toString()); //$NON-NLS-1$
+					String message = Messages.bind(Messages.resources_mustExist, path);
 					status.add(new ResourceStatus(IResourceStatus.RESOURCE_NOT_FOUND, path, message, null));
 					return false;
 				}
 			}
 			if (!force && !wasSynchronized) {
 				IPath path = node.getResource().getFullPath();
-				String message = Policy.bind("localstore.resourceIsOutOfSync", path.toString()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.localstore_resourceIsOutOfSync, path);
 				status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, path, message, null));
 				return true;
 			}

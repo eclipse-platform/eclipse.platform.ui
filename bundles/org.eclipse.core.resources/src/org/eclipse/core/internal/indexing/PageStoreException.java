@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
+
 
 public class PageStoreException extends StoreException {
 	public final static int GenericFailure = 0;
@@ -64,24 +65,19 @@ public class PageStoreException extends StoreException {
 	 * Initialize the messages at class load time.
 	 */
 	private static void initializeMessages() {
-		message[GenericFailure] = bind("pageStore.genericFailure"); //$NON-NLS-1$
-		message[CreateFailure] = bind("pageStore.createFailure"); //$NON-NLS-1$
-		message[OpenFailure] = bind("pageStore.openFailure"); //$NON-NLS-1$
-		message[LengthFailure] = bind("pageStore.lengthFailure"); //$NON-NLS-1$
-		message[WriteFailure] = bind("pageStore.writeFailure"); //$NON-NLS-1$
-		message[ReadFailure] = bind("pageStore.readFailure"); //$NON-NLS-1$
-		message[CommitFailure] = bind("pageStore.commitFailure"); //$NON-NLS-1$
-		message[IntegrityFailure] = bind("pageStore.integrityFailure"); //$NON-NLS-1$
-		message[MetadataRequestFailure] = bind("pageStore.metadataRequestFailure"); //$NON-NLS-1$
-		message[ConversionFailure] = bind("pageStore.conversionFailure"); //$NON-NLS-1$
-		message[LogCreateFailure] = bind("pageStore.logCreateFailure"); //$NON-NLS-1$
-		message[LogOpenFailure] = bind("pageStore.logOpenFailure"); //$NON-NLS-1$
-		message[LogReadFailure] = bind("pageStore.logReadFailure"); //$NON-NLS-1$
-		message[LogWriteFailure] = bind("pageStore.logWriteFailure"); //$NON-NLS-1$
+		message[GenericFailure] = Messages.bind(Messages.pageStore_genericFailure);
+		message[CreateFailure] = Messages.bind(Messages.pageStore_createFailure);
+		message[OpenFailure] = Messages.bind(Messages.pageStore_openFailure);
+		message[LengthFailure] = Messages.bind(Messages.pageStore_lengthFailure);
+		message[WriteFailure] = Messages.bind(Messages.pageStore_writeFailure);
+		message[ReadFailure] = Messages.bind(Messages.pageStore_readFailure);
+		message[CommitFailure] = Messages.bind(Messages.pageStore_commitFailure);
+		message[IntegrityFailure] = Messages.bind(Messages.pageStore_integrityFailure);
+		message[MetadataRequestFailure] = Messages.bind(Messages.pageStore_metadataRequestFailure);
+		message[ConversionFailure] = Messages.bind(Messages.pageStore_conversionFailure);
+		message[LogCreateFailure] = Messages.bind(Messages.pageStore_logCreateFailure);
+		message[LogOpenFailure] = Messages.bind(Messages.pageStore_logOpenFailure);
+		message[LogReadFailure] = Messages.bind(Messages.pageStore_logReadFailure);
+		message[LogWriteFailure] = Messages.bind(Messages.pageStore_logWriteFailure);
 	}
-
-	private static String bind(String name) {
-		return Policy.bind(name);
-	}
-
 }

@@ -11,7 +11,7 @@
 package org.eclipse.core.internal.dtree;
 
 import java.security.InvalidParameterException;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -236,7 +236,7 @@ public abstract class AbstractDataTree {
 	 * method
 	 */
 	AbstractDataTreeNode getRootNode() {
-		throw new AbstractMethodError(Policy.bind("dtree.subclassImplement")); //$NON-NLS-1$
+		throw new AbstractMethodError(Messages.bind(Messages.dtree_subclassImplement));
 	}
 
 	/**
@@ -245,7 +245,7 @@ public abstract class AbstractDataTree {
 	 * an unchecked exception.
 	 */
 	static void handleImmutableTree() {
-		throw new RuntimeException(Policy.bind("dtree.immutable")); //$NON-NLS-1$
+		throw new RuntimeException(Messages.bind(Messages.dtree_immutable));
 	}
 
 	/**
@@ -254,7 +254,7 @@ public abstract class AbstractDataTree {
 	 * unchecked exception.
 	 */
 	static void handleNotFound(IPath key) {
-		throw new ObjectNotFoundException(Policy.bind("dtree.notFound", key.toString())); //$NON-NLS-1$
+		throw new ObjectNotFoundException(Messages.bind(Messages.dtree_notFound, key));
 	}
 
 	/**
@@ -325,7 +325,7 @@ public abstract class AbstractDataTree {
 	 * method
 	 */
 	void setRootNode(AbstractDataTreeNode node) {
-		throw new Error(Policy.bind("dtree.subclassImplement")); //$NON-NLS-1$
+		throw new Error(Messages.bind(Messages.dtree_subclassImplement));
 	}
 
 	public String toDebugString() {

@@ -13,7 +13,7 @@ package org.eclipse.core.internal.dtree;
 import java.io.DataInput;
 import java.io.IOException;
 import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -108,7 +108,7 @@ public class DataTreeReader {
 			case AbstractDataTreeNode.T_NO_DATA_DELTA_NODE :
 				return new NoDataDeltaNode(name, children);
 			default :
-				Assert.isTrue(false, Policy.bind("dtree.switchError")); //$NON-NLS-1$
+				Assert.isTrue(false, Messages.bind(Messages.dtree_switchError));
 				return null;
 		}
 	}

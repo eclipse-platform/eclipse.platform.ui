@@ -14,7 +14,7 @@ import java.util.*;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
@@ -587,7 +587,7 @@ public class AliasManager implements IManager, ILifecycleListener {
 		FileSystemResourceManager localManager = workspace.getFileSystemManager();
 		for (Iterator it = aliases.iterator(); it.hasNext();) {
 			IResource alias = (IResource) it.next();
-			monitor.subTask(Policy.bind("links.updatingDuplicate", alias.getFullPath().toString()));//$NON-NLS-1$
+			monitor.subTask(Messages.bind(Messages.links_updatingDuplicate, alias.getFullPath()));
 			localManager.refresh(alias, IResource.DEPTH_INFINITE, false, null);
 		}
 	}

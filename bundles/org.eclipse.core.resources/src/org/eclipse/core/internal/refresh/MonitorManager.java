@@ -13,7 +13,7 @@ import java.util.*;
 import org.eclipse.core.internal.events.ILifecycleListener;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.resources.Workspace;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.resources.refresh.RefreshProvider;
@@ -249,7 +249,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener 
 			t = e;
 		}
 		if (t != null) {
-			IStatus error = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, Policy.bind("refresh.installError"), t); //$NON-NLS-1$
+			IStatus error = new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, Messages.bind(Messages.refresh_installError), t);
 			ResourcesPlugin.getPlugin().getLog().log(error);
 		}
 		return null;

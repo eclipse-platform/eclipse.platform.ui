@@ -12,7 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -39,7 +39,7 @@ public class MarkerReader {
 			case 3 :
 				return new MarkerReader_3(workspace);
 			default :
-				throw new IOException(Policy.bind("resources.format")); //$NON-NLS-1$
+				throw new IOException(Messages.bind(Messages.resources_format));
 		}
 	}
 

@@ -13,6 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
@@ -39,6 +40,37 @@ public class ProjectPreferences extends EclipsePreferences {
 	// cache which nodes have been loaded from disk
 	protected static Set loadedNodes = new HashSet();
 	private boolean isWriting;
+
+	class SortedProperties extends Properties {
+
+		private static final long serialVersionUID = 1L;
+
+		class IteratorWrapper implements Enumeration {
+			Iterator iterator;
+
+			public IteratorWrapper(Iterator iterator) {
+				this.iterator = iterator;
+			}
+
+			public boolean hasMoreElements() {
+				return iterator.hasNext();
+			}
+
+			public Object nextElement() {
+				return iterator.next();
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see java.util.Hashtable#keys()
+		 */
+		public synchronized Enumeration keys() {
+			TreeSet set = new TreeSet();
+			for (Enumeration e = super.keys(); e.hasMoreElements();)
+				set.add(e.nextElement());
+			return new IteratorWrapper(set.iterator());
+		}
+	}
 
 	/**
 	 * Default constructor. Should only be called by #createExecutableExtension.
@@ -135,7 +167,7 @@ public class ProjectPreferences extends EclipsePreferences {
 				Policy.debug("Not saving preferences since there is no file for node: " + absolutePath()); //$NON-NLS-1$
 			return;
 		}
-		Properties table = convertToProperties(new Properties(), ""); //$NON-NLS-1$
+		Properties table = convertToProperties(new SortedProperties(), ""); //$NON-NLS-1$
 		try {
 			if (table.isEmpty()) {
 				// nothing to save. delete existing file if one exists.
@@ -150,7 +182,7 @@ public class ProjectPreferences extends EclipsePreferences {
 					try {
 						fileInWorkspace.delete(true, null);
 					} catch (CoreException e) {
-						String message = Policy.bind("preferences.deleteException", fileInWorkspace.getFullPath().toString()); //$NON-NLS-1$
+						String message = Messages.bind(Messages.preferences_deleteException, fileInWorkspace.getFullPath());
 						log(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null));
 					}
 				}
@@ -161,7 +193,7 @@ public class ProjectPreferences extends EclipsePreferences {
 			try {
 				table.store(output, null);
 			} catch (IOException e) {
-				String message = Policy.bind("preferences.saveProblems", absolutePath()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.preferences_saveProblems, absolutePath());
 				log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e));
 				throw new BackingStoreException(message);
 			} finally {
@@ -195,7 +227,7 @@ public class ProjectPreferences extends EclipsePreferences {
 				fileInWorkspace.create(input, IResource.NONE, null);
 			}
 		} catch (CoreException e) {
-			String message = Policy.bind("preferences.saveProblems", fileInWorkspace.getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.preferences_saveProblems, fileInWorkspace.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
 			throw new BackingStoreException(message);
 		}
@@ -216,11 +248,11 @@ public class ProjectPreferences extends EclipsePreferences {
 			input = new BufferedInputStream(localFile.getContents(true));
 			fromDisk.load(input);
 		} catch (CoreException e) {
-			String message = Policy.bind("preferences.loadException", localFile.getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.preferences_loadException, localFile.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
 			throw new BackingStoreException(message);
 		} catch (IOException e) {
-			String message = Policy.bind("preferences.loadException", localFile.getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.preferences_loadException, localFile.getFullPath());
 			log(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IStatus.ERROR, message, e));
 			throw new BackingStoreException(message);
 		} finally {
@@ -247,7 +279,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		Preferences node = root.node(ProjectScope.SCOPE).node(project).node(qualifier);
 		String message = null;
 		try {
-			message = Policy.bind("preferences.syncException", node.absolutePath()); //$NON-NLS-1$
+			message = Messages.bind(Messages.preferences_syncException, node.absolutePath());
 			if (!(node instanceof ProjectPreferences))
 				return;
 			ProjectPreferences projectPrefs = (ProjectPreferences) node;
@@ -265,7 +297,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	}
 
 	static void removeNode(Preferences node) throws CoreException {
-		String message = Policy.bind("preferences.removeNodeException", node.absolutePath()); //$NON-NLS-1$
+		String message = Messages.bind(Messages.preferences_removeNodeException, node.absolutePath());
 		try {
 			node.removeNode();
 		} catch (BackingStoreException e) {

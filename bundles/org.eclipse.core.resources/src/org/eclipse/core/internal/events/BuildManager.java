@@ -13,6 +13,7 @@ package org.eclipse.core.internal.events;
 import java.util.*;
 import org.eclipse.core.internal.dtree.DeltaDataTree;
 import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
@@ -78,7 +79,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		protected IProject[] build(int kind, Map args, IProgressMonitor monitor) {
 			if (!hasBeenBuilt) {
 				hasBeenBuilt = true;
-				String msg = Policy.bind("events.skippingBuilder", new String[] {name, getProject().getName()}); //$NON-NLS-1$
+				String msg = Messages.bind(Messages.events_skippingBuilder, name, getProject().getName());
 				IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, 1, msg, null);
 				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
@@ -147,9 +148,9 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				String name = currentBuilder.getLabel();
 				String message;
 				if (name != null)
-					message = Policy.bind("events.invoking.2", name, builder.getProject().getFullPath().toString()); //$NON-NLS-1$
+					message = Messages.bind(Messages.events_invoking_2, name, builder.getProject().getFullPath());
 				else
-					message = Policy.bind("events.invoking.1", builder.getProject().getFullPath().toString()); //$NON-NLS-1$
+					message = Messages.bind(Messages.events_invoking_1, builder.getProject().getFullPath());
 				monitor.subTask(message);
 				hookStartBuild(builder, trigger);
 				//release workspace lock while calling builders
@@ -181,7 +182,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	protected void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Policy.bind("events.building.1", project.getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.events_building_1, project.getFullPath());
 			monitor.beginTask(message, Math.max(1, commands.length));
 			for (int i = 0; i < commands.length; i++) {
 				checkCanceled(trigger, monitor);
@@ -217,7 +218,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				// builder exceptions in core exceptions if required.
 				String message = e.getMessage();
 				if (message == null)
-					message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName()); //$NON-NLS-1$
+					message = Messages.bind(Messages.events_unknown, e.getClass().getName(), currentBuilder.getClass().getName());
 				status.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
 			}
 
@@ -305,7 +306,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	public void build(IProject project, int trigger, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Policy.bind("events.building.1", project.getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.events_building_1, project.getFullPath());
 			monitor.beginTask(message, 1);
 			if (!canRun(trigger))
 				return;
@@ -557,7 +558,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				if (builderName == null || builderName.length() == 0)
 					builderName = currentBuilder.getClass().getName();
 				String pluginId = currentBuilder.getPluginId();
-				String message = Policy.bind("events.builderError", builderName, currentBuilder.getProject().getName()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.events_builderError, builderName, currentBuilder.getProject().getName());
 				status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, null));
 
 				//add the exception status to the MultiStatus
@@ -566,7 +567,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				else {
 					message = e.getMessage();
 					if (message == null)
-						message = Policy.bind("events.unknown", e.getClass().getName(), builderName); //$NON-NLS-1$
+						message = Messages.bind(Messages.events_unknown, e.getClass().getName(), builderName);
 					status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, e));
 				}
 			}
@@ -668,7 +669,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		try {
 			builder = instantiateBuilder(builderName);
 		} catch (CoreException e) {
-			status.add(new ResourceStatus(IResourceStatus.BUILD_FAILED, project.getFullPath(), Policy.bind("events.instantiate.1", builderName), e)); //$NON-NLS-1$
+			status.add(new ResourceStatus(IResourceStatus.BUILD_FAILED, project.getFullPath(), Messages.bind(Messages.events_instantiate_1, builderName), e));
 			status.add(e.getStatus());
 		}
 		if (builder == null) {

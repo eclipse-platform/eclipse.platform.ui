@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.util.*;
 import org.eclipse.core.internal.localstore.IHistoryStore;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.utils.WrappedRuntimeException;
 import org.eclipse.core.internal.watson.*;
@@ -261,7 +262,7 @@ public abstract class Container extends Resource implements IContainer {
 	public void setDefaultCharset(String newCharset, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Policy.bind("resources.settingDefaultCharsetContainer", getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_settingDefaultCharsetContainer, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			// need to get the project as a scheduling rule because we might be 
 			// creating a new folder/file to hold the project settings

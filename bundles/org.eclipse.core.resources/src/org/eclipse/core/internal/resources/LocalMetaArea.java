@@ -13,8 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeChunkyOutputStream;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -61,7 +60,7 @@ public class LocalMetaArea implements ICoreConstants {
 		java.io.File workspaceLocation = getLocation().toFile();
 		Workspace.clear(workspaceLocation);
 		if (!workspaceLocation.mkdirs()) {
-			String message = Policy.bind("resources.writeWorkspaceMeta", workspaceLocation.toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_writeWorkspaceMeta, workspaceLocation);
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, null);
 		}
 	}
@@ -73,7 +72,7 @@ public class LocalMetaArea implements ICoreConstants {
 	public void delete(IProject target) throws CoreException {
 		IPath path = locationFor(target);
 		if (!Workspace.clear(path.toFile()) && path.toFile().exists()) {
-			String message = Policy.bind("resources.deleteMeta", target.getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_deleteMeta, target.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, target.getFullPath(), message, null);
 		}
 	}
@@ -246,7 +245,7 @@ public class LocalMetaArea implements ICoreConstants {
 					if (location.length() > 0)
 						description.setLocation(Path.fromOSString(location));
 				} catch (IOException e) {
-					String msg = Policy.bind("resources.exReadProjectLocation", target.getName()); //$NON-NLS-1$
+					String msg = Messages.bind(Messages.resources_exReadProjectLocation, target.getName());
 					ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IStatus.ERROR, IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, e));
 				}
 				//try to read the dynamic references - will fail for old location files
@@ -279,11 +278,11 @@ public class LocalMetaArea implements ICoreConstants {
 		try {
 			description = new ProjectDescriptionReader().read(path, tempPath);
 		} catch (IOException e) {
-			String msg = Policy.bind("resources.readMeta", project.getName()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_readMeta, project.getName());
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), msg, e);
 		}
 		if (description == null) {
-			String msg = Policy.bind("resources.readMeta", project.getName()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_readMeta, project.getName());
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), msg, null);
 		}
 		return description;
@@ -341,7 +340,7 @@ public class LocalMetaArea implements ICoreConstants {
 				dataOut.close();
 			}
 		} catch (IOException e) {
-			String message = Policy.bind("resources.exSaveProjectLocation", target.getName()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_exSaveProjectLocation, target.getName());
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 		}
 	}
@@ -360,7 +359,7 @@ public class LocalMetaArea implements ICoreConstants {
 		try {
 			new ModelObjectWriter().write(description, path, tempPath);
 		} catch (IOException e) {
-			String message = Policy.bind("resources.writeWorkspaceMeta", path.toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_writeWorkspaceMeta, path);
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 		}
 	}

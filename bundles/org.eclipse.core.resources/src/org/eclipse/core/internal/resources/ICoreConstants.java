@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.QualifiedName;
 
@@ -98,7 +98,7 @@ public interface ICoreConstants {
 	public static final IFileState[] EMPTY_FILE_STATES = new IFileState[0];
 
 	//common externalized strings
-	public static final String MSG_RESOURCES_UPDATING = Policy.bind("resources.updating");//$NON-NLS-1$
-	public static final String MSG_EVENTS_BUILDING_0 = Policy.bind("events.building.0");//$NON-NLS-1$
-	public static final String MSG_EVENTS_ERRORS = Policy.bind("events.errors");//$NON-NLS-1$
+	public static final String MSG_RESOURCES_UPDATING = Messages.bind(Messages.resources_updating);
+	public static final String MSG_EVENTS_BUILDING_0 = Messages.bind(Messages.events_building_0);
+	public static final String MSG_EVENTS_ERRORS = Messages.bind(Messages.events_errors);
 }

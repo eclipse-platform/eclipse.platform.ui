@@ -79,7 +79,7 @@ public final class Assert {
 	 */
 	public static void isNotNull(Object object, String message) {
 		if (object == null)
-			throw new AssertionFailedException(Policy.bind("utils.null", message)); //$NON-NLS-1$
+			throw new AssertionFailedException(Messages.bind(Messages.utils_null, message));
 	}
 
 	/** Asserts that the given boolean is <code>true</code>. If this
@@ -104,7 +104,7 @@ public final class Assert {
 	 */
 	public static boolean isTrue(boolean expression, String message) {
 		if (!expression)
-			throw new AssertionFailedException(Policy.bind("utils.failed", message)); //$NON-NLS-1$
+			throw new AssertionFailedException(Messages.bind(Messages.utils_failed, message));
 		return expression;
 	}
 }

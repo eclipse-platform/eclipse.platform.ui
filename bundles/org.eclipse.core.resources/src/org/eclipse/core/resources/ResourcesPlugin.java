@@ -11,7 +11,7 @@
 package org.eclipse.core.resources;
 
 import org.eclipse.core.internal.resources.*;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
@@ -317,7 +317,7 @@ public final class ResourcesPlugin extends Plugin {
 	 */
 	public static IWorkspace getWorkspace() {
 		if (workspace == null)
-			throw new IllegalStateException(Policy.bind("resources.workspaceClosed")); //$NON-NLS-1$
+			throw new IllegalStateException(Messages.bind(Messages.resources_workspaceClosed));
 		return workspace;
 	}
 

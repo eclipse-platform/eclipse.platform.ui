@@ -127,7 +127,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				ISafeRunnable code = new ISafeRunnable() {
 
 					public void handleException(Throwable e) {
-						String message = Policy.bind("resources.saveProblem"); //$NON-NLS-1$
+						String message = Messages.bind(Messages.resources_saveProblem);
 						IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e);
 						warnings.add(status);
 
@@ -366,7 +366,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (file.exists())
 			file.delete();
 		if (file.exists()) {
-			String message = Policy.bind("resources.snapInit"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_snapInit);
 			throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, null, message, null);
 		}
 	}
@@ -507,7 +507,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (file.exists())
 			file.delete();
 		if (file.exists()) {
-			message = Policy.bind("resources.resetMarkers"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_resetMarkers);
 			throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), message, null);
 		}
 
@@ -516,7 +516,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		if (file.exists())
 			file.delete();
 		if (file.exists()) {
-			message = Policy.bind("resources.resetSync"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_resetSync);
 			throw new ResourceException(IResourceStatus.FAILED_DELETE_METADATA, resource.getFullPath(), message, null);
 		}
 
@@ -544,7 +544,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			// inside an operation, be sure to close it afterwards
 			workspace.newWorkingTree();
 			try {
-				String msg = Policy.bind("resources.startupProblems"); //$NON-NLS-1$
+				String msg = Messages.bind(Messages.resources_startupProblems);
 				MultiStatus problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, msg, null);
 
 				restoreMasterTable();
@@ -655,7 +655,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				input.close();
 			}
 		} catch (IOException e) {
-			String message = Policy.bind("resources.exMasterTable"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_exMasterTable);
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 		}
 		if (Policy.DEBUG_RESTORE_MASTERTABLE)
@@ -762,7 +762,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				}
 			} catch (Exception e) {
 				// only log the exception, we should not fail restoring the snapshot
-				message = Policy.bind("resources.snapRead"); //$NON-NLS-1$
+				message = Messages.bind(Messages.resources_snapRead);
 				ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, null, message, e));
 			}
 		} finally {
@@ -822,7 +822,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				input.close();
 			}
 		} catch (IOException e) {
-			String msg = Policy.bind("resources.readMeta", treeLocation.toOSString()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_readMeta, treeLocation.toOSString());
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, treeLocation, msg, e);
 		}
 		if (Policy.DEBUG_RESTORE_TREE) {
@@ -856,7 +856,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				input.close();
 			}
 		} catch (IOException e) {
-			message = Policy.bind("resources.readMeta", project.getFullPath().toString()); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_readMeta, project.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), message, e);
 		} finally {
 			monitor.done();
@@ -887,9 +887,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		long start = System.currentTimeMillis();
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Policy.bind("resources.saving.0"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_saving_0);
 			monitor.beginTask(message, 7);
-			message = Policy.bind("resources.saveWarnings"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_saveWarnings);
 			MultiStatus warnings = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.WARNING, message, null);
 			ISchedulingRule rule = project != null ? (IResource) project : workspace.getRoot();
 			try {
@@ -998,7 +998,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				output.close();
 			}
 		} catch (IOException e) {
-			String message = Policy.bind("resources.exSaveMaster"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_exSaveMaster);
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 		}
 		if (Policy.DEBUG_SAVE_MASTERTABLE)
@@ -1039,7 +1039,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		//if there is nothing on disk, write the description
 		if (!workspace.getFileSystemManager().hasSavedProject(project)) {
 			workspace.getFileSystemManager().writeSilently(project);
-			String msg = Policy.bind("resources.missingProjectMetaRepaired", project.getName()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_missingProjectMetaRepaired, project.getName());
 			return new ResourceStatus(IResourceStatus.MISSING_DESCRIPTION_REPAIRED, project.getFullPath(), msg);
 		}
 		if (Policy.DEBUG_SAVE_METAINFO)
@@ -1066,7 +1066,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				output.close();
 			}
 		} catch (Exception e) {
-			String msg = Policy.bind("resources.writeWorkspaceMeta", treeLocation.toString()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_writeWorkspaceMeta, treeLocation);
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, Path.ROOT, msg, e);
 		}
 		if (Policy.DEBUG_SAVE_TREE)
@@ -1169,7 +1169,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					out.close();
 				}
 			} catch (IOException e) {
-				message = Policy.bind("resources.writeWorkspaceMeta", localFile.getAbsolutePath()); //$NON-NLS-1$
+				message = Messages.bind(Messages.resources_writeWorkspaceMeta, localFile.getAbsolutePath());
 				throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, Path.ROOT, message, e);
 			}
 			lastSnap = tree;
@@ -1284,7 +1284,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				} catch (IOException e2) {
 					// ignore
 				}
-			message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_writeMeta, root.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 		}
 
@@ -1342,7 +1342,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			if (syncInfoOutput != null)
 				removeGarbage(syncInfoOutput, syncInfoLocation, syncInfoTempLocation);
 		} catch (IOException e) {
-			message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_writeMeta, root.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 		} finally {
 			if (markersOutput != null)
@@ -1408,7 +1408,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				} catch (IOException e2) {
 					// ignore
 				}
-			message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_writeMeta, root.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 		}
 
@@ -1466,7 +1466,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			if (safeSyncInfoStream != null && syncInfoFileSize != syncInfoOutput.size())
 				safeSyncInfoStream.succeed();
 		} catch (IOException e) {
-			message = Policy.bind("resources.writeMeta", root.getFullPath().toString()); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_writeMeta, root.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, root.getFullPath(), message, e);
 		} finally {
 			if (markersOutput != null)
@@ -1660,7 +1660,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				safe.close();
 			}
 		} catch (IOException e) {
-			String msg = Policy.bind("resources.writeMeta", project.getFullPath().toString()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_writeMeta, project.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, treeLocation, msg, e);
 		}
 		if (Policy.DEBUG_SAVE_TREE)

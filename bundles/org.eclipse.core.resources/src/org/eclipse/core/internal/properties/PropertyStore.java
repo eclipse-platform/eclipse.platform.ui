@@ -14,7 +14,7 @@ import java.util.*;
 import org.eclipse.core.internal.indexing.IndexCursor;
 import org.eclipse.core.internal.indexing.ObjectID;
 import org.eclipse.core.internal.resources.ResourceException;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
@@ -50,7 +50,7 @@ public class PropertyStore {
 			cursor.close();
 			return exists;
 		} catch (Exception e) {
-			String message = Policy.bind("properties.couldNotReadProp", searchKey.getQualifier(), searchKey.getLocalName()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.properties_couldNotReadProp, searchKey.getQualifier(), searchKey.getLocalName());
 			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, searchKey.getResourceName().getPath(), message, e);
 		}
 	}
@@ -64,7 +64,7 @@ public class PropertyStore {
 			ObjectID valueID = store.createObject(value);
 			store.getIndex().insert(key.toBytes(), valueID);
 		} catch (Exception e) {
-			String message = Policy.bind("properties.couldNotWriteProp", key.getQualifier(), key.getLocalName()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.properties_couldNotWriteProp, key.getQualifier(), key.getLocalName());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, key.getResourceName().getPath(), message, e);
 		}
 	}
@@ -84,7 +84,7 @@ public class PropertyStore {
 			}
 			cursor.close();
 		} catch (Exception e) {
-			String message = Policy.bind("properties.couldNotDeleteProp", key.getQualifier(), key.getLocalName()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.properties_couldNotDeleteProp, key.getQualifier(), key.getLocalName());
 			throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, resourceName.getPath(), message, e);
 		}
 		return wasFound;
@@ -103,7 +103,7 @@ public class PropertyStore {
 			}
 			cursor.close();
 		} catch (Exception e) {
-			String message = Policy.bind("properties.couldNotWriteProp", key.getQualifier(), key.getLocalName()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.properties_couldNotWriteProp, key.getQualifier(), key.getLocalName());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, key.getResourceName().getPath(), message, e);
 		}
 	}
@@ -284,7 +284,7 @@ public class PropertyStore {
 			}
 			cursor.close();
 		} catch (Exception e) {
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Policy.bind("properties.storeProblem"), e); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Messages.bind(Messages.properties_storeProblem), e);
 		}
 	}
 
@@ -309,7 +309,7 @@ public class PropertyStore {
 			cursor.close();
 		} catch (Exception e) {
 			store.reset();
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Policy.bind("properties.storeProblem"), e); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Messages.bind(Messages.properties_storeProblem), e);
 		}
 	}
 
@@ -333,7 +333,7 @@ public class PropertyStore {
 			cursor.close();
 		} catch (Exception e) {
 			store.reset();
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Policy.bind("properties.storeProblem"), e); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Messages.bind(Messages.properties_storeProblem), e);
 		}
 	}
 
@@ -480,7 +480,7 @@ public class PropertyStore {
 				propertyValue = store.getObjectAsString(cursor.getValueAsObjectID());
 			visitor.visit(resourceName, new StoredProperty(propertyName, propertyValue), cursor);
 		} catch (Exception e) {
-			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("properties.storeProblem"), e); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Messages.bind(Messages.properties_storeProblem), e);
 		}
 	}
 

@@ -13,7 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.util.Properties;
 import java.util.Set;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -69,7 +69,7 @@ public class SafeFileTable {
 				input.close();
 			}
 		} catch (IOException e) {
-			String message = Policy.bind("resources.exSafeRead"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_exSafeRead);
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 		}
 	}
@@ -84,7 +84,7 @@ public class SafeFileTable {
 				output.close();
 			}
 		} catch (IOException e) {
-			String message = Policy.bind("resources.exSafeSave"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_exSafeSave);
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
 		}
 	}

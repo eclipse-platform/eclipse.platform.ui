@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
+
 
 public class IndexedStoreException extends StoreException {
 
@@ -94,48 +95,44 @@ public class IndexedStoreException extends StoreException {
 	 * Initializes the messages at class load time.
 	 */
 	private static void initializeMessages() {
-		messages[GenericError] = bind("indexedStore.genericError"); //$NON-NLS-1$
-		messages[EntryKeyLengthError] = bind("indexedStore.entryKeyLengthError"); //$NON-NLS-1$
-		messages[EntryNotRemoved] = bind("indexedStore.entryNotRemoved"); //$NON-NLS-1$
-		messages[EntryValueLengthError] = bind("indexedStore.entryValueLengthError"); //$NON-NLS-1$
-		messages[EntryValueNotUpdated] = bind("indexedStore.entryValueNotUpdated"); //$NON-NLS-1$
-		messages[IndexNodeNotRetrieved] = bind("indexedStore.indexNodeNotRetrieved"); //$NON-NLS-1$
-		messages[IndexNodeNotStored] = bind("indexedStore.indexNodeNotStored"); //$NON-NLS-1$
-		messages[IndexNodeNotSplit] = bind("indexedStore.indexNodeNotSplit"); //$NON-NLS-1$
-		messages[IndexNodeNotCreated] = bind("indexedStore.indexNodeNotCreated"); //$NON-NLS-1$
-		messages[IndexExists] = bind("indexedStore.indexExists"); //$NON-NLS-1$
-		messages[IndexNotCreated] = bind("indexedStore.indexNotCreated"); //$NON-NLS-1$
-		messages[IndexNotFound] = bind("indexedStore.indexNotFound"); //$NON-NLS-1$
-		messages[IndexNotRemoved] = bind("indexedStore.indexNotRemoved"); //$NON-NLS-1$
-		messages[ObjectExists] = bind("indexedStore.objectExists"); //$NON-NLS-1$
-		messages[ObjectNotAcquired] = bind("indexedStore.objectNotAcquired"); //$NON-NLS-1$
-		messages[ObjectNotCreated] = bind("indexedStore.objectNotCreated"); //$NON-NLS-1$
-		messages[ObjectNotFound] = bind("indexedStore.objectNotFound"); //$NON-NLS-1$
-		messages[ObjectNotReleased] = bind("indexedStore.objectNotReleased"); //$NON-NLS-1$
-		messages[ObjectNotRemoved] = bind("indexedStore.objectNotRemoved"); //$NON-NLS-1$
-		messages[ObjectNotUpdated] = bind("indexedStore.objectNotUpdated"); //$NON-NLS-1$
-		messages[ObjectNotStored] = bind("indexedStore.objectNotStored"); //$NON-NLS-1$
-		messages[ObjectTypeError] = bind("indexedStore.objectTypeError"); //$NON-NLS-1$
-		messages[StoreEmpty] = bind("indexedStore.storeEmpty"); //$NON-NLS-1$
-		messages[StoreFormatError] = bind("indexedStore.storeFormatError"); //$NON-NLS-1$
-		messages[StoreNotCreated] = bind("indexedStore.storeNotCreated"); //$NON-NLS-1$
-		messages[StoreNotOpen] = bind("indexedStore.storeNotOpen"); //$NON-NLS-1$
-		messages[StoreNotClosed] = bind("indexedStore.storeNotClosed"); //$NON-NLS-1$
-		messages[StoreNotFlushed] = bind("indexedStore.storeNotFlushed"); //$NON-NLS-1$
-		messages[StoreNotOpened] = bind("indexedStore.storeNotOpened"); //$NON-NLS-1$
-		messages[StoreNotReadWrite] = bind("indexedStore.storeNotReadWrite"); //$NON-NLS-1$
-		messages[ContextNotAvailable] = bind("indexedStore.contextNotAvailable"); //$NON-NLS-1$
-		messages[ObjectIDInvalid] = bind("indexedStore.objectIDInvalid"); //$NON-NLS-1$
-		messages[MetadataRequestError] = bind("indexedStore.metadataRequestError"); //$NON-NLS-1$
-		messages[EntryRemoved] = bind("indexedStore.entryRemoved"); //$NON-NLS-1$
-		messages[StoreNotConverted] = bind("indexedStore.storeNotConverted"); //$NON-NLS-1$
-		messages[StoreIsOpen] = bind("indexedStore.storeIsOpen"); //$NON-NLS-1$
-		messages[StoreNotCommitted] = bind("indexedStore.storeNotCommitted"); //$NON-NLS-1$
-		messages[StoreNotRolledBack] = bind("indexedStore.storeNotRolledBack"); //$NON-NLS-1$
-	}
-
-	private static String bind(String name) {
-		return Policy.bind(name);
+		messages[GenericError] = Messages.bind(Messages.indexedStore_genericError);
+		messages[EntryKeyLengthError] = Messages.bind(Messages.indexedStore_entryKeyLengthError);
+		messages[EntryNotRemoved] = Messages.bind(Messages.indexedStore_entryNotRemoved);
+		messages[EntryValueLengthError] = Messages.bind(Messages.indexedStore_entryValueLengthError);
+		messages[EntryValueNotUpdated] = Messages.bind(Messages.indexedStore_entryValueNotUpdated);
+		messages[IndexNodeNotRetrieved] = Messages.bind(Messages.indexedStore_indexNodeNotRetrieved);
+		messages[IndexNodeNotStored] = Messages.bind(Messages.indexedStore_indexNodeNotStored);
+		messages[IndexNodeNotSplit] = Messages.bind(Messages.indexedStore_indexNodeNotSplit);
+		messages[IndexNodeNotCreated] = Messages.bind(Messages.indexedStore_indexNodeNotCreated);
+		messages[IndexExists] = Messages.bind(Messages.indexedStore_indexExists);
+		messages[IndexNotCreated] = Messages.bind(Messages.indexedStore_indexNotCreated);
+		messages[IndexNotFound] = Messages.bind(Messages.indexedStore_indexNotFound);
+		messages[IndexNotRemoved] = Messages.bind(Messages.indexedStore_indexNotRemoved);
+		messages[ObjectExists] = Messages.bind(Messages.indexedStore_objectExists);
+		messages[ObjectNotAcquired] = Messages.bind(Messages.indexedStore_objectNotAcquired);
+		messages[ObjectNotCreated] = Messages.bind(Messages.indexedStore_objectNotCreated);
+		messages[ObjectNotFound] = Messages.bind(Messages.indexedStore_objectNotFound);
+		messages[ObjectNotReleased] = Messages.bind(Messages.indexedStore_objectNotReleased);
+		messages[ObjectNotRemoved] = Messages.bind(Messages.indexedStore_objectNotRemoved);
+		messages[ObjectNotUpdated] = Messages.bind(Messages.indexedStore_objectNotUpdated);
+		messages[ObjectNotStored] = Messages.bind(Messages.indexedStore_objectNotStored);
+		messages[ObjectTypeError] = Messages.bind(Messages.indexedStore_objectTypeError);
+		messages[StoreEmpty] = Messages.bind(Messages.indexedStore_storeEmpty);
+		messages[StoreFormatError] = Messages.bind(Messages.indexedStore_storeFormatError);
+		messages[StoreNotCreated] = Messages.bind(Messages.indexedStore_storeNotCreated);
+		messages[StoreNotOpen] = Messages.bind(Messages.indexedStore_storeNotOpen);
+		messages[StoreNotClosed] = Messages.bind(Messages.indexedStore_storeNotClosed);
+		messages[StoreNotFlushed] = Messages.bind(Messages.indexedStore_storeNotFlushed);
+		messages[StoreNotOpened] = Messages.bind(Messages.indexedStore_storeNotOpened);
+		messages[StoreNotReadWrite] = Messages.bind(Messages.indexedStore_storeNotReadWrite);
+		messages[ContextNotAvailable] = Messages.bind(Messages.indexedStore_contextNotAvailable);
+		messages[ObjectIDInvalid] = Messages.bind(Messages.indexedStore_objectIDInvalid);
+		messages[MetadataRequestError] = Messages.bind(Messages.indexedStore_metadataRequestError);
+		messages[EntryRemoved] = Messages.bind(Messages.indexedStore_entryRemoved);
+		messages[StoreNotConverted] = Messages.bind(Messages.indexedStore_storeNotConverted);
+		messages[StoreIsOpen] = Messages.bind(Messages.indexedStore_storeIsOpen);
+		messages[StoreNotCommitted] = Messages.bind(Messages.indexedStore_storeNotCommitted);
+		messages[StoreNotRolledBack] = Messages.bind(Messages.indexedStore_storeNotRolledBack);
 	}
 
 	/**

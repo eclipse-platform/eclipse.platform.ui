@@ -13,7 +13,7 @@ package org.eclipse.core.internal.localstore;
 import java.io.*;
 import org.eclipse.core.internal.localstore.Bucket.Visitor;
 import org.eclipse.core.internal.resources.ResourceException;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 
@@ -111,7 +111,7 @@ public class BucketTree {
 			stream.write(current.getVersion());
 		} catch (IOException e) {
 			failed = true;
-			String message = Policy.bind("resources.writeWorkspaceMeta", versionFile.getAbsolutePath()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 		} finally {
 			try {
@@ -119,7 +119,7 @@ public class BucketTree {
 					stream.close();
 			} catch (IOException e) {
 				if (!failed) {
-					String message = Policy.bind("resources.writeWorkspaceMeta", versionFile.getAbsolutePath()); //$NON-NLS-1$
+					String message = Messages.bind(Messages.resources_writeWorkspaceMeta, versionFile.getAbsolutePath());
 					throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);
 				}
 			}

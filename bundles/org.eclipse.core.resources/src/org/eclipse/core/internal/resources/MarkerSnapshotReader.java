@@ -12,7 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.CoreException;
 
 public class MarkerSnapshotReader {
@@ -33,7 +33,7 @@ public class MarkerSnapshotReader {
 			case 2 :
 				return new MarkerSnapshotReader_2(workspace);
 			default :
-				throw new IOException(Policy.bind("resources.format")); //$NON-NLS-1$
+				throw new IOException(Messages.bind(Messages.resources_format));
 		}
 	}
 

@@ -13,7 +13,7 @@ package org.eclipse.core.internal.properties;
 import java.io.*;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.utils.Convert;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 
@@ -95,7 +95,7 @@ public class StoreKey {
 				writeBytes(buffer, path);
 				// If prefix matching, cannot allow other fields to be specified
 				if (qualifier != null || localName != null) {
-					String message = Policy.bind("properties.invalidPropName", qualifier, localName); //$NON-NLS-1$
+					String message = Messages.bind(Messages.properties_invalidPropName, qualifier, localName);
 					throw new ResourceException(IResourceStatus.INVALID_VALUE, null, message, null);
 				}
 			} else {
@@ -110,13 +110,13 @@ public class StoreKey {
 					writeNullTerminated(buffer, localName);
 			} else if (localName != null) {
 				// Specifying a local name without a qualifier is illegal
-				String message = Policy.bind("properties.invalidPropName", qualifier, localName); //$NON-NLS-1$
+				String message = Messages.bind(Messages.properties_invalidPropName, qualifier, localName);
 				throw new ResourceException(IResourceStatus.INVALID_VALUE, null, message, null);
 			}
 			value = buffer.toByteArray();
 		} catch (IOException e) {
 			// should never happen
-			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Policy.bind("properties.storeProblem"), e); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Messages.bind(Messages.properties_storeProblem), e);
 		}
 	}
 
@@ -134,7 +134,7 @@ public class StoreKey {
 			localName = readNullTerminated(stream);
 		} catch (IOException e) {
 			// should never happen
-			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Policy.bind("properties.storeProblem"), e); //$NON-NLS-1$
+			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Messages.bind(Messages.properties_storeProblem), e);
 		}
 	}
 

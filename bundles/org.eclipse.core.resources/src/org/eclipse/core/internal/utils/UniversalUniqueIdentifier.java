@@ -118,7 +118,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		// Check to ensure it is a String of the right length.
 		// do not use Assert to avoid having to call Policy.bind ahead of time
 		if (string.length() != PrintStringSize)
-			Assert.isTrue(false, Policy.bind("utils.wrongLength", string)); //$NON-NLS-1$
+			Assert.isTrue(false, Messages.bind(Messages.utils_wrongLength, string));
 
 		char[] newChars = string.toCharArray();
 
@@ -163,7 +163,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		try {
 			return super.clone();
 		} catch (CloneNotSupportedException e) {
-			Assert.isTrue(false, Policy.bind("utils.clone")); //$NON-NLS-1$
+			Assert.isTrue(false, Messages.bind(Messages.utils_clone));
 			return null;
 		}
 	}
@@ -373,7 +373,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 		try {
 			outStream.writeBytes(toString());
 		} catch (IOException e) {
-			Assert.isTrue(false, Policy.bind("utils.print")); //$NON-NLS-1$
+			Assert.isTrue(false, Messages.bind(Messages.utils_print));
 		}
 	}
 

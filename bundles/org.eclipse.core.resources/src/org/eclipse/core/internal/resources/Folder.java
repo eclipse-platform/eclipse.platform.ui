@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.resources;
 
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -27,7 +28,7 @@ public class Folder extends Container implements IFolder {
 		ResourceInfo info = parent.getResourceInfo(false, false);
 		parent.checkAccessible(getFlags(info));
 		if (location == null) {
-			String message = Policy.bind("localstore.locationUndefined", getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.localstore_locationUndefined, getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), message, null);
 		}
 
@@ -38,11 +39,11 @@ public class Folder extends Container implements IFolder {
 			if (!CoreFileSystemLibrary.isCaseSensitive()) {
 				String name = getLocalManager().getLocalName(localFile);
 				if (name != null && !localFile.getName().equals(name)) {
-					String msg = Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
+					String msg = Messages.bind(Messages.resources_existsLocalDifferentCase, location.removeLastSegments(1).append(name).toOSString());
 					throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 				}
 			}
-			String msg = Policy.bind("resources.fileExists", localFile.getAbsolutePath()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_fileExists, localFile.getAbsolutePath());
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), msg, null);
 		}
 	}
@@ -78,7 +79,7 @@ public class Folder extends Container implements IFolder {
 		final boolean force = (updateFlags & IResource.FORCE) != 0;
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_creating, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			checkValidPath(path, FOLDER, true);
 			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
@@ -94,7 +95,7 @@ public class Folder extends Container implements IFolder {
 						delete(true, null);
 					} else {
 						// The file system is not case sensitive and a case variant exists at this location
-						String msg = Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
+						String msg = Messages.bind(Messages.resources_existsLocalDifferentCase, location.removeLastSegments(1).append(name).toOSString());
 						throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 					}
 				}
@@ -130,7 +131,7 @@ public class Folder extends Container implements IFolder {
 		if (exists(flags, true))
 			return;
 		if (exists(flags, false)) {
-			String message = Policy.bind("resources.folderOverFile", getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_folderOverFile, getFullPath());
 			throw new ResourceException(IResourceStatus.RESOURCE_WRONG_TYPE, getFullPath(), message, null);
 		}
 		Container parent = (Container) getParent();
@@ -162,7 +163,7 @@ public class Folder extends Container implements IFolder {
 	public void internalCreate(boolean force, boolean local, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_creating, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			workspace.createResource(this, false);
 			if (local) {

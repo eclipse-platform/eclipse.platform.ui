@@ -10,7 +10,7 @@
 package org.eclipse.core.internal.refresh;
 
 import java.util.ArrayList;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.refresh.IRefreshMonitor;
 import org.eclipse.core.runtime.*;
@@ -71,7 +71,7 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 	 * Creates a new polling monitor.
 	 */
 	public PollingMonitor(RefreshManager manager) {
-		super(Policy.bind("refresh.pollJob")); //$NON-NLS-1$
+		super(Messages.bind(Messages.refresh_pollJob));
 		this.manager = manager;
 		setPriority(Job.DECORATE);
 		setSystem(true);

@@ -14,7 +14,7 @@ import java.io.*;
 import org.eclipse.core.internal.dtree.DataTreeReader;
 import org.eclipse.core.internal.dtree.IDataFlattener;
 import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
@@ -81,7 +81,7 @@ public class ElementTreeReader {
 			case 1 :
 				return new ElementTreeReaderImpl_1(elementInfoFlattener);
 			default :
-				throw new IOException(Policy.bind("watson.unknown")); //$NON-NLS-1$
+				throw new IOException(Messages.bind(Messages.watson_unknown));
 		}
 	}
 

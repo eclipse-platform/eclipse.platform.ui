@@ -12,7 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import org.eclipse.core.internal.localstore.IHistoryStore;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.IFileState;
 import org.eclipse.core.resources.IResourceStatus;
@@ -53,14 +53,14 @@ public class FileState extends PlatformObject implements IFileState {
 			return description == null ? null : description.getCharset();
 		} catch (IOException e) {
 			failed = true;
-			String message = Policy.bind("history.errorContentDescription", getFullPath().toString()); //$NON-NLS-1$		
+			String message = Messages.bind(Messages.history_errorContentDescription, getFullPath());		
 			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
 		} finally {
 			try {
 				contents.close();
 			} catch (IOException e) {
 				if (!failed) {
-					String message = Policy.bind("history.errorContentDescription", getFullPath().toString()); //$NON-NLS-1$		
+					String message = Messages.bind(Messages.history_errorContentDescription, getFullPath());		
 					throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, getFullPath(), message, e);
 				}
 			}

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.dtree;
 
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.StringPool;
 import org.eclipse.core.runtime.IPath;
 
@@ -198,7 +198,7 @@ public abstract class AbstractDataTreeNode {
 		if (node != null) {
 			return node;
 		}
-		throw new ObjectNotFoundException(Policy.bind("dtree.missingChild", localName)); //$NON-NLS-1$
+		throw new ObjectNotFoundException(Messages.bind(Messages.dtree_missingChild, localName));
 	}
 
 	/**
@@ -389,7 +389,7 @@ public abstract class AbstractDataTreeNode {
 	 * Returns the node's data
 	 */
 	Object getData() {
-		throw new AbstractMethodError(Policy.bind("dtree.subclassImplement")); //$NON-NLS-1$
+		throw new AbstractMethodError(Messages.bind(Messages.dtree_subclassImplement));
 	}
 
 	/**
@@ -509,7 +509,7 @@ public abstract class AbstractDataTreeNode {
 		if (i >= 0) {
 			children[i] = node;
 		} else {
-			throw new ObjectNotFoundException(Policy.bind("dtree.missingChild", localName)); //$NON-NLS-1$
+			throw new ObjectNotFoundException(Messages.bind(Messages.dtree_missingChild, localName));
 		}
 	}
 

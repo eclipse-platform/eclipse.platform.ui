@@ -15,7 +15,7 @@ import java.util.*;
 import org.eclipse.core.internal.localstore.SafeChunkyInputStream;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
 import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.watson.IPathRequestor;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -121,7 +121,7 @@ public class Synchronizer implements ISynchronizer {
 		Assert.isLegal(resource != null);
 
 		if (!isRegistered(partner)) {
-			String message = Policy.bind("synchronizer.partnerNotRegistered", partner.toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.synchronizer_partnerNotRegistered, partner);
 			throw new ResourceException(new ResourceStatus(IResourceStatus.PARTNER_NOT_REGISTERED, message));
 		}
 
@@ -163,7 +163,7 @@ public class Synchronizer implements ISynchronizer {
 				input.close();
 			}
 		} catch (IOException e) {
-			String msg = Policy.bind("resources.readMeta", sourceLocation.toString()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_readMeta, sourceLocation);
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e);
 		}
 	}
@@ -185,7 +185,7 @@ public class Synchronizer implements ISynchronizer {
 			}
 		} catch (Exception e) {
 			// only log the exception, we should not fail restoring the snapshot
-			String msg = Policy.bind("resources.readMeta", sourceLocation.toString()); //$NON-NLS-1$
+			String msg = Messages.bind(Messages.resources_readMeta, sourceLocation);
 			ResourcesPlugin.getPlugin().getLog().log(new ResourceStatus(IResourceStatus.FAILED_READ_METADATA, sourceLocation, msg, e));
 		}
 	}
@@ -229,7 +229,7 @@ public class Synchronizer implements ISynchronizer {
 			workspace.prepareOperation(resource, null);
 			workspace.beginOperation(true);
 			if (!isRegistered(partner)) {
-				String message = Policy.bind("synchronizer.partnerNotRegistered", partner.toString()); //$NON-NLS-1$
+				String message = Messages.bind(Messages.synchronizer_partnerNotRegistered, partner);
 				throw new ResourceException(new ResourceStatus(IResourceStatus.PARTNER_NOT_REGISTERED, message));
 			}
 			// we do not store sync info on the workspace root
@@ -250,7 +250,7 @@ public class Synchronizer implements ISynchronizer {
 			resourceInfo.set(ICoreConstants.M_SYNCINFO_SNAP_DIRTY);
 			flags = target.getFlags(resourceInfo);
 			if (target.isPhantom(flags) && resourceInfo.getSyncInfo(false) == null) {
-				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("resources.deleteProblem"), null); //$NON-NLS-1$
+				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.bind(Messages.resources_deleteProblem), null);
 				((Resource) resource).deleteResource(false, status);
 				if (!status.isOK())
 					throw new ResourceException(status);

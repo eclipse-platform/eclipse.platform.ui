@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -89,7 +90,7 @@ public class WorkManager implements IManager {
 		boolean success = false;
 		try {
 			if (workspace.isTreeLocked()) {
-				String msg = Policy.bind("resources.cannotModify"); //$NON-NLS-1$
+				String msg = Messages.bind(Messages.resources_cannotModify);
 				throw new ResourceException(IResourceStatus.WORKSPACE_LOCKED, null, msg, null);
 			}
 			jobManager.beginRule(rule, monitor);

@@ -13,8 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -34,7 +33,7 @@ public class File extends Resource implements IFile {
 		final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Policy.bind("resources.settingContents", getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_settingContents, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			Assert.isNotNull(content, "Content cannot be null."); //$NON-NLS-1$
 			if (workspace.shouldValidate)
@@ -98,7 +97,7 @@ public class File extends Resource implements IFile {
 		final boolean monitorNull = monitor == null;
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = monitorNull ? "" : Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			String message = monitorNull ? "" : Messages.bind(Messages.resources_creating, getFullPath()); //$NON-NLS-1$
 			monitor.beginTask(message, Policy.totalWork);
 			checkValidPath(path, FILE, true);
 			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
@@ -113,7 +112,7 @@ public class File extends Resource implements IFile {
 				IPath location = getLocalManager().locationFor(this);
 				//location can be null if based on an undefined variable
 				if (location == null) {
-					message = Policy.bind("localstore.locationUndefined", getFullPath().toString()); //$NON-NLS-1$
+					message = Messages.bind(Messages.localstore_locationUndefined, getFullPath());
 					throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, getFullPath(), message, null);
 				}
 				java.io.File localFile = location.toFile();
@@ -126,7 +125,7 @@ public class File extends Resource implements IFile {
 							} else {
 								// The file system is not case sensitive and there is already a file
 								// under this location.
-								message = Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
+								message = Messages.bind(Messages.resources_existsLocalDifferentCase, location.removeLastSegments(1).append(name).toOSString());
 								throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), message, null);
 							}
 						}
@@ -137,11 +136,11 @@ public class File extends Resource implements IFile {
 						if (!CoreFileSystemLibrary.isCaseSensitive()) {
 							String name = getLocalManager().getLocalName(localFile);
 							if (name != null && !localFile.getName().equals(name)) {
-								message = Policy.bind("resources.existsLocalDifferentCase", location.removeLastSegments(1).append(name).toOSString()); //$NON-NLS-1$
+								message = Messages.bind(Messages.resources_existsLocalDifferentCase, location.removeLastSegments(1).append(name).toOSString());
 								throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), message, null);
 							}
 						}
-						message = Policy.bind("resources.fileExists", localFile.getAbsolutePath()); //$NON-NLS-1$
+						message = Messages.bind(Messages.resources_fileExists, localFile.getAbsolutePath());
 						throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), message, null);
 					}
 				}
@@ -326,7 +325,7 @@ public class File extends Resource implements IFile {
 		final boolean keepHistory = (updateFlags & IResource.KEEP_HISTORY) != 0;
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Policy.bind("resources.settingContents", getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_settingContents, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			if (workspace.shouldValidate)
 				workspace.validateSave(this);
@@ -404,7 +403,7 @@ public class File extends Resource implements IFile {
 	public void setCharset(String newCharset, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Policy.bind("resources.settingCharset", getFullPath().toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_settingCharset, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
 			// need to get the project as a scheduling rule because we might be creating a new folder/file to
 			// hold the project settings

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.indexing;
 
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 
 public class ObjectStoreException extends StoreException {
 
@@ -68,28 +68,24 @@ public class ObjectStoreException extends StoreException {
 	 * Initializes the messages at class load time.
 	 */
 	private static void initializeMessages() {
-		message[GenericFailure] = bind("objectStore.genericFailure"); //$NON-NLS-1$
-		message[InternalFailure] = bind("objectStore.internalFailure"); //$NON-NLS-1$
-		message[StoreCreateFailure] = bind("objectStore.storeCreateFailure"); //$NON-NLS-1$
-		message[StoreConversionFailure] = bind("objectStore.storeConversionFailure"); //$NON-NLS-1$
-		message[StoreOpenFailure] = bind("objectStore.storeOpenFailure"); //$NON-NLS-1$
-		message[StoreCloseFailure] = bind("objectStore.storeCloseFailure"); //$NON-NLS-1$
-		message[PageReadFailure] = bind("objectStore.pageReadFailure"); //$NON-NLS-1$
-		message[PageWriteFailure] = bind("objectStore.pageWriteFailure"); //$NON-NLS-1$
-		message[PageVacancyFailure] = bind("objectStore.pageVacancyFailure"); //$NON-NLS-1$
-		message[ObjectTypeFailure] = bind("objectStore.objectTypeFailure"); //$NON-NLS-1$
-		message[ObjectSizeFailure] = bind("objectStore.objectSizeFailure"); //$NON-NLS-1$
-		message[ObjectExistenceFailure] = bind("objectStore.objectExistenceFailure"); //$NON-NLS-1$
-		message[ObjectHeaderFailure] = bind("objectStore.objectHeaderFailure"); //$NON-NLS-1$
-		message[ObjectInsertFailure] = bind("objectStore.objectInsertFailure"); //$NON-NLS-1$
-		message[ObjectRemoveFailure] = bind("objectStore.objectRemoveFailure"); //$NON-NLS-1$
-		message[ObjectUpdateFailure] = bind("objectStore.objectUpdateFailure"); //$NON-NLS-1$
-		message[ObjectIsLocked] = bind("objectStore.objectIsLocked"); //$NON-NLS-1$
-		message[MetadataRequestFailure] = bind("objectStore.metadataRequestFailure"); //$NON-NLS-1$
-	}
-
-	private static String bind(String name) {
-		return Policy.bind(name);
+		message[GenericFailure] = Messages.bind(Messages.objectStore_genericFailure);
+		message[InternalFailure] = Messages.bind(Messages.objectStore_internalFailure);
+		message[StoreCreateFailure] = Messages.bind(Messages.objectStore_storeCreateFailure);
+		message[StoreConversionFailure] = Messages.bind(Messages.objectStore_storeConversionFailure);
+		message[StoreOpenFailure] = Messages.bind(Messages.objectStore_storeOpenFailure);
+		message[StoreCloseFailure] = Messages.bind(Messages.objectStore_storeCloseFailure);
+		message[PageReadFailure] = Messages.bind(Messages.objectStore_pageReadFailure);
+		message[PageWriteFailure] = Messages.bind(Messages.objectStore_pageWriteFailure);
+		message[PageVacancyFailure] = Messages.bind(Messages.objectStore_pageVacancyFailure);
+		message[ObjectTypeFailure] = Messages.bind(Messages.objectStore_objectTypeFailure);
+		message[ObjectSizeFailure] = Messages.bind(Messages.objectStore_objectSizeFailure);
+		message[ObjectExistenceFailure] = Messages.bind(Messages.objectStore_objectExistenceFailure);
+		message[ObjectHeaderFailure] = Messages.bind(Messages.objectStore_objectHeaderFailure);
+		message[ObjectInsertFailure] = Messages.bind(Messages.objectStore_objectInsertFailure);
+		message[ObjectRemoveFailure] = Messages.bind(Messages.objectStore_objectRemoveFailure);
+		message[ObjectUpdateFailure] = Messages.bind(Messages.objectStore_objectUpdateFailure);
+		message[ObjectIsLocked] = Messages.bind(Messages.objectStore_objectIsLocked);
+		message[MetadataRequestFailure] = Messages.bind(Messages.objectStore_metadataRequestFailure);
 	}
 
 }

@@ -14,6 +14,7 @@ import java.util.Enumeration;
 import java.util.List;
 import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.resources.Resource;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -37,7 +38,7 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 		this.convertToPhantom = convertToPhantom;
 		this.keepHistory = keepHistory;
 		this.monitor = monitor;
-		status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("localstore.deleteProblem"), null); //$NON-NLS-1$
+		status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Messages.bind(Messages.localstore_deleteProblem), null);
 	}
 
 	/**

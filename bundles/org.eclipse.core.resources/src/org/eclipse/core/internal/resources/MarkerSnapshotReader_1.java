@@ -13,7 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.*;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 
@@ -117,7 +117,7 @@ public class MarkerSnapshotReader_1 extends MarkerSnapshotReader {
 				break;
 			default :
 				//if we get here the marker file is corrupt
-				String msg = Policy.bind("resources.readMarkers"); //$NON-NLS-1$
+				String msg = Messages.bind(Messages.resources_readMarkers);
 				throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, msg, null);
 		}
 		info.internalSetAttributes(readAttributes(input));

@@ -13,6 +13,7 @@ package org.eclipse.core.internal.resources;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.events.BuilderPersistentInfo;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.internal.watson.ElementTreeReader;
@@ -116,7 +117,7 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 		monitor = Policy.monitorFor(monitor);
 		String message;
 		try {
-			message = Policy.bind("resources.readingSnap"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_readingSnap);
 			monitor.beginTask(message, Policy.totalWork);
 			ElementTreeReader reader = new ElementTreeReader(workspace.getSaveManager());
 			while (input.available() > 0) {
@@ -133,7 +134,7 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 			}
 			return complete;
 		} catch (IOException e) {
-			message = Policy.bind("resources.readWorkspaceSnap"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_readWorkspaceSnap);
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, message, e);
 		} finally {
 			monitor.done();
@@ -144,7 +145,7 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 		monitor = Policy.monitorFor(monitor);
 		String message;
 		try {
-			message = Policy.bind("resources.reading"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_reading);
 			monitor.beginTask(message, Policy.totalWork);
 			readWorkspaceFields(input, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
@@ -161,7 +162,7 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 			linkBuildersToTrees(buildersToBeLinked, trees, pluginsToBeLinked.size(), Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 
 		} catch (IOException e) {
-			message = Policy.bind("resources.readWorkspaceTree"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_readWorkspaceTree);
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, message, e);
 		} finally {
 			monitor.done();
@@ -172,7 +173,7 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 		monitor = Policy.monitorFor(monitor);
 		String message;
 		try {
-			message = Policy.bind("resources.reading"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_reading);
 			monitor.beginTask(message, 10);
 			/* read the number of builders */
 			int numBuilders = input.readInt();
@@ -201,7 +202,7 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 			monitor.worked(1);
 
 		} catch (IOException e) {
-			message = Policy.bind("readProjectTree"); //$NON-NLS-1$
+			message = Messages.bind(Messages.resources_readProjectTree);
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, null, message, e);
 		} finally {
 			monitor.done();
@@ -214,7 +215,7 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 	protected ElementTree[] readTrees(IPath root, DataInputStream input, IProgressMonitor monitor) throws IOException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			String message = Policy.bind("resources.reading"); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_reading);
 			monitor.beginTask(message, 4);
 			ElementTreeReader treeReader = new ElementTreeReader(workspace.getSaveManager());
 			ElementTree[] trees = treeReader.readDeltaChain(input);

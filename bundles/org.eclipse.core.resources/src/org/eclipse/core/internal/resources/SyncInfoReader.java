@@ -14,7 +14,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
@@ -43,7 +43,7 @@ public class SyncInfoReader {
 			case 3 :
 				return new SyncInfoReader_3(workspace, synchronizer);
 			default :
-				throw new IOException(Policy.bind("resources.format")); //$NON-NLS-1$
+				throw new IOException(Messages.bind(Messages.resources_format));
 		}
 	}
 
@@ -58,7 +58,7 @@ public class SyncInfoReader {
 			}
 			synchronizer.setRegistry(registry);
 		} catch (IOException e) {
-			String message = Policy.bind("resources.readSync", e.toString()); //$NON-NLS-1$
+			String message = Messages.bind(Messages.resources_readSync, e);
 			throw new ResourceException(new ResourceStatus(IResourceStatus.INTERNAL_ERROR, message));
 		}
 	}

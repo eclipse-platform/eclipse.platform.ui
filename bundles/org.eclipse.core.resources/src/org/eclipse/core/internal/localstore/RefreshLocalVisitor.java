@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.localstore;
 
 import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -51,7 +52,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 		this.monitor = monitor;
 		workspace = (Workspace) ResourcesPlugin.getWorkspace();
 		resourceChanged = false;
-		String msg = Policy.bind("resources.errorMultiRefresh"); //$NON-NLS-1$
+		String msg = Messages.bind(Messages.resources_errorMultiRefresh);
 		errors = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_LOCAL, msg, null);
 	}
 
@@ -279,7 +280,7 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 				}
 			} else {
 				if (node.existsInFileSystem() && !Path.EMPTY.isValidSegment(node.getLocalName())) {
-					String message = Policy.bind("resources.invalidResourceName", node.getLocalName()); //$NON-NLS-1$
+					String message = Messages.bind(Messages.resources_invalidResourceName, node.getLocalName());
 					errors.merge(new ResourceStatus(IResourceStatus.INVALID_RESOURCE_NAME, message));
 					return false;
 				}
