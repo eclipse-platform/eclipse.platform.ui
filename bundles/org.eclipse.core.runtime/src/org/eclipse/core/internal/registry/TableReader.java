@@ -85,6 +85,8 @@ public class TableReader {
 			mainInput = new DataInputStream(new BufferedInputStream(new FileInputStream(mainDataFile)));
 		} catch (FileNotFoundException e) {
 			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_unableToReadCache, e));
+			InternalPlatform.getDefault().clearRegistryCache();
+			throw new IllegalStateException(Messages.meta_registryCacheReadProblems);
 		}
 	}
 
@@ -93,6 +95,8 @@ public class TableReader {
 			extraInput = new DataInputStream(new BufferedInputStream(new FileInputStream(extraDataFile)));
 		} catch (FileNotFoundException e) {
 			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, fileError, Messages.meta_unableToReadCache, e));
+			InternalPlatform.getDefault().clearRegistryCache();
+			throw new IllegalStateException(Messages.meta_registryCacheReadProblems);
 		}
 	}
 

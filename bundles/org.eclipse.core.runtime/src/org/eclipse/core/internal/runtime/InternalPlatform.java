@@ -17,6 +17,7 @@ import org.eclipse.core.internal.boot.*;
 import org.eclipse.core.internal.content.ContentTypeManager;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.preferences.PreferencesService;
+import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.core.runtime.jobs.IJobManager;
@@ -215,6 +216,11 @@ public final class InternalPlatform {
 		//avoid the Policy.bind if assertion is true
 		if (!initialized)
 			Assert.isTrue(false, Messages.meta_appNotInit);
+	}
+
+	public void clearRegistryCache() {
+		if (registry instanceof ExtensionRegistry)
+			((ExtensionRegistry) registry).clearRegistryCache();
 	}
 
 	/**

@@ -736,6 +736,19 @@ public class ExtensionRegistry implements IExtensionRegistry {
 			currentFileManager.close();
 	}
 
+	/*
+	 * Clear the registry cache files from the file manager so on next start-up we recompute it.
+	 */
+	public void clearRegistryCache() {
+		String[] keys = new String[] {TableReader.TABLE, TableReader.MAIN, TableReader.EXTRA, TableReader.CONTRIBUTIONS, TableReader.ORPHANS};
+		for (int i=0; i<keys.length; i++)
+			try {
+				currentFileManager.remove(keys[i]);
+			} catch (IOException e) {
+				InternalPlatform.getDefault().log(new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, Messages.meta_registryCacheReadProblems, e));
+			}
+	}
+
 	private long computeRegistryStamp() {
 		// If the check config prop is false or not set then exit
 		if (!"true".equalsIgnoreCase(System.getProperty(InternalPlatform.PROP_CHECK_CONFIG))) //$NON-NLS-1$  
