@@ -183,19 +183,14 @@ public interface IExternalToolConstants {
 
 	// ------- Images -------
 	/**
-	 * Refresh action image
+	 * Refresh tab image
 	 */
-	public static final String IMG_ACTION_REFRESH = PLUGIN_ID + ".IMG_ACTION_REFRESH"; //$NON-NLS-1$
+	public static final String IMG_TAB_REFRESH = PLUGIN_ID + ".IMG_TAB_REFRESH"; //$NON-NLS-1$
 
 	/**
 	 * Main tab image.
 	 */
 	public static final String IMG_TAB_MAIN = PLUGIN_ID + ".IMG_TAB_MAIN"; //$NON-NLS-1$
-
-	/**
-	 * Property image
-	 */
-	public static final String IMG_PROPERTY = PLUGIN_ID + ".IMG_PROPERTY"; //$NON-NLS-1$
 	
 	// ------- Launch configuration types --------
 	/**

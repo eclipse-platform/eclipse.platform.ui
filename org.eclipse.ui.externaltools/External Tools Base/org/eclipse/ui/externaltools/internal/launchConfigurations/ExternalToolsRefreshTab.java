@@ -241,7 +241,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
-		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_ACTION_REFRESH);
+		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_REFRESH);
 	}
 
 	public boolean isValid(ILaunchConfiguration launchConfig) {

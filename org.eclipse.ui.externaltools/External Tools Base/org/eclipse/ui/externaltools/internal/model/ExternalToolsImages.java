@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.model;
 
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -56,7 +55,6 @@ public class ExternalToolsImages {
 	}
 
 	// Use IPath and toOSString to build the names to ensure they have the slashes correct
-	private final static String LOCALTOOL= "clcl16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	private final static String OBJECT= "obj16/"; //basic colors - size 16x16 //$NON-NLS-1$
 	
 	/**
@@ -64,11 +62,10 @@ public class ExternalToolsImages {
 	 */
 	private static void declareImages() {
 		// Refresh tab
-		declareRegistryImage(IExternalToolConstants.IMG_ACTION_REFRESH, LOCALTOOL + "refresh.gif"); //$NON-NLS-1$
+		declareRegistryImage(IExternalToolConstants.IMG_TAB_REFRESH, OBJECT + "refresh.gif"); //$NON-NLS-1$
 		
 		// Objects
 		declareRegistryImage(IExternalToolConstants.IMG_TAB_MAIN, OBJECT + "main_tab.gif"); //$NON-NLS-1$
-		declareRegistryImage(IExternalToolConstants.IMG_PROPERTY, OBJECT + "prop_ps.gif"); //$NON-NLS-1$
 	}
 
 	/**
