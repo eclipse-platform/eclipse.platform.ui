@@ -336,6 +336,9 @@ public class MarkerAnnotationPreferences {
 				
 		}
 		
+		s= element.getAttribute("includeOnPreferencePage");  //$NON-NLS-1$
+		info.setIncludeOnPreferencePage(s == null || StringConverter.asBoolean(s, true));
+
 		return info;
 	}
 	

@@ -96,8 +96,10 @@ public class AnnotationPreference {
 	protected final static Object HEADER_VALUE= new Object();
 	/** The annotation image provider. */
 	protected final static Object IMAGE_PROVIDER= new Object();
-	
-	/** IDs for preference store access and initialization */
+	/** The value for the includeOnPreferencePage property. */
+	protected final static Object INCLUDE_ON_PREFERENCE_PAGE= new Object();
+
+	/* IDs for preference store access and initialization */
 	
 	/** The preference key for the visibility inside text */
 	protected final static Object TEXT_PREFERENCE_KEY= new Object();
@@ -163,7 +165,8 @@ public class AnnotationPreference {
 			SHOW_IN_NAVIGATION_DROPDOWN_KEY,
 			SHOW_IN_NAVIGATION_DROPDOWN_VALUE,
 			TEXT_STYLE_PREFERENCE_KEY,
-			TEXT_STYLE_PREFERENCE_VALUE
+			TEXT_STYLE_PREFERENCE_VALUE,
+			INCLUDE_ON_PREFERENCE_PAGE
 	};
 	
 	/** The annotation type */
@@ -903,6 +906,31 @@ public class AnnotationPreference {
 		fConfigurationElement= configurationElement;
 		fAnnotationImageProviderAttribute= annotationImageProviderAttribute;
 		setValue(IMAGE_PROVIDER, annotationImageProviderAttribute != null);
+	}
+	
+	/**
+	 * Sets the property of this annotation preference whether it should be included 
+	 * on the default annotation preference page.
+	 * 
+	 * @param includeOnPreferencePage the new value
+	 * @since 3.0
+	 */
+	public void setIncludeOnPreferencePage(boolean includeOnPreferencePage) {
+		setValue(INCLUDE_ON_PREFERENCE_PAGE, includeOnPreferencePage);
+	}
+	
+	/**
+	 * Returns the property of the receiver of whether it should be included on
+	 * the default annotation preference page.
+	 * 
+	 * @return the includeOnPreferencePage property
+	 * @since 3.0
+	 */
+	public boolean isIncludeOnPreferencePage() {
+		Object value= fAttributes.get(INCLUDE_ON_PREFERENCE_PAGE);
+		if (value instanceof Boolean)
+			return ((Boolean) value).booleanValue();
+		return true;
 	}
 	
 	/**

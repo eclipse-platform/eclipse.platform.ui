@@ -271,6 +271,13 @@ since: 3.0
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="includeOnPreferencePage" type="boolean" use="default" value="true">
+            <annotation>
+               <documentation>
+                  Defines whether this annotation type should be configurable via the standard annotation preference page. Default is true.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

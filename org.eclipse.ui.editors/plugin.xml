@@ -441,7 +441,8 @@
             label="%changes.label"
             textPreferenceValue="false"
             textPreferenceKey="changeIndication"
-            overviewRulerPreferenceKey="changeIndicationInOverviewRuler">
+            overviewRulerPreferenceKey="changeIndicationInOverviewRuler"
+            includeOnPreferencePage="false">
       </specification>
       <specification
             annotationType="org.eclipse.ui.workbench.texteditor.quickdiffAddition"
@@ -459,7 +460,8 @@
             label="%additions.label"
             textPreferenceValue="false"
             textPreferenceKey="additionIndication"
-            overviewRulerPreferenceKey="additionIndicationInOverviewRuler">
+            overviewRulerPreferenceKey="additionIndicationInOverviewRuler"
+            includeOnPreferencePage="false">
       </specification>
       <specification
             annotationType="org.eclipse.ui.workbench.texteditor.quickdiffDeletion"
@@ -477,7 +479,8 @@
             label="%deletions.label"
             textPreferenceValue="false"
             textPreferenceKey="deletionIndication"
-            overviewRulerPreferenceKey="deletionIndicationInOverviewRuler">
+            overviewRulerPreferenceKey="deletionIndicationInOverviewRuler"
+            includeOnPreferencePage="false">
       </specification>
       <specification
       		annotationType="org.eclipse.ui.workbench.texteditor.spelling"
