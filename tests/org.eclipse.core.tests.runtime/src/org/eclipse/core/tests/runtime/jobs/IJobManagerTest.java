@@ -64,9 +64,9 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 
 	public static Test suite() {
 		return new TestSuite(IJobManagerTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new IJobManagerTest("testSuspendMultiThreadAccess"));
-		//		return suite;
+//				TestSuite suite = new TestSuite();
+//				suite.addTest(new IJobManagerTest("testSuspendMismatchedBegins"));
+//				return suite;
 	}
 
 	public IJobManagerTest() {
@@ -1257,6 +1257,7 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 		//finally let the test runner resume the rule
 		status[0] = TestBarrier.STATUS_WAIT_FOR_DONE;
 		TestBarrier.waitForStatus(status, TestBarrier.STATUS_DONE);
+		waitForCompletion(runner);
 
 	}
 

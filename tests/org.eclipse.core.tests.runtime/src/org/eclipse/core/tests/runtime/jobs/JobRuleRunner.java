@@ -44,6 +44,7 @@ class JobRuleRunner extends Job {
 			//set the status flag to START
 			status[index] = TestBarrier.STATUS_START;
 			for (int i = 0; i < numRepeats; i++) {
+				monitor.worked(1);
 				//wait until the tester allows this job to run again
 				TestBarrier.waitForStatusNoFail(status, index, TestBarrier.STATUS_WAIT_FOR_RUN);
 				//create a hook that would notify this thread when this job was blocked on a rule (if needed)
@@ -66,7 +67,6 @@ class JobRuleRunner extends Job {
 				//set status to DONE
 				status[index] = TestBarrier.STATUS_DONE;
 
-				monitor.worked(1);
 				Thread.yield();
 			}
 
