@@ -162,12 +162,6 @@
 			id="org.eclipse.team.ccvs.ui.IFileContributions"
 			objectClass="org.eclipse.core.resources.IFile" adaptable="true">
 			<filter name="projectNature" value="org.eclipse.team.cvs.core.cvsnature"/>
-			<action
-				id="org.eclipse.team.ccvs.ui.delete"
-				label="%Delete.label"
-				tooltip="%Delete.tooltip"
-				menubarPath="team.main/group2"
-				class="org.eclipse.team.ui.actions.DeleteAction"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.compareWithRevision"
 				label="%CompareWithRevisionAction.label"
