@@ -1300,7 +1300,6 @@ public class KeysPreferencePage extends
      *            combo box; may be <code>null</code>.
      */
     private void setContextId(String contextId) {
-        System.out.println("setContextId(" + contextId + ")");
         // Clear the current selection.
         comboContext.clearSelection();
         comboContext.deselectAll();
