@@ -55,6 +55,7 @@ import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.MergeViewerAction;
 import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.compare.internal.CompareNavigator;
+import org.eclipse.compare.internal.StoppableThread;
 
 import org.eclipse.compare.rangedifferencer.RangeDifference;
 import org.eclipse.compare.rangedifferencer.RangeDifferencer;
@@ -1100,32 +1101,23 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}
 		}
 		
-		// perform the compare within TIMEOUT milli seconds
-		RangeDifference[] e= null;
-		
-		final Object[] result= new Object[1];
 		final DocLineComparator sa= sancestor, sl= sleft, sr= sright;
-		Thread t= new Thread() {
-			public void run() {
-				result[0]= RangeDifferencer.findRanges(sa, sl, sr);
+		StoppableThread t= new StoppableThread() {
+			public Object doRun() {
+				return RangeDifferencer.findRanges(sa, sl, sr);
 			}
 		};
-		t.start();
-		try {
-			t.join(TIMEOUT);
-			e= (RangeDifference[]) result[0];
-		} catch(InterruptedException ex) {
-		}
-		t.stop();
+		RangeDifference[] e= (RangeDifference[]) t.getResult(TIMEOUT);
 					
 		if (e == null) {
+			// timeout
 			ResourceBundle bundle= getResourceBundle();
 			String title= Utilities.getString(bundle, "tooComplexError.title"); //$NON-NLS-1$
 			String format= Utilities.getString(bundle, "tooComplexError.format"); //$NON-NLS-1$
 			String msg= MessageFormat.format(format, new Object[] { Integer.toString(TIMEOUT/1000) } );
 			MessageDialog.openError(fComposite.getShell(), title, msg);
 
-			// timeout: we create a NOCHANGE range for the whole document
+			// we create a NOCHANGE range for the whole document
 			Diff diff= new Diff(null, RangeDifference.NOCHANGE,
 				aDoc, 0, aDoc != null ? aDoc.getLength() : 0,
 				lDoc, 0, lDoc.getLength(),
@@ -1390,83 +1382,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			((Action)fCopyDiffLeftToRightItem.getAction()).setEnabled(leftToRight);
 		if (fCopyDiffRightToLeftItem != null)
 			((Action)fCopyDiffRightToLeftItem.getAction()).setEnabled(rightToLeft);
-//		
-//		int fAutoResolve= 0;
-//		int fUnresolvedDiffs= 0;
-//		if (fChangeDiffs != null) {
-//			fUnresolvedDiffs= fChangeDiffs.size();
-//			if (fUnresolvedDiffs > 0) {
-//				Iterator e= fChangeDiffs.iterator();
-//				while (e.hasNext()) {
-//					Diff diff= (Diff) e.next();
-//					if (diff.isResolved()) {
-//						fUnresolvedDiffs--;
-//					} else {
-//						if (diff.fDirection == RangeDifference.RIGHT || diff.fDirection == RangeDifference.LEFT) {
-//							fAutoResolve++;
-//						}
-//					}
-//				}
-//			}
-//		}
-//		
-//		boolean acceptReject= false;
-//		boolean both= false;
-//		
-//		String s= "";
-//
-//		if (fCurrentDiff != null) {
-//			if (fCurrentDiff.isResolved()) {
-//				s= "resolved";
-//			} else {
-//				s= "unresolved";
-//				
-//				IMergeViewerContentProvider twr= getContentProvider();
-//				Object input= getInput();
-//				boolean rightEditable= twr.isRightEditable(input);
-//				boolean leftEditable= twr.isLeftEditable(input);
-//				
-//				switch (fCurrentDiff.fDirection) {
-//				case RangeDifference.RIGHT:	// outgoing
-//					if (rightEditable)
-//						acceptReject= true;
-//					break;
-//				case RangeDifference.LEFT:	// incoming
-//					if (leftEditable)
-//						acceptReject= true;
-//					break;
-//				case RangeDifference.CONFLICT:
-//					if (rightEditable) {
-//						acceptReject= true;
-//						both= true;
-//					}
-//					break;
-//				}
-//			}
-//		} else {
-//			if (fUnresolvedDiffs <= 0)
-//				s= "allresolved";
-//			else
-//				s= "same";
-//		}
-//		
-//		getAction(fTakeLeftActionItem).setEnabled(acceptReject);
-//		getAction(fRejectItem).setEnabled(acceptReject);
-//		if (fBothItem != null)
-//			getAction(fBothItem).setEnabled(both);
-//		if (fAutoItem != null)
-//			getAction(fAutoItem).setEnabled(fAutoResolve > 0);
-//
-//		if (s.length() > 0)
-//			s= getBundle().getString("status." + s);
-//
-//		ApplicationWindow b= getApplicationWindow();
-//		if (b != null) {
-//			String format= fBundle.getString(fUnresolvedDiffs > 0
-//								? "status.unresolvedformat"
-//								: "status.resolvedformat");
-//			b.setStatus(MessageFormat.format(format, new String[] { s, "" + fUnresolvedDiffs } ));
-//		}
 	}
 	
 	
@@ -1474,15 +1389,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		
 		super.updateHeader();
 				
-		IMergeViewerContentProvider content= getMergeContentProvider();
-		Object input= getInput();
-		boolean m= content.isRightEditable(input);
-		boolean y= content.isLeftEditable(input);
-
-		CompareConfiguration mp= getCompareConfiguration();
-		//fLeft.setEditable(y && mp.isLeftEditable());
-		//fRight.setEditable(m && mp.isRightEditable());
-
 		updateControls();
 	}
 
@@ -1491,38 +1397,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 * and adds them to the given toolbar manager.
 	 */
 	protected void createToolItems(ToolBarManager tbm) {
-		
-//		if (USE_MORE_CONTROLS) {
-//			fBothItem= new ActionContributionItem(
-//				new Action(fBundle, "action.AcceptBoth.") {
-//					public void actionPerformed(Window w) {
-//						accept(fCurrentDiff, true, false);
-//					}
-//				}
-//			);
-//			tbm.appendToGroup("merge", fBothItem);
-//	
-//			fAutoItem= new ActionContributionItem(
-//				new Action(fBundle, "action.AcceptAll.") {
-//					public void actionPerformed(Window w) {
-//						autoResolve();
-//					}
-//				}
-//			);
-//			tbm.appendToGroup("merge", fAutoItem);
-//		}
-//		fRejectItem= new ActionContributionItem(
-//			new Action(fBundle, "action.AcceptIgnoreNow.") {
-//				public void actionPerformed(Window w) {
-//					reject(fCurrentDiff, true);
-//				}
-//			}
-//		);
-//		tbm.appendToGroup("merge", fRejectItem);
-//		
-//		Action a= new ChangePropertyAction(getResourceBundle(), getCompareConfiguration(), "action.SynchMode.", SYNC_SCROLLING);
-//		a.setChecked(fSynchronizedScrolling);
-//		tbm.appendToGroup("modes", a);
 		
 		tbm.add(new Separator());
 					
@@ -1593,19 +1467,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				updateFont(ps, fComposite);
 				invalidateLines();
 			}
-			
-//		} else if (key.equals(SYNC_SCROLLING)) {
-//			
-//			boolean b= Utilities.getBoolean(getCompareConfiguration(), SYNC_SCROLLING, true);
-//			if (b != fSynchronizedScrolling)
-//				toggleSynchMode();
-	
+				
 		} else if (key.equals(ComparePreferencePage.SYNCHRONIZE_SCROLLING)) {
 			
 			IPreferenceStore ps= CompareUIPlugin.getDefault().getPreferenceStore();
 			
 			boolean b= ps.getBoolean(ComparePreferencePage.SYNCHRONIZE_SCROLLING);
-			//boolean b= Utilities.getBoolean(getCompareConfiguration(), SYNC_SCROLLING, true);
 			if (b != fSynchronizedScrolling)
 				toggleSynchMode();
 		
@@ -1635,40 +1502,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fLeft.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
 		fRight.getTextWidget().getVerticalBar().setVisible(!fSynchronizedScrolling);
 
-		// recreates central control (Sash or Canvas)
-		//handleResize();
 		fComposite.layout(true);
 	}
-				
-	protected void updateToolItems() {
 					
-		boolean visible= false;
-		Object input= getInput();
-		if (input != null) {
-			visible= true;
-			
-			IMergeViewerContentProvider content= getMergeContentProvider();
-			
-			//boolean y= getMergePolicy().isLeftEditable();
-			//boolean m= getMergePolicy().isRightEditable();
-			
-				//destinationEditable= content.isRightEditable(getInput());
-				//destinationEditable= content.isLeftEditable(getInput());
-			/*
-			if (USE_MORE_CONTROLS) {	
-				fBothItem.setVisible(destinationEditable);
-				fAutoItem.setVisible(destinationEditable);
-			}
-			fRejectItem.setVisible(destinationEditable);
-			*/
-		}
-		
-		//fNextItem.setVisible(visible);
-		//fPreviousItem.setVisible(visible);
-		
-		super.updateToolItems();
-	}
-	
 	//---- painting lines
 	
 	/**
@@ -2214,14 +2050,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private void copyDiffRightToLeft() {
 		copy(fCurrentDiff, false, false, false);
 	}
-	
-//	private void accept(Diff diff, boolean both, boolean gotoNext) {
-//		if (getCompareConfiguration().isRightEditable())
-//			copy(diff, true, both, gotoNext);
-//		else if (getCompareConfiguration().isLeftEditable())
-//			copy(diff, false, both, gotoNext);
-//	}
-	
+		
 	private void copy(Diff diff, boolean leftToRight, boolean both, boolean gotoNext) {
 		
 		if (diff != null && !diff.isResolved()) {
@@ -2290,65 +2119,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 	}
 
-	/**
-	 */
-//	private void reject(Diff diff, boolean gotoNext) {
-//		
-//		if (diff != null && !diff.isResolved()) {
-//							
-//			switch (diff.fDirection) {
-//			case RangeDifference.RIGHT:
-//				setRightDirty(true);		// mark dirty to force save!
-//				break;
-//			case RangeDifference.LEFT:
-//				setLeftDirty(true);		// mark dirty to force save!
-//				break;
-//			case RangeDifference.ANCESTOR:
-//				break;
-//			case RangeDifference.CONFLICT:
-//				setLeftDirty(true);		// mark dirty to force save!
-//				setRightDirty(true);		// mark dirty to force save!
-//				break;
-//			}
-//		
-//			diff.setResolved(true);
-//
-//			if (gotoNext) {
-//				navigate(true/*, true*/);
-//			} else {
-//				revealDiff(diff, true);
-//				updateControls();
-//			}
-//		}
-//	}
-	
-
-//	private void autoResolve() {
-//		fCurrentDiff= null;
-//		Diff firstConflict= null;
-//		
-//		Iterator e= fChangeDiffs.iterator();
-//		for (int i= 0; e.hasNext(); i++) {
-//			Diff diff= (Diff) e.next();
-//			if (!diff.isResolved()) {
-//				switch (diff.fDirection) {
-//				case RangeDifference.RIGHT:	// outgoing
-//				case RangeDifference.LEFT:	// incoming
-//					accept(diff, false, false);
-//					break;
-//				case RangeDifference.CONFLICT:	// incoming
-//					if (firstConflict == null)
-//						firstConflict= diff;
-//					break;
-//				}
-//			}
-//		}
-//		
-//		if (firstConflict == null)
-//			firstConflict= (Diff) fChangeDiffs.get(0);
-//		setCurrentDiff(firstConflict, true);
-//	}
-		
 	//---- scrolling
 
 	/**
@@ -2511,17 +2281,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private void updateVScrollBar() {
 		
 		if (Utilities.okToUse(fVScrollBar) && fSynchronizedScrolling) {
-//			int selection= fVScrollBar.getSelection();
 			int virtualHeight= getVirtualHeight();
 			int viewPortHeight= getViewportHeight();
 			int pageIncrement= viewPortHeight-1;
 			int thumb= (viewPortHeight > virtualHeight) ? virtualHeight : viewPortHeight;
 						
 			fVScrollBar.setPageIncrement(pageIncrement);
-			fVScrollBar.setMaximum(virtualHeight);	// XXX: sometimes the last line isn't visible
+			fVScrollBar.setMaximum(virtualHeight);
 			fVScrollBar.setThumb(thumb);
-				
-			//fVScrollBar.setValues(selection, 0, virtualHeight, thumb, 1, pageIncrement);
 		}			
 	}
 	

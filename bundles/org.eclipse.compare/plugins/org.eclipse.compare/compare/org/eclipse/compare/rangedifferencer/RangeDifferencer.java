@@ -9,6 +9,8 @@ import java.util.List;
 
 import org.eclipse.jface.util.Assert;
 
+import org.eclipse.compare.internal.StoppableThread;
+
 /**
  * For finding the differences between two or three <code>IRangeComparator</code>s.
  * <p>
@@ -84,13 +86,16 @@ public final class RangeDifferencer {
 
 		// for each value of the edit distance
 		for (int d= 1; d <= maxDiagonal; ++d) { // d is the current edit distance
-
+			
 			if (right.skipRangeComparison(d, maxDiagonal, left))
 				return EMPTY_RESULT; // should be something we already found
 
 			// for each relevant diagonal (-d, -d+2 ..., d-2, d)
 			for (int k= lower; k <= upper; k += 2) { // k is the current diagonal
 				LinkedRangeDifference edit;
+				
+				if (StoppableThread.isStopped())
+					return EMPTY_RESULT;
 
 				if (k == origin - d || k != origin + d && lastDiagonal[k + 1] >= lastDiagonal[k - 1]) {
 					//

@@ -449,20 +449,6 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 	/* package */ void propertyChange(PropertyChangeEvent event) {
 		
 		String key= event.getProperty();
-//		if (key.equals(ICompareConfiguration.MERGE_DIRECTION)) {
-//			if (isDirty() && !saveContents(true, true))
-//				return;
-//			ToolBarManager tbm= null;
-//			IVisualContainer vc= getContainer();
-//			if (vc instanceof Pane)
-//				tbm= ((Pane)vc).getToolBarManager();
-//			if (tbm != null) {
-//				updateToolItems();
-//				tbm.update(true);
-//			}
-//	
-//			updateDirectionLabel();
-//		} else
 
 		if (key.equals(ANCESTOR_ENABLED)) {
 			fAncestorEnabled= Utilities.getBoolean(getCompareConfiguration(), ANCESTOR_ENABLED, fAncestorEnabled);
@@ -639,9 +625,9 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 			tbm.removeAll();
 			
 			// define groups
-			tbm.add(new Separator("modes")); //$NON-NLS-1$
-			tbm.add(new Separator("merge"));			 //$NON-NLS-1$
-			tbm.add(new Separator("navigation")); //$NON-NLS-1$
+			tbm.add(new Separator("modes"));	//$NON-NLS-1$
+			tbm.add(new Separator("merge"));	//$NON-NLS-1$
+			tbm.add(new Separator("navigation"));	//$NON-NLS-1$
 			
 			CompareConfiguration cc= getCompareConfiguration();
 		
@@ -670,7 +656,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 			Action a= new ChangePropertyAction(fBundle, fCompareConfiguration, "action.EnableAncestor.", ANCESTOR_ENABLED); //$NON-NLS-1$
 			a.setChecked(fAncestorEnabled);
 			fAncestorItem= new ActionContributionItem(a);
-			//fAncestorItem.setVisible(false);
+			fAncestorItem.setVisible(false);
 			tbm.appendToGroup("modes", fAncestorItem); //$NON-NLS-1$
 			
 			createToolItems(tbm);
@@ -781,64 +767,6 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		}
 	}
 	
-//	protected void createToolItems(ToolBarManager tbm) {
-//		
-//		if (USE_MORE_CONTROLS) {
-//			fBothItem= new ActionContributionItem(
-//				new Action(fBundle, "action.AcceptBoth.") {
-//					public void actionPerformed(Window w) {
-//						accept(fCurrentDiff, true, false);
-//					}
-//				}
-//			);
-//			tbm.appendToGroup("merge", fBothItem);
-//	
-//			fAutoItem= new ActionContributionItem(
-//				new Action(fBundle, "action.AcceptAll.") {
-//					public void actionPerformed(Window w) {
-//						autoResolve();
-//					}
-//				}
-//			);
-//			tbm.appendToGroup("merge", fAutoItem);
-//		}
-//		fRejectItem= new ActionContributionItem(
-//			new Action(fBundle, "action.AcceptIgnoreNow.") {
-//				public void actionPerformed(Window w) {
-//					reject(fCurrentDiff, true);
-//				}
-//			}
-//		);
-//		tbm.appendToGroup("merge", fRejectItem);
-//		
-//		Action a= new ChangePropertyAction(getBundle(), TextMergeViewer.class, getCompareConfiguration(), "action.SynchMode.", SYNC_SCROLLING);
-//		a.setChecked(fSynchronizedScrolling);
-////		tbm.appendToGroup("modes", a);
-//		tbm.add(a);
-//		
-//		tbm.add(new Separator());
-//					
-//		a= new Action() {
-//			public void actionPerformed() {
-//				navigate(true);
-//			}
-//		};
-//		CompareUIPlugin.init(a, TextMergeViewer.class, getBundle(), "action.NextDiff.");
-//		fNextItem= new ActionContributionItem(a);
-//		//tbm.appendToGroup("navigation", fNextItem);
-//		tbm.add(fNextItem);
-//		
-//		a= new Action() {
-//			public void actionPerformed() {
-//				navigate(false);
-//			}
-//		};
-//		CompareUIPlugin.init(a, TextMergeViewer.class, getBundle(), "action.PrevDiff.");
-//		fPreviousItem= new ActionContributionItem(a);
-//		//tbm.appendToGroup("navigation", fPreviousItem);
-//		tbm.add(fPreviousItem);
-//	}
-
 	/**
 	 * Updates the headers of the three areas
 	 * by querying the content provider for a name and image for
@@ -865,8 +793,6 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 			fRightLabel.setImage(content.getRightImage(input));
 			fRightLabel.setText(content.getRightLabel(input));
 		}
-		
-		updateDirectionLabel();
 	}
 	
 	private Image loadImage(String name) {
@@ -875,37 +801,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 			return id.createImage();
 		return null;
 	}
-	
-	private void updateDirectionLabel() {
-//		if (fDirectionLabel != null) {
-//			Image image= null;
-//			
-//			//if (fMergePolicy.hasMergeDirection()) {
-//				boolean y= fCompareConfiguration.isLeftEditable();
-//				boolean m= fCompareConfiguration.isRightEditable();
-//				
-//				if (y && m) {
-//					if (fBothArrow == null)
-//						fBothArrow= loadImage("images/both.gif"); 
-//					image= fBothArrow;
-//				} else if (y) {
-//					if (fLeftArrow == null)
-//						fLeftArrow= loadImage("images/yours.gif");
-//					image= fLeftArrow;
-//				} else if (m) {
-//					if (fRightArrow == null)
-//						fRightArrow= loadImage("images/mine.gif"); 
-//					image= fRightArrow;
-//				}
-//			//}
-//	
-//			if (image != null)
-//				fDirectionLabel.setImage(image);
-//			else
-//				fDirectionLabel.setText("");
-//		}
-	}
-	
+		
 	/**
 	 * Calculates the height of the header.
 	 */

@@ -189,7 +189,6 @@ public class EditionSelectionDialog extends Dialog {
 	 *	title       String        dialog title
 	 *	width       Integer       initial width of dialog
 	 *	height      Integer       initial height of dialog
-	 *	mode        String        "replace" or "add"; default is "replace"
 	 *	treeTitleFormat   MessageFormat pane title for edition tree; arg 0 is the target
 	 *	dateIcon    String        icon for node in edition tree; path relative to plugin
 	 *	timeIcon    String        icon for leaf in edition tree; path relative to plugin
@@ -210,8 +209,6 @@ public class EditionSelectionDialog extends Dialog {
 		
 		fBundle= bundle;
 	
-		fReplaceMode= "replace".equals(Utilities.getString(fBundle, "mode", "replace")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-									    
 		fCompareConfiguration= new CompareConfiguration();
 		fCompareConfiguration.setLeftEditable(false);
 		fCompareConfiguration.setRightEditable(false);
@@ -225,7 +222,7 @@ public class EditionSelectionDialog extends Dialog {
 		if (id != null)
 			fTimeImage= id.createImage();
 	}
-		
+	
 	/**
 	 * Presents this modal dialog with the functionality described in the class comment above.
 	 *
@@ -385,6 +382,16 @@ public class EditionSelectionDialog extends Dialog {
 		fTargetIsRight= isRight;
 	}
 		
+	/**
+	 * Controls whether the EditionSelectionDialog is in 'replace' mode
+	 * or 'add' mode. 
+	 *
+	 * @param addMode if true dialog is in 'add' mode.
+	 */
+	public void setAddMode(boolean addMode) {
+		fReplaceMode= !addMode;
+	}
+	
 	/**
 	 * Returns the input target that has been specified with the most recent call
 	 * to <code>selectEdition</code>. If a not <code>null</code> path was specified this method
