@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.ant.tests.core.AbstractAntTest;
+import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.core.runtime.CoreException;
 
 
@@ -48,10 +49,13 @@ public class TargetTests extends AbstractAntTest {
 	}
 	
 	/**
-	 * Runs an Ant script
+	 * Runs an Ant script and ensure that the build file location is logged
 	 */
 	public void testRunScript() throws CoreException {
 		run("TestForEcho.xml");
+		String message= (String)AntTestChecker.getDefault().getMessages().get(0);
+		assertTrue("Build file location should be logged as the first message", message != null && message.endsWith("AntTests\\scripts\\TestForEcho.xml"));
+		assertSuccessful();
 	}
 }
 

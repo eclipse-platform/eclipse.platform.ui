@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.ant.core.AntRunner;
+import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
@@ -15,8 +16,7 @@ import org.eclipse.core.runtime.CoreException;
  * Responsible for running test ant build files.
  */
 public class AntFileRunner {
-
-	private static final String ANT_LOGGER_CLASS = "org.eclipse.ant.tests.core.testloggers.TestBuildLogger"; //$NON-NLS-1$
+	
 	private static final String BASE_DIR_PREFIX = "-Dbasedir="; //$NON-NLS-1$
 
 	public void run(IFile buildFile, String[] targets, String[] args, String baseDir, boolean captureOutput) throws CoreException {
@@ -41,7 +41,7 @@ public class AntFileRunner {
 			runner.setExecutionTargets(targets);
 		}
 		if (captureOutput) {
-			runner.addBuildLogger(ANT_LOGGER_CLASS);
+			runner.addBuildLogger(AbstractAntTest.ANT_TEST_BUILD_LOGGER);
 		}
 
 		runner.run(null);

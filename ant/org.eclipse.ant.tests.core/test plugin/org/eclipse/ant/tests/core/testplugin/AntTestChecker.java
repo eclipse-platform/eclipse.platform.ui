@@ -43,6 +43,8 @@ public class AntTestChecker {
 	
 	private Hashtable userProperties;
 	
+	private String nameOfListener;
+	
 	private AntTestChecker()  {
 	}
 	
@@ -184,6 +186,7 @@ public class AntTestChecker {
 		currentProject= null;
 		currentTarget= null;
 		currentTask= null;
+		nameOfListener= null;
 	}
 	
 	
@@ -204,5 +207,13 @@ public class AntTestChecker {
 	
 	public List getMessages() {
 		return messages;
+	}
+	
+	public String getNameOfListener() {
+		return nameOfListener;
+	}
+
+	public void setNameOfListener(String nameOfListener) {
+		this.nameOfListener = nameOfListener;
 	}
 }

@@ -50,7 +50,6 @@ public class TestBuildLogger implements BuildLogger {
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildStarted(BuildEvent event) {
-		AntTestChecker.reset();
 		AntTestChecker.getDefault().buildStarted(event.getProject().getName());
 		AntTestChecker.getDefault().setUserProperties(event.getProject().getProperties());
 	}

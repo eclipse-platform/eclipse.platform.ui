@@ -30,7 +30,6 @@ public class OptionTests extends AbstractAntTest {
 		run("TestForEcho.xml", new String[]{"-help"});
 		assertTrue("One message should have been logged", AntTestChecker.getDefault().getMessagesLoggedCount() == 1);
 		assertTrue("Help is incorrect", getLastMessageLogged() != null && getLastMessageLogged().startsWith(START_OF_HELP));
-		assertTrue("No build started should have occurred", AntTestChecker.getDefault().getBuildsStartedCount() == 0);
 	}
 	
 	/**
@@ -40,16 +39,23 @@ public class OptionTests extends AbstractAntTest {
 		run("TestForEcho.xml", new String[]{"-version"});
 		assertTrue("One message should have been logged", AntTestChecker.getDefault().getMessagesLoggedCount() == 1);
 		assertTrue("Version is incorrect", VERSION.equals(getLastMessageLogged()));
-		assertTrue("No build started should have occurred", AntTestChecker.getDefault().getBuildsStartedCount() == 0);
 	}
 	
 	/**
-	 * Tests the "-projecthelp" option
+	 * Tests the "-projecthelp" option when it will not show (quite mode)
 	 */
 	public void testProjecthelp() throws CoreException {
+		run("TestForEcho.xml", new String[]{"-projecthelp"});
+		assertTrue("4 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 4);
+		assertTrue("Project help is incorrect", getLastMessageLogged().startsWith("Subtargets:"));
+	}
+	
+	/**
+	 * Tests the "-projecthelp" option when it will not show (quite mode)
+	 */
+	public void testProjecthelpQuiet() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-projecthelp", "-q"});
-		assertTrue("One message should have been logged", AntTestChecker.getDefault().getMessagesLoggedCount() == 1);
-		assertTrue("Project help is incorrect", VERSION.equals(getLastMessageLogged()));
+		assertTrue("no messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 0);
 	}
 	
 	
@@ -138,13 +144,26 @@ public class OptionTests extends AbstractAntTest {
 	}
 	
 	/**
-	 * Tests specifying the -listener with no arg
+	 * Tests specifying the -listener with a class that will not be found
+	 */
+	public void testListenerClassNotFound() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-listener", "TestBuildListener"});
+		} catch (CoreException e) {
+			String message= e.getStatus().getException().getMessage();
+			assertTrue("Should be ClassNotFoundException", "java.lang.ClassNotFoundException: TestBuildListener".equals(message));
+			return;
+		}
+		assertTrue("A CoreException should have occurred as the listener class will not be found", false);
+		
+	}
+	/**
+	 * Tests specifying the -listener
 	 */
 	public void testListener() throws CoreException {
-		
-		run("TestForEcho.xml", new String[]{"-listener", "TestBuildListener"});
+		run("TestForEcho.xml", new String[]{"-listener", ANT_TEST_BUILD_LISTENER});
 		assertSuccessful();
-		
+		assertTrue("A listener should have been added named: " + ANT_TEST_BUILD_LISTENER, ANT_TEST_BUILD_LISTENER.equals(AntTestChecker.getDefault().getNameOfListener()));
 	}
 	
 	/**

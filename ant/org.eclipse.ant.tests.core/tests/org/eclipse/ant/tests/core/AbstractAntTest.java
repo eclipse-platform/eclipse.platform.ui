@@ -24,6 +24,8 @@ import org.eclipse.core.runtime.CoreException;
 public abstract class AbstractAntTest extends TestCase {
 	
 	protected static final String BUILD_SUCCEESSFUL= "BUILD SUCCESSFUL";
+	public static final String ANT_TEST_BUILD_LOGGER = "org.eclipse.ant.tests.core.testloggers.TestBuildLogger"; //$NON-NLS-1$
+	public static final String ANT_TEST_BUILD_LISTENER= "org.eclipse.ant.tests.core.testloggers.TestBuildListener";
 	
 	/**
 	 * Returns the 'AntTests' project.
@@ -77,6 +79,7 @@ public abstract class AbstractAntTest extends TestCase {
 			targets= getTargetNames(buildFileName);
 		}
 		runner.run(buildFile, targets, args, "", true);
+		assertTrue("Build starts did not equal build finishes", AntTestChecker.getDefault().getBuildsStartedCount() == AntTestChecker.getDefault().getBuildsFinishedCount());
 	}
 	
 	protected TargetInfo[] getTargets(String buildFileName) throws CoreException {

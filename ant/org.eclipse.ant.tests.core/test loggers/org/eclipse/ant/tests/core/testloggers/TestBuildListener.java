@@ -1,7 +1,15 @@
 package org.eclipse.ant.tests.core.testloggers;
 
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
+import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 
 
 public class TestBuildListener implements BuildListener {
@@ -16,6 +24,7 @@ public class TestBuildListener implements BuildListener {
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildStarted(BuildEvent event) {
+		AntTestChecker.getDefault().setNameOfListener(this.getClass().getName());
 	}
 
 	/**
