@@ -40,6 +40,8 @@ public class MemoryByte {
 	 * suspend event.
 	 * 
 	 * @see org.eclipse.debug.core.DebugEvent#SUSPEND
+	 * 
+	 * TODO: should this say DebugEvent#CHANGED? what it the correlation?
 	 */
 	public static final byte	CHANGED		= 0x04;
 	
