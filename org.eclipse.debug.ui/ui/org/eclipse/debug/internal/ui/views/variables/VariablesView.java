@@ -599,7 +599,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				setFocusViewer(getVariablesViewer());
 			}
 		});
-		variablesViewer.addSelectionChangedListener(getTreeSelectionChangedListener());
+		variablesViewer.addPostSelectionChangedListener(getTreeSelectionChangedListener());
 		getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(variablesViewer);
 		getSite().setSelectionProvider(getVariablesViewSelectionProvider());
 
