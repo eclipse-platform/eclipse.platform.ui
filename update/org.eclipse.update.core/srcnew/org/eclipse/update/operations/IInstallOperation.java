@@ -11,12 +11,10 @@
 package org.eclipse.update.operations;
 
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.*;
 
 /**
  * IConfigOperation
  */
 public interface IInstallOperation extends ISingleOperation {
-	public FeatureHierarchyElement2[] getOptionalElements();
 	public IFeatureReference[] getOptionalFeatures();
 }
