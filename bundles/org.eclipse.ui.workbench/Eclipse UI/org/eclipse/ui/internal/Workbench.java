@@ -1914,6 +1914,7 @@ public final class Workbench implements IWorkbench {
                 extensionEventHandler);
         Platform.getExtensionRegistry().removeRegistryChangeListener(
 				startupRegistryListener);
+        workbenchActivitySupport.dispose();
         WorkbenchHelpSystem.disposeIfNecessary();
         // shutdown the rest of the workbench
         WorkbenchColors.shutdown();

@@ -10,13 +10,19 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.activities.ws;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.jface.resource.DeviceResourceException;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.NotDefinedException;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
  * Provides labels for elements drawn from <code>IActivityManagers</code>.  
@@ -26,17 +32,52 @@ import org.eclipse.ui.internal.WorkbenchImages;
  */
 public class ActivityCategoryLabelProvider extends LabelProvider {
 
+	private LocalResourceManager manager;	
+	private Map descriptorMap = new HashMap();
+
+	/**
+	 * Create a new instance of this class.
+	 */
+	public ActivityCategoryLabelProvider() {
+		manager = new LocalResourceManager(JFaceResources.getResources());
+	}
+	
     /* (non-Javadoc)
      * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
      */
     public Image getImage(Object element) {
-        if (element instanceof ICategory) {
-            return WorkbenchImages
-                    .getImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY_CATEGORY);
-        } else {
-            return WorkbenchImages
-                    .getImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY);
+    	try {
+    		ImageDescriptor descriptor = getDescriptor(element);	        
+	        if (descriptor != null)
+	        	return manager.createImage(descriptor);
+    	}
+    	catch (DeviceResourceException e) {
+    		//ignore 
+    	}
+        return null;
+    }
+    
+    private ImageDescriptor getDescriptor(Object element) {
+    	ImageDescriptor descriptor = (ImageDescriptor) descriptorMap.get(element);
+    	if (descriptor != null)
+    		return descriptor;
+        
+    	if (element instanceof ICategory) {
+        	ICategory category = (ICategory) element;
+			descriptor = PlatformUI.getWorkbench().getActivitySupport()
+					.getImageDescriptor(category);
+			if (descriptor != null) {
+				descriptorMap.put(element, descriptor);
+			}
+        } else if (element instanceof IActivity) {
+        	IActivity activity = (IActivity) element;
+			descriptor = PlatformUI.getWorkbench().getActivitySupport()
+					.getImageDescriptor(activity);
+			if (descriptor != null) {
+				descriptorMap.put(element, descriptor);
+			}
         }
+    	return descriptor;
     }
 
     /* (non-Javadoc)
@@ -59,5 +100,13 @@ public class ActivityCategoryLabelProvider extends LabelProvider {
             }
         }
         return super.getText(element);
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+     */
+    public void dispose() {    	
+    	manager.dispose();
+    	descriptorMap.clear();
     }
 }

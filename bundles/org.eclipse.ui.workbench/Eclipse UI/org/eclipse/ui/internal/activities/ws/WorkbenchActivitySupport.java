@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
@@ -29,20 +30,35 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
+import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IActivityManagerListener;
+import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.IMutableActivityManager;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.activities.ActivityManagerFactory;
 import org.eclipse.ui.internal.activities.ProxyActivityManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
 
+/**
+ * Implementation of {@link org.eclipse.ui.activities.IWorkbenchActivitySupport}.
+ * @since 3.0
+ */
 public class WorkbenchActivitySupport implements IWorkbenchActivitySupport {
     private IMutableActivityManager mutableActivityManager;
 
     private ProxyActivityManager proxyActivityManager;
 
+	private ImageBindingRegistry activityImageBindingRegistry;
+
+	private ImageBindingRegistry categoryImageBindingRegistry;
+
+	/**
+	 * Create a new instance of this class.
+	 */
     public WorkbenchActivitySupport() {
         mutableActivityManager = ActivityManagerFactory
                 .getMutableActivityManager();
@@ -95,9 +111,7 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport {
                                         /* (non-Javadoc)
                                          * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
                                          */
-                                        public void run(IProgressMonitor monitor)
-                                                throws InvocationTargetException,
-                                                InterruptedException {
+                                        public void run(IProgressMonitor monitor) {
 
                                             openTime = System
                                                     .currentTimeMillis()
@@ -264,11 +278,83 @@ public class WorkbenchActivitySupport implements IWorkbenchActivitySupport {
                 });
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IWorkbenchActivitySupport#getActivityManager()
+     */
     public IActivityManager getActivityManager() {
         return proxyActivityManager;
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.activities.IWorkbenchActivitySupport#setEnabledActivityIds(java.util.Set)
+     */
     public void setEnabledActivityIds(Set enabledActivityIds) {
         mutableActivityManager.setEnabledActivityIds(enabledActivityIds);
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.activities.IWorkbenchActivitySupport#getImageDescriptor(org.eclipse.ui.activities.IActivity)
+	 */
+	public ImageDescriptor getImageDescriptor(IActivity activity) {
+		if (activity.isDefined()) {
+			ImageDescriptor descriptor = getActivityImageBindingRegistry()
+					.getImageDescriptor(activity.getId());
+			if (descriptor != null)
+				return descriptor;
+		}
+		return WorkbenchImages
+				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.activities.IWorkbenchActivitySupport#getImageDescriptor(org.eclipse.ui.activities.ICategory)
+	 */
+	public ImageDescriptor getImageDescriptor(ICategory category) {
+		if (category.isDefined()) {
+			ImageDescriptor descriptor = getCategoryImageBindingRegistry()
+					.getImageDescriptor(category.getId());
+			if (descriptor != null)
+				return descriptor;
+		}
+		return WorkbenchImages
+				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY_CATEGORY);
+	}
+	
+	
+	/**
+	 * Return the activity image registry.
+	 * 
+	 * @return the activity image registry
+	 * @since 3.1
+	 */
+	private ImageBindingRegistry getActivityImageBindingRegistry() {
+		if (activityImageBindingRegistry == null) {
+			activityImageBindingRegistry = new ImageBindingRegistry("activityImageBinding"); //$NON-NLS-1$			
+		}
+		return activityImageBindingRegistry;
+	}
+	
+	/**
+	 * Return the category image registry.
+	 * 
+	 * @return the category image registry
+	 * @since 3.1
+	 */
+	private ImageBindingRegistry getCategoryImageBindingRegistry() {
+		if (categoryImageBindingRegistry == null) 
+			categoryImageBindingRegistry = new ImageBindingRegistry("categoryImageBinding"); //$NON-NLS-1$
+		return categoryImageBindingRegistry;
+	}
+
+	/**
+	 * Dispose of the image registries.
+	 * 
+	 * @since 3.1
+	 */
+	public void dispose() {
+		if (activityImageBindingRegistry != null) 
+			activityImageBindingRegistry.dispose();
+		if (categoryImageBindingRegistry != null)
+			categoryImageBindingRegistry.dispose();
+	}
 }

@@ -12,6 +12,8 @@ package org.eclipse.ui.activities;
 
 import java.util.Set;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+
 /**
  * An instance of this interface provides support for managing 
  * <code>IWorkbench</code> activities.  An instance of this interface may be
@@ -29,7 +31,6 @@ public interface IWorkbenchActivitySupport {
      * 
      * @return the activity manager for the workbench. Guaranteed not to be
      *         <code>null</code>.
-     * @since 3.0
      */
     IActivityManager getActivityManager();
 
@@ -42,4 +43,22 @@ public interface IWorkbenchActivitySupport {
      *            is not empty, it must only contain instances of <code>String</code>.
      */
     void setEnabledActivityIds(Set enabledActivityIds);
+    
+    /**
+     * Return the image associated with this activity.
+     * 
+     * @param activity the activity
+     * @return the image associated with this activity.  Never <code>null</code>.
+     * @since 3.1
+     */
+    ImageDescriptor getImageDescriptor(IActivity activity);
+
+    /**
+     * Return the image associated with this category.
+     * 
+     * @param category the category
+     * @return the image associated with this category.  Never <code>null</code>.
+     * @since 3.1
+     */
+    ImageDescriptor getImageDescriptor(ICategory category);
 }
