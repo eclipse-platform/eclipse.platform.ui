@@ -80,6 +80,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	// when the dialog is closed.
 	private IActionBars actionBars;
 	private List actionHandlers = new ArrayList(2);
+	private IPageBookViewPage page;
 
 	/*
 	 * Page site that allows hosting the participant page in a dialog.
@@ -170,6 +171,8 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		if(titleImage != null) {
 			titleImage.dispose();
 		}
+		if (page != null) 
+			page.dispose();
 		IWorkbenchCommandSupport cm = PlatformUI.getWorkbench().getCommandSupport();
 		for (Iterator it = actionHandlers.iterator(); it.hasNext();) {
 			HandlerSubmission handler = (HandlerSubmission) it.next();
@@ -270,7 +273,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		});
 		fEditionPane.setText(Policy.bind("ParticipantPageSaveablePart.0")); //$NON-NLS-1$
 		
-		IPageBookViewPage page = participant.createPage(pageConfiguration);
+		page = participant.createPage(pageConfiguration);
 		((SynchronizePageConfiguration)pageConfiguration).setSite(new CompareViewerPaneSite());
 		ToolBarManager tbm = CompareViewerPane.getToolBarManager(fEditionPane);
 		createActionBars(tbm);

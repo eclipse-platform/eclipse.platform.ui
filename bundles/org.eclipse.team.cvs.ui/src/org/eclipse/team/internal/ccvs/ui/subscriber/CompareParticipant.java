@@ -170,6 +170,7 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	public void dispose() {
 		super.dispose();
 		CVSUIPlugin.getPlugin().getPluginPreferences().removePropertyChangeListener(this);
+		getCVSCompareSubscriber().dispose();
 	}
 
 	/* (non-Javadoc)
