@@ -175,7 +175,7 @@ public class EditorList {
 		updateItems();
 		editorsTable.pack();
 		editorsTable.setFocus();
-		editorsTable.setVisible(true);
+//		editorsTable.setVisible(true);
 
 //		// Create the context menu						
 		MenuManager menuMgr = new MenuManager("#PopUp"); //$NON-NLS-1$
@@ -275,7 +275,6 @@ public class EditorList {
 				e.close();
 			}
 			updateItems();
-			editorsTable.getShell().close();
 		}
 	}
 
@@ -304,7 +303,6 @@ public class EditorList {
 				e.close();
 			}
 			updateItems();
-			editorsTable.getShell().close();
 		}
 	}
 	
@@ -536,7 +534,6 @@ public class EditorList {
 				Adapter e = (Adapter)items[i].getData();
 				workbook.addBookMark(e.editorRef);
 			}
-			editorsTable.getShell().close();
 		}
 	}
 	/**

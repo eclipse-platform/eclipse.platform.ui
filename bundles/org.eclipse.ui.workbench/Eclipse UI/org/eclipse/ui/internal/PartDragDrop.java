@@ -229,6 +229,12 @@ protected Rectangle getSourceBounds() {
 /**
  * Returns the drag source part.
  */
+public void setSourcePart(LayoutPart sourcePart) {
+	this.sourcePart = sourcePart;
+}
+/**
+ * Returns the drag source part.
+ */
 public LayoutPart getSourcePart() {
 	return sourcePart;
 }

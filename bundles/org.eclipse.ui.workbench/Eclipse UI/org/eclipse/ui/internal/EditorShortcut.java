@@ -44,7 +44,6 @@ public class EditorShortcut {
 		e.initImage();
 		return e;
 	}
-	
 	private EditorShortcut(IMemento mem) {
 		id = mem.getString(IWorkbenchConstants.TAG_ID);
 		title = mem.getString(IWorkbenchConstants.TAG_TITLE);

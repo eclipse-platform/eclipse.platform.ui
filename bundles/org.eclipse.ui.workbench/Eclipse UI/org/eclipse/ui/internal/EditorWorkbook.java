@@ -16,9 +16,7 @@ import java.util.*;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.custom.ViewForm; 
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -40,8 +38,6 @@ public class EditorWorkbook extends LayoutPart
 	private int activeState = INACTIVE;
 	private boolean assignFocusOnSelection = true;
 	private boolean ignoreTabFocusHide = false;
-	private boolean handleTabSelection = true;
-//	private boolean mouseDownListenerAdded = false;
 
 	private boolean isZoomed = false;
 	private Composite parent;
@@ -50,9 +46,8 @@ public class EditorWorkbook extends LayoutPart
 	
 	private EditorArea editorArea;
 	private EditorPane visibleEditor;
-	private Map mapPartToDragMonitor = new HashMap();
+	private EditorPartDragDrop editorPartDragDrop;
 
-//	private Map mapTabToEditor = new HashMap();
 	private List editors = new ArrayList();
 /**
  * EditorWorkbook constructor comment.
@@ -82,7 +77,6 @@ public void add(LayoutPart part) {
 		editorPane.setWorkbook(this);
 		editorPane.setZoomed(isZoomed);
 		if (workbookForm != null) {
-//			createTab(editorPane);
 			createPage(editorPane);
 			setVisibleEditor(editorPane);
 		}	
@@ -121,44 +115,8 @@ public void createControl(Composite parent) {
 	header.createControl(workbookForm);
 	workbookForm.setTopLeft(header.getControl());
 	
-	
-	//tabFolder = new CTabFolder(parent, SWT.BORDER | tabLocation);
-
-	// prevent close button and scroll buttons from taking focus
-	//tabFolder.setTabList(new Control[0]);
-	
 	// redirect drop request to the workbook
 	workbookForm.setData((IPartDropTarget) this);
-
-	// listener to close the editor
-//	tabFolder.addCTabFolderListener(new CTabFolderAdapter() {
-//		public void itemClosed(CTabFolderEvent e) {
-//			e.doit = false; // otherwise tab is auto disposed on return
-//			EditorPane pane = (EditorPane) mapTabToEditor.get(e.item);
-//			pane.doHide();
-//		}
-//	});
-
-	// listener to switch between visible tabItems
-//	tabFolder.addSelectionListener(new SelectionAdapter() {
-//		public void widgetSelected(SelectionEvent e) {
-//			if (handleTabSelection) {
-//				EditorPane pane = (EditorPane) mapTabToEditor.get(e.item);
-//				// Pane can be null when tab is just created but not map yet.
-//				if (pane != null) {
-//					setVisibleEditor(pane);
-//					if (assignFocusOnSelection) {
-//						// If we get a tab focus hide request, it's from
-//						// the previous editor in this workbook which had focus.
-//						// Therefore ignore it to avoid paint flicker
-//						ignoreTabFocusHide = true;
-//						pane.setFocus();
-//						ignoreTabFocusHide = false;
-//					}
-//				}
-//			}
-//		}
-//	});
 
 	// listener to resize visible components
 	workbookForm.addListener(SWT.Resize, new Listener() {
@@ -203,16 +161,14 @@ public void createControl(Composite parent) {
 	Iterator enum = editors.iterator();
 	while (enum.hasNext()) {
 		EditorPane pane = (EditorPane) enum.next();
-//		createTab(pane);
 		createPage(pane);
 	}
 
 	// Set active tab.
 	if (visibleEditor != null)
 		setVisibleEditor(visibleEditor);
-	else
-		if (getItemCount() > 0)
-			setVisibleEditor((EditorPane) editors.get(0));
+	else if (getItemCount() > 0)
+		setVisibleEditor((EditorPane) editors.get(0));
 }
 
 /**
@@ -224,14 +180,6 @@ public void showPaneMenu() {
 		visibleEditor.showPaneMenu(header.getControl(),new Point(bounds.x,bounds.height));
 	}
 }
-/**
- * Returns true if the mouse pointer is over the
- * image of the tab's label
- */
-///*package*/ boolean overImage(EditorPane pane, int x) {
-////	CTabItem item = getTab(pane);
-////	return overImage(item, x);
-//} //infw done.
 /*
  * Return true if <code>x</code> is over the label image.
  */
@@ -252,36 +200,7 @@ private void createPage(EditorPane editorPane) {
 	IEditorReference editorRef = editorPane.getEditorReference();
 	updateEditorTab(editorRef);
 	editorRef.addPropertyListener(this);
-
-	// When first editor added, also enable workbook for
-	// D&D - this avoids dragging the initial empty workbook
-//	if (mapPartToDragMonitor.size() == 1)
-//		enableTabDrag(this, null);
 }
-/**
- * Create a new tab for an item.
- */
-//private CTabItem createTab(EditorPane editorPane) {
-//	return createTab(editorPane, tabFolder.getItemCount());
-//}
-///**
-// * Create a new tab for an item at a particular index.
-// */
-//private CTabItem createTab(EditorPane editorPane, int index) {
-//	CTabItem tab = new CTabItem(tabFolder, SWT.NONE, index);
-//	mapTabToEditor.put(tab, editorPane);
-//	enableTabDrag(editorPane, tab);
-//	updateEditorTab((IEditorReference)editorPane.getPartReference());
-//	return tab;
-//}
-private void disableTabDrag(LayoutPart part) {
-	PartDragDrop partDragDrop = (PartDragDrop)mapPartToDragMonitor.get(part);
-	if (partDragDrop != null) {
-		partDragDrop.dispose();
-		mapPartToDragMonitor.remove(part);
-	}
-}
-
 /**
  * See LayoutPart#dispose
  */
@@ -295,18 +214,8 @@ public void dispose() {
 	//Reset the visible editor so that no references are made to it.
 	setVisibleEditor(null);
 
-	// dispose of disabled images
-//	for(int i = 0; i < tabFolder.getItemCount(); i++) {
-//		CTabItem tab = tabFolder.getItem(i);
-//		if (tab.getDisabledImage() != null)
-//			tab.getDisabledImage().dispose();
-//	}
-
 	workbookForm.dispose();
 	workbookForm = null;
-//	mouseDownListenerAdded = false;
-
-//	mapTabToEditor.clear();
 }
 /**
  * Zooms in on the active page in this workbook.
@@ -353,9 +262,9 @@ private void doZoom() {
 			break;
 	}
 	
-//	tabFolder.setSelectionForeground(fgColor);
-//	tabFolder.setSelectionBackground(bgColors, bgPercents);
-//	tabFolder.update();
+	header.getDragControl().setForeground(fgColor);
+	header.getDragControl().setBackground(bgColors, bgPercents);
+	header.getDragControl().update();
 }
 /**
  * enableDrop
@@ -365,11 +274,18 @@ private void enableDrop(LayoutPart part) {
 	if (control != null)
 		control.setData((IPartDropTarget)this); // Use workbook as drop target, not part itself.
 }
-//private void enableTabDrag(LayoutPart part, CTabItem tab) {
-//	CTabPartDragDrop dragSource = new CTabPartDragDrop(part, this.tabFolder, tab);
-//	mapPartToDragMonitor.put(part, dragSource);
-//	dragSource.addDropListener(getEditorArea().getPartDropListener());
-//}
+private void updateDrag() {
+	if(editors.size() > 1 || editorArea.getEditorWorkbookCount() > 1) {
+		if(editorPartDragDrop == null) {
+			editorPartDragDrop = new EditorPartDragDrop(getVisibleEditor(),header.getDragControl());
+			editorPartDragDrop.addDropListener(getEditorArea().getPartDropListener());
+		} else {
+			editorPartDragDrop.setSourcePart(getVisibleEditor());
+		}
+	} else if(editorPartDragDrop != null) {
+		editorPartDragDrop.dispose();
+	}
+}
 /**
  * Gets the presentation bounds.
  */
@@ -429,35 +345,6 @@ public Composite getParent() {
 	return this.parent;
 }
 /**
- * Returns the tab for a part.
- */
-//private CTabItem getTab(IEditorReference editorRef) {
-//	Iterator tabs = mapTabToEditor.keySet().iterator();
-//	PartPane pane = ((WorkbenchPartReference)editorRef).getPane();
-//	while (tabs.hasNext()) {
-//		CTabItem tab = (CTabItem) tabs.next();
-//		PartPane p = (PartPane)mapTabToEditor.get(tab);
-//		if (p != null && p == pane)
-//			return tab;
-//	}
-//	
-//	return null;
-//}
-/**
- * Returns the tab for a part.
- */
-//private CTabItem getTab(LayoutPart child) {
-//	Iterator tabs = mapTabToEditor.keySet().iterator();
-//	while (tabs.hasNext()) {
-//		CTabItem tab = (CTabItem) tabs.next();
-//		if (mapTabToEditor.get(tab) == child)
-//			return tab;
-//	}
-//	
-//	return null;
-//}
-
-/**
  * Returns the tab list to use when this workbook is active.
  * Includes the active editor and its tab, in the appropriate order.
  */
@@ -474,7 +361,6 @@ public Control[] getTabList() {
 		return new Control[] { visibleEditor.getControl(), workbookForm };
 	}
 }
-
 /**
  * Returns the visible child.
  */
@@ -507,8 +393,9 @@ public boolean isDragAllowed(Point p) {
  * the specified part using keyboard.
  */
 public void openTracker(LayoutPart part) {
-	CTabPartDragDrop dnd = (CTabPartDragDrop)mapPartToDragMonitor.get(part);
-	dnd.openTracker();
+	editorPartDragDrop.setSourcePart(part);
+	editorPartDragDrop.openTracker();
+	updateDrag();
 }
 
 /**
@@ -557,13 +444,11 @@ public void remove(LayoutPart child) {
 		}
 		if (workbookForm != null) {
 			// Dispose old editor.
-//			removeTab(getTab(child));
 			child.setContainer(null);
 		}
 		setVisibleEditor(nextEditor);
 	} else if (workbookForm != null) {
 		// Dispose old editor.
-//		removeTab(getTab(child));
 		child.setContainer(null);
 	}
 }
@@ -571,11 +456,6 @@ public void remove(LayoutPart child) {
  * See IVisualContainer#remove
  */
 public void removeAll() {
-	// turn off tab selection handling so as
-	// not to activate another editor when a
-	// tab is disposed. See PR 1GBXAWZ
-	handleTabSelection = false;
-	
 	// Show empty space.
 	setVisibleEditor(null);
 
@@ -583,54 +463,19 @@ public void removeAll() {
 	if (workbookForm != null) {
 		Iterator tabs = editors.iterator();
 		while (tabs.hasNext()) {
-//			CTabItem tab = (CTabItem) tabs.next();
-//			if (tab.getDisabledImage() != null)
-//				tab.getDisabledImage().dispose();
-//			tab.dispose();
 			EditorPane child = (EditorPane)tabs.next();
 			removeListeners(child);
 			child.setContainer(null);
 		}
 	}
-
-	// Clean up
-//	mapTabToEditor.clear();
 	editors.clear();
-	handleTabSelection = true;
 }
 
 private void removeListeners(EditorPane editor) {
 	if (editor == null)
 		return;
-//
-//	disableTabDrag(editor);
-//
-//	// When last editor removed, also disable workbook for
-//	// D&D - this avoids dragging the initial empty workbook
-//	if (mapPartToDragMonitor.size() == 1)
-//		disableTabDrag(this);
-//
 	editor.getPartReference().removePropertyListener(this);
 }
-/**
- * Remove the tab item from the tab folder
- */
-//private void removeTab(CTabItem tab) {
-//	if (tabFolder != null) {
-//		if (tab != null) {
-//			mapTabToEditor.remove(tab);
-//			if (tab.getDisabledImage() != null)
-//				tab.getDisabledImage().dispose();
-//			// Note, that disposing of the tab causes the
-//			// tab folder to select another tab and fires
-//			// a selection event. In this situation, do
-//			// not assign focus.
-//			assignFocusOnSelection = false;
-//			tab.dispose();
-//			assignFocusOnSelection = true;
-//		}
-//	}
-//}
 /**
  * Reorder the tab representing the specified pane.
  * If a tab exists under the specified x,y location,
@@ -747,8 +592,8 @@ private void setActiveState(int state) {
 public void setBounds(Rectangle r) {
 	if (workbookForm != null) {
 		workbookForm.setBounds(r);
-		header.getControl().setBounds(workbookForm.getTopLeft().getBounds());
-		setControlSize(visibleEditor);
+//		header.getControl().setBounds(workbookForm.getTopLeft().getBounds());
+//		setControlSize(visibleEditor);
 	}
 }
 /**
@@ -756,20 +601,23 @@ public void setBounds(Rectangle r) {
  */
 public void setContainer(ILayoutContainer container) {
 	super.setContainer(container);
-//	infw - Also implemented in EditorCoolBar
-//	// register the interested mouse down listener
-//	if (!mouseDownListenerAdded && getEditorArea() != null && tabFolder != null) {
-//		tabFolder.addListener(SWT.MouseDown, getEditorArea().getMouseDownListener());
-//		mouseDownListenerAdded = true;
-//	}
 }
 /**
  * Set the size of a page in the folder.
  */
 private void setControlSize(LayoutPart part) {
-	if (part == null || workbookForm == null) 
-		return;		
-	part.setBounds(workbookForm.getContent().getBounds());
+	if (part == null || workbookForm == null || part.getControl() == null) 
+		return;
+	
+	Control formControl = workbookForm.getContent();
+	Control partControl = part.getControl();
+
+	Rectangle contentBounds = formControl.getBounds();
+	Point position = new Point(contentBounds.x,contentBounds.y);
+	position = partControl.getParent().toControl(formControl.getParent().toDisplay(position));
+	contentBounds.x = position.x;
+	contentBounds.y = position.y;
+	part.setBounds(contentBounds);
 	part.getControl().moveAbove(workbookForm);
 }
 public void setVisibleEditor(EditorPane comp) {
@@ -803,25 +651,26 @@ public void setVisibleEditor(EditorPane comp) {
 	} else {
 		header.updateEmptyEditorLabel();
 	}
+	updateDrag();
 	
 }
 public void tabFocusHide() {
-//	if (tabFolder == null || ignoreTabFocusHide) 
-//		return;
-//
-//	if (isActiveWorkbook())
-//		setActiveState(ACTIVE_NOFOCUS);
-//	else
-//		setActiveState(INACTIVE);
+	if (workbookForm == null || ignoreTabFocusHide) 
+		return;
+
+	if (isActiveWorkbook())
+		setActiveState(ACTIVE_NOFOCUS);
+	else
+		setActiveState(INACTIVE);
 }
 public void tabFocusShow(boolean hasFocus) {
-//	if (tabFolder == null) 
-//		return;
-//
-//	if (hasFocus)
-//		setActiveState(ACTIVE_FOCUS);
-//	else
-//		setActiveState(ACTIVE_NOFOCUS);
+	if (workbookForm == null) 
+		return;
+
+	if (hasFocus)
+		setActiveState(ACTIVE_FOCUS);
+	else
+		setActiveState(ACTIVE_NOFOCUS);
 }
 /**
  * @see IPartDropTarget::targetPartFor
@@ -862,40 +711,6 @@ public void updateEditorTab(IEditorReference ref) {
  */
 public void updateEditorTab(PartPane pane,String title,boolean isDirty,Image image,String toolTip) {
 	header.updateEditorLabel(title, isDirty, image, toolTip);
-//	// Get tab.
-//	CTabItem tab = getTab(pane);
-//	if(tab == null) return;
-//	
-//	// Update title.
-//	if (isDirty)
-//		title = "*" + title;//$NON-NLS-1$
-//	tab.setText(title);
-//
-//	// Update the tab image
-//	if (image == null) {
-//		// Normal image.
-//		tab.setImage(null);
-//		// Disabled image.
-//		Image disableImage = tab.getDisabledImage();
-//		if (disableImage != null) {
-//			disableImage.dispose();
-//			tab.setDisabledImage(null);
-//		}
-//	} else if (!image.equals(tab.getImage())) {
-//		// Normal image.
-//		tab.setImage(image);
-//		// Disabled image.
-//		Image disableImage = tab.getDisabledImage();
-//		if (disableImage != null)
-//			disableImage.dispose();
-//		Display display = tab.getDisplay();
-//		disableImage = new Image(display, image, SWT.IMAGE_DISABLE);
-//		tab.setDisabledImage(disableImage);
-//	}
-//
-//	// Tool tip.
-//	tab.setToolTipText(toolTip);
-//	tab.getParent().update();
 }
 /**
  * Zoom in on the active part.

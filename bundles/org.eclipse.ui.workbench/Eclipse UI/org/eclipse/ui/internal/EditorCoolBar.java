@@ -9,7 +9,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.help.WorkbenchHelp; 
 
 public class EditorCoolBar {
 	private CoolBar coolBar;
@@ -36,6 +36,8 @@ public class EditorCoolBar {
 	private boolean singleClick = false;
 	private boolean dragEvent = false;
 	private boolean doubleClick = false;
+	
+	private static final int MAX_ITEMS = 11;
 			
 	public EditorCoolBar(IWorkbenchWindow window, EditorWorkbook workbook, int style) {
 		this.window = window;
@@ -159,28 +161,29 @@ public class EditorCoolBar {
 		}		
 	}
 	
-	/**
-	 * Sets the location for a hovering shell
-	 * @param shell the object that is to hover
-	 * @param position the position of a widget to hover over
-	 */
-	private void setShellBounds(Shell shell, Point position) {
-		Control editorListControl = editorList.getControl();
-		final int maxItems = 11; // displays x-1 items without a scrollbar
-		Rectangle displayBounds = shell.getDisplay().getClientArea();
-		Rectangle shellBounds = shell.getBounds();
-		Point pullDownSize = dropDownItem.getSize();
-	
-		shellBounds.x = position.x;
-		if (position.y + pullDownSize.y + shellBounds.height >  displayBounds.height) {
-			shellBounds.y = position.y - shellBounds.height;
-		} else {
-			shellBounds.y = position.y + pullDownSize.y;
-		}
-		shellBounds.height = Math.min(shellBounds.height, maxItems*((Table) editorListControl).getItemHeight());
-		shellBounds.width = dropDownItem.getSize().x;
-		shell.setBounds(shellBounds);
-	}
+//	/**
+//	 * Sets the location for a hovering shell
+//	 * @param shell the object that is to hover
+//	 * @param position the position of a widget to hover over
+//	 */
+//	private Rectangle setShellBounds(Shell shell, Point position) {
+//		Control editorListControl = editorList.getControl();
+//		final int maxItems = 11; // displays x-1 items without a scrollbar
+//		Rectangle displayBounds = shell.getDisplay().getClientArea();
+//		Rectangle shellBounds = shell.getBounds();
+//		Point pullDownSize = dropDownItem.getSize();
+//	
+//		shellBounds.x = position.x;
+//		if (position.y + pullDownSize.y + shellBounds.height >  displayBounds.height) {
+//			shellBounds.y = position.y - shellBounds.height;
+//		} else {
+//			shellBounds.y = position.y + pullDownSize.y;
+//		}
+//		shellBounds.height = Math.min(shellBounds.height, maxItems*((Table) editorListControl).getItemHeight());
+//		shellBounds.width = dropDownItem.getSize().x;
+//		shell.setBounds(shellBounds);
+//		return shellBounds;
+//	}
 	
 	private void displayEditorList() {
 		if (editorListIsOpen) {
@@ -188,10 +191,28 @@ public class EditorCoolBar {
 		}
 		Shell parent = workbook.getEditorArea().getWorkbenchWindow().getShell();
 		Display display = parent.getDisplay();
-		final Shell shell = new Shell (parent, SWT.ON_TOP);
-		shell.setLayout(new FillLayout());	
-		editorList.createControl(shell);
-		shell.pack();
+		final Composite listComposite = new Composite(parent,SWT.BORDER);
+//		final Shell shell = new Shell (parent, SWT.ON_TOP | SWT.NO_TRIM);
+//		shell.setLayout(new FillLayout());	
+		editorList.createControl(listComposite);
+		listComposite.pack();
+
+		Rectangle coolbarBounds = coolBar.getBounds();
+		Rectangle listCompositeBounds = listComposite.getBounds();
+		Point point = coolBar.getParent().toDisplay(new Point(coolbarBounds.x,coolbarBounds.y));
+		point = parent.toControl(point);
+		point.y += coolbarBounds.height + 1;
+		
+		listCompositeBounds.x = point.x;
+		listCompositeBounds.y = point.y;
+		listCompositeBounds.width = dropDownItem.getSize().x;
+		listCompositeBounds.height = Math.min(listCompositeBounds.height, MAX_ITEMS * ((Table)editorList.getControl()).getItemHeight());
+		listComposite.setBounds(listCompositeBounds);
+		editorList.getControl().setBounds(listComposite.getClientArea());	 
+		listComposite.setVisible(true);
+		listComposite.moveAbove(null);
+		listComposite.setLocation(point);
+//		shell.pack();
 		
 		Table editorsTable = ((Table)editorList.getControl());
 		TableItem[] items = editorsTable.getItems();
@@ -200,29 +221,37 @@ public class EditorCoolBar {
  			return;
  		}
  					
-		shell.addShellListener(new ShellAdapter() {
-			public void shellDeactivated(ShellEvent e) {
-				shell.close();
+//		shell.addShellListener(new ShellAdapter() {
+//			public void shellDeactivated(ShellEvent e) {
+//				shell.close();
+//			}
+//		}); 
+		editorList.getControl().addFocusListener(new FocusAdapter() {
+			public void focusLost(FocusEvent e) {
+				listComposite.dispose();
+				editorListIsOpen = false;
 			}
-		}); 
+		});
 		
-		Point point = coolBar.getParent().toDisplay (coolBar.getLocation ());
-		setShellBounds(shell, point);
+		
+//		Point point = coolBar.getParent().toDisplay (coolBar.getLocation ());
+//		setShellBounds(shell, point);
 		
 		try {
 			editorListIsOpen = true;
-			shell.open();
-			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch()) {
-					display.sleep();
-				}
-			}
+////			shell.setVisible(true);
+//			while (!listComposite.isDisposed()) {
+//				if (!display.readAndDispatch()) {
+//					display.sleep();
+//				}
+//			}
 		} finally {
-			editorListIsOpen = false;
+//			editorListIsOpen = false;
+//			listComposite.dispose();
 			// Should never happen
-			if(!shell.isDisposed()) {
-				shell.dispose();
-			}
+//			if(!shell.isDisposed()) {
+//				shell.dispose();
+//			}
 		}	
 	}
 	
@@ -257,12 +286,13 @@ public class EditorCoolBar {
 		dropDownLabel.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent e) {
 				singleClick = true;
+				EditorPane visibleEditor = workbook.getVisibleEditor();
+				if (visibleEditor != null)
+					visibleEditor.getPage().activate(visibleEditor.getPartReference().getPart(false));
 			}
-
 			public void mouseDoubleClick(MouseEvent e) {
 				doubleClick = true;
 			}			
-
 			public void mouseUp(final MouseEvent e) {
 				final int doubleClickTime = dropDownLabel.getDisplay().getDoubleClickTime();
 				if (singleClick == doubleClick) {
@@ -273,51 +303,47 @@ public class EditorCoolBar {
 	 					visibleEditor.getPage().toggleZoom(visibleEditor.getPartReference());
 	 				}					
 				} else {
-	 				(new Thread() {
-						public void run() {
-							try { 
-								Thread.sleep(doubleClickTime);
-							} catch (InterruptedException e){
-							}
-							if (singleClick) {
-								Display.getDefault().asyncExec(new Runnable() {
-									public void run() {
-										if (singleClick) {
-											singleClick = false;
-											if (dragEvent) {
-												dragEvent = false;
-												return;
+					EditorPane visibleEditor = workbook.getVisibleEditor();
+					if (e.button == 3) {
+						visibleEditor.showPaneMenu(dropDownLabel, new Point(e.x, e.y));
+					} else if ((e.button == 1) && overImage(visibleEditor, e.x)) {
+							visibleEditor.showPaneMenu();
+					} else {
+	 					Thread t = new Thread() {
+							public void run() {
+								try {
+									Thread.sleep(doubleClickTime);
+								} catch (InterruptedException e){}
+								if (singleClick) {
+									Display.getDefault().asyncExec(new Runnable() {
+										public void run() {
+											if (singleClick) {
+												singleClick = false;
+//												if (dragEvent) {
+//													dragEvent = false;
+//													return;
+//												}
+												displayEditorList();
 											}
-							 				EditorPane visibleEditor = workbook.getVisibleEditor();
-											if (e.button == 3) {
-												visibleEditor.showPaneMenu(dropDownLabel, new Point(e.x, e.y));
-											} else {
-												if ((e.button == 1) && overImage(visibleEditor, e.x)) {
-													visibleEditor.showPaneMenu();
-												} else {
-								 					displayEditorList();
-												}
-											}												
-										}
-									}
-								});
+										}												
+									});
+								}
 							}
-						}
-					}).start();
-				}								
-
-			}
-			
+						};
+						t.start();
+					}
+				}
+			}	
 		});	
 		
 		dropDownLabel.addMouseMoveListener(new MouseMoveListener() {
 			public void mouseMove(MouseEvent e) {
-				if (singleClick) {
-					if (!dragEvent) {					
-					}
-					dragEvent = true;
-					return;
-				}
+//				if (singleClick) {
+//					if (!dragEvent) {					
+//					}
+//					dragEvent = true;
+//					return;
+//				}
 			}
 		});
 				
@@ -345,7 +371,7 @@ public class EditorCoolBar {
 				}
 			}
 		});	
-		
+			
 		// Add existing entries
 		EditorShortcut[] items = ((Workbench) window.getWorkbench()).getEditorShortcutManager().getItems();
 		for (int i = 0; i < items.length; i++) {
@@ -375,7 +401,10 @@ public class EditorCoolBar {
 	public Control getControl() {
 		return coolBar;
 	}
-
+	
+	public CLabel getDragControl() {
+		return dropDownLabel;
+	}
 	/**
 	 * Sets the parent for this part.
 	 */
@@ -549,7 +578,7 @@ public class EditorCoolBar {
 					((Workbench) window.getWorkbench()).getEditorShortcutManager().remove(shortcut);
 					shortcut.dispose();
 				}
-				toolItems[i].dispose();
+				toolItems[i].dispose();		
 			}
 		}
 	}
@@ -572,12 +601,11 @@ public class EditorCoolBar {
 		 * Performs the save.
 		 */
 		public void run() {
-			for (int i = 0; i < toolItems.length; i++) {
+			for (int i = 0; i < toolItems.length; i++) {			
 				EditorShortcut shortcut = (EditorShortcut) toolItems[i].getData();
 				//infw
 				shortcut.setTitle("NewName");			
 				toolItems[i].setText("NewName");
-				
 			}
 		}
 	}
