@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.ColorSchemeService;
@@ -42,6 +43,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -62,6 +64,8 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.internal.dnd.AbstractDragSource;
 import org.eclipse.ui.internal.dnd.DragUtil;
+import org.eclipse.ui.internal.dnd.IDragOverListener;
+import org.eclipse.ui.internal.dnd.IDropTarget;
 
 public class TabbedEditorWorkbook extends EditorWorkbook {
 
@@ -440,7 +444,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 				
 				if (tabUnderPointer == null) {
 					return null;
-	}
+				}
 
 				return mapTabToEditor.get(tabUnderPointer);
 			}
@@ -450,6 +454,73 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			}
 			
 		});
+		
+		DragUtil.addDragTarget(tabFolder, new IDragOverListener() {
+
+			public IDropTarget drag(Control currentControl, final Object draggedObject, 
+					Point position, Rectangle dragRectangle) {
+				
+				// We can only drop ViewPanes here
+				if (!(draggedObject instanceof EditorPane)) {
+					return null;
+				}
+				
+				final EditorPane pane = (EditorPane)draggedObject;
+				
+				Point localPos = tabFolder.toControl(position);
+				final CTabItem2 tabUnderPointer = tabFolder.getItem(localPos);
+				
+				// This drop target only handles the tab area -- if we're not on the tab area
+				// or we're still on the original tab, we can't drop here.
+				if (tabUnderPointer == null || mapTabToEditor.get(tabUnderPointer) == draggedObject) {
+					return null;
+				}
+				
+				return new IDropTarget() {
+
+					public void drop() {
+						ILayoutContainer container = pane.getContainer();
+						if (container != TabbedEditorWorkbook.this) {
+							if (container != null) {
+								container.remove(pane);
+								LayoutPart[] children = container.getChildren();
+								if (children == null || children.length == 0) {
+									// There are no more children in this container, so get rid of it
+									if (container instanceof LayoutPart) {
+										LayoutPart parent = (LayoutPart)container;
+										ILayoutContainer parentContainer = parent.getContainer();
+										if (parentContainer != null) {
+											parentContainer.remove(parent);
+											parent.dispose();
+										}
+									}
+								}
+							}
+							add(pane);
+							setVisibleItem(pane);	
+							pane.setFocus();
+						}
+						
+						reorderTab(pane, getTab(pane), tabFolder.indexOf(tabUnderPointer));
+
+						getParent().setRedraw(true);
+					}
+
+					public Cursor getCursor() {
+						return DragCursors.getCursor(DragCursors.CENTER);
+					}
+
+					public Rectangle getSnapRectangle() {
+						if (tabUnderPointer == null) {
+							return Geometry.toDisplay(tabFolder.getParent(), tabFolder.getBounds());
+						}
+						
+						return Geometry.toDisplay(tabFolder, tabUnderPointer.getBounds());
+					}
+				};
+			}
+		});
+
 		
 	}
 

@@ -903,7 +903,7 @@ public class PerspectivePresentation {
 		if (e.dropTarget instanceof EditorArea) {
 			if (e.relativePosition == DragCursors.CENTER) {
 				e.dropTarget = null;
-				e.relativePosition = offScreenPosition;
+				e.relativePosition = DragCursors.INVALID;
 				return;
 			}
 			return;
@@ -912,7 +912,7 @@ public class PerspectivePresentation {
 		// If drop target is offscreen ..
 		if (e.relativePosition == DragCursors.OFFSCREEN) {
 			// If detaching is not supported then exclude.
-			if (!detachable) {
+			if (!detachable || e.dragSource instanceof PartTabFolder) {
 				e.relativePosition = DragCursors.INVALID;
 				return;
 			}
