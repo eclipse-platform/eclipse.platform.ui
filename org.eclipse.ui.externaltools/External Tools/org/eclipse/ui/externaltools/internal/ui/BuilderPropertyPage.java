@@ -29,6 +29,8 @@ import org.eclipse.ui.externaltools.internal.core.*;
  * Property page to add external tools in between builders.
  */
 public final class BuilderPropertyPage extends PropertyPage {
+	private static final int BUILDER_TABLE_WIDTH = 250;
+
 	private Table builderTable;
 	private Button upButton, downButton, newButton, editButton, removeButton;
 	private ArrayList imagesToDispose = new ArrayList();
@@ -171,12 +173,9 @@ public final class BuilderPropertyPage extends PropertyPage {
 	
 		// table of builders and tools		
 		builderTable = new Table(tableAndButtons, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
-		builderTable.setLayoutData(new GridData(GridData.FILL_BOTH));
-		TableLayout tableLayout = new TableLayout();
-		builderTable.setLayout(tableLayout);
-		TableColumn tc = new TableColumn(builderTable, SWT.NONE);
-		tc.setResizable(false);
-		tableLayout.addColumnData(new ColumnWeightData(100));
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.widthHint = BUILDER_TABLE_WIDTH;
+		builderTable.setLayoutData(data);
 		builderTable.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				handleTableSelectionChanged();
