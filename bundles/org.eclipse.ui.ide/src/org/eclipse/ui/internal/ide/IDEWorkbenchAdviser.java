@@ -131,6 +131,14 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		super();
 	}
 	
+	/**
+	 * Returns the workbench configurer for the adviser. Can
+	 * be <code>null</code> if adviser not initialized yet.
+	 */
+	/* package */ IWorkbenchConfigurer getWorkbenchConfigurer() {
+		return configurer;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdviser#initialize
 	 */

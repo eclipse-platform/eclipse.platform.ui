@@ -25,8 +25,6 @@ import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -610,10 +608,6 @@ public final class WorkbenchActionBuilder {
 
 		// The actions in jface do not have menu vs. enable, vs. disable vs. color
 		// There are actions in here being passed the workbench - problem 
-
-		IWorkbench workbench = getWindow().getWorkbench();
-		ISharedImages sharedImages = workbench.getSharedImages();
-
 		newWizardAction = IDEActionFactory.NEW.create(getWindow());
 		registerGlobalAction(newWizardAction);
 
@@ -673,7 +667,7 @@ public final class WorkbenchActionBuilder {
 		pinEditorAction = ActionFactory.PIN_EDITOR.create(getWindow());
 
 		try {
-			aboutAction = ActionFactory.ABOUT.create(getWindow());
+			aboutAction = IDEActionFactory.ABOUT.create(getWindow());
 			AboutInfo aboutInfo = windowConfigurer.getWorkbenchConfigurer().getPrimaryFeatureAboutInfo();
 			String productName = aboutInfo.getProductName();
 			if (productName == null) {

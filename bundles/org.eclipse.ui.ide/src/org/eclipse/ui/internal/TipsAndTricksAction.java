@@ -22,7 +22,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.PartEventAction;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -41,16 +40,21 @@ public class TipsAndTricksAction
 	 * The workbench window this action is registered with.
 	 */
 	 private IWorkbenchWindow workbenchWindow;
+	 
+	 private AboutInfo primaryInfo;
+	 private AboutInfo[] featureInfos;
 
 	/**
 	 *	Create an instance of this class
 	 */
-	public TipsAndTricksAction(IWorkbenchWindow window) {
+	public TipsAndTricksAction(IWorkbenchWindow window, AboutInfo primaryInfo, AboutInfo[] featureInfos) {
 		super(IDEWorkbenchMessages.getString("TipsAndTricks.text")); //$NON-NLS-1$
 		if (window == null) {
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
+		this.primaryInfo = primaryInfo;
+		this.featureInfos = featureInfos;
 		setToolTipText(IDEWorkbenchMessages.getString("TipsAndTricks.toolTip")); //$NON-NLS-1$
 		WorkbenchHelp.setHelp(this, IHelpContextIds.TIPS_AND_TRICKS_ACTION);
 		setActionDefinitionId("org.eclipse.ui.help.tipsAndTricksAction"); //$NON-NLS-1$
@@ -66,12 +70,10 @@ public class TipsAndTricksAction
 			return;
 		}
 		// Ask the user to select a feature
-		// @issue access to AboutInfo
-		AboutInfo[] features = PlatformUI.getWorkbench().getConfigurationInfo().getFeaturesInfo();
 		ArrayList tipsAndTricksFeatures = new ArrayList();
-		for (int i = 0; i < features.length; i++) {
-			if (features[i].getTipsAndTricksHref() != null)
-				tipsAndTricksFeatures.add(features[i]);
+		for (int i = 0; i < featureInfos.length; i++) {
+			if (featureInfos[i].getTipsAndTricksHref() != null)
+				tipsAndTricksFeatures.add(featureInfos[i]);
 		}
 
 		Shell shell = workbenchWindow.getShell();
@@ -84,15 +86,13 @@ public class TipsAndTricksAction
 			return;
 		}
 
-		features = new AboutInfo[tipsAndTricksFeatures.size()];
+		AboutInfo[] features = new AboutInfo[tipsAndTricksFeatures.size()];
 		tipsAndTricksFeatures.toArray(features);
-		// @issue access to AboutInfo
-		AboutInfo primaryFeature = PlatformUI.getWorkbench().getConfigurationInfo().getAboutInfo();
 
 		FeatureSelectionDialog d = new FeatureSelectionDialog(
 			shell, 
 			features, 
-			primaryFeature, 
+			primaryInfo, 
 			"TipsAndTricksPageSelectionDialog.title", //$NON-NLS-1$
 			"TipsAndTricksPageSelectionDialog.message", //$NON-NLS-1$
 			IHelpContextIds.TIPS_AND_TRICKS_PAGE_SELECTION_DIALOG);

@@ -8,16 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal;
+package org.eclipse.ui.internal.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.AboutInfo;
-import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.AboutDialog;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IHelpContextIds;
 
 /**
  * Creates an About dialog and opens it.
@@ -38,27 +38,22 @@ private AboutInfo[] featureInfos;
 /**
  * Creates a new <code>AboutAction</code> with the given label
  */
-public AboutAction(IWorkbenchWindow window) {
+public AboutAction(IWorkbenchWindow window, AboutInfo primaryInfo, AboutInfo[] featureInfos) {
 	if (window == null) {
 		throw new IllegalArgumentException();
 	}
 	this.workbenchWindow = window;
 	
-	try {
-		primaryInfo = Workbench.getInstance().getWorkbenchConfigurer().getPrimaryFeatureAboutInfo();
-		featureInfos = Workbench.getInstance().getWorkbenchConfigurer().getAllFeaturesAboutInfo();
-	} catch (WorkbenchException e) {
-		WorkbenchPlugin.log("Failed to get about infos.", e.getStatus()); //$NON-NLS-1$
-		throw new IllegalStateException();
-	}
+	this.primaryInfo = primaryInfo;
+	this.featureInfos = featureInfos;
 	
 	// use message with no fill-in
 	String productName = primaryInfo.getProductName();
 	if (productName == null) {
 		productName = ""; //$NON-NLS-1$
 	}
-	setText(WorkbenchMessages.format("AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.format("AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$
+	setText(IDEWorkbenchMessages.format("AboutAction.text", new Object[] { productName })); //$NON-NLS-1$
+	setToolTipText(IDEWorkbenchMessages.format("AboutAction.toolTip", new Object[] { productName})); //$NON-NLS-1$
 	setId("about"); //$NON-NLS-1$
 	setActionDefinitionId("org.eclipse.ui.help.aboutAction"); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(this, IHelpContextIds.ABOUT_ACTION);

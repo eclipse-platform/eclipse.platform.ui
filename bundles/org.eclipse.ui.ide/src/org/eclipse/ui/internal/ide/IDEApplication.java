@@ -15,7 +15,9 @@ import org.eclipse.core.boot.IPlatformRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.ui.AboutInfo;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 
 /**
  * The "main program" for the Eclipse IDE.
@@ -23,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.0
  */
 public final class IDEApplication implements IPlatformRunnable, IExecutableExtension {
+	private static final IDEWorkbenchAdviser workbenchAdviser = new IDEWorkbenchAdviser();
 	
 	/**
 	 * Creates a new IDE application.
@@ -35,9 +38,6 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 	 * @see org.eclipse.core.boot.IPlatformRunnable#run(java.lang.Object)
 	 */
 	public Object run(Object args) throws Exception {
-		
-		// create the IDE-specific workbench adviser
-		IDEWorkbenchAdviser workbenchAdviser = new IDEWorkbenchAdviser();
 		
 		// create the workbench with this adviser and run it until it exits
 		// N.B. createWorkbench remembers the adviser, and also registers the
@@ -58,5 +58,19 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 	 */
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data) throws CoreException {
 		// There is nothing to do for IDEApplication
+	}
+	
+	/**
+	 * Returns the about information of the primary feature
+	 */
+	public static AboutInfo getPrimaryInfo() throws WorkbenchException {
+		return workbenchAdviser.getWorkbenchConfigurer().getPrimaryFeatureAboutInfo();
+	}
+	
+	/**
+	 * Returns the about information of all features
+	 */
+	public static AboutInfo[] getFeatureInfos() throws WorkbenchException {
+		return workbenchAdviser.getWorkbenchConfigurer().getAllFeaturesAboutInfo();
 	}
 }
