@@ -154,7 +154,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * The given build file has changed. Refresh the view to pick up any
 	 * structural changes.
 	 */
-	private void handleBuildFileChanged(final ProjectNode project) {
+	private void handleBuildFileChanged(ProjectNode project) {
 		project.parseBuildFile();
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
