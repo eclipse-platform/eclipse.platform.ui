@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.Window;
@@ -25,7 +26,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
-import org.eclipse.team.internal.ccvs.ui.MessageDialogWithToggle;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagAsVersionDialog;
 import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
@@ -86,11 +86,13 @@ public abstract class TagAction extends WorkspaceAction {
 
 		// The user has indicated they want to force a move.  Make sure they really do.		
 		if (dialog.shouldMoveTag() && store.getBoolean(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG))  {
-			MessageDialogWithToggle confirmDialog = MessageDialogWithToggle.openQuestion(getShell(), 
+			MessageDialogWithToggle confirmDialog = MessageDialogWithToggle.openYesNoQuestion(getShell(), 
 				Policy.bind("TagAction.moveTagConfirmTitle"),  //$NON-NLS-1$
 				Policy.bind("TagAction.moveTagConfirmMessage", dialog.getTagName()), //$NON-NLS-1$
 				null,
-				false);
+				false,
+				null,
+				null);
 			
 			if (confirmDialog.getReturnCode() == IDialogConstants.OK_ID)  {
 				store.setValue(ICVSUIConstants.PREF_CONFIRM_MOVE_TAG, !confirmDialog.getToggleState());
