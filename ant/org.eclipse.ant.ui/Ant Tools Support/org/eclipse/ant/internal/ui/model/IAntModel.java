@@ -111,7 +111,7 @@ public interface IAntModel {
     void addProject(Project project, int lineNumber, int columnNumber);
 
     /**
-     * Return the <code>java.io.File</code> that is the buildfile that this Ant modle represents
+     * Return the <code>java.io.File</code> that is the buildfile that this Ant model represents
      * @return the <code>java.io.File</code> that is the buildfile
      */
     //TODO Could this just be getPath().toLocation();
