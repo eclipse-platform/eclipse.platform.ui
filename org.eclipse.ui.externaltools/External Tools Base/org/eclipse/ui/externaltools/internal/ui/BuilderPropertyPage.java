@@ -991,7 +991,7 @@ public final class BuilderPropertyPage extends PropertyPage {
 		}
 		int newSelection[]= new int[indices.length];
 		int max= builderTable.getItemCount() - 1;
-		for (int i = 0; i < indices.length; i++) {
+		for (int i = indices.length - 1; i >= 0; i--) {
 			int index= indices[i];
 			if (index < max) {
 				move (builderTable.getItem(index), index + 1);
