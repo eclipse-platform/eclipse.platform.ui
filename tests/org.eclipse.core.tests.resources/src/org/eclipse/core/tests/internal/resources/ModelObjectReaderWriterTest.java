@@ -8,7 +8,6 @@ package org.eclipse.core.tests.internal.resources;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.SafeFileOutputStream;
@@ -16,14 +15,14 @@ import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.xml.sax.InputSource;
 /**
  * 
  */
 public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
+	static final IPath LONG_LOCATION = new Path("D:/eclipse/dev/i0218/eclipse/pffds/fds//fds///fdsfsdfsd///fdsfdsf/fsdfsdfsd/lugi/dsds/fsd//f/ffdsfdsf/fsdfdsfsd/fds//fdsfdsfdsf/fdsfdsfds/fdsfdsfdsf/fdsfdsfdsds/ns/org.eclipse.help.ui_2.1.0/contexts.xml");
 public ModelObjectReaderWriterTest() {
 }
 public ModelObjectReaderWriterTest(String name) {
@@ -388,38 +387,95 @@ public void testInvalidProjectDescription3() throws Throwable {
 	assertEquals("3.6", new ICommand[0], projDesc.getBuildSpec());
 	assertNull("3.7", projDesc.getLinks());
 }
+private String getLongDescription() {
+	return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + 
+	"<projectDescription>" +
+		"<name>org.eclipse.help.ui</name>" +
+		"<comment></comment>" +
+	"	<projects>" +
+		"	<project>org.eclipse.core.boot</project>" +
+		"	<project>org.eclipse.core.resources</project>" +
+		"	<project>org.eclipse.core.runtime</project>" +
+		"	<project>org.eclipse.help</project>" +
+		"	<project>org.eclipse.help.appserver</project>" +
+		"	<project>org.eclipse.search</project>" +
+		"	<project>org.eclipse.ui</project>" +
+	"	</projects>" +
+	"	<buildSpec>" +
+		"	<buildCommand>" +
+			"	<name>org.eclipse.jdt.core.javabuilder</name>" +
+			"	<arguments>" +
+			"	</arguments>" +
+		"	</buildCommand>" +
+		"	<buildCommand>" +
+			"	<name>org.eclipse.pde.ManifestBuilder</name>" +
+			"	<arguments>" +
+			"	</arguments>" +
+		"	</buildCommand>" +
+		"	<buildCommand>" +
+			"	<name>org.eclipse.pde.SchemaBuilder</name>" +
+			"	<arguments>" +
+			"	</arguments>" +
+		"	</buildCommand>" +
+	"	</buildSpec>" +
+	"	<natures>" +
+		"	<nature>org.eclipse.jdt.core.javanature</nature>" +
+		"	<nature>org.eclipse.pde.PluginNature</nature>" +
+	"	</natures>" +
+	"	<linkedResources>" +
+		"	<link>" +
+			"	<name>contexts.xml</name>" +
+			"	<type>1</type>" +
+			"	<location>" + LONG_LOCATION + "</location>" +
+		"	</link>" +
+		"	<link>" +
+			"	<name>doc</name>" +
+			"	<type>2</type>" +
+			"	<location>" + LONG_LOCATION + "</location>" +
+		"	</link>" +
+		"	<link>" +
+			"	<name>icons</name>" +
+			"	<type>2</type>" +
+			"	<location>" + LONG_LOCATION + "</location>" +
+		"	</link>" +
+		"	<link>" +
+			"	<name>preferences.ini</name>" +
+			"	<type>1</type>" +
+			"	<location>" + LONG_LOCATION + "</location>" +
+		"	</link>" +
+		"	<link>" +
+			"	<name>.options</name>" +
+			"	<type>1</type>" +
+			"	<location>" + LONG_LOCATION + "</location>" +
+		"	</link>" +
+		"	<link>" +
+			"	<name>plugin.properties</name>" +
+			"	<type>1</type>" +
+			"	<location>" + LONG_LOCATION + "</location>" +
+		"	</link>" +
+		"	<link>" +
+			"	<name>plugin.xml</name>" +
+			"	<type>1</type>" +
+			"	<location>" + LONG_LOCATION + "</location>" +
+		"	</link>" +
+		"	<link>" +
+			"	<name>about.html</name>" +
+			"	<type>1</type>" +
+			"	<location>" + LONG_LOCATION + "</location>" +
+		"	</link>" +
+		"	<link>" +
+			"	<name>helpworkbench.jar</name>" +
+			"	<type>1</type>" +
+			"	<location>" + LONG_LOCATION + "</location>" +
+		"	</link>" +
+		"</linkedResources>" +
+	"</projectDescription>";
+}
 /**
  * Test multiple elements where they shouldn't be
  */
 public void testLongProjectDescription() throws Throwable {
-	String linkName = "newLink";
-	String longLocation = "d:/abc/deftlkshlfkjhaslkjfhiutyw/liehftlieasuiwuehslkjdhflsi" +
-	"uh/astihtlkstksljdhtlks/kjashlkshflkjdsf/askjhfslkdhfslkd/foo.txt";
-	String longProjectDescription = 
-		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-		"<projectDescription>\n" +
-		"	<name>abc</name>\n" +
-		"	<comment></comment>\n" +
-		"	<projects>\n" +
-		"	</projects>\n" +
-		"	<buildSpec>\n" +
-		"		<buildCommand>\n" +
-		"			<name>org.eclipse.jdt.core.javabuilder</name>\n" +
-		"			<arguments>\n" +
-		"			</arguments>\n" +
-		"		</buildCommand>\n" +
-		"	</buildSpec>\n" +
-		"	<natures>\n" +
-		"	<nature>org.eclipse.jdt.core.javanature</nature>\n" +
-		"	</natures>\n" +
-		"	<linkedResources>\n" +
-		"		<link>\n" +
-		"			<name>" + linkName + "</name>\n" +
-		"			<type>2</type>\n" +
-		"			<location>" + longLocation + "</location>\n" +
-		"		</link>\n" +
-		"	</linkedResources>\n" +
-		"</projectDescription>";
+	String longProjectDescription = getLongDescription();
 
 	IPath location = getRandomLocation();
 	try {
@@ -430,7 +486,10 @@ public void testLongProjectDescription() throws Throwable {
 		createFileInFileSystem(location, stream);
 		ProjectDescription projDesc = reader.read(location);
 		ensureDoesNotExistInFileSystem(location.toFile());
-		assertEquals("1.0", longLocation, projDesc.getLinkLocation(linkName).toString());
+		for (Iterator i = projDesc.getLinks().values().iterator(); i.hasNext(); ) {
+			LinkDescription link = (LinkDescription) i.next();
+			assertEquals("1.0." + link.getName(), LONG_LOCATION, link.getLocation());
+		}
 	} finally {
 		Workspace.clear(location.toFile());
 	}
