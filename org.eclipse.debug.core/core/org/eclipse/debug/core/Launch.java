@@ -345,8 +345,7 @@ public class Launch extends PlatformObject implements ILaunch {
 	 */
 	public final void removeProcess(IProcess process) {
 		if (process != null) {
-			if (!getProcesses0().contains(process)) {
-				getProcesses0().remove(process);
+			if (getProcesses0().remove(process)) {
 				fireChanged();
 			}
 		}
