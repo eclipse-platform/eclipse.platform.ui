@@ -12,7 +12,7 @@ import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 public interface IExternalToolsUIConstants {
 
-	// Planty images
+	// Ant Editor images
 	/**
 	 * Icon for property propasal.
 	 */

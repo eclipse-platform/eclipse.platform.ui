@@ -61,7 +61,7 @@ public class ExternalToolsImages {
 	 * Declare all images
 	 */
 	private static void declareImages() {
-		// Planty images
+		// Ant Editor images
 		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_PROPERTY, OBJECT + "property.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_TASK, OBJECT + "html_tag_obj.gif"); //$NON-NLS-1$
 		declareRegistryImage(IExternalToolsUIConstants.IMAGE_ID_TARGET, OBJECT + "ant_tsk_arrow.gif"); //$NON-NLS-1$

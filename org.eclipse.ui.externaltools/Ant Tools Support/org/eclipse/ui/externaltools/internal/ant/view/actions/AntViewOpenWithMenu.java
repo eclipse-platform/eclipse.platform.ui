@@ -181,10 +181,10 @@ public class AntViewOpenWithMenu extends ContributionItem {
 				return s1.compareToIgnoreCase(s2);
 			}
 		});
-		IEditorDescriptor plantyEditor= registry.findEditor("org.eclipse.ui.externaltools.internal.ant.editor.PlantyEditor"); //$NON-NLS-1$
+		IEditorDescriptor antEditor= registry.findEditor("org.eclipse.ui.externaltools.internal.ant.editor.AntEditor"); //$NON-NLS-1$
 		
 		boolean defaultFound = false;
-		boolean plantyFound= false;
+		boolean antFound= false;
 		List alreadyAddedEditors= new ArrayList(editors.length);
 		for (int i = 0; i < editors.length; i++) {
 			IEditorDescriptor editor = (IEditorDescriptor) editors[i];
@@ -195,8 +195,8 @@ public class AntViewOpenWithMenu extends ContributionItem {
 			if (defaultEditor != null && editor.getId().equals(defaultEditor.getId())) {
 				defaultFound = true;
 			}
-			if (plantyEditor != null && editor.getId().equals(plantyEditor.getId())) {
-				plantyFound= true;
+			if (antEditor != null && editor.getId().equals(antEditor.getId())) {
+				antFound= true;
 			}
 			alreadyAddedEditors.add(editor.getId());
 			
@@ -207,9 +207,9 @@ public class AntViewOpenWithMenu extends ContributionItem {
 			new MenuItem(menu, SWT.SEPARATOR);
 		}
 
-		// Add planty editor.
-		 if (!plantyFound && plantyEditor != null) {
-			 createMenuItem(menu, plantyEditor, preferredEditor);
+		// Add ant editor.
+		 if (!antFound && antEditor != null) {
+			 createMenuItem(menu, antEditor, preferredEditor);
 		 }
 			 
 		// Add default editor.
