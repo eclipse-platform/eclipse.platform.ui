@@ -239,11 +239,24 @@ private void applyEditorValueAndDeactivate() {
 	deactivate();
 }
 
-/**
- * @see CellEditor#focusLost()
+/*
+ *  (non-Javadoc)
+ * @see org.eclipse.jface.viewers.CellEditor#focusLost()
  */
 protected void focusLost() {
 	if (isActivated()) {
+		applyEditorValueAndDeactivate();
+	}
+}
+
+/*
+ *  (non-Javadoc)
+ * @see org.eclipse.jface.viewers.CellEditor#keyReleaseOccured(org.eclipse.swt.events.KeyEvent)
+ */
+protected void keyReleaseOccured(KeyEvent keyEvent) {
+	if (keyEvent.character == '\u001b') { // Escape character
+		fireCancelEditor();
+	} else if (keyEvent.character == '\t') { // tab key
 		applyEditorValueAndDeactivate();
 	}
 }

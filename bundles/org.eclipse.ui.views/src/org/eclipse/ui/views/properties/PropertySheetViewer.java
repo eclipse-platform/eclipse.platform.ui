@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
+Copyright (c) 2000, 2003 IBM Corp. and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -12,18 +12,49 @@ Contributors:
 package org.eclipse.ui.views.properties;
 
 import java.text.Collator;
-import java.util.*;
-import java.util.List; // otherwise ambiguous
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ICellEditorListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableTree;
+import org.eclipse.swt.custom.TableTreeEditor;
+import org.eclipse.swt.custom.TableTreeItem;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.Widget;
 /**
  * The PropertySheetViewer displays the properties of objects.
  * The model for the viewer consists of a hierarchy of 
@@ -540,9 +571,9 @@ class PropertySheetViewer extends Viewer {
 	 * Check if there is an active cell editor. 
 	 * If yes, deactivate it and check if a new cell editor must be activated.
 	 *
-	 * @param event the selection event
+	 * @param selection the TableTreeItem that is selected
 	 */
-	private void handleSelect(SelectionEvent event) {
+	private void handleSelect(TableTreeItem selection) {
 		// deactivate the current cell editor
 		if (cellEditor != null) {
 			applyEditorValue();
@@ -550,7 +581,7 @@ class PropertySheetViewer extends Viewer {
 		}
 
 		// get the new selection
-		TableTreeItem[] sel = tableTree.getSelection();
+		TableTreeItem[] sel = new TableTreeItem[] {selection};
 		if (sel.length == 0) {
 			setMessage(null);
 			setErrorMessage(null);
@@ -619,12 +650,25 @@ class PropertySheetViewer extends Viewer {
 	 */
 	private void hookControl() {
 		// Handle selections in the TableTree
+		// Part1: Double click only (allow traversal via keyboard without
+		// activation
 		tableTree.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				handleSelect(e);
+			public void widgetDefaultSelected(SelectionEvent e) {
+				handleSelect((TableTreeItem)e.item);
 			}
 		});
-
+		// Part2: handle single click activation of cell editor
+		tableTree.getTable().addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent event) {
+				// only activate if there is a cell editor
+				Point pt = new Point (event.x, event.y);
+				TableTreeItem item = tableTree.getItem(pt);
+				if (item != null) {
+					handleSelect(item);
+				}				
+			}
+		});
+		
 		// Add a tree listener to expand and collapse which
 		// allows for lazy creation of children
 		tableTree.addTreeListener(new TreeListener() {
