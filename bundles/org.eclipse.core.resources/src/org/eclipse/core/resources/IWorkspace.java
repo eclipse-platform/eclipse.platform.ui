@@ -169,7 +169,7 @@ public void build(int kind, IProgressMonitor monitor) throws CoreException;
 /**
  * Checkpoints the operation currently in progress.
  * This method is used in the middle of a group of operations 
- * to force a build (if the build argument is true) and send an 
+ * to force a background auto-build (if the build argument is true) and send an 
  * interim notification of resource change events.
  * <p>
  * When invoked in the dynamic scope of a
