@@ -100,7 +100,7 @@ public class CheckoutAsAction extends TeamAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("CheckoutAsAction.checkout"), this.PROGRESS_DIALOG);
+		}, Policy.bind("CheckoutAsAction.checkoutFailed"), this.PROGRESS_DIALOG);
 	}
 	/*
 	 * @see TeamAction#isEnabled()

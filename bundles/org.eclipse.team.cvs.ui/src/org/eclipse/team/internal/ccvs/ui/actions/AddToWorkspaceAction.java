@@ -96,7 +96,7 @@ public class AddToWorkspaceAction extends TeamAction {
 					throw new InvocationTargetException(e);
 				}
 			}
-		}, Policy.bind("AddToWorkspaceAction.add"), this.PROGRESS_DIALOG);
+		}, Policy.bind("AddToWorkspaceAction.checkoutFailed"), this.PROGRESS_DIALOG);
 	}
 	private int confirmOverwrite(IProject project) {
 		if (!project.exists()) return 0;
