@@ -289,6 +289,19 @@ public class DefaultUndoManager implements IUndoManager {
 			reinitialize();
 			return this;
 		}
+		
+		/*
+		 * @see org.eclipse.jface.text.DefaultUndoManager.TextCommand#commit()
+		 */
+		protected void commit() {
+			if (fStart < 0) {
+				if (fCommands.size() > 0 && !fFoldingIntoCompoundChange) {
+					super.updateCommandStack();
+					return;
+				}
+			}
+			super.commit();
+		}
 	};
 	
 	/**
