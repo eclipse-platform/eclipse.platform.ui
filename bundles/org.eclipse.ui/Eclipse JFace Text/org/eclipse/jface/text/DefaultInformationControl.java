@@ -60,17 +60,21 @@ public class DefaultInformationControl implements IInformationControl {
 	/** The control height constraint */
 	private int fMaxHeight= -1;
 	
+
+
 	/**
-	 * Creates a default information control with the given shell as parent.
-	 * No information presenter is used to process the information
-	 * to be displayed.
+	 * Creates a default information control with the given shell as parent. The given
+	 * information presenter is used to process the information to be displayed. The given
+	 * styles are applied to the created styled text widget.
 	 * 
 	 * @param parent the parent shell
+	 * @param presenter the presenter to be used
+	 * @param style the additional styles for the styled text widget
 	 */
-	public DefaultInformationControl(Shell parent) {
+	public DefaultInformationControl(Shell parent, int style, IInformationPresenter presenter) {
 		
 		fShell= new Shell(parent, SWT.NO_FOCUS | SWT.NO_TRIM | SWT.ON_TOP);
-		fText= new StyledText(fShell, SWT.MULTI | SWT.READ_ONLY);
+		fText= new StyledText(fShell, SWT.MULTI | SWT.READ_ONLY | style);
 		
 		Display display= fShell.getDisplay();
 		
@@ -78,18 +82,31 @@ public class DefaultInformationControl implements IInformationControl {
 		
 		fText.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
 		fText.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
+		
+		fPresenter= presenter;
+	}
+	
+	/**
+	 * Creates a default information control with the given shell as parent.
+	 * No information presenter is used to process the information
+	 * to be displayed. No additional styles are applied to the styled text widget.
+	 * 
+	 * @param parent the parent shell
+	 */
+	public DefaultInformationControl(Shell parent) {
+		this(parent, SWT.NONE, null);
 	}
 	
 	/**
 	 * Creates a default information control with the given shell as parent. The given
 	 * information presenter is used to process the information to be displayed.
+	 * No additional styles are applied to the styled text widget.
 	 * 
 	 * @param parent the parent shell
 	 * @param presenter the presenter to be used
 	 */
 	public DefaultInformationControl(Shell parent, IInformationPresenter presenter) {
-		this(parent);
-		fPresenter= presenter;
+		this(parent, SWT.NONE, presenter);
 	}
 	
 	/*

@@ -9,7 +9,6 @@ package org.eclipse.ui.texteditor;
 import org.eclipse.swt.widgets.Composite;
 
 
-
 /**
  * @deprecated use WorkbenchChainedTextFontFieldEditor
  */
@@ -22,4 +21,3 @@ public final class PropagatingFontFieldEditor extends WorkbenchChainedTextFontFi
 		super(name, labelText, parent);
 	}
 }
-

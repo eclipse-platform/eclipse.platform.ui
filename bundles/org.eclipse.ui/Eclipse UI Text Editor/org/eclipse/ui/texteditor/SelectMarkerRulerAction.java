@@ -90,7 +90,11 @@ public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {
 	public void run() {
 		
 		IMarker marker= chooseMarker(fMarkers);
-		fTextEditor.gotoMarker(marker);
+		
+		/*
+		 * Jumpy behaviour when adding/removing breakpoints (1GKZKJN) 
+		 *  fTextEditor.gotoMarker(marker);
+		 */
 		
 		IWorkbenchPage page= fTextEditor.getSite().getPage();
 		IViewPart view= view= page.findView("org.eclipse.ui.views.TaskList"); //$NON-NLS-1$

@@ -63,11 +63,16 @@ class ContextInformationPopup implements IContentAssistListener {
 		final StyledText styledText= fViewer.getTextWidget();
 		BusyIndicator.showWhile(styledText.getDisplay(), new Runnable() {
 			public void run() {
-				IContextInformation[] contexts= computeContextInformation();
+				
+				int position= fViewer.getSelectedRange().x;
+				
+				IContextInformation[] contexts= computeContextInformation(position);
 				int count = (contexts == null ? 0 : contexts.length);
 				if (count == 1) {
+					
 					// Show context information directly
-					showContextInformation(contexts[0]);
+					showContextInformation(contexts[0], position);
+				
 				} else if (count > 0) {
 					// Precise context must be selected
 					
@@ -78,6 +83,7 @@ class ContextInformationPopup implements IContentAssistListener {
 					setContexts(contexts);
 					displayContextSelector();
 					hideContextInfoPopup();
+					
 				} else if (beep) {
 					styledText.getDisplay().beep();
 				}
@@ -87,19 +93,18 @@ class ContextInformationPopup implements IContentAssistListener {
 		return getErrorMessage();
 	}
 	
-	public void showContextInformation(final IContextInformation info) {
+	public void showContextInformation(final IContextInformation info, final int position) {
 		Control control= fViewer.getTextWidget();
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
-				internalShowContextInfo(info);
+				internalShowContextInfo(info, position);
 				hideContextSelector();
 			}
 		});
 	}
 	
-	private void internalShowContextInfo(IContextInformation information) {
+	private void internalShowContextInfo(IContextInformation information, int pos) {
 		
-		int pos= fViewer.getSelectedRange().x;
 		IContextInformationValidator validator= fContentAssistant.getContextInformationValidator(fViewer.getDocument(), pos);
 		
 		if (validator != null) {
@@ -120,9 +125,8 @@ class ContextInformationPopup implements IContentAssistListener {
 		}
 	}
 	
-	private IContextInformation[] computeContextInformation() {
-		int pos= fViewer.getSelectedRange().x;
-		return fContentAssistant.computeContextInformation(fViewer, pos);
+	private IContextInformation[] computeContextInformation(int position) {
+		return fContentAssistant.computeContextInformation(fViewer, position);
 	}
 	
 	private String getErrorMessage() {
@@ -232,8 +236,9 @@ class ContextInformationPopup implements IContentAssistListener {
 
 		if (i < 0 || i >= fContextSelectorInput.length)
 			return;
-			
-		internalShowContextInfo(fContextSelectorInput[i]);
+		
+		int position= fViewer.getSelectedRange().x;
+		internalShowContextInfo(fContextSelectorInput[i], position);
 	}
 	
 	private void setContexts(IContextInformation[] contexts) {

@@ -1010,9 +1010,10 @@ public class ContentAssistant implements IContentAssistant {
 	 * Requests that the specified context information to be shown.
 	 *
 	 * @param contextInformation the context information to be shown
+	 * @param position the position to which the context information refers to
 	 */
-	void showContextInformation(IContextInformation contextInformation) {
-		fContextInfoPopup.showContextInformation(contextInformation);
+	void showContextInformation(IContextInformation contextInformation, int position) {
+		fContextInfoPopup.showContextInformation(contextInformation, position);
 	}
 	
 	/**

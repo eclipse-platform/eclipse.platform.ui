@@ -73,7 +73,7 @@ abstract public class AbstractInformationControlManager {
 	/**
 	 * Constitues entities to enumerate ankers for the layout of the information control.
 	 */
-	protected static final class Anker {
+	public static final class Anker {
 		private Anker() {
 		};
 	};
@@ -81,13 +81,13 @@ abstract public class AbstractInformationControlManager {
 	private final static Anker[] ANKERS= { new Anker(), new Anker(), new Anker(), new Anker() };
 	
 	/** Anker representing the top of the information area */
-	protected final static Anker ANKER_TOP=  ANKERS[0];
+	public final static Anker ANKER_TOP=  ANKERS[0];
 	/** Anker representing the bottom of the information area */
-	protected final static Anker ANKER_BOTTOM=  ANKERS[1];
+	public final static Anker ANKER_BOTTOM=  ANKERS[1];
 	/** Anker representing the left side of the information area */
-	protected final static Anker ANKER_LEFT=  ANKERS[2];
+	public final static Anker ANKER_LEFT=  ANKERS[2];
 	/** Anker representing the right side of the information area */
-	protected final static Anker ANKER_RIGHT= ANKERS[3];
+	public final static Anker ANKER_RIGHT= ANKERS[3];
 	
 	
 	
@@ -203,7 +203,7 @@ abstract public class AbstractInformationControlManager {
 	 * @param xMargin the x-margin
 	 * @param yMargin the y-Margin
 	 */
-	protected void setMargins(int xMargin, int yMargin) {
+	public void setMargins(int xMargin, int yMargin) {
 		fMarginX= xMargin;
 		fMarginY= yMargin;
 	}
@@ -216,7 +216,7 @@ abstract public class AbstractInformationControlManager {
 	 * @param enforceAsMinimalSize indicates whether the constraints describe the minimal allowed size of the control
 	 * @param enforceAsMaximalSize indicates whether the constraints describe the maximal allowed size of the control
 	 */
-	protected void setSizeConstraints(int widthInChar, int heightInChar, boolean enforceAsMinimalSize, boolean enforceAsMaximalSize) {
+	public void setSizeConstraints(int widthInChar, int heightInChar, boolean enforceAsMinimalSize, boolean enforceAsMaximalSize) {
 		fWidthConstraint= widthInChar;
 		fHeightConstraint= heightInChar;
 		fEnforceAsMinimalSize= enforceAsMinimalSize;
@@ -231,7 +231,7 @@ abstract public class AbstractInformationControlManager {
 	 * 
 	 * @param anker the layout anker
 	 */
-	protected void setAnker(Anker anker) {
+	public void setAnker(Anker anker) {
 		fAnker= anker;
 	}
 	
@@ -242,7 +242,7 @@ abstract public class AbstractInformationControlManager {
 	 * 
 	 * @param fallbackAnkers the list of ankers to be tried
 	 */
-	protected void setFallbackAnkers(Anker[] fallbackAnkers) {
+	public void setFallbackAnkers(Anker[] fallbackAnkers) {
 		fFallbackAnkers= fallbackAnkers;
 	}
 	

@@ -89,9 +89,14 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	private Table fProposalTable;
 	private Thread fThread;
 	private boolean fIsReset= false;
+	
 	private Object fMutex= new Object();
+	private Object fStartSignal;
+	
 	private SelectionListener fSelectionListener= new TableSelectionListener();
 	private int fDelay;
+	
+	
 	
 	AdditionalInfoController(IInformationControlCreator creator, int delay) {
 		super(creator);
@@ -112,7 +117,16 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 		fProposalTable= (Table) control;
 		fProposalTable.addSelectionListener(fSelectionListener);
 		fThread= new Thread(this, JFaceTextMessages.getString("InfoPopup.info_delay_timer_name")); //$NON-NLS-1$
-		fThread.start();
+		
+		fStartSignal= new Object();
+		synchronized (fStartSignal) {
+			fThread.start();
+			try {
+				// wait until thread is ready
+				fStartSignal.wait();
+			} catch (InterruptedException x) {
+			}
+		}
 	}
 	
 	/*
@@ -138,8 +152,17 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 			while (true) {
 				
 				synchronized (fMutex) {
+					
+					if (fStartSignal != null) {
+						synchronized (fStartSignal) {
+							fStartSignal.notifyAll();
+							fStartSignal= null;
+						}
+					}
+					
 					// Wait for a selection event to occur.
 					fMutex.wait();
+					
 					while (true) {
 						fIsReset= false;
 						// Delay before showing the popup.
@@ -150,7 +173,7 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 				}
 				
 				if (fProposalTable != null && !fProposalTable.isDisposed()) {
-					fProposalTable.getDisplay().syncExec(new Runnable() {
+					fProposalTable.getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							if (!fIsReset)
 								showInformation();
@@ -166,9 +189,12 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	}
 	
 	public void handleTableSelectionChanged() {
-		synchronized (fMutex) {
-			fIsReset= true;
-			fMutex.notifyAll();
+		
+		if (fProposalTable != null && !fProposalTable.isDisposed() && fProposalTable.isVisible()) {
+			synchronized (fMutex) {
+				fIsReset= true;
+				fMutex.notifyAll();
+			}
 		}
 	}
 			
@@ -177,6 +203,9 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 	 */
 	protected void computeInformation() {
 		
+		if (fProposalTable == null || fProposalTable.isDisposed())
+			return;
+			
 		TableItem[] selection= fProposalTable.getSelection();
 		if (selection != null && selection.length > 0) {
 			
@@ -191,7 +220,7 @@ class AdditionalInfoController extends AbstractInformationControlManager impleme
 			}
 			
 			// compute subject area
-			setMargins(0, 0);
+			setMargins(3, 0);
 			Rectangle area= fProposalTable.getBounds();
 			
 			// set information & subject area
