@@ -65,7 +65,7 @@ import org.eclipse.team.core.internal.simpleAccess.SimpleAccessOperations;
  */
 public abstract class RepositoryProvider implements IProjectNature {
 	
-	private final static String TEAM_SETID = "org.eclipse.team.repository-provider";
+	private final static String TEAM_SETID = "org.eclipse.team.repository-provider"; //$NON-NLS-1$
 	
 	// the project instance that this nature is assigned to
 	private IProject project;	
