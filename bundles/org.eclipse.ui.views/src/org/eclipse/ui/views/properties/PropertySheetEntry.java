@@ -232,7 +232,7 @@ public class PropertySheetEntry implements IPropertySheetEntry {
         List descriptors = computeMergedPropertyDescriptors();
 
         // rebuild child entries using old when possible
-        childEntries = createChildEntriesArray(descriptors.size());
+        childEntries = new PropertySheetEntry[descriptors.size()];
 		for (int i = 0; i < descriptors.size(); i++) {
             IPropertyDescriptor d = (IPropertyDescriptor) descriptors.get(i);
             // create new entry
@@ -244,21 +244,6 @@ public class PropertySheetEntry implements IPropertySheetEntry {
             childEntries[i] = entry;
         }
     }
-
-	/**
-	 * Factory method to create a new array instance of
-	 * <code>PropertySheetEntry</code>.
-	 * <p>
-	 * Subclasses may overwrite to create new array instance of their own class.
-	 * </p>
-	 * 
-	 * @param size
-	 * @return a new array of <code>PropertySheetEntry</code>
-     * @since 3.1
-	 */
-	protected PropertySheetEntry[] createChildEntriesArray(int size) {
-		return new PropertySheetEntry[size];
-	}
 
 	/**
 	 * Factory method to create a new child <code>PropertySheetEntry</code>
@@ -537,7 +522,7 @@ public class PropertySheetEntry implements IPropertySheetEntry {
         List entriesToDispose = new ArrayList(Arrays.asList(childEntries));
 
         // rebuild child entries using old when possible
-        childEntries = createChildEntriesArray(descriptors.size());
+        childEntries = new PropertySheetEntry[descriptors.size()];
         boolean entriesChanged = descriptors.size() != entryCache.size();
         for (int i = 0; i < descriptors.size(); i++) {
             IPropertyDescriptor d = (IPropertyDescriptor) descriptors.get(i);
