@@ -48,7 +48,7 @@ public class SelectPerspectiveDialog extends Dialog implements
 
     final private static int LIST_HEIGHT = 300;
 
-    final private static int LIST_WIDTH = 200;
+    final private static int LIST_WIDTH = 300;
 
     private TableViewer list;
 
@@ -109,6 +109,7 @@ public class SelectPerspectiveDialog extends Dialog implements
                 IDialogConstants.OK_LABEL, true);
         createButton(parent, IDialogConstants.CANCEL_ID,
                 IDialogConstants.CANCEL_LABEL, false);
+        updateButtons();
     }
 
     /**
@@ -128,7 +129,6 @@ public class SelectPerspectiveDialog extends Dialog implements
         if (needsShowAllButton()) {
             createShowAllButton(composite);
         }
-
         // Return results.
         return composite;
     }
