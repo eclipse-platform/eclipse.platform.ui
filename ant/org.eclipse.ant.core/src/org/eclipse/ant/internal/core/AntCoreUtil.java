@@ -21,8 +21,19 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.osgi.framework.BundleContext;
 
 public class AntCoreUtil {
+    
+    private static BundleContext fgContext= null;
+    
+    public static void setBundleContext(BundleContext context) {
+        fgContext= context;
+    }
+    
+    public static BundleContext getBundleContext() {
+        return fgContext;
+    }
     
     /*
 	 * Helper method to ensure an array is converted into an ArrayList.

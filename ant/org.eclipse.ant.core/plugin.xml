@@ -57,11 +57,10 @@
 		<content-type  
 			id="antBuildFile" 
 			name="%antBuildFileContentType.name" 
-			base-type="org.eclipse.core.runtime.xml" 
+			base-type="org.eclipse.core.runtime.xml"
 			priority="high"> 
 			<describer 
-				class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber"> 
-				<parameter name="element" value="project" /> 
+				class="org.eclipse.ant.internal.core.AntBuildfileContentDescriber">
 			</describer> 
 		</content-type> 
    </extension>

@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.ant.internal.core.AntClassLoader;
+import org.eclipse.ant.internal.core.AntCoreUtil;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IStatus;
@@ -168,10 +169,19 @@ public class AntCorePlugin extends Plugin {
 	 */
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
+        AntCoreUtil.setBundleContext(null);
 		if (preferences != null) {
 			savePluginPreferences();
 		}
 	}
+    
+    /* (non-Javadoc)
+     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+     */
+    public void start(BundleContext context) throws Exception {
+        super.start(context);
+        AntCoreUtil.setBundleContext(context);
+    }
 
 	/**
 	 * Given an extension point name, extract its extensions and return them
