@@ -23,6 +23,7 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.core.subscribers.SubscriberResourceMappingContext;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.PlatformUI;
 
 
@@ -43,6 +44,9 @@ public abstract class WorkspaceTraversalAction extends WorkspaceAction {
         try {
             // Get all the traversals since enablement may be based on entire selection
             ResourceTraversal[] traversals = getSelectedTraversals(null, null);
+            if (traversals.length == 0 && selection != null) {
+                return Utils.getResources(selection.toArray());
+            }
             Set resources = new HashSet();
             for (int i = 0; i < traversals.length; i++) {
                 ResourceTraversal traversal = traversals[i];
