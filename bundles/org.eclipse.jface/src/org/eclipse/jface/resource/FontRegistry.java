@@ -306,7 +306,7 @@ public class FontRegistry {
 	/**
 	 * Fires a PropertyChangeEvent.
 	 */
-	private void fireFontMappingChanged(String name) {
+	private void fireFontMappingChanged(String name, FontData[] oldValue, FontData[] newValue) {
 		final String finalName = name;
 		final Object[] listeners = this.listeners.getListeners();
 		if (listeners.length > 0) {
@@ -314,7 +314,7 @@ public class FontRegistry {
 			//		Platform.run(new SafeRunnable(JFaceResources.getString("FontRegistry.changeError")) { //$NON-NLS-1$
 			//			public void run() {
 			PropertyChangeEvent event =
-				new PropertyChangeEvent(this, finalName, null, null);
+				new PropertyChangeEvent(this, finalName, oldValue, newValue);
 			for (int i = 0; i < listeners.length; ++i) {
 				((IPropertyChangeListener) listeners[i]).propertyChange(event);
 			}
@@ -494,7 +494,7 @@ public class FontRegistry {
 		Font oldFont = (Font) stringToFont.remove(symbolicName);
 		stringToFontData.put(symbolicName, fontData);
 		if (update)
-			fireFontMappingChanged(symbolicName);
+			fireFontMappingChanged(symbolicName,existing,fontData);
 
 		if (oldFont == defaultFont())
 			return;
