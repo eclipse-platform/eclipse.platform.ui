@@ -107,12 +107,14 @@ public class HistoryStore2 implements IHistoryStore {
 	}
 
 	private void clean(IPath root) {
+		long start = System.currentTimeMillis();
 		try {
 			IWorkspaceDescription description = workspace.internalGetDescription();
 			final long minimumTimestamp = System.currentTimeMillis() - description.getFileStateLongevity();
 			final int max = description.getMaxFileStates();
 			final BlobStore tmpBlobStore = blobStore;
 			final Set tmpBlobsToRemove = blobsToRemove;
+			final int[] entryCount = new int[1];
 			accept(new Visitor() {
 				public int visit(Entry fileEntry) {
 					int statesCounter = 0;
@@ -124,16 +126,24 @@ public class HistoryStore2 implements IHistoryStore {
 							if (blobFile.lastModified() >= minimumTimestamp)
 								continue;
 						}
-						// "delete" the current uuid
+						// "delete" the current uuid						
 						tmpBlobsToRemove.add(uuidObject);
 						fileEntry.deleteOccurrence(i);
 						changed = true;
+						entryCount[0]++;
 					}
 					return changed ? UPDATE : CONTINUE;
 				}
 			}, root, IResource.DEPTH_INFINITE);
+			if (Policy.DEBUG_HISTORY) {
+				Policy.debug("Time to apply history store policies: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
+				Policy.debug("Total number of history store entries: " + entryCount[0]); //$NON-NLS-1$
+			}
+			start = System.currentTimeMillis();
 			// remove unreferenced blobs
 			blobStore.deleteBlobs(blobsToRemove);
+			if (Policy.DEBUG_HISTORY)
+				Policy.debug("Time to remove " + blobsToRemove.size() + " unreferenced blobs: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$			
 			blobsToRemove = new HashSet();
 		} catch (Exception e) {
 			String message = Policy.bind("history.problemsCleaning"); //$NON-NLS-1$

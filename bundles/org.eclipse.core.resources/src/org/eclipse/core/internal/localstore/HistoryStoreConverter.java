@@ -30,6 +30,7 @@ public class HistoryStoreConverter {
 			// nothing to be converted
 			return Status.OK_STATUS;
 		// visit all existing entries and add them to the new history store
+		long start = System.currentTimeMillis();
 		final CoreException[] exception = new CoreException[1];
 		final BucketIndex currentBucket = destination.createBucketTable();
 		HistoryStore source = new HistoryStore(workspace, location, limit);
@@ -51,18 +52,20 @@ public class HistoryStoreConverter {
 			// the last bucket changed will not have been saved
 			currentBucket.save();
 			// we are done using the old history store instance		
-			source.shutdown(null);			
-		} catch (CoreException e) {			
+			source.shutdown(null);
+		} catch (CoreException e) {
 			// failed during save
 			exception[0] = e;
 		}
+		if (Policy.DEBUG_HISTORY)
+			Policy.debug("Time to convert local history: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
 		if (exception[0] != null) {
 			// failed while visiting or saving
 			String conversionFailed = Policy.bind("history.conversionFailed"); //$NON-NLS-1$
 			Status failure = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, new IStatus[] {exception[0].getStatus()}, conversionFailed, null);
 			// we failed, so don't do anything else - we might try converting again later
 			return failure;
-		}		
+		}
 		// everything went fine
 		// if requested rename the index file to something else
 		// so we don't try converting again in the future
