@@ -27,6 +27,9 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 	 * @see IBrowserFactory#isAvailable()
 	 */
 	public boolean isAvailable() {
+		// TODO enable for all OSes after 46751 is fixed
+		if (true)
+			return System.getProperty("os.name").startsWith("Win");
 		if (!tested) {
 			tested = true;
 			Shell sh = new Shell();
@@ -37,10 +40,12 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 				if (se.code == SWT.ERROR_NO_HANDLES) {
 					// Browser not implemented
 					available = false;
+				} else {
+					HelpUIPlugin.logError(
+						HelpUIResources.getString(
+							"EmbeddedBrowserFactory.error"),
+						se);
 				}
-				HelpUIPlugin.logError(
-					HelpUIResources.getString("EmbeddedBrowserFactory.error"),
-					se);
 			}
 			if (sh != null && !sh.isDisposed())
 				sh.dispose();

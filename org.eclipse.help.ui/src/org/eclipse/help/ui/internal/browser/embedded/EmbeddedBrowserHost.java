@@ -252,31 +252,36 @@ public class EmbeddedBrowserHost implements Runnable {
 		shell.setSize(w, h);
 		if (store.getBoolean(BROWSER_MAXIMIZED))
 			shell.setMaximized(true);
-		webBrowser.addNewWindowListener(new NewWindowListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.browser.NewWindowListener#newWindow(org.eclipse.swt.browser.NewWindowEvent)
-			 */
-			public void newWindow(NewWindowEvent event) {
-				int dw=300;
-				int dh=300;
-				int dx=x+(w-dw)/2;
-				int dy=y+(h-dh)/2;
-				if(dy>50) dy-=50;
-				EmbeddedBrowserDialog workingSetManagerDialog =
-					new EmbeddedBrowserDialog(
-						shell,
-						productName,
-						createImage(),
-						dx,
-						dy,
-						dw,
-						dh);
-				event.browser = workingSetManagerDialog.getBrowser();
+		
+		// TODO enable on Windows after 46751 is fixed
+		if (!System.getProperty("os.name").startsWith("Win")) {
+			webBrowser.addNewWindowListener(new NewWindowListener() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.swt.browser.NewWindowListener#newWindow(org.eclipse.swt.browser.NewWindowEvent)
+				 */
+				public void newWindow(NewWindowEvent event) {
+					int dw = 300;
+					int dh = 300;
+					int dx = x + (w - dw) / 2;
+					int dy = y + (h - dh) / 2;
+					if (dy > 50)
+						dy -= 50;
+					EmbeddedBrowserDialog workingSetManagerDialog =
+						new EmbeddedBrowserDialog(
+							shell,
+							productName,
+							createImage(),
+							dx,
+							dy,
+							dw,
+							dh);
+					event.browser = workingSetManagerDialog.getBrowser();
 
-			}
-		});
+				}
+			});
+		}
 		shell.open();
 	}
 	/**
