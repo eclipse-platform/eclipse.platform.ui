@@ -11,16 +11,8 @@
 package org.eclipse.team.internal.ccvs.core.client.listeners;
 
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.ICVSFile;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -53,27 +45,9 @@ public class AdminKSubstListener extends CommandOutputListener {
 				return new CVSStatus(CVSStatus.ERROR,
 					Policy.bind("AdminKSubstListener.expectedRCSFile", rcsFile)); //$NON-NLS-1$
 			}
-			String remoteRootLocation = null;
-			try {
-				FolderSyncInfo info = commandRoot.getFolderSyncInfo();
-				remoteRootLocation = info.getRemoteLocation();
-			} catch (CVSException e) {
-				return e.getStatus();
-			}
-			if (remoteRootLocation == null) {
-				return new CVSStatus(CVSStatus.ERROR,
-					Policy.bind("AdminKSubstListener.commandRootNotManaged")); //$NON-NLS-1$
-			}
 			IPath rcsFilePath = new Path(rcsFile.substring(0, rcsFile.length() - 2));
-			IPath remoteRootPath = new Path(remoteRootLocation);
-			if (! remoteRootPath.isPrefixOf(rcsFilePath)) {
-				return new CVSStatus(CVSStatus.ERROR,
-					Policy.bind("AdminKSubstListener.expectedChildOfCommandRoot", //$NON-NLS-1$
-						rcsFilePath.toString(), remoteRootPath.toString()));
-			}
-			rcsFilePath = rcsFilePath.removeFirstSegments(remoteRootPath.segmentCount());
 			try {
-				ICVSFile file = commandRoot.getFile(rcsFilePath.toString());
+				ICVSFile file = findLocalFileFor(commandRoot, rcsFilePath);
 				//ResourceSyncInfo info = file.getSyncInfo();
 				byte[] syncBytes = file.getSyncBytes();
 				if (syncBytes != null) {
@@ -81,11 +55,70 @@ public class AdminKSubstListener extends CommandOutputListener {
 					file.setSyncBytes(ResourceSyncInfo.setKeywordMode(syncBytes, ksubstMode), ICVSFile.UNKNOWN);
 				}
 			} catch (CVSException e) {
-				return new CVSStatus(CVSStatus.ERROR,
-					Policy.bind("AdminKSubstListener.couldNotSetResourceSyncInfo", //$NON-NLS-1$
-						rcsFilePath.toString(), e.toString()));
+				return e.getStatus();
 			}
 		}
 		return OK;
 	}
+	
+	private ICVSFile findLocalFileFor(ICVSFolder commandRoot, IPath rcsFilePath) throws CVSException {
+		
+		// First, look for the local file by following the remote path
+		FolderSyncInfo info = commandRoot.getFolderSyncInfo();
+		String remoteRootLocation = info.getRemoteLocation();
+		if (remoteRootLocation == null) {
+			throw new CVSException(new CVSStatus(CVSStatus.ERROR,
+				Policy.bind("AdminKSubstListener.commandRootNotManaged"))); //$NON-NLS-1$
+		}
+		IPath remoteRootPath = new Path(remoteRootLocation);
+		if (remoteRootPath.isPrefixOf(rcsFilePath)) {
+			IPath relativeFilePath = rcsFilePath.removeFirstSegments(remoteRootPath.segmentCount());
+			ICVSFile file = commandRoot.getFile(relativeFilePath.toString());
+			if (file.isManaged() && isMatchingPath(file, rcsFilePath)) {
+			    return file;
+			}
+		}
+		
+		// We couldn't find the file that way which means we're working in a defined module.
+		// Scan all folders looking for a match
+		ICVSFolder parent = findFolder(commandRoot, rcsFilePath.removeLastSegments(1));
+		if (parent != null) {
+			ICVSFile file = parent.getFile(rcsFilePath.lastSegment());
+			if (file.isManaged()) {
+			    return file;
+			}
+		}
+		
+		// No file was found so return null;
+		throw new CVSException(new CVSStatus(CVSStatus.ERROR,
+				Policy.bind("AdminKSubstListener.expectedChildOfCommandRoot", //$NON-NLS-1$
+					rcsFilePath.toString(), remoteRootPath.toString())));
+	}
+
+    private ICVSFolder findFolder(ICVSFolder commandRoot, IPath path) throws CVSException {
+        final String remotePath = path.toString();
+        final ICVSFolder[] result = new ICVSFolder[] { null };
+        commandRoot.accept(new ICVSResourceVisitor() {
+            public void visitFile(ICVSFile file) throws CVSException {
+                // Nothing to do for files
+            }
+            public void visitFolder(ICVSFolder folder) throws CVSException {
+                FolderSyncInfo info = folder.getFolderSyncInfo();
+                if (info != null && info.getRemoteLocation().equals(remotePath)) {
+                    // We found the folder we're looking for
+                    result[0] = folder;
+                }
+                if (result[0] == null) {
+                    folder.acceptChildren(this);
+                }
+            }
+        });
+        return result[0];
+    }
+
+    private boolean isMatchingPath(ICVSFile file, IPath rcsFilePath) throws CVSException {
+        FolderSyncInfo info = file.getParent().getFolderSyncInfo();
+        return info != null 
+           && info.getRemoteLocation().equals(rcsFilePath.removeLastSegments(1).toString());
+    }
 }
