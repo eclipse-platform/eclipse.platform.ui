@@ -44,7 +44,7 @@ public class BrowserIntroPartImplementation extends
 
         public void run() {
             // dynamic case. Uses navigation history.
-            if (getModelRoot().getHomePage().isDynamic()) {
+            if (getModelRoot().isDynamic()) {
                 if (canNavigateBackward()) {
                     navigateBackward();
                     if (locationIsURL()) {
@@ -75,7 +75,7 @@ public class BrowserIntroPartImplementation extends
 
         public void run() {
             // dynamic case. Uses navigation history.
-            if (getModelRoot().getHomePage().isDynamic()) {
+            if (getModelRoot().isDynamic()) {
                 if (canNavigateForward()) {
                     navigateForward();
                     if (locationIsURL()) {
@@ -107,7 +107,7 @@ public class BrowserIntroPartImplementation extends
             // Home is URL of root page in static case, and root page in
             // dynamic.
             IntroHomePage rootPage = getModelRoot().getHomePage();
-            if (rootPage.isDynamic())
+            if (getModelRoot().isDynamic())
                 getModelRoot().setCurrentPageId(rootPage.getId());
             else
                 browser.setUrl(rootPage.getUrl());
@@ -133,17 +133,8 @@ public class BrowserIntroPartImplementation extends
             return;
         }
 
-
-
-        // the root page is the first page we want to display, if there is no
-        // valid cached page. Its attributes decide if we have a static or
-        // dynamic case.
-        IntroHomePage rootPage = getModelRoot().getHomePage();
-
-        // get cached page.
-        String url = getCachedCurrentPage();
-
-        if (rootPage.isDynamic())
+        // root page is what decides if the model is dynamic or not.
+        if (getModelRoot().isDynamic())
             handleDynamicIntro();
         else
             handleStaticIntro();
@@ -321,12 +312,7 @@ public class BrowserIntroPartImplementation extends
         }
     }
 
-    private boolean isURL(String url) {
-        IntroURLParser parser = new IntroURLParser(url);
-        if (parser.hasProtocol())
-            return true;
-        return false;
-    }
+    
 
 
 }

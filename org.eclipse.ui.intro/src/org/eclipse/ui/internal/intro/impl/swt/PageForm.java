@@ -114,7 +114,7 @@ public class PageForm implements IIntroConstants, IPropertyListener {
         categoryPageBook.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         // Create Navigation bar if needed.
-        if (sharedStyleManager.getShowRootPageLinks()) {
+        if (sharedStyleManager.showHomePageNavigation()) {
             Composite navigationComposite = toolkit.createComposite(pageForm
                     .getBody());
             navigationComposite.setLayoutData(new GridData(
@@ -184,25 +184,25 @@ public class PageForm implements IIntroConstants, IPropertyListener {
         if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
             // update page book with correct PageContentForm composite.
             String pageId = model.getCurrentPageId();
-            pageChanged(pageId);
+            showPage(pageId);
         }
     }
-    
+
     /**
-     * This method is called when the current page changes.  It 
-     * creates the PageContentForm if necessary, and handles showing the 
-     * page in the Page Book
+     * This method is called when the current page changes. It creates the
+     * PageContentForm if necessary, and handles showing the page in the Page
+     * Book
+     * 
      * @param pageID
      */
-    public void pageChanged(String pageID){
-    	if (!categoryPageBook.hasPage(pageID)) {
+    public void showPage(String pageID) {
+        if (!categoryPageBook.hasPage(pageID)) {
             // if we do not have a category form for this page create one.
-            PageContentForm categoryForm = new PageContentForm(toolkit,
-                    model);
-            categoryForm.createPartControl(categoryPageBook,
-                    sharedStyleManager);
+            PageContentForm categoryForm = new PageContentForm(toolkit, model);
+            categoryForm
+                    .createPartControl(categoryPageBook, sharedStyleManager);
         }
-        categoryPageBook.showPage(model.getCurrentPage().getId());
+        categoryPageBook.showPage(pageID);
 
         // Get cached page subtitle from control data.
         Composite page = (Composite) categoryPageBook.getCurrentPage();

@@ -177,15 +177,21 @@ public class SharedStyleManager {
         return null;
     }
 
-    public boolean getShowRootPageLinks() {
-        String key = "show-navigation"; //$NON-NLS-1$
+    public boolean showHomePageNavigation() {
+        String key = "show-home-page-navigation"; //$NON-NLS-1$
         String value = getProperty(key);
         if (value == null)
             value = "true"; //$NON-NLS-1$
-        return value.toLowerCase().equals("true"); //$NON-NLS-1$
+        return value.equalsIgnoreCase("true"); //$NON-NLS-1$
     }
 
-
+    public boolean useCustomHomePagelayout() {
+        String key = "home-page-custom-layout"; //$NON-NLS-1$
+        String value = getProperty(key);
+        if (value == null)
+            value = "true"; //$NON-NLS-1$
+        return value.equalsIgnoreCase("true"); //$NON-NLS-1$
+    }
 
 }
 

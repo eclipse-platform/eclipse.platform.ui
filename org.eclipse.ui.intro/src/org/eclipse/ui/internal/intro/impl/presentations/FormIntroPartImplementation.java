@@ -55,7 +55,7 @@ public class FormIntroPartImplementation extends
 
         public void run() {
             IntroHomePage rootPage = getModelRoot().getHomePage();
-            if (rootPage.isDynamic())
+            if (getModelRoot().isDynamic())
                 getModelRoot().setCurrentPageId(rootPage.getId());
         }
     };
@@ -66,9 +66,33 @@ public class FormIntroPartImplementation extends
     }
 
     public void createPartControl(Composite container) {
+
+        if (getModelRoot().isDynamic())
+            handleDynamicIntro(container);
+        else {
+            // create just a dummy composite for now, to enable...
+            Composite composite = new Composite(container, SWT.NULL);
+            handleStaticIntro();
+        }
+    }
+
+
+    /*
+     * create static UI forms Intro. For this, we only kaunch the url of the
+     * root page.
+     */
+    private void handleStaticIntro() {
+        String rootPageUrl = getModelRoot().getHomePage().getUrl();
+        Util.openBrowser(rootPageUrl);
+    }
+
+
+    /*
+     * create dynamic UI forms Intro, ie: swt intro.
+     */
+    private void handleDynamicIntro(Composite container) {
         // Create single toolkit instance, which is disposed of on dispose of
-        // intro part.
-        // also define bacjgrounf of all presentation.
+        // intro part. also define background of all presentation.
         toolkit = new FormToolkit(container.getDisplay());
         // Define presentation title color
         Color bg = sharedStyleManager.getColor(toolkit, "bg"); //$NON-NLS-1$
@@ -88,7 +112,7 @@ public class FormIntroPartImplementation extends
             mainForm.setBackgroundImage(bgImage);
             String repeat = sharedStyleManager
                     .getProperty("title.image.repeat"); //$NON-NLS-1$
-            if (repeat != null && repeat.toLowerCase().equals("true"))
+            if (repeat != null && repeat.equalsIgnoreCase("true"))
 
                 mainForm.setBackgroundImageTiled(true);
         }
@@ -103,6 +127,17 @@ public class FormIntroPartImplementation extends
         addToolBarActions();
     }
 
+
+    /**
+     * The main page book that holds Intro pages. It has two pages, one that
+     * holds the home page, and one that holds all other pages. If the
+     * presentation is configured to not show the home page with the Home Page
+     * layout, then this page book will only have one page.
+     * 
+     * @param toolkit
+     * @param form
+     * @return
+     */
     private ScrolledPageBook createMainPageBook(FormToolkit toolkit, Form form) {
         // get body and create page book in it. Body has GridLayout.
         Composite body = form.getBody();
@@ -111,36 +146,32 @@ public class FormIntroPartImplementation extends
         ScrolledPageBook pageBook = toolkit.createPageBook(body, SWT.V_SCROLL
                 | SWT.H_SCROLL);
         pageBook.setLayoutData(new GridData(GridData.FILL_BOTH));
-        // creating root page form.
-        if (!pageBook.hasPage(model.getHomePage().getId())) {
+        // Create root page form, only if needed.
+        if (sharedStyleManager.useCustomHomePagelayout()) {
             // if we do not have a root page form, create one
             RootPageForm rootPageForm = new RootPageForm(toolkit, model, form);
             rootPageForm.createPartControl(pageBook, sharedStyleManager);
         }
-  
-        // creating static page form.
-        PageForm pageForm = null;
-        if (!pageBook.hasPage(PageForm.PAGE_FORM_ID)) {
-            // if we do not have this page create one in main page book.
-            pageForm = new PageForm(toolkit, model, form);
-            pageForm.createPartControl(pageBook, sharedStyleManager);
-        }
+
+        // Create the Page form.
+        PageForm pageForm = new PageForm(toolkit, model, form);
+        pageForm.createPartControl(pageBook, sharedStyleManager);
+
         // now determine which page to show.
         String cachedPage = getCachedCurrentPage();
-        AbstractIntroPage pageToShow = null;
-        if (cachedPage != null)
-            getModelRoot().setCurrentPageId(cachedPage);
-        pageToShow = getModelRoot().getCurrentPage();
+        if (cachedPage != null & !isURL(cachedPage))
+            model.setCurrentPageId(cachedPage);
+        AbstractIntroPage pageToShow = getModelRoot().getCurrentPage();
 
-        // if the page to show is the root page
-        if (pageToShow != null && pageToShow instanceof IntroHomePage) {
-            pageBook.showPage(pageToShow.getId());
-        }
-        // we have to show one of the content pages
-        else {
-            if (pageToShow != null && pageForm != null) {
-                // first create the correct content
-                pageForm.pageChanged(pageToShow.getId());
+        if (pageToShow != null) {
+            if (pageBook.hasPage(pageToShow.getId()))
+                // we are showing Home Page.
+                pageBook.showPage(pageToShow.getId());
+            else {
+                // if we are showing a regular intro page, or if the Home Page
+                // has a regular page layout, set the page id to the static
+                // PageForm id. first create the correct content
+                pageForm.showPage(pageToShow.getId());
                 // then show the page
                 pageBook.showPage(PageForm.PAGE_FORM_ID);
             }
@@ -150,7 +181,8 @@ public class FormIntroPartImplementation extends
     }
 
     public void dispose() {
-        toolkit.dispose();
+        if (toolkit != null)
+            toolkit.dispose();
     }
 
     /**
@@ -168,13 +200,10 @@ public class FormIntroPartImplementation extends
                 // If page ID was not set properly. exit.
                 return;
 
-            String rootPageId = getModelRoot().getHomePage().getId();
-
-            // if we are showing a regular intro page, set the page id to the
-            // static PageForm id.
-            if (!pageId.equals(rootPageId))
+            // if we are showing a regular intro page, or if the Home Page has a
+            // regular page layout, set the page id to the static PageForm id.
+            if (!mainPageBook.hasPage(pageId))
                 pageId = PageForm.PAGE_FORM_ID;
-
             mainPageBook.showPage(pageId);
         }
     }
@@ -190,9 +219,10 @@ public class FormIntroPartImplementation extends
     }
 
     public void setFocus() {
-        boolean value = false;
-        if (mainPageBook.getCurrentPage() != null)
-            value = mainPageBook.getCurrentPage().setFocus();
+        if (model.isDynamic()) {
+            if (mainPageBook.getCurrentPage() != null)
+                mainPageBook.getCurrentPage().setFocus();
+        }
     }
 
 }

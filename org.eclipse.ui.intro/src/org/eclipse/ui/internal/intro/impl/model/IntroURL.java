@@ -95,14 +95,14 @@ public class IntroURL implements IIntroURL {
                 // command closes the Intro, then the control is disposed and
                 // there is no need to redraw.
                 CustomizableIntroPart currentIntroPart = (CustomizableIntroPart) IntroPlugin
-                        .getIntroPart();
+                        .getIntro();
                 if (currentIntroPart == null)
                     result[0] = doExecute();
                 else {
                     currentIntroPart.getControl().setRedraw(false);
                     result[0] = doExecute();
                     currentIntroPart = (CustomizableIntroPart) IntroPlugin
-                            .getIntroPart();
+                            .getIntro();
                     if (currentIntroPart != null)
                         // no one closed it.
                         currentIntroPart.getControl().setRedraw(true);
@@ -124,7 +124,7 @@ public class IntroURL implements IIntroURL {
             return setStandbyState(getParameter(KEY_STANDBY));
 
         else if (action.equals(SHOW_STANDBY))
-            return handleStandbyStateChanged(getParameter(KEY_PART_ID),
+            return handleStandbyState(getParameter(KEY_PART_ID),
                     getParameter(KEY_INPUT));
 
         else if (action.equals(SHOW_HELP))
@@ -158,8 +158,7 @@ public class IntroURL implements IIntroURL {
 
     private boolean closeIntro() {
         // Relies on Workbench.
-        return PlatformUI.getWorkbench().getIntroManager().closeIntro(
-                PlatformUI.getWorkbench().getIntroManager().getIntro());
+        return IntroPlugin.closeIntro();
     }
 
     /**
@@ -169,11 +168,10 @@ public class IntroURL implements IIntroURL {
      * @param partId
      * @param input
      */
-    private boolean handleStandbyStateChanged(String partId, String input) {
+    private boolean handleStandbyState(String partId, String input) {
         // set intro to standby mode. we know we have a customizable part.
-        CustomizableIntroPart introPart = getCustomizableIntroPart(true);
-        PlatformUI.getWorkbench().getIntroManager().setIntroStandby(introPart,
-                true);
+        CustomizableIntroPart introPart = (CustomizableIntroPart) IntroPlugin
+                .showIntro(true);
         StandbyPart standbyPart = (StandbyPart) introPart
                 .getAdapter(StandbyPart.class);
 
@@ -194,33 +192,13 @@ public class IntroURL implements IIntroURL {
      */
     private boolean setStandbyState(String state) {
         boolean standby = state.equals("true") ? true : false; //$NON-NLS-1$
-        CustomizableIntroPart introPart = getCustomizableIntroPart(standby);
+        IIntroPart introPart = IntroPlugin.showIntro(standby);
         if (introPart == null)
             return false;
-        // should rely on Workbench api. If the Intro part was not open when
-        // this method was called, the following line simply resets the part
-        // into standby.
-        PlatformUI.getWorkbench().getIntroManager().setIntroStandby(introPart,
-                standby);
-        return true;
+        else
+            return true;
     }
 
-    /**
-     * Utility method to return the Intro part, if it is open. If it is not, then opens the 
-     * Intro part with the given state. This is needed to avoid flicker if states need to be changed.
-     * @param standby
-     * @return
-     * @todo Generated comment
-     */
-    private CustomizableIntroPart getCustomizableIntroPart(boolean standby) {
-        // do not rely on model presentation to get part because Intro may be
-        // closed.
-        CustomizableIntroPart intro = (CustomizableIntroPart) IntroPlugin
-                .getIntroPart();
-        if (intro == null)
-            intro = (CustomizableIntroPart) IntroPlugin.showIntroPart(standby);
-        return intro;
-    }
 
     /**
      * Run an action

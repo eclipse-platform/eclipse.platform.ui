@@ -71,6 +71,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
     // to false whenever something bad happens.
     private boolean hasValidConfig = true;
 
+    private boolean isdynamicIntro;
+
     private IntroPartPresentation introPartPresentation;
     private IntroHomePage homePage;
     private String currentPageId;
@@ -118,7 +120,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
         IConfigurationElement presentationElement = loadPresentation();
         if (presentationElement == null) {
             // no presentations at all, exit.
-            setModelState(true, false);
+            setModelState(true, false, false);
             Log.warning("Could not find presentation element in intro config."); //$NON-NLS-1$
             return;
         }
@@ -137,14 +139,15 @@ public class IntroModelRoot extends AbstractIntroContainer {
             // we failed to parse the content file. Intro Parser would have
             // logged the fact. Parser would also have checked to see if the
             // content file has the correct root tag.
-            setModelState(true, false);
+            setModelState(true, false, false);
             return;
         }
 
         loadPages(document, getBundle());
         loadSharedGroups(document, getBundle());
 
-        setModelState(true, true);
+        // Attributes of root page decide if we have a static or dynamic case.
+        setModelState(true, true, getHomePage().isDynamic());
     }
 
 
@@ -372,11 +375,15 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
 
     /**
-     * Sets the model state based on all the model classes.
+     * Sets the model state based on all the model classes. Dynamic nature of
+     * the model is always setto false when we fail to load model for any
+     * reason.
      */
-    private void setModelState(boolean loaded, boolean hasValidConfig) {
+    private void setModelState(boolean loaded, boolean hasValidConfig,
+            boolean isdynamicIntro) {
         this.loaded = loaded;
         this.hasValidConfig = hasValidConfig;
+        this.isdynamicIntro = isdynamicIntro;
     }
 
     /**
@@ -418,6 +425,13 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     public boolean isLoaded() {
         return loaded;
+    }
+
+    /**
+     * @return Returns the isdynamicIntro.
+     */
+    public boolean isDynamic() {
+        return isdynamicIntro;
     }
 
     /**
@@ -493,7 +507,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      *         we are not in a dynamic intro mode.
      */
     public AbstractIntroPage getCurrentPage() {
-        if (!homePage.isDynamic())
+        if (!isdynamicIntro)
             return null;
 
         AbstractIntroPage page = (AbstractIntroPage) findChild(currentPageId,

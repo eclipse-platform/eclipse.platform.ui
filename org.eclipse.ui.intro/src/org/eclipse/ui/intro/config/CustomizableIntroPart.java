@@ -61,7 +61,6 @@ public final class CustomizableIntroPart extends IntroPart implements
     private StandbyPart standbyPart;
     private Composite container;
     private IMemento memento;
-    private boolean standbyPartCreated;
 
     // Adapter factory to abstract out the StandbyPart implementation from APIs.
     IAdapterFactory factory = new IAdapterFactory() {
@@ -156,7 +155,7 @@ public final class CustomizableIntroPart extends IntroPart implements
     public void standbyStateChanged(boolean standby) {
         // do this only if there is a valid config.
         if (model != null && model.hasValidConfig()) {
-            if (standby && !standbyPartCreated)
+            if (standby && standbyPart == null)
                 // if standby part is not created yet, create it only if in
                 // standby.
                 createStandbyPart();
@@ -174,15 +173,17 @@ public final class CustomizableIntroPart extends IntroPart implements
         standbyPart = new StandbyPart(model);
         standbyPart.init(this, getMemento(memento, MEMENTO_STANDBY_PART_TAG));
         standbyPart.createPartControl((Composite) getControl());
-        standbyPartCreated = true;
     }
 
 
     private void handleSetFocus(boolean standby) {
         if (standby)
-            standbyPart.setFocus();
-        else
-            presentation.setFocus();
+            // standby part is null when Intro has not gone into standby state
+            // yet, or if
+            if (standbyPart != null)
+                standbyPart.setFocus();
+            else
+                presentation.setFocus();
     }
 
     /*
@@ -191,8 +192,7 @@ public final class CustomizableIntroPart extends IntroPart implements
      * @see org.eclipse.ui.IWorkbenchPart#setFocus()
      */
     public void setFocus() {
-        handleSetFocus(PlatformUI.getWorkbench().getIntroManager()
-                .isIntroStandby(this));
+        handleSetFocus(IntroPlugin.isIntroStandby());
     }
 
     private void setTopControl(Control c) {
@@ -210,7 +210,7 @@ public final class CustomizableIntroPart extends IntroPart implements
         // the Containet top control may have only one child if the stanndby
         // part is not created yet. This happens if the intro never goes into
         // standby. Doing this for performance.
-        if (standbyPartCreated)
+        if (standbyPart != null)
             return container.getChildren()[1];
         return null;
     }

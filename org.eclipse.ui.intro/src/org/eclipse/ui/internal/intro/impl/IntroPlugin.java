@@ -97,11 +97,10 @@ public class IntroPlugin extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the Intro Part. If the Intro part is not shown already, it is
-     * opened.
+     * Returns the Intro Part.
      *  
      */
-    public static IIntroPart getIntroPart() {
+    public static IIntroPart getIntro() {
         IIntroPart introPart = PlatformUI.getWorkbench().getIntroManager()
                 .getIntro();
         return introPart;
@@ -111,13 +110,46 @@ public class IntroPlugin extends AbstractUIPlugin {
      * Returns the Intro Part after forcing an open on it.
      *  
      */
-    public static IIntroPart showIntroPart(boolean standby) {
+    public static IIntroPart showIntro(boolean standby) {
         IIntroPart introPart = PlatformUI.getWorkbench().getIntroManager()
                 .showIntro(
                         PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
-                        false);
+                        standby);
         return introPart;
     }
+
+    /**
+     * Returns the standby state of the Intro Part. If the intro is closed,
+     * retruns false.
+     *  
+     */
+    public static boolean isIntroStandby() {
+        return PlatformUI.getWorkbench().getIntroManager().isIntroStandby(
+                getIntro());
+    }
+
+    /**
+     * Sets the standby state of the Intro Part. If the intro is closed, retruns
+     * false.
+     *  
+     */
+    public static void setIntroStandby(boolean standdby) {
+        PlatformUI.getWorkbench().getIntroManager().setIntroStandby(getIntro(),
+                standdby);
+    }
+
+
+    /**
+     * Returns the standby state of the Intro Part. If the intro is closed,
+     * retruns false.
+     *  
+     */
+    public static boolean closeIntro() {
+        //      Relies on Workbench.
+        return PlatformUI.getWorkbench().getIntroManager().closeIntro(
+                getIntro());
+    }
+
 
     /*
      * (non-Javadoc)

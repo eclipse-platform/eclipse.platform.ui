@@ -248,6 +248,12 @@ public abstract class AbstractIntroPartImplementation {
         return memento.getString(IIntroConstants.MEMENTO_CURRENT_PAGE_ATT);
     }
 
+    protected boolean isURL(String aString) {
+        IntroURLParser parser = new IntroURLParser(aString);
+        if (parser.hasProtocol())
+            return true;
+        return false;
+    }
 
     public void setFocus() {
     }

@@ -295,10 +295,7 @@ public class StandbyPart implements IIntroConstants {
     }
 
     private void doReturn() {
-        IIntroPart part = PlatformUI.getWorkbench().getIntroManager()
-                .getIntro();
-        PlatformUI.getWorkbench().getIntroManager()
-                .setIntroStandby(part, false);
+        IntroPlugin.setIntroStandby(false);
     }
 
     /**

@@ -70,7 +70,8 @@ public class IntroModelSerializer {
     private void printHomePage(IntroHomePage rootPage, StringBuffer text) {
         text.append("\n\nHOME PAGE: "); //$NON-NLS-1$
         text.append("\n--------------"); //$NON-NLS-1$
-        text.append("\n\tis dynamic= " + rootPage.isDynamic()); //$NON-NLS-1$
+        text
+                .append("\n\tis dynamic= " + ((IntroModelRoot) rootPage.getParent()).isDynamic()); //$NON-NLS-1$
 
         text.append("\n\tid = " + rootPage.getId()); //$NON-NLS-1$
         text.append("\n\ttitle = " + rootPage.getTitle()); //$NON-NLS-1$
