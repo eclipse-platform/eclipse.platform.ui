@@ -124,7 +124,7 @@
 	
 	<extension point="org.eclipse.compare.contentMergeViewers">
 		<viewer
-			extensions="binary"
+			extensions="class,exe,dll,binary"
 			class="org.eclipse.compare.internal.BinaryCompareViewerCreator">
 		</viewer>
 		<viewer

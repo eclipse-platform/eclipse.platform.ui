@@ -688,11 +688,16 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 				is= sca.getContents();
 				if (is == null)
 					return null;
-				for (int i= 0; i < 1000; i++) {
+				int lineLength= 0;
+				while (true) {
 					int c= is.read();
 					if (c == -1)	// EOF
 						break;
-					if (c >= 128)
+					if (c == '\n')
+						lineLength= 0;
+					else
+						lineLength++;
+					if (lineLength > 1000)
 						return ITypedElement.UNKNOWN_TYPE;
 				}
 				return ITypedElement.TEXT_TYPE;
