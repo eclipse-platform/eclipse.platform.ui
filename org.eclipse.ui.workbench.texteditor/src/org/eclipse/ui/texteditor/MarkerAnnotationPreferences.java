@@ -80,34 +80,52 @@ public class MarkerAnnotationPreferences {
 		if (s == null || s.trim().length() == 0) return null;
 		info.setMarkerType(s);
 		
-		i= StringConverter.asInt(element.getAttribute("markerSeverity"), IMarker.SEVERITY_INFO);  //$NON-NLS-1$
+		i= IMarker.SEVERITY_INFO;
+		s= element.getAttribute("markerSeverity");  //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0)
+			i= StringConverter.asInt(s, IMarker.SEVERITY_INFO);
 		info.setSeverity(i);
 		
 		s= element.getAttribute("textPreferenceKey");  //$NON-NLS-1$
 		if (s == null || s.trim().length() == 0) return null;
 		info.setTextPreferenceKey(s);
 
-		b= StringConverter.asBoolean(element.getAttribute("textPreferenceValue"), false);  //$NON-NLS-1$
+		b= false;
+		s= element.getAttribute("textPreferenceValue");  //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0)
+			b= StringConverter.asBoolean(s, false);
 		info.setTextPreferenceValue(b);
 		
 		s= element.getAttribute("overviewRulerPreferenceKey");  //$NON-NLS-1$
 		if (s == null || s.trim().length() == 0) return null;
 		info.setOverviewRulerPreferenceKey(s);
 
-		b= StringConverter.asBoolean(element.getAttribute("overviewRulerPreferenceValue"), false);  //$NON-NLS-1$
+		b= false;
+		s= element.getAttribute("overviewRulerPreferenceValue");  //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0)
+			b= StringConverter.asBoolean(s, false);
 		info.setOverviewRulerPreferenceValue(b);
 
 		s= element.getAttribute("colorPreferenceKey");  //$NON-NLS-1$
 		if (s == null || s.trim().length() == 0) return null;
 		info.setColorPreferenceKey(s);
-						
-		RGB rgb= StringConverter.asRGB(element.getAttribute("colorPreferenceValue"), new RGB(0, 0, 0));  //$NON-NLS-1$
-		info.setColorPreferenceValue(rgb);
 		
-		i= StringConverter.asInt(element.getAttribute("presentationLayer"), 0);  //$NON-NLS-1$
+		RGB rgb= null;
+		s= element.getAttribute("colorPreferenceValue");  //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0)
+			rgb= StringConverter.asRGB(s);
+		info.setColorPreferenceValue(rgb == null ? new RGB(0, 0, 0) : rgb);
+		
+		i= 0;
+		s= element.getAttribute("presentationLayer");  //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0)
+			i= StringConverter.asInt(s, 0);
 		info.setPresentationLayer(i);
 		
-		b= StringConverter.asBoolean(element.getAttribute("contributesToHeader"), false);  //$NON-NLS-1$
+		b= false;
+		s= element.getAttribute("contributesToHeader");  //$NON-NLS-1$
+		if (s != null && s.trim().length() > 0)
+			b= StringConverter.asBoolean(s, false);
 		info.setContributesToHeader(b);
 		
 		return info;
