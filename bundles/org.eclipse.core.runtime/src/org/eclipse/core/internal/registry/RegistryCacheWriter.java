@@ -70,7 +70,7 @@ public class RegistryCacheWriter {
 			for (int i = 0; i < length; i++)
 				writeConfigurationElement((ConfigurationElement) elements[i], out);
 		} catch (IOException ioe) {
-			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ConfigruationElement"), ioe)); //$NON-NLS-1$
+			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ConfigruationElement"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -79,7 +79,7 @@ public class RegistryCacheWriter {
 			writeStringOrNull(object.getName(), out);
 			writeStringOrNull(object.getValue(), out);
 		} catch (IOException ioe) {
-			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ConfigurationProperty"), ioe)); //$NON-NLS-1$
+			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ConfigurationProperty"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -97,7 +97,7 @@ public class RegistryCacheWriter {
 			writeStringOrNull(object.getExtensionPointIdentifier(), out);
 			writeSubElements(object, out);
 		} catch (IOException ioe) {
-			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "Extension"), ioe)); //$NON-NLS-1$
+			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "Extension"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -143,7 +143,7 @@ public class RegistryCacheWriter {
 			for (int i = 0; i < length; i++)
 				writeExtension((Extension) extensions[i], out);
 		} catch (IOException ioe) {
-			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ExtensionPoint"), ioe)); //$NON-NLS-1$
+			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ExtensionPoint"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -189,7 +189,7 @@ public class RegistryCacheWriter {
 			for (int i = 0; i < length; i++)
 				writeExtension((Extension) extensions[i], out);
 		} catch (IOException ioe) {
-			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "Bundle"), ioe)); //$NON-NLS-1$
+			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "Bundle"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -212,7 +212,7 @@ public class RegistryCacheWriter {
 			for (int i = 0; i < ids.length; i++)
 				writeBundleModel((BundleModel) object.getElement(ids[i]), out);
 		} catch (IOException ioe) {
-			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ExtensionRegisry"), ioe)); //$NON-NLS-1$
+			problems.add(new Status(IStatus.WARNING, IPlatform.PI_RUNTIME, IPlatform.PARSE_PROBLEM, Policy.bind("meta.regCacheIOExceptionWriting", "ExtensionRegisry"), ioe)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

@@ -326,7 +326,7 @@ public class ExtensionsParser extends DefaultHandler {
 	}
 
 	private SAXParserFactory acquireXMLParsing() {
-		parserReference = InternalPlatform.getDefault().getBundleContext().getServiceReference("javax.xml.parsers.SAXParserFactory");
+		parserReference = InternalPlatform.getDefault().getBundleContext().getServiceReference("javax.xml.parsers.SAXParserFactory"); //$NON-NLS-1$
 		if (parserReference == null)
 			return null;
 		return (SAXParserFactory) InternalPlatform.getDefault().getBundleContext().getService(parserReference);
@@ -352,7 +352,7 @@ public class ExtensionsParser extends DefaultHandler {
 			if (manifestType == null)
 				throw new NullPointerException();
 			if (!(manifestType.equals(PLUGIN) || manifestType.equals(FRAGMENT)))
-				throw new IllegalArgumentException("Invalid manifest type: " + manifestType);
+				throw new IllegalArgumentException("Invalid manifest type: " + manifestType); //$NON-NLS-1$
 			this.manifestType = manifestType;
 			locationName = in.getSystemId();
 			try {
@@ -371,7 +371,7 @@ public class ExtensionsParser extends DefaultHandler {
 			releaseXMLParsing();
 			if (InternalPlatform.DEBUG) {
 				cumulativeTime = cumulativeTime + (System.currentTimeMillis() - start);
-				InternalPlatform.getDefault().setOption("org.eclipse.core.runtime/registry/parsing/timing" + "/value", Long.toString(cumulativeTime));
+				InternalPlatform.getDefault().setOption("org.eclipse.core.runtime/registry/parsing/timing/value", Long.toString(cumulativeTime)); //$NON-NLS-1$
 			}
 		}
 	}

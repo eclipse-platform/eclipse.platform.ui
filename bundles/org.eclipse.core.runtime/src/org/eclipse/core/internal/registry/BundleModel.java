@@ -122,7 +122,7 @@ public class BundleModel extends NestedRegistryModelObject implements IRegistryE
 	}
 
 	public String toString() {
-		return "BundleModel: " + getName();
+		return "BundleModel: " + getName(); //$NON-NLS-1$
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class BundleModel extends NestedRegistryModelObject implements IRegistryE
 	 * for extension points that were renamed between release 2.1 and 3.0.
 	 */
 	private void fixRenamedExtensionPoints() {
-		if (extensions == null || (schemaVersion != null && schemaVersion.equals("3.0")) || System.getProperties().get(NO_EXTENSION_MUNGING) != null)
+		if (extensions == null || (schemaVersion != null && schemaVersion.equals("3.0")) || System.getProperties().get(NO_EXTENSION_MUNGING) != null) //$NON-NLS-1$
 			return;
 		for (int i = 0; i < extensions.length; i++) {
 			Extension extension = (Extension) extensions[i];

@@ -128,7 +128,7 @@ public class RegistryCacheReader {
 		} catch (IOException e) {
 			String extensionId = null;
 			if (result != null && result.getParent() != null)
-				extensionId = result.getParentIdentifier() + "." + result.getSimpleIdentifier();
+				extensionId = result.getParentIdentifier() + "." + result.getSimpleIdentifier(); //$NON-NLS-1$
 			throw new InvalidRegistryCacheException(Policy.bind("meta.regCacheIOExceptionReading", "extension:  " + extensionId), e); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
