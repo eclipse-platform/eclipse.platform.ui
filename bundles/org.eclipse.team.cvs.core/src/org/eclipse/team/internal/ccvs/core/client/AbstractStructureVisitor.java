@@ -36,6 +36,9 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
  * by Command and it's subclasses.
  * Provides helper methods to send files and folders with modifications
  * to the server.
+ * 
+ * This class does not perform a beginTask of done on the provided monitor.
+ * It is used only to signal worl and subTask.
  */
 abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 	
@@ -46,16 +49,15 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 	protected boolean sendModifiedContents;
 	private boolean sendBinary;
 
-	public AbstractStructureVisitor(Session session, boolean sendQuestionable, boolean sendModifiedContents, IProgressMonitor monitor) {
-		this(session, sendQuestionable, sendModifiedContents, true, monitor);
+	public AbstractStructureVisitor(Session session, boolean sendQuestionable, boolean sendModifiedContents) {
+		this(session, sendQuestionable, sendModifiedContents, true);
 	}
 
-	public AbstractStructureVisitor(Session session, boolean sendQuestionable, boolean sendModifiedContents, boolean sendBinary, IProgressMonitor monitor) {
+	public AbstractStructureVisitor(Session session, boolean sendQuestionable, boolean sendModifiedContents, boolean sendBinary) {
 		this.session = session;
 		this.sendQuestionable = sendQuestionable;
 		this.sendModifiedContents = sendModifiedContents;
 		this.sendBinary = sendBinary;
-		this.monitor = Policy.infiniteSubMonitorFor(monitor, 256);
 	}
 		
 	/** 
@@ -189,6 +191,8 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 				session.sendUnchanged(mFile);
 			}
 		}
+		
+		monitor.worked(1);
 	}
 
 	protected void sendPendingNotification(ICVSFile mFile) throws CVSException {
@@ -203,7 +207,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 	 * This method is used to visit a set of ICVSResources. Using it ensures
 	 * that a common parent between the set of resources is only sent once
 	 */
-	public void visit(Session session, ICVSResource[] resources) throws CVSException {
+	public void visit(Session session, ICVSResource[] resources, IProgressMonitor monitor) throws CVSException {
 		
 		// Sort the resources to avoid sending the same directory multiple times
 		List resourceList = new ArrayList(resources.length);
@@ -234,13 +238,20 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 			}
 		});
 
-		// Visit all the resources
-		session.setSendFileTitleKey(getSendFileTitleKey());
-		for (int i = 0; i < resourceList.size(); i++) {
-			((ICVSResource)resourceList.get(i)).accept(this);
+		// Create a progress monitor suitable for the visit
+		int resourceHint = 64;
+		monitor.beginTask(null, resourceHint);
+		this.monitor = Policy.infiniteSubMonitorFor(monitor, resourceHint);
+		try {
+			// Visit all the resources
+			this.monitor.beginTask(null, resourceHint);
+			session.setSendFileTitleKey(getSendFileTitleKey());
+			for (int i = 0; i < resourceList.size(); i++) {
+				((ICVSResource)resourceList.get(i)).accept(this);
+			}
+		} finally {
+			monitor.done();
 		}
-		
-		monitor.done();
 	}
 	
 	protected String getSendFileTitleKey() {

@@ -14,7 +14,6 @@ package org.eclipse.team.internal.ccvs.core.client;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 
@@ -25,8 +24,8 @@ class ModifiedFileSender extends FileStructureVisitor {
 
 	private final Set modifiedFiles;
 	
-	public ModifiedFileSender(Session session, IProgressMonitor monitor) {
-		super(session, false, true, monitor);
+	public ModifiedFileSender(Session session) {
+		super(session, false, true);
 		modifiedFiles = new HashSet();
 	}
 	

@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
  
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -23,8 +22,8 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  */
 class TagFileSender extends FileStructureVisitor {
 
-	public TagFileSender(Session session, IProgressMonitor monitor) {
-		super(session, false, false, monitor);
+	public TagFileSender(Session session) {
+		super(session, false, false);
 	}
 	
 	/** 

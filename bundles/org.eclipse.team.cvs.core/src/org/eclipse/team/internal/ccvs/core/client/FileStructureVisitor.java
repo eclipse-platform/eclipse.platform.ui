@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.core.client;
 
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
@@ -32,12 +31,12 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 
 	private boolean sendEmptyFolders;
 
-	public FileStructureVisitor(Session session, boolean sendEmptyFolders, boolean sendModifiedContents, IProgressMonitor monitor) {
-		this(session, sendEmptyFolders, sendModifiedContents, true, monitor);
+	public FileStructureVisitor(Session session, boolean sendEmptyFolders, boolean sendModifiedContents) {
+		this(session, sendEmptyFolders, sendModifiedContents, true);
 	}
 
-	public FileStructureVisitor(Session session, boolean sendEmptyFolders, boolean sendModifiedContents, boolean sendBinary, IProgressMonitor monitor) {
-		super(session, true, sendModifiedContents, sendBinary, monitor);
+	public FileStructureVisitor(Session session, boolean sendEmptyFolders, boolean sendModifiedContents, boolean sendBinary) {
+		super(session, true, sendModifiedContents, sendBinary);
 		this.sendEmptyFolders = sendEmptyFolders;
 	}
 

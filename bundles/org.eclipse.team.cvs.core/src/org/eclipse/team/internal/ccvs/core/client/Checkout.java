@@ -99,7 +99,7 @@ public class Checkout extends Command {
 		}
 		if ( ! resourcesToSend.isEmpty()) {
 			resources = (ICVSResource[]) resourcesToSend.toArray(new ICVSResource[resourcesToSend.size()]);
-			new FileStructureVisitor(session, true, true, monitor).visit(session, resources);
+			new FileStructureVisitor(session, true, true).visit(session, resources, monitor);
 		}
 		return resources;
 	}

@@ -42,8 +42,8 @@ public class Add extends Command {
 		
 		// Get a vistor and use it on every resource we should
 		// work on
-		AddStructureVisitor visitor = new AddStructureVisitor(session, monitor);
-		visitor.visit(session, resources);
+		AddStructureVisitor visitor = new AddStructureVisitor(session);
+		visitor.visit(session, resources, monitor);
 		return resources;
 	}
 	

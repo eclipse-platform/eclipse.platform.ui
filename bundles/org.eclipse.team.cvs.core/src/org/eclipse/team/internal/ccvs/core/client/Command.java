@@ -262,7 +262,7 @@ public abstract class Command extends Request {
 		boolean emptyFolders, IProgressMonitor monitor) throws CVSException {
 		checkResourcesManaged(resources);
 		
-		new FileStructureVisitor(session, emptyFolders, true, monitor).visit(session, resources);
+		new FileStructureVisitor(session, emptyFolders, true).visit(session, resources, monitor);
 	}
 
 	/**
@@ -386,9 +386,9 @@ public abstract class Command extends Request {
 			// compute the work resources
 			resources = computeWorkResources(session, localOptions, arguments);			
 			Policy.checkCanceled(monitor);
-			// send local working directory state contributes 25% of work
+			// send local working directory state contributes 48% of work
 			resources = sendLocalResourceState(session, globalOptions, localOptions,
-				resources, Policy.subMonitorFor(monitor, 25));
+					resources, Policy.infiniteSubMonitorFor(monitor, 48));
 			Policy.checkCanceled(monitor);
 			// send arguments
 			sendArguments(session, arguments);
@@ -399,11 +399,11 @@ public abstract class Command extends Request {
 			if (listener == null) listener = getDefaultCommandOutputListener();
 
 			/*** execute command and process responses ***/
-			// Processing responses contributes 70% of work.
-			IStatus status = executeRequest(session, listener, Policy.subMonitorFor(monitor, 70));
+			// Processing responses contributes 50% of work.
+			IStatus status = executeRequest(session, listener, Policy.subMonitorFor(monitor, 50));
 
-			// Finished adds last 5% of work.
-			status = commandFinished(session, globalOptions, localOptions, resources, Policy.subMonitorFor(monitor, 5),
+			// Finished adds last 2% of work.
+			status = commandFinished(session, globalOptions, localOptions, resources, Policy.subMonitorFor(monitor, 2),
 				status);
 			return status;
 		} finally {			

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.client;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
@@ -20,9 +19,9 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
  */
 public class NOOPVisitor extends AbstractStructureVisitor {
 
-	public NOOPVisitor(Session session, IProgressMonitor monitor) {
+	public NOOPVisitor(Session session) {
 		// Only send non-empty folders
-		super(session, false, false, monitor);
+		super(session, false, false);
 	}
 	
 	/**
