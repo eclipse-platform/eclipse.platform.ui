@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Brock Janiczak - bug 78494
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
@@ -381,8 +382,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	/**
 	 * Updates the checked state of the given object's container assuming
 	 * that the child element has changed to the given enabled state.
-	 * @param object
-	 * @param enable
+	 * @param object the object whose parents should be updated
+	 * @param enable the object's new enabled state
 	 */
 	public void updateParents(Object object, boolean enable) {
 		Object parent= getTreeContentProvider().getParent(object);
@@ -413,6 +414,21 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	}
 
 	/**
+	 * Updates the checked state of the given container's children, assuming that
+	 * the element has changed to the given enabled state.
+	 * @param container the container whose children should be updated
+	 * @param enabled the container's new enabled state
+	 */
+	public void updateChildren(IBreakpointContainer container, boolean enabled) {
+		IBreakpointContainer[] children = container.getContainers();
+		for (int i = 0; i < children.length; i++) {
+			IBreakpointContainer childContainer = children[i];
+			CheckboxTreeViewer viewer= getCheckboxViewer();
+			viewer.setChecked(childContainer, enabled);
+			updateChildren(childContainer, enabled);
+		}
+	}
+	/**
 	 * A group has been checked or unchecked. Enable/disable all of the
 	 * breakpoints in that group to match.
 	 */
@@ -437,6 +453,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		// but we include it here so that the feedback is immediate when the user
 		// toggles a breakpoint within the view.
 		updateParents(container, enable);
+		updateChildren(container, enable);
 		if (!DebugPlugin.getDefault().getBreakpointManager().isEnabled()) {
 			viewer.setGrayed(container, true);
 		}
