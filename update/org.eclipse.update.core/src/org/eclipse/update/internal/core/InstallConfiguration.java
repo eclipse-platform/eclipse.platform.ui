@@ -11,10 +11,10 @@ import java.util.*;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.PluginDescriptorModel;
+import org.eclipse.core.runtime.model.PluginFragmentModel;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.IFeatureReference;
-import org.eclipse.update.core.SiteManager;
 import org.eclipse.update.core.model.SiteModel;
 import org.eclipse.update.internal.model.*;
 
@@ -329,18 +329,38 @@ public class InstallConfiguration
 					// get the URL of the plugin that corresponds to the feature (pluginid = featureid)					
 					IPluginEntry[] entries = feature.getPluginEntries();
 					URL url = null;
+					IPluginEntry featurePlugin = null;
 					for (int k = 0; k < entries.length; k++) {
 						if (id.equalsIgnoreCase(entries[k].getVersionedIdentifier().getIdentifier())) {
 							url = getRuntimeConfigurationURL(entries[k], cSite);
+							featurePlugin = entries[k];
 						}
 					}
+					
+					// get any fragments for the feature plugin
+					ArrayList list = new ArrayList();
+					if (url != null) 
+						list.add(url);
+					if (featurePlugin != null) {
+						URL[] fragments = getRuntimeFragmentURLs(featurePlugin);
+						list.addAll(Arrays.asList(fragments));
+					}
+					URL[] roots = (URL[]) list.toArray(new URL[0]);
 
+					// save information in runtime platform state
 					String version = feature.getVersionedIdentifier().getVersion().toString();
 					String application = feature.getApplication();
 					IPlatformConfiguration.IFeatureEntry featureEntry =
-						runtimeConfiguration.createFeatureEntry(id, version, application, url);
+						runtimeConfiguration.createFeatureEntry(id, version, application, roots);
 					runtimeConfiguration.configureFeatureEntry(featureEntry);
-				}
+				} else {
+					// write non-primary feature entries
+					String id = feature.getVersionedIdentifier().getIdentifier();
+					String version = feature.getVersionedIdentifier().getVersion().toString();
+					IPlatformConfiguration.IFeatureEntry featureEntry =
+						runtimeConfiguration.createFeatureEntry(id, version, null, null);
+					runtimeConfiguration.configureFeatureEntry(featureEntry);
+				}				
 
 				// write the platform features (features that contain special platform plugins)
 				IPluginEntry[] platformPlugins =
@@ -683,6 +703,44 @@ public class InstallConfiguration
 				e);
 			//$NON-NLS-1$
 		}
+	}
+	
+	/*
+	 * Return URLs for any fragments that are associated with the specified plugin entry
+	 */
+	private URL[] getRuntimeFragmentURLs(
+		IPluginEntry entry)
+		throws CoreException {
+			
+		// get the identifier associated with the entry
+		VersionedIdentifier vid = entry.getVersionedIdentifier();
+		
+		// get the plugin descriptor from the registry
+		IPluginRegistry reg = Platform.getPluginRegistry();
+		IPluginDescriptor desc = reg.getPluginDescriptor(vid.getIdentifier());
+		ArrayList list = new ArrayList();
+		if (desc != null) {
+			try {
+				// get all of the fragments
+				PluginDescriptorModel descModel = (PluginDescriptorModel) desc;
+				PluginFragmentModel[] frags = descModel.getFragments();
+				
+				for (int i=0; frags!=null && i<frags.length; i++) {
+					String location = frags[i].getLocation();
+					try {
+						URL locationURL = new URL(location);
+						locationURL = Platform.resolve(locationURL);
+						list.add(locationURL);
+					} catch(IOException e) {
+						// skip bad fragments
+					}
+				}				
+				
+			} catch(ClassCastException e) {
+				// cannot determine fragments
+			}
+		}
+		return (URL[]) list.toArray(new URL[0]);
 	}
 
 	/**
