@@ -17,8 +17,7 @@ import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.PropertyManager;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
@@ -36,7 +35,6 @@ protected Resource(IPath path, Workspace workspace) {
  */
 public void accept(final IResourceProxyVisitor visitor, int memberFlags) throws CoreException {
 	final ResourceProxy proxy = new ResourceProxy();
-	final CoreException[] signal = new CoreException[1];
 	final boolean includePhantoms = (memberFlags & IContainer.INCLUDE_PHANTOMS) != 0;
 	final boolean includeTeamPrivate = (memberFlags & IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS) != 0;
 	IElementContentVisitor elementVisitor = new IElementContentVisitor() {
@@ -51,9 +49,8 @@ public void accept(final IResourceProxyVisitor visitor, int memberFlags) throws 
 			try {
 				return visitor.visit(proxy);
 			} catch (CoreException e) {
-				signal[0] = e;
 				//throw an exception to bail out of the traversal
-				throw new RuntimeException();
+				throw new WrappedRuntimeException(e);
 			} finally {
 				proxy.reset();
 			}
@@ -61,9 +58,11 @@ public void accept(final IResourceProxyVisitor visitor, int memberFlags) throws 
 	};
 	try {
 		new ElementTreeIterator(workspace.getElementTree(), getFullPath()).iterate(elementVisitor);
+	} catch (WrappedRuntimeException e) {
+		throw (CoreException) e.getTargetException();
+	} catch (OperationCanceledException e) {
+		throw e;
 	} catch (RuntimeException e) {
-		if (signal[0] != null)
-			throw signal[0];
 		String msg = Policy.bind("resources.errorVisiting");//$NON-NLS-1$
 		IResourceStatus errorStatus = new ResourceStatus(IResourceStatus.INTERNAL_ERROR, getFullPath(), msg, e);
 		ResourcesPlugin.getPlugin().getLog().log(errorStatus);
