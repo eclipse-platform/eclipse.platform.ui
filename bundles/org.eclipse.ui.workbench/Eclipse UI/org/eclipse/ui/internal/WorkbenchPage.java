@@ -1308,14 +1308,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 		IViewReference ref = findViewReference(id);
 		if (ref == null)
 			return null;
-
-		// Create the control first - needed for fast views only
-		IViewPart view = ref.getView(true);
-		ViewPane pane = (ViewPane) ((WorkbenchPartReference) ref).getPane();
-		Control ctrl = pane.getControl();
-		if (ctrl == null)
-			pane.createControl(getClientComposite());
-		return view;
+		return ref.getView(true);
 	}
 	
 	/* (non-Javadoc)
@@ -2587,6 +2580,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements IWorkbench
 	 * Sets the active part.
 	 */
 	private void setActivePart(IWorkbenchPart newPart) {
+	    System.err.println("setActivePart: " + newPart);
 		// Optimize it.
 		if (activePart == newPart)
 			return;
