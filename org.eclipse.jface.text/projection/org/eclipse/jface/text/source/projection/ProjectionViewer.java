@@ -186,6 +186,8 @@ public class ProjectionViewer extends SourceViewer implements ISourceViewer, ITe
 				if (slave.getLength() == master.getLength()) {
 					replaceVisibleDocument(master);
 					freeSlaveDocument(slave);
+				} else {
+					invalidateTextPresentation(offset, length);
 				}
 			}
 		} catch (BadLocationException e) {
