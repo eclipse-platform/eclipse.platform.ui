@@ -474,9 +474,7 @@ public final class WorkbenchKeyboard {
             }
         }
 
-        return command.isHandled(); // TODO what is the purpose of returning
-        // this expression? should isDefined be
-        // considered as well?
+        return (command.isDefined() && command.isHandled());
     }
 
     /**
