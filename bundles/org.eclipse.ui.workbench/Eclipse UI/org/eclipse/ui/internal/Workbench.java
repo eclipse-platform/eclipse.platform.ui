@@ -20,9 +20,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -154,7 +156,6 @@ import org.eclipse.ui.internal.roles.ObjectActivityManager;
 import org.eclipse.ui.internal.roles.RoleManager;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.progress.IProgressManager;
 import org.eclipse.update.core.SiteManager;
@@ -231,7 +232,8 @@ public class Workbench
 			 * global key filter.
 			 */
 			if (event.doit) {
-				processKeyEvent(event);
+				Set keyStrokes = generatePossibleKeyStrokes(event);
+				processKeyEvent(keyStrokes, event);
 			}
 		}
 	}
@@ -559,7 +561,8 @@ public class Workbench
 		}
 			
 		// Allow special key out-of-order processing.
-		if (isOutOfOrderKey(event)) {
+		Set keyStrokes = generatePossibleKeyStrokes(event);
+		if (isOutOfOrderKey(keyStrokes)) {
 			if (event.type == SWT.KeyDown) {
 				Widget widget = event.widget;
 				if (widget instanceof StyledText) {
@@ -579,7 +582,7 @@ public class Workbench
 			 * keys). 
 			 */
 		} else {
-			processKeyEvent(event);
+			processKeyEvent(keyStrokes, event);
 		}
 	}
 	
@@ -596,18 +599,16 @@ public class Workbench
 	 * unmodified "Escape" key stroke.
 	 * </p>
 	 * 
-	 * @param event The event containing key strokes; must not be 
-	 * <code>null</code>.
+	 * @param keyStrokes The key stroke in which to look for out-of-order keys;
+	 * must not be <code>null</code>.
 	 * 
 	 * @since 3.0
 	 */
-	private static boolean isOutOfOrderKey(Event event) {
-		// Get the key strokes from the event.
-		KeyStroke[] keyStrokes = generatePossibleKeyStrokes(event);
-		
+	private static boolean isOutOfOrderKey(Set keyStrokes) {		
 		// Compare to see if one of the possible key strokes is out of order.
-		for (int i = 0; i < keyStrokes.length; i++) {
-			if (outOfOrderKeys.getKeyStrokes().contains(keyStrokes[i])) {
+		Iterator keyStrokeItr = keyStrokes.iterator();
+		while (keyStrokeItr.hasNext()) {
+			if (outOfOrderKeys.getKeyStrokes().contains(keyStrokeItr.next())) {
 				return true;
 			}
 		}
@@ -621,16 +622,16 @@ public class Workbench
 	 * 
 	 * @param event The event from which the key strokes should be generated;
 	 * must not be <code>null</code>.
-	 * @return An array of nearly matching key strokes.  It is never 
-	 * <code>null</code> and never empty; however, duplicates may exist. 
+	 * @return The set of nearly matching key strokes.  It is never 
+	 * <code>null</code> and never empty. 
 	 * 
 	 * @since 3.0
 	 */
-	private static KeyStroke[] generatePossibleKeyStrokes(Event event) {
-		KeyStroke[] keyStrokes = new KeyStroke[3];
-		keyStrokes[0] = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnmodifiedAccelerator(event));
-		keyStrokes[1] = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnshiftedModifiedAccelerator(event));
-		keyStrokes[2] = KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToModifiedAccelerator(event));
+	public static Set generatePossibleKeyStrokes(Event event) {
+		Set keyStrokes = new HashSet();
+		keyStrokes.add(KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnmodifiedAccelerator(event)));
+		keyStrokes.add(KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToUnshiftedModifiedAccelerator(event)));
+		keyStrokes.add(KeySupport.convertAcceleratorToKeyStroke(KeySupport.convertEventToModifiedAccelerator(event)));
 		return keyStrokes;
 	}
 	
@@ -639,12 +640,13 @@ public class Workbench
 	 * <code>ICommandManager</code>.  If work is carried out, then the event is
 	 * stopped here (i.e., <code>event.doit = false</code>).
 	 * 
+	 * @param keyStrokes The set of all possible matching key strokes; must not
+	 * be <code>null</code>.
 	 * @param event The event to process; must not be <code>null</code>.
 	 * 
 	 * @since 3.0
 	 */
-	private void processKeyEvent(Event event) {
-		KeyStroke[] keyStrokes = generatePossibleKeyStrokes(event);
+	private void processKeyEvent(Set keyStrokes, Event event) {
 		if (press(keyStrokes, event)) {
 			switch (event.type) {
 				case SWT.KeyDown :
@@ -675,25 +677,28 @@ public class Workbench
 	 * 
 	 * @since 3.0
 	 */
-	public boolean press(KeyStroke[] potentialKeyStrokes, Event event) {
+	public boolean press(Set potentialKeyStrokes, Event event) {
 		// TODO move this method to CommandManager once getMode() is added to ICommandManager (and triggers and change event)
 		// TODO remove event parameter once key-modified actions are removed
 		
 		// Check every potential key stroke until one matches.
-		for (int i = 0; i < potentialKeyStrokes.length; i++) {
+		Iterator keyStrokeItr = potentialKeyStrokes.iterator();
+		while (keyStrokeItr.hasNext()) {
 			KeySequence modeBeforeKeyStroke = commandManager.getMode();
 			List keyStrokes = new ArrayList(modeBeforeKeyStroke.getKeyStrokes());
-			keyStrokes.add(potentialKeyStrokes[i]);
+			keyStrokes.add(keyStrokeItr.next());
 			KeySequence modeAfterKeyStroke = KeySequence.getInstance(keyStrokes);
 			Map matchesByKeySequenceForModeBeforeKeyStroke = commandManager.getMatchesByKeySequenceForMode();
 			commandManager.setMode(modeAfterKeyStroke);
 			Map matchesByKeySequenceForModeAfterKeyStroke = commandManager.getMatchesByKeySequenceForMode();
 			boolean consumeKeyStroke = false;
+			boolean matchingSequence = false;
 
 			if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {
 				// this key stroke is part of one or more possible completions: consume the keystroke
 				updateModeLines(modeAfterKeyStroke);
 				consumeKeyStroke = true;
+				matchingSequence = true;
 			} else {
 				// there are no possible longer multi-stroke sequences, allow a completion now if possible
 				Match match = (Match) matchesByKeySequenceForModeBeforeKeyStroke.get(modeAfterKeyStroke);
@@ -720,6 +725,8 @@ public class Workbench
 						// consume the keystroke
 						consumeKeyStroke = true;
 					}
+					
+					matchingSequence = true;
 				}
 	
 				// possibly no completion was found, or no action was found corresponding to the completion, but if we were already in a mode consume the keystroke anyway.									
@@ -738,8 +745,15 @@ public class Workbench
 				// We found a match, so stop now.
 				return consumeKeyStroke;
 			} else {
-				// Restore the mode, so we can try again.
-				commandManager.setMode(modeBeforeKeyStroke);
+				/* If we haven't consumed the stroke, but we found a command
+				 * That matches, then we should break the loop.
+				 */
+				if (matchingSequence) {
+					break;
+				} else {
+					// Restore the mode, so we can try again.
+					commandManager.setMode(modeBeforeKeyStroke);
+				}
 			}
 		}
 		
