@@ -261,8 +261,14 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 	 * @return <code>true</code>, iff the key sequence is complete.
 	 */
 	public final boolean isComplete() {
-		return (triggers.length == 0)
-				|| ((KeyStroke) triggers[triggers.length - 1]).isComplete();
+		final int triggersLength = triggers.length;
+		for (int i = 0; i < triggersLength; i++) {
+			if (!((KeyStroke) triggers[i]).isComplete()) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**

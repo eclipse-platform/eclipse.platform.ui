@@ -62,12 +62,14 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 		RESOURCE_BUNDLE = ResourceBundle.getBundle(NativeKeyFormatter.class
 				.getName());
 
-		CARBON_KEY_LOOK_UP
-				.put(IKeyLookup.BS_NAME, Character.toString('\u232B'));
+		final String carbonBackspace = Character.toString('\u232B');
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.BS_NAME, carbonBackspace);
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.BACKSPACE_NAME, carbonBackspace);
 		CARBON_KEY_LOOK_UP
 				.put(IKeyLookup.CR_NAME, Character.toString('\u21A9'));
-		CARBON_KEY_LOOK_UP.put(IKeyLookup.DEL_NAME, Character
-				.toString('\u2326'));
+		final String carbonDelete = Character.toString('\u2326');
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.DEL_NAME, carbonDelete);
+		CARBON_KEY_LOOK_UP.put(IKeyLookup.DELETE_NAME, carbonDelete);
 		CARBON_KEY_LOOK_UP.put(IKeyLookup.SPACE_NAME, Character
 				.toString('\u2423'));
 		CARBON_KEY_LOOK_UP.put(IKeyLookup.ALT_NAME, Character
@@ -198,7 +200,7 @@ public class NativeKeyFormatter extends AbstractKeyFormatter {
 			}
 
 		}
-		
+
 		return sortedKeys;
 	}
 }

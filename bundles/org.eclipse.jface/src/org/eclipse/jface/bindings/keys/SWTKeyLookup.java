@@ -97,21 +97,26 @@ public final class SWTKeyLookup implements IKeyLookup {
 		final Integer bs = new Integer(SWT.BS);
 		naturalKeyTable.put(BS_NAME, bs);
 		nameTable.put(bs, BS_NAME);
+		naturalKeyTable.put(BACKSPACE_NAME, bs);
 		final Integer capsLock = new Integer(SWT.CAPS_LOCK);
 		naturalKeyTable.put(CAPS_LOCK_NAME, capsLock);
 		nameTable.put(capsLock, CAPS_LOCK_NAME);
 		final Integer cr = new Integer(SWT.CR);
 		naturalKeyTable.put(CR_NAME, cr);
 		nameTable.put(cr, CR_NAME);
+		naturalKeyTable.put(ENTER_NAME, cr);
+		naturalKeyTable.put(RETURN_NAME, cr);
 		final Integer del = new Integer(SWT.DEL);
 		naturalKeyTable.put(DEL_NAME, del);
 		nameTable.put(del, DEL_NAME);
+		naturalKeyTable.put(DELETE_NAME, del);
 		final Integer end = new Integer(SWT.END);
 		naturalKeyTable.put(END_NAME, end);
 		nameTable.put(end, END_NAME);
 		final Integer esc = new Integer(SWT.ESC);
 		naturalKeyTable.put(ESC_NAME, esc);
 		nameTable.put(esc, ESC_NAME);
+		naturalKeyTable.put(ESCAPE_NAME, esc);
 		final Integer f1 = new Integer(SWT.F1);
 		naturalKeyTable.put(F1_NAME, f1);
 		nameTable.put(f1, F1_NAME);
@@ -259,6 +264,15 @@ public final class SWTKeyLookup implements IKeyLookup {
 		}
 
 		return name.charAt(0);
+	}
+
+	public final Integer formalKeyLookupInteger(final String name) {
+		final Object value = naturalKeyTable.get(name);
+		if (value instanceof Integer) {
+			return (Integer) value;
+		}
+
+		return new Integer(name.charAt(0));
 	}
 
 	public final int formalModifierLookup(final String name) {
