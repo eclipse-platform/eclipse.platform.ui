@@ -1,3 +1,9 @@
+/**********************************************************************
+This file is made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+**********************************************************************/
+
 //
 // PlantySaxDefaultHandler.java
 //
@@ -9,6 +15,7 @@
 //
 package org.eclipse.ui.externaltools.internal.ant.editor;
 
+import java.text.MessageFormat;
 import java.util.Stack;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -106,7 +113,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
 			ExternalToolsPlugin.getDefault().log("PlantySaxDefaultHandler(" +aRowOfCursorPosition+ ", "+aColumnOfCursorPosition+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
         }
         if(aRowOfCursorPosition < 0 || aColumnOfCursorPosition < 0) {
-            throw new IllegalArgumentException("The cursor position of " +aRowOfCursorPosition+ ", " +aColumnOfCursorPosition+ "(startingRow, startingColumn) is not valid");
+            throw new IllegalArgumentException(MessageFormat.format(AntEditorMessages.getString("PlantySaxDefaultHandler.Invalid_cursor_position"), new String[]{Integer.toString(aRowOfCursorPosition), Integer.toString(aColumnOfCursorPosition)})); //$NON-NLS-1$
         }
         rowOfCursorPosition = aRowOfCursorPosition;
         columnOfCursorPosition = aColumnOfCursorPosition;
@@ -192,7 +199,7 @@ public class PlantySaxDefaultHandler extends DefaultHandler {
         // Create a Dom Element
         String tempTagName = aLocalName.length() > 0 ? aLocalName : aQualifiedName;
         if(tempTagName == null || tempTagName.length() == 0) {
-            throw new PlantyException("Error when parsing document: Neither a local name nor qualified of an element specified");
+            throw new PlantyException(AntEditorMessages.getString("PlantySaxDefaultHandler.Error_parsing")); //$NON-NLS-1$
         }
         // This code added to determine root element in a rational way bf
         if (rootElementName == null)
