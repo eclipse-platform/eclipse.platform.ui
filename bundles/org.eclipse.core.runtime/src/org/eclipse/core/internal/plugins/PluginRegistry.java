@@ -21,6 +21,10 @@ public class PluginRegistry extends PluginRegistryModel implements IPluginRegist
 	// lifecycle events
 	private static final int STARTUP = 0;
 	private static final int SHUTDOWN = 1;
+
+	// registry index - used to store last modified times for
+	// registry caching
+	private Map regIndex = null;
 	
 public PluginRegistry() {
 	super();
@@ -277,4 +281,12 @@ private void shutdownPlugins() {
 	accept(visitor, true);
 }
 public void startup(IProgressMonitor progress) {}
+public void addLastModifiedTime (String pathKey, long lastModTime) {
+	if (regIndex == null)
+		regIndex = new HashMap(30);
+	regIndex.put(pathKey, new Long(lastModTime));
+}
+public Map getRegIndex() {
+	return regIndex;
+}
 }

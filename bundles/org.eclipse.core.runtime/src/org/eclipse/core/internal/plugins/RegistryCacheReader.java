@@ -1038,29 +1038,40 @@ private boolean readAndCheckLastModified (PluginRegistry cachedRegistry, DataInp
 		for (int i = 0; i < numEntries; i++) {
 			String fileName = in.readUTF();
 			long lastMod = in.readLong();
-			InternalPlatform.addLastModifiedTime(fileName, lastMod);
+			cachedRegistry.addLastModifiedTime(fileName, lastMod);
 		}
 	} catch (IOException ioe) {
 		cacheReadProblems.add(new Status(IStatus.WARNING, Platform.PI_RUNTIME, Platform.PARSE_PROBLEM, Policy.bind ("meta.regCacheIOException", decipherLabel(REGISTRY_LABEL)), ioe));
 		return false;
 	}
 	
-	Map onDiskModTimes = new HashMap(30);
-	for (int i = 0; i < pluginPath.length; i++) {
-		String pluginString = pluginPath[i].getFile();
-		if (pluginString.endsWith("/")) {
-			// directory entry - search for plugins
-			String[] members = getPathMembers(pluginPath[i]);
-			for (int j = 0; j < members.length; j++) {
-				onDiskModTimes.put(new String(pluginString + members[j] + "/plugin.xml"), new Long(0L));
-				onDiskModTimes.put(new String(pluginString + members[j] + "/fragment.xml"), new Long(0L));
+	Map onDiskModTimes = null;
+	if (pluginPath != null) {
+		onDiskModTimes = new HashMap(30);	
+		for (int i = 0; i < pluginPath.length; i++) {
+			String pluginString = pluginPath[i].getFile();
+			if (pluginString.endsWith("/")) {
+				// directory entry - search for plugins
+				String[] members = getPathMembers(pluginPath[i]);
+				for (int j = 0; j < members.length; j++) {
+					onDiskModTimes.put(new String(pluginString + members[j] + "/plugin.xml"), new Long(0L));
+					onDiskModTimes.put(new String(pluginString + members[j] + "/fragment.xml"), new Long(0L));
+				}
+			} else {
+				onDiskModTimes.put(new String(pluginString), new Long(0L));
 			}
-		} else {
-			onDiskModTimes.put(new String(pluginString), new Long(0L));
 		}
 	}
 	
-	Map regIndex = InternalPlatform.getRegIndex();
+	Map regIndex = cachedRegistry.getRegIndex();
+	
+	// Get the simple (i.e. null) cases out of the way quickly
+	if ((regIndex == null) && (onDiskModTimes == null))
+		return true;
+		
+	if (((regIndex == null) && (onDiskModTimes != null)) ||
+		((regIndex != null) && (onDiskModTimes == null)))
+		return false;
 	
 	for (Iterator keys = regIndex.keySet().iterator(); keys.hasNext();) {
 		String cacheKey = (String)keys.next();
