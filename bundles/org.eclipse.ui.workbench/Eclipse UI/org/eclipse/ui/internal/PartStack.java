@@ -189,11 +189,16 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     		ILayoutContainer childContainer = child.getContainer();
     		
     		if (isDisposed()) {
-    			// Currently, we allow null backpointers if the widgetry is disposed.
-    			// However, it is never valid for the child to have a parent other than
-    			// this object
-    			if (childContainer != null) {
-    				Assert.isTrue(childContainer == this);
+    			// Disable tests for placeholders -- PartPlaceholder backpointers don't
+    			// obey the usual rules -- they sometimes point to a container placeholder
+    			// for this stack instead of the real stack.
+    			if (!(child instanceof PartPlaceholder)) {
+	    			// Currently, we allow null backpointers if the widgetry is disposed.
+	    			// However, it is never valid for the child to have a parent other than
+	    			// this object
+	    			if (childContainer != null) {
+	    				Assert.isTrue(childContainer == this);
+	    			}
     			}
     		} else {
     			// If the widgetry exists, the child's backpointer must point to us
@@ -205,7 +210,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         		if (SwtUtil.isChild(child.getControl(), focusControl)) {
         			Assert.isTrue(child == current);
 //  focus check commented out since it fails when focus workaround in LayoutPart.setVisible is not present       			
-//        			Assert.isTrue(getActive() == StackPresentation.AS_ACTIVE_FOCUS);
+        			Assert.isTrue(getActive() == StackPresentation.AS_ACTIVE_FOCUS);
         		}
     		}
     		
@@ -219,7 +224,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     	}
     	
     	// If we have at least one child, ensure that the "current" pointer points to one of them
-    	if (children.length > 0) {
+    	if (!isDisposed() && getPresentableParts().size() > 0) {
     		Assert.isTrue(currentFound);
     		
     		if (!isDisposed()) {
@@ -279,10 +284,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
     public void add(LayoutPart child) {
         children.add(child);
         showPart(child, null);
-        
-        if (children.size() == 1 && child instanceof PartPane) {
-        	setSelection(child);
-        }
     }
     
     /**
@@ -416,8 +417,6 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
                 if (dropResult == null) { return null; }
 
-                //if (dropResult.getInsertionPoint() == pane.getPresentablePart()) { return null; };
-                
                 return new IDropTarget() {
 
                     public void drop() {
@@ -453,11 +452,13 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
 
         ctrl.setData(this);
         
-        if (getVisiblePart() == null) {
+        updateActions();
+        
+        // We should not have a placeholder selected once we've created the widgetry
+        if (current instanceof PartPlaceholder) {
+        	current = null;
         	updateContainerVisibleTab();
         }
-        
-        updateActions();
         
         refreshPresentationSelection();
     }
@@ -692,14 +693,11 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             child.setContainer(null);
         }
         
-        //TODO: Temporarily rolled back a fix -- we should only update the selection when the *selected*
-        // part is removed, not all parts. However, it seems that this is covering up another selection
-        // bug, so the following is commented out temporarily while the real problem can be investigated.
-        //if (child == current) {
-        updateContainerVisibleTab();
-        //}
+        if (child == current) {
+        	updateContainerVisibleTab();
+        }    	
     }
-
+    
     /**
      * Reparent a part. Also reparent visible children...
      */
@@ -989,6 +987,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         if (presentablePart == null) { return; }
 
         presentationSite.getPresentation().addPart(presentablePart, cookie);
+        
+        if (current == null) {
+        	setSelection(part);
+        }
     }
 
     /**
