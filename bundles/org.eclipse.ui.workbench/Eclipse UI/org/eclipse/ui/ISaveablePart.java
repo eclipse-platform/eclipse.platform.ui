@@ -17,10 +17,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Workbench parts implement or adapt to this interface to participate
  * in the enablement and execution of the <code>Save</code> and
  * <code>Save As</code> actions.
- * <p>
- * NOTE: This is experimental API, which may be changed or removed at any point in time.
- * This API should not be called, overridden or otherwise used in production code.
- * </p>
  * 
  * @since 2.1
  * @see org.eclipse.ui.IEditorPart  
