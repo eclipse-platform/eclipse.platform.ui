@@ -60,7 +60,7 @@
       <property name="data-dir" value="${jface-sniff-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname"
-                value="org.eclipse.jface.tests.viewers.AllTests"/>
+                value="org.eclipse.jface.tests.AllTests"/>
     </ant>
     
     <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">

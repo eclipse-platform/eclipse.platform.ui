@@ -386,7 +386,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
                 handleAboutToShow();
             }
         });
-        markDirty();
         // Don't do an update(true) here, in case menu is never opened.
         // Always do it lazily in handleAboutToShow().
     }
@@ -455,6 +454,19 @@ public class MenuManager extends ContributionManager implements IMenuManager {
         return visibleChildren;
     }
 
+    
+    /**
+     * The <code>MenuManager</code> implementation of this <code>ContributionManager</code> method
+     * also marks the parent manager as dirty.
+     */
+    public void markDirty() {
+        super.markDirty();
+        IContributionManager parent = getParent();
+        if (parent != null) {
+            parent.markDirty();
+        }
+    }
+    
     /**
      * Returns whether the menu control is created
      * and not disposed.

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.tests.viewers;
+package org.eclipse.jface.tests.images;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -23,16 +23,8 @@ public class AllTests extends TestSuite {
         return new AllTests();
     }
 
-     public AllTests() {
-        addTestSuite(TreeViewerTest.class);
-        addTestSuite(TableViewerTest.class);
-        addTestSuite(VirtualTableViewerTest.class);
-        addTestSuite(TableTreeViewerTest.class);
-        addTestSuite(TableColorProviderTest.class);
-        addTestSuite(TableFontProviderTest.class);
-        addTestSuite(ListViewerTest.class);
-        addTestSuite(CheckboxTableViewerTest.class);
-        addTestSuite(CheckboxTreeViewerTest.class);
-        addTestSuite(ComboViewerTest.class);
+    public AllTests() {
+        addTestSuite(ImageRegistryTest.class);
+        addTestSuite(ImageCacheTest.class);
     }
 }
