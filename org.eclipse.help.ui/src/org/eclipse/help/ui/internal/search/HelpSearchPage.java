@@ -83,8 +83,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		});
 		searchWordCombo.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
-				scontainer.setPerformActionEnabled(
-					searchWordCombo.getText().length() > 0);
+				updateSearchButtonState();
 			}
 		});
 		// Space
@@ -229,8 +228,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 				searchWordCombo.setItems(patterns);
 			}
 			searchWordCombo.setFocus();
-			scontainer.setPerformActionEnabled(
-				searchWordCombo.getText().length() > 0);
+			updateSearchButtonState();
 		}
 		super.setVisible(visible);
 	}
