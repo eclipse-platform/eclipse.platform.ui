@@ -3838,8 +3838,8 @@ public class TextViewer extends Viewer implements
 					if (length == 0 && !ignoreWhitespace && line.getLength() > 0) {
 						// found a non-empty line which cannot be shifted
 						return;
-					} else 
-						occurrences[i]= new Region(index, length);
+					}
+					occurrences[i]= new Region(index, length);
 				} else {
 					// found a line which cannot be shifted
 					return;
@@ -4673,9 +4673,8 @@ public class TextViewer extends Viewer implements
 				Region reversed= new Region(modelRange.getOffset() + modelRange.getLength(), -modelRange.getLength());
 				IRegion result= fInformationMapping.toImageRegion(reversed);
 				return new Region(result.getOffset() + result.getLength(), -result.getLength());
-			} else {
-				return fInformationMapping.toImageRegion(modelRange);
 			}
+			return fInformationMapping.toImageRegion(modelRange);
 			
 		} catch (BadLocationException x) {
 		}
@@ -4753,9 +4752,9 @@ public class TextViewer extends Viewer implements
 				Region reveresed= new Region(widgetRange.getOffset() + widgetRange.getLength(), -widgetRange.getLength());
 				IRegion result= fInformationMapping.toOriginRegion(reveresed);
 				return new Region(result.getOffset() + result.getLength(), -result.getLength());
-			} else {
-				return fInformationMapping.toOriginRegion(widgetRange);
 			}
+			
+			return fInformationMapping.toOriginRegion(widgetRange);
 			
 		} catch (BadLocationException x) {
 			int modelOffset= widgetOffset2ModelOffset(widgetRange.getOffset());
@@ -4917,9 +4916,8 @@ public class TextViewer extends Viewer implements
 		if (fWidgetTokenKeeper instanceof IWidgetTokenKeeperExtension) {
 			IWidgetTokenKeeperExtension extension= (IWidgetTokenKeeperExtension) fWidgetTokenKeeper;
 			return extension.setFocus(this);
-		} else  {
-			return false;
-		}
+		} 
+		return false;
 	}
 	
 	/**
