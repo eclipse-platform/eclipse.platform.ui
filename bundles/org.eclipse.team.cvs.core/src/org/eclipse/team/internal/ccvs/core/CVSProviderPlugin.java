@@ -600,9 +600,7 @@ public class CVSProviderPlugin extends Plugin {
 	 * Return the CVS preferences node in the instance scope
 	 */
 	public org.osgi.service.prefs.Preferences getInstancePreferences() {
-		IPreferencesService service = Platform.getPreferencesService();
-		IEclipsePreferences root = service.getRootNode();
-		return root.node(InstanceScope.SCOPE).node(getBundle().getSymbolicName());
+		return new InstanceScope().getNode(getBundle().getSymbolicName());
 	}
 	
 	/**
