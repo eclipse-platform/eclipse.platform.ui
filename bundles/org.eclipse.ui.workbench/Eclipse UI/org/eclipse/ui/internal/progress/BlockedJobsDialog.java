@@ -18,7 +18,6 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -243,24 +242,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 			}
 		};
 	}
-	/**
-	 * Create a button with the supplied parameters.
-	 * 
-	 * @param parent
-	 * @param text
-	 * @param listener
-	 * @return
-	 */
-	private Button createButton(Composite parent, String text,
-			SelectionListener listener) {
-		Button button = new Button(parent, SWT.PUSH);
-		button.setText(text); //$NON-NLS-1$
-		button.addSelectionListener(listener);
-		if (arrowCursor == null)
-			arrowCursor = new Cursor(button.getDisplay(), SWT.CURSOR_ARROW);
-		button.setCursor(arrowCursor);
-		return button;
-	}
+	
 	/**
 	 * Clear the cursors in the dialog.
 	 */
@@ -335,5 +317,13 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 */
 	public void setBlockedTaskName(String taskName) {
 		blockedTaskName = taskName;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IconAndMessageDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected Control createButtonBar(Composite parent) {
+		// Do nothing here as we want no buttons
+		return parent;
 	}
 }
