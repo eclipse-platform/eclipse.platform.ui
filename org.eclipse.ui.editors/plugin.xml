@@ -27,7 +27,7 @@
    <extension-point id="documentProviders" name="%ExtPoint.documentProviders" schema="schema/documentProviders.exsd"/>
    <extension-point id="markerUpdaters" name="%ExtPoint.markerUpdaters" schema="schema/markerUpdaters.exsd"/>
    <extension-point id="markerAnnotationSpecification" name="%ExtPoint.markerAnnotationSpecification" schema="schema/markerAnnotationSpecification.exsd"/>
-   <extension-point id="annotationTypes" schema="schema/annotationTypes.exsd"/>
+   <extension-point id="annotationTypes" name="%ExtPoint.annotationTypes" schema="schema/annotationTypes.exsd"/>
 
    <extension
          point="org.eclipse.ui.commands">
