@@ -21,7 +21,7 @@ import org.eclipse.team.internal.ui.Policy;
  * Encapsulates information about a resource that requires
  * contact with the Team API.
  */
-class MergeResource {
+public class MergeResource {
 	private IRemoteSyncElement syncTree;
 	
 	/**
@@ -106,6 +106,10 @@ class MergeResource {
 		return syncTree.getLocal();
 	}
 
+	public IRemoteSyncElement getSyncElement() {
+		return syncTree;
+	}
+	
 	/**
 	 * Returns true if this merge resource has a base resource,
 	 * and false otherwise.
