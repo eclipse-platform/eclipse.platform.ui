@@ -444,6 +444,25 @@ public abstract class RepositoryProvider implements IProjectNature {
 	}
 	
 	/**
+	 * Returns whether the given project is shared or not. This is a lightweight
+	 * method in that it will not instantiate a provider instance (as
+	 * <code>getProvider</code> would) if one is not already instantiated.
+	 * @param project the project being tested.
+	 * @return boolean
+	 * 
+	 * @see getProvider(IProject)
+	 */
+	public static boolean isShared(IProject project) {
+		try {
+			if (lookupProviderProp(project) != null) return true;
+			return project.getPersistentProperty(PROVIDER_PROP_KEY) != null;
+		} catch (CoreException e) {
+			TeamPlugin.log(e.getStatus());
+			return false;
+		}
+	}
+	
+	/**
 	 * Provisional non-API method.
 	 *
 	 * This method is here to allow experimentation with 3rd party tools

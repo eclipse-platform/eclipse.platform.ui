@@ -367,4 +367,12 @@ public class RepositoryProviderTests extends TeamTest {
 		fail("Link should be disallowed");
 	}
 	
+	public void testIsShared() throws CoreException, TeamException {
+		IProject project1 = getUniqueTestProject("testGetProviderById_1");
+		RepositoryProvider.map(project1, RepositoryProviderBic.NATURE_ID);
+		assertTrue(RepositoryProvider.isShared(project1));
+		RepositoryProvider.unmap(project1);
+		assertTrue(!RepositoryProvider.isShared(project1));
+	}
+	
 }
