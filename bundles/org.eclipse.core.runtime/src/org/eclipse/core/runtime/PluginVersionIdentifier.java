@@ -33,8 +33,8 @@ import org.eclipse.core.internal.runtime.Assert;
  * and compatible service update of the minor version component.
  * </p>
  * <p>
- * Version identifiers can be matched for equality, equivalency,
- * and compatibility.
+ * Version identifiers can be matched as perfectly equal, equivalent,
+ * compatible or greaterOrEqual.
  * </p>
  * <p>
  * Clients may instantiate; not intended to be subclassed by clients.
