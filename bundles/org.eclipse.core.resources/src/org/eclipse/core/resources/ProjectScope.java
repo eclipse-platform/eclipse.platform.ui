@@ -28,6 +28,9 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
  * The path for preferences defined in the project scope hierarchy
  * is as follows: <code>/project/&lt;projectName&gt;/&lt;qualifier&gt;</code>
  * </p>
+ * <p>
+ * This class is not intended to be subclassed. This class may be instantiated.
+ * </p>
  * @see IProject#getLocation()
  * @since 3.0
  */
