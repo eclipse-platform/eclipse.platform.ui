@@ -283,13 +283,20 @@ public class ReviewPage
 
 		createTable(client);
 
-		Composite buttonContainer = new Composite(client, SWT.NULL);
+		Composite comp = new Composite(client, SWT.NONE);
+		layout = new GridLayout();
+		layout.marginWidth = layout.marginHeight = 0;
+		comp.setLayout(layout);
+		comp.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+				
+		Composite buttonContainer = new Composite(comp, SWT.NULL);
 		gd = new GridData(GridData.FILL_VERTICAL);
 		buttonContainer.setLayoutData(gd);
 		layout = new GridLayout();
 		layout.marginWidth = 0;
-		layout.marginHeight = 0;
+		layout.marginHeight = 0; //30?
 		buttonContainer.setLayout(layout);
+		buttonContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		Button button = new Button(buttonContainer, SWT.PUSH);
 		button.setText(UpdateUI.getString("InstallWizard.ReviewPage.selectAll")); //$NON-NLS-1$

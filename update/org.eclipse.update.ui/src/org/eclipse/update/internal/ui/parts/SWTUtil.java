@@ -93,6 +93,7 @@ public class SWTUtil {
 	 * @param button	the button for which to set the dimension hint
 	 */
 	public static void setButtonDimensionHint(Button button) {
+		Dialog.applyDialogFont(button);
 		Assert.isNotNull(button);
 		Object gd = button.getLayoutData();
 		if (gd instanceof GridData) {
