@@ -29,7 +29,7 @@ import org.eclipse.osgi.service.datalocation.Location;
  * The path for preferences defined in the configuration scope hierarchy
  * is as follows: <code>/configuration/&lt;qualifier&gt;</code>
  * </p>
- * @see IPlatform#getConfigurationLocation()
+ * @see Platform#getConfigurationLocation()
  * @since 3.0
  */
 public final class ConfigurationScope extends AbstractScope {
