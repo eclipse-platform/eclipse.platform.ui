@@ -150,7 +150,7 @@ public class BreakpointsView extends AbstractDebugView {
 	/**
 	 * @see AbstractDebugView#createViewer(Composite)
 	 */
-	protected StructuredViewer createViewer(Composite parent) {
+	protected Viewer createViewer(Composite parent) {
 		StructuredViewer viewer = new TableViewer(parent, SWT.MULTI| SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new BreakpointsViewContentProvider());
 		viewer.setLabelProvider(new DelegatingModelPresentation());
@@ -192,7 +192,7 @@ public class BreakpointsView extends AbstractDebugView {
 		action.setEnabled(DebugPlugin.getDefault().getBreakpointManager().getBreakpoints().length == 0 ? false : true);
 		setAction("RemoveAll", action); //$NON-NLS-1$
 		
-		action = new ShowQualifiedAction(getViewer());
+		action = new ShowQualifiedAction(getStructuredViewer());
 		action.setChecked(true);
 		setAction("ShowQualifiedNames", action); //$NON-NLS-1$
 		
@@ -202,7 +202,7 @@ public class BreakpointsView extends AbstractDebugView {
 		
 		setAction("EnableDisableBreakpoint", new EnableDisableBreakpointAction(getViewer())); //$NON-NLS-1$
 		
-		setAction("ShowBreakpointsForModel", new ShowBreakpointsForModelAction(getViewer())); //$NON-NLS-1$
+		setAction("ShowBreakpointsForModel", new ShowBreakpointsForModelAction(getStructuredViewer())); //$NON-NLS-1$
 	}
 
 	/**

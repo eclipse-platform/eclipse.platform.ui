@@ -5,10 +5,12 @@ package org.eclipse.debug.ui;
  * All Rights Reserved.
  */
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IValue;
@@ -21,12 +23,16 @@ import org.eclipse.debug.internal.ui.InspectorView;
 import org.eclipse.debug.internal.ui.LazyModelPresentation;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This class provides utilities for clients of the debug UI.
@@ -207,16 +213,46 @@ public class DebugUITools {
 	}	
 	
 	/**
-	 * Returns the currently selected debug element in the 
-	 * debug view of the current workbench page, or <code>null</code>
-	 * if there is no current debug context.
+	 * Returns the currently selected element in the 
+	 * debug view of the current workbench page,
+	 * or <code>null</code> if there is no current
+	 * debug context, or if not called from the UI
+	 * thread.
 	 * 
 	 * @return the currently selected debug context, or <code>null</code>
+	 * @since 2.0
 	 */
-	public static IDebugElement getDebugContext() {
-		return DebugUIPlugin.getDefault().getDebugContext();
+	public static IAdaptable getDebugContext() {
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow() ;
+		if (window != null) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				IWorkbenchPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
+				if (part != null) {
+					IDebugViewAdapter view = (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
+					if (view != null) {
+						Viewer viewer = view.getViewer();
+						if (viewer != null) {
+							ISelection s = viewer.getSelection();
+							if (s != null) {
+								if (s instanceof IStructuredSelection) {
+									IStructuredSelection ss = (IStructuredSelection)s;
+									if (ss.size() == 1) {
+										Object element = ss.getFirstElement();
+										if (element instanceof IAdaptable) {
+											return (IAdaptable)element;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return null;
 	}
-	
+			
 	/**
 	 * Returns the process associated with the current debug context.
 	 * If there is no debug context currently, the most recently
@@ -224,9 +260,26 @@ public class DebugUITools {
 	 * <code>null</code> is returned.
 	 * 
 	 * @return the current process, or <code>null</code>
+	 * @since 2.0
 	 */
 	public static IProcess getCurrentProcess() {
-		return DebugUIPlugin.getDefault().getCurrentProcess();
+		IAdaptable context = getDebugContext();
+		if (context == null) {
+			return DebugUIPlugin.getDefault().getCurrentProcess();
+		}
+		if (context instanceof IDebugElement) {
+			return ((IDebugElement)context).getDebugTarget().getProcess();
+		}
+		if (context instanceof IProcess) {
+			return (IProcess)context;
+		}
+		if (context instanceof ILaunch) {
+			IProcess[] ps = ((ILaunch)context).getProcesses();
+			if (ps.length > 0) {
+				return ps[ps.length - 1];
+			}
+		}
+		return null;
 	}
 }
 

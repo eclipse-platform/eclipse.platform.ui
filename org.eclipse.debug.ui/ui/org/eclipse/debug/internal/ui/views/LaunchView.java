@@ -16,7 +16,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
@@ -24,18 +23,11 @@ import org.eclipse.debug.internal.ui.ControlAction;
 import org.eclipse.debug.internal.ui.CopyToClipboardActionDelegate;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
-import org.eclipse.debug.internal.ui.DisconnectActionDelegate;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.RelaunchActionDelegate;
 import org.eclipse.debug.internal.ui.RemoveTerminatedAction;
-import org.eclipse.debug.internal.ui.ResumeActionDelegate;
 import org.eclipse.debug.internal.ui.ShowQualifiedAction;
-import org.eclipse.debug.internal.ui.StepIntoActionDelegate;
-import org.eclipse.debug.internal.ui.StepOverActionDelegate;
-import org.eclipse.debug.internal.ui.StepReturnActionDelegate;
-import org.eclipse.debug.internal.ui.SuspendActionDelegate;
-import org.eclipse.debug.internal.ui.TerminateActionDelegate;
 import org.eclipse.debug.internal.ui.TerminateAllAction;
 import org.eclipse.debug.internal.ui.TerminateAndRemoveActionDelegate;
 import org.eclipse.debug.ui.AbstractDebugView;
@@ -51,11 +43,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -115,7 +107,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @see AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
-		StructuredViewer viewer = getViewer();
+		StructuredViewer viewer = getStructuredViewer();
 		
 		IAction action;
 		
@@ -131,12 +123,16 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		setAction("TerminateAll", new TerminateAllAction()); //$NON-NLS-1$
 		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider())); //$NON-NLS-1$
 		
-		setAction("CopyToClipboard", new ControlAction(viewer, new CopyToClipboardActionDelegate())); //$NON-NLS-1$
-
+		setAction("CopyToClipboard", new ControlAction(viewer, new CopyToClipboardActionDelegate()));
+ //$NON-NLS-1$
 		IAction qAction = new ShowQualifiedAction(viewer);
 		qAction.setChecked(false);
 		setAction("ShowQualifiedNames", qAction);	 //$NON-NLS-1$
-		
+
+		// XXX: Temp Hack to get the debug viewer set properly
+		DebugPageSelectionProvider dpsp = (DebugPageSelectionProvider)DebugSelectionManager.getDefault().getSelectionProvider(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		dpsp.setDebugView(this);
+				
 		// submit an async exec to update the selection once the
 		// view has been created - i.e. auto-expand and select the
 		// suspended thread on creation. (Done here, because the
@@ -147,12 +143,13 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 			}
 		};
 		asyncExec(r);		
+		
 	}
 
 	/**
 	 * @see AbstractDebugView#createViewer(Composite)
 	 */
-	protected StructuredViewer createViewer(Composite parent) {
+	protected Viewer createViewer(Composite parent) {
 		LaunchViewer lv = new LaunchViewer(parent);
 		lv.addSelectionChangedListener(this);
 		lv.setContentProvider(createContentProvider());
@@ -162,6 +159,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		getSite().setSelectionProvider(lv);
 		lv.setInput(DebugPlugin.getDefault().getLaunchManager());
 		setEventHandler(new LaunchViewEventHandler(this, lv));
+		
 		return lv;
 	}
 	
@@ -223,10 +221,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(IDebugUIConstants.THREAD_GROUP));
-		tbm.add(getAction("RemoveAll")); //$NON-NLS-1$
+		tbm.add(getAction("RemoveAll"));
 		tbm.add(new Separator(IDebugUIConstants.STEP_GROUP));
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		tbm.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
+		tbm.add(getAction("ShowQualifiedNames"));
 	}	
 
 	/**
@@ -609,14 +607,14 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		if (refreshNeeded) {
 			//ensures that the child item exists in the viewer widget
 			//set selection only works if the child exists
-			getViewer().refresh(element);
+			getStructuredViewer().refresh(element);
 		}
 		if (selectNeeded) {
 			getViewer().setSelection(new StructuredSelection(selectee), true);
 		}
 		if (children != null && children.length > 0) {
 			//reveal the thread children of a debug target
-			getViewer().reveal(children[0]);
+			getStructuredViewer().reveal(children[0]);
 		}
 	}	
 	

@@ -12,8 +12,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.views.AbstractDebugSelectionProvider;
+import org.eclipse.debug.internal.ui.views.DebugSelectionManager;
+import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -26,8 +29,11 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextInputListener;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.VerifyEvent;
@@ -41,14 +47,12 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class ConsoleView extends ViewPart implements IDocumentListener {
+public class ConsoleView extends AbstractDebugView implements IDocumentListener, ISelectionChangedListener {
 
-	protected ConsoleViewer fConsoleViewer= null;
 	protected ClearOutputAction fClearOutputAction= null;
 
 	protected Map fGlobalActions= new HashMap(10);
@@ -56,99 +60,83 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 	
 	protected IDocument fCurrentDocument= null;
 	/**
-	 * @see ViewPart#createChild(IWorkbenchPartContainer)
+	 * @see AbstractDebugView#createViewer(Composite)
 	 */
-	public void createPartControl(Composite parent) {
-		fConsoleViewer= new ConsoleViewer(parent);
-		initializeActions();
-		initializeToolBar();
-
-		// create context menu
-		MenuManager menuMgr= new MenuManager("#PopUp", IDebugUIConstants.ID_CONSOLE_VIEW); //$NON-NLS-1$
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager mgr) {
-				fillContextMenu(mgr);
-			}
-		});
-		Menu menu= menuMgr.createContextMenu(fConsoleViewer.getTextWidget());
-		fConsoleViewer.getTextWidget().setMenu(menu);
-		// register the context menu such that other plugins may contribute to it
-		getSite().registerContextMenu(menuMgr, fConsoleViewer);
+	protected Viewer createViewer(Composite parent) {
+		ConsoleViewer cv = new ConsoleViewer(parent);		
+		cv.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
+		cv.addTextInputListener(getTextInputListener());
+		getSite().setSelectionProvider(cv.getSelectionProvider());
 		
-		fConsoleViewer.getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
-		fConsoleViewer.addTextInputListener(getTextInputListener());
-		getSite().setSelectionProvider(fConsoleViewer.getSelectionProvider());
-		setViewerInput(DebugUIPlugin.getDefault().getCurrentProcess());
-		WorkbenchHelp.setHelp(
-			parent,
-			new ViewContextComputer(this, IDebugHelpContextIds.CONSOLE_VIEW));
+		// listen to selection changes in the debug view
+		ISelectionProvider sp = DebugSelectionManager.getDefault().getSelectionProvider(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		sp.addSelectionChangedListener(this);			
+		return cv;
 	}
-
+	
 	/**
-	 * @see IWorkbenchPart#setFocus()
+	 * @see AbstractDebugView#getHelpContextId()
 	 */
-	public void setFocus() {
-		if (fConsoleViewer != null) {
-			fConsoleViewer.getControl().setFocus();
-		}
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.CONSOLE_VIEW;
 	}
 	
 	/** 
 	 * Sets the input of the viewer of this view in the
 	 * UI thread.
 	 */
-	protected void setViewerInput(IAdaptable element) {
-		setViewerInput(element, true);
-	}
-	
-	/** 
-	 * Sets the input of the viewer of this view in the
-	 * UI thread.  The current input process is determined
-	 * if so specified.
-	 */
-	protected void setViewerInput(final IAdaptable element, final boolean determineCurrentProcess) {
-		if (fConsoleViewer == null || fConsoleViewer.getControl() == null || fConsoleViewer.getControl().isDisposed()) {
+	protected void setViewerInput(final IProcess process) {
+		if (getViewer() == null || getViewer().getControl() == null || getViewer().getControl().isDisposed()) {
 			return;
 		}
-		Display display= fConsoleViewer.getControl().getDisplay();
-		if (display != null) {
-			display.asyncExec(new Runnable() {
-				public void run() {
-					if (fConsoleViewer == null) {
-						return;
-					}
-					Control viewerControl= fConsoleViewer.getControl();
-					if (viewerControl == null || viewerControl.isDisposed()) {
-						return;
-					}
-					IDocument doc= DebugUIPlugin.getDefault().getConsoleDocument((IProcess) element, determineCurrentProcess);
-					fConsoleViewer.setDocument(doc);
-				}
-			});
+		if (getViewer().getInput() == process) {
+			if (getConsoleViewer().getDocument() == null) {
+				getConsoleViewer().setDocument(new ConsoleDocument(null));
+			}
+			return;
 		}
+		Runnable r = new Runnable() {
+			public void run() {
+				if (getViewer() == null) {
+					return;
+				}
+				Control viewerControl= getViewer().getControl();
+				if (viewerControl == null || viewerControl.isDisposed()) {
+					return;
+				}
+				IDocument doc = null;
+				if (process != null) {
+					doc = DebugUIPlugin.getDefault().getConsoleDocument(process);
+				}
+				if (doc == null) {
+					doc = new ConsoleDocument(null);
+				}
+				getConsoleViewer().setDocument(doc);
+			}
+		};
+		asyncExec(r);
 	}
-	
+		
 	/**
-	 * Initialize the actions of this view
+	 * @see AbstractDebugView#createActions()
 	 */
-	private void initializeActions() {
-		fClearOutputAction= new ClearOutputAction(fConsoleViewer);
+	protected void createActions() {
+		fClearOutputAction= new ClearOutputAction(getConsoleViewer());
 		
 		// In order for the clipboard actions to accessible via their shortcuts
 		// (e.g., Ctrl-C, Ctrl-V), we *must* set a global action handler for
 		// each action		
 		IActionBars actionBars= getViewSite().getActionBars();
-		TextViewerAction action= new TextViewerAction(fConsoleViewer, fConsoleViewer.CUT);
+		TextViewerAction action= new TextViewerAction(getTextViewer(), TextViewer.CUT);
 		action.configureAction(DebugUIMessages.getString("ConsoleView.Cu&t@Ctrl+X_3"), DebugUIMessages.getString("ConsoleView.Cut_4"), DebugUIMessages.getString("ConsoleView.Cut_5")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		setGlobalAction(actionBars, ITextEditorActionConstants.CUT, action);
-		action= new TextViewerAction(fConsoleViewer, fConsoleViewer.COPY);
+		action= new TextViewerAction(getTextViewer(), TextViewer.COPY);
 		action.configureAction(DebugUIMessages.getString("ConsoleView.&Copy@Ctrl+C_6"), DebugUIMessages.getString("ConsoleView.Copy_7"), DebugUIMessages.getString("ConsoleView.Copy_8")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		setGlobalAction(actionBars, ITextEditorActionConstants.COPY, action);
-		action= new TextViewerAction(fConsoleViewer, fConsoleViewer.PASTE);
+		action= new TextViewerAction(getTextViewer(), TextViewer.PASTE);
 		action.configureAction(DebugUIMessages.getString("ConsoleView.&Paste@Ctrl+V_9"), DebugUIMessages.getString("ConsoleView.Paste_10"), DebugUIMessages.getString("ConsoleView.Paste_Clipboard_Text_11")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		setGlobalAction(actionBars, ITextEditorActionConstants.PASTE, action);
-		action= new TextViewerAction(fConsoleViewer, fConsoleViewer.SELECT_ALL);
+		action= new TextViewerAction(getTextViewer(), TextViewer.SELECT_ALL);
 		action.configureAction(DebugUIMessages.getString("ConsoleView.Select_&All@Ctrl+A_12"), DebugUIMessages.getString("ConsoleView.Select_All_13"), DebugUIMessages.getString("ConsoleView.Select_All_14")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		setGlobalAction(actionBars, ITextEditorActionConstants.SELECT_ALL, action);
 		
@@ -156,11 +144,11 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.DebugUIMessages"); //$NON-NLS-1$
 		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));				 //$NON-NLS-1$
 	
-		action= new TextViewerGotoLineAction(fConsoleViewer);
+		action= new TextViewerGotoLineAction(getConsoleViewer());
 		setGlobalAction(actionBars, ITextEditorActionConstants.GOTO_LINE, action);				
 		actionBars.updateActionBars();
 		
-		fConsoleViewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
+		getConsoleViewer().getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
 			public void verifyKey(VerifyEvent event) {
 				IAction gotoLine= (IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE);
 				if (event.stateMask == SWT.CTRL && event.keyCode == 0 && event.character == 0x0C && event.keyCode == 0 && gotoLine.isEnabled()) {
@@ -174,6 +162,9 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 		fSelectionActions.add(ITextEditorActionConstants.COPY);
 		fSelectionActions.add(ITextEditorActionConstants.PASTE);
 		updateAction(ITextEditorActionConstants.FIND);
+		
+		// initialize input, after viewer has been created
+		setViewerInput(DebugUITools.getCurrentProcess());
 	}
 
 	protected void setGlobalAction(IActionBars actionBars, String actionID, IAction action) {
@@ -182,19 +173,17 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 	}
 	
 	/**
-	 * Configures the toolBar.
+	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
 	 */
-	private void initializeToolBar() {
-		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
-		tbm.add(fClearOutputAction);
-		getViewSite().getActionBars().updateActionBars();
+	protected void configureToolBar(IToolBarManager mgr) {
+		mgr.add(fClearOutputAction);
 	}
 	/**
 	 * Adds the text manipulation actions to the <code>ConsoleViewer</code>
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
-		Point selectionRange= fConsoleViewer.getTextWidget().getSelection();
-		ConsoleDocument doc= (ConsoleDocument) fConsoleViewer.getDocument();
+		Point selectionRange= getConsoleViewer().getTextWidget().getSelection();
+		ConsoleDocument doc= (ConsoleDocument) getConsoleViewer().getDocument();
 		if (doc == null) {
 			return;
 		}
@@ -221,10 +210,10 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 	 */
 	public Object getAdapter(Class required) {
 		if (IFindReplaceTarget.class.equals(required)) {
-			return fConsoleViewer.getFindReplaceTarget();
+			return getConsoleViewer().getFindReplaceTarget();
 		}
 		if (Widget.class.equals(required)) {
-			return fConsoleViewer.getTextWidget();
+			return getConsoleViewer().getTextWidget();
 		}
 		return super.getAdapter(required);
 	}
@@ -268,9 +257,10 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 	}
 	
 	public void dispose() {
-		if (fConsoleViewer != null) {
-			fConsoleViewer.dispose();
-			fConsoleViewer= null;
+		ISelectionProvider sp = DebugSelectionManager.getDefault().getSelectionProvider(getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		sp.removeSelectionChangedListener(this);		
+		if (getConsoleViewer() != null) {
+			getConsoleViewer().dispose();
 		}
 		if (fCurrentDocument != null) {
 			fCurrentDocument.removeDocumentListener(this);
@@ -288,6 +278,20 @@ public class ConsoleView extends ViewPart implements IDocumentListener {
 	 */
 	public void documentChanged(DocumentEvent arg0) {
 		updateAction(ITextEditorActionConstants.FIND);
+	}
+	
+	/**
+	 * Change to show the document associated with the 
+	 * selection in the debug view.
+	 * 
+	 * @see ISelectionChangedListener#selectionChanged(SelectionChangedEvent)
+	 */
+	public void selectionChanged(SelectionChangedEvent event) {
+		setViewerInput(DebugUITools.getCurrentProcess());
+	}
+
+	public ConsoleViewer getConsoleViewer() {
+		return (ConsoleViewer)getViewer();
 	}
 }
 

@@ -6,12 +6,12 @@ package org.eclipse.debug.ui;
  */
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
 
 /**
- * An adapter that debug views containing a structured viewer implement.
- * Provides access to enclosed viewer and debug model presentation being
+ * An adapter that debug views implement.
+ * Provides access to underlying viewer and debug model presentation being
  * used by a viewer. This allows clients to do such things as add and
  * remove filters to a viewer, and configure a debug model presentation.
  * The following debug views support this adapter:
@@ -20,6 +20,7 @@ import org.eclipse.ui.IViewPart;
  * <li>Breakpoint view</li>
  * <li>Variable view</li>
  * <li>Inspector view</li>
+ * <li>Console view</li>
  * </ul>
  * <p>
  * Clients are not intended to implement this interface.
@@ -37,11 +38,12 @@ import org.eclipse.ui.IViewPart;
 public interface IDebugViewAdapter extends IViewPart {
 	
 	/**
-	 * Returns the structured viewer contained in this debug view.
+	 * Returns the viewer contained in this debug view.
 	 *
 	 * @return viewer
+	 * @since 2.0
 	 */
-	public StructuredViewer getViewer();
+	public Viewer getViewer();
 	
 	/**
 	 * Returns the debug model presentation for this view specified
@@ -60,6 +62,7 @@ public interface IDebugViewAdapter extends IViewPart {
 	 * @param actionId the action id
 	 * @param action the action, or <code>null</code> to clear it
 	 * @see #getAction
+	 * @since 2.0
 	 */
 	public void setAction(String actionID, IAction action);
 	
@@ -69,6 +72,7 @@ public interface IDebugViewAdapter extends IViewPart {
 	 * @param actionId the action id
 	 * @return the action, or <code>null</code> if none
 	 * @see #setAction
+	 * @since 2.0
 	 */
 	public IAction getAction(String actionID);
 	

@@ -11,8 +11,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -27,7 +27,7 @@ public class InspectorView extends AbstractDebugView {
 	/**
 	 * @see AbstractDebugView#createViewer(Composite)
 	 */
-	protected StructuredViewer createViewer(Composite parent) {
+	protected Viewer createViewer(Composite parent) {
 		TreeViewer vv = new TreeViewer(parent, SWT.MULTI);
 		setContentProvider(new InspectorContentProvider());
 		vv.setContentProvider(getContentProvider());
@@ -50,11 +50,11 @@ public class InspectorView extends AbstractDebugView {
 	protected void createActions() {
 		IAction action;
 		
-		action = new ShowTypesAction(getViewer());
+		action = new ShowTypesAction(getStructuredViewer());
 		action.setChecked(false);
 		setAction("ShowTypes", action); //$NON-NLS-1$
 		
-		action = new ShowQualifiedAction(getViewer());
+		action = new ShowQualifiedAction(getStructuredViewer());
 		action.setChecked(false);
 		setAction("ShowQualifiedNames", action); //$NON-NLS-1$
 				

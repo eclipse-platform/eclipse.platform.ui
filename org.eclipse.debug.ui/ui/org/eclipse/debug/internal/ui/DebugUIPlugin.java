@@ -92,8 +92,7 @@ import org.xml.sax.SAXException;
  * The Debug UI Plugin.
  *
  */
-public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionListener, 
-															   IDocumentListener, 
+public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener, 
 															   ILaunchListener,
 															   IResourceChangeListener {
 															   	
@@ -360,12 +359,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionListene
 		
 		// shutdown the perspective manager
 		PerspectiveManager.getDefault().shutdown();		
-		
-		IWorkbenchWindow window= getActiveWorkbenchWindow();
-		if (window != null) {
-			window.getSelectionService().removeSelectionListener(this);
-		}
-		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
+				ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.removeLaunchListener(this);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 		fColorManager.dispose();
@@ -390,7 +384,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionListene
 		super.startup();
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(this);	
-		getActiveWorkbenchWindow().getSelectionService().addSelectionListener(this);		
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		//set up the docs for launches already registered
 		ILaunch[] launches= launchManager.getLaunches();
@@ -420,67 +413,20 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionListene
 	 * If the document is <code>null</code> the mapping for the
 	 * process is removed.
 	 */
-	public void setConsoleDocument(IProcess process, IDocument doc) {
+	protected void setConsoleDocument(IProcess process, IDocument doc) {
 		if (doc == null) {
 			fConsoleDocuments.remove(process);
 		} else {
-
 			fConsoleDocuments.put(process, doc);
 		}
 	}
-
+	
 	/**
-	 * Returns the correct document for the process, determining the current
-	 * process if required (process argument is null).
+	 * Returns thedocument for the process, or <code>null</code>
+	 * if none.
 	 */
 	public IDocument getConsoleDocument(IProcess process) {
-		return getConsoleDocument(process, true);
-	}
-	
-	/**
-	 * Returns the correct document for the process, determining the current
-	 * process if specified.
-	 */
-	public IDocument getConsoleDocument(IProcess process, boolean determineCurrentProcess) {
-		if (process != null) {
-			IDocument document= (IDocument) fConsoleDocuments.get(process);
-			if (document != null) {
-				return document;
-			}
-			document= new ConsoleDocument(process);
-			fConsoleDocuments.put(process, document);
-			return document;
-		}
-		
-		if (determineCurrentProcess) {
-			if (getCurrentProcess() == null) {
-				setCurrentProcess(determineCurrentProcess());
-			}
-
-			IProcess currentProcess= getCurrentProcess();
-			if (currentProcess != null) {
-				IDocument document= (IDocument) fConsoleDocuments.get(currentProcess);
-				if (document != null) {
-					return document;
-				}
-				document= new ConsoleDocument(currentProcess);
-				fConsoleDocuments.put(currentProcess, document);
-				return document;
-			}
-		}
-
-		return new ConsoleDocument(null);
-	}
-	
-	/**
-	 * Returns the current document being displayed in the console
-	 * view. Never returns <code>null</code>.
-	 */
-	public static IDocument getCurrentConsoleDocument() {
-		DebugUIPlugin plugin = DebugUIPlugin.getDefault();
-		IProcess currentProcess = plugin.getCurrentProcess();
-		IDocument document = plugin.getConsoleDocument(currentProcess, true);
-		return document;
+		return (IDocument) fConsoleDocuments.get(process);
 	}
 	/**
 	 * Returns the color manager to use in the debug UI
@@ -495,87 +441,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionListene
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
 		DebugPreferencePage.initDefaults(prefs);
 		ConsolePreferencePage.initDefaults(prefs);
-	}
-	
-	/**
-	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
-	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
-		if (!(part.getSite().getId().equals(IDebugUIConstants.ID_DEBUG_VIEW))) {
-			return;
-		}
-		
-		IWorkbenchWindow window= getActiveWorkbenchWindow();
-		IWorkbenchPage page= window.getActivePage();
-		if (page == null) {
-			return;
-		}
-		Object input= null;
-		if (sel instanceof IStructuredSelection) {
-			input= ((IStructuredSelection) sel).getFirstElement();
-		}
-		ConsoleView consoleView= (ConsoleView)page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
-		if (input == null) {
-			if (consoleView != null && getCurrentProcess() != null) {
-				consoleView.setViewerInput(getCurrentProcess());
-			} else {
-				IProcess currentProcess= determineCurrentProcess();
-				if (currentProcess == null) { 
-					setCurrentProcess(currentProcess);
-					if (consoleView != null) {
-						consoleView.setViewerInput(currentProcess);
-					}
-				}
-			}
-		} else {
-			IProcess processFromInput= getProcessFromInput(input);
-			if (processFromInput == null) {
-				if (consoleView != null) {
-					consoleView.setViewerInput(null, false);
-				}
-				setCurrentProcess(null);
-				return;
-			}
-			if (!processFromInput.equals(getCurrentProcess())) {
-				setCurrentProcess(processFromInput);
-				if (consoleView != null) { 
-					consoleView.setViewerInput(processFromInput);
-				} else {
-					IDocument doc= getConsoleDocument(processFromInput);
-					if (doc != null) {
-						doc.addDocumentListener(this);
-					}
-				}
-			}
-		}
-	}
-	
-	/**
-	 * Returns the current process to use as input for the console view.
-	 * Returns the first <code>IProcess</code> that has a launch and is associated with a debug target.
-	 * If no debug targets, returns the first <code>IProcess</code> found in the launch manager.
-	 * Can return <code>null</code>.
-	 */
-	public IProcess determineCurrentProcess() {
-		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
-		IDebugTarget[] debugTargets= launchManager.getDebugTargets();
-		for (int i = 0; i < debugTargets.length; i++) {
-			IDebugTarget target= debugTargets[i];
-			IProcess process= target.getProcess();
-			if (process != null && process.getLaunch() != null) {
-				return process;
-			}
-		}
-
-		IProcess[] processes= launchManager.getProcesses();
-		for (int i=0; i < processes.length; i++) {
-			IProcess process= processes[i];
-			if (process.getLaunch() != null) {
-				return process;
-			}
-		}
-
-		return null;
 	}
 
 	protected IProcess getProcessFromInput(Object input) {
@@ -648,62 +513,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionListene
 	
 	public IProcess getCurrentProcess() {
 		return fCurrentProcess;
-	}
-	
-	/**
-	 * Returns the currently selected debug element in the 
-	 * debug view of the current workbench page, or <code>null</code>
-	 * if there is no current debug context.
-	 * 
-	 * @return the currently selected debug context, or <code>null</code>
-	 */
-	public IDebugElement getDebugContext() {
-		IWorkbenchWindow window = getActiveWorkbenchWindow() ;
-		if (window == null) {
-			return null;
-		}
-		IWorkbenchPage page = window.getActivePage();
-		if (page == null) {
-			return null;
-		}
-		IWorkbenchPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
-		if (part == null) {
-			return null;
-		}
-		IDebugViewAdapter view = (IDebugViewAdapter)part.getAdapter(IDebugViewAdapter.class);
-		if (view == null) {
-			return null;
-		}
-		StructuredViewer viewer = view.getViewer();
-		if (viewer == null) {
-			return null;
-		}
-		ISelection s = viewer.getSelection();
-		if (s == null || s.isEmpty()) {
-			return null;
-		}
-		if (s instanceof IStructuredSelection) {
-			IStructuredSelection ss = (IStructuredSelection)s;
-			if (ss.size() > 1) {
-				return null;
-			} else {
-				Object element = ss.getFirstElement();
-				if (element instanceof IDebugElement) {
-					return (IDebugElement)element;
-				}
-				if (element instanceof IProcess) {
-					element = ((IProcess)element).getLaunch();
-				}				
-				if (element instanceof ILaunch) {
-					return ((ILaunch)element).getDebugTarget();
-				}
-
-			}
-			
-		}
-		return null;
 	}
-	public void setCurrentProcess(IProcess process) {
+	private void setCurrentProcess(IProcess process) {
 		if (fCurrentProcess != null) {
 			getConsoleDocument(fCurrentProcess).removeDocumentListener(this);
 		}
@@ -790,7 +601,6 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionListene
 			}
 		}
 		setCurrentProcess(newProcess);
-		setConsoleInput(newProcess);
 	}
 	
 	/**
@@ -799,33 +609,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionListene
 	public boolean userPreferenceToSwitchPerspective(boolean isDebug) {
 		IPreferenceStore prefs= getPreferenceStore();
 		return isDebug ? prefs.getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW) : prefs.getBoolean(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW);
-	}
-	
-	/**
-	 * Sets the input console view viewer input for all
-	 * consoles that exist in a thread safe manner.
-	 */
-	protected void setConsoleInput(final IProcess process) {
-		getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				IWorkbenchWindow[] windows= getWorkbench().getWorkbenchWindows();
-				for (int j= 0; j < windows.length; j++) {
-					IWorkbenchWindow window= windows[j];
-					IWorkbenchPage[] pages= window.getPages();
-					if (pages != null) {
-						for (int i= 0; i < pages.length; i++) {
-							IWorkbenchPage page= pages[i];
-							ConsoleView consoleView= (ConsoleView)page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
-							if (consoleView != null) {
-								consoleView.setViewerInput(process);
-							} 
-						}
-					}
-				}
-			}
-		});
-	}
-
+	}
 	/**
 	 * Returns the collection of most recent debug launches, which 
 	 * can be empty.

@@ -8,19 +8,13 @@ package org.eclipse.debug.internal.ui;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugViewAdapter;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
  
@@ -96,9 +90,9 @@ public class RemoveTerminatedAction extends Action implements IUpdate {
 	protected Object[] getElements() {
 		IDebugViewAdapter view = (IDebugViewAdapter)getPart().getAdapter(IDebugViewAdapter.class);
 		if (view != null) {
-			StructuredViewer viewer = view.getViewer();
-			if (viewer != null) {
-				IStructuredContentProvider cp = (IStructuredContentProvider)viewer.getContentProvider();
+			Viewer viewer = view.getViewer();
+			if (viewer instanceof StructuredViewer) {
+				IStructuredContentProvider cp = (IStructuredContentProvider)((StructuredViewer)viewer).getContentProvider();
 				Object input = viewer.getInput();
 				return cp.getElements(input);
 			}

@@ -13,6 +13,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -140,15 +141,21 @@ public class DebugPageSelectionProvider extends AbstractDebugSelectionProvider i
 	/**
 	 * Sets the debug view for this selection provider
 	 */
-	private void setDebugView(IDebugViewAdapter view) {
+	protected void setDebugView(IDebugViewAdapter view) {
 		if (fDebugView != null) {
 			// remove myself as a listener from the existing
 			// debug view
-			fDebugView.getViewer().removeSelectionChangedListener(this);
+			Viewer v = fDebugView.getViewer();
+			if (v != null) {
+				v.removeSelectionChangedListener(this);	
+			}			
 		}
 		fDebugView = view;
 		if (view != null) {
-			fDebugView.getViewer().addSelectionChangedListener(this);
+			Viewer v = fDebugView.getViewer();
+			if (v != null) {
+				v.addSelectionChangedListener(this);	
+			}
 		}
 	}
 }

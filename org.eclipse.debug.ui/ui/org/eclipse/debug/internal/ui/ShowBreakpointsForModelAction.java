@@ -57,7 +57,7 @@ public class ShowBreakpointsForModelAction extends ToggleFilterAction implements
 				if (view != null) {
 					IDebugViewAdapter adapter= (IDebugViewAdapter)view.getAdapter(IDebugViewAdapter.class);
 					if (adapter != null) {
-						StructuredViewer lViewer= adapter.getViewer();
+						Viewer lViewer= adapter.getViewer();
 						ISelection selection= lViewer.getSelection();
 						if (selection instanceof IStructuredSelection) {
 							IStructuredSelection ss= (IStructuredSelection)selection;

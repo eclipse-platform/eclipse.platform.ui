@@ -42,20 +42,15 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
@@ -153,7 +148,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 			return;
 		}
 
-		((VariablesContentProvider)getViewer().getContentProvider()).clearCache();
+		((VariablesContentProvider)getStructuredViewer().getContentProvider()).clearCache();
 		getViewer().setInput(frame);
 	}
 	
@@ -171,7 +166,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 	/**
 	 * @see AbstractDebugView#createViewer(Composite)
 	 */
-	public StructuredViewer createViewer(Composite parent) {
+	public Viewer createViewer(Composite parent) {
 		
 		fModelPresentation = new DelegatingModelPresentation();
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
@@ -309,11 +304,11 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 	 * @see AbstractDebugView#createActions()
 	 */
 	protected void createActions() {
-		IAction action = new ShowTypesAction(getViewer());
+		IAction action = new ShowTypesAction(getStructuredViewer());
 		action.setChecked(false);
 		setAction("ShowTypeNames",action); //$NON-NLS-1$
 		
-		action = new ShowQualifiedAction(getViewer());
+		action = new ShowQualifiedAction(getStructuredViewer());
 		action.setChecked(false);
 		setAction("ShowQualifiedNames", action); //$NON-NLS-1$
 		

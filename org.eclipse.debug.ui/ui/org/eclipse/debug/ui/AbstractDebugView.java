@@ -18,10 +18,12 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -29,7 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.ViewContextComputer;
@@ -71,7 +72,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * Underlying viewer that displays the contents of
 	 * this view.
 	 */
-	private StructuredViewer fViewer = null;
+	private Viewer fViewer = null;
 	
 	/**
 	 * Map of actions. Keys are strings, values
@@ -149,7 +150,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * @see #fillContextMenu(IMenuManager)
 	 */
 	public final void createPartControl(Composite parent) {
-		StructuredViewer viewer = createViewer(parent);
+		Viewer viewer = createViewer(parent);
 		setViewer(viewer);
 		createActions();
 		initializeToolBar();
@@ -162,7 +163,9 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 				handleKeyPressed(e);
 			}
 		});
-		viewer.addDoubleClickListener(this);	
+		if (viewer instanceof StructuredViewer) {
+			((StructuredViewer)viewer).addDoubleClickListener(this);	
+		}
 	}	
 	/**
 	 * Creates and returns this view's underlying viewer.
@@ -172,7 +175,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * 
 	 * @param parent the parent control
 	 */
-	protected abstract StructuredViewer createViewer(Composite parent);
+	protected abstract Viewer createViewer(Composite parent);
 	
 	/**
 	 * Creates this view's actions. Subclasses must
@@ -193,8 +196,8 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		if (getViewer() != null) {
-			getViewer().removeDoubleClickListener(this);
+		if (getViewer() instanceof StructuredViewer) {
+			((StructuredViewer)getViewer()).removeDoubleClickListener(this);
 		}
 		setViewer(null);
 		fActionMap.clear();
@@ -204,21 +207,51 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	/**
 	 * @see IDebugViewAdapter#getViewer()
 	 */
-	public StructuredViewer getViewer() {
+	public Viewer getViewer() {
 		return fViewer;
 	}
+	
+	/**
+	 * Returns this view's viewer as a structured viewer,
+	 * or <code>null</code> if none.
+	 * 
+	 * @return this view's viewer as a structured viewer
+	 * 	or <code>null</code>
+	 */
+	protected StructuredViewer getStructuredViewer() {
+		if (getViewer() instanceof StructuredViewer) {
+			return (StructuredViewer)getViewer();
+		}
+		return null;
+	}
+	
+	/**
+	 * Returns this view's viewer as a text viewer,
+	 * or <code>null</code> if none.
+	 * 
+	 * @return this view's viewer as a text viewer
+	 * 	or <code>null</code>
+	 */
+	protected TextViewer getTextViewer() {
+		if (getViewer() instanceof TextViewer) {
+			return (TextViewer)getViewer();
+		}
+		return null;
+	}	
 	
 	/**
 	 * @see IDebugViewAdapter#getPresentation(String)
 	 */
 	public IDebugModelPresentation getPresentation(String id) {
-		IBaseLabelProvider lp = getViewer().getLabelProvider();
-		if (lp instanceof DelegatingModelPresentation) {
-			return ((DelegatingModelPresentation)lp).getPresentation(id);
-		}
-		if (lp instanceof LazyModelPresentation) {
-			if (((LazyModelPresentation)lp).getDebugModelIdentifier().equals(id)) {
-				return (IDebugModelPresentation)lp;
+		if (getViewer() instanceof StructuredViewer) {
+			IBaseLabelProvider lp = ((StructuredViewer)getViewer()).getLabelProvider();
+			if (lp instanceof DelegatingModelPresentation) {
+				return ((DelegatingModelPresentation)lp).getPresentation(id);
+			}
+			if (lp instanceof LazyModelPresentation) {
+				if (((LazyModelPresentation)lp).getDebugModelIdentifier().equals(id)) {
+					return (IDebugModelPresentation)lp;
+				}
 			}
 		}
 		return null;
@@ -310,7 +343,7 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * @see IWorkbenchPart#setFocus()
 	 */
 	public void setFocus() {
-		StructuredViewer viewer= getViewer();
+		Viewer viewer= getViewer();
 		if (viewer != null) {
 			Control c = viewer.getControl();
 			if (!c.isFocusControl()) {
@@ -322,9 +355,9 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	/**
 	 * Sets the viewer for this view.
 	 * 
-	 * @param viewer structured viewer
+	 * @param viewer viewer
 	 */
-	private void setViewer(StructuredViewer viewer) {
+	private void setViewer(Viewer viewer) {
 		fViewer = viewer;
 	}
 	
@@ -381,8 +414,6 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * Handles key events in viewer. Invokes the 
 	 * <code>REMOVE_ACTION</code> when the delete
 	 * key is pressed.
-	 * 
-	 * @param event the event generated by the key press.
 	 */
 	protected void handleKeyPressed(KeyEvent event) {
 		if (event.character == SWT.DEL && event.stateMask == 0) {
@@ -448,8 +479,6 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	/**
 	 * Returns the memento that contains the persisted state of
 	 * the view.  May be <code>null</code>.
-	 * 
-	 * @return The memento for this view, or <code>null</code> if none.
 	 */
 	protected IMemento getMemento() {
 		return fMemento;
@@ -458,8 +487,6 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	/** 
 	 * Sets the memento that contains the persisted state of the 
 	 * view.
-	 * 
-	 * @param memento the memento for this view.
 	 */
 	protected void setMemento(IMemento memento) {
 		fMemento = memento;
@@ -490,9 +517,6 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 	 * Persists the checked state of the action in the memento.
 	 * The state is persisted as an <code>Integer</code>: <code>1</code>
 	 * meaning the action is checked; <code>0</code> representing unchecked.
-	 * 
-	 * @param memento the memento used to persist the action's state
-	 * @param action the action whose state will be persisted
 	 */
 	protected void saveActionState(IMemento memento, IAction action) {
 		String id= action.getId();
@@ -521,4 +545,5 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 			}
 		}
 	}	
-}
+}	
+
