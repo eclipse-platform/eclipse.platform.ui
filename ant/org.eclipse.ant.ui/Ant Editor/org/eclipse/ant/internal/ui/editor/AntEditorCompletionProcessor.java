@@ -35,8 +35,6 @@ import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.IntrospectionHelper;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Target;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.taskdefs.MacroDef;
 import org.apache.tools.ant.taskdefs.MacroInstance;
 import org.apache.tools.ant.types.EnumeratedAttribute;
@@ -778,8 +776,8 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     protected ICompletionProposal[] getPropertyProposals(IDocument document, String prefix, int aCursorPosition) {
         List proposals = new ArrayList();
         Map displayStringToProposals= new HashMap();
-        Map properties = findPropertiesFromDocument(document);
-		String propertyName;
+        Map properties = findPropertiesFromDocument();
+		
 		Image image = AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
 		// Determine replacement length and offset
 	    // String from beginning to the beginning of the prefix
@@ -805,7 +803,8 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 	   if(text.length() > aCursorPosition && text.charAt(aCursorPosition) == '}') {
 		   replacementLength += 1;
 	   }
-        for(Iterator i=properties.keySet().iterator(); i.hasNext(); ) {
+	   String propertyName;
+       for(Iterator i=properties.keySet().iterator(); i.hasNext(); ) {
             propertyName= (String)i.next();
             if(prefix.length() == 0 || propertyName.toLowerCase().startsWith(prefix)) {
                 String additionalPropertyInfo = (String)properties.get(propertyName);
@@ -1390,65 +1389,12 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
     }
 
     /**
-     * Parses the actually edited file as far as possible.
-     * <P>
-     * We use the parsing facilities of the ant plug-in here.
+     * Return the properties as defined in the entire buildfile
      * 
      * @return a map with all the found properties
      */
-    private Map findPropertiesFromDocument(IDocument document) {
-		/*
-		 * What is implemented here:
-		 * - Retrieve the project from the Ant model
-		 * - Determine the enclosing target
-		 * - Determine the dependency Vector for the target
-		 * - Work through the dependency Vector and execute the
-		 *   Property relevant tasks.
-		 */
-
+    private Map findPropertiesFromDocument() {
     	Project project= antModel.getProjectNode().getProject();
-        
-        // Determine the parent
-    	String targetName = getEnclosingTargetName(document, lineNumber, columnNumber);
-         
-        if(targetName == null) {
-        	return project.getProperties();
-        }
-        List sortedTargets = null;
-        try {
-        	sortedTargets= project.topoSort(targetName, project.getTargets());
-        } catch (BuildException be) {
-			return project.getProperties();
-        }
-
-        int curidx = 0;
-        Target curtarget;
-
-        do {
-            curtarget = (Target) sortedTargets.get(curidx++);
-			Task[] tasks = curtarget.getTasks();
-			Task task;
-			for (int i = 0; i < tasks.length; i++) {
-				task= tasks[i];                
-				if (task instanceof UnknownElement) {
-					try {
-						task.maybeConfigure();
-					} catch (BuildException be) {
-						continue;
-					}
-					task= ((UnknownElement)task).getTask();
-				}
-				
-				if(AntModel.isPropertySettingTask(task.getTaskName())) { 
-					try {
-						task.perform();
-					} catch (BuildException be) {
-						
-					}
-				}
-            }
-        } while (!curtarget.getName().equals(targetName));
-
         return project.getProperties();
     }
     
