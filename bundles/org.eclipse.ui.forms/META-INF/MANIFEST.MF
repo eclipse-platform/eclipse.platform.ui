@@ -9,9 +9,7 @@ Bundle-Localization: plugin
 Export-Package: org.eclipse.ui.forms,
  org.eclipse.ui.forms.editor,
  org.eclipse.ui.forms.events,
- org.eclipse.ui.forms.widgets,
- org.eclipse.ui.internal.forms;x-internal:=true,
- org.eclipse.ui.internal.forms.widgets;x-internal:=true
+ org.eclipse.ui.forms.widgets
 Require-Bundle: org.eclipse.ui;resolution:=optional,
  org.eclipse.core.runtime
 Eclipse-AutoStart: true
