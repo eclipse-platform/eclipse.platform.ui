@@ -1434,11 +1434,11 @@ public Resource newResource(IPath path, int type) {
 	String message;
 	switch (type) {
 		case IResource.FOLDER :
-			message = "Path must include project and resource name."; //$NON-NLS-1$
+			message = "Path must include project and resource name: " + path.toString(); //$NON-NLS-1$
 			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FOLDER_SEGMENT_LENGTH , message);
 			return new Folder(path.makeAbsolute(), this);
 		case IResource.FILE :
-			message = "Path must include project and resource name."; //$NON-NLS-1$
+			message = "Path must include project and resource name: " + path.toString(); //$NON-NLS-1$
 			Assert.isLegal(path.segmentCount() >= ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH, message);
 			return new File(path.makeAbsolute(), this);
 		case IResource.PROJECT :
