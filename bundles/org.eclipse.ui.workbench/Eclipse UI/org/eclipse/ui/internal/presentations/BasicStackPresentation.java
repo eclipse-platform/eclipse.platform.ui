@@ -68,6 +68,7 @@ public class BasicStackPresentation extends StackPresentation {
 	private MenuManager systemMenuManager = new MenuManager();
 	private TabFolderLayout layout;
 	private Label titleLabel;
+	private Listener dragListener;
 	
 	// Current tab colours
 	private Color backgroundGradientStart;
@@ -245,7 +246,7 @@ public class BasicStackPresentation extends StackPresentation {
 		
 		tabFolder.addCTabFolder2Listener(expandListener);
 		
-		Listener dragListener = new Listener() {
+		dragListener = new Listener() {
 			public void handleEvent(Event event) {
 				
 				Point localPos = new Point(event.x, event.y);
@@ -552,9 +553,9 @@ public class BasicStackPresentation extends StackPresentation {
 		if (isDisposed()) {
 			return;
 		}
+		PresentationUtil.removeDragListener(tabFolder, dragListener);
 		
 		systemMenuManager.dispose();
-		
 		tabFolder.dispose();
 		tabFolder = null;
 		

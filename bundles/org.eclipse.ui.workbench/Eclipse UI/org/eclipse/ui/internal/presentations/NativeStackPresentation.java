@@ -47,6 +47,7 @@ import org.eclipse.ui.presentations.StackPresentation;
 public class NativeStackPresentation extends StackPresentation {
 	
 	private TabFolder tabFolder;
+	private Listener dragListener;
 	private IPresentablePart current;
 	private MenuManager systemMenuManager = new MenuManager();
 	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
@@ -139,7 +140,7 @@ public class NativeStackPresentation extends StackPresentation {
 		
 		tabFolder.addListener(SWT.MenuDetect, menuListener);
 
-		PresentationUtil.addDragListener(tabFolder, new Listener() {
+		dragListener = new Listener() {
 			public void handleEvent(Event event) {
 				Point localPos = new Point(event.x, event.y);
 //				TabItem tabUnderPointer = tabFolder.getItem(localPos);
@@ -156,7 +157,9 @@ public class NativeStackPresentation extends StackPresentation {
 						tabFolder.toDisplay(localPos), false);
 				}
 			}
-		});
+		};
+		
+		PresentationUtil.addDragListener(tabFolder, dragListener);
 						
 	}
 
@@ -262,6 +265,7 @@ public class NativeStackPresentation extends StackPresentation {
 		if (isDisposed()) {
 			return;
 		}
+		PresentationUtil.removeDragListener(tabFolder, dragListener);
 		
 		//systemMenuManager.dispose();
 		
