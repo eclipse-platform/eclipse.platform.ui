@@ -332,8 +332,9 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		for (Iterator iter = properties.iterator(); iter.hasNext();) {
 			Property property = (Property) iter.next();
 			key= property.getName();
-			if (property.getValue() != null && (userProperties == null || userProperties.get(key) == null)) {
-				appendProperty(commandLine, key, property.getValue());
+			String value= property.getValue();
+			if (value != null && (userProperties == null || userProperties.get(key) == null)) {
+				appendProperty(commandLine, key, value);
 			}
 		}
 		
@@ -408,7 +409,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		commandLine.append(name);
 		commandLine.append('='); 
 		commandLine.append(value);
-		commandLine.append('\"');
+		commandLine.append(" \""); //$NON-NLS-1$
 	}
 	
 	private void runInSeparateVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, String idStamp, int port, StringBuffer commandLine, boolean captureOutput) throws CoreException {
