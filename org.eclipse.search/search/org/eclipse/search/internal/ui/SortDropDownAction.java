@@ -49,6 +49,7 @@ class SortDropDownAction extends Action implements IMenuCreator {
 	}
 
 	public Menu getMenu(final Menu parent) {
+		boolean hasEntries= false;
 		Menu menu= new Menu(parent);
 		Iterator iter= SearchPlugin.getDefault().getSorterDescriptors().iterator();
 		while (iter.hasNext()) {
@@ -74,8 +75,10 @@ class SortDropDownAction extends Action implements IMenuCreator {
 				action.setToolTipText(sorterDesc.getToolTipText());
 				action.setChecked(fCheckedId.equals(sorterDesc.getId()));
 				addActionToMenu(menu, action);
+				hasEntries= true;
 			}
 		}
+		setEnabled(hasEntries);
 		return menu;
 	}
 
