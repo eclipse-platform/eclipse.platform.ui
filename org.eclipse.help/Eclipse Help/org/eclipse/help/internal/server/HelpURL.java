@@ -8,7 +8,7 @@ package org.eclipse.help.internal.server;
 import java.io.*;
 import java.util.*;
 
-import java.net.URLDecoder;
+import org.eclipse.help.internal.util.URLCoder;
 
 /**
  * Manages a help URL.  Note that there is a limitation in handling
@@ -110,7 +110,7 @@ public class HelpURL {
 			else
 				return null;
 		try {
-			return URLDecoder.decode(stringValue);
+			return URLCoder.decode(stringValue);
 		} catch (Exception e) {
 			return null;
 		}
