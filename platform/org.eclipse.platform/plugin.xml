@@ -15,17 +15,19 @@
    </requires>
 
 
-<!--
+<!-- -->
    <extension
          point="org.eclipse.ui.intro">
       <intro
             name="%introPart.title"
-            productId="org.eclipse.platform"
             class="org.eclipse.ui.intro.internal.presentations.CustomizableIntroPart"
             id="org.eclipse.platform.intro">
       </intro>
+      <introProductBinding 
+      		productId="org.eclipse.platform"
+      		introId="org.eclipse.platform.intro"/>
    </extension>
--->
+<!-- -->
    <extension
          id="intro"
          point="org.eclipse.ui.intro.config">
@@ -94,7 +96,7 @@
                %overview.text
             </text>
             <link
-                  url="about:blank;"
+                  url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.user/concepts/concepts-2.htm"
                   label="%overview.basics.label"
                   id="basics">
                <text>
@@ -102,7 +104,7 @@
                </text>
             </link>
             <link
-                  url="about:blank;"
+                  url="http://org.eclipse.ui.intro/showHelpTopic?id=/org.eclipse.platform.doc.user/concepts/concepts-26.htm"
                   label="%overview.team.label"
                   id="team">
                <text>
