@@ -24,17 +24,18 @@ package org.eclipse.ui.keys;
  * extend this class.
  * </p>
  * 
+ * @deprecated Please use org.eclipse.jface.bindings.keys.NaturalKey
  * @since 3.0
  */
 public abstract class NaturalKey extends Key {
 
-    /**
-     * Constructs an instance of <code>NaturalKey</code> given a name.
-     * 
-     * @param name
-     *            The name of the key, must not be null.
-     */
-    NaturalKey(String name) {
-        super(name);
-    }
+	/**
+	 * Constructs an instance of <code>NaturalKey</code> given a name.
+	 * 
+	 * @param key
+	 *            The key to be wrapped; must not be <code>null</code>.
+	 */
+	NaturalKey(org.eclipse.jface.bindings.keys.NaturalKey key) {
+		super(key);
+	}
 }

@@ -225,6 +225,10 @@ public class RetargetAction extends PartEventAction implements
     public IAction getActionHandler() {
         return handler;
     }
+    
+    public boolean isHandled() {
+        return (handler != null);
+    }
 
     /**
      * Sets the action handler.

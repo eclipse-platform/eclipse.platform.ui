@@ -29,6 +29,7 @@ import org.eclipse.ui.keys.KeySequence;
  * @since 3.0
  * @see org.eclipse.ui.commands.ICommand
  * @see org.eclipse.ui.commands.ICommandManagerListener
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public interface ICommandManager {
 

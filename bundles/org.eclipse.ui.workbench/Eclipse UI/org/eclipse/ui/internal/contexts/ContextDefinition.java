@@ -20,157 +20,174 @@ import java.util.Map;
 import org.eclipse.ui.internal.util.Util;
 
 final class ContextDefinition implements Comparable {
-    private final static int HASH_FACTOR = 89;
+	private final static int HASH_FACTOR = 89;
 
-    private final static int HASH_INITIAL = ContextDefinition.class.getName()
-            .hashCode();
+	private final static int HASH_INITIAL = ContextDefinition.class.getName()
+			.hashCode();
 
-    static Map contextDefinitionsById(Collection contextDefinitions,
-            boolean allowNullIds) {
-        if (contextDefinitions == null)
-            throw new NullPointerException();
+	static Map contextDefinitionsById(Collection contextDefinitions,
+			boolean allowNullIds) {
+		if (contextDefinitions == null)
+			throw new NullPointerException();
 
-        Map map = new HashMap();
-        Iterator iterator = contextDefinitions.iterator();
+		Map map = new HashMap();
+		Iterator iterator = contextDefinitions.iterator();
 
-        while (iterator.hasNext()) {
-            Object object = iterator.next();
-            Util.assertInstance(object, ContextDefinition.class);
-            ContextDefinition contextDefinition = (ContextDefinition) object;
-            String id = contextDefinition.getId();
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			Util.assertInstance(object, ContextDefinition.class);
+			ContextDefinition contextDefinition = (ContextDefinition) object;
+			String id = contextDefinition.getId();
 
-            if (allowNullIds || id != null)
-                map.put(id, contextDefinition);
-        }
+			if (allowNullIds || id != null)
+				map.put(id, contextDefinition);
+		}
 
-        return map;
-    }
+		return map;
+	}
 
-    static Map contextDefinitionsByName(Collection contextDefinitions,
-            boolean allowNullNames) {
-        if (contextDefinitions == null)
-            throw new NullPointerException();
+	static Map contextDefinitionsByName(Collection contextDefinitions,
+			boolean allowNullNames) {
+		if (contextDefinitions == null)
+			throw new NullPointerException();
 
-        Map map = new HashMap();
-        Iterator iterator = contextDefinitions.iterator();
+		Map map = new HashMap();
+		Iterator iterator = contextDefinitions.iterator();
 
-        while (iterator.hasNext()) {
-            Object object = iterator.next();
-            Util.assertInstance(object, ContextDefinition.class);
-            ContextDefinition contextDefinition = (ContextDefinition) object;
-            String name = contextDefinition.getName();
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			Util.assertInstance(object, ContextDefinition.class);
+			ContextDefinition contextDefinition = (ContextDefinition) object;
+			String name = contextDefinition.getName();
 
-            if (allowNullNames || name != null) {
-                Collection contextDefinitions2 = (Collection) map.get(name);
+			if (allowNullNames || name != null) {
+				Collection contextDefinitions2 = (Collection) map.get(name);
 
-                if (contextDefinitions2 == null) {
-                    contextDefinitions2 = new HashSet();
-                    map.put(name, contextDefinitions2);
-                }
+				if (contextDefinitions2 == null) {
+					contextDefinitions2 = new HashSet();
+					map.put(name, contextDefinitions2);
+				}
 
-                contextDefinitions2.add(contextDefinition);
-            }
-        }
+				contextDefinitions2.add(contextDefinition);
+			}
+		}
 
-        return map;
-    }
+		return map;
+	}
 
-    private transient int hashCode;
+	private transient int hashCode;
 
-    private transient boolean hashCodeComputed;
+	private transient boolean hashCodeComputed;
 
-    private String id;
+	private String id;
 
-    private String name;
+	private String name;
 
-    private String parentId;
+	private final String description;
 
-    private String sourceId;
+	private String parentId;
 
-    private transient String string;
+	private String sourceId;
 
-    ContextDefinition(String id, String name, String parentId, String sourceId) {
-        this.id = id;
-        this.name = name;
-        this.parentId = parentId;
-        this.sourceId = sourceId;
-    }
+	private transient String string;
 
-    public int compareTo(Object object) {
-        ContextDefinition castedObject = (ContextDefinition) object;
-        int compareTo = Util.compare(id, castedObject.id);
+	ContextDefinition(String id, String name, String description,
+			String parentId, String sourceId) {
+		this.id = id;
+		this.name = name;
+		this.description = description;
+		this.parentId = parentId;
+		this.sourceId = sourceId;
+	}
 
-        if (compareTo == 0) {
-            compareTo = Util.compare(name, castedObject.name);
+	public int compareTo(Object object) {
+		ContextDefinition castedObject = (ContextDefinition) object;
+		int compareTo = Util.compare(id, castedObject.id);
 
-            if (compareTo == 0) {
-                compareTo = Util.compare(parentId, castedObject.parentId);
+		if (compareTo == 0) {
+			compareTo = Util.compare(name, castedObject.name);
+			
+			if (compareTo == 0) {
+				compareTo = Util.compare(description, castedObject.description);
 
-                if (compareTo == 0)
-                    compareTo = Util.compare(sourceId, castedObject.sourceId);
-            }
-        }
+				if (compareTo == 0) {
+					compareTo = Util.compare(parentId, castedObject.parentId);
 
-        return compareTo;
-    }
+					if (compareTo == 0)
+						compareTo = Util.compare(sourceId,
+								castedObject.sourceId);
+				}
+			}
+		}
 
-    public boolean equals(Object object) {
-        if (!(object instanceof ContextDefinition))
-            return false;
+		return compareTo;
+	}
 
-        ContextDefinition castedObject = (ContextDefinition) object;
-        boolean equals = true;
-        equals &= Util.equals(id, castedObject.id);
-        equals &= Util.equals(name, castedObject.name);
-        equals &= Util.equals(parentId, castedObject.parentId);
-        equals &= Util.equals(sourceId, castedObject.sourceId);
-        return equals;
-    }
+	public boolean equals(Object object) {
+		if (!(object instanceof ContextDefinition))
+			return false;
 
-    public String getId() {
-        return id;
-    }
+		ContextDefinition castedObject = (ContextDefinition) object;
+		boolean equals = true;
+		equals &= Util.equals(id, castedObject.id);
+		equals &= Util.equals(name, castedObject.name);
+		equals &= Util.equals(description, castedObject.description);
+		equals &= Util.equals(parentId, castedObject.parentId);
+		equals &= Util.equals(sourceId, castedObject.sourceId);
+		return equals;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getDescription() {
+		return description;
+	}
 
-    public String getParentId() {
-        return parentId;
-    }
+	public String getId() {
+		return id;
+	}
 
-    public String getSourceId() {
-        return sourceId;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL;
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
-            hashCodeComputed = true;
-        }
+	public String getParentId() {
+		return parentId;
+	}
 
-        return hashCode;
-    }
+	public String getSourceId() {
+		return sourceId;
+	}
 
-    public String toString() {
-        if (string == null) {
-            final StringBuffer stringBuffer = new StringBuffer();
-            stringBuffer.append('[');
-            stringBuffer.append(id);
-            stringBuffer.append(',');
-            stringBuffer.append(name);
-            stringBuffer.append(',');
-            stringBuffer.append(parentId);
-            stringBuffer.append(',');
-            stringBuffer.append(sourceId);
-            stringBuffer.append(']');
-            string = stringBuffer.toString();
-        }
+	public int hashCode() {
+		if (!hashCodeComputed) {
+			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(sourceId);
+			hashCodeComputed = true;
+		}
 
-        return string;
-    }
+		return hashCode;
+	}
+
+	public String toString() {
+		if (string == null) {
+			final StringBuffer stringBuffer = new StringBuffer();
+			stringBuffer.append('[');
+			stringBuffer.append(id);
+			stringBuffer.append(',');
+			stringBuffer.append(name);
+			stringBuffer.append(',');
+			stringBuffer.append(description);
+			stringBuffer.append(',');
+			stringBuffer.append(parentId);
+			stringBuffer.append(',');
+			stringBuffer.append(sourceId);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
+
+		return string;
+	}
 }

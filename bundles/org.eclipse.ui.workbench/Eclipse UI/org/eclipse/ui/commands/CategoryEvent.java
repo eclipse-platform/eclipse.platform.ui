@@ -20,6 +20,7 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  * @see org.eclipse.ui.commands.ICategoryListener#categoryChanged(CategoryEvent)
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public final class CategoryEvent {
 

@@ -30,98 +30,66 @@ package org.eclipse.ui.keys;
  * this class.
  * </p>
  * 
+ * @deprecated Please use org.eclipse.jface.bindings.keys.Key
  * @since 3.0
  */
 public abstract class Key implements Comparable {
 
-    /**
-     * An internal constant used only in this object's hash code algorithm.
-     */
-    private final static int HASH_FACTOR = 89;
+	/**
+	 * The key from which this key was constructed. This value will never be
+	 * <code>null</code>.
+	 */
+	protected final org.eclipse.jface.bindings.keys.Key key;
 
-    /**
-     * An internal constant used only in this object's hash code algorithm.
-     */
-    private final static int HASH_INITIAL = Key.class.getName().hashCode();
+	/**
+	 * Constructs an instance of <code>Key</code> given its formal string
+	 * representation.
+	 * 
+	 * @param name
+	 *            the formal string representation of this key. Must not be
+	 *            <code>null</code>.
+	 */
+	Key(final org.eclipse.jface.bindings.keys.Key key) {
+		if (key == null) {
+			throw new NullPointerException(
+					"Cannot construct a key from a null key"); //$NON-NLS-1$
+		}
 
-    /**
-     * The cached hash code for this object. Because Key objects are immutable,
-     * their hash codes need only to be computed once. After the first call to
-     * <code>hashCode()</code>, the computed value is cached here to be used
-     * for all subsequent calls.
-     */
-    private transient int hashCode;
+		this.key = key;
+	}
 
-    /**
-     * A flag to determine if the <code>hashCode</code> field has been
-     * computed and cached.
-     */
-    private transient boolean hashCodeComputed;
+	/**
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	public final int compareTo(final Object object) {
+		return key.compareTo(((Key) object).key);
+	}
 
-    /**
-     * The formal string representation for this object. Equality of Key
-     * objects is determined solely by this field.
-     */
-    protected String name;
+	/**
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public final boolean equals(final Object object) {
+		if (!(object instanceof Key))
+			return false;
 
-    /**
-     * Constructs an instance of <code>Key</code> given its formal string
-     * representation.
-     * 
-     * @param name
-     *            the formal string representation of this key. Must not be
-     *            <code>null</code>.
-     */
-    Key(String name) {
-        if (name == null)
-            throw new NullPointerException();
+		return key.equals(((Key) object).key);
+	}
 
-        this.name = name;
-    }
+	/**
+	 * @see java.lang.Object#hashCode()
+	 */
+	public final int hashCode() {
+		return key.hashCode();
+	}
 
-    /**
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    public int compareTo(Object object) {
-        Key castedObject = (Key) object;
-        int compareTo = name.compareTo(castedObject.name);
-        return compareTo;
-    }
-
-    /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    public boolean equals(Object object) {
-        if (!(object instanceof Key))
-            return false;
-
-        Key castedObject = (Key) object;
-        boolean equals = true;
-        equals &= name.equals(castedObject.name);
-        return equals;
-    }
-
-    /**
-     * @see java.lang.Object#hashCode()
-     */
-    public int hashCode() {
-        if (!hashCodeComputed) {
-            hashCode = HASH_INITIAL;
-            hashCode = hashCode * HASH_FACTOR + name.hashCode();
-            hashCodeComputed = true;
-        }
-
-        return hashCode;
-    }
-
-    /**
-     * Returns the formal string representation for this key.
-     * 
-     * @return The formal string representation for this key. Guaranteed not to
-     *         be <code>null</code>.
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
-        return name;
-    }
+	/**
+	 * Returns the formal string representation for this key.
+	 * 
+	 * @return The formal string representation for this key. Guaranteed not to
+	 *         be <code>null</code>.
+	 * @see java.lang.Object#toString()
+	 */
+	public final String toString() {
+		return key.toString();
+	}
 }

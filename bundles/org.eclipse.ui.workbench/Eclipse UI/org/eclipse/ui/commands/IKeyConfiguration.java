@@ -38,6 +38,8 @@ package org.eclipse.ui.commands;
  * @since 3.0
  * @see IKeyConfigurationListener
  * @see ICommandManager
+ * @deprecated Please use the bindings support in the "org.eclipse.jface"
+ * plug-in instead.
  */
 public interface IKeyConfiguration extends Comparable {
 

@@ -516,6 +516,11 @@ final class Persistence {
         if (contextId == null) {
             contextId = KeySequenceBinding.DEFAULT_CONTEXT_ID;
         }
+        
+        // An empty command identifier should be a null command identifier.
+        if ((commandId != null) && (commandId.length() < 1)) {
+        	commandId = null;
+        }
 
         return new KeySequenceBindingDefinition(contextId, commandId,
                 keyConfigurationId, keySequence, locale, platform, sourceId);

@@ -29,6 +29,8 @@ public class KeysTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public KeysTestSuite() {
+    	addTest(new TestSuite(BindingInteractionsTest.class));
+    	addTest(new TestSuite(BindingManagerTest.class));
         // TODO This no longer works due to focus issues related to key bindings
         //addTest(new TestSuite(Bug36420Test.class));
         //		TODO This test is broken until JDT fixes Bug 44148

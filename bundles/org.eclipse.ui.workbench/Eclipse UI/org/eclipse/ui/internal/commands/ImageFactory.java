@@ -27,6 +27,11 @@ final class ImageFactory {
 	static {
 		put("blank", "icons/full/obj16/blank.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("change", "icons/full/obj16/change_obj.gif"); //$NON-NLS-1$//$NON-NLS-2$
+		
+		/*
+		 * TODO Remove these images from the registry if they are no longer
+		 * needed.
+		 */
 		put("minus", "icons/full/obj16/delete_obj.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("plus", "icons/full/obj16/add_obj.gif"); //$NON-NLS-1$//$NON-NLS-2$
 	}

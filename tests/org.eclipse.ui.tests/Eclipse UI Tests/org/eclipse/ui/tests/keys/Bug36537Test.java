@@ -20,7 +20,7 @@ import java.util.Map;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.commands.KeySequenceBindingDefinition;
-import org.eclipse.ui.internal.commands.MutableCommandManager;
+import org.eclipse.ui.internal.commands.CommandManagerWrapper;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.tests.util.UITestCase;
 
@@ -49,7 +49,7 @@ public class Bug36537Test extends UITestCase {
         IWorkbenchWindow window = openTestWindow();
         Workbench workbench = (Workbench) window.getWorkbench();
         // TODO this is a bad downcast and will fail in the future.
-        MutableCommandManager mutableCommandManager = (MutableCommandManager) workbench
+        CommandManagerWrapper mutableCommandManager = (CommandManagerWrapper) workbench
                 .getCommandSupport().getCommandManager();
         List keySequenceBindings = mutableCommandManager.getCommandRegistry()
                 .getKeySequenceBindingDefinitions();

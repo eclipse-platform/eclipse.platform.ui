@@ -25,6 +25,8 @@ import org.eclipse.ui.keys.KeySequence;
  * 
  * @since 3.0
  * @see org.eclipse.ui.commands.ICommand
+ * @deprecated Please use the bindings support in the "org.eclipse.jface"
+ * plug-in instead.
  */
 public interface IKeySequenceBinding extends Comparable {
 

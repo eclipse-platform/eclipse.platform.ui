@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.commands.IHandlerAttributes;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -26,6 +27,7 @@ import org.eclipse.ui.actions.RetargetAction;
  * <code>IHandler</code>.
  * 
  * @since 3.0
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public final class ActionHandler extends AbstractHandler {
 
@@ -46,17 +48,8 @@ public final class ActionHandler extends AbstractHandler {
      * The name of the attribute indicating whether the wrapped instance of
      * <code>RetargetAction</code> has a handler.
      * </p>
-     * <p>
-     * TODO This should be changed. CommandManager should not look for this
-     * attribute (search by string "handled" to find it..). Instead, code in
-     * workbench should be changed such that if a RetargetAction loses its
-     * action, this ActionHandler instance's corresponding HandlerSubmission
-     * should be removed. In any case, this attribute especially should never be
-     * made public. Also, RetargetAction doesn't not notify that this property
-     * has changed. All handler attributes must notify listeners on change.
-     * </p>
      */
-    private final static String ATTRIBUTE_HANDLED = "handled"; //$NON-NLS-1$
+    private final static String ATTRIBUTE_HANDLED = IHandlerAttributes.ATTRIBUTE_HANDLED;
 
     /**
      * The attribute name for the identifier of the wrapped action. This is the

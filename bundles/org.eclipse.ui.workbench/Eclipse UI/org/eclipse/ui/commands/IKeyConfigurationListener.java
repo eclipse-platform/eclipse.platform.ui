@@ -25,6 +25,8 @@ package org.eclipse.ui.commands;
  * @see IKeyConfiguration#addKeyConfigurationListener(IKeyConfigurationListener)
  * @see IKeyConfiguration#removeKeyConfigurationListener(IKeyConfigurationListener)
  * @see org.eclipse.ui.commands.KeyConfigurationEvent
+ * @deprecated Please use the bindings support in the "org.eclipse.jface"
+ * plug-in instead.
  */
 public interface IKeyConfigurationListener {
 

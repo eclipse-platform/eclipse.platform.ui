@@ -26,6 +26,7 @@ import java.util.Map;
  * attributes.
  * 
  * @since 3.0
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public abstract class AbstractHandler implements IHandler {
 

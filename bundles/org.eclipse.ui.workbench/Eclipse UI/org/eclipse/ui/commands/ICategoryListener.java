@@ -25,6 +25,7 @@ package org.eclipse.ui.commands;
  * @see CategoryEvent
  * @see org.eclipse.ui.commands.ICategory#addCategoryListener(ICategoryListener)
  * @see org.eclipse.ui.commands.ICategory#removeCategoryListener(ICategoryListener)
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public interface ICategoryListener {
 

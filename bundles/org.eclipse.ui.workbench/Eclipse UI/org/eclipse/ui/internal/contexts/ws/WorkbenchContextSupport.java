@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -44,7 +45,6 @@ import org.eclipse.ui.contexts.NotDefinedException;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.contexts.ContextManagerFactory;
 import org.eclipse.ui.internal.contexts.IMutableContextManager;
-import org.eclipse.ui.internal.contexts.ProxyContextManager;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.Policy;
@@ -196,8 +196,6 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      */
     private boolean processing = true;
 
-    private ProxyContextManager proxyContextManager;
-
     /**
      * This is a map of shell to a list of submissions. When a shell is
      * registered, it is added to this map with the list of submissions that
@@ -220,12 +218,15 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
      * @param workbenchToSupport
      *            The workbench that needs to be supported by this instance;
      *            must not be <code>null</code>.
+     * @param contextManager
+     *            The context manager to be wrappered; must not be
+     *            <code>null</code>.
      */
-    public WorkbenchContextSupport(final Workbench workbenchToSupport) {
+    public WorkbenchContextSupport(final Workbench workbenchToSupport,
+            final ContextManager contextManager) {
         workbench = workbenchToSupport;
         mutableContextManager = ContextManagerFactory
-                .getMutableContextManager();
-        proxyContextManager = new ProxyContextManager(mutableContextManager);
+                .getMutableContextManager(contextManager);
 
         // And hook up a shell activation filter.
         workbenchToSupport.getDisplay().addFilter(SWT.Activate,
@@ -332,13 +333,15 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                         public void widgetDisposed(DisposeEvent e) {
                             registeredWindows.remove(null);
                             newShell.removeDisposeListener(this);
-                            
+
                             /*
-                             * In the case where a dispose has happened, we are expecting an
-                             * activation event to arrive at some point in the future. If we
-                             * process the submissions now, then we will update the
-                             * activeShell before checkWindowType is called. This means that
-                             * dialogs won't be recognized as dialogs.
+                             * In the case where a dispose has happened, we are
+                             * expecting an activation event to arrive at some
+                             * point in the future. If we process the
+                             * submissions now, then we will update the
+                             * activeShell before checkWindowType is called.
+                             * This means that dialogs won't be recognized as
+                             * dialogs.
                              */
                             final Iterator newSubmissionItr = newSubmissions
                                     .iterator();
@@ -484,7 +487,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
     }
 
     public IContextManager getContextManager() {
-        return proxyContextManager;
+        return mutableContextManager;
     }
 
     /**
@@ -546,7 +549,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
         } else {
             /*
-             * The shell is not registered, but has no parent.  It gets no key
+             * The shell is not registered, but has no parent. It gets no key
              * bindings.
              */
             return IWorkbenchContextSupport.TYPE_NONE;
@@ -690,7 +693,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                     if (shellToMatch != null && shellToMatch != newActiveShell)
                         continue;
 
-                    // Check if the site matches or is a wildcard. 
+                    // Check if the site matches or is a wildcard.
                     final IWorkbenchSite siteToMatch = enabledSubmission
                             .getActiveWorkbenchPartSite();
                     if (siteToMatch != null
@@ -792,7 +795,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
             public void widgetDisposed(DisposeEvent e) {
                 registeredWindows.remove(shell);
                 shell.removeDisposeListener(this);
-                
+
                 /*
                  * In the case where a dispose has happened, we are expecting an
                  * activation event to arrive at some point in the future. If we

@@ -21,6 +21,7 @@ package org.eclipse.ui.contexts;
  * @since 3.0
  * @see org.eclipse.ui.contexts.IContext#addContextListener(IContextListener)
  * @see org.eclipse.ui.contexts.IContext#removeContextListener(IContextListener)
+ * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public interface IContextListener {
 
