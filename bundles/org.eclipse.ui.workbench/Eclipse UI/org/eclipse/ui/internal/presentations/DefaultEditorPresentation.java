@@ -37,7 +37,7 @@ import org.eclipse.ui.themes.ITheme;
  * 
  * @since 3.0
  */
-public class EditorPresentation extends BasicStackPresentation {
+public class DefaultEditorPresentation extends DefaultPartPresentation {
 
     private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault()
             .getPreferenceStore();
@@ -87,7 +87,7 @@ public class EditorPresentation extends BasicStackPresentation {
         }
     };
 
-    public EditorPresentation(Composite parent, IStackPresentationSite newSite) {
+    public DefaultEditorPresentation(Composite parent, IStackPresentationSite newSite) {
         super(new PaneFolder(parent, SWT.BORDER), newSite);
         final PaneFolder tabFolder = getTabFolder();
 
@@ -152,14 +152,14 @@ public class EditorPresentation extends BasicStackPresentation {
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#getCurrentTitle()
+     * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#getCurrentTitle()
      */
     protected String getCurrentTitle() {
         return ""; //$NON-NLS-1$
     }
     
     /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#updateGradient()
+     * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#updateGradient()
      */
     protected void updateGradient() {
         if (isDisposed())
@@ -205,13 +205,13 @@ public class EditorPresentation extends BasicStackPresentation {
         }
     }
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#getPaneName()
+	 * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#getPaneName()
 	 */
 	protected String getPaneName() {		
 		return WorkbenchMessages.getString("EditorPane.moveEditor"); //$NON-NLS-1$ 
 	}
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#getLabelText(org.eclipse.ui.presentations.IPresentablePart, boolean)
+	 * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#getLabelText(org.eclipse.ui.presentations.IPresentablePart, boolean)
 	 */
 	String getLabelText(IPresentablePart presentablePart, boolean includePath) {
 	    String title = super.getLabelText(presentablePart, includePath); 

@@ -19,9 +19,9 @@ import org.eclipse.ui.presentations.IPresentablePart;
 
 public class SystemMenuCloseAll extends Action implements ISelfUpdatingAction {
 
-    private BasicStackPresentation presentation;
+    private DefaultPartPresentation presentation;
 
-    public SystemMenuCloseAll(BasicStackPresentation presentation) {
+    public SystemMenuCloseAll(DefaultPartPresentation presentation) {
         this.presentation = presentation;
         setText(WorkbenchMessages.getString("PartPane.closeAll")); //$NON-NLS-1$
     }

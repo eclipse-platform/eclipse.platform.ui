@@ -40,7 +40,7 @@ public class BasicStackList extends AbstractTableInformationControl {
 
     private class BasicStackListContentProvider implements IStructuredContentProvider {
 
-        private BasicStackPresentation basicStackPresentation;
+        private DefaultPartPresentation basicStackPresentation;
 
         public BasicStackListContentProvider() {
             //no-op
@@ -70,7 +70,7 @@ public class BasicStackList extends AbstractTableInformationControl {
         }
 
         public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-        	basicStackPresentation = (BasicStackPresentation) newInput;
+        	basicStackPresentation = (DefaultPartPresentation) newInput;
         }
     }
     
@@ -84,7 +84,7 @@ public class BasicStackList extends AbstractTableInformationControl {
 
     	public String getText(Object element) {
     	    CTabItem tabItem = (CTabItem) element;
-            BasicStackPresentation basicStackPresentation = (BasicStackPresentation) getTableViewer()
+            DefaultPartPresentation basicStackPresentation = (DefaultPartPresentation) getTableViewer()
             .getInput();
             IPresentablePart presentablePart = basicStackPresentation.getPartForTab(tabItem);
             // TODO: the 'true' parameter should be removed
@@ -93,7 +93,7 @@ public class BasicStackList extends AbstractTableInformationControl {
 
     	public Image getImage(Object element) {
     	    CTabItem tabItem = (CTabItem) element;
-            BasicStackPresentation basicStackPresentation = (BasicStackPresentation) getTableViewer()
+            DefaultPartPresentation basicStackPresentation = (DefaultPartPresentation) getTableViewer()
             .getInput();
             IPresentablePart presentablePart = basicStackPresentation.getPartForTab(tabItem);    	    
     	    return basicStackPresentation.getLabelImage(presentablePart);
@@ -157,7 +157,7 @@ public class BasicStackList extends AbstractTableInformationControl {
     				name1 = lprov.getText(e1);
     				name2 = lprov.getText(e2);
     				// ILabelProvider's implementation in BasicStackList calls 
-    				// EditorPresentation.getLabelText which returns the name of dirty 
+    				// DefaultEditorPresentation.getLabelText which returns the name of dirty 
     				// files begining with "* ", sorting should not take "* " in consideration
     				if (name1.startsWith("* ")) //$NON-NLS-1$
     					name1 = name1.substring(2);
@@ -202,7 +202,7 @@ public class BasicStackList extends AbstractTableInformationControl {
     }
 
     public void setInput(Object information) {
-    	BasicStackPresentation basicStackPresentation = (BasicStackPresentation) information;
+    	DefaultPartPresentation basicStackPresentation = (DefaultPartPresentation) information;
         inputChanged(basicStackPresentation, basicStackPresentation.getTabFolder()
                 .getSelection());
     }
@@ -211,7 +211,7 @@ public class BasicStackList extends AbstractTableInformationControl {
         Object selectedElement = getSelectedElement();
 
         if (selectedElement != null) {
-        	BasicStackPresentation basicStackPresentation = (BasicStackPresentation) getTableViewer()
+        	DefaultPartPresentation basicStackPresentation = (DefaultPartPresentation) getTableViewer()
                     .getInput();
             basicStackPresentation.setSelection((CTabItem) selectedElement);
         }
@@ -224,7 +224,7 @@ public class BasicStackList extends AbstractTableInformationControl {
         IStructuredSelection structuredSelection = getSelectedElements();
         
         if (structuredSelection != null) {
-        	BasicStackPresentation basicStackPresentation = (BasicStackPresentation) getTableViewer()
+        	DefaultPartPresentation basicStackPresentation = (DefaultPartPresentation) getTableViewer()
             .getInput();
             
         	ArrayList list = new ArrayList(structuredSelection.size());
@@ -237,7 +237,7 @@ public class BasicStackList extends AbstractTableInformationControl {
             basicStackPresentation.close((IPresentablePart[]) list.toArray(new IPresentablePart[list.size()]));
         }
         
-		if (((BasicStackPresentation)getTableViewer().getInput()).isDisposed()) {
+		if (((DefaultPartPresentation)getTableViewer().getInput()).isDisposed()) {
 			fComposite.dispose();
 			return true;
 		}

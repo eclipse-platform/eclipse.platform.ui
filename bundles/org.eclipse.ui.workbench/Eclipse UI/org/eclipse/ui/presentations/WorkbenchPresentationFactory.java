@@ -12,9 +12,9 @@
 package org.eclipse.ui.presentations;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.internal.presentations.EditorPresentation;
-import org.eclipse.ui.internal.presentations.PartTabFolderPresentation;
-import org.eclipse.ui.internal.presentations.StandalonePartTabFolderPresentation;
+import org.eclipse.ui.internal.presentations.DefaultEditorPresentation;
+import org.eclipse.ui.internal.presentations.DefaultViewPresentation;
+import org.eclipse.ui.internal.presentations.DefaultStandalonePresentation;
 
 /**
  * The default presentation factory for the Workbench.
@@ -30,7 +30,7 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
      */
     public StackPresentation createEditorPresentation(Composite parent,
             IStackPresentationSite site) {
-        return new EditorPresentation(parent, site);
+        return new DefaultEditorPresentation(parent, site);
     }
 
     /*
@@ -40,7 +40,7 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
      */
     public StackPresentation createViewPresentation(Composite parent,
             IStackPresentationSite site) {
-        return new PartTabFolderPresentation(parent, site);
+        return new DefaultViewPresentation(parent, site);
     }
 
     /*
@@ -50,6 +50,6 @@ public class WorkbenchPresentationFactory extends AbstractPresentationFactory {
      */
     public StackPresentation createStandaloneViewPresentation(Composite parent,
             IStackPresentationSite site, boolean showTitle) {
-        return new StandalonePartTabFolderPresentation(parent, site, showTitle);
+        return new DefaultStandalonePresentation(parent, site, showTitle);
     }
 }

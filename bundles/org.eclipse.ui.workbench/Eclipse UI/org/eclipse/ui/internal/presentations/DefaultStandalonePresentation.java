@@ -14,21 +14,21 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 /**
- * Extends <code>PartTabFolderPresentation</code> with support for standalone
+ * Extends <code>DefaultViewPresentation</code> with support for standalone
  * parts.  A standalone part cannot be docked together with other parts in
  * the same folder, and can optionally have its title hidden.
  */
-public class StandalonePartTabFolderPresentation extends
-        PartTabFolderPresentation {
+public class DefaultStandalonePresentation extends
+        DefaultViewPresentation {
 
     /**
-     * Constructs a new <code>StandalonePartTabFolderPresentation</code>.
+     * Constructs a new <code>DefaultStandalonePresentation</code>.
      * 
      * @param parent the parent composite
      * @param newSite the site for interacting with the workbench
      * @param showTitle <code>true</code> iff the part's title should be shown.
      */
-    public StandalonePartTabFolderPresentation(Composite parent,
+    public DefaultStandalonePresentation(Composite parent,
             IStackPresentationSite newSite, boolean showTitle) {
         super(parent, newSite);
         PaneFolder folder = getTabFolder();

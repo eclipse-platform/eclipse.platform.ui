@@ -32,7 +32,7 @@ import org.eclipse.ui.themes.ITheme;
  * 
  * @since 3.0
  */
-public class PartTabFolderPresentation extends BasicStackPresentation {
+public class DefaultViewPresentation extends DefaultPartPresentation {
 	
 	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
 	private IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
@@ -49,7 +49,7 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 		}
 	};
 	
-	public PartTabFolderPresentation(Composite parent, IStackPresentationSite newSite) {
+	public DefaultViewPresentation(Composite parent, IStackPresentationSite newSite) {
 		
 		super(new PaneFolder(parent, SWT.BORDER), newSite);
 		PaneFolder tabFolder = getTabFolder();
@@ -82,7 +82,7 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#updateGradient()
+	 * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#updateGradient()
 	 */
 	protected void updateGradient() {
         if (isDisposed())
@@ -141,7 +141,7 @@ public class PartTabFolderPresentation extends BasicStackPresentation {
 	
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.presentations.BasicStackPresentation#getPartMenu()
+	 * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#getPartMenu()
 	 */
 	protected String getPaneName() {
 		return WorkbenchMessages.getString("ViewPane.moveView"); //$NON-NLS-1$ 

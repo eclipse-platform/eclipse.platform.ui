@@ -18,9 +18,9 @@ import org.eclipse.ui.presentations.IPresentablePart;
 
 public class SystemMenuCloseOthers extends Action implements ISelfUpdatingAction {
 
-    private BasicStackPresentation stackPresentation;
+    private DefaultPartPresentation stackPresentation;
 
-    public SystemMenuCloseOthers(BasicStackPresentation stackPresentation) {
+    public SystemMenuCloseOthers(DefaultPartPresentation stackPresentation) {
         this.stackPresentation = stackPresentation;
         setText(WorkbenchMessages.getString("PartPane.closeOthers")); //$NON-NLS-1$
     }

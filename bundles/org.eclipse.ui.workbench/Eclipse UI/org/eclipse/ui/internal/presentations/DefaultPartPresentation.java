@@ -72,7 +72,7 @@ import org.eclipse.ui.themes.IThemeManager;
  * 
  * @since 3.0
  */
-public class BasicStackPresentation extends StackPresentation {
+public class DefaultPartPresentation extends StackPresentation {
 	
 	private PaneFolder tabFolder;
 	private IPresentablePart current;
@@ -87,7 +87,7 @@ public class BasicStackPresentation extends StackPresentation {
 	 */
 	private int dragStart = -1;
 		
-	private final static String TAB_DATA = BasicStackPresentation.class.getName() + ".partId"; //$NON-NLS-1$
+	private final static String TAB_DATA = DefaultPartPresentation.class.getName() + ".partId"; //$NON-NLS-1$
 	
 	private PaneFolderButtonListener buttonListener = new PaneFolderButtonListener() {
 		public void stateButtonPressed(int buttonId) {
@@ -226,7 +226,7 @@ public class BasicStackPresentation extends StackPresentation {
         }	            
     };
 
-	public BasicStackPresentation(PaneFolder control, IStackPresentationSite stackSite) {
+	public DefaultPartPresentation(PaneFolder control, IStackPresentationSite stackSite) {
 	    super(stackSite);
 	    
 	    shellActive = control.getControl().getShell().equals(control.getControl().getDisplay().getActiveShell());
