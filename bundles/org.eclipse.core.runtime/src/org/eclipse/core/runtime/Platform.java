@@ -997,9 +997,9 @@ public final class Platform {
 	 *
 	 * @return <code>true</code> if the platform is running, 
 	 *		and <code>false</code> otherwise
+	 *@since 3.0
 	 */
-	public boolean isRunning() {
+	public static boolean isRunning() {
 		return InternalPlatform.getDefault().isRunning();
 	}
-	
 }
