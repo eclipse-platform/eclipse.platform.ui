@@ -1,0 +1,25 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.76 [en] (Windows NT 5.0; U) [Netscape]">
+   <title>Package-level Javadoc</title>
+</head>
+<body>
+Provides a reconciler add-on for an <tt>ITextViewer</tt>.
+A&nbsp; reconciler provides generic synchronization support&nbsp; with
+the content of the document serving as the <tt>ITextViewer</tt>'s input.
+There is no explicit model of what is synchronized.
+<h2>
+Package Specification</h2>
+<tt>IReconciler</tt> defines the concept of a reconciler. It collaborates
+with content type specific reconciling strategies (<tt>IReconcilingStrategy</tt>)
+which perform the synchronization for a given dirty region. The package
+contains a default implementation of <tt>IReconciler</tt> (<tt>Reconciler</tt>).
+
+<tt>Reconciler</tt> and <tt>MonoReconciler</tt> implements reconciling
+as a periodic background activity and folds co-located changes while being
+inactive.
+</body>
+</html>

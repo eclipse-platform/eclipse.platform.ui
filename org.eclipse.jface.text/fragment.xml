@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fragment
+   id="org.eclipse.jface.text"
+   name="%fragmentName"
+   version="2.1.0"
+   provider-name="%providerName"
+   plugin-id="org.eclipse.jface"
+   plugin-version="2.1.0">
+
+   <runtime>
+      <library name="jfacetext.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+   <requires>
+      <import plugin="org.eclipse.text" export="true"/>
+   </requires>
+
+
+</fragment>

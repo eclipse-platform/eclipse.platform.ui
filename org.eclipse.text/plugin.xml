@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="org.eclipse.text"
+   name="%pluginName"
+   version="2.1.0"
+   provider-name="%providerName">
+
+   <runtime>
+      <library name="text.jar">
+         <export name="*"/>
+      </library>
+   </runtime>
+
+</plugin>

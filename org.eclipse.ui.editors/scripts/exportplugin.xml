@@ -1,0 +1,29 @@
+<project name="Default Text Editor" default="export" basedir="..">
+	<target name="init">
+		<tstamp/>
+		<property name="destdir" value="../../plugin-export" />
+		<property name="plugin"  value="org.eclipse.ui.editors" />
+		<property name="version"  value="_2.1.0" />
+		<property name="dest"  value="${destdir}/${plugin}${version}" />
+	</target>
+
+	<target name="build" depends="init">
+    	<eclipse.incrementalBuild project="${plugin}" kind="incr"/>
+	</target>
+
+	<target name="export" depends="build">
+		<mkdir dir="${destdir}" />
+		<delete dir="${dest}" />
+		<mkdir dir="${dest}" />
+		<jar 
+			jarfile="${dest}/editors.jar"
+			basedir="bin"
+		/>
+		<copy file="plugin.xml" todir="${dest}"/>
+		<copy file="plugin.properties" todir="${dest}"/>
+		<zip zipfile="${dest}/editorssrc.zip">
+		    <fileset dir="src" />
+		    <fileset dir="extensions" />
+  		</zip>				
+	</target>
+</project>
