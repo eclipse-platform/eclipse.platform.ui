@@ -114,16 +114,4 @@ public class AppServer
 		return appServer != null;
 	}
 
-	/**
-	 * Sets the host and port for the app server. Must be called before adding a webapp,
-	 * but the call is optional.
-	 * @param host the host name or IP address. Pass null when any address on 
-	 *         local machine is to be used.
-	 * @param port the port number to be used. Pass 0 to let the system select
-	 *         an available port.
-	 */
-	private void setAddress(String host, int port)
-	{
-		// leave the default, i.e. let the system choose the port
-	}
 }
