@@ -743,7 +743,7 @@ public class Main {
 		// the *end* of the command line.  This interferes with the -vmargs arg.  Process 
 		// -showsplash now and remove it from the end.  This code should be removed soon.
 		int end = args.length;
-		if (args[end - 2].equalsIgnoreCase(SHOWSPLASH)) {
+		if (args.length > 1 && args[end - 2].equalsIgnoreCase(SHOWSPLASH)) {
 			showSplash = args[end - 1];
 			end -= 2;
 		}
