@@ -32,7 +32,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.help.ViewContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -554,6 +556,23 @@ public abstract class AbstractDebugView extends ViewPart implements IDebugViewAd
 				action.setChecked(state.intValue() == 1);
 			}
 		}
-	}	
+	}
+	
+	/**
+	 * Returns the specified view in this view's page
+	 * or <code>null</code> if none.
+	 * 
+	 * @param id view identifier
+	 * @return view part
+	 */
+	protected IViewPart findView(String id) {
+		IWorkbenchPage page = getSite().getPage();
+		IViewPart view = null;
+		if (page != null) {
+			view = page.findView(id);
+		}
+		return null;	
+	}
+	
 }	
 

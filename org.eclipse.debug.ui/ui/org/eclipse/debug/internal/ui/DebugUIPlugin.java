@@ -56,7 +56,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.ITerminate;
 import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.views.ConsoleDocument;
-import org.eclipse.debug.internal.ui.views.ConsoleView;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugUIEventFilter;
@@ -72,6 +71,7 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -452,11 +452,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 					IWorkbenchPage page= window.getActivePage();
 					if (page != null) {
 						try { // show the console
-							ConsoleView consoleView= (ConsoleView)page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
+							IViewPart consoleView= page.findView(IDebugUIConstants.ID_CONSOLE_VIEW);
 							if(consoleView == null) {
 								IWorkbenchPart activePart= page.getActivePart();
-								consoleView= (ConsoleView)page.showView(IDebugUIConstants.ID_CONSOLE_VIEW);
-								consoleView.setViewerInput(getCurrentProcess());
+								page.showView(IDebugUIConstants.ID_CONSOLE_VIEW);
 								//restore focus stolen by the creation of the console
 								page.activate(activePart);
 							} else {

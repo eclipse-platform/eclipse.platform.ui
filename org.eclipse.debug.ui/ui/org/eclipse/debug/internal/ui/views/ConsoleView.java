@@ -12,6 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.ClearOutputAction;
@@ -22,7 +25,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.TextViewerAction;
 import org.eclipse.debug.internal.ui.TextViewerGotoLineAction;
-import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
@@ -46,12 +48,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
 
-public class ConsoleView extends AbstractDebugEventHandlerView implements IDocumentListener, ISelectionChangedListener {
+public class ConsoleView extends AbstractDebugEventHandlerView implements IDocumentListener, ISelectionChangedListener, ILaunchListener {
 
 	protected ClearOutputAction fClearOutputAction= null;
 
@@ -76,6 +79,8 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		
 		// listen to selection changes in the debug view
 		DebugSelectionManager.getDefault().addSelectionChangedListener(this,getSite().getPage(), IDebugUIConstants.ID_DEBUG_VIEW);
+		// listen to lanuches
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(this);
 		
 		setEventHandler(new ConsoleViewEventHandler(this, cv));
 		return cv;
@@ -296,6 +301,7 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 		if (fCurrentDocument != null) {
 			fCurrentDocument.removeDocumentListener(this);
 		}
+		DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(this);
 		super.dispose();
 	}
 	/**
@@ -342,5 +348,34 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	public IProcess getProcess() {
 		return fProcess;
 	}
+	
+	/**
+	 * If a launch is deregistered and there is no debug view
+	 * in this view's page (to provide a 'process context'),
+	 * show the output of the current process.
+	 * 
+	 * @see ILaunchListener#launchDeregistered(ILaunch)
+	 */
+	public void launchDeregistered(ILaunch launch) {
+		IViewPart view = findView(IDebugUIConstants.ID_DEBUG_VIEW);
+		if (view == null) {
+			setViewerInput(DebugUITools.getCurrentProcess());
+		}
+	}
+
+	/**
+	 * If a launch is registered and there is no debug view
+	 * in this view's page (to provide a 'process context'),
+	 * show the output of the current process.
+	 * 
+	 * @see ILaunchListener#launchRegistered(ILaunch)
+	 */
+	public void launchRegistered(ILaunch launch) {
+		IViewPart view = findView(IDebugUIConstants.ID_DEBUG_VIEW);
+		if (view == null) {
+			setViewerInput(DebugUITools.getCurrentProcess());
+		}
+	}
+
 }
 
