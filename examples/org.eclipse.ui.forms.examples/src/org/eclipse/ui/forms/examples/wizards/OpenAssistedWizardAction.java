@@ -25,10 +25,10 @@ public class OpenAssistedWizardAction implements IWorkbenchWindowActionDelegate 
 	
 	public void run(IAction action) {
 		NewPluginProjectWizard wizard = new NewPluginProjectWizard();
-		AssistedWizardDialog dialog = new AssistedWizardDialog(window.getShell(), wizard);
+		AltAssistedWizardDialog dialog = new AltAssistedWizardDialog(window.getShell(), wizard);
 		dialog.create();
 		dialog.getShell().setText("Assisted Wizard");
-		dialog.getShell().setSize(600, 400);
+		//dialog.getShell().setSize(600, 400);
 		dialog.open();
 	}
 	/* (non-Javadoc)

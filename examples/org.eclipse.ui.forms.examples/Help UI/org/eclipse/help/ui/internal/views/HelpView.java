@@ -128,7 +128,7 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 		else
 			provider.addSelectionChangedListener(this);
 		monitoredPart = part;
-		System.out.println("Installing "+part.getSite().getRegisteredName());
+		//System.out.println("Installing "+part.getSite().getRegisteredName());
 	}
 	private void uninstallSelectionListener(IWorkbenchPart part) {
 		ISelectionProvider provider = part.getSite().getSelectionProvider();
@@ -137,12 +137,12 @@ public class HelpView extends ViewPart implements IPartListener2, ISelectionChan
 		else
 			provider.removeSelectionChangedListener(this);
 		monitoredPart = null;
-		System.out.println("Uninstalling "+part.getSite().getRegisteredName());
+		//System.out.println("Uninstalling "+part.getSite().getRegisteredName());
 	}
 	
 	private boolean isThisPart(IWorkbenchPartReference ref) {
 		IWorkbenchPart part = ref.getPart(false);
-		return part.equals(this);
+		return part!=null && part.equals(this);
 	}
 	
 	private void updateActivePart() {

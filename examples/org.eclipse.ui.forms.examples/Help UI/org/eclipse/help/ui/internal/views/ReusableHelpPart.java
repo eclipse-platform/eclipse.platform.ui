@@ -14,6 +14,7 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -65,6 +66,7 @@ public class ReusableHelpPart implements IHelpViewConstants {
 	private IRunnableContext runnableContext;
 
 	private IToolBarManager toolBarManager;
+	private IStatusLineManager statusLineManager;
 	
 	private abstract class BusyRunAction extends Action {
 		public BusyRunAction(String name) {
@@ -177,6 +179,11 @@ public class ReusableHelpPart implements IHelpViewConstants {
 					return rec.part;
 			}
 			return null;
+		}
+		public void setFocus() {
+			if (partRecs.size()==0) return;
+			PartRec rec = (PartRec)partRecs.get(0);
+			rec.part.setFocus();
 		}
 	}
 
@@ -306,8 +313,9 @@ public class ReusableHelpPart implements IHelpViewConstants {
 		pages.add(page);
 	}
 
-	public void init(IToolBarManager manager) {
-		this.toolBarManager = manager;
+	public void init(IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
+		this.toolBarManager = toolBarManager;
+		this.statusLineManager = statusLineManager;
 		makeActions();
 		definePages();
 	}
@@ -321,6 +329,7 @@ public class ReusableHelpPart implements IHelpViewConstants {
 		backAction.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
 		backAction.setEnabled(false);
 		backAction.setText("&Back");
+		backAction.setToolTipText("Back");
 		
 		nextAction = new Action("next") {
 			public void run() {
@@ -331,6 +340,7 @@ public class ReusableHelpPart implements IHelpViewConstants {
 		nextAction.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
 		nextAction.setDisabledImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
 		nextAction.setEnabled(false);
+		nextAction.setToolTipText("Forward");
 		toolBarManager.add(backAction);
 		toolBarManager.add(nextAction);
 		
@@ -388,17 +398,24 @@ public class ReusableHelpPart implements IHelpViewConstants {
 		Menu contextMenu = manager.createContextMenu(form.getForm());
 		form.getForm().setMenu(contextMenu);
 	}
-	
-	public void showPage(String id) {
+
+	public HelpPartPage showPage(String id) {
 		if (currentPage!=null && currentPage.getId().equals(id))
-			return;
+			return currentPage;
 		for (int i=0; i<pages.size(); i++) {
 			HelpPartPage page = (HelpPartPage)pages.get(i);
 			if (page.getId().equals(id)) {
 				flipPages(currentPage, page);
-				return;
+				return page;
 			}
 		}
+		return null;
+	}
+	public HelpPartPage showPage(String id, boolean setFocus) {
+		HelpPartPage page = this.showPage(id);
+		if (page!=null && setFocus)
+			page.setFocus();
+		return page;
 	}
 
 	private void flipPages(HelpPartPage oldPage, HelpPartPage newPage) {
@@ -460,7 +477,10 @@ public class ReusableHelpPart implements IHelpViewConstants {
 	 * @see org.eclipse.ui.internal.intro.impl.parts.IStandbyContentPart#setFocus()
 	 */
 	public void setFocus() {
-		mform.setFocus();
+		if (currentPage!=null)
+			currentPage.setFocus();
+		else
+			mform.setFocus();
 	}
 
 	public void update(Control control) {
@@ -614,5 +634,11 @@ public class ReusableHelpPart implements IHelpViewConstants {
 		String href = getHref(target);
 		if (href!=null)
 			WorkbenchHelp.displayHelpResource(href);
+	}
+	/**
+	 * @return Returns the statusLineManager.
+	 */
+	public IStatusLineManager getStatusLineManager() {
+		return statusLineManager;
 	}
 }

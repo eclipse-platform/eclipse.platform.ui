@@ -52,7 +52,7 @@ public class SeeAlsoPart extends AbstractFormPart implements IHelpPart {
 				FormColors.TITLE));		
 		text.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
-				SeeAlsoPart.this.parent.showPage((String)e.getHref());
+				SeeAlsoPart.this.parent.showPage((String)e.getHref(), true);
 			}
 		});
 		hookImage(ExamplesPlugin.IMG_HELP_SEARCH); 

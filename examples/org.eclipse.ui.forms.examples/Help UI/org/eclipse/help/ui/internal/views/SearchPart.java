@@ -62,6 +62,7 @@ public class SearchPart extends SectionPart implements IHelpPart {
 	 */
 	public SearchPart(Composite parent, FormToolkit toolkit) {
 		super(parent, toolkit, Section.EXPANDED|Section.TWISTIE|Section.TITLE_BAR);
+		// configure section
 		Section section = getSection();
 		section.setText("Search");
 		section.marginWidth = 5;
@@ -72,8 +73,7 @@ public class SearchPart extends SectionPart implements IHelpPart {
 			public void expansionStateChanged(ExpansionEvent e) {
 			}
 		});
-		Composite helpContainer = toolkit.createComposite(section);
-		section.setClient(helpContainer);
+		// create 'clear' hyperlink on the section tool bar
 		ImageHyperlink clearLink = new ImageHyperlink(section, SWT.NULL);
 		toolkit.adapt(clearLink, true, true);
 		clearLink.setToolTipText("Clear results");
@@ -85,7 +85,9 @@ public class SearchPart extends SectionPart implements IHelpPart {
 			}
 		});
 		section.setTextClient(clearLink);
-
+		// create section client
+		Composite helpContainer = toolkit.createComposite(section);
+		section.setClient(helpContainer);
 		GridLayout glayout = new GridLayout();
 		glayout.numColumns = 3;
 		glayout.marginWidth = glayout.marginHeight = 1;
@@ -119,6 +121,10 @@ public class SearchPart extends SectionPart implements IHelpPart {
 			}
 		});
 		toolkit.paintBordersFor(helpContainer);
+	}
+	public void setFocus() {
+		if (phraseText!=null)
+			phraseText.setFocus();
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.ui.internal.views.IHelpPart#getControl()
