@@ -35,26 +35,38 @@ import org.eclipse.swt.widgets.Text;
  */
 public class MultipleInputDialog extends Dialog {
 	
+	/**
+	 * The dialog's title.
+	 */
 	protected String title;
+	/**
+	 * The labels of the fields this dialog will display.
+	 */
 	protected String[] fieldLabels;
+	/**
+	 * The initial values of the fields this dialog will display.
+	 */
 	protected String[] initialValues;
 	
+	/**
+	 * Mapping of field names to the Text fields created
+	 * for them.
+	 */
 	protected Map textMap= new HashMap();
+	/**
+	 * Mapping of field names to the value the associated
+	 * field contained when the user pressed the OK button.
+	 */
 	protected Map valueMap= new HashMap();
 	/**
 	 * List of field names (Strings) whose associated text fields
 	 * should be validated as the user types.
 	 */
-	protected List verifyList= new ArrayList();
-	
-	public interface IMultipleInputModifyListener {
-		public void modifyText(String fieldLabel, ModifyEvent event);
-	}
+	protected List validateList= new ArrayList();
 
-	protected void cancelPressed() {
-		super.cancelPressed();
-	}
-
+	/**
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+	 */
 	protected void okPressed() {
 		Set entries= textMap.entrySet();
 		Iterator iter= entries.iterator();
@@ -73,7 +85,8 @@ public class MultipleInputDialog extends Dialog {
 	 * @param title the dialog title
 	 * @param fieldLabels the labels of the text fields to create
 	 * @param initialValues the initial values of the text fields or <code>null</code> if
-	 * 		no initial value should be displayed in any fields.
+	 * 		no initial value should be displayed in any fields. The position of the initial
+	 * 		values is taken to align with the position of the desired text field. 
 	 */
 	public MultipleInputDialog(Shell shell, String title, String[] fieldLabels, String[] initialValues) {
 		super(shell);
@@ -82,9 +95,13 @@ public class MultipleInputDialog extends Dialog {
 		this.initialValues= initialValues;
 	}
 	
+	/**
+	 * Creates the dialog and initializes button enablement.
+	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
+	 */
 	protected Control createContents(Composite parent) {
 		Control control= super.createContents(parent);
-		Iterator iter= verifyList.iterator();
+		Iterator iter= validateList.iterator();
 		while (iter.hasNext()) {
 			Text text= (Text) textMap.get(iter.next());
 			if (text == null) {
@@ -95,6 +112,9 @@ public class MultipleInputDialog extends Dialog {
 		return control;
 	}
 
+	/**
+	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite mainComposite= (Composite) super.createDialogArea(parent);
 		createFields(mainComposite);
@@ -102,7 +122,7 @@ public class MultipleInputDialog extends Dialog {
 	}
 	
 	/**
-	 * Creates the text fields with their labels
+	 * Creates the text fields with their labels.
 	 * @param mainComposite
 	 */
 	protected void createFields(Composite mainComposite) {
@@ -118,11 +138,13 @@ public class MultipleInputDialog extends Dialog {
 			label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 			label.setText(fieldLabel);
 			final Text text= new Text(fieldComposite, SWT.SINGLE | SWT.BORDER);
-			text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			gridData= new GridData(GridData.FILL_HORIZONTAL);
+			gridData.widthHint= 200;
+			text.setLayoutData(gridData);
 			if (initialValues != null && initialValues.length >= i) {
 				text.setText(initialValues[i]);
 			}
-			if (verifyList.contains(fieldLabel)) {
+			if (validateList.contains(fieldLabel)) {
 				text.addModifyListener(new ModifyListener() {
 					public void modifyText(ModifyEvent e) {
 						validateNotEmpty(text);
@@ -133,6 +155,11 @@ public class MultipleInputDialog extends Dialog {
 		}
 	}
 	
+	/**
+	 * Validates the given text to make sure it has a non-empty value.
+	 * Disabled the OK button if the text is empty. Enables it otherwise.
+	 * @param text the text field to examine
+	 */
 	public void validateNotEmpty(Text text) {
 		boolean enable= text.getText().trim().length() > 0; 
 		getButton(IDialogConstants.OK_ID).setEnabled(enable);
@@ -147,17 +174,19 @@ public class MultipleInputDialog extends Dialog {
 	 * 		an empty value.
 	 */
 	public void disallowEmpty(String fieldLabel) {
-		verifyList.add(fieldLabel);
+		validateList.add(fieldLabel);
 	}
 
-/* (non-Javadoc)
-	* Method declared in Window.
-	*/
-   protected void configureShell(Shell shell) {
-	   super.configureShell(shell);
-	   if (title != null)
-		   shell.setText(title);
-   }
+	/**
+	 * Sets the dialog title.
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		if (title != null) {
+			shell.setText(title);
+		}
+	}
 	
 	/**
 	 * Returns the value of the text field with the given label or
