@@ -30,31 +30,6 @@ public class OperationsManager implements IAdaptable {
 		return null;
 	}
 
-	public PendingOperation createPendingChange(
-		IFeature feature,
-		int jobType) {
-		return new PendingOperation(feature, jobType);
-	}
-
-	public PendingOperation createPendingChange(
-		IFeature feature,
-		IConfiguredSite targetSite) {
-		return new PendingOperation(feature, targetSite);
-	}
-
-	public PendingOperation createPendingChange(
-		IFeature oldFeature,
-		IFeature newFeature) {
-		return new PendingOperation(oldFeature, newFeature);
-	}
-
-	public PendingOperation createPendingChange(
-		IFeature oldFeature,
-		IFeature newFeature,
-		boolean optionalDelta) {
-		return new PendingOperation(oldFeature, newFeature, optionalDelta);
-	}
-
 	public PendingOperation[] getPendingChanges() {
 		return (PendingOperation[]) pendingChanges.toArray(
 			new PendingOperation[pendingChanges.size()]);
@@ -409,30 +384,37 @@ public class OperationsManager implements IAdaptable {
 		Object adapter)
 		throws CoreException {
 
-		toggle(site, feature, isConfigured);
+		PendingOperation toggleOperation = null;
+		if (isConfigured)
+			toggleOperation = new FeatureUnconfigOperation(site, feature);
+		else
+			toggleOperation = new FeatureConfigOperation(site, feature);
 
+		toggleOperation.execute();
+	
 		IStatus status = UpdateManager.getValidator().validateCurrentState();
 		if (status != null) {
-			revert(site, feature, isConfigured);
+			toggleOperation.undo();
 			throw new CoreException(status);
 		} else {
-			// do a restart
 			try {
+				// Restart not needed
 				boolean restartNeeded = false;
-				if (isConfigured) {
-					restartNeeded =
-						addPendingChange(
-							feature,
-							PendingOperation.UNCONFIGURE,
-							PendingOperation.CONFIGURE);
-				} else {
-					restartNeeded =
-						addPendingChange(
-							feature,
-							PendingOperation.CONFIGURE,
-							PendingOperation.UNCONFIGURE);
-				}
 
+				// Check if this operation is cancelling one that's already pending
+				PendingOperation oldOperation = findPendingChange(feature);
+
+				if ((isConfigured
+					&& oldOperation instanceof FeatureUnconfigOperation)
+					|| (!isConfigured
+						&& oldOperation instanceof FeatureConfigOperation)) {
+					// no need to do either pending change
+					removePendingChange(oldOperation);
+				} else {
+					addPendingChange(toggleOperation);
+					restartNeeded = true;
+				} 
+				
 				SiteManager.getLocalSite().save();
 				UpdateManager.getOperationsManager().fireObjectChanged(
 					adapter,
@@ -440,7 +422,7 @@ public class OperationsManager implements IAdaptable {
 
 				return restartNeeded;
 			} catch (CoreException e) {
-				revert(site, feature, isConfigured);
+				toggleOperation.undo();
 				UpdateManager.logException(e);
 				throw e;
 			}
@@ -460,6 +442,7 @@ public class OperationsManager implements IAdaptable {
 		site.setEnabled(!oldValue);
 		IStatus status = UpdateManager.getValidator().validateCurrentState();
 		if (status != null) {
+			// revert
 			site.setEnabled(oldValue);
 			throw new CoreException(status);
 		} else {
@@ -470,48 +453,11 @@ public class OperationsManager implements IAdaptable {
 					"");
 				return true; // will restart
 			} catch (CoreException e) {
+				//revert
 				site.setEnabled(oldValue);
 				UpdateManager.logException(e);
 				throw e;
 			}
-		}
-	}
-
-	private void toggle(
-		IConfiguredSite site,
-		IFeature feature,
-		boolean isConfigured)
-		throws CoreException {
-		if (isConfigured) {
-			site.unconfigure(feature);
-		} else {
-			site.configure(feature);
-		}
-	}
-
-	private void revert(
-		IConfiguredSite site,
-		IFeature feature,
-		boolean isConfigured)
-		throws CoreException {
-		toggle(site, feature, !isConfigured);
-	}
-
-	private boolean addPendingChange(
-		IFeature feature,
-		int newJobType,
-		int obsoleteJobType) {
-		OperationsManager opmgr = UpdateManager.getOperationsManager();
-		PendingOperation job = opmgr.findPendingChange(feature);
-		if (job != null && obsoleteJobType == job.getJobType()) {
-			opmgr.removePendingChange(job);
-			return false;
-		} else {
-			opmgr.addPendingChange(
-				UpdateManager.getOperationsManager().createPendingChange(
-					feature,
-					newJobType));
-			return true;
 		}
 	}
 

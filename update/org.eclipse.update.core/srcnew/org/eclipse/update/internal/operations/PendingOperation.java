@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.update.internal.operations;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 
@@ -20,32 +21,33 @@ public class PendingOperation {
 	public static final int CONFIGURE = 0x3;
 	public static final int UNCONFIGURE = 0x4;
 	
+	protected IFeature feature;
+	protected IFeature oldFeature;
+	
 	private int jobType;
-	private IFeature feature;
-	private IFeature oldFeature;
 	private boolean optionalDelta;
 	private IConfiguredSite defaultTargetSite;
 	private boolean processed;
 	
-	public PendingOperation(IFeature feature, int jobType) {
+	protected PendingOperation(IFeature feature, int jobType) {
 		this.feature = feature;
 		this.jobType = jobType;
 	}
 	
-	public PendingOperation(IFeature feature, IConfiguredSite targetSite) {
-		this(feature, INSTALL);
-		this.defaultTargetSite = targetSite;
-	}
+//	public PendingOperation(IFeature feature, IConfiguredSite targetSite) {
+//		this(feature, INSTALL);
+//		this.defaultTargetSite = targetSite;
+//	}
 	
-	public PendingOperation(IFeature oldFeature, IFeature newFeature) {
-		this(newFeature, INSTALL);
-		this.oldFeature = oldFeature;
-	}
+//	public PendingOperation(IFeature oldFeature, IFeature newFeature) {
+//		this(newFeature, INSTALL);
+//		this.oldFeature = oldFeature;
+//	}
 	
-	public PendingOperation(IFeature oldFeature, IFeature newFeature, boolean optionalDelta) {
-		this(oldFeature, newFeature);
-		this.optionalDelta = optionalDelta;
-	}
+//	public PendingOperation(IFeature oldFeature, IFeature newFeature, boolean optionalDelta) {
+//		this(oldFeature, newFeature);
+//		this.optionalDelta = optionalDelta;
+//	}
 
 	public int getJobType() {
 		return jobType;
@@ -77,5 +79,19 @@ public class PendingOperation {
 	public void enable(boolean enable) {
 		// this should register with the operation manager
 		// used to be called setModel
+	}
+	
+	public void execute() throws CoreException {
+	}
+	
+	public void undo()  throws CoreException{
+	}
+	
+	public void commit() {
+		markProcessed();
+	}
+	
+	public boolean isCommitted() {
+		return isProcessed();
 	}
 }

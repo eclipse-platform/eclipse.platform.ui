@@ -105,7 +105,7 @@ public class SearchRunner2 {
 				IFeature oldFeature = null;
 				if (installed.length>0)
 					oldFeature = installed[0];
-				PendingOperation change = UpdateManager.getOperationsManager().createPendingChange(oldFeature, feature);
+				PendingOperation change = new FeatureInstallOperation(feature);
 				result.add(change);
 			} catch (CoreException e) {
 				UpdateUI.logException(e);
