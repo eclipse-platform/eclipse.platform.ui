@@ -22,7 +22,7 @@ package org.eclipse.debug.core.variables;
  * @see org.eclipse.debug.core.variables.ISimpleLaunchVariable
  * @since 3.0
  */
-public interface ISimpleVariableRegistry {
+public interface ISimpleLaunchVariableRegistry {
 	/**
 	 * Adds the given variables to this variable registry
 	 * 

@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
-import org.eclipse.debug.core.variables.ISimpleVariableRegistry;
+import org.eclipse.debug.core.variables.ISimpleLaunchVariableRegistry;
 import org.eclipse.debug.core.variables.ILaunchVariableInitializer;
 import org.eclipse.debug.core.variables.SimpleLaunchVariable;
 import org.w3c.dom.Document;
@@ -48,7 +48,7 @@ import org.w3c.dom.NodeList;
  * A registry of simple variables, used for retrieving launch configuration
  * variable objects based on their names.
  */
-public class SimpleVariableRegistry implements ISimpleVariableRegistry {
+public class SimpleVariableRegistry implements ISimpleLaunchVariableRegistry {
 	
 	private static final String PREF_SIMPLE_VARIABLES="simpleVariables"; //$NON-NLS-1$
 	// Variable extension point constants

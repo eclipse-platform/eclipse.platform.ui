@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.variables.ContextLaunchVariableRegistry;
 import org.eclipse.debug.core.variables.IContextLaunchVariableRegistry;
-import org.eclipse.debug.core.variables.ISimpleVariableRegistry;
+import org.eclipse.debug.core.variables.ISimpleLaunchVariableRegistry;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.ExpressionManager;
@@ -367,7 +367,7 @@ public class DebugPlugin extends Plugin {
 	 * 
 	 * @return the registry of simple launch variables
 	 */
-	public ISimpleVariableRegistry getSimpleVariableRegistry() {
+	public ISimpleLaunchVariableRegistry getSimpleVariableRegistry() {
 		if (fSimpleVariableRegistry == null) {
 			fSimpleVariableRegistry = new SimpleVariableRegistry();
 		}
