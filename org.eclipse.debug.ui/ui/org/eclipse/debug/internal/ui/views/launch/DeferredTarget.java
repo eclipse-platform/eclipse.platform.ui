@@ -11,11 +11,9 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.ui.DebugElementWorkbenchAdapter;
 import org.eclipse.ui.progress.IDeferredWorkbenchAdapter;
 import org.eclipse.ui.progress.IElementCollector;
 
@@ -23,7 +21,7 @@ import org.eclipse.ui.progress.IElementCollector;
 /**
  * Default deferred content provider for a debug target 
  */
-public class DeferredTarget extends DebugElementWorkbenchAdapter implements IDeferredWorkbenchAdapter {
+public class DeferredTarget extends DeferredDebugElementWorkbenchAdapter implements IDeferredWorkbenchAdapter {
     
     /* (non-Javadoc)
      * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#fetchDeferredChildren(java.lang.Object, org.eclipse.ui.progress.IElementCollector, org.eclipse.core.runtime.IProgressMonitor)
@@ -37,20 +35,4 @@ public class DeferredTarget extends DebugElementWorkbenchAdapter implements IDef
         }
         collector.done();
     }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#isContainer()
-     */
-    public boolean isContainer() {
-        return true;
-    }
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.progress.IDeferredWorkbenchAdapter#getRule(java.lang.Object)
-     */
-    public ISchedulingRule getRule(Object object) {
-        return null;
-    }
-
-
 }
