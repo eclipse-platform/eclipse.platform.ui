@@ -198,7 +198,7 @@ public class Connection {
 			throw new CVSCommunicationException(Policy.bind("Connection.writeUnestablishedConnection"));//$NON-NLS-1$
 			
 		if (Policy.DEBUG_CVS_PROTOCOL)
-			System.out.print(new String(b) + (newline ? "\n" : ""));//$NON-NLS-1$ //$NON-NLS-2$ 
+			System.out.print(new String(b, off, len) + (newline ? "\n" : ""));//$NON-NLS-1$ //$NON-NLS-2$ 
 	
 		try {
 			OutputStream out= getOutputStream();
