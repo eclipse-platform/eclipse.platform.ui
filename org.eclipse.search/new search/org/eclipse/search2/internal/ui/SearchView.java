@@ -292,6 +292,8 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fSearchesDropDownAction= new SearchDropDownAction(this);
 		fSearchesDropDownAction.setEnabled(InternalSearchUI.getInstance().getSearchManager().getQueries().length != 0);
 		fSearchAgainAction= new SearchAgainAction(this);
+		// hackery to get the shortcut to show up
+		fSearchAgainAction.setActionDefinitionId("org.eclipse.ui.file.refresh"); //$NON-NLS-1$
 		fCancelAction= new CancelSearchAction(this);
 		fCancelAction.setEnabled(false);
 	}
