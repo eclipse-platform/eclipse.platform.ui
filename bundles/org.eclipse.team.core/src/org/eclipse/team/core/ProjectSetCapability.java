@@ -15,7 +15,17 @@ import java.io.File;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Provisional
+ * This class represents provisional API. A provider is not required to implement this API.
+ * Implementers, and those who reference it, do so with the awareness that this class may be
+ * removed or substantially changed at future times without warning.
+ * <p>
+ * The intention is that this class will eventually replace <code>IProjectSetSerializer</code>.
+ * At the current time it only complements this API by providing a notification mechanism
+ * for informing repository providers when a project set has been created.
+ * 
+ * @see IProjectSetSerializer, RepositoryProviderType
+ * 
+ * @since 2.1
  */
 
 public abstract class ProjectSetCapability {
@@ -29,20 +39,6 @@ public abstract class ProjectSetCapability {
 	 */	
 	public void projectSetCreated(File file, Object context, IProgressMonitor monitor) {
 		//default is to do nothing
-	}
-		
-	/**
-	 * Returns true if when importing a project set the projects can be created
-	 * at a specified file system location different than the default.
-	 * 
-	 * NOTE: If this method is overriden to return true, then the provider
-	 * <b>must</b> also override addToWorkspace(String[], String, IPath, Object,
-	 * IProgressMonitor);
-	 * 
-	 * @return boolean
-	 */
-	public boolean supportsProjectSetImportRelocation() {
-		return false;
 	}
 	
 }
