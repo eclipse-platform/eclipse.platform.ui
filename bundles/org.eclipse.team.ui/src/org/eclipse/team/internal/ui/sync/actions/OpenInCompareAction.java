@@ -22,6 +22,7 @@ import org.eclipse.team.internal.ui.sync.views.SyncSet;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 
 /**
@@ -47,7 +48,13 @@ public class OpenInCompareAction extends Action {
 		CompareEditorInput input = getCompareInput();
 		if(input != null) { 
 			IEditorPart editor = reuseCompareEditor((SyncInfoCompareInput)input);
-			CompareUI.openCompareEditor(input);
+			if(editor != null && editor instanceof IReusableEditor) {
+				CompareUI.openCompareEditor(input);
+				// should be enabled once  Bug 38770 is fixed
+				//((IReusableEditor)editor).setInput(input);
+			} else {
+				CompareUI.openCompareEditor(input);
+			}
 		}		
 	}
 	
@@ -70,12 +77,13 @@ public class OpenInCompareAction extends Action {
 			for (int i = 0; i < editorRefs.length; i++) {
 				IEditorPart part = editorRefs[i].getEditor(true);
 				if(part != null && part.getEditorInput() instanceof SyncInfoCompareInput) {
-					if(! part.isDirty()) {
+					if(! part.isDirty()) {	
+						// should be removed once Bug 38770 is fixed					
 						page.closeEditor(part, true /*save changes if required */);		
 					}
 				}
 			}
 		}
-		return null;
+		return editor;
 	}
 }
