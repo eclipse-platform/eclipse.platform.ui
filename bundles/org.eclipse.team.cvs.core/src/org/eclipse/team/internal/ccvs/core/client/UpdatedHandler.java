@@ -98,6 +98,9 @@ class UpdatedHandler extends ResponseHandler {
 		modTime = mFile.getTimeStamp();
 		MutableResourceSyncInfo newInfoWithTimestamp = info.cloneMutable();
 		newInfoWithTimestamp.setTimeStamp(modTime);
+		if(handlerType==HANDLE_MERGED) {
+			newInfoWithTimestamp.setMerged();
+		}
 		mFile.setSyncInfo(newInfoWithTimestamp);
 	}
 }
