@@ -10,6 +10,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IFlushableStreamMonitor;
@@ -58,6 +60,12 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * from the stream immediately.
 	 */
 	private boolean fKilled= false;
+	
+	/**
+	 * Safe runnable use to notify when content appended.
+	 */
+	private ContentNotifier fNotifier = null;
+	
 	/**
 	 * Creates an output stream monitor on the
 	 * given stream (connected to system out or err).
@@ -96,12 +104,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	 * been appended to the stream.
 	 */
 	private void fireStreamAppended(String text) {
-		if (text == null)
-			return;
-		Object[] copiedListeners= fListeners.getListeners();
-		for (int i= 0; i < copiedListeners.length; i++) {
-			 ((IStreamListener) copiedListeners[i]).streamAppended(text, this);
-		}
+		getNotifier().notifyAppend(text);
 	}
 
 	/**
@@ -200,4 +203,40 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 		return fBuffered;
 	}
 
+	private ContentNotifier getNotifier() {
+		if (fNotifier == null) {
+			fNotifier = new ContentNotifier();
+		}
+		return fNotifier;
+	}
+	
+	class ContentNotifier implements ISafeRunnable {
+		
+		private IStreamListener fListener;
+		private String fText;
+		
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
+		 */
+		public void handleException(Throwable exception) {
+		}
+
+		/**
+		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
+		 */
+		public void run() throws Exception {
+			fListener.streamAppended(fText, OutputStreamMonitor.this);
+		}
+
+		public void notifyAppend(String text) {
+			if (text == null)
+				return;
+			fText = text;
+			Object[] copiedListeners= fListeners.getListeners();
+			for (int i= 0; i < copiedListeners.length; i++) {
+				fListener = (IStreamListener) copiedListeners[i];
+				Platform.run(this);
+			}			
+		}
+	}
 }
