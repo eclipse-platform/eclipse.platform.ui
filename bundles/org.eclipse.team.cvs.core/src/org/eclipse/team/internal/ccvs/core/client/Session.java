@@ -893,22 +893,29 @@ public class Session {
 				byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
 				if (! isBinary && IS_CRLF_PLATFORM || compressionLevel != 0) {
 					// this affects the file size, spool the converted copy to an in-memory buffer
-					if (! isBinary && IS_CRLF_PLATFORM) in = new CRLFtoLFInputStream(in);
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					OutputStream zout;
-					if (compressionLevel != 0) {
-						try {
-							zout = new GZIPOutputStream(bout); // apparently does not support specifying compression level
-							compressed = true;
-						} catch (IOException e) {
-							throw CVSException.wrapException(e);
+					try {
+						if (! isBinary && IS_CRLF_PLATFORM) in = new CRLFtoLFInputStream(in);
+						OutputStream zout;
+						if (compressionLevel != 0) {
+							try {
+								zout = new GZIPOutputStream(bout); // apparently does not support specifying compression level
+								compressed = true;
+							} catch (IOException e) {
+								in.close();
+								throw CVSException.wrapException(e);
+							}
+						} else {
+							zout = bout;
 						}
-					} else {
-						zout = bout;
+						try {
+							for (int count; (count = in.read(buffer)) != -1;) zout.write(buffer, 0, count);
+						} finally {
+							zout.close();
+						}
+					} finally {
+						in.close();
 					}
-					for (int count; (count = in.read(buffer)) != -1;) zout.write(buffer, 0, count);
-					zout.close();
-					in.close();
 					byte[] contents = bout.toByteArray();
 					in = new ByteArrayInputStream(contents);
 					size = contents.length;
