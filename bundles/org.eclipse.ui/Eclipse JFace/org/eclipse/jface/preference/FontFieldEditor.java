@@ -163,7 +163,7 @@ protected void doFillIntoGrid(Composite parent, int numColumns) {
 protected void doLoad() {
 	if (changeFontButton == null)
 		return;
-	updateFont(PreferenceConverter.getFontData(getPreferenceStore(), getPreferenceName()));
+	updateFont(PreferenceConverter.getFontDataArray(getPreferenceStore(), getPreferenceName()));
 }
 /* (non-Javadoc)
  * Method declared on FieldEditor.
@@ -171,7 +171,7 @@ protected void doLoad() {
 protected void doLoadDefault() {
 	if (changeFontButton == null)
 		return;
-	updateFont(PreferenceConverter.getDefaultFontData(getPreferenceStore(), getPreferenceName()));
+	updateFont(PreferenceConverter.getDefaultFontDataArray(getPreferenceStore(), getPreferenceName()));
 }
 /* (non-Javadoc)
  * Method declared on FieldEditor.
@@ -197,7 +197,9 @@ protected Button getChangeControl(Composite parent) {
 				if (font != null) {
 					FontData oldFont= chosenFont;
 					setPresentsDefaultValue(false);
-					updateFont(font);
+					FontData[] newData = new FontData[1];
+					newData[0] = font;
+					updateFont(newData);
 					fireValueChanged(VALUE, oldFont, font);
 				}
 				
@@ -275,8 +277,18 @@ public void setChangeButtonText(String text) {
  * Updates the change font button and the previewer to reflect the
  * newly selected font.
  */
-private void updateFont(FontData font) {
-	chosenFont = font;
+private void updateFont(FontData font[]) {
+	FontData bestFont = 
+		JFaceResources.getFontRegistry().
+			bestData(font,valueControl.getDisplay());
+
+	//if we have nothing valid do as best we can
+	if(bestFont == null)
+		bestFont = getDefaultFontData();
+		
+	//Now cache this value in the receiver
+	this.chosenFont = bestFont;
+	
 	if (valueControl != null) {
 		valueControl.setText(StringConverter.asString(chosenFont));
 	}
@@ -289,12 +301,19 @@ private void updateFont(FontData font) {
  * being edited
  */
 protected void setToDefault(){
-	FontData defaultFontData = 
-		PreferenceConverter.getDefaultFontData(getPreferenceStore(),getPreferenceName());
+	FontData[] defaultFontData = 
+		PreferenceConverter.getDefaultFontDataArray(getPreferenceStore(),getPreferenceName());
 	PreferenceConverter.setValue(
 		getPreferenceStore(), 
 		getPreferenceName(), 
 		defaultFontData);
+}
+
+/**
+ * Get the system default font data.
+ */
+private FontData getDefaultFontData(){
+	return valueControl.getDisplay().getSystemFont().getFontData()[0];
 }
 
 }
