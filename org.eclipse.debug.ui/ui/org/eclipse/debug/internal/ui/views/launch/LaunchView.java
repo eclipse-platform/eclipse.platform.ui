@@ -562,7 +562,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			setActive(true);
 			updateObjects();
 			showEditorForCurrentSelection();
-			fContextListener.loadTrackViews();
+			if (fContextListener != null) {
+				fContextListener.loadTrackViews();
+			}
 		}
 	}
 
