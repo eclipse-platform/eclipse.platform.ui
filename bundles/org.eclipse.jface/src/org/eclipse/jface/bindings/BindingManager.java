@@ -38,6 +38,14 @@ import org.eclipse.swt.SWT;
  * It is possible to listen to changes in the collection of schemes and bindings
  * by attaching a listener to the manager.
  * </p>
+ * <p>
+ * The binding manager is very sensitive to performance. Misusing the manager
+ * can render an application unenjoyable to use. As such, each of the public
+ * methods states the current run-time performance. In future releases, it is
+ * guaranteed that that method will run in at least the stated time constraint --
+ * though it might get faster. Where possible, we have also tried to be memory
+ * efficient.
+ * </p>
  * 
  * @since 3.1
  */
@@ -57,9 +65,14 @@ public final class BindingManager implements IContextManagerListener,
 	private static final String LOCALE_SEPARATOR = "_"; //$NON-NLS-1$
 
 	/**
+	 * <p>
 	 * Takes a fully-specified string, and converts it into an array of
 	 * increasingly less-specific strings. So, for example, "en_GB" would become
 	 * ["en_GB", "en", "", null].
+	 * </p>
+	 * <p>
+	 * This method runs in linear time (O(n)) over the length of the string.
+	 * </p>
 	 * 
 	 * @param string
 	 *            The string to break apart into its less specific components;
@@ -100,15 +113,26 @@ public final class BindingManager implements IContextManagerListener,
 	/**
 	 * The active bindings. This is a map of tirggers (
 	 * <code>TriggerSequence</code>) to command ids (<code>String</code>).
+	 * This value will only be <code>null</code> if the active bindings have
+	 * not yet been computed. Otherwise, this value may be empty.
 	 */
 	private Map activeBindings = null;
 
 	/**
 	 * The scheme that is currently active. An active scheme is the one that is
 	 * currently dictating which bindings will actually work. This value may be
-	 * <code>null</code> if there is no active scheme.
+	 * <code>null</code> if there is no active scheme. If the active scheme
+	 * becomes undefined, then this should automatically revert to
+	 * <code>null</code>.
 	 */
 	private Scheme activeScheme = null;
+
+	/**
+	 * The array of scheme identifiers, starting with the active scheme and
+	 * moving up through its parents. This value may be <code>null</code> if
+	 * there is no active scheme.
+	 */
+	private String[] activeSchemeIds = null;
 
 	/**
 	 * The set of all bindings currently handled by this manager. This set has
@@ -152,7 +176,7 @@ public final class BindingManager implements IContextManagerListener,
 	/**
 	 * The array of locales, starting with the active locale and moving up
 	 * through less specific representations of the locale. For example,
-	 * ["en_US", "en", "", null].
+	 * ["en_US", "en", "", null]. This value will never be <code>null</code>.
 	 */
 	private String[] locales = expand(locale, LOCALE_SEPARATOR);
 
@@ -165,15 +189,9 @@ public final class BindingManager implements IContextManagerListener,
 	/**
 	 * The array of platforms, starting with the active platform and moving up
 	 * through less specific representations of the platform. For example,
-	 * ["gtk", "", null].
+	 * ["gtk", "", null]. This value will never be <code>null,/code>.
 	 */
 	private String[] platforms = expand(platform, Util.ZERO_LENGTH_STRING);
-
-	/**
-	 * The array of scheme identifiers, starting with the active scheme and
-	 * moving up through its parents.
-	 */
-	private String[] schemeIds = null;
 
 	/**
 	 * The map of scheme identifiers (<code>String</code>) to scheme (
@@ -183,7 +201,12 @@ public final class BindingManager implements IContextManagerListener,
 	private final Map schemesById = new HashMap();
 
 	/**
+	 * <p>
 	 * Constructs a new instance of <code>BindingManager</code>.
+	 * </p>
+	 * <p>
+	 * This method completes in amortized constant time (O(1)).
+	 * </p>
 	 * 
 	 * @param contextManager
 	 *            The context manager that will support this binding manager.
@@ -200,9 +223,14 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Adds a single new binding to the exist set of bindings. If the set is
 	 * currently <code>null</code>, then a new set is created and this
 	 * binding is added to it.
+	 * </p>
+	 * <p>
+	 * This method completes in amortized <code>O(1)</code>.
+	 * </p>
 	 * 
 	 * @param binding
 	 *            The binding to be added; must not be <code>null</code>.
@@ -216,15 +244,18 @@ public final class BindingManager implements IContextManagerListener,
 			bindings = new HashSet();
 		}
 		bindings.add(binding);
-		activeBindings = null;
-		cachedBindings.clear();
-		recomputeBindings();
+		clearCache();
 	}
 
 	/**
+	 * <p>
 	 * Adds a listener to this binding manager. The listener will be notified
 	 * when the set of defined schemes or bindings changes. This can be used to
 	 * track the global appearance and disappearance of bindings.
+	 * </p>
+	 * <p>
+	 * This method completes in amortized constant time (<code>O(1)</code>).
+	 * </p>
 	 * 
 	 * @param listener
 	 *            The listener to attach; must not be <code>null</code>.
@@ -243,11 +274,46 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
+	 * Clears the cache, and the existing solution. If debugging is turned on,
+	 * then this will also print a message to standard out.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>.
+	 * </p>
+	 */
+	private final void clearCache() {
+		if (DEBUG) {
+			System.out.println("BINDINGS >> Clearing cache"); //$NON-NLS-1$
+		}
+		cachedBindings.clear();
+		clearSolution();
+	}
+
+	/**
+	 * <p>
+	 * Clears the existing solution.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>.
+	 */
+	private final void clearSolution() {
+		activeBindings = null;
+	}
+
+	/**
+	 * <p>
 	 * Computes the bindings given the context tree, and inserts them into the
 	 * <code>commandIdsByTrigger</code>. It is assumed that
 	 * <code>locales</code>,<code>platforsm</code> and
 	 * <code>schemeIds</code> correctly reflect the state of the application.
 	 * This method does not deal with caching.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n+mn)</code>, where <code>n</code>
+	 * is the number of bindings and <code>m</code> is the number of deletion
+	 * markers.
+	 * </p>
 	 * 
 	 * @param activeContextTree
 	 *            The map representing the tree of active contexts. The map is
@@ -299,8 +365,8 @@ public final class BindingManager implements IContextManagerListener,
 			// Check the scheme ids.
 			final String schemeId = binding.getSchemeId();
 			found = false;
-			for (int i = 0; i < schemeIds.length; i++) {
-				if (Util.equals(schemeId, schemeIds[i])) {
+			for (int i = 0; i < activeSchemeIds.length; i++) {
+				if (Util.equals(schemeId, activeSchemeIds[i])) {
 					found = true;
 					break;
 				}
@@ -369,7 +435,8 @@ public final class BindingManager implements IContextManagerListener,
 					if (winner == null) {
 						if (DEBUG) {
 							System.out
-									.println("A conflict occurred for " + trigger); //$NON-NLS-1$
+									.println("BINDINGS >> A conflict occurred for " + trigger); //$NON-NLS-1$
+							System.out.println("BINDINGS >>     " + match); //$NON-NLS-1$
 						}
 					} else {
 						commandIdsByTrigger.put(trigger, winner.getCommandId());
@@ -379,22 +446,32 @@ public final class BindingManager implements IContextManagerListener,
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.commands.contexts.IContextManagerListener#contextManagerChanged(org.eclipse.commands.contexts.ContextManagerEvent)
+	/**
+	 * <p>
+	 * Notifies this manager that the context manager has changed. This method
+	 * is intended for internal use only.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>.
+	 * </p>
 	 */
 	public final void contextManagerChanged(
 			final ContextManagerEvent contextManagerEvent) {
 		if (contextManagerEvent.haveActiveContextsChanged()) {
-			recomputeBindings();
+			clearSolution();
 		}
 	}
 
 	/**
+	 * <p>
 	 * Creates a tree of context identifiers, representing the hierarchical
 	 * structure of the given contexts. The tree is structured as a mapping from
 	 * child to parent.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the height of the context tree.
+	 * </p>
 	 * 
 	 * @param contextIds
 	 *            The set of context identifiers to be converted into a tree;
@@ -433,7 +510,8 @@ public final class BindingManager implements IContextManagerListener,
 	 * contexts will have taken place.
 	 * </p>
 	 * <p>
-	 * This method is intended for internal use only.
+	 * This method completes in <code>O(n^2)</code>, where <code>n</code>
+	 * is the height of the context tree.
 	 * </p>
 	 * 
 	 * @param contextIds
@@ -497,7 +575,7 @@ public final class BindingManager implements IContextManagerListener,
 			}
 		} catch (NotDefinedException e) {
 			if (DEBUG) {
-				System.out.println("CONTEXTS >>> NotDefinedException('" //$NON-NLS-1$
+				System.out.println("BINDINGS >>> NotDefinedException('" //$NON-NLS-1$
 						+ e.getMessage()
 						+ "') while filtering dialog/window contexts"); //$NON-NLS-1$
 			}
@@ -507,8 +585,14 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Notifies all of the listeners to this manager that the defined or active
 	 * schemes of bindings have changed.
+	 * </p>
+	 * <p>
+	 * The time this method takes to complete is dependent on external
+	 * listeners.
+	 * </p>
 	 * 
 	 * @param event
 	 *            The event to send to all of the listeners; must not be
@@ -529,7 +613,15 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Returns the active bindings.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>. If the active bindings are
+	 * not yet computed, then this completes in <code>O(n+mn)</code>, where
+	 * <code>n</code> is the number of bindings and <code>m</code> is the
+	 * number of deletion markers.
+	 * </p>
 	 * 
 	 * @return The map of triggers (<code>TriggerSequence</code>) to command
 	 *         ids (<code>String</code>) which are currently active. This
@@ -538,16 +630,23 @@ public final class BindingManager implements IContextManagerListener,
 	 */
 	public final Map getActiveBindings() {
 		if (activeBindings == null) {
-			return null;
+			recomputeBindings();
 		}
 
 		return Collections.unmodifiableMap(activeBindings);
 	}
 
 	/**
+	 * <p>
 	 * Computes the bindings for the current state of the application, but
 	 * disregarding the current contexts. This can be useful when trying to
 	 * display all the possible bindings.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n+mn)</code>, where <code>n</code>
+	 * is the number of bindings and <code>m</code> is the number of deletion
+	 * markers.
+	 * </p>
 	 * 
 	 * @return A map of trigger (<code>TriggerSequence</code>) to bindings (
 	 *         <code>Collection</code> containing <code>Binding</code>).
@@ -561,7 +660,7 @@ public final class BindingManager implements IContextManagerListener,
 
 		// Build a cached binding set for that state.
 		final CachedBindingSet bindingCache = new CachedBindingSet(null,
-				locales, platforms, schemeIds);
+				locales, platforms, activeSchemeIds);
 
 		/*
 		 * Check if the cached binding set already exists. If so, simply set the
@@ -575,7 +674,16 @@ public final class BindingManager implements IContextManagerListener,
 		}
 		Map commandIdsByTrigger = existingCache.getCommandIdsByTrigger();
 		if (commandIdsByTrigger != null) {
+			if (DEBUG) {
+				System.out.println("BINDINGS >> Cache hit"); //$NON-NLS-1$
+			}
+
 			return Collections.unmodifiableMap(commandIdsByTrigger);
+		}
+
+		// There is no cached entry for this.
+		if (DEBUG) {
+			System.out.println("BINDINGS >> Cache miss"); //$NON-NLS-1$
 		}
 
 		// Compute the active bindings.
@@ -586,9 +694,16 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Computes the bindings for the current state of the application, but
 	 * disregarding the current contexts. This can be useful when trying to
 	 * display all the possible bindings.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n+mn)</code>, where <code>n</code>
+	 * is the number of bindings and <code>m</code> is the number of deletion
+	 * markers.
+	 * </p>
 	 * 
 	 * @return All of the active bindings (<code>Binding</code>), not sorted
 	 *         in any fashion. This collection may be empty, but it is never
@@ -611,8 +726,18 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Returns the active bindings for a particular command identifier. This
 	 * method operates in O(n) time over the number of bindings.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of active bindings. If the active bindings are not yet
+	 * computed, then this completes in <code>O(n+mn)</code>, where
+	 * <code>n</code> is the number of bindings and <code>m</code> is the
+	 * number of deletion markers.
+	 * </p>
+	 * </p>
 	 * 
 	 * @param commandId
 	 *            The identifier for the command whose bindings you wish to
@@ -622,11 +747,7 @@ public final class BindingManager implements IContextManagerListener,
 	 *         never be <code>null</code>, but it may be empty.
 	 */
 	public final Collection getActiveBindingsFor(final String commandId) {
-		if (activeBindings == null) {
-			return Collections.EMPTY_LIST;
-		}
-
-		final Iterator entryItr = activeBindings.entrySet().iterator();
+		final Iterator entryItr = getActiveBindings().entrySet().iterator();
 		final Collection bindings = new ArrayList();
 		while (entryItr.hasNext()) {
 			final Map.Entry entry = (Map.Entry) entryItr.next();
@@ -640,7 +761,12 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Gets the currently active scheme.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>.
+	 * </p>
 	 * 
 	 * @return The active scheme; may be <code>null</code> if there is no
 	 *         active scheme.
@@ -650,9 +776,14 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Returns the set of all bindings managed by this class. This set is
 	 * wrapped in a <code>Collections.unmodifiableSet</code>. This is to
 	 * prevent modification of the manager's internal data structures.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>.
+	 * </p>
 	 * 
 	 * @return The set of all bindings. This value may be <code>null</code>
 	 *         and it may be empty.
@@ -666,7 +797,12 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Returns the set of identifiers for those schemes that are defined.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>.
+	 * </p>
 	 * 
 	 * @return The set of defined scheme identifiers; this value may be empty,
 	 *         but it is never <code>null</code>.
@@ -676,8 +812,13 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Returns the active locale for this binding manager. The locale is in the
 	 * same format as <code>Locale.getDefault().toString()</code>.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>.
+	 * </p>
 	 * 
 	 * @return The active locale; never <code>null</code>.
 	 */
@@ -686,8 +827,17 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Returns all of the possible bindings that start with the given trigger
 	 * (but are not equal to the given trigger).
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of active bindings. If the bindings aren't currently computed,
+	 * then this completes in <code>O(n+mn)</code>, where <code>n</code> is
+	 * the number of bindings and <code>m</code> is the number of deletion
+	 * markers.
+	 * </p>
 	 * 
 	 * @param trigger
 	 *            The prefix to look for; must not be <code>null</code>.
@@ -696,12 +846,8 @@ public final class BindingManager implements IContextManagerListener,
 	 *         it is never <code>null</code>.
 	 */
 	public final Map getPartialMatches(final TriggerSequence trigger) {
-		if (activeBindings == null) {
-			recomputeBindings();
-		}
-
 		final Map partialMatches = new HashMap();
-		final Iterator bindingItr = activeBindings.entrySet().iterator();
+		final Iterator bindingItr = getActiveBindings().entrySet().iterator();
 		while (bindingItr.hasNext()) {
 			final Map.Entry entry = (Map.Entry) bindingItr.next();
 			final TriggerSequence triggerSequence = (TriggerSequence) entry
@@ -715,8 +861,16 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Returns the command identifier for the active binding matching this
 	 * trigger, if any.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>. If the bindings aren't
+	 * currently computed, then this completes in <code>O(n+mn)</code>, where
+	 * <code>n</code> is the number of bindings and <code>m</code> is the
+	 * number of deletion markers.
+	 * </p>
 	 * 
 	 * @param trigger
 	 *            The trigger to match; may be <code>null</code>.
@@ -724,16 +878,17 @@ public final class BindingManager implements IContextManagerListener,
 	 *         otherwise.
 	 */
 	public final String getPerfectMatch(final TriggerSequence trigger) {
-		if (activeBindings == null) {
-			recomputeBindings();
-		}
-
-		return (String) activeBindings.get(trigger);
+		return (String) getActiveBindings().get(trigger);
 	}
 
 	/**
+	 * <p>
 	 * Returns the active platform for this binding manager. The platform is in
 	 * the same format as <code>SWT.getPlatform()</code>.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>.
+	 * </p>
 	 * 
 	 * @return The active platform; never <code>null</code>.
 	 */
@@ -742,9 +897,14 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Gets the scheme with the given identifier. If the scheme does not already
 	 * exist, then a new (undefined) scheme is created with that identifier.
 	 * This guarantees that schemes will remain unique.
+	 * </p>
+	 * <p>
+	 * This method completes in amortized <code>O(1)</code>.
+	 * </p>
 	 * 
 	 * @param identifier
 	 *            The identifier for the scheme to retrieve; must not be
@@ -768,7 +928,13 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Ascends all of the parents of the scheme until no more parents are found.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the height of the context tree.
+	 * </p>
 	 * 
 	 * @param schemeId
 	 *            The id of the scheme for which the parents should be found;
@@ -791,8 +957,17 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Returns whether the given trigger sequence is a partial match for the
 	 * given sequence.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of active bindings. If the bindings aren't currently computed,
+	 * then this completes in <code>O(n+mn)</code>, where <code>n</code> is
+	 * the number of bindings and <code>m</code> is the number of deletion
+	 * markers.
+	 * </p>
 	 * 
 	 * @param trigger
 	 *            The sequence which should be the prefix for some binding;
@@ -801,11 +976,7 @@ public final class BindingManager implements IContextManagerListener,
 	 *         bindings; <code>false</code> otherwise.
 	 */
 	public final boolean isPartialMatch(final TriggerSequence trigger) {
-		if (activeBindings == null) {
-			recomputeBindings();
-		}
-
-		final Iterator bindingItr = activeBindings.entrySet().iterator();
+		final Iterator bindingItr = getActiveBindings().entrySet().iterator();
 		while (bindingItr.hasNext()) {
 			final Map.Entry entry = (Map.Entry) bindingItr.next();
 			final TriggerSequence triggerSequence = (TriggerSequence) entry
@@ -819,8 +990,16 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Returns whether the given trigger sequence is a perfect match for the
 	 * given sequence.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>. If the bindings aren't
+	 * currently computed, then this completes in <code>O(n+mn)</code>, where
+	 * <code>n</code> is the number of bindings and <code>m</code> is the
+	 * number of deletion markers.
+	 * </p>
 	 * 
 	 * @param trigger
 	 *            The sequence which should match exactly; should not be
@@ -829,16 +1008,18 @@ public final class BindingManager implements IContextManagerListener,
 	 *         bindings; <code>false</code> otherwise.
 	 */
 	public final boolean isPerfectMatch(final TriggerSequence trigger) {
-		if (activeBindings == null) {
-			recomputeBindings();
-		}
-
-		return activeBindings.containsKey(trigger);
+		return getActiveBindings().containsKey(trigger);
 	}
 
 	/**
+	 * <p>
 	 * Tests whether the locale for the binding matches one of the active
 	 * locales.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of active locales.
+	 * </p>
 	 * 
 	 * @param binding
 	 *            The binding with which to test; must not be <code>null</code>.
@@ -864,8 +1045,14 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Tests whether the platform for the binding matches one of the active
 	 * platforms.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of active platforms.
+	 * </p>
 	 * 
 	 * @param binding
 	 *            The binding with which to test; must not be <code>null</code>.
@@ -891,6 +1078,7 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * This recomputes the bindings based on changes to the state of the world.
 	 * This computation can be triggered by changes to contexts, the active
 	 * scheme, the locale, or the platform. This method tries to use the cache
@@ -898,10 +1086,17 @@ public final class BindingManager implements IContextManagerListener,
 	 * <code>activeBindings</code> will be set to the current set of bindings
 	 * and <code>cachedBindings</code> will contain an instance of
 	 * <code>CachedBindingSet</code> representing these bindings.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n+mn)</code>, where <code>n</code>
+	 * is the number of bindings and <code>m</code> is the number of deletion
+	 * markers.
+	 * </p>
 	 */
 	private final void recomputeBindings() {
 		if (bindings == null) {
 			// Not yet initialized. This is happening too early. Do nothing.
+			activeBindings = Collections.EMPTY_MAP;
 			return;
 		}
 
@@ -911,7 +1106,7 @@ public final class BindingManager implements IContextManagerListener,
 
 		// Build a cached binding set for that state.
 		final CachedBindingSet bindingCache = new CachedBindingSet(
-				activeContextTree, locales, platforms, schemeIds);
+				activeContextTree, locales, platforms, activeSchemeIds);
 
 		/*
 		 * Check if the cached binding set already exists. If so, simply set the
@@ -925,8 +1120,16 @@ public final class BindingManager implements IContextManagerListener,
 		}
 		Map commandIdsByTrigger = existingCache.getCommandIdsByTrigger();
 		if (commandIdsByTrigger != null) {
+			if (DEBUG) {
+				System.out.println("BINDINGS >> Cache hit"); //$NON-NLS-1$
+			}
 			activeBindings = commandIdsByTrigger;
 			return;
+		}
+
+		// There is no cached entry for this.
+		if (DEBUG) {
+			System.out.println("BINDINGS >> Cache miss"); //$NON-NLS-1$
 		}
 
 		// Compute the active bindings.
@@ -937,7 +1140,12 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Removes a listener from this binding manager.
+	 * </p>
+	 * <p>
+	 * This method completes in amortized <code>O(1)</code>.
+	 * </p>
 	 * 
 	 * @param listener
 	 *            The listener to be removed; must not be <code>null</code>.
@@ -960,8 +1168,14 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Removes any binding that matches the given values -- regardless of
 	 * command identifier.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of bindings.
+	 * </p>
 	 * 
 	 * @param sequence
 	 *            The sequence to look for; may be <code>null</code>.
@@ -1005,14 +1219,19 @@ public final class BindingManager implements IContextManagerListener,
 		}
 
 		if (bindingsChanged) {
-			activeBindings = null;
-			cachedBindings.clear();
-			recomputeBindings();
+			clearCache();
 		}
 	}
 
 	/**
+	 * <p>
 	 * Attempts to remove deletion markers from the collection of bindings.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n+mn)</code>, where <code>n</code>
+	 * is the number of bindings and <code>m</code> is the number of deletion
+	 * markers.
+	 * </p>
 	 * 
 	 * @param bindings
 	 *            The bindings from which the deleted items should be removed.
@@ -1052,9 +1271,15 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Attempts to resolve the conflicts for the given bindings -- irrespective
 	 * of the currently active contexts. This means that type and scheme will be
 	 * considered.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of bindings.
+	 * </p>
 	 * 
 	 * @param bindings
 	 *            The bindings which all match the same trigger sequence; must
@@ -1088,8 +1313,8 @@ public final class BindingManager implements IContextManagerListener,
 			final String bestScheme = bestMatch.getSchemeId();
 			if (!currentScheme.equals(bestScheme)) {
 				boolean goToNextBinding = false;
-				for (int i = 0; i < schemeIds.length; i++) {
-					final String schemePointer = schemeIds[i];
+				for (int i = 0; i < activeSchemeIds.length; i++) {
+					final String schemePointer = activeSchemeIds[i];
 					if (currentScheme.equals(schemePointer)) {
 						// the current wins
 						bestMatch = current;
@@ -1131,7 +1356,13 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Attempts to resolve the conflicts for the given bindings.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of bindings.
+	 * </p>
 	 * 
 	 * @param bindings
 	 *            The bindings which all match the same trigger sequence; must
@@ -1220,8 +1451,8 @@ public final class BindingManager implements IContextManagerListener,
 			final String bestScheme = bestMatch.getSchemeId();
 			if (!currentScheme.equals(bestScheme)) {
 				boolean goToNextBinding = false;
-				for (int i = 0; i < schemeIds.length; i++) {
-					final String schemePointer = schemeIds[i];
+				for (int i = 0; i < activeSchemeIds.length; i++) {
+					final String schemePointer = activeSchemeIds[i];
 					if (currentScheme.equals(schemePointer)) {
 						// the current wins
 						bestMatch = current;
@@ -1266,10 +1497,15 @@ public final class BindingManager implements IContextManagerListener,
 		return bestMatch;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.bindings.ISchemeListener#schemeChanged(org.eclipse.jface.bindings.SchemeEvent)
+	/**
+	 * <p>
+	 * Notifies this manager that a scheme has changed. This method is intended
+	 * for internal use only.
+	 * </p>
+	 * <p>
+	 * This method calls out to listeners, and so the time it takes to complete
+	 * is dependent on third-party code.
+	 * </p>
 	 */
 	public final void schemeChanged(final SchemeEvent schemeEvent) {
 		if (schemeEvent.hasDefinedChanged()) {
@@ -1284,8 +1520,11 @@ public final class BindingManager implements IContextManagerListener,
 				definedSchemeIds.remove(schemeId);
 				if (activeScheme == scheme) {
 					activeScheme = null;
+					activeSchemeIds = null;
 					activeSchemeChanged = true;
-					recomputeBindings();
+
+					// Clear the binding solution.
+					clearSolution();
 				}
 			}
 
@@ -1296,8 +1535,14 @@ public final class BindingManager implements IContextManagerListener,
 	}
 
 	/**
+	 * <p>
 	 * Selects one of the schemes as the active scheme. This scheme must be
 	 * defined.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the height of the context tree.
+	 * </p>
 	 * 
 	 * @param schemeId
 	 *            The scheme to become active; must not be <code>null</code>.
@@ -1320,16 +1565,22 @@ public final class BindingManager implements IContextManagerListener,
 		}
 
 		activeScheme = scheme;
-		schemeIds = getSchemeIds(activeScheme.getId());
-		recomputeBindings();
+		activeSchemeIds = getSchemeIds(activeScheme.getId());
+		clearSolution();
 		fireBindingManagerChanged(new BindingManagerEvent(this, true, null,
 				false, false));
 	}
 
 	/**
+	 * <p>
 	 * Changes the set of bindings for this binding manager. The whole set is
 	 * required so that internal consistency can be maintained and so that
 	 * excessive recomputations do nothing occur.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(n)</code>, where <code>n</code> is
+	 * the number of bindings.
+	 * </p>
 	 * 
 	 * @param bindings
 	 *            The new set of bindings; may be <code>null</code>. This set
@@ -1337,21 +1588,28 @@ public final class BindingManager implements IContextManagerListener,
 	 */
 	public final void setBindings(final Set bindings) {
 		if (Util.equals(this.bindings, bindings)) {
-			return;
+			return; // nothing has changed
 		}
 
-		this.bindings = bindings;
-		activeBindings = null;
-		cachedBindings.clear();
-		recomputeBindings();
+		if ((bindings == null) || (bindings.isEmpty())) {
+			this.bindings = null;
+		} else {
+			this.bindings = bindings;
+		}
+		clearCache();
 	}
 
 	/**
+	 * <p>
 	 * Changes the locale for this binding manager. The locale can be used to
 	 * provide locale-specific bindings. If the locale is different than the
 	 * current locale, then this will force a recomputation of the bindings. The
 	 * locale is in the same format as
 	 * <code>Locale.getDefault().toString()</code>.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>.
+	 * </p>
 	 * 
 	 * @param locale
 	 *            The new locale; must not be <code>null</code>.
@@ -1365,16 +1623,21 @@ public final class BindingManager implements IContextManagerListener,
 		if (!Util.equals(this.locale, locale)) {
 			this.locale = locale;
 			this.locales = expand(locale, LOCALE_SEPARATOR);
-			recomputeBindings();
+			clearSolution();
 		}
 	}
 
 	/**
+	 * <p>
 	 * Changes the platform for this binding manager. The platform can be used
 	 * to provide platform-specific bindings. If the platform is different than
 	 * the current platform, then this will force a recomputation of the
 	 * bindings. The locale is in the same format as
 	 * <code>SWT.getPlatform()</code>.
+	 * </p>
+	 * <p>
+	 * This method completes in <code>O(1)</code>.
+	 * </p>
 	 * 
 	 * @param platform
 	 *            The new platform; must not be <code>null</code>.
@@ -1388,7 +1651,7 @@ public final class BindingManager implements IContextManagerListener,
 		if (!Util.equals(this.platform, platform)) {
 			this.platform = platform;
 			this.platforms = expand(platform, Util.ZERO_LENGTH_STRING);
-			recomputeBindings();
+			clearSolution();
 		}
 	}
 }
