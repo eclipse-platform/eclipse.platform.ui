@@ -21,7 +21,7 @@ public class OverrideAndCommitAction extends SubscriberCommitAction {
 	 * @see org.eclipse.team.ui.sync.SubscriberAction#getSyncInfoFilter()
 	 */
 	protected SyncInfoFilter getSyncInfoFilter() {
-		return new SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.OUTGOING, SyncInfo.INCOMING});
+		return new SyncInfoDirectionFilter(new int[] {SyncInfo.CONFLICTING, SyncInfo.INCOMING});
 	}
 	
 	protected boolean promptForConflictHandling(SyncInfoSet syncSet) {
