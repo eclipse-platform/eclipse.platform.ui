@@ -81,20 +81,20 @@ public class JarVerificationPage extends BannerPage {
 		if (_VerificationResult.getVerificationCode()
 			!= IVerificationResult.TYPE_ENTRY_CORRUPTED) {
 
-			// Text: Instruction
+			// Label: Instruction
 			//------------------
-			Text textInstruction = new Text(compositeClient, SWT.MULTI | SWT.READ_ONLY);
-			textInstruction.setLayoutData(
+			Label labelInstruction = new Label(compositeClient, SWT.NULL);
+			labelInstruction.setLayoutData(
 				new GridData(
 					GridData.VERTICAL_ALIGN_BEGINNING
 						| GridData.GRAB_VERTICAL
 						| GridData.FILL_HORIZONTAL));
 			if (_VerificationResult.isFeatureVerification()) {
-				textInstruction.setText(
+				labelInstruction.setText(
 					UpdateUIPlugin.getResourceString("JarVerificationDialog.MayChooseToInstall"));
 				//$NON-NLS-1$
 			} else {
-				textInstruction.setText(
+				labelInstruction.setText(
 					UpdateUIPlugin.getResourceString("JarVerificationDialog.MayChooseToContinue"));
 				//$NON-NLS-1$ 					
 			}
@@ -107,11 +107,11 @@ public class JarVerificationPage extends BannerPage {
 	 */
 	private void createTextArea(Composite compositeClient) {
 
-		// Text: Information
+		// Label: Information
 		//------------------
-		Text textInformation =
-			new Text(compositeClient, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
-		textInformation.setLayoutData(
+		Label labelInformation =
+			new Label(compositeClient, SWT.WRAP);
+		labelInformation.setLayoutData(
 			new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 
 		StringBuffer strb = new StringBuffer();
@@ -144,7 +144,7 @@ public class JarVerificationPage extends BannerPage {
 						UpdateUIPlugin.getResourceString("JarVerificationDialog.ContinueMayCorrupt"));
 					//$NON-NLS-1$ 					
 				}
-				textInformation.setText(strb.toString());
+				labelInformation.setText(strb.toString());
 				break;
 
 			case IVerificationResult.TYPE_ENTRY_CORRUPTED :
@@ -158,7 +158,7 @@ public class JarVerificationPage extends BannerPage {
 					UpdateUIPlugin.getResourceString(
 						"JarVerificationDialog.ComponentNotInstalled"));
 				//$NON-NLS-1$
-				textInformation.setText(strb.toString());
+				labelInformation.setText(strb.toString());
 				break;
 
 			case IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED :
@@ -189,7 +189,7 @@ public class JarVerificationPage extends BannerPage {
 						UpdateUIPlugin.getResourceString("JarVerificationDialog.ContinueMayCorrupt"));
 					//$NON-NLS-1$ 					
 				}
-				textInformation.setText(strb.toString());
+				labelInformation.setText(strb.toString());
 				break;
 
 			case IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED :
@@ -212,7 +212,7 @@ public class JarVerificationPage extends BannerPage {
 				//$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
 
-				textInformation.setText(strb.toString());
+				labelInformation.setText(strb.toString());
 
 				createCautionArea(compositeClient);
 				break;
@@ -239,9 +239,9 @@ public class JarVerificationPage extends BannerPage {
 		
 		// Text
 		//-----
-		Text textInformationCaution =
-			new Text(compositeCaution, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
-		textInformationCaution.setText(
+		Label labelInformationCaution =
+			new Label(compositeCaution, SWT.WRAP);
+		labelInformationCaution.setText(
 			UpdateUIPlugin.getFormattedMessage(
 				"JarVerificationDialog.Caution",
 				_strProviderName));
@@ -264,48 +264,48 @@ public class JarVerificationPage extends BannerPage {
 
 		// Feature name
 		//---------------
-		Label label = null;
-		Text text = null;
+		Label keyLabel = null;
+		Label valueLabel = null;
 		if (_strFeatureName != null && _strFeatureName.length() > 0) {
-			label = new Label(compositeInformation, SWT.NULL);
-			label.setText(
+			keyLabel = new Label(compositeInformation, SWT.NULL);
+			keyLabel.setText(
 				UpdateUIPlugin.getResourceString("JarVerificationDialog.FeatureName"));
 			//$NON-NLS-1$
-			text = new Text(compositeInformation, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
-			text.setFont(JFaceResources.getBannerFont());
-			text.setText(_strFeatureName);
+			valueLabel = new Label(compositeInformation, SWT.WRAP);
+			valueLabel.setFont(JFaceResources.getBannerFont());
+			valueLabel.setText(_strFeatureName);
 		}
 		// Feature identifier
 		//---------------------
 		if (_strId != null && _strId.length() > 0) {
-			label = new Label(compositeInformation, SWT.NULL);
-			label.setText(
+			keyLabel = new Label(compositeInformation, SWT.NULL);
+			keyLabel.setText(
 				UpdateUIPlugin.getResourceString("JarVerificationDialog.FeatureIdentifier"));
 			//$NON-NLS-1$
-			text = new Text(compositeInformation, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
-			text.setFont(JFaceResources.getBannerFont());
-			text.setText(_strId);
+			valueLabel = new Label(compositeInformation, SWT.WRAP);
+			valueLabel.setFont(JFaceResources.getBannerFont());
+			valueLabel.setText(_strId);
 		}
 		// Provider name
 		//--------------
 		if (_strProviderName != null && _strProviderName.length() > 0) {
-			label = new Label(compositeInformation, SWT.NULL);
-			label.setText(
+			keyLabel = new Label(compositeInformation, SWT.NULL);
+			keyLabel.setText(
 				UpdateUIPlugin.getResourceString("JarVerificationDialog.Provider"));
 			//$NON-NLS-1$
-			text = new Text(compositeInformation, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
-			text.setFont(JFaceResources.getBannerFont());
-			text.setText(_strProviderName);
+			valueLabel = new Label(compositeInformation, SWT.WRAP);
+			valueLabel.setFont(JFaceResources.getBannerFont());
+			valueLabel.setText(_strProviderName);
 		}
 		// Label: File name
 		//-----------------
-		label = new Label(compositeInformation, SWT.NULL);
-		label.setText(
+		keyLabel = new Label(compositeInformation, SWT.NULL);
+		keyLabel.setText(
 			UpdateUIPlugin.getResourceString("JarVerificationDialog.FileName"));
 		//$NON-NLS-1$
-		text = new Text(compositeInformation, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
-		text.setFont(JFaceResources.getBannerFont());
-		text.setText(_fileName);
+		valueLabel = new Label(compositeInformation, SWT.WRAP);
+		valueLabel.setFont(JFaceResources.getBannerFont());
+		valueLabel.setText(_fileName);
 	}
 
 	/*
@@ -329,29 +329,29 @@ public class JarVerificationPage extends BannerPage {
 
 			// Signer
 			//-------------------
-			Label label = null;
-			Text text = null;
+			Label keyLabel = null;
+			Label valueLabel = null;
 			//data = new GridData(GridData.FILL_HORIZONTAL);
 			//data.horizontalIndent = 0;
 			//textInformation.setLayoutData(data);			
 			if (_VerificationResult.getSignerInfo() != null) {
-				label = new Label(group, SWT.NULL);
-				label.setText(UpdateUIPlugin.getResourceString("JarVerificationDialog.SubjectCA"));
-				label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+				keyLabel = new Label(group, SWT.NULL);
+				keyLabel.setText(UpdateUIPlugin.getResourceString("JarVerificationDialog.SubjectCA"));
+				keyLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 				//$NON-NLS-1$
-				text = new Text(group, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
-				text.setText(_VerificationResult.getSignerInfo());
+				valueLabel = new Label(group, SWT.WRAP);
+				valueLabel.setText(_VerificationResult.getSignerInfo());
 			}
 			
 			// Authenticator
 			//---------------------
 			if (_VerificationResult.getVerifierInfo() != null) {
-				label = new Label(group, SWT.NULL);
-				label.setText(UpdateUIPlugin.getResourceString("JarVerificationDialog.RootCA"));
-				label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));				
+				keyLabel = new Label(group, SWT.NULL);
+				keyLabel.setText(UpdateUIPlugin.getResourceString("JarVerificationDialog.RootCA"));
+				keyLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));				
 				//$NON-NLS-1$
-				text = new Text(group, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
-				text.setText(_VerificationResult.getVerifierInfo());
+				valueLabel = new Label(group, SWT.WRAP);
+				valueLabel.setText(_VerificationResult.getVerifierInfo());
 			}
 		}
 	}
