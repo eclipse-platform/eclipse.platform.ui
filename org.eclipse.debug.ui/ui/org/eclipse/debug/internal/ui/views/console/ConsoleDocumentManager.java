@@ -26,7 +26,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
-import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.console.IConsole;
@@ -53,12 +52,6 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 public class ConsoleDocumentManager implements ILaunchListener {
 	
 	/**
-	 * The process that is/can provide output to the console
-	 * view.
-	 */
-	private IProcess fCurrentProcess= null;
-	
-	/**
 	 * Console document content provider extensions, keyed by extension id
 	 */
 	private Map fColorProviders;
@@ -81,7 +74,6 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	}
 	
 	protected void removeLaunch(ILaunch launch) {
-		IProcess currentProcess= getCurrentProcess();
 		IProcess[] processes= launch.getProcesses();
 		IConsoleManager manager = DebugUIPlugin.getDefault().getConsoleManager(); 
 		for (int i= 0; i < processes.length; i++) {
@@ -93,14 +85,6 @@ public class ConsoleDocumentManager implements ILaunchListener {
 			}
 			IDocumentProvider provider = getDocumentProvider();
 			provider.disconnect(iProcess);
-			if (iProcess.equals(currentProcess)) {
-				setCurrentProcess(null);
-				ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
-				if (launches.length > 0) {
-					ILaunch prev = launches[launches.length - 1];
-					setCurrentProcess(getOutputProcess(prev));
-				}
-			}
 		}		
 	}
 	
@@ -136,8 +120,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * @see ILaunchListener#launchChanged(ILaunch)
 	 */
 	public void launchChanged(final ILaunch launch) {
-		if (launch.getProcesses().length > 0) {
-			setCurrentProcess(getOutputProcess(launch));	
+		if (launch.getProcesses().length > 0) {	
 			DebugUIPlugin.getStandardDisplay().syncExec(new Runnable () {
 				public void run() {
 					IProcess[] processes= launch.getProcesses();
@@ -156,34 +139,6 @@ public class ConsoleDocumentManager implements ILaunchListener {
 				}
 			});
 		}
-	}
-	
-	/**
-	 * Returns the process in the given launch that output should be displayed for.
-	 *  
-	 * @param launch
-	 * @return IProcess
-	 */
-	private IProcess getOutputProcess(ILaunch launch) {
-		IProcess process= null;
-		IDebugTarget target= launch.getDebugTarget();
-		if (target != null) {
-			process= target.getProcess();
-		} else {
-			IProcess[] processes= launch.getProcesses();
-			if (processes.length > 0) {
-				process= processes[processes.length - 1];
-			}
-		}		
-		return process;
-	}
-
-	protected IProcess getCurrentProcess() {
-		return fCurrentProcess;
-	}
-
-	protected void setCurrentProcess(IProcess currentProcess) {
-		fCurrentProcess = currentProcess;
 	}
 	
 	/**
