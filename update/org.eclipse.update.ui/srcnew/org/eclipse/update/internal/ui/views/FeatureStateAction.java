@@ -7,7 +7,6 @@ import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.forms.*;
 import org.eclipse.update.internal.ui.model.*;
 
 public class FeatureStateAction extends Action {
@@ -37,7 +36,7 @@ public class FeatureStateAction extends Action {
 			} else {
 				site.configure(feature);
 			}
-			IStatus status = ActivityConstraints.validateCurrentState();
+			IStatus status = UpdateManager.getValidator().validateCurrentState();
 			if (status != null) {
 				revert(isConfigured);
 				ErrorDialog.openError(
@@ -92,7 +91,7 @@ public class FeatureStateAction extends Action {
 			opmgr.removePendingChange(job);
 			return false;
 		} else {
-			opmgr.addPendingChange(new PendingOperation(feature, newJobType));
+			opmgr.addPendingChange(UpdateManager.getOperationsManager().createPendingChange(feature, newJobType));
 			return true;
 		}
 	}
