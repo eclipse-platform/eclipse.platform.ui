@@ -46,7 +46,7 @@ public class MarginPainter implements IPainter, PaintListener {
 	
 	public void setMarginRulerColumn(int width) {
 		fMarginWidth= width;
-		intialize();
+		initialize();
 	}
 	
 	public void setMarginRulerStyle(int lineStyle) {
@@ -67,7 +67,7 @@ public class MarginPainter implements IPainter, PaintListener {
 	/**
 	 * Must be called explicitly when font of text widget changes.
 	 */
-	public void intialize() {
+	public void initialize() {
 		computeWidgetX();
 		fTextWidget.redraw();
 	}
