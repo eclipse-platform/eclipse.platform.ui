@@ -11,6 +11,7 @@
 package org.eclipse.core.tools.metadata;
 
 import java.io.DataInputStream;
+import java.io.IOException;
 
 /**
  * A strategy for reading .location files. 
@@ -20,8 +21,26 @@ class LocationStrategy implements IStringDumpingStrategy {
 	/**
 	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 */
-	public String dumpStringContents(DataInputStream dataInput) throws Exception {
-		return "Location: " + dataInput.readUTF(); //$NON-NLS-1$
+	public String dumpStringContents(DataInputStream dataInput) throws DumpException, IOException {
+		StringBuffer contents = new StringBuffer(100);
+		String location = dataInput.readUTF();
+		contents.append("Location: '"); //$NON-NLS-1$
+		contents.append(location);
+		contents.append('\''); //$NON-NLS-1$		
+		//try to read the dynamic references
+		int numRefs = dataInput.readInt();
+		if (numRefs < 0)
+			return contents.toString();
+		contents.append('\n');
+		contents.append("Dynamic references ("); //$NON-NLS-1$
+		contents.append(numRefs);
+		contents.append("): "); //$NON-NLS-1$
+		for (int i = 0; i < numRefs; i++) {
+			String projectName = dataInput.readUTF();
+			contents.append("\n\t"); //$NON-NLS-1$
+			contents.append(projectName);
+		}
+		return contents.toString();
 	}
 
 	/**

@@ -28,13 +28,6 @@ public class DumpException extends Exception {
 	private Throwable cause;
 
 	/**
-	 * Constructs a non-initialized <code>DumpException</code>.
-	 */
-	public DumpException() {
-		super();
-	}
-
-	/**
 	 * Constructs a <code>DumpException</code> with the provided message.
 	 * 
 	 * @param msg the message
@@ -51,15 +44,6 @@ public class DumpException extends Exception {
 	 */
 	public DumpException(String msg, Throwable cause) {
 		super(msg);
-		this.cause = cause;
-	}
-
-	/**
-	 * Constructs a <code>DumpException</code> with the provided cause.
-	 * 
-	 * @param cause the exception that caused this <code>DumpException</code>
-	 */
-	public DumpException(Throwable cause) {
 		this.cause = cause;
 	}
 

@@ -35,28 +35,28 @@ public class DumpTool {
 
 		String fileName = args[0];
 
+		IDumper dumper = null;
 		try {
-			IDumper dumper = DumperFactory.getInstance().getDumper(fileName);
-			IDump dump = dumper.dump(new File(fileName));
-			System.out.print("Dump for file: "); //$NON-NLS-1$
-			System.out.println(dump.getFile().getAbsolutePath());
-			System.out.print("Contents: "); //$NON-NLS-1$
-			System.out.println(dump.getContents());
-			if (dump.isFailed()) {
-				System.out.print("*** Dump failed. Reason: "); //$NON-NLS-1$
-				System.out.print(dump.getFailureReason());
-			} else {
-				System.out.print(">>> File is ok"); //$NON-NLS-1$
-			}
-			System.out.print(". Bytes read: "); //$NON-NLS-1$
-			System.out.print(dump.getOffset());
-			System.out.print(" / Total: "); //$NON-NLS-1$
-			System.out.println(dump.getFile().length());
-
+			dumper = DumperFactory.getInstance().getDumper(fileName);
 		} catch (DumpException de) {
 			System.err.println("Error: \n" + de); //$NON-NLS-1$
 			System.exit(1);
 		}
+		IDump dump = dumper.dump(new File(fileName));
+		System.out.print("Dump for file: "); //$NON-NLS-1$
+		System.out.println(dump.getFile().getAbsolutePath());
+		System.out.print("Contents: "); //$NON-NLS-1$
+		System.out.println(dump.getContents());
+		if (dump.isFailed()) {
+			System.out.print("*** Dump failed. Reason: "); //$NON-NLS-1$
+			System.out.print(dump.getFailureReason());
+		} else {
+			System.out.print(">>> File is ok"); //$NON-NLS-1$
+		}
+		System.out.print(". Bytes read: "); //$NON-NLS-1$
+		System.out.print(dump.getOffset());
+		System.out.print(" / Total: "); //$NON-NLS-1$
+		System.out.println(dump.getFile().length());
 	}
 
 	/**

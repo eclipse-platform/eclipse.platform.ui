@@ -31,7 +31,7 @@ class SyncInfoSnapshotDumpingStrategy_3 implements IStringDumpingStrategy {
 	/**
 	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 */
-	public String dumpStringContents(DataInputStream dataInput) throws Exception {
+	public String dumpStringContents(DataInputStream dataInput) throws IOException, DumpException {
 		StringBuffer contents = new StringBuffer();
 		String resourceName = dataInput.readUTF();
 
@@ -43,7 +43,7 @@ class SyncInfoSnapshotDumpingStrategy_3 implements IStringDumpingStrategy {
 		return contents.toString();
 	}
 
-	private void dumpReadPartners(DataInputStream input, StringBuffer contents) throws DumpException, IOException {
+	private void dumpReadPartners(DataInputStream input, StringBuffer contents) throws IOException {
 		int size = input.readInt();
 		for (int i = 0; i < size; i++) {
 			String qualifier = input.readUTF();

@@ -128,43 +128,38 @@ public class WorkspaceView extends SpyView {
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		try {
-			viewer = new TreeViewer(parent);
+		viewer = new TreeViewer(parent);
 
-			// sets a content provider for the viewer
-			DumperFactory factory = DumperFactory.getInstance();
-			String[] fileNames = factory.getRegisteredFileNames();
-			WorkspaceContentProvider contentProvider;
-			contentProvider = new WorkspaceContentProvider(fileNames);
-			viewer.setContentProvider(contentProvider);
+		// sets a content provider for the viewer
+		DumperFactory factory = DumperFactory.getInstance();
+		String[] fileNames = factory.getRegisteredFileNames();
+		WorkspaceContentProvider contentProvider;
+		contentProvider = new WorkspaceContentProvider(fileNames);
+		viewer.setContentProvider(contentProvider);
 
-			// creates actions
-			final IAction dumpFileAction = new DumpFileAction();
-			final IAction selectWorkspaceAction = new SelectWorkspaceAction();
+		// creates actions
+		final IAction dumpFileAction = new DumpFileAction();
+		final IAction selectWorkspaceAction = new SelectWorkspaceAction();
 
-			// adds actions to the menu bar
-			IMenuManager barMenuManager = getViewSite().getActionBars().getMenuManager();
-			barMenuManager.add(selectWorkspaceAction);
-			barMenuManager.add(dumpFileAction);
+		// adds actions to the menu bar
+		IMenuManager barMenuManager = getViewSite().getActionBars().getMenuManager();
+		barMenuManager.add(selectWorkspaceAction);
+		barMenuManager.add(dumpFileAction);
 
-			// creates a context menu with actions and adds it to the viewer control
-			MenuManager menuMgr = new MenuManager();
-			menuMgr.add(selectWorkspaceAction);
-			menuMgr.add(dumpFileAction);
+		// creates a context menu with actions and adds it to the viewer control
+		MenuManager menuMgr = new MenuManager();
+		menuMgr.add(selectWorkspaceAction);
+		menuMgr.add(dumpFileAction);
 
-			Menu menu = menuMgr.createContextMenu(viewer.getControl());
-			viewer.getControl().setMenu(menu);
+		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
 
-			// associates double-click to dump file action
-			viewer.addDoubleClickListener(new IDoubleClickListener() {
-				public void doubleClick(DoubleClickEvent event) {
-					dumpFileAction.run();
-				}
-			});
-
-		} catch (DumpException e) {
-			e.printStackTrace();
-		}
+		// associates double-click to dump file action
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				dumpFileAction.run();
+			}
+		});
 	}
 
 	/**

@@ -36,7 +36,7 @@ class SyncInfoDumpingStrategy_3 implements IStringDumpingStrategy {
 	/**
 	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 */
-	public String dumpStringContents(DataInputStream dataInput) throws Exception {
+	public String dumpStringContents(DataInputStream dataInput) throws IOException, DumpException {
 		StringBuffer contents = new StringBuffer();
 		List readPartners = new ArrayList();
 		String resourceName;
@@ -74,7 +74,7 @@ class SyncInfoDumpingStrategy_3 implements IStringDumpingStrategy {
 					break;
 				default :
 					//if we get here then the sync info file is corrupt
-					throw new DumpException("Invalid read partner type found: " + type); //$NON-NLS-1$
+					throw new PartialDumpException("Invalid read partner type found: " + type, contents); //$NON-NLS-1$
 			}
 			contents.append("Read Partner: "); //$NON-NLS-1$
 			contents.append(qualifiedName);

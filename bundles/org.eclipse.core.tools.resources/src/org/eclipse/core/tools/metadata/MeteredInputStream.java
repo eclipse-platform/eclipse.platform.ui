@@ -43,6 +43,7 @@ public class MeteredInputStream extends PushbackInputStream {
 			offset++;
 		return byteRead;
 	}
+
 	/**
 	 * Forwards the call to the super class, incrementing the current offset
 	 * by the number of bytes read.
@@ -53,10 +54,9 @@ public class MeteredInputStream extends PushbackInputStream {
 	 * @see java.io.PushbackInputStream#read(byte[])
 	 */
 	public int read(byte[] b) throws IOException {
-		int read = super.read(b);
-		offset += read;
-		return read;
+		return read(b, 0, b.length);
 	}
+
 	/**
 	 * Forwards the call to the super class, incrementing the current offset
 	 * by the number of bytes read.
@@ -70,9 +70,11 @@ public class MeteredInputStream extends PushbackInputStream {
 	 */
 	public int read(byte[] b, int off, int len) throws IOException {
 		int read = super.read(b, off, len);
-		offset += read;
+		if (read > 0)
+			offset += read;
 		return read;
 	}
+
 	/**
 	 * Returns the current offset value.
 	 * 
@@ -94,6 +96,7 @@ public class MeteredInputStream extends PushbackInputStream {
 		super.unread(b);
 		offset -= b.length;
 	}
+
 	/**
 	 * Forwards the call to the underlying input stream, decrementing the offset by
 	 * the number of bytes unread.

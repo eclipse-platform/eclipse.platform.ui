@@ -10,7 +10,7 @@
  **********************************************************************/
 package org.eclipse.core.tools.metadata;
 
-import java.io.*;
+import java.io.File;
 import java.util.Properties;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tools.resources.CoreResourcesToolsPlugin;
@@ -20,9 +20,9 @@ import org.eclipse.core.tools.resources.CoreResourcesToolsPlugin;
  */
 public class DumperFactory {
 
-	private static final String ELEM_DUMPER = "dumper";
-	private static final String ATTR_FILE_NAME = "file-name";
-	private static final String PT_METADATA_DUMPERS = "metadataDumpers";
+	private static final String ELEM_DUMPER = "dumper"; //$NON-NLS-1$
+	private static final String ATTR_FILE_NAME = "file-name"; //$NON-NLS-1$
+	private static final String PT_METADATA_DUMPERS = "metadataDumpers"; //$NON-NLS-1$
 	/**
 	 * The <code>DumperFactory</code> singleton reference.
 	 */
@@ -40,7 +40,7 @@ public class DumperFactory {
 	 * @throws DumpException if a problem occurs while instantiating the factory
 	 * object
 	 */
-	public synchronized static DumperFactory getInstance() throws DumpException {
+	public synchronized static DumperFactory getInstance() {
 		// currently we allow only one instance for this class
 		if (ref == null)
 			ref = new DumperFactory();
@@ -49,14 +49,12 @@ public class DumperFactory {
 
 	/**
 	 * Constructs a dumper factory, reading dumper definitions from the 
-	 * extension registry and optionally from a properties
-	 * file. Forbids instantiation from outside this class. 
+	 * extension registry. Forbids instantiation from outside this class. 
 	 * 
 	 * @throws DumpException if there is an error when reading 
 	 * the dumper definition file   
 	 */
-	private DumperFactory() throws DumpException {
-		loadLegacyDumpers();
+	private DumperFactory() {
 		loadDumpers();
 	}
 
@@ -65,24 +63,7 @@ public class DumperFactory {
 		IConfigurationElement[] dumperDefinitions = dumpersPoint.getConfigurationElements();
 		for (int i = 0; i < dumperDefinitions.length; i++)
 			if (dumperDefinitions[i].getName().equals(ELEM_DUMPER))
-			configuration.put(dumperDefinitions[i].getAttributeAsIs(ATTR_FILE_NAME), dumperDefinitions[i]);
-	}
-
-	private void loadLegacyDumpers() throws DumpException {
-		InputStream input = getClass().getResourceAsStream("/dumper_factory.properties"); //$NON-NLS-1$
-		if (input == null)
-			return;
-		try {
-			configuration.load(input);
-		} catch (IOException ioe) {
-			throw new DumpException("Error opening Dumper factory registry file", ioe); //$NON-NLS-1$
-		} finally {
-			try {
-				input.close();
-			} catch (IOException ioe) {
-				throw new DumpException("Error closing Dumper factory registry file", ioe); //$NON-NLS-1$
-			}
-		}
+				configuration.put(dumperDefinitions[i].getAttributeAsIs(ATTR_FILE_NAME), dumperDefinitions[i]);
 	}
 
 	/**
@@ -107,7 +88,7 @@ public class DumperFactory {
 	 */
 	public IDumper getDumper(String fileName) throws DumpException {
 		fileName = fileName.substring(fileName.lastIndexOf(File.separator) + 1);
-		
+
 		Object dumper = configuration.get(fileName);
 
 		if (dumper == null)
@@ -119,12 +100,12 @@ public class DumperFactory {
 				return (IDumper) Class.forName((String) dumper).newInstance();
 			} catch (Exception e) {
 				throw new DumpException("Error instantiating dumper for <" + fileName + "> file", e); //$NON-NLS-1$ //$NON-NLS-2$
-			}		
+			}
 		// dumper defined through extension mechanism	
 		try {
 			return (IDumper) ((IConfigurationElement) dumper).createExecutableExtension("class"); //$NON-NLS-1$
 		} catch (CoreException ce) {
 			throw new DumpException("Error instantiating dumper for <" + fileName + "> file", ce); //$NON-NLS-1$ //$NON-NLS-2$		
-		} 
+		}
 	}
 }

@@ -11,6 +11,7 @@
 package org.eclipse.core.tools.metadata;
 
 import java.io.DataInputStream;
+import java.io.IOException;
 
 /**
  * A dumping strategy defines how a input stream will be dumped as a string.
@@ -31,7 +32,7 @@ public interface IStringDumpingStrategy {
 	 * @return the contents read in string format
 	 * @throws Exception any exception occurred while dumping the input stream 
 	 */
-	public String dumpStringContents(DataInputStream input) throws Exception;
+	public String dumpStringContents(DataInputStream input) throws IOException, DumpException;
 
 	/**
 	 * Returns a high-level description for the file format understood by this 

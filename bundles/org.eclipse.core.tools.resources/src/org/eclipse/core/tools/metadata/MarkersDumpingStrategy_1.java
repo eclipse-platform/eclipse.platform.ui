@@ -43,7 +43,7 @@ public class MarkersDumpingStrategy_1 implements IStringDumpingStrategy {
 	/**
 	 * @see org.eclipse.core.tools.metadata.IStringDumpingStrategy#dumpStringContents(DataInputStream)
 	 */
-	public String dumpStringContents(DataInputStream dataInput) throws Exception {
+	public String dumpStringContents(DataInputStream dataInput) throws IOException, DumpException {
 		StringBuffer contents = new StringBuffer();
 		List markerTypes = new ArrayList();
 		while (dataInput.available() > 0) {
@@ -96,7 +96,7 @@ public class MarkersDumpingStrategy_1 implements IStringDumpingStrategy {
 				case MarkersDumper.ATTRIBUTE_NULL :
 					break;
 				default :
-					throw new DumpException("Invalid marker attribute type found: " + type); //$NON-NLS-1$
+					throw new PartialDumpException("Invalid marker attribute type found: " + type, contents); //$NON-NLS-1$
 			}
 			contents.append('=');
 			contents.append(value);
@@ -116,7 +116,7 @@ public class MarkersDumpingStrategy_1 implements IStringDumpingStrategy {
 				markerType = (String) markerTypes.get(input.readInt());
 				break;
 			default :
-				throw new DumpException("Invalid marker type constant found: " + constant); //$NON-NLS-1$
+				throw new PartialDumpException("Invalid marker type constant found: " + constant, contents); //$NON-NLS-1$
 		}
 		contents.append("Marker Type: "); //$NON-NLS-1$
 		contents.append(markerType);

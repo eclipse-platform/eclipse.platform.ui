@@ -70,7 +70,11 @@ public abstract class AbstractDumper implements IDumper {
 
 			if (contents.length() == 0)
 				contents.append("No contents\n"); //$NON-NLS-1$
-
+		} catch (PartialDumpException pde) {
+			// ensure we remember any partial contents
+			if (pde.getPartialContents() != null)
+				contents.append(pde.getPartialContents());
+			dump.setFailureReason(pde);
 		} catch (Exception e) {
 			dump.setFailureReason(e);
 		} finally {

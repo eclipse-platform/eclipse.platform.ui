@@ -48,13 +48,8 @@ public class DumpContentsView extends SpyView {
 	 * Constructs a DumpContentsView. 
 	 */
 	public DumpContentsView() {
-		try {
-			dumperFactory = DumperFactory.getInstance();
-			this.registeredFileNames = dumperFactory.getRegisteredFileNames();
-		} catch (DumpException de) {
-			ErrorUtil.logException(de, null);
-			ErrorUtil.showErrorMessage(de.getMessage(), "Error creating view"); //$NON-NLS-1$
-		}
+		dumperFactory = DumperFactory.getInstance();
+		this.registeredFileNames = dumperFactory.getRegisteredFileNames();
 	}
 
 	/**
@@ -133,7 +128,7 @@ public class DumpContentsView extends SpyView {
 			this.initialTitle = this.getTitle();
 
 		// updates title and title tool tip
-		this.setTitle(initialTitle + " : " + this.currentFile.getName());
+		this.setContentDescription(initialTitle + " : " + this.currentFile.getName()); //$NON-NLS-1$
 		this.setTitleToolTip("Dump contents for " + this.currentFile.getAbsolutePath()); //$NON-NLS-1$
 
 		// updates viewer

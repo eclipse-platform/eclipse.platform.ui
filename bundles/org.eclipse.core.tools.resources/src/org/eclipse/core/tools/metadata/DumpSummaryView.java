@@ -77,8 +77,8 @@ public class DumpSummaryView extends SpyView {
 
 		// sets title and tool tip
 		File file = dump.getFile();
-		this.setTitle(initialTitle + " : " + file.getName());
-		this.setTitleToolTip("Dump summary for file " + file.getAbsolutePath());
+		this.setContentDescription(initialTitle + " : " + file.getName()); //$NON-NLS-1$
+		this.setTitleToolTip("Dump summary for file " + file.getAbsolutePath()); //$NON-NLS-1$
 
 		// generates text to be shown on this view
 		StringBuffer output = new StringBuffer();
