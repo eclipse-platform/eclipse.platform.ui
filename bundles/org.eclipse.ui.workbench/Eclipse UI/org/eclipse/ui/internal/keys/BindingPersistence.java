@@ -15,14 +15,19 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
@@ -716,6 +721,12 @@ public final class BindingPersistence {
 			final IConfigurationElement[] configurationElements,
 			final int configurationElementCount,
 			final BindingManager bindingManager) {
+		/*
+		 * If necessary, this list of status items will be constructed. It will
+		 * only contains instances of <code>IStatus</code>.
+		 */
+		List warningsToLog = null;
+
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
 
@@ -743,9 +754,15 @@ public final class BindingPersistence {
 						.getAttribute(ATTRIBUTE_CONFIGURATION);
 				if ((schemeId == null) || (schemeId.length() == 0)) {
 					// The scheme id should never be null. This is invalid.
-					WorkbenchPlugin.log("Key bindings need a scheme: '" //$NON-NLS-1$
+					final String message = "Key bindings need a scheme: '" //$NON-NLS-1$
 							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
-							+ commandId + "'."); //$NON-NLS-1$
+							+ commandId + "'."; //$NON-NLS-1$
+					final IStatus status = new Status(IStatus.WARNING,
+							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+					if (warningsToLog == null) {
+						warningsToLog = new ArrayList();
+					}
+					warningsToLog.add(status);
 					continue;
 				}
 			}
@@ -775,11 +792,15 @@ public final class BindingPersistence {
 				if ((keySequenceText == null)
 						|| (keySequenceText.length() == 0)) {
 					// The key sequence should never be null. This is pointless
-					WorkbenchPlugin
-							.log("Defining a key binding with no key sequence has no effect: '" //$NON-NLS-1$
-									+ configurationElement.getNamespace()
-									+ "', '" //$NON-NLS-1$
-									+ commandId + "'."); //$NON-NLS-1$
+					final String message = "Defining a key binding with no key sequence has no effect: '" //$NON-NLS-1$
+							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+							+ commandId + "'."; //$NON-NLS-1$
+					final IStatus status = new Status(IStatus.WARNING,
+							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+					if (warningsToLog == null) {
+						warningsToLog = new ArrayList();
+					}
+					warningsToLog.add(status);
 					continue;
 				}
 
@@ -791,20 +812,29 @@ public final class BindingPersistence {
 				try {
 					keySequence = KeySequence.getInstance(keySequenceText);
 				} catch (final ParseException e) {
-					WorkbenchPlugin.log("Could not parse '" + keySequenceText //$NON-NLS-1$
+					final String message = "Could not parse '" + keySequenceText //$NON-NLS-1$
 							+ "': '" //$NON-NLS-1$
 							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
-							+ commandId + "'."); //$NON-NLS-1$
+							+ commandId + "'."; //$NON-NLS-1$
+					final IStatus status = new Status(IStatus.WARNING,
+							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+					if (warningsToLog == null) {
+						warningsToLog = new ArrayList();
+					}
+					warningsToLog.add(status);
 					continue;
 				}
 				if (keySequence.isEmpty() || !keySequence.isComplete()) {
-					WorkbenchPlugin
-							.log("Key bindings should not have an empty or incomplete key sequence: '" //$NON-NLS-1$
-									+ keySequence
-									+ "': '" //$NON-NLS-1$
-									+ configurationElement.getNamespace()
-									+ "', '" //$NON-NLS-1$
-									+ commandId + "'."); //$NON-NLS-1$
+					final String message = "Key bindings should not have an empty or incomplete key sequence: '" //$NON-NLS-1$
+							+ keySequence + "': '" //$NON-NLS-1$
+							+ configurationElement.getNamespace() + "', '" //$NON-NLS-1$
+							+ commandId + "'."; //$NON-NLS-1$
+					final IStatus status = new Status(IStatus.WARNING,
+							WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+					if (warningsToLog == null) {
+						warningsToLog = new ArrayList();
+					}
+					warningsToLog.add(status);
 					continue;
 				}
 
@@ -825,6 +855,16 @@ public final class BindingPersistence {
 					schemeId, contextId, locale, platform, null, Binding.SYSTEM);
 			bindingManager.addBinding(binding);
 		}
+
+		// If there were any warnings, then log them now.
+		if (warningsToLog != null) {
+			final String message = "Warnings while parsing the key bindings from the 'org.eclipse.ui.commands' extension point."; //$NON-NLS-1$
+			final IStatus status = new MultiStatus(
+					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
+							.toArray(new IStatus[warningsToLog.size()]),
+					message, null);
+			WorkbenchPlugin.log(message, status);
+		}
 	}
 
 	/**
@@ -838,6 +878,12 @@ public final class BindingPersistence {
 	 */
 	private static final void readBindingsFromPreferences(
 			final IMemento preferences, final BindingManager bindingManager) {
+		/*
+		 * If necessary, this list of status items will be constructed. It will
+		 * only contains instances of <code>IStatus</code>.
+		 */
+		List warningsToLog = null;
+
 		if (preferences != null) {
 			final IMemento[] preferenceMementos = preferences
 					.getChildren(ELEMENT_KEY_BINDING);
@@ -861,9 +907,14 @@ public final class BindingPersistence {
 					schemeId = memento.getString(ATTRIBUTE_CONFIGURATION);
 					if ((schemeId == null) || (schemeId.length() == 0)) {
 						// The scheme id should never be null. This is invalid.
-						WorkbenchPlugin
-								.log("Key bindings need a scheme or key configuration: preferences, '" //$NON-NLS-1$
-										+ commandId + "'."); //$NON-NLS-1$
+						final String message = "Key bindings need a scheme or key configuration: '" //$NON-NLS-1$
+								+ commandId + "'."; //$NON-NLS-1$
+						final IStatus status = new Status(IStatus.WARNING,
+								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+						if (warningsToLog == null) {
+							warningsToLog = new ArrayList();
+						}
+						warningsToLog.add(status);
 					}
 				}
 
@@ -894,9 +945,14 @@ public final class BindingPersistence {
 						 * The key sequence should never be null. This is
 						 * pointless
 						 */
-						WorkbenchPlugin
-								.log("Key bindings need a key sequence or string: preferences, '" //$NON-NLS-1$
-										+ commandId + "'."); //$NON-NLS-1$
+						final String message = "Key bindings need a key sequence or string: '" //$NON-NLS-1$
+								+ commandId + "'."; //$NON-NLS-1$
+						final IStatus status = new Status(IStatus.WARNING,
+								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+						if (warningsToLog == null) {
+							warningsToLog = new ArrayList();
+						}
+						warningsToLog.add(status);
 						continue;
 					}
 
@@ -908,16 +964,27 @@ public final class BindingPersistence {
 					try {
 						keySequence = KeySequence.getInstance(keySequenceText);
 					} catch (final ParseException e) {
-						WorkbenchPlugin.log("Could not parse: '" //$NON-NLS-1$
-								+ keySequenceText + "': preferences, '" //$NON-NLS-1$
-								+ commandId + "'."); //$NON-NLS-1$
+						final String message = "Could not parse: '" //$NON-NLS-1$
+								+ keySequenceText + "': '" //$NON-NLS-1$
+								+ commandId + "'."; //$NON-NLS-1$
+						final IStatus status = new Status(IStatus.WARNING,
+								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+						if (warningsToLog == null) {
+							warningsToLog = new ArrayList();
+						}
+						warningsToLog.add(status);
 						continue;
 					}
 					if (keySequence.isEmpty() || !keySequence.isComplete()) {
-						WorkbenchPlugin
-								.log("Key bindings cannot use an empty or incomplete key sequence: '" //$NON-NLS-1$
-										+ keySequence + "': preferences, '" //$NON-NLS-1$
-										+ commandId + "'."); //$NON-NLS-1$
+						final String message = "Key bindings cannot use an empty or incomplete key sequence: '" //$NON-NLS-1$
+								+ keySequence + "': '" //$NON-NLS-1$
+								+ commandId + "'."; //$NON-NLS-1$
+						final IStatus status = new Status(IStatus.WARNING,
+								WorkbenchPlugin.PI_WORKBENCH, 0, message, null);
+						if (warningsToLog == null) {
+							warningsToLog = new ArrayList();
+						}
+						warningsToLog.add(status);
 						continue;
 					}
 
@@ -938,6 +1005,16 @@ public final class BindingPersistence {
 						Binding.USER);
 				bindingManager.addBinding(binding);
 			}
+		}
+
+		// If there were any warnings, then log them now.
+		if (warningsToLog != null) {
+			final String message = "Warnings while parsing the key bindings from the preference store."; //$NON-NLS-1$
+			final IStatus status = new MultiStatus(
+					WorkbenchPlugin.PI_WORKBENCH, 0, (IStatus[]) warningsToLog
+							.toArray(new IStatus[warningsToLog.size()]),
+					message, null);
+			WorkbenchPlugin.log(message, status);
 		}
 	}
 
