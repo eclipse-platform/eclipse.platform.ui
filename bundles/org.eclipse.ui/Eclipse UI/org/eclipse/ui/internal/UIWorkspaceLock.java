@@ -19,8 +19,9 @@ public UIWorkspaceLock(IWorkspace workspace, Display display) throws CoreExcepti
 }
 public boolean acquire() throws InterruptedException {
 	if (isUI()) {
-		if (getCurrentOperationThread() != null && display.getSyncThread() == getCurrentOperationThread())
-			throw new RuntimeException("The resource tree cannot be modified during delta or lifecycle notification.");//$NON-NLS-1$
+		if (getCurrentOperationThread() != null && display.getSyncThread() == getCurrentOperationThread()) {
+			throw new RuntimeException(WorkbenchMessages.getString("UIWorkspaceLock.errorModDuringNotification")); //$NON-NLS-1$
+		}
 		ui = Thread.currentThread();
 		doPendingWork();
 	}
