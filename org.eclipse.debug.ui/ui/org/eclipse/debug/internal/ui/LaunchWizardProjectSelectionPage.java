@@ -154,10 +154,10 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		
 		createElementsGroup(root);
 
-		setDescription(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_Project_3")); //$NON-NLS-1$
+		setDescription(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_Project_2")); //$NON-NLS-1$
 
 		setPageComplete(false);
-		setTitle(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_Project_4")); //$NON-NLS-1$
+		setTitle(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_Project_2")); //$NON-NLS-1$
 		setControl(root);
 		WorkbenchHelp.setHelp(
 			ancestor,
@@ -209,7 +209,7 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 
 		fElementsList.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
-				setMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_a_project_for_the_launch_context._8")); //$NON-NLS-1$
+				setMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_a_project_for_the_launch_context._6")); //$NON-NLS-1$
 				IStructuredSelection ss = null;
 				if (e.getSelection() instanceof IStructuredSelection) {
 					ss = (IStructuredSelection) e.getSelection();
@@ -274,17 +274,17 @@ public class LaunchWizardProjectSelectionPage extends WizardPage {
 		Object[] children= ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		if (children.length == 1) {
 			fElementsList.setSelection(new StructuredSelection(children[0]));
-			setMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_a_project_for_the_launch_context._9")); //$NON-NLS-1$
+			setMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_a_project_for_the_launch_context._6")); //$NON-NLS-1$
 			setPageComplete(true);
 		} else if (children.length > 0) {
-			setMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_a_project_for_the_launch_context._10")); //$NON-NLS-1$
+			setMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.Select_a_project_for_the_launch_context._6")); //$NON-NLS-1$
 			if (fElementsList.getSelection().isEmpty()) {
 				fElementsList.setSelection(new StructuredSelection(children[0]));
 			}
 			setPageComplete(true);
 		} else {
 			// no elements to select
-			setErrorMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.No_projects_available._11")); //$NON-NLS-1$
+			setErrorMessage(DebugUIMessages.getString("LaunchWizardProjectSelectionPage.No_projects_available._7")); //$NON-NLS-1$
 			setPageComplete(false);
 		}
 		fPatternText.setFocus();
