@@ -207,6 +207,12 @@ public class IEHost implements Runnable {
 			while (null != (line = reader.readLine())) {
 				if (line.length() > 0) {
 					executeCommand(line);
+					while (System.in.available() <= 0) {
+						try {
+							Thread.currentThread().sleep(30);
+						} catch (InterruptedException ie) {
+						}
+					}
 				}
 			}
 		} catch (IOException e) {
