@@ -12,7 +12,7 @@ package org.eclipse.core.internal.utils;
 import org.eclipse.core.runtime.PlatformMessages;
 
 public class Messages extends PlatformMessages {
-	//### dtree
+	// dtree
 	public static String dtree_immutable;
 	public static String dtree_malformedTree;
 	public static String dtree_missingChild;
@@ -23,7 +23,7 @@ public class Messages extends PlatformMessages {
 	public static String dtree_subclassImplement;
 	public static String dtree_switchError;
 
-	//### events
+	// events
 	public static String events_builderError;
 	public static String events_building_0;
 	public static String events_building_1;
@@ -34,7 +34,7 @@ public class Messages extends PlatformMessages {
 	public static String events_skippingBuilder;
 	public static String events_unknown;
 
-	//### history store
+	// history store
 	public static String history_conversionFailed;
 	public static String history_conversionSucceeded;
 	public static String history_copyToNull;
@@ -52,7 +52,7 @@ public class Messages extends PlatformMessages {
 	public static String history_specificProblemsCleaning;
 	public static String history_tooManySimUpdates;
 
-	//### properties
+	// properties
 	public static String indexed_couldNotClose;
 	public static String indexed_couldNotCommit;
 	public static String indexed_couldNotCreate;
@@ -64,7 +64,7 @@ public class Messages extends PlatformMessages {
 	public static String indexed_couldNotRead;
 	public static String indexed_couldNotWrite;
 
-	//### indexing
+	// indexing
 	public static String indexedStore_contextNotAvailable;
 	public static String indexedStore_entryKeyLengthError;
 	public static String indexedStore_entryNotRemoved;
@@ -122,7 +122,7 @@ public class Messages extends PlatformMessages {
 	public static String links_workspaceVeto;
 	public static String links_wrongLocalType;
 
-	//### localstore
+	// localstore
 	public static String localstore_copying;
 	public static String localstore_copyProblem;
 	public static String localstore_couldNotCreateFolder;
@@ -149,7 +149,7 @@ public class Messages extends PlatformMessages {
 	public static String localstore_resourceExists;
 	public static String localstore_resourceIsOutOfSync;
 
-	//### internal.resources
+	// internal.resources
 	public static String natures_duplicateNature;
 	public static String natures_hasCycle;
 	public static String natures_invalidDefinition;
@@ -179,8 +179,6 @@ public class Messages extends PlatformMessages {
 	public static String objectStore_storeCreateFailure;
 	public static String objectStore_storeOpenFailure;
 
-	public static String ok;
-
 	public static String pageStore_commitFailure;
 	public static String pageStore_conversionFailure;
 	public static String pageStore_createFailure;
@@ -195,30 +193,24 @@ public class Messages extends PlatformMessages {
 	public static String pageStore_openFailure;
 	public static String pageStore_readFailure;
 	public static String pageStore_writeFailure;
+
 	public static String pathvar_beginLetter;
 	public static String pathvar_invalidChar;
 	public static String pathvar_invalidValue;
-
 	public static String pathvar_length;
 	public static String pathvar_undefined;
+
 	public static String preferences_deleteException;
 	public static String preferences_loadException;
-	public static String preferences_noFile;
-
-	//### preferences
-	public static String preferences_noProject;
-	public static String preferences_projectDeleteException;
 	public static String preferences_removeNodeException;
 	public static String preferences_saveProblems;
 	public static String preferences_syncException;
-	public static String preferences_visitException;
 
 	public static String projectDescriptionReader_badLinkLocation;
 	public static String projectDescriptionReader_badLinkName;
 	public static String projectDescriptionReader_badLinkType;
 	public static String projectDescriptionReader_badLinkType2;
 	public static String projectDescriptionReader_badLocation;
-	public static String projectDescriptionReader_badProjectName;
 	public static String projectDescriptionReader_emptyLinkName;
 	public static String projectDescriptionReader_failureReadingProjectDesc;
 	public static String projectDescriptionReader_notProjectDescription;
@@ -233,14 +225,13 @@ public class Messages extends PlatformMessages {
 	public static String properties_storeNotAvailable;
 	public static String properties_storeProblem;
 
-	//### auto-refresh
+	// auto-refresh
 	public static String refresh_installError;
 	public static String refresh_jobName;
 	public static String refresh_pollJob;
 	public static String refresh_refreshErr;
 	public static String refresh_task;
 
-	public static String resources_broadcasting;
 	public static String resources_cannotModify;
 	public static String resources_changeInAdd;
 	public static String resources_charsetBroadcasting;
@@ -250,7 +241,6 @@ public class Messages extends PlatformMessages {
 	public static String resources_copyDestNotSub;
 	public static String resources_copying;
 	public static String resources_copying_0;
-	public static String resources_copyMet;
 	public static String resources_copyNotMet;
 	public static String resources_copyProblem;
 	public static String resources_couldnotDelete;
@@ -261,22 +251,17 @@ public class Messages extends PlatformMessages {
 	public static String resources_deleting;
 	public static String resources_deleting_0;
 	public static String resources_destNotNull;
-	public static String resources_different;
 	public static String resources_errorContentDescription;
-	public static String resources_errorCreating;
 	public static String resources_errorDeleting;
 	public static String resources_errorMarkersDelete;
 	public static String resources_errorMarkersMove;
 	public static String resources_errorMembers;
-	public static String resources_errorMove;
 	public static String resources_errorMoving;
 	public static String resources_errorMultiRefresh;
 	public static String resources_errorNature;
-	public static String resources_errorOpen;
 	public static String resources_errorPropertiesMove;
 	public static String resources_errorReadProject;
 	public static String resources_errorRefresh;
-	public static String resources_errorTimestamp;
 	public static String resources_errorValidator;
 	public static String resources_errorVisiting;
 	public static String resources_existsDifferentCase;
@@ -298,18 +283,15 @@ public class Messages extends PlatformMessages {
 	public static String resources_initValidator;
 	public static String resources_invalidCharInName;
 	public static String resources_invalidCharInPath;
-	public static String resources_invalidDot;
 	public static String resources_invalidName;
 	public static String resources_invalidPath;
 	public static String resources_invalidProjDesc;
 	public static String resources_invalidResourceName;
 	public static String resources_invalidRoot;
-	public static String resources_invalidWhitespace;
 	public static String resources_markerNotFound;
 	public static String resources_missingProjectMeta;
 	public static String resources_missingProjectMetaRepaired;
 	public static String resources_moveDestNotSub;
-	public static String resources_moveMet;
 	public static String resources_moveMeta;
 	public static String resources_moveNotMet;
 	public static String resources_moveNotProject;
@@ -317,7 +299,6 @@ public class Messages extends PlatformMessages {
 	public static String resources_moveRoot;
 	public static String resources_moving;
 	public static String resources_moving_0;
-	public static String resources_movingContent;
 	public static String resources_mustBeAbsolute;
 	public static String resources_mustBeLocal;
 	public static String resources_mustBeOpen;
@@ -348,7 +329,6 @@ public class Messages extends PlatformMessages {
 	public static String resources_readMetaWrongVersion;
 	public static String resources_readOnly;
 	public static String resources_readOnly2;
-	public static String resources_readOnlyFailed;
 	public static String resources_readProjectMeta;
 	public static String resources_readProjectTree;
 	public static String resources_readSync;
@@ -358,7 +338,6 @@ public class Messages extends PlatformMessages {
 	public static String resources_readWorkspaceTree;
 	public static String resources_refreshing;
 	public static String resources_refreshingRoot;
-	public static String resources_renaming;
 	public static String resources_resetMarkers;
 	public static String resources_resetSync;
 	public static String resources_resourcePath;
@@ -377,31 +356,26 @@ public class Messages extends PlatformMessages {
 	public static String resources_settingDefaultCharsetContainer;
 	public static String resources_shutdown;
 	public static String resources_shutdownProblems;
-	public static String resources_shuttingDown;
 	public static String resources_snapInit;
 	public static String resources_snapRead;
 	public static String resources_snapRequest;
 	public static String resources_snapshot;
 	public static String resources_startupProblems;
-	public static String resources_syncTree;
 	public static String resources_touch;
 	public static String resources_updating;
 	public static String resources_updatingEncoding;
-	public static String resources_validLocation;
-	public static String resources_workspaceClose;
 	public static String resources_workspaceClosed;
 	public static String resources_workspaceOpen;
 	public static String resources_writeMeta;
 	public static String resources_writeWorkspaceMeta;
-	public static String resources_writing;
 
 	public static String synchronizer_partnerNotRegistered;
 
-	//### URL
+	// URL
 	public static String url_badVariant;
 	public static String url_couldNotResolve;
 
-	//### utils
+	// utils
 	public static String utils_buildException;
 	public static String utils_builds;
 	public static String utils_buildTime;
@@ -421,16 +395,15 @@ public class Messages extends PlatformMessages {
 	public static String utils_stringJobName;
 	public static String utils_wrongLength;
 
-	//### watson
+	// watson
 	public static String watson_elementNotFound;
 	public static String watson_illegalSubtree;
 	public static String watson_immutable;
 	public static String watson_noModify;
 	public static String watson_nullArg;
-	public static String watson_traversal;
 	public static String watson_unknown;
 
-	//### auto-refresh win32 native
+	// auto-refresh win32 native
 	public static String WM_beginTask;
 	public static String WM_errCloseHandle;
 	public static String WM_errCreateHandle;
