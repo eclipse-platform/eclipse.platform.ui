@@ -60,9 +60,10 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 	 * @see org.eclipse.debug.core.ILaunchListener#launchAdded(org.eclipse.debug.core.ILaunch)
 	 */
 	public void launchAdded(ILaunch launch) {
-		if (accepts(launch)) {
-			addHistory(launch.getLaunchConfiguration());
-			setRecentLaunch(launch.getLaunchConfiguration());
+		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
+		if (configuration != null && !configuration.isWorkingCopy() && accepts(configuration)) {
+			addHistory(configuration);
+			setRecentLaunch(configuration);
 		}
 	}
 	
@@ -236,19 +237,6 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 	}
 	
 	/**
-	 * Returns whether the given launch is included in the group assocaited with
-	 * this launch history.
-	 * 
-	 * @param launch	 * @return boolean	 */
-	protected boolean accepts(ILaunch launch) {
-		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
-		if (configuration == null) {
-			return false;
-		}
-		return accepts(configuration);
-	}
-	
-	/**
 	 * Returns whether the given configruation is included in the group
 	 * associated with this launch history.
 	 * 
@@ -256,9 +244,6 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 	 * @return boolean
 	 */
 	public boolean accepts(ILaunchConfiguration configuration) {
-		if (configuration.isWorkingCopy()) {
-			return false;
-		}
 		try {
 			if (configuration.getType().supportsMode(getLaunchGroup().getMode())) {
 				String launchCategory = null;
