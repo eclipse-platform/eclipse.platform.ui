@@ -14,38 +14,31 @@ import junit.framework.*;
 import org.eclipse.core.tests.runtime.compatibility.PluginCompatibilityTests;
 
 public class AllTests extends TestCase {
-	/**
-	 * AllTests constructor comment.
-	 * @param name java.lang.String
-	 */
+
 	public AllTests() {
 		super(null);
 	}
 
-	/**
-	 * AllTests constructor comment.
-	 * @param name java.lang.String
-	 */
 	public AllTests(String name) {
 		super(name);
 	}
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
+		suite.addTest(CoreExceptionTest.suite());
+		suite.addTest(IAdapterManagerTest.suite());
+		suite.addTest(IRegistryChangeEventTest.suite());
+		suite.addTest(OperationCanceledExceptionTest.suite());
 		suite.addTest(PathTest.suite());
 		suite.addTest(PlatformTest.suite());
-		suite.addTest(PreferencesTest.suite());
+		suite.addTest(PluginVersionIdentifierTest.suite());
 		suite.addTest(PreferenceExportTest.suite());
-		suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.runtime.model.ConfigurationElementModelTest.suite());
-		suite.addTest(IRegistryChangeEventTest.suite());
-		//	suite.addTest(org.eclipse.core.tests.internal.plugins.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.registrycache.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.runtime.jobs.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.preferences.AllTests.suite());
 		suite.addTest(PreferenceForwarderTest.suite());
-		suite.addTest(org.eclipse.core.tests.runtime.content.AllTests.suite());
-		suite.addTest(PluginCompatibilityTests.suite());
+		suite.addTest(PreferencesTest.suite());
+		suite.addTest(ProgressMonitorWrapperTest.suite());
+		suite.addTest(QualifiedNameTest.suite());
+		suite.addTest(StatusTest.suite());
+		suite.addTest(URLTest.suite());
 		return suite;
 	}
 }

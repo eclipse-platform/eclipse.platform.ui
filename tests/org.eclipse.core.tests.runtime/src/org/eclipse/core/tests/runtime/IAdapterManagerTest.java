@@ -9,6 +9,7 @@
  **********************************************************************/
 package org.eclipse.core.tests.runtime;
 
+import junit.framework.*;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.*;
 
@@ -22,6 +23,10 @@ public class IAdapterManagerTest extends TestCase {
 
 	public IAdapterManagerTest(String name) {
 		super(name);
+	}
+
+	public static Test suite() {
+		return new TestSuite(IAdapterManagerTest.class);
 	}
 
 	public IAdapterManagerTest() {

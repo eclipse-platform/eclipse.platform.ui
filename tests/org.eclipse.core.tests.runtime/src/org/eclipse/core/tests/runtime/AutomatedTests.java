@@ -26,9 +26,19 @@ public class AutomatedTests extends TestCase {
 		super(name);
 	}
 
+	/**
+	 * Add all of the AllTests suites for each package to be tested.
+	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTest(org.eclipse.core.tests.runtime.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.runtime.compatibility.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.runtime.content.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.runtime.jobs.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.runtime.model.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.internal.preferences.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.internal.registrycache.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.internal.runtime.AllTests.suite());
 		return suite;
 	}
 }
