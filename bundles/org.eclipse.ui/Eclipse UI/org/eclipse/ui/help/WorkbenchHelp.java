@@ -73,6 +73,7 @@ private static Point computePopUpLocation(Widget widget) {
 }
 /**
  * Calls the help support system to displays the given help context
+ * 
  *
  * @param helpContexts the contexts to display a mixed-type
  *   array of context ids (type <code>String</code>) and/or help contexts (type
@@ -83,32 +84,13 @@ private static void displayHelp(Object[] helpContexts, Point point) {
 	if (getHelpSupport() == null)
 		return;
 	
-	//If helpContexts contains even one IContext we have to look up the other
-	//context ids
-	boolean found = false;
-	int i = 0;
-	while (!found && i < helpContexts.length) {
-		found = helpContexts[i] instanceof IContext;
-		i++;	
-	}
-
-	if (found) {
-		//need to convert ids to contexts
-		IContext[] contexts = new IContext[helpContexts.length];
-		for (i = 0; i < helpContexts.length; i++) {
-			if (helpContexts[i] instanceof IContext)
-				contexts[i] = (IContext)helpContexts[i];
-			else
-				contexts[i] = (IContext)getHelpSupport().findContext((String)helpContexts[i]);
-		}
-		getHelpSupport().displayHelp(contexts, point.x, point.y);
-	} else {
-		String[] ids = new String[helpContexts.length];
-		for (i = 0; i < helpContexts.length; i++) {
-			ids[i] = (String)helpContexts[i];
-		}
-		getHelpSupport().displayHelp(ids, point.x, point.y);
-	}
+	// Since 2.0 the help support system no longer provides
+	// API for an array of help contexts.
+	// Therefore we only use the first context in the array.
+	if (helpContexts[0] instanceof IContext) 
+		getHelpSupport().displayHelp((IContext)helpContexts[0], point.x, point.y);
+	else
+		getHelpSupport().displayHelp((String)helpContexts[0], point.x, point.y);
 }
 /**
  * Returns the help contexts on the given control.
