@@ -26,7 +26,6 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 	private String name;
 	private ArrayList elements;
 	private String editPageId;
-	private ListenerList propertyChangeListeners = new ListenerList();
 
 	/**
 	 * Creates a new working set
@@ -40,16 +39,6 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		Assert.isNotNull(name, "name must not be null"); //$NON-NLS-1$
 		this.name = name;
 		internalSetElements(elements);
-	}
-	/** 
-	 * Implements IWorkingSet
-	 * 
-	 * @see org.eclipse.ui.IWorkingSet#addPropertyChangeListener(IPropertyChangeListener)
-	 * @deprecated use IWorkingSetManager.addPropertyChangeListener instead.
-	 *	newValue of the PropertyChangeEvent will be the changed working set.
-	 */
-	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		propertyChangeListeners.add(listener);
 	}
 	/**
 	 * Tests the receiver and the object for equality
@@ -70,26 +59,6 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 			return workingSet.getName().equals(getName()) && workingSet.elements.equals(elements) && pageIdEqual;
 		}
 		return false;
-	}
-	/**
-	 * Notify property change listeners about a working set change.
-	 * 
-	 * @param changeId one of IWorkingSet.CHANGE_WORKING_SET_CONTENT_CHANGE and
-	 * 	IWorkingSet.CHANGE_WORKING_SET_NAME_CHANGE 
-	 * @param oldValue the old property value
-	 * @param newValue the new property value 
-	 */
-	private void firePropertyChange(String changeId, Object oldValue, Object newValue) {
-		final PropertyChangeEvent event = new PropertyChangeEvent(this, changeId, oldValue, newValue);
-
-		Display.getDefault().syncExec(new Runnable() {
-			public void run() {
-				Object[] listeners = propertyChangeListeners.getListeners();		
-				for (int i = 0; i < listeners.length; i++) {
-					((IPropertyChangeListener) listeners[i]).propertyChange(event);
-				}
-			}
-		});
 	}
 	/**
 	 * Returns the receiver if the requested type is either IWorkingSet 
@@ -152,15 +121,6 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		}
 		return hashCode;
 	}
-	/** 
-	 * Implements IWorkingSet
-	 * 
-	 * @see org.eclipse.ui.IWorkingSet#removePropertyChangeListener(IPropertyChangeListener)
-	 * @deprecated use IWorkingSetManager.removePropertyChangeListener instead.
-	 */
-	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		propertyChangeListeners.remove(listener);
-	}
 	/**
 	 * Implements IPersistableElement.
 	 * Persist the working set name and working set contents. 
@@ -195,8 +155,6 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		internalSetElements(newElements);
 		WorkingSetManager workingSetManager = (WorkingSetManager) WorkbenchPlugin.getDefault().getWorkingSetManager();	
 		workingSetManager.workingSetChanged(this, IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE);
-		// deprecated event notification		
-		firePropertyChange(CHANGE_WORKING_SET_CONTENT_CHANGE, oldElements, newElements);
 	}
 	/**
 	 * Create a copy of the elements to store in the receiver.
@@ -234,7 +192,5 @@ public class WorkingSet implements IAdaptable, IPersistableElement, IWorkingSet 
 		name = newName;
 		WorkingSetManager workingSetManager = (WorkingSetManager) WorkbenchPlugin.getDefault().getWorkingSetManager();	
 		workingSetManager.workingSetChanged(this, IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE);
-		// deprecated event notification		
-		firePropertyChange(CHANGE_WORKING_SET_NAME_CHANGE, oldName, newName);
 	}
 }
