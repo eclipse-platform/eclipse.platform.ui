@@ -1254,10 +1254,14 @@ public class TaskList extends ViewPart {
 	public void setSelection(ISelection selection, boolean reveal) {
 		Assert.isTrue(selection instanceof IStructuredSelection);
 		IStructuredSelection ssel = (IStructuredSelection) selection;
+		
 		for (Iterator i = ssel.iterator(); i.hasNext();)
 			Assert.isTrue(i.next() instanceof IMarker);
-		viewer.setSelection(selection, reveal);
+		
+		if (viewer != null)
+			viewer.setSelection(selection, reveal);
 	}
+
 	boolean showChildrenHierarchy() {
 		switch (getFilter().onResource) {
 			case TasksFilter.ON_ANY_RESOURCE :
