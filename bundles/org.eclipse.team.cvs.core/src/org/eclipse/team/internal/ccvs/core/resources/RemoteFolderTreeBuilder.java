@@ -54,6 +54,8 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
  */
 public class RemoteFolderTreeBuilder {
 
+	private static final int MAX_REVISION_FETCHES_PER_CONNECTION = 1024;
+	
 	private Map fileDeltas;
 	private List changedFiles;
 	private Map remoteFolderTable;
@@ -171,8 +173,8 @@ public class RemoteFolderTreeBuilder {
 			} finally {
 				session.close();
 			}
-			// FIXME: We need a second session because of the use of a different handle on the same remote resource
-			// We didn't need one before!!! Perhaps we could support the changing of a sessions root as long as
+			// We need a second session because of the use of a different handle on the same remote resource
+			// Perhaps we could support the changing of a sessions root as long as
 			// the folder sync info is the same 
 			remoteRoot =
 				new RemoteFolderTree(null, root.getName(), repository,
@@ -186,12 +188,37 @@ public class RemoteFolderTreeBuilder {
 				subProgress.beginTask(null, 512);
 				// Build the remote tree
 				buildRemoteTree(session, root, remoteRoot, Path.EMPTY, subProgress);
-				if (!changedFiles.isEmpty())
+				// we can only fecth the status for up to 1024 files in a single connection due to
+				// the server which has a limit on the number of "open" files.
+				if (!changedFiles.isEmpty() && changedFiles.size() <= MAX_REVISION_FETCHES_PER_CONNECTION) {
 					fetchFileRevisions(session, (String[])changedFiles.toArray(new String[changedFiles.size()]), Policy.subMonitorFor(monitor, 20));
-				return remoteRoot;
+				}
 			} finally {
 				session.close();
 			}
+			
+			// If there were more than 1024 changed files, we need a connection per each 1024
+			if (!changedFiles.isEmpty() && changedFiles.size() > MAX_REVISION_FETCHES_PER_CONNECTION) {
+				String[] allChangedFiles = (String[])changedFiles.toArray(new String[changedFiles.size()]);
+				int iterations = (allChangedFiles.length / MAX_REVISION_FETCHES_PER_CONNECTION) 
+					+ (allChangedFiles.length % MAX_REVISION_FETCHES_PER_CONNECTION == 0 ? 0 : 1);
+				for (int i = 0; i < iterations ; i++) {
+					int length = Math.min(MAX_REVISION_FETCHES_PER_CONNECTION, 
+						allChangedFiles.length - (MAX_REVISION_FETCHES_PER_CONNECTION * i));
+					String buffer[] = new String[length];
+					System.arraycopy(allChangedFiles, i * MAX_REVISION_FETCHES_PER_CONNECTION, buffer, 0, length);
+					session = new Session(repository, remoteRoot, false);
+					session.open(Policy.subMonitorFor(monitor, 1));
+					try {
+						fetchFileRevisions(session, buffer, Policy.subMonitorFor(monitor, 2));
+					} finally {
+						session.close();
+					}
+				}
+			}
+			
+			return remoteRoot;
+			
 		} finally {
 			CVSProviderPlugin.getPlugin().setQuietness(quietness);
 			monitor.done();
