@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %plugin_name
+Bundle-SymbolicName: org.eclipse.ui.intro; singleton:=true
+Bundle-Version: 3.1.0
+Bundle-ClassPath: .
+Bundle-Activator: org.eclipse.ui.internal.intro.impl.IntroPlugin
+Bundle-Vendor: %provider_name
+Bundle-Localization: plugin
+Export-Package: org.eclipse.ui.intro.config
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.help,
+ org.eclipse.ui.forms
+Eclipse-AutoStart: true
