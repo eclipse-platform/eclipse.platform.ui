@@ -105,11 +105,4 @@ public interface ITextViewerExtension5 extends ITextViewerExtension3 {
 	 * @return <code>true</code> if the set of exposed model ranges changed, <code>false</code> otherwise
 	 */
 	boolean exposeModelRange(IRegion modelRange);
-	
-	/**
-	 * Sets the exposed model range.
-	 * 
-	 * @param modelRange the model range to be set as exposed model range
-	 */
-	void setExposedModelRange(IRegion modelRange);	
 }

@@ -2358,9 +2358,9 @@ public class TextViewer extends Viewer implements
 		
 		try {
 			
-			IDocument visibleDocument= createSlaveDocument(document);
-			updateVisibleDocument(visibleDocument, modelRangeOffset, modelRangeLength);
-			setVisibleDocument(visibleDocument);
+			IDocument slaveDocument= createSlaveDocument(document);
+			updateSlaveDocument(slaveDocument, modelRangeOffset, modelRangeLength);
+			setVisibleDocument(slaveDocument);
 		
 		} catch (BadLocationException x) {
 			throw new IllegalArgumentException(JFaceTextMessages.getString("TextViewer.error.invalid_visible_region_1")); //$NON-NLS-1$
@@ -2392,23 +2392,24 @@ public class TextViewer extends Viewer implements
 	}
 	
 	/**
-	 * Updates the given slave document to show the specified range of its master document.
+	 * Sets the given slave document to the specified range of its master document.
 	 * 
-	 * @param slaveDocument the slave document
-	 * @param modelRangeOffset the offset of the master document range
-	 * @param modelRangeLength the length of the master document range
+	 * @param visibleDocument the slave document
+	 * @param visibleRegionOffset the offset of the master document range
+	 * @param visibleRegionLength the length of the master document range
 	 * @return <code>true</code> if the slave has been adapted successfully
 	 * @throws BadLocationException in case the specified range is not valid in the master document
 	 * @since 2.1
+ 	 * @deprecated use <code>updateSlaveDocument</code> instead
 	 */
-	protected boolean  updateVisibleDocument(IDocument slaveDocument, int modelRangeOffset, int modelRangeLength) throws BadLocationException {
-		if (slaveDocument instanceof ChildDocument) {
-			ChildDocument childDocument= (ChildDocument) slaveDocument;
+	protected boolean updateVisibleDocument(IDocument visibleDocument, int visibleRegionOffset, int visibleRegionLength) throws BadLocationException {
+		if (visibleDocument instanceof ChildDocument) {
+			ChildDocument childDocument= (ChildDocument) visibleDocument;
 
 			IDocument document= childDocument.getParentDocument();
-			int line= document.getLineOfOffset(modelRangeOffset);
+			int line= document.getLineOfOffset(visibleRegionOffset);
 			int offset= document.getLineOffset(line);
-			int length= (modelRangeOffset - offset) + modelRangeLength;
+			int length= (visibleRegionOffset - offset) + visibleRegionLength;
 			
 			Position parentRange= childDocument.getParentDocumentRange();
 			if (offset != parentRange.getOffset() || length != parentRange.getLength()) {
@@ -2418,6 +2419,21 @@ public class TextViewer extends Viewer implements
 		}
 		return false;
 	}
+	
+	/**
+	 * Updates the given slave document to show the specified range of its master document.
+	 * 
+	 * @param slaveDocument the slave document
+	 * @param modelRangeOffset the offset of the master document range
+	 * @param modelRangeLength the length of the master document range
+	 * @return <code>true</code> if the slave has been adapted successfully
+	 * @throws BadLocationException in case the specified range is not valid in the master document
+	 * @since 3.0
+	 */
+	protected boolean updateSlaveDocument(IDocument slaveDocument, int modelRangeOffset, int modelRangeLength) throws BadLocationException {
+		return updateVisibleDocument(slaveDocument, modelRangeOffset, modelRangeLength);
+	}
+
 	
 	
 	//---- View ports	
@@ -3051,9 +3067,9 @@ public class TextViewer extends Viewer implements
 		}
 		
 		try {
-			IDocument visibleDocument= createSlaveDocument(getVisibleDocument());
-			if (updateVisibleDocument(visibleDocument, start, length))
-				setVisibleDocument(visibleDocument);
+			IDocument slaveDocument= createSlaveDocument(getVisibleDocument());
+			if (updateSlaveDocument(slaveDocument, start, length))
+				setVisibleDocument(slaveDocument);
 		} catch (BadLocationException x) {
 			throw new IllegalArgumentException(JFaceTextMessages.getString("TextViewer.error.invalid_visible_region_2")); //$NON-NLS-1$
 		}
