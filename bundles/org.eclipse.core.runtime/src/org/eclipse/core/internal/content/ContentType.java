@@ -470,12 +470,15 @@ public final class ContentType implements IContentType {
 		return internalIsAssociatedWith(fileName) != NOT_ASSOCIATED;
 	}
 
-	//TODO this can be done better
 	public boolean isKindOf(IContentType another) {
+		if (another == null)
+			return false;
 		if (aliasTarget != null)
-			return getTarget().isKindOf(another);
+			return getTarget().isKindOf(another);		
 		if (this == another)
 			return true;
+		if (getDepth() <= ((ContentType) another).getDepth())
+			return false;
 		IContentType baseType = getBaseType();
 		return baseType != null && baseType.isKindOf(another);
 	}
@@ -518,6 +521,9 @@ public final class ContentType implements IContentType {
 	void setAliasTarget(ContentType newTarget) {
 		// when changing the target, it must be cleared first
 		if (aliasTarget != null && newTarget != null)
+			return;
+		// don't allow a sub-type to be made into an alias to the base type
+		if (aliasTarget == null && isKindOf(newTarget))
 			return;
 		aliasTarget = newTarget;
 	}

@@ -42,7 +42,7 @@
             file-names="myContent.mc"
             describer="org.eclipse.core.tests.runtime.content.MyContentDescriber"/>         
       <!-- A base type and a sub-type are in conflict. Base type should be picked. --> 
-      <!--content-type      
+      <content-type      
             file-extensions="conflict1"
             name="Conflict 1"
             id="conflict1"/>         
@@ -50,9 +50,9 @@
             base-type="conflict1"     
             priority="high"    
             name="Specialized Conflict 1"
-            id="alpha_special_conflict1"/-->                     
+            id="aaa_conflict1"/>
       <!-- A base type and a sub-type (that restates file-spec) are in conflict. Base type should be picked. -->             
-      <!--content-type      
+      <content-type      
             file-extensions="conflict2"
             name="Conflict 2"
             id="conflict2"/>         
@@ -61,21 +61,21 @@
             base-type="conflict2"         
             file-extensions="conflict2"
             name="Specialized Conflict 2"
-            id="alpha_special_conflict2"/-->                                 
+            id="aaa_conflict2"/>
       <!-- Two unrelated types are in conflict. The "heaviest" one should be picked -->
-      <!--content-type      
-            file-extensions="conflict3"
-            name="Conflict 3"
-            id="conflict3"/>               
-      <content-type      
-            base-type="conflict3"         
-            file-extensions="conflict3,conflict3a"
-            name="Specialized Conflict 3"
-            id="alpha_special_conflict3"/>                                             
       <content-type      
             file-extensions="conflict3"
             name="Unrelated Conflict 3"
-            id="alpha_unrelated_conflict3"/-->                                 
+            id="xxx_conflict3"/>      
+      <content-type      
+            file-extensions="conflict3"
+            name="Conflict 3"
+            id="conflict3"/>
+      <content-type      
+            base-type="conflict3"         
+            file-extensions="conflict3"
+            name="Specialized Conflict 3"
+            id="aaa_conflict3"/>                                             
 	  <content-type
             file-extensions="tzt"
             default-charset="BAR"

@@ -388,17 +388,34 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		assertNull("4.0", description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 	}
 
-	public void _testFileSpecConflicts() throws IOException {
+	public void testFileSpecConflicts() throws IOException {
 		IContentTypeManager manager = Platform.getContentTypeManager();
+
+		IContentType conflict1a = manager.getContentType(PI_RUNTIME_TESTS + ".conflict1");
+		IContentType conflict1b = manager.getContentType(PI_RUNTIME_TESTS + ".aaa_conflict1");
+		assertNotNull("1.0", conflict1a);
+		assertNotNull("1.1", conflict1b);
 		IContentType preferredConflict1 = manager.findContentTypeFor("test.conflict1");
-		assertNotNull("1.0", preferredConflict1);
-		assertEquals("1.1", PI_RUNTIME_TESTS + ".conflict1", preferredConflict1.getId());
+		assertNotNull("1.2", preferredConflict1);
+		assertEquals("1.3", conflict1a, preferredConflict1);
+
+		IContentType conflict2a = manager.getContentType(PI_RUNTIME_TESTS + ".conflict2");
+		IContentType conflict2b = manager.getContentType(PI_RUNTIME_TESTS + ".aaa_conflict2");
+		assertNotNull("2.0", conflict2a);
+		assertNotNull("2.1", conflict2b);
 		IContentType preferredConflict2 = manager.findContentTypeFor("test.conflict2");
-		assertNotNull("2.0", preferredConflict2);
-		assertEquals("2.1", PI_RUNTIME_TESTS + ".conflict2", preferredConflict2.getId());
+		assertNotNull("2.2", preferredConflict2);
+		assertEquals("2.3", conflict2a, preferredConflict2);
+
+		IContentType conflict3a = manager.getContentType(PI_RUNTIME_TESTS + ".conflict3");
+		IContentType conflict3b = manager.getContentType(PI_RUNTIME_TESTS + ".aaa_conflict3");
+		IContentType conflict3c = manager.getContentType(PI_RUNTIME_TESTS + ".xxx_conflict3");
+		assertNotNull("3.0", conflict3a);
+		assertNotNull("3.1", conflict3b);
+		assertNotNull("3.2", conflict3c);
 		IContentType preferredConflict3 = manager.findContentTypeFor("test.conflict3");
-		assertNotNull("3.0", preferredConflict3);
-		assertEquals("3.1", PI_RUNTIME_TESTS + ".conflict3", preferredConflict3.getId());
+		assertNotNull("3.3", preferredConflict3);
+		assertEquals("3.3", conflict3a, preferredConflict3);
 	}
 
 	public void testMyContentDescriber() throws UnsupportedEncodingException, IOException {
@@ -413,7 +430,7 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 		for (int i = 0; i < MyContentDescriber.MY_OPTIONS.length; i++)
 			assertEquals("2." + i, MyContentDescriber.MY_OPTION_VALUES[i], description.getProperty(MyContentDescriber.MY_OPTIONS[i]));
 	}
-	
+
 	public void testOrderWithEmptyFiles() throws IOException {
 		IContentTypeManager manager = LocalContentTypeManager.getLocalContentTypeManager();
 		IContentType xml = manager.getContentType(Platform.PI_RUNTIME + ".xml");
@@ -434,15 +451,16 @@ public class IContentTypeManagerTest extends DynamicPluginTest {
 	public static Test suite() {
 		return new TestSuite(IContentTypeManagerTest.class);
 	}
+
 	/**
 	 * Helps to ensure we don't get fooled by case sensitivity in file names/specs.
 	 */
 	private String changeCase(String original) {
 		StringBuffer result = new StringBuffer(original);
-		for (int i = result.length()-1; i >= 0; i--) {
+		for (int i = result.length() - 1; i >= 0; i--) {
 			char originalChar = original.charAt(i);
-			result.setCharAt(i, i % 2 == 0 ? Character.toLowerCase(originalChar) : Character.toUpperCase(originalChar));			
+			result.setCharAt(i, i % 2 == 0 ? Character.toLowerCase(originalChar) : Character.toUpperCase(originalChar));
 		}
 		return result.toString();
-	}	
+	}
 }
