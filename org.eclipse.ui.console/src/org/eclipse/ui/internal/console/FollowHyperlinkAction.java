@@ -26,6 +26,7 @@ public class FollowHyperlinkAction extends Action {
 	 * Constructs a follow link action
 	 */
 	public FollowHyperlinkAction(IOConsoleViewer consoleViewer) {
+		// TODO: NLS
 	    super("&Open Link");
 		setToolTipText("Follow the selected hyperlink");
 		this.viewer = consoleViewer;
