@@ -51,6 +51,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
 import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -101,12 +102,7 @@ public class BasicNewProjectResourceWizard extends BasicNewResourceWizard
 	 * Extension attribute name for preferred perspectives.
 	 */
 	private static final String PREFERRED_PERSPECTIVES = "preferredPerspectives";  //$NON-NLS-1$
-	
-	/**
-	 * Preference name for whether not to show the Confirm PerspectiveSwitchDialog. 
-	 */
-	private static final String PREF_DONT_SHOW_DIALOG = "dontConfirmPerspectiveSwitch";  //$NON-NLS-1$
-	
+		
 /**
  * Creates a wizard for creating a new project resource in the workspace.
  */
@@ -480,8 +476,8 @@ public static void updatePerspective(IConfigurationElement configElement) {
  */
 private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window, IPerspectiveDescriptor finalPersp) {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean dontShowDialog = store.getBoolean(PREF_DONT_SHOW_DIALOG);
-	if (dontShowDialog) {
+	String pspm = store.getString(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE);
+	if (!IPreferenceConstants.PSPM_PROMPT.equals(pspm)) {
 		return true;
 	}
 	MessageDialogWithToggle dialog = new MessageDialogWithToggle(
@@ -496,10 +492,10 @@ private static boolean confirmPerspectiveSwitch(IWorkbenchWindow window, IPerspe
 		0,		// yes is the default
 		null,	// use the default message for the toggle
 		false); // toggle is initially unchecked
-	if (dialog.open() == 0) {
-		store.setValue(PREF_DONT_SHOW_DIALOG, dialog.getToggleState());
-		return true;
+	boolean result = dialog.open() == 0;
+	if (dialog.getToggleState()) {
+		store.setValue(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE, IPreferenceConstants.PSPM_ALWAYS);
 	}
-	return false;
+	return result;
 }
 }

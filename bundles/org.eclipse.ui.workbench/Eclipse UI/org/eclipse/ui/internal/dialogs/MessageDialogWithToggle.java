@@ -12,6 +12,8 @@ Contributors:
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -84,7 +86,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 	 * Creates a toggle button with the toggle message and state.
 	 */
 	protected Button createToggleButton(Composite parent) {
-		Button button= new Button(parent, SWT.CHECK | SWT.LEFT);
+		final Button button= new Button(parent, SWT.CHECK | SWT.LEFT);
 		String text = toggleMessage; 
 		if (text == null) {
 			text = WorkbenchMessages.getString("MessageDialogWithToggle.defaultToggleMessage"); //$NON-NLS-1$
@@ -98,6 +100,12 @@ public class MessageDialogWithToggle extends MessageDialog {
 		button.setLayoutData(data);
 		button.setFont(parent.getFont());
 
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				toggleState = button.getSelection();
+			}
+
+		});
 		return button;
 	}
 	
@@ -110,16 +118,6 @@ public class MessageDialogWithToggle extends MessageDialog {
 		return toggleButton;
 	}
 	
-	/**
-	 * When the OK button is pressed, update the toggle state.
-	 */
-	protected void okPressed() {
-		if (toggleButton != null && !toggleButton.isDisposed()) {
-			toggleState = getToggleButton().getSelection(); 
-		}
-		super.okPressed();
-	}
-
 	/**
 	 * Convenience method to open a simple confirm (OK/Cancel) dialog.
 	 *

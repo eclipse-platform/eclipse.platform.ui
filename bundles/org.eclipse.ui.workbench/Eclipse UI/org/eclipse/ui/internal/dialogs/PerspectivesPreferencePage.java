@@ -1,21 +1,21 @@
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+    IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.internal.dialogs;
 
-/**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
-**********************************************************************/
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferencePage;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,6 +33,14 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPersistentPreferenceStore;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.preference.RadioGroupFieldEditor;
+
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
@@ -51,6 +59,9 @@ import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
+/**
+ * The Workbench / Perspectives preference page.
+ */
 public class PerspectivesPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	private IWorkbench workbench;
 	private PerspectiveRegistry perspectiveRegistry;
@@ -73,9 +84,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	private Button openEmbedButton;
 	private Button openFastButton;
 
-	// widgets for perspective switching when creating new projects
-	private Button switchOnNewProjectButton;
-	private boolean switchOnNewProject;
+	private RadioGroupFieldEditor projectSwitchField;
 
 //	private static final int LIST_WIDTH = 200;
 //	private static final int LIST_HEIGHT = 200;
@@ -236,28 +245,26 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 	 */
 	private void createProjectPerspectiveGroup(Composite composite) {
 		
-		Font font = composite.getFont();
-
-		Group buttonComposite = new Group(composite, SWT.LEFT | SWT.NULL);
-		GridLayout layout = new GridLayout();
-		buttonComposite.setLayout(layout);
-		GridData data =
-			new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-		buttonComposite.setLayoutData(data);
-		buttonComposite.setText(NEW_PROJECT_PERSPECTIVE_TITLE);
-		buttonComposite.setFont(font);
-
-		// No switch button
-		switchOnNewProjectButton = new Button(buttonComposite, SWT.CHECK | SWT.LEFT);
-		switchOnNewProjectButton.setText(SWITCH_PERSPECTIVES_LABEL);
-		switchOnNewProjectButton.setFont(buttonComposite.getFont());
-		switchOnNewProjectButton.setSelection(switchOnNewProject);
-		switchOnNewProjectButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				switchOnNewProject = switchOnNewProjectButton.getSelection();
-			}
-		});
+		Composite projectComposite = new Composite(composite, SWT.NONE);
+		projectComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		projectComposite.setFont(composite.getFont()); 
+		
+		String[][] namesAndValues = {
+			{"Always switch", IPreferenceConstants.PSPM_ALWAYS},
+			{"Never switch", IPreferenceConstants.PSPM_NEVER},
+			{"Prompt", IPreferenceConstants.PSPM_PROMPT}
+		};
+		projectSwitchField =
+			new RadioGroupFieldEditor(
+				IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE,
+				"Switch to associated perspective when creating a new project",
+				namesAndValues.length,
+				namesAndValues,
+				projectComposite,
+				true);
+		projectSwitchField.setPreferenceStore(getPreferenceStore());
+		projectSwitchField.setPreferencePage(this);
+		projectSwitchField.load();
 	}
 	/**
 	 * Create a table a 3 buttons to enable the user to manage customized
@@ -268,7 +275,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		Font font = parent.getFont();
 
 		// define container & its gridding
-		Composite perspectivesComponent = new Composite(parent, SWT.NULL);
+		Composite perspectivesComponent = new Composite(parent, SWT.NONE);
 		perspectivesComponent.setLayoutData(new GridData(GridData.FILL_BOTH));
 		perspectivesComponent.setFont(parent.getFont());
 
@@ -405,10 +412,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		this.workbench = aWorkbench;
 		this.perspectiveRegistry = (PerspectiveRegistry) workbench.getPerspectiveRegistry();
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		setPreferenceStore(store);
 		
-		switchOnNewProject = 
-			!IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE.equals(
-			getUIPublicPreferenceStore().getString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE));
 		openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 		openPerspMode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
 	}
@@ -432,9 +437,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		//Project perspective preferences
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 				
-		switchOnNewProject = !IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE.equals(
-			getUIPublicPreferenceStore().getDefaultString(IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE));
-		switchOnNewProjectButton.setSelection(switchOnNewProject);
+		projectSwitchField.loadDefault();
 
 		openViewMode = store.getDefaultInt(IPreferenceConstants.OPEN_VIEW_MODE);
 		// Open view as float no longer supported
@@ -494,15 +497,19 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		 ((Workbench) workbench).getPerspectiveHistory().refreshFromRegistry();
 
 		// store the open new project perspective settings
-		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		projectSwitchField.store();
+		IPreferenceStore store = getPreferenceStore();
+		String pspm = store.getString(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE);
 		String newProjectPerspectiveSetting;
-		if(!switchOnNewProject)
+		if (IPreferenceConstants.PSPM_NEVER.equals(pspm)) {
 			newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.NO_NEW_PERSPECTIVE;
-		else if(openPerspMode == IPreferenceConstants.OPM_NEW_WINDOW)
-			newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW;
-		else
-			newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE;
-		
+		}
+		else { // PSPM_ALWAYS or PSPM_PROMPT
+			if(openPerspMode == IPreferenceConstants.OPM_NEW_WINDOW)
+				newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_WINDOW;
+			else
+				newProjectPerspectiveSetting = IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE; 
+		}
 		getUIPublicPreferenceStore().setValue(
 			IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
 			newProjectPerspectiveSetting);
@@ -514,6 +521,12 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		store.setValue(IPreferenceConstants.OPEN_PERSP_MODE, openPerspMode);
 		
 		WorkbenchPlugin.getDefault().savePluginPreferences();
+		try {
+			((IPersistentPreferenceStore) getUIPublicPreferenceStore()).save();
+		}
+		catch (IOException e) {
+			WorkbenchPlugin.log("Error saving UI preference store in PerspectivesPreferencePage.performOK(): " + e); //$NON-NLS-1$
+		}
 		return true;
 	}
 	
