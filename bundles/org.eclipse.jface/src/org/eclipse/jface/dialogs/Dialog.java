@@ -739,7 +739,7 @@ public boolean close() {
  * @param the control to apply the font to. Font will also be applied to
  * its children.
  */
-protected void applyDialogFont(Control control){
+public static void applyDialogFont(Control control){
 	Font dialogFont = JFaceResources.getDialogFont();
 	Font defaultFont = JFaceResources.getDefaultFont(); 
 	applyDialogFont(control,dialogFont,defaultFont);
@@ -752,7 +752,7 @@ protected void applyDialogFont(Control control){
  * @param dialogFont
  * @param defaultFont
  */
-protected void applyDialogFont(Control control, Font dialogFont, Font defaultFont){
+public static void applyDialogFont(Control control, Font dialogFont, Font defaultFont){
 	
 	if(control.getFont().equals(defaultFont))
 		control.setFont(dialogFont);
