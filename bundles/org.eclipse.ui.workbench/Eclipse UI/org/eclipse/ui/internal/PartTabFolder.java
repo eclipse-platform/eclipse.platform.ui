@@ -227,25 +227,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer {
     }
 
     /**
-     * See ILayoutContainer::allowBorder
-     * 
-     * There is already a border around the tab folder so no need for one from
-     * the parts.
-     */
-    public boolean allowsBorder() {
-        // @issue need to support old look even if a theme is set (i.e. show
-        // border
-        //   even when only one item) -- separate theme attribute, or derive this
-        //   from existing attributes?
-        // @issue this says to show the border only if there are no items, but
-        //   in this case the folder should not be visible anyway
-        //		if (tabThemeDescriptor != null)
-        //			return (mapTabToPart.size() < 1);
-        //		return mapTabToPart.size() <= 1;
-        return false;
-    }
-
-    /**
      * @param part
      */
     protected void close(IPresentablePart part) {
