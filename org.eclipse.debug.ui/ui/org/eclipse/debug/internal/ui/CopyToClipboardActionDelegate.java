@@ -28,39 +28,39 @@ import org.eclipse.swt.widgets.Display;
 
 public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	
-	protected ContentViewer fViewer;
+	private ContentViewer fViewer;
 	
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#initializeForOwner(ControlAction)
 	 */
 	public void initializeForOwner(ControlAction controlAction) {		
 		controlAction.setEnabled(!controlAction.getStructuredSelection().isEmpty());
-		fViewer = (ContentViewer)controlAction.getSelectionProvider();		
+		setViewer((ContentViewer)controlAction.getSelectionProvider());
 		super.initializeForOwner(controlAction);
 	}
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#isEnabledFor(Object)
 	 */
 	public boolean isEnabledFor(Object element) {
 		return element instanceof IDebugElement;
 	}
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object element, StringBuffer buffer) {
-		append(element, buffer, (ILabelProvider)fViewer.getLabelProvider(), 0);
+		append(element, buffer, (ILabelProvider)getViewer().getLabelProvider(), 0);
 	}
 	
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object element) {
 		StringBuffer buffer= new StringBuffer();
 		doAction(element, buffer);
 		TextTransfer plainTextTransfer = TextTransfer.getInstance();
-		Clipboard clipboard= new Clipboard(fViewer.getControl().getDisplay());		
+		Clipboard clipboard= new Clipboard(getViewer().getControl().getDisplay());
 		clipboard.setContents(
 			new String[]{buffer.toString()}, 
 			new Transfer[]{plainTextTransfer});
@@ -88,12 +88,15 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 		}
 	}
 
+	/**
+	 * @see ControlActionDelegate#getHelpContextId()
+	 */
 	protected String getHelpContextId() {
 		return IDebugHelpContextIds.COPY_TO_CLIPBOARD_ACTION;
 	}
 	
 	protected Object getParent(Object e) {
-		return ((ITreeContentProvider) fViewer.getContentProvider()).getParent(e);
+		return ((ITreeContentProvider) getViewer().getContentProvider()).getParent(e);
 	}
 	
 	/**
@@ -101,12 +104,12 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	 * that are present in the viewer.
 	 */
 	protected Object[] getChildren(Object parent) {
-		Object[] children= ((ITreeContentProvider)fViewer.getContentProvider()).getChildren(parent);
-		ViewerFilter[] filters= ((StructuredViewer)fViewer).getFilters();
+		Object[] children= ((ITreeContentProvider)getViewer().getContentProvider()).getChildren(parent);
+		ViewerFilter[] filters= ((StructuredViewer)getViewer()).getFilters();
 		if (filters != null) {
 			for (int i= 0; i < filters.length; i++) {
 				ViewerFilter f = filters[i];
-				children = f.filter(fViewer, parent, children);
+				children = f.filter(getViewer(), parent, children);
 			}
 		}
 		return children;
@@ -124,7 +127,7 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 					doAction(iter.next(), buffer);
 				}
 				TextTransfer plainTextTransfer = TextTransfer.getInstance();
-				Clipboard clipboard= new Clipboard(fViewer.getControl().getDisplay());		
+				Clipboard clipboard= new Clipboard(getViewer().getControl().getDisplay());		
 				clipboard.setContents(
 					new String[]{buffer.toString()}, 
 					new Transfer[]{plainTextTransfer});
@@ -138,7 +141,7 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	 * remove the child.
 	 */
 	protected Iterator pruneSelection() {
-		IStructuredSelection selection= (IStructuredSelection)fViewer.getSelection();
+		IStructuredSelection selection= (IStructuredSelection)getViewer().getSelection();
 		List elements= new ArrayList(selection.size());
 		Iterator iter= selection.iterator();
 		while (iter.hasNext()) {
@@ -164,12 +167,11 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 		if (elements.contains(parent)) {
 			return false;
 		}
-		return walkHierarchy(parent, elements);
-		
+		return walkHierarchy(parent, elements);		
 	}
 
 	/**
-	 * @see ControlActionDelegate
+	 * @see ControlActionDelegate#setActionImages(IAction)
 	 */
 	protected void setActionImages(IAction action) { 	
 		action.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_COPY));
@@ -180,37 +182,45 @@ public class CopyToClipboardActionDelegate extends ControlActionDelegate {
 	protected boolean shouldAppendChildren(Object e) {
 		return e instanceof IDebugTarget || e instanceof IThread;
 	}
-	/*
+	
+	/**
 	 * @see ControlActionDelegate#getStatusMessage()
 	 */
 	protected String getStatusMessage() {
 		return DebugUIMessages.getString("CopyToClipboardActionDelegate.Copy_failed"); //$NON-NLS-1$
 	}
 
-	/*
+	/**
 	 * @see ControlActionDelegate#getErrorDialogMessage()
 	 */
 	protected String getErrorDialogMessage() {
 		return null;
 	}
 
-	/*
+	/**
 	 * @see ControlActionDelegate#getErrorDialogTitle()
 	 */
 	protected String getErrorDialogTitle() {
 		return null;
 	}
-	/*
+	/**
 	 * @see ControlActionDelegate#getToolTipText()
 	 */
 	protected String getToolTipText() {
 		return DebugUIMessages.getString("CopyToClipboardActionDelegate.Copy_to_Clipboard_2"); //$NON-NLS-1$
 	}
-
-	/*
+	/**
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
 		return DebugUIMessages.getString("CopyToClipboardActionDelegate.&Copy_Stack_3"); //$NON-NLS-1$
+	}
+	
+	protected ContentViewer getViewer() {
+		return fViewer;
+	}
+
+	protected void setViewer(ContentViewer viewer) {
+		fViewer = viewer;
 	}
 }

@@ -28,15 +28,7 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 	 * Only append children that are visible in the tree viewer
 	 */
 	protected boolean shouldAppendChildren(Object e) {
-		return((TreeViewer)fViewer).getExpandedState(e);
-	}
-	
-	/**
-	 * @see ControlActionDelegate#initializeForOwner(ControlAction)
-	 */
-	public void initializeForOwner(ControlAction controlAction) {		
-		controlAction.setEnabled(!controlAction.getStructuredSelection().isEmpty());
-		fViewer = (ContentViewer)controlAction.getSelectionProvider();		
+		return((TreeViewer)getViewer()).getExpandedState(e);
 	}
 	
 	/**
@@ -53,7 +45,7 @@ public class CopyVariablesToClipboardActionDelegate extends CopyToClipboardActio
 		action.setEnabled(!s.isEmpty());
 	}
 	
-	/*
+	/**
 	 * @see ControlActionDelegate#getText()
 	 */
 	protected String getText() {
