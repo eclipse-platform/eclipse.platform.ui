@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+  name="Eclipse Team Core Tests"
+  id="org.eclipse.team.tests.core"
+  version="1.0"
+  provider-name="Object Technology International, Inc.">
+
+  <requires>
+	<import plugin="org.apache.xerces"/>
+    <import plugin="org.eclipse.core.tests.harness"/>
+    <import plugin="org.eclipse.core.resources"/>
+    <import plugin="org.eclipse.core.runtime"/>
+    <import plugin="org.eclipse.team.core"/>
+    <import plugin="org.junit"/>
+  </requires>
+
+  <runtime>
+    <library name="teamtests.jar">
+      <export name="*"/>
+    </library>
+  </runtime>
+
+ <extension point="org.eclipse.core.tests.harness.tests"> 
+    <test id="team.all">
+      <run class="org.eclipse.team.tests.core.RepositoryProviderTests"/>
+    </test>
+ </extension>
+
+<extension point="org.eclipse.core.resources.natures" id="bic-provider" name="Bic Provider">
+	<runtime>
+		<run class="org.eclipse.team.tests.core.RepositoryProviderBic"/>
+	</runtime>
+ 	<one-of-nature id="org.eclipse.team.repository-provider"/>
+</extension>
+
+<extension point="org.eclipse.core.resources.natures" id="naish-provider" name="Naish Provider">
+	<runtime>
+		<run class="org.eclipse.team.tests.core.RepositoryProviderNaish"/>
+	</runtime>
+ 	<one-of-nature id="org.eclipse.team.repository-provider"/>
+</extension>
+
+<extension point="org.eclipse.core.resources.natures" id="other" name="Bad Set Provider">
+	<runtime>
+		<run class="org.eclipse.team.tests.core.RepositoryProviderOtherSport"/>
+	</runtime>
+ 	<one-of-nature id="some set"/>
+</extension>
+
+</plugin>
