@@ -1031,6 +1031,7 @@ public class ResourceNavigator
 
 	/**
 	 * @see IResourceNavigator#setLinkingEnabled(boolean)
+	 * @since 2.1
 	 */
 	public void setLinkingEnabled(boolean enabled) {
 		this.linkingEnabled = enabled;
