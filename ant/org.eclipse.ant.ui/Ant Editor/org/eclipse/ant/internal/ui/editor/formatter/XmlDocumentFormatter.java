@@ -339,22 +339,16 @@ public class XmlDocumentFormatter {
 
     private int depth;
 
-    private String documentText;
-
     private StringBuffer formattedXml;
 
     private boolean lastNodeWasText;
 
-    private FormattingPreferences prefs;
-    
-    public XmlDocumentFormatter(String documentText, FormattingPreferences prefs) {
+    public XmlDocumentFormatter() {
 		super();
-		this.documentText = documentText;
-		this.prefs = prefs;
 		depth= -1;
 	}
 
-    private void copyNode(Reader reader, StringBuffer out) throws IOException {
+    private void copyNode(Reader reader, StringBuffer out, FormattingPreferences prefs) throws IOException {
 
         TagReader tag = TagReaderFactory.createTagReaderFor(reader);
 
@@ -367,7 +361,7 @@ public class XmlDocumentFormatter {
             }
 
             if (tag.requiresInitialIndent()) {
-                out.append(indent());
+                out.append(indent(prefs.getCanonicalIndent()));
             }
         }
 
@@ -379,7 +373,7 @@ public class XmlDocumentFormatter {
 
     }
 
-    public void format(TemplateBuffer templateBuffer, AntContext antContext) {
+    public void format(TemplateBuffer templateBuffer, AntContext antContext, FormattingPreferences prefs) {
     	
 		//IPreferenceStore prefs= AntUIPlugin.getDefault().getPreferenceStore();
 		//boolean useCodeFormatter= prefs.getBoolean(IAntUIPreferenceConstants.TEMPLATES_USE_CODEFORMATTER);		
@@ -410,11 +404,10 @@ public class XmlDocumentFormatter {
     	
     	String leadingText= getLeadingText(fullDocument, antContext.getAntModel(), completionOffset);
     	String newTemplateString= leadingText + templateString;
-    	documentText= newTemplateString;
     	int indent= computeIndent(leadingText, prefs.getTabWidth());
     	setInitialIndent(indent);
     	
-    	newTemplateString= format();
+    	newTemplateString= format(newTemplateString, prefs);
     	
     	try {
     		templateDocument.replace(completionOffset, templateString.length(), newTemplateString);
@@ -472,10 +465,10 @@ public class XmlDocumentFormatter {
     /**
      * @return
      */
-    public String format() {
+    public String format(String documentText, FormattingPreferences prefs) {
 
-        Assert.isNotNull(this.documentText);
-        Assert.isNotNull(this.prefs);
+        Assert.isNotNull(documentText);
+        Assert.isNotNull(prefs);
 
         Reader reader = new StringReader(documentText);
         formattedXml = new StringBuffer();
@@ -491,7 +484,7 @@ public class XmlDocumentFormatter {
                 reader.reset();
 
                 if (intChar != -1) {
-                    copyNode(reader, formattedXml);
+                    copyNode(reader, formattedXml, prefs);
                 } else {
                     break;
                 }
@@ -508,10 +501,10 @@ public class XmlDocumentFormatter {
                || out.lastIndexOf("\r") == formattedXml.length() - 1; //$NON-NLS-1$
     }
 
-    private String indent() {
+    private String indent(String canonicalIndent) {
         StringBuffer indent = new StringBuffer(30);
         for (int i = 0; i < depth; i++) {
-            indent.append(prefs.getCanonicalIndent());
+            indent.append(canonicalIndent);
         }
         return indent.toString();
     }
