@@ -22,13 +22,17 @@ public class FontPreferencePage
 	 */
 	public void createFieldEditors() {
 
-		String localeName = Locale.getDefault().toString();
 		Composite editorParent = getFieldEditorParent();
 
 		createFieldEditor(
 			JFaceResources.getBannerFont(),
 			JFaceResources.BANNER_FONT,
 			"Banner Font: ",
+			editorParent);
+		createFieldEditor(
+			JFaceResources.getDialogFont(),
+			JFaceResources.DIALOG_FONT,
+			"Dialog Font: ",
 			editorParent);
 		createFieldEditor(
 			JFaceResources.getTerminalFont(),
@@ -106,6 +110,7 @@ public class FontPreferencePage
 
 		if (super.performOk()) {
 			setRegistryValue(JFaceResources.BANNER_FONT);
+			setRegistryValue(JFaceResources.DIALOG_FONT);
 			setRegistryValue(JFaceResources.TERMINAL_FONT);
 			setRegistryValue(JFaceResources.TEXT_FONT);
 			return true;

@@ -334,24 +334,23 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
 		FontRegistry registry = JFaceResources.getFontRegistry();
 		String locale = Locale.getDefault().toString();
-		initializeFont(JFaceResources.DEFAULT_FONT, locale, registry, store);
-		initializeFont(JFaceResources.DIALOG_FONT, locale, registry, store);
-		initializeFont(JFaceResources.BANNER_FONT, locale, registry, store);
-		initializeFont(JFaceResources.VIEWER_FONT, locale, registry, store);
-		initializeFont(JFaceResources.TEXT_FONT, locale, registry, store);
-		initializeFont(JFaceResources.WINDOW_FONT, locale, registry, store);
+		initializeFont(JFaceResources.DEFAULT_FONT,  registry, store);
+		initializeFont(JFaceResources.DIALOG_FONT,  registry, store);
+		initializeFont(JFaceResources.BANNER_FONT,  registry, store);
+		initializeFont(JFaceResources.VIEWER_FONT,  registry, store);
+		initializeFont(JFaceResources.TEXT_FONT,  registry, store);
+		initializeFont(JFaceResources.WINDOW_FONT, registry, store);
 	}
 
 	private void initializeFont(
 		String fontKey,
-		String locale,
 		FontRegistry registry,
 		IPreferenceStore store) {
 		FontData[] fontData = registry.getFontData(JFaceResources.DEFAULT_FONT);
 
 		PreferenceConverter.setDefault(
 			store,
-			fontKey + "_" + locale,
+			fontKey,
 			fontData[0]);
 	}
 	/**

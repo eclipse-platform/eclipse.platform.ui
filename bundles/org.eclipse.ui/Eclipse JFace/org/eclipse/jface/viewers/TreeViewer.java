@@ -1,20 +1,17 @@
 package org.eclipse.jface.viewers;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Licensed Materials - Property of IBM,
+ * WebSphere Studio Workbench
+ * (c) Copyright IBM Corp 2000
  */
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.*;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import java.util.*;
 import java.util.List; // Otherwise ambiguous
-
 
 /**
  * A concrete viewer based on an SWT <code>Tree</code> control.
@@ -35,7 +32,6 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * This viewer's control.
 	 */
 	private Tree tree;
-	private IPropertyChangeListener fontListener;
 /**
  * Creates a tree viewer on a newly-created tree control under the given parent.
  * The tree control is created using the SWT style bits <code>MULTI, H_SCROLL, V_SCROLL,</code> and <code>BORDER</code>.
@@ -71,20 +67,6 @@ public TreeViewer(Tree tree) {
 	super();
 	this.tree = tree;
 	hookControl(tree);
-	tree.setFont(JFaceResources.getFont(JFaceResources.VIEWER_FONT));
-	fontListener = new IPropertyChangeListener() {
-		public void propertyChange(PropertyChangeEvent event) {
-			if(JFaceResources.VIEWER_FONT.equals(event.getProperty())) {
-				TreeViewer.this.tree.setFont(JFaceResources.getFont(JFaceResources.VIEWER_FONT));
-			}
-		}
-	};
-	JFaceResources.getFontRegistry().addListener(fontListener);
-}
-
-protected void handleDispose(DisposeEvent event) {
-	super.handleDispose(event);
-	JFaceResources.getFontRegistry().removeListener(fontListener);
 }
 /* (non-Javadoc)
  * Method declared in AbstractTreeViewer.

@@ -46,6 +46,7 @@ public class Workbench implements IWorkbench,
 	private static final String P_PRODUCT_INFO = "productInfo";//$NON-NLS-1$
 	private static final String DEFAULT_PRODUCT_INFO_FILENAME = "product.ini";//$NON-NLS-1$
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml";//$NON-NLS-1$
+	private static String LOCALE_SUFIX;
 	private WindowManager windowManager;
 	private EditorHistory editorHistory;
 	private boolean runEventLoop;
@@ -55,6 +56,7 @@ public class Workbench implements IWorkbench,
 	private String productInfoFilename;
 	private ProductInfo productInfo;
 	private String[] commandLineArgs;
+
 /**
  * Workbench constructor comment.
  */
@@ -376,7 +378,7 @@ private boolean init(String[] commandLineArgs) {
 	addAdapters();
 	windowManager = new WindowManager();
 	WorkbenchColors.startup();
-	initializeFonts();
+	intializeFonts();
 
 	// deadlock code
 	boolean avoidDeadlock = true;
@@ -401,29 +403,29 @@ private boolean init(String[] commandLineArgs) {
 	isStarting = false;
 	return true;
 }
+
 /**
  * Initialize the workbench fonts with the stored values.
  */
-private void initializeFonts() {
+private void intializeFonts() {
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	FontRegistry registry = JFaceResources.getFontRegistry();
-	String locale = Locale.getDefault().toString();
-	initializeFont(JFaceResources.DEFAULT_FONT,locale,registry,store);
-	initializeFont(JFaceResources.DIALOG_FONT,locale,registry,store);
-	initializeFont(JFaceResources.BANNER_FONT,locale,registry,store);
-	initializeFont(JFaceResources.VIEWER_FONT,locale,registry,store);
-	initializeFont(JFaceResources.TEXT_FONT,locale,registry,store);
-	initializeFont(JFaceResources.WINDOW_FONT,locale,registry,store);
+	initializeFont(JFaceResources.DEFAULT_FONT,registry,store);
+	initializeFont(JFaceResources.DIALOG_FONT,registry,store);
+	initializeFont(JFaceResources.BANNER_FONT,registry,store);
+	initializeFont(JFaceResources.VIEWER_FONT,registry,store);
+	initializeFont(JFaceResources.TEXT_FONT,registry,store);
+	initializeFont(JFaceResources.WINDOW_FONT,registry,store);
 }
 /**
  * Initialize the specified font with the stored value.
  */
-private void initializeFont(String fontKey,String locale,FontRegistry registry,IPreferenceStore store) {
-	String font_Locale = fontKey + "_" + locale;
+private void initializeFont(String fontKey,FontRegistry registry,IPreferenceStore store) {
+	String font_Locale = PreferenceConverter.localizeFontName(fontKey);
 	if(store.isDefault(font_Locale))
 		return;
 	FontData[] font = new FontData[1];
-	font[0] = PreferenceConverter.getFontData(store,font_Locale);
+	font[0] = PreferenceConverter.getFontData(store,fontKey);
 	registry.put(fontKey,font);
 }
 /**

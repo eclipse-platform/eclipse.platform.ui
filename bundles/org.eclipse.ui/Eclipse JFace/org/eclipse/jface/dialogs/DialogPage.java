@@ -1,8 +1,9 @@
 package org.eclipse.jface.dialogs;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
+ * Licensed Materials - Property of IBM,
+ * WebSphere Studio Workbench
+ * (c) Copyright IBM Corp 2000
  */
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.graphics.*;
@@ -185,7 +186,14 @@ protected String getDialogFontName() {
 public String getErrorMessage() {
 	return errorMessage;
 }
-
+/**
+ * Returns the default font to use for this dialog page.
+ *
+ * @return the font
+ */
+protected Font getFont() {
+	return JFaceResources.getFontRegistry().get(getDialogFontName());
+}
 /* (non-Javadoc)
  * Method declared on IDialogPage.
  */
@@ -317,10 +325,8 @@ public void setMessage(String newMessage) {
 public void setTitle(String title) {
 	this.title = title;
 }
-/**
- * The <code>DialogPage</code> implementation of this <code>IDialogPage</code>
- * method sets the control to the given visibility state.
- * Subclasses may extend.
+/* (non-Javadoc)
+ * Method declared on IDialogPage.
  */
 public void setVisible(boolean visible) {
 	control.setVisible(visible);

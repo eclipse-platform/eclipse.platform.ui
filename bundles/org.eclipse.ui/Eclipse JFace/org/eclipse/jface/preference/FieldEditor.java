@@ -570,9 +570,17 @@ public void store() {
 		return;
 
 	if (isDefaultPresented) {
-		preferenceStore.setToDefault(preferenceName);
+		setToDefault();
 	} else {
 		doStore();
 	}
+}
+
+/**
+ * Store the default preference for the field
+ * being edited
+ */
+protected void setToDefault(){
+	preferenceStore.setToDefault(preferenceName);
 }
 }
