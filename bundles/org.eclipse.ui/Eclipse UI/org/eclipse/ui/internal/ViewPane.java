@@ -350,6 +350,28 @@ public MenuManager getMenuManager() {
 		isvMenuMgr = new PaneMenuManager();
 	return isvMenuMgr;
 }
+
+/**
+ * Returns the tab list to use when this part is active.
+ * Includes the view and its tab (if applicable), in the appropriate order.
+ */
+public Control[] getTabList() {
+	Control c = getControl();
+	if (getContainer() instanceof PartTabFolder) {
+		PartTabFolder tf = (PartTabFolder) getContainer();
+		CTabFolder f = (CTabFolder) tf.getControl();
+		if (f.getItemCount() > 1) {
+			if ((f.getStyle() & SWT.TOP) != 0) {
+				return new Control[] { f, c };
+			}
+			else {
+				return new Control[] { c, f };
+			}
+		}
+	}
+	return new Control[] { c };
+}
+
 /**
  * @see ViewActionBars
  */

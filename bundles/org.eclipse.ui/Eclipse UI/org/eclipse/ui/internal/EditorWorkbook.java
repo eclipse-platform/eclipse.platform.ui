@@ -357,6 +357,23 @@ private CTabItem getTab(LayoutPart child) {
 	
 	return null;
 }
+
+/**
+ * Returns the tab list to use when this workbook is active.
+ * Includes the active editor and its tab, in the appropriate order.
+ */
+public Control[] getTabList() {
+	if (visibleEditor == null) {
+		return new Control[] { tabFolder };
+	}
+	if ((tabFolder.getStyle() & SWT.TOP) != 0) {
+		return new Control[] { tabFolder, visibleEditor.getControl() };
+	}
+	else {
+		return new Control[] { visibleEditor.getControl(), tabFolder };
+	}
+}
+
 /**
  * Returns the visible child.
  */

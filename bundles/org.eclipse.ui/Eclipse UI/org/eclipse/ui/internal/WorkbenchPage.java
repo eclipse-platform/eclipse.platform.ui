@@ -111,13 +111,14 @@ public void activate(IWorkbenchPart part) {
 /**
  * Activates a part.  The part is given focus, the pane is hilighted and the action bars are shown.
  */
-static private void activatePart(final IWorkbenchPart part, final boolean switchActions, final boolean switchActionsForced) {
+private void activatePart(final IWorkbenchPart part, final boolean switchActions, final boolean switchActionsForced) {
 	Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("WorkbenchPage.ErrorActivatingView")) { //$NON-NLS-1$
 		public void run() {
 			if (part != null) {
 				part.setFocus();
 				PartSite site = (PartSite)part.getSite();
 				site.getPane().showFocus(true);
+				updateTabList(part);
 				SubActionBars bars = (SubActionBars)site.getActionBars();
 				bars.partChanged(part);
 				if (switchActions)
@@ -511,7 +512,7 @@ private void deactivateLastEditor() {
 /**
  * Deactivates a part.  The pane is unhilighted and the action bars are hidden.
  */
-static private void deactivatePart(IWorkbenchPart part, boolean switchActions, boolean switchActionsForced) {
+private void deactivatePart(IWorkbenchPart part, boolean switchActions, boolean switchActionsForced) {
 	if (part != null) {
 		PartSite site = (PartSite)part.getSite();
 		site.getPane().showFocus(false);
@@ -1528,6 +1529,25 @@ public void toggleZoom(IWorkbenchPart part) {
 public void updateActionBars() {
 	window.updateActionBars();
 }
+
+/**
+ * Sets the tab list of this page's composite appropriately
+ * when a part is activated.
+ */
+private void updateTabList(IWorkbenchPart part) {
+	PartSite site = (PartSite)part.getSite();
+	PartPane pane = site.getPane();
+	if (pane instanceof ViewPane) {
+		ViewPane viewPane = (ViewPane) pane;
+		getClientComposite().setTabList(viewPane.getTabList());
+	}
+	else if (pane instanceof EditorPane) {
+		EditorArea ea = ((EditorPane) pane).getWorkbook().getEditorArea();
+		ea.updateTabList();
+		getClientComposite().setTabList(new Control[] { ea.getParent() });
+	}
+}
+
 /**
  * The title of the given part has changed.
  * For views, updates the fast view button if necessary.
