@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.AntLaunchShortcut;
 import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
@@ -67,6 +68,10 @@ public class RunTargetAction extends Action implements IUpdate {
 	 */
 	public void run(TargetNode target) {
 		IFile file= AntUtil.getFile(target.getProject().getBuildFileName());
+		if (file == null) {
+			Display.getDefault().beep();
+			return;
+		}
 		AntLaunchShortcut shortcut= new AntLaunchShortcut();
 		shortcut.launch(file, ILaunchManager.RUN_MODE, target.getName());
 	}
