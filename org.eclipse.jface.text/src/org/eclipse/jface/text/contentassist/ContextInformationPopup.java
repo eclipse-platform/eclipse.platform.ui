@@ -235,7 +235,8 @@ class ContextInformationPopup implements IContentAssistListener {
 		BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
 			public void run() {
 				if (info == null)
-					validateContextInformation();
+					if (Helper.okToUse(fContextInfoPopup))
+						validateContextInformation();
 				else {
 					ContextFrame frame= createContextFrame(info, position);
 					if (isDuplicate(frame))
