@@ -589,10 +589,11 @@ public boolean isAutoBuilding();
 /**
  * Returns whether the workspace tree is currently locked. Resource changes 
  * are disallowed during certain types of resource change event notification. 
- * See IResourceChangeEvent for more details.
+ * See <code>IResourceChangeEvent</code> for more details.
  * 
  * @return boolean <code>true</code> if the workspace tree is locked, 
  *     <code>false</code> otherwise
+ * @see IResourceChangeEvent
  * @since 2.1
  */
 public boolean isTreeLocked();
