@@ -1087,7 +1087,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		}
 	}
 	
-	protected String getHistoryAsXML() throws IOException {
+	protected String getHistoryAsXML() throws IOException, CoreException {
 		org.w3c.dom.Document doc = new DocumentImpl();
 		Element historyRootElement = doc.createElement(HISTORY_ROOT_NODE); 
 		doc.appendChild(historyRootElement);
@@ -1121,19 +1121,19 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		return writer.toString();			
 	}
 	
-	protected Element getHistoryEntryAsXMLElement(org.w3c.dom.Document doc, LaunchConfigurationHistoryElement element) {
+	protected Element getHistoryEntryAsXMLElement(org.w3c.dom.Document doc, LaunchConfigurationHistoryElement element) throws CoreException {
 		Element entry = doc.createElement(HISTORY_LAUNCH_NODE); 
 		setAttributes(entry, element);
 		return entry;
 	}
 	
-	protected Element getRecentLaunchAsXMLElement(org.w3c.dom.Document doc, LaunchConfigurationHistoryElement element) {
+	protected Element getRecentLaunchAsXMLElement(org.w3c.dom.Document doc, LaunchConfigurationHistoryElement element) throws CoreException {
 		Element entry = doc.createElement(HISTORY_LAST_LAUNCH_NODE); 
 		setAttributes(entry, element);
 		return entry;
 	}
 	
-	protected void setAttributes(Element entry, LaunchConfigurationHistoryElement element) {
+	protected void setAttributes(Element entry, LaunchConfigurationHistoryElement element) throws CoreException {
 		if (usingConfigurationStyleLaunching()) {
 			setNewAttributes(entry, element);
 		} else {
@@ -1141,7 +1141,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		}
 	}
 	
-	protected void setNewAttributes(Element entry, LaunchConfigurationHistoryElement element) {
+	protected void setNewAttributes(Element entry, LaunchConfigurationHistoryElement element) throws CoreException {
 		ILaunchConfiguration config = element.getLaunchConfiguration();
 		if (config instanceof ILaunchConfigurationWorkingCopy) {
 			config = ((ILaunchConfigurationWorkingCopy)config).getOriginal();
@@ -1173,7 +1173,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 	 * Write out an XML file indicating the entries on the run & debug history lists and
 	 * the most recent launch.
 	 */
-	protected void persistLaunchHistory() throws IOException {
+	protected void persistLaunchHistory() throws IOException, CoreException {
 		IPath historyPath = getHistoryFilePath();
 		String osHistoryPath = historyPath.toOSString();
 		File file = new File(osHistoryPath);
@@ -1269,11 +1269,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		String memento = entry.getAttribute(HISTORY_MEMENTO_ATT); 
 		String mode = entry.getAttribute(HISTORY_MODE_ATT);       
 		String label = entry.getAttribute(HISTORY_LABEL_ATT);
-		ILaunchConfiguration launchConfig = getLaunchManager().getLaunchConfiguration(memento);
 		LaunchConfigurationHistoryElement hist = null;
-		if (launchConfig.exists()) {
-			hist = new LaunchConfigurationHistoryElement(launchConfig, mode, label);
-		} 
+		try {
+			ILaunchConfiguration launchConfig = getLaunchManager().getLaunchConfiguration(memento);
+			if (launchConfig.exists()) {
+				hist = new LaunchConfigurationHistoryElement(launchConfig, mode, label);
+			}
+		} catch (CoreException e) {
+			DebugUIPlugin.log(e.getStatus());
+		}	
 		return hist;
 	}
 	

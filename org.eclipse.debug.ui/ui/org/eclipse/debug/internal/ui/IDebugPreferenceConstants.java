@@ -1,5 +1,8 @@
 package org.eclipse.debug.internal.ui;
 
+import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -48,6 +51,12 @@ public interface IDebugPreferenceConstants {
 	public static final String LAUNCHING_STYLE = "Launching.style"; //$NON-NLS-1$
 	public static final String LAUNCHING_STYLE_LAUNCHERS = "Launching.style.launchers"; //$NON-NLS-1$
 	public static final String LAUNCHING_STYLE_CONFIGURATIONS = "Launching.style.configurations"; //$NON-NLS-1$
+	
+	/**
+	 * Memento for the last selected launch config in the
+	 * launch config dialog.
+	 */
+	public static final String PREF_LAST_LAUNCH_CONFIGURATION_SELECTION = IDebugUIConstants.PLUGIN_ID + ".lastLaunchConfigSelection";
 }
 
 

@@ -30,6 +30,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.IDebugPreferenceConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
@@ -354,22 +355,31 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 */
 	public int open() {		
 		try {
-			fFirstConfig = determineConfigFromContext();
-			if (fFirstConfig != null) {
-				if (fFirstConfig instanceof ILaunchConfigurationWorkingCopy) {
-					setWorkingCopy((ILaunchConfigurationWorkingCopy) fFirstConfig);
-				} else {
-					fUnderlyingConfig = fFirstConfig;
-				}
-				if (getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING)) {
+			if (getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SINGLE_CLICK_LAUNCHING)) {
+				// single click
+				fFirstConfig = determineConfigFromContext();
+				if (fFirstConfig != null) {
+					if (fFirstConfig instanceof ILaunchConfigurationWorkingCopy) {
+						setWorkingCopy((ILaunchConfigurationWorkingCopy) fFirstConfig);
+					} else {
+						fUnderlyingConfig = fFirstConfig;
+					}
 					doLaunch(fFirstConfig);
 					return ILaunchConfigurationDialog.SINGLE_CLICK_LAUNCHED;					
+				}
+			} else {
+				String memento = getPreferenceStore().getString(IDebugPreferenceConstants.PREF_LAST_LAUNCH_CONFIGURATION_SELECTION);
+				if (memento == null) {
+					// last launch
+					DebugUIPlugin.getDefault().getLastLaunch().getLaunchConfiguration();
+				} else {
+					// last selection
+					fFirstConfig = getLaunchManager().getLaunchConfiguration(memento);
 				}
 			}	
 		} catch (CoreException e) {
 			DebugUIPlugin.log(e.getStatus());
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Launch Configuration Error", "Exception occurred while launching configuration. See log for more information.", e.getStatus());
-			return CANCEL;
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Launch Configuration Error", "Exception occurred processing launch configuration. See log for more information.", e.getStatus());
 		}
 		return super.open();
 	}
@@ -1649,6 +1659,13 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			return;
 		}
 		if (result == OK) {
+			if (fUnderlyingConfig != null) {
+				try {
+					getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAST_LAUNCH_CONFIGURATION_SELECTION, fUnderlyingConfig.getMemento());
+				} catch (CoreException e) {
+					DebugUIPlugin.log(e.getStatus());
+				}
+			}
 			close();
 		} else {
 			getShell().setFocus();
