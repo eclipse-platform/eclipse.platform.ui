@@ -9,10 +9,13 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.externaltools.internal.ui.FileSelectionDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ProgramMainTab extends ExternalToolsMainTab {
 
@@ -36,5 +39,14 @@ public class ProgramMainTab extends ExternalToolsMainTab {
 			locationField.setText(text);
 		}
 	}
-
+	
+	
+   	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(getControl(), IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_PROGRAM_MAIN_TAB);
+	}
+	
 }

@@ -44,6 +44,7 @@ public interface IExternalToolsHelpContextIds {
 	public static final String SEARCH_FOR_BUILDFILES_DIALOG = PREFIX + "search_for_buildfiles_dialog_context"; //$NON-NLS-1$
 	public static final String STATUS_DIALOG = PREFIX + "status_dialog_context"; //$NON-NLS-1$
 	public static final String MESSAGE_WITH_TOGGLE_DIALOG = PREFIX + "message_with_toggle_dialog_context"; //$NON-NLS-1$
+	public static final String TARGET_ORDER_DIALOG = PREFIX + "target_order_dialog_context"; //$NON-NLS-1$
 	
 	// Preference Pages
 	public static final String ANT_PREFERENCE_PAGE = PREFIX + "ant_preference_page_context"; //$NON-NLS-1$
@@ -68,6 +69,6 @@ public interface IExternalToolsHelpContextIds {
 	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_ANT_CLASSPATH_TAB = PREFIX + "ant_classpath_tab_context"; //$NON-NLS-1$
 	
 	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILDER_TAB = PREFIX + "builders_tab_context"; //$NON-NLS-1$
-	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB = PREFIX + "main_tab_context"; //$NON-NLS-1$
+	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_PROGRAM_MAIN_TAB = PREFIX + "program_main_tab_context"; //$NON-NLS-1$
 	public static final String EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB = PREFIX + "refresh_tab_context"; //$NON-NLS-1$
 }

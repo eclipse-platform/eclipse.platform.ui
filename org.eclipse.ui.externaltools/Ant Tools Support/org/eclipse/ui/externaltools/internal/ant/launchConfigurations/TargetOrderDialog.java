@@ -22,6 +22,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Dialog to specify target execution order
@@ -184,5 +186,12 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		fUp.setEnabled(up);
 		fDown.setEnabled(down);		
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		WorkbenchHelp.setHelp(shell, IExternalToolsHelpContextIds.TARGET_ORDER_DIALOG);
+	}
 }
