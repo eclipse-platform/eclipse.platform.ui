@@ -29,7 +29,8 @@ public class Help
 	private String pluginsDir;
 	
 	/**
-	 * Constructor
+	 * This contstructs the stand alone help.
+	 * @param pluginsDir directory containing Eclipse plugins
 	 */
 	public Help(String pluginsDir)
 	{
@@ -61,7 +62,7 @@ public class Help
 	}
 	
 	/**
-	 * Displays help
+	 * Displays help.
 	 */
 	public void displayHelp()
 	{
@@ -69,9 +70,8 @@ public class Help
 	}
 	
 	/**
-	 * Displays specified help resource
-	 * @param toc the href of the table of contents
-	 * @param topic the topic url to display
+	 * Displays specified help resource.
+	 * @param href the href of the table of contents
 	 */
 	public void displayHelp(String href)
 	{
@@ -86,8 +86,8 @@ public class Help
 	}
 	
 	/**
-	 * Displays context sensitive help
-	 * @param id context id
+	 * Displays context sensitive help.
+	 * @param contextId context id
 	 * @param x x coordinate
 	 * @param y y coordinate
 	 */
@@ -104,8 +104,8 @@ public class Help
 	}
 	
 	/**
-	 * Displays context sensitive help in infopop
-	 * @param id context id
+	 * Displays context sensitive help in infopop.
+	 * @param contextId context id
 	 * @param x x coordinate
 	 * @param y y coordinate
 	 */
@@ -120,7 +120,11 @@ public class Help
 			System.out.println("Could not display  context:"  +contextId);
 		}
 	}
-	
+	/**
+	 * Starts the stand-alone help from command line for testing purposes.
+	 * @param args array of String;
+	 *  First array element is a name of directory containg plugins.
+	 */
 	public static void main(String[] args)
 	{
 		// Test
