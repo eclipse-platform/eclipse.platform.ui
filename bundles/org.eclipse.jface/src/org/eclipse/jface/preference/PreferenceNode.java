@@ -268,14 +268,4 @@ public class PreferenceNode implements IPreferenceNode {
     public void setPage(IPreferencePage newPage) {
         page = newPage;
     }
-    
-    /**
-     * Return the ImageDescriptor specified for the receiver.
-     * <strong>NOTE:</strong> This API is experimental and 
-     * may be deleted before version 3.1 ships.
-     * @return ImageDescriptor
-     */
-    public ImageDescriptor getSpecifiedImageDescriptor(){
-    	return getImageDescriptor();
-    }
 }
