@@ -49,26 +49,26 @@ public interface IStatus {
 	 * @see #getSeverity
 	 * @see #matches
  	 */
-	public static final int INFO = 1;
+	public static final int INFO = 0x01;
 
 	/** Status type severity (bit mask, value 2) indicating this status represents a warning.
 	 * @see #getSeverity
 	 * @see #matches
  	 */
-	public static final int WARNING = 2;
-
-	/** Status type severity (bit mask, value 3) indicating this status represents a
-	 * cancelation
-	 * @see #getSeverity
-	 * @see #matches
-	 */
-	public static final int CANCEL= 3;
+	public static final int WARNING = 0x02;
 
 	/** Status type severity (bit mask, value 4) indicating this status represents an error.
 	 * @see #getSeverity
 	 * @see #matches
  	 */
-	public static final int ERROR = 4;
+	public static final int ERROR = 0x04;
+
+	/** Status type severity (bit mask, value 8) indicating this status represents a
+	 * cancelation
+	 * @see #getSeverity
+	 * @see #matches
+	 */
+	public static final int CANCEL= 0x08;
 
 /**
  * Returns a list of status object immediately contained in this
