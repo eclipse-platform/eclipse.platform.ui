@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
@@ -31,11 +32,15 @@ public class EditAction extends WorkspaceAction {
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		// Get the editors
 		final EditorsAction editors = new EditorsAction();
-		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+		run(new IRunnableWithProgress() {
+			/* (non-Javadoc)
+			 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
 				executeProviderAction(editors,monitor);
 			}
-		},true /* cancelable */, PROGRESS_DIALOG);
+		}, true /* cancelable */, PROGRESS_DIALOG);
 		
 		// If there are editors show them
 		// and prompt the user to
@@ -45,7 +50,7 @@ public class EditAction extends WorkspaceAction {
 		}
 
 		
-		run(new WorkspaceModifyOperation() {
+		run(new WorkspaceModifyOperation(null) {
 			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				executeProviderAction(new IProviderAction() {
 					public IStatus execute(CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException {

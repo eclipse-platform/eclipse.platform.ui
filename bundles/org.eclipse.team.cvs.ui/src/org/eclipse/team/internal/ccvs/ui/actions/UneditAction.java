@@ -36,7 +36,7 @@ public class UneditAction extends WorkspaceAction {
 			return;
 		}
 		
-		run(new WorkspaceModifyOperation() {
+		run(new WorkspaceModifyOperation(null) {
 			public void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				executeProviderAction(new IProviderAction() {
 					public IStatus execute(CVSTeamProvider provider, IResource[] resources, IProgressMonitor monitor) throws CVSException {
