@@ -87,6 +87,37 @@ public boolean testAttribute(Object target, String name, String value) {
 		} catch (CoreException e) {
 			return false;		
 		}
+	} else if (name.equals(PERSISTENT_PROPERTY)) {
+		String propertyName;
+		String expectedVal;
+		int i = value.indexOf('=');
+		if (i != -1) {
+			propertyName = value.substring(0, i).trim();
+			expectedVal = value.substring(i+1).trim();
+		}
+		else {
+			propertyName = value.trim();
+			expectedVal = null;
+		}
+		try {
+			QualifiedName key;
+			int dot = propertyName.lastIndexOf('.');
+			if (dot != -1) {
+				key = new QualifiedName(propertyName.substring(0, dot), propertyName.substring(dot+1));
+			}
+			else {
+				key = new QualifiedName(null, propertyName);
+			}
+			String actualVal = res.getPersistentProperty(key);
+			if (expectedVal == null) {
+				return actualVal != null;
+			}
+			else {
+				return expectedVal.equals(actualVal);
+			}
+		} catch (CoreException e) {
+			return false;		
+		}
 	}
 	return false;
 }

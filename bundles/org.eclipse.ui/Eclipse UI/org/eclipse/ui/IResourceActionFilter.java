@@ -49,4 +49,12 @@ public interface IResourceActionFilter extends IActionFilter {
 	 * The attribute value in xml is unconstrained.
 	 */
 	public static final String PROJECT_NATURE = "projectNature";	 //$NON-NLS-1$
+	
+	/**
+	 * An attribute indicating a persistent property value (value <code>"persistentProperty"</code>).
+	 * If the value is a simple string, then this simply tests for existence of the property on the resource.
+	 * If it has the format <code>"propertyName=propertyValue" this obtains the value of the property
+	 * with the specified name and tests it for equality with the specified value.
+	 */
+	public static final String PERSISTENT_PROPERTY = "persistentProperty";	 //$NON-NLS-1$
 }
