@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize.sets;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -167,6 +167,11 @@ public class SubscriberInput implements IPropertyChangeListener, ITeamResourceCh
 				eventHandler.remove(resource);
 				return;
 			}
+			// Handle a closed project
+			if ((delta.getFlags() & IResourceDelta.OPEN) != 0 && !((IProject)resource).isOpen()) {
+				eventHandler.remove(resource);
+				return;
+			}	
 			// Only interested in projects mapped to the provider
 			if (!isVisibleProject((IProject)resource)) {
 				return;
