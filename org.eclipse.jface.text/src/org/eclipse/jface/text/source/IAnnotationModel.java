@@ -82,11 +82,11 @@ public interface IAnnotationModel {
 	
 	/**
 	 * Adds a annotation to this annotation model. The annotation is associated with
-	 * with the given position which desscribes the range covered by the annotation. 
+	 * with the given position which describes the range covered by the annotation. 
 	 * All registered annotation model listeners are informed about the change.
 	 * If the model is connected to a document, the position is automatically
 	 * updated on document changes. If the annotation is already managed by
-	 * this annotation model nothing happens.
+	 * this annotation model or is not a valid position in the connected nothing happens.
 	 *
 	 * @param annotation the annotation to add, may not be <code>null</code>
 	 * @param position the position describing the range covered by this annotation,
