@@ -6,6 +6,7 @@ package org.eclipse.debug.internal.ui;
  */
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -106,7 +107,11 @@ public class LaunchConfigurationTypePropertyPage extends PropertyPage {
 			if (configType != null) {
 				configTypeID = configType.getIdentifier();
 			}
-			getLaunchManager().setDefaultLaunchConfigurationType(getResource(), configTypeID);
+			try {
+				getLaunchManager().setDefaultLaunchConfigurationType(getResource(), configTypeID);
+			} catch (CoreException e) {
+				DebugUIPlugin.errorDialog(getShell(), "Error", "Unable to set default launch configuration type.", e);
+			}
 		}
 		return true;
 	}
