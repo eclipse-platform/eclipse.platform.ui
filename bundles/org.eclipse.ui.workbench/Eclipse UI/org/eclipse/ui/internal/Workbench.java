@@ -19,7 +19,6 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -28,6 +27,7 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
@@ -213,7 +213,7 @@ public final class Workbench implements IWorkbench {
 		Workbench.instance = this;
 		// for dynamic UI
 		extensionEventHandler = new ExtensionEventHandler(this);
-		InternalPlatform.getDefault().getRegistry().addRegistryChangeListener(extensionEventHandler);
+		Platform.getExtensionRegistry().addRegistryChangeListener(extensionEventHandler);
 	}
 
 	/**
@@ -751,7 +751,10 @@ public final class Workbench implements IWorkbench {
 
 		IIntroRegistry introRegistry = getIntroRegistry();
 		if (introRegistry.getIntroCount() > 0) {
-			introDescriptor = (IntroDescriptor) introRegistry.getIntros()[0];
+		    IProduct product = Platform.getProduct();
+		    if (product != null) {		    		
+			    introDescriptor = (IntroDescriptor) introRegistry.getIntroForProduct(product.getId());
+			}
 		}		
 		
         // begin the initialization of the activity, command, and context
@@ -1710,7 +1713,7 @@ public final class Workbench implements IWorkbench {
 	 */
 	private void shutdown() {
 		// for dynamic UI 
-		InternalPlatform.getDefault().getRegistry().removeRegistryChangeListener(extensionEventHandler);
+		Platform.getExtensionRegistry().removeRegistryChangeListener(extensionEventHandler);
 
 		// shutdown application-specific portions first
 		advisor.postShutdown();

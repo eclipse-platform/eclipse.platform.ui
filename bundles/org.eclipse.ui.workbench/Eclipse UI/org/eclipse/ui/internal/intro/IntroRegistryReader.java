@@ -25,8 +25,8 @@ import org.eclipse.ui.intro.IIntroDescriptor;
  * @since 3.0
  */
 public class IntroRegistryReader extends RegistryReader {
-
 	private static final String TAG_INTRO="intro";//$NON-NLS-1$	
+	private static final String TAG_INTROPRODUCTBINDING="introProductBinding";//$NON-NLS-1$
 	private IntroRegistry introRegistry;
 
 
@@ -44,10 +44,29 @@ public class IntroRegistryReader extends RegistryReader {
 			readIntro(element);
 			return true;
 		}
+		else if (element.getName().equals(TAG_INTROPRODUCTBINDING)) {
+		    readBinding(element);
+		    return true;
+		}
 		return false;
 	}
 
 	/**
+	 * Read binding information.
+	 * 
+     * @param element the configuration element to be read.
+     */
+    private void readBinding(IConfigurationElement element) {
+        try {
+            introRegistry.addBinding(element);
+        }
+        catch (CoreException e) {
+            // log an error since its not safe to open a dialog here
+			WorkbenchPlugin.log(IntroMessages.getString("Intro.could_not_create_binding") , e.getStatus());//$NON-NLS-1$            
+        }
+    }
+
+    /**
 	 * Read introduction information.
 	 * 
 	 * @param element the configuration element to read. 

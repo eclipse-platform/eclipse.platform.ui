@@ -24,9 +24,10 @@ Users are free to create any kind of SWT control as a client of the intro area. 
 
    <element name="extension">
       <complexType>
-         <sequence>
+         <choice>
             <element ref="intro"/>
-         </sequence>
+            <element ref="introProductBinding"/>
+         </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
@@ -52,6 +53,11 @@ Users are free to create any kind of SWT control as a client of the intro area. 
    </element>
 
    <element name="intro">
+      <annotation>
+         <documentation>
+            Specifies an introduction element.
+         </documentation>
+      </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -76,13 +82,6 @@ Users are free to create any kind of SWT control as a client of the intro area. 
                   <meta.attribute kind="resource"/>
                </appInfo>
             </annotation>
-         </attribute>         
-         <attribute name="productId" type="string" use="required">
-            <annotation>
-               <documentation>
-                  product identifier used to resolve the case when more than one intro parts have been registered. This can typically happen when there are two or more primary features present in the platform (RCP applications that support features will most likely provide extension definition in the primary feature plug-in). In this case, one of these primary features is used to provide application identity and &lt;samp&gt;productId&lt;/samp&gt; is used to identify it.
-               </documentation>
-            </annotation>
          </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -92,6 +91,30 @@ Users are free to create any kind of SWT control as a client of the intro area. 
                <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.intro.IIntroPart"/>
                </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="introProductBinding">
+      <annotation>
+         <documentation>
+            This element creates a binding between a product and an introduction.  When the workbench is started only an introduction bound to the current product (as defined by &lt;code&gt;org.eclipse.core.runtime.Platform.getProduct()&lt;/code&gt;) will be used.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="productId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  product identifier used to resolve the case when more than one intro parts have been registered. This can typically happen when there are two or more primary features present in the platform (RCP applications that support features will most likely provide extension definition in the primary feature plug-in). In this case, one of these primary features is used to provide application identity and &lt;samp&gt;productId&lt;/samp&gt; is used to identify it.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="introId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  intro identifier that specifies the intro part to use for the provided product
+               </documentation>
             </annotation>
          </attribute>
       </complexType>
