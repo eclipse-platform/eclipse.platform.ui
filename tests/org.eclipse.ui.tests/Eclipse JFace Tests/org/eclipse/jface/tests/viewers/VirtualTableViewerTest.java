@@ -212,6 +212,16 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	}
 	
 	
+	public void testDeleteSibling() {
+		((TableViewer) fViewer).getTable().getItem(0).getText();
+		super.testDeleteSibling();
+	}
+	
+	public void testSetSelection() {
+		((TableViewer) fViewer).getTable().getItem(0).getText();
+		super.testSetSelection();
+	}
+	
 
 
 }
