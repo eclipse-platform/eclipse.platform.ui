@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -75,6 +77,17 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		setBackground(newShell);
 		addRoundBorder(newShell,borderSize);
 		
+		newShell.addMouseMoveListener(new MouseMoveListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
+			 */
+			public void mouseMove(MouseEvent e) {
+				if(AnimationManager.getInstance().showingDetails())
+					return;
+				window.closeFloatingWindow();	
+			}
+		});
+		
 	}
 	/*
 	 * (non-Javadoc)
@@ -82,7 +95,7 @@ class ProgressFloatingWindow extends AssociatedWindow {
 	 * @see org.eclipse.jface.window.Window#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createContents(Composite root) {
-		viewer = new ProgressViewer(root, SWT.NONE,2) {
+		viewer = new ProgressViewer(root, SWT.NONE,5) {
 			/*
 			 * * (non-Javadoc)
 			 * 

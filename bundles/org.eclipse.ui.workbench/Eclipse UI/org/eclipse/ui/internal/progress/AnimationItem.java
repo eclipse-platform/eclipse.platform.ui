@@ -67,7 +67,8 @@ public class AnimationItem {
 		final AnimationManager manager = AnimationManager.getInstance();
 		// Canvas to show the image.
 		imageCanvas = new Canvas(parent, SWT.NONE);
-		imageCanvas.setBackground(AnimationManager.getItemBackgroundColor(getControl()));
+		imageCanvas.setBackground(AnimationManager
+				.getItemBackgroundColor(getControl()));
 
 		imageCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
@@ -106,38 +107,41 @@ public class AnimationItem {
 				//Do nothing
 			}
 		});
-		
-		imageCanvas.addMouseTrackListener(new MouseTrackListener(){
-			/* (non-Javadoc)
+
+		imageCanvas.addMouseTrackListener(new MouseTrackListener() {
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseEnter(MouseEvent e) {
 				//Nothing here
 			}
-			
-			/* (non-Javadoc)
+
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseExit(MouseEvent e) {
-				//Abort if we are already showing the window
-				if(AnimationManager.getInstance().showingDetails())
-					return;
-				closeFloatingWindow();
-
+				//Nothing here
 			}
-			
-			/* (non-Javadoc)
+
+			/*
+			 * (non-Javadoc)
+			 * 
 			 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
 			 */
 			public void mouseHover(MouseEvent e) {
 				//Abort if we are already showing the window
-				if(AnimationManager.getInstance().showingDetails())
+				if (AnimationManager.getInstance().showingDetails())
 					return;
 				openFloatingWindow();
 
 			}
 		});
-		
+
+
 		imageCanvas.getAccessible().addAccessibleControlListener(
 				new AccessibleControlAdapter() {
 					/*
@@ -212,7 +216,7 @@ public class AnimationItem {
 		}
 		WorkbenchJob floatingJob = new WorkbenchJob(ProgressMessages
 				.getString("AnimationItem.openFloatingWindowJob")) {//$NON-NLS-1$
-			
+
 			/*
 			 * (non-Javadoc)
 			 * 
