@@ -68,6 +68,11 @@ import org.w3c.dom.*;
  * because you want the VM to garbage collect the DOM model. Keeping a reference
  * to the DOM model from the Intro model will prevent that.</li>
  * </ol>
+ * <li>(since 3.0.2) several passes are used to resolve contributions to
+ * anchors that themselves where contributed through an extension. Each time a
+ * contribution is resolved, the model tries to resolve all unresolved
+ * contribution, recursively.
+ * </ul>
  */
 public class IntroModelRoot extends AbstractIntroContainer {
 
@@ -77,7 +82,6 @@ public class IntroModelRoot extends AbstractIntroContainer {
      */
     public static final int CURRENT_PAGE_PROPERTY_ID = 1;
 
-
     private static final String ATT_CONTENT = "content"; //$NON-NLS-1$
 
 
@@ -85,23 +89,23 @@ public class IntroModelRoot extends AbstractIntroContainer {
     // org.eclipse.ui.into.config extension point. Start off with true, and set
     // to false whenever something bad happens.
     private boolean hasValidConfig = true;
-
     private boolean isdynamicIntro;
-
     private IntroPartPresentation introPartPresentation;
-
     private IntroHomePage homePage;
-
     private String currentPageId;
-
     private IntroHomePage standbyPage;
-
 
     // the config extensions for this model.
     private IConfigurationElement[] configExtensionElements;
 
     // maintain listener list for model changes.
     private ListenerList propChangeListeners = new ListenerList(2);
+
+    // a hashtable to hold all loaded DOMs until resolving all configExtensions
+    // is done. Key is the extensionContent DOM element, while value is the
+    // bundle from where it was loaded.
+    private Hashtable unresolvedConfigExt = new Hashtable();
+
 
     /**
      * Model root. Takes a configElement that represents <config>in the
@@ -182,7 +186,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
 
     /**
-     * Resolve each include in this container's children.
+     * Resolve contributions into this container's children.
      */
     protected void resolveChildren() {
         // now handle config extension.
@@ -194,11 +198,11 @@ public class IntroModelRoot extends AbstractIntroContainer {
         // If there is more than one presentation, load first one, and log
         // rest.
         IConfigurationElement[] presentationElements = getCfgElement()
-                .getChildren(IntroPartPresentation.TAG_PRESENTATION);
+            .getChildren(IntroPartPresentation.TAG_PRESENTATION);
 
         IConfigurationElement presentationElement = ModelLoaderUtil
-                .validateSingleContribution(presentationElements,
-                    IntroPartPresentation.ATT_HOME_PAGE_ID);
+            .validateSingleContribution(presentationElements,
+                IntroPartPresentation.ATT_HOME_PAGE_ID);
         return presentationElement;
     }
 
@@ -251,58 +255,91 @@ public class IntroModelRoot extends AbstractIntroContainer {
     }
 
     /**
-     * Handles all the configExtensions to this current model.
-     *  
+     * Handles all the configExtensions to this current model. Resolving
+     * configExts means finding target anchor and inserting extension content at
+     * target. Also, several passes are used to resolve as many extensions as
+     * possible. This allows for resolving nested anchors (ie: anchors to
+     * anchors in contributions).
      */
     private void resolveConfigExtensions() {
-        for (int i = 0; i < configExtensionElements.length; i++) {
-            // get the bundle from the extensions since they are defined in
-            // other plugins.
-            Bundle bundle = BundleUtil
-                    .getBundleFromConfigurationElement(configExtensionElements[i]);
+        for (int i = 0; i < configExtensionElements.length; i++)
+            resolveConfigExtension(configExtensionElements[i]);
+        // now add all unresolved extensions as model children and log fact.
+        Enumeration keys = unresolvedConfigExt.keys();
+        while (keys.hasMoreElements()) {
+            Element configExtensionElement = (Element) keys.nextElement();
+            children.add(new IntroExtensionContent(configExtensionElement,
+                (Bundle) unresolvedConfigExt.get(configExtensionElement)));
+            // INTRO: fix log strings.
+            Log.warning("Could not resolve the following configExtension: " //$NON-NLS-1$
+                    + ModelLoaderUtil.getLogString(configExtensionElement,
+                        ATT_CONTENT));
+        }
+    }
 
-            Document dom = loadDOM(configExtensionElements[i]);
-            if (dom == null)
-                // we failed to parse the content file. Intro Parser would
-                // have logged the fact. Parser would also have checked to
-                // see if the content file has the correct root tag.
-                continue;
+    private void resolveConfigExtension(IConfigurationElement configExtElement) {
+        // get the bundle from the extensions since they are defined in
+        // other plugins.
+        Bundle bundle = BundleUtil
+            .getBundleFromConfigurationElement(configExtElement);
 
-            // Find the target of this container extension, and add all its
-            // children to target. Make sure to pass bundle to propagate to all
-            // children.
-            Element extensionContentElement = loadExtensionContent(dom, bundle);
-            if (extensionContentElement == null)
-                // no extension content defined.
-                continue;
+        Document dom = loadDOM(configExtElement);
+        if (dom == null)
+            // we failed to parse the content file. Intro Parser would
+            // have logged the fact. Parser would also have checked to
+            // see if the content file has the correct root tag.
+            return;
+        else
+            resolveConfigExtension(dom, bundle);
+    }
 
-            if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
-                // we failed to resolve this configExtension, because target
-                // could not be found or is not an anchor, add the extension
-                // as an (unresolved) child of this model, and log fact.
-                children.add(new IntroExtensionContent(extensionContentElement,
-                        bundle));
-                // INTRO: fix log strings.
-                Log.warning("Could not resolve the following configExtension: " //$NON-NLS-1$
-                        + ModelLoaderUtil.getLogString(extensionContentElement,
-                            ATT_CONTENT));
-                continue;
-            }
 
-            // Now load all pages and shared groups from this config extension
-            // only if we resolved this extension. No point adding pages that
-            // will never be referenced.
-            Element[] pages = ModelUtil.getElementsByTagName(dom,
-                IntroPage.TAG_PAGE);
-            for (int j = 0; j < pages.length; j++) {
-                // Create the model class for an intro Page.
-                IntroPage page = new IntroPage(pages[j], bundle);
-                page.setParent(this);
-                children.add(page);
-            }
+    private void resolveConfigExtension(Document dom, Bundle bundle) {
+        // Find the target of this container extension, and add all its
+        // children to target. Make sure to pass bundle to propagate to all
+        // children.
+        Element extensionContentElement = loadExtensionContent(dom, bundle);
+        if (extensionContentElement == null)
+            // no extension content defined, ignore extension completely.
+            return;
 
-            // load all shared groups from all configExtensions to this model.
-            loadSharedGroups(dom, bundle);
+        if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
+            // we failed to resolve this configExtension, because target
+            // could not be found or is not an anchor, add the extension
+            // as an (unresolved) child of this model.
+            if (!unresolvedConfigExt.containsKey(extensionContentElement))
+                unresolvedConfigExt.put(extensionContentElement, bundle);
+            return;
+        }
+
+        // We resolved a contribution. Now load all pages and shared groups
+        // from this config extension. No point adding pages that will never
+        // be referenced.
+        Element[] pages = ModelUtil.getElementsByTagName(dom,
+            IntroPage.TAG_PAGE);
+        for (int j = 0; j < pages.length; j++) {
+            // Create the model class for an intro Page.
+            IntroPage page = new IntroPage(pages[j], bundle);
+            page.setParent(this);
+            children.add(page);
+        }
+
+        // load all shared groups from all configExtensions to this model.
+        loadSharedGroups(dom, bundle);
+
+        // since we resolved a contribution, try resolving some of the
+        // unresolved ones before going on.
+        unresolvedConfigExt.remove(extensionContentElement);
+        tryResolvingExtensions();
+    }
+
+
+    private void tryResolvingExtensions() {
+        Enumeration keys = unresolvedConfigExt.keys();
+        while (keys.hasMoreElements()) {
+            Element configExtensionElement = (Element) keys.nextElement();
+            resolveConfigExtension(configExtensionElement.getOwnerDocument(),
+                (Bundle) unresolvedConfigExt.get(configExtensionElement));
         }
     }
 
@@ -328,23 +365,26 @@ public class IntroModelRoot extends AbstractIntroContainer {
         // here.
         // There should only be one container extension. (ver3.0)
         Element extensionContentElement = ModelLoaderUtil
-                .validateSingleContribution(extensionContents,
-                    IntroExtensionContent.ATT_PATH);
+            .validateSingleContribution(extensionContents,
+                IntroExtensionContent.ATT_PATH);
         if (extensionContentElement == null)
             // no extensionContent defined.
             return null;
 
         // Create the model class for extension content.
         IntroExtensionContent extensionContent = new IntroExtensionContent(
-                extensionContentElement, bundle);
+            extensionContentElement, bundle);
         boolean success = false;
         if (extensionContent.isXHTMLContent())
             success = loadXHTMLExtensionContent(extensionContent);
         else
             success = load3_0ExtensionContent(extensionContent);
 
-        if (!success)
-            extensionContentElement.setAttribute("failed", "true"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (success) {
+            if (extensionContentElement.hasAttribute("failed"))
+                extensionContentElement.removeAttribute("failed");
+        } else
+            extensionContentElement.setAttribute("failed", "true");
 
         return extensionContentElement;
     }
@@ -428,6 +468,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             insertAnchorChildren(targetAnchor, extensionContent,
                 extensionContent.getBundle());
             handleExtensionStyleInheritence(targetAnchor, extensionContent);
+
             return true;
         }
     }
@@ -436,7 +477,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
     private void insertAnchorChildren(IntroAnchor anchor,
             IntroExtensionContent extensionContent, Bundle bundle) {
         AbstractIntroContainer anchorParent = (AbstractIntroContainer) anchor
-                .getParent();
+            .getParent();
         // insert the elements of the extension before the anchor.
         anchorParent.insertElementsBefore(extensionContent.getChildren(),
             bundle, anchor);
@@ -456,7 +497,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             IntroExtensionContent extension) {
 
         AbstractIntroContainer targetContainer = (AbstractIntroContainer) anchor
-                .getParent();
+            .getParent();
         if (targetContainer.getType() == AbstractIntroElement.GROUP
                 && targetContainer.getParent().getType() == AbstractIntroElement.MODEL_ROOT)
             // if we are extending a shared group, defined under a config, we
