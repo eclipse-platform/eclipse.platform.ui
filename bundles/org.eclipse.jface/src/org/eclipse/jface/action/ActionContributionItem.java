@@ -659,8 +659,11 @@ public void update(String propertyName) {
 						if (commandId != null) {
 							accelerator = callback.getAccelerator(commandId);
 							acceleratorText = callback.getAcceleratorText(commandId);
-						} else
+						} 
+						/*
+						else
 							System.out.println("command is null for action: " + action + ", " + action.getId() + ", " + action.getText());
+						*/
 					} 
 				} 
 				
