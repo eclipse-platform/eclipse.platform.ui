@@ -47,8 +47,8 @@ public class MarkerHelpRegistryReader extends IDERegistryReader {
 	public void addHelp(MarkerHelpRegistry registry) {
 		IPluginRegistry pluginRegistry = Platform.getPluginRegistry();
 		markerHelpRegistry = registry;
-		readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IDEWorkbenchPlugin.PL_MARKER_HELP);
-		readRegistry(pluginRegistry, PlatformUI.PLUGIN_ID, IDEWorkbenchPlugin.PL_MARKER_RESOLUTION);
+		readRegistry(pluginRegistry, IDEWorkbenchPlugin.IDE_WORKBENCH, IDEWorkbenchPlugin.PL_MARKER_HELP);
+		readRegistry(pluginRegistry, IDEWorkbenchPlugin.IDE_WORKBENCH, IDEWorkbenchPlugin.PL_MARKER_RESOLUTION);
 	}
 
 	/**
