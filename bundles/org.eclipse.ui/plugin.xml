@@ -789,6 +789,15 @@
          </selection>
       </wizard>
       <wizard
+            name="%ImportWizards.ExternalProject"
+            icon="icons/full/ctool16/newprj_wiz.gif"
+            class="org.eclipse.ui.wizards.datatransfer.ExternalProjectImportWizard"
+            id="org.eclipse.ui.wizards.import.ExternalProject">
+         <description>
+            %ImportWizards.ExternalProjectDescription
+         </description>
+      </wizard>
+      <wizard
             name="%ImportWizards.ZipFile"
             icon="icons/full/ctool16/importzip_wiz.gif"
             class="org.eclipse.ui.wizards.datatransfer.ZipFileImportWizard"
