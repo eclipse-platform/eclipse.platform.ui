@@ -407,8 +407,7 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 	}
 	
 	// Save part.
-	if (save && editor.isSaveOnCloseNeeded() 
-		&& !getEditorManager().saveEditor(editor, true))
+	if (save && !getEditorManager().saveEditor(editor, true))
 		return false;
 
 	// Deactivate part.

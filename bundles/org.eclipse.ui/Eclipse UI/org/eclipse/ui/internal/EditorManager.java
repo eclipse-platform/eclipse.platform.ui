@@ -114,13 +114,9 @@ public class EditorManager {
 		IEditorPart[] editors = editorPresentation.getEditors();
 		for (int nX = 0; nX < editors.length; nX++) {
 			IEditorPart part = editors[nX];
-			if (closing) {
-				if (part.isSaveOnCloseNeeded())
-					result.add(part);
-			} else {
-				if (part.isDirty())
-					result.add(part);
-			}
+			if (part.isDirty())
+				result.add(part);
+
 		}
 		return result;
 	}
