@@ -40,8 +40,6 @@ import org.eclipse.swt.widgets.Table;
  */
 public class DeferredContentProvider implements ILazyContentProvider {
 
-	private int rangeStart = 0;
-	private int rangeLength = 0;
 	private int limit = -1;
 	private BackgroundContentProvider provider;
 	private Comparator sortOrder;
