@@ -96,22 +96,16 @@ public class NewWizardShortcutAction extends Action implements IPluginContributi
 		dialog.open();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
-	 */
-	public boolean fromPlugin() {		
-		return wizardElement.fromPlugin();
-	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
 	 */
 	public String getLocalId() {
 		return wizardElement.getLocalId();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
+	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {		
 		return wizardElement.getPluginId();

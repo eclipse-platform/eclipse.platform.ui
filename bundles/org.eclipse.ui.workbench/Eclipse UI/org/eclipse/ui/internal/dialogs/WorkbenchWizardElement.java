@@ -228,31 +228,18 @@ public class WorkbenchWizardElement
 		return new StructuredSelection(result.toArray());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
-	 */
-	public boolean fromPlugin() {
-		return configurationElement != null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
 	 */
 	public String getLocalId() {
 		return getID();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {
-		return fromPlugin()
+		return (configurationElement != null)
 		    ? configurationElement.getDeclaringExtension().getNamespace()
 			: null;
 	}

@@ -355,24 +355,16 @@ public abstract class PluginAction extends Action
 	protected IConfigurationElement getConfigElement() {
 		return configElement;
 	}
-    
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
-	 */
-	public boolean fromPlugin() {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
 	 */
 	public String getLocalId() {		
 		return getId();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.activities.support.IPluginContribution#getPluginId()
+	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 	 */
 	public String getPluginId() {		
 		return pluginId;
