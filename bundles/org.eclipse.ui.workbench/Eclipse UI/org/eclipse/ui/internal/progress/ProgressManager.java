@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
@@ -50,9 +51,11 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -402,7 +405,7 @@ public class ProgressManager extends ProgressProvider
 				}
 				jobs.remove(event.getJob());
 				//Only refresh if we are showing it
-				removeJobInfo(info);	
+				removeJobInfo(info);
 				//If there are no more left then refresh all on the last
 				// displayed one.
 				if (hasNoRegularJobInfos()
@@ -973,9 +976,9 @@ public class ProgressManager extends ProgressProvider
 	 * @see org.eclipse.ui.progress.IProgressService#runInUI(org.eclipse.jface.operation.IRunnableWithProgress,
 	 *      org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
-	public void runInUI(final IRunnableContext context, final IRunnableWithProgress runnable,
-			final ISchedulingRule rule) throws InvocationTargetException,
-			InterruptedException {
+	public void runInUI(final IRunnableContext context,
+			final IRunnableWithProgress runnable, final ISchedulingRule rule)
+			throws InvocationTargetException, InterruptedException {
 		final IJobManager manager = Platform.getJobManager();
 		final InvocationTargetException[] exception = new InvocationTargetException[1];
 		final InterruptedException[] canceled = new InterruptedException[1];
@@ -983,7 +986,7 @@ public class ProgressManager extends ProgressProvider
 			public void run() {
 				try {
 					manager.beginRule(rule, null);
-					context.run(false,false,runnable);
+					context.run(false, false, runnable);
 				} catch (InvocationTargetException e) {
 					exception[0] = e;
 				} catch (InterruptedException e) {
@@ -1048,14 +1051,29 @@ public class ProgressManager extends ProgressProvider
 	 *            The set the windows will be set to.
 	 */
 	private void setUserInterfaceActive(boolean active) {
-		IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-				.getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-			IWorkbenchWindow window = windows[i];
-			window.getShell().setEnabled(active);
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		Shell[] shells = workbench.getDisplay().getShells();
+		for (int i = 0; i < shells.length; i++) {
+			setActive(shells[i],active);
 		}
 	}
-
+	
+	/**
+	 * Set all of the children of the composite to have 
+	 * their enabled state set to active. Recurse through'
+	 * the children if required.
+	 * @param composite the composite to recurse through
+	 * @param active the state to set
+	 */
+	private void setActive(Composite composite, boolean active) {
+		Control[] children = composite.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if(children[i] instanceof Composite)
+				setActive((Composite)children[i],active);
+			else
+				children[i].setEnabled(active);		
+		}		
+	}
 	/**
 	 * Check to see if there are any stale jobs we have not cleared out.
 	 * 
