@@ -6,7 +6,7 @@ package org.eclipse.help.internal.util;
 
 import java.io.*;
 import java.util.*;
-import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.HelpPlugin;
 
 
@@ -46,6 +46,11 @@ public class HelpProperties extends Properties {
 		InputStream in = null;
 		boolean loaded = false;
 		clear();
+		// Test if we have a contribution file to start with
+		// If this is a clean start, then we will not have a 
+		// contribution file. return false.
+		if (!file.exists())
+			return loaded;
 		try {
 			in = new FileInputStream(file);
 			super.load(in);
