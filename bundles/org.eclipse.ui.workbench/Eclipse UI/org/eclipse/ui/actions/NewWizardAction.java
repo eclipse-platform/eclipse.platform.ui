@@ -31,7 +31,6 @@ import org.eclipse.ui.internal.LegacyResourceSupport;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.NewWizard;
-import org.eclipse.ui.internal.dialogs.WorkbenchWizardDialog;
 
 /**
  * Invoke the resource creation wizard selection Wizard.
@@ -155,7 +154,7 @@ public class NewWizardAction
 		wizard.setForcePreviousAndNextButtons(true);
 
 		Shell parent = workbenchWindow.getShell();
-		WizardDialog dialog = new WorkbenchWizardDialog(parent, wizard);
+		WizardDialog dialog = new WizardDialog(parent, wizard);
 		dialog.create();
 		dialog.getShell().setSize(Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT);
 		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_WIZARD);
