@@ -229,6 +229,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	private boolean fUseSplines= false;
 	private boolean fUseSingleLine= false;
+	private boolean fUseResolveUI= false;
 
 	private ActionContributionItem fNextItem;	// goto next difference
 	private ActionContributionItem fPreviousItem;	// goto previous difference
@@ -566,6 +567,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fShowPseudoConflicts= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
 			fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
 			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
+			fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
 		}
 		
 		fDocumentListener= new IDocumentListener() {
@@ -844,10 +846,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 									
 		fAncestor= createPart(composite);
 		fAncestor.setEditable(false);
-
+		
 		fSummaryLabel= new Label(composite, SWT.NONE);
-		Display d= composite.getDisplay(); // 
-		fSummaryLabel.setBackground(d.getSystemColor(SWT.COLOR_GREEN));
+		if (fUseResolveUI) {
+			Display d= composite.getDisplay(); //
+			fSummaryLabel.setBackground(d.getSystemColor(SWT.COLOR_RED));
+		}
 				
 		// 2nd row
 		if (fMarginWidth > 0) {
@@ -1944,7 +1948,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		
   		if (fBirdsEyeCanvas != null) {
-  			fSummaryLabel.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, BIRDS_EYE_VIEW_WIDTH);
+  			if (fSummaryLabel != null)
+  				fSummaryLabel.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, BIRDS_EYE_VIEW_WIDTH);
   			y+= scrollbarHeight;
   			fBirdsEyeCanvas.setBounds(x+scrollbarWidth, y, BIRDS_EYE_VIEW_WIDTH, height-(3*scrollbarHeight));
    		}
@@ -2474,6 +2479,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		boolean rightToLeft= false;
 		
 		updateStatus(fCurrentDiff);
+		updateResolveStatus();
 
 		if (fCurrentDiff != null) {
 			IMergeViewerContentProvider cp= getMergeContentProvider();
@@ -2514,6 +2520,29 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			IAction a= fPreviousItem.getAction();
 			a.setEnabled(enableNavigation);
 		}	
+	}
+	
+	private void updateResolveStatus() {
+		Color c= null;
+		if (fUseResolveUI) {
+			boolean unresolved= false;
+			if (fChangeDiffs != null) {
+				Iterator e= fChangeDiffs.iterator();
+				while (e.hasNext()) {
+					Diff d= (Diff) e.next();
+					if (!d.isResolved()) {
+						unresolved= true;
+						break;
+					}
+				}
+			}
+			Display d= fSummaryLabel.getDisplay();
+			if (unresolved)
+				c= d.getSystemColor(SWT.COLOR_RED);
+			else
+				c= d.getSystemColor(SWT.COLOR_GREEN);
+		}
+		fSummaryLabel.setBackground(c);
 	}
 
 	private void updateStatus(Diff diff) {
@@ -2764,7 +2793,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
 			fBasicCenterCurve= null;
 			invalidateLines();
-			
+	
+		} else if (key.equals(ComparePreferencePage.USE_RESOLVE_UI)) {
+			fUseResolveUI= fPreferenceStore.getBoolean(ComparePreferencePage.USE_RESOLVE_UI);
+			updateResolveStatus();
+			invalidateLines();
+		
 		} else if (key.equals(ComparePreferencePage.TEXT_FONT)) {
 			if (fPreferenceStore != null) {
 				updateFont(fPreferenceStore, fComposite.getDisplay());
@@ -3030,16 +3064,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					}
 				}
 				
-				// draw resolve state
-				int cx= (w-RESOLVE_SIZE)/2;
-				int cy= ((ly+lh/2) + (ry+rh/2) - RESOLVE_SIZE)/2;
-				
-				Color c= display.getSystemColor(diff.fResolved ? SWT.COLOR_GREEN : SWT.COLOR_RED);
-				g.setBackground(c);
-				g.fillRectangle(cx, cy, RESOLVE_SIZE, RESOLVE_SIZE);
-				
-				g.setForeground(strokeColor);
-				g.drawRectangle(cx, cy, RESOLVE_SIZE, RESOLVE_SIZE);
+				if (fUseResolveUI) {
+					// draw resolve state
+					int cx= (w-RESOLVE_SIZE)/2;
+					int cy= ((ly+lh/2) + (ry+rh/2) - RESOLVE_SIZE)/2;
+					
+					Color c= display.getSystemColor(diff.fResolved ? SWT.COLOR_GREEN : SWT.COLOR_RED);
+					g.setBackground(c);
+					g.fillRectangle(cx, cy, RESOLVE_SIZE, RESOLVE_SIZE);
+					
+					g.setForeground(strokeColor);
+					g.drawRectangle(cx, cy, RESOLVE_SIZE, RESOLVE_SIZE);
+				}
 			}
 		}
 	}

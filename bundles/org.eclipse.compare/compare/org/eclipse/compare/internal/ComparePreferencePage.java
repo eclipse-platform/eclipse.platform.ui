@@ -62,6 +62,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public static final String IGNORE_WHITESPACE= PREFIX + "IgnoreWhitespace"; //$NON-NLS-1$
 	public static final String USE_SPLINES= PREFIX + "UseSplines"; //$NON-NLS-1$
 	public static final String USE_SINGLE_LINE= PREFIX + "UseSingleLine"; //$NON-NLS-1$
+	public static final String USE_RESOLVE_UI= PREFIX + "UseResolveUI"; //$NON-NLS-1$
+	
 	
 	private WorkbenchChainedTextFontFieldEditor fFontEditor;
 	private TextMergeViewer fPreviewViewer;
@@ -86,6 +88,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SPLINES),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_SINGLE_LINE),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_RESOLVE_UI),
 	};
 	
 	
@@ -98,6 +101,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(IGNORE_WHITESPACE, false);
 		store.setDefault(USE_SPLINES, false);
 		store.setDefault(USE_SINGLE_LINE, false);
+		store.setDefault(USE_RESOLVE_UI, false);
 		
 		Display display= Display.getDefault();
 		Color color= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
@@ -230,6 +234,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		addCheckBox(composite, "ComparePreferencePage.useSplines.label", USE_SPLINES, 0);	//$NON-NLS-1$
 
 		addCheckBox(composite, "ComparePreferencePage.useSingleLine.label", USE_SINGLE_LINE, 0);	//$NON-NLS-1$
+
+		addCheckBox(composite, "ComparePreferencePage.useResolveUI.label", USE_RESOLVE_UI, 0);	//$NON-NLS-1$
 
 		return composite;
 	}
