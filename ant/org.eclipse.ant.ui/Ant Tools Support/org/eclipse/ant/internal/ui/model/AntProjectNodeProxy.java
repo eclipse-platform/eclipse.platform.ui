@@ -11,7 +11,6 @@
 
 package org.eclipse.ant.internal.ui.model;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -52,6 +51,7 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		if (fParsed && !force) {
 			return;
 		}
+		fChildNodes= null;
 		fParsed= true;
 		AntTargetNode[] nodes = null;
 		IPath buildFilePath= AntUtil.getFile(getBuildFileName()).getLocation();
@@ -69,7 +69,10 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		}
 		
 		AntProjectNode projectNode = nodes[0].getProjectNode();
-		fChildNodes= Arrays.asList(nodes);
+		for (int i = 0; i < nodes.length; i++) {
+            addChildNode(nodes[i]);
+        }
+		
 		fModel= projectNode.getAntModel();
 		fProject= (AntModelProject)projectNode.getProject();
 		
@@ -140,15 +143,7 @@ public class AntProjectNodeProxy extends AntProjectNode {
 	public boolean hasChildren() {
 		return true;
 	}
-	
-    /* (non-Javadoc)
-     * @see org.eclipse.ant.internal.ui.model.AntElementNode#addChildNode(org.eclipse.ant.internal.ui.model.AntElementNode)
-     */
-    public void addChildNode(AntElementNode childElement) {
-    	if (childElement instanceof AntTargetNode) {
-    		super.addChildNode(childElement);
-    	}
-    }
+    
     /* (non-Javadoc)
      * @see org.eclipse.ant.internal.ui.model.AntElementNode#dispose()
      */
