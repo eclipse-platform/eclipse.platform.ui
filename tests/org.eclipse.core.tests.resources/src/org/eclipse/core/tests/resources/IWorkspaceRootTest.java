@@ -27,6 +27,14 @@ protected void tearDown() throws Exception {
 	IProject[] projects = getWorkspace().getRoot().getProjects();
 	getWorkspace().delete(projects, true, null);
 }
+/**
+ * Tests the API method getContainerForLocation.
+ */
+public void testGetContainerForLocation() {
+	IWorkspaceRoot root = getWorkspace().getRoot();
+	assertEquals("1.0", root, root.getContainerForLocation(root.getLocation()));
+	
+}
 public void testPersistentProperty() {
 	IWorkspaceRoot root = getWorkspace().getRoot();
 	String value = "this is a test property value";

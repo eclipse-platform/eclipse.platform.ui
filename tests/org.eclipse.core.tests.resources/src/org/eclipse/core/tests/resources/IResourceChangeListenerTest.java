@@ -21,6 +21,8 @@ public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
 	IFile file1;//below folder1
 	IFile file2;//below folder1
 	IFile file3;//below folder2
+	IFile project1MetaData;
+	IFile project2MetaData;
 public IResourceChangeListenerTest() {
 }
 public IResourceChangeListenerTest(String name) {
@@ -134,6 +136,8 @@ protected void setUp() throws Exception {
 	file1 = folder1.getFile("File" + 1);
 	file2 = folder1.getFile("File" + 2);
 	file3 = folder2.getFile("File" + 1);
+	project1MetaData = project1.getFile(".project");
+	project2MetaData = project2.getFile(".project");
 
 	// Create and open a project, folder and file
 	IWorkspaceRunnable body = new IWorkspaceRunnable() {
@@ -251,6 +255,7 @@ public void testAddFolder() {
 public void testAddProject() {
 	try {
 		verifier.addExpectedChange(project2, IResourceDelta.ADDED, 0);
+		verifier.addExpectedChange(project2MetaData, IResourceDelta.ADDED, 0);
 		project2.create(getMonitor());
 		assertDelta();
 	} catch (CoreException e) {
@@ -309,6 +314,20 @@ public void testChangeFolderToFile() {
 			}
 		}
 		, getMonitor());
+		assertDelta();
+	} catch (CoreException e) {
+		handleCoreException(e);
+	}
+}
+public void testChangeProject() {
+	try {
+		project2.create(getMonitor());
+		project2.open(getMonitor());
+		IProjectDescription desc = project2.getDescription();
+		desc.setReferencedProjects(new IProject[] {project1});
+		verifier.addExpectedChange(project2, IResourceDelta.CHANGED, IResourceDelta.DESCRIPTION);
+		verifier.addExpectedChange(project2MetaData, IResourceDelta.CHANGED, IResourceDelta.CONTENT);
+		project2.setDescription(desc, IResource.FORCE, getMonitor());
 		assertDelta();
 	} catch (CoreException e) {
 		handleCoreException(e);

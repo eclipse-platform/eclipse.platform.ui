@@ -11,6 +11,8 @@ import junit.textui.TestRunner;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 //
 public class IResourceTest extends EclipseWorkspaceTest {
+
+
 	static boolean noSideEffects = false;
 	protected static IResource[] interestingResources;
 	protected static Set nonExistingResources = new HashSet();
@@ -475,9 +477,11 @@ public static Test suite() {
 	suite.addTest(new IResourceTest("testGetModificationStamp"));
 	suite.addTest(new IResourceTest("testReadOnly"));
 	suite.addTest(new IResourceTest("testConstants"));
+	suite.addTest(new IResourceTest("testProjectDescriptionFileModification"));
 	suite.addTest(new IResourceTest("testDerived"));
 	suite.addTest(new IResourceTest("testTeamPrivateMember"));
 	suite.addTest(new IResourceTest("testDelete")); // make sure that last test has side effects
+	
 	return suite;
 }
 protected void tearDown() throws Exception {
@@ -777,8 +781,7 @@ public void testDelete() {
 	}
 	.performTest(inputs);
 }
-
-/**
+/** 
  * Performs black box testing of the following methods:
  *     isDerived() and setDerived(boolean)
  */
@@ -887,121 +890,7 @@ public void testDerived() {
 	} catch (CoreException e) {
 		// pass
 	}
-}
-
-/**
- * Performs black box testing of the following methods:
- *     isTeamPrivateMember() and setTeamPrivateMember(boolean)
- */
-public void testTeamPrivateMember() {
-	IWorkspaceRoot root = getWorkspace().getRoot();
-	IProject project = root.getProject("Project");
-	IFolder folder = project.getFolder("folder"); 
-	IFile file = folder.getFile("target");
-	try {
-		project.create(getMonitor());
-		project.open(getMonitor());
-		folder.create(true, true, getMonitor());
-		file.create(getRandomContents(), true, getMonitor());
-		
-	} catch (CoreException e) {
-		fail("1.0", e);
-	}
-
-	// all resources have independent team private member flag
-	// all non-TPM by default; check each type
-	try {
-		
-		// root - cannot be made team private member
-		assertTrue("2.1.1", !root.isTeamPrivateMember());
-		assertTrue("2.1.2", !project.isTeamPrivateMember());
-		assertTrue("2.1.3", !folder.isTeamPrivateMember());
-		assertTrue("2.1.4", !file.isTeamPrivateMember());
-		root.setTeamPrivateMember(true);
-		assertTrue("2.2.1", !root.isTeamPrivateMember());
-		assertTrue("2.2.2", !project.isTeamPrivateMember());
-		assertTrue("2.2.3", !folder.isTeamPrivateMember());
-		assertTrue("2.2.4", !file.isTeamPrivateMember());
-		root.setTeamPrivateMember(false);
-		assertTrue("2.3.1", !root.isTeamPrivateMember());
-		assertTrue("2.3.2", !project.isTeamPrivateMember());
-		assertTrue("2.3.3", !folder.isTeamPrivateMember());
-		assertTrue("2.3.4", !file.isTeamPrivateMember());
-	
-		// project - cannot be made team private member
-		project.setTeamPrivateMember(true);
-		assertTrue("3.1.1", !root.isTeamPrivateMember());
-		assertTrue("3.1.2", !project.isTeamPrivateMember());
-		assertTrue("3.1.3", !folder.isTeamPrivateMember());
-		assertTrue("3.1.4", !file.isTeamPrivateMember());
-		project.setTeamPrivateMember(false);
-		assertTrue("3.2.1", !root.isTeamPrivateMember());
-		assertTrue("3.2.2", !project.isTeamPrivateMember());
-		assertTrue("3.2.3", !folder.isTeamPrivateMember());
-		assertTrue("3.2.4", !file.isTeamPrivateMember());
-	
-		// folder
-		folder.setTeamPrivateMember(true);
-		assertTrue("4.1.1", !root.isTeamPrivateMember());
-		assertTrue("4.1.2", !project.isTeamPrivateMember());
-		assertTrue("4.1.3", folder.isTeamPrivateMember());
-		assertTrue("4.1.4", !file.isTeamPrivateMember());
-		folder.setTeamPrivateMember(false);
-		assertTrue("4.2.1", !root.isTeamPrivateMember());
-		assertTrue("4.2.2", !project.isTeamPrivateMember());
-		assertTrue("4.2.3", !folder.isTeamPrivateMember());
-		assertTrue("4.2.4", !file.isTeamPrivateMember());
-	
-		// file
-		file.setTeamPrivateMember(true);
-		assertTrue("5.1.1", !root.isTeamPrivateMember());
-		assertTrue("5.1.2", !project.isTeamPrivateMember());
-		assertTrue("5.1.3", !folder.isTeamPrivateMember());
-		assertTrue("5.1.4", file.isTeamPrivateMember());
-		file.setTeamPrivateMember(false);
-		assertTrue("5.2.1", !root.isTeamPrivateMember());
-		assertTrue("5.2.2", !project.isTeamPrivateMember());
-		assertTrue("5.2.3", !folder.isTeamPrivateMember());
-		assertTrue("5.2.4", !file.isTeamPrivateMember());
-		
-	} catch (CoreException e) {
-		fail("6.0", e);
-	}
-
-	/* remove trash */
-	try {
-		project.delete(true, getMonitor());
-	} catch (CoreException e) {
-		fail("7.0", e);
-	}
-	
-	// isTeamPrivateMember should return false when resource does not exist
-	assertTrue("8.1", !project.isTeamPrivateMember());
-	assertTrue("8.2", !folder.isTeamPrivateMember());
-	assertTrue("8.3", !file.isTeamPrivateMember());
-	
-	// setTeamPrivateMember should fail when resource does not exist
-	try {
-		project.setTeamPrivateMember(false);
-		assertTrue("9.1", false);
-	} catch (CoreException e) {
-		// pass
-	}
-	try {
-		folder.setTeamPrivateMember(false);
-		assertTrue("9.2", false);
-	} catch (CoreException e) {
-		// pass
-	}
-	try {
-		file.setTeamPrivateMember(false);
-		assertTrue("9.3", false);
-	} catch (CoreException e) {
-		// pass
-	}
-}
-
-/**
+}/**
  * Performs black box testing of the following method:
  *     boolean equals(Object)
  */
@@ -1175,44 +1064,34 @@ public void testGetModificationStamp() {
 			fail("5.0." + project.getFullPath(), e);
 		}
 	}
-	IResourceVisitor visitor = new IResourceVisitor() {
-		public boolean visit(IResource resource) throws CoreException {
-			if (resource.getType() != IResource.ROOT) {
-				Object v = table.get(resource.getFullPath());
-				assertNotNull("5.1." + resource.getFullPath(), v);
-				long old = ((Long) v).longValue();
-				assertEquals("5.2." + resource.getFullPath(), old, resource.getModificationStamp());
-			}
-			return true;
+	for (int i = 0; i < resources.length; i++) {
+		IResource resource = resources[i];
+		if (resource.getType() != IResource.PROJECT) {
+			Object v = table.get(resource.getFullPath());
+			assertNotNull("5.1." + resource.getFullPath(), v);
+			long old = ((Long) v).longValue();
+			assertEquals("5.2." + resource.getFullPath(), old, resource.getModificationStamp());
 		}
-	};
-	try {
-		getWorkspace().getRoot().accept(visitor, IResource.DEPTH_INFINITE, false);
-	} catch (CoreException e) {
-		fail("5.3", e);
 	}
 
 	// touch all the resources. this will update the modification stamp
 	final Map tempTable = new HashMap(resources.length);
-	visitor = new IResourceVisitor() {
-		public boolean visit(IResource resource) throws CoreException {
-			if (resource.getType() != IResource.ROOT) {
+	for (int i = 0; i < resources.length; i++) {
+		IResource resource = resources[i];
+		if (resource.getType() != IResource.ROOT) {
+			try {
 				resource.touch(getMonitor());
-				long stamp = resource.getModificationStamp();
-				Object v = table.get(resource.getFullPath());
-				assertNotNull("6.0." + resource.getFullPath(), v);
-				long old = ((Long) v).longValue();
-				assertTrue("6.1." + resource.getFullPath(), old != stamp);
-				// cache for next time
-				tempTable.put(resource.getFullPath(), new Long(stamp));
+			} catch (CoreException e) {
+				fail("6.2", e);
 			}
-			return true;
+			long stamp = resource.getModificationStamp();
+			Object v = table.get(resource.getFullPath());
+			assertNotNull("6.0." + resource.getFullPath(), v);
+			long old = ((Long) v).longValue();
+			assertTrue("6.1." + resource.getFullPath(), old != stamp);
+			// cache for next time
+			tempTable.put(resource.getFullPath(), new Long(stamp));
 		}
-	};
-	try {
-		getWorkspace().getRoot().accept(visitor, IResource.DEPTH_INFINITE, false);
-	} catch (CoreException e) {
-		fail("6.2", e);
 	}
 	table.clear();
 	table.putAll(tempTable);
@@ -1223,7 +1102,7 @@ public void testGetModificationStamp() {
 	} catch (CoreException e) {
 		fail("7.1", e);
 	}
-	visitor = new IResourceVisitor() {
+	IResourceVisitor visitor = new IResourceVisitor() {
 		public boolean visit(IResource resource) throws CoreException {
 			//projects and root are always local
 			if (resource.getType() == IResource.ROOT || resource.getType() == IResource.PROJECT) {
@@ -1248,24 +1127,17 @@ public void testGetModificationStamp() {
 		fail("8.1", e);
 	}
 	tempTable.clear();
-	visitor = new IResourceVisitor() {
-		public boolean visit(IResource resource) throws CoreException {
-			if (resource.getType() != IResource.ROOT) {
-				long stamp = resource.getModificationStamp();
-				assertTrue("8.2." + resource.getFullPath(), stamp != IResource.NULL_STAMP);
-				Object v = table.get(resource.getFullPath());
-				assertNotNull("8.3." + resource.getFullPath(), v);
-				long old = ((Long) v).longValue();
-				assertTrue("8.4." + resource.getFullPath(), old != IResource.NULL_STAMP);
-				tempTable.put(resource.getFullPath(), new Long(stamp));
-			}
-			return true;
+	for (int i = 0; i < resources.length; i++) {
+		IResource resource = resources[i];
+		if (resource.getType() != IResource.ROOT) {
+			long stamp = resource.getModificationStamp();
+			assertTrue("8.2." + resource.getFullPath(), stamp != IResource.NULL_STAMP);
+			Object v = table.get(resource.getFullPath());
+			assertNotNull("8.3." + resource.getFullPath(), v);
+			long old = ((Long) v).longValue();
+			assertTrue("8.4." + resource.getFullPath(), old != IResource.NULL_STAMP);
+			tempTable.put(resource.getFullPath(), new Long(stamp));
 		}
-	};
-	try {
-		getWorkspace().getRoot().accept(visitor, IResource.DEPTH_INFINITE, false);
-	} catch (CoreException e) {
-		fail("8.5", e);
 	}
 	table.clear();
 	table.putAll(tempTable);
@@ -1275,23 +1147,16 @@ public void testGetModificationStamp() {
 	} catch (CoreException e) {
 		fail("9.1", e);
 	}
-	visitor = new IResourceVisitor() {
-		public boolean visit(IResource resource) throws CoreException {
-			if (resource.getType() != IResource.ROOT) {
-				long newStamp = resource.getModificationStamp();
-				assertTrue("9.2." + resource.getFullPath(), newStamp != IResource.NULL_STAMP);
-				Object v = table.get(resource.getFullPath());
-				assertNotNull("9.3." + resource.getFullPath(), v);
-				long oldStamp = ((Long) v).longValue();
-				assertEquals("9.4." + resource.getFullPath(), oldStamp, newStamp);
-			}
-			return true;
+	for (int i = 0; i < resources.length; i++) {
+		IResource resource = resources[i];
+		if (resource.getType() != IResource.ROOT) {
+			long newStamp = resource.getModificationStamp();
+			assertTrue("9.2." + resource.getFullPath(), newStamp != IResource.NULL_STAMP);
+			Object v = table.get(resource.getFullPath());
+			assertNotNull("9.3." + resource.getFullPath(), v);
+			long oldStamp = ((Long) v).longValue();
+			assertEquals("9.4." + resource.getFullPath(), oldStamp, newStamp);
 		}
-	};
-	try {
-		getWorkspace().getRoot().accept(visitor, IResource.DEPTH_INFINITE, false);
-	} catch (CoreException e) {
-		fail("9.5", e);
 	}
 	
 	// delete all the resources so we can start over.
@@ -1310,27 +1175,19 @@ public void testGetModificationStamp() {
 
 	// create all the resources (non-local) and ensure all stamps are null
 	ensureExistsInWorkspace(resources, false);
-	visitor = new IResourceVisitor() {
-		public boolean visit(IResource resource) throws CoreException {
-			switch (resource.getType()) {
-				case IResource.ROOT :
-					break;
-				case IResource.PROJECT :
-					assertTrue("11.1." + resource.getFullPath(), resource.getModificationStamp() != IResource.NULL_STAMP);
-					break;
-				default :
-					assertEquals("11.2." + resource.getFullPath(), IResource.NULL_STAMP, resource.getModificationStamp());
-					break;
-			}
-			return true;
+	for (int i = 0; i < resources.length; i++) {
+		IResource resource = resources[i];
+		switch (resource.getType()) {
+			case IResource.ROOT :
+				break;
+			case IResource.PROJECT :
+				assertTrue("11.1." + resource.getFullPath(), resource.getModificationStamp() != IResource.NULL_STAMP);
+				break;
+			default :
+				assertEquals("11.2." + resource.getFullPath(), IResource.NULL_STAMP, resource.getModificationStamp());
+				break;
 		}
-	};
-	try {
-		getWorkspace().getRoot().accept(visitor, IResource.DEPTH_INFINITE, false);
-	} catch (CoreException e) {
-		fail("11.3", e);
 	}
-
 	// now make all resources local and re-check stamps
 	try {
 		getWorkspace().getRoot().setLocal(true, IResource.DEPTH_INFINITE, getMonitor());
@@ -1431,6 +1288,19 @@ public void testMultiCreation() {
 	} catch (CoreException e) {
 		fail("2.0", e);
 	}
+}
+/**
+ * Test that opening an closing a project does not affect the description file.
+ */
+public void testProjectDescriptionFileModification() throws CoreException {
+	IProject project = getWorkspace().getRoot().getProject("P1");
+	IFile file = project.getFile(".project");
+	project.create(null);
+	project.open(null);
+	long stamp = file.getModificationStamp();
+	project.close(null);
+	project.open(null);
+	assertEquals(stamp, file.getModificationStamp());
 }
 public void testReadOnly() {
 	IProject project = getWorkspace().getRoot().getProject("Project");
@@ -1547,4 +1417,114 @@ public void testRefreshWithMissingParent() throws CoreException {
 	file.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
 }
 
-}
+/**
+ * Performs black box testing of the following methods:
+ *     isTeamPrivateMember() and setTeamPrivateMember(boolean)
+ */
+public void testTeamPrivateMember() {
+	IWorkspaceRoot root = getWorkspace().getRoot();
+	IProject project = root.getProject("Project");
+	IFolder folder = project.getFolder("folder"); 
+	IFile file = folder.getFile("target");
+	try {
+		project.create(getMonitor());
+		project.open(getMonitor());
+		folder.create(true, true, getMonitor());
+		file.create(getRandomContents(), true, getMonitor());
+		
+	} catch (CoreException e) {
+		fail("1.0", e);
+	}
+
+	// all resources have independent team private member flag
+	// all non-TPM by default; check each type
+	try {
+		
+		// root - cannot be made team private member
+		assertTrue("2.1.1", !root.isTeamPrivateMember());
+		assertTrue("2.1.2", !project.isTeamPrivateMember());
+		assertTrue("2.1.3", !folder.isTeamPrivateMember());
+		assertTrue("2.1.4", !file.isTeamPrivateMember());
+		root.setTeamPrivateMember(true);
+		assertTrue("2.2.1", !root.isTeamPrivateMember());
+		assertTrue("2.2.2", !project.isTeamPrivateMember());
+		assertTrue("2.2.3", !folder.isTeamPrivateMember());
+		assertTrue("2.2.4", !file.isTeamPrivateMember());
+		root.setTeamPrivateMember(false);
+		assertTrue("2.3.1", !root.isTeamPrivateMember());
+		assertTrue("2.3.2", !project.isTeamPrivateMember());
+		assertTrue("2.3.3", !folder.isTeamPrivateMember());
+		assertTrue("2.3.4", !file.isTeamPrivateMember());
+	
+		// project - cannot be made team private member
+		project.setTeamPrivateMember(true);
+		assertTrue("3.1.1", !root.isTeamPrivateMember());
+		assertTrue("3.1.2", !project.isTeamPrivateMember());
+		assertTrue("3.1.3", !folder.isTeamPrivateMember());
+		assertTrue("3.1.4", !file.isTeamPrivateMember());
+		project.setTeamPrivateMember(false);
+		assertTrue("3.2.1", !root.isTeamPrivateMember());
+		assertTrue("3.2.2", !project.isTeamPrivateMember());
+		assertTrue("3.2.3", !folder.isTeamPrivateMember());
+		assertTrue("3.2.4", !file.isTeamPrivateMember());
+	
+		// folder
+		folder.setTeamPrivateMember(true);
+		assertTrue("4.1.1", !root.isTeamPrivateMember());
+		assertTrue("4.1.2", !project.isTeamPrivateMember());
+		assertTrue("4.1.3", folder.isTeamPrivateMember());
+		assertTrue("4.1.4", !file.isTeamPrivateMember());
+		folder.setTeamPrivateMember(false);
+		assertTrue("4.2.1", !root.isTeamPrivateMember());
+		assertTrue("4.2.2", !project.isTeamPrivateMember());
+		assertTrue("4.2.3", !folder.isTeamPrivateMember());
+		assertTrue("4.2.4", !file.isTeamPrivateMember());
+	
+		// file
+		file.setTeamPrivateMember(true);
+		assertTrue("5.1.1", !root.isTeamPrivateMember());
+		assertTrue("5.1.2", !project.isTeamPrivateMember());
+		assertTrue("5.1.3", !folder.isTeamPrivateMember());
+		assertTrue("5.1.4", file.isTeamPrivateMember());
+		file.setTeamPrivateMember(false);
+		assertTrue("5.2.1", !root.isTeamPrivateMember());
+		assertTrue("5.2.2", !project.isTeamPrivateMember());
+		assertTrue("5.2.3", !folder.isTeamPrivateMember());
+		assertTrue("5.2.4", !file.isTeamPrivateMember());
+		
+	} catch (CoreException e) {
+		fail("6.0", e);
+	}
+
+	/* remove trash */
+	try {
+		project.delete(true, getMonitor());
+	} catch (CoreException e) {
+		fail("7.0", e);
+	}
+	
+	// isTeamPrivateMember should return false when resource does not exist
+	assertTrue("8.1", !project.isTeamPrivateMember());
+	assertTrue("8.2", !folder.isTeamPrivateMember());
+	assertTrue("8.3", !file.isTeamPrivateMember());
+	
+	// setTeamPrivateMember should fail when resource does not exist
+	try {
+		project.setTeamPrivateMember(false);
+		assertTrue("9.1", false);
+	} catch (CoreException e) {
+		// pass
+	}
+	try {
+		folder.setTeamPrivateMember(false);
+		assertTrue("9.2", false);
+	} catch (CoreException e) {
+		// pass
+	}
+	try {
+		file.setTeamPrivateMember(false);
+		assertTrue("9.3", false);
+	} catch (CoreException e) {
+		// pass
+	}
+}}

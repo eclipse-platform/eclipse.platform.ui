@@ -38,10 +38,15 @@ protected void nonexistentFolderFailureTests(IFolder folder, IContainer parent, 
 
 	/* Tests for failure in get/set methods in IResource. */
 	commonFailureTestsForResource(folder, false);
+	assertTrue(method + "4.0", parent.findMember(folder.getName()) == null);
+
 	try {
-		assertTrue(method + "4.0", parent.members().length == 0);
+		IResource[] members = parent.members();
+		for (int i = 0; i < members.length; i++) {
+			assertTrue("4.1: i=" + i, !members[i].getName().equals(folder.getName()));
+		}
 	} catch (CoreException e) {
-		assertTrue(method + "4.1", false);
+		assertTrue(method + "4.2", false);
 	}
 	assertTrue(method + "5", !wb.getRoot().exists(folder.getFullPath()));
 }
@@ -236,11 +241,6 @@ public void testFolder() {
 		fail("15.0", e);
 	}
 	assertTrue("15.1", !folder.exists());
-	try {
-		assertTrue("15.2", proj.members().length == 0);
-	} catch (CoreException e) {
-		fail("15.3");
-	}
 	assertTrue("15.4", workspace.getRoot().findMember(folder.getFullPath()) == null);
 	assertTrue("15.5", !workspace.getRoot().exists(folder.getFullPath()));
 	assertTrue("15.6", folder.getLocation().equals(absolutePath));

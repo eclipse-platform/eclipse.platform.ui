@@ -41,7 +41,7 @@ public void testDeleteProject() throws Throwable {
 
 	/* assert project does not exist anymore */
 	assertTrue("1.1", !projects[0].exists());
-	assertTrue("1.2", !((Workspace) getWorkspace()).getMetaArea().getLocationFor((Project) projects[0]).toFile().exists());
+	assertTrue("1.2", !((Workspace) getWorkspace()).getMetaArea().locationFor((Project) projects[0]).toFile().exists());
 	assertNull("1.3", projects[0].getLocation());
 
 	/* assert resources still exist */
@@ -74,7 +74,7 @@ public void testDeleteProject() throws Throwable {
 
 	/* assert project does not exist anymore */
 	assertTrue("2.1", !projects[0].exists());
-	assertTrue("2.2", !((Workspace) getWorkspace()).getMetaArea().getLocationFor((Project) projects[0]).toFile().exists());
+	assertTrue("2.2", !((Workspace) getWorkspace()).getMetaArea().locationFor((Project) projects[0]).toFile().exists());
 	assertNull("2.3", projects[0].getLocation());
 
 	/* assert resources still exist */
@@ -106,7 +106,7 @@ public void testDeleteProject() throws Throwable {
 
 	/* assert project does not exist anymore */
 	assertTrue("3.1", !projects[0].exists());
-	assertTrue("3.2", !((Workspace) getWorkspace()).getMetaArea().getLocationFor((Project) projects[0]).toFile().exists());
+	assertTrue("3.2", !((Workspace) getWorkspace()).getMetaArea().locationFor((Project) projects[0]).toFile().exists());
 	assertNull("3.3", projects[0].getLocation());
 
 	/* assert resources do not exist anymore */
@@ -138,7 +138,7 @@ public void testDeleteProject() throws Throwable {
 	ResourceInfo info = ((Project) projects[0]).getResourceInfo(true, false);
 	int flags = ((Project) projects[0]).getFlags(info);
 	assertTrue("4.1", !((Project) projects[0]).exists(flags, true));
-	assertTrue("4.2", !((Workspace) getWorkspace()).getMetaArea().getLocationFor((Project) projects[0]).toFile().exists());
+	assertTrue("4.2", !((Workspace) getWorkspace()).getMetaArea().locationFor((Project) projects[0]).toFile().exists());
 	assertNull("4.3", projects[0].getLocation());
 
 	/* assert resources do not exist anymore */
@@ -168,7 +168,7 @@ public void testDeleteProject() throws Throwable {
 
 	/* assert project does not exist anymore */
 	assertTrue("5.1", !projects[0].exists());
-	assertTrue("5.2", !((Workspace) getWorkspace()).getMetaArea().getLocationFor((Project) projects[0]).toFile().exists());
+	assertTrue("5.2", !((Workspace) getWorkspace()).getMetaArea().locationFor((Project) projects[0]).toFile().exists());
 	assertNull("5.3", projects[0].getLocation());
 
 	/* assert resources do not exist anymore */
@@ -214,6 +214,7 @@ public void testDeleteProject() throws Throwable {
 	/* (7) project is initially CLOSED and deleteContents = TRUE   */
 	/*     force = FALSE				                           */
 	/*     - uses default default mapping                          */
+	/*     - there is a file out of sync, so delete should fail */
 	/* =========================================================== */
 
 	/* initialize common objects */
@@ -240,10 +241,10 @@ public void testDeleteProject() throws Throwable {
 
 	/* assert project still exists */
 	assertTrue("7.1", projects[0].exists());
-	IPath metaAreaLocation = ((Workspace) getWorkspace()).getMetaArea().getLocationFor((Project) projects[0]);
+	IPath metaAreaLocation = ((Workspace) getWorkspace()).getMetaArea().locationFor((Project) projects[0]);
 	assertTrue("7.2", metaAreaLocation.toFile().exists());
 	assertTrue("7.3", metaAreaLocation.append(".properties").toFile().exists());
-	assertTrue("7.4", metaAreaLocation.append(".prj").toFile().exists());
+	assertTrue("7.4", projects[0].getLocation().append(".project").toFile().exists());
 	assertTrue("7.5", projects[0].getLocation().toFile().exists());
 
 	/* assert resources do not exist anymore */

@@ -79,7 +79,7 @@ protected void dirty(final IProject[] projects) throws CoreException {
 			for (int i = 0; i < projects.length; i++) {
 				IResource[] members = projects[i].members();
 				for (int j = 0; j < members.length; j++) {
-					if (members[j].getType() == IResource.FILE) {
+					if (members[j].getType() == IResource.FILE && !members[j].getName().equals(".project")) {
 						((IFile)members[j]).setContents(getRandomContents(), true, true, null);
 					}
 				}

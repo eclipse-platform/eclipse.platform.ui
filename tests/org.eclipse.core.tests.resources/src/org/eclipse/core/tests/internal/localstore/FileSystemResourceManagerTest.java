@@ -7,6 +7,8 @@ package org.eclipse.core.tests.internal.localstore;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.properties.*;
 import org.eclipse.core.internal.resources.*;
@@ -478,15 +480,20 @@ public void testWriteFolder() throws Throwable {
  */
 public void testWriteProject() throws Throwable {
 	/* initialize common objects */
-	IProject project = projects[0];
+	final IProject project = projects[0];
 
 	/* remove project location and write */
 	IPath location = getLocalManager().locationFor((Project) project);
 	ensureDoesNotExistInFileSystem(project);
 	assertTrue("2.1", !location.toFile().isDirectory());
-	getLocalManager().write((Project) project, null);
+	//write project in a runnable, otherwise tree will be locked
+	getWorkspace().run(new IWorkspaceRunnable() {
+		public void run(IProgressMonitor monitor) throws CoreException {
+			getLocalManager().write((Project) project, IResource.FORCE);
+		}
+	}, null);
 	assertTrue("2.2", location.toFile().isDirectory());
-	long lastModified = ((Workspace) getWorkspace()).getMetaArea().getDescriptionLocationFor((Project) project).toFile().lastModified();
+	long lastModified = getLocalManager().getDescriptionLocationFor(project).toFile().lastModified();
 	assertEquals("2.3", lastModified, ((Resource) project).getResourceInfo(false, false).getLocalSyncInfo());
 }
 protected void write(final IFile file, final InputStream contents, final boolean force, IProgressMonitor monitor) throws CoreException {
