@@ -43,6 +43,15 @@ public class OptionTests extends AbstractAntTest {
 	}
 	
 	/**
+	 * Tests the "-h" option (help)
+	 */
+	public void testMinusH() throws CoreException {
+		run("TestForEcho.xml", new String[]{"-h"});
+		assertTrue("One message should have been logged, was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 1);
+		assertTrue("Help is incorrect", getLastMessageLogged() != null && getLastMessageLogged().startsWith(START_OF_HELP));
+	}
+	
+	/**
 	 * Tests the "-version" option
 	 */
 	public void testVersion() throws CoreException {
@@ -52,10 +61,19 @@ public class OptionTests extends AbstractAntTest {
 	}
 	
 	/**
-	 * Tests the "-projecthelp" option when it will not show (quite mode)
+	 * Tests the "-projecthelp" option
 	 */
 	public void testProjecthelp() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-projecthelp"});
+		assertTrue("4 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 4);
+		assertTrue("Project help is incorrect", getLastMessageLogged().startsWith("Subtargets:"));
+	}
+	
+	/**
+	 * Tests the "-p" option (project help)
+	 */
+	public void testMinusP() throws CoreException {
+		run("TestForEcho.xml", new String[]{"-p"});
 		assertTrue("4 messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 4);
 		assertTrue("Project help is incorrect", getLastMessageLogged().startsWith("Subtargets:"));
 	}
@@ -311,6 +329,18 @@ public class OptionTests extends AbstractAntTest {
 		assertTrue("AntTests should have a value of testing", "testing".equals(AntTestChecker.getDefault().getUserProperty("AntTests")));
 		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
 		
+	}
+	
+	/**
+	 * Tests properties using "-D" and "-d" to specify debug
+	 */
+	public void testMinusDMinusd() throws CoreException {
+		run("echoing.xml", new String[]{"-d", "-DAntTests=testing", "-Declipse.is.cool=true"}, false);
+		assertSuccessful();
+		assertTrue("eclipse.is.cool should have been set as true", "true".equals(AntTestChecker.getDefault().getUserProperty("eclipse.is.cool")));
+		assertTrue("AntTests should have a value of testing", "testing".equals(AntTestChecker.getDefault().getUserProperty("AntTests")));
+		assertNull("my.name was not set and should be null", AntTestChecker.getDefault().getUserProperty("my.name"));
+	
 	}
 	
 	public void testMinusDAndGlobalProperties() throws CoreException {

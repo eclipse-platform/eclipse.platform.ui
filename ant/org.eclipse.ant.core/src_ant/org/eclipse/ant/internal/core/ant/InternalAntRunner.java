@@ -517,7 +517,7 @@ public class InternalAntRunner {
 		scriptExecuted= true;
 		processAntHome(false);
 		try {
-			if (argList != null && argList.remove("-projecthelp")) { //$NON-NLS-1$
+			if (argList != null && (argList.remove("-projecthelp") || argList.remove("-p"))) { //$NON-NLS-1$ //$NON-NLS-2$
 				projectHelp = true;
 			}
 			getCurrentProject().init();
@@ -904,7 +904,7 @@ public class InternalAntRunner {
 	 */
 	private boolean processCommandLine(List commands) {
 		
-		if (commands.remove("-help")) { //$NON-NLS-1$
+		if (commands.remove("-help") || commands.remove("-h")) { //$NON-NLS-1$ //$NON-NLS-2$
 			printUsage();
 			return false;
 		}
@@ -919,7 +919,7 @@ public class InternalAntRunner {
 			setMessageOutputLevel(Project.MSG_VERBOSE);
 		}
 		
-		if (commands.remove("-debug")) { //$NON-NLS-1$
+		if (commands.remove("-debug") || commands.remove("-d")) { //$NON-NLS-1$ //$NON-NLS-2$
 			printVersion();
 			setMessageOutputLevel(Project.MSG_DEBUG);
 		}
@@ -928,7 +928,7 @@ public class InternalAntRunner {
 			setMessageOutputLevel(Project.MSG_WARN);
 		}
 
-		if (commands.remove("-emacs")) { //$NON-NLS-1$
+		if (commands.remove("-emacs") || commands.remove("-e")) { //$NON-NLS-1$ //$NON-NLS-2$
 			emacsMode = true;
 			if (buildLogger != null) {
 				buildLogger.setEmacsMode(true);
@@ -1192,60 +1192,64 @@ public class InternalAntRunner {
 		msg.append(lSep);
 		msg.append(InternalAntMessages.getString("InternalAntRunner.Options___21")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-help\t\t\t\t\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-help, -h\t\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.print_this_message_23")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-projecthelp\t\t\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-projecthelp, -p\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.print_project_help_information_25")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-version\t\t\t\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-version\t\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.print_the_version_information_and_exit_27")); //$NON-NLS-1$
 		msg.append(lSep); 
-	 	msg.append("\t-diagnostics\t\t\t\t\t\t"); //$NON-NLS-1$
-	 	msg.append(InternalAntMessages.getString("InternalAntRunner.print_information_that_might_be_helpful_to_12")); //$NON-NLS-1$
-	 	msg.append(lSep);
-        msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_t_t_t_tdiagnose_or_report_problems._13")); //$NON-NLS-1$
+		msg.append("\t-diagnostics\t\t\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.getString("InternalAntRunner.12")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-quiet, -q\t\t\t\t\t\t\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.getString("InternalAntRunner.13")); //$NON-NLS-1$
+		msg.append(lSep);
+		msg.append("\t-quiet, -q\t\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.be_extra_quiet_29")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-verbose, -v\t\t\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-verbose, -v\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.be_extra_verbose_31")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-debug\t\t\t\t\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-debug, -d\t\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.print_debugging_information_33")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-emacs\t\t\t\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-emacs, -e\t\t\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.produce_logging_information_without_adornments_35")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-logfile\t<file>\t\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-logfile\t<file>\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.use_given_file_for_log_37")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t\t-l\t\t<file>"); //$NON-NLS-1$		msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_t_____15")); //$NON-NLS-1$ //$NON-NLS-2$
+		msg.append("\t\t-l\t\t<file>"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.getString("InternalAntRunner.1")); //$NON-NLS-1$ //$NON-NLS-2$
 		msg.append(lSep);  
 		msg.append("\t-logger <classname>\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.the_class_which_is_to_perform_logging_39")); //$NON-NLS-1$
 		msg.append(lSep);  
-		msg.append("\t-listener <classname>\t\t"); //$NON-NLS-1$
+		msg.append("\t-listener <classname>\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.add_an_instance_of_class_as_a_project_listener_41")); //$NON-NLS-1$
 		msg.append(lSep); 
-		msg.append("\t-buildfile\t<file>\t\t\t\t"); //$NON-NLS-1$
+		msg.append("\t-buildfile\t<file>\t\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.use_given_buildfile_43")); //$NON-NLS-1$
 		msg.append(lSep); 
-		msg.append("\t\t-file\t\t<file>"); //$NON-NLS-1$		msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_____1")); //$NON-NLS-1$
+		msg.append("\t\t-file\t<file>"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.getString("InternalAntRunner.1")); //$NON-NLS-1$
 		msg.append(lSep);
-        msg.append("\t\t-f\t\t\t<file>"); //$NON-NLS-1$        msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_____1")); //$NON-NLS-1$
+		msg.append("\t\t-f\t\t<file>"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.getString("InternalAntRunner.1")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-D<property>=<value>\t\t"); //$NON-NLS-1$
+		msg.append("\t-D<property>=<value>\t"); //$NON-NLS-1$
 		msg.append(InternalAntMessages.getString("InternalAntRunner.use_value_for_given_property_45")); //$NON-NLS-1$
 		msg.append(lSep);
-		msg.append("\t-propertyfile <name>\t\t"); //$NON-NLS-1$
-		msg.append(InternalAntMessages.getString("InternalAntRunner.load_all_properties_from_file_with_-D_19")); //$NON-NLS-1$
+		msg.append("\t-propertyfile <name>\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.getString("InternalAntRunner.19")); //$NON-NLS-1$
 		msg.append(lSep);
-        msg.append(InternalAntMessages.getString("InternalAntRunner._t_t_t_t_t_t_t_t_t_t_tproperties_taking_precedence_20")); //$NON-NLS-1$
-        msg.append(lSep);
-        msg.append("\t-inputhandler <class>\t\t"); //$NON-NLS-1$       	msg.append(InternalAntMessages.getString("InternalAntRunner.the_class_which_will_handle_input_requests_22")); //$NON-NLS-1$
-        msg.append(lSep);
+		msg.append(InternalAntMessages.getString("InternalAntRunner.20")); //$NON-NLS-1$
+		msg.append(lSep);
+		msg.append("\t-inputhandler <class>\t"); //$NON-NLS-1$
+		msg.append(InternalAntMessages.getString("InternalAntRunner.22")); //$NON-NLS-1$
+		msg.append(lSep);
 
 		logMessage(getCurrentProject(), msg.toString(), Project.MSG_INFO);
 	}
