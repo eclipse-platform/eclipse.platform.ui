@@ -43,7 +43,7 @@
 	<view
 		id="org.eclipse.ant.ui.antconsole"
 		name="Ant Console"
-		icon="icons/ant.gif"
+		icon="icons/basic/cview/ant_view.gif"
 		category="org.eclipse.ant.ui"
 		class="org.eclipse.ant.internal.ui.AntConsole">
 	</view>
