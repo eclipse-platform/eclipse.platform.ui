@@ -298,7 +298,9 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	 */
     protected ISelectionChangedListener fSelectionChangedListener = new ISelectionChangedListener(){
         public void selectionChanged(SelectionChangedEvent event) {
+        	fSelectionSetFromOutline= false;
             doSelectionChanged(event);
+            fSelectionSetFromOutline= true;
         }
     };
     
@@ -338,6 +340,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 	private ProjectionSupport fProjectionSupport;
 	
 	private AntFoldingStructureProvider fFoldingStructureProvider;
+	
+	private boolean fSelectionSetFromOutline= false;
   
     public AntEditor() {
         super();
@@ -430,57 +434,63 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
     }
     
     private void setSelection(AntElementNode reference, boolean moveCursor) {
-        if (reference != null) {
-        	while (reference.getImportNode() != null) {
-        		reference= reference.getImportNode();
+    	if (fSelectionSetFromOutline) {
+    		//the work has all just been done via a selection setting in the outline
+    		fSelectionSetFromOutline= false;
+    		return;
+    	}
+        if (reference == null) {
+        	if (moveCursor) {
+        		 resetHighlightRange();
         	}
-        	if (reference.isExternal()) {
-        		return;
-        	}
+        	return;
+        } 
+    	while (reference.getImportNode() != null) {
+    		reference= reference.getImportNode();
+    	}
+    	if (reference.isExternal()) {
+    		return;
+    	}
+        
+        StyledText textWidget= null;
+        ISourceViewer sourceViewer= getSourceViewer();
+        if (sourceViewer != null) {
+            textWidget= sourceViewer.getTextWidget();
+        }
+        
+        if (textWidget == null) {
+            return;
+        }
             
-            StyledText textWidget= null;
-            ISourceViewer sourceViewer= getSourceViewer();
-            if (sourceViewer != null) {
-                textWidget= sourceViewer.getTextWidget();
-            }
-            
-            if (textWidget == null) {
+        try {
+            int offset= reference.getOffset();
+            int length= reference.getSelectionLength();
+            int highLightLength= reference.getLength();
+            if (offset < 0) {
                 return;
             }
                 
-            try {
-                
-                int offset= reference.getOffset();
-                int length= reference.getSelectionLength();
-                int highLightLength= reference.getLength();
-                if (offset < 0) {
-                    return;
-                }
-                    
-                textWidget.setRedraw(false);
-                
-                if (highLightLength > 0) {
-	                setHighlightRange(offset, highLightLength, moveCursor);
-                }
-                
-                if (!moveCursor) {
-                    return;
-                }
-                                            
-                if (offset > -1 && length > 0) {
-                    sourceViewer.revealRange(offset, length);
-                    // Selected region begins one index after offset
-                    sourceViewer.setSelectedRange(offset, length); 
-                }
-            } catch (IllegalArgumentException x) {
-            	AntUIPlugin.log(x);
-            } finally {
-                if (textWidget != null) {
-                    textWidget.setRedraw(true);
-                }
+            textWidget.setRedraw(false);
+            
+            if (highLightLength > 0) {
+                setHighlightRange(offset, highLightLength, moveCursor);
             }
-        } else if (moveCursor) {
-            resetHighlightRange();
+            
+            if (!moveCursor) {
+                return;
+            }
+                                        
+            if (offset > -1 && length > 0) {
+                sourceViewer.revealRange(offset, length);
+                // Selected region begins one index after offset
+                sourceViewer.setSelectedRange(offset, length); 
+            }
+        } catch (IllegalArgumentException x) {
+        	AntUIPlugin.log(x);
+        } finally {
+            if (textWidget != null) {
+                textWidget.setRedraw(true);
+            }
         }
     }
 
