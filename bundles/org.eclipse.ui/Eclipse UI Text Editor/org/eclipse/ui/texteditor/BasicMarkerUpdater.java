@@ -57,26 +57,29 @@ public final class BasicMarkerUpdater implements IMarkerUpdater {
 		if (position.isDeleted())
 			return false;
 		
-		boolean changed= false;
+		boolean offsetsInitialized= false;
+		boolean offsetsChanged= false;
 		int markerStart= MarkerUtilities.getCharStart(marker);
 		int markerEnd= MarkerUtilities.getCharEnd(marker);
 		
 		if (markerStart != -1 && markerEnd != -1) {
 			
+			offsetsInitialized= true;
+			
 			int offset= position.getOffset();
 			if (markerStart != offset) {
 				MarkerUtilities.setCharStart(marker, offset);
-				changed= true;
+				offsetsChanged= true;
 			}
 			
 			offset += position.getLength();
 			if (markerEnd != offset) {
 				MarkerUtilities.setCharEnd(marker, offset);
-				changed= true;
+				offsetsChanged= true;
 			}
 		}
 		
-		if (changed && MarkerUtilities.getLineNumber(marker) != -1) {
+		if (!offsetsInitialized || (offsetsChanged && MarkerUtilities.getLineNumber(marker) != -1)) {
 			try {
 				// marker line numbers are 1-based
 				MarkerUtilities.setLineNumber(marker, document.getLineOfOffset(position.getOffset()) + 1);

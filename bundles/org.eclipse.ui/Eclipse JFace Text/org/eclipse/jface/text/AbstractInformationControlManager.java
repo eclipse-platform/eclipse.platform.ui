@@ -238,6 +238,7 @@ abstract public class AbstractInformationControlManager {
 	 * @param enforceAsMaximalSize indicates whether the constraints describe the maximal allowed size of the control
 	 */
 	public void setSizeConstraints(int widthInChar, int heightInChar, boolean enforceAsMinimalSize, boolean enforceAsMaximalSize) {
+		fSizeConstraints= null;
 		fWidthConstraint= widthInChar;
 		fHeightConstraint= heightInChar;
 		fEnforceAsMinimalSize= enforceAsMinimalSize;

@@ -290,7 +290,8 @@ public final class CompositeRuler implements IVerticalRuler, IVerticalRulerExten
 		 * 
 		 * @param clazz the listener type
 		 * @param listener the listener object
-		 */		private void removeListener(Class clazz, SWTEventListener listener) {
+		 */
+		private void removeListener(Class clazz, SWTEventListener listener) {
 			int length= fCachedListeners.size();
 			for (int i= 0; i < length; i++) {
 				ListenerInfo info= (ListenerInfo) fCachedListeners.get(i);
