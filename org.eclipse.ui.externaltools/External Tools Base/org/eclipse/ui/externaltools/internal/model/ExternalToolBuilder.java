@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,9 +15,11 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
+
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
@@ -26,6 +28,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
@@ -54,30 +57,11 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 
 	public static final String ID = "org.eclipse.ui.externaltools.ExternalToolBuilder"; //$NON-NLS-1$;
 
-	private static final String BUILD_TYPE_SEPARATOR = ","; //$NON-NLS-1$
-	private static final int[] DEFAULT_BUILD_TYPES= new int[] {
-									IncrementalProjectBuilder.INCREMENTAL_BUILD,
-									IncrementalProjectBuilder.FULL_BUILD};
-
 	private static String buildType = IExternalToolConstants.BUILD_TYPE_NONE;
 	
 	private static IProject buildProject= null;
 	
-	private List projectsWithinScope;
-	
-	private boolean buildKindCompatible(int kind, ILaunchConfiguration config) throws CoreException {
-		if (config.getAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, false)) {
-			//triggers have been set on the ICommand associated with this builder..therefore build kind must be compatible
-			return true;
-		}
-		int[] buildKinds = buildTypesToArray(config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, "")); //$NON-NLS-1$
-		for (int j = 0; j < buildKinds.length; j++) {
-			if (kind == buildKinds[j]) {
-				return true;
-			}
-		}
-		return false;
-	}
+	private List fProjectsWithinScope;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
@@ -87,17 +71,70 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			return null;
 		}
 		
-		projectsWithinScope= new ArrayList();
-		ILaunchConfiguration config = BuilderUtils.configFromBuildCommandArgs(getProject(), args, new String[1]);
+		fProjectsWithinScope= new ArrayList();
+		ILaunchConfiguration config= BuilderUtils.configFromBuildCommandArgs(getProject(), args, new String[1]);
         if (config == null) {
             throw ExternalToolsPlugin.newError(ExternalToolsModelMessages.getString("ExternalToolBuilder.0"), null); //$NON-NLS-1$
         }
-		if (buildKindCompatible(kind, config) && configEnabled(config)) {
-			doBuildBasedOnScope(kind, config, monitor);
-		}
+        boolean kindCompatible= commandConfiguredForKind(config, kind);
+        if (kindCompatible && configEnabled(config)) {
+            doBuildBasedOnScope(kind, config, monitor);
+        }
+        
 		return getProjectsWithinScope();
 	}
-	
+
+    private boolean commandConfiguredForKind(ILaunchConfiguration config, int kind) {
+        try {
+            if (!(config.getAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, false))) {
+                ICommand command= getCommand();
+                //adapt the builder command to make use of the 3.1 support for setting command build kinds
+                //this will only happen once for builder/command defined before the support existed
+                BuilderUtils.configureTriggers(config, command);
+                IProjectDescription desc= getProject().getDescription();
+                ICommand[] commands= desc.getBuildSpec();
+                int index= getBuilderCommandIndex(commands, command);
+                if (index != -1) {
+                    commands[index]= command;
+                    desc.setBuildSpec(commands);
+                    getProject().setDescription(desc, null);
+                    ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
+                    copy.setAttribute(IExternalToolConstants.ATTR_TRIGGERS_CONFIGURED, true);
+                    copy.doSave();
+                }
+                return command.isBuilding(kind);
+            }
+        } catch (CoreException e) {
+           ExternalToolsPlugin.getDefault().log(e);
+           return true;
+        }
+        return true;
+    }
+    
+    private int getBuilderCommandIndex(ICommand[] buildSpec, ICommand command) {
+        Map commandArgs= command.getArguments();
+        if (commandArgs == null) {
+            return -1;
+        }
+        String handle= (String) commandArgs.get(BuilderUtils.LAUNCH_CONFIG_HANDLE);
+        if (handle == null) {
+            return -1;
+        }
+        for (int i = 0; i < buildSpec.length; ++i) {
+            ICommand buildSpecCommand= buildSpec[i];
+            if (ID.equals(buildSpecCommand.getBuilderName())) {
+                Map buildSpecArgs= buildSpecCommand.getArguments();
+                if (buildSpecArgs != null) {
+                    String buildSpecHandle= (String) buildSpecArgs.get(BuilderUtils.LAUNCH_CONFIG_HANDLE);
+                    if (handle.equals(buildSpecHandle)) {
+                        return i;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
 	/**
 	 * Returns whether the given builder config is enabled or not.
 	 * 
@@ -114,11 +151,11 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	}
 
 	private IProject[] getProjectsWithinScope() {
-		if (projectsWithinScope == null || projectsWithinScope.isEmpty()) {
-			projectsWithinScope = null;
+		if (fProjectsWithinScope == null || fProjectsWithinScope.isEmpty()) {
+			fProjectsWithinScope = null;
 			return null;
 		}
-		return (IProject[])projectsWithinScope.toArray(new IProject[projectsWithinScope.size()]);
+		return (IProject[])fProjectsWithinScope.toArray(new IProject[fProjectsWithinScope.size()]);
 	}
 
 	private void doBuildBasedOnScope(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
@@ -128,7 +165,7 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			if (resources != null && resources.length > 0) {
 				for (int i = 0; i < resources.length; i++) {
 					IResource resource = resources[i];
-					projectsWithinScope.add(resource.getProject());
+					fProjectsWithinScope.add(resource.getProject());
 				}
 				buildForChange = buildScopeIndicatesBuild(resources);
 			}
@@ -223,61 +260,5 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			}
 		}
 		return false;
-	}
-
-	/**
-	 * Converts the build types string into an array of
-	 * build kinds.
-	 *
-	 * @param buildTypes the string of built types to convert
-	 * @return the array of build kinds.
-	 */
-	public static int[] buildTypesToArray(String buildTypes) {
-		if (buildTypes == null || buildTypes.length() == 0) {
-			return DEFAULT_BUILD_TYPES;
-		}
-		
-		int count = 0;
-		boolean incremental = false;
-		boolean full = false;
-		boolean auto = false;
-
-		StringTokenizer tokenizer = new StringTokenizer(buildTypes, BUILD_TYPE_SEPARATOR);
-		while (tokenizer.hasMoreTokens()) {
-			String token = tokenizer.nextToken();
-			if (IExternalToolConstants.BUILD_TYPE_INCREMENTAL.equals(token)) {
-				if (!incremental) {
-					incremental = true;
-					count++;
-				}
-			} else if (IExternalToolConstants.BUILD_TYPE_FULL.equals(token)) {
-				if (!full) {
-					full = true;
-					count++;
-				}
-			} else if (IExternalToolConstants.BUILD_TYPE_AUTO.equals(token)) {
-				if (!auto) {
-					auto = true;
-					count++;
-				}
-			}
-		}
-
-		int[] results = new int[count];
-		count = 0;
-		if (incremental) {
-			results[count] = IncrementalProjectBuilder.INCREMENTAL_BUILD;
-			count++;
-		}
-		if (full) {
-			results[count] = IncrementalProjectBuilder.FULL_BUILD;
-			count++;
-		}
-		if (auto) {
-			results[count] = IncrementalProjectBuilder.AUTO_BUILD;
-			count++;
-		}
-
-		return results;
 	}
 }

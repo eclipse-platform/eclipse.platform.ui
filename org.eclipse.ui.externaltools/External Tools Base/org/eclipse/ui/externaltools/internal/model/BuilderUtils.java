@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@ package org.eclipse.ui.externaltools.internal.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
@@ -64,6 +65,11 @@ public class BuilderUtils {
 	private static final String TAG_CONFIGURATION_MAP= "configurationMap"; //$NON-NLS-1$
 	private static final String TAG_SOURCE_TYPE= "sourceType"; //$NON-NLS-1$
 	private static final String TAG_BUILDER_TYPE= "builderType"; //$NON-NLS-1$
+    
+    private static final String BUILD_TYPE_SEPARATOR = ","; //$NON-NLS-1$
+    private static final int[] DEFAULT_BUILD_TYPES= new int[] {
+                                    IncrementalProjectBuilder.INCREMENTAL_BUILD,
+                                    IncrementalProjectBuilder.FULL_BUILD};
 
 	/**
 	 * Returns a launch configuration from the given ICommand arguments. If the
@@ -137,13 +143,13 @@ public class BuilderUtils {
 		return newCommand;
 	}
 	
-	private static void configureTriggers(ILaunchConfiguration config, ICommand newCommand) throws CoreException {
+	public static void configureTriggers(ILaunchConfiguration config, ICommand newCommand) throws CoreException {
 		newCommand.setBuilding(IncrementalProjectBuilder.FULL_BUILD, false);
 		newCommand.setBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD, false);
 		newCommand.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
 		newCommand.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, false);
 		String buildKinds= config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String)null);
-		int[] triggers= ExternalToolBuilder.buildTypesToArray(buildKinds);
+		int[] triggers= BuilderUtils.buildTypesToArray(buildKinds);
 		for (int i = 0; i < triggers.length; i++) {
 			switch (triggers[i]) {
 				case IncrementalProjectBuilder.FULL_BUILD:
@@ -311,4 +317,60 @@ public class BuilderUtils {
 		workingCopy.rename(name);
 		return workingCopy.doSave();
 	}
+
+    /**
+     * Converts the build types string into an array of
+     * build kinds.
+     *
+     * @param buildTypes the string of built types to convert
+     * @return the array of build kinds.
+     */
+    public static int[] buildTypesToArray(String buildTypes) {
+    	if (buildTypes == null || buildTypes.length() == 0) {
+    		return DEFAULT_BUILD_TYPES;
+    	}
+    	
+    	int count = 0;
+    	boolean incremental = false;
+    	boolean full = false;
+    	boolean auto = false;
+    
+    	StringTokenizer tokenizer = new StringTokenizer(buildTypes, BUILD_TYPE_SEPARATOR);
+    	while (tokenizer.hasMoreTokens()) {
+    		String token = tokenizer.nextToken();
+    		if (IExternalToolConstants.BUILD_TYPE_INCREMENTAL.equals(token)) {
+    			if (!incremental) {
+    				incremental = true;
+    				count++;
+    			}
+    		} else if (IExternalToolConstants.BUILD_TYPE_FULL.equals(token)) {
+    			if (!full) {
+    				full = true;
+    				count++;
+    			}
+    		} else if (IExternalToolConstants.BUILD_TYPE_AUTO.equals(token)) {
+    			if (!auto) {
+    				auto = true;
+    				count++;
+    			}
+    		}
+    	}
+    
+    	int[] results = new int[count];
+    	count = 0;
+    	if (incremental) {
+    		results[count] = IncrementalProjectBuilder.INCREMENTAL_BUILD;
+    		count++;
+    	}
+    	if (full) {
+    		results[count] = IncrementalProjectBuilder.FULL_BUILD;
+    		count++;
+    	}
+    	if (auto) {
+    		results[count] = IncrementalProjectBuilder.AUTO_BUILD;
+    		count++;
+    	}
+    
+    	return results;
+    }
 }

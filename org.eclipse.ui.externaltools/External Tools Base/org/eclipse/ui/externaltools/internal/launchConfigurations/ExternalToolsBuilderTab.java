@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,7 +35,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
+import org.eclipse.ui.externaltools.internal.model.BuilderUtils;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
@@ -170,7 +170,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 			workingSet = RefreshTab.getWorkingSet(buildScope);
 		}
 		
-		int buildTypes[]= ExternalToolBuilder.buildTypesToArray(buildKindString);
+		int buildTypes[]= BuilderUtils.buildTypesToArray(buildKindString);
 		for (int i = 0; i < buildTypes.length; i++) {
 			switch (buildTypes[i]) {
 				case IncrementalProjectBuilder.FULL_BUILD:
