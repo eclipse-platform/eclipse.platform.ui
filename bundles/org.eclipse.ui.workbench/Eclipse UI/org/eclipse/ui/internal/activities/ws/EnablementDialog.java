@@ -229,7 +229,8 @@ public class EnablementDialog extends Dialog {
     protected void setDetailHints() {
         GridData data = (GridData) detailsComposite.getLayoutData();
         if (showDetails) {
-            data.widthHint = SWT.DEFAULT;
+            Composite parent = detailsComposite.getParent();
+            data.widthHint = parent.getSize().x - ((GridLayout)parent.getLayout()).marginWidth * 2;
             data.heightHint = convertHeightInCharsToPixels(5);
         } else {
             data.widthHint = 0;
