@@ -53,18 +53,22 @@ import java.util.*;
 	 * If invoking the StringMatcher with string literals in Java, don't forget
 	 * escape characters are represented by "\\".
 	 *
-	 * @param pattern the pattern to match text against
+	 * @param aPattern the pattern to match text against
 	 * @param ignoreCase if true, case is ignored
 	 * @param ignoreWildCards if true, wild cards and their escape sequences are ignored
 	 * 		  (everything is taken literally).
 	 */
-	public StringMatcher(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
-		if (pattern == null)
-			throw new IllegalArgumentException();
+	public StringMatcher(String aPattern, boolean ignoreCase, boolean ignoreWildCards) {
 		fIgnoreCase = ignoreCase;
 		fIgnoreWildCards = ignoreWildCards;
-		fPattern = pattern;
-		fLength = pattern.length();
+		fLength = aPattern.length();
+
+		/* convert case */
+		if (fIgnoreCase) {
+			fPattern = aPattern.toUpperCase();
+		} else {
+			fPattern = aPattern;
+		}
 		
 		if (fIgnoreWildCards) {
 			parseNoWildCards();
@@ -85,8 +89,9 @@ import java.util.*;
 	 * Note that for pattern like "*abc*" with leading and trailing stars, position of "abc"
 	 * is returned. For a pattern like"*??*" in text "abcdf", (1,3) is returned
 	 */
+
 	public StringMatcher.Position find(String text, int start, int end) {
-		if (text == null)
+		if (fPattern  == null|| text == null)
 			throw new IllegalArgumentException();
 			
 		int tlen = text.length();
@@ -111,8 +116,7 @@ import java.util.*;
 					
 		int curPos = start;
 		int matchStart = -1;  
-		int i;
-		for (i = 0; i < segCount && curPos < end; ++i) {
+		for (int i = 0; i < segCount && curPos < end; ++i) {
 			String current = fSegments[i];
 			int nextMatch = regExpPosIn(text, curPos, end, current);
 			if (nextMatch < 0 )
@@ -121,8 +125,6 @@ import java.util.*;
 				matchStart = nextMatch;
 			curPos = nextMatch + current.length();
 		}
-		if (i < segCount) // Ensure all segments match
-			return null;
 		return new Position(matchStart, curPos);
 	}
 	/**
@@ -130,7 +132,7 @@ import java.util.*;
 	 * @return true if matched eitherwise false
 	 * @param <code>text</code>, a String object 
 	 */
-	public boolean match(String text) {
+	public boolean  match(String text) {
 		return match(text, 0, text.length());
 	}
 	/**
@@ -142,16 +144,16 @@ import java.util.*;
 	 * @param int <code>end<code> marks the ending index (exclusive) of the substring 
 	 */
 	public boolean match(String text, int start, int end) {
-		if (null == text)
+		if (null == fPattern || null == text)
 			throw new IllegalArgumentException();
 			
 		if (start > end)
 			return false;
 		
 		if (fIgnoreWildCards)
-			return (end - start == fLength) && fPattern.regionMatches(fIgnoreCase, 0, text, start, fLength);
+			return fPattern.regionMatches(fIgnoreCase, 0, text, start, fLength);
 		int segCount = fSegments.length;
-		if (segCount == 0 && (fHasLeadingStar || fHasTrailingStar))  // pattern contains only '*'(s)
+		if (segCount == 0)//pattern contains only '*'(s) or empty pattern
 			return true;
 		if (start == end)
 			return fLength == 0;
@@ -216,7 +218,7 @@ import java.util.*;
 		fBound = fLength;
 	}
 	/**
-	 * Parses the given pattern into segments seperated by wildcard '*' characters.
+	 *  This method parses the given pattern into segments seperated by wildcard '*' characters.
 	 * @param p, a String object that is a simple regular expression with ‘*’ and/or ‘?’
 	 */
 	private void parseWildCards() {
@@ -342,11 +344,8 @@ import java.util.*;
 			if (pchar == tchar)
 				continue;
 			if (fIgnoreCase) {
-				if (Character.toUpperCase(tchar) == Character.toUpperCase(pchar))
-					continue;
-				// comparing after converting to upper case doesn't handle all cases;
-				// also compare after converting to lower case
-				if (Character.toLowerCase(tchar) == Character.toLowerCase(pchar))
+				char tc = Character.toUpperCase(tchar);
+				if (tc == pchar)
 					continue;
 			}
 			return false;

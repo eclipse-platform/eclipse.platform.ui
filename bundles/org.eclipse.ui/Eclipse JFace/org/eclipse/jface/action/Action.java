@@ -5,7 +5,6 @@ package org.eclipse.jface.action;
  * All Rights Reserved.
  */
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.events.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -155,9 +154,8 @@ private int convertAccelerator(String acceleratorText) {
 			int modifier = findModifier(token);
 			if (modifier != 0) {
 				accelerator |= modifier;
-			} else {
-				// System.out.println("JFace Warning: Unknown key modifier \"" + token + "\" used in label: " + fLabel);
-				// System.out.println("               Valid modifiers are: Ctrl, Shift, and Alt");
+			} else {//Leave if there are none
+				return 0;
 			}
 		} else {
 			keyCode = findKeyCode(token);
@@ -195,7 +193,6 @@ private static String extractAcceleratorText(String text) {
  *  <li><code>"TAB"</code></li>
  *  <li><code>"RETURN"</code></li>
  *  <li><code>"ENTER"</code></li>
- *  <li><code>"ESC"</code></li>
  *  <li><code>"ESCAPE"</code></li>
  *  <li><code>"DELETE"</code></li>
  *  <li><code>"SPACE"</code></li>
@@ -366,7 +363,6 @@ private static void initKeyCodes() {
 	keyCodes.put("RETURN", new Integer(13));//$NON-NLS-1$
 	keyCodes.put("ENTER", new Integer(13));//$NON-NLS-1$
 	keyCodes.put("ESCAPE", new Integer(27));//$NON-NLS-1$
-	keyCodes.put("ESC", new Integer(27));//$NON-NLS-1$
 	keyCodes.put("DELETE", new Integer(127));//$NON-NLS-1$
 
 	keyCodes.put("SPACE", new Integer(' '));//$NON-NLS-1$
@@ -429,30 +425,10 @@ public static String removeAcceleratorText(String text) {
 public void removePropertyChangeListener(IPropertyChangeListener listener) {
 	listeners.remove(listener);
 }
-
 /**
- * The default implementation of this <code>IAction</code> method
- * does nothing.  Subclasses should override this method
- * if they do not need information from the triggering event,
- * or override <code>run(Event)</code> if they do.
+ * Implementation of method defined on <code>IAction</code>.
  */
-public void run() {
-}
-
-/**
- * The default implementation of this <code>IAction</code> method
- * ignores the event argument, and simply calls <code>run()</code>.
- * Subclasses should override this method if they need information 
- * from the triggering event, or override <code>run()</code> if not.
- * 
- * NOTE: This is experimental API, which may change in the future.
- *
- * @since 2.0
- */
-public void runWithEvent(Event event) {
-	run();
-}
-
+public abstract void run();
 /* (non-Javadoc)
  * Method declared on IAction.
  */
@@ -585,4 +561,21 @@ public void setToolTipText(String text) {
 		firePropertyChange(TOOL_TIP_TEXT, oldToolTipText, toolTipText);
 	}
 }
+/*
+ * @see IAction#setAccelerator(int)
+ */
+public void setAccelerator(int keycode) {
+	this.accelerator = keycode;
+}
+
+/**
+ * Set the accelerator to be a control code and a modifying 
+ * character.
+ * @param int - the control code
+ * @param char - the character modifying the control code
+ */
+public void setAccelerator(int controlCode, char modifier){
+	setAccelerator(controlCode | Character.getNumericValue(modifier));
+}
+
 }

@@ -19,7 +19,6 @@ import org.eclipse.ui.internal.*;
 import org.eclipse.ui.actions.OpenNewWindowMenu;
 import org.eclipse.ui.actions.OpenNewPageMenu;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.window.*;
@@ -43,8 +42,8 @@ public class WorkbenchWindow extends ApplicationWindow
 {
 	private int number;
 	private Workbench workbench;
-	private WorkbenchPage activePage; //This var could be deleted since this info is in PageList
-	private PageList pageList = new PageList(4);
+	private WorkbenchPage activePage;
+	private List pageTable = new ArrayList(4);
 	private PageListenerList pageListeners = new PageListenerList();
 	private PerspectiveListenerListOld perspectiveListeners = new PerspectiveListenerListOld();
 	private WWinPerspectiveService perspectiveService = new WWinPerspectiveService(this);
@@ -205,7 +204,7 @@ public WorkbenchWindow(Workbench workbench, int number) {
 	addMenuBar();
 	addToolBar(SWT.FLAT | SWT.WRAP);
 	addStatusLine();
-	addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
+	addShortcutBar(SWT.FLAT | SWT.WRAP);
 
 	// Add actions.
 	actionPresentation = new ActionPresentation(this);
@@ -266,12 +265,12 @@ private boolean busyClose() {
  *
  * Assumes that busy cursor is active.
  */
-protected IWorkbenchPage busyOpenPage(String perspID, IAdaptable input) 
+private IWorkbenchPage busyOpenPage(String perspID, IAdaptable input) 
 	throws org.eclipse.ui.WorkbenchException 
 {
 	// Create page.
 	WorkbenchPage result = new WorkbenchPage(this, perspID, input);
-	pageList.add(result);
+	pageTable.add(result);
 	firePageOpened(result);
 
 	// Add shortcut.
@@ -304,11 +303,11 @@ private void closeAllPages()
 
 	// Clone and deref all so that calls to getPages() returns
 	// empty list (if call by pageClosed event handlers)
-	PageList oldList = pageList;
-	pageList = new PageList(4);
+	List clone = (List)((ArrayList)pageTable).clone();
+	pageTable.clear();
 
 	// Close all.
-	Iterator enum = oldList.iterator();
+	Iterator enum = clone.iterator();
 	while (enum.hasNext()) {
 		WorkbenchPage page = (WorkbenchPage)enum.next();
 		removeShortcut(page);
@@ -331,7 +330,7 @@ public void closeAllPages(boolean save) {
  */
 protected boolean closePage(IWorkbenchPage in, boolean save) {
 	// Validate the input.
-	if (!pageList.contains(in))
+	if (!pageTable.contains(in))
 		return false;
 	WorkbenchPage oldPage = (WorkbenchPage)in;
 
@@ -346,16 +345,22 @@ protected boolean closePage(IWorkbenchPage in, boolean save) {
 	if (oldIsActive)
 		setActivePage(null);
 		
-	// Close old page. 
-	pageList.remove(oldPage);
+	// Close old page.
+	int nIndex = pageTable.indexOf(oldPage);
+	pageTable.remove(oldPage);
 	removeShortcut(oldPage);
 	firePageClosed(oldPage);
 	oldPage.dispose();
 	
 	// Activate new page.
 	if (oldIsActive) {
-		IWorkbenchPage newPage = pageList.getActive();
-		if(newPage != null)
+		WorkbenchPage newPage = null;
+		int nMaxIndex = pageTable.size() - 1;
+		if (nIndex > nMaxIndex)
+			nIndex = nMaxIndex;
+		if (nIndex >= 0)
+			newPage = (WorkbenchPage)pageTable.get(nIndex);
+		if (newPage != null)
 			setActivePage(newPage);
 	}
 
@@ -513,6 +518,19 @@ protected Composite getClientComposite() {
 	return (Composite)getContents();
 }
 /**
+ * Returns the menu bar manager for this window (if it has one).
+ * <p>
+ * [Issue: Could this be made a protected framework method?]
+ * </p>
+ *
+ * @return the menu bar manager, or <code>null</code> if
+ *   this window does not have a menu bar
+ * @see #addMenuBar
+ */
+public MenuManager getMenuBarManager() {
+	return super.getMenuBarManager();
+}
+/**
  * Answer the menu manager for this window.
  */
 public MenuManager getMenuManager() {
@@ -531,7 +549,10 @@ public int getNumber() {
  * @return an array of pages
  */
 public IWorkbenchPage[] getPages() {
-	return pageList.getPages();
+	int nSize = pageTable.size();
+	IWorkbenchPage [] retArray = new IWorkbenchPage[nSize];
+	pageTable.toArray(retArray);
+	return retArray;
 }
 /**
  * @see IWorkbenchWindow
@@ -616,25 +637,6 @@ public boolean okToClose() {
 public IWorkbenchPage openPage(final String perspID, final IAdaptable input) 
 	throws WorkbenchException 
 {
-	// If "reuse" and a page already exists for the input reuse it.
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean reuse = 
-		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
-	if (reuse) {
-		// If a window already exists for the input then
-		// reuse it.
-		IWorkbenchPage page = findPage(input);
-		if (page != null) {
-			setActivePage(page);
-			PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
-				.getDefault().getPerspectiveRegistry().findPerspectiveWithId(perspID);
-			if (desc == null)
-				throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
-			page.setPerspective(desc);
-			return page;
-		}
-	}
-	
 	// Run op in busy cursor.
 	final Object [] result = new Object[1];
 	BusyIndicator.showWhile(null, new Runnable() {
@@ -661,18 +663,6 @@ public IWorkbenchPage openPage(IAdaptable input)
 {
 	return openPage(workbench.getPerspectiveRegistry().getDefaultPerspective(), 
 		input);
-}
-/**
- * Returns the first page with a given input.
- */
-protected IWorkbenchPage findPage(IAdaptable input) {
-	IWorkbenchPage [] pages = getPages();
-	for (int nY = 0; nY < pages.length; nY ++) {
-		IAdaptable test = pages[nY].getInput();
-		if (input == test)
-			return pages[nY];
-	}
-	return null;
 }
 /*
  * Removes an listener from the part service.
@@ -751,7 +741,7 @@ public void restoreState(IMemento memento) {
 		WorkbenchPage result = null;
 		try {
 			result = new WorkbenchPage(this, pageMem, input);
-			pageList.add(result);
+			pageTable.add(result);
 			pageListeners.firePageOpened(result);
 			addShortcut(result);
 		} catch (WorkbenchException e) {
@@ -766,12 +756,12 @@ public void restoreState(IMemento memento) {
 	}
 
 	// If there are no pages create a default.
-	if (pageList.isEmpty()) {
+	if (pageTable.isEmpty()) {
 		try {
 			IContainer root = WorkbenchPlugin.getPluginWorkspace().getRoot();
 			String defPerspID = workbench.getPerspectiveRegistry().getDefaultPerspective();
 			WorkbenchPage result = new WorkbenchPage(this, defPerspID, root);
-			pageList.add(result);
+			pageTable.add(result);
 			pageListeners.firePageOpened(result);
 			addShortcut(result);
 		} catch (WorkbenchException e) {
@@ -783,7 +773,7 @@ public void restoreState(IMemento memento) {
 		
 	// Set active page.
 	if (newActivePage == null)
-		newActivePage = (IWorkbenchPage)pageList.getActive();
+		newActivePage = (IWorkbenchPage)pageTable.get(0);
 	setActivePage(newActivePage);
 }
 /**
@@ -792,7 +782,7 @@ public void restoreState(IMemento memento) {
 private boolean saveAllPages(boolean bConfirm) 
 {
 	boolean bRet = true;
-	Iterator enum = pageList.iterator();
+	Iterator enum = pageTable.iterator();
 	while (bRet && enum.hasNext()) {
 		WorkbenchPage page = (WorkbenchPage)enum.next();
 		bRet = page.saveAllEditors(bConfirm);
@@ -816,7 +806,7 @@ public void saveState(IMemento memento) {
 	}
 
 	// Save each page.
-	Iterator enum = pageList.iterator();
+	Iterator enum = pageTable.iterator();
 	while (enum.hasNext()) 
 	{
 		WorkbenchPage page = (WorkbenchPage)enum.next();
@@ -880,11 +870,10 @@ public void setActivePage(final IWorkbenchPage in) {
 			}
 
 			// Activate new persp.
-			if (in == null || pageList.contains(in)) {
+			if (in == null || pageTable.contains(in)) {
 				activePage = (WorkbenchPage)in;
 				if (activePage != null) {
 					activePage.onActivate();
-					pageList.setActive(activePage);
 					firePageActivated(activePage);
 					firePerspectiveActivated(activePage, activePage.getPerspective());
 					selectShortcut(activePage, true);
@@ -990,63 +979,12 @@ public void updateShortcut(IWorkbenchPage page) {
 /**
  * Updates the window title.
  */
-public void updateTitle() {
+private void updateTitle() {
 	String title = workbench.getProductInfo().getName();
 	if (activePage != null) {
 		IPerspectiveDescriptor persp = activePage.getPerspective();
-		String label = persp.getLabel();
-		IAdaptable input = activePage.getInput();
-		if((input != null) && (!input.equals(ResourcesPlugin.getWorkspace().getRoot())))
-			label = activePage.getLabel();
-		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {label, title}); //$NON-NLS-1$
+		title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] {persp.getLabel(), title}); //$NON-NLS-1$
 	}
 	getShell().setText(title);	
-}
-
-class PageList {
-	//List of pages in the order they were created;
-	private List pageList;
-	//List of pages where the top is the last activated.
- 	private List pageStack;
- 	
-	public PageList(int size) {
-		pageList = new ArrayList(4);
- 		pageStack = new ArrayList(4);
-	}
-	public boolean add(Object object) {
-		pageList.add(object);
-		pageStack.add(0,object); //It will be moved to top only when activated.
-		return true;
-	}
-	public Iterator iterator() {
-		return pageList.iterator();
-	}
-	public boolean contains(Object object) {
-		return pageList.contains(object);
-	}
-	public boolean remove(Object object) {
-		pageStack.remove(object);
-		return pageList.remove(object);
-	}
-	public boolean isEmpty() {
-		return pageList.isEmpty();
-	}
-	public IWorkbenchPage[] getPages() {
-		int nSize = pageList.size();
-		IWorkbenchPage [] retArray = new IWorkbenchPage[nSize];
-		pageList.toArray(retArray);
-		return retArray;
-	}
-	public void setActive(Object page) {
-		if(page == getActive())
-			return;
-		pageStack.remove(page);
-		pageStack.add(page);
-	}
-	public WorkbenchPage getActive() {
-		if(pageStack.isEmpty())
-			return null;
-		return (WorkbenchPage)pageStack.get(pageStack.size() - 1);
-	}
 }
 }

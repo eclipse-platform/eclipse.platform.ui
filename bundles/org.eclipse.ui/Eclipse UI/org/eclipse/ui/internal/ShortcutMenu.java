@@ -12,10 +12,28 @@ import org.eclipse.jface.action.*;
  * actions.  The visible actions are determined by the active perspective
  * within the workbench window.  
  */
-public abstract class ShortcutMenu implements IPerspectiveListener, IPageListener {
+public abstract class ShortcutMenu {
 	private IWorkbenchWindow window;
 	private IMenuManager innerMgr;
+	private Listener listener = new Listener();
 
+	private class Listener implements IPerspectiveListener, IPageListener {
+		public void pageActivated(IWorkbenchPage page) {
+		    updateMenu();
+		}
+		public void pageClosed(IWorkbenchPage page) {
+		    updateMenu();
+		}
+		public void pageOpened(IWorkbenchPage page) {
+		    // wait for activation.
+		}
+		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+		    updateMenu();
+		}
+		public void perspectiveReset(IWorkbenchPage page, IPerspectiveDescriptor perspective){
+		    updateMenu();
+		}
+	}
 /**
  * Create a shortcut menu.
  * This menu does not listen to changes in perspective in the window.
@@ -46,8 +64,8 @@ public ShortcutMenu(IMenuManager innerMgr, IWorkbenchWindow window, boolean regi
 	this.innerMgr = innerMgr;
 	this.window = window;
 	if (register) {
-		window.addPageListener(this);
-		((WorkbenchWindow)window).getPerspectiveService().addPerspectiveListener(this);
+		window.addPageListener(listener);
+		((WorkbenchWindow)window).getPerspectiveService().addPerspectiveListener(listener);
 	}
 }
 /**
@@ -58,8 +76,8 @@ public ShortcutMenu(IMenuManager innerMgr, IWorkbenchWindow window, boolean regi
  * </p>
  */
 public void deregisterListeners() {
-	window.removePageListener(this);
-	((WorkbenchWindow)window).getPerspectiveService().removePerspectiveListener(this);
+	window.removePageListener(listener);
+	((WorkbenchWindow)window).getPerspectiveService().removePerspectiveListener(listener);
 }
 /**
  * Fills the menu.  This method is typically called when the active perspective
@@ -110,21 +128,4 @@ protected void updateMenu() {
 	// the new items from the fillMenu() call.
 	innerMgr.update(false);
 }
-
-public void pageActivated(IWorkbenchPage page) {
-    updateMenu();
-}
-public void pageClosed(IWorkbenchPage page) {
-    updateMenu();
-}
-public void pageOpened(IWorkbenchPage page) {
-    // wait for activation.
-}
-public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-    updateMenu();
-}
-public void perspectiveReset(IWorkbenchPage page, IPerspectiveDescriptor perspective){
-    updateMenu();
-}
-
 }

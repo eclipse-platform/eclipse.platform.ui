@@ -96,45 +96,39 @@ public void setVisible(boolean visible, boolean forceVisibility) {
 		if (forceVisibility)
 			setVisible(true);
 		// Enable the ones disabled when the manager was deactivated
-		setEnabled(visible);
+		if (grayedOutItems != null) {
+			for (int i = 0; i < grayedOutItems.size(); i++) {
+				ToolItem toolItem = (ToolItem) grayedOutItems.get(i);
+				if (!toolItem.isDisposed())
+					toolItem.setEnabled(true);
+			}
+			grayedOutItems = null;
+		}
 	}
 	else {
 		// Make the editor tool bar items inactive for the user
+		grayedOutItems = null;
 		if (forceVisibility)
 			setVisible(false);
-		// Disabled the tool items that are already enabled.
-		setEnabled(visible);
-	}
-}
-
-/**
- * Enable / disable all of the items contributed by the editor.
- * <p>
- * Note: This relies upon unspecified behavior for IContributionItem.update.
- * We assume that the update method will always update the underlying
- * SWT item.  In the spec for update it says: "Updates any SWT controls 
- * cached by this contribution item with any changes which have been made to 
- * this contribution item since the last update."  All existing implementations
- * always update the item.
- * </p><p>
- * See also 1GJNB52: ITPUI:ALL - ToolItems in EditorToolBarManager can get out of synch with the state of the IAction
- * </p>
- */
-private void setEnabled(boolean enable) {
-	ToolBar toolbar = getToolBar();
-	ToolItem[] toolItems = toolbar.getItems();
-	for (int i = 0; i < toolItems.length; i++) {
-		ToolItem item = toolItems[i];
-		Object data = item.getData();
-		if (data instanceof SubContributionItem) {
-			// This is an item contributed by a sub tool manager
-			if (!(data instanceof ActionSetContributionItem)) {
-				// But not from the action set sub tool manager
-				if (enable) {
-					SubContributionItem contr = (SubContributionItem)data;
-					contr.update();
-				} else {
-					item.setEnabled(false);
+		else {
+			// Disabled the tool items that are already enabled.
+			ToolBar toolbar = getToolBar();
+			if (toolbar == null)
+				return;
+			grayedOutItems = new ArrayList(20);
+			ToolItem[] toolItems = toolbar.getItems();
+			for (int i = 0; i < toolItems.length; i++) {
+				ToolItem item = toolItems[i];
+				if (item.getData() instanceof SubContributionItem) {
+					// This is an item contributed by a sub tool manager
+					if (!(item.getData() instanceof ActionSetContributionItem)) {
+						// But not from the action set sub tool manager
+						if (item.getEnabled()) {
+							// Was enabled at the time
+							grayedOutItems.add(item);
+							item.setEnabled(false);
+						}
+					}
 				}
 			}
 		}

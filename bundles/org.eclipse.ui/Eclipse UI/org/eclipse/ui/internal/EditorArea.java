@@ -141,15 +141,6 @@ protected boolean isActiveWorkbook(EditorWorkbook workbook) {
 	return activeEditorWorkbook == workbook;
 }
 /**
- * Find the sashs around the specified part.
- */
-public void findSashes(LayoutPart pane,PartPane.Sashes sashes) {
-	//Find the sashes around the current editor and
-	//then the sashes around the editor area.
-	super.findSashes(pane,sashes);
-	getRootContainer().findSashes(this,sashes);
-}
-/**
  * Remove all the editors
  */
 public void removeAllEditors() {
@@ -271,8 +262,6 @@ public void setActiveWorkbook(EditorWorkbook newWorkbook, boolean hasFocus) {
 
 	if (newWorkbook != null)
 		newWorkbook.tabFocusShow(hasFocus);
-		
-	updateTabList();
 }
 /**
  * Set the editor workbook which is active.
@@ -284,23 +273,4 @@ public void setActiveWorkbookFromID(String id) {
 			setActiveWorkbook(workbook, false);
 	}
 }
-
-/**
- * Updates the editor area's tab list to include the active
- * editor and its tab.
- */
-public void updateTabList() {
-	Composite parent = getParent();
-	if (parent != null) {  // parent may be null on startup
-		EditorWorkbook wb = getActiveWorkbook();
-		if (wb == null) {
-			parent.setTabList(new Control[0]);
-		}
-		else {
-			parent.setTabList(wb.getTabList());
-		}
-	}
-}
-
-
 }

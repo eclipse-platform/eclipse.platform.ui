@@ -43,10 +43,7 @@ public FileEditorMapping(String name, String extension) {
 		setName("*");//$NON-NLS-1$
 	else
 		setName(name);
-	if (extension == null)
-		setExtension("");//$NON-NLS-1$
-	else
-		setExtension(extension);
+	setExtension(extension);
 }
 /**
  * Add the given editor to the list of editors registered.
@@ -104,7 +101,7 @@ public ImageDescriptor getImageDescriptor() {
  * Method declared on IFileEditorMapping.
  */
 public String getLabel() { 
-	return name + (extension.length() == 0 ? "" : "." + extension);//$NON-NLS-1$ //$NON-NLS-2$
+	return name + "." + extension;//$NON-NLS-1$
 }
 /* (non-Javadoc)
  * Method declared on IFileEditorMapping.

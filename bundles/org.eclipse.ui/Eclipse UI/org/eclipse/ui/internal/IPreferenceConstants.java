@@ -29,21 +29,5 @@ public interface IPreferenceConstants {
 
 	//Do we show tabs up or down for editors
 	public static final String EDITOR_TAB_POSITION = "EDITOR_TAB_POSITION"; //$NON-NLS-1$
-	
-	// (int) If > 0, an editor will be reused once 'N' editors are opened.
-	public static final String REUSE_EDITORS = "REUSE_OPEN_EDITORS"; //$NON-NLS-1$
 
-	// (boolean) If true a perspective with an input will be reused
-	// if the user opens a new perspective on the same input
-	public static final String REUSE_PERSPECTIVES = "REUSE_PERSPECTIVES"; //$NON-NLS-1$
-
-	// (integer) Mode for opening a view.
-	public static final String OPEN_VIEW_MODE = "OPEN_VIEW_MODE"; //$NON-NLS-1$
-	public static final int OVM_EMBED = 0;
-	public static final int OVM_FAST = 1;
-	public static final int OVM_FLOAT = 2;
-	
-	// (boolean) Do we use MRU for perspective list?
-	public static final String OPEN_PERSPECTIVE_MRU = "OPEN_PERSPECTIVE_MRU"; //$NON-NLS-1$
-	
 }

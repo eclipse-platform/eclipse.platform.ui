@@ -11,8 +11,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * This interface has been replaced by <code>IPageBookViewPage</code>
- * but is preserved for backward compatibility.
+ * Interface for a page in a pagebook view.
  * <p>
  * This class is not intended to be directly implemented by clients; clients
  * should instead subclass <code>Page</code>.

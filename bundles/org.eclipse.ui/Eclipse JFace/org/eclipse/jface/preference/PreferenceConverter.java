@@ -47,29 +47,16 @@ public class PreferenceConverter {
 	 * (black, <code>RGB(0,0,0)</code>).
 	 */
 	public static final RGB COLOR_DEFAULT_DEFAULT= new RGB(0, 0, 0);
-	
-	/**
-	 * The default-default value for <code>FontData</code> preferences.
-	 */
-	public static final FontData[] FONTDATA_ARRAY_DEFAULT_DEFAULT;
-	static {
-		Shell shell= new Shell();
-		FONTDATA_ARRAY_DEFAULT_DEFAULT = shell.getFont().getFontData();
-		shell.dispose();
-	}
-	
-	private static final String ENTRY_SEPARATOR = ";";
 
 	/**
 	 * The default-default value for <code>FontData</code> preferences.
-	 * This is left in for compatibility purposes. It is recommended that
-	 * FONTDATA_ARRAY_DEFAULT_DEFAULT is actually used. 
 	 */
 	public static final FontData FONTDATA_DEFAULT_DEFAULT;
 	static {
-		FONTDATA_DEFAULT_DEFAULT= FONTDATA_ARRAY_DEFAULT_DEFAULT[0];
+		Shell shell= new Shell();
+		FONTDATA_DEFAULT_DEFAULT= shell.getFont().getFontData()[0];
+		shell.dispose();
 	}
-	
 /* (non-Javadoc)
  * private constructor to prevent instantiation.
  */
@@ -90,27 +77,16 @@ private static RGB basicGetColor(String value) {
 }
 /**
  * Helper method to construct a <code>FontData</code> from the given string.
- * String is in the form FontData;FontData; in order that
- * multiple FontDatas can be defined.
  */
-private static FontData[] basicGetFontData(String value) {
+private static FontData basicGetFontData(String value) {
 	if (value == IPreferenceStore.STRING_DEFAULT_DEFAULT)
-		return FONTDATA_ARRAY_DEFAULT_DEFAULT;
+		return FONTDATA_DEFAULT_DEFAULT;
 
-	//Read in all of them to get the value
-	StringTokenizer tokenizer = 
-		new StringTokenizer(value,ENTRY_SEPARATOR);
-	int numTokens = tokenizer.countTokens();
-	FontData[] fontData = new FontData[numTokens];
-	
-	for(int i = 0; i < numTokens; i ++){
-		try{
-			fontData[i] = new FontData(tokenizer.nextToken());
-		} catch (SWTException error) {
-			return FONTDATA_ARRAY_DEFAULT_DEFAULT;
-		} catch (IllegalArgumentException error) {
-			return FONTDATA_ARRAY_DEFAULT_DEFAULT;
-		}
+	FontData fontData = FONTDATA_DEFAULT_DEFAULT;
+	try {
+		fontData = new FontData(value);
+	} catch (SWTException error) {
+	} catch (IllegalArgumentException error) {
 	}
 	return fontData;
 }
@@ -168,38 +144,19 @@ public static RGB getColor(IPreferenceStore store, String name) {
 public static RGB getDefaultColor(IPreferenceStore store, String name) {
 	return basicGetColor(store.getDefaultString(name));
 }
-
 /**
- * Returns the default value array for the font-valued preference
- * with the given name in the given preference store.
- * Returns the default-default value (<code>FONTDATA_ARRAY_DEFAULT_DEFAULT</code>) 
- * is no default preference with the given name, or if the default 
- * value cannot be treated as font data.
- *
- * @param store the preference store
- * @param name the name of the preference
- * @return the default value of the preference
- */
-public static FontData[] getDefaultFontDataArray(IPreferenceStore store, String name) {
-	return basicGetFontData(store.getDefaultString(name));
-}
-
-/**
- * Returns a single default value for the font-valued preference
+ * Returns the default value for the font-valued preference
  * with the given name in the given preference store.
  * Returns the default-default value (<code>FONTDATA_DEFAULT_DEFAULT</code>) 
  * is no default preference with the given name, or if the default 
  * value cannot be treated as font data.
- * This method is provided for backwards compatibility. It is
- * recommended that <code>getDefaultFontDataArray</code> is
- * used instead.
  *
  * @param store the preference store
  * @param name the name of the preference
  * @return the default value of the preference
  */
 public static FontData getDefaultFontData(IPreferenceStore store, String name) {
-	return getDefaultFontDataArray(store,name)[0];
+	return basicGetFontData(store.getDefaultString(name));
 }
 /**
  * Returns the default value for the point-valued preference
@@ -232,36 +189,17 @@ public static Rectangle getDefaultRectangle(IPreferenceStore store, String name)
 /**
  * Returns the current value of the font-valued preference with the
  * given name in the given preference store.
- * Returns the default-default value (<code>FONTDATA_ARRAY_DEFAULT_DEFAULT</code>) 
+ * Returns the default-default value (<code>FONTDATA_DEFAULT_DEFAULT</code>) 
  * if there is no preference with the given name, or if the current value 
  * cannot be treated as font data.
- *
- * @param store the preference store
- * @param name the name of the preference
- * @return the font-valued preference
- */
-public static FontData[] getFontDataArray(IPreferenceStore store, String name) {
-	return basicGetFontData(store.getString(name));
-}
-
-/**
- * Returns the current value of the first entry of the
- * font-valued preference with the
- * given name in the given preference store.
- * Returns the default-default value (<code>FONTDATA_ARRAY_DEFAULT_DEFAULT</code>) 
- * if there is no preference with the given name, or if the current value 
- * cannot be treated as font data.
- * This API is provided for backwards compatibility. It is
- * recommended that <code>getFontDataArray</code> is used instead.
  *
  * @param store the preference store
  * @param name the name of the preference
  * @return the font-valued preference
  */
 public static FontData getFontData(IPreferenceStore store, String name) {
-	return getFontDataArray(store,name)[0];
+	return basicGetFontData(store.getString(name));
 }
-
 /**
  * Returns the current value of the point-valued preference with the
  * given name in the given preference store.
@@ -292,33 +230,15 @@ public static Rectangle getRectangle(IPreferenceStore store, String name) {
 }
 /**
  * Sets the default value of the preference with the given name
- * in the given preference store. As FontDatas are stored as 
- * arrays this method is only provided for backwards compatibility.
- * Use <code>setDefault(IPreferenceStore, String, FontData[])</code>
- * instead.
- *
- * @param store the preference store
- * @param name the name of the preference
- * @param value the new default value of the preference
- */
-public static void setDefault(IPreferenceStore store, String name, FontData value) {
-	FontData[] fontDatas = new FontData[1];
-	fontDatas[0] = value;
-	setDefault(store,name, fontDatas);
-}
-
-/**
- * Sets the default value of the preference with the given name
  * in the given preference store.
  *
  * @param store the preference store
  * @param name the name of the preference
- * @param value the new default value of the preference
+ * @param value the new defaul value of the preference
  */
-public static void setDefault(IPreferenceStore store, String name, FontData[] value) {
-	store.setDefault(name, getStoredRepresentation(value));
+public static void setDefault(IPreferenceStore store, String name, FontData value) {
+	store.setDefault(name, value.toString());
 }
-
 /**
  * Sets the default value of the preference with the given name
  * in the given preference store.
@@ -352,23 +272,6 @@ public static void setDefault(IPreferenceStore store, String name, Rectangle val
 public static void setDefault(IPreferenceStore store, String name, RGB value) {
 	store.setDefault(name, StringConverter.asString(value));
 }
-
-/**
- * Sets the current value of the preference with the given name
- * in the given preference store. Included for backwards compatibility -
- * use <code>setValue(IPreferenceStore,String,FontData[])</code> instead.
- *
- * @param store the preference store
- * @param name the name of the preference
- * @param value the new current value of the preference
- */
-public static void setValue(IPreferenceStore store, String name, FontData value) {
-	FontData[] data = new FontData[1];
-	data[0] = value;
-	setValue(store,name,data);
-}
-
-
 /**
  * Sets the current value of the preference with the given name
  * in the given preference store.
@@ -377,59 +280,19 @@ public static void setValue(IPreferenceStore store, String name, FontData value)
  * @param name the name of the preference
  * @param value the new current value of the preference
  */
-public static void setValue(IPreferenceStore store, String name, FontData[] value) {
-	FontData[] oldValue = getFontDataArray(store, name);
-	if(hasFontDataChanged(oldValue,value)){
-		store.putValue(name, getStoredRepresentation(value));
-		JFaceResources.getFontRegistry().put(name,value);
+public static void setValue(IPreferenceStore store, String name, FontData value) {
+	FontData oldValue= getFontData(store, name);
+	if (oldValue == null || !(oldValue.getName().equals(value.getName()) &&
+		                      oldValue.getHeight() == value.getHeight() &&
+		                      oldValue.getStyle() == value.getStyle())) {
+		store.putValue(name, value.toString());
+		
+		FontData[] registryValue = new FontData[1];
+		registryValue[0] = value;
+		JFaceResources.getFontRegistry().put(name,registryValue);
 		store.firePropertyChangeEvent(name, oldValue, value);
 	}
 }
-
-/**
- * Check of the old value and the new value are the same
- * semantically. Return false if they are semantically the
- * same.
- */
-private static boolean hasFontDataChanged(FontData[] oldData,FontData[] newData){
-	if(oldData == null)
-		return true;
-		
-	if(oldData.length != newData.length)
-		return true;
-	for(int i = 0 ; i < oldData.length; i ++){
-		FontData oldValue = oldData[i];
-		FontData newValue = newData[i];
-		if (oldValue.getName()!= newValue.getName()) 
-			return true;
-		if (oldValue.getHeight() != newValue.getHeight())
-			return true;
-		if (oldValue.getStyle() != newValue.getStyle())
-			return true;
-	}
-	//Nothing has changed
-	return false;
-}               	
-
-/**
- * Return the stored representation of the FontData array.
- * FontDatas are stored in the form FontData;FontData;
- * Only include the non-null entries,
- * @return String - the String that will be stored
- * @param FontData[] - the FontDatas
- */
-
-private static String getStoredRepresentation(FontData[] fontData){
-	StringBuffer buffer = new StringBuffer();
-	for(int i = 0; i < fontData.length; i++){
-		if(fontData[i] != null){
-			buffer.append(fontData[i].toString());
-			buffer.append(ENTRY_SEPARATOR);
-		}
-	}
-	return buffer.toString();
-}
-	
 /**
  * Sets the current value of the preference with the given name
  * in the given preference store.

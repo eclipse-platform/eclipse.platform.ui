@@ -301,7 +301,6 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 	store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
 	store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
 	store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
-	store.setDefault(IPreferenceConstants.REUSE_EDITORS, 10);
 	store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
 	store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
 	store.setDefault(
@@ -316,10 +315,6 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 	store.setDefault(
 		IWorkbenchPreferenceConstants.PROJECT_OPEN_NEW_PERSPECTIVE,
 		IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_PAGE);
-	store.setDefault(IPreferenceConstants.REUSE_PERSPECTIVES, false);
-	store.setDefault(IPreferenceConstants.OPEN_PERSPECTIVE_MRU, false);
-	store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, 
-		IPreferenceConstants.OVM_EMBED);
 		
 	FontRegistry registry = JFaceResources.getFontRegistry();
 	initializeFont(JFaceResources.DIALOG_FONT,  registry, store);
@@ -337,7 +332,7 @@ private void initializeFont(
 	PreferenceConverter.setDefault(
 		store,
 		fontKey,
-		fontData);
+		fontData[0]);
 }
 /**
  * Log the given status to the ISV log.

@@ -26,12 +26,6 @@ protected void childAdded(LayoutPart child) {
 	// do nothing
 }
 /**
- * Gets root container for this part.
- */
-public RootLayoutContainer getRootContainer() {
-	return this;
-}
-/**
  * Notification that a child layout part has been
  * removed from the container. Subclasses may override
  * this method to perform any container specific

@@ -6,7 +6,6 @@ package org.eclipse.ui.views.navigator;
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.ui.actions.CopyResourceAction;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
@@ -61,37 +60,47 @@ public NavigatorDropAdapter(StructuredViewer viewer) {
  * already exists at the destination will be deleted before the
  * copy/move occurs.
  */
-protected IStatus doCopy(IProgressMonitor monitor, final IResource source, final IPath destination, final boolean overwrite) {
+protected IStatus doCopy(final IResource source, final IPath destination, final boolean overwrite) {
 	final boolean copy = getCurrentOperation() == DND.DROP_COPY;
+	final IStatus[] result = new IStatus[] { ok()};
 	try {
-		if (overwrite) {
-			//delete the destination
-			IResource oldResource = source.getWorkspace().getRoot().findMember(destination);
-			if (oldResource.exists()) {
-				oldResource.delete(true, null);
+		new ProgressMonitorDialog(getShell()).run(true, true, new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) {
+				try {
+					if (overwrite) {
+						//delete the destination
+						IResource oldResource = source.getWorkspace().getRoot().findMember(destination);
+						if (oldResource.exists()) {
+							oldResource.delete(true, null);
+						}
+					}
+					if (copy) {
+						IPath newName = destination;
+						if (source.getWorkspace().getRoot().exists(destination))
+							newName = CopyResourceAction.getNewNameFor(destination, source.getWorkspace());
+						if (newName != null) {
+							source.copy(newName, false, monitor);
+						}
+					}
+					else {
+						source.move(destination, false, monitor);
+					}
+				} catch (CoreException e) {
+					result[0] = e.getStatus();
+				}
 			}
-		}
-		if (copy) {
-			IPath newName = destination;
-			if (source.getWorkspace().getRoot().exists(destination))
-				newName = CopyResourceAction.getNewNameFor(destination, source.getWorkspace());
-			if (newName != null) {
-				source.copy(newName, false, monitor);
-			}
-		} else {
-			source.move(destination, false, monitor);
-		}
-	} catch (CoreException e) {
-		return e.getStatus();
+		});
+	} catch (InvocationTargetException e) {
+		//implementation doesn't throw this
+	} catch (InterruptedException e) {
 	}
-	return ok();
+	return result[0];
 }
-
 /**
  * Copies the source into the target container.  Returns a status object
  * indicating success or failure.
  */
-protected IStatus dragAndDropCopy(IProgressMonitor monitor,IContainer target, IResource source) {
+protected IStatus dragAndDropCopy(IContainer target, IResource source) {
 	if (isCanceled) {
 		return ok();
 	}
@@ -103,14 +112,14 @@ protected IStatus dragAndDropCopy(IProgressMonitor monitor,IContainer target, IR
 	}
 	IPath destination = target.getFullPath().append(source.getName());
 
-	IStatus result = doCopy(monitor,source, destination, false);
+	IStatus result = doCopy(source, destination, false);
 	if (result.getCode() == IResourceStatus.PATH_OCCUPIED) {
 		if (alwaysOverwrite) {
-			return doCopy(monitor,source, destination, true);
+			return doCopy(source, destination, true);
 		}
 		String query = queryOverwrite(destination.toString());
 		if (query == YES) {
-		   return doCopy(monitor,source, destination, true);
+		   return doCopy(source, destination, true);
 		}
 		if (query == CANCEL) {
 			isCanceled = true;
@@ -118,7 +127,7 @@ protected IStatus dragAndDropCopy(IProgressMonitor monitor,IContainer target, IR
 		}
 		if (query == ALL) {
 			alwaysOverwrite = true;
-			return doCopy(monitor,source, destination, true);
+			return doCopy(source, destination, true);
 		}
 		if (query == NO) {
 			return ok();
@@ -130,7 +139,7 @@ protected IStatus dragAndDropCopy(IProgressMonitor monitor,IContainer target, IR
  * Performs an import of the given file into the provided
  * container.  Returns a status indicating if the import was successful.
  */
-protected IStatus dragAndDropImport(IProgressMonitor monitor,IContainer target, String filePath) {
+protected IStatus dragAndDropImport(IContainer target, String filePath) {
 	File toImport = new File(filePath);
 	if (target.getLocation().equals(toImport)) {
 		return info(ResourceNavigatorMessages.getString("DropAdapter.canNotDropOntoSelf")); //$NON-NLS-1$
@@ -138,8 +147,9 @@ protected IStatus dragAndDropImport(IProgressMonitor monitor,IContainer target, 
 	ImportOperation op = 
 		new ImportOperation(target.getFullPath(), new File(toImport.getParent()), FileSystemStructureProvider.INSTANCE, this, Arrays.asList(new File[] {toImport})); 
 	op.setCreateContainerStructure(false);
+	int result = 0;
 	try {
-		op.run(monitor);
+		new ProgressMonitorDialog(getShell()).run(true, true, op);
 	} catch (InterruptedException e) {
 		return info(ResourceNavigatorMessages.getString("DropAdapter.cancelled")); //$NON-NLS-1$
 	} catch (InvocationTargetException e) {
@@ -274,9 +284,6 @@ protected IStatus ok() {
  * complex rules necessary for making the error dialog look nice.
  */
 protected void openError(IStatus status) {
-	if(status == null)
-		return;
-		
 	String genericTitle = ResourceNavigatorMessages.getString("DropAdapter.title"); //$NON-NLS-1$
 	int codes = IStatus.ERROR | IStatus.WARNING;
 	
@@ -301,86 +308,57 @@ protected void openError(IStatus status) {
  * This default implementation prints the name of this class and its label.
  * @see IAction#run
  */
-public boolean performDrop(final Object data) {
+public boolean performDrop(Object data) {
 	isCanceled = false;
 	alwaysOverwrite = false;
 	if (getCurrentTarget() == null || data == null) {
 		return false;
 	}
-	final boolean result[] = new boolean[1];
-	final IStatus status[] = new IStatus[1];
-	ProgressMonitorDialog dlg = new ProgressMonitorDialog(getShell());
-	try {
-		dlg.run(true,true,new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
-				try {
-					ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-						public void run(IProgressMonitor monitor) {
-							TransferData currentTransfer = getCurrentTransfer();
-							if (ResourceTransfer.getInstance().isSupportedType(currentTransfer)) {
-								status[0] = performResourceDrop(monitor,data);
-								//always return false because we don't want the source to clean up
-								result[0] = false;
-							} else if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
-								status[0] = performFileDrop(monitor,data);
-								result[0] = status[0].isOK();
-							} else {
-								result[0] = NavigatorDropAdapter.super.performDrop(data);
-							}
-						}
-					}, monitor);
-				} catch (CoreException e) {
-					status[0] = e.getStatus();
-					result[0] = false;
-				}
-			}
-		});
-	} catch (InterruptedException e) {
-		openError(info(ResourceNavigatorMessages.getString("DropAdapter.cancelled"))); //$NON-NLS-1$
-		return false; //$NON-NLS-1$
-	} catch (InvocationTargetException e) {
-		openError(error(ResourceNavigatorMessages.format("DropAdapter.dropOperationError", new Object[] {e.getTargetException().getMessage()}), e.getTargetException()));  //$NON-NLS-1$
-		return false;
+	TransferData currentTransfer = getCurrentTransfer();
+	if (ResourceTransfer.getInstance().isSupportedType(currentTransfer)) {
+		return performResourceDrop(data);
 	}
-	openError(status[0]);
-	return result[0];				
-
+	if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
+		return performFileDrop(data);
+	}
+	return super.performDrop(data);
 }
 /**
  * Performs a drop using the FileTransfer transfer type.
  */
-protected IStatus performFileDrop(IProgressMonitor monitor,Object data) {
+protected boolean performFileDrop(Object data) {
 	MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 0, ResourceNavigatorMessages.getString("DropAdapter.problemImporting"), null); //$NON-NLS-1$
 	mergeStatus(problems, validateTarget(getCurrentTarget()));
 
 	IContainer targetResource = getActualTarget((IResource)getCurrentTarget());
 	String[] names = (String[]) data;
 	for (int i = 0; i < names.length; i++) {
-		mergeStatus(problems, dragAndDropImport(monitor,targetResource, names[i]));
+		mergeStatus(problems, dragAndDropImport(targetResource, names[i]));
 	}
-	return problems;
+	openError(problems);
+	return problems.isOK();
 }
 /**
  * Performs a drop using the ResourceTransfer transfer type.
  */
-protected IStatus performResourceDrop(IProgressMonitor monitor,Object data) {
+protected boolean performResourceDrop(Object data) {
 	MultiStatus problems = new MultiStatus(PlatformUI.PLUGIN_ID, 1, ResourceNavigatorMessages.getString("DropAdapter.problemsMoving"), null); //$NON-NLS-1$
 	mergeStatus(problems, validateTarget(getCurrentTarget()));
 
 	IContainer targetResource = getActualTarget((IResource)getCurrentTarget());
 	IResource[] sources = (IResource[]) data;
 	for (int i = 0; i < sources.length; i++) {
-		mergeStatus(problems, dragAndDropCopy(monitor,targetResource, sources[i]));
+		mergeStatus(problems, dragAndDropCopy(targetResource, sources[i]));
 	}
-	return problems;
+	openError(problems);
+
+	//always return false because we don't want the source to clean up
+	return false;
 }
 /* (non-Javadoc)
  * Method declared on IOverWriteQuery
  */
 public String queryOverwrite(String pathString) {
-	if (alwaysOverwrite)
-		return ALL;
-		
 	final String returnCode[] = {CANCEL};
 	final String msg = ResourceNavigatorMessages.format("DropAdapter.overwriteQuery", new Object[] {pathString}); //$NON-NLS-1$
 	final String[] options = {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL};
@@ -393,8 +371,6 @@ public String queryOverwrite(String pathString) {
 			returnCode[0] = returnVal < 0 ? CANCEL : returnCodes[returnVal];
 		}
 	});
-	if(returnCode[0] == ALL)
-		alwaysOverwrite = true;
 	return returnCode[0];
 }
 /**

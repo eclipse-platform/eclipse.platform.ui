@@ -14,8 +14,8 @@ package org.eclipse.ui;
  * Only one instance of a particular view type may exist within a workbench page.  
  * This policy is designed to simplify part management for a user.  
  * </p><p>
- * This interface may be implemented directly.  For convenience, a base
- * implementation is defined in <code>ViewPart</code>.
+ * This interface is not intended to be directly implemented by clients;
+ * subclass <code>ViewPart</code> instead.
  * </p>
  * <p>
  * A view is added to the workbench in two steps:

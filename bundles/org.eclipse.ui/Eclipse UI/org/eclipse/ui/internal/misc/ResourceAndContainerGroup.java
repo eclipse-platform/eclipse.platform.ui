@@ -36,9 +36,6 @@ public class ResourceAndContainerGroup implements Listener {
 
 	// resource type (file, folder, project)
 	private String resourceType = WorkbenchMessages.getString("ResourceGroup.resource"); //$NON-NLS-1$
-
-	// show closed projects in the tree, by default
-	private boolean showClosedProjects = true;
 	
 	// problem indicator
 	private String problemMessage = "";//$NON-NLS-1$
@@ -62,23 +59,8 @@ public class ResourceAndContainerGroup implements Listener {
  * @param resourceType one word, in lowercase, to describe the resource to the user (file, folder, project)
  */
 public ResourceAndContainerGroup(Composite parent, Listener client, String resourceFieldLabel, String resourceType) {
-	this(parent, client, resourceFieldLabel, resourceType, true);
-}
-/**
- * Create an instance of the group to allow the user
- * to enter/select a container and specify a resource
- * name.
- *
- * @param parent composite widget to parent the group
- * @param client object interested in changes to the group's fields value
- * @param resourceFieldLabel label to use in front of the resource name field
- * @param resourceType one word, in lowercase, to describe the resource to the user (file, folder, project)
- * @param showClosedProjects whether or not to show closed projects
- */
-public ResourceAndContainerGroup(Composite parent, Listener client, String resourceFieldLabel, String resourceType, boolean showClosedProjects) {
 	super();
 	this.resourceType = resourceType;
-	this.showClosedProjects = showClosedProjects;
 	createContents(parent,resourceFieldLabel);
 	this.client = client;
 }
@@ -106,8 +88,8 @@ protected void createContents(Composite parent,String resourceLabelString) {
 	composite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
 
 	// container group
-	containerGroup = new ContainerSelectionGroup(composite, this, true, null,showClosedProjects);
-	
+	containerGroup = new ContainerSelectionGroup(composite, this, true);
+
 	// resource name group
 	Composite nameGroup = new Composite(composite,SWT.NONE);
 	layout = new GridLayout();
@@ -123,7 +105,7 @@ protected void createContents(Composite parent,String resourceLabelString) {
 
 	// resource name entry field
 	resourceNameField = new Text(nameGroup,SWT.BORDER);
-	resourceNameField.addListener(SWT.Modify,this);
+	resourceNameField.addListener(SWT.KeyDown,this);
 	data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 	data.widthHint = SIZING_TEXT_FIELD_WIDTH;
 	resourceNameField.setLayoutData(data);

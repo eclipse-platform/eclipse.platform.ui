@@ -7,7 +7,6 @@ package org.eclipse.jface.text.rules;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.util.Assert;
 
 /**
  * A generic scanner which can be "programmed" with a sequence of rules.
@@ -24,7 +23,6 @@ import org.eclipse.jface.util.Assert;
 public class RuleBasedScanner implements ICharacterScanner {
 	
 	protected IRule[] fRules;
-	protected IToken fDefaultReturnToken;
 	
 	protected IDocument fDocument;
 	protected char[][] fDelimiters;
@@ -51,18 +49,6 @@ public class RuleBasedScanner implements ICharacterScanner {
 	public void setRules(IRule[] rules) {
 		fRules= rules;
 	}
-	
-	/**
-	 * Configures the scanner's default return token. This is the token
-	 * which is returned when non of the rules fired and EOF has not been
-	 * reached.
-	 * 
-	 * @param token the default return token
-	 */
-	public void setDefaultReturnToken(IToken defaultReturnToken) {
-		Assert.isNotNull(defaultReturnToken.getData());
-		fDefaultReturnToken= defaultReturnToken;
-	}
 		
 	/**
 	 * Configures the scanner by providing access to the document range over which to scan.
@@ -81,9 +67,6 @@ public class RuleBasedScanner implements ICharacterScanner {
 		fDelimiters= new char[delimiters.length][];
 		for (int i= 0; i < delimiters.length; i++)
 			fDelimiters[i]= delimiters[i].toCharArray();
-			
-		if (fDefaultReturnToken == null)
-			fDefaultReturnToken= new Token(null);
 	}
 	
 	/**
@@ -136,16 +119,6 @@ public class RuleBasedScanner implements ICharacterScanner {
 	}
 	
 	/**
-	 * Returns the scanner's default return token
-	 * @see #setDefaultReturnToken(IToken)
-	 * 
-	 * @return the scanner's default return token
-	 */
-	public IToken getDefaultReturnToken() {
-		return fDefaultReturnToken;
-	}
-	
-	/**
 	 * Returns the next token in the document.
 	 *
 	 * @return the next token in the document
@@ -159,18 +132,15 @@ public class RuleBasedScanner implements ICharacterScanner {
 			fTokenOffset= fOffset;
 			fColumn= UNDEFINED;
 			
-			if (fRules != null) {
-				for (int i= 0; i < fRules.length; i++) {
-					token= (fRules[i].evaluate(this));
-					if (!token.isUndefined())
-						return token;
-				}
+			for (int i= 0; i < fRules.length; i++) {
+				token= (fRules[i].evaluate(this));
+				if (!token.isUndefined())
+					return token;
 			}
-			
 			if (read() == EOF)
 				return Token.EOF;
 			else
-				return fDefaultReturnToken;
+				return Token.OTHER;
 		}
 	}
 	

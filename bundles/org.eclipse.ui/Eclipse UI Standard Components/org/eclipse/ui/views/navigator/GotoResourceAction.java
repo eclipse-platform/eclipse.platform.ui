@@ -18,9 +18,8 @@ import java.util.*;
 public class GotoResourceAction extends ResourceNavigatorAction {
 /**
  * Creates a new instance of the class.
- * @since 2.0
  */
-public GotoResourceAction(IResourceNavigatorPart navigator, String label) {
+/*package */ GotoResourceAction(ResourceNavigator navigator, String label) {
 	super(navigator, label);
 	WorkbenchHelp.setHelp(this, new Object[] {INavigatorHelpContextIds.GOTO_RESOURCE_ACTION});
 }
@@ -28,15 +27,14 @@ public GotoResourceAction(IResourceNavigatorPart navigator, String label) {
  * Collect all resources in the workbench and add them to the <code>resources</code>
  * list.
  */
-private void collectAllResources(IContainer container,ArrayList resources,ResourcePatternFilter filter) {
+private void collectAllResources(IContainer container,ArrayList resources) {
 	try {
 		IResource members[] = container.members();
 		for (int i = 0; i < members.length; i++){
 			IResource r = members[i];
-			if(filter.select(getNavigator().getResourceViewer(),null,r))
-				resources.add(r);
+			resources.add(r);
 			if(r.getType() != IResource.FILE)
-				collectAllResources((IContainer)r,resources,filter);
+				collectAllResources((IContainer)r,resources);
 		}
 	} catch (CoreException e) {
 	}
@@ -49,7 +47,7 @@ private void collectAllResources(IContainer container,ArrayList resources,Resour
 public void run() {
 	IContainer cont = (IContainer)getResourceViewer().getInput();
 	ArrayList resources = new ArrayList();
-	collectAllResources(cont,resources,getNavigator().getPatternFilter());
+	collectAllResources(cont,resources);
 	IResource resourcesArray[] = new IResource[resources.size()];
 	resources.toArray(resourcesArray);
 	GotoResourceDialog dialog = new GotoResourceDialog(getShell(),resourcesArray);

@@ -268,7 +268,7 @@ private Hashtable readConfigurationPreferences() {
 		String e= (String) i.nextElement();
 		//System.out.println(e);
 		int index = e.indexOf("/");//$NON-NLS-1$
-		if (index == -1) {
+		if (index == 0) {
 			// corrupt entry: log error and answer null
 			return null;
 		}

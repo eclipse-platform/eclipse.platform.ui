@@ -35,8 +35,6 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 	private Table editorTable;
 	private Button browseExternalEditorsButton;
 	private Button internalButton;
-	private Button okButton;
-	private Button cancelButton;
 	private static final String EditorSelectionDialog = "FileSystemExportPage1.CreateDirectoriesForSelectedContainers";//$NON-NLS-1$
 	private static final String STORE_ID_INTERNAL_EXTERNAL = "EditorSelectionDialog.STORE_ID_INTERNAL_EXTERNAL";//$NON-NLS-1$
 	private String message = WorkbenchMessages.getString("EditorSelection.chooseAnEditor"); //$NON-NLS-1$
@@ -45,9 +43,7 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 	private IEditorDescriptor[] internalEditors;
 	private Image[] externalEditorImages;
 	private Image[] internalEditorImages;
-	private IEditorDescriptor[] editorsToFilter;
 	private static final String Executable_Filter;
-	private static final int TABLE_WIDTH = 200;
 	static {
 		if(SWT.getPlatform().equals("win32")) {//$NON-NLS-1$
 			Executable_Filter = "*.exe";//$NON-NLS-1$
@@ -58,7 +54,14 @@ public class EditorSelectionDialog extends Dialog implements Listener {
 public EditorSelectionDialog(Shell parentShell) {
 	super(parentShell);
 }
-
+	/**
+	 * Called just before Shell becomes visible.
+	 * It is ok to access SWT widgets because aboutToShow is always called from
+	 * within UI thread.
+	 */
+	protected void aboutToShow() {
+		updateEnableState();
+	}
 /**
  * This method is called if a button has been pressed.
  */
@@ -134,9 +137,7 @@ protected Control createDialogArea(Composite parent) {
 	editorTable = new Table(contents, SWT.SINGLE | SWT.BORDER);
 	editorTable.addListener(SWT.Selection, this);
 	editorTable.addListener(SWT.DefaultSelection, this);
-	editorTable.addListener(SWT.MouseDoubleClick, this);
 	data = new GridData();
-	data.widthHint = convertHorizontalDLUsToPixels(TABLE_WIDTH);
 	data.horizontalAlignment= data.FILL;
 	data.grabExcessHorizontalSpace= true;
 	data.verticalAlignment= data.FILL;
@@ -216,7 +217,6 @@ protected IEditorDescriptor[] getExternalEditors() {
 		// Get the external editors available
 		EditorRegistry reg = (EditorRegistry)WorkbenchPlugin.getDefault().getEditorRegistry();
 		externalEditors = reg.getSortedEditorsFromOS();
-		externalEditors = filterEditors(externalEditors);
 		externalEditorImages = getImages(externalEditors);
 		// Clean up
 		shell.setCursor(null);
@@ -224,35 +224,6 @@ protected IEditorDescriptor[] getExternalEditors() {
 	}
 	return externalEditors;
 }
-/**
- * Returns an array of editors which have been filtered according to 
- * the array of editors in the editorsToFilter instance variable.
- * 
- * @param editorsToFilter an array of editors to filter 
- * @return a filtered array of editors
- */
-protected IEditorDescriptor[] filterEditors(IEditorDescriptor[] editors){
-	if ((editors == null) || (editors.length < 1))
-		return editors;
-
-	if ((editorsToFilter == null) || (editorsToFilter.length < 1))
-		return editors;
-	
-	ArrayList filteredList = new ArrayList();
-	for (int i = 0; i < editors.length; i++) {
-		boolean add = true;
-		for (int j = 0; j < editorsToFilter.length; j++) {
-			if (editors[i].getId().equals(editorsToFilter[j].getId())) {
-				add = false;
-			}
-		}
-		if (add) 
-			filteredList.add(editors[i]);
-	}
-
-	return (IEditorDescriptor[]) filteredList.toArray(new IEditorDescriptor[filteredList.size()]);
-}
-
 /**
  * Returns an array of images for the given array of editors
  */
@@ -270,7 +241,6 @@ protected IEditorDescriptor[] getInternalEditors() {
 	if (internalEditors == null) {
 		EditorRegistry reg = (EditorRegistry)WorkbenchPlugin.getDefault().getEditorRegistry();
 		internalEditors = reg.getSortedEditorsFromPlugins();
-		internalEditors = filterEditors(internalEditors);
 		internalEditorImages = getImages(internalEditors);
 	}
 	return internalEditors;
@@ -282,20 +252,15 @@ public IEditorDescriptor getSelectedEditor() {
 	return selectedEditor;
 }
 public void handleEvent(Event event) {
-	if (event.type == SWT.MouseDoubleClick){
-		handleDoubleClickEvent();
-		return;
-	}
 	if (event.widget == externalButton) {
 		fillEditorTable();
 	} else if (event.widget == browseExternalEditorsButton) {
 		promptForExternalEditor();
 	} else if (event.widget == editorTable) {
-		if (editorTable.getSelectionIndex() != -1){
-			selectedEditor = (EditorDescriptor)editorTable.getSelection()[0].getData();	
+		if (editorTable.getSelectionIndex() != -1) {
+			selectedEditor = (EditorDescriptor)editorTable.getSelection()[0].getData();
 		} else {
 			selectedEditor = null;
-			okButton.setEnabled(false);
 		}
 	}
 	updateEnableState();
@@ -351,12 +316,6 @@ protected void promptForExternalEditor() {
 	}
 }
 /**
- * Handle a double click event on the list
- */
-protected void handleDoubleClickEvent() {
-	buttonPressed(IDialogConstants.OK_ID);
-}
-/**
  *  Use the dialog store to restore widget values to the values that they held
  *  last time this wizard was used to completion
  */
@@ -381,40 +340,8 @@ protected void saveWidgetValues() {
 public void setMessage(String aMessage) {
 	message = aMessage;
 }
-/**
- * Set the editors which will not appear in the dialog.
- * 
- * @param editors an array of editors
- */
-public void setEditorsToFilter(IEditorDescriptor[] editors) {
-	editorsToFilter = editors;
-}
-
 public void updateEnableState() {
 	boolean enableExternal = externalButton.getSelection();
 	browseExternalEditorsButton.setEnabled(enableExternal);
-	updateOkButton();
-}
-protected void createButtonsForButtonBar(Composite parent) {
-	okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-	cancelButton = createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-	//initially there is no selection so OK button should not be enabled
-	okButton.setEnabled(false);
-	
-}
-/**
- * Update the button enablement state.
- */
-protected void updateOkButton() {
-	// Buttons are null during dialog creation
-	if (okButton == null) 
-		return;
-	// If there is no selection, do not enable OK button
-	if (editorTable.getSelectionCount() == 0){
-		okButton.setEnabled(false);
-		return;
-	}
-	// At this point, there is a selection
-	okButton.setEnabled(selectedEditor != null);	
 }
 }

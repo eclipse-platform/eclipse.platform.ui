@@ -22,7 +22,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.texteditor.AbstractDocumentProvider;
 
@@ -70,23 +69,6 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 		}	
 	}
 	
-	/**
-	 * Intitializes the given document from the given editor input.
-	 *
-	 * @param document the document to be initialized
-	 * @param editorInput the input from which to derive the content of the document
-	 * @return <code>true</code> if the document content could be set, <code>false</code> otherwise
-	 * @exception CoreException if the given editor input cannot be accessed
-	 */
-	protected boolean setDocumentContent(IDocument document, IEditorInput editorInput) throws CoreException {
-		if (editorInput instanceof IStorageEditorInput) {
-			IStorage storage= ((IStorageEditorInput) editorInput).getStorage();
-			setDocumentContent(document, storage.getContents());
-			return true;
-		}
-		return false;
-	}
-	
 	/*
 	 * @see AbstractDocumentProvider#createAnnotationModel(Object)
 	 */
@@ -99,10 +81,12 @@ public class StorageDocumentProvider extends AbstractDocumentProvider {
 	 */
 	protected IDocument createDocument(Object element) throws CoreException {
 		
-		if (element instanceof IEditorInput) {
+		if (element instanceof IStorageEditorInput) {
+			IStorage storage= ((IStorageEditorInput) element).getStorage();
+			
 			Document document= new Document();
-			if (setDocumentContent(document, (IEditorInput) element))
-				return document;
+			setDocumentContent(document, storage.getContents());
+			return document;
 		}
 		
 		return null;

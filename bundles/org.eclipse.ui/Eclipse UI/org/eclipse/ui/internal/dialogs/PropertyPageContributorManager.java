@@ -9,7 +9,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.internal.misc.Sorter;
-import java.text.Collator;
 import java.util.*;
 
 /**
@@ -22,31 +21,11 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	private boolean contributorsLoaded=false;
 	
 	private Sorter sorter = new Sorter() {
-		private Collator collator = Collator.getInstance();
-		
 		public boolean compare(Object o1, Object o2) {
-			// Make sure the workbench info page is always at the top.
-			RegistryPageContributor c1 = (RegistryPageContributor)o1;
-			RegistryPageContributor c2 = (RegistryPageContributor)o2;
-			if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO.equals(c1.getPageId())) {
-				// c1 is the info page
-				if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO.equals(c2.getPageId())) {
-					// both are the info page so c2 is not greater
-					return false;
-				}
-				// c2 is any other page so it must be greater
-				return true;
-			}
-			if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO.equals(c2.getPageId())) {
-				// c1 is any other page so it is greater
-				return false;
-			}
-
-			// The other pages are sorted in alphabetical order			 
-			String s1 = c1.getPageName();
-			String s2 = c2.getPageName();
-			//Return true if c2 is 'greater than' c1
-			return collator.compare(s2, s1) > 0;
+			String s1 = ((RegistryPageContributor)o1).getPageName().toUpperCase();
+			String s2 = ((RegistryPageContributor)o2).getPageName().toUpperCase();
+			//Return true if elementTwo is 'greater than' elementOne
+			return s2.compareTo(s1) > 0;
 		}
 	};
 /**
@@ -73,8 +52,18 @@ public boolean contribute(PropertyPageManager manager, IAdaptable object) {
 	if (result == null || result.size() == 0)
 		return false;
 
-	// Sort the results 
+	// Sort the results in alphabetical order
 	Object[] sortedResult = sorter.sort(result.toArray());
+
+	// Make sure the workbench info page is always at the top.
+	for (int i = 0; i < sortedResult.length; i++) {
+		RegistryPageContributor ppcont = (RegistryPageContributor) sortedResult[i];
+		if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO.equals(ppcont.getPageId())) {
+			sortedResult[i] = sortedResult[0];
+			sortedResult[0] = ppcont;
+			break;
+		}
+	}
 
 	// Allow each contributor to add its page to the manager.
 	boolean actualContributions = false;

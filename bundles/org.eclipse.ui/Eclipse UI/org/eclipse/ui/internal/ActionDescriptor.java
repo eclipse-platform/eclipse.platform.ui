@@ -104,7 +104,6 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	// Create action.
 	action = createAction(targetType, actionElement, target);
 	action.setText(label);
-	action.setId(id);
 	if (tooltip != null)
 		action.setToolTipText(tooltip);
 	if (helpContextId != null) {

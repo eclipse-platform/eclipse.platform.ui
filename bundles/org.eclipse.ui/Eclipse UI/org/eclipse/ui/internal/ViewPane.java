@@ -4,17 +4,18 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.part.WorkbenchPart;
+import org.eclipse.swt.custom.*;
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.part.*;
 
 
 /**
@@ -37,126 +38,63 @@ public class ViewPane extends PartPane
 	private ToolBar isvToolBar;
 	private ToolBarManager isvToolBarMgr;
 	private MenuManager isvMenuMgr;
-	private ToolItem pullDownButton;
-	/**
-	 * Indicates whether a toolbar button is shown for the view local menu.
-	 */
-	private boolean showMenuButton = false;
+	private ToolBar systemBar;
 	
-	//Created in o.e.ui.Perspective, disposed there.
-	private Sash fastViewSash;
+	private ToolItem pullDownButton;
+	private ToolItem pinButton;
+	private ToolItem minimizeButton;
+	private ToolItem closeButton;
 	
 
 	/**
-	 * Toolbar manager for the ISV toolbar.
+	 * Tool bar manager
+	 * @private
 	 */
 	class PaneToolBarManager extends ToolBarManager {
 		public PaneToolBarManager(ToolBar paneToolBar) {
 			super(paneToolBar);
 		}
-		
 		protected void relayout(ToolBar toolBar, int oldCount, int newCount) {
-			toolBar.layout();
-			Composite parent = toolBar.getParent();
+			// remove/add the action bar from the view so to avoid
+			// having an empty action bar participating in the view's
+			// layout calculation (and maybe causing an empty bar to appear)
+			if (newCount < 1) {
+				if (control.getTopCenter() != null)
+					control.setTopCenter(null);
+			}
+			else {
+				toolBar.layout();
+				if (control.getTopCenter() == null)
+					control.setTopCenter(toolBar);
+			}
+			Composite parent= toolBar.getParent();
 			parent.layout();
 			if (parent.getParent() != null)
 				parent.getParent().layout();
-		}
-		
-		public void update(boolean force) {
-			// ensure the SystemContribution is at the end before updating
-			if (isDirty() || force) {
-				remove(systemContribution);
-				add(systemContribution);
-			}
-			super.update(force);
-		}
+		}       
 	}
 
 	/**
-	 * Menu manager for view local menu.
+	 * PaneMenuManager
 	 */
-	class PaneMenuManager extends MenuManager {
+	public class PaneMenuManager extends MenuManager {
 		public PaneMenuManager() {
 			super("View Local Menu");//$NON-NLS-1$
 		}
 		protected void update(boolean force, boolean recursive) {
-			// Changes to the menu can affect whether the toolbar has a menu button.
-			// Update it if necessary.
-			if (showMenuButton != !isEmpty()) {
-				isvToolBarMgr.update(true);
-			}
 			super.update(force, recursive);
+			if (!isEmpty())
+				createPulldownButton();
+			else
+				disposePulldownButton();
 		}
 	}
 
-	/**
-	 * Contributes system actions to toolbar.
-	 */
-	class SystemContribution extends ContributionItem {
-		public boolean isDynamic() {
-			return true;
-		}
-		
-		public void fill(ToolBar toolbar, int index) {
-			showMenuButton = (isvMenuMgr != null && !isvMenuMgr.isEmpty());
-			if (showMenuButton) {
-				pullDownButton = new ToolItem(toolbar, SWT.PUSH, index++);
-				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
-				pullDownButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
-				pullDownButton.setImage(img);
-				pullDownButton.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
-				pullDownButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						showViewMenu();
-					}
-				});
-			}
-		
-			if (isFastView()) {
-				ToolItem pinButton = new ToolItem(toolbar, SWT.PUSH, index++);
-				Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW);
-				pinButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
-				pinButton.setImage(img);
-				pinButton.setToolTipText(WorkbenchMessages.getString("ViewPane.pin")); //$NON-NLS-1$
-				pinButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						doPin();
-					}
-				});
-		
-				ToolItem minimizeButton = new ToolItem(toolbar, SWT.PUSH, index++);
-				img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW);
-				minimizeButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
-				minimizeButton.setImage(img);
-				minimizeButton.setToolTipText(WorkbenchMessages.getString("ViewPane.minimize")); //$NON-NLS-1$
-				minimizeButton.addSelectionListener(new SelectionAdapter() {
-					public void widgetSelected(SelectionEvent e) {
-						doMinimize();
-					}
-				});
-			}
-			
-			ToolItem closeButton= new ToolItem(toolbar, SWT.PUSH, index++);
-			Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
-			closeButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
-			closeButton.setImage(img);
-			closeButton.setToolTipText(WorkbenchMessages.getString("Close")); //$NON-NLS-1$
-			closeButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					doHide();
-				}
-			});
-		}
-	}
-	
-	private SystemContribution systemContribution = new SystemContribution();
-	
 /**
  * Constructs a view pane for a view part.
  */
-public ViewPane(IViewPart part, WorkbenchPage page) {
-	super(part, page);
+public ViewPane(IViewPart part, WorkbenchPage persp) {
+	super(part, persp);
 }
 /**
  * Create control. Add the title bar.
@@ -168,12 +106,12 @@ public void createControl(Composite parent) {
 		
 	super.createControl(parent);
 	
-	// Only include the ISV toolbar and the content in the tab list.
-	// All actions on the System toolbar should be accessible on the pane menu.
-	control.setTabList(new Control[] { isvToolBar, control.getContent() });
-	
 	Platform.run(new SafeRunnableAdapter() {
 		public void run() { 
+			// Update pin.
+			if (fast)
+				createFastButtons();
+
 			// Install the part's tools and menu
 			ViewActionBuilder builder = new ViewActionBuilder();
 			builder.readActionExtensions(getViewPart());
@@ -210,18 +148,59 @@ protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
 	site.setPart(newPart);
 	return newPart;
 }
-
 /**
- * See LayoutPart
+ * Create the pin button.
  */
-public boolean isDragAllowed(Point p) {
-	return !overImage(p.x) && super.isDragAllowed(p);
+private void createFastButtons() {
+	if (pinButton == null) {
+		pinButton = new ToolItem(systemBar, SWT.PUSH, systemBar.getItemCount() - 1);
+		Image img = WorkbenchImages.getImage(
+			IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW);
+		pinButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
+		pinButton.setImage(img);
+		pinButton.setToolTipText(WorkbenchMessages.getString("ViewPane.pin")); //$NON-NLS-1$
+		pinButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				doPin();
+			}
+		});
+	}
+	if (minimizeButton == null) {
+		minimizeButton = new ToolItem(systemBar, SWT.PUSH, systemBar.getItemCount() - 1);
+		Image img = WorkbenchImages.getImage(
+			IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW);
+		minimizeButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
+		minimizeButton.setImage(img);
+		minimizeButton.setToolTipText(WorkbenchMessages.getString("ViewPane.minimize")); //$NON-NLS-1$
+		minimizeButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				doMinimize();
+			}
+		});
+	}
 }
-/*
- * Return true if <code>x</code> is over the label image.
+/**
+ * Create a pulldown menu on the action bar.
  */
-private boolean overImage(int x) {
-	return x < titleLabel.getImage().getBounds().width;
+private void createPulldownButton() {
+	if (systemBar == null)
+		return;
+	if (pullDownButton == null) {	
+		pullDownButton = new ToolItem(systemBar, SWT.PUSH, 0);
+		Image img = WorkbenchImages.getImage(
+			IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU);
+		pullDownButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
+		pullDownButton.setImage(img);
+		pullDownButton.setToolTipText(WorkbenchMessages.getString("Menu")); //$NON-NLS-1$
+		pullDownButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				showViewMenu();
+			}
+		});
+		ViewForm vf = getViewForm();
+		if (vf != null)
+			vf.layout();
+	}
 }
 /**
  * Create a title bar for the pane.
@@ -242,9 +221,7 @@ protected void createTitleBar() {
 	titleLabel.addMouseListener(new MouseAdapter() {
 		public void mouseDown(MouseEvent e) {
 			if (e.button == 3)
-				showPaneMenu(titleLabel,new Point(e.x, e.y),isFastView());
-			else if ((e.button == 1) && overImage(e.x))
-				showPaneMenu();
+				showTitleLabelMenu(e);
 		}
 		public void mouseDoubleClick(MouseEvent event){
 			doZoom();
@@ -256,7 +233,7 @@ protected void createTitleBar() {
 	// Listen to title changes.
 	getViewPart().addPropertyListener(this);
 	
-	// ISV toolbar.
+	// ISV action bar.
 	isvToolBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
 	hookFocus(isvToolBar);
 	control.setTopCenter(isvToolBar);
@@ -267,11 +244,58 @@ protected void createTitleBar() {
 				doZoom();
 		}
 	});
-	isvToolBarMgr = new PaneToolBarManager(isvToolBar);
-	isvToolBarMgr.add(systemContribution);
+	
+	// System action bar.  
+	systemBar = new ToolBar(control, SWT.FLAT | SWT.WRAP);
+	hookFocus(systemBar);
+	systemBar.addMouseListener(new MouseAdapter(){
+		public void mouseDoubleClick(MouseEvent event) {
+			// 1GD0ISU: ITPUI:ALL - Dbl click on view tool cause zoom
+			if (systemBar.getItem(new Point(event.x, event.y)) == null)
+				doZoom();
+		}
+	});
+	closeButton= new ToolItem(systemBar, SWT.PUSH);
+	Image img = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW);
+	closeButton.setDisabledImage(img); // PR#1GE56QT - Avoid creation of unnecessary image.
+	closeButton.setImage(img);
+	closeButton.setToolTipText(WorkbenchMessages.getString("Close")); //$NON-NLS-1$
+	closeButton.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			doHide();
+		}
+	});
+	if (isvMenuMgr != null && !isvMenuMgr.isEmpty())
+		createPulldownButton();
+	control.setTopRight(systemBar);
 }
 /**
- * @see PartPane#doHide
+ * Dispose the pin button.
+ */
+private void disposeFastButtons() {
+	if (pinButton != null) {
+		pinButton.dispose();
+		pinButton = null;
+	}
+	if (minimizeButton != null) {
+		minimizeButton.dispose();
+		minimizeButton = null;
+	}
+}
+/**
+ * Dispose the pulldown button.
+ */
+private void disposePulldownButton() {
+	if (pullDownButton != null) {
+		pullDownButton.dispose();
+		pullDownButton = null;
+		ViewForm vf = getViewForm();
+		if (vf != null)
+			vf.layout();
+	}
+}
+/**
+ * @see PartPane::doHide
  */
 public void doHide() {
 	IWorkbenchPage page = getPart().getSite().getPage();
@@ -312,32 +336,12 @@ public MenuManager getMenuManager() {
 		isvMenuMgr = new PaneMenuManager();
 	return isvMenuMgr;
 }
-
-/**
- * Returns the tab list to use when this part is active.
- * Includes the view and its tab (if applicable), in the appropriate order.
- */
-public Control[] getTabList() {
-	Control c = getControl();
-	if (getContainer() instanceof PartTabFolder) {
-		PartTabFolder tf = (PartTabFolder) getContainer();
-		CTabFolder f = (CTabFolder) tf.getControl();
-		if (f.getItemCount() > 1) {
-			if ((f.getStyle() & SWT.TOP) != 0) {
-				return new Control[] { f, c };
-			}
-			else {
-				return new Control[] { c, f };
-			}
-		}
-	}
-	return new Control[] { c };
-}
-
 /**
  * @see ViewActionBars
  */
 public ToolBarManager getToolBarManager() {
+	if (isvToolBarMgr == null)
+		isvToolBarMgr = new PaneToolBarManager(isvToolBar);
 	return isvToolBarMgr;
 }
 /**
@@ -364,14 +368,13 @@ public void propertyChanged(Object source, int propId) {
  */
 public void setFast(boolean b) {
 	fast = b;
-	if (isvToolBarMgr != null) {
-		isvToolBarMgr.update(true);
+	if (getControl() != null) {
+		if (fast)
+			createFastButtons();
+		else
+			disposeFastButtons();
 	}
 }
-public void setFastViewSash(Sash s) {
-	fastViewSash = s;
-}
-
 /**
  * Indicate focus in part.
  */
@@ -384,51 +387,43 @@ public void showFocus(boolean inFocus) {
 		titleLabel.setForeground(WorkbenchColors.getSystemColor(SWT.COLOR_TITLE_FOREGROUND));
 		titleLabel.update();
 		isvToolBar.setBackground(WorkbenchColors.getActiveViewGradientEnd());
+		systemBar.setBackground(WorkbenchColors.getActiveViewGradientEnd());
 	}
 	else {
 		titleLabel.setBackground(null, null);
 		titleLabel.setForeground(null);
 		titleLabel.update();
 		isvToolBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		systemBar.setBackground(WorkbenchColors.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 	}
 }
-
 /**
  * Show a title label menu for this pane.
  */
-public void showPaneMenu() {
-	if(isFastView() && (page.getActiveFastView() != this.getPart()))
-		return;
-	Rectangle bounds = titleLabel.getBounds();
-	showPaneMenu(titleLabel,new Point(0,bounds.height),isFastView());
-}
-/**
- * Return true if this view is a fast view.
- */
-private boolean isFastView() {
-	return ((WorkbenchPage)getPart().getSite().getPage()).isFastView(getViewPart());
-}
-/**
- * Finds and return the sashes around this part.
- */
-protected Sashes findSashes() {
-	Sashes result = new Sashes();
-	if(isFastView()) {
-		result.right = fastViewSash;		
-		return result;
-	}
-	if (this.getContainer() instanceof PartTabFolder)
-		getRootContainer().findSashes((PartTabFolder)this.getContainer(),result);
-	else
-		getRootContainer().findSashes(this,result);
-	return result;
-}
-/**
- * Add the Fast View menu item to the view title menu.
- */
-protected void addFastViewMenuItem(Menu parent,boolean isFastView) {
+private void showTitleLabelMenu(MouseEvent e) {
+	Menu aMenu = new Menu(titleLabel);
+	MenuItem item; 
+
+	// Get various view states.
+	final boolean isZoomed = ((WorkbenchPage)getPart().getSite().getPage()).isZoomed();
+	boolean isFastView = ((WorkbenchPage)getPart().getSite().getPage()).isFastView(getViewPart());
+	boolean canZoom = (getWindow() instanceof IWorkbenchWindow);
+
+	// add restore item
+	item = new MenuItem(aMenu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("ViewPane.restore")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			if (isZoomed)
+				doZoom();
+			else
+				doPin();
+		}
+	});
+	item.setEnabled(isZoomed || isFastView);
+
 	// add fast view item
-	MenuItem item = new MenuItem(parent, SWT.NONE);
+	item = new MenuItem(aMenu, SWT.NONE);
 	item.setText(WorkbenchMessages.getString("ViewPane.fastView")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
@@ -437,53 +432,41 @@ protected void addFastViewMenuItem(Menu parent,boolean isFastView) {
 	});
 	item.setEnabled(!isFastView);
 
-	if(isFastView) {
-		item = new MenuItem(parent, SWT.NONE);
-		item.setText(WorkbenchMessages.getString("ViewPane.minimizeView")); //$NON-NLS-1$
-		item.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				doMinimize();
-			}
-		});
-		item.setEnabled(true);
-	}
-}
-/**
- * Add the View and Tab Group items to the Move menu.
- */
-protected void addMoveItems(Menu moveMenu) {
-	MenuItem item = new MenuItem(moveMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("ViewPane.moveView")); //$NON-NLS-1$
+	// add maximize item
+	item = new MenuItem(aMenu, SWT.NONE);
+	item.setText(WorkbenchMessages.getString("ViewPane.maximize")); //$NON-NLS-1$
 	item.addSelectionListener(new SelectionAdapter() {
 		public void widgetSelected(SelectionEvent e) {
-			page.openTracker(ViewPane.this);
+			doZoom();
 		}
 	});
-	item.setEnabled(!isZoomed());
-	item = new MenuItem(moveMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("ViewPane.moveFolder")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			ILayoutContainer container = getContainer();
-			if (container instanceof PartTabFolder)
-				((PartTabFolder)container).openTracker((PartTabFolder)container);
-		}
-	});
-	item.setEnabled(!isZoomed() && (getContainer() instanceof PartTabFolder));
-}
+	item.setEnabled(!isZoomed && !isFastView && canZoom);
 
+	new MenuItem(aMenu, SWT.SEPARATOR);
+	
+	// add close item
+	item = new MenuItem(aMenu, SWT.CASCADE);
+	item.setText(WorkbenchMessages.getString("ViewPane.close")); //$NON-NLS-1$
+	item.addSelectionListener(new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			doHide();
+		}
+	});
+
+	// open menu    
+	Point point = new Point(e.x, e.y);
+	point = titleLabel.toDisplay(point);
+	aMenu.setLocation(point.x, point.y);
+	aMenu.setVisible(true);
+}
 /**
  * Show the context menu for this window.
  */
-public void showViewMenu() {
-	if (isvMenuMgr == null)
-		return;
-	if(isFastView() && (page.getActiveFastView() != this))
-		return;
+private void showViewMenu() {
 	Menu aMenu = isvMenuMgr.createContextMenu(getControl());
-	Rectangle bounds = pullDownButton.getBounds();
-	Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
-	topLeft = isvToolBar.toDisplay(topLeft);
+	Point topLeft = new Point(0, 0);
+	topLeft.y += systemBar.getBounds().height;
+	topLeft = systemBar.toDisplay(topLeft);
 	aMenu.setLocation(topLeft.x, topLeft.y);
 	aMenu.setVisible(true);
 }

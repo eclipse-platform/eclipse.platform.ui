@@ -5,31 +5,8 @@ package org.eclipse.ui.editors.text;
  * All Rights Reserved.
  */
 
-import java.util.ResourceBundle;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Plugin;
-
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.FontFieldEditor;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.JFaceResources;
-
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.help.DialogPageContextComputer;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
+import java.util.MissingResourceException;import java.util.ResourceBundle;import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.Plugin;import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.graphics.Font;import org.eclipse.swt.graphics.FontData;import org.eclipse.jface.preference.FieldEditorPreferencePage;import org.eclipse.jface.preference.FontFieldEditor;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.JFaceResources;import org.eclipse.ui.IWorkbench;import org.eclipse.ui.IWorkbenchPreferencePage;import org.eclipse.ui.PlatformUI;import org.eclipse.ui.help.DialogPageContextComputer;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.plugin.AbstractUIPlugin;import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * A preference page to set the font used in the default text editor.
@@ -41,7 +18,7 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 public class TextEditorPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
 	
-	private static boolean fgInitialized= false;
+	private ResourceBundle fBundle;
 	
 	/**
 	 * Create the preference page.
@@ -76,28 +53,11 @@ public class TextEditorPreferencePage extends FieldEditorPreferencePage implemen
 	 * @see IWorkbenchPreferencePage#init
 	 */
 	public void init(IWorkbench workbench) {
-	}
-	
-	
-	public static void initDefaults(IPreferenceStore store) {
-		
-		if (fgInitialized)
-			return;
-			
-		fgInitialized= true;
-		
 		Font font= JFaceResources.getTextFont();
 		if (font != null) {
 			FontData[] data= font.getFontData();
 			if (data != null && data.length > 0)
-				PreferenceConverter.setDefault(store, AbstractTextEditor.PREFERENCE_FONT, data[0]);
+				PreferenceConverter.setDefault(getPreferenceStore(), AbstractTextEditor.PREFERENCE_FONT, data[0]);
 		}
-		
-		Display display= Display.getDefault();
-		Color color= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
-		PreferenceConverter.setDefault(store,  AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, color.getRGB());
-		
-		color= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-		PreferenceConverter.setDefault(store,  AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, color.getRGB());
 	}
 }

@@ -20,10 +20,10 @@ import java.util.List;
 public class ResourceTreeAndListGroup implements ICheckStateListener, ISelectionChangedListener, ITreeViewerListener {
 	private	Object			root;
 	private	Object			currentTreeSelection;
-	private	Collection			expandedTreeNodes = new HashSet();
+	private	List			expandedTreeNodes = new ArrayList();
 	private	Map		checkedStateStore = new HashMap(9);
-	private Collection			whiteCheckedTreeItems = new HashSet();
-	private	Collection			listeners = new HashSet();
+	private List			whiteCheckedTreeItems = new ArrayList();
+	private	List			listeners = new ArrayList();
 	
 	private	ITreeContentProvider		treeContentProvider;
 	private	IStructuredContentProvider	listContentProvider;
@@ -451,7 +451,8 @@ private void grayUpdateHierarchy(Object treeElement) {
 
 	boolean shouldBeAtLeastGray = determineShouldBeAtLeastGrayChecked(treeElement);
 
-	treeViewer.setGrayChecked(treeElement, shouldBeAtLeastGray);
+	treeViewer.setChecked(treeElement, shouldBeAtLeastGray);
+	treeViewer.setGrayed(treeElement, shouldBeAtLeastGray);
 
 	if (whiteCheckedTreeItems.contains(treeElement))
 		whiteCheckedTreeItems.remove(treeElement);
@@ -837,7 +838,8 @@ public void updateSelections(final Map items) {
 	while (checkedStateIterator.hasNext()) {
 		Object nextDeselection = checkedStateIterator.next();
 		if (!selectedNodes.contains(nextDeselection)) {
-			treeViewer.setGrayChecked(nextDeselection, false);
+			treeViewer.setChecked(nextDeselection, false);
+			treeViewer.setGrayed(nextDeselection, false);
 			setWhiteChecked(nextDeselection, false);
 			checkedStateStore.remove(nextDeselection);
 		}
@@ -856,15 +858,6 @@ public void updateSelections(final Map items) {
 				listViewer.setCheckedElements(((List) displayItems).toArray());
 		}
 	}
-}
-/** 
- * Set the focus on to the list widget.
- */
-public void setFocus(){
-	
-	this.treeViewer.getTree().setFocus();
-}
 
 }
-
-
+}

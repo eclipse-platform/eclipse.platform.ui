@@ -17,13 +17,13 @@ import org.eclipse.swt.graphics.Color;
 public class TextAttribute {
 	
 	/** Foreground color */
-	private Color foreground;
+	Color foreground;
 	
 	/** Background color */
-	private Color background;
+	Color background;
 	
 	/** The text style */
-	private int style;
+	int style;
 	
 	/**
 	 * Creates a text attribute with the given colors and style.

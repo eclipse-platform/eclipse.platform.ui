@@ -11,7 +11,6 @@ import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.preference.*;
-import java.text.Collator;
 import java.util.*;
 import org.eclipse.ui.internal.misc.Sorter;
 
@@ -273,13 +272,11 @@ private Object[] sortByCategories(List nodes) {
 	}
 
 	Sorter sorter = new Sorter() {
-		private Collator collator = Collator.getInstance();
-		
 		public boolean compare(Object o1, Object o2) {
-			String s1 = ((CategoryNode)o1).getFlatCategory();
-			String s2 = ((CategoryNode)o2).getFlatCategory();
+			String s1 = ((CategoryNode)o1).getFlatCategory().toUpperCase();
+			String s2 = ((CategoryNode)o2).getFlatCategory().toUpperCase();
 			//Return true if elementTwo is 'greater than' elementOne
-			return collator.compare(s2, s1) > 0;
+			return s2.compareTo(s1) > 0;
 		}
 	};
 	return sorter.sort(nodeArray);

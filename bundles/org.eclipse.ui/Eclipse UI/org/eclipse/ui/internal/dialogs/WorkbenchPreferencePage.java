@@ -22,15 +22,12 @@ public class WorkbenchPreferencePage
 	private Button autoBuildButton;
 	private Button autoSaveAllButton;
 	private Button linkButton;
-	private IntegerFieldEditor reuseEditors; 
 
 	//Widgets for menu based perspective operation
 	private Button openInNewWindowButton;
 	private Button openInNewPageButton;
 	private Button replaceButton;
 	private Button switchOnNewProjectButton;
-	private Button reusePerspectivesButton;
-	private Button openPerspectiveMruButton;
 	private Text openInNewWindowText;
 	private Text openInNewPageText;
 	private Text replaceText;
@@ -115,9 +112,7 @@ protected Control createContents(Composite parent) {
 
 	linkButton = new Button(composite, SWT.CHECK);
 	linkButton.setText(WorkbenchMessages.getString("WorkbenchPreference.linkNavigator")); //$NON-NLS-1$
-	
-	createReuseEditorsField(composite);
-	
+
 	createSpace(composite);
 
 	createPerspectiveGroup(composite);
@@ -135,25 +130,6 @@ protected Control createContents(Composite parent) {
 		store.getBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
 
 	return composite;
-}
-private void createReuseEditorsField(Composite composite) {
-	Composite c = new Composite(composite,SWT.NONE);
-	reuseEditors = new IntegerFieldEditor(
-		IPreferenceConstants.REUSE_EDITORS,
-		WorkbenchMessages.getString("WorkbenchPreference.reuseEditors"),
-		c);
-	GridData gd = new GridData();
-	gd.horizontalAlignment = gd.FILL;
-	gd.grabExcessHorizontalSpace = true;
-	c.setLayoutData(gd);
-	
-	reuseEditors.setPreferenceStore(WorkbenchPlugin.getDefault().getPreferenceStore());
-	reuseEditors.setPreferencePage(this);
-	reuseEditors.setTextLimit(2);
-	reuseEditors.setErrorMessage(WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsError"));
-	reuseEditors.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
-	reuseEditors.setValidRange(1,99);
-	reuseEditors.load();
 }
 /**
  * Create a composite that contains buttons for selecting the preference opening selections. 
@@ -223,17 +199,6 @@ private void createPerspectiveGroup(Composite composite) {
 
 	this.replaceText = new Text(buttonComposite, SWT.NONE);
 	this.replaceText.setEditable(false);
-
-	reusePerspectivesButton = new Button(composite, SWT.CHECK);
-	reusePerspectivesButton.setText(WorkbenchMessages.getString("WorkbenchPreference.reusePerspectives")); //$NON-NLS-1$
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	reusePerspectivesButton.setSelection(
-		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES));
-
-	openPerspectiveMruButton = new Button(composite, SWT.CHECK);
-	openPerspectiveMruButton.setText(WorkbenchMessages.getString("WorkbenchPreference.openPerspectiveMru")); //$NON-NLS-1$
-	openPerspectiveMruButton.setSelection(
-		store.getBoolean(IPreferenceConstants.OPEN_PERSPECTIVE_MRU));
 
 	setTextValuesForPerspective();
 }
@@ -397,8 +362,7 @@ protected void performDefaults() {
 	linkButton.setSelection(
 		store.getDefaultBoolean(
 			IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
-	reuseEditors.loadDefault();
- 
+
 	//Perspective preferences
 	String defaultPreference =
 		store.getDefaultString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
@@ -411,12 +375,6 @@ protected void performDefaults() {
 	replaceButton.setSelection(
 		defaultPreference.equals(
 			IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE));
-	reusePerspectivesButton.setSelection(
-		store.getDefaultBoolean(
-			IPreferenceConstants.REUSE_PERSPECTIVES));
-	openPerspectiveMruButton.setSelection(
-		store.getDefaultBoolean(
-			IPreferenceConstants.OPEN_PERSPECTIVE_MRU));
 
 	//Project perspective preferences
 	String projectPreference =
@@ -482,19 +440,6 @@ public boolean performOk() {
 		IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR,
 		linkButton.getSelection());
 
-	// store the reuse editors setting
-	reuseEditors.store();
-		
-	// store reuse perspctives setting
-	store.setValue(
-		IPreferenceConstants.REUSE_PERSPECTIVES,
-		reusePerspectivesButton.getSelection());
-		
-	// store open perspctive mru setting
-	store.setValue(
-		IPreferenceConstants.OPEN_PERSPECTIVE_MRU,
-		openPerspectiveMruButton.getSelection());
-		
 	// store the open in new window settings
 	store.setValue(
 		IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE,
@@ -547,6 +492,7 @@ private void setTextValuesForPerspective() {
 		}
 
 	}
+
 }
 /**
  * Get the values for the shift perspective setting. It will be window unless window is selected.

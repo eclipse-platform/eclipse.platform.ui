@@ -168,9 +168,9 @@ public void load(Reader r) {
  */
 public void load(String fileName) throws IOException {
 	FileInputStream stream = new FileInputStream(fileName);
-	InputStreamReader reader = new InputStreamReader(stream, "utf-8");
-	load(reader);
-	reader.close();
+	InputStreamReader writer = new InputStreamReader(stream, "utf-8");
+	load(writer);
+	writer.close();
 }
 /* (non-Javadoc)
  * Load the setting from the <code>document</code>

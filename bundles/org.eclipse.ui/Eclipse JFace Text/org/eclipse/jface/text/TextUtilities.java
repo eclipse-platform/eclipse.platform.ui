@@ -35,17 +35,8 @@ class TextUtilities {
 	public static int[] indexOf(String[] searchStrings, String text, int offset) {
 		
 		int[] result= { -1, -1 };
-		int zeroIndex= -1;
 		
 		for (int i= 0; i < searchStrings.length; i++) {
-			
-			int length= searchStrings[i].length();
-			
-			if (length == 0) {
-				zeroIndex= i;
-				continue;
-			}
-			
 			int index= text.indexOf(searchStrings[i], offset);
 			if (index >= 0) {
 				
@@ -55,19 +46,15 @@ class TextUtilities {
 				} else if (index < result[0]) {
 					result[0]= index;
 					result[1]= i;
-				} else if (index == result[0] && length > searchStrings[result[1]].length()) {
+				} else if (index == result[0] && searchStrings[i].length() > searchStrings[result[1]].length()) {
 					result[0]= index;
 					result[1]= i;
 				}
 			}
 		}
 		
-		if (zeroIndex > -1 && result[0] == -1) {
-			result[0]= 0;
-			result[1]= zeroIndex;
-		}
-		
 		return result;
+		
 	}
 	
 	/**

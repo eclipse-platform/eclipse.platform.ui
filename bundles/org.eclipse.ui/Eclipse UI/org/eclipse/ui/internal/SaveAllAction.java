@@ -4,15 +4,17 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import java.util.ArrayList;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.actions.PartEventAction;
-import org.eclipse.ui.internal.IHelpContextIds;
-import java.util.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Global action that saves all targets in the
@@ -40,6 +42,7 @@ public SaveAllAction(WorkbenchWindow window) {
 	setText(WorkbenchMessages.getString("SaveAll.text")); //$NON-NLS-1$
 	setToolTipText(WorkbenchMessages.getString("SaveAll.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.SAVE_ALL);
+	setAccelerator(SWT.CONTROL | SWT.SHIFT, 's');
 	setEnabled(false);
 	this.window = window;
 	window.addPageListener(this);
@@ -56,7 +59,7 @@ public void pageActivated(IWorkbenchPage page) {
 /**
  * Notifies the listener that a page has been closed
  */
-public void pageClosed(IWorkbenchPage page) {
+public void pageClosed(IWorkbenchPage persp) {
 	activePage = null;
 	refreshTargets();
 	testEnable();
@@ -120,9 +123,9 @@ protected void refreshTargets() {
  * and saves those that need it.
  */
 public void run() {
-	IWorkbenchPage page = window.getActivePage();
-	if (page != null)
-		page.saveAllEditors(false);
+	IWorkbenchPage persp = window.getActivePage();
+	if (persp != null)
+		persp.saveAllEditors(false);
 }
 /**
  * Updates availability depending on number of

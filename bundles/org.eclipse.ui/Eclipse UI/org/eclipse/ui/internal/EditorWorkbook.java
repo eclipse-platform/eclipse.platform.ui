@@ -99,9 +99,6 @@ public void createControl(Composite parent) {
 	this.parent = parent;
 	tabFolder = new CTabFolder(parent, SWT.BORDER | tabLocation);
 
-	// prevent close button and scroll buttons from taking focus
-	tabFolder.setTabList(new Control[0]);
-	
 	// redirect drop request to the workbook
 	tabFolder.setData((IPartDropTarget) this);
 
@@ -149,17 +146,8 @@ public void createControl(Composite parent) {
 		}
 
 		public void mouseDown(MouseEvent e) {
-			if (visibleEditor != null) {
+			if (visibleEditor != null)
 				visibleEditor.setFocus();
-				CTabItem item = getTab(visibleEditor);
-				Rectangle bounds = item.getBounds();
-				if(bounds.contains(e.x,e.y)) {
-					if (e.button == 3)
-						visibleEditor.showPaneMenu(tabFolder,new Point(e.x, e.y),false);
-					else if((e.button == 1) && overImage(item,e.x))
-						visibleEditor.showPaneMenu();
-				}
-			}
 		}
 	});
 
@@ -186,25 +174,6 @@ public void createControl(Composite parent) {
 		if (getItemCount() > 0)
 			setVisibleEditor((EditorPane) editors.get(0));
 }
-
-/**
- * Show a title label menu for this pane.
- */
-public void showPaneMenu() {
-	if (visibleEditor != null) {
-		CTabItem item = getTab(visibleEditor);
-		Rectangle bounds = item.getBounds();
-		visibleEditor.showPaneMenu(tabFolder,new Point(bounds.x,bounds.height),false);
-	}
-}
-
-/*
- * Return true if <code>x</code> is over the label image.
- */
-private boolean overImage(CTabItem item,int x) {
-	Rectangle imageBounds = item.getImage().getBounds();
-	return x < (item.getBounds().x + imageBounds.x + imageBounds.width);
-}		
 /**
  * Create a page and tab for an editor.
  */
@@ -360,23 +329,6 @@ private CTabItem getTab(LayoutPart child) {
 	
 	return null;
 }
-
-/**
- * Returns the tab list to use when this workbook is active.
- * Includes the active editor and its tab, in the appropriate order.
- */
-public Control[] getTabList() {
-	if (visibleEditor == null) {
-		return new Control[] { tabFolder };
-	}
-	if ((tabFolder.getStyle() & SWT.TOP) != 0) {
-		return new Control[] { tabFolder, visibleEditor.getControl() };
-	}
-	else {
-		return new Control[] { visibleEditor.getControl(), tabFolder };
-	}
-}
-
 /**
  * Returns the visible child.
  */
@@ -391,27 +343,15 @@ public boolean isActiveWorkbook() {
 	return getEditorArea().isActiveWorkbook(this);
 }
 /**
- * See LayoutPart
+ *	Allow the layout part to determine if they are in
+ * an acceptable state to start a drag & drop operation.
  */
-public boolean isDragAllowed(Point p) {
-	if (isZoomed) {
+public boolean isDragAllowed() {
+	if (isZoomed)
 		return false;
-	} else if (visibleEditor != null) {
-		CTabItem item = getTab(visibleEditor);
-		if(!overImage(item,p.x))
-			return true;
-	}
-	return false;
+	else
+		return true;
 }
-/**
- * Open the tracker to allow the user to move
- * the specified part using keyboard.
- */
-public void openTracker(LayoutPart part) {
-	CTabPartDragDrop dnd = (CTabPartDragDrop)mapPartToDragMonitor.get(part);
-	dnd.openTracker();
-}
-
 /**
  * Returns true if this part is visible.  A part is visible if it has a control.
  */
@@ -567,25 +507,11 @@ public void reorderTab(EditorPane pane, int x, int y) {
 	// do nothing if already before target tab
 	int sourceIndex = tabFolder.indexOf(sourceTab);
 	int targetIndex = tabFolder.indexOf(targetTab);
-	
 	if (sourceIndex == targetIndex - 1)
 		return;
-		
-	//Source is going to be dispose so the target index will change.
-	if (sourceIndex < targetIndex)
-		targetIndex--;
-		
+
 	reorderTab(pane, sourceTab, targetIndex);
 }
-/**
- * Move the specified editor to the a new position. 
- * Move to the end if <code>newIndex</code> is less then
- * zero.
- */
-public void reorderTab(EditorPane pane,int newIndex) {
-	reorderTab(pane,getTab(pane),newIndex);
-}
-
 /**
  * Reorder the tab representing the specified pane.
  */

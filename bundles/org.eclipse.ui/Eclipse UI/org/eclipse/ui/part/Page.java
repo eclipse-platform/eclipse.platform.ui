@@ -29,18 +29,12 @@ import org.eclipse.swt.widgets.Composite;
  *   <li><code>setFocus</code> - reimplement to accept focus</li>
  *   <li><code>setActionBars</code> - reimplement to make contributions</li>
  *   <li><code>makeContributions</code> - this method exists to support previous versions</li>
- *   <li><code>setActionBars</code> - this method exists to support previous versions</li>
- *   <li><code>init</code> - extend to provide additional setup</li>
  * </ul>
  * </p>
  *
  * @see PageBookView
  */
-public abstract class Page implements IPageBookViewPage {
-/**
-* The site which contains this page
-*/
-private IPageSite site;
+public abstract class Page implements IPage {
 /* 
  * Creates a new page for a pagebook view.
  */
@@ -67,16 +61,20 @@ public void dispose() {
 public abstract Control getControl();
 /* (non-Javadoc)
  * This method exists for backward compatibility.
- * Subclasses should reimplement <code>init</code>.
+ * Subclasses should reimplement <code>setActionBars</code>.
  */
 public void makeContributions(
 	IMenuManager menuManager, 
 	IToolBarManager toolBarManager, 
 	IStatusLineManager statusLineManager) {
 }
-/* (non-Javadoc)
- * This method exists for backward compatibility.
- * Subclasses should reimplement <code>init</code>.
+/**
+ * The <code>Page</code> implementation of this <code>IPage</code> method
+ * calls <code>makeContributions</code> for backwards compatibility with
+ * previous versions of <code>IPage</code>. 
+ * <p>
+ * Subclasses may reimplement.
+ * </p>
  */
 public void setActionBars(IActionBars actionBars) {
 	makeContributions(
@@ -84,26 +82,6 @@ public void setActionBars(IActionBars actionBars) {
 		actionBars.getToolBarManager(), 
 		actionBars.getStatusLineManager());
 }
-/**
- * The <code>Page</code> implementation of this <code>IPage</code> method
- * stores a reference to the supplied site (the site which contains this 
- * page). 
- * <p>
- * Subclasses may extend.
- * </p>
- */
-public void init(IPageSite pageSite) {
-	site = pageSite;
-}
-/**
- * Returns the site which contains this page.
- * 
- * @return the site which contains this page
- */
-public IPageSite getSite() {
-	return site;
-}	
-	
 /**
  * The <code>Page</code> implementation of this <code>IPage</code> method
  * does nothing. Subclasses may reimplement.

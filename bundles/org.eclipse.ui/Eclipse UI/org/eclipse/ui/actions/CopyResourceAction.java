@@ -427,7 +427,6 @@ IPath queryDestinationResource() {
 	ContainerSelectionDialog dialog =
 		new ContainerSelectionDialog(shell, getInitialContainer(), true, WorkbenchMessages.getString("CopyResourceAction.selectDestination")); //$NON-NLS-1$
 	dialog.setValidator(this);
-	dialog.showClosedProjects(false);
 	dialog.open();
 	Object[] result = dialog.getResult();
 	if (result != null && result.length == 1) {

@@ -12,6 +12,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.Viewer;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -26,8 +31,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
@@ -41,11 +44,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ScrollBar;
+import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.Viewer;
 
 
 
@@ -255,7 +255,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		public void documentAboutToBeChanged(DocumentEvent e) {
 			if (e.getDocument() == getVisibleDocument()) {
 				fWidgetCommand.setEvent(e);
-				if (fTextHoverManager != null && (fThread == null || !fThread.isAlive())) {
+				if (fTextHoveringController != null && (fThread == null || !fThread.isAlive())) {
 					fThread= new Thread(this, JFaceTextMessages.getString("TextViewer.timer.name")); //$NON-NLS-1$
 					fThread.start();
 				}
@@ -270,11 +270,11 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				
 				updateTextListeners(fWidgetCommand);
 				
-				if (fTextHoverManager != null) {
+				if (fTextHoveringController != null) {
 					synchronized (fSyncPoint) {
 						fIsReset= true;
 					}
-					fTextHoverManager.setEnabled(false);
+					fTextHoveringController.uninstall();
 				}
 			}
 		}
@@ -301,15 +301,15 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			
 			fThread= null;
 			
-			if (fTextHoverManager != null) {
+			if (fTextHoveringController != null) {
 				Control c= getControl();
 				if (c != null && !c.isDisposed()) {
 					Display d= c.getDisplay();
 					if (d != null) {
 						d.asyncExec(new Runnable() {
 							public void run() {
-								if (fTextHoverManager != null)
-									fTextHoverManager.setEnabled(true);
+								if (fTextHoveringController != null)
+									fTextHoveringController.install();
 							}
 						});
 					}
@@ -419,7 +419,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	/** The text viewer's double click strategies connector */
 	private TextDoubleClickStrategyConnector fDoubleClickStrategyConnector;
 	/** The text viewer's hovering controller */
-	private AbstractHoverInformationControlManager fTextHoverManager;
+	private TextHoveringController fTextHoveringController;
 	/** The text viewer's viewport guard */
 	private ViewportGuard fViewportGuard;
 	/** Caches the graphical coordinate of the first visible line */ 
@@ -452,8 +452,6 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	protected Map fAutoIndentStrategies;
 	/** The text viewer's text hovers */
 	protected Map fTextHovers;
-	/** The creator of the text hover control */
-	protected IInformationControlCreator fHoverControlCreator;
 	/** All registered viewport listeners> */
 	protected List fViewportListeners;
 	/** The last visible vertical position of the top line */
@@ -529,17 +527,6 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		fTextWidget.setFont(parent.getFont());
 		fTextWidget.setDoubleClickEnabled(false);
 		
-		/*
-		 * Disable SWT Shift+TAB traversal in this viewer
-		 * 1GIYQ9K: ITPUI:WINNT - StyledText swallows Shift+TAB
-		 */
-		fTextWidget.addTraverseListener(new TraverseListener() {
-			public void keyTraversed(TraverseEvent e) {
-				if ((SWT.SHIFT == e.stateMask) && ('\t' == e.character))
-					e.doit = false;
-			}	
-		});
-		
 		// where does the first line start
 		fTopInset= -fTextWidget.computeTrim(0, 0, 0, 0).y;
 		
@@ -554,9 +541,31 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			}
 		});
 		
+		/*
+		 * 1GERDLB: ITPUI:ALL - Important: Viewers should add a help listener only when required
+		 * Removed:
+		 
+			fTextWidget.addHelpListener(new HelpListener() {
+				public void helpRequested(HelpEvent event) {
+					TextViewer.this.helpRequested(event);
+				}
+			});
+		 */
+		
 		initializeViewportUpdate();
 	}
-		
+	
+	/*
+	 * 1GERDLB: ITPUI:ALL - Important: Viewers should add a help listener only when required
+	 * Removed:
+	 *
+	 * Circumvents visiblity issues by calling the actualli intended method.
+	 *
+		private void helpRequested(HelpEvent event) { 
+			super.handleHelpRequest(event);
+		}
+	 */
+	
 	/*
 	 * @see Viewer#getControl
 	 */
@@ -574,9 +583,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			fTextWidget.addMouseListener(fDoubleClickStrategyConnector);
 		}
 		
-		if (fTextHovers != null && !fTextHovers.isEmpty() && fHoverControlCreator != null && fTextHoverManager == null) {			
-			fTextHoverManager= new TextViewerHoverManager(this, fHoverControlCreator);
-			fTextHoverManager.install(this.getTextWidget());
+		if (fTextHovers != null && !fTextHovers.isEmpty() && fTextHoveringController == null) {
+			fTextHoveringController= new TextHoveringController(this);
+			fTextHoveringController.install();
 		}
 		
 		if (fUndoManager != null) {
@@ -634,9 +643,9 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		
 		fDoubleClickStrategyConnector= null;
 		
-		if (fTextHoverManager != null) {
-			fTextHoverManager.dispose();
-			fTextHoverManager= null;
+		if (fTextHoveringController != null) {
+			fTextHoveringController.dispose();
+			fTextHoveringController= null;
 		}
 		
 		if (fDocumentListener != null) {
@@ -736,25 +745,25 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	}
 			
 	/*
-	 * @see ITextViewer#setDefaultPrefixes
+	 * @see ITextViewer#setDefaultPrefix
 	 */
-	public void setDefaultPrefixes(String[] defaultPrefixes, String contentType) {
+	public void setDefaultPrefix(String defaultPrefix, String contentType) {
 				
-		if (defaultPrefixes != null && defaultPrefixes.length > 0) {
+		if (defaultPrefix != null && defaultPrefix.length() > 0) {
 			if (fDefaultPrefixChars == null)
 				fDefaultPrefixChars= new HashMap();
-			fDefaultPrefixChars.put(contentType, defaultPrefixes);
+			fDefaultPrefixChars.put(contentType, new String[] { defaultPrefix });
 		} else if (fDefaultPrefixChars != null)
 			fDefaultPrefixChars.remove(contentType);
 	}
-	
+			
 	/*
 	 * @see ITextViewer#setUndoManager
 	 */
 	public void setUndoManager(IUndoManager undoManager) {
 		fUndoManager= undoManager;
 	}
-	
+		
 	/*
 	 * @see ITextViewer#setTextHover
 	 */
@@ -768,32 +777,11 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			fTextHovers.remove(contentType);
 	}
 	
-	/**
+	/*
 	 * Returns the text hover for a given offset.
-	 * 
-	 * @param offset the offset for which to return the text hover
-	 * @return the text hover for the given offset
 	 */
-	protected ITextHover getTextHover(int offset) {
+	ITextHover getTextHover(int offset) {
 		return (ITextHover) selectContentTypePlugin(offset, fTextHovers);
-	}
-	
-	/**
-	 * Returns the text hovering controller of this viewer.
-	 * 
-	 * @return the text hovering controller of this viewer
-	 */
-	protected AbstractInformationControlManager getTextHoveringController() {
-		return fTextHoverManager;
-	}
-	
-	/**
-	 * Sets the creator for the hover controls.
-	 *  
-	 * @param creator the hover control creator
-	 */
-	public void setHoverControlCreator(IInformationControlCreator creator) {
-		fHoverControlCreator= creator;
 	}
 	
 	
@@ -1430,22 +1418,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	}
 	
 	/**
-	 * Invalidates the current presentation by sending an initialization
-	 * event to all text listener.
-	 */
-	public final void invalidateTextPresentation() {
-		if (fVisibleDocument != null) {
-			fWidgetCommand.start= 0;
-			fWidgetCommand.length= 0;
-			fWidgetCommand.text= fVisibleDocument.get();
-			fWidgetCommand.event= null;
-			updateTextListeners(fWidgetCommand);
-		}
-	}
-	
-	/**
-	 * Initializes the text widget with the visual document and
-	 * invalidates the overall presentation.
+	 * Initializes the text widget with the visual document. Informs
+	 * all text listeners about this initialization.
 	 */
 	private void initializeWidgetContents() {
 		
@@ -1458,8 +1432,12 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			fDocumentAdapter.setDocument(fVisibleDocument);
 			fTextWidget.setContent(fDocumentAdapter);
 								
-			// invalidate presentation				
-			invalidateTextPresentation();
+			// sent out appropriate widget change event				
+			fWidgetCommand.start= 0;
+			fWidgetCommand.length= 0;
+			fWidgetCommand.text= fVisibleDocument.get();
+			fWidgetCommand.event= null;
+			updateTextListeners(fWidgetCommand);
 		}
 	}
 	
@@ -1640,7 +1618,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 * manipulated by interested parties. By default, the hook forwards the command
 	 * to the installed <code>IAutoIndentStrategy</code>.
 	 *
-	 * @param command the document command representing the verify event
+	 * @param command the document command representing the varify event
 	 */
 	protected void customizeDocumentCommand(DocumentCommand command) {
 		if (!fIgnoreAutoIndent) {
@@ -1703,7 +1681,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				return isEditable() && fIndentChars != null && isBlockSelected();
 			case PREFIX:
 			case STRIP_PREFIX:
-				return isEditable() && fDefaultPrefixChars != null;
+				return isEditable() && fDefaultPrefixChars != null && isBlockSelected();
 			case UNDO:
 				return fUndoManager != null && fUndoManager.undoable();
 			case REDO:
@@ -1758,16 +1736,16 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 				setSelectedRange(getVisibleRegionOffset(), getVisibleDocument().getLength());
 				break;
 			case SHIFT_RIGHT:
-				shift(false, true, false);
+				shift(false, true);
 				break;
 			case SHIFT_LEFT:
-				shift(false, false, false);
+				shift(false, false);
 				break;
 			case PREFIX:
-				shift(true, true, true);
+				shift(true, true);
 				break;
 			case STRIP_PREFIX:
-				shift(true, false, true);
+				shift(true, false);
 				break;
 			case PRINT:
 				print();
@@ -1864,67 +1842,30 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 		
 		return -1;
 	}
-	
-	
-	/**
-	 * Creates a region describing the text block (something that starts at
-	 * the beginning of a line) completely containing the current selection.
-	 * 
-	 * @param selection the selection to use
-	 */
-	private IRegion getTextBlockFromSelection(Point selection) {
-				
-		try {
-			IDocument document= getDocument();
-			IRegion line= document.getLineInformationOfOffset(selection.x);
-			int length= selection.y == 0 ? line.getLength() : selection.y + (selection.x - line.getOffset());
-			return new Region(line.getOffset(), length);
-			
-		} catch (BadLocationException x) {
-		}
 		
-		return null;		
-	}
 
 	/**
-	 * Shifts a text block to the right or left using the specified set of prefix characters.
-	 * The prefixes must start at the beginnig of the line.
+	 * Shifts a block selection to the right or left using the specified set of prefix characters.
 	 *
 	 * @param useDefaultPrefixes says whether the configured default or indent prefixes should be used
 	 * @param right says whether to shift to the right or the left
-	 * 
-	 * @deprecated use shift(boolean, boolean, boolean) instead
 	 */
 	protected void shift(boolean useDefaultPrefixes, boolean right) {
-		shift(useDefaultPrefixes, right, false);
-	}
 		
-	/**
-	 * Shifts a text block to the right or left using the specified set of prefix characters.
-	 * If white space should be ignored the prefix characters must not be at the beginning of
-	 * the line when shifting to the left. There may be whitespace in front of the prefixes.
-	 *
-	 * @param useDefaultPrefixes says whether the configured default or indent prefixes should be used
-	 * @param right says whether to shift to the right or the left
-	 * @param ignoreWhitespace says whether whitepsace in front of prefixes is allowed
-	 */
-	protected void shift(boolean useDefaultPrefixes, boolean right, boolean ignoreWhitespace) {
-		
+		if ( !isBlockSelected())
+			return;
+			
 		if (fUndoManager != null)
 			fUndoManager.beginCompoundChange();
 						
 		try {
-			
 			Point selection= getSelectedRange();
-			IRegion block= getTextBlockFromSelection(selection);
-			ITypedRegion[] regions= getDocument().computePartitioning(block.getOffset(), block.getLength());
+			ITypedRegion[] regions= getDocument().computePartitioning(selection.x, selection.y);
 			
 			IDocument d= getDocument();
-			int[] lines= new int[regions.length * 2]; // [startline, endline, startline, endline, ...]
+			int[] lines= new int[regions.length * 2];
 			for (int i= 0, j= 0; i < regions.length; i++, j+= 2) {
-				// start line of region
 				lines[j]= getFirstCompleteLineOfRegion(regions[i]);
-				// end line of region
 				int offset= regions[i].getOffset() + regions[i].getLength() - 1;
 				lines[j + 1]= (lines[j] == -1 ? -1 : d.getLineOfOffset(offset));
 			}
@@ -1946,12 +1887,8 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			Map map= (useDefaultPrefixes ? fDefaultPrefixChars : fIndentChars);
 			for (int i= 0, j= 0; i < regions.length; i++, j += 2) {
 				String[] prefixes= (String[]) selectContentTypePlugin(regions[i].getType(), map);
-				if (prefixes != null && prefixes.length > 0 && lines[j] >= 0 && lines[j + 1] >= 0) {
-					if (right)
-						shiftRight(lines[j], lines[j + 1], prefixes[0]);
-					else
-						shiftLeft(lines[j], lines[j + 1], prefixes, ignoreWhitespace);
-				}
+				if (prefixes != null && lines[j] >= 0 && lines[j + 1] >= 0)
+					shift(prefixes, right, lines[j], lines[j + 1]);
 			}
 			
 			// Restore the selection.
@@ -1976,29 +1913,6 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	}
 	
 	/**
-	 * Shifts the specified lines to the right inserting the given prefix
-	 * at the beginning of each line
-	 *
-	 * @param prefix the prefix to be inserted
-	 * @param startLine the first line to shift
-	 * @param endLine the last line to shift
-	 */
-	private void shiftRight(int startLine, int endLine, String prefix) {
-		
-		try {
-						
-			IDocument d= getDocument();
-			while (startLine <= endLine) {
-				d.replace(d.getLineOffset(startLine++), 0, prefix);
-			}
-
-		} catch (BadLocationException x) {
-			if (TRACE_ERRORS)
-				System.out.println("TextViewer.shiftRight: BadLocationException");
-		}
-	}
-	
-	/**
 	 * Shifts the specified lines to the right or to the left. On shifting to the right
 	 * it insert <code>prefixes[0]</code> at the beginning of each line. On shifting to the
 	 * left it tests whether each of the specified lines starts with one of the specified 
@@ -2009,55 +1923,57 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	 * @param startLine the first line to shift
 	 * @param endLine the last line to shift
 	 */
-	private void shiftLeft(int startLine, int endLine, String[] prefixes, boolean ignoreWhitespace) {
-		
+	private void shift(String[] prefixes, boolean right, int startLine, int endLine) {
+				
 		IDocument d= getDocument();
 		
 		try {
 						
-			IRegion[] occurrences= new IRegion[endLine - startLine + 1];
-			
-			// find all the first occurrences of prefix in the given lines
-			for (int i= 0; i < occurrences.length; i++) {
+			int lineNumber= startLine;
+			int lineCount= 0;
+			int lines= endLine - startLine;
+			String[] linePrefixes= null;
+
+			if (!right) {
 				
-				IRegion line= d.getLineInformation(startLine + i);
-				String text= d.get(line.getOffset(), line.getLength());
+				linePrefixes= new String[lines + 1];
 				
-				int index= -1;
-				int[] found= TextUtilities.indexOf(prefixes, text, 0);
-				if (found[0] != -1) {
-					if (ignoreWhitespace) {
-						String s= d.get(line.getOffset(), found[0]);
-						s= s.trim();
-						if (s.length() == 0)
-							index= line.getOffset() + found[0];
-					} else if (found[0] == 0)
-						index= line.getOffset();
-				}
-				
-				if (index > -1) {
-					// remember where prefix is in line, so that it can be removed
-					int length= prefixes[found[1]].length();
-					if (length == 0 && !ignoreWhitespace && line.getLength() > 0) {
-						// found a non-empty line which cannot be shifted
+				// check whether stripping is possible
+				while (lineNumber <= endLine) {
+					for (int i= 0; i < prefixes.length; i++) {
+						IRegion line= d.getLineInformation(lineNumber);
+						int delimiterLength= Math.min(prefixes[i].length(), line.getLength());
+						String s= d.get(line.getOffset(), delimiterLength);
+						if (prefixes[i].equals(s)) {
+							linePrefixes[lineCount]= s;
+							break;
+						}
+					}
+					
+					if (linePrefixes[lineCount] == null) {
+						// found a line which does not start with one of the prefixes
 						return;
-					} else 
-						occurrences[i]= new Region(index, length);
-				} else {
-					// found a line which cannot be shifted
-					return;
+					}
+					
+					++ lineNumber;						
+					++ lineCount;
 				}
 			}
 
 			// ok - change the document
-			for (int i= occurrences.length - 1; i >= 0; i--) {
-				IRegion r= occurrences[i];
-				d.replace(r.getOffset(), r.getLength(), null);
+			lineNumber= startLine;
+			
+			lineCount= 0;
+			while (lineNumber <= endLine) {
+				if (right)
+					d.replace(d.getLineOffset(lineNumber++), 0, prefixes[0]);
+				else
+					d.replace(d.getLineOffset(lineNumber++), linePrefixes[lineCount++].length(), null);
 			}
 
 		} catch (BadLocationException x) {
 			if (TRACE_ERRORS)
-				System.out.println("TextViewer.shiftLeft: BadLocationException");
+				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.shift_2")); //$NON-NLS-1$
 		}
 	}
 	
@@ -2190,6 +2106,24 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 	}
 	
 	/**
+	 * Replaces the viewer's style information with the given presentation.
+	 *
+	 * @param presentation the viewer's new style information
+	 */
+	private void replacePresentation(TextPresentation presentation) {
+		
+		StyleRange[] ranges= new StyleRange[presentation.getDenumerableRanges()];				
+		
+		int i= 0;
+		Iterator e= presentation.getAllStyleRangeIterator();
+		while (e.hasNext()) {
+			ranges[i++]= (StyleRange) e.next();
+		}
+		
+		fTextWidget.setStyleRanges(ranges);
+	}
+	
+	/**
 	 * Returns the visible region if it is not equal to the whole document.
 	 * Otherwise returns <code>null</code>.
 	 *
@@ -2222,7 +2156,7 @@ public class TextViewer extends Viewer implements ITextViewer, ITextOperationTar
 			fTextWidget.setRedraw(false);
 		
 		if (fReplaceTextPresentation)
-			TextPresentation.applyTextPresentation(presentation, fTextWidget);
+			replacePresentation(presentation);
 		else
 			addPresentation(presentation);
 		

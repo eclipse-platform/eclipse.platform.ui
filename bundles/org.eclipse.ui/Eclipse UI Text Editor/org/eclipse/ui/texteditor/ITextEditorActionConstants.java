@@ -79,10 +79,6 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 */
 	static final String RULER_DOUBLE_CLICK= "RulerDoubleClick"; //$NON-NLS-1$
 	/** 
-	 * Name of the ruler action performed when clicking the editor's vertical ruler. 
-	 */
-	static final String RULER_CLICK= "RulerClick"; //$NON-NLS-1$
-	/** 
 	 * Name of the ruler action to manage tasks.
 	 */
 	static final String RULER_MANAGE_TASKS= "ManageTasks"; //$NON-NLS-1$

@@ -137,23 +137,6 @@ public void fill(Menu menu, int index)
  */
 private ArrayList getShortcuts() 
 {
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean smart = 
-		store.getBoolean(IPreferenceConstants.OPEN_PERSPECTIVE_MRU);
-	if (smart)
-		return getMruShortcuts();
-	else
-		return getLocalShortcuts();
-}
-		
-/* (non-Javadoc)
- * Returns the local shortcut perspectives.
- * 
- * The shortcut list is formed from the default perspective and
- * the shortcuts on the active perspective.
- */
-private ArrayList getLocalShortcuts() 
-{
 	ArrayList list = new ArrayList();
 
 	// Add default perspective.
@@ -178,19 +161,6 @@ private ArrayList getLocalShortcuts()
 
 	return list;
 }
-
-/* (non-Javadoc)
- * Returns the MRU shortcut perspectives.
- *
- * The shortcut list is formed from the global perspective history
- * in the workbench.
- */
-private ArrayList getMruShortcuts() 
-{
-	Workbench wb = (Workbench)WorkbenchPlugin.getDefault().getWorkbench();
-	return wb.getPerspectiveHistory().getItems();
-}	
-
 /**
  * Returns the window for this menu.
  *

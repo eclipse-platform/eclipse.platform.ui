@@ -89,14 +89,15 @@ public class TextActionHandler {
 			super(WorkbenchMessages.getString("Cut")); //$NON-NLS-1$
 			setId("TextCellEditorCutActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			setAccelerator(SWT.CONTROL,'x');
 		}
-		public void runWithEvent(Event event) {
+		public void run() {
 			if (activeTextControl != null) {
 				activeTextControl.cut();
 				return;
 			}
 			if (cutAction != null) {
-				cutAction.runWithEvent(event);
+				cutAction.run();
 				return;
 			}
 		}
@@ -117,14 +118,15 @@ public class TextActionHandler {
 			super(WorkbenchMessages.getString("Copy")); //$NON-NLS-1$
 			setId("TextCellEditorCopyActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			setAccelerator(SWT.CONTROL,'c');
 		}
-		public void runWithEvent(Event event) {
+		public void run() {
 			if (activeTextControl != null) {
 				activeTextControl.copy();
 				return;
 			}
 			if (copyAction != null) {
-				copyAction.runWithEvent(event);
+				copyAction.run();
 				return;
 			}
 		}
@@ -145,14 +147,15 @@ public class TextActionHandler {
 			super(WorkbenchMessages.getString("Paste")); //$NON-NLS-1$
 			setId("TextCellEditorPasteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			setAccelerator(SWT.CONTROL, 'v');
 		}
-		public void runWithEvent(Event event) {
+		public void run() {
 			if (activeTextControl != null) {
 				activeTextControl.paste();
 				return;
 			}
 			if (pasteAction != null) {
-				pasteAction.runWithEvent(event);
+				pasteAction.run();
 				return;
 			}
 		}
@@ -174,13 +177,13 @@ public class TextActionHandler {
 			setId("TextCellEditorSelectAllActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
-		public void runWithEvent(Event event) {
+		public void run() {
 			if (activeTextControl != null) {
 				activeTextControl.selectAll();
 				return;
 			}
 			if (selectAllAction != null) {
-				selectAllAction.runWithEvent(event);
+				selectAllAction.run();
 				return;
 			}
 		}

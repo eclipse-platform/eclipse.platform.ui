@@ -18,7 +18,6 @@ public class LayoutTree {
 	LayoutTreeNode parent;
 	/* Any LayoutPart if this is a leaf or a LayoutSashPart if it is a node */
 	LayoutPart part;
-
 /**
  * Initialize this tree with its part.
  */
@@ -45,16 +44,6 @@ public LayoutTree find(LayoutPart child) {
 	if(part != child) 
 		return null;
 	return this;
-}
-/**
- * Find the Left,Rigth,Top and Botton 
- * sashes around this tree and set them
- * in <code>sashes</code>
- */
-public void findSashes(PartPane.Sashes sashes) {
-	if(getParent() == null)
-		return;
-	getParent().findSashes(this,sashes);
 }
 /**
  * Find the part that is in the bottom rigth possition.

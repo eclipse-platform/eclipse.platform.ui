@@ -7,7 +7,6 @@ package org.eclipse.ui.internal.dialogs;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.*;
@@ -55,21 +54,34 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
  * This is typically called after the extension dialog is shown to the user.
  */
 public void addResourceType(String newName, String newExtension) {
-	// Either a file name or extension must be provided
-	Assert.isTrue((newName != null && newName.length() != 0) || 
-		(newExtension != null && newExtension.length() != 0));
+	// A file extension must always be provided. Only the file
+	// name is optional.
+	if (newExtension == null || newExtension.length() < 1) {
+		MessageDialog.openInformation(
+			getControl().getShell(),
+			WorkbenchMessages.getString("FileEditorPreference.extensionEmptyTitle"), //$NON-NLS-1$
+			WorkbenchMessages.getString("FileEditorPreference.extensionEmptyMessage")); //$NON-NLS-1$
+		return;
+	}
 
-	// Wild card only valid by itself (i.e. rep* is not valid)
-	// And must have an extension
-	int index = newName.indexOf('*');
-	if (index > -1) {
-		Assert.isTrue(index == 0 && newName.length() == 1); 
-		Assert.isTrue(newExtension != null && newExtension.length() != 0);
+	if (newName == null || newName.length() < 1)
+		newName = "*";//$NON-NLS-1$
+	else {
+		// Wild card only valid by itself (i.e. rep* is not valid)
+		int index = newName.indexOf('*');
+		if (index > -1) {
+			if (!(index == 0 && newName.length() == 1)) {
+				MessageDialog.openInformation(
+					getControl().getShell(),
+					WorkbenchMessages.getString("FileEditorPreference.fileNameInvalidTitle"), //$NON-NLS-1$
+					WorkbenchMessages.getString("FileEditorPreference.fileNameInvalidMessage")); //$NON-NLS-1$
+				return;
+			}
+		}
 	}
 	
 	// Find the index at which to insert the new entry.
-	String newFilename = (newName + (newExtension == null || newExtension.length() == 0 ?
-		 "" : "." + newExtension)).toUpperCase();//$NON-NLS-1$
+	String newFilename = (newName + "." + newExtension).toUpperCase();//$NON-NLS-1$
 	IFileEditorMapping resourceType;
 	TableItem[] items = resourceTypeTable.getItems();
 	boolean found = false;
@@ -77,7 +89,7 @@ public void addResourceType(String newName, String newExtension) {
 
 	while (i < items.length && !found) {
 		resourceType = (IFileEditorMapping) items[i].getData();
-		int result = newFilename.compareToIgnoreCase(resourceType.getLabel());
+		int result = newFilename.compareTo(resourceType.getLabel().toUpperCase());
 		if (result == 0) {
 			// Same resource type not allowed!
 			MessageDialog.openInformation(
@@ -95,9 +107,8 @@ public void addResourceType(String newName, String newExtension) {
 
 	// Create the new type and insert it
 	resourceType = new FileEditorMapping(newName, newExtension);
-	TableItem item = newResourceTableItem(resourceType, i, true);
+	newResourceTableItem(resourceType, i, true);
 	resourceTypeTable.setFocus();
-	resourceTypeTable.showItem(item);
 	fillEditorTable();
 }
 /**
@@ -220,6 +231,13 @@ protected Control createContents(Composite parent) {
 	data.widthHint = Math.max(widthHint, defaultEditorButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 	defaultEditorButton.setLayoutData(data);
 
+	//Spacer
+	label = new Label(pageComponent, SWT.LEFT);
+	data = new GridData();
+	data.horizontalAlignment = GridData.FILL;
+	data.horizontalSpan = 2;
+	label.setLayoutData(data);
+
 	fillResourceTypeTable();
 	if (resourceTypeTable.getItemCount() > 0) {
 		resourceTypeTable.setSelection(0);
@@ -270,21 +288,7 @@ protected void fillEditorTable() {
 			IEditorDescriptor editor = array[i];
 			TableItem item = new TableItem(editorTable, SWT.NULL);
 			item.setData(editor);
-			// Check if it is the default editor
-			String defaultString = null;
-			FileEditorMapping ext = getSelectedResourceType();
-			if (ext != null){
-				IEditorDescriptor preferredEditor = ext.getDefaultEditor();
-				if (preferredEditor == editor)
-					defaultString = WorkbenchMessages.getString("FileEditorPreference.defaultLabel"); //$NON-NLS-1$
-			}
-
-			if (defaultString != null) {
-				item.setText(editor.getLabel() + " " + defaultString); //$NON-NLS-1$
-			}
-			else {
-				item.setText(editor.getLabel());
-			}
+			item.setText(editor.getLabel());
 			item.setImage(getImage(editor));
 		}
 	}
@@ -337,20 +341,8 @@ protected FileEditorMapping getSelectedResourceType() {
 		return null;
 	}
 }
-protected IEditorDescriptor[] getAssociatedEditors(){
-	if (getSelectedResourceType() == null)
-		return null;
-	if (editorTable.getItemCount() > 0) {
-		ArrayList editorList = new ArrayList();
-		for (int i = 0; i < editorTable.getItemCount(); i++)
-			editorList.add(editorTable.getItem(i).getData());
-
-		return (IEditorDescriptor[])editorList.toArray(new IEditorDescriptor[editorList.size()]);
-	}
-	else
-		return null;
-}
 public void handleEvent(Event event) {
+	boolean valid = true;
 	if (event.widget == addResourceTypeButton) {
 		promptForResourceType();
 	} else if (event.widget == removeResourceTypeButton) {
@@ -367,6 +359,15 @@ public void handleEvent(Event event) {
 
 	updateEnabledState();   
 		
+}
+protected boolean hasEditor(FileEditorMapping resourceType, EditorDescriptor editor) {
+	IEditorDescriptor[] editors = resourceType.getEditors();
+	for (int i = 0; i < editors.length; i++) {
+		if (editors[i].getLabel().equals(editor.getLabel())) {
+			return true;
+		}
+	}
+	return false;
 }
 /**
  * @see IWorkbenchPreferencePage
@@ -412,19 +413,14 @@ public boolean performOk() {
 }
 public void promptForEditor() {
 	EditorSelectionDialog dialog = new EditorSelectionDialog(getControl().getShell());
-	dialog.setEditorsToFilter(getAssociatedEditors());
 	dialog.setMessage(WorkbenchMessages.format("Choose_the_editor_for_file", new Object[] {getSelectedResourceType().getLabel()})); //$NON-NLS-1$
 	if (dialog.open() == dialog.OK) {
 		EditorDescriptor editor = (EditorDescriptor)dialog.getSelectedEditor();
-		if (editor != null) {
+		if (editor != null && !hasEditor(getSelectedResourceType(), editor)) {
 			int i = editorTable.getItemCount();
-			boolean isEmpty = i < 1;
 			TableItem item = new TableItem(editorTable, SWT.NULL, i);
 			item.setData(editor);
-			if (isEmpty)
-				item.setText(editor.getLabel() + " " + 	WorkbenchMessages.getString("FileEditorPreference.defaultLabel")); //$NON-NLS-2$ //$NON-NLS-1$
-			else
-				item.setText(editor.getLabel());
+			item.setText(editor.getLabel());
 			item.setImage(getImage(editor));
 			editorTable.setSelection(i);
 			editorTable.setFocus();
@@ -438,7 +434,9 @@ public void promptForResourceType() {
 	if (dialog.open() == dialog.OK) {
 		String name = dialog.getName();
 		String extension = dialog.getExtension();
-		addResourceType(name, extension);
+		if (extension.length() > 0) {
+			addResourceType(name, extension);
+		}
 	}
 }
 /**
@@ -446,17 +444,10 @@ public void promptForResourceType() {
  */
 public void removeSelectedEditor() {
 	TableItem[] items = editorTable.getSelection();
-	boolean defaultEditor = editorTable.getSelectionIndex() == 0;		
 	if (items.length > 0) {
 		getSelectedResourceType().removeEditor((EditorDescriptor)items[0].getData());
 		items[0].dispose();  //Table is single selection
 	}
-	if (defaultEditor && editorTable.getItemCount() > 0){
-		TableItem item = editorTable.getItem(0);
-		if (item != null)
-			item.setText(((EditorDescriptor)(item.getData())).getLabel() + " " + 	WorkbenchMessages.getString("FileEditorPreference.defaultLabel"));  //$NON-NLS-2$ //$NON-NLS-1$
-	}
-
 }
 /**
  * Remove the type from the table
@@ -472,16 +463,12 @@ public void removeSelectedResourceType() {
 public void setSelectedEditorAsDefault() {
 	TableItem[] items = editorTable.getSelection();
 	if (items.length > 0) {
-		// First change the label of the old default
-		TableItem oldDefaultItem = editorTable.getItem(0);
-		oldDefaultItem.setText(((EditorDescriptor)oldDefaultItem.getData()).getLabel());
-		// Now set the new default
 		EditorDescriptor editor = (EditorDescriptor)items[0].getData();
 		getSelectedResourceType().setDefaultEditor(editor);
 		items[0].dispose();  //Table is single selection
 		TableItem item = new TableItem(editorTable, SWT.NULL, 0);
 		item.setData(editor);
-		item.setText(editor.getLabel() + " " + 	WorkbenchMessages.getString("FileEditorPreference.defaultLabel")); //$NON-NLS-2$ //$NON-NLS-1$
+		item.setText(editor.getLabel());
 		item.setImage(getImage(editor));
 		editorTable.setSelection(new TableItem[] {item});
 	}

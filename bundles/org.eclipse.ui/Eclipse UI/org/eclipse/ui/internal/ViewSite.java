@@ -12,7 +12,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.ui.internal.ViewPane;
 
 /**
- * A view container manages the services for a view.
+ * An editor container manages the services for an editor.
  */
 public class ViewSite extends PartSite
 	implements IViewSite
@@ -20,8 +20,8 @@ public class ViewSite extends PartSite
 /**
  * ViewSite constructor comment.
  */
-public ViewSite(IViewPart view, WorkbenchPage page, IViewDescriptor desc) {
-	super(view, page);
+public ViewSite(IViewPart view, WorkbenchPage persp, IViewDescriptor desc) {
+	super(view, persp);
 	setConfigurationElement(desc.getConfigurationElement());
 }
 /**

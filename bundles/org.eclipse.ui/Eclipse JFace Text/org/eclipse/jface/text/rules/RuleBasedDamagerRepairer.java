@@ -18,7 +18,6 @@ import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.jface.text.presentation.IPresentationDamager;
 import org.eclipse.jface.text.presentation.IPresentationRepairer;
-import org.eclipse.jface.util.Assert;
 
 
 /**
@@ -45,32 +44,13 @@ public class RuleBasedDamagerRepairer implements IPresentationDamager, IPresenta
 	 * text attribute if the current token does not carry a text attribute.
 	 *
 	 * @param scanner the rule based scanner to be used
-	 * @param defaultTextAttribute the text attribute to be returned if non is specified by the current token,
-	 * 			may not be <code>null</code>
-	 * 
-	 * @deprecated use RuleBasedDamagerRepairer(RuleBasedScanner) instead
+	 * @param defaultTextAttribute the text attribute to be returned if non is specified by the current token
 	 */
 	public RuleBasedDamagerRepairer(RuleBasedScanner scanner, TextAttribute defaultTextAttribute) {
-		
-		Assert.isNotNull(defaultTextAttribute);
-		
 		fScanner= scanner;
 		fDefaultTextAttribute= defaultTextAttribute;
 	}
-	
-	/**
-	 * Creates a damager/repairer that uses the given scanner. The scanner may not be <code>null</code>
-	 * and is assumed to return only token that carry text attributes.
-	 *
-	 * @param scanner the rule based scanner to be used, may not be <code>null</code>
-	 */
-	public RuleBasedDamagerRepairer(RuleBasedScanner scanner) {
 		
-		Assert.isNotNull(scanner);
-		
-		fScanner= scanner;
-	}
-	
 	/*
 	 * @see IPresentationDamager#setDocument
 	 * @see IPresentationRepairer#setDocument
@@ -142,7 +122,6 @@ public class RuleBasedDamagerRepairer implements IPresentationDamager, IPresenta
 	public void createPresentation(TextPresentation presentation, ITypedRegion region) {
 		
 		if (fScanner == null) {
-			// will be removed if deprecated constructor will be removed
 			addRange(presentation, region.getOffset(), region.getLength(), fDefaultTextAttribute);
 			return;
 		}
@@ -211,8 +190,7 @@ public class RuleBasedDamagerRepairer implements IPresentationDamager, IPresenta
 	 * @param attr the attribute describing the style of the range to be styled
 	 */
 	protected void addRange(TextPresentation presentation, int offset, int length, TextAttribute attr) {
-		if (attr != null)
-			presentation.addStyleRange(new StyleRange(offset, length, attr.getForeground(), attr.getBackground(), attr.getStyle()));
+		presentation.addStyleRange(new StyleRange(offset, length, attr.getForeground(), attr.getBackground()));
 	}
 }
 

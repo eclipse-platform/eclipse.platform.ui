@@ -17,7 +17,6 @@ import org.eclipse.jface.util.ListenerList;
 import org.eclipse.swt.widgets.*;
 
 import java.io.*;
-import java.text.Collator;
 import java.util.*;
 import java.util.List;
 
@@ -395,8 +394,8 @@ public IEditorDescriptor[] getSortedEditorsFromPlugins() {
  * this type. Null if none can be found.
  */
 public ImageDescriptor getSystemEditorImageDescriptor(String filename) {
+	int extensionIndex = filename.indexOf('.');
 	Program externalProgram = null;
-	int extensionIndex = filename.lastIndexOf('.');
 	if (extensionIndex >= 0)
 		externalProgram = Program.findProgram(filename.substring(extensionIndex));
 	if (externalProgram == null)
@@ -560,8 +559,7 @@ private String mappingKeyFor(String type) {
  * of the given mapping
  */
 private String mappingKeyFor(FileEditorMapping mapping) {
-	return mappingKeyFor(mapping.getName() + 
-		(mapping.getExtension().length() == 0 ? "" : "." + mapping.getExtension()));//$NON-NLS-1$ //$NON-NLS-2$
+	return mappingKeyFor(mapping.getName() + "." + mapping.getExtension());//$NON-NLS-1$
 }
 /**
  * Rebuild the editor map
@@ -694,13 +692,11 @@ private Object[] sortEditors(List unsortedList) {
 	unsortedList.toArray(array);
 	
 	Sorter s = new Sorter() {
-		private Collator collator = Collator.getInstance();
-		
 		public boolean compare(Object o1, Object o2) {
-			String s1 = ((IEditorDescriptor)o1).getLabel();
-			String s2 = ((IEditorDescriptor)o2).getLabel();
+			String s1 = ((IEditorDescriptor)o1).getLabel().toUpperCase();
+			String s2 = ((IEditorDescriptor)o2).getLabel().toUpperCase();
 			//Return true if elementTwo is 'greater than' elementOne
-			return collator.compare(s2, s1) > 0;
+			return s2.compareTo(s1) > 0;
 		}
 	};
 	return s.sort(array);
@@ -722,20 +718,18 @@ private List sortedTypeEditorMappings() {
 	}
 	
 	Sorter s = new Sorter() {
-		private Collator collator = Collator.getInstance();
-
 		public boolean compare(Object o1, Object o2) {
-			String s1 = ((FileEditorMapping)o1).getLabel();
-			String s2 = ((FileEditorMapping)o2).getLabel();
+			String s1 = ((FileEditorMapping)o1).getLabel().toUpperCase();
+			String s2 = ((FileEditorMapping)o2).getLabel().toUpperCase();
 			//Return true if elementTwo is 'greater than' elementOne
-			return collator.compare(s2, s1) > 0;
+			return s2.compareTo(s1) > 0;
 		}
 	};
 	array = s.sort(array);
 	List result = new ArrayList();  // vector of FileEditorMapping
 	for (int i = 0; i < array.length; i++) {
 		result.add(array[i]);
-	} 
+	}
 	return result;
 }
 /**

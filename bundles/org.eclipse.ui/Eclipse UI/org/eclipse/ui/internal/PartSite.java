@@ -87,7 +87,7 @@ public String getId() {
 	return extensionID;
 }
 /**
- * Returns the page containing this workbench site's part.
+ * Returns the peage containing this workbench site's part.
  *
  * @return the page containing this part
  */

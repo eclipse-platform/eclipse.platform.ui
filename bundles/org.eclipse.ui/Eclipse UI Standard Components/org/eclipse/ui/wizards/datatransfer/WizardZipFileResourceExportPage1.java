@@ -244,7 +244,7 @@ protected String getOutputSuffix() {
  */
 protected void handleDestinationBrowseButtonPressed() {
 	FileDialog dialog = new FileDialog(getContainer().getShell(),SWT.SAVE);
-	dialog.setFilterExtensions(new String[] {"*.zip"});//$NON-NLS-1$
+	dialog.setFilterExtensions(new String[] {"*.jar;*.zip"});//$NON-NLS-1$
 	
 	String currentSourceString = getDestinationValue();
 	int lastSeparatorIndex = currentSourceString.lastIndexOf(File.separator);

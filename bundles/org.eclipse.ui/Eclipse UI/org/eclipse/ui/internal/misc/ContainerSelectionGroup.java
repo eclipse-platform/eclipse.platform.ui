@@ -30,15 +30,13 @@ public class ContainerSelectionGroup extends Composite {
 	// Enable user to type in new container name
 	private boolean allowNewContainerName = true;
 
-	// show all projects by default
-	private boolean showClosedProjects = true;
-	
 	// Last selection made by user
 	private IContainer selectedContainer;
 	
 	// handle on parts
 	private Text containerNameField;
 	private TreeViewer treeViewer;
+
 
 	// the message to display at the top of this dialog
 	private static final String DEFAULT_MSG_NEW_ALLOWED = WorkbenchMessages.getString("ContainerGroup.message"); //$NON-NLS-1$
@@ -70,24 +68,9 @@ public ContainerSelectionGroup (Composite parent, Listener listener, boolean all
  * @param message The text to present to the user.
  */
 public ContainerSelectionGroup (Composite parent, Listener listener, boolean allowNewContainerName, String message) {
-	this(parent, listener, allowNewContainerName, message, true);
-}
-/**
- * Creates a new instance of the widget.
- *
- * @param parent The parent widget of the group.
- * @param listener A listener to forward events to.  Can be null if
- *	 no listener is required.
- * @param allowNewContainerName Enable the user to type in a new container
- *  name instead of just selecting from the existing ones.
- * @param message The text to present to the user.
- * @param showClosedProjects Whether or not to show closed projects.
- */
-public ContainerSelectionGroup (Composite parent, Listener listener, boolean allowNewContainerName, String message, boolean showClosedProjects) {
 	super (parent, SWT.NONE);
 	this.listener = listener;
 	this.allowNewContainerName = allowNewContainerName;
-	this.showClosedProjects = showClosedProjects;
 	this.setFont(parent.getFont());
 	if (message != null)
 		createContents(message);
@@ -162,9 +145,7 @@ protected void createTreeViewer() {
 	// Create tree viewer inside drill down.
 	treeViewer = new TreeViewer(drillDown, SWT.NONE);
 	drillDown.setChildTree(treeViewer);
-	ContainerContentProvider cp = new ContainerContentProvider();
-	cp.showClosedProjects(showClosedProjects);
-	treeViewer.setContentProvider(cp);
+	treeViewer.setContentProvider(new ContainerContentProvider());
 	treeViewer.setLabelProvider(new WorkbenchLabelProvider());
 	treeViewer.addSelectionChangedListener(
 		new ISelectionChangedListener() {

@@ -82,13 +82,9 @@ public void closeAll() {
  * The IEditorPart.dispose method must be called at a higher level.
  */
 public void closeEditor(IEditorPart part) {
-	// Record the close event.
-	Workbench wb = (Workbench)window.getWorkbench();
-	EditorSite site = (EditorSite)part.getEditorSite();
-	wb.getEditorHistory().add(part.getEditorInput(),site.getEditorDescriptor());
-				
 	// Close the pane, action bars, pane, etc.
 	editorPresentation.closeEditor(part);
+	PartSite site = (PartSite)part.getSite();
 	disposeEditorActionBars((EditorActionBars)site.getActionBars());
 	site.dispose();
 }
@@ -258,10 +254,17 @@ public IEditorPart openEditor(String editorID, IEditorInput input)
 /*
  * @see IWorkbenchPage.
  */
-public IEditorPart openEditor(IFileEditorInput input,boolean setVisible) 
+public IEditorPart openEditor(IFileEditorInput input) throws PartInitException {
+	return openEditor(input,true);
+}
+/*
+ * @see IWorkbenchPage.
+ */
+private IEditorPart openEditor(IFileEditorInput input,boolean setVisible) 
 	throws PartInitException
 {
 	IFile file = input.getFile();
+	
 	// If there is a registered editor for the file use it.
 	EditorDescriptor desc = (EditorDescriptor)getEditorRegistry().
 		getDefaultEditor(file);
@@ -288,87 +291,11 @@ public IEditorPart openEditor(IFileEditorInput input,boolean setVisible)
 	return openEditor(desc, input);
 }
 /*
- * Find an editor to be reused or return null if a new one should
- * be opened.
- */
-private IEditorPart findReusableEditor(EditorDescriptor desc) {
-	
-	IEditorPart editors[] = page.getSortedEditors();
-	if(editors.length < page.getEditorReuseThreshold())
-		return null;
-	
-	
-	IEditorPart dirtyEditor = null;
-	IWorkbenchPart activePart = page.getActivePart();
-	//Find a editor to be reused
-	for(int i = 0;i < editors.length;i++) {
-		IEditorPart editor = editors[i];
-		if(editor == activePart)
-			continue;
-		EditorSite site = (EditorSite)editor.getEditorSite();
-		if(!site.getReuseEditor())
-			continue;
-		if(editor.isDirty()) {
-			dirtyEditor = editor;
-			continue;
-		}
-		return editor;
-	}
-	if(dirtyEditor == null)
-		return null;
-	
-	//Should we have a global preference "Allways open new Editor when dirty"?
-	//if(openNewWhenDirty)
-	//	return null;
-	MessageDialog dialog = new MessageDialog(
-		window.getShell(),
-		WorkbenchMessages.getString("EditorManager.reuseEditorDialogTitle"),
-		null,	// accept the default window icon
-		WorkbenchMessages.format("EditorManager.saveChangesQuestion", new String[]{dirtyEditor.getEditorInput().getName()}),
-		MessageDialog.QUESTION, 
-		new String[] {
-			IDialogConstants.YES_LABEL,
-			IDialogConstants.NO_LABEL,
-			WorkbenchMessages.getString("EditorManager.openNewEditorLabel")}, 
-		0);
-	int result = dialog.open();
-	if(result == 0) { //YES
-		ProgressMonitorDialog pmd = new ProgressMonitorDialog(dialog.getShell());
-		pmd.open();
-		dirtyEditor.doSave(pmd.getProgressMonitor());
-		pmd.close();
-	} else if(result == 2) {
-		return null;
-	}
-	return dirtyEditor;
-}
-/*
  * See IWorkbenchPage.
  */
 private IEditorPart openEditor(EditorDescriptor desc, IEditorInput input)
 	throws PartInitException {
 	if (desc.isInternal()) {
-		IEditorPart reusableEditor = findReusableEditor(desc);
-		if(reusableEditor != null) {
-			EditorSite site = (EditorSite)reusableEditor.getEditorSite();
-			IEditorInput editorInput = reusableEditor.getEditorInput(); 
-			EditorDescriptor oldDesc = site.getEditorDescriptor();
-			if(oldDesc == null)
-				oldDesc = (EditorDescriptor)getEditorRegistry().getDefaultEditor();
-			if((desc.getId().equals(oldDesc.getId())) &&
-				(reusableEditor instanceof IReusableEditor)) {
-					Workbench wb = (Workbench)window.getWorkbench();
-					editorPresentation.moveEditor(reusableEditor,-1);
-					wb.getEditorHistory().add(reusableEditor.getEditorInput(),site.getEditorDescriptor());
-					((IReusableEditor)reusableEditor).setInput(input);
-					return reusableEditor;
-			} else {
-				//findReusableEditor(...) makes sure its neither pinned nor dirty
-				IEditorPart result = openInternalEditor(desc, input, true);
-				reusableEditor.getEditorSite().getPage().closeEditor(reusableEditor,true);				
-				return result;
-			}
-		}
 		return openInternalEditor(desc, input, true);
 	} else
 		if (desc.isOpenInPlace()) {
@@ -430,7 +357,7 @@ private void openExternalEditor(final EditorDescriptor desc, final Object input)
 	
 	// Test the result.
 	if (ex[0] != null) {
-		throw new PartInitException(ex[0].getMessage()); //$NON-NLS-1$
+		throw new PartInitException(WorkbenchMessages.format("EditorManager.errorInitializingExternalEditor", new Object[] {desc.getFileName(),desc.getId(),ex[0]})); //$NON-NLS-1$
 	}
 }
 /*
@@ -459,9 +386,10 @@ private void openInternalEditor(final IEditorPart part, final EditorDescriptor d
 				else
 					site.setActionBars(createEmptyEditorActionBars());
 				editorPresentation.openEditor(part,setVisible);
+
+				// Record the happy event.
 				Workbench wb = (Workbench)window.getWorkbench();
-				wb.getEditorHistory().remove(input);
-				page.firePartOpened(part);
+				wb.getEditorHistory().add(input, desc);
 			} catch (PartInitException e) {
 				ex[0] = e;
 			}
@@ -583,12 +511,11 @@ public void restoreState(IMemento memento) {
 					String workbookID = editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK);
 					editorPresentation.setActiveEditorWorkbookFromID(workbookID);
 					IEditorPart part;
-					if(desc == null) {
+					if(desc == null) 
 						part = openEditor((IFileEditorInput)editorInput,false);
-					} else {
+					else
 						part = openInternalEditor(desc, editorInput,false);
-						((WorkbenchPage)part.getEditorSite().getPage()).addPart(part);
-					}	
+						
 					String strFocus = editorMem.getString(IWorkbenchConstants.TAG_FOCUS);
 					if ("true".equals(strFocus))//$NON-NLS-1$
 						activeEditors.add(part);

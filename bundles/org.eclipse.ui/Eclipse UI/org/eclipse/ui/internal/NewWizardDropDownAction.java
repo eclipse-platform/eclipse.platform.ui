@@ -59,7 +59,6 @@ public Menu getMenu(Control parent) {
 			workbench.getActiveWorkbenchWindow(),
 			false);
 	}
-	newWizardMenu.updateMenu();
 	return dropDownMenuMgr.createContextMenu(parent);
 }
 public Menu getMenu(Menu parent) {

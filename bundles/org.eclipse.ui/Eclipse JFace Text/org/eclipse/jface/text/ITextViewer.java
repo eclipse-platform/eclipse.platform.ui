@@ -269,12 +269,6 @@ public interface ITextViewer {
 	 * @param controlRedraw indicates whether this viewer should manage redraws
 	 */
 	void changeTextPresentation(TextPresentation presentation, boolean controlRedraw);
-	
-	/**
-	 * Marks the currently applied text presentation as invalid. It is the viewer's
-	 * responsibility to take any action is can to repair the text presentation.
-	 */
-	void invalidateTextPresentation();
 		
 	/**
 	 * Applies the given color to this viewer's selection.
@@ -315,15 +309,11 @@ public interface ITextViewer {
 	/**
 	 * Sets the string that is used as prefix when lines of the given 
 	 * content type are prefixed by the prefix text operation.
-	 * Sets the strings that are used as prefixes when lines of the given content type 
-	 * are prefixed using the prefix text operation. The prefixes are considered equivalent.
-	 * Inserting a prefix always inserts the defaultPrefixes[0].
-	 * Removing a prefix removes all of the specified prefixes.
 	 *
-	 * @param defaultPrefixes the prefixes to be used
-	 * @param contentType the content type for which the prefixes are specified
+	 * @param defaultPrefix the prefix to be used
+	 * @param contentType the content type for which the prefix is specified
 	 */
-	void setDefaultPrefixes(String[] defaultPrefixes, String contentType);
+	void setDefaultPrefix(String defaultPrefix, String contentType);
 	
 	/**
 	 * Sets the strings that are used as prefixes when lines of the given content type 

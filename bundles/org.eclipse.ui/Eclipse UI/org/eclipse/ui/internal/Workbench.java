@@ -45,7 +45,6 @@ public class Workbench implements IWorkbench,
 	private static final String DEFAULT_WORKBENCH_STATE_FILENAME = "workbench.xml";//$NON-NLS-1$
 	private WindowManager windowManager;
 	private EditorHistory editorHistory;
-	private PerspectiveHistory perspHistory;
 	private boolean runEventLoop;
 	private boolean isStarting = false;
 	private boolean isClosing = false;
@@ -125,14 +124,13 @@ private IWorkbenchWindow busyOpenWorkbenchWindow(String perspID, IAdaptable inpu
 	windowManager.add(newWindow);
 
 	// Create the initial page.
-	newWindow.busyOpenPage(perspID, input);
+	newWindow.openPage(perspID, input);
 
 	// Open after opening page, to avoid flicker.
 	newWindow.open();
 
 	return newWindow;
 }
-
 private void checkInstallErrors() {
 	if(!LaunchInfo.getCurrent().hasStatus())
 		return;
@@ -238,15 +236,6 @@ public EditorHistory getEditorHistory() {
 		editorHistory = new EditorHistory();
 	}
 	return editorHistory;
-}
-/**
- * Returns the perspective history.
- */
-public PerspectiveHistory getPerspectiveHistory() {
-	if (perspHistory == null) {
-		perspHistory = new PerspectiveHistory(getPerspectiveRegistry());
-	}
-	return perspHistory;
 }
 /**
  * Returns the editor registry for the workbench.
@@ -433,8 +422,8 @@ private void initializeFonts() {
 private void initializeFont(String fontKey,FontRegistry registry,IPreferenceStore store) {
 	if(store.isDefault(fontKey))
 		return;
-	FontData[] font = 
-		PreferenceConverter.getFontDataArray(store,fontKey);
+	FontData[] font = new FontData[1];
+	font[0] = PreferenceConverter.getFontData(store,fontKey);
 	registry.put(fontKey,font);
 }
 /**
@@ -565,27 +554,6 @@ private void openWindows() {
 public IWorkbenchWindow openWorkbenchWindow(final String perspID, final IAdaptable input) 
 	throws WorkbenchException 
 {
-	// If "reuse" and a window already exists for the input reuse it.
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	boolean reuse = 
-		store.getBoolean(IPreferenceConstants.REUSE_PERSPECTIVES);
-	if (reuse) {
-		// If a window already exists for the input then
-		// reuse it.
-		IWorkbenchPage page = findPage(input);
-		if (page != null) {
-			IWorkbenchWindow win = page.getWorkbenchWindow();
-			win.getShell().open();
-			win.setActivePage(page);
-			PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
-				.getDefault().getPerspectiveRegistry().findPerspectiveWithId(perspID);
-			if (desc == null)
-				throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
-			page.setPerspective(desc);
-			return win;
-		}
-	}
-	
 	// Run op in busy cursor.
 	final Object [] result = new Object[1];
 	BusyIndicator.showWhile(null, new Runnable() {
@@ -613,21 +581,6 @@ public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 	return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), 
 		input);
 }
-
-/**
- * Reteturns the first page open on a particular input.
- */
-private IWorkbenchPage findPage(IAdaptable input) {
-	IWorkbenchWindow [] windows = getWorkbenchWindows();
-	for (int nX = 0; nX < windows.length; nX ++) {
-		WorkbenchWindow win = (WorkbenchWindow)windows[nX];
-		IWorkbenchPage page = win.findPage(input);
-		if (page != null)
-			return page;
-	}
-	return null;
-}
-
 /**
  * Reads the platform and product info.
  * This info contains the platform and product name, product images,
@@ -670,19 +623,12 @@ private XMLMemento recordWorkbenchState() {
  * @see IPersistable
  */
 public void restoreState(IMemento memento) {
-	// Read perspective history.
-	// This must be done before we recreate the windows, because it is
-	// consulted during the recreation.
-	IMemento childMem = memento.getChild("perspHistory");
-	if (childMem != null)
-		getPerspectiveHistory().restoreState(childMem);
-		
 	// Get the child windows.
 	IMemento [] children = memento.getChildren(IWorkbenchConstants.TAG_WINDOW);
 	
 	// Read the workbench windows.
 	for (int x = 0; x < children.length; x ++) {
-		childMem = children[x];
+		IMemento childMem = children[x];
 		WorkbenchWindow newWindow = new WorkbenchWindow(this, getNewWindowNumber());
 		newWindow.create();
 		newWindow.restoreState(childMem);
@@ -759,9 +705,6 @@ public void saveState(IMemento memento) {
 		IMemento childMem = memento.createChild(IWorkbenchConstants.TAG_WINDOW);
 		window.saveState(childMem);
 	}
-	
-	// Save perspective history.
-	getPerspectiveHistory().saveState(memento.createChild("perspHistory"));
 }
 /**
  * Save the workbench UI in a persistence file.
@@ -841,84 +784,4 @@ private boolean testStateFile() {
 		return false;
 	}
 }
-
-/**
- * Saves the current state of the workbench to a file.
- */
-public boolean saveSnapshot(File stateFile) {
-	XMLMemento memento = recordWorkbenchState();
-	try {
-		FileOutputStream stream = new FileOutputStream(stateFile);
-		OutputStreamWriter writer = new OutputStreamWriter(stream, "utf-8");
-		memento.save(writer);
-		writer.close();
-	} catch (IOException e) {
-		stateFile.delete();		
-		MessageDialog.openError((Shell)null, 
-			WorkbenchMessages.getString("SavingProblem"),  //$NON-NLS-1$
-			WorkbenchMessages.getString("ProblemSavingState")); //$NON-NLS-1$
-		return false;
-	}
-
-	// Success !
-	return true;
-}
-
-/**
- * Restores the state of the workbench from a file.
- * All existing windows are closed.
- * <p>
- * This method creates an async runnable and returns before
- * the runnable executes.  This allows the caller to backtrack into
- * the event loop before any windows are closed.
- * </p>
- */	
-public boolean restoreSnapshot(final File stateFile) {
-	Display disp = Display.getCurrent();
-	disp.asyncExec(new Runnable() {
-		public void run() {
-			asyncRestoreSnapshot(stateFile);
-		}
-	});
-	return true;
-}
-
-/**
- * Restores the state of the workbench from a file.
- * All existing windows are closed.
- */	
-private boolean asyncRestoreSnapshot(final File stateFile) {
-	if (!stateFile.exists())
-		return false;
-
-	// Close the existing windows.
-	isClosing = true;
-	isClosing = windowManager.close();
-	if (!isClosing)
-		return false;
-	isClosing = false;
-
-	try {
-		FileInputStream input = new FileInputStream(stateFile);
-		InputStreamReader reader = new InputStreamReader(input, "utf-8");
-		// Restore the workbench state.
-		IMemento memento = XMLMemento.createReadRoot(reader);
-		String version = memento.getString(IWorkbenchConstants.TAG_VERSION);
-		if((version == null) || (!version.equals(VERSION_STRING))) {
-			reader.close();
-			MessageDialog.openError((Shell)null, 
-				WorkbenchMessages.getString("Restoring_Problems"),  //$NON-NLS-1$
-				WorkbenchMessages.getString("Invalid_workbench_state_ve")); //$NON-NLS-1$
-			stateFile.delete();		
-			return false;
-		}
-		restoreState(memento);
-		reader.close();
-		return true;
-	} catch (Exception e) {
-		stateFile.delete();
-		return false;
-	}
-}
-
 }

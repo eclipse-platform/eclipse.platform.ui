@@ -12,7 +12,6 @@ import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.registry.*;
-import java.text.Collator;
 import java.util.*;
 
 /**
@@ -161,12 +160,10 @@ private void finishCategories() {
 		flatArray[i] = new CategoryNode((Category)deferCategories.get(i));
 	}
 	Sorter sorter = new Sorter() {
-		private Collator collator = Collator.getInstance();
-		
 		public boolean compare(Object o1, Object o2) {
 			String s1 = ((CategoryNode)o1).getPath();
 			String s2 = ((CategoryNode)o2).getPath();
-			return collator.compare(s2, s1) > 0;
+			return s2.compareTo(s1) > 0;
 		}
 	};
 	Object [] sortedCategories = sorter.sort(flatArray);

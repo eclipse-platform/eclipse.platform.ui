@@ -52,6 +52,9 @@ public String getText(Object element) {
 		label = ((ICategory)element).getLabel();
 	else if (element instanceof IViewDescriptor)
 		label = ((ViewDescriptor)element).getLabel();
-	return DialogUtil.removeAccel(label);
+	int aruga = label.indexOf('&');
+	if (aruga >= 0)
+		label = label.substring(aruga + 1);
+	return label;
 }
 }

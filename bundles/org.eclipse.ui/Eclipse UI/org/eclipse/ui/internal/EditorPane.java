@@ -25,8 +25,8 @@ public class EditorPane extends PartPane {
 /**
  * Constructs an editor pane for an editor part.
  */
-public EditorPane(IEditorPart part, WorkbenchPage page, EditorWorkbook workbook) {
-	super(part, page);
+public EditorPane(IEditorPart part, WorkbenchPage persp, EditorWorkbook workbook) {
+	super(part, persp);
 	this.workbook = workbook;
 }
 protected WorkbenchPart createErrorPart(WorkbenchPart oldPart) {
@@ -83,7 +83,8 @@ public IEditorPart getEditorPart() {
 /**
  * Answer the SWT widget style.
  */
-int getStyle() {
+int getStyle()
+{
 	return SWT.NONE;
 }
 /**
@@ -92,13 +93,6 @@ int getStyle() {
 public EditorWorkbook getWorkbook() {
 	return workbook;
 }
-/**
- * See LayoutPart
- */
-public boolean isDragAllowed(Point p) {
-	return workbook.isDragAllowed(p) && super.isDragAllowed(p);
-}
-
 /**
  * Notify the workbook page that the part pane has
  * been activated by the user.
@@ -127,55 +121,9 @@ public void showFocus(boolean inFocus) {
 		this.workbook.tabFocusHide();
 }
 /**
- * Add the Editor and Tab Group items to the Move menu.
- */
-protected void addMoveItems(Menu moveMenu) {
-	MenuItem item = new MenuItem(moveMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("EditorPane.moveEditor")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			ILayoutContainer container = getContainer();
-			if (container instanceof EditorWorkbook)
-				((EditorWorkbook)container).openTracker(EditorPane.this);
-		}
-	});
-	item.setEnabled(!isZoomed());
-	item = new MenuItem(moveMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("EditorPane.moveFolder")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			ILayoutContainer container = getContainer();
-			if (container instanceof EditorWorkbook)
-				((EditorWorkbook)container).openTracker((EditorWorkbook)container);
-		}
-	});
-	item.setEnabled(!isZoomed() && (getContainer() instanceof EditorWorkbook));
-}
-
-/**
- * Return the sashes around this part.
- */
-protected Sashes findSashes() {
-	Sashes result = new Sashes();
-	workbook.getEditorArea().findSashes(workbook,result);
-	return result;
-}
-/**
  * Update the title attributes for the pane.
  */
 public void updateTitles() {
 	getWorkbook().updateEditorTab(getEditorPart());
-}
-/**
- * Show a title label menu for this pane.
- */
-public void showPaneMenu() {
-	workbook.showPaneMenu();
-}
-/**
- * Show the context menu for this part.
- */
-public void showViewMenu(){
-	//Do nothing. Editors do not have menus
 }
 }

@@ -89,11 +89,10 @@ public void run() {
 /**
  * The <code>AddBookmarkAction</code> implementation of this
  * <code>SelectionListenerAction</code> method enables the action only
- * if the selection is not empty and contains just file resources.
+ * if the selection contains just file resources.
  */
 protected boolean updateSelection(IStructuredSelection selection) {
 	return super.updateSelection(selection)
-		&& !selection.isEmpty()
 		&& selectionIsOfType(IFile.FILE);
 }
 }

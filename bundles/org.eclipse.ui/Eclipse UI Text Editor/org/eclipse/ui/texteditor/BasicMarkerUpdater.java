@@ -17,7 +17,7 @@ import org.eclipse.core.resources.IMarker;
  * Updates a marker's positional attributes which are 
  * start position, end position, and line number.
  */
-public final class BasicMarkerUpdater implements IMarkerUpdater {
+public class BasicMarkerUpdater implements IMarkerUpdater {
 	
 	private final static String[] ATTRIBUTES= {
 		IMarker.CHAR_START,
@@ -51,32 +51,14 @@ public final class BasicMarkerUpdater implements IMarkerUpdater {
 	 */
 	public boolean updateMarker(IMarker marker, IDocument document, Position position) {
 		
-		if (position == null)
-			return true;
-			
 		if (position.isDeleted())
 			return false;
 		
-		boolean changed= false;
-		int markerStart= MarkerUtilities.getCharStart(marker);
-		int markerEnd= MarkerUtilities.getCharEnd(marker);
-		
-		if (markerStart != -1 && markerEnd != -1) {
-			
-			int offset= position.getOffset();
-			if (markerStart != offset) {
-				MarkerUtilities.setCharStart(marker, offset);
-				changed= true;
-			}
-			
-			offset += position.getLength();
-			if (markerEnd != offset) {
-				MarkerUtilities.setCharEnd(marker, offset);
-				changed= true;
-			}
+		if (MarkerUtilities.getCharStart(marker) != -1 && MarkerUtilities.getCharEnd(marker) != -1) {
+			MarkerUtilities.setCharStart(marker, position.getOffset());
+			MarkerUtilities.setCharEnd(marker, position.getOffset() + position.getLength());
 		}
-		
-		if (changed && MarkerUtilities.getLineNumber(marker) != -1) {
+		if (MarkerUtilities.getLineNumber(marker) != -1) {
 			try {
 				// marker line numbers are 1-based
 				MarkerUtilities.setLineNumber(marker, document.getLineOfOffset(position.getOffset()) + 1);

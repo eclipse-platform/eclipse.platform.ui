@@ -91,7 +91,7 @@ protected Control createDialogArea(Composite parent) {
 		Label imageLabel = new Label(topContainer, SWT.NONE);
 		data = new GridData();
 		data.horizontalAlignment = GridData.FILL;
-		data.verticalAlignment = GridData.BEGINNING;
+		data.verticalAlignment = GridData.VERTICAL_ALIGN_BEGINNING;
 		data.grabExcessHorizontalSpace = true;
 		imageLabel.setLayoutData(data);
 		imageLabel.setImage(image);

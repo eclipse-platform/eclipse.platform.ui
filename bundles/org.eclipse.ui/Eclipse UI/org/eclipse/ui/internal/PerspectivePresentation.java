@@ -196,14 +196,6 @@ private DetachedWindow[] collectDetachedWindows(Window[] windows) {
 	return result;
 }
 /**
- * Open the tracker to allow the user to move
- * the specified part using keyboard.
- */
-public void openTracker(ViewPane pane) {
-	PartDragDrop dnd = (PartDragDrop)dragParts.get(pane);
-	dnd.openTracker();
-}
-/**
  * Answer a list of the view panes.
  */
 private void collectDragParts(List result, LayoutPart [] parts) {
@@ -365,26 +357,20 @@ private void derefPart(LayoutPart part) {
 		boolean hasChildren = (children != null) && (children.length > 0);
 		if (hasChildren) {
 			// make sure one is at least visible
-			int childVisible = 0;
+			boolean childVisible = false;
 			for (int i = 0; i < children.length; i++)
-				if(children[i].isVisible())
-					childVisible++;
+				childVisible = childVisible || children[i].isVisible();
 
 			// none visible, then reprarent and remove container
-			if (oldContainer instanceof PartTabFolder) {
+			if (!childVisible && (oldContainer instanceof PartTabFolder)) {
 				PartTabFolder folder = (PartTabFolder)oldContainer;
-				if(childVisible == 0) {
-					ILayoutContainer parentContainer = folder.getContainer();
-					for (int i = 0; i < children.length; i++) {
-						folder.remove(children[i]);
-						parentContainer.add(children[i]);
-					}	
-					hasChildren = false;
-				} else if(childVisible == 1) {
-					LayoutTree layout = mainLayout.getLayoutTree();
-					layout = layout.find(folder);
-					layout.setBounds(layout.getBounds());
+				ILayoutContainer parentContainer = folder.getContainer();
+				for (int i = 0; i < children.length; i++) {
+					folder.remove(children[i]);
+					parentContainer.add(children[i]);
 				}
+					
+				hasChildren = false;
 			}
 		}
 		
@@ -492,44 +478,6 @@ private void detach(LayoutPart part, int x, int y) {
 		part.setFocus();
 	}
 
-}
-/**
- * Create a detached window containing a part.
- */
-public void addDetachedPart(LayoutPart part) {
-	// Detaching is disabled on some platforms ..
-	if (!detachable) {
-		addPart(part);
-		return;
-	}
-		
-	// Calculate detached window size.
-	int width = 300;
-	int height = 300;
-	Rectangle bounds = parentWidget.getShell().getBounds();
-	int x = bounds.x + (bounds.width - width) / 2;
-	int y = bounds.y + (bounds.height - height) / 2;
-	
-	// Create detached window.
-	DetachedWindow window = new DetachedWindow(page);
-	detachedWindowList.add(window);
-	window.create();
-
-	// add part to detached window.
-	part.createControl(window.getShell());
-	ViewPane pane = (ViewPane) part;
-	window.getShell().setText(pane.getPart().getTitle());
-	window.add(pane, partDropListener);
-
-	// Open window.
-	window.getShell().setBounds(x, y, width, height);
-	window.open();
-
-	part.setFocus();
-
-	// enable direct manipulation
-	enableDrag(pane);
-	enableDrop(part);
 }
 /**
  * disableDragging.
@@ -678,13 +626,6 @@ private LayoutPart findPart(String id, LayoutPart[] parts) {
 		}
 	}
 	return null;
-}
-/**
- * Returns true if a placeholder exists for a given ID.
- */
-public boolean hasPlaceholder(String id) {
-	LayoutPart testPart = findPart(id);
-	return (testPart != null && testPart instanceof PartPlaceholder);
 }
 /**
  * Returns the layout container.

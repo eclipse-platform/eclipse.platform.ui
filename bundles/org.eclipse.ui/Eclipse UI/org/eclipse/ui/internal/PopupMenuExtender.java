@@ -18,7 +18,6 @@ public class PopupMenuExtender implements IMenuListener
 {
 	private String menuID;
 	private MenuManager menu;
-	private SubMenuManager menuWrapper;
 	private ISelectionProvider selProvider;
 	private IWorkbenchPart part;
 	private List staticItems;
@@ -32,41 +31,33 @@ public PopupMenuExtender(String id, MenuManager menu, ISelectionProvider prov, I
 	this.selProvider = prov;
 	this.part = part;
 	menu.addMenuListener(this);
-	if (!menu.getRemoveAllWhenShown()) {
-		menuWrapper = new SubMenuManager(menu);
-		menuWrapper.setVisible(true);
-	}
 	readStaticActions();
 }
 /**
  * Contributes items registered for the object type(s) in
  * the current selection.
  */
-private void addObjectActions(IMenuManager mgr) {
+private void addObjectActions() {
 	if (selProvider != null) {
 		if (ObjectActionContributorManager.getManager()
-			.contributeObjectActions(part, mgr, selProvider))
-			mgr.add(new Separator());
+			.contributeObjectActions(part, menu, selProvider))
+			menu.add(new Separator());
 	}
 }
 /**
  * Adds static items to the context menu.
  */
-private void addStaticActions(IMenuManager mgr) {
+private void addStaticActions() {
 	if (staticActionBuilder != null)
-		staticActionBuilder.contribute(mgr, null, true);
+		staticActionBuilder.contribute(menu, null, true);
 }
 /**
  * Notifies the listener that the menu is about to be shown.
  */
 public void menuAboutToShow(IMenuManager mgr) {
 	testForAdditions();
-	if (menuWrapper != null) {
-		mgr = menuWrapper;
-		menuWrapper.removeAll();
-	}
-	addObjectActions(mgr);
-	addStaticActions(mgr);
+	addObjectActions();
+	addStaticActions();
 }
 /**
  * Read static items for the context menu.

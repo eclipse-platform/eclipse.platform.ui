@@ -102,7 +102,7 @@ public void done() {
 		if (in == null || in.indexOf('&') < 0)
 			return in;
 		int length= in.length();
-		StringBuffer out= new StringBuffer(length+1);
+		StringBuffer out= new StringBuffer(length);
 		for (int i= 0; i < length; i++) {
 			char c= in.charAt(i);
 			if (c == '&')

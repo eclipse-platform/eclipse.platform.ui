@@ -14,7 +14,7 @@ Eclipse Platform Build Notes</h1>
 <h1>
 Text Editor Support (including JFace Text)</h1>
 
-<p><br>Eclipse SDK Build 20011120
+<p><br>Eclipse SDK Build 135
 <h2>
 Breaking API changes</h2>
 
@@ -23,241 +23,407 @@ Other highlights</h2>
 
 <ul>
 <li>
-Change to AbstractHoverInformationControlManager to reset the hover location
-on a time basis.</li>
-
-<li>
-Added configuration method to ContentAssistant to automatically insert
-a single proposal.</li>
-
-<li>
-Behavioral configuration methods such as enableAutoInsert, enableAutoActivation,
-and setAutoActivationDelay can now be called when after the content assistant
-has been installed.</li>
-
-<li>
-Context information popup recomputes size after style information has been
-applied.</li>
+Default text editor supports unified preference story. Thus the editor's
+preference page has been removed. Fonts are set using the Workbench's font
+preference page instead.</li>
 </ul>
 
 <h2>
 Known deficiencies</h2>
 
-<h2>
-Problem reports closed</h2>
-#2569&nbsp;&nbsp;&nbsp; [JFace Text] Content assist list truncated (1GG1W9B)
-<br>#2904&nbsp;&nbsp;&nbsp; [JFace Text] PropagatingFontFieldEditor has
-moved (1GKKL13)
-<br>#1824&nbsp;&nbsp;&nbsp; [JFace Text] 50 reconciling threads for 4 editors
-opened (1GFXMV8)
-<br>&nbsp;
-<p>
-<hr WIDTH="100%">
-<p>Eclipse SDK Build 20011101
-<h2>
-Breaking API changes</h2>
-
-<h2>
-Other highlights</h2>
-
-<ul>
-<li>
-introduction of setDocumentContent(IDocument, IEditorInput) on StorageDocumentProvider.</li>
-
-<li>
-introduction of IDocumentExtension (see JavaDoc)</li>
-
-<li>
-AbstractDocument implements IDocumentExtension</li>
-</ul>
-
-<h2>
-Known deficiencies</h2>
-Instances of DefaultInformationControl are wider than necessary.
 <h2>
 Problem reports fixed</h2>
-
-<hr WIDTH="100%">
-<p>Eclipse SDK Build 206
-<h2>
-Breaking API changes</h2>
-Corrected spelling of&nbsp; "anchor" in AbstractInformationControlManager
-and its subclasses.
-<h2>
-Other highlights</h2>
-
-<h2>
-Known deficiencies</h2>
-Instances of DefaultInformationControl are wider than necessary.
-<h2>
-Problem reports fixed</h2>
-<a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=5066">#5066&nbsp;&nbsp;&nbsp;
-Code Assist: Thread created / not removed</a>
-<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=5120">#5120&nbsp;&nbsp;&nbsp;
-Empty popup doc in java editor</a>
-<br><a href="http://dev.eclipse.org/bugs/show_bug.cgi?id=3473">#3473&nbsp;&nbsp;
-mnemonics (1GF25DN)</a>
+1GII2RZ: ITPJUI:WINNT - AssertionFailed Ex. in Java editor
 <p>
 <hr WIDTH="100%">
-<br>&nbsp;
-<p>Eclipse SDK Build 204
+<p>Eclipse SDK Build 134
 <h2>
 Breaking API changes</h2>
 
 <h2>
 Other highlights</h2>
-For more information about the following issue please see JavaDoc of the
-classes
+
 <ul>
 <li>
-Several improvements of the new hover infrastructure, such as customizable
-SWT styles.</li>
+Text shown in a text editor can now be printed either using the editor's
+context menu or the global toolbar print action.</li>
 
 <li>
-Improved look of the content assist window.</li>
-
-<li>
-Content assist supports customizable completion characters, i.e. each completion
-proposal can specify which characters trigger its insertion.</li>
+The text hover now behaves correctly also when requested on hebrew and
+japanese text.</li>
 </ul>
 
 <h2>
 Known deficiencies</h2>
-Instances of DefaultInformationControl are wider than necessary.
+
 <h2>
 Problem reports fixed</h2>
 
 <p><br>
 <hr WIDTH="100%">
 <br>&nbsp;
-<p>Eclipse SDK Build 203
+<p>Eclipse SDK Build 133
 <h2>
 Breaking API changes</h2>
-&nbsp; package:&nbsp;&nbsp; org.eclipse.jface.text
-<br>&nbsp; interface:&nbsp;&nbsp; IHoverInfoPresenter
-<br>&nbsp; change:&nbsp;&nbsp; removed interface
-<br>&nbsp; change type: breaking API change for implementers of IHoverInfoPresenter
+
 <h2>
 Other highlights</h2>
-For more information about the following issue please see JavaDoc of the
-classes
-<ul>
-<li>
-Complete rework of hover popups (previously a package private mechanism
-hidden from clients). There is now the concept of an IInformationControl
-and an IInformationControlCreator. Everywhere where floating windows are
-used to present some kind of information, now IInformationControl is used.
-More precise, the according component is equiped with an IInformationControlCreator
-and creates the IInformationControl instance when needed. So clients can
-set an IInformationControlCreator on a TextViewer and a SourceViewer. They&nbsp;
-use it&nbsp; to create the text hover window and the annotation bar hover
-window respectively. DefaultInformationControl&nbsp; is a StyledText-based
-default implementation of IInformationControl. Clients may implement IInformationControl
-directly and inject their custom information control creator.</li>
-
-<li>
-AbstractInformationControlManager and its subclasses abstractly&nbsp; implement
-the process of providing a SWT control with support for floating information
-windows. This covers layout, positioning, content, and visibility of the
-floating window. They offer a broad customization space such as layout
-strategies, colors, etc.</li>
-
-<li>
-TextViewer hovers, annotation bar hovers, additional info on completion
-proposals in the content assistant, etc. benefit from the new infrastructure.
-UI improvements are especially visible in the layout behavior.</li>
-
-<li>
-Introduced the concept of an information presenter. An information presenter
-shows information on a context derivved subject on request. See IInformationPresenter
-for details as well as SourceViewer and SourceViewerConfiguration for how
-to use it.</li>
-</ul>
-
+- read only files can be modified in the editor but not saved
+<br>- improved lazy loading of marker updater providers
 <h2>
 Known deficiencies</h2>
-Instances of DefaultInformationControl are wider than necessary.
+
 <h2>
 Problem reports fixed</h2>
 
-<p><br>
 <hr WIDTH="100%">
-<p>Eclipse SDK Build 200
+<p>Eclipse SDK Build 128
 <h2>
 Breaking API changes</h2>
-&nbsp; package:&nbsp;&nbsp; org.eclipse.jface.text
-<br>&nbsp; interface:&nbsp;&nbsp; ITextViewer
-<br>&nbsp; change:&nbsp;&nbsp; added method public void invalidateTextPresentation(
+
+<h2>
+Other highlights</h2>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+1GGYYWK: ITPJUI:ALL - Dismissing editor with code assist up causes lots
+of Internal Errors
+<br>&nbsp;
+<p>
+<hr WIDTH="100%">
+<br>&nbsp;
+<p>Eclipse SDK Build 127
+<h2>
+Breaking API changes</h2>
+
+<h2>
+Other highlights</h2>
+Complete NLS. Internal changes to NLS mechanisms.
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+1GFBE1X: ITPSRCEDIT:ALL - Marker are not deleted on save
+<br>1GEX587: ITPJUI:ALL - Find/Replace String requires externalization
+<p>
+<hr WIDTH="100%">
+<p>Eclipse SDK Build 125
+<h2>
+Breaking API changes</h2>
+
+<h2>
+Other highlights</h2>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+1GF5TZW: ITPJUI:WINNT - NPE discarding a package
+<br>&nbsp;
+<p>
+<hr WIDTH="100%">
+<p>Eclipse SDK Build 124
+<h2>
+Breaking API changes</h2>
+
+<h2>
+Other highlights</h2>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+1GF6C3H: ITPSRCEDIT:ALL - Cannot save file after deletion
+<br>1GF86V3: ITPUI:WINNT - Internal errors using Find/Replace Dialog
+<p>
+<hr WIDTH="100%">
+<p>Eclipse SDK Build 123
+<h2>
+Breaking API changes</h2>
+
+<h2>
+Other highlights</h2>
+All packages now contain a package description.
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+
+<hr WIDTH="100%">
+<p>Eclipse SDK Build 122
+<h2>
+Breaking API changes</h2>
+&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractTextEditor
+<br>&nbsp; change:&nbsp;&nbsp; added method protected void setHelpContextId(String
 )
-<br>&nbsp; change type: breaking API change for implementers of ITextViewer
-<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.jface.text
-<br>&nbsp; interface:&nbsp;&nbsp; ITextViewer
-<br>&nbsp; change:&nbsp;&nbsp; added method public void setDefaultPrefixes(String[]
-defaultPrefixes, String contentType)
-<br>&nbsp; change type: breaking API change for implementers of ITextViewer
-<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.jface.text
-<br>&nbsp; interface:&nbsp;&nbsp; ITextViewer
-<br>&nbsp; change:&nbsp;&nbsp; removed method&nbsp; void setDefaultPrefix(String
-defaultPrefix, String contentType)
-<br>&nbsp; change type: breaking API change for implementers of ITextViewer
-<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.jface.text.rules
-<br>&nbsp; class:&nbsp;&nbsp; RuleBasedDamagerRepairer
-<br>&nbsp; change:&nbsp;&nbsp; deprecated constructor&nbsp; public RuleBasedDamagerRepairer(RuleBasedScanner
-scanner, TextAttribute defaultTextAttribute)
-<br>&nbsp; change type: breaking API change for clients of RuleBasedDamagerRepairer
+<br>&nbsp; change type: breaking API change for subclasses of AbstractTextEditor
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractTextEditor
+<br>&nbsp; change:&nbsp;&nbsp; added method protected String getHelpContextId()
+<br>&nbsp; change type: breaking API change for subclasses of AbstractTextEditor
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; ResourceAction
+<br>&nbsp; change:&nbsp;&nbsp; added method public final void setHelpContextId(String
+)
+<br>&nbsp; change type: breaking API change for subclasses of ResourceAction
 <h2>
 Other highlights</h2>
-For more information about the following issue please see JavaDoc of the
-classes
+AbstractTextEditor now registers automatically for context help if a help
+context ID has been configured. For text editors the following help contexts
+are generally defined:
 <ul>
 <li>
-IContextInformationValidator implementers may also implement IContextInformationPresenter
-to style context information</li>
+editor</li>
 
 <li>
-ITextHover implementers may also implement IHoverInfoPresenter to style
-hover information</li>
+all editor actions</li>
 
 <li>
-PropagatingFontFieldEditor has been introduced</li>
-
-<li>
-MonoReconciler has been introduced to support partition independent reconciling</li>
-
-<li>
-Token has been reimplemented, supports setData method now</li>
-
-<li>
-RuleBasedScanner now supports&nbsp; public void setDefaultReturnToken(IToken
-defaultReturnToken). This token is returned if no rule can fire.</li>
-
-<li>
-TextPresentation now supports&nbsp; public static void applyTextPresentation(TextPresentation
-presentation, StyledText text)</li>
-
-<li>
-BasicMarkerUpdater has been marked as final</li>
-
-<li>
-SelectMarkerRulerAction has been introduced</li>
-
-<li>
-WorkbenchChainedTextFontFieldEditor has been introduced</li>
+find/replace dialog</li>
 </ul>
+The Default text editor in addition defines a help context for its preference
+page.
+<p>The editor's behavior in case of a deletion of its input element has
+been changed. When activated the editor must either be saved or closed.
+The decision what to do can no longer be postponed - as this gave the wrong
+impression&nbsp; that editors with deleted input are fully functional.
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+1GEYNE1: ITPUI:WINNT - SEVERE - Strange effects with Outliner on deleted
+project
+<br>&nbsp;
+<p>
+<hr WIDTH="100%">
+<p>Eclipse SDK Build 121
+<h2>
+Breaking API changes</h2>
+&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractTextEditor
+<br>&nbsp; change:&nbsp;&nbsp; added method protected void performSaveAs(IProgressMonitor
+)
+<br>&nbsp; change type: breaking API change for subclasses of AbstractTextEditor
+<p>Changed control flow of doSave(IProgressMonitor) and doSaveAs() to take
+atvantage of performSaveAs(IProgressMonitor). This is relevant for subclasses
+overriding doSave and doSaveAs.
+<h2>
+&nbsp;Other highlights</h2>
 
 <h2>
 Known deficiencies</h2>
 
 <h2>
 Problem reports fixed</h2>
-1GJ65EW: ITPSRCEDIT:WINNT - ResourceMarkerAnnotaionModel: unnecessary fireModelChange
-<br>1GIYR3X: ITPSRCEDIT:ALL - NL: word select (double click) in Java comments
-<br>1GGYYWK: ITPJUI:ALL - Dismissing editor with code assist up causes
-lots of Internal Errors
-<br>1GEUOZ9: ITPJUI:ALL - Confusing UI for multiline Bookmarks and Tasks
-<br>1GII2RZ: ITPJUI:WINNT - AssertionFailed Ex. in Java editor
-<br>1GIYQ9K: ITPUI:WINNT - StyledText swallows Shift+TAB
-<br>1GIJZOO: ITPSRCEDIT:ALL - Gotodialog's edit field has no initial focus
+1GEYOA9: ITPUI:ALL - Problem with externalized strings in save error dialog
+<br>1GEXA6E: ITPVCM:WIN2000 - Repositories: the user can save files in
+the repositories?
+<br>1GEUSSR: ITPUI:ALL - User should never loose changes made in the editors.
+<p>
+<hr WIDTH="100%">
+<p>Eclipse SDK Build 120
+<h2>
+Breaking API changes</h2>
+
+<h2>
+&nbsp;Other highlights</h2>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+1GEUXEA: ITPUI:WIN2000 - IllegalArgumentException: Manifest Editor
+<p>
+<hr WIDTH="100%">
+<p>Eclipse SDK Build 118
+<h2>
+Breaking API changes</h2>
+&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; ITextEditor
+<br>&nbsp; change:&nbsp;&nbsp; added method public void setActionActivationCode(String
+, char , int , int )
+<br>&nbsp; change type: breaking API change for clients implementing ITextEditor
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; ITextEditor
+<br>&nbsp; change:&nbsp;&nbsp; added method public void removeActionActivationCode(String)
+<br>&nbsp; change type: breaking API change for clients implementing ITextEditor
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; IDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; removed method public void saveDocument(IProgressMonitor,
+Object, IDocument) throws CoreException;
+<br>&nbsp; change type: breaking API change for clients implementing ITextEditor
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; IDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method public void saveDocument(IProgressMonitor,
+Object, IDocument, boolean) throws CoreException;
+<br>&nbsp; change type: breaking API change for clients implementing IDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; IDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method public long getModificationStamp(Object)
+<br>&nbsp; change type: breaking API change for clients implementing IDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; IDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method public long getSynchronizationStamp(Object)
+<br>&nbsp; change type: breaking API change for clients implementing IDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; IDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method public void isDeleted(Object)
+<br>&nbsp; change type: breaking API change for clients implementing IDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractTextEditor
+<br>&nbsp; change:&nbsp;&nbsp; changed flow of method public void doSave(IProgressMonitor
+progressMonitor)
+<br>&nbsp; change type: breaking API change for subclasses of AbstractTextEditor
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractTextEditor
+<br>&nbsp; change:&nbsp;&nbsp; added method protected WorkspaceModifyOperation
+createSaveOperation(boolean)
+<br>&nbsp; change type: breaking API change for subclasses of AbstractTextEditor
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractTextEditor
+<br>&nbsp; change:&nbsp;&nbsp; added method protected void handleEditorInputChanged()
+<br>&nbsp; change type: breaking API change for subclasses of AbstractTextEditor
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractTextEditor
+<br>&nbsp; change:&nbsp;&nbsp; added method protected void handleExceptionOnSave(CoreException,
+IProgressMonitor)
+<br>&nbsp; change type: breaking API change for subclasses of AbstractTextEditor
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractTextEditor
+<br>&nbsp; change:&nbsp;&nbsp; added method protected void performSaveOperation(WorkspaceModifyOperation,
+IProgressMonitor)
+<br>&nbsp; change type: breaking API change for subclasses of AbstractTextEditor
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractTextEditor
+<br>&nbsp; change:&nbsp;&nbsp; added method&nbsp; public void removeActionActivationCode(String
+actionID)
+<br>&nbsp; change type: breaking API change for subclasses of AbstractTextEditor
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractTextEditor
+<br>&nbsp; change:&nbsp;&nbsp; added method&nbsp; public void setActionActivationCode(String,
+char, int, int)
+<br>&nbsp; change type: breaking API change for subclasses of AbstractTextEditor
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method&nbsp; protected void addUnchangedElementListeners(Object,
+ElementInfo)
+<br>&nbsp; change type: breaking API change for subclasses of AbstractDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method protected void removeUnchangedElementListeners(Object,
+ElementInfo)
+<br>&nbsp; change type: breaking API change for subclasses of AbstractDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; removed method public void saveDocument(IProgressMonitor,
+Object, IDocument) throws CoreException
+<br>&nbsp; change type: breaking API change for subclasses of AbstractDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method public void saveDocument(IProgressMonitor,
+Object, IDocument, boolean) throws CoreException
+<br>&nbsp; change type: breaking API change for subclasses of AbstractDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; removed method&nbsp; protected abstract
+void doSaveDocument(IProgressMonitor, Object, IDocument) throws CoreException
+<br>&nbsp; change type: breaking API change for subclasses of AbstractDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; AbstractDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method protected abstract void doSaveDocument(IProgressMonitor,
+Object, IDocument, boolean) throws CoreException;
+<br>&nbsp; change type: breaking API change for subclasses of AbstractDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; StorageDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; removed method&nbsp; protected abstract
+void doSaveDocument(IProgressMonitor, Object, IDocument) throws CoreException
+<br>&nbsp; change type: breaking API change for subclasses of StorageDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; StorageDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method protected abstract void doSaveDocument(IProgressMonitor,
+Object, IDocument, boolean) throws CoreException;
+<br>&nbsp; change type: breaking API change for subclasses of StorageDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; StorageDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method&nbsp; public long getModificationStamp(Object)
+<br>&nbsp; change type: breaking API change for subclasses of StorageDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; StorageDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method&nbsp; public long getSynchronizationStamp(Object)
+<br>&nbsp; change type: breaking API change for subclasses of StorageDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; StorageDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method&nbsp; public boolean isDeleted(Object
+element)
+<br>&nbsp; change type: breaking API change for subclasses of StorageDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; FileDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method protected void checkSynchronizationState(long,
+IResource ) throws CoreException
+<br>&nbsp; change type: breaking API change for subclasses of FileDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; FileDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method protected long computeModificationStamp(IResource)
+<br>&nbsp; change type: breaking API change for subclasses of FileDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; FileDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; removed method protected void doSaveDocument(IProgressMonitor,
+Object, IDocument) throws CoreException
+<br>&nbsp; change type: breaking API change for subclasses of FileDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; FileDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method protected void doSaveDocument(IProgressMonitor,
+Object, IDocument, boolean) throws CoreException
+<br>&nbsp; change type: breaking API change for subclasses of FileDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; FileDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method public long getModificationStamp(Object)
+<br>&nbsp; change type: breaking API change for subclasses of FileDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; FileDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method public long getSynchronizationStamp(Object)
+<br>&nbsp; change type: breaking API change for subclasses of FileDocumentProvider
+<p>&nbsp; package:&nbsp;&nbsp; org.eclipse.ui.texteditor
+<br>&nbsp; interface:&nbsp;&nbsp; FileDocumentProvider
+<br>&nbsp; change:&nbsp;&nbsp; added method public boolean isDeleted(Object)
+<br>&nbsp; change type: breaking API change for subclasses of FileDocumentProvider
+<br>&nbsp;
+<h2>
+Other highlights</h2>
+AbstractTextEditor implements the envisioned behavior of how editors should
+behave in the advent of external changes to the resources they edit. Subclasses
+of AbstractTextEditor profit from that implementation. Direct implementers
+of IEditorPart which are also resource based have to reimplement this behavior.
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports fixed</h2>
+1GE4Y2P: ITPUI:WINNT - Source view/replace resource interaction
+<br>1GE6P8A: ITPUI:WINNT - Cancel during bookmark does not work
+<br>1GDGYMY: ITPUI:Linux - Find/Replace dialog has no title bar and can't
+be moved
+<br>1GDU5VY: ITPVCM:WINNT - Exception in catchup
+<br>1GEGLJM: ITPUI:Linux - Find/Replace dialog needs border on Linux
+<br>1GDXKH5: ITPUI:ALL - text editor loses changes if file is stale
+<br>1GE5C74: ITPUI:WIN2000 - IllegalArgumentException in text editor when
+building
+<br>1GE8GTM: ITPSRCEDIT:WIN98 - Add Task proceeds even if cancelled
+<br>1GE8GYC: ITPSRCEDIT:WIN98 - Add Task label has no correlation to selection
+<br>1GE8HJB: ITPUI:Linux - Find dialog has no title bar
+<br>1GE8PAN: ITPUI:Linux - Text editor should have a "reverse to saved"
+menu option.
+<br>1GEAU3U: ITPUI:ALL - Add bookmark/task cancel button ignored
 <br>&nbsp;
 <p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" BORDER=0 height=12 width=195></a>
 <br>&nbsp;

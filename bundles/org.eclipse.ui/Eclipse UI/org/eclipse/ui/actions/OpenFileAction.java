@@ -6,13 +6,19 @@ package org.eclipse.ui.actions;
  */
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import java.util.Iterator;
 
 /**
  * Standard action for opening an editor on the currently selected file 
@@ -99,17 +105,4 @@ void openFile(IFile file) {
 			e);
 	}
 }
-
-	/**
-	 * Handle a double click.
-	 */
-	public void handleDoubleClick(IStructuredSelection selection) {
-		
-		Object element = selection.getFirstElement();
-		if (element instanceof IFile) {
-			selectionChanged(selection);
-			run();
-		}
-	}
-
 }

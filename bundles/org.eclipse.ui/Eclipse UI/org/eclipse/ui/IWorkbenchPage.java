@@ -521,20 +521,4 @@ public void showActionSet(String actionSetID);
  * @exception PartInitException if the view could not be initialized
  */
 public IViewPart showView(String viewId) throws PartInitException;
-/**
- * Returns the number of open editors before reusing editors.
- *
- * @return a int
- * 
- * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
- */
-public int getEditorReuseThreshold();
-/**
- * Set the number of open editors before reusing editors.
- * If < 0 the user preference settings will be used.
- * 
- * Note: For EXPERIMENTAL use only. IT MAY CHANGE IN NEAR FUTURE.
- */
-public void setEditorReuseThreshold(int openEditors);
-
 }

@@ -22,6 +22,9 @@ public String getText(Object element) {
 		label = ((ActionSetCategory)element).getLabel();
 	else if (element instanceof IActionSetDescriptor)
 		label = ((IActionSetDescriptor)element).getLabel();
-	return DialogUtil.removeAccel(label);
+	int aruga = label.indexOf('&');
+	if (aruga >= 0)
+		label = label.substring(aruga + 1);
+	return label;
 }
 }

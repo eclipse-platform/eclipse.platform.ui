@@ -14,7 +14,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 
-import org.eclipse.jface.text.AbstractHoverInformationControlManager;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
@@ -22,7 +21,6 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
-import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.reconciler.IReconciler;
 
@@ -85,8 +83,6 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	protected IPresentationReconciler fPresentationReconciler;
 	/** The viewer's annotation hover */
 	protected IAnnotationHover fAnnotationHover;
-	/** The viewer's information presenter */
-	protected IInformationPresenter fInformationPresenter;
 	
 	/** Visual vertical ruler */
 	private IVerticalRuler fVerticalRuler;
@@ -99,7 +95,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	/** The viewer's range indicator to be shown in the vertical ruler */
 	private Annotation fRangeIndicator;
 	/** The viewer's vertical ruler hovering controller */
-	private AbstractHoverInformationControlManager fVerticalRulerHoveringController;
+	private VerticalRulerHoveringController fVerticalRulerHoveringController;
 	
 	
 	
@@ -179,18 +175,12 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 			
 		fContentFormatter= configuration.getContentFormatter(this);
 		
-		fInformationPresenter= configuration.getInformationPresenter(this);
-		if (fInformationPresenter != null)
-			fInformationPresenter.install(this);
-		
 		setUndoManager(configuration.getUndoManager(this));
 		
 		getTextWidget().setTabs(configuration.getTabWidth(this));
 		
 		setAnnotationHover(configuration.getAnnotationHover(this));
-		
-		setHoverControlCreator(configuration.getInformationControlCreator(this));
-		
+				 
 		// install content type specific plugins
 		String[] types= configuration.getConfiguredContentTypes(this);
 		for (int i= 0; i < types.length; i++) {
@@ -205,9 +195,9 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 			if (prefixes != null && prefixes.length > 0)
 				setIndentPrefixes(prefixes, t);
 			
-			prefixes= configuration.getDefaultPrefixes(this, t);
-			if (prefixes != null && prefixes.length > 0)
-				setDefaultPrefixes(prefixes, t);
+			String prefix= configuration.getDefaultPrefix(this, t);
+			if (prefix != null && prefix.length() > 0)
+				setDefaultPrefix(prefix, t);
 		}
 		
 		activatePlugins();
@@ -219,8 +209,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	public void activatePlugins() {
 		
 		if (fVerticalRuler != null && fAnnotationHover != null && fVerticalRulerHoveringController == null) {
-			fVerticalRulerHoveringController= new AnnotationBarHoverManager(this, fVerticalRuler, fAnnotationHover, fHoverControlCreator);
-			fVerticalRulerHoveringController.install(fVerticalRuler.getControl());
+			fVerticalRulerHoveringController= new VerticalRulerHoveringController(this, fVerticalRuler, fAnnotationHover);
+			fVerticalRulerHoveringController.install();
 		}
 		
 		super.activatePlugins();
@@ -311,11 +301,6 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		
 		fContentFormatter= null;
 		
-		if (fInformationPresenter != null) {
-			fInformationPresenter.uninstall();
-			fInformationPresenter= null;
-		}
-		
 		if (fVisualAnnotationModel != null && getDocument() != null) {
 			fVisualAnnotationModel.disconnect(getDocument());
 			fVisualAnnotationModel= null;
@@ -342,9 +327,6 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		if (operation == CONTENTASSIST_PROPOSALS || operation == CONTENTASSIST_CONTEXT_INFORMATION)
 			return fContentAssistant != null;
 		
-		if (operation == INFORMATION)
-			return fInformationPresenter != null;
-			
 		if (operation == FORMAT) {
 			Point p= getSelectedRange();
 			int length= (p == null ? -1 : p.y);
@@ -368,9 +350,6 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 				return;
 			case CONTENTASSIST_CONTEXT_INFORMATION:
 				fContentAssistant.showContextInformation();
-				return;
-			case INFORMATION:
-				fInformationPresenter.showInformation();
 				return;
 			case FORMAT: {
 				Point s= getSelectedRange();

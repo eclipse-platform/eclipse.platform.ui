@@ -6,11 +6,8 @@ package org.eclipse.ui.texteditor;
  */
 
 
-import java.lang.reflect.InvocationTargetException;import java.util.ArrayList;import java.util.HashMap;import java.util.Iterator;import java.util.List;import java.util.Map;import java.util.MissingResourceException;import java.util.ResourceBundle;import org.eclipse.core.resources.IMarker;import org.eclipse.core.resources.IStorage;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.ILog;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.NullProgressMonitor;import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.Status;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.StyledText;import org.eclipse.swt.custom.VerifyKeyListener;import org.eclipse.swt.events.MouseEvent;import org.eclipse.swt.events.MouseListener;import org.eclipse.swt.events.VerifyEvent;import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;import org.eclipse.swt.graphics.FontData;import org.eclipse.swt.graphics.Image;import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Menu;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.action.IAction;import org.eclipse.jface.action.IMenuListener;import org.eclipse.jface.action.IMenuManager;import org.eclipse.jface.action.MenuManager;import org.eclipse.jface.action.Separator;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.dialogs.IDialogConstants;import org.eclipse.jface.dialogs.MessageDialog;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.jface.resource.JFaceResources;import org.eclipse.jface.text.BadLocationException;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.jface.text.IRegion;import org.eclipse.jface.text.ITextListener;import org.eclipse.jface.text.ITextOperationTarget;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.text.Position;import org.eclipse.jface.text.TextEvent;import org.eclipse.jface.text.source.Annotation;import org.eclipse.jface.text.source.IAnnotationModel;import org.eclipse.jface.text.source.ISourceViewer;import org.eclipse.jface.text.source.IVerticalRuler;import org.eclipse.jface.text.source.SourceViewer;import org.eclipse.jface.text.source.SourceViewerConfiguration;import org.eclipse.jface.text.source.VerticalRuler;import org.eclipse.jface.util.Assert;import org.eclipse.jface.util.IPropertyChangeListener;import org.eclipse.jface.util.PropertyChangeEvent;import org.eclipse.jface.viewers.ISelectionChangedListener;import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.IEditorSite;import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IPartListener;import org.eclipse.ui.IReusableEditor;
-import org.eclipse.ui.IStorageEditorInput;import org.eclipse.ui.IWorkbenchPart;import org.eclipse.ui.PartInitException;import org.eclipse.ui.PlatformUI;import org.eclipse.ui.actions.WorkspaceModifyOperation;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.part.EditorPart;
+import java.lang.reflect.InvocationTargetException;import java.util.ArrayList;import java.util.HashMap;import java.util.Iterator;import java.util.List;import java.util.Map;import java.util.MissingResourceException;import java.util.ResourceBundle;import org.eclipse.core.resources.IMarker;import org.eclipse.core.resources.IStorage;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.ILog;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.NullProgressMonitor;import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.Status;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.StyledText;import org.eclipse.swt.custom.VerifyKeyListener;import org.eclipse.swt.events.MouseEvent;import org.eclipse.swt.events.MouseListener;import org.eclipse.swt.events.VerifyEvent;import org.eclipse.swt.graphics.Font;import org.eclipse.swt.graphics.FontData;import org.eclipse.swt.graphics.Image;import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Menu;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.action.IAction;import org.eclipse.jface.action.IMenuListener;import org.eclipse.jface.action.IMenuManager;import org.eclipse.jface.action.MenuManager;import org.eclipse.jface.action.Separator;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.dialogs.IDialogConstants;import org.eclipse.jface.dialogs.MessageDialog;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.jface.resource.JFaceResources;import org.eclipse.jface.text.BadLocationException;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.jface.text.IRegion;import org.eclipse.jface.text.ITextListener;import org.eclipse.jface.text.ITextOperationTarget;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.text.Position;import org.eclipse.jface.text.TextEvent;import org.eclipse.jface.text.source.Annotation;import org.eclipse.jface.text.source.IAnnotationModel;import org.eclipse.jface.text.source.ISourceViewer;import org.eclipse.jface.text.source.IVerticalRuler;import org.eclipse.jface.text.source.SourceViewer;import org.eclipse.jface.text.source.SourceViewerConfiguration;import org.eclipse.jface.text.source.VerticalRuler;import org.eclipse.jface.util.Assert;import org.eclipse.jface.util.IPropertyChangeListener;import org.eclipse.jface.util.PropertyChangeEvent;import org.eclipse.jface.viewers.ISelectionChangedListener;import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.IEditorSite;import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPartListener;import org.eclipse.ui.IStorageEditorInput;import org.eclipse.ui.IWorkbenchPart;import org.eclipse.ui.PartInitException;import org.eclipse.ui.PlatformUI;import org.eclipse.ui.actions.WorkspaceModifyOperation;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.part.EditorPart;
 
 
 
@@ -24,7 +21,7 @@ import org.eclipse.ui.IStorageEditorInput;import org.eclipse.ui.IWorkbenchPart;
  *
  * @see org.eclipse.ui.editors.text.TextEditor
  */
-public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor {
+public abstract class AbstractTextEditor extends EditorPart implements ITextEditor {
 	
 	/**
 	 * Internal element state listener.
@@ -121,7 +118,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					selectAndReveal(offset, length);
 				} catch (IllegalArgumentException x) {
 					/*
-					 * Catching IllegalArgumentException because of 1GEUUH3 and 1GDXEKW.
+					 * Catching IllegalArgumentException because of
+					 * 1GEUUH3 and 1GDXEKW.
 					 */
 				}
 			}
@@ -274,16 +272,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	/** Key used to look up font preference */
 	public final static String PREFERENCE_FONT= JFaceResources.TEXT_FONT;
-	/** Key used to look up foreground color preference */
-	public final static String PREFERENCE_COLOR_FOREGROUND= "AbstractTextEditor.Color.Foreground"; //$NON-NLS-1$
-	/** Key used to look up background color preference */
-	public final static String PREFERENCE_COLOR_BACKGROUND= "AbstractTextEditor.Color.Background"; //$NON-NLS-1$	
-	
 	/** Menu id for the editor context menu. */
 	public final static String DEFAULT_EDITOR_CONTEXT_MENU_ID= "#EditorContext"; //$NON-NLS-1$
 	/** Menu id for the ruler context menu. */
 	public final static String DEFAULT_RULER_CONTEXT_MENU_ID= "#RulerContext"; //$NON-NLS-1$
-	
 	/** The width of the vertical ruler */
 	protected final static int VERTICAL_RULER_WIDTH= 12;
 	
@@ -302,10 +294,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private ISourceViewer fSourceViewer;
 	/** The editor's font */
 	private Font fFont;
-	/** The editor's foreground color */
-	private Color fForegroundColor;
-	/** The editor's background color */
-	private Color fBackgroundColor;
 	/** The editor's vertical ruler */
 	private IVerticalRuler fVerticalRuler;
 	/** The editor's context menu id */
@@ -540,11 +528,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			try {
 				
 				/*
-				 * Change to always allow editing of files even when it is read only. ClearCase request.
+				 * Change to always allow editing of files even when it is read only.
+				 * ClearCase request.
 				 */
 				IStorage storage= storageInput.getStorage();
 				return (storage != null && (storageInput instanceof IFileEditorInput || !storage.isReadOnly()));
-			
+				
 			} catch (CoreException x) {
 				ILog log= Platform.getPlugin(PlatformUI.PLUGIN_ID).getLog();		
 				log.log(x.getStatus());
@@ -594,32 +583,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fMouseListener == null) {
 			fMouseListener= new MouseListener() {
 				
-				private boolean fDoubleClicked= false;
+				public void mouseDown(MouseEvent e) {}
 				
-				private void triggerAction(String actionID) {
-					IAction action= getAction(actionID);
+				public void mouseUp(MouseEvent e) {}
+				
+				public void mouseDoubleClick(MouseEvent e) {
+					IAction action= getAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK);
 					if (action != null) {
 						if (action instanceof IUpdate)
 							((IUpdate) action).update();
-						if (action.isEnabled())
-							action.run();
+						action.run();
 					}
-				}
-				
-				public void mouseUp(MouseEvent e) {
-					if (1 == e.button && !fDoubleClicked)
-						triggerAction(ITextEditorActionConstants.RULER_CLICK);
-					fDoubleClicked= false;
-				}
-				
-				public void mouseDoubleClick(MouseEvent e) {
-					if (1 == e.button) {
-						fDoubleClicked= true;
-						triggerAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK);
-					}
-				}
-				
-				public void mouseDown(MouseEvent e) {
 				}
 			};
 		}
@@ -719,7 +693,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				
 		StyledText styledText= fSourceViewer.getTextWidget();
 		initializeWidgetFont(styledText);
-		initializeWidgetColors(styledText);
 		
 		if (getHelpContextId() != null)
 			WorkbenchHelp.setHelp(styledText, new Object[] { getHelpContextId() });
@@ -747,7 +720,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		initializeSourceViewer(getEditorInput());
 	}
 	
-	/**
+	/*
 	 * Initializes the given widget's font.
 	 * 
 	 * @param styledText the widget to be initialized
@@ -781,61 +754,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		styledText.setFont(JFaceResources.getTextFont());
 	}
 	
-	
-	/**
-	 * Creates a color from the information stored in the given preference store.
-	 * Returns <code>null</code> if there is no such information available.
-	 */
-	private Color createColor(IPreferenceStore store, String key, Display display) {
-	
-		RGB rgb= null;		
-		
-		if (store.contains(key)) {
-			
-			if (store.isDefault(key))
-				rgb= PreferenceConverter.getDefaultColor(store, key);
-			else
-				rgb= PreferenceConverter.getColor(store, key);
-		
-			if (rgb != null)
-				return new Color(display, rgb);
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * Initializes the given widget's colors.
-	 * 
-	 * @param styledText the widget to be initialized
-	 */
-	private void initializeWidgetColors(StyledText styledText) {
-		
-		IPreferenceStore store= getPreferenceStore();
-		if (store != null) {
-			
-			// ----------- foreground color --------------------
-			Color color= createColor(store, PREFERENCE_COLOR_FOREGROUND, styledText.getDisplay());
-			if (color != null)
-				styledText.setForeground(color);
-				
-			if (fForegroundColor != null)
-				fForegroundColor.dispose();
-			
-			fForegroundColor= color;
-			
-			// ---------- background color ----------------------
-			color= createColor(store, PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
-			if (color != null)
-				styledText.setBackground(color);
-				
-			if (fBackgroundColor != null)
-				fBackgroundColor.dispose();
-				
-			fBackgroundColor= color;
-		}
-	}
-		
 	/**
 	 * Initializes the editor's source viewer based on the given editor input.
 	 *
@@ -1037,24 +955,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fActivationCodeTrigger= null;
 			fActivationCodes.clear();
 			fActivationCodes= null;
-		}
-		
-		super.setInput(null);		
+		}		
 		
 		super.dispose();
-	}
-	
-	/**
-	 * Determines whether the given preference change affects the editor's
-	 * presentation. This implementation always returns <code>false</code>.
-	 * May be reimplemented by subclasses.
-	 * 
-	 * @param event the event which should be investigated
-	 * @return whether the event describes a preference change affecting the editor's
-	 * 			presentation
-	 */
-	protected boolean affectsTextPresentation(PropertyChangeEvent event) {
-		return false;
 	}
 	
 	/**
@@ -1069,16 +972,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fSourceViewer == null)
 			return;
 			
-		String property= event.getProperty();
-		
-		if (PREFERENCE_FONT.equals(property))
+		if (PREFERENCE_FONT.equals(event.getProperty()))
 			initializeWidgetFont(fSourceViewer.getTextWidget());
-			
-		if (PREFERENCE_COLOR_FOREGROUND.equals(property) || PREFERENCE_COLOR_BACKGROUND.equals(property))
-			initializeWidgetColors(fSourceViewer.getTextWidget());
-			
-		if (affectsTextPresentation(event))
-			fSourceViewer.invalidateTextPresentation();
 	}
 	
 	/**
@@ -1572,12 +1467,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		action= new GotoLineAction(EditorMessages.getResourceBundle(), "Editor.GotoLine.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.GOTO_LINE_ACTION);
+		action.setAccelerator(SWT.CONTROL, 'l');
 		setAction(ITextEditorActionConstants.GOTO_LINE, action);
 		
 		setAction(ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS, new MarkerRulerAction(EditorMessages.getResourceBundle(), "Editor.ManageBookmarks.", fVerticalRuler, this, IMarker.BOOKMARK, true)); //$NON-NLS-1$
 		setAction(ITextEditorActionConstants.RULER_MANAGE_TASKS, new MarkerRulerAction(EditorMessages.getResourceBundle(), "Editor.ManageTasks.", fVerticalRuler, this, IMarker.TASK, true)); //$NON-NLS-1$
 		setAction(ITextEditorActionConstants.RULER_DOUBLE_CLICK, getAction(ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS));
-		setAction(ITextEditorActionConstants.RULER_CLICK, new SelectMarkerRulerAction(EditorMessages.getResourceBundle(), "Editor.SelectMarker.", fVerticalRuler, this));
 		
 		markAsContentDependentAction(ITextEditorActionConstants.UNDO, true);
 		markAsContentDependentAction(ITextEditorActionConstants.REDO, true);
@@ -1589,7 +1484,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		markAsSelectionDependentAction(ITextEditorActionConstants.DELETE, true);
 		
 		setActionActivationCode(ITextEditorActionConstants.SHIFT_RIGHT,'\t', 0, 0);
-		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, SWT.SHIFT);
+		setActionActivationCode(ITextEditorActionConstants.SHIFT_LEFT, '\t', 0, /* SWT.SHIFT */ SWT.CTRL);
 	}
 	
 	/**
@@ -1679,6 +1574,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_PRINT));
+		addAction(menu, ITextEditorActionConstants.PRINT);
 		
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_EDIT));
 		addAction(menu, ITextEditorActionConstants.SHIFT_RIGHT);

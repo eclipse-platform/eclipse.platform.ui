@@ -10,7 +10,7 @@ import org.eclipse.ui.views.internal.framelist.TreeViewerFrameSource;
 public class NavigatorFrameSource extends TreeViewerFrameSource {
 	private ResourceNavigator navigator;
 public NavigatorFrameSource(ResourceNavigator navigator) {
-	super(navigator.getTreeViewer());
+	super(navigator.getResourceViewer());
 	this.navigator = navigator;
 }
 protected TreeFrame createFrame(Object input) {

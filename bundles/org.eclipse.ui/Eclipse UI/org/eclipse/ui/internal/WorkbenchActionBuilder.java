@@ -5,7 +5,6 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
-import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.misc.*;
 import org.eclipse.ui.internal.dialogs.*;
@@ -51,15 +50,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private EditActionSetsAction editActionSetAction;
 	private ClosePageAction closePageAction;
 	private CloseAllPagesAction closeAllPagesAction;
-	private PinEditorAction pinEditorAction;
-	private ShowViewMenuAction showViewMenuAction;
-	private ShowPartPaneMenuAction showPartPaneMenuAction;
-	private CyclePartAction nextPartAction;
-	private CyclePartAction prevPartAction;
-	private CycleEditorAction nextEditorAction;
-	private CycleEditorAction prevEditorAction;
-	private ActivateEditorAction activateEditorAction;
-	private WorkbenchEditorsAction workbenchEditorsAction;
 
 	// menus
 	private OpenPerspectiveMenu openPerspMenu;
@@ -213,13 +203,13 @@ private void createMenuBar() {
 	popup.add(new GroupMarker(IWorkbenchActionConstants.EDIT_END));
 	popup.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
-	// Perspective menu.
+	// View menu.
 	popup = new MenuManager(WorkbenchMessages.getString("Workbench.perspective"), IWorkbenchActionConstants.M_VIEW); //$NON-NLS-1$
 	menubar.add(popup);
 	{
 		MenuManager openInSameWindow = new MenuManager(WorkbenchMessages.getString("Workbench.open")); //$NON-NLS-1$
 		openPerspMenu = 
-			new WindowPerspectiveMenu(window, ResourcesPlugin.getWorkspace().getRoot());
+			new OpenPerspectiveMenu(window, ResourcesPlugin.getWorkspace().getRoot());
 		openInSameWindow.add(openPerspMenu);
 		popup.add(openInSameWindow);
 	}
@@ -234,12 +224,13 @@ private void createMenuBar() {
 	popup.add(editActionSetAction = new EditActionSetsAction(window));
 	popup.add(resetPerspectiveAction = new ResetPerspectiveAction(window));
 	popup.add(new Separator());
+	popup.add(new NextPageAction(WorkbenchMessages.getString("Workbench.previous"), -1, window)); //$NON-NLS-1$
+	popup.add(new NextPageAction(WorkbenchMessages.getString("Workbench.next"), 1, window)); //$NON-NLS-1$
+	popup.add(new Separator());
 	popup.add(closePageAction = new ClosePageAction(window));
 	popup.add(closeAllPagesAction = new CloseAllPagesAction(window));
 	popup.add(new Separator(IWorkbenchActionConstants.VIEW_EXT));
 	popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-	popup.add(new Separator());
-	popup.add(new OpenPagesMenu(window, false));
 
 	// Workbench menu
 	popup = new MenuManager(WorkbenchMessages.getString("Workbench.project"), IWorkbenchActionConstants.M_WORKBENCH); //$NON-NLS-1$
@@ -258,26 +249,11 @@ private void createMenuBar() {
 	// Window menu.
 	popup = new MenuManager(WorkbenchMessages.getString("Workbench.window"), IWorkbenchActionConstants.M_WINDOW); //$NON-NLS-1$
 	menubar.add(popup);
-	popup.add(new OpenWorkbenchAction(window));
 	MenuManager launchWindowMenu =
 		new MenuManager(WorkbenchMessages.getString("Workbench.launch"), IWorkbenchActionConstants.M_LAUNCH); //$NON-NLS-1$
 	launchWindowMenu.add(new GroupMarker(IWorkbenchActionConstants.LAUNCH_EXT));
 	popup.add(launchWindowMenu);
-	
-	{
-		MenuManager subMenu = new MenuManager(WorkbenchMessages.getString("Workbench.navigation")); //$NON-NLS-1$
-		popup.add(subMenu);
-		subMenu.add(activateEditorAction);
-		subMenu.add(showViewMenuAction);
-		subMenu.add(showPartPaneMenuAction);
-		subMenu.add(nextEditorAction);
-		subMenu.add(prevEditorAction);
-		subMenu.add(nextPartAction);
-		subMenu.add(prevPartAction);
-	}
-	
 	popup.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
-	popup.add(workbenchEditorsAction = new WorkbenchEditorsAction(window));
 	popup.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 	popup.add(new Separator());
 	popup.add(openPreferencesAction);
@@ -323,8 +299,6 @@ private void createToolBar() {
 		toolbar.add(new Separator());
 		toolbar.add(buildAction);
 	}
-	toolbar.add(pinEditorAction);
-	toolbar.add(new PerspectiveComboBox(window));
 	toolbar.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
 	toolbar.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 }
@@ -468,12 +442,6 @@ private void makeActions() {
 
 	closeAllAction = new CloseAllAction(window);
 	partService.addPartListener(closeAllAction);
-		
-	pinEditorAction = new PinEditorAction(window);
-	partService.addPartListener(pinEditorAction);
-	pinEditorAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR));
-	pinEditorAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_HOVER));
-	pinEditorAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PIN_EDITOR_DISABLED));	
 
 	aboutAction = new AboutAction(window);
 	aboutAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_OBJS_DEFAULT_PROD));
@@ -496,15 +464,6 @@ private void makeActions() {
 	// See if a welcome page is specified
 	if (((Workbench)PlatformUI.getWorkbench()).getProductInfo().getWelcomePageURL() != null)
 		quickStartAction = new QuickStartAction(workbench);
-	
-	// Actions for invisible accelerators
-	showViewMenuAction = new ShowViewMenuAction(window);
-	showPartPaneMenuAction = new ShowPartPaneMenuAction(window);
-	nextEditorAction = new CycleEditorAction(window, true);
-	prevEditorAction = new CycleEditorAction(window, false);
-	nextPartAction = new CyclePartAction(window, true);
-	prevPartAction = new CyclePartAction(window, false);
-	activateEditorAction = new ActivateEditorAction(window);
 }
 /**
  * Update the menubar and toolbar when
@@ -519,8 +478,6 @@ public void propertyChange(PropertyChangeEvent event) {
 			removeManualIncrementalBuildAction();
 		else
 			addManualIncrementalBuildAction();
-	} else if(event.getProperty() == IPreferenceConstants.REUSE_EDITORS) {
-		pinEditorAction.updateState();
 	}
 }
 /**

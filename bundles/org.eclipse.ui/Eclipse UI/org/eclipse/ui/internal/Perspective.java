@@ -4,19 +4,18 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.io.*;
-import java.util.*;
-
 import org.eclipse.core.runtime.*;
+import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.internal.ViewPane;
+import org.eclipse.ui.*;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.registry.*;
-import java.util.List;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.SWT;
+import java.io.*;
+import java.util.List;	// name resolution problem with swt.widgets.*
+import java.util.*;
 
 /**
  * The ViewManager is a factory for workbench views.  
@@ -36,17 +35,6 @@ public class Perspective
 	private IViewPart activeFastView;
 	protected PerspectivePresentation presentation;
 	final static private String VERSION_STRING = "0.016";//$NON-NLS-1$
-	
-	// fields used by fast view resizing via a sash
-	private static final int SASH_SIZE = 3;
-	private static final RGB RGB_COLOR1 = new RGB(132, 130, 132);
-	private static final RGB RGB_COLOR2 = new RGB(143, 141, 138);
-	private static final RGB RGB_COLOR3 = new RGB(171, 168, 165);
-	private Color borderColor1;
-	private Color borderColor2;
-	private Color borderColor3;
-	private Map mapFastViewToWidth = new HashMap();
-	private Sash fastViewSash;
 
 	// resize listener to update fast view height when
 	// window resized.
@@ -60,7 +48,17 @@ public class Perspective
 			}
 		}
 	};
-
+	
+	// fields used by fast view resizing via a sash
+	private static final int SASH_SIZE = 3;
+	private static final RGB RGB_COLOR1 = new RGB(132, 130, 132);
+	private static final RGB RGB_COLOR2 = new RGB(143, 141, 138);
+	private static final RGB RGB_COLOR3 = new RGB(171, 168, 165);
+	private Color borderColor1;
+	private Color borderColor2;
+	private Color borderColor3;
+	private Map mapFastViewToWidth = new HashMap();
+	private Sash fastViewSash;
 	private PaintListener paintListener = new PaintListener() {
 		public void paintControl(PaintEvent event) {
 			if (borderColor1 == null) borderColor1 = WorkbenchColors.getColor(RGB_COLOR1);
@@ -296,13 +294,6 @@ private ViewFactory getViewFactory() {
 	return viewFactory;
 }
 /**
- * Open the tracker to allow the user to move
- * the specified part using keyboard.
- */
-public void openTracker(ViewPane pane) {
-	presentation.openTracker(pane);
-}
-/**
  * See IWorkbenchPage.
  */
 public IViewPart [] getViews() {
@@ -379,7 +370,6 @@ private void hideFastView(IViewPart part) {
 
 	// Hide it completely.
 	pane.setBounds(0, 0, 0, 0);
-	pane.setFastViewSash(null);
 	ctrl.setEnabled(false); // Remove focus support.
 }
 /**
@@ -560,18 +550,6 @@ public void restoreState(IMemento memento) {
 	descriptor = new PerspectiveDescriptor(null,null,null);
 	descriptor.restoreState(memento);
 	
-	IMemento boundsMem = memento.getChild(IWorkbenchConstants.TAG_WINDOW);
-	if(boundsMem != null) {
-		Rectangle r = new Rectangle(0,0,0,0);
-		r.x = boundsMem.getInteger(IWorkbenchConstants.TAG_X).intValue();
-		r.y = boundsMem.getInteger(IWorkbenchConstants.TAG_Y).intValue();
-		r.height = boundsMem.getInteger(IWorkbenchConstants.TAG_HEIGHT).intValue();
-		r.width = boundsMem.getInteger(IWorkbenchConstants.TAG_WIDTH).intValue();
-		if(page.getWorkbenchWindow().getPages().length == 0) {
-			page.getWorkbenchWindow().getShell().setBounds(r);
-		}
-	}
-	
 	// Create an empty presentation..
 	RootLayoutContainer mainLayout = new RootLayoutContainer(page.getMouseDownListener());
 	PerspectivePresentation pres = new PerspectivePresentation(page, mainLayout);
@@ -592,7 +570,6 @@ public void restoreState(IMemento memento) {
 
 		// Create and open the view.
 		ViewPane pane = restoreView(childMem,viewID);
-		page.addPart(pane.getPart());
 		if(pane != null) 
 			pres.replacePlaceholderWithPart(pane);
 		else
@@ -613,7 +590,6 @@ public void restoreState(IMemento memento) {
 				
 			// Create and open the view.
 			ViewPane pane = restoreView(childMem,viewID);
-			page.addPart(pane.getPart());
 			if(pane != null) 
 				fastViews.add(pane.getPart());
 			else
@@ -738,15 +714,7 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 	// Save the version number.
 	memento.putString(IWorkbenchConstants.TAG_VERSION, VERSION_STRING);
 	p.saveState(memento);
-	if(!saveInnerViewState) {
-		Rectangle bounds = page.getWorkbenchWindow().getShell().getBounds();
-		IMemento boundsMem = memento.createChild(IWorkbenchConstants.TAG_WINDOW);
-		boundsMem.putInteger(IWorkbenchConstants.TAG_X,bounds.x);
-		boundsMem.putInteger(IWorkbenchConstants.TAG_Y,bounds.y);
-		boundsMem.putInteger(IWorkbenchConstants.TAG_HEIGHT,bounds.height);
-		boundsMem.putInteger(IWorkbenchConstants.TAG_WIDTH,bounds.width);
-	}
-	
+
 	// Save the action sets.
 	Iterator enum = visibleActionSets.iterator();
 	while (enum.hasNext()) {
@@ -858,16 +826,9 @@ public void setActionSets(IActionSetDescriptor[] newArray) {
 	}
 }
 /**
- * Return the active fast view or null if there are no
- * fast views or if there are all minimized.
- */
-public IViewPart getActiveFastView() {
-	return activeFastView;
-}
-/**
  * Sets the active fast view.
  */
-private void setActiveFastView(IViewPart view) {
+public void setActiveFastView(IViewPart view) {
 	if (activeFastView == view)
 		return;
 	if (activeFastView != null) {
@@ -967,17 +928,8 @@ private void showFastView(IViewPart part) {
 	if (fastViewSash == null) {
 		fastViewSash = new Sash(parent, SWT.VERTICAL);
 		fastViewSash.addPaintListener(paintListener);
-		fastViewSash.addFocusListener(new FocusListener() {
-			public void focusGained(FocusEvent e) {
-				fastViewSash.removePaintListener(paintListener);
-			}
-			public void focusLost(FocusEvent e) {
-				fastViewSash.addPaintListener(paintListener);
-			}
-		});
 		fastViewSash.addSelectionListener(selectionListener);
 	}
-	pane.setFastViewSash(fastViewSash);
 	fastViewSash.setBounds(bounds.width - SASH_SIZE, bounds.y, SASH_SIZE, bounds.height - SASH_SIZE);
 	fastViewSash.moveAbove(null);
 }
@@ -988,20 +940,8 @@ public IViewPart showView(String viewID)
 	throws PartInitException 
 {
 	ViewPane pane = getViewFactory().createView(viewID);
-	IViewPart part = pane.getViewPart();
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	int openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
-	if (presentation.hasPlaceholder(viewID)) {
-		presentation.addPart(pane);
-	} else if (openViewMode == IPreferenceConstants.OVM_FAST) {
-		fastViews.add(part);
-		showFastView(part);
-	} else if (openViewMode == IPreferenceConstants.OVM_FLOAT) {
-		presentation.addDetachedPart(pane);
-	} else {
-		presentation.addPart(pane);
-	}
-	return part;
+	presentation.addPart(pane);
+	return pane.getViewPart();
 }
 /**
  * Toggles the visibility of a fast view.  If the view is active it

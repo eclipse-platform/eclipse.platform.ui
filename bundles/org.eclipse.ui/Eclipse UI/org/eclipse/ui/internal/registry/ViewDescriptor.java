@@ -21,12 +21,10 @@ public class ViewDescriptor implements IViewDescriptor {
 	private ImageDescriptor imageDescriptor;
 	private static final String ATT_ID="id";//$NON-NLS-1$
 	private static final String ATT_NAME="name";//$NON-NLS-1$
-	private static final String ATT_ACCELERATOR="accelerator";//$NON-NLS-1$
 	private static final String ATT_ICON="icon";//$NON-NLS-1$
 	private static final String ATT_CATEGORY="category";//$NON-NLS-1$
 	private static final String ATT_CLASS="class";//$NON-NLS-1$
 	private String label;
-	private String accelerator;
 	private String className;
 	private IConfigurationElement configElement;
 	private String [] categoryPath;
@@ -69,22 +67,15 @@ public ImageDescriptor getImageDescriptor() {
 			iconName); 
 	return imageDescriptor;
 }
-
-public String getLabel() {
-	return label;
-}
-
-public String getAccelerator() {
-	return accelerator;
-}
-
+	public String getLabel() {
+		return label;
+	}
 /**
  * load a view descriptor from the registry.
  */
 private void loadFromExtension() throws CoreException {
 	id = configElement.getAttribute(ATT_ID);
 	label = configElement.getAttribute(ATT_NAME);
-	accelerator = configElement.getAttribute(ATT_ACCELERATOR);
 	className = configElement.getAttribute(ATT_CLASS);
 	String category = configElement.getAttribute(ATT_CATEGORY);
 

@@ -146,14 +146,15 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Cut")); //$NON-NLS-1$
 			setId("CellEditorCutActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			setAccelerator(SWT.CONTROL,'x');
 		}
-		public void runWithEvent(Event event) {
+		public void run() {
 			if (activeEditor != null) {
 				activeEditor.performCut();
 				return;
 			}
 			if (cutAction != null) {
-				cutAction.runWithEvent(event);
+				cutAction.run();
 				return;
 			}
 		}
@@ -175,14 +176,15 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Copy")); //$NON-NLS-1$
 			setId("CellEditorCopyActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			setAccelerator(SWT.CONTROL,'c');
 		}
-		public void runWithEvent(Event event) {
+		public void run() {
 			if (activeEditor != null) {
 				activeEditor.performCopy();
 				return;
 			}
 			if (copyAction != null) {
-				copyAction.runWithEvent(event);
+				copyAction.run();
 				return;
 			}
 		}
@@ -204,14 +206,15 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Paste")); //$NON-NLS-1$
 			setId("CellEditorPasteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			setAccelerator(SWT.CONTROL, 'v');
 		}
-		public void runWithEvent(Event event) {
+		public void run() {
 			if (activeEditor != null) {
 				activeEditor.performPaste();
 				return;
 			}
 			if (pasteAction != null) {
-				pasteAction.runWithEvent(event);
+				pasteAction.run();
 				return;
 			}
 		}
@@ -233,14 +236,15 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Delete")); //$NON-NLS-1$
 			setId("CellEditorDeleteActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			setAccelerator(SWT.DEL);
 		}
-		public void runWithEvent(Event event) {
+		public void run() {
 			if (activeEditor != null) {
 				activeEditor.performDelete();
 				return;
 			}
 			if (deleteAction != null) {
-				deleteAction.runWithEvent(event);
+				deleteAction.run();
 				return;
 			}
 		}
@@ -263,13 +267,13 @@ public class CellEditorActionHandler {
 			setId("CellEditorSelectAllActionHandler");//$NON-NLS-1$
 			setEnabled(false);
 		}
-		public void runWithEvent(Event event) {
+		public void run() {
 			if (activeEditor != null) {
 				activeEditor.performSelectAll();
 				return;
 			}
 			if (selectAllAction != null) {
-				selectAllAction.runWithEvent(event);
+				selectAllAction.run();
 				return;
 			}
 		}
@@ -291,14 +295,15 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Workbench.findReplace")); //$NON-NLS-1$
 			setId("CellEditorFindActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			setAccelerator(SWT.CONTROL,'f');
 		}
-		public void runWithEvent(Event event) {
+		public void run() {
 			if (activeEditor != null) {
 				activeEditor.performFind();
 				return;
 			}
 			if (findAction != null) {
-				findAction.runWithEvent(event);
+				findAction.run();
 				return;
 			}
 		}
@@ -320,14 +325,15 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Workbench.undo")); //$NON-NLS-1$
 			setId("CellEditorUndoActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			setAccelerator(SWT.CONTROL,'z');
 		}
-		public void runWithEvent(Event event) {
+		public void run() {
 			if (activeEditor != null) {
 				activeEditor.performUndo();
 				return;
 			}
 			if (undoAction != null) {
-				undoAction.runWithEvent(event);
+				undoAction.run();
 				return;
 			}
 		}
@@ -349,14 +355,15 @@ public class CellEditorActionHandler {
 			super(WorkbenchMessages.getString("Workbench.redo")); //$NON-NLS-1$
 			setId("CellEditorRedoActionHandler");//$NON-NLS-1$
 			setEnabled(false);
+			setAccelerator(SWT.CONTROL, 'y');
 		}
-		public void runWithEvent(Event event) {
+		public void run() {
 			if (activeEditor != null) {
 				activeEditor.performRedo();
 				return;
 			}
 			if (redoAction != null) {
-				redoAction.runWithEvent(event);
+				redoAction.run();
 				return;
 			}
 		}

@@ -161,57 +161,32 @@ public FontRegistry(Display display) {
 public void addListener(IPropertyChangeListener listener) {
 	listeners.add(listener);
 }
-
 /**
- * Find the first valid fontData in the provided list. 
- * If none are valid return the first one regardless.
- * If the list is empty return null.
- * Return null if one cannot be found.
+ * Creates a new font with the given font datas.
  */
-public FontData bestData(FontData[] fonts, Display display) {
+private Font createFont(FontData[] fonts) {
+	Display display = Display.getCurrent();
 	for (int i = 0; i < fonts.length; i++) {
 		FontData fd = fonts[i];
-		
 		if (fd == null)
 			break;
 
 		FontData[] fixedFonts = display.getFontList(fd.getName(), false);
 		if (isFixedFont(fixedFonts, fd)) {
-			return fd;
+			return new Font(display, fd);
 		}
 
 		FontData[] scalableFonts = display.getFontList(fd.getName(), true);
 		if (scalableFonts.length > 0) {
-			return fd;
+			return new Font(display, fd);
 		}
 	}
-	
-	//None of the provided datas are valid. Return the
-	//first one as it is at least the first choice.
-	if (fonts.length > 0)
-			return fonts[0];
-	else
-		//Nothing specified 
+	//unable to find a valid font.
+	if (fonts.length > 0) {
+		return new Font(display, fonts[0]);
+	} else {
+		//Failed to find any reasonable font. 
 		return null;
-}
-	
-/**
- * Creates a new font with the given font datas or nulk
- * if there is no data.
- */
-private Font createFont(String symbolicName, FontData[] fonts) {
-	Display display = Display.getCurrent();
-	FontData validData = bestData(fonts,display);
-	if(validData == null){
-		//Nothing specified 
-		return null;
-	}
-	else {
-		//Create a font data for updating the registry
-		FontData[] newEntry = new FontData[1];
-		newEntry[0] = validData;
-		put(symbolicName,newEntry);
-		return new Font(display, validData);
 	}
 }
 /**
@@ -285,7 +260,7 @@ public Font get(String symbolicName) {
 
 	// Create the font and update the mapping so it can 
 	// be shared.
-	Font font = createFont(symbolicName,(FontData[])result);
+	Font font = createFont((FontData[])result);
 	stringToFont.put(symbolicName, font);
 
 	// Note, the font may be null if the create() failed. Put a mapping
@@ -335,7 +310,7 @@ private boolean isFixedFont(FontData[] fixedFonts, FontData fd) {
 	String name = fd.getName();
 	for (int i = 0; i < fixedFonts.length; i++) {
 		FontData fixed = fixedFonts[i];
-		if (fixed.getHeight() == height && fixed.getName().equals(name))
+		if (fixed.getHeight() == height && fixed.getName().toLowerCase().equals(name))
 			return true;
 	}
 	return false;
@@ -348,7 +323,7 @@ private FontData makeFontData(String value) throws MissingResourceException {
 		return StringConverter.asFontData(value.trim());
 	} catch (DataFormatException e) {
 		throw new MissingResourceException("Wrong font data format. Value is: \"" + value + "\"", getClass().getName(), value);//$NON-NLS-2$//$NON-NLS-1$
-	}
+	};
 }
 /**
  * Adds (or replaces) a font to this font registry under the given

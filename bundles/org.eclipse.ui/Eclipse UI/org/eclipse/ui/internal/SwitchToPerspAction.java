@@ -37,9 +37,9 @@ public void run() {
 	IPerspectiveDescriptor defDesc =
 		reg.findPerspectiveWithId(IWorkbenchConstants.DEFAULT_LAYOUT_ID);
 	if (defDesc != null) {
-		IWorkbenchPage page = window.getActivePage();
-		if (page != null) {
-			page.setPerspective(defDesc);
+		IWorkbenchPage persp = window.getActivePage();
+		if (persp != null) {
+			persp.setPerspective(defDesc);
 		}
 	}
 

@@ -34,13 +34,6 @@ public abstract class PartPane extends LayoutPart
 			requestActivation();
 		}
 	};
-	
-	public static class Sashes {
-		public Sash left;
-		public Sash right;
-		public Sash top;
-		public Sash bottom;
-	}	
 /**
  * Construct a pane for a part.
  */
@@ -187,9 +180,10 @@ public void hookFocus(Control ctrl) {
 	ctrl.addMouseListener(mouseListener);
 }
 /**
- * See LayoutPart
+ *	Allow the layout part to determine if they are in
+ * an acceptable state to start a drag & drop operation.
  */
-public boolean isDragAllowed(Point p) {
+public boolean isDragAllowed() {
 	if (isZoomed())
 		return false;
 	else
@@ -262,151 +256,4 @@ public abstract void showFocus(boolean inFocus);
 public LayoutPart targetPartFor(LayoutPart dragSource) {
 	return this;
 }
-
-/**
- * Show a title label menu for this pane.
- */
-public abstract void showPaneMenu();
-/**
- * Show the context menu for this part.
- */
-public abstract void showViewMenu();
-/**
- * Show a title label menu for this pane.
- */
-protected void showPaneMenu(Control parent,Point point,boolean isFastView) {
-	Menu aMenu = new Menu(parent);
-	MenuItem item; 
-
-	// Get various view states.
-	final boolean isZoomed = ((WorkbenchPage)getPart().getSite().getPage()).isZoomed();
-	boolean canZoom = (getWindow() instanceof IWorkbenchWindow);
-
-	// add restore item
-	item = new MenuItem(aMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("PartPane.restore")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			if (isZoomed)
-				doZoom();
-			else
-				doPin();
-		}
-	});
-	item.setEnabled(isZoomed || isFastView);
-	
-	//Add move menu
-	item = new MenuItem(aMenu, SWT.CASCADE);
-	item.setText(WorkbenchMessages.getString("PartPane.move")); //$NON-NLS-1$
-	Menu moveMenu = new Menu(aMenu);
-	item.setMenu(moveMenu);
-	addMoveItems(moveMenu);
-	
-	//Add size menu
-	item = new MenuItem(aMenu, SWT.CASCADE);
-	item.setText(WorkbenchMessages.getString("PartPane.size")); //$NON-NLS-1$
-	Menu sizeMenu = new Menu(aMenu);
-	item.setMenu(sizeMenu);
-	addSizeItems(sizeMenu);
-	
-	addFastViewMenuItem(aMenu,isFastView);
-
-	// add maximize item
-	item = new MenuItem(aMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("PartPane.maximize")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			doZoom();
-		}
-	});
-	item.setEnabled(!isZoomed && !isFastView && canZoom);
-
-	new MenuItem(aMenu, SWT.SEPARATOR);
-	
-	// add close item
-	item = new MenuItem(aMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("PartPane.close")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			doHide();
-		}
-	});
-
-	// open menu    
-	point = parent.toDisplay(point);
-	aMenu.setLocation(point.x, point.y);
-	aMenu.setVisible(true);
-}
-/**
- * Return the sashes around this part.
- */
-protected abstract Sashes findSashes();
-/**
- * Enable the user to resize this part using
- * the keyboard to move the specified sash
- */
-protected void moveSash(final Sash sash) {
-	final Control focus = sash.getDisplay().getFocusControl();
-	final KeyListener listener = new KeyAdapter() {
-		public void keyPressed(KeyEvent e) {
-			if ((e.keyCode != SWT.ARROW_DOWN) && 
-	  			 (e.keyCode != SWT.ARROW_UP) && 
-				 (e.keyCode != SWT.ARROW_LEFT) && 
-				 (e.keyCode != SWT.ARROW_RIGHT) &&
-				 (e.keyCode != SWT.ALT) &&
-				 (e.keyCode != SWT.CTRL)) {
-			 		if(control == null || control.isDisposed())
-						getPart().setFocus();
-					else
-						control.setFocus();
-				 }
-		}
-	};
-	sash.addFocusListener(new FocusAdapter() {
-		public void focusGained(FocusEvent e) {
-			sash.setBackground(sash.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
-			sash.addKeyListener(listener);
-		}
-		public void focusLost(FocusEvent e) {
-			sash.setBackground(null);
-			sash.removeKeyListener(listener);
-		}
-	});
-	sash.setFocus();
-}
-/**
- * Add a menu item to the Size Menu
- */
-protected void addSizeItem(Menu sizeMenu, String labelKey,final Sash sash) {
-	MenuItem item = new MenuItem(sizeMenu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString(labelKey)); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			moveSash(sash);
-		}
-	});
-	item.setEnabled(!isZoomed() && sash != null);
-}
-/**
- * Add the Left,Rigth,Up,Botton menu items to the Size menu.
- */
-protected void addSizeItems(Menu sizeMenu) {
-	Sashes sashes = findSashes();
-	addSizeItem(sizeMenu,"PartPane.sizeLeft",sashes.left);
-	addSizeItem(sizeMenu,"PartPane.sizeRight",sashes.right);
-	addSizeItem(sizeMenu,"PartPane.sizeTop",sashes.top);
-	addSizeItem(sizeMenu,"PartPane.sizeBottom",sashes.bottom);
-}
-/**
- * Add the move items to the Move menu.
- */
-protected void addMoveItems(Menu parent) {}
-/**
- * Add the Fast View menu item to the part title menu.
- */
-protected void addFastViewMenuItem(Menu parent,boolean isFastView) {}
-/**
- * Pin this part.
- */
-protected void doPin() {}
 }

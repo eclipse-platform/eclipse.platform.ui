@@ -43,14 +43,6 @@ public Rectangle getBounds() {
 	return new Rectangle(0, 0, 0, 0);
 }
 /**
- * Gets root container for this part.
- */
-public RootLayoutContainer getRootContainer() {
-	if(container != null)
-		return container.getRootContainer();
-	return null;
-}
-/**
  * Gets the parent for this part.
  */
 public ILayoutContainer getContainer() {
@@ -110,7 +102,7 @@ public IWorkbenchWindow getWorkbenchWindow() {
  *	Allow the layout part to determine if they are in
  * an acceptable state to start a drag & drop operation.
  */
-public boolean isDragAllowed(Point p) {
+public boolean isDragAllowed() {
 	return true;
 }
 /**

@@ -4,9 +4,9 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.*;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.*;
 
 /**
  * This interface must be implemented in order to contribute
@@ -22,7 +22,7 @@ public interface IObjectActionContributor extends IObjectContributor {
  * the given selection provider.
  * @return True if any contributions were made, and false otherwise.
  */
-public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager menu, 
+public boolean contributeObjectActions(IWorkbenchPart part, MenuManager menu, 
 	ISelectionProvider selProv);
 /**
  * Implement this method to add menus that deal with the currently
@@ -31,5 +31,5 @@ public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager menu,
  * the given selection provider.
  * @return True if any contributions were made, and false otherwise.
  */
-public boolean contributeObjectMenus(IMenuManager menu, ISelectionProvider selProv);
+public boolean contributeObjectMenus(MenuManager menu, ISelectionProvider selProv);
 }

@@ -419,8 +419,6 @@ void fillContextMenu(IMenuManager menu) {
 	menu.add(new Separator());
 	menu.add(purgeCompletedAction);
 	menu.add(new Separator());
-	menu.add(filtersAction);
-	menu.add(new Separator());
 	menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));	
 	menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));	 //$NON-NLS-1$
 }

@@ -28,12 +28,4 @@ public void remove(LayoutPart part);
  * Replace one child with another
  */
 public void replace(LayoutPart oldPart, LayoutPart newPart);
-/**
- * Gets the parent for this container.
- */
-public ILayoutContainer getContainer();
-/**
- * Gets root container for this part.
- */
-public RootLayoutContainer getRootContainer();
 }

@@ -13,24 +13,24 @@ import org.eclipse.swt.widgets.*;
  * Superclass of all actions provided by the resource navigator.
  */
 /* package */ abstract class ResourceNavigatorAction extends SelectionProviderAction {
-	private IResourceNavigatorPart navigator;
+	private ResourceNavigator navigator;
 /**
  * Creates a new instance of the class.
  */
-public ResourceNavigatorAction(IResourceNavigatorPart navigator, String label) {
+public ResourceNavigatorAction(ResourceNavigator navigator, String label) {
 	super(navigator.getResourceViewer(), label);
 	this.navigator = navigator;
 }
 /**
  * Returns the resource navigator for which this action was created.
  */
-public IResourceNavigatorPart getNavigator() {
+public ResourceNavigator getNavigator() {
 	return navigator;
 }
 /**
  * Returns the resource viewer
  */
-protected Viewer getResourceViewer() {
+protected TreeViewer getResourceViewer() {
 	return getNavigator().getResourceViewer();
 }
 /**

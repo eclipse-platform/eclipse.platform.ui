@@ -1,6 +1,5 @@
 package org.eclipse.ui.internal.dialogs;
 
-import java.text.Collator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Set;
@@ -19,9 +18,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.help.DialogPageContextComputer;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.Sorter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -33,8 +29,6 @@ public class FontPreferencePage
 	Hashtable namesToIds;
 	Hashtable idsToFontData;
 	List fontList;
-	Button changeFontButton;
-	Button useDefaultsButton;
 
 	/**
 	 * The label that displays the selected font, or <code>null</code> if none.
@@ -63,19 +57,10 @@ public class FontPreferencePage
 			return text;
 		}
 
-		public void setFont(FontData[] fontData) {
+		public void setFont(FontData fontData) {
 			if (font != null)
 				font.dispose();
-				
-			FontData bestData = 
-				JFaceResources.getFontRegistry().
-					bestData(fontData,text.getDisplay());
-					
-			//If there are no specified values then return.
-			if(bestData == null)
-				return;
-				
-			font = new Font(text.getDisplay(), bestData);
+			font = new Font(text.getDisplay(), fontData);
 			text.setFont(font);
 			//Also set the text here
 			text.setText(WorkbenchMessages.getString("FontsPreference.SampleText"));
@@ -89,7 +74,6 @@ public class FontPreferencePage
 	 * @see PreferencePage#createContents
 	 */
 	public Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(getControl(), new DialogPageContextComputer(this, IHelpContextIds.FONT_PREFERENCE_PAGE));
 
 		Composite mainColumn = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
@@ -157,15 +141,8 @@ public class FontPreferencePage
 		fontList.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				String selectedFontId = getSelectedFontId();
-				if (selectedFontId == null){
-					changeFontButton.setEnabled(false);
-					useDefaultsButton.setEnabled(false);
-				}
-				else{
-					changeFontButton.setEnabled(true);
-					useDefaultsButton.setEnabled(true);
-					updateForFont((FontData[]) idsToFontData.get(selectedFontId));
-				}
+				if (selectedFontId != null)
+					updateForFont((FontData) idsToFontData.get(selectedFontId));
 			}
 		});
 
@@ -175,12 +152,10 @@ public class FontPreferencePage
 		names.toArray(unsortedItems);
 
 		Sorter sorter = new Sorter() {
-			private Collator collator = Collator.getInstance();
-			
 			public boolean compare(Object o1, Object o2) {
 				String s1 = (String) o1;
 				String s2 = (String) o2;
-				return collator.compare(s1, s2) < 0;
+				return ((s1).compareTo(s2)) < 0;
 			}
 		};
 
@@ -208,7 +183,7 @@ public class FontPreferencePage
 	 * Creates the change button for this field editor.=
 	 */
 	private void createChangeControl(Composite parent, String changeButtonLabel) {
-		changeFontButton = new Button(parent, SWT.PUSH);
+		final Button changeFontButton = new Button(parent, SWT.PUSH);
 
 		changeFontButton.setText(changeButtonLabel); //$NON-NLS-1$
 		changeFontButton.addSelectionListener(new SelectionAdapter() {
@@ -216,22 +191,17 @@ public class FontPreferencePage
 				String selectedFontId = getSelectedFontId();
 				if (selectedFontId != null) {
 					FontDialog fontDialog = new FontDialog(changeFontButton.getShell());
-					FontData[] currentData = (FontData[]) idsToFontData.get(selectedFontId);
-					fontDialog.setFontData(currentData[0]);
+					fontDialog.setFontData((FontData) idsToFontData.get(selectedFontId));
 					FontData font = fontDialog.open();
 					if (font != null) {
-						FontData[] fonts = new FontData[1];
-						fonts[0] = font;
-						idsToFontData.put(selectedFontId, fonts);
-						updateForFont(fonts);
+						idsToFontData.put(selectedFontId, font);
+						updateForFont(font);
 					}
 
 				}
 
 			}
 		});
-		
-		changeFontButton.setEnabled(false);
 	}
 
 	/**
@@ -241,21 +211,19 @@ public class FontPreferencePage
 		Composite parent,
 		String useSystemLabel) {
 
-		useDefaultsButton = new Button(parent, SWT.PUSH | SWT.CENTER);
+		final Button changeFontButton = new Button(parent, SWT.PUSH | SWT.CENTER);
 
-		useDefaultsButton.setText(useSystemLabel); //$NON-NLS-1$
-		useDefaultsButton.addSelectionListener(new SelectionAdapter() {
+		changeFontButton.setText(useSystemLabel); //$NON-NLS-1$
+		changeFontButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				String selectedFontId = getSelectedFontId();
 				if (selectedFontId != null) {
 					FontData[] defaultFontData = JFaceResources.getDefaultFont().getFontData();
-					idsToFontData.put(selectedFontId, defaultFontData);
-					updateForFont(defaultFontData);
+					idsToFontData.put(selectedFontId, defaultFontData[0]);
+					updateForFont(defaultFontData[0]);
 				}
 			}
 		});
-		
-		useDefaultsButton.setEnabled(false);
 	}
 
 	/**
@@ -295,9 +263,9 @@ public class FontPreferencePage
 	 * Updates the value label and the previewer to reflect the
 	 * newly selected font.
 	 */
-	private void updateForFont(FontData[] font) {
+	private void updateForFont(FontData font) {
 
-		valueControl.setText(StringConverter.asString(font[0]));
+		valueControl.setText(StringConverter.asString(font));
 		previewer.setFont(font);
 	}
 
@@ -326,15 +294,15 @@ public class FontPreferencePage
 		idsToFontData = new Hashtable();
 		idsToFontData.put(
 			JFaceResources.BANNER_FONT,
-			(JFaceResources.getBannerFont().getFontData()));
+			(JFaceResources.getBannerFont().getFontData())[0]);
 
 		idsToFontData.put(
 			JFaceResources.TEXT_FONT,
-			(JFaceResources.getTextFont().getFontData()));
+			(JFaceResources.getTextFont().getFontData())[0]);
 
 		idsToFontData.put(
 			JFaceResources.HEADER_FONT,
-			(JFaceResources.getHeaderFont().getFontData()));
+			(JFaceResources.getHeaderFont().getFontData())[0]);
 
 	}
 
@@ -348,27 +316,9 @@ public class FontPreferencePage
 
 		while (fontSettingsEnumerator.hasMoreElements()) {
 			String preferenceName = (String) fontSettingsEnumerator.nextElement();
-			FontData[] defaultData =
-				PreferenceConverter.getDefaultFontDataArray(getPreferenceStore(), preferenceName);
-				
-			//Now we have the defaults ask the registry which to use of these
-			//values.
-			FontData bestChoice = 
-				JFaceResources.getFontRegistry().
-					bestData(defaultData,valueControl.getDisplay());
-					
-			//The default data was empty so use the system default
-			if(bestChoice == null)
-				defaultData =
-					valueControl.getDisplay().
-						getSystemFont().getFontData();
-			else{
-				defaultData = new FontData[1];
-				defaultData[0] = bestChoice;
-			}
-						
+			FontData defaultData =
+				PreferenceConverter.getDefaultFontData(getPreferenceStore(), preferenceName);
 			idsToFontData.put(preferenceName, defaultData);
-			
 			if (preferenceName.equals(currentSelection))
 				updateForFont(defaultData);
 		}
@@ -388,7 +338,7 @@ public class FontPreferencePage
 			PreferenceConverter.setValue(
 				getPreferenceStore(),
 				preferenceName,
-				(FontData[]) idsToFontData.get(preferenceName));
+				(FontData) idsToFontData.get(preferenceName));
 		}
 		return super.performOk();
 	}

@@ -32,7 +32,7 @@ public ObjectActionContributor(IConfigurationElement config) {
 /**
  * Contributes actions applicable for the current selection.
  */
-public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager menu, 
+public boolean contributeObjectActions(IWorkbenchPart part, MenuManager menu, 
 	ISelectionProvider selProv) 
 {
 	// Parse config.
@@ -68,7 +68,7 @@ public boolean contributeObjectActions(IWorkbenchPart part, IMenuManager menu,
 /**
  * Contributes menus applicable for the current selection.
  */
-public boolean contributeObjectMenus(IMenuManager menu, ISelectionProvider selProv) {
+public boolean contributeObjectMenus(MenuManager menu, ISelectionProvider selProv) {
 	// Parse config element.
 	if (!configRead)
 		readConfigElement();

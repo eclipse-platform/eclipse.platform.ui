@@ -30,7 +30,7 @@ import org.eclipse.jface.util.Assert;
  * @see ITextStore
  * @see ILineTracker
  */
-public abstract class AbstractDocument implements IDocument, IDocumentExtension {
+public abstract class AbstractDocument implements IDocument {
 		
 	/** The document's text store */
 	private ITextStore   fStore;
@@ -49,12 +49,6 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	/** All registered document position updaters */
 	private List fPositionUpdaters;
 	
-	/** The list of post notification changes */
-	private List fPostNotificationChanges;
-	/** The reentrance count for post notification changes. */
-	private int fReentranceCount= 0;
-	/** Indicates whether post notification change processing has been stopped. */
-	private int fStoppedCount= 0;
 	
 	/**
 	 * The default constructor does not perform any configuration
@@ -418,10 +412,6 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	 */
 	protected void fireDocumentAboutToBeChanged(DocumentEvent event) {
 		
-		// IDocumentExtension
-		if (fReentranceCount == 0)
-			flushPostNotificationChanges();
-		
 		if (fDocumentPartitioner != null)
 			fDocumentPartitioner.documentAboutToBeChanged(event);
 			
@@ -466,7 +456,6 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 		
 	/**
 	 * Updates the internal document structures and informs all document listeners.
-	 * Uses a robust iterator.
 	 *
 	 * @param event the document event to be sent out
 	 */
@@ -491,15 +480,6 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 				IDocumentListener l= (IDocumentListener) e.next();
 				l.documentChanged(event);
 			}
-		}
-		
-		// IDocumentExtension
-		++ fReentranceCount;
-		try {
-			if (fReentranceCount == 1)
-				executePostNotificationChanges();
-		} finally {
-			-- fReentranceCount;
 		}
 	}
 	
@@ -787,7 +767,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 		
 		getStore().set(text);
 		getTracker().set(text);
-		
+				
 		fireDocumentChanged(e);
 	}
 		
@@ -795,13 +775,11 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 	 * Updates all positions of all categories to the change
 	 * described by the document event. All registered document
 	 * updaters are called in the sequence they have been arranged.
-	 * Uses a robust iterator.
 	 *
 	 * @param event the document event describing the change to which to adapt the positions
 	 */
-	protected void updatePositions(DocumentEvent event) {
-		List list= new ArrayList(fPositionUpdaters);
-		Iterator e= list.iterator();
+	protected void updatePositions(DocumentEvent event) {		
+		Iterator e= fPositionUpdaters.iterator();
 		while (e.hasNext()) {
 			IPositionUpdater u= (IPositionUpdater) e.next();
 			u.update(event);
@@ -995,72 +973,5 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension 
 			}
 		}
 		return true;
-	}
-	
-	
-	// ---------- implementation of IDocumentExtension --------------
-	
-	static private class RegisteredReplace {
-		IDocumentListener fOwner;
-		IDocumentExtension.IReplace fReplace;
-		
-		RegisteredReplace(IDocumentListener owner, IDocumentExtension.IReplace replace) {
-			fOwner= owner;
-			fReplace= replace;
-		}
-	};
-	
-	/**
-	 * Flushs all registered post notification changes.
-	 */
-	private void flushPostNotificationChanges() {
-		if (fPostNotificationChanges != null)
-			fPostNotificationChanges.clear();
-	}
-	
-	/**
-	 * Executes all registered post notification changes. The process is
-	 * repeated until no new post notification changes are added.
-	 */
-	private void executePostNotificationChanges() {
-		
-		if (fStoppedCount > 0)
-			return;
-			
-		while (fPostNotificationChanges != null) {
-			List changes= fPostNotificationChanges;
-			fPostNotificationChanges= null;
-			
-			Iterator e= changes.iterator();
-			while (e.hasNext()) {
-				RegisteredReplace replace = (RegisteredReplace) e.next();
-				replace.fReplace.perform(this, replace.fOwner);
-			}
-		}
-	}
-	
-	/*
-	 * @see IDocumentExtension#registerPostNotificationReplace(IDocumentListener, IReplace)
-	 */
-	public void registerPostNotificationReplace(IDocumentListener owner, IDocumentExtension.IReplace replace) {
-		if (fPostNotificationChanges == null)
-			fPostNotificationChanges= new ArrayList(1);
-		fPostNotificationChanges.add(new RegisteredReplace(owner, replace));
-	}
-	
-	/*
-	 * @see IDocumentExtension#stopPostNotificationProcessing()
-	 */
-	public void stopPostNotificationProcessing() {
-		++ fStoppedCount;
-	}
-	
-	/*
-	 * @see IDocumentExtension#resumePostNotificationProcessing()
-	 */
-	public void resumePostNotificationProcessing() {
-		-- fStoppedCount;
-		if (fStoppedCount == 0 && fReentranceCount == 0)
-			executePostNotificationChanges();
 	}
 }

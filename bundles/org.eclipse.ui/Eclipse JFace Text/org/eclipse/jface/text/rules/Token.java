@@ -1,8 +1,5 @@
 package org.eclipse.jface.text.rules;
 
-import org.eclipse.jface.util.Assert;
-
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -14,42 +11,32 @@ import org.eclipse.jface.util.Assert;
  */
 public class Token implements IToken {
 	
-	private static final int T_UNDEFINED=	0;
-	private static final int T_EOF=			1;
-	private static final int T_WHITESPACE=	2;
-	private static final int T_OTHER=		3;
-	
-	
-	/** 
-	 * Standard undefined token 
-	 */
-	public static final IToken UNDEFINED= new Token(T_UNDEFINED);
-	/** 
-	 * Standard End Of File token 
-	 */
-	public static final IToken EOF= new Token(T_EOF);
-	/** 
-	 * Standard whitespace token
-	 */
-	public static final IToken WHITESPACE= new Token(T_WHITESPACE);
-	/**
-	 * Standard token neither undefine, whitespace, nor whitespace
-	 * @deprecated will be removed
-	 */
-	public static final IToken OTHER= new Token(T_OTHER);
-	
-	
-	private int fType;
+	/** Standard undefined token */
+	public static final IToken UNDEFINED= new Token(true, false, false);
+	/** Standard End Of File token */
+	public static final IToken EOF= new Token(false, true, false);
+	/** Standard whitespace token */
+	public static final IToken WHITESPACE= new Token(false, false, true);
+	/** Standard token neither undefine, whitespace, nor whitespace */
+	public static final IToken OTHER= new Token(false, false, false);
+			
+	private boolean fIsUndefined;
+	private boolean fIsEOF;
+	private boolean fIsWhitespace;
 	private Object fData;
 	
 	/**
 	 * Creates a new token according to the given specification which does not
 	 * have any data attached to it.
 	 *
-	 * @param type the type of the token
+	 * @param isUndefined indicates whether the token is undefined
+	 * @param isEOF indicates whether the token represents EOF
+	 * @param isWhitespace indicates whether the token represents a whitespace
 	 */
-	private Token(int type) {
-		fType= type;
+	private Token(boolean isUndefined, boolean isEOF, boolean isWhitespace) {
+		fIsUndefined= isUndefined;
+		fIsEOF= isEOF;
+		fIsWhitespace= isWhitespace;
 		fData= null;
 	}
 	
@@ -60,18 +47,9 @@ public class Token implements IToken {
 	 * @param data the data attached to the newly created token
 	 */
 	public Token(Object data) {
-		fType= T_OTHER;
-		fData= data;
-	}
-	
-	/**
-	 * Reinitializes the data of this token. The token may not represent
-	 * undefined, whitepsace, or EOF.
-	 * 
-	 * @param the data to be attached to the token
-	 */
-	public void setData(Object data) {
-		Assert.isTrue(isOther());
+		fIsUndefined= false;
+		fIsEOF= false;
+		fIsWhitespace= false;
 		fData= data;
 	}
 	
@@ -86,27 +64,27 @@ public class Token implements IToken {
 	 * @see IToken#isOther()
 	 */
 	public boolean isOther() {
-		return (fType == T_OTHER);
+		return ! (fIsUndefined || fIsEOF || fIsWhitespace);
 	}
 	
 	/*
 	 * @see IToken#isEOF()
 	 */
 	public boolean isEOF() {
-		return (fType == T_EOF);
+		return fIsEOF;
 	}
 	
 	/*
 	 * @see IToken#isWhitespace()
 	 */
 	public boolean isWhitespace() {
-		return (fType == T_WHITESPACE);
+		return fIsWhitespace;
 	}
 	
 	/*
 	 * @see IToken#isUndefined()
 	 */
 	public boolean isUndefined() {
-		return (fType == T_UNDEFINED);
+		return fIsUndefined;
 	}	
 }

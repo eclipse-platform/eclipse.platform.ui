@@ -186,11 +186,7 @@ private void addColumns() {
  * current cell editor value.
  */
 private void applyEditorValue() {
-	TableTreeItem treeItem = tableTreeEditor.getItem();
-	// treeItem can be null when view is opened
-	if (treeItem == null || treeItem.isDisposed())
-		return;
-	IPropertySheetEntry entry = (IPropertySheetEntry)treeItem.getData();
+	IPropertySheetEntry entry = (IPropertySheetEntry)tableTreeEditor.getItem().getData();
 	entry.applyEditorValue();
 }
 /**
@@ -692,8 +688,6 @@ private void setErrorMessage(String errorMessage) {
  * @param input the input of this viewer, or <code>null</code> if none
  */
 public void setInput(Object newInput) {
-	// need to save any changed value when user clicks elsewhere
-	applyEditorValue();
 	// deactivate our cell editor
 	deactivateCellEditor();
 
@@ -861,15 +855,7 @@ private void updateCategory(PropertySheetCategory category, TableTreeItem item) 
 	item.setText(1, "");//$NON-NLS-1$
 
 	// update the "+" icon	
-	if (category.getAutoExpand()) {
-		// we auto expand categories when they first appear
-		createChildren(item);
-		item.setExpanded(true);
-		category.setAutoExpand(false);
-	} else {
-		// we do not want to auto expand categories if the user has collpased them
-		updatePlus(category, item);
-	}
+	updatePlus(category, item);
 }
 /**
  * Update the child entries or categories of the given entry or category.

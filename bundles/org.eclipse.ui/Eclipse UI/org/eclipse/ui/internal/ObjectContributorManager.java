@@ -82,8 +82,6 @@ private List computeInterfaceOrder(List classList) {
 	}
 	return result;
 }
-
-
 /**
  * Flushes the cache of contributor search paths.  This is generally required
  * whenever a contributor is added or removed.  
@@ -99,18 +97,21 @@ public void flushLookup() {
  * the given object class.
  */
 protected List getContributors(Class objectClass) {
+	List result=null;
 	
 	// If there's a cache look for the object class.
 	if (lookup!=null) {
-		List result = (ArrayList) lookup.get(objectClass);
+		result = (ArrayList) lookup.get(objectClass);
 		if (result != null)
 		   return result;
 	}
 	
 	// Class not found.  Build the result set for classes and interfaces.
-	
-	List result = addContributorsFor(objectClass);
-	
+	result = new ArrayList();
+	List classList = computeClassOrder(objectClass);	// classes
+	addContributorsFor(classList, result);
+	classList = computeInterfaceOrder(classList);	// interfaces
+	addContributorsFor(classList, result);
 	if (result.size()==0) 
 		return null;
 
@@ -121,22 +122,6 @@ protected List getContributors(Class objectClass) {
 	
 	return result;
 }
-
-/**
- * Return the list of contributors for the supplied classList.
- */
-
-protected List addContributorsFor(Class objectClass){
-	
-	List classList = computeClassOrder(objectClass);
-	List result = new ArrayList();
-	addContributorsFor(classList, result);
-	classList = computeInterfaceOrder(classList);	// interfaces
-	addContributorsFor(classList, result);
-	return result;
-}
-
-
 /**
  * Returns true if contributors exist in the manager for
  * this object.

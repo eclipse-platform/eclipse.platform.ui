@@ -26,17 +26,17 @@ import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.preference.IPreferenceStore;
+
 /**
  * A collection of views and editors in a workbench.
  */
-public class WorkbenchPage implements IWorkbenchPage {
+public class WorkbenchPage implements IWorkbenchPage
+{
 	private WorkbenchWindow window;
 	private IAdaptable input;
 	private Composite composite;
 	private ControlListener resizeListener;
-	private IWorkbenchPart activePart; //Could be delete. This information is in the active part list;
-	private ActivationList activationList = new ActivationList();
+	private IWorkbenchPart activePart;
 	private IEditorPart lastActiveEditor;
 	private EditorManager editorMgr;
 	private EditorPresentation editorPresentation;
@@ -46,12 +46,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private Perspective activePersp;
 	private ViewFactory viewFactory;
 	private ArrayList perspList = new ArrayList(1);
-	//Number of open editors before reusing. If < 0, use the 
-	//user preference settings.
-	private int reuseEditors = -1;
+
 	private Listener mouseDownListener;
-	private IMemento deferredMemento;
-	private PerspectiveDescriptor deferredActivePersp;
 /**
  * Constructs a new page with a given perspective and input.
  *
@@ -78,12 +74,8 @@ public WorkbenchPage(WorkbenchWindow w, IMemento memento, IAdaptable input)
 	throws WorkbenchException
 {
 	super();
-	if (true) {
-		init(w, null, input);
-		restoreState(memento);
-	} else {
-		deferInit(w, memento, input);
-	}
+	init(w, null, input);
+	restoreState(memento);
 }
 /**
  * Activates a part.  The part will be brought to the front and given focus.
@@ -104,21 +96,19 @@ public void activate(IWorkbenchPart part) {
 		bringToTop(part);
 		setActivePart(part);
 	} else {
-		activationList.setActive(part);
 		activePart = part;
 	}
 }
 /**
  * Activates a part.  The part is given focus, the pane is hilighted and the action bars are shown.
  */
-private void activatePart(final IWorkbenchPart part, final boolean switchActions, final boolean switchActionsForced) {
+static private void activatePart(final IWorkbenchPart part, final boolean switchActions, final boolean switchActionsForced) {
 	Platform.run(new SafeRunnableAdapter(WorkbenchMessages.getString("WorkbenchPage.ErrorActivatingView")) { //$NON-NLS-1$
 		public void run() {
 			if (part != null) {
 				part.setFocus();
 				PartSite site = (PartSite)part.getSite();
 				site.getPane().showFocus(true);
-				updateTabList(part);
 				SubActionBars bars = (SubActionBars)site.getActionBars();
 				bars.partChanged(part);
 				if (switchActions)
@@ -140,9 +130,8 @@ public void addFastView(IViewPart view) {
 
 	// The view is now invisible.
 	// If it is active then deactivate it.
-	if (view == activePart) {
-		activate(activationList.getActive());
-	}
+	if (view == activePart)
+		setActivePart(null);
 		
 	// Notify listeners.
 	window.getShortcutBar().update(true);
@@ -170,9 +159,9 @@ public void bringToTop(IWorkbenchPart part) {
 	if (!certifyPart(part))
 		return;
 		
-	// If zoomed then ignore.
+	// If zoomed unzoom.
 	if (isZoomed() && partChangeAffectsZoom(part))
-		return;
+		zoomOut();
 
 	// Move part.
 	boolean broughtToTop = false;
@@ -212,11 +201,9 @@ private void busyResetPerspective() {
 	// Map the current perspective to the original template.
 	// If the original template cannot be found then it has been deleted.  In
 	// that case just return. (PR#1GDSABU).
-	IPerspectiveRegistry reg = WorkbenchPlugin.getDefault().getPerspectiveRegistry();
-	PerspectiveDescriptor desc = (PerspectiveDescriptor)reg.findPerspectiveWithId(oldPersp.getDesc().getId());
-	if(desc == null)
-		desc = (PerspectiveDescriptor)reg.findPerspectiveWithId(((PerspectiveDescriptor)oldPersp.getDesc()).getOriginalId());
-	if (desc == null)		
+	PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
+		.getDefault().getPerspectiveRegistry().findPerspectiveWithId(oldPersp.getDesc().getId());
+	if (desc == null)
 		return;
 
 	// Create new persp from original template.
@@ -278,10 +265,6 @@ private void busySetPerspective(IPerspectiveDescriptor desc) {
 	// Change layout.
 	setPerspective(newPersp);
 	window.firePerspectiveActivated(this, desc);
-	
-	// Update MRU list.
-	Workbench wb = (Workbench)window.getWorkbench();
-	wb.getPerspectiveHistory().add(desc);
 	
 	// Update shortcut
 	window.updateShortcut(this);
@@ -370,8 +353,7 @@ public boolean closeAllEditors(boolean save) {
 		return false;
 
 	// Deactivate part.
-	boolean deactivate = activePart instanceof IEditorPart;
-	if (deactivate)
+	if (activePart instanceof IEditorPart)
 		setActivePart(null);
 	if (lastActiveEditor != null) {
 		deactivateLastEditor();
@@ -384,13 +366,10 @@ public boolean closeAllEditors(boolean save) {
 	getEditorManager().closeAll();
 	for (int nX = 0; nX < editors.length; nX ++) {
 		IEditorPart editor = editors[nX];
-		activationList.remove(editor);
 		firePartClosed(editor);
 		editor.dispose();
 	}
-	if (deactivate)
-		activate(activationList.getActive());
-		
+
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
 
@@ -415,7 +394,6 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 		return false;
 
 	// Deactivate part.
-	activationList.remove(editor);
 	boolean partWasActive = (editor == activePart);
 	if (partWasActive)
 		setActivePart(null);
@@ -432,18 +410,13 @@ public boolean closeEditor(IEditorPart editor, boolean save) {
 
 	// Notify interested listeners
 	window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_CLOSE);
-	
+
 	// Activate new part.
 	if (partWasActive) {
-		IWorkbenchPart top = activationList.getTopEditor();
-		if (top == null)
-			top = activationList.getActive();
-		if (top != null)
-			activate(top);
-		else
-			setActivePart(null);
+		IEditorPart newEditor = getEditorManager().getVisibleEditor();
+		setActivePart(newEditor); // null is OK.  It just deactivates editor.
 	}
-	
+
 	// Return true on success.
 	return true;
 }
@@ -469,38 +442,10 @@ private Perspective createPerspective(PerspectiveDescriptor desc) {
 	try {
 		Perspective persp = new Perspective(desc, this);
 		perspList.add(persp);
-		IViewPart parts[] = persp.getViews();
-		for (int i = 0; i < parts.length; i++) {
-			addPart(parts[i]);
-		}
 		return persp;
 	} catch (WorkbenchException e) {
 		return null;
 	}
-}
-/**
- * Open the tracker to allow the user to move
- * the specified part using keyboard.
- */
-public void openTracker(ViewPane pane) {
-	activePersp.openTracker(pane);
-}
-/**
- * Cycles the editors forward or backward.
- * 
- * @param forward true to cycle forward, false to cycle backward
- */
-public void cycleEditors(boolean forward) {
-	IEditorPart editor = activationList.cycleEditors(forward);
-	if (editor != null) {
-		activate(editor);
-	}
-}
-/**
- * Add a editor to the activation list.
- */
-protected void addPart(IWorkbenchPart part) {
-	activationList.add(part);
 }
 /**
  * Deactivate the last known active editor to force its
@@ -516,7 +461,7 @@ private void deactivateLastEditor() {
 /**
  * Deactivates a part.  The pane is unhilighted and the action bars are hidden.
  */
-private void deactivatePart(IWorkbenchPart part, boolean switchActions, boolean switchActionsForced) {
+static private void deactivatePart(IWorkbenchPart part, boolean switchActions, boolean switchActionsForced) {
 	if (part != null) {
 		PartSite site = (PartSite)part.getSite();
 		site.getPane().showFocus(false);
@@ -530,10 +475,6 @@ private void deactivatePart(IWorkbenchPart part, boolean switchActions, boolean 
  * Cleanup.
  */
 public void dispose() {
-	// If we were never created just return.
-	if (deferredMemento != null)
-		return;
-		
 	// Always unzoom
 	if (isZoomed())
 		zoomOut();
@@ -559,7 +500,6 @@ public void dispose() {
 		view.dispose();
 	}
 	activePart = null;
-	activationList = null;
 
 	// Get rid of editor presentation.
 	editorPresentation.dispose();
@@ -587,7 +527,6 @@ private void disposePerspective(Perspective persp) {
 		boolean exists = viewFactory.hasView(view.getSite().getId());
 		if (!exists) {
 			firePartClosed(view);
-			activationList.remove(view);
 			view.dispose();
 		}
 	}
@@ -660,7 +599,7 @@ private void firePartDeactivated(IWorkbenchPart part) {
 /**
  * Fire part open out.
  */
-public void firePartOpened(IWorkbenchPart part) {
+private void firePartOpened(IWorkbenchPart part) {
 	partListeners.firePartOpened(part);
 	selectionService.partOpened(part);
 }
@@ -727,7 +666,7 @@ public IAdaptable getInput() {
 	return input;
 }
 /**
- * Returns the page label.  This is a combination of the page input
+ * Returns the page label.  This is a permutation of the page number
  * and active perspective.
  */
 public String getLabel() {
@@ -739,8 +678,6 @@ public String getLabel() {
 	}
 	if(activePersp != null)
 		label = WorkbenchMessages.format("WorkbenchPage.PerspectiveFormat", new Object[] { label, activePersp.getDesc().getLabel() }); //$NON-NLS-1$
-	else if (deferredActivePersp != null)
-		label = WorkbenchMessages.format("WorkbenchPage.PerspectiveFormat", new Object[] { label, deferredActivePersp.getLabel() }); //$NON-NLS-1$	
 	return label;
 }
 /**
@@ -767,8 +704,6 @@ private Perspective getPersp() {
  * Returns the perspective.
  */
 public IPerspectiveDescriptor getPerspective() {
-	if (deferredActivePersp != null)
-		return deferredActivePersp;
 	return getPersp().getDesc();
 }
 /**
@@ -844,13 +779,8 @@ public void hideView(IViewPart view) {
 		return;
 		
 	// Activate new part.
-	if (view == activePart) {
-		IWorkbenchPart prevActive = activationList.getPreviouslyActive();
-		if (prevActive != null)
-			activate(prevActive);
-		else
-			setActivePart(null);
-	}
+	if (view == activePart)
+		setActivePart(null);
 		
 	// Hide the part.  
 	getPersp().hideView(view);
@@ -860,7 +790,6 @@ public void hideView(IViewPart view) {
 	if (!exists) {
 		firePartClosed(view);
 		view.dispose();
-		activationList.remove(view);		
 	}
 	
 	// Notify interested listeners
@@ -905,53 +834,7 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 			throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
 		activePersp = createPerspective(desc);
 		window.firePerspectiveActivated(this, desc);
-		
-		// Update MRU list.
-		Workbench wb = (Workbench)window.getWorkbench();
-		wb.getPerspectiveHistory().add(desc);
 	}
-}
-/**
- * Save the init parameters and defer initialization.  
- *
- * @param w the parent window
- * @param memento the persistent memento.
- * @param input the page input
- */
-private void deferInit(WorkbenchWindow w, IMemento memento, IAdaptable input) 
-	throws WorkbenchException
-{
-	// Save state.
-	window = w;
-	this.input = input;
-	deferredMemento = memento;
-
-	// Get active perspective.
-	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVES);
-	String activePerspectiveID = childMem.getString(IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE);
-	PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
-		.getDefault().getPerspectiveRegistry().findPerspectiveWithId(activePerspectiveID);
-	if (desc == null)
-		throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
-	deferredActivePersp = desc;
-}
-/**
- * Finish initialization if we have been deferred.
- */
-private void finishInit() {
-	if (deferredMemento == null) 
-		return;
-	BusyIndicator.showWhile(null, new Runnable() {
-		public void run() {
-			try {
-				init(window, null, input);
-			} catch (WorkbenchException e) {
-			}
-			restoreState(deferredMemento);
-			deferredMemento = null;
-			deferredActivePersp = null;
-		}
-	});
 }
 /**
  * Determine if the new active part will cause the
@@ -988,13 +871,6 @@ public boolean isFastView(IViewPart part) {
 	return getPersp().isFastView(part);
 }
 /**
- * Return the active fast view or null if there are no
- * fast views or if there are all minimized.
- */
-public IViewPart getActiveFastView() {
-	return getPersp().getActiveFastView();
-}
-/**
  * Return true if the perspective has a dirty editor.
  */
 protected boolean isSaveNeeded() {
@@ -1014,13 +890,9 @@ public boolean isZoomed() {
  * expected to update action bars afterwards.
  */
 protected void onActivate() {
-	if (deferredMemento != null)
-		finishInit();
 	composite.setVisible(true);
 	getPersp().onActivate();
 	if (activePart != null) {
-		activationList.setActive(activePart);
-		
 		activatePart(activePart, true, true);
 		if (activePart instanceof IEditorPart)
 			lastActiveEditor = (IEditorPart) activePart;
@@ -1050,7 +922,7 @@ protected void onDeactivate() {
 public IEditorPart openEditor(IFile file) 
 	throws PartInitException
 {
-	return openEditor(new FileEditorInput(file),null,true,false,null);
+	return openEditor(file, true);
 }
 /**
  * See IWorkbenchPage.
@@ -1058,7 +930,81 @@ public IEditorPart openEditor(IFile file)
 public IEditorPart openEditor(IFile file, String editorID)
 	throws PartInitException 
 {
-	return openEditor(new FileEditorInput(file),editorID,true,true,file);
+	return openEditor(file, editorID, true);
+}
+/**
+ * See IWorkbenchPage.
+ */
+private IEditorPart openEditor(IFile file, String editorID, boolean activate)
+	throws PartInitException 
+{
+	// If part is added / removed always unzoom.
+	if (isZoomed())
+		zoomOut();
+		
+	// Update the default editor for this file.
+	WorkbenchPlugin.getDefault().getEditorRegistry().setDefaultEditor(
+		file, editorID);
+	
+	// If an editor is already open for the input just activate it.
+	FileEditorInput input = new FileEditorInput(file);
+	IEditorPart editor = getEditorManager().findEditor(input);
+	if (editor != null) {
+		setEditorAreaVisible(true);
+		if (activate)
+			activate(editor);
+		else
+			bringToTop(editor);
+		return editor;
+	}
+
+	// Otherwise, create a new one.
+	editor = getEditorManager().openEditor(editorID, input);
+	if (editor != null) {
+		firePartOpened(editor);
+		setEditorAreaVisible(true);
+		if (activate)
+			activate(editor);
+		else
+			bringToTop(editor);
+		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
+	}
+	return editor;
+}
+/**
+ * See IWorkbenchPage.
+ */
+private IEditorPart openEditor(IFile file, boolean activate) 
+	throws PartInitException
+{
+	// If part is added / removed always unzoom.
+	if (isZoomed())
+		zoomOut();
+		
+	// If an editor already exists for the input use it.
+	FileEditorInput input = new FileEditorInput(file);
+	IEditorPart editor = getEditorManager().findEditor(input);
+	if (editor != null) {
+		setEditorAreaVisible(true);
+		if (activate)
+			activate(editor);
+		else
+			bringToTop(editor);
+		return editor;
+	}
+
+	// Otherwise, create a new one.
+	editor = getEditorManager().openEditor(input);
+	if (editor != null) {
+		firePartOpened(editor);
+		setEditorAreaVisible(true);
+		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
+		if (activate)
+			activate(editor);
+		else
+			bringToTop(editor);
+	}
+	return editor;
 }
 /**
  * See IWorkbenchPage.
@@ -1090,9 +1036,9 @@ public IEditorPart openEditor(IMarker marker, boolean activate)
 	// Create a new editor.
 	IEditorPart editor = null;
 	if (editorID == null)
-		editor = openEditor(new FileEditorInput(file),null,activate,false,null);
+		editor = openEditor(file, activate);
 	else 
-		editor = openEditor(new FileEditorInput(file),editorID,activate,true,file);
+		editor = openEditor(file, editorID, activate);
 
 	// Goto the bookmark.
 	if (editor != null)
@@ -1113,23 +1059,9 @@ public IEditorPart openEditor(IEditorInput input, String editorID)
 public IEditorPart openEditor(IEditorInput input, String editorID, boolean activate) 
 	throws PartInitException
 {
-	return openEditor(input,editorID,activate,true,null);
-}
-/**
- * See IWorkbenchPage.
- */
-private IEditorPart openEditor(IEditorInput input, String editorID, boolean activate,boolean useEditorID,IFile file) 
-	throws PartInitException
-{
 	// If part is added / removed always unzoom.
 	if (isZoomed())
 		zoomOut();
-	
-	if(file != null) {
-		// Update the default editor for this file.
-		WorkbenchPlugin.getDefault().getEditorRegistry().setDefaultEditor(
-			file, editorID);
-	}
 		
 	// If an editor already exists for the input use it.
 	IEditorPart editor = getEditorManager().findEditor(input);
@@ -1141,30 +1073,18 @@ private IEditorPart openEditor(IEditorInput input, String editorID, boolean acti
 			bringToTop(editor);
 		return editor;
 	}
-// Disabled turning redraw off, because it causes setFocus
-// in activate(editor) to fail.
-// getClientComposite().setRedraw(false);
- 
+
 	// Otherwise, create a new one.
-	if(useEditorID)
-		editor = getEditorManager().openEditor(editorID, input);
-	else
-		editor = getEditorManager().openEditor((IFileEditorInput)input,true);
-				
+	editor = getEditorManager().openEditor(editorID, input);
 	if (editor != null) {
-		//firePartOpened(editor);
+		firePartOpened(editor);
 		setEditorAreaVisible(true);
-		if (activate) {
+		if (activate)
 			activate(editor);
-		} else {
-			activationList.add(editor);
+		else
 			bringToTop(editor);
-		}
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_OPEN);
 	}
-	
-//	getClientComposite().setRedraw(true);
-
 	return editor;
 }
 /**
@@ -1285,8 +1205,6 @@ private void restoreState(IMemento memento) {
  * See IWorkbenchPage
  */
 public boolean saveAllEditors(boolean confirm) {
-	if (deferredMemento != null)
-		return true;
 	return getEditorManager().saveAll(confirm, false);
 }
 /**
@@ -1331,16 +1249,6 @@ public void savePerspectiveAs(IPerspectiveDescriptor desc) {
  * Save the state of the page.
  */
 public void saveState(IMemento memento) {
-	// If we were never initialized ..
-	if (deferredMemento != null) {
-		XMLMemento realMemento = (XMLMemento) memento;
-		IMemento child = deferredMemento.getChild(IWorkbenchConstants.TAG_EDITORS);
-		realMemento.copyChild(child);
-		child = deferredMemento.getChild(IWorkbenchConstants.TAG_PERSPECTIVES);
-		realMemento.copyChild(child);
-		return;
-	}
-	
 	// We must unzoom to get correct layout.
 	if (isZoomed())
 		zoomOut();
@@ -1403,8 +1311,7 @@ private void setActivePart(IWorkbenchPart newPart) {
 
 	// Set active part.
 	activePart = newPart;
-	if (newPart != null) {	
-		activationList.setActive(newPart);
+	if (newPart != null) {
 		// Upon a new editor being activated, make sure the previously
 		// active editor's toolbar contributions are removed.
 		if (newPart instanceof IEditorPart) {
@@ -1415,7 +1322,6 @@ private void setActivePart(IWorkbenchPart newPart) {
 					deactivateLastEditor();
 			}
 			lastActiveEditor = (IEditorPart)newPart;
-			editorMgr.setVisibleEditor(lastActiveEditor,true);
 		}
 		activatePart(newPart, switchActions, switchActionsForced);
 		firePartActivated(newPart);
@@ -1459,7 +1365,6 @@ private void setPerspective(Perspective newMgr) {
 	if (activePersp != null)
 		activePersp.onActivate();
 	window.updateActionSets();
-	window.updateTitle();
 }
 /**
  * Sets the perspective.  
@@ -1550,25 +1455,6 @@ public void toggleZoom(IWorkbenchPart part) {
 public void updateActionBars() {
 	window.updateActionBars();
 }
-
-/**
- * Sets the tab list of this page's composite appropriately
- * when a part is activated.
- */
-private void updateTabList(IWorkbenchPart part) {
-	PartSite site = (PartSite)part.getSite();
-	PartPane pane = site.getPane();
-	if (pane instanceof ViewPane) {
-		ViewPane viewPane = (ViewPane) pane;
-		getClientComposite().setTabList(viewPane.getTabList());
-	}
-	else if (pane instanceof EditorPane) {
-		EditorArea ea = ((EditorPane) pane).getWorkbook().getEditorArea();
-		ea.updateTabList();
-		getClientComposite().setTabList(new Control[] { ea.getParent() });
-	}
-}
-
 /**
  * The title of the given part has changed.
  * For views, updates the fast view button if necessary.
@@ -1587,177 +1473,5 @@ public void updateTitle(IWorkbenchPart part) {
  */
 private void zoomOut() {
 	getPersp().getPresentation().zoomOut();
-}
-/**
- * See IWorkbenchPage.
- */
-public int getEditorReuseThreshold() {
-	//reuseEditors <= 0 -> use the global preference IPreferenceConstants.REUSE_EDITORS.
-	//reuseEditors > 0 -> reuse editors after openning 'N' editors.
-	if(reuseEditors > 0)
-		return reuseEditors;
-
-	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-	return store.getInt(IPreferenceConstants.REUSE_EDITORS);
-}
-/**
- * See IWorkbenchPage.
- */
-public void setEditorReuseThreshold(int openEditors) {
-	reuseEditors = openEditors;
-}
-/*
- * Returns the editors in activation order (oldest first).
- */
-public IEditorPart[] getSortedEditors() {
-	ArrayList editors = activationList.getEditors();
-	IEditorPart[] result = new IEditorPart[editors.size()];
-	return (IEditorPart[])editors.toArray(result);
-}
-/*
- * Returns the parts in activation order (oldest first).
- */
-public IWorkbenchPart[] getSortedParts() {
-	return activationList.getParts();
-}
-
-class ActivationList {
-	//List of parts in the activation order (oldest first)
-	List parts = new ArrayList();
-	/*
-	 * Add/Move the active part to end of the list;
-	 */
-	void setActive(IWorkbenchPart part) {
-		if(parts.size() > 0 && part == parts.get(parts.size() - 1))
-			return;
-		parts.remove(part);
-		parts.add(part);
-	}
-	/*
-	 * Add the active part to the beginning of the list.
-	 */
-	void add(IWorkbenchPart part) {
-		if(parts.indexOf(part) >= 0)
-			return;
-		parts.add(0,part);
-	}
-	/*
-	 * Return the active part. Filter fast views.
-	 */
-	IWorkbenchPart getActive() {
-		if(parts.isEmpty())
-			return null;
-		return getActive(parts.size() - 1);	
-	}
-	/*
-	 * Return the previously active part. Filter fast views.
-	 */
-	IWorkbenchPart getPreviouslyActive() {
-		if(parts.size() < 2) 
-			return null;
-		return getActive(parts.size() - 2);	
-	} 
-	/*
-	 * Find a part in the list starting from the end and
-	 * filter fast views.
-	 */	
-	IWorkbenchPart getActive(int start) {
-		IViewPart[] views = getViews();
-		for (int i = start; i >= 0; i--) {
-			IWorkbenchPart part = (IWorkbenchPart)parts.get(i);
-			if(part instanceof IViewPart) {
-				if(!isFastView((IViewPart)part)) {
-					for (int j = 0; j < views.length; j++) {
-						if(views[j] == part) {
-							return part;
-						}
-					}
-				}
-			} else {
-				return part;
-			}
-		}
-		return null;
-	}
-	/*
-	 * Remove a part from the list
-	 */
-	boolean remove(Object part) {
-		return parts.remove(part);
-	}
-
-	/*
-	 * Returns the editors in activation order (oldest first).
-	 */
-	private ArrayList getEditors() {
-		ArrayList editors = new ArrayList(parts.size());
-		for (Iterator i = parts.iterator(); i.hasNext();) {
-			IWorkbenchPart part = (IWorkbenchPart) i.next();
-			if (part instanceof IEditorPart) {
-				editors.add(part);
-			}
-		}
-		return editors;
-	}
-	/*
-	 * Return a list with all parts (editors and views).
-	 */
-	private IWorkbenchPart[] getParts() {
-		IViewPart[] views = getViews();
-		ArrayList resultList = new ArrayList(parts.size());
-		for (Iterator iterator = parts.iterator(); iterator.hasNext();) {
-			IWorkbenchPart part = (IWorkbenchPart)iterator.next();
-			if(part instanceof IViewPart) {
-				for (int i = 0; i < views.length; i++) {
-					if(views[i] == part) {
-						resultList.add(part);
-						break;
-					}
-				}
-			} else {
-				resultList.add(part);	
-			}	
-		}
-		IWorkbenchPart[] result = new IWorkbenchPart[resultList.size()];
-		return (IWorkbenchPart[])resultList.toArray(result);
-	}
-	/*
-	 * Cycles the editors forward or backward, returning the editor to activate,
-	 * or null if none.
-	 * 
-	 * @param forward true to cycle forward, false to cycle backward
-	 */
-	IEditorPart cycleEditors(boolean forward) {
-		ArrayList editors = getEditors();
-		if (editors.size() >= 2) {
-			if (forward) {
-				// move the topmost editor to the bottom
-				IEditorPart top = (IEditorPart) editors.get(editors.size()-1);
-				parts.remove(top);
-				parts.add(0, top);
-				// get the next editor and move it on top of any views
-				IEditorPart next = (IEditorPart) editors.get(editors.size()-2);
-				setActive(next);
-				return next;
-			} else {
-				// move the bottom-most editor to the top
-				IEditorPart prev = (IEditorPart) editors.get(0);
-				setActive(prev);
-				return prev;
-			}
-		}
-		return null;
-	}
-	
-	/*
-	 * Returns the topmost editor on the stack, or null if none.
-	 */
-	IEditorPart getTopEditor() {
-		ArrayList editors = getEditors();
-		if (editors.size() > 0) {
-			return (IEditorPart) editors.get(editors.size()-1);
-		}
-		return null;
-	}
 }
 }

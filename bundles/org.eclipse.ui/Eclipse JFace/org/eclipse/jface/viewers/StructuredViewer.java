@@ -159,8 +159,7 @@ protected void disassociate(Item item) {
 	Object element = item.getData();
 	Assert.isNotNull(element);
 	item.setData(null);
-	if (elementMap != null && findItem(element) == item)
-		unmapElement(element);
+	unmapElement(element);
 }
 /**
  * Returns the widget in this viewer's control which 

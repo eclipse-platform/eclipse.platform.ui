@@ -6,7 +6,6 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
@@ -338,14 +337,6 @@ public void enableDrag(ViewPane pane, IPartDropListener listener) {
 	}
 }
 /**
- * Open the tracker to allow the user to move
- * the specified part using keyboard.
- */
-public void openTracker(LayoutPart part) {
-	CTabPartDragDrop dnd = (CTabPartDragDrop)mapPartToDragMonitor.get(part);
-	dnd.openTracker();
-}
-/**
  * Gets the presentation bounds.
  */
 public Rectangle getBounds() {
@@ -610,7 +601,6 @@ private void replaceChild(LayoutPart oldChild, PartPlaceholder newChild) {
 			CTabItem key = (CTabItem)keys.next();
 			LayoutPart part = (LayoutPart)mapTabToPart.get(key);
 			if (part == oldChild) {
-				boolean partIsActive = (current == oldChild);
 				TabInfo info = new TabInfo();
 				info.part = newChild;
 				info.tabText = key.getText();
@@ -622,12 +612,8 @@ private void replaceChild(LayoutPart oldChild, PartPlaceholder newChild) {
 				oldChild.setBounds(new Rectangle(0, 0, 0, 0));
 				oldChild.setContainer(null);
 				newChild.setContainer(this);
-				if (tabFolder.getItemCount() > 0) {
-					if (partIsActive) 
-						setSelection(0);
-					else
-						setControlSize(current);
-				}
+				if (tabFolder.getItemCount() > 0)
+					setSelection(0);
 				break;
 			}
 		}
@@ -686,11 +672,6 @@ public void restoreState(IMemento memento)
 			IMemento childMem = children[i];
 			String partID = childMem.getString(IWorkbenchConstants.TAG_CONTENT);
 			String tabText = childMem.getString(IWorkbenchConstants.TAG_LABEL);
-
-			IViewDescriptor descriptor = (IViewDescriptor)WorkbenchPlugin.getDefault().
-				getViewRegistry().find(partID);
-			if(descriptor != null)
-				tabText = descriptor.getLabel();
 
 			// Create the part.
 			LayoutPart part = new PartPlaceholder(partID);

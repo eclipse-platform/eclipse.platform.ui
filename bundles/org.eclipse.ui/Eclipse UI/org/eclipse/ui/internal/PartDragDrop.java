@@ -251,7 +251,7 @@ private LayoutPart getTargetPart(Control target) {
  * @see MouseListener::mouseDoubleClick
  */
 public void mouseDoubleClick(MouseEvent e) {
-	mouseDown = false;
+	// do nothing
 }
 /**
  * @see MouseListener::mouseDown
@@ -260,8 +260,7 @@ public void mouseDown(MouseEvent e) {
 	// track left button only.
 	if (e.button != 1) 
 		return;
-	if (!sourcePart.isDragAllowed(new Point(e.x,e.y)))
-		return;
+
 	// remember anchor position for hysteresis in mouseMove
 	xAnchor = e.x;
 	yAnchor = e.y;
@@ -284,17 +283,9 @@ public void mouseMove(MouseEvent e) {
 
 	// If the source part is not in a state to allow drag & drop
 	// operation to start, ignore the move
-	if (!sourcePart.isDragAllowed(new Point(e.x,e.y)))
+	if (!sourcePart.isDragAllowed())
 		return;
 		
-	openTracker();
-}
-/**
- * Open a tracker (a XOR rect on the screen) change
- * the cursor indicanting where the part will be dropped 
- * and notify the drag listeners.
- */
-public void openTracker() {
 	// Create a tracker.  This is just an XOR rect on the screen.
 	// As it moves we notify the drag listeners.
 	final Display display= dragControl.getDisplay();	 						 	
@@ -315,7 +306,7 @@ public void openTracker() {
 				}
 			}
 			Cursor cursor = getCursor(display, dropEvent.relativePosition);
-			tracker.setCursor(cursor);
+			dragControl.setCursor(cursor);
 		}
 	});
 
@@ -326,16 +317,10 @@ public void openTracker() {
 	if (!(sourceControl instanceof Shell)) {
 		sourcePos = sourceControl.getParent().toDisplay(sourcePos);
 	}	
-	if(mouseDown) {
-		Point anchorPos = dragControl.toDisplay(new Point(xAnchor, yAnchor));
-		Point cursorPos = display.getCursorLocation();
-		sourceBounds.x = sourcePos.x - (anchorPos.x - cursorPos.x);
-		sourceBounds.y = sourcePos.y - (anchorPos.y - cursorPos.y);
-	} else {
-		sourceBounds.x = sourcePos.x + HYSTERESIS;
-		sourceBounds.y = sourcePos.y + HYSTERESIS;
-	}
-	
+	Point anchorPos = dragControl.toDisplay(new Point(xAnchor, yAnchor));
+	Point cursorPos = display.getCursorLocation();
+	sourceBounds.x = sourcePos.x - (anchorPos.x - cursorPos.x);
+	sourceBounds.y = sourcePos.y - (anchorPos.y - cursorPos.y);
 	tracker.setRectangles(new Rectangle[] {sourceBounds});
 		
 	// Run tracker until mouse up occurs or escape key pressed.

@@ -6,15 +6,8 @@ package org.eclipse.ui.part;
  */
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.SubActionBars;
-import org.eclipse.ui.part.PageSite;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.*;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -35,21 +28,11 @@ import java.util.*;
  * <code>PageBookView</code> is a base implementation for multi page views.
  * </p>
  * <p>
- * <code>PageBookView</code>s provide an <code>IPageSite</code> for each of
- * their pages. This site is supplied during the page's initialization. The page
- * may supply a selection provider for this site. <code>PageBookView</code>s deal
- * with these selection providers in a similar way to a workbench page's
- * <code>SelectionService</code>. When a page is made visible, if its site
- * has a selection provider, then changes in the selection are listened for
- * and the current selection is obtained and fired as a selection change event.
- * Selection changes are no longer listened for when a page is made invisible.
- * </p>
- * <p>
  * This class should be subclassed by clients wishing to define new 
  * multi-page views.
  * </p>
  * <p>
- * When a <code>PageBookView</code> is created the following methods are
+ * When a <code>PageBookView</code> the following methods are
  * invoked.  Subclasses must implement these.
  * <ul>
  *   <li><code>createDefaultPage</code> - called to create a default page for the
@@ -80,7 +63,9 @@ import java.util.*;
  * </ul>
  * </p>
  */
-public abstract class PageBookView extends ViewPart implements IPartListener {
+public abstract class PageBookView extends ViewPart 
+	implements IPartListener
+{
 	/**
 	 * The pagebook control, or <code>null</code> if not initialized.
 	 */
@@ -91,18 +76,12 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 */
 	private PageRec defaultPageRec;
 	
+	
 	/**
 	 * Map from parts to part records (key type: <code>IWorkbenchPart</code>;
 	 * value type: <code>PartRec</code>).
 	 */
 	private Map mapPartToRec = new HashMap();
-	
-	/**
-	 * Map from pages to view sites
-	 * Note that view sites were not added to page recs to 
-	 * avoid breaking binary compatibility with previous builds
-	 */
-	private Map mapPageToSite = new HashMap();
 
 	/**
 	 * The page rec which provided the current page or
@@ -111,32 +90,17 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	private PageRec activeRec;
 
 	/**
-	 * The action bar property listener. 
+	 * The action bar property listener.
 	 */
 	private IPropertyChangeListener actionBarPropListener =
 		new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty() == SubActionBars.P_ACTION_HANDLERS
 					&& event.getSource() == activeRec.subActionBars) {
-					refreshGlobalActionHandlers(); 
+					refreshGlobalActionHandlers();
 				}
 			}
 		};
-		
-	/**
-	 * Selection change listener to listen for page selection changes
-	 */
-	private ISelectionChangedListener selectionChangedListener =
-		new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				pageSelectionChanged(event);
-			}
-		};
-		
-	/** 
-	 * Selection provider for this view's site
-	 */
-	private SelectionProvider selectionProvider = new SelectionProvider();	
 		
 	/**
 	 * A data structure used to store the information about a single page 
@@ -174,61 +138,6 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 			page = null;
 		}
 	}
-	
-	/**
-	 * A selection provider/listener for this view.
-	 * It is a selection provider fo this view's site.
-	 */
-	protected class SelectionProvider implements ISelectionProvider {
-		/**
-		 * Selection change listeners.
-		 */
-		private ListenerList selectionChangedListeners = new ListenerList();
-				
-		/* (non-Javadoc)
-		 * Method declared on ISelectionProvider.
-		 */
-		public void addSelectionChangedListener(ISelectionChangedListener listener) {
-			selectionChangedListeners.add(listener);	
-		}
-		/* (non-Javadoc)
-		 * Method declared on ISelectionProvider.
-		 */
-		public ISelection getSelection() {
-			// get the selection provider from the current page
-			ISelectionProvider selProvider = getPageSite(getCurrentPage()).getSelectionProvider();
-			if (selProvider != null) 
-				return selProvider.getSelection();
-			else
-				return StructuredSelection.EMPTY;
-		}
-		/* (non-Javadoc)
-		 * Method declared on ISelectionProvider.
-		 */
-		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-			selectionChangedListeners.remove(listener);
-		}
-		/* (non-Javadoc)
-		 * Method declared on ISelectionChangedListener.
-		 */
-		public void selectionChanged(SelectionChangedEvent event) {
-			// pass on the notification to listeners
-			Object[] listeners = selectionChangedListeners.getListeners();
-			for (int i = 0; i < listeners.length; i++) {
-				((ISelectionChangedListener) listeners[i]).selectionChanged(event);
-			}
-		}
-		/* (non-Javadoc)
-		 * Method declared on ISelectionProvider.
-		 */
-		public void setSelection(ISelection selection) {
-			// get the selection provider from the current page
-			ISelectionProvider selProvider = getPageSite(getCurrentPage()).getSelectionProvider();
-			// and set its selection
-			if (selProvider != null) 
-				selProvider.setSelection(selection);
-		}
-	}
 /**
  * Creates a new pagebook view.
  */
@@ -240,12 +149,7 @@ protected PageBookView() {
  * <p>
  * Subclasses must implement this method.
  * </p>
- * <p> 
- * Subclasses must call initPage with the new page (if it is an
- * <code>IPageBookViewPage</code>) before calling createControl 
- * on the page.
- * </p>
- * 
+ *
  * @param book the pagebook control
  * @return the default page
  */
@@ -258,47 +162,12 @@ private PageRec createPage(IWorkbenchPart part) {
 	PageRec rec = doCreatePage(part);
 	if (rec != null) {
 		mapPartToRec.put(part, rec);
-		preparePage(rec);
+		SubActionBars bars = new SubActionBars(getViewSite().getActionBars());
+		rec.subActionBars = bars;
+		rec.page.setActionBars(bars);
+		bars.addPropertyChangeListener(actionBarPropListener);
 	}
 	return rec;
-}
-/**
- * Prepares the page in the given page rec for use
- * in this view.
- */
-private void preparePage(PageRec rec) {
-	IPageSite site = null;
-	if (rec.page instanceof IPageBookViewPage) {
-		site = ((IPageBookViewPage)rec.page).getSite();
-	}
-	if (site == null) {
-		// We will create a site for our use
-		site = new PageSite(getViewSite());
-	}
-	mapPageToSite.put(rec.page, site);
-	rec.subActionBars = (SubActionBars)site.getActionBars();
-	rec.subActionBars.addPropertyChangeListener(actionBarPropListener);
-	// for backward compability with IPage
-	rec.page.setActionBars(rec.subActionBars);
-}
-/**
- * Initializes the given page with a page site.
- * <p>
- * Subclasses should call this method after
- * the page is created but before creating its
- * controls.
- * </p>
- * <p>
- * Subclasses may override
- * </p>
- * @param the page to initialize
- */
-protected void initPage(IPageBookViewPage page) {
-	try {
-		page.init(new PageSite(getViewSite()));
-	} catch (PartInitException e) {
-		WorkbenchPlugin.log(e.getMessage());
-	}
 }
 /**
  * The <code>PageBookView</code> implementation of this <code>IWorkbenchPart</code>
@@ -313,7 +182,10 @@ public void createPartControl(Composite parent) {
 	// Create the default page rec.
 	IPage defaultPage = createDefaultPage(book);
 	defaultPageRec = new PageRec(null, defaultPage);
-	preparePage(defaultPageRec);
+	SubActionBars bars = new SubActionBars(getViewSite().getActionBars());
+	defaultPageRec.subActionBars = bars;
+	defaultPageRec.page.setActionBars(bars);
+	bars.addPropertyChangeListener(actionBarPropListener);
 
 	// Show the default page	
 	showPageRec(defaultPageRec);
@@ -333,12 +205,7 @@ public void dispose() {
 
 	// Deref all of the pages.
 	activeRec = null;
-	if (defaultPageRec != null) {
-		// check for null since the default page may not have
-		// been created (ex. perspective never visible)
-		defaultPageRec.page.dispose();
-		defaultPageRec = null;
-	}
+	defaultPageRec = null;
 	Map clone = (Map)((HashMap)mapPartToRec).clone();
 	Iterator enum = clone.values().iterator();
 	while (enum.hasNext()) {
@@ -356,11 +223,7 @@ public void dispose() {
  * <p>
  * Subclasses must implement this method.
  * </p>
- * <p> 
- * Subclasses must call initPage with the new page (if it is an
- * <code>IPageBookViewPage</code>) before calling createControl 
- * on the page.
- * </p>
+ *
  * @param part the input part
  * @return the record describing a new page for this view
  * @see #doDestroyPage
@@ -418,15 +281,6 @@ public IPage getCurrentPage() {
 	return activeRec.page;
 }
 /**
- * Returns the view site for the given page of this view.
- *
- * @param page the page
- * @return the corresponding site, or <code>null</code> if not found
- */
-protected PageSite getPageSite(IPage page) {
-	return (PageSite)mapPageToSite.get(page);
-}
-/**
  * Returns the default page for this view.
  *
  * @return the default page
@@ -477,13 +331,6 @@ protected PageRec getPageRec(IPage page) {
  *   otherwise
  */
 protected abstract boolean isImportant(IWorkbenchPart part);
-/* (non-Javadoc)
- * Method declared on IViewPart.
- */
-public void init(IViewSite site) throws PartInitException {
-	site.setSelectionProvider(selectionProvider);
-	super.init(site);
-}
 /**
  * The <code>PageBookView</code> implementation of this <code>IPartListener</code>
  * method shows the page when the given part is activated. Subclasses may extend.
@@ -519,11 +366,6 @@ public void partClosed(IWorkbenchPart part) {
 	// Update the active part.
 	if (activeRec.part == part) {
 		activeRec.subActionBars.dispose();
-		// remove our selection listener
-		ISelectionProvider provider = ((PageSite)mapPageToSite.get(activeRec.page)).getSelectionProvider();
-		if (provider != null) 
-			provider.removeSelectionChangedListener(selectionChangedListener);
-
 		activeRec = null;
 		showPageRec(defaultPageRec);
 	}
@@ -570,7 +412,6 @@ private void refreshGlobalActionHandlers() {
  * Removes a page.
  */
 private void removePage(PageRec rec) {
-	mapPageToSite.remove(rec.page);
 	mapPartToRec.remove(rec.part);
 
 	// free the page 
@@ -584,16 +425,6 @@ public void setFocus() {
 		book.setFocus();
 	else
 		activeRec.page.getControl().setFocus();
-}
-
-/**
- * Handle page selection changes.
- */
-private void pageSelectionChanged(SelectionChangedEvent event) {
-	// forward this change from a page to our site's selection provider
-	SelectionProvider provider = (SelectionProvider)getSite().getSelectionProvider();
-	if (provider != null)
-		provider.selectionChanged(event);
 }
 /**
  * Shows a page for the active workbench part.
@@ -616,13 +447,9 @@ private void showBootstrapPart() {
  */
 protected void showPageRec(PageRec pageRec) {
 	// Hide old page.
-	if (activeRec != null) {
+	if (activeRec != null)
 		activeRec.subActionBars.deactivate();
-		// remove our selection listener
-		ISelectionProvider provider = ((PageSite)mapPageToSite.get(activeRec.page)).getSelectionProvider();
-		if (provider != null) 
-			provider.removeSelectionChangedListener(selectionChangedListener);
-	}			
+
 	// Show new page.
 	activeRec = pageRec;
 	Control pageControl = activeRec.page.getControl();
@@ -632,21 +459,9 @@ protected void showPageRec(PageRec pageRec) {
 		book.showPage(pageControl);
 		activeRec.subActionBars.activate();
 		refreshGlobalActionHandlers();
-		// add our selection listener
-		ISelectionProvider provider = 
-			((PageSite)mapPageToSite.get(activeRec.page)).getSelectionProvider();
-		if (provider != null) 
-			provider.addSelectionChangedListener(selectionChangedListener);		
+
 		// Update action bars.
 		getViewSite().getActionBars().updateActionBars();
 	}
-}
-/**
- * Returns the selectionProvider for this page book view.
- * 
- * @return a SelectionProvider
- */
-protected SelectionProvider getSelectionProvider() {
-	return selectionProvider;
 }
 }

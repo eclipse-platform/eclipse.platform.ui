@@ -14,12 +14,10 @@ import org.eclipse.jface.dialogs.MessageDialog;
  */
 public abstract class SafeRunnableAdapter implements ISafeRunnable {
 	String message;
-	static boolean ignoreErrors = false;
 /**
  * Creates a new instance of SafeRunnableAdapter.
  */
 public SafeRunnableAdapter() {}
-
 /**
  * Creates a new instance of SafeRunnableAdapter.
  */
@@ -30,25 +28,8 @@ public SafeRunnableAdapter(String message) {
  * Method declared on ISafeRunnable.
  */
 public void handleException(Throwable e) {
-	// Workaround to avoid interactive error dialogs during automated testing
-	if (ignoreErrors) {
-		if(message == null)
-			message = WorkbenchMessages.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
-		MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
-	}
-}
-
-/**
- * Workaround to avoid interactive error dialogs during automated testing.
- */
-public static boolean getIgnoreErrors(boolean flag) {
-	return ignoreErrors;
-}
-
-/**
- * Workaround to avoid interactive error dialogs during automated testing.
- */
-public static void setIgnoreErrors(boolean flag) {
-	ignoreErrors = flag;
+	if(message == null)
+		message = WorkbenchMessages.getString("SafeRunnable.errorMessage"); //$NON-NLS-1$
+	MessageDialog.openError(null, WorkbenchMessages.getString("Error"), message); //$NON-NLS-1$
 }
 }

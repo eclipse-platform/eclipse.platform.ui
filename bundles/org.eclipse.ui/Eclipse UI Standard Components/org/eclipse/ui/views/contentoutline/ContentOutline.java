@@ -9,7 +9,7 @@ import org.eclipse.ui.part.*;
 import org.eclipse.ui.help.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.util.ListenerList;
-import org.eclipse.swt.widgets.Composite; 
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * Main class for the Content Outline View.
@@ -48,19 +48,21 @@ import org.eclipse.swt.widgets.Composite;
 public class ContentOutline extends PageBookView implements ISelectionProvider, ISelectionChangedListener {
 
 	private static java.util.ResourceBundle resoutline_nls = java.util.ResourceBundle.getBundle("org.eclipse.ui.views.contentoutline.messages");  //$NON-NLS-1$
-	public static final String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
-
 	/**
 	 * Help context id used for the content outline view
 	 * (value <code>"org.eclipse.ui.content_outline_context"</code>).
 	 */
-	public static final String CONTENT_OUTLINE_VIEW_HELP_CONTEXT_ID = PREFIX + "content_outline_context";//$NON-NLS-1$
+	public static final String CONTENT_OUTLINE_VIEW_HELP_CONTEXT_ID = "org.eclipse.ui.content_outline_context";//$NON-NLS-1$
 
 	/**
 	 * Message to show on the default page.
 	 */
 	private String defaultText = resoutline_nls.getString("ContentOutline.noOutline"); //$NON-NLS-1$
 
+	/**
+	 * Selection change listeners.
+	 */
+	private ListenerList selectionChangedListeners = new ListenerList();
 /**
  * Creates a content outline view with no content outline pages.
  */
@@ -71,14 +73,13 @@ public ContentOutline() {
  * Method declared on ISelectionProvider.
  */
 public void addSelectionChangedListener(ISelectionChangedListener listener) {
-	getSelectionProvider().addSelectionChangedListener(listener);	
+	selectionChangedListeners.add(listener);	
 }
 /* (non-Javadoc)
  * Method declared on PageBookView.
  */
 protected IPage createDefaultPage(PageBook book) {
 	MessagePage page = new MessagePage();
-	initPage(page);
 	page.createControl(book);
 	page.setMessage(defaultText);
 	return page;
@@ -100,9 +101,8 @@ protected PageRec doCreatePage(IWorkbenchPart part)
 	Object obj = part.getAdapter(IContentOutlinePage.class);
 	if (obj instanceof IContentOutlinePage) {
 		IContentOutlinePage page = (IContentOutlinePage)obj;
-		if (page instanceof IPageBookViewPage) 
-			initPage((IPageBookViewPage)page);
 		page.createControl(getPageBook());
+		page.addSelectionChangedListener(this);
 		return new PageRec(part, page);
 	}
 	// There is no content outline
@@ -113,6 +113,7 @@ protected PageRec doCreatePage(IWorkbenchPart part)
  */
 protected void doDestroyPage(IWorkbenchPart part, PageRec rec) {
 	IContentOutlinePage page = (IContentOutlinePage) rec.page;
+	page.removeSelectionChangedListener(this);
 	page.dispose();
 	rec.dispose();
 }
@@ -152,8 +153,19 @@ private IWorkbenchPart getContributingEditor() {
  * Method declared on ISelectionProvider.
  */
 public ISelection getSelection() {
-	// get the selection from the selection provider
-	return getSelectionProvider().getSelection();
+	// get the selection from the current page
+	if (getCurrentPage() instanceof IContentOutlinePage) {
+		return ((IContentOutlinePage)getCurrentPage()).getSelection();
+	} else {
+		return StructuredSelection.EMPTY;
+	}
+}
+/* (non-Javadoc)
+ * Method declared on IViewPart.
+ */
+public void init(IViewSite site) throws PartInitException {
+	site.setSelectionProvider(this);
+	super.init(site);
 }
 /* (non-Javadoc)
  * Method declared on PageBookView.
@@ -174,33 +186,23 @@ public void partBroughtToTop(IWorkbenchPart part) {
  * Method declared on ISelectionProvider.
  */
 public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-	getSelectionProvider().removeSelectionChangedListener(listener);
+	selectionChangedListeners.remove(listener);
 }
 /* (non-Javadoc)
  * Method declared on ISelectionChangedListener.
  */
 public void selectionChanged(SelectionChangedEvent event) {
-	getSelectionProvider().selectionChanged(event);
+	// fire the event
+	Object[] listeners = selectionChangedListeners.getListeners();
+	for (int i = 0; i < listeners.length; ++i) {
+		((ISelectionChangedListener) listeners[i]).selectionChanged(event);
+	}
 }
 /* (non-Javadoc)
  * Method declared on ISelectionProvider.
  */
 public void setSelection(ISelection selection) {
-	getSelectionProvider().setSelection(selection);
-}
-/**
- * The <code>ContentOutline</code> implementation of this <code>PageBookView</code> method
- * extends the behavior of its parent to use the current page as a selection provider.
- * 
- * @param pageRec the page record containing the page to show
- */
-protected void showPageRec(PageRec pageRec) {
-	IPageSite pageSite = getPageSite(pageRec.page);
-	ISelectionProvider provider = pageSite.getSelectionProvider();
-	if (provider == null && (pageRec.page instanceof IContentOutlinePage)) 
-		// This means that the page did not set a provider during its initialization 
-		// so for backward compatibility we will set the page itself as the provider.
-		pageSite.setSelectionProvider((IContentOutlinePage)pageRec.page); 
-	super.showPageRec(pageRec);
+	if (getCurrentPage() instanceof IContentOutlinePage)
+		((IContentOutlinePage)getCurrentPage()).setSelection(selection);
 }
 }

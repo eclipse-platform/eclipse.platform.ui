@@ -14,7 +14,7 @@ import java.util.*;
  * list. 
  */
 public class EditorHistory {
-	final static private int DEFAULT_DEPTH = 15;
+	final static private int DEFAULT_DEPTH = 4;
 	private int depth;
 	private ArrayList stack;
 /**
@@ -50,7 +50,6 @@ public void add(IEditorInput input, IEditorDescriptor desc) {
 		stack.remove(0);
 	}
 }
-
 /**
  * Returns an array of editor history items.  The items are returned in order
  * of most recent first.
