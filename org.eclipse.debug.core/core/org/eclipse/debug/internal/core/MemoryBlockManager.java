@@ -286,11 +286,11 @@ public class MemoryBlockManager implements IMemoryBlockManager, IDebugEventSetLi
 			if (obj instanceof IDebugTarget)
 			{
 				dt = ((IDebugTarget)obj);
+				
+				// getMemoryBlocks will return an empty array if dt is null
+				IMemoryBlock[] deletedMemoryBlocks = getMemoryBlocks(dt);
+				removeMemoryBlocks(deletedMemoryBlocks);
 			}
-			
-			// getMemoryBlocks will return an empty array if dt is null
-			IMemoryBlock[] deletedMemoryBlocks = getMemoryBlocks(dt);
-			removeMemoryBlocks(deletedMemoryBlocks);
 		}
 	}
 	

@@ -21,6 +21,9 @@ public class SignedIntegerRenderer
 	extends AbstractMemoryRenderer {
 	
 	private ITableMemoryViewTab fTableViewTab;
+	private int fColSize;
+	private BigInteger fMax;
+	private BigInteger fMin;
 	
 	/* (non-Javadoc)
 	 * @see com.ibm.debug.extended.ui.AbstractMemoryRenderer#setViewTab(com.ibm.debug.extended.ui.IMemoryViewTab)
@@ -54,10 +57,15 @@ public class SignedIntegerRenderer
 		{
 			result = RendererUtil.convertByteArrayToLong(byteArray, endianess);				
 		}
+		else if (columnSize == 16)
+		{
+			BigInteger bigRet = RendererUtil.convertByteArrayToSignedBigInt(byteArray, endianess);
+			return bigRet.toString();
+		}
 		else
 		{
-			BigInteger bigRet = RendererUtil.convertByteArrayToBigInteger(byteArray, endianess);
-			return bigRet.toString();
+			BigInteger bigRet = RendererUtil.convertByteArrayToSignedBigInt(byteArray, endianess, columnSize);
+			return bigRet.toString();			
 		}
 
 		ret = new Long(result).toString();
@@ -90,7 +98,7 @@ public class SignedIntegerRenderer
 				long i = Long.parseLong(newValue);
 				bytes = RendererUtil.convertLongToByteArray(i, endianess);
 			}
-			else
+			else if (colSize == 16)
 			{
 				// special case for colSize == 16
 				// need to represent number in Big Integer
@@ -99,6 +107,27 @@ public class SignedIntegerRenderer
 			
 				return bytes;
 			}		
+			else
+			{
+				BigInteger i = new BigInteger(newValue);
+				
+				// avoid calculating max and min over and over again
+				// for the same column size
+				if (fColSize != colSize)
+				{
+					fColSize = colSize;
+					fMax = BigInteger.valueOf(2);
+					fMax = fMax.pow(colSize*8-1);
+					fMin = fMax.multiply(BigInteger.valueOf(-1));
+					fMax = fMax.subtract(BigInteger.valueOf(1));
+				}
+				
+				if (i.compareTo(fMax) > 0 || i.compareTo(fMin) < 0)
+					throw new NumberFormatException();
+				
+				bytes = RendererUtil.convertSignedBigIntToByteArray(i, endianess, colSize);
+				return bytes;				
+			}
 			
 			return bytes;
 		} catch (NumberFormatException e) {
@@ -149,7 +178,7 @@ public class SignedIntegerRenderer
 		}
 		
 		if (fTableViewTab != null){
-			int columnSize = fTableViewTab.getColumnSize();
+			int columnSize = fTableViewTab.getBytesPerColumn();
 			int endianess = getEndianess();
 			
 			byte[] byteArray = new byte[data.length];
@@ -169,7 +198,7 @@ public class SignedIntegerRenderer
 	public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String data) {
 		
 		if (fTableViewTab != null){
-			int columnSize = fTableViewTab.getColumnSize();
+			int columnSize = fTableViewTab.getBytesPerColumn();
 			int endianess = getEndianess();
 			
 			return convertToBytes(columnSize, data, endianess);

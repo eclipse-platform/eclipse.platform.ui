@@ -88,7 +88,7 @@ public class PrintViewTabAction extends AbstractMemoryAction
 			for (int j=0; j < numColumns; j++) {
 				String columnText = labelProvider.getColumnText(itemList[i].getData(), j);
 				
-				while (columnText.length() < ((ITableMemoryViewTab)getViewTab()).getColumnSize() * charPerByte)
+				while (columnText.length() < ((ITableMemoryViewTab)getViewTab()).getBytesPerColumn() * charPerByte)
 				{
 					 columnText += " "; //$NON-NLS-1$
 				}
@@ -135,7 +135,7 @@ public class PrintViewTabAction extends AbstractMemoryAction
 	
 			if (k > 0)
 			{
-				numBytes = ((ITableMemoryViewTab)getViewTab()).getColumnSize();
+				numBytes = ((ITableMemoryViewTab)getViewTab()).getBytesPerColumn();
 			}
 			else
 			{

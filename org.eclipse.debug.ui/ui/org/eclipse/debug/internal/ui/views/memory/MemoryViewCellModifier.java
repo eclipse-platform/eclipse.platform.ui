@@ -66,8 +66,13 @@ public class MemoryViewCellModifier implements ICellModifier
 			if (MemoryViewLine.P_ADDRESS.equals(property)) {
 			   return false;
 			}
-			int offset = Integer.valueOf(property, 16).intValue();
-			int end = offset + fViewTab.getColumnSize();
+			
+			// property is stored as number of addressible unit away from the line address
+			// to calculate offset to the memory line array, offset = numberofAddressibleUnit * addressibleSize
+			int addressibleSize = getAddressibleSize();
+			
+			int offset = Integer.valueOf(property, 16).intValue()*addressibleSize;
+			int end = offset + fViewTab.getBytesPerColumn();
 			
 			for (int i=offset; i<end; i++)
 			{
@@ -87,6 +92,16 @@ public class MemoryViewCellModifier implements ICellModifier
 		}		
 	}
 
+	/**
+	 * @return
+	 */
+	private int getAddressibleSize() {
+		int addressibleSize = fViewTab.getAddressibleSize();
+		if (addressibleSize < 1)
+			addressibleSize = 1;
+		return addressibleSize;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ICellModifier#getValue(java.lang.Object, java.lang.String)
 	 */
@@ -103,8 +118,8 @@ public class MemoryViewCellModifier implements ICellModifier
 			if (MemoryViewLine.P_ADDRESS.equals(property))
 			   return line.getAddress();
 			
-			int offset = Integer.valueOf(property, 16).intValue();
-			int end = offset + fViewTab.getColumnSize();
+			int offset = Integer.valueOf(property, 16).intValue() * getAddressibleSize();
+			int end = offset + fViewTab.getBytesPerColumn();
 			
 
 			//Ask for label provider
@@ -113,7 +128,6 @@ public class MemoryViewCellModifier implements ICellModifier
 			IBaseLabelProvider labelProvider = ((MemoryViewTab)fViewTab).getTableViewer().getLabelProvider();
 			if(labelProvider instanceof AbstractTableViewTabLabelProvider)
 			{	
-				
 				if (line.isAvailable(offset, end))
 				{
 					// ask the renderer for a string representation of the bytes
@@ -157,6 +171,7 @@ public class MemoryViewCellModifier implements ICellModifier
 
 		int lineOffset = Integer.valueOf(property, 16).intValue();
 		
+		// this offset is number of addressible unit from the line address
 		long offset = getOffset(memory, line.getAddress(), lineOffset);
 		
 		// validate data
@@ -178,8 +193,11 @@ public class MemoryViewCellModifier implements ICellModifier
 				IBaseLabelProvider labelProvider = ((MemoryViewTab)fViewTab).getTableViewer().getLabelProvider();
 				if(labelProvider instanceof AbstractTableViewTabLabelProvider)
 				{	
-					int offsetToLine = Integer.valueOf(property, 16).intValue();
-					int end = offsetToLine + fViewTab.getColumnSize();
+					// property is number of addressible unit from line address
+					// to calculate proper offset in the memoryViewLine's array
+					// offset = numberOfAddressibleUnit * addressibleSize
+					int offsetToLine = Integer.valueOf(property, 16).intValue() * getAddressibleSize();
+					int end = offsetToLine + fViewTab.getBytesPerColumn();
 					
 					MemoryByte[] oldArray= line.getBytes(offsetToLine, end);
 					

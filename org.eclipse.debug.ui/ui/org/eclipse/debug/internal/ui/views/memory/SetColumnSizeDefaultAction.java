@@ -43,10 +43,10 @@ public class SetColumnSizeDefaultAction extends Action
 	 */
 	public void run()
 	{
-		int colSize = fViewTab.getColumnSize();
+		int numUnits = fViewTab.getAddressibleUnitPerColumn();
 		
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
-		prefStore.setValue(IDebugPreferenceConstants.PREF_COLUMN_SIZE, colSize);
+		prefStore.setValue(IDebugPreferenceConstants.PREF_COLUMN_SIZE, numUnits);
 	}
 
 }

@@ -158,6 +158,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		SWT.CTRL,
 		SWT.ALT
 	};
+	private int fAddressibleSize;
 	
 	private final class TabFolderDisposeListener implements DisposeListener
 	{
@@ -368,18 +369,17 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	 * Create actions for the view tab
 	 */
 	protected void createActions() {
-		
 		fCopyToClipboardAction = new CopyViewTabToClipboardContextAction(this);
 		fGoToAddressAction = new GoToAddressAction(this);
 		fResetMemoryBlockAction = new ResetMemoryBlockContextAction(this);
 		fPrintViewTabAction = new PrintViewTabContextAction(this);
 		
 		fFormatColumnActions = new Action[6];
-		fFormatColumnActions[0] =  new FormatColumnAction(1, this);
-		fFormatColumnActions[1] =  new FormatColumnAction(2, this);
-		fFormatColumnActions[2] =  new FormatColumnAction(4, this);
-		fFormatColumnActions[3] =  new FormatColumnAction(8, this);
-		fFormatColumnActions[4] =  new FormatColumnAction(16, this);
+		fFormatColumnActions[0] =  new FormatColumnAction(1, fAddressibleSize, this);
+		fFormatColumnActions[1] =  new FormatColumnAction(2, fAddressibleSize, this);
+		fFormatColumnActions[2] =  new FormatColumnAction(4, fAddressibleSize, this);
+		fFormatColumnActions[3] =  new FormatColumnAction(8, fAddressibleSize, this);
+		fFormatColumnActions[4] =  new FormatColumnAction(16, fAddressibleSize, this);
 		fFormatColumnActions[5] =  new SetColumnSizeDefaultAction(this);
 		
 		fReformatAction = new ReformatAction(this);
@@ -413,7 +413,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 				// add check mark to the action to reflect current format of the view tab
 				if (fFormatColumnActions[i] instanceof FormatColumnAction)
 				{
-					if (((FormatColumnAction)fFormatColumnActions[i]).getColumnSize() == getColumnSize())
+					if (((FormatColumnAction)fFormatColumnActions[i]).getColumnSize() == getBytesPerColumn())
 					{
 						fFormatColumnActions[i].setChecked(true);
 					}
@@ -471,11 +471,24 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		fTableViewer.getTable().setHeaderVisible(true);
 		fTableViewer.getTable().setLinesVisible(true);
 		
-		int bytePerLine = IInternalDebugUIConstants.BYTES_PER_LINE;
+		fAddressibleSize = -1;
+		
+		if (fMemoryBlock instanceof IMemoryBlockExtension)
+			fAddressibleSize = ((IMemoryBlockExtension)fMemoryBlock).getAddressibleSize();
+		
+		if (fAddressibleSize < 1)
+			fAddressibleSize = 1;
+		
+		int bytePerLine = IInternalDebugUIConstants.ADD_UNIT_PER_LINE * fAddressibleSize;
 		
 		// get default column size from preference store
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
+		
+		// column size is now stored as number of addressible units
 		int columnSize = prefStore.getInt(IDebugPreferenceConstants.PREF_COLUMN_SIZE);
+		
+		// actual column size is number of addressible units * size of the addressible unit
+		columnSize = columnSize * getAddressibleSize();
 		
 		// check synchronized col size
 		Integer colSize = (Integer)getSynchronizedProperty(IMemoryViewConstants.PROPERTY_COL_SIZE);
@@ -569,17 +582,18 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 
 	/**
 	 * Format view tab based on parameters.
-	 * @param bytesPerLine - number of bytes per line, possible values: 16
-	 * @param columnSize - number of bytes per column, possible values: 1, 2, 4, 8
+	 * @param bytesPerLine - number of bytes per line, possible values: 16 * addressibleSize
+	 * @param columnSize - number of bytes per column, possible values: (1 / 2 / 4 / 8 / 16) * addressibleSize
 	 * @return true if format is successful, false, otherwise
 	 */
 	public boolean format(int bytesPerLine, int columnSize)
 	{			
-		// check parameter, bytesPerLine be 16
-		if (bytesPerLine != IInternalDebugUIConstants.BYTES_PER_LINE)
+		// check parameter, limit number of addressible unit to 16
+		if (bytesPerLine/fAddressibleSize != IInternalDebugUIConstants.ADD_UNIT_PER_LINE)
 		{
 			return false;
 		}
+		
 		// bytes per cell must be divisible to bytesPerLine
 		if (bytesPerLine % columnSize != 0)
 		{
@@ -650,14 +664,15 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			else
 			{
 				// otherwise, use default
-				if (getColumnSize() >= 4)
+				int addressibleUnit = columnSize/fAddressibleSize;
+				if (getAddressibleUnitPerColumn() >= 4)
 				{
-					column.setText(Integer.toHexString(i*columnSize).toUpperCase() + 
-						" - " + Integer.toHexString(i*columnSize+columnSize-1).toUpperCase()); //$NON-NLS-1$
+					column.setText(Integer.toHexString(i*addressibleUnit).toUpperCase() + 
+						" - " + Integer.toHexString(i*addressibleUnit+addressibleUnit-1).toUpperCase()); //$NON-NLS-1$
 				}
 				else
 				{
-					column.setText(Integer.toHexString(i*columnSize).toUpperCase());
+					column.setText(Integer.toHexString(i*addressibleUnit).toUpperCase());
 				}
 			}
 		}
@@ -671,11 +686,15 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		// +2 to include properties for address and navigation column
 		String[] columnProperties = new String[byteColumns.length+2];
 		columnProperties[0] = MemoryViewLine.P_ADDRESS;
+		
+		int addressibleUnit = columnSize / getAddressibleSize();
 
 		// use column beginning offset to the row address as properties
 		for (int i=1; i<columnProperties.length-1; i++)
 		{
-			columnProperties[i] = Integer.toHexString((i-1)*columnSize);
+			// column properties are stored as number of addressible units from the
+			// the line address
+			columnProperties[i] = Integer.toHexString((i-1)*addressibleUnit);
 		}
 		
 		// Empty column for cursor navigation
@@ -912,7 +931,8 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		if (col > 0)
 		{	
 			// 	get address offset
-			offset = (col-1) * getColumnSize();
+			int addressibleUnit = getAddressibleUnitPerColumn();
+			offset = (col-1) * addressibleUnit;
 		}
 		else
 		{
@@ -1140,7 +1160,8 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			TABLE_PREBUFFER = topBufferAddress.divide(BigInteger.valueOf(32)).min(BigInteger.valueOf(TABLE_DEFAULTBUFFER)).intValue();
 		}
 
-		topBufferAddress = topAddress.subtract(BigInteger.valueOf(getBytesPerLine()*TABLE_PREBUFFER));
+		int addressibleUnit = getAddressibleUnitPerLine();
+		topBufferAddress = topAddress.subtract(BigInteger.valueOf(addressibleUnit*TABLE_PREBUFFER));
 
 		// calculate number of lines needed
 		long numLines = 0;
@@ -1174,9 +1195,6 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			// restore cursor
 			if (isAddressVisible(fSelectedAddress) && findAddressIndex(fSelectedAddress) != -1)
 			{
-				getTopVisibleAddress();
-				getTopVisibleAddress().add(BigInteger.valueOf(getBytesPerLine()*getNumberOfVisibleLines()));
-
 				// if the cursor is not visible but in buffered range
 				// updating and showing the cursor will move the top index of the table
 				updateCursorPosition();
@@ -1219,7 +1237,8 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			{	
 				MemoryViewLine line = (MemoryViewLine)items[i].getData();
 				BigInteger lineAddress = new BigInteger(line.getAddress(), 16);
-				BigInteger endLineAddress = lineAddress.add(BigInteger.valueOf(getBytesPerLine()));
+				int addressibleUnit = getAddressibleUnitPerLine();
+				BigInteger endLineAddress = lineAddress.add(BigInteger.valueOf(addressibleUnit));
 				
 				if (lineAddress.compareTo(address) <= 0 && endLineAddress.compareTo(address) > 0)
 				{	
@@ -1242,8 +1261,9 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			return false;
 		
 		// calculate selected row address
-		int numOfRows = fSelectedAddress.subtract(contentProvider.getBufferTopAddress()).intValue()/getBytesPerLine();
-		BigInteger rowAddress = contentProvider.getBufferTopAddress().add(BigInteger.valueOf(numOfRows * getBytesPerLine()));
+		int addressibleUnit = getAddressibleUnitPerLine();
+		int numOfRows = fSelectedAddress.subtract(contentProvider.getBufferTopAddress()).intValue()/addressibleUnit;
+		BigInteger rowAddress = contentProvider.getBufferTopAddress().add(BigInteger.valueOf(numOfRows * addressibleUnit));
 
 		// try to find the row of the selected address
 		int row = findAddressIndex(fSelectedAddress);
@@ -1257,7 +1277,8 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		BigInteger offset = fSelectedAddress.subtract(rowAddress);
 		
 		// locate column
-		int col = ((offset.intValue()/getColumnSize())+1);
+		int colAddressibleUnit = getAddressibleUnitPerColumn();
+		int col = ((offset.intValue()/colAddressibleUnit)+1);
 		
 		// setting cursor selection or table selection changes
 		// the top index of the table... and may mess up top index in the talbe
@@ -1487,10 +1508,10 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			public void run()
 			{
 				try
-				{	
+				{
 					switch (evt.detail)
 					{
-						case 0 : //the end of a drag
+						case 0 : //  TODO:  replace with SWT.DRAG - the end of a drag, platform no longer gives us this event
 						case SWT.END :
 						case SWT.PAGE_DOWN :
 						case SWT.ARROW_DOWN :
@@ -1881,7 +1902,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	/**
 	 * @return current column size
 	 */
-	public int getColumnSize()
+	public int getBytesPerColumn()
 	{
 		return fColumnSize;
 	}
@@ -1893,7 +1914,21 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	{
 		return fBytePerLine;
 	}
+	
+	
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.ITableMemoryViewTab#getNumAddressibleUnitPerLine()
+	 */
+	public int getAddressibleUnitPerLine() {
+		return fBytePerLine / fAddressibleSize;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.memory.ITableMemoryViewTab#getNumbAddressibleUnitPerColumn()
+	 */
+	public int getAddressibleUnitPerColumn() {
+		return fColumnSize / fAddressibleSize;
+	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IMemoryViewTab#setFont(org.eclipse.swt.graphics.Font)
 	 */
@@ -1955,7 +1990,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 		{
 			public void run()
 			{
-				format(16, newColumnSize);				
+				format(getBytesPerLine(), newColumnSize);				
 			}
 		});
 		
@@ -2148,7 +2183,8 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			return true;
 		
 		BigInteger topVisible = getTopVisibleAddress();
-		BigInteger lastVisible = getTopVisibleAddress().add(BigInteger.valueOf((getNumberOfVisibleLines()) * getBytesPerLine() + getBytesPerLine()));
+		int addressibleUnit = getAddressibleUnitPerLine();
+		BigInteger lastVisible = getTopVisibleAddress().add(BigInteger.valueOf((getNumberOfVisibleLines() * addressibleUnit) + addressibleUnit));
 		
 		if (topVisible.compareTo(address) <= 0 && lastVisible.compareTo(address) > 0)
 		{
@@ -2276,7 +2312,7 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	public String getSelectedContent() {
 
 		// check precondition
-		if (fCursorManager.fCol == 0 || fCursorManager.fCol > getBytesPerLine()/getColumnSize())
+		if (fCursorManager.fCol == 0 || fCursorManager.fCol > getBytesPerLine()/getBytesPerColumn())
 		{
 			return ""; //$NON-NLS-1$
 		}
@@ -2327,21 +2363,22 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 			
 			BigInteger startAddress = new BigInteger(first.getAddress(), 16);
 			BigInteger lastAddress = new BigInteger(last.getAddress(), 16);
-			lastAddress = lastAddress.add(BigInteger.valueOf(getBytesPerLine()));
+			int addressibleUnit = getAddressibleUnitPerLine();
+			lastAddress = lastAddress.add(BigInteger.valueOf(addressibleUnit));
 			
 			BigInteger topVisibleAddress = getTopVisibleAddress();
 			long numVisibleLines = getNumberOfVisibleLines();
-			long numOfBytes = numVisibleLines * getBytesPerLine();
+			long numOfBytes = numVisibleLines * addressibleUnit;
 			
 			BigInteger lastVisibleAddrss = topVisibleAddress.add(BigInteger.valueOf(numOfBytes));
 			
 			// if there are only 3 lines left at the top, refresh
-			BigInteger numTopLine = topVisibleAddress.subtract(startAddress).divide(BigInteger.valueOf(getBytesPerLine()));
+			BigInteger numTopLine = topVisibleAddress.subtract(startAddress).divide(BigInteger.valueOf(addressibleUnit));
 			if (numTopLine.compareTo(BigInteger.valueOf(3)) <= 0)
 				return true;
 			
 			// if there are only 3 lines left at the bottom, refresh
-			BigInteger numBottomLine = lastAddress.subtract(lastVisibleAddrss).divide(BigInteger.valueOf(getBytesPerLine()));
+			BigInteger numBottomLine = lastAddress.subtract(lastVisibleAddrss).divide(BigInteger.valueOf(addressibleUnit));
 			if (numBottomLine.compareTo(BigInteger.valueOf(3)) <= 0)
 			{
 				return true;
@@ -2386,7 +2423,20 @@ public class MemoryViewTab extends AbstractMemoryViewTab implements SelectionLis
 	{
 		return fShowAddressColumn;
 	}
-
+	/**
+	 * @return Returns the fAddressibleSize.
+	 */
+	public int getAddressibleSize() {
+		return fAddressibleSize;
+	}
+	/**
+	 * @param addressibleSize The fAddressibleSize to set.
+	 */
+	public void setAddressibleSize(int addressibleSize) {
+		fAddressibleSize = addressibleSize;
+	}
+	
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.memory.ISynchronizerListener#synchronizerEnablementChanged(boolean)
 	 */

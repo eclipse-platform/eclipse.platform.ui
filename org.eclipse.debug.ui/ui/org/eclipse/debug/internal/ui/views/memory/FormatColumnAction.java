@@ -25,33 +25,33 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class FormatColumnAction extends Action
 {
 	private static final String PREFIX = "FormatColumnAction."; //$NON-NLS-1$
-	private static final String BYTE = PREFIX + "byte"; //$NON-NLS-1$
-	private static final String BYTES = PREFIX + "bytes"; //$NON-NLS-1$
+	private static final String UNIT = PREFIX + "unit"; //$NON-NLS-1$
+	private static final String UNITS = PREFIX + "units"; //$NON-NLS-1$
 	
 	ITableMemoryViewTab fViewTab;
 	int fNumBytesPerCol;
 	
-	public FormatColumnAction(int numBytes, ITableMemoryViewTab viewTab)
+	public FormatColumnAction(int numUnits, int addressibleSize, ITableMemoryViewTab viewTab)
 	{
 		super();
 		
 		String label;
-		if (numBytes > 1)
-			label = String.valueOf(numBytes) + " " + DebugUIMessages.getString(BYTES); //$NON-NLS-1$
+		if (numUnits > 1)
+			label = String.valueOf(numUnits) + " " + DebugUIMessages.getString(UNIT); //$NON-NLS-1$
 		else	
-			label = String.valueOf(numBytes) + " " + DebugUIMessages.getString(BYTE); //$NON-NLS-1$
+			label = String.valueOf(numUnits) + " " + DebugUIMessages.getString(UNITS); //$NON-NLS-1$
 		
 		super.setText(label);
 		
 		fViewTab = viewTab;	
 		
 		// check this action if the view tab is currently in this format
-		if (numBytes == fViewTab.getColumnSize())
+		if (numUnits*addressibleSize == fViewTab.getBytesPerColumn())
 		{
 			setChecked(true);
 		}
 
-		fNumBytesPerCol = numBytes;
+		fNumBytesPerCol = numUnits*addressibleSize;
 		
 		WorkbenchHelp.setHelp(this, IDebugUIConstants.PLUGIN_ID + ".FormatColumnAction_context"); //$NON-NLS-1$
 	}

@@ -199,10 +199,8 @@ public interface IInternalDebugUIConstants {
 	 */
 	public final static String FONT_NAME = IDebugUIConstants.PLUGIN_ID + ".MemoryViewTableFont"; //$NON-NLS-1$
 	
-	public final static int BYTES_PER_LINE = 16;	// number of bytes per line
+	public final static int ADD_UNIT_PER_LINE = 16;	// number of addressible unit per line
 	public final static int CHAR_PER_BYTE = 2;		// number of characters to represent one byte
-	public final static int BYTE_PER_CELL = 4;		// number of bytes per cell
-	public final static int NUM_COL = BYTES_PER_LINE/BYTE_PER_CELL + 2;	// Number of columns in the table 
 
 	/**
 	 * Memory view identifier (value <code>"org.eclipse.debug.ui.MemoryView"</code>).

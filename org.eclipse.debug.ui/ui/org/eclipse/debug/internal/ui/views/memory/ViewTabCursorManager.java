@@ -417,10 +417,10 @@ public class ViewTabCursorManager
 								
 								if (fRenderer != null)
 								{								
-									if (text.getText().length() > fViewTab.getColumnSize()*fRenderer.getNumCharPerByte())
+									if (text.getText().length() > fViewTab.getBytesPerColumn()*fRenderer.getNumCharPerByte())
 									{
 										String newValue = text.getText();
-										text.setText(newValue.substring(0, fViewTab.getColumnSize()*fRenderer.getNumCharPerByte()));
+										text.setText(newValue.substring(0, fViewTab.getBytesPerColumn()*fRenderer.getNumCharPerByte()));
 										
 										modifyValue(fRow, fCol, text.getText());
 										
@@ -446,7 +446,7 @@ public class ViewTabCursorManager
 										removeListeners(text);
 							
 										// activate text editor at next cell
-										activateCellEditor(newValue.substring(fViewTab.getColumnSize()*fRenderer.getNumCharPerByte()));
+										activateCellEditor(newValue.substring(fViewTab.getBytesPerColumn()*fRenderer.getNumCharPerByte()));
 									}
 								}
 								break;	
@@ -466,10 +466,10 @@ public class ViewTabCursorManager
 							default :
 							if (fRenderer != null)
 							{
-								if (text.getText().length()> fViewTab.getColumnSize()* fRenderer.getNumCharPerByte())
+								if (text.getText().length()> fViewTab.getBytesPerColumn()* fRenderer.getNumCharPerByte())
 								{
 									String newValue = text.getText();
-									text.setText(newValue.substring(0,fViewTab.getColumnSize()* fRenderer.getNumCharPerByte()));
+									text.setText(newValue.substring(0,fViewTab.getBytesPerColumn()* fRenderer.getNumCharPerByte()));
 									modifyValue(fRow, fCol, text.getText());
 									// if cursor is at the end of a line, move to next line
 									if (fCol >= getNumCol())
@@ -490,7 +490,7 @@ public class ViewTabCursorManager
 									removeListeners(text);
 									activateCellEditor(
 										newValue.substring(
-											fViewTab.getColumnSize()
+											fViewTab.getBytesPerColumn()
 												* fRenderer.getNumCharPerByte()));
 								}
 							}
@@ -840,7 +840,7 @@ public class ViewTabCursorManager
 	private int getNumCol() {
 		
 		int bytesPerLine = fViewTab.getBytesPerLine();
-		int columnSize = fViewTab.getColumnSize();
+		int columnSize = fViewTab.getBytesPerColumn();
 		
 		return bytesPerLine/columnSize;
 	}

@@ -15,6 +15,7 @@ package org.eclipse.debug.internal.ui.views.memory;
  * Listener to Memory Block View Synchronizer's enablement changes.
  * This listener will be called when the synchronizer's enablement
  * state is changed.
+ * @since 3.1
  */
 public interface ISynchronizerListener {
 

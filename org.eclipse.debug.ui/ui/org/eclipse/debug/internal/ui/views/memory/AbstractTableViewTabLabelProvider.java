@@ -65,15 +65,15 @@ abstract public class AbstractTableViewTabLabelProvider extends LabelProvider im
 		{
 			return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY);
 		}
-		else if (columnIndex > (fViewTab.getBytesPerLine()/fViewTab.getColumnSize()))
+		else if (columnIndex > (fViewTab.getBytesPerLine()/fViewTab.getBytesPerColumn()))
 		{
 			return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY);	
 		}
 		else
 		{	
 			// if memory in the range has changed, return delta icon
-			int startOffset = (columnIndex-1)*fViewTab.getColumnSize();
-			int endOffset = startOffset + fViewTab.getColumnSize() - 1;
+			int startOffset = (columnIndex-1)*fViewTab.getBytesPerColumn();
+			int endOffset = startOffset + fViewTab.getBytesPerColumn() - 1;
 			if (((MemoryViewLine)element).isRangeChange(startOffset, endOffset)) {
 				return DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_OBJECT_MEMORY_CHANGED);
 			}
@@ -94,14 +94,14 @@ abstract public class AbstractTableViewTabLabelProvider extends LabelProvider im
 			
 			// consult model presentation for address presentation
 		}
-		else if (columnIndex > (fViewTab.getBytesPerLine()/fViewTab.getColumnSize()))
+		else if (columnIndex > (fViewTab.getBytesPerLine()/fViewTab.getBytesPerColumn()))
 		{
 			columnLabel = " "; //$NON-NLS-1$
 		}
 		else
 		{	
-			int start = (columnIndex-1)*fViewTab.getColumnSize();
-			int end = start + fViewTab.getColumnSize();
+			int start = (columnIndex-1)*fViewTab.getBytesPerColumn();
+			int end = start + fViewTab.getBytesPerColumn();
 			MemoryViewLine line = (MemoryViewLine)element;
 
 			MemoryByte[] bytes = ((MemoryViewLine)element).getBytes(start, end);

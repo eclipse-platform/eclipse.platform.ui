@@ -20,10 +20,10 @@ public interface ITableMemoryViewTab extends IMemoryViewTab {
 
 	/**
 	 * View tab will be formatted based on the parameters provided.  
-	 * Possible value for bytesPerLine is:  16.  
+	 * Possible value for bytesPerLine is:  16*addressibleSize.  
 	 * Although bytesPerLine is limited to 16, this function should still take this argument 
 	 * for future extension when other values are to be supported.  
-	 * Possible values for columnSize:  1, 2, 4, 8, 16.
+	 * Possible values for columnSize:  (1, 2, 4, 8, 16) * addressibleSize.
 	 * @param bytesPerLine
 	 * @param columnSize
 	 * @return true if formatting is successful, false otherwise
@@ -35,11 +35,25 @@ public interface ITableMemoryViewTab extends IMemoryViewTab {
 	 */
 	public int getBytesPerLine();
 	
+	/**
+	 * @return number of addressible unit per line
+	 */
+	public int getAddressibleUnitPerLine();
 	
 	/**
 	 * @return number of bytes per column from the view tab.
 	 */
-	public int getColumnSize();
+	public int getBytesPerColumn();
+	
+	/**
+	 * @return number of addressible unit per column
+	 */
+	public int getAddressibleUnitPerColumn();
+	
+	/**
+	 * @return the size of the smallest addressible unit in bytes
+	 */
+	public int getAddressibleSize();
 	
 	
 	/**

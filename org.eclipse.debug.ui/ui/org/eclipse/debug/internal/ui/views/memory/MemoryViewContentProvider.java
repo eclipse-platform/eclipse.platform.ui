@@ -142,7 +142,8 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 						viewTab.TABLE_PREBUFFER = bigInt.divide(BigInteger.valueOf(32)).min(BigInteger.valueOf(viewTab.TABLE_DEFAULTBUFFER)).intValue();
 					}
 				
-					address = bigInt.subtract(BigInteger.valueOf(fViewTab.getBytesPerLine()*viewTab.TABLE_PREBUFFER));
+					int addressibleUnit = fViewTab.getAddressibleUnitPerLine();
+					address = bigInt.subtract(BigInteger.valueOf(addressibleUnit*viewTab.TABLE_PREBUFFER));
 				
 					// get stoarage to fit the memory view tab size
 					getMemoryToFitTable(address, fViewTab.getNumberOfVisibleLines()+viewTab.TABLE_PREBUFFER+viewTab.TABLE_POSTBUFFER, true);
@@ -223,7 +224,11 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				// get memory from memory block
 				extMemoryBlock = (IMemoryBlockExtension) fMemoryBlock;
 				
-				memoryBuffer =	extMemoryBlock.getBytesFromAddress(startingAddress,	reqNumBytes);
+				IMemoryBlockRetrieval retrieval = extMemoryBlock.getMemoryBlockRetrieval();
+				
+				long reqNumberOfUnits = fViewTab.getAddressibleUnitPerLine() * numberOfLines;
+				
+				memoryBuffer =	extMemoryBlock.getBytesFromAddress(startingAddress,	reqNumberOfUnits);
 				
 				if(memoryBuffer == null)
 				{
@@ -232,15 +237,11 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 				}
 				
 				// get padded string
-				IMemoryBlockRetrieval retrieval = extMemoryBlock.getMemoryBlockRetrieval();
-				if (retrieval != null && retrieval instanceof IMemoryBlockExtensionRetrieval)
+				paddedString = ((IMemoryBlockExtensionRetrieval)retrieval).getPaddedString();
+				
+				if (paddedString == null)
 				{
-					paddedString = ((IMemoryBlockExtensionRetrieval)retrieval).getPaddedString();
-					
-					if (paddedString == null)
-					{
-						paddedString = DEFAULT_PADDED_STR;
-					}
+					paddedString = DEFAULT_PADDED_STR;
 				}
 			}
 			else
@@ -480,7 +481,8 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 			
 			// increment row address
 			BigInteger bigInt = new BigInteger(address, 16);
-			address = bigInt.add(BigInteger.valueOf(fViewTab.getBytesPerLine())).toString(16);
+			int addressibleUnit = fViewTab.getBytesPerLine()/fViewTab.getAddressibleSize();
+			address = bigInt.add(BigInteger.valueOf(addressibleUnit)).toString(16);
 		}
 		
 		if (error){
@@ -582,8 +584,9 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 			{		
 			
 				IMemoryBlockExtension extMB = (IMemoryBlockExtension)fMemoryBlock;
+				long reqNumUnits = fViewTab.getAddressibleUnitPerLine();
 				
-				MemoryByte[] memory = extMB.getBytesFromAddress(fBufferTopAddress, lineCache.size()*fViewTab.getBytesPerLine());
+				MemoryByte[] memory = extMB.getBytesFromAddress(fBufferTopAddress, lineCache.size()*reqNumUnits);
 				
 				if (memory == null)
 				{
@@ -830,7 +833,8 @@ public class MemoryViewContentProvider extends BasicDebugViewContentProvider {
 			
 			BigInteger startAddress = new BigInteger(first.getAddress(), 16);
 			BigInteger lastAddress = new BigInteger(last.getAddress(), 16);
-			lastAddress = lastAddress.add(BigInteger.valueOf(fViewTab.getBytesPerLine()));
+			int addressibleUnit = fViewTab.getAddressibleUnitPerLine();
+			lastAddress = lastAddress.add(BigInteger.valueOf(addressibleUnit));
 			
 			if (startAddress.compareTo(address) <= 0 &&
 				lastAddress.compareTo(address) >= 0)

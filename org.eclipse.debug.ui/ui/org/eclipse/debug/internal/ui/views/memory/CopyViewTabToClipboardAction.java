@@ -91,7 +91,7 @@ public class CopyViewTabToClipboardAction extends AbstractMemoryAction
 					return ""; //$NON-NLS-1$
 				}
 				
-				numBytes = ((ITableMemoryViewTab)getViewTab()).getColumnSize();
+				numBytes = ((ITableMemoryViewTab)getViewTab()).getBytesPerColumn();
 				numChars = numBytes * charPerByte;
 			}
 			else
@@ -140,7 +140,7 @@ public class CopyViewTabToClipboardAction extends AbstractMemoryAction
 					if (!(getViewTab() instanceof ITableMemoryViewTab))
 						return ""; //$NON-NLS-1$
 					
-					int numBytes = ((ITableMemoryViewTab)getViewTab()).getColumnSize();
+					int numBytes = ((ITableMemoryViewTab)getViewTab()).getBytesPerColumn();
 					int numChars = numBytes * charPerByte;
 					while (temp.length() < numChars)
 					{

@@ -38,5 +38,4 @@ public interface IMemoryBlockExtensionRetrieval extends IMemoryBlockRetrieval {
 	 * Return null if the byte is available.
 	 */
 	public String getPaddedString();
-
 }

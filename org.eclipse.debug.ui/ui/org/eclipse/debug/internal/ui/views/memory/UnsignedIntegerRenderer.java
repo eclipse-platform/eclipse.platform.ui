@@ -55,10 +55,15 @@ public class UnsignedIntegerRenderer extends AbstractMemoryRenderer {
 			BigInteger value = RendererUtil.convertByteArrayToUnsignedLong(byteArray, endianess);
 			return value.toString();				
 		}
+		else if (columnSize == 16)
+		{
+			BigInteger bigRet = RendererUtil.convertByteArrayToUnsignedBigInt(byteArray, endianess);
+			return bigRet.toString();
+		}
 		else
 		{
-			BigInteger bigRet = RendererUtil.convertByteArrayToUnsignedBigInteger(byteArray, endianess);
-			return bigRet.toString();
+			BigInteger bigRet = RendererUtil.convertByteArrayToUnsignedBigInt(byteArray, endianess, columnSize);
+			return bigRet.toString();			
 		}
 
 		ret = new Long(result).toString();
@@ -95,13 +100,20 @@ public class UnsignedIntegerRenderer extends AbstractMemoryRenderer {
 				bytes = RendererUtil.convertBigIntegerToByteArray(i, endianess);
 				bytes = extractBytes(bytes, endianess, colSize);
 			}
-			else
+			else if (colSize == 16)
 			{	
 				BigInteger i = new BigInteger(newValue);
 				bytes = RendererUtil.convertUnsignedBigIntegerToByteArray(i, endianess);
 				bytes = extractBytes(bytes, endianess, colSize);
 
 				return bytes;
+			}
+			else
+			{
+				BigInteger i = new BigInteger(newValue);
+				bytes = RendererUtil.convertUnsignedBigIntToByteArray(i, endianess, colSize);
+				bytes = extractBytes(bytes, endianess, colSize);
+				return bytes;				
 			}
 			
 			return bytes;
@@ -152,7 +164,7 @@ public class UnsignedIntegerRenderer extends AbstractMemoryRenderer {
 		}
 		
 		if (fTableViewTab != null){
-			int columnSize = fTableViewTab.getColumnSize();
+			int columnSize = fTableViewTab.getBytesPerColumn();
 			int endianess = getEndianess();
 			
 			byte[] byteArray = new byte[data.length];
@@ -172,7 +184,7 @@ public class UnsignedIntegerRenderer extends AbstractMemoryRenderer {
 	public byte[] getBytes(String dataType, BigInteger address, MemoryByte[] currentValues, String data) {
 		
 		if (fTableViewTab != null){
-			int columnSize = fTableViewTab.getColumnSize();
+			int columnSize = fTableViewTab.getBytesPerColumn();
 			int endianess = getEndianess();
 			
 			return convertToBytes(columnSize, data, endianess);

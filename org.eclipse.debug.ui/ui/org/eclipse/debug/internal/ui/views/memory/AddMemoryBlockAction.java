@@ -212,10 +212,10 @@ public class AddMemoryBlockAction extends Action implements ISelectionListener, 
 				
 				long length = Long.parseLong(strLength);
 				
-				// must block at least one line
+				// must monitor at least one line
 				if (length == 0)
 				{
-					length = IInternalDebugUIConstants.BYTES_PER_LINE;
+					length = IInternalDebugUIConstants.ADD_UNIT_PER_LINE;
 				}
 				
 				// get standard memory block

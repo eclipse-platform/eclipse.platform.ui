@@ -137,7 +137,7 @@ public class RendererUtil {
         return value;
 	}
 	
-	static public BigInteger convertByteArrayToBigInteger(byte[] array, int endianess)
+	static public BigInteger convertByteArrayToSignedBigInt(byte[] array, int endianess)
 	{	
 		if (array.length < 16)
 		{
@@ -162,7 +162,32 @@ public class RendererUtil {
         return value;
 	}
 	
-	static public BigInteger convertByteArrayToUnsignedBigInteger(byte[] array, int endianess)
+	static public BigInteger convertByteArrayToSignedBigInt(byte[] array, int endianess, int arraySize)
+	{	
+		if (array.length < arraySize)
+		{
+			array = fillArray(array, arraySize, endianess);
+		}
+		
+		if (endianess == RendererUtil.LITTLE_ENDIAN)
+		{	
+			// reverse bytes
+			byte[] holder = new byte[arraySize];
+			int j=arraySize-1;
+			for (int i=0; i<arraySize; i++, j--)
+			{	
+				holder[i] = array[j];
+			}
+			
+			// create BigInteger
+			BigInteger value = new BigInteger(holder);
+			return value;
+		}
+        BigInteger value = new BigInteger(array);
+        return value;
+	}
+	
+	static public BigInteger convertByteArrayToUnsignedBigInt(byte[] array, int endianess)
 	{
 		if (array.length < 16)
 		{
@@ -195,6 +220,41 @@ public class RendererUtil {
 			}
 		}
 		return value;	
+	}
+	
+	static public BigInteger convertByteArrayToUnsignedBigInt(byte[] array, int endianess, int arraySize)
+	{
+		if (array.length < arraySize)
+		{
+			array = fillArray(array, arraySize, endianess);
+		}
+		
+		BigInteger value = new BigInteger("0"); //$NON-NLS-1$
+		if (endianess == RendererUtil.LITTLE_ENDIAN)
+		{
+			for (int i=0; i< arraySize; i++)
+			{
+				byte[] temp = new byte[1];
+				temp[0] = array[i];
+				BigInteger b = new BigInteger(temp);
+				b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
+				b = b.shiftLeft(i*8);
+				value = value.or(b);
+			}			
+		}
+		else
+		{	
+			for (int i=0; i< arraySize; i++)
+			{
+				byte[] temp = new byte[1];
+				temp[0] = array[i];
+				BigInteger b = new BigInteger(temp);
+				b = b.and(new BigInteger("ff", 16)); //$NON-NLS-1$
+				b = b.shiftLeft((arraySize-1-i)*8);
+				value = value.or(b);
+			}
+		}
+		return value;			
 	}
 	
 	/**
@@ -291,6 +351,27 @@ public class RendererUtil {
         return buf;		
 	}
 	
+	static public byte[] convertSignedBigIntToByteArray(BigInteger i, int endianess, int arraySize)
+	{
+		byte buf[]=new byte[arraySize];
+
+		if (endianess == RendererUtil.LITTLE_ENDIAN)
+		{
+			for (int j=0; j<arraySize; j++)
+			{
+				BigInteger x = i.shiftRight(j*8);
+				buf[j] = x.byteValue();
+			}
+			return buf;
+		}
+        for (int j=arraySize-1; j>=0; j--)
+        {
+        	BigInteger x = i.shiftRight((arraySize-1-j)*8);
+        	buf[j] = x.byteValue();
+        }
+        return buf;				
+	}
+	
 	/**
 	 * Convert big integer to byte array.
 	 * @param i
@@ -316,6 +397,27 @@ public class RendererUtil {
         	buf[j] = x.byteValue();
         }
         return buf;		
+	}
+	
+	static public byte[] convertUnsignedBigIntToByteArray(BigInteger i, int endianess, int arraySize)
+	{
+		byte buf[]=new byte[arraySize*2];
+
+		if (endianess == RendererUtil.LITTLE_ENDIAN)
+		{
+			for (int j=0; j<arraySize*2; j++)
+			{
+				BigInteger x = i.shiftRight(j*8);
+				buf[j] = x.byteValue();
+			}
+			return buf;
+		}
+        for (int j=(arraySize*2)-1; j>=0; j--)
+        {
+        	BigInteger x = i.shiftRight(((arraySize*2)-1-j)*8);
+        	buf[j] = x.byteValue();
+        }
+        return buf;				
 	}
 	
 	/**
