@@ -77,7 +77,6 @@ public class RemoveBreakpointAction extends AbstractRemoveActionDelegate {
 	 */
 	private void removeGroup(String group, IBreakpointManager manager) throws CoreException {
 	    Object[] children = ((BreakpointsView) getView()).getTreeContentProvider().getChildren(group);
-	    IBreakpoint[] breakpoints= new IBreakpoint[children.length];
 	    for (int i = 0; i < children.length; i++) {
             manager.removeBreakpoint((IBreakpoint) children[i], true);
         }
