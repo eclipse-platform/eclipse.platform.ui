@@ -1093,7 +1093,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 		size.height = height;
 		size.width = width;
 		
-		getShell().setBounds(getConstrainedShellSize(size));
+		getShell().setBounds(getConstrainedShellBounds(size));
 	}
 	/**
 	 * Computes the correct dialog size for the current page and resizes 
