@@ -83,9 +83,8 @@ public LayoutTreeNode getParent() {
 	return parent;
 }
 /**
- * Insert a new child on the tree. The child will be place beside of
- * another the <code>relative</code> child. Returns the new root of the
- * tree.
+ * Inserts a new child on the tree. The child will be placed beside 
+ * the <code>relative</code> child. Returns the new root of the tree.
  */
 public LayoutTree insert(LayoutPart child,boolean left,LayoutPartSash sash,LayoutPart relative) {
 	LayoutTree relativeChild = find(relative);
