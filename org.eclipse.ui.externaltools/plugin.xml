@@ -446,6 +446,21 @@
 			description="%build_type.description"
 			expanderClass="org.eclipse.ui.externaltools.internal.variable.BuildTypeExpander">
 		</variable>
+		<variable
+			tag="string_prompt"
+			description="%string_prompt.description"
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.StringPromptExpander">
+		</variable>
+		<variable
+			tag="file_prompt"
+			description="%file_prompt.description"
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.FilePromptExpander">
+		</variable>
+		<variable
+			tag="folder_prompt"
+			description="%folder_prompt.description"
+			expanderClass="org.eclipse.ui.externaltools.internal.variable.FolderPromptExpander">
+		</variable>
 	</extension>
 
 	<extension point="org.eclipse.ui.externaltools.refreshVariables">
