@@ -136,33 +136,7 @@ protected void createActions() {
 
 	fClearSelection = new ClearSelectionAction("Clear Selection", this);
 }
-protected Control createContents() {
-	Shell shell = getShell();
-	ViewForm form = new ViewForm(shell, SWT.NONE);
-	CLabel label = new CLabel(form, SWT.NONE);
-	form.setTopLeft(label);
-	Object input = getInput();
-	label.setText(input.toString());
-	if (fPanes == 1) {
-		Viewer viewer = createViewer(form);
-		form.setContent(viewer.getControl());
-		fViewer = viewer;
-		viewer.setInput(input);
-	} else if (fPanes == 2) {
-		SashForm sashForm = new SashForm(form, SWT.VERTICAL);
-		form.setContent(sashForm);
-		Viewer viewer = createViewer(sashForm);
-		fViewer = viewer;
-		viewer.setInput(input);
-		viewer = createViewer(sashForm);
-		viewer.setInput(input);
-	}
-	createActions();
-	fillMenuBar(getMenuBarManager());
-	viewerFillMenuBar(getMenuBarManager());
-	getMenuBarManager().updateAll(false);
-	return form;
-}
+
 protected Control createContents(Composite parent) {
 	ViewForm form = new ViewForm(parent, SWT.NONE);
 	CLabel label = new CLabel(form, SWT.NONE);
