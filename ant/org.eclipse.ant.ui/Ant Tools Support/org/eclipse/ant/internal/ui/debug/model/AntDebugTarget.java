@@ -344,8 +344,17 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget {
 	 * 
 	 * @throws DebugException if the request fails
 	 */
-	protected void step() throws DebugException {
-		sendRequest(DebugMessageIds.STEP);
+	protected void stepOver() throws DebugException {
+		sendRequest(DebugMessageIds.STEP_OVER);
+	}
+	
+	/**
+	 * Step-into the Ant build.
+	 * 
+	 * @throws DebugException if the request fails
+	 */
+	protected void stepInto() throws DebugException {
+		sendRequest(DebugMessageIds.STEP_INTO);
 	}
 	
 	/**

@@ -19,8 +19,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Stack;
 
 import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 
@@ -38,13 +40,17 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	
 	private BufferedReader fRequestReader;
 	
-	protected boolean fStepSuspend= false;
+	protected boolean fStepOverSuspend= false;
+	protected boolean fStepIntoSuspend= false;
+	
 	protected boolean fClientSuspend= false;
 	
 	protected boolean fShouldSuspend= false;
 	
-	private Task fCurrentTask;
+	private Stack fTasks= new Stack();
 	private Target fCurrentTarget;
+	private Task fCurrentTask;
+	private Task fStepOverTask;
 	
 	private int[] fBreakpoints= null;
 	
@@ -71,10 +77,17 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 				while (fRequestReader != null) { 
 					if ((message= fRequestReader.readLine()) != null) {
 						
-						if (message.startsWith(DebugMessageIds.STEP)){
+						if (message.startsWith(DebugMessageIds.STEP_INTO)){
 							synchronized(RemoteAntDebugBuildLogger.this) {
 								RemoteAntDebugBuildLogger.this.notifyAll();
-								fStepSuspend= true;
+								fStepIntoSuspend= true;
+								sendRequestResponse(DebugMessageIds.RESUMED + DebugMessageIds.STEP);
+							}
+						} if (message.startsWith(DebugMessageIds.STEP_OVER)){
+							synchronized(RemoteAntDebugBuildLogger.this) {
+								RemoteAntDebugBuildLogger.this.notifyAll();
+								fStepOverSuspend= true;
+								fStepOverTask= fCurrentTask;
 								sendRequestResponse(DebugMessageIds.RESUMED + DebugMessageIds.STEP);
 							}
 						} else if (message.startsWith(DebugMessageIds.SUSPEND)) {
@@ -91,9 +104,6 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 							//sendRequestResponse(DebugMessageIds.TERMINATED);
 							System.exit(1);
 						} else if (message.startsWith(DebugMessageIds.STACK)) {
-							if (fCurrentTask == null) {
-								//TODO return an error
-							}
 							marshallStack();
 						} else if (message.startsWith(DebugMessageIds.ADD_BREAKPOINT)) {
 							addBreakpoint(message);
@@ -197,7 +207,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		super.targetStarted(event);
 		fCurrentTarget= event.getTarget();
 		marshalMessage(-1, DebugMessageIds.TARGET_STARTED);
-		waitIfSuspended();
+		//waitIfSuspended();
 	}
 	
 	/* (non-Javadoc)
@@ -207,7 +217,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		super.targetFinished(event);
 		fCurrentTarget= null;
 		marshalMessage(-1, DebugMessageIds.TARGET_FINISHED);
-		waitIfSuspended();
+		//waitIfSuspended();
 	}
 	
 	/* (non-Javadoc)
@@ -216,6 +226,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	public void taskStarted(BuildEvent event) {
 		super.taskStarted(event);
 		fCurrentTask= event.getTask();
+		fTasks.push(fCurrentTask);
 		
 		marshalMessage(-1, DebugMessageIds.TASK_STARTED);
 		waitIfSuspended();
@@ -226,6 +237,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	 */
 	public void taskFinished(BuildEvent event) {
 		super.taskFinished(event);
+		fTasks.pop();
 		fCurrentTask= null;
 		marshalMessage(-1, DebugMessageIds.TASK_FINISHED);
 		waitIfSuspended();
@@ -238,9 +250,17 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 				boolean shouldSuspend= true;
 				if (breakpointAtLineNumber(fCurrentTask.getLocation().getLineNumber())) {
 					detail= DebugMessageIds.BREAKPOINT + ' ' + Integer.toString(fCurrentTask.getLocation().getLineNumber());
-				} else if (fStepSuspend) {
+				} else if (fStepIntoSuspend) {
 					detail= DebugMessageIds.STEP;
-					fStepSuspend= false;
+					fStepIntoSuspend= false;
+				} else if (fStepOverSuspend) {
+				    if (fCurrentTask == fStepOverTask) {
+				        detail= DebugMessageIds.STEP;
+				        fStepOverSuspend= false;
+				        fStepOverTask= null;
+				    } else {
+				        shouldSuspend= false;
+				    }
 				} else if (fClientSuspend) {
 					detail= DebugMessageIds.CLIENT_REQUEST;
 					fClientSuspend= false;
@@ -289,21 +309,26 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	}
 	
 	protected void marshallStack() {
-		if (fCurrentTarget != null || fCurrentTask != null) {
-			StringBuffer stackRepresentation= new StringBuffer();
-			stackRepresentation.append(DebugMessageIds.STACK);
-			stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-			stackRepresentation.append(fCurrentTarget.getName());
-			if (fCurrentTask != null) {
-				stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-				stackRepresentation.append(fCurrentTask.getTaskName());
-			}
-			stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-			stackRepresentation.append(fCurrentTask.getLocation().getFileName());
-			stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-			stackRepresentation.append(fCurrentTask.getLocation().getLineNumber());
-			sendRequestResponse(stackRepresentation.toString());
-		}
+	    StringBuffer stackRepresentation= new StringBuffer();
+	    stackRepresentation.append(DebugMessageIds.STACK);
+	    stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	   // stackRepresentation.append(fTasks.size());
+	   // stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	    
+	    for (int i = fTasks.size() - 1; i >= 0 ; i--) {
+	        Task task = (Task) fTasks.get(i);
+	        stackRepresentation.append(task.getOwningTarget().getName());
+	        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	        stackRepresentation.append(task.getTaskName());
+	        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	        
+	        Location location= task.getLocation();
+	        stackRepresentation.append(location.getFileName());
+	        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	        stackRepresentation.append(location.getLineNumber());
+	        stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
+	    }	
+	    sendRequestResponse(stackRepresentation.toString());
 	}
 	
 	protected void marshallProperties() {

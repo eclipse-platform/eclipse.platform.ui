@@ -170,7 +170,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
 	 */
 	public boolean canStepInto() {
-		return false;
+	    return isSuspended();
 	}
 	
 	/* (non-Javadoc)
@@ -198,6 +198,8 @@ public class AntThread extends AntDebugElement implements IThread {
 	 * @see org.eclipse.debug.core.model.IStep#stepInto()
 	 */
 	public void stepInto() throws DebugException {
+	    fFrames= null;
+		((AntDebugTarget)getDebugTarget()).stepInto();
 	}
 	
 	/* (non-Javadoc)
@@ -205,7 +207,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	 */
 	public void stepOver() throws DebugException {
 		fFrames= null;
-		((AntDebugTarget)getDebugTarget()).step();
+		((AntDebugTarget)getDebugTarget()).stepOver();
 	}
 	
 	/* (non-Javadoc)

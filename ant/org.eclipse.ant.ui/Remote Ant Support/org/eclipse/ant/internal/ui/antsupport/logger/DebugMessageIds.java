@@ -22,6 +22,8 @@ public class DebugMessageIds extends MessageIds {
 	public final static String TASK_FINISHED= "task_finished"; //$NON-NLS-1$
 	
 	public final static String STEP= "step"; //$NON-NLS-1$
+	public final static String STEP_OVER= "step_over"; //$NON-NLS-1$
+	public final static String STEP_INTO= "step_into"; //$NON-NLS-1$
 	
 	public final static String TERMINATE= "terminate"; //$NON-NLS-1$
 	public final static String TERMINATED= "terminated"; //$NON-NLS-1$
