@@ -1,9 +1,14 @@
 package org.eclipse.ui.internal;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v0.5
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v05.html
+ 
+Contributors:
+**********************************************************************/
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
@@ -29,296 +34,326 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * A Memento is a class independent container for persistence
- * info.  It is a reflection of 3 storage requirements.
+ * This class represents the default implementation of the
+ * <code>IMemento</code> interface.
+ * <p>
+ * This class is not intended to be extended by clients.
+ * </p>
  *
- * 1) 	We need the ability to persist an object and restore it.  
- * 2) 	The class for an object may be absent.  If so we would 
- * 		like to skip the object and keep reading. 
- * 3) 	The class for an object may change.  If so the new class 
- * 		should be able to read the old persistence info.
- *
- * We could ask the objects to serialize themselves into an 
- * ObjectOutputStream, DataOutputStream, or Hashtable.  However 
- * all of these approaches fail to meet the second requirement.
- *
- * Memento supports binary persistance with a version ID.
+ * @see IMemento
  */
 public final class XMLMemento implements IMemento {
 	private Document factory;
 	private Element element;
-/**
- * Answer a memento for the document and element.  For simplicity
- * you should use createReadRoot and createWriteRoot to create the initial
- * mementos on a document.
- */
-public XMLMemento(Document doc, Element el) {
-	factory = doc;
-	element = el;
-}
-/**
- * @see IMemento.
- */
-public IMemento createChild(String type) {
-	Element child = factory.createElement(type);
-	element.appendChild(child);
-	return new XMLMemento(factory, child);
-}
-/**
- * @see IMemento.
- */
-public IMemento createChild(String type, String id) {
-	Element child = factory.createElement(type);
-	child.setAttribute(TAG_ID, id);
-	element.appendChild(child);
-	return new XMLMemento(factory, child);
-}
-/**
- * Create a Document from a Reader and answer a root memento for reading 
- * a document.
- */
-static public XMLMemento createReadRoot(Reader reader) {
-	Document document = null;
-	try {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder parser = factory.newDocumentBuilder();
-		document = parser.parse(new InputSource(reader));
-		Node node = document.getFirstChild();
-		if (node instanceof Element)
-			return new XMLMemento(document, (Element) node);
-	} catch (ParserConfigurationException e) {
-	} catch (IOException e) {
-	} catch (SAXException e) {
+
+	/**
+	 * Creates a <code>Document</code> from the <code>Reader</code>
+	 * and returns a root memento for reading the document.
+	 * 
+	 * @param reader the reader used to create the memento's document
+	 * @return the root memento for reading the document
+	 */
+	public static XMLMemento createReadRoot(Reader reader) {
+		Document document = null;
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder parser = factory.newDocumentBuilder();
+			document = parser.parse(new InputSource(reader));
+			Node node = document.getFirstChild();
+			if (node instanceof Element)
+				return new XMLMemento(document, (Element) node);
+		} catch (ParserConfigurationException e) {
+		} catch (IOException e) {
+		} catch (SAXException e) {
+		}
+		return null;
 	}
-	return null;
-}
-/**
- * Answer a root memento for writing a document.
- */
-static public XMLMemento createWriteRoot(String type) {
-	Document document = new DocumentImpl();
-	Element element = document.createElement(type);
-	document.appendChild(element);
-	return new XMLMemento(document, element);
-}
-/**
- * Copy a child from one document to another.
- */
-public IMemento copyChild(IMemento child) {
-	Element childElement = ((XMLMemento)child).element;
-	Element newElement = (Element)factory.importNode(childElement, true);
-	element.appendChild(newElement);	
-	return new XMLMemento(factory, newElement);
-}
-/**
- * @see IMemento.
- */
-public IMemento getChild(String type) {
 	
-	// Get the nodes.
-	NodeList nodes = element.getChildNodes();
-	int size = nodes.getLength();
-	if (size == 0)
-		return null;
+	/**
+	 * Returns a root memento for writing a document.
+	 * 
+	 * @param type the element node type to create on the document
+	 * @return the root memento for writing a document
+	 */
+	public static XMLMemento createWriteRoot(String type) {
+		Document document = new DocumentImpl();
+		Element element = document.createElement(type);
+		document.appendChild(element);
+		return new XMLMemento(document, element);
+	}
+	
+	/**
+	 * Creates a memento for the specified document and element.
+	 * <p>
+	 * Clients should use <code>createReadRoot</code> and
+	 * <code>createWriteRoot</code> to create the initial
+	 * memento on a document.
+	 * </p>
+	 * 
+	 * @param document the document for the memento
+	 * @param element the element node for the memento
+	 * @return the memento on the specified document and element
+	 */
+	public XMLMemento(Document document, Element element) {
+		super();
+		this.factory = document;
+		this.element = element;
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public IMemento createChild(String type) {
+		Element child = factory.createElement(type);
+		element.appendChild(child);
+		return new XMLMemento(factory, child);
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public IMemento createChild(String type, String id) {
+		Element child = factory.createElement(type);
+		child.setAttribute(TAG_ID, id);
+		element.appendChild(child);
+		return new XMLMemento(factory, child);
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public IMemento copyChild(IMemento child) {
+		Element childElement = ((XMLMemento) child).element;
+		Element newElement = (Element) factory.importNode(childElement, true);
+		element.appendChild(newElement);
+		return new XMLMemento(factory, newElement);
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public IMemento getChild(String type) {
 
-	// Find the first node which is a child of this node.
-	for (int nX = 0; nX < size; nX ++) {
-		Node node = nodes.item(nX);
-		if (node instanceof Element) {
-			Element element = (Element)node;
-			if (element.getNodeName().equals(type))
-				return new XMLMemento(factory, element);
+		// Get the nodes.
+		NodeList nodes = element.getChildNodes();
+		int size = nodes.getLength();
+		if (size == 0)
+			return null;
+
+		// Find the first node which is a child of this node.
+		for (int nX = 0; nX < size; nX++) {
+			Node node = nodes.item(nX);
+			if (node instanceof Element) {
+				Element element = (Element) node;
+				if (element.getNodeName().equals(type))
+					return new XMLMemento(factory, element);
+			}
+		}
+
+		// A child was not found.
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public IMemento[] getChildren(String type) {
+
+		// Get the nodes.
+		NodeList nodes = element.getChildNodes();
+		int size = nodes.getLength();
+		if (size == 0)
+			return new IMemento[0];
+
+		// Extract each node with given type.
+		ArrayList list = new ArrayList(size);
+		for (int nX = 0; nX < size; nX++) {
+			Node node = nodes.item(nX);
+			if (node instanceof Element) {
+				Element element = (Element) node;
+				if (element.getNodeName().equals(type))
+					list.add(element);
+			}
+		}
+
+		// Create a memento for each node.
+		size = list.size();
+		IMemento[] results = new IMemento[size];
+		for (int x = 0; x < size; x++) {
+			results[x] = new XMLMemento(factory, (Element) list.get(x));
+		}
+		return results;
+	}
+	
+	/**
+	 * Returns the XML element contained in this memento.
+	 */
+	private Element getElement() {
+		return element;
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public Float getFloat(String key) {
+		Attr attr = element.getAttributeNode(key);
+		if (attr == null)
+			return null;
+		String strValue = attr.getValue();
+		try {
+			return new Float(strValue);
+		} catch (NumberFormatException e) {
+			WorkbenchPlugin.log("Memento problem - Invalid float for key: " //$NON-NLS-1$
+			+ key + " value: " + strValue); //$NON-NLS-1$
+			return null;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public String getID() {
+		return element.getAttribute(TAG_ID);
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public Integer getInteger(String key) {
+		Attr attr = element.getAttributeNode(key);
+		if (attr == null)
+			return null;
+		String strValue = attr.getValue();
+		try {
+			return new Integer(strValue);
+		} catch (NumberFormatException e) {
+			WorkbenchPlugin.log("Memento problem - invalid integer for key: " + key //$NON-NLS-1$
+			+ " value: " + strValue); //$NON-NLS-1$
+			return null;
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public String getString(String key) {
+		Attr attr = element.getAttributeNode(key);
+		if (attr == null)
+			return null;
+		return attr.getValue();
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public String getTextData() {
+		Text textNode = getTextNode();
+		if (textNode != null) {
+			return textNode.getData();
+		} else {
+			return null;
 		}
 	}
 
-	// A child was not found.
-	return null;
-}
-/**
- * @see IMemento.
- */
-public IMemento [] getChildren(String type) {
-
-	// Get the nodes.
-	NodeList nodes = element.getChildNodes();
-	int size = nodes.getLength();
-	if (size == 0)
-		return new IMemento[0];
-
-	// Extract each node with given type.
-	ArrayList list = new ArrayList(size);
-	for (int nX = 0; nX < size; nX ++) {
-		Node node = nodes.item(nX);
-		if (node instanceof Element) {
-			Element element = (Element)node;
-			if (element.getNodeName().equals(type))
-				list.add(element);
+	/**
+	 * Returns the Text node of the memento. Each memento is allowed only 
+	 * one Text node.
+	 * 
+	 * @return the Text node of the memento, or <code>null</code> if
+	 * the memento has no Text node.
+	 */
+	private Text getTextNode() {
+		// Get the nodes.
+		NodeList nodes = element.getChildNodes();
+		int size = nodes.getLength();
+		if (size == 0)
+			return null;
+		for (int nX = 0; nX < size; nX++) {
+			Node node = nodes.item(nX);
+			if (node instanceof Text) {
+				return (Text) node;
+			}
 		}
-	}
-
-	// Create a memento for each node.
-	size = list.size();
-	IMemento [] results = new IMemento[size];
-	for (int x = 0; x < size; x ++) {
-		results[x] = new XMLMemento(factory, (Element)list.get(x));
-	}
-	return results;
-}
-/**
- * Answer the XML element contained in this memento.
- */
-private Element getElement() {
-	return element;
-}
-/**
- * @see IMemento.
- */
-public Float getFloat(String key) {
-	Attr attr = element.getAttributeNode(key);
-	if (attr == null)
-		return null; 
-	String strValue = attr.getValue();
-	try {
-		return new Float(strValue);
-	} catch (NumberFormatException e) {
-		WorkbenchPlugin.log("Memento problem - Invalid float for key: " //$NON-NLS-1$
-			+ key + " value: " + strValue);//$NON-NLS-1$
+		// a Text node was not found
 		return null;
 	}
-}
-/**
- * @see IMemento.
- */
-public String getID() {
-	return element.getAttribute(TAG_ID);
-}
-/**
- * @see IMemento.
- */
-public Integer getInteger(String key) {
-	Attr attr = element.getAttributeNode(key);
-	if (attr == null)
-		return null; 
-	String strValue = attr.getValue();
-	try {
-		return new Integer(strValue);
-	} catch (NumberFormatException e) {
-		WorkbenchPlugin.log("Memento problem - invalid integer for key: " + key //$NON-NLS-1$
-			+ " value: " + strValue);//$NON-NLS-1$
-		return null;
-	}
-}
-/**
- * @see IMemento.
- */
-public String getString(String key) {
-	Attr attr = element.getAttributeNode(key);
-	if (attr == null)
-		return null; 
-	return attr.getValue();
-}
 
-/**
- * @see IMemento.
- */
-public String getTextData() {
-	Text textNode = getTextNode();
-	if (textNode != null) {
-		return textNode.getData();
-	} else {
-		return null;	
-	}
-}
+	/**
+	 * Places the element's attributes into the document.
+	 */
+	private void putElement(Element element) {
+		NamedNodeMap nodeMap = element.getAttributes();
+		int size = nodeMap.getLength();
+		for (int i = 0; i < size; i++) {
+			Attr attr = (Attr) nodeMap.item(i);
+			putString(attr.getName(), attr.getValue());
+		}
 
-/**
- * Returns the Text node of the memento. Each memento is allowed only 
- * one Text node.
- * 
- * @return the Text node of the memento, or <code>null</code> if
- * the memento has no Text node.
- */
-private Text getTextNode() {
-	// Get the nodes.
-	NodeList nodes = element.getChildNodes();
-	int size = nodes.getLength();
-	if (size == 0)
-		return null;
-	for (int nX = 0; nX < size; nX ++) {
-		Node node = nodes.item(nX);
-		if (node instanceof Text) {
-			return (Text)node;
+		NodeList nodes = element.getChildNodes();
+		size = nodes.getLength();
+		for (int i = 0; i < size; i++) {
+			Node node = nodes.item(i);
+			if (node instanceof Element) {
+				XMLMemento child = (XMLMemento) createChild(node.getNodeName());
+				child.putElement((Element) node);
+			}
 		}
 	}
-	// a Text node was not found
-	return null;
-}
-
-/**
- * @see IMemento.
- */
-private void putElement(Element element) {
-	NamedNodeMap nodeMap = element.getAttributes();
-	int size = nodeMap.getLength();
-	for (int i = 0; i < size; i++){
-		Attr attr = (Attr)nodeMap.item(i);
-		putString(attr.getName(),attr.getValue());
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public void putFloat(String key, float f) {
+		element.setAttribute(key, String.valueOf(f));
 	}
-				
-	NodeList nodes = element.getChildNodes();
-	size = nodes.getLength();
-	for (int i = 0; i < size; i ++) {
-		Node node = nodes.item(i);
-		if (node instanceof Element) {
-			XMLMemento child = (XMLMemento)createChild(node.getNodeName());
-			child.putElement((Element)node);
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public void putInteger(String key, int n) {
+		element.setAttribute(key, String.valueOf(n));
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public void putMemento(IMemento memento) {
+		XMLMemento xmlMemento = (XMLMemento) memento;
+		putElement(((XMLMemento) memento).element);
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public void putString(String key, String value) {
+		if (value == null)
+			return;
+		element.setAttribute(key, value);
+	}
+	
+	/* (non-Javadoc)
+	 * Method declared in IMemento.
+	 */
+	public void putTextData(String data) {
+		Text textNode = getTextNode();
+		if (textNode == null) {
+			textNode = factory.createTextNode(data);
+			element.appendChild(textNode);
+		} else {
+			textNode.setData(data);
 		}
 	}
-}
-/**
- * @see IMemento.
- */
-public void putFloat(String key, float f) {
-	element.setAttribute(key, String.valueOf(f));
-}
-/**
- * @see IMemento.
- */
-public void putInteger(String key, int n) {
-	element.setAttribute(key, String.valueOf(n));
-}
-/**
- * @see IMemento.
- */
-public void putMemento(IMemento memento) {
-	XMLMemento xmlMemento = (XMLMemento)memento;
-	putElement(((XMLMemento)memento).element);
-}
-/**
- * @see IMemento.
- */
-public void putString(String key, String value) {
-	if(value==null) return;
-	element.setAttribute(key, value);
-}
-/**
- * @see IMemento.
- */
-public void putTextData(String data) {
-	Text textNode = getTextNode();
-	if (textNode == null) {
-		textNode = factory.createTextNode(data);
-		element.appendChild(textNode);	
-	} else {
-		textNode.setData(data);
+	
+	/**
+	 * Saves this memento's document current values to the
+	 * specified writer. 
+	 * 
+	 * @param writer the writer used to save the memento's document
+	 */
+	public void save(Writer writer) throws IOException {
+		OutputFormat format = new OutputFormat();
+		format.setPreserveSpace(true);
+		Serializer serializer = SerializerFactory.getSerializerFactory("xml").makeSerializer(writer, format); //$NON-NLS-1$
+		serializer.asDOMSerializer().serialize(factory);
 	}
-}
-/**
- * Save this Memento to a Writer.
- */
-public void save(Writer writer) throws IOException {
-	OutputFormat format = new OutputFormat();
-	format.setPreserveSpace(true);
-	Serializer serializer = SerializerFactory.getSerializerFactory("xml").makeSerializer(writer, format);//$NON-NLS-1$
-	serializer.asDOMSerializer().serialize(factory);
-}
 }
