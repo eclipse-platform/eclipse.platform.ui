@@ -450,7 +450,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			IAnnotationModelListener l= (IAnnotationModelListener) e.next();
 			if (l instanceof IAnnotationModelListenerExtension)
 				((IAnnotationModelListenerExtension) l).modelChanged(event);
-			else
+			else if (l != null)
 				l.modelChanged(this);
 		}
 	}
