@@ -10,7 +10,12 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -42,6 +47,10 @@ public class FileStatesPage
 		WorkbenchMessages.getString("FileHistory.invalid"); //$NON-NLS-1$
 	private static final String SAVE_ERROR_MESSAGE =
 		WorkbenchMessages.getString("FileHistory.exceptionSaving"); //$NON-NLS-1$
+	private static final String NOTE_MESSAGE =
+		WorkbenchMessages.getString("FileHistory.restartNote"); //$NON-NLS-1$
+	private static final String NOTE_LABEL = 
+		WorkbenchMessages.getString("Preference.note"); //$NON-NLS-1$
 
 	private static final int FAILED_VALUE = -1;
 
@@ -126,11 +135,7 @@ protected Control createContents(Composite parent) {
 	Composite composite = new Composite(parent, SWT.NONE);
 	GridLayout layout = new GridLayout();
 	layout.numColumns = 2;
-	layout.marginWidth = 0;
-	layout.marginHeight = 0;
 	composite.setLayout(layout);
-	composite.setLayoutData(
-		new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 	composite.setFont(parent.getFont());
 
 	IWorkspaceDescription description = getWorkspaceDescription();
@@ -158,6 +163,14 @@ protected Control createContents(Composite parent) {
 			composite);
 
 	checkState();
+	
+	//Create a spacing label to breakup the note from the fields
+	Label spacer = new Label(composite, SWT.NONE);
+	GridData spacerData = new GridData();
+	spacerData.horizontalSpan = 2;
+	spacer.setLayoutData(spacerData);
+	
+	createNoteLabel(composite);
 	
 	return composite;
 }
@@ -334,6 +347,51 @@ private long validateMaxFileStateSize(){
 	}
 
 	return maxFileStateSize;
+}
+
+/** 
+ * Create a label with a note that informs the user
+ * that a restart is required for these changes to 
+ * take effect.
+ */
+private void createNoteLabel(Composite parent){
+	
+	Composite messageComposite = new Composite(parent, SWT.NONE);
+	GridLayout messageLayout = new GridLayout();
+	messageLayout.numColumns = 2;
+	messageLayout.marginWidth = 0;
+	
+	messageComposite.setLayout(messageLayout);
+	GridData data = 
+		new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+	data.horizontalSpan = 2;
+	messageComposite.setLayoutData(data);
+	messageComposite.setFont(parent.getFont());
+
+
+	final Label noteLabel = new Label(messageComposite,SWT.BOLD);
+	noteLabel.setText(NOTE_LABEL);
+	noteLabel.setFont(JFaceResources.getBannerFont());
+	noteLabel.setLayoutData(
+		new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		
+	final IPropertyChangeListener fontListener = new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			if(JFaceResources.BANNER_FONT.equals(event.getProperty())) {
+				noteLabel.setFont(JFaceResources.getFont(JFaceResources.BANNER_FONT));
+			}
+		}
+	};
+	JFaceResources.getFontRegistry().addListener(fontListener);
+	noteLabel.addDisposeListener(new DisposeListener() {
+		public void widgetDisposed(DisposeEvent event) {
+			JFaceResources.getFontRegistry().removeListener(fontListener);
+		}
+	});
+	
+	Label messageLabel = new Label(messageComposite,SWT.WRAP);
+	messageLabel.setText(NOTE_MESSAGE);
+	messageLabel.setFont(parent.getFont());
 }
 
 }

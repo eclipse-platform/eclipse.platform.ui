@@ -51,7 +51,7 @@ public class ViewsPreferencePage
 	 * No longer supported - remove when confirmed!
 	 * private static final String OVM_FLOAT = WorkbenchMessages.getString("OpenViewMode.float"); //$NON-NLS-1$
 	 */
-	private static final String NOTE_LABEL = WorkbenchMessages.getString("ViewsPreference.note"); //$NON-NLS-1$
+	private static final String NOTE_LABEL = WorkbenchMessages.getString("Preference.note"); //$NON-NLS-1$
 	private static final String APPLY_MESSAGE = WorkbenchMessages.getString("ViewsPreference.applyMessage"); //$NON-NLS-1$
 /**
  * Create a composite that for creating the tab toggle buttons.
