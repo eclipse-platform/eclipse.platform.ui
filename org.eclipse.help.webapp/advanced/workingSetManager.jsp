@@ -64,6 +64,7 @@ function highlightHandler()
 _highlightHandler = highlightHandler;
 
 function onloadHandler() {
+alert("ws="+getWorkingSet());
 	sizeButtons();
 	enableButtons();
 	document.getElementById("alldocs").focus();
@@ -137,7 +138,7 @@ function selectWorkingSet() {
 }
 
 function removeWorkingSet() {
-	window.location.replace("workingSetManager.jsp?operation=remove&workingSet="+getWorkingSet());
+	window.location.replace("workingSetManager.jsp?operation=remove&workingSet="+escape(getWorkingSet()));
 }
 
 var workingSetDialog;
