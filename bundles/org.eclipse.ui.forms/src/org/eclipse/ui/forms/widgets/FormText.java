@@ -117,15 +117,14 @@ public final class FormText extends Canvas {
 	public int marginWidth = 0;
 
 	/**
-	 * Value of hte horizontal margin (default is 1).
+	 * Value of tue vertical margin (default is 1).
 	 */
 	public int marginHeight = 1;
-	
-	private static final boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXT));  //$NON-NLS-1$//$NON-NLS-2$	
+
+	private static final boolean DEBUG = "true".equalsIgnoreCase(Platform.getDebugOption(FormUtil.DEBUG_TEXT)); //$NON-NLS-1$//$NON-NLS-2$	
 
 	// private fields
 	private boolean hasFocus;
-	
 
 	private boolean paragraphsSeparated = true;
 
@@ -136,20 +135,18 @@ public final class FormText extends Canvas {
 	private Hashtable resourceTable = new Hashtable();
 
 	private IHyperlinkSegment entered;
+
 	private boolean mouseFocus = false;
+
 	private boolean mouseDown = false;
+
 	private SelectionData selData;
 
 	private Action openAction;
 
 	private Action copyShortcutAction;
 
-	private boolean loading = true;
-
 	private static final String INTERNAL_MENU = "__internal_menu__";
-
-	// TODO translate this text
-	private String loadingText = "Loading...";
 
 	private class FormTextLayout extends Layout implements ILayoutExtension {
 		public FormTextLayout() {
@@ -168,7 +165,7 @@ public final class FormText extends Canvas {
 		 */
 		public Point computeSize(Composite composite, int wHint, int hHint,
 				boolean changed) {
-			long start=0;
+			long start = 0;
 
 			if (DEBUG)
 				start = System.currentTimeMillis();
@@ -184,7 +181,8 @@ public final class FormText extends Canvas {
 			Point result = new Point(textWidth, textHeight);
 			if (DEBUG) {
 				long stop = System.currentTimeMillis();
-				System.out.println("FormText computeSize: "+(stop-start)+"ms");
+				System.out.println("FormText computeSize: " + (stop - start)
+						+ "ms");
 			}
 			return result;
 		}
@@ -236,26 +234,24 @@ public final class FormText extends Canvas {
 			}
 			gc.dispose();
 			if (linksInTheLastRow)
-				loc.y += 1; 
+				loc.y += 1;
 			return new Point(width, loc.y);
 		}
 
 		protected void layout(Composite composite, boolean flushCache) {
 			long start = 0;
-			
+
 			if (DEBUG) {
 				start = System.currentTimeMillis();
-			}			
+			}
 			selData = null;
-			if (loading) return;						
 			Rectangle carea = composite.getClientArea();
 			GC gc = new GC(composite);
 			gc.setFont(getFont());
 			ensureBoldFontPresent(getFont());
 			gc.setForeground(getForeground());
 			gc.setBackground(getBackground());
-			if (loading) return;
-			
+
 			Locator loc = new Locator();
 			loc.marginWidth = marginWidth;
 			loc.marginHeight = marginHeight;
@@ -274,12 +270,12 @@ public final class FormText extends Canvas {
 				loc.resetCaret();
 				loc.rowHeight = 0;
 				p.layout(gc, carea.width, loc, lineHeight, resourceTable,
-							selectedLink);
+						selectedLink);
 			}
 			gc.dispose();
 			if (DEBUG) {
 				long stop = System.currentTimeMillis();
-				System.out.println("FormText.layout: "+(stop-start)+"ms");
+				System.out.println("FormText.layout: " + (stop - start) + "ms");
 			}
 		}
 	}
@@ -411,9 +407,10 @@ public final class FormText extends Canvas {
 	 * 
 	 * @return <samp>true </samp> if the widget is still loading the text,
 	 *         <samp>false </samp> otherwise.
+	 * @deprecated not used any more - returns <code>false</code>
 	 */
 	public boolean isLoading() {
-		return loading;
+		return false;
 	}
 
 	/**
@@ -421,9 +418,10 @@ public final class FormText extends Canvas {
 	 * is loading.
 	 * 
 	 * @return loading text message
+	 * @deprecated loading text is not used since 3.1
 	 */
 	public String getLoadingText() {
-		return loadingText;
+		return null;
 	}
 
 	/**
@@ -434,9 +432,10 @@ public final class FormText extends Canvas {
 	 * 
 	 * @param loadingText
 	 *            loading text message
+	 * @deprecated use setText(loadingText, false, false);
 	 */
 	public void setLoadingText(String loadingText) {
-		this.loadingText = loadingText;
+		setText(loadingText, false, false);
 	}
 
 	/**
@@ -552,7 +551,6 @@ public final class FormText extends Canvas {
 			model.parseTaggedText(text, expandURLs);
 		else
 			model.parseRegularText(text, expandURLs);
-		loading = false;
 		layout();
 		redraw();
 	}
@@ -572,7 +570,6 @@ public final class FormText extends Canvas {
 		entered = null;
 		disposeResourceTable(false);
 		model.parseInputStream(is, expandURLs);
-		loading = false;
 		layout();
 		redraw();
 	}
@@ -942,7 +939,7 @@ public final class FormText extends Canvas {
 	private void handleMouseClick(MouseEvent e, boolean down) {
 		if (down) {
 			// select a hyperlink
-			mouseFocus=true;
+			mouseFocus = true;
 			IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
 			if (segmentUnder != null) {
 				IHyperlinkSegment oldLink = model.getSelectedLink();
@@ -956,9 +953,10 @@ public final class FormText extends Canvas {
 			}
 		} else {
 			if (e.button == 1) {
-				endSelection(e);				
-				IHyperlinkSegment segmentUnder = model.findHyperlinkAt(e.x, e.y);
-				if (segmentUnder != null && selData==null) {
+				endSelection(e);
+				IHyperlinkSegment segmentUnder = model
+						.findHyperlinkAt(e.x, e.y);
+				if (segmentUnder != null && selData == null) {
 					activateLink(segmentUnder, e.stateMask);
 				}
 			}
@@ -967,17 +965,17 @@ public final class FormText extends Canvas {
 
 	private void handleMouseHover(MouseEvent e) {
 	}
-	
+
 	private void updateTooltipText(ParagraphSegment segment) {
 		String tooltipText = null;
-		if (segment!=null) {
+		if (segment != null) {
 			tooltipText = segment.getTooltipText();
 		}
 		String currentTooltipText = getToolTipText();
 
-		if ((currentTooltipText!=null && tooltipText==null) || 
-				(currentTooltipText==null && tooltipText!=null))
-			setToolTipText(tooltipText);		
+		if ((currentTooltipText != null && tooltipText == null)
+				|| (currentTooltipText == null && tooltipText != null))
+			setToolTipText(tooltipText);
 	}
 
 	private void handleMouseMove(MouseEvent e) {
@@ -986,7 +984,7 @@ public final class FormText extends Canvas {
 			return;
 		}
 		ParagraphSegment segmentUnder = model.findSegmentAt(e.x, e.y);
-		updateTooltipText(segmentUnder);		
+		updateTooltipText(segmentUnder);
 		if (segmentUnder == null) {
 			if (entered != null) {
 				exitLink(entered, e.stateMask);
@@ -1033,11 +1031,11 @@ public final class FormText extends Canvas {
 
 	private void handleFocusChange() {
 		if (hasFocus) {
-			if (model.getSelectedLink()==null)
+			if (model.getSelectedLink() == null)
 				model.traverseLinks(true);
 			enterLink(model.getSelectedLink(), SWT.NULL);
 			paintFocusTransfer(null, model.getSelectedLink());
-			//ensureVisible(model.getSelectedLink());
+			// ensureVisible(model.getSelectedLink());
 		} else {
 			paintFocusTransfer(model.getSelectedLink(), null);
 			model.selectLink(null);
@@ -1076,7 +1074,8 @@ public final class FormText extends Canvas {
 		gc.setBackground(getBackground());
 		gc.setFont(getFont());
 		boolean selected = (link == model.getSelectedLink());
-		((ParagraphSegment)link).paint(gc, hover, resourceTable, selected, selData, null);
+		((ParagraphSegment) link).paint(gc, hover, resourceTable, selected,
+				selData, null);
 		if (selected) {
 			link.paintFocus(gc, getBackground(), getForeground(), false, null);
 			link.paintFocus(gc, getBackground(), getForeground(), true, null);
@@ -1104,15 +1103,15 @@ public final class FormText extends Canvas {
 		}
 		if (!isDisposed() && model.linkExists(link)) {
 			setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
-			//IHyperlinkSegment selectedLink = model.getSelectedLink();
-			//if (selectedLink!=link) {
-				//if (selectedLink != null)
-					//exitLink(selectedLink, SWT.NULL);
-				//model.selectLink(link);
-				//enterLink(link, SWT.NULL);
-				//paintFocusTransfer(selectedLink, link);
-				
-			//}
+			// IHyperlinkSegment selectedLink = model.getSelectedLink();
+			// if (selectedLink!=link) {
+			// if (selectedLink != null)
+			// exitLink(selectedLink, SWT.NULL);
+			// model.selectLink(link);
+			// enterLink(link, SWT.NULL);
+			// paintFocusTransfer(selectedLink, link);
+
+			// }
 		}
 	}
 
@@ -1132,7 +1131,7 @@ public final class FormText extends Canvas {
 		gc.setBackground(getBackground());
 		repaint(gc, e.x, e.y, e.width, e.height);
 	}
-	
+
 	private void repaint(GC gc, int x, int y, int width, int height) {
 		Image textBuffer = new Image(getDisplay(), width, height);
 		textBuffer.setBackground(getBackground());
@@ -1145,15 +1144,17 @@ public final class FormText extends Canvas {
 
 		Paragraph[] paragraphs = model.getParagraphs();
 		IHyperlinkSegment selectedLink = model.getSelectedLink();
-		if (getDisplay().getFocusControl()!=this)
+		if (getDisplay().getFocusControl() != this)
 			selectedLink = null;
 		for (int i = 0; i < paragraphs.length; i++) {
 			Paragraph p = paragraphs[i];
-			p.paint(textGC, repaintRegion, resourceTable, selectedLink, selData);
+			p
+					.paint(textGC, repaintRegion, resourceTable, selectedLink,
+							selData);
 		}
 		gc.drawImage(textBuffer, x, y);
 		textGC.dispose();
-		textBuffer.dispose();	
+		textBuffer.dispose();
 	}
 
 	private int getParagraphSpacing(int lineHeight) {
@@ -1195,7 +1196,7 @@ public final class FormText extends Canvas {
 	 */
 	private void ensureVisible(IHyperlinkSegment segment) {
 		if (mouseFocus) {
-			mouseFocus=false;
+			mouseFocus = false;
 			return;
 		}
 		if (segment == null)
@@ -1243,7 +1244,7 @@ public final class FormText extends Canvas {
 			if (key.startsWith(ImageSegment.SEL_IMAGE_PREFIX)) {
 				Object obj = resourceTable.get(key);
 				if (obj instanceof Image) {
-					Image image = (Image)obj;
+					Image image = (Image) obj;
 					if (!image.isDisposed()) {
 						image.dispose();
 						imagesToRemove.add(key);
@@ -1251,7 +1252,7 @@ public final class FormText extends Canvas {
 				}
 			}
 		}
-		for (int i=0; i<imagesToRemove.size(); i++) {
+		for (int i = 0; i < imagesToRemove.size(); i++) {
 			resourceTable.remove(imagesToRemove.get(i));
 		}
 	}

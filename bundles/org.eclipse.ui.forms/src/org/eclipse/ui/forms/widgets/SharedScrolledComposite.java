@@ -47,7 +47,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 
 	private boolean reflowPending = false;
 
-	private boolean delayedReflow = false;
+	private boolean delayedReflow = true;
 
 	/**
 	 * Creates the new instance.
@@ -235,13 +235,20 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 	}
 
 	/**
-	 * @return Returns the delayedReflow.
+	 * Tests if the control uses delayed reflow.
+	 * @return <code>true</code> if reflow requests will
+	 * be delayed, <code>false</code> otherwise. 
 	 */
 	public boolean isDelayedReflow() {
 		return delayedReflow;
 	}
 
 	/**
+	 * Sets the delayed reflow feature. When used,
+	 * it will schedule a reflow on resize requests
+	 * and reject subsequent reflows until the
+	 * scheduled one is performed. This improves
+	 * performance by 
 	 * @param delayedReflow
 	 *            The delayedReflow to set.
 	 */
