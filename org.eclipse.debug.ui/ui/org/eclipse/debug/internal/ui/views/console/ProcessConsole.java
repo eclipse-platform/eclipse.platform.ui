@@ -90,6 +90,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 
     private boolean fAllocateConsole = true;
 
+    private boolean fStreamsClosed = false;
+
     /**
      * Proxy to a console document
      */
@@ -318,6 +320,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
     }
 
     private void closeStreams() {
+        if (fStreamsClosed) {
+            return;
+        }
         synchronized (fStreamListeners) {
             for (Iterator i = fStreamListeners.iterator(); i.hasNext();) {
                 StreamListener listener = (StreamListener) i.next();
@@ -330,6 +335,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             } catch (IOException e) {
             }
         }
+        fStreamsClosed  = true;
     }
 
     private void disposeStreams() {
