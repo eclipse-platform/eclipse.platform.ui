@@ -35,6 +35,9 @@ public class JarVerificationDialog extends TitleAreaDialog {
 		setShellStyle(SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL);		
 		_VerificationResult = verificationResult;
 		_DialogPage = dialogPage;
+		if (dialogPage instanceof JarVerificationPage){
+			((JarVerificationPage)_DialogPage).setTitleAreaDialog(this);
+		}
 	}
 
 	/**
@@ -85,6 +88,7 @@ public class JarVerificationDialog extends TitleAreaDialog {
 		Composite compositeParent = (Composite)super.createDialogArea(parent);
 		setTitleImage(this.getImage());
 		setTitle("Feature Verification");
+		setMessage("Message from Dialog");
 		
 		_DialogPage.createControl(compositeParent);
 		pageContainer=(Composite)_DialogPage.getControl();

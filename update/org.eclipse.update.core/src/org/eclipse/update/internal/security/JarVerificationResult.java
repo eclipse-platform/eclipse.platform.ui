@@ -186,18 +186,14 @@ public class JarVerificationResult implements IVerificationResult {
 		certIssuer = (X509Certificate) trustedCertificate.getIssuer();
 
 		StringBuffer strb = new StringBuffer();
-		strb.append(Policy.bind("JarVerificationResult.SubjectCA")); //$NON-NLS-1$
-		strb.append("\r\n"); //$NON-NLS-1$
-		strb.append(Policy.bind("JarVerificationResult.CAIssuer", issuerString(certIssuer.getSubjectDN()))); //$NON-NLS-1$
+		strb.append(issuerString(certIssuer.getSubjectDN()));
 		strb.append("\r\n"); //$NON-NLS-1$
 		strb.append(Policy.bind("JarVerificationResult.ValidBetween", dateString(certIssuer.getNotBefore()), dateString(certIssuer.getNotAfter()))); //$NON-NLS-1$
 		strb.append(checkValidity(certIssuer));
 		signerInfo = strb.toString();
 		if (certIssuer != null && !certIssuer.equals(certRoot)) {
-			strb = new StringBuffer();			
-			strb.append(Policy.bind("JarVerificationResult.RootCA")); //$NON-NLS-1$
-			strb.append("\r\n"); //$NON-NLS-1$
-			strb.append(Policy.bind("JarVerificationResult.CAIssuer", issuerString(certIssuer.getIssuerDN()))); //$NON-NLS-1$
+			strb = new StringBuffer();	
+			strb.append(issuerString(certIssuer.getIssuerDN()));
 			strb.append("\r\n"); //$NON-NLS-1$
 			strb.append(Policy.bind("JarVerificationResult.ValidBetween", dateString(certRoot.getNotBefore()), dateString(certRoot.getNotAfter()))); //$NON-NLS-1$ 
 			strb.append(checkValidity(certRoot));
@@ -227,15 +223,15 @@ public class JarVerificationResult implements IVerificationResult {
 	private String issuerString(Principal principal) {
 		try {
 			if (principal instanceof X500Name) {
-				String issuerString = "";
+				StringBuffer buf = new StringBuffer();
 				X500Name name = (X500Name) principal;
-				issuerString += (name.getDNQualifier() != null) ? name.getDNQualifier() + ", " : "";
-				issuerString += name.getCommonName();
-				issuerString += (name.getOrganizationalUnit() != null) ? ", " + name.getOrganizationalUnit() : "";
-				issuerString += (name.getOrganization() != null) ? ", " + name.getOrganization() : "";
-				issuerString += (name.getLocality() != null) ? ", " + name.getLocality() : "";
-				issuerString += (name.getCountry() != null) ? ", " + name.getCountry() : "";
-				return issuerString;
+				buf.append((name.getDNQualifier() != null) ? name.getDNQualifier() + ", " : "");
+				buf.append(name.getCommonName());
+				buf.append((name.getOrganizationalUnit() != null) ? ", " + name.getOrganizationalUnit() : "");
+				buf.append((name.getOrganization() != null) ? ", " + name.getOrganization() : "");
+				buf.append((name.getLocality() != null) ? ", " + name.getLocality() : "");
+				buf.append((name.getCountry() != null) ? ", " + name.getCountry() : "");
+				return new String(buf);
 			}
 		} catch (Exception e) {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS){

@@ -3,6 +3,7 @@ package org.eclipse.update.internal.ui.security;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -10,7 +11,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.IVerificationResult;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
-import org.eclipse.update.internal.ui.wizards.BannerPage;
 
 /**
  * 
@@ -22,14 +22,12 @@ public class JarVerificationPage extends BannerPage {
 	private String _strFeatureName = null;
 	private String _strId = null;
 	private String _strProviderName = null;
+	private TitleAreaDialog _Dialog;
 	private boolean okToInstall = false;
-	private String componentVerified;	
+	private String componentVerified;
 
-	
-	/**
-	 * Constructor for JarVerificationDialog.
-	 * @param parentShell
-	 * @param newWizard
+	/*
+	 * Constructor for JarVerificationPage.
 	 */
 	public JarVerificationPage(IVerificationResult verificationResult) {
 		super(UpdateUIPlugin.getResourceString("JarVerificationDialog.Verification"));
@@ -51,8 +49,9 @@ public class JarVerificationPage extends BannerPage {
 		// Composite: Client
 		//------------------
 		Composite compositeClient = new Composite(compositeParent, SWT.NULL);
-		GridLayout grid = new GridLayout();
-		compositeClient.setLayout(grid);
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = layout.marginWidth = 0;
+		compositeClient.setLayout(layout);
 		compositeClient.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Text Information
@@ -61,12 +60,7 @@ public class JarVerificationPage extends BannerPage {
 
 		// Certificate Area
 		//------------------
-		if (_VerificationResult.getVerificationCode()
-			== IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED
-			|| _VerificationResult.getVerificationCode()
-				== IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED) {
-			createCertificateArea(compositeClient);
-		}
+		createCertificateArea(compositeClient);
 
 		// File and Feature Information
 		//-----------------------------		
@@ -74,6 +68,16 @@ public class JarVerificationPage extends BannerPage {
 
 		// Choice Area
 		//------------		
+		createChoiceArea(compositeClient);
+
+		return compositeClient;
+
+	}
+
+	/*
+	 * Continue install or cancel install
+	 */
+	private void createChoiceArea(Composite compositeClient) {
 		if (_VerificationResult.getVerificationCode()
 			!= IVerificationResult.TYPE_ENTRY_CORRUPTED) {
 
@@ -96,31 +100,29 @@ public class JarVerificationPage extends BannerPage {
 			}
 			//$NON-NLS-1$
 		}
-
-		return compositeClient;
-
 	}
 
 	/*
 	 * Creates the Information text
 	 */
 	private void createTextArea(Composite compositeClient) {
-		//
+
 		// Text: Information
 		//------------------
 		Text textInformation =
 			new Text(compositeClient, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
 		textInformation.setLayoutData(
 			new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
+
 		StringBuffer strb = new StringBuffer();
 		switch (_VerificationResult.getVerificationCode()) {
+
 			case IVerificationResult.TYPE_ENTRY_NOT_SIGNED :
-				strb.append(
+				String msg =
 					UpdateUIPlugin.getFormattedMessage(
 						"JarVerificationDialog.AboutToInstall",
-						componentVerified));
-				//$NON-NLS-1$
-				strb.append("\r\n\r\n"); //$NON-NLS-1$
+						componentVerified);
+				setMessage(msg, WARNING);
 				strb.append(
 					UpdateUIPlugin.getFormattedMessage(
 						"JarVerificationDialog.NotDigitallySigned",
@@ -144,26 +146,28 @@ public class JarVerificationPage extends BannerPage {
 				}
 				textInformation.setText(strb.toString());
 				break;
+
 			case IVerificationResult.TYPE_ENTRY_CORRUPTED :
-				strb.append(
+				msg =
 					UpdateUIPlugin.getFormattedMessage(
 						"JarVerificationDialog.CorruptedContent",
-						componentVerified));
+						componentVerified);
+				setMessage(msg, ERROR);
 				//$NON-NLS-1$
-				strb.append("\r\n\r\n"); //$NON-NLS-1$
 				strb.append(
 					UpdateUIPlugin.getResourceString(
 						"JarVerificationDialog.ComponentNotInstalled"));
 				//$NON-NLS-1$
 				textInformation.setText(strb.toString());
 				break;
+
 			case IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED :
-				strb.append(
+				msg =
 					UpdateUIPlugin.getFormattedMessage(
 						"JarVerificationDialog.SignedComponent",
-						componentVerified));
+						componentVerified);
 				//$NON-NLS-1$
-				strb.append("\r\n\r\n"); //$NON-NLS-1$
+				setMessage(msg, WARNING);
 				strb.append(
 					UpdateUIPlugin.getFormattedMessage(
 						"JarVerificationDialog.UnknownCertificate",
@@ -187,13 +191,14 @@ public class JarVerificationPage extends BannerPage {
 				}
 				textInformation.setText(strb.toString());
 				break;
+
 			case IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED :
-				strb.append(
+				msg =
 					UpdateUIPlugin.getFormattedMessage(
 						"JarVerificationDialog.SignedComponent",
-						componentVerified));
+						componentVerified);
 				//$NON-NLS-1$
-				strb.append("\r\n\r\n"); //$NON-NLS-1$
+				setMessage(msg, WARNING);
 				strb.append(
 					UpdateUIPlugin.getFormattedMessage(
 						"JarVerificationDialog.KnownCertificate",
@@ -206,14 +211,41 @@ public class JarVerificationPage extends BannerPage {
 						componentVerified));
 				//$NON-NLS-1$
 				strb.append("\r\n"); //$NON-NLS-1$
-				strb.append(
-					UpdateUIPlugin.getFormattedMessage(
-						"JarVerificationDialog.Caution",
-						_strProviderName));
-				//$NON-NLS-1$
+
 				textInformation.setText(strb.toString());
+
+				createCautionArea(compositeClient);
 				break;
 		}
+	}
+	
+	/*
+	 * Caution Label and text
+	 */
+	private void createCautionArea(Composite compositeClient) {
+		// Composite: Caution
+		//------------------------------
+		Composite compositeCaution = new Composite(compositeClient, SWT.NULL);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginWidth = layout.marginHeight = 0;
+		compositeCaution.setLayout(layout);
+		compositeCaution.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
+		// Icon
+		//-----
+		Label label = new Label(compositeCaution,SWT.LEFT);
+		label.setImage(JFaceResources.getImage(_Dialog.DLG_IMG_MESSAGE_WARNING));
+		
+		// Text
+		//-----
+		Text textInformationCaution =
+			new Text(compositeCaution, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
+		textInformationCaution.setText(
+			UpdateUIPlugin.getFormattedMessage(
+				"JarVerificationDialog.Caution",
+				_strProviderName));
+		//$NON-NLS-1$
 	}
 
 	/*
@@ -226,21 +258,22 @@ public class JarVerificationPage extends BannerPage {
 		Composite compositeInformation = new Composite(compositeClient, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.verticalSpacing = 0;
+		layout.marginWidth = layout.marginHeight = 0;
 		compositeInformation.setLayout(layout);
 		compositeInformation.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// Feature name
 		//---------------
 		Label label = null;
+		Text text = null;
 		if (_strFeatureName != null && _strFeatureName.length() > 0) {
 			label = new Label(compositeInformation, SWT.NULL);
 			label.setText(
 				UpdateUIPlugin.getResourceString("JarVerificationDialog.FeatureName"));
 			//$NON-NLS-1$
-			label = new Label(compositeInformation, SWT.NULL);
-			label.setFont(JFaceResources.getBannerFont());
-			label.setText(_strFeatureName);
+			text = new Text(compositeInformation, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
+			text.setFont(JFaceResources.getBannerFont());
+			text.setText(_strFeatureName);
 		}
 		// Feature identifier
 		//---------------------
@@ -249,9 +282,9 @@ public class JarVerificationPage extends BannerPage {
 			label.setText(
 				UpdateUIPlugin.getResourceString("JarVerificationDialog.FeatureIdentifier"));
 			//$NON-NLS-1$
-			label = new Label(compositeInformation, SWT.NULL);
-			label.setFont(JFaceResources.getBannerFont());				
-			label.setText(_strId);
+			text = new Text(compositeInformation, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
+			text.setFont(JFaceResources.getBannerFont());
+			text.setText(_strId);
 		}
 		// Provider name
 		//--------------
@@ -260,9 +293,9 @@ public class JarVerificationPage extends BannerPage {
 			label.setText(
 				UpdateUIPlugin.getResourceString("JarVerificationDialog.Provider"));
 			//$NON-NLS-1$
-			label = new Label(compositeInformation, SWT.NULL);
-			label.setFont(JFaceResources.getBannerFont());							
-			label.setText(_strProviderName);
+			text = new Text(compositeInformation, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
+			text.setFont(JFaceResources.getBannerFont());
+			text.setText(_strProviderName);
 		}
 		// Label: File name
 		//-----------------
@@ -270,9 +303,9 @@ public class JarVerificationPage extends BannerPage {
 		label.setText(
 			UpdateUIPlugin.getResourceString("JarVerificationDialog.FileName"));
 		//$NON-NLS-1$
-		label = new Label(compositeInformation, SWT.NULL);
-		label.setFont(JFaceResources.getBannerFont());						
-		label.setText(_fileName);
+		text = new Text(compositeInformation, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
+		text.setFont(JFaceResources.getBannerFont());
+		text.setText(_fileName);
 	}
 
 	/*
@@ -280,25 +313,64 @@ public class JarVerificationPage extends BannerPage {
 	 */
 	private void createCertificateArea(Composite compositeClient) {
 
-		// Group box
-		//----------
-		Group group = new Group(compositeClient, SWT.NONE);
-		group.setLayout(new GridLayout());
-		group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		// Certificate Text
-		//-------------------
-		Text textInformation = new Text(group, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
-		textInformation.setLayoutData(new GridData(GridData.FILL_BOTH));
-		StringBuffer strb = new StringBuffer();
-		if (_VerificationResult.getSignerInfo() != null) {
-			strb.append(_VerificationResult.getSignerInfo());
+		if (_VerificationResult.getVerificationCode()
+			== IVerificationResult.TYPE_ENTRY_SIGNED_UNRECOGNIZED
+			|| _VerificationResult.getVerificationCode()
+				== IVerificationResult.TYPE_ENTRY_SIGNED_RECOGNIZED) {
+			// Group box
+			//----------
+			Group group = new Group(compositeClient, SWT.SHADOW_ETCHED_IN);
+			GridLayout layout = new GridLayout();
+			layout.numColumns = 2;
+			layout.marginWidth = layout.marginHeight = 0;
+			group.setLayout(layout);
+			group.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+			group.setText("JarVerificationResult.CertificateInfo");
+
+			// Signer
+			//-------------------
+			Label label = null;
+			Text text = null;
+			//data = new GridData(GridData.FILL_HORIZONTAL);
+			//data.horizontalIndent = 0;
+			//textInformation.setLayoutData(data);			
+			if (_VerificationResult.getSignerInfo() != null) {
+				label = new Label(group, SWT.NULL);
+				label.setText(UpdateUIPlugin.getResourceString("JarVerificationDialog.SubjectCA"));
+				label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+				//$NON-NLS-1$
+				text = new Text(group, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
+				text.setText(_VerificationResult.getSignerInfo());
+			}
+			
+			// Authenticator
+			//---------------------
+			if (_VerificationResult.getVerifierInfo() != null) {
+				label = new Label(group, SWT.NULL);
+				label.setText(UpdateUIPlugin.getResourceString("JarVerificationDialog.RootCA"));
+				label.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));				
+				//$NON-NLS-1$
+				text = new Text(group, SWT.WRAP | SWT.READ_ONLY | SWT.MULTI);
+				text.setText(_VerificationResult.getVerifierInfo());
+			}
 		}
-		if (_VerificationResult.getVerifierInfo() != null) {
-			strb.append("\r\n\r\n"); //$NON-NLS-1$
-			strb.append(_VerificationResult.getVerifierInfo());
-		}
-		textInformation.setText(strb.toString());
 	}
 
+	/*
+	 * Sets the Dialog
+	 */
+	public void setTitleAreaDialog(TitleAreaDialog dialog) {
+		_Dialog = dialog;
+	};
+
+	/*
+	 * 
+	 */
+	public void setMessage(String newMessage, int newType) {
+		super.setMessage(newMessage, newType);
+		if (_Dialog != null) {
+			_Dialog.setMessage(newMessage, newType);
+		}
+	}
 
 }
