@@ -21,6 +21,13 @@ import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ui.synchronize.SynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 
+/**
+ * A model element corresponding to a "commit set". It displays a CVS
+ * log entry using a currently fixed format. A commit doesn't have an
+ * associated resource.
+ * 
+ * @since 3.0
+ */
 public class ChangeLogDiffNode extends SynchronizeModelElement {
 
 	private ILogEntry logEntry;
@@ -34,10 +41,13 @@ public class ChangeLogDiffNode extends SynchronizeModelElement {
 		return logEntry;
 	}
 	
-	public boolean equals(Object other) {
-		if(other == this) return true;
-		if(! (other instanceof ChangeLogDiffNode)) return false;
-		return ((ChangeLogDiffNode)other).getComment().equals(getComment());
+	public boolean equals(Object obj) {
+		if(obj == this) return true;
+		if(! (obj instanceof ChangeLogDiffNode)) return false;
+		ChangeLogDiffNode other = (ChangeLogDiffNode)obj;
+		ILogEntry otherLog = other.getComment();
+		ILogEntry thisLog = getComment();
+		return thisLog.getComment().equals(otherLog.getComment()) && thisLog.getAuthor().equals(otherLog.getAuthor());
 	}
 
 	/* (non-Javadoc)

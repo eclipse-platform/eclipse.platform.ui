@@ -51,9 +51,6 @@ import org.eclipse.ui.progress.UIJob;
  * @since 3.0
  */
 public class ChangeLogModelProvider extends SynchronizeModelProvider {
-	// Cache for the top level commit sets
-	private Map commentRoots = new HashMap();
-	
 	// Log operation that is used to fetch revision histories from the server. It also
 	// provides caching so we keep it around.
 	private RemoteLogOperation logOperation;
@@ -69,6 +66,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	// the history for the remote revision in the sync info is used.
 	private CVSTag tag1;
 	private CVSTag tag2;
+	private Map multipleResourceMap;
 	
 	// Constants for persisting sorting options
 	private final static String SORT_ORDER_GROUP = "changelog_sort"; //$NON-NLS-1$
@@ -135,10 +133,6 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	/* *****************************************************************************
 	 * Action group for this layout. It is added and removed for this layout only.
 	 */
-	
-	/**
-	 * Actions for the compare particpant's toolbar
-	 */
 	public class ChangeLogActionGroup extends SynchronizePageActionGroup {
 		public void initialize(ISynchronizePageConfiguration configuration) {
 			super.initialize(configuration);
@@ -163,32 +157,6 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			sortByResource.add( new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.8"), ChangeLogModelSorter.PATH, ToggleSortOrderAction.RESOURCE_NAME, sorter.getResourceCriteria())); //$NON-NLS-1$
 			sortByResource.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.7"), ChangeLogModelSorter.NAME, ToggleSortOrderAction.RESOURCE_NAME, sorter.getResourceCriteria())); //$NON-NLS-1$
 			sortByResource.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.9"), ChangeLogModelSorter.PARENT_NAME, ToggleSortOrderAction.RESOURCE_NAME, sorter.getResourceCriteria())); //$NON-NLS-1$
-		}
-	}
-	
-	/* *****************************************************************************
-	 * Commit set key in for the model elements.
-	 */
-	public static class DateComment {
-		Date date;
-		String comment;
-		private String user;
-		
-		DateComment(Date date, String comment, String user) {
-			this.date = date;
-			this.comment = comment;
-			this.user = user;	
-		}
-
-		public boolean equals(Object obj) {
-			if(obj == this) return true;
-			if(! (obj instanceof DateComment)) return false;
-			DateComment other = (DateComment)obj;
-			return comment.equals(other.comment) && user.equals(other.user);
-		}
-		
-		public int hashCode() {
-			return comment.hashCode() + user.hashCode();
 		}
 	}
 	
@@ -310,8 +278,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 				}
 			} catch (InterruptedException e) {
 			}
-			// Clear any cached state
-			commentRoots.clear();
+
 			// Start building the model from scratch
 			startUpdateJob(getSyncInfoSet());
 		}
@@ -385,39 +352,62 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	private void addSyncInfoToCommentNode(SyncInfo info, RemoteLogOperation logs) {
 		ICVSRemoteResource remoteResource = getRemoteResource((CVSSyncInfo)info);
 		if(tag1 != null && tag2 != null) {
-			ILogEntry[] logEntries = logs.getLogEntries(remoteResource);
-			if(logEntries == null || logEntries.length == 0) {
-				// If for some reason we don't have a log entry, just add the element
-				// without a commit set.
-				addNewElementFor(info, null, null);
-			}
+			addMultipleRevisions(info, logs, remoteResource);
+		} else {
+			addSingleRevision(info, logs, remoteResource);
+		}
+	}
+	
+	/**
+	 * Add multiple log entries to the model.
+	 * 
+	 * @param info
+	 * @param logs
+	 * @param remoteResource
+	 */
+	private void addMultipleRevisions(SyncInfo info, RemoteLogOperation logs, ICVSRemoteResource remoteResource) {
+		ILogEntry[] logEntries = logs.getLogEntries(remoteResource);
+		if(logEntries == null || logEntries.length == 0) {
+			// If for some reason we don't have a log entry, try the latest
+			// remote.
+			addNewElementFor(info, null, null);
+		} else {
 			for (int i = 0; i < logEntries.length; i++) {
 				ILogEntry entry = logEntries[i];
 				addNewElementFor(info, remoteResource, entry);
 			}
-		} else {
-			ILogEntry logEntry = logs.getLogEntry(remoteResource);
-			// For incoming deletions grab the comment for the latest on the same branch
-			// which is now in the attic.
-			try {
-				String remoteRevision = ((ICVSRemoteFile) remoteResource).getRevision();
-				if (isDeletedRemotely(info)) {
-					ILogEntry[] logEntries = logs.getLogEntries(remoteResource);
-					for (int i = 0; i < logEntries.length; i++) {
-						ILogEntry entry = logEntries[i];
-						String revision = entry.getRevision();
-						if (entry.isDeletion() && ResourceSyncInfo.isLaterRevision(revision, remoteRevision)) {
-							logEntry = entry;
-						}
-					}
-				}
-			} catch (TeamException e) {
-				// continue and skip deletion checks
-			}
-			addNewElementFor(info, remoteResource, logEntry);
 		}
 	}
-	
+
+	/**
+	 * Add a single log entry to the model.
+	 * 
+	 * @param info
+	 * @param logs
+	 * @param remoteResource
+	 */
+	private void addSingleRevision(SyncInfo info, RemoteLogOperation logs, ICVSRemoteResource remoteResource) {
+		ILogEntry logEntry = logs.getLogEntry(remoteResource);
+		// For incoming deletions grab the comment for the latest on the same branch
+		// which is now in the attic.
+		try {
+			String remoteRevision = ((ICVSRemoteFile) remoteResource).getRevision();
+			if (isDeletedRemotely(info)) {
+				ILogEntry[] logEntries = logs.getLogEntries(remoteResource);
+				for (int i = 0; i < logEntries.length; i++) {
+					ILogEntry entry = logEntries[i];
+					String revision = entry.getRevision();
+					if (entry.isDeletion() && ResourceSyncInfo.isLaterRevision(revision, remoteRevision)) {
+						logEntry = entry;
+					}
+				}
+			}
+		} catch (TeamException e) {
+			// continue and skip deletion checks
+		}
+		addNewElementFor(info, remoteResource, logEntry);
+	}
+
 	private boolean isDeletedRemotely(SyncInfo info) {
 		int kind = info.getKind();
 		if(kind == (SyncInfo.INCOMING | SyncInfo.DELETION)) return true;
@@ -429,11 +419,9 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		ISynchronizeModelElement element;	
 		// If the element has a comment then group with common comment
 		if(remoteResource != null && logEntry != null && isInterestingChange(info)) {
-			DateComment dateComment = new DateComment(logEntry.getDate(), logEntry.getComment(), logEntry.getAuthor());
-			ChangeLogDiffNode changeRoot = (ChangeLogDiffNode) commentRoots.get(dateComment);
+			ChangeLogDiffNode changeRoot = (ChangeLogDiffNode) getChangeLogDiffNodeFor(logEntry);
 			if (changeRoot == null) {
 				changeRoot = new ChangeLogDiffNode(getModelRoot(), logEntry);
-				commentRoots.put(dateComment, changeRoot);
 				addToViewer(changeRoot);
 			}
 			if(info instanceof CVSSyncInfo && ! logEntry.isDeletion()) {
@@ -451,6 +439,25 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			element = new FullPathSyncInfoElement(getModelRoot(), info);
 		}	
 		addToViewer(element);
+	}
+	
+	/*
+	 * Find an existing comment set
+	 * TODO: we could do better than a linear lookup?
+	 */
+	private ChangeLogDiffNode getChangeLogDiffNodeFor(ILogEntry entry) {
+		IDiffElement[] elements = getModelRoot().getChildren();
+		for (int i = 0; i < elements.length; i++) {
+			IDiffElement element = elements[i];
+			if(element instanceof ChangeLogDiffNode) {
+				ChangeLogDiffNode other = (ChangeLogDiffNode)element;
+				ILogEntry thisLog = other.getComment();
+				if(thisLog.getComment().equals(entry.getComment()) && thisLog.getAuthor().equals(entry.getAuthor())) {
+					return other;
+				}
+			}
+		}
+		return null;
 	}
 	
 	/*
@@ -482,15 +489,14 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			}
 		}
 		ICVSRemoteResource[] remoteResources = (ICVSRemoteResource[]) remotes.toArray(new ICVSRemoteResource[remotes.size()]);
+		if(logOperation == null) {
+			logOperation = new RemoteLogOperation(null, remoteResources, tag1, tag2);
+		}
 		if(! remotes.isEmpty()) {
-			if(logOperation == null) {
-				logOperation = new RemoteLogOperation(null, remoteResources, tag1, tag2);
-			}
 			logOperation.setRemoteResources(remoteResources);
 			logOperation.execute(monitor);
-			return logOperation;
 		}
-		return null;
+		return logOperation;
 	}
 	
 	private ICVSRemoteResource getRemoteResource(CVSSyncInfo info) {
@@ -627,7 +633,40 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 				}
 			}
 		}
+		// Clear the multiple element cache
+		if(multipleResourceMap != null) {
+			List elements = (List)multipleResourceMap.get(resource);
+			if(elements != null) {
+				for (Iterator it = elements.iterator(); it.hasNext();) {
+					ISynchronizeModelElement element = (ISynchronizeModelElement) it.next();
+					super.removeFromViewer(element);			
+				}
+				multipleResourceMap.remove(resource);
+			}
+		}	
 		// Remove the object now
-		super.removeFromViewer(resource);
+		super.removeFromViewer(resource);		
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.SynchronizeModelProvider#addToViewer(org.eclipse.team.ui.synchronize.ISynchronizeModelElement)
+	 */
+	protected void addToViewer(ISynchronizeModelElement node) {
+		// Save model elements in our own mapper so that we
+		// can support multiple elements for the same resource.
+		IResource r = node.getResource();
+		if(r != null) {
+			if(multipleResourceMap == null) {
+				multipleResourceMap = new HashMap(5);
+			}
+			List elements = (List)multipleResourceMap.get(r);
+			if(elements == null) {
+				elements = new ArrayList(2);
+				multipleResourceMap.put(r, elements);
+			}
+			elements.add(node);
+		}
+		// The super class will do all the interesting work.
+		super.addToViewer(node);
 	}
 }

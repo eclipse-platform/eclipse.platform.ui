@@ -374,18 +374,28 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	}
 
 	/**
-	 * Remove any traces of the resource and any of it's descendants in the
+	 * Remove any traces of the model element and any of it's descendants in the
 	 * hiearchy defined by the content provider from the content provider and
 	 * the viewer it is associated with.
-	 * @param resource
+	 * @param node the model element to remove
 	 */
-	protected void removeFromViewer(IResource resource) {
-		ISynchronizeModelElement node = getModelObject(resource);
-		if (node == null) return;
+	protected void removeFromViewer(ISynchronizeModelElement node) {
 		calculateProperties(node, true);
 		clearModelObjects(node);
 		if (canUpdateViewer()) {
 			doRemove(node);
+		}
+	}
+	
+	/**
+	 * Helper method to remove a resource from the viewer. If the resource
+	 * is not mapped to a model element, this is a no-op.
+	 * @param resource the resource to remove
+	 */
+	protected void removeFromViewer(IResource resource) {
+		ISynchronizeModelElement element = getModelObject(resource);
+		if(element != null) {
+			removeFromViewer(element);
 		}
 	}
 
