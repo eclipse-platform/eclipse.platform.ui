@@ -166,9 +166,11 @@ public class TextConsoleViewer extends TextViewer implements LineStyleListener, 
                 }
                 if (hyperlink != null) {
                     IRegion region = console.getRegion(hyperlink);
-                    Color color = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
-                    StyleRange linkRange = new StyleRange(region.getOffset(), region.getLength(), color, null);
-                    override(ranges, linkRange);
+                    if (region != null) {
+                        Color color = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
+                        StyleRange linkRange = new StyleRange(region.getOffset(), region.getLength(), color, null);
+                        override(ranges, linkRange);
+                    }
                 }
             } catch (BadPositionCategoryException e) {
             }

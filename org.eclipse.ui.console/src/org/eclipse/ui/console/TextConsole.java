@@ -449,7 +449,7 @@ public abstract class TextConsole extends AbstractConsole {
      * Returns the region assocaited with the given hyperlink.
      * 
      * @param link hyperlink
-     * @return the region associated witht the hyperlink
+     * @return the region associated witht the hyperlink or null if the hyperlink is not found.
      */
     public IRegion getRegion(IHyperlink link) {
 		try {
