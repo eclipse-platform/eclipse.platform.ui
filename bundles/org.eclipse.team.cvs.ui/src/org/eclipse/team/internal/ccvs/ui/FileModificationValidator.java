@@ -39,7 +39,6 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 public class FileModificationValidator implements ICVSFileModificationValidator {
 
 	public static final IStatus OK = new Status(IStatus.OK, CVSUIPlugin.ID, 0, Policy.bind("ok"), null); //$NON-NLS-1$
-	private static final int HIGHJACK = 1;
 	
 	public FileModificationValidator() {
 	}
@@ -123,7 +122,7 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 		
 	private IStatus edit(final IFile[] files, Shell shell) {
 		try {
-			if (!promptToEditFiles(files, shell)) {
+			if (shell != null && !promptToEditFiles(files, shell)) {
 				return OK;
 			}
 		} catch (InvocationTargetException e) {
@@ -204,7 +203,6 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 	}	
 
 	private void run(Shell shell, final IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException {
-		final InvocationTargetException[] exception = new InvocationTargetException[] { null };
 		CVSUIPlugin.runWithProgress(shell, false, runnable, CVSUIPlugin.PERFORM_SYNC_EXEC);
 	}
 	
