@@ -189,8 +189,7 @@ public void dragOperationChanged(DropTargetEvent event) {
 public void dragOver(DropTargetEvent event) {
 	try {
 		//use newly revealed item as target if scrolling occurs
-		Item item = scrollIfNeeded(event.x, event.y);
-		Object target = item == null ? determineTarget(event) : item.getData();
+		Object target = determineTarget(event);
 
 		//set the location feedback
 		int oldLocation = currentLocation;
@@ -345,34 +344,6 @@ protected void handleException(Throwable exception, DropTargetEvent event) {
  *   <code>false</code> otherwise
  */
 public abstract boolean performDrop(Object data);
-/**
- * Scrolls the viewer's control if the given coordinates are within epsilon
- * of the control's borders.
- *
- * @param x the x coordinate
- * @param y the y coordinate
- * @return The newly revealed widget if scrolling actually occurred, and 
- *   <code>null</code> otherwise
- */
-protected Item scrollIfNeeded(int x, int y) {
-	int epsilon = 15;
-	Control control = viewer.getControl();
-	Point point = control.toControl(new Point(x, y));
-	Rectangle bounds = control.getBounds();
-
-	//modify Epsilon if larger than third of screen size
-	if (bounds.height < epsilon * 3) {
-		epsilon = bounds.height / 3;
-	}
-	if (point.y < epsilon) {
-		return viewer.scrollUp(x, y);
-	} else {
-		if ((bounds.height - bounds.y - point.y) < epsilon) {
-			return viewer.scrollDown(x, y);
-		}
-	}
-	return null;
-}
 /* (non-Javadoc)
  * Method declared on DropTargetAdapter.
  * The mouse has moved over the drop target.  If the
@@ -381,16 +352,17 @@ protected Item scrollIfNeeded(int x, int y) {
  */
 private void setFeedback(DropTargetEvent event, int location) {
 	if (!feedbackEnabled) return;
+	event.feedback |= DND.FEEDBACK_EXPAND | DND.FEEDBACK_SCROLL;
 	switch (location) {
 		case LOCATION_BEFORE:
-			event.feedback = DND.FEEDBACK_INSERT_BEFORE;
+			event.feedback |= DND.FEEDBACK_INSERT_BEFORE;
 			break;
 		case LOCATION_AFTER:
-			event.feedback = DND.FEEDBACK_INSERT_AFTER;
+			event.feedback |= DND.FEEDBACK_INSERT_AFTER;
 			break;
 		case LOCATION_ON:
 		default:
-			event.feedback = DND.FEEDBACK_SELECT;
+			event.feedback |= DND.FEEDBACK_SELECT;
 			break;
 	}
 }
