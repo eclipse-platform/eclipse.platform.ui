@@ -146,6 +146,8 @@ public class GroupBreakpointsByDialog extends Dialog {
 
 		Composite selectedComposite= new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
+		layout.marginHeight=0;
+		layout.marginWidth=0;
 		layout.numColumns= 2;
 		selectedComposite.setLayout(layout);
 		selectedComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -195,6 +197,8 @@ public class GroupBreakpointsByDialog extends Dialog {
 		
 		Composite availableComposite= new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
+		layout.marginHeight=0;
+		layout.marginWidth=0;
 		layout.numColumns= 2;
 		availableComposite.setLayout(layout);
 		availableComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
