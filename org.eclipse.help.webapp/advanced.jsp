@@ -133,7 +133,6 @@ function doAdvancedSearch()
 function fixHeights()
 {
 	var booksContainer = document.getElementById("booksContainer");
-	var oldH = booksContainer.offsetHeight;
 	var h = opener.h
 			- document.getElementById("searchTable").offsetHeight 
 			- document.getElementById("buttonsTable").offsetHeight

@@ -86,7 +86,7 @@ var isIE = navigator.userAgent.indexOf('MSIE') != -1;
 
 var extraStyle = "";
 if (isIE)
- 	 extraStyle = "<style type='text/css'>INPUT{height:20px;} #go{padding-left:4px;padding-right:4px;} </style>";
+ 	 extraStyle = "<style type='text/css'>#go{padding-left:4px;padding-right:4px;} </style>";
 document.write(extraStyle);
 	
 var advancedDialog;
@@ -119,11 +119,18 @@ function doSearch()
 		parent.doSearch("searchWord="+escape(searchWord)+"&maxHits="+maxHits);
 }
 
+function fixHeights()
+{
+	if (!isIE) return;
+	
+	var h = document.getElementById("searchWord").offsetHeight;
+	document.getElementById("go").style.height = h;
+}
 </script>
 
 </head>
 
-<body  onunload="closeAdvanced()">
+<body onload="fixHeights()"  onunload="closeAdvanced()">
 
 	<table align="left" cellspacing="0" cellpadding="0" border="0">
 		<tr>
@@ -139,7 +146,7 @@ function doSearch()
 					<input type="text" id="searchWord" name="searchWord" value="<%= UrlUtil.getRequestParameter(request, "searchWord")!=null?UrlUtil.getRequestParameter(request, "searchWord"):""%>" size="20" maxlength="256" alt='<%=WebappResources.getString("SearchExpression", request)%>'>
 				</td>
 				<td>
-					<input type="submit" value='<%=WebappResources.getString("Search", request)%>' id="go" alt='<%=WebappResources.getString("Search", request)%>'>
+					<input type="button" onclick="this.blur();doSearch()" value='<%=WebappResources.getString("Search", request)%>' id="go" alt='<%=WebappResources.getString("Search", request)%>'>
 					<input type="hidden" name="maxHits" value="500" >
 				</td>
 				<td><a id="advanced" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("Advanced", request)%>'><%=WebappResources.getString("Advanced", request)%></a>
