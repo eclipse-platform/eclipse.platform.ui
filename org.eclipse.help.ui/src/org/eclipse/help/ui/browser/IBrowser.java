@@ -24,6 +24,7 @@ public interface IBrowser {
 	 * Displays document with the given URL,
 	 * and makes the browser visible.
 	 * This method starts the browser if necessary.
+	 * @param url the URL to display in the browser
 	 */
 	public void displayURL(String url);
 	/**
