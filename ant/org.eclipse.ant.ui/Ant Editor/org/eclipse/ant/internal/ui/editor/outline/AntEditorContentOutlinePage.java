@@ -53,6 +53,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -82,6 +83,23 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private ListenerList fPostSelectionChangedListeners= new ListenerList();
 	private boolean fIsModelEmpty= true;
 	private boolean fFilterInternalTargets;
+	private boolean fSort;
+
+	private static ViewerSorter fSorter;
+	
+	private class AntOutlineSorter extends ViewerSorter {
+		
+			/**
+		 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+		 */
+		public int compare(Viewer viewer, Object e1, Object e2) {
+			if (!(e1 instanceof XmlElement && e2 instanceof XmlElement)) {
+				return super.compare(viewer, e1, e2);
+			}
+			return ((XmlElement) e1).getDisplayName().compareToIgnoreCase(((XmlElement) e2).getDisplayName());
+		}
+
+}
 
 	/**
 	 * The content provider for the objects shown in the outline view.
@@ -264,9 +282,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	}
 	
 	/**
-	 * Sets whether internal targets should be filtered out of the outline. Must
-	 * be called in the UI thread.
-	 * @param filter
+	 * Sets whether internal targets should be filtered out of the outline.
+	 * 
+	 * @param filter whether or not internal targets should be filtered out
 	 */
 	protected void setFilterInternalTargets(boolean filter) {
 		fFilterInternalTargets= filter;
@@ -277,12 +295,46 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	/**
 	 * Returns whether internal targets are currently being filtered out of
 	 * the outline.
-	 * @return
+	 * 
+	 * @return whether or not internal targets are being filtered out
 	 */
 	protected boolean isFilterInternalTargets() {
 		return fFilterInternalTargets;
 	}
 	
+	/**
+	 * Sets whether elements should be sorted in the outline.
+	 *  
+	 * @param sort whether or not elements should be sorted
+	 */
+	protected void setSort(boolean sort) {
+		fSort= sort;
+		if (sort) {
+			if (fSorter == null) {
+				fSorter= new AntOutlineSorter();
+			}
+			getTreeViewer().setSorter(fSorter);
+		} else {
+			getTreeViewer().setSorter(null);
+		}
+		AntUIPlugin.getDefault().getPreferenceStore().setValue(IAntUIPreferenceConstants.ANTEDITOR_SORT, sort);
+	}
+	
+	/**
+	 * Returns whether elements are currently being sorted.
+	 * 
+	 * @return whether elements are currently being sorted
+	 */
+	protected boolean isSort() {
+		return fSort;
+	}
+	
+	/**
+	 * Returns whether the given element represents a project's default target
+	 * 
+	 * @param node the node to examine
+	 * @return whether the given node is a default target
+	 */
 	private boolean isDefaultTargetNode(XmlElement node) {
 		XmlAttribute type= node.getAttributeNamed(IAntEditorConstants.ATTR_TYPE);
 		if (type == null || !type.getValue().equals(IAntEditorConstants.TYPE_TARGET)) {
@@ -314,6 +366,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		super();
 		fCore= core;
 		fFilterInternalTargets= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_FILTER_INTERNAL_TARGETS);
+		fSort= AntUIPlugin.getDefault().getPreferenceStore().getBoolean(IAntUIPreferenceConstants.ANTEDITOR_SORT);
 	}
 
 	/* (non-Javadoc)
@@ -346,6 +399,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		 * structure that resembles the file contents.
 		 */
 		viewer.setContentProvider(new ContentProvider());
+		setSort(fSort);
 
 		/*
 		 * We probably also need our own label provider.
@@ -369,6 +423,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		site.registerContextMenu(IAntUIConstants.PLUGIN_ID + ".antEditorOutline", manager, viewer); //$NON-NLS-1$
 		
 		IToolBarManager tbm= site.getActionBars().getToolBarManager();
+		tbm.add(new ToggleSortAntOutlineAction(this));
 		tbm.add(new FilterInternalTargetsAction(this));
 		
 		openWithMenu= new AntOpenWithMenu(this.getSite().getPage());
