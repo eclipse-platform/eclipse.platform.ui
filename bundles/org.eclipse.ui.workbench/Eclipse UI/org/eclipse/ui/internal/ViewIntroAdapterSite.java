@@ -86,7 +86,7 @@ final class ViewIntroAdapterSite implements IIntroSite {
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getRegisteredName()
 	 */
 	public String getRegisteredName() {
-		return descriptor.getLabel();
+		return viewSite.getRegisteredName();
 	}
 
 	/* (non-Javadoc)

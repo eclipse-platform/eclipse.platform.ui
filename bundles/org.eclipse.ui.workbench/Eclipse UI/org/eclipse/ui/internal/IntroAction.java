@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -68,4 +69,11 @@ public class IntroAction extends Action implements ActionFactory.IWorkbenchActio
 	public void run() {
 		workbenchWindow.getWorkbench().getIntroManager().showIntro(workbenchWindow, false);		
 	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.action.IAction#getImageDescriptor()
+     */
+    public ImageDescriptor getImageDescriptor() {
+        return ((Workbench)workbenchWindow.getWorkbench()).getIntroDescriptor().getImageDescriptor();
+    }
 }

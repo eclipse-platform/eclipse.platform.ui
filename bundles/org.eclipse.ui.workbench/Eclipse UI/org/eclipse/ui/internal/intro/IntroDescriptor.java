@@ -12,15 +12,14 @@ package org.eclipse.ui.internal.intro;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
 import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.ui.IPluginContribution;
-import org.eclipse.ui.intro.IIntroPart;
-
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.intro.IIntroPart;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Describes an introduction extension.
@@ -31,12 +30,13 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 
 	private static final String ATT_ID = "id"; //$NON-NLS-1$
 	private static final String ATT_CLASS = "class"; //$NON-NLS-1$
-	private static final String ATT_NAME = "name"; //$NON-NLS-1$	
+	private static final String ATT_ICON = "icon"; //$NON-NLS-1$	
 	
 	private IConfigurationElement configElement;
 	private String id;
 	private String pluginId;
-	private String name;
+	private String iconName;
+    private ImageDescriptor imageDescriptor;
 	
 	/**
 	 * Create a new IntroDescriptor for an extension.
@@ -52,17 +52,16 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 	 */
 	private void loadFromExtension() throws CoreException {
 		id = configElement.getAttribute(ATT_ID);
-		name = configElement.getAttribute(ATT_NAME);
 		pluginId = configElement.getDeclaringExtension().getNamespace();
 		String className = configElement.getAttribute(ATT_CLASS);
+		iconName = configElement.getAttribute(ATT_ICON);
 		// Sanity check.
-		if (name == null || className == null) {
+		if (className == null) {
 			throw new CoreException(new Status(IStatus.ERROR, configElement
 					.getDeclaringExtension().getNamespace(), 0,
-					"Invalid extension (missing label or class name): " + id, //$NON-NLS-1$
+					"Invalid extension (Missing class name): " + id, //$NON-NLS-1$
 					null));
 		}
-		
 	}	
 
 	/* (non-Javadoc)
@@ -73,25 +72,29 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartDescriptor#getId()
+	 * @see org.eclipse.ui.IIntroDescriptor#getId()
 	 */
 	public String getId() {
 		return id;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartDescriptor#getImageDescriptor()
+	 * @see org.eclipse.ui.IIntroDescriptor#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		return null;
+		if (imageDescriptor != null)
+			return imageDescriptor;		
+		if (iconName == null)
+			return null;
+		IExtension extension = configElement.getDeclaringExtension();
+		String extendingPluginId = extension.getNamespace();
+		imageDescriptor =
+			AbstractUIPlugin.imageDescriptorFromPlugin(
+				extendingPluginId,
+				iconName);
+		return imageDescriptor;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IWorkbenchPartDescriptor#getLabel()
-	 */
-	public String getLabel() {
-		return name;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
