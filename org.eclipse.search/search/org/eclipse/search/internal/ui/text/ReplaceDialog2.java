@@ -15,14 +15,31 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.SubProgressMonitor;
-
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.search.internal.ui.SearchMessages;
+import org.eclipse.search.internal.ui.SearchPlugin;
+import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
+import org.eclipse.search.ui.SearchUI;
+import org.eclipse.search.ui.text.Match;
+import org.eclipse.search2.internal.ui.InternalSearchUI;
+import org.eclipse.search2.internal.ui.text.PositionTracker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -32,23 +49,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
-
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -59,17 +59,6 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.search.ui.SearchUI;
-import org.eclipse.search.ui.text.AbstractTextSearchResult;
-import org.eclipse.search.ui.text.Match;
-
-import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
-import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
-
-import org.eclipse.search2.internal.ui.InternalSearchUI;
-import org.eclipse.search2.internal.ui.text.PositionTracker;
 
 class ReplaceDialog2 extends ExtendedDialogWindow {
 		
@@ -116,23 +105,21 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	
 	// reuse editors stuff
 	private IReusableEditor fEditor;
-	private AbstractTextSearchResult fSearchResult;
-	private StructuredViewer fViewer;
+	private FileSearchPage fPage;
 	
-	protected ReplaceDialog2(Shell parentShell, IFile[] entries, StructuredViewer viewer, AbstractTextSearchResult result) {
+	protected ReplaceDialog2(Shell parentShell, IFile[] entries, FileSearchPage page) {
 		super(parentShell);
 		Assert.isNotNull(entries);
-		Assert.isNotNull(result);
-		fSearchResult= result;
+		Assert.isNotNull(fPage.getInput());
+		fPage= page;
 		fMarkers= new ArrayList();
-		fViewer= viewer;
 		initializeMarkers(entries);
 	}
 	
 	private void initializeMarkers(IFile[] entries) {
 		for (int j= 0; j < entries.length; j++) {
 			IFile entry = entries[j];
-			Match[] matches= fSearchResult.getMatches(entry);
+			Match[] matches= fPage.getDisplayedMatches(entry);
 			for (int i= 0; i < matches.length; i++) {
 				fMarkers.add(matches[i]);
 			}
@@ -169,7 +156,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		label.setText(SearchMessages.getString("ReplaceDialog.replace_label")); //$NON-NLS-1$
 		Text clabel= new Text(result, SWT.BORDER);
 		clabel.setEnabled(false);
-		clabel.setText(((FileSearchQuery)fSearchResult.getQuery()).getSearchString());
+		clabel.setText(((FileSearchQuery)fPage.getInput().getQuery()).getSearchString());
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(50);
 		clabel.setLayoutData(gd);
@@ -346,7 +333,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 						}
 						doc.replace(offset, length, replacementText);
 						fMarkers.remove(0);
-						fSearchResult.removeMatch(markers[i]);
+						fPage.getInput().removeMatch(markers[i]);
 					}
 				if (!wasDirty)
 					fb.commit(new SubProgressMonitor(pm, 1), true);
@@ -426,14 +413,14 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	}
 	
 	private void selectEntry(Match marker) {
-		ISelection sel= fViewer.getSelection();
+		ISelection sel= fPage.getViewer().getSelection();
 		if (!(sel instanceof IStructuredSelection))
 			return;
 		IStructuredSelection ss= (IStructuredSelection) sel;
 		IFile file= (IFile) marker.getElement();
 		if (ss.size() == 1 && file.equals(ss.getFirstElement()))
 			return;
-		fViewer.setSelection(new StructuredSelection(marker.getElement()));
+		fPage.getViewer().setSelection(new StructuredSelection(marker.getElement()));
 	}
 
 	// opening editors ------------------------------------------

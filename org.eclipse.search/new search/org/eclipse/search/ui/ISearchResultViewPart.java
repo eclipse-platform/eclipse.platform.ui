@@ -41,4 +41,12 @@ public interface ISearchResultViewPart extends IViewPart {
 	 * @return the active <code>ISearchResultPage</code> or <code>null</code>
 	 */
 	ISearchResultPage getActivePage();
+	
+	/**
+	 * Requests that the search view updates the label it is showing for search result
+	 * pages. Typically, a search result page will call this method when the search result
+	 * it's displaying is updated.
+	 * @see ISearchResultPage#getLabel()
+	 */
+	void updateLabel();
 }

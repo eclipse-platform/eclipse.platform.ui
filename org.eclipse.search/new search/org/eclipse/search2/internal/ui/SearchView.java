@@ -13,9 +13,6 @@ package org.eclipse.search2.internal.ui;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
@@ -47,7 +44,6 @@ import org.eclipse.ui.part.Page;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.part.PageBookView;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-import org.eclipse.ui.progress.UIJob;
 
 public class SearchView extends PageBookView implements ISearchResultViewPart, IQueryListener {
 	private static final String MEMENTO_TYPE= "view"; //$NON-NLS-1$
@@ -91,30 +87,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		public void setFocus() {/*dummy*/}
 		public Object getAdapter(Class adapter) { return null; }
 	}
-	
-	class UpdateTitleJob extends UIJob {
-		
-		public UpdateTitleJob() {
-			super(SearchMessages.getString("SearchView.update_title_job.name")); //$NON-NLS-1$
-			setSystem(true);
-		}
-		
-		public IStatus runInUIThread(IProgressMonitor monitor) {
-			ISearchResult result= getCurrentSearchResult();
-			String title= ""; //$NON-NLS-1$
-			boolean queryRunning= false;
-			if (result != null) {
-				queryRunning= InternalSearchUI.getInstance().isQueryRunning(result.getQuery());
-				title= result.getLabel();
-			}
-			fCancelAction.setEnabled(queryRunning);
-			setTitle(title);
-			if (queryRunning)
-				schedule(1000);
-			return Status.OK_STATUS;
-		}
 
-}
 
 
 	class EmptySearchView extends Page implements ISearchResultPage {
@@ -187,6 +160,13 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		 */
 		public String getID() {
 			return fId;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.eclipse.search.ui.ISearchResultPage#getLabel()
+		 */
+		public String getLabel() {
+			return ""; //$NON-NLS-1$
 		}
 	}
 
@@ -268,14 +248,19 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		fCurrentSearch= search;
 		if (page != null)
 			page.setInput(search, fSearchViewStates.get(search));
-		startUpdateTitle();
+		updateLabel();
 	}
 
 	private void doUpdateTitle() {
 	}
-		
-	private void startUpdateTitle() {
-		new UpdateTitleJob().schedule();
+	
+	public void updateLabel() {
+		ISearchResultPage page= getActivePage();
+		String label= ""; //$NON-NLS-1$
+		if (page != null) {
+			label= page.getLabel();
+		}
+		setTitle(label);
 	}
 	
 	public ISearchResult getCurrentSearchResult() {
@@ -311,6 +296,23 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		super.dispose();
 	}
 
+	public void queryStarting(ISearchQuery query) {
+		updateCancelAction();
+	}
+
+	public void queryFinished(ISearchQuery query) {
+		updateCancelAction();
+	}
+
+	private void updateCancelAction() {
+		ISearchResult result= getCurrentSearchResult();
+		boolean queryRunning= false;
+		if (result != null) {
+			queryRunning= InternalSearchUI.getInstance().isQueryRunning(result.getQuery());
+		}
+		fCancelAction.setEnabled(queryRunning);
+	}
+
 	public void queryAdded(ISearchQuery query) {
 		showSearchResult(query.getSearchResult());
 		fSearchesDropDownAction.setEnabled(InternalSearchUI.getInstance().getSearchManager().getQueries().length != 0);
@@ -338,13 +340,6 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		}
 	}
 
-	public void queryStarting(ISearchQuery query) {
-		startUpdateTitle();
-	}
-
-	public void queryFinished(ISearchQuery query) {
-		startUpdateTitle(); 
-	}
 	
 	// Methods related to saving page state. -------------------------------------------
 	/**

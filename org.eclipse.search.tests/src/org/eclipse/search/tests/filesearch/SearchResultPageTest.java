@@ -52,7 +52,7 @@ public class SearchResultPageTest extends TestCase {
 		fQuery1= new FileSearchQuery(scope, "", "Test");
 	}
 
-	public void atestBasicDisplay() throws Exception {
+	public void testBasicDisplay() throws Exception {
 		ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchPage page= (FileSearchPage) view.getActivePage();
@@ -115,7 +115,7 @@ public class SearchResultPageTest extends TestCase {
 			assertTrue(item.getText().indexOf(String.valueOf(itemCount)) >= 0);
 	}
 	
-	public void atestTableNavigation() {
+	public void testTableNavigation() {
 		ISearchResultViewPart view= NewSearchUI.activateSearchResultView();
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchPage page= (FileSearchPage) view.getActivePage();

@@ -83,4 +83,14 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	 * @return the id of this page
 	 */
 	String getID();
+	
+	/**
+	 * Returns a user readable label for this search result page. The label will be
+	 * used to describe the contents for the page to the user (for example it will be
+	 * displayed in the search view title bar). To take an example from file search, 
+	 * a label might read like this: '"test" 896 matches in Workspace'.
+	 * 
+	 * @return the user readable label for this search result page
+	 */
+	String getLabel();
 }

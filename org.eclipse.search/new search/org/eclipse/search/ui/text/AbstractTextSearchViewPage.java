@@ -108,6 +108,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 		
 		public IStatus runInUIThread(IProgressMonitor monitor) {
+			fViewPart.updateLabel();
 			runBatchedUpdates();
 			if (hasMoreUpdates() || isQueryRunning()) {
 				schedule(500);
@@ -129,6 +130,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	private transient boolean  fIsUIUpdateScheduled= false;
 	private static final String KEY_LAYOUT = "org.eclipse.search.resultpage.layout"; //$NON-NLS-1$
+	
+	protected static final Match[] EMPTY_MATCH_ARRAY= new Match[0];
+	
 	private StructuredViewer fViewer;
 	private Composite fViewerContainer;
 	private Control fBusyLabel;
@@ -139,6 +143,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private ISearchResultListener fListener;
 	private IQueryListener fQueryListener;
 	private MenuManager fMenu;
+	private ISearchResult fInput;
 	// Actions
 	private Action fCopyToClipboardAction;
 	private Action fRemoveSelectedMatches;
@@ -255,6 +260,16 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	public String getID() {
 		return fId;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getLabel() {
+		AbstractTextSearchResult result= getInput();
+		if (result == null)
+			return ""; //$NON-NLS-1$
+		return result.getLabel();
 	}
 
 	/**
@@ -535,7 +550,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 					TreeViewer tv = (TreeViewer) event.getViewer();
 					Object element = ((IStructuredSelection) event.getSelection()).getFirstElement();
 					tv.setExpandedState(element, !tv.getExpandedState(element));
-					if (!hasCurrentMatch && getInput().getMatchCount(element) > 0)
+					if (!hasCurrentMatch && getDisplayedMatchCount(element) > 0)
 						gotoNextMatch();
 					return;
 				} else if (!hasCurrentMatch) {
@@ -603,6 +618,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		if (oldSearch != null)
 			oldSearch.removeListener(fListener);
 		AnnotationManager.searchResultActivated(getSite().getWorkbenchWindow(), (AbstractTextSearchResult) search);
+		fInput= search;
 		if (search != null) {
 			search.addListener(fListener);
 			connectViewer(search);
@@ -673,9 +689,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * @see AbstractTextSearchViewPage#setInput(ISearchResult, Object)
 	 */
 	public AbstractTextSearchResult getInput() {
-		if (fViewer != null)
-			return (AbstractTextSearchResult) fViewer.getInput();
-		return null;
+		return (AbstractTextSearchResult) fInput;
 	}
 
 	/**
@@ -736,13 +750,56 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	public Match getCurrentMatch() {
 		Object element = getFirstSelectedElement();
 		if (element != null) {
-			Match[] matches = getInput().getMatches(element);
+			Match[] matches = getDisplayedMatches(element);
 			if (fCurrentMatchIndex >= 0 && fCurrentMatchIndex < matches.length)
 				return matches[fCurrentMatchIndex];
 		}
 		return null;
 	}
-
+	
+	/**
+	 * Returns the matches that are currently displayed for the given element.
+	 * While the default implementation just forwards to the current input
+	 * search result of the page, subclasses may override this method to do
+	 * filtering, etc. Any action operating on the visible matches in the search
+	 * result page should use this method to get the matches for a search
+	 * result (instead of asking the search result directly).
+	 * 
+	 * @param element
+	 *            The element to get the matches for
+	 * @return The matches displayed for the given element. If the current input
+	 *         of this page is <code>null</code>, an empty array is returned
+	 * @see AbstractTextSearchResult#getMatches(Object)
+	 */
+	public Match[] getDisplayedMatches(Object element) {
+		AbstractTextSearchResult result= getInput();
+		if (result == null)
+			return EMPTY_MATCH_ARRAY;
+		return result.getMatches(element);		
+	}
+	
+	/**
+	 * Returns the number of matches that are currently displayed for the given
+	 * element. While the default implementation just forwards to the current
+	 * input search result of the page, subclasses may override this method to
+	 * do filtering, etc. Any action operating on the visible matches in the
+	 * search result page should use this method to get the match count for a
+	 * search result (instead of asking the search result directly).
+	 * 
+	 * @param element
+	 *            The element to get the matches for
+	 * @return The number of matches displayed for the given element. If the
+	 *         current input of this page is <code>null</code>, 0 is
+	 *         returned
+	 * @see AbstractTextSearchResult#getMatchCount(Object)
+	 */
+	public int getDisplayedMatchCount(Object element) {
+		AbstractTextSearchResult result= getInput();
+		if (result == null)
+			return 0;
+		return result.getMatchCount(element);		
+	}
+	
 	private Object getFirstSelectedElement() {
 		IStructuredSelection selection = (IStructuredSelection) fViewer.getSelection();
 		if (selection.size() > 0)
@@ -798,6 +855,18 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	public void setViewPart(ISearchResultViewPart part) {
 		fViewPart = part;
+	}
+	
+
+	/**
+	 * Returns the view part set with
+	 * <code>setViewPart(ISearchResultViewPart)</code>.
+	 * 
+	 * @return The view part or <code>null</code> if the view part hasn't been
+	 *         set yet (or set to null).
+	 */
+	protected ISearchResultViewPart getViewPart() {
+		return fViewPart;
 	}
 
 	// multithreaded update handling.
@@ -937,7 +1006,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	private void collectAllMatches(AbstractTextSearchResult result, HashSet set, Object[] elements) {
 		for (int j = 0; j < elements.length; j++) {
-			Match[] matches = result.getMatches(elements[j]);
+			Match[] matches = getDisplayedMatches(elements[j]);
 			for (int i = 0; i < matches.length; i++) {
 				set.add(matches[i]);
 			}
@@ -946,7 +1015,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	private void collectAllMatchesBelow(AbstractTextSearchResult result, Set set, ITreeContentProvider cp, Object[] elements) {
 		for (int j = 0; j < elements.length; j++) {
-			Match[] matches = result.getMatches(elements[j]);
+			Match[] matches = getDisplayedMatches(elements[j]);
 			for (int i = 0; i < matches.length; i++) {
 				set.add(matches[i]);
 			}

@@ -145,13 +145,10 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 		return (IFile[]) files.toArray(new IFile[files.size()]);
 	}
 
-	private AbstractTextSearchResult getResult() {
-		return fPage.getInput();
-	}
-	
+
 	public void run() {
-		if (validateResources((FileSearchQuery) getResult().getQuery())) {
-			ReplaceDialog2 dialog= new ReplaceDialog2(fSite.getShell(), fElements, fPage.getViewer(), getResult());
+		if (validateResources((FileSearchQuery) fPage.getInput().getQuery())) {
+			ReplaceDialog2 dialog= new ReplaceDialog2(fSite.getShell(), fElements, fPage);
 			dialog.open();
 		}
 	}
@@ -160,7 +157,7 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 		final List outOfDateEntries= new ArrayList();
 		for (int j= 0; j < fElements.length; j++) {
 			IFile entry = fElements[j];
-			Match[] markers= getResult().getMatches(entry);
+			Match[] markers= fPage.getDisplayedMatches(entry);
 			for (int i= 0; i < markers.length; i++) {
 				if (isOutOfDate((FileMatch)markers[i])) {
 					outOfDateEntries.add(entry);
@@ -230,7 +227,7 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 	}
 		
 	private IStatus research(FileSearchQuery operation, final IProgressMonitor monitor, IFile entry) {
-		Match[] matches= getResult().getMatches(entry);
+		Match[] matches= fPage.getDisplayedMatches(entry);
 		IStatus status= operation.searchInFile(getResult(), monitor, entry);
 		if (status == null || status.isOK()) {
 			for (int i= 0; i < matches.length; i++) {
@@ -238,6 +235,10 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 			}
 		}
 		return status;
+	}
+
+	private AbstractTextSearchResult getResult() {
+		return fPage.getInput();
 	}
 	
 }
