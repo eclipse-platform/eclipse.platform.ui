@@ -258,13 +258,13 @@ public class CopyFilesAndFoldersOperation {
 			
 				final String returnCode[] = {CANCEL};
 				final String msg = WorkbenchMessages.format("CopyFilesAndFoldersOperation.overwriteQuestion", new Object[] {pathString}); //$NON-NLS-1$
-				final String[] options = {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL};
+				final String[] options = {IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL};
 				parentShell.getDisplay().syncExec(new Runnable() {
 					public void run() {
 						MessageDialog dialog = new MessageDialog(parentShell, WorkbenchMessages.getString("CopyFilesAndFoldersOperation.question"), null, msg, MessageDialog.QUESTION, options, 0); //$NON-NLS-1$
 						dialog.open();
 						int returnVal = dialog.getReturnCode();
-						String[] returnCodes = {YES, NO, ALL, CANCEL};
+						String[] returnCodes = {YES, ALL, NO, CANCEL};
 						returnCode[0] = returnVal == -1 ? CANCEL : returnCodes[returnVal];
 					}
 				});

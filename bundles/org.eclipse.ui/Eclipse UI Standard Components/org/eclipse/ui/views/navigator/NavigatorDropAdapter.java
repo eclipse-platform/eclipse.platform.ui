@@ -433,15 +433,15 @@ public class NavigatorDropAdapter
 		final String[] options =
 			{
 				IDialogConstants.YES_LABEL,
-				IDialogConstants.NO_LABEL,
 				IDialogConstants.YES_TO_ALL_LABEL,
+				IDialogConstants.NO_LABEL,
 				IDialogConstants.CANCEL_LABEL };
 		getDisplay().syncExec(new Runnable() {
 			public void run() {
 				MessageDialog dialog = new MessageDialog(getShell(), ResourceNavigatorMessages.getString("DropAdapter.question"), null, msg, MessageDialog.QUESTION, options, 0); //$NON-NLS-1$
 				dialog.open();
 				int returnVal = dialog.getReturnCode();
-				String[] returnCodes = { YES, NO, ALL, CANCEL };
+				String[] returnCodes = { YES, ALL, NO, CANCEL };
 				returnCode[0] = returnVal < 0 ? CANCEL : returnCodes[returnVal];
 			}
 		});
