@@ -142,14 +142,16 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
 	 * Method declared on MultiStepWizard.
 	 */
 	protected String getFinishStepLabel(WizardStep[] steps) {
-		// The first step is the remove nature which has no wizard
-		// pages, so ignore it. If there is only one step after that,
-		// then it needs the "Finish" label. So the "Finish Step" label
-		// is only needed if more than 2 steps in the list.
-		if (steps.length > 2)
-			return super.getFinishStepLabel(steps);
-		else
-			return null;
+		int count = 0;
+		for (int i = 0; i < steps.length; i++) {
+			if (!(steps[i] instanceof RemoveCapabilityStep)) {
+				count++;
+				if (count > 1)
+					return super.getFinishStepLabel(steps);
+			}
+		}
+		
+		return null;
 	}
 
 	/* (non-Javadoc)
