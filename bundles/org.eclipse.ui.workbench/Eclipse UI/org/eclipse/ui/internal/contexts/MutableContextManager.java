@@ -30,318 +30,277 @@ import org.eclipse.ui.contexts.IContextContextBinding;
 import org.eclipse.ui.contexts.IMutableContextManager;
 import org.eclipse.ui.internal.util.Util;
 
-public final class MutableContextManager
-	extends AbstractContextManager
-	implements IMutableContextManager {
+public final class MutableContextManager extends AbstractContextManager
+        implements IMutableContextManager {
 
-	static boolean isContextDefinitionChildOf(
-		String ancestor,
-		String id,
-		Map contextDefinitionsById) {
-		Collection visited = new HashSet();
+    static boolean isContextDefinitionChildOf(String ancestor, String id,
+            Map contextDefinitionsById) {
+        Collection visited = new HashSet();
 
-		while (id != null && !visited.contains(id)) {
-			ContextDefinition contextDefinition =
-				(ContextDefinition) contextDefinitionsById.get(id);
-			visited.add(id);
+        while (id != null && !visited.contains(id)) {
+            ContextDefinition contextDefinition = (ContextDefinition) contextDefinitionsById
+                    .get(id);
+            visited.add(id);
 
-			if (contextDefinition != null
-				&& Util.equals(id = contextDefinition.getParentId(), ancestor))
-				return true;
-		}
+            if (contextDefinition != null
+                    && Util.equals(id = contextDefinition.getParentId(),
+                            ancestor)) return true;
+        }
 
-		return false;
-	}
-	private Map contextContextBindingsByParentContextId = new HashMap();
-	private Map contextDefinitionsById = new HashMap();
-	private IContextRegistry contextRegistry;
+        return false;
+    }
 
-	private Map contextsById = new WeakHashMap();
-	private Set definedContextIds = new HashSet();
-	private Set enabledContextIds = new HashSet();
+    private Map contextContextBindingsByParentContextId = new HashMap();
 
-	public MutableContextManager() {
-		this(new ExtensionContextRegistry(Platform.getExtensionRegistry()));
-	}
+    private Map contextDefinitionsById = new HashMap();
 
-	public MutableContextManager(IContextRegistry contextRegistry) {
-		if (contextRegistry == null)
-			throw new NullPointerException();
+    private IContextRegistry contextRegistry;
 
-		this.contextRegistry = contextRegistry;
+    private Map contextsById = new WeakHashMap();
 
-		this
-			.contextRegistry
-			.addContextRegistryListener(new IContextRegistryListener() {
-			public void contextRegistryChanged(ContextRegistryEvent contextRegistryEvent) {
-				readRegistry();
-			}
-		});
+    private Set definedContextIds = new HashSet();
 
-		readRegistry();
-	}
+    private Set enabledContextIds = new HashSet();
 
-	public IContext getContext(String contextId) {
-		if (contextId == null)
-			throw new NullPointerException();
+    public MutableContextManager() {
+        this(new ExtensionContextRegistry(Platform.getExtensionRegistry()));
+    }
 
-		Context context = (Context) contextsById.get(contextId);
+    public MutableContextManager(IContextRegistry contextRegistry) {
+        if (contextRegistry == null) throw new NullPointerException();
 
-		if (context == null) {
-			context = new Context(contextId);
-			updateContext(context);
-			contextsById.put(contextId, context);
-		}
+        this.contextRegistry = contextRegistry;
 
-		return context;
-	}
+        this.contextRegistry
+                .addContextRegistryListener(new IContextRegistryListener() {
 
-	public Set getDefinedContextIds() {
-		return Collections.unmodifiableSet(definedContextIds);
-	}
+                    public void contextRegistryChanged(
+                            ContextRegistryEvent contextRegistryEvent) {
+                        readRegistry();
+                    }
+                });
 
-	public Set getEnabledContextIds() {
-		return Collections.unmodifiableSet(enabledContextIds);
-	}
+        readRegistry();
+    }
 
-	private void getRequiredContextIds(
-		Set contextIds,
-		Set requiredContextIds) {
-		for (Iterator iterator = contextIds.iterator(); iterator.hasNext();) {
-			String contextId = (String) iterator.next();
-			IContext context = getContext(contextId);
-			Set childContextIds = new HashSet();
-			Set contextContextBindings = context.getContextContextBindings();
+    public IContext getContext(String contextId) {
+        if (contextId == null) throw new NullPointerException();
 
-			for (Iterator iterator2 = contextContextBindings.iterator();
-				iterator2.hasNext();
-				) {
-				IContextContextBinding contextContextBinding =
-					(IContextContextBinding) iterator2.next();
-				childContextIds.add(contextContextBinding.getChildContextId());
-			}
+        Context context = (Context) contextsById.get(contextId);
 
-			childContextIds.removeAll(requiredContextIds);
-			requiredContextIds.addAll(childContextIds);
-			getRequiredContextIds(childContextIds, requiredContextIds);
-		}
-	}
+        if (context == null) {
+            context = new Context(contextId);
+            updateContext(context);
+            contextsById.put(contextId, context);
+        }
 
-	private void notifyContexts(Map contextEventsByContextId) {
-		for (Iterator iterator = contextEventsByContextId.entrySet().iterator();
-			iterator.hasNext();
-			) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			String contextId = (String) entry.getKey();
-			ContextEvent contextEvent = (ContextEvent) entry.getValue();
-			Context context = (Context) contextsById.get(contextId);
+        return context;
+    }
 
-			if (context != null)
-				context.fireContextChanged(contextEvent);
-		}
-	}
+    public Set getDefinedContextIds() {
+        return Collections.unmodifiableSet(definedContextIds);
+    }
 
-	private void readRegistry() {
-		Collection contextDefinitions = new ArrayList();
-		contextDefinitions.addAll(contextRegistry.getContextDefinitions());
-		Map contextDefinitionsById =
-			new HashMap(
-				ContextDefinition.contextDefinitionsById(
-					contextDefinitions,
-					false));
+    public Set getEnabledContextIds() {
+        return Collections.unmodifiableSet(enabledContextIds);
+    }
 
-		for (Iterator iterator = contextDefinitionsById.values().iterator();
-			iterator.hasNext();
-			) {
-			ContextDefinition contextDefinition =
-				(ContextDefinition) iterator.next();
-			String name = contextDefinition.getName();
+    private void getRequiredContextIds(Set contextIds, Set requiredContextIds) {
+        for (Iterator iterator = contextIds.iterator(); iterator.hasNext();) {
+            String contextId = (String) iterator.next();
+            IContext context = getContext(contextId);
+            Set childContextIds = new HashSet();
+            Set contextContextBindings = context.getContextContextBindings();
 
-			if (name == null || name.length() == 0)
-				iterator.remove();
-		}
+            for (Iterator iterator2 = contextContextBindings.iterator(); iterator2
+                    .hasNext();) {
+                IContextContextBinding contextContextBinding = (IContextContextBinding) iterator2
+                        .next();
+                childContextIds.add(contextContextBinding.getChildContextId());
+            }
 
-		for (Iterator iterator = contextDefinitionsById.keySet().iterator();
-			iterator.hasNext();
-			)
-			if (!isContextDefinitionChildOf(null,
-				(String) iterator.next(),
-				contextDefinitionsById))
-				iterator.remove();
+            childContextIds.removeAll(requiredContextIds);
+            requiredContextIds.addAll(childContextIds);
+            getRequiredContextIds(childContextIds, requiredContextIds);
+        }
+    }
 
-		Map contextContextBindingDefinitionsByParentContextId =
-			ContextContextBindingDefinition
-				.contextContextBindingDefinitionsByParentContextId(
-				contextRegistry.getContextContextBindingDefinitions());
-		Map contextContextBindingsByParentContextId = new HashMap();
+    private void notifyContexts(Map contextEventsByContextId) {
+        for (Iterator iterator = contextEventsByContextId.entrySet().iterator(); iterator
+                .hasNext();) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            String contextId = (String) entry.getKey();
+            ContextEvent contextEvent = (ContextEvent) entry.getValue();
+            Context context = (Context) contextsById.get(contextId);
 
-		for (Iterator iterator =
-			contextContextBindingDefinitionsByParentContextId
-				.entrySet()
-				.iterator();
-			iterator.hasNext();
-			) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			String parentContextId = (String) entry.getKey();
+            if (context != null) context.fireContextChanged(contextEvent);
+        }
+    }
 
-			if (contextDefinitionsById.containsKey(parentContextId)) {
-				Collection contextContextBindingDefinitions =
-					(Collection) entry.getValue();
+    private void readRegistry() {
+        Collection contextDefinitions = new ArrayList();
+        contextDefinitions.addAll(contextRegistry.getContextDefinitions());
+        Map contextDefinitionsById = new HashMap(ContextDefinition
+                .contextDefinitionsById(contextDefinitions, false));
 
-				if (contextContextBindingDefinitions != null)
-					for (Iterator iterator2 =
-						contextContextBindingDefinitions.iterator();
-						iterator2.hasNext();
-						) {
-						ContextContextBindingDefinition contextContextBindingDefinition =
-							(ContextContextBindingDefinition) iterator2.next();
-						String childContextId =
-							contextContextBindingDefinition.getChildContextId();
+        for (Iterator iterator = contextDefinitionsById.values().iterator(); iterator
+                .hasNext();) {
+            ContextDefinition contextDefinition = (ContextDefinition) iterator
+                    .next();
+            String name = contextDefinition.getName();
 
-						if (contextDefinitionsById
-							.containsKey(childContextId)) {
-							IContextContextBinding contextContextBinding =
-								new ContextContextBinding(
-									childContextId,
-									parentContextId);
-							Set contextContextBindings =
-								(
-									Set) contextContextBindingsByParentContextId
-										.get(
-									parentContextId);
+            if (name == null || name.length() == 0) iterator.remove();
+        }
 
-							if (contextContextBindings == null) {
-								contextContextBindings = new HashSet();
-								contextContextBindingsByParentContextId.put(
-									parentContextId,
-									contextContextBindings);
-							}
+        for (Iterator iterator = contextDefinitionsById.keySet().iterator(); iterator
+                .hasNext();)
+            if (!isContextDefinitionChildOf(null, (String) iterator.next(),
+                    contextDefinitionsById)) iterator.remove();
 
-							contextContextBindings.add(contextContextBinding);
-						}
-					}
-			}
-		}
+        Map contextContextBindingDefinitionsByParentContextId = ContextContextBindingDefinition
+                .contextContextBindingDefinitionsByParentContextId(contextRegistry
+                        .getContextContextBindingDefinitions());
+        Map contextContextBindingsByParentContextId = new HashMap();
 
-		this.contextContextBindingsByParentContextId =
-			contextContextBindingsByParentContextId;
-		this.contextDefinitionsById = contextDefinitionsById;
-		Set definedContextIds = new HashSet(contextDefinitionsById.keySet());
-		Set contextsDefined = new HashSet(this.definedContextIds);
-		contextsDefined.removeAll(definedContextIds);  
+        for (Iterator iterator = contextContextBindingDefinitionsByParentContextId
+                .entrySet().iterator(); iterator.hasNext();) {
+            Map.Entry entry = (Map.Entry) iterator.next();
+            String parentContextId = (String) entry.getKey();
 
-		if (!definedContextIds.equals(this.definedContextIds)) {
-			this.definedContextIds = definedContextIds;
-		}
+            if (contextDefinitionsById.containsKey(parentContextId)) {
+                Collection contextContextBindingDefinitions = (Collection) entry
+                        .getValue();
 
-		Set enabledContextIds = new HashSet(this.enabledContextIds);
-		getRequiredContextIds(this.enabledContextIds, enabledContextIds);
-		
-		Set contextsEnabled= new HashSet(enabledContextIds);
-		contextsEnabled.removeAll(this.enabledContextIds);
-		
-		Set contextsDisabled= new HashSet(this.enabledContextIds);
-		contextsDisabled.removeAll(enabledContextIds);
+                if (contextContextBindingDefinitions != null)
+                        for (Iterator iterator2 = contextContextBindingDefinitions
+                                .iterator(); iterator2.hasNext();) {
+                            ContextContextBindingDefinition contextContextBindingDefinition = (ContextContextBindingDefinition) iterator2
+                                    .next();
+                            String childContextId = contextContextBindingDefinition
+                                    .getChildContextId();
 
-		if (!this.enabledContextIds.equals(enabledContextIds)) {
-			this.enabledContextIds = enabledContextIds;
-		}
+                            if (contextDefinitionsById
+                                    .containsKey(childContextId)) {
+                                IContextContextBinding contextContextBinding = new ContextContextBinding(
+                                        childContextId, parentContextId);
+                                Set contextContextBindings = (Set) contextContextBindingsByParentContextId
+                                        .get(parentContextId);
 
-		Map contextEventsByContextId = updateContexts(contextsById.keySet());
+                                if (contextContextBindings == null) {
+                                    contextContextBindings = new HashSet();
+                                    contextContextBindingsByParentContextId
+                                            .put(parentContextId,
+                                                    contextContextBindings);
+                                }
 
-		if (!contextsEnabled.isEmpty() || !contextsDisabled.isEmpty() || !contextsDefined.isEmpty()) {
-			fireContextManagerChanged(new ContextManagerEvent(this,
-				(String[]) contextsEnabled.toArray(new String[contextsEnabled.size()]),
-				(String[]) contextsDisabled.toArray(new String[contextsDisabled.size()]),
-				(String[]) contextsDefined.toArray(new String[contextsDefined.size()])));
-		}
+                                contextContextBindings
+                                        .add(contextContextBinding);
+                            }
+                        }
+            }
+        }
 
-		if (contextEventsByContextId != null)
-			notifyContexts(contextEventsByContextId);
-	}
+        this.contextContextBindingsByParentContextId = contextContextBindingsByParentContextId;
+        this.contextDefinitionsById = contextDefinitionsById;
+        boolean definedContextIdsChanged = false;
+        Set definedContextIds = new HashSet(contextDefinitionsById.keySet());
+        Set previouslyDefinedContextIds = null;
 
-	public void setEnabledContextIds(Set enabledContextIds) {
-		enabledContextIds = Util.safeCopy(enabledContextIds, String.class);
-		Set requiredContextIds = new HashSet(enabledContextIds);
-		getRequiredContextIds(enabledContextIds, requiredContextIds);
-		enabledContextIds = requiredContextIds;
-		Map contextEventsByContextId = null;
-		
-		Set contextsEnabled= new HashSet(enabledContextIds);
-		contextsEnabled.removeAll(this.enabledContextIds);
-		
-		Set contextsDisabled= new HashSet(this.enabledContextIds);
-		contextsDisabled.removeAll(enabledContextIds);
+        if (!definedContextIds.equals(this.definedContextIds)) {
+            previouslyDefinedContextIds = this.definedContextIds;
+            this.definedContextIds = definedContextIds;
+            definedContextIdsChanged = true;
+        }
 
-		if (!this.enabledContextIds.equals(enabledContextIds)) {
-			this.enabledContextIds = enabledContextIds;
-			contextEventsByContextId = updateContexts(contextsById.keySet());
-		}
+        Set enabledContextIds = new HashSet(this.enabledContextIds);
+        getRequiredContextIds(this.enabledContextIds, enabledContextIds);
+        boolean enabledContextIdsChanged = false;
+        Set previouslyEnabledContextIds = null;
 
-		if (contextEventsByContextId != null)
-			notifyContexts(contextEventsByContextId);
-		
-		if (!contextsEnabled.isEmpty() || !contextsDisabled.isEmpty()) {
-			fireContextManagerChanged(new ContextManagerEvent(this,
-				(String[]) contextsEnabled.toArray(new String[contextsEnabled.size()]),
-				(String[]) contextsDisabled.toArray(new String[contextsDisabled.size()]),
-				null));
-		}
-	}
+        if (!this.enabledContextIds.equals(enabledContextIds)) {
+            previouslyEnabledContextIds = this.enabledContextIds;
+            this.enabledContextIds = enabledContextIds;
+            enabledContextIdsChanged = true;
+        }
 
-	private ContextEvent updateContext(Context context) {
-		Set contextContextBindings =
-			(Set) contextContextBindingsByParentContextId.get(context.getId());
-		boolean contextContextBindingsChanged =
-			context.setContextContextBindings(
-				contextContextBindings != null
-					? contextContextBindings
-					: Collections.EMPTY_SET);
-		ContextDefinition contextDefinition =
-			(ContextDefinition) contextDefinitionsById.get(context.getId());
-		boolean definedChanged = context.setDefined(contextDefinition != null);
-		boolean enabledChanged =
-			context.setEnabled(enabledContextIds.contains(context.getId()));
-		boolean nameChanged =
-			context.setName(
-				contextDefinition != null ? contextDefinition.getName() : null);
-		boolean parentIdChanged =
-			context.setParentId(
-				contextDefinition != null
-					? contextDefinition.getParentId()
-					: null);
+        Map contextEventsByContextId = updateContexts(contextsById.keySet());
 
-		if (contextContextBindingsChanged
-			|| definedChanged
-			|| enabledChanged
-			|| nameChanged
-			|| parentIdChanged)
-			return new ContextEvent(
-				context,
-				contextContextBindingsChanged,
-				definedChanged,
-				enabledChanged,
-				nameChanged,
-				parentIdChanged);
-		else
-			return null;
-	}
+        if (definedContextIdsChanged || enabledContextIdsChanged)
+                fireContextManagerChanged(new ContextManagerEvent(this,
+                        definedContextIdsChanged, enabledContextIdsChanged,
+                        previouslyDefinedContextIds,
+                        previouslyEnabledContextIds));
 
-	private Map updateContexts(Collection contextIds) {
-		Map contextEventsByContextId = new TreeMap();
+        if (contextEventsByContextId != null)
+                notifyContexts(contextEventsByContextId);
+    }
 
-		for (Iterator iterator = contextIds.iterator(); iterator.hasNext();) {
-			String contextId = (String) iterator.next();
-			Context context = (Context) contextsById.get(contextId);
+    public void setEnabledContextIds(Set enabledContextIds) {
+        enabledContextIds = Util.safeCopy(enabledContextIds, String.class);
+        Set requiredContextIds = new HashSet(enabledContextIds);
+        getRequiredContextIds(enabledContextIds, requiredContextIds);
+        enabledContextIds = requiredContextIds;
+        boolean contextManagerChanged = false;
+        Map contextEventsByContextId = null;
+        Set previouslyEnabledContextIds = null;
 
-			if (context != null) {
-				ContextEvent contextEvent = updateContext(context);
+        if (!this.enabledContextIds.equals(enabledContextIds)) {
+            previouslyEnabledContextIds = this.enabledContextIds;
+            this.enabledContextIds = enabledContextIds;
+            contextManagerChanged = true;
+            contextEventsByContextId = updateContexts(contextsById.keySet());
+        }
 
-				if (contextEvent != null)
-					contextEventsByContextId.put(contextId, contextEvent);
-			}
-		}
+        if (contextEventsByContextId != null)
+                notifyContexts(contextEventsByContextId);
 
-		return contextEventsByContextId;
-	}
+        if (contextManagerChanged)
+                fireContextManagerChanged(new ContextManagerEvent(this, false,
+                        true, null, previouslyEnabledContextIds));
+    }
+
+    private ContextEvent updateContext(Context context) {
+        Set contextContextBindings = (Set) contextContextBindingsByParentContextId
+                .get(context.getId());
+        boolean contextContextBindingsChanged = context
+                .setContextContextBindings(contextContextBindings != null ? contextContextBindings
+                        : Collections.EMPTY_SET);
+        ContextDefinition contextDefinition = (ContextDefinition) contextDefinitionsById
+                .get(context.getId());
+        boolean definedChanged = context.setDefined(contextDefinition != null);
+        boolean enabledChanged = context.setEnabled(enabledContextIds
+                .contains(context.getId()));
+        boolean nameChanged = context
+                .setName(contextDefinition != null ? contextDefinition
+                        .getName() : null);
+        boolean parentIdChanged = context
+                .setParentId(contextDefinition != null ? contextDefinition
+                        .getParentId() : null);
+
+        if (contextContextBindingsChanged || definedChanged || enabledChanged
+                || nameChanged || parentIdChanged)
+            return new ContextEvent(context, contextContextBindingsChanged,
+                    definedChanged, enabledChanged, nameChanged,
+                    parentIdChanged);
+        else
+            return null;
+    }
+
+    private Map updateContexts(Collection contextIds) {
+        Map contextEventsByContextId = new TreeMap();
+
+        for (Iterator iterator = contextIds.iterator(); iterator.hasNext();) {
+            String contextId = (String) iterator.next();
+            Context context = (Context) contextsById.get(contextId);
+
+            if (context != null) {
+                ContextEvent contextEvent = updateContext(context);
+
+                if (contextEvent != null)
+                        contextEventsByContextId.put(contextId, contextEvent);
+            }
+        }
+
+        return contextEventsByContextId;
+    }
 }

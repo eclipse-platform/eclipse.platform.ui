@@ -24,7 +24,7 @@ import org.eclipse.ui.actions.RetargetAction;
  * 
  * @since 3.0
  */
-public class ActionHandler extends AbstractHandler {
+public final class ActionHandler extends AbstractHandler {
 
     private final static String ATTRIBUTE_CHECKED = "checked"; //$NON-NLS-1$
 

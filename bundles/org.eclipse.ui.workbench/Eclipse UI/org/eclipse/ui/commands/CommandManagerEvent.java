@@ -10,8 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.commands;
 
+import java.util.Set;
+
+import org.eclipse.ui.internal.util.Util;
+
 /**
- * An instance of this class describes changes to an instance of <code>ICommandManager</code>.
+ * An instance of this class describes changes to an instance of
+ * <code>ICommandManager</code>.
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
@@ -37,7 +42,11 @@ public final class CommandManagerEvent {
 
     private boolean definedKeyConfigurationIdsChanged;
 
-    private boolean handlersByCommandIdChanged;
+    private Set previouslyDefinedCategoryIds;
+
+    private Set previouslyDefinedCommandIds;
+
+    private Set previouslyDefinedKeyConfigurationIds;
 
     /**
      * Creates a new instance of this class.
@@ -60,8 +69,26 @@ public final class CommandManagerEvent {
      * @param definedKeyConfigurationIdsChanged
      *            true, iff the definedKeyConfigurationIdsChanged property
      *            changed.
-     * @param handlersByCommandIdChanged
-     *            true, iff the handlersByCommandIdChanged property changed.
+     * @param previouslyDefinedCategoryIds
+     *            the set of identifiers to previously defined categories. This
+     *            set may be empty. If this set is not empty, it must only
+     *            contain instances of <code>String</code>. This set must be
+     *            <code>null</code> if definedCategoryIds is
+     *            <code>false</code> and must not be null if
+     *            definedCategoryIds is <code>true</code>.
+     * @param previouslyDefinedContextIds
+     *            the set of identifiers to previously defined contexts. This
+     *            set may be empty. If this set is not empty, it must only
+     *            contain instances of <code>String</code>. This set must be
+     *            <code>null</code> if definedContextIds is <code>false</code>
+     *            and must not be null if definedContextIds is <code>true</code>.
+     * @param previouslyDefinedKeyConfigurationIds
+     *            the set of identifiers to previously defined key
+     *            configurations. This set may be empty. If this set is not
+     *            empty, it must only contain instances of <code>String</code>.
+     *            This set must be <code>null</code> if
+     *            definedKeyConfigurationIds is <code>false</code> and must
+     *            not be null if definedKeyConfigurationIds is <code>true</code>.
      */
     public CommandManagerEvent(ICommandManager commandManager,
             boolean activeContextIdsChanged,
@@ -70,8 +97,31 @@ public final class CommandManagerEvent {
             boolean definedCategoryIdsChanged,
             boolean definedCommandIdsChanged,
             boolean definedKeyConfigurationIdsChanged,
-            boolean handlersByCommandIdChanged) {
+            Set previouslyDefinedCategoryIds, Set previouslyDefinedCommandIds,
+            Set previouslyDefinedKeyConfigurationIds) {
         if (commandManager == null) throw new NullPointerException();
+
+        if (!definedCategoryIdsChanged && previouslyDefinedCategoryIds != null)
+                throw new IllegalArgumentException();
+
+        if (!definedCommandIdsChanged && previouslyDefinedCommandIds != null)
+                throw new IllegalArgumentException();
+
+        if (!definedKeyConfigurationIdsChanged
+                && previouslyDefinedKeyConfigurationIds != null)
+                throw new IllegalArgumentException();
+
+        if (definedCategoryIdsChanged)
+                this.previouslyDefinedCategoryIds = Util.safeCopy(
+                        previouslyDefinedCategoryIds, String.class);
+
+        if (definedCommandIdsChanged)
+                this.previouslyDefinedCommandIds = Util.safeCopy(
+                        previouslyDefinedCommandIds, String.class);
+
+        if (definedKeyConfigurationIdsChanged)
+                this.previouslyDefinedKeyConfigurationIds = Util.safeCopy(
+                        previouslyDefinedKeyConfigurationIds, String.class);
 
         this.commandManager = commandManager;
         this.activeContextIdsChanged = activeContextIdsChanged;
@@ -81,7 +131,6 @@ public final class CommandManagerEvent {
         this.definedCategoryIdsChanged = definedCategoryIdsChanged;
         this.definedCommandIdsChanged = definedCommandIdsChanged;
         this.definedKeyConfigurationIdsChanged = definedKeyConfigurationIdsChanged;
-        this.handlersByCommandIdChanged = handlersByCommandIdChanged;
     }
 
     /**
@@ -95,21 +144,55 @@ public final class CommandManagerEvent {
     }
 
     /**
+     * Returns the set of identifiers to previously defined categories.
+     * 
+     * @return the set of identifiers to previously defined categories. This set
+     *         may be empty. If this set is not empty, it is guaranteed to only
+     *         contain instances of <code>String</code>. This set is
+     *         guaranteed to be <code>null</code> if definedCategoryIds is
+     *         <code>false</code> and is guaranteed to not be null if
+     *         definedCategoryIds is <code>true</code>.
+     */
+    public Set getPreviouslyDefinedCategoryIds() {
+        return previouslyDefinedCategoryIds;
+    }
+
+    /**
+     * Returns the set of identifiers to previously defined commands.
+     * 
+     * @return the set of identifiers to previously defined commands. This set
+     *         may be empty. If this set is not empty, it is guaranteed to only
+     *         contain instances of <code>String</code>. This set is
+     *         guaranteed to be <code>null</code> if definedCommandIds is
+     *         <code>false</code> and is guaranteed to not be null if
+     *         definedCommandIds is <code>true</code>.
+     */
+    public Set getPreviouslyDefinedCommandIds() {
+        return previouslyDefinedCommandIds;
+    }
+
+    /**
+     * Returns the set of identifiers to previously defined key conigurations.
+     * 
+     * @return the set of identifiers to previously defined key configurations.
+     *         This set may be empty. If this set is not empty, it is guaranteed
+     *         to only contain instances of <code>String</code>. This set is
+     *         guaranteed to be <code>null</code> if
+     *         definedKeyConfigurationIds is <code>false</code> and is
+     *         guaranteed to not be null if definedKeyConfigurationIds is
+     *         <code>true</code>.
+     */
+    public Set getPreviouslyDefinedKeyConfigurationIds() {
+        return previouslyDefinedKeyConfigurationIds;
+    }
+
+    /**
      * Returns whether or not the activeContextIds property changed.
      * 
      * @return true, iff the activeContextIds property changed.
      */
     public boolean haveActiveContextIdsChanged() {
         return activeContextIdsChanged;
-    }
-
-    /**
-     * Returns whether or not the handlersByCommandId property changed.
-     * 
-     * @return true, iff the handlersByCommandId property changed.
-     */
-    public boolean haveHandlersByCommandIdChanged() {
-        return handlersByCommandIdChanged;
     }
 
     /**

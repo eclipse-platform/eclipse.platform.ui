@@ -24,12 +24,6 @@ public abstract class AbstractHandler implements IHandler {
 
     private List handlerListeners;
 
-    /**
-     * Creates a new instance of this class.
-     */
-    protected AbstractHandler() {
-    }
-
     public void addHandlerListener(IHandlerListener handlerListener) {
         if (handlerListener == null) throw new NullPointerException();
 
@@ -57,14 +51,14 @@ public abstract class AbstractHandler implements IHandler {
     }
 
     public Object getAttributeValue(String attributeName)
-    	throws NoSuchAttributeException {
+            throws NoSuchAttributeException {
         throw new NoSuchAttributeException();
     }
 
     public Set getDefinedAttributeNames() {
         return Collections.EMPTY_SET;
     }
-    
+
     public void removeHandlerListener(IHandlerListener handlerListener) {
         if (handlerListener == null) throw new NullPointerException();
 
