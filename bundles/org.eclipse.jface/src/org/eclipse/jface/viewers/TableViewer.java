@@ -245,6 +245,14 @@ public class TableViewer extends StructuredViewer {
 									.getText(), item.getImage());
 
 							itemProvider.updateLabel(updateLabel, element);
+							
+							 //As it is possible for user code to run the event 
+				            //loop check here.
+				            if (item.isDisposed()) {
+				                unmapElement(element);
+				                return;
+				            }   
+				            
 							text = updateLabel.getText();
 							image = updateLabel.getImage();
 							

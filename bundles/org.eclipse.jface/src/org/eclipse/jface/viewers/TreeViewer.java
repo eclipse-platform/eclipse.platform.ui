@@ -100,8 +100,6 @@ public class TreeViewer extends AbstractTreeViewer {
 
         if (item.isDisposed()) {
             unmapElement(element);
-            Assert.isTrue(!item.isDisposed(),
-                    "Update to disposed element " + element.toString());//$NON-NLS-1$
             return;
         }        
         // update icon and label
@@ -126,15 +124,17 @@ public class TreeViewer extends AbstractTreeViewer {
 
             ViewerLabel updateLabel = new ViewerLabel(item.getText(), item
                     .getImage());
+            
             provider.updateLabel(updateLabel, element);
             
-            decorating = true;
+            //As it is possible for user code to run the event 
+            //loop check here.
             if (item.isDisposed()) {
                 unmapElement(element);
-                Assert.isTrue(!item.isDisposed(),
-                        "Disposed element during label update" + element.toString());//$NON-NLS-1$
                 return;
-            }    
+            }           
+            
+            decorating = true;
 
             if (updateLabel.hasNewImage())
                 item.setImage(updateLabel.getImage());
