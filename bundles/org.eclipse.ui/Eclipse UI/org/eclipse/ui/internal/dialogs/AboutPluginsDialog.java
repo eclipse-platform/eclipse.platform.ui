@@ -31,7 +31,7 @@ import org.eclipse.ui.internal.*;
  * @private
  *		This class is internal to the workbench and must not be called outside the workbench
  */
-public class AboutPluginsDialog extends Dialog {
+public class AboutPluginsDialog extends ProductInfoDialog {
 
 	/**
 	 * Table height in dialog units (value 200).
@@ -274,37 +274,7 @@ public class AboutPluginsDialog extends Dialog {
 			return;
 		}
 
-		final URL url = infoURL;
-		if (SWT.getPlatform().equals("win32")) {	//$NON-NLS-1$
-			Program.launch(url.toString());
-		} else {
-			Thread launcher = new Thread("Plugin Info Launcher") {	//$NON-NLS-1$
-				public void run() {
-					try {
-						if (webBrowserOpened) {
-							Runtime.getRuntime().exec("netscape -remote openURL(" + url.toString() + ")");	//$NON-NLS-1$ //$NON-NLS-2$
-						} else {
-							Process p = Runtime.getRuntime().exec("netscape " + url.toString());	//$NON-NLS-1$
-							webBrowserOpened = true;
-							try {
-								if (p != null)
-									p.waitFor();
-							} catch (InterruptedException e) {
-								MessageDialog.openError(AboutPluginsDialog.this.getShell(), WorkbenchMessages.getString("AboutPluginsDialog.errorTitle"), //$NON-NLS-1$
-								e.getMessage());
-							} finally {
-								webBrowserOpened = false;
-							}
-						}
-					} catch (IOException e) {
-						MessageDialog.openError(AboutPluginsDialog.this.getShell(), WorkbenchMessages.getString("AboutPluginsDialog.errorTitle"), //$NON-NLS-1$
-						e.getMessage());
-
-					}
-				}
-			};
-			launcher.start();
-		}
+		openLink(infoURL.toString());
 	}
 	
 	/**

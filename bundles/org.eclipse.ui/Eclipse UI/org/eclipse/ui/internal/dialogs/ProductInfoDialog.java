@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.AboutItem;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -241,11 +242,12 @@ protected StyleRange findPreviousRange(StyledText text){
  * Open a link
  */
 protected void openLink(final String href) {
+	final Display d = Display.getCurrent();
 	if (SWT.getPlatform().equals("win32")) { //$NON-NLS-1$
 		Program.launch(href);
 	} else {
-			Thread launcher = new Thread("About Link Launcher") {//$NON-NLS-1$
-	public void run() {
+		Thread launcher = new Thread("About Link Launcher") {//$NON-NLS-1$
+			public void run() {
 				try {
 					if (webBrowserOpened) {
 						Runtime.getRuntime().exec("netscape -remote openURL(" + href + ")"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -256,16 +258,23 @@ protected void openLink(final String href) {
 							if (p != null)
 								p.waitFor();
 						} catch (InterruptedException e) {
-							MessageDialog.openError(getShell(), WorkbenchMessages.getString("ProductInfoDialog.errorTitle"), //$NON-NLS-1$
-							e.getMessage());
+							d.asyncExec(new Runnable() {
+								public void run() {
+									MessageDialog.openError(getShell(), WorkbenchMessages.getString("ProductInfoDialog.errorTitle"), //$NON-NLS-1$
+									WorkbenchMessages.getString("ProductInfoDialog.unableToOpenWebBrowser"));
+								}
+							});
 						} finally {
 							webBrowserOpened = false;
 						}
 					}
 				} catch (IOException e) {
-					MessageDialog.openError(getShell(), WorkbenchMessages.getString("ProductInfoDialog.errorTitle"), //$NON-NLS-1$
-					e.getMessage());
-
+					d.asyncExec(new Runnable() {
+						public void run() {
+							MessageDialog.openError(getShell(), WorkbenchMessages.getString("ProductInfoDialog.errorTitle"), //$NON-NLS-1$
+							WorkbenchMessages.getString("ProductInfoDialog.unableToOpenWebBrowser"));
+						}
+					});
 				}
 			}
 		};
