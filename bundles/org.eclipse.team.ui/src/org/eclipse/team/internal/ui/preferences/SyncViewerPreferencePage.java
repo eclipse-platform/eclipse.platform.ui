@@ -10,14 +10,19 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.preferences;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ui.IPreferenceIds;
+import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -110,6 +115,11 @@ public class SyncViewerPreferencePage extends FieldEditorPreferencePage implemen
 		
 		scheduledDelay = new IntegerFieldEditor2(IPreferenceIds.SYNCVIEW_DELAY, "How often should the background refresh run? (in minutes)", getFieldEditorParent(), 2);
 		addField(scheduledDelay);
+		
+		Date lastTimeRun = new Date(TeamUIPlugin.getPlugin().getRefreshJob().getLastTimeRun());
+		String sLastTimeRun = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).format(lastTimeRun);
+		Label label= new Label(getFieldEditorParent(), SWT.NONE);
+		label.setText(Policy.bind("SyncViewPreferencePage.lastRefreshRun", sLastTimeRun)); //$NON-NLS-1$ 
 		
 		compressFolders = new BooleanFieldEditor(IPreferenceIds.SYNCVIEW_COMPRESS_FOLDERS, "Compress in-sync folder paths when using the tree view", SWT.NONE, getFieldEditorParent());
 		addField(compressFolders);

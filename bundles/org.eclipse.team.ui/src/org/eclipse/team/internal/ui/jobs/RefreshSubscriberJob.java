@@ -55,6 +55,11 @@ public class RefreshSubscriberJob extends Job {
 	private static long scheduleDelay = 20000; //5 /* minutes */ * (60 * 1000); 
 	
 	/**
+	 * Time the job was run last in milliseconds.
+	 */
+	private long lastTimeRun = 0; 
+	
+	/**
 	 * The subscribers and roots to refresh. If these are changed when the job
 	 * is running the job is cancelled.
 	 */
@@ -117,6 +122,7 @@ public class RefreshSubscriberJob extends Job {
 		IResource[] roots = getResources();		
 		monitor.beginTask(Policy.bind("RefreshSubscriber.runTitle", subscriber.getName()), 100);
 		try {
+			lastTimeRun = System.currentTimeMillis();
 			TeamSubscriber[] subscribers = new TeamSubscriber[] {subscriber};
 			for (int i = 0; i < subscribers.length; i++) {
 				TeamSubscriber s = subscribers[i];
@@ -176,5 +182,9 @@ public class RefreshSubscriberJob extends Job {
 	
 	public boolean shouldReschedule() {
 		return reschedule;
-	}	
+	}
+	
+	public long getLastTimeRun() {
+		return lastTimeRun;
+	}
 }
