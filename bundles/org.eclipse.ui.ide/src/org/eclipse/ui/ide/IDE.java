@@ -105,6 +105,9 @@ public final class IDE {
 	 * </p>
 	 * 
 	 * @see org.eclipse.ui.ISharedImages
+	 * 
+	 * @issue this defines API constants, but there is no public API
+	 *   for obtaining the corresponding image.
 	 */
 	public interface SharedImages {
 		/**
