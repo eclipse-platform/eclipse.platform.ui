@@ -186,8 +186,8 @@ public class ToolBarContributionItem extends ContributionItem {
         if (coolItem == null && coolBar != null) {
             ToolBar oldToolBar = toolBarManager.getControl();
             ToolBar toolBar = toolBarManager.createControl(coolBar);
-            if ((oldToolBar != null) && (!oldToolBar.equals(toolBar))) {
-                // We are using a new tool bar, so we need to update.
+            if ((oldToolBar != null) && (oldToolBar.equals(toolBar))) {
+                // We are using an old tool bar, so we need to update.
                 toolBarManager.update(true);
             }
             
