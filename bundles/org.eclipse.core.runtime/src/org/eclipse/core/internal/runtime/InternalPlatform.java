@@ -141,7 +141,7 @@ public static URL asLocalURL(URL url) throws IOException {
 	return ((PlatformURLConnection) connection).getURLAsLocal();
 }
 private static void assertInitialized() {
-	Assert.isTrue(initialized, Policy.bind("meta.appNotInit"));
+	Assert.isTrue(initialized, "meta.appNotInit");
 }
 private static String findPlugin(LaunchInfo.VersionedIdentifier[] list, String name, String version) {
 	LaunchInfo.VersionedIdentifier result = null;
