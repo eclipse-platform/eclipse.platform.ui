@@ -78,6 +78,9 @@ public BundleManifest(File manifest) {
 			}
 			// plugin version
 			String version = a.getValue(Constants.BUNDLE_VERSION);
+			if (version == null) {
+				return;
+			}
 			String hostPlugin = a.getValue(Constants.FRAGMENT_HOST);
 			pluginEntry = new PluginEntry();
 			pluginEntry.setVersionedIdentifier(new VersionedIdentifier(id,
