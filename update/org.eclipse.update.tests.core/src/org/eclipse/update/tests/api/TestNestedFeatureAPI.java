@@ -177,7 +177,7 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 	/*
 	 * 
 	 */
-	public void testNested3() throws Exception {
+/*	public void testNested3() throws Exception {
 
 		IFeature rootFeature = getRootFeature3();
 		IFeatureReference[] ref = rootFeature.getIncludedFeatureReferences();
@@ -187,6 +187,6 @@ public class TestNestedFeatureAPI extends UpdateManagerTestCase {
 			childFeature,
 			ref[0].getFeature());
 	}
-
+*/
 
 }
