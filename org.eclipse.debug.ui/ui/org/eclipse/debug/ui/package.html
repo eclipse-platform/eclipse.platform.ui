@@ -36,14 +36,17 @@ console view handles I/O for the debuggable process.</p>
 
 <h4>The Variables View</h4>
 
-<p>The variables view presents a tree of variables for the currently selected stack frame.</p>
+<p>The variables view presents a tree of variables for the currently selected stack frame.
+A "details" area may be hidden/shown which provides a detailed description of 
+the selected variable. For example, the Java debugger displays the result of
+invoking 'toString()' on the selected variable in this area.</p>
 
 <h4>The Breakpoints View</h4>
 
 <p>The breakpoints view presents a list of all breakpoints currently defined in the
 workspace. It supports enabling/disabling and breakpoint removal.</p>
 
-<h4>The Experssion View</h4>
+<h4>The Expression View</h4>
 
 <p>The expression view presents a tree of expressions and their corresponding values.</p>
 
@@ -59,20 +62,17 @@ implementation of a debug model presentation. The presentation provides:
   <li>an image for a debug element or breakpoint</li>
   <li>a label for a debug element or breakpoint</li>
   <li>an editor input and editor id used to display a debug element, breakpoint, or source element</li>
+  <li>a detailed description of a variable value, used to display
+   in the "details" section of the variables view</li>
 </ul>
 
-<h4>Launch Wizard</h4>
+<h4>Launch Configuration Dialog</h4>
 
-<p>The debug UI plug-in defines an interface that launch wizards must implement - <b>
-org.eclipse.debug.ui.ILaunchWizard</b>. Launch wizards are defined
-in <b>launcher</b> extensions (defined by <b>org.eclipse.debug.core</b>), and are instantiated by the debug UI
-plug-in.</p>
+<p>The debug UI plug-in provides a lanuch configuration dialog for
+creating and editing launch configurations. Clients may contribute
+tabs to the launch configuration dialog via the launchConfigurationTab
+extension point.</p>
 
-<h4>Debug Perspective</h4>
 
-<p>By default, when a program is run or debug, the debug UI automatically switches to the
-default debug perspective. To circumvent automatic perspective switching, a user
-preference is available. Launcher extensions may also define an alternate perspective to
-use.</p>
 </body>
 </html>
