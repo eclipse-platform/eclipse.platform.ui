@@ -23,14 +23,13 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringVariableSelectionDialog;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -38,6 +37,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
@@ -46,6 +46,11 @@ import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
+/**
+ * The external tools main tab allows the user to configure primary attributes
+ * of external tool launch configurations such as the location, working directory,
+ * and arguments.
+ */
 public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	public final static String FIRST_EDIT = "editedByExternalToolsMainTab"; //$NON-NLS-1$
 
@@ -53,16 +58,20 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	protected Text workDirectoryField;
 	protected Button fileLocationButton;
 	protected Button workspaceLocationButton;
+	protected Button variablesLocationButton;
 	protected Button fileWorkingDirectoryButton;
 	protected Button workspaceWorkingDirectoryButton;
+	protected Button variablesWorkingDirectoryButton;
 
 	protected Text argumentField;
-	protected Button variableButton;
+	protected Button argumentVariablesButton;
 
 	protected SelectionAdapter selectionAdapter;
 	
 	protected boolean fInitializing= false;
 	private boolean userEdited= false;
+
+	protected WidgetListener fListener= new WidgetListener();
 	
 	/**
 	 * A listener to update for text modification and widget selection.
@@ -78,24 +87,24 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		public void widgetSelected(SelectionEvent e) {
 			setDirty(true);
 			Object source= e.getSource();
-			if (source == variableButton) {
-				StringVariableSelectionDialog dialog= new StringVariableSelectionDialog(getShell());
-				if (dialog.open() == Window.OK) {
-					argumentField.insert(dialog.getVariableExpression());
-				}
-			} else if (source == workspaceLocationButton) {
+			if (source == workspaceLocationButton) {
 				handleWorkspaceLocationButtonSelected();
 			} else if (source == fileLocationButton) {
-				handleLocationButtonSelected();
+				handleFileLocationButtonSelected();
 			} else if (source == workspaceWorkingDirectoryButton) {
 				handleWorkspaceWorkingDirectoryButtonSelected();
 			} else if (source == fileWorkingDirectoryButton) {
 				handleFileWorkingDirectoryButtonSelected();
+			} else if (source == argumentVariablesButton) {
+				handleVariablesButtonSelected(argumentField);
+			} else if (source == variablesLocationButton) {
+				handleVariablesButtonSelected(locationField);
+			} else if (source == variablesWorkingDirectoryButton) {
+				handleVariablesButtonSelected(workDirectoryField);
 			}
 		}
+
 	}
-	
-	protected WidgetListener fListener= new WidgetListener();
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -105,65 +114,66 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		setControl(mainComposite);
 		
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 1;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);
 		mainComposite.setLayoutData(gridData);
-		mainComposite.setFont(parent.getFont());
+
 		createLocationComponent(mainComposite);
 		createWorkDirectoryComponent(mainComposite);
 		createArgumentComponent(mainComposite);
-		createVerticalSpacer(mainComposite, 2);
+		createVerticalSpacer(mainComposite, 1);
+		
+		Dialog.applyDialogFont(parent);
 	}
 	
 	/**
 	 * Creates the controls needed to edit the location
 	 * attribute of an external tool
 	 * 
-	 * @param parent the composite to create the controls in
+	 * @param group the composite to create the controls in
 	 */
 	protected void createLocationComponent(Composite parent) {
-		Font font = parent.getFont();
-		
-		Composite composite = new Composite(parent, SWT.NONE);
+		Group group = new Group(parent, SWT.NONE);
+		group.setText(getLocationLabel());
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
 		layout.numColumns = 1;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;		
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayout(layout);
-		composite.setLayoutData(gridData);
+		group.setLayout(layout);
+		group.setLayoutData(gridData);
 		
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(getLocationLabel());
-		label.setFont(font);
+		Composite composite = new Composite(group, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns=1;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		locationField = new Text(composite, SWT.BORDER);
-		GridData data = new GridData(GridData.FILL_HORIZONTAL);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		locationField.setLayoutData(data);
-		locationField.setFont(font);
+		gridData = new GridData(GridData.FILL_HORIZONTAL);
+		gridData.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		locationField.setLayoutData(gridData);
+		locationField.addModifyListener(fListener);
 		
-		Composite buttonComposite = new Composite(parent, SWT.NONE);
+		Composite buttonComposite = new Composite(composite, SWT.NONE);
 		layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.numColumns = 1;
+		layout.numColumns = 3;
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(gridData);
-		buttonComposite.setFont(font);
-		
-		createVerticalSpacer(buttonComposite, 1);
 		
 		workspaceLocationButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Browse_Workspace..._3"), null); //$NON-NLS-1$
 		workspaceLocationButton.addSelectionListener(fListener);
 		fileLocationButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Brows&e_File_System..._4"), null); //$NON-NLS-1$
-		
 		fileLocationButton.addSelectionListener(fListener);
-		locationField.addModifyListener(fListener);
+		variablesLocationButton = createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.31"), null); //$NON-NLS-1$
+		variablesLocationButton.addSelectionListener(fListener);	
 	}
 	
+	/**
+	 * Returns the label used for the location widgets. Subclasses may wish to override.
+	 */
 	protected String getLocationLabel() {
 		return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Location___2"); //$NON-NLS-1$
 	}
@@ -175,48 +185,46 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createWorkDirectoryComponent(Composite parent) {
-		Font font = parent.getFont();
-		
-		Composite composite = new Composite(parent, SWT.NONE);
+		Group group = new Group(parent, SWT.NONE);
+		group.setText(getWorkingDirectoryLabel());
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		layout.numColumns = 1;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		composite.setLayout(layout);
-		composite.setLayoutData(gridData);
+		group.setLayout(layout);
+		group.setLayoutData(gridData);
 		
-		Label label = new Label(composite, SWT.NONE);
-		label.setText(getWorkingDirectoryLabel());
-		label.setFont(font);
+		Composite composite = new Composite(group, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 1;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		workDirectoryField = new Text(composite, SWT.BORDER);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		workDirectoryField.setLayoutData(data);
-		workDirectoryField.setFont(font);
+		workDirectoryField.addModifyListener(fListener);
 		
-		Composite buttonComposite = new Composite(parent, SWT.NONE);
+		Composite buttonComposite = new Composite(composite, SWT.NONE);
 		layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.numColumns = 1;
+		layout.numColumns = 3;
 		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(gridData);
-		buttonComposite.setFont(font);
 		
-		createVerticalSpacer(buttonComposite, 1);
 		workspaceWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Browse_Wor&kspace..._6"), null); //$NON-NLS-1$
 		workspaceWorkingDirectoryButton.addSelectionListener(fListener);
 		fileWorkingDirectoryButton= createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Browse_F&ile_System..._7"), null); //$NON-NLS-1$
-		
 		fileWorkingDirectoryButton.addSelectionListener(fListener);
-		workDirectoryField.addModifyListener(fListener);
+		variablesWorkingDirectoryButton = createPushButton(buttonComposite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.32"), null); //$NON-NLS-1$
+		variablesWorkingDirectoryButton.addSelectionListener(fListener);		
 	}
+	
 	/**
 	 * Return the String to use as the label for the working directory field.
-	 * @return String
+	 * Subclasses may wish to override.
 	 */
 	protected String getWorkingDirectoryLabel() {
 		return ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Working_&Directory__5"); //$NON-NLS-1$
@@ -229,34 +237,41 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * @param parent the composite to create the controls in
 	 */
 	protected void createArgumentComponent(Composite parent) {
-		Font font = parent.getFont();
-
-		Label label = new Label(parent, SWT.NONE);
-		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Arguments___1")); //$NON-NLS-1$
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		data.horizontalSpan = 2;
-		label.setLayoutData(data);
-		label.setFont(font);
-
-		argumentField = new Text(parent, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-		data = new GridData(GridData.FILL_BOTH);
-		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-		data.heightHint= 40;
-		argumentField.setLayoutData(data);
-		argumentField.setFont(font);
+		Group group = new Group(parent, SWT.NONE);
+		group.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Arguments___1")); //$NON-NLS-1$
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.numColumns = 1;
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		group.setLayout(layout);
+		group.setLayoutData(gridData);
+		
+		Composite composite = new Composite(group, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 1;
+		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.horizontalSpan = 2;
+		composite.setLayout(layout);
+		composite.setLayoutData(gridData);
+		
+		argumentField = new Text(composite, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		gridData = new GridData(GridData.FILL_BOTH);
+		gridData.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		gridData.heightHint = 30;
+		argumentField.setLayoutData(gridData);
 		argumentField.addModifyListener(fListener);
+		
+		argumentVariablesButton= createPushButton(composite, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Varia&bles..._2"), null); //$NON-NLS-1$
+		gridData = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		argumentVariablesButton.setLayoutData(gridData);
+		argumentVariablesButton.addSelectionListener(fListener);
 
-		variableButton= createPushButton(parent, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Varia&bles..._2"), null); //$NON-NLS-1$
-		GridData gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		variableButton.setLayoutData(gridData);
-		variableButton.addSelectionListener(fListener);
-
-		Label instruction = new Label(parent, SWT.NONE);
+		Label instruction = new Label(composite, SWT.NONE);
 		instruction.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.3")); //$NON-NLS-1$
-		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
-		data.horizontalSpan = 2;
-		instruction.setLayoutData(data);
-		instruction.setFont(font);
+		gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gridData.horizontalSpan = 2;
+		instruction.setLayoutData(gridData);
 	}
 	
 	/* (non-Javadoc)
@@ -278,6 +293,10 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		setDirty(false);
 	}
 	
+	/**
+	 * Updates the working directory widgets to match the state of the given launch
+	 * configuration.
+	 */
 	protected void updateWorkingDirectory(ILaunchConfiguration configuration) {
 		String workingDir= ""; //$NON-NLS-1$
 		try {
@@ -288,6 +307,10 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		workDirectoryField.setText(workingDir);
 	}
 	
+	/**
+	 * Updates the location widgets to match the state of the given launch
+	 * configuration.
+	 */
 	protected void updateLocation(ILaunchConfiguration configuration) {
 		String location= ""; //$NON-NLS-1$
 		try {
@@ -298,6 +321,10 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		locationField.setText(location);
 	}
 
+	/**
+	 * Updates the argument widgets to match the state of the given launch
+	 * configuration.
+	 */
 	protected void updateArgument(ILaunchConfiguration configuration) {
 		String arguments= ""; //$NON-NLS-1$
 		try {
@@ -365,7 +392,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 */
 	protected boolean validateLocation(boolean newConfig) {
 		String value = locationField.getText().trim();
-		
 		if (value.length() < 1) {
 			if (newConfig) {
 				setErrorMessage(null);
@@ -385,7 +411,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			return false;
 		}
 		
-		
 		File file = new File(location);
 		if (!file.exists()) { // The file does not exist.
 			if (!newConfig) {
@@ -396,14 +421,11 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		if (!file.isFile()) {
 			if (!newConfig) {
 				setErrorMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.External_tool_location_specified_is_not_a_file_20")); //$NON-NLS-1$
-				
 			}
 			return false;
 		}
 		return true;
 	}
-	
-	
 	
 	/**
 	 * Returns the value of the given string with all variables substituted (if any).
@@ -421,7 +443,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * Validates the content of the working directory field.
 	 */
 	protected boolean validateWorkDirectory() {
-		
 		String value = workDirectoryField.getText().trim();
 		if (value.length() <= 0) {
 			return true;
@@ -447,7 +468,11 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		return true;
 	}
 	
-	protected void handleLocationButtonSelected() {
+	/**
+	 * Prompts the user to choose a location from the filesystem and
+	 * sets the location as the full path of the selected file.
+	 */
+	protected void handleFileLocationButtonSelected() {
 		FileDialog fileDialog = new FileDialog(getShell(), SWT.NONE);
 		fileDialog.setFileName(locationField.getText());
 		String text= fileDialog.open();
@@ -473,10 +498,6 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		locationField.setText(newVariableExpression("workspace_loc", resource.getFullPath().toString())); //$NON-NLS-1$
 	}
 	
-	protected String newVariableExpression(String varName, String arg) {
-		return VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression(varName, arg);
-	}
-	
 	/**
 	 * Prompts the user for a working directory location within the workspace
 	 * and sets the working directory as a String containing the workspace_loc
@@ -500,6 +521,17 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		}
 	}
 	
+	/**
+	 * Returns a new variable expression with the given variable and the given argument.
+	 * @see IStringVariableManager#generateVariableExpression(String, String)
+	 */
+	protected String newVariableExpression(String varName, String arg) {
+		return VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression(varName, arg);
+	}
+	
+	/**
+	 * Prompts the user to choose a working directory from the filesystem.
+	 */
 	protected void handleFileWorkingDirectoryButtonSelected() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SAVE);
 		dialog.setMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.23")); //$NON-NLS-1$
@@ -509,7 +541,29 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			workDirectoryField.setText(text);
 		}
 	}
+	
+	/**
+	 * A variable entry button has been pressed for the given text
+	 * field. Prompt the user for a variable and enter the result
+	 * in the given field.
+	 */
+	private void handleVariablesButtonSelected(Text textField) {
+		String variable = getVariable();
+		if (variable != null) {
+			textField.append(variable);
+		}
+	}
 
+	/**
+	 * Prompts the user to choose and configure a variable and returns
+	 * the resulting string, suitable to be used as an attribute.
+	 */
+	private String getVariable() {
+		StringVariableSelectionDialog dialog = new StringVariableSelectionDialog(getShell());
+		dialog.open();
+		return dialog.getVariableExpression();
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
