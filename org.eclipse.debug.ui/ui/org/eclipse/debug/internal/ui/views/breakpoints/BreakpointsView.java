@@ -125,6 +125,7 @@ public class BreakpointsView extends AbstractDebugView {
 						iterator.remove();
 					} catch (UnsupportedOperationException exception) {
 						iteratorException= exception;
+						break;
 					}
 				}
 			} catch (CoreException e) {
