@@ -30,6 +30,7 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -77,8 +78,10 @@ public final class AboutSystemDialog extends ProductInfoDialog {
     protected void createButtonsForButtonBar(Composite parent) {
         parent.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        createButton(parent, BROWSE_ERROR_LOG_BUTTON, WorkbenchMessages
+        Button button = createButton(parent, BROWSE_ERROR_LOG_BUTTON, WorkbenchMessages
                 .getString("AboutSystemDialog.browseErrorLogName"), false); //$NON-NLS-1$
+        String filename = Platform.getLogFileLocation().toOSString();
+        button.setEnabled(new File(filename).exists());
 
         createButton(parent, COPY_TO_CLIPBOARD_BUTTON, WorkbenchMessages
                 .getString("AboutSystemDialog.copyToClipboardName"), false); //$NON-NLS-1$
