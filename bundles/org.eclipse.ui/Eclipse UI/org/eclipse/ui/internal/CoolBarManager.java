@@ -381,6 +381,12 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 	}
 	/**
 	 */
+	public boolean isLayoutLocked() {
+		if (!coolBarExist()) return false;
+		return coolBar.getLocked();
+	}
+	/**
+	 */
 	public void lockLayout(boolean value) {
 		coolBar.setLocked(value);
 	}
@@ -602,7 +608,7 @@ public class CoolBarManager extends ContributionManager implements IToolBarManag
 				
 				// workaround for 14330
 				boolean relock = false;
-				if (coolBar.getLocked() && (coolBar.getItems().length > 0)) {
+				if (coolBar.getLocked()) {
 					coolBar.setLocked(false);
 					relock = true;
 				}
