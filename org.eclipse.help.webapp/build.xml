@@ -70,6 +70,8 @@
       <property name="dest" value="${basedir}/WEB-INF/lib/webapp.jar"/>
       <property name="compilePath" value="../org.eclipse.core.runtime/bin;../org.eclipse.core.runtime/runtime.jar;../org.eclipse.core.boot/bin;../org.eclipse.core.boot/boot.jar;../org.apache.xerces/bin;../org.apache.xerces/xerces.jar;../org.eclipse.help/bin;../org.eclipse.help/help.jar;../org.eclipse.tomcat/servlet.jar"/>
     </ant>
+    <delete file="${basedir}/WEB-INF/web.xml"/>
+    <delete file="${basedir}/WEB-INF/lib/jsp.jar"/>
     <copy file="${basedir}/jsp.jar" todir="${basedir}/WEB-INF/lib"/>
     <copy file="${basedir}/web.xml" todir="${basedir}/WEB-INF"/>
   </target>
