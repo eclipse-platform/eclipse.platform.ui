@@ -24,9 +24,9 @@ public class WizardTableOfContentsNode implements ITableOfContentsNode{
 	private static final String TOC_IMG_DECISION = "toc_decision_image"; //$NON-NLS-1$
 
 	/**
-	 * Image registry key for last page image (value <code>"toc_last_image"</code>).
+	 * Image registry key for last page image (value <code>"toc_disabled_image"</code>).
 	 */
-	private static final String TOC_IMG_LAST = "toc_last_image"; //$NON-NLS-1$
+	private static final String TOC_IMG_DISABLED= "toc_disabled_image"; //$NON-NLS-1$
 
 	/**
 	 * Image registry key for next image (value <code>"toc_next_image"</code>).
@@ -42,9 +42,11 @@ public class WizardTableOfContentsNode implements ITableOfContentsNode{
 
 	static {
 		ImageRegistry reg = JFaceResources.getImageRegistry();
-		reg.put(TOC_IMG_DECISION, ImageDescriptor.createFromFile(WizardTableOfContentsNode.class, "images/decision.gif")); //$NON-NLS-1$
-		reg.put(TOC_IMG_LAST, ImageDescriptor.createFromFile(WizardTableOfContentsNode.class, "images/last.gif")); //$NON-NLS-1$
+		reg.put(TOC_IMG_DISABLED, ImageDescriptor.createFromFile(WizardTableOfContentsNode.class, "images/disabled.gif")); //$NON-NLS-1$
 		reg.put(TOC_IMG_NEXT, ImageDescriptor.createFromFile(WizardTableOfContentsNode.class, "images/next.gif")); //$NON-NLS-1$
+		reg.put(TOC_IMG_DECISION, ImageDescriptor.createFromFile(WizardTableOfContentsNode.class, "images/decision.gif")); //$NON-NLS-1$
+		
+		
 	}
 
 	IWizardPage page;
@@ -69,9 +71,9 @@ public class WizardTableOfContentsNode implements ITableOfContentsNode{
 		innerComposite.setBackground(background);
 
 		imageLabel = new Label(innerComposite, SWT.NULL);
-		imageLabel.setImage(getImage());
 		imageLabel.setForeground(foreground);
 		imageLabel.setBackground(background);
+		imageLabel.setImage(getImage(true));
 		titleLabel = new Label(innerComposite, SWT.NULL);
 		titleLabel.setText(this.page.getTitle());
 		titleLabel.setFont(JFaceResources.getFont(JFaceResources.BANNER_FONT));
@@ -118,6 +120,7 @@ public class WizardTableOfContentsNode implements ITableOfContentsNode{
 	 * @see ITableOfContentsNode.setEnabled(boolean)
 	 */
 	public void setEnabled(boolean enabled){
+		imageLabel.setImage(getImage(enabled));
 		innerComposite.setEnabled(enabled);
 		imageLabel.setEnabled(enabled);
 		titleLabel.setEnabled(enabled);
@@ -126,12 +129,18 @@ public class WizardTableOfContentsNode implements ITableOfContentsNode{
 	
 	/**
 	 * Get the image for the receiver.
+	 * @param enabled The boolean state used to determine the image to use.
+	 * @return Image
 	 */
-	private Image getImage(){
+	private Image getImage(boolean enabled){
 		if(getPage() instanceof IDecisionPage)
 			return JFaceResources.getImage(TOC_IMG_DECISION);
-		else
-			return JFaceResources.getImage(TOC_IMG_NEXT);
+		else{
+			if(enabled)
+				return JFaceResources.getImage(TOC_IMG_NEXT);
+			else
+				return JFaceResources.getImage(TOC_IMG_DISABLED);
+		}
 	}
 
 }
