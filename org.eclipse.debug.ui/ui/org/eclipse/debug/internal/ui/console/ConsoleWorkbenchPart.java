@@ -77,7 +77,7 @@ public class ConsoleWorkbenchPart implements IWorkbenchPart {
 	 * @see org.eclipse.ui.IWorkbenchPart#getTitle()
 	 */
 	public String getTitle() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -91,7 +91,7 @@ public class ConsoleWorkbenchPart implements IWorkbenchPart {
 	 * @see org.eclipse.ui.IWorkbenchPart#getTitleToolTip()
 	 */
 	public String getTitleToolTip() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

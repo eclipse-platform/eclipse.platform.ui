@@ -230,6 +230,12 @@ public class ConsoleView extends AbstractDebugView implements IConsoleView, ICon
 							if (part != null) {
 								partClosed(part);
 							}
+							if (getConsole() == null) {
+								IConsole[] available = DebugUIPlugin.getDefault().getConsoleManager().getConsoles();
+								if (available.length > 0) {
+									display(available[available.length - 1]);
+								}
+							}
 						}
 					}
 				}
