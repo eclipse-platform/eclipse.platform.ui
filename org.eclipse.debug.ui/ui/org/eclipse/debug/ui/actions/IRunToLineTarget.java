@@ -41,7 +41,10 @@ public interface IRunToLineTarget {
 	
 	/**
 	 * Perform a run to line operation on the given element that is 
-	 * currently selected and suspended in the Debug view.
+	 * currently selected and suspended in the Debug view. Implementations
+	 * must honor the user preference of whether to skip breakpoints
+	 * during the operation -
+	 * see <code>IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE</code>.
 	 * 
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
