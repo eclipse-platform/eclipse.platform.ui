@@ -1,14 +1,16 @@
 package org.eclipse.ui.externaltools.internal.ant.launchConfigurations;
 
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
+Copyright (c) 2000, 2003 IBM Corp.  All rights reserved.
 This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.core.runtime.CoreException;
@@ -16,10 +18,17 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,6 +39,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
@@ -43,20 +54,24 @@ import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
 
 public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 
+	private TabFolder tabFolder;
+	
+	private TabItem executeTabItem;
+	private TabItem orderTabItem;
+	
 	private Button upButton;
 	private Button downButton;
 	
 	private Label descriptionLabel;
-	private Label executeLabel;
-	private TableViewer executeTargetsTable;
+	
+	private CheckboxTableViewer executeTargetsTable;
+	private TableViewer orderTargetsTable;
 	
 	private TargetInfo defaultTarget = null;
 	private TargetInfo[] allTargets= null;
 	private Text descriptionField;
 	
 	private String location= null;
-	private Button addButton;
-	private Button removeButton;
 	
 	private static final String TEMP_ATTRIBUTE= "temp"; //$NON-NLS-1$
 	
@@ -66,72 +81,41 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
 		
-		Composite mainComposite = new Composite(parent, SWT.NONE);
-		setControl(mainComposite);
-		GridLayout layout = new GridLayout();
-		mainComposite.setLayout(layout);
-		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		mainComposite.setLayoutData(gridData);
-		createVerticalSpacer(mainComposite, 1);
-										
-		Composite middleComposite = new Composite(mainComposite, SWT.NONE);
-		layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.numColumns = 4;
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		middleComposite.setLayout(layout);
-		middleComposite.setLayoutData(gridData);
-		middleComposite.setFont(font);
+		Composite comp = new Composite(parent, SWT.NONE);
+		setControl(comp);
+		//TODO: set help context ID
+		//WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_CLASSPATH_TAB); 
+		GridLayout topLayout = new GridLayout();
+		topLayout.numColumns = 1;
+		comp.setLayout(topLayout);		
+
+		tabFolder = new TabFolder(comp, SWT.NONE);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		tabFolder.setLayoutData(gridData);
+		tabFolder.setFont(font);
 		
-		createExecuteTargetsList(middleComposite);
-		createButtonComposite(middleComposite);
+		createExecuteTargetsList(tabFolder);
 		
-		Composite lowerComposite = new Composite(mainComposite, SWT.NONE);
-		layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		gridData = new GridData(GridData.FILL_HORIZONTAL);
-		lowerComposite.setLayout(layout);
-		lowerComposite.setLayoutData(gridData);
-		lowerComposite.setFont(font);	
-		
-		createDescriptionField(lowerComposite);
+		createOrderTargetsList(tabFolder);
+
+		createDescriptionField(comp);
 	}
 	
-	/*
+	/**
 	 * Creates a button bank containing the buttons for moving
-	 * targets in the active list upButton and downButton.
+	 * targets in the order list.
 	 */
-	private void createButtonComposite(Composite parent) {
+	private void createOrderButtonComposite(Composite parent) {
 		Composite buttonComposite = new Composite(parent, SWT.NONE);
 
-		GridData gridData = new GridData();
+		GridData gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
 		buttonComposite.setLayoutData(gridData);
-
+		
 		GridLayout layout = new GridLayout();
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		buttonComposite.setLayout(layout);
 		buttonComposite.setFont(parent.getFont());
-		
-		new Label(buttonComposite, SWT.NONE);
-		
-		addButton = createPushButton(buttonComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.&Add..._1"), null); //$NON-NLS-1$
-		addButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					addTargets();
-					updateLaunchConfigurationDialog();
-				}
-			});
-			
-		removeButton = createPushButton(buttonComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.R&emove_2"), null); //$NON-NLS-1$
-		removeButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					removeTargets();
-					updateLaunchConfigurationDialog();
-				}
-			});
 		
 		upButton = createPushButton(buttonComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.U&p_3"), null); //$NON-NLS-1$
 		upButton.addSelectionListener(new SelectionAdapter() {
@@ -145,6 +129,49 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		downButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					handleMoveDown();
+					updateLaunchConfigurationDialog();
+				}
+			});
+	}
+	
+	/**
+	 * Creates a button bank containing the buttons for the 
+	 * execute targets tab
+	 */
+	private void createExecuteButtonComposite(Composite parent) {
+		Composite buttonComposite = new Composite(parent, SWT.NONE);
+
+		GridData gridData = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
+		buttonComposite.setLayoutData(gridData);
+	
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		buttonComposite.setLayout(layout);
+		buttonComposite.setFont(parent.getFont());
+	
+		Button selectAllButton = createPushButton(buttonComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.&Select_All_1"), null); //$NON-NLS-1$
+		selectAllButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					executeTargetsTable.setAllChecked(true);
+					orderTargetsTable.setInput(executeTargetsTable.getCheckedElements());
+					updateLaunchConfigurationDialog();
+				}
+			});
+	
+		Button deselectAllButton = createPushButton(buttonComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.&Deselect_All_2"), null); //$NON-NLS-1$
+		deselectAllButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					executeTargetsTable.setAllChecked(false);
+					orderTargetsTable.setInput(new TargetInfo[0]);
+					updateLaunchConfigurationDialog();
+				}
+			});	
+			
+		Button addButton = createPushButton(buttonComposite, AntLaunchConfigurationMessages.getString("AntTargetsTab.&Add_Duplicates..._3"), null); //$NON-NLS-1$
+		addButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					addTargets();
 					updateLaunchConfigurationDialog();
 				}
 			});
@@ -192,31 +219,19 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		TargetInfo[] targets= getTargets();
 		AntTargetLabelProvider labelProvider= new AntTargetLabelProvider(null);			
 		SelectionDialog dialog= new ListSelectionDialog(getShell(), targets, new AntTargetContentProvider(), labelProvider, AntLaunchConfigurationMessages.getString("AntTargetsTab.Select_&Ant_Targets__6")); //$NON-NLS-1$
+		
 		if (dialog.open() == SelectionDialog.OK) {
-			getContentProvider().addAll(Arrays.asList(dialog.getResult()));
+			AntTargetContentProvider contentProvider= (AntTargetContentProvider)executeTargetsTable.getContentProvider();
+			contentProvider.addAll(Arrays.asList(dialog.getResult()));
 		}
-		updateItemColoring();
-	}
-	
-	private AntTargetContentProvider getContentProvider() {
-		return (AntTargetContentProvider)executeTargetsTable.getContentProvider();
-	}
-	
-	private void removeTargets() {
-		int startIndex = executeTargetsTable.getTable().getSelectionIndex();
-		int indices[] = executeTargetsTable.getTable().getSelectionIndices();
-		for (int i = indices.length - 1; i >= 0; i--) {
-			getContentProvider().removeTarget(indices[i]);
-		}
-		executeTargetsTable.refresh();
-		executeTargetsTable.getTable().select(startIndex - 1);
+		updateItemColoring(executeTargetsTable);
 	}
 	
 	/**
 	 * Moves the selected targets up in the list of active targets
 	 */
 	private void handleMoveUp() {
-		int indices[] = executeTargetsTable.getTable().getSelectionIndices();
+		int indices[] = orderTargetsTable.getTable().getSelectionIndices();
 		if (indices.length == 0) {
 			return;
 		}
@@ -225,87 +240,164 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			// Only perform the move if the items have somewhere to move to
 			return;
 		}
+		AntTargetContentProvider contentProvider= (AntTargetContentProvider)orderTargetsTable.getContentProvider();
 		for (int i = 0; i < newIndices.length; i++) {
 			int index = indices[i];
-			getContentProvider().moveUpTarget(index);
+			contentProvider.moveUpTarget(index);
 			newIndices[i] = index - 1;
 		}
-		executeTargetsTable.refresh();
+		orderTargetsTable.refresh();
 		// TODO: Remove the call to deselectAll() once Bug 30745 is fixed
-		executeTargetsTable.getTable().deselectAll();
-		executeTargetsTable.getTable().select(newIndices);
+		orderTargetsTable.getTable().deselectAll();
+		orderTargetsTable.getTable().select(newIndices);
 		updateButtonEnablement();
-		updateItemColoring();
+		updateItemColoring(orderTargetsTable);
 	}
 	
 	/**
 	 * Moves the selected targets down in the list of active targets
 	 */
 	private void handleMoveDown() {
-		int indices[] = executeTargetsTable.getTable().getSelectionIndices();
+		int indices[] = orderTargetsTable.getTable().getSelectionIndices();
 		if (indices.length == 0) {
 			return;
 		}
 		int newIndices[] = new int[indices.length];
-		if (indices[indices.length - 1] == executeTargetsTable.getTable().getItemCount() - 1) {
+		if (indices[indices.length - 1] == orderTargetsTable.getTable().getItemCount() - 1) {
 			// Only perform the move if the items have somewhere to move to
 			return;
 		}
+		AntTargetContentProvider contentProvider= (AntTargetContentProvider)orderTargetsTable.getContentProvider();
 		for (int i= indices.length - 1; i >= 0; i--) {
 			int index = indices[i];
-			getContentProvider().moveDownTarget(index);
+			contentProvider.moveDownTarget(index);
 			newIndices[i] = index + 1;
 		}
-		executeTargetsTable.refresh();
+		orderTargetsTable.refresh();
 		// TODO: Remove the call to deselectAll() once Bug 30745 is fixed
-		executeTargetsTable.getTable().deselectAll();
-		executeTargetsTable.getTable().select(newIndices);
+		orderTargetsTable.getTable().deselectAll();
+		orderTargetsTable.getTable().select(newIndices);
 		updateButtonEnablement();
-		updateItemColoring();
+		updateItemColoring(orderTargetsTable);
 	}
 
 	/*
 	 * Creates the list of targets that will be used when the tool is run.
 	 */
-	private void createExecuteTargetsList(Composite parent) {
-		Font font = parent.getFont();
+	private void createExecuteTargetsList(TabFolder folder) {
+		Font font = folder.getFont();
 		
-		Composite tableComposite = new Composite(parent, SWT.NONE);
-		
-		GridData gridData = new GridData(GridData.FILL_BOTH);
-		tableComposite.setLayoutData(gridData);
-		
+		Composite comp = new Composite(folder, SWT.NONE);
 		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		tableComposite.setLayout(layout);
-				
-		executeLabel = new Label(tableComposite, SWT.LEFT);
-		executeLabel.setFont(font);
-		executeLabel.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Targets_to_e&xecute__7"));  //$NON-NLS-1$
+		layout.numColumns = 2;
+		comp.setLayout(layout);
 		
-		executeTargetsTable = new TableViewer(tableComposite,SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
+		executeTabItem = new TabItem(folder, SWT.NONE, 0);
+		executeTabItem.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.&Execute_4")); //$NON-NLS-1$
+		executeTabItem.setControl(comp);
+						
+		executeTargetsTable = CheckboxTableViewer.newCheckList(comp, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		executeTargetsTable.setContentProvider(new AntTargetContentProvider());
 		AntTargetLabelProvider labelProvider= new AntTargetLabelProvider(executeTargetsTable);
-		
 		executeTargetsTable.setLabelProvider(labelProvider);
-		gridData = new GridData(GridData.FILL_BOTH);
+		
+		GridData gridData = new GridData(GridData.FILL_BOTH);
 		executeTargetsTable.getControl().setLayoutData(gridData);
 		executeTargetsTable.getTable().setFont(font);
+		executeTargetsTable.setSorter(new ViewerSorter() {
+			/**
+			 * @see org.eclipse.jface.viewers.ViewerSorter#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+			 */
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				return e1.toString().compareToIgnoreCase(e2.toString());
+			}
+		});
 		
+		executeTabItem.setData(executeTargetsTable);
+				
 		executeTargetsTable.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = (IStructuredSelection)executeTargetsTable.getSelection();
-				targetsSelected((TargetInfo)selection.getFirstElement());
+				if (selection.size() == 1) {
+					targetsSelected((TargetInfo)selection.getFirstElement());
+				} else {
+					targetsSelected(null);
+				}
 			}
 		});
+		
+		executeTargetsTable.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				updateOrderTargetsTable(event.getChecked(), event.getElement());
+			}
+		});
+		
+		executeTargetsTable.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				int index= executeTargetsTable.getTable().getSelectionIndex();
+				TableItem item= executeTargetsTable.getTable().getItem(index);
+				item.setChecked(!item.getChecked());
+				updateOrderTargetsTable(item.getChecked(), item.getData());
+			}
+		});
+		
+		createExecuteButtonComposite(comp);
 	}
 	
-	/*
-	 * A target was selected.
+	private void updateOrderTargetsTable(boolean isChecked, Object targetInfo) {
+		if (isChecked) {
+			((AntTargetContentProvider)orderTargetsTable.getContentProvider()).add(targetInfo);
+		} else {
+			((AntTargetContentProvider)orderTargetsTable.getContentProvider()).removeTarget(targetInfo);
+		}
+		updateLaunchConfigurationDialog();
+	}
+	
+	/**
+	 * Creates the list of targets that can be used to order the execution of
+	 * the targets.
+	 */
+	private void createOrderTargetsList(TabFolder folder) {
+		Font font = folder.getFont();
+		
+		Composite comp = new Composite(folder, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 2;
+		comp.setLayout(layout);
+	
+		orderTabItem = new TabItem(folder, SWT.NONE, 1);
+		orderTabItem.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.&Order_5")); //$NON-NLS-1$
+		orderTabItem.setControl(comp);
+					
+		orderTargetsTable = new TableViewer(comp, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
+		orderTargetsTable.setContentProvider(new AntTargetContentProvider());
+		AntTargetLabelProvider labelProvider= new AntTargetLabelProvider(orderTargetsTable);
+	
+		orderTargetsTable.setLabelProvider(labelProvider);
+		GridData gridData = new GridData(GridData.FILL_BOTH);
+		orderTargetsTable.getControl().setLayoutData(gridData);
+		orderTargetsTable.getTable().setFont(font);
+		orderTabItem.setData(orderTargetsTable);
+		
+		orderTargetsTable.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = (IStructuredSelection)orderTargetsTable.getSelection();
+				if (selection.size() == 1) {
+					targetsSelected((TargetInfo)selection.getFirstElement());
+				} else {
+					targetsSelected(null);
+				}
+				updateButtonEnablement();
+			}
+		});
+		
+		createOrderButtonComposite(comp);
+	}
+	
+	/**
+	 * A target was selected; update the description field.
 	 */
 	private void targetsSelected(TargetInfo target) {
-		updateButtonEnablement();
 		String description= ""; //$NON-NLS-1$
 		if (target != null) {
 			description =target.getDescription();
@@ -316,8 +408,9 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		descriptionField.setText(description);
 	}
 	
-	/*
-	 * Creates the text field which displays the descriptionField of the selected target.
+	/**
+	 * Creates the text field which displays the description of the selected
+	 * target.
 	 */
 	private void createDescriptionField(Composite parent) {
 		Font font = parent.getFont();
@@ -326,8 +419,9 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		descriptionLabel.setFont(font);
 		descriptionLabel.setText(AntLaunchConfigurationMessages.getString("AntTargetsTab.Target_description__10")); //$NON-NLS-1$
 		
-		descriptionField = new Text(parent, SWT.READ_ONLY | SWT.BORDER);
+		descriptionField = new Text(parent, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.heightHint = 40;
 		descriptionField.setLayoutData(data);
 		descriptionField.setFont(font);
 	}
@@ -356,7 +450,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (newLocation == null) {
 			allTargets= null;
 			location= newLocation;
-			setInput(new TargetInfo[0]);
+			setExecuteInput(new TargetInfo[0]);
+			orderTargetsTable.setInput(new TargetInfo[0]);
 			return; 
 		}
 		
@@ -367,59 +462,79 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		TargetInfo[] allInfos= getTargets();
 		if (allInfos == null) {
-			setInput(new TargetInfo[0]);
+			setExecuteInput(new TargetInfo[0]);
+			orderTargetsTable.setInput(new TargetInfo[0]);
 			return; 
 		}
 		String[] targetNames= AntUtil.parseRunTargets(configTargets);
 		if (targetNames.length == 0) {
+			executeTargetsTable.setAllChecked(false);
+			setExecuteInput(allInfos);
 			if (defaultTarget != null) {
-				setInput(new TargetInfo[]{defaultTarget});
-			} else {
-				setInput(new TargetInfo[0]);
+				executeTargetsTable.setChecked(defaultTarget, true);
+				orderTargetsTable.setInput(new TargetInfo[0]);
+				((AntTargetContentProvider)orderTargetsTable.getContentProvider()).add(defaultTarget);
+				updateItemColoring(orderTargetsTable);
 			}
 			return;
 		}
 		
 		TargetInfo[] targetInfos= new TargetInfo[targetNames.length];
-
-		int found = initializeTargetInfos(allInfos, targetNames, targetInfos);
-
-		if (found != targetNames.length) {
-			if (defaultTarget == null) {
-				setInput(new TargetInfo[0]);
-			} else {
-				setInput(new TargetInfo[]{defaultTarget});
+		TargetInfo[] allWithDuplicates= initializeTargetInfos(allInfos, targetNames, targetInfos);
+		
+		setExecuteInput(allWithDuplicates);
+		
+		TableItem[] items= executeTargetsTable.getTable().getItems();
+		for (int i = 0; i < items.length; i++) {
+			TableItem item= items[i];
+			for (int j = 0; j < targetInfos.length; j++) {
+				TargetInfo info = targetInfos[j];
+				if (info != null && info.equals(item.getData())) {
+					item.setChecked(true);
+				}
 			}
-		} else {
-			setInput(targetInfos);
 		}
+		orderTargetsTable.setInput(new TargetInfo[0]);
+		for (int j = 0; j < targetInfos.length; j++) {
+			TargetInfo info = targetInfos[j];
+			if (info != null) {
+				((AntTargetContentProvider)orderTargetsTable.getContentProvider()).add(info);
+			}
+		}
+		updateItemColoring(orderTargetsTable);
 	}
 	
 	/**
-	 * Sets the table's input to the given input.
+	 * Sets the execute table's input to the given input.
 	 */
-	private void setInput(Object input) {
+	private void setExecuteInput(Object input) {
 		executeTargetsTable.setInput(input);
-		updateItemColoring();
+		updateItemColoring(executeTargetsTable);
 	}
 	
-	private int initializeTargetInfos(TargetInfo[] allInfos, String[] targetNames, TargetInfo[] targetInfos) {
-		int found= 0;
+	private TargetInfo[] initializeTargetInfos(TargetInfo[] allInfos, String[] targetNames, TargetInfo[] targetInfos) {
+		List targetInfosWithDuplicates= new ArrayList(allInfos.length *2);
 		TargetInfo info;
-		for (int i = 0; i < allInfos.length; i++) {
-			info = allInfos[i];
-			for (int j = 0; j < targetNames.length; j++) {
-				String name = targetNames[j];
+		for (int j = 0; j < targetNames.length; j++) {
+			String name = targetNames[j];
+			for (int i = 0; i < allInfos.length; i++) {
+				info = allInfos[i];
 				if (info.getName().equals(name)) {
+					targetInfosWithDuplicates.add(info);
 					targetInfos[j]= info;
-					found++;
+					break;
 				}
 			}
-			if (found == targetNames.length) {
-				break;
+		}
+		
+		for (int i = 0; i < allInfos.length; i++) {
+			info = allInfos[i];
+			if (!targetInfosWithDuplicates.contains(info)) {
+				targetInfosWithDuplicates.add(info);				
 			}
 		}
-		return found;
+		return (TargetInfo[])targetInfosWithDuplicates.toArray(new TargetInfo[targetInfosWithDuplicates.size()]);
+		
 	}
 
 	/**
@@ -429,7 +544,13 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(TEMP_ATTRIBUTE, (String)null);
 		
 		String targets= null;
-		Object[] items= getContentProvider().getElements(null);
+		AntTargetContentProvider orderContentProvider= (AntTargetContentProvider)orderTargetsTable.getContentProvider();
+		Object[] items= orderContentProvider.getElements(null);
+		if (items.length == 0) {
+			//the user never went to the order tab
+			items= executeTargetsTable.getCheckedElements();
+		} 
+		
 		if (items.length == 1) {
 			TargetInfo item = (TargetInfo)items[0];
 			if (item.isDefault()) {
@@ -461,60 +582,39 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		return AntLaunchConfigurationMessages.getString("AntTargetsTab.Tar&gets_14"); //$NON-NLS-1$
 	}
 	
-	/*
+	/**
 	 * Updates the enabled state of the upButton and downButton buttons based
 	 * on the current list selection.
 	 */
 	private void updateButtonEnablement() {
-		if (executeTargetsTable.getTable().isEnabled() == false) {
-			upButton.setEnabled(false);
-			downButton.setEnabled(false);
-			removeButton.setEnabled(false);
-			addButton.setEnabled(false);	
-			return;
-		}
-		
-		addButton.setEnabled(true);
 		// Disable upButton and downButton buttons if there is not one
-		// target selected in the active list.
-		if (executeTargetsTable.getTable().getSelectionCount() == 0) {
+		// target selected in the order list.
+		if (orderTargetsTable.getTable().getSelectionCount() == 0) {
 			upButton.setEnabled(false);
 			downButton.setEnabled(false);
-			removeButton.setEnabled(false);
 			return;	
 		}
 		
-		removeButton.setEnabled(true);
-		int index = executeTargetsTable.getTable().getSelectionIndex();
-		if (index > 0) {
-			upButton.setEnabled(true);
-		} else {
-			upButton.setEnabled(false);
-		}
-	
-		if (index >= 0 && 
-			executeTargetsTable.getTable().getSelectionIndices()[executeTargetsTable.getTable().getSelectionCount() - 1] < executeTargetsTable.getTable().getItemCount() - 1) {
-			downButton.setEnabled(true);
-		} else {
-			downButton.setEnabled(false);		
-		}
+		int indices[]= orderTargetsTable.getTable().getSelectionIndices();
+		upButton.setEnabled(indices[0] != 0);
+		downButton.setEnabled(indices[indices.length - 1] != orderTargetsTable.getTable().getItemCount() - 1);
 	}
 
-	public void updateItemColoring() {
-		if (executeTargetsTable != null &&  !executeTargetsTable.getTable().isDisposed()) {
-			TableItem[] items = executeTargetsTable.getTable().getItems();
+	private void updateItemColoring(TableViewer viewer) {
+		if (viewer != null &&  !viewer.getTable().isDisposed()) {
+			TableItem[] items = viewer.getTable().getItems();
 			for (int i = 0; i < items.length; i++) {
 				TableItem item = items[i];
 				TargetInfo info = (TargetInfo) item.getData();
 				if (info.isDefault()) {
-					item.setForeground(executeTargetsTable.getControl().getDisplay().getSystemColor(SWT.COLOR_BLUE));
+					item.setForeground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_BLUE));
 				} else {
-					item.setForeground(executeTargetsTable.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
+					item.setForeground(viewer.getControl().getDisplay().getSystemColor(SWT.COLOR_LIST_FOREGROUND));
 				}
 			}
 		}
 	}
-	
+		
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
@@ -532,10 +632,14 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
+		if (allTargets == null) {
+			//error in parsing;
+			return false;
+		}
 		setErrorMessage(null);
 		setMessage(null);
 		
-		if (executeTargetsTable.getTable().getItemCount() == 0) {
+		if (executeTargetsTable.getCheckedElements().length == 0) {
 			setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.No_targets")); //$NON-NLS-1$
 			return false;
 		}
