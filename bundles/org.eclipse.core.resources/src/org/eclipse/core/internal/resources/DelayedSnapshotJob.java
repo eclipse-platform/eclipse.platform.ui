@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.events.EventStats;
+import org.eclipse.core.internal.events.ResourceStats;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.ISaveContext;
@@ -42,14 +42,16 @@ public class DelayedSnapshotJob extends Job {
 		if (ResourcesPlugin.getWorkspace() == null)
 			return Status.OK_STATUS;
 		try {
-			EventStats.startSnapshot();
+			if (Policy.TRACE_SNAPSHOT)
+				ResourceStats.startSnapshot();
 			return saveManager.save(ISaveContext.SNAPSHOT, null, Policy.monitorFor(null));
 		} catch (CoreException e) {
 			return e.getStatus();
 		} finally {
 			saveManager.operationCount = 0;
 			saveManager.snapshotRequested = false;
-			EventStats.endSnapshot();
+			if (Policy.TRACE_SNAPSHOT)
+				ResourceStats.endSnapshot();
 		}
 	}
 }

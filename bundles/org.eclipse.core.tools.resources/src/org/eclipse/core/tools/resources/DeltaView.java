@@ -53,12 +53,12 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 	/**
 	 * Creates this view's text widget and actions.
 	 * 
-	 * @param parent the parent control
+	 * @param aParent the parent control
 	 * @see IWorkbenchPart#createPartControl
 	 */
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite aParent) {
 
-		this.parent = parent;
+		this.parent = aParent;
 
 		viewer = new TextViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP | SWT.READ_ONLY);
 		viewer.setDocument(new Document());

@@ -4,10 +4,13 @@
 org.eclipse.core.resources/debug=false
 
 # Monitor builders and gather time statistics etc.
-org.eclipse.core.resources/monitor/builders=false
+org.eclipse.core.resources/trace/builders=10000
 
 # Monitor resource change listeners and gather time statistics etc.
-org.eclipse.core.resources/monitor/listeners=false
+org.eclipse.core.resources/trace/listeners=500
+
+# Monitor workspace snapshot and gather time statistics etc.
+org.eclipse.core.resources/trace/snapshot=500
 
 # Debug build failure cases such as failure to retrieve deltas.
 org.eclipse.core.resources/build/failure=false

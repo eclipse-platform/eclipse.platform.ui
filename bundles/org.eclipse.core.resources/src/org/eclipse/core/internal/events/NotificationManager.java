@@ -114,7 +114,8 @@ public class NotificationManager implements IManager, ILifecycleListener {
 
 	public void addListener(IResourceChangeListener listener, int eventMask) {
 		listeners.add(listener, eventMask);
-		EventStats.listenerAdded(listener);
+		if (Policy.TRACE_LISTENERS)
+			ResourceStats.listenerAdded(listener);
 	}
 
 	/**
@@ -272,8 +273,8 @@ public class NotificationManager implements IManager, ILifecycleListener {
 			for (int i = 0; i < resourceListeners.length; i++) {
 				if ((type & resourceListeners[i].eventMask) != 0) {
 					final IResourceChangeListener listener = resourceListeners[i].listener;
-					if (Policy.MONITOR_LISTENERS)
-						EventStats.startNotify(listener);
+					if (Policy.TRACE_LISTENERS)
+						ResourceStats.startNotify(listener);
 					Platform.run(new ISafeRunnable() {
 						public void handleException(Throwable e) {
 							// exception logged in Platform#run
@@ -283,8 +284,8 @@ public class NotificationManager implements IManager, ILifecycleListener {
 							listener.resourceChanged(event);
 						}
 					});
-					if (Policy.MONITOR_LISTENERS)
-						EventStats.endNotify();
+					if (Policy.TRACE_LISTENERS)
+						ResourceStats.endNotify();
 				}
 			}
 		} finally {
@@ -295,7 +296,8 @@ public class NotificationManager implements IManager, ILifecycleListener {
 
 	public void removeListener(IResourceChangeListener listener) {
 		listeners.remove(listener);
-		EventStats.listenerRemoved(listener);
+		if (Policy.TRACE_LISTENERS)
+			ResourceStats.listenerRemoved(listener);
 	}
 
 	/**

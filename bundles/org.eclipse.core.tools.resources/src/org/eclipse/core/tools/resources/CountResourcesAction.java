@@ -177,11 +177,11 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Initializes this action delegate with the workbench window it will work in.
 	 *
-	 * @param window the window that provides the context for this delegate
+	 * @param workbenchWindow the window that provides the context for this delegate
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
-	public void init(IWorkbenchWindow window) {
-		this.window = window;
+	public void init(IWorkbenchWindow workbenchWindow) {
+		this.window = workbenchWindow;
 	}
 
 	/**

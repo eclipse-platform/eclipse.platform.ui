@@ -216,9 +216,9 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 			deltaKind = delta.getKind();
 			path = delta.getFullPath();
 			resource = delta.getResource();
-			IResourceDelta[] children = delta.getAffectedChildren();
-			for (int i = 0; i < children.length; i++)
-				addChild(new DeltaNode(children[i]));
+			IResourceDelta[] deltaChildren = delta.getAffectedChildren();
+			for (int i = 0; i < deltaChildren.length; i++)
+				addChild(new DeltaNode(deltaChildren[i]));
 		}
 	}
 
@@ -323,7 +323,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 					imageKey = ISharedImages.IMG_OBJ_FOLDER;
 					break;
 				case IResource.PROJECT :
-					imageKey = ISharedImages.IMG_OBJ_PROJECT;
+					imageKey = org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJ_PROJECT;
 					break;
 				case IResource.FOLDER :
 					imageKey = ISharedImages.IMG_OBJ_FOLDER;

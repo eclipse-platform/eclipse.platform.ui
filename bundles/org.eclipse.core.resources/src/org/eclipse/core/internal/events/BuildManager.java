@@ -624,8 +624,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Hook for adding trace options and debug information at the end of a build.
 	 */
 	private void hookEndBuild(IncrementalProjectBuilder builder) {
-		if (Policy.MONITOR_BUILDERS)
-			EventStats.endBuild();
+		if (Policy.TRACE_BUILDERS)
+			ResourceStats.endBuild();
 		if (!Policy.DEBUG_BUILD_INVOKING || timeStamp == -1)
 			return; //builder wasn't called or we are not debugging
 		Policy.debug("Builder finished: " + toString(builder) + " time: " + (System.currentTimeMillis() - timeStamp) + "ms"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -636,8 +636,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Hook for adding trace options and debug information at the start of a build.
 	 */
 	private void hookStartBuild(IncrementalProjectBuilder builder, int trigger) {
-		if (Policy.MONITOR_BUILDERS)
-			EventStats.startBuild(builder);
+		if (Policy.TRACE_BUILDERS)
+			ResourceStats.startBuild(builder);
 		if (Policy.DEBUG_BUILD_INVOKING) {
 			timeStamp = System.currentTimeMillis();
 			String type;

@@ -388,22 +388,11 @@ public class Messages extends NLS {
 	public static String url_couldNotResolve;
 
 	// utils
-	public static String utils_buildException;
-	public static String utils_builds;
-	public static String utils_buildTime;
 	public static String utils_clone;
-	public static String utils_endBuild;
-	public static String utils_endNotify;
-	public static String utils_exceptions;
 	public static String utils_failed;
-	public static String utils_missing;
 	public static String utils_noElements;
-	public static String utils_notifications;
-	public static String utils_notifyTime;
 	public static String utils_null;
 	public static String utils_print;
-	public static String utils_snapshots;
-	public static String utils_stats;
 	public static String utils_stringJobName;
 	public static String utils_wrongLength;
 
