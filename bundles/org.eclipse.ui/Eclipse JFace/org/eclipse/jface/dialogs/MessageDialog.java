@@ -9,6 +9,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import sun.awt.HorizBagLayout;
 import org.eclipse.jface.resource.*;
 
 /**
@@ -159,19 +160,14 @@ protected Control createContents(Composite parent) {
 	// initialize the dialog units
 	initializeDialogUnits(parent);
 	
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
+	FormLayout layout = new FormLayout();
 	layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 	layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-	layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-	layout.makeColumnsEqualWidth = false;
 	parent.setLayout(layout);
-	parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 	
 	// create the dialog area and button bar
 	dialogArea = createDialogArea(parent);
-	buttonBar = createButtonBar(parent);
+	buttonBar = createButtonBar(parent, dialogArea);
 	
 	
 	return parent;
@@ -180,22 +176,60 @@ protected Control createContents(Composite parent) {
 /*
  * @see Dialog.createButtonBar()
  */
-protected Control createButtonBar(Composite parent) {
+protected Control createButtonBar(Composite parent, Control topAttachment) {
 	
-	Control bar = super.createButtonBar(parent);
-	GridData data = (GridData) bar.getLayoutData();
-	data.horizontalSpan = 2;
-	return bar;
+	// Add the buttons to the button bar.
+	createButtonsForButtonBar(parent, topAttachment);
+
+	return parent;
 }
 
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
-protected void createButtonsForButtonBar(Composite parent) {
+protected void createButtonsForButtonBar(Composite parent, Control topAttachment) {
 	buttons = new Button[buttonLabels.length];
-	for (int i = 0; i < buttonLabels.length; i++) {
+	Button previousButton = null;
+	
+	int margin = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_MARGIN);
+	
+	for (int i = buttonLabels.length - 1; i >= 0 ; i--) {
+		//Iterate through backwards in order to attach to the previous button
 		String label = buttonLabels[i];
-		Button button = createButton(parent, i, label, defaultButtonIndex == i);
+		
+		// increment the number of columns in the button bar
+		Button button = new Button(parent, SWT.PUSH);
+		button.setText(label);
+	
+		FormData data = new FormData();
+		data.height = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
+		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
+		data.width = Math.max(widthHint, button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
+		data.top = new FormAttachment(topAttachment, margin);
+		
+		if(previousButton == null)
+			data.right = new FormAttachment(100,margin);
+		else
+			data.right = new FormAttachment(previousButton, -1 * margin);
+			
+		previousButton = button;
+			
+		button.setLayoutData(data);
+	
+		button.setData(new Integer(i));
+		button.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				buttonPressed(((Integer) event.widget.getData()).intValue());
+			}
+		});
+		if (defaultButtonIndex == i) {
+			Shell shell = parent.getShell();
+			if (shell != null) {
+				shell.setDefaultButton(button);
+			}
+		}
+		button.setFont(parent.getFont());
+
 		buttons[i] = button;
 	}
 }
@@ -214,7 +248,18 @@ protected void createButtonsForButtonBar(Composite parent) {
 protected Control createCustomArea(Composite parent) {
 	// by default, do nothing
 	return null;
+	
+	
 }
+
+/**
+ * Get the button margin for the receiver.
+ * @return int
+ */
+private int getButtonMargin(){
+	return convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_MARGIN);
+}
+
 /**
  * This implementation of the <code>Dialog</code> framework 
  * method creates and lays out a composite and calls 
@@ -225,19 +270,18 @@ protected Control createCustomArea(Composite parent) {
 protected Control createDialogArea(Composite parent) {
 	
 	// create message area
-	createMessageArea(parent);
+	Control label = createMessageArea(parent);
 	
 	// create the top level composite for the dialog area
 	Composite composite = new Composite(parent, SWT.NONE);
-	GridLayout layout = new GridLayout();
-	layout.marginHeight = 0;
-	layout.marginWidth = 0;
+	FormLayout layout = new FormLayout();
 	composite.setLayout(layout);
 	
-	GridData data = new GridData(GridData.FILL_BOTH);
-	data.horizontalSpan = 2;
-	
+	FormData data = new FormData();
+	data.top = new FormAttachment(label,getButtonMargin());
+	data.left = new FormAttachment(0,getButtonMargin());
 	composite.setLayoutData(data);
+	
 	composite.setFont(parent.getFont());
 
 	// allow subclasses to add custom controls
@@ -255,34 +299,61 @@ protected Control createDialogArea(Composite parent) {
  * </p>
  * 
  * @param the parent composite to contain the message area
- * @return the message area control
+ * @return one of the message area labels if they exist, null
+ *  otherwise
  */
 private Control createMessageArea(Composite composite) {
 
+	Label imageLabel = null;
+	
 	// create image
 	if (image != null) {
-		Label label = new Label(composite, 0);
-		image.setBackground(label.getBackground());
-		label.setImage(image);
-		label.setLayoutData(new GridData(
-			GridData.HORIZONTAL_ALIGN_CENTER |
-			GridData.VERTICAL_ALIGN_BEGINNING));
+		imageLabel = new Label(composite, 0);
+		image.setBackground(imageLabel.getBackground());
+		imageLabel.setImage(image);
+		
+		FormData data = new FormData();
+		data.left = new FormAttachment(0,getButtonMargin());
+		imageLabel.setLayoutData(data);
+		
 	}
 
+	Label label = null;
 	// create message
 	if (message != null) {
-		Label label = new Label(composite, SWT.WRAP);
+		label = new Label(composite, SWT.WRAP);
 		label.setText(message);
-		GridData data = new GridData(
-			GridData.GRAB_HORIZONTAL |
-			GridData.GRAB_VERTICAL |
-			GridData.HORIZONTAL_ALIGN_FILL |
-			GridData.VERTICAL_ALIGN_CENTER);
-		data.widthHint = getMinimumMessageWidth();
-		label.setLayoutData(data);
+		
 		label.setFont(composite.getFont());
+		if(imageLabel == null){
+			FormData data = new FormData();
+			data.left = new FormAttachment(0,getButtonMargin());
+			label.setLayoutData(data);
+		}
+		else{
+			FormData data = new FormData();
+			data.left = new FormAttachment(imageLabel,getButtonMargin());
+			label.setLayoutData(data);
+		}
+		
 	}
-	return composite;
+	
+	if(label == null)
+		return imageLabel;
+	if(imageLabel == null)
+		return label;
+	Point imageSize = imageLabel.computeSize(SWT.DEFAULT,SWT.DEFAULT);
+	Point labelSize = label.computeSize(SWT.DEFAULT,SWT.DEFAULT);
+	if(imageSize.y > labelSize.y){
+		//If imageLabel is larger try and position the label better
+		FormData data = (FormData) label.getLayoutData();
+		//data.bottom = new FormAttachment(imageLabel,0,SWT.BOTTOM);
+		data.top = new FormAttachment(imageLabel,0,SWT.CENTER);
+		label.setLayoutData(data);
+		return imageLabel;
+	}		
+	else
+		return label;
 }
 /**
  * Gets a button in this dialog's button bar.
