@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.actions;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
@@ -59,4 +60,14 @@ public interface IPopupInformationControlAdapter {
 	 * @return The graphical presentation of the controls information
 	 */
 	public Composite createInformationComposite(Shell parent);
+	
+	/**
+	 * Returns the dialog settings to be used for persisting size information 
+	 * about the popup. If this adapter does not want its size to be persisted,
+	 * it should return <code>null</code>.
+	 *  
+	 * @return The dialog settings to use for persistance,
+	 *  or <code>null</code> if persistance is not desired
+	 */
+	public IDialogSettings getDialogSettings();
 }

@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.debug.core.model.IExpression;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.expression.ExpressionPopupContentProvider;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
@@ -22,6 +23,7 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IPopupInformationControlAdapter;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
@@ -112,6 +114,13 @@ public class ExpressionInformationControlAdapter implements IPopupInformationCon
 		composite.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		
 		return composite;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.actions.IPopupInformationControlAdapter#getDialogSettings()
+	 */
+	public IDialogSettings getDialogSettings() {
+		return DebugUIPlugin.getDefault().getDialogSettings();
 	}
 
 	

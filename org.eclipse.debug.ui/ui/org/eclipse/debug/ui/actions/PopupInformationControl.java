@@ -19,6 +19,7 @@ import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlExtension;
@@ -62,6 +63,9 @@ import org.eclipse.ui.contexts.EnabledSubmission;
  * @since 3.0
  */
 public class PopupInformationControl implements IInformationControl, IInformationControlExtension {
+	protected static final String HEIGHT_STRING = "_DEBUGPOPUP_HEIGHT"; //$NON-NLS-1$
+	protected static final String WIDTH_STRING = "_DEBUGPOPUP_WIDTH"; //$NON-NLS-1$
+	
 	/**
 	 * Default border size
 	 */
@@ -209,28 +213,36 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 		shell.addFocusListener(listener);
 	}
 	
-		/**
-		 * Computes and returns a proposal for the size of this information 
-		 * control depending on the information to present. The method tries
-		 * to honor known size constraints but might returns a size that 
-		 * exceeds them. 
-		 * @return The size suggested size for the control.
-		 */
-		public Point computeSizeHint() {
+	/**
+	 * Computes and returns a proposal for the size of this information 
+	 * control based upon data persisted in its IPopupInformantionControl first.
+	 * If no data is found, it attempts to calculate a suggestion based 
+	 * on the information to present. The method tries
+	 * to honor known size constraints but might returns a size that 
+	 * exceeds them. 
+	 * @return The size suggested size for the control.
+	 */
+	public Point computeSizeHint() {
+		Point persistedSize = getInitialSize();
+		if (persistedSize != null) {
+			return persistedSize;
+		} else {
 			Point computedSize = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-
+			
 			if (maxWidth > 0 && computedSize.x > maxWidth)
 				computedSize.x = maxWidth;
 			if (maxHeight > 0 && computedSize.y > maxHeight)
 				computedSize.y = maxHeight;
 			return computedSize;
 		}
+	}
 	
 	/**
 	 * Disposes this control
 	 */
 	public void dispose() {		
 		deregister();
+		persistSize();
 		shell= null;
 	}
 	
@@ -369,6 +381,46 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 	}
 	
 	/**
+	 * Attempts to retrieve the size of the popup when it was last disposed.
+	 * @return The size the initial size of the popup if available, otherwise null 
+	 */
+	protected Point getInitialSize() {
+		Point point = null;
+		try {		
+			IDialogSettings settings = adapter.getDialogSettings();
+			if (settings != null) {
+				String key = adapter.getClass().getName();
+				
+				int height = settings.getInt(key+HEIGHT_STRING); 
+				int width = settings.getInt(key+WIDTH_STRING); 
+				
+				point = new Point(width, height);
+			}
+		} catch (NumberFormatException e) {
+		}
+		
+		return point;
+	}
+	
+	/**
+	 * Attempts to store the current size of the popup in the adapter's IDialogSettings.
+	 * Uses the adapters fully qualified class name to create unique keys.
+	 */
+	protected void persistSize() {
+		if (shell == null) {
+			return;
+		}
+		
+		IDialogSettings settings = adapter.getDialogSettings();
+		if (settings != null) {
+			String key = adapter.getClass().getName();
+			Point size = shell.getSize();
+			settings.put(key+WIDTH_STRING, size.x); 
+			settings.put(key+HEIGHT_STRING, size.y); 
+		}
+	}
+	
+	/**
 	 * Wraps the supplied action in order to call dispose after any time the action has been completed. 
 	 */
 	private class WrappedAction implements IAction {
@@ -431,12 +483,15 @@ public class PopupInformationControl implements IInformationControl, IInformatio
 			try {
 				realAction.run();
 			} finally {
-				dispose();
+				shell.dispose();
 			}
 		}
 		public void runWithEvent(Event event) {
-			realAction.runWithEvent(event);
-			shell.dispose();
+			try {
+				realAction.runWithEvent(event);
+			} finally {
+				shell.dispose();
+			}
 		}
 		public void setActionDefinitionId(String id) {
 			realAction.setActionDefinitionId(id);
