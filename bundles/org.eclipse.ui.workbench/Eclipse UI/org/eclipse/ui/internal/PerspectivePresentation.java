@@ -1262,6 +1262,9 @@ private void onFastViewIconDrag(PartDropEvent e) {
 		WorkbenchWindow window = (WorkbenchWindow)page.getWorkbenchWindow();
 		ToolItem icon = window.getShortcutDND().getDraggedItem();
 		IViewReference ref = (IViewReference)icon.getData(ShowFastViewContribution.FAST_VIEW);
+		//Make sure the view is restored.
+		if(ref.getPart(true) == null)
+			return;
 		e.dragSource = ((WorkbenchPartReference)ref).getPane();
 		page.removeFastView(ref);		
 	}
