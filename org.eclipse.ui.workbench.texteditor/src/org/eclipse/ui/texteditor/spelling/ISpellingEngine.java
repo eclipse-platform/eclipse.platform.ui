@@ -19,7 +19,9 @@ import org.eclipse.jface.text.IRegion;
 /**
  * A spelling engine that can be contributed to the
  * <code>org.eclipse.ui.workbench.texteditor.spellingEngine</code> extension
- * point.
+ * point. The <code>SpellingContext</code> provides information about the
+ * content type to be checked. In general a spelling engine should at least
+ * support the text {@link org.eclipse.core.runtime.content.IContentType content type}.
  * <p>
  * This interface is intended to be implemented by clients.
  * </p><p>
