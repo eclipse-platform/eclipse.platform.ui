@@ -44,8 +44,8 @@ public class WorkspaceSessionTestSuite extends SessionTestSuite {
 	 * Ensures setup uses this suite's instance location.
 	 * @throws SetupException
 	 */
-	protected Setup getSetup() throws SetupException {
-		Setup base = super.getSetup();
+	protected Setup newSetup() throws SetupException {
+		Setup base = super.newSetup();
 		base.setEclipseArgument(Setup.DATA, instanceLocation.toOSString());
 		return base;
 	}

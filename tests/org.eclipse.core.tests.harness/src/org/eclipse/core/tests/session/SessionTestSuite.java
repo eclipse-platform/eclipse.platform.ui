@@ -18,9 +18,10 @@ public class SessionTestSuite extends TestSuite {
 	public static final String CORE_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.coretestapplication"; //$NON-NLS-1$	
 	public static final String UI_TEST_APPLICATION = "org.eclipse.pde.junit.runtime.uitestapplication"; //$NON-NLS-1$	
 	protected String applicationId = CORE_TEST_APPLICATION;
-	protected String pluginId;
-	protected SessionTestRunner testRunner;
 	private Set crashTests = new HashSet();
+	protected String pluginId;
+	private Setup setup;
+	protected SessionTestRunner testRunner;
 
 	public SessionTestSuite(String pluginId) {
 		super();
@@ -63,9 +64,16 @@ public class SessionTestSuite extends TestSuite {
 		return applicationId;
 	}
 
-	protected Setup getSetup() throws SetupException {
-		return SetupManager.getInstance().getDefaultSetup();
+	public Setup getSetup() throws SetupException {
+		if (setup == null)
+			setup = newSetup();
+		return setup;
 	}
+	
+	protected Setup newSetup() throws SetupException {
+		return  SetupManager.getInstance().getDefaultSetup();
+	}
+	
 
 	protected SessionTestRunner getTestRunner() {
 		if (testRunner == null)
@@ -110,5 +118,8 @@ public class SessionTestSuite extends TestSuite {
 
 	public void setApplicationId(String applicationId) {
 		this.applicationId = applicationId;
+	}
+	void setSetup(Setup setup) {
+		this.setup = setup;
 	}
 }
