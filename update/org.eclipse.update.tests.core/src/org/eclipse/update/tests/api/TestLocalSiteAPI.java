@@ -64,8 +64,8 @@ public class TestLocalSiteAPI extends UpdateManagerTestCase {
 		boolean found2 = false;
 		boolean found3 = false;
 		String name1= "plugins/org.eclipse.update.core.tests.bundleManifest_1.0.1.jar";
-		String name2 = "plugins/org.eclipse.update.core.tests.bundleAndPluginManifests_1.0.3.jar";
-		String name3 = "plugins/org.eclipse.update.core.tests.bundleAndPluginManifestsBUNDLEPARSED_1.0.3.jar";
+		String name2 = "plugins/org.eclipse.update.core.tests.bundleAndPluginManifestsBUNDLEPARSED_1.0.3.jar";
+		String name3 = "plugins/org.eclipse.update.core.tests.bundleAndPluginManifests_1.0.3.jar";
 		
 		for (int i =0; i<info.length; i++){
 			if (info[i].getPath().equals(name1)) found1 = true;
@@ -77,7 +77,7 @@ public class TestLocalSiteAPI extends UpdateManagerTestCase {
 			fail("Cannot find plugin : org.eclipse.update.core.tests.feature1.plugin2 version 5.0.0 and 5.0.1 on the site, by parsing file system");
 		}
 		if (found3){
-			fail("Bundle manifest parsed instead of plugin manifest.");
+			fail("Plugin manifest parsed instead of bundle manifest.");
 		}
 		
 
