@@ -97,7 +97,12 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 		IRemoteResource remote = sync.getRemote();
 		IRemoteResource base = sync.getBase();
 		
-		config.setLeftLabel(Policy.bind("SyncInfoCompareInput.localLabel")); //$NON-NLS-1$
+		String localContentId = sync.getLocalContentIdentifier();
+		if(localContentId != null) {		
+			config.setLeftLabel(Policy.bind("SyncInfoCompareInput.localLabelExists", localContentId)); //$NON-NLS-1$
+		} else {
+			config.setLeftLabel(Policy.bind("SyncInfoCompareInput.localLabel")); //$NON-NLS-1$
+		}
 		
 		if(remote != null) {
 			try {
@@ -163,8 +168,6 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 		if(other == this) return true;
 		if(other instanceof SyncInfoCompareInput) {
 			return equalDiffNodes(node, (SyncInfoDiffNode)((SyncInfoCompareInput)other).getCompareResult());
-		} else if(other instanceof SyncInfoCompareInputFinder) {
-			return true;
 		}
 		return false;
 	}	
