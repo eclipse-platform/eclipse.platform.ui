@@ -153,7 +153,7 @@ public class DecoratorDefinition {
 	 */
 	
 	private void refreshDecorator() {
-		DecoratorManager manager = WorkbenchPlugin.getDefault().getDecoratorManager();
+		DecoratorManager manager = (DecoratorManager) WorkbenchPlugin.getDefault().getDecoratorManager();
 		
 		try {
 			if (this.enabled)
