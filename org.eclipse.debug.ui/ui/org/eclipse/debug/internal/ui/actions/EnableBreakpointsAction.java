@@ -18,10 +18,12 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 
 public class EnableBreakpointsAction implements IViewActionDelegate, IPartListener, IBreakpointListener {
 	
@@ -153,7 +155,7 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	/**
 	 * @see IBreakpointListener#breakpointAdded(IBreakpoint)
 	 */
-	public void breakpointAdded(final IBreakpoint breakpoint) {
+	public void breakpointAdded(IBreakpoint breakpoint) {
 	}
 	
 	
@@ -161,13 +163,43 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 	 * @see IBreakpointListener#breakpointRemoved(IBreakpoint, IMarkerDelta)
 	 */
 	public void breakpointRemoved(final IBreakpoint breakpoint, IMarkerDelta delta) {	
-		update();
+		asynchUpdate();
 	}
 	
 	/**
 	 * @see IBreakpointListener#breakpointChanged(IBreakpoint, IMarkerDelta)
 	 */
-	public void breakpointChanged(final IBreakpoint breakpoint, IMarkerDelta delta) {
+	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
+		asynchUpdate();
+	}
+	
+	protected void asynchUpdate() {
+		if (getAction() == null) {
+			return;
+		}
+		IWorkbenchWindow window= getView().getViewSite().getPage().getWorkbenchWindow();
+		if (window == null) {
+			return;
+		}
+		Shell shell= window.getShell();
+		if (shell == null || shell.isDisposed()) {
+			return;
+		}
+		Runnable r= new Runnable() {
+			public void run() {
+				IWorkbenchWindow window= getView().getViewSite().getPage().getWorkbenchWindow();
+				if (window == null) {
+					return;
+				}
+				Shell shell= window.getShell();
+				if (shell == null || shell.isDisposed()) {
+					return;
+				}
+				update();
+			}
+		};
+		
+		shell.getDisplay().asyncExec(r);
 	}
 	
 	protected IAction getAction() {
