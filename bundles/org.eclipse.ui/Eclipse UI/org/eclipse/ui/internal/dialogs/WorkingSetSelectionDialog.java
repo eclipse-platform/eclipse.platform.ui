@@ -122,8 +122,8 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	 * @see Dialog#cancelPressed()
 	 */
 	protected void cancelPressed() {
-		restoreChangedWorkingSets();
 		restoreAddedWorkingSets();
+		restoreChangedWorkingSets();
 		restoreRemovedWorkingSets();
 		super.cancelPressed();
 	}
@@ -134,8 +134,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog implements IWorki
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		// TODO: Needs help
-		//		WorkbenchHelp.setHelp(shell, new Object[] {IHelpContextIds.LIST_SELECTION_DIALOG});
+		WorkbenchHelp.setHelp(shell, IHelpContextIds.WORKING_SET_SELECTION_DIALOG);
 	}
 	/**
 	 * Create the dialog widgets.
