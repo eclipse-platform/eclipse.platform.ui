@@ -149,6 +149,13 @@ public class DefaultPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(13, 39, offsets, DEFAULT);
 	}
 
+	public void testComputePartitioningSubrangeOnBoundaries2() {
+		fDoc.set("/* comment *//* comment *//* comment */");
+
+		int[] offsets= new int[] { 13, 26 };
+		assertComputePartitioning_InterleavingPartitions(13, 26, offsets, DEFAULT);
+	}
+	
 	public void testComputePartitioningSubrangeAfterBoundaries() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -156,6 +163,20 @@ public class DefaultPartitionerTest extends TestCase {
 		assertComputePartitioning_InterleavingPartitions(14, 40, offsets, COMMENT);
 	}
 
+	public void testComputePartitioningSubrangeInBoundaries1() {
+		fDoc.set("/* comment */");
+
+		int[] offsets= new int[] { };
+		assertComputePartitioning_InterleavingPartitions(1, 12, offsets, COMMENT);
+	}
+	
+	public void testComputePartitioningSubrangeInBoundaries2() {
+		fDoc.set("docu     ment");
+
+		int[] offsets= new int[] { };
+		assertComputePartitioning_InterleavingPartitions(1, 12, offsets, DEFAULT);
+	}
+	
 	private void assertComputePartitioning_InterleavingPartitions(int[] offsets) {
 		assertComputePartitioning_InterleavingPartitions(0, fDoc.getLength(), offsets, DEFAULT);
 	}

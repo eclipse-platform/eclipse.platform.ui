@@ -149,6 +149,13 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(13, 39, offsets, DEFAULT);
 	}
 
+	public void testComputePartitioningSubrangeOnBoundaries2() {
+		fDoc.set("/* comment *//* comment *//* comment */");
+
+		int[] offsets= new int[] { 13, 26 };
+		assertComputeZeroLengthPartitioning_InterleavingPartitions(13, 26, offsets, DEFAULT);
+	}
+	
 	public void testComputePartitioningSubrangeAfterBoundaries() {
 		fDoc.set("docu     ment/* comment *//* comment */docu     ment");
 
@@ -156,6 +163,20 @@ public class DefaultPartitionerZeroLengthTest extends TestCase {
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(14, 40, offsets, COMMENT);
 	}
 
+	public void testComputePartitioningSubrangeInBoundaries1() {
+		fDoc.set("/* comment */");
+
+		int[] offsets= new int[] { };
+		assertComputeZeroLengthPartitioning_InterleavingPartitions(1, 12, offsets, COMMENT);
+	}
+	
+	public void testComputePartitioningSubrangeInBoundaries2() {
+		fDoc.set("docu     ment");
+
+		int[] offsets= new int[] { };
+		assertComputeZeroLengthPartitioning_InterleavingPartitions(1, 12, offsets, DEFAULT);
+	}
+	
 	private void assertComputeZeroLengthPartitioning_InterleavingPartitions(int[] offsets) {
 		assertComputeZeroLengthPartitioning_InterleavingPartitions(0, fDoc.getLength(), offsets, DEFAULT);
 	}
