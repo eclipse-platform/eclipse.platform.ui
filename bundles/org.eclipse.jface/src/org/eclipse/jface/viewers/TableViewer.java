@@ -1005,8 +1005,12 @@ public class TableViewer extends StructuredViewer {
 	 * Replace the entries starting at index with elements.
 	 * This method assumes all of these values are correct
 	 * and will not call the content provider to verify.
-	 * <strong>Note that this method will create a TableItem
+	 * <strong>
+	 * This API is experimental and is subject to change 
+	 * before Eclipse 3.1 is released.
+	 * Note that this method will create a TableItem
 	 * for all of the elements provided</strong>.
+	 * 
 	 * @param elements
 	 * @param index
 	 * @see ILazyContentProvider
@@ -1015,7 +1019,7 @@ public class TableViewer extends StructuredViewer {
 	
 		for (int i = 0; i < elements.length; i++) {
 			Object object = elements[i];
-			TableItem item = getTable().getItem(index);
+			TableItem item = getTable().getItem(index + i);
 			refreshItem(item, object);
 		}
 	}
