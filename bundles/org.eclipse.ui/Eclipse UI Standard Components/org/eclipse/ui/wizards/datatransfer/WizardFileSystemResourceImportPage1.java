@@ -4,28 +4,40 @@ package org.eclipse.ui.wizards.datatransfer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.IProgressMonitor;
+import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.dialogs.*;
-import org.eclipse.ui.model.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import java.util.List;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.dialogs.FileSystemElement;
+import org.eclipse.ui.dialogs.WizardResourceImportPage;
+import org.eclipse.ui.help.DialogPageContextComputer;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.model.WorkbenchContentProvider;
 
 /**
  *	Page 1 of the base resource import-from-file-system Wizard
@@ -716,7 +728,7 @@ protected void setupSelectionsBasedOnSelectedTypes() {
 	
 	IRunnableWithProgress runnable  = new IRunnableWithProgress() {
 		public void run(final IProgressMonitor monitor) throws InterruptedException{		
-			monitor.beginTask(WorkbenchMessages.getString("WizardImportPage.filterSelections"), IProgressMonitor.UNKNOWN);
+			monitor.beginTask(DataTransferMessages.getString("ImportPage.filterSelections"), IProgressMonitor.UNKNOWN);
 			List files = getSelectedResources(monitor);
 			if(files == null){
 				throw new InterruptedException();
