@@ -20,13 +20,15 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.dialog.ExternalToolVariableForm;
+import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab implements IGroupDialogPage {
 
@@ -41,6 +43,7 @@ public class ExternalToolsRefreshTab extends AbstractLaunchConfigurationTab impl
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
+		WorkbenchHelp.setHelp(getControl(), IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_REFRESH_TAB);
 		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;

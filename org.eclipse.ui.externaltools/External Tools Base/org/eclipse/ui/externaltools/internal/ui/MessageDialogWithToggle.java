@@ -17,6 +17,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * An message dialog which allows the user to set a boolean preference.
@@ -204,6 +206,14 @@ public class MessageDialogWithToggle extends MessageDialog {
 			toggleMessage,
 			store);
 		dialog.open();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
+	 */
+	protected void configureShell(Shell shell) {
+		super.configureShell(shell);
+		WorkbenchHelp.setHelp(shell, IExternalToolsHelpContextIds.MESSAGE_WITH_TOGGLE_DIALOG);
 	}
 
 }

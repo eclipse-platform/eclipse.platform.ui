@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.IHelpContextIds;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
@@ -61,8 +61,6 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 	 */
 	protected Control createContents(Composite parent) {
 		initializeDialogUnits(parent);
-		
-		WorkbenchHelp.setHelp(parent, IHelpContextIds.ANT_PREFERENCE_PAGE);
 
 		TabFolder folder = new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());	
@@ -158,5 +156,13 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		urls.addAll(classpathPage.getContents());
 		urls.addAll(classpathPage.getUserURLs());
 		return urls;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.ANT_RUNTIME_PREFERENCE_PAGE);
 	}
 }

@@ -34,7 +34,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.StringMatcher;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -95,7 +97,7 @@ public void setFileFilter(String pattern, boolean ignoreCase) {
  */
 protected void configureShell(Shell shell) {
 	super.configureShell(shell);
-	//WorkbenchHelp.setHelp(shell, IHelpContextIds.RESOURCE_SELECTION_DIALOG);
+	WorkbenchHelp.setHelp(shell, IExternalToolsHelpContextIds.FILE_SELECTION_DIALOG);
 }
 
 protected void createButtonsForButtonBar(Composite parent) {

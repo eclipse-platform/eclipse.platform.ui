@@ -7,6 +7,9 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -15,11 +18,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * An abstract base class for dialogs with a status bar and ok/cancel buttons.
@@ -91,8 +91,10 @@ public abstract class StatusDialog extends Dialog {
 	 */
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
-		if (fTitle != null)
+		if (fTitle != null) {
 			shell.setText(fTitle);
+		}
+		WorkbenchHelp.setHelp(shell, IExternalToolsHelpContextIds.STATUS_DIALOG);
 	}
 
 	/*

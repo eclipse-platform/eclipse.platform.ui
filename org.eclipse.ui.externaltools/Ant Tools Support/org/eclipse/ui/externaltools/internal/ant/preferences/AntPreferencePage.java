@@ -26,7 +26,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.externaltools.internal.ant.editor.text.PlantyColorConstants;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 
@@ -151,8 +153,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		//TODO: help context id
-		//WorkbenchHelp.setHelp(parent, IAntHelpContextIds.ANT_PREFERENCE_PAGE);
+		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.ANT_PREFERENCE_PAGE);
 	}
 
 	/**

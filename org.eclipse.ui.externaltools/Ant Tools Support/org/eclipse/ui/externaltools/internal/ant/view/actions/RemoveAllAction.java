@@ -10,7 +10,9 @@ http://www.eclipse.org/legal/cpl-v10.html
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
 public class RemoveAllAction extends Action implements IUpdate {
@@ -21,6 +23,7 @@ public class RemoveAllAction extends Action implements IUpdate {
 		setDescription(AntViewActionMessages.getString("RemoveAllAction.Remove_all")); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("RemoveAllAction.Remove_All")); //$NON-NLS-1$
 		this.view= view;
+		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.REMOVE_ALL_ACTION);
 	}
 	
 	public void run() {

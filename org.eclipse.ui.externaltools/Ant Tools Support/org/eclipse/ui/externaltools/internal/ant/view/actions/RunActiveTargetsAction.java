@@ -27,7 +27,9 @@ import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -42,6 +44,7 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 		super(AntViewActionMessages.getString("RunActiveTargetsAction.Run"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_RUN)); //$NON-NLS-1$
 		setToolTipText(AntViewActionMessages.getString("RunActiveTargetsAction.Run_2")); //$NON-NLS-1$
 		this.view = view;
+		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.RUN_TARGETS_ACTION);
 	}
 
 	public void run() {

@@ -17,6 +17,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -29,6 +31,7 @@ public class ActivateTargetAction extends Action implements IUpdate {
 		super(AntViewActionMessages.getString("ActivateTargetAction.Activate_Target_1")); //$NON-NLS-1$
 		setDescription(AntViewActionMessages.getString("ActivateTargetAction.Activate_selected")); //$NON-NLS-1$
 		this.view= view;
+		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.ACTIVATE_TARGET_ACTION);
 	}
 	
 	public void run() {

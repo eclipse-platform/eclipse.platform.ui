@@ -14,7 +14,9 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -28,6 +30,7 @@ public class RemoveProjectAction extends Action implements IUpdate {
 		super(AntViewActionMessages.getString("RemoveProjectAction.Remove"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_REMOVE)); //$NON-NLS-1$
 		this.view= view;
 		setToolTipText(AntViewActionMessages.getString("RemoveProjectAction.Remove_2")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.REMOVE_PROJECT_ACTION);
 	}
 
 	/**

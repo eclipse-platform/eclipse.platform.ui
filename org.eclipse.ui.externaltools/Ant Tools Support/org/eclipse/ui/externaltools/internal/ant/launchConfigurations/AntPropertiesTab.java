@@ -47,8 +47,10 @@ import org.eclipse.ui.externaltools.internal.ant.preferences.AntPreferencesMessa
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Tab for setting Ant user properties per launch configuration. All properties
@@ -163,6 +165,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab {
 		Composite top = new Composite(parent, SWT.NONE);
 		top.setFont(font);
 		setControl(top);
+		WorkbenchHelp.setHelp(getControl(), IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_ANT_PROPERTIES_TAB);
 		
 		GridLayout layout = new GridLayout();
 		layout.numColumns= 2;

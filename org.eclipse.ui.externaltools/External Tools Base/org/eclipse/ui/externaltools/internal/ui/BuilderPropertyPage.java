@@ -62,12 +62,14 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.dialogs.PropertyPage;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
-import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Property page to add external tools in between builders.
@@ -975,4 +977,11 @@ public final class BuilderPropertyPage extends PropertyPage {
 		return super.performCancel();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_BUILDER_PROPERTY_PAGE);
+	}
 }

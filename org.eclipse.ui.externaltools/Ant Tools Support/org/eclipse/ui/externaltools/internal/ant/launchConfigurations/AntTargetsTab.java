@@ -49,8 +49,10 @@ import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.externaltools.internal.variable.ExpandVariableContext;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 
@@ -81,8 +83,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		
 		Composite comp = new Composite(parent, SWT.NONE);
 		setControl(comp);
-		//TODO: set help context ID
-		//WorkbenchHelp.setHelp(getControl(), IJavaDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_CLASSPATH_TAB); 
+		WorkbenchHelp.setHelp(getControl(), IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_ANT_TARGETS_TAB);
+		 
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 1;
 		comp.setLayout(topLayout);		

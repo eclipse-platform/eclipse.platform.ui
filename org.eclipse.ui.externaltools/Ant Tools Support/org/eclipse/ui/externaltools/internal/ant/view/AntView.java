@@ -81,7 +81,9 @@ import org.eclipse.ui.externaltools.internal.ant.view.elements.RootNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.IUpdate;
 
@@ -263,6 +265,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 			// begin listening for resource changes
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 		}
+		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.ANT_VIEW);
 	}
 	
 	private IDialogSettings getDialogSettings() {

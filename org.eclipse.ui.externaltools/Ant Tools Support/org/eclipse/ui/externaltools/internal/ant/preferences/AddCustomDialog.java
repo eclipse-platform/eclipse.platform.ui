@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.FileSystemElement;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.IHelpContextIds;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.StatusDialog;
 import org.eclipse.ui.externaltools.internal.ui.StatusInfo;
 import org.eclipse.ui.externaltools.internal.ui.TreeAndListGroup;
@@ -156,7 +156,7 @@ public class AddCustomDialog extends StatusDialog {
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
 		newShell.setText(title);
-		WorkbenchHelp.setHelp(newShell, IHelpContextIds.ADD_TASK_DIALOG);
+		WorkbenchHelp.setHelp(newShell, IExternalToolsHelpContextIds.ADD_CUSTOM_DIALOG);
 	}
 	/**
 	 * Clears the cached structure provider after first finalizing

@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Provides the generic implementation for a sub-page in the
@@ -256,6 +257,7 @@ public abstract class AntPage {
 	 * Creates the default contents of this page
 	 */
 	protected Composite createContents(Composite top) {
+		WorkbenchHelp.setHelp(top, getHelpContextId());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = 2;
@@ -302,4 +304,12 @@ public abstract class AntPage {
 	
 	protected void edit(IStructuredSelection selection) {
 	}
+	
+	/**
+	 * Returns this page's help context id, which is hooked
+	 * to this page on creation.
+	 * 
+	 * @return help context id
+	 */
+	protected abstract String getHelpContextId();
 }

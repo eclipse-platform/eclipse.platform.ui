@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 
 /**
  * Sub-page that allows the user to enter custom tasks
@@ -208,5 +209,12 @@ public class AntTasksPage extends AntPage {
 	protected void initialize() {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		setInput(prefs.getTasks());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.AntPage#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IExternalToolsHelpContextIds.ANT_TASKS_PAGE;
 	}
 }

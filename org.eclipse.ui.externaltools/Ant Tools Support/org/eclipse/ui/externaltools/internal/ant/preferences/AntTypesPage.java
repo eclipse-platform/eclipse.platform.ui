@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 
 /**
  * Sub-page that allows the user to enter custom types
@@ -214,5 +215,11 @@ public class AntTypesPage extends AntPage {
 		AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
 		setInput(prefs.getTypes());
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.AntPage#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IExternalToolsHelpContextIds.ANT_TYPES_PAGE;
+	}
 }

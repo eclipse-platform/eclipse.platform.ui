@@ -30,6 +30,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 
@@ -49,6 +51,8 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
+		WorkbenchHelp.setHelp(getControl(), IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_BUILDER_TAB);
+		
 		GridLayout layout = new GridLayout();
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		mainComposite.setLayout(layout);

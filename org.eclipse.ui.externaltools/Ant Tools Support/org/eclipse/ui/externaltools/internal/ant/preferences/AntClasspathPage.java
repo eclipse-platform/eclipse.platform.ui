@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
@@ -542,5 +543,12 @@ public class AntClasspathPage extends AntPage {
 		} else {
 			return ""; //$NON-NLS-1$
 		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.AntPage#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IExternalToolsHelpContextIds.ANT_CLASSPATH_PAGE;
 	}
 }

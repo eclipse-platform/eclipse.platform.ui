@@ -23,6 +23,8 @@ import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -37,6 +39,7 @@ public class EditLaunchConfigurationAction extends Action implements IUpdate {
 		super(AntViewActionMessages.getString("EditLaunchConfigurationAction.Properties"), ExternalToolsImages.getImageDescriptor(IExternalToolConstants.IMG_PROPERTY)); //$NON-NLS-1$
 		setDescription(AntViewActionMessages.getString("EditLaunchConfigurationAction.Edit")); //$NON-NLS-1$
 		this.view= view;
+		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.EDIT_LAUNCH_CONFIGURATION_ACTION);
 	}
 	
 	public void run() {

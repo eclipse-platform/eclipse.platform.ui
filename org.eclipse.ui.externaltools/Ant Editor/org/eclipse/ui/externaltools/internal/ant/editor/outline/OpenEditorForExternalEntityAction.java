@@ -23,6 +23,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 public class OpenEditorForExternalEntityAction extends Action {
@@ -33,6 +35,7 @@ public class OpenEditorForExternalEntityAction extends Action {
 		super(AntOutlineMessages.getString("OpenEditorForExternalEntityAction.&Open_Editor_1")); //$NON-NLS-1$
 		setDescription(AntOutlineMessages.getString("OpenEditorForExternalEntityAction.Open_an_editor")); //$NON-NLS-1$
 		this.page= page;
+		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.OPEN_EDITOR_ACTION);
 	}
 	
 	/* (non-Javadoc)

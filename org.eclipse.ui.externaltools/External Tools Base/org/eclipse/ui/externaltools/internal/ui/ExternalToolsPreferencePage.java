@@ -19,7 +19,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.IPreferenceConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Preference page that allows the user to customize external tools
@@ -89,4 +91,11 @@ public class ExternalToolsPreferencePage extends PreferencePage implements IWork
 		super.performDefaults();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
+	 */
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		WorkbenchHelp.setHelp(parent, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_PREFERENCE_PAGE);
+	}
 }

@@ -40,15 +40,17 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 import org.eclipse.ui.dialogs.SelectionDialog;
-import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.dialog.ExternalToolVariableForm;
+import org.eclipse.ui.externaltools.internal.group.IGroupDialogPage;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.externaltools.internal.model.ToolUtil.VariableDefinition;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariable;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolVariableRegistry;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 
@@ -77,6 +79,8 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
 		setControl(mainComposite);
+		WorkbenchHelp.setHelp(getControl(), IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_MAIN_TAB);
+		
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);

@@ -13,8 +13,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.FileSelectionDialog;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Action that prompts the user for a build file and adds the selected file to
@@ -28,6 +30,7 @@ public class AddBuildFileAction extends Action {
 		super(AntViewActionMessages.getString("AddBuildFileAction.Add_Build_File_1"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_ADD)); //$NON-NLS-1$
 		this.view= view;
 		setToolTipText(AntViewActionMessages.getString("AddBuildFileAction.Add_build_file_2")); //$NON-NLS-1$
+		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.ADD_BUILDFILE_ACTION);
 	}
 
 	/**

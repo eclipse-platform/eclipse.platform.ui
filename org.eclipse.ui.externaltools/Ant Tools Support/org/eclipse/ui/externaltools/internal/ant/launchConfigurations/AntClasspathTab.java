@@ -52,8 +52,10 @@ import org.eclipse.ui.externaltools.internal.ant.preferences.AntClasspathLabelPr
 import org.eclipse.ui.externaltools.internal.ant.preferences.AntPreferencesMessages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 
@@ -279,7 +281,8 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 		top.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		setControl(top);
-
+		WorkbenchHelp.setHelp(top, IExternalToolsHelpContextIds.EXTERNAL_TOOLS_LAUNCH_CONFIGURATION_DIALOG_ANT_CLASSPATH_TAB);
+		
 		createChangeClasspath(top);
 
 		Label label = new Label(top, SWT.NONE);

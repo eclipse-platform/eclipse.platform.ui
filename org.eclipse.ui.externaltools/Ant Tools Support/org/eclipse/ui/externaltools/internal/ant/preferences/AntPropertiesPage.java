@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.ExternalToolsContentProvider;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 
@@ -290,5 +291,12 @@ public class AntPropertiesPage extends AntPage {
 			files[i] = (String)elements[i];
 		}
 		return files;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.externaltools.internal.ant.preferences.AntPage#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IExternalToolsHelpContextIds.ANT_PROPERTIES_PAGE;
 	}
 }

@@ -15,7 +15,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.externaltools.internal.ant.view.AntView;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.texteditor.IUpdate;
 
 public class DeactivateTargetAction extends Action implements IUpdate {
@@ -26,6 +28,7 @@ public class DeactivateTargetAction extends Action implements IUpdate {
 		super(AntViewActionMessages.getString("DeactivateTargetAction.Deactivate"), ExternalToolsImages.getImageDescriptor(IExternalToolsUIConstants.IMG_REMOVE)); //$NON-NLS-1$
 		setDescription(AntViewActionMessages.getString("DeactivateTargetAction.Deactivate_selected")); //$NON-NLS-1$
 		this.view= view;
+		WorkbenchHelp.setHelp(this, IExternalToolsHelpContextIds.DEACTIVATE_TARGET_ACTION);
 	}
 	
 	public void run() {
