@@ -164,11 +164,10 @@ public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 	throws WorkbenchException;
 	
 /**
- * Notifies the workbench that a plugin has been loaded.  
- * <p>
- * In response to this notification, the workbench will instantiate any
- * outstanding action delegates for the plugin.
- * </p>
+ * Creates the action delegate for each action extension contributed by
+ * a particular plugin.  The delegates are only created if the
+ * plugin itself has been activated.
+ * 
  * @param pluginId the plugin id.
  */
 public void refreshPluginActions(String pluginId);
