@@ -100,7 +100,9 @@ protected DialogPage(String title, ImageDescriptor image) {
  * @return the number of pixels
  */
 protected int convertHeightInCharsToPixels(int chars) {
-	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	// test for failure to initialize for backward compatibility
+	if (fontMetrics == null)
+		return 0;
 	return Dialog.convertHeightInCharsToPixels(fontMetrics, chars);
 }
 /**
@@ -118,7 +120,9 @@ protected int convertHeightInCharsToPixels(int chars) {
  * @return the number of pixels
  */
 protected int convertHorizontalDLUsToPixels(int dlus) {
-	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	// test for failure to initialize for backward compatibility
+	if (fontMetrics == null)
+		return 0;
 	return Dialog.convertHorizontalDLUsToPixels(fontMetrics, dlus);
 }
 /**
@@ -136,7 +140,9 @@ protected int convertHorizontalDLUsToPixels(int dlus) {
  * @return the number of pixels
  */
 protected int convertVerticalDLUsToPixels(int dlus) {
-	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	// test for failure to initialize for backward compatibility
+	if (fontMetrics == null)
+		return 0;
 	return Dialog.convertVerticalDLUsToPixels(fontMetrics, dlus);
 }
 /**
@@ -154,7 +160,9 @@ protected int convertVerticalDLUsToPixels(int dlus) {
  * @return the number of pixels
  */
 protected int convertWidthInCharsToPixels(int chars) {
-	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	// test for failure to initialize for backward compatibility
+	if (fontMetrics == null)
+		return 0;
 	return Dialog.convertWidthInCharsToPixels(fontMetrics, chars);
 }
 /**	

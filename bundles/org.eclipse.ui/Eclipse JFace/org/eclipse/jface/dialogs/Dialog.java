@@ -239,7 +239,9 @@ protected void cancelPressed() {
  * @return the number of pixels
  */
 protected int convertHeightInCharsToPixels(int chars) {
-	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	// test for failure to initialize for backward compatibility
+	if (fontMetrics == null)
+		return 0;
 	return convertHeightInCharsToPixels(fontMetrics, chars);
 }
 /**
@@ -257,7 +259,9 @@ protected int convertHeightInCharsToPixels(int chars) {
  * @return the number of pixels
  */
 protected int convertHorizontalDLUsToPixels(int dlus) {
-	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	// test for failure to initialize for backward compatibility
+	if (fontMetrics == null)
+		return 0;
 	return convertHorizontalDLUsToPixels(fontMetrics, dlus);
 }
 /**
@@ -275,7 +279,9 @@ protected int convertHorizontalDLUsToPixels(int dlus) {
  * @return the number of pixels
  */
 protected int convertVerticalDLUsToPixels(int dlus) {
-	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	// test for failure to initialize for backward compatibility
+	if (fontMetrics == null)
+		return 0;
 	return convertVerticalDLUsToPixels(fontMetrics, dlus);
 }
 /**
@@ -293,7 +299,9 @@ protected int convertVerticalDLUsToPixels(int dlus) {
  * @return the number of pixels
  */
 protected int convertWidthInCharsToPixels(int chars) {
-	Assert.isNotNull(fontMetrics, "Must call initializeDialogUnits before calling this method"); //$NON-NLS-1$
+	// test for failure to initialize for backward compatibility
+	if (fontMetrics == null)
+		return 0;
 	return convertWidthInCharsToPixels(fontMetrics, chars);
 }
 /**
