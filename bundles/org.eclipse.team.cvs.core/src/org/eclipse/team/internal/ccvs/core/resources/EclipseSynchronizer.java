@@ -20,10 +20,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -47,6 +49,8 @@ public class EclipseSynchronizer {
 	
 	private static final String[] NULL_IGNORES = new String[0];
 	private static final FolderSyncInfo NULL_FOLDER_SYNC_INFO = new FolderSyncInfo("", "", null, false); //$NON-NLS-1$ //$NON-NLS-2$
+	
+	private static final IStatus STATUS_OK = new Status(IStatus.OK, CVSProviderPlugin.ID, 0, Policy.bind("ok"), null);
 	
 	// the cvs eclipse synchronizer is a singleton
 	private static EclipseSynchronizer instance;
@@ -322,15 +326,23 @@ public class EclipseSynchronizer {
 	/**
 	 * Ends a batch of operations.  Pending changes are committed only when
 	 * the number of calls to endOperation() balances those to beginOperation().
-	 * 
+	 * <p>
+	 * Will throw a CVS Exception with a status with code = CVSStatus.DELETION_FAILED 
+	 * if the endOperation could not perform CVS folder deletions. In this case, all other
+	 * aspects of the operation succeeded.
+	 * </p>
 	 * @param monitor the progress monitor, may be null
 	 */
 	public void endOperation(IProgressMonitor monitor) throws CVSException {
+		IStatus status = STATUS_OK;
 		if (nestingCount == 1) {
-			commitCache(monitor);
+			status = commitCache(monitor);
 		}
 		nestingCount -= 1;
 		Assert.isTrue(nestingCount>= 0);
+		if (status != STATUS_OK) {
+			throw new CVSException(status);
+		}
 	}
 	
 	/**
@@ -341,6 +353,11 @@ public class EclipseSynchronizer {
 	 * so that the next time it is accessed it will be retrieved from disk.
 	 * May flush more sync information than strictly needed, but never less.
 	 * </p>
+	 * <p>
+	 * Will throw a CVS Exception with a status with code = CVSStatus.DELETION_FAILED 
+	 * if the flush could not perform CVS folder deletions. In this case, all other
+	 * aspects of the operation succeeded.
+	 * </p>
 	 * 
 	 * @param root the root of the subtree to flush
 	 * @param purgeCache if true, purges the cache from memory as well
@@ -350,13 +367,18 @@ public class EclipseSynchronizer {
 	public void flush(IContainer root, boolean purgeCache, boolean deep, IProgressMonitor monitor)
 		throws CVSException {
 		// flush unwritten sync info to disk
-		if (nestingCount != 0) commitCache(monitor);
+		IStatus status = STATUS_OK;
+		if (nestingCount != 0) status = commitCache(monitor);
 		
 		// purge from memory too if we were asked to
 		if (purgeCache) purgeCache(root, deep);
 
 		// prepare for the operation again if we cut the last one short
 		if (nestingCount != 0) prepareCache(monitor);
+		
+		if (status != STATUS_OK) {
+			throw new CVSException(status);
+		}
 	}
 	
 	public void syncFilesChanged(IContainer[] roots) throws CVSException {
@@ -384,11 +406,15 @@ public class EclipseSynchronizer {
 	
 	/**
 	 * Commits the cache after a series of operations.
+	 * 
+	 * Will return STATUS_OK unless there were problems deleting the CVS folders, in 
+	 * which case a status with code = CVSStatus.DELETION_FAILED is returned.
 	 *
 	 * @param monitor the progress monitor, may be null
 	 */
-	private void commitCache(IProgressMonitor monitor) throws CVSException {
-		if (changedFolders.isEmpty() && changedResources.isEmpty()) return;
+	private IStatus commitCache(IProgressMonitor monitor) throws CVSException {
+		if (changedFolders.isEmpty() && changedResources.isEmpty()) return STATUS_OK;
+		List errors = new ArrayList();
 		try {
 			/*** prepare operation ***/
 			// find parents of changed resources
@@ -413,7 +439,11 @@ public class EclipseSynchronizer {
 					FolderSyncInfo info = getCachedFolderSync(folder);
 					if (info == null) {
 						// deleted folder sync info since we loaded it
-						SyncFileWriter.deleteFolderSync(folder);
+						try {
+							SyncFileWriter.deleteFolderSync(folder);
+						} catch (CVSException e) {
+							errors.add(e.getStatus());
+						}
 						dirtyParents.remove(folder);
 					} else {
 						// modified or created new folder sync info since we loaded it
@@ -446,7 +476,15 @@ public class EclipseSynchronizer {
 				new IResource[changedResources.size()]);
 			CVSProviderPlugin.broadcastResourceStateChanges(resources);
 			changedResources.clear();
-			changedFolders.clear();	
+			changedFolders.clear();
+			if ( ! errors.isEmpty()) {
+				MultiStatus status = new MultiStatus(CVSProviderPlugin.ID, CVSStatus.DELETION_FAILED, Policy.bind("EclipseSynchronizer.ErrorDeletingFolderSync"), null);
+				for (int i = 0; i < errors.size(); i++) {
+					status.merge((IStatus)errors.get(i));
+				}
+				return status;
+			}
+			return STATUS_OK;
 		} finally {
 			monitor.done();
 		}

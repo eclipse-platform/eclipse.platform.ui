@@ -20,6 +20,7 @@ public class CVSStatus extends Status {
 	public static final int CONFLICT = -12;
 	public static final int ERROR_LINE = -14; // generic uninterpreted E line from the server
 	public static final int TAG_ALREADY_EXISTS = -15;
+	public static final int DELETION_FAILED = -16;
 	
 	// Path for resource related status
 	private IPath path;

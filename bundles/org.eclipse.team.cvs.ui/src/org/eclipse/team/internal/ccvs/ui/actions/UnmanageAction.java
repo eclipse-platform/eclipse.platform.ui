@@ -136,7 +136,7 @@ public class UnmanageAction extends TeamAction {
 			}
 		}
 		if (exceptions[0] != null) {
-			handle(exceptions[0], null, Policy.bind("Unmanage.unmanaging"));
+			handle(exceptions[0], null, Policy.bind("Unmanage.unmanagingError"));
 		}
 	}
 
@@ -158,11 +158,15 @@ public class UnmanageAction extends TeamAction {
 						for (int i = 0; i < providerResources.length; i++) {
 							IResource resource = providerResources[i];
 							ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor((IContainer) resource);
-							if(deleteContent) {
-								folder.unmanage(Policy.subMonitorFor(subMonitor, 10));
+							try {
+								if(deleteContent) {
+									folder.unmanage(Policy.subMonitorFor(subMonitor, 10));
+								}
+							} finally {
+								// We want to remove the nature even if the unmanage operation fails
+								RepositoryProvider.removeNatureFromProject((IProject)resource, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(subMonitor, 10));							
+								CVSDecorator.refresh(resource);
 							}
-							RepositoryProvider.removeNatureFromProject((IProject)resource, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(subMonitor, 10));							
-							CVSDecorator.refresh(resource);
 						}											
 					}										
 				} catch (TeamException e) {

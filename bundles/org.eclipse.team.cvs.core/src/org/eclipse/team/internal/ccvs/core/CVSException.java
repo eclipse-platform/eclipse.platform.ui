@@ -79,4 +79,7 @@ public class CVSException extends TeamException {
 	public static CVSException wrapException(Exception e) {
 		return new CVSException(new CVSStatus(IStatus.ERROR, UNABLE, e.getMessage() != null ? e.getMessage() : "",	e)); //$NON-NLS-1$
 	}
+	public static CVSException wrapException(CoreException e) {
+		return new CVSException(e.getStatus());
+	}
 }
