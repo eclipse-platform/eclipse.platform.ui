@@ -11,6 +11,8 @@
 package org.eclipse.ant.ui.internal.model;
 
 
+import java.util.Locale;
+
 import org.eclipse.ant.ui.internal.editor.text.IAntEditorColorConstants;
 import org.eclipse.ant.ui.internal.preferences.AntEditorPreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
@@ -120,7 +122,13 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
 		prefs.setDefault(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, "build.xml"); //$NON-NLS-1$
-		prefs.setDefault(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, true);
+		String osname= System.getProperty("os.name").toLowerCase(Locale.US); //$NON-NLS-1$
+		if (osname.indexOf("mac") == -1) { //$NON-NLS-1$
+			//the mac does not have a tools.jar Bug 40778
+			prefs.setDefault(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, false);
+		} else {
+			prefs.setDefault(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, true);
+		}
 		prefs.setDefault(IAntUIPreferenceConstants.ANT_XERCES_JARS_WARNING, true);
 		// Ant Editor color preferences
 		PreferenceConverter.setDefault(prefs, IAntEditorColorConstants.P_DEFAULT, IAntEditorColorConstants.DEFAULT);
