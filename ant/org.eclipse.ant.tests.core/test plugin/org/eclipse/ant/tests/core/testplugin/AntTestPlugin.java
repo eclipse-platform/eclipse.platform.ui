@@ -18,14 +18,15 @@ import java.net.URL;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 
 
 public class AntTestPlugin extends AbstractUIPlugin {
 	
 	private static AntTestPlugin deflt;
 	
-	public AntTestPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public AntTestPlugin() {
+		super();
 		deflt= this;
 	}
 	
@@ -47,7 +48,8 @@ public class AntTestPlugin extends AbstractUIPlugin {
 	
 	public File getFileInPlugin(IPath path) {
 		try {
-			URL installURL= new URL(getDescriptor().getInstallURL(), path.toString());
+			Bundle bundle = getDefault().getBundle();
+			URL installURL= new URL(bundle.getEntry("/"), path.toString());
 			URL localURL= Platform.asLocalURL(installURL);
 			return new File(localURL.getFile());
 		} catch (IOException e) {

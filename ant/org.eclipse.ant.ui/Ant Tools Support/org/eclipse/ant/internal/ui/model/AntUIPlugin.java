@@ -15,8 +15,6 @@ package org.eclipse.ant.internal.ui.model;
 import java.util.Locale;
 
 import org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -25,6 +23,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * The plug-in runtime class for the Ant Core plug-in.
@@ -57,20 +56,17 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 * when the facilities provided by the Ant Core plug-in are required.
 	 * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
 	 * </p>
-	 * 
-	 * @param descriptor the plug-in descriptor for the
-	 *   Ant UI plug-in
 	 */
-	public AntUIPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public AntUIPlugin() {
+		super();
 		plugin = this;
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.Plugin#shutdown()
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void shutdown() throws CoreException {
-		super.shutdown();
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
 		AntUIImages.disposeImageDescriptorRegistry();
 	}
 
@@ -87,13 +83,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
 	public static String getUniqueIdentifier() {
-		if (getDefault() == null) {
-			// If the default instance is not yet initialized,
-			// return a static identifier. This identifier must
-			// match the plugin id defined in plugin.xml
-			return "org.eclipse.ant.ui"; //$NON-NLS-1$
-		}
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return PI_ANTUI;
 	}
 	
 	/**
@@ -102,7 +92,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 * @param t throwable to log 
 	 */
 	public static void log(Throwable t) {
-		IStatus status= new Status(IStatus.ERROR, PI_ANTUI, INTERNAL_ERROR, "Error logged from Ant Core: ", t); //$NON-NLS-1$
+		IStatus status= new Status(IStatus.ERROR, PI_ANTUI, INTERNAL_ERROR, "Error logged from Ant UI: ", t); //$NON-NLS-1$
 		getDefault().getLog().log(status);
 	}
 	

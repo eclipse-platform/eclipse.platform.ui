@@ -32,7 +32,7 @@
       <import plugin="org.eclipse.jdt.ui"/>
       <import plugin="org.eclipse.jdt.debug.ui"/>
       <import plugin="org.eclipse.jdt.launching"/>
-      <import plugin="org.eclipse.core.runtime.compatibility"/>
+      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.jdt.core"/>
    </requires>
    
