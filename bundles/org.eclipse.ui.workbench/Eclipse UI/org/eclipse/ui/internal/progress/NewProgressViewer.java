@@ -1138,26 +1138,26 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		scroller.setExpandHorizontal(true);
 		scroller.setExpandVertical(true);
 
-		scroller.addListener(SWT.KeyDown, new Listener() {
-		    public void handleEvent (Event e) {
-		        System.err.println("KeyDown1");
-		    }
-		});
+//		scroller.addListener(SWT.KeyDown, new Listener() {
+//		    public void handleEvent (Event e) {
+//		        System.err.println("KeyDown1");
+//		    }
+//		});
 
 		list= new Composite(scroller, SWT.NONE);
 		list.setFont(defaultFont);
 		list.setBackground(lightColor);
 		list.setLayout(new ListLayout());
 		
-		list.addListener(SWT.KeyDown, new Listener() {
-		    public void handleEvent (Event e) {
-		        System.err.println("KeyDown2");
-		    }
-		});
-		
-		list.addListener(SWT.Traverse, new Listener () {
-           public void handleEvent (Event e) {
-               System.err.println("Traverse");
+//		list.addListener(SWT.KeyDown, new Listener() {
+//		    public void handleEvent (Event e) {
+//		        System.err.println("KeyDown2");
+//		    }
+//		});
+//		
+//		list.addListener(SWT.Traverse, new Listener () {
+//           public void handleEvent (Event e) {
+//               System.err.println("Traverse");
 //               switch (e.detail) {
 //                    /* Do tab group traversal */
 //                   case SWT.TRAVERSE_ESCAPE:
@@ -1169,9 +1169,9 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 //                           e.doit = true;
 //                           break;
 //               }
-           }
-		});
-
+//           }
+//		});
+//
 		list.addListener(SWT.MouseDown, new Listener() {
 			public void handleEvent(Event event) {
 				select(null, event);	// clear selection
