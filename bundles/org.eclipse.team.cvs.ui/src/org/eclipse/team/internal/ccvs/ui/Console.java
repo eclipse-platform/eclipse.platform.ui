@@ -92,6 +92,7 @@ public class Console extends ViewPart {
 			this.line = line;
 		}
 	}
+	
 	private static Vector pendingConsoleData = new Vector();
 	private static Runnable aSyncRunnable;
 	private static final int MAX_BUFFER_SIZE = 200; //maximum size of buffer if console not open
@@ -396,7 +397,7 @@ public class Console extends ViewPart {
 				if (Policy.DEBUG_CONSOLE_BUFFERING) {
 					System.out.println("==Console running runnable");	//$NON-NLS-1$
 				}
-				//if we don't have a console open and the pref is to open one, then do so
+				//flush all buffered console data to the console
 				while (! pendingConsoleData.isEmpty()) {
 					PendingConsoleLine consoleLine = (PendingConsoleLine) pendingConsoleData.remove(0);
 					if (Policy.DEBUG_CONSOLE_BUFFERING) {
@@ -497,6 +498,7 @@ public class Console extends ViewPart {
 			}
 			appendConsoleLine(ConsoleDocument.DELIMITER, Policy.bind("Console.postExecutionDelimiter")); //$NON-NLS-1$
 			appendConsoleLine(ConsoleDocument.DELIMITER, ""); //$NON-NLS-1$
+			flushConsoleBuffer();
 		}
 		/**
 		 * Method messageLineForStatus.
