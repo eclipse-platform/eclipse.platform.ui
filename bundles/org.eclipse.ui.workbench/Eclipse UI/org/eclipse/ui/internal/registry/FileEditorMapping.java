@@ -80,6 +80,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
      */
 	private void addToObjectActivityManager(EditorDescriptor editor) {
 	   IObjectActivityManager objectManager = getObjectActivityManager();
+	   if(objectManager == null)
+	   		return;
         String pluginId = editor.getPluginID();
         if (pluginId == null) {
            if(editor.isInternal())
@@ -269,6 +271,8 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 	 */
 	private List filteredEditors() {
         IObjectActivityManager objectManager = getObjectActivityManager();
+        if(objectManager == null)
+        	return editors;
         ArrayList filtered = new ArrayList(editors);
         filtered.retainAll(objectManager.getActiveObjects());
         return filtered;
