@@ -22,8 +22,11 @@ public class UIAutomatedSuite extends TestSuite {
 	 */
 	public UIAutomatedSuite() {
 		addTest(new TestSuite(UIDialogsAuto.class));
+		addTest(new TestSuite(DeprecatedUIDialogsAuto.class));
 		addTest(new TestSuite(UIWizardsAuto.class));
+		addTest(new TestSuite(DeprecatedUIWizardsAuto.class));
 		addTest(new TestSuite(UIPreferencesAuto.class));
+		addTest(new TestSuite(DeprecatedUIPreferencesAuto.class));
 		addTest(new TestSuite(UIMessageDialogsAuto.class));
 		addTest(new TestSuite(UINewWorkingSetWizardAuto.class));
 		addTest(new TestSuite(UIEditWorkingSetWizardAuto.class));		

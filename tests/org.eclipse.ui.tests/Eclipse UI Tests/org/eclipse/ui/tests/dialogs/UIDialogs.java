@@ -4,13 +4,10 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.LabelProvider;
-
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
@@ -20,11 +17,9 @@ import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.dialogs.ProjectLocationSelectionDialog;
 import org.eclipse.ui.dialogs.SaveAsDialog;
 import org.eclipse.ui.dialogs.TypeFilteringDialog;
-import org.eclipse.ui.dialogs.YesNoCancelListSelectionDialog;
 import org.eclipse.ui.internal.Perspective;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchPartLabelProvider;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.AboutDialog;
 import org.eclipse.ui.internal.dialogs.ActionSetSelectionDialog;
@@ -34,10 +29,8 @@ import org.eclipse.ui.internal.dialogs.SavePerspectiveDialog;
 import org.eclipse.ui.internal.dialogs.SelectPerspectiveDialog;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
 import org.eclipse.ui.internal.dialogs.SimpleListContentProvider;
-import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
-import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.tests.util.DialogCheck;
 
 public class UIDialogs extends TestCase {
@@ -122,17 +115,7 @@ public class UIDialogs extends TestCase {
 		dialog.setBlockOnOpen(true);
 		DialogCheck.assertDialog(dialog, this);
 	}
-	public void testSaveAll() {
-		YesNoCancelListSelectionDialog dialog = new YesNoCancelListSelectionDialog(
-			getShell(),
-			new AdaptableList(),
-			new WorkbenchContentProvider(),
-			new WorkbenchPartLabelProvider(),
-			WorkbenchMessages.getString("EditorManager.saveResourcesMessage")
-		);
-		dialog.setTitle(WorkbenchMessages.getString("EditorManager.saveResourcesTitle"));
-		DialogCheck.assertDialog(dialog, this);
-	}
+	
 	public void testSaveAs() {
 		Dialog dialog = new SaveAsDialog( getShell() );
 		DialogCheck.assertDialog(dialog, this);

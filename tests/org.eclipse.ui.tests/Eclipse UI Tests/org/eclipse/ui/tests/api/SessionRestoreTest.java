@@ -4,6 +4,7 @@ import org.eclipse.core.resources.IFile;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IViewPart;
@@ -58,11 +59,11 @@ public class SessionRestoreTest extends UITestCase {
 		testSessionView(pages[1]);
 		
 		// Last page contains 3 editors.
-		IEditorPart [] editors = pages[1].getEditors();
+		IEditorReference [] editors = pages[1].getEditorReferences();
 		assertEquals(editors.length, 3);
-		testSessionEditor(editors[0], SessionCreateTest.TEST_FILE_1);
-		testSessionEditor(editors[1], SessionCreateTest.TEST_FILE_2);
-		testSessionEditor(editors[2], SessionCreateTest.TEST_FILE_3);
+		testSessionEditor(editors[0].getEditor(true), SessionCreateTest.TEST_FILE_1);
+		testSessionEditor(editors[1].getEditor(true), SessionCreateTest.TEST_FILE_2);
+		testSessionEditor(editors[2].getEditor(true), SessionCreateTest.TEST_FILE_3);
 	}
 	
 	/**

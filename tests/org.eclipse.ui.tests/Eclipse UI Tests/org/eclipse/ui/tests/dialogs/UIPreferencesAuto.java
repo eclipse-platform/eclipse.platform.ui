@@ -75,7 +75,7 @@ public class UIPreferencesAuto extends TestCase {
 			dialog.create();
 			WorkbenchHelp.setHelp(
 				dialog.getShell(),
-				new Object[] { IHelpContextIds.PREFERENCE_DIALOG });
+				IHelpContextIds.PREFERENCE_DIALOG);
 
 			for (Iterator iterator =
 				manager.getElements(PreferenceManager.PRE_ORDER).iterator();
@@ -132,7 +132,7 @@ public class UIPreferencesAuto extends TestCase {
 			dialog.getShell().setText(title);
 			WorkbenchHelp.setHelp(
 				dialog.getShell(),
-				new Object[] { IHelpContextIds.PROPERTY_DIALOG });
+				IHelpContextIds.PROPERTY_DIALOG);
 			for (Iterator iterator =
 				manager.getElements(PreferenceManager.PRE_ORDER).iterator();
 				iterator.hasNext();

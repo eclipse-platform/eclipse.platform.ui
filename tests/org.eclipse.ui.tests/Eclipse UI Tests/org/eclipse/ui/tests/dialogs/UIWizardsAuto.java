@@ -51,7 +51,7 @@ public class UIWizardsAuto extends TestCase {
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();
 		dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT );
-		WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.EXPORT_WIZARD});
+		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.EXPORT_WIZARD);
 
 		if (page != null) {
 			page.setWizard(wizard);
@@ -72,7 +72,7 @@ public class UIWizardsAuto extends TestCase {
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();
 		dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT );
-		WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.IMPORT_WIZARD});
+		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.IMPORT_WIZARD);
 		
 		if (page != null) {
 			page.setWizard(wizard);
@@ -136,7 +136,7 @@ public class UIWizardsAuto extends TestCase {
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();
 		dialog.getShell().setText(WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_FILE_WIZARD});
+		WorkbenchHelp.setHelp(dialog.getShell(),IHelpContextIds.NEW_FILE_WIZARD);
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
 	/**
@@ -176,7 +176,7 @@ public class UIWizardsAuto extends TestCase {
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();
 		dialog.getShell().setText(WorkbenchMessages.getString("CreateFolderAction.title")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_FOLDER_WIZARD});
+		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_FOLDER_WIZARD);
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
 	public void testNewProjectPage1() {
@@ -188,7 +188,7 @@ public class UIWizardsAuto extends TestCase {
 		dialog.create();
 		dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH_2, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT_2 );
 		dialog.getShell().setText(WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$
-		WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_PROJECT_WIZARD});
+		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_PROJECT_WIZARD);
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
 	public void testNewProjectPage2() {
@@ -206,7 +206,7 @@ public class UIWizardsAuto extends TestCase {
 		dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH_2, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT_2 );
 		dialog.getShell().setText(WorkbenchMessages.getString("CreateFileAction.title")); //$NON-NLS-1$			
 		dialog.showPage(page);
-		WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_PROJECT_WIZARD});
+		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_PROJECT_WIZARD);
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
 	public void testNewProject() {
@@ -231,7 +231,7 @@ public class UIWizardsAuto extends TestCase {
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();
 		dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH_2, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT_2 );
-		WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_PROJECT_WIZARD});	
+		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_PROJECT_WIZARD);	
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
 	public void testNewResource() {
@@ -253,7 +253,7 @@ public class UIWizardsAuto extends TestCase {
 		WizardDialog dialog = new WizardDialog(getShell(), wizard);
 		dialog.create();
 		dialog.getShell().setSize( Math.max(SIZING_WIZARD_WIDTH_2, dialog.getShell().getSize().x), SIZING_WIZARD_HEIGHT_2 );
-		WorkbenchHelp.setHelp(dialog.getShell(), new Object[]{IHelpContextIds.NEW_WIZARD});
+		WorkbenchHelp.setHelp(dialog.getShell(), IHelpContextIds.NEW_WIZARD);
 		DialogCheck.assertDialogTexts(dialog, this);
 	}
 

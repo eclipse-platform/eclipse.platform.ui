@@ -43,6 +43,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener;
@@ -427,9 +428,9 @@ public class AdaptedResourceNavigator
 		if (obj instanceof IFile && selection.size() == 1) {
 			IFile file = (IFile) obj;
 			IWorkbenchPage page = getSite().getPage();
-			IEditorPart editorArray[] = page.getEditors();
+			IEditorReference editorArray[] = page.getEditorReferences();
 			for (int i = 0; i < editorArray.length; ++i) {
-				IEditorPart editor = editorArray[i];
+				IEditorPart editor = editorArray[i].getEditor(true);
 				IEditorInput input = editor.getEditorInput();
 				if (input instanceof IFileEditorInput
 					&& file.equals(((IFileEditorInput) input).getFile())) {

@@ -23,6 +23,7 @@ public class ApiTestSuite extends TestSuite {
 		addTest(new TestSuite(IWorkbenchTest.class));
 		addTest(new TestSuite(IWorkbenchWindowTest.class));
 		addTest(new TestSuite(IWorkbenchPageTest.class));
+		addTest(new TestSuite(IDeprecatedWorkbenchPageTest.class));
 		addTest(new TestSuite(IActionFilterTest.class));
 		addTest(new TestSuite(IPageListenerTest.class));
 		addTest(new TestSuite(IPageServiceTest.class));
@@ -43,6 +44,8 @@ public class ApiTestSuite extends TestSuite {
 		addTest(new TestSuite(ISelectionServiceTest.class));
 		addTest(new TestSuite(IWorkingSetTest.class));
 		addTest(new TestSuite(IWorkingSetManagerTest.class));
-		addTest(new TestSuite(MockWorkingSetTest.class));		
+		addTest(new TestSuite(MockWorkingSetTest.class));	
+		addTest(new TestSuite(SessionRestoreTest.class));
+		addTest(new TestSuite(DeprecatedSessionRestoreTest.class));		
 	}
 }

@@ -1,9 +1,7 @@
 package org.eclipse.ui.tests.dialogs;
 
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 
 /**
  * Test all areas of the UI.
@@ -17,17 +15,19 @@ public class UIInteractiveSuite extends TestSuite {
 	public static Test suite() {
 		return new UIInteractiveSuite();
 	}
-	
+
 	/**
 	 * Construct the test suite.
 	 */
 	public UIInteractiveSuite() {
 		addTest(new TestSuite(UIPreferences.class));
+		addTest(new TestSuite(DeprecatedUIPreferences.class));
 		addTest(new TestSuite(UIWizards.class));
+		addTest(new TestSuite(DeprecatedUIWizards.class));
 		addTest(new TestSuite(UIDialogs.class));
+		addTest(new TestSuite(DeprecatedUIDialogs.class));
 		addTest(new TestSuite(UIMessageDialogs.class));
 		addTest(new TestSuite(UIErrorDialogs.class));
 	}
-
 
 }

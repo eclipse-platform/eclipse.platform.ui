@@ -10,8 +10,10 @@ import org.eclipse.swt.SWT;
 
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -19,7 +21,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.part.FileEditorInput;
-import org.eclipse.ui.tests.util.ArrayUtil;
 import org.eclipse.ui.tests.util.CallHistory;
 import org.eclipse.ui.tests.util.EmptyPerspective;
 import org.eclipse.ui.tests.util.FileUtil;
@@ -70,13 +71,18 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertNotNull(fActivePage.getPerspective());
 
 		IWorkbenchPage page =
-			fWin.openPage(EmptyPerspective.PERSP_ID, ResourcesPlugin.getWorkspace());
+			fWin.openPage(
+				EmptyPerspective.PERSP_ID,
+				ResourcesPlugin.getWorkspace());
 		assertEquals(EmptyPerspective.PERSP_ID, page.getPerspective().getId());
 	}
 
 	public void testSetPerspective() throws Throwable {
 		IPerspectiveDescriptor per =
-			PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(
+			PlatformUI
+				.getWorkbench()
+				.getPerspectiveRegistry()
+				.findPerspectiveWithId(
 				EmptyPerspective.PERSP_ID);
 		fActivePage.setPerspective(per);
 		assertEquals(per, fActivePage.getPerspective());
@@ -93,8 +99,10 @@ public class IWorkbenchPageTest extends UITestCase {
 	}
 
 	public void testActivate() throws Throwable {
-		MockViewPart part = (MockViewPart) fActivePage.showView(MockViewPart.ID);
-		MockViewPart part2 = (MockViewPart) fActivePage.showView(MockViewPart.ID2);
+		MockViewPart part =
+			(MockViewPart) fActivePage.showView(MockViewPart.ID);
+		MockViewPart part2 =
+			(MockViewPart) fActivePage.showView(MockViewPart.ID2);
 
 		MockPartListener listener = new MockPartListener();
 		fActivePage.addPartListener(listener);
@@ -117,7 +125,8 @@ public class IWorkbenchPageTest extends UITestCase {
 
 	public void testBringToTop() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
-		IEditorPart part = fActivePage.openEditor(FileUtil.createFile("a.mock1", proj));
+		IEditorPart part =
+			fActivePage.openEditor(FileUtil.createFile("a.mock1", proj));
 		IEditorPart part2 =
 			fActivePage.openEditor(FileUtil.createFile("b.mock1", proj));
 
@@ -135,79 +144,85 @@ public class IWorkbenchPageTest extends UITestCase {
 	}
 
 	public void testGetWorkbenchWindow() {
-/*
- * Commented out because until test case can be updated to work
- * with new window/page/perspective implementation
- * 
-		assertEquals(fActivePage.getWorkbenchWindow(), fWin);
-		IWorkbenchPage page = openTestPage(fWin);
-		assertEquals(page.getWorkbenchWindow(), fWin);
-*/
+		/*
+		 * Commented out because until test case can be updated to work
+		 * with new window/page/perspective implementation
+		 * 
+				assertEquals(fActivePage.getWorkbenchWindow(), fWin);
+				IWorkbenchPage page = openTestPage(fWin);
+				assertEquals(page.getWorkbenchWindow(), fWin);
+		*/
 	}
 
 	public void testShowView() throws Throwable {
-	/*
-		javadoc: Shows a view in this page and give it focus
-	*/		
-		MockViewPart view = (MockViewPart) fActivePage.showView(MockViewPart.ID);
+		/*
+			javadoc: Shows a view in this page and give it focus
+		*/
+		MockViewPart view =
+			(MockViewPart) fActivePage.showView(MockViewPart.ID);
 		assertNotNull(view);
 		assertTrue(
 			view.getCallHistory().verifyOrder(
 				new String[] { "init", "createPartControl", "setFocus" }));
-	
-		fActivePage.showView(MockViewPart.ID2 );
-		
-	/*
-		javadoc: If the view is already visible, it is given focus
-	*/
+
+		fActivePage.showView(MockViewPart.ID2);
+
+		/*
+			javadoc: If the view is already visible, it is given focus
+		*/
 		CallHistory callTrace = view.getCallHistory();
 		callTrace.clear();
-		assertEquals(fActivePage.showView(MockViewPart.ID), view );		
-		assertEquals(callTrace.contains( "setFocus" ), true );
+		assertEquals(fActivePage.showView(MockViewPart.ID), view);
+		assertEquals(callTrace.contains("setFocus"), true);
 	}
 
 	/**
 	 *	openEditor(IFile input)
 	 */
 	public void testOpenEditor() throws Throwable {
-		proj = FileUtil.createProject("testOpenEditor");		
-		
-	/*
-		javadoc: 1. The workbench editor registry is consulted to determine if an editor extension has been
-		registered for the file type. If so, an instance of the editor extension is opened on the file
-	*/
+		proj = FileUtil.createProject("testOpenEditor");
+
+		/*
+			javadoc: 1. The workbench editor registry is consulted to determine if an editor extension has been
+			registered for the file type. If so, an instance of the editor extension is opened on the file
+		*/
 		IFile file = FileUtil.createFile("test.mock1", proj);
 		IEditorPart editor = fActivePage.openEditor(file);
-		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
+
+		boolean foundEditor = hasEditor(editor);
+		assertEquals(foundEditor, true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
-		assertEquals(editor.getSite().getId(),
+		assertEquals(
+			editor.getSite().getId(),
 			fWorkbench.getEditorRegistry().getDefaultEditor(file).getId());
 
-	/*
-		javadoc: 2. Next, the native operating system will be consulted to determine if a native editor exists for 
-		the file type. If so, a new process is started and the native editor is opened on the file.
-	*/
+		/*
+			javadoc: 2. Next, the native operating system will be consulted to determine if a native editor exists for 
+			the file type. If so, a new process is started and the native editor is opened on the file.
+		*/
 		//can not be tested
 
-	/*
-		javadoc: 3. If all else fails the file will be opened in a default text editor.		
-	*/
+		/*
+			javadoc: 3. If all else fails the file will be opened in a default text editor.		
+		*/
 		// PR 1GkD5O0 - Fails on linux
 		String platform = SWT.getPlatform();
 		if (!platform.equals("motif")) {
 			file = FileUtil.createFile("a.null and void", proj);
 			editor = fActivePage.openEditor(file);
-			assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
+			assertEquals(hasEditor(editor), true);
 			assertEquals(fActivePage.getActiveEditor(), editor);
-			assertEquals(editor.getSite().getId(), "org.eclipse.ui.DefaultTextEditor");
+			assertEquals(
+				editor.getSite().getId(),
+				"org.eclipse.ui.DefaultTextEditor");
 		}
-			
+
 		//open another editor to take the focus away from the first editor
 		fActivePage.openEditor(FileUtil.createFile("test.mock2", proj));
-	
-	/*	
-		javadoc: If this page already has an editor open on the target object that editor is activated
-	*/
+
+		/*	
+			javadoc: If this page already has an editor open on the target object that editor is activated
+		*/
 		//open the editor second time.		
 		assertEquals(editor, fActivePage.openEditor(file));
 		assertEquals(editor, fActivePage.getActiveEditor());
@@ -221,20 +236,20 @@ public class IWorkbenchPageTest extends UITestCase {
 		final IFile file = FileUtil.createFile("asfasdasdf", proj);
 		final String id = MockEditorPart.ID1;
 
-	/*
-		javadoc: The editor type is determined by mapping editorId to an editor extension registered with the workbench.
-	*/	
+		/*
+			javadoc: The editor type is determined by mapping editorId to an editor extension registered with the workbench.
+		*/
 		IEditorPart editor = fActivePage.openEditor(file, id);
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
+		assertEquals(hasEditor(editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 
 		//open another editor to take the focus away from the first editor
 		fActivePage.openEditor(FileUtil.createFile("test.mock2", proj));
-		
-	/*
-		javadoc: If this page already has an editor open on the target object that editor is activated
-	*/
+
+		/*
+			javadoc: If this page already has an editor open on the target object that editor is activated
+		*/
 		//open the first editor second time.
 		assertEquals(fActivePage.openEditor(file, id), editor);
 		assertEquals(fActivePage.getActiveEditor(), editor);
@@ -248,22 +263,22 @@ public class IWorkbenchPageTest extends UITestCase {
 		final String id = MockEditorPart.ID1;
 		IEditorInput input =
 			new FileEditorInput(FileUtil.createFile("test.mock1", proj));
-			
-	/*
-		javadoc: The editor type is determined by mapping editorId to an editor extension registered with the workbench
-	*/
+
+		/*
+			javadoc: The editor type is determined by mapping editorId to an editor extension registered with the workbench
+		*/
 		IEditorPart editor = fActivePage.openEditor(input, id);
 		assertEquals(editor.getEditorInput(), input);
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
+		assertEquals(hasEditor(editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 
 		//open another editor to take the focus away from the first editor
 		fActivePage.openEditor(FileUtil.createFile("test.mock2", proj));
-		
-	/*
-		javadoc: If this page already has an editor open on the target object that editor is activated
-	*/
+
+		/*
+			javadoc: If this page already has an editor open on the target object that editor is activated
+		*/
 		//open the first editor second time.
 		assertEquals(fActivePage.openEditor(input, id), editor);
 		assertEquals(fActivePage.getActiveEditor(), editor);
@@ -281,23 +296,24 @@ public class IWorkbenchPageTest extends UITestCase {
 		fActivePage.addPartListener(listener);
 		CallHistory callTrace = listener.getCallHistory();
 
-	/*
-		javadoc: The editor type is determined by mapping editorId to an editor extension 
-		registered with the workbench. 
-		javadoc: If activate == true the editor will be activated
-	*/
+		/*
+			javadoc: The editor type is determined by mapping editorId to an editor extension 
+			registered with the workbench. 
+			javadoc: If activate == true the editor will be activated
+		*/
 		//open an editor with activation
 		IEditorPart editor = fActivePage.openEditor(input, id, true);
 		assertEquals(editor.getEditorInput(), input);
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
+		assertEquals(hasEditor(editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
-		assertEquals(callTrace.contains( "partActivated"), true);
+		assertEquals(callTrace.contains("partActivated"), true);
 
 		//we need another editor so that the editor under test can receive events.
 		//otherwise, events will be ignored.
-		IEditorPart extra = fActivePage.openEditor(FileUtil.createFile("aaaaa", proj));
-		
+		IEditorPart extra =
+			fActivePage.openEditor(FileUtil.createFile("aaaaa", proj));
+
 		//close the first editor after the second has opened; necessary for
 		//test to work with fix to PR 7743
 		fActivePage.closeEditor(editor, false);
@@ -307,32 +323,32 @@ public class IWorkbenchPageTest extends UITestCase {
 		editor = fActivePage.openEditor(input, id, false);
 		assertEquals(editor.getEditorInput(), input);
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
-		assertEquals(callTrace.contains( "partActivated"), false);
-		assertEquals(callTrace.contains( "partBroughtToTop"), true);
+		assertEquals(hasEditor(editor), true);
+		assertEquals(callTrace.contains("partActivated"), false);
+		assertEquals(callTrace.contains("partBroughtToTop"), true);
 
 		fActivePage.activate(extra);
 
-	/*
-		javadoc: If this page already has an editor open on the target object that editor is brought to the front
-	*/
+		/*
+			javadoc: If this page already has an editor open on the target object that editor is brought to the front
+		*/
 		//open the editor under test second time without activation
 		callTrace.clear();
 		assertEquals(fActivePage.openEditor(input, id, false), editor);
-		assertEquals(callTrace.contains( "partBroughtToTop"), true);
-		assertEquals(callTrace.contains( "partActivated"), false);
+		assertEquals(callTrace.contains("partBroughtToTop"), true);
+		assertEquals(callTrace.contains("partActivated"), false);
 
 		//activate the other editor
 		fActivePage.activate(extra);
 
-	/*
-		javadoc: If activate == true the editor will be activated
-	*/
+		/*
+			javadoc: If activate == true the editor will be activated
+		*/
 		//open the editor under test second time with activation
 		callTrace.clear();
 		assertEquals(fActivePage.openEditor(input, id, true), editor);
-		assertEquals(callTrace.contains( "partBroughtToTop"), true);
-		assertEquals(callTrace.contains( "partActivated"), true);
+		assertEquals(callTrace.contains("partBroughtToTop"), true);
+		assertEquals(callTrace.contains("partActivated"), true);
 	}
 
 	/**
@@ -344,39 +360,39 @@ public class IWorkbenchPageTest extends UITestCase {
 			FileUtil.createFile("aa.mock2", proj).createMarker(IMarker.TASK);
 		CallHistory callTrace;
 
-	/*	
-		javadoc: the cursor and selection state of the editor is then updated from information 
-		recorded in the marker. 
-	*/		
+		/*	
+			javadoc: the cursor and selection state of the editor is then updated from information 
+			recorded in the marker. 
+		*/
 		//open the registered editor for the marker resource 
 		IEditorPart editor = fActivePage.openEditor(marker);
 		callTrace = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), MockEditorPart.ID2);
-		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
+		assertEquals(hasEditor(editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
-		assertEquals(callTrace.contains( "gotoMarker"), true);
+		assertEquals(callTrace.contains("gotoMarker"), true);
 		fActivePage.closeEditor(editor, false);
 
-	/*	
-		javadoc: If the marker contains an EDITOR_ID_ATTR attribute the attribute value will be used to 
-		determine the editor type to be opened
-	*/
+		/*	
+			javadoc: If the marker contains an EDITOR_ID_ATTR attribute the attribute value will be used to 
+			determine the editor type to be opened
+		*/
 		marker.setAttribute(IWorkbenchPage.EDITOR_ID_ATTR, MockEditorPart.ID1);
 		editor = fActivePage.openEditor(marker);
 		callTrace = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), MockEditorPart.ID1);
-		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
+		assertEquals(hasEditor(editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
-		assertEquals(callTrace.contains( "gotoMarker"), true);
+		assertEquals(callTrace.contains("gotoMarker"), true);
 		//do not close the editor this time
 
-	/*
-		javdoc: If this page already has an editor open on the target object that editor is activated
-	*/		
+		/*
+			javdoc: If this page already has an editor open on the target object that editor is activated
+		*/
 		callTrace.clear();
 		assertEquals(fActivePage.openEditor(marker), editor);
 		assertEquals(fActivePage.getActiveEditor(), editor);
-		assertEquals(callTrace.contains( "gotoMarker"), true);
+		assertEquals(callTrace.contains("gotoMarker"), true);
 		fActivePage.closeEditor(editor, false);
 	}
 
@@ -394,23 +410,24 @@ public class IWorkbenchPageTest extends UITestCase {
 
 		//we need another editor so that the editor under test can receive events.
 		//otherwise, events will be ignored.
-		IEditorPart extra = fActivePage.openEditor(FileUtil.createFile("aaaaa", proj));
+		IEditorPart extra =
+			fActivePage.openEditor(FileUtil.createFile("aaaaa", proj));
 
-	/*
-		javadoc: If activate == true the editor will be activated
-	*/		
+		/*
+			javadoc: If activate == true the editor will be activated
+		*/
 		//open the registered editor for the marker resource with activation
 		IEditorPart editor = fActivePage.openEditor(marker, true);
 		editorCall = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), MockEditorPart.ID2);
-		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
+		assertEquals(hasEditor(editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
 
-	/*	
-		javadoc: the cursor and selection state of the editor is then updated from information 
-		recorded in the marker. 
-	*/		
-		assertEquals(editorCall.contains( "gotoMarker"), true);
+		/*	
+			javadoc: the cursor and selection state of the editor is then updated from information 
+			recorded in the marker. 
+		*/
+		assertEquals(editorCall.contains("gotoMarker"), true);
 		fActivePage.closeEditor(editor, false);
 
 		fActivePage.activate(extra);
@@ -420,28 +437,28 @@ public class IWorkbenchPageTest extends UITestCase {
 		editor = fActivePage.openEditor(marker, false);
 		editorCall = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), MockEditorPart.ID2);
-		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
-		assertEquals(listenerCall.contains( "partBroughtToTop"), true);
-		assertEquals(listenerCall.contains( "partActivated"), false);	
-		assertEquals(editorCall.contains( "gotoMarker"), true);		
+		assertEquals(hasEditor(editor), true);
+		assertEquals(listenerCall.contains("partBroughtToTop"), true);
+		assertEquals(listenerCall.contains("partActivated"), false);
+		assertEquals(editorCall.contains("gotoMarker"), true);
 		fActivePage.closeEditor(editor, false);
-	
-	/*	
-		javadoc: If the marker contains an EDITOR_ID_ATTR attribute the attribute value will be used to 
-		determine the editor type to be opened
-	*/
+
+		/*	
+			javadoc: If the marker contains an EDITOR_ID_ATTR attribute the attribute value will be used to 
+			determine the editor type to be opened
+		*/
 		String id = MockEditorPart.ID1;
 		marker.setAttribute(IWorkbenchPage.EDITOR_ID_ATTR, id);
 
 		//open an editor with activation
 		listenerCall.clear();
-	
+
 		editor = fActivePage.openEditor(marker, true);
 		editorCall = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
+		assertEquals(hasEditor(editor), true);
 		assertEquals(fActivePage.getActiveEditor(), editor);
-		assertEquals(editorCall.contains( "gotoMarker"), true);
+		assertEquals(editorCall.contains("gotoMarker"), true);
 		fActivePage.closeEditor(editor, false);
 
 		fActivePage.activate(extra);
@@ -451,34 +468,34 @@ public class IWorkbenchPageTest extends UITestCase {
 		editor = fActivePage.openEditor(marker, false);
 		editorCall = ((MockEditorPart) editor).getCallHistory();
 		assertEquals(editor.getSite().getId(), id);
-		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editor), true);
-		assertEquals(editorCall.contains( "gotoMarker"), true);
-		assertEquals(listenerCall.contains( "partActivated"), false);
-		assertEquals(listenerCall.contains( "partBroughtToTop"), true);
+		assertEquals(hasEditor(editor), true);
+		assertEquals(editorCall.contains("gotoMarker"), true);
+		assertEquals(listenerCall.contains("partActivated"), false);
+		assertEquals(listenerCall.contains("partBroughtToTop"), true);
 		//do not close the editor this time
 
 		fActivePage.activate(extra);
 
-	/*
-		javadoc: If this page already has an editor open on the target object that editor is brought to front
-	*/
+		/*
+			javadoc: If this page already has an editor open on the target object that editor is brought to front
+		*/
 		//open the editor second time without activation
 		listenerCall.clear();
 		assertEquals(fActivePage.openEditor(marker, false), editor);
-		assertEquals(listenerCall.contains( "partBroughtToTop"), true);
-		assertEquals(listenerCall.contains( "partActivated"), false);
+		assertEquals(listenerCall.contains("partBroughtToTop"), true);
+		assertEquals(listenerCall.contains("partActivated"), false);
 
 		fActivePage.activate(extra);
 
-	/*
-		javdoc: If activate == true the editor will be activated
-	*/
+		/*
+			javdoc: If activate == true the editor will be activated
+		*/
 		//open the editor second time with activation 		
 		listenerCall.clear();
 		assertEquals(fActivePage.openEditor(marker, true), editor);
-		assertEquals(editorCall.contains( "gotoMarker"), true);
-		assertEquals(listenerCall.contains( "partBroughtToTop"), true);		
-		assertEquals(listenerCall.contains( "partActivated"), true);
+		assertEquals(editorCall.contains("gotoMarker"), true);
+		assertEquals(listenerCall.contains("partBroughtToTop"), true);
+		assertEquals(listenerCall.contains("partActivated"), true);
 	}
 
 	public void testFindView() throws Throwable {
@@ -495,15 +512,15 @@ public class IWorkbenchPageTest extends UITestCase {
 	}
 
 	public void testGetViews() throws Throwable {
-		int totalBefore = fActivePage.getViews().length;
+		int totalBefore = fActivePage.getViewReferences().length;
 
 		IViewPart view = fActivePage.showView(MockViewPart.ID2);
-		assertEquals(ArrayUtil.contains(fActivePage.getViews(), view), true);
-		assertEquals(fActivePage.getViews().length, totalBefore + 1);
+		assertEquals(hasView(view),true);
+		assertEquals(fActivePage.getViewReferences().length, totalBefore + 1);
 
 		fActivePage.hideView(view);
-		assertEquals(ArrayUtil.contains(fActivePage.getViews(), view), false);
-		assertEquals(fActivePage.getViews().length, totalBefore);
+		assertEquals(hasView(view),false);
+		assertEquals(fActivePage.getViewReferences().length, totalBefore);
 	}
 
 	public void testHideView() throws Throwable {
@@ -511,7 +528,7 @@ public class IWorkbenchPageTest extends UITestCase {
 
 		fActivePage.hideView(view);
 		CallHistory callTrace = ((MockViewPart) view).getCallHistory();
-		assertTrue(callTrace.contains( "dispose"));
+		assertTrue(callTrace.contains("dispose"));
 	}
 
 	public void testClose() throws Throwable {
@@ -523,14 +540,14 @@ public class IWorkbenchPageTest extends UITestCase {
 		CallHistory callTrace = ((MockEditorPart) editor).getCallHistory();
 		callTrace.clear();
 
-	/*
-		javadoc: If the page has open editors with unsaved content and save is true, the user will be given the opportunity to save them
-	*/		
+		/*
+			javadoc: If the page has open editors with unsaved content and save is true, the user will be given the opportunity to save them
+		*/
 		assertEquals(page.close(), true);
 		assertEquals(
 			callTrace.verifyOrder(new String[] { "isDirty", "dispose" }),
 			true);
-		assertEquals(fWin.getActivePage(), fActivePage);	
+		assertEquals(fWin.getActivePage(), fActivePage);
 	}
 
 	public void testCloseEditor() throws Throwable {
@@ -540,9 +557,9 @@ public class IWorkbenchPageTest extends UITestCase {
 		CallHistory callTrace;
 		MockEditorPart mock;
 
-	/*
-		javadoc: Parameters: save - true to save the editor contents if required (recommended)
-	*/
+		/*
+			javadoc: Parameters: save - true to save the editor contents if required (recommended)
+		*/
 		//create a clean editor that needs to be saved on closing
 		editor = fActivePage.openEditor(file);
 		mock = (MockEditorPart) editor;
@@ -550,20 +567,19 @@ public class IWorkbenchPageTest extends UITestCase {
 		callTrace = mock.getCallHistory();
 		callTrace.clear();
 		//close the editor with save confirmation
-		assertEquals( fActivePage.closeEditor(editor, true), true );
+		assertEquals(fActivePage.closeEditor(editor, true), true);
 		assertEquals(
-			callTrace.verifyOrder(
-				new String[] { "isDirty", "dispose" }),
+			callTrace.verifyOrder(new String[] { "isDirty", "dispose" }),
 			true);
 
-	/*
-		javadoc: If the editor has unsaved content and save is true, the user will be given the opportunity to save it.
-	*/
+		/*
+			javadoc: If the editor has unsaved content and save is true, the user will be given the opportunity to save it.
+		*/
 		//can't be tested
-			
-	/*
-		javadoc: Parameters: save - false to discard any unsaved changes
-	*/
+
+		/*
+			javadoc: Parameters: save - false to discard any unsaved changes
+		*/
 		//create a dirty editor
 		editor = fActivePage.openEditor(file);
 		mock = (MockEditorPart) editor;
@@ -572,8 +588,8 @@ public class IWorkbenchPageTest extends UITestCase {
 		callTrace = mock.getCallHistory();
 		callTrace.clear();
 		//close the editor and discard changes
-		assertEquals( fActivePage.closeEditor(editor, false), true );
-		assertEquals(callTrace.contains( "isSaveOnCloseNeeded"), false);
+		assertEquals(fActivePage.closeEditor(editor, false), true);
+		assertEquals(callTrace.contains("isSaveOnCloseNeeded"), false);
 		/*
 		 * It is possible that some action may query the isDirty value of
 		 * the editor to update its enabled state. There is nothing wrong
@@ -581,12 +597,11 @@ public class IWorkbenchPageTest extends UITestCase {
 		 *
 		 * assertEquals(callTrace.contains( "isDirty"), false);
 		 */
-		assertEquals(callTrace.contains( "doSave"), false);
-		assertEquals(callTrace.contains( "dispose"), true);
+		assertEquals(callTrace.contains("doSave"), false);
+		assertEquals(callTrace.contains("dispose"), true);
 	}
 
-	public void testCloseAllEditors() throws Throwable
-	{
+	public void testCloseAllEditors() throws Throwable {
 		int total = 5;
 		final IFile[] files = new IFile[total];
 		IEditorPart[] editors = new IEditorPart[total];
@@ -597,26 +612,26 @@ public class IWorkbenchPageTest extends UITestCase {
 		for (int i = 0; i < total; i++)
 			files[i] = FileUtil.createFile(i + ".mock2", proj);
 
-	/*
-		javadoc: If the page has open editors with unsaved content and save is true, the user will be given the opportunity to save them.
-	*/		
+		/*
+			javadoc: If the page has open editors with unsaved content and save is true, the user will be given the opportunity to save them.
+		*/
 		//close all clean editors with confirmation
-		for( int i = 0; i < total; i ++ ){	
-			editors[i] = fActivePage.openEditor(files[i]);			
-			callTraces[i] = ((MockEditorPart)editors[i]).getCallHistory();		
+		for (int i = 0; i < total; i++) {
+			editors[i] = fActivePage.openEditor(files[i]);
+			callTraces[i] = ((MockEditorPart) editors[i]).getCallHistory();
 		}
 		assertEquals(fActivePage.closeAllEditors(true), true);
 		for (int i = 0; i < total; i++) {
-			assertEquals(callTraces[i].contains( "isDirty"), true);
-			assertEquals(callTraces[i].contains( "doSave"), false);
+			assertEquals(callTraces[i].contains("isDirty"), true);
+			assertEquals(callTraces[i].contains("doSave"), false);
 			callTraces[i].clear();
 		}
-		
+
 		//close all dirty editors with confirmation
 		//can't be tested		
-		
+
 		//close all dirty editors discarding them		
-		for( int i = 0; i < total; i ++ ){	
+		for (int i = 0; i < total; i++) {
 			editors[i] = fActivePage.openEditor(files[i]);
 			mocks[i] = (MockEditorPart) editors[i];
 			mocks[i].setDirty(true);
@@ -641,26 +656,26 @@ public class IWorkbenchPageTest extends UITestCase {
 		callTrace = mock.getCallHistory();
 		callTrace.clear();
 
-	/*
-		javadoc: Saves the contents of the given editor if dirty. 
-		If not, this method returns without effect
-	*/
+		/*
+			javadoc: Saves the contents of the given editor if dirty. 
+			If not, this method returns without effect
+		*/
 		//save the clean editor with confirmation		
 		assertEquals(fActivePage.saveEditor(editor, true), true);
 		assertEquals(callTrace.contains("isDirty"), true);
 		assertEquals(callTrace.contains("doSave"), false);
-	
-	/*
-		javadoc: If confirm is true the user is prompted to confirm the command. 
-	*/
+
+		/*
+			javadoc: If confirm is true the user is prompted to confirm the command. 
+		*/
 		//can't be tested
 
-	/*
-		javadoc: Otherwise, the save happens without prompt. 
-	*/
+		/*
+			javadoc: Otherwise, the save happens without prompt. 
+		*/
 		//save the clean editor without confirmation
 		assertEquals(fActivePage.saveEditor(editor, false), true);
-		assertEquals(callTrace.contains( "isDirty"), true);
+		assertEquals(callTrace.contains("isDirty"), true);
 		assertEquals(callTrace.contains("doSave"), false);
 
 		//save the dirty editor without confirmation
@@ -688,33 +703,33 @@ public class IWorkbenchPageTest extends UITestCase {
 			callTraces[i] = mocks[i].getCallHistory();
 		}
 
-	/*
-		javadoc: If there are no dirty editors this method returns without effect.
-		javadoc: If confirm is true the user is prompted to confirm the command
-	*/
+		/*
+			javadoc: If there are no dirty editors this method returns without effect.
+			javadoc: If confirm is true the user is prompted to confirm the command
+		*/
 		//save all clean editors with confirmation
 		assertEquals(fActivePage.saveAllEditors(true), true);
 		for (int i = 0; i < total; i++) {
-			assertEquals(callTraces[i].contains( "isDirty"), true);
-			assertEquals(callTraces[i].contains( "doSave"), false);
+			assertEquals(callTraces[i].contains("isDirty"), true);
+			assertEquals(callTraces[i].contains("doSave"), false);
 			callTraces[i].clear();
 		}
 
 		//save all dirty editors with confirmation can't be tested
 
-	/*
-		javadoc: Parameters: confirm - false to save unsaved changes without asking
-	*/
+		/*
+			javadoc: Parameters: confirm - false to save unsaved changes without asking
+		*/
 		//save all clean editors without confirmation
 		assertEquals(fActivePage.saveAllEditors(false), true);
 		for (int i = 0; i < total; i++) {
-			assertEquals(callTraces[i].contains( "isDirty"), true);
-			assertEquals(callTraces[i].contains( "doSave"), false);
+			assertEquals(callTraces[i].contains("isDirty"), true);
+			assertEquals(callTraces[i].contains("doSave"), false);
 			callTraces[i].clear();
 		}
 
 		//save all dirty editors without confirmation
-		for (int i = 0; i < total; i++) 
+		for (int i = 0; i < total; i++)
 			mocks[i].setDirty(true);
 		assertEquals(fActivePage.saveAllEditors(false), true);
 		for (int i = 0; i < total; i++)
@@ -725,22 +740,23 @@ public class IWorkbenchPageTest extends UITestCase {
 
 	public void testGetEditors() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
-		int totalBefore = fActivePage.getEditors().length;
+		int totalBefore = fActivePage.getEditorReferences().length;
 		int num = 3;
 		IEditorPart[] editors = new IEditorPart[num];
 
 		for (int i = 0; i < num; i++) {
-			editors[i] = fActivePage.openEditor(FileUtil.createFile(i + ".mock2", proj));
-			assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editors[i]), true);
+			editors[i] =
+				fActivePage.openEditor(FileUtil.createFile(i + ".mock2", proj));
+			assertEquals(hasEditor(editors[i]),true);
 		}
-		assertEquals(fActivePage.getEditors().length, totalBefore + num);
+		assertEquals(fActivePage.getEditorReferences().length, totalBefore + num);
 
 		fActivePage.closeEditor(editors[0], false);
-		assertEquals(ArrayUtil.contains(fActivePage.getEditors(), editors[0]), false);
-		assertEquals(fActivePage.getEditors().length, totalBefore + num - 1);
+		assertEquals(hasEditor(editors[0]),false);
+		assertEquals(fActivePage.getEditorReferences().length, totalBefore + num - 1);
 
 		fActivePage.closeAllEditors(false);
-		assertEquals(fActivePage.getEditors().length, 0);
+		assertEquals(fActivePage.getEditorReferences().length, 0);
 	}
 
 	public void testShowActionSet() {
@@ -750,7 +766,8 @@ public class IWorkbenchPageTest extends UITestCase {
 		int totalBefore = page.getActionSets().length;
 		fActivePage.showActionSet(id);
 
-		IActionSetDescriptor[] sets = ((WorkbenchPage) fActivePage).getActionSets();
+		IActionSetDescriptor[] sets =
+			((WorkbenchPage) fActivePage).getActionSets();
 		boolean found = false;
 		for (int i = 0; i < sets.length; i++)
 			if (id.equals(sets[i].getId()))
@@ -775,17 +792,45 @@ public class IWorkbenchPageTest extends UITestCase {
 		int totalBefore = page.getActionSets().length;
 
 		String id = MockWorkbenchWindowActionDelegate.SET_ID;
-		fActivePage.showActionSet( id );
+		fActivePage.showActionSet(id);
 		assertEquals(page.getActionSets().length, totalBefore + 1);
 
-		fActivePage.hideActionSet(id );
-		assertEquals(page.getActionSets().length, totalBefore );
-		
+		fActivePage.hideActionSet(id);
+		assertEquals(page.getActionSets().length, totalBefore);
+
 		IActionSetDescriptor[] sets = page.getActionSets();
 		boolean found = false;
 		for (int i = 0; i < sets.length; i++)
 			if (id.equals(sets[i].getId()))
 				found = true;
 		assertEquals(found, false);
+	}
+
+	/**
+	 * Return whether or not the editor exists in the current page.
+	 * @param editor
+	 *  @return boolean
+	 */
+	private boolean hasEditor(IEditorPart editor) {
+		IEditorReference[] references = fActivePage.getEditorReferences();
+		for (int i = 0; i < references.length; i++) {
+			if (references[i].getEditor(false).equals(editor))
+				return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Return whether or not the view exists in the current page.
+	 * @param editor
+	 * @return boolean
+	 */
+	private boolean hasView(IViewPart view) {
+		IViewReference[] references = fActivePage.getViewReferences();
+		for (int i = 0; i < references.length; i++) {
+			if (references[i].getView(false).equals(view))
+				return true;
+		}
+		return false;
 	}
 }
