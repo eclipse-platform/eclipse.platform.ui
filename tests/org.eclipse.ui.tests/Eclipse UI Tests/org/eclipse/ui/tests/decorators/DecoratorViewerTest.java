@@ -12,19 +12,16 @@ package org.eclipse.ui.tests.decorators;
 
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
-
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
 
 /**
  * DecoratorViewerTest is the abstract class of the tests for 
