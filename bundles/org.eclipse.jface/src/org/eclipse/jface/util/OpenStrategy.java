@@ -166,6 +166,8 @@ public class OpenStrategy {
 		c.addListener(SWT.KeyDown, eventHandler);
 		c.addListener(SWT.Selection, eventHandler);
 		c.addListener(SWT.DefaultSelection, eventHandler);
+		c.addListener(SWT.Collapse, eventHandler);
+		c.addListener(SWT.Expand, eventHandler);
 	}
 	/*
 	 * Fire the selection event to all selectionEventListeners
@@ -224,6 +226,9 @@ public class OpenStrategy {
 			final int[] count = new int[1];
 			
 			long startTime = System.currentTimeMillis();
+			
+			boolean collapseOccurred = false;
+			boolean expandOccurred = false;
 
 			public void handleEvent(final Event e) {
 				if(e.type == SWT.DefaultSelection) {
@@ -280,15 +285,25 @@ public class OpenStrategy {
 					case SWT.MouseDown :
 						mouseUpEvent = null;
 						arrowKeyDown = false;
-						break;						
+						break;
+					case SWT.Expand:
+						expandOccurred = true;
+						break;
+					case SWT.Collapse:
+						collapseOccurred = true;
+						break;
 					case SWT.MouseUp:
 						mouseMoveEvent = null;
 						if((e.button != 1) || ((e.stateMask & ~SWT.BUTTON1) != 0))
 							return;
-						if(selectionPendent != null)
+						if (selectionPendent != null && !(collapseOccurred || expandOccurred)) {
 							mouseSelectItem(selectionPendent);
-						else
+						}
+						else {
 							mouseUpEvent = e;
+							collapseOccurred = false;
+							expandOccurred = false;
+						}
 						break;
 					case SWT.KeyDown:
 						mouseMoveEvent = null;
