@@ -242,7 +242,7 @@ public class SearchObject extends NamedModelObject {
 		backgroundProgress.beginTask(
 			UpdateUIPlugin.getResourceString(KEY_BEGIN),
 			ntasks);
-
+			
 		for (int i = 0; i < queries.length; i++) {
 			ISearchQuery query = queries[i];
 			ISiteAdapter site = query.getSearchSite();
@@ -288,7 +288,7 @@ public class SearchObject extends NamedModelObject {
 
 		monitor.subTask(UpdateUIPlugin.getResourceString(KEY_CHECKING));
 		IFeatureReference[] refs = site.getFeatureReferences();
-		SearchResultSite searchSite = null;
+
 		for (int i = 0; i < refs.length; i++) {
 			IFeature candidate = refs[i].getFeature();
 			// filter out the feature for environment
@@ -296,15 +296,25 @@ public class SearchObject extends NamedModelObject {
 			
 			if (query.matches(candidate)) {
 				// bingo - add this
+				SearchResultSite searchSite = findResultSite(site);
 				if (searchSite == null) {
 					searchSite = new SearchResultSite(this, siteAdapter.getLabel(), site);
 					result.add(searchSite);
 					asyncFireObjectAdded(this, searchSite);
 				}
-				searchSite.addCandidate(new SimpleFeatureAdapter(candidate));
-				asyncFireObjectAdded(searchSite, candidate);
+				SimpleFeatureAdapter featureAdapter = new SimpleFeatureAdapter(candidate);
+				searchSite.addCandidate(featureAdapter);
+				asyncFireObjectAdded(searchSite, featureAdapter);
 			}
 		}
+	}
+	
+	private SearchResultSite findResultSite(ISite site) {
+		for (int i=0; i<result.size(); i++) {
+			SearchResultSite resultSite = (SearchResultSite)result.get(i);
+			if (resultSite.getSite().equals(site)) return resultSite;
+		}
+		return null;
 	}
 	
 	private boolean isValidEnvironment(IFeature candidate) {

@@ -113,6 +113,7 @@ public class UpdatesSearchCategory extends SearchCategory {
 	private boolean isNewerVersion(IFeature feature, IFeature candidate) {
 		VersionedIdentifier fvi = feature.getVersionedIdentifier();
 		VersionedIdentifier cvi = candidate.getVersionedIdentifier();
+		if (!fvi.getIdentifier().equals(cvi.getIdentifier())) return false;
 		PluginVersionIdentifier fv = fvi.getVersion();
 		PluginVersionIdentifier cv = cvi.getVersion();
 		return cv.isGreaterThan(fv);
