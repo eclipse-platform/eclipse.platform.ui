@@ -25,12 +25,12 @@ public class FindSupport {
 
 	private static String[] WS_JAR_VARIANTS = buildWSVariants();
 	private static String[] OS_JAR_VARIANTS = buildOSVariants();
-	private static String[] NL_JAR_VARIANTS = buildNLVariants(InternalPlatform.getDefault().getEnvironmentInfoService().getNL());
+	private static String[] NL_JAR_VARIANTS = buildNLVariants(InternalPlatform.getDefault().getNL());
 	private static String[] JAR_VARIANTS = buildVanillaVariants();
 
 	private static String[] buildWSVariants() {
 		ArrayList result = new ArrayList();
-		result.add("ws/" + InternalPlatform.getDefault().getEnvironmentInfoService().getWS()); //$NON-NLS-1$
+		result.add("ws/" + InternalPlatform.getDefault().getWS()); //$NON-NLS-1$
 		result.add(""); //$NON-NLS-1$
 		return (String[]) result.toArray(new String[result.size()]);
 	}
@@ -39,8 +39,8 @@ public class FindSupport {
 	}
 	private static String[] buildOSVariants() {
 		ArrayList result = new ArrayList();
-		result.add("os/" + InternalPlatform.getDefault().getEnvironmentInfoService().getOS() + "/" + InternalPlatform.getDefault().getEnvironmentInfoService().getOSArch()); //$NON-NLS-1$ //$NON-NLS-2$
-		result.add("os/" + InternalPlatform.getDefault().getEnvironmentInfoService().getOS()); //$NON-NLS-1$
+		result.add("os/" + InternalPlatform.getDefault().getOS() + "/" + InternalPlatform.getDefault().getOSArch()); //$NON-NLS-1$ //$NON-NLS-2$
+		result.add("os/" + InternalPlatform.getDefault().getOS()); //$NON-NLS-1$
 		result.add(""); //$NON-NLS-1$
 		return (String[]) result.toArray(new String[result.size()]);
 	}
@@ -147,7 +147,7 @@ public class FindSupport {
 			}
 			if (os == null)
 				// use default
-				os = InternalPlatform.getDefault().getEnvironmentInfoService().getOS();
+				os = InternalPlatform.getDefault().getOS();
 			if (os.length() == 0)
 				return null;
 
@@ -162,7 +162,7 @@ public class FindSupport {
 				}
 				if (osArch == null)
 					// use default
-					osArch = InternalPlatform.getDefault().getEnvironmentInfoService().getOSArch();
+					osArch = InternalPlatform.getDefault().getOSArch();
 				if (osArch.length() == 0)
 					return null;
 
@@ -198,7 +198,7 @@ public class FindSupport {
 			}
 			if (ws == null)
 				// use default
-				ws = InternalPlatform.getDefault().getEnvironmentInfoService().getWS();
+				ws = InternalPlatform.getDefault().getWS();
 			IPath filePath = new Path("ws").append(ws).append(path); //$NON-NLS-1$
 			// We know that there is only one segment to the ws path
 			// e.g. ws/win32	

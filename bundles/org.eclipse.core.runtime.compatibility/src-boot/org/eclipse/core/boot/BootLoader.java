@@ -90,7 +90,7 @@ public final class BootLoader implements Constants {
 	 * @return the command line used to start the platform
 	 */
 	public static String[] getCommandLineArgs() {
-		return InternalPlatform.getDefault().getAppArgs(); //TODO Check why we do not use the environmentInfo service here
+		return InternalPlatform.getDefault().getApplicationArgs();
 	}
 	/**
 	 * Returns the current platform configuration.
@@ -128,7 +128,7 @@ public final class BootLoader implements Constants {
 	 * @return the string name of the current locale
 	 */
 	public static String getNL() {
-		return InternalPlatform.getDefault().getEnvironmentInfoService().getNL();
+		return InternalPlatform.getDefault().getNL();
 	}
 	/**
 	 * Returns the string name of the current operating system for use in finding
@@ -143,7 +143,7 @@ public final class BootLoader implements Constants {
 	 *  
 	 */
 	public static String getOS() {
-		return InternalPlatform.getDefault().getEnvironmentInfoService().getOS();
+		return InternalPlatform.getDefault().getOS();
 	}
 	/**
 	 * Returns the string name of the current system architecture.  
@@ -156,7 +156,7 @@ public final class BootLoader implements Constants {
 	 *  
 	 */
 	public static String getOSArch() {
-		return InternalPlatform.getDefault().getEnvironmentInfoService().getOSArch();
+		return InternalPlatform.getDefault().getOSArch();
 	}
 	/**
 	 * Returns a platform configuration object, optionally initialized with previously saved
@@ -190,7 +190,7 @@ public final class BootLoader implements Constants {
 	 *  
 	 */
 	public static String getWS() {
-		return InternalPlatform.getDefault().getEnvironmentInfoService().getWS();
+		return InternalPlatform.getDefault().getWS();
 	}
 	/**
 	 * Returns a list of known system architectures.
