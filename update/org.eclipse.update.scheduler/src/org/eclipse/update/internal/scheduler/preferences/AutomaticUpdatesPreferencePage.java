@@ -32,6 +32,8 @@ public class AutomaticUpdatesPreferencePage
 	private Combo hourCombo;
 	private Button searchOnlyRadio;
 	private Button searchAndDownloadRadio;
+	private Group updateScheduleGroup;
+	private Group downloadGroup;
 
 	public void init(IWorkbench workbench) {
 	}
@@ -47,15 +49,15 @@ public class AutomaticUpdatesPreferencePage
 
 		createSpacer(container, 1);
 
-		Group group = new Group(container, SWT.NONE);
-		group.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.UpdateSchedule")); //$NON-NLS-1$
+		updateScheduleGroup = new Group(container, SWT.NONE);
+		updateScheduleGroup.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.UpdateSchedule")); //$NON-NLS-1$
 		layout = new GridLayout();
 		layout.numColumns = 3;
-		group.setLayout(layout);
+		updateScheduleGroup.setLayout(layout);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		group.setLayoutData(gd);
+		updateScheduleGroup.setLayoutData(gd);
 
-		onStartupRadio = new Button(group, SWT.RADIO);
+		onStartupRadio = new Button(updateScheduleGroup, SWT.RADIO);
 		onStartupRadio.setText(
 			UpdateScheduler.getString("AutomaticUpdatesPreferencePage.findOnStart")); //$NON-NLS-1$
 		gd = new GridData();
@@ -67,7 +69,7 @@ public class AutomaticUpdatesPreferencePage
 			}
 		});
 
-		onScheduleRadio = new Button(group, SWT.RADIO);
+		onScheduleRadio = new Button(updateScheduleGroup, SWT.RADIO);
 		onScheduleRadio.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.findOnSchedule")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
@@ -78,17 +80,17 @@ public class AutomaticUpdatesPreferencePage
 			}
 		});
 
-		dayCombo = new Combo(group, SWT.READ_ONLY);
+		dayCombo = new Combo(updateScheduleGroup, SWT.READ_ONLY);
 		dayCombo.setItems(SchedulerStartup.DAYS);
 		gd = new GridData();
 		gd.widthHint = 200;
 		gd.horizontalIndent = 30;
 		dayCombo.setLayoutData(gd);
 		
-		Label label = new Label(group, SWT.NULL);
+		Label label = new Label(updateScheduleGroup, SWT.NULL);
 		label.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.at")); //$NON-NLS-1$
 		
-		hourCombo = new Combo(group, SWT.READ_ONLY);
+		hourCombo = new Combo(updateScheduleGroup, SWT.READ_ONLY);
 		hourCombo.setItems(SchedulerStartup.HOURS);
 		gd = new GridData();
 		gd.widthHint = 100;
@@ -96,15 +98,15 @@ public class AutomaticUpdatesPreferencePage
 	
 		createSpacer(container, 1);
 		
-		group = new Group(container, SWT.NONE);
-		group.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.downloadOptions")); //$NON-NLS-1$
+		downloadGroup = new Group(container, SWT.NONE);
+		downloadGroup.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.downloadOptions")); //$NON-NLS-1$
 		layout = new GridLayout();
 		layout.numColumns = 3;
-		group.setLayout(layout);
+		downloadGroup.setLayout(layout);
 		gd = new GridData(GridData.FILL_HORIZONTAL);
-		group.setLayoutData(gd);
+		downloadGroup.setLayoutData(gd);
 
-		searchOnlyRadio = new Button(group, SWT.RADIO);
+		searchOnlyRadio = new Button(downloadGroup, SWT.RADIO);
 		searchOnlyRadio.setText(
 			UpdateScheduler.getString("AutomaticUpdatesPreferencePage.searchAndNotify")); //$NON-NLS-1$
 		gd = new GridData();
@@ -116,7 +118,7 @@ public class AutomaticUpdatesPreferencePage
 			}
 		});
 
-		searchAndDownloadRadio = new Button(group, SWT.RADIO);
+		searchAndDownloadRadio = new Button(downloadGroup, SWT.RADIO);
 		searchAndDownloadRadio.setText(UpdateScheduler.getString("AutomaticUpdatesPreferencePage.downloadAndNotify")); //$NON-NLS-1$
 		gd = new GridData();
 		gd.horizontalSpan = 3;
@@ -169,10 +171,12 @@ public class AutomaticUpdatesPreferencePage
 
 	private void pageChanged() {
 		boolean master = enabledCheck.getSelection();
+		updateScheduleGroup.setEnabled(master);
 		onStartupRadio.setEnabled(master);
 		onScheduleRadio.setEnabled(master);
 		dayCombo.setEnabled(master && onScheduleRadio.getSelection());
 		hourCombo.setEnabled(master && onScheduleRadio.getSelection());
+		downloadGroup.setEnabled(master);
 		searchOnlyRadio.setEnabled(master);
 		searchAndDownloadRadio.setEnabled(master);
 	}
