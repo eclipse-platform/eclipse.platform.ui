@@ -24,6 +24,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 	public static final String TAG_MENU="menu";//$NON-NLS-1$
 	public static final String TAG_ACTION="action";//$NON-NLS-1$
 	public static final String TAG_SEPARATOR="separator";//$NON-NLS-1$
+	public static final String TAG_GROUP_MARKER="groupMarker";//$NON-NLS-1$
 	public static final String TAG_FILTER="filter";//$NON-NLS-1$
 	public static final String TAG_VISIBILITY="visibility";//$NON-NLS-1$
 	public static final String TAG_ENABLEMENT="enablement";//$NON-NLS-1$
@@ -130,9 +131,14 @@ protected void contributeMenu(IConfigurationElement menuElement, IMenuManager mn
 		newMenu = new MenuManager(label, id);
 	
 	// Create separators.
-	IConfigurationElement[] children = menuElement.getChildren(TAG_SEPARATOR);
+	IConfigurationElement[] children = menuElement.getChildren();
 	for (int i = 0; i < children.length; i++) {
-		contributeSeparator(newMenu, children[i]);
+		String childName = children[i].getName();
+		if(childName.equals(TAG_SEPARATOR)) {
+			contributeSeparator(newMenu, children[i]);
+		} else if(childName.equals(TAG_GROUP_MARKER)) {
+			contributeGroupMarker(newMenu, children[i]);
+		}
 	}
 
 	// Add new menu
@@ -194,6 +200,19 @@ protected void contributeSeparator(IMenuManager menu, IConfigurationElement elem
 	if (sep != null)
 		return;
 	menu.add(new Separator(id));
+}
+/**
+ * Creates a named menu group marker from the information in the configuration element.
+ * If the marker already exists do not create a second.
+ */
+protected void contributeGroupMarker(IMenuManager menu, IConfigurationElement element) {
+	String id = element.getAttribute(ATT_NAME);
+	if (id == null || id.length() <= 0)
+		return;
+	IContributionItem marker = menu.find(id);
+	if (marker != null)
+		return;
+	menu.add(new GroupMarker(id));
 }
 /**
  * Contributes action from the action descriptor into the provided tool bar manager.
