@@ -179,9 +179,9 @@ public boolean finish() {
 		return false;
 
 	List resourcesToExport = getWhiteCheckedResources();
-	if (!ensureResourcesLocal(resourcesToExport))
-		return false;
 
+	//Save dirty editors if possible but do not stop if not all are saved
+	saveDirtyEditors();
 	// about to invoke the operation so save our state
 	saveWidgetValues();
 

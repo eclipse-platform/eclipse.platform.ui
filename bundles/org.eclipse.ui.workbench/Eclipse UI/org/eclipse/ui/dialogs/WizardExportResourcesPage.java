@@ -21,6 +21,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -576,5 +578,12 @@ private void setupSelectionsBasedOnSelectedTypes(
 	//Only add it to the list if there are files in this folder
 	if (hasFiles) 
 		selectionMap.put(parent, selections);
+}
+
+/**
+ * Save any editors that the user wants to save before export.
+ * @return boolean if the save was successful. */
+protected boolean saveDirtyEditors(){
+	return WorkbenchPlugin.getDefault().getWorkbench().saveAllEditors(true);
 }
 }

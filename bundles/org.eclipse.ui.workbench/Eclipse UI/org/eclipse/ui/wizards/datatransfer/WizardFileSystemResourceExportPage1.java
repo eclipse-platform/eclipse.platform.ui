@@ -19,6 +19,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.dialogs.WizardExportResourcesPage;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.EditorManager;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  *	Page 1 of the base resource export-to-file-system Wizard
@@ -225,9 +227,8 @@ public boolean finish() {
 
 	List resourcesToExport = getWhiteCheckedResources();
 
-	if (!ensureResourcesLocal(resourcesToExport))
-		return false;
-
+	//Save dirty editors if possible but do not stop if not all are saved
+	saveDirtyEditors();
 	// about to invoke the operation so save our state
 	saveWidgetValues();
 

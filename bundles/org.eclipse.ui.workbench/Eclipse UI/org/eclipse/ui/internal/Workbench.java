@@ -174,6 +174,31 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		if (!isClosing && !force)
 			return false;
 
+		isClosing = saveAllEditors(!force);
+		Platform.run(new SafeRunnable(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
+			public void run() {
+				if(isClosing || force)
+					isClosing = windowManager.close();
+			}
+		});
+
+		if (!isClosing && !force)
+			return false;
+
+		if (WorkbenchPlugin.getPluginWorkspace() != null)
+			disconnectFromWorkspace();
+
+		runEventLoop = false;
+		return true;
+	}
+	
+	/*
+	 * @see IWorkbench.saveAllEditors(boolean)	 */
+	public boolean saveAllEditors(boolean confirm) {
+		final boolean finalConfirm = confirm;
+		final boolean [] result = new boolean[1];
+		result[0] = true;
+		
 		Platform.run(new SafeRunnable(WorkbenchMessages.getString("ErrorClosing")) { //$NON-NLS-1$
 			public void run() {
 				//Collect dirtyEditors
@@ -200,21 +225,11 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 					IWorkbenchWindow w = getActiveWorkbenchWindow();
 					if(w == null)
 						w = windows[0];
-					isClosing = EditorManager.saveAll(dirtyEditors,!force,w);					
-				}
-				if(isClosing || force)
-					isClosing = windowManager.close();
+					result[0] = EditorManager.saveAll(dirtyEditors,finalConfirm,w);					
+				}			
 			}
 		});
-
-		if (!isClosing && !force)
-			return false;
-
-		if (WorkbenchPlugin.getPluginWorkspace() != null)
-			disconnectFromWorkspace();
-
-		runEventLoop = false;
-		return true;
+	return result[0];
 	}
 	/**
 	 * Opens a new workbench window and page with a specific perspective.
