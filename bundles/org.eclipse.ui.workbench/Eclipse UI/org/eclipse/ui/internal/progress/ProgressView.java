@@ -88,7 +88,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 			 * @see org.eclipse.jface.action.Action#isEnabled()
 			 */
 			public boolean isEnabled() {
-				return hasSelection();
+				return isJobInfoOfType(JobInfo.PENDING_STATUS);
 			}
 		});
 
@@ -117,7 +117,7 @@ public class ProgressView extends ViewPart implements IViewPart {
 			 * @see org.eclipse.jface.action.Action#isEnabled()
 			 */
 			public boolean isEnabled() {
-				return hasSelection();
+				return isJobInfoOfType(IStatus.ERROR);
 			}
 		});
 
@@ -146,16 +146,22 @@ public class ProgressView extends ViewPart implements IViewPart {
 	}
 
 	/**
-	 * Return whether or not there are selected objects. If any of the selections are 
-	 * not JobInfos or there is no selection then return false.
-	 * @return boolean
+	 * Return whether or not the current selection is a single JobInfo
+	 * whose status has a code equal to type.
+	 * @param code
+	 * @return
 	 */
-	private boolean hasSelection() {
+	private boolean isJobInfoOfType(int code) {
 
-		//If the provider has not been set yet move on.
-		ISelectionProvider provider = getSite().getSelectionProvider();
-		ISelection currentSelection = provider.getSelection();
-		return currentSelection != null;
+		IStructuredSelection selection = getSelection();
+		if (selection != null && selection.size() == 1) {
+			JobTreeElement element =
+				(JobTreeElement) selection.getFirstElement();
+			if (element.isJobInfo())
+				return ((JobInfo) element).getStatus().getCode() == code;
+		}
+		return false;
+
 	}
 
 	/**
