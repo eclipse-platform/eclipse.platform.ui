@@ -93,7 +93,6 @@ public class AssociatedWindow extends Window {
 		super.configureShell(newShell);
 		//newShell.setTransparent(getTransparencyValue());
 		this.associate(newShell);
-		newShell.setBackground(newShell.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 	}
 
 	/**
