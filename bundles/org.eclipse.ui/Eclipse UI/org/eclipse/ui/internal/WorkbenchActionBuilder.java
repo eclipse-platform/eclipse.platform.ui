@@ -20,7 +20,6 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
