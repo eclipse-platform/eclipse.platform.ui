@@ -131,8 +131,10 @@ public class FileSearchQuery implements ISearchQuery {
 	}
 
 	public ISearchResult getSearchResult() {
-		if (fResult == null)
+		if (fResult == null) {
 			fResult= new FileSearchResult(this);
+			new SearchResultUpdater(fResult);
+		}
 		return fResult;
 	}
 }

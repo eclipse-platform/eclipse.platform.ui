@@ -165,6 +165,8 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		IFile file= adapter.getFile(element);
 		if (file == null)
 			return null;
+		if (!file.exists())
+			return null;
 		return FileBuffers.getTextFileBufferManager().getTextFileBuffer(file.getLocation());
 	}
 	

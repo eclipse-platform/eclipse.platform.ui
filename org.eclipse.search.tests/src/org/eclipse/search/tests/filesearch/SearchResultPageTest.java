@@ -9,29 +9,21 @@
 
 package org.eclipse.search.tests.filesearch;
 
-import java.util.zip.ZipFile;
-
+import junit.framework.Test;
 import junit.framework.TestCase;
-
-import org.eclipse.core.runtime.Path;
-
-import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Widget;
-
+import junit.framework.TestSuite;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
-
-import org.eclipse.search.tests.SearchTestPlugin;
-
+import org.eclipse.search.internal.core.text.TextSearchScope;
+import org.eclipse.search.internal.ui.text.FileSearchPage;
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
-
-import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.text.FileSearchPage;
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Widget;
 
 public class SearchResultPageTest extends TestCase {
 	FileSearchQuery fQuery1;
@@ -40,10 +32,16 @@ public class SearchResultPageTest extends TestCase {
 		super(name);
 	}
 
+	public static Test allTests() {
+		return new JUnitSetup(new TestSuite(SearchResultPageTest.class));
+	}
+	
+	public static Test suite() {
+		return allTests();
+	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
-		ZipFile zip= new ZipFile(SearchTestPlugin.getDefault().getFileInPlugin(new Path("testresources/junit37-noUI-src.zip"))); //$NON-NLS-1$
-		SearchTestPlugin.importFilesFromZip(zip, new Path("Test"), null); //$NON-NLS-1$
 		TextSearchScope scope= TextSearchScope.newWorkspaceScope();
 		scope.addExtension("*.java");
 		fQuery1= new FileSearchQuery(scope, "", "Test");

@@ -12,37 +12,28 @@ package org.eclipse.search.tests.filesearch;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.zip.ZipFile;
-
+import junit.framework.Test;
 import junit.framework.TestCase;
-
+import junit.framework.TestSuite;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.Path;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
-
-import org.eclipse.ui.editors.text.EditorsUI;
-
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.texteditor.AnnotationTypeLookup;
-import org.eclipse.ui.texteditor.ITextEditor;
-
+import org.eclipse.search.internal.core.text.TextSearchScope;
+import org.eclipse.search.internal.ui.text.FileSearchQuery;
+import org.eclipse.search.internal.ui.text.FileSearchResult;
 import org.eclipse.search.tests.SearchTestPlugin;
-
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.search.ui.SearchUI;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
-
-import org.eclipse.search.internal.core.text.TextSearchScope;
-import org.eclipse.search.internal.ui.text.FileSearchQuery;
-import org.eclipse.search.internal.ui.text.FileSearchResult;
-
 import org.eclipse.search2.internal.ui.InternalSearchUI;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.texteditor.AnnotationTypeLookup;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 public class AnnotationManagerTest extends TestCase {
 	FileSearchQuery fQuery1;
@@ -54,11 +45,16 @@ public class AnnotationManagerTest extends TestCase {
 		super(name);
 	}
 		
+	public static Test allTests() {
+		return new JUnitSetup(new TestSuite(AnnotationManagerTest.class));
+	}
+	
+	public static Test suite() {
+		return allTests();
+	}
+
 	protected void setUp() throws Exception {
 		super.setUp();
-		ZipFile zip= new ZipFile(SearchTestPlugin.getDefault().getFileInPlugin(new Path("testresources/junit37-noUI-src.zip"))); //$NON-NLS-1$
-		
-		SearchTestPlugin.importFilesFromZip(zip, new Path("Test"), null); //$NON-NLS-1$
 		
 		TextSearchScope scope= TextSearchScope.newWorkspaceScope();
 		scope.addExtension("*.java");
