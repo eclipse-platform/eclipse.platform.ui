@@ -20,6 +20,10 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
@@ -28,7 +32,6 @@ import org.eclipse.team.core.ITeamProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
@@ -37,7 +40,9 @@ import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 
 public class BranchWizard extends Wizard {
-	BranchWizardPage mainPage;
+	BranchWizardVersionPage versionPage;
+	BranchWizardBranchPage branchPage;
+	BranchWizardMethodPage methodPage;
 	IResource[] resources;
 	
 	public BranchWizard() {
@@ -46,8 +51,12 @@ public class BranchWizard extends Wizard {
 	}
 	
 	public void addPages() {
-		mainPage = new BranchWizardPage("branchPage", Policy.bind("BranchWizard.createABranch"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH));
-		addPage(mainPage);
+		versionPage = new BranchWizardVersionPage("versionPage", Policy.bind("BranchWizard.createABranch"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH));
+		addPage(versionPage);
+		branchPage = new BranchWizardBranchPage("branchPage", Policy.bind("BranchWizard.createABranch"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH));
+		addPage(branchPage);
+		methodPage = new BranchWizardMethodPage("methodPage", Policy.bind("BranchWizard.createABranch"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_BRANCH));
+		addPage(methodPage);
 	}
 	public boolean performFinish() {
 		final boolean[] result = new boolean[] {false};
@@ -55,13 +64,14 @@ public class BranchWizard extends Wizard {
 			getContainer().run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
-						String tagString = mainPage.getBranchTag();
-						boolean update = mainPage.getUpdate();
-						String versionString = mainPage.getVersionTag();
+						String tagString = branchPage.getBranchTag();
+						boolean update = branchPage.getUpdate();
+						String versionString = versionPage.getVersionTag();
 						CVSTag versionTag = null;
 						if (versionString != null) {
 							versionTag = new CVSTag(versionString, CVSTag.VERSION);
 						}
+						boolean eclipseWay = methodPage.getEclipseWay();
 						
 						// To do: use the wizard's progress monitor
 						RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
@@ -78,7 +88,7 @@ public class BranchWizard extends Wizard {
 							ICVSRepositoryLocation root = provider.getCVSWorkspaceRoot().getRemoteLocation();
 							CVSTag tag = new CVSTag(tagString, CVSTag.BRANCH);
 							try {
-								provider.makeBranch(providerResources, versionTag, tag, update, subMonitor);
+								provider.makeBranch(providerResources, versionTag, tag, update, eclipseWay, subMonitor);
 								if (versionTag != null) {
 									for (int i = 0; i < providerResources.length; i++) {
 										ICVSRemoteFolder remoteResource = (ICVSRemoteFolder) CVSWorkspaceRoot.getRemoteResourceFor(providerResources[i]);
@@ -135,5 +145,26 @@ public class BranchWizard extends Wizard {
 			list.add(resources[i]);
 		}
 		return result;
+	}
+	
+	/**
+	 * A helper method used by pages to display indented descriptions
+	 */
+	protected static Composite createDescriptionComposite(Composite parent, int parentColumns) {
+		Composite composite = new Composite(parent, SWT.NULL);
+	
+		// GridLayout
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 10;
+		layout.marginHeight = 0;
+		composite.setLayout(layout);
+	
+		// GridData
+		GridData data = new GridData();
+		data.verticalAlignment = GridData.FILL;
+		data.horizontalAlignment = GridData.FILL;
+		data.horizontalSpan = parentColumns;
+		composite.setLayoutData(data);
+		return composite;
 	}
 }

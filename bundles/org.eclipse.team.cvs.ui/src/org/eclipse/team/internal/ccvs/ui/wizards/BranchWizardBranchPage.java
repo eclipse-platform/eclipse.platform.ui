@@ -6,10 +6,10 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
  */
 
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -19,16 +19,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
-public class BranchWizardPage extends CVSWizardPage {
+public class BranchWizardBranchPage extends CVSWizardPage {
 	boolean update;
 	String branchTag;
-	String versionTag;
-	boolean doVersion;
-	
-	Text versionText;
+
 	Text branchText;
 	
-	public BranchWizardPage(String pageName, String title, ImageDescriptor titleImage) {
+	public BranchWizardBranchPage(String pageName, String title, ImageDescriptor titleImage) {
 		super(pageName, title, titleImage);
 	}
 	/*
@@ -38,7 +35,7 @@ public class BranchWizardPage extends CVSWizardPage {
 		Composite composite = createComposite(parent, 2);
 		
 		Label label = new Label(composite, SWT.WRAP);
-		label.setText(Policy.bind("BranchWizardPage.description"));
+		label.setText(Policy.bind("BranchWizardBranchPage.description"));
 		GridData data = new GridData();
 		data.horizontalSpan = 2;
 		data.widthHint = 350;
@@ -47,7 +44,7 @@ public class BranchWizardPage extends CVSWizardPage {
 		createLabel(composite, "");
 		createLabel(composite, "");
 		
-		createLabel(composite, Policy.bind("BranchWizardPage.branchName"));
+		createLabel(composite, Policy.bind("BranchWizardBranchPage.branchName"));
 		branchText = createTextField(composite);
 		branchText.addListener(SWT.Modify, new Listener() {
 			public void handleEvent(Event event) {
@@ -63,58 +60,27 @@ public class BranchWizardPage extends CVSWizardPage {
 		data = new GridData();
 		data.horizontalSpan = 2;
 		check.setLayoutData(data);
-		check.setText(Policy.bind("BranchWizardPage.startWorking"));
+		check.setText(Policy.bind("BranchWizardBranchPage.startWorking"));
 		check.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event) {
 				update = check.getSelection();
 			}
 		});
-		check.setSelection(true);		
+		check.setSelection(true);
 		update = true;
-		
-		createLabel(composite, "");
-		createLabel(composite, "");
-
-		final Button specifyVersion = new Button(composite, SWT.CHECK);
-		data = new GridData();
-		data.horizontalSpan = 2;
-		specifyVersion.setLayoutData(data);
-		specifyVersion.setText(Policy.bind("BranchWizardPage.specifyVersion"));
-		specifyVersion.setSelection(true);
-		doVersion = true;
-		
-		createLabel(composite, Policy.bind("BranchWizardPage.versionName"));
-		versionText = createTextField(composite);
-		versionText.addListener(SWT.Modify, new Listener() {
-			public void handleEvent(Event event) {
-				versionTag = versionText.getText();
-				updateEnablement();
-			}
-		});
-		specifyVersion.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event) {
-				doVersion = specifyVersion.getSelection();
-				versionText.setEnabled(doVersion);
-				updateEnablement();
-			}
-		});
-		
+			
 		setControl(composite);
 		updateEnablement();
 	}
+	
 	public String getBranchTag() {
 		return branchTag;
 	}
+	
 	public boolean getUpdate() {
 		return update;
 	}
-	public String getVersionTag() {
-		if (doVersion) {
-			return versionTag;
-		} else {
-			return null;
-		}
-	}
+
 	private void updateEnablement() {
 		String branch = branchText.getText();
 		if (branch.length() == 0) {
@@ -129,17 +95,6 @@ public class BranchWizardPage extends CVSWizardPage {
 			setErrorMessage(status.getMessage());
 			setPageComplete(false);
 			return;
-		}
-		
-		if (doVersion) {
-			status = CVSTag.validateTagName(versionText.getText());
-			if (status.isOK()) {
-				setErrorMessage(null);
-			} else {
-				setErrorMessage(status.getMessage());
-				setPageComplete(false);
-				return;
-			}
 		}
 		setPageComplete(true);
 	}

@@ -532,12 +532,19 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * Use specialiazed tagging to move all local changes (including additions and
 	 * deletions) to the specified branch.
 	 */
-	public void makeBranch(IResource[] resources, CVSTag versionTag, CVSTag branchTag, boolean moveToBranch, IProgressMonitor monitor) throws TeamException {
+	public void makeBranch(IResource[] resources, CVSTag versionTag, CVSTag branchTag, boolean moveToBranch, boolean eclipseWay, IProgressMonitor monitor) throws TeamException {
 		
 		// Determine the total amount of work
 		int totalWork = 10 + (versionTag!= null ? 60 : 40) + (moveToBranch ? 20 : 0);
 		monitor.beginTask(Policy.bind("CVSTeamProvider.makeBranch"), totalWork);  //$NON-NLS-1$
 		try {
+			
+			// Determine which tag command to used depending on whether the Eclipse specific
+			// method of branching is requested
+			Tag tagCommand = Command.TAG;
+			if (eclipseWay) {
+				tagCommand = Command.CUSTOM_TAG;
+			}
 			
 			// Build the arguments list
 			String[] arguments = getValidArguments(resources, Command.NO_LOCAL_OPTIONS);
@@ -550,7 +557,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 				IStatus status;
 				if (versionTag != null) {
 					// Version using tag and braqnch using rtag
-					status = Command.CUSTOM_TAG.execute(s,
+					status = tagCommand.execute(s,
 						Command.NO_GLOBAL_OPTIONS,
 						Command.NO_LOCAL_OPTIONS,
 						versionTag,
@@ -559,7 +566,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 						Policy.subMonitorFor(monitor, 40));
 					if (status.getCode() != CVSStatus.SERVER_ERROR) {
 						// XXX Could use RTAG here when it works
-						status = Command.CUSTOM_TAG.execute(s,
+						status = tagCommand.execute(s,
 							Command.NO_GLOBAL_OPTIONS,
 							Command.NO_LOCAL_OPTIONS,
 							branchTag,
@@ -569,7 +576,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 					}
 				} else {
 					// Just branch using tag
-					status = Command.CUSTOM_TAG.execute(s,
+					status = tagCommand.execute(s,
 						Command.NO_GLOBAL_OPTIONS,
 						Command.NO_LOCAL_OPTIONS,
 						branchTag,
@@ -588,7 +595,11 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 			// Set the tag of the local resources to the branch tag (The update command will not
 			// properly update "cvs added" and "cvs removed" resources so a custom visitor is used
 			if (moveToBranch) {
-				setTag(resources, branchTag, Policy.subMonitorFor(monitor, 20));
+				if (eclipseWay) {
+					setTag(resources, branchTag, Policy.subMonitorFor(monitor, 20));
+				} else {
+					update(resources, Command.NO_LOCAL_OPTIONS, branchTag, null, Policy.subMonitorFor(monitor, 20));
+				}
 			}
 		} finally {
 			monitor.done();
