@@ -365,7 +365,7 @@ public final class InternalPlatform {
 	 * and should not try to access the instance data area.
 	 */
 
-	public void start(BundleContext runtimeContext) {
+	public void start(BundleContext runtimeContext) throws IOException {
 		this.context = runtimeContext;
 		initializeLocationTrackers();
 		ResourceTranslator.start();
@@ -379,7 +379,15 @@ public final class InternalPlatform {
 		getMetaArea();
 		initializeAuthorizationHandler();
 		platformLog = new PlatformLogWriter();
-		addLogListener(platformLog);
+		addLogListener(platformLog);		
+		initializeRuntimeFileManager();
+	}
+
+	private void initializeRuntimeFileManager() throws IOException {
+		File controlledDir = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME);
+		controlledDir.mkdirs();
+		runtimeFileManager = new FileManager(controlledDir);
+		runtimeFileManager.open(true);
 	}
 
 	private Runnable getSplashHandler() {
@@ -1206,16 +1214,6 @@ public final class InternalPlatform {
 	}
 
 	public FileManager getRuntimeFileManager() {
-		if (runtimeFileManager == null) {
-			try {
-				File controlledDir = new File(InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME);
-				controlledDir.mkdirs();
-				runtimeFileManager = new FileManager(controlledDir);
-				runtimeFileManager.open(true);
-			} catch (IOException e) {
-				getFrameworkLog().log(new FrameworkLogEntry(Platform.PI_RUNTIME, Policy.bind("meta.fileManagerInitializationFailed", InternalPlatform.getDefault().getConfigurationLocation().getURL().getPath() + '/' + Platform.PI_RUNTIME), 0, e, null)); //$NON-NLS-1$
-			}
-		}
 		return runtimeFileManager;
 	}
 

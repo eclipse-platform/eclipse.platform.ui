@@ -161,7 +161,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		return result;
 	}
 
-	public void stop(BundleContext runtimeContext) throws Exception {
+	public void stop(BundleContext runtimeContext) throws IOException {
 		// Stop the registry
 		stopRegistry(runtimeContext);
 		environmentInfoServiceReleased(environmentServiceReference);
@@ -174,7 +174,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		InternalPlatform.getDefault().getRuntimeFileManager().close();
 	}
 
-	private void stopRegistry(BundleContext runtimeContext) {
+	private void stopRegistry(BundleContext runtimeContext) throws IOException {
 		runtimeContext.removeBundleListener(this.pluginBundleListener);
 		ExtensionRegistry registry = (ExtensionRegistry) InternalPlatform.getDefault().getRegistry();
 		if (registry == null)
@@ -229,7 +229,7 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		InternalPlatform.packageAdmin = (PackageAdmin) context.getService(packageAdminReference);
 	}
 
-	private void startInternalPlatform() {
+	private void startInternalPlatform() throws IOException {
 		InternalPlatform.getDefault().start(context);
 	}
 
