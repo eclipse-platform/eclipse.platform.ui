@@ -18,6 +18,8 @@ import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
@@ -26,6 +28,7 @@ import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.ide.dialogs.ResourceEncodingFieldEditor;
 
 import org.eclipse.ui.internal.dialogs.EditorsPreferencePage;
+import org.eclipse.ui.internal.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
@@ -44,6 +47,14 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 	protected Control createContents(Composite parent) {
 		Composite composite = createComposite(parent);
 
+		PreferenceLinkArea area = new PreferenceLinkArea(composite, SWT.BORDER,
+				"org.eclipse.ui.preferencePages.FileEditors");//$NON-NLS-1$
+
+		GridData data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		data.heightHint = 25;
+		data.widthHint = 100;
+		area.setLayoutData(data);
+
 		createEditorHistoryGroup(composite);
 
 		createSpace(composite);
@@ -52,19 +63,19 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		createEditorReuseGroup(composite);
 
 		createSpace(composite);
-		encodingEditor = new ResourceEncodingFieldEditor(
-				IDEWorkbenchMessages.getString("WorkbenchPreference.encoding"), composite, ResourcesPlugin //$NON-NLS-1$
-						.getWorkspace().getRoot());
+		encodingEditor = new ResourceEncodingFieldEditor(IDEWorkbenchMessages
+				.getString("WorkbenchPreference.encoding"), composite, ResourcesPlugin //$NON-NLS-1$
+				.getWorkspace().getRoot());
 
 		encodingEditor.setPreferencePage(this);
 		encodingEditor.load();
-		encodingEditor.setPropertyChangeListener(new IPropertyChangeListener(){
+		encodingEditor.setPropertyChangeListener(new IPropertyChangeListener() {
 			/* (non-Javadoc)
 			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 			 */
 			public void propertyChange(PropertyChangeEvent event) {
-				  if (event.getProperty().equals(FieldEditor.IS_VALID))
-				  	updateValidState();
+				if (event.getProperty().equals(FieldEditor.IS_VALID))
+					updateValidState();
 
 			}
 		});
@@ -89,10 +100,8 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 		encodingEditor.loadDefault();
 
 		super.performDefaults();
-	
+
 	}
-	
-	
 
 	/*
 	 * (non-Javadoc)
@@ -100,7 +109,7 @@ public class IDEEditorsPreferencePage extends EditorsPreferencePage {
 	 * @see org.eclipse.ui.internal.dialogs.EditorsPreferencePage#updateValidState()
 	 */
 	protected void updateValidState() {
-		if (!encodingEditor.isValid()){
+		if (!encodingEditor.isValid()) {
 			setValid(false);
 			return;
 		}
