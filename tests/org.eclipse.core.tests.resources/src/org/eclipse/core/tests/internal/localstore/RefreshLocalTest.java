@@ -11,14 +11,13 @@
 package org.eclipse.core.tests.internal.localstore;
 
 import java.io.File;
-import java.io.IOException;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.osgi.service.environment.Constants;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 //
 public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
@@ -36,42 +35,35 @@ public class RefreshLocalTest extends LocalStoreTest implements ICoreConstants {
 	}
 
 	/**
-	 * Tests if files with names that are invalid segments are properly rejected - does not run on Windows.
+	 * Tests refreshing a folder whose case has changed on disk.
+	 * This is a regression test for bug 79090.
 	 */
-	public void testDiscoverFileWithInvalidName() {
-		//FIXME Temporarily skip this test due to VM vendor bug #96338
-
-		if (Platform.getOS().equals(Constants.OS_WIN32))
-			return;
-
-		/* initialize common objects */
+	public void testDiscoverCaseChange() {
 		IProject project = projects[0];
-
-		/* test root deletion */
-		IFile file = project.getFile("file.txt");
-		ensureExistsInFileSystem(file);
-
-		File fileWithInvalidName = new File(project.getLocation().toFile(), "a\\b");
+		IFolder folder = project.getFolder("A");
+		IFolder folderVariant = project.getFolder("a");
+		IFile file = folder.getFile("file");
+		IFile fileVariant = folderVariant.getFile(file.getName());
+		//create the project, folder, and file
+		ensureExistsInWorkspace(file, true);
+		
+		//change the case of the folder on disk
+		folder.getLocation().toFile().renameTo(folderVariant.getLocation().toFile());
+		
 		try {
-			assertTrue("0.1", fileWithInvalidName.createNewFile());
-		} catch (IOException e) {
-			fail("0.2", e);
-		}
-		assertTrue("1.0", !file.exists());
-		try {
+			//refresh the project
 			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
-			fail("2.0 - should have failed");
-		} catch (CoreException ce) {
-			IStatus status = ce.getStatus();
-			assertTrue("2.1", status.isMultiStatus());
-			IStatus[] children = status.getChildren();
-			assertEquals("2.2", 1, children.length);
-			assertTrue("2.3", children[0] instanceof ResourceStatus);
-			assertEquals("2.4", IResourceStatus.INVALID_RESOURCE_NAME, children[0].getCode());
+		} catch (CoreException e) {
+			fail("1.99", e);
 		}
-		assertTrue("3.0", file.exists());
+		
+		//variant should exist but original shouldn't
+		assertTrue("1.1", folderVariant.exists());
+		assertTrue("1.2", fileVariant.exists());
+		assertTrue("1.3", !folder.exists());
+		assertTrue("1.4", !file.exists());
+		assertTrue("1.5", project.isSynchronized(IResource.DEPTH_INFINITE));
 	}
-
 	/**
 	 * Test discovery of a linked resource on refresh.
 	 */
