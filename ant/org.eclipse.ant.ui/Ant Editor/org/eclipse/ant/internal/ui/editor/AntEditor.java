@@ -45,6 +45,8 @@ import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.IAutoIndentStrategy;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
@@ -343,7 +345,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	
 	private boolean fSelectionSetFromOutline= false;
 
-    private org.eclipse.ant.internal.ui.editor.actions.FoldingActionGroup fFoldingGroup;
+    private FoldingActionGroup fFoldingGroup;
   
     public AntEditor() {
         super();
@@ -691,11 +693,11 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 
         if (isFoldingEnabled()) {
         	fProjectionSupport= new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
-//        	fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
-//    			public IInformationControl createInformationControl(Shell shell) {
-//    				return new CustomSourceInformationControl(shell, IDocument.DEFAULT_CONTENT_TYPE);
-//    			}
-//    		});
+        	fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
+    			public IInformationControl createInformationControl(Shell shell) {
+    				return new AntSourceViewerInformationControl(shell);
+    			}
+    		});
             fProjectionSupport.install();
 			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
 			((ProjectionViewer)getViewer()).addProjectionListener(this);
