@@ -7,6 +7,8 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
@@ -50,6 +52,19 @@ public class ShowProcessAction extends Action {
 			label = labelProvider.getText(target);
 		}
 		setImageDescriptor(imageDescriptor);
+		// prefix label with launch name
+		ILaunch launch = process.getLaunch();
+		if (launch != null) {
+			ILaunchConfiguration configuration = launch.getLaunchConfiguration();
+			if (configuration != null) {
+				StringBuffer buffer = new StringBuffer();
+				buffer.append('[');
+				buffer.append(configuration.getName());
+				buffer.append("] "); //$NON-NLS-1$
+				buffer.append(label);
+				label = buffer.toString();
+			}
+		}
 		setText(label);
 	}
 
