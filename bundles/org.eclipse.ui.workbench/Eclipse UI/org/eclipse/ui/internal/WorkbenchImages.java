@@ -283,10 +283,14 @@ private final static void declareImages() {
 	declareRegistryImage(ISharedImages.IMG_DEF_VIEW, PATH_CVIEW+"defaultview_misc.gif");//$NON-NLS-1$
 
 	// view toolbar images
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW, PATH_CLOCALTOOL+"close_view.gif");//$NON-NLS-1$
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW, PATH_CLOCALTOOL+"pin_view.gif");//$NON-NLS-1$
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW, PATH_CLOCALTOOL+"min_view.gif");//$NON-NLS-1$
-	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU, PATH_CLOCALTOOL+"view_menu.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW, PATH_ELOCALTOOL+"close_view.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_HOVER, PATH_CLOCALTOOL+"close_view.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW, PATH_ELOCALTOOL+"pin_view.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_PIN_VIEW_HOVER, PATH_CLOCALTOOL+"pin_view.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW, PATH_ELOCALTOOL+"min_view.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_MIN_VIEW_HOVER, PATH_CLOCALTOOL+"min_view.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU, PATH_ELOCALTOOL+"view_menu.gif");//$NON-NLS-1$
+	declareRegistryImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER, PATH_CLOCALTOOL+"view_menu.gif");//$NON-NLS-1$
 	
 	// task objects
 	//declareRegistryImage(IWorkbenchGraphicConstants.IMG_OBJS_HPRIO_TSK, PATH_OBJECT+"hprio_tsk.gif");

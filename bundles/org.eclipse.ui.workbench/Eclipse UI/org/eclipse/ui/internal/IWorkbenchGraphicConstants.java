@@ -96,13 +96,17 @@ public interface IWorkbenchGraphicConstants {
 	
 	// local toolbars
 	public final static String IMG_LCL_CLOSE_VIEW = "IMG_LCL_CLOSE_VIEW" ; //$NON-NLS-1$
+	public final static String IMG_LCL_CLOSE_VIEW_HOVER = "IMG_LCL_CLOSE_VIEW_HOVER"; //$NON-NLS-1$	
 	public final static String IMG_LCL_PIN_VIEW = "IMG_LCL_PIN_VIEW" ; //$NON-NLS-1$
+	public final static String IMG_LCL_PIN_VIEW_HOVER = "IMG_LCL_PIN_VIEW_HOVER"; //$NON-NLS-1$
 	public final static String IMG_LCL_MIN_VIEW = "IMG_LCL_MIN_VIEW" ; //$NON-NLS-1$
+	public final static String IMG_LCL_MIN_VIEW_HOVER = "IMG_LCL_MIN_VIEW_HOVER"; //$NON-NLS-1$
 	public final static String IMG_LCL_GOTOOBJ_TSK = "IMG_LCL_GOTOOBJ_TSK"; //$NON-NLS-1$
 	public final static String IMG_LCL_ADDTSK_TSK = "IMG_LCL_ADDTSK_TSK"; //$NON-NLS-1$
 	public final static String IMG_LCL_REMTSK_TSK = "IMG_LCL_REMTSK_TSK"; //$NON-NLS-1$
 	public final static String IMG_LCL_SHOWCOMPLETE_TSK = "IMG_LCL_SHOWCOMPLETE_TSK"; //$NON-NLS-1$
 	public final static String IMG_LCL_VIEW_MENU = "IMG_LCL_VIEW_MENU"; //$NON-NLS-1$
+	public final static String IMG_LCL_VIEW_MENU_HOVER = "IMG_LCL_VIEW_MENU_HOVER"; //$NON-NLS-1$
 	public final static String IMG_LCL_SELECTED_MODE = "IMG_LCL_SELECTED_MODE"; //$NON-NLS-1$
 	public final static String IMG_LCL_SHOWCHILD_MODE = "IMG_LCL_SHOWCHILD_MODE"; //$NON-NLS-1$
 
