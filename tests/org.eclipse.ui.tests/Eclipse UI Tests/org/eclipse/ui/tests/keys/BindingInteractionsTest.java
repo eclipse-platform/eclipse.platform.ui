@@ -275,6 +275,50 @@ public final class BindingInteractionsTest extends UITestCase {
 	}
 
 	/**
+	 * This tests a complicated scenario that arises with the Emacs key binding
+	 * set in the Eclipse workbench. The first binding belongs to a parent
+	 * context, but a child scheme. The trigger sequences are not the same.
+	 * 
+	 * @throws NotDefinedException
+	 *             If the scheme we try to activate is not defined.
+	 */
+	public void testDoubleParent() throws NotDefinedException {
+		final String parent = "parent";
+		final String child = "child";
+
+		// Set-up the contexts
+		final Context parentContext = contextManager.getContext(parent);
+		parentContext.define(parent, parent, null);
+		final Context childContext = contextManager.getContext(child);
+		childContext.define(child, child, parent);
+		final Set activeContextIds = new HashSet();
+		activeContextIds.add(parent);
+		activeContextIds.add(child);
+		contextManager.setActiveContextIds(activeContextIds);
+
+		// Set-up the schemes.
+		final Scheme parentScheme = bindingManager.getScheme(parent);
+		parentScheme.define(parent, parent, null);
+		final Scheme childScheme = bindingManager.getScheme(child);
+		childScheme.define(child, child, parent);
+		bindingManager.setActiveScheme(childScheme);
+
+		// Add two bindings.
+		final Binding parentBinding = new TestBinding(parent, parent, parent,
+				null, null, Binding.SYSTEM);
+		final Binding childBinding = new TestBinding(child, child, child, null,
+				null, Binding.SYSTEM);
+		bindingManager.addBinding(parentBinding);
+		bindingManager.addBinding(childBinding);
+
+		// Test to see that only the child is active.
+		assertTrue("The parent should not be active", bindingManager
+				.getActiveBindingsFor(parent).isEmpty());
+		assertTrue("The child should be active", !bindingManager
+				.getActiveBindingsFor(child).isEmpty());
+	}
+
+	/**
 	 * <p>
 	 * Tests whether a plug-in developer can override a binding for a particular
 	 * locale.
