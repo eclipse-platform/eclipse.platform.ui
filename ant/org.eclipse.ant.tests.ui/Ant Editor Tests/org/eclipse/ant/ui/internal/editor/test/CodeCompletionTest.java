@@ -119,7 +119,7 @@ public class CodeCompletionTest extends TestCase {
     /**
      * Test the code completion for properties.
      */
-    public void testPropertyProposals1() {
+    public void testPropertyProposals() {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
         String documentText = "<project default=\"test\"><property name=\"prop1\" value=\"val1\" />\n";
@@ -171,8 +171,8 @@ public class CodeCompletionTest extends TestCase {
         project.init();
         URL url = getClass().getResource("buildtest1.xml");
         assertNotNull(url);
-        File file = new File(url.getPath());
-        assertTrue(file.exists());
+        File file = new File(url.getFile());
+        assertTrue("Required file does not exist: " + url.getFile(), file.exists());
         
         project.setUserProperty("ant.file", file.getAbsolutePath());
 
@@ -189,8 +189,8 @@ public class CodeCompletionTest extends TestCase {
         project.init();
         url = getClass().getResource("buildtest2.xml");
         assertNotNull(url);
-        file = new File(url.getPath());
-		assertTrue(file.exists());
+        file = new File(url.getFile());
+		assertTrue("Required file does not exist: " + url.getFile(), file.exists());
         project.setUserProperty("ant.file", file.getAbsolutePath());
         try {
             org.eclipse.ant.ui.internal.editor.utils.ProjectHelper.configureProject(project, file);  // File will be parsed here
@@ -208,7 +208,7 @@ public class CodeCompletionTest extends TestCase {
         project.init();
         url = getClass().getResource("buildtest2.xml");
         assertNotNull(url);
-        String path = url.getPath();
+        String path = url.getFile();
         path = path.substring(0, path.lastIndexOf('/')+1) + "someNonExisting.xml";
         file = new File(path);
         project.setUserProperty("ant.file", file.getAbsolutePath());
@@ -235,13 +235,13 @@ public class CodeCompletionTest extends TestCase {
 	 * Tests the property proposals for the case that they are defined in
 	 * a dependent targets.
 	 */
-    public void testPropertyProposalDefinedInDependendTargets() throws FileNotFoundException {
+    public void testPropertyProposalDefinedInDependantTargets() throws FileNotFoundException {
         TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
         URL url = getClass().getResource("dependencytest.xml");
         assertNotNull(url);
-        File file = new File(url.getPath());
-        assertTrue(file.exists());
+        File file = new File(url.getFile());
+        assertTrue("Required file does not exist: " + url.getFile(), file.exists());
         processor.setEditedFile(file);
 		String documentText = getFileContentAsString(file);
 
