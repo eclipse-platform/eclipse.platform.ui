@@ -71,9 +71,9 @@ public void partDeactivated(IWorkbenchPartReference partRef);
 public void partOpened(IWorkbenchPartReference partRef);
 
 /**
- * Notifies this listener that the given part is hidden.
+ * Notifies this listener that the given part is hidden or obscured by another part.
  *
- * @param partRef the part that is hidden
+ * @param partRef the part that is hidden or obscured by another part
  */	
 public void partHidden(IWorkbenchPartReference partRef);
 
