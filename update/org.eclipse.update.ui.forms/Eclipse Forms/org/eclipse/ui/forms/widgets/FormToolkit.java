@@ -61,6 +61,7 @@ public class FormToolkit {
 				Control c = children[i];
 				boolean inactiveBorder = false;
 				boolean textBorder = false;
+				if (!c.isVisible()) continue;
 				if (c.getEnabled() == false && !(c instanceof CCombo))
 					continue;
 				if (c instanceof Hyperlink)
