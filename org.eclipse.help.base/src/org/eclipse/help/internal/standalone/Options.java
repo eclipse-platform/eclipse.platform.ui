@@ -147,7 +147,11 @@ public class Options {
 			String vmName = System.getProperty("java.vm.name"); //$NON-NLS-1$
 			String executable = "J9".equals(vmName) ? "j9" : "java"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			if (System.getProperty("os.name").startsWith("Win")) { //$NON-NLS-1$ //$NON-NLS-2$
-				executable += "w.exe"; //$NON-NLS-1$
+				if (!debug) {
+					executable += "w.exe"; //$NON-NLS-1$
+				} else {
+					executable += ".exe"; //$NON-NLS-1$
+				}
 			}
 			vm =
 				System.getProperty("java.home") //$NON-NLS-1$
