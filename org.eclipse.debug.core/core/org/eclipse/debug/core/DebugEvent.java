@@ -141,6 +141,11 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  */
 public final class DebugEvent extends EventObject {
 	
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	/**
 	 * Resume event kind.
 	 */

@@ -30,6 +30,12 @@ import org.eclipse.core.runtime.IStatus;
  * @see IStatus
  */
 public class DebugException extends CoreException {	
+    
+    /**
+     * All serializable objects should have a stable serialVersionUID
+     */
+    private static final long serialVersionUID = 1L;
+    
 	/**
 	 * Indicates a request made of a debug element has failed
 	 * on the target side.
