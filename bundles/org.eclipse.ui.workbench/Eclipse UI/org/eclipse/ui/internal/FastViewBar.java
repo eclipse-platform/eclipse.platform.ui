@@ -116,13 +116,29 @@ public class FastViewBar implements IWindowTrim {
 		}
 		
 		viewOrientation.put(refToSet.getId(), new Integer(newState));
-		Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
+		Perspective persp = getPerspective();
 		
-		IViewReference ref = persp.getActiveFastView();
-		if (ref != null) {
-			persp.setActiveFastView(null);
+		if (persp != null) {
+			IViewReference ref = persp.getActiveFastView();
+			if (ref != null) {
+				persp.setActiveFastView(null);
+			}
+			persp.setActiveFastView(refToSet);
 		}
-		persp.setActiveFastView(refToSet);
+	}
+	
+	private Perspective getPerspective() {
+		if (window == null) {
+			return null;
+		}
+		
+		WorkbenchPage page = window.getActiveWorkbenchPage();
+		
+		if (page == null) {
+			return null;
+		}
+		
+		return page.getActivePerspective();
 	}
 
 	/**
@@ -170,9 +186,11 @@ public class FastViewBar implements IWindowTrim {
 					showFastViewBarPopup(loc);
 				} else if (event.type == SWT.MouseDown) {
 					if (getViewAt(getToolBar().toDisplay(loc)) == null) {
-						Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
-						
-						persp.setActiveFastView(null, 0);
+						Perspective persp = getPerspective();
+							
+						if (persp != null) {
+							persp.setActiveFastView(null, 0);
+						}
 					}
 				}
 			}
@@ -232,10 +250,12 @@ public class FastViewBar implements IWindowTrim {
 			public void dragFinished(Object draggedItem, boolean success) {
 
 				if (oldFastView != null) {
-					Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
 					
-					if (persp.isFastView(oldFastView)) {
-						persp.setActiveFastView(oldFastView);
+					Perspective persp = getPerspective();
+					if (persp != null) {
+						if (persp.isFastView(oldFastView)) {
+							persp.setActiveFastView(oldFastView);
+						}
 					}
 				}
 				
@@ -243,11 +263,15 @@ public class FastViewBar implements IWindowTrim {
 			}
 
 			public void dragStarted(Object draggedItem) {				
-				Perspective persp = window.getActiveWorkbenchPage().getActivePerspective();
+				Perspective persp = getPerspective();
 				
-				oldFastView = persp.getActiveFastView();
+				if (persp != null) {
 				
-				persp.setActiveFastView(null, 0);
+					oldFastView = persp.getActiveFastView();
+					
+					persp.setActiveFastView(null, 0);
+				
+				}
 			}
 		};
 		
@@ -393,15 +417,6 @@ public class FastViewBar implements IWindowTrim {
 		Point local = toolbar.toControl(position);
 		return toolbar.getItem(local);		
 	}
-
-	/**
-	 * 
-	 * @param pane
-	 * @return
-	 */
-	private Perspective getPerspective(ViewPane pane) {
-		return pane.getPage().getActivePerspective();
-	}
 	
 	/**
 	 * Shows the popup menu for an item in the fast view bar.
@@ -433,7 +448,10 @@ public class FastViewBar implements IWindowTrim {
 			restoreItem.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					if (selectedView != null) {
-						window.getActiveWorkbenchPage().removeFastView(selectedView);
+						WorkbenchPage page = window.getActiveWorkbenchPage();
+						if (page != null) {
+							page.removeFastView(selectedView);
+						}
 					}
 				}
 			});
@@ -443,7 +461,10 @@ public class FastViewBar implements IWindowTrim {
 			closeItem.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					if (selectedView != null) {
-						window.getActiveWorkbenchPage().hideView(selectedView);						
+						WorkbenchPage page = window.getActiveWorkbenchPage();
+						if (page != null) {
+							page.hideView(selectedView);
+						}
 					}
 				}
 			});
