@@ -267,7 +267,7 @@ public class PerspectivesTab extends AbstractLaunchConfigurationTab implements I
 				if (persp != null) {
 					descriptor = registry.findPerspectiveWithId(persp);
 				}
-				if (persp == null || descriptor == null) {
+				if (descriptor == null) {
 					// select none
 					fCombos[i].setText(LaunchConfigurationsMessages.getString("PerspectivesTab.1")); //$NON-NLS-1$
 				} else {
