@@ -7,10 +7,12 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Blake Meike (blakem@world.std.com) - patch for bug 29316
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.ant.model;
 
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -305,5 +307,19 @@ public final class AntUtil {
 	public static IFile getFile(String fullPath) {
 		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		return root.getFile(new Path(fullPath));
+	}
+	
+	/**
+	 * Returns a string representation of the supplied <code>URL</code> which uses the
+	 * platform-dependent path separator defined by <code>java.io.File</code>.
+	 * 
+	 * @param url name of a file resource
+	 * @return path appropriate to this OS
+	 */
+	public static String toOSPath(URL url) {
+		String path = url.getFile();
+		return (File.separatorChar == '/')
+			? path
+			: path.replace('/', File.separatorChar);
 	}
 }

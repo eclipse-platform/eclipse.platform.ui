@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Blake Meike (blakem@world.std.com) - patch for bug 29316
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.ant.preferences;
 
@@ -29,6 +30,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 
@@ -195,7 +197,7 @@ public class AntTypesPage extends AntPage {
 			Type type = (Type) element;
 			StringBuffer text= new StringBuffer(type.getTypeName());
 			text.append(" ("); //$NON-NLS-1$
-			text.append(type.getLibrary().getFile());
+			text.append(AntUtil.toOSPath(type.getLibrary()));
 			text.append(": "); //$NON-NLS-1$
 			text.append(type.getClassName());
 			text.append(')');

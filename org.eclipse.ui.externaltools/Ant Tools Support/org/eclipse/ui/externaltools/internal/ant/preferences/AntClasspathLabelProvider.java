@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Blake Meike (blakem@world.std.com) - patch for bug 29316
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.ant.preferences;
 
@@ -19,6 +20,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**
@@ -70,7 +72,7 @@ public class AntClasspathLabelProvider extends LabelProvider implements ITableLa
 	 * Method declared on ITableLabelProvider.
 	 */
 	public String getColumnText(Object element, int columnIndex) {
-		return ((URL) element).getFile();
+		return AntUtil.toOSPath(((URL) element));
 	}
 
 	private Image getFolderImage() {

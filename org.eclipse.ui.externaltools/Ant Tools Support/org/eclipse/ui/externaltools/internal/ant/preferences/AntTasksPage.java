@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Blake Meike (blakem@world.std.com) - patch for bug 29316
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.ant.preferences;
 
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.externaltools.internal.ant.model.AntUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 
 /**
@@ -191,7 +193,7 @@ public class AntTasksPage extends AntPage {
 			Task task = (Task) element;
 			StringBuffer text= new StringBuffer(task.getTaskName());
 			text.append(" ("); //$NON-NLS-1$
-			text.append(task.getLibrary().getFile());
+			text.append(AntUtil.toOSPath(task.getLibrary()));
 			text.append(": "); //$NON-NLS-1$
 			text.append(task.getClassName());
 			text.append(')');
