@@ -52,7 +52,17 @@ if (data.isMozilla()){
 	margin:0px;
 	padding:0px;
 	cursor:default;
+<% 
+if (data.isIE()){
+%>
 	filter:progid:DXImageTransform.Microsoft.Gradient(startColorstr='#CCffffff', endColorstr='#00ffffff', gradientType='0');
+<%
+}else{
+%>
+	background-color:<%=prefs.getViewBackground()%>;
+<%
+}
+%>
 	border-top:1px solid <%=prefs.getViewBackground()%>;
 	border-bottom:1px solid ThreeDShadow;
 }
