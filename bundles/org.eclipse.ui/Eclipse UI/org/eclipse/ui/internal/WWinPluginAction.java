@@ -78,7 +78,7 @@ public class WWinPluginAction extends PluginAction
 			IWorkbenchWindowActionDelegate winDelegate =
 				(IWorkbenchWindowActionDelegate) delegate;
 			winDelegate.init(window);
-			refreshSelection();
+//			refreshSelection();
 			return delegate;
 		} else {
 			WorkbenchPlugin.log(
