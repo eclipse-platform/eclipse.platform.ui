@@ -131,6 +131,8 @@ public class PrebuiltIndex {
 	 * @param locale String
 	 */
 	private InputStream openPrebuiltIndex() {
+		try
+		{
 		// obtain searchengine configuration from registry
 		IPluginRegistry registry = Platform.getPluginRegistry();
 		IExtensionPoint xpt =
@@ -155,5 +157,10 @@ public class PrebuiltIndex {
 			}
 		}
 		return null;
+		}
+		catch(Exception ex)
+		{
+			return null;
+		}
 	}
 }
