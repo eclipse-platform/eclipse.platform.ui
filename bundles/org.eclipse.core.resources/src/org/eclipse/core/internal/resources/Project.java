@@ -736,6 +736,8 @@ protected void updateDescription() throws CoreException {
 		return;
 	FileSystemResourceManager manager = getLocalManager();
 	workspace.changing(this);
+	// FIXME: do we even need to check this? review how we got here....
+	// it may always be the case where we want to read from disk
 	//if changed, read description from disk and update in memory
 	if (manager.isDescriptionSynchronized(this))
 		return;
