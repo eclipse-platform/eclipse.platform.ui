@@ -11,7 +11,10 @@
 package org.eclipse.jface.text.source;
 
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.DefaultAutoIndentStrategy;
 import org.eclipse.jface.text.DefaultInformationControl;
@@ -28,6 +31,10 @@ import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.IUndoManager;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.formatter.IContentFormatter;
+import org.eclipse.jface.text.hyperlink.DefaultHyperlinkController;
+import org.eclipse.jface.text.hyperlink.IHyperlinkController;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
@@ -323,5 +330,59 @@ public class SourceViewerConfiguration {
 	 */
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return IDocumentExtension3.DEFAULT_PARTITIONING;
+	}
+	
+	/**
+	 * Returns the whether hyperlinks are enabled in the
+	 * given source viewer.
+	 * This implementation always returns the <code>true</code>.
+	 *
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return <code>true</code> if hyperlinks are enabled 
+	 * @since 3.1
+	 */
+	public boolean getHyperlinksEnabled(ISourceViewer sourceViewer) {
+		return true;
+	}
+
+	/**
+	 * Returns the hyperlink detectors which be used to detect hyperlinks
+	 * in the given source viewer. This
+	 * implementation always returns an array with an URL hyperlink detector.
+	 *
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return an array with hyperlink detectors or <code>null</code> if no hyperlink support should be installed
+	 * @since 3.1
+	 */
+	public IHyperlinkDetector[] getHyperlinkDetectors(ISourceViewer sourceViewer) {
+		if (sourceViewer == null)
+			return null;
+		
+		return new IHyperlinkDetector[] {new URLHyperlinkDetector(sourceViewer)};
+	}
+
+	/**
+	 * Returns the hyperlink controller for the given source viewer.
+	 * This implementation always returns the {@link DefaultHyperlinkController}.
+	 * 
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return the hyperlink controller or <code>null</code> if no hyperlink support should be installed
+	 * @since 3.1
+	 */
+	public IHyperlinkController getHyperlinkController(ISourceViewer sourceViewer) {
+		return new DefaultHyperlinkController((IPreferenceStore)null);
+	}
+	
+	/**
+	 * Returns the SWT event state mask which in combination
+	 * with the left mouse button activates hyperlinking.
+	 * This implementation always returns the {@link SWT#MOD1}.
+	 *
+	 * @param sourceViewer the source viewer to be configured by this configuration
+	 * @return the state mask for 
+	 * @since 3.1
+	 */
+	public int getHyperlinkStateMask(ISourceViewer sourceViewer) {
+		return SWT.CTRL;
 	}
 }

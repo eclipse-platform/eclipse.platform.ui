@@ -43,6 +43,7 @@ import org.eclipse.jface.text.formatter.FormattingContextProperties;
 import org.eclipse.jface.text.formatter.IContentFormatter;
 import org.eclipse.jface.text.formatter.IContentFormatterExtension;
 import org.eclipse.jface.text.formatter.IFormattingContext;
+import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.jface.text.information.IInformationPresenter;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.projection.ChildDocument;
@@ -347,6 +348,14 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		setOverviewRulerAnnotationHover(configuration.getOverviewRulerAnnotationHover(this));
 		
 		setHoverControlCreator(configuration.getInformationControlCreator(this));
+		
+		if (configuration.getHyperlinksEnabled(this)) {
+			setHyperlinkController(configuration.getHyperlinkController(this));
+			setHyperlinkStateMask(configuration.getHyperlinkStateMask(this));
+			IHyperlinkDetector[] hyperlinkDetectors= configuration.getHyperlinkDetectors(this);
+			if (hyperlinkDetectors != null)
+				setHyperlinkDetectors(hyperlinkDetectors);
+		}
 		
 		// install content type specific plug-ins
 		String[] types= configuration.getConfiguredContentTypes(this);
