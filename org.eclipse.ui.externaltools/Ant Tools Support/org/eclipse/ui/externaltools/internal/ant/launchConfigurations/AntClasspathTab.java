@@ -667,7 +667,11 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab {
 			urlString.append(url.getFile());
 			urlString.append(',');
 		}
-		configuration.setAttribute(IExternalToolConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.substring(0, urlString.length() - 1));
+		if (urlString.length() > 0) {
+			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.substring(0, urlString.length() - 1));
+		} else {
+			configuration.setAttribute(IExternalToolConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
+		}
 		String antHomeText= antHome.getText().trim();
 		if (!antHomeButton.getSelection() || antHomeText.length() == 0) {
 			antHomeText= null;
