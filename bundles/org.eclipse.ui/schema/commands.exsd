@@ -256,7 +256,9 @@ The &lt;code&gt;org.eclipse.ui.commands&lt;/code&gt; extension point is used to 
          <attribute name="keySequence" type="string">
             <annotation>
                <documentation>
-                  The key sequence to assign to the command. Key sequences consist of one or more key strokes, where a key stroke consists of a key on the keyboard, optionally pressed in combination with one or more of the following modifiers: Ctrl, Alt, Shift, and Command. Key strokes are separated by spaces, and modifiers are separated by &apos;+&apos; characters.
+                  &lt;p&gt;The key sequence to assign to the command. Key sequences consist of one or more key strokes, where a key stroke consists of a key on the keyboard, optionally pressed in combination with one or more of the following modifiers: Ctrl, Alt, Shift, and Command. Key strokes are separated by spaces, and modifiers are separated by &apos;+&apos; characters.&lt;/p&gt;
+&lt;p&gt;The modifier keys can also be expressed in a platform-independent way.  On MacOS X, for example, &quot;Command&quot; is almost always used in place of &quot;Ctrl&quot;.  So, we provide &quot;M1&quot; which will map to either &quot;Ctrl&quot; or &quot;Command&quot;, as appropriate.  Similarly, &quot;M2&quot; is &quot;Shift&quot;; &quot;M3&quot; is &quot;Alt&quot;; and &quot;M4&quot; is &quot;Ctrl&quot; (MacOS X).  If more platforms are added, then you can count on these aliases being mapped to good platform defaults.&lt;/p&gt;
+&lt;p&gt;The syntax for this string is defined in &lt;code&gt;org.eclipse.ui.internal.keys&lt;/code&gt;.  Briefly, the string is case insensitive -- though all capitals is preferred stylistically.  If the key is a letter, then simply append the letter.  If the key is a special key (i.e., non-ASCII), then use one of the following: ARROW_DOWN, ARROW_LEFT, ARROW_RIGHT, ARROW_UP, BREAK, CAPS_LOCK, END, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15, HOME, INSERT, NUM_LOCK, NUMPAD_0, NUMPAD_1, NUMPAD_2, NUMPAD_3, NUMPAD_4, NUMPAD_5, NUMPAD_6, NUMPAD_7, NUMPAD_8, NUMPAD_9, NUMPAD_ADD, NUMPAD_DECIMAL, NUMPAD_DIVIDE, NUMPAD_ENTER, NUMPAD_EQUAL, NUMPAD_MULTIPLY, NUMPAD_SUBTRACT, PAGE_UP, PAGE_DOWN, PAUSE, PRINT_SCREEN, or SCROLL_LOCK.  If the key is a non-printable ASCII key, then use one of the following: BS, CR, DEL, ESC, FF, LF, NUL, SPACE, TAB, or VT.  Note that the main keyboard enter/return key is CR.&lt;/p&gt;
                </documentation>
             </annotation>
          </attribute>
@@ -401,7 +403,7 @@ This particular API should still be considered experimental.  While you may use 
                   The name of the class of the handler.  If the class is an implementation of IExecutableExtension, then it is possible to pass data into the object.  This handler will be proxied until the handler is queried for information -- at which point the class will be loaded, and an instance created.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="java.lang.Object"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.ui.commands.IHandler"/>
                </appInfo>
             </annotation>
          </attribute>
