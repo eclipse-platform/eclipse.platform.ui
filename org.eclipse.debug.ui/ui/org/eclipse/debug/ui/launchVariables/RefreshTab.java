@@ -194,11 +194,12 @@ public class RefreshTab extends AbstractLaunchConfigurationTab implements IVaria
 
 		if (refreshField.getSelection()) {
 			configuration.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, variableForm.getSelectedVariable());
+			setAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, configuration, recursiveField.getSelection(), true);
 		} else {
+			//clear the refresh attributes
 			configuration.setAttribute(LaunchVariableUtil.ATTR_REFRESH_SCOPE, (String)null);
+			setAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, configuration, true, true);
 		}
-		
-		setAttribute(LaunchVariableUtil.ATTR_REFRESH_RECURSIVE, configuration, recursiveField.getSelection(), true);
 	}
 
 	/**
