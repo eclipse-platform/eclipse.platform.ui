@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.StringTokenizer;
 import org.eclipse.ant.internal.ui.AntSourceViewerConfiguration;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.editor.text.AntDocumentSetupParticipant;
@@ -34,6 +35,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -41,6 +43,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -51,6 +54,8 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
+import org.eclipse.ui.internal.editors.text.CHyperLink;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
@@ -318,6 +323,8 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		getOverlayStore().load();
 		getOverlayStore().start();
 		
+		createHeader(parent);
+		
 		TabFolder folder= new TabFolder(parent, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());	
 		folder.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -340,7 +347,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		
 		initialize();
 		
-		applyDialogFont(folder);
+		applyDialogFont(parent);
 		return folder;
 	}
 	
@@ -680,4 +687,70 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		}
 		return super.performOk();
 	}
+	
+	private void createHeader(Composite contents) {
+		String before= AntPreferencesMessages.getString("AntEditorPreferencePage.0"); //$NON-NLS-1$
+		String linktext= AntPreferencesMessages.getString("AntEditorPreferencePage.2"); //$NON-NLS-1$
+		String linktooltip= AntPreferencesMessages.getString("AntEditorPreferencePage.3"); //$NON-NLS-1$
+		String after= AntPreferencesMessages.getString("AntEditorPreferencePage.4"); //$NON-NLS-1$
+		Control description= createLinkText(contents, new Object[] {
+				before, 
+				new String[] {linktext, "org.eclipse.ui.preferencePages.GeneralTextEditor", linktooltip }, //$NON-NLS-1$
+				after});
+		GridData gridData= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+		gridData.widthHint= 150; // only expand further if anyone else requires it
+		description.setLayoutData(gridData);
+	}
+	
+	private Control createLinkText(Composite contents, Object[] tokens) {
+		Composite description= new Composite(contents, SWT.NONE);
+		RowLayout rowLayout= new RowLayout(SWT.HORIZONTAL);
+		rowLayout.justify= false;
+		rowLayout.fill= true;
+		rowLayout.marginBottom= 0;
+		rowLayout.marginHeight= 0;
+		rowLayout.marginLeft= 0;
+		rowLayout.marginRight= 0;
+		rowLayout.marginTop= 0;
+		rowLayout.marginWidth= 0;
+		rowLayout.spacing= 0;
+		description.setLayout(rowLayout);
+		
+		for (int i= 0; i < tokens.length; i++) {
+			String text;
+			if (tokens[i] instanceof String[]) {
+				String[] strings= (String[]) tokens[i];
+				text= strings[0];
+				final String target= strings[1];
+				CHyperLink link= new CHyperLink(description, SWT.NONE);
+				link.setText(text);
+				link.addSelectionListener(new SelectionAdapter() {
+					public void widgetSelected(SelectionEvent e) {
+						WorkbenchPreferenceDialog.createDialogOn(target);
+					}
+				});
+				if (strings.length > 2)
+					link.setToolTipText(strings[2]);
+				continue;
+			}
+			
+			text= (String) tokens[i];
+			StringTokenizer tokenizer= new StringTokenizer(text, " ", true); //$NON-NLS-1$
+			boolean addSpace= false;
+			while (tokenizer.hasMoreTokens()) {
+				String token= tokenizer.nextToken();
+				if (token.trim().length() == 0 && tokenizer.hasMoreTokens()) {
+					addSpace= true;
+					continue;
+				}
+					
+				Label label= new Label(description, SWT.NONE);
+				label.setText((addSpace ? " " : "") + token); //$NON-NLS-1$ //$NON-NLS-2$
+				addSpace= false;
+			}
+		}
+		
+		return description;
+	}
+
 }
