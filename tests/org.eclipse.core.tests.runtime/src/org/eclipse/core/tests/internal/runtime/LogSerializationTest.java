@@ -13,7 +13,6 @@ package org.eclipse.core.tests.internal.runtime;
 import java.io.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.internal.runtime.PlatformLogReader;
 import org.eclipse.core.internal.runtime.PlatformLogWriter;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
