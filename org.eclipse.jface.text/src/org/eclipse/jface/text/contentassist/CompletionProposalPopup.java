@@ -941,128 +941,143 @@ class CompletionProposalPopup implements IContentAssistListener {
 			return true;
 		}
 		
-		// 1: get the common ignore-case prefix of all remaining proposals
-		// note that the prefix still 
-		StringBuffer prefix= null; // the common prefix
-		boolean isCaseCompatible= true;
+		// 1: extract pre- and postfix from all remaining proposals
 		IDocument document= fContentAssistSubjectControlAdapter.getDocument();
-		int startOffset= -1; // the location where the proposals would insert (< fInvocationOffset if invoked in the middle of an indent)
-		String currentPrefix= null; // the prefix already in the document
-		int currentPrefixLen= -1; // the length of the current prefix
-		List caseFiltered= new ArrayList();
+		
+		// contains the common postfix in the case that there are any proposals matching our LHS
+		StringBuffer rightCasePostfix= null;
+		List rightCase= new ArrayList();
+
+		// whether to check for non-case compatible matches. This is initially true, and stays so
+		// as long as there are i) no case-sensitive matches and ii) all proposals share the same 
+		// (altough not corresponding with the document contents) common prefix.
+		boolean checkWrongCase= true;
+		// the prefix of all case insensitive matches. This differs from the document
+		// contents and will be replaced. 
+		CharSequence wrongCasePrefix= null;
+		int wrongCasePrefixStart= 0;
+		// contains the common postfix of all case-insensitive matches
+		StringBuffer wrongCasePostfix= null;
+		List wrongCase= new ArrayList();
 		
 		for (int i= 0; i < fFilteredProposals.length; i++) {
 			ICompletionProposal proposal= fFilteredProposals[i];
-			CharSequence insertion= getReplacementString(proposal);
-			
-			if (currentPrefix == null) {
-				startOffset= getReplacementOffset(proposal);
-				currentPrefixLen= fFilterOffset - startOffset;
-				try {
-					// make sure we get the right case
-					currentPrefix= document.get(startOffset, currentPrefixLen);
-				} catch (BadLocationException e1) {
-					// bail out silently
-					return false;
+			CharSequence insertion= getPrefixCompletion(proposal);
+			int start= getPrefixCompletionOffset(proposal);
+			try {
+				int prefixLength= fFilterOffset - start;
+				int relativeCompletionOffset= Math.min(insertion.length(), prefixLength);
+				String prefix= document.get(start, prefixLength);
+				if (insertion.toString().startsWith(prefix)) {
+					checkWrongCase= false;
+					rightCase.add(proposal);
+					CharSequence newPostfix= insertion.subSequence(relativeCompletionOffset, insertion.length());
+					if (rightCasePostfix == null)
+						rightCasePostfix= new StringBuffer(newPostfix.toString());
+					else
+						truncatePostfix(rightCasePostfix, newPostfix);
+				} else if (checkWrongCase) {
+					CharSequence newPrefix= insertion.subSequence(0, relativeCompletionOffset);
+					if (isPrefixCompatible(wrongCasePrefix, wrongCasePrefixStart, newPrefix, start, document)) {
+						wrongCasePrefix= newPrefix;
+						wrongCasePrefixStart= start;
+						CharSequence newPostfix= insertion.subSequence(relativeCompletionOffset, insertion.length());
+						if (wrongCasePostfix == null)
+							wrongCasePostfix= new StringBuffer(newPostfix.toString());
+						else
+							truncatePostfix(wrongCasePostfix, newPostfix);
+						wrongCase.add(proposal);
+					} else {
+						checkWrongCase= false;
+					}
 				}
+			} catch (BadLocationException e2) {
+				// bail out silently
+				return false;
 			}
 			
-			// prune ignore-case matches
-			if (isCaseSensitive() && !insertion.toString().startsWith(currentPrefix))
-				continue;
-			
-			caseFiltered.add(proposal);
-
-			if (prefix == null)
-				prefix= new StringBuffer(insertion.toString()); // initial
-			else 
-				isCaseCompatible &= truncatePrefix(prefix, insertion);
-			
-			// early break computation if there is nothing left to check
-			if (prefix.length() == 0)
-				break;
+			if (rightCasePostfix != null && rightCasePostfix.length() == 0 && rightCase.size() > 1)
+				return false;
 		}
 		
-		if (prefix == null || currentPrefixLen > prefix.length() || prefix.toString().equals(currentPrefix))
-			return false;
-	
-		// 2: replace / insert the common prefix in the document
+		// 2: replace single proposals
 		
-		if (caseFiltered.size() == 1) {
-			insertProposal((ICompletionProposal) caseFiltered.get(0), (char) 0, 0, fInvocationOffset);
+		if (rightCase.size() == 1) {
+			insertProposal((ICompletionProposal) rightCase.get(0), (char) 0, 0, fInvocationOffset);
+			hide();
+			return true;
+		} else if (checkWrongCase && wrongCase.size() == 1) {
+			insertProposal((ICompletionProposal) wrongCase.get(0), (char) 0, 0, fInvocationOffset);
 			hide();
 			return true;
 		}
 		
+		// 3: replace post- / prefixes
+		
+		CharSequence prefix;
+		if (checkWrongCase)
+			prefix= wrongCasePrefix;
+		else
+			prefix= new String();
+		
+		CharSequence postfix;
+		if (checkWrongCase)
+			postfix= wrongCasePostfix;
+		else
+			postfix= rightCasePostfix;
+		
+		if (prefix == null || postfix == null)
+			return false;
+		
 		try {
-			String presentPart= prefix.substring(0, currentPrefixLen);
-			int replaceOffset;
-			int replaceLen;
-			if (isCaseCompatible && !currentPrefix.equals(presentPart)) {
-				// update case
-				currentPrefixLen= 0;
-				replaceOffset= startOffset;
-				replaceLen= fFilterOffset - startOffset;
-			} else {
-				// only insert remaining part
-				replaceOffset= fFilterOffset;
-				replaceLen= 0;
-			}
+			// 4: check if parts of the postfix are already in the document
+			int to= Math.min(document.getLength(), fFilterOffset + postfix.length());
+			StringBuffer inDocument= new StringBuffer(document.get(fFilterOffset, to - fFilterOffset));
+			truncatePostfix(inDocument, postfix);
+
+			// 5: replace and reveal
+			document.replace(fFilterOffset - prefix.length(), prefix.length() + inDocument.length(), prefix.toString() + postfix.toString());
 			
-			int remainingLen= prefix.length() - currentPrefixLen;
-			String remainingPrefix= prefix.subSequence(currentPrefixLen, currentPrefixLen + remainingLen).toString();
+			fContentAssistSubjectControlAdapter.setSelectedRange(fFilterOffset + postfix.length(), 0);
+			fContentAssistSubjectControlAdapter.revealRange(fFilterOffset + postfix.length(), 0);
 			
-			document.replace(replaceOffset, replaceLen, remainingPrefix);
-			
-			fContentAssistSubjectControlAdapter.setSelectedRange(replaceOffset + remainingLen, 0);
-			fContentAssistSubjectControlAdapter.revealRange(replaceOffset + remainingLen, 0);
-			
-			return true;
+			return postfix.length() > 0;
 		} catch (BadLocationException e) {
 			// ignore and return false
 			return false;
 		}
 	}
 
-	/**
-	 * Truncates <code>prefix</code> to the longest prefix it has in common with
-	 * <code>sequence</code> and returns <code>true</code> if the common prefix
-	 * has the same case for <code>prefix</code> and <code>sequence</code>.
-	 * 
-	 * @param prefix the previous prefix that will get truncated to the prefix it has in common with <code>sequence</code>
-	 * @param sequence the character sequence to match
-	 * @return <code>true</code> if the match is case compatible, <code>false</code> if the common prefix differs in case
-	 * @since 3.0
-	 */
-	private boolean truncatePrefix(StringBuffer prefix, CharSequence sequence) {
-		// find common prefix
-		int min= Math.min(prefix.length(), sequence.length());
-		boolean caseCompatible= true;
-		for (int c= 0; c < min; c++) {
-			char compareChar= sequence.charAt(c);
-			char prefixChar= prefix.charAt(c);
-			if (prefixChar != compareChar) {
-				if (isCaseSensitive() || Character.toLowerCase(prefixChar) != Character.toLowerCase(compareChar)) {
-					prefix.delete(c, prefix.length());
-					return caseCompatible;
-				} else 
-					caseCompatible= false;
-			}
-		}
+	private boolean isPrefixCompatible(CharSequence oneSequence, int oneOffset, CharSequence twoSequence, int twoOffset, IDocument document) throws BadLocationException {
+		if (oneSequence == null || twoSequence == null)
+			return true;
 		
-		prefix.delete(min, prefix.length());
-		return caseCompatible;
+		int min= Math.min(oneOffset, twoOffset);
+		int oneEnd= oneOffset + oneSequence.length();
+		int twoEnd= twoOffset + twoSequence.length();
+		
+		String one= document.get(oneOffset, min - oneOffset) + oneSequence + document.get(oneEnd, Math.min(fFilterOffset, fFilterOffset - oneEnd));
+		String two= document.get(twoOffset, min - twoOffset) + twoSequence + document.get(twoEnd, Math.min(fFilterOffset, fFilterOffset - twoEnd));
+
+		return one.equals(two);
 	}
 
 	/**
-	 * Returns whether common prefix completion should be case sensitive or not. 
-	 * Returns <code>true</code> if no proposal popup is currently showing, <code>false</code> if there is.
-	 * 
-	 * @return <code>true</code> if common prefix completion should be case sensitive, <code>false</code> otherwise
-	 * @since 3.0
+	 * Truncates <code>buffer</code> to the common prefix of <code>buffer</code>
+	 * and <code>sequence</code>.
+	 *  
+	 * @param buffer the common postfix to truncate
+	 * @param sequence the characters to truncate with
 	 */
-	private boolean isCaseSensitive() {
-		return !Helper.okToUse(fProposalShell);
+	private void truncatePostfix(StringBuffer buffer, CharSequence sequence) {
+		// find common prefix
+		int min= Math.min(buffer.length(), sequence.length());
+		for (int c= 0; c < min; c++) {
+			if (sequence.charAt(c) != buffer.charAt(c)) {
+				buffer.delete(c, buffer.length());
+				return;
+			}
+		}
 	}
 
 	/**
@@ -1075,7 +1090,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @return the proposals completion offset, or <code>fInvocationOffset</code>
 	 * @since 3.0
 	 */
-	private int getReplacementOffset(ICompletionProposal proposal) {
+	private int getPrefixCompletionOffset(ICompletionProposal proposal) {
 		if (proposal instanceof ICompletionProposalExtension3)
 			return ((ICompletionProposalExtension3) proposal).getPrefixCompletionStart(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
 		else
@@ -1092,7 +1107,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @return the proposals completion text
 	 * @since 3.0
 	 */
-	private CharSequence getReplacementString(ICompletionProposal proposal) {
+	private CharSequence getPrefixCompletion(ICompletionProposal proposal) {
 		CharSequence insertion= null;
 		if (proposal instanceof ICompletionProposalExtension3)
 			insertion= ((ICompletionProposalExtension3) proposal).getPrefixCompletionText(fContentAssistSubjectControlAdapter.getDocument(), fFilterOffset);
