@@ -12,12 +12,17 @@
  *******************************************************************************/
 package org.eclipse.debug.core.variables;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -407,23 +412,70 @@ public class LaunchVariableUtil {
 	 */
 	public static String[] getEnvironment(ILaunchConfiguration configuration, ExpandVariableContext context) throws CoreException {
 		Map envMap = configuration.getAttribute(ATTR_ENVIRONMENT_VARIABLES, (Map) null);
-		if (envMap != null) {
-			MultiStatus status = new MultiStatus(DebugPlugin.getUniqueIdentifier(), 0, DebugCoreMessages.getString("VariableUtil.6"), null); //$NON-NLS-1$
-			String[] expandedEnvironment = LaunchVariableUtil.expandEnvironment(envMap, status, context);
-			if (status.isOK()) {
-				if (expandedEnvironment != null && expandedEnvironment.length > 0) {
-					return expandedEnvironment;
-				} else {
-					String message = MessageFormat.format(DebugCoreMessages.getString("VariableUtil.7"), new Object[] { configuration.getName()}); //$NON-NLS-1$
-					throw new CoreException(newErrorStatus(message, null));
-				}
-			} else {
-				throw new CoreException(status);
-			}
+		if (envMap == null) {
+			return null;
 		}
-		return null;
+		MultiStatus status = new MultiStatus(DebugPlugin.getUniqueIdentifier(), 0, DebugCoreMessages.getString("VariableUtil.6"), null); //$NON-NLS-1$
+		HashMap env= getNativeEnvironment();
+		if (status.isOK()) {
+			if (envMap != null) {
+				Iterator iter= envMap.entrySet().iterator();
+				// Overwrite system environment with locally defined variables
+				while (iter.hasNext()) {
+					Map.Entry entry = (Map.Entry) iter.next();
+					env.put(entry.getKey(), expandVariables((String) entry.getValue(), status, context));
+				}
+			}
+			Iterator iter= env.entrySet().iterator();
+			List strings= new ArrayList(env.size());
+			while (iter.hasNext()) {
+				Map.Entry entry = (Map.Entry) iter.next();
+				StringBuffer buffer= new StringBuffer((String) entry.getKey());
+				buffer.append('=').append((String) entry.getValue());
+				strings.add(buffer.toString());
+			}
+			return (String[]) strings.toArray(new String[strings.size()]);
+		} else {
+			throw new CoreException(status);
+		}
 	}
 	
+	/**
+	 * Returns the native system environment variables.
+	 * 
+	 * @return the native system environment variables
+	 */
+	private static HashMap getNativeEnvironment() {
+		HashMap env= new HashMap();
+		try {
+			String nativeCommand= null;
+			if (BootLoader.getOS().equals(BootLoader.OS_WIN32)) {
+				nativeCommand= "set";
+			} else if (!BootLoader.getOS().equals(BootLoader.OS_UNKNOWN)){
+				nativeCommand= "printenv";				
+			}
+			if (nativeCommand == null) {
+				return env;
+			}
+			Process process= Runtime.getRuntime().exec(nativeCommand);
+			BufferedReader reader= new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line= reader.readLine();
+			while (line != null) {
+				int separator= line.indexOf('=');
+				if (separator > 0) {
+					String key= line.substring(0, separator);
+					String value= line.substring(separator + 1);
+					env.put(key, value);
+				}
+				line= reader.readLine();
+			}
+			reader.close();
+		} catch (IOException e) {
+			DebugPlugin.log(e);
+		}
+		return env;
+	}
+
 	private static IStatus newErrorStatus(String message, Throwable exception) {
 		return new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, message, exception);
 	}
