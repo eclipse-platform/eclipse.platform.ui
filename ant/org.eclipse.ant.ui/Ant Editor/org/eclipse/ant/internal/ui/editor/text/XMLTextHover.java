@@ -20,6 +20,8 @@ import org.apache.tools.ant.types.PatternSet;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
 import org.eclipse.ant.internal.ui.editor.derived.HTMLPrinter;
 import org.eclipse.ant.internal.ui.editor.derived.HTMLTextPresenter;
+import org.eclipse.ant.internal.ui.editor.model.AntElementNode;
+import org.eclipse.ant.internal.ui.editor.model.AntPropertyNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.text.BadLocationException;
@@ -109,10 +111,13 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension {
 			int offset= hoverRegion.getOffset();
 			int length= hoverRegion.getLength();
 			String text= document.get(offset, length);
-			
-			String value= antModel.getPropertyValue(text);
-			if (value != null) {
-				return formatMessage(value);
+			String value;
+			AntElementNode node= antModel.getNode(offset, false);
+			if (document.get(offset - 2, 2).equals("${") || node instanceof AntPropertyNode) { //$NON-NLS-1$
+				value= antModel.getPropertyValue(text);
+				if (value != null) {
+					return formatMessage(value);
+				}
 			}
 			value= antModel.getTargetDescription(text);
 			if (value != null) {
