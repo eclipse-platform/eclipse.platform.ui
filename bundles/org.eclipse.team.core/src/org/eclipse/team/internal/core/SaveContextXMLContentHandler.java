@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 import org.xml.sax.Attributes;
@@ -26,7 +24,6 @@ public class SaveContextXMLContentHandler extends DefaultHandler {
 	private StringBuffer buffer = new StringBuffer();
 	private Stack contextStack = new Stack();
 	private SaveContext last;
-	private Map children = new HashMap();
 
 	public SaveContextXMLContentHandler() {
 	}

@@ -310,7 +310,7 @@ public class SyncInfo implements IAdaptable {
 						boolean ay = criteria.compare(local, base, Policy.subMonitorFor(progress, 30));
 						boolean am = criteria.compare(base, remote, Policy.subMonitorFor(progress, 30));
 						if (ay && am) {
-							;
+							// in-sync
 						} else if (ay && !am) {
 							description = INCOMING | CHANGE;
 						} else if (!ay && am) {

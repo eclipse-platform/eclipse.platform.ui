@@ -224,7 +224,7 @@ public abstract class RemoteSyncElement extends LocalSyncElement implements IRem
 						boolean ay = compare(granularity, false, local, base, Policy.subMonitorFor(progress, 30));
 						boolean am = compare(granularity, false, base, remote, Policy.subMonitorFor(progress, 30));
 						if (ay && am) {
-							;
+							// in-sync
 						} else if (ay && !am) {
 							description = INCOMING | CHANGE;
 						} else if (!ay && am) {

@@ -91,22 +91,6 @@ public final class Team {
 		}
 	}
 	
-	private static class IgnoreInfo implements IIgnoreInfo {
-		private String pattern;
-		private boolean enabled;
-		
-		public IgnoreInfo(String pattern, boolean enabled) {
-			this.pattern = pattern;
-			this.enabled = enabled;
-		}
-		public String getPattern() {
-			return pattern;
-		}
-		public boolean getEnabled() {
-			return enabled;
-		}
-	};
-	
 	/**
 	 * Return the type of the given IStorage.
 	 * 
@@ -271,7 +255,7 @@ public final class Team {
 		while (e.hasNext()) {
 			String extension = (String)e.next();
 			boolean isCustom = (!pluginTypes.containsKey(extension)) ||
-				!((Integer)pluginTypes.get(extension)).equals((Integer)pluginTypes.get(extension));
+				!((Integer)pluginTypes.get(extension)).equals(pluginTypes.get(extension));
 			if (isCustom) {
 				buf.append(extension);
 				buf.append(PREF_TEAM_SEPARATOR);
@@ -299,7 +283,7 @@ public final class Team {
 		while (e.hasNext()) {
 			String pattern = (String)e.next();
 			boolean isCustom = (!pluginIgnore.containsKey(pattern)) ||
-				!((Boolean)pluginIgnore.get(pattern)).equals((Boolean)globalIgnore.get(pattern));
+				!((Boolean)pluginIgnore.get(pattern)).equals(globalIgnore.get(pattern));
 			if (isCustom) {
 				buf.append(pattern);
 				buf.append(PREF_TEAM_SEPARATOR);
