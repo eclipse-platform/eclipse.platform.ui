@@ -59,10 +59,8 @@ public class IWorkingSetManagerTest extends UITestCase {
 		
 		resetChangeData();
 		fWorkingSetManager.removeWorkingSet(fWorkingSet);
-/*
-		Add back test once 21187 is fixed
 		assertEquals("", fChangeProperty);
-*/				
+				
 		resetChangeData();
 		fWorkingSetManager.addWorkingSet(fWorkingSet);
 		assertEquals(IWorkingSetManager.CHANGE_WORKING_SET_ADD, fChangeProperty);

@@ -240,10 +240,13 @@ public class WorkingSetManager implements IWorkingSetManager {
 	 * @see org.eclipse.ui.IWorkingSetManager#removeWorkingSet(IWorkingSet)
 	 */
 	public void removeWorkingSet(IWorkingSet workingSet) {
-		workingSets.remove(workingSet);
-		recentWorkingSets.remove(workingSet);
-		saveState();
-		firePropertyChange(CHANGE_WORKING_SET_REMOVE, workingSet, null);
+		boolean workingSetRemoved = workingSets.remove(workingSet);
+		boolean recentWorkingSetRemoved = recentWorkingSets.remove(workingSet);
+		 
+		if (workingSetRemoved || recentWorkingSetRemoved) { 
+			saveState();
+			firePropertyChange(CHANGE_WORKING_SET_REMOVE, workingSet, null);
+		}
 	}
 	/**
 	 * Restores the list of most recently used working sets from the 
