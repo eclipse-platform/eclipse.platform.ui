@@ -10,6 +10,7 @@ import org.eclipse.help.internal.ui.util.HelpWorkbenchException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -34,6 +35,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 	private static String installURL;
 	private static String stateLocation;
 	private Display display;
+	private Image shellImg, backImg, forwardImg;
 	private Shell shell;
 	private WebBrowser webBrowser;
 	private IEResources ieResources;
@@ -49,6 +51,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		ieResources = new IEResources(installURL);
 		store = new IEStore(new File(stateLocation, ".iestore").toString());
 		store.restore();
+		createImages();
 		createShell();
 		// Start command interpreter
 		Thread inputReader = new Thread(this);
@@ -84,14 +87,27 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		ie.runUI();
 	}
 	/**
+	 * Creates the toolbar images
+	 */
+	private void createImages()
+	{
+		shellImg = ImageDescriptor.createFromURL(ieResources.getImagePath("shellIcon")).createImage();
+		backImg = ImageDescriptor.createFromURL(ieResources.getImagePath("back_icon")).createImage();
+		forwardImg = ImageDescriptor.createFromURL(ieResources.getImagePath("forward_icon")).createImage();
+	}
+	
+	/**
 	 * Creates hosting shell.
 	 */
 	private void createShell() {
 		shell = new Shell();
+		/*
 		shell.setImage(
 			ImageDescriptor
 				.createFromURL(ieResources.getImagePath("shellIcon"))
 				.createImage());
+		*/
+		shell.setImage(shellImg);
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				store.put(BROWSER_X, Integer.toString(x));
@@ -100,6 +116,9 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 				store.put(BROWSER_HEIGTH, Integer.toString(h));
 				store.put(BROWSER_MAXIMIZED, (new Boolean(shell.getMaximized()).toString()));
 				store.save();
+				shellImg.dispose();
+				backImg.dispose();
+				forwardImg.dispose();
 				shell.close();
 			}
 		});
@@ -170,6 +189,7 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		backItem = new ToolItem(bar, SWT.HORIZONTAL, 0);
 		backItem.setText(ieResources.getString("Previous_page"));
 		backItem.setToolTipText(ieResources.getString("Previous_page_tip"));
+		backItem.setImage(backImg);
 		backItem.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				webBrowser.back();
@@ -182,6 +202,8 @@ public class IEHost implements Runnable, ICommandStateChangedListener {
 		forwardItem = new ToolItem(bar, SWT.NONE, 1);
 		forwardItem.setText(ieResources.getString("Next_page"));
 		forwardItem.setToolTipText(ieResources.getString("Next_page_tip"));
+		forwardItem.setImage(forwardImg);
+		forwardItem.setHotImage(null);
 		forwardItem.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				webBrowser.forward();
