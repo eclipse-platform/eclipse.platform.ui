@@ -7,11 +7,10 @@ package org.eclipse.compare.patch;
 import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.wizard.Wizard;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
@@ -29,7 +28,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	private PreviewPatchPage fPreviewPatchPage;
 	
 	private Patcher fPatcher;
-	private ISelection fSelection;
+	private IResource fTarget;
 
 		
 	/**
@@ -37,11 +36,12 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	 */
 	/* package */ PatchWizard(ISelection selection) {
 		
-		fSelection= selection;
+		fTarget= getResource(selection);
+
 		fPatcher= new Patcher();
 		
-		setWindowTitle("Apply Patch");
-
+		setWindowTitle("Resource Patcher");
+		
 		IDialogSettings workbenchSettings= CompareUIPlugin.getDefault().getDialogSettings();
 		IDialogSettings section= workbenchSettings.getSection(DIALOG_SETTINGS_KEY); //$NON-NLS-1$
 		if (section == null)
@@ -52,27 +52,23 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 		}	
 	}
 	
+	static IResource getResource(ISelection selection) {
+		IResource[] rs= Utilities.getResources(selection);
+		if (rs != null && rs.length > 0)
+			return rs[0];
+		return null;
+	}
+		
 	Patcher getPatcher() {
 		return fPatcher;
 	}
 	
-	ISelection getSelection() {
-		return fSelection;
+	IResource getTarget() {
+		return fTarget;
 	}
 	
-	/*package */ IFile existsInSelection(IPath path) {
-		if (fSelection != null && !fSelection.isEmpty()) {
-			IResource[] selection= Utilities.getResources(fSelection);
-			for (int i= 0; i < selection.length; i++) {
-				IResource r= selection[i];
-				if (r instanceof IContainer) {
-					IContainer c= (IContainer) r;
-					if (c.exists(path))
-						return c.getFile(path);
-				}
-			} 
-		}
-		return null;
+	void setTarget(IResource target) {
+		fTarget= target;
 	}
 	
 	/* (non-Javadoc)
@@ -109,11 +105,8 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 		cc.setProperty(CompareEditor.CONFIRM_SAVE_PROPERTY, new Boolean(false));
 
 		fPatcher.setName(fPatchWizardPage.getPatchName());
-		fPatcher.setStripPrefixSegments(fPreviewPatchPage.getStripPrefixSegments());
-		fPatcher.setFuzz(3);
-		fPatcher.setIgnoreWhitespace(true);
-		
-		CompareUI.openCompareEditor(new PatchCompareInput(cc, fPatcher, fSelection));
+
+		CompareUI.openCompareEditor(new PatchCompareInput(cc, fPatcher, new StructuredSelection(fTarget)));
 
 		// Save the dialog settings
 		if (fHasNewDialogSettings) {

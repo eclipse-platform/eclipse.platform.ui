@@ -4,27 +4,24 @@
  */
 package org.eclipse.compare.patch;
 
-import java.util.*;
 import java.io.*;
+import java.util.ArrayList;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.graphics.*;
 
-import org.eclipse.jface.wizard.*;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.wizard.WizardPage;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
 import org.eclipse.compare.structuremergeviewer.*;
-import org.eclipse.compare.contentmergeviewer.*;
 
 
 /**
@@ -64,6 +61,8 @@ import org.eclipse.compare.contentmergeviewer.*;
 	private Tree fTree;
 	private Combo fStripPrefixSegments;
 	private CompareViewerSwitchingPane fHunkViewer;
+	private Button fIgnoreWhitespaceButton;
+	private Text fFuzzField;
 	
 	private Image fNullImage;
 	private Image fAddImage;
@@ -73,7 +72,13 @@ import org.eclipse.compare.contentmergeviewer.*;
 	
 	
 	/* package */ PreviewPatchPage(PatchWizard pw) {
-		super("Preview Patch", "Preview Patch", null);
+		super("PreviewPatchPage", "Verify Patch", null);
+		
+		setMessage(
+			"The tree shows the contents of the patch. " +
+			"A checked item indicates that a patch could be applied succesfully.\n" +
+			"Uncheck an item if you want to exclude it.");
+		
 		fPatchWizard= pw;
 		//setPageComplete(false);
 		
@@ -117,29 +122,31 @@ import org.eclipse.compare.contentmergeviewer.*;
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
 		setControl(composite);
 		
+		buildPatchOptionsGroup(composite);
+		
+		// top pane showing diffs and hunks in a check box tree 
 		fTree= new Tree(composite, SWT.CHECK | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-		
-		GridData data= new GridData();
-		data.verticalAlignment= GridData.FILL;
-		data.horizontalAlignment= GridData.FILL;
-		data.grabExcessHorizontalSpace= true;
-		data.grabExcessVerticalSpace= true;
-		fTree.setLayoutData(data);
-		
-		createStripPrefixSegmentsGroup(composite);
+		GridData gd= new GridData();
+		gd.verticalAlignment= GridData.FILL;
+		gd.horizontalAlignment= GridData.FILL;
+		gd.grabExcessHorizontalSpace= true;
+		gd.grabExcessVerticalSpace= true;
+		fTree.setLayoutData(gd);
 				
+		// bottom pane showing hunks in compare viewer 
 		fHunkViewer= new CompareViewerSwitchingPane(composite, SWT.BORDER) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
 				return CompareUI.findContentViewer(oldViewer, (ICompareInput)input, this, fCompareConfiguration);
 			}
 		};
-								
-		GridData data2= new GridData();
-		data2.verticalAlignment= GridData.FILL;
-		data2.horizontalAlignment= GridData.FILL;
-		data2.grabExcessHorizontalSpace= true;
-		data2.grabExcessVerticalSpace= true;
-		fHunkViewer.setLayoutData(data2);
+		gd= new GridData();
+		gd.verticalAlignment= GridData.FILL;
+		gd.horizontalAlignment= GridData.FILL;
+		gd.grabExcessHorizontalSpace= true;
+		gd.grabExcessVerticalSpace= true;
+		fHunkViewer.setLayoutData(gd);
+		
+		// register listeners
 		
 		fTree.addSelectionListener(
 			new SelectionAdapter() {
@@ -165,9 +172,78 @@ import org.eclipse.compare.contentmergeviewer.*;
 			}
 		);
 		
+		// creating tree's content
 		buildTree();
 
 		// WorkbenchHelp.setHelp(composite, new DialogPageContextComputer(this, PATCH_HELP_CONTEXT_ID));								
+	}
+	
+	/**
+	 *	Create the group for setting various patch options
+	 */
+	private void buildPatchOptionsGroup(Composite parent) {
+		
+		Group group= new Group(parent, SWT.NONE);
+		group.setText("Patch Options");
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 7;
+		group.setLayout(layout);
+		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
+		//fPatchFileGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	
+		new Label(group, SWT.NONE).setText("Ignore leading path name segments:");
+
+		fStripPrefixSegments= new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
+		fStripPrefixSegments.add("0");
+		fStripPrefixSegments.setText("0");
+		
+		addSpacer(group);
+		
+		Label l= new Label(group, SWT.NONE);
+		l.setText("Maximum fuzz factor:");
+		l.setToolTipText("Allow context to shift this number of lines from the original place");
+		fFuzzField= new Text(group, SWT.BORDER);
+		fFuzzField.setText("2");
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_CENTER);
+		gd.widthHint= 30;
+		fFuzzField.setLayoutData(gd);
+
+		addSpacer(group);
+		
+		fIgnoreWhitespaceButton= new Button(group, SWT.CHECK);
+		fIgnoreWhitespaceButton.setText("Ignore Whitespace");
+		
+		addSpacer(group);
+		
+		// register listeners
+		
+		final Patcher patcher= fPatchWizard.getPatcher();
+				
+		fStripPrefixSegments.addSelectionListener(
+			new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (patcher.setStripPrefixSegments(getStripPrefixSegments()))
+						updateTree();
+				}
+			}
+		);
+		fIgnoreWhitespaceButton.addSelectionListener(
+			new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					if (patcher.setIgnoreWhitespace(fIgnoreWhitespaceButton.getSelection()))
+						updateTree();
+				}
+			}
+		);
+		
+		fFuzzField.addModifyListener(
+			new ModifyListener() {
+				public void modifyText(ModifyEvent e) {
+					if (patcher.setFuzz(getFuzzFactor()))
+						updateTree();
+				}
+			}
+		);
 	}
 	
 	ICompareInput createInput(Hunk hunk) {
@@ -241,35 +317,68 @@ import org.eclipse.compare.contentmergeviewer.*;
 					fStripPrefixSegments.add(Integer.toString(i));
 		}
 		
-		updateTree(0);
+		updateTree();
+	}
+	
+	private IFile existsInSelection(IPath path) {
+		IResource target= fPatchWizard.getTarget();
+		if (target instanceof IFile) {
+			IFile file= (IFile) target;
+			IPath path2= file.getFullPath().removeFirstSegments(1);
+			System.out.println("target: " + path2.toOSString());
+			System.out.println("  path: " + path.toOSString());
+			if (path.equals(path2))
+				return file;
+//			String name= file.getName();
+//			if (path.lastSegment().equals(name))
+//				return file;
+		} else if (target instanceof IContainer) {
+			IContainer c= (IContainer) target;
+			if (c.exists(path))
+				return c.getFile(path);
+		}
+		return null;
 	}
 	
 	/**
 	 * Updates label and checked state of tree items.
 	 */
-	private void updateTree(int strip) {
+	private void updateTree() {
 		if (fTree == null || fTree.isDisposed())
 			return;
+		int strip= getStripPrefixSegments();
 		TreeItem[] children= fTree.getItems();
 		for (int i= 0; i < children.length; i++) {
 			TreeItem item= children[i];
 			Diff diff= (Diff) item.getData();
-								
-			item.setText(diff.getDescription(strip));
-			
+			String error= null;
+											
 			IFile file= null;
 			if (diff.getType() == Differencer.ADDITION) {
 				IPath p= diff.fNewPath;
 				if (strip > 0 && strip < p.segmentCount())
 					p= p.removeFirstSegments(strip);
-				file= fPatchWizard.existsInSelection(p);
-				diff.fIsEnabled= file == null;
+				file= existsInSelection(p);
+				if (file == null) {
+					diff.fIsEnabled= true;
+				} else {
+					// file already exists
+					diff.fIsEnabled= false;					
+					error= "(file already exists)";
+				}
 			} else {
 				IPath p= diff.fOldPath;
 				if (strip > 0 && strip < p.segmentCount())
 					p= p.removeFirstSegments(strip);
-				file= fPatchWizard.existsInSelection(p);
+				file= existsInSelection(p);
 				diff.fIsEnabled= file != null;
+				if (file != null) {
+					diff.fIsEnabled= true;
+				} else {
+					// file doesn't exist
+					diff.fIsEnabled= false;					
+					error= "(file doesn't exist)";
+				}
 			}			
 			
 			boolean checked= false;
@@ -302,23 +411,37 @@ import org.eclipse.compare.contentmergeviewer.*;
 			TreeItem[] hunkItems= item.getItems();
 			for (int h= 0; h < hunkItems.length; h++) {
 				Hunk hunk= (Hunk) hunkItems[h].getData();
-				hunk.fIsEnabled= diff.fIsEnabled && !failedHunks.contains(hunk);
+				boolean failed= failedHunks.contains(hunk);
+				String hunkError= null;
+				if (failed)
+					hunkError= "(no match)";
+				hunk.fIsEnabled= diff.fIsEnabled && !failed;
 				hunkItems[h].setChecked(hunk.fIsEnabled);
 				if (hunk.fIsEnabled) {
 					checkedSubs++;
 					checked= true;
 				}
+				String hunkLabel= hunk.getDescription();
+				if (hunkError != null)
+					hunkLabel+= "   " + hunkError;
+				hunkItems[h].setText(hunkLabel);
 			}
 			
+			String label= diff.getDescription(strip);
+			if (error != null)
+				label+= "    " + error;
+			item.setText(label);
 			item.setChecked(checked);
-			item.setGrayed((checkedSubs > 0 &&  checkedSubs < hunkItems.length));
+			boolean gray= (checkedSubs > 0 &&  checkedSubs < hunkItems.length);
+			item.setGrayed(gray);
+			item.setExpanded(gray);
 		}
 	}
 	
 	/**
 	 * Updates the gray state of the given diff and the checked state of its children.
 	 */
-	void updateCheckedState(TreeItem diff) {
+	private void updateCheckedState(TreeItem diff) {
 		boolean checked= diff.getChecked();
 		diff.setGrayed(false);
 		TreeItem[] hunks= diff.getItems();
@@ -329,7 +452,7 @@ import org.eclipse.compare.contentmergeviewer.*;
 	/**
 	 * Updates the gray state of the given items parent.
 	 */
-	void updateGrayedState(TreeItem hunk) {
+	private void updateGrayedState(TreeItem hunk) {
 		TreeItem diff= hunk.getParentItem();
 		TreeItem[] hunks= diff.getItems();
 		int checked= 0;
@@ -340,35 +463,14 @@ import org.eclipse.compare.contentmergeviewer.*;
 		diff.setGrayed(checked > 0 && checked < hunks.length);
 	}
 	
-	/**
-	 *	Create the group for setting the strip prefix segment size
-	 */
-	private Composite createStripPrefixSegmentsGroup(Composite parent) {
-		
-		Composite group= new Composite(parent, SWT.NONE);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 3;
-		group.setLayout(layout);
-		group.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-	
-		new Label(group, SWT.NONE).setText("Ignore leading path name segments:");
-
-		fStripPrefixSegments= new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
-		fStripPrefixSegments.add("0");
-		fStripPrefixSegments.setText("0");
-		fStripPrefixSegments.addSelectionListener(
-			new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					int ix= fStripPrefixSegments.getSelectionIndex();
-					updateTree(ix);
-				}
-			}
-		);
-			
-		return group;
+	private void addSpacer(Composite parent) {
+		Label label= new Label(parent, SWT.NONE);
+		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.widthHint= 20;
+		label.setLayoutData(gd);
 	}
 	
-	/* package */ int getStripPrefixSegments() {
+	private int getStripPrefixSegments() {
 		int stripPrefixSegments= 0;
 		if (fStripPrefixSegments != null) {
 			String s= fStripPrefixSegments.getText();
@@ -379,6 +481,16 @@ import org.eclipse.compare.contentmergeviewer.*;
 		}
 		return stripPrefixSegments;
 	}
+	
+	private int getFuzzFactor() {
+		int fuzzFactor= 0;
+		if (fFuzzField != null) {
+			String s= fFuzzField.getText();
+			try {
+				fuzzFactor= Integer.parseInt(s);
+			} catch(NumberFormatException ex) {
+			}
+		}
+		return fuzzFactor;
+	}
 }
-
-

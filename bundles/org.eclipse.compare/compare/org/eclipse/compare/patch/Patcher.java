@@ -33,6 +33,7 @@ public class Patcher {
 		
 	private String fName;
 	private Diff[] fDiffs;
+	// patch options
 	private int fStripPrefixSegments;
 	private int fFuzz;
 	private boolean fIgnoreWhitespace;
@@ -59,10 +60,6 @@ public class Patcher {
 		return fDiffs;
 	}
 	
-	void setStripPrefixSegments(int strip) {
-		fStripPrefixSegments= strip;
-	}
-	
 	IPath getPath(Diff diff) {
 		IPath path= diff.getPath();
 		if (fStripPrefixSegments > 0 && fStripPrefixSegments < path.segmentCount())
@@ -70,14 +67,39 @@ public class Patcher {
 		return path;
 	}
 
-	void setFuzz(int fuzz) {
-		fFuzz= fuzz;
+	/**
+	 * Returns <code>true</code> if new value differs from old.
+	 */
+	boolean setStripPrefixSegments(int strip) {
+		if (strip != fStripPrefixSegments) {
+			fStripPrefixSegments= strip;
+			return true;
+		}
+		return false;
 	}
 	
-	void setIgnoreWhitespace(boolean ignoreWhitespace) {
-		fIgnoreWhitespace= ignoreWhitespace;
+	/**
+	 * Returns <code>true</code> if new value differs from old.
+	 */
+	boolean setFuzz(int fuzz) {
+		if (fuzz != fFuzz) {
+			fFuzz= fuzz;
+			return true;
+		}
+		return false;
 	}
 	
+	/**
+	 * Returns <code>true</code> if new value differs from old.
+	 */
+	boolean setIgnoreWhitespace(boolean ignoreWhitespace) {
+		if (ignoreWhitespace != fIgnoreWhitespace) {
+			fIgnoreWhitespace= ignoreWhitespace;
+			return true;
+		}
+		return false;
+	}
+		
 	//---- parsing patch files
 		
 	/* package */ void parse(BufferedReader reader) throws IOException {
@@ -468,7 +490,7 @@ public class Patcher {
 			if (pos >= 0)
 				path= path.substring(0, pos);
 			if (path2 != null && !path2.equals(path)) {
-				System.out.println("path mismatch: " + path2);
+				// System.out.println("path mismatch: " + path2);
 				path= path2;
 			}
 			return new Path(path);
@@ -668,18 +690,24 @@ public class Patcher {
 		return hunk.fNewLength - hunk.fOldLength;
 	}
 
+	private static String stripWhiteSpace(String s) {
+		StringBuffer sb= new StringBuffer();
+		int l= s.length();
+		for (int i= 0; i < l; i++) {
+			char c= s.charAt(i);
+			if (!Character.isWhitespace(c))
+				sb.append(c);
+		}
+		return sb.toString();
+	}
+	
 	/**
-	 * Compares two strings without taking the line endings into account.
-	 * Supported line endings are "\n", "\r", and "\r\n".
+	 * Compares two strings.
+	 * If fIgnoreWhitespace is true whitespace and line endings are ignored.
 	 */
 	private boolean linesMatch(String line1, String line2) {
-		if (fIgnoreWhitespace) {
-			int l1= length(line1);
-			int l2= length(line2);
-			if (l1 != l2)
-				return false;
-			return line1.regionMatches(0, line2, 0, l1);
-		}
+		if (fIgnoreWhitespace)
+			return stripWhiteSpace(line1).equals(stripWhiteSpace(line2));
 		return line1.equals(line2);
 	}
 	
