@@ -1482,8 +1482,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 		// Launch button
 		getTabViewer().refresh();
-		getButton(ID_LAUNCH_BUTTON).setEnabled(getTabViewer().canLaunch());
-		
+		boolean canLaunch = getTabViewer().canLaunch();
+		getButton(ID_LAUNCH_BUTTON).setEnabled(canLaunch);
+		fDoubleClickAction.setEnabled(canLaunch);		
 	}
 	
 	/**
