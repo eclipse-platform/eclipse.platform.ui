@@ -1971,8 +1971,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected final void internalInit(IWorkbenchWindow window, final IEditorSite site, final IEditorInput input) throws PartInitException {
 		
-		final PartInitException[] exceptions= new PartInitException[1];
-		
 		IRunnableWithProgress runnable= new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
@@ -1985,7 +1983,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					doSetInput(input);
 					
 				} catch (CoreException x) {
-					exceptions[0]= new PartInitException(x.getStatus());
+					throw new InvocationTargetException(x);
 				} finally {
 					if (getDocumentProvider() instanceof IDocumentProviderExtension2) {
 						IDocumentProviderExtension2 extension= (IDocumentProviderExtension2) getDocumentProvider();
@@ -2002,12 +2000,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		} catch (InvocationTargetException x) {
 			Throwable t= x.getTargetException();
 			if (t instanceof CoreException)
-				exceptions[0]= new PartInitException(((CoreException)t).getStatus());
-			else
-				exceptions[0]= new PartInitException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.getString("Editor.error.init"), t)); //$NON-NLS-1$
+				throw new PartInitException(((CoreException) t).getStatus());
+			throw new PartInitException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.getString("Editor.error.init"), t)); //$NON-NLS-1$
 		}
-		if (exceptions[0] != null)
-			throw exceptions[0];
 	}
 	
 	/*
