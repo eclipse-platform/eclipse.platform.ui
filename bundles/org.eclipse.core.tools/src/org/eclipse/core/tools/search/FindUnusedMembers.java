@@ -40,16 +40,15 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 
 	private void doSearchCU(ICompilationUnit cu, IProgressMonitor monitor) throws JavaModelException, IOException {
 		IType[] allTypes = cu.getAllTypes();
-		for (int i = 0; i < allTypes.length; i++) {
+		for (int i = 0; i < allTypes.length; i++)
 			doSearchType(allTypes[i], monitor);
-		}
 	}
 
 	public void doSearchType(IType type, IProgressMonitor monitor) throws JavaModelException, IOException {
+		headerWritten = false;
 
-		// Search for references
 		IMethod[] methods = type.getMethods();
-		IField[] fields= type.getFields();
+		IField[] fields = type.getFields();
 		monitor.beginTask("Searching for references.", methods.length + fields.length); //$NON-NLS-1$
 		try {
 			for (int i = 0; i < methods.length; i++) {
@@ -76,13 +75,13 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 		}
 	}
 
+	public int getUnusedMethodCount() {
+		return unusedMemberCount;
+	}
+
 	private boolean hasReferences(IMember member, IProgressMonitor monitor) throws JavaModelException {
 		ICompilationUnit[] affectedUnits = RefactoringSearchEngine.findAffectedCompilationUnits(SearchPattern.createPattern(member, IJavaSearchConstants.REFERENCES), RefactoringScopeFactory.create(member.getDeclaringType()), new SubProgressMonitor(monitor, 1), new RefactoringStatus());
 		return affectedUnits.length > 0;
-	}
-
-	public int getUnusedMethodCount() {
-		return unusedMemberCount;
 	}
 
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -98,12 +97,20 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 			throw new InvocationTargetException(e);
 		}
 	}
-	
+
 	private void writeHeader(IType type) throws IOException {
 		if (!headerWritten) {
 			headerWritten = true;
 			output.write("\n\n" + type.getFullyQualifiedName()); //$NON-NLS-1$
 		}
+	}
+
+	private void writeResult(IField field) throws IOException, IllegalArgumentException, JavaModelException {
+		writeHeader(field.getDeclaringType());
+		output.write("\n\t"); //$NON-NLS-1$
+		output.write(Signature.toString(field.getTypeSignature()));
+		output.write(" "); //$NON-NLS-1$
+		output.write(field.getElementName());
 	}
 
 	/**
@@ -126,12 +133,5 @@ public class FindUnusedMembers implements IRunnableWithProgress {
 				output.write(","); //$NON-NLS-1$
 		}
 		output.write(")"); //$NON-NLS-1$
-	}
-	private void writeResult(IField field) throws IOException, IllegalArgumentException, JavaModelException {
-		writeHeader(field.getDeclaringType());
-		output.write("\n\t"); //$NON-NLS-1$
-		output.write(Signature.toString(field.getTypeSignature()));
-		output.write(" "); //$NON-NLS-1$
-		output.write(field.getElementName());
 	}
 }
