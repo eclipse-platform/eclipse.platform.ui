@@ -25,7 +25,7 @@ public class TypedResourceVisitor implements IResourceVisitor {
 			case IResource.PROJECT:
 				return visitProject((IProject)resource);
 			default:
-				Assert.isTrue(false, SearchMessages.getString("TypedResourceVisitor.unknownResourceType")); //$NON-NLS-1$
+				Assert.isTrue(false, "unknown resource type"); //$NON-NLS-1$
 		}
 		return false;
 	}
