@@ -25,8 +25,7 @@
 
 
 <body onload="adjustMargins()" >
- 
-<%
+
 <%
 	// Generate the results
 	if(request.getParameter("searchWord")!=null){
