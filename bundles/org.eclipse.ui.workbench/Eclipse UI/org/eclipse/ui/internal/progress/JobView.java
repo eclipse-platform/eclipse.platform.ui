@@ -30,8 +30,8 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.preferences.ViewPreferencesAction;
 
-import org.eclipse.ui.internal.preferences.ViewPreferencesAction;
 import org.eclipse.ui.internal.util.ImageSupport;
 
 /**
