@@ -15,7 +15,7 @@ import org.eclipse.jface.text.Position;
  */
 public class HyperlinkPosition extends Position {
 	
-	public static final String HYPER_LINK_CATEGORY = DebugUIPlugin.getUniqueIdentifier() + ".HYPER_LINK";
+	public static final String HYPER_LINK_CATEGORY = DebugUIPlugin.getUniqueIdentifier() + ".HYPER_LINK"; //$NON-NLS-1$
 	
 	private IConsoleHyperlink fLink = null;
 

@@ -76,7 +76,7 @@ public class LaunchGroupExtension {
 	 */
 	public ImageDescriptor getImageDescriptor() {
 		if (fImageDescriptor == null) {
-			fImageDescriptor = createImageDescriptor("image");
+			fImageDescriptor = createImageDescriptor("image"); //$NON-NLS-1$
 		}
 		return fImageDescriptor;
 	}
@@ -90,7 +90,7 @@ public class LaunchGroupExtension {
 	 */
 	public ImageDescriptor getBannerImageDescriptor() {
 		if (fBannerImageDescriptor == null) {
-			fBannerImageDescriptor = createImageDescriptor("bannerImage");
+			fBannerImageDescriptor = createImageDescriptor("bannerImage"); //$NON-NLS-1$
 		}
 		return fBannerImageDescriptor;
 	}	
@@ -101,7 +101,7 @@ public class LaunchGroupExtension {
 	 * @return the label for this launch group
 	 */
 	public String getLabel() {
-		return getConfigurationElement().getAttribute("label");
+		return getConfigurationElement().getAttribute("label"); //$NON-NLS-1$
 	}	
 	
 	/**
@@ -110,7 +110,7 @@ public class LaunchGroupExtension {
 	 * @return the id for this launch group
 	 */
 	public String getIdentifier() {
-		return getConfigurationElement().getAttribute("id");
+		return getConfigurationElement().getAttribute("id"); //$NON-NLS-1$
 	}	
 	
 	/**
@@ -119,7 +119,7 @@ public class LaunchGroupExtension {
 	 * @return the category for this launch group, possibly <code>null</code>
 	 */
 	public String getCategory() {
-		return getConfigurationElement().getAttribute("category");
+		return getConfigurationElement().getAttribute("category"); //$NON-NLS-1$
 	}
 	
 	/**
@@ -128,7 +128,7 @@ public class LaunchGroupExtension {
 	 * @return the mode for this launch group
 	 */
 	public String getMode() {
-		return getConfigurationElement().getAttribute("mode");
+		return getConfigurationElement().getAttribute("mode"); //$NON-NLS-1$
 	}					
 	
 	/**
@@ -155,11 +155,11 @@ public class LaunchGroupExtension {
 	 * @return boolean
 	 */
 	public boolean isPublic() {
-		String string = getConfigurationElement().getAttribute("public");
+		String string = getConfigurationElement().getAttribute("public"); //$NON-NLS-1$
 		if (string == null) {
 			return true;
 		}
-		return string.equals("true");
+		return string.equals("true"); //$NON-NLS-1$
 	}
 }
 

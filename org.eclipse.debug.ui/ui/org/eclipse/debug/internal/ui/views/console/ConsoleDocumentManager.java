@@ -308,7 +308,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
 				IConfigurationElement extension = elements[i];
-				fColorProviders.put(extension.getAttributeAsIs("processType"), extension);
+				fColorProviders.put(extension.getAttributeAsIs("processType"), extension); //$NON-NLS-1$
 			}
 		}
 		IConfigurationElement extension = (IConfigurationElement)fColorProviders.get(type);
@@ -343,7 +343,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
 			for (int i = 0; i < elements.length; i++) {
 				IConfigurationElement extension = elements[i];
-				String processType = extension.getAttributeAsIs("processType");
+				String processType = extension.getAttributeAsIs("processType"); //$NON-NLS-1$
 				List list = (List)fLineTrackers.get(processType);
 				if (list == null) {
 					list = new ArrayList();

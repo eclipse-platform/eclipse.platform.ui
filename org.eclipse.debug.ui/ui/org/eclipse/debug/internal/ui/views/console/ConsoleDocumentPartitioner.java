@@ -710,7 +710,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 					
 					// remove overflow text
 					try {
-						fDocument.replace(0, overflow, "");
+						fDocument.replace(0, overflow, ""); //$NON-NLS-1$
 					} catch (BadLocationException e) {
 						DebugUIPlugin.log(e);
 					}

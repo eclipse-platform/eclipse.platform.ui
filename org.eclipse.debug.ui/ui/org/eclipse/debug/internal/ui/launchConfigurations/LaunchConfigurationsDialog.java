@@ -450,7 +450,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if (getWorkingSetActionManager() != null) {
 			IDialogSettings settings = getDialogSettings();
 			IWorkingSet workingSet = getWorkingSetActionManager().getWorkingSet();
-			String name = "";
+			String name = ""; //$NON-NLS-1$
 			if (workingSet != null) {
 				name = workingSet.getName();
 			}
@@ -1807,7 +1807,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @return String
 	 */
 	protected String getDialogSettingsSectionName() {
-		return IDebugUIConstants.PLUGIN_ID + ".LAUNCH_CONFIGURATIONS_DIALOG_SECTION";
+		return IDebugUIConstants.PLUGIN_ID + ".LAUNCH_CONFIGURATIONS_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 	
 	/**

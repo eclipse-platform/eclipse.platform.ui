@@ -101,7 +101,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	
 		// Set the things that TitleAreaDialog takes care of 
 		setTitle("Edit launch configuration properties");
-		setMessage("");
+		setMessage(""); //$NON-NLS-1$
 		setModeLabelState();
 	
 		// Build the launch configuration edit area and put it into the composite.
@@ -246,6 +246,6 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	 * @return String
 	 */
 	protected String getDialogSettingsSectionName() {
-		return IDebugUIConstants.PLUGIN_ID + ".LAUNCH_CONFIGURATION_PROPERTIES_DIALOG_SECTION";
+		return IDebugUIConstants.PLUGIN_ID + ".LAUNCH_CONFIGURATION_PROPERTIES_DIALOG_SECTION"; //$NON-NLS-1$
 	}
 }

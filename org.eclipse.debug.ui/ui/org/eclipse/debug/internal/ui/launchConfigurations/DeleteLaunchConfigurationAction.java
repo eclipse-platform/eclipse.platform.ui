@@ -24,7 +24,7 @@ public class DeleteLaunchConfigurationAction extends AbstractLaunchConfiguration
 	/**
 	 * Action identifier for IDebugView#getAction(String)
 	 */
-	public static final String ID_DELETE_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_DELETE_ACTION";
+	public static final String ID_DELETE_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_DELETE_ACTION"; //$NON-NLS-1$
 	
 	class Confirmation implements IConfirmationRequestor {
 		/**

@@ -23,7 +23,7 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 	/**
 	 * Action identifier for IDebugView#getAction(String)
 	 */
-	public static final String ID_DUPLICATE_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_DUPLICATE_ACTION";
+	public static final String ID_DUPLICATE_ACTION = DebugUIPlugin.getUniqueIdentifier() + ".ID_DUPLICATE_ACTION"; //$NON-NLS-1$
 
 	/**
 	 * Constructs an action to duplicate a launch configuration 
