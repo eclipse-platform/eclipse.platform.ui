@@ -11,7 +11,6 @@
 package org.eclipse.ui.intro.internal.html;
 import java.io.*;
 import java.net.*;
-
 import org.eclipse.ui.intro.internal.*;
 import org.eclipse.ui.intro.internal.model.*;
 import org.eclipse.ui.intro.internal.util.*;
@@ -376,7 +375,7 @@ public class IntroHTMLGenerator {
 	 */
 	private HTMLElement generateIntroText(IntroText element, int indentLevel) {
 		HTMLElement textElement = generateTextElement(
-				IIntroHTMLConstants.ELEMENT_PARAGRAPH, null,
+				IIntroHTMLConstants.ELEMENT_PARAGRAPH, element.getId(),
 				IIntroHTMLConstants.SPAN_CLASS_TEXT, element.getText(),
 				indentLevel);
 		return textElement;
@@ -560,7 +559,7 @@ public class IntroHTMLGenerator {
 	 */
 	private HTMLElement generateLinkElement(String href, int indentLevel) {
 		HTMLElement link = new FormattedHTMLElement(
-				IIntroHTMLConstants.ELEMENT_LINK, indentLevel, true);
+				IIntroHTMLConstants.ELEMENT_LINK, indentLevel, true, false);
 		link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_RELATIONSHIP,
 				IIntroHTMLConstants.LINK_REL);
 		link.addAttribute(IIntroHTMLConstants.ATTRIBUTE_STYLE,
@@ -718,7 +717,7 @@ public class IntroHTMLGenerator {
 	 */
 	private HTMLElement generateImageElement(String imageSrc, int indentLevel) {
 		HTMLElement image = new FormattedHTMLElement(
-				IIntroHTMLConstants.ELEMENT_IMG, indentLevel, true);
+				IIntroHTMLConstants.ELEMENT_IMG, indentLevel, true, false);
 		image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_SRC, imageSrc);
 		return image;
 	}

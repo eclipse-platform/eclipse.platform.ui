@@ -9,42 +9,52 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.intro.internal.html;
-
 import java.util.*;
-
 /**
  * A FormattedHTMLElement is an HTMLElement that is indented and can have its
  * content on a separate line from its start and end tags
  */
 public class FormattedHTMLElement extends HTMLElement {
-
 	// an integer representing how many tabs to insert when printing out this
 	// element and its content
 	private int indentLevel;
 	// indicates whether to print this element on a single line or on multiple
 	// lines
 	private boolean spanMultipleLines;
-
-	public FormattedHTMLElement(
-		String name,
-		int indentLevel,
-		boolean spanMultipleLines) {
+	// indicates whether an end tag is required for this element. default is
+	// true, since most elements require an end tag
+	private boolean endTagRequired = true;
+	public FormattedHTMLElement(String name, int indentLevel,
+			boolean spanMultipleLines) {
 		super(name);
 		this.indentLevel = indentLevel;
 		this.spanMultipleLines = spanMultipleLines;
+		// default
+		endTagRequired = true;
 	}
-
-	public FormattedHTMLElement(
-		String name,
-		Map attributes,
-		Vector content,
-		int indentLevel,
-		boolean spanMultipleLines) {
+	public FormattedHTMLElement(String name, int indentLevel,
+			boolean spanMultipleLines, boolean endTagRequired) {
+		super(name);
+		this.indentLevel = indentLevel;
+		this.spanMultipleLines = spanMultipleLines;
+		this.endTagRequired = endTagRequired;
+	}
+	public FormattedHTMLElement(String name, Map attributes, Vector content,
+			int indentLevel, boolean spanMultipleLines) {
 		super(name, attributes, content);
 		this.indentLevel = indentLevel;
 		this.spanMultipleLines = spanMultipleLines;
+		endTagRequired = true;
 	}
-
+	/**
+	 * Set whether the end tag is required for this element
+	 * 
+	 * @param required
+	 *            true if end tag required, false otherwise
+	 */
+	public void setEndTagRequired(boolean required) {
+		this.endTagRequired = required;
+	}
 	/**
 	 * Set the indent level that should be applied to this element when printed
 	 * 
@@ -54,7 +64,6 @@ public class FormattedHTMLElement extends HTMLElement {
 	public void setIndentLevel(int indentLevel) {
 		this.indentLevel = indentLevel;
 	}
-
 	/**
 	 * Set whether or not this element should be printed over multiple lines,
 	 * or on a single line
@@ -66,7 +75,6 @@ public class FormattedHTMLElement extends HTMLElement {
 	public void setSpanMultipleLines(boolean spanMultipleLines) {
 		this.spanMultipleLines = spanMultipleLines;
 	}
-
 	/**
 	 * Create a string of tabs to insert before the element is printed
 	 * 
@@ -82,7 +90,6 @@ public class FormattedHTMLElement extends HTMLElement {
 		}
 		return indent;
 	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -90,36 +97,26 @@ public class FormattedHTMLElement extends HTMLElement {
 	 */
 	public String toString() {
 		StringBuffer element = new StringBuffer();
-
 		// insert the indent
 		element.append(getIndent(indentLevel));
-
 		// add the start tag and attributes
-		element.append(
-			HTMLUtil.createHTMLStartTag(
-				getElementName(),
-				getElementAttributes(),
-				spanMultipleLines));
-
-		// if there is no content, just return the element as is
-		if (getElementContent().isEmpty()) {
+		element.append(HTMLUtil.createHTMLStartTag(getElementName(),
+				getElementAttributes(), spanMultipleLines));
+		// if there is no content and an end tag is not required just
+		// return the element as is
+		if (getElementContent().isEmpty() && !endTagRequired) {
 			return element.toString();
 		}
-
-		// include the element's content
+		// include the element's content, if there is any
 		for (Iterator it = getElementContent().iterator(); it.hasNext();) {
 			Object content = it.next();
 			element.append(content);
 		}
-
 		// indent the end tag if we're on a new line
 		if (indentLevel > 0 && spanMultipleLines)
 			element.append(getIndent(indentLevel));
-
 		// include an end tag
 		element.append(HTMLUtil.createHTMLEndTag(getElementName(), true));
-
 		return element.toString();
 	}
-
 }
