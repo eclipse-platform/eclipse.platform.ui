@@ -41,6 +41,7 @@ public class ActionDescriptor {
 	public static final String ATT_HOVERICON = "hoverIcon";//$NON-NLS-1$
 	public static final String ATT_DISABLEDICON = "disabledIcon";//$NON-NLS-1$
 	public static final String ATT_CLASS = "class";//$NON-NLS-1$
+	public static final String ATT_ACCELERATOR = "accelerator";//$NON-NLS-1$
 /**
  * Creates a new descriptor with the specified target.
  */
@@ -64,6 +65,7 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	String hoverIcon = actionElement.getAttribute(ATT_HOVERICON);
 	String disabledIcon = actionElement.getAttribute(ATT_DISABLEDICON);
 	String description = actionElement.getAttribute(ATT_DESCRIPTION);
+	String accelerator = actionElement.getAttribute(ATT_ACCELERATOR);
 
 	// Verify input.
 	if (label == null) {
@@ -127,6 +129,15 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	}
 	if (disabledIcon != null) {
 		action.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptorFromExtension(actionElement.getDeclaringExtension(), disabledIcon));
+	}
+	
+	if(accelerator != null){
+		try{
+			action.setAccelerator(Integer.valueOf(accelerator).intValue());
+		}
+		catch (NumberFormatException exception){
+			WorkbenchPlugin.log("Invalid accelerator declaration: " + id); //$NON-NLS-1$
+		}
 	}
 }
 /**

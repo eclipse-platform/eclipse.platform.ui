@@ -4,7 +4,7 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
@@ -21,6 +21,7 @@ public SaveAction(IWorkbenchWindow window) {
 	setToolTipText(WorkbenchMessages.getString("SaveAction.toolTip")); //$NON-NLS-1$
 	setId(IWorkbenchActionConstants.SAVE);
 	WorkbenchHelp.setHelp(this, new Object[] {IHelpContextIds.SAVE_ACTION});
+	setAccelerator(SWT.CTRL |'s');
 }
 /**
  * Performs the save.
