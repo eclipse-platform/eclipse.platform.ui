@@ -232,7 +232,6 @@ public class ConfigurationView
 
 		private Object[] getAllFeatures(IConfiguredSiteAdapter adapter) {
 			IConfiguredSite csite = adapter.getConfigurationSite();
-			IFeatureReference[] crefs = csite.getConfiguredFeatures();
 			ISite site = csite.getSite();
 			IFeatureReference[] allRefs = site.getFeatureReferences();
 			Object[] result = new Object[allRefs.length];
@@ -244,20 +243,12 @@ public class ConfigurationView
 				} catch (CoreException e) {
 					feature = new MissingFeature(site, allRefs[i].getURL());
 				}
-				boolean configured = isOnTheList(allRefs[i], crefs);
-				result[i] = new ConfiguredFeatureAdapter(adapter, feature, configured);
+				result[i] = new ConfiguredFeatureAdapter(adapter, feature, csite.isConfigured(feature));
 			}
 			return result;
 		}
 
-		private boolean isOnTheList(IFeatureReference ref, IFeatureReference[] refs) {
-			for (int i = 0; i < refs.length; i++) {
-				IFeatureReference confRef = refs[i];
-				if (confRef.getURL().equals(ref.getURL()))
-					return true;
-			}
-			return false;
-		}
+
 
 		/**
 		 * @see ITreeContentProvider#getParent(Object)

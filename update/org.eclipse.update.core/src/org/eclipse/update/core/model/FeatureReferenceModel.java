@@ -4,6 +4,7 @@ package org.eclipse.update.core.model;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
@@ -55,7 +56,21 @@ public class FeatureReferenceModel extends ModelObject {
 			return false;
 
 		FeatureReferenceModel f = (FeatureReferenceModel) object;
-		return (getURL().equals(f.getURL()));
+		if (getURL().equals(f.getURL())) return true;
+		
+		// check if URL are file: URL as we may
+		// have 2 URL pointing to the same featureReference
+		// but with different representation
+		// (i.e. file:/C;/ and file:C:/)
+		if (!"file".equalsIgnoreCase(getURL().getProtocol())) return false;
+		if (!"file".equalsIgnoreCase(f.getURL().getProtocol())) return false;		
+		
+		File file1 = new File(getURL().getFile());
+		File file2 = new File(f.getURL().getFile());
+		
+		if (file1==null) return false;
+		return (file1.equals(file2));
+		
 	}
 
 	/**

@@ -39,8 +39,9 @@ public class InstallWizard extends Wizard {
 	private boolean hasLicense() {
 		IFeature feature = job.getFeature();
 		IURLEntry info = feature.getLicense();
-		if (info==null) return false;
-		return info.getAnnotation()!=null && info.getAnnotation().length()>0;
+		if (info == null)
+			return false;
+		return info.getAnnotation() != null && info.getAnnotation().length() > 0;
 	}
 
 	/**
@@ -127,9 +128,7 @@ public class InstallWizard extends Wizard {
 	/*
 	 * When we are uninstalling, there is not targetSite
 	 */
-	private void execute(
-		IConfiguredSite targetSite,
-		IProgressMonitor monitor)
+	private void execute(IConfiguredSite targetSite, IProgressMonitor monitor)
 		throws CoreException {
 		IFeature feature = job.getFeature();
 		if (job.getJobType() == PendingChange.UNINSTALL) {
@@ -155,30 +154,30 @@ public class InstallWizard extends Wizard {
 			if (oldFeature != null) {
 				success = unconfigure(oldFeature);
 			}
-			if (success) targetSite.install(feature,getVerificationListener(), monitor);
-			else return;
-		}
-		else if (job.getJobType() == PendingChange.CONFIGURE) {
+			if (success)
+				targetSite.install(feature, getVerificationListener(), monitor);
+			else {
+				// FIXME should also throw error
+				return;
+			}
+		} else if (job.getJobType() == PendingChange.CONFIGURE) {
 			configure(job.getFeature());
-		}
-		else if (job.getJobType() == PendingChange.UNCONFIGURE) {
+		} else if (job.getJobType() == PendingChange.UNCONFIGURE) {
 			unconfigure(job.getFeature());
-		}
-		else {
+		} else {
 			return;
 		}
 		UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 		model.addPendingChange(job);
 	}
 
-	private IConfiguredSite findConfigSite(IFeature feature)
-		throws CoreException {
+	private IConfiguredSite findConfigSite(IFeature feature) throws CoreException {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		IConfiguredSite[] configSite =
 			localSite.getCurrentConfiguration().getConfiguredSites();
 		for (int i = 0; i < configSite.length; i++) {
 			IConfiguredSite site = configSite[i];
-			if (site.getSite().getURL().equals(feature.getSite().getURL())) {
+			if (site.getSite().equals(feature.getSite())) {
 				return site;
 			}
 		}
@@ -198,9 +197,8 @@ public class InstallWizard extends Wizard {
 			site.configure(feature);
 		}
 	}
-	
-	
-	private IVerificationListener getVerificationListener(){
+
+	private IVerificationListener getVerificationListener() {
 		return new JarVerificationService(this.getShell());
 	}
 }

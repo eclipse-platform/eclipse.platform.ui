@@ -234,8 +234,8 @@ public class ConfiguredSite
 		activity.setDate(new Date());
 
 		try {
-			FeatureReferenceModel referenceToRemove= null;
-			FeatureReferenceModel[] featureRef= getSiteModel().getFeatureReferenceModels();
+			IFeatureReference referenceToRemove= null;
+			IFeatureReference[] featureRef= getSite().getFeatureReferences();
 			IFeatureReference ref= getSite().getFeatureReference(feature);
 			for (int i= 0; i < featureRef.length; i++) {
 				if (featureRef[i].equals(ref)) {
@@ -667,4 +667,15 @@ public class ConfiguredSite
 		}
 		return false;
 	}
+	
+	/**
+	 * @since 2.0
+	 */
+	public boolean isConfigured(IFeature feature) {
+		if (getConfigurationPolicy()==null) return false;
+		IFeatureReference featureReference= getSite().getFeatureReference(feature);
+		if (featureReference==null) return false;
+		return getConfigurationPolicy().isConfigured(featureReference);
+	}
+	
 }

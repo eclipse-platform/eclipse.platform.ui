@@ -73,9 +73,15 @@ public interface IConfiguredSite extends IAdaptable {
 	 */
 	boolean isBroken(IFeature feature);
 
+	/**
+	 * returns true if the Feature is configured.
+	 * @return Returns a boolean
+	 * @since 2.0
+	 */
+	boolean isConfigured(IFeature feature);
 		
 	/**
-	 * Configure the DefaultFeature to be available at next startup
+	 * Configure the feature to be available at next startup
 	 * @since 2.0 
 	 */
 

@@ -62,6 +62,7 @@ public class TextModel implements ITextModel {
 			*/
 			processDocument(parser.getDocument(), expandURLs);
 		} catch (SAXException e) {
+			// FIXME log instead 
 			System.out.println(e);
 		} catch (IOException e) {
 		}

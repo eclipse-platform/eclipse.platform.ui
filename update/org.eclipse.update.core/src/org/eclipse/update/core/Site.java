@@ -4,6 +4,7 @@ package org.eclipse.update.core;
  * All Rights Reserved.
  */
 
+import java.io.File;
 import java.net.URL;
 import java.util.*;
 
@@ -86,7 +87,20 @@ public class Site extends SiteModel implements ISite {
 			return false;
 		ISite otherSite = (ISite) obj;
 
-		return getURL().equals(otherSite.getURL());
+		if (getURL().equals(otherSite.getURL())) return true;
+		
+		// check if URL are file: URL as we may
+		// have 2 URL pointing to the same featureReference
+		// but with different representation
+		// (i.e. file:/C;/ and file:C:/)
+		if (!"file".equalsIgnoreCase(getURL().getProtocol())) return false;
+		if (!"file".equalsIgnoreCase(otherSite.getURL().getProtocol())) return false;		
+		
+		File file1 = new File(getURL().getFile());
+		File file2 = new File(otherSite.getURL().getFile());
+		
+		if (file1==null) return false;
+		return (file1.equals(file2));		
 	}
 
 	/**

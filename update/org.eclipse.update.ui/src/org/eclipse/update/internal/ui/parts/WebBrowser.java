@@ -119,6 +119,7 @@ public class WebBrowser implements OleListener {
 			// Display and log error, then delegate to parent UI class. 
 			// The actual translated message goes all the way back to the calling
 			// UI class, for display.
+			//FIXME log instead
 			System.out.println(e);
 			//String msg = WorkbenchResources.getString("WE001");
 			//Util.displayErrorDialog(msg, e);

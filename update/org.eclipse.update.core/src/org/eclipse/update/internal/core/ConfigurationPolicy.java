@@ -43,9 +43,20 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 	/**
 	 * @since 2.0
 	 */
-	public boolean isConfigured(IFeatureReference feature) {
-		return super.isConfigured((FeatureReferenceModel) feature);
+	public boolean isConfigured(IFeatureReference featureReference) {
+		
+		if (featureReference==null) return false;
+		
+		// returns true if the feature is part of the configured list
+		IFeatureReference[] refs = getConfiguredFeatures();
+		for (int i = 0; i < refs.length; i++) {
+			if (featureReference.equals(refs[i])) {
+				return true;
+			}
+		}
+		return false;
 	}
+
 
 	/**
 	 * adds the feature to the list of features if the policy is USER_INCLUDE
@@ -409,4 +420,31 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 		this.configuredSite = configuredSite;
 	}
 
+	/**
+	 * removes a feature reference
+	 */
+	public void removeFeatureReference(IFeatureReference featureRef) {
+		if (featureRef instanceof FeatureReferenceModel){
+			removeFeatureReference((FeatureReferenceModel) featureRef);
+		}
+	}
+
+	/**
+	 * 
+	 */
+	public void addConfiguredFeatureReference(IFeatureReference featureRef) {	
+		if (featureRef instanceof FeatureReferenceModel){
+			addConfiguredFeatureReference((FeatureReferenceModel) featureRef);
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	public void addUnconfiguredFeatureReference(IFeatureReference featureRef) {	
+		if (featureRef instanceof FeatureReferenceModel){
+			addUnconfiguredFeatureReference((FeatureReferenceModel) featureRef);
+		}
+	}
+	
 }

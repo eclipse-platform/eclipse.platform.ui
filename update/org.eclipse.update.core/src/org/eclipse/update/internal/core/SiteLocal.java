@@ -702,10 +702,10 @@ public class SiteLocal
 		throws CoreException {
 
 		ConfiguredSite newConfiguredSite = createNewConfigSite(oldConfiguredSite);
-		ConfigurationPolicyModel newSitePolicyModel =
-			newConfiguredSite.getConfigurationPolicyModel();
-		ConfigurationPolicyModel oldSitePolicyModel =
-			((ConfiguredSite) oldConfiguredSite).getConfigurationPolicyModel();
+		ConfigurationPolicy newSitePolicy =
+			newConfiguredSite.getConfigurationPolicy();
+		ConfigurationPolicy oldSitePolicy =
+			((ConfiguredSite) oldConfiguredSite).getConfigurationPolicy();
 
 		// check the Features that are still on the new version of the Config Site
 		// and the new one. Add the new Features as Configured
@@ -729,19 +729,18 @@ public class SiteLocal
 
 			// new fature found: add as configured
 			if (!newFeatureFound) {
-				newSitePolicyModel.addConfiguredFeatureReference(currentFeatureRefModel);
+				newSitePolicy.addConfiguredFeatureReference(currentFeatureRefModel);
 			}
 		}
 
 		// if a feature has been found in new and old state use old state (configured/unconfigured)
 		Iterator featureIter = toCheck.iterator();
 		while (featureIter.hasNext()) {
-			FeatureReferenceModel oldFeatureRef =
-				(FeatureReferenceModel) featureIter.next();
-			if (oldSitePolicyModel.isConfigured(oldFeatureRef)) {
-				newSitePolicyModel.addConfiguredFeatureReference(oldFeatureRef);
+			IFeatureReference oldFeatureRef = (IFeatureReference)featureIter.next();
+			if (oldSitePolicy.isConfigured(oldFeatureRef)) {
+				newSitePolicy.addConfiguredFeatureReference(oldFeatureRef);
 			} else {
-				newSitePolicyModel.addUnconfiguredFeatureReference(oldFeatureRef);
+				newSitePolicy.addUnconfiguredFeatureReference(oldFeatureRef);
 			}
 		}
 

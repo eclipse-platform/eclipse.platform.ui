@@ -11,6 +11,7 @@ import java.util.*;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.model.*;
 import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.ModelObject;
 import org.eclipse.update.internal.core.UpdateManagerPlugin;
@@ -83,24 +84,6 @@ public class ConfigurationPolicyModel extends ModelObject {
 			return new FeatureReferenceModel[0];			
 		return (FeatureReferenceModel[]) unconfiguredFeatureReferences.toArray(arrayTypeFor(unconfiguredFeatureReferences));		
 	}
-
-	/**
-	 * @since 2.0
-	 */
-	public boolean isConfigured(FeatureReferenceModel feature) {
-		boolean result = false;
-		// return true if the feature is part of the configured list
-		Iterator iter = configuredFeatureReferences.iterator();
-		String featureURLString = feature.getURL().toExternalForm();
-		while (iter.hasNext() && !result) {
-			FeatureReferenceModel element = (FeatureReferenceModel) iter.next();
-			if (element.getURL().toExternalForm().trim().equalsIgnoreCase(featureURLString)) {
-				result = true;
-			}
-		}
-		return result;
-	}
-
 
 	/**
 	 * 
