@@ -710,10 +710,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		}
 		AntProjectNode node= getAntModel().getProjectNode();
 		if (node != null) {
-			Image newImage= node.getImage();
-			if (titleImage != newImage) {
-				postImageChange(newImage);
-			}
+			postImageChange(node);
 		}
 	}
 	
@@ -723,12 +720,16 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant {
 		getAntModel().updateForInitialReconcile();
 	}
 	
-	private void postImageChange(final Image newImage) {
+	private void postImageChange(final AntElementNode node) {
 		Shell shell= getEditorSite().getShell();
 		if (shell != null && !shell.isDisposed()) {
 			shell.getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					setTitleImage(newImage);
+					Image titleImage= getTitleImage();
+					Image newImage= node.getImage();
+					if (titleImage != newImage) {
+						setTitleImage(newImage);
+					}
 				}
 			});
 		}
