@@ -380,7 +380,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 					DebugUIPlugin.getDefault().getLastLaunch().getLaunchConfiguration();
 				} else {
 					// last selection
-					fFirstConfig = getLaunchManager().getLaunchConfiguration(memento);
+					try {
+						fFirstConfig = getLaunchManager().getLaunchConfiguration(memento);
+					} catch (CoreException e) {
+						// do not warn when restoring selection
+						DebugUIPlugin.log(e.getStatus());
+					}
 				}
 			}	
 		} catch (CoreException e) {
@@ -458,7 +463,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		if (res != null) {
 			ILaunchConfigurationType type = determineConfigTypeFromContext();
 			if (type != null) {
-				def = getLaunchManager().getDefaultLaunchConfiguration(res, type.getIdentifier());
+				try {
+					def = getLaunchManager().getDefaultLaunchConfiguration(res, type.getIdentifier());
+				} catch (CoreException e) {
+					// hide the excepetion and return no default
+					DebugUIPlugin.log(e.getStatus());
+				}
 			}
 		}
 		if (def != null) {
