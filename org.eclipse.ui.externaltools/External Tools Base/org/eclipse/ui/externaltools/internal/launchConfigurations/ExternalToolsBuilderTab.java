@@ -43,15 +43,17 @@ import org.eclipse.ui.ide.IDE;
 
 public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 
-	private Button afterClean;
-	private Button autoBuildButton;
-	private Button manualBuild;
-	private Button workingSetButton;
-	private Button specifyResources;
+	protected Button afterClean;
+	protected Button fDuringClean;
+	protected Button autoBuildButton;
+	protected Button manualBuild;
+	protected Button workingSetButton;
+	protected Button specifyResources;
 	protected Button fLaunchInBackgroundButton;
-	private IWorkingSet workingSet; 
+	protected IWorkingSet workingSet; 
+	protected ILaunchConfiguration fConfiguration;
 	
-	private SelectionListener selectionListener= new SelectionAdapter() {
+	protected SelectionListener selectionListener= new SelectionAdapter() {
 		/* (non-Javadoc)
 		 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 		 */
@@ -99,14 +101,15 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		});
 	}
 	
-	private void createBuildScheduleComponent(Composite parent) {
+	protected void createBuildScheduleComponent(Composite parent) {
 		Label label= new Label(parent, SWT.NONE);
 		label.setText(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Run_this_builder_for__1")); //$NON-NLS-1$
 		label.setFont(parent.getFont());
 		afterClean= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Full_builds_2"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Full"), 2); //$NON-NLS-1$ //$NON-NLS-2$
 		manualBuild= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Incremental_builds_4"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Inc"), 2); //$NON-NLS-1$ //$NON-NLS-2$
 		autoBuildButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.&Auto_builds_(Not_recommended)_6"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.Auto"), 2); //$NON-NLS-1$ //$NON-NLS-2$
-				
+		fDuringClean= createButton(parent, selectionListener, "During a Clean", "Runs when a clean has been initiated", 2);
+		
 		createVerticalSpacer(parent, 2);
 		
 		workingSetButton= createButton(parent, selectionListener, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.workingSet_label"), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsBuilderTab.workingSet_tooltip"), 1); //$NON-NLS-1$ //$NON-NLS-2$
@@ -123,7 +126,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	/*
 	 * Creates a check button in the given composite with the given text
 	 */
-	private Button createButton(Composite parent, SelectionListener listener, String text, String tooltipText, int columns) {
+	protected Button createButton(Composite parent, SelectionListener listener, String text, String tooltipText, int columns) {
 		Button button= createCheckButton(parent, text);
 		button.setToolTipText(tooltipText);
 		button.addSelectionListener(listener);
@@ -150,10 +153,11 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
-		
+		fConfiguration= configuration;
 		afterClean.setSelection(false);
 		manualBuild.setSelection(false);
 		autoBuildButton.setSelection(false);
+		fDuringClean.setSelection(false);
 
 		String buildKindString= null;
 		String buildScope= null;
@@ -181,6 +185,9 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 					break;
 				case IncrementalProjectBuilder.AUTO_BUILD:
 					autoBuildButton.setSelection(true);
+					break;
+				case IncrementalProjectBuilder.CLEAN_BUILD:
+					fDuringClean.setSelection(true);
 					break;
 			}
 		}
@@ -223,6 +230,10 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		} 
 		if (autoBuildButton.getSelection()) {
 			buffer.append(IExternalToolConstants.BUILD_TYPE_AUTO).append(',');
+		}
+		
+		if (fDuringClean.getSelection()) {
+			buffer.append(IExternalToolConstants.BUILD_TYPE_CLEAN);
 		}
 		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
 		
@@ -306,5 +317,4 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing on deactivation
 	}
-
 }

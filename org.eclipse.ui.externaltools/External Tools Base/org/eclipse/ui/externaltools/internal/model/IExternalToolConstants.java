@@ -71,9 +71,15 @@ public interface IExternalToolConstants {
 
 	/**
 	 * Build type indicating an automatic project build request for
-	 * the external tool running as a builder (value <code>incremental</code>).
+	 * the external tool running as a builder (value <code>auto</code>).
 	 */
 	public static final String BUILD_TYPE_AUTO = "auto"; //$NON-NLS-1$
+	
+	/**
+	 * Build type indicating a clean project build request for
+	 * the external tool running as a builder (value <code>clean</code>).
+	 */
+	public static final String BUILD_TYPE_CLEAN = "clean"; //$NON-NLS-1$
 
 	/**
 	 * Build type indicating no project build request for
