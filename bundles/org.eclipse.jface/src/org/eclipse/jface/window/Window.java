@@ -162,7 +162,21 @@ public abstract class Window implements IShellProvider {
                 return null;
             }
 
-            return d.getActiveShell();
+            Shell parent = d.getActiveShell();
+            
+            // Make sure we don't pick a parent that has a modal child (this can lock the app)
+            if (parent == null) {
+                // If this is a top-level window, then there must not be any open modal windows.
+                parent = getModalChild(Display.getCurrent().getShells());
+            } else {
+                // If we picked a parent with a modal child, use the modal child instead
+                Shell modalChild = getModalChild(parent.getShells());
+                if (modalChild != null) {
+                    parent = modalChild;
+                }
+            }
+            
+            return parent;
         }
     };
     
@@ -604,18 +618,6 @@ public abstract class Window implements IShellProvider {
             // If this is a modal shell with no parent, pick a shell using defaultModalParent.
             if (parent == null) {
                 parent = defaultModalParent.getShell();
-            }
-            
-            // Make sure we don't pick a parent that has a modal child (this can lock the app)
-            if (parent == null) {
-                // If this is a top-level window, then there must not be any open modal windows.
-                parent = getModalChild(Display.getCurrent().getShells());
-            } else {
-                // If we picked a parent with a modal child, use the modal child instead
-                Shell modalChild = getModalChild(parent.getShells());
-                if (modalChild != null) {
-                    parent = modalChild;
-                }
             }
         }
         
