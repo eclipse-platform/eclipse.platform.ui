@@ -14,6 +14,9 @@ import org.eclipse.core.resources.IResource;
 /**
  * A change event that describes a change in a resource
  * that is or was supervised by a subscriber.
+ * <p>
+ * Clients are not intented to implement. Instead subclass {@link SubscriberChangeEvent}.
+ * </p>
  * @see ISubscriberChangeListener
  * @since 3.0
  */

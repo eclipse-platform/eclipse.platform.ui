@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.core.subscribers;
 
-
 import java.util.EventListener;
 
 /**

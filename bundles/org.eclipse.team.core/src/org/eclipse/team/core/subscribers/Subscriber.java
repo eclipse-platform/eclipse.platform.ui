@@ -47,7 +47,7 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * or base resource changed. The subscriber does not need to notify listeners when the state changes due to a local
  * modification since local changes are available through the <code>IResource</code> delta mechanism. However, 
  * the subscriber must
- * cache enough information (e..g the local timestamp of when the file was in-sync with its corresponding remote 
+ * cache enough information (e.g. the local timestamp of when the file was in-sync with its corresponding remote 
  * resource)
  * to determine if the file represents an outgoing change so that <code>SyncInfo</code> obtained
  * after a delta will indicate that the file has an outgoing change. The subscriber must also notify listeners 
@@ -57,12 +57,11 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * with a repository. No event is required when a root is deleted as this is available through the 
  * <code>IResource</code> delta mechanism. It is up to clients to requery the subscriber
  * when the state of a resource changes locally by listening to IResource deltas.
- * </p>
- * <p>
+ * </p><p>
  * The remote and base states can also include the state for resources that do not exist locally (i.e outgoing deletions 
  * or incoming additions). When queried for the members of a local resource, the subscriber should include any children
  * for which a remote exists even if the local does not.
- * 
+ * </p>
  * @since 3.0
  */
 abstract public class Subscriber {
@@ -95,20 +94,12 @@ abstract public class Subscriber {
 	 * result will include entries for resources that exist either in the
 	 * workspace or are implicated in an incoming change. Returns an empty list
 	 * if the given resource exists neither in the workspace nor in the
-	 * corresponding team stream, or if the given resource is transient.
+	 * corresponding subscriber location, or if the given resource is transient.
 	 * <p>
 	 * This is a fast operation; the repository is not contacted.
 	 * </p>
-	 * <p>
-	 * [Issue1 : Is there any filtering on the members? Just the ones that
-	 * changed in some way, or *every member*? ]
-	 * </p>
-	 * 
-	 * @param resource
-	 *                   the resource
+	 * @param resource the resource
 	 * @return a list of member resources
-	 * @exception TeamException
-	 *                         if this request fails. Reasons include:
 	 */
 	abstract public IResource[] members(IResource resource) throws TeamException;
 
@@ -119,26 +110,23 @@ abstract public class Subscriber {
 	 * subscriber.
 	 * 
 	 * @return a list of resources
-	 * @throws TeamException
 	 */
 	abstract public IResource[] roots();
 
 	/**
 	 * Returns synchronization info for the given resource, or <code>null</code>
-	 * if there is no synchronization info because the subscriber does not
-	 * apply to this resource.
+	 * if there is no synchronization info because the subscriber does not apply
+	 * to this resource.
 	 * <p>
 	 * Note that sync info may be returned for non-existing or for resources
 	 * which have no corresponding remote resource.
+	 * </p><p>
+	 * This method will be quick. If synchronization calculation requires content from
+	 * the server it must be cached when the subscriber is refreshed. A client should
+	 * call refresh before calling this method to ensure that the latest information
+	 * is available for computing the sync state.
 	 * </p>
-	 * <p>
-	 * This method may take some time; it depends on the comparison criteria
-	 * that is used to calculate the synchronization state (e.g. using content
-	 * or only timestamps).
-	 * </p>
-	 * 
-	 * @param resource
-	 *                   the resource of interest
+	 * @param resource the resource of interest
 	 * @return sync info
 	 */
 	abstract public SyncInfo getSyncInfo(IResource resource) throws TeamException;
@@ -146,62 +134,61 @@ abstract public class Subscriber {
 	/**
 	 * Returns the comparison criteria that will be used by the sync info
 	 * created by this subscriber.
+	 * 
+	 * @return the comparator to use when computing sync states for this
+	 * subscriber.
 	 */
 	abstract public IResourceVariantComparator getResourceComparator();
 	
 	/**
 	 * Refreshes the resource hierarchy from the given resources and their
-	 * children (to the specified depth) from the corresponding resources in
-	 * the remote location. Resources are ignored in the following cases:
+	 * children (to the specified depth) from the corresponding resources in the
+	 * remote location. Resources are ignored in the following cases:
 	 * <ul>
-	 * <li>if they do not exist either in the workspace or in the
-	 * corresponding remote location</li>
-	 * <li>if the given resource is not managed by this subscriber</li>
+	 * <li>if they do not exist either in the workspace or in the corresponding
+	 * remote location</li>
+	 * <li>if the given resource is not supervised by this subscriber</li>
 	 * <li>if the given resource is a closed project (they are ineligible for
 	 * synchronization)</li>
 	 * <p>
 	 * Typical synchronization operations use the statuses computed by this
 	 * method as the basis for determining what to do. It is possible for the
 	 * actual sync status of the resource to have changed since the current
-	 * local sync status was refreshed. Operations typically skip resources
-	 * with stale sync information. The chances of stale information being used
-	 * can be reduced by running this method (where feasible) before doing
-	 * other operations. Note that this will of course affect performance.
+	 * local sync status was refreshed. Operations typically skip resources with
+	 * stale sync information. The chances of stale information being used can
+	 * be reduced by running this method (where feasible) before doing other
+	 * operations. Note that this will of course affect performance.
 	 * </p>
 	 * <p>
 	 * The depth parameter controls whether refreshing is performed on just the
 	 * given resource (depth= <code>DEPTH_ZERO</code>), the resource and its
 	 * children (depth= <code>DEPTH_ONE</code>), or recursively to the
 	 * resource and all its descendents (depth= <code>DEPTH_INFINITE</code>).
-	 * Use depth <code>DEPTH_ONE</code>, rather than depth <code>DEPTH_ZERO</code>,
-	 * to ensure that new members of a project or folder are detected.
+	 * Use depth <code>DEPTH_ONE</code>, rather than depth
+	 * <code>DEPTH_ZERO</code>, to ensure that new members of a project or
+	 * folder are detected.
 	 * </p>
 	 * <p>
 	 * This method might change resources; any changes will be reported in a
-	 * subsequent resource change event indicating changes to server sync
-	 * status.
+	 * subsequent subscriber resource change event indicating changes to server
+	 * sync status.
 	 * </p>
 	 * <p>
 	 * This method contacts the server and is therefore long-running; progress
 	 * and cancellation are provided by the given progress monitor.
 	 * </p>
-	 * 
-	 * @param resources
-	 *                   the resources
-	 * @param depth
-	 *                   valid values are <code>DEPTH_ZERO</code>,<code>DEPTH_ONE</code>,
-	 *                   or <code>DEPTH_INFINITE</code>
-	 * @param monitor
-	 *                   progress monitor, or <code>null</code> if progress
-	 *                   reporting and cancellation are not desired
+	 * @param resources the resources
+	 * @param depth valid values are <code>DEPTH_ZERO</code>,
+	 * <code>DEPTH_ONE</code>, or <code>DEPTH_INFINITE</code>
+	 * @param monitor progress monitor, or <code>null</code> if progress
+	 * reporting and cancellation are not desired
 	 * @return status with code <code>OK</code> if there were no problems;
-	 *               otherwise a description (possibly a multi-status) consisting of
-	 *               low-severity warnings or informational messages.
-	 * @exception TeamException
-	 *                         if this method fails. Reasons include:
-	 *                         <ul>
-	 *                         <li>The server could not be contacted.</li>
-	 *                         </ul>
+	 * otherwise a description (possibly a multi-status) consisting of
+	 * low-severity warnings or informational messages.
+	 * @exception TeamException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>The server could not be contacted.</li>
+	 * </ul>
 	 */
 	abstract public void refresh(IResource[] resources, int depth, IProgressMonitor monitor) throws TeamException;
 
@@ -212,9 +199,7 @@ abstract public class Subscriber {
 	 * Team resource change listeners are informed about state changes that
 	 * affect the resources supervised by this subscriber.
 	 * </p>
-	 * 
-	 * @param listener
-	 *                   a team resource change listener
+	 * @param listener a team resource change listener
 	 */
 	public void addListener(ISubscriberChangeListener listener) {
 		synchronized (listeners) {
@@ -228,8 +213,7 @@ abstract public class Subscriber {
 	 * Removes a listener previously registered with this team subscriber. Has
 	 * no affect if an identical listener is not registered.
 	 * 
-	 * @param listener
-	 *                   a team resource change listener
+	 * @param listener a team resource change listener
 	 */
 	public void removeListener(ISubscriberChangeListener listener) {
 		synchronized (listeners) {
@@ -238,7 +222,7 @@ abstract public class Subscriber {
 	}
 	
 	/**
-	 * Adds all out-of-sync resources (getKind() != 0) that occur
+	 * Adds all out-of-sync resources (getKind() != IN_SYNC) that occur
 	 * under the given resources to the specified depth. The purpose of this
 	 * method is to provide subscribers a means of optimizing the determination
 	 * of all out-of-sync out-of-sync descendants of a set of resources.
@@ -247,7 +231,7 @@ abstract public class Subscriber {
 	 * they should be removed from the set.
 	 * If errors occur while determining the sync info for the resources, they should
 	 * be added to the set using <code>addError</code>.
-	 * 
+	 * </p>
 	 * @param resources the root of the resource subtrees from which out-of-sync sync info should be collected
 	 * @param depth the depth to which sync info should be collected
 	 * (one of <code>IResource.DEPTH_ZERO</code>,

@@ -23,11 +23,11 @@ import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * A subscriber operation provides access to a {@link SyncInfoSet} containing
- * the selection from a {@link SynchronizeModelAction}.
- * When used in conjuntion with a {@link SynchronizeModelAction}, the selected
- * elements in the view will show busy indication if this 
- * operation is run as a job.
+ * A specialized team operation that operates on
+ * {@link org.eclipse.team.ui.synchronize.ISynchronizeModelElement}elements. If
+ * the operation is run in the background the elements the operation is created
+ * with will be updated to show that they are busy while the operation is
+ * running and will be marked un-busy after the operation completes.
  * 
  * @see SyncInfoSet
  * @see SynchronizeModelAction
@@ -61,10 +61,11 @@ public abstract class SynchronizeModelOperation extends TeamOperation {
 	}
 	
 	/**
-	 * Create an operation that will operate on the given diff elements
-	 * that were obtained from a view populated by a 
-	 * {@link org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider}.
-	 * @param elements
+	 * Create an operation that will operate on the given diff elements.
+	 * 
+	 * @param configuration the participant configuration in which this
+	 * operation is run
+	 * @param elements the model elements this operation will run with
 	 */
 	protected SynchronizeModelOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements) {
 		super(getPart(configuration), getRunnableContext(configuration));
@@ -72,8 +73,11 @@ public abstract class SynchronizeModelOperation extends TeamOperation {
 	}
 
 	/**
-	 * Returns a sync info set that contains the {@link SyncInfo} for the
+	 * Returns a sync info set that contains the {@link SyncInfo}for the
 	 * elements of this operations.
+	 * 
+	 * @return the sync info set that contains the elements this operation is
+	 * operating on.
 	 */
 	protected SyncInfoSet getSyncInfoSet() {
 		return makeSyncInfoSetFromSelection(getSyncInfos());
@@ -106,6 +110,7 @@ public abstract class SynchronizeModelOperation extends TeamOperation {
 	
 	/*
 	 * Return the selected SyncInfo for which this action is enabled.
+	 * 
 	 * @return the selected SyncInfo for which this action is enabled.
 	 */
 	private SyncInfo[] getSyncInfos() {

@@ -10,24 +10,12 @@
  *******************************************************************************/
 package org.eclipse.team.ui.synchronize;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.util.SafeRunnable;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.actions.ActionGroup;
@@ -63,8 +51,7 @@ import org.eclipse.ui.actions.ActionGroup;
  * a chance to adjust the input to actions that operate on all visible elements.
  * <li>The <code>dispose()</code> method is called when the page is disposed.
  * </ul>
- * <p>
- * TODO: Describe menu configuration and adding actions to groups
+ * </p>
  * @since 3.0
  */
 public abstract class SynchronizePageActionGroup extends ActionGroup {
@@ -75,10 +62,10 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	
 	private VisibleRootsSelectionProvider visibleRootSelectionProvider;
 
-	/**
-	 * A selection provider whose selection is the root elements
-	 * visible in the page. Selection changed events are sent out
-	 * when the model roots change or their visible children change
+	/*
+	 * A selection provider whose selection is the root elements visible in the
+	 * page. Selection changed events are sent out when the model roots change
+	 * or their visible children change
 	 */
 	private class VisibleRootsSelectionProvider extends SynchronizePageActionGroup implements ISelectionProvider {
 
@@ -144,15 +131,15 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	}
 	
 	/**
-	 * Initialize the actions of this contribution.
-	 * This method will be invoked once before any calls are
-	 * made to <code>filleContextMenu</code> or <code>setActionBars</code>
-	 * but after the control for the page has been created. As a result
-	 * of this, the site of the configuration can be accessed.
-	 * Sublcasses may override this method but must invoke
-	 * the overriden method.
-	 * @param configuration the configuration for the part to which
-	 * the contribution is associated
+	 * Initialize the actions of this contribution. This method will be invoked
+	 * once before any calls are made to <code>filleContextMenu</code> or
+	 * <code>setActionBars</code> but after the control for the page has been
+	 * created. As a result of this, the site of the configuration can be
+	 * accessed. Sublcasses may override this method but must invoke the
+	 * overriden method.
+	 * 
+	 * @param configuration the configuration for the part to which the
+	 * contribution is associated
 	 */
 	public void initialize(ISynchronizePageConfiguration configuration) {
 		this.configuration = configuration;
@@ -162,10 +149,11 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	}
 	
 	/**
-	 * This method is invoked whenever the model being displayed in the
-	 * view changes. This includes when the input to the view changes
-	 * and when the children of the input change. The default implementation
-	 * of this method does nothing. Subclasses may override.
+	 * This method is invoked whenever the model being displayed in the view
+	 * changes. This includes when the input to the view changes and when the
+	 * children of the input change. The default implementation of this method
+	 * does nothing. Subclasses may override.
+	 * 
 	 * @param root the root of the model being viewed
 	 */
 	public void modelChanged(ISynchronizeModelElement root) {
@@ -184,11 +172,11 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	}
 
 	/**
-	 * Helper method to find the group of the given id for the page
-	 * associated with the configuration of this action group.
-	 * The id of the returned group will not match that of the
-	 * provided id since the group must be modified to ensure that
-	 * groups are unique accross pages.
+	 * Helper method to find the group of the given id for the page associated
+	 * with the configuration of this action group. The id of the returned group
+	 * will not match that of the provided id since the group must be modified
+	 * to ensure that groups are unique accross pages.
+	 * 
 	 * @param menu the menu
 	 * @param groupId the id of the group being searched for
 	 * @return the group for the given id or <code>null</code>
@@ -205,8 +193,9 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	
 	/**
 	 * Helper method to add an action to a group in a menu. The action is only
-	 * added to the menu if the group exists in the menu. Calling this method 
+	 * added to the menu if the group exists in the menu. Calling this method
 	 * also has no effect if either the menu or action are <code>null</code>.
+	 * 
 	 * @param manager the menu manager
 	 * @param groupId the group to append the action to
 	 * @param action the action to add
@@ -224,9 +213,11 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	}
 	
 	/**
-	 * Helper method to add a contribution item to a group in a menu. The item is only
-	 * added to the menu if the group exists in the menu. Calling this method 
-	 * also has no effect if either the menu or item are <code>null</code>.
+	 * Helper method to add a contribution item to a group in a menu. The item
+	 * is only added to the menu if the group exists in the menu. Calling this
+	 * method also has no effect if either the menu or item are
+	 * <code>null</code>.
+	 * 
 	 * @param manager the menu manager
 	 * @param groupId the group to append the action to
 	 * @param item the item to add
@@ -244,13 +235,15 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	}
 	
 	/**
-	 * Helper method that can be invoked during initialization to add an
-	 * action to a particular menu (one of P_TOOLBAR_MENU, P_VIEW_MENU, P_CONTEXT_MENU
-	 * from ISynchronizePageConfiguration). The action is added to the given group
-	 * if it is present. Otherwise the action is not added to the menu.
-	 * @param menuId the menu id (one of P_TOOLBAR_MENU, P_VIEW_MENU, P_CONTEXT_MENU
-	 * from ISynchronizePageConfiguration)
-	 * @param groupId the group id in the menu to which the action is to be added
+	 * Helper method that can be invoked during initialization to add an action
+	 * to a particular menu (one of P_TOOLBAR_MENU, P_VIEW_MENU, P_CONTEXT_MENU
+	 * from ISynchronizePageConfiguration). The action is added to the given
+	 * group if it is present. Otherwise the action is not added to the menu.
+	 * 
+	 * @param menuId the menu id (one of P_TOOLBAR_MENU, P_VIEW_MENU,
+	 * P_CONTEXT_MENU from ISynchronizePageConfiguration)
+	 * @param groupId the group id in the menu to which the action is to be
+	 * added
 	 * @param action the action to be added
 	 */
 	protected void appendToGroup(String menuId, String groupId, IAction action) {
@@ -258,12 +251,13 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	}
 	
 	/**
-	 * Helper method that can be invoked during initialization to add an
-	 * item to a particular menu (one of P_TOOLBAR_MENU, P_VIEW_MENU, P_CONTEXT_MENU
+	 * Helper method that can be invoked during initialization to add an item to
+	 * a particular menu (one of P_TOOLBAR_MENU, P_VIEW_MENU, P_CONTEXT_MENU
 	 * from ISynchronizePageConfiguration). The item is added to the given group
 	 * if it is present. Otherwise the item is not added to the menu.
-	 * @param menuId the menu id (one of P_TOOLBAR_MENU, P_VIEW_MENU, P_CONTEXT_MENU
-	 * from ISynchronizePageConfiguration)
+	 * 
+	 * @param menuId the menu id (one of P_TOOLBAR_MENU, P_VIEW_MENU,
+	 * P_CONTEXT_MENU from ISynchronizePageConfiguration)
 	 * @param groupId the group id in the menu to which the item is to be added
 	 * @param item the item to be added
 	 */
@@ -272,10 +266,10 @@ public abstract class SynchronizePageActionGroup extends ActionGroup {
 	}
 	
 	/**
-	 * Return a selection provider whose selection includes all roots
-	 * of the elements
-	 * visible in the page. Selection change events are fired when the
+	 * Return a selection provider whose selection includes all roots of the
+	 * elements visible in the page. Selection change events are fired when the
 	 * elements visible in the view change.
+	 * 
 	 * @return a selection provider whgose selection is the roots of all
 	 * elements visible in the page
 	 */

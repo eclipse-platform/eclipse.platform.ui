@@ -26,6 +26,7 @@ public class FastSyncInfoFilter extends SyncInfoFilter {
 
 	/**
 	 * Selects <code>SyncInfo</code> that match the given change type and direction.
+	 * 
 	 * @param direction the change direction (<code>SyncInfo.OUTGOING</code>,
 	 * <code>SyncInfo.INCOMING</code> and <code>SyncInfo.CONFLICTING</code>) that this filter matches
 	 * @param change the change type (<code>SyncInfo.ADDITION</code>,

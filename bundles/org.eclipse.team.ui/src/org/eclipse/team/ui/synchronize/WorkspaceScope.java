@@ -17,6 +17,7 @@ import org.eclipse.team.internal.ui.Policy;
  * A synchronize scope whose roots are the workspace.
  * <p>
  * Clients are not expected to subclass this class.
+ * </p>
  * @since 3.0
  */
 public class WorkspaceScope extends AbstractSynchronizeScope  {

@@ -34,9 +34,9 @@ import org.eclipse.team.internal.core.Policy;
  * <li>A resource is considered a CHANGE if both the local and remote exist but the 
  * comparator indicates that they differ. The comparator may be comparing contents or
  * timestamps or some other resource state.
- * <li>I resource is considered IN_SYNC in all other cases.
+ * <li>A resource is considered IN_SYNC in all other cases.
  * </ul>
- * </p>
+ * </p><p>
  * For three-way comparisons, the sync info node has a direction as well as a change
  * type. The direction is one of INCOMING, OUTGOING or CONFLICTING. The comparison
  * of the local and remote resources with a <b>base</b> resource is used to determine
@@ -52,9 +52,9 @@ import org.eclipse.team.internal.core.Policy;
  * <b>incoming resource</b>.
  * <li>If there are both incoming and outgoing changes, the resource 
  * is considered a <b>conflicting change</b>.
- * Again, the comparison of resources is done using the comparator of the
- * node.
- * 
+ * Again, the comparison of resources is done using the variant comparator provided
+ * when the sync info was created.
+ * </p>
  * @since 3.0
  */
 public class SyncInfo implements IAdaptable {
@@ -190,7 +190,6 @@ public class SyncInfo implements IAdaptable {
 	 * of the local and remote resources.
 	 * ]
 	 * </p>
-	 *
 	 * @return a remote resource handle, or <code>null</code>
 	 */
 	public IResourceVariant getBase() {
@@ -205,7 +204,6 @@ public class SyncInfo implements IAdaptable {
 	 * of the local and common resources.
 	 * ]
 	 * </p>
-	 *
 	 * @return a remote resource handle, or <code>null</code>
 	 */
 	public IResourceVariant getRemote() {
@@ -214,15 +212,19 @@ public class SyncInfo implements IAdaptable {
 	
 	/**
 	 * Returns the comparator that is used to determine the
-	 * kin of this sync node.
+	 * kind of this sync node.
+	 * 
+	 * @return the comparator that is used to determine the
+	 * kind of this sync node.
 	 */
 	public IResourceVariantComparator getComparator() {
 		return comparator;
 	}
 	
 	/**
-	 * Returns the kind of synchronization for this node. 
-	 * @return the kind of synchronization for this nod
+	 * Returns the kind of synchronization for this node.
+	 *  
+	 * @return the kind of synchronization for this node.
 	 */
 	public int getKind() {
 		return syncKind;
@@ -231,6 +233,7 @@ public class SyncInfo implements IAdaptable {
 	/**
 	 * Helper method that returns whether the given kind represents
 	 * an in-sync resource.
+	 * 
 	 * @param kind the kind of a <code>SyncInfo</code>
 	 * @return whether the kind is <code>IN_SYNC</code>.
 	 */
@@ -242,6 +245,7 @@ public class SyncInfo implements IAdaptable {
 	 * Helper method to return the direction portion 
 	 * of the given kind. The resulting value
 	 * can be compared directly with the direction constants.
+	 * 
 	 * @param kind the kind of a <code>SyncInfo</code>
 	 * @return the direction portion of the kind
 	 */
@@ -254,6 +258,7 @@ public class SyncInfo implements IAdaptable {
 	 * of the given kind. The resulting value
 	 * can be compared directly with the change
 	 * type constants.
+	 * 
 	 * @param kind the kind of a <code>SyncInfo</code>
 	 * @return the change portion of the kind
 	 */
@@ -340,6 +345,7 @@ public class SyncInfo implements IAdaptable {
 	/**
 	 * A helper method that returns a displayable (i.e. externalized)
 	 * string describing the provided sync kind.
+	 * 
 	 * @param kind the sync kind obtained from a <code>SyncInfo</code>
 	 * @return a displayable string that descibes the kind
 	 */
@@ -373,7 +379,8 @@ public class SyncInfo implements IAdaptable {
 	 * This method should only be invoked by the creator of the <code>SyncInfo</code>
 	 * instance. It is not done from the constructor in order to allow subclasses
 	 * to calculate the sync kind from any additional state variables they may have.
-	 * @throws TeamException
+	 * 
+	 * @throws TeamException if there were problems calculating the sync state.
 	 */
 	public final void init() throws TeamException {
 		syncKind = calculateKind();
@@ -385,8 +392,9 @@ public class SyncInfo implements IAdaptable {
 	 * assigned to an instance variable and is available using <code>getKind()</code>.
 	 * Subclasses should not invoke this method but may override it in order to customize
 	 * the sync kind calculation algorithm.
+	 * 
 	 * @return the sync kind of this <code>SyncInfo</code>
-	 * @throws TeamException
+	 * @throws TeamException if there were problems calculating the sync state.
 	 */
 	protected int calculateKind() throws TeamException {
 		int description = IN_SYNC;

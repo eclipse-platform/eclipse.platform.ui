@@ -16,6 +16,7 @@ package org.eclipse.team.ui.synchronize;
  * <p>
  * Clients may implement this interface.
  * </p>
+ * @see ISynchronizeManager
  * @since 3.0
  */
 public interface ISynchronizeParticipantListener {	
@@ -34,5 +35,4 @@ public interface ISynchronizeParticipantListener {
 	 * @param participants removed participants
 	 */
 	public void participantsRemoved(ISynchronizeParticipant[] participants);
-
 }

@@ -41,6 +41,8 @@ import org.eclipse.ui.progress.UIJob;
  * in an editor. This input can alternatly be used to show compare results in 
  * a dialog by calling {@link CompareUI#openCompareDialog()}.
  * <p>
+ * The editor will not update when the elements in the sync info are changed.
+ * </p><p>
  * Supports saving the local resource that is changed in the editor and will be updated
  * when the local resources is changed.
  * </p><p>

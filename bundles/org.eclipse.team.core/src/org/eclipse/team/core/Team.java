@@ -22,8 +22,6 @@ import org.eclipse.team.internal.core.*;
  * The Team class provides a global point of reference for the global ignore set
  * and the text/binary registry.
  * 
- * WVCM: how does the IProjectSetSerializer fit into the 3.0 team api?
- * 
  * @since 2.0
  */
 public final class Team {

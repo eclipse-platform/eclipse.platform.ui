@@ -43,9 +43,8 @@ import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.progress.IProgressService;
 
 /**
- * Displays a synchronize participant page combined with the compare/merge
- * infrastructured. This only works if the synchronize page viewer provides
- * selections that ITypedElement and ICompareInput. 
+ * Displays a synchronize participant page combined with the compare/merge infrastructured. This only works if the
+ * synchronize page viewer provides selections that are of the following types: ITypedElement and ICompareInput. 
  * 
  * @since 3.0
  */
@@ -320,7 +319,8 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		control = parent;
 	}
 	
-	/* (non Javadoc)
+	/**
+	 * This method should not be called from clients.
 	 * TODO: using internal compare classes to support page navigation. This is required because
 	 * we are building our own compare editor input that includes a participant page instead of a
 	 * viewer.
@@ -508,9 +508,9 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 		return actionBars;
 	}
 	
-	
 	/**
 	 * Return the synchronize page configiration for this part
+	 * 
 	 * @return Returns the pageConfiguration.
 	 */
 	public ISynchronizePageConfiguration getPageConfiguration() {
@@ -519,6 +519,7 @@ public class ParticipantPageSaveablePart extends SaveablePartAdapter implements 
 	
 	/**
 	 * Return the Synchronize participant for this part
+	 * 
 	 * @return Returns the participant.
 	 */
 	public ISynchronizeParticipant getParticipant() {

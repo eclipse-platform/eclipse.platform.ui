@@ -23,8 +23,8 @@ import org.eclipse.team.internal.core.TeamPlugin;
  * statuses.  The API definition determinies if the exception represents a single or multiple status
  * response; this can also be tested on the exception instance itself.
  * <p>
- * To determine the exact cause of the failure the caller should look at each status in detail.</p>
- * 
+ * To determine the exact cause of the failure the caller should look at each status in detail.
+ * </p>
  * @since 2.0
  */
 public class TeamException extends CoreException {

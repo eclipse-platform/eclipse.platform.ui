@@ -27,7 +27,7 @@ import org.eclipse.ui.IViewPart;
  * <p>
  * Clients are not intended to implement this interface.
  * </p>
- * @see ISynchronizeManager
+ * @see ISynchronizeManager#showSynchronizeViewInActivePage()
  * @since 3.0
  */
 public interface ISynchronizeView extends IViewPart {
@@ -36,6 +36,10 @@ public interface ISynchronizeView extends IViewPart {
 	 */
 	public static final String VIEW_ID = "org.eclipse.team.sync.views.SynchronizeView"; //$NON-NLS-1$
 	
+	/**
+	 * This id is no longer used.
+	 * @deprecated not used, please use {@link #VIEW_ID} instead.
+	 */
 	public static final String COMPARE_VIEW_ID = "org.eclipse.team.sync.views.CompareView"; //$NON-NLS-1$
 	
 	/**

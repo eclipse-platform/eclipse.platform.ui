@@ -24,7 +24,8 @@ import org.eclipse.team.internal.core.Policy;
  * their resource's hierarchical relationships.
  * <p>
  * Events fired from a <code>SyncInfoTree</code> will be instances of <code>ISyncInfoTreeChangeEvent</code>.
- * 
+ * </p>
+ * @see SyncInfoSet
  * @since 3.0
  */
 public class SyncInfoTree extends SyncInfoSet {
@@ -40,6 +41,7 @@ public class SyncInfoTree extends SyncInfoSet {
 	
 	/**
 	 * Create a sync info tree containing the given sync info elements.
+	 * 
 	 * @param infos the sync info elements
 	 */
 	public SyncInfoTree(SyncInfo[] infos) {
@@ -50,8 +52,9 @@ public class SyncInfoTree extends SyncInfoSet {
 	 * Return wether the given resource has any children in the sync set. The children
 	 * could be either out-of-sync resources that are contained by the set or containers
 	 * that are ancestors of out-of-sync resources contained by the set.
-	 * @param resource the parent resource
-	 * @return the members of the parent in the set.
+	 * 
+	 * @param resource the resource to check for children.
+	 * @return <code>true</code> if the resource has children in the set.
 	 */
 	public synchronized boolean hasMembers(IResource resource) {
 		if (resource.getType() == IResource.FILE) return false;
@@ -75,7 +78,7 @@ public class SyncInfoTree extends SyncInfoSet {
 	 * The default implementation makes use of <code>getSyncInfo(IResource)</code>,
 	 * <code>members(IResource)</code> and <code>getSyncInfos()</code>
 	 * to provide the varying depths. Subclasses may override to optimize.
-	 * 
+	 * </p>
 	 * @param resource the root of the resource subtree
 	 * @param depth the depth of the subtree
 	 * @return the <code>SyncInfo</code> for any out-of-sync resources

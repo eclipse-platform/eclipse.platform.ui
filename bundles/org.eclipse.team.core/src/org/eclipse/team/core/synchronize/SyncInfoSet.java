@@ -27,6 +27,7 @@ import org.eclipse.team.internal.core.subscribers.SyncSetChangedEvent;
  * A dynamic collection of {@link SyncInfo} objects that provides
  * change notification to registered listeners. Batching of change notifications
  * can be accomplished using the <code>beginInput/endInput</code> methods. 
+ * 
  * @see SyncInfoTree
  * @see SyncInfo
  * @see ISyncInfoSetChangeListener
@@ -53,7 +54,8 @@ public class SyncInfoSet {
 
 	/**
 	 * Create a <code>SyncInfoSet</code> containing the given <code>SyncInfo</code>
-	 * instances
+	 * instances.
+	 * 
 	 * @param infos the <code>SyncInfo</code> instances to be contained by this set
 	 */
 	public SyncInfoSet(SyncInfo[] infos) {
@@ -66,6 +68,7 @@ public class SyncInfoSet {
 	
 	/**
 	 * Return an array of <code>SyncInfo</code> for all out-of-sync resources that are contained by the set.
+	 * 
 	 * @return an array of <code>SyncInfo</code>
 	 */
 	public synchronized SyncInfo[] getSyncInfos() {
@@ -76,6 +79,7 @@ public class SyncInfoSet {
 	 * Return all out-of-sync resources contained in this set. The default implementation
 	 * uses <code>getSyncInfos()</code> to determine the resources contained in the set.
 	 * Subclasses may override to optimize.
+	 * 
 	 * @return all out-of-sync resources contained in the set
 	 */
 	public IResource[] getResources() {
@@ -91,8 +95,10 @@ public class SyncInfoSet {
 	/**
 	 * Return the <code>SyncInfo</code> for the given resource or <code>null</code>
 	 * if the resource is not contained in the set.
+	 * 
 	 * @param resource the resource
-	 * @return the <code>SyncInfo</code> for the resource or <code>null</code>
+	 * @return the <code>SyncInfo</code> for the resource or <code>null</code> if
+	 * the resource is in-sync or doesn't have synchronization information in this set.
 	 */
 	public synchronized SyncInfo getSyncInfo(IResource resource) {
 		return (SyncInfo)resources.get(resource.getFullPath());
@@ -100,7 +106,9 @@ public class SyncInfoSet {
 
 	/**
 	 * Return the number of out-of-sync resources contained in this set.
+	 * 
 	 * @return the size of the set.
+	 * @see #countFor(int, int)
 	 */
 	public synchronized int size() {
 		return resources.size();		
@@ -109,6 +117,12 @@ public class SyncInfoSet {
 	/**
 	 * Return the number of out-of-sync resources in the given set whose sync kind
 	 * matches the given kind and mask (e.g. <code>(SyncInfo#getKind() & mask) == kind</code>).
+	 * <p>
+	 * For example, this will return the number of outgoing changes in the set:
+	 * <pre>
+	 *  long outgoing =  countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK);
+	 * </pre>
+	 * </p>
 	 * @param kind the sync kind
 	 * @param mask the sync kind mask
 	 * @return the number of matching resources in the set.
@@ -120,6 +134,9 @@ public class SyncInfoSet {
 	/**
 	 * Returns <code>true</code> if there are any conflicting nodes in the set, and
 	 * <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if there are any conflicting nodes in the set, and
+	 * <code>false</code> otherwise.
 	 */
 	public boolean hasConflicts() {
 		return countFor(SyncInfo.CONFLICTING, SyncInfo.DIRECTION_MASK) > 0;
@@ -127,6 +144,7 @@ public class SyncInfoSet {
 	
 	/**
 	 * Return whether the set is empty.
+	 * 
 	 * @return <code>true</code> if the set is empty
 	 */
 	public synchronized boolean isEmpty() {
@@ -135,6 +153,7 @@ public class SyncInfoSet {
 	
 	/**
 	 * Add the <code>SyncInfo</code> to the set, replacing any previously existing one.
+	 * 
 	 * @param info the new <code>SyncInfo</code>
 	 */
 	protected synchronized void internalAdd(SyncInfo info) {
@@ -152,6 +171,7 @@ public class SyncInfoSet {
 	
 	/**
 	 * Remove the resource from the set, updating all internal data structures.
+	 * 
 	 * @param resource the resource to be removed
 	 * @return the <code>SyncInfo</code> that was just removed
 	 */
@@ -215,7 +235,7 @@ public class SyncInfoSet {
 	 * subclass implementation. However, it is gaurenteed that two invocations
 	 * of <code>run</code> performed in the same thread will be executed in the 
 	 * same order even if run in different threads.
-	 * 
+	 * </p>
 	 * @param runnable a runnable
 	 * @param progress a progress monitor or <code>null</code>
 	 */
@@ -242,11 +262,12 @@ public class SyncInfoSet {
 	 * The reset event may be done in the context of this method invocation or may be
 	 * done in another thread at the discretion of the <code>SyncInfoSet</code>
 	 * implementation. 
-	 * <p>
+	 * </p><p>
 	 * Disconnecting is done by calling <code>removeChangeListener</code>. Once disconnected,
 	 * a listener can reconnect to be reinitialized.
-	 * @param listener
-	 * @param monitor
+	 * </p>
+	 * @param listener the listener that should be connected to this set
+	 * @param monitor a progress monitor
 	 */
 	public void connect(final ISyncInfoSetChangeListener listener, IProgressMonitor monitor) {
 		run(new IWorkspaceRunnable() {
@@ -275,11 +296,13 @@ public class SyncInfoSet {
 	 * in which case the event for this addition and any other sync set
 	 * change will be fired in a batched event when <code>endInput</code>
 	 * is invoked.
+	 * <p>
 	 * Invoking this method outside of the above mentioned block will result
 	 * in the <code>endInput(IProgressMonitor)</code> being invoked with a null
 	 * progress monitor. If responsiveness is required, the client should always
 	 * nest sync set modifications within <code>beginInput/endInput</code>.
-	 * @param info
+	 * </p>
+	 * @param info the sync info to be added to this set.
 	 */
 	public void add(SyncInfo info) {
 		try {
@@ -298,6 +321,7 @@ public class SyncInfoSet {
 
 	/**
 	 * Add all the syncinfo from the given set to this set.
+	 * 
 	 * @param set the set whose sync info should be added to this set
 	 */
 	public void addAll(SyncInfoSet set) {
@@ -314,6 +338,7 @@ public class SyncInfoSet {
 
 	/**
 	 * Remove the given local resource from the set.
+	 * 
 	 * @param resource the local resource to remove
 	 */
 	public synchronized void remove(IResource resource) {
@@ -328,6 +353,7 @@ public class SyncInfoSet {
 
 	/**
 	 * Remove all the given resources from the set.
+	 * 
 	 * @param resources the resources to be removed
 	 */
 	public void removeAll(IResource[] resources) {
@@ -364,6 +390,7 @@ public class SyncInfoSet {
 
 	/**
 	 * Indicate whether the set has nodes matching the given filter.
+	 * 
 	 * @param filter a sync info filter
 	 */
 	public boolean hasNodes(FastSyncInfoFilter filter) {
@@ -380,6 +407,7 @@ public class SyncInfoSet {
 	/**
 	 * Removes all nodes from this set that do not match the given filter
 	 * leaving only those that do match the filter.
+	 * 
 	 * @param filter a sync info filter
 	 */
 	public void selectNodes(FastSyncInfoFilter filter) {
@@ -400,6 +428,7 @@ public class SyncInfoSet {
 	/**
 	 * Removes all nodes from this set that match the given filter
 	 * leaving those that do not match the filter.
+	 * 
 	 * @param filter a sync info filter
 	 */
 	public void rejectNodes(FastSyncInfoFilter filter) {
@@ -419,6 +448,7 @@ public class SyncInfoSet {
 
 	/**
 	 * Return all nodes in this set that match the given filter.
+	 * 
 	 * @param filter a sync info filter
 	 */
 	public SyncInfo[] getNodes(FastSyncInfoFilter filter) {
@@ -436,6 +466,8 @@ public class SyncInfoSet {
 	/**
 	 * Returns <code>true</code> if this sync set has incoming changes.
 	 * Note that conflicts are not considered to be incoming changes.
+	 * 
+	 * @return <code>true</code> if this sync set has incoming changes.
 	 */
 	public boolean hasIncomingChanges() {
 		return countFor(SyncInfo.INCOMING, SyncInfo.DIRECTION_MASK) > 0;
@@ -444,6 +476,8 @@ public class SyncInfoSet {
 	/**
 	 * Returns <code>true</code> if this sync set has outgoing changes.
 	 * Note that conflicts are not considered to be outgoing changes.
+	 * 
+	 * @return <code>true</code> if this sync set has outgoing changes.
 	 */
 	public boolean hasOutgoingChanges() {
 		return countFor(SyncInfo.OUTGOING, SyncInfo.DIRECTION_MASK) > 0;
@@ -465,7 +499,9 @@ public class SyncInfoSet {
 	 *      set.endInput(progress);
 	 *   }
 	 * </pre>
+	 * </p><p>
 	 * Calls to <code>beginInput</code> and <code>endInput</code> can be nested and must be matched.
+	 * </p>
 	 */
 	public void beginInput() {
 		lock.acquire();
@@ -489,10 +525,8 @@ public class SyncInfoSet {
 	}
 
 	/**
-	 * Reset the changes accumulated so far by this set.
-	 * This method is not intended to be invoked or
-	 * implemented by clients.
-	 *
+	 * Reset the changes accumulated so far by this set. This method is not
+	 * intended to be invoked or implemented by clients.
 	 */
 	protected void resetChanges() {
 		changes = createEmptyChangeEvent();
@@ -500,6 +534,7 @@ public class SyncInfoSet {
 
 	/**
 	 * Create an empty change event. Subclass may override to provided specialized event types
+	 * 
 	 * @return an empty change event
 	 */
 	protected SyncSetChangedEvent createEmptyChangeEvent() {
@@ -572,11 +607,13 @@ public class SyncInfoSet {
 	 * populating the set cannot determine the <code>SyncInfo</code> for one
 	 * or more resources due to an exception or some other problem. Listeners
 	 * will be notified that an error occurred and can react accordingly.
+	 * <p>
 	 * Only one error can be associated with a resource (which is obtained from
 	 * the <code>ITeamStatus</code>). It is up to the
 	 * client populating the set to ensure that the error associated with a
 	 * resource contains all relevent information.
 	 * The error will remain in the set until the set is reset.
+	 * </p>
 	 * @param resource the resource associated with the error or the workspace root
 	 * @param status the status that describes the error that occurred.
 	 */
@@ -593,6 +630,7 @@ public class SyncInfoSet {
 	/**
 	 * Return an array of the errors the occurred while populating this set.
 	 * The errors will remain with the set until it is reset.
+	 * 
 	 * @return the errors
 	 */
 	public ITeamStatus[] getErrors() {

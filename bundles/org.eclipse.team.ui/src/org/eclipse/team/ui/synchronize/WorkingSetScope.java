@@ -40,6 +40,7 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 	
 	/**
 	 * Create the scope for the subscriber and working set
+	 * 
 	 * @param subscriber the subscriber that defines this scope
 	 * @param set the working set that defines this scope
 	 */
@@ -48,9 +49,11 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 		PlatformUI.getWorkbench().getWorkingSetManager().addPropertyChangeListener(this);
 	}
 	
-	/** 
+	/**
 	 * Create this scope from it's previously saved state
-	 * @param memento
+	 * 
+	 * @param memento the memento containing a previous scope information
+	 * that is used to initialize this scope.
 	 */
 	protected WorkingSetScope(IMemento memento) {
 		super(memento);
@@ -74,7 +77,6 @@ public class WorkingSetScope extends AbstractSynchronizeScope implements IProper
 		return name.toString();
 	}
 	
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeScope#getRoots()
 	 */

@@ -26,16 +26,14 @@ import org.eclipse.ui.ide.IDE;
 
 /**
  * This action provides utilities for performing operations on selections that
- * are obtained from a view populated by a 
- * {@link org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider}.
- * The {@link org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage} is an example of such a view.
- * Subclasses can use this support to filter the selection in order to 
- * determine action enablement and generate the input for a {@link SynchronizeModelOperation}.
+ * contain {@link org.eclipse.team.ui.synchronize.ISynchronizeModelElement}
+ * instances. Subclasses can use this support to filter the selection in order
+ * to determine action enablement and generate the input for a
+ * {@link SynchronizeModelOperation}.
+ * 
  * @see SyncInfo
  * @see SyncInfoSet
- * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider
- * @see org.eclipse.team.internal.ui.synchronize.SubscriberParticipantPage
- * @see org.eclipse.team.ui.synchronize.SynchronizeModelOperation
+ * @see SynchronizeModelOperation
  * @since 3.0
  */
 public abstract class SynchronizeModelAction extends BaseSelectionListenerAction {
@@ -46,6 +44,7 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	 * Create an action with the given text and configuration. By default,
 	 * the action registers for selection change with the selection provider 
 	 * from the configuration's site.
+	 * 
 	 * @param text the action's text
 	 * @param configuration the actions synchronize page configuration
 	 */
@@ -56,6 +55,7 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	/**
 	 * Create an action with the given text and configuration. By default,
 	 * the action registers for selection change with the given selection provider.
+	 * 
 	 * @param text the action's text
 	 * @param configuration the actions synchronize page configuration
 	 * @param selectionProvider a selection provider
@@ -70,6 +70,7 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	 * Method invoked from the constructor.
 	 * The default implementation registers the action as a selection change
 	 * listener. Subclasses may override.
+	 * 
 	 * @param configuration the synchronize page configuration
 	 * @param selectionProvider a selection provider
 	 */
@@ -103,6 +104,7 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	/**
 	 * Return whether dirty editor should be saved before this action is run.
 	 * Default is <code>true</code>.
+	 * 
 	 * @return whether dirty editor should be saved before this action is run
 	 */
 	protected boolean needsToSaveDirtyEditors() {
@@ -110,8 +112,9 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	}
 
 	/**
-	 * Returns whether the user should be prompted to save dirty editors.
-	 * The default is <code>true</code>.
+	 * Returns whether the user should be prompted to save dirty editors. The
+	 * default is <code>true</code>.
+	 * 
 	 * @return whether the user should be prompted to save dirty editors
 	 */
 	protected boolean confirmSaveOfDirtyEditor() {
@@ -119,20 +122,24 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	}
 	
 	/**
-	 * Return the subscriber operation associated with this action. This operation
-	 * will be run when the action is run. Subclass may implement this method and provide 
-	 * an operation subclass or may override the <code>run(IAction)</code> method directly
-	 * if they choose not to implement a <code>SynchronizeModelOperation</code>.
-	 * @param configuration the synchronize page configuration for the page
-	 * to which this action is associated
-	 * @param elements the selected diff element for which this action is enabled.
+	 * Return the subscriber operation associated with this action. This
+	 * operation will be run when the action is run. Subclass may implement this
+	 * method and provide an operation subclass or may override the
+	 * <code>run(IAction)</code> method directly if they choose not to
+	 * implement a <code>SynchronizeModelOperation</code>.
+	 * 
+	 * @param configuration the synchronize page configuration for the page to
+	 * which this action is associated
+	 * @param elements the selected diff element for which this action is
+	 * enabled.
 	 * @return the subscriber operation to be run by this action.
 	 */
 	protected abstract SynchronizeModelOperation getSubscriberOperation(ISynchronizePageConfiguration configuration, IDiffElement[] elements);
 	
-	/** 
-	 * Generic error handling code that uses an error dialog to show the error to the 
-	 * user. Subclasses can use this method and/or override it.
+	/**
+	 * Generic error handling code that uses an error dialog to show the error
+	 * to the user. Subclasses can use this method and/or override it.
+	 * 
 	 * @param e the exception that occurred.
 	 */
 	protected void handle(Exception e) {
@@ -162,10 +169,10 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	}
 
 	/**
-	 * Filter uses to filter the user selection to contain only those
-	 * elements for which this action is enabled.
-	 * Default filter includes all out-of-sync elements in the current
-	 * selection. Subsclasses may override.
+	 * Filter uses to filter the user selection to contain only those elements
+	 * for which this action is enabled. Default filter includes all out-of-sync
+	 * elements in the current selection. Subsclasses may override.
+	 * 
 	 * @return a sync info filter which selects all out-of-sync resources.
 	 */
 	protected FastSyncInfoFilter getSyncInfoFilter() {
@@ -174,7 +181,8 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 
 	/**
 	 * Return the selected diff element for which this action is enabled.
-	 * @return the list of selected diff elements for which this action is enabled.
+	 * @return the list of selected diff elements for which this action is
+	 *               enabled.
 	 */
 	protected final IDiffElement[] getFilteredDiffElements() {
 		IDiffElement[] elements = getSelectedDiffElements();
@@ -193,6 +201,7 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 
 	/**
 	 * Set the selection of this action to the given selection
+	 * 
 	 * @param selection the selection
 	 */
 	public void selectionChanged(ISelection selection) {
@@ -205,21 +214,21 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 	}
 	
 	/**
-	 * @return Returns the configuration.
+	 * Returns the configuration showing this action.
+	 * 
+	 * @return the configuration showing this action.
 	 */
 	public ISynchronizePageConfiguration getConfiguration() {
 		return configuration;
 	}
 	
 	/**
-	 * Save all dirty editors in the workbench that are open on files that
-	 * may be affected by this operation. Opens a dialog to prompt the
-	 * user if <code>confirm</code> is true. Return true if successful.
-	 * Return false if the user has cancelled the command. Must be called
-	 * from the UI thread.
+	 * Save all dirty editors in the workbench that are open on files that may
+	 * be affected by this operation. Opens a dialog to prompt the user if
+	 * <code>confirm</code> is true. Return true if successful. Return false
+	 * if the user has cancelled the command. Must be called from the UI thread.
 	 * 
-	 * @param confirm
-	 *            prompt the user if true
+	 * @param confirm prompt the user if true
 	 * @return boolean false if the operation was cancelled.
 	 */
 	public final boolean saveAllEditors(boolean confirm) {

@@ -16,7 +16,7 @@ import org.eclipse.core.resources.IResource;
  * A concrete implementation of <code>ISubscriberChangeEvent</code> that can
  * be used by clients.
  *
- * @see IResource
+ * @see ISubscriberChangeEvent
  * @see Subscriber
  * 
  * @since 3.0

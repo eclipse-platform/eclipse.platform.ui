@@ -14,11 +14,11 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
- * A synchronize scope defines the set of resources involved in a synchronize.
- * Instance of this interface are used to scope the resources of a
- * {@link SubscriberParticipant}.
+ * A synchronize scope defines the set of resources involved in a synchronization.
+ * Instance of this interface are used to scope the resources of a created {@link SubscriberParticipant}.
  * <p>
  * This interface is not intended to be implemented by clients
+ * </p>
  * @see SubscriberParticipant
  * @since 3.0
  */
@@ -31,6 +31,7 @@ public interface ISynchronizeScope {
 	
 	/**
 	 * Return the name of the scope
+	 * 
 	 * @return the name of the scope
 	 */
 	public String getName();
@@ -47,6 +48,7 @@ public interface ISynchronizeScope {
 	/**
 	 * Add a propety change listener that will get invoked when a
 	 * property of the reciever cnahges.
+	 * 
 	 * @param listener
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener);
@@ -54,6 +56,7 @@ public interface ISynchronizeScope {
 	/**
 	 * Remove a propety change listener. Removing an unregistered listener
 	 * has no effect.
+	 * 
 	 * @param listener
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener);

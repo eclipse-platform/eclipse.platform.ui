@@ -11,7 +11,6 @@
 package org.eclipse.team.ui.synchronize;
 
 import java.util.Arrays;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -31,7 +30,8 @@ import org.eclipse.ui.part.IPageBookViewPage;
 /**
  * A synchronize participant that displays synchronization information for local resources that are 
  * managed via a {@link Subscriber}. It maintains a dynamic collection of all out-of-sync resources
- * by listening to workspace resource changes and remote changes.
+ * by listening to workspace resource changes and remote changes thus creating a live view of
+ * changes in the workspace.
  * <p>
  * The subscriber can be configured to be synchronized in the background based on a schedule. This
  * effectively refreshes the subscriber and updates the dynamic sync set.
@@ -82,6 +82,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	/**
 	 * Constructor which should be called when creating a particpant whose resources
 	 * are to be scoped.
+	 * 
 	 * @param scope a synchronize scope
 	 */
 	public SubscriberParticipant(ISynchronizeScope scope) {
@@ -100,7 +101,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	
 	/**
 	 * Returns the resources supervised by this participant. It will
-	 * either be the roots of the subscriber or the resources 
+	 * either be the roots of the subscriber or the resource scope
 	 * provided when the subscriber was set.
 	 * 
 	 * @return the resources supervised by this participant.
@@ -112,6 +113,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	/*
 	 * Set the resources supervised by this participant. If <code>null</code>,
 	 * the participant will include all roots of its subscriber
+	 * 
 	 * @param roots the root resources to consider or <code>null</code>
 	 * to consider all roots of the subscriber
 	 */
@@ -121,6 +123,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	
 	/**
 	 * Refresh this participants synchronization state and displays the result in a model dialog. 
+	 * 
 	 * @param resources
 	 * @param taskName
 	 * @param site
@@ -131,9 +134,16 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	}
 
 	/**
-	 * Refresh a participant in the background the result of the refresh are shown in the progress view.
+	 * Refresh a participant in the background the result of the refresh are shown in the progress view. Refreshing 
+	 * can also be considered synchronizing, or refreshing the synchronization state. Basically this is a long
+	 * running operation that will update the participants sync info sets with new changes detected on the
+	 * server.
 	 * 
 	 * @param resources the resources to be refreshed.
+	 * @param shortTaskName the taskName of the background job that will run the synchronize.
+	 * @param longTaskName the taskName of the progress monitor running the synchronize
+	 * @param site the workbench site the synchronize is running from. This can be used to notify the site
+	 * that a job is running.
 	 */
 	public final void refresh(IResource[] resources, String shortTaskName, String longTaskName, IWorkbenchSite site) {
 		IRefreshSubscriberListener listener = new RefreshUserNotificationPolicy(this);
@@ -192,7 +202,11 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	}
 	
 	/**
-	 * Returns a participant that matches the scoping 
+	 * Returns a participant that matches the given resource scoping
+	 * 
+	 * @param ID the type id of participants to match
+	 * @param resources the resources to match in the scope
+	 * @return  a participant that matches the given resource scoping
 	 */
 	public static SubscriberParticipant getMatchingParticipant(String ID, IResource[] resources) {
 		ISynchronizeParticipantReference[] refs = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
@@ -332,6 +346,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	 * <code>initializeConfiguration(ISynchronizePageConfiguration)</code>
 	 * but may have also been tailored further. This method gives the particpant 
 	 * a chance to validate those changes before the page is created.
+	 * 
 	 * @param configuration the page configuration that is about to be used to create a page.
 	 */
 	protected void validateConfiguration(ISynchronizePageConfiguration configuration) {
@@ -367,21 +382,19 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	}
 	
 	/**
-	 * Provide a filter that is used to filter the contents of the
-	 * sync info set for the participant. Normally, all out-of-sync
-	 * resources from the subscriber will be included in the 
-	 * participant's set. However, a filter can be used to exclude
+	 * Provide a filter that is used to filter the contents of the sync info set for the participant. Normally, all out-of-sync
+	 * resources from the subscriber will be included in the participant's set. However, a filter can be used to exclude
 	 * some of these out-of-sync resources, if desired.
 	 * <p>
-	 * Subsclasses can invoke this method any time after 
-	 * <code>setSubscriber</code> has been invoked.
+	 * Subsclasses can invoke this method any time after <code>setSubscriber</code> has been invoked.
+	 * </p>
 	 * @param filter a sync info filter
 	 */
 	protected void setSyncInfoFilter(SyncInfoFilter filter) {
 		collector.setFilter(filter);
 	}
 	
-	/**
+	/*
 	 * Create and schedule a subscriber refresh job. 
 	 * 
 	 * @param resources resources to be synchronized
@@ -402,6 +415,7 @@ public abstract class SubscriberParticipant extends AbstractSynchronizeParticipa
 	
 	/**
 	 * Return the scope that defines the resources displayed by this participant.
+	 * 
 	 * @return Returns the scope.
 	 */
 	public ISynchronizeScope getScope() {

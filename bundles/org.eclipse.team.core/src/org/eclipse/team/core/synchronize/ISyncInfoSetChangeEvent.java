@@ -21,10 +21,10 @@ import org.eclipse.core.resources.IResource;
  * from scratch any state that is derived from the <code>SyncInfoSet</code> from
  * which the event originated. 
  * <p>
- * The mix of return types, <code>SyncInfo</code> and <code>IResource</code>is required a result of an optimization 
+ * The mix of return types, <code>SyncInfo</code> and <code>IResource</code>is required as a result of an optimization 
  * included in {@link SyncInfoSet} collections that doesn't maintain <code>SyncInfo</code> objects
  * for in-sync resources.
- *  
+ *  </p>
  * @see SyncInfoSet#addSyncSetChangedListener(ISyncInfoSetChangeListener)
  * @see ISyncInfoSetChangeListener
  * @since 3.0

@@ -20,7 +20,7 @@ import org.eclipse.team.ui.*;
 /**
  * A dialog that displays the option of adding the participant to the {@link org.eclipse.team.ui.synchronize.ISynchronizeManager}
  * when the dialog is closed. This can be useful for showing changes for a participant modally and allowing the
- * user to decide if the participant shown be made available non-modally.
+ * user to decide if the participant shown should be made available non-modally.
  * 
  * @see SaveablePartAdapter
  * @see ISynchronizeParticipant
@@ -85,6 +85,11 @@ public class ParticipantPageDialog extends SaveablePartDialog {
 		}
 	}
 	
+	/**
+	 * Returns the participant showing in this dialog.
+	 * 
+	 * @return the participant showing in this dialog. 
+	 */
 	protected ISynchronizeParticipant getParticipant() {
 		return participant;
 	}

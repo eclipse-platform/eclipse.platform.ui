@@ -20,33 +20,36 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * A synchronize participant is a visual compoment that can be displayed within any
  * control (e.g. view, editor, dialog).  Typically a participant is used to show changes between 
  * local resources and variant states of those resources and allows the user to perform actions
- * to manipulate the changes. For example, a participant could show the relative synchronization
- * between local resources and those on an FTP server, or alternatively, between local
- * resources and local history.
+ * to manipulate the changes. 
  * <p>
+ * This class does not mandate how the synchronization state is displayed, but instead provides
+ * the accessors that clients would use to create a visual instance of the this participant.
+ * </p><p>
+ * A participant can display multiple instances of its synchronization state to the user via the creation 
+ * of a page {@link #createPage(ISynchronizePageConfiguration)} and
+ * clients can decide where to display the page. For example, the synchronize view is an example
+ * of a client that displays a participant in a view. However, you can imagine that a client may
+ * also want to display this state in a wizard or dialog instead. That is possible by 
+ * </p><p>
  * When a participant is registered with the {@link ISynchronizeManager} it will automatically display 
  * in the <i>Synchronize View</i> and if the participant extension point
- * enabled <code>globalSynchronize</code> it will also appear in the global synchronize action
- * toolbar.
+ * enabled <code>synchronizeWizards</code> it will also appear in the global synchronize action
+ * toolbar. 
  * <p>
  * A participant is added to the workbench as follows:
  * <ul>
  * <li>A <code>synchronizeParticipant</code> extension is contributed to 
  * the team registry. This extension defines the participant id, name, icon, type, and 
  * participant class.
- * <li>The participant type is <code>static</code> it is automatically added
- * to the {@link ISynchronizeManager}.
- * <li>If a participant is not static, plug-in developers can add the participant to the 
- * manager via {@link ISynchronizeManager#addSynchronizeParticipants(ISynchronizeParticipant[]) and
- * remove it using {@link ISynchronizeManager#removeSynchronizeParticipants(ISynchronizeParticipant[]).
- * Note that you don't have to add the participant to the manager. You can instead create the
- * participant, display it, and then dispose of it yourself.
- * <li>For non-static participants you can configure the participant to support multiple instances. This will
- * allow multiple instances to be created and registered with the synchronize manager.
+ * <li>A user via a wizard provided by the <code>synchronizeWizards</code> extension point
+ * or client code, creates a participant instance and registers it with the
+ * synchronize manager. It then appears in the synchronize view.
+ * <li>A synchronization can be persistent and thus re-initialized at startup. 
+ * <li>A pinned participant will only be removed from the synchronize manager if it is un-pinned.
  * </ul></p>
  * <p>
  * Once a participant is added to the synchronize manager its lifecycle will be managed. On shutdown if
- * the <code>persistent</code> property is set, the participant will be asked to persist state via 
+ * the participant is persistable, the participant will be asked to persist state via 
  * the <code>saveState()</code> method. At startup the <code>init()</code> method is called
  * with a handle to the state that was saved. The dispose method is called when the participant is
  * removed from the manager and at shutdown.
@@ -136,7 +139,7 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	public IPageBookViewPage createPage(ISynchronizePageConfiguration configuration);
 	
 	/**
-	 * Runs the participants action. Typically this would be some action to refresh the synchronizatin
+	 * Runs the participants action. Typically this would be some action to refresh the synchronization
 	 * state of the participant. This action is run from the global synchronize drop-down.
 	 * 
 	 * @param part the part in which the action is run or <code>null</code> if the action
@@ -167,12 +170,10 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	 * resources associated with a participant. When a participant is added
 	 * to the {@link ISynchronizeManager} this method is called when the
 	 * manager is shutdown or the participant is removed from the manager.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * Within this method a participant may release any resources, fonts, images, etc. 
 	 * held by this part.  It is also very important to deregister all listeners.
-	 * </p>
-	 * <p>
+	 * </p><p>
 	 * Clients should not call this method (the synchronize manager calls this 
 	 * method at appropriate times).
 	 * </p>

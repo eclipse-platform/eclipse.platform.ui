@@ -24,6 +24,7 @@ import org.eclipse.ui.IMemento;
  * A synchronize scope whose roots are a set of resources.
  * <p>
  * Clients are not expected to subclass this class.
+ * </p>
  * @since 3.0
  */
 public class ResourceScope extends AbstractSynchronizeScope {
@@ -41,6 +42,7 @@ public class ResourceScope extends AbstractSynchronizeScope {
 	
 	/**
 	 * Create the resource scope for the given resources
+	 * 
 	 * @param resources the resources that define this scope
 	 */
 	public ResourceScope(IResource[] resources) {
@@ -49,7 +51,8 @@ public class ResourceScope extends AbstractSynchronizeScope {
 	
 	/** 
 	 * Create this scope from it's previously saved state
-	 * @param memento
+	 * 
+	 * @param memento persisted state that can be restored
 	 */
 	protected ResourceScope(IMemento memento) {
 		super(memento);
@@ -57,6 +60,7 @@ public class ResourceScope extends AbstractSynchronizeScope {
 	
 	/**
 	 * Set the resources that define this scope
+	 * 
 	 * @param resources the resources that define this scope
 	 */
 	public void setResources(IResource[] resources) {
