@@ -98,7 +98,8 @@ public class ResourceChangeListenerList {
 	 * Adds the given listener to this list. Has no effect if an identical listener
 	 * is already registered.
 	 *
-	 * @param entry the entry
+	 * @param listener the listener
+	 * @param mask event types
 	 */
 	public void add(IResourceChangeListener listener, int mask) {
 		Assert.isNotNull(listener);
@@ -198,7 +199,7 @@ public class ResourceChangeListenerList {
 	 * Removes the given listener from this list. Has no effect if an identical
 	 * listener was not already registered.
 	 *
-	 * @param entry the entry to remove
+	 * @param listener the listener to remove
 	 */
 	public void remove(IResourceChangeListener listener) {
 		Assert.isNotNull(listener);

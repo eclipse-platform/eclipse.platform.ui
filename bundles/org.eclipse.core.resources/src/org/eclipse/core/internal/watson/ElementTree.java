@@ -69,7 +69,7 @@ import org.eclipse.core.runtime.Path;
  * of arbitrary ElementTrees (they need not have any ancestors in common).
  * These deltas are obtained with the <code>computeDeltaWith()</code>
  * method, which returns an instance of <code>ElementTreeDelta</code>.
- * @see computeDeltaWith()
+ * @see #computeDeltaWith(ElementTree, IElementComparator)
  * @see ElementTreeDelta
  *
  * Classes are also available for tree serialization and navigation.
@@ -296,7 +296,7 @@ public class ElementTree {
 	 * key in this tree.
 	 *
 	 * @param key The path of the new subtree in this tree.
-	 * @see getSubtree(IPath)
+	 * @see #getSubtree(IPath)
 	 */
 	public void createSubtree(IPath key, ElementTree subtree) {
 		/* don't allow creating subtrees at the root */
@@ -578,7 +578,7 @@ public class ElementTree {
 	 * 
 	 * The subtree must be present in this tree.
 	 *
-	 * @see createSubtree(ElementSubtree)
+	 * @see #createSubtree(IPath, ElementTree)
 	 */
 	public ElementTree getSubtree(IPath key) {
 		/* the subtree of the root of this tree is just this tree */
@@ -914,7 +914,6 @@ public class ElementTree {
 	 * The given element must be present in this tree.
 	 * @param key element identifier
 	 * @param data element info, or <code>null</code>
-	 * @see #setElementInfo
 	 */
 	public void setElementData(IPath key, Object data) {
 		/* don't allow modification of the implicit root */

@@ -32,8 +32,6 @@ import org.eclipse.core.runtime.Path;
  * <p>Element tree readers are thread-safe; several
  * threads may share a single reader provided, of course,
  * that the <code>IElementInfoFactory</code> is thread-safe.
- *
- * @see IElementTreeReader
  */
 public class ElementTreeReader {
 

@@ -135,9 +135,6 @@ public class PollingMonitor extends Job implements IRefreshMonitor {
 		schedule(MIN_FREQUENCY);
 	}
 
-	/**
-	 * @param hotRoot2
-	 */
 	private void poll(IResource resource) {
 		if (resource.isSynchronized(IResource.DEPTH_INFINITE))
 			return;

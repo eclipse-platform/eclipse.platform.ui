@@ -95,8 +95,8 @@ import org.eclipse.core.internal.dtree.DeltaDataTree;
 		return results;
 	}
 
-	/** Part of <code>IElementTreeReader</code> interface.
-	 * @see IElementTreeReader
+	/** Part of <code>ElementTreeReader</code> interface.
+	 * @see ElementTreeReader
 	 */
 	public ElementTree readTree(DataInput input) throws IOException {
 

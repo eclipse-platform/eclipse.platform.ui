@@ -20,7 +20,7 @@ public interface IDeltaFilter {
 	 * included in the response to an ElementTreeDelta query, and false 
 	 * otherwise.  The flag is the integer set by the IElementComparator.
 	 *
-	 * @see IComparator.compare(Object, Object)
+	 * @see org.eclipse.core.internal.dtree.IComparator#compare(Object, Object)
 	 */
 	public boolean includeElement(int flag);
 }

@@ -25,7 +25,7 @@ public class NodeInfo {
 	/**
 	 * Creates a new NodeInfo object
 	 *
-	 * @param name name of node
+	 * @param type type of node
 	 * @param data node's data
 	 * @param children array of child names
 	 * @param deleted array of deleted child names
@@ -89,7 +89,6 @@ public class NodeInfo {
 	 */
 	public boolean isDelta() {
 		int type = this.getType();
-
 		return (type == AbstractDataTreeNode.T_DELTA_NODE || type == AbstractDataTreeNode.T_NO_DATA_DELTA_NODE);
 	}
 

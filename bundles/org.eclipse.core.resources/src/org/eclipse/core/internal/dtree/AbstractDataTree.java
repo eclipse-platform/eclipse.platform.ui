@@ -60,7 +60,6 @@ public abstract class AbstractDataTree {
 	 * instance variables.
 	 */
 	protected AbstractDataTree copy() {
-
 		AbstractDataTree newTree = this.createInstance();
 		newTree.setImmutable(this.isImmutable());
 		newTree.setRootNode(this.getRootNode());
@@ -92,7 +91,7 @@ public abstract class AbstractDataTree {
 	 *
 	 * @param parentKey key of parent for new child.
 	 * @param localName name for new child.
-	 * @param data the data for the new child
+	 * @param object the data for the new child
 	 * @exception ObjectNotFoundException
 	 *	parentKey does not exist in the receiver
 	 * @exception InvalidParameterException
@@ -111,11 +110,10 @@ public abstract class AbstractDataTree {
 
 	/**
 	 * Creates or replaces a subtree in the tree.  The parent node must exist.
-	 * @exception InvalidParameterException
-	 *	receiver is immutable
 	 *
 	 * @param key key of parent of subtree to create/replace
 	 * @param subtree new subtree to add to tree
+	 * @exception InvalidParameterException receiver is immutable
 	 */
 	public abstract void createSubtree(IPath key, AbstractDataTreeNode subtree);
 
@@ -154,7 +152,6 @@ public abstract class AbstractDataTree {
 	 *	if no child with the given index (runtime exception)
 	 */
 	public IPath getChild(IPath parentKey, int index) {
-
 		/* Get name of given child of the parent */
 		String child = getNameOfChild(parentKey, index);
 		return parentKey.append(child);
@@ -216,9 +213,7 @@ public abstract class AbstractDataTree {
 	 *	if no child with the given index
 	 */
 	public String getNameOfChild(IPath parentKey, int index) {
-
 		String childNames[] = getNamesOfChildren(parentKey);
-
 		/* Return the requested child as long as its in range */
 		return childNames[index];
 	}

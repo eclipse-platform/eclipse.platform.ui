@@ -136,7 +136,7 @@ public class PropertyStore {
 	 * exists.  If <code>resourceName</code> does not exist returns an empty
 	 * enumerator.
 	 *
-	 * @see IResourceName
+	 * @see ResourceName
 	 * @param resourceName the name of the top most resource to match.
 	 * @return an enumeration of matching resource names.
 	 */
@@ -356,7 +356,7 @@ public class PropertyStore {
 	 * @param propertyNames the property names to remove.
 	 * @param depth the scope for matching the resource name.
 	 * @param removeRule the behavior when removing non-existant properties.
-	 * @exception PropertyNotFoundException
+	 * @exception CoreException
 	 */
 	public QueryResults remove(ResourceName resourceName, QualifiedName[] propertyNames, int depth, int removeRule) throws CoreException {
 		QueryResults failures = new QueryResults();
@@ -388,7 +388,7 @@ public class PropertyStore {
 	 * to depth zero.</p>
 	 * <p>
 	 * @param resourceName the resource containing the property.
-	 * @param property the property to remove.
+	 * @param propertyName the property to remove.
 	 */
 	public void remove(ResourceName resourceName, QualifiedName propertyName) throws CoreException {
 		remove(resourceName, new QualifiedName[] {propertyName}, IResource.DEPTH_ZERO, IGNORE_MISSING);
@@ -432,8 +432,8 @@ public class PropertyStore {
 	 * @param resourceName the resource to receive the properties.
 	 * @param properties the properties to add.
 	 * @param depth the depth at which to apply the add opertion.
-	 * @param addRule the behavior of the add operation.
-	 * @exception PropertyExistsException
+	 * @param mode the behavior of the add operation.
+	 * @exception CoreException
 	 */
 	public QueryResults set(ResourceName resourceName, StoredProperty[] properties, int depth, int mode) throws CoreException {
 		QueryResults failures = new QueryResults();

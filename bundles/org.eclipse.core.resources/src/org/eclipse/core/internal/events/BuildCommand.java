@@ -43,7 +43,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	}
 
 	/**
-	 * @see ICommand#getArguments
+	 * @see ICommand#getArguments()
 	 */
 	public Map getArguments() {
 		return getArguments(true);
@@ -54,7 +54,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	}
 
 	/**
-	 * @see ICommand#getBuilderName
+	 * @see ICommand#getBuilderName()
 	 */
 	public String getBuilderName() {
 		return getName();
@@ -66,7 +66,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	}
 
 	/**
-	 * @see ICommand#setArguments
+	 * @see ICommand#setArguments(Map)
 	 */
 	public void setArguments(Map value) {
 		// copy parameter for safety's sake
@@ -74,7 +74,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	}
 
 	/**
-	 * @see ICommand#setBuilderName
+	 * @see ICommand#setBuilderName(String)
 	 */
 	public void setBuilderName(String value) {
 		//don't allow builder name to be null

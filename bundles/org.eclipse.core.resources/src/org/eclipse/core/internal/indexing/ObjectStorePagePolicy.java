@@ -13,7 +13,7 @@ package org.eclipse.core.internal.indexing;
 public class ObjectStorePagePolicy extends AbstractPagePolicy {
 
 	/**
-	 * @see PagePolicy#createPage(int, byte[], PageStore)
+	 * @see AbstractPagePolicy#createPage(int, byte[], PageStore)
 	 */
 	public final Page createPage(int pageNumber, byte[] buffer, PageStore pageStore) {
 		if (pageNumber % Page.SIZE == 0) {

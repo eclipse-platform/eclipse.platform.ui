@@ -364,9 +364,7 @@ public abstract class AbstractDataTreeNode {
 	 * #replaceFrom:to:with:startingAt: method for copying children in data nodes
 	 */
 	protected void copyChildren(int from, int to, AbstractDataTreeNode otherNode, int start) {
-
 		int other = start;
-
 		for (int i = from; i <= to; i++, other++) {
 			this.children[i] = otherNode.children[other];
 		}
@@ -455,13 +453,10 @@ public abstract class AbstractDataTreeNode {
 	 * Returns the local names of the receiver's children.
 	 */
 	String[] namesOfChildren() {
-
 		String names[] = new String[children.length];
-
 		/* copy child names (Reverse loop optimized) */
-		for (int i = children.length; --i >= 0;) {
+		for (int i = children.length; --i >= 0;)
 			names[i] = children[i].getName();
-		}
 		return names;
 	}
 

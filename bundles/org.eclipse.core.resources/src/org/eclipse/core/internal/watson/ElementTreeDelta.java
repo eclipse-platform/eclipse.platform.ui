@@ -44,7 +44,8 @@ import org.eclipse.core.runtime.Path;
  * @see DeltaIterator
  * @see IDeltaVisitor
  *
- * @see ElementTree.computeDeltaWith(...)
+ * @see ElementTree#computeDeltaWith(ElementTree, IElementComparator)
+ * @see ElementTree#computeDeltaWith(ElementTree, IElementComparator, IPath)
  */
 public class ElementTreeDelta {
 

@@ -80,7 +80,7 @@ public class DataTree extends AbstractDataTree {
 
 	/**
 	 * Creates a new child in the tree.
-	 * @see AbstractDataTree#createChild
+	 * @see AbstractDataTree#createChild(IPath, String)
 	 */
 	public void createChild(IPath parentKey, String localName) {
 		createChild(parentKey, localName, null);
@@ -88,20 +88,14 @@ public class DataTree extends AbstractDataTree {
 
 	/**
 	 * Creates a new child in the tree.
-	 * @see AbstractDataTree#createChild
+	 * @see AbstractDataTree#createChild(IPath, String, Object)
 	 */
 	public void createChild(IPath parentKey, String localName, Object data) {
-
 		DataTreeNode node = findNodeAt(parentKey);
-
-		if (node == null) {
+		if (node == null)
 			handleNotFound(parentKey);
-		}
-
-		if (this.isImmutable()) {
+		if (this.isImmutable())
 			handleImmutableTree();
-		}
-
 		/* If node already exists, replace */
 		if (node.includesChild(localName)) {
 			node.replaceChild(localName, new DataTreeNode(localName, data));
@@ -161,14 +155,11 @@ public class DataTree extends AbstractDataTree {
 
 	/**
 	 * Deletes a child of the tree.
-	 * @see AbstractDataTree#deleteChild
+	 * @see AbstractDataTree#deleteChild(IPath, String)
 	 */
 	public void deleteChild(IPath parentKey, String localName) {
-
-		if (this.isImmutable()) {
+		if (this.isImmutable())
 			handleImmutableTree();
-		}
-
 		DataTreeNode node = findNodeAt(parentKey);
 		if (node == null || (!node.includesChild(localName))) {
 			handleNotFound(node == null ? parentKey : parentKey.append(localName));
@@ -179,7 +170,7 @@ public class DataTree extends AbstractDataTree {
 
 	/**
 	 * Initializes the receiver.
-	 * @see AbstractDataTree#empty
+	 * @see AbstractDataTree#empty()
 	 */
 	public void empty() {
 		this.setRootNode(new DataTreeNode(null, null));
@@ -192,7 +183,6 @@ public class DataTree extends AbstractDataTree {
 	 *	Key of node to return
 	 */
 	public DataTreeNode findNodeAt(IPath key) {
-
 		AbstractDataTreeNode node = this.getRootNode();
 		int keyLength = key.segmentCount();
 		for (int i = 0; i < keyLength; i++) {
@@ -212,9 +202,7 @@ public class DataTree extends AbstractDataTree {
 	 *	Node whose data to return.
 	 */
 	public Object getData(IPath key) {
-
 		DataTreeNode node = findNodeAt(key);
-
 		if (node == null) {
 			handleNotFound(key);
 			return null;
@@ -225,12 +213,10 @@ public class DataTree extends AbstractDataTree {
 
 	/**
 	 * Returns the names of the children of a node.
-	 * @see AbstractDataTree#getNamesOfChildren
+	 * @see AbstractDataTree#getNamesOfChildren(IPath)
 	 */
 	public String[] getNamesOfChildren(IPath parentKey) {
-
 		DataTreeNode parentNode;
-
 		parentNode = findNodeAt(parentKey);
 		if (parentNode == null) {
 			handleNotFound(parentKey);
@@ -264,7 +250,6 @@ public class DataTree extends AbstractDataTree {
 	 */
 	public DataTreeLookup lookup(IPath key) {
 		DataTreeNode node = this.findNodeAt(key);
-
 		if (node == null) {
 			return DataTreeLookup.newLookup(key, false, null);
 		} else {
@@ -276,9 +261,7 @@ public class DataTree extends AbstractDataTree {
 	 * Replaces the node at the specified key with the given node
 	 */
 	protected void replaceNode(IPath key, DataTreeNode node) {
-
 		DataTreeNode found;
-
 		if (key.isRoot()) {
 			this.setRootNode(node);
 		} else {
@@ -289,15 +272,12 @@ public class DataTree extends AbstractDataTree {
 
 	/**
 	 * Sets the data at the specified node.
-	 * @see AbstractDataTree#setData
+	 * @see AbstractDataTree#setData(IPath, Object)
 	 */
 	public void setData(IPath key, Object data) {
 		DataTreeNode node = this.findNodeAt(key);
-
-		if (this.isImmutable()) {
+		if (this.isImmutable())
 			handleImmutableTree();
-		}
-
 		if (node == null) {
 			handleNotFound(key);
 		} else {
@@ -307,7 +287,7 @@ public class DataTree extends AbstractDataTree {
 
 	/**
 	 * Sets the root node of the tree
-	 * @see AbstractDataTree#setRootNode
+	 * @see AbstractDataTree#setRootNode(AbstractDataTreeNode)
 	 */
 	void setRootNode(DataTreeNode aNode) {
 		rootNode = aNode;

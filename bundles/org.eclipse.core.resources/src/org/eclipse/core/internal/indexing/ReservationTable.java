@@ -18,6 +18,7 @@ public class ReservationTable {
 	protected Map table = new HashMap();
 
 	public ReservationTable() {
+		super();
 	}
 
 	public Reservation get(int pageNumber) {

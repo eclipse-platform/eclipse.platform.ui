@@ -18,6 +18,7 @@ class Pointer {
 	 * Default constructor for a new Field -- do not use.
 	 */
 	protected Pointer() {
+		super();
 	}
 
 	/**

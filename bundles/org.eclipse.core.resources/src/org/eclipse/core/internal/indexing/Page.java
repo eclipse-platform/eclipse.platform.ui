@@ -25,6 +25,7 @@ public abstract class Page extends Observable implements Referable {
 	 * Default constructor.
 	 */
 	protected Page() {
+		super();
 	}
 
 	/**

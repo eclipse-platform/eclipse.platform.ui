@@ -176,7 +176,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	}
 
 	/**
-	 * @see IResourceDelta#getAffectedChildren
+	 * @see IResourceDelta#getAffectedChildren()
 	 */
 	public IResourceDelta[] getAffectedChildren() {
 		return getAffectedChildren(ADDED | REMOVED | CHANGED, IResource.NONE);
@@ -240,28 +240,28 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	}
 
 	/**
-	 * @see IResourceDelta#getFlags
+	 * @see IResourceDelta#getFlags()
 	 */
 	public int getFlags() {
 		return status & ~KIND_MASK;
 	}
 
 	/**
-	 * @see IResourceDelta#getFullPath
+	 * @see IResourceDelta#getFullPath()
 	 */
 	public IPath getFullPath() {
 		return path;
 	}
 
 	/**
-	 * @see IResourceDelta#getKind
+	 * @see IResourceDelta#getKind()
 	 */
 	public int getKind() {
 		return status & KIND_MASK;
 	}
 
 	/**
-	 * @see IResourceDelta#getMarkerDeltas
+	 * @see IResourceDelta#getMarkerDeltas()
 	 */
 	public IMarkerDelta[] getMarkerDeltas() {
 		Map markerDeltas = deltaInfo.getMarkerDeltas();
@@ -280,7 +280,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	}
 
 	/**
-	 * @see IResourceDelta#getMovedFromPath
+	 * @see IResourceDelta#getMovedFromPath()
 	 */
 	public IPath getMovedFromPath() {
 		if ((status & MOVED_FROM) != 0) {
@@ -290,7 +290,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	}
 
 	/**
-	 * @see IResourceDelta#getMovedToPath
+	 * @see IResourceDelta#getMovedToPath()
 	 */
 	public IPath getMovedToPath() {
 		if ((status & MOVED_TO) != 0) {
@@ -300,7 +300,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	}
 
 	/**
-	 * @see IResourceDelta#getProjectRelativePath
+	 * @see IResourceDelta#getProjectRelativePath()
 	 */
 	public IPath getProjectRelativePath() {
 		IPath full = getFullPath();
@@ -313,7 +313,7 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 	}
 
 	/**
-	 * @see IResourceDelta#getResource
+	 * @see IResourceDelta#getResource()
 	 */
 	public IResource getResource() {
 		// return a cached copy if we have one
@@ -336,9 +336,6 @@ public class ResourceDelta extends PlatformObject implements IResourceDelta {
 		return cachedResource;
 	}
 
-	/**
-	 * @see IResourceDelta#hasAffectedChildren
-	 */
 	public boolean hasAffectedChildren() {
 		return children.length > 0;
 	}

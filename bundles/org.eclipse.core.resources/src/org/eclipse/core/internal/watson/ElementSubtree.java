@@ -18,7 +18,7 @@ import org.eclipse.core.internal.dtree.DataTreeNode;
  * contents of an element tree.  It can be used for rapidly creating ElementTree 
  * objects, but cannot be treated as an ElementTree itself.
  * @see ElementTree(ElementSubtree)
- * @see ElementTree.getElementSubtree()
+ * @see ElementTree#getElementSubtree()
  */
 class ElementSubtree {
 	protected String elementName;

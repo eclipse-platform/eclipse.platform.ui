@@ -62,21 +62,21 @@ public class ResourceChangeEvent extends EventObject implements IResourceChangeE
 	}
 
 	/**
-	 * @see IResourceChangeEvent#getDelta
+	 * @see IResourceChangeEvent#getDelta()
 	 */
 	public IResourceDelta getDelta() {
 		return delta;
 	}
 
 	/**
-	 * @see IResourceChangeEvent#getResource
+	 * @see IResourceChangeEvent#getResource()
 	 */
 	public IResource getResource() {
 		return resource;
 	}
 
 	/**
-	 * @see IResourceChangeEvent#getType
+	 * @see IResourceChangeEvent#getType()
 	 */
 	public int getType() {
 		return type;

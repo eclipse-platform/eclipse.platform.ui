@@ -143,7 +143,7 @@ public abstract class InternalBuilder {
 
 	/**
 	 * Sets the project for which this builder operates.
-	 * @see #getProject
+	 * @see #getProject()
 	 */
 	final void setProject(IProject value) {
 		Assert.isTrue(project == null);

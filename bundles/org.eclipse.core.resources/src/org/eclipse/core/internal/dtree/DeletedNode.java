@@ -28,15 +28,13 @@ public class DeletedNode extends AbstractDataTreeNode {
 	}
 
 	/**
-	 * @see AbstractDataTreeNode#asBackwardDelta
+	 * @see AbstractDataTreeNode#asBackwardDelta(DeltaDataTree, DeltaDataTree, IPath)
 	 */
 	AbstractDataTreeNode asBackwardDelta(DeltaDataTree myTree, DeltaDataTree parentTree, IPath key) {
-
-		if (parentTree.includes(key)) {
+		if (parentTree.includes(key))
 			return parentTree.copyCompleteSubtree(key);
-		} else {
+		else
 			return this;
-		}
 	}
 
 	/**
@@ -59,7 +57,6 @@ public class DeletedNode extends AbstractDataTreeNode {
 	 * Replaces the child with the given local name.
 	 */
 	AbstractDataTreeNode childAtPut(String localName) {
-
 		/* deleted nodes do not have children */
 		return null;
 	}
@@ -98,19 +95,16 @@ public class DeletedNode extends AbstractDataTreeNode {
 	 * Simplifies the given node, and returns its replacement.
 	 */
 	AbstractDataTreeNode simplifyWithParent(IPath key, DeltaDataTree parent, IComparator comparer) {
-
-		if (parent.includes(key)) {
+		if (parent.includes(key))
 			return this;
-		} else {
+		else
 			return new NoDataDeltaNode(name);
-		}
 	}
 
 	/**
 	 * Returns the number of children of the receiver
 	 */
 	int size() {
-
 		/* deleted nodes have no children */
 		return 0;
 	}
@@ -134,5 +128,4 @@ public class DeletedNode extends AbstractDataTreeNode {
 		/* deleted nodes do not have children */
 		return null;
 	}
-
 }

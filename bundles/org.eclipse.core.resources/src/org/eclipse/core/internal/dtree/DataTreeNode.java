@@ -46,7 +46,7 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	}
 
 	/**
-	 * @see AbstractDataTreeNode#asBackwardDelta
+	 * @see AbstractDataTreeNode#asBackwardDelta(DeltaDataTree, DeltaDataTree, IPath)
 	 */
 	AbstractDataTreeNode asBackwardDelta(DeltaDataTree myTree, DeltaDataTree parentTree, IPath key) {
 
@@ -111,11 +111,8 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	}
 
 	AbstractDataTreeNode compareWithParent(IPath key, DeltaDataTree parent, IComparator comparator) {
-
-		if (!parent.includes(key)) {
+		if (!parent.includes(key))
 			return convertToAddedComparisonNode(this, NodeComparison.K_ADDED);
-		}
-
 		DataTreeNode inParent = (DataTreeNode) parent.copyCompleteSubtree(key);
 		return inParent.compareWith(this, comparator);
 	}
@@ -329,7 +326,6 @@ public class DataTreeNode extends AbstractDataTreeNode {
 	 * Simplifies the given node, and answers its replacement.
 	 */
 	AbstractDataTreeNode simplifyWithParent(IPath key, DeltaDataTree parent, IComparator comparer) {
-
 		/* If not in parent, can't be simplified */
 		if (!parent.includes(key)) {
 			return this;

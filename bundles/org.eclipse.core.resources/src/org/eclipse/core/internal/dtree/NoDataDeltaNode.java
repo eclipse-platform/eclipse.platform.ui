@@ -40,7 +40,7 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 	/**
 	 * Creates a new data tree node
 	 *
-	 * @param name name of new node
+	 * @param localName name of new node
 	 * @param childNode single child for new node
 	 */
 	NoDataDeltaNode(String localName, AbstractDataTreeNode childNode) {
@@ -48,7 +48,7 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 	}
 
 	/**
-	 * @see AbstractDataTreeNode#asBackwardDelta
+	 * @see AbstractDataTreeNode#asBackwardDelta(DeltaDataTree, DeltaDataTree, IPath)
 	 */
 	AbstractDataTreeNode asBackwardDelta(DeltaDataTree myTree, DeltaDataTree parentTree, IPath key) {
 		int numChildren = children.length;
@@ -61,6 +61,9 @@ public class NoDataDeltaNode extends AbstractDataTreeNode {
 		return new NoDataDeltaNode(name, newChildren);
 	}
 
+	/**
+	 * @see AbstractDataTreeNode#compareWithParent(IPath, DeltaDataTree, IComparator)
+	 */
 	AbstractDataTreeNode compareWithParent(IPath key, DeltaDataTree parent, IComparator comparator) {
 		AbstractDataTreeNode[] comparedChildren = compareWithParent(children, key, parent, comparator);
 		Object oldData = parent.getData(key);

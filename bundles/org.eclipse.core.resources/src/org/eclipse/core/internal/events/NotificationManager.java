@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.jobs.Job;
 public class NotificationManager implements IManager, ILifecycleListener {
 	class NotifyJob extends Job {
 		private final IWorkspaceRunnable noop = new IWorkspaceRunnable() {
-			public void run(IProgressMonitor monitor) throws CoreException {
+			public void run(IProgressMonitor monitor) {
 			}
 		};
 

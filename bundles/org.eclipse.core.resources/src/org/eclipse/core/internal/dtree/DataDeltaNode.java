@@ -42,7 +42,7 @@ public class DataDeltaNode extends DataTreeNode {
 	}
 
 	/**
-	 * @see AbstractDataTreeNode#asBackwardDelta
+	 * @see AbstractDataTreeNode#asBackwardDelta(DeltaDataTree, DeltaDataTree, IPath)
 	 */
 	AbstractDataTreeNode asBackwardDelta(DeltaDataTree myTree, DeltaDataTree parentTree, IPath key) {
 		AbstractDataTreeNode[] newChildren;
@@ -58,11 +58,9 @@ public class DataDeltaNode extends DataTreeNode {
 	}
 
 	AbstractDataTreeNode compareWithParent(IPath key, DeltaDataTree parent, IComparator comparator) {
-
 		AbstractDataTreeNode[] comparedChildren = compareWithParent(children, key, parent, comparator);
 		Object oldData = parent.getData(key);
 		Object newData = data;
-
 		/* don't compare data of root */
 		int userComparison = 0;
 		if (key != parent.rootKey()) {
@@ -99,9 +97,7 @@ public class DataDeltaNode extends DataTreeNode {
 	 * Simplifies the given node, and answers its replacement.
 	 */
 	AbstractDataTreeNode simplifyWithParent(IPath key, DeltaDataTree parent, IComparator comparer) {
-
 		AbstractDataTreeNode[] simplifiedChildren = simplifyWithParent(children, key, parent, comparer);
-
 		/* don't compare root nodes */
 		if (!key.isRoot() && comparer.compare(parent.getData(key), data) == 0) {
 			return new NoDataDeltaNode(name, simplifiedChildren);
