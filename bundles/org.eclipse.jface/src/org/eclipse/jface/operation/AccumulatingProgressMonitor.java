@@ -57,6 +57,12 @@ import org.eclipse.jface.util.Assert;
 		private double worked;
 		private IProgressMonitor monitor;
 		
+		/**
+		 * Create a new collector.
+		 * @param subTask
+		 * @param work
+		 * @param monitor
+		 */
 		public Collector(
 				String subTask, 
 				double work, 
@@ -66,14 +72,24 @@ import org.eclipse.jface.util.Assert;
 			this.monitor = monitor;
 		}
 		
-		public void worked(double worked) {
-			this.worked = this.worked + worked;
+		/**
+		 * Add worked to the work.
+		 * @param workedIncrement
+		 */
+		public void worked(double workedIncrement) {
+			this.worked = this.worked + workedIncrement;
 		}
 		
-		public void subTask(String subTask) {
-			this.subTask = subTask;
+		/**
+		 * Set the subTask name.
+		 * @param subTaskName
+		 */
+		public void subTask(String subTaskName) {
+			this.subTask = subTaskName;
 		}
-		
+		/**
+		 * Run the collector.
+		 */
 		public void run() {
 			clearCollector(this);
 			if (subTask != null)
@@ -112,15 +128,18 @@ public void beginTask(final String name, final int totalWork) {
 /**
  * Clears the collector object used to accumulate work and subtask calls
  * if it matches the given one.
+ * @param collectorToClear
  */
-private synchronized void clearCollector(Collector collector) {
+private synchronized void clearCollector(Collector collectorToClear) {
 	// Check if the accumulator is still using the given collector.
 	// If not, don't clear it.
-	if (this.collector == collector)
+	if (this.collector == collectorToClear)
 		this.collector = null;
 }
 /**
- * Creates a collector object to accumulate work and subtask calls.
+ *  Creates a collector object to accumulate work and subtask calls.
+ * @param subTask
+ * @param work
  */
 private void createCollector(String subTask, double work) {
 	collector = new Collector(subTask, work, getWrappedProgressMonitor());
@@ -220,6 +239,7 @@ public void setBlocked(final IStatus reason) {
 		 */
 		public void run() {
 			((IProgressMonitorWithBlocking)pm).setBlocked(reason);
+			//Do not give a shell as we want it to block until it opens.
 			Dialog.getBlockedHandler().showBlocked(pm,reason,currentTask);
 		}
 	});

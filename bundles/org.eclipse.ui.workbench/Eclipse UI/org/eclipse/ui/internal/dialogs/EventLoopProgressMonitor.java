@@ -9,10 +9,13 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ProgressMonitorWrapper;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.ExceptionHandler;
-import org.eclipse.ui.internal.progress.BlockedJobsDialog;
 /**
  * Used to run an event loop whenever progress monitor methods
  * are invoked.  <p>
@@ -34,17 +37,12 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	private static int T_MAX = 50;
 	
 	/**
-	 * The dialog that is shown when the operation is blocked, or null when no
-	 * operation in the UI thread is blocked. 
-	 */
-	protected BlockedJobsDialog dialog;
-	
-	/**
 	 * Last time the event loop was spun.
 	 */
 	private long lastTime = System.currentTimeMillis();
 	/**
-	 * Constructs a new monitor.
+	 * Constructs a new instance of the receiver and forwards to monitor.
+	 * @param monitor
 	 */
 	public EventLoopProgressMonitor(IProgressMonitor monitor) {
 		super(monitor);
@@ -60,10 +58,7 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
 	 */
 	public void clearBlocked() {
-		//dismiss the dialog that was reporting the blockage
-		if (dialog != null)
-			dialog.close(this);
-		dialog = null;
+		Dialog.getBlockedHandler().clearBlocked();
 	}
 	/**
 	 * @see IProgressMonitor#done
@@ -83,16 +78,6 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 * @see IProgressMonitor#isCanceled
 	 */
 	public boolean isCanceled() {
-		if (dialog != null) {
-			IProgressMonitor blockedMonitor = dialog.getProgressMonitor();
-			// If the blocked dialog already exists, and is associated with a different
-			// progress monitor, then this is a recursive blockage. Respond to the cancelation
-			// in the progress monitor that is associated with the dialog rather than this one.
-			// This will allow cancelation in the dialog to cancel all event loop monitors in
-			// the stack.
-			if (blockedMonitor != null && blockedMonitor != this)
-				return blockedMonitor.isCanceled();
-		}
 		runEventLoop();
 		return super.isCanceled();
 	}
@@ -137,7 +122,7 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper
 	 * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(org.eclipse.core.runtime.IStatus)
 	 */
 	public void setBlocked(IStatus reason) {
-		dialog = BlockedJobsDialog.createBlockedDialog(null, this, reason);
+		Dialog.getBlockedHandler().showBlocked(this,reason,null);
 	}
 	/**
 	 * @see IProgressMonitor#setCanceled

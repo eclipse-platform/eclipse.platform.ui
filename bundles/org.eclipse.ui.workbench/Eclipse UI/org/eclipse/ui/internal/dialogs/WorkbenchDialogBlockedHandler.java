@@ -11,10 +11,9 @@
 package org.eclipse.ui.internal.dialogs;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.jface.dialogs.IDialogBlockedHandler;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.progress.BlockedJobsDialog;
-import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 /**
  * The WorkbenchWizardBlockedHandler is the class that implements the blocked
  * handler for the workbench.
@@ -50,15 +49,13 @@ public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
 	public void showBlocked(Shell parentShell,
 			IProgressMonitor blockingMonitor, IStatus blockingStatus,
 			String blockedName) {
-		
+
 		currentMonitor = blockingMonitor;
 		//Try to get a name as best as possible
-		if (blockedName == null)
+		if (blockedName == null && parentShell != null)
 			blockedName = parentShell.getText();
 		blockedDialog = BlockedJobsDialog.createBlockedDialog(parentShell,
-				blockingMonitor, blockingStatus);
-		blockedDialog.setBlockedTaskName(blockedName);
-		blockedDialog.open();
+				blockingMonitor, blockingStatus, blockedName);
 	}
 	/*
 	 * (non-Javadoc)
@@ -68,7 +65,6 @@ public class WorkbenchDialogBlockedHandler implements IDialogBlockedHandler {
 	 */
 	public void showBlocked(IProgressMonitor blocking, IStatus blockingStatus,
 			String blockedName) {
-		showBlocked(ProgressManagerUtil.getDefaultParent(), blocking,
-				blockingStatus, blockedName);
+		showBlocked(null, blocking, blockingStatus, blockedName);
 	}
 }

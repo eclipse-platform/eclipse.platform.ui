@@ -52,7 +52,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	/**
 	 * The name of the task that is being blocked.
 	 */
-	private String blockedTaskName = null;	
+	private String blockedTaskName = null;
 	/**
 	 * The Job blocking the blocked task.
 	 */
@@ -161,41 +161,62 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * 
 	 * @param parentShell
 	 *            The parent shell, or <code>null</code> to create a top-level
-	 *            shell.
+	 *            shell. If the parentShell is not null we will open immediately
+	 *            as parenting has been determined. If it is <code>null</code>
+	 *            then the dialog will not open until there is no modal shell
+	 *            blocking it.
 	 * @param blockedMonitor
 	 *            The monitor that is currently blocked
 	 * @param reason
 	 *            A status describing why the monitor is blocked
+	 * @param taskName
+	 *            A name to give the blocking task in the dialog
 	 * @return BlockedJobsDialog
 	 */
 	public static BlockedJobsDialog createBlockedDialog(Shell parentShell,
-			IProgressMonitor blockedMonitor, IStatus reason) {
+			IProgressMonitor blockedMonitor, IStatus reason, String taskName) {
 		//use an existing dialog if available
 		if (singleton != null)
 			return singleton;
 		singleton = new BlockedJobsDialog(parentShell, blockedMonitor, reason);
-		//create the job that will open the dialog after a delay.
-		WorkbenchJob dialogJob = new WorkbenchJob(WorkbenchMessages
-				.getString("EventLoopProgressMonitor.OpenDialogJobName")) { //$NON-NLS-1$
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
-			 */
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-				if (singleton == null)
-					return Status.CANCEL_STATUS;
-				if (ProgressManagerUtil.rescheduleIfModalShellOpen(this))
+
+		if (taskName == null) {
+			if (singleton.getParentShell() != null)
+				singleton.setBlockedTaskName(singleton.getParentShell()
+						.getText());
+		} else
+			singleton.setBlockedTaskName(taskName);
+
+		/**
+		 * If there is no parent shell we have not been asked for a parent so we
+		 * want to avoid blocking. If there is a parent then it is OK to open.
+		 */
+		if (parentShell == null) {
+			//create the job that will open the dialog after a delay.
+			WorkbenchJob dialogJob = new WorkbenchJob(WorkbenchMessages
+					.getString("EventLoopProgressMonitor.OpenDialogJobName")) { //$NON-NLS-1$
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.runtime.IProgressMonitor)
+				 */
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					if (singleton == null)
+						return Status.CANCEL_STATUS;
+					if (ProgressManagerUtil.rescheduleIfModalShellOpen(this))
 						return Status.CANCEL_STATUS;
 					singleton.open();
-				return Status.OK_STATUS;
-			}
-		};
-		//Wait for long operation time to prevent a proliferation
-		//of dialogs
-		dialogJob.setSystem(true);
-		dialogJob.schedule(PlatformUI.getWorkbench().getProgressService()
-				.getLongOperationTime());
+					return Status.OK_STATUS;
+				}
+			};
+			//Wait for long operation time to prevent a proliferation
+			//of dialogs
+			dialogJob.setSystem(true);
+			dialogJob.schedule(PlatformUI.getWorkbench().getProgressService()
+					.getLongOperationTime());
+		} else
+			singleton.open();
+
 		return singleton;
 	}
 	/**
@@ -217,8 +238,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 				: parentShell);
 		blockingMonitor = blocking;
 		if (blockingStatus instanceof IJobStatus)
-			blockingJob= ((IJobStatus)blockingStatus).getJob();
-		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL | SWT.RESIZE);
+			blockingJob = ((IJobStatus) blockingStatus).getJob();
+		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL
+				| SWT.RESIZE);
 		// no close button
 		setBlockOnOpen(false);
 		setMessage(blockingStatus.getMessage());
@@ -262,7 +284,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 			}
 		};
 		if (viewer instanceof NewProgressViewer && blockingJob != null)
-			((NewProgressViewer)viewer).setHighlightJob(blockingJob);
+			((NewProgressViewer) viewer).setHighlightJob(blockingJob);
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(new ViewerSorter() {
 			/*
@@ -331,7 +353,8 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		}
 	}
 	/*
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell(Shell shell) {
@@ -344,7 +367,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	}
 	/**
 	 * This method sets the message in the message label.
-	 * @param messageString - the String for the message area
+	 * 
+	 * @param messageString -
+	 *            the String for the message area
 	 */
 	private void setMessage(String messageString) {
 		//must not set null text in a label
@@ -371,17 +396,20 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	/**
 	 * Requests that the blocked jobs dialog be closed. The supplied monitor
 	 * must be the same one that was passed to the createBlockedDialog method.
+	 * 
 	 * @param monitor
 	 * @return IProgressMonitor
 	 */
 	public boolean close(IProgressMonitor monitor) {
 		//ignore requests to close the dialog from all but the first monitor
 		if (blockingMonitor != monitor)
-			return false;		
+			return false;
 		return close();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#close()
 	 */
 	public boolean close() {
@@ -389,15 +417,6 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		singleton = null;
 		clearCursors();
 		return super.close();
-	}
-	/**
-	 * Set the name of the task being blocked. If this value is not set then the
-	 * default blocked name will be used.
-	 * 
-	 * @param taskName
-	 */
-	public void setBlockedTaskName(String taskName) {
-		blockedTaskName = taskName;
 	}
 	/*
 	 * (non-Javadoc)
@@ -407,5 +426,12 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	protected Control createButtonBar(Composite parent) {
 		// Do nothing here as we want no buttons
 		return parent;
+	}
+	/**
+	 * @param taskName
+	 *            The blockedTaskName to set.
+	 */
+	void setBlockedTaskName(String taskName) {
+		this.blockedTaskName = taskName;
 	}
 }
