@@ -29,6 +29,9 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -88,181 +91,6 @@ public class WorkbenchWindow
 	static final int BAR_SIZE = 23;
 
 	/**
-	 * The layout for the workbench window's shell.
-	 */
-	class WorkbenchWindowLayout extends Layout {
-
-		protected Point computeSize(
-			Composite composite,
-			int wHint,
-			int hHint,
-			boolean flushCache) {
-			if (wHint != SWT.DEFAULT && hHint != SWT.DEFAULT)
-				return new Point(wHint, hHint);
-
-			Point result = new Point(0, 0);
-			Control[] ws = composite.getChildren();
-			for (int i = 0; i < ws.length; i++) {
-				Control w = ws[i];
-				boolean skip = false;
-				if (w == getToolBarControl()) {
-					skip = true;
-					result.y += BAR_SIZE;
-				} else if (
-					getShortcutBar() != null
-						&& w == getShortcutBar().getControl()) {
-					skip = true;
-				}
-				if (!skip) {
-					Point e = w.computeSize(wHint, hHint, flushCache);
-					result.x = Math.max(result.x, e.x);
-					result.y += e.y + VGAP;
-				}
-			}
-
-			result.x += BAR_SIZE; // For shortcut bar.
-			if (wHint != SWT.DEFAULT)
-				result.x = wHint;
-			if (hHint != SWT.DEFAULT)
-				result.y = hHint;
-			return result;
-		}
-
-		protected void layout(Composite composite, boolean flushCache) {
-			Rectangle clientArea = composite.getClientArea();
-			// Loop through the children.  
-			// Expected order == sep1, toolbar, status, sep2, shortcuts, sep3, client
-			Control[] ws = composite.getChildren();
-			for (int i = 0; i < ws.length; i++) {
-				Control w = ws[i];
-				if (i == 0) {
-					Point e =
-						w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-					w.setBounds(
-						clientArea.x,
-						clientArea.y,
-						clientArea.width,
-						e.y);
-					clientArea.y += e.y;
-					clientArea.height -= e.y;
-				} else if (w == getSeparator2()) {
-					if (getShowToolBar()) {
-						Point e =
-							w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-						w.setBounds(
-							clientArea.x,
-							clientArea.y,
-							clientArea.width,
-							e.y);
-						clientArea.y += e.y;
-						clientArea.height -= e.y;
-					} else {
-						w.setBounds(0, 0, 0, 0);
-					}
-				} else if (w == getToolBarControl()) {
-					if (getShowToolBar()) {
-						int height = BAR_SIZE;
-						if (toolBarChildrenExist()) {
-							Point e =
-								w.computeSize(
-									clientArea.width,
-									SWT.DEFAULT,
-									flushCache);
-							height = e.y;
-						}
-						w.setBounds(
-							clientArea.x,
-							clientArea.y,
-							clientArea.width,
-							height);
-						clientArea.y += height;
-						clientArea.height -= height;
-					} else {
-						w.setBounds(0, 0, 0, 0);
-					}
-				} else if (
-					getStatusLineManager() != null
-						&& w == getStatusLineManager().getControl()) {
-					if (getShowStatusLine()) {
-						int width = 0;
-						if (getShortcutBar() != null && getShowShortcutBar()) {
-							Widget widget = getShortcutBar().getControl();
-							if (widget != null) {
-								if (widget instanceof ToolBar) {
-									ToolBar bar = (ToolBar) widget;
-									if (bar.getItemCount() > 0) {
-										ToolItem item = bar.getItem(0);
-										width = item.getWidth();
-										Rectangle trim =
-											bar.computeTrim(0, 0, width, width);
-										width = trim.width;
-									}
-								}
-							}
-						}
-						Point e =
-							w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-						w.setBounds(
-							clientArea.x + width,
-							clientArea.y + clientArea.height - e.y,
-							clientArea.width - width,
-							e.y);
-						clientArea.height -= e.y + VGAP;
-					} else {
-						w.setBounds(0, 0, 0, 0);
-					}
-				} else if (
-					getShortcutBar() != null
-						&& w == getShortcutBar().getControl()) {
-					if (getShowShortcutBar()) {
-						int width = BAR_SIZE;
-						if (w instanceof ToolBar) {
-							ToolBar bar = (ToolBar) w;
-							if (bar.getItemCount() > 0) {
-								ToolItem item = bar.getItem(0);
-								width = item.getWidth();
-								Rectangle trim =
-									bar.computeTrim(0, 0, width, width);
-								width = trim.width;
-							}
-						}
-						w.setBounds(
-							clientArea.x,
-							clientArea.y,
-							width,
-							clientArea.height);
-						clientArea.x += width + VGAP;
-						clientArea.width -= width + VGAP;
-					} else {
-						w.setBounds(0, 0, 0, 0);
-					}
-				} else if (w == getSeparator3()) {
-					if (getShowShortcutBar()) {
-						Point e =
-							w.computeSize(SWT.DEFAULT, SWT.DEFAULT, flushCache);
-						w.setBounds(
-							clientArea.x,
-							clientArea.y,
-							e.x,
-							clientArea.height);
-						clientArea.x += e.x;
-					} else {
-						w.setBounds(0, 0, 0, 0);
-					}
-				} else {
-					// Must be client.
-					// Inset client area by 3 pixels 
-					w.setBounds(
-						clientArea.x + CLIENT_INSET,
-						clientArea.y + CLIENT_INSET + VGAP,
-						clientArea.width - (2 * CLIENT_INSET),
-						clientArea.height - VGAP - (2 * CLIENT_INSET));
-				}
-			}
-		}
-	}
-
-	/**
 	 * Constructs a new workbench window.
 	 * 
 	 * @param workbench the Workbench
@@ -278,7 +106,7 @@ public class WorkbenchWindow
 		addToolBar(SWT.FLAT);
 
 		addStatusLine();
-		addShortcutBar(SWT.FLAT | SWT.WRAP | SWT.VERTICAL);
+		addShortcutBar(SWT.FLAT |  SWT.VERTICAL | SWT.WRAP);
 
 		addProgressItem();
 
@@ -1047,7 +875,7 @@ public class WorkbenchWindow
 	 * @return the layout for the shell
 	 */
 	protected Layout getLayout() {
-		return new WorkbenchWindowLayout();
+		return new FormLayout();
 	}
 
 	/**
@@ -2016,6 +1844,94 @@ public class WorkbenchWindow
 
 		};
 		job.schedule();
+	}
+
+	protected void initializeBounds() {
+
+		FormData sep1Data = new FormData();
+		sep1Data.top = new FormAttachment(0, 0);
+		sep1Data.left = new FormAttachment(0, 0);
+		sep1Data.right = new FormAttachment(100, 0);
+		seperator1.setLayoutData(sep1Data);
+		Control topWidget = seperator1;
+
+		if (getShowToolBar()) {
+
+			FormData toolData = new FormData();
+			toolData.top = new FormAttachment(seperator1, 0);
+			toolData.left = new FormAttachment(0, 0);
+			getToolBarControl().setLayoutData(toolData);
+
+			FormData sep2Data = new FormData();
+			sep2Data.top = new FormAttachment(getToolBarControl(), 0);
+			sep2Data.left = new FormAttachment(0, 0);
+			sep2Data.right = new FormAttachment(100, 0);
+			getSeparator2().setLayoutData(sep2Data);
+
+			topWidget = getSeparator2();
+
+		} else
+			getSeparator2().setBounds(0, 0, 0, 0);
+
+		Control sideWidget = null;
+		if (getShowShortcutBar()) {
+			ToolBar shortcutBar = getShortcutBar().getControl();
+			
+			Control [] children = shortcutBar.getChildren();
+
+			FormData shortcutData = new FormData();
+			shortcutData.top = new FormAttachment(topWidget, 0);
+			shortcutData.left = new FormAttachment(0, 0);
+			shortcutData.right = new FormAttachment(0, 25);
+			shortcutData.bottom = new FormAttachment(100, 0);
+			shortcutBar.setLayoutData(shortcutData);
+
+			Control sep3 = getSeparator3();
+			FormData sep3Data = new FormData();
+			sep3Data.top = new FormAttachment(topWidget, 0);
+			sep3Data.left = new FormAttachment(shortcutBar, 0);
+			sep3Data.bottom = new FormAttachment(100, 0);
+			sep3.setLayoutData(sep3Data);
+			sideWidget = sep3;
+		}
+
+		Control bottomWidget = null;
+		if (getShowStatusLine() && getStatusLineManager() != null) {
+			Control statusLine = getStatusLineManager().getControl();
+			FormData statusData = new FormData();
+			statusData.right = new FormAttachment(100, 0);
+			statusData.bottom = new FormAttachment(100, 0);
+
+			if (sideWidget == null)
+				statusData.left = new FormAttachment(0, 0);
+			else
+				statusData.left = new FormAttachment(sideWidget, 0);
+
+			statusLine.setLayoutData(statusData);
+			
+
+			bottomWidget = statusLine;
+		}
+
+		FormData mainAreaData = new FormData();
+		mainAreaData.top = new FormAttachment(topWidget, VGAP);
+		mainAreaData.right = new FormAttachment(100, CLIENT_INSET);
+
+		if (sideWidget == null)
+			mainAreaData.left = new FormAttachment(0, CLIENT_INSET);
+		else
+			mainAreaData.left = new FormAttachment(sideWidget, CLIENT_INSET);
+
+		if (bottomWidget == null)
+			mainAreaData.bottom = new FormAttachment(100, 0);
+		else
+			mainAreaData.bottom = new FormAttachment(bottomWidget, 0);
+
+		getClientComposite().setLayoutData(mainAreaData);
+		Point bounds =
+			getClientComposite().computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		System.out.println(bounds);
+		super.initializeBounds();
 	}
 
 }
