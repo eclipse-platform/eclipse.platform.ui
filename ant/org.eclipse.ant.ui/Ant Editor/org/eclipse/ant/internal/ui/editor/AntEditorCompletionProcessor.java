@@ -10,7 +10,7 @@
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug fixes
- *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49383
+ *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49383, 58299
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor;
@@ -59,6 +59,7 @@ import org.eclipse.ant.internal.ui.editor.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.editor.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.editor.templates.AntContext;
 import org.eclipse.ant.internal.ui.editor.templates.AntTemplateAccess;
 import org.eclipse.ant.internal.ui.editor.templates.BuildFileContextType;
 import org.eclipse.ant.internal.ui.editor.templates.TaskContextType;
@@ -70,6 +71,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
@@ -77,6 +79,7 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.jface.text.templates.ContextType;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateCompletionProcessor;
+import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -510,7 +513,6 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
         return (ICompletionProposal[])proposals.toArray(new ICompletionProposal[proposals.size()]);
     }
 
-
     private void addMacroDefProposals(String taskName, String prefix, List proposals) {
 		AntProjectNode projectNode= antModel.getProjectNode();
 		AntDefiningTaskNode node= projectNode.getDefininingTaskNode(taskName);
@@ -631,42 +633,23 @@ public class AntEditorCompletionProcessor  extends TemplateCompletionProcessor i
 		String enumerated;
 		for (int i = 0; i < values.length; i++) {
 			enumerated= values[i].toLowerCase();
-			if (enumerated.startsWith(prefix)) {
+			if (prefix.length() == 0 || enumerated.startsWith(prefix)) {
 				proposals.add(new AntCompletionProposal(enumerated, cursorPosition - prefix.length(), prefix.length(), enumerated.length(), null, enumerated, null, AntCompletionProposal.TASK_PROPOSAL));
 			}
 		}
 	}
 
 	private void addBooleanAttributeValueProposals(String prefix, List proposals) {
-		String trueString= "true"; //$NON-NLS-1$
-		String falseString= "false"; //$NON-NLS-1$
-		String onString= "on"; //$NON-NLS-1$
-		String offString= "off"; //$NON-NLS-1$
-		String yesString= "yes"; //$NON-NLS-1$
-		String noString= "no"; //$NON-NLS-1$
-		if (prefix.length() == 0) {
-			proposals.add(new AntCompletionProposal(trueString, cursorPosition - prefix.length(), prefix.length(), 4, null, trueString, null, AntCompletionProposal.TASK_PROPOSAL));
-			proposals.add(new AntCompletionProposal(falseString, cursorPosition - prefix.length(), prefix.length(), 5, null, falseString, null, AntCompletionProposal.TASK_PROPOSAL));
-			proposals.add(new AntCompletionProposal(onString, cursorPosition - prefix.length(), prefix.length(), 2, null, onString, null, AntCompletionProposal.TASK_PROPOSAL));
-			proposals.add(new AntCompletionProposal(offString, cursorPosition - prefix.length(), prefix.length(), 3, null, offString, null, AntCompletionProposal.TASK_PROPOSAL));
-			proposals.add(new AntCompletionProposal(yesString, cursorPosition - prefix.length(), prefix.length(), 3, null, yesString, null, AntCompletionProposal.TASK_PROPOSAL));
-			proposals.add(new AntCompletionProposal(noString, cursorPosition - prefix.length(), prefix.length(), 2, null, noString, null, AntCompletionProposal.TASK_PROPOSAL));
-		} else if (trueString.startsWith(prefix)) {
-				proposals.add(new AntCompletionProposal(trueString, cursorPosition - prefix.length(), prefix.length(), 4, null, trueString, null, AntCompletionProposal.TASK_PROPOSAL));
-			} else if (falseString.startsWith(prefix)) {
-				proposals.add(new AntCompletionProposal(falseString, cursorPosition - prefix.length(), prefix.length(), 5, null, falseString, null, AntCompletionProposal.TASK_PROPOSAL));
-			} else if (onString.startsWith(prefix)) {
-				proposals.add(new AntCompletionProposal(onString, cursorPosition - prefix.length(), prefix.length(), 2, null, onString, null, AntCompletionProposal.TASK_PROPOSAL));
-				if (offString.startsWith(prefix)) {
-					proposals.add(new AntCompletionProposal(offString, cursorPosition - prefix.length(), prefix.length(), 3, null, offString, null, AntCompletionProposal.TASK_PROPOSAL));
-				}
-			} else if (offString.startsWith(prefix)) {
-				proposals.add(new AntCompletionProposal(offString, cursorPosition - prefix.length(), prefix.length(), 3, null, offString, null, AntCompletionProposal.TASK_PROPOSAL));
-			} else if (yesString.startsWith(prefix)) {
-				proposals.add(new AntCompletionProposal(yesString, cursorPosition - prefix.length(), prefix.length(), 3, null, yesString, null, AntCompletionProposal.TASK_PROPOSAL));
-			} else if (noString.startsWith(prefix)) {
-				proposals.add(new AntCompletionProposal(noString, cursorPosition - prefix.length(), prefix.length(), 2, null, noString, null, AntCompletionProposal.TASK_PROPOSAL));
+		String[] booleanValues = new String[]{"true","false","on","off","yes","no"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		String booleanAssist;
+		for (int i = 0; i < booleanValues.length; i++) {
+			booleanAssist= booleanValues[i].toLowerCase();
+			if (prefix.length() == 0 || booleanAssist.startsWith(prefix)) {
+				proposals.add(new AntCompletionProposal(booleanAssist, cursorPosition -prefix.length(),
+						prefix.length(), booleanAssist.length(), null, booleanAssist,
+						null, AntCompletionProposal.TASK_PROPOSAL));
 			}
+		}	    
 	}
 
 	/**
