@@ -574,6 +574,32 @@ public class JobTest extends TestCase {
 		}
 		assertTrue("1.0", timeout < 100);
 		assertEquals("1.1", REPEATS, count[0]);
+	}	/*
+	 * Schedule a simple job that repeats several times from within the run method.
+	 */
+	public void testRescheduleRepeatWithDelay() {
+		final int[] count = new int[] {0};
+		final int REPEATS = 10;
+		Job job = new Job("testRescheduleRepeat") {
+			protected IStatus run(IProgressMonitor monitor) {
+				count[0]++;
+				schedule(10);
+				return Status.OK_STATUS;
+			}
+			public boolean shouldSchedule() {
+				return count[0] < REPEATS;
+			}
+		};
+		job.schedule();
+		int timeout = 0;
+		while (timeout++ < 100 && count[0] < REPEATS) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+			}
+		}
+		assertTrue("1.0", timeout < 100);
+		assertEquals("1.1", REPEATS, count[0]);
 	}
 	/*
 	 * Schedule a job to run, and then reschedule it
