@@ -30,8 +30,8 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.*;
-
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -649,7 +649,7 @@ class FindReplaceDialog extends Dialog {
 		});
 
 		fIsRegExCheckBox= new Button(group, SWT.CHECK | SWT.LEFT);
-		fIsRegExCheckBox.setText("Search string is a regular e&xpression");
+		fIsRegExCheckBox.setText(EditorMessages.getString("FindReplace.RegExCheckbox.label")); //$NON-NLS-1$
 		setGridData(fIsRegExCheckBox, GridData.BEGINNING, false, GridData.CENTER, false);
 		((GridData)fIsRegExCheckBox.getLayoutData()).horizontalSpan= 2;
 		fIsRegExCheckBox.setSelection(fIsRegExInit);
