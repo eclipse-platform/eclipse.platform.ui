@@ -5,32 +5,31 @@
 package org.eclipse.compare.internal.patch;
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
 import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.jface.action.IAction;
-
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.IActionDelegate;
-import org.eclipse.ui.actions.GlobalBuildAction;
+import org.eclipse.jface.wizard.IWizard;
+import org.eclipse.jface.wizard.WizardDialog;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+
+import org.eclipse.ui.IActionDelegate;
+import org.eclipse.ui.IEditorPart;
 
 import org.eclipse.compare.internal.*;
 
@@ -62,16 +61,8 @@ public class CompareWithPatchAction implements IActionDelegate {
 		PatchWizard wizard= new PatchWizard(fSelection);
 		
 		if (areAllEditorsSaved()) {
-			//RefactoringStatus activationStatus= refactoring.checkActivation(new NullProgressMonitor());
-			//if (! activationStatus.hasFatalError()){
-			//	wizard.setActivationStatus(activationStatus);
-				PatchWizardDialog dialog= new PatchWizardDialog(CompareUIPlugin.getShell(), wizard);
-				if (dialog.open() == Dialog.CANCEL)
-					triggerBuild();
-					
-			//} else{
-				//RefactoringErrorDialog.open(dialogTitle, activationStatus);
-			//}
+			PatchWizardDialog dialog= new PatchWizardDialog(CompareUIPlugin.getShell(), wizard);
+			dialog.open();
 		}
 	}
 
@@ -159,11 +150,5 @@ public class CompareWithPatchAction implements IActionDelegate {
 				return ((IEditorPart) element).getTitle();
 			}
 		};
-	}
-	
-	private void triggerBuild() {
-		if (fSavedFiles && ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding()) {
-			new GlobalBuildAction(CompareUIPlugin.getActiveWorkbenchWindow(), IncrementalProjectBuilder.INCREMENTAL_BUILD).run();
-		}
 	}
 }

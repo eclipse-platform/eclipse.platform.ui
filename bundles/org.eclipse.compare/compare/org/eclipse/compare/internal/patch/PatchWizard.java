@@ -9,15 +9,14 @@ import java.util.ArrayList;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.*;
@@ -100,6 +99,13 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 	/* (non-Javadoc)
 	 * Method declared on IWizard.
 	 */
+	public boolean needsProgressMonitor() {
+		return true;
+	}
+
+	/* (non-Javadoc)
+	 * Method declared on IWizard.
+	 */
 	public boolean performFinish() {
 		
 		if (false) {
@@ -128,16 +134,19 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
 			fPatcher.setName(fPatchWizardPage.getPatchName());
 
 			try {
-				IRunnableWithProgress op= new IRunnableWithProgress() {
-					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+				WorkspaceModifyOperation op= new WorkspaceModifyOperation() {
+					protected void execute(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 						fPatcher.applyAll(getTarget(), monitor);
 					}
 				};
-				new ProgressMonitorDialog(CompareUIPlugin.getShell()).run(true, true, op);
+				getContainer().run(true, false, op);
+
 			} catch (InvocationTargetException e) {
-				// handle exception
+				ExceptionHandler.handle(e,
+						PatchMessages.getString("PatchWizard.title"),	//$NON-NLS-1$ 
+						PatchMessages.getString("PatchWizard.unexpectedException.message"));	//$NON-NLS-1$
 			} catch (InterruptedException e) {
-				// handle cancelation
+				// cannot happen
 			}
 		}
 		
