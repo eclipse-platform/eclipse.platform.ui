@@ -200,27 +200,30 @@ public class ObjectMap implements Map, IStringPoolParticipant {
 			return null;
 		}
 
+		int emptyIndex = -1;
 		// replace existing value if it exists
 		for (int i = 0; i < elements.length; i = i + 2) {
+			// keep track of the first empty index
+			if (emptyIndex == -1 && elements[i] == null) 
+				emptyIndex = i;
 			if (elements[i] != null && elements[i].equals(key)) {
 				Object oldValue = elements[i + 1];
 				elements[i + 1] = value;
 				return oldValue;
 			}
 		}
+		// this will put the emptyIndex greater than the size but
+		// that's ok because we will grow first.
+		if (emptyIndex == -1)
+			emptyIndex = count * 2;
 
 		// otherwise add it to the list of elements.
 		// grow if necessary
 		if (elements.length <= (count * 2))
 			grow();
-		for (int i = 0; i < elements.length; i = i + 2) {
-			if (elements[i] == null) {
-				elements[i] = key;
-				elements[i + 1] = value;
-				count++;
-				return null;
-			}
-		}
+		elements[emptyIndex] = key;
+		elements[emptyIndex + 1] = value;
+		count++;
 		return null;
 	}
 
