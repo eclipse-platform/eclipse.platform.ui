@@ -22,8 +22,7 @@
 <extension-point id="projectSets" name="%TeamProjectSets"/>
 <extension-point id="targets" name="%Targets"/>
 
-<!-- Define some example text extensions. This will be done
-     by other plugins later. -->
+<!-- Define common known file types -->
      
 <extension point="org.eclipse.team.core.fileTypes">
   <fileTypes extension="txt" type="text"/>
@@ -31,6 +30,16 @@
   <fileTypes extension="properties" type="text"/>
   <fileTypes extension="xml" type="text"/>
   <fileTypes extension="html" type="text"/>
+  <fileTypes extension="jpg" type="binary"/>
+  <fileTypes extension="gif" type="binary"/>
+  <fileTypes extension="ico" type="binary"/>
+  <fileTypes extension="bmp" type="binary"/>
+  <fileTypes extension="tif" type="binary"/>
+  <fileTypes extension="doc" type="binary"/>
+  <fileTypes extension="xls" type="binary"/>
+  <fileTypes extension="ppt" type="binary"/>
+  <fileTypes extension="zip" type="binary"/>
+  <fileTypes extension="exe" type="binary"/>
 </extension>
 
 <extension point="org.eclipse.core.resources.fileModificationValidator" id="FileValidator">
