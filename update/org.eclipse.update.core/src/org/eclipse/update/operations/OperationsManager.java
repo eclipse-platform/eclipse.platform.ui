@@ -15,6 +15,9 @@ import java.util.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.operations.*;
 
+/**
+ * Entry point for update manager operations.
+ */
 public class OperationsManager {
 	private static IOperationFactory operationFactory;
 	private static Vector listeners = new Vector();
@@ -25,12 +28,23 @@ public class OperationsManager {
 	private OperationsManager() {
 	}
 	
+	/**
+	 * Each update operations must be created by the operation factory. 
+	 * Use this method to obtain the factory.
+	 */
 	public static IOperationFactory getOperationFactory() {
 		if (operationFactory == null)
 			operationFactory = new OperationFactory();
 		return operationFactory;
 	}
 
+	/**
+	 * Check if the feature is the subject of an update operation such as install,
+	 * configure, etc. and return it. Currently there can only be one pending
+	 * operation on a feature.
+	 * @param feature
+	 * @return
+	 */
 	public static IFeatureOperation findPendingOperation(IFeature feature) {
 		for (int i = 0; i < pendingOperations.size(); i++) {
 			IFeatureOperation operation =
@@ -40,27 +54,48 @@ public class OperationsManager {
 		}
 		return null;
 	}
-
+	
+	/**
+	 * Register a pending operation.
+	 * @param operation
+	 */
 	public static void addPendingOperation(IOperation operation) {
 		pendingOperations.add(operation);
 		//fireObjectsAdded(this, new Object[] { change });
 	}
 
+	/**
+	 * Unregister a pending operation.
+	 * @param operation
+	 */
 	public static void removePendingOperation(IOperation operation) {
 		pendingOperations.remove(operation);
 		//fireObjectsRemoved(this, new Object[] { change });
 	}
 
+	/**
+	 * Adds a model changed listener.
+	 * @param listener
+	 */
 	public static void addUpdateModelChangedListener(IUpdateModelChangedListener listener) {
 		if (!listeners.contains(listener))
 			listeners.add(listener);
 	}
 
+	/**
+	 * Removes an model changed listener.
+	 * @param listener
+	 */
 	public static void removeUpdateModelChangedListener(IUpdateModelChangedListener listener) {
 		if (listeners.contains(listener))
 			listeners.remove(listener);
 	}
 
+	/**
+	 * Notifies model changed listeners when features/sites/etc. are added.
+	 * @param parent
+	 * @param children
+	 */
 	public static void fireObjectsAdded(Object parent, Object[] children) {
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
 			IUpdateModelChangedListener listener =
@@ -69,6 +104,11 @@ public class OperationsManager {
 		}
 	}
 
+	/**
+	 * Notifies model changed listeners when features/sites/etc are removed.
+	 * @param parent
+	 * @param children
+	 */
 	public static void fireObjectsRemoved(Object parent, Object[] children) {
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
 			IUpdateModelChangedListener listener =
@@ -77,6 +117,11 @@ public class OperationsManager {
 		}
 	}
 
+	/**
+	 * Notifies model changed listeners when features/sites/etc. have changed.
+	 * @param object
+	 * @param property
+	 */
 	public static void fireObjectChanged(Object object, String property) {
 		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
 			IUpdateModelChangedListener listener =
@@ -85,6 +130,11 @@ public class OperationsManager {
 		}
 	}
 
+	/**
+	 * Returns true when any of the install operations requires a licence agreement.
+	 * @param jobs
+	 * @return
+	 */
 	public static boolean hasSelectedJobsWithLicenses(IInstallFeatureOperation[] jobs) {
 		for (int i = 0; i < jobs.length; i++) {
 			if (UpdateUtils.hasLicense(jobs[i].getFeature()))
@@ -93,6 +143,11 @@ public class OperationsManager {
 		return false;
 	}
 
+	/**
+	 * Returns true when any of the features to install has optional features.
+	 * @param jobs
+	 * @return
+	 */
 	public static boolean hasSelectedJobsWithOptionalFeatures(IInstallFeatureOperation[] jobs) {
 		for (int i = 0; i < jobs.length; i++) {
 			if (UpdateUtils.hasOptionalFeatures(jobs[i].getFeature()))
@@ -101,6 +156,11 @@ public class OperationsManager {
 		return false;
 	}
 
+	/**
+	 * Returns the list of operations that need a licence agreement.
+	 * @param jobs
+	 * @return
+	 */
 	public static IInstallFeatureOperation[] getSelectedJobsWithLicenses(IInstallFeatureOperation[] jobs) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < jobs.length; i++) {
@@ -111,6 +171,11 @@ public class OperationsManager {
 			new IInstallFeatureOperation[list.size()]);
 	}
 
+	/**
+	 * Returns the list of operations that have optional features to install.
+	 * @param jobs
+	 * @return
+	 */
 	public static IInstallFeatureOperation[] getSelectedJobsWithOptionalFeatures(IInstallFeatureOperation[] jobs) {
 		ArrayList list = new ArrayList();
 		for (int i = 0; i < jobs.length; i++) {
@@ -121,10 +186,18 @@ public class OperationsManager {
 			new IInstallFeatureOperation[list.size()]);
 	}
 	
+	/**
+	 * Sets whether any operations is in progress.
+	 * @param inProgress
+	 */
 	public static synchronized void setInProgress(boolean inProgress) {
 		OperationsManager.inProgress = inProgress;
 	}
 	
+	/**
+	 * Returns true when some operation is being executed, false otherwise.
+	 * @return
+	 */
 	public static synchronized boolean isInProgress() {
 		return inProgress;
 	}
