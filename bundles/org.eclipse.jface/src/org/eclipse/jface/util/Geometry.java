@@ -296,6 +296,20 @@ public class Geometry {
 	}
 
 	/**
+	 * Converts the given rectangle from display coordinates to the local coordinate system 
+	 * of the given object into display coordinates.
+	 * 
+	 * @param coordinateSystem local coordinate system being converted to
+	 * @param toConvert rectangle to convert
+	 * @return a rectangle in control coordinates
+	 * @since 3.0
+	 */
+	public static Rectangle toControl(Control coordinateSystem, Rectangle toConvert) {
+		Point start = coordinateSystem.toControl(toConvert.x, toConvert.y);
+		return new Rectangle(start.x, start.y, toConvert.width, toConvert.height);		
+	}
+	
+	/**
 	 * Converts the given rectangle from the local coordinate system of the given object
 	 * into display coordinates.
 	 * 
