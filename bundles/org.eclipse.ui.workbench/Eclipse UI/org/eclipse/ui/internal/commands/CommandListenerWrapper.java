@@ -77,7 +77,7 @@ final class CommandListenerWrapper implements ICommandListener {
 	}
 
 	public final boolean equals(final Object object) {
-		if (object instanceof SchemeListenerWrapper) {
+		if (object instanceof CommandListenerWrapper) {
 			final CommandListenerWrapper wrapper = (CommandListenerWrapper) object;
 			return listener.equals(wrapper.listener);
 		}
