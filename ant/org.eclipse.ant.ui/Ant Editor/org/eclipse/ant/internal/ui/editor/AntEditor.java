@@ -17,7 +17,6 @@ package org.eclipse.ant.internal.ui.editor;
 
 import java.io.File;
 import java.util.ResourceBundle;
-
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
@@ -54,6 +53,7 @@ import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -319,12 +319,13 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		 * @see org.eclipse.ant.internal.ui.editor.outline.IDocumentModelListener#documentModelChanged(org.eclipse.ant.internal.ui.editor.outline.DocumentModelChangeEvent)
 		 */
 		public void antModelChanged(AntModelChangeEvent event) {
-			if (event.getModel() == getAntModel()) {
+			AntModel model= getAntModel();
+			if (event.getModel() == model) {
 				if (event.isPreferenceChange()) {
-					updateEditorImage();
+					updateEditorImage(model);
 				}
 				if (fFoldingStructureProvider != null) {
-					fFoldingStructureProvider.updateFoldingRegions((AntModel)event.getModel());
+					fFoldingStructureProvider.updateFoldingRegions(model);
 				}
 			}
 		}
@@ -859,28 +860,40 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 */
 	public void doSave(IProgressMonitor monitor) {
 		super.doSave(monitor);
-		getAntModel().updateMarkers();
-		updateEditorImage();
+		AntModel model= getAntModel();
+		model.updateMarkers();
+		updateEditorImage(model);
 	}
 	
-	private void updateEditorImage() {
+	private void updateEditorImage(AntModel model) {
 		Image titleImage= getTitleImage();
 		if (titleImage == null) {
 			return;
 		}
-		AntProjectNode node= getAntModel().getProjectNode();
+		AntProjectNode node= model.getProjectNode();
 		if (node != null) {
 			postImageChange(node);
 		}
 	}
 	
 	private void updateForInitialReconcile() {
-		if (getAntModel() == null) {
+		IDocumentProvider provider=  getDocumentProvider();
+		if (provider == null) {//disposed
 			return;
 		}
-		fInitialReconcile= false;
-		updateEditorImage();
-		getAntModel().updateForInitialReconcile();
+		ISynchronizable doc= (ISynchronizable) provider.getDocument(getEditorInput());
+		//ensure to synchronize so that the AntModel is not nulled out underneath in the AntEditorDocumentProvider
+		//when the editor/doc provider are disposed
+	    synchronized (doc.getLockObject()) {
+	    	AntModel model= getAntModel();
+	    	if (model == null) {
+	    		return;
+	    	}
+
+	    	fInitialReconcile= false;
+	    	updateEditorImage(model);
+	    	model.updateForInitialReconcile();
+	    }
 	}
 	
 	private void postImageChange(final AntElementNode node) {
@@ -949,13 +962,15 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 * @see org.eclipse.ant.internal.ui.editor.text.IReconcilingParticipant#reconciled()
 	 */
 	public void reconciled() {
-		if (getSourceViewerConfiguration() == null) {
-			return; //editor has been disposed.
-		}
 		if (fInitialReconcile) {
 			updateForInitialReconcile();
 		}
-		IAutoIndentStrategy strategy= getSourceViewerConfiguration().getAutoIndentStrategy(null, null);
+		
+		SourceViewerConfiguration config= getSourceViewerConfiguration();
+		if (config == null) {
+			return; //editor has been disposed.
+		}
+		IAutoIndentStrategy strategy= config.getAutoIndentStrategy(null, null);
 		if (strategy instanceof AntAutoIndentStrategy) {
 			((AntAutoIndentStrategy)strategy).reconciled();
 		}
