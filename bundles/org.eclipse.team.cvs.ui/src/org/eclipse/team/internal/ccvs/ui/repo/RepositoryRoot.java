@@ -276,8 +276,10 @@ public class RepositoryRoot extends PlatformObject {
 				ICVSRemoteFile file = root.getRemoteFile(filesToRefresh[i], CVSTag.DEFAULT);
 				tags.addAll(Arrays.asList(fetchTags(file, Policy.subMonitorFor(monitor, 5))));
 			}
-			clearTags(remotePath);
-			addTags(remotePath, (CVSTag[]) tags.toArray(new CVSTag[tags.size()]));
+			if (!tags.isEmpty()) {
+				clearTags(remotePath);
+				addTags(remotePath, (CVSTag[]) tags.toArray(new CVSTag[tags.size()]));
+			}
 		} finally {
 			monitor.done();
 		}
