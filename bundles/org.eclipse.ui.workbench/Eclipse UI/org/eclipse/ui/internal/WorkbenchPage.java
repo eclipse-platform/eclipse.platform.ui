@@ -68,6 +68,7 @@ import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IShowEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
@@ -2212,6 +2213,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                     }
                 }
             } else {
+                // do the IShowEditorInput notification before showing the editor
+                // to reduce flicker
+                if (editor instanceof IShowEditorInput) {
+                    ((IShowEditorInput) editor).showEditorInput(input);
+                }
                 showEditor(activate, editor);
                 return editor;
             }

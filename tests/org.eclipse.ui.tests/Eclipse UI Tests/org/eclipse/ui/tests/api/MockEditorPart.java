@@ -22,11 +22,12 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IShowEditorInput;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IGotoMarker;
 
 public class MockEditorPart extends MockWorkbenchPart implements IEditorPart,
-        IGotoMarker {
+        IGotoMarker, IShowEditorInput {
 
     private static final String BASE = "org.eclipse.ui.tests.api.MockEditorPart";
 
@@ -168,6 +169,13 @@ public class MockEditorPart extends MockWorkbenchPart implements IEditorPart,
      */
     protected IActionBars getActionBars() {
         return getEditorSite().getActionBars();
+    }
+
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.IShowEditorInput#showEditorInput(org.eclipse.ui.IEditorInput)
+     */
+    public void showEditorInput(IEditorInput editorInput) {
+        callTrace.add("showEditorInput");
     }
 }
 
