@@ -42,10 +42,21 @@ public class ToolScript implements IToolScript {
 	public static final String SCRIPT_TYPE_PROGRAM = "org.eclipse.toolscript.type.program"; //$NON-NLS-1$
 	public static final String SCRIPT_TYPE_ANT = "org.eclipse.toolscript.type.ant"; //$NON-NLS-1$
 	
+	// Variable tag identifiers
+	private static final String VAR_TAG_START = "${"; //$NON-NLS-1$
+	private static final String VAR_TAG_END = "}"; //$NON-NLS-1$
+	private static final String VAR_TAG_SEP = ":"; //$NON-NLS-1$
+	
 	// Variable names the tool script will expand
-	public static final String VAR_DIR_WORKSPACE = "${workspace_dir}"; //$NON-NLS-1$
-	public static final String VAR_DIR_PROJECT = "${project}"; //$NON-NLS-1$
+	public static final String VAR_DIR_WORKSPACE = "workspace_dir"; //$NON-NLS-1$
+	public static final String VAR_DIR_PROJECT = "project_dir"; //$NON-NLS-1$
 
+	// Known refresh scopes
+	public static final String REFRESH_SCOPE_NONE = "none"; //$NON-NLS-1$;
+	public static final String REFRESH_SCOPE_WORKSPACE = "workspace"; //$NON-NLS-1$;
+	public static final String REFRESH_SCOPE_PROJECT = "project"; //$NON-NLS-1$;
+	public static final String REFRESH_SCOPE_WORKING_SET = "working_set"; //$NON-NLS-1$;
+	
 	private static final String EMPTY_VALUE = ""; //$NON-NLS-1$;
 	
 	private String type = SCRIPT_TYPE_PROGRAM;
@@ -53,7 +64,7 @@ public class ToolScript implements IToolScript {
 	private String location = EMPTY_VALUE;
 	private String arguments = EMPTY_VALUE;
 	private String directory = EMPTY_VALUE;
-	private String refreshScope = EMPTY_VALUE;
+	private String refreshScope = REFRESH_SCOPE_NONE;
 	
 	/**
 	 * Creates an empty initialized tool script.
@@ -104,6 +115,25 @@ public class ToolScript implements IToolScript {
 			(String)args.get(TAG_SCRIPT_REFRESH));
 	}
 
+	/**
+	 * Builds a variable tag that will be auto-expanded before
+	 * the script is run.
+	 * 
+	 * @param varName the name of a known variable (one of the VAR_* constants)
+	 * @param varArgument an optional argument for the variable, <code>null</code> if none
+	 */
+	public static String buildVariableTag(String varName, String varArgument) {
+		StringBuffer buf = new StringBuffer();
+		buf.append(VAR_TAG_START);
+		buf.append(varName);
+		if (varArgument != null && varArgument.length() > 0) {
+			buf.append(VAR_TAG_SEP);
+			buf.append(varArgument);
+		}
+		buf.append(VAR_TAG_END);
+		return buf.toString();
+	}
+	
 	/**
 	 * Returns the type of script.
 	 */
@@ -202,8 +232,8 @@ public class ToolScript implements IToolScript {
 	 * the script is run
 	 */
 	public void setRefreshScope(String refreshScope) {
-		if (refreshScope == null)
-			this.refreshScope = EMPTY_VALUE;
+		if (refreshScope == null || refreshScope.length() < 1)
+			this.refreshScope = REFRESH_SCOPE_NONE;
 		else
 			this.refreshScope = refreshScope;
 	}

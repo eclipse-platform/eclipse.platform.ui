@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -196,6 +197,7 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 				ToolScript script = dialog.getToolScript();
 				scripts.add(script);
 				listViewer.add(script);
+				listViewer.setSelection(new StructuredSelection(script), true);
 			}
 		});
 
@@ -205,6 +207,7 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 				dialog = new ToolScriptEditDialog(getShell(), currentSelection);
 				dialog.open();
 				listViewer.update(currentSelection, null);
+				updateDetails();
 			}
 		});
 
@@ -223,8 +226,8 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 				Object script = scripts.get(index - 1);
 				scripts.set(index - 1, currentSelection);
 				scripts.set(index, script);
-				listViewer.update(script, null);
-				listViewer.update(currentSelection, null);
+				listViewer.refresh(false);
+				updateUpDownButtons();
 			}
 		});
 
@@ -236,8 +239,8 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 				Object script = scripts.get(index + 1);
 				scripts.set(index + 1, currentSelection);
 				scripts.set(index, script);
-				listViewer.update(script, null);
-				listViewer.update(currentSelection, null);
+				listViewer.refresh(false);
+				updateUpDownButtons();
 			}
 		});
 	}
@@ -255,22 +258,34 @@ public class ToolScriptConfigurationDialog extends TitleAreaDialog {
 					currentSelection = (ToolScript)sel.getFirstElement();
 				}
 
-				int selIndex = listViewer.getList().getSelectionIndex();
-				int itemCount = listViewer.getList().getItemCount();
-				
 				editButton.setEnabled(currentSelection != null);
 				removeButton.setEnabled(currentSelection != null);
-				upButton.setEnabled(currentSelection != null && selIndex > 0);
-				downButton.setEnabled(currentSelection != null && selIndex < itemCount - 1);
-				
-				if (currentSelection == null)
-					detailText.setText(""); //$NON-NLS-1$
-				else
-					detailText.setText(ToolScriptMessages.format("ToolScriptConfigurationDialog.detailMessage", new Object[] {currentSelection.getLocation(), currentSelection.getArguments(), currentSelection.getWorkingDirectory()})); //$NON-NLS-1$
+				updateUpDownButtons();
+				updateDetails();
 			}
 		});
 	}
 
+	/**
+	 * Update the enable state of the up/down buttons
+	 */
+	private void updateUpDownButtons() {
+		int selIndex = listViewer.getList().getSelectionIndex();
+		int itemCount = listViewer.getList().getItemCount();
+		upButton.setEnabled(currentSelection != null && selIndex > 0);
+		downButton.setEnabled(currentSelection != null && selIndex < itemCount - 1);
+	}
+	
+	/**
+	 * Update the detail field
+	 */
+	private void updateDetails() {
+		if (currentSelection == null)
+			detailText.setText(""); //$NON-NLS-1$
+		else
+			detailText.setText(ToolScriptMessages.format("ToolScriptConfigurationDialog.detailMessage", new Object[] {currentSelection.getLocation(), currentSelection.getArguments(), currentSelection.getWorkingDirectory()})); //$NON-NLS-1$
+	}
+	
 	/* (non-Javadoc)
 	 * Method declared on Dialog.
 	 */

@@ -9,14 +9,21 @@ http://www.eclipse.org/legal/cpl-v05.html
  
 Contributors:
 **********************************************************************/
+import java.io.File;
+
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -31,6 +38,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
@@ -61,7 +69,6 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	private Text locationField;
 	private Text argumentsField;
 	private Text directoryField;
-	private Button refreshCheckBox;
 	private Text refreshField;
 	private Button locationBrowseWorkspace;
 	private Button locationBrowseFileSystem;
@@ -115,6 +122,9 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		
+		if (!editMode)
+			getButton(IDialogConstants.OK_ID).setEnabled(false);
 	}
 	
 	/* (non-Javadoc)
@@ -144,7 +154,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 		
 		// Create name label
 		Label nameLabel = new Label(topComp, SWT.NONE);
-		nameLabel.setText(ToolScriptMessages.getString("ToolScriptEditDialog.nameLabel"));
+		nameLabel.setText(ToolScriptMessages.getString("ToolScriptEditDialog.nameLabel")); //$NON-NLS-1$
 		FormData data = new FormData();
 		data.top = new FormAttachment(0, MARGIN_SPACE);
 		nameLabel.setLayoutData(data);
@@ -159,7 +169,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 
 		// Create location browse workspace button
 		locationBrowseWorkspace = new Button(topComp, SWT.PUSH);
-		locationBrowseWorkspace.setText(ToolScriptMessages.getString("ToolScriptEditDialog.browseWkspButton1"));
+		locationBrowseWorkspace.setText(ToolScriptMessages.getString("ToolScriptEditDialog.browseWkspButton1")); //$NON-NLS-1$
 		buttonData[0] = new FormData();
 		buttonData[0].left = new FormAttachment(nameField, MARGIN_SPACE, SWT.RIGHT);
 		buttonData[0].top = new FormAttachment(nameField, GROUP_SPACE, SWT.BOTTOM);
@@ -172,7 +182,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 
 		// Create label for location text field.
 		Label locationLabel = new Label(topComp, SWT.NONE);
-		locationLabel.setText(ToolScriptMessages.getString("ToolScriptEditDialog.locationLabel"));
+		locationLabel.setText(ToolScriptMessages.getString("ToolScriptEditDialog.locationLabel")); //$NON-NLS-1$
 		data = new FormData();
 		data.bottom = new FormAttachment(locationBrowseWorkspace, 0, SWT.BOTTOM);
 		locationLabel.setLayoutData(data);
@@ -188,7 +198,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 
 		// Create location browse file system button.
 		locationBrowseFileSystem = new Button(topComp, SWT.PUSH);
-		locationBrowseFileSystem.setText(ToolScriptMessages.getString("ToolScriptEditDialog.browseFileSysButton1"));
+		locationBrowseFileSystem.setText(ToolScriptMessages.getString("ToolScriptEditDialog.browseFileSysButton1")); //$NON-NLS-1$
 		buttonData[1] = new FormData();
 		buttonData[1].left = new FormAttachment(locationBrowseWorkspace, 0, SWT.LEFT);
 		buttonData[1].top = new FormAttachment(locationBrowseWorkspace, WIDGET_SPACE, SWT.BOTTOM);
@@ -197,7 +207,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 
 		// Create label for arguments text field.
 		Label argumentsLabel = new Label(topComp, SWT.NONE);
-		argumentsLabel.setText(ToolScriptMessages.getString("ToolScriptEditDialog.argumentLabel"));
+		argumentsLabel.setText(ToolScriptMessages.getString("ToolScriptEditDialog.argumentLabel")); //$NON-NLS-1$
 		data = new FormData();
 		data.top = new FormAttachment(locationField, GROUP_SPACE+buttonLabelHeightDiff, SWT.BOTTOM);
 		argumentsLabel.setLayoutData(data);
@@ -213,7 +223,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 
 		// Create argument browse variable button.
 		argumentsBrowseVariable = new Button(topComp, SWT.PUSH);
-		argumentsBrowseVariable.setText(ToolScriptMessages.getString("ToolScriptEditDialog.browseVarsButton"));
+		argumentsBrowseVariable.setText(ToolScriptMessages.getString("ToolScriptEditDialog.browseVarsButton")); //$NON-NLS-1$
 		buttonData[2] = new FormData();
 		buttonData[2].left = new FormAttachment(locationBrowseFileSystem, 0, SWT.LEFT);
 		buttonData[2].bottom = new FormAttachment(argumentsField, 0, SWT.BOTTOM);
@@ -222,7 +232,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 
 		// Create directory browse workspace button.
 		directoryBrowseWorkspace = new Button(topComp, SWT.PUSH);
-		directoryBrowseWorkspace.setText(ToolScriptMessages.getString("ToolScriptEditDialog.browseWkspButton2"));
+		directoryBrowseWorkspace.setText(ToolScriptMessages.getString("ToolScriptEditDialog.browseWkspButton2")); //$NON-NLS-1$
 		buttonData[3] = new FormData();
 		buttonData[3].left = new FormAttachment(argumentsBrowseVariable, 0, SWT.LEFT);
 		buttonData[3].top = new FormAttachment(argumentsBrowseVariable, GROUP_SPACE, SWT.BOTTOM);
@@ -231,7 +241,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 
 		// Create label for directory text field.
 		Label dirLabel = new Label(topComp, SWT.NONE);
-		dirLabel.setText(ToolScriptMessages.getString("ToolScriptEditDialog.dirLabel"));
+		dirLabel.setText(ToolScriptMessages.getString("ToolScriptEditDialog.dirLabel")); //$NON-NLS-1$
 		data = new FormData();
 		data.bottom = new FormAttachment(directoryBrowseWorkspace, 0, SWT.BOTTOM);
 		dirLabel.setLayoutData(data);
@@ -247,7 +257,7 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 
 		// Create directory browse file system button.
 		directoryBrowseFileSystem = new Button(topComp, SWT.PUSH);
-		directoryBrowseFileSystem.setText(ToolScriptMessages.getString("ToolScriptEditDialog.browseFileSysButton2"));
+		directoryBrowseFileSystem.setText(ToolScriptMessages.getString("ToolScriptEditDialog.browseFileSysButton2")); //$NON-NLS-1$
 		buttonData[4] = new FormData();
 		buttonData[4].left = new FormAttachment(argumentsField, MARGIN_SPACE, SWT.RIGHT);
 		buttonData[4].bottom = new FormAttachment(directoryField, 0, SWT.BOTTOM);
@@ -255,26 +265,25 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 		checkForMaxWidth(directoryBrowseFileSystem);
 		
 		// Create refresh check box and label.
-		refreshCheckBox = new Button(topComp, SWT.CHECK);
-		refreshCheckBox.setText(ToolScriptMessages.getString("ToolScriptEditDialog.refreshOption")); //$NON-NLS-1$
+		Label refreshLabel = new Label(topComp, SWT.NONE);
+		refreshLabel.setText(ToolScriptMessages.getString("ToolScriptEditDialog.refreshOption")); //$NON-NLS-1$
 		data = new FormData();
 		data.left = new FormAttachment(0,0);
 		data.top = new FormAttachment(directoryField, GROUP_SPACE+buttonLabelHeightDiff, SWT.BOTTOM);
-		refreshCheckBox.setLayoutData(data);
+		refreshLabel.setLayoutData(data);
 		
 		// Create refresh text field.
 		refreshField = new Text(topComp, SWT.SINGLE | SWT.H_SCROLL | SWT.BORDER);
 		refreshField.setEditable(false);
 		data = new FormData();
-		data.left = new FormAttachment(refreshCheckBox, MARGIN_SPACE, SWT.RIGHT);
-		data.top = new FormAttachment(refreshCheckBox, 0, SWT.TOP);
-		data.width = FIELD_WIDTH - MARGIN_SPACE - refreshCheckBox.computeSize(SWT.DEFAULT, SWT.DEFAULT, false).x;
+		data.left = new FormAttachment(refreshLabel, MARGIN_SPACE, SWT.RIGHT);
+		data.top = new FormAttachment(refreshLabel, 0, SWT.TOP);
+		data.width = FIELD_WIDTH - MARGIN_SPACE - refreshLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, false).x;
 		refreshField.setLayoutData(data);
 
-		// Create refresh option button.
+		// Create refresh scope.
 		refreshOptionButton = new Button(topComp, SWT.PUSH);
-		refreshOptionButton.setText(ToolScriptMessages.getString("ToolScriptEditDialog.refreshOptionButton"));
-		refreshOptionButton.setEnabled(false);
+		refreshOptionButton.setText(ToolScriptMessages.getString("ToolScriptEditDialog.refreshOptionButton")); //$NON-NLS-1$
 		buttonData[5] = new FormData();
 		buttonData[5].left = new FormAttachment(directoryBrowseFileSystem, 0, SWT.LEFT);
 		buttonData[5].top = new FormAttachment(refreshField, 0, SWT.TOP);
@@ -284,15 +293,6 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 		for (int i=0; i<buttonData.length; i++) {
 			buttonData[i].width = maxButtonWidth;	
 		}	
-		
-		refreshCheckBox.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				refreshField.setEnabled(refreshCheckBox.getSelection());
-				refreshOptionButton.setEnabled(refreshCheckBox.getSelection());
-			}
-			public void widgetDefaultSelected(SelectionEvent e) {
-			}
-		});
 		
 		// Build the separator line
 		Label separator = new Label(dialogComp, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -305,9 +305,26 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 			argumentsField.setText(script.getArguments());
 			directoryField.setText(script.getWorkingDirectory());
 		}
+
+		// Set the proper tab order
+		Control[] tabList = new Control[] {
+			nameField, 
+			locationField, 
+			locationBrowseWorkspace,
+			locationBrowseFileSystem,
+			argumentsField,
+			argumentsBrowseVariable,
+			directoryField,
+			directoryBrowseWorkspace,
+			directoryBrowseFileSystem,
+			refreshField,
+			refreshOptionButton};
+		topComp.setTabList(tabList);
 		
 		// Finish setup
 		hookButtonActions();
+		hookFieldValidation();
+		nameField.setFocus();
 		
 		return dialogComp;
 	}
@@ -343,7 +360,8 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 				if (results == null || results.length < 1)
 					return;
 				IResource resource = (IResource)results[0];
-				locationField.setText(ToolScript.VAR_DIR_WORKSPACE + resource.getFullPath());
+				String var = ToolScript.buildVariableTag(ToolScript.VAR_DIR_WORKSPACE, null);
+				locationField.setText(var + resource.getFullPath());
 			}
 		});
 		
@@ -358,6 +376,20 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 			}
 		});
 
+		argumentsBrowseVariable.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				VariableSelectionDialog dialog;
+				dialog = new VariableSelectionDialog(getShell());
+				dialog.open();
+				Object[] results = dialog.getResult();
+				if (results == null || results.length < 1)
+					return;
+				String args = argumentsField.getText();
+				args = args + (String)results[0]; //$NON-NLS-1$
+				argumentsField.setText(args);
+			}
+		});
+		
 		directoryBrowseWorkspace.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				ContainerSelectionDialog dialog = new ContainerSelectionDialog(
@@ -370,7 +402,8 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 				dialog.open();
 				Object[] result = dialog.getResult();
 				if (result != null && result.length == 1) {
-					directoryField.setText(ToolScript.VAR_DIR_WORKSPACE + result[0].toString());
+					String var = ToolScript.buildVariableTag(ToolScript.VAR_DIR_WORKSPACE, null);
+					directoryField.setText(var + result[0].toString());
 				}
 			}
 		});
@@ -386,6 +419,70 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 				}
 			}
 		});
+	}
+	
+	/**
+	 * Hooks the necessary field validation
+	 */
+	private void hookFieldValidation() {
+		nameField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				validateFields();
+			}
+		});
+		
+		locationField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				validateFields();
+			}
+		});
+		
+		directoryField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				validateFields();
+			}
+		});
+	}
+
+	/**
+	 * Validate the fields for acceptable values
+	 */
+	private void validateFields() {
+		String value = nameField.getText().trim();
+		if (value.length() < 1) {
+			setMessage(ToolScriptMessages.getString("ToolScriptEditDialog.noScriptName"), IMessageProvider.NONE); //$NON-NLS-1$
+			getButton(IDialogConstants.OK_ID).setEnabled(false);
+			return;
+		}
+		
+		value = locationField.getText().trim();
+		if (value.length() < 1) {
+			setMessage(ToolScriptMessages.getString("ToolScriptEditDialog.noScriptLocation"), IMessageProvider.NONE); //$NON-NLS-1$
+			getButton(IDialogConstants.OK_ID).setEnabled(false);
+			return;
+		}
+
+		getButton(IDialogConstants.OK_ID).setEnabled(true);
+		
+		File file = new File(value);
+		if (!file.exists()) {
+			setMessage(ToolScriptMessages.getString("ToolScriptEditDialog.missingScriptLocation"), IMessageProvider.WARNING); //$NON-NLS-1$
+			return;
+		}
+		
+		value = directoryField.getText().trim();
+		if (value.length() > 0) {
+			file = new File(value);
+			if (!file.exists()) {
+				setMessage(ToolScriptMessages.getString("ToolScriptEditDialog.missingScriptDirectory"), IMessageProvider.WARNING); //$NON-NLS-1$
+				return;
+			}
+		}
+		
+		if (editMode)
+			setMessage(ToolScriptMessages.getString("ToolScriptEditDialog.editDialogMessage")); //$NON-NLS-1$
+		else
+			setMessage(ToolScriptMessages.getString("ToolScriptEditDialog.newDialogMessage")); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -406,6 +503,11 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 	
+	
+	/**
+	 * Internal dialog to show available resources from which
+	 * the user can select one
+	 */
 	private class ResourceSelectionDialog extends SelectionDialog {
 		// sizing constants
 		private static final int	SIZING_SELECTION_PANE_HEIGHT = 250;
@@ -451,6 +553,133 @@ public class ToolScriptEditDialog extends TitleAreaDialog {
 			IStructuredSelection sel = (IStructuredSelection)wsTree.getSelection();
 			if (sel != null)
 				setSelectionResult(sel.toArray());
+			super.okPressed();
+		}
+	}
+
+
+	/**
+	 * Internal dialog to show available variables from which
+	 * the user can select one.
+	 */
+	private class VariableSelectionDialog extends SelectionDialog {
+		// sizing constants
+		private static final int	SIZING_SELECTION_PANE_HEIGHT = 250;
+		private static final int	SIZING_SELECTION_PANE_WIDTH = 300;
+
+		List list;
+		
+		public VariableSelectionDialog(Shell parent) {
+			super(parent);
+			setTitle(ToolScriptMessages.getString("ToolScriptEditDialog.browseVarTitle")); //$NON-NLS-1$
+		}
+
+		/* (non-Javadoc)
+		 * Method declared on Dialog.
+		 */
+		protected Control createDialogArea(Composite parent) {
+			// create composite 
+			Composite dialogArea = (Composite)super.createDialogArea(parent);
+			
+			Label label = new Label(dialogArea, SWT.LEFT);
+			label.setText(ToolScriptMessages.getString("ToolScriptEditDialog.selectVar")); //$NON-NLS-1$
+			
+			list = new List(dialogArea, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER);
+			GridData data = new GridData(GridData.FILL_BOTH);
+			data.heightHint = SIZING_SELECTION_PANE_HEIGHT;
+			data.widthHint = SIZING_SELECTION_PANE_WIDTH;
+			list.setLayoutData(data);
+			
+			list.add(ToolScriptMessages.getString("ToolScriptEditDialog.varWorkspaceDirLabel")); //$NON-NLS-1$
+			list.add(ToolScriptMessages.getString("ToolScriptEditDialog.varProjectDirLabel")); //$NON-NLS-1$
+			list.add(ToolScriptMessages.getString("ToolScriptEditDialog.varProjectXDirLabel")); //$NON-NLS-1$
+			list.add(ToolScriptMessages.getString("ToolScriptEditDialog.varAntTargetLabel")); //$NON-NLS-1$
+			
+			return dialogArea;
+		}
+		
+		/* (non-Javadoc)
+		 * Method declared on Dialog.
+		 */
+		protected void okPressed() {
+			int sel = list.getSelectionIndex();
+			String result = null;
+			
+			switch (sel) {
+				case 0 :
+					result = ToolScript.buildVariableTag(ToolScript.VAR_DIR_WORKSPACE, null);
+					break;
+
+				case 1 :
+					result = ToolScript.buildVariableTag(ToolScript.VAR_DIR_PROJECT, null);
+					break;
+
+				case 2 :
+					ProjectSelectionDialog dialog;
+					dialog = new ProjectSelectionDialog(getShell());
+					dialog.open();
+					Object[] name = dialog.getResult();
+					if (name != null && name.length > 0)
+						result = ToolScript.buildVariableTag(ToolScript.VAR_DIR_PROJECT, (String)name[0]);
+					break;
+
+				case 3 :
+					result = null;
+					break;
+			}
+			
+			if (result != null)
+				setSelectionResult(new Object[] {result});
+			super.okPressed();
+		}
+	}
+	
+	/**
+	 * Internal dialog to show available projects from which
+	 * the user can select one.
+	 */
+	private class ProjectSelectionDialog extends SelectionDialog {
+		// sizing constants
+		private static final int	SIZING_SELECTION_PANE_HEIGHT = 250;
+		private static final int	SIZING_SELECTION_PANE_WIDTH = 300;
+
+		List list;
+		
+		public ProjectSelectionDialog(Shell parent) {
+			super(parent);
+			setTitle(ToolScriptMessages.getString("ToolScriptEditDialog.browseProjectTitle")); //$NON-NLS-1$
+		}
+
+		/* (non-Javadoc)
+		 * Method declared on Dialog.
+		 */
+		protected Control createDialogArea(Composite parent) {
+			// create composite 
+			Composite dialogArea = (Composite)super.createDialogArea(parent);
+			
+			Label label = new Label(dialogArea, SWT.LEFT);
+			label.setText(ToolScriptMessages.getString("ToolScriptEditDialog.selectProject")); //$NON-NLS-1$
+			
+			list = new List(dialogArea, SWT.H_SCROLL | SWT.V_SCROLL | SWT.SINGLE | SWT.BORDER);
+			GridData data = new GridData(GridData.FILL_BOTH);
+			data.heightHint = SIZING_SELECTION_PANE_HEIGHT;
+			data.widthHint = SIZING_SELECTION_PANE_WIDTH;
+			list.setLayoutData(data);
+			
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IProject[] projects = root.getProjects();
+			for (int i = 0; i < projects.length; i++) {
+				list.add(projects[i].getName());
+			}
+			
+			return dialogArea;
+		}
+		
+		/* (non-Javadoc)
+		 * Method declared on Dialog.
+		 */
+		protected void okPressed() {
+			setSelectionResult(list.getSelection());
 			super.okPressed();
 		}
 	}
