@@ -10,20 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.forms.editor;
 import java.util.Vector;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.IEditorActionBarContributor;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.PartInitException;
+
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 import org.eclipse.ui.forms.IManagedForm;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.part.MultiPageEditorActionBarContributor;
-import org.eclipse.ui.part.MultiPageEditorPart;
-import org.eclipse.ui.part.MultiPageSelectionProvider;
+import org.eclipse.ui.part.*;
 /**
  * This class forms a base of multi-page form editors that typically use one or
  * more pages with forms and one page for raw source of the editor input.
@@ -132,14 +125,31 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 */
 	protected abstract void addPages();
 	/**
-	 * Adds the form page to this editor.
+	 * Adds the form page to this editor. Form page will be
+	 * loaded lazily. Its part control will not be created
+	 * until it is activated for the first time.
 	 * 
 	 * @param page
-	 *            the page to add
+	 *            the form page to add
 	 */
 	public int addPage(IFormPage page) throws PartInitException {
-		int i = addPage(page.getPartControl());
+		int i = super.addPage(page.getPartControl());
 		configurePage(i, page);
+		return i;
+	}
+/**
+ * Adds a simple SWT control as a page. Overrides superclass
+ * implementation to keep track of pages.
+ *@param control the page control to add
+ *@return the 0-based index of the newly added page 
+ */
+	public int addPage(Control control) {
+		int i = super.addPage(control);
+		try {
+			registerPage(control);
+		} catch (PartInitException e) {
+			// cannot happen for controls
+		}
 		return i;
 	}
 	/**
@@ -171,6 +181,35 @@ public abstract class FormEditor extends MultiPageEditorPart {
 		registerPage(page);
 	}
 	/**
+	 * Overrides the superclass to remove the page from the page table.
+	 * 
+	 * @param pageIndex
+	 *            the 0-based index of the page in the editor
+	 */
+	public void removePage(int pageIndex) {
+		if (pageIndex >= 0 && pageIndex < pages.size()) {
+			Object page = pages.get(pageIndex);
+			pages.remove(page);
+			if (page instanceof IFormPage) {
+				IFormPage fpage = (IFormPage) page;
+				if (!fpage.isEditor())
+					fpage.dispose();
+				updatePageIndices();
+			}
+		}
+		super.removePage(pageIndex);
+	}
+	// fix the page indices after the removal
+	private void updatePageIndices() {
+		for (int i = 0; i < pages.size(); i++) {
+			Object page = pages.get(i);
+			if (page instanceof IFormPage) {
+				IFormPage fpage = (IFormPage) page;
+				fpage.setIndex(i);
+			}
+		}
+	}
+	/**
 	 * Called to indicate that the editor has been made dirty or the changes
 	 * have been saved.
 	 */
@@ -184,11 +223,14 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	public void dispose() {
 		super.dispose();
 		for (int i = 0; i < pages.size(); i++) {
-			IFormPage page = (IFormPage) pages.get(i);
-			// don't dispose source pages because they will
-			// be disposed as nested editors by the superclass
-			if (!page.isEditor())
-				page.dispose();
+			Object page = pages.get(i);
+			if (page instanceof IFormPage) {
+				IFormPage fpage = (IFormPage) page;
+				// don't dispose source pages because they will
+				// be disposed as nested editors by the superclass
+				if (!fpage.isEditor())
+					fpage.dispose();
+			}
 		}
 		pages = null;
 		toolkit.dispose();
@@ -244,11 +286,14 @@ public abstract class FormEditor extends MultiPageEditorPart {
 			}
 		}
 		// Now is the absolute last moment to create the page control.
-		IFormPage page = (IFormPage) pages.get(newPageIndex);
-		if (page.getPartControl() == null) {
-			page.createPartControl(getContainer());
-			setControl(newPageIndex, page.getPartControl());
-			page.getPartControl().setMenu(getContainer().getMenu());
+		Object page = pages.get(newPageIndex);
+		if (page instanceof IFormPage) {
+			IFormPage fpage = (IFormPage) page;
+			if (fpage.getPartControl() == null) {
+				fpage.createPartControl(getContainer());
+				setControl(newPageIndex, fpage.getPartControl());
+				fpage.getPartControl().setMenu(getContainer().getMenu());
+			}
 		}
 		if (oldPage != -1 && pages.size() > oldPage
 				&& pages.get(oldPage) instanceof IFormPage) {
@@ -277,10 +322,13 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 */
 	public IFormPage setActivePage(String pageId) {
 		for (int i = 0; i < pages.size(); i++) {
-			IFormPage page = (IFormPage) pages.get(i);
-			if (page.getId().equals(pageId)) {
-				setActivePage(i);
-				return page;
+			Object page = pages.get(i);
+			if (page instanceof IFormPage) {
+				IFormPage fpage = (IFormPage) page;
+				if (fpage.getId().equals(pageId)) {
+					setActivePage(i);
+					return fpage;
+				}
 			}
 		}
 		return null;
@@ -294,9 +342,12 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 */
 	public IFormPage findPage(String pageId) {
 		for (int i = 0; i < pages.size(); i++) {
-			IFormPage page = (IFormPage) pages.get(i);
-			if (page.getId().equals(pageId))
-				return page;
+			Object page = pages.get(i);
+			if (page instanceof IFormPage) {
+				IFormPage fpage = (IFormPage) pages.get(i);
+				if (fpage.getId().equals(pageId))
+					return fpage;
+			}
 		}
 		return null;
 	}
@@ -332,9 +383,12 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 */
 	public IFormPage selectReveal(Object pageInput) {
 		for (int i = 0; i < pages.size(); i++) {
-			IFormPage page = (IFormPage) pages.get(i);
-			if (page.selectReveal(pageInput))
-				return page;
+			Object page = pages.get(i);
+			if (page instanceof IFormPage) {
+				IFormPage fpage = (IFormPage) page;
+				if (fpage.selectReveal(pageInput))
+					return fpage;
+			}
 		}
 		return null;
 	}
@@ -347,8 +401,11 @@ public abstract class FormEditor extends MultiPageEditorPart {
 	 */
 	public IFormPage getActivePageInstance() {
 		int index = getActivePage();
-		if (index != -1)
-			return (IFormPage) pages.get(index);
+		if (index != -1) {
+			Object page = pages.get(index);
+			if (page instanceof IFormPage)
+				return (IFormPage) page;
+		}
 		return null;
 	}
 	/**
@@ -401,11 +458,13 @@ public abstract class FormEditor extends MultiPageEditorPart {
 			}
 		});
 	}
-	private void registerPage(IFormPage page) throws PartInitException {
+	private void registerPage(Object page) throws PartInitException {
 		if (!pages.contains(page))
 			pages.add(page);
-		if (page.isEditor() == false) {
-			page.init(getEditorSite(), getEditorInput());
+		if (page instanceof IFormPage) {
+			IFormPage fpage = (IFormPage) page;
+			if (fpage.isEditor() == false)
+				fpage.init(getEditorSite(), getEditorInput());
 		}
 	}
 }

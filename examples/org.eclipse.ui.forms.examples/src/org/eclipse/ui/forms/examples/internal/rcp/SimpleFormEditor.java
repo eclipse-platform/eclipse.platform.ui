@@ -11,6 +11,8 @@
 package org.eclipse.ui.forms.examples.internal.rcp;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.forms.editor.FormEditor;
@@ -45,6 +47,8 @@ public class SimpleFormEditor extends FormEditor {
 		try {
 		addPage(new FreeFormPage(this));
 		addPage(new SecondPage(this));
+		int index = addPage(new Composite(getContainer(), SWT.NULL));
+		setPageText(index, "Composite");
 		addPage(new ThirdPage(this));
 		addPage(new ScrolledPropertiesPage(this));
 		addPage(new PageWithSubPages(this));
