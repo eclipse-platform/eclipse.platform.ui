@@ -136,10 +136,15 @@ public class DataArea {
 			e.printStackTrace();
 		}
 	}
+	
+	// TODO remove this method by M8
 	/**
 	 * Creates a lock file in the meta-area that indicates the meta-area is in use, preventing other eclipse instances from concurrently using the same meta-area.
 	 */
 	public synchronized void createLockFile() throws CoreException, IllegalStateException {
+		// temporary testing hook to allow the UI team to turn runtime locking off and test their locking.
+		if (System.getProperty("eclipse.ui.testing") != null)
+			return;
 		assertLocationInitialized();
 		if (System.getProperty("org.eclipse.core.runtime.ignoreLockFile") != null) //$NON-NLS-1$
 			return;
@@ -155,10 +160,15 @@ public class DataArea {
 			throw new CoreException(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.FAILED_WRITE_METADATA, message, e));
 		}
 	}
+
+	// TODO remove this method by M8
 	/**
 	 * Closes the open lock file handle, and makes a silent best attempt to delete the file.
 	 */
 	public synchronized void clearLockFile() throws IllegalStateException {
+		// temporary testing hook to allow the UI team to turn runtime locking off and test their locking.
+		if (System.getProperty("eclipse.ui.testing") != null)
+			return;
 		assertLocationInitialized();
 		if (metaAreaLock != null)
 			metaAreaLock.release();
@@ -232,7 +242,7 @@ public class DataArea {
 			throw new IllegalStateException(Policy.bind("meta.keyringFileAlreadySpecified", this.keyringFile)); //$NON-NLS-1$
 		this.keyringFile = keyringFile;
 	}
-	public void setPasswork(String password) {
+	public void setPassword(String password) {
 		this.password = password;
 	}
 }

@@ -349,7 +349,7 @@ public final class InternalPlatform implements IPlatform {
 			// or it has not been defined yet.
 		}
 		metaArea.setKeyringFile(keyringFile);
-		metaArea.setPasswork(password);			
+		metaArea.setPassword(password);			
 		return metaArea;
 	}
 	private  void handleException(ISafeRunnable code, Throwable e) {
@@ -1201,12 +1201,17 @@ public final class InternalPlatform implements IPlatform {
 		return frameworkArgs;
 	}
 
+	// TODO remove this method by M8
 	/**
 	 * Return whether the workspace metadata version matches the expected version. 
 	 * 
 	 * @return <code>true</code> if they match, <code>false</code> if not
 	 */
 	private boolean checkVersionNoPrompt() {
+		// temporary testing hook to allow the UI team to turn runtime locking off and test their locking.
+		if (System.getProperty("eclipse.ui.testing") != null)
+			return true;
+
 		File pluginsDir = getMetaArea().getMetadataLocation().append(DataArea.F_PLUGIN_DATA).toFile();
 		if (!pluginsDir.exists())
 			return true;
@@ -1263,6 +1268,7 @@ public final class InternalPlatform implements IPlatform {
 		}
 	}
 
+	// TODO remove this method by M8
 	/**
 	 * Check whether the workspace metadata version matches the expected version. 
 	 * If not, prompt the user for whether to proceed, or exit with no changes.
