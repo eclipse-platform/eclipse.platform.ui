@@ -29,8 +29,11 @@ import org.eclipse.ui.part.intro.*;
 public class CustomizableIntroPart extends IntroPart {
 
     private IntroModelRoot model;
+
     private IntroPartPresentation presentation;
+
     private StandbyPart standbyPart;
+
     private Composite container;
 
     /**
@@ -67,11 +70,6 @@ public class CustomizableIntroPart extends IntroPart {
         }
 
         // REVISIT: make sure this is handled better.
-        //			throw new PartInitException(
-        //				"Could not find a valid configuration for Intro Part: "
-        //					+ ExtensionPointManager.getLogString(
-        //						getConfigurationElement()));
-
         if (model == null || !model.hasValidConfig())
             DialogUtil.displayErrorMessage(site.getShell(),
                     "Could not find a valid configuration for Intro Part: "
@@ -80,14 +78,17 @@ public class CustomizableIntroPart extends IntroPart {
                             + "\nCheck Log View for details.", null);
 
     }
-    
-    /* (non-Javadoc)
-	 * @see org.eclipse.ui.intro.IIntroPart#init(org.eclipse.ui.intro.IIntroSite, org.eclipse.ui.IMemento)
-	 */
-	public void init(IIntroSite site, IMemento memento)
-			throws PartInitException {
-		init(site);
-	}
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.ui.intro.IIntroPart#init(org.eclipse.ui.intro.IIntroSite,
+     *      org.eclipse.ui.IMemento)
+     */
+    public void init(IIntroSite site, IMemento memento)
+            throws PartInitException {
+        init(site);
+    }
 
     /**
      * Creates the UI based on how the InroPart has been configured.
@@ -178,7 +179,7 @@ public class CustomizableIntroPart extends IntroPart {
      */
     public StandbyPart getStandbyPart() {
         return standbyPart;
-        
+
     }
-	
+
 }

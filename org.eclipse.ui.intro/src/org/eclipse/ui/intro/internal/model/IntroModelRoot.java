@@ -25,23 +25,22 @@ import org.eclipse.ui.intro.internal.util.*;
  * 
  * Model rules:
  * <ol>
- * <li>if an attribute is not included in the markup, its value will be null
- * in the model.</li>
+ * <li>if an attribute is not included in the markup, its value will be null in
+ * the model.</li>
  * <li>Children of a given parent (ie: model root, page, or div) *must* have
  * distinctive IDs otherwise resolving includes and extensions may fail.</li>
  * <li>Containers have the concept of loading children and resolving children.
- * At the model root lovel, resolving children means resolving ALL extensions
- * of model. At the container level, resolving children means resolving
- * includes.</li>
+ * At the model root lovel, resolving children means resolving ALL extensions of
+ * model. At the container level, resolving children means resolving includes.
+ * </li>
  * <li>Extensions are resolved before includes at the container level to avoid
- * race conditions. eg: if a page includes a shared div and an extension
- * extends this shared div, you want the include to get the extended div and
- * not the original div.</li>
+ * race conditions. eg: if a page includes a shared div and an extension extends
+ * this shared div, you want the include to get the extended div and not the
+ * original div.</li>
  * <li>Resolving extensions should not resolve includes. No need to load other
  * models when we dont have to.</li>
  * <li>unresolved includes are left as children of the parent container.</li>
- * <li>Unresolved extensions are left as children of the targetted model.
- * </li>
+ * <li>Unresolved extensions are left as children of the targetted model.</li>
  * </ol>
  */
 public class IntroModelRoot extends AbstractIntroContainer {
@@ -74,8 +73,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
     /**
      * Model root. Takes a configElement that represents <config>in the
-     * plugin.xml markup AND all the extension contributed to this model
-     * through the configExtension point.
+     * plugin.xml markup AND all the extension contributed to this model through
+     * the configExtension point.
      */
     public IntroModelRoot(IConfigurationElement configElement,
             IConfigurationElement[] configExtensionElements) {
@@ -113,15 +112,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
         introPartPresentation = new IntroPartPresentation(presentationElement);
         children.add(introPartPresentation);
-        if (introPartPresentation.getImplementationElement() == null) {
-            // Presentation does not have a valid implementation, exit.
-            setModelState(true, false);
-            Logger
-                    .logWarning("Could not find valid implementation element in intro config.");
-            return;
-        } else
-            // valid presentation element, set parent.
-            introPartPresentation.setParent(this);
+        // set parent.
+        introPartPresentation.setParent(this);
 
         // now load all children of the config. There should only be pages and
         // divs here. And order is not important.
@@ -271,8 +263,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * Updates the inherited styles based on the merge-style attribute. If we
      * are including a shared div, or if we are including an element from the
      * same page, do nothing. For inherited alt-styles, we have to cache the pd
-     * from which we inherited the styles to be able to access resources in
-     * that plugin.
+     * from which we inherited the styles to be able to access resources in that
+     * plugin.
      * 
      * @param include
      * @param target

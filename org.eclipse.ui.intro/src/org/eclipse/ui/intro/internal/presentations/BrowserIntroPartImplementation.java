@@ -120,13 +120,8 @@ public class BrowserIntroPartImplementation extends
      * create the browser and set it's contents
      */
     public void createPartControl(Composite parent) {
-        try {
-            browser = new Browser(parent, SWT.MULTI);
-        } catch (SWTException e) {
-            // should never be here. This means that SWT could not create
-            // browser on current platform. This should have been handled by the
-            // model. We should not get here.
-        }
+
+        browser = new Browser(parent, SWT.MULTI);
 
         // add a location listener on the browser so we can intercept
         // LocationEvents. Responsible for intercepting URLs and updating UI

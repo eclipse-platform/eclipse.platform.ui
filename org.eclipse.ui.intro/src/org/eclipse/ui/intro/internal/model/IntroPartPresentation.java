@@ -11,10 +11,14 @@
 
 package org.eclipse.ui.intro.internal.model;
 
+import java.util.*;
+
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.intro.*;
+import org.eclipse.ui.intro.internal.extensions.*;
+import org.eclipse.ui.intro.internal.presentations.*;
 import org.eclipse.ui.intro.internal.util.*;
 
 /**
@@ -59,17 +63,11 @@ public class IntroPartPresentation extends IntroElement {
 
     private String homePageId;
 
-    // config element representing the implementation element contributed in
-    // this presentation. If null, it means no valid implementation found.
-    private IConfigurationElement implementationElement;
-
     // The Head contributions to this preentation (inherited from child
     // implementation).
     private IntroHead head;
 
     private AbstractIntroPartImplementation implementation;
-
-    //private AbstractIntroPart implementation;
 
     // CustomizableIntroPart instance. Passed to the Implementation classes.
     private IIntroPart introPart;
@@ -81,15 +79,17 @@ public class IntroPartPresentation extends IntroElement {
         super(element);
         title = element.getAttribute(TITLE_ATTRIBUTE);
         homePageId = element.getAttribute(HOME_PAGE_ID_ATTRIBUTE);
-        implementationElement = getImplementationElement(element);
-        if (implementationElement != null) {
+    }
+
+    private void updatePresentationAttributes(IConfigurationElement element) {
+        if (element != null) {
             // reset (ie: inherit) id and style to be implementation id and
             // style. Then handle HEAD content in the case of HTML Browser.
-            style = implementationElement.getAttribute(STYLE_ATTRIBUTE);
-            id = implementationElement.getAttribute(ID_ATTRIBUTE);
+            style = element.getAttribute(STYLE_ATTRIBUTE);
+            id = element.getAttribute(ID_ATTRIBUTE);
             // get Head contribution, regardless of implementation class.
             // Implementation class is created lazily by UI.
-            head = getHead(implementationElement);
+            head = getHead(element);
             // Resolve.
             style = IntroModelRoot.resolveURL(style, element);
         }
@@ -129,8 +129,6 @@ public class IntroPartPresentation extends IntroElement {
         // separation of model / UI. Will change later.
         // should not get here if there is no valid implementation.
         this.introPart = introPart;
-        implementation = createIntroPartImplementation(implementationElement);
-        implementation.init(introPart);
     }
 
     /**
@@ -154,84 +152,129 @@ public class IntroPartPresentation extends IntroElement {
     }
 
     /**
-     * Creates the UI based on the implementation class. .
+     * Creates the UI based on the implementation class.
      * 
      * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
      */
     public void createPartControl(Composite parent) {
-        implementation.createPartControl(parent);
+        Vector validImplementations = getValidImplementationElements(getConfigurationElement());
+        IConfigurationElement implementationElement = null;
+        for (int i = 0; i < validImplementations.size(); i++) {
+            implementationElement = (IConfigurationElement) validImplementations
+                    .elementAt(i);
+            // you want to pass primed model.
+            updatePresentationAttributes(implementationElement);
+            try {
+                implementation = createIntroPartImplementation(implementationElement);
+                if (implementation == null)
+                    // failed to create executable.
+                    continue;
+
+                implementation.init(introPart);
+                implementation.createPartControl(parent);
+                Logger.logInfo("Loaded config implementation from: "
+                        + ExtensionPointManager
+                                .getLogString(implementationElement));
+                break;
+            } catch (Exception e) {
+                Logger.logWarning("failed to create implementation from: "
+                        + ExtensionPointManager
+                                .getLogString(implementationElement));
+                implementation = null;
+                implementationElement = null;
+            }
+        }
+
+        if (implementationElement == null) {
+            // worst case scenario. We failed in all cases.
+            implementation = new FormIntroPartImplementation();
+            try {
+                implementation.init(introPart);
+            } catch (Exception e) {
+                // should never be here.
+                Logger.logError(e.getMessage(), e);
+                return;
+            }
+            implementation.createPartControl(parent);
+            Logger
+                    .logWarning("Loaded UI Forms implementation as a default Welcome.");
+        }
     }
 
     /**
-     * Retruns the implementation element of the config. Choose correct
-     * implementation element based on os atrributes. Rules: get current OS,
-     * choose first contributrion, with os that matches OS. Otherwise, choose
-     * first contribution with no os. Returns null if no valid implementation is
-     * found.
+     * Retruns a list of valid implementation elements of the config. Choose
+     * correct implementation element based on os atrributes. Rules: get current
+     * OS, choose first contributrion, with os that matches OS. Otherwise,
+     * choose first contribution with no os. Returns null if no valid
+     * implementation is found.
      */
-    private IConfigurationElement getImplementationElement(
+    private Vector getValidImplementationElements(
             IConfigurationElement configElement) {
-        try {
-            // There can be more than one implementation contribution. Pick one
-            // depending on OS.
-            IConfigurationElement[] implementationElements = configElement
-                    .getChildren(IMPLEMENTATION_ELEMENT);
-            IConfigurationElement implementationElement = null;
 
-            if (implementationElements.length == 0)
-                // no contributions. done.
-                return null;
+        Vector validList = new Vector();
 
-            String currentOS = Platform.getOS();
-            // first loop through all to find one with matching OS.
-            for (int i = 0; i < implementationElements.length; i++) {
-                String os = implementationElements[i]
-                        .getAttribute(OS_ATTRIBUTE);
-                if (os == null)
-                    // no os, no match.
-                    continue;
+        // There can be more than one implementation contribution. Add each
+        // valid one. First start with OS, then WS then no OS.
+        IConfigurationElement[] implementationElements = configElement
+                .getChildren(IMPLEMENTATION_ELEMENT);
+        IConfigurationElement implementationElement = null;
 
-                if (listValueHasValue(os, currentOS)) {
-                    // found implementation with correct OS. Now try if WS
-                    // matches.
-                    String currentWS = Platform.getWS();
-                    String ws = implementationElements[i]
-                            .getAttribute(WS_ATTRIBUTE);
-                    if (ws == null) {
-                        // good OS, and they do not care about WS. we have a
-                        // match.
-                        implementationElement = implementationElements[i];
-                        break;
-                    }
+        if (implementationElements.length == 0)
+            // no contributions. done.
+            return validList;
 
-                    // valid OS, and we have WS.
-                    if (listValueHasValue(ws, currentWS)) {
-                        implementationElement = implementationElements[i];
-                        break;
-                    }
+        String currentOS = Platform.getOS();
+        String currentWS = Platform.getWS();
+
+        // first loop through all to find one with matching OS, with or
+        // without WS.
+        for (int i = 0; i < implementationElements.length; i++) {
+            String os = implementationElements[i].getAttribute(OS_ATTRIBUTE);
+            if (os == null)
+                // no os, no match.
+                continue;
+
+            if (listValueHasValue(os, currentOS)) {
+                // found implementation with correct OS. Now try if WS
+                // matches.
+                String ws = implementationElements[i]
+                        .getAttribute(WS_ATTRIBUTE);
+                if (ws == null) {
+                    // good OS, and they do not care about WS. we have a
+                    // match.
+                    validList.add(implementationElements[i]);
+                } else {
+                    // good OS, and we have WS.
+                    if (listValueHasValue(ws, currentWS))
+                        validList.add(implementationElements[i]);
                 }
             }
+        }
 
-            // if implementation element is still null, it means no
-            // contribution matches OS. Pick first one, that does not have an
-            // OS.
-            if (implementationElement == null)
-                for (int i = 0; i < implementationElements.length; i++) {
-                    String os = implementationElements[i]
-                            .getAttribute(OS_ATTRIBUTE);
-                    if (os == null)
-                        // no os, choose this one.
-                        implementationElement = implementationElements[i];
+        // now loop through all to find one with no OS defined, but with a
+        // matching WS.
+        for (int i = 0; i < implementationElements.length; i++) {
+            String os = implementationElements[i].getAttribute(OS_ATTRIBUTE);
+            if (os == null) {
+                // found implementation with no OS. Now try if WS
+                // matches.
+                String ws = implementationElements[i]
+                        .getAttribute(WS_ATTRIBUTE);
+                if (ws == null) {
+                    // no OS, and they do not care about WS. we have a
+                    // match.
+                    validList.add(implementationElements[i]);
+                } else {
+                    // no OS, and we have WS.
+                    if (listValueHasValue(ws, currentWS))
+                        validList.add(implementationElements[i]);
                 }
 
-            if (implementationElement != null)
-                Logger.logInfo("Loaded the Config implementation.");
-            return implementationElement;
-
-        } catch (Exception e) {
-            Util.handleException(e.getMessage(), e);
-            return null;
+            }
         }
+
+        return validList;
+
     }
 
     /**
@@ -249,8 +292,7 @@ public class IntroPartPresentation extends IntroElement {
     }
 
     /**
-     * Creates the actual implementation class, and primes it with the into
-     * part.
+     * Creates the actual implementation class. Returns null on failure.
      * 
      * @return Returns the partConfigElement representing the single Intro
      *         config.
@@ -297,13 +339,6 @@ public class IntroPartPresentation extends IntroElement {
     public void updateHistory(String pageId) {
         if (implementation != null)
             implementation.updateHistory(pageId);
-    }
-
-    /**
-     * @return Returns the implementationElement.
-     */
-    IConfigurationElement getImplementationElement() {
-        return implementationElement;
     }
 
     /**
