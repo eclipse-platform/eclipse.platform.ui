@@ -54,18 +54,8 @@ public class Buffer {
 		}
 	}
 
-	private static void clear(byte[] buffer, int offset, int length, byte value) {
-		for (int i = offset; i < offset + length; i++) {
-			buffer[i] = value;
-		}
-	}
-
 	public void clear(int offset, int length) {
 		clear(contents, offset, length);
-	}
-
-	public void clear(int offset, int length, byte value) {
-		clear(contents, offset, length, value);
 	}
 
 	private static int compare(byte[] buffer1, int offset1, int length1, byte[] buffer2, int offset2, int length2) {
@@ -87,10 +77,6 @@ public class Buffer {
 
 	public static int compare(Buffer buffer1, int offset1, int length1, Buffer buffer2, int offset2, int length2) {
 		return compare(buffer1.contents, offset1, length1, buffer2.contents, offset2, length2);
-	}
-
-	public static int compare(Buffer buffer1, Buffer buffer2) {
-		return compare(buffer1.contents, 0, buffer1.contents.length, buffer2.contents, 0, buffer2.contents.length);
 	}
 
 	public void copyInternal(int fromOffset, int toOffset, int length) {

@@ -136,16 +136,6 @@ class IndexAnchor extends IndexedStoreObject {
 	}
 
 	/**
-	 * This method requests the anchor to destroy its children.
-	 */
-	void destroyChildren() throws IndexedStoreException {
-		IndexNode rootNode = acquireNode(rootNodeAddress);
-		rootNode.destroyChildren();
-		rootNode.release();
-		removeObject(rootNodeAddress);
-	}
-
-	/**
 	 * This method returns a cursor set to the first entry in the index whose key 
 	 * is greater than or equal to the key provided.  To set a cursor to the beginning 
 	 * of the index use a key of zero length.
@@ -174,19 +164,6 @@ class IndexAnchor extends IndexedStoreObject {
 	}
 
 	/**
-	 * This method returns a cursor set to the last entry in the index.
-	 */
-	void findLastEntry(IndexCursor cursor) throws IndexedStoreException {
-		if (rootNodeAddress.isNull()) {
-			cursor.reset();
-		} else {
-			IndexNode rootNode = acquireNode(rootNodeAddress);
-			rootNode.findLastEntry(cursor);
-			rootNode.release();
-		}
-	}
-
-	/**
 	 * Insert an entry into an index.  
 	 */
 	void insert(byte[] key, byte[] value) throws IndexedStoreException {
@@ -202,24 +179,5 @@ class IndexAnchor extends IndexedStoreObject {
 		IndexNode rootNode = acquireNode(rootNodeAddress);
 		rootNode.insertEntry(key, value);
 		rootNode.release();
-	}
-
-	/**
-	 * Returns the number of entries in the index.
-	 */
-	int getNumberOfEntries() {
-		return numberOfEntries;
-	}
-
-	/**
-	 * Returns the number of nodes in the index.
-	 */
-	int getNumberOfNodes() throws IndexedStoreException {
-		if (rootNodeAddress.isNull())
-			return 0;
-		IndexNode node = acquireNode(rootNodeAddress);
-		int n = node.getNumberOfNodes();
-		node.release();
-		return n;
 	}
 }

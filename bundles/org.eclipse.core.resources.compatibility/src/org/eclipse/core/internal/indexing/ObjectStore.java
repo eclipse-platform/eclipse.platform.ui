@@ -187,15 +187,6 @@ public class ObjectStore implements Observer {
 	}
 
 	/**
-	 * Rollback the modified objects collection.
-	 */
-	public void rollback() throws ObjectStoreException {
-		modifiedObjects.clear();
-		reservations.clear();
-		phantoms.clear();
-	}
-
-	/**
 	 * Returns the StoredObject at a given address.  This registers the store as an 
 	 * observer of changes to this object.
 	 */

@@ -111,17 +111,6 @@ public class IndexCursor {
 	}
 
 	/**
-	 * Sets the cursor at the last entry of an index.
-	 */
-	public synchronized IndexCursor findLastEntry() throws IndexedStoreException {
-		IndexAnchor anchor = store.acquireAnchor(anchorAddress);
-		anchor.findLastEntry(this);
-		anchor.release();
-		entryRemoved = false;
-		return this;
-	}
-
-	/**
 	 * Returns the byte array holding the key for the current cursor location.  
 	 * If the cursor is at the beginning or end of the index then return null.
 	 * 
@@ -179,15 +168,6 @@ public class IndexCursor {
 	 * This method returns true if the current cursor location before the first entry in the index.
 	 */
 	public synchronized boolean isAtBeginning() throws IndexedStoreException {
-		if (entryRemoved)
-			throw new IndexedStoreException(IndexedStoreException.EntryRemoved);
-		return (leafNode == null);
-	}
-
-	/**
-	 * This method returns true if the current cursor location after the last entry in the index.
-	 */
-	public synchronized boolean isAtEnd() throws IndexedStoreException {
 		if (entryRemoved)
 			throw new IndexedStoreException(IndexedStoreException.EntryRemoved);
 		return (leafNode == null);

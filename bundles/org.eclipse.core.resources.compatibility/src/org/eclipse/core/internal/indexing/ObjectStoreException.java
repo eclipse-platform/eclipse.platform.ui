@@ -55,11 +55,6 @@ public class ObjectStoreException extends StoreException {
 		this.id = id;
 	}
 
-	public ObjectStoreException(String s, Throwable exception) {
-		super(s, exception);
-		this.id = GenericFailure;
-	}
-
 	/**
 	 * Initializes the messages at class load time.
 	 */

@@ -385,27 +385,4 @@ public class IndexedStore {
 		objectDirectoryCursor.remove();
 		removeObject(address);
 	}
-
-	public synchronized void rollback() throws IndexedStoreException {
-		try {
-			objectStore.rollback();
-		} catch (ObjectStoreException e) {
-			throw new IndexedStoreException(IndexedStoreException.StoreNotRolledBack, e);
-		}
-	}
-
-	/**
-	 * Replaces the contents of the object identified by "id" with the byte array "b".
-	 */
-	public synchronized void updateObject(ObjectID id, byte[] b) throws IndexedStoreException {
-		byte[] key = id.toByteArray();
-		objectDirectoryCursor.find(key);
-		if (!objectDirectoryCursor.keyMatches(key)) {
-			throw new IndexedStoreException(IndexedStoreException.ObjectNotFound);
-		}
-		ObjectAddress oldAddress = objectDirectoryCursor.getValueAsObjectAddress();
-		ObjectAddress newAddress = insertObject(new BinarySmallObject(b));
-		objectDirectoryCursor.updateValue(newAddress.toByteArray());
-		removeObject(oldAddress);
-	}
 }

@@ -52,15 +52,6 @@ public class PageStoreException extends StoreException {
 		this.id = id;
 	}
 
-	public PageStoreException(String s) {
-		this(s, null);
-	}
-
-	public PageStoreException(String s, Throwable exception) {
-		super(s, exception);
-		this.id = GenericFailure;
-	}
-
 	/**
 	 * Initialize the messages at class load time.
 	 */
