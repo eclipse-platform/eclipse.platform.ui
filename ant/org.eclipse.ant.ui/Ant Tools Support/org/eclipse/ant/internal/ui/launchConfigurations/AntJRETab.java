@@ -28,6 +28,7 @@ import org.eclipse.ant.internal.ui.model.AntUtil;
 import org.eclipse.ant.internal.ui.model.IAntUIConstants;
 import org.eclipse.ant.internal.ui.model.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.model.IAntUIPreferenceConstants;
+import org.eclipse.ant.internal.ui.preferences.ClasspathModel;
 import org.eclipse.ant.internal.ui.preferences.MessageDialogWithToggle;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILibrary;
@@ -165,8 +166,7 @@ public class AntJRETab extends JavaJRETab {
 	
 	/**
 	 * Updates the classpath for this Ant build based on the selected JRE.
-	 * If running in the same VM as Eclipse, the appropriate tools.jar is added and 
-	 * the Xerces JARs are removed.
+	 * If running in the same VM as Eclipse, the appropriate tools.jar is added if not already present.
 	 * If running in the separate VM from Eclipse, the appropriate tools.jar is added and 
 	 * the Xerces JARs are added.
 	 */
@@ -196,36 +196,34 @@ public class AntJRETab extends JavaJRETab {
 		
 		IAntClasspathEntry newToolsEntry= prefs.getToolsJarEntry(newJavaPath);
 		
-		List antURLs= new ArrayList();
-		List userURLs= new ArrayList();
-		
-		getEntries(prefs, configuration, antURLs, userURLs);
-
-		StringBuffer urlString= new StringBuffer();
+		List antEntries= new ArrayList();
+		List userEntries= new ArrayList();	
+		getEntries(prefs, configuration, antEntries, userEntries);
+	
+		StringBuffer classpath= new StringBuffer();
 		boolean found= false;
-		boolean[] xercesFlags;
-		{ 
-			boolean xercesImplFound= false;
-			boolean xercesAPIFound= false;
-			xercesFlags= new boolean[]{xercesImplFound, xercesAPIFound};
-		}
-		found= lookForToolsAndXerces(urlString, antURLs, oldToolsEntry, newToolsEntry, xercesFlags);
+		boolean xercesImplFound= false;
+		boolean xercesAPIFound= false;
+		boolean[] xercesFlags= new boolean[]{xercesImplFound, xercesAPIFound};
 		
-		//mark as additional classpath entries
-		urlString.append(AntUtil.ANT_CLASSPATH_DELIMITER);
-		
+		found= lookForToolsAndXerces(antEntries, oldToolsEntry, newToolsEntry, xercesFlags);
+					
 		//look for the tools.jar and xerces in the additional classpath entries
-		boolean foundInAdditional= lookForToolsAndXerces(urlString, userURLs, oldToolsEntry, newToolsEntry, xercesFlags);
+		boolean foundInAdditional= lookForToolsAndXerces(userEntries, oldToolsEntry, newToolsEntry, xercesFlags);
 		if (newToolsEntry != null && !found && !foundInAdditional) {
-			urlString.append(newToolsEntry.getLabel());
-			urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
+			classpath.append(newToolsEntry.getLabel());
+			classpath.append(AntUtil.ATTRIBUTE_SEPARATOR);
 		}
 		
+		//add the xerces JARs if required and not previously found
 		if (!fJREBlock.isDefaultJRE() && (!xercesFlags[0] || !xercesFlags[1])) {
 			IPluginDescriptor descriptor = Platform.getPlugin("org.apache.xerces").getDescriptor(); //$NON-NLS-1$
-			addLibraries(descriptor, urlString, !xercesFlags[1], !xercesFlags[0]);
+			addLibraries(descriptor, classpath, !xercesFlags[1], !xercesFlags[0]);
 		}
-		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, urlString.substring(0, urlString.length() - 1));
+		
+		ClasspathModel model= getClasspathModel();
+		classpath.append(model.serializeClasspath(true));
+		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, classpath.toString());
 		previousJRE= vm;
 		updateTargetsTab();
 	}
@@ -241,6 +239,19 @@ public class AntJRETab extends JavaJRETab {
 				break;
 			}
 		}
+	}
+	
+	private ClasspathModel getClasspathModel() {
+		//the classpath has changed...set the targets tab to 
+		//need to be recomputed
+		ILaunchConfigurationTab[] tabs=  getLaunchConfigurationDialog().getTabs();
+		for (int i = 0; i < tabs.length; i++) {
+			ILaunchConfigurationTab tab = tabs[i];
+			if (tab instanceof AntClasspathTab) {
+				return ((AntClasspathTab)tab).getClasspathModel();
+			}
+		}
+		return null;
 	}
 	
 	private void getEntries(AntCorePreferences prefs, ILaunchConfigurationWorkingCopy configuration, List antHomeEntries, List additionalEntries) {
@@ -264,38 +275,22 @@ public class AntJRETab extends JavaJRETab {
 	 * with the specified JRE.
 	 * The xerces flags are set based on the Xerces JARs that are found.
 	 */
-	private boolean lookForToolsAndXerces(StringBuffer urlString, List entries, IAntClasspathEntry oldToolsEntry, IAntClasspathEntry newToolsEntry, boolean[] xercesFlags){
-		boolean include= true;
+	private boolean lookForToolsAndXerces(List entries, IAntClasspathEntry oldToolsEntry, IAntClasspathEntry newToolsEntry, boolean[] xercesFlags){
 		boolean found= false;
 		for (Iterator iter = entries.iterator(); iter.hasNext();) {
 			IAntClasspathEntry entry = (IAntClasspathEntry) iter.next();
 			if (sameURL(oldToolsEntry, entry)) {
 				entry= newToolsEntry;
 				found= newToolsEntry != null;
-				include= found;
 			} else if (sameURL(newToolsEntry, entry)) {
 				found= true;
 			} else if (entry.getLabel().endsWith(XERCES_API)) {
 				xercesFlags[1]= true;
-				if (fJREBlock.isDefaultJRE()) {
-					include= false;
-				}
 			} else if (entry.getLabel().endsWith(XERCES_IMPL)) {
 				xercesFlags[0]= true;
-				if (fJREBlock.isDefaultJRE()) {
-					include= false;
-				}
 			} else if (entry.getLabel().endsWith(XERCES_PARSER_API)) {
 				xercesFlags[1]= true;
-				if (fJREBlock.isDefaultJRE()) {
-					include= false;
-				}
 			}
-			if (include) {
-				urlString.append(entry.getEntryURL().getFile());
-				urlString.append(AntUtil.ATTRIBUTE_SEPARATOR);
-			}
-			include= true;
 		}
 		return found;
 	}

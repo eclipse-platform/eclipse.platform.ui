@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -52,7 +51,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -90,7 +88,6 @@ public class AntClasspathBlock {
 	
 	private boolean localBlock= false;
 	
-	private Button antHomeButton;
 	private Text antHome;
 	private Button browseAntHomeButton;
 
@@ -155,7 +152,7 @@ public class AntClasspathBlock {
 			}
 		});
 		if (localBlock) {
-			restoreButton= container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.45")); //$NON-NLS-1$
+			restoreButton= container.createPushButton(parent, AntPreferencesMessages.getString("AntClasspathBlock.54")); //$NON-NLS-1$
 			restoreButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent evt) {
 					restoreGlobalEntries();
@@ -394,35 +391,12 @@ public class AntClasspathBlock {
 	}
 			
 	public void createContents(Composite parent) {
-		Font font = parent.getFont();
-		Label label = new Label(parent, SWT.NONE);
-		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gd.horizontalSpan = 2;
-		label.setLayoutData(gd);
-		label.setFont(font);
-		label.setText(AntPreferencesMessages.getString("AntClasspathBlock.Run&time_classpath__8")); //$NON-NLS-1$
-
 		createClasspathTree(parent);
 		createButtonGroup(parent);
-
-		createSeparator(parent);
 
 		createAntHome(parent);
 		
 		tableSelectionChanged((IStructuredSelection)treeViewer.getSelection(), antContentProvider);
-	}
-
-	/**
-	 * Creates a space between controls
-	 */
-	private Label createSeparator(Composite parent) {
-		Label separator = new Label(parent, SWT.NONE);
-		GridData gd =
-			new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.heightHint = 4;
-		gd.horizontalSpan = 2;
-		separator.setLayoutData(gd);
-		return separator;
 	}
 
 	private void createAntHome(Composite top) {
@@ -437,21 +411,15 @@ public class AntClasspathBlock {
 		antHomeComposite.setLayout(layout);
 		antHomeComposite.setFont(top.getFont());
 
-		antHomeButton = new Button(antHomeComposite, SWT.CHECK);
-		antHomeButton.setFont(top.getFont());
-		antHomeButton.setText(AntPreferencesMessages.getString("AntClasspathBlock.Set_ANT_HO&ME_9")); //$NON-NLS-1$
-		antHomeButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				specifyAntHome();
-			}
-		});
-
+		Label antHomeLabel = new Label(antHomeComposite, SWT.NONE);
+		antHomeLabel.setFont(top.getFont());
+		antHomeLabel.setText(AntPreferencesMessages.getString("AntClasspathBlock.55"));  //$NON-NLS-1$
+		
 		antHome = new Text(antHomeComposite, SWT.BORDER);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		antHome.setLayoutData(gd);
 		antHome.setFont(top.getFont());
-		antHome.setEnabled(false);
 		antHome.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (initializing) {
@@ -477,7 +445,6 @@ public class AntClasspathBlock {
 				browseAntHome();
 			}
 		});
-		browseAntHomeButton.setEnabled(false);
 	}
 	
 	/* (non-Javadoc)
@@ -522,10 +489,6 @@ public class AntClasspathBlock {
 				currentParent= antContentProvider.getModel();
 			} else {
 				resolveCurrentParent(selection);
-				if (currentParent.getParent() != antContentProvider.getModel()) {
-					//first= true;
-					//last= true;
-				}
 				if (haveGlobalEntrySelected) {
 					canRemove= false;
 				}
@@ -572,21 +535,6 @@ public class AntClasspathBlock {
 		return true;
 	}
 
-	private void specifyAntHome() {
-		antHome.setEnabled(!antHome.getEnabled());
-		browseAntHomeButton.setEnabled(!browseAntHomeButton.getEnabled());
-		if (antHome.isEnabled()) {
-			File rootDir = validateAntHome(antHome.getText());
-			if (rootDir != null) {
-				setAntHome(rootDir);
-			}
-		} else {
-			container.setMessage(null);
-			container.setErrorMessage(null);
-		}
-		updateContainer();
-	}
-	
 	private File validateAntHome(String path) {
 		File rootDir = null;
 		if (path.length() > 0) {
@@ -647,22 +595,15 @@ public class AntClasspathBlock {
 	
 	public String getAntHome() {
 		String antHomeText= antHome.getText().trim();
-		if (!antHomeButton.getSelection() || antHomeText.length() == 0) {
-			antHomeText= null;
+		if (antHomeText.length() == 0) {
+			antHomeText= ""; //$NON-NLS-1$
 		}
 		return antHomeText;
 	}
 	
 	public void initializeAntHome(String antHomeString, boolean setInitializing) {
-		this.initializing= setInitializing;
-		antHomeButton.setSelection(antHomeString != null);
-		antHome.setEnabled(antHomeString != null);
-		browseAntHomeButton.setEnabled(antHomeString != null);
-		if (antHomeString != null) {
-			antHome.setText(antHomeString);
-		} else {
-			antHome.setText(""); //$NON-NLS-1$
-		}
+		this.initializing= setInitializing; //possible turn off the modifytext callback
+		antHome.setText(antHomeString);
 		this.initializing= false;
 	}
 	

@@ -211,4 +211,8 @@ public class AntClasspathTab extends AbstractLaunchConfigurationTab implements I
 			model= new ClasspathModel(classpathString, customAntHome);
 		}
 	}
+	
+	protected ClasspathModel getClasspathModel() {
+		return model;
+	}
 }

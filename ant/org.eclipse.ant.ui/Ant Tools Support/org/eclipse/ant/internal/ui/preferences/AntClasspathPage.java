@@ -89,7 +89,7 @@ public class AntClasspathPage implements IAntBlockContainer {
 		model.setAntHomeEntries(prefs.getDefaultAntHomeEntries());
 		model.setGlobalEntries(new IAntClasspathEntry[] {prefs.getToolsJarEntry()});
 		antClasspathBlock.setInput(model);
-		antClasspathBlock.initializeAntHome(prefs.getDefaultAntHome(), true);
+		antClasspathBlock.initializeAntHome(prefs.getDefaultAntHome(), false);
 		update();
 	}
 	
