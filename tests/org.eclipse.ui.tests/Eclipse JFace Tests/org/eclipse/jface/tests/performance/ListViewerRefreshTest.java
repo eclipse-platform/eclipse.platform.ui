@@ -20,7 +20,7 @@ import org.eclipse.ui.tests.performance.ViewPerformanceSuite;
  * The ListViewerRefreshTest is a test of refreshing the list viewer.
  * 
  */
-public class ListViewerRefreshTest extends LinearViewerTest {
+public class ListViewerRefreshTest extends ViewerTest {
 
 	ListViewer viewer;
 	private RefreshTestContentProvider contentProvider;

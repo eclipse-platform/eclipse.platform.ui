@@ -22,6 +22,14 @@ public class TestElement {
 	/**
 	 * Create a new instance of the receiver.
 	 * 
+	 */
+	public TestElement() {
+		super();
+	}
+	
+	/**
+	 * Create a new instance of the receiver.
+	 * 
 	 * @param index
 	 */
 	public TestElement(int index) {
