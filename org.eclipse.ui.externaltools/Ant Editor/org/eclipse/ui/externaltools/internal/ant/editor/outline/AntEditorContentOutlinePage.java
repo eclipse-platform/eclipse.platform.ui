@@ -60,7 +60,6 @@ import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
-import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 /**
@@ -76,7 +75,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	private IDocumentModelListener fListener;
 	private AntModel fModel;
 	private XMLCore fCore;
-	private ITextEditor fEditor;
 	private ListenerList fPostSelectionChangedListeners= new ListenerList();
 	private boolean fIsModelEmpty= true;
 
@@ -278,10 +276,9 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	/**
 	 * Creates a new AntEditorContentOutlinePage.
 	 */
-	public AntEditorContentOutlinePage(XMLCore core, ITextEditor editor) {
+	public AntEditorContentOutlinePage(XMLCore core) {
 		super();
 		fCore= core;
-		fEditor= editor;
 	}
 
 	/* (non-Javadoc)

@@ -49,7 +49,6 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 
 	protected class XMLAnnotationModel extends ResourceMarkerAnnotationModel implements IProblemRequestor {
 		
-		private IFileEditorInput fInput;
 		private List fGeneratedAnnotations= new ArrayList();
 		private List fCollectedProblems= new ArrayList();
 		
@@ -63,7 +62,6 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 		 */
 		public XMLAnnotationModel(IFileEditorInput input) {
 			super(input.getFile());
-			fInput= input;
 		}
 
 		/*

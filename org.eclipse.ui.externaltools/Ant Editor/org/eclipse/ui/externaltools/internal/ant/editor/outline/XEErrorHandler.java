@@ -12,7 +12,6 @@ package org.eclipse.ui.externaltools.internal.ant.editor.outline;
 
 import org.eclipse.jface.text.Region;
 import org.eclipse.ui.externaltools.internal.ant.editor.xml.XmlElement;
-import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
 
@@ -52,7 +51,6 @@ public class XEErrorHandler implements IProblemRequestor {
 	private static final int SEVERTITY_FATAL_ERROR= 2;
 
 	private IProblemRequestor fProblemRequestor;	
-	private Locator fLocator;
 	
 	/**
 	 * Constructor XEErrorHandler.
@@ -60,10 +58,6 @@ public class XEErrorHandler implements IProblemRequestor {
 	 */
 	public XEErrorHandler(IProblemRequestor problemRequestor) {
 		fProblemRequestor= problemRequestor;
-	}
-
-	public void setDocumentLocator(Locator locator) {
-		fLocator= locator;
 	}
 
 	public void acceptProblem(IProblem problem) {
