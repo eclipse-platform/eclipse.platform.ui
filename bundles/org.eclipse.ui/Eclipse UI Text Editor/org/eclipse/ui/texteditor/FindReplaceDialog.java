@@ -1019,7 +1019,10 @@ class FindReplaceDialog extends Dialog {
 			while (index != -1) {
 				index= fTarget.findAndSelect(findReplacePosition, findString, forwardSearch, caseSensitive, wholeWord);
 				if (index != -1) { // substring not contained from current position
-					findReplacePosition= index + replaceString.length();
+					if (forwardSearch)
+						findReplacePosition= index + replaceString.length();					
+					else
+						findReplacePosition= index;
 					fTarget.replaceSelection(replaceString);
 					replaceCount++;
 				}
