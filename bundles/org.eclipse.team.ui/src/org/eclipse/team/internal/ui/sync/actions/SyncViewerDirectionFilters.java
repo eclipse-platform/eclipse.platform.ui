@@ -167,6 +167,7 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 			incomingMode.setEnabled(false);
 			outgoingMode.setEnabled(false);
 			conflictsMode.setEnabled(false);
+			bothMode.setEnabled(false);
 		} else {
 			TeamSubscriber s = input.getSubscriber();
 			incomingMode.setEnabled(true);
