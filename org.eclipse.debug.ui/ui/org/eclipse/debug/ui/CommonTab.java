@@ -253,7 +253,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		
 		fFavoritesTable = CheckboxTableViewer.newCheckList(favComp, SWT.CHECK | SWT.BORDER | SWT.MULTI | SWT.FULL_SELECTION);
 		Control table = fFavoritesTable.getControl();
-		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 1;
 		table.setLayoutData(gd);
 		fFavoritesTable.setContentProvider(new FavoritesContentProvider());
