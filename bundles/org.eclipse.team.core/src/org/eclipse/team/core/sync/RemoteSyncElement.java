@@ -28,6 +28,12 @@ import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.core.Policy;
 
 /**
+ * <b>Note:</b> This class/interface is part of an interim API that is still under 
+ * development and expected to change significantly before reaching stability. 
+ * It is being made available at this early stage to solicit feedback from pioneering 
+ * adopters on the understanding that any code that uses this API will almost 
+ * certainly be broken (repeatedly) as the API evolves.
+ * 
  * A standard abstract class that provides implementations for interesting 
  * <code>IRemoteSyncElement</code> methods. The <code>members</code> method
  * provided will create a unified tree based on the local, base, and remote

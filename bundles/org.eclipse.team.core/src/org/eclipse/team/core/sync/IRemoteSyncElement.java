@@ -8,6 +8,12 @@ package org.eclipse.team.core.sync;
 import org.eclipse.team.core.TeamException;
 
 /**
+ * <b>Note:</b> This class/interface is part of an interim API that is still under 
+ * development and expected to change significantly before reaching stability. 
+ * It is being made available at this early stage to solicit feedback from pioneering 
+ * adopters on the understanding that any code that uses this API will almost 
+ * certainly be broken (repeatedly) as the API evolves.
+ * 
  * A <code>ILocalSyncElement</code> describes the relative synchronization of a <b>local</b> 
  * and <b>remote</b> resource using a <b>base</b> resource for comparison.
  * <p>
