@@ -57,7 +57,11 @@ public class CompareEditor extends EditorPart implements IReusableEditor {
 	private Control fControl;
 	
 	
+	
+	static CompareEditor fgCurrentCompareEditor;
+	
 	public CompareEditor() {
+		fgCurrentCompareEditor= this;
 	}
 		
 	/* package */ CompareConfiguration getCompareConfiguration() {

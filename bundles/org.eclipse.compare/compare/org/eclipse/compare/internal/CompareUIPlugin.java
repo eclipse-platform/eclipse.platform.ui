@@ -306,10 +306,15 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			if (page == null)
 				page= getActivePage();
 			if (page != null) {
-				try {
-					page.openEditor(input, COMPARE_EDITOR);
-				} catch (PartInitException e) {
-					MessageDialog.openError(getShell(), Utilities.getString("CompareUIPlugin.openEditorError"), e.getMessage()); //$NON-NLS-1$
+				if (false && CompareEditor.fgCurrentCompareEditor instanceof IReusableEditor) {
+					IReusableEditor e= (IReusableEditor) CompareEditor.fgCurrentCompareEditor;
+					e.setInput(input);
+				} else {
+					try {
+						page.openEditor(input, COMPARE_EDITOR);
+					} catch (PartInitException e) {
+						MessageDialog.openError(getShell(), Utilities.getString("CompareUIPlugin.openEditorError"), e.getMessage()); //$NON-NLS-1$
+					}					
 				}
 			} else {
 				MessageDialog.openError(getShell(),
