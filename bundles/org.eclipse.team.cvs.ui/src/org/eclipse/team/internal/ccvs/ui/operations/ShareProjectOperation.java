@@ -72,8 +72,8 @@ public class ShareProjectOperation extends CVSOperation {
 	}
 
 	private void waitForCollector(IProgressMonitor sub) {
-		sub.beginTask("Calculating synchronization states", IProgressMonitor.UNKNOWN);
-		sub.subTask("Calculating synchronization states");
+		sub.beginTask(Policy.bind("ShareProjectOperation.1"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+		sub.subTask(Policy.bind("ShareProjectOperation.1")); //$NON-NLS-1$
 		CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant().getSubscriberSyncInfoCollector().waitForCollector(sub);
 	}
 
