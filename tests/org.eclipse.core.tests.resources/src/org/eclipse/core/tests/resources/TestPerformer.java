@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.core.tests.resources;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 
 import java.util.Random;
 
@@ -26,7 +31,10 @@ public TestPerformer(String name) {
 }
 public void cleanUp(Object[] args, int count) {
 }
-abstract public Object[] interestingOldState(Object[] args) throws Exception;
+public Object[] interestingOldState(Object[] args) throws Exception {
+	//subclasses should override to hold onto interesting old state
+	return null;
+}
 abstract public Object invokeMethod(Object[] args, int count) throws Exception;
 final public void performTest(Object[][] inputs) {
 	// call helper method
