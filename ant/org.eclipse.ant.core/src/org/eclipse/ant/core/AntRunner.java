@@ -203,6 +203,14 @@ public class AntRunner implements IPlatformRunnable {
 			// set build file
 			Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
 			setBuildFileLocation.invoke(runner, new Object[] { buildFileLocation });
+			
+			setProperties(runner, classInternalAntRunner);
+			
+			if (arguments != null && arguments.length > 0) {
+				Method setArguments = classInternalAntRunner.getMethod("setArguments", new Class[] { String[].class }); //$NON-NLS-1$
+				setArguments.invoke(runner, new Object[] { arguments });
+			}
+						
 			// get the info for each targets
 			Method getTargets = classInternalAntRunner.getMethod("getTargets", null); //$NON-NLS-1$
 			Object results = getTargets.invoke(runner, null);
@@ -306,17 +314,8 @@ public class AntRunner implements IPlatformRunnable {
 				Method setProgressMonitor = classInternalAntRunner.getMethod("setProgressMonitor", new Class[] { IProgressMonitor.class }); //$NON-NLS-1$
 				setProgressMonitor.invoke(runner, new Object[] { monitor });
 			}
-			// add properties
-			if (userProperties != null) {
-				Method addUserProperties = classInternalAntRunner.getMethod("addUserProperties", new Class[] { Map.class }); //$NON-NLS-1$
-				addUserProperties.invoke(runner, new Object[] { userProperties });
-			}
 			
-			// add property files
-			if (propertyFiles != null) {
-				Method addPropertyFiles = classInternalAntRunner.getMethod("addPropertyFiles", new Class[] { String[].class }); //$NON-NLS-1$
-				addPropertyFiles.invoke(runner, new Object[] { propertyFiles });
-			}
+			setProperties(runner, classInternalAntRunner);
 			
 			// set message output level
 			Method setMessageOutputLevel = classInternalAntRunner.getMethod("setMessageOutputLevel", new Class[] { int.class }); //$NON-NLS-1$
@@ -347,6 +346,21 @@ public class AntRunner implements IPlatformRunnable {
 		} finally {
 			buildRunning= false;
 			Thread.currentThread().setContextClassLoader(originalClassLoader);
+		}
+	}
+
+	private void setProperties(Object runner, Class classInternalAntRunner)
+		throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+		// add properties
+		if (userProperties != null) {
+			Method addUserProperties = classInternalAntRunner.getMethod("addUserProperties", new Class[] { Map.class }); //$NON-NLS-1$
+			addUserProperties.invoke(runner, new Object[] { userProperties });
+		}
+		
+		// add property files
+		if (propertyFiles != null) {
+			Method addPropertyFiles = classInternalAntRunner.getMethod("addPropertyFiles", new Class[] { String[].class }); //$NON-NLS-1$
+			addPropertyFiles.invoke(runner, new Object[] { propertyFiles });
 		}
 	}
 
