@@ -1069,13 +1069,6 @@
       </keyBinding>
       <keyBinding
             platform="carbon"
-            string="Ctrl+Shift+W"
-            scope="org.eclipse.ui.globalScope"
-            command=""
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
             string="Alt+-"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.ui.window.showSystemMenu"
@@ -1324,13 +1317,6 @@
             string="Command+B"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.ui.project.buildAll"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-            platform="carbon"
-            string="Command+Shift+W"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.ui.window.switchToEditor"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
