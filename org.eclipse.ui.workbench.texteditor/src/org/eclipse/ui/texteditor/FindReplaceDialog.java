@@ -82,58 +82,15 @@ class FindReplaceDialog extends Dialog {
 		 * @see ShellListener#shellActivated(ShellEvent)
 		 */
 		public void shellActivated(ShellEvent e) {
-			
-			String oldText= fFindField.getText(); // XXX workaround for 10766
-			List oldList= new ArrayList();
-			oldList.addAll(fFindHistory);
-
-			readConfiguration();
-			
-
-			fFindField.removeModifyListener(fFindModifyListener);
-
-			updateCombo(fFindField, fFindHistory);
-			if (!fFindHistory.equals(oldList) && !fFindHistory.isEmpty())
-				fFindField.setText((String) fFindHistory.get(0));
-			else 
-				fFindField.setText(oldText);
-			if (findFieldHadFocus())
-				fFindField.setSelection(new Point(0, fFindField.getText().length()));
-			fFindField.addModifyListener(fFindModifyListener);
-
 			fActiveShell= (Shell)e.widget;
 			updateButtonState();
-			
-			if (findFieldHadFocus() && getShell() == fActiveShell && !fFindField.isDisposed())
-				fFindField.setFocus();
 		}
-		
-		/**
-		 * Returns <code>true</code> if the find field had focus,
-		 * <code>false</code> if it did not.
-		 * 
-		 * @return <code>true</code> if the find field had focus,
-		 *         <code>false</code> if it did not
-		 */
-		private boolean findFieldHadFocus() {
-			/*
-			 * See bug 45447. Under GTK and Motif, the focus of the find field
-			 * is already gone when shellDeactivated is called. On the other
-			 * hand focus has already been restored when shellActivated is
-			 * called.
-			 * 
-			 * Therefore, we select and give focus if either
-			 * fGiveFocusToFindField is true or the find field has focus.
-			 */
-			return fGiveFocusToFindField || okToUse(fFindField) && fFindField.isFocusControl();
-		}
-		
+				
 		/*
 		 * @see ShellListener#shellDeactivated(ShellEvent)
 		 */
 		public void shellDeactivated(ShellEvent e) {
-			fGiveFocusToFindField= fFindField.isFocusControl();
-
+			
 			storeSettings();
 
 			fGlobalRadioButton.setSelection(true);
@@ -220,7 +177,7 @@ class FindReplaceDialog extends Dialog {
 	private Button fIsRegExCheckBox;
 	
 	private Button fReplaceSelectionButton, fReplaceFindButton, fFindNextButton, fReplaceAllButton;
-	Combo fFindField, fReplaceField;
+	private Combo fFindField, fReplaceField;
 	private Rectangle fDialogPositionInit;
 
 	private IDialogSettings fDialogSettings;
@@ -255,13 +212,6 @@ class FindReplaceDialog extends Dialog {
 	 * @since 3.0
 	 */
 	private Color fProposalPopupForegroundColor;
-	/**
-	 * <code>true</code> if the find field should receive focus the next time
-	 * the dialog is activated, <code>false</code> otherwise.
-	 * @since 3.0
-	 */
-	private boolean fGiveFocusToFindField= true;
-
 
 	
 	/**
@@ -1510,19 +1460,17 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private void updateButtonState(boolean disableReplace) {
 		if (okToUse(getShell()) && okToUse(fFindNextButton)) {
-			String selectedText= null;
+			
+			boolean selection= false;
 			if (fTarget != null) {
-				selectedText= fTarget.getSelectionText();
+				String selectedText= fTarget.getSelectionText();
+				selection= (selectedText != null && selectedText.length() > 0);
 			}
-
-			boolean selection= (selectedText != null && selectedText.length() > 0);
-
 			boolean enable= fTarget != null && (fActiveShell == fParentShell || fActiveShell == getShell());
 			String str= getFindString();
 			boolean findString= str != null && str.length() > 0;
 			
-			boolean wholeWord= isWord(str) && !isRegExSearchAvailableAndChecked();
-			fWholeWordCheckBox.setEnabled(wholeWord);
+			fWholeWordCheckBox.setEnabled(isWord(str) && !isRegExSearchAvailableAndChecked());
 
 			fFindNextButton.setEnabled(enable && findString);
 			fReplaceSelectionButton.setEnabled(!disableReplace && enable && isEditable() && selection && (!fNeedsInitialFindBeforeReplace || !isRegExSearchAvailableAndChecked()));
@@ -1658,10 +1606,7 @@ class FindReplaceDialog extends Dialog {
 			initIncrementalBaseLocation();
 			updateButtonState();
 		}
-		
-		// see pr 51073
-		fGiveFocusToFindField= true;
-		
+				
 		setContentAssistsEnablement(isRegExSearchAvailableAndChecked());
 	}
 
