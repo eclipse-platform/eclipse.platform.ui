@@ -89,9 +89,6 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		try {
 			final IFile file = getWorkspace().getRoot().getProject("proj1").getFile("file.txt");
 			new CorePerformanceTest() {
-				protected void setup() {
-					ensureExistsInWorkspace(file, getRandomContents());
-				}
 
 				protected void operation() {
 					try {
@@ -99,6 +96,10 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 					} catch (CoreException e) {
 						fail("", e);
 					}
+				}
+
+				protected void setup() {
+					ensureExistsInWorkspace(file, getRandomContents());
 				}
 
 				protected void teardown() {
@@ -123,10 +124,6 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 			final IFolder base = project.getFolder("base");
 			ensureDoesNotExistInWorkspace(base);
 			new CorePerformanceTest() {
-				protected void setup() {
-					createTree(base, filesPerFolder, statesPerFile);
-					ensureDoesNotExistInWorkspace(base);
-				}
 
 				protected void operation() {
 					try {
@@ -134,6 +131,11 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 					} catch (CoreException e) {
 						fail("", e);
 					}
+				}
+
+				protected void setup() {
+					createTree(base, filesPerFolder, statesPerFile);
+					ensureDoesNotExistInWorkspace(base);
 				}
 			}.run(this, 4, 3);
 		} finally {
