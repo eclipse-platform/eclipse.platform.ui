@@ -17,57 +17,51 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
-public class EditBookmarkAction implements IViewActionDelegate {
+/**
+ * Opens a properties dialog allowing the user to edit the bookmark's description. 
+ */
+class EditBookmarkAction extends BookmarkAction {
 	
-	private IViewPart view;
-	private IMarker marker;
-
-	/**
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
-	public void init(IViewPart view) {
-		this.view = view;
+	protected EditBookmarkAction(BookmarkNavigator view) {
+		super(view, BookmarkMessages.getString("Properties.text")); //$NON-NLS-1$
+		setEnabled(false);
 	}
 
-	/**
-	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
-	 */
-	public void run(IAction action) {
+	private IMarker marker;
+
+	public void run() {
 		if (marker != null)
 			editBookmark();
 	}
 	
-	public void setMarker(IMarker marker) {
-		this.marker = marker;
-	}
-	
-
 	/**
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
+	 * Sets marker to the current selection if the selection is an instance of 
+	 * <code>org.eclipse.core.resources.IMarker<code> and the selected marker's 
+	 * resource is an instance of <code>org.eclipse.core.resources.IFile<code>.
+	 * Otherwise sets marker to null.
 	 */
-	public void selectionChanged(IAction action, ISelection selection) {
+	public void selectionChanged(IStructuredSelection selection) {
 		marker = null;
-		if (!(selection instanceof IStructuredSelection)) 
-			return;
+		setEnabled(false);
 		
-		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
-		Object o = structuredSelection.getFirstElement(); 
-		if (!(o instanceof IMarker) || structuredSelection.size() > 1)
+		if (selection.size() != 1)
+			return;
+			
+		Object o = selection.getFirstElement(); 
+		if (!(o instanceof IMarker))
 			return;
 			
 		IMarker selectedMarker = (IMarker) o;
 		IResource resource = selectedMarker.getResource();
-		if (resource instanceof IFile)
+		if (resource instanceof IFile) {
 			marker = selectedMarker;
+			setEnabled(true);
+		}
 	}
-
+	
 	private void editBookmark() {
 		IFile file = (IFile) marker.getResource();
 		
@@ -75,7 +69,7 @@ public class EditBookmarkAction implements IViewActionDelegate {
 			file.getWorkspace().run(
 				new IWorkspaceRunnable() {
 					public void run(IProgressMonitor monitor) throws CoreException {
-						BookmarkPropertiesDialog dialog = new BookmarkPropertiesDialog(view.getSite().getShell());
+						BookmarkPropertiesDialog dialog = new BookmarkPropertiesDialog(getView().getSite().getShell());
 						dialog.setMarker(marker);	
 						dialog.open();
 					}

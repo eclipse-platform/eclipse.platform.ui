@@ -1,9 +1,14 @@
-/*
- * Created on Feb 11, 2003
- *
- * To change this generated comment go to 
- * Window>Preferences>Java>Code Generation>Code Template
- */
+/************************************************************************
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 package org.eclipse.ui.views.bookmarkexplorer;
 
 import java.util.ArrayList;
@@ -19,12 +24,15 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.part.MarkerTransfer;
 
 /**
- * @author jhalhead
+ * Pastes one or more bookmark(s) from the clipboard into the bookmark navigator.
  */
-public class PasteBookmarkAction extends BookmarkAction {
+class PasteBookmarkAction extends BookmarkAction {
 	
 	private BookmarkNavigator view;
 	
+	/**
+	 * The constructor.
+	 */
 	public PasteBookmarkAction(BookmarkNavigator view) {
 		super(view, BookmarkMessages.getString("PasteBookmark.text"));//$NON-NLS-1$
 		this.view = view;
@@ -32,7 +40,7 @@ public class PasteBookmarkAction extends BookmarkAction {
 	}
 
 	/**
-	 * Implementation of method defined on <code>IAction</code>.
+	 * Copies the marker(s) from the clipboard to the bookmark navigator view.
 	 */
 	public void run() {
 		// Get the markers from the clipboard

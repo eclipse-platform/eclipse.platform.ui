@@ -1,9 +1,15 @@
-package org.eclipse.ui.views.bookmarkexplorer;
+/************************************************************************
+Copyright (c) 2002 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
 
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
+package org.eclipse.ui.views.bookmarkexplorer;
 
 import java.util.List;
 
@@ -21,7 +27,7 @@ import org.eclipse.ui.part.MarkerTransfer;
 
 
 /**
- * Copies a task to the clipboard.
+ * Copies one or more bookmark(s) to the clipboard.
  */
 class CopyBookmarkAction extends BookmarkAction {
 
@@ -48,15 +54,6 @@ class CopyBookmarkAction extends BookmarkAction {
 		List list = selection.toList();
 		IMarker[] markers = new IMarker[list.size()];
 		list.toArray(markers);
-
-//		// Place the markers on the clipboard
-//		StringBuffer buffer = new StringBuffer();
-//		ILabelProvider provider = (ILabelProvider)bookmarkNavigator.getViewer().getLabelProvider();
-//		for (int i = 0; i < markers.length; i++) {
-//			if (i > 0)
-//				buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
-//			buffer.append(provider.getText(markers[i]));
-//		} 
 
 		setClipboard(markers, createBookmarkReport(markers));
 	}
@@ -101,7 +98,6 @@ class CopyBookmarkAction extends BookmarkAction {
 		int maxDescriptionLength = descriptionHeader.length(); 
 		int maxResourceLength = resourceHeader.length();
 		int maxFolderLength = folderHeader.length();
-		int maxLocationLength = locationHeader.length();
 		
 		for (int i = 0; i < markers.length; i++) {
 			//get marker description
@@ -130,8 +126,6 @@ class CopyBookmarkAction extends BookmarkAction {
 			locations[i] = BookmarkMessages.format("LineIndicator.text", new String[] {String.valueOf(line)});//$NON-NLS-1$
 			if (locations[i] == null)
 				locations[i] = ""; //$NON-NLS-1$
-			if (locations[i].length() > maxLocationLength)
-				maxLocationLength = locations[i].length();
 		}
 		
 		//add headers
@@ -145,8 +139,6 @@ class CopyBookmarkAction extends BookmarkAction {
 		for (int i = folderHeader.length(); i <= maxFolderLength; i++)
 			report += ' ';
 		report += locationHeader;
-		for (int i = locationHeader.length(); i <= maxLocationLength; i++)
-			report += ' ';
 		report += System.getProperty("line.separator"); //$NON-NLS-1$
 		
 		//add marker info
@@ -161,8 +153,6 @@ class CopyBookmarkAction extends BookmarkAction {
 			for (int j = folders[i].length(); j <= maxFolderLength; j++)
 				report += ' ';
 			report += locations[i];
-			for (int j = locations[i].length(); j <= maxLocationLength; j++)
-				report += ' ';
 			report += System.getProperty("line.separator"); //$NON-NLS-1$
 		}
 		

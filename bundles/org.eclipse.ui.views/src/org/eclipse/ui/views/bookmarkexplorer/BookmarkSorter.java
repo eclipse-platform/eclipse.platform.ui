@@ -16,7 +16,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
-public class BookmarkSorter extends ViewerSorter {
+class BookmarkSorter extends ViewerSorter {
 	
 	private int direction;
 	
@@ -131,11 +131,6 @@ public class BookmarkSorter extends ViewerSorter {
 		return compare(marker1, marker2, 0) * direction;
 	}
 
-	/**
-	 * Saves the object state within a memento.
-	 *
-	 * @param memento a memento to receive the object state
-	 */
 	public void saveState(IDialogSettings settings) {
 		if (settings == null)
 			return;

@@ -13,25 +13,101 @@ Contributors:
 
 package org.eclipse.ui.views.tasklist;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.CheckboxCellEditor;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.*;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleControlAdapter;
+import org.eclipse.swt.accessibility.AccessibleControlEvent;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.CellEditorActionHandler;
+import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.IShowInTargetList;
+import org.eclipse.ui.part.MarkerTransfer;
+import org.eclipse.ui.part.ShowInContext;
+import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -51,6 +127,7 @@ public class TaskList extends ViewPart {
 	private Table table;
 	private TableEditor tableEditor;
 	private MenuManager contextMenu;
+	private TaskSorter sorter;
 
 	private CellEditor descriptionEditor;
 	private TableViewer viewer;
@@ -76,17 +153,17 @@ public class TaskList extends ViewPart {
 	private TaskAction propertiesAction;
 
 	//sort by action
-	private TaskAction sortByCategoryAction;
-	private TaskAction sortByCompletedAction;
-	private TaskAction sortByPriorityAction;
-	private TaskAction sortByDescriptionAction;
-	private TaskAction sortByResourceAction;
-	private TaskAction sortByContainerAction;
-	private TaskAction sortByLocationAction;
-	private TaskAction sortByCreationTimeAction;
+	private Action sortByCategoryAction;
+	private Action sortByCompletedAction;
+	private Action sortByPriorityAction;
+	private Action sortByDescriptionAction;
+	private Action sortByResourceAction;
+	private Action sortByContainerAction;
+	private Action sortByLocationAction;
+	private Action sortByCreationTimeAction;
 
-	private TaskAction sortAscendingAction;
-	private TaskAction sortDescendingAction;
+	private Action sortAscendingAction;
+	private Action sortDescendingAction;
 
 	private Clipboard clipboard;
 
@@ -104,14 +181,13 @@ public class TaskList extends ViewPart {
 	private static final String TAG_COLUMN = "column"; //$NON-NLS-1$
 	private static final String TAG_NUMBER = "number"; //$NON-NLS-1$
 	private static final String TAG_WIDTH = "width"; //$NON-NLS-1$
-	private static final String TAG_SORTER_COLUMN = "sorterColumn"; //$NON-NLS-1$
-	private static final String TAG_SORTER_REVERSED = "sorterReversed"; //$NON-NLS-1$
 	private static final String TAG_FILTER = "filter"; //$NON-NLS-1$
 	private static final String TAG_SELECTION = "selection"; //$NON-NLS-1$
 	private static final String TAG_ID = "id"; //$NON-NLS-1$
 	private static final String TAG_MARKER = "marker"; //$NON-NLS-1$
 	private static final String TAG_RESOURCE = "resource"; //$NON-NLS-1$
 	private static final String TAG_TOP_INDEX = "topIndex"; //$NON-NLS-1$
+	private static final String TAG_SORT_SECTION = "TaskListSortState"; //$NON-NLS-1$
 
 	static class TaskListLabelProvider
 		extends LabelProvider
@@ -141,6 +217,52 @@ public class TaskList extends ViewPart {
 					keys[columnIndex]);
 			}
 			return null;
+		}
+	}
+	
+	class SortByAction extends Action {
+		
+		private int column;
+		
+		public SortByAction(int column) {
+			if (column < 0 || column > 8)
+				column = 0;
+			else 
+				this.column = column;
+		}
+
+		public void run() {
+			sorter.setTopPriority(column);
+			updateSortingState();
+			viewer.refresh();
+			IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
+			IDialogSettings settings = workbenchSettings.getSection(TAG_SORT_SECTION);
+			if (settings == null)
+				settings = workbenchSettings.addNewSection(TAG_SORT_SECTION);
+			sorter.saveState(settings);
+		}
+	}
+
+	class SortDirectionAction extends Action {
+		
+		private int direction;
+		
+		public SortDirectionAction(int direction) {
+			if (direction == TaskSorter.ASCENDING || direction == TaskSorter.DESCENDING)
+				this.direction = direction;
+			else 
+				this.direction = TaskSorter.ASCENDING;
+		}
+
+		public void run() {
+			sorter.setDirection(direction);
+			updateSortingState();
+			viewer.refresh();
+			IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
+			IDialogSettings settings = workbenchSettings.getSection(TAG_SORT_SECTION);
+			if (settings == null)
+				settings = workbenchSettings.addNewSection(TAG_SORT_SECTION);
+			sorter.saveState(settings);
 		}
 	}
 
@@ -250,18 +372,21 @@ public class TaskList extends ViewPart {
 			 * toggle sorting order (ascending/descending).
 			 */
 			public void widgetSelected(SelectionEvent e) {
-					// column selected - need to sort
-	int column = table.indexOf((TableColumn) e.widget);
-				TaskSorter oldSorter = (TaskSorter) viewer.getSorter();
-				if (oldSorter != null
-					&& column == oldSorter.getColumnNumber()) {
-					oldSorter.setReversed(!oldSorter.isReversed());
-					viewer.refresh();
-				} else {
-					viewer.setSorter(new TaskSorter(TaskList.this, column));
+				// column selected - need to sort
+				int column = table.indexOf((TableColumn) e.widget);
+				if (column == sorter.getTopPriority())
+					sorter.reverse();
+				else {
+					sorter.setTopPriority(column);
+					sorter.setDirection(TaskSorter.ASCENDING);
 				}
-				//update the menu to indicate how task are currently sorted
 				updateSortingState();
+				viewer.refresh();
+				IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
+				IDialogSettings settings = workbenchSettings.getSection(TAG_SORT_SECTION);
+				if (settings == null)
+					settings = workbenchSettings.addNewSection(TAG_SORT_SECTION);
+				sorter.saveState(settings);
 			}
 		};
 
@@ -292,9 +417,9 @@ public class TaskList extends ViewPart {
 			tc.setResizable(columnLayouts[i].resizable);
 
 			if (i == 1)
-				tc.setImage(MarkerUtil.getImage("header_complete"));
+				tc.setImage(MarkerUtil.getImage("header_complete")); //$NON-NLS-1$
 			else if (i == 2)
-				tc.setImage(MarkerUtil.getImage("header_priority"));
+				tc.setImage(MarkerUtil.getImage("header_priority")); //$NON-NLS-1$
 			else 
 				tc.setText(columnHeaders[i]);
 
@@ -307,28 +432,105 @@ public class TaskList extends ViewPart {
 	 */
 	/*package*/
 	static String createMarkerReport(IMarker[] markers) {
-		StringBuffer buf = new StringBuffer();
-		// Create the header
-		buf.append(TaskListMessages.getString("TaskList.reportKind")); //$NON-NLS-1$
-		buf.append("\t"); //$NON-NLS-1$
-		buf.append(TaskListMessages.getString("TaskList.reportStatus")); //$NON-NLS-1$
-		buf.append("\t"); //$NON-NLS-1$
-		buf.append(TaskListMessages.getString("TaskList.reportPriority")); //$NON-NLS-1$
-		buf.append("\t"); //$NON-NLS-1$
-		buf.append(TaskListMessages.getString("TaskList.headerDescription")); //$NON-NLS-1$
-		buf.append("\t"); //$NON-NLS-1$
-		buf.append(TaskListMessages.getString("TaskList.headerResource")); //$NON-NLS-1$
-		buf.append("\t"); //$NON-NLS-1$
-		buf.append(TaskListMessages.getString("TaskList.headerFolder")); //$NON-NLS-1$
-		buf.append("\t"); //$NON-NLS-1$
-		buf.append(TaskListMessages.getString("TaskList.headerLocation")); //$NON-NLS-1$
-		buf.append(System.getProperty("line.separator")); //$NON-NLS-1$
-
-		// Create the report for the markers
+		String report = ""; //$NON-NLS-1$
+		String[] kinds = new String[markers.length];
+		String[] status = new String[markers.length];
+		String[] priorities = new String[markers.length];
+		String[] descriptions = new String[markers.length];
+		String[] resources = new String[markers.length];
+		String[] folders = new String[markers.length];
+		String[] locations = new String[markers.length];
+		String kindHeader = TaskListMessages.getString("TaskList.reportKind"); //$NON-NLS-1$
+		String statusHeader = TaskListMessages.getString("TaskList.reportStatus"); //$NON-NLS-1$
+		String priorityHeader = TaskListMessages.getString("TaskList.reportPriority"); //$NON-NLS-1$
+		String descriptionHeader = TaskListMessages.getString("TaskList.headerDescription"); //$NON-NLS-1$
+		String resourceHeader = TaskListMessages.getString("TaskList.headerResource"); //$NON-NLS-1$
+		String folderHeader = TaskListMessages.getString("TaskList.headerFolder"); //$NON-NLS-1$
+		String locationHeader = TaskListMessages.getString("TaskList.headerLocation"); //$NON-NLS-1$
+		int maxKind = kindHeader.length();
+		int maxStatus = statusHeader.length();
+		int maxPriority = priorityHeader.length();
+		int maxDescription = descriptionHeader.length();
+		int maxResource = resourceHeader.length();
+		int maxFolder = folderHeader.length();
+		
+		//gather marker info
 		for (int i = 0; i < markers.length; i++) {
-			writeMarker(buf, markers[i]);
+			//gather kind info
+			kinds[i] = MarkerUtil.getKindText(markers[i]);
+			if (kinds[i].length() > maxKind)
+				maxKind = kinds[i].length();
+			//gather status info
+			status[i] = MarkerUtil.getCompleteText(markers[i]);
+			if (status[i].length() > maxStatus)
+				maxStatus = status[i].length();	
+			//gather priority info
+			priorities[i] = MarkerUtil.getPriorityText(markers[i]);
+			if (priorities[i].length() > maxPriority)
+				maxPriority = priorities[i].length();	
+			//gather description info
+			descriptions[i] = MarkerUtil.getMessage(markers[i]);
+			if (descriptions[i].length() > maxDescription)
+				maxDescription = descriptions[i].length();
+			//gather resource info
+			resources[i] = MarkerUtil.getResourceName(markers[i]);
+			if (resources[i].length() > maxResource)
+				maxResource = resources[i].length();
+			//gather folder info
+			folders[i] = MarkerUtil.getContainerName(markers[i]);
+			if (folders[i].length() > maxFolder)
+				maxFolder = folders[i].length();
+			//gather location info
+			locations[i] = MarkerUtil.getLineAndLocation(markers[i]);
 		}
-		return buf.toString();
+		
+		//write header
+		report += kindHeader;
+		for (int i = kindHeader.length(); i <= maxKind; i++)
+			report += ' ';
+		report += statusHeader;
+		for (int i = statusHeader.length(); i <= maxStatus; i++)
+			report += ' ';
+		report += priorityHeader;
+		for (int i = priorityHeader.length(); i <= maxPriority; i++)
+			report += ' ';
+		report += descriptionHeader;
+		for (int i = descriptionHeader.length(); i <= maxDescription; i++)
+			report += ' ';
+		report += resourceHeader;
+		for (int i = resourceHeader.length(); i <= maxResource; i++)
+			report += ' ';
+		report += folderHeader;
+		for (int i = folderHeader.length(); i <= maxFolder; i++)
+			report += ' ';
+		report += locationHeader;
+		report += System.getProperty("line.separator"); //$NON-NLS-1$
+		
+		//write markers
+		for (int i = 0; i < markers.length; i++) {
+			report += kinds[i];
+			for (int j = kinds[i].length(); j <= maxKind; j++)
+				report += ' ';
+			report += status[i];
+			for (int j = status[i].length(); j <= maxStatus; j++)
+				report += ' ';
+			report += priorities[i];
+			for (int j = priorities[i].length(); j <= maxPriority; j++)
+				report += ' ';
+			report += descriptions[i];
+			for (int j = descriptions[i].length(); j <= maxDescription; j++)
+				report += ' ';
+			report += resources[i];
+			for (int j = resources[i].length(); j <= maxResource; j++)
+				report += ' ';
+			report += folders[i];
+			for (int j = folders[i].length(); j <= maxFolder; j++)
+				report += ' ';
+			report += locations[i];
+			report += System.getProperty("line.separator"); //$NON-NLS-1$
+		}
+		
+		return report;
 	}
 
 	/* package */
@@ -380,23 +582,20 @@ public class TaskList extends ViewPart {
 
 		viewer.setContentProvider(new TaskListContentProvider(this));
 		viewer.setLabelProvider(new TaskListLabelProvider());
-		viewer.setSorter(new TaskSorter(this, 5));
 		if (memento != null) {
 			//restore filter
 			IMemento filterMem = memento.getChild(TAG_FILTER);
 			if (filterMem != null)
 				getFilter().restoreState(filterMem);
-			//restore sorter
-			Integer columnNumber = memento.getInteger(TAG_SORTER_COLUMN);
-			if (columnNumber != null) {
-				boolean reversed =
-					memento.getInteger(TAG_SORTER_REVERSED).intValue() == 1;
-				TaskSorter sorter =
-					new TaskSorter(this, columnNumber.intValue());
-				sorter.setReversed(reversed);
-				viewer.setSorter(sorter);
-			}
 		}
+		
+		sorter = new TaskSorter();
+		IDialogSettings workbenchSettings = getPlugin().getDialogSettings();
+		IDialogSettings settings = workbenchSettings.getSection(TAG_SORT_SECTION);
+		if (settings != null)
+			sorter.restoreState(settings);
+		viewer.setSorter(sorter);
+			
 		//update the menu to indicate how task are currently sorted
 		updateSortingState();
 		viewer.setInput(getWorkspace().getRoot());
@@ -936,43 +1135,43 @@ public class TaskList extends ViewPart {
 		resolveMarkerAction.setEnabled(false);
 
 		// Sort by ->	
-		sortByCategoryAction = new SortByAction(this, "sortByCategory", 0); //$NON-NLS-1$
+		sortByCategoryAction = new SortByAction(0);
 		sortByCategoryAction.setText(TaskListMessages.getString("SortByCategory.text")); //$NON-NLS-1$
 		sortByCategoryAction.setToolTipText(TaskListMessages.getString("SortByCategory.tooltip")); //$NON-NLS-1$
 
-		sortByCompletedAction = new SortByAction(this, "sortByCompleted", 1); //$NON-NLS-1$
+		sortByCompletedAction = new SortByAction(1);
 		sortByCompletedAction.setText(TaskListMessages.getString("SortByCompleted.text")); //$NON-NLS-1$
 		sortByCompletedAction.setToolTipText(TaskListMessages.getString("SortByCompleted.tooltip")); //$NON-NLS-1$
 
-		sortByPriorityAction = new SortByAction(this, "sortByPriority", 2); //$NON-NLS-1$
+		sortByPriorityAction = new SortByAction(2);
 		sortByPriorityAction.setText(TaskListMessages.getString("SortByPriority.text")); //$NON-NLS-1$
 		sortByPriorityAction.setToolTipText(TaskListMessages.getString("SortByPriority.tooltip")); //$NON-NLS-1$
 
-		sortByDescriptionAction = new SortByAction(this, "sortByDescription", 3); //$NON-NLS-1$
+		sortByDescriptionAction = new SortByAction(3);
 		sortByDescriptionAction.setText(TaskListMessages.getString("SortByDescription.text")); //$NON-NLS-1$
 		sortByDescriptionAction.setToolTipText(TaskListMessages.getString("SortByDescription.tooltip")); //$NON-NLS-1$
 
-		sortByResourceAction = new SortByAction(this, "sortByResource", 4); //$NON-NLS-1$
+		sortByResourceAction = new SortByAction(4);
 		sortByResourceAction.setText(TaskListMessages.getString("SortByResource.text")); //$NON-NLS-1$
 		sortByResourceAction.setToolTipText(TaskListMessages.getString("SortByResource.tooltip")); //$NON-NLS-1$
 
-		sortByContainerAction = new SortByAction(this, "sortByContainer", 5); //$NON-NLS-1$
+		sortByContainerAction = new SortByAction(5);
 		sortByContainerAction.setText(TaskListMessages.getString("SortByContainer.text")); //$NON-NLS-1$
 		sortByContainerAction.setToolTipText(TaskListMessages.getString("SortByContainer.tooltip")); //$NON-NLS-1$
 
-		sortByLocationAction = new SortByAction(this, "sortByLocation", 6); //$NON-NLS-1$
+		sortByLocationAction = new SortByAction(6);
 		sortByLocationAction.setText(TaskListMessages.getString("SortByLocation.text")); //$NON-NLS-1$
 		sortByLocationAction.setToolTipText(TaskListMessages.getString("SortByLocation.tooltip")); //$NON-NLS-1$
 
-		sortByCreationTimeAction = new SortByAction(this, "sortByCreationTime", 7); //$NON-NLS-1$
+		sortByCreationTimeAction = new SortByAction(7);
 		sortByCreationTimeAction.setText(TaskListMessages.getString("SortByCreationTime.text")); //$NON-NLS-1$
 		sortByCreationTimeAction.setToolTipText(TaskListMessages.getString("SortByCreationTime.tooltip")); //$NON-NLS-1$
 
-		sortAscendingAction = new SortDirectionAction(this, "sortAscending", false); //$NON-NLS-1$
+		sortAscendingAction = new SortDirectionAction(TaskSorter.ASCENDING);
 		sortAscendingAction.setText(TaskListMessages.getString("SortAscending.text")); //$NON-NLS-1$
 		sortAscendingAction.setToolTipText(TaskListMessages.getString("SortAscending.tooltip")); //$NON-NLS-1$
 
-		sortDescendingAction = new SortDirectionAction(this, "sortDescending", true); //$NON-NLS-1$
+		sortDescendingAction = new SortDirectionAction(TaskSorter.DESCENDING);
 		sortDescendingAction.setText(TaskListMessages.getString("SortDescending.text")); //$NON-NLS-1$
 		sortDescendingAction.setToolTipText(TaskListMessages.getString("SortDescending.tooltip")); //$NON-NLS-1$
 
@@ -1097,11 +1296,6 @@ public class TaskList extends ViewPart {
 
 		//save filter
 		getFilter().saveState(memento.createChild(TAG_FILTER));
-
-		//save sorter
-		TaskSorter sorter = (TaskSorter) viewer.getSorter();
-		memento.putInteger(TAG_SORTER_COLUMN, sorter.getColumnNumber());
-		memento.putInteger(TAG_SORTER_REVERSED, sorter.isReversed() ? 1 : 0);
 
 		//save columns width
 		Table table = viewer.getTable();
@@ -1488,60 +1682,24 @@ public class TaskList extends ViewPart {
 			setTitle(title);
 		}
 	}
-	/**
-	 * Writes a string representation of the given marker to the buffer.
-	 */
-	static void writeMarker(StringBuffer buf, IMarker marker) {
-		buf.append(MarkerUtil.getKindText(marker));
-		buf.append("\t"); //$NON-NLS-1$
-		buf.append(MarkerUtil.getCompleteText(marker));
-		buf.append("\t"); //$NON-NLS-1$
-		buf.append(MarkerUtil.getPriorityText(marker));
-		buf.append("\t"); //$NON-NLS-1$
-		buf.append(MarkerUtil.getMessage(marker));
-		buf.append("\t"); //$NON-NLS-1$
-		buf.append(MarkerUtil.getResourceName(marker));
-		buf.append("\t"); //$NON-NLS-1$
-		buf.append(MarkerUtil.getContainerName(marker));
-		buf.append("\t"); //$NON-NLS-1$
-		buf.append(MarkerUtil.getLineAndLocation(marker));
-		buf.append(System.getProperty("line.separator")); //$NON-NLS-1$
 
-	}
 	/**
 	 * Method updateSortingState.
 	 */
-	/* package */
 	void updateSortingState() {
-		int curColumn = ((TaskSorter) viewer.getSorter()).getColumnNumber();
-		sortByCategoryAction.setChecked(
-			curColumn
-				== ((SortByAction) sortByCategoryAction).getColumnNumber());
-		sortByCompletedAction.setChecked(
-			curColumn
-				== ((SortByAction) sortByCompletedAction).getColumnNumber());
-		sortByContainerAction.setChecked(
-			curColumn
-				== ((SortByAction) sortByContainerAction).getColumnNumber());
-		sortByCreationTimeAction.setChecked(
-			curColumn
-				== ((SortByAction) sortByCreationTimeAction).getColumnNumber());
-		sortByDescriptionAction.setChecked(
-			curColumn
-				== ((SortByAction) sortByDescriptionAction).getColumnNumber());
-		sortByLocationAction.setChecked(
-			curColumn
-				== ((SortByAction) sortByLocationAction).getColumnNumber());
-		sortByPriorityAction.setChecked(
-			curColumn
-				== ((SortByAction) sortByPriorityAction).getColumnNumber());
-		sortByResourceAction.setChecked(
-			curColumn
-				== ((SortByAction) sortByResourceAction).getColumnNumber());
+		int curColumn = sorter.getTopPriority();
+		sortByCategoryAction.setChecked(curColumn == 0);
+		sortByCompletedAction.setChecked(curColumn == 1);
+		sortByPriorityAction.setChecked(curColumn == 2);
+		sortByDescriptionAction.setChecked(curColumn == 3);
+		sortByResourceAction.setChecked(curColumn == 4);
+		sortByContainerAction.setChecked(curColumn == 5);
+		sortByLocationAction.setChecked(curColumn == 6);
+		sortByCreationTimeAction.setChecked(curColumn == 7);
 
-		boolean curDirection = ((TaskSorter) viewer.getSorter()).isReversed();
-		sortAscendingAction.setChecked(!curDirection);
-		sortDescendingAction.setChecked(curDirection);
-
+		int curDirection = sorter.getDirection();
+		sortAscendingAction.setChecked(curDirection == TaskSorter.ASCENDING);
+		sortDescendingAction.setChecked(curDirection == TaskSorter.DESCENDING);
 	}
+	
 }

@@ -15,16 +15,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,22 +39,22 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * Shows the properties of a new or existing task, or a problem.
+ * Shows the properties of a new or existing bookmark
  */
-public class BookmarkPropertiesDialog extends Dialog {
+class BookmarkPropertiesDialog extends Dialog {
 
 	/**
-	 * The task or problem being shown, or <code>null</code> for a new task.
+	 * The bookmark being shown, or <code>null</code> for a new bookmark
 	 */
 	private IMarker marker = null;
 
 	/**
-	 * The resource on which to create a new task.
+	 * The resource on which to create a new bookmark
 	 */
 	private IResource resource = null;
 
 	/**
-	 * The initial attributes to use when creating a new task.
+	 * The initial attributes to use when creating a new bookmark
 	 */
 	private Map initialAttributes = null;
 
@@ -79,14 +83,18 @@ public class BookmarkPropertiesDialog extends Dialog {
 	 */
 	private Text locationText;
 
+	/**
+	 * Dirty flag.  True if any changes have been made.
+	 */
+	private boolean dirty;
 
 	private String title;
 
 	/**
-	 * Creates the dialog.  By default this dialog creates a new task.
-	 * To set the resource and initial attributes for the new task, 
+	 * Creates the dialog.  By default this dialog creates a new bookmark.
+	 * To set the resource and initial attributes for the new bookmark, 
 	 * use <code>setResource</code> and <code>setInitialAttributes</code>.
-	 * To show or modify an existing task, use <code>setMarker</code>.
+	 * To show or modify an existing bookmark, use <code>setMarker</code>.
 	 * 
 	 * @param shell the parent shell
 	 */
@@ -110,7 +118,6 @@ public class BookmarkPropertiesDialog extends Dialog {
 	 */
 	public void setMarker(IMarker marker) {
 		this.marker = marker;
-		resource = marker.getResource();
 	}
 
 	/**
@@ -123,34 +130,34 @@ public class BookmarkPropertiesDialog extends Dialog {
 	}
 
 	/**
-	 * Sets the resource to use when creating a new task.
-	 * If not set, the new task is created on the workspace root.
+	 * Sets the resource to use when creating a new bookmark.
+	 * If not set, the new bookmark is created on the workspace root.
 	 */
 	public void setResource(IResource resource) {
 		this.resource = resource;
 	}
 
 	/**
-	 * Returns the resource to use when creating a new task,
+	 * Returns the resource to use when creating a new bookmark,
 	 * or <code>null</code> if none has been set.
-	 * If not set, the new task is created on the workspace root.
+	 * If not set, the new bookmark is created on the workspace root.
 	 */
 	public IResource getResource() {
 		return resource;
 	}
 
 	/**
-	 * Sets initial attributes to use when creating a new task.
-	 * If not set, the new task is created with default attributes.
+	 * Sets initial attributes to use when creating a new bookmark.
+	 * If not set, the new bookmark is created with default attributes.
 	 */
 	public void setInitialAttributes(Map initialAttributes) {
 		this.initialAttributes = initialAttributes;
 	}
 
 	/**
-	 * Returns the initial attributes to use when creating a new task,
+	 * Returns the initial attributes to use when creating a new bookmark,
 	 * or <code>null</code> if not set.
-	 * If not set, the new task is created with default attributes.
+	 * If not set, the new bookmark is created with default attributes.
 	 */
 	public Map getInitialAttributes() {
 		return initialAttributes;
@@ -163,8 +170,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 		super.configureShell(newShell);
 		if (title == null)
 			newShell.setText(
-				BookmarkMessages.getString("PropertiesDialogTitle.text"));
-		//$NON-NLS-1$
+				BookmarkMessages.getString("PropertiesDialogTitle.text")); //$NON-NLS-1$
 		else
 			newShell.setText(title);
 	}
@@ -173,17 +179,26 @@ public class BookmarkPropertiesDialog extends Dialog {
 	 * Method declared on Dialog.
 	 */
 	protected Control createDialogArea(Composite parent) {
+		//initialize resources/properties
+		if (marker != null) {
+			resource = marker.getResource();
+			try {
+				initialAttributes = marker.getAttributes();
+			}
+			catch (CoreException e) {
+			}
+		}
+		else if (initialAttributes == null && resource == null) {
+			resource = (IResource) ResourcesPlugin.getWorkspace().getRoot();
+		}
+		
 		Composite composite = (Composite) super.createDialogArea(parent);
 		initializeDialogUnits(composite);
 		createDescriptionArea(composite);
-		createCreationTimeArea(composite);
-		//	if (isTask()) {
-		//		createPriorityAndStatusArea(composite);
-		//	}
-		//	else {
-		//		createSeverityArea(composite);
-		//	}
-		createResourceArea(composite);
+		if (marker != null)
+			createCreationTimeArea(composite);
+		if (resource != null && resource.getType() != IResource.ROOT)
+			createResourceArea(composite);
 		updateDialogFromMarker();
 		return composite;
 	}
@@ -193,8 +208,6 @@ public class BookmarkPropertiesDialog extends Dialog {
 	 */
 	private void createCreationTimeArea(Composite parent) {
 		String creation = BookmarkMessages.getString("MarkerCreationTime.text");//$NON-NLS-1$
-		if (creation == null || creation.equals(""))
-			return;
 		
 		Font font = parent.getFont();
 		Composite composite = new Composite(parent, SWT.NONE);
@@ -211,8 +224,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 	}
 
 	/**
-	 * Creates only the OK button if showing problem properties, otherwise creates
-	 * both OK and Cancel buttons.
+	 * Creates the OK and Cancel buttons.
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(
@@ -237,7 +249,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 		layout.numColumns = 2;
 		composite.setLayout(layout);
 		Label label = new Label(composite, SWT.NONE);
-		label.setText(BookmarkMessages.getString("ColumnDescription.text")); //$NON-NLS-1$
+		label.setText(BookmarkMessages.getString("ColumnDescription.dialogText")); //$NON-NLS-1$
 		label.setFont(font);
 		int style = SWT.SINGLE | SWT.BORDER;
 		descriptionText = new Text(composite, style);
@@ -245,6 +257,12 @@ public class BookmarkPropertiesDialog extends Dialog {
 		gridData.widthHint = convertHorizontalDLUsToPixels(400);
 		descriptionText.setLayoutData(gridData);
 		descriptionText.setFont(font);
+		
+		descriptionText.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				markDirty();
+			}
+		});
 	}
 
 	/**
@@ -260,7 +278,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 		composite.setLayout(layout);
 
 		Label resourceLabel = new Label(composite, SWT.NONE);
-		resourceLabel.setText(BookmarkMessages.getString("ColumnResource.text")); //$NON-NLS-1$
+		resourceLabel.setText(BookmarkMessages.getString("ColumnResource.dialogText")); //$NON-NLS-1$
 		resourceLabel.setFont(font);
 		resourceText =
 			new Text(
@@ -271,7 +289,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 		resourceText.setFont(font);
 
 		Label folderLabel = new Label(composite, SWT.NONE);
-		folderLabel.setText(BookmarkMessages.getString("ColumnFolder.text")); //$NON-NLS-1$
+		folderLabel.setText(BookmarkMessages.getString("ColumnFolder.dialogText")); //$NON-NLS-1$
 		folderLabel.setFont(font);
 		folderText =
 			new Text(
@@ -282,7 +300,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 		folderText.setFont(font);
 
 		Label locationLabel = new Label(composite, SWT.NONE);
-		locationLabel.setText(BookmarkMessages.getString("ColumnLocation.text")); //$NON-NLS-1$
+		locationLabel.setText(BookmarkMessages.getString("ColumnLocation.dialogText")); //$NON-NLS-1$
 		locationLabel.setFont(font);
 		locationText =
 			new Text(
@@ -297,18 +315,61 @@ public class BookmarkPropertiesDialog extends Dialog {
 	 * Updates the dialog from the marker state.
 	 */
 	private void updateDialogFromMarker() {
+		if (marker == null) {
+			updateDialogForNewMarker();
+			return;			
+		}
 		descriptionText.setText(MarkerUtil.getMessage(marker));
-		creationTime.setText(MarkerUtil.getCreationTime(marker));
-		resourceText.setText(MarkerUtil.getResourceName(marker));
-		folderText.setText(MarkerUtil.getContainerName(marker));
-		int line = MarkerUtil.getLineNumber(marker);
-		if (line < 0)
-			locationText.setText("");
-		//$NON-NLS-1$
-		else
-			locationText.setText(BookmarkMessages.format("LineIndicator.text", new String[] {String.valueOf(line)})); //$NON-NLS-1$
+		if (creationTime != null)
+			creationTime.setText(MarkerUtil.getCreationTime(marker));
+		if (resourceText != null)
+			resourceText.setText(MarkerUtil.getResourceName(marker));
+		if (folderText != null)
+			folderText.setText(MarkerUtil.getContainerName(marker));
+		if (locationText != null) {
+			int line = MarkerUtil.getLineNumber(marker);
+			if (line < 0)
+				locationText.setText(""); //$NON-NLS-1$
+			else
+				locationText.setText(BookmarkMessages.format("LineIndicator.text", new String[] {String.valueOf(line)})); //$NON-NLS-1$
+		}
 
 		descriptionText.selectAll();
+	}
+	
+	void updateDialogForNewMarker() {
+		if (resource != null) {
+			resourceText.setText(resource.getName());
+			
+			IPath path = resource.getFullPath();
+			int n = path.segmentCount() - 1; // n is the number of segments in container, not path
+			if (n > 0) {
+				int len = 0;
+				for (int i = 0; i < n; ++i)
+					len += path.segment(i).length();
+				// account for /'s
+				if (n > 1)
+					len += n-1;
+				StringBuffer sb = new StringBuffer(len);
+				for (int i = 0; i < n; ++i) {
+					if (i != 0)
+						sb.append('/');
+					sb.append(path.segment(i));
+				}
+				folderText.setText(sb.toString());
+			}
+		}
+		
+		if (initialAttributes != null) {
+			Object description = initialAttributes.get(IMarker.MESSAGE);
+			if (description != null && description instanceof String)
+				descriptionText.setText((String) description);
+			descriptionText.selectAll();
+				
+			Object line = initialAttributes.get(IMarker.LINE_NUMBER);
+			if (line != null && line instanceof Integer)
+				locationText.setText(BookmarkMessages.format("LineIndicator.text", new String[] {line.toString()})); //$NON-NLS-1$
+		}
 	}
 
 	/* (non-Javadoc)
@@ -319,18 +380,28 @@ public class BookmarkPropertiesDialog extends Dialog {
 		super.okPressed();
 	}
 
+	private void markDirty() {
+		dirty = true;
+	}
+
+	private boolean isDirty() {
+		return dirty;
+	}
+
 	/**
 	 * Saves the changes made in the dialog if needed.
-	 * Creates a new task if needed.
-	 * Updates the existing task only if there have been changes.
-	 * Does nothing for problems, since they cannot be modified.
+	 * Creates a new bookmark if needed.
+	 * Updates the existing bookmark only if there have been changes.
 	 */
 	private void saveChanges() {
 		try {
 			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
 				public void run(IProgressMonitor monitor)
 					throws CoreException {
-					createOrUpdateMarker();
+					if (marker == null)
+						createMarker();
+					else if (isDirty())
+						updateMarker();
 				}
 			}, null);
 		} catch (CoreException e) {
@@ -342,19 +413,7 @@ public class BookmarkPropertiesDialog extends Dialog {
 	/**
 	 * Creates or updates the marker.  Must be called within a workspace runnable.
 	 */
-	private void createOrUpdateMarker() throws CoreException {
-		if (marker == null) {
-			IResource resource = getResource();
-			if (resource == null) {
-				resource = ResourcesPlugin.getWorkspace().getRoot();
-			}
-			marker = resource.createMarker(IMarker.TASK);
-			Map initialAttrs = getInitialAttributes();
-			if (initialAttrs != null) {
-				marker.setAttributes(initialAttrs);
-			}
-		}
-
+	private void updateMarker() throws CoreException {
 		// Set the marker attributes from the current dialog field values.
 		// Do not use setAttributes(Map) as that overwrites any attributes
 		// not covered by the dialog.
@@ -371,9 +430,25 @@ public class BookmarkPropertiesDialog extends Dialog {
 	 * based on the current dialog fields.
 	 */
 	private Map getMarkerAttributesFromDialog() {
-		Map attribs = new HashMap(11);
+		Map attribs = new HashMap();
 		attribs.put(IMarker.MESSAGE, descriptionText.getText());
 		return attribs;
+	}
+	
+	private void createMarker() {
+		if (resource == null || !(resource instanceof IFile))
+			return;
+			
+		IFile file = (IFile) resource;
+		try {
+			IMarker newMarker = file.createMarker(IMarker.BOOKMARK);
+			if (initialAttributes != null)
+				newMarker.setAttributes(initialAttributes);
+			String message = descriptionText.getText();
+			newMarker.setAttribute(IMarker.MESSAGE, message);
+		}
+		catch (CoreException e) {
+		}
 	}
 
 }

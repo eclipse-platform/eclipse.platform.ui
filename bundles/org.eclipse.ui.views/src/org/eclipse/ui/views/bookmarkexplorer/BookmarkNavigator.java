@@ -53,6 +53,7 @@ public class BookmarkNavigator extends ViewPart {
 	private CopyBookmarkAction copyAction;
 	private PasteBookmarkAction pasteAction;
 	private RemoveBookmarkAction removeAction;
+	private EditBookmarkAction editAction;
 	private SelectAllAction selectAllAction;
 	private ShowInNavigatorAction showInNavigatorAction;
 	private SortByAction sortByDescriptionAction;
@@ -159,6 +160,8 @@ public class BookmarkNavigator extends ViewPart {
 		removeAction.setImageDescriptor(getImageDescriptor("elcl16/remtsk_tsk.gif"));//$NON-NLS-1$
 		removeAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/remtsk_tsk.gif"));//$NON-NLS-1$
 		
+		editAction = new EditBookmarkAction(this);
+		
 		selectAllAction = new SelectAllAction(this);
 		showInNavigatorAction = new ShowInNavigatorAction(getViewSite().getPage(), viewer);
 	
@@ -257,18 +260,7 @@ public class BookmarkNavigator extends ViewPart {
 	 * @param manager the menu manager
 	 */
 	void fillContextMenu(IMenuManager manager) {
-		IStructuredSelection selection = (IStructuredSelection) viewer.getSelection();
-		
 		manager.add(openAction);
-		if (selection.size() == 1 && selection.getFirstElement() instanceof IMarker) {
-			IMarker marker = (IMarker) selection.getFirstElement();
-			IResource resource = marker.getResource();
-			if (resource instanceof IFile) {
-				MenuManager submenu = new MenuManager(BookmarkMessages.getString("OpenWithMenu.text"), null);//$NON-NLS-1$
-				submenu.add(new OpenBookmarkWithMenu(getSite().getPage(), marker));
-				manager.add(submenu);
-			}
-		}
 		manager.add(copyAction);
 		updatePasteEnablement();
 		manager.add(pasteAction);
@@ -276,6 +268,8 @@ public class BookmarkNavigator extends ViewPart {
 		manager.add(selectAllAction);
 		manager.add(showInNavigatorAction);
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		manager.add(new Separator());
+		manager.add(editAction);
 	}
 		
 	/* (non-Javadoc)
@@ -359,6 +353,7 @@ public class BookmarkNavigator extends ViewPart {
 		//update the actions
 		openAction.selectionChanged(selection);
 		removeAction.selectionChanged(selection);
+		editAction.selectionChanged(selection);
 		selectAllAction.selectionChanged(selection);
 		showInNavigatorAction.selectionChanged(selection);
 	}
@@ -563,13 +558,13 @@ public class BookmarkNavigator extends ViewPart {
 	
 	void createSortActions() {
 		sortByDescriptionAction = new SortByAction(BookmarkConstants.COLUMN_DESCRIPTION);
-		sortByDescriptionAction.setText(columnHeaders[BookmarkConstants.COLUMN_DESCRIPTION]);
+		sortByDescriptionAction.setText(BookmarkMessages.getString("ColumnDescription.text")); //$NON-NLS-1$
 		sortByResourceAction = new SortByAction(BookmarkConstants.COLUMN_RESOURCE);
-		sortByResourceAction.setText(columnHeaders[BookmarkConstants.COLUMN_RESOURCE]);
+		sortByResourceAction.setText(BookmarkMessages.getString("ColumnResource.text")); //$NON-NLS-1$
 		sortByFolderAction = new SortByAction(BookmarkConstants.COLUMN_FOLDER);
-		sortByFolderAction.setText(columnHeaders[BookmarkConstants.COLUMN_FOLDER]);
+		sortByFolderAction.setText(BookmarkMessages.getString("ColumnFolder.text")); //$NON-NLS-1$
 		sortByLineAction = new SortByAction(BookmarkConstants.COLUMN_LOCATION);
-		sortByLineAction.setText(columnHeaders[BookmarkConstants.COLUMN_LOCATION]);
+		sortByLineAction.setText(BookmarkMessages.getString("ColumnLocation.text"));//$NON-NLS-1$
 		sortAscendingAction = new ChangeSortDirectionAction(BookmarkConstants.SORT_ASCENDING);
 		sortAscendingAction.setText(BookmarkMessages.getString("SortDirectionAscending.text"));//$NON-NLS-1$
 		sortDescendingAction = new ChangeSortDirectionAction(BookmarkConstants.SORT_DESCENDING);
