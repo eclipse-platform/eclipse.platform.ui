@@ -66,9 +66,9 @@ protected void addItems(Table table,WorkbenchPage page) {
 		TableItem item  = null;
 		item = new TableItem(table,SWT.NONE);
 		if(refs[i].isDirty())
-			item.setText("*" + refs[i].getName()); //$NON-NLS-1$
+			item.setText("*" + refs[i].getTitle()); //$NON-NLS-1$
 		else
-			item.setText(refs[i].getName());
+			item.setText(refs[i].getTitle());
 		item.setImage(refs[i].getTitleImage());
 		item.setData(refs[i]);
 	}
