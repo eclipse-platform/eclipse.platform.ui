@@ -10,10 +10,10 @@
  **********************************************************************/
 package org.eclipse.ant.internal.core.ant;
 
-import org.apache.tools.ant.*;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildListener;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 public class ProgressBuildListener implements BuildListener {
 
@@ -53,6 +53,6 @@ public void messageLogged(BuildEvent event) {
 
 protected void checkCanceled() {
 	if (monitor.isCanceled())
-		throw new BuildException(Policy.bind("exception.canceled")); //$NON-NLS-1$
+		throw new OperationCanceledException(Policy.bind("exception.canceled")); //$NON-NLS-1$
 }
 }
