@@ -45,7 +45,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
@@ -257,12 +256,6 @@ public class LaunchHistoryPreferenceTab {
 		button.addSelectionListener(fButtonListener);
 		button.setEnabled(false);
 		return button;
-	}
-
-	/**
-	 * @see IWorkbenchPreferencePage#init(IWorkbench)
-	 */
-	public void init(IWorkbench workbench) {
 	}
 
 	protected void createSpacer(Composite composite, int columnSpan) {
