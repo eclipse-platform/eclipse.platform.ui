@@ -27,6 +27,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.variables.VariableUtil;
+import org.eclipse.debug.ui.launchVariables.RefreshTab;
 import org.eclipse.debug.ui.launchVariables.VariableContextManager;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWindowListener;
@@ -166,7 +167,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 		
 		if (ExternalToolsUtil.isBackground(configuration)) {
 			// refresh resources after process finishes
-			if (ExternalToolsUtil.getRefreshScope(configuration) != null) {
+			if (VariableUtil.getRefreshScope(configuration) != null) {
 				BackgroundResourceRefresher refresher = new BackgroundResourceRefresher(configuration, process);
 				refresher.startBackgroundRefresh();
 			}				
@@ -184,7 +185,7 @@ public class ProgramLaunchDelegate implements ILaunchConfigurationDelegate {
 			}
 			
 			// refresh resources
-			ExternalToolsUtil.refreshResources(configuration, monitor);
+			RefreshTab.refreshResources(configuration, monitor);
 		}
 	}
 	

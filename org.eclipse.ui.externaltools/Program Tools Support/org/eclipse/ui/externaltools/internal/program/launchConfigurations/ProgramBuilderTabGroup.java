@@ -14,8 +14,8 @@ package org.eclipse.ui.externaltools.internal.program.launchConfigurations;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.eclipse.debug.ui.launchVariables.RefreshTab;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsBuilderTab;
-import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsRefreshTab;
 
 public class ProgramBuilderTabGroup extends AbstractLaunchConfigurationTabGroup {
 
@@ -25,7 +25,7 @@ public class ProgramBuilderTabGroup extends AbstractLaunchConfigurationTabGroup 
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
 			new ProgramMainTab(false),
-			new ExternalToolsRefreshTab(),
+			new RefreshTab(),
 			new ExternalToolsBuilderTab(),
 		};
 		setTabs(tabs);

@@ -20,6 +20,7 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.ui.launchVariables.RefreshTab;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
@@ -96,7 +97,7 @@ public class BackgroundResourceRefresher implements IDebugEventSetListener, Runn
 	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
-			ExternalToolsUtil.refreshResources(fConfiguration, monitor);
+			RefreshTab.refreshResources(fConfiguration, monitor);
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		}				

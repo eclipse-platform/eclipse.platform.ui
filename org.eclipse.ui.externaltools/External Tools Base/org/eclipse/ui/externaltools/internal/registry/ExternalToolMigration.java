@@ -123,8 +123,8 @@ public final class ExternalToolMigration {
 		config.setAttribute(IExternalToolConstants.ATTR_SHOW_CONSOLE, TRUE.equals((String) commandArgs.get(TAG_SHOW_CONSOLE)));
 		config.setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, TRUE.equals((String) commandArgs.get(TAG_RUN_BKGRND)));
 		config.setAttribute(IExternalToolConstants.ATTR_PROMPT_FOR_ARGUMENTS, TRUE.equals((String) commandArgs.get(TAG_PROMPT_ARGS)));
-		config.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String) commandArgs.get(TAG_REFRESH_SCOPE));
-		config.setAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, TRUE.equals((String) commandArgs.get(TAG_REFRESH_RECURSIVE)));
+		config.setAttribute(VariableUtil.ATTR_REFRESH_SCOPE, (String) commandArgs.get(TAG_REFRESH_SCOPE));
+		config.setAttribute(VariableUtil.ATTR_REFRESH_RECURSIVE, TRUE.equals((String) commandArgs.get(TAG_REFRESH_RECURSIVE)));
 
 		config.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String) commandArgs.get(TAG_RUN_BUILD_KINDS));
 		
@@ -186,7 +186,7 @@ public final class ExternalToolMigration {
 			if ("none".equals(varDef.name)) { //$NON-NLS-1$
 				refresh = null;
 			}
-			config.setAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, refresh);
+			config.setAttribute(VariableUtil.ATTR_REFRESH_SCOPE, refresh);
 		}
 
 		// Update the arguments

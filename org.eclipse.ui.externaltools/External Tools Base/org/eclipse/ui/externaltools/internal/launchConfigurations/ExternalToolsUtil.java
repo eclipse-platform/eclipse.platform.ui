@@ -26,13 +26,11 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.variables.IContextLaunchVariable;
 import org.eclipse.debug.core.variables.VariableUtil;
+import org.eclipse.debug.ui.launchVariables.RefreshTab;
 import org.eclipse.debug.ui.launchVariables.VariableContextManager;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.registry.ExternalToolMigration;
-import org.eclipse.ui.externaltools.internal.variables.RefreshScopeVariableRegistry;
 
 /**
  * Utilities for external tool launch configurations.
@@ -182,90 +180,16 @@ public class ExternalToolsUtil {
 	}
 
 	/**
-	 * Returns the refresh scope specified by the given launch configuration or
-	 * <code>null</code> if none.
+	 * Returns whether this tool is to be run in the background.
 	 * 
 	 * @param configuration
-	 * @return refresh scope
+	 * @return whether this tool is to be run in the background
 	 * @throws CoreException if unable to access the associated attribute
 	 */
-	public static String getRefreshScope(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_SCOPE, (String) null);
-	}
-
-	/**
-	 * Returns whether the refresh scope specified by the given launch
-	 * configuration is recursive.
-	 * 
-	 * @param configuration
-	 * @return whether the refresh scope is recursive
-	 * @throws CoreException if unable to access the associated attribute
-	 */
-	public static boolean isRefreshRecursive(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IExternalToolConstants.ATTR_REFRESH_RECURSIVE, true);
-	}
-
-	/**
-	 * Refreshes the resources as specified by the given launch configuration.
-	 * 
-	 * @param configuration launch configuration
-	 * @param context context used to expand variables
-	 * @param monitor progress monitor
-	 * @throws CoreException if an exception occurrs while refreshing resources
-	 */
-	public static void refreshResources(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		IResource[] resources= getResourcesForRefreshScope(configuration, monitor);
-		if (resources == null || resources.length == 0){
-			return;
-		}
-		int depth = IResource.DEPTH_ONE;
-		if (isRefreshRecursive(configuration))
-			depth = IResource.DEPTH_INFINITE;
-
-		if (monitor.isCanceled()) {
-			return;
-		}
-
-		monitor.beginTask(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.refreshResources"), //$NON-NLS-1$
-			resources.length);
-
-		MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.Exception(s)_occurred_during_refresh._2"), null); //$NON-NLS-1$
-		for (int i = 0; i < resources.length; i++) {
-			if (monitor.isCanceled())
-				break;
-			if (resources[i] != null && resources[i].isAccessible()) {
-				try {
-					resources[i].refreshLocal(depth, null);
-				} catch (CoreException e) {
-					status.merge(e.getStatus());
-				}
-			}
-			monitor.worked(1);
-		}
-
-		monitor.done();
-		if (!status.isOK()) {
-			throw new CoreException(status);
-		}
+	public static boolean isBackground(ILaunchConfiguration configuration) throws CoreException {
+		return configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
 	}
 	
-	/**
-	 * Returns the collection of resources for the refresh scope as specified by the given launch configuration.
-	 * 
-	 * @param configuration launch configuration
-	 * @param context context used to expand variables
-	 * @param monitor progress monitor
-	 * @throws CoreException if an exception occurs while refreshing resources
-	 */
-	public static IResource[] getResourcesForRefreshScope(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		String scope = getRefreshScope(configuration);
-		if (scope == null) {
-			return null;
-		}
-
-		return getResourcesForScope(configuration, monitor, scope);
-	}
-
 	/**
 	 * Returns the collection of resources for the build scope as specified by the given launch configuration.
 	 * 
@@ -279,41 +203,9 @@ public class ExternalToolsUtil {
 		if (scope == null) {
 			return null;
 		}
-
-		return getResourcesForScope(configuration, monitor, scope);
 	
-	}
+		return RefreshTab.expandResources(scope, monitor);
 	
-	private static IResource[] getResourcesForScope(ILaunchConfiguration configuration, IProgressMonitor monitor, String scope) throws CoreException {
-		VariableUtil.VariableDefinition varDef = VariableUtil.extractVariableDefinition(scope, 0);
-		if (varDef.start == -1 || varDef.end == -1 || varDef.name == null) {
-			String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.invalidRefreshVarFormat"), new Object[] { configuration.getName()}); //$NON-NLS-1$
-			abort(msg, null, 0);
-		}
-
-		RefreshScopeVariableRegistry registry = ExternalToolsPlugin.getDefault().getRefreshVariableRegistry();
-		IContextLaunchVariable variable = registry.getVariable(varDef.name);
-		if (variable == null) {
-			String msg = MessageFormat.format(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsUtil.noRefreshVarNamed"), new Object[] { configuration.getName(), varDef.name }); //$NON-NLS-1$
-			abort(msg, null, 0);
-		}
-
-		if (monitor.isCanceled()) {
-			return null;
-		}
-
-		return variable.getExpander().getResources(varDef.name, varDef.argument, VariableContextManager.getDefault().getVariableContext());
-	}
-
-	/**
-	 * Returns whether this tool is to be run in the background.
-	 * 
-	 * @param configuration
-	 * @return whether this tool is to be run in the background
-	 * @throws CoreException if unable to access the associated attribute
-	 */
-	public static boolean isBackground(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
 	}
 
 	/**

@@ -155,19 +155,6 @@ public interface IExternalToolConstants {
 	 * arguments before running a tool. Default value is <code>false</code>.
 	 */
 	public static final String ATTR_PROMPT_FOR_ARGUMENTS = PLUGIN_ID + ".ATTR_PROMPT_FOR_ARGUMENTS"; //$NON-NLS-1$
-
-	/**
-	 * Boolean attribute indicating if a refresh scope is recursive. Default
-	 * value is <code>false</code>.
-	 */
-	public static final String ATTR_REFRESH_RECURSIVE = PLUGIN_ID + ".ATTR_REFRESH_RECURSIVE"; //$NON-NLS-1$
-
-	/**
-	 * String attribute identifying the scope of resources that should be
-	 * refreshed after an external tool is run. Default value is
-	 * <code>null</code>, indicating no refresh. Format is ???
-	 */
-	public static final String ATTR_REFRESH_SCOPE = PLUGIN_ID + ".ATTR_REFRESH_SCOPE"; //$NON-NLS-1$
 	
 	/**
 	 * String attribute identifying the scope of resources that should trigger an 

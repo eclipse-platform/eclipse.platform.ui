@@ -25,7 +25,6 @@
 
 <!-- extension point definitions -->
 	<extension-point id="configurationDuplicationMaps" name="%ExtPoint.configurationDuplicationMaps"/>
-	<extension-point id="refreshVariables" name="%ExtPoint.refreshVariables"/>
 
 <!-- Extensions -->
    <!-- UI extensions -->
@@ -194,33 +193,6 @@
 			name="build_type"
 			description="%build_type.description"
 			expanderClass="org.eclipse.ui.externaltools.internal.variables.BuildTypeExpander">
-		</variable>
-	</extension>
-	<extension point="org.eclipse.ui.externaltools.refreshVariables">
-		<variable
-			name="workspace"
-			description="%workspace.description"
-			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.WorkspaceExpander">
-		</variable>
-		<variable
-			name="project"
-			description="%project.description"
-			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ProjectExpander">
-		</variable>
-		<variable
-			name="container"
-			description="%container.description"
-			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ContainerExpander">
-		</variable>
-		<variable
-			name="resource"
-			description="%resource.description"
-			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ResourceExpander">
-		</variable>
-		<variable
-			name="working_set"
-			description="%working_set.description"
-			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.WorkingSetExpander">
 		</variable>
 	</extension>
 	

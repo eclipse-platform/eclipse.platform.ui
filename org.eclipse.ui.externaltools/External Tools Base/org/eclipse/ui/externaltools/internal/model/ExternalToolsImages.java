@@ -60,10 +60,7 @@ public class ExternalToolsImages {
 	/**
 	 * Declare all images
 	 */
-	private static void declareImages() {
-		// Refresh tab
-		declareRegistryImage(IExternalToolConstants.IMG_TAB_REFRESH, OBJECT + "refresh.gif"); //$NON-NLS-1$
-		
+	private static void declareImages() {		
 		// Objects
 		declareRegistryImage(IExternalToolConstants.IMG_TAB_MAIN, OBJECT + "main_tab.gif"); //$NON-NLS-1$
 	}
