@@ -34,10 +34,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.custom.TreeEditor;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.KeyAdapter;
@@ -50,9 +47,11 @@ import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
 /**
@@ -219,17 +218,23 @@ class PropertySheetViewer extends Viewer {
             }
         }
 
-        tree.addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
-				Rectangle area = tree.getClientArea();
-				TreeColumn[] columns = tree.getColumns();
-				columns[0].setWidth(area.width * 40 / 100);
-				columns[1].setWidth(area.width - columns[0].getWidth() - 4);
-			}
-		});
-
+        tree.getParent().addControlListener(new ControlAdapter() {
+            public void controlResized(ControlEvent e) {
+                updateColumnSizes();
+            }
+        });
     }
 
+    private void updateColumnSizes() {
+        // the parent has not yet layed out the tree; force the tree's size to be updated earlier
+        tree.getParent().layout();
+        
+        int w = tree.getSize().x;
+        TreeColumn[] columns = tree.getColumns();
+        columns[0].setWidth(w * 40 / 100);
+        columns[1].setWidth(w - columns[0].getWidth() - 4);
+    }
+    
     /**
      * Asks the entry currently being edited to apply its current cell editor
      * value.
@@ -251,12 +256,7 @@ class PropertySheetViewer extends Viewer {
      */
     private void createChildren(Widget widget) {
         // get the current child items
-        TreeItem[] childItems;
-        if (widget == tree)
-            childItems = tree.getItems();
-        else {
-            childItems = ((TreeItem) widget).getItems();
-        }
+        TreeItem[] childItems = getChildItems(widget);
 
         if (childItems.length > 0) {
             Object data = childItems[0].getData();
@@ -479,6 +479,17 @@ class PropertySheetViewer extends Viewer {
         return cellEditor;
     }
 
+    private TreeItem[] getChildItems(Widget widget) {
+        if (widget instanceof Tree) {
+            return ((Tree) widget).getItems();
+        }
+        else if (widget instanceof TreeItem) {
+            return ((TreeItem) widget).getItems();
+        }
+        // shouldn't happen
+        return new TreeItem[0];
+    }
+    
     /**
      * Returns the children of the given category or entry
      *
@@ -1059,16 +1070,13 @@ class PropertySheetViewer extends Viewer {
             category = (PropertySheetCategory) node;
 
         // get the current child tree items
-        TreeItem item = null;
-        TreeItem[] childItems;
-        if (node == rootEntry) {
-            childItems = tree.getItems();
-        } else {
-            item = (TreeItem) widget;
-            childItems = item.getItems();
-        }
+        TreeItem[] childItems = getChildItems(widget);
 
         // optimization! prune collapsed subtrees
+        TreeItem item = null;
+        if (widget instanceof TreeItem) {
+            item = (TreeItem) widget;
+        }
         if (item != null && !item.getExpanded()) {
             // remove all children
             for (int i = 0; i < childItems.length; i++) {
@@ -1079,17 +1087,17 @@ class PropertySheetViewer extends Viewer {
 
             // append a dummy if necessary
             if (category != null || entry.hasChildEntries()) {
-                //may already have a dummy
-                // its is either a category (which always has at least one
-                // child)
+                // may already have a dummy
+                // It is either a category (which always has at least one child)
                 // or an entry with chidren.
                 // Note that this test is not perfect, if we have filtering on
                 // then there in fact may be no entires to show when the user
                 // presses the "+" expand icon. But this is an acceptable
                 // compromise.
-                if (childItems.length != 1 || childItems[0].getData() != null)
-                    //if already a dummy - do nothing
+                childItems = getChildItems(widget);
+                if (childItems.length == 0) {
                     new TreeItem(item, SWT.NULL);
+                }
             }
             return;
         }
@@ -1138,10 +1146,7 @@ class PropertySheetViewer extends Viewer {
         }
 
         // get the child tree items after our changes
-        if (entry == rootEntry)
-            childItems = tree.getItems();
-        else
-            childItems = item.getItems();
+        childItems = getChildItems(widget);
 
         // update the child items
         // This ensures that the children are in the correct order
