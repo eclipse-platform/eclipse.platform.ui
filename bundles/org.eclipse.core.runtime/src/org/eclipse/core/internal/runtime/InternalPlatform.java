@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.plugins.*;
 import java.io.*;
+import java.io.FileOutputStream;
 import java.net.*;
 import java.util.*;
 
@@ -41,6 +42,9 @@ public final class InternalPlatform {
 	private static boolean inDevelopmentMode = false;
 	private static boolean splashDown = false;
 	private static boolean cacheRegistry = false;
+
+	private static File lockFile = null;
+	private static RandomAccessFile lockRAF = null;
 
 	// default plugin data
 	private static final String PI_XML = "org.apache.xerces";
@@ -165,6 +169,50 @@ private static String findPlugin(LaunchInfo.VersionedIdentifier[] list, String n
 		}
 	}
 	return result == null ? null : result.toString();
+}
+/**
+ * Closes the open lock file handle, and makes a silent best
+ * attempt to delete the file.
+ */
+private static synchronized void clearLockFile() {
+	try {
+		if (lockRAF != null) {
+			lockRAF.close();
+			lockRAF = null;
+		}
+	} catch (IOException e) {
+	}
+	if (lockFile != null) {
+		lockFile.delete();
+		lockFile = null;
+	}
+}
+/**
+ * Creates a lock file in the meta-area that indicates the meta-area
+ * is in use, preventing other eclipse instances from concurrently
+ * using the same meta-area.
+ */
+private static synchronized void createLockFile() throws CoreException {
+	String lockLocation = metaArea.getLocation().append(PlatformMetaArea.F_LOCK_FILE).toOSString();
+	lockFile = new File(lockLocation);
+	boolean success = false;
+	//if the lock file already exists, try to delete,
+	//assume failure means another eclipse has it open
+	if (lockFile.exists())
+		lockFile.delete();
+	if (lockFile.exists()) {
+		String message = Policy.bind("meta.inUse", lockLocation);
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
+	}
+	try {
+		//open the lock file so other instances can't co-exist
+		lockRAF = new RandomAccessFile(lockFile, "rw");
+		lockRAF.writeByte(0);
+		success = true;
+	} catch (IOException e) {
+		String message = Policy.bind("meta.failCreateLock", lockLocation);
+		throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, e));
+	}
 }
 
 /**
@@ -473,6 +521,7 @@ public static IPlatformRunnable loaderGetRunnable(String pluginId, String classN
 public static void loaderShutdown() {
 	assertInitialized();
 	registry.shutdown(null);
+	clearLockFile();
 	if (DEBUG_PLUGINS) {
 		// We are debugging so output the registry in XML
 		// format.
@@ -523,6 +572,7 @@ public static void loaderShutdown() {
 public static void loaderStartup(URL[] pluginPath, String locationString, Properties bootOptions, String[] args) throws CoreException {
 	processCommandLine(args);
 	setupMetaArea(locationString);
+	createLockFile();
 	adapterManager = new AdapterManager();
 	loadOptions(bootOptions);
 	createXMLClassLoader();
@@ -787,7 +837,7 @@ private static void setupMetaArea(String locationString) throws CoreException {
 	if (location.toFile().exists()) {
 		if (!location.toFile().isDirectory()) {
 			String message = Policy.bind("meta.notDir", location.toString());
-			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, 13, message, null));
+			throw new CoreException(new Status(IStatus.ERROR, Platform.PI_RUNTIME, Platform.FAILED_WRITE_METADATA, message, null));
 		}
 	}
 	metaArea = new PlatformMetaArea(location);
