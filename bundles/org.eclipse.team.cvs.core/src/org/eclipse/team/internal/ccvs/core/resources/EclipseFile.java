@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -208,7 +209,15 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 					break;
 			}
 		} catch(CoreException e) {
-			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_writing_resource", resource.getFullPath().toString(), e.getMessage()), e); //$NON-NLS-1$
+			String message = null;
+			if (e.getStatus().getCode() == IResourceStatus.FAILED_READ_LOCAL) {
+				// This error indicates that Core couldn't read from the server stream
+				// The real reason will be in the message of the wrapped exception
+				Throwable t = e.getStatus().getException();
+				if (t != null) message = t.getMessage();
+			}
+			if (message == null) message = e.getMessage();
+			throw CVSException.wrapException(resource, Policy.bind("EclipseFile_Problem_writing_resource", resource.getFullPath().toString(), message), e); //$NON-NLS-1$
 		}
 	}
 			
