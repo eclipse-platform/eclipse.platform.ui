@@ -311,10 +311,11 @@ public class AntPropertiesBlock {
 	private void edit() {
 		IStructuredSelection selection= (IStructuredSelection) propertyTableViewer.getSelection();
 		Property prop = (Property) selection.getFirstElement();
-		String originalName= prop.getName();
 		if (prop == null) {
 			return;
 		}
+		
+		String originalName= prop.getName();
 		String title = AntPreferencesMessages.getString("AntPropertiesBlock.Edit_User_Property_5"); //$NON-NLS-1$
 		AddPropertyDialog dialog = new AddPropertyDialog(propertyTableViewer.getControl().getShell(), title, new String[]{prop.getName(), prop.getValue()});
 	
@@ -441,7 +442,6 @@ public class AntPropertiesBlock {
 			propertyTableViewer.setSelection(propertyTableViewer.getSelection());
 			fileTableViewer.setSelection(fileTableViewer.getSelection());
 		} else {
-			
 			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 			List properties= prefs.getProperties();
 			propertyTableViewer.setInput(properties);
