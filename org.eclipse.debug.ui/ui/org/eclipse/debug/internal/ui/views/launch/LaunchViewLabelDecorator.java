@@ -55,13 +55,7 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 	 * are appended to this job.
 	 */
 	protected LabelJob fNextJob= null;
-	private LabelJob fCurrentJob= null;
 	private Set resumedThreads= new HashSet();
-	/**
-	 * An object to use as a lock for ensuring thread-safe
-	 * access to the current job.
-	 */
-	private Object currentJobLock= new Object();
 	
 	/**
 	 * Creates a new label decorator which will query the
@@ -220,7 +214,7 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 			synchronized(this) {
 				fNextJob= null;
 			}
-			fCurrentJob= this;
+
 			int numElements= fElementQueue.size();
 			monitor.beginTask(MessageFormat.format(DebugUIViewsMessages.getString("LaunchViewLabelDecorator.1"), new String[] { Integer.toString(numElements) }), numElements); //$NON-NLS-1$
 			while (!fElementQueue.isEmpty()) {
@@ -254,7 +248,6 @@ public class LaunchViewLabelDecorator extends LabelProvider implements ILabelDec
 				labelsComputed(computedElements.toArray());
 				monitor.worked(computedElements.size());
 			}
-			fCurrentJob= null;
 			monitor.done();
 			return Status.OK_STATUS;
 		}
