@@ -6,8 +6,9 @@ package org.eclipse.team.internal.ccvs.core.response.custom;
  */
  
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.ccvs.core.ICVSTag;
+import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
 
 public class LogEntry extends PlatformObject implements ILogEntry {
@@ -66,11 +67,10 @@ public class LogEntry extends PlatformObject implements ILogEntry {
 	/**
 	 * @see ILogEntry#getTags()
 	 */
-	public String[] getTags() {
-		String[] tagNames = new String[tags.length];
-		for (int i=0;i<tags.length;i++)
-			tagNames[i] = tags[i].getName();
-		return tagNames;
+	public ICVSTag[] getTags() {
+		ICVSTag[] result = new ICVSTag[tags.length];
+		System.arraycopy(tags, 0, result, 0, tags.length);
+		return result;
 	}
 
 	/**

@@ -9,27 +9,23 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import java.util.Set;
+
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.ccvs.core.ICVSTag;
+import org.eclipse.team.ccvs.core.ILogEntry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.model.Tag;
 import org.eclipse.team.ui.actions.TeamAction;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
 
 public class AutoDefineTagsAction extends TeamAction {
 	/**
@@ -83,9 +79,9 @@ public class AutoDefineTagsAction extends TeamAction {
 						return;
 					}
 					for (int j = 0; j < entries.length; j++) {
-						String[] tags = entries[j].getTags();
+						ICVSTag[] tags = entries[j].getTags();
 						for (int k = 0; k < tags.length; k++) {
-							tagSet.add(tags[k]);
+							tagSet.add(tags[k].getName());
 						}
 					}
 					Iterator it = tagSet.iterator();

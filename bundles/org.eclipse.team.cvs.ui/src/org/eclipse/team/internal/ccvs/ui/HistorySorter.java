@@ -5,10 +5,10 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.team.ccvs.core.ICVSTag;
 import org.eclipse.team.ccvs.core.ILogEntry;
-
-import java.text.Collator;import java.util.Date;
 
 /**
  * This sorter is used by the HistoryView
@@ -60,15 +60,15 @@ class HistorySorter extends ViewerSorter {
 			case 0: /* version */
 				return versionCollator.compare(e1.getRevision(), e2.getRevision());
 			case 1: /* tags */
-				String[] tags1 = e1.getTags();
-				String[] tags2 = e2.getTags();
+				ICVSTag[] tags1 = e1.getTags();
+				ICVSTag[] tags2 = e2.getTags();
 				if (tags2.length == 0) {
 					return -1;
 				}
 				if (tags1.length == 0) {
 					return 1;
 				}
-				return getCollator().compare(tags1[0], tags2[0]);
+				return getCollator().compare(tags1[0].getName(), tags2[0].getName());
 			case 2: /* date  */
 				// To do: use dates instead of strings
 				String date1 = e1.getDate();

@@ -1,5 +1,10 @@
 package org.eclipse.team.ccvs.core;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
+ 
 import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;

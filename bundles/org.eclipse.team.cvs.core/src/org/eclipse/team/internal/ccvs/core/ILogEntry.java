@@ -1,11 +1,11 @@
 package org.eclipse.team.ccvs.core;
 
-import org.eclipse.core.runtime.IAdaptable;
-
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+
+import org.eclipse.core.runtime.IAdaptable;
 
 /**
  * Instances of ILogEntry represent an entry for a CVS file that results
@@ -43,7 +43,7 @@ public interface ILogEntry extends IAdaptable {
 	/**
 	 * Get the tags associated with the revision
 	 */
-	public String[] getTags();
+	public ICVSTag[] getTags();
 	
 	/**
 	 * Get the remote file for this entry
