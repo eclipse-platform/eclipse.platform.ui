@@ -15,24 +15,27 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * A mapping context provides a model element with a view of the remote state
- * of a local resource as it relates to a repository operation that is in
- * progress. A repository provider can pass an instance of this interface to a
- * model element when obtaining a set of traversals for a model element. This
- * allows the model element to query the remote state of a resource in order to
- * determine if there are resources that exist remotely but do not exist locally
- * that should be included in the traversal.
- * 
- * TODO Maybe call this RemoteMappingContext to differentiate it from other
- * possible context that may be introduced later?
+ * A resource mapping context is provided to a resource mapping when traversing
+ * the resources of the mapping. The type of context may determine what resources
+ * are included in the traversals of a mapping.
+ * <p>
+ * There are currently two resource mapping contexts: the local mapping context
+ * (represented by the singleton <code>LOCAL_CONTEXT</code),
+ * and <code>RemoteResourceMappingContext</code>. Implementors of <code>ResourceMapping</code>
+ * should not assume that these are the only valid contexts (in order to allow future 
+ * extensibility). Therefore, if the provided context is not of one of the above mentioed types,
+ * the implementor can assume that the context is a local context.
  * 
  * <p>
  * NOTE: This API is work in progress and will likely change before the final API freeze.
  * </p>
  * 
  * @since 3.1
+ * 
+ * @see ResourceMapping
+ * @see RemoteResourceMappingContext
  */
-public abstract class ResourceMappingContext {
+public class ResourceMappingContext {
 
     /**
      * Refresh flag constant (bit mask value 0) indicating that no
@@ -46,6 +49,15 @@ public abstract class ResourceMappingContext {
      * covered by the traversals being refreshed.
      */
     public static final int FILE_CONTENTS_REQUIRED = 1;
+	
+	/**
+	 * This resource mapping context is used to indicate that the operation
+	 * that is requesting the traversals is performing a local operation.
+	 * Because the operation is local, the resource mapping is free to be 
+	 * as precise as desired about what resources make up the mapping without
+	 * concern for performing optimized remote operations.
+	 */
+	public static final ResourceMappingContext LOCAL_CONTEXT = new ResourceMappingContext();
 
     /**
 	 * Return whether the contents of the corresponding remote differs from the
@@ -76,7 +88,9 @@ public abstract class ResourceMappingContext {
      *    (status code will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
      * </ul>
 	 */
-	public abstract boolean contentDiffers(IFile file, IProgressMonitor monitor) throws CoreException;
+	public boolean contentDiffers(IFile file, IProgressMonitor monitor) throws CoreException {
+        return false;
+    }
 
 	/**
 	 * Returns an instance of IStorage in order to allow the
@@ -100,7 +114,9 @@ public abstract class ResourceMappingContext {
      *    (status code will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
      * </ul>
 	 */
-	public abstract IStorage fetchContents(IFile file, IProgressMonitor monitor) throws CoreException;
+	public IStorage fetchContents(IFile file, IProgressMonitor monitor) throws CoreException {
+        return null;
+    }
 
 	/**
 	 * Returns the list of member resources whose corresponding remote resources
@@ -127,7 +143,9 @@ public abstract class ResourceMappingContext {
 	 *    (status code will be IResourceStatus.RESOURCE_WRONG_TYPE).</li>
 	 * </ul>
 	 */
-	public abstract IResource[] fetchMembers(IContainer container, IProgressMonitor monitor) throws CoreException;
+	public IResource[] fetchMembers(IContainer container, IProgressMonitor monitor) throws CoreException {
+        return null;
+    }
 
     /**
      * Refresh the known remote state for any resources covered by the given traversals.
@@ -156,5 +174,7 @@ public abstract class ResourceMappingContext {
 	 * <ul>
 	 * </ul>
      */
-    public abstract void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException;
+    public void refresh(ResourceTraversal[] traversals, int flags, IProgressMonitor monitor) throws CoreException {
+        // Do nothing
+    }
 }
