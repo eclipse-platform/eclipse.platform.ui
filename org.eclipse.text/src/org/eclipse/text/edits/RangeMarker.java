@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.text.edits;
 
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 /**
@@ -38,16 +39,24 @@ public final class RangeMarker extends TextEdit {
 	}
 
 	/* non Java-doc
-	 * @see TextEdit#perform
-	 */	
-	/* package */ final void perform(IDocument document)  {
-		// do nothing
-	}
-	
-	/* non Java-doc
 	 * @see TextEdit#copy
 	 */	
 	protected TextEdit doCopy() {
 		return new RangeMarker(this);
-	}	
+	}
+	
+	/* non Java-doc
+	 * @see TextEdit#performPassTwo
+	 */	
+	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
+		fDelta= 0;
+		return fDelta;
+	}
+	
+	/* non Java-doc
+	 * @see TextEdit#deleteChildren
+	 */	
+	/* package */ boolean deleteChildren() {
+		return false;
+	}
 }

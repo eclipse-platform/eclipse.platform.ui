@@ -10,11 +10,10 @@
  *******************************************************************************/
 package org.eclipse.text.edits;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 
 /**
@@ -34,7 +33,7 @@ import org.eclipse.jface.text.IDocument;
  * 
  * @since 3.0
  */
-public final class MoveTargetEdit extends AbstractTransferEdit {
+public final class MoveTargetEdit extends TextEdit {
 
 	private MoveSourceEdit fSource;
 
@@ -108,46 +107,69 @@ public final class MoveTargetEdit extends AbstractTransferEdit {
 	 */	
 	protected void postProcessCopy(TextEditCopier copier) {
 		if (fSource != null) {
-			((MoveTargetEdit)copier.getCopy(this)).setSourceEdit((MoveSourceEdit)copier.getCopy(fSource));
+			MoveTargetEdit target= (MoveTargetEdit)copier.getCopy(this);
+			MoveSourceEdit source= (MoveSourceEdit)copier.getCopy(fSource);
+			if (target != null && source != null)
+				target.setSourceEdit(source);
 		}
 	}
 	
+	//---- pass one ----------------------------------------------------------------
+	
 	/* non Java-doc
-	 * @see TextEdit#checkIntegrity
+	 * @see TextEdit#performPassOne
 	 */	
-	protected void checkIntegrity() {
+	/* package */ void performPassOne(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fSource == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveTargetEdit.no_source")); //$NON-NLS-1$
 		if (fSource.getTargetEdit() != this)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveTargetEdit.different_target")); //$NON-NLS-1$
 	}
 	
+	//---- pass two ----------------------------------------------------------------
+	
 	/* non Java-doc
-	 * @see TextEdit#perform
+	 * @see TextEdit#performPassTwo
 	 */	
-	/* package */ void perform(IDocument document) throws BadLocationException {
-		if (++fSource.fCounter == 2) {
-			String source= fSource.getContent();
-			fMode= INSERT;
-			document.replace(getOffset(), getLength(), source);
+	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
+		String source= fSource.getContent();
+		document.replace(getOffset(), getLength(), source);
+		fDelta= source.length() - getLength();
+		
+		MultiTextEdit sourceRoot= fSource.getRoot();
+		if (sourceRoot != null) {
+			sourceRoot.moveTree(getOffset());
+			TextEdit[] sourceChildren= sourceRoot.removeChildren();
+			List children= new ArrayList(sourceChildren.length);
+			for (int i= 0; i < sourceChildren.length; i++) {
+				TextEdit child= sourceChildren[i];
+				child.internalSetParent(this);
+				children.add(child);
+			}
+			internalSetChildren(children);
 		}
+		fSource.clearContent();
+		return fDelta;
 	}
 	
-	/* package */ void update(DocumentEvent event, TreeIterationInfo info) {
-		if (fMode == INSERT) {
-			// we have to substract the delta since <code>super.updateTextRange</code>
-			// add the delta to the move source's children.
-			int moveDelta= getOffset() - fSource.getContentOffset();
-			
-			super.update(event, info);			
-
-			List sourceChildren= fSource.getContentChildren();
-			move(sourceChildren, moveDelta); 
-			internalSetChildren(sourceChildren);
-			
+	//---- pass three --------------------------------------------------------------
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.text.edits.TextEdit#traversePassThree
+	 */
+	/* package */ int traversePassThree(TextEditProcessor processor, IDocument document, int accumulatedDelta, boolean delete) {
+		// the children got already updated / normalized while they got removed
+		// from the source edit. So we only have to adjust the offset computed to
+		// far.
+		if (delete) {
+			deleteTree();
 		} else {
-			Assert.isTrue(false);
+			moveTree(accumulatedDelta);
 		}
-		
+		return accumulatedDelta + fDelta;
+	}
+	
+	/* package */ boolean deleteChildren() {
+		return false;
 	}
 }

@@ -13,7 +13,6 @@ package org.eclipse.text.edits;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
 
 /**
  * A copy target edit denotes the target of a copy operation. Copy
@@ -31,7 +30,7 @@ import org.eclipse.jface.text.IRegion;
  * 
  * @since 3.0
  */
-public final class CopyTargetEdit extends AbstractTransferEdit {
+public final class CopyTargetEdit extends TextEdit {
 
 	private CopySourceEdit fSource;
 
@@ -106,14 +105,17 @@ public final class CopyTargetEdit extends AbstractTransferEdit {
 	 */	
 	protected void postProcessCopy(TextEditCopier copier) {
 		if (fSource != null) {
-			((CopyTargetEdit)copier.getCopy(this)).setSourceEdit((CopySourceEdit)copier.getCopy(fSource));
+			CopyTargetEdit target= (CopyTargetEdit)copier.getCopy(this);
+			CopySourceEdit source= (CopySourceEdit)copier.getCopy(fSource);
+			if (target != null && source != null)
+				target.setSourceEdit(source);
 		}
 	}
 	
 	/* non Java-doc
-	 * @see TextEdit#checkIntegrity
+	 * @see TextEdit#performPassOne
 	 */	
-	protected void checkIntegrity() throws MalformedTreeException {
+	/* package */ void performPassOne(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fSource == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopyTargetEdit.no_source")); //$NON-NLS-1$
 		if (fSource.getTargetEdit() != this)
@@ -121,16 +123,20 @@ public final class CopyTargetEdit extends AbstractTransferEdit {
 	}
 	
 	/* non Java-doc
-	 * @see TextEdit#perform
+	 * @see TextEdit#performPassTwo
 	 */	
-	/* package */ void perform(IDocument document) throws BadLocationException {
-		if (++fSource.fCounter == 2 && !isDeleted()) {
-			try {
-				IRegion region= getRegion();
-				document.replace(region.getOffset(), region.getLength(), fSource.getContent());
-			} finally {
-				fSource.clearContent();
-			}
-		}
+	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
+		String source= fSource.getContent();
+		document.replace(getOffset(), getLength(), source);
+		fDelta= source.length() - getLength();
+		fSource.clearContent();
+		return fDelta;
+	}
+	
+	/* non Java-doc
+	 * @see TextEdit#deleteChildren
+	 */	
+	/* package */ boolean deleteChildren() {
+		return false;
 	}
 }

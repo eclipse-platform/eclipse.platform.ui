@@ -19,8 +19,6 @@ import java.util.Map;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
@@ -43,15 +41,13 @@ import org.eclipse.jface.text.Region;
  *  
  * @since 3.0 
  */
-public final class MoveSourceEdit extends AbstractTransferEdit {
+public final class MoveSourceEdit extends TextEdit {
 
-	/* package */ int fCounter;
 	private MoveTargetEdit fTarget;
 	private ISourceModifier fModifier;
 	
-	private String fContent;
-	private int fContentOffset;
-	private List fContentChildren;
+	private String fSourceContent;
+	private MultiTextEdit fSourceRoot;
 	
 	/**
 	 * Constructs a new move source edit.
@@ -126,6 +122,23 @@ public final class MoveSourceEdit extends AbstractTransferEdit {
 	public void setSourceModifier(ISourceModifier modifier) {
 		fModifier= modifier;
 	}
+
+	//---- API for MoveTargetEdit ---------------------------------------------
+	
+	/* package */ String getContent() {
+		return fSourceContent;
+	}
+	
+	/* package */ MultiTextEdit getRoot() {
+		return fSourceRoot;
+	}
+	
+	/* package */ void clearContent() {
+		fSourceContent= null;
+		fSourceRoot= null;
+	}
+	
+	//---- Copying -------------------------------------------------------------
 	
 	/* non Java-doc
 	 * @see TextEdit#doCopy
@@ -139,133 +152,132 @@ public final class MoveSourceEdit extends AbstractTransferEdit {
 	 */	
 	protected void postProcessCopy(TextEditCopier copier) {
 		if (fTarget != null) {
-			((MoveSourceEdit)copier.getCopy(this)).setTargetEdit((MoveTargetEdit)copier.getCopy(fTarget));
+			MoveSourceEdit source= (MoveSourceEdit)copier.getCopy(this);
+			MoveTargetEdit target= (MoveTargetEdit)copier.getCopy(fTarget);
+			if (source != null && target != null)
+				source.setTargetEdit(target);
+		}
+	}
+	
+	//---- pass one ----------------------------------------------------------------
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.text.edits.TextEdit#traversePassOne
+	 */
+	/* package */ void traversePassOne(TextEditProcessor processor, IDocument document) {
+		// Do not process the children. The are covered by the actual
+		// perform operation.
+		if (processor.considerEdit(this)) {
+			performPassOne(processor, document);
 		}
 	}
 	
 	/* non Java-doc
-	 * @see TextEdit#checkIntegrity
+	 * @see TextEdit#performPassOne
 	 */	
-	protected void checkIntegrity() throws MalformedTreeException {
+	/* package */ void performPassOne(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
 		if (fTarget == null)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.no_target")); //$NON-NLS-1$
 		if (fTarget.getSourceEdit() != this)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.different_source"));  //$NON-NLS-1$
-	}
-	
-	/* non Java-doc
-	 * @see TextEdit#perform
-	 */	
-	/* package */ void perform(IDocument document) throws BadLocationException {
-		fCounter++;
-		switch(fCounter) {
-			// Position of move source > position of move target.
-			// Hence MoveTarget does the actual move. Move Source
-			// only deletes the content.
-			case 1:
-				fContent= getContent(document);
-				fContentOffset= getOffset();
-				fContentChildren= internalGetChildren();
-				fMode= DELETE;
-				document.replace(getOffset(), getLength(), ""); //$NON-NLS-1$
-				// do this after executing the replace to be able to
-				// compute the number of children.
-				internalSetChildren(null);
-				break;
-				
-			// Position of move source < position of move target.
-			// Hence move source handles the delete and the 
-			// insert at the target position.	
-			case 2:
-				fContent= getContent(document);
-				fMode= DELETE;
-				document.replace(getOffset(), getLength(), ""); //$NON-NLS-1$
-				if (!fTarget.isDeleted()) {
-					// Insert target
-					IRegion targetRange= fTarget.getRegion();
-					fMode= INSERT;
-					document.replace(targetRange.getOffset(), targetRange.getLength(), fContent);
+		
+		try {
+			TextEdit[] children= removeChildren();
+			if (children.length > 0) {
+				String content= document.get(getOffset(), getLength());
+				EditDocument subDocument= new EditDocument(content);
+				fSourceRoot= new MultiTextEdit(getOffset(), getLength());
+				fSourceRoot.addChildren(children);
+				fSourceRoot.moveTree(-getOffset());
+				int processingStyle= getStyle(processor);
+				fSourceRoot.apply(subDocument, processingStyle);
+				if (needsTransformation())
+					applyTransformation(subDocument, processingStyle);
+				fSourceContent= subDocument.get();
+			} else {
+				fSourceContent= document.get(getOffset(), getLength());
+				if (needsTransformation()) {
+					EditDocument subDocument= new EditDocument(fSourceContent);
+					applyTransformation(subDocument, getStyle(processor));
+					fSourceContent= subDocument.get();
 				}
-				clearContent();
-				break;
-			default:
-				Assert.isTrue(false, "Should never happen"); //$NON-NLS-1$
-		}
-	}
-
-	/* package */ String getContent() {
-		return fContent;
-	}
-	
-	/* package */ List getContentChildren() {
-		return fContentChildren;
-	}
-	
-	/* package */ int getContentOffset() {
-		return fContentOffset;
-	}
-	
-	/* package */ void clearContent() {
-		fContent= null;
-		fContentChildren= null;
-		fContentOffset= -1;
-	}
-	
-	/* package */ void update(DocumentEvent event, TreeIterationInfo info) {
-		if (fMode == DELETE) {			// source got deleted
-			super.update(event, info); 
-		} else if (fMode == INSERT) {	// text got inserted at target position
-			fTarget.update(event);
-			List children= internalGetChildren();
-			if (children != null) {
-				internalSetChildren(null);
-				int moveDelta= fTarget.getOffset() - getOffset();
-				move(children, moveDelta);
 			}
-			fTarget.internalSetChildren(children);
-		} else {
+		} catch (BadLocationException cannotHappen) {
 			Assert.isTrue(false);
 		}
-	}	
+	}
 	
-	//---- content management --------------------------------------------------
+	private int getStyle(TextEditProcessor processor) {
+		// we never need undo while performing local edits.
+		if ((processor.getStyle() & TextEdit.UPDATE_REGIONS) != 0)
+			return TextEdit.UPDATE_REGIONS;
+		return TextEdit.NONE;
+	}
 	
-	private String getContent(IDocument document) throws BadLocationException {
-		String result= document.get(getOffset(), getLength());
-		if (fModifier != null) {
-			IDocument newDocument= new Document(result);
+	//---- pass two ----------------------------------------------------------------
+	
+	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
+		document.replace(getOffset(), getLength(), ""); //$NON-NLS-1$
+		fDelta= -getLength();
+		return fDelta;
+	}
+	
+	//---- pass three --------------------------------------------------------------
+	
+	/* non Java-doc
+	 * @see TextEdit#deleteChildren
+	 */	
+	/* package */ boolean deleteChildren() {
+		return false;
+	}
+	
+	//---- content transformation --------------------------------------------------
+	
+	private boolean needsTransformation() {
+		return fModifier != null;
+	}
+	
+	private void applyTransformation(IDocument document, int style) throws MalformedTreeException {
+		if ((style & TextEdit.UPDATE_REGIONS) != 0 && fSourceRoot != null) {
 			Map editMap= new HashMap();
 			TextEdit newEdit= createEdit(editMap);
-			List replaces= new ArrayList(Arrays.asList(fModifier.getModifications(result)));
+			List replaces= new ArrayList(Arrays.asList(fModifier.getModifications(document.get())));
+			insertEdits(newEdit, replaces);
 			try {
-				insertEdits(newEdit, replaces);
-				newEdit.apply(newDocument);
-			} catch (MalformedTreeException e) {
-				throw new BadLocationException();
+				newEdit.apply(document, style);
+			} catch (BadLocationException cannotHappen) {
+				Assert.isTrue(false);
 			}
-			restorePositions(editMap, getOffset());
-			result= newDocument.get();
+			restorePositions(editMap);
+		} else {
+			MultiTextEdit newEdit= new MultiTextEdit(0, document.getLength());
+			TextEdit[] replaces= fModifier.getModifications(document.get());
+			for (int i= 0; i < replaces.length; i++) {
+				newEdit.addChild(replaces[i]);
+			}
+			try {
+				newEdit.apply(document, style);
+			} catch (BadLocationException cannotHappen) {
+				Assert.isTrue(false);
+			}
 		}
-		return result;		
 	}
 	
 	private TextEdit createEdit(Map editMap) {
-		int delta= getOffset();
-		MultiTextEdit result= new MultiTextEdit(0, getLength());
-		// don't but the root edit into the edit map. The sourc edit
-		// will be updated by the perform method.
-		createEdit(this, result, editMap, delta);
+		MultiTextEdit result= new MultiTextEdit(0, fSourceRoot.getLength());
+		editMap.put(result, fSourceRoot);
+		createEdit(fSourceRoot, result, editMap);
 		return result;
 	}
 	
-	private static void createEdit(TextEdit source, TextEdit target, Map editMap, int delta) {
+	private static void createEdit(TextEdit source, TextEdit target, Map editMap) {
 		TextEdit[] children= source.getChildren();
 		for (int i= 0; i < children.length; i++) {
 			TextEdit child= children[i];
-			RangeMarker marker= new RangeMarker(child.getOffset() - delta, child.getLength());
+			RangeMarker marker= new RangeMarker(child.getOffset(), child.getLength());
 			target.addChild(marker);
 			editMap.put(marker, child);
-			createEdit(child, marker, editMap, delta);
+			createEdit(child, marker, editMap);
 		}
 	}
 	
@@ -351,14 +363,14 @@ public final class MoveSourceEdit extends AbstractTransferEdit {
 		return result;
 	}
 		
-	private static void restorePositions(Map editMap, int delta) {
+	private static void restorePositions(Map editMap) {
 		for (Iterator iter= editMap.keySet().iterator(); iter.hasNext();) {
 			TextEdit marker= (TextEdit)iter.next();
 			TextEdit edit= (TextEdit)editMap.get(marker);
 			if (marker.isDeleted()) {
 				edit.markAsDeleted();
 			} else {
-				edit.adjustOffset(marker.getOffset() - edit.getOffset() + delta);
+				edit.adjustOffset(marker.getOffset() - edit.getOffset());
 				edit.adjustLength(marker.getLength() - edit.getLength());
 			}
 		}

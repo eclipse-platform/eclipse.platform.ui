@@ -11,14 +11,13 @@
 package org.eclipse.text.edits;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.text.edits.TreeIterationInfo.Visitor;
-
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
@@ -64,15 +63,71 @@ import org.eclipse.jface.text.Region;
  */
 public abstract class TextEdit {
 
+	/**
+	 * Flags indicating that either <code>CREATE_UNDO</code> nor
+	 * <code>UPDATE_REGIONS</code> is set. 
+	 */
+	public static final int NONE= 0;
+	
+	/**
+	 * Flags indicating that applying an edit tree to a document
+	 * is supposed to create a corresponding undo edit. If not
+	 * specified <code>null</code> is returned from method <code>
+	 * apply</code>.
+	 */
+	public static final int CREATE_UNDO= 1 << 0;
+	
+	/**
+	 * Flag indicating that the edit's region will be updated to
+	 * reflect its position in the changed document. If not specified
+	 * when applying an edit tree to a document the edit's region will
+	 * be arbitrary. It is even not guaranteed that the tree is still 
+	 * well formed.
+	 */
+	public static final int UPDATE_REGIONS= 1 << 1;
+	
+	private static class InsertionComparator implements Comparator {
+		public int compare(Object o1, Object o2) {
+			TextEdit edit1 = (TextEdit) o1;
+			TextEdit edit2 = (TextEdit) o2;
+					
+			int offset1 = edit1.getOffset();
+			int length1 = edit1.getLength();
+					
+			int offset2 = edit2.getOffset();
+			int length2 = edit2.getLength();
+					
+			// make sure that a duplicate insertion point at the same offet is 
+			// inserted last. Have to double check with the spec. It says the
+			// with identical values there is no guarantee which one will be 
+			// found.
+			if (offset1 == offset2 && length1 == 0 && length2 == 0) {
+				return -1;
+			}
+			if (offset1 + length1 - 1 < offset2) {
+				return -1;
+			}
+			if (offset2 + length2 - 1 < offset1) {
+				return 1;
+			}
+			throw new MalformedTreeException(
+					null, edit1, 
+					TextEditMessages.getString("TextEdit.overlapping")); //$NON-NLS-1$
+		}
+	}
+	
 	private static final TextEdit[] EMPTY_ARRAY= new TextEdit[0];
+	private static final InsertionComparator INSERTION_COMPARATOR= new InsertionComparator();
 	
 	private static final int DELETED_VALUE= -1;
 	
 	private int fOffset;
 	private int fLength;
 	
-	private TextEdit fParent;
-	private List fChildren;
+	/* package */ TextEdit fParent;
+	/* package */ List fChildren;
+	
+	/* package */ int fDelta;
 
 	/**
 	 * Create a new text edit. Parent is initialized to <code>
@@ -82,6 +137,7 @@ public abstract class TextEdit {
 		Assert.isTrue(offset >= 0 && length >= 0);
 		fOffset= offset;
 		fLength= length;
+		fDelta= 0;
 	}
 	
 	/**
@@ -92,6 +148,7 @@ public abstract class TextEdit {
 	protected TextEdit(TextEdit source) {
 		fOffset= source.fOffset;
 		fLength= source.fLength;
+		fDelta= 0;
 	}
 
 	//---- Region management -----------------------------------------------
@@ -283,7 +340,7 @@ public abstract class TextEdit {
 	 */
 	public final TextEdit[] removeChildren() {
 		if (fChildren == null)
-			return new TextEdit[0];
+			return EMPTY_ARRAY;
 		int size= fChildren.size();
 		TextEdit[] result= new TextEdit[size];
 		for (int i= 0; i < size; i++) {
@@ -479,6 +536,11 @@ public abstract class TextEdit {
 	 * execute an edit tree.
 	 * 
 	 * @param document the document to be manipulated
+	 * @param style flags controlling the execution of the edit tree. Valid
+	 *  flags are: <code>CREATE_UNDO</code> and </code>UPDATE_REGIONS</code>.
+	 * @return a undo edit, if <code>CREATE_UNDO</code> is specified. Otherwise
+	 *  <code>null</code> is returned.
+	 * 
 	 * @exception MalformedTreeException is thrown if the tree isn't
 	 *  in a valid state. This exception is thrown before any edit
 	 *  is executed. So the document is still in its original state.
@@ -490,9 +552,9 @@ public abstract class TextEdit {
 	 * @see #perform(IDocument)
 	 * @see TextEditProcessor#performEdits()
 	 */
-	public final UndoEdit apply(IDocument document) throws MalformedTreeException, BadLocationException {
+	public final UndoEdit apply(IDocument document, int style) throws MalformedTreeException, BadLocationException {
 		try {
-			TextEditProcessor processor= new TextEditProcessor(document, this);
+			TextEditProcessor processor= new TextEditProcessor(document, this, style);
 			return processor.performEdits();
 		} finally {
 			// unconnect from text edit processor
@@ -501,34 +563,16 @@ public abstract class TextEdit {
 	}
 	
 	/**
-	 * Checks the edit's integrity. 
-	 * <p>
-	 * Note that this method <b>should only be called</b> by the edit
-	 * framework and not by normal clients.
-	 *<p>
-	 * This default implementation does nothing. Subclasses may override
-	 * if needed.
-	 *  
-	 * @exception MalformedTreeException if the edit isn't in a valid state
-	 *  and can therefore not be executed
+	 * Applies the edit tree rooted by this edit to the given document. This
+	 * method is a convinence method for <code>apply(document, CREATE_UNDO | UPDATE_REGIONS)
+	 * </code>
+	 * 
+	 * @see #apply(IDocument, int)
 	 */
-	protected void checkIntegrity() throws MalformedTreeException {
-		// does nothing
+	public final UndoEdit apply(IDocument document) throws MalformedTreeException, BadLocationException {
+		return apply(document, CREATE_UNDO | UPDATE_REGIONS);
 	}
-	
-	/**
-	 * Performs the text edit.
-	 * 
-	 * <p>
-	 * Note that this method <b>should only be called</b> by the edit framework. 
-	 * 
-	 * @param document the actual document to manipulate
-	 * 
-	 * @see #apply(IDocument)
-	 */
-	/* package */ abstract void perform(IDocument document) throws BadLocationException;
-	
-	
+
 	/* package */ UndoEdit dispatchPerformEdits(TextEditProcessor processor) throws BadLocationException {
 		return processor.executeDo();
 	}
@@ -581,20 +625,15 @@ public abstract class TextEdit {
 		int size= fChildren.size();
 		if (size == 0)
 			return 0;
-		int offset= edit.getOffset();
-		int end= edit.getInclusiveEnd();
-		for (int i= 0; i < size; i++) {
-			TextEdit other= (TextEdit)fChildren.get(i);
-			int childOffset= other.getOffset();
-			int childEnd= other.getInclusiveEnd();
-			// make sure that a duplicate insertion point at the same offet is inserted last 
-			if (offset > childEnd || (offset == childOffset && edit.getLength() == 0 && other.getLength() == 0))
-				continue;
-			if (end < childOffset)
-				return i;
-			throw new MalformedTreeException(this, edit, TextEditMessages.getString("TextEdit.overlapping")); //$NON-NLS-1$
+		TextEdit last= (TextEdit)fChildren.get(size - 1);
+		if (last.getExclusiveEnd() <= edit.getOffset())
+			return size;
+		try {
+			return -Collections.binarySearch(fChildren, edit,INSERTION_COMPARATOR) -1;
+		} catch(MalformedTreeException e) {
+			e.setParent(this);
+			throw e;
 		}
-		return size;
 	}
 		
 	//---- Offset & Length updating -------------------------------------------------
@@ -634,96 +673,81 @@ public abstract class TextEdit {
 		fLength= DELETED_VALUE;
 	}
 	
-	/**
-	 * Updates all previously executed edits. This method doesn't 
-	 * have any tree iteration info object hence it has to walk 
-	 * the tree by itself. This is slower than the corresponding
-	 * update method that takes a <code>TreeIterationInfo</code>
-	 * object.
-	 * 
-	 * @param event the document event describing the change
-	 */
-	/* package */ final void update(DocumentEvent event) {
-		checkEvent(event);
-		int delta= getDelta(event);
-		if (fParent != null)
-			fParent.update(delta, this);
-		adjustLength(this, delta);
-	}
+	//---- New edit processing ----------------------------------------------
 	
-	private void update(int delta, TextEdit child) {
-		if (fParent != null)
-			fParent.update(delta, this);
-		// We have children. Otherwise we wouldn't end here.
-		boolean doIt= false;
-		for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
-			TextEdit edit= (TextEdit)iter.next();
-			if (doIt) {
-				adjustOffset(edit, delta);	
-			} else {
-				if (edit == child)
-					doIt= true;
+	/* package */ void traversePassOne(TextEditProcessor processor, IDocument document) {
+		if (fChildren != null) {
+			for (int i= fChildren.size() - 1; i >= 0; i--) {
+				TextEdit child= (TextEdit)fChildren.get(i);
+				child.traversePassOne(processor, document);
 			}
+		}
+		if (processor.considerEdit(this)) {
+			performPassOne(processor, document);
 		}
 	}
 	
-	/**
-	 * Updates all previously executed edits.
-	 * 
-	 * @param event the document event describing the change
-	 * @param info a tree iteration info object describing the
-	 * position of the current edit in the tree. 
-	 */
-	/* package */ void update(DocumentEvent event, TreeIterationInfo info) {
-		checkEvent(event);
-		final int delta= getDelta(event);
-		Visitor visitor= new Visitor() {
-			public void visit(TextEdit edit) {
-				adjustOffset(edit, delta);
+	/* package */ void performPassOne(TextEditProcessor processor, IDocument document) {
+	}
+	
+	/* package */ int traversePassTwo(TextEditProcessor processor, IDocument document) throws BadLocationException {
+		int delta= 0;
+		if (fChildren != null) {
+			for (int i= fChildren.size() - 1; i >= 0; i--) {
+				TextEdit child= (TextEdit)fChildren.get(i);
+				delta+= child.traversePassTwo(processor, document);
 			}
-		};
-		info.accept(visitor);
-		adjustLength(this, delta);
+		}
+		if (processor.considerEdit(this)) {
+			if (delta != 0)
+				adjustLength(delta);
+			int r= performPassTwo(document);
+			if (r != 0)
+				adjustLength(r);
+			delta+= r;
+		}
+		return delta;
 	}
 	
+	/* package */ abstract int performPassTwo(IDocument document) throws BadLocationException;
 	
-	private void checkEvent(DocumentEvent event) {
-		int eventOffset= event.getOffset();
-		int eventLength= event.getLength();
-		Assert.isTrue(fOffset <= eventOffset && eventOffset + eventLength <= fOffset + fLength);
+	/* package */ int traversePassThree(TextEditProcessor processor, IDocument document, int accumulatedDelta, boolean delete) {
+		performPassThree(accumulatedDelta, delete);
+		if (fChildren != null) {
+			boolean childDelete= delete || deleteChildren();
+			for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
+				TextEdit child= (TextEdit)iter.next();
+				accumulatedDelta= child.traversePassThree(processor, document, accumulatedDelta, childDelete);
+			}
+		}
+		return accumulatedDelta + fDelta;
 	}
+	
+	/* package */ void performPassThree(int accumulatedDelta, boolean delete) {
+		if (delete)
+			markAsDeleted();
+		else
+			adjustOffset(accumulatedDelta);
+	}
+	
+	/* package */ abstract boolean deleteChildren();
 
-	/* package */ void markChildrenAsDeleted() {
+	/* package */ void moveTree(int delta) {
+		adjustOffset(delta);
 		if (fChildren != null) {
 			for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
-				TextEdit edit= (TextEdit)iter.next();
-				if (!edit.isDeleted()) {
-					edit.markAsDeleted();
-					edit.markChildrenAsDeleted();
-				}
-			}
-		}	
-	}
-	
-	/* package */ static int getDelta(DocumentEvent event) {
-		String text= event.getText();
-		return (text == null ? -event.getLength() : text.length()) - event.getLength();
-	}
-	
-	private static void adjustOffset(TextEdit edit, int delta) {
-		edit.adjustOffset(delta);
-		List children= edit.internalGetChildren();
-		if (children != null) {
-			for (Iterator iter= children.iterator(); iter.hasNext();) {
-				adjustOffset((TextEdit)iter.next(), delta);
+				((TextEdit)iter.next()).moveTree(delta);
 			}
 		}
 	}
 	
-	private static void adjustLength(TextEdit edit, int delta) {
-		while (edit != null) {
-			edit.adjustLength(delta);
-			edit= edit.getParent();
+	/* package */ void deleteTree() {
+		markAsDeleted();
+		if (fChildren != null) {
+			for (Iterator iter= fChildren.iterator(); iter.hasNext();) {
+				TextEdit child= (TextEdit)iter.next();
+				child.deleteTree();
+			}
 		}
 	}
 }

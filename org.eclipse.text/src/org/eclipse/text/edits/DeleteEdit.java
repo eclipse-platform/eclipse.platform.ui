@@ -11,7 +11,6 @@
 package org.eclipse.text.edits;
 
 import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 
 /**
@@ -49,17 +48,18 @@ public final class DeleteEdit extends TextEdit {
 	}
 	
 	/* non Java-doc
-	 * @see TextEdit#perform
+	 * @see TextEdit#performPassTwo
 	 */	
-	/* package */ void perform(IDocument document) throws BadLocationException {
+	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
 		document.replace(getOffset(), getLength(), ""); //$NON-NLS-1$
+		fDelta= -getLength();
+		return fDelta;
 	}
 	
 	/* non Java-doc
-	 * @see TextEdit#update
+	 * @see TextEdit#deleteChildren
 	 */	
-	/* package */ void update(DocumentEvent event, TreeIterationInfo info) {
-		markChildrenAsDeleted();
-		super.update(event, info);
-	}		
+	/* package */ boolean deleteChildren() {
+		return true;
+	}
 }

@@ -11,6 +11,7 @@
 package org.eclipse.text.edits;
 
 import org.eclipse.jface.text.Assert;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
@@ -65,6 +66,22 @@ public class MultiTextEdit extends TextEdit {
 		super(other);
 	}
 
+	/**
+	 * Checks the edit's integrity. 
+	 * <p>
+	 * Note that this method <b>should only be called</b> by the edit
+	 * framework and not by normal clients.
+	 *<p>
+	 * This default implementation does nothing. Subclasses may override
+	 * if needed.
+	 *  
+	 * @exception MalformedTreeException if the edit isn't in a valid state
+	 *  and can therefore not be executed
+	 */
+	protected void checkIntegrity() throws MalformedTreeException {
+		// does nothing
+	}
+	
 	/* non Java-doc
 	 * @see TextEdit#copy
 	 */	
@@ -72,14 +89,29 @@ public class MultiTextEdit extends TextEdit {
 		Assert.isTrue(MultiTextEdit.class == getClass(), "Subclasses must reimplement copy0"); //$NON-NLS-1$
 		return new MultiTextEdit(this);
 	}
+
+	/* non Java-doc
+	 * @see TextEdit#performPassOne
+	 */	
+	/* package */ void performPassOne(TextEditProcessor processor, IDocument document) throws MalformedTreeException {
+		checkIntegrity();
+	}
 	
 	/* non Java-doc
-	 * @see TextEdit#perform
+	 * @see TextEdit#performPassTwo
 	 */	
-	/* package */ final void perform(IDocument document) {
-		// do nothing.
+	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
+		fDelta= 0;
+		return fDelta;
 	}
-
+	
+	/* non Java-doc
+	 * @see TextEdit#deleteChildren
+	 */	
+	/* package */ boolean deleteChildren() {
+		return false;
+	}
+	
 	/* package */ void aboutToBeAdded(TextEdit parent) {
 		defineRegion(parent.getOffset());
 	}

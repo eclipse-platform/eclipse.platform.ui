@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.text.edits;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -31,6 +28,7 @@ public class TextEditProcessor {
 	
 	private IDocument fDocument;
 	private TextEdit fRoot;
+	private int fStyle;
 	
 	private boolean fChecked;
 	private MalformedTreeException fException;
@@ -46,13 +44,14 @@ public class TextEditProcessor {
 	 *  text edit processors. Clients must not modify the edit
 	 *  (e.g adding new children) any longer. 
 	 */
-	public TextEditProcessor(IDocument document, TextEdit root) {
+	public TextEditProcessor(IDocument document, TextEdit root, int style) {
 		Assert.isNotNull(document);
 		Assert.isNotNull(root);
 		fDocument= document;
 		fRoot= root;
 		if (fRoot instanceof MultiTextEdit)
 			((MultiTextEdit)fRoot).defineRegion(0);
+		fStyle= style;
 	}
 	
 	/**
@@ -71,6 +70,17 @@ public class TextEditProcessor {
 	 */
 	public TextEdit getRoot() {
 		return fRoot;
+	}
+	
+	/**
+	 * Returns the style bits of the text edit processor
+	 * 
+	 * @return the style bits
+	 * @see TextEdit#CREATE_UNDO
+	 * @see TextEdit#UPDATE_POSITIONS
+	 */
+	public int getStyle() {
+		return fStyle;
 	}
 	
 	/**
@@ -123,20 +133,9 @@ public class TextEditProcessor {
 	//---- checking --------------------------------------------------------------------
 	
 	/* package */ void checkIntegrityDo() throws MalformedTreeException {
-		checkIntegrity(fRoot);
+		fRoot.traversePassOne(this, fDocument);
 		if (fRoot.getExclusiveEnd() > fDocument.getLength())
 			throw new MalformedTreeException(null, fRoot, TextEditMessages.getString("TextEditProcessor.invalid_length")); //$NON-NLS-1$
-	}
-	
-	private static void checkIntegrity(TextEdit root) throws MalformedTreeException {
-		root.checkIntegrity();
-		List children= root.internalGetChildren();
-		if (children != null) {
-			for (Iterator iter= children.iterator(); iter.hasNext();) {
-				TextEdit edit= (TextEdit)iter.next();
-				checkIntegrity(edit);
-			}
-		}
 	}
 	
 	/* package */ void checkIntegrityUndo() {
@@ -147,51 +146,40 @@ public class TextEditProcessor {
 	//---- execution --------------------------------------------------------------------
 	
 	/* package */ UndoEdit executeDo() throws BadLocationException {
-		Updater.DoUpdater updater= null;
+		UndoCollector collector= new UndoCollector(fRoot);
 		try {
-			updater= Updater.createDoUpdater(fRoot);
-			fDocument.addDocumentListener(updater);
-			updater.push(new TextEdit[] { fRoot });
-			updater.setIndex(0);
-			execute(fRoot, updater);
-			updater.storeRegion();
-			return updater.undo;
-		} finally {
-			if (updater != null)
-				fDocument.removeDocumentListener(updater);
-		}
-	}
-	
-	private void execute(TextEdit edit, Updater.DoUpdater updater) throws BadLocationException {
-		if (edit.hasChildren()) {
-			TextEdit[] children= edit.getChildren();
-			updater.push(children);
-			for (int i= children.length - 1; i >= 0; i--) {
-				updater.setIndex(i);
-				execute(children[i], updater);
+			if (createUndo())
+				collector.connect(fDocument);
+			fRoot.traversePassTwo(this, fDocument);
+			if (updateRegions()) {
+				fRoot.traversePassThree(this, fDocument, 0, false);
 			}
-			updater.pop();
+		} finally {
+			collector.disconnect(fDocument);
 		}
-		if (considerEdit(edit)) {
-			updater.setActiveEdit(edit);
-			edit.perform(fDocument);
-		}
+		return collector.undo;
 	}
 	
 	/* package */ UndoEdit executeUndo() throws BadLocationException {
-		Updater updater= null;
+		UndoCollector collector= new UndoCollector(fRoot);
 		try {
-			updater= Updater.createUndoUpdater(fRoot);
-			fDocument.addDocumentListener(updater);
+			if (createUndo())
+				collector.connect(fDocument);
 			TextEdit[] edits= fRoot.getChildren();
 			for (int i= edits.length - 1; i >= 0; i--) {
-				edits[i].perform(fDocument);
+				edits[i].performPassTwo(fDocument);
 			}
-			updater.storeRegion();
-			return updater.undo;
 		} finally {
-			if (updater != null)
-				fDocument.removeDocumentListener(updater);
+			collector.disconnect(fDocument);
 		}
-	}		
+		return collector.undo;
+	}
+	
+	private boolean createUndo() {
+		return (fStyle & TextEdit.CREATE_UNDO) != 0;
+	}
+	
+	private boolean updateRegions() {
+		return (fStyle & TextEdit.UPDATE_REGIONS) != 0;
+	}
 }

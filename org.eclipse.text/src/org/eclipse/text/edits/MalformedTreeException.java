@@ -54,4 +54,8 @@ public class MalformedTreeException extends RuntimeException {
 	public TextEdit getChild() {
 		return fChild;
 	}
+	
+	/* package */ void setParent(TextEdit parent) {
+		fParent= parent;
+	}
 }

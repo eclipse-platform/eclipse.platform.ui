@@ -22,13 +22,18 @@ package org.eclipse.text.edits;
 public interface ISourceModifier {
 	/**
 	 * Returns the modification to be done to the passed
-	 * string in form of replace edits. The caller of this
-	 * method is responsible to apply the returned edits
-	 * to the passed source.
+	 * string in form of replace edits. The set of returned
+	 * replace edits must modify disjoint text regions. 
+	 * Violating this requirement will result in a <code>
+	 * BadLocationException</code> while executing the
+	 * associated move or copy edit. 
+	 * <p>
+	 * The caller of this method is responsible to apply 
+	 * the returned edits to the passed source.
 	 * 
 	 * @param source the source to be copied or moved
 	 * @return an array of <code>ReplaceEdits</code>
-	 *  describing the modifications
+	 *  describing the modifications.
 	 */
 	public ReplaceEdit[] getModifications(String source);
 	
@@ -37,6 +42,8 @@ public interface ISourceModifier {
 	 * be used in a different text edit object. So it should be 
 	 * created in a way that is doesn't conflict with other text edits
 	 * refering to this source modifier.
+	 * 
+	 * @return the copy of the source modifier
 	 */
 	public ISourceModifier copy();
 }

@@ -69,9 +69,9 @@ public final class UndoEdit extends TextEdit {
 	/* (non-Javadoc)
 	 * @see org.eclipse.text.edits.TextEdit#perform(org.eclipse.jface.text.IDocument)
 	 */
-	void perform(IDocument document) throws BadLocationException {
-		// do nothing. Only the children modify the
-		// document
+	/* package */ int performPassTwo(IDocument document) throws BadLocationException {
+		fDelta= 0;
+		return fDelta;
 	}
 	
 	/* package */ void add(ReplaceEdit edit) {
@@ -86,6 +86,10 @@ public final class UndoEdit extends TextEdit {
 	/* package */ void defineRegion(int offset, int length) {
 		internalSetOffset(offset);
 		internalSetLength(length);
+	}
+	
+	/* package */ boolean deleteChildren() {
+		return false;
 	}
 }
 
