@@ -17,6 +17,7 @@ package org.eclipse.ant.tests.ui.testplugin;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.ant.tests.ui.BuildTests;
 import org.eclipse.ant.tests.ui.editor.AntEditorContentOutlineTests;
 import org.eclipse.ant.tests.ui.editor.CodeCompletionTest;
 import org.eclipse.ant.tests.ui.editor.EnclosingTargetSearchingHandlerTest;
@@ -34,7 +35,7 @@ public class AntUITests extends TestSuite {
         TestSuite suite= new AntUITests();
         suite.setName("Ant UI Unit Tests");
 		suite.addTest(new TestSuite(ProjectCreationDecorator.class));
-		//suite.addTest(new TestSuite(BuildTests.class));
+		suite.addTest(new TestSuite(BuildTests.class));
 		suite.addTest(new TestSuite(SeparateVMTests.class));
         suite.addTest(new TestSuite(CodeCompletionTest.class));
         suite.addTest(new TestSuite(TaskDescriptionProviderTest.class));
