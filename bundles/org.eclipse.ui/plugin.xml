@@ -1097,7 +1097,8 @@
             id="org.eclipse.ui.emacsAcceleratorConfiguration"
             parentId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyConfiguration>
-<!-- New 3.0 key binding work -->
+      
+<!-- New 3.0 key binding work: Standard configuration -->
 <!-- Backspace -->
       <keyBinding
             commandId="org.eclipse.ui.edit.deletePrevious"
@@ -2217,6 +2218,377 @@
             name="%keyConfiguration-3.0-name"
             description="%keyConfiguration-3.0-description"
             id="org.eclipse.ui.keys.configuration-3.0">
+      </keyConfiguration>
+      
+<!-- New 3.0 key binding work: Emacs Configuration -->
+<!-- Close -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.close"
+            keySequence="M1+X K"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Close all -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.closeAll"
+            keySequence="M1+X M1+C"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Save -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.save"
+            keySequence="M1+X M1+S"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Save all -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.saveAll"
+            keySequence="M1+X S"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Print -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.print"
+            keySequence="M3+F9"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.file.print"
+            keySequence="ESC F9"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Undo -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.undo"
+            keySequence="F9"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.undo"
+            keySequence="M1+X U"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.undo"
+            keySequence="M1+M2+-"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Redo -->
+      <keyBinding
+            commandId="org.eclipse.ui.file.save"
+            keySequence="F10"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Cut -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.cut"
+            keySequence="M1+W"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.cut"
+            keySequence="M2+DEL"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Copy -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.copy"
+            keySequence="M3+W"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.copy"
+            keySequence="ESC W"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.copy"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Paste -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.paste"
+            keySequence="M1+Y"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.paste"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Select all -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.selectAll"
+            keySequence="CTRL+X H"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Find/replace -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.findReplace"
+            keySequence="M3+R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.findReplace"
+            keySequence="ESC R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Switch to editor -->
+      <keyBinding
+            commandId="org.eclipse.ui.window.switchToEditor"
+            keySequence="M1+X M1+B"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Content assist proposals -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
+            keySequence="M3+/"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Context information -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            keySequence="M3+?"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.contentAssist.contextInformation"
+            keySequence="M2+M3+?"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Cut line to beginning -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.cut.line.to.beginning"
+            keySequence="M3+0 M1+K"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.cut.line.to.beginning"
+            keySequence="ESC 0 M1+K"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Cut line to end -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.cut.line.to.end"
+            keySequence="M1+K"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Set mark -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.set.mark"
+            keySequence="M1+SPACE"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.set.mark"
+            keySequence="M1+2"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Clear mark -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.clear.mark"
+            keySequence="M1+G"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Swap mark -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.swap.mark"
+            keySequence="M1+X M1+X"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Find incremental -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.findIncremental"
+            keySequence="M1+S"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Find incremental reverse -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.findIncrementalReverse"
+            keySequence="M1+R"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Line up -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.lineUp"
+            keySequence="M1+P"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Line down -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.lineDown"
+            keySequence="M1+N"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Line start -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.lineStart"
+            keySequence="M1+A"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Line end -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.lineUp"
+            keySequence="M1+E"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Goto line -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.line"
+            keySequence="M1+X G"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Goto previous column -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.columnPrevious"
+            keySequence="M1+B"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Goto next column -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.columnNext"
+            keySequence="M1+F"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Page up -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.pageUp"
+            keySequence="M3+V"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.pageUp"
+            keySequence="ESC V"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Page down -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.pageDown"
+            keySequence="M1+V"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Previous word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.wordPrevious"
+            keySequence="M3+B"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.wordPrevious"
+            keySequence="ESC B"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Next word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.wordNext"
+            keySequence="M3+F"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.wordNext"
+            keySequence="ESC F"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Go to the start of text -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.textStart"
+            keySequence="M3+&lt;"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.textStart"
+            keySequence="M2+M3+&lt;"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.textStart"
+            keySequence="ESC &lt;"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.textStart"
+            keySequence="ESC M2+&lt;"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.textStart"
+            keySequence="M1+X ["
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Go to the end of text -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.textEnd"
+            keySequence="M3+&gt;"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.textEnd"
+            keySequence="M2+M3+&gt;"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.textEnd"
+            keySequence="ESC &gt;"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.textEnd"
+            keySequence="ESC M2+&gt;"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.goto.textEnd"
+            keySequence="M1+X ]"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Scroll line up -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.scroll.lineUp"
+            keySequence="M3+Z"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.scroll.lineUp"
+            keySequence="ESC Z"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Scroll line down -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.scroll.lineDown"
+            keySequence="M1+Z"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Delete next -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.deleteNext"
+            keySequence="M1+D"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Delete previous word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.deletePreviousWord"
+            keySequence="M3+BS"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.deletePreviousWord"
+            keySequence="ESC BS"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+<!-- Delete next word -->
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.deleteNextWord"
+            keySequence="M3+D"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyBinding
+            commandId="org.eclipse.ui.edit.text.deleteNextWord"
+            keySequence="ESC D"
+            keyConfigurationId="org.eclipse.ui.keys.configuration-3.0-emacs">
+      </keyBinding>
+      <keyConfiguration
+            name="%keyConfiguration-3.0-emacs-name"
+            description="%keyConfiguration-3.0-emacs-description"
+            id="org.eclipse.ui.keys.configuration-3.0-emacs"
+            parentId="org.eclipse.ui.keys.configuration-3.0">
       </keyConfiguration>
    </extension>
    <extension
