@@ -38,60 +38,28 @@ public class HelpWorkingSetSynchronizer
 
 			// add the help working set
 			IWorkingSet iws = (IWorkingSet) event.getNewValue();
-			WorkingSet ws = getHelpWorkingSetManager().getWorkingSet(iws.getName());
-			if (ws == null && isHelpWorkingSet(iws)) {
-				HelpWorkingSet hws = new HelpWorkingSet(iws);
-				workingSets.add(hws);
-				getHelpWorkingSetManager().addWorkingSet(hws.getWorkingSet());
-			}
-			// see if this is happening upon workbench startup 
-			if (ws != null && findWorkingSet(iws) == null) {
-				getEclipseWorkingSetManager().removeWorkingSet(iws);
-				HelpWorkingSet hws = new HelpWorkingSet(ws);
-				workingSets.add(hws);
-				getEclipseWorkingSetManager().addWorkingSet(hws.getIWorkingSet());
-			}
+			addWorkingSet(iws);
 		} else if (
 			event.getProperty().equals(
 				IWorkingSetManager.CHANGE_WORKING_SET_REMOVE)) {
 
 			// remove the help working set
 			IWorkingSet iws = (IWorkingSet) event.getOldValue();
-			WorkingSet ws = getHelpWorkingSetManager().getWorkingSet(iws.getName());
-			if (ws != null) {
-				HelpWorkingSet hws = findWorkingSet(iws);
-				if (hws != null)
-					workingSets.remove(hws);
-				getHelpWorkingSetManager().removeWorkingSet(ws);
-			}
+			removeWorkingSet(iws);
 		} else if (
 			event.getProperty().equals(
 				IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE)) {
 
 			// rename the help working set
 			IWorkingSet iws = (IWorkingSet) event.getNewValue();
-			HelpWorkingSet hws = findWorkingSet(iws);
-			if (hws != null) {
-				hws.getWorkingSet().setName(iws.getName());
-			}
+			renameWorkingSet(iws);
 		} else if (
 			event.getProperty().equals(
 				IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE)) {
 
 			// change the content of the help working set
 			IWorkingSet iws = (IWorkingSet) event.getNewValue();
-			HelpWorkingSet hws = findWorkingSet(iws);
-			if (hws != null) {
-				AdaptableHelpResource[] elements =
-					new AdaptableHelpResource[iws.getElements().length];
-				System.arraycopy(
-					iws.getElements(),
-					0,
-					elements,
-					0,
-					elements.length);
-				hws.getWorkingSet().setElements(elements);
-			}
+			changeWorkingSet(iws);
 		}
 	}
 
@@ -105,49 +73,108 @@ public class HelpWorkingSetSynchronizer
 
 			// add an eclipse working set
 			WorkingSet ws = (WorkingSet) event.getNewValue();
-			IWorkingSet iws = getEclipseWorkingSetManager().getWorkingSet(ws.getName());
-			if (iws == null) {
-				HelpWorkingSet hws = new HelpWorkingSet(ws);
-				workingSets.add(hws);
-				getEclipseWorkingSetManager().addWorkingSet(hws.getIWorkingSet());
-			} else if (findWorkingSet(ws) == null) {
-				HelpWorkingSet hws = new HelpWorkingSet(ws, iws);
-				workingSets.add(hws);
-			}
+			addWorkingSet(ws);
 		} else if (
 			event.getProperty().equals(
 				WorkingSetManager.CHANGE_WORKING_SET_REMOVE)) {
 
 			// remove the eclipse working set
 			WorkingSet ws = (WorkingSet) event.getOldValue();
-			IWorkingSet iws =
-				getEclipseWorkingSetManager().getWorkingSet(ws.getName());
-			if (iws != null) {
-				HelpWorkingSet hws = findWorkingSet(ws);
-				if (hws != null)
-					workingSets.remove(hws);
-				getEclipseWorkingSetManager().removeWorkingSet(iws);
-			}
+			removeWorkingSet(ws);
 		} else if (
 			event.getProperty().equals(
 				WorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE)) {
 
 			// change the name of the eclipse working set
 			WorkingSet ws = (WorkingSet) event.getNewValue();
-			HelpWorkingSet hws = findWorkingSet(ws);
-			if (hws != null) {
-				hws.getIWorkingSet().setName(ws.getName());
-			}
+			renameWorkingSet(ws);
 		} else if (
 			event.getProperty().equals(
 				WorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE)) {
 
 			// change the content of the eclipse working set
 			WorkingSet ws = (WorkingSet) event.getNewValue();
+			changeWorkingSet(ws);
+		}
+	}
+
+	public void renameWorkingSet(IWorkingSet iws) {
+		HelpWorkingSet hws = findWorkingSet(iws);
+		if (hws != null) {
+			hws.getWorkingSet().setName(iws.getName());
+		}
+	}
+	public void changeWorkingSet(IWorkingSet iws) {
+		HelpWorkingSet hws = findWorkingSet(iws);
+		if (hws != null) {
+			AdaptableHelpResource[] elements =
+				new AdaptableHelpResource[iws.getElements().length];
+			System.arraycopy(
+				iws.getElements(),
+				0,
+				elements,
+				0,
+				elements.length);
+			hws.getWorkingSet().setElements(elements);
+		}
+	}
+
+	public void addWorkingSet(IWorkingSet iws) {
+		WorkingSet ws = getHelpWorkingSetManager().getWorkingSet(iws.getName());
+		if (ws == null && isHelpWorkingSet(iws)) {
+			HelpWorkingSet hws = new HelpWorkingSet(iws);
+			workingSets.add(hws);
+			getHelpWorkingSetManager().addWorkingSet(hws.getWorkingSet());
+		}
+		// see if this is happening upon workbench startup 
+		if (ws != null && findWorkingSet(iws) == null) {
+			HelpWorkingSet hws = new HelpWorkingSet(ws, iws);
+			workingSets.add(hws);
+			iws.setElements(ws.getElements());
+		}
+	}
+	public void removeWorkingSet(IWorkingSet iws) {
+		WorkingSet ws = getHelpWorkingSetManager().getWorkingSet(iws.getName());
+		if (ws != null) {
+			HelpWorkingSet hws = findWorkingSet(iws);
+			if (hws != null)
+				workingSets.remove(hws);
+			getHelpWorkingSetManager().removeWorkingSet(ws);
+		}
+	}
+
+	public void renameWorkingSet(WorkingSet ws) {
+		HelpWorkingSet hws = findWorkingSet(ws);
+		if (hws != null) {
+			hws.getIWorkingSet().setName(ws.getName());
+		}
+	}
+	public void changeWorkingSet(WorkingSet ws) {
+		HelpWorkingSet hws = findWorkingSet(ws);
+		if (hws != null) {
+			hws.getIWorkingSet().setElements(ws.getElements());
+		}
+	}
+	public void removeWorkingSet(WorkingSet ws) {
+		IWorkingSet iws =
+			getEclipseWorkingSetManager().getWorkingSet(ws.getName());
+		if (iws != null) {
 			HelpWorkingSet hws = findWorkingSet(ws);
-			if (hws != null) {
-				hws.getIWorkingSet().setElements(ws.getElements());
-			}
+			if (hws != null)
+				workingSets.remove(hws);
+			getEclipseWorkingSetManager().removeWorkingSet(iws);
+		}
+	}
+	public void addWorkingSet(WorkingSet ws) {
+		IWorkingSet iws =
+			getEclipseWorkingSetManager().getWorkingSet(ws.getName());
+		if (iws == null) {
+			HelpWorkingSet hws = new HelpWorkingSet(ws);
+			workingSets.add(hws);
+			getEclipseWorkingSetManager().addWorkingSet(hws.getIWorkingSet());
+		} else if (findWorkingSet(ws) == null) {
+			HelpWorkingSet hws = new HelpWorkingSet(ws, iws);
+			workingSets.add(hws);
 		}
 	}
 
