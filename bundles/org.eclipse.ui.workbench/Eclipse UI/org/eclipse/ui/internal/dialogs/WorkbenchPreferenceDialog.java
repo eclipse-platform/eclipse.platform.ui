@@ -19,7 +19,10 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -29,8 +32,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.misc.Assert;
 
 /**
  * Prefence dialog for the workbench including the ability to load/save
@@ -51,6 +60,77 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * The dialog settings key for the last used import/export path.
 	 */
 	final static String FILE_PATH_SETTING = "PreferenceImportExportFileSelectionPage.filePath"; //$NON-NLS-1$
+	
+    /**
+     * There can only ever be one instance of the workbench's preference dialog.
+     * This keeps a handle on this instance, so that attempts to create a second
+     * dialog should just fail (or return the original instance).
+     * 
+     * @since 3.1
+     */
+    private static WorkbenchPreferenceDialog instance = null;
+
+    /**
+     * Creates a workbench preference dialog to a particular preference page. It
+     * is the responsibility of the caller to then call <code>open()</code>.
+     * The call to <code>open()</code> will not return until the dialog
+     * closes, so this is the last chance to manipulate the dialog.
+     * 
+     * @param preferencePageId
+     *            The identifier of the preference page to open; may be
+     *            <code>null</code>. If it is <code>null</code>, then the
+     *            preference page is not selected or modified in any way.
+     * @return The selected preference page.
+     * @since 3.1
+     */
+    public static final WorkbenchPreferenceDialog createDialogOn(
+            final String preferencePageId) {
+        final WorkbenchPreferenceDialog dialog;
+
+        if (instance == null) {
+            /*
+             * There is no existing preference dialog, so open a new one with
+             * the given selected page.
+             */
+
+            // Determine a decent parent shell.
+            final IWorkbench workbench = PlatformUI.getWorkbench();
+            final IWorkbenchWindow workbenchWindow = workbench
+                    .getActiveWorkbenchWindow();
+            final Shell parentShell;
+            if (workbenchWindow != null) {
+                parentShell = workbenchWindow.getShell();
+            } else {
+                parentShell = null;
+            }
+
+            // Create the dialog and open it.
+            final PreferenceManager preferenceManager = PlatformUI
+                    .getWorkbench().getPreferenceManager();
+            dialog = new WorkbenchPreferenceDialog(parentShell,
+                    preferenceManager);
+            if (preferencePageId != null) {
+                dialog.setSelectedNode(preferencePageId);
+            }
+            dialog.create();
+            WorkbenchHelp.setHelp(dialog.getShell(),
+                    IWorkbenchHelpContextIds.PREFERENCE_DIALOG);
+
+        } else {
+            /*
+             * There is an existing preference dialog, so let's just select the
+             * given preference page.
+             */
+            dialog = instance;
+            if (preferencePageId != null) {
+                dialog.setCurrentPageId(preferencePageId);
+            }
+
+        }
+
+        // Get the selected node, and return it.
+        return dialog;
+    }
 
 	/**
 	 * Creates a new preference dialog under the control of the given preference
@@ -62,10 +142,14 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 *            the preference manager
 	 */
 	public WorkbenchPreferenceDialog(Shell parentShell,
-			PreferenceManager manager) {
-		super(parentShell, manager);
+            PreferenceManager manager) {
+        super(parentShell, manager);
+        Assert
+                .isTrue((instance == null),
+                        "There cannot be two preference dialogs at once in the workbench."); //$NON-NLS-1$
+        instance = this;
 
-	}
+    }
 
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
@@ -83,6 +167,19 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		}
 		super.buttonPressed(buttonId);
 	}
+    
+    /**
+     * Closes the preference dialog. This clears out the singleton instance
+     * before calling the super implementation.
+     * 
+     * @return <code>true</code> if the dialog is (or was already) closed, and
+     *         <code>false</code> if it is still open
+     * @since 3.1
+     */
+    public final boolean close() {
+        instance = null;
+        return super.close();
+    }
 
 	/*
 	 * (non-Javadoc) Method declared on Dialog.
@@ -256,5 +353,33 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 		}
 		return true;
 	}
+   
+    /**
+     * Returns the currently selected page. This can be used in conjuction with
+     * <code>createDialogOn</code> to create a dialog, manipulate the
+     * preference page, and then display it to the user.
+     * 
+     * @return The currently selected page; this value may be <code>null</code>
+     *         if there is no selected page.
+     * @since 3.1
+     */
+    public final IPreferencePage getCurrentPage() {
+        return super.getCurrentPage();
+    }
 
+    /**
+     * Selects the current page based on the given preference page identifier.
+     * If no node can be found, then nothing will change.
+     * 
+     * @param preferencePageId
+     *            The preference page identifier to select; should not be
+     *            <code>null</code>.
+     */
+    public final void setCurrentPageId(final String preferencePageId) {
+        final IPreferenceNode node = findNodeMatching(preferencePageId);
+        if (node != null) {
+            getTreeViewer().setSelection(new StructuredSelection(node));
+            showPage(node);
+        }
+    }
 }
