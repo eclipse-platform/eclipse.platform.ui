@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.ColorSchemeService;
 import org.eclipse.ui.internal.IHelpContextIds;

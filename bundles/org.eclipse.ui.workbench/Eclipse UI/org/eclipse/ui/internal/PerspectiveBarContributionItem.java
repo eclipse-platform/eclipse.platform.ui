@@ -23,7 +23,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.application.IWorkbenchPreferences;
 
 public class PerspectiveBarContributionItem extends ContributionItem {
 
