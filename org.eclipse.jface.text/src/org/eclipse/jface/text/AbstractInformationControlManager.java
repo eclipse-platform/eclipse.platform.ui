@@ -111,13 +111,25 @@ abstract public class AbstractInformationControlManager {
 	public final static Anchor ANCHOR_GLOBAL= new Anchor();
 
 	/**
-	 * Dialog store constants.
+	 * Dialog store constant for the location's x-coordinate.
 	 * @since 3.0
 	 */
 	public static final String STORE_LOCATION_X= "location.x"; //$NON-NLS-1$
+	/**
+	 * Dialog store constant for the location's y-coordinate.
+	 * @since 3.0
+	 */
 	public static final String STORE_LOCATION_Y= "location.y"; //$NON-NLS-1$
-	public static final String STORE_SIZE_X= "size.x"; //$NON-NLS-1$
-	public static final String STORE_SIZE_Y= "size.y"; //$NON-NLS-1$
+	/**
+	 * Dialog store constant for the size's width.
+	 * @since 3.0
+	 */
+	public static final String STORE_SIZE_WIDTH= "size.width"; //$NON-NLS-1$
+	/**
+	 * Dialog store constant for the size's height.
+	 * @since 3.0
+	 */
+	public static final String STORE_SIZE_HEIGHT= "size.height"; //$NON-NLS-1$
 	
 	
 	/** The subject control of the information control */
@@ -329,8 +341,8 @@ abstract public class AbstractInformationControlManager {
 	 * <ul>
 	 *	<li>{@link AbstractInformationControlManager#STORE_LOCATION_X}</li>
 	 *	<li>{@link AbstractInformationControlManager#STORE_LOCATION_Y}</li>
-	 *  <li>{@link AbstractInformationControlManager#STORE_SIZE_X}</li>
-	 *	<li>{@link AbstractInformationControlManager#STORE_SIZE_Y}</li>
+	 *  <li>{@link AbstractInformationControlManager#STORE_SIZE_WIDTH}</li>
+	 *	<li>{@link AbstractInformationControlManager#STORE_SIZE_HEIGHT}</li>
 	 * </ul>
 	 * </p>
 	 * 
@@ -892,6 +904,8 @@ abstract public class AbstractInformationControlManager {
 	
 	/**
 	 * Stores the information control's bounds.
+	 *
+	 * @since 3.0
 	 */
 	protected void storeInformationControlBounds() {
 		if (fDialogSettings == null || fInformationControl == null || !(fIsRestoringLocation || fIsRestoringSize))
@@ -908,8 +922,8 @@ abstract public class AbstractInformationControlManager {
 			return;
 		
 		if (fIsRestoringSize && controlRestoresSize) {
-			fDialogSettings.put(STORE_SIZE_X, bounds.width);
-			fDialogSettings.put(STORE_SIZE_Y, bounds.height);
+			fDialogSettings.put(STORE_SIZE_WIDTH, bounds.width);
+			fDialogSettings.put(STORE_SIZE_HEIGHT, bounds.height);
 		}
 		if (fIsRestoringLocation && controlRestoresLocation) {
 			fDialogSettings.put(STORE_LOCATION_X, bounds.x);
@@ -936,8 +950,8 @@ abstract public class AbstractInformationControlManager {
 		
 		if (fIsRestoringSize && controlRestoresSize) {
 			try {
-				bounds.width= fDialogSettings.getInt(STORE_SIZE_X);
-				bounds.height= fDialogSettings.getInt(STORE_SIZE_Y);
+				bounds.width= fDialogSettings.getInt(STORE_SIZE_WIDTH);
+				bounds.height= fDialogSettings.getInt(STORE_SIZE_HEIGHT);
 			} catch (NumberFormatException ex) {
 				bounds.width= -1;
 				bounds.height= -1;

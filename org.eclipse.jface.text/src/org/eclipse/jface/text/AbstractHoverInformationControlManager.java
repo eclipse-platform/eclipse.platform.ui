@@ -386,7 +386,10 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		
 	/** The mouse tracker on the subject control */
 	private MouseTracker fMouseTracker= new MouseTracker();
-	/** The remembered hover event */
+	/**
+	 * The remembered hover event.
+     * @since 3.0
+	 */
 	private MouseEvent fHoverEvent= null;
 	/** The remembered hover event sate mask of the keyboard modifiers */
 	private int fHoverEventStateMask= 0;

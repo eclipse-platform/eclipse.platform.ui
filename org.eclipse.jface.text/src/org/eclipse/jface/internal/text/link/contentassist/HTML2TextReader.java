@@ -69,7 +69,9 @@ class HTML2TextReader extends SubstitutionTextReader {
 	private boolean fIsPreformattedText= false;
 	
 	/**
-	 * Transforms the html text from the reader to formatted text.
+	 * Transforms the HTML text from the reader to formatted text.
+	 * 
+	 * @param reader the reader
 	 * @param presentation If not <code>null</code>, formattings will be applied to 
 	 * the presentation.
 	*/
@@ -202,7 +204,7 @@ class HTML2TextReader extends SubstitutionTextReader {
 	}
 	
 	/*
-	 * A '<' has been read. Process a html tag
+	 * A '<' has been read. Process a HTML tag
 	 */ 
 	private String processHTMLTag() throws IOException {
 		

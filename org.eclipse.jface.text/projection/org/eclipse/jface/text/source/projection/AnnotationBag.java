@@ -17,6 +17,8 @@ import org.eclipse.jface.text.source.Annotation;
 
 /**
  * A bag of annotations.
+ * 
+ * @since 3.0
  */
 public class AnnotationBag extends Annotation {
 	
