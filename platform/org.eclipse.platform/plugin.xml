@@ -59,10 +59,16 @@
             <implementation
                   kind="swt">
             </implementation>
-            <launchBar location="right">
+            <!--
+            fg="#7269d2"
+            -->
+            <launchBar 	
+            	location="right" 
+            	bg="#dedcf5" 
+            	>
                <shortcut
-                     tooltip="%shortcut.overview.tooltip"
                      icon="css/graphics/icons/etool/overview.gif"
+                     tooltip="%shortcut.overview.tooltip"
                      url="http://org.eclipse.ui.intro/showPage?id=overview"/>
                <shortcut
                      tooltip="%shortcut.tutorials.tooltip"
