@@ -393,6 +393,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	 * Sorts all the editors according to the table header
 	 */
 	private void sort() {
+		//Backward compatible. Table used to have 3 columns.
+		if(sortColumn > (editorsTable.getColumnCount() - 1))
+			sortColumn = 0;
 		Adapter a[] = new Adapter[elements.size()];
 		elements.toArray(a);
 		Arrays.sort(a);
