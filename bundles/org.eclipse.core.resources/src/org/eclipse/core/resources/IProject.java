@@ -309,10 +309,15 @@ public interface IProject extends IContainer, IAdaptable {
 	 * account.
 	 * 
 	 * @return the content type matcher for this project
+	 * @throws CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This project does not exist.</li>
+	 * <li> This project is not open.</li>
+	 * </ul>
 	 * @see IContentTypeMatcher
 	 * @since 3.1
 	 */
-	public IContentTypeMatcher getContentTypeMatcher();
+	public IContentTypeMatcher getContentTypeMatcher() throws CoreException;
 
 	/**
 	 * Returns the description for this project.
