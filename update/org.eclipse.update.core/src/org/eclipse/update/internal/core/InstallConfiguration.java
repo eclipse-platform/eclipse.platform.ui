@@ -340,7 +340,9 @@ public class InstallConfiguration
 
 	/*
 	 * Saves the configuration into its URL/location
-	 * and changes the platform configuration
+	 * and changes the platform configuration.
+	 * The runtime site entries from platform.cfg are updated as required
+	 * (cannot recreate these because must preserve other runtime state) [18520]
 	 */
 	public void save(boolean isTransient) throws CoreException {
 
@@ -360,8 +362,8 @@ public class InstallConfiguration
 				configuredFeatureEntries[i]);
 		}
 
-		//Unconfigure sites
-		unconfigureSites(configurationSites,runtimeConfiguration);
+		//check sites
+		checkSites(configurationSites,runtimeConfiguration);
 
 		// Write the plugin path, primary feature and platform
 		// into platform.cfg
@@ -403,7 +405,8 @@ public class InstallConfiguration
 
 	/*
 	 * Write the plugin path for each site
-	 * Do not check if the site already existed before [16696]
+	 * Do not check if the site already existed before [16696].
+	 * Reuse any runtime site objects in platform.cfg (to preserve state) [18520].
 	 */
 	private void savePluginPath(
 		ConfiguredSite cSite,
@@ -440,10 +443,17 @@ public class InstallConfiguration
 			//$NON-NLS-1$
 		}
 
-		// create the policy
+		// update runtime configuration [18520]
+		// Note: we must not blindly replace the site entries because they
+		//       contain additional runtime state that needs to be preserved.
 		IPlatformConfiguration.ISiteEntry siteEntry =
-			runtimeConfiguration.createSiteEntry(urlToCheck,sitePolicy);
-		runtimeConfiguration.configureSite(siteEntry);
+			runtimeConfiguration.findConfiguredSite(urlToCheck);
+		if (siteEntry == null) 
+			siteEntry = 	
+				runtimeConfiguration.createSiteEntry(urlToCheck,sitePolicy);
+		else
+			siteEntry.setSitePolicy(sitePolicy);
+		runtimeConfiguration.configureSite(siteEntry, true /*replace if exists*/);
 	}
 
 	/*
@@ -528,11 +538,10 @@ public class InstallConfiguration
 	}
 
 	/*
-	 * Unconfigures all Site entries from platform.cfg
 	 * Log if we are about to create a site that didn't exist before
-	 * in platform.cfg [16696]
+	 * in platform.cfg [16696]. 
 	 */
-	private void unconfigureSites(
+	private void checkSites(
 		ConfiguredSiteModel[] configurationSites,
 		IPlatformConfiguration runtimeConfiguration) throws CoreException {
 
@@ -572,15 +581,7 @@ public class InstallConfiguration
 							.toExternalForm()));
 				//$NON-NLS-1$
 			}
-		}
-		
-		
-		// disable all the sites
-		IPlatformConfiguration.ISiteEntry[] platformSites = runtimeConfiguration.getConfiguredSites();
-		for (int i = 0; i < platformSites.length; i++) {
-			runtimeConfiguration.unconfigureSite(platformSites[i]);
-		}
-		
+		}		
 	}	 
 
 	/*

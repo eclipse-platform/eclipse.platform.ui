@@ -148,7 +148,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	/**
 	 * Method parseSite.
 	 */
-	public Site parseSite(File directory) throws CoreException {
+	private Site parseSite(File directory) throws CoreException {
 
 		this.site = (SiteFile) createSiteMapModel();
 
@@ -434,12 +434,6 @@ public class SiteFileFactory extends BaseSiteFactory {
 		return (
 			super.canParseSiteType(type)
 				|| SiteFileContentProvider.SITE_TYPE.equalsIgnoreCase(type));
-	}
-
-	/**
-	 * 
-	 */
-	public void abort() {
 	}
 
 }
