@@ -145,4 +145,8 @@ class CopyToClipboardAction extends SelectionListenerAction {
 
         return true;
     }
+    
+	public void dispose() {
+		fClipboard.dispose();
+	}
 }

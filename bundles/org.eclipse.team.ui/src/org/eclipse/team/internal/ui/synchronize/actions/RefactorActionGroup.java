@@ -140,4 +140,12 @@ public class RefactorActionGroup extends ActionGroup {
 		}
 		return true;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		copyAction.dispose();
+	}
 }
