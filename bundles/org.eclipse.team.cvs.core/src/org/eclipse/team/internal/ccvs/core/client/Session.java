@@ -626,7 +626,7 @@ public class Session {
 			throw new CVSException(Policy.bind("Session.badInt"), e); //$NON-NLS-1$
 		}
 		// obtain an output stream for the file
-		OutputStream out = file.getOutputStream(responseType);
+		OutputStream out = file.getOutputStream(responseType, true);
 		try {
 			transferWithProgress(connection.getInputStream(), out, size, SERVER_NEWLINE_BYTE,
 				isBinary ? null : PLATFORM_NEWLINE_BYTES, monitor, title);

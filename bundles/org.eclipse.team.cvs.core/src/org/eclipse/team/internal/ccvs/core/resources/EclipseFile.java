@@ -68,7 +68,7 @@ class EclipseFile extends EclipseResource implements ICVSFile {
  		}
  	}
 	
-	public OutputStream getOutputStream(final int responseType) throws CVSException {
+	public OutputStream getOutputStream(final int responseType, final boolean keepLocalHistory) throws CVSException {
 		return new ByteArrayOutputStream() {
 			public void close() throws IOException {
 				try {
@@ -76,13 +76,16 @@ class EclipseFile extends EclipseResource implements ICVSFile {
 					if (responseType == CREATED || (responseType == UPDATED && ! resource.exists())) {
 						file.create(new ByteArrayInputStream(toByteArray()), false /*force*/, null);
 					} else if(responseType == UPDATE_EXISTING) {
-						file.setContents(new ByteArrayInputStream(toByteArray()), false /*force*/, true /*keep history*/, null);
+						file.setContents(new ByteArrayInputStream(toByteArray()), false /*force*/, keepLocalHistory /*keep history*/, null);
 					} else {
-						// Ensure we don't leave the file in a partially written state
-						IFile tempFile = file.getParent().getFile(new Path(file.getName() + TEMP_FILE_EXTENSION));
-						tempFile.create(new ByteArrayInputStream(toByteArray()), true /*force*/, null);
-						file.delete(false, true, null);
-						tempFile.move(new Path(file.getName()), true, true, null);
+						
+						file.setContents(new ByteArrayInputStream(toByteArray()), false /*force*/, keepLocalHistory /*keep history*/, null);
+						
+//						// Ensure we don't leave the file in a partially written state
+//						IFile tempFile = file.getParent().getFile(new Path(file.getName() + TEMP_FILE_EXTENSION));
+//						tempFile.create(new ByteArrayInputStream(toByteArray()), true /*force*/, null);
+//						file.delete(false, true, null);
+//						tempFile.move(new Path(file.getName()), true, true, null);
 					}
 				} catch(CoreException e) {
 					throw new IOException(Policy.bind("EclipseFile_Problem_creating_resource", e.getMessage())); //$NON-NLS-1$ //$NON-NLS-2$

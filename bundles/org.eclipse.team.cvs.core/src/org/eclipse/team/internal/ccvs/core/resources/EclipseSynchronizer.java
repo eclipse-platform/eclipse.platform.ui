@@ -240,6 +240,7 @@ public class EclipseSynchronizer {
 								SyncFileWriter.writeFolderSync(cvsFolder, info);
 							}
 						}
+						Policy.checkCanceled(monitor);
 						monitor.worked(1);
 					}
 
@@ -256,6 +257,7 @@ public class EclipseSynchronizer {
 							ICVSFolder cvsFolder = CVSWorkspaceRoot.getCVSFolderFor(folder);
 							SyncFileWriter.writeAllResourceSync(cvsFolder, infos);
 						}
+						Policy.checkCanceled(monitor);
 						monitor.worked(1);
 					}
 					

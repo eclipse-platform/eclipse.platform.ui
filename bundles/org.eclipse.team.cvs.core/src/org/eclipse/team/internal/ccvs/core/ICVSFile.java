@@ -50,7 +50,7 @@ public interface ICVSFile extends ICVSResource {
 	 *    CREATED - contents for a file that doesn't exist locally
 	 *    UPDATE_EXISTING - Replacing a local file with no local changes with remote changes.
  	 */
-	OutputStream getOutputStream(int responseType) throws CVSException;
+	OutputStream getOutputStream(int responseType, boolean keepLocalHistory) throws CVSException;
 	
 	/**
 	 * Gets an appending output stream for writing to the file.
