@@ -12,6 +12,7 @@ package org.eclipse.core.resources;
 
 import java.util.Map;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.content.IContentTypeMatcher;
 
 /**
  * A project is a type of resource which groups resources
@@ -301,6 +302,17 @@ public interface IProject extends IContainer, IAdaptable {
 	 * @see IResourceRuleFactory#deleteRule(IResource)
 	 */
 	public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
+	
+	/**
+	 * Returns this project's content type matcher. This content type matcher takes 
+	 * project specific preferences and nature-content type associations into 
+	 * account.
+	 * 
+	 * @return the content type matcher for this project
+	 * @see IContentTypeMatcher
+	 * @since 3.1
+	 */
+	public IContentTypeMatcher getContentTypeMatcher();
 
 	/**
 	 * Returns the description for this project.

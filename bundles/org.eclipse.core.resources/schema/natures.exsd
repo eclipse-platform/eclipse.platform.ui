@@ -15,6 +15,7 @@ configured automatically when a project is opened and deconfigured
 when a project is closed.  For example, the Java nature 
 might install a Java builder and do other project 
 configuration when added to a project
+&lt;/p&gt;
 &lt;p&gt;
 The natures extension-point allows nature writers 
 to register their nature implementation under a 
@@ -22,8 +23,9 @@ symbolic name that is then used from within the
 workspace to find and configure natures. 
 The symbolic name is id of the nature extension.  When 
 defining a nature extension, users are encouraged to include a
-human-readable value fo rth e&quot;name&quot; attribute which identifies
+human-readable value for the &quot;name&quot; attribute which identifies
 their meaning and potentially may be presented to users.
+&lt;/p&gt;
 &lt;p&gt;
 Natures can specify relationship constraints with other natures.
 The &quot;one-of-nature&quot; constraint specifies that at most one nature
@@ -36,6 +38,7 @@ to be configured and deconfigured in such a way that their required
 natures will always be configured before them and deconfigured after
 them.  For this reason, cyclic dependencies between natures are not
 permitted.
+&lt;/p&gt;
 &lt;p&gt;
 Natures cannot be added to or removed from a project if that change would
 violate any constraints that were previously satisfied.  If a nature is
@@ -45,6 +48,7 @@ satisfied, that nature and all natures that require it are marked as
 when a required nature goes missing from the install.  Natures that are 
 missing from the install, and natures involved in dependency cycles are 
 also marked as disabled.
+&lt;/p&gt;
 &lt;p&gt;
 Natures can also specify which incremental project builders, if any, are 
 configured by them.  With this information, the workspace will ensure that 
@@ -54,8 +58,17 @@ but the nature&apos;s deconfigure method fails to remove its corresponding build
 the workspace will remove those builders from the spec automatically.  It 
 is not permitted for two natures to specify the same incremental project builder
 in their markup.
+&lt;/p&gt;
 &lt;p&gt;
 Natures also have the ability to disallow the creation of linked resources on projects they are associated with.  By setting the &lt;code&gt;allowLinking&lt;/code&gt; attribute to &amp;quot;false&amp;quot;, a nature can declare that linked resources should never be created.  This feature is new in release 2.1.
+&lt;/p&gt;
+&lt;p&gt;
+Starting with release 3.1, natures can declare affinity 
+with arbitrary content types, affecting the way content 
+type determination happens for files in the workspace. 
+In case of conflicts (two or more content types deemed
+equally suitable for a given file), the content type having affinity with any of the natures configured for the corresponding project will be chosen.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -67,6 +80,7 @@ Natures also have the ability to disallow the creation of linked resources on pr
                <element ref="one-of-nature"/>
                <element ref="requires-nature"/>
                <element ref="builder"/>
+               <element ref="content-type"/>
             </choice>
             <element ref="options" minOccurs="0" maxOccurs="1"/>
          </sequence>
@@ -195,6 +209,18 @@ Natures also have the ability to disallow the creation of linked resources on pr
             <annotation>
                <documentation>
                   an option to specify whether this nature allows the creation of linked resources.  By default, linking is allowed.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="content-type">
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  the fully-qualified id of a content type associated to this nature.
                </documentation>
             </annotation>
          </attribute>

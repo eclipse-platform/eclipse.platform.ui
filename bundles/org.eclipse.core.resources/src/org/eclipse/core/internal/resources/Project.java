@@ -13,11 +13,10 @@ package org.eclipse.core.internal.resources;
 import java.util.*;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.utils.*;
-import org.eclipse.core.internal.utils.Assert;
-import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.content.IContentTypeMatcher;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.osgi.util.NLS;
 
@@ -346,7 +345,7 @@ public class Project extends Container implements IProject {
 	public IProjectDescription getDescription() throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
-		ProjectDescription description = ((ProjectInfo)info).getDescription();
+		ProjectDescription description = ((ProjectInfo) info).getDescription();
 		//if the project is currently in the middle of being created, the description might not be available yet
 		if (description == null)
 			checkAccessible(NULL_FLAG);
@@ -390,6 +389,15 @@ public class Project extends Container implements IProject {
 
 	/*
 	 *  (non-Javadoc)
+	 * @see IProject#getContentTypeMatcher
+	 */
+	public IContentTypeMatcher getContentTypeMatcher() {
+		//TODO support project specific content type matcher
+		return Platform.getContentTypeManager();
+	}
+
+	/*
+	 *  (non-Javadoc)
 	 * @see IProject#getWorkingLocation(String)
 	 */
 	public IPath getWorkingLocation(String id) {
@@ -428,7 +436,7 @@ public class Project extends Container implements IProject {
 	public IProject[] getReferencedProjects() throws CoreException {
 		ResourceInfo info = getResourceInfo(false, false);
 		checkAccessible(getFlags(info));
-		ProjectDescription description = ((ProjectInfo)info).getDescription();
+		ProjectDescription description = ((ProjectInfo) info).getDescription();
 		//if the project is currently in the middle of being created, the description might not be available yet
 		if (description == null)
 			checkAccessible(NULL_FLAG);
