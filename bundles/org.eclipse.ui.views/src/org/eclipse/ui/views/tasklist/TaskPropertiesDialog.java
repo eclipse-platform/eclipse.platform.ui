@@ -49,6 +49,11 @@ public class TaskPropertiesDialog extends Dialog {
 	private Text descriptionText;
 	
 	/**
+	 * The control for the Creation Time field.
+	 */
+	private Label creationTime;
+		
+	/**
 	 * The combo box control for the Priority field.
 	 */
 	private Combo priorityCombo;
@@ -172,6 +177,7 @@ protected Control createDialogArea(Composite parent) {
 	Composite composite = (Composite) super.createDialogArea(parent);
 	initializeDialogUnits(composite);
 	createDescriptionArea(composite);
+	createCreationTimeArea(composite);
 	if (isTask()) {
 		createPriorityAndStatusArea(composite);
 	}
@@ -181,6 +187,21 @@ protected Control createDialogArea(Composite parent) {
 	createResourceArea(composite);
 	updateDialogFromMarker();
 	return composite;
+}
+/**
+ * Method createCreationTimeArea.
+ * @param composite
+ */
+private void createCreationTimeArea(Composite parent) {
+	Composite composite = new Composite(parent, SWT.NONE);
+	GridLayout layout = new GridLayout();
+	layout.numColumns = 2;
+	composite.setLayout(layout);
+	
+	Label label = new Label(composite, SWT.NONE);
+	label.setText(TaskListMessages.getString("TaskProp.creationTime")); //$NON-NLS-1$
+	
+	creationTime = new Label(composite, SWT.NONE);	
 }
 
 /**
@@ -310,6 +331,7 @@ private void updateDialogFromMarker() {
 		return;
 	}
 	descriptionText.setText(MarkerUtil.getMessage(marker));
+	creationTime.setText(MarkerUtil.getCreationTime(marker));
 	if (isTask()) {
 		priorityCombo.clearSelection();
 		priorityCombo.select(IMarker.PRIORITY_HIGH - MarkerUtil.getPriority(marker));
