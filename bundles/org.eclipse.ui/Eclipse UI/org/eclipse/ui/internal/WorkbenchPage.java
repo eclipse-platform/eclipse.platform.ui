@@ -50,6 +50,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	//user preference settings.
 	private int reuseEditors = -1;
 	private Listener mouseDownListener;
+	private IMemento deferredMemento;
+	private PerspectiveDescriptor deferredActivePersp;
 /**
  * Constructs a new page with a given perspective and input.
  *
@@ -76,8 +78,12 @@ public WorkbenchPage(WorkbenchWindow w, IMemento memento, IAdaptable input)
 	throws WorkbenchException
 {
 	super();
-	init(w, null, input);
-	restoreState(memento);
+	if (true) {
+		init(w, null, input);
+		restoreState(memento);
+	} else {
+		deferInit(w, memento, input);
+	}
 }
 /**
  * Activates a part.  The part will be brought to the front and given focus.
@@ -513,6 +519,10 @@ static private void deactivatePart(IWorkbenchPart part, boolean switchActions, b
  * Cleanup.
  */
 public void dispose() {
+	// If we were never created just return.
+	if (deferredMemento != null)
+		return;
+		
 	// Always unzoom
 	if (isZoomed())
 		zoomOut();
@@ -718,6 +728,8 @@ public String getLabel() {
 	}
 	if(activePersp != null)
 		label = WorkbenchMessages.format("WorkbenchPage.PerspectiveFormat", new Object[] { label, activePersp.getDesc().getLabel() }); //$NON-NLS-1$
+	else if (deferredActivePersp != null)
+		label = WorkbenchMessages.format("WorkbenchPage.PerspectiveFormat", new Object[] { label, deferredActivePersp.getLabel() }); //$NON-NLS-1$	
 	return label;
 }
 /**
@@ -744,6 +756,8 @@ private Perspective getPersp() {
  * Returns the perspective.
  */
 public IPerspectiveDescriptor getPerspective() {
+	if (deferredActivePersp != null)
+		return deferredActivePersp;
 	return getPersp().getDesc();
 }
 /**
@@ -882,6 +896,48 @@ private void init(WorkbenchWindow w, String layoutID, IAdaptable input)
 	}
 }
 /**
+ * Save the init parameters and defer initialization.  
+ *
+ * @param w the parent window
+ * @param memento the persistent memento.
+ * @param input the page input
+ */
+private void deferInit(WorkbenchWindow w, IMemento memento, IAdaptable input) 
+	throws WorkbenchException
+{
+	// Save state.
+	window = w;
+	this.input = input;
+	deferredMemento = memento;
+
+	// Get active perspective.
+	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_PERSPECTIVES);
+	String activePerspectiveID = childMem.getString(IWorkbenchConstants.TAG_ACTIVE_PERSPECTIVE);
+	PerspectiveDescriptor desc = (PerspectiveDescriptor)WorkbenchPlugin
+		.getDefault().getPerspectiveRegistry().findPerspectiveWithId(activePerspectiveID);
+	if (desc == null)
+		throw new WorkbenchException(WorkbenchMessages.getString("WorkbenchPage.ErrorRecreatingPerspective")); //$NON-NLS-1$
+	deferredActivePersp = desc;
+}
+/**
+ * Finish initialization if we have been deferred.
+ */
+private void finishInit() {
+	if (deferredMemento == null) 
+		return;
+	BusyIndicator.showWhile(null, new Runnable() {
+		public void run() {
+			try {
+				init(window, null, input);
+			} catch (WorkbenchException e) {
+			}
+			restoreState(deferredMemento);
+			deferredMemento = null;
+			deferredActivePersp = null;
+		}
+	});
+}
+/**
  * Determine if the new active part will cause the
  * the actions to change the visibility state or
  * just change the enablement state.
@@ -935,6 +991,8 @@ public boolean isZoomed() {
  * expected to update action bars afterwards.
  */
 protected void onActivate() {
+	if (deferredMemento != null)
+		finishInit();
 	composite.setVisible(true);
 	getPersp().onActivate();
 	if (activePart != null) {
@@ -1199,6 +1257,8 @@ private void restoreState(IMemento memento) {
  * See IWorkbenchPage
  */
 public boolean saveAllEditors(boolean confirm) {
+	if (deferredMemento != null)
+		return true;
 	return getEditorManager().saveAll(confirm, false);
 }
 /**
@@ -1243,6 +1303,16 @@ public void savePerspectiveAs(IPerspectiveDescriptor desc) {
  * Save the state of the page.
  */
 public void saveState(IMemento memento) {
+	// If we were never initialized ..
+	if (deferredMemento != null) {
+		XMLMemento realMemento = (XMLMemento) memento;
+		IMemento child = deferredMemento.getChild(IWorkbenchConstants.TAG_EDITORS);
+		realMemento.copyChild(child);
+		child = deferredMemento.getChild(IWorkbenchConstants.TAG_PERSPECTIVES);
+		realMemento.copyChild(child);
+		return;
+	}
+	
 	// We must unzoom to get correct layout.
 	if (isZoomed())
 		zoomOut();
