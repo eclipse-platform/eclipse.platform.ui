@@ -130,9 +130,6 @@ function mouseClickHandler(e) {
   var treeNode = getContentNode(clickedNode);
 
   if (treeNode != null && treeNode.parentNode.tagName != "BODY") {
-    // mozilla adds styled margin on top of built-in margin.
-    if (isMozilla) treeNode.style.marginLeft = -18;
-    
     if (isCollapsed(treeNode)) {
    	 expand(treeNode);
   	}

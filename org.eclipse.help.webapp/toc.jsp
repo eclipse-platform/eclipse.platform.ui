@@ -115,7 +115,7 @@ A.book {
 <script language="JavaScript"> 
  var extraStyle = "";
  if (isMozilla)
-  	 extraStyle = "<style type='text/css'>#root{ margin-left:-15px; margin-top:5px;} </style>";
+  	 extraStyle = "<style type='text/css'>UL { margin-left:-20px;} #root{ margin-left:-15px; margin-top:5px;} </style>";
  else if (isIE50)
  	 extraStyle = "<style type='text/css'>A, A:visited, A:hover, A:link{ height:10px;} </style>";
  
