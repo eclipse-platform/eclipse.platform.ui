@@ -11,58 +11,24 @@
 
 package org.eclipse.ui.internal;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.JFacePreferences;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.preference.*;
+import org.eclipse.jface.resource.*;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IElementFactory;
-import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.internal.registry.ActionSetRegistry;
-import org.eclipse.ui.internal.registry.CapabilityRegistry;
-import org.eclipse.ui.internal.registry.EditorRegistry;
-import org.eclipse.ui.internal.registry.IViewRegistry;
-import org.eclipse.ui.internal.registry.MarkerHelpRegistry;
-import org.eclipse.ui.internal.registry.MarkerHelpRegistryReader;
-import org.eclipse.ui.internal.registry.MarkerImageProviderRegistry;
-import org.eclipse.ui.internal.registry.PerspectiveRegistry;
-import org.eclipse.ui.internal.registry.PreferencePageRegistryReader;
-import org.eclipse.ui.internal.registry.ProjectImageRegistry;
-import org.eclipse.ui.internal.registry.ViewRegistry;
-import org.eclipse.ui.internal.registry.ViewRegistryReader;
-import org.eclipse.ui.internal.registry.WorkingSetRegistry;
+import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -98,7 +64,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	// Manager for working sets (IWorkingSet)
 	private WorkingSetManager workingSetManager;
 	// Working set registry, stores working set dialogs
-	private WorkingSetRegistry workingSetRegistry;	
+	private WorkingSetRegistry workingSetRegistry;
+	private NavigatorRegistry navigatorRegistry	;
 	
 	// Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
 	// All other plugins, examples, or test cases must *not* use this flag.
@@ -285,6 +252,17 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		if (markerImageProviderRegistry == null)
 			markerImageProviderRegistry = new MarkerImageProviderRegistry();
 		return markerImageProviderRegistry;
+	}
+	/**
+	 *
+	 */
+	public NavigatorRegistry getNavigatorRegistry() {
+		if (navigatorRegistry == null) {
+			navigatorRegistry = new NavigatorRegistry();
+			NavigatorRegistryReader reader = new NavigatorRegistryReader();
+			reader.readRegistry(Platform.getPluginRegistry(), navigatorRegistry);
+		}
+		return navigatorRegistry;
 	}
 	/**
 	 * Return the perspective registry.
