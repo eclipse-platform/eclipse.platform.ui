@@ -132,8 +132,8 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 
 			IDocumentPartitioner partitioner= document.getDocumentPartitioner();
 			if (partitioner != null) {
-				document.setDocumentPartitioner(null);
 				partitioner.disconnect();
+				document.setDocumentPartitioner(null);
 			}
 			
 			try {
@@ -156,8 +156,8 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			} finally {
 
 				if (partitioner != null) {
-					document.setDocumentPartitioner(partitioner);
 					partitioner.connect(document);
+					document.setDocumentPartitioner(partitioner);
 				}
 									
 				if (document instanceof IDocumentExtension)

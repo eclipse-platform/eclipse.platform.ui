@@ -51,6 +51,8 @@ public class PresentationReconciler implements IPresentationReconciler {
 	class InternalListener implements 
 			ITextInputListener, IDocumentListener, ITextListener, 
 			IDocumentPartitioningListener, IDocumentPartitioningListenerExtension {
+				
+		private boolean fDocumentChanging= false;
 		
 		/*
 		 * @see ITextInputListener#inputDocumentAboutToBeChanged
@@ -76,6 +78,9 @@ public class PresentationReconciler implements IPresentationReconciler {
 		 * @see ITextInputListener#inputDocumenChanged
 		 */
 		public void inputDocumentChanged(IDocument oldDocument, IDocument newDocument) {
+			
+			fDocumentChanging= false;
+			
 			if (newDocument != null) {
 				
 				newDocument.addPositionCategory(fPositionCategory);
@@ -95,21 +100,31 @@ public class PresentationReconciler implements IPresentationReconciler {
 		 * @see IDocumentPartitioningListener#documentPartitioningChanged
 		 */
 		public void documentPartitioningChanged(IDocument document) {
-			fDocumentPartitioningChanged= true;
+			if (!fDocumentChanging)
+				processDamage(new Region(0, document.getLength()), document);
+			else
+				fDocumentPartitioningChanged= true;
 		}
 		
 		/*
 		 * @see IDocumentPartitioningListenerExtension#documentPartitioningChanged
 		 */
 		public void documentPartitioningChanged(IDocument document, IRegion changedRegion) {
-			fDocumentPartitioningChanged= true;
-			fChangedDocumentPartitions= changedRegion;
+			if (!fDocumentChanging) {
+				processDamage(new Region(changedRegion.getOffset(), changedRegion.getLength()), document);
+			} else {
+				fDocumentPartitioningChanged= true;
+				fChangedDocumentPartitions= changedRegion;
+			}
 		}
 				
 		/*
 		 * @see IDocumentListener#documentAboutToBeChanged
 		 */
 		public void documentAboutToBeChanged(DocumentEvent e) {
+			
+			fDocumentChanging= true;
+			
 			try {
 				int offset= e.getOffset() + e.getLength();
 				fRememberedPosition= new TypedPosition(e.getDocument().getPartition(offset));
@@ -130,6 +145,8 @@ public class PresentationReconciler implements IPresentationReconciler {
 			} catch (BadPositionCategoryException x) {
 				// can not happen on input documents
 			}
+			
+			fDocumentChanging= false;
 		}
 		
 		/*
