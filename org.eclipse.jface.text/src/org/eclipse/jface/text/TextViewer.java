@@ -5136,7 +5136,6 @@ public class TextViewer extends Viewer implements
 
 	/*
 	 * @see org.eclipse.jface.text.IEditingSupportRegistry#registerHelper(org.eclipse.jface.text.IEditingSupport)
-	 * XXX API still in flux, do not rely on this method
 	 * @since 3.1
 	 */
 	public void register(IEditingSupport helper) {
@@ -5146,7 +5145,6 @@ public class TextViewer extends Viewer implements
 
 	/*
 	 * @see org.eclipse.jface.text.IEditingSupportRegistry#deregisterHelper(org.eclipse.jface.text.IEditingSupport)
-	 * XXX API still in flux, do not rely on this method
 	 * @since 3.1
 	 */
 	public void unregister(IEditingSupport helper) {
@@ -5155,7 +5153,6 @@ public class TextViewer extends Viewer implements
 
 	/*
 	 * @see org.eclipse.jface.text.IEditingSupportRegistry#getCurrentHelpers()
-	 * XXX API still in flux, do not rely on this method
 	 * @since 3.1
 	 */
 	public IEditingSupport[] getRegisteredSupports() {

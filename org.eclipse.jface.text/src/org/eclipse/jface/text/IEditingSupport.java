@@ -23,7 +23,7 @@ package org.eclipse.jface.text;
  * <code>IEditingSupport</code>.
  * </p>
  * <p>
- * XXX This interface is subject to change. Do not use.
+ * Clients may implement this interface.
  * </p>
  * 
  * @see IEditingSupportRegistry
