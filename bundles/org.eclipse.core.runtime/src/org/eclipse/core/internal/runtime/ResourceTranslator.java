@@ -43,7 +43,7 @@ public class ResourceTranslator {
 			return resourceBundle.getString(key.substring(1));
 		} catch (MissingResourceException e) {
 			//this will avoid requiring a bundle access on the next lookup
-			return '%' + dflt; //$NON-NLS-1$
+			return dflt;
 		}
 	}
 
@@ -71,18 +71,18 @@ public class ResourceTranslator {
 	}
 
 	private static boolean hasRuntime21(Bundle b) {
-//		try {
-//			ManifestElement[] prereqs = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, (String) b.getHeaders().get(Constants.REQUIRE_BUNDLE));
-//			if (prereqs == null)
-//				return false;
-//			for (int i = 0; i < prereqs.length; i++) {
-//				if ("2.1".equals(prereqs[i].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE)) && "org.eclipse.core.runtime".equals(prereqs[i].getValue())) { //$NON-NLS-1$//$NON-NLS-2$
-//					return true;
-//				}
-//			}
-//		} catch (BundleException e) {
-//			return false;
-//		}
+		try {
+			ManifestElement[] prereqs = ManifestElement.parseHeader(Constants.REQUIRE_BUNDLE, (String) b.getHeaders().get(Constants.REQUIRE_BUNDLE));
+			if (prereqs == null)
+				return false;
+			for (int i = 0; i < prereqs.length; i++) {
+				if ("2.1".equals(prereqs[i].getAttribute(Constants.BUNDLE_VERSION_ATTRIBUTE)) && "org.eclipse.core.runtime".equals(prereqs[i].getValue())) { //$NON-NLS-1$//$NON-NLS-2$
+					return true;
+				}
+			}
+		} catch (BundleException e) {
+			return false;
+		}
 		return false;
 	}
 
