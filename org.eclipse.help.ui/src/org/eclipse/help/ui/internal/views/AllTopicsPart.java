@@ -159,10 +159,19 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 				doOpenSelection((IStructuredSelection) event.getSelection());
 			}
 		});
-		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-		    public void selectionChanged(SelectionChangedEvent event) {
-		    	doOpenSelection((IStructuredSelection)event.getSelection());
-		    }
+		treeViewer.getTree().addMouseListener(new MouseAdapter() {
+			public void mouseUp(MouseEvent e) {
+				if (e.button!=1)
+					return;
+				Point p = new Point(e.x, e.y);
+				TreeItem item = treeViewer.getTree().getItem(p);
+				if (item != null) {
+					Object obj = item.getData();
+					if (obj instanceof IHelpResource) {
+						doOpen((IHelpResource)obj);
+					}
+				}
+			}
 		});
 
 		treeViewer.getTree().addMouseMoveListener(new MouseMoveListener() {
@@ -220,12 +229,16 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 	private void doOpenSelection(IStructuredSelection sel) {
 		IHelpResource res = (IHelpResource) sel.getFirstElement();
 		if (res != null) {
-			if (res instanceof IToc) {
-				treeViewer.setExpandedState(res, true);
-				postUpdate(res);
-			} else
-				parent.showURL(res.getHref());
+			doOpen(res);
 		}
+	}
+	
+	private void doOpen(IHelpResource res) {
+		if (res instanceof IToc) {
+			treeViewer.setExpandedState(res, true);
+			postUpdate(res);
+		} else
+			parent.showURL(res.getHref());
 	}
 	
 	private void postUpdate(final Object obj) {

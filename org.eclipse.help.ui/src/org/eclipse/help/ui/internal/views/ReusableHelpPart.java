@@ -117,6 +117,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		private SubToolBarManager toolBarManager;
 		private ArrayList partRecs;
 		private int nflexible;
+		private Control focusControl;
 
 		public HelpPartPage(String id, String text) {
 			this.id = id;
@@ -174,8 +175,14 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = (PartRec) partRecs.get(i);
 				if (visible) {
-					if (rec.part == null)
+					if (rec.part == null) {
 						rec.part = createPart(rec.id, toolBarManager);
+						rec.part.getControl().addListener(SWT.Activate, new Listener() {
+							public void handleEvent(Event e) {
+								focusControl = e.widget.getDisplay().getFocusControl();
+							}
+						});
+					}
 				}
 				rec.part.setVisible(visible);
 				toolBarManager.setVisible(visible);
@@ -190,6 +197,10 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			return null;
 		}
 		public void setFocus() {
+			//set focus on the control that had
+			//focus when this page was active
+			if (focusControl!=null)
+				focusControl.setFocus();
 			if (partRecs.size()==0) return;
 			PartRec rec = (PartRec)partRecs.get(0);
 			rec.part.setFocus();
