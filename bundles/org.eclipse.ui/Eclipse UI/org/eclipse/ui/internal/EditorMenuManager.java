@@ -17,7 +17,6 @@ import java.util.*;
  */
 public class EditorMenuManager extends SubMenuManager {
 	private IMenuManager parentMgr;
-	private boolean enabledAllowed = true;
 	private ArrayList wrappers;
 /**
  * Constructs a new editor manager.
@@ -71,7 +70,7 @@ public void prependToGroup(String groupName, IContributionItem item) {
 public void setVisible(boolean visible, boolean forceVisibility) {
 	if (visible) {
 		// Make the items visible 
-		if (!enabledAllowed) 
+		if (!isEnabledAllowed()) 
 			setEnabledAllowed(true);
 		if (!isVisible())
 			setVisible(true);
@@ -89,21 +88,29 @@ public void setVisible(boolean visible, boolean forceVisibility) {
  * Sets the enablement ability of all the items contributed by the editor.
  */
 public void setEnabledAllowed(boolean enabledAllowed) {
-	this.enabledAllowed = enabledAllowed;
-	IContributionItem[] items = super.getItems();
-	for (int i = 0; i < items.length; i++) {
-		IContributionItem item = items[i];
-		if (!(item instanceof ActionContributionItem &&
-			((ActionContributionItem)item).getAction() instanceof RetargetAction)) {
-			// skip retarget actions, they stay enabled if they have a handler	
-			item.setEnabledAllowed(enabledAllowed);
-		}
+	super.setEnabledAllowed(enabledAllowed);
+	if (!enabledAllowed) {
+		// search for retarget actions and allow them to enable
+		setRetargetEnabledAllowed(this);
 	}
-	// pass it on to the created wrappers
-	if (wrappers != null) {
-		for (int i = 0; i < wrappers.size(); i++) {
-			((EditorMenuManager)wrappers.get(i)).setEnabledAllowed(enabledAllowed);
+}
+
+/**
+ * Sets enablement allowed ability for the given item if it is a retarget
+ * action.
+ */
+public void setRetargetEnabledAllowed(IContributionItem item) {
+	if (item instanceof IMenuManager) {
+		IContributionItem[] items = ((IMenuManager)item).getItems();
+		for (int i = 0; i < items.length; i++) {
+			setRetargetEnabledAllowed(items[i]);
 		}
+	} else if (item instanceof SubContributionItem) {
+		setRetargetEnabledAllowed(((SubContributionItem)item).getInnerItem());
+	} else if (item instanceof ActionContributionItem &&
+		((ActionContributionItem)item).getAction() instanceof RetargetAction) {
+			// retarget actions stay enabled if they have a handler	
+			item.setEnabledAllowed(true);
 	}
 }
 
