@@ -277,14 +277,14 @@ public class ExternalToolsUtil {
 	}
 
 	/**
-	 * Returns whether this tool is to be run in the background..
+	 * Returns whether this tool is to be run in the background.
 	 * 
 	 * @param configuration
 	 * @return whether this tool is to be run in the background
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static boolean isBackground(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, false);
+		return configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
 	}
 
 	/**

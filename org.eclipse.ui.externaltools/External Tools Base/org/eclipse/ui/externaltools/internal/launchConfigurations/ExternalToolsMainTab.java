@@ -318,7 +318,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	protected void updateRunBackground(ILaunchConfiguration configuration) {
 		boolean runInBackground= true;
 		try {
-			runInBackground= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, false);
+			runInBackground= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, true);
 		} catch (CoreException ce) {
 			ExternalToolsPlugin.getDefault().log(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Error_reading_configuration_7"), ce); //$NON-NLS-1$
 		}
@@ -343,7 +343,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			configuration.setAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, workingDirectory);
 		}
 		
-		setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, configuration, runBackgroundButton.getSelection(), false);
+		setAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, configuration, runBackgroundButton.getSelection(), true);
 
 		String arguments= argumentField.getText().trim();
 		if (arguments.length() == 0) {
