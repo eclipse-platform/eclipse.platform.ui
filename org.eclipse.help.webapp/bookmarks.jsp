@@ -45,12 +45,6 @@ BODY {
 	padding:0;
 	border:0;
 	cursor:default;
-
-	scrollbar-highlight-color:ThreeDShadow;
-	scrollbar-shadow-color:ThreeDShadow;
-	scrollbar-arrow-color:#000000;
-	scrollbar-darkshadow-color:Window;
-	scrollbar-face-color:ButtonFace;
 }
 
 A {

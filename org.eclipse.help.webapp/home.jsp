@@ -28,12 +28,7 @@
 	font: icon;
 	margin:0;
 	padding:0;
-	cursor:default;
-	scrollbar-highlight-color:ThreeDShadow;
-	scrollbar-shadow-color:ThreeDShadow;
-	scrollbar-arrow-color:#000000;
-	scrollbar-darkshadow-color:Window;
-	scrollbar-face-color:ButtonFace;	
+	cursor:default;	
 }  
 </style>
 

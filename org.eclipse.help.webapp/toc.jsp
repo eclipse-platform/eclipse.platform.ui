@@ -24,12 +24,6 @@ BODY {
 	margin:0;
 	padding:0;
 	border:0;
-
-	scrollbar-highlight-color:ThreeDShadow;
-	scrollbar-shadow-color:ThreeDShadow;
-	scrollbar-arrow-color:#000000;
-	scrollbar-darkshadow-color:Window;
-	scrollbar-face-color:ButtonFace;
 }
 
 UL { 

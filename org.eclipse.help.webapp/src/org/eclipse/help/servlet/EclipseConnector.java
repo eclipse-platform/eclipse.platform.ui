@@ -17,7 +17,6 @@ import javax.servlet.http.*;
 public class EclipseConnector {
 	private ServletContext context;
 	private static IFilter[] noFilters = new IFilter[0];
-	private static CSSFilter cssFilter = new CSSFilter();
 	private static final String errorPageBegin =
 		"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n"
 			+ "<html><head>\n"
@@ -138,7 +137,10 @@ public class EclipseConnector {
 		URLConnection con = null;
 		if (eclipse != null) {
 			// it is an infocentre, add client locale to url
-			String locale = request == null? Locale.getDefault().toString() : request.getLocale().toString();
+			String locale =
+				request == null
+					? Locale.getDefault().toString()
+					: request.getLocale().toString();
 			if (url.indexOf('?') >= 0) {
 				url = url + "&lang=" + locale;
 			} else {
@@ -191,31 +193,18 @@ public class EclipseConnector {
 	 */
 	private IFilter[] getFilters(HttpServletRequest req) {
 		String uri = req.getRequestURI();
-		String agent = req.getHeader("User-Agent").toLowerCase(Locale.US);
-		boolean ie = (agent.indexOf("msie") != -1);
-	
-		// we only insert css for ie
-		if (ie) {
-			if (uri != null && (uri.endsWith("html") || uri.endsWith("htm"))) {
-				if (UrlUtil.getRequestParameter(req, "resultof") != null)
-					return new IFilter[] {
-						new FramesetFilter(req),
-						cssFilter,
-						new HighlightFilter(req)};
-				else
-					return new IFilter[] { new FramesetFilter(req), cssFilter};
-			} else
-				return noFilters;
-		} else {
-			if (uri != null && (uri.endsWith("html") || uri.endsWith("htm"))) {
-				if (UrlUtil.getRequestParameter(req, "resultof") != null)
-					return new IFilter[] {
-						new FramesetFilter(req),
-						new HighlightFilter(req)};
-				else
-					return new IFilter[] { new FramesetFilter(req) };
-			} else
-				return noFilters;
-		}
+		//String agent = req.getHeader("User-Agent").toLowerCase(Locale.US);
+		//boolean ie = (agent.indexOf("msie") != -1);
+
+		if (uri != null && (uri.endsWith("html") || uri.endsWith("htm"))) {
+			if (UrlUtil.getRequestParameter(req, "resultof") != null)
+				return new IFilter[] {
+					new FramesetFilter(req),
+					new HighlightFilter(req)};
+			else
+				return new IFilter[] { new FramesetFilter(req)};
+		} else
+			return noFilters;
+
 	}
 }

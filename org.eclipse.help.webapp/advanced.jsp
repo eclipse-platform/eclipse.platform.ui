@@ -51,12 +51,6 @@ BODY {
 	border:1px solid WindowText;
 	padding:0px;
 	margin:0px;
-	
-	scrollbar-highlight-color:ThreeDShadow;
-	scrollbar-shadow-color:ThreeDShadow;
-	scrollbar-arrow-color:#000000;
-	scrollbar-darkshadow-color:Window;
-	scrollbar-face-color:ButtonFace;
 }
 
 TABLE {
