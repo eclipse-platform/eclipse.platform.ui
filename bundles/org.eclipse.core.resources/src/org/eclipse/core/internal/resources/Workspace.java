@@ -877,7 +877,7 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 			CoreException signal = null;
 			monitor = Policy.monitorFor(monitor);
 			monitor.subTask(MSG_RESOURCES_UPDATING); //$NON-NLS-1$
-			boolean hasTreeChanges = ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
+			boolean hasTreeChanges = operationTree != null && ElementTree.hasChanges(tree, operationTree, ResourceComparator.getComparator(false), true);
 			broadcastChanges(tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
 			if (isAutoBuilding() && shouldBuild(hasTreeChanges)) {
 				try {
