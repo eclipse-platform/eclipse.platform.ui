@@ -208,8 +208,10 @@ public final class PaintManager implements KeyListener, MouseListener, ISelectio
 	 * @param painter the painter to be removed
 	 */
 	public void removePainter(IPainter painter) {
-		if (fPainters.remove(painter))
+		if (fPainters.remove(painter)) {
+			painter.deactivate(true);
 			painter.setPositionManager(null);
+		}
 		if (fPainters.size() == 0)
 			dispose();
 	}

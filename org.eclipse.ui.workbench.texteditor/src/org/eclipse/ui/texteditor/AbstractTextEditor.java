@@ -1466,10 +1466,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	
 	
-	/**
-	 * The editor's explicit document provider.
-	 * @since 3.0
-	 */
+	/** The editor's explicit document provider. */
 	private IDocumentProvider fExplicitDocumentProvider;
 	/** The editor's preference store. */
 	private IPreferenceStore fPreferenceStore;
@@ -4306,13 +4303,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fSourceViewer == null)
 			return;
 		
-		if (!isVisible(fSourceViewer, offset, length)) {
-			if (fSourceViewer instanceof ITextViewerExtension5) {
-				ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
-				extension.exposeModelRange(new Region(offset, length));
-			} else {
-				fSourceViewer.resetVisibleRegion();
-			}
+		if (fSourceViewer instanceof ITextViewerExtension5) {
+			ITextViewerExtension5 extension= (ITextViewerExtension5) fSourceViewer;
+			extension.exposeModelRange(new Region(offset, length));
+		} else if (!isVisible(fSourceViewer, offset, length)) {
+			fSourceViewer.resetVisibleRegion();
 		}
 	}
 	
