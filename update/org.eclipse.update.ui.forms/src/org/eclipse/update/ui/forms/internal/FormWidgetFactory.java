@@ -183,7 +183,7 @@ public Text createText(Composite parent, String value) {
 }
 public Text createText(Composite parent, String value, int style) {
 	Text text = new Text(parent, style);
-	text.setText(value);
+	if (value!=null) text.setText(value);
 	text.setBackground(clientAreaColor);
 	text.setForeground(foregroundColor);
 	return text;
