@@ -16,9 +16,12 @@ import org.eclipse.core.runtime.CoreException;
  * Represents a type of memory rendering contributed via the <code>memoryRenderings</code>
  * extension point.
  * <p>
- * Clients are not intended to implement this interface. Instead, clients contributing a rendering
+ * Clients contributing a rendering usually
  * implement {@link org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate}
- * and {@link org.eclipse.debug.ui.memory.IMemoryRendering}.
+ * and {@link org.eclipse.debug.ui.memory.IMemoryRendering}. Clients providing
+ * dynamic rendering bindings via an 
+ * {@link org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider}
+ * may implement this interface.
  * </p>
  * @since 3.1
  */
