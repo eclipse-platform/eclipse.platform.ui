@@ -455,7 +455,7 @@ public class AntElementNode {
 				}
 			}
 		}
-		if (length == -1 && !isExternal()) { //this is still an open element
+		if (length == -1 && offset <= sourceOffset && !isExternal()) { //this is still an open element
 			return this;
 		}
 		if (offset <= sourceOffset && sourceOffset <= (offset + length - 2)) {
