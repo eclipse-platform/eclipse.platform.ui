@@ -123,6 +123,19 @@ public class DeepSize {
 	private boolean isStaticField(Field f) {
 		return (Modifier.STATIC & f.getModifiers()) != 0;
 	}
+	
+	/**
+	 * Prints a detailed report of memory usage by type to standard output
+	 */
+	public void printSizeReport() {
+		System.out.println("*** Begin DeepSize report ***"); //$NON-NLS-1$
+		for (Iterator it = sizes.keySet().iterator(); it.hasNext();) {
+			Class clazz = (Class) it.next();
+			int size = ((Integer)sizes.get(clazz)).intValue();
+			System.out.println('\t' + clazz.getName() + " size: " + size); //$NON-NLS-1$
+		}
+		System.out.println("*** End DeepSize report ***"); //$NON-NLS-1$
+	}
 
 	void setIgnoreTypeNames(Set ignore) {
 		ignoreTypeNames = ignore;
