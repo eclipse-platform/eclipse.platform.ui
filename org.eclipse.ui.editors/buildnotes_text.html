@@ -19,6 +19,28 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 <br>
 <br>
+========== Eclipse Build Input November 30th 2004 ==========<br>
+<pre>
+- added new hyperlink support to text viewer and editors:
+	- new package org.eclipse.jface.text.hyperlink
+	- extended ITextEditor with ITextViewerExtension6
+	- added shared/global text editor preference to
+		- enable/disable hyperlinking (default: enabled)
+		- set the hyperlink modifier key (default: MOD1 i.e. Ctrl or Command)
+		- set the hyperlink color (default: blue)
+	- SourceViewerConfiguration: clients using or subclassing it will now automatically
+	  get hyperlinking for URLs (using MOD1 modifier).
+	  - If hyperlinking is not desired then getHyperlinksEnabled(...) can be overwritten
+	    to return false.
+	  - To use the shared/global editor hyperlink preference either subclass
+	    TextSourceViewerConfiguration or duplicate the getHyperlink* methods to your subclass
+	    of SourceViewerConfiguration.
+	    Note: your editor's preference store must be a ChainedPreferenceStore, e.g.
+	  		  IPreferenceStore generalTextStore= EditorsUI.getPreferenceStore(); 
+			  fChainedPreferenceStore= new ChainedPreferenceStore(new IPreferenceStore[] { YourPlugin.getPreferenceStore(), generalTextStore });
+	 - additional hyperlink targets can be configured by extending SourceViewerConfiguration.getHyperlinkDetectors(...)
+- bug fixing
+</pre>
 ========== Eclipse Build Input November 23th 2004 ==========<br>
 <pre>
 - moved adapter factory registration from plug-in class to extension point
