@@ -2,13 +2,13 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="fontDefinitions" name="Font Definitions"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to register fonts with the JFace FontRegistry and with the workbench preference store for use by the Fonts preference page.
-   </documentation>
-</annotation>
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="fontDefinitions" name="Font Definitions"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to register fonts with the JFace FontRegistry and with the workbench preference store for use by the Fonts preference page.
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -58,7 +58,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="defaultsTo" type="string" use="required">
+         <attribute name="defaultsTo" type="string">
             <annotation>
                <documentation>
                   the id of another  font definition that is the default setting for the receiver. When there is no preference for this font the font registry will have the value of defaultsTo set for it in the registry.
@@ -93,19 +93,19 @@
          Following is an example of an a font definition extension:
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ui.fontDefinition"&gt; 
+   &lt;extension point=&quot;org.eclipse.ui.fontDefinition&quot;&gt; 
       &lt;fontDefinition 
-         id="org.eclipse.examples.textFont" 
-         label="Text"&gt; 
+         id=&quot;org.eclipse.examples.textFont&quot; 
+         label=&quot;Text&quot;&gt; 
          &lt;description&gt;
             The text font
          &lt;/description&gt;
       &lt;/fontDefinition&gt; 
 
       &lt;fontDefinition 
-        id="org.eclipse.examples.userFont" 
-        label="User"
-        defaultsTo="org.eclipse.jface.textFont"&gt; 
+        id=&quot;org.eclipse.examples.userFont&quot; 
+        label=&quot;User&quot;
+        defaultsTo=&quot;org.eclipse.jface.textFont&quot;&gt; 
         &lt;description&gt;
            The user font
         &lt;/description&gt;

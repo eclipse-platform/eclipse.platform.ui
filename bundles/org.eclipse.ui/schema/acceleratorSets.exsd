@@ -2,15 +2,15 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="acceleratorSets" name="Accelerator Sets"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to register accelerator set extensions. Accelerator sets are just what the name implies, sets of accelerators. An accelerator is an association between one or more sequences of accelerator keys and a workbench action. An accelerator key sequence may be of length one or greater. 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="acceleratorSets" name="Accelerator Sets"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to register accelerator set extensions. Accelerator sets are just what the name implies, sets of accelerators. An accelerator is an association between one or more sequences of accelerator keys and a workbench action. An accelerator key sequence may be of length one or greater. 
 &lt;p&gt;
 An accelerator set is registered with an accelerator configuration (see the Accelerator Configuration extension point) and is applicable for an accelerator scope (see the Accelerator Scope extension point).
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -65,17 +65,17 @@ An accelerator set is registered with an accelerator configuration (see the Acce
 
    <element name="accelerator">
       <complexType>
-         <attribute name="id" type="string" use="required">
+         <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  the unique identifier of the action definition of the action associated with this accelerator.
+                  the unique identifier of the action definition of the action associated with this accelerator. If the id is not specified this accelerator deletes any  mappings with the same key. This is used to delete a key binding for a specific Locale.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="key" type="string" use="required">
             <annotation>
                <documentation>
-                  an attribute representing the sequence(s) of accelerator keys used to perform the action associated with this accelerator. Sequences are separated by '||', and individual keys in a sequence are separated by a space. A key may be modified by the CTRL, ALT, or SHIFT keys. Depending on keyboard layout, some keys ('?' for example) may need the SHIFT to be accessed but the accelerator should be specified without the SHIFT so it will be independent of keyboard layout. E.g. if CTRL+? is specified as an accelerator, the user may have to press CTRL+SHIFT+? depending on the keyboard layout.
+                  an attribute representing the sequence(s) of accelerator keys used to perform the action associated with this accelerator. Sequences are separated by &apos;||&apos;, and individual keys in a sequence are separated by a space. A key may be modified by the CTRL, ALT, or SHIFT keys. Depending on keyboard layout, some keys (&apos;?&apos; for example) may need the SHIFT to be accessed but the accelerator should be specified without the SHIFT so it will be independent of keyboard layout. E.g. if CTRL+? is specified as an accelerator, the user may have to press CTRL+SHIFT+? depending on the keyboard layout.
                </documentation>
             </annotation>
          </attribute>
@@ -113,21 +113,21 @@ An accelerator set is registered with an accelerator configuration (see the Acce
          Following is an example of an accelerator set extension: 
 &lt;p&gt;
 &lt;pre&gt;
-   &lt;extension point="org.eclipse.ui.acceleratorSets"&gt; 
+   &lt;extension point=&quot;org.eclipse.ui.acceleratorSets&quot;&gt; 
       &lt;acceleratorSet 
-        configurationId="org.eclipse.ui.exampleAcceleratorConfiguration" 
-        scopeId="org.eclipse.ui.globalScope"&gt; 
+        configurationId=&quot;org.eclipse.ui.exampleAcceleratorConfiguration&quot; 
+        scopeId=&quot;org.eclipse.ui.globalScope&quot;&gt; 
           &lt;accelerator 
-              id="org.eclipse.ui.ExampleActionA" 
-              key="CTRL+R CTRL+A"&gt; 
+              id=&quot;org.eclipse.ui.ExampleActionA&quot; 
+              key=&quot;CTRL+R CTRL+A&quot;&gt; 
           &lt;/accelerator&gt; 
           &lt;accelerator 
-              id="org.eclipse.ui.ExampleActionB" 
-              key="CTRL+R CTRL+B"&gt; 
+              id=&quot;org.eclipse.ui.ExampleActionB&quot; 
+              key=&quot;CTRL+R CTRL+B&quot;&gt; 
           &lt;/accelerator&gt; 
           &lt;accelerator 
-              id="org.eclipse.ui.ExampleActionC" 
-              key="CTRL+R CTRL+C || CTRL+SHIFT+DELETE"&gt; 
+              id=&quot;org.eclipse.ui.ExampleActionC&quot; 
+              key=&quot;CTRL+R CTRL+C || CTRL+SHIFT+DELETE&quot;&gt; 
           &lt;/accelerator&gt; 
       &lt;/acceleratorSet&gt; 
    &lt;/extension&gt; 
@@ -143,9 +143,9 @@ An accelerator set is registered with an accelerator configuration (see the Acce
       <documentation>
          More than one accelerator may be specified for the same action in the accelerator set but only one will be used. 
 &lt;p&gt;
-If the locale and/or the platform is specified, the accelerator that better matches the current locale and platform will be used. The current locale is determined by the API Locale.getDefault() and the platform by the API SWT.getPlatform(). If the platform and/or the locale is specified and it does not match the current locale and/or platform, the accelerator is discarded. If accelerator A defines only the locale and B defines only the platform, B is used. If accelerator A defines "ja" as its locale and B defines "ja_JP", B is used in case the current locale is "ja_JP". 
+If the locale and/or the platform is specified, the accelerator that better matches the current locale and platform will be used. The current locale is determined by the API Locale.getDefault() and the platform by the API SWT.getPlatform(). If the platform and/or the locale is specified and it does not match the current locale and/or platform, the accelerator is discarded. If accelerator A defines only the locale and B defines only the platform, B is used. If accelerator A defines &quot;ja&quot; as its locale and B defines &quot;ja_JP&quot;, B is used in case the current locale is &quot;ja_JP&quot;. 
 &lt;p&gt;
-If two accelerators are defined in accelerators sets in different plugins, the chosen accelerator will depend on the plugins. If plugin A depends on B, the accelerators defined in B is used. If A and B don't depend on each other, they will be alphabetically sorted by the plugin id. 
+If two accelerators are defined in accelerators sets in different plugins, the chosen accelerator will depend on the plugins. If plugin A depends on B, the accelerators defined in B is used. If A and B don&apos;t depend on each other, they will be alphabetically sorted by the plugin id. 
 &lt;p&gt;
 If two accelerators are defined in different scopes, the accelerator defined in the current scope will be used. If an accelerator is not defined in the current scope or one of its parents it is discarded. If an accelerator is defined in a parent and child scope, the one in the child is used.
       </documentation>

@@ -2,11 +2,11 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
-   <appInfo>
-      <meta.schema plugin="org.eclipse.ui" id="perspectiveExtensions" name="Perspective Extensions"/>
-   </appInfo>
-   <documentation>
-      This extension point is used to extend perspectives 
+      <appInfo>
+         <meta.schema plugin="org.eclipse.ui" id="perspectiveExtensions" name="Perspective Extensions"/>
+      </appInfo>
+      <documentation>
+         This extension point is used to extend perspectives 
 registered by other plug-ins. A perspective defines 
 the initial contents of the window action bars 
 (menu and toolbar) and the initial set of views 
@@ -15,8 +15,8 @@ Other plug-ins may contribute actions or views to
 the perspective which appear when the perspective 
 is selected.  Optional additions by other plug-ins 
 are appended to the initial definition.
-   </documentation>
-</annotation>
+      </documentation>
+   </annotation>
 
    <element name="extension">
       <complexType>
@@ -60,6 +60,7 @@ are appended to the initial definition.
             <element ref="perspectiveShortcut"/>
             <element ref="newWizardShortcut"/>
             <element ref="view"/>
+            <element ref="showInPart"/>
          </choice>
          <attribute name="targetID" type="string" use="required">
             <annotation>
@@ -88,7 +89,7 @@ are appended to the initial definition.
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the unique identifier of the view which will be added to the perspective's "Show View" submenu of the "Window" menu.
+                  the unique identifier of the view which will be added to the perspective&apos;s &quot;Show View&quot; submenu of the &quot;Window&quot; menu.
                </documentation>
             </annotation>
          </attribute>
@@ -100,7 +101,7 @@ are appended to the initial definition.
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the unique identifier of the perspective which will be added to the perspective's "Open Perspective" submenu of the "Window" menu.
+                  the unique identifier of the perspective which will be added to the perspective&apos;s &quot;Open Perspective&quot; submenu of the &quot;Window&quot; menu.
                </documentation>
             </annotation>
          </attribute>
@@ -112,7 +113,7 @@ are appended to the initial definition.
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
-                  the unique identifier of the new wizard which will be added to the perspective's "New" submenu of the "File" menu.
+                  the unique identifier of the new wizard which will be added to the perspective&apos;s &quot;New&quot; submenu of the &quot;File&quot; menu.
                </documentation>
             </annotation>
          </attribute>
@@ -124,7 +125,7 @@ are appended to the initial definition.
          <attribute name="id" type="string">
             <annotation>
                <documentation>
-                  the unique identifier of the view which will be added to the perspective's "Show In..." prompter in the Navigate menu.
+                  the unique identifier of the view which will be added to the perspective&apos;s &quot;Show In...&quot; prompter in the Navigate menu.
                </documentation>
             </annotation>
          </attribute>
@@ -189,7 +190,7 @@ be defined.&lt;/ul&gt;
          <attribute name="visible" type="boolean">
             <annotation>
                <documentation>
-                  whether the view is initially visible when the perspective is opened.  This attribute should have a value of "true" or "false" if used.
+                  whether the view is initially visible when the perspective is opened.  This attribute should have a value of &quot;true&quot; or &quot;false&quot; if used.
 If this attribute is not used, the view will be initially visible by default.
                </documentation>
             </annotation>
@@ -205,20 +206,20 @@ If this attribute is not used, the view will be initially visible by default.
          The following is an example of a perspective extension (note the subelements and the way attributes are used):
 &lt;p&gt;
 &lt;pre&gt;
-    &lt;extension point="org.eclipse.ui.perspectiveExtensions"&gt; 
+    &lt;extension point=&quot;org.eclipse.ui.perspectiveExtensions&quot;&gt; 
         &lt;perspectiveExtension 
-            targetID="org.eclipse.ui.resourcePerspective"&gt; 
-            &lt;actionSet id="org.eclipse.jdt.ui.JavaActionSet"/&gt; 
-            &lt;viewShortcut id="org.eclipse.jdt.ui.PackageExplorer"/&gt; 
-            &lt;newWizardShortcut id="org.eclipse.jdt.ui.wizards.NewProjectCreationWizard"/&gt; 
-            &lt;perspectiveShortcut id="org.eclipse.jdt.ui.JavaPerspective"/&gt; 
-            &lt;view id="org.eclipse.jdt.ui.PackageExplorer" 
-                relative="org.eclipse.ui.views.ResourceNavigator" 
-                relationship="stack"/&gt; 
-            &lt;view id="org.eclipse.jdt.ui.TypeHierarchy" 
-                relative="org.eclipse.ui.views.ResourceNavigator" 
-                relationship="left" 
-                ratio="0.50"/&gt; 
+            targetID=&quot;org.eclipse.ui.resourcePerspective&quot;&gt; 
+            &lt;actionSet id=&quot;org.eclipse.jdt.ui.JavaActionSet&quot;/&gt; 
+            &lt;viewShortcut id=&quot;org.eclipse.jdt.ui.PackageExplorer&quot;/&gt; 
+            &lt;newWizardShortcut id=&quot;org.eclipse.jdt.ui.wizards.NewProjectCreationWizard&quot;/&gt; 
+            &lt;perspectiveShortcut id=&quot;org.eclipse.jdt.ui.JavaPerspective&quot;/&gt; 
+            &lt;view id=&quot;org.eclipse.jdt.ui.PackageExplorer&quot; 
+                relative=&quot;org.eclipse.ui.views.ResourceNavigator&quot; 
+                relationship=&quot;stack&quot;/&gt; 
+            &lt;view id=&quot;org.eclipse.jdt.ui.TypeHierarchy&quot; 
+                relative=&quot;org.eclipse.ui.views.ResourceNavigator&quot; 
+                relationship=&quot;left&quot; 
+                ratio=&quot;0.50&quot;/&gt; 
         &lt;/perspectiveExtension&gt; 
     &lt;/extension&gt; 
 &lt;/pre&gt;
