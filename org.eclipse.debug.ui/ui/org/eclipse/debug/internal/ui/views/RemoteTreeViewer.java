@@ -305,56 +305,58 @@ public class RemoteTreeViewer extends TreeViewer {
         Widget widget = findItem(parent);
         if (widget != null) {
     	    Item[] currentChildren = getChildren(widget);
-    	    if (offset < currentChildren.length) {
-    	        Object[] pruned = new Object[currentChildren.length - offset];
-    	        System.arraycopy(currentChildren, offset, pruned, 0, pruned.length);
-    	        remove(pruned);
+    	    for (int i = offset; i < currentChildren.length; i++) {
+    	        disassociate(currentChildren[i]);
+    	        currentChildren[i].dispose();
     	    }
         }
     }
 
-
-
-    public synchronized void replace(Object parent, Object[] children, int offset) {
-        Widget widget = findItem(parent);
-        if (widget == null) {
-            add(parent, children);
-            return;
-        }
-        Item[] currentChildren = getChildren(widget);
-        if (offset >= currentChildren.length) {
-            // append
-            add(parent, children);
-        } else {
-            // replace
-            for (int i = 0; i < children.length; i++) {
-                Object child = children[i];
-                if (offset < currentChildren.length) {
-                    // replace
-                    Item item = currentChildren[offset];
-                    Object data = item.getData();
-                    if (!child.equals(data)) {
-                        associate(child, item);
-                        internalRefresh(item, child, true, true);
-                    } else {
-                    	internalRefresh(item, child, false, true);
-                    }
-                } else {
-                    // add
-                	int numLeft = children.length - i;
-                	if (numLeft > 1) {
-                		Object[] others = new Object[numLeft];
-                		System.arraycopy(children, i, others, 0, numLeft);
-                		add(parent, others);
-                	} else {
-                		add(parent, child);
-                	}
-                	return;
+    public synchronized void replace(final Object parent, final Object[] children, final int offset) {
+        preservingSelection(new Runnable() {
+            public void run() {
+                Widget widget = findItem(parent);
+                if (widget == null) {
+                    add(parent, children);
+                    return;
                 }
-                offset++;
+                Item[] currentChildren = getChildren(widget);
+                int pos = offset;
+                if (pos >= currentChildren.length) {
+                    // append
+                    add(parent, children);
+                } else {
+                    // replace
+                    for (int i = 0; i < children.length; i++) {
+                        Object child = children[i];
+                        if (pos < currentChildren.length) {
+                            // replace
+                            Item item = currentChildren[pos];
+                            Object data = item.getData();
+                            if (!child.equals(data)) {
+                                associate(child, item);
+                                internalRefresh(item, child, true, true);
+                            } else {
+                            	internalRefresh(item, child, false, true);
+                            }
+                        } else {
+                            // add
+                        	int numLeft = children.length - i;
+                        	if (numLeft > 1) {
+                        		Object[] others = new Object[numLeft];
+                        		System.arraycopy(children, i, others, 0, numLeft);
+                        		add(parent, others);
+                        	} else {
+                        		add(parent, child);
+                        	}
+                        	return;
+                        }
+                        pos++;
+                    }
+                }
+                runDeferredUpdates();
             }
-        }
-        runDeferredUpdates();
+        });
     }
 
 }
