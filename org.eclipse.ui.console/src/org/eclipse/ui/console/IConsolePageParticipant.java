@@ -34,7 +34,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * &lt;/extension&gt;
  * </p>
  * The example page participant is contributed to all console pages. An optional
- * <code>enablement</code> attriubte may be specified to control which consoles
+ * <code>enablement</code> attribute may be specified to control which consoles
  * a page participant is applicable to.
  * <p>
  * Clients contributing console page participant extensions are intended to 
