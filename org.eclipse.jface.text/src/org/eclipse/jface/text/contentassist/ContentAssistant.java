@@ -1258,6 +1258,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		return fProposalPopup.showProposals(false);
 	}
 	
+	/*
+	 * @see org.eclipse.jface.text.contentassist.IContentAssistantExtension#completePrefix()
+	 */
+	public String completePrefix() {
+		promoteKeyListener();
+		return fProposalPopup.incrementalComplete();
+	}
+	
 	/**
 	 * Callback to signal this content assistant that the presentation of the possible completions has been stopped.
 	 * @since 2.1 

@@ -57,6 +57,32 @@ import org.eclipse.jface.text.TextUtilities;
  */
 class CompletionProposalPopup implements IContentAssistListener {
 	
+	private final class MyKeyListener implements KeyListener {
+		public void keyPressed(KeyEvent e) {
+			if (!Helper.okToUse(fProposalShell))
+				return;
+			
+			if (e.character == 0 && e.keyCode == SWT.MOD1) {
+				// http://dev.eclipse.org/bugs/show_bug.cgi?id=34754
+				int index= fProposalTable.getSelectionIndex();
+				if (index >= 0)
+					selectProposal(index, true);
+			}
+		}
+
+		public void keyReleased(KeyEvent e) {
+			if (!Helper.okToUse(fProposalShell))
+				return;
+
+			if (e.character == 0 && e.keyCode == SWT.MOD1) {
+				// http://dev.eclipse.org/bugs/show_bug.cgi?id=34754
+				int index= fProposalTable.getSelectionIndex();
+				if (index >= 0)
+					selectProposal(index, false);
+			}
+		}
+	}
+
 	/** The associated text viewer */
 	private ITextViewer fViewer;
 	/** The associated content assistant */
@@ -149,31 +175,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	public String showProposals(final boolean autoActivated) {
 					
 		if (fKeyListener == null) {
-			fKeyListener= new KeyListener() {
-				public void keyPressed(KeyEvent e) {
-					if (!Helper.okToUse(fProposalShell))
-						return;
-					
-					if (e.character == 0 && e.keyCode == SWT.MOD1) {
-						// http://dev.eclipse.org/bugs/show_bug.cgi?id=34754
-						int index= fProposalTable.getSelectionIndex();
-						if (index >= 0)
-							selectProposal(index, true);
-					}
-				}
-
-				public void keyReleased(KeyEvent e) {
-					if (!Helper.okToUse(fProposalShell))
-						return;
-
-					if (e.character == 0 && e.keyCode == SWT.MOD1) {
-						// http://dev.eclipse.org/bugs/show_bug.cgi?id=34754
-						int index= fProposalTable.getSelectionIndex();
-						if (index >= 0)
-							selectProposal(index, false);
-					}
-				}
-			};
+			fKeyListener= new MyKeyListener();
 		}
 
 		final Control control= fContentAssistSubjectAdapter.getControl();
@@ -184,6 +186,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			public void run() {
 				
 				fInvocationOffset= fContentAssistSubjectAdapter.getSelectedRange().x;
+				fFilterOffset= fInvocationOffset;
 				fComputedProposals= computeProposals(fInvocationOffset);
 				
 				int count= (fComputedProposals == null ? 0 : fComputedProposals.length);
@@ -452,6 +455,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		}
 
 		fFilteredProposals= null;
+		fComputedProposals= null;
 		
 		fContentAssistant.possibleCompletionsClosed();
 	}
@@ -637,6 +641,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				
 				case '\t':
 					e.doit= false;
+//					completeCommonPrefix(e.stateMask); // T ODO just testing
 					fProposalShell.setFocus();
 					return false;
 					
@@ -811,5 +816,187 @@ class CompletionProposalPopup implements IContentAssistListener {
 		if (Helper.okToUse(fProposalShell)) {
 			fProposalShell.setFocus();
 		}		
+	}
+	
+	public String incrementalComplete() {
+		if (fFilteredProposals != null) {
+			completeCommonPrefix();
+		} else {
+			final Control control= fContentAssistSubjectAdapter.getControl();
+			
+			BusyIndicator.showWhile(control.getDisplay(), new Runnable() {
+				public void run() {
+					
+					fInvocationOffset= fContentAssistSubjectAdapter.getSelectedRange().x;
+					fFilterOffset= fInvocationOffset;
+					fFilteredProposals= computeProposals(fInvocationOffset);
+					
+					int count= (fFilteredProposals == null ? 0 : fFilteredProposals.length);
+					if (count == 0)
+						control.getDisplay().beep();
+					else if (count == 1 && fContentAssistant.isAutoInserting())
+						insertProposal(fFilteredProposals[0], (char) 0, 0, fInvocationOffset);
+					else {
+						if (fLineDelimiter == null)
+							fLineDelimiter= fContentAssistSubjectAdapter.getLineDelimiter();
+						
+						if (completeCommonPrefix())
+							unregister(); // TODO add some caching? for now: just throw away the completions
+						else {
+							if (fKeyListener == null) {
+								fKeyListener= new MyKeyListener();
+							}
+
+							if (!control.isDisposed())
+								fContentAssistSubjectAdapter.addKeyListener(fKeyListener);
+
+							fComputedProposals= fFilteredProposals;
+							createProposalSelector();
+							setProposals(fComputedProposals);
+							displayProposals();
+						}
+					}
+				}
+			});
+		}
+		return getErrorMessage();
+	}
+	
+	private boolean completeCommonPrefix() {
+		
+		// 0: insert single proposals
+		if (fFilteredProposals.length == 1) {
+			insertProposal(fFilteredProposals[0], (char) 0, 0, fInvocationOffset);
+			hide();
+			return true;
+		}
+		
+		// 1: get the common ignore-case prefix of all remaining proposals
+		// note that the prefix still 
+		StringBuffer prefix= null; // the common prefix
+		boolean isCaseCompatible= true;
+		IDocument document= fViewer.getDocument();
+		int startOffset= -1; // the location where the proposals would insert (< fInvocationOffset if invoked in the middle of an ident)
+		String currentPrefix= null; // the prefix already in the document
+		int currentPrefixLen= -1; // the length of the current prefix
+		
+		for (int i= 0; i < fFilteredProposals.length; i++) {
+			ICompletionProposal proposal= fFilteredProposals[i];
+			CharSequence insertion= getReplacementString(proposal);
+			
+			if (currentPrefix == null) {
+				startOffset= getReplacementOffset(proposal);
+				currentPrefixLen= fFilterOffset - startOffset;
+				try {
+					// make sure we get the right case
+					currentPrefix= document.get(startOffset, currentPrefixLen);
+				} catch (BadLocationException e1) {
+					// bail out silently
+					return false;
+				}
+			}
+			
+			// prune ignore-case matches
+			if (isCaseSensitive() && !insertion.toString().startsWith(currentPrefix))
+				continue;
+
+			if (prefix == null)
+				prefix= new StringBuffer(insertion.toString()); // initial
+			else 
+				isCaseCompatible &= truncatePrefix(prefix, insertion);
+			
+			// early break computation if there is nothing left to check
+			if (prefix.length() == 0)
+				break;
+		}
+		
+		if (prefix == null || prefix.toString().equals(currentPrefix))
+			return false;
+	
+		// 2: replace / insert the common prefix in the document
+		
+		try {
+			// check if our assumptions are correct - TODO what for?
+			// the current content must be a prefix of prefix (hehe)
+			String presentPart= prefix.substring(0, currentPrefixLen);
+			
+			int replaceOffset;
+			int replaceLen;
+			if (isCaseCompatible && !currentPrefix.equals(presentPart)) {
+				// update case
+				currentPrefixLen= 0;
+				replaceOffset= startOffset;
+				replaceLen= fFilterOffset - startOffset;
+			} else {
+				// only insert remaining part
+				replaceOffset= fFilterOffset;
+				replaceLen= 0;
+			}
+			
+			int remainingLen= prefix.length() - currentPrefixLen;
+			String remainingPrefix= prefix.subSequence(currentPrefixLen, currentPrefixLen + remainingLen).toString();
+			
+			document.replace(replaceOffset, replaceLen, remainingPrefix);
+			
+			fViewer.setSelectedRange(replaceOffset + remainingLen, 0);
+			
+			return true;
+		} catch (BadLocationException e) {
+			// ignore and return false
+			return false;
+		}
+	}
+
+	/**
+	 * @param proposal
+	 * @return
+	 */
+	private int getReplacementOffset(ICompletionProposal proposal) {
+		if (proposal instanceof ICompletionProposalExtension3)
+			return ((ICompletionProposalExtension3) proposal).getCompletionOffset();
+		else
+			return fInvocationOffset;	
+	}
+
+	private boolean truncatePrefix(StringBuffer prefix, CharSequence anycase) {
+		// find common prefix
+		int min= Math.min(prefix.length(), anycase.length());
+		boolean caseCompatible= true;
+		for (int c= 0; c < min; c++) {
+			char compareChar= anycase.charAt(c);
+			char prefixChar= prefix.charAt(c);
+			if (prefixChar != compareChar) {
+				if (isCaseSensitive() || Character.toLowerCase(prefixChar) != Character.toLowerCase(compareChar)) {
+					prefix.delete(c, prefix.length());
+					return caseCompatible;
+				} else 
+					caseCompatible= false;
+			}
+		}
+		
+		prefix.delete(min, prefix.length());
+		return caseCompatible;
+	}
+
+	/**
+	 * @return
+	 */
+	private boolean isCaseSensitive() {
+		return !Helper.okToUse(fProposalShell);
+	}
+
+	/**
+	 * @param proposal
+	 * @return
+	 */
+	private CharSequence getReplacementString(ICompletionProposal proposal) {
+		CharSequence insertion= null;
+		if (proposal instanceof ICompletionProposalExtension3)
+			insertion= ((ICompletionProposalExtension3) proposal).getCompletionText();
+		
+		if (insertion == null)
+			insertion= proposal.getDisplayString();
+		
+		return insertion;
 	}
 }

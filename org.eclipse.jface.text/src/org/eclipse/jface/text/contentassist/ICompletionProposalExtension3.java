@@ -28,7 +28,23 @@ public interface ICompletionProposalExtension3 {
 	/**
 	 * Returns the information control creator of this completion proposal.
 	 * 
-	 * @return the information control creator
+	 * @return the information control creator, or <code>null</code> if no custom control creater is available
 	 */
 	IInformationControlCreator getInformationControlCreator();
+	
+	/**
+	 * Returns the string that would be inserted at the position returned from 
+	 * {@see #getCompletionOffset()} if this proposal was applied. If the 
+	 * replacement string cannot be determined, <code>null</code> may be returned.
+	 * 
+	 * @return the replacement string or <code>null</code> if it cannot be determined
+	 */
+	CharSequence getCompletionText();
+	
+	/**
+	 * Returns the document offset at which the receiver would insert its proposal.
+	 *  
+	 * @return the offset at which the proposal would insert its proposal
+	 */
+	int getCompletionOffset();
 }

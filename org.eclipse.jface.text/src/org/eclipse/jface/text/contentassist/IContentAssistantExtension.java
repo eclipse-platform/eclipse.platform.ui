@@ -35,4 +35,11 @@ public interface IContentAssistantExtension {
 	 * @throws UnsupportedOperationException if the content assist does not support this method
 	 */
 	void install(IContentAssistSubject contentAssistSubject);
+	
+	/**
+	 * Complete the common prefix of the available choices.
+	 *
+	 * @return an optional error message if no proposals can be computed
+	 */
+	String completePrefix();
 }
