@@ -323,7 +323,6 @@ public void activate(IWorkbenchPart part) {
 	if (isZoomed() && partChangeAffectsZoom(part))
 		zoomOut();
 	
-	((PartSite)part.getSite()).getPane();
 	if(part instanceof MultiEditor) { 
 		part = ((MultiEditor)part).getActiveEditor();
 	}
