@@ -805,6 +805,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			
 			if ((fContentAssistSubjectAdapter != null) && fAutoAssistListener == null) {
 				fAutoAssistListener= new AutoAssistListener();
+				// TODO see bug 49212 
 				if (fContentAssistSubjectAdapter.supportsVerifyKeyListener())
 					fContentAssistSubjectAdapter.appendVerifyKeyListener(fAutoAssistListener);
 				else
@@ -812,6 +813,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			}
 			
 		} else if (fAutoAssistListener != null) {
+			// TODO see bug 49212 
 			if (fContentAssistSubjectAdapter.supportsVerifyKeyListener())
 				fContentAssistSubjectAdapter.removeVerifyKeyListener(fAutoAssistListener);
 			else
