@@ -9,6 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -26,9 +27,13 @@ import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
 import org.eclipse.team.ui.IConfigurationWizard;
+import org.eclipse.team.ui.sync.SyncView;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 /**
@@ -171,14 +176,27 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								result[0] = false;
 								return;
 							}
-							// Import and Checkout. This associates the project with a provider automatically.
-							CVSProviderPlugin.getProvider().importAndCheckout(project, getProperties(), monitor);
+							// Create the remote module for the project
+							CVSProviderPlugin.getProvider().createModule(project, getProperties(), monitor);
 						}
 					} catch (TeamException e) {
 						throw new InvocationTargetException(e);
 					}
 				}
 			});
+			// Sync of the project
+			SyncView view = (SyncView)CVSUIPlugin.getActivePage().findView(SyncView.VIEW_ID);
+			if (view == null) {
+				view = SyncView.findInActivePerspective();
+			}
+			if (view != null) {
+				try {
+					CVSUIPlugin.getActivePage().showView(SyncView.VIEW_ID);
+				} catch (PartInitException e) {
+					CVSUIPlugin.log(e.getStatus());
+				}
+				view.showSync(new CVSSyncCompareInput(new IResource[] {project}));
+			}
 		} catch (InterruptedException e) {
 			return true;
 		} catch (InvocationTargetException e) {
@@ -192,6 +210,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 				ErrorDialog.openError(getContainer().getShell(), null, null, ((TeamException)target).getStatus());
 			}
 		}
+
 		return result[0];
 	}
 	/**

@@ -51,7 +51,8 @@ public interface ICVSProvider {
 	public void checkout(ICVSRemoteFolder[] resources, IProject[] projects, IProgressMonitor monitor) throws TeamException;
 
 	/**
-	 * Import a project into a CVS repository and then check out a local copy.
+	 * Create a remote module in the CVS repository and link the project directory to this remote module.
+	 * The contents of the project are not imported.
 	 * 
 	 * Consideration: What if the project already exists?
 	 * 
@@ -65,8 +66,9 @@ public interface ICVSProvider {
 	 *   message The message to be attached (optional)
 	 *   vendor The vendor tag (optional)
 	 *   tag The version tag (optional)
+	 * 
 	 */
-	public void importAndCheckout(IProject project, Properties configuration, IProgressMonitor monitor) throws TeamException;
+	public void createModule(IProject project, Properties configuration, IProgressMonitor monitor) throws TeamException;
 
 	/**
 	 * Create a repository instance from the given properties.

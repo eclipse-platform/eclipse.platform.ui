@@ -11,6 +11,7 @@ import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 
 /**
  * Whereas the RemoteFolder class provides access to a remote hierarchy using
@@ -38,6 +39,17 @@ public class RemoteFolderTree extends RemoteFolder  {
 	 */
 	public void setChildren(ICVSRemoteResource[] children) {
 		super.setChildren(children);
+	}
+	
+	/*
+	 * @see ICVSFolder#acceptChildren(ICVSResourceVisitor)
+	 */
+	public void acceptChildren(ICVSResourceVisitor visitor) throws CVSException {
+		ICVSRemoteResource[] children = getChildren();
+		if (children == null) return;
+		for (int i=0; i<children.length; i++) {
+			((ICVSResource)children[i]).accept(visitor);
+		}
 	}
 }
 

@@ -59,6 +59,7 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 
@@ -372,7 +373,7 @@ public class CVSProvider implements ICVSProvider {
 	/*
 	 * @see ICVSProvider#importAndCheckout(IProject, Properties, IProgressMonitor)
 	 */
-	public void importAndCheckout(
+	public void createModule(
 		IProject project,
 		Properties configuration,
 		IProgressMonitor monitor)
@@ -382,8 +383,55 @@ public class CVSProvider implements ICVSProvider {
 		boolean alreadyExists = isCached(location);
 		addToCache(location);
 		try {
-			importProject(location, project, configuration, monitor);
-			checkout(location, project, configuration.getProperty("module"), getTagFromProperties(configuration), monitor); //$NON-NLS-1$
+
+			// Get the import properties
+			String message = configuration.getProperty("message"); //$NON-NLS-1$
+			if (message == null)
+				message = Policy.bind("CVSProvider.initialImport");
+			String vendor = configuration.getProperty("vendor"); //$NON-NLS-1$
+			if (vendor == null)
+				vendor = location.getUsername();
+			// Get the vendor
+			String tag = configuration.getProperty("tag"); //$NON-NLS-1$
+			if (tag == null)
+				tag = "start"; //$NON-NLS-1$
+			// Get the module name
+			String projectName = project.getName();
+			String moduleName = configuration.getProperty("module"); //$NON-NLS-1$
+			if (moduleName == null)
+				moduleName = projectName;
+
+			// Perform the import using a dummy root so the local project is not traversed
+			Session s = new Session(location, new RemoteFolderTree(null, location, Path.EMPTY, null));
+			s.open(monitor);
+			try {
+				IStatus status = Command.IMPORT.execute(s,
+					getDefaultGlobalOptions(),
+					new LocalOption[] {Import.makeMessageOption(message)},
+					new String[] { moduleName, vendor, tag },
+					null,
+					monitor);
+				if (status.getCode() == CVSException.SERVER_ERROR) {
+					throw new CVSServerException(status);
+				}
+			} finally {
+				s.close();
+			}
+			
+			// Set the folder sync info of the project to point to the remote module
+			ICVSFolder folder = (ICVSFolder)Session.getManagedResource(project);
+			folder.setFolderSyncInfo(new FolderSyncInfo(moduleName, location.getLocation(), null, false));
+			Synchronizer.getInstance().save(monitor);
+
+			// Register the project with Team
+			// (unless the project already has the proper nature from the project meta-information)
+			try {
+				if (!project.getDescription().hasNature(CVSProviderPlugin.NATURE_ID)) {
+					TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, Policy.subMonitorFor(monitor, 1));
+				}
+			} catch (CoreException e) {
+				throw wrapException(e);
+			} 
 		} catch (TeamException e) {
 			// The checkout may have triggered password caching
 			// Therefore, if this is a newly created location, we want to clear its cache
@@ -407,67 +455,6 @@ public class CVSProvider implements ICVSProvider {
 			return CVSTag.DEFAULT;
 		return new CVSTag(tagName, CVSTag.BRANCH);
 	}
-	public void importProject(
-		ICVSRepositoryLocation location,
-		IProject project,
-		Properties configuration,
-		IProgressMonitor monitor)
-		throws TeamException {
-			
-			// Get the location of the workspace root
-			ICVSFolder root = Session.getManagedFolder(project.getLocation().toFile());
-	
-			// Get the message
-			String message = configuration.getProperty("message"); //$NON-NLS-1$
-			if (message == null)
-				message = Policy.bind("CVSProvider.initialImport");
-				
-			// Get the vendor
-			String vendor = configuration.getProperty("vendor"); //$NON-NLS-1$
-			if (vendor == null)
-				vendor = location.getUsername();
-				
-			// Get the vendor
-			String tag = configuration.getProperty("tag"); //$NON-NLS-1$
-			if (tag == null)
-				tag = "start"; //$NON-NLS-1$
-				
-			// Get the module name
-			String module = configuration.getProperty("module"); //$NON-NLS-1$
-			if (module == null)
-				module = project.getName();
-				
-			// Build the local options
-			List localOptions = new ArrayList();
-			localOptions.add(Import.makeMessageOption(message));
-
-			// Create filters for all known text files
-			String[] patterns = getBinaryFilePatterns(project);
-			for (int i = 0; i < patterns.length ; i++) {
-				localOptions.add(Import.makeBinaryWrapperOption(patterns[i]));
-			}
-
-			// Perform a import
-			IStatus status;
-			Session s = new Session(location, root);
-			s.open(monitor);
-			try {
-				status = Command.IMPORT.execute(s,
-					getDefaultGlobalOptions(),
-					(LocalOption[])localOptions.toArray(new LocalOption[localOptions.size()]),
-					new String[] { module, vendor, tag },
-					null,
-					monitor);
-			} finally {
-				s.close();
-			}
-
-			if (status.getCode() == CVSException.SERVER_ERROR) {
-				throw new CVSServerException(status);
-			}
-
-			// NOTE: we should check to see the results of the import
-		}
 	
 	private boolean isCached(ICVSRepositoryLocation repository) {
 		return repositories.containsKey(repository.getLocation());

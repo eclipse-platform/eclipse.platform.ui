@@ -168,9 +168,7 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	 * @see ITeamNature#configureProvider(Properties)
 	 */
 	public void configureProvider(Properties configuration) throws TeamException {
-		// For now, perform an import and checkout.
-		// NOTE: We'll need to revisit this once we start using the Team test framework
-		CVSProviderPlugin.getProvider().importAndCheckout(project, configuration, Policy.monitorFor(null));
+		// Do nothing
 	}
 			
 	/*

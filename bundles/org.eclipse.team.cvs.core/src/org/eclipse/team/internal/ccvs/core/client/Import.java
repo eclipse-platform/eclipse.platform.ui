@@ -31,9 +31,10 @@ public class Import extends Command {
 	
 	protected void sendLocalResourceState(Session session, GlobalOption[] globalOptions,
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
-		throws CVSException {			
-	 	// if the called does not specify a branch option, then the CVS client
-	 	// enforces a default value of 1.1.1 upon the server
+		throws CVSException {
+					
+	 	// If the branch option is not provided, a default value of 1.1.1 is used.
+	 	// This is done to maintain reference cliet compatibility
 	 	if (findOption(localOptions, "-b") == null) {
 	 		session.sendArgument("-b");
 	 		session.sendArgument("1.1.1");
