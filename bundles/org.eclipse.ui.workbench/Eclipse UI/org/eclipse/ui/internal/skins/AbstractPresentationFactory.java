@@ -66,9 +66,4 @@ public abstract class AbstractPresentationFactory {
 		return null;
 	}
 	
-	public PartPresentation createFixedViewPresentation(Composite parent,
-			IPartPresentationSite container, IPresentablePart thePart, int flags) {
-		
-		return null;
-	}
 }
