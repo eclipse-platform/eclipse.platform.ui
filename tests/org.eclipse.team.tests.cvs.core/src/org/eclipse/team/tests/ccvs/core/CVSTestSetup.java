@@ -25,6 +25,7 @@ public class CVSTestSetup extends TestSetup {
 	public static final boolean DEBUG;
 	public static final boolean LOCAL_REPO;
 	public static final String RSH;
+	public static final int WAIT_FACTOR;
 	
 	public static CVSRepositoryLocation repository;
 	
@@ -36,6 +37,7 @@ public class CVSTestSetup extends TestSetup {
 		DEBUG = Boolean.valueOf(System.getProperty("eclipse.cvs.debug", "false")).booleanValue();
 		RSH = System.getProperty("eclipse.cvs.rsh", "rsh");
 		LOCAL_REPO = Boolean.valueOf(System.getProperty("eclipse.cvs.localRepo", "false")).booleanValue();
+		WAIT_FACTOR = Integer.parseInt(System.getProperty("eclipse.cvs.waitFactor", "1"));
 	}
 
 	public static void loadProperties() {
