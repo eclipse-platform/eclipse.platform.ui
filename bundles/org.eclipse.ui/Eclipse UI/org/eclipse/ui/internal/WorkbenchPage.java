@@ -1999,8 +1999,12 @@ public void setEditorAreaVisible(boolean showEditorArea) {
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_AREA_SHOW);
 	} else {
 		persp.hideEditorArea();
-		if (activePart instanceof IEditorPart)
+		if (activePart instanceof IEditorPart) {
+			IEditorPart e = (IEditorPart)activePart;
 			setActivePart(null);
+			// preserve editor contributions
+			actionSwitcher.updateTopEditor(e);
+		}
 		window.firePerspectiveChanged(this, getPerspective(), CHANGE_EDITOR_AREA_HIDE);
 	}
 }
