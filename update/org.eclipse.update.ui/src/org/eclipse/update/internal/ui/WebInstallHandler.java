@@ -1,6 +1,5 @@
 package org.eclipse.update.internal.ui;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import org.eclipse.update.internal.ui.preferences.AppServerPreferencePage;
@@ -81,11 +80,7 @@ public abstract class WebInstallHandler {
 					+ "/"
 					+ UpdateUIPlugin.WEB_APP_ID
 					+ "/install";
-			try {
-				return URLEncoder.encode(value, "UTF8");
-			} catch (UnsupportedEncodingException e) {
-				return value;
-			}
+			return URLEncoder.encode(value);
 		}
 	}
 }
