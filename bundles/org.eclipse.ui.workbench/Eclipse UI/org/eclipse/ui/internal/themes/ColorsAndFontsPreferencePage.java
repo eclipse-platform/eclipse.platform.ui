@@ -1113,22 +1113,11 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 
 			if (!rgbString.equals(storeString)) {
 				currentTheme.getColorRegistry().put(id, rgb);
-				colorValuesToSet.remove(id); // already taken care of.
 				getPreferenceStore().setValue(key, rgbString);
 			}
 		}
 
 		colorPreferencesToSet.clear();
-
-		for (Iterator i = colorValuesToSet.keySet().iterator(); i.hasNext();) {
-			String id = (String) i.next();
-			RGB rgb = (RGB) colorValuesToSet.get(id);
-
-			currentTheme.getColorRegistry().put(id, rgb);
-		}
-
-		colorValuesToSet.clear();
-
 		return true;
     }
 
@@ -1168,21 +1157,10 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			
 			FontData [] fd = (FontData []) fontPreferencesToSet.get(id);
 			currentTheme.getFontRegistry().put(id, fd);
-			fontValuesToSet.remove(id); // remove from the value list because it's already been set.
 			getPreferenceStore().setValue(key, PreferenceConverter.getStoredRepresentation(fd));
 		}
 
-		fontPreferencesToSet.clear();
-
-		for (Iterator i = fontValuesToSet.keySet().iterator(); i.hasNext();) {
-			String id = (String) i.next();
-			FontData [] fd = (FontData []) fontValuesToSet.get(id);
-
-			currentTheme.getFontRegistry().put(id, fd);
-		}
-
-		fontValuesToSet.clear();
-		
+		fontPreferencesToSet.clear();		
 		return true;
     }
     

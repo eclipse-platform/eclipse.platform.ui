@@ -151,11 +151,26 @@ public final class ThemeElementHelper {
         return themeId + '.' + id;
     }
 
-
+    /**
+     * @param theme
+     * @param property
+     * @return
+     */
+    public static String splitPreferenceKey(Theme theme, String property) {
+        String themeId = theme.getId();
+        if (themeId == null)
+            return property;
+        
+        if (property.startsWith(themeId + '.')) {
+            return property.substring(themeId.length() + 1);            
+        }
+        return property;
+    }
+    
     /**
      * Not intended to be instantiated.
      */
     private ThemeElementHelper() {
         // no-op
-    }
+    }    
 }
