@@ -74,10 +74,11 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
      */
 	private XmlElement rootElement;
     
-    /**
-     * Used as a helper for resolving external relative entries.
-     */
-    private File mainFileContainer;
+	/**
+	 * Used as a helper for resolving external relative entries
+	 * and paths for error elements.
+	 */
+    private File mainFile;
 
     /**
      * Helper for generating <code>IProblem</code>s
@@ -99,12 +100,20 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
      */
     private boolean isInDTD;
    
+     /**
+     * Start offset of the last seen external entity.
+     */
+    private int lastExternalEntityOffset= -1;
+
     /**
      * Creates an instance.
      */
-    public OutlinePreparingHandler(File mainFileContainer) {
-        super();
-        this.mainFileContainer= mainFileContainer;
+    public OutlinePreparingHandler(ILocationProvider locationProvider) {
+		super();
+		IPath location= locationProvider.getLocation();
+		if(location != null) {
+			this.mainFile= location.toFile();
+		}
     }
 
 
@@ -445,8 +454,9 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 
 	private XmlElement generateErrorElementHierarchy(SAXParseException exception) {
 		if (rootElement == null) {
-			rootElement= new XmlElement(exception.getSystemId() != null ? exception.getSystemId() : ""); //$NON-NLS-1$
-			rootElement.setFilePath(exception.getSystemId());
+			String path= exception.getSystemId() != null ? exception.getSystemId() : mainFile.getAbsolutePath();
+			rootElement= new XmlElement(path); //$NON-NLS-1$
+			rootElement.setFilePath(path);
 			stillOpenElements.push(rootElement);
 		}
 		rootElement.setIsErrorNode(true);
@@ -499,7 +509,7 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 				//relative path
 				try {
 					//this call is ok if mainFileContainer is null
-					resolvedFile= FileUtils.newFileUtils().resolveFile(mainFileContainer, systemId);
+					resolvedFile= FileUtils.newFileUtils().resolveFile(mainFile.getParentFile(), systemId);
 				} catch (BuildException be) {
 					return null;
 				}
@@ -524,6 +534,15 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 	 * @see org.xml.sax.ext.LexicalHandler#comment(char[], int, int)
 	 */
 	public void comment(char[] ch, int start, int length) throws SAXException {
+		if (isInDTD || isExternal()) {
+			return;
+		}
+
+		try {
+			lastExternalEntityOffset= getOffset(locator.getLineNumber(), locator.getColumnNumber()) - 1;
+		} catch (BadLocationException e) {
+			ExternalToolsPlugin.getDefault().log(e);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -599,21 +618,30 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		
 		try {
 			int offset;
-			
-			int locatorLine= locator.getLineNumber();
-			int locatorColumn= locator.getColumnNumber();
-			String prefix= "<"; //$NON-NLS-1$
+ 			
 			if (isTopLevelRootExternal) {
-				prefix= "&";  //$NON-NLS-1$
-			}	
-			if (locatorColumn <= 0) {
-				offset= getOffset(locatorLine, getLastCharColumn(locatorLine));
-				offset= document.search(offset, prefix + element.getName(), false, false, false);
+				String source= "&" + element.getName() + ";";  //$NON-NLS-1$
+				offset= document.search(lastExternalEntityOffset + 1, source, true, true, false);
+				lastExternalEntityOffset= offset;
 			} else {
-				offset= getOffset(locatorLine, locatorColumn);
-				offset= document.search(offset - 1, prefix, false, true, false); 
+				int locatorLine= locator.getLineNumber();
+				int locatorColumn= locator.getColumnNumber();
+				String prefix= "<"; //$NON-NLS-1$
+
+				if (locatorColumn <= 0) {
+					offset= getOffset(locatorLine, getLastCharColumn(locatorLine));
+					offset= document.search(offset, prefix + element.getName(), false, false, false);
+					
+					lastExternalEntityOffset= offset;
+				} else {
+					offset= getOffset(locatorLine, locatorColumn);
+					
+					lastExternalEntityOffset= offset - 1;
+					
+					offset= document.search(offset - 1, prefix, false, true, false); 
+				}
 			}
-			
+ 			
 			int line= getLine(offset);
 			int column= getColumn(offset, line);
 			
@@ -631,33 +659,43 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
 		}
 		
 		try {
-			int offset;
-			int line= locator.getLineNumber();
-			int column= locator.getColumnNumber();
-			
-			if (column <= 0) {
-				int lineOffset= getOffset(line, 1);
-				offset= document.search(lineOffset, element.getName(), true, false, false);
-				if (offset < 0 || getLine(offset) != line) {
-					offset= lineOffset;
-				}
-				String endDelimiter= ">"; //$NON-NLS-1$
-				if (isTopLevelRootExternal) {
-					endDelimiter= ";"; //$NON-NLS-1$
-				}
-				offset= document.search(lineOffset, endDelimiter, true, true, false); //$NON-NLS-1$
-				if (offset < 0 || getLine(offset) != line) {
-					offset= lineOffset;
-					column= 1;
-				} else {
-					offset++;
-					column= getColumn(offset, line);
-				}
+			int length, line, column;
+
+			if (isTopLevelRootExternal) {
+				length= element.getName().length() + 2;
+				line= element.getStartingRow();
+				column= element.getStartingColumn() + length;
 			} else {
-				offset= getOffset(line, column);
+				line= locator.getLineNumber();
+				column= locator.getColumnNumber();
+				
+				int offset;
+ 			
+				if (column <= 0) {
+					int lineOffset= getOffset(line, 1);
+					offset= document.search(lineOffset, element.getName(), true, false, false);
+					if (offset < 0 || getLine(offset) != line) {
+						offset= lineOffset;
+					}
+					String endDelimiter= ">"; //$NON-NLS-1$
+					offset= document.search(lineOffset, endDelimiter, true, true, false); //$NON-NLS-1$
+					if (offset < 0 || getLine(offset) != line) {
+						offset= lineOffset;
+						column= 1;
+					} else {
+						offset++;
+						column= getColumn(offset, line);
+					}
+				} else {
+					offset= getOffset(line, column);
+				}
+				
+				length= offset - element.getOffset();
+				
+				lastExternalEntityOffset= offset - 1;
 			}
-			
-			element.setLength(offset - element.getOffset());
+ 			
+			element.setLength(length);
 			element.setEndingRow(line);
 			element.setEndingColumn(column);
 		} catch (BadLocationException e) {
