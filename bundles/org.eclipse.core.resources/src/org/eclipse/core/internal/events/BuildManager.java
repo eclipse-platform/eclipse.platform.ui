@@ -20,9 +20,18 @@ public class BuildManager implements ICoreConstants, IManager {
 	protected InternalBuilder currentBuilder;
 	protected List createdDeltas = new ArrayList(5);
 	protected boolean needNextTree;
+
+	public static boolean DEBUG_BUILD = false;
+	public static final String OPTION_DEBUG_BUILD = ResourcesPlugin.PI_RESOURCES + "/debug/build";
+	
 public BuildManager(Workspace workspace) {
 	this.workspace = workspace;
+	if (!ResourcesPlugin.getPlugin().isDebugging()) {
+		String option = Platform.getDebugOption(OPTION_DEBUG_BUILD);
+		DEBUG_BUILD = "true".equalsIgnoreCase(option);
+	}
 }
+
 void basicBuild(final IProject project, final int trigger, final IncrementalProjectBuilder builder, final Map args, final MultiStatus status, final IProgressMonitor monitor) {
 	try {
 		// want to invoke some methods not accessible via IncrementalProjectBuilder
@@ -185,34 +194,29 @@ public Map createBuildersPersistentInfo(IProject project) throws CoreException {
 	ICommand[] buildCommands = ((Project) project).internalGetDescription().getBuildSpec(false);
 	if (buildCommands.length == 0)
 		return null;
-
+		
 	/* build the new map */
 	Map newInfos = new HashMap(buildCommands.length * 2);
 	Hashtable instantiatedBuilders = getBuilders(project);
 	for (int i = 0; i < buildCommands.length; i++) {
 		String builderName = buildCommands[i].getBuilderName();
 		ElementTree tree = null;
+		BuilderPersistentInfo info = null;
 		IncrementalProjectBuilder builder = (IncrementalProjectBuilder) instantiatedBuilders.get(builderName);
-		if (builder != null) {
-			tree = ((InternalBuilder) builder).getLastBuiltTree();
+		if (builder == null) {
+			// if the builder was not instantiated, use the old info if any.
+			if (oldInfos != null) 
+				info = (BuilderPersistentInfo) oldInfos.get(builderName);
 		} else {
-			/* look in the old builder map */
-			if (oldInfos != null) {
-				BuilderPersistentInfo info = (BuilderPersistentInfo) oldInfos.get(builderName);
-				tree = info.getLastBuiltTree();
-			}
-		}
-		if (tree != null) {
-			BuilderPersistentInfo info = new BuilderPersistentInfo();
+			// if the builder was instantiated, construct a memento with the important info
+			info = new BuilderPersistentInfo();
 			info.setProjectName(project.getName());
 			info.setBuilderName(builderName);
-			info.setLastBuildTree(tree);
-			if (builder != null)
-				info.setInterestingProjects(((InternalBuilder) builder).getInterestingProjects());
-			else
-				info.setInterestingProjects(ICoreConstants.EMPTY_PROJECT_ARRAY);
-			newInfos.put(builderName, info);
+			info.setLastBuildTree(((InternalBuilder) builder).getLastBuiltTree());
+			info.setInterestingProjects(((InternalBuilder)builder).getInterestingProjects());
 		}
+		if (info != null)
+			newInfos.put(builderName, info);
 	}
 	return newInfos;
 }
@@ -256,16 +260,35 @@ private Hashtable getBuilders(IProject project) {
 	return info.getBuilders();
 }
 public IResourceDelta getDelta(IProject project) {
-	if (currentTree == null)
+	if (currentTree == null) {
+		if (DEBUG_BUILD) 
+			System.out.println("Build: no tree for delta" + debugBuilder() + " [" + debugProject() + "]");
 		return null;
+	}
 	IProject interestingProject = getInterestingProject(project);
-	if (interestingProject == null)
+	if (interestingProject == null) {
+		if (DEBUG_BUILD) 
+			System.out.println("Build: project not interesting for delta" + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
 		return null;
-
+	}
+	
 	IResourceDelta result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, interestingProject.getFullPath(), false);
 	createdDeltas.add(result);
+	if (DEBUG_BUILD && result == null) 
+		System.out.println("Build: no delta" + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
 	return result;
 }
+
+String debugProject() {
+	if (currentBuilder== null)
+		return "<no project>";
+	return currentBuilder.getProject().getFullPath().toString();
+}
+
+String debugBuilder() {
+	return currentBuilder == null ? "<no builder>" : currentBuilder.getClass().getName();
+}
+
 ResourceDelta getDelta(IProject project, IncrementalProjectBuilder builder, ElementTree currentTree) {
 	return ResourceDeltaFactory.computeDelta(workspace, ((InternalBuilder)builder).getLastBuiltTree(), currentTree, project.getFullPath(), false);
 }
@@ -291,17 +314,17 @@ protected IncrementalProjectBuilder instantiateBuilder(String builderName, IProj
 		IConfigurationElement config = configs[0];
 		IncrementalProjectBuilder builder = (IncrementalProjectBuilder) config.createExecutableExtension("run");
 		((InternalBuilder) builder).setPluginDescriptor(config.getDeclaringExtension().getDeclaringPluginDescriptor());
-
-		/* get the map of builders to get the last built tree */
+		// get the map of builders to get the last built tree
 		Map infos = getBuildersPersistentInfo(project);
 		if (infos != null) {
 			BuilderPersistentInfo info = (BuilderPersistentInfo) infos.remove(builderName);
-			ElementTree tree = info.getLastBuiltTree();
-			if (tree != null) {
-				((InternalBuilder) builder).setLastBuiltTree(tree);
+			if (info != null) {
+				ElementTree tree = info.getLastBuiltTree();
+				if (tree != null) 
+					((InternalBuilder) builder).setLastBuiltTree(tree);
+				((InternalBuilder) builder).setInterestingProjects(info.getInterestingProjects());
 			}
-			((InternalBuilder) builder).setInterestingProjects(info.getInterestingProjects());
-			/* delete the build map if it's now empty */
+			// delete the build map if it's now empty 
 			if (infos.size() == 0)
 				setBuildersPersistentInfo(project, null);
 		}
