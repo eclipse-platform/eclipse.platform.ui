@@ -14,6 +14,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.dialogs.PreferencePageContainerDialog;
 import org.eclipse.team.internal.ui.preferences.SyncViewerPreferencePage;
 
@@ -22,8 +23,7 @@ public class SyncViewerShowPreferencesAction extends Action {
 	
 	public SyncViewerShowPreferencesAction(Shell shell) {
 		this.shell = shell;
-		setText("Preferences...");
-		setToolTipText("Configure the view's preferences");
+		Utils.initAction(this, "action.syncViewPreferences."); //$NON-NLS-1$
 	}
 
 	public void run() {

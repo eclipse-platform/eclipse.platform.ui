@@ -184,7 +184,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		getPreferenceStore().addPropertyChangeListener(this);
 		
 		// startup auto-refresh job if necessary
-		refreshJob = new RefreshSubscriberInputJob(Policy.bind("ScheduledSyncViewRefresh.taskName"));
+		refreshJob = new RefreshSubscriberInputJob(Policy.bind("ScheduledSyncViewRefresh.taskName")); //$NON-NLS-1$
 		refreshJob.setReschedule(true);
 		refreshJob.setRefreshInterval(getPreferenceStore().getInt(IPreferenceIds.SYNCVIEW_DELAY) * 60);
 		if(getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
@@ -257,6 +257,10 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	 * @return the image associated with the given ID
 	 */
 	public static ImageDescriptor getImageDescriptor(String id) {
+		if(! imageDescriptors.containsKey(id)) {
+			URL baseURL = TeamUIPlugin.getPlugin().getDescriptor().getInstallURL();
+			createImageDescriptor(id, baseURL);
+		}
 		return (ImageDescriptor)imageDescriptors.get(id);
 	}	
 	/**

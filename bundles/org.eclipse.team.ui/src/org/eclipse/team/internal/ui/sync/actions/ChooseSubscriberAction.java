@@ -10,24 +10,19 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.sync.actions;
 
-import org.eclipse.jface.action.Action;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
-import org.eclipse.ui.actions.ActionContext;
 
-class CancelSubscription extends Action {
+class ChooseSubscriberAction extends SyncViewerToolbarDropDownAction {
 	private final SyncViewerActions actions;
-	
-	public CancelSubscription(SyncViewerActions actions) {
-		this.actions = actions;
-		Utils.initAction(this, "action.cancelSubscriber."); //$NON-NLS-1$
-		// don't enable until necessary
-		setEnabled(false);
-	}
-	
+
 	public void run() {
-		ActionContext context = actions.getContext();
-		SubscriberInput input = (SubscriberInput)context.getInput();
-		input.getSubscriber().cancel();
+		RefreshAction refresh = new RefreshAction(actions, true /* refresh all */);
+		refresh.run();
 	}
+
+	public ChooseSubscriberAction(SyncViewerActions actions, SyncViewerActionGroup[] actionGroup) {
+		super(actionGroup);
+		this.actions = actions;
+		Utils.initAction(this, "action.refreshSubscriber."); //$NON-NLS-1$
+	}		
 }

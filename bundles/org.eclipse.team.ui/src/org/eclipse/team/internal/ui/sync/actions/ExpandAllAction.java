@@ -17,14 +17,15 @@ import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.ui.actions.ActionContext;
 
 
 class ExpandAllAction extends Action {
 	private final SyncViewerActions actions;
 	public ExpandAllAction(SyncViewerActions actions) {
-		super("Expand All");
 		this.actions = actions;
+		Utils.initAction(this, "action.expandAll."); //$NON-NLS-1$
 	}
 	public void run() {
 		expandSelection();

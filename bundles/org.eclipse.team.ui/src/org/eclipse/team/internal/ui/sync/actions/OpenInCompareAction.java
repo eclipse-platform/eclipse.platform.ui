@@ -13,23 +13,23 @@ package org.eclipse.team.internal.ui.sync.actions;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.sync.compare.SyncInfoCompareInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 
 /**
- * OpenInCompareEditor
- * 
- * TODO: Compare editor should implement IReusableEditor so that the non-dirty editor doesn't have to be closed
- * and the compare editor finding should be cleaned up.
+ * Opens a compare editor on a selected SyncInfo object
  */
 public class OpenInCompareAction extends Action {
 	
@@ -37,7 +37,7 @@ public class OpenInCompareAction extends Action {
 	
 	public OpenInCompareAction(SyncViewer viewer) {
 		this.viewer = viewer;
-		setText("Open With Compare Editor");
+		Utils.initAction(this, "action.openInCompareEditor."); //$NON-NLS-1$
 	}
 
 	public void run() {	
@@ -55,7 +55,8 @@ public class OpenInCompareAction extends Action {
 			} else {
 				CompareUI.openCompareEditor(input);
 			}
-			SyncViewer.showInActivePage(viewer.getSite().getPage());
+			// This could be a user preference.
+			//SyncViewer.showInActivePage(viewer.getSite().getPage());
 		}		
 	}
 	
@@ -90,5 +91,25 @@ public class OpenInCompareAction extends Action {
 			}
 		}
 		return editor;
+	}
+	
+	public static void closeCompareEditorFor(SyncViewer viewer, IResource resource) {
+		final IWorkbenchPage page = viewer.getSite().getPage();
+		IEditorReference[] editorRefs = page.getEditorReferences();
+	
+		for (int i = 0; i < editorRefs.length; i++) {
+			final IEditorPart part = editorRefs[i].getEditor(true);
+			IEditorInput input = part.getEditorInput();
+			if(part != null && input instanceof SyncInfoCompareInput) {
+				SyncInfo inputInfo = ((SyncInfoCompareInput)input).getSyncInfo();
+				if(inputInfo.getLocal().equals(resource)) {
+					viewer.getSite().getShell().getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							page.closeEditor(part, true /*save changes if required */);
+						}
+					});
+				}
+			}
+		}
 	}
 }

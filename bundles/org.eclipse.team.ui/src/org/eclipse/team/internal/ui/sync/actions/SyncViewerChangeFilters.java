@@ -15,6 +15,7 @@ import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 import org.eclipse.ui.IMemento;
 
@@ -25,7 +26,7 @@ import org.eclipse.ui.IMemento;
  */
 public class SyncViewerChangeFilters extends SyncViewerActionGroup {
 	
-	private static final String MEMENTO_KEY_PREFIX = "SyncViewerChangeFilters";
+	private static final String MEMENTO_KEY_PREFIX = "SyncViewerChangeFilters"; //$NON-NLS-1$
 	
 	// array of actions for filtering by change type (additions, deletions and changes)
 	private ChangeFilterAction[] actions;	
@@ -37,9 +38,9 @@ public class SyncViewerChangeFilters extends SyncViewerActionGroup {
 	class ChangeFilterAction extends Action {
 		// The SyncInfo change constant associated with the change type
 		private int changeFilter;
-		public ChangeFilterAction(String title, int changeFilter) {
-			super(title);
+		public ChangeFilterAction(String prefix, int changeFilter) {
 			this.changeFilter = changeFilter;
+			Utils.initAction(this, prefix);
 		}
 		public void run() {
 			refreshFilters();
@@ -56,11 +57,11 @@ public class SyncViewerChangeFilters extends SyncViewerActionGroup {
 	}
 	
 	private void createActions() {
-		ChangeFilterAction additions = new ChangeFilterAction("Show Additions", SyncInfo.ADDITION);
+		ChangeFilterAction additions = new ChangeFilterAction("action.changeFilterShowAdditions.", SyncInfo.ADDITION); //$NON-NLS-1$
 		additions.setChecked(true);
-		ChangeFilterAction deletions = new ChangeFilterAction("Show Deletions", SyncInfo.DELETION);
+		ChangeFilterAction deletions = new ChangeFilterAction("action.changeFilterShowDeletions.", SyncInfo.DELETION); //$NON-NLS-1$
 		deletions.setChecked(true);
-		ChangeFilterAction changes = new ChangeFilterAction("Show Changes", SyncInfo.CHANGE);
+		ChangeFilterAction changes = new ChangeFilterAction("action.changeFilterShowChanges.", SyncInfo.CHANGE); //$NON-NLS-1$
 		changes.setChecked(true);
 		actions = new ChangeFilterAction[] { additions, deletions, changes };
 	}
@@ -155,7 +156,7 @@ public class SyncViewerChangeFilters extends SyncViewerActionGroup {
 		Integer i;
 		int count = 0;
 		do {
-			i = memento.getInteger(MEMENTO_KEY_PREFIX + "." + count);
+			i = memento.getInteger(MEMENTO_KEY_PREFIX + "." + count); //$NON-NLS-1$
 			if (i != null) {
 				count++;
 				actions[i.intValue()].setChecked(true);
@@ -183,7 +184,7 @@ public class SyncViewerChangeFilters extends SyncViewerActionGroup {
 		for (int i = 0; i < actions.length; i++) {
 			Action action = actions[i];
 			if (action.isChecked()) {
-				memento.putInteger(MEMENTO_KEY_PREFIX + "." + count++, i);
+				memento.putInteger(MEMENTO_KEY_PREFIX + "." + count++, i); //$NON-NLS-1$
 			}
 		}
 	}

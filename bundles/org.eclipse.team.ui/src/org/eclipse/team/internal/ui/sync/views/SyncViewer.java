@@ -73,6 +73,7 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberInputJob;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
+import org.eclipse.team.internal.ui.sync.actions.OpenInCompareAction;
 import org.eclipse.team.internal.ui.sync.actions.RefreshAction;
 import org.eclipse.team.internal.ui.sync.actions.SyncViewerActions;
 import org.eclipse.team.ui.ISharedImages;
@@ -97,7 +98,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	/*
 	 * This view's id. The same value as in the plugin.xml.
 	 */
-	 public static final String VIEW_ID = "org.eclipse.team.sync.views.SyncViewer"; 
+	 public static final String VIEW_ID = "org.eclipse.team.sync.views.SyncViewer";  //$NON-NLS-1$
 	
 	/*
 	 * The viewer thst is shown in the view. Currently this can be
@@ -206,11 +207,18 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 
 	public void switchViewerType(int viewerType) {
 		if(viewerType != currentViewType) {
+			ISelection s = viewer.getSelection();
 			if (composite == null || composite.isDisposed()) return;
 			currentViewType = viewerType;
 			disposeChildren(composite);
 			createViewer(composite);
 			composite.layout();
+			IStructuredSelection selection = (IStructuredSelection)s;
+			if(selection.size() == 0) {
+				gotoDifference(INavigableControl.NEXT);
+			} else {
+				viewer.setSelection(selection, true);
+			}
 			fireSafePropertyChange(PROP_VIEWTYPE);
 		}
 	}
@@ -454,6 +462,10 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 				viewer.setInput(input.getFilteredSyncSet());
 				RefreshSubscriberInputJob refreshJob = TeamUIPlugin.getPlugin().getRefreshJob();
 				refreshJob.setSubscriberInput(input);
+				IStructuredSelection s = (IStructuredSelection)viewer.getSelection();
+				if(s.size() == 0) {
+					gotoDifference(INavigableControl.NEXT);
+				}
 			}
 		});
 		updateTitle();
@@ -468,23 +480,23 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 				SubscriberInput input = getInput();
 				if(input != null) {
 					TeamSubscriber subscriber = input.getSubscriber();
-					String changesText = Policy.bind("LiveSyncView.titleChangeNumbers", 
+					String changesText = Policy.bind("LiveSyncView.titleChangeNumbers",  //$NON-NLS-1$
 														new Integer(input.getFilteredSyncSet().size()).toString(), 
 														new Integer(input.getSubscriberSyncSet().size()).toString());
 				 	setTitle(
-				 		Policy.bind("LiveSyncView.titleWithSubscriber", new String[] {
-				 				Policy.bind("LiveSyncView.title"), 
+				 		Policy.bind("LiveSyncView.titleWithSubscriber", new String[] { //$NON-NLS-1$
+				 				Policy.bind("LiveSyncView.title"),  //$NON-NLS-1$
 				 				changesText,
 				 				subscriber.getName()}));
 				 	IWorkingSet ws = input.getWorkingSet();
 				 	if(ws != null) {
-				 		setTitleToolTip(Policy.bind("LiveSyncView.titleTooltip", subscriber.getDescription(), ws.getName()));
+				 		setTitleToolTip(Policy.bind("LiveSyncView.titleTooltip", subscriber.getDescription(), ws.getName())); //$NON-NLS-1$
 				 	} else {
 					 	setTitleToolTip(subscriber.getDescription());
 				 	}
 				} else {
-					setTitle(Policy.bind("LiveSyncView.title"));
-					setTitleToolTip("");
+					setTitle(Policy.bind("LiveSyncView.title")); //$NON-NLS-1$
+					setTitleToolTip(""); //$NON-NLS-1$
 				}
 			}
 		});
@@ -754,6 +766,12 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	 */
 	public void syncSetChanged(SyncSetChangedEvent event) {
 		updateTitle();
+		// remove opened compare editors if file was removed from sync view and update if changed
+		IResource[] resources =event.getRemovedResources();
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			OpenInCompareAction.closeCompareEditorFor(this, resource);
+		}
 	}
 
 	private void fireSafePropertyChange(final int property) {

@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.swt.SWT;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 import org.eclipse.ui.actions.ActionContext;
@@ -24,8 +25,6 @@ import org.eclipse.ui.actions.ActionContext;
  * SyncViewerSubscriberListActions
  */
 public class SyncViewerSubscriberListActions extends SyncViewerActionGroup {
-
-	private static final String MEMENTO_KEY = "SelectedComparisonCriteria";
 
 	// {QualifiedName:subscriber id -> SubscriberInput}
 	private Map actions = new HashMap();
@@ -37,7 +36,7 @@ public class SyncViewerSubscriberListActions extends SyncViewerActionGroup {
 	class SwitchSubscriberAction extends Action {
 		private SubscriberInput input;
 		public SwitchSubscriberAction(SubscriberInput input) {
-			super(input.getSubscriber().getName());
+			super(input.getSubscriber().getName(), SWT.RADIO);
 			this.input = input;
 		}
 		public void run() {

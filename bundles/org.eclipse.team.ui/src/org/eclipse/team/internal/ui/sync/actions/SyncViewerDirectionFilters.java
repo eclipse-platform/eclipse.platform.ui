@@ -16,18 +16,16 @@ import java.util.List;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionContext;
-import org.eclipse.team.internal.ui.Policy;
 
 /**
  * This ActionGroup provides filtering of a sync set by change direction.
@@ -49,10 +47,19 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 	class DirectionFilterAction extends Action {
 		// The sync mode that this action enables
 		private int syncMode;
-		public DirectionFilterAction(String title, ImageDescriptor image, int mode) {
-			super(title, SWT.TOGGLE);
-			setImageDescriptor(image);
+		private boolean toggled;
+		public DirectionFilterAction(String prefix,String commandId, int mode) {
+			super("", SWT.TOGGLE); //$NON-NLS-1$
 			this.syncMode = mode;
+			Utils.initAction(this, prefix);
+			Action a = new Action() {
+				public void run() {
+					DirectionFilterAction.this.setChecked(! DirectionFilterAction.this.isChecked());
+					DirectionFilterAction.this.run();
+				}
+			};
+			IKeyBindingService kbs = refreshGroup.getSyncView().getSite().getKeyBindingService();
+			Utils.registerAction(kbs, a, commandId);	//$NON-NLS-1$
 		}
 		public void run() {
 			updateFilter(this);
@@ -73,31 +80,13 @@ public class SyncViewerDirectionFilters extends SyncViewerActionGroup {
 	 */
 	private void createActions() {
 		// Create the actions
-		DirectionFilterAction incomingMode = new DirectionFilterAction(
-			Policy.bind("SyncViewerDirectionFilters.incomingTitle"), //$NON-NLS-1$
-			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP_ENABLED),
-			SyncInfo.INCOMING);
-		incomingMode.setToolTipText(Policy.bind("SyncViewerDirectionFilters.incomingToolTip")); //$NON-NLS-1$
-		incomingMode.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP_DISABLED));
-		incomingMode.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP));
+		DirectionFilterAction incomingMode = new DirectionFilterAction("action.directionFilterIncoming.", "org.eclipse.team.ui.syncview.incomingFilter", SyncInfo.INCOMING); //$NON-NLS-1$ //$NON-NLS-2$
 		actions.add(incomingMode);
 					
-		DirectionFilterAction outgoingMode = new DirectionFilterAction(
-			Policy.bind("SyncViewerDirectionFilters.outgoingTitle"), //$NON-NLS-1$
-			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE_ENABLED),
-			SyncInfo.OUTGOING);
-		outgoingMode.setToolTipText(Policy.bind("SyncViewerDirectionFilters.outgoingToolTip")); //$NON-NLS-1$
-		outgoingMode.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE_DISABLED));
-		outgoingMode.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE));
+		DirectionFilterAction outgoingMode = new DirectionFilterAction("action.directionFilterOutgoing.", "org.eclipse.team.ui.syncview.outgoingFilter", SyncInfo.OUTGOING); //$NON-NLS-1$ //$NON-NLS-2$
 		actions.add(outgoingMode);
-		
-		DirectionFilterAction conflictsMode = new DirectionFilterAction(
-			Policy.bind("SyncViewerDirectionFilters.conflictingTitle"),  //$NON-NLS-1$
-			TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING_ENABLED),
-			SyncInfo.CONFLICTING);
-		conflictsMode.setToolTipText(Policy.bind("SyncViewerDirectionFilters.conflictingToolTip")); //$NON-NLS-1$
-		conflictsMode.setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING_DISABLED));
-		conflictsMode.setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING));
+
+		DirectionFilterAction conflictsMode = new DirectionFilterAction("action.directionFilterConflicts.", "org.eclipse.team.ui.syncview.conflictsFilter", SyncInfo.CONFLICTING); //$NON-NLS-1$ //$NON-NLS-2$
 		actions.add(conflictsMode);
 		
 		updateCheckedState(DEFAULT_FILTER);

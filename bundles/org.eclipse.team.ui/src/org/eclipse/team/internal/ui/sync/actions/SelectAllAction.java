@@ -11,23 +11,26 @@
 package org.eclipse.team.internal.ui.sync.actions;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
-import org.eclipse.ui.actions.ActionContext;
+import org.eclipse.team.internal.ui.sync.views.SyncViewer;
+import org.eclipse.team.ui.sync.ISyncViewer;
+import org.eclipse.ui.IPropertyListener;
 
-class CancelSubscription extends Action {
-	private final SyncViewerActions actions;
+class SelectAllAction extends Action implements IPropertyListener {
+	private final SyncViewer viewer;
 	
-	public CancelSubscription(SyncViewerActions actions) {
-		this.actions = actions;
-		Utils.initAction(this, "action.cancelSubscriber."); //$NON-NLS-1$
-		// don't enable until necessary
-		setEnabled(false);
+	public SelectAllAction(SyncViewer viewer) {
+		this.viewer = viewer;
+		viewer.addPropertyListener(this);
 	}
 	
 	public void run() {
-		ActionContext context = actions.getContext();
-		SubscriberInput input = (SubscriberInput)context.getInput();
-		input.getSubscriber().cancel();
+		viewer.selectAll();
+	}
+	
+	public void propertyChanged(Object source, int propId) {
+		if(propId == SyncViewer.PROP_VIEWTYPE) {
+			setEnabled(viewer.getCurrentViewType() == ISyncViewer.TABLE_VIEW);
+			viewer.getViewSite().getActionBars().updateActionBars();	
+		}			
 	}
 }

@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -184,6 +185,63 @@ public class Utils {
 		if (kbs != null) {
 			a.setActionDefinitionId(id);
 			kbs.registerAction(a);
+		}
+	}
+	
+	/**
+	 * Initialize the given Action from a ResourceBundle.
+	 */
+	public static void initAction(IAction a, String prefix) {
+		
+		String labelKey= "label"; //$NON-NLS-1$
+		String tooltipKey= "tooltip"; //$NON-NLS-1$
+		String imageKey= "image"; //$NON-NLS-1$
+		String descriptionKey= "description"; //$NON-NLS-1$
+		
+		if (prefix != null && prefix.length() > 0) {
+			labelKey= prefix + labelKey;
+			tooltipKey= prefix + tooltipKey;
+			imageKey= prefix + imageKey;
+			descriptionKey= prefix + descriptionKey;
+		}
+	
+		String s = Policy.bind(labelKey);
+		if(s != null)
+			a.setText(s);
+		s = Policy.bind(tooltipKey);
+		if(s != null)
+			a.setToolTipText(s);
+		s = Policy.bind(descriptionKey);
+		if(s != null)
+			a.setDescription(s);
+	
+		String relPath= Policy.bind(imageKey);
+		if (relPath != null && ! relPath.equals(imageKey) && relPath.trim().length() > 0) {
+		
+			String cPath;
+			String dPath;
+			String ePath;
+		
+			if (relPath.indexOf("/") >= 0) { //$NON-NLS-1$
+				String path= relPath.substring(1);
+				cPath= 'c' + path;
+				dPath= 'd' + path;
+				ePath= 'e' + path;
+			} else {
+				cPath= "clcl16/" + relPath; //$NON-NLS-1$
+				dPath= "dlcl16/" + relPath; //$NON-NLS-1$
+				ePath= "elcl16/" + relPath; //$NON-NLS-1$
+			}
+		
+			ImageDescriptor id= TeamUIPlugin.getImageDescriptor(dPath);	// we set the disabled image first (see PR 1GDDE87)
+			if (id != null)
+				a.setDisabledImageDescriptor(id);
+			id= TeamUIPlugin.getImageDescriptor(cPath);
+			if (id != null)
+				a.setHoverImageDescriptor(id);
+			id= TeamUIPlugin.getImageDescriptor(ePath);
+			if (id != null)
+				a.setImageDescriptor(id);
 		}
 	}
 }

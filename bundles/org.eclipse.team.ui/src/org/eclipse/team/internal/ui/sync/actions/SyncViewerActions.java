@@ -22,14 +22,11 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.sync.views.INavigableControl;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.sync.AndSyncInfoFilter;
-import org.eclipse.team.ui.sync.ISyncViewer;
 import org.eclipse.team.ui.sync.PseudoConflictFilter;
 import org.eclipse.team.ui.sync.SyncInfoChangeTypeFilter;
 import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
@@ -37,10 +34,8 @@ import org.eclipse.team.ui.sync.SyncInfoFilter;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -74,95 +69,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	private CancelSubscription cancelSubscription;
 	private SelectAllAction selectAllAction;
 	
-	class CollapseAllAction extends Action {
-		public CollapseAllAction() {
-			super("Collapse All", TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_COLLAPSE_ALL_ENABLED));
-			setToolTipText("Collapse all entries in the view");
-			setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_COLLAPSE_ALL));
-		}
-		public void run() {
-			getSyncView().collapseAll();
-		}
-	}
-	
-	class ToggleViewAction extends Action implements IPropertyListener {
-		private SyncViewer viewer;
-		public ToggleViewAction(SyncViewer viewer, int initialState) {
-			this.viewer = viewer;
-			setText("Toggle Tree/Table");
-			setToolTipText("Toggle Tree/Table");
-			setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
-						getImageDescriptor(org.eclipse.ui.ISharedImages.IMG_TOOL_COPY));
-			setChecked(initialState == SyncViewer.TREE_VIEW);
-			collapseAll.setEnabled(false);
-			viewer.addPropertyListener(this);
-		}
-		public void run() {
-			int viewerType;
-			if(toggleViewerType.isChecked()) {
-				viewerType = SyncViewer.TREE_VIEW;	
-				collapseAll.setEnabled(true);						
-			} else {
-				viewerType = SyncViewer.TABLE_VIEW;
-				collapseAll.setEnabled(false);
-			}
-			getSyncView().switchViewerType(viewerType);
-		}
-		public void propertyChanged(Object source, int propId) {
-			if(propId == SyncViewer.PROP_VIEWTYPE) {
-				setChecked(viewer.getCurrentViewType() == SyncViewer.TREE_VIEW);
-			}			
-		}
-	}	
-
-	class SelectAllAction extends Action implements IPropertyListener {
-		public SelectAllAction() {
-			getSyncView().addPropertyListener(this);
-		}
-		public void run() {
-			getSyncView().selectAll();
-		}
-		public void propertyChanged(Object source, int propId) {
-			if(propId == SyncViewer.PROP_VIEWTYPE) {
-				selectAllAction.setEnabled(getSyncView().getCurrentViewType() == ISyncViewer.TABLE_VIEW);
-				getSyncView().getViewSite().getActionBars().updateActionBars();	
-			}			
-		}
-	}
-	
-	class ChooseSubscriberAction extends SyncViewerToolbarDropDownAction {
-		public void run() {
-			RefreshAction refresh = new RefreshAction(SyncViewerActions.this, true /* refresh all */);
-			refresh.run();
-		}
-
-		public ChooseSubscriberAction(SyncViewerActionGroup[] actionGroup) {
-			super(actionGroup);
-			setText("Select Subscriber");
-			setToolTipText("Refresh with remote");
-			setImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_SITE_ELEMENT));
-		}		
-	}
-	
-	class ChooseChangeFilterAction extends SyncViewerToolbarDropDownAction {
-		private SyncViewerChangeFilters filters;
-		public void run() {		
-			Action[] enabled = filters.getActiveFilters();
-			Action[] actions = filters.getFilters();
-			if(actions.length != enabled.length) {
-				filters.setAllEnabled();
-				refreshFilters();
-			}
-		}		
-		public ChooseChangeFilterAction(SyncViewerChangeFilters filters) {
-			super(filters);
-			this.filters = filters;
-			setText("Select a change filter");
-			setToolTipText("Enable all change filters");
-			setImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_CHANGE_FILTER));
-		}		
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
 	 */
@@ -172,8 +78,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		directionsFilters.updateActionBars();
 		comparisonCriteria.updateActionBars();
 		subscriberInputs.updateActionBars();
-		subscriberActions.updateActionBars();
-		
+		subscriberActions.updateActionBars();		
 		expandAll.update();
 	}
 
@@ -192,40 +97,59 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		// initialize the dropdown for choosing a subscriber
 		subscriberInputs = new SyncViewerSubscriberListActions(syncView);
 		comparisonCriteria = new SyncViewerComparisonCriteria(syncView);
-		chooseSubscriberAction = new ChooseSubscriberAction(
-			new SyncViewerActionGroup[] {subscriberInputs, comparisonCriteria});
+		chooseSubscriberAction = new ChooseSubscriberAction(this, new SyncViewerActionGroup[] {subscriberInputs, comparisonCriteria});
 		
 		// initialize the dropdown for choosing a change type filter
-		chooseChangeFilterAction = new ChooseChangeFilterAction(changeFilters);
+		chooseChangeFilterAction = new ChooseChangeFilterAction(this, changeFilters);
 		
 		// initialize other actions
 		refreshSelectionAction = new RefreshAction(this, false);
 		refreshSelectionAction.setEnabled(false);
 		
-		collapseAll = new CollapseAllAction();
+		selectAllAction = new SelectAllAction(getSyncView());
+		getSyncView().getViewSite().getActionBars().setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, selectAllAction);
+
+		
+		Action a= new Action() {
+			public void  run() {
+				getSyncView().collapseAll();
+			}
+		};
+		Utils.initAction(a, "action.collapseAll."); //$NON-NLS-1$
+		
+		
 		expandAll = new ExpandAllAction(this);
 		cancelSubscription = new CancelSubscription(this);
 		
 		IKeyBindingService kbs = getSyncView().getSite().getKeyBindingService();
-		Action a= new Action("Select next team change") {
+		a= new Action() {
 			public void run() {
 				getSyncView().gotoDifference(INavigableControl.NEXT);
 			}
 		};
+		Utils.initAction(a, "action.selectNextChange."); //$NON-NLS-1$
 		Utils.registerAction(kbs, a, "org.eclipse.team.ui.syncview.selectNextChange");	//$NON-NLS-1$
 		getSyncView().getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.NEXT, a);
 		
-		a= new Action("Select previous team change") {
+		a= new Action() {
 			public void run() {
 				getSyncView().gotoDifference(INavigableControl.PREVIOUS);
 			}
 		};
+		Utils.initAction(a, "action.selectPreviousChange."); //$NON-NLS-1$
 		Utils.registerAction(kbs, a, "org.eclipse.team.ui.syncview.selectPreviousChange");	//$NON-NLS-1$
 		getSyncView().getViewSite().getActionBars().setGlobalActionHandler(IWorkbenchActionConstants.PREVIOUS, a);
 		
+		collapseAll = new Action() {
+			public void run() {
+				getSyncView().collapseAll();
+			}
+		};
+		Utils.initAction(collapseAll, "action.collapseAll."); //$NON-NLS-1$
+		
 		toggleViewerType = new ToggleViewAction(getSyncView(), getSyncView().getCurrentViewType());
 		open = new OpenInCompareAction(syncView);
-		
+				
 		IPropertyChangeListener workingSetUpdater = new IPropertyChangeListener() {
 			public void propertyChange(PropertyChangeEvent event) {
 				String property = event.getProperty();
@@ -253,9 +177,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	public void fillActionBars(IActionBars actionBars) {
 		super.fillActionBars(actionBars);
 		
-		selectAllAction = new SelectAllAction();
-		actionBars.setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, selectAllAction);
-
 		IToolBarManager manager = actionBars.getToolBarManager();
 		manager.add(chooseSubscriberAction);
 		manager.add(new Separator());
@@ -287,7 +208,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		// Subscriber menus go here
 		subscriberActions.fillContextMenu(manager);
 		// Other plug-ins can contribute there actions here
-		manager.add(new Separator("Additions"));
+		manager.add(new Separator("Additions")); //$NON-NLS-1$
 	}
 
 	public void refreshFilters() {
@@ -337,9 +258,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	protected void initializeActions() {
 		SubscriberInput input = getSubscriberContext();
 		refreshSelectionAction.setEnabled(input != null);
-		
-
-		cancelSubscription.updateTitle(input);
 		if(input == null) {
 			cancelSubscription.setEnabled(false);
 		} else {

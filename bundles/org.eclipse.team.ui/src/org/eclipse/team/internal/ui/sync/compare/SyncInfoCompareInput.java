@@ -198,4 +198,8 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 		if (right instanceof LocalResourceTypedElement)
 			((LocalResourceTypedElement) right).commit(pm);
 	}
+	
+	public SyncInfo getSyncInfo() {
+		return sync;
+	}
 }

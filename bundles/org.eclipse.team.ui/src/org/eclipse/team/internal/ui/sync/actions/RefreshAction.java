@@ -23,11 +23,11 @@ import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.jobs.RefreshSubscriberJob;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
-import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.ui.actions.ActionContext;
 
 public class RefreshAction extends Action {
@@ -37,11 +37,7 @@ public class RefreshAction extends Action {
 	public RefreshAction(SyncViewerActions actions, boolean refreshAll) {
 		this.refreshAll = refreshAll;
 		this.actions = actions;
-		setText("Refresh with Repository");
-		setToolTipText("Refresh with the repository");
-		setImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_REFRESH_ENABLED));
-		setDisabledImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_REFRESH_DISABLED));
-		setHoverImageDescriptor(TeamUIPlugin.getImageDescriptor(ISharedImages.IMG_REFRESH));
+		Utils.initAction(this, "action.refreshWithRemote."); //$NON-NLS-1$
 	}
 	
 	public void run() {
@@ -71,7 +67,7 @@ public class RefreshAction extends Action {
 			// Cancel the scheduled background refresh but ensure it gets rescheduled
 			// to run later.
 			Platform.getJobManager().cancel(RefreshSubscriberJob.getFamily());
-			RefreshSubscriberJob job = new RefreshSubscriberJob(Policy.bind("SyncViewRefresh.taskName", new Integer(resources.length).toString()), resources, subscriber);
+			RefreshSubscriberJob job = new RefreshSubscriberJob(Policy.bind("SyncViewRefresh.taskName", new Integer(resources.length).toString()), resources, subscriber); //$NON-NLS-1$
 			if(TeamUIPlugin.getPlugin().getPreferenceStore().getBoolean(IPreferenceIds.SYNCVIEW_SCHEDULED_SYNC)) {
 				job.schedule();
 			}

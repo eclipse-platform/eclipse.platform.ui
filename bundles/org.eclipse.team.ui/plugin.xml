@@ -268,37 +268,61 @@
             name="%Command.category.name"
             description="%Command.category.description"
             id="org.eclipse.team.ui.commands.category"
- 		/>      
-      <command
+ 		/>
+	<command
 			category="org.eclipse.team.ui.commands.category"
-			id="org.eclipse.team.ui.syncview.selectNextChange"
-			name= "%Command.selectNextChange.name"
-			description="%Command.selectNextChange.description"
+			id="org.eclipse.team.ui.syncview.incomingFilter"
+			name= "%Command.incomingFilter.name"
+			description="%Command.incomingFilter.description"
 		/>
-		<keyBinding
+	<keyBinding
 			string=""
 			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.team.ui.syncview.selectNextChange"
+			command="org.eclipse.team.ui.syncview.incomingFilter"
 			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>		
-		<command
+	/> 
+	<command
 			category="org.eclipse.team.ui.commands.category"
-			id="org.eclipse.team.ui.syncview.selectPreviousChange"
-			name= "%Command.selectPreviousChange.name"
-			description="%Command.selectPreviousChange.description"
+			id="org.eclipse.team.ui.syncview.outgoingFilter"
+			name= "%Command.outgoingFilter.name"
+			description="%Command.outgoingFilter.description"
 		/>
-		<keyBinding
+	<keyBinding
 			string=""
 			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.team.ui.syncview.selectPreviousChange"
+			command="org.eclipse.team.ui.syncview.outgoingFilter"
 			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>      
-      <command
+	/>  
+	<command
+			category="org.eclipse.team.ui.commands.category"
+			id="org.eclipse.team.ui.syncview.conflictsFilter"
+			name= "%Command.conflictsFilter.name"
+			description="%Command.conflictsFilter.description"
+		/>
+	<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.team.ui.syncview.conflictsFilter"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+	/>
+	<command
+			category="org.eclipse.team.ui.commands.category"
+			id="org.eclipse.team.ui.syncview.toggleView"
+			name= "%Command.toggleView.name"
+			description="%Command.toggleView.description"
+		/>
+	<keyBinding
+			string=""
+			scope="org.eclipse.ui.globalScope"
+			command="org.eclipse.team.ui.syncview.toggleView"
+			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
+	/>      
+     <command
 			category="org.eclipse.team.ui.commands.category"
 			id="org.eclipse.team.ui.syncview.syncAll"			
-            name="%Command.syncAll.name"
-            description="%Command.syncAll.description"
- 		/> 
+           name="%Command.syncAll.name"
+           description="%Command.syncAll.description"
+ 	/> 
  </extension>
    
 <!-- ***************** Action sets ********************** -->
