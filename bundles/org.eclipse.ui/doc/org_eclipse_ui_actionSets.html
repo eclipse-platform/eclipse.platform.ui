@@ -94,6 +94,10 @@ CDATA #IMPLIED</tt>
 CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; disabledIcon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; hoverIcon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #OPTIONAL</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tooltip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 CDATA #IMPLIED</tt>
 <br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; helpContextId&nbsp;&nbsp;&nbsp;&nbsp;
@@ -147,6 +151,18 @@ represent the action in its context. If it is omitted and the action should
 appear in the toolbar, the workbench will use a place holder icon. The
 path is relative to the location of the plugin.xml file of the contributing
 plug-in.</li>
+
+<li>
+<b>disabledIcon</b> - a relative path of an icon that will be used to visually
+represent the action in its context when the action is disabled. If it is omitted
+the normal icon will simply appear greyed out. The path is relative to the 
+location of the plugin.xml file of the contributing plug-in.</li>
+
+<li>
+<b>hoverIcon</b> - a relative path of an icon that will be used to visually
+represent the action in its context when the mouse is over the action. If it 
+is omitted the normal icon will be used. The path is relative to the 
+location of the plugin.xml file of the contributing plug-in.</li>
 
 <li>
 <b>tooltip</b> - a value of the tool tip text if the action is to appear
