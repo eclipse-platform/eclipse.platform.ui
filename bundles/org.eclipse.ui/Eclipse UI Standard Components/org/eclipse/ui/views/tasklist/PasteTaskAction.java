@@ -28,11 +28,6 @@ import org.eclipse.ui.part.MarkerTransfer;
  */
 /*package*/ class PasteTaskAction extends TaskAction {
 
-	/**
-	 * The id of this action.
-	 */
-	public static final String ID = PlatformUI.PLUGIN_ID + ".TaskPasteAction";//$NON-NLS-1$
-
 /**
  * Creates a new action.
  */

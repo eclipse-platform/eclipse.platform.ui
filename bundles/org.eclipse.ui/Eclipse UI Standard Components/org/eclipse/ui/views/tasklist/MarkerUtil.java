@@ -116,6 +116,39 @@ public static Image getCompleteImage(IMarker marker) {
 	}
 	return null;
 }
+
+/**
+ * Returns the text to be used for the complete state of a task. 
+ * Returns the empty string for markers that are not tasks.
+ */
+public static String getCompleteText(IMarker marker) {
+	if (isMarkerType(marker, IMarker.TASK)) {
+		if (isComplete(marker)) 
+			return TaskListMessages.getString("TaskList.completed"); //$NON-NLS-1$
+		else	
+			return TaskListMessages.getString("TaskList.notCompleted"); //$NON-NLS-1$
+	}
+	return "";
+}
+
+/**
+ * Returns the text to be used for the kind of marker.
+ */
+public static String getKindText(IMarker marker) {
+	if (isMarkerType(marker, IMarker.TASK)) {
+		return TaskListMessages.getString("TaskList.task"); //$NON-NLS-1$
+	}
+	switch (getSeverity(marker)) {
+		case IMarker.SEVERITY_ERROR:
+			return TaskListMessages.getString("TaskList.error"); //$NON-NLS-1$
+		case IMarker.SEVERITY_WARNING:
+			return TaskListMessages.getString("TaskList.warning"); //$NON-NLS-1$
+		case IMarker.SEVERITY_INFO:
+			return TaskListMessages.getString("TaskList.info"); //$NON-NLS-1$
+	}
+	return "";
+}
+
 /**
  * Returns the container name if it is defined, or empty string if not.
  */
@@ -266,12 +299,28 @@ public static Image getPriorityImage(IMarker marker) {
 		case IMarker.PRIORITY_HIGH:
 			return getImage("hprio");//$NON-NLS-1$
 		case IMarker.PRIORITY_NORMAL:
-			return null;
+			return null;  // no image for normal priority
 		case IMarker.PRIORITY_LOW:
 			return getImage("lprio");//$NON-NLS-1$
 	}
 	return null;
 }
+
+/**
+ * Returns the text for the given marker's priority.
+ */
+public static String getPriorityText(IMarker marker) {
+	switch (getPriority(marker)) {
+		case IMarker.PRIORITY_HIGH:
+			return TaskListMessages.getString("TaskList.high"); //$NON-NLS-1$
+		case IMarker.PRIORITY_NORMAL:
+			return "";  //$NON-NLS-1$
+		case IMarker.PRIORITY_LOW:
+			return TaskListMessages.getString("TaskList.low"); //$NON-NLS-1$
+	}
+	return ""; //$NON-NLS-1$		
+}
+
 /**
  * Implements IProvider interface by supporting a number of
  * properties required for visual representation of markers

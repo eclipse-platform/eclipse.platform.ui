@@ -277,17 +277,19 @@ void createColumns() {
 /*package*/ static String createMarkerReport(IMarker[] markers) {
 	StringBuffer buf = new StringBuffer();
 	// Create the header
-	buf.append(TaskListMessages.getString("TaskList.reportCompleted")); //$NON-NLS-1$
+	buf.append(TaskListMessages.getString("TaskList.reportKind")); //$NON-NLS-1$
+	buf.append("\t"); //$NON-NLS-1$
+	buf.append(TaskListMessages.getString("TaskList.reportStatus")); //$NON-NLS-1$
 	buf.append("\t"); //$NON-NLS-1$
 	buf.append(TaskListMessages.getString("TaskList.reportPriority")); //$NON-NLS-1$
 	buf.append("\t"); //$NON-NLS-1$
-	buf.append(TaskListMessages.getString("TaskList.reportDescription")); //$NON-NLS-1$
+	buf.append(TaskListMessages.getString("TaskList.headerDescription")); //$NON-NLS-1$
 	buf.append("\t"); //$NON-NLS-1$
-	buf.append(TaskListMessages.getString("TaskList.reportResource")); //$NON-NLS-1$
+	buf.append(TaskListMessages.getString("TaskList.headerResource")); //$NON-NLS-1$
 	buf.append("\t"); //$NON-NLS-1$
-	buf.append(TaskListMessages.getString("TaskList.reportFolder")); //$NON-NLS-1$
+	buf.append(TaskListMessages.getString("TaskList.headerFolder")); //$NON-NLS-1$
 	buf.append("\t"); //$NON-NLS-1$
-	buf.append(TaskListMessages.getString("TaskList.reportLineNumber")); //$NON-NLS-1$
+	buf.append(TaskListMessages.getString("TaskList.headerLocation")); //$NON-NLS-1$
 	buf.append(System.getProperty("line.separator")); //$NON-NLS-1$
 	
 	// Create the report for the markers
@@ -1127,35 +1129,19 @@ void updateTitle() {
  * Writes a string representation of the given marker to the buffer.
  */
 static void writeMarker(StringBuffer buf, IMarker marker) {
-	if (MarkerUtil.isComplete(marker)) 
-		buf.append(TaskListMessages.getString("TaskList.reportComplete")); //$NON-NLS-1$
-	else	
-		buf.append(TaskListMessages.getString("TaskList.reportIncomplete")); //$NON-NLS-1$
+	buf.append(MarkerUtil.getKindText(marker));
 	buf.append("\t"); //$NON-NLS-1$
-	switch (MarkerUtil.getPriority(marker)) {
-		case IMarker.PRIORITY_HIGH:
-			buf.append(TaskListMessages.getString("TaskList.high")); //$NON-NLS-1$
-			buf.append("\t"); //$NON-NLS-1$
-			break;
-		case IMarker.PRIORITY_LOW:
-			buf.append(TaskListMessages.getString("TaskList.low")); //$NON-NLS-1$
-			buf.append("\t"); //$NON-NLS-1$
-			break;
-		default:
-			buf.append(TaskListMessages.getString("TaskList.normal")); //$NON-NLS-1$
-			buf.append("\t"); //$NON-NLS-1$
-			break;
-	}
+	buf.append(MarkerUtil.getCompleteText(marker));
+	buf.append("\t"); //$NON-NLS-1$
+	buf.append(MarkerUtil.getPriorityText(marker));
+	buf.append("\t"); //$NON-NLS-1$
 	buf.append(MarkerUtil.getMessage(marker));
 	buf.append("\t"); //$NON-NLS-1$
-	buf.append(marker.getResource().getName());
+	buf.append(MarkerUtil.getResourceName(marker));
 	buf.append("\t"); //$NON-NLS-1$
-	if (marker.getResource().getParent() != null)
-		buf.append(marker.getResource().getParent());
+	buf.append(MarkerUtil.getContainerName(marker));
 	buf.append("\t"); //$NON-NLS-1$
-	int lineNumber = MarkerUtil.getLineNumber(marker);
-	if (lineNumber != -1)
-		buf.append(lineNumber);
+	buf.append(MarkerUtil.getLineAndLocation(marker));
 	buf.append(System.getProperty("line.separator")); //$NON-NLS-1$
 }
 
@@ -1164,7 +1150,6 @@ static void writeMarker(StringBuffer buf, IMarker marker) {
  * default adapter if there is not one registered and the
  * object is adaptable, else return null.
  */
-
 private ITaskListResourceAdapter getTaskListAdapter(Object object){
 	if(object instanceof IAdaptable){
 		Object adapter =
