@@ -196,6 +196,7 @@ public abstract class ContributionItemFactory {
      * promising new item wizards and an "Other" subitem. Selecting
      * one of the items invokes the corresponding new item wizard. 
      * This action dynamically maintains the new item wizard shortlist.
+     * @since 3.1
      */
     public static final ContributionItemFactory NEW_WIZARD_SHORTLIST = new ContributionItemFactory(
             "newWizardShortlist") { //$NON-NLS-1$
