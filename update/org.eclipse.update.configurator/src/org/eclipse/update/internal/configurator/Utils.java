@@ -112,10 +112,11 @@ public class Utils {
 	/**
 	 * 
 	 */
-	public static boolean isValidEnvironment(String os, String ws, String arch) {
+	public static boolean isValidEnvironment(String os, String ws, String arch, String nl) {
 		if (os!=null && !isMatching(os, Platform.getOS())) return false;
 		if (ws!=null && !isMatching(ws, Platform.getWS())) return false;
 		if (arch!=null && !isMatching(arch, Platform.getOSArch())) return false;
+		if (nl!=null && !isMatchingLocale(nl, Platform.getNL())) return false;
 		return true;
 	}
 
@@ -130,6 +131,26 @@ public class Utils {
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken().toUpperCase();
 			if (siteValues.indexOf(token)!=-1) return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 
+	 */	
+	private static boolean isMatchingLocale(String candidateValues, String locale) {
+		if (locale==null) return false;
+		if ("*".equalsIgnoreCase(candidateValues)) return true;
+		
+		locale = locale.toUpperCase();
+		candidateValues = candidateValues.toUpperCase();	
+		StringTokenizer stok = new StringTokenizer(candidateValues, ",");
+		while (stok.hasMoreTokens()) {
+			String candidate = stok.nextToken();
+			if (locale.indexOf(candidate) == 0)
+				return true;
+			if (candidate.indexOf(locale) == 0)
+				return true;
 		}
 		return false;
 	}

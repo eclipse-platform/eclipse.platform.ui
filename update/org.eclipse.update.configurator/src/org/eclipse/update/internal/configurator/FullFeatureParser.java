@@ -105,11 +105,11 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 		} else {
 //			String label = attributes.getValue("label"); //$NON-NLS-1$
 //			String provider = attributes.getValue("provider-name"); //$NON-NLS-1$
-//			String nl = attributes.getValue("nl"); //$NON-NLS-1$
+			String nl = attributes.getValue("nl"); //$NON-NLS-1$
 			String os = attributes.getValue("os"); //$NON-NLS-1$
 			String ws = attributes.getValue("ws"); //$NON-NLS-1$
 			String arch = attributes.getValue("arch"); //$NON-NLS-1$
-			if (!Utils.isValidEnvironment(os, ws, arch))
+			if (!Utils.isValidEnvironment(os, ws, arch,nl))
 				return;
 
 			PluginEntry plugin = new PluginEntry();

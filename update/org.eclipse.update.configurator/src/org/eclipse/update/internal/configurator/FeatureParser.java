@@ -110,7 +110,7 @@ public class FeatureParser extends DefaultHandler {
 			String ws = attributes.getValue("ws"); //$NON-NLS-1$
 			String nl = attributes.getValue("nl"); //$NON-NLS-1$
 			String arch = attributes.getValue("arch"); //$NON-NLS-1$
-			if (!Utils.isValidEnvironment(os, ws, arch))
+			if (!Utils.isValidEnvironment(os, ws, arch, nl)) 
 				return;
 //			String exclusive = attributes.getValue("exclusive"); //$NON-NLS-1$
 //			String affinity = attributes.getValue("colocation-affinity"); //$NON-NLS-1$
