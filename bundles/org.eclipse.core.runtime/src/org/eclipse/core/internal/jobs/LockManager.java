@@ -98,6 +98,8 @@ public class LockManager {
 			if (locks.isDeadlocked()) {
 				Thread candidate = locks.resolutionCandidate(thread, lock);
 				locks.reportDeadlock(thread, lock, candidate);
+				if(JobManager.DEBUG_DEADLOCK)
+					throw new IllegalStateException("Deadlock detected. Caused by thread " + thread.getName() + ".");
 				ISchedulingRule[] toSuspend = locks.contestedLocksForThread(candidate);
 				LockState[] suspended = new LockState[toSuspend.length];
 				for (int i = 0; i < toSuspend.length; i++) {
