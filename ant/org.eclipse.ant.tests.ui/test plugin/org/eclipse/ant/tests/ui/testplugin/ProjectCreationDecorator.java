@@ -20,7 +20,9 @@ import org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationC
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -97,14 +99,19 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 	 * name.
 	 */
 	protected void createLaunchConfiguration(String launchConfigName) throws Exception {
-		ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+	    createLaunchConfiguration(launchConfigName, ProjectHelper.PROJECT_NAME + "/buildfiles/" + launchConfigName + ".xml");
+	}
+	
+	public static ILaunchConfiguration createLaunchConfiguration(String launchConfigName, String path) throws CoreException {
+	    ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		ILaunchConfigurationWorkingCopy config = type.newInstance(getJavaProject().getProject().getFolder("launchConfigurations"), launchConfigName);
 	
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
-		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/" + ProjectHelper.PROJECT_NAME + "/buildfiles/" + launchConfigName + ".xml}");
+		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/" + path + "}");
 		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
 			
 		config.doSave();
+		return config;
 	}
 
 	private void setVM(ILaunchConfigurationWorkingCopy config) {
