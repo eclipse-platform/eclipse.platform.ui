@@ -43,7 +43,7 @@ public class AntTestChecker {
 	
 	private Hashtable userProperties;
 	
-	private String nameOfListener;
+	private List nameOfListeners= new ArrayList();
 	
 	private AntTestChecker()  {
 	}
@@ -186,7 +186,7 @@ public class AntTestChecker {
 		currentProject= null;
 		currentTarget= null;
 		currentTask= null;
-		nameOfListener= null;
+		nameOfListeners= new ArrayList();
 	}
 	
 	
@@ -209,11 +209,16 @@ public class AntTestChecker {
 		return messages;
 	}
 	
-	public String getNameOfListener() {
-		return nameOfListener;
+	public List getListeners() {
+		return nameOfListeners;
+	}
+	
+	public String getLastListener() {
+		return (String)nameOfListeners.get(nameOfListeners.size() - 1);
 	}
 
-	public void setNameOfListener(String nameOfListener) {
-		this.nameOfListener = nameOfListener;
+
+	public void addNameOfListener(String nameOfListener) {
+		this.nameOfListeners.add(nameOfListener);
 	}
 }

@@ -24,7 +24,7 @@ public class TestBuildListener implements BuildListener {
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildStarted(BuildEvent event) {
-		AntTestChecker.getDefault().setNameOfListener(this.getClass().getName());
+		AntTestChecker.getDefault().addNameOfListener(this.getClass().getName());
 	}
 
 	/**

@@ -691,14 +691,17 @@ public class InternalAntRunner {
 	protected boolean preprocessCommandLine(List commands) {
 		
 		String[] args = getArgument(commands, "-listener"); //$NON-NLS-1$
-		if (args != null) {
-			if (args.length == 0) {
-				throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-listener_argument_1")); //$NON-NLS-1$
-			} 
-			if (buildListeners == null) {
-				buildListeners= new ArrayList(1);
+		while (args != null) {
+			if (args != null) {
+				if (args.length == 0) {
+					throw new BuildException(InternalAntMessages.getString("InternalAntRunner.You_must_specify_a_classname_when_using_the_-listener_argument_1")); //$NON-NLS-1$
+				} 
+				if (buildListeners == null) {
+					buildListeners= new ArrayList(1);
+				}
+				buildListeners.add(args[0]);
 			}
-			buildListeners.add(args[0]);
+			args = getArgument(commands, "-listener"); //$NON-NLS-1$
 		}
 
 		args = getArgument(commands, "-logger"); //$NON-NLS-1$
@@ -708,7 +711,10 @@ public class InternalAntRunner {
 			} 
 			loggerClassname = args[0];
 		}
-		
+		args = getArgument(commands, "-logger"); //$NON-NLS-1$
+		if (args != null) {
+			throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Only_one_logger_class_may_be_specified_1")); //$NON-NLS-1$
+		}
 		return true;
 	}
 	
@@ -792,12 +798,13 @@ public class InternalAntRunner {
 			setBuildFileLocation(args[0]);
 		}
 		
+		//MULTIPLE property files are allowed
 		args= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		if (args != null) {
 			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-propertyfile_option_not_yet_implemented_6"), Project.MSG_INFO); //$NON-NLS-1$
 			return false;
 		}
-		
+		//Only one input handler class may be specified.
 		args= getArgument(commands, "-inputhandler"); //$NON-NLS-1$
 		if (args != null) {
 			logMessage(currentProject, InternalAntMessages.getString("InternalAntRunner.-inputhandler_option_not_yet_implemented_8"), Project.MSG_INFO); //$NON-NLS-1$

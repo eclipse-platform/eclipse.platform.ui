@@ -58,19 +58,6 @@ public class OptionTests extends AbstractAntTest {
 		assertTrue("no messages should have been logged; was " + AntTestChecker.getDefault().getMessagesLoggedCount(), AntTestChecker.getDefault().getMessagesLoggedCount() == 0);
 	}
 	
-	
-	/**
-	 * Tests the "-logger" option with a logger that is not an instance of BuildLogger
-	 */
-	public void testBadLogger() throws CoreException {
-		try {
-			run("TestForEcho.xml", new String[]{"-logger", "java.lang.String"});
-		} catch (CoreException ce) {
-			return;
-		}
-		assertTrue("A core exception should have occurred wrappering a class cast exception", false);
-	}
-	
 	/**
 	 * Tests the "-listener" option with a listener that is not an instance of BuildListener
 	 */
@@ -101,10 +88,9 @@ public class OptionTests extends AbstractAntTest {
 		try {
 			run("TestForEcho.xml", new String[]{"-logfile"});
 		} catch (CoreException ce) {
-			//You must specify a log file when using the -log argument
 			return;
 		}
-		assertTrue("A core exception should have occurred as an unrecognized argument ", false);
+		assertTrue("You must specify a log file when using the -log argument", false);
 	}
 	
 	/**
@@ -124,10 +110,33 @@ public class OptionTests extends AbstractAntTest {
 		try {
 			run("TestForEcho.xml", new String[]{"-logger"});
 		} catch (CoreException ce) {
-			//You must specify a classname when using the -logger argument
 			return;
 		}
-		assertTrue("A core exception should have occurred as an unrecognized argument ", false);
+		assertTrue("You must specify a classname when using the -logger argument", false);
+	}
+	
+	/**
+	 * Tests the "-logger" option with a logger that is not an instance of BuildLogger
+	 */
+	public void testBadLogger() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-logger", "java.lang.String"});
+		} catch (CoreException ce) {
+			return;
+		}
+		assertTrue("A core exception should have occurred wrappering a class cast exception", false);
+	}
+	
+	/**
+	 * Tests the "-logger" option with two loggers specified...only one is allowed
+	 */
+	public void testTwoLoggers() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-logger", "java.lang.String", "-q", "-logger", "java.lang.String"});
+		} catch (CoreException ce) {
+			return;
+		}
+		assertTrue("As only one logger can be specified", false);
 	}
 	
 	/**
@@ -137,10 +146,9 @@ public class OptionTests extends AbstractAntTest {
 		try {
 			run("TestForEcho.xml", new String[]{"-listener"});
 		} catch (CoreException ce) {
-			
 			return;
 		}
-		assertTrue("A core exception should have occurred as an unrecognized argument ", false);
+		assertTrue("You must specify a listeners when using the -listener argument ", false);
 	}
 	
 	/**
@@ -158,12 +166,35 @@ public class OptionTests extends AbstractAntTest {
 		
 	}
 	/**
-	 * Tests specifying the -listener
+	 * Tests specifying the -listener option
 	 */
 	public void testListener() throws CoreException {
 		run("TestForEcho.xml", new String[]{"-listener", ANT_TEST_BUILD_LISTENER});
 		assertSuccessful();
-		assertTrue("A listener should have been added named: " + ANT_TEST_BUILD_LISTENER, ANT_TEST_BUILD_LISTENER.equals(AntTestChecker.getDefault().getNameOfListener()));
+		assertTrue("A listener should have been added named: " + ANT_TEST_BUILD_LISTENER, ANT_TEST_BUILD_LISTENER.equals(AntTestChecker.getDefault().getLastListener()));
+	}
+	
+	/**
+	 * Tests specifying the -listener option multiple times...which is allowed
+	 */
+	public void testMultipleListener() throws CoreException {
+		run("TestForEcho.xml", new String[]{"-listener", ANT_TEST_BUILD_LISTENER, "-listener", ANT_TEST_BUILD_LISTENER});
+		assertSuccessful();
+		assertTrue("A listener should have been added named: " + ANT_TEST_BUILD_LISTENER, ANT_TEST_BUILD_LISTENER.equals(AntTestChecker.getDefault().getLastListener()));
+		assertTrue("Two listeners should have been added", AntTestChecker.getDefault().getListeners().size() == 2);
+	}
+	
+	/**
+	 * Tests specifying the -listener option multiple times, with one missing the arg
+	 */
+	public void testMultipleListenerSecondBad() throws CoreException {
+		try {
+			run("TestForEcho.xml", new String[]{"-listener", ANT_TEST_BUILD_LISTENER, "-q", "-listener", "-verbose"});
+		} catch(CoreException e) {
+			//You must specify a listener for all -listener arguments
+			return;
+		}
+		assertTrue("You must specify a listener for all -listener arguments ", false);
 	}
 	
 	/**
@@ -176,7 +207,7 @@ public class OptionTests extends AbstractAntTest {
 			//You must specify a buildfile when using the -buildfile argument
 			return;
 		}
-		assertTrue("A core exception should have occurred as an unrecognized argument ", false);
+		assertTrue("You must specify a buildfile when using the -buildfile argument", false);
 	}
 	
 	/**
