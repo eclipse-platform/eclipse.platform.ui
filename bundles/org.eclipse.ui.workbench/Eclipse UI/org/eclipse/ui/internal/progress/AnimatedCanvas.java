@@ -33,6 +33,12 @@ public class AnimatedCanvas {
 	private GC imageCanvasGC;
 	private ImageLoader loader = new ImageLoader();
 	private boolean animated = false;
+	
+	/**
+	 * Create a new instance of the receiver.
+	 * @param animatedPath
+	 * @param disabledPath
+	 */
 
 	public AnimatedCanvas(URL animatedPath, URL disabledPath) {
 
@@ -47,6 +53,8 @@ public class AnimatedCanvas {
 
 	/**
 	 * Returns the image descriptor with the given relative path.
+	 * @param source
+	 * @return Image
 	 */
 	private Image getImage(ImageData source) {
 		ImageData mask = source.getTransparencyMask();
@@ -55,10 +63,12 @@ public class AnimatedCanvas {
 
 	/**
 	 * Returns the image descriptor with the given relative path.
+	 * @param fileSystemPath The URL for the file system to the image.
+	 * @return ImageData[]
 	 */
-	private ImageData[] getImageData(URL relativePath) {
+	private ImageData[] getImageData(URL fileSystemPath) {
 		try {
-			InputStream stream = relativePath.openStream();
+			InputStream stream = fileSystemPath.openStream();
 			ImageData[] result = loader.load(stream);
 			stream.close();
 			return result;
@@ -69,7 +79,11 @@ public class AnimatedCanvas {
 		}
 	}
 
-	public void createCanvas(Composite parent) {
+	/**
+	 * Create the canvas that will display the image.
+	 * @param parent
+	 */
+	void createCanvas(Composite parent) {
 
 		// Canvas to show the image.
 		imageCanvas = new Canvas(parent, SWT.NONE);
@@ -90,7 +104,11 @@ public class AnimatedCanvas {
 		});
 
 	}
-
+	
+	/**
+	 * Return the current image for the receiver.
+	 * @return Image
+	 */
 	Image getImage() {
 		if (animated)
 			return animatedImage;
@@ -98,6 +116,10 @@ public class AnimatedCanvas {
 			return disabledImage;
 	}
 
+	/**
+	 * Get the current ImageData for the receiver.
+	 * @return ImageData[]
+	 */
 	private ImageData[] getImageData() {
 		if (animated)
 			return animatedData;
@@ -105,7 +127,13 @@ public class AnimatedCanvas {
 			return disabledData;
 	}
 
-	void paintImage(PaintEvent event, Image image, ImageData imageData) {
+	/**
+	 * Paint the image in the canvas.
+	 * @param event The PaintEvent that generated this call.
+	 * @param image The image to display
+	 * @param imageData The array of ImageData. Required to show an animation.
+	 */
+	private void paintImage(PaintEvent event, Image image, ImageData imageData) {
 
 		Display display = imageCanvas.getDisplay();
 		Image paintImage = image;
@@ -124,16 +152,18 @@ public class AnimatedCanvas {
 			h);
 	}
 	/**
-	 * @return
+	 * Return whether or not the current state is animated.
+	 * @return boolean
 	 */
-	public boolean isAnimated() {
+	private boolean isAnimated() {
 		return animated;
 	}
 
 	/**
-	 * @param b
+	 * Set whether or not the receiver is animated.
+	 * @param boolean
 	 */
-	public void setAnimated(final boolean b) {
+	void setAnimated(final boolean bool) {
 		if (getControl().isDisposed())
 			return;
 		getControl().getDisplay().asyncExec(new Runnable() {
@@ -143,9 +173,9 @@ public class AnimatedCanvas {
 			public void run() {
 				if (imageCanvas.isDisposed())
 					return;
-				animated = b;
+				animated = bool;
 				imageCanvas.redraw();
-				if (b)
+				if (bool)
 					animate();
 
 			}
@@ -153,19 +183,26 @@ public class AnimatedCanvas {
 
 	}
 
+	/**
+	 * Get the SWT control for the receiver.
+	 * @return Control
+	 */
 	public Control getControl() {
 		return imageCanvas;
 	}
 
-	public void dispose() {
+	/**
+	 * Dispose the images in the receiver.
+	 */
+	void dispose() {
 		animatedImage.dispose();
 		disabledImage.dispose();
 	}
 
-	/*
-	 * Called when the Animate button is pressed.
+	/**
+	 * Animate the image in the canvas if required.
 	 */
-	void animate() {
+	private void animate() {
 		Image image = getImage();
 		ImageData[] imageDataArray = getImageData();
 		if (isAnimated() && image != null && imageDataArray.length > 1) {
@@ -193,11 +230,11 @@ public class AnimatedCanvas {
 			animateJob.schedule();
 		}
 	}
-	/*
+	/**
 	 * Loop through all of the images in a multi-image file
 	 * and display them one after another.
 	 */
-	void animateLoop() {
+	private void animateLoop() {
 		// Create an off-screen image to draw on, and a GC to draw with.
 		// Both are disposed after the animation.
 
@@ -324,10 +361,12 @@ public class AnimatedCanvas {
 		}
 	}
 
-	/*
+	/**
 	 * Return the specified number of milliseconds.
 	 * If the specified number of milliseconds is too small
 	 * to see a visual change, then return a higher number.
+	 * @param ms The suggested delay
+	 * @return int
 	 */
 	int visibleDelay(int ms) {
 		if (ms < 20)
