@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IMarkerHelpRegistry;
@@ -199,32 +200,190 @@ public final class IDE {
 			gotoMarker.gotoMarker(marker);
 		} 
 	}
-	
+
 	/**
-	 * Opens an editor on the given file resource.  
-	 * <p>
-	 * If this page already has an editor open on the target file that editor is 
-	 * brought to front; otherwise, a new editor is opened. If 
-	 * <code>activate == true</code> the editor will be activated. 
-	 * </p>
-	 *
-	 * @param page the workbench page to open the editor in
-	 * @param input the file to edit
-	 * @param activate if <code>true</code> the editor will be activated
-	 * @return an open editor or <code>null</code> if external editor open
-	 * @exception PartInitException if the editor could not be initialized
-	 * @see IDE#getEditorDescriptor(IFile)
-	 */
-	public static IEditorPart openEditor(IWorkbenchPage page, IFile input, boolean activate) throws PartInitException {
-		//sanity checks
-		if (page == null) {
-			throw new IllegalArgumentException();
-		}		
-		IEditorDescriptor editorDesc = getEditorDescriptor(input);
-		
-		// open the editor on the file
-		return page.openEditor(new FileEditorInput(input), editorDesc.getId(), activate);
-	}
+     * Opens an editor on the given object.
+     * <p>
+     * If the page already has an editor open on the target object then that
+     * editor is brought to front; otherwise, a new editor is opened.
+     * <p>
+     * 
+     * @param page
+     *            the page in which the editor will be opened
+     * @param input
+     *            the editor input
+     * @param editorId
+     *            the id of the editor extension to use
+     * @return an open editor or <code>null</code> if an external editor was
+     *         opened
+     * @exception PartInitException
+     *                if the editor could not be initialized
+     * @see org.eclipse.ui.IWorkbenchPage.openEditor(org.eclipse.ui.IEditorInput,
+     *      String)
+     */
+    public static IEditorPart openEditor(IWorkbenchPage page,
+            IEditorInput input, String editorId) throws PartInitException {
+        //sanity checks
+        if (page == null)
+            throw new IllegalArgumentException();
+
+        // open the editor on the file
+        return page.openEditor(input, editorId);
+    }
+
+	/**
+     * Opens an editor on the given object.
+     * <p>
+     * If the page already has an editor open on the target object then that
+     * editor is brought to front; otherwise, a new editor is opened. If
+     * <code>activate == true</code> the editor will be activated.
+     * <p>
+     * @param page
+     *            the page in which the editor will be opened
+     * @param input
+     *            the editor input
+     * @param editorId
+     *            the id of the editor extension to use
+     * @param activate
+     * 			  if <code>true</code> the editor will be activated
+     * @return an open editor or <code>null</code> if an external editor was
+     *         opened
+     * @exception PartInitException
+     *                if the editor could not be initialized
+     * @see org.eclipse.ui.IWorkbenchPage.openEditor(org.eclipse.ui.IEditorInput,
+     *      String, boolean)
+     */
+    public static IEditorPart openEditor(IWorkbenchPage page,
+            IEditorInput input, String editorId, boolean activate)
+            throws PartInitException {
+        //sanity checks
+        if (page == null)
+            throw new IllegalArgumentException();
+
+        // open the editor on the file
+        return page.openEditor(input, editorId, activate);
+    }
+
+	/**
+     * Opens an editor on the given file resource.
+     * <p>
+     * If the page already has an editor open on the target object then that
+     * editor is brought to front; otherwise, a new editor is opened. If
+     * <code>activate == true</code> the editor will be activated.
+     * <p>
+     * @param page
+     *            the page in which the editor will be opened
+     * @param input
+     *            the editor input
+     * @param activate
+     * 			  if <code>true</code> the editor will be activated
+     * @return an open editor or <code>null</code> if an external editor was
+     *         opened
+     * @exception PartInitException
+     *                if the editor could not be initialized
+     * @see org.eclipse.ui.IWorkbenchPage.openEditor(org.eclipse.ui.IEditorInput,
+     *      String, boolean)
+     */
+    public static IEditorPart openEditor(IWorkbenchPage page, IFile input,
+            boolean activate) throws PartInitException {
+        //sanity checks
+        if (page == null) 
+            throw new IllegalArgumentException();
+
+        // open the editor on the file
+        IEditorDescriptor editorDesc = getEditorDescriptor(input);
+        return page.openEditor(new FileEditorInput(input), editorDesc.getId(),
+                activate);
+    }
+
+	/**
+     * Opens an editor on the given file resource.
+     * <p>
+     * If the page already has an editor open on the target object then that
+     * editor is brought to front; otherwise, a new editor is opened.
+     * <p>
+     * @param page
+     *            the page in which the editor will be opened
+     * @param input
+     *            the editor input
+     * @return an open editor or <code>null</code> if an external editor was
+     *         opened
+     * @exception PartInitException
+     *                if the editor could not be initialized
+     * @see org.eclipse.ui.IWorkbenchPage.openEditor(org.eclipse.ui.IEditorInput,
+     *      String)
+     */
+    public static IEditorPart openEditor(IWorkbenchPage page, IFile input)
+            throws PartInitException {
+        //sanity checks
+        if (page == null)
+            throw new IllegalArgumentException();
+
+        // open the editor on the file
+        IEditorDescriptor editorDesc = getEditorDescriptor(input);
+        return page.openEditor(new FileEditorInput(input), editorDesc.getId());
+    }
+
+	/**
+     * Opens an editor on the given file resource.
+     * <p>
+     * If the page already has an editor open on the target object then that
+     * editor is brought to front; otherwise, a new editor is opened.
+     * <p>
+     * @param page
+     *            the page in which the editor will be opened
+     * @param input
+     *            the editor input
+     * @param editorId
+     *            the id of the editor extension to use
+     * @return an open editor or <code>null</code> if an external editor was
+     *         opened
+     * @exception PartInitException
+     *                if the editor could not be initialized
+     * @see org.eclipse.ui.IWorkbenchPage.openEditor(org.eclipse.ui.IEditorInput,
+     *      String)
+     */
+    public static IEditorPart openEditor(IWorkbenchPage page, IFile input,
+            String editorId) throws PartInitException {
+        //sanity checks
+        if (page == null)
+            throw new IllegalArgumentException();
+
+        // open the editor on the file
+        return page.openEditor(new FileEditorInput(input), editorId);
+    }
+
+	/**
+     * Opens an editor on the given file resource.
+     * <p>
+     * If the page already has an editor open on the target object then that
+     * editor is brought to front; otherwise, a new editor is opened. If
+     * <code>activate == true</code> the editor will be activated.
+     * <p>
+     * @param page
+     *            the page in which the editor will be opened
+     * @param input
+     *            the editor input
+     * @param editorId
+     *            the id of the editor extension to use
+     * @param activate
+     * 			  if <code>true</code> the editor will be activated
+     * @return an open editor or <code>null</code> if an external editor was
+     *         opened
+     * @exception PartInitException
+     *                if the editor could not be initialized
+     * @see org.eclipse.ui.IWorkbenchPage.openEditor(org.eclipse.ui.IEditorInput,
+     *      String, boolean)
+     */
+    public static IEditorPart openEditor(IWorkbenchPage page, IFile input,
+            String editorId, boolean activate) throws PartInitException {
+        //sanity checks
+        if (page == null)
+            throw new IllegalArgumentException();
+
+        // open the editor on the file
+        return page.openEditor(new FileEditorInput(input), editorId, activate);
+    }
 
 	/**
 	 * Returns an editor descriptor appropriate for opening the given file resource.
@@ -279,6 +438,34 @@ public final class IDE {
 			throw new PartInitException(IDEWorkbenchMessages.getString("IDE.noFileEditorFound")); //$NON-NLS-1$
 		}
 		return editorDesc;
+	}
+
+	/**
+     * Opens an editor on the file resource of the given marker.
+     * <p>
+     * If this page already has an editor open on the marker resource file that
+     * editor is brought to front; otherwise, a new editor is opened.The cursor
+     * and selection state of the editor are then updated from information
+     * recorded in the marker.
+     * </p>
+     * <p>
+     * If the marker contains an <code>EDITOR_ID_ATTR</code> attribute the
+     * attribute value will be used to determine the editor type to be opened.
+     * If not, the registered editor for the marker resource file will be used.
+     * </p>
+     * 
+     * @param page
+     *            the workbench page to open the editor in
+     * @param marker
+     *            the marker to open
+     * @return an open editor or <code>null</code> not possible
+     * @exception PartInitException
+     *                if the editor could not be initialized
+     * @see #openEditor(org.eclipse.ui.IWorkbenchPage,
+     *      org.eclipse.core.resources.IMarker, boolean)
+     */
+	public static IEditorPart openEditor(IWorkbenchPage page, IMarker marker) throws PartInitException {
+	    return openEditor(page, marker, true);
 	}
 
 	/**
