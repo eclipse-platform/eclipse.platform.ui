@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.ide.model;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
  * IWorkbenchAdapter adapter for the IWorkspace object.

@@ -13,6 +13,8 @@ package org.eclipse.ui.internal.ide.model;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.model.IWorkbenchAdapter;
+import org.eclipse.ui.model.WorkbenchAdapter;
+
 import java.util.*;
 
 public class WorkbenchStatusList extends WorkbenchAdapter implements IAdaptable {

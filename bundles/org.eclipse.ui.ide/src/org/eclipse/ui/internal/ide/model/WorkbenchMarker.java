@@ -18,6 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IMarkerActionFilter;
 import org.eclipse.ui.actions.SimpleWildcardTester;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.model.WorkbenchAdapter;
 
 /**
  * Model object for adapting IMarker objects to the IWorkbenchAdapter

@@ -18,7 +18,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.internal.ide.model.WorkbenchAdapter;
+import org.eclipse.ui.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**

@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.ide.Category;
-import org.eclipse.ui.internal.ide.model.WorkbenchAdapter;
+import org.eclipse.ui.model.WorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
