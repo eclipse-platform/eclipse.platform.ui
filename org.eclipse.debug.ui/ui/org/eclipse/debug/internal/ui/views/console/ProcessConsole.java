@@ -117,14 +117,16 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         ILaunchConfiguration configuration = process.getLaunch().getLaunchConfiguration();
         String file = null;
         boolean append = false;
-        try {
-            file = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String) null);
-            if (file != null) {
-                IStringVariableManager stringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
-                file = stringVariableManager.performStringSubstitution(file);
-                append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
+        if (configuration != null) {
+            try {
+                file = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String) null);
+                if (file != null) {
+                    IStringVariableManager stringVariableManager = VariablesPlugin.getDefault().getStringVariableManager();
+                    file = stringVariableManager.performStringSubstitution(file);
+                    append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
+                }
+            } catch (CoreException e) {
             }
-        } catch (CoreException e) {
         }
 
         if (file != null) {
