@@ -12,6 +12,9 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.custom.CLabel;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
@@ -52,7 +55,8 @@ import org.eclipse.compare.internal.*;
  * @see IMergeViewerContentProvider
  * @see TextMergeViewer
  */
-public abstract class ContentMergeViewer extends ContentViewer implements IPropertyChangeNotifier {
+public abstract class ContentMergeViewer extends ContentViewer
+					implements IPropertyChangeNotifier, ISavable {
 	
 	class SaveAction extends MergeViewerAction {
 		
@@ -493,6 +497,23 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 			if (oldInput instanceof ICompareInput)
 				((ICompareInput)oldInput).removeCompareInputChangeListener(fCompareInputChangeListener);
 		
+		boolean success= doSave(input, oldInput);
+		
+		if (input != oldInput)
+			if (input instanceof ICompareInput)
+				((ICompareInput)input).addCompareInputChangeListener(fCompareInputChangeListener);
+		
+		if (success) {
+			setLeftDirty(false);
+			setRightDirty(false);
+		}
+
+		if (input != oldInput)
+			internalRefresh(input);
+	}
+	
+	protected boolean doSave(Object newInput, Object oldInput) {
+		
 		// before setting the new input we have to save the old
 		if (fLeftSaveAction.isEnabled() || fRightSaveAction.isEnabled()) {
 			
@@ -508,7 +529,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 					new String[] {
 						IDialogConstants.YES_LABEL,
 						IDialogConstants.NO_LABEL,
-						IDialogConstants.CANCEL_LABEL
+//						IDialogConstants.CANCEL_LABEL
 					},
 					0);		// default button index
 									
@@ -525,19 +546,11 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 				}
 			} else
 				saveContent(oldInput);
+			return true;
 		}
-			
-		if (input != oldInput)
-			if (input instanceof ICompareInput)
-				((ICompareInput)input).addCompareInputChangeListener(fCompareInputChangeListener);
-		
-		setLeftDirty(false);
-		setRightDirty(false);
-
-		if (input != oldInput)
-			internalRefresh(input);
+		return false;
 	}
-	
+		
 	public void setConfirmSave(boolean enable) {
 		fConfirmSave= enable;
 	}
@@ -890,6 +903,10 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		}
 	}
 	
+	public void save(IProgressMonitor pm) throws CoreException {
+		saveContent(getInput());
+	}
+	
 	/**
 	 * Save modified content back to input elements via the content provider.
 	 */
@@ -898,8 +915,8 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 		// write back modified contents
 		IMergeViewerContentProvider content= (IMergeViewerContentProvider) getContentProvider();
 		
-		boolean leftEmpty= content.getLeftContent(oldInput) != null;
-		boolean rightEmpty= content.getRightContent(oldInput) != null;
+		boolean leftEmpty= content.getLeftContent(oldInput) == null;
+		boolean rightEmpty= content.getRightContent(oldInput) == null;
 
 		if (fCompareConfiguration.isLeftEditable() && fLeftSaveAction.isEnabled()) {
 			byte[] bytes= getContents(true);

@@ -145,6 +145,7 @@ public class DiffTreeViewer extends TreeViewer {
 	private Action fNextAction;
 	private Action fPreviousAction;
 	private Action fEmptyMenuAction;
+	private Action fExpandAllAction;
 		
 	/**
 	 * Creates a new viewer for the given SWT tree control with the specified configuration.
@@ -411,17 +412,41 @@ public class DiffTreeViewer extends TreeViewer {
 	
 	/**
 	 * This method is called to add actions to the viewer's context menu.
-	 * It installs actions for copying one side of a <code>DiffNode</code> to the other side.
+	 * It installs actions for expanding tree nodes, copying one side of a <code>DiffNode</code> to the other side.
 	 * Clients can override this method and are free to decide whether they want to call
 	 * the inherited method.
 	 *
 	 * @param manager the menu manager for which to add the actions
 	 */
 	protected void fillContextMenu(IMenuManager manager) {
+		if (fExpandAllAction == null) {
+			fExpandAllAction= new Action() {
+				public void run() {
+					expandSelection();
+				}
+			};
+			Utilities.initAction(fExpandAllAction, fBundle, "action.ExpandAll."); //$NON-NLS-1$
+		}
+		manager.add(fExpandAllAction);
+		
 		if (fCopyLeftToRightAction != null)
 			manager.add(fCopyLeftToRightAction);
 		if (fCopyRightToLeftAction != null)
 			manager.add(fCopyRightToLeftAction);
+	}
+
+	/**
+	 * Expands to infinity all items in the selection.
+	 */
+	protected void expandSelection() {
+		ISelection selection= getSelection();
+		if (selection instanceof IStructuredSelection) {
+			Iterator elements= ((IStructuredSelection)selection).iterator();
+			while (elements.hasNext()) {
+				Object next= elements.next();
+				expandToLevel(next, ALL_LEVELS);
+			}
+		}
 	}
 
 	/**

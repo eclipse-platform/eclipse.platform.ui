@@ -12,6 +12,8 @@ import org.eclipse.compare.*;
 
 import org.eclipse.jface.viewers.Viewer;
 
+import org.eclipse.ui.internal.ViewerActionBuilder;
+
 /**
  * Creates <code>Viewer</code>s from an <code>IConfigurationElement</code>.
  */
@@ -22,16 +24,19 @@ public class ViewerDescriptor implements IViewerDescriptor {
 
 	private IConfigurationElement fConfiguration;
 	private IViewerCreator fViewerCreator;
+	private Class fViewerClass;
 
 	public ViewerDescriptor(IConfigurationElement config) {
 		fConfiguration= config;
 	}
 
 	public Viewer createViewer(Viewer currentViewer, Composite parent, CompareConfiguration mp) {
-		String className= fConfiguration.getAttribute(CLASS_ATTRIBUTE);
-		if (currentViewer != null && currentViewer.getClass().getName().equals(className)) {
+		
+		if (currentViewer != null && currentViewer.getClass() == fViewerClass) {
+			//System.out.println("reused viewer: " + currentViewer.getClass().getName());
 			return currentViewer;
 		}
+		
 		if (fViewerCreator == null) {
 			try {
 				fViewerCreator= (IViewerCreator) fConfiguration.createExecutableExtension(CLASS_ATTRIBUTE);
@@ -41,8 +46,8 @@ public class ViewerDescriptor implements IViewerDescriptor {
 
 		if (fViewerCreator != null) {
 			Viewer viewer= fViewerCreator.createViewer(parent, mp);
-			//if (viewer != null && currentViewer != null && viewer.getClass() == currentViewer.getClass())
-			//	return currentViewer;
+			if (viewer != null)
+				fViewerClass= viewer.getClass();
 			return viewer;
 		}
 

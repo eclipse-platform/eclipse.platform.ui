@@ -14,7 +14,9 @@ import org.eclipse.jface.text.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.Utilities;
+import org.eclipse.compare.contentmergeviewer.*;
 import org.eclipse.compare.contentmergeviewer.IDocumentRange;
+import org.eclipse.compare.contentmergeviewer.TextMergeViewer;
 
 
 /**
@@ -39,7 +41,7 @@ public class DocumentRangeNode
 		implements IDocumentRange, IStructureComparator, IEditableContent, IStreamContentAccessor {
 
 	private static final boolean POS_UPDATE= true;
-	
+		
 	private IDocument fBaseDocument;
 	private Position fRange; // the range in the base document
 	private int fTypeCode;
@@ -65,11 +67,13 @@ public class DocumentRangeNode
 		fID= id;
 		
 		fBaseDocument= document;
+		fBaseDocument.addPositionCategory(RANGE_CATEGORY);
 		fRange= new Position(start, length);
 		
 		if (POS_UPDATE) {
 			try {
-				document.addPosition(fRange);
+				document.addPosition(RANGE_CATEGORY, fRange);
+			} catch (BadPositionCategoryException ex) {
 			} catch (BadLocationException ex) {
 			}
 		}
@@ -163,8 +167,9 @@ public class DocumentRangeNode
 			fBaseDocument.removePosition(fAppendPosition);
 			try {
 				Position p= new Position(pos);
-				fBaseDocument.addPosition(p);
+				fBaseDocument.addPosition(RANGE_CATEGORY, p);
 				fAppendPosition= p;
+			} catch (BadPositionCategoryException ex) {
 			} catch (BadLocationException ex) {
 				// ignore
 			}
@@ -185,8 +190,9 @@ public class DocumentRangeNode
 			if (POS_UPDATE) {
 				try {
 					Position p= new Position(fBaseDocument.getLength());
-					fBaseDocument.addPosition(p);
+					fBaseDocument.addPosition(RANGE_CATEGORY, p);
 					fAppendPosition= p;
+				} catch (BadPositionCategoryException ex) {
 				} catch (BadLocationException ex) {
 					// ignore
 				}
@@ -236,7 +242,7 @@ public class DocumentRangeNode
 
 						//try {
 						Position po= new Position(p.getOffset() + p.getLength() + 1, 0);
-						//c.fBaseDocument.addPosition(po);
+						//c.fBaseDocument.addPosition(RANGE_CATEGORY, po);
 						return po;
 						//} catch (BadLocationException ex) {
 						//}
@@ -253,7 +259,7 @@ public class DocumentRangeNode
 						Position p= c.fRange;
 						//try {
 						Position po= new Position(p.getOffset(), 0);
-						//c.fBaseDocument.addPosition(po);
+						//c.fBaseDocument.addPosition(RANGE_CATEGORY, po);
 						return po;
 						//} catch (BadLocationException ex) {
 						//}

@@ -169,7 +169,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 		fTree.setLayoutData(gd);
 				
 		// bottom pane showing hunks in compare viewer 
-		fHunkViewer= new CompareViewerSwitchingPane(splitter, SWT.BORDER) {
+		fHunkViewer= new CompareViewerSwitchingPane(splitter, SWT.BORDER | SWT.FLAT) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
 				return CompareUI.findContentViewer(oldViewer, (ICompareInput)input, this, fCompareConfiguration);
 			}

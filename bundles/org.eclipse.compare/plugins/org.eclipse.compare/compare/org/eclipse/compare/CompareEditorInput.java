@@ -89,12 +89,6 @@ import org.eclipse.compare.structuremergeviewer.*;
 public abstract class CompareEditorInput implements IEditorInput, IPropertyChangeNotifier, IRunnableWithProgress {
 	
 	/**
-	 * Work in progres !!
-	 * SHOW_STRUCTURE is not public API.
-	 */
-	public static final boolean SHOW_STRUCTURE= false;
-	
-	/**
 	 * The name of the "dirty" property.
 	 */
 	public static final String DIRTY_STATE= "DIRTY_STATE"; //$NON-NLS-1$
@@ -121,7 +115,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	private IgnoreWhiteSpaceAction fIgnoreWhitespace;
 	private ShowPseudoConflicts fShowPseudoConflicts;
 	
-	boolean fStructureCompareOnSingleClick= false;
+	boolean fStructureCompareOnSingleClick= true;
 
 	/**
 	 * Creates a <code>CompareEditorInput</code> which is initialized with the given
@@ -621,14 +615,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public Viewer findContentViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
 		Viewer v= CompareUIPlugin.findContentViewer(oldViewer, input, parent, fCompareConfiguration);
 		
-		if (SHOW_STRUCTURE) {
-			if (oldViewer != null && v != null && oldViewer.getClass() == v.getClass())
-				v= oldViewer;
-		}
-		
 		if (v instanceof IPropertyChangeNotifier) {
 			final IPropertyChangeNotifier dsp= (IPropertyChangeNotifier) v;
-
 			dsp.addPropertyChangeListener(fDirtyStateListener);
 			
 			Control c= v.getControl();
@@ -709,28 +697,19 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	public void saveChanges(IProgressMonitor pm) throws CoreException {
 		
 		// flush changes in any dirty viewer
-		flushViewer(fStructureInputPane);
-		flushViewer(fStructurePane1);
-		flushViewer(fStructurePane2);
-		flushViewer(fContentInputPane);
+		flushViewer(fStructureInputPane, pm);
+		flushViewer(fStructurePane1, pm);
+		flushViewer(fStructurePane2, pm);
+		flushViewer(fContentInputPane, pm);
 
 		save(pm);
 	}
 	
-	private static void flushViewer(CompareViewerSwitchingPane pane) {
+	private static void flushViewer(CompareViewerSwitchingPane pane, IProgressMonitor pm) throws CoreException {
 		if (pane != null) {
 			Viewer v= pane.getViewer();
-			if (v != null) {
-				
-				// since we have already asked the user whether he wants to save
-				// changes, we disable the confirmation alert in
-				// ContentMergeViewer.inputChanged
-				if (v instanceof ContentMergeViewer)
-					((ContentMergeViewer)v).setConfirmSave(false);
-
-				Object input= pane.getInput();
-				v.setInput(input);
-			}
+			if (v instanceof ISavable)
+				((ISavable)v).save(pm);
 		}
 	}
 }

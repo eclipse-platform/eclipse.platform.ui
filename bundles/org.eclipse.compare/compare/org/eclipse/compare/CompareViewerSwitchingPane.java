@@ -88,11 +88,8 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 	 */
 	private void setViewer(Viewer newViewer) {
 		
-		if (newViewer == fViewer) {
-			if (CompareEditorInput.SHOW_STRUCTURE)
-				System.out.println("Same viewer: " + fViewer.getClass().getName());
+		if (newViewer == fViewer)
 			return;
-		}
 				
 		boolean oldEmpty= isEmpty();
 
@@ -210,14 +207,12 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 			
 		boolean hadFocus= hasFocus2();
 		
-		if (! CompareEditorInput.SHOW_STRUCTURE) {
-			try {
-				if (fViewer != null)
-					fViewer.setInput(null);	// force save before switching viewer
-			} catch (ViewerSwitchingCancelled ex) {
-				return;
-			}
-		}
+//		try {
+//			if (fViewer != null)
+//				fViewer.setInput(null);	// force save before switching viewer
+//		} catch (ViewerSwitchingCancelled ex) {
+//			return;
+//		}
 
 		fInput= input;
 
