@@ -12,7 +12,7 @@ import org.eclipse.jface.action.*;
 import org.eclipse.ui.internal.ViewPane;
 
 /**
- * An editor container manages the services for an editor.
+ * A view container manages the services for a view.
  */
 public class ViewSite extends PartSite
 	implements IViewSite
