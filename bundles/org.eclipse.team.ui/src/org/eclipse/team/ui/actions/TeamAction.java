@@ -133,11 +133,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 		if (shell != null) {
 			return shell;
 		} else {
-			return TeamUIPlugin
-				.getPlugin()
-				.getWorkbench()
-				.getActiveWorkbenchWindow()
-				.getShell();
+			return TeamUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getShell();
 		}
 	}
 	/**
@@ -150,12 +146,7 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 		if (t instanceof CoreException) {
 			return ((CoreException) t).getStatus();
 		}
-		return new Status(
-			IStatus.ERROR,
-			TeamUIPlugin.ID,
-			1,
-			Policy.bind("simpleInternal"),
-			t);
+		return new Status(IStatus.ERROR, TeamUIPlugin.ID, 1, Policy.bind("simpleInternal"), t);
 	}
 	/**
 	 * Convenience method for running an operation with progress and
@@ -221,10 +212,12 @@ public abstract class TeamAction extends ActionDelegate implements IObjectAction
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			this.selection = (IStructuredSelection) selection;
-			try {
-				action.setEnabled(isEnabled());
-			} catch (TeamException e) {
-				action.setEnabled(false);
+			if (action != null) {
+				try {
+					action.setEnabled(isEnabled());
+				} catch (TeamException e) {
+					action.setEnabled(false);
+				}
 			}
 		}
 	}
