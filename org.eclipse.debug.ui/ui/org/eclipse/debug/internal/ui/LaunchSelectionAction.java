@@ -41,7 +41,7 @@ public class LaunchSelectionAction extends Action {
 	public void run() {
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
-				if (fElement != null) {
+				if (fElement != null || !DebugUIPlugin.getDefault().hasWizard(fLauncher)) {
 					fLauncher.launch(new Object[] {fElement}, fMode);
 				} else {
 					Shell shell= DebugUIPlugin.getActiveWorkbenchWindow().getShell();

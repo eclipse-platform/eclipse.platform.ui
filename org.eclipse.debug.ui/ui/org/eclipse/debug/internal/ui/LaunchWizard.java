@@ -190,6 +190,9 @@ public class LaunchWizard extends Wizard {
 	 */
 	public void setProjectSelection(IStructuredSelection selection) {
 		fSelection= selection;
+		if (fPage != null) {
+			fPage.updateDefaultProject();
+		}
 	}
 	
 	/**

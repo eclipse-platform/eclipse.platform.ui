@@ -144,14 +144,7 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		});
 		fLaunchersList.setInput(fLaunchersList);
 		fSetAsDefaultLauncher= new Button(root, SWT.CHECK);
-		IProject project= ((LaunchWizard)getWizard()).getProject();
-		String projectName= "";
-		if (project != null) {
-			projectName= project.getName();
-		} else {
-			projectName= DebugUIUtils.getResourceString(UNKNOWN);
-		}
-		fSetAsDefaultLauncher.setText(MessageFormat.format(DebugUIUtils.getResourceString(DEFAULT_LAUNCHER), new String[] {projectName}));
+		updateDefaultProject();
 	}
 
 	/**
@@ -239,6 +232,17 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 	 */
 	protected IWizardContainer getContainer() {
 		return super.getContainer();
-	}	
+	}
+	
+	protected void updateDefaultProject() {
+		IProject project= ((LaunchWizard)getWizard()).getProject();
+		String projectName= "";
+		if (project != null) {
+			projectName= project.getName();
+		} else {
+			projectName= DebugUIUtils.getResourceString(UNKNOWN);
+		}
+		fSetAsDefaultLauncher.setText(MessageFormat.format(DebugUIUtils.getResourceString(DEFAULT_LAUNCHER), new String[] {projectName}));
+	}
 }
 
