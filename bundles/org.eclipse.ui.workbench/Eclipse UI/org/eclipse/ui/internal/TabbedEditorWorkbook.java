@@ -478,6 +478,11 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 				
 				final EditorPane pane = (EditorPane)draggedObject;
 				
+				// Don't allow views to be dragged between windows
+				if (pane.getWorkbenchWindow() != getWorkbenchWindow()) {
+					return null;
+				}
+				
 				Point localPos = tabFolder.toControl(position);
 				final CTabItem tabUnderPointer = tabFolder.getItem(localPos);
 				
