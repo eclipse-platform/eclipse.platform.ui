@@ -235,17 +235,16 @@ public class ExpressionManager implements IExpressionManager, IDebugEventSetList
 	 * 		the XML document.
 	 */
 	private String getWatchExpressionsAsXML() throws IOException, ParserConfigurationException, TransformerException {
-		Iterator iter= fExpressions.iterator();
+		IExpression[] expressions= getExpressions();
 		Document document= LaunchManager.getDocument();
 		Element rootElement= document.createElement(WATCH_EXPRESSIONS_TAG);
 		document.appendChild(rootElement);
-		while (iter.hasNext()) {
-			Object object= iter.next();
-			if (object instanceof IWatchExpression) {
-				IWatchExpression expression= (IWatchExpression) object;
+		for (int i = 0; i < expressions.length; i++) {
+			IExpression expression= expressions[i];
+			if (expression instanceof IWatchExpression) {
 				Element element= document.createElement(EXPRESSION_TAG); 
 				element.setAttribute(TEXT_TAG, expression.getExpressionText());
-				element.setAttribute(ENABLED_TAG, expression.isEnabled() ? TRUE_VALUE : FALSE_VALUE);
+				element.setAttribute(ENABLED_TAG, ((IWatchExpression) expression).isEnabled() ? TRUE_VALUE : FALSE_VALUE);
 				rootElement.appendChild(element);
 			}
 		}
