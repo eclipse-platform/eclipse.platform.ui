@@ -117,7 +117,24 @@ function openAdvanced()
 	var workingSet = "";
 	if (scope != null)
 	 	workingSet = document.getElementById("scope").firstChild.nodeValue;
-	advancedDialog = window.open("workingSetManager.jsp?workingSet="+escape(workingSet), "advancedDialog", "resizeable=no,height="+h+",width="+w );
+	 	
+<%
+if (data.isIE()){
+%>
+	var l = top.screenLeft + (top.document.body.clientWidth - w) / 2;
+	var t = top.screenTop + (top.document.body.clientHeight - h) / 2;
+<%
+} else {
+%>
+	var l = top.screenX + (top.innerWidth - w) / 2;
+	var t = top.screenY + (top.innerHeight - h) / 2;
+<%
+}
+%>
+	// move the dialog just a bit higher than the middle
+	if (t-50 > 0) t = t-50;
+	
+	advancedDialog = window.open("workingSetManager.jsp?workingSet="+escape(workingSet), "advancedDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
 	advancedDialog.focus(); 
 }
 

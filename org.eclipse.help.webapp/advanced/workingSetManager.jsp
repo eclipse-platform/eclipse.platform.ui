@@ -144,13 +144,46 @@ var workingSetDialog;
 var w = 300;
 var h = 500;
 
-function newWorkingSet() {
-	workingSetDialog = window.open("workingSet.jsp?operation=add&workingSet="+getWorkingSet(), "workingSetDialog", "resizeable=no,height="+h+",width="+w );
+function newWorkingSet() { 	
+	<%
+	if (data.isIE()){
+	%>
+		var l = top.screenLeft + (top.document.body.clientWidth - w) / 2;
+		var t = top.screenTop + (top.document.body.clientHeight - h) / 2;
+	<%
+	} else {
+	%>
+		var l = top.screenX + (top.innerWidth - w) / 2;
+		var t = top.screenY + (top.innerHeight - h) / 2;
+	<%
+	}
+	%>
+	// move the dialog just a bit higher than the middle
+	if (t-50 > 0) t = t-50;
+		
+	workingSetDialog = window.open("workingSet.jsp?operation=add&workingSet="+getWorkingSet(), "workingSetDialog", "resizeable=no,height="+h+",width="+w +",left="+l+",top="+t);
 	workingSetDialog.focus(); 
 }
 
 function editWorkingSet() {
-	workingSetDialog = window.open("workingSet.jsp?operation=edit&workingSet="+getWorkingSet(), "workingSetDialog", "resizeable=no,height="+h+",width="+w );
+	 	
+	<%
+	if (data.isIE()){
+	%>
+		var l = top.screenLeft + (top.document.body.clientWidth - w) / 2;
+		var t = top.screenTop + (top.document.body.clientHeight - h) / 2;
+	<%
+	} else {
+	%>
+		var l = top.screenX + (top.innerWidth - w) / 2;
+		var t = top.screenY + (top.innerHeight - h) / 2;
+	<%
+	}
+	%>
+	// move the dialog just a bit higher than the middle
+	if (t-50 > 0) t = t-50;
+		
+	workingSetDialog = window.open("workingSet.jsp?operation=edit&workingSet="+getWorkingSet(), "workingSetDialog", "resizeable=no,height="+h+",width="+w+",left="+l+",top="+t );
 	workingSetDialog.focus(); 
 }
 
