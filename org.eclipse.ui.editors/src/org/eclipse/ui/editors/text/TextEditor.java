@@ -551,10 +551,12 @@ public class TextEditor extends StatusTextEditor {
 	 * Shows the line number ruler column.
 	 */
 	private void showLineNumberRuler() {
-		IVerticalRuler v= getVerticalRuler();
-		if (v instanceof CompositeRuler) {
-			CompositeRuler c= (CompositeRuler) v;
-			c.addDecorator(1, createLineNumberRulerColumn());
+		if (fLineNumberRulerColumn == null) {
+			IVerticalRuler v= getVerticalRuler();
+			if (v instanceof CompositeRuler) {
+				CompositeRuler c= (CompositeRuler) v;
+				c.addDecorator(1, createLineNumberRulerColumn());
+			}
 		}
 	}
 	
@@ -562,10 +564,13 @@ public class TextEditor extends StatusTextEditor {
 	 * Hides the line number ruler column.
 	 */
 	private void hideLineNumberRuler() {
-		IVerticalRuler v= getVerticalRuler();
-		if (v instanceof CompositeRuler) {
-			CompositeRuler c= (CompositeRuler) v;
-			c.removeDecorator(1);
+		if (fLineNumberRulerColumn != null) {
+			IVerticalRuler v= getVerticalRuler();
+			if (v instanceof CompositeRuler) {
+				CompositeRuler c= (CompositeRuler) v;
+				c.removeDecorator(1);
+			}
+			fLineNumberRulerColumn = null;
 		}
 	}
 	
