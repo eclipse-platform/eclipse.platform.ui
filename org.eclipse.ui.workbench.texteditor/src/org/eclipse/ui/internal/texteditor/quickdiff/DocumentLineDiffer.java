@@ -242,28 +242,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		}
 	}
 	
-	/**
-	 * A nonsynchronized listener that simply notices if there were any document events while it 
-	 * was installed.
-	 */
-	private class ChangeListener implements IDocumentListener {
-		/** Set to true when an event is received. */
-		boolean hasChanged= false;
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
-		public void documentAboutToBeChanged(DocumentEvent event) {
-			hasChanged= true;
-		}
-						
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
-		public void documentChanged(DocumentEvent event) {
-			hasChanged= true;
-		}
-	}
-					
 	/** The provider for the reference document. */
 	IQuickDiffReferenceProvider fReferenceProvider;
 	/** Whether this differ is in sync with the model. */
@@ -518,6 +496,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		
 		fInitializationJob= new Job(QuickDiffMessages.getString("quickdiff.initialize")) { //$NON-NLS-1$
 
+			/*
+			 * This is run in a different thread. As the documents might be synchronized, never ever
+			 * access the documents in a synchronized section or expect deadlocks. See
+			 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=44692
+			 */
 			public IStatus run(IProgressMonitor monitor) {
 				
 				// 1:	wait for any previous job that was canceled to avoid job flooding
@@ -556,66 +539,55 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				//
 				// Now this is fun. The reference documents may be PartiallySynchronizedDocuments
 				// which will result in a deadlock if they get changed externally before we get
-				// our exclusive copies. On the other hand, we cannot just register a listener, as
-				// we might get also event from just before we made the copies, which is bad.
-				//
-				// So: we register a (non-synchronized) listener with the documents which tells us
-				// whether the documents were modified during our copying (or just before, in the gap,
-				// or just after, in the gap) and do it all over again if they were. We might go 
-				// through the loop too many times if we get a document modification right after
-				// copying and before removing the change listener, but that will be rare and not
-				// so bad after all (same for modification that occur before we start copying).
+				// our exclusive copies.
+				// Here's what we do: we try over and over (without synchronization) to get copies 
+				// without interleaving modification. If there is a document change, we just repeat. 
 				
 				IDocument right= fRightDocument; // fRightDocument, but not subject to change
 				IDocument actual= null; // the copy of the actual (right) document
 				IDocument reference= null; // the copy of the reference (left) document
-				ChangeListener unsynchronizedListener= new ChangeListener();
 				
-				do {
-					synchronized (DocumentLineDiffer.this) {
-						// 4: take an early exit if the documents are not valid
-						if (left == null || right == null) {
-							if (isCanceled(monitor))
-								return Status.CANCEL_STATUS;
-							else {
-								clearModel();
-								fireModelChanged();
-								DocumentLineDiffer.this.notifyAll();
-								return Status.OK_STATUS;
-							}
+				synchronized (DocumentLineDiffer.this) {
+					// 4: take an early exit if the documents are not valid
+					if (left == null || right == null) {
+						if (isCanceled(monitor))
+							return Status.CANCEL_STATUS;
+						else {
+							clearModel();
+							fireModelChanged();
+							DocumentLineDiffer.this.notifyAll();
+							return Status.OK_STATUS;
 						}
-						
-						// set the reference document
-						fLeftDocument= left;
-						
-						
-						unsynchronizedListener.hasChanged= false;
-						left.addDocumentListener(unsynchronizedListener);
-						right.addDocumentListener(unsynchronizedListener);
-						
-						// get an exclusive copy of the actual document, which is not synchronized, and will give us
-						// not interleaving updates.
-						// no deadlock possible as we only register as listener after getting the content.
-						reference= new Document(left.get());
-						actual= new Document(right.get());
-	
-						// clear any stored events received in between, we're starting over
+					}
+					
+					// set the reference document
+					fLeftDocument= left;
+				}
+					
+				right.addDocumentListener(DocumentLineDiffer.this);
+				left.addDocumentListener(DocumentLineDiffer.this);
+					
+				do {
+					// clear events
+					synchronized (DocumentLineDiffer.this) {
+						if (isCanceled(monitor))
+							return Status.CANCEL_STATUS;
+
 						fStoredEvents.clear();
-						
 					}
 					
-					// non synchronized
-					right.addDocumentListener(DocumentLineDiffer.this);
-					left.addDocumentListener(DocumentLineDiffer.this);
-					right.removeDocumentListener(unsynchronizedListener);
-					left.removeDocumentListener(unsynchronizedListener);
+					// access documents unsynched:
+					// get an exclusive copy of the actual document
+					reference= new Document(left.get());
+					actual= new Document(right.get());
 					
-					if (unsynchronizedListener.hasChanged) {
-						right.removeDocumentListener(DocumentLineDiffer.this);
-						left.removeDocumentListener(DocumentLineDiffer.this);
+					synchronized (DocumentLineDiffer.this) {
+						if (fStoredEvents.size() == 0)
+							break;
 					}
 					
-				} while (unsynchronizedListener.hasChanged);
+					
+				} while (true);
 				
 				// 6:	Do Da Diffing
 				DocLineComparator ref= new DocLineComparator(reference, null, false);
@@ -624,79 +596,55 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				
 				// 7:	Reset the model to the just gotten differences
 				// 		re-inject stored events to get up to date.
+				List storedEvents;
 				synchronized (DocumentLineDiffer.this) {
 					if (isCanceled(monitor))
 						return Status.CANCEL_STATUS;
 				
 					// set the new differences so we can operate on them
 					fDifferences= diffs;
-					
-					unsynchronizedListener= new ChangeListener();
+					storedEvents= new ArrayList(fStoredEvents);
+					fStoredEvents.clear();
+				}
 
-					if (fRightDocument != null && fLeftDocument != null) {
-						fRightDocument.addDocumentListener(unsynchronizedListener);
-						fLeftDocument.addDocumentListener(unsynchronizedListener);
-						fRightDocument.removeDocumentListener(DocumentLineDiffer.this);
-						fLeftDocument.removeDocumentListener(DocumentLineDiffer.this);
-
-						// avoid somebody already waiting
-						if (unsynchronizedListener.hasChanged) {
-							fLeftDocument.removeDocumentListener(unsynchronizedListener);
-							fRightDocument.removeDocumentListener(unsynchronizedListener);
-							clearModel();
-							initialize();
-							return Status.CANCEL_STATUS;
-						}
-
-					} else {
-						return Status.CANCEL_STATUS;
-					}
-
-					// reinject events accumulated in the meantime.
-					try {
-						for (ListIterator iter= fStoredEvents.listIterator(); iter.hasNext();) {
-							DocumentEvent event= (DocumentEvent) iter.next();
-							handleAboutToBeChanged(event);
-							handleChanged(event);
-
+				// reinject events accumulated in the meantime.
+				try {
+					for (ListIterator iter= storedEvents.listIterator(); iter.hasNext();) {
+						DocumentEvent event= (DocumentEvent) iter.next();
+						// access documents unsynched:
+						handleAboutToBeChanged(event);
+						handleChanged(event);
+						
+						synchronized (DocumentLineDiffer.this) {
 							if (isCanceled(monitor))
 								return Status.CANCEL_STATUS;
-							
-							if (unsynchronizedListener.hasChanged) {
-								fLeftDocument.removeDocumentListener(unsynchronizedListener);
-								fRightDocument.removeDocumentListener(unsynchronizedListener);
+						
+							if (fStoredEvents.size() > 0) {
+								// early leave on interfering change
+								left.removeDocumentListener(DocumentLineDiffer.this);
+								right.removeDocumentListener(DocumentLineDiffer.this);
 								clearModel();
 								initialize();
 								return Status.CANCEL_STATUS;
 							}
-
 						}
-					} catch (BadLocationException e) {
-						initialize();
-						return Status.CANCEL_STATUS;
+						
 					}
-					
-					fStoredEvents.clear();
-					
-					// restore old listener behaviour - register synchronized version before
-					// decomissioning unsychronized, to cover the gap in between
-					fLeftDocument.addDocumentListener(DocumentLineDiffer.this);
-					fRightDocument.addDocumentListener(DocumentLineDiffer.this);
-					fLeftDocument.removeDocumentListener(unsynchronizedListener);
-					fRightDocument.removeDocumentListener(unsynchronizedListener);
-					// final check
-					if (unsynchronizedListener.hasChanged) {
-						clearModel();
-						initialize();
-						return Status.CANCEL_STATUS;
-					}
-					
+				} catch (BadLocationException e) {
+					left.removeDocumentListener(DocumentLineDiffer.this);
+					right.removeDocumentListener(DocumentLineDiffer.this);
+					clearModel();
+					initialize();
+					return Status.CANCEL_STATUS;
+				}
+				
+				synchronized (DocumentLineDiffer.this) {
 					// signal done
 					fInitializationJob= null;
 					fIsSynchronized= true;
 					fLastDifference= null;
 					
-					// update blocking calls.
+					// inform blocking calls.
 					DocumentLineDiffer.this.notifyAll();
 				}
 				
@@ -710,7 +658,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 
 			private void clearModel() {
 				fLeftDocument= null;
-				
 				fInitializationJob= null;
 				fStoredEvents.clear();
 				fLastDifference= null;
@@ -755,7 +702,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		if (doc == null)
 			return;
 
-		// store size of replaced region
+		// store size of replaced region (never synchronized -> not a problem)
 		fFirstLine= doc.getLineOfOffset(event.getOffset()); // store change bounding lines
 		fNLines= doc.getLineOfOffset(event.getOffset() + event.getLength()) - fFirstLine + 1;
 	}
@@ -766,6 +713,14 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	public synchronized void documentChanged(DocumentEvent event) {
 		if (!isInitialized())
 			return;
+		
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=44692
+		// don't allow incremental update for changes from the reference document
+		// as this could deadlock
+		if (event.getDocument() == fLeftDocument) {
+			initialize();
+			return;
+		}
 		
 		try {
 			handleChanged(event);
@@ -1256,7 +1211,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		++fOpenConnections;
 		if (fOpenConnections == 1) {
 			fRightDocument= document;
-			fRightDocument.addDocumentListener(this);
 			initialize();
 		}
 	}
