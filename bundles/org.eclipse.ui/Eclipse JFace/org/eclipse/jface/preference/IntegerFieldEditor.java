@@ -36,7 +36,10 @@ public IntegerFieldEditor(String name, String labelText, Composite parent) {
 }
 
 /**
- * Set the range of valid values for this field
+ * Sets the range of valid values for this field.
+ * 
+ * @param min the minimum allowed value (inclusive)
+ * @param max the maximum allowed value (inclusive)
  */
 public void setValidRange(int min,int max) {
 	minValidValue = min;
