@@ -11,10 +11,10 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.jface.action.Action;
-
+import org.eclipse.ui.IPageListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
-
 import org.eclipse.ui.internal.intro.IntroMessages;
 
 /**
@@ -25,6 +25,20 @@ import org.eclipse.ui.internal.intro.IntroMessages;
 public class IntroAction extends Action implements ActionFactory.IWorkbenchAction {
 
 	private IWorkbenchWindow workbenchWindow;
+	private IPageListener pageListener = new IPageListener() {
+	    
+	    public void pageActivated(IWorkbenchPage page) {
+	        //no-op
+	    }
+	    
+	    public void pageClosed(IWorkbenchPage page) {
+	        setEnabled(workbenchWindow.getPages().length > 0);	        
+	    }
+	    
+	    public void pageOpened(IWorkbenchPage page) {
+	        setEnabled(true);
+	    }	    
+	};
 	
 	/**
 	 * @param window the window to bind the action to. 
@@ -36,22 +50,18 @@ public class IntroAction extends Action implements ActionFactory.IWorkbenchActio
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
+		
+		window.addPageListener(pageListener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction#dispose()
 	 */
 	public void dispose() {
+		workbenchWindow.removePageListener(pageListener);
 		workbenchWindow = null;
 	}
 
-	/* (non-Javadoc)
-     * @see org.eclipse.jface.action.IAction#isEnabled()
-     */
-    public boolean isEnabled() {
-        return workbenchWindow.getPages().length > 0;
-    }
-    
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
