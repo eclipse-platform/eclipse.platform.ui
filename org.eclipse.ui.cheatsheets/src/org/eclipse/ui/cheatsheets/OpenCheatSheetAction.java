@@ -33,8 +33,6 @@ import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
  * This class is not intended to be subclassed by clients.
  * </p>
  * 
- * TODO (lorne) - should rename this to "OpenCheatSheetAction" to be consistent with terms used elsewhere
- * TODO (lorne) - marked as final
  * @since 3.0
  */
 public final class OpenCheatSheetAction extends Action {
