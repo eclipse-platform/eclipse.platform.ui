@@ -15,9 +15,17 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DialogSettingsHelper;
 import org.eclipse.debug.internal.ui.SWTUtil;
+import org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceDialog;
+import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferenceNode;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -26,6 +34,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -46,6 +55,7 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 	// the argument value
 	private Text fArgumentText;
 	private String fArgumentValue;
+	private Button fEditVariablesButton;
 
 	/**
 	 * Constructs a new string substitution variable selection dialog.
@@ -111,7 +121,19 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		container.setLayoutData(gd);
 		container.setFont(parent.getFont());
-				
+		
+		fEditVariablesButton = new Button(container, SWT.PUSH);
+		fEditVariablesButton.setFont(container.getFont());
+		fEditVariablesButton.setText(StringSubstitutionMessages.getString("StringVariableSelectionDialog.0")); //$NON-NLS-1$
+		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
+		gd.horizontalSpan = 2;
+		fEditVariablesButton.setLayoutData(gd);
+		fEditVariablesButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				editVariables();
+			}
+		});	
+		
 		Label desc = new Label(container, SWT.NONE);
 		desc.setFont(parent.getFont());
 		desc.setText(StringSubstitutionMessages.getString("StringVariableSelectionDialog.6")); //$NON-NLS-1$
@@ -162,6 +184,33 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		gd.heightHint = 50;
 		fDescriptionText.setLayoutData(gd);		
 		
+	}
+
+
+	protected void editVariables() {
+		PreferencePage page = new StringVariablePreferencePage();
+		page.setTitle(StringSubstitutionMessages.getString("StringVariableSelectionDialog.1")); //$NON-NLS-1$
+		final IPreferenceNode targetNode = new PreferenceNode("org.eclipse.debug.ui.StringVariablePreferencePage", page); //$NON-NLS-1$
+		
+		PreferenceManager manager = new PreferenceManager();
+		manager.addToRoot(targetNode);
+		final PreferenceDialog dialog = new PreferenceDialog(getShell(), manager);
+		
+		final Display display = DebugUIPlugin.getStandardDisplay();
+		BusyIndicator.showWhile(display, new Runnable() {
+			public void run() {
+				dialog.create();
+				dialog.setMessage(targetNode.getLabelText());
+				if(dialog.open() == IDialogConstants.OK_ID) {
+					final IStringVariable[] elements = VariablesPlugin.getDefault().getStringVariableManager().getVariables();
+					display.asyncExec(new Runnable() {
+						public void run() {
+							setListElements(elements);
+						}
+					});
+				}
+			}
+		});		
 	}
 
 	/**
