@@ -100,9 +100,6 @@ public IMemento[] getChildren(String type);
 public Float getFloat(String key);
 /**
  * Returns the id for this memento.
- * <p>
- * [Issue: For consistency, rename to "getId".]
- * </p>
  *
  * @return the memento id, or <code>null</code> if none
  * @see #createChild(java.lang.String,java.lang.String)
