@@ -80,6 +80,7 @@ public class InternalProject extends Project {
 			return null;
 		}
 
+		Throwable thrown = null;
 		try {
 			Constructor ctor = null;
 			boolean noArg = false;
@@ -104,25 +105,24 @@ public class InternalProject extends Project {
 			}
 			return o;
 		} catch (InvocationTargetException ite) {
-			Throwable t = ite.getTargetException();
-			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, t.toString()}); //$NON-NLS-1$
-			throw new BuildException(message, t);
+			thrown = ite.getTargetException();
 		} catch (IllegalArgumentException e) {
-			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, e.toString()}); //$NON-NLS-1$
-			throw new BuildException(message, e);
+			thrown = e;
 		} catch (InstantiationException e) {
-			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, e.toString()}); //$NON-NLS-1$
-			throw new BuildException(message, e);
+			thrown = e;
 		} catch (IllegalAccessException e) {
-			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, e.toString()}); //$NON-NLS-1$
-			throw new BuildException(message, e);
+			thrown = e;
 		} catch (NoSuchMethodException nse) {
-			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, nse.toString()}); //$NON-NLS-1$
-			throw new BuildException(message, nse);
+			thrown = nse;
 		} catch (NoClassDefFoundError ncdfe) {
-			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, ncdfe.toString()}); //$NON-NLS-1$
-			throw new BuildException(message, ncdfe);
+			thrown = ncdfe;
 		}
+		if (thrown != null) {
+			String message= MessageFormat.format(InternalAntMessages.getString("InternalProject.0"), new String[]{typeName, thrown.toString()}); //$NON-NLS-1$
+			throw new BuildException(message, thrown);
+		}
+		// this line is actually unreachable
+		return null;
 	}
 
 	/**
