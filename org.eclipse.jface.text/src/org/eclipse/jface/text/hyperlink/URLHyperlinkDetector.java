@@ -98,8 +98,19 @@ public class URLHyperlinkDetector implements IHyperlinkDetector {
 		if (offsetInLine < urlOffsetInLine || offsetInLine > urlOffsetInLine + urlLength)
 			return null;
 		
-		if (startDoubleQuote && line.charAt(urlOffsetInLine + urlLength - 1) == '"')
-			urlLength--;
+		if (startDoubleQuote) {
+			int endOffset= -1;
+			int nextDoubleQuote= line.indexOf('"', urlOffsetInLine);
+			int nextWhitespace= line.indexOf(' ', urlOffsetInLine);
+			if (nextDoubleQuote != -1 && nextWhitespace != -1)
+				endOffset= Math.min(nextDoubleQuote, nextWhitespace);
+			else if (nextDoubleQuote != -1)
+				endOffset= nextDoubleQuote;
+			else if (nextWhitespace != -1)
+				endOffset= nextWhitespace;
+			if (endOffset != -1)
+				urlLength= endOffset - urlOffsetInLine;
+		}
 		
 		// Set and validate URL string
 		try {
