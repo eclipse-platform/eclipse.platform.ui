@@ -586,7 +586,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	}
 	
 	/**
-	 * Returns the default lanuch group for the given mode.
+	 * Returns the default launch group for the given mode.
 	 * 
 	 * @param mode	 * @return launch group	 */
 	public LaunchGroupExtension getDefaultLanuchGroup(String mode) {

@@ -276,7 +276,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * parent shell.
 	 * 
 	 * @param shell the parent shell
-	 * @param group the group of lanuch configuration to display
+	 * @param group the group of launch configuration to display
 	 */
 	public LaunchConfigurationsDialog(Shell shell, LaunchGroupExtension group) {
 		super(shell);

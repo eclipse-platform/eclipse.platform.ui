@@ -239,7 +239,7 @@ public interface ILaunchManager {
 	public IPersistableSourceLocator newSourceLocator(String identifier) throws CoreException;
 	
 	/**
-	 * When a lanuch configuration is created or moved, registered launch
+	 * When a launch configuration is created or moved, registered launch
 	 * configuration listeners (see <code>ILaunchConfigurationListener</code>)
 	 * are notified of an add notification for the new configuration. If the
 	 * notification is the result of a move this method will return a handle to
@@ -263,7 +263,7 @@ public interface ILaunchManager {
 	public ILaunchConfiguration getMovedFrom(ILaunchConfiguration addedConfiguration);
 	
 	/**
-	 * When a lanuch configuration is deleted or moved, registered launch
+	 * When a launch configuration is deleted or moved, registered launch
 	 * configuration listeners (see <code>ILaunchConfigurationListener</code>)
 	 * are notified of a remove notification for launch configuration that has
 	 * been deleted. If the notification is the result of a move this method

@@ -33,7 +33,7 @@ public class LaunchAction extends Action {
 	 */
 	private ILaunchConfiguration fConfiguration;
 	/**
-	 * The mode to lanuch in
+	 * The mode to launch in
 	 */
 	private String fMode;
 	

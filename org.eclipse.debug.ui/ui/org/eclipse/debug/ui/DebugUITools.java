@@ -305,7 +305,7 @@ public class DebugUITools {
 	 * @param shell the parent shell for the launch configuration dialog
 	 * @param selection the initial selection for the dialog
 	 * @param groupIdentifier the identifier of the launch group to display (corresponds to
-	 * the identifier of a lanuch group extension)
+	 * the identifier of a launch group extension)
 	 * @return the return code from opening the launch configuration dialog -
 	 *  one  of <code>Window.OK</code> or <code>Window.CANCEL</code>
 	 * @since 2.1
@@ -337,7 +337,7 @@ public class DebugUITools {
 	 * @param shell the parent shell for the launch configuration dialog
 	 * @param selection the initial selection for the dialog
 	 * @param groupIdentifier the identifier of the launch group to display (corresponds to
-	 * the identifier of a lanuch group extension)
+	 * the identifier of a launch group extension)
 	 * @param status the status to display in the dialog, or <code>null</code>
 	 * if none
 	 * @return the return code from opening the launch configuration dialog -

@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Shell;
 public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDialog implements ILaunchConfigurationListener {
 	
 	/**
-	 * The lanuch configuration to display
+	 * The launch configuration to display
 	 */
 	private ILaunchConfiguration fLaunchConfiguration;
 
@@ -48,7 +48,7 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	 * @param shell the parent shell
 	 * @param selection the selection used to initialize this dialog, typically the 
 	 *  current workbench selection
-	 * @param group lanuch group
+	 * @param group launch group
 	 */
 	public LaunchConfigurationPropertiesDialog(Shell shell, ILaunchConfiguration launchConfiguration, LaunchGroupExtension group) {
 		super(shell, group);
