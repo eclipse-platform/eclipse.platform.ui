@@ -22,6 +22,7 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.osgi.framework.*;
 /**
  * Help browser employing SWT Browser widget
  */
@@ -230,10 +231,15 @@ public class EmbeddedBrowser {
 				try {
 					imageURL = new URL(productImageURLs[i]);
 				} catch (MalformedURLException mue) {
-					// must be a path relative to a bundle
-					imageURL = Platform
-							.find(Platform.getProduct().getDefiningBundle(),
-									new Path(productImageURLs[i]));
+					// must be a path relative to the product bundle
+					IProduct product = Platform.getProduct();
+					if (product != null) {
+						Bundle productBundle = product.getDefiningBundle();
+						if (productBundle != null) {
+							imageURL = Platform.find(productBundle, new Path(
+									productImageURLs[i]));
+						}
+					}
 				}
 				Image image = null;
 				if (imageURL != null) {
