@@ -13,13 +13,14 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.util.*;
 import java.util.List;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.*;
@@ -53,6 +54,9 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	private Combo repositoryPathCombo;
 	// Validation
 	private Button validateButton;
+	// Caching password
+	private Button allowCachingButton;
+	private boolean allowCaching = false;
 	
 	private static final int COMBO_HISTORY_LENGTH = 5;
 	
@@ -210,6 +214,35 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 			});
 		}
 		
+		allowCachingButton = new Button(composite, SWT.CHECK);
+		allowCachingButton.setText(Policy.bind("UserValidationDialog.6")); //$NON-NLS-1$
+		data = new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL);
+		data.horizontalSpan = 3;
+		allowCachingButton.setLayoutData(data);
+		allowCachingButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				allowCaching = allowCachingButton.getSelection();
+			}
+		});
+	
+		Composite warningComposite = new Composite(composite, SWT.NONE);
+		layout = new GridLayout();
+		layout.numColumns = 2;
+		layout.marginHeight = 0;
+		layout.marginHeight = 0;
+		warningComposite.setLayout(layout);
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 3;
+		warningComposite.setLayoutData(data);
+		Label warningLabel = new Label(warningComposite, SWT.NONE);
+		warningLabel.setImage(Dialog.getImage(Dialog.DLG_IMG_MESSAGE_WARNING));
+		warningLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_BEGINNING));
+		Label warningText = new Label(warningComposite, SWT.WRAP);
+		warningText.setText(Policy.bind("UserValidationDialog.7")); //$NON-NLS-1$
+		data = new GridData(GridData.FILL_HORIZONTAL);
+		data.widthHint = 300;
+		warningText.setLayoutData(data);
+		
 		initializeValues();
 		updateWidgetEnablements();
 		hostCombo.setFocus();
@@ -273,6 +306,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		if (location == null) {
 			if (!isPageComplete()) return null;
 			location = CVSRepositoryLocation.fromProperties(createProperties());
+			location.setAllowCaching(allowCaching);
 			saveWidgetValues();
 		}
 		return location;

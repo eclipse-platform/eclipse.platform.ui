@@ -85,7 +85,7 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	 * encoding for commit comments. 
 	 */
 	public String getEncoding();
-	
+		
 	/**
 	 * Return the conection timeout value in milliseconds.
 	 * A value of 0 means there is no timeout value.
@@ -114,6 +114,27 @@ public interface ICVSRepositoryLocation  extends IAdaptable {
 	 * @param monitor the progress monitor used while validating
 	 */
 	public void validateConnection(IProgressMonitor monitor) throws CVSException;
+	
+	/**
+	 * Set the option to allow the user settings to be cached between sessions.
+	 * @since 3.0
+	 */
+	public void setAllowCaching(boolean allowCaching);
+
+	/**
+	 * Returns if the user info for this location is cached
+	 */
+	public boolean getUserInfoCached();
+	
+	/**
+	 * Sets the user information used for this location
+	 */
+	public void setUsername(String username);
+	
+	/**
+	 * Sets the user information used for this location
+	 */
+	public void setPassword(String password);
 	
 	/**
 	 * Returns the plugged-in authenticator for this location.

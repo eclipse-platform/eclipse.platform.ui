@@ -92,7 +92,7 @@ public class KnownRepositories {
 		// Check the cache for an equivalent instance and if there is one, just update the cache
 		CVSRepositoryLocation existingLocation = internalGetRepository(repository.getLocation());
 		if (existingLocation == null) {
-			// Store the location and cache the password
+			// Store the location
 			store((CVSRepositoryLocation)repository);
 			existingLocation = (CVSRepositoryLocation)repository;
 		}

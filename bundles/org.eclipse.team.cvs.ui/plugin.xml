@@ -885,6 +885,15 @@
             id="org.eclipse.team.cvs.ui.WatchEditPreferencePage">
       </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%PasswordManagement"
+            category="org.eclipse.team.cvs.ui.CVSPreferences"
+            class="org.eclipse.team.internal.ccvs.ui.PasswordManagementPreferencePage"
+            id="org.eclipse.team.cvs.ui.PasswordManagementPreferencePage">
+      </page>
+   </extension>
 <!-- **************** Decorator ******************* -->
    <extension
          point="org.eclipse.ui.decorators">

@@ -82,6 +82,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 	private String root;
 	private boolean userFixed;
 	private boolean passwordFixed;
+	private boolean allowCaching;
 	
 	private int serverPlatform = UNDETERMINED_PLATFORM;
 	
@@ -756,7 +757,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 							throw new CVSAuthenticationException(Policy.bind("Client.noAuthenticator"), CVSAuthenticationException.NO_RETRY);//$NON-NLS-1$ 
 						}
 						authenticator.promptForUserInfo(this, this, message);
-						updateCache();
 					} else {
 						throw ex;
 					}
@@ -827,9 +827,14 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		userFixed = !muteable;
 	}
 	
+	public void setAllowCaching(boolean value) {
+		allowCaching = value;
+		updateCache();
+	}
+	
 	public void updateCache() {
 		// Nothing to cache if the password is fixed
-		if (passwordFixed) return;
+		if (passwordFixed || ! allowCaching) return;
 		// Nothing to cache if the password is null and the user is fixed
 		if (password == null && userFixed) return;
 		if (updateCache(user, password)) {
@@ -1196,5 +1201,17 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		if (!hasPreferences()) {
 			storePreferences();
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation#getUserInfoCached()
+	 */
+	public boolean getUserInfoCached() {
+		Map map = Platform.getAuthorizationInfo(FAKE_URL, getLocation(), AUTH_SCHEME);
+		if (map != null) {
+			String password = (String) map.get(INFO_PASSWORD);
+			return (password != null);
+		}
+		return false;
 	}
 }

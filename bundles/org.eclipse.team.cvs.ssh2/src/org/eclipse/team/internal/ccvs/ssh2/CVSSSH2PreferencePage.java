@@ -73,7 +73,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
   private Text privateKeyText;
   private Button enableProxy;
   private Button enableAuth;
-  private Button enableSSH2;
   private Button privateKeyAdd;
   private boolean useProxy;
   private boolean useAuth;
@@ -152,12 +151,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
     data.horizontalAlignment = GridData.FILL;
     group.setLayoutData(data);
 
-    enableSSH2=new Button(group, SWT.CHECK);
-    enableSSH2.setText(Policy.bind("CVSSSH2PreferencePage.22")); //$NON-NLS-1$
-    GridData gd=new GridData();
-    gd.horizontalSpan=3;
-    enableSSH2.setLayoutData(gd);
-
     createSpacer(group, 3);
 
     ssh2HomeLabel=new Label(group, SWT.NONE);
@@ -165,7 +158,7 @@ public class CVSSSH2PreferencePage extends PreferencePage
 
     ssh2HomeText=new Text(group, SWT.SINGLE | SWT.BORDER);
     ssh2HomeText.setFont(group.getFont());
-    gd=new GridData(GridData.FILL_HORIZONTAL);
+    GridData gd=new GridData(GridData.FILL_HORIZONTAL);
     gd.horizontalSpan=1;
     ssh2HomeText.setLayoutData(gd);
 
@@ -174,7 +167,6 @@ public class CVSSSH2PreferencePage extends PreferencePage
     gd=new GridData(GridData.HORIZONTAL_ALIGN_FILL);
     gd.horizontalSpan=1;
     ssh2HomeBrowse.setLayoutData(gd);
-
 
     createSpacer(group, 3);
 
