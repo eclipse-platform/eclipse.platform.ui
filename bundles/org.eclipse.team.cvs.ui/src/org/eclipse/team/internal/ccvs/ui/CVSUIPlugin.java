@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
@@ -27,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
+import org.eclipse.team.ui.TeamUIPlugin;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -213,6 +216,15 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		initializePreferences();
 		repositoryManager = new RepositoryManager();
 		changeListener.register();
+		
+		// if the global ignores list is changed then update decorators.
+		TeamUIPlugin.getPlugin().addPropertyChangeListener(new IPropertyChangeListener() {
+			public void propertyChange(PropertyChangeEvent event) {
+				if(event.getProperty().equals(TeamUIPlugin.GLOBAL_IGNORES_CHANGED)) {
+					CVSDecorator.refresh();
+				}
+			}
+		});
 		
 		try {
 			repositoryManager.startup();

@@ -50,10 +50,11 @@ public class SyncFileUtil {
 	private static final String REMOVE_TAG="R ";
 
 	// file and folder patterns that are ignored by default by the CVS server on import.
-	public static final String[] PREDEFINED_IGNORE_PATTERNS = {"CVS", ".#*", "#*", ",*", "_$*", "*~", "*$", "*.a", "*.bak", "*.BAK", 
-																						"*.elc", "*.exe", "*.ln", "*.o", "*.obj", "*.olb", "*.old", "*.orig", "*.rej", "*.so",
-																						"*.Z", ".del-*", ".make.state", ".nse_depinfo", "core", "CVS", "CVS.adm",
-																						"cvslog.*", "RCS", "RCSLOG", "SCCS", "tags", "TAGS" };
+	public static final String[] PREDEFINED_IGNORE_PATTERNS = {
+		"CVS", ".#*", "#*", ",*", "_$*", "*~", "*$", "*.a", "*.bak", "*.BAK", 
+		"*.elc", "*.exe", "*.ln", "*.o", "*.obj", "*.olb", "*.old", "*.orig", "*.rej", "*.so",
+		"*.Z", ".del-*", ".make.state", ".nse_depinfo", "core", "CVS", "CVS.adm",
+		"cvslog.*", "RCS", "RCSLOG", "SCCS", "tags", "TAGS"};
 
 
 	/**

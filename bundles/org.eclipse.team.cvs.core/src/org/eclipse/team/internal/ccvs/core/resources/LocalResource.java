@@ -105,7 +105,9 @@ public abstract class LocalResource implements ICVSResource {
 		FileNameMatcher matcher = new FileNameMatcher(SyncFileUtil.PREDEFINED_IGNORE_PATTERNS);
 		for (int i = 0; i < ignorePatterns.length; i++) {
 			IIgnoreInfo info = ignorePatterns[i];
-			matcher.register(info.getPattern(), "true");
+			if(info.getEnabled()) {
+				matcher.register(info.getPattern(), "true");
+			}
 		}
 		boolean ignored = matcher.match(ioResource.getName());
 		if(!ignored) {

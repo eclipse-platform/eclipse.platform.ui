@@ -11,11 +11,13 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.core.TeamPlugin;
@@ -80,7 +82,6 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 			try {
 				File file = (File)id;
 				File parent = file.getParentFile();
-				Assert.isTrue(parent.exists());
 				
 				ResourceSyncInfo infos[] = SyncFileUtil.readEntriesFile(parent);
 				// if null then, entries file does not exist 
@@ -104,7 +105,7 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 	}
 
 	/**
-	 * For every get request from the cache, load the entire entries and permissions file.
+	 * For every get request from the cache, load the .cvsignore file
 	 */
 	private class CVSIgnoreFileLoader implements ICacheLoader {
 		/*
@@ -138,7 +139,6 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 		public CacheData load(Object id, ICache cache) {
 			try {
 				File folder = (File)id;
-				Assert.isTrue(folder.exists());
 				FolderSyncInfo info = SyncFileUtil.readFolderConfig(folder);
 			
 				// no CVS sub-directory
@@ -159,30 +159,14 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 	 * 1. 
 	 */
 	private class SyncResourceChangeListener extends ResourceDeltaVisitor {
-		private Set delta = new HashSet();
+		final private Set delta = new HashSet();
 
 		protected void handleAdded(IResource[] resources) {
 			handleDefault(resources);
 		}
 		
 		protected void handleRemoved(IResource[] resources) {
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
-				if(resource!=null) {
-					IPath location = resource.getLocation();
-					if(location!=null) {
-						File file = resource.getLocation().toFile();
-						// if a resource is deleted, then clear the cache, there is not need for a delta.
-						if(!SyncFileUtil.isMetaFile(file)) {
-							clearCache(file, IResource.DEPTH_INFINITE);
-						} else {
-							if(resource.getName().equals("CVS")) {
-								handleMetaChange(file, resource);
-							}
-						}
-					}
-				}
-			}
+			handleDefault(resources);
 		}
 		
 		protected void handleChanged(IResource[] resources) {
@@ -198,20 +182,29 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 		 * If a meta file has changed the cache will be out-of-date. It will be cleared and subsequent access
 		 * will force a reload of the sync information when needed by a client.
 		 */
-		private void handleMetaChange(File cvsdir, IResource resource) {
+		private void handleMetaChange(File cvsdir, IResource resource, boolean deep) {
 			File parent = cvsdir.getParentFile();			
 			clearCache(parent, IResource.DEPTH_ONE);
 			
 			// generate deltas for children of the parent because their state may of changed.		
 			// it is safe to get the parent two up from the metafile because we have already
 			// confirmed that this is a meta directory.
-			if(resource.exists()) {
+			if(resource.getParent().exists()) {
 				IContainer resourceParent = resource.getParent();
 				delta.add(resourceParent);
 				try {
 					IResource[] children = resourceParent.members();
 					for (int i = 0; i < children.length; i++) {
-						delta.add(children[i]);
+						if(deep) {
+							children[i].accept(new IResourceVisitor() {
+								public boolean visit(IResource resource) throws CoreException {
+									delta.add(resource);
+									return true;
+								}
+							});
+						} else {						
+							delta.add(children[i]);
+						}
 					}
 				} catch(CoreException e) {
 					// XXX what can you do in a resource listener when an exception occurs???
@@ -233,14 +226,11 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 						File file = location.toFile();
 						String name = file.getName();
 						if(SyncFileUtil.isMetaFile(file)) {
-							handleMetaChange(file.getParentFile(), resources[i].getParent());
-							// add all parents children to delta
-						} else {
-							if(!name.equals("CVS")) {
-								delta.add(resources[i]);
-							} else if(name.equals(SyncFileUtil.IGNORE_FILE)) {
-								handleMetaChange(file, resource);
-							}
+							handleMetaChange(file.getParentFile(), resources[i].getParent(), false);
+						} else if(name.equals(SyncFileUtil.IGNORE_FILE)) {
+							handleMetaChange(file, resource, true);
+						} else if(!name.equals("CVS")) {
+							delta.add(resources[i]);
 						}
 					}
 				}
@@ -282,9 +272,6 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 	 * @see ICVSSynchronizer#setFolderSync(File, FolderSyncInfo)
 	 */
 	public void setFolderSync(File file, FolderSyncInfo info) throws CVSException {
-		Assert.isNotNull(info);
-		Assert.isTrue(file.exists());
-		
 		SyncFileUtil.writeFolderConfig(file, info);
 		folderSyncCache.put(new CacheData(file, info, CACHE_EXPIRATION_MINUTES));
 	
@@ -299,7 +286,6 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 	 */
 	public void setResourceSync(File file, ResourceSyncInfo info) throws CVSException {
 		Assert.isNotNull(info);
-		Assert.isTrue(file.getParentFile().exists());
 		Assert.isTrue(file.getName().equals(info.getName()));
 		
 		try {
@@ -338,39 +324,8 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 	 * 
 	 * @see ICVSSynchronizer#reload(File, IProgressMonitor)
 	 */
-	public void reload(File file, IProgressMonitor monitor) throws CVSException {
-		
-		clearCache(file, IResource.DEPTH_INFINITE);
-		
-		if(!file.exists()) {
-			// a non-existant file implies that there is no longer any meta information
-			// on disk, we can safely clear the cache.
-			// we can safely reload the parent if it exists.
-			file = file.getParentFile();
-			if(!file.exists()) {
-				return;
-			}
-		}
-		
-		// the following is to refresh the workbench with the local file changes.
-		if(file.equals(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile())) {
-			return;
-		}
-			
-		IResource resource;
-		if(file.isDirectory()) {
-			resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(file.getAbsolutePath()));
-		} else {
-			// reload a container always, or else sync info changes won't be loaded!
-			resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(file.getParentFile().getAbsolutePath()));
-		}
-		try {
-			if(resource!=null) {
-				resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
-			}		
-		} catch(CoreException e) {
-			throw new CVSException(IStatus.ERROR, 0, "Error reloading sync information", e);
-		}
+	public void reload(File file, IProgressMonitor monitor) throws CVSException {		
+		reloadDeep(file, false, monitor);
 	}
 	
 	/*
@@ -432,6 +387,41 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 		cvsIgnoreCache.clear();
 	}
 	
+	protected void reloadDeep(File file, boolean refreshFromParent, IProgressMonitor monitor) throws CVSException {
+		
+		clearCache(file, IResource.DEPTH_INFINITE);
+		
+		if(!file.exists()) {
+			// a non-existant file implies that there is no longer any meta information
+			// on disk, we can safely clear the cache.
+			// we can safely reload the parent if it exists.
+			file = file.getParentFile();
+			if(!file.exists()) {
+				return;
+			}
+		}
+		
+		// the following is to refresh the workbench with the local file changes.
+		if(file.equals(ResourcesPlugin.getWorkspace().getRoot().getLocation().toFile())) {
+			return;
+		}
+			
+		IResource resource;
+		if(file.isDirectory() && !refreshFromParent) {
+			resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(file.getAbsolutePath()));
+		} else {
+			// reload a container always, or else sync info changes won't be loaded!
+			resource = ResourcesPlugin.getWorkspace().getRoot().getContainerForLocation(new Path(file.getParentFile().getAbsolutePath()));
+		}
+		try {
+			if(resource!=null) {
+				resource.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			}		
+		} catch(CoreException e) {
+			throw new CVSException(IStatus.ERROR, 0, "Error reloading sync information", e);
+		}
+	}
+	
 	/*
 	 * @see ICVSSynchronizer#isIgnored(File)
 	 */
@@ -448,5 +438,6 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 	 */
 	public void setIgnored(File file, String pattern) throws CVSException {
 		SyncFileUtil.addCvsIgnoreEntry(file, pattern);
+		reloadDeep(file, true, new NullProgressMonitor());	
 	}
 }

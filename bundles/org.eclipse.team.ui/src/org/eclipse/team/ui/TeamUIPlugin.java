@@ -7,7 +7,10 @@ package org.eclipse.team.ui;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -15,6 +18,8 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.internal.ui.Policy;
@@ -30,8 +35,13 @@ public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 
 	private static TeamUIPlugin instance;
 	public static final String ID = "org.eclipse.team.ui";
+	
+	// property change types
+	public static String GLOBAL_IGNORES_CHANGED = "global_ignores_changed";
 
 	private Hashtable imageDescriptors = new Hashtable(20);
+	
+	private List propertyChangeListeners = new ArrayList(5);
 
 	public final static String ICON_PATH;
 	
@@ -171,6 +181,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 	protected void initializePreferences() {
 		//IPreferenceStore store = getPreferenceStore();
 	}
+	
 	/**
 	 * Convenience method for logging statuses to the plugin log
 	 * 
@@ -179,6 +190,31 @@ public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
 	public static void log(IStatus status) {
 		getPlugin().getLog().log(status);
 	}
+	
+	/**
+	 * Register for changes made to Team UI properties.
+	 */
+	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+		propertyChangeListeners.add(listener);
+	}
+	
+	/**
+	 * Deregister as a Team UI property changes.
+	 */
+	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+		propertyChangeListeners.remove(listener);
+	}
+	
+	/**
+	 * Broadcast a Team UI property change.
+	 */
+	public void broadcastPropertyChange(PropertyChangeEvent event) {
+		for (Iterator it = propertyChangeListeners.iterator(); it.hasNext();) {
+			IPropertyChangeListener listener = (IPropertyChangeListener) it.next();			
+			listener.propertyChange(event);
+		}
+	}
+	
 	/**
 	 * @see Plugin#startup()
 	 */
