@@ -7,6 +7,37 @@
 <hr>
 <h1>Eclipse Platform Build Notes<br>
   Core</h1>
+Eclipse SDK Build 20030205 
+<h2>What's new in this drop</h2>
+<h3>API changes</h3>
+<ul>
+  <li><tt>BootLoader.getNL()</tt> was spec'd to return a String or null but has been changed 
+    so the return value will never be null.</li>
+  <li>Added <tt>IncrementalProjectBuilder.needRebuild()</tt> and <tt>IncrementalProjectBuilder.hasBeenBuilt(IProject)</tt>
+    to help acommodate recent changes with building projects with cyclic dependancies.</li>
+  <li>Added <tt>IResourceProxy.getSessionProperty(QualifiedName)</tt> so users don't have 
+    to request the underlying resource from the proxy in order to get access to 
+    a particular session property.</li>
+  <li>Added <tt>IWorkspace.isTreeLocked()</tt> so clients can determine whether or not 
+    the workspace tree is locked for changes.</li>
+  <li>Added API to <tt>IWorkspaceDescription</tt> for setting/getting the values to use 
+    for the number of iterations for building projects with cyclic dependancies. 
+    Also added a preference constant to <tt>ResourcesPlugin</tt> to aid with this.</li>
+</ul>
+<h3>Other highlights</h3>
+<ul>
+  <li>None. 
+</ul>
+<h3>Resolved Bugs</h3>
+<ul>
+  <li> <a href="http://dev.eclipse.org/bugs/buglist.cgi?short_desc_type=allwordssubstr&short_desc=&product=Platform&component=Core&long_desc_type=allwordssubstr&long_desc=&bug_file_loc_type=allwordssubstr&bug_file_loc=&keywords_type=anywords&keywords=&bug_status=RESOLVED&bug_status=VERIFIED&bug_status=CLOSED&emailassigned_to1=1&emailtype1=substring&email1=&emailreporter2=1&emailtype2=substring&email2=&bugidtype=include&bug_id=&votes=&changedin=&chfield=bug_status&chfieldfrom=2003%2F01%2F28&chfieldto=2003%2F02%2F04&chfieldvalue=&cmdtype=doit&order=Reuse%2Bsame%2Bsort%2Bas%2Blast%2Btime&field0-0-0=noop&type0-0-0=noop&value0-0-0=">Click 
+    here</a> to see PRs which have been marked as RESOLVED, VERIFIED or CLOSED 
+    since the last integration build.</li>
+</ul>
+
+<hr>
+<h1>Eclipse Platform Build Notes<br>
+  Core</h1>
 Eclipse SDK Build 20030128
 <h2>What's new in this drop</h2>
 <h3>API changes</h3>
