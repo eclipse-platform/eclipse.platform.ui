@@ -45,7 +45,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	}
 	
 	/**
-	 * @see IDebugEventListener
+	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
 	 */
 	public void handleDebugEvent(final DebugEvent event) {
 		if (getViewer() == null) {
