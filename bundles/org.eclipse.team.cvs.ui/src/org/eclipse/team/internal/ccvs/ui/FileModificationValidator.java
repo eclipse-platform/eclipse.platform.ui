@@ -41,16 +41,28 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 	 * @see org.eclipse.core.resources.IFileModificationValidator#validateEdit(org.eclipse.core.resources.IFile, java.lang.Object)
 	 */
 	public IStatus validateEdit(IFile[] files, Object context) {
+	    IFile[] unmanagedReadOnlyFiles = getUnmanagedReadOnlyFiles(files);
+	    if (unmanagedReadOnlyFiles.length > 0) {
+	        IStatus status = setWritable(unmanagedReadOnlyFiles);
+	        if (!status.isOK()) {
+	            return status;
+	        }
+	    }
 		IFile[] readOnlyFiles = getManagedReadOnlyFiles(files);
 		if (readOnlyFiles.length == 0) return OK;
 		return edit(readOnlyFiles, getShell(context));
 	}
 
-	/**
+    /**
 	 * @see org.eclipse.core.resources.IFileModificationValidator#validateSave(org.eclipse.core.resources.IFile)
 	 */
 	public IStatus validateSave(IFile file) {
-		if (!needsCheckout(file)) return OK;
+		if (!needsCheckout(file)) {
+		    if (file.isReadOnly()) {
+		        setWritable(new IFile[] { file } );
+		    }
+		    return OK;
+		}
 		return edit(new IFile[] {file}, (Shell)null);
 	}
 
@@ -69,6 +81,17 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 		}
 	}
 	
+    private IFile[] getUnmanagedReadOnlyFiles(IFile[] files) {
+		List readOnlys = new ArrayList();
+		for (int i = 0; i < files.length; i++) {
+			IFile iFile = files[i];
+			if (iFile.isReadOnly() && !needsCheckout(iFile)) {
+				readOnlys.add(iFile);
+			}
+		}
+		return (IFile[]) readOnlys.toArray(new IFile[readOnlys.size()]);
+    }
+    
 	private IFile[] getManagedReadOnlyFiles(IFile[] files) {
 		List readOnlys = new ArrayList();
 		for (int i = 0; i < files.length; i++) {
@@ -84,7 +107,8 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 		try {
 			if (file.isReadOnly()) {
 				ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor(file);
-				return cvsFile.isManaged();
+				boolean managed = cvsFile.isManaged();
+                return managed;
 			}
 		} catch (CVSException e) {
 			// Log the exception and assume we don't need a checkout
@@ -152,23 +176,28 @@ public class FileModificationValidator implements ICVSFileModificationValidator 
 			}
 		} else {
 			// Allow the files to be edited without notifying the server
-			for (int i = 0; i < files.length; i++) {
-				IFile file = files[i];
-				ResourceAttributes attributes = file.getResourceAttributes();
-				if (attributes != null) {
-					attributes.setReadOnly(false);
-				}
-				try {
-					file.setResourceAttributes(attributes);
-				} catch (CoreException e) {
-					return CVSException.wrapException(e).getStatus();
-				}
-			}
+			return setWritable(files);
 		}
 
 		return OK;
 		
 	}
+
+    private IStatus setWritable(final IFile[] files) {
+        for (int i = 0; i < files.length; i++) {
+        	IFile file = files[i];
+        	ResourceAttributes attributes = file.getResourceAttributes();
+        	if (attributes != null) {
+        		attributes.setReadOnly(false);
+        	}
+        	try {
+        		file.setResourceAttributes(attributes);
+        	} catch (CoreException e) {
+        		return CVSException.wrapException(e).getStatus();
+        	}
+        }
+        return Status.OK_STATUS;
+    }
 
     private boolean isRunningInUIThread() {
         return Display.getCurrent() != null;
