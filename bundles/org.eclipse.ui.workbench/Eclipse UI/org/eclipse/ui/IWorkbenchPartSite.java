@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui;
 
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 
@@ -117,16 +116,5 @@ public IKeyBindingService getKeyBindingService();
 
 //IContextActivationService getContextActivationService();
 
-/**
- * Progress on a job that blocks the site has begun.
- * @param Job the job starting.
- */
-public void progressStart(Job job);
-
-/**
- * Progress on a job that blocks the site has finished.
- * @param Job the job finishing.
- */
-public void progressEnd(Job job);
 
 }

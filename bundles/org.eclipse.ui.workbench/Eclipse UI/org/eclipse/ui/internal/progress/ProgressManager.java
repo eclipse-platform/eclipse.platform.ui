@@ -49,7 +49,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.part.WorkbenchPart;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.UIJob;
 
@@ -806,21 +808,30 @@ public class ProgressManager extends JobChangeAdapter implements IProgressProvid
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.progress.IProgressService#runInPart(org.eclipse.core.runtime.jobs.Job, org.eclipse.ui.IWorkbenchPart)
 	 */
-	public void runInPart(final Job job, final IWorkbenchPart part) {
+	public void runInPart(Job job, IWorkbenchPart part) {
+		
+		final PartSite workbenchSite;
+		
+		if(part.getSite() instanceof PartSite)
+			workbenchSite = (PartSite) part.getSite();
+		else
+			return;
+		
+		final Job finalJob = job;
 		
 		job.addJobChangeListener(new JobChangeAdapter(){
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#done(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
-				part.getSite().progressEnd(job);
+				workbenchSite.progressEnd(finalJob);
 			}
 			
 			/* (non-Javadoc)
 			 * @see org.eclipse.core.runtime.jobs.JobChangeAdapter#aboutToRun(org.eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void aboutToRun(IJobChangeEvent event) {
-				part.getSite().progressStart(job);
+				workbenchSite.progressStart(finalJob);
 			}
 		});
 
