@@ -66,14 +66,50 @@ package org.eclipse.ant.internal.core.ant;
  * <http://www.apache.org/>.
  */
  
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Vector;
 
-import org.apache.tools.ant.*;
-import org.eclipse.ant.core.*;
-import org.eclipse.core.runtime.*;
+import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.BuildListener;
+import org.apache.tools.ant.BuildLogger;
+import org.apache.tools.ant.DefaultLogger;
+import org.apache.tools.ant.DemuxOutputStream;
+import org.apache.tools.ant.Diagnostics;
+import org.apache.tools.ant.Main;
+import org.apache.tools.ant.Project;
+import org.apache.tools.ant.ProjectHelper;
+import org.apache.tools.ant.Target;
+import org.apache.tools.ant.XmlLogger;
+import org.eclipse.ant.core.AntCorePlugin;
+import org.eclipse.ant.core.AntCorePreferences;
+import org.eclipse.ant.core.AntSecurityException;
+import org.eclipse.ant.core.Property;
+import org.eclipse.ant.core.Type;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 
 /**
  * Eclipse application entry point into Ant. Derived from the original Ant Main class
@@ -764,6 +800,9 @@ public class InternalAntRunner {
 						//wrong type of class
 					}
 				}
+			} else {
+				IStatus s = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.INTERNAL_ERROR, message, null);
+				AntCorePlugin.getPlugin().getLog().log(s);
 			}
 		}
 	}
