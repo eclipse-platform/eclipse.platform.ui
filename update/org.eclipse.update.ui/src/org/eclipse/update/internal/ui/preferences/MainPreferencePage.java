@@ -94,7 +94,7 @@ public class MainPreferencePage
 	public void createFieldEditors() {
 		WorkbenchHelp.setHelp(
 			getFieldEditorParent(),
-			"org.eclipse.update.ui.MainPreferencePage_getFieldEditorParent");
+			"org.eclipse.update.ui.MainPreferencePage");
 		IntegerFieldEditor maxLevel =
 			new IntegerFieldEditor(
 				P_HISTORY_SIZE,

@@ -37,8 +37,10 @@ public class AppServerPreferencePage
 		"AppServerPreferencePage.masterSwitch";
 	private static final String KEY_ENCODE_URLS =
 		"AppServerPreferencePage.encodeURLs";
-	private MasterField masterField;
+	//private MasterField masterField;
+	private BooleanFieldEditor masterField;
 
+/*
 	class MasterField extends BooleanFieldEditor {
 		BooleanFieldEditor slave;
 		public MasterField(String property, String key, Composite parent) {
@@ -58,6 +60,7 @@ public class AppServerPreferencePage
 			this.slave = slave;
 		}
 	}
+*/
 
 	/**
 	 * The constructor.
@@ -79,11 +82,12 @@ public class AppServerPreferencePage
 			getFieldEditorParent(),
 			"org.eclipse.update.ui.AppServerPreferencePage");
 		masterField =
-			new MasterField(
+			new BooleanFieldEditor(
 				P_MASTER_SWITCH,
 				UpdateUI.getString(KEY_MASTER_SWITCH),
 				getFieldEditorParent());
 		addField(masterField);
+		/*
 		BooleanFieldEditor encodeURLs =
 			new BooleanFieldEditor(
 				P_ENCODE_URLS,
@@ -91,17 +95,21 @@ public class AppServerPreferencePage
 				getFieldEditorParent());
 		addField(encodeURLs);
 		masterField.setSlave(encodeURLs);
+		*/
 	}
 	
 	public void createControl(Composite parent) {
 		super.createControl(parent);
 		Dialog.applyDialogFont(getControl());
+		WorkbenchHelp.setHelp(
+			parent,"org.eclipse.update.ui.AppServerPreferencePage");
 	}	
-
+/*
 	protected void initialize() {
 		super.initialize();
 		masterField.update();
 	}
+*/
 	protected void createSpacer(Composite composite, int columnSpan) {
 		Label label = new Label(composite, SWT.NONE);
 		GridData gd = new GridData();
@@ -115,9 +123,12 @@ public class AppServerPreferencePage
 	}
 
 	public static boolean getEncodeURLs() {
+		return true;
+		/*
 		IPreferenceStore store =
 			UpdateUI.getDefault().getPreferenceStore();
 		return store.getBoolean(P_ENCODE_URLS);
+		*/
 	}
 
 	public boolean performOk() {
