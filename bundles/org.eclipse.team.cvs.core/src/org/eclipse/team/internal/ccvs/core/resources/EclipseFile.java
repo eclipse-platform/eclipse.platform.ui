@@ -107,10 +107,10 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	 * @see ICVSFile#isModified()
 	 */
 	public boolean isModified() throws CVSException {
-		if (!exists() || !isManaged()) {
+		ResourceSyncInfo info = getSyncInfo();
+		if (!exists() || !isManaged(info)) {
 			return true;
 		} else {
-			ResourceSyncInfo info = getSyncInfo();
 			// consider a merged file as always modified.
 			if(info.isMerged()) return true;
 			return !getTimeStamp().equals(info.getTimeStamp());
@@ -211,7 +211,8 @@ public class EclipseFile extends EclipseResource implements ICVSFile {
 	 * @see ICVSFile#getLogEntries(IProgressMonitor)
 	 */
 	public ILogEntry[] getLogEntries(IProgressMonitor monitor)	throws TeamException {
-		if(isManaged() && !getSyncInfo().isAdded()) {
+		ResourceSyncInfo info = getSyncInfo();
+		if(isManaged(info) && !info.isAdded()) {
 			ICVSRemoteResource remoteFile = CVSWorkspaceRoot.getRemoteResourceFor(resource);
 			return ((ICVSRemoteFile)remoteFile).getLogEntries(monitor);
 		}

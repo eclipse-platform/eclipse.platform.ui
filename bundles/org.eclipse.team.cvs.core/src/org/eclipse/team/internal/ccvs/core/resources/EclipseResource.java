@@ -175,9 +175,16 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 	 * @see ICVSResource#isManaged()
 	 */
 	public boolean isManaged() throws CVSException {
-		return getSyncInfo() != null;
+		return isManaged(getSyncInfo());
 	}
-			
+	
+	/*
+	 * Helper method that captures the sematics of isManaged given a ResourceSyncInfo
+	 */
+	public boolean isManaged(ResourceSyncInfo info) {
+		return info != null;
+	}
+	
 	/**
 	 * Two ManagedResources are equal, if there cvsResources are
 	 * equal (and that is, if the point to the same file)
