@@ -716,7 +716,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 	//--------------- Configuration handling --------------
 	
 	/**
-	 * Returns the page settings for this Java search page.
+	 * Returns the page settings for this Text search page.
 	 * 
 	 * @return the page settings to be used
 	 */
