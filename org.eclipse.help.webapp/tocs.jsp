@@ -1,4 +1,4 @@
-<%@ page import="org.eclipse.help.servlet.Tocs,org.w3c.dom.*"%>
+<%@ page import="org.eclipse.help.servlet.*,org.w3c.dom.*"%>
 
 <% 
 	// calls the utility class to initialize the application
@@ -34,7 +34,7 @@ function selectTopic(topic)
 
 </head>
 
-<body onload="onloadHandler('Bookshelf')">
+<body onload='onloadHandler("<%=WebappResources.getString("Bookshelf", null)%>")'>
 
 <ul class='expanded'>
 <% 

@@ -15,17 +15,14 @@ import javax.servlet.http.*;
  */
 public class ContentServlet extends HttpServlet {
 	private static final String RESOURCE_BUNDLE = ContentServlet.class.getName();
-	private ResourceBundle resBundle;
 	private EclipseConnector connector;
 
 	/**
 	 */
 	public void init() throws ServletException {
 		try {
-			resBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
 			connector = new EclipseConnector(getServletContext());
 		} catch (Throwable e) {
-			//log(resBundle.getString("problemInit"), e); 
 			throw new ServletException(e);
 		}
 	}

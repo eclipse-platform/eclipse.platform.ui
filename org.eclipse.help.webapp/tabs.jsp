@@ -1,3 +1,9 @@
+<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp"%>
+
+<% 
+	// calls the utility class to initialize the application
+	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
+%>
 
 <html>
 <head>
@@ -123,11 +129,11 @@ function onloadHandler()
 <body onload="onloadHandler()">
    <table cellspacing="0" cellpadding="0" border="0">
    <tr>
-   <td><a class="tab" id="toc" onclick="javascript:switchTab('toc')">&nbsp;Content</a></td>
+   <td><a class="tab" id="toc" onclick="javascript:switchTab('toc')">&nbsp;<%=WebappResources.getString("Content", null)%></a></td>
    <td><img id="tocI" src="images/rightBorder.gif" width="2" height="20"></td>
-   <td><a class="tab" id="search" onclick="javascript:switchTab('search')">Search</a></td>
+   <td><a class="tab" id="search" onclick="javascript:switchTab('search')"><%=WebappResources.getString("Search", null)%></a></td>
    <td><img id="searchI" src="images/middleBorder.gif" width="2" height="20"></td>
-   <td><a class="tab" id="links" onclick="javascript:switchTab('links')">Links</a></td>
+   <td><a class="tab" id="links" onclick="javascript:switchTab('links')"><%=WebappResources.getString("Links", null)%></a></td>
    <td><img id="linksI" src="images/noBorder.gif" width="2" height="20"></td>
    </tr>
    </table>

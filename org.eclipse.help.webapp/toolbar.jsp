@@ -1,3 +1,10 @@
+<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp"%>
+
+<% 
+	// calls the utility class to initialize the application
+	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
+%>
+
 
 <html>
 <head>
@@ -104,11 +111,11 @@ function setTitle(label)
 
 		<td width="100%" bgcolor="#223E7F"><img src="images/eclipse_appicon.gif" height="22" alt="" border="0"/></td>
 		<td><img src="images/eclipse_titleGradient.gif" width="253" height="22" alt="" border="0"></td>
-		<td><a href="#" onclick="showBookshelf(this);"><img src="images/home.gif" alt="Bookshelf" border="0" name="bookshelf"></a></td>
-		<td><a href="#" onclick="toggleNav(this);" onmouseover="if(navVisible) document['hide_nav'].src=imgs[0].src;" onmouseout="if(navVisible) document['hide_nav'].src='images/eclipse_collapse.gif';"><img src="images/eclipse_collapse.gif" alt="Hide Navigation" border="0" name="hide_nav"></a></td>
-		<td><a href="#" onclick="resynch(this);" onmouseover="document['sync_nav'].src=imgs[1].src;" onmouseout="document['sync_nav'].src='images/eclipse_sync.gif';"><img src="images/eclipse_sync.gif" alt="Synchronize Navigation" border="0" name="sync_nav"></a></td>
-		<td><a href="#" onclick="printContent(this);" onmouseover="document['print'].src=imgs[2].src;" onmouseout="document['print'].src='images/eclipse_print.gif';"><img src="images/eclipse_print.gif" alt="Print Page" border="0" name="print"></a></td>
-		<td><a href="#" onclick="parent.window.close(this);" onmouseover="document['close'].src=imgs[3].src;" onmouseout="document['close'].src='images/eclipse_close.gif';" ><img src="images/eclipse_close.gif" alt="Close" border="0" name="close"></a></td>
+		<td><a href="#" onclick="showBookshelf(this);"><img src="images/home.gif" alt='<%=WebappResources.getString("Bookshelf", null)%>' border="0" name="bookshelf"></a></td>
+		<td><a href="#" onclick="toggleNav(this);" onmouseover="if(navVisible) document['hide_nav'].src=imgs[0].src;" onmouseout="if(navVisible) document['hide_nav'].src='images/eclipse_collapse.gif';"><img src="images/eclipse_collapse.gif" alt='<%=WebappResources.getString("Toggle", null)%>' border="0" name="hide_nav"></a></td>
+		<td><a href="#" onclick="resynch(this);" onmouseover="document['sync_nav'].src=imgs[1].src;" onmouseout="document['sync_nav'].src='images/eclipse_sync.gif';"><img src="images/eclipse_sync.gif" alt='<%=WebappResources.getString("Synch", null)%>' border="0" name="sync_nav"></a></td>
+		<td><a href="#" onclick="printContent(this);" onmouseover="document['print'].src=imgs[2].src;" onmouseout="document['print'].src='images/eclipse_print.gif';"><img src="images/eclipse_print.gif" alt='<%=WebappResources.getString("Print", null)%>' border="0" name="print"></a></td>
+		<td><a href="#" onclick="parent.window.close(this);" onmouseover="document['close'].src=imgs[3].src;" onmouseout="document['close'].src='images/eclipse_close.gif';" ><img src="images/eclipse_close.gif" alt='<%=WebappResources.getString("Close", null)%>' border="0" name="close"></a></td>
 
 		</tr>
 	  </table>

@@ -16,8 +16,7 @@ import javax.servlet.http.*;
  * application lifecyle events and get rid of this servlet.
  */
 public class InitServlet extends HttpServlet {
-	private static final String RESOURCE_BUNDLE = InitServlet.class.getName();
-	private ResourceBundle resBundle;
+	private WebappResources resBundle;
 	private boolean initialized = false;
 	private Eclipse eclipse;
 	private Tocs tocs;
@@ -35,7 +34,7 @@ public class InitServlet extends HttpServlet {
 		ServletContext context = getServletContext();
 		try {
 			// initializes string resources
-			resBundle = ResourceBundle.getBundle(RESOURCE_BUNDLE);
+			resBundle = new WebappResources(context);
 			
 			// In infocentre mode, initialize and save the eclipse app
 			if (isInfocentre()) {
@@ -56,7 +55,10 @@ public class InitServlet extends HttpServlet {
 			context.setAttribute("org.eclipse.help.links", links);
 			
 		} catch (Throwable e) {
-			log(resBundle.getString("problemInit"), e);
+			if (resBundle != null)
+				log(resBundle.getString("problemInit", null), e);
+			else
+				log("Problem occured initializing Eclipse", e);
 			throw new ServletException(e);
 		} finally {
 			// Note: should we set it to false if something failed?

@@ -1,3 +1,9 @@
+<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp"%>
+
+<% 
+	// calls the utility class to initialize the application
+	application.getRequestDispatcher("/servlet/org.eclipse.help.servlet.InitServlet").include(request,response);
+%>
 
 <html>
 <head>

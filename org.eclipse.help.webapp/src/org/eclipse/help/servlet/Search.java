@@ -55,7 +55,8 @@ public class Search {
 		NodeList topics = toc.getChildNodes();
 		if (topics.getLength() == 0)
 		{
-			out.write("Nothing found");
+			// TO DO: get the correct locale
+			out.write(WebappResources.getString("Nothing_found", null));
 			return;
 		}
 		out.write("<ul class='expanded'>");
@@ -110,7 +111,7 @@ public class Search {
 		sb
 		.append("<CENTER>")
 		.append("<TABLE BORDER='0'>")
-		.append("    <TR><TD>Indexing...</TD></TR>")
+		.append("    <TR><TD>"+WebappResources.getString("Indexing", null)+"</TD></TR>")
         .append("    <TR>")
         .append("    	<TD ALIGN='LEFT'>")
   		.append("			<DIV STYLE='width:100px;height:16px;border-width:1px;border-style:solid;border-color:black'>")
@@ -120,7 +121,7 @@ public class Search {
   		.append("		</TD>")
   		.append("	</TR>")
   		.append("	<TR>")
-  		.append("		<TD>"+indexed+"% complete</TD>")
+  		.append("		<TD>"+indexed+"% "+WebappResources.getString("complete",null)+"</TD>")
   		.append("	</TR>")
   		.append("</TABLE>")
   		.append("</CENTER>")

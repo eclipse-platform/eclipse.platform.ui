@@ -75,6 +75,7 @@ var currentNavFrame;
  */
 function setToolbarTitle(title)
 {
+	if (parent.ToolbarFrame && parent.ToolbarFrame.setTitle)
 		parent.ToolbarFrame.setTitle(title);
 }
 

@@ -34,7 +34,7 @@
 		srcMainFrame=request.getParameter("topic");
 	
 	// url of TabsFrame
-	String srcTabsFrame = "tabs.html";
+	String srcTabsFrame = "tabs.jsp";
 	if(request.getParameter("tab")!=null)
 		srcTabsFrame=srcTabsFrame+"?tab="+request.getParameter("tab");
 %>
@@ -75,7 +75,7 @@
 
 <!-- frames -->
 <frameset  rows="23,*,24">
-	<frame name="ToolbarFrame" src="toolbar.html" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
+	<frame name="ToolbarFrame" src="toolbar.jsp" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
     <frameset id="contentFrameset" cols="25%,*">
         <frame name="NavFrame" src="<%=srcNavFrame%>" marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
         <frame name="MainFrame" src="<%=srcMainFrame%>" marginwidth="10" marginheight="10" scrolling="auto" frameborder="1">
