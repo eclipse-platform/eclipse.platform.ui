@@ -9,6 +9,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.webapp.servlet.UrlUtil;
 import org.eclipse.help.internal.workingset.*;
 
 /**
@@ -18,17 +19,18 @@ public class WorkingSetData extends RequestData {
 	public final static short STATE_UNCHECKED = 0;
 	public final static short STATE_GRAYED = 1;
 	public final static short STATE_CHECKED = 2;
-	
+
 	private WorkingSetManager wsmgr =
 		HelpSystem.getWorkingSetManager(getLocale());
-		
+
 	private AdaptableToc[] tocs;
 	private boolean isEditMode;
 
 	public WorkingSetData(ServletContext context, HttpServletRequest request) {
 		super(context, request);
-		AdaptableTocsArray adaptableTocs = HelpSystem.getWorkingSetManager(getLocale()).getRoot();
-		tocs = (AdaptableToc[])adaptableTocs.getChildren();
+		AdaptableTocsArray adaptableTocs =
+			HelpSystem.getWorkingSetManager(getLocale()).getRoot();
+		tocs = (AdaptableToc[]) adaptableTocs.getChildren();
 		isEditMode = "edit".equals(getOperation());
 	}
 
@@ -37,8 +39,12 @@ public class WorkingSetData extends RequestData {
 	}
 
 	public String getWorkingSetName() {
-		String name = request.getParameter("workingSet");
-		if (name == null )
+		String name =
+			UrlUtil.isIE(request)
+				? UrlUtil.unescape(
+					UrlUtil.getRawRequestParameter(request, "workingSet"))
+				: request.getParameter("workingSet");
+		if (name == null)
 			name = "";
 		return name;
 	}
@@ -62,9 +68,9 @@ public class WorkingSetData extends RequestData {
 		WorkingSet ws = getWorkingSet();
 		if (ws == null)
 			return STATE_UNCHECKED;
-		if (toc <0 || toc >= tocs.length)
+		if (toc < 0 || toc >= tocs.length)
 			return STATE_UNCHECKED;
-			
+
 		// See if the toc is in the working set
 		AdaptableToc adaptableToc = tocs[toc];
 		AdaptableHelpResource[] elements = ws.getElements();
@@ -72,7 +78,7 @@ public class WorkingSetData extends RequestData {
 			if (elements[i] == adaptableToc)
 				return STATE_CHECKED;
 		}
-		
+
 		// Check if it is grayed out
 		int topics = adaptableToc.getChildren().length;
 		boolean allTheSame = true;
@@ -80,12 +86,12 @@ public class WorkingSetData extends RequestData {
 		// base value is that of the first topic
 		if (topics > 0)
 			baseValue = getTopicState(toc, 0);
-		for (int i=1; allTheSame && i<topics; i++)
+		for (int i = 1; allTheSame && i < topics; i++)
 			allTheSame = allTheSame && (getTopicState(toc, i) == baseValue);
-		
+
 		if (!allTheSame)
 			return STATE_GRAYED;
-		else			
+		else
 			return STATE_UNCHECKED;
 	}
 
@@ -106,11 +112,11 @@ public class WorkingSetData extends RequestData {
 		WorkingSet ws = getWorkingSet();
 		if (ws == null)
 			return STATE_UNCHECKED;
-		if (toc <0 || toc >= tocs.length)
+		if (toc < 0 || toc >= tocs.length)
 			return STATE_UNCHECKED;
-			
+
 		AdaptableToc parent = tocs[toc];
-		AdaptableTopic[] topics = (AdaptableTopic[])parent.getChildren();
+		AdaptableTopic[] topics = (AdaptableTopic[]) parent.getChildren();
 		if (topic < 0 || topic >= topics.length)
 			return STATE_UNCHECKED;
 		AdaptableTopic adaptableTopic = topics[topic];
@@ -125,7 +131,7 @@ public class WorkingSetData extends RequestData {
 	public String getOperation() {
 		return request.getParameter("operation");
 	}
-	
+
 	// Accessor methods to avoid exposing help classes directly to JSP.
 	// Note: this seems ok for now, but maybe we need to reconsider this
 	//       and allow help classes in JSP's.
