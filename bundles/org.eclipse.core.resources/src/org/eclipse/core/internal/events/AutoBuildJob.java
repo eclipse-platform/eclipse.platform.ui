@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
-import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -42,7 +42,7 @@ class AutoBuildJob extends Job implements Preferences.IPropertyChangeListener {
 	private Preferences preferences = ResourcesPlugin.getPlugin().getPluginPreferences();
 
 	AutoBuildJob(Workspace workspace) {
-		super(ICoreConstants.MSG_EVENTS_BUILDING_0);
+		super(Messages.events_building_0);
 		setRule(workspace.getRoot());
 		isAutoBuilding = workspace.isAutoBuilding();
 		this.workspace = workspace;

@@ -264,7 +264,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			monitor.beginTask(ICoreConstants.MSG_EVENTS_BUILDING_0, TOTAL_BUILD_WORK);
+			monitor.beginTask(Messages.events_building_0, TOTAL_BUILD_WORK);
 			if (!canRun(trigger))
 				return;
 			try {
@@ -273,7 +273,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				HashSet leftover = new HashSet(Arrays.asList(workspace.getRoot().getProjects()));
 				leftover.removeAll(Arrays.asList(ordered));
 				IProject[] unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
-				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.BUILD_FAILED, ICoreConstants.MSG_EVENTS_ERRORS, null);
+				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.BUILD_FAILED, Messages.events_errors, null);
 
 				basicBuildLoop(ordered, unordered, trigger, status, monitor);
 
@@ -295,7 +295,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 			return;
 		try {
 			building = true;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, ICoreConstants.MSG_EVENTS_ERRORS, null);
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
 			basicBuild(project, trigger, status, monitor);
 			if (!status.isOK())
 				throw new ResourceException(status);
@@ -313,7 +313,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 				return;
 			try {
 				building = true;
-				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, ICoreConstants.MSG_EVENTS_ERRORS, null);
+				MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Messages.events_errors, null);
 				ICommand command = getCommand(project, builderName, args);
 				IncrementalProjectBuilder builder = getBuilder(project, command, -1, status);
 				if (builder != null)

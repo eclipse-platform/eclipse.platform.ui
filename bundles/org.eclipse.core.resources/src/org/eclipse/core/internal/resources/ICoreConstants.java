@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.QualifiedName;
 
@@ -89,9 +88,4 @@ public interface ICoreConstants {
 	public static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
 	public static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
 	public static final IFileState[] EMPTY_FILE_STATES = new IFileState[0];
-
-	//common externalized strings
-	public static final String MSG_RESOURCES_UPDATING = Messages.resources_updating;
-	public static final String MSG_EVENTS_BUILDING_0 = Messages.events_building_0;
-	public static final String MSG_EVENTS_ERRORS = Messages.events_errors;
 }

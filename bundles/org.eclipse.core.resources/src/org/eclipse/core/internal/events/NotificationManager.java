@@ -12,6 +12,7 @@ package org.eclipse.core.internal.events;
 
 import java.util.*;
 import org.eclipse.core.internal.resources.*;
+import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -25,7 +26,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 		};
 
 		public NotifyJob() {
-			super(ICoreConstants.MSG_RESOURCES_UPDATING);
+			super(Messages.resources_updating);
 			setSystem(true);
 		}
 
