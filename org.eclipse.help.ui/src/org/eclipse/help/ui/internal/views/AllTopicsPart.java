@@ -183,7 +183,7 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 		treeViewer.getTree().addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent e) {
 				if (lastItem!=null)
-					repaintItem(lastItem, true, toolkit);
+					repaintItem(e.gc, lastItem, true, toolkit);
 			}
 		});
 		
@@ -203,28 +203,41 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 				TreeItem item = treeViewer.getTree().getItem(p);
 				if (item != null) {
 					Object obj = item.getData();
-					if (obj instanceof IHelpResource) {
-						IHelpResource res = (IHelpResource)obj;
+					String href=null;
+					
+					if (obj instanceof ITopic) {
+						href = ((ITopic)obj).getHref();
+					}
+					
+					if (lastItem!=null) {
+						if (!lastItem.equals(item)) {
+							lastItem.setForeground(null);
+							repaintItem(null, lastItem, false, toolkit);
+							AllTopicsPart.this.parent.handleLinkExited(null);
+							lastItem = null;
+						}
+						else
+							return;
+					}
+
+					if (href!=null) {
+						ITopic topic = (ITopic)obj;
 						treeViewer.getTree().setCursor(
 								FormsResources.getHandCursor());
-						if (lastItem==null || !lastItem.equals(item)) {
-							if (lastItem!=null) {
-								lastItem.setForeground(null);
-								repaintItem(lastItem, false, toolkit);
-							}
-							item.setForeground(toolkit.getHyperlinkGroup().getActiveForeground());
-							lastItem = item;							
-							repaintItem(item, false, toolkit);
-							AllTopicsPart.this.parent.handleLinkEntered(new HyperlinkEvent(treeViewer.getTree(), res.getHref(), res.getLabel(), SWT.NULL));							
-						}
+						item.setForeground(toolkit.getHyperlinkGroup().getActiveForeground());
+						lastItem = item;							
+						repaintItem(null, item, false, toolkit);
+						AllTopicsPart.this.parent.handleLinkEntered(new HyperlinkEvent(treeViewer.getTree(), topic.getHref(), topic.getLabel(), SWT.NULL));
 						return;
 					}
-					else
+					else {
 						AllTopicsPart.this.parent.handleLinkExited(null);
+						lastItem = null;
+					}
 				}
 				else if (lastItem!=null) {
 					lastItem.setForeground(null);
-					repaintItem(lastItem, false, toolkit);							
+					repaintItem(null, lastItem, false, toolkit);							
 					lastItem=null;
 					AllTopicsPart.this.parent.handleLinkExited(null);
 				}
@@ -235,11 +248,18 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 
 	}
 
-	private void repaintItem(TreeItem item, boolean hover, FormToolkit toolkit) {
+	private void repaintItem(GC gc, TreeItem item, boolean hover, FormToolkit toolkit) {
 		Rectangle bounds = item.getBounds();
+		Object obj = item.getData();
+		if (obj instanceof ITopic) {
+			ITopic res = (ITopic)obj;
+			if (res.getHref()==null) {
+				// no href - don't underline
+				hover=false;
+			}
+		}
 		if (hover) {
-			GC gc = new GC(item.getParent());
-			gc.setFont(item.getParent().getFont());
+			//gc.setFont(item.getParent().getFont());
 			boolean selected = false;
 			TreeItem[] items = item.getParent().getSelection();
 			for (int i=0; i<items.length; i++) {
@@ -256,7 +276,6 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 			int height = fm.getHeight();
 			int lineY = bounds.y+height;
 			gc.drawLine(bounds.x, lineY, bounds.x+bounds.width-1, lineY);
-			gc.dispose();
 		}
 		else {
 			item.getParent().redraw(bounds.x, bounds.y, bounds.width, bounds.height, false);
@@ -328,8 +347,8 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 	
 	private void doOpen(IHelpResource res) {
 		if (res instanceof IToc) {
-			treeViewer.setExpandedState(res, true);
-			postUpdate(res);
+			//treeViewer.setExpandedState(res, true);
+			//postUpdate(res);
 		} else
 			parent.showURL(res.getHref());
 	}
