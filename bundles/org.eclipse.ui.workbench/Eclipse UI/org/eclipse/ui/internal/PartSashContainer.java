@@ -877,8 +877,10 @@ protected void derefPart(LayoutPart sourcePart) {
 	
 	if (container instanceof LayoutPart) {
 		if (isStackType((LayoutPart)container)) {
-			if (container.getChildren().length == 0) {
-				remove((LayoutPart)container);
+			PartStack stack = (PartStack)container;
+			if (stack.getChildren().length == 0) {
+				remove(stack);
+				stack.dispose();
 			}
 		}
 	}

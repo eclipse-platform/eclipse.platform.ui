@@ -115,14 +115,16 @@ public class DefaultEditorPresentation extends DefaultPartPresentation {
         
         init();
     }
-    
-    public void dispose() {
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#widgetDisposed()
+	 */
+	protected void widgetDisposed() {
         preferenceStore.removePropertyChangeListener(propertyChangeListener);
         apiPreferenceStore.removePropertyChangeListener(propertyChangeListener);
-        super.dispose();
-    }
-
+        super.widgetDisposed();
+	}
+	
     protected void initTab(CTabItem tabItem, IPresentablePart part) {
         tabItem.setText(getLabelText(part, (getTabFolder().getControl().getStyle() & SWT.MULTI) == 0));
         tabItem.setImage(getLabelImage(part));

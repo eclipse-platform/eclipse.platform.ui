@@ -743,10 +743,12 @@ public class DefaultPartPresentation extends StackPresentation {
 		return part.getMenu();
 	}
 		
+	
+	// This is final because subclasses should overload widgetDisposed() instead.
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.skins.Presentation#dispose()
 	 */
-	public void dispose() {
+	public final void dispose() {
 		if (isDisposed()) {
 			return;
 		}

@@ -132,14 +132,13 @@ public class DefaultViewPresentation extends DefaultPartPresentation {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.presentations.StackPresentation#dispose()
+	 * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#widgetDisposed()
 	 */
-	public void dispose() {
+	protected void widgetDisposed() {
 		preferenceStore.removePropertyChangeListener(propertyChangeListener);
 		apiPreferenceStore.removePropertyChangeListener(propertyChangeListener);
-		super.dispose();
+		super.widgetDisposed();
 	}
-	
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.presentations.DefaultPartPresentation#getPartMenu()
