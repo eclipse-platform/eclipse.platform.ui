@@ -61,16 +61,6 @@ public class ShowViewAction extends Action implements IPluginContribution {
     /*
      * (non-Javadoc)
      * 
-     * @see org.eclipse.ui.activities.support.IPluginContribution#fromPlugin()
-     */
-    public boolean fromPlugin() {
-        return desc instanceof IPluginContribution
-                && ((IPluginContribution) desc).getPluginId() != null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see org.eclipse.ui.activities.support.IPluginContribution#getLocalId()
      */
     public String getLocalId() {
