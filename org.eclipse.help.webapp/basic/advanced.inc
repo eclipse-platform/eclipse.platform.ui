@@ -2,8 +2,6 @@
  (c) Copyright IBM Corp. 2000, 2002.
  All Rights Reserved.
 --%>
-<%@ include file="header.jsp"%>
-
 <form action="searchView.jsp" method="get" accept-charset="UTF-8" target="_self">
 
 	<table border="0" cellpadding="0" cellspacing="0">
