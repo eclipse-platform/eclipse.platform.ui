@@ -39,6 +39,7 @@ import java.util.Map;
  * @since 3.0
  * @see ICommandListener
  * @see ICommandManager
+ * @see org.eclipse.core.commands.Command
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public interface ICommand extends Comparable {

@@ -38,6 +38,7 @@ package org.eclipse.ui.commands;
  * @since 3.0
  * @see IKeyConfigurationListener
  * @see ICommandManager
+ * @see org.eclipse.jface.bindings.Scheme
  * @deprecated Please use the bindings support in the "org.eclipse.jface"
  * plug-in instead.
  */

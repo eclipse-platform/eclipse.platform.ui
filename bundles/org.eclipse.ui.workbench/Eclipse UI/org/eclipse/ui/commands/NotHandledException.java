@@ -19,6 +19,7 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
+ * @see org.eclipse.core.commands.NotHandledException
  */
 public final class NotHandledException extends CommandException {
 

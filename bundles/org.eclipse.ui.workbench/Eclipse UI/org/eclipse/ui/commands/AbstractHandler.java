@@ -27,6 +27,7 @@ import java.util.Map;
  * 
  * @since 3.0
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
+ * @see org.eclipse.core.commands.AbstractHandler
  */
 public abstract class AbstractHandler implements IHandler {
 

@@ -20,6 +20,7 @@ package org.eclipse.ui.commands;
  * @since 3.0
  * @see ICommand#addCommandListener(ICommandListener)
  * @see ICommand#removeCommandListener(ICommandListener)
+ * @see org.eclipse.core.commands.ICommandListener
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public interface ICommandListener {

@@ -22,6 +22,7 @@ package org.eclipse.ui.commands;
  * @see IKeyConfigurationListener#keyConfigurationChanged(KeyConfigurationEvent)
  * @deprecated Please use the bindings support in the "org.eclipse.jface"
  * plug-in instead.
+ * @see org.eclipse.jface.bindings.SchemeEvent
  */
 public final class KeyConfigurationEvent {
 

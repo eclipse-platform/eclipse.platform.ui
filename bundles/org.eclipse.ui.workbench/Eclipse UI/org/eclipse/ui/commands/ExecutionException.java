@@ -18,6 +18,7 @@ package org.eclipse.ui.commands;
  * 
  * @since 3.0
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
+ * @see org.eclipse.core.commands.ExecutionException
  */
 public final class ExecutionException extends CommandException {
 

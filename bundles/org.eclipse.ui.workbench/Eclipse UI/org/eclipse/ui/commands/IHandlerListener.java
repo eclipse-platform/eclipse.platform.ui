@@ -21,6 +21,7 @@ package org.eclipse.ui.commands;
  * @see IHandler#addHandlerListener(IHandlerListener)
  * @see IHandler#removeHandlerListener(IHandlerListener)
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
+ * @see org.eclipse.core.commands.IHandlerListener
  */
 public interface IHandlerListener {
 

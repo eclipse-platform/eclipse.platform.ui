@@ -28,6 +28,7 @@ import org.eclipse.ui.actions.RetargetAction;
  * 
  * @since 3.0
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
+ * @see org.eclipse.jface.commands.ActionHandler
  */
 public final class ActionHandler extends AbstractHandler {
 
