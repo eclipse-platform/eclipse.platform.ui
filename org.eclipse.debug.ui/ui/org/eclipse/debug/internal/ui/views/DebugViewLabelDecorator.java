@@ -262,6 +262,7 @@ public class DebugViewLabelDecorator extends LabelProvider implements ILabelDeco
 			super(name);
 			fJobPresentation= presentation;
 			setRule(this);
+			setSystem(true);
 		}
 		
 		/**
