@@ -275,7 +275,7 @@ public abstract class CompositeModelProvider extends AbstractSynchronizeModelPro
      * @see org.eclipse.team.internal.ui.synchronize.AbstractSynchronizeModelProvider#hasViewerState()
      */
     protected boolean hasViewerState() {
-        return !resourceToElements.isEmpty();
+        return resourceToElements != null && !resourceToElements.isEmpty();
     }
     
     /* (non-Javadoc)
