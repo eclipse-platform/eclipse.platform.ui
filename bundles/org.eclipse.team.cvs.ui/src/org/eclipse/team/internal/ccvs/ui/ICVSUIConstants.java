@@ -17,7 +17,7 @@ public interface ICVSUIConstants {
 	public final String IMG_TAG = "obj16/tag.gif";
 	public final String IMG_BRANCHES_CATEGORY = "obj16/branches_rep.gif";
 	public final String IMG_VERSIONS_CATEGORY = "obj16/versions_rep.gif";
-	public final String IMG_PROJECT_VERSIONS = "obj16/prjversions_rep.gif";
+	public final String IMG_PROJECT_VERSION = "obj16/prjversions_rep.gif";
 	
 	// toolbar
 	public final String IMG_REFRESH = "clcl16/refresh.gif";

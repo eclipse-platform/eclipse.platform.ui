@@ -5,26 +5,32 @@ package org.eclipse.team.internal.ccvs.ui.model;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.IAdaptable;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.swt.custom.BusyIndicator;import org.eclipse.swt.widgets.Display;import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.ccvs.core.ICVSRemoteResource;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 /**
- * This class represents an IProject resource in a repository.  The
- * children of a RemoteProject are its versions.
+ * This class represents a version of a project in the repository.
+ * The children are remote resources.
  */
-public class RemoteProject extends CVSModelElement implements IAdaptable {
+public class ProjectVersion extends CVSModelElement implements IAdaptable {
 	ICVSRemoteFolder resource;
-	VersionCategory category;
-	
+	String tag;
+	RemoteProject parent;
+		
 	/**
 	 * RemoteProject constructor.
 	 */
-	public RemoteProject(ICVSRemoteFolder resource, VersionCategory category) {
+	public ProjectVersion(ICVSRemoteFolder resource, String tag, RemoteProject parent) {
 		this.resource = resource;
-		this.category = category;
+		this.tag = tag;
+		this.parent = parent;
 	}
 	
 	/**
@@ -44,13 +50,12 @@ public class RemoteProject extends CVSModelElement implements IAdaptable {
 	 * object has no children.
 	 */
 	public Object[] getChildren(Object o) {
-		// This will be improved; for now, just get all version tags for the repository
-		Tag[] tags = CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(resource.getRepository());
-		ProjectVersion[] result = new ProjectVersion[tags.length];
-		for (int i = 0; i < result.length; i++) {
-			result[i] = new ProjectVersion(resource.forTag(tags[i].getTag()), tags[i].getTag(), this);
+		try {
+			return resource.getMembers(new NullProgressMonitor());
+		} catch (TeamException e) {
+			CVSUIPlugin.log(e.getStatus());
+			return null;
 		}
-		return result;
 	}
 	
 	/**
@@ -61,7 +66,7 @@ public class RemoteProject extends CVSModelElement implements IAdaptable {
 	 * image is returned, and the caller is responsible for disposing it.
 	 */
 	public ImageDescriptor getImageDescriptor(Object object) {
-		return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_PROJECT_VERSION);
+		return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 	}
 	
 	/**
@@ -70,14 +75,14 @@ public class RemoteProject extends CVSModelElement implements IAdaptable {
 	 * in the UI.
 	 */
 	public String getLabel(Object o) {
-		return resource.getName();
+		return resource.getName() + " " + tag;
 	}
 	
 	/**
 	 * Returns the logical parent of the given object in its tree.
 	 */
 	public Object getParent(Object o) {
-		return category;
+		return parent;
 	}
 
 	/**
@@ -91,6 +96,6 @@ public class RemoteProject extends CVSModelElement implements IAdaptable {
 	 * For debugging purposes only.
 	 */
 	public String toString() {
-		return "RemoteProject(" + resource.getName() + ")";
+		return "ProjectVersion(" + resource.getName() + ")";
 	}
 }
