@@ -302,11 +302,7 @@ private void queryNewResourceNameInline(final IResource resource) {
 	});
 	textEditor.addFocusListener(new FocusAdapter() {
 		public void focusLost(FocusEvent fe) {
-			fe.widget.getDisplay ().asyncExec (new Runnable () {
-				public void run () {
-					saveChangesAndDispose(resource);
-				}
-			});
+			saveChangesAndDispose(resource);
 		}
 	});
 	if (textActionHandler != null)
