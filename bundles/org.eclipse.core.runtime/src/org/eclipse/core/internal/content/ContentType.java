@@ -54,9 +54,7 @@ public final class ContentType implements IContentType {
 	final static byte STATUS_INVALID = 2;
 	final static byte STATUS_UNKNOWN = 3;
 	final static byte STATUS_VALID = 1;
-	private ContentType aliasTarget;
 	private String baseTypeId;
-	private IContentType[] children;
 	private IConfigurationElement contentTypeElement;
 	private String defaultCharset;
 	private String userCharset;
@@ -70,9 +68,9 @@ public final class ContentType implements IContentType {
 	private String simpleId;
 	private byte validation;
 
-	public static ContentType createContentType(ContentTypeManager manager, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset, IConfigurationElement contentTypeElement) {
-		ContentType contentType = new ContentType(manager);
-		contentType.defaultDescription = new DefaultDescription(contentType);
+	public static ContentType createContentType(ContentTypeCatalog catalog, String namespace, String simpleId, String name, byte priority, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset, IConfigurationElement contentTypeElement) {
+		ContentType contentType = new ContentType(catalog.getManager());
+		contentType.defaultDescription = new DefaultDescription(contentType, catalog);
 		contentType.simpleId = simpleId;
 		contentType.namespace = namespace;
 		contentType.name = name;
@@ -87,11 +85,11 @@ public final class ContentType implements IContentType {
 		contentType.defaultCharset = defaultCharset;
 		contentType.contentTypeElement = contentTypeElement;
 		contentType.baseTypeId = baseTypeId;
-		contentType.processPreferences();
+		contentType.processPreferences(catalog);
 		return contentType;
 	}
 
-	private void processPreferences() {
+	private void processPreferences(ContentTypeCatalog catalog) {
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
 		// user set default charset
 		this.userCharset = contentTypeNode.get(PREF_DEFAULT_CHARSET, null);
@@ -99,12 +97,12 @@ public final class ContentType implements IContentType {
 		String userSetFileNames = contentTypeNode.get(PREF_FILE_NAMES, null);
 		String[] fileNames = Util.parseItems(userSetFileNames);
 		for (int i = 0; i < fileNames.length; i++)
-			internalAddFileSpec(fileNames[i], FILE_NAME_SPEC | SPEC_USER_DEFINED);
+			internalAddFileSpec(catalog, fileNames[i], FILE_NAME_SPEC | SPEC_USER_DEFINED);
 		// user set file extensions
 		String userSetFileExtensions = contentTypeNode.get(PREF_FILE_EXTENSIONS, null);
 		String[] fileExtensions = Util.parseItems(userSetFileExtensions);
 		for (int i = 0; i < fileExtensions.length; i++)
-			internalAddFileSpec(fileExtensions[i], FILE_EXTENSION_SPEC | SPEC_USER_DEFINED);
+			internalAddFileSpec(catalog, fileExtensions[i], FILE_EXTENSION_SPEC | SPEC_USER_DEFINED);
 	}
 
 	static FileSpec createFileSpec(String fileSpec, int type) {
@@ -123,16 +121,25 @@ public final class ContentType implements IContentType {
 		this.manager = manager;
 	}
 
+	/**
+	 * @see IContentType
+	 */
 	public void addFileSpec(String fileSpec, int type) throws CoreException {
-		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$
+		addFileSpec(manager.getCatalog(), fileSpec, type);
+	}
+
+	private void addFileSpec(ContentTypeCatalog catalog, String fileSpec, int type) throws CoreException {
+		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$		
+		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null) {
-			getTarget().addFileSpec(fileSpec, type);
+			aliasTarget.addFileSpec(catalog, fileSpec, type);
 			return;
 		}
 		String[] userSet;
 		synchronized (this) {
-			if (!internalAddFileSpec(fileSpec, type | SPEC_USER_DEFINED))
+			if (!internalAddFileSpec(catalog, fileSpec, type | SPEC_USER_DEFINED))
 				return;
+			// TODO shouldn't this be taking a catalog too?
 			userSet = internalGetFileSpecs(type | IGNORE_PRE_DEFINED);
 		}
 		// persist using preferences		
@@ -199,52 +206,90 @@ public final class ContentType implements IContentType {
 		return IContentDescriber.INVALID;
 	}
 
+	public boolean equals(Object another) {
+		if (!(another instanceof ContentType))
+			return false;
+		return ((ContentType) another).getId().equals(this.getId());
+	}
+
 	public IContentType getBaseType() {
+		return getBaseType(manager.getCatalog());
+	}
+
+	private ContentType getBaseType(ContentTypeCatalog catalog) {
+		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null)
-			return getTarget().getBaseType();
+			return aliasTarget.getBaseType(catalog);
 		if (baseTypeId == null)
 			return null;
-		ContentType originalBaseType = manager.internalGetContentType(baseTypeId);
-		return originalBaseType != null ? originalBaseType.getTarget() : null;
+		ContentType originalBaseType = catalog.internalGetContentType(baseTypeId);
+		return originalBaseType != null ? originalBaseType.getTarget(catalog, true) : null;
 	}
 
 	String getBaseTypeId() {
 		return baseTypeId;
 	}
 
-	IContentType[] getChildren() {
-		if (children == null)
-			children = manager.getChildren(this);
-		return children;
-	}
-
 	/**
 	 * @see IContentType
 	 */
 	public String getDefaultCharset() {
+		return getDefaultCharset(manager.getCatalog());
+	}
+
+	String getDefaultCharset(ContentTypeCatalog catalog) {
+		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null)
-			return getTarget().getDefaultCharset();
-		String currentCharset = userCharset != null ? userCharset : internalGetDefaultCharset();
+			return aliasTarget.getDefaultCharset(catalog);
+		String currentCharset = userCharset != null ? userCharset : internalGetDefaultCharset(catalog);
 		// an empty string as charset means: no default charset
 		return "".equals(currentCharset) ? null : currentCharset; //$NON-NLS-1$
 	}
 
+	/**
+	 * Returns the default content description for this content type. A default 
+	 * content description is returned by <code>IContentType#getDescriptionFor</code>
+	 * and <code>IContentTypeManager#getDescriptionFor</code> whenever 
+	 * content analysis could not find any particular information to be described, so all
+	 * default attributes for the content type in question apply.
+	 * <p>
+	 * Clients doing some sort of caching of content descriptions may choose 
+	 * not to do so for default descriptions, since they are easily available 
+	 * through this API.
+	 * </p>  
+	 * 
+	 *  @return a content description
+	 *  @since 3.1
+	 */
 	public IContentDescription getDefaultDescription() {
+		return getDefaultDescription(manager.getCatalog());
+	}
+
+	private IContentDescription getDefaultDescription(ContentTypeCatalog catalog) {
+		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null)
-			return getTarget().getDefaultDescription();
+			return aliasTarget.getDefaultDescription(catalog);
 		return defaultDescription;
 	}
 
-	public int getDepth() {
-		ContentType baseType = (ContentType) getBaseType();
+	int getDepth(ContentTypeCatalog catalog) {
+		ContentType baseType = getBaseType(catalog);
 		if (baseType == null)
 			return 0;
-		return 1 + baseType.getDepth();
+		return 1 + baseType.getDepth(catalog);
 	}
 
+	/**
+	 * For tests only, should not be called by anyone else.
+	 */
 	public IContentDescriber getDescriber() {
+		return getDescriber(manager.getCatalog());
+	}
+
+	IContentDescriber getDescriber(ContentTypeCatalog catalog) {
+		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null)
-			return getTarget().getDescriber();
+			return aliasTarget.getDescriber(catalog);
 		// if "" is specified no describer should be created
 		if ("".equals(contentTypeElement.getAttributeAsIs(DESCRIBER_ELEMENT))) //$NON-NLS-1$
 			return null;
@@ -261,34 +306,51 @@ public final class ContentType implements IContentType {
 					return invalidateDescriber(ce);
 				}
 		}
-		ContentType baseType = (ContentType) getBaseType();
-		return baseType == null ? null : baseType.getDescriber();
+		ContentType baseType = getBaseType(catalog);
+		return baseType == null ? null : baseType.getDescriber(catalog);
 	}
 
 	/**
 	 * @see IContentType
 	 */
 	public IContentDescription getDescriptionFor(InputStream contents, QualifiedName[] options) throws IOException {
+		return getDescriptionFor(manager.getCatalog(), contents, options);
+	}
+
+	private IContentDescription getDescriptionFor(ContentTypeCatalog catalog, InputStream contents, QualifiedName[] options) throws IOException {
 		InputStream buffer = ContentTypeManager.readBuffer(contents);
 		if (buffer == null)
 			return defaultDescription;
-		return internalGetDescriptionFor(buffer, options);
+		return internalGetDescriptionFor(catalog, buffer, options);
 	}
 
 	/**
 	 * @see IContentType
 	 */
 	public IContentDescription getDescriptionFor(Reader contents, QualifiedName[] options) throws IOException {
+		return getDescriptionFor(manager.getCatalog(), contents, options);
+	}
+
+	private IContentDescription getDescriptionFor(ContentTypeCatalog catalog, Reader contents, QualifiedName[] options) throws IOException {
 		Reader buffer = ContentTypeManager.readBuffer(contents);
 		if (buffer == null)
 			return defaultDescription;
-		return internalGetDescriptionFor(buffer, options);
+		return internalGetDescriptionFor(catalog, buffer, options);
 	}
 
 	public String[] getFileSpecs(int typeMask) {
+		return getFileSpecs(manager.getCatalog(), typeMask);
+	}
+
+	public String[] getFileSpecs(ContentTypeCatalog catalog, int typeMask) {
+		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null)
-			return getTarget().getFileSpecs(typeMask);
+			return aliasTarget.getFileSpecs(catalog, typeMask);
 		return internalGetFileSpecs(typeMask);
+	}
+
+	public int hashCode() {
+		return this.getId().hashCode();
 	}
 
 	private String[] internalGetFileSpecs(int typeMask) {
@@ -324,10 +386,9 @@ public final class ContentType implements IContentType {
 	/*
 	 * Returns the alias target, if one is found, or this object otherwise.
 	 */
-	ContentType getTarget() {
-		if (aliasTarget == null)
-			return this;
-		return aliasTarget.getTarget();
+	ContentType getTarget(ContentTypeCatalog catalog, boolean self) {
+		ContentType target = catalog.getAliasTarget(this);
+		return (self && target == null) ? this : target;
 	}
 
 	byte getValidation() {
@@ -350,31 +411,38 @@ public final class ContentType implements IContentType {
 		return false;
 	}
 
-	boolean internalAddFileSpec(String fileSpec, int typeMask) {
+	/**
+	 * Adds a user-defined or pre-defined file spec.
+	 */
+	boolean internalAddFileSpec(ContentTypeCatalog catalog, String fileSpec, int typeMask) {
+		// XXX shouldn't this be done *after* we check for aliasing?
 		if (hasFileSpec(fileSpec, typeMask))
 			return false;
+		//TODO do we have to check for aliases at this point? 
+		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null)
-			return aliasTarget.internalAddFileSpec(fileSpec, typeMask);
+			return aliasTarget.internalAddFileSpec(catalog, fileSpec, typeMask);
 		if (fileSpecs == null)
 			fileSpecs = new ArrayList(3);
 		fileSpecs.add(createFileSpec(fileSpec, typeMask));
 		return true;
 	}
 
-	private String internalGetDefaultCharset() {
+	private String internalGetDefaultCharset(ContentTypeCatalog catalog) {
 		if (defaultCharset == null) {
-			ContentType baseType = (ContentType) getBaseType();
-			return baseType == null ? null : baseType.getDefaultCharset();
+			ContentType baseType = getBaseType(catalog);
+			return baseType == null ? null : baseType.getDefaultCharset(catalog);
 		}
 		return defaultCharset;
 	}
 
-	IContentDescription internalGetDescriptionFor(InputStream buffer, QualifiedName[] options) throws IOException {
+	IContentDescription internalGetDescriptionFor(ContentTypeCatalog catalog, InputStream buffer, QualifiedName[] options) throws IOException {
+		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null)
-			return getTarget().internalGetDescriptionFor(buffer, options);
+			return aliasTarget.internalGetDescriptionFor(catalog, buffer, options);
 		if (buffer == null)
 			return defaultDescription;
-		IContentDescriber describer = this.getDescriber();
+		IContentDescriber describer = this.getDescriber(catalog);
 		// no describer - just return the default description
 		if (describer == null)
 			return defaultDescription;
@@ -386,17 +454,18 @@ public final class ContentType implements IContentType {
 			return defaultDescription;
 		// check if any of the defaults need to be applied
 		if (description.isRequested(IContentDescription.CHARSET) && description.getProperty(IContentDescription.CHARSET) == null)
-			description.setProperty(IContentDescription.CHARSET, getDefaultCharset());
+			description.setProperty(IContentDescription.CHARSET, getDefaultCharset(catalog));
 		description.setContentType(this);
 		return description;
 	}
 
-	IContentDescription internalGetDescriptionFor(Reader buffer, QualifiedName[] options) throws IOException {
+	IContentDescription internalGetDescriptionFor(ContentTypeCatalog catalog, Reader buffer, QualifiedName[] options) throws IOException {
+		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null)
-			return getTarget().internalGetDescriptionFor(buffer, options);
+			return aliasTarget.internalGetDescriptionFor(catalog, buffer, options);
 		if (buffer == null)
 			return defaultDescription;
-		IContentDescriber describer = this.getDescriber();
+		IContentDescriber describer = this.getDescriber(catalog);
 		// no describer - just return the default description
 		if (describer == null)
 			return defaultDescription;
@@ -409,14 +478,15 @@ public final class ContentType implements IContentType {
 			return defaultDescription;
 		// check if any of the defaults need to be applied
 		if (description.isRequested(IContentDescription.CHARSET) && description.getProperty(IContentDescription.CHARSET) == null)
-			description.setProperty(IContentDescription.CHARSET, getDefaultCharset());
+			description.setProperty(IContentDescription.CHARSET, getDefaultCharset(catalog));
 		description.setContentType(this);
 		return description;
 	}
 
-	public byte internalIsAssociatedWith(String fileName) {
+	byte internalIsAssociatedWith(ContentTypeCatalog catalog, String fileName) {
+		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null)
-			return getTarget().internalIsAssociatedWith(fileName);
+			return aliasTarget.internalIsAssociatedWith(catalog, fileName);
 		if (hasFileSpec(fileName, FILE_NAME_SPEC))
 			return ASSOCIATED_BY_NAME;
 		String fileExtension = ContentTypeManager.getFileExtension(fileName);
@@ -424,9 +494,9 @@ public final class ContentType implements IContentType {
 			return ASSOCIATED_BY_EXTENSION;
 		// if does not have *built-in* file specs, delegate to parent (if any)
 		if (!hasAnyFileSpec(SPEC_PRE_DEFINED)) {
-			IContentType baseType = getBaseType();
+			IContentType baseType = getBaseType(catalog);
 			if (baseType != null)
-				return ((ContentType) baseType).internalIsAssociatedWith(fileName);
+				return ((ContentType) baseType).internalIsAssociatedWith(catalog, fileName);
 		}
 		return NOT_ASSOCIATED;
 	}
@@ -442,9 +512,10 @@ public final class ContentType implements IContentType {
 		return false;
 	}
 
-	boolean internalRemoveFileSpec(String fileSpec, int typeMask) {
+	boolean internalRemoveFileSpec(ContentTypeCatalog catalog, String fileSpec, int typeMask) {
+		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null)
-			return aliasTarget.internalRemoveFileSpec(fileSpec, typeMask);
+			return aliasTarget.internalRemoveFileSpec(catalog, fileSpec, typeMask);
 		if (fileSpecs == null)
 			return false;
 		for (Iterator i = fileSpecs.iterator(); i.hasNext();) {
@@ -465,24 +536,25 @@ public final class ContentType implements IContentType {
 	}
 
 	public boolean isAssociatedWith(String fileName) {
-		return internalIsAssociatedWith(fileName) != NOT_ASSOCIATED;
+		return internalIsAssociatedWith(manager.getCatalog(), fileName) != NOT_ASSOCIATED;
 	}
 
 	public boolean isKindOf(IContentType another) {
-		if (another == null)
-			return false;
-		if (aliasTarget != null)
-			return getTarget().isKindOf(another);
-		if (this == another)
-			return true;
-		if (getDepth() <= ((ContentType) another).getDepth())
-			return false;
-		IContentType baseType = getBaseType();
-		return baseType != null && baseType.isKindOf(another);
+		return isKindOf(manager.getCatalog(), (ContentType) another);
 	}
 
-	public boolean isText() {
-		return isKindOf(manager.getContentType(IContentTypeManager.CT_TEXT));
+	boolean isKindOf(ContentTypeCatalog catalog, ContentType another) {
+		if (another == null)
+			return false;
+		ContentType aliasTarget = getTarget(catalog, false);
+		if (aliasTarget != null)
+			return aliasTarget.isKindOf(catalog, another);
+		if (this == another)
+			return true;
+		if (getDepth(catalog) <= another.getDepth(catalog))
+			return false;
+		ContentType baseType = getBaseType(catalog);
+		return baseType != null && baseType.isKindOf(catalog, another);
 	}
 
 	boolean isValid() {
@@ -496,17 +568,23 @@ public final class ContentType implements IContentType {
 	}
 
 	public void removeFileSpec(String fileSpec, int type) throws CoreException {
+		removeFileSpec(manager.getCatalog(), fileSpec, type);
+	}
+
+	private void removeFileSpec(ContentTypeCatalog catalog, String fileSpec, int type) throws CoreException {
 		Assert.isLegal(type == FILE_EXTENSION_SPEC || type == FILE_NAME_SPEC, "Unknown type: " + type); //$NON-NLS-1$		
+		ContentType aliasTarget = getTarget(catalog, false);
 		if (aliasTarget != null) {
-			getTarget().removeFileSpec(fileSpec, type);
+			aliasTarget.removeFileSpec(catalog, fileSpec, type);
 			return;
 		}
 		synchronized (this) {
-			if (!internalRemoveFileSpec(fileSpec, type | SPEC_USER_DEFINED))
+			if (!internalRemoveFileSpec(catalog, fileSpec, type | SPEC_USER_DEFINED))
 				return;
 		}
 		// persist the change
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
+		//TODO: shouldn't this call take a catalog?
 		final String[] userSet = internalGetFileSpecs(type | IGNORE_PRE_DEFINED);
 		if (userSet.length == 0)
 			contentTypeNode.remove(getPreferenceKey(type));
@@ -523,16 +601,8 @@ public final class ContentType implements IContentType {
 		manager.fireContentTypeChangeEvent(this);
 	}
 
-	void setAliasTarget(ContentType newTarget) {
-		// when changing the target, it must be cleared first
-		if (aliasTarget != null && newTarget != null)
-			return;
-		// don't allow a sub-type to be made into an alias to the base type
-		if (aliasTarget == null && isKindOf(newTarget))
-			return;
-		if (ContentTypeManager.DEBUGGING)
-			Policy.debug("Setting alias target for " + this + " -> " + newTarget); //$NON-NLS-1$ //$NON-NLS-2$		
-		aliasTarget = newTarget;
+	void setAliasTarget(ContentTypeCatalog catalog, ContentType newTarget) {
+		catalog.setAliasTarget(this, newTarget);
 	}
 
 	/*
@@ -585,7 +655,7 @@ public final class ContentType implements IContentType {
 		return getId();
 	}
 
-	public boolean isAlias() {
-		return aliasTarget != null;
+	boolean isAlias(ContentTypeCatalog catalog) {
+		return getTarget(catalog, false) != null;
 	}
 }

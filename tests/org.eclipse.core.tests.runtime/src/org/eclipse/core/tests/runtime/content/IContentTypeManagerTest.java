@@ -48,7 +48,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	private final static String XML_US_ASCII_INVALID = "<?xml version='1.0' encoding='us-ascii'?><!-- αινσϊ --><org.eclipse.core.runtime.tests.root/>";
 
 	public static Test suite() {
-		//		return new IContentTypeManagerTest("testRootElementAndDTDDescriber");
+		//return new IContentTypeManagerTest("testDynamicChanges");
 		return new TestSuite(IContentTypeManagerTest.class);
 	}
 
@@ -583,7 +583,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 	 * Bug 66976
 	 */
 	public void testSignatureBeyondBufferLimit() throws IOException {
-		int bufferLimit = ContentTypeManager.MARK_LIMIT * 4;
+		int bufferLimit = ContentTypeManager.BLOCK_SIZE * 4;
 		// create a long XML comment as prefix 
 		StringBuffer comment = new StringBuffer("<!--");
 		for (int i = 0; i < bufferLimit; i++)
@@ -680,6 +680,7 @@ public class IContentTypeManagerTest extends RuntimeTest {
 			 * All serializable objects should have a stable serialVersionUID
 			 */
 			private static final long serialVersionUID = 1L;
+
 			public String getMessage() {
 				return "This exception was thrown for testing purposes";
 			}
@@ -792,7 +793,69 @@ public class IContentTypeManagerTest extends RuntimeTest {
 		assertTrue("6.1", !tracer.isOnlyChange(myType));
 
 	}
-	
+
+	/**
+	 * Obtains a reference to a known content type, then installs a bundle that contributes a content type,
+	 * and makes sure a new obtained reference to the same content type is not identical (shows
+	 * that the content type catalog has been discarded and rebuilt). Then uninstalls that bundle
+	 * and checks again the same thing (because the content type catalog should be rebuilt whenever 
+	 * content types are dynamicaly added/removed).
+	 */
+	public void testDynamicChanges() {
+		IContentType text1, text2, text3, text4;
+		IContentTypeManager manager = Platform.getContentTypeManager();
+		String textId = Platform.PI_RUNTIME + '.' + "text";
+		text1 = manager.getContentType(textId);
+		assertNotNull("1.0", text1);
+		text2 = manager.getContentType(textId);
+		assertEquals("2.0", text1, text2);
+		assertTrue("2.1", text1 == text2);
+		//	make arbitrary dynamic changes to the contentTypes extension point
+		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
+		listener.register();
+		Bundle installed = null;
+		try {
+			installed = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "content/bundle01");
+		} catch (BundleException e) {
+			fail("2.8", e);
+		} catch (IOException e) {
+			fail("2.9", e);
+		}
+		assertEquals("3.0", Bundle.INSTALLED, installed.getState());
+		try {
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
+			IRegistryChangeEvent event = listener.getEvent(10000);
+			// ensure the bundle was properly installed and the content type it contributed is available
+			assertNotNull("3.1", event);
+			assertNotNull("3.2", Platform.getBundle("org.eclipse.bundle01"));
+			IContentType missing = manager.getContentType("org.eclipse.bundle01.missing");
+			assertNotNull("3.3", missing);
+			// ensure the content type instances are different
+			text3 = manager.getContentType(textId);
+			assertEquals("4.0", text1, text3);
+			assertTrue("4.1", text1 != text3);
+		} finally {
+			try {
+				// clean-up: remove installed bundle
+				installed.uninstall();
+			} catch (BundleException e) {
+				fail("5.0", e);
+			}
+			BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
+		}
+		IRegistryChangeEvent event = listener.getEvent(10000);
+		// ensure the bundle was properly uninstalled and the content type it contributed is not available anymore
+		assertNotNull("5.1", event);
+		assertNull("5.2", Platform.getBundle("org.eclipse.bundle01"));
+		assertNull("5.3", manager.getContentType("org.eclipse.bundle01.missing"));
+		// ensure the content type instances are all different
+		text4 = manager.getContentType(textId);
+		assertEquals("6.0", text1, text4);
+		assertEquals("6.1", text3, text4);
+		assertTrue("6.2", text1 != text4);
+		assertTrue("6.3", text3 != text4);
+	}
+
 	protected void tearDown() throws Exception {
 		super.tearDown();
 		// some tests here will trigger a charset delta job (any causing ContentTypeChangeEvents to be broadcast) 

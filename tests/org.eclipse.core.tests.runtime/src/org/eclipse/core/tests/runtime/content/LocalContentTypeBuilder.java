@@ -13,18 +13,18 @@ package org.eclipse.core.tests.runtime.content;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.internal.content.ContentTypeBuilder;
-import org.eclipse.core.internal.content.ContentTypeManager;
+import org.eclipse.core.internal.content.ContentTypeCatalog;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.runtime.RuntimeTest;
 
 public class LocalContentTypeBuilder extends ContentTypeBuilder {
-	public LocalContentTypeBuilder(ContentTypeManager catalog) {
+	public LocalContentTypeBuilder(ContentTypeCatalog catalog) {
 		super(catalog);
 	}
 
 	/**
-	 * To make testiing easier, ensures only content types / content interpreters contributed 
+	 * To make testing easier, ensures only content types / content interpreters contributed 
 	 * by runtime and runtime.tests will be added to the catalog.
 	 */
 	protected IConfigurationElement[] getConfigurationElements() {

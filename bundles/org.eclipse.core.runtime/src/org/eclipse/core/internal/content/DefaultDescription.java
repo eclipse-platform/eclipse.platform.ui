@@ -14,15 +14,26 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 
+/**
+ * @see ContentType#getDefaultDescription
+ */
 public final class DefaultDescription implements IContentDescription {
-	private IContentType contentType;
+	private ContentType contentType;
+	private ContentTypeCatalog catalog;
 
-	public DefaultDescription(ContentType contentType) {
+	public DefaultDescription(ContentType contentType, ContentTypeCatalog catalog) {
 		this.contentType = contentType;
+		this.catalog = catalog;
+	}
+	
+	public boolean equals(Object obj) {
+		if (!(obj instanceof DefaultDescription))
+			return false;
+		return contentType.getId().equals(((DefaultDescription) obj).getContentType().getId());
 	}
 
 	public String getCharset() {
-		return contentType.getDefaultCharset();
+		return contentType.getDefaultCharset(catalog);
 	}
 	
 	public IContentType getContentType() {
@@ -31,12 +42,12 @@ public final class DefaultDescription implements IContentDescription {
 
 	public Object getProperty(QualifiedName key) {
 		if (key == IContentDescription.CHARSET)
-			return contentType.getDefaultCharset();
+			return contentType.getDefaultCharset(catalog);
 		return null;
 	}
-
-	public boolean isDefault() {
-		return true;
+	
+	public int hashCode() {
+		return contentType.getId().hashCode();
 	}
 
 	public boolean isRequested(QualifiedName key) {

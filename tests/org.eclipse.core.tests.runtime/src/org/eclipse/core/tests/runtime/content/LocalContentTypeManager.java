@@ -10,33 +10,21 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.content;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 
+/**
+ * A content type manager that only sees content types contributed by 
+ * org.eclipse.core.runtime and this plug-in.
+ * 
+ *  @see org.eclipse.core.tests.runtime.content.LocalContentTypeBuilder#getConfigurationElements()
+ */
 public class LocalContentTypeManager extends ContentTypeManager {
-	public LocalContentTypeManager() {
-		// to increase visibility
-	}
-
-	public void addContentType(IContentType contentType) {
-		super.addContentType(contentType);
-		reorganize();
-	}
-
-	public IContentType createContentType(String namespace, String simpleId, String name, String[] fileExtensions, String[] fileNames, String baseTypeId, String defaultCharset) {
-		return ContentType.createContentType(this, namespace, simpleId, name, (byte) 0, fileExtensions, fileNames, baseTypeId, defaultCharset, null);
-	}
-
-	protected ContentTypeBuilder createBuilder() {
-		return new LocalContentTypeBuilder(this);
-	}
-
 	public static IContentTypeManager getLocalContentTypeManager() {
-		LocalContentTypeManager contentTypeManager = new LocalContentTypeManager();
-		contentTypeManager.startup();
-		return contentTypeManager;
+		return new LocalContentTypeManager();
 	}
 
 	public IContentType findContentTypeFor(InputStream contents, IContentType[] subset) throws IOException {
@@ -48,8 +36,14 @@ public class LocalContentTypeManager extends ContentTypeManager {
 		InputStream buffer = readBuffer(contents);
 		if (buffer == null)
 			return subset;
+		ContentTypeCatalog catalog = getCatalog();
 		if (subset == null)
-			subset = getAllContentTypes();
-		return internalFindContentTypesFor(buffer, subset);
+			subset = catalog.getAllContentTypes();
+		return catalog.internalFindContentTypesFor(buffer, subset);
 	}
+
+	protected ContentTypeBuilder createBuilder(ContentTypeCatalog newCatalog) {
+		return new LocalContentTypeBuilder(newCatalog);
+	}
+
 }

@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.content;
 
-import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
@@ -21,29 +20,50 @@ import org.eclipse.core.runtime.content.IContentType;
  * creating content types from the extension registry (which ContentTypeManager
  *  is oblivious to).
  */
-public class ContentTypeBuilder implements IRegistryChangeListener {
+public class ContentTypeBuilder {
 	public static final String PT_CONTENTTYPES = "contentTypes"; //$NON-NLS-1$	
-	private ContentTypeManager catalog;
-	// map content-type-id -> file association configuration element set
-	private Map orphanAssociations = new HashMap();
+	private ContentTypeCatalog catalog;
 
-	public ContentTypeBuilder(ContentTypeManager catalog) {
+	private static String getUniqueId(String namespace, String baseTypeId) {
+		if (baseTypeId == null)
+			return null;
+		int separatorPosition = baseTypeId.lastIndexOf('.');
+		// base type is defined in the same namespace
+		if (separatorPosition == -1)
+			baseTypeId = namespace + '.' + baseTypeId;
+		return baseTypeId;
+	}
+
+	private static byte parsePriority(String priority) {
+		if (priority == null)
+			return ContentType.PRIORITY_NORMAL;
+		if (priority.equals("high")) //$NON-NLS-1$
+			return ContentType.PRIORITY_HIGH;
+		if (priority.equals("low")) //$NON-NLS-1$
+			return ContentType.PRIORITY_LOW;
+		if (!priority.equals("normal")) //$NON-NLS-1$
+			return ContentType.PRIORITY_NORMAL;
+		//TODO: should log - INVALID PRIORITY
+		return ContentType.PRIORITY_NORMAL;
+	}
+
+	protected ContentTypeBuilder(ContentTypeCatalog catalog) {
 		this.catalog = catalog;
 	}
 
 	private void addFileAssociation(IConfigurationElement fileAssociationElement, ContentType target) {
 		String[] fileNames = Util.parseItems(fileAssociationElement.getAttributeAsIs("file-names")); //$NON-NLS-1$
 		for (int i = 0; i < fileNames.length; i++)
-			target.internalAddFileSpec(fileNames[i], IContentType.FILE_NAME_SPEC | ContentType.SPEC_PRE_DEFINED);
+			target.internalAddFileSpec(catalog, fileNames[i], IContentType.FILE_NAME_SPEC);
 		String[] fileExtensions = Util.parseItems(fileAssociationElement.getAttributeAsIs("file-extensions")); //$NON-NLS-1$
 		for (int i = 0; i < fileExtensions.length; i++)
-			target.internalAddFileSpec(fileExtensions[i], IContentType.FILE_EXTENSION_SPEC | ContentType.SPEC_PRE_DEFINED);
+			target.internalAddFileSpec(catalog, fileExtensions[i], IContentType.FILE_EXTENSION_SPEC | ContentType.SPEC_PRE_DEFINED);
 	}
 
 	/**
 	 * Builds all content types found in the extension registry.
 	 */
-	public void buildContentTypes() {
+	public void buildCatalog() {
 		IConfigurationElement[] allContentTypeCEs = getConfigurationElements();
 		for (int i = 0; i < allContentTypeCEs.length; i++) {
 			if (allContentTypeCEs[i].getName().equals("content-type")) //$NON-NLS-1$
@@ -56,7 +76,7 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		validateCatalog();
 	}
 
-	public ContentType createContentType(IConfigurationElement contentTypeCE) {
+	private ContentType createContentType(IConfigurationElement contentTypeCE) {
 		//TODO: need to ensure the config. element is valid
 		String simpleId = contentTypeCE.getAttributeAsIs("id"); //$NON-NLS-1$
 		byte priority = parsePriority(contentTypeCE.getAttributeAsIs("priority")); //$NON-NLS-1$);
@@ -76,33 +96,6 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		return allContentTypeCEs;
 	}
 
-	private byte parsePriority(String priority) {
-		if (priority == null)
-			return ContentType.PRIORITY_NORMAL;
-		if (priority.equals("high")) //$NON-NLS-1$
-			return ContentType.PRIORITY_HIGH;
-		if (priority.equals("low")) //$NON-NLS-1$
-			return ContentType.PRIORITY_LOW;
-		if (!priority.equals("normal")) //$NON-NLS-1$
-			return ContentType.PRIORITY_NORMAL;
-		//TODO: should log - INVALID PRIORITY
-		return ContentType.PRIORITY_NORMAL;
-	}
-
-	protected void registerContentType(IConfigurationElement contentTypeCE) {
-		//TODO: need to ensure the config. element is valid
-		ContentType contentType = createContentType(contentTypeCE);
-		if (!isComplete(contentType))
-			return;
-		catalog.addContentType(contentType);
-		// ensure orphan associations are added		
-		Set orphans = (Set) orphanAssociations.remove(contentType.getId());
-		if (orphans == null)
-			return;
-		for (Iterator iter = orphans.iterator(); iter.hasNext();)
-			addFileAssociation((IConfigurationElement) iter.next(), contentType);
-	}
-
 	/* Checks whether the content type has all required pieces. */
 	private boolean isComplete(ContentType contentType) {
 		String message = null;
@@ -117,6 +110,14 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		return false;
 	}
 
+	private void registerContentType(IConfigurationElement contentTypeCE) {
+		//TODO: need to ensure the config. element is valid
+		ContentType contentType = createContentType(contentTypeCE);
+		if (!isComplete(contentType))
+			return;
+		catalog.addContentType(contentType);
+	}
+
 	/* Adds extra file associations to existing content types. If the content 
 	 * type has not been added, the file association is ignored.
 	 */
@@ -124,52 +125,13 @@ public class ContentTypeBuilder implements IRegistryChangeListener {
 		//TODO: need to ensure the config. element is valid		
 		String contentTypeId = getUniqueId(fileAssociationElement.getDeclaringExtension().getNamespace(), fileAssociationElement.getAttribute("content-type")); //$NON-NLS-1$
 		ContentType target = catalog.internalGetContentType(contentTypeId);
-		if (target == null) {
-			// the content type is not available yet... remember it as orphan 
-			Set orphans = (Set) orphanAssociations.get(contentTypeId);
-			if (orphans == null)
-				orphanAssociations.put(contentTypeId, orphans = new HashSet(3));
-			orphans.add(fileAssociationElement);
+		if (target == null)
 			return;
-		}
 		addFileAssociation(fileAssociationElement, target);
 	}
 
-	private static String getUniqueId(String namespace, String baseTypeId) {
-		if (baseTypeId == null)
-			return null;
-		int separatorPosition = baseTypeId.lastIndexOf('.');
-		// base type is defined in the same namespace
-		if (separatorPosition == -1)
-			baseTypeId = namespace + '.' + baseTypeId;
-		return baseTypeId;
-	}
-
-	public void registryChanged(IRegistryChangeEvent event) {
-		IExtensionDelta[] deltas = (event.getExtensionDeltas(Platform.PI_RUNTIME, PT_CONTENTTYPES));
-		for (int i = 0; i < deltas.length; i++) {
-			IConfigurationElement[] configElements = deltas[i].getExtension().getConfigurationElements();
-			if (deltas[i].getKind() == IExtensionDelta.ADDED) {
-				for (int j = 0; i < configElements.length; i++)
-					if (configElements[j].getName().equals("content-type"))//$NON-NLS-1$
-						registerContentType(configElements[j]);
-				for (int j = 0; i < configElements.length; i++)
-					if (configElements[j].getName().equals("file-association")) //$NON-NLS-1$
-						registerFileAssociation(configElements[j]);
-			} else {
-				//TODO should unregister removed types
-				//TODO remove any involved orphans as well
-			}
-		}
-		// ensure there are no orphan types / cycles
-		validateCatalog();
-	}
-
-	public void startup() {
-		InternalPlatform.getDefault().getRegistry().addRegistryChangeListener(this, Platform.PI_RUNTIME);
-	}
-
-	protected void validateCatalog() {
+	private void validateCatalog() {
 		catalog.reorganize();
 	}
+
 }

@@ -90,7 +90,7 @@ public interface IContentType {
 	 * @return this content type's base type, or <code>null</code>
 	 */
 	public IContentType getBaseType();
-
+	
 	/**
 	 * Tries to obtain a description for the given contents. 
 	 * <p>

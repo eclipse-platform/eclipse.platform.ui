@@ -16,6 +16,7 @@ import java.util.Hashtable;
 import java.util.Locale;
 import org.eclipse.core.internal.boot.PlatformURLBaseConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
+import org.eclipse.core.internal.content.ContentTypeManager;
 import org.eclipse.core.internal.registry.ExtensionRegistry;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.framework.log.FrameworkLog;
@@ -57,6 +58,8 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		registerEntryLocator();
 		startInternalPlatform();
 		startRegistry(runtimeContext);
+		// the content type manager must be initialized only after the registry has been created
+		ContentTypeManager.startup();
 		installPlatformURLSupport();
 		registerApplicationService();
 		InternalPlatform.getDefault().setRuntimeInstance(this);
@@ -77,11 +80,13 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 		context.registerService(URLStreamHandlerService.class.getName(), new PlatformURLHandler(), properties);
 	}
 
-	private void startRegistry(BundleContext runtimeContext) {		
-		InternalPlatform.getDefault().setExtensionRegistry(new ExtensionRegistry());	
+	private void startRegistry(BundleContext runtimeContext) {
+		InternalPlatform.getDefault().setExtensionRegistry(new ExtensionRegistry());
 	}
 
 	public void stop(BundleContext runtimeContext) {
+		// stop the content type manager
+		ContentTypeManager.shutdown();
 		// Stop the registry
 		stopRegistry(runtimeContext);
 		// unregister the EntryLocator to prevent the Framework from calling it
