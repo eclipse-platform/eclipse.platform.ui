@@ -109,8 +109,7 @@ public class DecorationScheduler {
 			awaitingDecoration.add(element);
 			if (shutdown)
 				return;
-			if (decorationJob.getState() == Job.NONE)
-				decorationJob.schedule();
+			decorationJob.schedule();
 		}
 
 	}
@@ -153,7 +152,7 @@ public class DecorationScheduler {
 	public void decorated() {
 
 		//Don't bother if we are shutdown now
-		if (shutdown || pendingUpdate.isEmpty())
+		if (shutdown)
 			return;
 
 		//Lazy initialize the job
@@ -161,8 +160,7 @@ public class DecorationScheduler {
 			updateJob = getUpdateJob();
 			updateJob.setPriority(Job.DECORATE);
 		}
-		if (updateJob.getState() == Job.NONE)
-			updateJob.schedule();
+		updateJob.schedule();
 	}
 
 	/**
@@ -346,7 +344,8 @@ public class DecorationScheduler {
 			 */
 			public void done(IJobChangeEvent event) {
 				//Reschedule in case something got added when we dropped the lock
-				decorated();
+				if(!pendingUpdate.isEmpty())
+					decorated();
 			}
 		});
 		return job;
