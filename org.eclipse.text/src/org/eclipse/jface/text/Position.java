@@ -126,7 +126,10 @@ public class Position {
 		
 		if (isDeleted)
 			return false;
-			
+		
+		if (length == 0)
+			return this.offset <= offset; 
+		
 		return (this.offset <= offset) && (offset < this.offset + length);
 	}
 	
