@@ -375,7 +375,7 @@ public class UpdateUI extends AbstractUIPlugin {
 					+ WEB_APP_ID
 					+ "/install"; //$NON-NLS-1$
 			try {
-				value = URLEncoder.encode(value, "UTF-8");
+				value = URLEncoder.encode(value, "UTF-8"); //$NON-NLS-1$
 			} catch (UnsupportedEncodingException e) {
 			}
 			return value;

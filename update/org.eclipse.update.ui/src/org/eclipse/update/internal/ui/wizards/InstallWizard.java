@@ -164,9 +164,9 @@ public class InstallWizard
 							retry =
 							MessageDialog.openQuestion(
 								getShell(),
-								UpdateUI.getString("InstallWizard.retryTitle"),
-								fde.getMessage()+"\n"
-									+ UpdateUI.getString("InstallWizard.retry"));
+								UpdateUI.getString("InstallWizard.retryTitle"), //$NON-NLS-1$
+								fde.getMessage()+"\n" //$NON-NLS-1$
+									+ UpdateUI.getString("InstallWizard.retry")); //$NON-NLS-1$
 							if (retry)
 								continue;
 					}

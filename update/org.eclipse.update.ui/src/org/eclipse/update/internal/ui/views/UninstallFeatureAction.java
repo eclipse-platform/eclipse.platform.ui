@@ -73,7 +73,7 @@ public class UninstallFeatureAction extends Action {
 			return false;
 			
 		try {
-			if (InstallRegistry.getInstance().get("feature_"+adapter.getFeature(null).getVersionedIdentifier()) == null)
+			if (InstallRegistry.getInstance().get("feature_"+adapter.getFeature(null).getVersionedIdentifier()) == null) //$NON-NLS-1$
 				return false;
 		} catch (CoreException e) {
 			return false;

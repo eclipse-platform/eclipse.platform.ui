@@ -59,7 +59,7 @@ public class InstallOptionalFeatureAction extends Action {
 		
 		// If current config is broken, confirm with the user to continue
 		if (OperationsManager.getValidator().validateCurrentState() != null &&
-				!confirm(UpdateUI.getString("Actions.brokenConfigQuestion")))
+				!confirm(UpdateUI.getString("Actions.brokenConfigQuestion"))) //$NON-NLS-1$
 			return;
 			
 		

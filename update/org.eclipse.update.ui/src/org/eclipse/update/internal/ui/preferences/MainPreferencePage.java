@@ -316,14 +316,14 @@ public class MainPreferencePage
 		Preferences prefs = UpdateCore.getPlugin().getPluginPreferences();
 
 		enableHttpProxy.setSelection(false);
-		httpProxyHostText.setText("");
-		httpProxyPortText.setText("");
+		httpProxyHostText.setText(""); //$NON-NLS-1$
+		httpProxyPortText.setText(""); //$NON-NLS-1$
 		httpProxyPortLabel.setEnabled(false);
 		httpProxyHostLabel.setEnabled(false);
 		httpProxyPortText.setEnabled(false);
 		httpProxyHostText.setEnabled(false);
 
-		updatePolicyText.setText("");
+		updatePolicyText.setText(""); //$NON-NLS-1$
 
 		checkSignatureCheckbox.setSelection(true);
 		historySizeText.setText(

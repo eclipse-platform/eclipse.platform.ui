@@ -26,7 +26,7 @@ public class ShowActivitiesAction extends Action {
 	public void run() {
 		ShowActivitiesDialog dialog = new ShowActivitiesDialog(shell);
 		dialog.create();
-		dialog.getShell().setText(UpdateUI.getString("ShowActivitiesDialog.title"));
+		dialog.getShell().setText(UpdateUI.getString("ShowActivitiesDialog.title")); //$NON-NLS-1$
 		dialog.open();
 	}
 }

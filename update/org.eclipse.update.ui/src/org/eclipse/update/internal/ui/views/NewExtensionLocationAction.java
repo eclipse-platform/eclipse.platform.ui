@@ -59,9 +59,9 @@ public class NewExtensionLocationAction extends Action {
 				MessageDialog.openInformation(
 					UpdateUI.getActiveWorkbenchShell(),
 					UpdateUI.getString(
-						"NewExtensionLocationAction.extInfoTitle"),
+						"NewExtensionLocationAction.extInfoTitle"), //$NON-NLS-1$
 					UpdateUI.getString(
-						"NewExtensionLocationAction.extInfoMessage"));
+						"NewExtensionLocationAction.extInfoMessage")); //$NON-NLS-1$
 				// re-open the directory dialog
 				dialog.setFilterPath(dir);
 				dir = dialog.open();
@@ -75,7 +75,7 @@ public class NewExtensionLocationAction extends Action {
 	 */
 	static File getExtensionSite(File directory) {
 		// Check the eclipse folder
-		if (directory.getName().equals("eclipse")) {
+		if (directory.getName().equals("eclipse")) { //$NON-NLS-1$
 			// if we picked up the eclipse directory, check if its parent is a site
 			File site = getExtensionSite(directory.getParentFile());
 			if (site != null)

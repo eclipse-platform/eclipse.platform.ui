@@ -130,7 +130,7 @@ public class JarVerificationService implements IVerificationListener {
 	 */
 	private boolean see(final IVerificationResult verificationResult) {
 		String key = verificationResult.getFeature().getVersionedIdentifier().toString()
-			+"/"+verificationResult.getContentReference().getIdentifier();
+			+"/"+verificationResult.getContentReference().getIdentifier(); //$NON-NLS-1$
 		Long value = new Long(verificationResult.getContentReference().getLastModified());
 		Long cachedValue = (Long)processed.get(key);
 		if(value.equals(cachedValue)){

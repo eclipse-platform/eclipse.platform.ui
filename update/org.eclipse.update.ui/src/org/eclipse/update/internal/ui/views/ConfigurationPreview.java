@@ -139,9 +139,9 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 					if (url == null)
 						return text;
 					else {
-						String link = " <a href=\"urlHandler\" arg=\"" + url
+						String link = " <a href=\"urlHandler\" arg=\"" + url //$NON-NLS-1$
 								+ "\">More info...</a>"; //$NON-NLS-1$ //$NON-NLS-2$
-						String fullText = "<form><p>" + text + link
+						String fullText = "<form><p>" + text + link //$NON-NLS-1$
 								+ "</p></form>"; //$NON-NLS-1$ //$NON-NLS-2$
 						return fullText;
 					}
@@ -169,9 +169,9 @@ public class ConfigurationPreview implements IUpdateModelChangedListener {
 			IPreviewTask task = tasks[i];
 			if (task.isEnabled() == false)
 				continue;
-			buf.append("<li style=\"text\" indent=\"0\"><a href=\"" + i + "\">"
+			buf.append("<li style=\"text\" indent=\"0\"><a href=\"" + i + "\">" //$NON-NLS-1$ //$NON-NLS-2$
 					+ task.getName() + "</a></li>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			buf.append("<li style=\"text\" indent=\"10\" vspace=\"false\">"
+			buf.append("<li style=\"text\" indent=\"10\" vspace=\"false\">" //$NON-NLS-1$
 					+ task.getDescription() + "</li>"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		buf.append("</form>"); //$NON-NLS-1$

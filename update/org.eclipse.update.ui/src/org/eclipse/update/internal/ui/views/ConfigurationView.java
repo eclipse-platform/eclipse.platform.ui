@@ -353,7 +353,7 @@ public class ConfigurationView
 			if (windowImageURL == null) {
 				String windowImagesUrls = product.getProperty(IProductConstants.WINDOW_IMAGES);
 				if (windowImagesUrls != null ) {
-					StringTokenizer st = new StringTokenizer(windowImagesUrls, ",");
+					StringTokenizer st = new StringTokenizer(windowImagesUrls, ","); //$NON-NLS-1$
 					if (st.hasMoreTokens())
 						windowImageURL = st.nextToken();
 				}

@@ -35,7 +35,7 @@ public class LocalSiteSelector {
 	public static SiteBookmark getLocaLSite(Shell parent) {
 		DirectoryDialog dialog = new DirectoryDialog(parent);
 		dialog.setMessage(
-			UpdateUI.getString("LocalSiteSelector.dialogMessage"));
+			UpdateUI.getString("LocalSiteSelector.dialogMessage")); //$NON-NLS-1$
 		dialog.setFilterPath(lastLocation);
 		String dir = dialog.open();
 
@@ -48,8 +48,8 @@ public class LocalSiteSelector {
 			} else {
 				MessageDialog.openInformation(
 					parent,
-					UpdateUI.getString("LocalSiteSelector.dirInfoTitle"),
-					UpdateUI.getString("LocalSiteSelector.dirInfoMessage"));
+					UpdateUI.getString("LocalSiteSelector.dirInfoTitle"), //$NON-NLS-1$
+					UpdateUI.getString("LocalSiteSelector.dirInfoMessage")); //$NON-NLS-1$
 				dialog.setFilterPath(dir);
 				dir = dialog.open();
 			}
@@ -59,7 +59,7 @@ public class LocalSiteSelector {
 	public static SiteBookmark getLocaLZippedSite(Shell parent) {
 		FileDialog dialog = new FileDialog(parent);
 		dialog.setText(
-			UpdateUI.getString("LocalSiteSelector.dialogMessagezip"));
+			UpdateUI.getString("LocalSiteSelector.dialogMessagezip")); //$NON-NLS-1$
 		//dialog.setFilterExtensions(new String[] { "*.zip", "*.jar" });
 		// //$NON-NLS-1$
 		dialog.setFilterExtensions(new String[] { "*.jar;*.zip" }); //$NON-NLS-1$
@@ -74,8 +74,8 @@ public class LocalSiteSelector {
 			} else {
 				MessageDialog.openInformation(
 					parent,
-					UpdateUI.getString("LocalSiteSelector.zipInfoTitle"),
-					UpdateUI.getString("LocalSiteSelector.zipInfoMessage"));
+					UpdateUI.getString("LocalSiteSelector.zipInfoTitle"), //$NON-NLS-1$
+					UpdateUI.getString("LocalSiteSelector.zipInfoMessage")); //$NON-NLS-1$
 				zip = dialog.open();
 			}
 		}
@@ -88,8 +88,8 @@ public class LocalSiteSelector {
 	 * @return
 	 */
 	static boolean isZipSite(File file) {
-		if (!file.getName().toLowerCase().endsWith(".zip")
-			&& !file.getName().toLowerCase().endsWith(".jar")) {
+		if (!file.getName().toLowerCase().endsWith(".zip") //$NON-NLS-1$
+			&& !file.getName().toLowerCase().endsWith(".jar")) { //$NON-NLS-1$
 			return false;
 		}
 
@@ -125,12 +125,12 @@ public class LocalSiteSelector {
 	 */
 	static SiteBookmark createZipSite(File file) {
 		try {
-			URL fileURL = new URL("file", null, file.getAbsolutePath());
+			URL fileURL = new URL("file", null, file.getAbsolutePath()); //$NON-NLS-1$
 			URL url =
 				new URL(
-					"jar:"
+					"jar:" //$NON-NLS-1$
 						+ fileURL.toExternalForm().replace('\\', '/')
-						+ "!/");
+						+ "!/"); //$NON-NLS-1$
 			SiteBookmark site = new SiteBookmark(file.getName(), url, false);
 			site.setLocal(true);
 			return site;
@@ -167,7 +167,7 @@ public class LocalSiteSelector {
 			try {
 				// check if the zip file contains site.xml
 				siteZip = new ZipFile(file);
-				if (siteZip.getEntry("site.xml") != null) {
+				if (siteZip.getEntry("site.xml") != null) { //$NON-NLS-1$
 					valid = true;
 					return;
 				}
@@ -179,11 +179,11 @@ public class LocalSiteSelector {
 					) {
 					ZipEntry zEntry = (ZipEntry) enum.nextElement();
 					if (!hasFeatures
-						&& zEntry.getName().startsWith("features")) {
+						&& zEntry.getName().startsWith("features")) { //$NON-NLS-1$
 						hasFeatures = true;
 					}
 					if (!hasPlugins
-						&& zEntry.getName().startsWith("plugins")) {
+						&& zEntry.getName().startsWith("plugins")) { //$NON-NLS-1$
 						hasPlugins = true;
 					}
 					if (hasFeatures && hasPlugins) {

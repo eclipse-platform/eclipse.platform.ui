@@ -51,11 +51,11 @@ public class FeatureSorter extends ViewerSorter {
 		PluginVersionIdentifier v1 = f1.getVersionedIdentifier().getVersion();
 		PluginVersionIdentifier v2 = f2.getVersionedIdentifier().getVersion();
 		
-		String label1 = f1.getLabel() == null ? "" : f1.getLabel();
-		String label2 = f2.getLabel() == null ? "" : f2.getLabel();
+		String label1 = f1.getLabel() == null ? "" : f1.getLabel(); //$NON-NLS-1$
+		String label2 = f2.getLabel() == null ? "" : f2.getLabel(); //$NON-NLS-1$
 		
-		String provider1 = f1.getProvider() == null ? "" : f1.getProvider();
-		String provider2 = f2.getProvider() == null ? "" : f2.getProvider();
+		String provider1 = f1.getProvider() == null ? "" : f1.getProvider(); //$NON-NLS-1$
+		String provider2 = f2.getProvider() == null ? "" : f2.getProvider(); //$NON-NLS-1$
 		
 		int result = 0;
 		if (key == FEATURE_VERSION) {

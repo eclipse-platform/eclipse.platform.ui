@@ -84,12 +84,12 @@ public class ShowActivitiesDialog extends Dialog {
 		container.setLayoutData(gd);
 		try {
 			Label targetLabel = new Label(container, SWT.NONE);
-			targetLabel.setText(UpdateUI.getString("ShowActivitiesDialog.date"));
+			targetLabel.setText(UpdateUI.getString("ShowActivitiesDialog.date")); //$NON-NLS-1$
 			Label target = new Label(container, SWT.NONE);
 			target.setText(SiteManager.getLocalSite().getCurrentConfiguration().getLabel());
 			
 			Label urlLabel = new Label(container, SWT.NONE);
-			urlLabel.setText(UpdateUI.getString("ShowActivitiesDialog.loc"));
+			urlLabel.setText(UpdateUI.getString("ShowActivitiesDialog.loc")); //$NON-NLS-1$
 			Label url = new Label(container, SWT.NONE);
 			url.setText(((InstallConfiguration)SiteManager.getLocalSite().getCurrentConfiguration()).getURL().getFile());
 			
@@ -173,8 +173,8 @@ public class ShowActivitiesDialog extends Dialog {
 			int y= s.getInt("y"); //$NON-NLS-1$
 			dialogLocation= new Point(x, y);
 			
-			x = s.getInt("width");
-			y = s.getInt("height");
+			x = s.getInt("width"); //$NON-NLS-1$
+			y = s.getInt("height"); //$NON-NLS-1$
 			dialogSize = new Point(x,y);
 		} catch (NumberFormatException e) {
 			dialogLocation= null;
@@ -185,11 +185,11 @@ public class ShowActivitiesDialog extends Dialog {
 	private void writeConfiguration(){
 		IDialogSettings s = getDialogSettings();
 		Point location = getShell().getLocation();
-		s.put("x", location.x);
-		s.put("y", location.y);
+		s.put("x", location.x); //$NON-NLS-1$
+		s.put("y", location.y); //$NON-NLS-1$
 		
 		Point size = getShell().getSize();
-		s.put("width", size.x);
-		s.put("height", size.y);
+		s.put("width", size.x); //$NON-NLS-1$
+		s.put("height", size.y); //$NON-NLS-1$
 	}
 }

@@ -371,7 +371,7 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		URL oldURL = bookmark.getURL();
 		EditSiteDialog dialog = new EditSiteDialog(getShell(), bookmark);
 		dialog.create();
-		String title = bookmark.isLocal() ? UpdateUI.getString("SitePage.dialogEditLocal") : UpdateUI.getString("SitePage.dialogEditUpdateSite"); //$NON-NLS-1$
+		String title = bookmark.isLocal() ? UpdateUI.getString("SitePage.dialogEditLocal") : UpdateUI.getString("SitePage.dialogEditUpdateSite"); //$NON-NLS-1$ //$NON-NLS-2$
 																																				  // //$NON-NLS-2$
 		dialog.getShell().setText(title);
 		if (dialog.open() == EditSiteDialog.OK ) {

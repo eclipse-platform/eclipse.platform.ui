@@ -128,7 +128,7 @@ public class ReviewPage
 				if (cycleCandidates == null)
 					cycleCandidates = new ArrayList();
 				if (cycleCandidates.contains(feature))
-					throw Utilities.newCoreException("Cycle starting at " + feature.getVersionedIdentifier(), null);
+					throw Utilities.newCoreException(UpdateUI.getFormattedMessage("InstallWizard.ReviewPage.cycle", feature.getVersionedIdentifier().toString()), null); //$NON-NLS-1$
 				else
 					cycleCandidates.add(feature);
 				IFeatureReference[] irefs =
@@ -196,8 +196,8 @@ public class ReviewPage
 		// when searching for updates, only nested patches can be shown.
 		// when searching for features, features and patches can be shown
 		String filterText = filterCheck.getText();
-		String filterFeatures = UpdateUI.getString("InstallWizard.ReviewPage.filterFeatures");
-		String filterPatches = UpdateUI.getString("InstallWizard.ReviewPage.filterPatches");
+		String filterFeatures = UpdateUI.getString("InstallWizard.ReviewPage.filterFeatures"); //$NON-NLS-1$
+		String filterPatches = UpdateUI.getString("InstallWizard.ReviewPage.filterPatches"); //$NON-NLS-1$
 		boolean isUpdateSearch = searchRunner.getSearchProvider() instanceof ModeSelectionPage;
 		if (isUpdateSearch && filterText.equals(filterFeatures))
 			filterCheck.setText(filterPatches);
@@ -752,7 +752,7 @@ public class ReviewPage
 //		Button detailsButton;
 		public StatusDialog() {
 			super(UpdateUI.getActiveWorkbenchShell(), UpdateUI
-					.getString("InstallWizard.ReviewPage.invalid.short"), null,
+					.getString("InstallWizard.ReviewPage.invalid.short"), null, //$NON-NLS-1$
 					validationStatus, IStatus.OK | IStatus.INFO
 							| IStatus.WARNING | IStatus.ERROR);
 		}
