@@ -463,16 +463,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	}
 	
 	/**
-	 * Updates all actions that are instances of 
-	 * <code>IUpdate</code>.
-	 *
-	 * @deprecated use updateObjects
-	 */
-	public void updateActions() {
-		updateObjects();
-	}
-	
-	/**
 	 * Updates all the registered updatables.
 	 */
 	public void updateObjects() {
