@@ -1,7 +1,7 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 
@@ -69,8 +69,6 @@ public class SetKeywordSubstitutionOperation implements IRunnableWithProgress {
 					messages.add(status);
 				}
 			}
-			
-
 		} catch (TeamException e) {
 			throw new InvocationTargetException(e);
 		} finally {
@@ -78,7 +76,7 @@ public class SetKeywordSubstitutionOperation implements IRunnableWithProgress {
 		}
 
 		// Check for any status messages and display them
-		if ( ! messages.isEmpty()) {
+		if (!messages.isEmpty()) {
 			boolean error = false;
 			MultiStatus combinedStatus = new MultiStatus(CVSUIPlugin.ID, 0,
 				Policy.bind("SetKeywordSubstitution.problemsMessage"), null);
