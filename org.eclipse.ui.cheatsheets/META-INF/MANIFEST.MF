@@ -7,13 +7,7 @@ Bundle-ClassPath: cheatsheets.jar
 Bundle-Activator: org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin
 Bundle-Vendor: %PROVIDER_NAME
 Bundle-Localization: plugin
-Export-Package: org.eclipse.ui.cheatsheets,
- org.eclipse.ui.internal.cheatsheets;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.actions;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.data;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.dialogs;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.registry;x-internal:=true,
- org.eclipse.ui.internal.cheatsheets.views;x-internal:=true
+Export-Package: org.eclipse.ui.cheatsheets
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.forms,
  org.eclipse.help,
