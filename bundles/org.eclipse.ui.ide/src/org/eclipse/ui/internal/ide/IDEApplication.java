@@ -189,6 +189,8 @@ public final class IDEApplication implements IPlatformRunnable, IExecutableExten
 				workspace.mkdir();
 
 			try {
+			    // Don't use File.toURL() since it adds a leading slash that Platform does not
+			    // handle properly.  See bug 54081 for more details.  
 			    String path = workspace.getAbsolutePath().replace(File.separatorChar, '/');
 				url = new URL("file", null, path); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
