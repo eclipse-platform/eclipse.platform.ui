@@ -316,7 +316,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 			if (classpath != null)
 				allLibraries.addAll(splitClasspath(classpath));	
 		}
-		return (ILibrary[])(new ILibrary[allLibraries.size()]);
+		return (ILibrary[]) allLibraries.toArray(new ILibrary[allLibraries.size()]);
 	}
 	
 	private ArrayList splitClasspath(String classpath) {
