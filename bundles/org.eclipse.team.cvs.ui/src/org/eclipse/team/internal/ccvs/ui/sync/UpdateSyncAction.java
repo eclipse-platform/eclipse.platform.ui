@@ -1,9 +1,14 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * All rights reserved.   This program and the accompanying materials
+ * are made available under the terms of the Common Public License v0.5
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v05.html
+ * 
+ * Contributors:
+ * IBM - Initial API and implementation
+ ******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.sync;
-
-/*
- * (c) Copyright IBM Corp. 2000, 2002.
- * All Rights Reserved.
- */
  
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,6 +50,7 @@ import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
+import org.eclipse.team.internal.ui.sync.TeamFile;
 
 /**
  * UpdateSyncAction is run on a set of sync nodes when the "Update" menu item is performed
@@ -218,7 +224,18 @@ public class UpdateSyncAction extends MergeAction {
 								if (onlyUpdateAutomergeable && (changedNode.getKind() & IRemoteSyncElement.AUTOMERGE_CONFLICT) != 0) {
 									updateShallow.add(changedNode);
 								} else {
-									updateIgnoreLocalShallow.add(changedNode);
+									// Check to see if there is a remote
+									if (((TeamFile)changedNode).getMergeResource().getSyncElement().getRemote() == null) {
+										// If a locally modified file has no remote, "update -C" will fail.
+										// We must unmanage and delete the file ourselves
+										deletions.add(changedNode);
+									} else {
+										updateIgnoreLocalShallow.add(changedNode);
+										// If the resource doesn't exist remotely, we must ensure the sync info will allow the above update.
+										if (!resource.exists()) {
+											makeIncoming.add(changedNode);
+										}
+									}
 								}
 							} else {
 								// Conflicting change on a folder only occurs if the folder has been deleted locally
