@@ -1,4 +1,4 @@
-package org.eclipse.ant.core;
+package org.eclipse.ant.internal.core;
 
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class Policy {
 	private static ResourceBundle bundle;
-	private static final String bundleName = "org.eclipse.ant.core.messages";
+	private static final String bundleName = "org.eclipse.ant.internal.core.messages";
 
 	static {
 		relocalize();

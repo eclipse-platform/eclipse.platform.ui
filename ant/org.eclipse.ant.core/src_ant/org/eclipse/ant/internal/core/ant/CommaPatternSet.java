@@ -1,4 +1,4 @@
-package org.eclipse.ant.core;
+package org.eclipse.ant.internal.core.ant;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -58,17 +58,14 @@ package org.eclipse.ant.core;
  * <http://www.apache.org/>.
  */
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.ProjectHelper;
-import org.apache.tools.ant.BuildException;
+import java.io.*;
+import java.util.*;
+
+import org.apache.tools.ant.*;
 import org.apache.tools.ant.types.PatternSet;
 import org.apache.tools.ant.types.Reference;
-
-import java.io.*;
-import java.util.Enumeration;
-import java.util.Stack;
-import java.util.StringTokenizer;
-import java.util.Vector;
+import org.apache.tools.ant.types.PatternSet.NameEntry;
+import org.eclipse.ant.internal.core.Policy;
 
 /**
  * Named collection of include/exclude tags.  This is largely a copy of the original
