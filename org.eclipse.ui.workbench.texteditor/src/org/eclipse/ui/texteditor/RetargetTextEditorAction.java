@@ -15,6 +15,9 @@ package org.eclipse.ui.texteditor;
  
 import java.util.ResourceBundle;
 
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -37,6 +40,8 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	private IAction fAction;
 	/** The default label if there is no target action */
 	private String fDefaultText;
+	/** The local help listener */
+	private HelpListener fLocalHelpListener;
 	/** The listener to pick up changes of the target action */
 	private IPropertyChangeListener fListener= new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
@@ -67,6 +72,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	public RetargetTextEditorAction(ResourceBundle bundle, String prefix, int style) {
 		super(bundle, prefix, style);
 		fDefaultText= getText();
+		installHelpListener();
 	}
 	
 	/**
@@ -84,6 +90,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	public RetargetTextEditorAction(ResourceBundle bundle, String prefix) {
 		super(bundle, prefix);
 		fDefaultText= getText();
+		installHelpListener();
 	}
 
 	/**
@@ -111,6 +118,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		super(bundle, prefix, style);
 		fDefaultText= getText();
 		setId(actionId);
+		installHelpListener();
 	}
 	
 	/**
@@ -131,6 +139,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		super(bundle, prefix);
 		fDefaultText= getText();
 		setId(actionId);
+		installHelpListener();
 	}
 	
 	/**
@@ -185,6 +194,33 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		}
 	}
 
+	private void installHelpListener() {
+		super.setHelpListener(new HelpListener() {
+			public void helpRequested(HelpEvent e) {
+				HelpListener listener= null;
+				if (fAction != null) {
+					// if we have a handler, see if it has a help listener
+					listener= fAction.getHelpListener();
+					if (listener == null)
+						// use our own help listener
+						listener= fLocalHelpListener;
+				}
+				if (listener != null)
+					// pass on the event
+					listener.helpRequested(e);
+			}
+		});
+	}
+
+	/** 
+	 * The <code>RetargetTextEditorAction</code> implementation of this method declared on
+	 * <code>IAction</code> stores the help listener in a local field. The
+	 * supplied listener is only used if there is no handler.
+	 */
+	public void setHelpListener(HelpListener listener) {
+		fLocalHelpListener= listener;
+	}
+	
 	/*
 	 * @see Action#run()
 	 */

@@ -5,6 +5,7 @@
 <!-- ======================================================================= -->
 <plugin
 	name="%pluginName"
+	
 	id="org.eclipse.search"
 	version="2.1.0"
 	provider-name="%providerName"
@@ -67,12 +68,6 @@
 			command="org.eclipse.search.ui.openSearchDialog"
 			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
 		/>
-		<keyBinding
-			string="Ctrl+H"
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.search.ui.openSearchDialog"
-			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
-		/>
 
 		<command
 			category="org.eclipse.search.ui.category.search"
@@ -85,12 +80,6 @@
 			scope="org.eclipse.ui.globalScope"
 			command="org.eclipse.search.ui.openFileSearchPage"
 			configuration="org.eclipse.ui.defaultAcceleratorConfiguration"
-		/>
-		<keyBinding
-			string=""
-			scope="org.eclipse.ui.globalScope"
-			command="org.eclipse.search.ui.openFileSearchPage"
-			configuration="org.eclipse.ui.emacsAcceleratorConfiguration"
 		/>
 	</extension>
 	

@@ -21,13 +21,13 @@ public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContex
 	
 	/**
 	 * Id for the text editor preference page.
-	 * Default value: <code>"text_editor_preference_page_context"</code>.
+	 * Default value: <code>"org.eclipse.ui.text_editor_preference_page_context"</code>.
 	 */
 	public static final String TEXT_EDITOR_PREFERENCE_PAGE= PREFIX + "text_editor_preference_page_context"; //$NON-NLS-1$
 
 	/**
 	 * Id for the text editor.
-	 * Default value: <code>"text_editor_context"</code>.
+	 * Default value: <code>"org.eclipse.ui.text_editor_context"</code>.
 	 */
 	public static final String TEXT_EDITOR= PREFIX + "text_editor_context"; //$NON-NLS-1$
 }
