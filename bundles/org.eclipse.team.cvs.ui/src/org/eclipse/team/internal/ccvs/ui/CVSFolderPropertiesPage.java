@@ -75,19 +75,10 @@ public class CVSFolderPropertiesPage extends PropertyPage {
 				if (tag == null) {
 					createLabel(composite, Policy.bind("CVSFilePropertiesPage.none")); //$NON-NLS-1$
 				} else {
-					switch (tag.getType()) {
-						case CVSTag.HEAD:
-							createLabel(composite, tag.getName());
-							break;
-						case CVSTag.VERSION:
-							createLabel(composite, Policy.bind("CVSFilePropertiesPage.version", tag.getName())); //$NON-NLS-1$
-							break;
-						case CVSTag.BRANCH:
-							createLabel(composite, Policy.bind("CVSFilePropertiesPage.branch", tag.getName())); //$NON-NLS-1$
-							break;
-						case CVSTag.DATE:
-							createLabel(composite, Policy.bind("CVSFilePropertiesPage.date", tag.getName())); //$NON-NLS-1$
-							break;
+					if (tag.getType() == CVSTag.DATE) {
+						createLabel(composite, Policy.bind("CVSFilePropertiesPage.date", tag.getName())); //$NON-NLS-1$
+					} else {
+						createLabel(composite, tag.getName());
 					}
 				}
 				
@@ -122,7 +113,7 @@ public class CVSFolderPropertiesPage extends PropertyPage {
 			// Display error text
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.error"), 2); //$NON-NLS-1$
 		}
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.FOLDER_PROPERTY_PAGE);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.FOLDER_PROPERTY_PAGE);
 		return composite;
 	}
 

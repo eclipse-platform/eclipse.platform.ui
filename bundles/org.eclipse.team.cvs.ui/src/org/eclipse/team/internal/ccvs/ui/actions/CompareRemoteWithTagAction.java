@@ -17,10 +17,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTreeBuilder;
 import org.eclipse.team.internal.ccvs.ui.CVSCompareEditorInput;
 import org.eclipse.team.internal.ccvs.ui.ResourceEditionNode;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
@@ -39,22 +44,53 @@ public class CompareRemoteWithTagAction extends CVSAction {
 	 * @see org.eclipse.team.internal.ccvs.ui.actions.CVSAction#execute(org.eclipse.jface.action.IAction)
 	 */
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
+		
+		ICVSRemoteResource[] editions = getSelectedRemoteResources();
+		if (editions.length == 0) return;
+		final ICVSRemoteResource resource = editions[0];
+		
+		final ResourceEditionNode[] input = new ResourceEditionNode[] { null /* left */, null /* right */};
+		final CVSTag[] tag = new CVSTag[] { null};
+
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				ICVSRemoteResource[] editions = getSelectedRemoteResources();
-				if (editions.length == 0) return;
 				ICVSFolder folder;
-				if (editions[0] instanceof ICVSRemoteFolder) {
-					folder = (ICVSFolder)editions[0];
+				if (resource instanceof ICVSRemoteFolder) {
+					folder = (ICVSFolder)resource;
 				} else {
-					folder = editions[0].getParent();
+					folder = resource.getParent();
 				}
-				final CVSTag tag = TagSelectionDialog.getTagToCompareWith(getShell(), new ICVSFolder[] {folder});
-				if (tag == null) return;
-				ResourceEditionNode left = new ResourceEditionNode(editions[0]);
-				ResourceEditionNode right = new ResourceEditionNode(editions[0].forTag(tag));
+				tag[0] = TagSelectionDialog.getTagToCompareWith(getShell(), new ICVSFolder[] {folder});
+			}
+		}, false /* cancelable */, PROGRESS_BUSYCURSOR);
+		
+		if (tag[0] == null) return;
+		
+		final ICVSRemoteResource[] remote = new ICVSRemoteResource[] { null };
+		if (resource.isFolder()) {
+			remote[0] = resource.forTag(tag[0]);
+		} else {
+			run(new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException {
+					try {
+						ICVSRepositoryLocation location = resource.getRepository();
+						remote[0] = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFile)resource, tag[0], monitor);
+					} catch (CVSException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+			}, false /* cancelable */, PROGRESS_DIALOG);
+		}
+		
+		input[0] = new ResourceEditionNode(resource);
+		input[1] = new ResourceEditionNode(remote[0]);
+		
+		if (input[0] == null || input[1] == null) return;
+		
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				CompareUI.openCompareEditorOnPage(
-				  new CVSCompareEditorInput(left, right),
+				  new CVSCompareEditorInput(input[0] /* left */, input[1] /* right */),
 				  getTargetPage());
 			}
 		}, false /* cancelable */, PROGRESS_BUSYCURSOR);

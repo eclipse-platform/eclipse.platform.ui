@@ -16,9 +16,11 @@ import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.model.BranchCategory;
 import org.eclipse.team.internal.ccvs.ui.model.CVSTagElement;
+import org.eclipse.team.internal.ccvs.ui.model.RemoteModule;
 import org.eclipse.team.internal.ccvs.ui.model.VersionCategory;
 
 public class RepositorySorter extends ViewerSorter {
@@ -26,6 +28,16 @@ public class RepositorySorter extends ViewerSorter {
 		if (element instanceof ICVSRemoteFolder) {
 			if (((ICVSRemoteFolder)element).isDefinedModule()) {
 				return 7;
+			}
+			return 1;
+		}
+		if (element instanceof RemoteModule) {
+			ICVSRemoteResource resource = ((RemoteModule)element).getCVSResource();
+			if (resource instanceof ICVSRemoteFolder) {
+				ICVSRemoteFolder folder = (ICVSRemoteFolder) resource;
+				if (folder.isDefinedModule()) {
+					return 7;
+				}
 			}
 			return 1;
 		}

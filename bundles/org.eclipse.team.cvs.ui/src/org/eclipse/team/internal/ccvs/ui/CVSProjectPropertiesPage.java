@@ -241,7 +241,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 		});
 		
 		initializeValues(oldLocation);
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.PROJECT_PROPERTY_PAGE);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.PROJECT_PROPERTY_PAGE);
 		return composite;
 	}
 	/**
@@ -348,7 +348,7 @@ public class CVSProjectPropertiesPage extends PropertyPage {
 			CVSTag tag = local.getFolderSyncInfo().getTag();
 			String tagName;
 			if (tag == null) {
-				tagName = CVSTag.DEFAULT.getName();
+				tagName = Policy.bind("CVSFilePropertiesPage.none");
 			} else {
 				tagName = tag.getName();
 			}

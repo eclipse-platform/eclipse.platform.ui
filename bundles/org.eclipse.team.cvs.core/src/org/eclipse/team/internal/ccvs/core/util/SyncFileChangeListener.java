@@ -24,7 +24,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
 
 /*
@@ -122,6 +124,8 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 						toBeNotified = handleChangedMetaFile(resource, kind);
 					} else if(name.equals(SyncFileWriter.IGNORE_FILE)) {
 						toBeNotified = handleChangedIgnoreFile(resource, kind);
+					} else if (isExternalDeletion(resource, kind)) {
+						toBeNotified = handleExternalDeletion(resource);
 					}
 										
 					if(toBeNotified.length>0 && isModifiedBy3rdParty(resource)) {
@@ -148,6 +152,45 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 		}
 	}
 	
+	/**
+	 * @param resource
+	 * @return
+	 */
+	protected IContainer[] handleExternalDeletion(IResource resource) {
+		IContainer changedContainer = resource.getParent();
+		if(changedContainer.exists()) {
+			return new IContainer[] {changedContainer};
+		} else {
+			return new IContainer[0];
+		}
+	}
+
+	/**
+	 * Treat a resource as an external deletion if 
+	 *   - it is a file 
+	 *   - the delta says the file was removed
+	 *   - the file is not managed but its parent is a CVS folder
+	 * 
+	 * There will be some false positives but the reaction to this situation
+	 * is to purge the cahced CVS meta-information so nothing bad will happen
+	 * for the false positives.
+	 * 
+	 * @param resource
+	 * @param kind
+	 * @return
+	 */
+	protected boolean isExternalDeletion(IResource resource, int kind) {
+		if (kind != IResourceDelta.REMOVED) return false;
+		if (resource.getType() != IResource.FILE) return false;
+		ICVSFile file = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
+		try {
+			return (!file.isManaged() && file.getParent().isCVSFolder());
+		} catch (CVSException e) {
+			CVSProviderPlugin.log(e);
+			return false;
+		}
+	}
+
 	/*
 	 * Consider non-existing resources as being recently deleted and thus modified, and resources
 	 * with modification stamps that differ from when the CVS plugin last modified the meta-file.

@@ -462,11 +462,10 @@ public class CVSDecoratorPreferencesPage extends PreferencePage implements IWork
 		Map bindings = new HashMap();
 		bindings.put(CVSDecoratorConfiguration.RESOURCE_NAME, Policy.bind("name_of_the_resource_being_decorated_42")); //$NON-NLS-1$
 		bindings.put(CVSDecoratorConfiguration.RESOURCE_TAG, Policy.bind("the_tag_applied_to_the_resource_43")); //$NON-NLS-1$
-		bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, Policy.bind("keyword_subsitution_rule_for_the_resource_44")); //$NON-NLS-1$
+		bindings.put(CVSDecoratorConfiguration.FILE_KEYWORD, Policy.bind("keyword_substitution_rule_for_the_resource_44")); //$NON-NLS-1$
 		bindings.put(CVSDecoratorConfiguration.FILE_REVISION, Policy.bind("last_revision_loaded_into_workspace_45")); //$NON-NLS-1$
 		bindings.put(CVSDecoratorConfiguration.DIRTY_FLAG, Policy.bind("flag_indicating_that_the_file_has_outgoing_changes_46")); //$NON-NLS-1$
 		bindings.put(CVSDecoratorConfiguration.ADDED_FLAG, Policy.bind("flag_indicating_that_the_file_has_been_added_to_the_server_47")); //$NON-NLS-1$
-		bindings.put(CVSDecoratorConfiguration.READ_ONLY_FLAG, Policy.bind("flag_indicating_that_the_file_is_read_only")); //$NON-NLS-1$
 		return bindings;
 	}
 }

@@ -53,36 +53,36 @@
  
  	<!-- *************** Resource patterns ignored by CVS **************** -->
  	<extension point="org.eclipse.team.core.ignore">
-		<ignore pattern = "RCS" selected = "true"/>
-		<ignore pattern = "RCSLOG" selected = "true"/>
-		<ignore pattern = "SCCS" selected = "true"/>
-		<ignore pattern = "CVS.adm" selected = "true"/>
-		<ignore pattern = "tags" selected = "true"/>
-		<ignore pattern = "TAGS" selected = "true"/>
-		<ignore pattern = ".make.state" selected = "true"/>
-		<ignore pattern = ".nse_depinfo" selected = "true"/>
-		<ignore pattern = "*~" selected = "true"/>
-		<ignore pattern = "#*" selected = "true"/>
-		<ignore pattern = ".#*" selected = "true"/>
-		<ignore pattern = ",*" selected = "true"/>
-		<ignore pattern = "_$*" selected = "true"/>
-		<ignore pattern = "*$" selected = "true"/>
-		<ignore pattern = "*.old" selected = "true"/>
-		<ignore pattern = "*.bak" selected = "true"/>
-		<ignore pattern = "*.BAK" selected = "true"/>
-		<ignore pattern = "*.orig" selected = "true"/>
-		<ignore pattern = "*.rej" selected = "true"/>
-		<ignore pattern = ".del-*" selected = "true"/>
-		<ignore pattern = "*.a" selected = "true"/>
-		<ignore pattern = "*.olb" selected = "true"/>
-		<ignore pattern = "*.obj" selected = "true"/>
-		<ignore pattern = "*.so" selected = "true"/>
-		<ignore pattern = "*.exe" selected = "true"/>
-		<ignore pattern = "*.Z" selected = "true"/>
-		<ignore pattern = "*.elc" selected = "true"/>
-		<ignore pattern = "*.ln" selected = "true"/>
-		<ignore pattern = ".DS_Store" selected = "true"/>
-		<ignore pattern = "core" selected = "false"/>
+		<ignore pattern = "RCS" enabled = "true"/>
+		<ignore pattern = "RCSLOG" enabled = "true"/>
+		<ignore pattern = "SCCS" enabled = "true"/>
+		<ignore pattern = "CVS.adm" enabled = "true"/>
+		<ignore pattern = "tags" enabled = "true"/>
+		<ignore pattern = "TAGS" enabled = "true"/>
+		<ignore pattern = ".make.state" enabled = "true"/>
+		<ignore pattern = ".nse_depinfo" enabled = "true"/>
+		<ignore pattern = "*~" enabled = "true"/>
+		<ignore pattern = "#*" enabled = "true"/>
+		<ignore pattern = ".#*" enabled = "true"/>
+		<ignore pattern = ",*" enabled = "true"/>
+		<ignore pattern = "_$*" enabled = "true"/>
+		<ignore pattern = "*$" enabled = "true"/>
+		<ignore pattern = "*.old" enabled = "true"/>
+		<ignore pattern = "*.bak" enabled = "true"/>
+		<ignore pattern = "*.BAK" enabled = "true"/>
+		<ignore pattern = "*.orig" enabled = "true"/>
+		<ignore pattern = "*.rej" enabled = "true"/>
+		<ignore pattern = ".del-*" enabled = "true"/>
+		<ignore pattern = "*.a" enabled = "true"/>
+		<ignore pattern = "*.olb" enabled = "true"/>
+		<ignore pattern = "*.obj" enabled = "true"/>
+		<ignore pattern = "*.so" enabled = "true"/>
+		<ignore pattern = "*.exe" enabled = "true"/>
+		<ignore pattern = "*.Z" enabled = "true"/>
+		<ignore pattern = "*.elc" enabled = "true"/>
+		<ignore pattern = "*.ln" enabled = "true"/>
+		<ignore pattern = ".DS_Store" enabled = "true"/>
+		<ignore pattern = "core" enabled = "false"/>
 	</extension>
  
   	<!-- *************** Markers **************** -->

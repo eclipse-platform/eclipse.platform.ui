@@ -485,7 +485,11 @@ public final class Team {
 					for (int j = 0; j < configElements.length; j++) {
 						String pattern = configElements[j].getAttribute("pattern"); //$NON-NLS-1$
 						if (pattern != null) {
-							String selected = configElements[j].getAttribute("selected"); //$NON-NLS-1$
+							String selected = configElements[j].getAttribute("enabled"); //$NON-NLS-1$
+							if (selected == null) {
+								// Check for selected because this used to be the field name
+								selected = configElements[j].getAttribute("selected"); //$NON-NLS-1$
+							}
 							boolean enabled = selected != null && selected.equalsIgnoreCase("true"); //$NON-NLS-1$
 							// if this ignore doesn't already exist, add it to the global list
 							pluginIgnore.put(pattern, new Boolean(enabled));

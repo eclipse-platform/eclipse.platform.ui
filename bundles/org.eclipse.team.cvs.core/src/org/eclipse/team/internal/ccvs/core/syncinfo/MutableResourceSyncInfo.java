@@ -88,6 +88,15 @@ public class MutableResourceSyncInfo extends ResourceSyncInfo {
 	}
 	
 	/**
+	 * Sets the timeStamp.
+	 * @param timeStamp The timeStamp to set
+	 */
+	public void setTimeStamp(Date timeStamp, boolean clearMerged) {
+		setTimeStamp(timeStamp);
+		if (clearMerged) setSyncType(TYPE_REGULAR);
+	}
+	
+	/**
 	 * Sets the keywordMode.
 	 * @param keywordMode The keywordMode to set
 	 */

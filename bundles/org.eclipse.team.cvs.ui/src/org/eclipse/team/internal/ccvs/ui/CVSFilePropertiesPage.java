@@ -105,7 +105,7 @@ public class CVSFilePropertiesPage extends PropertyPage {
 			createLabel(composite, Policy.bind("CVSFilePropertiesPage.error")); //$NON-NLS-1$
 			createLabel(composite, ""); //$NON-NLS-1$
 		}
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.FILE_PROPERTY_PAGE);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.FILE_PROPERTY_PAGE);
 		return composite;
 	}
 	/**

@@ -54,6 +54,7 @@ public class CVSTag {
 	}
 
 	public int getType() {
+		// TODO: getType() will not return accurate types for Tags retrieved from the local CVS Entries file.  See Bug: 36758
 		return type;
 	}
 	

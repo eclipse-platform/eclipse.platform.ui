@@ -223,6 +223,8 @@ public class PServerConnection implements IServerConnection {
 		Socket result;
 		try {
 			result= Util.createSocket(cvsroot.getHost(), port, monitor);
+			// Bug 36351: disable buffering and send bytes immediately
+			result.setTcpNoDelay(true);
 		} catch (InterruptedIOException e) {
 			// If we get this exception, chances are the host is not responding
 			throw new InterruptedIOException(Policy.bind("PServerConnection.socket", new Object[] {cvsroot.getHost()}));//$NON-NLS-1$

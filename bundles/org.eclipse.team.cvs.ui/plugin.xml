@@ -100,7 +100,7 @@
 	<extension point="org.eclipse.ui.commands">
       <category
             name="%CVSActionSet.categoryName"
-            description="%CVSActionSet.category.description"
+            description="%CVSActionSet.description"
             id="org.eclipse.team.cvs.ui.actionSet">
       </category>
       <command

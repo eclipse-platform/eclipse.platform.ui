@@ -562,6 +562,24 @@ public class EclipseSynchronizer {
 	}
 	
 	/**
+	 * The resource has been deleted. Make sure any cached state is cleared.
+	 * This is needed because the move/delete hook is not invoked in all situations
+	 * (e.g. external deletion).
+	 * 
+	 * @param resource
+	 * @throws CVSException
+	 */
+	protected void handleDeleted(IResource resource) throws CVSException {
+		if (resource.exists()) return;
+		try {
+			beginOperation(null);
+			adjustDirtyStateRecursively(resource, RECOMPUTE_INDICATOR);
+		} finally {
+			endOperation(null);
+		}
+	}
+	
+	/**
 	 * Prepare for a move or delete within the move/delete hook by moving the
 	 * sync info into phantom space and flushing the session properties cache.
 	 * This will allow sync info for deletions to be maintained in the source

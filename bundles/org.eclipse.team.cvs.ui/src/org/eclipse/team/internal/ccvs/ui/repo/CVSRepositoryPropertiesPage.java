@@ -176,7 +176,7 @@ public class CVSRepositoryPropertiesPage extends PropertyPage {
 				connectionInfoChanged = true;
 			}
 		});
-		WorkbenchHelp.setHelp(composite, IHelpContextIds.REPOSITORY_LOCATION_PROPERTY_PAGE);
+		WorkbenchHelp.setHelp(getControl(), IHelpContextIds.REPOSITORY_LOCATION_PROPERTY_PAGE);
 		return composite;
 	}
 	/**

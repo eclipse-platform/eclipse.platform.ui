@@ -49,11 +49,12 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData());
 		
-		Label intro = new Label(composite, SWT.LEFT);
+		Label intro = new Label(composite, SWT.LEFT | SWT.WRAP);
 		intro.setText(Policy.bind("ExtMethodPreferencePage_message")); //$NON-NLS-1$
 		GridData data = new GridData();
 		data.horizontalSpan = 3;
 		data.horizontalAlignment = GridData.FILL;
+		data.widthHint = 300;
 		intro.setLayoutData(data);
 		
 		new Label(composite, SWT.LEFT).setText(Policy.bind("ExtMethodPreferencePage_CVS_RSH")); //$NON-NLS-1$

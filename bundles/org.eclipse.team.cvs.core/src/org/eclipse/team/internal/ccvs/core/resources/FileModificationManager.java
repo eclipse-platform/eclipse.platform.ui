@@ -86,8 +86,11 @@ public class FileModificationManager implements IResourceChangeListener, ISavePa
 					} else if (delta.getKind() == IResourceDelta.ADDED) {
 						resourceChanged(resource, true);
 					} else if (delta.getKind() == IResourceDelta.REMOVED) {
-						// provide notifications for deletions since they may not have been managed
-						// The move/delete hook would have updated the parent counts properly
+						try {
+							EclipseSynchronizer.getInstance().handleDeleted(resource);
+						} catch (CVSException e) {
+							CVSProviderPlugin.log(e);
+						}
 						modifiedResources.add(resource);
 					}
 
