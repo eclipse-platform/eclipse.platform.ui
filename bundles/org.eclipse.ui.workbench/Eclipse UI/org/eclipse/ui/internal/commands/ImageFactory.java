@@ -28,14 +28,8 @@ final class ImageFactory {
 	private static Map map = new HashMap();
 	
 	static {
-		put("category_collapsed", "icons/full/commands/category_collapsed.gif"); //$NON-NLS-1$//$NON-NLS-2$
-		put("category_expanded", "icons/full/commands/category_expanded.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("change", "icons/full/commands/change.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("exclamation", "icons/full/commands/exclamation.gif"); //$NON-NLS-1$//$NON-NLS-2$
-		put("gesture_configuration_active", "icons/full/commands/gesture_configuration_active.gif"); //$NON-NLS-1$//$NON-NLS-2$
-		put("gesture_configuration_inactive", "icons/full/commands/gesture_configuration_inactive.gif"); //$NON-NLS-1$//$NON-NLS-2$
-		put("key_configuration_active", "icons/full/commands/key_configuration_active.gif"); //$NON-NLS-1$//$NON-NLS-2$
-		put("key_configuration_inactive", "icons/full/commands/key_configuration_inactive.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("minus", "icons/full/commands/minus.gif"); //$NON-NLS-1$//$NON-NLS-2$
 		put("plus", "icons/full/commands/plus.gif"); //$NON-NLS-1$//$NON-NLS-2$
 	}
