@@ -43,23 +43,58 @@ public class TestFeatureParse extends UpdateManagerTestCase {
 	
 	public void testParseValid1() throws Exception {
 
-	try {
+		try {
+			URL remoteURL =
+				new URL(SOURCE_FILE_SITE + "parsertests/feature1.xml");
+			DefaultFeatureParser parser =
+				new DefaultFeatureParser(new FeatureExecutableFactory());
+			URL resolvedURL = URLEncoder.encode(remoteURL);
+			FeatureModel remoteFeature = parser.parse(resolvedURL.openStream());
+			remoteFeature.resolve(remoteURL, null);
 
-		URL remoteURL = new URL(SOURCE_FILE_SITE + "parsertests/feature1.xml");
-		DefaultFeatureParser parser = new DefaultFeatureParser(new FeatureExecutableFactory());
-		URL resolvedURL = URLEncoder.encode(remoteURL);		
-		FeatureModel remoteFeature = parser.parse(resolvedURL.openStream());
-		remoteFeature.resolve(remoteURL, null);
-	
-		fail("Exception shoudl be thrown");
-	} catch (SAXParseException e){
-		if (e.getMessage().indexOf("</copyright>")==-1){
-			throw e;	
+			fail("Exception should be thrown");
+		} catch (SAXParseException e) {
+			if (e.getMessage().indexOf("</copyright>") == -1) {	
+				throw e;	
+			}
 		}
 	}
-		
+	
+	public void testParseValid1bis() throws Exception {
 
+		try {
+			URL remoteURL =
+				new URL(SOURCE_FILE_SITE + "parsertests/feature1bis.xml");
+			DefaultFeatureParser parser =
+				new DefaultFeatureParser(new FeatureExecutableFactory());
+			URL resolvedURL = URLEncoder.encode(remoteURL);
+			FeatureModel remoteFeature = parser.parse(resolvedURL.openStream());
+			remoteFeature.resolve(remoteURL, null);
+
+			fail("Exception should be thrown");
+		} catch (SAXParseException e) {
+			if (e.getMessage().indexOf("</copyright>") == -1) {	
+				throw e;	
+			}
+		}
 	}	
+	
+	public void testParseValid2() throws Exception {
+
+		try {
+			URL remoteURL =
+				new URL(SOURCE_FILE_SITE + "parsertests/feature2.xml");
+			DefaultFeatureParser parser =
+				new DefaultFeatureParser(new FeatureExecutableFactory());
+			URL resolvedURL = URLEncoder.encode(remoteURL);
+			FeatureModel remoteFeature = parser.parse(resolvedURL.openStream());
+			remoteFeature.resolve(remoteURL, null);
+
+
+		} catch (SAXParseException e) {
+			fail("Exception should not be thrown"+e.getMessage());			
+		}
+	}		
 	
 }
 

@@ -17,6 +17,7 @@ import org.eclipse.update.internal.core.*;
 import org.eclipse.update.internal.core.SiteFileFactory;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
 import org.eclipse.update.tests.UpdateManagerTestCase;
+import org.xml.sax.SAXParseException;
 
 public class TestSiteParse extends UpdateManagerTestCase {
 
@@ -215,4 +216,49 @@ public class TestSiteParse extends UpdateManagerTestCase {
 		ICategory[] categories = ((FeatureReference)featureRef[0]).getCategories();
 		assertTrue(categories.length==0);
 	}	
+	
+		public void testParseValid7() throws Exception {
+
+		try {
+			URL remoteURL =
+				new URL(SOURCE_FILE_SITE + "parsertests/site7.xml");
+			DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
+			URL resolvedURL = URLEncoder.encode(remoteURL);		
+			SiteModel remoteSite = parser.parse(resolvedURL.openStream());
+			remoteSite.resolve(remoteURL, null);
+
+		} catch (SAXParseException e) {
+			fail("Exception should not be thrown"+e.getMessage());			
+		}
+	}
+	
+	public void testParseValid8() throws Exception {
+
+		try {
+			URL remoteURL =
+				new URL(SOURCE_FILE_SITE + "parsertests/site8.xml");
+			DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
+			URL resolvedURL = URLEncoder.encode(remoteURL);		
+			SiteModel remoteSite = parser.parse(resolvedURL.openStream());
+			remoteSite.resolve(remoteURL, null);
+
+		} catch (SAXParseException e) {
+			fail("Exception should not be thrown"+e.getMessage());			
+		}
+	}	
+	
+	public void testParseValid9() throws Exception {
+
+		try {
+			URL remoteURL =
+				new URL(SOURCE_FILE_SITE + "parsertests/site9.xml");
+			DefaultSiteParser parser = new DefaultSiteParser(new SiteFileFactory());
+			URL resolvedURL = URLEncoder.encode(remoteURL);		
+			SiteModel remoteSite = parser.parse(resolvedURL.openStream());
+			remoteSite.resolve(remoteURL, null);
+		} catch (SAXParseException e) {
+			fail("Exception should not be thrown"+e.getMessage());			
+		}
+	}		
+	
 }
