@@ -213,11 +213,15 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_CONSOLE_WIDTH)) {
 		    fViewer.setConsoleWidth(fConsole.getConsoleWidth()); 
 		} else if (property.equals(IConsoleConstants.P_CONSOLE_HYPERLINK_ADDED)) {
-		    ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
-		        public void run() {
-		            fViewer.getTextWidget().redraw();
-		        }
-		    }); 
+		    if (fViewer != null) {
+		        ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
+		            public void run() {
+		                if(fViewer != null) {
+		                    fViewer.getTextWidget().redraw();
+		                }
+		            }
+		        }); 
+		    }
 		}
 	}
 
