@@ -184,7 +184,8 @@ public class RemoteFolderTreeBuilder {
 				ICVSResource resource = resources[i];
 				arguments.add(resource.getRelativePath(root));
 			}
-				
+			
+			// 1st Connection: Use local state to determine delta with server
 			Policy.checkCanceled(monitor);
 			Session session = new Session(repository, root, false);
 			session.open(Policy.subMonitorFor(monitor, 10));
@@ -203,9 +204,10 @@ public class RemoteFolderTreeBuilder {
 			} finally {
 				session.close();
 			}
-			// We need a second session because of the use of a different handle on the same remote resource
-			// Perhaps we could support the changing of a sessions root as long as
-			// the folder sync info is the same 
+			
+			// 2nd Connection: Build remote tree from above delta using 2nd connection to fetch unknown directories
+			// NOTE: Multiple commands may be issued over this connection.
+			// NOTE: It is also possible that no messages will be sent (i.e. wasted connection!)
 			remoteRoot =
 				new RemoteFolderTree(null, root.getName(), repository,
 					new Path(root.getFolderSyncInfo().getRepository()),
@@ -218,17 +220,12 @@ public class RemoteFolderTreeBuilder {
 				subProgress.beginTask(null, 512);
 				// Build the remote tree
 				buildRemoteTree(session, root, remoteRoot, Path.EMPTY, subProgress);
-				// we can only fecth the status for up to 1024 files in a single connection due to
-				// the server which has a limit on the number of "open" files.
-				if (!changedFiles.isEmpty() && changedFiles.size() <= MAX_REVISION_FETCHES_PER_CONNECTION) {
-					fetchFileRevisions(session, (String[])changedFiles.toArray(new String[changedFiles.size()]), Policy.subMonitorFor(monitor, 20));
-				}
 			} finally {
 				session.close();
 			}
 			
-			// If there were more than 1024 changed files, we need a connection per each 1024
-			if (!changedFiles.isEmpty() && changedFiles.size() > MAX_REVISION_FETCHES_PER_CONNECTION) {
+			// 3rd+ Connection: Used to fetch file status in groups of 1024
+			if (!changedFiles.isEmpty()) {
 				String[] allChangedFiles = (String[])changedFiles.toArray(new String[changedFiles.size()]);
 				int iterations = (allChangedFiles.length / MAX_REVISION_FETCHES_PER_CONNECTION) 
 					+ (allChangedFiles.length % MAX_REVISION_FETCHES_PER_CONNECTION == 0 ? 0 : 1);

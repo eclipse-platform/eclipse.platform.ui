@@ -104,7 +104,14 @@ public class ReplaceWithBaseVisitor implements ICVSResourceVisitor {
 		}
 		monitor.worked(1);
 	}
-
+	
+	/*
+	 * This method will replace any changed resources in the local workspace with the 
+	 * base resource. Although CVS allows this operation using "cvs update -r BASE" the
+	 * results in the workspace are "sticky". This operation does not leave the local workspace "sticky".
+	 * 
+	 * NOTE: This operation issues multiple commands over a single connection. It may fail
+	 * with some servers that are configured to run scripts during an update.	 */
 	public void replaceWithBase(IProject project, final IResource[] resources, int depth, IProgressMonitor pm) throws CVSException {
 		this.depth = depth;
 		final ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(project);

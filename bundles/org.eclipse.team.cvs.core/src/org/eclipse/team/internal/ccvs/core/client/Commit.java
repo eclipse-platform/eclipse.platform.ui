@@ -5,13 +5,15 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
 
+import java.util.Collection;
+
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
-import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
+import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 
 public class Commit extends Command {
 	/*** Local options: specific to commit ***/
@@ -69,5 +71,18 @@ public class Commit extends Command {
 	 * them in sendRequestsToServer (special handling).
 	 */
 	protected void sendArguments(Session session, String[] arguments) throws CVSException {
+	}
+	
+	public final IStatus execute(GlobalOption[] globalOptions, LocalOption[] localOptions, 
+		ICVSResource[] arguments, Collection filesToCommitAsText,
+		ICommandOutputListener listener, IProgressMonitor pm) throws CVSException {
+		
+		Session openSession = getOpenSession(arguments);
+		openSession.setTextTransferOverride(filesToCommitAsText);
+		try {
+			return super.execute(globalOptions, localOptions, arguments, listener, pm);
+		} finally {
+			openSession.setTextTransferOverride(null);
+		}
 	}
 }	

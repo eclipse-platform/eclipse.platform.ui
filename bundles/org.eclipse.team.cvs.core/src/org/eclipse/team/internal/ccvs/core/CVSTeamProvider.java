@@ -918,7 +918,7 @@ public class CVSTeamProvider extends RepositoryProvider {
 		workspaceRoot.getLocalRoot().run(new ICVSRunnable() {
 			public void run(final IProgressMonitor monitor) throws CVSException {
 				final Map /* from KSubstOption to List of String */ filesToAdmin = new HashMap();
-				final List /* of String */ filesToCommit = new ArrayList();
+				final List /* of ICVSResource */ filesToCommit = new ArrayList();
 				final Collection /* of ICVSFile */ filesToCommitAsText = new HashSet(); // need fast lookup
 		
 				/*** determine the resources to be committed and/or admin'd ***/
@@ -949,7 +949,6 @@ public class CVSTeamProvider extends RepositoryProvider {
 					if (info.isDeleted()) continue;
 
 					// file exists remotely so we'll have to commit it
-					String remotePath = mFile.getRelativePath(workspaceRoot.getLocalRoot());
 					if (fromKSubst.isBinary() && ! toKSubst.isBinary()) {
 						// converting from binary to text
 						cleanLineDelimiters(file, IS_CRLF_PLATFORM, new NullProgressMonitor()); // XXX need better progress monitoring
@@ -958,14 +957,14 @@ public class CVSTeamProvider extends RepositoryProvider {
 					}
 					// force a commit to bump the revision number
 					makeDirty(file);
-					filesToCommit.add(remotePath);
+					filesToCommit.add(mFile);
 					// remember to admin the resource
 					List list = (List) filesToAdmin.get(toKSubst);
 					if (list == null) {
 						list = new ArrayList();
 						filesToAdmin.put(toKSubst, list);
 					}
-					list.add(remotePath);
+					list.add(mFile);
 				}
 			
 				/*** commit then admin the resources ***/
@@ -976,23 +975,25 @@ public class CVSTeamProvider extends RepositoryProvider {
 					totalWork += list.size();
 				}
 				if (totalWork != 0) {
-					Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
-					monitor.beginTask(Policy.bind("CVSTeamProvider.settingKSubst"), 5 + totalWork); //$NON-NLS-1$
+					monitor.beginTask(Policy.bind("CVSTeamProvider.settingKSubst"), totalWork); //$NON-NLS-1$
 					try {
-						s.open(Policy.subMonitorFor(monitor, 5));
-						
 						// commit files that changed from binary to text
 						// NOTE: The files are committed as text with conversions even if the
 						//       resource sync info still says "binary".
 						if (filesToCommit.size() != 0) {
-							String keywordChangeComment = Policy.bind("CVSTeamProvider.changingKeywordComment"); //$NON-NLS-1$
-							s.setTextTransferOverride(filesToCommitAsText);
-							result[0] = Command.COMMIT.execute(s, Command.NO_GLOBAL_OPTIONS,
-								new LocalOption[] { Commit.DO_NOT_RECURSE, Commit.FORCE,
-									Commit.makeArgumentOption(Command.MESSAGE_OPTION, keywordChangeComment) },
-								(String[]) filesToCommit.toArray(new String[filesToCommit.size()]),
-								null, Policy.subMonitorFor(monitor, filesToCommit.size()));
-							s.setTextTransferOverride(null);
+							Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */,
+								new ICVSRunnable(								) {
+									public void run(IProgressMonitor monitor) throws CVSException {
+										String keywordChangeComment = Policy.bind("CVSTeamProvider.changingKeywordComment"); //$NON-NLS-1$
+										result[0] = Command.COMMIT.execute(
+											Command.NO_GLOBAL_OPTIONS,
+											new LocalOption[] { Commit.DO_NOT_RECURSE, Commit.FORCE,
+												Commit.makeArgumentOption(Command.MESSAGE_OPTION, keywordChangeComment) },
+											(ICVSResource[]) filesToCommit.toArray(new ICVSResource[filesToCommit.size()]),
+											filesToCommitAsText,
+											null, Policy.subMonitorFor(monitor, filesToCommit.size()));
+									}
+								}, Policy.subMonitorFor(monitor, filesToCommit.size()));
 							// if errors were encountered, abort
 							if (! result[0].isOK()) return;
 						}
@@ -1005,19 +1006,23 @@ public class CVSTeamProvider extends RepositoryProvider {
 						//       were actually changed remotely.
 						for (Iterator it = filesToAdmin.entrySet().iterator(); it.hasNext();) {
 							Map.Entry entry = (Map.Entry) it.next();
-							KSubstOption toKSubst = (KSubstOption) entry.getKey();
-							List list = (List) entry.getValue();
+							final KSubstOption toKSubst = (KSubstOption) entry.getKey();
+							final List list = (List) entry.getValue();
 							// do it
-							result[0] = Command.ADMIN.execute(s, Command.NO_GLOBAL_OPTIONS,
-								new LocalOption[] { toKSubst },
-								(String[]) list.toArray(new String[list.size()]),
-								new AdminKSubstListener(toKSubst),
-								Policy.subMonitorFor(monitor, list.size()));
+							Session.run(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot(), true /* output to console */,
+								new ICVSRunnable(								) {
+									public void run(IProgressMonitor monitor) throws CVSException {
+										result[0] = Command.ADMIN.execute(Command.NO_GLOBAL_OPTIONS,
+											new LocalOption[] { toKSubst },
+											(ICVSResource[]) list.toArray(new ICVSResource[list.size()]),
+											new AdminKSubstListener(toKSubst),
+											Policy.subMonitorFor(monitor, list.size()));
+									}
+								}, Policy.subMonitorFor(monitor, list.size()));
 							// if errors were encountered, abort
 							if (! result[0].isOK()) return;
 						}
 					} finally {
-						s.close();
 						monitor.done();
 					}
 				}
