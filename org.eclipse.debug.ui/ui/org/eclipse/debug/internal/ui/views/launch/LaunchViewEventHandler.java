@@ -531,6 +531,15 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	 * @see org.eclipse.debug.core.ILaunchesListener2#launchesTerminated(org.eclipse.debug.core.ILaunch[])
 	 */
 	public void launchesTerminated(final ILaunch[] launches) {
+		if (fLastStackFrame != null) {
+			ILaunch launch= fLastStackFrame.getLaunch();
+			for (int i = 0; i < launches.length; i++) {
+				ILaunch terminatedLaunch = launches[i];
+				if (launch.equals(terminatedLaunch)) {
+					fLastStackFrame= null;
+				}
+			}
+		}
 		Runnable r= new Runnable() {
 			public void run() {
 				getLaunchView().launchesTerminated(launches);
