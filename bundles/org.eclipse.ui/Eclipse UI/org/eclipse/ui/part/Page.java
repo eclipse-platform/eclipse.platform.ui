@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  * @see PageBookView
  */
-public abstract class Page implements IPage, IPageBookViewPage {
+public abstract class Page implements IPageBookViewPage {
 /**
 * The site which contains this page
 */
@@ -87,15 +87,13 @@ public void setActionBars(IActionBars actionBars) {
 /**
  * The <code>Page</code> implementation of this <code>IPage</code> method
  * stores a reference to the supplied site (the site which contains this 
- * page). It also calls <code>setActionBars</code> for backwards 
- * compatibility with previous versions of <code>IPage</code>. 
+ * page). 
  * <p>
  * Subclasses may extend.
  * </p>
  */
 public void init(IPageSite pageSite) {
 	site = pageSite;
-	setActionBars(site.getActionBars());
 }
 /**
  * Returns the site which contains this page.

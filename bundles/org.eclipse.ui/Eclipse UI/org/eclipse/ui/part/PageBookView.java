@@ -271,10 +271,9 @@ private void initPage(PageRec rec) {
 		} catch (PartInitException e) {
 			WorkbenchPlugin.log(e.getMessage());
 		}
-	} else {
-		// for backward compability with IPage
-		rec.page.setActionBars(rec.subActionBars);
 	}
+	// for backward compability with IPage
+	rec.page.setActionBars(rec.subActionBars);
 }
 /**
  * The <code>PageBookView</code> implementation of this <code>IWorkbenchPart</code>
