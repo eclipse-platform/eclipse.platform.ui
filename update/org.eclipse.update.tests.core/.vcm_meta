@@ -3,7 +3,14 @@
 	<comment></comment>
 	<nature id="org.eclipse.jdt.core.javanature"/>
 	<nature id="org.eclipse.pde.PluginNature"/>
+	<reference project-name="org.apache.xerces"/>
+	<reference project-name="org.eclipse.core.boot"/>
+	<reference project-name="org.eclipse.core.resources"/>
+	<reference project-name="org.eclipse.core.runtime"/>
+	<reference project-name="org.eclipse.help"/>
+	<reference project-name="org.eclipse.tomcat"/>
 	<reference project-name="org.eclipse.update.core"/>
+	<reference project-name="org.junit"/>
 	<builder name="org.eclipse.jdt.core.javabuilder">
 	</builder>
 	<builder name="org.eclipse.pde.ManifestBuilder">

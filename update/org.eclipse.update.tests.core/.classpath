@@ -1,55 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
     <classpathentry kind="src" path="src/"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtime.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.runtime/runtimesrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.junit/junit.jar" sourcepath="ECLIPSE_HOME/plugins/org.junit/junitsrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.apache.xerces/xerces.jar" sourcepath="ECLIPSE_HOME/plugins/org.apache.xerces/xercessrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resources.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.resources/resourcessrc.zip"/>
+    <classpathentry kind="src" path="/org.eclipse.core.runtime"/>
+    <classpathentry kind="src" path="/org.junit"/>
+    <classpathentry kind="src" path="/org.apache.xerces"/>
+    <classpathentry kind="src" path="/org.eclipse.core.resources"/>
     <classpathentry kind="src" path="/org.eclipse.update.core"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.help/help.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.help/helpsrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/tomcatwrapper.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/tomcatwrappersrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/jdt_jasper.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/jdt_jaspersrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/catalina.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/catalinasrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/bootstrap.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/bootstrapsrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/jakarta-regexp-1.2.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/jakarta-regexp-1.2src.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/jasper-compiler.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/jasper-compilersrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/jasper-runtime.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/jasper-runtimesrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/naming-factory.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/naming-factorysrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/naming-common.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/naming-commonsrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/naming-resources.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/naming-resourcessrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servlet.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servletsrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servlets-common.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servlets-commonsrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servlets-default.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servlets-defaultsrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servlets-invoker.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servlets-invokersrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servlets-manager.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servlets-managersrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servlets-snoop.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servlets-snoopsrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servlets-webdav.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/servlets-webdavsrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.tomcat/tomcat-util.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.tomcat/tomcat-utilsrc.zip"/>
-    <classpathentry kind="var"
-        path="ECLIPSE_HOME/plugins/org.eclipse.core.boot/boot.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.core.boot/bootsrc.zip"/>
+    <classpathentry kind="src" path="/org.eclipse.help"/>
+    <classpathentry kind="src" path="/org.eclipse.tomcat"/>
+    <classpathentry kind="src" path="/org.eclipse.core.boot"/>
     <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
     <classpathentry kind="output" path="bin"/>
 </classpath>
