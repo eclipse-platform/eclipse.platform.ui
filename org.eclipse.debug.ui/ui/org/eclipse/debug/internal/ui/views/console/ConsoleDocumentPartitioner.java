@@ -612,11 +612,12 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 			}
 			if (closed) {
 				Display display= DebugUIPlugin.getStandardDisplay();
+				final StreamEntry entry= prev; 
 				if (display != null) {
 					display.asyncExec(new Runnable() {
 						public void run() {
 							if (fLineNotifier != null) {
-								fLineNotifier.streamClosed();
+								fLineNotifier.streamClosed(entry.getStreamIdentifier());
 							}
 						}
 					});

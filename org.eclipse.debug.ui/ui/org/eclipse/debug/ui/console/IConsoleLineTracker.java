@@ -65,7 +65,7 @@ public interface IConsoleLineTracker {
 	 * Notification that the input to the console has been closed. No
 	 * more lines will be appended after this method is called.
 	 */
-	public void streamClosed();
+	public void consoleClosed();
 	
 	/**
 	 * Disposes this console line tracker. 

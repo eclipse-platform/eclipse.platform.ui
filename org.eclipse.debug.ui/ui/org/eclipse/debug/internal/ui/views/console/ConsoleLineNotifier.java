@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.ui.views.console;
 
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.text.BadLocationException;
@@ -41,10 +42,8 @@ public class ConsoleLineNotifier {
 	 */
 	private IConsole fConsole = null;
 	
-	/**
-	 * Whether the console's streams have been closed.
-	 */
-	private boolean fClosed= false;
+	private boolean fStandardOutClosed= false;
+	private boolean fStandardErrClosed= false;
 	
 	/**
 	 * Connects this notifier to the given console.
@@ -83,15 +82,19 @@ public class ConsoleLineNotifier {
 	/**
 	 * Notification the console's stream has been closed
 	 */
-	public void streamClosed() {
-		fClosed= true;
-		// First, notify of any pending lines
+	public void streamClosed(String streamIdentifier) {
+		if (streamIdentifier.equals(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM)) {
+			fStandardOutClosed= true;
+		} else if (streamIdentifier.equals(IDebugUIConstants.ID_STANDARD_ERROR_STREAM)) {
+			fStandardErrClosed= true;
+		}
 		processNewLines();
-		// Then, notify of the close
-		Object[] listeners= fListeners.getListeners();
-		for (int i = 0; i < listeners.length; i++) {
-			IConsoleLineTracker tracker = (IConsoleLineTracker) listeners[i];
-			tracker.streamClosed();
+		if (fStandardErrClosed && fStandardOutClosed) {
+			Object[] listeners= fListeners.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				IConsoleLineTracker tracker = (IConsoleLineTracker) listeners[i];
+				tracker.consoleClosed();
+			}
 		}
 	}
 	
@@ -110,7 +113,7 @@ public class ConsoleLineNotifier {
 				DebugUIPlugin.log(e);
 				return;
 			}
-			if (delimiter == null && !fClosed) {
+			if (delimiter == null && !fStandardErrClosed && !fStandardOutClosed) {
 				// line not complete yet
 				return;
 			}
