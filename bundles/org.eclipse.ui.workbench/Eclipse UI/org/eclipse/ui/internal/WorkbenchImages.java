@@ -227,6 +227,10 @@ private final static void declareImages() {
 	declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU, PATH_ELOCALTOOL+"view_menu.gif", true);
 	declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU_HOVER, PATH_CLOCALTOOL+"view_menu.gif", true);
 	
+	declareImage(ISharedImages.IMG_OBJS_ERROR_TSK, PATH_OBJECT+"error_tsk.gif", true);
+	declareImage(ISharedImages.IMG_OBJS_WARN_TSK, PATH_OBJECT+"warn_tsk.gif", true);
+	declareImage(ISharedImages.IMG_OBJS_INFO_TSK, PATH_OBJECT+"info_tsk.gif", true);
+
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_LEFT_SOURCE, PATH_DND+"left_source.bmp", true);
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_LEFT_MASK, PATH_DND+"left_mask.bmp", true);
 	declareImage(IWorkbenchGraphicConstants.IMG_OBJS_DND_RIGHT_SOURCE, PATH_DND+"right_source.bmp", true);

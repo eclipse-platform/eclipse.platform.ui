@@ -76,28 +76,16 @@ public interface ISharedImages {
 
 	/**
 	 * Identifies the default image used to indicate errors.
-	 * 
-	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
-	 * only in IDE configurations. IDE-specific tools should use 
-	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_ERROR_TSK</code> instead.
 	 */
 	public final static String IMG_OBJS_ERROR_TSK = "IMG_OBJS_ERROR_TSK"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the default image used to indicate warnings.
-	 * 
-	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
-	 * only in IDE configurations. IDE-specific tools should use 
-	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_WARN_TSK</code> instead.
 	 */
 	public final static String IMG_OBJS_WARN_TSK = "IMG_OBJS_WARN_TSK"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the default image used to indicate information only.
-	 * 
-	 * @deprecated in 3.0. This image is IDE-specific, and is therefore found
-	 * only in IDE configurations. IDE-specific tools should use 
-	 * <code>org.eclipse.ui.ide.IDE.SharedImages.IMG_OBJS_INFO_TSK</code> instead.
 	 */
 	public final static String IMG_OBJS_INFO_TSK = "IMG_OBJS_INFO_TSK"; //$NON-NLS-1$
 
