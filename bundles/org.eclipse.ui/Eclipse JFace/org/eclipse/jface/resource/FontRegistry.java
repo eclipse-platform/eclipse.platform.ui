@@ -7,6 +7,8 @@ package org.eclipse.jface.resource;
 import java.io.*;
 import java.util.*;
 import java.util.List;
+
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -124,25 +126,47 @@ public FontRegistry(String location) throws MissingResourceException {
 
 	Display display = Display.getCurrent();
 	Assert.isNotNull(display);
-	String osname = System.getProperty("os.name").trim();//$NON-NLS-1$
-	osname = StringConverter.removeWhiteSpaces(osname).toLowerCase();
-	String OSLocation = location;
-	ResourceBundle bundle = null;
-	if (osname != null)
-		OSLocation = location + "_" + osname;//$NON-NLS-1$
-
-	try {
-		bundle = ResourceBundle.getBundle(OSLocation);
-		readResourceBundle(bundle, OSLocation);
-	} catch (MissingResourceException e) {
-		if (location != OSLocation) {
-			bundle = ResourceBundle.getBundle(location);
-			readResourceBundle(bundle, OSLocation);
-		}
-		else
-			throw e;
-	}
+	readResourceBundle(location);
 	hookDisplayDispose(display);
+}
+
+/**
+ * Read the resource bundle at location. Look for a file with the
+ * extension _os_ws first, then _os then just the name.
+ * @param location - String - the location of the file.
+ */
+
+private void readResourceBundle(String location) {
+	String osname = System.getProperty("os.name").trim();//$NON-NLS-1$
+	String wsname = SWT.getPlatform();
+	osname = StringConverter.removeWhiteSpaces(osname).toLowerCase();
+	wsname = StringConverter.removeWhiteSpaces(wsname).toLowerCase();
+	String OSLocation = location;
+	String WSLocation = location;
+	ResourceBundle bundle = null;
+	if (osname != null){
+		OSLocation = location + "_" + osname;//$NON-NLS-1$
+		if (wsname != null)
+			WSLocation = OSLocation + "_" + wsname;//$NON-NLS-1$
+	}
+	
+	try{
+		bundle = ResourceBundle.getBundle(WSLocation);
+		readResourceBundle(bundle, WSLocation);
+	}
+	catch(MissingResourceException wsException){
+		try {
+			bundle = ResourceBundle.getBundle(OSLocation);
+			readResourceBundle(bundle, WSLocation);
+		} catch (MissingResourceException osException) {
+			if (location != OSLocation) {
+				bundle = ResourceBundle.getBundle(location);
+				readResourceBundle(bundle, WSLocation);
+			}
+			else
+				throw osException;
+		}
+	}
 }
 /**
  * Creates an empty font registry.
