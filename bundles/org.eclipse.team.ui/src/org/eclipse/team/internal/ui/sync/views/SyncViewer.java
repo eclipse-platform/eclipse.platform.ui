@@ -167,27 +167,12 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
-		TeamProvider.addListener(this);
-		
-		Platform.getJobManager().addJobChangeListener(new JobChangeAdapter() {
-			public void done(IJobChangeEvent event) {
-				if(event.getJob().belongsTo(RefreshSubscriberJob.getFamily())) {
-					setViewImage(initialImg);
-				}
-			}
-
-			public void running(IJobChangeEvent event) {
-				if(event.getJob().belongsTo(RefreshSubscriberJob.getFamily())) {
-					setViewImage(refreshingImg);
-				}
-			}
-		});
-		
 		initializeActions();
 		createViewer(parent);
 		contributeToActionBars();
 		this.composite = parent;
 		
+		TeamProvider.addListener(this);
 		TeamSubscriber[] subscribers = TeamProvider.getSubscribers();
 		for (int i = 0; i < subscribers.length; i++) {
 			TeamSubscriber subscriber = subscribers[i];
@@ -202,6 +187,21 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		setViewImage(initialImg);
 		
 		updateTitle();
+		
+		// add listeners
+		Platform.getJobManager().addJobChangeListener(new JobChangeAdapter() {
+			public void done(IJobChangeEvent event) {
+				if(event.getJob().belongsTo(RefreshSubscriberJob.getFamily())) {
+					setViewImage(initialImg);
+				}
+			}
+
+			public void running(IJobChangeEvent event) {
+				if(event.getJob().belongsTo(RefreshSubscriberJob.getFamily())) {
+					setViewImage(refreshingImg);
+				}
+			}
+		});		
 	}
 
 	private void setViewImage(Image image) {
@@ -618,8 +618,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 	 * Add the subscriber to the view. This method does not activate
 	 * the subscriber.
 	 */
-	private void addSubscriber(final TeamSubscriber s) {
-		showInActivePage(null);
+	synchronized private void addSubscriber(final TeamSubscriber s) {
 		SubscriberInput si = new SubscriberInput(s);
 		subscriberInputs.put(s.getId(), si);
 		ActionContext context = new ActionContext(null);
@@ -627,12 +626,15 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener,
 		actions.addContext(context);
 	}
 	
-	private void removeSubscriber(TeamSubscriber s) {
+	synchronized private void removeSubscriber(TeamSubscriber s) {
 		// notify that context is changing
 		SubscriberInput si = (SubscriberInput)subscriberInputs.get(s.getId());
 		ActionContext context = new ActionContext(null);
 		context.setInput(si);
 		actions.removeContext(context);
+		
+		// dispose of the input
+		si.dispose();
 		
 		// forget about this input
 		subscriberInputs.remove(s.getId());
