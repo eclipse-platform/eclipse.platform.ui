@@ -13,18 +13,47 @@ Contributors:
 
 package org.eclipse.ui.internal;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolderAdapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPart;
 
 
 /**
@@ -118,33 +147,6 @@ public void createControl(Composite parent) {
 
 	this.parent = parent;
 	tabFolder = new CTabFolder(parent, SWT.BORDER | tabLocation);
-
-	// listen for property change events on the folder
-	tabFolderListener =
-		new IPropertyChangeListener(){
-			public void propertyChange(PropertyChangeEvent event){
-				if(event.getProperty().equals(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR)){
-					//TODO: Need API from SWT, this is a workaround
-					tabFolder.MIN_TAB_WIDTH = getPreferenceStore().getInt(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR);
-					if (getPreferenceStore().getBoolean(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE)) {	
-						tabFolder.setTopRight(pullDownBar);
-						pullDownBar.setVisible(tabFolder.getItemCount() >= 1);
-					} else {
-						pullDownBar.setVisible(false);
-						tabFolder.setTopRight(null);
-					}
-				}
-				if(event.getProperty().equals(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE)) {
-					if (getPreferenceStore().getBoolean(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE)) {	
-							tabFolder.setTopRight(pullDownBar);
-							pullDownBar.setVisible(tabFolder.getItemCount() >= 1);
-						} else {
-							pullDownBar.setVisible(false);							
-							tabFolder.setTopRight(null);
-						}
-				}
-			}
-		};	
 
 	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 	store.addPropertyChangeListener(tabFolderListener);
@@ -242,7 +244,7 @@ public void createControl(Composite parent) {
 	});
 
 	// Present the editorList pull-down if requested
-	if (store.getBoolean(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE)) {
+	if (store.getBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE)) {
 		tabFolder.setTopRight(pullDownBar);
 		pullDownBar.setVisible(true);
 	} else {
@@ -251,7 +253,7 @@ public void createControl(Composite parent) {
 	}
 	
 	// Set the tab width
-	tabFolder.MIN_TAB_WIDTH =  store.getInt(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR);			
+	tabFolder.MIN_TAB_WIDTH =  store.getInt(IPreferenceConstants.EDITOR_TAB_WIDTH);			
 
 	// Create tabs.
 	Iterator enum = editors.iterator();

@@ -1,5 +1,5 @@
 /************************************************************************
-Copyright (c) 2000, 2002 IBM Corporation and others.
+Copyright (c) 2000, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -106,24 +106,24 @@ public interface IPreferenceConstants {
 	public static final int MAX_SAVE_INTERVAL = 9999;
 	
 	//Tab width = tab height * scalar value
-	public final static String EDITOR_TAB_WIDTH_SCALAR = "EDITOR_TAB_WIDTH_SCALAR"; //$NON-NLS-1$
+	public final static String EDITOR_TAB_WIDTH = "EDITOR_TAB_WIDTH"; //$NON-NLS-1$
 
 	//Boolean: true = show Editors drop down button on CTabFolder 
-	public static final String EDITOR_LIST_PULLDOWN_ACTIVE = "EDITOR_LIST_PULLDOWN_ACTIVE"; //$NON-NLS-1$
+	public static final String EDITORLIST_PULLDOWN_ACTIVE = "EDITORLIST_PULLDOWN_ACTIVE"; //$NON-NLS-1$
 
 	// Selection scope for EditorList
-	public static final String EDITOR_LIST_SELECTION_SCOPE = "EDITOR_LIST_SELECTION_SCOPE"; //$NON-NLS-1$
-	public static final int EDITOR_LIST_SET_WINDOW_SCOPE = 0;
-	public static final int EDITOR_LIST_SET_PAGE_SCOPE = 1;
-	public static final int EDITOR_LIST_SET_TAB_GROUP_SCOPE = 2;
+	public static final String EDITORLIST_SELECTION_SCOPE = "EDITORLIST_SELECTION_SCOPE"; //$NON-NLS-1$
+	public static final int EDITORLIST_SET_WINDOW_SCOPE = 0;
+	public static final int EDITORLIST_SET_PAGE_SCOPE = 1;
+	public static final int EDITORLIST_SET_TAB_GROUP_SCOPE = 2;
 
 	// Sort criteria for EditorList
-	public static final String EDITOR_LIST_SORT_CRITERIA = "EDITOR_LIST_SORT_CRITERIA"; //$NON-NLS-1$
-	public static final int EDITOR_LIST_NAME_SORT = 0;
-	public static final int EDITOR_LIST_MRU_SORT = 1;
+	public static final String EDITORLIST_SORT_CRITERIA = "EDITORLIST_SORT_CRITERIA"; //$NON-NLS-1$
+	public static final int EDITORLIST_NAME_SORT = 0;
+	public static final int EDITORLIST_MRU_SORT = 1;
 	
 	// Boolean; true = EditorList displays full path
-	public static final String EDITOR_LIST_DISPLAY_FULL_NAME = "EDITOR_LIST_DISPLAY_FULL_NAME"; //$NON-NLS-1$
+	public static final String EDITORLIST_DISPLAY_FULL_NAME = "EDITORLIST_DISPLAY_FULL_NAME"; //$NON-NLS-1$
 	
 	// Show Tasks view to users when build contains errors
 	public static final String SHOW_TASKS_ON_BUILD = "SHOW_TASKS_ON_BUILD"; //$NON-NLS-1$

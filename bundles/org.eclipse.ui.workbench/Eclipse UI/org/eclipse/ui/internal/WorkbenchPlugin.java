@@ -1,5 +1,5 @@
 /************************************************************************
-Copyright (c) 2000, 2002 IBM Corporation and others.
+Copyright (c) 2000, 2003 IBM Corporation and others.
 All rights reserved.   This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -406,8 +406,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.SAVE_INTERVAL, 5); //5 minutes
 		store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
 		store.setDefault(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, false);
-		store.setDefault(IPreferenceConstants.EDITOR_LIST_PULLDOWN_ACTIVE, false);
-		store.setDefault(IPreferenceConstants.EDITOR_LIST_DISPLAY_FULL_NAME, false);
+		store.setDefault(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE, false);
+		store.setDefault(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, false);
 		store.setDefault(IPreferenceConstants.CLOSE_EDITORS_ON_EXIT, false);
 		store.setDefault(IPreferenceConstants.REUSE_EDITORS_BOOLEAN, false);
 		store.setDefault(IPreferenceConstants.REUSE_DIRTY_EDITORS, true);
@@ -418,13 +418,13 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		store.setDefault(IPreferenceConstants.RECENT_FILES, 4);
 		store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
 		store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
-		store.setDefault(IPreferenceConstants.EDITOR_TAB_WIDTH_SCALAR, 3); // high
+		store.setDefault(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high
 		store.setDefault(IPreferenceConstants.OPEN_VIEW_MODE, IPreferenceConstants.OVM_EMBED);
 		store.setDefault(IPreferenceConstants.OPEN_PERSP_MODE, IPreferenceConstants.OPM_ACTIVE_PAGE);
 		store.setDefault(IPreferenceConstants.PROJECT_SWITCH_PERSP_MODE, IPreferenceConstants.PSPM_PROMPT);
 		store.setDefault(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$
-		store.setDefault(IPreferenceConstants.EDITOR_LIST_SELECTION_SCOPE, IPreferenceConstants.EDITOR_LIST_SET_PAGE_SCOPE); // Current Window
-		store.setDefault(IPreferenceConstants.EDITOR_LIST_SORT_CRITERIA, IPreferenceConstants.EDITOR_LIST_NAME_SORT); // Name Sort
+		store.setDefault(IPreferenceConstants.EDITORLIST_SELECTION_SCOPE, IPreferenceConstants.EDITORLIST_SET_PAGE_SCOPE); // Current Window
+		store.setDefault(IPreferenceConstants.EDITORLIST_SORT_CRITERIA, IPreferenceConstants.EDITORLIST_NAME_SORT); // Name Sort
 		store.setDefault(IPreferenceConstants.COLOR_ICONS, false);
 		store.setDefault(IPreferenceConstants.SHOW_SHORTCUT_BAR, true);
 		store.setDefault(IPreferenceConstants.SHOW_STATUS_LINE, true);

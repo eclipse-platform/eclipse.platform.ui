@@ -56,12 +56,12 @@ public class EditorList {
 	private static final int INVERT_SELECTION = 1;
 	private static final int SELECT_CLEAN = 2;
 
-	private static final int NAME_SORT = IPreferenceConstants.EDITOR_LIST_NAME_SORT;
-	private static final int MRU_SORT = IPreferenceConstants.EDITOR_LIST_MRU_SORT;
+	private static final int NAME_SORT = IPreferenceConstants.EDITORLIST_NAME_SORT;
+	private static final int MRU_SORT = IPreferenceConstants.EDITORLIST_MRU_SORT;
 
-	private static final int SET_WINDOW_SCOPE = IPreferenceConstants.EDITOR_LIST_SET_WINDOW_SCOPE;
-	private static final int SET_PAGE_SCOPE = IPreferenceConstants.EDITOR_LIST_SET_PAGE_SCOPE;
-	private static final int SET_TAB_GROUP_SCOPE = IPreferenceConstants.EDITOR_LIST_SET_TAB_GROUP_SCOPE;
+	private static final int SET_WINDOW_SCOPE = IPreferenceConstants.EDITORLIST_SET_WINDOW_SCOPE;
+	private static final int SET_PAGE_SCOPE = IPreferenceConstants.EDITORLIST_SET_PAGE_SCOPE;
+	private static final int SET_TAB_GROUP_SCOPE = IPreferenceConstants.EDITORLIST_SET_TAB_GROUP_SCOPE;
 	
 	private static final String editorListData = "editorListData"; //$NON-NLS-1$
 	
@@ -140,9 +140,9 @@ public EditorList(IWorkbenchWindow window, EditorWorkbook workbook) {
 	this.window = (WorkbenchWindow) window;
 	this.workbook = workbook;
 	
-	listScope = WorkbenchPlugin.getDefault().getPreferenceStore().getInt(IPreferenceConstants.EDITOR_LIST_SELECTION_SCOPE);
-	sortOrder = WorkbenchPlugin.getDefault().getPreferenceStore().getInt(IPreferenceConstants.EDITOR_LIST_SORT_CRITERIA);
-	displayFullPath = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.EDITOR_LIST_DISPLAY_FULL_NAME);
+	listScope = WorkbenchPlugin.getDefault().getPreferenceStore().getInt(IPreferenceConstants.EDITORLIST_SELECTION_SCOPE);
+	sortOrder = WorkbenchPlugin.getDefault().getPreferenceStore().getInt(IPreferenceConstants.EDITORLIST_SORT_CRITERIA);
+	displayFullPath = WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME);
 
 	// Special handling for scope selection. The concept of tab groups does
 	// not make sense in this situation, so over-ride to page scope
@@ -615,7 +615,7 @@ private class FullNameAction extends Action {
 	 */
 	public void run() {
 		displayFullPath = !displayFullPath;
-		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.EDITOR_LIST_DISPLAY_FULL_NAME, displayFullPath);
+		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.EDITORLIST_DISPLAY_FULL_NAME, displayFullPath);
 		setChecked(displayFullPath);
 		int[] indices = editorsTable.getSelectionIndices();
 		updateItems();
@@ -654,7 +654,7 @@ private class SortAction extends Action {
 	 */
 	public void run() {
 		EditorList.sortOrder = this.sortOrder;
-		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.EDITOR_LIST_SORT_CRITERIA, this.sortOrder);
+		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.EDITORLIST_SORT_CRITERIA, this.sortOrder);
 		TableItem[] items = editorsTable.getItems();
 		if(items.length == 0) {
 			return;
@@ -695,7 +695,7 @@ private class SetScopeAction extends Action {
 	 */
 	public void run() {
 		EditorList.listScope = this.whichScope;
-		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.EDITOR_LIST_SELECTION_SCOPE, this.whichScope);
+		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.EDITORLIST_SELECTION_SCOPE, this.whichScope);
 		updateItems();
 		if (dropDown) {
 			workbook.resizeEditorList();
