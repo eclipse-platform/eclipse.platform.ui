@@ -18,6 +18,7 @@ import org.eclipse.ui.tests.api.ApiTestSuite;
 import org.eclipse.ui.tests.commands.CommandsTestSuite;
 import org.eclipse.ui.tests.contexts.ContextsTestSuite;
 import org.eclipse.ui.tests.datatransfer.DataTransferTestSuite;
+import org.eclipse.ui.tests.deadlock.NestedSyncExecDeadlockTest;
 import org.eclipse.ui.tests.dialogs.UIAutomatedSuite;
 import org.eclipse.ui.tests.dnd.DragTestSuite;
 import org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite;
@@ -72,5 +73,6 @@ public class UiTestSuite extends TestSuite {
         addTest(new ThemesTestSuite());
         addTest(new IntroTestSuite());
         addTest(new MenusTestSuite());
+        addTest(new TestSuite(NestedSyncExecDeadlockTest.class));
     }
 }

@@ -97,21 +97,27 @@ public class UILockListener extends LockListener {
 	void addPendingWork(Semaphore work) {
 		pendingWork.add(work);
 	}
-	/**
-	 * Should always be called from the UI thread.
-	 */
-	void doPendingWork() {
-		Semaphore work;
-		while ((work = pendingWork.remove()) != null) {
-			try {
-				currentWork = work;
-				work.getRunnable().run();
-			} finally {
-				currentWork = null;
-				work.release();
-			}
-		}
-	}
+    /**
+     * Should always be called from the UI thread.
+     */
+    void doPendingWork() {
+        Semaphore work;
+        while ((work = pendingWork.remove()) != null) {
+        	//remember the old current work before replacing, to handle
+        	//the nested waiting case (bug 76378)
+        	Semaphore oldWork = currentWork;
+            try {
+                currentWork = work;
+                Runnable runnable = work.getRunnable();
+                if (runnable != null)
+                    runnable.run();
+
+            } finally {
+                currentWork = oldWork;
+                work.release();
+            }
+        }
+    }
 	void interruptUI() {
 		display.getThread().interrupt();
 	}
