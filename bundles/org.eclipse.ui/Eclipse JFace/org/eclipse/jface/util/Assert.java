@@ -159,7 +159,7 @@ public static boolean isTrue(boolean expression) {
  */
 public static boolean isTrue(boolean expression, String message) {
 	if (!expression)
-		throw new AssertionFailedException("assertion failed; "+message);//$NON-NLS-1$
+		throw new AssertionFailedException("Assertion failed: "+message);//$NON-NLS-1$
 	return expression;
 }
 }
