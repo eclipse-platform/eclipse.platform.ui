@@ -15,6 +15,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -22,9 +23,11 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.Pair;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IEditorPart;
 
 
@@ -37,11 +40,14 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	private List fPerspectives = null;
 	private ILaunchShortcut fDelegate = null;
 	private Set fModes = null;
+	private IActionFilter fActionFilter = null;
+	private /* <Pair> */ List fFilters = null;
 	
 	/**
 	 * The configuration element defining this tab.
 	 */
 	private IConfigurationElement fConfig;
+	private /* <Pair> */ List fContextLabels;
 	
 	/**
 	 * Constructs a launch configuration tab extension based
@@ -72,7 +78,7 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	 * @param configuration element that defines the attributes
 	 *  for this launch configuration tab extension
 	 */
-	protected IConfigurationElement getConfigurationElement() {
+	public IConfigurationElement getConfigurationElement() {
 		return fConfig;
 	}
 	
@@ -86,6 +92,67 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 		return getConfigurationElement().getAttribute("label"); //$NON-NLS-1$
 	}
 	
+	/**
+	 * Returns the contextual launch label of this shortcut
+	 * 
+	 * @return the contextual label of this shortcut, or <code>null</code> if not
+	 *  specified
+	 */
+	public String getContextLabel(String mode) {
+		// remember the list of context labels for this shortcut
+		if (fContextLabels == null) {
+			IConfigurationElement[] labels = getConfigurationElement().getChildren("contextLabel"); //$NON-NLS-1$
+			fContextLabels = new ArrayList(labels.length);
+			for (int i = 0; i < labels.length; i++) {
+				fContextLabels.add(new Pair(labels[i].getAttribute("mode"),
+						labels[i].getAttribute("label"))); //$NON-NLS-1$
+			}
+		}
+		// pick out the first occurance of the "name" bound to "mode"
+		Iterator iter = fContextLabels.iterator();
+		while (iter.hasNext()) {
+			Pair p = (Pair) iter.next();
+			if (p.firstAsString().equals(mode)) {
+				return p.secondAsString();
+			}
+		}
+		return "no label";
+	}
+	
+	/**
+	 * Returns the filter class of this shortcut.
+	 * 
+	 * @return the filter class of this shortcut., or <code>null</code> if not
+	 *  specified
+	 */
+	public IActionFilter getFilterClass() {
+		if (fActionFilter == null) {
+			try {
+				fActionFilter = (IActionFilter)fConfig.createExecutableExtension("filterClass"); //$NON-NLS-1$
+			} catch (CoreException e) {
+				// silently ignore because filterClass is optional
+				// DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), LaunchConfigurationsMessages.getString("LaunchShortcutExtension.Error_4"), LaunchConfigurationsMessages.getString("LaunchShortcutExtension.Unable_to_use_launch_shortcut_5"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+		}
+		return fActionFilter;
+	}
+	/**
+	 * Returns all of the filter elements of this shortcut as a List of String Pairs.
+	 * 
+	 * @return all of the filter elements of this shortcut., or <code>null</code> if not
+	 *  specified
+	 */
+	public /* <Pair> */ List getFilters() {
+		if (fFilters == null) {
+			IConfigurationElement[] filters = getConfigurationElement().getChildren("filter"); //$NON-NLS-1$
+			fFilters = new ArrayList(filters.length);
+			for (int i = 0; i < filters.length; i++) {
+				fFilters.add(new Pair(filters[i].getAttribute("name"),
+						filters[i].getAttribute("value"))); //$NON-NLS-1$
+			}
+		}
+		return fFilters;
+	}
 	/**
 	 * Returns the id of this shortcut
 	 * 

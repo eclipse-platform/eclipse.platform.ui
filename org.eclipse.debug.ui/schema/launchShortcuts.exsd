@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.debug.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.debug.ui" id="launchShortcuts" name="Launch Shortcuts"/>
+         <meta.schema plugin="org.eclipse.debug.ui" id="filaunchShortcuts" name="Launch Shortcuts"/>
       </appInfo>
       <documentation>
          This extension point provides support for selection sensitive launching.  Extensions register a shortcut which
@@ -49,6 +49,8 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
       <complexType>
          <sequence>
             <element ref="perspective" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="filter" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="contextLabel" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -106,6 +108,20 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="contextLabel" type="string">
+            <annotation>
+               <documentation>
+                  an optional attribute that specifies the label to appear in the contextual launch menu (if this shortcut is not filtered according to the rules described in the filterClass attribute). If unspecified, the &lt;samp&gt;label&lt;/samp&gt; attribute will be used instead.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="filterClass" type="string">
+            <annotation>
+               <documentation>
+                  an optional attribute that specifies the fully qualified path of a Java class that implements the &lt;samp&gt;org.eclipse.ui.IActionFilter&lt;/samp&gt; interface. The testAttribute() method is called with the selected resource and the name/value pair specified by subsequent filter elements. If all return values of all filter elements are true, the shortcut will appear in the contextual launch menu of the selected resource. If the filterClass attribute is not specifies, the shortcut will not appear in the contextual launch menu. If the filterClass is specified, but no filter elements are found, the shortcut will appear in the menu.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -115,6 +131,64 @@ appears in the run and/or debug cascade menus to launch the workbench selection 
             <annotation>
                <documentation>
                   the unique identifier of a perspective in which a menu shortcut for this launch shortcut will appear.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="filter">
+      <annotation>
+         <documentation>
+            specifies the name/value pair that will be tested for boolean true/false by calling the &lt;samp&gt;org.eclipse.ui.IActionFilter:testAttribute()&lt;/samp&gt; method of the class specified by the &lt;samp&gt;filterClass&lt;/samp&gt; attribute of the parent &lt;samp&gt;shortcut&lt;/samp&gt; element. If all filters return a true value, the shortcut will be visible in the contextual launch menu.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the name of the filter property.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the expected value of the filter property.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="contextLabel">
+      <annotation>
+         <documentation>
+            Specify the label for a contextual launch mode.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="mode" use="required">
+            <annotation>
+               <documentation>
+                  specifies a mode from the set {&quot;run&quot;,&quot;debug&quot;,&quot;profile&quot;}
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="run">
+                  </enumeration>
+                  <enumeration value="debug">
+                  </enumeration>
+                  <enumeration value="profile">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="label" type="string" use="required">
+            <annotation>
+               <documentation>
+                  specifies the label to appear in the contextual launch menu.
                </documentation>
             </annotation>
          </attribute>
@@ -165,9 +239,9 @@ interface &lt;b&gt;org.eclipse.debug.ui.ILaunchShortcut&lt;/b&gt;.
       </appInfo>
       <documentation>
          &lt;p&gt;
-&lt;a href="hglegal.htm"&gt;
- &lt;img SRC="ngibmcpy.gif"
-   ALT="Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved."
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2000, 2003 IBM Corporation and others. All Rights Reserved.&quot;
    BORDER=0 height=14 width=324&gt;&lt;/a&gt;
 &lt;/p&gt;
       </documentation>

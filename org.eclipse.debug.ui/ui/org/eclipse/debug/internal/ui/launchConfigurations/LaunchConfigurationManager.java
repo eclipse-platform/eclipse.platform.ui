@@ -512,11 +512,11 @@ public class LaunchConfigurationManager implements ILaunchListener {
 	
 	/**
 	 * Returns all launch shortcuts defined for the given perspective,
-	 * or <code>null</code> if none
+	 * empty list if none.
 	 * 
 	 * @param perpsective perspective identifier
 	 * @return all launch shortcuts defined for the given perspective,
-	 * or <code>null</code> if none
+	 * empty list if none.
 	 */
 	public List getLaunchShortcuts(String perpsective, String category) {
 		if (fLaunchShortcutsByPerspective == null) {
@@ -538,7 +538,7 @@ public class LaunchConfigurationManager implements ILaunchListener {
 		}
 		List list = (List)fLaunchShortcutsByPerspective.get(perpsective); 
 		if (list == null) {
-			return null;
+			return new ArrayList();
 		} else {
 			return filterShortcuts(list, category);
 		}
