@@ -11,6 +11,7 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ResourceListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -32,5 +33,15 @@ public OpenResourceDialog(Shell parentShell, IContainer container, int typesMask
 	super(parentShell, container, typesMask);
 	setTitle(IDEWorkbenchMessages.getString("OpenResourceDialog.title")); //$NON-NLS-1$
 	WorkbenchHelp.setHelp(parentShell, IHelpContextIds.OPEN_RESOURCE_DIALOG);
+}
+
+
+/**
+ * Extends the super's filter to exclude derived resources.
+ * 
+ * @since 3.0
+ */
+protected boolean select(IResource resource) {
+    return super.select(resource) && !resource.isDerived();
 }
 }
