@@ -28,7 +28,7 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 public class NewLocationWizard extends Wizard {
 	private ConfigurationWizardMainPage mainPage;
 
-	private Properties properties;
+	private Properties properties = null;
 	
 	public NewLocationWizard() {
 		IDialogSettings workbenchSettings = CVSUIPlugin.getPlugin().getDialogSettings();
@@ -38,6 +38,11 @@ public class NewLocationWizard extends Wizard {
 		}
 		setDialogSettings(section);
 		setWindowTitle(Policy.bind("NewLocationWizard.title")); //$NON-NLS-1$
+	}
+	
+	public NewLocationWizard(Properties initialProperties) {
+		this();
+		this.properties = initialProperties;
 	}
 
 	/**

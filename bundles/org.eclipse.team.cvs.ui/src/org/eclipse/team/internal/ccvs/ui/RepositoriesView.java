@@ -5,6 +5,8 @@ package org.eclipse.team.internal.ccvs.ui;
  * All Rights Reserved.
  */
 
+import java.util.Properties;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -33,7 +35,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.actions.OpenRemoteFileAction;
 import org.eclipse.team.internal.ccvs.ui.model.AllRootsElement;
-import org.eclipse.team.internal.ccvs.ui.model.BranchTag;
 import org.eclipse.team.internal.ccvs.ui.model.RemoteContentProvider;
 import org.eclipse.team.internal.ccvs.ui.wizards.NewLocationWizard;
 import org.eclipse.ui.IActionBars;
@@ -124,6 +125,19 @@ public class RepositoriesView extends ViewPart {
 				dialog.open();
 			}
 		};
+		
+		final Action newAnonAction = new Action(Policy.bind("RepositoriesView.newAnonCVS"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_NEWLOCATION)) { //$NON-NLS-1$
+			public void run() {
+				Properties p = new Properties();
+				p.setProperty("connection", "pserver");
+				p.setProperty("user", "anonymous");
+				p.setProperty("host", "dev.eclipse.org");
+				p.setProperty("root", "/home/eclipse");
+				NewLocationWizard wizard = new NewLocationWizard(p);
+				WizardDialog dialog = new WizardDialog(shell, wizard);
+				dialog.open();
+			}
+		};
 
 		// Properties
 		propertiesAction = new PropertyDialogAction(shell, viewer);
@@ -166,6 +180,7 @@ public class RepositoriesView extends ViewPart {
 					manager.add(propertiesAction);
 				}
 				sub.add(newAction);
+				sub.add(newAnonAction);
 			}
 		});
 		menuMgr.setRemoveAllWhenShown(true);

@@ -56,7 +56,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	
 	private static final int COMBO_HISTORY_LENGTH = 5;
 	
-	private Properties properties = new Properties();
+	private Properties properties = null;
 	
 	// Dialog store id constants
 	private static final String STORE_USERNAME_ID =
@@ -266,39 +266,43 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		for (int i = 0; i < methods.length; i++) {
 			connectionMethodCombo.add(methods[i]);
 		}
-		String method = (String)properties.getProperty("connection"); //$NON-NLS-1$
-		if (method == null) {
-			connectionMethodCombo.select(0);
-		} else {
-			connectionMethodCombo.select(connectionMethodCombo.indexOf(method));
-		}
-
-		String user = (String)properties.getProperty("user"); //$NON-NLS-1$
-		if (user != null) {
-			userCombo.setText(user);
-		}
-
-		String password = (String)properties.getProperty("password"); //$NON-NLS-1$
-		if (password != null) {
-			passwordText.setText(password);
-		}
-
-		String host = (String)properties.getProperty("host"); //$NON-NLS-1$
-		if (host != null) {
-			hostCombo.setText(host);
-		}
-
-		String port = (String)properties.getProperty("port"); //$NON-NLS-1$
-		if (port == null) {
-			useDefaultPort.setSelection(true);
-		} else {
-			useCustomPort.setSelection(true);
-			portText.setText(port);
-		}
-
-		String repositoryPath = (String)properties.getProperty("root"); //$NON-NLS-1$
-		if (repositoryPath != null) {
-			repositoryPathCombo.setText(repositoryPath);
+		
+		connectionMethodCombo.select(0);
+		if(properties != null) {
+			String method = (String)properties.getProperty("connection"); //$NON-NLS-1$
+			if (method == null) {
+				connectionMethodCombo.select(0);
+			} else {
+				connectionMethodCombo.select(connectionMethodCombo.indexOf(method));
+			}
+	
+			String user = (String)properties.getProperty("user"); //$NON-NLS-1$
+			if (user != null) {
+				userCombo.setText(user);
+			}
+	
+			String password = (String)properties.getProperty("password"); //$NON-NLS-1$
+			if (password != null) {
+				passwordText.setText(password);
+			}
+	
+			String host = (String)properties.getProperty("host"); //$NON-NLS-1$
+			if (host != null) {
+				hostCombo.setText(host);
+			}
+	
+			String port = (String)properties.getProperty("port"); //$NON-NLS-1$
+			if (port == null) {
+				useDefaultPort.setSelection(true);
+			} else {
+				useCustomPort.setSelection(true);
+				portText.setText(port);
+			}
+	
+			String repositoryPath = (String)properties.getProperty("root"); //$NON-NLS-1$
+			if (repositoryPath != null) {
+				repositoryPathCombo.setText(repositoryPath);
+			}
 		}
 	}
 	/**
@@ -339,8 +343,9 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	 * @param properties  the properties or null
 	 */
 	public void setProperties(Properties properties) {
-		this.properties = properties;
+		this.properties = properties;		
 	}
+	
 	/**
 	 * Updates widget enablements and sets error message if appropriate.
 	 */

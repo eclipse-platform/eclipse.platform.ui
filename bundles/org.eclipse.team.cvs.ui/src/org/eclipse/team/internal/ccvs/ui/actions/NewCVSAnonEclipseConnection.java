@@ -5,8 +5,9 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  * All Rights Reserved.
  */
 
+import java.util.Properties;
+
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -17,7 +18,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 /**
  * Called from Welcome page only.
  */
-public class NewCVSRepositoryAction extends Action {
+public class NewCVSAnonEclipseConnection extends Action {
 	public void run() {
 		Shell shell;
 		IWorkbenchWindow window = CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow();
@@ -27,7 +28,12 @@ public class NewCVSRepositoryAction extends Action {
 			Display display = Display.getCurrent();
 			shell = new Shell(display);
 		}
-		NewLocationWizard wizard = new NewLocationWizard();
+		Properties p = new Properties();
+		p.setProperty("connection", "pserver");
+		p.setProperty("user", "anonymous");
+		p.setProperty("host", "dev.eclipse.org");
+		p.setProperty("root", "/home/eclipse");
+		NewLocationWizard wizard = new NewLocationWizard(p);
 		WizardDialog dialog = new WizardDialog(shell, wizard);
 		dialog.open();
 	}
