@@ -26,7 +26,6 @@ import java.util.NoSuchElementException;
 
 import org.osgi.framework.Bundle;
 
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ILog;
@@ -45,6 +44,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 
@@ -1038,9 +1038,21 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 	 */
 	public IStatus getStatus(Object element) {
 		FileInfo info= (FileInfo) fFileInfoMap.get(element);
-		if (info != null)
-			return info.fTextFileBuffer.getStatus();
-		return ((IDocumentProviderExtension) getParentProvider()).getStatus(element);
+		if (info == null)
+			return ((IDocumentProviderExtension) getParentProvider()).getStatus(element);
+
+		IStatus status= info.fTextFileBuffer.getStatus();
+		
+		// Ensure that we don't open an empty document for an non-existent IFile
+		if (status.getSeverity() != IStatus.ERROR && element instanceof IFileEditorInput) {
+			IFile file= FileBuffers.getWorkspaceFileAtLocation(info.fTextFileBuffer.getLocation());
+			if (file == null || !file.exists()) {
+				String message= TextEditorMessages.getFormattedString("TextFileDocumentProvider.error.doesNotExist", ((IFileEditorInput)element).getFile().getFullPath()); //$NON-NLS-1$
+				return new Status(IStatus.ERROR, EditorsUI.PLUGIN_ID, IResourceStatus.RESOURCE_NOT_FOUND, message, null);
+			}
+		}
+		
+		return status;
 	}
 
 	/*
