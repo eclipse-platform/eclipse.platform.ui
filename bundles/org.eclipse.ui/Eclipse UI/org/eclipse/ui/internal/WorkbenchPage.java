@@ -56,6 +56,15 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private Listener mouseDownListener;
 	private IMemento deferredMemento;
 	private PerspectiveDescriptor deferredActivePersp;
+	private IPropertyChangeListener propertyChangeListener= new IPropertyChangeListener() {
+		public void propertyChange(PropertyChangeEvent event) {
+			String property = event.getProperty();
+			if (IWorkingSet.CHANGE_WORKING_SET_CONTENT_CHANGE.equals(property) || IWorkingSet.CHANGE_WORKING_SET_NAME_CHANGE.equals(property)) {
+				firePropertyChange(CHANGE_WORKING_SET_CHANGE, event.getNewValue(), event.getNewValue());
+			}
+		}
+	};
+
 	/**
 	 * Constructs a new page with a given perspective and input.
 	 *
@@ -1715,6 +1724,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 		workingSet = newWorkingSet;
 		if (oldWorkingSet != newWorkingSet) {
 			firePropertyChange(CHANGE_WORKING_SET_REPLACE, oldWorkingSet, newWorkingSet);
+			if (oldWorkingSet != null) {
+				oldWorkingSet.removePropertyChangeListener(propertyChangeListener);
+			}
+			if (newWorkingSet != null) {
+				newWorkingSet.addPropertyChangeListener(propertyChangeListener);
+			}
 		} else {
 			firePropertyChange(CHANGE_WORKING_SET_CHANGE, oldWorkingSet, newWorkingSet);
 		}

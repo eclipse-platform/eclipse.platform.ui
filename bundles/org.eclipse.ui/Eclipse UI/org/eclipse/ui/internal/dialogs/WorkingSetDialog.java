@@ -45,7 +45,7 @@ class WorkingSetDialog extends InputDialog {
 				return WorkbenchMessages.getString("WorkingSetDialog.warning.nameMustNotBeEmpty"); //$NON-NLS-1$
 			}
 			if (!newText.equals(initalName)) {
-				IWorkingSet[] workingSets = WorkingSet.getWorkingSets();
+				IWorkingSet[] workingSets = WorkbenchPlugin.getWorkingSetRegistry().getWorkingSets();
 				for (int i = 0; i < workingSets.length; i++) {
 					if (newText.equals(workingSets[i].getName()))
 						return WorkbenchMessages.getString("WorkingSetDialog.warning.workingSetExists"); //$NON-NLS-1$
@@ -146,7 +146,7 @@ class WorkingSetDialog extends InputDialog {
 		ArrayList resources = new ArrayList(10);
 		findCheckedResources(resources, (IContainer) tree.getInput());
 		if (workingSet == null)
-			workingSet = new WorkingSet(getText().getText(), resources.toArray());
+			workingSet = new WorkingSet(getText().getText(), (IAdaptable[]) resources.toArray(new IAdaptable[resources.size()]));
 		else if (workingSet instanceof WorkingSet) {
 			// Add inaccessible resources
 			IAdaptable[] oldItems = workingSet.getItems();
@@ -162,9 +162,8 @@ class WorkingSetDialog extends InputDialog {
 					resources.add(oldResource);
 				}
 			}
-			// TODO: Create a new working set?
-			 ((WorkingSet) workingSet).setName(getText().getText());
-			((WorkingSet) workingSet).setItems(resources.toArray());
+			((WorkingSet) workingSet).setName(getText().getText());
+			((WorkingSet) workingSet).setItems((IAdaptable[]) resources.toArray(new IAdaptable[resources.size()]));
 		}
 		super.okPressed();
 	}

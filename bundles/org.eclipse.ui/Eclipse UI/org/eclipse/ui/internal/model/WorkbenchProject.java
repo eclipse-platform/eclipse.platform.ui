@@ -7,6 +7,7 @@ package org.eclipse.ui.internal.model;
 import java.util.HashMap;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.*;
@@ -79,7 +80,13 @@ public Object[] getChildren(Object o) {
  * @return <code>true</code> if the attribute matches; <code>false</code> otherwise
  */
 public boolean testAttribute(Object target, String name, String value) {
-	IProject proj = (IProject) target;
+	IProject proj;
+	if ((target instanceof IProject) == true) {
+		proj = (IProject) target;
+	}
+	else {
+		proj = (IProject) ((IAdaptable) target).getAdapter(IProject.class);
+	}
 	if (name.equals(NATURE)) {
 		try {
 			return proj.hasNature(value);

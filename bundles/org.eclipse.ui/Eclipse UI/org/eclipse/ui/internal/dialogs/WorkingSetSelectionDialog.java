@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.WorkingSet;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 public class WorkingSetSelectionDialog extends SelectionDialog {
@@ -88,7 +88,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 				if (dlg.open() == dlg.OK) {
 					listViewer.add(dlg.getWorkingSet());
 					listViewer.setSelection(new StructuredSelection(dlg.getWorkingSet()), true);
-					WorkingSet.add(dlg.getWorkingSet());
+					WorkbenchPlugin.getWorkingSetRegistry().add(dlg.getWorkingSet());
 				}
 			}
 		});
@@ -178,7 +178,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 	 * Initializes this dialog's viewer after it has been laid out.
 	 */
 	private void initializeViewer() {
-		listViewer.setInput(Arrays.asList(WorkingSet.getWorkingSets()));
+		listViewer.setInput(Arrays.asList(WorkbenchPlugin.getWorkingSetRegistry().getWorkingSets()));
 	}
 
 	/*
@@ -214,7 +214,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 		if (selection instanceof IStructuredSelection) {
 			Iterator iter = ((IStructuredSelection) selection).iterator();
 			while (iter.hasNext())
-				WorkingSet.remove(((IWorkingSet) iter.next()));
+				WorkbenchPlugin.getWorkingSetRegistry().remove(((IWorkingSet) iter.next()));
 			listViewer.remove(((IStructuredSelection) selection).toArray());
 		}
 	}

@@ -28,6 +28,17 @@ public WorkbenchWorkingSet(IAdaptable resource, IAdaptable[] workingSet, String 
 	this.workingSet = workingSet;
 	this.name = name;
 }
+public boolean equals(Object object) {
+	if (this == object)
+		return true;
+	if (!(object instanceof WorkbenchWorkingSet))
+		return false;
+	WorkbenchWorkingSet workbenchWorkingSet = (WorkbenchWorkingSet) object;
+	return getItem().equals(workbenchWorkingSet.getItem());
+}
+public int hashCode() {
+	return resource.hashCode();
+}
 public Object getAdapter(Class clazz) {
 //	if (clazz == IWorkbenchAdapter.class) {
 //		return this;

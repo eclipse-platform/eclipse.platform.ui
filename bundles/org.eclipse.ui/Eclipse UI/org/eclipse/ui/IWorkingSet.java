@@ -5,6 +5,7 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
  * <p>
@@ -18,7 +19,11 @@ import org.eclipse.core.runtime.IAdaptable;
  * @since 2.0
  */
 public interface IWorkingSet {
-	
+	public static final String CHANGE_WORKING_SET_CONTENT_CHANGE = "workingSetContentChange";	//$NON-NLS-1$
+	public static final String CHANGE_WORKING_SET_NAME_CHANGE = "workingSetNAmeChange";	//$NON-NLS-1$	
+		
+	public void addPropertyChangeListener(IPropertyChangeListener listener);
+
 	/**
 	 * Returns the name of the working set.
 	 * 
@@ -32,4 +37,9 @@ public interface IWorkingSet {
 	 * @return	the working set's resources as array of <code>IResource</code>
 	 */
 	public IAdaptable[] getItems();
+	
+	public void removePropertyChangeListener(IPropertyChangeListener listener);
+	public void setItems(IAdaptable[] elements);
+
+
 }

@@ -66,7 +66,13 @@ protected IResource getResource(Object o) {
  * @return <code>true</code> if the attribute matches; <code>false</code> otherwise
  */
 public boolean testAttribute(Object target, String name, String value) {
-	IResource res = (IResource) target;
+	IResource res;
+	if ((target instanceof IResource) == true) {
+		res = (IResource) target;
+	}
+	else {
+		res = (IResource) ((IAdaptable) target).getAdapter(IResource.class);
+	}
 	if (name.equals(NAME)) {
 		return SimpleWildcardTester.testWildcardIgnoreCase(value, 
 			res.getName());

@@ -8,23 +8,18 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.FontData;
-
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
-
-import org.eclipse.jface.preference.IPreferenceNode;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.JFaceResources;
-
+import org.eclipse.jface.preference.*;
+import org.eclipse.jface.resource.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.internal.dialogs.WorkingSetSelectionDialog;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -59,7 +54,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	private DecoratorManager decoratorManager;
 	// Manager that maps markers to help context ids and resolutions
 	private MarkerHelpRegistry markerHelpRegistry;
-
+	
 	// Global workbench ui plugin flag. Only workbench implementation is allowed to use this flag
 	// All other plugins, examples, or test cases must *not* use this flag.
 	public static boolean DEBUG = false;
@@ -127,6 +122,28 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 				return ret[0];
 		}
 	}
+	/**
+	 * Creates a selection dialog that lists all working sets and allows to
+	 * add and edit working sets.
+	 * The caller is responsible for opening the dialog with <code>Window.open</code>,
+	 * and subsequently extracting the selected working sets (of type
+	 * <code>IWorkingSet</code>) via <code>SelectionDialog.getResult</code>.
+	 * <p>
+	 * This method is for internal use only due to issue below. Once
+	 * the issues is solved there will be an official API.
+	 * </p>
+	 * <p>
+	 * [Issue: Working set must be provided by platform.]
+	 * </p>
+	 * 
+	 * @param parent the parent shell of the dialog to be created
+	 * @return a new selection dialog or <code>null</code> if none available
+	 * @since 2.0
+	 */
+	public static SelectionDialog createWorkingSetDialog(Shell parent) {
+		return new WorkingSetSelectionDialog(parent);
+	}
+	
 	/**
 	 * Returns the image registry for this plugin.
 	 *
@@ -289,6 +306,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 	public static IWorkspace getPluginWorkspace() {
 		return ResourcesPlugin.getWorkspace();
+	}
+	public static IWorkingSetRegistry getWorkingSetRegistry() {
+		return WorkingSetRegistry.getInstance();
 	}
 	/*
 	 * Get the preference manager.

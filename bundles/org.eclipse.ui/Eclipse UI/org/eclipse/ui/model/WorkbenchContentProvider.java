@@ -48,8 +48,8 @@ protected IWorkbenchAdapter getAdapter(Object o) {
  * Method declared on ITreeContentProvider.
  */
 public Object[] getChildren(Object element) {
-	if (element instanceof IWorkingSet) {
-		return ((IWorkingSet) element).getItems();
+	if (element instanceof WorkbenchWorkingSet) {
+		return ((WorkbenchWorkingSet) element).getChildren(element);
 	}
 	IWorkbenchAdapter adapter = getAdapter(element);
 	if (adapter != null) {
@@ -97,6 +97,12 @@ public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		
 		if (workingSet.getItems().length > 0) {
 			oldInput = workingSet.getItems()[0];
+			if ((oldInput instanceof IContainer) == false) {
+				IResource resource = (IResource) ((IAdaptable) oldInput).getAdapter(IResource.class);
+				if (resource != null) {
+					oldInput = resource.getParent();
+				}
+			}
 		}
 	}
 	if (oldInput instanceof IWorkspace) {
@@ -111,8 +117,15 @@ public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		
 		if (workingSet.getItems().length > 0) {
 			newInput = workingSet.getItems()[0];
-		}
+			if ((newInput instanceof IContainer) == false) {
+				IResource resource = (IResource) ((IAdaptable) newInput).getAdapter(IResource.class);
+				if (resource != null) {
+					newInput = resource.getParent();
+				}
+			}
+		}	
 	}
+
 	if (newInput instanceof IWorkspace) {
 		newWorkspace = (IWorkspace) newInput;
 	}
@@ -139,7 +152,12 @@ protected void processDelta(IResourceDelta delta) {
 		return;
 
 	// Get the affected resource
-	IResource resource = delta.getResource();
+	IAdaptable adapter = delta.getResource();
+	IWorkingSet workingSet = null;
+	if (viewer.getInput() instanceof IWorkingSet) {
+		workingSet = (IWorkingSet) viewer.getInput();
+		adapter = new WorkbenchWorkingSet(adapter, workingSet.getItems(), workingSet.getName());
+	}	
 
 	// If any children have changed type, just do a full refresh of this parent,
 	// since a simple update on such children won't work, 
@@ -149,7 +167,7 @@ protected void processDelta(IResourceDelta delta) {
 		delta.getAffectedChildren(IResourceDelta.CHANGED);
 	for (int i = 0; i < affectedChildren.length; i++) {
 		if ((affectedChildren[i].getFlags() & IResourceDelta.TYPE) != 0) {
-			((StructuredViewer) viewer).refresh(resource);
+			((StructuredViewer) viewer).refresh(adapter);
 			return;
 		}
 	}
@@ -161,7 +179,7 @@ protected void processDelta(IResourceDelta delta) {
 	if ((changeFlags
 		& (IResourceDelta.OPEN | IResourceDelta.SYNC))
 		!= 0) {
-		((StructuredViewer) viewer).update(resource, null);
+		((StructuredViewer) viewer).update(adapter, null);
 	}
 
 	// Handle changed children .
@@ -175,12 +193,18 @@ protected void processDelta(IResourceDelta delta) {
 	affectedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
 	if (affectedChildren.length > 0) {
 		Object[] affected = new Object[affectedChildren.length];
-		for (int i = 0; i < affectedChildren.length; i++)
-			affected[i] = affectedChildren[i].getResource();
+		for (int i = 0; i < affectedChildren.length; i++) {
+			if (workingSet != null) {
+				affected[i] = new WorkbenchWorkingSet(affectedChildren[i].getResource(), workingSet.getItems(), workingSet.getName());
+			}	
+			else {
+				affected[i] = affectedChildren[i].getResource();
+			}
+		}
 		if (viewer instanceof AbstractTreeViewer) {
 			((AbstractTreeViewer) viewer).remove(affected);
 		} else {
-			((StructuredViewer) viewer).refresh(resource);
+			((StructuredViewer) viewer).refresh(adapter);
 		}
 	}
 
@@ -188,13 +212,19 @@ protected void processDelta(IResourceDelta delta) {
 	affectedChildren = delta.getAffectedChildren(IResourceDelta.ADDED);
 	if (affectedChildren.length > 0) {
 		Object[] affected = new Object[affectedChildren.length];
-		for (int i = 0; i < affectedChildren.length; i++)
-			affected[i] = affectedChildren[i].getResource();
+		for (int i = 0; i < affectedChildren.length; i++) {
+			if (workingSet != null) {
+				affected[i] = new WorkbenchWorkingSet(affectedChildren[i].getResource(), workingSet.getItems(), workingSet.getName());
+			}	
+			else {
+				affected[i] = affectedChildren[i].getResource();
+			}
+		}
 		if (viewer instanceof AbstractTreeViewer) {
-			((AbstractTreeViewer) viewer).add(resource, affected);
+			((AbstractTreeViewer) viewer).add(adapter, affected);
 		}
 		else {
-			((StructuredViewer) viewer).refresh(resource);
+			((StructuredViewer) viewer).refresh(adapter);
 		}
 	}
 }
