@@ -61,9 +61,7 @@ public abstract class WorkspaceAction extends CVSAction {
 		if (super.beginExecution(action)) {
 			// Ensure that the required sync info is loaded
 			if (requiresLocalSyncInfo()) {
-				if (!ensureSyncInfoLoaded(getSelectedResources())) {
-					return false;
-				}
+				// Check enablement just in case the sync info wasn't loaded
 				if (!isEnabled()) {
 					MessageDialog.openInformation(getShell(), Policy.bind("CVSAction.disabledTitle"), Policy.bind("CVSAction.disabledMessage")); //$NON-NLS-1$ //$NON-NLS-2$
 					return false;
