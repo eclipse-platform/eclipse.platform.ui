@@ -34,6 +34,7 @@ import org.eclipse.jface.viewers.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.*;
@@ -671,8 +672,7 @@ public class ResourceNavigator
 	 * @since 2.0
 	 */
 	protected boolean isLinkingEnabled() {
-		IPreferenceStore store = getPlugin().getPreferenceStore();
-		return store.getBoolean(LINK_NAVIGATOR_TO_EDITOR);
+		return WorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(LINK_NAVIGATOR_TO_EDITOR);
 	}
 
 	/**
@@ -858,7 +858,7 @@ public class ResourceNavigator
 			sb.append(patterns[i]);
 		}
 
-		getPlugin().getPreferenceStore().setValue(
+		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
 			ResourcePatternFilter.FILTERS_TAG,
 			sb.toString());
 	}
