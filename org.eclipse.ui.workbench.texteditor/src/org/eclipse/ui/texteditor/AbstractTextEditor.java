@@ -3946,7 +3946,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				
 		action= new SaveAction(EditorMessages.getResourceBundle(), "Editor.Save.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SAVE_ACTION);
-		// action.setActionDefinitionId(ITextEditorActionDefinitionIds.SAVE);
+		// if the line below is uncommented then the key binding does not work any more
+//		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SAVE);
 		setAction(ITextEditorActionConstants.SAVE, action);
 		
 		action= new RevertToSavedAction(EditorMessages.getResourceBundle(), "Editor.Revert.", this); //$NON-NLS-1$
