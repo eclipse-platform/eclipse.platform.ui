@@ -1502,6 +1502,79 @@
             command="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>      
+<!-- views -->
+      <command
+            name="%ViewCommand.debugView.name"
+            description="%ViewCommand.debugView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.debug.ui.DebugView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.ui.DebugView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ViewCommand.breakpointView.name"
+            description="%ViewCommand.breakpointView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.debug.ui.BreakpointView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.ui.BreakpointView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ViewCommand.variableView.name"
+            description="%ViewCommand.variableView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.debug.ui.VariableView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.ui.VariableView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ViewCommand.expressionView.name"
+            description="%ViewCommand.expressionView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.debug.ui.ExpressionView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.ui.ExpressionView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ViewCommand.registerView.name"
+            description="%ViewCommand.registerView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.debug.ui.RegisterView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.ui.RegisterView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+      <command
+            name="%ViewCommand.memoryView.name"
+            description="%ViewCommand.memoryView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.debug.ui.MemoryView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.debug.ui.MemoryView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
    </extension>
    <extension
          point="org.eclipse.ui.editors.annotationTypes">

@@ -31,6 +31,21 @@
             id="org.eclipse.ui.console.ConsoleView">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            name="%ViewCommand.consoleView.name"
+            description="%ViewCommand.consoleView.description"
+            category="org.eclipse.ui.category.views"
+            id="org.eclipse.ui.console.ConsoleView">
+      </command>
+      <keyBinding
+            string=""
+            scope="org.eclipse.ui.globalScope"
+            command="org.eclipse.ui.console.ConsoleView"
+            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </keyBinding>
+   </extension>
     <extension
          point="org.eclipse.ui.themes">
       <fontDefinition
