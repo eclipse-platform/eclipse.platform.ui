@@ -41,8 +41,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.custom.LineStyleEvent;
 import org.eclipse.swt.custom.LineStyleListener;
@@ -210,6 +208,7 @@ public class Console extends ViewPart {
 			}
 		};
 		getPreferenceStore().addPropertyChangeListener(propertyChangeListener);
+		JFaceResources.getFontRegistry().addListener(propertyChangeListener);
 		
 		// add a document listener for auto-scrolling
 		documentListener = new IDocumentListener() {
@@ -345,14 +344,6 @@ public class Console extends ViewPart {
 	private Color createColor(Display display, String preference) {
 		RGB rgb = PreferenceConverter.getColor(getPreferenceStore(), preference);
 		return new Color(display, rgb);
-	}
-
-	/**
-	 * Returns a font instance based on data from a preference field.
-	 */
-	private Font createFont(Display display, String preference) {
-		FontData fontData = PreferenceConverter.getFontData(getPreferenceStore(), preference);
-		return new Font(display, fontData);
 	}
 
 	/**
