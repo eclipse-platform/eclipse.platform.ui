@@ -91,7 +91,7 @@ public class PreferencePagesArea  {
 		PreferenceAreaEntry newEntry = new PreferenceAreaEntry(node,dialog);
 		newEntry.createContents(control);
 
-		control.pack(true);
+		control.layout(true);
 
 		return true;
 	}

@@ -135,10 +135,10 @@ public abstract class GenericListViewer extends ContentViewer {
 				 */
 				public void mouseDown(MouseEvent e) {
 					itemSelected(newItem);
-					Object[] children = ((ITreeContentProvider) getContentProvider())
-					.getChildren(element);
-					createItems(children,newItem,newIndent);
-					control.pack();
+//					Object[] children = ((ITreeContentProvider) getContentProvider())
+//					.getChildren(element);
+//					createItems(children,newItem,newIndent);
+//					control.pack();
 				}
 			});
 			
@@ -172,7 +172,8 @@ public abstract class GenericListViewer extends ContentViewer {
 	 * @see org.eclipse.jface.viewers.Viewer#refresh()
 	 */
 	public void refresh() {
-		// TODO Auto-generated method stub
+		if(items.isEmpty())
+			createContents();
 
 	}
 }

@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
+import java.util.Iterator;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
@@ -45,7 +47,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 	private GenericListViewer genericListViewer;
 
-	private PreferencePagesArea newPageContainer;
+	private PreferencesPageContainer newPageContainer;
 
 	//A boolean to indicate if the new look tab was selected
 	private boolean newLookSelected = false;
@@ -113,11 +115,11 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			public void widgetSelected(SelectionEvent e) {
 				
 				newLookSelected = (e.item == newItem);
-//				Iterator elements = getPreferenceManager().getElements(PreferenceManager.PRE_ORDER).iterator();
+				Iterator elements = getPreferenceManager().getElements(PreferenceManager.PRE_ORDER).iterator();
 				
-//				while(elements.hasNext()){
-//					clear((IPreferenceNode) elements.next());
-//				}
+				while(elements.hasNext()){
+					clear((IPreferenceNode) elements.next());
+				}
 				
 			}
 			/**
@@ -141,7 +143,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		genericListViewer = createListViewer(composite);
 		createSash(composite, genericListViewer.getControl());
 		// Build the Page container
-		newPageContainer = 	new PreferencePagesArea(this);
+		newPageContainer = 	new PreferencesPageContainer();
 		newPageContainer.createContents(composite, SWT.NULL);
 	}
 
@@ -158,7 +160,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			 */
 			public GenericListItem createListItem(Object element, Color color,
 					GenericListViewer viewer) {
-				PreferencesTreeItem item =  new PreferencesTreeItem(element);
+				PreferencesCategoryItem item =  new PreferencesCategoryItem(element);
 				item.createControl(viewer.getComposite(),color);
 				return item;
 			}
@@ -168,10 +170,11 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 			 */
 			protected void itemSelected(GenericListItem item) {
 				showPage((IPreferenceNode) item.getElement());
-				item.highlightForSelection();
+
 			}
 		};
 		
+		viewer.getControl().setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		
 		//Register help listener on the tree to use context sensitive help
 		viewer.getControl().addHelpListener(new HelpListener() {
@@ -186,15 +189,9 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 		viewer.setContentProvider(new FilteredPreferenceContentProvider());
 		
 		viewer.setInput(getPreferenceManager());
-		
-		viewer.createContents();
-		
-		viewer.getControl().setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		
 		GridData gd = new GridData(GridData.FILL_VERTICAL);
 		gd.widthHint = getLastRightWidth();
 		gd.verticalSpan = 1;
-		
 		viewer.getControl().setLayoutData(gd);
 		
 		return viewer;
