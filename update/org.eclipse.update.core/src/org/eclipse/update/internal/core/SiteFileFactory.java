@@ -395,7 +395,8 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * 
 	 */
 	private IFeature createFeature(URL url, String type) throws CoreException {
-		FeatureReference ref = new InternalFeatureReference();
+		// InternalFeatureReference
+		FeatureReference ref = new FeatureReference();
 		ref.setSite(site);
 		ref.setURL(url);
 		ref.setType(type);

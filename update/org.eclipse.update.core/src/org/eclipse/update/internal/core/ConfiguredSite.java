@@ -31,6 +31,9 @@ public class ConfiguredSite
 	// listeners	
 	private ListenersList listeners = new ListenersList();
 
+	// verification status
+	private IStatus verifyStatus;
+	
 	/*
 	 * Default Constructor
 	 */
@@ -830,33 +833,42 @@ public class ConfiguredSite
 	 */
 	public IStatus verifyUpdatableStatus() {
 		
-		URL siteURL = getSite().getURL();
-		if (siteURL==null)
-			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.SiteURLNull"),null); //$NON-NLS-1$
+		if (verifyStatus!=null)
+			return verifyStatus;	
 		
-		if (!"file".equalsIgnoreCase(siteURL.getProtocol()))
-			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.NonLocalSite"),null); //$NON-NLS-1$
+		URL siteURL = getSite().getURL();
+		if (siteURL==null){
+			verifyStatus=createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.SiteURLNull"),null); //$NON-NLS-1$
+			return verifyStatus;
+		}
+		
+		if (!"file".equalsIgnoreCase(siteURL.getProtocol())){
+			verifyStatus=createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.NonLocalSite"),null); //$NON-NLS-1$
+			return verifyStatus;
+		}
 			
 		String siteLocation = siteURL.getFile();
 		File file = new File(siteLocation);
 		
-		if (!isUpdatable())
-			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.NonUpdatableSite"),null); //$NON-NLS-1$
-
-		if (!sameProduct(file))
-			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.NotSameProductId"),null); //$NON-NLS-1$
-			
-		// do not check children
-		//if (containsAnotherSite(file))
-		//	return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.ContainsAnotherSite"),null); //$NON-NLS-1$
-
-		if (isContainedInAnotherSite(file))
-			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.ContainedInAnotherSite"),null);	//$NON-NLS-1$
-			
-		if (!canWrite(file))
-			return createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.ReadOnlySite"),null); //$NON-NLS-1$
+		String differentProductName = getProductName(file);
+		if (differentProductName!=null){
+			verifyStatus=createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.NotSameProductId",differentProductName),null); //$NON-NLS-1$
+			return verifyStatus;
+		}
 		
-		return createStatus(IStatus.OK,"",null);
+		File container = getSiteContaining(file);
+		if (container!=null){
+			verifyStatus=createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.ContainedInAnotherSite",container.getAbsolutePath()),null);	//$NON-NLS-1$
+			return verifyStatus;
+		}
+			
+		if (!canWrite(file)){
+			verifyStatus=createStatus(IStatus.ERROR,Policy.bind("ConfiguredSite.ReadOnlySite"),null); //$NON-NLS-1$
+			return verifyStatus;
+		}
+			
+		verifyStatus=createStatus(IStatus.OK,"",null);
+		return verifyStatus;
 	}
 	
 	/*
@@ -886,101 +898,83 @@ public class ConfiguredSite
 	}
 	
 	/*
-	 * check if the directory contains a marker, 
-	 * if not ask the parent directory to check itself
-	 * if we end up with no parent, return false
-	 */
-	private static boolean containsAnotherSite(File file) {
-		if (file == null)
-			return false;
-
-		UpdateManagerPlugin.warn("contains: Checking for markers at:" + file);
-			
-		if (!file.isDirectory())
-			return containsAnotherSite(file.getParentFile());
-
-		File productFile = new File(file, PRODUCT_SITE_MARKER);
-		File extensionFile = new File(file, EXTENSION_SITE_MARKER);
-		File privateFile = new File(file, PRIVATE_SITE_MARKER);
-		if (productFile.exists() || extensionFile.exists() || privateFile.exists())
-			return true;
-		return containsAnotherSite(file.getParentFile());
-	}
-	
-	/*
 	 * Check if the directory contains a marker
 	 * if not ask all directory children to check
-	 * if one validates the condition, returns true
+	 * if one validates the condition, returns the marker
 	 */
-	private static boolean isContainedInAnotherSite(File file) {
+	private static File getSiteContaining(File file) {
 
 		if (file==null)
-			return false;
+			return null;
+			
 		UpdateManagerPlugin.warn("IsContained: Checking for markers at:" + file);			
 		if (!file.isDirectory())
-			return isContainedInAnotherSite(file.getParentFile());
+			return getSiteContaining(file.getParentFile());
 
 		File productFile = new File(file, PRODUCT_SITE_MARKER);
 		File extensionFile = new File(file, EXTENSION_SITE_MARKER);
 		File privateFile = new File(file, PRIVATE_SITE_MARKER);
-		if (productFile.exists() || extensionFile.exists() || privateFile.exists())
-			return true;
+		if (productFile.exists()||extensionFile.exists()||privateFile.exists())
+			return privateFile.getParentFile();
 
 		File[] childrenFiles = file.listFiles();
 		for (int i = 0; i < childrenFiles.length; i++) {
 			if (childrenFiles[i].isDirectory() && !childrenFiles[i].equals(file)) {
-				if (isContainedInAnotherSite(childrenFiles[i]))
-					return true;
+				 File container = getSiteContaining(childrenFiles[i]);
+				 if (container!=null) return container;
 			}
 		}
-		return false;
+		
+		return null;
 	}
 	
 	/*
-	 * Returns true if the identifier of the private Site markup is
-	 * the same as the identifier of the product the workbench was started with 
+	 * Returns the name of the product if the identifier of the private Site markup is not
+	 * the same as the identifier of the product the workbench was started with.
+	 * If the product is the same, return null.
 	 */
-	private static boolean sameProduct(File file) {
+	private static String getProductName(File file) {
 		File privateFile = new File(file, PRIVATE_SITE_MARKER);
 		File productFile = getProductFile();
 		if (productFile!=null){		
-			String productId = getProductIdentifier(productFile);
-			String privateId = getProductIdentifier(privateFile);
+			String productId = getProductIdentifier("id",productFile);
+			String privateId = getProductIdentifier("id",privateFile);
 			if (productId == null){
 				UpdateManagerPlugin.warn("Product ID is null at:"+productFile);
-				return true;
+				return null;
 			}
-			if (productId.equalsIgnoreCase(privateId))
-				return true;
-			else {
+			if (!productId.equalsIgnoreCase(privateId)){
 				UpdateManagerPlugin.warn("Product id at"+productFile+" Different than:" + privateFile);
+				String name = getProductIdentifier("id",productFile);
+				String version = getProductIdentifier("version",productFile);
+				return (name==null)?version:name+":"+version;
 			}
 		} else {
 			UpdateManagerPlugin.warn("Product Marker doesn't exist:"+productFile);			
-			return true;
 		}
-		return false;
+		
+		return null;
 	}
 	
 	/*
 	 * Returns the identifier of the product from the property file
 	 */
-	private static String getProductIdentifier(File propertyFile) {
-		String identifier = null;
+	private static String getProductIdentifier(String identifier, File propertyFile) {
+		String result = null;
+		if (identifier==null) return result;
 		try {
 			InputStream in = new FileInputStream(propertyFile);
 			PropertyResourceBundle bundle = new PropertyResourceBundle(in);
-			identifier = bundle.getString("id");
+			result = bundle.getString(identifier);
 		} catch (IOException e) {
 			if (UpdateManagerPlugin.DEBUG
 				&& UpdateManagerPlugin.DEBUG_SHOW_INSTALL)
 				UpdateManagerPlugin.debug(
-					"Exception reading 'id' from property file:"
+					"Exception reading '"+identifier+"' from property file:"
 						+ propertyFile);
 		}
-		return identifier;
+		return result;
 	}
-	
 	
 	/*
 	 * Returns the identifier of the product from the property file
@@ -1015,7 +1009,9 @@ public class ConfiguredSite
 		String siteLocation = siteURL.getFile();
 		File productFile = getProductFile();
 		if (productFile!=null){
-			String productId = getProductIdentifier(productFile);
+			String productId = getProductIdentifier("id",productFile);
+			String productName = getProductIdentifier("name",productFile);
+			String productVer = getProductIdentifier("ver",productFile);			
 			if (productId!=null){
 				File file = new File(siteLocation,PRIVATE_SITE_MARKER);				
 				if (!file.exists()){
@@ -1026,6 +1022,10 @@ public class ConfiguredSite
 						BufferedWriter buffWriter = new BufferedWriter(outWriter);
 						w = new PrintWriter(buffWriter);
 						w.println("id="+productId);
+						if (productName!=null)
+							w.println("name="+productName);
+						if (productVer!=null)
+							w.println("name="+productVer);
 					} catch (Exception e){
 						UpdateManagerPlugin.warn("Unable to create private Marker at:"+file,e);
 					} finally {

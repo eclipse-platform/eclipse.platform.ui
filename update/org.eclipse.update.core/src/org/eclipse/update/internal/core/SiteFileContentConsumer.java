@@ -123,7 +123,8 @@ public class SiteFileContentConsumer extends SiteContentConsumer {
 	 */
 	public IFeatureReference close() throws CoreException {
 
-		InternalFeatureReference ref = new InternalFeatureReference();
+		// InternalFeatureReference
+		FeatureReference ref = new FeatureReference();
 		ref.setSite(getSite());
 		File file = null;
 

@@ -27,7 +27,6 @@ public interface IConfiguredSite extends IAdaptable {
 
 	/**
 	 * Indicates whether updates can be applied to the site.
-	 * The validation will also check if the site is updatable.
 	 * 
 	 * <code>IStatus.isOk()</code> return <code>true</code> if
 	 * the site can be updated, <code>false</code> otherwise.
@@ -43,6 +42,7 @@ public interface IConfiguredSite extends IAdaptable {
 
 	/**
 	 * Indicates whether updates can be applied to the site.
+	 * 
 	 * A configuration site is tagged a non-updatable by reading
 	 * the platform configuration for this site.
 	 * 

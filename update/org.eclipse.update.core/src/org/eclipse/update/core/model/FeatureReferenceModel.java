@@ -245,7 +245,7 @@ public class FeatureReferenceModel extends ModelObject {
 	 */
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("FeatureReference :");
+		buffer.append(getClass().toString()+" :");
 		if (versionID!=null) buffer.append(versionID.toString());
 		buffer.append(" at ");
 		if (url!=null) buffer.append(url.toExternalForm());
