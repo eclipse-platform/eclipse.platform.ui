@@ -30,6 +30,7 @@ public class ExtensionRegistryStaticTest extends TestCase {
 	}
 	
 	public void testAFromCache() {
+		//Check that it has been persisted
 		testExtensionPoint("A");
 	}
 	
@@ -48,7 +49,7 @@ public class ExtensionRegistryStaticTest extends TestCase {
 	}
 	
 	public void testBFromCache()  throws IOException, BundleException {
-		//test the addition of an extension point when orphans extension exists 
+		// Test the addition of an extension point when orphans extension exists 
 		assertNull(Platform.getExtensionRegistry().getExtension("testB2", "xptB2", "ext1"));
 		Bundle bundle02 = BundleTestingHelper.installBundle(RuntimeTestsPlugin.getContext(), RuntimeTestsPlugin.TEST_FILES_ROOT + "registry/testB/2");
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02});
@@ -69,7 +70,7 @@ public class ExtensionRegistryStaticTest extends TestCase {
 		assertNotNull(Platform.getExtensionRegistry().getExtensionPoint("testB2.xptB2").getExtension("testB1.ext1"));
 		assertEquals(Platform.getExtensionRegistry().getExtensionPoint("testB2.xptB2").getExtensions()[0].getUniqueIdentifier(), "testB1.ext1");
 		
-		//uninstall
+		//uninstall the bundle contributing the extension point
 		bundle02.uninstall();
 		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {bundle02} );
 		
@@ -80,6 +81,7 @@ public class ExtensionRegistryStaticTest extends TestCase {
 	}
 	
 	public void testBRemoved() {
+		//Test if testB has been removed.
 		assertNull(Platform.getExtensionRegistry().getExtension("testB1.ext1"));
 		assertEquals(Platform.getExtensionRegistry().getExtensions("testB1").length, 0);
 		assertEquals(Platform.getExtensionRegistry().getExtensionPoints("testB2").length, 0);
@@ -235,6 +237,20 @@ public class ExtensionRegistryStaticTest extends TestCase {
 		assertEquals(Arrays.asList(Platform.getExtensionRegistry().getNamespaces()).contains("testH3"), true);
 		assertEquals(Arrays.asList(Platform.getExtensionRegistry().getNamespaces()).contains("testH2"), false); //fragments do not come with their namespace
 	}
+	
+	//Test the configuration elements
+	//Test the configuration elements third level
+	
+	//Test the cache readAll
+	
+	//Test stale handles, 
+	//test createexecutable extension from a stale ce
+	//test various methods on a delta object
+	//test that configuration elements are removed 
+	
+	//Test that all the objects are removed.
+	
+	//Test the delta with more details
 	
 //	public static Test suite() {
 //		TestSuite sameSession = new SessionTestSuite("org.eclipse.core.tests.runtime", ExtensionRegistryStaticTest.class);
