@@ -121,13 +121,15 @@ public class WizardArchiveFileResourceExportPage1 extends
     protected void createFileFormatOptions(Composite optionsGroup, Font font) {
         // create directory structure radios
         zipFormatButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
-        zipFormatButton.setText("Save in zip format"); //$NON-NLS-1$
+        zipFormatButton.setText(DataTransferMessages
+                .getString("ArchiveExport.saveInZipFormat")); //$NON-NLS-1$
         zipFormatButton.setSelection(true);
         zipFormatButton.setFont(font);
 
         // create directory structure radios
         targzFormatButton = new Button(optionsGroup, SWT.RADIO | SWT.LEFT);
-        targzFormatButton.setText("Save in tar.gz format");//$NON-NLS-1$
+        targzFormatButton.setText(DataTransferMessages
+                .getString("ArchiveExport.saveInTarFormat")); //$NON-NLS-1$
         targzFormatButton.setSelection(false);
         targzFormatButton.setFont(font);
     }    
