@@ -131,8 +131,7 @@ private Composite createBasicInfoGroup(Composite parent, IResource resource) {
 	locationValue.setLayoutData(gd);
 	locationValue.setFont(font);
 	
-	if (resource.isLinked() && 
-		!getLocationText(resource).equals(getResolvedLocationText(resource))) {
+	if (isPathVariable(resource)) {
 		Label resolvedLocationTitle = new Label(basicInfoComposite, SWT.LEFT);
 		resolvedLocationTitle.setText(RESOLVED_LOCATION_TITLE);
 		gd = new GridData();
@@ -309,17 +308,25 @@ private String getLocationText(IResource resource) {
 	if (!resource.isLocal(IResource.DEPTH_ZERO))
 		return NOT_LOCAL_TEXT;
 
-	IPath location; 
+	IPath resolvedLocation = resource.getLocation();
+	IPath location = resolvedLocation;
 	if (resource.isLinked()) {
 		location = resource.getRawLocation();
 	}
-	else {	
-		location = resource.getLocation();
-	}
 	if (location == null) {
 		return NOT_EXIST_TEXT;
-	} else {
-		return location.toOSString();
+	} 
+	else {
+		String locationString = location.toOSString();		
+		if (resolvedLocation != null && !isPathVariable(resource)) {
+			// No path variable used. Display the file not exist message 
+			// in the location. Fixes bug 33318. 
+			File file = resolvedLocation.toFile();
+			if (!file.exists()) {
+				locationString += " " + FILE_NOT_EXIST_TEXT; //$NON-NLS-1$ 
+			}
+		}
+		return locationString;
 	}
 }
 /**
@@ -392,6 +399,31 @@ private String getTypeString(IResource resource) {
 
 	//Should not be possible
 	return UNKNOWN_LABEL;
+}
+/**
+ * Returns whether the given resource is a linked resource bound 
+ * to a path variable.
+ * 
+ * @param resource resource to test
+ * @return boolean <code>true</code> the given resource is a linked 
+ * 	resource bound to a path variable. <code>false</code> the given 
+ * 	resource is either not a linked resource or it is not using a
+ * 	path variable.  
+ */
+private boolean isPathVariable(IResource resource){
+	if (!resource.isLinked())
+		return false;
+		
+	IPath resolvedLocation = resource.getLocation();
+	if (resolvedLocation == null) {
+		// missing path variable
+		return true;
+	}		
+	IPath rawLocation = resource.getRawLocation();	
+	if (resolvedLocation.equals(rawLocation))
+		return false;
+		
+	return true;
 }
 /**
  * Reset the editableBox to the false.
