@@ -122,7 +122,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
 		prefs.setDefault(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, "build.xml"); //$NON-NLS-1$
-		if (isMacOS()) { //$NON-NLS-1$
+		if (isMacOS()) {
 			//the mac does not have a tools.jar Bug 40778
 			prefs.setDefault(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, false);
 		} else {

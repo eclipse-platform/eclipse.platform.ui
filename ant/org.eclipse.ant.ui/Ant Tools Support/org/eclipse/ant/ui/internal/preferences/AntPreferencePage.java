@@ -88,7 +88,7 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		
 		new Label(getFieldEditorParent(), SWT.NONE);
 	
-		if (!AntUIPlugin.isMacOS()) { //$NON-NLS-1$
+		if (!AntUIPlugin.isMacOS()) {
 			//the mac does not have a tools.jar Bug 40778
 			addField(new BooleanFieldEditor(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING, AntPreferencesMessages.getString("AntPreferencePage.10"), getFieldEditorParent())); //$NON-NLS-1$
 		}
