@@ -1,4 +1,4 @@
 bin
-externaltools.jar.bin.log
 externaltools.jar
 build.xml
+temp.folder

@@ -19,6 +19,7 @@
 		<property name="destBin"  value="${destdir}/${pluginName}" />
 		<property name="destSrc"  value="${destdir}/org.eclipse.platform.source/src/org.eclipse.ui.externaltools_2.1.0" />
 		<property name="temp.folder" value="${destdir}/temp.folder"/>
+		<property name="swt.jar" value="${basedir}/../org.eclipse.swt.win32/ws/win32/swt.jar"/>
 
 		<property name="currentBuild" value="../../Debugger/Ant/eclipse"/>
 		<property name="currentBuildPlugins" value="${currentBuild}/plugins/${pluginName}"/>
@@ -39,34 +40,39 @@
 		/>
 		<!-- Create the source zip -->
 		<zip zipfile="${destSrc}/externaltoolssrc.zip">
-			<fileset dir="External Tools"/>
+			<fileset dir="External Tools Base"/>
+			<fileset dir="Program Tools Support"/>
+			<fileset dir="Ant Tools Support"/>
 		</zip>
 		<copy file="plugin.xml" todir="${destBin}"/>
 		<copy file="plugin.properties" todir="${destBin}"/>
 		<copy file="about.html" todir="${destBin}"/>
 		<copy file=".classpath" todir="${destBin}"/>
 		<copy file=".options" todir="${destBin}"/>
+		<copy todir="${destBin}/icons">
+			<fileset dir="icons" />
+		</copy>	
 		
-		<delete dir="${temp.folder}/lib/antbuilder.jar.bin"/>
-		<mkdir dir="${temp.folder}/lib/antbuilder.jar.bin"/>
+		<delete dir="${temp.folder}/lib/antrunner.jar.bin"/>
+		<mkdir dir="${temp.folder}/lib/antrunner.jar.bin"/>
 		<!-- compile the source code -->
-		<javac destdir="${temp.folder}/lib/antbuilder.jar.bin" failonerror="false" verbose="false" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="${basedir}/../org.eclipse.core.runtime/runtime.jar;${basedir}/../org.apache.ant/ant.jar;${basedir}/../org.apache.xerces/xercesImpl.jar;${basedir}/../org.apache.xerces/xmlParserAPIs.jar;${basedir}/bin;${basedir}/../org.eclipse.core.boot/boot.jar;${basedir}/../org.eclipse.swt.win32/ws/win32/swt.jar;${basedir}/../org.eclipse.ant.core/bin">
-			<src path="Ant Builder/"/>
+		<javac destdir="${temp.folder}/lib/antrunner.jar.bin" failonerror="false" verbose="false" debug="on" includeAntRuntime="no" bootclasspath="${bootclasspath}" classpath="${basedir}/../org.eclipse.core.runtime/runtime.jar;${basedir}/../org.apache.ant/ant.jar;${basedir}/../org.apache.xerces/xercesImpl.jar;${basedir}/../org.apache.xerces/xmlParserAPIs.jar;${basedir}/bin;${basedir}/../org.eclipse.core.boot/boot.jar;${swt.jar};${basedir}/../org.eclipse.ant.core/bin">
+			<src path="Ant Runner Support/"/>
 		</javac>
 		<!-- copy any necessary resources -->
-		<copy todir="${temp.folder}/lib/antbuilder.jar.bin">
-			<fileset dir="Ant Builder/" excludes="**/*.java"/>
+		<copy todir="${temp.folder}/lib/antrunner.jar.bin">
+			<fileset dir="Ant Runner Support/" excludes="**/*.java"/>
 		</copy>
 		<mkdir dir="${destBin}/lib"/>
-		<jar jarfile="${destBin}/lib/antbuilder.jar" basedir="${temp.folder}/lib/antbuilder.jar.bin"/>
+		<jar jarfile="${destBin}/lib/antrunner.jar" basedir="${temp.folder}/lib/antrunner.jar.bin"/>
 		<delete dir="${temp.folder}"/>
 		
 	</target>
 	
 	<target name="copy" depends="init">
+		<delete dir="${currentBuildPlugins}/${pluginName}" />
 		<copy todir="${currentBuildPlugins}">
 			<fileset dir="${destBin}"/>
 		</copy>
 	</target>
-	
 </project>

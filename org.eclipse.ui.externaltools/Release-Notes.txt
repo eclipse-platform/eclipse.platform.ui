@@ -1,0 +1,94 @@
+
+
+AntView Eclipse plug-in
+------------------------------------
+An eclipse plug-in to run ANT build file targets from within the IDE. 
+
+Release Notes
+-----------------------
+2002.10.30
+	Integrated Ant View into Eclipse repository
+2002.09.05
+    Release Candidate 2.2.6
+    Fixes: 
+      1) Tree View errors on build files with custom task/path requirements
+      2) executing run with no targets selected now produces a log message 
+2002.08.15
+	Release 2.2.5
+	Fixes:
+	  1) Preferences take immediate effect on apply or ok.
+	  2) Ant classpath inheritence fixed via R2.0 AntRunner class.
+	  3) Project topsort no longer generates debug/LogC Console output
+	  4) Problem using JDK 1.4.0_01 and Ant 1.5 corrected.
+	Features:
+	  1) Target filter - Filter visible targets based on target description attribute.
+	  2) Added identification of target execute children. 
+	      e.g. select a target and all other targets that would be executed 
+	      that have not already been selected will be indicated by a '*'
+      3) Alternate Ant build file name. Configurable via preferences page, 
+              default is build.xml 
+      4) Ant build file parsing errors appear in viewer tree. 
+              Identified with red icon and error description node with line number.
+      5) Target node labels are configurable via preferences page. 
+              a) Target name
+              b) Target description attribute
+              c) Both
+      6) Ant execution is via Eclipse 2.0 AntRunner class with Progress dialog.
+              This configures ant classpath from Eclipse Ant Core preferences page with 
+              Eclipse Ant Core tasks and types. 
+      7) Viewer will now display an error node instead of a blank viewer when 
+              no build files are found. 
+
+2002.07.15
+     Release 2.0.1
+     Fixes:
+       1) eclipse.running property set for ANT build
+       2) supports project directory outside of eclipse home
+     New Features:
+       1) project node labels now have the option of being 
+             a) directory location, 
+             b) project name attribute, 
+             c) both
+       2) preference page to modify project node labeling.
+ 
+2002.07.05
+     Release 2.0.0
+     Rewrite to Eclipse R2.0 IDE
+     Removed Log4J requirement
+     Added Ant Target dependency and target execution information
+     Change Ant output from R1.0 AntConsole to R2.0 LogConsole
+     Removed preferences page
+
+2002.05.31 
+     Functional release 1.2.5
+     
+Installation
+-----------------
+1) Unpack the distribution file in the 'plug-ins' directory of your eclipse installation. 
+2) Launch eclipse
+
+Usage
+-----------
+Activate View
+   1) From eclipse menu select: 
+           Window -> Show View -> Other
+       This will bring up the View Selection Dialog
+   2) From View Selection Dialog select:
+            External Tools -> AntView
+
+Run Ant Target(s)
+    o The AntView is a tree, with the top level being the project/directory of the Ant Build file
+        and the sub-items being the Targets. 
+    o A target can be selected (double-click), the order the targets are run is 
+       displayed next to the  target when selected. To deselect  a target, double-click again. 
+    o To run all selected targets, select the 'running man' icon on the view tool bar or the 
+         right click menu in the view. 
+    o To clear all selections (reset), select the 'eraser' icon on the view tool bar or the 
+         right click menu in the view. 
+    o To Refresh/Reload Ant Build files, select the 'circular arrows' icon on the view tool bar
+        or the right click menu in the view. 
+    o To change the display level output of the Ant build process, select the 'down triangle' 
+         then the 'Display level' menu option or use the right click menu in the view. 
+    o Open target item to see additional information on target dependiencies and execution order.    
+
+

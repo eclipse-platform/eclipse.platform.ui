@@ -6,7 +6,7 @@
 	<target name="export to remote targets" depends="init">
 		<ant antfile="scripts/updateTarget.xml" dir="../../org.eclipse.ant.core" target="export"/>
 		<ant antfile="scripts/updateTarget.xml" dir="../../org.eclipse.ant.core" target="copy"/>
-		<ant antfile="scripts/updateTarget.xml" dir="../../org.eclipse.ui.externalTools" target="export"/>
-		<ant antfile="scripts/updateTarget.xml" dir="../../org.eclipse.ui.externalTools" target="copy"/>
+		<ant antfile="scripts/updateTarget.xml" dir="../../org.eclipse.ui.externaltools" target="export"/>
+		<ant antfile="scripts/updateTarget.xml" dir="../../org.eclipse.ui.externaltools" target="copy"/>
 	</target>
 </project>
