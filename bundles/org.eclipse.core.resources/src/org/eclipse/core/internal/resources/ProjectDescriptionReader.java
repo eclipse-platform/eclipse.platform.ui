@@ -48,6 +48,8 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	protected static final int S_PROJECTS = 6;
 	protected static final int S_REFERENCED_PROJECT_NAME = 9;
 	protected static final int S_WORKSPACE_DESC = 1;
+	protected final StringBuffer charBuffer = new StringBuffer();
+
 	protected Stack objectStack;
 	protected MultiStatus problems;
 
@@ -59,88 +61,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	 * @see ContentHandler#characters(char[], int, int)
 	 */
 	public void characters(char[] chars, int offset, int length) throws SAXException {
-		switch (state) {
-			case S_PROJECT_NAME :
-				String projectName = new String(chars, offset, length);
-				projectDescription.setName(projectName);
-				break;
-			case S_PROJECT_COMMENT :
-				String comment = new String(chars, offset, length);
-				projectDescription.setComment(comment);
-				break;
-			case S_REFERENCED_PROJECT_NAME :
-				String referencedProjectName = new String(chars, offset, length);
-				((ArrayList) objectStack.peek()).add(referencedProjectName);
-				break;
-			case S_BUILD_COMMAND_NAME :
-				String buildCmdName = new String(chars, offset, length);
-				((BuildCommand) objectStack.peek()).setName(buildCmdName);
-				break;
-			case S_DICTIONARY_KEY :
-				// There is a value place holder on the top of the stack and
-				// a key place holder just below it.
-				String value = (String) objectStack.pop();
-				String oldKey = (String) objectStack.pop();
-				String key = new String(chars, offset, length);
-				if (oldKey != null && oldKey.length() != 0) {
-					parseProblem(Policy.bind("projectDescriptionReader.whichKey", oldKey, key)); //$NON-NLS-1$
-					objectStack.push(oldKey);
-				} else {
-					objectStack.push(key);
-				}
-				objectStack.push(value);
-				break;
-			case S_DICTIONARY_VALUE :
-				value = new String(chars, offset, length);
-				// There is a value place holder on the top of the stack
-				String oldValue = (String) objectStack.pop();
-				if (oldValue != null && oldValue.length() != 0) {
-					parseProblem(Policy.bind("projectDescriptionReader.whichValue", oldValue, value)); //$NON-NLS-1$
-					objectStack.push(oldValue);
-				} else {
-					objectStack.push(value);
-				}
-				break;
-			case S_NATURE_NAME :
-				String natureName = new String(chars, offset, length);
-				((ArrayList) objectStack.peek()).add(natureName);
-				break;
-			case S_LINK_NAME :
-				String linkName = new String(chars, offset, length);
-				// objectStack has a LinkDescription on it. Set the name
-				// on this LinkDescription.
-				String oldName = ((LinkDescription) objectStack.peek()).getName();
-				if (oldName.length() != 0) {
-					parseProblem(Policy.bind("projectDescriptionReader.badLinkName", oldName, linkName)); //$NON-NLS-1$
-				} else {
-					((LinkDescription) objectStack.peek()).setName(linkName);
-				}
-				break;
-			case S_LINK_TYPE :
-				String typeString = new String(chars, offset, length);
-				int type = new Integer(typeString).intValue();
-				// objectStack has a LinkDescription on it. Set the type
-				// on this LinkDescription.
-				int oldType = ((LinkDescription) objectStack.peek()).getType();
-				if (oldType != -1) {
-					parseProblem(Policy.bind("projectDescriptionReader.badLinkType", new Integer(oldType).toString(), typeString)); //$NON-NLS-1$
-				} else {
-					((LinkDescription) objectStack.peek()).setType(type);
-				}
-				break;
-			case S_LINK_LOCATION :
-				String location = new String(chars, offset, length);
-				// objectStack has name, type, and location on it.  Pop until
-				// you get to the location and then restore the stack.
-				IPath oldLocation = ((LinkDescription) objectStack.peek()).getLocation();
-				if (!oldLocation.isEmpty()) {
-					parseProblem(Policy.bind("projectDescriptionReader.badLocation", oldLocation.toString(), location)); //$NON-NLS-1$
-				} else {
-					((LinkDescription) objectStack.peek()).setLocation(new Path(location));
-				}
-				break;
-		}
+		//accumulate characters and process them when endElement is reached
+		charBuffer.append(chars, offset, length);
 	}
+
 	/**
 	 * End of an element that is part of a build command
 	 */
@@ -169,6 +93,53 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			projectDescription.setBuildSpec(commandArray);
 		}
 	}
+
+	public void endDictionary(String elementName) {
+		if (elementName.equals(DICTIONARY)) {
+			// Pick up the value and then key off the stack and add them
+			// to the HashMap which is just below them on the stack.
+			// Leave the HashMap on the stack to pick up more key/value
+			// pairs if they exist.
+			String value = (String) objectStack.pop();
+			String key = (String) objectStack.pop();
+			((HashMap) objectStack.peek()).put(key, value);
+			state = S_BUILD_COMMAND_ARGUMENTS;
+		}
+	}
+
+	public void endDictionaryKey(String elementName) {
+		if (elementName.equals(KEY)) {
+			// There is a value place holder on the top of the stack and
+			// a key place holder just below it.
+			String value = (String) objectStack.pop();
+			String oldKey = (String) objectStack.pop();
+			String newKey = charBuffer.toString();
+			if (oldKey != null && oldKey.length() != 0) {
+				parseProblem(Policy.bind("projectDescriptionReader.whichKey", oldKey, newKey)); //$NON-NLS-1$
+				objectStack.push(oldKey);
+			} else {
+				objectStack.push(newKey);
+			}
+			//push back the dictionary value
+			objectStack.push(value);
+			state = S_DICTIONARY;
+		}
+	}
+
+	public void endDictionaryValue(String elementName) {
+		if (elementName.equals(VALUE)) {
+			String newValue = charBuffer.toString();
+			// There is a value place holder on the top of the stack
+			String oldValue = (String) objectStack.pop();
+			if (oldValue != null && oldValue.length() != 0) {
+				parseProblem(Policy.bind("projectDescriptionReader.whichValue", oldValue, newValue)); //$NON-NLS-1$
+				objectStack.push(oldValue);
+			} else {
+				objectStack.push(newValue);
+			}
+			state = S_DICTIONARY;
+		}
+	}
 	/**
 	 * @see ContentHandler#endElement(String, String, String)
 	 */
@@ -178,8 +149,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				// Don't think we need to do anything here.
 				break;
 			case S_PROJECT_NAME :
-				if (elementName.equals(NAME))
+				if (elementName.equals(NAME)) {
+					projectDescription.setName(charBuffer.toString());
 					state = S_PROJECT_DESC;
+				}
 				break;
 			case S_PROJECTS :
 				if (elementName.equals(PROJECTS)) {
@@ -188,16 +161,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				}
 				break;
 			case S_DICTIONARY :
-				if (elementName.equals(DICTIONARY)) {
-					// Pick up the value and then key off the stack and add them
-					// to the HashMap which is just below them on the stack.
-					// Leave the HashMap on the stack to pick up more key/value
-					// pairs if they exist.
-					String value = (String) objectStack.pop();
-					String key = (String) objectStack.pop();
-					((HashMap) objectStack.peek()).put(key, value);
-					state = S_BUILD_COMMAND_ARGUMENTS;
-				}
+				endDictionary(elementName);
 				break;
 			case S_BUILD_COMMAND_ARGUMENTS :
 				if (elementName.equals(ARGUMENTS)) {
@@ -227,43 +191,49 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				endLinkedResourcesElement(elementName);
 				return;
 			case S_PROJECT_COMMENT :
-				if (elementName.equals(COMMENT))
+				if (elementName.equals(COMMENT)) {
+					projectDescription.setComment(charBuffer.toString());
 					state = S_PROJECT_DESC;
+				}
 				break;
 			case S_REFERENCED_PROJECT_NAME :
-				if (elementName.equals(PROJECT))
+				if (elementName.equals(PROJECT)) {
+					//top of stack is list of project references
+					 ((ArrayList) objectStack.peek()).add(charBuffer.toString());
 					state = S_PROJECTS;
+				}
 				break;
 			case S_BUILD_COMMAND_NAME :
-				if (elementName.equals(NAME))
+				if (elementName.equals(NAME)) {
+					//top of stack is the build command
+					 ((BuildCommand) objectStack.peek()).setName(charBuffer.toString());
 					state = S_BUILD_COMMAND;
+				}
 				break;
 			case S_DICTIONARY_KEY :
-				if (elementName.equals(KEY))
-					state = S_DICTIONARY;
+				endDictionaryKey(elementName);
 				break;
 			case S_DICTIONARY_VALUE :
-				if (elementName.equals(VALUE))
-					state = S_DICTIONARY;
+				endDictionaryValue(elementName);
 				break;
 			case S_NATURE_NAME :
-				if (elementName.equals(NATURE))
+				if (elementName.equals(NATURE)) {
+					//top of stack is list of nature names
+					 ((ArrayList) objectStack.peek()).add(charBuffer.toString());
 					state = S_NATURES;
+				}
 				break;
 			case S_LINK_NAME :
-				if (elementName.equals(NAME))
-					state = S_LINK;
+				endLinkName(elementName);
 				break;
 			case S_LINK_TYPE :
-				if (elementName.equals(TYPE))
-					state = S_LINK;
+				endLinkType(elementName);
 				break;
 			case S_LINK_LOCATION :
-				if (elementName.equals(LOCATION))
-					state = S_LINK;
+				endLinkLocation(elementName);
 				break;
-
 		}
+		charBuffer.setLength(0);
 	}
 	/**
 	 * 
@@ -306,6 +276,57 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 			// The HashMap of linked resources is the next thing on the stack
 			 ((HashMap) objectStack.peek()).put(link.getName(), link);
+		}
+	}
+
+	public void endLinkLocation(String elementName) {
+		if (elementName.equals(LOCATION)) {
+			String newLocation = charBuffer.toString();
+			// objectStack has a LinkDescription on it. Set the type on this LinkDescription.
+			IPath oldLocation = ((LinkDescription) objectStack.peek()).getLocation();
+			if (!oldLocation.isEmpty()) {
+				parseProblem(Policy.bind("projectDescriptionReader.badLocation", oldLocation.toString(), newLocation)); //$NON-NLS-1$
+			} else {
+				((LinkDescription) objectStack.peek()).setLocation(new Path(newLocation));
+			}
+			state = S_LINK;
+		}
+	}
+
+	public void endLinkName(String elementName) {
+		if (elementName.equals(NAME)) {
+			String newName = charBuffer.toString();
+			// objectStack has a LinkDescription on it. Set the name
+			// on this LinkDescription.
+			String oldName = ((LinkDescription) objectStack.peek()).getName();
+			if (oldName.length() != 0) {
+				parseProblem(Policy.bind("projectDescriptionReader.badLinkName", oldName, newName)); //$NON-NLS-1$
+			} else {
+				((LinkDescription) objectStack.peek()).setName(newName);
+			}
+			state = S_LINK;
+		}
+	}
+
+	public void endLinkType(String elementName) {
+		if (elementName.equals(TYPE)) {
+			//FIXME we should handle this case by removing the entire link
+			//for now we default to a file link
+			int newType = IResource.FILE;
+			try {
+				newType = Integer.parseInt(charBuffer.toString());
+			} catch (NumberFormatException e) {
+				log(e);
+			}
+			// objectStack has a LinkDescription on it. Set the type
+			// on this LinkDescription.
+			int oldType = ((LinkDescription) objectStack.peek()).getType();
+			if (oldType != -1) {
+				parseProblem(Policy.bind("projectDescriptionReader.badLinkType", Integer.toString(oldType), Integer.toString(newType))); //$NON-NLS-1$
+			} else {
+				((LinkDescription) objectStack.peek()).setType(newType);
+			}
+			state = S_LINK;
 		}
 	}
 	/**
@@ -400,7 +421,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		}
 	}
 	public ProjectDescription read(InputSource input) {
-		problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, Policy.bind("projectDescriptionReader.failureReadingProjectDesc "), null); //$NON-NLS-1$
+		problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, Policy.bind("projectDescriptionReader.failureReadingProjectDesc"), null); //$NON-NLS-1$
 		objectStack = new Stack();
 		state = S_INITIAL;
 		try {
@@ -422,14 +443,14 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			log(e);
 		}
 		switch (problems.getSeverity()) {
-			case IStatus.ERROR:
+			case IStatus.ERROR :
 				ResourcesPlugin.getPlugin().getLog().log(problems);
 				return null;
-			case IStatus.WARNING:
-			case IStatus.INFO:
+			case IStatus.WARNING :
+			case IStatus.INFO :
 				ResourcesPlugin.getPlugin().getLog().log(problems);
-			case IStatus.OK:
-			default:
+			case IStatus.OK :
+			default :
 				return projectDescription;
 		}
 	}
@@ -455,6 +476,8 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	 * @see ContentHandler#startElement(String, String, String, Attributes)
 	 */
 	public void startElement(String uri, String elementName, String qname, Attributes attributes) throws SAXException {
+		//clear the character buffer at the start of every element
+		charBuffer.setLength(0);
 		switch (state) {
 			case S_INITIAL :
 				if (elementName.equals(PROJECT_DESCRIPTION)) {
