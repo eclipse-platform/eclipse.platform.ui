@@ -18,6 +18,7 @@ import java.util.HashMap;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbench;
@@ -25,6 +26,8 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+
+import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.util.PrefUtil;
 
@@ -35,105 +38,97 @@ import org.eclipse.ui.internal.util.PrefUtil;
  */
 public class PlatformUIPreferenceListener implements IPropertyChangeListener {
 
-    /**
-     * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(PropertyChangeEvent)
-     */
-    public void propertyChange(PropertyChangeEvent event) {
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
 
-        String propertyName = event.getProperty();
-        if (IPreferenceConstants.ENABLED_DECORATORS.equals(propertyName)) {
-            WorkbenchPlugin.getDefault().getDecoratorManager()
-                    .restoreListeners();
-            return;
-        }
+		String propertyName = event.getProperty();
+		if (IPreferenceConstants.ENABLED_DECORATORS.equals(propertyName)) {
+			DecoratorManager manager = WorkbenchPlugin.getDefault().getDecoratorManager();
+			manager.applyDecoratorsPreference();
+			manager.clearCaches();
+			manager.updateForEnablementChange();
+			return;
+		}
 
-        if (IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID
-                .equals(propertyName)) {
-            IWorkbench workbench = PlatformUI.getWorkbench();
+		if (IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID.equals(propertyName)) {
+			IWorkbench workbench = PlatformUI.getWorkbench();
 
-            workbench.getPerspectiveRegistry().setDefaultPerspective(
-                    (String) event.getNewValue());
-            return;
-        }
+			workbench.getPerspectiveRegistry().setDefaultPerspective((String) event.getNewValue());
+			return;
+		}
 
-        if (IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR
-                .equals(propertyName)) {
-            IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-            IWorkbench workbench = PlatformUI.getWorkbench();
-            IWorkbenchWindow[] workbenchWindows = workbench
-                    .getWorkbenchWindows();
-            for (int i = 0; i < workbenchWindows.length; i++) {
-                IWorkbenchWindow window = workbenchWindows[i];
-                if (window instanceof WorkbenchWindow)
-                    ((WorkbenchWindow) window)
-                            .setPerspectiveBarLocation(apiStore
-                                    .getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
-            }
-            return;
-        }
+		if (IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR.equals(propertyName)) {
+			IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			IWorkbenchWindow[] workbenchWindows = workbench.getWorkbenchWindows();
+			for (int i = 0; i < workbenchWindows.length; i++) {
+				IWorkbenchWindow window = workbenchWindows[i];
+				if (window instanceof WorkbenchWindow)
+					((WorkbenchWindow) window).setPerspectiveBarLocation(apiStore
+							.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
+			}
+			return;
+		}
 
-        // TODO the banner apperance should have its own preference
-        if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS
-                .equals(propertyName)) {
-            boolean newValue = PrefUtil.getAPIPreferenceStore().getBoolean(
-                    IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
+		// TODO the banner apperance should have its own preference
+		if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(propertyName)) {
+			boolean newValue = PrefUtil.getAPIPreferenceStore().getBoolean(
+					IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
 
-            IWorkbench workbench = PlatformUI.getWorkbench();
-            IWorkbenchWindow[] workbenchWindows = workbench
-                    .getWorkbenchWindows();
-            for (int i = 0; i < workbenchWindows.length; i++) {
-                IWorkbenchWindow window = workbenchWindows[i];
-                if (window instanceof WorkbenchWindow)
-                    ((WorkbenchWindow) window).setBannerCurve(newValue);
-            }
-            return;
-        }
+			IWorkbench workbench = PlatformUI.getWorkbench();
+			IWorkbenchWindow[] workbenchWindows = workbench.getWorkbenchWindows();
+			for (int i = 0; i < workbenchWindows.length; i++) {
+				IWorkbenchWindow window = workbenchWindows[i];
+				if (window instanceof WorkbenchWindow)
+					((WorkbenchWindow) window).setBannerCurve(newValue);
+			}
+			return;
+		}
 
-        // Update the file associations if they have changed due to an import
-        if (IPreferenceConstants.RESOURCES.equals(propertyName)) {
-            IEditorRegistry registry = WorkbenchPlugin.getDefault()
-                    .getEditorRegistry();
-            if (registry instanceof EditorRegistry) {
-                EditorRegistry editorRegistry = (EditorRegistry) registry;
-                IPreferenceStore store = WorkbenchPlugin.getDefault()
-                        .getPreferenceStore();
-                Reader reader = null;
-                try {
-                    String xmlString = store
-                            .getString(IPreferenceConstants.RESOURCES);
-                    if (xmlString != null && xmlString.length() > 0) {
-                        reader = new StringReader(xmlString);
-                        // Build the editor map.
-                        HashMap editorMap = new HashMap();
-                        int i = 0;
-                        IEditorDescriptor[] descriptors = editorRegistry
-                                .getSortedEditorsFromPlugins();
-                        // Get the internal editors
-                        for (i = 0; i < descriptors.length; i++) {
-                            IEditorDescriptor descriptor = descriptors[i];
-                            editorMap.put(descriptor.getId(), descriptor);
-                        }
-                        // Get the external (OS) editors
-                        descriptors = editorRegistry.getSortedEditorsFromOS();
-                        for (i = 0; i < descriptors.length; i++) {
-                            IEditorDescriptor descriptor = descriptors[i];
-                            editorMap.put(descriptor.getId(), descriptor);
-                        }
-                        // Update the file to editor(s) mappings
-                        editorRegistry.readResources(editorMap, reader);
-                    }
-                } catch (WorkbenchException e) {
-                    e.printStackTrace();
-                } finally {
-                    if (reader != null) {
-                        try {
-                            reader.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }
-    }
+		// Update the file associations if they have changed due to an import
+		if (IPreferenceConstants.RESOURCES.equals(propertyName)) {
+			IEditorRegistry registry = WorkbenchPlugin.getDefault().getEditorRegistry();
+			if (registry instanceof EditorRegistry) {
+				EditorRegistry editorRegistry = (EditorRegistry) registry;
+				IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+				Reader reader = null;
+				try {
+					String xmlString = store.getString(IPreferenceConstants.RESOURCES);
+					if (xmlString != null && xmlString.length() > 0) {
+						reader = new StringReader(xmlString);
+						// Build the editor map.
+						HashMap editorMap = new HashMap();
+						int i = 0;
+						IEditorDescriptor[] descriptors = editorRegistry
+								.getSortedEditorsFromPlugins();
+						// Get the internal editors
+						for (i = 0; i < descriptors.length; i++) {
+							IEditorDescriptor descriptor = descriptors[i];
+							editorMap.put(descriptor.getId(), descriptor);
+						}
+						// Get the external (OS) editors
+						descriptors = editorRegistry.getSortedEditorsFromOS();
+						for (i = 0; i < descriptors.length; i++) {
+							IEditorDescriptor descriptor = descriptors[i];
+							editorMap.put(descriptor.getId(), descriptor);
+						}
+						// Update the file to editor(s) mappings
+						editorRegistry.readResources(editorMap, reader);
+					}
+				} catch (WorkbenchException e) {
+					e.printStackTrace();
+				} finally {
+					if (reader != null) {
+						try {
+							reader.close();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+	}
 }
