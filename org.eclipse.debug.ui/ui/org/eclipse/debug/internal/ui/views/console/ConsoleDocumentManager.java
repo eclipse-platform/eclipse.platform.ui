@@ -94,7 +94,7 @@ public class ConsoleDocumentManager implements ILaunchListener {
 	 * @param process
 	 * @return the console for the given process, or <code>null</code> if none
 	 */
-	private IConsole getConsole(IProcess process) {
+	public IConsole getConsole(IProcess process) {
 		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager(); 
 		IConsole[] consoles = manager.getConsoles();
 		for (int i = 0; i < consoles.length; i++) {
