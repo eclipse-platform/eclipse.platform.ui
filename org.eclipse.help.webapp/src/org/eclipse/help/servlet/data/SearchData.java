@@ -187,6 +187,9 @@ public class SearchData extends RequestData {
 		String workingSetName;
 		if (isSearchRequest()) {
 			workingSetName = request.getParameter("scope");
+			// if we have already set the working set, then use it.
+			if (workingSetName == null)
+				workingSetName = request.getParameter("workingSet");
 		} else if (isScopeRequest()) {
 			workingSetName = request.getParameter("workingSet");
 		} else {
