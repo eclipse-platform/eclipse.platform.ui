@@ -221,7 +221,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	}
 
 	protected void setViewerInput(IStructuredSelection ssel) {
-		
 		IStackFrame frame= null;
 		if (ssel.size() == 1) {
 			Object input= ssel.getFirstElement();
@@ -230,6 +229,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			}
 		}
 
+		getDetailViewer().setEditable(frame != null);
+		
 		Object current= getViewer().getInput();
 		if (current == null && frame == null) {
 			return;
@@ -252,16 +253,16 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	protected void configureDetailsViewer() {
 		LazyModelPresentation mp = (LazyModelPresentation)fModelPresentation.getPresentation(getDebugModel());
 		SourceViewerConfiguration svc = null;
-		try {
-			svc = mp.newDetailsViewerConfiguration();
-		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(getSite().getShell(), DebugUIViewsMessages.getString("VariablesView.Error_1"), DebugUIViewsMessages.getString("VariablesView.Unable_to_configure_variable_details_area._2"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+		if (mp != null) {
+			try {
+				svc = mp.newDetailsViewerConfiguration();
+			} catch (CoreException e) {
+				DebugUIPlugin.errorDialog(getSite().getShell(), DebugUIViewsMessages.getString("VariablesView.Error_1"), DebugUIViewsMessages.getString("VariablesView.Unable_to_configure_variable_details_area._2"), e.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		}
 		if (svc == null) {
 			svc = new SourceViewerConfiguration();
 			getDetailViewer().setEditable(false);
-		} else {
-			getDetailViewer().setEditable(true);
 		}
 		getDetailViewer().configure(svc);
 		//update actions that depend on the configuration of the details viewer
@@ -745,7 +746,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * @param id debug model identifier of the type of debug
 	 *  elements being displayed in this view
 	 */
-	private void setDebugModel(String id) {
+	protected void setDebugModel(String id) {
 		if (id != fDebugModelIdentifier) {
 			fDebugModelIdentifier = id;
 			configureDetailsViewer();
