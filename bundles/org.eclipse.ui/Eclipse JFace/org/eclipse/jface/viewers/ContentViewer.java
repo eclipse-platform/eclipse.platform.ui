@@ -248,6 +248,12 @@ public void setInput(Object input) {
  */
 public void setLabelProvider(IBaseLabelProvider labelProvider) {
 	IBaseLabelProvider oldProvider = this.labelProvider;
+	// If it hasn't changed, do nothing.
+	// This also ensures that the provider is not disposed
+	// if set a second time.
+	if (labelProvider == oldProvider) {
+		return;
+	}
 	if (oldProvider != null) {
 		oldProvider.removeListener(this.labelProviderListener);
 	}
