@@ -10,8 +10,14 @@ import java.io.FileFilter;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.commands.FileNameMatcher;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
@@ -221,6 +227,7 @@ public class LocalFolder extends LocalResource implements ICVSFolder {
 	public void setFolderSyncInfo(FolderSyncInfo folderInfo) throws CVSException {
 		Synchronizer.getInstance().setFolderSync(ioResource, folderInfo);
 	}
+
 	/*
 	 * @see ICVSFolder#isCVSFolder()
 	 */
@@ -228,9 +235,11 @@ public class LocalFolder extends LocalResource implements ICVSFolder {
 		try {
 			return Synchronizer.getInstance().getFolderSync(ioResource) != null;
 		} catch(CVSException e) {
+			CVSProviderPlugin.log(new CVSStatus(IStatus.ERROR, Path.EMPTY, "CVS error getting folder sync info", e));
 			return false;
 		}
 	}
+
 	/*
 	 * @see ICVSResource#unmanage()
 	 */

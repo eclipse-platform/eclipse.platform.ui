@@ -123,9 +123,6 @@ public abstract class ResourceDeltaVisitor implements IResourceDeltaVisitor {
 	}
 	
 	private void addRemoval(IProject project, IResource resource) {
-		// Only record files as there's nothing we can do about folders
-		if (resource.getType() != IResource.FILE)
-			return;
 		List removals = (List)this.removals.get(project);
 		if (removals == null) {
 			removals = new ArrayList();

@@ -40,7 +40,7 @@ import org.eclipse.team.internal.ccvs.core.util.SyncFileUtil;
  * <p>
  * All set and delete methods on the synchronizer do not persist the sync information
  * to disk, instead clients modifying the sync info must call <code>save()</code>
- * to persis the sync information.</p>
+ * to persist the sync information.</p>
  * <p>
  * A client may set/get resource sync info for files that don't exist on the file
  * system yet. This is mainly to support having sync info for deleted files. However,
@@ -91,14 +91,14 @@ public class Synchronizer {
 		protected void handleAdded(IProject project, IResource resource) {
 		}
 		protected void handleRemoved(IProject project, IResource resource) {
-//			try {
-//				if(resource.getType()!=IResource.FILE && !resource.getName().equals("CVS")) {
-//					Synchronizer.getInstance().deleteFolderSync(resource.getLocation().toFile(), new NullProgressMonitor());
-//					Synchronizer.getInstance().save(new NullProgressMonitor());
-//				}
-//			} catch(CVSException e) {
-//				CVSProviderPlugin.log(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, "Could not delete CVS folder sync info", null));
-//			}
+			try {
+				if(resource.getType()!=IResource.FILE && !resource.getName().equals("CVS")) {
+					Synchronizer.getInstance().deleteFolderSync(resource.getLocation().toFile(), new NullProgressMonitor());
+					Synchronizer.getInstance().save(new NullProgressMonitor());
+				}
+			} catch(CVSException e) {
+				CVSProviderPlugin.log(new Status(IStatus.WARNING, CVSProviderPlugin.ID, 0, "Could not delete CVS folder sync info", null));
+			}
 		}
 		protected void handleChanged(IProject project, IResource resource) {
 		}
@@ -202,9 +202,6 @@ public class Synchronizer {
 	 * the changes. If the folder does not exist on the file system.
 	 */
 	public FolderSyncInfo getFolderSync(File folder) throws CVSException {
-		if(!folder.exists()) {
-			throw new CVSException("Folder does not exist");
-		}
 		return getFolderSync(folder, false);
 	}
 	
@@ -352,18 +349,14 @@ public class Synchronizer {
 	 * @param folder the folder for which to return the children resource sync infos.
 	 */
 	public ResourceSyncInfo[] members(File folder) throws CVSException {
-		if(folder.isDirectory()) {
-			File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(folder), SyncFileUtil.ENTRIES);
-			SyncFile entriesSync = (SyncFile)entriesCache.get(entriesFile);		
-			if(entriesSync==null) {
-				getResourceSync(new File(folder, "dummy"), true);
-				entriesSync = (SyncFile)entriesCache.get(entriesFile);
-			}
-			Collection entries = entriesSync.config.values();
-			return (ResourceSyncInfo[])entries.toArray(new ResourceSyncInfo[entries.size()]);
-		} else {
+		File entriesFile = new File(SyncFileUtil.getCVSSubdirectory(folder), SyncFileUtil.ENTRIES);
+		SyncFile entriesSync = (SyncFile)entriesCache.get(entriesFile);		
+		
+		if(entriesSync==null) {
 			return new ResourceSyncInfo[0];
 		}
+		Collection entries = entriesSync.config.values();
+		return (ResourceSyncInfo[])entries.toArray(new ResourceSyncInfo[entries.size()]);		
 	}
 	
 	/**
@@ -378,6 +371,7 @@ public class Synchronizer {
 			File file = fsFolder.getLocalFile();
 			getFolderSync(file, true);
 			
+			// XXX not a great way to force a reload of the entries file :<
 			ICVSFile[] files = folder.getFiles();
 			for (int i = 0; i < files.length; i++) {
 				ICVSFile iCVSFile = files[i];
@@ -395,6 +389,16 @@ public class Synchronizer {
 	}
 	
 	/**
+	 * Clear the entire synchronizer cache. This will force a reload of sync information from
+	 * disk on subsequent get calls. There must not be any invalidated sync infos.
+	 */
+	public void clear() {
+		Assert.isTrue(invalidatedEntryFiles.isEmpty() && invalidatedFolderConfigs.isEmpty());
+		entriesCache.clear();
+		folderConfigCache.clear();
+	}
+	
+	/**
 	 * Internal helping for returning the folder sync info. If reload is <code>true</code>
 	 * then load entries from disk.
 	 * 
@@ -405,6 +409,11 @@ public class Synchronizer {
 	protected FolderSyncInfo getFolderSync(File folder, boolean reload) throws CVSException {
 		SyncFile folderSync = (SyncFile)folderConfigCache.get(folder);
 		if(folderSync==null || reload) {
+			
+			if(!folder.exists()) {
+				return null;
+			}
+			
 			folderSync = new SyncFile();
 			FolderSyncInfo info = SyncFileUtil.readFolderConfig(folder);
 			
@@ -470,7 +479,7 @@ public class Synchronizer {
 			try {
 				resource.refreshLocal(depth, null);
 			} catch(CoreException e) {
-				throw new CVSException("Error refreshing file from local contents " + file.getAbsolutePath(), e);
+				// throw new CVSException("Error refreshing file from local contents " + file.getAbsolutePath(), e);
 			}
 			TeamPlugin.getManager().broadcastResourceStateChanges(new IResource[] {resource});
 		}
