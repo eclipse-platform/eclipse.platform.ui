@@ -41,6 +41,12 @@ public class ProgressMonitorDialog extends Dialog implements IRunnableContext {
 	 * Name to use for task when normal task name is empty string.
 	 */
 	private static String DEFAULT_TASKNAME= JFaceResources.getString("ProgressMonitorDialog.message"); //$NON-NLS-1$
+	
+	/**
+	 * Constants for label and monitor size
+	 */
+	private static int LABEL_DLUS = 21;
+	private static int BAR_DLUS = 9;
 
 
 	/**
@@ -291,55 +297,57 @@ protected Control createContents(Composite parent) {
 	
 	return parent;
 }
-	
+
+
 /* (non-Javadoc)
  * Method declared on Dialog.
  */
 protected Control createDialogArea(Composite parent) {
-
-		// icon
-		Label iconLabel= new Label(parent, SWT.LEFT);
-		iconLabel.setLayoutData(new GridData(
-			GridData.HORIZONTAL_ALIGN_CENTER |
-			GridData.VERTICAL_ALIGN_BEGINNING));
-		Image i= JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_INFO);
-		if (i != null)
-			iconLabel.setImage(i);
-		else {
-			iconLabel.setText(JFaceResources.getString("Image_not_found")); //$NON-NLS-1$
-		}
-
-		// label on right hand side of icon
-		taskLabel = new Label(parent, SWT.LEFT | SWT.WRAP);
-		GridData gd = new GridData(
-			GridData.GRAB_HORIZONTAL |
-			GridData.GRAB_VERTICAL |
-			GridData.HORIZONTAL_ALIGN_FILL |
-			GridData.VERTICAL_ALIGN_CENTER);
-		gd.heightHint= 35;
-		taskLabel.setLayoutData(gd);
-		taskLabel.setText(DEFAULT_TASKNAME);
-		taskLabel.setFont(parent.getFont());
-
-		// progress indicator
-		progressIndicator= new ProgressIndicator(parent);
-		gd= new GridData();
-		gd.heightHint= 15;
-		gd.horizontalAlignment= gd.FILL;
-		gd.grabExcessHorizontalSpace= true;
-		gd.horizontalSpan= 2;
-		progressIndicator.setLayoutData(gd);
-
-		// label showing current task
-		subTaskLabel= new Label(parent, SWT.LEFT | SWT.WRAP);
-		gd= new GridData(GridData.FILL_HORIZONTAL);
-		gd.heightHint= 35;	
-		gd.horizontalSpan= 2;
-		subTaskLabel.setLayoutData(gd);
-		subTaskLabel.setFont(parent.getFont());
-
-		return parent;
+	
+	// icon
+	Label iconLabel= new Label(parent, SWT.LEFT);
+	iconLabel.setLayoutData(new GridData(
+		GridData.HORIZONTAL_ALIGN_CENTER |
+		GridData.VERTICAL_ALIGN_BEGINNING));
+	Image i= JFaceResources.getImageRegistry().get(Dialog.DLG_IMG_INFO);
+	if (i != null)
+		iconLabel.setImage(i);
+	else {
+		iconLabel.setText(JFaceResources.getString("Image_not_found")); //$NON-NLS-1$
 	}
+
+	// label on right hand side of icon
+	taskLabel = new Label(parent, SWT.LEFT | SWT.WRAP);
+	GridData gd = new GridData(
+		GridData.GRAB_HORIZONTAL |
+		GridData.GRAB_VERTICAL |
+		GridData.HORIZONTAL_ALIGN_FILL |
+		GridData.VERTICAL_ALIGN_CENTER);
+	gd.heightHint= convertVerticalDLUsToPixels(LABEL_DLUS);
+	taskLabel.setLayoutData(gd);
+	taskLabel.setText(DEFAULT_TASKNAME);
+	taskLabel.setFont(parent.getFont());
+
+	// progress indicator
+	progressIndicator= new ProgressIndicator(parent);
+	gd= new GridData();
+	gd.heightHint= convertVerticalDLUsToPixels(BAR_DLUS);
+	gd.horizontalAlignment= gd.FILL;
+	gd.grabExcessHorizontalSpace= true;
+	gd.horizontalSpan= 2;
+	progressIndicator.setLayoutData(gd);
+
+	// label showing current task
+	subTaskLabel= new Label(parent, SWT.LEFT | SWT.WRAP);
+	gd= new GridData(GridData.FILL_HORIZONTAL);
+	gd.heightHint= convertVerticalDLUsToPixels(LABEL_DLUS);
+	gd.horizontalSpan= 2;
+	subTaskLabel.setLayoutData(gd);
+	subTaskLabel.setFont(parent.getFont());
+
+	return parent;
+}
+
 /* (non-Javadoc)
  * Method declared in Window.
  */
