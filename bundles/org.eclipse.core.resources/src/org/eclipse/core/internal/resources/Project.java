@@ -342,6 +342,10 @@ protected IProjectNature createNature(String natureID) throws CoreException {
 		throw new ResourceException(Platform.PLUGIN_ERROR, getFullPath(), message, null);
 	}
 	IConfigurationElement config = configs[0];
+	if (!"runtime".equals(config.getName())) {
+		String message = Policy.bind("resources.natureFormat", natureID);
+		throw new ResourceException(Platform.PLUGIN_ERROR, getFullPath(), message, null);
+	}
 	try {
 		IProjectNature nature = (IProjectNature) config.createExecutableExtension("run");
 		nature.setProject(this);
