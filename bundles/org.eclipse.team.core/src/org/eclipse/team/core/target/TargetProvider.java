@@ -154,4 +154,16 @@ public abstract class TargetProvider {
 	public abstract boolean isDirty(IResource resource);
 
 	public abstract void deregister(IProject project);
+	
+	/**
+	 * This method provides a mechanism for allowing a target provider to optimize connections
+	 * over a set of operations. The default behavior of the method is to run the provided runnable
+	 * and to supply it with the provided progress monitor. Specific target providers may override this
+	 * method in order to ensure that the number of connections made to a remote server is minimized.
+	 * Calls to this method are nestable and it is up to the target provider to ensure that this is 
+	 * supported.
+	 */
+	public void run(ITargetRunnable runnable, IProgressMonitor monitor) throws TeamException {
+		runnable.run(monitor);
+	}
 }

@@ -10,15 +10,18 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ui.target;
 
+import org.eclipse.compare.structuremergeviewer.IDiffContainer;
+import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.core.target.ITargetRunnable;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.team.core.target.TargetProvider;
-import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.sync.CatchupReleaseViewer;
 import org.eclipse.team.internal.ui.sync.SyncCompareInput;
 
@@ -63,5 +66,27 @@ public class TargetSyncCompareInput extends SyncCompareInput {
 		
 		// Update the status line
 		updateStatusLine();
+	}
+	
+	/**
+	 * @see SyncCompareInput#collectResourceChanges(IDiffContainer, IRemoteSyncElement, IProgressMonitor)
+	 */
+	protected IDiffElement collectResourceChanges(
+		final IDiffContainer parent,
+		final IRemoteSyncElement tree,
+		IProgressMonitor pm) {
+		
+		final IDiffElement[] result = new IDiffElement[] {null};
+		try {
+			TargetProvider provider = TargetManager.getProvider(tree.getLocal().getProject());
+			provider.run(new ITargetRunnable() {
+				public void run(IProgressMonitor monitor) throws TeamException {
+					result[0] = TargetSyncCompareInput.super.collectResourceChanges(parent, tree, monitor);
+				}
+			}, pm);
+		} catch (TeamException e) {
+			TeamUIPlugin.log(e.getStatus());
+		}
+		return result[0];
 	}
 }
