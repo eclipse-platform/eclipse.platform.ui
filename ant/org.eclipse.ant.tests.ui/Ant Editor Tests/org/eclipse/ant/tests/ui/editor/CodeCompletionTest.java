@@ -857,9 +857,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 			IFile file= getIFile("empty.xml");
 			AntEditor editor= (AntEditor)EditorTestHelper.openInEditor(file, ANT_EDITOR_ID, true);
 			TestTextCompletionProcessor processor= new TestTextCompletionProcessor(editor);
-			//int lineNumber= 4;
-	    	//int lineOffset= editor.getDocumentProvider().getDocument(editor.getEditorInput()).getLineOffset(lineNumber);
-	    	
+			
 	    	editor.getSelectionProvider().setSelection(TextSelection.emptySelection());
 	    	
 	    	ICompletionProposal[] proposals= processor.computeCompletionProposals(0);
