@@ -37,7 +37,6 @@ TABLE {
 	padding:0;
 }
 
-
 FORM {
 	background:black;
 	margin:0;
@@ -45,15 +44,20 @@ FORM {
 
 INPUT {
 	font: 8pt Tahoma;
-	height:15px;
 	border:0px;
 	margin:0px;
 	padding:0px;
 }
 
+#searchTable {
+	margin-right:4px;
+}
+
 #searchWord {
-	border:1px solid Window;
-	border-left:2px solid Window;
+	border:1px solid black;
+	border-right:none;
+	height:17px;
+	padding-left:2px;
 }
 
 #advanced {
@@ -69,14 +73,10 @@ INPUT {
 }
 
 #go {
-	padding-left:5px;
+	height:17px;
+	padding-left:4px;
 	padding-right:4px;
-}
-
-#main {	
-	background-image: url("images/banner_prod.jpg");
-	background-position:top left;
-	background-repeat:no-repeat;
+	border:1px solid black;
 }
 
 </style>
@@ -115,49 +115,46 @@ function doSearch()
 
 <body style="overflow:hidden;" onunload="closeAdvanced()" >
 
-<form  name="searchForm"   onsubmit="doSearch()">
-					
-<table id=main width="100%" height="100%" cellspacing=0 cellpading=0 border=0>
-<tr>
-<td align=left>
-<!--
-	<img src="images/banner_prod.jpg">
--->
-</td>
-<td align=right >
-	<table height="100%" cellspacing=0 cellpading=0 border=0 style="margin-right:5px;" >
-	<tr>
-	<td>
-		<table width="100%" cellspacing=0 cellpading=0 border=0  style="color:white; ">
-			<tr>
-				<td  valign=bottom><%=WebappResources.getString("Search", request)%></td>
-				<td>&nbsp;</td>
-				<td align=right><a id="advanced"  href="javascript:openAdvanced();"  alt='<%=WebappResources.getString("Search", request)%>'><%=WebappResources.getString("Advanced", request)%></a></td>
-			</tr>
-		</table>
-	</td>
-	</tr>
-	<tr>
-	<td >
-		<table cellspacing=0 cellpading=0 border=0 style="margin-bottom:10px;">
-			<tr>
-			<td width="100%" >
-					<input type="text" id="searchWord" name="searchWord" value="<%= UrlUtil.getRequestParameter(request, "searchWord")!=null?UrlUtil.getRequestParameter(request, "searchWord"):""%>" maxlength=256 alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+	<table align="left" cellspacing="0" cellpadding="0" border="0">
+		<tr>
+			<td align=left valign=top><img src="images/banner_prod.jpg">
 			</td>
-			<td>
-					<input type="submit"  value='<%=WebappResources.getString("Go", request)%>'  id="go" alt='<%=WebappResources.getString("Go", request)%>'>
-          	  		<input type="hidden" name="maxHits" value="500" >
-			</td>
-			</tr>
-		</table>
-	</td>
-	</tr>
+		</tr>
 	</table>
-</td>
-</tr>
-</table>
-				
-</form>
+
+	<form  name="searchForm"   onsubmit="doSearch()">
+		<table id="searchTable" align="right" cellspacing="0" cellpadding="0" border="0">
+			<tr>
+				<td nowrap>
+					<table width="100%" cellspacing="0" cellpadding="0" border="0">
+						<tr>
+							<td><font color="white"><%=WebappResources.getString("Search", request)%></font>
+							</td>
+							<td align="center">	&nbsp;
+							</td>
+							<td align="right"><a id="advanced" href="javascript:openAdvanced();" alt='<%=WebappResources.getString("Advanced", request)%>'><%=WebappResources.getString("Advanced", request)%></a>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td nowrap>
+					<table cellspacing="0" cellpadding="0" border="0">
+						<tr>
+							<td>
+								<input type="text" id="searchWord" name="searchWord" value="<%= request.getParameter("searchWord")!=null?request.getParameter("searchWord"):""%>" size="20" maxlength="256" alt='<%=WebappResources.getString("SearchExpression", request)%>'>
+							</td>
+							<td align="right">
+								<input type="submit" value='<%=WebappResources.getString("Go", request)%>' id="go" alt='<%=WebappResources.getString("Go", request)%>'>
+								<input type="hidden" name="maxHits" value="500" >
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</form>
 
 </body>
 </html>

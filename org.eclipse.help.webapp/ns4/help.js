@@ -85,13 +85,11 @@ function setToolbarTitle(title)
 function switchTab(nav, title)
 {		
 	// set the title on the navigation toolbar to match the tab
-	/*
-  	if (title)
-     	NavToolbarFrame.document.titleText.document.write(title);
-    else
-    	NavToolbarFrame.document.titleText.document.write(titleArray[nav]);
-    */
-    	
+
+  	if (!title)
+  		title = titleArray[nav];
+    NavToolbarFrame.document.title.document.write(title);
+    
     if (nav == "toc") {
     	NavFrame.location = tocURL;
     } else if (nav == "search") {
@@ -99,8 +97,10 @@ function switchTab(nav, title)
 	}else if (nav == "links"){
     	NavFrame.location = linksURL;
     }
+    
+    TabsFrame.location = "tabs.jsp?tab="+nav;
  	
- /*
+/*
  	// show the appropriate pressed tab
   	var buttons = TabsFrame.document.body.getElementsByTagName("TD");
   	for (var i=0; i<buttons.length; i++)
@@ -110,7 +110,7 @@ function switchTab(nav, title)
 		else if (buttons[i].className == "pressed")
 			buttons[i].className = "tab";
  	 }
- 	 */
+*/
 }
  
  
@@ -166,10 +166,7 @@ function doSearch(query)
 		switchTab("search");
 		return;
 	}
-	if (isIE)
-		searchURL = "search_results.jsp?"+query;
-	else if (isMozilla)
-		searchURL = "search_results.jsp?"+query; 
-	
+
+	searchURL = "search_results.jsp?"+query;
 	switchTab("search");
 }

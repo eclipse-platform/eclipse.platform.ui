@@ -28,49 +28,23 @@ function refresh()
 
 <style type="text/css">
 BODY {
-	background-color: Window;
-	font: icon;
-	margin-top:5px;
-	margin-left:5px;
+	font: 8pt Tahoma;
 	padding:0;
 	border:0;
-	cursor:default;
-
-	scrollbar-highlight-color:ThreeDShadow;
-	scrollbar-shadow-color:ThreeDShadow;
-	scrollbar-arrow-color:#000000;
-	scrollbar-darkshadow-color:Window;
-	scrollbar-face-color:ActiveBorder;
 }
 
 
 A {
 	text-decoration:none; 
-	color:WindowText; 
+	color:black; 
 	padding:0px;
 	white-space: nowrap;
 	cursor:default;
 }
 
 
-TABLE {
-	background-color: Window;
-	font: icon;
-}
-
-.score {
-	padding-right:5px;
-}
-
-
-.list {
-	background-color: Window;
-	padding:2px;
-}
-     
-.active { 
-	background:ActiveBorder;
-	padding:2px;
+TABLE, TD {
+	font: 8pt Tahoma;
 }
 
 
@@ -102,7 +76,7 @@ if(request.getParameter("searchWord")!=null)
 	<TR><TD><%=WebappResources.getString("Indexing", request)%></TD></TR>
 	<TR><TD ALIGN='LEFT'>
 		<DIV STYLE='width:100px;height:16px;border:1px solid black;'>
-			<DIV ID='divProgress' STYLE='width:<%=percentage%>px;height:100%;background-color:Highlight'></DIV>
+			<DIV ID='divProgress' STYLE='width:<%=percentage%>px;height:14;background-color:#08246B'></DIV>
 		</DIV>
 	</TD></TR>
 	<TR><TD><%=percentage%>% <%=WebappResources.getString("complete", request)%></TD></TR>
@@ -160,7 +134,7 @@ setTimeout('refresh()', 2000);
 %>
 
 <tr class='list'>
-	<td class='score' align='right'><%=scoreString%></td>
+	<td class='score' align='right'><%=scoreString%>&nbsp;</td>
 	<td align='left' class='label' nowrap>
 		<a href='<%=href%>' onclick='parent.parent.setToolbarTitle("<%=tocLabel%>")'><%=label%></a>
 	</td>

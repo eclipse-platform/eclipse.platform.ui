@@ -20,31 +20,18 @@
 <style type="text/css">
 
 /* need this one for Mozilla */
-HTML { 
-	width:100%;
-	height:100%;
-	margin:0px;
-	padding:0px;
-	border:0px;
- }
- 
+
 BODY {
 	font: 8pt Tahoma;
-	background:ActiveBorder;
+	background:#D4D0C8;
 	border:1px black solid;
 	padding:0px;
 	margin:0px;
-	
-	scrollbar-highlight-color:ThreeDShadow;
-	scrollbar-shadow-color:ThreeDShadow;
-	scrollbar-arrow-color:#000000;
-	scrollbar-darkshadow-color:Window;
-	scrollbar-face-color:ActiveBorder;
 }
 
 TABLE {
 	font: 8pt Tahoma;
-	background:ActiveBorder;
+	background:#D4D0C8;
 }
 
 TD, TR {
@@ -73,9 +60,9 @@ FORM {
 }
 
 #booksContainer {
-	background:Window;
-	border-top:1px solid ThreeDShadow;
-	border-bottom:1px solid ThreeDShadow;
+
+	border-top:1px solid black;
+	border-bottom:1px solid black;
 	padding-left:10px;
 	overflow:auto; 
 	height:104px;
@@ -84,7 +71,6 @@ FORM {
 
 
 #books {
-	background:Window;
 	margin-left:10px;
 	overflow:auto;
 	height:104;

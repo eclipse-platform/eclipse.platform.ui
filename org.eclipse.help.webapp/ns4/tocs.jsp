@@ -32,6 +32,8 @@ A {
 
 DIV {
 	padding-left:20px;
+	width:100%;
+	font: 8pt Tahoma;
 }
 
 DIV {

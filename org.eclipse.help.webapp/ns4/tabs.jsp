@@ -13,6 +13,13 @@
 	 String  ContentStr = WebappResources.getString("Content", request);
 	 String  SearchStr = WebappResources.getString("SearchResults", request);
 	 String  LinksStr = WebappResources.getString("Links", request);
+	 
+	 String tab = UrlUtil.getRequestParameter(request, "tab");
+	 if (tab == null || tab.length() == 0)
+	 	tab = "toc";
+	 String tocColor = tab.equals("toc") ? "white" : "#D4D0C8";
+	 String searchColor = tab.equals("search") ? "white" : "#D4D0C8";
+	 String linksColor = tab.equals("links") ? "white" : "#D4D0C8";
 %>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
@@ -31,13 +38,6 @@ BODY {
 	background:#000000;
 }
 
-TABLE , TD{
-	background:#D4D0C8;
-	padding:0px;
-	margin:0px;
-	border:0px;
-}
-
 
 </style>
  
@@ -47,11 +47,11 @@ TABLE , TD{
 
   <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%">
    <tr cols=5>
-   <td  title="<%=ContentStr%>" align="center"  class="tab" id="tocTab" onclick="parent.switchTab('toc')"><a  href='javascript:parent.switchTab("toc");' ><img class="tabImage" alt="<%=ContentStr%>" title="<%=ContentStr%>" src="../images/contents_view.gif" border=0></a></td>
+   <td  bgcolor="<%=tocColor%>" title="<%=ContentStr%>" align="center"  class="tab" id="tocTab" onclick="parent.switchTab('toc')"><a  href='javascript:parent.switchTab("toc");' ><img class="tabImage" alt="<%=ContentStr%>" title="<%=ContentStr%>" src="../images/contents_view.gif" border=0></a></td>
    <td width=1><img src="../images/separator.gif" border=0 width=0 height=23></td>
-   <td  title="<%=SearchStr%>" align="center" class="tab" id="searchTab"  onclick="alert(window.document.foo);parent.switchTab('search')"><a  href='javascript:parent.switchTab("search")' ><img class="tabImage" alt="<%=SearchStr%>" title="<%=SearchStr%>" src="../images/search_results_view.gif" border=0></a></td>
+   <td  bgcolor="<%=searchColor%>"  title="<%=SearchStr%>" align="center" class="tab" id="searchTab"  onclick="parent.switchTab('search')"><a  href='javascript:parent.switchTab("search")' ><img class="tabImage" alt="<%=SearchStr%>" title="<%=SearchStr%>" src="../images/search_results_view.gif" border=0></a></td>
    <td width=1 border=0><img src="../images/separator.gif" border=0 width=0 height=23></td>
-   <td  title="<%=LinksStr%>" align="center" class="tab" id="linksTab"  onclick="parent.switchTab('links')"><a href='javascript:parent.switchTab("links")' ><img class="tabImage" alt="<%=LinksStr%>" title="<%=LinksStr%>" src="../images/links_view.gif" border=0></a></td>
+   <td  bgcolor="<%=linksColor%>" title="<%=LinksStr%>" align="center" class="tab" id="linksTab"  onclick="parent.switchTab('links')"><a href='javascript:parent.switchTab("links")' ><img class="tabImage" alt="<%=LinksStr%>" title="<%=LinksStr%>" src="../images/links_view.gif" border=0></a></td>
    </tr>
    </table>
 

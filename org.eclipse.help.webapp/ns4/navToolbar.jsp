@@ -46,7 +46,7 @@ TABLE {
 
 <table id="toolbarTable"  cellpading=0 cellspacing=0 border=0 width="100%" height="100%" nowrap>
 <tr border=1>
-<td align=left valign=center ><div id="title" style="position:relative; text-indent:4px; font-weight:bold;"> &nbsp;<%=WebappResources.getString("Content", request)%> </div></td>
+<td align=left valign=center ><div id="title" name="title" style="position:relative; text-indent:4px; font-weight:bold;"> &nbsp;<%=WebappResources.getString("Content", request)%> </div></td>
 <td align=right ><a  href="#" onclick="parent.showBookshelf(this); this.blur();"><img src="../images/home_nav.gif" alt='<%=WebappResources.getString("Bookshelf", request)%>' border="0" ></a>&nbsp;</td>
 </tr>
 </table>	
