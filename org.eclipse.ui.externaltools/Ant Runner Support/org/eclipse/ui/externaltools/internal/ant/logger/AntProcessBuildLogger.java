@@ -12,12 +12,10 @@ Contributors:
 *********************************************************************/
 
 import java.io.File;
-import java.io.PrintStream;
 import java.text.MessageFormat;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -42,18 +40,10 @@ import org.eclipse.ui.externaltools.internal.ant.launchConfigurations.TaskLinkMa
 	
 /**
  */
-public class AntProcessBuildLogger implements BuildLogger {
+public class AntProcessBuildLogger extends NullBuildLogger {
 	
-	protected int fMessageOutputLevel = Project.MSG_INFO;
-	private PrintStream fErr= null;
-	private PrintStream fOut= null;
-	protected boolean fEmacsMode= false;
 	private File fBuildFileParent= null;
 	private long fStartTime;
-	/**
-	 * An exception that has already been logged.
-	 */
-	protected Throwable fHandledException= null;
 	
 	/**
 	 * Size of left-hand column for right-justified task name.
@@ -69,7 +59,7 @@ public class AntProcessBuildLogger implements BuildLogger {
 	/**
 	 * @see org.eclipse.ui.externaltools.internal.ant.logger.NullBuildLogger#logMessage(java.lang.String, int)
 	 */
-	private void logMessage(String message, BuildEvent event, int overridePriority) {
+	protected void logMessage(String message, BuildEvent event, int overridePriority) {
 		int priority= overridePriority;
 		if (priority == -1) {
 			priority= event.getPriority();
@@ -173,40 +163,6 @@ public class AntProcessBuildLogger implements BuildLogger {
 				//user has designated to log to a logfile
 				getOutputPrintStream().println(message);
 			}
-		}
-	}
-	
-	protected PrintStream getErrorPrintStream() {
-		return fErr;
-	}
-
-	protected PrintStream getOutputPrintStream() {
-		return fOut;
-	}
-
-	/**
-	 * @see org.apache.tools.ant.BuildLogger#setErrorPrintStream(java.io.PrintStream)
-	 */
-	public void setErrorPrintStream(PrintStream err) {
-		//this build logger logs to "null" unless
-		//the user has explicitly set a logfile to use
-		if (err == System.err) {
-			fErr= null;
-		} else {
-			fErr= err;
-		}
-	}
-
-	/**
-	 * @see org.apache.tools.ant.BuildLogger#setOutputPrintStream(java.io.PrintStream)
-	 */
-	public void setOutputPrintStream(PrintStream output) {
-		//this build logger logs to "null" unless
-		//the user has explicitly set a logfile to use
-		if (output == System.out) {
-			fOut= null;
-		} else {
-			fOut= output;
 		}
 	}
 	
@@ -325,13 +281,6 @@ public class AntProcessBuildLogger implements BuildLogger {
 		}
 	
 	/**
-	 * @see org.apache.tools.ant.BuildLogger#setEmacsMode(boolean)
-	 */
-	public void setEmacsMode(boolean emacsMode) {
-		fEmacsMode= emacsMode;
-	}
-
-	/**
 	 * @see BuildListener#messageLogged(BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
@@ -364,33 +313,13 @@ public class AntProcessBuildLogger implements BuildLogger {
 	}
 
 	/**
-	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
-	 */
-	public void targetFinished(BuildEvent event) {
-		handleException(event);
-	}
-	
-	/**
-	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
-	 */
-	public void taskStarted(BuildEvent event) {
-	}
-
-	/**
-	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
-	 */
-	public void taskFinished(BuildEvent event) {
-		handleException(event);
-	}
-
-	/**
 	 * Returns the workspace file associated with the given absolute path in the
 	 * local file system, or <code>null</code> if none.
 	 *   
 	 * @param absolutePath
 	 * @return file or <code>null</code>
 	 */
-	protected IFile getFileForLocation(String absolutePath) {
+	private IFile getFileForLocation(String absolutePath) {
 		IPath filePath= new Path(absolutePath);
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(filePath);
 		if (file == null) {
@@ -413,16 +342,5 @@ public class AntProcessBuildLogger implements BuildLogger {
 			return file;
 		}
 		return null;
-	}
-	
-	/**
-	 * @see org.apache.tools.ant.BuildLogger#setMessageOutputLevel(int)
-	 */
-	public void setMessageOutputLevel(int level) {
-		fMessageOutputLevel= level;
-	}
-
-	protected int getMessageOutputLevel() {
-		return fMessageOutputLevel;
 	}
 }
