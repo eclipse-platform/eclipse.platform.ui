@@ -29,6 +29,35 @@ name is the id of the builder extension. When defining a builder extension, user
    </documentation>
 </annotation>
 
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="builder"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="builder">
       <complexType>
          <sequence>

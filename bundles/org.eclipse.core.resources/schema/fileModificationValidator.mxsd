@@ -11,6 +11,35 @@ and validate-save mechanism.  This extension point tolerates at most one extensi
    </documentation>
 </annotation>
 
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="fileModificationValidator" minOccurs="0" maxOccurs="1"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="fileModificationValidator">
       <complexType>
          <attribute name="class" type="string" use="required">

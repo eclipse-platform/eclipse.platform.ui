@@ -31,6 +31,37 @@ and potentially may be presented to users.
    </documentation>
 </annotation>
 
+   <element name="extension">
+      <complexType>
+         <sequence>
+            <element ref="super" minOccurs="0" maxOccurs="1"/>
+            <element ref="persistent" minOccurs="0" maxOccurs="1"/>
+            <element ref="attribute" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="super">
       <complexType>
          <attribute name="type" type="string" use="required">
