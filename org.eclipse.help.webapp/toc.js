@@ -262,6 +262,9 @@ function focusHandler(e)
 {
 	if (oldActive)
 		oldActive.focus();
+		
+	if (isMozilla)
+  		e.cancelBubble = true;
 }
 
 var tocTitle = "";	
@@ -291,7 +294,7 @@ function onloadHandler(toc, title, tocDescription, isTopicSelected)
 if (isMozilla) {
   document.addEventListener('click', mouseClickHandler, true);
   document.addEventListener('mousemove', mouseMoveHandler, true);
-  document.addEventListener("focus", focusHandler, true);
+//  document.addEventListener("focus", focusHandler, true);
 }
 else if (isIE){
   document.onclick = mouseClickHandler;
