@@ -6,11 +6,12 @@ package org.eclipse.help.ui.internal.search;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.text.NumberFormat;
+
 import org.apache.xerces.parsers.DOMParser;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
-import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.ui.*;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
 import org.eclipse.help.internal.util.Logger;
@@ -117,7 +118,8 @@ public class SearchOperation extends WorkspaceModifyOperation {
 						System.out.println(e);
 					}
 				}
-			}		}, new IGroupByKeyComputer() {
+			}
+		}, new IGroupByKeyComputer() {
 			public Object computeGroupByKey(IMarker marker) {
 				try {
 					if (marker.getAttribute(IHelpUIConstants.HIT_MARKER_ATTR_HREF) != null)
@@ -167,9 +169,14 @@ public class SearchOperation extends WorkspaceModifyOperation {
 				marker.setAttribute(
 					IHelpUIConstants.HIT_MARKER_ATTR_RESULTOF,
 					queryData.toURLQuery());
-				marker.setAttribute(
-					IHelpUIConstants.HIT_MARKER_ATTR_LABEL,
-					topic.getAttribute(ITopic.LABEL));
+
+				// Use Score percentage and label as topic label
+				String scoreString = topic.getAttribute("score");
+				float score = Float.parseFloat(scoreString);
+				NumberFormat percentFormat = NumberFormat.getPercentInstance();
+				scoreString = percentFormat.format(score);
+				String label = scoreString + " " + topic.getAttribute(ITopic.LABEL);
+				marker.setAttribute(IHelpUIConstants.HIT_MARKER_ATTR_LABEL, label);
 				marker.setAttribute(
 					IHelpUIConstants.HIT_MARKER_ATTR_ORDER,
 					new Integer(i).toString());
