@@ -177,6 +177,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 		
 		fAnnotationAccess= null;
 		fAnnotationPreferences= null;
+		fAnnotationRulerColumn= null;
 		
 		super.dispose();
 	}
@@ -629,7 +630,27 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 * @see AbstractTextEditor#createVerticalRuler()
 	 */
 	protected IVerticalRuler createVerticalRuler() {
-		return createCompositeRuler();
+		CompositeRuler ruler= createCompositeRuler();
+		if (ruler != null) {
+			for (Iterator iter=  ruler.getDecoratorIterator(); iter.hasNext();) {
+				IVerticalRulerColumn column= (IVerticalRulerColumn)iter.next();
+				if (column instanceof AnnotationRulerColumn) {
+					fAnnotationRulerColumn= (AnnotationRulerColumn)column;
+					for (Iterator iter2= fAnnotationPreferences.getAnnotationPreferences().iterator(); iter2.hasNext();) {
+						AnnotationPreference preference= (AnnotationPreference)iter2.next();
+						String key= preference.getVerticalRulerPreferenceKey();
+						boolean showAnnotation= true;
+						if (key != null)
+							showAnnotation= getPreferenceStore().getBoolean(key);
+						if (showAnnotation)
+							fAnnotationRulerColumn.addAnnotationType(preference.getAnnotationType());
+					}
+					fAnnotationRulerColumn.addAnnotationType(DefaultMarkerAnnotationAccess.UNKNOWN);
+					break;
+				}
+			}
+		}
+		return ruler;
 	}
 	
 	/**
@@ -640,22 +661,7 @@ public abstract class ExtendedTextEditor extends StatusTextEditor {
 	 */
 	protected CompositeRuler createCompositeRuler() {
 		CompositeRuler ruler= new CompositeRuler();
-		
-		fAnnotationRulerColumn= new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, getAnnotationAccess());
-		
-		for (Iterator iter= fAnnotationPreferences.getAnnotationPreferences().iterator(); iter.hasNext();) {
-			AnnotationPreference preference= (AnnotationPreference)iter.next();
-			String key= preference.getVerticalRulerPreferenceKey();
-			boolean showAnnotation= true;
-			if (key != null)
-				showAnnotation= getPreferenceStore().getBoolean(key);
-			if (showAnnotation)
-				fAnnotationRulerColumn.addAnnotationType(preference.getAnnotationType());
-			
-		}
-		fAnnotationRulerColumn.addAnnotationType(DefaultMarkerAnnotationAccess.UNKNOWN);
-		
-		ruler.addDecorator(0, fAnnotationRulerColumn);
+		ruler.addDecorator(0, new AnnotationRulerColumn(VERTICAL_RULER_WIDTH, getAnnotationAccess()));
 		
 		if (isLineNumberRulerVisible())
 			ruler.addDecorator(1, createLineNumberRulerColumn());
