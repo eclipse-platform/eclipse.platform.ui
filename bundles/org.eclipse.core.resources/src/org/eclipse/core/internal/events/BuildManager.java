@@ -482,13 +482,22 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					throw (OperationCanceledException) e;
 				//ResourceStats.buildException(e);
 				// don't log the exception....it is already being logged in Platform#run
+				
+				//add a generic message to the MultiStatus
+				String builderName = currentBuilder.getLabel();
+				if (builderName == null || builderName.length() == 0)
+					builderName = currentBuilder.getClass().getName();
+				String pluginId = currentBuilder.getPluginDescriptor().getUniqueIdentifier();
+				String message = Policy.bind("events.builderError", builderName, currentBuilder.getProject().getName()); //$NON-NLS-1$
+				status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, null));
+				
+				//add the exception status to the MultiStatus
 				if (e instanceof CoreException)
 					status.add(((CoreException) e).getStatus());
 				else {
-					String pluginId = currentBuilder.getPluginDescriptor().getUniqueIdentifier();
-					String message = e.getMessage();
+					message = e.getMessage();
 					if (message == null)
-						message = Policy.bind("events.unknown", e.getClass().getName(), currentBuilder.getClass().getName()); //$NON-NLS-1$
+						message = Policy.bind("events.unknown", e.getClass().getName(), builderName); //$NON-NLS-1$
 					status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, e));
 				}
 			}
