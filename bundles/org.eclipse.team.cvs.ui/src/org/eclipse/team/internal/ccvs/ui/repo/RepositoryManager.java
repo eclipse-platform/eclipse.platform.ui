@@ -185,8 +185,7 @@ public class RepositoryManager {
 	
 	public ICVSRemoteResource[] getFoldersForTag(ICVSRepositoryLocation location, CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		if (tag.getType() == CVSTag.HEAD) {
-			IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-			return location.members(tag, store.getBoolean(ICVSUIConstants.PREF_SHOW_MODULES), monitor);
+			return location.members(tag, false, monitor);
 		}
 		Set result = new HashSet();
 		// Get the tags for the location

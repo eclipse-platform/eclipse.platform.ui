@@ -434,7 +434,6 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		store.setDefault(ICVSUIConstants.PREF_SHOW_TAGS, true);
 		store.setDefault(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, CVSProviderPlugin.DEFAULT_PRUNE);
 		store.setDefault(ICVSUIConstants.PREF_TIMEOUT, CVSProviderPlugin.DEFAULT_TIMEOUT);
-		store.setDefault(ICVSUIConstants.PREF_SHOW_MODULES, false);
 		store.setDefault(ICVSUIConstants.PREF_CONSIDER_CONTENTS, false);
 		store.setDefault(ICVSUIConstants.PREF_SHOW_MARKERS, true);
 		store.setDefault(ICVSUIConstants.PREF_COMPRESSION_LEVEL, CVSProviderPlugin.DEFAULT_COMPRESSION_LEVEL);
