@@ -15,6 +15,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.internal.ccvs.ui.CVSLocalCompareEditorInput;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 
@@ -29,8 +30,12 @@ public class CompareWithTagAction extends CVSAction {
 		for (int i = 0; i < resources.length; i++) {
 			projects[i] = resources[i].getProject();
 		}
-		TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, Policy.bind("CompareWithTagAction.message"),  //$NON-NLS-1$
-			Policy.bind("TagSelectionDialog.Select_a_Tag_1"), TagSelectionDialog.INCLUDE_ALL_TAGS, false); //$NON-NLS-1$ //$NON-NLS-2$
+		TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, 
+			Policy.bind("CompareWithTagAction.message"),  //$NON-NLS-1$
+			Policy.bind("TagSelectionDialog.Select_a_Tag_1"), //$NON-NLS-1$
+			TagSelectionDialog.INCLUDE_ALL_TAGS, 
+			false, /* show recurse*/
+			IHelpContextIds.COMPARE_TAG_SELECTION_DIALOG);
 		dialog.setBlockOnOpen(true);
 		int result = dialog.open();
 		if (result == Dialog.CANCEL || dialog.getResult() == null) {
@@ -40,8 +45,6 @@ public class CompareWithTagAction extends CVSAction {
 		if (tag == null) return;
 		CompareUI.openCompareEditor(new CVSLocalCompareEditorInput(resources, tag));
 	}
-	
-	
 	
 	protected boolean isEnabled() {
 		try {

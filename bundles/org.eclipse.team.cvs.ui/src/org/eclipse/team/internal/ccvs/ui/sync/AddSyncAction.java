@@ -43,6 +43,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
@@ -149,4 +150,11 @@ public class AddSyncAction extends MergeAction {
 		set.removeConflictingNodes();
 		((CVSSyncSet)set).removeAddedChanges();
 	}	
+	/**
+	 * @see MergeAction#getHelpContextID()
+	 */
+	protected String getHelpContextID() {
+		return IHelpContextIds.SYNC_ADD_ACTION;
+	}
+
 }

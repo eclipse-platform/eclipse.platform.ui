@@ -24,7 +24,9 @@ import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This configuration page explains to the user that CVS/ directories already exists and
@@ -47,6 +49,9 @@ public class ConfigurationWizardAutoconnectPage extends CVSWizardPage {
 	public void createControl(Composite parent) {
 		Composite composite = createComposite(parent, 2);
 		setControl(composite);
+		
+		// set F1 help
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_AUTOCONNECT_PAGE);
 		
 		Label description = new Label(composite, SWT.WRAP);
 		GridData data = new GridData();

@@ -21,6 +21,7 @@ import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.IgnoreResourcesDialog;
 import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
@@ -28,6 +29,7 @@ import org.eclipse.team.internal.ui.sync.MergeResource;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 import org.eclipse.team.internal.ui.sync.TeamFile;
 import org.eclipse.team.internal.ui.sync.UnchangedTeamContainer;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class IgnoreAction extends Action {
 	Shell shell;
@@ -39,6 +41,7 @@ public class IgnoreAction extends Action {
 		this.shell = shell;
 		this.diffModel = model;
 		this.selectionProvider = sp;
+		WorkbenchHelp.setHelp(this, IHelpContextIds.SYNC_IGNORE_ACTION);
 	}
 	public void run() {
 		IStructuredSelection selection = (IStructuredSelection)selectionProvider.getSelection();

@@ -26,7 +26,9 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -72,7 +74,7 @@ public class RepositorySelectionPage extends CVSWizardPage {
 	public void createControl(Composite parent) {
 		Composite composite = createComposite(parent, 2);
 		// set F1 help
-		// WorkbenchHelp.setHelp(composite, new DialogPageContextComputer (this, ITeamHelpContextIds.REPO_CONNECTION_MAIN_PAGE));
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_SELECT_REPOSITORY_PAGE);
 		
 		Label description = new Label(composite, SWT.WRAP);
 		GridData data = new GridData();

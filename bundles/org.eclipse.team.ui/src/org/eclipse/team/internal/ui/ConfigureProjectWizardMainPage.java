@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -76,7 +77,10 @@ public class ConfigureProjectWizardMainPage extends WizardPage {
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
 		setControl(composite);
-		
+
+		// set F1 help
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARE_PROJECT_PAGE);
+				
 		Label label = new Label(composite, SWT.LEFT);
 		label.setText(Policy.bind("ConfigureProjectWizardMainPage.selectRepository")); //$NON-NLS-1$
 		GridData data = new GridData();

@@ -28,6 +28,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ui.PromptingDialog;
@@ -64,8 +65,12 @@ public class ReplaceWithTagAction extends CVSAction {
 				for (int i = 0; i < resources.length; i++) {
 					projects[i] = resources[i].getProject();
 				}
-				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, Policy.bind("ReplaceWithTagAction.message"), Policy.bind("TagSelectionDialog.Select_a_Tag_1"),  //$NON-NLS-1$ //$NON-NLS-2$
-													TagSelectionDialog.INCLUDE_ALL_TAGS, true /*show recurse*/); //$NON-NLS-1$
+				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, 
+					Policy.bind("ReplaceWithTagAction.message"), //$NON-NLS-1$
+					Policy.bind("TagSelectionDialog.Select_a_Tag_1"), //$NON-NLS-1$
+					TagSelectionDialog.INCLUDE_ALL_TAGS, 
+					true, /*show recurse*/
+					IHelpContextIds.REPLACE_TAG_SELECTION_DIALOG); //$NON-NLS-1$
 				dialog.setBlockOnOpen(true);
 				if (dialog.open() == Dialog.CANCEL) {
 					return;

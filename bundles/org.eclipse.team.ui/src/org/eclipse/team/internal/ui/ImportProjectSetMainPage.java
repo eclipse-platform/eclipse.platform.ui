@@ -21,9 +21,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class ImportProjectSetMainPage extends TeamWizardPage {
 	Text fileText;
@@ -40,7 +40,10 @@ public class ImportProjectSetMainPage extends TeamWizardPage {
 	public void createControl(Composite parent) {
 		Composite composite = createComposite(parent, 1);
 		initializeDialogUnits(composite);
-		
+
+		// set F1 help
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.IMPORT_PROJECT_SET_PAGE);
+				
 		Composite inner = new Composite(composite, SWT.NULL);
 		inner.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridLayout layout = new GridLayout();

@@ -24,6 +24,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
@@ -150,4 +151,11 @@ public class UpdateMergeAction extends UpdateSyncAction {
 			throw new CVSException(Policy.bind("UpdateMergeActionProblems_merging_remote_resources_into_workspace_2"), e); //$NON-NLS-1$
 		}
 	}	
+	/**
+	 * @see MergeAction#getHelpContextID()
+	 */
+	protected String getHelpContextID() {
+		return IHelpContextIds.MERGE_UPDATE_ACTION;
+	}
+
 }

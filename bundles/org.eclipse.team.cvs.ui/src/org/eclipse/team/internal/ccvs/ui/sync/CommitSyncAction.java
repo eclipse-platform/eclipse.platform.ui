@@ -16,6 +16,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 
@@ -43,4 +44,11 @@ public class CommitSyncAction extends ForceCommitSyncAction {
 		set.removeIncomingNodes();
 		((CVSSyncSet)set).removeNonAddedChanges();
 	}
+	/**
+	 * @see MergeAction#getHelpContextID()
+	 */
+	protected String getHelpContextID() {
+		return IHelpContextIds.SYNC_COMMIT_ACTION;
+	}
+
 }

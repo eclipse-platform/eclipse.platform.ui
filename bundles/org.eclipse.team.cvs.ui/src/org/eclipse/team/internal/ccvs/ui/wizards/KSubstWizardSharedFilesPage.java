@@ -17,8 +17,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.KSubstWizard.KSubstChangeElement;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Page to warn user about the side-effects of changing keyword
@@ -39,7 +41,10 @@ public class KSubstWizardSharedFilesPage extends CVSWizardPage {
 		top.setLayout(new GridLayout());
 		setControl(top);
 		createWrappingLabel(top, Policy.bind("KSubstWizardSharedFilesPage.contents"), 0, LABEL_WIDTH_HINT); //$NON-NLS-1$
-		
+
+		// set F1 help
+		WorkbenchHelp.setHelp(top, IHelpContextIds.KEYWORD_SUBSTITUTION_SHARED_PAGE);
+				
 		includeSharedFilesButton = new Button(top, SWT.CHECK);
 		includeSharedFilesButton.setText(Policy.bind("KSubstWizardSharedFilesPage.includeSharedFiles")); //$NON-NLS-1$
 		includeSharedFilesButton.setSelection(includeSharedFiles);

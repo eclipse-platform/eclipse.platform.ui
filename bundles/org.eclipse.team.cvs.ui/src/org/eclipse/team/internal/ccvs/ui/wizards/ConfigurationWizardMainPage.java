@@ -28,7 +28,9 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Wizard page for entering information about a CVS repository location.
@@ -130,7 +132,7 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 	public void createControl(Composite parent) {
 		Composite composite = createComposite(parent, 2);
 		// set F1 help
-		// WorkbenchHelp.setHelp(composite, new DialogPageContextComputer (this, ITeamHelpContextIds.REPO_CONNECTION_MAIN_PAGE));
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_NEW_REPOSITORY_PAGE);
 
 		Listener listener = new Listener() {
 			public void handleEvent(Event event) {

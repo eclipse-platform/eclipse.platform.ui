@@ -38,8 +38,10 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.KSubstWizard.KSubstChangeElement;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
 
 public class KSubstWizardSummaryPage extends CVSWizardPage {
@@ -76,6 +78,9 @@ public class KSubstWizardSummaryPage extends CVSWizardPage {
 		setControl(top);
 		createWrappingLabel(top, Policy.bind("KSubstWizardSummaryPage.contents"), 0, LABEL_WIDTH_HINT);		 //$NON-NLS-1$
 
+		// set F1 help
+		WorkbenchHelp.setHelp(top, IHelpContextIds.KEYWORD_SUBSTITUTION_SUMMARY_PAGE);
+		
 		createSeparator(top, 0);
 
 		showUnaffectedFilesButton = new Button(top, SWT.CHECK);

@@ -218,6 +218,7 @@
                tooltip="%CommitAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.actions.CommitAction"
                menubarPath="team.main/group1"
+               helpContextId="org.eclipse.team.cvs.ui.team_commit_action_context"
                id="org.eclipse.team.ccvs.ui.commit">
          </action>
          <action

@@ -38,10 +38,12 @@ import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
@@ -209,8 +211,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 						} else {
 							// Import
 							doSync[0] = true;
-							// Make sure the directory does not already exist on the server.
-							// If it does, return false.
+							// Check if the directory exists on the server
 							ICVSRepositoryLocation location;
 							boolean isKnown;
 							try {
@@ -264,14 +265,16 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 					CVSSyncCompareInput input;
 					if (projectExists[0]) {
 						try {
-							ICVSRepositoryLocation location = getLocation();
 							String moduleName = getModuleName();
 							CVSTag tag;
 							if (autoconnectPage == null) {
 								TagSelectionDialog dialog = new TagSelectionDialog(getShell(), 
-									new ICVSFolder[] {(ICVSFolder)location.getRemoteFolder(moduleName, null)}, 
+									new ICVSFolder[] {(ICVSFolder)getLocation().getRemoteFolder(moduleName, null)}, 
 									Policy.bind("SharingWizard.selectTagTitle"),  //$NON-NLS-1$
-									Policy.bind("SharingWizard.selectTag"), TagSelectionDialog.INCLUDE_HEAD_TAG | TagSelectionDialog.INCLUDE_BRANCHES, false /*don't show recurse option*/); //$NON-NLS-1$
+									Policy.bind("SharingWizard.selectTag"), //$NON-NLS-1$
+									TagSelectionDialog.INCLUDE_HEAD_TAG | TagSelectionDialog.INCLUDE_BRANCHES, 
+									false, /*don't show recurse option*/
+									IHelpContextIds.SHARE_WITH_EXISTING_TAG_SELETION_DIALOG);
 								dialog.setBlockOnOpen(true);
 								if (dialog.open() == Dialog.CANCEL) {
 									return false;
@@ -328,7 +331,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 			}
 		});
 		Properties properties = createLocationPage.getProperties();
-		return CVSProviderPlugin.getProvider().createRepository(properties);
+		CVSRepositoryLocation location = CVSRepositoryLocation.fromProperties(properties);
+		return CVSProviderPlugin.getProvider().getRepository(location.getLocation());
 	}
 	/**
 	 * Return the module name.

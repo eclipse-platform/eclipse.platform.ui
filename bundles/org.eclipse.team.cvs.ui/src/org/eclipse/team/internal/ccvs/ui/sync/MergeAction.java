@@ -38,6 +38,7 @@ import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 import org.eclipse.team.internal.ui.sync.UnchangedTeamContainer;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Applies merge related actions to the selected ITeamNodes.
@@ -62,6 +63,18 @@ abstract class MergeAction extends Action {
 		this.diffModel = model;
 		this.selectionProvider = sp;
 		this.shell = shell;
+		String helpContextId = getHelpContextID();
+		if (helpContextId != null) {
+			WorkbenchHelp.setHelp(this, helpContextId);
+		}
+	}
+
+	/**
+	 * Method getHelpContextID.
+	 * @return String
+	 */
+	protected String getHelpContextID() {
+		return null;
 	}
 	
 	protected Shell getShell() {

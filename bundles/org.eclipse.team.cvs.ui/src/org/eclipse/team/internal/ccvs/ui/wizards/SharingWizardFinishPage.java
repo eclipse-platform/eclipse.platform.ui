@@ -10,7 +10,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class SharingWizardFinishPage extends CVSWizardPage {
 	public SharingWizardFinishPage(String pageName, String title, ImageDescriptor titleImage) {
@@ -22,6 +24,8 @@ public class SharingWizardFinishPage extends CVSWizardPage {
 	 */
 	public void createControl(Composite parent) {
 		Composite composite = createComposite(parent, 1);
+		// set F1 help
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_FINISH_PAGE);
 		Label label = new Label(composite, SWT.LEFT | SWT.WRAP);
 		label.setText(Policy.bind("SharingWizardFinishPage.message")); //$NON-NLS-1$
 		GridData data = new GridData();

@@ -21,27 +21,27 @@ public interface IHelpContextIds {
 	public static final String RELEASE_COMMENT_DIALOG = PREFIX + "release_comment_dialog_context"; //$NON-NLS-1$
 	public static final String BRANCH_DIALOG = PREFIX + "branch_dialog_context"; //$NON-NLS-1$
 
-	// Different uses of the TagSelectionDialog (not done)
+	// Different uses of the TagSelectionDialog (not done in xml)
 	public static final String REPLACE_TAG_SELECTION_DIALOG = PREFIX + "replace_tag_selection_dialog_context"; //$NON-NLS-1$
 	public static final String COMPARE_TAG_SELECTION_DIALOG = PREFIX + "compare_tag_selection_dialog_context"; //$NON-NLS-1$
-	public static final String TAG_REMOTE_WITH_EXISTING_DIALOG = PREFIX + "tag_remot_with_existing_dialog_context"; //$NON-NLS-1$
+	public static final String TAG_REMOTE_WITH_EXISTING_DIALOG = PREFIX + "tag_remote_with_existing_dialog_context"; //$NON-NLS-1$
+	public static final String SHARE_WITH_EXISTING_TAG_SELETION_DIALOG = PREFIX + "share_with_existing_tag_selection_dialog_context"; //$NON-NLS-1$
 
-	// Different uses of the TagAsVersionDialog (not done)
-	public static final String TAG_LOCAL_AS_VERSION_DIALOG = PREFIX + "tag_local_as_version_dialog_context"; //$NON-NLS-1$
-	public static final String TAG_REMOTE_AS_VERSION_DIALOG = PREFIX + "tag_remote_as_version_dialog_context"; //$NON-NLS-1$
+	// Different uses of the TagAsVersionDialog (not done in xml)
+	public static final String TAG_AS_VERSION_DIALOG = PREFIX + "tag_as_version_dialog_context"; //$NON-NLS-1$
 	
 	// Different uses of InputDialog from actions (not done)
 	public static final String DEFINE_BRANCH_DIALOG = PREFIX + "define_branch_dialog_context"; //$NON-NLS-1$
 	public static final String DEFINE_VERSION_DIALOG = PREFIX + "define_version_dialog_context"; //$NON-NLS-1$
 	
-	// Wizards 
+	// Wizards (no one seems to add wizard help, only wizard page help)
 	// (not done)
 	public static final String SHARING_WIZARD = PREFIX + "sharing_wizard_context"; //$NON-NLS-1$
 	public static final String KEYWORD_SUBSTITUTION_WIZARD = PREFIX + "keyword_substituton_wizard_context"; //$NON-NLS-1$
 	public static final String NEW_LOCATION_WIZARD = PREFIX + "new_location_wizard_context"; //$NON-NLS-1$
 	public static final String PATCH_WIZARD = PREFIX + "patch_wizard_context"; //$NON-NLS-1$
 
-	// Wizard Pages (not done)
+	// Wizard Pages (not done in xml)
 	public static final String SHARING_AUTOCONNECT_PAGE = PREFIX + "sharing_autoconnect_page_context"; //$NON-NLS-1$
 	public static final String SHARING_SELECT_REPOSITORY_PAGE = PREFIX + "sharing_select_repository_page_context"; //$NON-NLS-1$
 	public static final String SHARING_NEW_REPOSITORY_PAGE = PREFIX + "sharing_new_repository_page_context"; //$NON-NLS-1$
@@ -80,4 +80,28 @@ public interface IHelpContextIds {
 	public static final String GET_FILE_REVISION_ACTION = PREFIX + "get_file_revision_action_context"; //$NON-NLS-1$
 	public static final String GET_FILE_CONTENTS_ACTION = PREFIX + "get_file_contents_action_context"; //$NON-NLS-1$
 
+	// Team menu actions (not done: I think these are pure xml)
+	public static final String TEAM_SYNCHRONIZE_ACTION = PREFIX + "team_synchronize_action_context"; //$NON-NLS-1$
+	public static final String TEAM_SYNCHRONIZE_OUTGOING_ACTION = PREFIX + "team_synchronize_outgoing_action_context"; //$NON-NLS-1$
+	public static final String TEAM_COMMIT_ACTION = PREFIX + "team_commit_action_context"; //$NON-NLS-1$
+	public static final String TEAM_UPDATE_ACTION = PREFIX + "team_update_action_context"; //$NON-NLS-1$
+	public static final String TEAM_CREATE_PATCH_ACTION = PREFIX + "team_create_patch_action_context"; //$NON-NLS-1$
+	public static final String TEAM_TAG_AS_VERSION_ACTION = PREFIX + "team_tag_as_version_action_context"; //$NON-NLS-1$
+	public static final String TEAM_BRANCH_ACTION = PREFIX + "team_branch_action_context"; //$NON-NLS-1$
+	public static final String TEAM_MERGE_ACTION = PREFIX + "team_merge_action_context"; //$NON-NLS-1$
+	public static final String TEAM_SET_KEYWORD_MODE_ACTION = PREFIX + "team_set_keyword_mode_action_context"; //$NON-NLS-1$
+	public static final String TEAM_DISCONNECT_ACTION = PREFIX + "team_disconnect_action_context"; //$NON-NLS-1$
+	public static final String TEAM_ADD_ACTION = PREFIX + "team_add_action_context"; //$NON-NLS-1$
+	public static final String TEAM_IGNORE_ACTION = PREFIX + "team_ignore_action_context"; //$NON-NLS-1$
+
+	// Sync view menu actions (not done)
+	public static final String SYNC_COMMIT_ACTION = PREFIX + "sync_commit_action_context"; //$NON-NLS-1$
+	public static final String SYNC_FORCED_COMMIT_ACTION = PREFIX + "sync_forced_commit_action_context"; //$NON-NLS-1$
+	public static final String SYNC_UPDATE_ACTION = PREFIX + "sync_update_action_context"; //$NON-NLS-1$
+	public static final String SYNC_FORCED_UPDATE_ACTION = PREFIX + "sync_forced_update_action_context"; //$NON-NLS-1$
+	public static final String SYNC_ADD_ACTION = PREFIX + "sync_add_action_context"; //$NON-NLS-1$
+	public static final String SYNC_IGNORE_ACTION = PREFIX + "sync_ignore_action_context"; //$NON-NLS-1$
+	public static final String MERGE_UPDATE_ACTION = PREFIX + "merge_update_action_context"; //$NON-NLS-1$
+	public static final String MERGE_FORCED_UPDATE_ACTION = PREFIX + "merge_forced update_action_context"; //$NON-NLS-1$
+	public static final String MERGE_UPDATE_WITH_JOIN_ACTION = PREFIX + "merge_update_with_joinaction_context"; //$NON-NLS-1$
 }

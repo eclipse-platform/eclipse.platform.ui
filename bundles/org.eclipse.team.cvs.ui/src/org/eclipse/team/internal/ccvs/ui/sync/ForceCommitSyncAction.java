@@ -37,6 +37,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ui.sync.ChangedTeamContainer;
@@ -315,4 +316,11 @@ public class ForceCommitSyncAction extends MergeAction {
 		}
 		return CVSWorkspaceRoot.getRemoteResourceFor(syncElement.getLocal()).exists(monitor);
 	}
+	/**
+	 * @see MergeAction#getHelpContextID()
+	 */
+	protected String getHelpContextID() {
+		return IHelpContextIds.SYNC_FORCED_COMMIT_ACTION;
+	}
+
 }

@@ -85,6 +85,8 @@ public class TagAsVersionDialog extends DetailsDialog {
 				}
 			}
 		);
+		// Add F1 help
+		WorkbenchHelp.setHelp(parent, IHelpContextIds.TAG_AS_VERSION_DIALOG);
 	}
 
 	protected TableViewer createTable(Composite parent) {

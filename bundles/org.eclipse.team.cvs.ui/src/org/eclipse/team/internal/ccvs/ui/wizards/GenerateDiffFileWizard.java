@@ -50,8 +50,10 @@ import org.eclipse.team.internal.ccvs.core.client.Diff;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.misc.ContainerContentProvider;
 import org.eclipse.ui.internal.misc.ResourceAndContainerGroup;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -170,7 +172,10 @@ public class GenerateDiffFileWizard extends Wizard {
 			composite.setLayout(layout);
 			composite.setLayoutData(new GridData());
 			setControl(composite);
-			
+
+			// set F1 help
+			WorkbenchHelp.setHelp(composite, IHelpContextIds.PATCH_SELECTION_PAGE);
+					
 			// Clipboard
 			saveToClipboard= new Button(composite, SWT.RADIO);
 			saveToClipboard.setText(Policy.bind("Save_To_Clipboard_2")); //$NON-NLS-1$
@@ -384,7 +389,10 @@ public class GenerateDiffFileWizard extends Wizard {
 			composite.setLayout(layout);
 			composite.setLayoutData(new GridData());
 			setControl(composite);
-			
+
+			// set F1 help
+			WorkbenchHelp.setHelp(composite, IHelpContextIds.PATCH_OPTIONS_PAGE);
+						
 			recurseOption = new Button(composite, SWT.CHECK);
 			recurseOption.setText(Policy.bind("Do_not_recurse_into_sub-folders_10")); //$NON-NLS-1$
 			recurseOption.setSelection(true);

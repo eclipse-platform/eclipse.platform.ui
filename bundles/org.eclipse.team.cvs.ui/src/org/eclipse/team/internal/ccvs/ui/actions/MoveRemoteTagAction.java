@@ -33,6 +33,7 @@ import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.RTag;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ui.actions.TeamAction;
@@ -61,7 +62,10 @@ public class MoveRemoteTagAction extends TagInRepositoryAction {
 		// Allow the user to select a tag
 		TagSelectionDialog dialog = new TagSelectionDialog(getShell(), folders, 
 			Policy.bind("MoveTagAction.title"), //$NON-NLS-1$
-			Policy.bind("MoveTagAction.message"), TagSelectionDialog.INCLUDE_BRANCHES | TagSelectionDialog.INCLUDE_VERSIONS, true); //$NON-NLS-1$
+			Policy.bind("MoveTagAction.message"), //$NON-NLS-1$
+			TagSelectionDialog.INCLUDE_BRANCHES | TagSelectionDialog.INCLUDE_VERSIONS, 
+			true, /* show recurse */
+			IHelpContextIds.TAG_REMOTE_WITH_EXISTING_DIALOG);
 		dialog.setBlockOnOpen(true);
 		if (dialog.open() == Dialog.CANCEL) {
 			return null;

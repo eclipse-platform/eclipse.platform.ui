@@ -8,6 +8,7 @@ package org.eclipse.team.internal.ccvs.ui.merge;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
@@ -28,4 +29,11 @@ public class OverrideUpdateMergeAction extends UpdateMergeAction {
 		SyncSet set = new SyncSet(new StructuredSelection(node));
 		return (set.hasConflicts() && hasRealChanges(node, new int[] { ITeamNode.CONFLICTING }));
 	}
+	/**
+	 * @see MergeAction#getHelpContextID()
+	 */
+	protected String getHelpContextID() {
+		return IHelpContextIds.MERGE_FORCED_UPDATE_ACTION;
+	}
+
 }

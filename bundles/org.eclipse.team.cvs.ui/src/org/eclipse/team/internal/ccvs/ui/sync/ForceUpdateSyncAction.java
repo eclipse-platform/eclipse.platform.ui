@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.sync;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ui.sync.ITeamNode;
 import org.eclipse.team.internal.ui.sync.SyncSet;
 import org.eclipse.team.internal.ui.sync.SyncView;
@@ -42,4 +43,11 @@ public class ForceUpdateSyncAction extends UpdateSyncAction {
 	protected boolean promptForConflicts() {
 		return true;
 	}
+	/**
+	 * @see MergeAction#getHelpContextID()
+	 */
+	protected String getHelpContextID() {
+		return IHelpContextIds.SYNC_FORCED_UPDATE_ACTION;
+	}
+
 }

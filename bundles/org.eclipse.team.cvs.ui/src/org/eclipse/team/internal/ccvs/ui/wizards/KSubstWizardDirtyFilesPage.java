@@ -17,8 +17,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.wizards.KSubstWizard.KSubstChangeElement;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Page to warn user about uncommitted outgoing changes.
@@ -37,6 +39,10 @@ public class KSubstWizardDirtyFilesPage extends CVSWizardPage {
 		Composite top = new Composite(parent, SWT.NONE);
 		top.setLayout(new GridLayout());
 		setControl(top);
+		
+		// set F1 help
+		WorkbenchHelp.setHelp(top, IHelpContextIds.KEYWORD_SUBSTITUTION_CHANGED_PAGE);
+			
 		createWrappingLabel(top, Policy.bind("KSubstWizardDirtyFilesPage.contents"), 0, LABEL_WIDTH_HINT); //$NON-NLS-1$
 		
 		includeDirtyFilesButton = new Button(top, SWT.CHECK);

@@ -14,5 +14,13 @@ public interface IHelpContextIds {
 	public static final String PREFIX = TeamUIPlugin.ID + "."; //$NON-NLS-1$
 
 	// Preference Pages
+	public static final String TEAM_PREFERENCE_PAGE = PREFIX + "team_preference_page_context"; //$NON-NLS-1$
 	public static final String IGNORE_PREFERENCE_PAGE = PREFIX + "ignore_preference_page_context"; //$NON-NLS-1$
+	public static final String FILE_TYPE_PREFERENCE_PAGE = PREFIX + "file_type_preference_page_context"; //$NON-NLS-1$
+	
+	// Wizard Pages
+	public static final String SHARE_PROJECT_PAGE = PREFIX + "share_project_page_context"; //$NON-NLS-1$
+	public static final String IMPORT_PROJECT_SET_PAGE = PREFIX + "import_project_set_page_context"; //$NON-NLS-1$
+	public static final String EXPORT_PROJECT_SET_PAGE = PREFIX + "export_project_set_page_context"; //$NON-NLS-1$
+	
 }

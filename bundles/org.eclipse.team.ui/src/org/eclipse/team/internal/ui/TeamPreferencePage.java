@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 public class TeamPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	Button syncModeButton;
@@ -34,6 +35,9 @@ public class TeamPreferencePage extends PreferencePage implements IWorkbenchPref
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
 
+		// set F1 help
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.TEAM_PREFERENCE_PAGE);
+		
 		// GridLayout
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;

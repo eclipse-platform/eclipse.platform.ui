@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -32,6 +31,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.merge.TagElement;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement.ProjectElementSorter;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -42,6 +42,7 @@ public class TagSelectionDialog extends Dialog {
 	private ICVSFolder[] folders;
 	private int includeFlags;
 	private CVSTag result;
+	private String helpContext;
 	
 	public static final int INCLUDE_HEAD_TAG = ProjectElement.INCLUDE_HEAD_TAG;
 	public static final int INCLUDE_BASE_TAG = ProjectElement.INCLUDE_BASE_TAG;
@@ -69,8 +70,8 @@ public class TagSelectionDialog extends Dialog {
 	 * Creates a new TagSelectionDialog.
 	 * @param resource The resource to select a version for.
 	 */
-	public TagSelectionDialog(Shell parentShell, IProject[] projects, String title, String message, int includeFlags, boolean showRecurse) {
-		this(parentShell, getCVSFoldersFor(projects), title, message, includeFlags, showRecurse); //$NON-NLS-1$		
+	public TagSelectionDialog(Shell parentShell, IProject[] projects, String title, String message, int includeFlags, boolean showRecurse, String helpContext) {
+		this(parentShell, getCVSFoldersFor(projects), title, message, includeFlags, showRecurse, helpContext); //$NON-NLS-1$		
 	}
 	
 	private static ICVSFolder[] getCVSFoldersFor(IProject[] projects) {
@@ -85,13 +86,14 @@ public class TagSelectionDialog extends Dialog {
 	 * Creates a new TagSelectionDialog.
 	 * @param resource The resource to select a version for.
 	 */
-	public TagSelectionDialog(Shell parentShell, ICVSFolder[] folders, String title, String message, int includeFlags, boolean showRecurse) {
+	public TagSelectionDialog(Shell parentShell, ICVSFolder[] folders, String title, String message, int includeFlags, boolean showRecurse, String helpContext) {
 		super(parentShell);
 		this.folders = folders;
 		this.title = title;
 		this.message = message;
 		this.includeFlags = includeFlags;
 		this.showRecurse = showRecurse;
+		this.helpContext = helpContext;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 	
@@ -147,7 +149,10 @@ public class TagSelectionDialog extends Dialog {
 	 */
 	protected Control createDialogArea(Composite parent) {
 		Composite top = (Composite)super.createDialogArea(parent);
-		
+		// Add F1 help
+		if (helpContext != null) {
+			WorkbenchHelp.setHelp(top, helpContext);
+		}
 		Composite inner = new Composite(top, SWT.NULL);
 		GridData data = new GridData(GridData.FILL_BOTH);
 		data.widthHint = SIZING_DIALOG_WIDTH;

@@ -22,7 +22,9 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * Page to select keyword substitution mode.
@@ -64,6 +66,9 @@ public class KSubstWizardSelectionPage extends CVSWizardPage {
 		top.setLayout(new GridLayout());
 		setControl(top);
 
+		// set F1 help
+		WorkbenchHelp.setHelp(top, IHelpContextIds.KEYWORD_SUBSTITUTION_SELECTION_PAGE);
+		
 		Listener selectionListener = new Listener() {
 			public void handleEvent(Event event) {
 				updateEnablements();
