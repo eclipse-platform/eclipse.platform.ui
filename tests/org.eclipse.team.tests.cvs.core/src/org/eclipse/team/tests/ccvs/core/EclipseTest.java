@@ -21,11 +21,14 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteResource;
@@ -244,30 +247,33 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	/*
 	 * Compare two projects by comparing thier providers
 	 */
+	protected void assertEquals(IProject project1, IProject project2) throws CoreException, TeamException, IOException {
+		assertEquals(project1, project2, false, false);
+	}
 	protected void assertEquals(String message, IProject project1, IProject project2) throws CoreException, TeamException, IOException {
-		assertEquals(message, project1, project2, false, false);
+		assertEquals(project1, project2, false, false);
 	}
 	
-	protected void assertEquals(String message, IProject project1, IProject project2, boolean includeTimestamps, boolean includeTags) throws CoreException, TeamException, IOException {
-		assertEquals(message, getProvider(project1), getProvider(project2), includeTimestamps, includeTags);
+	protected void assertEquals(IProject project1, IProject project2, boolean includeTimestamps, boolean includeTags) throws CoreException, TeamException, IOException {
+		assertEquals(getProvider(project1), getProvider(project2), includeTimestamps, includeTags);
 	}
 	
 	/*
 	 * Compare CVS team providers by comparing the cvs resource corresponding to the provider's project
 	 */
-	protected void assertEquals(String message, CVSTeamProvider provider1, CVSTeamProvider provider2, boolean includeTimestamps, boolean includeTags) throws CoreException, TeamException, IOException {
-		assertEquals(message, (ICVSFolder)Session.getManagedFolder(provider1.getProject().getLocation().toFile()), (ICVSFolder)Session.getManagedFolder(provider2.getProject().getLocation().toFile()), includeTimestamps, includeTags);
+	protected void assertEquals(CVSTeamProvider provider1, CVSTeamProvider provider2, boolean includeTimestamps, boolean includeTags) throws CoreException, TeamException, IOException {
+		assertEquals(Path.EMPTY, (ICVSFolder)Session.getManagedFolder(provider1.getProject().getLocation().toFile()), (ICVSFolder)Session.getManagedFolder(provider2.getProject().getLocation().toFile()), includeTimestamps, includeTags);
 	}
 	
 	/*
 	 * Compare resources by casting them to their prpoer type
 	 */
-	protected void assertEquals(String message, ICVSResource resource1, ICVSResource resource2, boolean includeTimestamps, boolean includeTags) throws CoreException, CVSException, IOException {
-		assertEquals(message, resource1.isFolder(), resource2.isFolder());
+	protected void assertEquals(IPath parent, ICVSResource resource1, ICVSResource resource2, boolean includeTimestamps, boolean includeTags) throws CoreException, CVSException, IOException {
+		assertEquals("Resource types do not match for " + parent.append(resource1.getName()), resource1.isFolder(), resource2.isFolder());
 		if (!resource1.isFolder())
-			assertEquals(message, (ICVSFile)resource1, (ICVSFile)resource2, includeTimestamps, includeTags);
+			assertEquals(parent, (ICVSFile)resource1, (ICVSFile)resource2, includeTimestamps, includeTags);
 		else 
-			assertEquals(message, (ICVSFolder)resource1, (ICVSFolder)resource2, includeTimestamps, includeTags);
+			assertEquals(parent, (ICVSFolder)resource1, (ICVSFolder)resource2, includeTimestamps, includeTags);
 	}
 	
 	/*
@@ -275,33 +281,34 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 * 
 	 * XXX What about unmanaged children?
 	 */
-	protected void assertEquals(String message, ICVSFolder container1, ICVSFolder container2, boolean includeTimestamps, boolean includeTags) throws CoreException, CVSException, IOException {
-		assertEquals(message, container1.getFolderSyncInfo(), container2.getFolderSyncInfo(), includeTags);
-		assertTrue(message, container1.getFolders().length == container2.getFolders().length);
-		assertTrue(message, container1.getFiles().length == container2.getFiles().length);
+	protected void assertEquals(IPath parent, ICVSFolder container1, ICVSFolder container2, boolean includeTimestamps, boolean includeTags) throws CoreException, CVSException, IOException {
+		IPath path = parent.append(container1.getName());
+		assertEquals(path, container1.getFolderSyncInfo(), container2.getFolderSyncInfo(), includeTags);
+		assertTrue("The numder of folders in " + path.toString() + " differs", container1.getFolders().length == container2.getFolders().length);
+		assertTrue("The numder of files in " + path.toString() + " differs", container1.getFiles().length == container2.getFiles().length);
 		ICVSFolder[] folders = container1.getFolders();
 		for (int i= 0;i <folders.length;i++)
-			assertEquals(message, folders[i], container2.getFolder(folders[i].getName()), includeTimestamps, includeTags);
+			assertEquals(path, folders[i], container2.getFolder(folders[i].getName()), includeTimestamps, includeTags);
 		ICVSFile[] files = container1.getFiles();
 		for (int i= 0;i <files.length;i++)
-			assertEquals(message, files[i], container2.getFile(files[i].getName()), includeTimestamps, includeTags);
+			assertEquals(path, files[i], container2.getFile(files[i].getName()), includeTimestamps, includeTags);
 	}
 	
 	/*
 	 * Compare the files contents and sync information
 	 */
-	protected void assertEquals(String message, ICVSFile file1, ICVSFile file2, boolean includeTimestamps, boolean includeTags) throws CoreException, CVSException, IOException {
+	protected void assertEquals(IPath parent, ICVSFile file1, ICVSFile file2, boolean includeTimestamps, boolean includeTags) throws CoreException, CVSException, IOException {
 		// Getting the contents first is important as it will fetch the proper sync info if one of the files is a remote handle
-		assertTrue(message, compareContent(getContents(file1), getContents(file2)));
-		assertEquals(message, file1.getSyncInfo(), file2.getSyncInfo(), includeTimestamps, includeTags);
+		assertTrue("Contents of " + parent.append(file1.getName()) + " do not match", compareContent(getContents(file1), getContents(file2)));
+		assertEquals(parent.append(file1.getName()), file1.getSyncInfo(), file2.getSyncInfo(), includeTimestamps, includeTags);
 	}
 	
 	/*
 	 * Compare sync info by comparing the entry line generated by the sync info
 	 */
-	protected void assertEquals(String message, ResourceSyncInfo info1, ResourceSyncInfo info2, boolean includeTimestamp, boolean includeTag) throws CoreException, CVSException, IOException {
+	protected void assertEquals(IPath path, ResourceSyncInfo info1, ResourceSyncInfo info2, boolean includeTimestamp, boolean includeTag) throws CoreException, CVSException, IOException {
 		if (info1 == null) {
-			assertTrue(message, info2 == null);
+			assertTrue("Resource Sync info differs for " + path.toString(), info2 == null);
 			return;
 		}
 		String line1 = info1.getEntryLine(includeTimestamp);
@@ -311,19 +318,19 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			line1 = line1.substring(0, line1.lastIndexOf('/'));
 			line2 = line2.substring(0, line2.lastIndexOf('/'));
 		}
-		assertTrue(message, line1.equals(line2));
+		assertTrue("Resource Sync info differs for " + path.toString(), line1.equals(line2));
 	}
 	
 	/*
 	 * Use the equals of folder sync info unless the tag is not included in which case we just
 	 * compare the root and repository
 	 */
-	protected void assertEquals(String message, FolderSyncInfo info1, FolderSyncInfo info2, boolean includeTag) throws CoreException, CVSException, IOException {
+	protected void assertEquals(IPath path, FolderSyncInfo info1, FolderSyncInfo info2, boolean includeTag) throws CoreException, CVSException, IOException {
 		if (includeTag) {
-			assertTrue(message, info1.equals(info2));
+			assertTrue("Folder sync info differs for " + path.toString(), info1.equals(info2));
 		} else {
-			assertTrue(message, info1.getRoot().equals(info2.getRoot()));
-			assertTrue(message, info1.getRepository().equals(info2.getRepository()));
+			assertTrue("Repository Root differs for " + path.toString(), info1.getRoot().equals(info2.getRoot()));
+			assertTrue("Repository relative path differs for " + path.toString(), info1.getRepository().equals(info2.getRepository()));
 		}
 	}
 	
@@ -333,42 +340,43 @@ public class EclipseTest extends EclipseWorkspaceTest {
 	 * 
 	 * XXX What about unmanaged children?
 	 */
-	protected void assertEquals(RemoteFolder container1, RemoteFolder container2, boolean includeTags) throws CoreException, TeamException, IOException {
-		assertEquals("Folder information differs", container1.getFolderSyncInfo(), container2.getFolderSyncInfo(), includeTags);
+	protected void assertEquals(IPath parent, RemoteFolder container1, RemoteFolder container2, boolean includeTags) throws CoreException, TeamException, IOException {
+		IPath path = parent.append(container1.getName());
+		assertEquals(path, container1.getFolderSyncInfo(), container2.getFolderSyncInfo(), includeTags);
 		ICVSRemoteResource[] members1 = container1.getMembers(DEFAULT_MONITOR);
 		ICVSRemoteResource[] members2 = container2.getMembers(DEFAULT_MONITOR);
-		assertTrue("Number of members differ", members1.length == members2.length);
+		assertTrue("Number of members differ for " + path, members1.length == members2.length);
 		Map memberMap2 = new HashMap();
 		for (int i= 0;i <members2.length;i++) {
 			memberMap2.put(members2[i].getName(), members2[i]);
 		}
 		for (int i= 0;i <members1.length;i++) {
 			ICVSRemoteResource member2 = (ICVSRemoteResource)memberMap2.get(members1[i].getName());
-			assertNotNull(member2);
-			assertEquals(members1[i], member2, includeTags);
+			assertNotNull("Resource does not exist: " + path.append(members1[i].getName()) + member2);
+			assertEquals(path, members1[i], member2, includeTags);
 		}
 	}
-	protected void assertEquals(ICVSRemoteResource resource1, ICVSRemoteResource resource2, boolean includeTags) throws CoreException, TeamException, IOException {
-		assertEquals("Resource types do not match", resource1.isContainer(), resource2.isContainer());
+	protected void assertEquals(IPath parent, ICVSRemoteResource resource1, ICVSRemoteResource resource2, boolean includeTags) throws CoreException, TeamException, IOException {
+		assertEquals("Resource types do not match for " + parent.append(resource1.getName()), resource1.isContainer(), resource2.isContainer());
 		if (resource1.isContainer())
-			assertEquals((RemoteFolder)resource1, (RemoteFolder)resource2, includeTags);
+			assertEquals(parent, (RemoteFolder)resource1, (RemoteFolder)resource2, includeTags);
 		else 
-			assertEquals("File comparison failed", (ICVSFile)resource1, (ICVSFile)resource2, false, includeTags);
+			assertEquals(parent, (ICVSFile)resource1, (ICVSFile)resource2, false, includeTags);
 	}
 	
 	
 	/*
 	 * Compare the local project with the remote state by checking out a copy of the project.
 	 */
-	protected void assertLocalStateEqualsRemote(String message, IProject project) throws TeamException, CoreException, IOException {
-		assertEquals(message + "The local state does not match remote state", getProvider(project), getProvider(checkoutCopy(project, "-remote")), false, true);
+	protected void assertLocalStateEqualsRemote(IProject project) throws TeamException, CoreException, IOException {
+		assertEquals(getProvider(project), getProvider(checkoutCopy(project, "-remote")), false, true);
 	}
 	
 	/*
 	 * Compare the local project with the remote state indicated by the given tag by checking out a copy of the project.
 	 */
 	protected void assertLocalStateEqualsRemote(String message, IProject project, CVSTag tag) throws TeamException, CoreException, IOException {
-		assertEquals(message + "The local state does not match remote state", getProvider(project), getProvider(checkoutCopy(project, tag)), true, false);
+		assertEquals(getProvider(project), getProvider(checkoutCopy(project, tag)), true, false);
 	}
 	
 	protected void assertHasNoRemote(String prefix, IResource[] resources) throws TeamException {
@@ -514,7 +522,7 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			s.close();
 		}
 
-		if (status.getCode() == CVSException.SERVER_ERROR) {
+		if (status.getCode() == CVSStatus.SERVER_ERROR) {
 			throw new CVSServerException(status);
 		}
 	}

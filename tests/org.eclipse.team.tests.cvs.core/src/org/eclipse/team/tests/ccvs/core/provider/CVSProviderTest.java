@@ -58,7 +58,7 @@ public class CVSProviderTest extends EclipseTest {
 		assertIsModified("testDeepCheckin: ", newResources);
 		assertIsModified("testDeepCheckin: ", new IResource[] {project.getFile("deleted.txt"), project.getFile("changed.txt")});
 		getProvider(project).checkin(new IResource[] {project}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-		assertLocalStateEqualsRemote("testCheckin: ", project);
+		assertLocalStateEqualsRemote(project);
 	}
 	
 	public void testMoved() throws TeamException, CoreException {
@@ -81,7 +81,7 @@ public class CVSProviderTest extends EclipseTest {
 		// Commit the copy and update the project
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 		getProvider(project).update(new IResource[] {project}, IResource.DEPTH_INFINITE, null, false, DEFAULT_MONITOR);
-		assertEquals("testUpdate: ", project, copy);
+		assertEquals(project, copy);
 	}
 	
 	public void testVersionTag() throws TeamException, CoreException, IOException {
@@ -100,19 +100,19 @@ public class CVSProviderTest extends EclipseTest {
 		CVSTag v1Tag = new CVSTag("v1", CVSTag.VERSION);
 		getProvider(project).tag(new IResource[] {project}, IResource.DEPTH_INFINITE, v1Tag, DEFAULT_MONITOR);
 		IProject v1 = checkoutCopy(project, v1Tag);
-		assertEquals("Version retrieval failed: ", project, v1);
+		assertEquals(project, v1);
 		
 		// Update original to HEAD and compare with copy including tags
 		updateProject(project, null, false);
-		assertEquals("Version update failed: ", project, copy, false, true);
+		assertEquals(project, copy, false, true);
 		
 		// Update copy to v1 and compare with the copy (including tag)
 		updateProject(copy, v1Tag, false);
-		assertEquals("Version update failed: ", copy, v1, false, true);
+		assertEquals(copy, v1, false, true);
 		
 		// Update copy back to HEAD and compare with project (including tag)
 		updateProject(copy, CVSTag.DEFAULT, false);
-		assertEquals("Version update failed: ", project, copy, false, true);
+		assertEquals(project, copy, false, true);
 	}
 	
 	public void testBranchTag() throws TeamException, CoreException, IOException {
@@ -125,7 +125,7 @@ public class CVSProviderTest extends EclipseTest {
 
 		// Disable pruning, checkout a copy and ensure original and copy are the same
 		IProject copy = checkoutCopy(project, "-copy");
-		assertEquals("testPruning", project, copy); 
+		assertEquals(project, copy); 
 
 		// Enable pruning, update copy and ensure emtpy folders are gone
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(true);
@@ -134,12 +134,12 @@ public class CVSProviderTest extends EclipseTest {
 		
 		// Checkout another copy and ensure that the two copies are the same (with pruning enabled)
 		IProject copy2 = checkoutCopy(project, "-copy2");
-		assertEquals("testPruning", copy, copy2); 
+		assertEquals(copy, copy2); 
 		
 		// Disable pruning, update copy and ensure directories come back
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(false);
 		updateProject(copy, null, false);
-		assertEquals("testPruning", project, copy);
+		assertEquals(project, copy);
 		
 		// Enable pruning again since it's the default
 		CVSProviderPlugin.getPlugin().setPruneEmptyDirectories(true);
@@ -159,7 +159,7 @@ public class CVSProviderTest extends EclipseTest {
 
 		// get the remote conetns
 		getProvider(copy).get(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
-		assertEquals("Get failed to retrieve proper contents", project, copy);
+		assertEquals(project, copy);
 	}
 
 }

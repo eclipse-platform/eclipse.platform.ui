@@ -26,6 +26,7 @@ import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
+import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
 /**
  * @version 	1.0
@@ -126,6 +127,7 @@ public class SyncElementTest extends EclipseTest {
 		// Checkout and modify a copy
 		IProject copy = checkoutCopy(project, "-copy");
 		IFile file = copy.getFile("folder1/a.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null);
 		addResources(copy, new String[] { "folder2/folder3/add.txt" }, false);
 		deleteResources(copy, new String[] {"folder1/b.txt"}, false);
@@ -165,7 +167,7 @@ public class SyncElementTest extends EclipseTest {
 		assertDeleted("testIncomingChanges", tree, new String[] {"folder1/b.txt"});
 				
 		// Verify that the copy equals the original
-		assertEquals("testIncomingChanges", project, copy);
+		assertEquals(project, copy);
 	}
 	
 	/*
@@ -270,6 +272,7 @@ public class SyncElementTest extends EclipseTest {
 		// Checkout a copy and make some modifications
 		IProject copy = checkoutCopy(project, "-copy");
 		IFile file = copy.getFile("file1.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		appendText(file, "prefix\n", true);
 		file = copy.getFile("folder1/a.txt");
 		file.setContents(getRandomContents(), false, false, null);
@@ -277,6 +280,7 @@ public class SyncElementTest extends EclipseTest {
 
 		// Make the same modifications to the original (We need to test both M and C!!!)
 		file = project.getFile("file1.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		appendText(file, "\npostfix", false); // This will test merges (M)
 		file = project.getFile("folder1/a.txt");
 		file.setContents(getRandomContents(), false, false, null); // This will test conflicts (C)
@@ -426,6 +430,7 @@ public class SyncElementTest extends EclipseTest {
 		// Checkout a copy and commit the deletion
 		IProject copy = checkoutCopy(project, "-copy");
 		file = copy.getFile("delete1.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null);
 		file = copy.getFile("delete2.txt");
 		file.setContents(getRandomContents(), false, false, null);
@@ -650,7 +655,7 @@ public class SyncElementTest extends EclipseTest {
 	 */
 	 public void testGranularityContents() throws TeamException, CoreException, IOException {
 	 	// Create a test project (which commits it as well)
-		IProject project = createProject("testFileConflict", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		IProject project = createProject("testGranularityContents", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
 		
 		// Checkout a copy and make some modifications
 		IProject copy = checkoutCopy(project, "-copy");
@@ -664,11 +669,12 @@ public class SyncElementTest extends EclipseTest {
 		file = project.getFile("file1.txt");
 		appendText(file, "", false);
 		file = project.getFile("folder1/a.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(new ByteArrayInputStream("unique text".getBytes()), false, false, null);
 
 		// Get the sync tree for the project
 		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertSyncEquals("testFileConflict", tree, 
+		assertSyncEquals("testGranularityContents", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
 			new int[] {
 				IRemoteSyncElement.IN_SYNC,
@@ -692,7 +698,7 @@ public class SyncElementTest extends EclipseTest {
 		
 		// Get the sync tree for the project
 		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertEquals("Base is incorrect", (ICVSResource)tree.getBase(), Session.getManagedResource(copy), false, false);
+		assertEquals(Path.EMPTY, (ICVSResource)tree.getBase(), Session.getManagedResource(copy), false, false);
 
 	 }
 	 
@@ -751,6 +757,6 @@ public class SyncElementTest extends EclipseTest {
 		
 		// Sync on the original and assert the result equals the copy
 		IRemoteSyncElement tree = getProvider(project).getRemoteSyncTree(project, null, DEFAULT_MONITOR);
-		assertEquals("Remote does not match local", (ICVSResource)tree.getRemote(), Session.getManagedResource(copy), false, false);
+		assertEquals(Path.EMPTY, (ICVSResource)tree.getRemote(), Session.getManagedResource(copy), false, false);
 	 }
 }

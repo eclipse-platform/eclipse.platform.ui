@@ -16,12 +16,12 @@ import java.util.List;
 
 import junit.awtui.TestRunner;
 import junit.framework.TestCase;
-import org.eclipse.core.internal.resources.Synchronizer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.client.Session;
@@ -113,7 +113,7 @@ public abstract class JUnitTestCase extends TestCase {
 				arguments,
 				null,
 				monitor);
-			if (status.getCode() == CVSException.SERVER_ERROR) {
+			if (status.getCode() == CVSStatus.SERVER_ERROR) {
 				throw new CVSServerException(status);
 			}
 		} finally {
@@ -449,7 +449,7 @@ public abstract class JUnitTestCase extends TestCase {
 	/**
 	 * wait milliseconds to continou the execution
 	 */
-	protected static void waitMsec(int msec) {	
+	public static void waitMsec(int msec) {	
 		try {
 			Thread.currentThread().sleep(msec);
 		} catch(InterruptedException e) {

@@ -13,8 +13,8 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.core.TeamException;
@@ -144,9 +144,9 @@ public class ModuleTest extends EclipseTest {
 		uploadProject("project1");
 		IProject project1 = checkoutProject("project1", null);
 		IRemoteSyncElement tree = getProvider(project1).getRemoteSyncTree(project1, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertEquals("Local does not match remote", Session.getManagedResource(project1), (ICVSResource)tree.getRemote(), false, false);
+		assertEquals(Path.EMPTY, Session.getManagedResource(project1), (ICVSResource)tree.getRemote(), false, false);
 		RemoteModule module = getRemoteModule("project1");
-		assertEquals((RemoteFolder)tree.getRemote(), module, false);
+		assertEquals(Path.EMPTY, (RemoteFolder)tree.getRemote(), module, false);
 	}
 	
 	/*
@@ -160,15 +160,15 @@ public class ModuleTest extends EclipseTest {
 		
 		IProject docs = checkoutProject("docs", null);
 		IRemoteSyncElement tree = getProvider(docs).getRemoteSyncTree(docs, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertEquals("Local does not match remote", Session.getManagedResource(docs), (ICVSResource)tree.getRemote(), false, false);
+		assertEquals(Path.EMPTY, Session.getManagedResource(docs), (ICVSResource)tree.getRemote(), false, false);
 		RemoteModule module = getRemoteModule("docs");
-		assertEquals((RemoteFolder)tree.getRemote(), module, false);
+		assertEquals(Path.EMPTY, (RemoteFolder)tree.getRemote(), module, false);
 		
 		IProject macros = checkoutProject("macros", null);
 		tree = getProvider(macros).getRemoteSyncTree(macros, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertEquals("Local does not match remote", Session.getManagedResource(macros), (ICVSResource)tree.getRemote(), false, false);
+		assertEquals(Path.EMPTY, Session.getManagedResource(macros), (ICVSResource)tree.getRemote(), false, false);
 		module = getRemoteModule("macros");
-		assertEquals((RemoteFolder)tree.getRemote(), module, false);
+		assertEquals(Path.EMPTY, (RemoteFolder)tree.getRemote(), module, false);
 
 	}
 	
@@ -184,17 +184,17 @@ public class ModuleTest extends EclipseTest {
 		uploadProject("project2");
 		IProject project2 = checkoutProject("project2", null);
 		IRemoteSyncElement tree = getProvider(project2).getRemoteSyncTree(project2, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertEquals("Local does not match remote", Session.getManagedResource(project2), (ICVSResource)tree.getRemote(), false, false);
+		assertEquals(Path.EMPTY, Session.getManagedResource(project2), (ICVSResource)tree.getRemote(), false, false);
 
 		RemoteModule module = getRemoteModule("project2");
-		assertEquals((RemoteFolder)tree.getRemote(), module, false);
+		assertEquals(Path.EMPTY, (RemoteFolder)tree.getRemote(), module, false);
 
 		project2 = checkoutProject("project2-only", null);
 		tree = getProvider(project2).getRemoteSyncTree(project2, CVSTag.DEFAULT, DEFAULT_MONITOR);
-		assertEquals("Local does not match remote", Session.getManagedResource(project2), (ICVSResource)tree.getRemote(), false, false);
+		assertEquals(Path.EMPTY, Session.getManagedResource(project2), (ICVSResource)tree.getRemote(), false, false);
 
 		module = getRemoteModule("project2-only");
-		assertEquals((RemoteFolder)tree.getRemote(), module, false);
+		assertEquals(Path.EMPTY, (RemoteFolder)tree.getRemote(), module, false);
 
 	}
 	

@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFile;
@@ -31,6 +32,7 @@ import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.util.RemoteFolderTreeBuilder;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
+import org.eclipse.team.tests.ccvs.core.JUnitTestCase;
 
 public class RemoteResourceTest extends EclipseTest {
 
@@ -45,11 +47,11 @@ public class RemoteResourceTest extends EclipseTest {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(RemoteResourceTest.class);
 		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new RemoteResourceTest("testFolderAddition"));
+		//return new CVSTestSetup(new RemoteResourceTest("testNonRootBuild"));
 	}
 	
 	protected void assertRemoteMatchesLocal(String message, RemoteFolder remote, IContainer container) throws CVSException, IOException, CoreException {
-		assertEquals(message, (ICVSResource)remote, Session.getManagedFolder(container.getLocation().toFile()), false, false);
+		assertEquals(Path.EMPTY, (ICVSResource)remote, Session.getManagedFolder(container.getLocation().toFile()), false, false);
 	}
 	
 	protected void getMembers(ICVSRemoteFolder folder, boolean deep) throws TeamException {
@@ -76,6 +78,7 @@ public class RemoteResourceTest extends EclipseTest {
 		// Make some changes to the copy and commit
 		IResource[] newResources = buildResources(copy, new String[] { "added.txt", "folder2/", "folder2/added.txt" }, false);
 		IFile file = copy.getFile("changed.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null);
 		CVSTeamProvider provider = getProvider(copy);
 		provider.add(newResources, IResource.DEPTH_ZERO, DEFAULT_MONITOR);
@@ -140,10 +143,11 @@ public class RemoteResourceTest extends EclipseTest {
 		
 		// Create a test project
 		IProject project = createProject("testNonRootBuild", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
-		
+
 		// Checkout and modify a copy
 		IProject copy = checkoutCopy(project, "-copy");
 		IFile file = copy.getFile("folder2/folder3/c.txt");
+		JUnitTestCase.waitMsec(1500); // Wait so that timestamp of modified file differs from original
 		file.setContents(getRandomContents(), false, false, null);
 		addResources(copy, new String[] { "folder2/folder3/add.txt" }, false);
 		getProvider(copy).delete(new IResource[] {copy.getFile("folder2/folder3/b.txt")}, DEFAULT_MONITOR);
@@ -162,7 +166,7 @@ public class RemoteResourceTest extends EclipseTest {
 		IProject project = createProject("testGetRemoteResource", new String[] { "file1.txt", "folder1/", "folder1/a.txt", "folder2/", "folder2/a.txt", "folder2/folder3/", "folder2/folder3/b.txt", "folder2/folder3/c.txt"});
 		ICVSRemoteResource file = getProvider(project).getRemoteResource(project.getFile("folder1/a.txt"));
 		assertTrue("File should exist remotely", file.exists());
-		assertEquals("Remote file should match local file", (ICVSResource)file, (ICVSResource)Session.getManagedFile(project.getFile("folder1/a.txt").getLocation().toFile()), false, false);
+		assertEquals(Path.EMPTY, (ICVSResource)file, (ICVSResource)Session.getManagedFile(project.getFile("folder1/a.txt").getLocation().toFile()), false, false);
 		ICVSRemoteResource folder = getProvider(project).getRemoteResource(project.getFolder("folder2/folder3/"));
 		getMembers((ICVSRemoteFolder)folder, true);
 		assertTrue("Folder should exist remotely", folder.exists());
@@ -193,7 +197,7 @@ public class RemoteResourceTest extends EclipseTest {
 		project = checkoutCopy(project, v1Tag);
 		
 		// Compare the two
-		assertEquals("testVersionTag", (ICVSResource)tree.getRemote(), (ICVSResource)Session.getManagedResource(project), false, false);
+		assertEquals(Path.EMPTY, (ICVSResource)tree.getRemote(), (ICVSResource)Session.getManagedResource(project), false, false);
 	}
 	
 	/*
