@@ -145,12 +145,10 @@ public class InputDialog extends Dialog {
 				validateInput();
 			}
 		});
-		text.setFont(parent.getFont());
-		errorMessageText = new Text(composite, SWT.NONE);
-		errorMessageText.setEditable(false);
+		errorMessageText = new Text(composite, SWT.READ_ONLY);
 		errorMessageText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL
 				| GridData.HORIZONTAL_ALIGN_FILL));
-		errorMessageText.setFont(parent.getFont());
+	
 
 		applyDialogFont(composite);
 		return composite;
