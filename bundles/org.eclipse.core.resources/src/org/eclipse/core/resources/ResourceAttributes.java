@@ -12,6 +12,8 @@
 
 package org.eclipse.core.resources;
 
+import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
+
 
 /**
  * This class represents platform specific attributes of files.
@@ -30,6 +32,19 @@ public class ResourceAttributes {
 	private boolean executable = false;
 	private boolean readOnly = false;
 	private boolean archive = false;
+
+	/**
+	 * Creates a new resource attributes instance with attributes
+	 * taken from the specified file in the file system.  If the specified
+	 * file does not exist or is not accessible, this method has the
+	 * same effect as calling the default constructor.
+	 * 
+	 * @param file The file to get attributes from
+	 * @return A resource attributes object.
+	 */
+	public static ResourceAttributes fromFile(java.io.File file) {
+		return CoreFileSystemLibrary.getResourceAttributes(file.getAbsolutePath());
+	}
 	
 	/**
 	 * Creates a new instance of <code>ResourceAttributes</code>.
