@@ -22,7 +22,6 @@ import org.eclipse.jface.text.*;
 import org.eclipse.jface.util.ListenerList;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.*;
@@ -825,13 +824,8 @@ public static Object createExtension(final IConfigurationElement element, final 
 	 * @see AbstractUIPlugin#initializeDefaultPreferences
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
-		prefs.setDefault(IDebugUIConstants.PREF_AUTO_SHOW_DEBUG_VIEW, true);
-		prefs.setDefault(IDebugUIConstants.PREF_AUTO_SHOW_PROCESS_VIEW, true);
-		prefs.setDefault(IDebugPreferenceConstants.CONSOLE_OPEN, true);
-
-		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB, new RGB(0, 0, 255));
-		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, new RGB(0, 200, 125));
-		PreferenceConverter.setDefault(prefs, IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB, new RGB(255, 0, 0));
+		DebugPreferencePage.initDefaults(prefs);
+		ConsolePreferencePage.initDefaults(prefs);
 	}
 	
 	/**
