@@ -11,8 +11,15 @@
 package org.eclipse.ui.internal.progress;
 import java.util.HashSet;
 
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 /**
  * The ProgressTableContentProvider is the content provider for tables that are
  * showing jobs.
@@ -40,7 +47,7 @@ public class ProgressTableContentProvider extends ProgressContentProvider
 	 */
 	public void add(Object[] elements) {
 		addToShowList(elements);
-		viewer.setInput(getRoots(displayNumberToShow(elements), false));
+		viewer.setInput(this);
 	}
 	/**
 	 * Add the jobs to the temporary job list.
@@ -59,11 +66,21 @@ public class ProgressTableContentProvider extends ProgressContentProvider
 	 *            the array of elements.
 	 * @return the elements that we want to display.
 	 */
-	public Object[] displayNumberToShow(Object[] elements) {
-		HashSet jobsLimit = new HashSet();
-		for (int index = 0; index < elements.length && index < numShowItems; index++)
-			jobsLimit.add(elements[index]);
-		return jobsLimit.toArray();
+	public Object[] getDisplayedValues(Object[] elements) {
+		HashSet showing = new HashSet();
+		
+		for (int i = 0; i < elements.length; i++) {
+			if(showing.size() == numShowItems)
+				break;
+			JobTreeElement element = (JobTreeElement) elements[i];
+			if(element.isActive()){
+				if(element.isJobInfo() && ((JobInfo)element).getJob().getState() != Job.RUNNING)
+						continue;
+				showing.add(element);
+			}
+		}
+		
+		return showing.toArray();
 	}
 	/*
 	 * (non-Javadoc)
@@ -91,7 +108,7 @@ public class ProgressTableContentProvider extends ProgressContentProvider
 	 */
 	public void remove(Object[] elements) {
 		jobsToShow.remove(getRoots(elements, false));
-		viewer.setInput(getRoots(displayNumberToShow(elements), false));
+		viewer.setInput(this);
 	}
 	/*
 	 * (non-Javadoc)
@@ -100,9 +117,9 @@ public class ProgressTableContentProvider extends ProgressContentProvider
 	 */
 	public Object[] getElements(Object inputElement) {
 		JobTreeElement[] elements = ProgressManager.getInstance()
-				.getRootElements(ProgressViewUpdater.getSingleton().debug);
+				.getRootElements(false);
 		addToShowList(elements);
-		return displayNumberToShow(elements);
+		return getDisplayedValues(elements);
 	}
 	/**
 	 * Get the root elements of the passed elements as we only show roots.
@@ -133,6 +150,37 @@ public class ProgressTableContentProvider extends ProgressContentProvider
 		}
 		return roots.toArray();
 	}
-	
-	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
+	 *      java.lang.Object, java.lang.Object)
+	 */
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+		Shell shell = viewer.getControl().getShell();
+		shell.setSize(getMaximumSize(shell.getDisplay()));
+		super.inputChanged(viewer, oldInput, newInput);
+	}
+	/**
+	 * Get the maximum size of the window based on the display.
+	 * 
+	 * @param display
+	 * @return int
+	 */
+	private Point getMaximumSize(Display display) {
+		GC gc = new GC(display);
+		FontMetrics fm = gc.getFontMetrics();
+		int charWidth = fm.getAverageCharWidth();
+		int charHeight = fm.getHeight();
+		int maxWidth = display.getBounds().width / 6;
+		int maxHeight = display.getBounds().height / 6;
+		int fontWidth = charWidth * 34;
+		int fontHeight = charHeight * 3;
+		if (maxWidth < fontWidth)
+			fontWidth = maxWidth;
+		if (maxHeight < fontHeight)
+			fontHeight = maxHeight;
+		gc.dispose();
+		return new Point(fontWidth, fontHeight);
+	}
 }

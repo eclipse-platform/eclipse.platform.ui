@@ -12,13 +12,10 @@ package org.eclipse.ui.internal.progress;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -115,7 +112,6 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		tableData.bottom = new FormAttachment(100);
 		viewer.getControl().setLayoutData(tableData);
 		initContentProvider();
-		viewer.setInput(this);
 		viewer.setLabelProvider(viewerLabelProvider());
 		root.addListener(SWT.Traverse, new Listener() {
 			public void handleEvent(Event event) {
@@ -184,42 +180,12 @@ class ProgressFloatingWindow extends AssociatedWindow {
 		};
 	}
 	
-	/**
-	 * Get the maximum size of the window based on the display.
-	 * 
-	 * @param display
-	 * @return int
-	 */
-	private Point getMaximumSize(Display display) {
-		GC gc = new GC(display);
-		FontMetrics fm = gc.getFontMetrics();
-		int charWidth = fm.getAverageCharWidth();
-		int charHeight = fm.getHeight();
-		int maxWidth = display.getBounds().width / 6;
-		int maxHeight = display.getBounds().height / 6;
-		int fontWidth = charWidth * 34;
-		int fontHeight = charHeight * 3;
-		if (maxWidth < fontWidth)
-			fontWidth = maxWidth;
-		if (maxHeight < fontHeight)
-			fontHeight = maxHeight;
-		gc.dispose();
-		return new Point(fontWidth, fontHeight);
-	}
+	
 	/**
 	 * Set the content provider for the viewer.
 	 */
 	protected void initContentProvider() {
-		IContentProvider provider = new ProgressTableContentProvider(viewer){
-			/* (non-Javadoc)
-			 * @see org.eclipse.ui.internal.progress.ProgressContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-			 */
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
-				getShell().setSize(getMaximumSize(getShell().getDisplay()));
-				super.inputChanged(viewer, oldInput, newInput);
-			}
-		};
+		IContentProvider provider = new ProgressTableContentProvider(viewer);
 		viewer.setContentProvider(provider);
 		viewer.setInput(provider);
 	}
