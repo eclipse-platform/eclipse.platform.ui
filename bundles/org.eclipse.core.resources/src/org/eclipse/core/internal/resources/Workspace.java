@@ -1289,7 +1289,7 @@ public IProjectDescription loadProjectDescription(IPath path) throws CoreExcepti
 	IProjectDescription result = null;
 	IOException e = null;
 	try {
-		result = (IProjectDescription) new ProjectDescriptionReader().read(path);
+		result = new ProjectDescriptionReader().read(path);
 		if (result != null) {
 			// check to see if we are using in the default area or not. use java.io.File for
 			// testing equality because it knows better w.r.t. drives and case sensitivity

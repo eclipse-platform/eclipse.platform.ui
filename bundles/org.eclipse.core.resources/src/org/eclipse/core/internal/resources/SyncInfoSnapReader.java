@@ -10,13 +10,14 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.io.IOException;
 import java.io.DataInputStream;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.internal.resources.*;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import org.eclipse.core.internal.utils.Policy;
-import java.util.*;
+import org.eclipse.core.resources.IResourceStatus;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.QualifiedName;
 public class SyncInfoSnapReader {
 	protected Workspace workspace;
 	protected Synchronizer synchronizer;

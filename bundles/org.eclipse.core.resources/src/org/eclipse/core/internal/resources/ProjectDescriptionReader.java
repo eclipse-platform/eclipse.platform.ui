@@ -12,7 +12,6 @@ package org.eclipse.core.internal.resources;
 
 import java.io.*;
 import java.util.*;
-
 import org.apache.xerces.parsers.SAXParser;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
@@ -21,12 +20,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.xml.sax.*;
 import org.xml.sax.helpers.DefaultHandler;
-/**
- *
- */
-public class ProjectDescriptionReader
-	extends DefaultHandler
-	implements IModelObjectConstants {
+
+public class ProjectDescriptionReader extends DefaultHandler implements IModelObjectConstants {
 
 	/** constants */
 	protected static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
@@ -63,8 +58,7 @@ public class ProjectDescriptionReader
 	/**
 	 * @see ContentHandler#characters(char[], int, int)
 	 */
-	public void characters(char[] chars, int offset, int length)
-		throws SAXException {
+	public void characters(char[] chars, int offset, int length) throws SAXException {
 		switch (state) {
 			case S_PROJECT_NAME :
 				String projectName = new String(chars, offset, length);
@@ -75,8 +69,7 @@ public class ProjectDescriptionReader
 				projectDescription.setComment(comment);
 				break;
 			case S_REFERENCED_PROJECT_NAME :
-				String referencedProjectName =
-					new String(chars, offset, length);
+				String referencedProjectName = new String(chars, offset, length);
 				((ArrayList) objectStack.peek()).add(referencedProjectName);
 				break;
 			case S_BUILD_COMMAND_NAME :
@@ -116,8 +109,7 @@ public class ProjectDescriptionReader
 				String linkName = new String(chars, offset, length);
 				// objectStack has a LinkDescription on it. Set the name
 				// on this LinkDescription.
-				String oldName =
-					((LinkDescription) objectStack.peek()).getName();
+				String oldName = ((LinkDescription) objectStack.peek()).getName();
 				if (oldName.length() != 0) {
 					parseProblem(Policy.bind("projectDescriptionReader.badLinkName", oldName, linkName)); //$NON-NLS-1$
 				} else {
@@ -140,13 +132,11 @@ public class ProjectDescriptionReader
 				String location = new String(chars, offset, length);
 				// objectStack has name, type, and location on it.  Pop until
 				// you get to the location and then restore the stack.
-				IPath oldLocation =
-					((LinkDescription) objectStack.peek()).getLocation();
+				IPath oldLocation = ((LinkDescription) objectStack.peek()).getLocation();
 				if (!oldLocation.isEmpty()) {
 					parseProblem(Policy.bind("projectDescriptionReader.badLocation", oldLocation.toString(), location)); //$NON-NLS-1$
 				} else {
-					((LinkDescription) objectStack.peek()).setLocation(
-						new Path(location));
+					((LinkDescription) objectStack.peek()).setLocation(new Path(location));
 				}
 				break;
 		}
@@ -175,16 +165,14 @@ public class ProjectDescriptionReader
 			state = S_PROJECT_DESC;
 			if (commands.isEmpty())
 				return;
-			ICommand[] commandArray =
-				((ICommand[]) commands.toArray(new ICommand[commands.size()]));
+			ICommand[] commandArray = ((ICommand[]) commands.toArray(new ICommand[commands.size()]));
 			projectDescription.setBuildSpec(commandArray);
 		}
 	}
 	/**
 	 * @see ContentHandler#endElement(String, String, String)
 	 */
-	public void endElement(String uri, String elementName, String qname)
-		throws SAXException {
+	public void endElement(String uri, String elementName, String qname) throws SAXException {
 		switch (state) {
 			case S_PROJECT_DESC :
 				// Don't think we need to do anything here.
@@ -220,8 +208,7 @@ public class ProjectDescriptionReader
 					if (dictionaryArgs.isEmpty())
 						break;
 					// Below the hashMap on the stack, there is a BuildCommand.
-					((BuildCommand) objectStack.peek()).setArguments(
-						dictionaryArgs);
+					 ((BuildCommand) objectStack.peek()).setArguments(dictionaryArgs);
 				}
 				break;
 			case S_BUILD_COMMAND :
@@ -331,8 +318,7 @@ public class ProjectDescriptionReader
 			state = S_PROJECT_DESC;
 			if (natures.size() == 0)
 				return;
-			String[] natureNames =
-				(String[]) natures.toArray(new String[natures.size()]);
+			String[] natureNames = (String[]) natures.toArray(new String[natures.size()]);
 			projectDescription.setNatureIds(natureNames);
 		}
 	}
@@ -363,32 +349,14 @@ public class ProjectDescriptionReader
 	 * @see ErrorHandler#fatalError(SAXParseException)
 	 */
 	public void fatalError(SAXParseException error) throws SAXException {
-		problems.add(
-			new Status(
-				IStatus.ERROR,
-				ResourcesPlugin.PI_RESOURCES,
-				IResourceStatus.FAILED_READ_METADATA,
-				error.getMessage(),
-				error));
+		problems.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, error.getMessage(), error));
 		throw error;
 	}
 	protected void log(Exception ex) {
-		problems.add(
-			new Status(
-				IStatus.WARNING,
-				ResourcesPlugin.PI_RESOURCES,
-				IResourceStatus.FAILED_READ_METADATA,
-				ex.getMessage(),
-				ex));
+		problems.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, ex.getMessage(), ex));
 	}
 	private void parseProblem(String errorMessage) {
-		problems.add(
-			new Status(
-				IStatus.WARNING,
-				ResourcesPlugin.PI_RESOURCES,
-				IResourceStatus.FAILED_READ_METADATA,
-				errorMessage,
-				null));
+		problems.add(new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, errorMessage, null));
 	}
 	private void parseProjectDescription(String elementName) {
 		if (elementName.equals(NAME)) {
@@ -465,8 +433,7 @@ public class ProjectDescriptionReader
 	public ProjectDescription read(IPath location) throws IOException {
 		BufferedInputStream file = null;
 		try {
-			file =
-				new BufferedInputStream(new FileInputStream(location.toFile()));
+			file = new BufferedInputStream(new FileInputStream(location.toFile()));
 			return read(new InputSource(file));
 		} finally {
 			if (file != null)
@@ -484,12 +451,7 @@ public class ProjectDescriptionReader
 	/**
 	 * @see ContentHandler#startElement(String, String, String, Attributes)
 	 */
-	public void startElement(
-		String uri,
-		String elementName,
-		String qname,
-		Attributes attributes)
-		throws SAXException {
+	public void startElement(String uri, String elementName, String qname, Attributes attributes) throws SAXException {
 		switch (state) {
 			case S_INITIAL :
 				if (elementName.equals(PROJECT_DESCRIPTION)) {

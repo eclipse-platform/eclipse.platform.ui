@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
@@ -234,7 +234,7 @@ public ProjectDescription readOldDescription(IProject project) throws CoreExcept
 	IPath tempPath = getBackupLocationFor(path);
 	ProjectDescription description = null;
 	try {
-		description = (ProjectDescription)new ProjectDescriptionReader().read(path, tempPath);
+		description = new ProjectDescriptionReader().read(path, tempPath);
 	} catch (IOException e) {
 		String msg = Policy.bind("resources.readMeta", project.getName()); //$NON-NLS-1$
 		throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, project.getFullPath(), msg, e);

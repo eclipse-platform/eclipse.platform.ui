@@ -481,8 +481,7 @@ protected void restoreFromSave(IResource resource, boolean generateDeltas) throw
 }
 protected void restoreFromSnap(IResource resource) {
 	IPath sourceLocation = workspace.getMetaArea().getMarkersSnapshotLocationFor(resource);
-	java.io.File sourceFile = new java.io.File(sourceLocation.toOSString());
-	if (!sourceFile.exists())
+	if (!sourceLocation.toFile().exists())
 		return;
 	try {
 		DataInputStream input = new DataInputStream(new SafeChunkyInputStream(sourceLocation.toOSString()));
@@ -495,8 +494,6 @@ protected void restoreFromSnap(IResource resource) {
 		} finally {
 			input.close();
 		}
-//	} catch (FileNotFoundException e) {
-//		// ignore if no markers saved
 	} catch (Exception e) {
 		// only log the exception, we should not fail restoring the snapshot
 		String msg = Policy.bind("resources.readMeta", sourceLocation.toString()); //$NON-NLS-1$
