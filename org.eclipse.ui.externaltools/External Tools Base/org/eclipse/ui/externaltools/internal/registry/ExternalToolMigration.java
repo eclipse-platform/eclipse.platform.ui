@@ -174,7 +174,7 @@ public final class ExternalToolMigration {
 		if (location != null) {
 			LaunchVariableUtil.VariableDefinition varDef = LaunchVariableUtil.extractVariableDefinition(location, 0);
 			if (ILaunchVariableManager.VAR_WORKSPACE_LOC.equals(varDef.name)) {
-				location = LaunchVariableUtil.buildVariableTag(ILaunchVariableManager.VAR_RESOURCE_LOC, varDef.argument);
+				location = LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_RESOURCE_LOC, varDef.argument);
 			}
 			config.setAttribute(IExternalToolConstants.ATTR_LOCATION, location);
 		}

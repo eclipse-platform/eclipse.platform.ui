@@ -65,7 +65,7 @@ public abstract class AbstractVariableComponent implements IVariableComponent {
 		mainGroup.setLayout(layout);
 		mainGroup.setLayoutData(gridData);
 		mainGroup.setFont(parent.getFont());
-		mainGroup.setText(LaunchVariableUtil.buildVariableTag(varTag, null));
+		mainGroup.setText(LaunchVariableUtil.newVariableExpression(varTag, null));
 	}
 
 	/**

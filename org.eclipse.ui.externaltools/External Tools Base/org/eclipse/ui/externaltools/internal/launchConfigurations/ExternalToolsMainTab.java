@@ -509,12 +509,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 			return;
 		}
 		IResource resource = (IResource)results[0];
-		StringBuffer buf = new StringBuffer();
-		LaunchVariableUtil.buildVariableTag(ILaunchVariableManager.VAR_WORKSPACE_LOC, resource.getFullPath().toString(), buf);
-		String text= buf.toString();
-		if (text != null) {
-			locationField.setText(text);
-		}
+		locationField.setText(LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, resource.getFullPath().toString()));
 	}
 	
 	/**
@@ -533,7 +528,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		Object[] resource = containerDialog.getResult();
 		String text= null;
 		if (resource != null && resource.length > 0) {
-			text= LaunchVariableUtil.buildVariableTag(ILaunchVariableManager.VAR_WORKSPACE_LOC, ((IPath)resource[0]).toString());
+			text= LaunchVariableUtil.newVariableExpression(ILaunchVariableManager.VAR_WORKSPACE_LOC, ((IPath)resource[0]).toString());
 		}
 		if (text != null) {
 			workDirectoryField.setText(text);

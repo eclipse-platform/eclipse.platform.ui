@@ -181,7 +181,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab impl
 		configuration.setAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, buffer.toString());
 		
 		if (workingSetButton.getSelection()) {
-			String variableTag= LaunchVariableUtil.buildVariableTag("working_set", workingSetComponent.getVariableValue()); //$NON-NLS-1$
+			String variableTag= LaunchVariableUtil.newVariableExpression("working_set", workingSetComponent.getVariableValue()); //$NON-NLS-1$
 			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, variableTag);
 		} else {
 			configuration.setAttribute(IExternalToolConstants.ATTR_BUILD_SCOPE, (String)null);

@@ -35,9 +35,9 @@ public class LaunchVariableUtil {
 	/**
 	 * Variable tag indentifiers
 	 */
-	public static final char VAR_TAG_START_CHAR1 = '$'; //$NON-NLS-1$
-	public static final char VAR_TAG_START_CHAR2 = '{'; //$NON-NLS-1$
-	public static final char VAR_TAG_END_CHAR1 = '}'; //$NON-NLS-1$
+	private static final char VAR_TAG_START_CHAR1 = '$'; //$NON-NLS-1$
+	private static final char VAR_TAG_START_CHAR2 = '{'; //$NON-NLS-1$
+	private static final char VAR_TAG_END_CHAR1 = '}'; //$NON-NLS-1$
 	private static final String VAR_TAG_START = "${"; //$NON-NLS-1$
 	private static final String VAR_TAG_END = "}"; //$NON-NLS-1$
 	private static final String VAR_TAG_SEP = ":"; //$NON-NLS-1$
@@ -153,32 +153,32 @@ public class LaunchVariableUtil {
 	}
 	
 	/**
-	 * Returns a variable tag from the given variable name and argument.
+	 * Returns an expression referencing the given variable and argument.
 	 * 
-	 * @param varName the name of a variable (one of the VAR_* constants for instance)
-	 * @param varArgument an optional argument for the variable, <code>null</code> if none
-	 * @return a variable tag, built from the given variable name and argument.
+	 * @param varName the name of a variable
+	 * @param argument an optional argument for the variable, <code>null</code> if none
+	 * @return an expression referencing the given variable and argument
 	 */
-	public static String buildVariableTag(String varName, String varArgument) {
+	public static String newVariableExpression(String varName, String argument) {
 		StringBuffer buf = new StringBuffer();
-		buildVariableTag(varName,varArgument, buf);
+		appendVariableExpression(varName,argument, buf);
 		return buf.toString();
 	}
 	
 	/**
-	 * Builds a variable tag in the given buffer from the given
-	 * variable name and argument.
+	 * Builds and appends a variable expression referencing the given variable and
+	 * argument, to the given String buffer.
 	 * 
-	 * @param varName the name of a variable (one of the VAR_* constants for instance)
-	 * @param varArgument an optional argument for the variable, <code>null</code> if none
-	 * @param buffer the buffer to write the constructed variable tag
+	 * @param varName the name of a variable
+	 * @param argument an optional argument for the variable, <code>null</code> if none
+	 * @param buffer the buffer to append the expression to
 	 */
-	public static void buildVariableTag(String varName, String varArgument, StringBuffer buffer) {
+	public static void appendVariableExpression(String varName, String argument, StringBuffer buffer) {
 		buffer.append(VAR_TAG_START);
 		buffer.append(varName);
-		if (varArgument != null && varArgument.length() > 0) {
+		if (argument != null && argument.length() > 0) {
 			buffer.append(VAR_TAG_SEP);
-			buffer.append(varArgument);
+			buffer.append(argument);
 		}
 		buffer.append(VAR_TAG_END);
 	}

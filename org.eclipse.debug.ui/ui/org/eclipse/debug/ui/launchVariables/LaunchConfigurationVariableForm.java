@@ -178,7 +178,7 @@ public class LaunchConfigurationVariableForm {
 	public String getSelectedVariable() {
 		if (activeComponentIndex != -1) {
 			String varValue = components[activeComponentIndex].getVariableValue();
-			return LaunchVariableUtil.buildVariableTag(variables[activeComponentIndex].getName(), varValue);
+			return LaunchVariableUtil.newVariableExpression(variables[activeComponentIndex].getName(), varValue);
 		}
 
 		return null;
@@ -209,7 +209,7 @@ public class LaunchConfigurationVariableForm {
 		ILaunchVariable variable;
 		for (int i = 0; i < variables.length; i++) {
 			variable= variables[i];
-			LaunchVariableUtil.buildVariableTag(variable.getName(), null, buffer);
+			LaunchVariableUtil.appendVariableExpression(variable.getName(), null, buffer);
 			String description= variable.getDescription();
 			if (description != null && description.length() != 0) {
 				buffer.append(" - "); //$NON-NLS-1$
