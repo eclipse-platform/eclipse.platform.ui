@@ -165,17 +165,20 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		);
 		if (!previousSearchQueryData.contains(searchQueryData))
 			previousSearchQueryData.add(searchQueryData);
-		try {
-			SearchUI.activateSearchResultView();
-			scontainer.getRunnableContext().run(
-				true,
-				true,
-				new SearchOperation(searchQueryData));
-		} catch (InvocationTargetException ex) {
-			return false;
-		} catch (InterruptedException e) {
-			return false;
-		}
+		boolean dontCancel=false;
+		do{
+			try {
+				SearchUI.activateSearchResultView();
+				scontainer.getRunnableContext().run(
+					true,
+					true,
+					new SearchOperation(searchQueryData));
+			} catch (InvocationTargetException ex) {
+				return false;
+			} catch (InterruptedException e) {
+				dontCancel=ErrorUtil.displayQuestionDialog(WorkbenchResources.getString("WW004"));
+			}
+		}while (dontCancel);
 		return true;
 	}
 	public void setContainer(ISearchPageContainer container) {

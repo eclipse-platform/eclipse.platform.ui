@@ -71,6 +71,8 @@ public class SearchOperation extends WorkspaceModifyOperation {
 			displayResults(results.getSearchHits());
 		} catch (OperationCanceledException oce){
 			// allowed, no logging
+			monitor.done();
+			throw oce;
 		} catch (Exception e) {
 			Logger.logError(WorkbenchResources.getString("WE021"), e);
 		}
