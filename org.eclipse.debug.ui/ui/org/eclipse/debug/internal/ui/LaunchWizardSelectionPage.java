@@ -123,6 +123,8 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 
 	public void createLaunchersGroup(Composite root) {
 
+		fSetAsDefaultLauncher= new Button(root, SWT.CHECK);
+
 		Label launchersLabel= new Label(root, SWT.NONE);
 		launchersLabel.setText(DebugUIUtils.getResourceString(LAUNCHER));
 
@@ -161,7 +163,6 @@ public class LaunchWizardSelectionPage extends WizardSelectionPage {
 		if (fLauncher != null) {
 			fLaunchersList.setSelection(new StructuredSelection(fLauncher));
 		}
-		fSetAsDefaultLauncher= new Button(root, SWT.CHECK);
 	}
 
 	/**
