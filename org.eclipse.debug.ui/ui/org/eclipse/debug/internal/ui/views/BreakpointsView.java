@@ -82,12 +82,12 @@ public class BreakpointsView extends AbstractDebugView {
 			try {
 				type1= b1.getMarker().getType();
 			} catch (CoreException ce) {
-				DebugUIPlugin.log(ce.getStatus());
+				DebugUIPlugin.log(ce);
 			}
 			try {
 				type2= b2.getMarker().getType();	
 			} catch (CoreException e) {
-				DebugUIPlugin.log(e.getStatus());
+				DebugUIPlugin.log(e);
 			}
 		
 			result= type1.compareTo(type2);
@@ -104,7 +104,7 @@ public class BreakpointsView extends AbstractDebugView {
 			try {
 				lineBreakpoint= b1.getMarker().isSubtypeOf(IBreakpoint.LINE_BREAKPOINT_MARKER);
 			} catch (CoreException ce) {
-				DebugUIPlugin.log(ce.getStatus());
+				DebugUIPlugin.log(ce);
 			}
 			if (lineBreakpoint) {
 				return compareLineBreakpoints(b1, b2, name1,name2);
@@ -125,12 +125,12 @@ public class BreakpointsView extends AbstractDebugView {
 						try {
 							l1= ((ILineBreakpoint)b1).getLineNumber();	
 						} catch (CoreException e) {
-							DebugUIPlugin.log(e.getStatus());
+							DebugUIPlugin.log(e);
 						}
 						try {
 							l2= ((ILineBreakpoint)b2).getLineNumber();	
 						} catch (CoreException e) {
-							DebugUIPlugin.log(e.getStatus());
+							DebugUIPlugin.log(e);
 						}
 						return l1 - l2;
 					}

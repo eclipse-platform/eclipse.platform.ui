@@ -138,7 +138,7 @@ public class LaunchWizard extends Wizard {
 					DebugPlugin.getDefault().getLaunchManager().setDefaultLauncher(project, launcher);
 					setDefaultLauncherSet(true);
 				} catch (CoreException e) {
-					DebugUIPlugin.log(e.getStatus());
+					DebugUIPlugin.log(e);
 				}
 			}
 		}

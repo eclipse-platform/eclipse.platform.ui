@@ -166,7 +166,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				}
 			}
 		} catch (DebugException e) {
-			DebugUIPlugin.log(e.getStatus());
+			DebugUIPlugin.log(e);
 			label.append(DebugUIMessages.getString("DefaultLabelProvider.<unknown>_1")); //$NON-NLS-1$
 		}
 		return label.toString();
@@ -201,7 +201,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			try {
 				buff.append(config.getType().getName());
 			} catch (CoreException e) {
-				DebugUIPlugin.log(e.getStatus());
+				DebugUIPlugin.log(e);
 			}
 			buff.append("]"); //$NON-NLS-1$
 			return buff.toString();			
@@ -216,7 +216,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			try {
 				valueString= value.getValueString();
 			} catch (DebugException de) {
-				DebugUIPlugin.log(de.getStatus());
+				DebugUIPlugin.log(de);
 			}
 		}
 		if (valueString != null && valueString.length() > 0) {
@@ -234,7 +234,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 			buffer.append(" = "); //$NON-NLS-1$
 			buffer.append(value.getValueString());
 		} catch (DebugException de) {
-			DebugUIPlugin.log(de.getStatus());
+			DebugUIPlugin.log(de);
 		}
 		return buffer.toString();
 	}
@@ -245,7 +245,7 @@ public class DefaultLabelProvider implements ILabelProvider {
 				return DebugUIMessages.getString("DefaultLabelProvider.Breakpoint_1"); //$NON-NLS-1$
 			}
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e.getStatus());
+			DebugUIPlugin.log(e);
 		}
 		return ""; //$NON-NLS-1$
 	}
@@ -261,35 +261,34 @@ public class DefaultLabelProvider implements ILabelProvider {
 				}
 			}
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e.getStatus());
+			DebugUIPlugin.log(e);
 		}
 		return null;
 	}
 
-	/*
+	/**
 	 * @see IBaseLabelProvider#addListener(ILabelProviderListener)
 	 */
 	public void addListener(ILabelProviderListener listener) {
 	}
 
-	/*
+	/**
 	 * @see IBaseLabelProvider#dispose()
 	 */
 	public void dispose() {
 	}
 
-	/*
+	/**
 	 * @see IBaseLabelProvider#isLabelProperty(Object, String)
 	 */
 	public boolean isLabelProperty(Object element, String property) {
 		return false;
 	}
 
-	/*
+	/**
 	 * @see IBaseLabelProvider#removeListener(ILabelProviderListener)
 	 */
 	public void removeListener(ILabelProviderListener listener) {
 	}
-
 }
 

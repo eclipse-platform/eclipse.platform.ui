@@ -217,7 +217,7 @@ public class LauncherPropertyPage extends PropertyPage implements IWorkbenchPref
 				}
 			} catch (CoreException ce) {
 				fCombo.select(0);
-				DebugUIPlugin.log(ce.getStatus());
+				DebugUIPlugin.log(ce);
 			}
 		}
 	}

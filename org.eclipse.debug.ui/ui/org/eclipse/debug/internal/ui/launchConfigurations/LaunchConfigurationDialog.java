@@ -354,7 +354,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				setIgnoreSelectionChanges(false);
 				setLaunchConfiguration(fFirstConfig, false);
 			} catch (CoreException ce) {
-				DebugUIPlugin.log(ce.getStatus());
+				DebugUIPlugin.log(ce);
 			}
 		} else if (fFirstConfig instanceof ILaunchConfiguration) {
 			selection = new StructuredSelection(fFirstConfig);			
@@ -400,13 +400,12 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 						fFirstConfig = getLaunchManager().getLaunchConfiguration(memento);
 					} catch (CoreException e) {
 						// do not warn when restoring selection
-						DebugUIPlugin.log(e.getStatus());
+						DebugUIPlugin.log(e);
 					}
 				}
 			}	
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e.getStatus());
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Launch Configuration Error", "Exception occurred processing launch configuration. See log for more information.", e.getStatus());
+			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), "Launch Configuration Error", "Exception occurred processing launch configuration. See log for more information.", e);
 		}
 		return super.open();
 	}
@@ -483,7 +482,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 					def = getLaunchManager().getDefaultLaunchConfiguration(res, type.getIdentifier());
 				} catch (CoreException e) {
 					// hide the exception and return no default
-					DebugUIPlugin.log(e.getStatus());
+					DebugUIPlugin.log(e);
 				}
 			}
 		}
@@ -525,7 +524,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		try {
 			workingCopy = configType.newInstance(null, DEFAULT_NEW_CONFIG_NAME);
 		} catch (CoreException ce) {
-			DebugUIPlugin.log(ce.getStatus());
+			DebugUIPlugin.log(ce);
 			return null;
 		}
 
@@ -546,11 +545,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 		}
 	 		config = workingCopy.doSave();
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e.getStatus());
+			DebugUIPlugin.log(e);
 			return null;
 		}
 		
-		return config;		
+		return config;
 	}
 	
 	/**
@@ -922,7 +921,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 					}
 					return filteredConfigs.toArray();
 				} catch (CoreException e) {
-					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving launch configurations.", e.getStatus());
+					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving launch configurations.", e);
 				}
 			} else {
 				return getLaunchManager().getLaunchConfigurationTypes();
@@ -941,7 +940,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				try {
 					return ((ILaunchConfiguration)element).getType();
 				} catch (CoreException e) {
-					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving launch configurations.", e.getStatus());
+					DebugUIPlugin.errorDialog(getShell(), "Error", "An exception occurred while retrieving launch configurations.", e);
 				}
 			} else if (element instanceof ILaunchConfigurationType) {
 				return ResourcesPlugin.getWorkspace().getRoot();
@@ -1217,7 +1216,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 	 		refreshStatus();
 	 		
 		} catch (CoreException ce) {
- 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred setting launch configuration", ce.getStatus());
+ 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred setting launch configuration", ce);
  			clearLaunchConfiguration();
  			return;					
 		}
@@ -1255,7 +1254,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  		try {
 	 		group = createGroup(configType);
  		} catch (CoreException ce) {
- 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred creating launch configuration tabs.",ce.getStatus());
+ 			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception occurred creating launch configuration tabs.",ce);
  			return;
  		}
  		
@@ -1436,7 +1435,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			fUnderlyingConfig = configuration;
 			setSelectedTreeObject(configuration);
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e.getStatus());
+			DebugUIPlugin.log(e);
 		}
 		getTreeViewer().refresh();	
 		getTreeViewer().setSelection(new StructuredSelection(configuration));
@@ -1562,7 +1561,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			setLaunchConfiguration(wc, true);
 			doSave();
 		} catch (CoreException ce) {
-			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception creating new launch configuration.", ce.getStatus());
+			DebugUIPlugin.errorDialog(getShell(), "Error", "Exception creating new launch configuration.", ce);
  			clearLaunchConfiguration();
  			return;			
 		}		
@@ -1581,7 +1580,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				try {
 					((ILaunchConfiguration)selectedElement).delete();
 				} catch (CoreException ce) {
-					DebugUIPlugin.log(ce.getStatus());				
+					DebugUIPlugin.log(ce);				
 				}
 			}
 		}
@@ -1600,7 +1599,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				setLaunchConfiguration(newWorkingCopy, false);
 				doSave();
 			} catch (CoreException ce) {
-				DebugUIPlugin.log(ce.getStatus());			
+				DebugUIPlugin.log(ce);			
 			}			
 		}
 	}	
@@ -1631,7 +1630,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				newName = buffer.toString();		
 			}		
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e.getStatus());
+			DebugUIPlugin.log(e);
 		}
 		return newName;
 	}
@@ -1646,7 +1645,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			widget.setText(widget.getText().trim());
 			doSave();
 		} catch (CoreException e) {
-			DebugUIPlugin.errorDialog(getShell(), "Launch Configuration Error", "Exception occurred while saving launch configuration.", e.getStatus());
+			DebugUIPlugin.errorDialog(getShell(), "Launch Configuration Error", "Exception occurred while saving launch configuration.", e);
 			return;
 		}
 		
@@ -1718,8 +1717,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			doSave();
 			result = doLaunch(getLaunchConfiguration());
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e.getStatus());
-			DebugUIPlugin.errorDialog(getShell(), "Launch Configuration Error", "Exception occurred while launching configuration. See log for more information.", e.getStatus());
+			DebugUIPlugin.errorDialog(getShell(), "Launch Configuration Error", "Exception occurred while launching configuration. See log for more information.", e);
 			return;
 		}
 		if (result == OK) {
@@ -1727,7 +1725,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				try {
 					getPreferenceStore().setValue(IDebugPreferenceConstants.PREF_LAST_LAUNCH_CONFIGURATION_SELECTION, fUnderlyingConfig.getMemento());
 				} catch (CoreException e) {
-					DebugUIPlugin.log(e.getStatus());
+					DebugUIPlugin.log(e);
 				}
 			}
 			close();

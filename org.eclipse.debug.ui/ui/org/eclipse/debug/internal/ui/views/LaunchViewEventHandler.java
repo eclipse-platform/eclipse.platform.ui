@@ -152,7 +152,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		try {
 			stackFrames = thread.getStackFrames();
 		} catch (DebugException de) {
-			DebugUIPlugin.log(de.getStatus());
+			DebugUIPlugin.log(de);
 			return;
 		}
 		
@@ -221,7 +221,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 								}
 							}						
 						} catch (DebugException de) {
-							DebugUIPlugin.log(de.getStatus());
+							DebugUIPlugin.log(de);
 						}
 						
 						getLaunchView().autoExpand(target.getLaunch(), false, true);

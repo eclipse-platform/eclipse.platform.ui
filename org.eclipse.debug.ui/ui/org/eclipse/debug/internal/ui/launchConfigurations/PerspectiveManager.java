@@ -210,7 +210,7 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventSetListen
 				try {
 					perspectiveId = getPerspectiveId(launch);
 				} catch (CoreException e) {
-					DebugUIPlugin.log(e.getStatus());
+					DebugUIPlugin.log(e);
 				}
 				// if no perspective specified, always switch to debug
 			// perspective 

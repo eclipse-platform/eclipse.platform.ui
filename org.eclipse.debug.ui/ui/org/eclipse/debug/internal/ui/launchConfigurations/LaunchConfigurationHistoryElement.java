@@ -158,7 +158,7 @@ public class LaunchConfigurationHistoryElement {
 					return getLaunchConfiguration().getAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, false);
 				}
 			} catch (CoreException e) {
-				DebugUIPlugin.log(e.getStatus());
+				DebugUIPlugin.log(e);
 			}
 		}
 		return false;

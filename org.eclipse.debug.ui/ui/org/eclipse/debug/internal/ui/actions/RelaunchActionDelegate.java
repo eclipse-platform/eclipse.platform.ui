@@ -123,7 +123,6 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 		try {
 			config.launch(mode, null);		
 		} catch (CoreException ce) {
-			DebugUIPlugin.log(ce.getStatus());
 			DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), ActionMessages.getString("RelaunchActionDelegate.Launch_Failed_1"), ActionMessages.getString("RelaunchActionDelegate.An_exception_occurred_while_launching_2"), ce.getStatus()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}

@@ -152,7 +152,7 @@ public class VariablesViewer extends TreeViewer {
 			try {
 				currentValue = var.getValue();
 			} catch (DebugException e) {
-				DebugUIPlugin.log(e.getStatus());
+				DebugUIPlugin.log(e);
 			}
 			if (currentValue != null) {
 				fPreviousValues.put(var, currentValue);
@@ -191,7 +191,7 @@ public class VariablesViewer extends TreeViewer {
 							treeItem.setImage(getDisabledImage(image));
 						}
 					} catch (DebugException e) {
-						DebugUIPlugin.log(e.getStatus());
+						DebugUIPlugin.log(e);
 					}
 				}
 			}

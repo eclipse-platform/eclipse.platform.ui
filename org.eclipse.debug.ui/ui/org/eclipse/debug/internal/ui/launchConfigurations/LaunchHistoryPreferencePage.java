@@ -190,7 +190,7 @@ public class LaunchHistoryPreferencePage
 				wc.doSave();
 			}				
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e.getStatus());
+			DebugUIPlugin.log(e);
 		}
 	}
 	

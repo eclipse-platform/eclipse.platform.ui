@@ -318,7 +318,7 @@ public class DebugPlugin extends Plugin {
 			try {
 				return (IStatusHandler)config.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
-				log(e.getStatus());
+				log(e);
 			}
 		}
 		return null;
@@ -373,18 +373,7 @@ public class DebugPlugin extends Plugin {
 	public void removeDebugEventListener(IDebugEventSetListener listener) {
 		fEventListeners.remove(listener);
 	}	
-	/**
-	 * Logs the given message if in debug mode.
-	 * 
-	 * @param String message to log
-	 */
-	public static void logDebugMessage(String message) {
-		if (getDefault().isDebugging()) {
-			// this message is intentionally not internationalized, as an exception may
-			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from Debug Core: " + message, null));
-		}
-	}
+
 	/**
 	 * Shuts down this debug plug-in and discards all plug-in state.
 	 * <p> 
@@ -526,6 +515,19 @@ public class DebugPlugin extends Plugin {
 	}	
 	
 	/**
+	 * Logs the given message if in debug mode.
+	 * 
+	 * @param String message to log
+	 */
+	public static void logDebugMessage(String message) {
+		if (getDefault().isDebugging()) {
+			// this message is intentionally not internationalized, as an exception may
+			// be due to the resource bundle itself
+			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from Debug Core: " + message, null));
+		}
+	}
+	
+	/**
 	 * Logs the specified status with this plug-in's log.
 	 * 
 	 * @param status status to log
@@ -540,12 +542,7 @@ public class DebugPlugin extends Plugin {
 	 * @param t throwable to log 
 	 */
 	public static void log(Throwable t) {
-		IStatus status= null;
-		if (t instanceof CoreException) {
-			status= ((CoreException)t).getStatus();
-		} else {
-			status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Error logged from Debug Core: ", t); //$NON-NLS-1$
-		}
+		IStatus status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Error logged from Debug Core: ", t); //$NON-NLS-1$
 		log(status);
 	}
 	

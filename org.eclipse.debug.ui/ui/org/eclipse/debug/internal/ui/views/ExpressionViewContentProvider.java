@@ -41,7 +41,7 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 				return children;
 			}
 		} catch (DebugException e) {
-			DebugUIPlugin.log(e.getStatus());
+			DebugUIPlugin.log(e);
 		}
 		return new Object[0];
 	}

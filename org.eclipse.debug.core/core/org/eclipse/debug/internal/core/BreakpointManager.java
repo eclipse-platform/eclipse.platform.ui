@@ -121,7 +121,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			try {
 				createBreakpoint(marker);
 			} catch (DebugException e) {
-				DebugPlugin.log(e.getStatus());
+				DebugPlugin.log(e);
 			}
 		}
 	}
@@ -249,7 +249,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		try {
 			loadBreakpoints(root);	
 		} catch (CoreException ce) {
-			DebugPlugin.log(ce.getStatus());
+			DebugPlugin.log(ce);
 			setBreakpoints(new Vector(0));
 		} 
 	}
@@ -384,7 +384,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				}
 				delta.accept(fgVisitor);
 			} catch (CoreException ce) {
-				DebugPlugin.log(ce.getStatus());
+				DebugPlugin.log(ce);
 			}
 		}
 	}
@@ -415,7 +415,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 					try {
 						removeBreakpoint(breakpoint, false);
 					} catch (CoreException e) {
-						DebugPlugin.log(e.getStatus());
+						DebugPlugin.log(e);
 					}
 				}
 			}
@@ -424,7 +424,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			try {
 				loadBreakpoints(project);
 			} catch (CoreException e) {
-				DebugPlugin.log(e.getStatus());
+				DebugPlugin.log(e);
 			}
 		}
 	}
@@ -478,7 +478,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 						try {
 							marker.delete();
 						} catch (CoreException ce) {
-							DebugPlugin.log(ce.getStatus());
+							DebugPlugin.log(ce);
 						}
 					}
 				};
@@ -497,7 +497,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				try {
 					removeBreakpoint(breakpoint, false);
 				} catch (CoreException e) {
-					DebugPlugin.log(e.getStatus());
+					DebugPlugin.log(e);
 				}
 			}
 		}
@@ -558,7 +558,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				try {
 					getWorkspace().run(wRunnable, null);
 				} catch (CoreException ce) {
-					DebugPlugin.log(ce.getStatus());
+					DebugPlugin.log(ce);
 				}
 			}
 		};

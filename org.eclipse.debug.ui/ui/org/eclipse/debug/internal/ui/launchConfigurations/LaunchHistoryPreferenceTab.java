@@ -463,7 +463,7 @@ public abstract class LaunchHistoryPreferenceTab {
 			try {
 				all = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
 			} catch (CoreException e) {
-				DebugUIPlugin.log(e.getStatus());
+				DebugUIPlugin.log(e);
 				return new ILaunchConfiguration[0];
 			}
 			List list = new ArrayList(all.length);

@@ -142,7 +142,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 				return ((IStackFrame)element).hasVariables();
 			}
 		} catch (DebugException e) {
-			DebugUIPlugin.log(e.getStatus());
+			DebugUIPlugin.log(e);
 			return false;
 		}
 		return false;

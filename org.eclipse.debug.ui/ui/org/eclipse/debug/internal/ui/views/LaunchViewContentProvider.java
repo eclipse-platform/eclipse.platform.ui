@@ -35,7 +35,7 @@ public class LaunchViewContentProvider implements ITreeContentProvider {
 				return ((IThread)parent).getStackFrames();
 			}			
 		} catch (DebugException e) {
-			DebugUIPlugin.log(e.getStatus());
+			DebugUIPlugin.log(e);
 		}
 		if (parent instanceof ILaunch) {
 			return ((ILaunch)parent).getChildren();
@@ -79,7 +79,7 @@ public class LaunchViewContentProvider implements ITreeContentProvider {
 			try {
 				return ((IDebugTarget)element).hasThreads();
 			} catch (DebugException e) {
-				DebugUIPlugin.log(e.getStatus());
+				DebugUIPlugin.log(e);
 				return false;
 			}
 		} 
@@ -87,7 +87,7 @@ public class LaunchViewContentProvider implements ITreeContentProvider {
 			try {
 				return ((IThread)element).hasStackFrames();
 			} catch (DebugException e) {
-				DebugUIPlugin.log(e.getStatus());
+				DebugUIPlugin.log(e);
 				return false;
 			}
 		}

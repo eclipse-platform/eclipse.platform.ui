@@ -620,7 +620,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 				}
 				delta.accept(fgDeletedVisitor, false);
 			} catch (CoreException ce) {
-				log(ce.getStatus());
+				log(ce);
 			}
 		}		
 	}
@@ -702,7 +702,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 				removeRunFavorite(config);
 			}
 		} catch (CoreException e) {
-			log(e.getStatus());
+			log(e);
 		}	
 	}
 	
@@ -1314,7 +1314,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 				hist = new LaunchConfigurationHistoryElement(launchConfig, mode, label);
 			}
 		} catch (CoreException e) {
-			DebugUIPlugin.log(e.getStatus());
+			DebugUIPlugin.log(e);
 		}	
 		return hist;
 	}
@@ -1448,12 +1448,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener,
 	 * @param t throwable to log 
 	 */
 	public static void log(Throwable t) {
-		IStatus status= null;
-		if (t instanceof CoreException) {
-			status= ((CoreException)t).getStatus();
-		} else {
-			status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error logged from Debug UI: ", t); //$NON-NLS-1$
-		}
+		IStatus status= new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "Error logged from Debug UI: ", t); //$NON-NLS-1$
 		log(status);
 	}
 	
