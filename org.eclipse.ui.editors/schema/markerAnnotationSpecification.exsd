@@ -264,7 +264,7 @@ since: 3.0
             </annotation>
             <simpleType>
                <restriction base="string">
-                  <enumeration value="SQUIGGLIES">
+                  <enumeration value="SQUIGGLES">
                   </enumeration>
                   <enumeration value="BOX">
                   </enumeration>
