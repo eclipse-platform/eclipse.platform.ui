@@ -239,15 +239,15 @@ public class ProblemView extends MarkerView {
 	}
 	
 	/**
-	 * This method will take as parameter a list of all the markers we
-	 * wish to get statistical information on.  Each marker will be examined
-	 * to determine its severity.  The resulting int array will contain a
-	 * count of the total number of markers with each of the severities:  error,
+	 * This method takes a list of all the markers we
+	 * wish to get statistical information on.  Each marker is examined
+	 * to determine its severity.  The resulting array contains
+	 * counts of the total number of markers with each of the severities:  error,
 	 * warning or info.
-	 * <p>
+	 * 
 	 * @param regList the list of markers we wish to get stats for
 	 * @return a 3-element int array giving the number of markers in regList
-	 *   that have severity ERROR, WARNING, and INFO.</p>
+	 *   that have severity ERROR, WARNING, and INFO
 	 */
 	private int[] getMarkerCounts (Object[] regList) {
 		int[] visibleMarkerCounts = {0, 0, 0};
@@ -271,17 +271,17 @@ public class ProblemView extends MarkerView {
 		return visibleMarkerCounts;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.views.markers.internal.MarkerView#updateStatusMessage(org.eclipse.jface.viewers.IStructuredSelection)
-	 * <p>
-	 * This method has been overwritten from the default version in 
-	 * MarkerView.  For Problem views, the status area will indicate the
+	/**
+	 * The <code>ProblemView</code> implementation of this <code>MarkerView</code>
+	 * method updates the status message to indicate the
 	 * total number of items in the view and how many of them have severity
-	 * 'error', 'warning' or 'info' if the selection passed in is null
+	 * ERROR, WARNING, and INFO if the selection passed in is <code>null</code>
 	 * or has a size of 0 (i.e. nothing is selected in the view).  If more
-	 * than 1 item is selected, the same information will be displayed but
-	 * only for the selected items.  If only 1 item is selected, the 'message'
-	 * attribute of this marker will be displayed.</p>
+	 * than 1 item is selected, the same information is displayed but
+	 * only for the selected items.  If only 1 item is selected, the MESSAGE
+	 * attribute of this marker is displayed.
+	 * 
+	 * @param selection a valid selection or <code>null</code>
 	 */
 	protected void updateStatusMessage(IStructuredSelection selection) {
 		String message = ""; //$NON-NLS-1$
@@ -301,13 +301,12 @@ public class ProblemView extends MarkerView {
 	}
 
 	/**
-	 * updateSummaryVisible will retrieve statistical information (the
-	 * total number of markers with each severity type) for the markers
-	 * contained in the marker registry for this view.  This information
-	 * will then be massaged into a String which may be displayed by the
-	 * caller.
-	 * <p>
-	 * @return a String message ready for display</p>
+	 * Retrieves statistical information (the total number of markers with each
+	 * severity type) for the markers contained in the marker registry for this
+	 * view. This information is then massaged into a string which may be
+	 * displayed by the caller.
+	 * 
+	 * @return a message ready for display
 	 */
 	private String updateSummaryVisible() {
 		Object[] regList = getRegistry().getElements();
@@ -327,13 +326,13 @@ public class ProblemView extends MarkerView {
 	}
 	
 	/**
-	 * updateSummarySelected will retrieve statistical information (the
-	 * total number of markers with each severity type) for the markers
-	 * contained in the selection passed in.  This information will then
-	 * be massaged into a String which may be displayed by the caller.
-	 * <p>
-	 * @param selection may be null or a valid IStructuredSelection
-	 * @return a String message ready for display</p>
+	 * Retrieves statistical information (the total number of markers with each
+	 * severity type) for the markers contained in the selection passed in.
+	 * This information is then massaged into a string which may be displayed
+	 * by the caller.
+	 * 
+	 * @param selection a valid selection or <code>null</code>
+	 * @return a message ready for display
 	 */
 	private String updateSummarySelected(IStructuredSelection selection) {
 		int[] selectedMarkerCounts = getMarkerCounts(selection.toArray());

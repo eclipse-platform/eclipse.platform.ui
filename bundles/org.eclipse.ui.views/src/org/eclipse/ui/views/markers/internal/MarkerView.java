@@ -545,18 +545,20 @@ public abstract class MarkerView extends TableView {
 	}
 	
 	/**
-	 * Updates the message displayed in the status line.  This method will
-	 * be invoked in the following cases:
-	 * - when this view is first created
-	 * - when new elements are added
-	 * - when something is deleted
-	 * - when the focus changes to this view
-	 * - when the filters change
+	 * Updates the message displayed in the status line.  This method is
+	 * invoked in the following cases:
+	 * <ul>
+	 * <li>when this view is first created</li>
+	 * <li>when new elements are added</li>
+	 * <li>when something is deleted</li>
+	 * <li>when the filters change</li>
+	 * </ul>
 	 * <p>
-	 * By default, this method will call updateStatusMessage(IStructuredSelection)
-	 * with the current selection or null.  Classes wishing to override
+	 * By default, this method calls <code>updateStatusMessage(IStructuredSelection)</code>
+	 * with the current selection or <code>null</code>.  Classes wishing to override
 	 * this functionality, should just override the method
-	 * updateStatusMessage(IStructuredSelection).</p>
+	 * <code>updateStatusMessage(IStructuredSelection)</code>.
+	 * </p>
 	 */
 	protected void updateStatusMessage() {
 		ISelection selection = getViewer().getSelection();
@@ -569,18 +571,18 @@ public abstract class MarkerView extends TableView {
 
 	/**
 	 * Updates that message displayed in the status line.  If the
-	 * selection parameter is null or its size is 0, the status 
-	 * area will be blanked out.  If only 1 marker is selected, the
-	 * status area will be updated with the contents of the message
+	 * selection parameter is <code>null</code> or its size is 0, the status 
+	 * area is blanked out.  If only 1 marker is selected, the
+	 * status area is updated with the contents of the message
 	 * attribute of this marker.  In other cases (more than one marker
-	 * is selected) the status area will indicate how many items have
+	 * is selected) the status area indicates how many items have
 	 * been selected.
 	 * <p>
 	 * This method may be overwritten.
 	 * </p><p>
 	 * This method is called whenever a selection changes in this view.
-	 * </p><p>
-	 * @param selection may be null or a valid IStructuredSelection</p>
+	 * </p>
+	 * @param selection a valid selection or <code>null</code>
 	 */
 	protected void updateStatusMessage(IStructuredSelection selection) {
 		String message = ""; //$NON-NLS-1$
