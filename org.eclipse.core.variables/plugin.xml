@@ -13,6 +13,9 @@
          <packages prefixes="org.eclipse.core.variables,org.eclipse.core.internal.variables"/>
       </library>
    </runtime>
+   <requires>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
+   </requires>
 
    <extension-point id="valueVariables" name="%valueVariablesExtensionPointName" schema="schema/valueVariables.exsd"/>
    <extension-point id="dynamicVariables" name="%dynamicVariablesExtensionPointName" schema="schema/dynamicVariables.exsd"/>
