@@ -51,7 +51,7 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 		} else {
 			imageDescriptor = DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);			
 		}	
-		setText(ActionMessages.getString("OpenLaunchConfigurationsAction.Edit_Configurations_1")); //$NON-NLS-1$
+		setText(getLabelText()); 
 		setImageDescriptor(imageDescriptor);	
 	}
 	
@@ -143,5 +143,10 @@ public abstract class OpenLaunchConfigurationsAction extends Action implements I
 	 * @see ILaunchManager#DEBUG_MODE
 	 */
 	protected abstract String getMode();
+	
+	/**
+	 * Return a String label for this action.
+	 */
+	protected abstract String getLabelText();
 	
 }

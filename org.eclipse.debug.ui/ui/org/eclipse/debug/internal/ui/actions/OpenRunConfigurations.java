@@ -28,4 +28,11 @@ public class OpenRunConfigurations extends OpenLaunchConfigurationsAction {
 		return ILaunchManager.RUN_MODE;
 	}
 
+	/**
+	 * @see OpenLaunchConfigurationsAction#getLabelText()
+	 */
+	protected String getLabelText() {
+		return ActionMessages.getString("OpenRunConfigurations.Run..._1"); //$NON-NLS-1$
+	}
+
 }

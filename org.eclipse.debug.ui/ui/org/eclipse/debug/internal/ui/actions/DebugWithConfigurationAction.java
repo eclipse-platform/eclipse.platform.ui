@@ -11,4 +11,10 @@ public class DebugWithConfigurationAction extends LaunchWithConfigurationAction 
 		return ILaunchManager.DEBUG_MODE;		
 	}
 
+	/**
+	 * @see LaunchWithConfigurationAction#getLabelText()
+	 */
+	public String getLabelText() {
+		return ActionMessages.getString("DebugWithConfigurationAction.Debug_As_1"); //$NON-NLS-1$
+	}
 }

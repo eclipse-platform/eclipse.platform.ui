@@ -27,5 +27,12 @@ public class OpenDebugConfigurations extends OpenLaunchConfigurationsAction {
 	protected String getMode() {
 		return ILaunchManager.DEBUG_MODE;
 	}
+	
+	/**
+	 * @see OpenLaunchConfigurationsAction#getLabelText()
+	 */
+	protected String getLabelText() {
+		return ActionMessages.getString("OpenDebugConfigurations.Debug..._1"); //$NON-NLS-1$
+	}
 
 }

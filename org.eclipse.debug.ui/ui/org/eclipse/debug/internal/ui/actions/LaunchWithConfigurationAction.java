@@ -56,13 +56,12 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 	 * @see IAction#run()
 	 */
 	public void run() {
-		//do nothing 
-		//this action just creates a cascading menu.
+		//do nothing, this action just creates a cascading menu.
 	}
 	
 	public LaunchWithConfigurationAction() {
 		super();
-		setText(ActionMessages.getString("LaunchWithConfigurationAction.New_Configuration_1")); //$NON-NLS-1$
+		setText(getLabelText());
 		setMenuCreator(this);
 	}
 	
@@ -258,4 +257,9 @@ public abstract class LaunchWithConfigurationAction extends Action implements IM
 	 * that specifies the launch mode. 
 	 */
 	public abstract String getMode();
+	
+	/**
+	 * Return a String label for this action.
+	 */
+	public abstract String getLabelText();
 }

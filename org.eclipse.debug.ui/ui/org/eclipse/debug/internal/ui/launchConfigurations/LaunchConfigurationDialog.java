@@ -74,6 +74,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -846,11 +847,11 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		fTabComposite.setLayoutData(gd);		
 		
 		TabFolder tabFolder = new TabFolder(fTabComposite, SWT.NONE);
+		setTabFolder(tabFolder);
 		gd = new GridData(GridData.FILL_BOTH);
 		gd.heightHint = 375;
 		gd.widthHint = 375;
 		tabFolder.setLayoutData(gd);
-		setTabFolder(tabFolder);
 		getTabFolder().addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
 				handleTabSelected();
@@ -1218,7 +1219,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			setInitializingTabs(true);
 			
 			getEditArea().setVisible(true);
-			setTabsForConfigType(config.getType());
+			showTabsForConfigType(config.getType());
 			
 			if (config.isWorkingCopy()) {
 		 		setWorkingCopy((ILaunchConfigurationWorkingCopy)config);
@@ -1270,7 +1271,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  	 * Populate the tabs in the configuration edit area to be appropriate to the current
  	 * launch configuration type.
  	 */
- 	protected void setTabsForConfigType(ILaunchConfigurationType configType) {		
+ 	protected void showTabsForConfigType(ILaunchConfigurationType configType) {		
  		if (getTabType() != null && getTabType().equals(configType)) {
  			return;
  		}
@@ -1314,7 +1315,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
  			}
  		}
  		
- 		// Adjust the maximum tab dimensions to account for the extra space required for the tab folder
+ 		// Adjust the maximum tab dimensions to account for the extra space required for the tab labels
  		Rectangle tabFolderBoundingBox = getTabFolder().computeTrim(0, 0, contentSize.x, contentSize.y);
 		contentSize.x = tabFolderBoundingBox.width;
 		contentSize.y = tabFolderBoundingBox.height;
@@ -1323,7 +1324,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 		getTabFolder().layout(true);
 		
 		// Calculate difference between required space for tab folder and current size,
-		// then increase size of Shell by this amount
+		// then increase size of this dialog's Shell by that amount
  		Rectangle rect = fTabComposite.getClientArea();
 		Point containerSize= new Point(rect.width, rect.height);
 		int hdiff= contentSize.x - containerSize.x;
@@ -2594,4 +2595,6 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				handleDeletePressed();
 			}
 		}
-	}}
+	}
+
+}

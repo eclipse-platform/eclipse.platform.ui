@@ -10,4 +10,11 @@ public class RunWithConfigurationAction extends LaunchWithConfigurationAction {
 	public String getMode() {
 		return ILaunchManager.RUN_MODE;		
 	}
+	
+	/**
+	 * @see LaunchWithConfigurationAction#getLabelText()
+	 */
+	public String getLabelText() {
+		return ActionMessages.getString("RunWithConfigurationAction.Run_As_1"); //$NON-NLS-1$
+	}
 }
