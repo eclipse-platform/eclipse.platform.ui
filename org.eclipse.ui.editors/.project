@@ -12,7 +12,6 @@
 		<project>org.eclipse.text</project>
 		<project>org.eclipse.ui.ide</project>
 		<project>org.eclipse.ui.views</project>
-		<project>org.eclipse.ui.win32</project>
 		<project>org.eclipse.ui.workbench</project>
 		<project>org.eclipse.ui.workbench.texteditor</project>
 		<project>org.eclipse.update.core</project>

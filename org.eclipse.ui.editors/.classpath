@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="/org.eclipse.text"/>
 	<classpathentry kind="src" path="/org.eclipse.ui.views"/>
 	<classpathentry kind="src" path="/org.eclipse.ui.workbench"/>
-	<classpathentry kind="src" path="/org.eclipse.ui.win32"/>
 	<classpathentry kind="src" path="/org.eclipse.ui.workbench.texteditor"/>
 	<classpathentry kind="src" path="/org.eclipse.jface"/>
 	<classpathentry kind="src" path="/org.eclipse.jface.text"/>
