@@ -97,10 +97,14 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog impl
 
 		// top level group
 		Composite outerContainer = (Composite) super.createDialogArea(parent);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
-		outerContainer.setLayout(layout);
-		outerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		Layout layout = outerContainer.getLayout();
+		if(layout != null && layout instanceof GridLayout) {
+			((GridLayout)layout).numColumns = 2;
+		} else {
+			GridLayout gridLayout = new GridLayout();
+			outerContainer.setLayout(gridLayout);
+			outerContainer.setLayoutData(new GridData(GridData.FILL_BOTH));
+		}
 
 		// Create label
 		createMessageArea(outerContainer);
@@ -229,10 +233,10 @@ public class CheatSheetCategoryBasedSelectionDialog extends SelectionDialog impl
 	 * @param selectionEvent SelectionChangedEvent
 	 */
 	private void handleCategorySelection(SelectionChangedEvent selectionEvent) {
-		Object currentSelection = cheatsheetSelectionViewer.getInput();
+		Object selection = cheatsheetSelectionViewer.getInput();
 		Object selectedCategory =
 			getSingleSelection((IStructuredSelection)selectionEvent.getSelection());
-		if (currentSelection != selectedCategory) {
+		if (selection != selectedCategory) {
 			cheatsheetSelectionViewer.setInput(selectedCategory);
 
 			enableOKButton(false);
