@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.text.MessageFormat;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
@@ -101,10 +102,10 @@ public class ViewsPreferencePage
 		label.setText(WorkbenchMessages.getString("ViewsPreference.currentTheme")); //$NON-NLS-1$
 		label.setLayoutData(data);
 		
-		data =
-			new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL);
+		data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		data.horizontalSpan = 2;
-		
+				
 		themeCombo = new Combo(composite, SWT.READ_ONLY);
         themeCombo.setLayoutData(data);
 		refreshThemeCombo();
