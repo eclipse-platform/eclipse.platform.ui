@@ -43,12 +43,21 @@ public class AnnotationPreferenceLookup {
 	 * @return the annotation preference for the given annotation or <code>null</code>
 	 */
 	public AnnotationPreference getAnnotationPreference(Annotation annotation) {
-		String typeName= annotation.getType();
-		if (typeName == null || typeName == Annotation.TYPE_UNKNOWN)
+		return getAnnotationPreference(annotation.getType());
+	}
+	
+	/**
+	 * Returns the annotation preference defined for the given annotation type.
+	 * 
+	 * @param annotationType the annotation type
+	 * @return the annotation preference for the given annotation type or <code>null</code>
+	 */
+	public AnnotationPreference getAnnotationPreference(String annotationType) {
+		if (annotationType == null || annotationType == Annotation.TYPE_UNKNOWN)
 			return null;
 		
 		AnnotationTypeHierarchy hierarchy= getAnnotationTypeHierarchy();
-		AnnotationType type= hierarchy.getAnnotationType(typeName);
+		AnnotationType type= hierarchy.getAnnotationType(annotationType);
 		AnnotationPreference preference= type.getPreference();
 		if (preference == null) {
 			preference= new DelegatingAnnotationPreference(type, this);
@@ -59,7 +68,10 @@ public class AnnotationPreferenceLookup {
 	}
 	
 	/**
-	 * Returns the annotation preference fragment defined for the given annotation type.
+	 * Returns the annotation preference fragment defined for the given
+	 * annotation type.
+	 * <p>
+	 * For internal use only. Not intended to be called by clients.
 	 * 
 	 * @param annotationType the annotation type
 	 * @return the defined annotation preference fragment
@@ -80,7 +92,7 @@ public class AnnotationPreferenceLookup {
 
 	/**
 	 * Returns a map between annotation type names and annotation preference
-	 * fragements and creates it if not yet done.
+	 * fragments and creates it if not yet done.
 	 * 
 	 * @return the map between annotation type names and annotation preference fragments
 	 */
