@@ -490,7 +490,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	}
 
 	/**
-	 *Returns whether this popup is active. It is active if the propsal selector is visible.
+	 *Returns whether this popup is active. It is active if the proposal selector is visible.
 	 *
 	 * @return <code>true</code> if this popup is active
 	 */
@@ -598,7 +598,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			 * the table is still okToUse. See comments below
 			 */
 			fProposalShell.setVisible(true); // may run event loop on GTK
-			// XXX: transfer focus since no verify key listern can be attached
+			// XXX: transfer focus since no verify key listener can be attached
 			if (!fContentAssistSubjectAdapter.supportsVerifyKeyListener() && Helper.okToUse(fProposalShell))
 				fProposalShell.setFocus(); // may run event loop on GTK ??
 			
@@ -712,7 +712,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * the selection to the additional info controller.
 	 * 
 	 * @param index the index in the list
-	 * @param smartToggle <code>true</code> if the smart toogle key has been pressed
+	 * @param smartToggle <code>true</code> if the smart toggle key has been pressed
 	 * @since 2.1
 	 */
 	private void selectProposal(int index, boolean smartToggle) {
@@ -945,7 +945,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		StringBuffer prefix= null; // the common prefix
 		boolean isCaseCompatible= true;
 		IDocument document= fContentAssistSubjectAdapter.getDocument();
-		int startOffset= -1; // the location where the proposals would insert (< fInvocationOffset if invoked in the middle of an ident)
+		int startOffset= -1; // the location where the proposals would insert (< fInvocationOffset if invoked in the middle of an indent)
 		String currentPrefix= null; // the prefix already in the document
 		int currentPrefixLen= -1; // the length of the current prefix
 		List caseFiltered= new ArrayList();
