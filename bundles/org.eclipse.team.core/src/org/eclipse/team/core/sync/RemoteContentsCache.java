@@ -108,7 +108,7 @@ public class RemoteContentsCache {
 	public static synchronized File getFile(QualifiedName id) throws TeamException {
 		RemoteContentsCache cache = getCache(id.getLocalName());
 		if (cache == null) {
-			throw new TeamException("The cache for " + id.getLocalName() + " is not enabled.");
+			throw new TeamException(Policy.bind("RemoteContentsCache.cacheNotEnabled", id.getLocalName())); //$NON-NLS-1$
 		}
 		return cache.getFile(id.getQualifier());
 	}
@@ -136,7 +136,7 @@ public class RemoteContentsCache {
 	public synchronized File getFile(String id) {
 		if (cacheFileNames == null) {
 			// This probably means that the cache has been disposed
-			throw new IllegalStateException("The cache for " + name + "is disposed.");
+			throw new IllegalStateException(Policy.bind("RemoteContentsCache.cacheDisposed", name)); //$NON-NLS-1$
 		}
 		String physicalPath;
 		if (cacheFileNames.containsKey(id)) {
@@ -180,7 +180,7 @@ public class RemoteContentsCache {
 			}
 		} catch (IOException e) {
 			// We will end up here if we couldn't read or delete the cache file
-			throw new TeamException("An error occured accessing cache file " + ioFile.getAbsolutePath(), e);
+			throw new TeamException(Policy.bind("RemoteContentsCache.fileError", ioFile.getAbsolutePath()), e); //$NON-NLS-1$
 		}
 		return null;
 	}
@@ -204,7 +204,7 @@ public class RemoteContentsCache {
 			try {
 				out = new BufferedOutputStream(new FileOutputStream(ioFile));
 			} catch (FileNotFoundException e) {
-				throw new TeamException("An error occurred opening cache file " + ioFile.getAbsolutePath() + " for writing.", e);
+				throw new TeamException(Policy.bind("RemoteContentsCache.fileError", ioFile.getAbsolutePath()), e); //$NON-NLS-1$
 			}
 	
 			// Transfer the contents
@@ -225,7 +225,7 @@ public class RemoteContentsCache {
 				throw e;
 			}
 		} catch (IOException e) {
-			throw new TeamException("An error occurred  writing to cache file " + ioFile.getAbsolutePath() + ".", e);
+			throw new TeamException(Policy.bind("RemoteContentsCache.fileError", ioFile.getAbsolutePath()), e); //$NON-NLS-1$
 		} finally {
 			try {
 				stream.close();
@@ -301,7 +301,7 @@ public class RemoteContentsCache {
 			deleteFile(file);
 		}
 		if (! file.mkdirs()) {
-			throw new TeamException("Could not create cache directory " + file.getAbsolutePath());
+			throw new TeamException(Policy.bind("RemoteContentsCache.fileError", file.getAbsolutePath())); //$NON-NLS-1$
 		}
 		cacheFileNames = new HashMap();
 		cacheFileTimes = new HashMap();
@@ -328,7 +328,7 @@ public class RemoteContentsCache {
 			}
 		}
 		if (! file.delete()) {
-			throw new TeamException("Could not delete file " + file.getAbsolutePath(), null);
+			throw new TeamException(Policy.bind("RemoteContentsCache.fileError", file.getAbsolutePath())); //$NON-NLS-1$
 		}
 	}
 }
