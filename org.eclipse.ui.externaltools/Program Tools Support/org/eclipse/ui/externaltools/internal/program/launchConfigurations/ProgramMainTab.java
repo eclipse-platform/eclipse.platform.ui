@@ -13,6 +13,7 @@ package org.eclipse.ui.externaltools.internal.program.launchConfigurations;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
@@ -30,15 +31,18 @@ public class ProgramMainTab extends ExternalToolsMainTab {
 		FileSelectionDialog dialog;
 		dialog = new FileSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), ExternalToolsProgramMessages.getString("ProgramMainTab.Select")); //$NON-NLS-1$
 		dialog.open();
-		IFile file = dialog.getResult();
-		if (file == null) {
+		IStructuredSelection result = dialog.getResult();
+		if (result == null) {
 			return;
 		}
-		StringBuffer expression = new StringBuffer();
-		expression.append("${workspace_loc:"); //$NON-NLS-1$
-		expression.append(file.getFullPath().toString());
-		expression.append("}"); //$NON-NLS-1$
-		locationField.setText(expression.toString());
+		Object file= result.getFirstElement();
+		if (file instanceof IFile) {
+			StringBuffer expression = new StringBuffer();
+			expression.append("${workspace_loc:"); //$NON-NLS-1$
+			expression.append(((IFile)file).getFullPath().toString());
+			expression.append("}"); //$NON-NLS-1$
+			locationField.setText(expression.toString());
+		}
 	}
 	
 	

@@ -69,14 +69,16 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 	 *	@param listPropertyName java.lang.String
 	 *	@param width int
 	 *	@param height int
+	 *  @param allowMultiselection Whether to allow multi-selection in the list viewer.
 	 */
-	public TreeAndListGroup(Composite parent, Object rootObject, ITreeContentProvider treeContentProvider, ILabelProvider treeLabelProvider, IStructuredContentProvider listContentProvider, ILabelProvider listLabelProvider, int style, int width, int height) {
+	public TreeAndListGroup(Composite parent, Object rootObject, ITreeContentProvider treeContentProvider, ILabelProvider treeLabelProvider, IStructuredContentProvider listContentProvider, ILabelProvider listLabelProvider, int style, int width, int height, boolean allowMultiselection) {
 
 		root = rootObject;
 		this.treeContentProvider = treeContentProvider;
 		this.listContentProvider = listContentProvider;
 		this.treeLabelProvider = treeLabelProvider;
 		this.listLabelProvider = listLabelProvider;
+		this.allowMultiselection= allowMultiselection;
 		createContents(parent, width, height, style);
 	}
 	/**
@@ -314,10 +316,5 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 	public void setFocus() {
 
 		this.treeViewer.getTree().setFocus();
-	}
-	
-	public void setAllowMultiselection(boolean allowMultiselection) {
-		this.allowMultiselection= allowMultiselection;
-		
 	}
 }
