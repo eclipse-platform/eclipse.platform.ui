@@ -164,6 +164,26 @@ public IEditorReference getVisibleEditor() {
 	}
 	return null;
 }
+/**
+ * The active editor has failed to be restored. Find another editor, restore it
+ * and make it visible.
+ */
+public void fixVisibleEditor() {
+	EditorWorkbook activeWorkbook = editorArea.getActiveWorkbook();
+	EditorPane pane = activeWorkbook.getVisibleEditor();
+	if(pane == null) {
+		LayoutPart editors[] = activeWorkbook.getChildren();
+		if(editors.length > 0)
+			pane = (EditorPane)editors[0];
+	}
+	if(pane != null) {
+		IEditorReference result = pane.getEditorReference();
+		IEditorPart editorPart = (IEditorPart)result.getPart(true);
+		if(editorPart != null)
+			activeWorkbook.setVisibleEditor(pane);
+	}
+}
+
 public void moveEditor(IEditorPart part,int position) {
 	EditorPane pane = (EditorPane)((EditorSite)part.getSite()).getPane();
 	pane.getWorkbook().reorderTab(pane,position);

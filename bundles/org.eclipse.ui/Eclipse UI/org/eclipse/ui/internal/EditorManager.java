@@ -656,8 +656,9 @@ public class EditorManager {
 		// Restore the editor area workbooks layout/relationship
 
 		final String activeWorkbookID[] = new String[1];
-		final ArrayList activeEditors = new ArrayList(5);
+		final ArrayList visibleEditors = new ArrayList(5);
 		final IEditorPart activeEditor[] = new IEditorPart[1];
+		final ArrayList errorWorkbooks = new ArrayList(1);
 
 		IMemento areaMem = memento.getChild(IWorkbenchConstants.TAG_AREA);
 		if (areaMem != null) {
@@ -674,7 +675,7 @@ public class EditorManager {
 			boolean visibleEditor = "true".equals(strFocus); //$NON-NLS-1$
 			if(visibleEditor) {
 				Editor e = new Editor();
-				activeEditors.add(e);
+				visibleEditors.add(e);
 				page.addPart(e);
 				restoreEditor(e,editorMem,errors);
 				if(e.getPart(true) != null) {
@@ -682,8 +683,9 @@ public class EditorManager {
 					if ("true".equals(strActivePart)) //$NON-NLS-1$
 						activeEditor[0] = (IEditorPart)e.getPart(true);
 				} else {
-					page.removePart(e);
-					activeEditors.remove(e);
+					page.closeEditor(e,false);
+					visibleEditors.remove(e);
+					errorWorkbooks.add(editorMem.getString(IWorkbenchConstants.TAG_WORKBOOK));
 				}
 			} else {
 				String editorName = editorMem.getString(IWorkbenchConstants.TAG_TITLE);
@@ -732,9 +734,14 @@ public class EditorManager {
 		Platform.run(new SafeRunnable() {
 			public void run() {
 				// Update each workbook with its visible editor.
-				for (int i = 0; i < activeEditors.size(); i++)
-					setVisibleEditor((IEditorReference) activeEditors.get(i), false);
-
+				for (int i = 0; i < visibleEditors.size(); i++)
+					setVisibleEditor((IEditorReference) visibleEditors.get(i), false);
+				for (Iterator iter = errorWorkbooks.iterator(); iter.hasNext();) {
+					String workbook = (String)iter.next();
+					editorPresentation.setActiveEditorWorkbookFromID(activeWorkbookID[0]);
+					editorPresentation.fixVisibleEditor();
+				}
+				
 				// Update the active workbook
 				if (activeWorkbookID[0] != null)
 					editorPresentation.setActiveEditorWorkbookFromID(activeWorkbookID[0]);
@@ -1140,13 +1147,16 @@ public class EditorManager {
 			int errors[] = new int[1];
 			restoreEditor(this,editorMemento,errors);
 			Workbench workbench = (Workbench)window.getWorkbench();
-			if(!workbench.isStarting() && errors[0] > 0) {
-				page.closeEditor(this,false);	
-				MessageDialog.openInformation(
-					window.getShell(),
-					WorkbenchMessages.getString("EditorManager.unableToRestoreEditorTitle"), //$NON-NLS-1$
-					WorkbenchMessages.format("EditorManager.unableToRestoreEditorMessage",new String[]{getName()}));  //$NON-NLS-1$
-			} 
+			if(errors[0] > 0) {
+				editorMemento = null;
+				page.closeEditor(this,false);
+				if(!workbench.isStarting()) {
+					MessageDialog.openInformation(
+						window.getShell(),
+						WorkbenchMessages.getString("EditorManager.unableToRestoreEditorTitle"), //$NON-NLS-1$
+						WorkbenchMessages.format("EditorManager.unableToRestoreEditorMessage",new String[]{getName()}));  //$NON-NLS-1$
+				} 
+			}
 			setPane(this.pane);
 			this.pane = null;	
 			editorMemento = null;
