@@ -113,7 +113,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		radioComp.setLayout(radioLayout);
 		
 		setLocalSharedLabel(new Label(radioComp, SWT.NONE));
-		getLocalSharedLabel().setText("Type of Launch Configuration:");
+		getLocalSharedLabel().setText("Type of launch configuration:");
 		
 		setLocalRadioButton(new Button(radioComp, SWT.RADIO));
 		getLocalRadioButton().setText("L&ocal");
@@ -135,7 +135,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		locationComp.setLayoutData(gd);
 		
 		setSharedLocationLabel(new Label(locationComp, SWT.NONE));
-		getSharedLocationLabel().setText("Location of Shared Confi&guration:");
+		getSharedLocationLabel().setText("Location of shared confi&guration:");
 		gd = new GridData();
 		gd.horizontalSpan = 2;
 		getSharedLocationLabel().setLayoutData(gd);
@@ -163,7 +163,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		createVerticalSpacer(comp);
 		
 		setSwitchToLabel(new Label(comp, SWT.HORIZONTAL | SWT.LEFT));
-		getSwitchToLabel().setText("Switch/Open Perspective when Launched:");
+		getSwitchToLabel().setText("Switch/Open perspective when launched:");
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.BEGINNING;
 		gd.horizontalSpan = 3;
@@ -199,7 +199,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		favComp.setLayout(favLayout);
 		
 		Label favLabel = new Label(favComp, SWT.HORIZONTAL | SWT.LEFT);
-		favLabel.setText("Display in Fa&vorites Menu:");
+		favLabel.setText("Display in favorites menu:");
 		
 		setRunFavoriteButton(new Button(favComp, SWT.CHECK));
 		getRunFavoriteButton().setText("&Run");
