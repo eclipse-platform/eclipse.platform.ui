@@ -756,37 +756,42 @@ public class ActionContributionItem extends ContributionItem {
 
                 if (textChanged) {
                     int accelerator = 0;
-                    String acceleratorText = null;
-                    IAction updatedAction = getAction();
-                    String text = null;
+					String acceleratorText = null;
+					IAction updatedAction = getAction();
+					String text = null;
+					accelerator = updatedAction.getAccelerator();
+					ExternalActionManager.ICallback callback = ExternalActionManager
+							.getInstance().getCallback();
 
-                    // Set the accelerator using the action's accelerator.
-                    accelerator = updatedAction.getAccelerator();
+					// Block accelerators that are already in use.
+					if ((accelerator != 0)
+							&& (callback.isAcceleratorInUse(accelerator))) {
+						accelerator = 0;
+					}
 
-                    /* Process accelerators on GTK in a special way to avoid
-                     * Bug 42009.  We will override the native input method by
-                     * allowing these reserved accelerators to be placed on the
-                     * menu.  We will only do this for "Ctrl+Shift+[A-F]".
-                     */
-                    ExternalActionManager.ICallback callback = ExternalActionManager
-                            .getInstance().getCallback();
-                    String commandId = updatedAction.getActionDefinitionId();
-                    if (SWT.getPlatform().equals("gtk")) { //$NON-NLS-1$
-                        if ((callback != null) && (commandId != null)) {
-                            Integer commandAccelerator = callback
-                                    .getAccelerator(commandId);
-                            if (commandAccelerator != null) {
-                                int accelInt = callback.getAccelerator(
-                                        commandId).intValue();
-                                if ((accelInt >= LOWER_GTK_ACCEL_BOUND)
-                                        && (accelInt <= UPPER_GTK_ACCEL_BOUND)) {
-                                    accelerator = accelInt;
-                                    acceleratorText = callback
-                                            .getAcceleratorText(commandId);
-                                }
-                            }
-                        }
-                    }
+					/*
+					 * Process accelerators on GTK in a special way to avoid Bug
+					 * 42009. We will override the native input method by
+					 * allowing these reserved accelerators to be placed on the
+					 * menu. We will only do this for "Ctrl+Shift+[A-F]".
+					 */
+					String commandId = updatedAction.getActionDefinitionId();
+					if (SWT.getPlatform().equals("gtk")) { //$NON-NLS-1$
+						if ((callback != null) && (commandId != null)) {
+							Integer commandAccelerator = callback
+									.getAccelerator(commandId);
+							if (commandAccelerator != null) {
+								int accelInt = callback.getAccelerator(
+										commandId).intValue();
+								if ((accelInt >= LOWER_GTK_ACCEL_BOUND)
+										&& (accelInt <= UPPER_GTK_ACCEL_BOUND)) {
+									accelerator = accelInt;
+									acceleratorText = callback
+											.getAcceleratorText(commandId);
+								}
+							}
+						}
+					}
 
                     if (accelerator == 0) {
                         if ((callback != null) && (commandId != null)) {
