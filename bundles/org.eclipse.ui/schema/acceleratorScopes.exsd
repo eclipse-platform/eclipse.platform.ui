@@ -7,7 +7,7 @@
       </appInfo>
       <documentation>
          &lt;p&gt;
-&lt;b&gt;WARNING: This extension point is DEPRECATED.&lt;/b&gt;&lt;br/&gt;
+&lt;b&gt;WARNING: This extension point is DEPRECATED.&lt;/b&gt;&lt;br&gt;
 Do not use this extension point, it will be removed in future versions of this product.
 Instead, use the extension point &lt;a href=&quot;org_eclipse_ui_commands.html&quot;&gt;org.eclipse.ui.commands&lt;/a&gt;
 &lt;/p&gt;
