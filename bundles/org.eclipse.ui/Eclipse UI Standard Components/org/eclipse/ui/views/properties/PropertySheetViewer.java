@@ -188,7 +188,7 @@ private void addColumns() {
 private void applyEditorValue() {
 	TableTreeItem treeItem = tableTreeEditor.getItem();
 	// treeItem can be null when view is opened
-	if (treeItem == null)
+	if (treeItem == null || treeItem.isDisposed())
 		return;
 	IPropertySheetEntry entry = (IPropertySheetEntry)treeItem.getData();
 	entry.applyEditorValue();
