@@ -40,15 +40,13 @@ public interface ITranslator {
 	String translate(Reader reader, String name) throws IOException;
 
 	/**
-	 * FIXME: needs a better name
-	 * 
 	 * Returns the line mapping information.
 	 * 
 	 * @return an int array where the index corresponds to line
 	 * 			numbers in the translation and the value is a
 	 * 			source line number
 	 */	
-	int[] getSmap();
+	int[] getLineMapping();
 	
 	/**
 	 * Assigns an optional tag handler factory to this translator.
