@@ -476,6 +476,8 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				if (item instanceof ILaunchConfiguration) {
 					configsToBeDeleted.add(item);
 					viewer.remove(item);
+				} else if (item instanceof ErrorConfig) {
+					viewer.remove(item);
 				}
 			}
 		}
