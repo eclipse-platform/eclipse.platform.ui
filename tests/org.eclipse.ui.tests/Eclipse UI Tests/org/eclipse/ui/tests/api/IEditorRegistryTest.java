@@ -136,27 +136,27 @@ public class IEditorRegistryTest extends TestCase {
 		
 		IFile file = FileUtil.createFile("Whats up.bro", proj);
 		String id = MockEditorPart.ID1;
-		fReg.setDefaultEditor( file.getName(), id );
-		IEditorDescriptor editor = fReg.getDefaultEditor( file.getName() );
+		IDE.setDefaultEditor( file, id );
+		IEditorDescriptor editor = IDE.getDefaultEditor( file );
 		assertEquals( editor.getId(), id );
 		
 		//attach an IFile object with a registered extension to a different editor
 		file = FileUtil.createFile("ambush.mock1", proj);
 		id = MockEditorPart.ID2;
-		fReg.setDefaultEditor( file.getName(), id );
-		editor = fReg.getDefaultEditor( file.getName() );
+		IDE.setDefaultEditor( file, id );
+		editor = IDE.getDefaultEditor( file );
 		assertEquals( editor.getId(), id );
 		
 		//a non-registered IFile object with a registered extension
 		String name = "what.mock2";
 		file = FileUtil.createFile( name, proj);
-		editor = fReg.getDefaultEditor( file.getName() );
+		editor = IDE.getDefaultEditor( file );
 		assertEquals( editor, fReg.getDefaultEditor( name ) );
 		
 		//a non-registered IFile object with an unregistered extension
 		name = IConstants.UnknownFileName[0];
 		file = FileUtil.createFile( name, proj);
-		assertNull( fReg.getDefaultEditor( file.getName() ) );
+		assertNull( IDE.getDefaultEditor( file ) );
 	}
 	
 	public void testSetDefaultEditor() throws Throwable
