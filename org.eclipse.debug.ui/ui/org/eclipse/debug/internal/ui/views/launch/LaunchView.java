@@ -546,7 +546,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 		if (contextIds.isEmpty() && selection instanceof IStackFrame) {
 			String contextId = contextListener.getDebugModelContext(((IStackFrame) selection).getModelIdentifier());
-			contextIds.add(contextId);
+			if (contextId != null) {
+				contextIds.add(contextId);
+			}
 		}
 		if (!contextIds.isEmpty()) {
 			Set set= new HashSet();
