@@ -21,6 +21,23 @@ To see which bugs have been addressed in one of the builds simply open the <a hr
 <br>
 ========== Eclipse Build Input April 20th 2004 ==========<br>
 <pre>
+Open / closed partitions:
+From IDocumentPartitionerExtension2:
+This extension introduces the concept of open and closed (or delimited)
+partitions. A delimited partition has a textual token delimiting its start
+and end, while an open partition can fill any space between two delimited
+partitions.
+An open partition of zero length can occur between two delimited partitions,
+thus having the same offset as the following delimited partition. The
+document start and end are considered to be delimiters of open partitions,
+i.e. there may be a zero-length partition between the document start and a
+closed partition starting at offset 0.
+
+The partition information queries on IDocumentPartitionerExtension2 carry a 
+boolean argument that specifies whether such open partitions should be returned.
+
+-----
+
 API changes:
 
 plug-in: org.eclipse.text 
