@@ -740,12 +740,13 @@ public abstract class ResourceState {
 			progress.beginTask(null, 100);
 			Policy.checkCanceled(progress);
 	
-			// Ensure that the remote type matches the local type
-			boolean hasRemote = hasRemote(noProgress);
-			if ((getRemoteType() != localResource.getType() && localResource.getType() != IResource.PROJECT)) {
-				if (hasRemote) delete(noProgress);
-				hasRemote = false;
-			}
+			// This operation is inefficient
+//			// Ensure that the remote type matches the local type
+//			boolean hasRemote = hasRemote(noProgress);
+//			if ((getRemoteType() != localResource.getType() && localResource.getType() != IResource.PROJECT)) {
+//				if (hasRemote) delete(noProgress);
+//				hasRemote = false;
+//			}
 					
 			// Upload the resource (this is a shallow operation for folders)			
 			checkin(Policy.subMonitorFor(progress, 75));
@@ -758,6 +759,7 @@ public abstract class ResourceState {
 	
 			// Make a list of _remote_ children that have not yet been processed,
 			Map surplusRemoteChildren = new HashMap();
+			boolean hasRemote = hasRemote(noProgress); // XXX is this needed?
 			if (hasRemote) {
 				ResourceState[] remoteChildren = remoteChildren = getRemoteChildren(progress);
 				for (int i = 0; i < remoteChildren.length; i++) {
@@ -800,4 +802,25 @@ public abstract class ResourceState {
 			
 		}
 	}
+	
+	/**
+	 * Method to be used only by subclasses to set the remoteBaseIdentifier after
+	 * an upload or download.
+	 * 
+	 * @param remoteBaseIdentifier The remoteBaseIdentifier to set
+	 */
+	protected void setRemoteBaseIdentifier(String remoteBaseIdentifier) {
+		this.remoteBaseIdentifier = remoteBaseIdentifier;
+	}
+
+	/**
+	 * Method to be used only by subclasses to set the localBaseTimestamp after
+	 * an upload or download.
+	 * 
+	 * @param localBaseTimestamp The localBaseTimestamp to set
+	 */
+	public void setLocalBaseTimestamp(long localBaseTimestamp) {
+		this.localBaseTimestamp = localBaseTimestamp;
+	}
+
 }
