@@ -384,23 +384,24 @@ public class JarVerifier implements IVerifier {
 		if (result.getVerificationCode()==IVerificationResult.TYPE_ENTRY_NOT_SIGNED)
 			return (acceptUnsignedFiles);		
 
-		if (trustedCertificates != null) {
-			// check if this is not a user accepted certificate for this feature
+		if (getTrustedCertificates() != null) {
 			Iterator iter = getTrustedCertificates().iterator();
-			CertificatePair currentPair = null;
+			CertificatePair[] jarPairs = result.getRootCertificates();		
+			
+			// check if this is not a user accepted certificate for this feature	
 			while (iter.hasNext()) {
 				CertificatePair trustedCertificate = (CertificatePair) iter.next();
-				CertificatePair[] pairs = result.getRootCertificates();
-				for (int i = 0; i < pairs.length; i++) {
-					currentPair = pairs[i];
-					if (trustedCertificate.equals(currentPair)) {
+				for (int i = 0; i < jarPairs.length; i++) {
+					if (trustedCertificate.equals(jarPairs[i])) {
 						return true;
 					}
 				}
 			}
 			
 			// if certificate pair not found in trusted add it for next time
-			addTrustedCertificate(currentPair);
+			for (int i = 0; i < jarPairs.length; i++) {
+					addTrustedCertificate(jarPairs[i]);
+				}
 		}
 
 		return false;

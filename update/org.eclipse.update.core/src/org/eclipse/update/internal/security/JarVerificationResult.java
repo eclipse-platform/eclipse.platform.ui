@@ -214,12 +214,12 @@ public class JarVerificationResult implements IVerificationResult {
 			if (principal instanceof X500Name) {
 				String issuerString = "";
 				X500Name name = (X500Name) principal;
-				issuerString += (name.getDNQualifier() != null) ? name.getDNQualifier() + ",1" : "";
+				issuerString += (name.getDNQualifier() != null) ? name.getDNQualifier() + ", " : "";
 				issuerString += name.getCommonName();
-				issuerString += (name.getOrganizationalUnit() != null) ? "," + name.getOrganizationalUnit() : "";
-				issuerString += (name.getOrganization() != null) ? "," + name.getOrganization() : "";
-				issuerString += (name.getLocality() != null) ? "," + name.getLocality() : "";
-				issuerString += (name.getCountry() != null) ? "," + name.getCountry() : "";
+				issuerString += (name.getOrganizationalUnit() != null) ? ", " + name.getOrganizationalUnit() : "";
+				issuerString += (name.getOrganization() != null) ? ", " + name.getOrganization() : "";
+				issuerString += (name.getLocality() != null) ? ", " + name.getLocality() : "";
+				issuerString += (name.getCountry() != null) ? ", " + name.getCountry() : "";
 				return issuerString;
 			}
 		} catch (Exception e) {
