@@ -1,6 +1,7 @@
 package org.eclipse.jface.tests.viewers.interactive;
 
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
 /*
  * Licensed Materials - Property of IBM,
  * WebSphere Studio Workbench

@@ -5,13 +5,20 @@ package org.eclipse.jface.tests.viewers.interactive;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 1999, 2000
  */
-import org.eclipse.jface.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.tests.viewers.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import java.util.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TableColumn;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.tests.viewers.TestElement;
+import org.eclipse.jface.tests.viewers.TestModelContentProvider;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableTreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 
 public class TestTableTree extends TestBrowser {
 

@@ -1,7 +1,8 @@
 package org.eclipse.ui.tests.internal;
 
-import org.eclipse.ui.*;
 import org.eclipse.jface.text.ITextSelection;
+
+import org.eclipse.ui.IActionFilter;
 
 public class ExtendedTextSelectionActionFilter implements IActionFilter {
 

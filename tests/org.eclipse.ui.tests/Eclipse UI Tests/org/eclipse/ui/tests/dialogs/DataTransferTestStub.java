@@ -5,9 +5,6 @@ package org.eclipse.ui.tests.dialogs;
  * All Rights Reserved.
  */
  
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizardPage;
-import org.eclipse.ui.IWorkbench;
 
 /**
  * FOR USE BY TESTS ONLY!

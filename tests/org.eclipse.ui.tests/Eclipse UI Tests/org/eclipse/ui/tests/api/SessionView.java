@@ -1,7 +1,10 @@
 package org.eclipse.ui.tests.api;
 
 import junit.framework.TestCase;
-import org.eclipse.ui.*;
+
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 
 /**
  * This view is used to test the creation and restoration of 

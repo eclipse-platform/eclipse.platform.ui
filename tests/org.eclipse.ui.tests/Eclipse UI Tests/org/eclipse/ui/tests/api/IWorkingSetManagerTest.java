@@ -1,15 +1,18 @@
 package org.eclipse.ui.tests.api;
 
-import junit.framework.TestCase;
-import org.eclipse.jface.resource.*;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.tests.util.*;
-import org.eclipse.ui.*;
+
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-import org.eclipse.ui.internal.registry.*;
+import org.eclipse.ui.tests.util.ArrayUtil;
+import org.eclipse.ui.tests.util.UITestCase;
 
 public class IWorkingSetManagerTest extends UITestCase {
 	final static String WORKING_SET_NAME_1 = "ws1";

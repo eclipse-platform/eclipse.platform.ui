@@ -1,8 +1,17 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.tests.util.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.IToolBarManager;
+
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.tests.util.ActionUtil;
+import org.eclipse.ui.tests.util.UITestCase;
 
 
 /**

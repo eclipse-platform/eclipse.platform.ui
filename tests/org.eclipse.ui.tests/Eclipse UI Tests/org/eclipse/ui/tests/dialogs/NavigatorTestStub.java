@@ -5,8 +5,6 @@ package org.eclipse.ui.tests.dialogs;
  * All Rights Reserved.
  */
  
-import org.eclipse.core.resources.IResource;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * FOR USE BY TESTS ONLY!

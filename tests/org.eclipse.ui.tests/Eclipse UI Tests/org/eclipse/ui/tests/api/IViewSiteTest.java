@@ -1,6 +1,9 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.ui.*;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
 
 public class IViewSiteTest extends IWorkbenchPartSiteTest {
 

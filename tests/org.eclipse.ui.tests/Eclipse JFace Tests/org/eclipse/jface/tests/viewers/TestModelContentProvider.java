@@ -1,9 +1,15 @@
 package org.eclipse.jface.tests.viewers;
 
-import org.eclipse.jface.*;
 import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.*;
-import java.util.*;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 
 public class TestModelContentProvider implements ITestModelListener, IStructuredContentProvider, ITreeContentProvider {
 	Viewer fViewer;

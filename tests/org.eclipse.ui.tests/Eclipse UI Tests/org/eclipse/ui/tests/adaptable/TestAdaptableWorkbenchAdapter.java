@@ -7,15 +7,14 @@ package org.eclipse.ui.tests.adaptable;
  * http://www.eclipse.org/legal/cpl-v10.html
  */
 
-import java.util.Hashtable;
-import java.util.Iterator;
-
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
+
 import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.LabelProvider;
+
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**

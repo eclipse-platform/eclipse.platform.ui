@@ -1,10 +1,9 @@
 package org.eclipse.jface.tests.viewers.interactive;
 
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.tests.viewers.*;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.jface.tests.viewers.TestLabelProvider;
+import org.eclipse.jface.viewers.ITableLabelProvider;
  
 public class TestTableTreeLabelProvider extends TestLabelProvider implements ITableLabelProvider{
 /**

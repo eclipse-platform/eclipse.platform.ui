@@ -5,7 +5,8 @@ package org.eclipse.jface.tests.viewers;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 1999, 2000
  */
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class AllTests {
 

@@ -1,8 +1,10 @@
 package org.eclipse.ui.tests.api;
 
+import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
-import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 

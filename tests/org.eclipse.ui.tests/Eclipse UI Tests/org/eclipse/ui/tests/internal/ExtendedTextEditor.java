@@ -1,8 +1,11 @@
 package org.eclipse.ui.tests.internal;
 
-import org.eclipse.jface.text.source.*;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRuler;
+
 import org.eclipse.ui.editors.text.TextEditor;
 
 public class ExtendedTextEditor extends TextEditor {

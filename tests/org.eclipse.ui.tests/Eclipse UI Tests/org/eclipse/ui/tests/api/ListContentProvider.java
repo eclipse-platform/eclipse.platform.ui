@@ -1,7 +1,9 @@
 package org.eclipse.ui.tests.api;
 
 import java.util.List;
-import org.eclipse.jface.viewers.*;
+
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 
 public class ListContentProvider implements IStructuredContentProvider {
 

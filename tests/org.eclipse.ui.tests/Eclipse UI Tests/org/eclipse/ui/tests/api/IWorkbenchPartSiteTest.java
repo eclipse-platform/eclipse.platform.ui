@@ -1,7 +1,10 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.ui.*;
-import org.eclipse.ui.tests.util.*;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.tests.util.UITestCase;
 
 
 /**

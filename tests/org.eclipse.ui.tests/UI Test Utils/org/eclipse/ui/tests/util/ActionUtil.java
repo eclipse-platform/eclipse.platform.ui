@@ -1,7 +1,15 @@
 package org.eclipse.ui.tests.util;
 import java.lang.reflect.Method;
+
 import junit.framework.TestCase;
-import org.eclipse.jface.action.*;
+
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.SubContributionItem;
+
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
 

@@ -1,20 +1,20 @@
 package org.eclipse.jface.tests.viewers.interactive;
 
-import org.eclipse.swt.custom.*;
-/*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 1999, 2000
- */
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.tests.viewers.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.window.*;
-import java.util.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.ViewForm;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.tests.viewers.TestElement;
+import org.eclipse.jface.tests.viewers.TestModelChange;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.window.ApplicationWindow;
 
 public abstract class TestBrowser extends ApplicationWindow {
 	TestElement fInput;

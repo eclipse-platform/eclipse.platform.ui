@@ -7,13 +7,15 @@ package org.eclipse.ui.tests.adaptable;
  * http://www.eclipse.org/legal/cpl-v10.html
  */
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.actions.*;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.AddBookmarkAction;
 import org.eclipse.ui.actions.NewWizardAction;
 import org.eclipse.ui.actions.NewWizardMenu;

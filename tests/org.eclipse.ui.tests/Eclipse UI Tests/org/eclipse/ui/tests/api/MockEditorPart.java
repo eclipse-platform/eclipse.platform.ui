@@ -2,8 +2,11 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.*;
-import org.eclipse.ui.tests.util.*;
+
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
 
 public class MockEditorPart extends MockWorkbenchPart implements IEditorPart {
 

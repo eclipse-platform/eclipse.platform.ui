@@ -1,12 +1,15 @@
 package org.eclipse.ui.tests.api;
 
-import junit.framework.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.ui.*;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+
+import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.tests.util.*;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.tests.util.EmptyPerspective;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * Tests the IPageService class.

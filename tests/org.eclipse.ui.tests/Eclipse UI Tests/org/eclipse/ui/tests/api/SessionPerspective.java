@@ -1,6 +1,7 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPerspectiveFactory;
 
 /**
  * This class tests the persistance of a perspective.

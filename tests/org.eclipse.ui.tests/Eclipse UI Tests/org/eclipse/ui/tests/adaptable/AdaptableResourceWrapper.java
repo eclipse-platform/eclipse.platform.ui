@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class AdaptableResourceWrapper implements IAdaptable {

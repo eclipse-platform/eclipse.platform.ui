@@ -1,15 +1,18 @@
 package org.eclipse.jface.tests.preferences;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.tests.util.UITestCase;
+
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * The FontPreferenceTestCase tests adding fonts to

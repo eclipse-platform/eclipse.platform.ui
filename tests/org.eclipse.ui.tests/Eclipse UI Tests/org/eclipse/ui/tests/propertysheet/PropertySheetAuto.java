@@ -1,14 +1,23 @@
 package org.eclipse.ui.tests.propertysheet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
-import org.eclipse.ui.tests.util.UITestCase;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
+
+import org.eclipse.jface.viewers.StructuredSelection;
+
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.SelectionProviderView;
-import org.eclipse.ui.views.properties.*;
+import org.eclipse.ui.tests.util.UITestCase;
+import org.eclipse.ui.views.properties.ColorPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 /**
  *  The class implements a test for the workbench's default
  * property sheet page. It does this by firing a sequence of 

@@ -1,10 +1,11 @@
 package org.eclipse.ui.tests.dialogs;
 
-import org.eclipse.jface.preference.*;
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.swt.widgets.Shell;
 
 public class PreferenceDialogWrapper extends PreferenceDialog {
 

@@ -1,33 +1,24 @@
 package org.eclipse.ui.tests.dialogs;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.TestCase;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.wizard.*;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.*;
+
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+
+import org.eclipse.jface.wizard.IWizardPage;
+
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
-import org.eclipse.ui.dialogs.WizardNewProjectReferencePage;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.WorkingSetEditWizard;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
-import org.eclipse.ui.tests.util.*;
 import org.eclipse.ui.tests.util.ArrayUtil;
 import org.eclipse.ui.tests.util.DialogCheck;
-import org.eclipse.ui.wizards.newresource.*;
 
 /**
  * Tests the WorkingSetEditWizard

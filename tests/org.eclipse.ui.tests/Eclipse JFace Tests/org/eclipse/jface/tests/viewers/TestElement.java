@@ -5,7 +5,7 @@ package org.eclipse.jface.tests.viewers;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 1999, 2000
  */
-import java.util.*;
+import java.util.Vector;
 
 public class TestElement implements Cloneable {
 	TestModel fModel;

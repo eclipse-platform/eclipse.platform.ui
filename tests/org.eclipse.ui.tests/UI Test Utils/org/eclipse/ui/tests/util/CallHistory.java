@@ -1,7 +1,6 @@
 package org.eclipse.ui.tests.util;
-import java.util.*;
-import java.lang.*;
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 
 /**

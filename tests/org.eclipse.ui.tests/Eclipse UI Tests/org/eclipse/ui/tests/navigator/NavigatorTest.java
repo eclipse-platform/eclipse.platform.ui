@@ -1,14 +1,11 @@
 package org.eclipse.ui.tests.navigator;
 
-import java.io.ByteArrayInputStream;
-import java.io.StringBufferInputStream;
-import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.*;
-import org.eclipse.ui.tests.util.UITestCase;
-import org.eclipse.ui.views.navigator.ResourceNavigator;
+
+import org.eclipse.ui.PartInitException;
 
 /**
  * Tests the Resource Navigator view.

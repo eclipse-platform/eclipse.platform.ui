@@ -1,6 +1,6 @@
 package org.eclipse.jface.tests.viewers;
 
-import java.util.*;
+import java.util.Vector;
 
 public class TestModel {
 	Vector fListeners = new Vector();

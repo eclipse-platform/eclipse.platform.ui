@@ -6,11 +6,12 @@ package org.eclipse.jface.tests.viewers;
  * (c) Copyright IBM Corp 1999, 2000
  */
 
-import org.eclipse.jface.*;
-import org.eclipse.jface.resource.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.*;
-import junit.framework.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.TreeViewer;
 
 public class TreeViewerTest extends AbstractTreeViewerTest {
 			

@@ -5,10 +5,11 @@ package org.eclipse.jface.tests.viewers;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 1999, 2000
  */
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.viewers.*;
-import junit.framework.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.List;
+
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.StructuredViewer;
 
 public class ListViewerTest extends StructuredViewerTest {
 	

@@ -1,6 +1,7 @@
 package org.eclipse.ui.tests.zoom;
 
 import junit.framework.Assert;
+
 import org.eclipse.ui.IViewPart;
 
 public class ShowViewTest extends ZoomTestCase {

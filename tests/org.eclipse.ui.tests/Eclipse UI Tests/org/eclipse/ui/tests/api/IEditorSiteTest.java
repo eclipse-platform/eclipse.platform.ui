@@ -1,8 +1,13 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.tests.util.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.tests.util.FileUtil;
 
 public class IEditorSiteTest extends IWorkbenchPartSiteTest {
 

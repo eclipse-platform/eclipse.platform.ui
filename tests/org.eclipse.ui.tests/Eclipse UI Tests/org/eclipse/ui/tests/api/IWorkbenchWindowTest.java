@@ -1,9 +1,12 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.*;
-import org.eclipse.ui.tests.util.*;
+
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.tests.util.ArrayUtil;
+import org.eclipse.ui.tests.util.UITestCase;
 
 public class IWorkbenchWindowTest extends UITestCase {
 

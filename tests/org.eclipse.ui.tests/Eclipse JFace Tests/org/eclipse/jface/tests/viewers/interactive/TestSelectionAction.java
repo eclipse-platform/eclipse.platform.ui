@@ -5,11 +5,11 @@ package org.eclipse.jface.tests.viewers.interactive;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 1999, 2000
  */
-import org.eclipse.jface.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.tests.viewers.*;
-import org.eclipse.jface.viewers.*;
-import java.util.*;
+import org.eclipse.jface.tests.viewers.TestElement;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 public abstract class TestSelectionAction extends TestBrowserAction implements ISelectionChangedListener {
 	public TestSelectionAction(String label, TestBrowser browser) {

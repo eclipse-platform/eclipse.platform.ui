@@ -1,8 +1,7 @@
 package org.eclipse.ui.tests.propertysheet;
 
-import junit.framework.*;
-import junit.textui.TestRunner;
-import org.eclipse.swt.SWT;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test areas of the Property Sheet API.

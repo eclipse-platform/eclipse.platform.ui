@@ -1,12 +1,22 @@
 package org.eclipse.ui.tests.api;
 
 import junit.framework.TestCase;
-import org.eclipse.jface.resource.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.tests.util.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.registry.*;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IFileEditorMapping;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.registry.EditorRegistry;
+import org.eclipse.ui.internal.registry.FileEditorMapping;
+import org.eclipse.ui.tests.util.ArrayUtil;
+import org.eclipse.ui.tests.util.CallHistory;
+import org.eclipse.ui.tests.util.FileUtil;
 
 public class IEditorRegistryTest extends TestCase {
 	private IEditorRegistry fReg;

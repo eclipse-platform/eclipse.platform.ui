@@ -1,8 +1,13 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.tests.util.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.tests.util.CallHistory;
+import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * This is a test for IEditorPart.  Since IEditorPart is an

@@ -5,9 +5,12 @@ package org.eclipse.jface.tests.viewers;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 1999, 2000
  */
-import org.eclipse.jface.viewers.*;
-import java.util.*;
-import junit.framework.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.eclipse.jface.viewers.StructuredSelection;
 
 public class StructuredSelectionTest extends TestCase {
 

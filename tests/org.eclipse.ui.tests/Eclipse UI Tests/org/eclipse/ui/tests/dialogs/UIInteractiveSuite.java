@@ -1,8 +1,8 @@
 package org.eclipse.ui.tests.dialogs;
 
 
-import junit.framework.*;
-import junit.textui.TestRunner;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 
 /**

@@ -1,6 +1,7 @@
 package org.eclipse.ui.tests.internal;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Test all areas of the UI Implementation.

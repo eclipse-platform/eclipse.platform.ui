@@ -1,8 +1,11 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.jface.action.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.tests.util.*;
+import org.eclipse.jface.action.MenuManager;
+
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.tests.util.ActionUtil;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * Test the lifecycle of an action filter.

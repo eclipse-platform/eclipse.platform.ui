@@ -1,10 +1,16 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.tests.util.*;
+import org.eclipse.ui.tests.util.ArrayUtil;
+import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.util.UITestCase;
 
 public class IWorkingSetTest extends UITestCase {
 	final static String WORKING_SET_NAME_1 = "ws1";

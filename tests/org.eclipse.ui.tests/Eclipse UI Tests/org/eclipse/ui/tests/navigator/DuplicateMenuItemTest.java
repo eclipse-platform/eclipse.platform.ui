@@ -4,12 +4,13 @@ import java.util.HashSet;
 
 import junit.framework.Assert;
 
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.IWorkbenchPartSite;
+
 import org.eclipse.ui.internal.WorkbenchWindow;
 
 /**

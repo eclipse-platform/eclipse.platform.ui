@@ -2,11 +2,16 @@ package org.eclipse.ui.tests.navigator;
 
 import java.io.ByteArrayInputStream;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.tests.util.UITestCase;
+
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
 
 /**

@@ -5,7 +5,7 @@ package org.eclipse.jface.tests.viewers.interactive;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 1999, 2000
  */
-import org.eclipse.jface.tests.viewers.*;
+import org.eclipse.jface.tests.viewers.TestElement;
 
 public class CreateModelAction extends TestBrowserAction {
 	int fLevel;

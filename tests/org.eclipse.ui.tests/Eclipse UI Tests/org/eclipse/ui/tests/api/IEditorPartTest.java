@@ -1,7 +1,10 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.ui.*;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.tests.util.FileUtil;
 
 /**

@@ -1,11 +1,19 @@
 package org.eclipse.ui.tests.internal;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.ui.tests.util.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.text.IFindReplaceTarget;
-import org.eclipse.ui.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.SubContributionItem;
+
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.tests.util.ActionUtil;
+import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.util.UITestCase;
 
 
 /**

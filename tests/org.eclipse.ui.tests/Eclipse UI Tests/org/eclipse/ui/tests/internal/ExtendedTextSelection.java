@@ -1,7 +1,10 @@
 package org.eclipse.ui.tests.internal;
 
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.text.*;
+
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.TextSelection;
+
 import org.eclipse.ui.IActionFilter;
 
 public class ExtendedTextSelection extends TextSelection 

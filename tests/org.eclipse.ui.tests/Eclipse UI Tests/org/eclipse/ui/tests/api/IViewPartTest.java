@@ -1,7 +1,7 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.ui.*;
-import org.eclipse.core.resources.*;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 
 /**
  * This is a test for IViewPart.  Since IViewPart is an

@@ -6,12 +6,20 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.ToolBarManager;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.tests.api.*;
+import org.eclipse.ui.internal.CoolBarContributionItem;
+import org.eclipse.ui.internal.CoolBarManager;
+import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.tests.api.MockAction;
+import org.eclipse.ui.tests.api.MockEditorActionBarContributor;
+import org.eclipse.ui.tests.api.MockEditorPart;
+import org.eclipse.ui.tests.api.MockViewPart;
 import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.tests.util.UITestCase;
 

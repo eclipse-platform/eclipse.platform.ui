@@ -7,13 +7,29 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
 import junit.framework.Assert;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.part.WorkbenchPart;
+
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.EditorArea;
+import org.eclipse.ui.internal.EditorPane;
+import org.eclipse.ui.internal.EditorSite;
+import org.eclipse.ui.internal.EditorWorkbook;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.PartPane;
+import org.eclipse.ui.internal.PartSite;
+import org.eclipse.ui.internal.WorkbenchPage;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.util.FileUtil;
 import org.eclipse.ui.tests.util.UITestCase;

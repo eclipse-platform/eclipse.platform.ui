@@ -5,13 +5,17 @@ package org.eclipse.jface.tests.viewers.interactive;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 1999, 2000
  */
-import org.eclipse.jface.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.tests.viewers.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import java.util.*;
+import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.jface.tests.viewers.TestElement;
+import org.eclipse.jface.tests.viewers.TestLabelProvider;
+import org.eclipse.jface.tests.viewers.TestModelContentProvider;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
+import org.eclipse.jface.viewers.ITreeViewerListener;
+import org.eclipse.jface.viewers.TreeExpansionEvent;
+import org.eclipse.jface.viewers.Viewer;
 
 public class TestCheckboxTree extends TestTree {
 	CheckboxTreeViewer fCheckboxViewer;

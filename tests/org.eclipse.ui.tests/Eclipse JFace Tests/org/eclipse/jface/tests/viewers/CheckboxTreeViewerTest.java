@@ -6,12 +6,12 @@ package org.eclipse.jface.tests.viewers;
  * (c) Copyright IBM Corp 1999, 2000
  */
 
-import org.eclipse.jface.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
-import junit.framework.*;
-import java.util.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.StructuredViewer;
 
 public class CheckboxTreeViewerTest extends TreeViewerTest {
 	public static class CheckboxTableTestLabelProvider

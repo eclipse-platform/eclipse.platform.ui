@@ -7,6 +7,7 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v05.html
 **********************************************************************/
 import junit.framework.Assert;
+
 import org.eclipse.ui.IViewPart;
 
 public class ActivateTest extends ZoomTestCase {

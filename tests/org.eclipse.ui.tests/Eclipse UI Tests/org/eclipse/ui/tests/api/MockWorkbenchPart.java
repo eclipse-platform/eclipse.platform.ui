@@ -1,15 +1,25 @@
 package org.eclipse.ui.tests.api;
 
-import java.net.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.ui.tests.util.CallHistory;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IPluginDescriptor;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ISelectionProvider;
+
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.tests.util.CallHistory;
 
 public abstract class MockWorkbenchPart implements IWorkbenchPart,
 	IExecutableExtension

@@ -1,9 +1,13 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+
 import org.eclipse.jface.action.IMenuManager;
+
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.tests.util.*;
+import org.eclipse.ui.tests.util.ActionUtil;
+import org.eclipse.ui.tests.util.FileUtil;
 
 
 /**

@@ -1,7 +1,9 @@
 package org.eclipse.ui.tests.api;
 
-import junit.framework.*;
-import org.eclipse.ui.*;
+import junit.framework.TestCase;
+
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Tests the PlatformUI class.

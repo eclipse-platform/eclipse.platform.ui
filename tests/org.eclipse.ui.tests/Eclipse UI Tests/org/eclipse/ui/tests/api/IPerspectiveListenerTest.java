@@ -1,8 +1,10 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.ui.*;
-import junit.framework.*;
-import org.eclipse.ui.tests.util.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.tests.util.UITestCase;
 
 public class IPerspectiveListenerTest extends UITestCase implements IPerspectiveListener {
 	private int fEvent;

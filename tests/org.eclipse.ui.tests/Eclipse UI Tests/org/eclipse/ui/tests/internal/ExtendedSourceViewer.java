@@ -1,9 +1,12 @@
 package org.eclipse.ui.tests.internal;
 
-import org.eclipse.jface.text.source.*;
-import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.jface.text.source.IVerticalRuler;
+import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 public class ExtendedSourceViewer extends SourceViewer {
 

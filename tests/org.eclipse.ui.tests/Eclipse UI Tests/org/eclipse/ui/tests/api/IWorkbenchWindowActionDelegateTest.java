@@ -1,6 +1,6 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.ui.tests.util.*;
+import org.eclipse.ui.tests.util.ActionUtil;
 
 /**
  * Tests the lifecycle for a window action delegate.

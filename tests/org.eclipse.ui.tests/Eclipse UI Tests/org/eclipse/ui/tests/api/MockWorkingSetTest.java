@@ -1,6 +1,7 @@
 package org.eclipse.ui.tests.api;
 
 import junit.framework.TestCase;
+
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;

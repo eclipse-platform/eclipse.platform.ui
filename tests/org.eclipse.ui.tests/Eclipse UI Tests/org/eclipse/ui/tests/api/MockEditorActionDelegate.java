@@ -1,7 +1,9 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.*;
+
+import org.eclipse.ui.IEditorActionDelegate;
+import org.eclipse.ui.IEditorPart;
 
 public class MockEditorActionDelegate extends MockActionDelegate
 	implements IEditorActionDelegate 

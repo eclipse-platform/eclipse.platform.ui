@@ -4,8 +4,8 @@ import org.eclipse.jface.action.IToolBarManager;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.tests.util.CallHistory;
 import org.eclipse.ui.part.EditorActionBarContributor;
+import org.eclipse.ui.tests.util.CallHistory;
 
 public class MockEditorActionBarContributor
 	extends EditorActionBarContributor 

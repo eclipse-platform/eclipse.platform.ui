@@ -5,10 +5,13 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
+
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.ui.internal.misc.Assert;
 
 public class TestDecoratorContributor implements ILabelDecorator {

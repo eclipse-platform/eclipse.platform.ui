@@ -1,9 +1,14 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.ui.tests.util.UITestCase;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.ui.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+
+import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.SelectionProviderView;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * Tests the ISelectionService class.

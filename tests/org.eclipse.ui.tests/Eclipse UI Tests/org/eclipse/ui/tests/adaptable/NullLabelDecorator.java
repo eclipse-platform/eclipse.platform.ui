@@ -4,9 +4,10 @@ package org.eclipse.ui.tests.adaptable;
  * This decorator tests the null cases
  */
 
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.swt.graphics.Image;
 
 /**
  * @version 	1.0

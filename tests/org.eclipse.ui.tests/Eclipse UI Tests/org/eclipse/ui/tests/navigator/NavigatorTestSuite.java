@@ -1,6 +1,7 @@
 package org.eclipse.ui.tests.navigator;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 
 public class NavigatorTestSuite extends TestSuite {

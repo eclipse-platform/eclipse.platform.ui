@@ -1,8 +1,11 @@
 package org.eclipse.ui.tests.api;
 
 import junit.framework.TestCase;
-import org.eclipse.ui.tests.util.*;
-import org.eclipse.ui.*;
+
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IFileEditorMapping;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.tests.util.ArrayUtil;
 
 public class IEditorDescriptorTest extends TestCase {
 	IEditorDescriptor[] fEditors;

@@ -2,20 +2,12 @@ package org.eclipse.ui.tests.manual;
 
 import java.util.Iterator;
 
-import junit.framework.TestCase;
+import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.PreferenceManager;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.dialogs.*;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.tests.dialogs.*;
-import org.eclipse.ui.tests.util.DialogCheck;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.tests.dialogs.PreferenceDialogWrapper;
+import org.eclipse.ui.tests.dialogs.UIPreferencesAuto;
 
 /**
  * The UIPreferencesManual is a test case that requires

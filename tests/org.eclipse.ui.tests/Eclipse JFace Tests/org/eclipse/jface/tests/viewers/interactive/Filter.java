@@ -5,8 +5,10 @@ package org.eclipse.jface.tests.viewers.interactive;
  * WebSphere Studio Workbench
  * (c) Copyright IBM Corp 1999, 2000
  */
-import org.eclipse.jface.viewers.*;
-import java.util.*;
+import java.util.ArrayList;
+
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 
 public class Filter extends ViewerFilter {
 

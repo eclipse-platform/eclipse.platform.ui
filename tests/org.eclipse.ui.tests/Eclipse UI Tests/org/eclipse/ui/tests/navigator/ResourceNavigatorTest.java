@@ -1,13 +1,27 @@
 package org.eclipse.ui.tests.navigator;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.Tree;
+
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.*;
+
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeViewer;
+
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.part.ISetSelectionTarget;
-import org.eclipse.ui.tests.util.*;
+import org.eclipse.ui.tests.util.ActionUtil;
+import org.eclipse.ui.tests.util.FileUtil;
+import org.eclipse.ui.tests.util.UITestCase;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
 
 public class ResourceNavigatorTest extends UITestCase {

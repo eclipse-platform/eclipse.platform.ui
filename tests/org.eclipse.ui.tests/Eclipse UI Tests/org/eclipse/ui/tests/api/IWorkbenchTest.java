@@ -3,10 +3,21 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.preference.PreferenceManager;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.*;
-import org.eclipse.ui.tests.util.*;
+
+import org.eclipse.jface.preference.PreferenceManager;
+
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.tests.util.ArrayUtil;
+import org.eclipse.ui.tests.util.EmptyPerspective;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * Tests the IWorkbench interface.

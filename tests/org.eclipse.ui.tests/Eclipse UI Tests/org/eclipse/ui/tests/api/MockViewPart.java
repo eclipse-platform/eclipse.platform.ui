@@ -1,7 +1,9 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PartInitException;
 
 public class MockViewPart extends MockWorkbenchPart implements IViewPart {	
 	public static String ID = "org.eclipse.ui.tests.api.MockViewPart";

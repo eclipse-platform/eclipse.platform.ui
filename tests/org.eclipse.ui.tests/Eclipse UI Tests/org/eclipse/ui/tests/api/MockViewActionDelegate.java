@@ -1,6 +1,6 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.ui.*;
+import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 
 /**

@@ -2,6 +2,7 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.resource.ImageDescriptor;
+
 import org.eclipse.ui.tests.TestPlugin;
 
 public class MockAction extends Action {

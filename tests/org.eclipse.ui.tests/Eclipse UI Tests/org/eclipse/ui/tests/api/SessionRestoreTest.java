@@ -1,8 +1,16 @@
 package org.eclipse.ui.tests.api;
 
-import org.eclipse.ui.tests.util.*;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.ui.*;
+
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.tests.util.EmptyPerspective;
+import org.eclipse.ui.tests.util.UITestCase;
 
 /**
  * SessionRestoreTest runs the second half of our session

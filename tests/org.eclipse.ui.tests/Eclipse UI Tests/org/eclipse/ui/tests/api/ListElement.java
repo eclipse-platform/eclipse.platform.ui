@@ -1,6 +1,7 @@
 package org.eclipse.ui.tests.api;
 
 import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.ui.IActionFilter;
 
 public class ListElement implements IAdaptable {
