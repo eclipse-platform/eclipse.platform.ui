@@ -133,31 +133,44 @@ public abstract class AbstractSectionForm extends AbstractForm {
 	}
 
 	public static void ensureVisible(ScrolledComposite scomp, Control control) {
-		Point controlSize = control.getSize();
 		Rectangle area = scomp.getClientArea();
-		Point areaOrigin = scomp.toDisplay(new Point(area.x, area.y));
-
-		Point scompOrigin = scomp.toDisplay(scomp.getOrigin());
-		Point controlOrigin = control.toDisplay(control.getLocation());
+		Point controlSize = control.getSize();
+		Point scompOrigin = scomp.getOrigin();
+		Point controlOrigin = getControlLocation(scomp, control);
 
 		int x = scompOrigin.x;
 		int y = scompOrigin.y;
 
-		if (controlOrigin.x < scompOrigin.x) {
-			x = Math.max(areaOrigin.x, controlOrigin.x);
+		if (controlOrigin.x + controlSize.x < scompOrigin.x ) {
+			x = controlOrigin.x;
+		} else if (controlOrigin.x > scompOrigin.x + area.width) {
+			x = controlOrigin.x + controlSize.x - area.width;
 		}
-		if (controlOrigin.y < scompOrigin.y) {
-			y = Math.max(areaOrigin.y, controlOrigin.y);
-		}
-		if (controlOrigin.x + controlSize.x > scompOrigin.x + area.width) {
-			x = Math.max(areaOrigin.x, controlOrigin.x + controlSize.x - area.width);
-		}
-		if (controlOrigin.y + controlSize.y > scompOrigin.y + area.height) {
-			y = Math.max(areaOrigin.y, controlOrigin.y + controlSize.y - area.height);
-		}
-		scomp.setOrigin(scomp.toControl(new Point(x, y)));
-	}
 
+		if (controlOrigin.y + controlSize.y < scompOrigin.y) {
+			y = controlOrigin.y;
+		} else if (controlOrigin.y > scompOrigin.y + area.height) {
+			y = controlOrigin.y + controlSize.y - area.height;
+		}
+		scomp.setOrigin(x, y);
+	}
+	
+	private static Point getControlLocation(ScrolledComposite scomp, Control control) {
+		int x = 0;
+		int y = 0;
+		Control currentControl = control;
+		for (;;) {
+			if (currentControl == scomp)
+				break;
+			if (currentControl.getLocation().x > 0)
+				x += currentControl.getLocation().x;
+			if (currentControl.getLocation().y > 0)
+				y += currentControl.getLocation().y;
+			currentControl = currentControl.getParent();
+		}
+		return new Point(x, y);
+	}
+	
 	public static void scrollVertical(ScrolledComposite scomp, boolean up) {
 		scroll(scomp, 0, up ? -V_SCROLL_INCREMENT : V_SCROLL_INCREMENT);
 	}
