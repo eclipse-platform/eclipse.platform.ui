@@ -121,7 +121,7 @@ public class AddFromHistoryDialog extends ResizableDialog {
 			fTimeImage= id.createImage();
 	}
 	
-	public boolean select(IContainer root, IFile[] files) {
+	public boolean select(IContainer root, IFile[] inputFiles) {
 		
 		create();	// create widgets
 		
@@ -129,6 +129,15 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		String title= MessageFormat.format(format, new Object[] { root.getName() });
 		fMemberPane.setImage(CompareUI.getImage(root));
 		fMemberPane.setText(title);
+		
+		// sort input files
+		final int count= inputFiles.length;
+		final IFile[] files= new IFile[count];
+		for (int i= 0; i < count; i++)
+			files[i]= (IFile) inputFiles[i];
+		if (count > 1)
+			internalSort(files, 0, count-1);
+			
 		
 		String prefix= root.getFullPath().toString();
 		
@@ -362,5 +371,54 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		fCommitButton= createButton(parent, IDialogConstants.OK_ID, buttonLabel, true);
 		fCommitButton.setEnabled(false);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+	}
+	
+	/**
+	 * Returns true if the pathname of f1 comes after f2
+	 */
+	private static boolean greaterThan(IFile f1, IFile f2) {
+		String[] ss1= f1.getFullPath().segments();
+		String[] ss2= f2.getFullPath().segments();
+		int l1= ss1.length;
+		int l2= ss2.length;
+		int n= Math.max(l1, l2);
+		
+		for (int i= 0; i < n; i++) {
+			String s1= i < l1 ? ss1[i] : "";
+			String s2= i < l2 ? ss2[i] : "";
+			int rc= s1.compareToIgnoreCase(s2);
+			if (rc != 0)
+				return rc < 0;
+		}
+		return false;
+	}
+	
+	private static void internalSort(IFile[] keys, int left, int right) { 
+	
+		int original_left= left;
+		int original_right= right;
+		
+		IFile mid= keys[(left + right) / 2]; 
+		do { 
+			while (greaterThan(keys[left], mid))
+				left++; 
+			
+			while (greaterThan(mid, keys[right]))
+				right--; 
+		
+			if (left <= right) { 
+				IFile tmp= keys[left]; 
+				keys[left]= keys[right]; 
+				keys[right]= tmp;			
+				left++; 
+				right--; 
+			} 
+		} while (left <= right);
+		
+		if (original_left < right)
+			internalSort(keys, original_left, right); 
+		
+		if (left < original_right)
+			internalSort(keys, left, original_right); 
 	}
 }
