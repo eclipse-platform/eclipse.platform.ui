@@ -475,7 +475,9 @@ public class IOConsole extends AbstractConsole implements IDocumentListener {
     			}
     		}
     	}
-    	matchJob.schedule(50);
+    	if (matchJob != null) {
+    	    matchJob.schedule(50);
+    	}
     }
     
     private class CompiledPatternMatchListener {
