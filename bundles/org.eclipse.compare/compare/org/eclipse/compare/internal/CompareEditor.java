@@ -12,8 +12,10 @@ package org.eclipse.compare.internal;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
 
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.util.*;
 
@@ -32,11 +34,27 @@ import org.eclipse.compare.*;
  * A CompareEditor takes a ICompareEditorInput as input.
  * Most functionality is delegated to the ICompareEditorInput.
  */
-public class CompareEditor extends EditorPart implements IPropertyChangeListener {
+public class CompareEditor extends EditorPart implements IReusableEditor {
 	
+	/**
+	 * Internal property change listener for handling changes in the editor's input.
+	 */
+	class PropertyChangeListener implements IPropertyChangeListener {
+		/*
+		 * @see IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+		 */
+		public void propertyChange(PropertyChangeEvent event) {
+			CompareEditor.this.propertyChange(event);
+		}
+	};
+
 	public final static String CONFIRM_SAVE_PROPERTY= "org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY"; //$NON-NLS-1$
 	
 	private IActionBars fActionBars;
+	/** The editor's property change listener. */
+	private IPropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
+	/** the SWT control */
+	private Control fControl;
 	
 	
 	public CompareEditor() {
@@ -54,18 +72,53 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 		if (!(input instanceof CompareEditorInput))
 			throw new PartInitException(Utilities.getString("CompareEditor.invalidInput")); //$NON-NLS-1$
 				
-		CompareEditorInput cei= (CompareEditorInput) input;
-			
 		setSite(site);
 		setInput(input);
+	}
+	
+	public void setInput(IEditorInput input) {
+		try {
+			doSetInput(input);			
+		} catch (CoreException x) {
+			String title= Utilities.getString("CompareEditor.error.setinput.title"); //$NON-NLS-1$
+			String msg= Utilities.getString("CompareEditor.error.setinput.message"); //$NON-NLS-1$
+			ErrorDialog.openError(getSite().getShell(), title, msg, x.getStatus());
+		}				
+	}
+	
+	public void doSetInput(IEditorInput input) throws CoreException {
+	
+		if (!(input instanceof CompareEditorInput)) {
+			IStatus s= new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.OK, Utilities.getString("CompareEditor.invalidInput"), null); //$NON-NLS-1$
+			throw new CoreException(s);
+		}
+
+		IEditorInput oldInput= getEditorInput();
+		if (oldInput instanceof IPropertyChangeNotifier)
+			((IPropertyChangeNotifier)input).removePropertyChangeListener(fPropertyChangeListener);
+			
+		super.setInput(input);
 		
+		CompareEditorInput cei= (CompareEditorInput) input;
+
 		setTitleImage(cei.getTitleImage());
 		setTitle(cei.getTitle());
 				
 		if (input instanceof IPropertyChangeNotifier)
-			((IPropertyChangeNotifier)input).addPropertyChangeListener(this);
+			((IPropertyChangeNotifier)input).addPropertyChangeListener(fPropertyChangeListener);
+			
+		if (oldInput != null) {
+			if (fControl != null && !fControl.isDisposed()) {
+				Point oldSize= fControl.getSize();
+				Composite parent= fControl.getParent();
+				fControl.dispose();
+				createPartControl(parent);
+				if (fControl != null)
+					fControl.setSize(oldSize);
+			}
+		}
 	}
-
+	
 	public IActionBars getActionBars() {
 		return fActionBars;
 	}
@@ -82,8 +135,8 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 		
 		IEditorInput input= getEditorInput();
 		if (input instanceof CompareEditorInput) {
-			Control c= ((CompareEditorInput) input).createContents(parent);
-			WorkbenchHelp.setHelp(c, ICompareContextIds.COMPARE_EDITOR);
+			fControl= ((CompareEditorInput) input).createContents(parent);
+			WorkbenchHelp.setHelp(fControl, ICompareContextIds.COMPARE_EDITOR);
 		}
 	}
 	
@@ -94,9 +147,11 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 	
 		IEditorInput input= getEditorInput();
 		if (input instanceof IPropertyChangeNotifier)
-			((IPropertyChangeNotifier)input).removePropertyChangeListener(this);
+			((IPropertyChangeNotifier)input).removePropertyChangeListener(fPropertyChangeListener);
 								
 		super.dispose();
+		
+		fPropertyChangeListener= null;
 	}
 			
 	/*
