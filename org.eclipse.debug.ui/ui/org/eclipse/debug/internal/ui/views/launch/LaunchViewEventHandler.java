@@ -17,6 +17,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener;
 import org.eclipse.debug.core.model.IDebugTarget;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.ISuspendResume;
 import org.eclipse.debug.core.model.IThread;
@@ -70,7 +71,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		for (int i = 0; i < events.length; i++) {
 			DebugEvent event = events[i];
 			Object element= event.getSource();
-			if (!(element instanceof IStackFrame || element instanceof IThread || element instanceof IDebugTarget)) {
+			if (!(element instanceof IStackFrame || element instanceof IThread || element instanceof IDebugTarget || element instanceof IProcess)) {
 				// the launch view is not interested in any other types of elements
 				return;
 			}
