@@ -36,6 +36,7 @@ public class AllTestsProvider extends EclipseTest {
 		suite.addTest(CVSProviderTest.suite());
 		suite.addTest(RemoteResourceTest.suite());
 		suite.addTest(SyncElementTest.suite());
+		suite.addTest(ResourceDeltaTest.suite());
 		return new CVSTestSetup(suite);
 	}
 }
