@@ -95,7 +95,7 @@ public class AntPropertiesPage extends AntPage {
 	 */
 	public TabItem createTabItem(TabFolder folder) {
 		TabItem item = new TabItem(folder, SWT.NONE);
-		item.setText(AntPreferencesMessages.getString("AntPropertiesPage.title"));
+		item.setText(AntPreferencesMessages.getString("AntPropertiesPage.title")); //$NON-NLS-1$
 		item.setImage(labelProvider.getPropertyImage());
 		item.setData(this);
 		item.setControl(createControl(folder));
@@ -183,9 +183,9 @@ public class AntPropertiesPage extends AntPage {
 	 * Allows the user to enter a global user property
 	 */
 	private void addProperty() {
-		String title = "Add Property"; 
-		String msg = "Enter a name and value for the user property:"; 
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), null, title, msg, "&Value:");
+		String title = AntPreferencesMessages.getString("AntPropertiesPage.Add_Property_2");  //$NON-NLS-1$
+		String msg = AntPreferencesMessages.getString("AntPropertiesPage.Enter_a_name_and_value_for_the_user_property__3");  //$NON-NLS-1$
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), null, title, msg, AntPreferencesMessages.getString("AntPropertiesPage.&Value__4")); //$NON-NLS-1$
 		if (dialog.open() == Dialog.CANCEL) {
 			return;
 		}
@@ -201,9 +201,9 @@ public class AntPropertiesPage extends AntPage {
 		if (prop == null) {
 			return;
 		}
-		String title = "Edit User Property";
-		String msg = "Modify the name or value of a user property:";
-		AddCustomDialog dialog = new AddCustomDialog(getShell(), null, title, msg, "Value:");
+		String title = AntPreferencesMessages.getString("AntPropertiesPage.Edit_User_Property_5"); //$NON-NLS-1$
+		String msg = AntPreferencesMessages.getString("AntPropertiesPage.Modify_the_name_or_value_of_a_user_property__6"); //$NON-NLS-1$
+		AddCustomDialog dialog = new AddCustomDialog(getShell(), null, title, msg, AntPreferencesMessages.getString("AntPropertiesPage.Value__7")); //$NON-NLS-1$
 		
 		dialog.setClassName(prop.getValue());
 		dialog.setName(prop.getName());
