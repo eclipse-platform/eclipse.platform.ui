@@ -75,5 +75,6 @@ public interface UIConstants {
 
 	//objects
 	public final String IMG_SITE_ELEMENT = "clcl16/site_element.gif"; //$NON-NLS-1$
+	public final String IMG_CHANGE_FILTER = "clcl16/change_filter.gif"; //$NON-NLS-1$
 
 }

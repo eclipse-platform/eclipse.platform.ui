@@ -11,9 +11,7 @@
 package org.eclipse.team.internal.ui.sync.actions;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Iterator;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -23,15 +21,8 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.AbstractTreeViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.subscribers.TeamSubscriber;
-import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.ui.UIConstants;
-import org.eclipse.team.internal.ui.actions.TeamAction;
 import org.eclipse.team.internal.ui.sync.views.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.SyncViewer;
 import org.eclipse.team.ui.ISharedImages;
@@ -64,121 +55,17 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	private OpenWithActionGroup openWithActionGroup;
 	
 	private SyncViewerToolbarDropDownAction chooseSubscriberAction;
-	private ChooseComparisonCriteriaAction chooseComparisonCriteriaAction;
+	private SyncViewerToolbarDropDownAction chooseChangeFilterAction;
 	
 	private IWorkingSet workingSet;
 	
 	// other view actions
 	private Action collapseAll;
 	private Action refreshSelectionAction;
-	private Action refreshAllAction;
 	private Action toggleViewerType;
 	private Action open;
 	private ExpandAllAction expandAll;
 	private CancelSubscription cancelSubscription;
-	
-	class RefreshAction extends Action {
-		private boolean refreshAll;
-		public RefreshAction(boolean refreshAll) {
-			this.refreshAll = refreshAll;
-			setText("Refresh with Repository");
-			setToolTipText("Refresh with the repository");
-			setImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH_ENABLED));
-			setDisabledImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH_DISABLED));
-			setHoverImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_REFRESH));
-		}
-		public void run() {
-			final SyncViewer view = getSyncView();
-			view.run(new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						monitor.beginTask(null, 100);
-						ActionContext context = getContext();
-						getResources(context.getSelection());
-						SubscriberInput input = (SubscriberInput)context.getInput();
-						IResource[] resources = getResources(context.getSelection());
-						if (refreshAll || resources.length == 0) {
-							// If no resources are selected, refresh all the subscriber roots
-							resources = input.roots();
-						}
-						input.getSubscriber().refresh(resources, IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, 100));
-					} catch (TeamException e) {
-						throw new InvocationTargetException(e);
-					} finally {
-						monitor.done();
-					}
-				}
-				private IResource[] getResources(ISelection selection) {
-					if(selection == null) {
-						return new IResource[0];
-					}
-					return (IResource[])TeamAction.getSelectedAdaptables(selection, IResource.class);					
-				}
-			});
-		}
-	}
-	
-	class CancelSubscription extends Action {
-		public CancelSubscription() {
-			setText("Cancel");
-			setToolTipText("Cancel the active synchronization target");
-		}
-		public void run() {
-			ActionContext context = getContext();
-			SubscriberInput input = (SubscriberInput)context.getInput();
-			input.getSubscriber().cancel();
-		}
-		public void updateTitle(SubscriberInput input) {
-			TeamSubscriber subscriber = input.getSubscriber();
-			if(subscriber.isCancellable()) {
-				setText("Cancel [" + subscriber.getName() +"]");
-			} else {
-				setText("Cancel");
-			}
-			setToolTipText("Cancel the active synchronization target");
-		}
-	}
-	
-	class ExpandAllAction extends Action {
-		public ExpandAllAction() {
-			super("Expand All");
-		}
-		public void run() {
-			expandSelection();
-		}
-		public void update() {
-			setEnabled(getTreeViewer() != null && hasSelection());
-		}
-		protected void expandSelection() {
-			AbstractTreeViewer treeViewer = getTreeViewer();
-			if (treeViewer != null) {
-				ISelection selection = getSelection();
-				if (selection instanceof IStructuredSelection) {
-					Iterator elements = ((IStructuredSelection)selection).iterator();
-					while (elements.hasNext()) {
-						Object next = elements.next();
-						treeViewer.expandToLevel(next, AbstractTreeViewer.ALL_LEVELS);
-					}
-				}
-			}
-		}
-		private AbstractTreeViewer getTreeViewer() {
-			Viewer viewer = getSyncView().getViewer();
-			if (viewer instanceof AbstractTreeViewer) {
-				return (AbstractTreeViewer)viewer;
-			}
-			return null;
-		}
-		private ISelection getSelection() {
-			ActionContext context = getContext();
-			if (context == null) return null;
-			return getContext().getSelection();
-		}
-		private boolean hasSelection() {
-			ISelection selection = getSelection();
-			return (selection != null && !selection.isEmpty());
-		}
-	}
 	
 	class CollapseAllAction extends Action {
 		public CollapseAllAction() {
@@ -198,34 +85,52 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 			setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().
 						getImageDescriptor(org.eclipse.ui.ISharedImages.IMG_TOOL_COPY));
 			setChecked(initialState == SyncViewer.TREE_VIEW);
+			collapseAll.setEnabled(false);
 		}
 		public void run() {
 			int viewerType;
 			if(toggleViewerType.isChecked()) {
-				viewerType = SyncViewer.TREE_VIEW;							
+				viewerType = SyncViewer.TREE_VIEW;	
+				collapseAll.setEnabled(true);						
 			} else {
 				viewerType = SyncViewer.TABLE_VIEW;
+				collapseAll.setEnabled(false);
 			}
 			getSyncView().switchViewerType(viewerType);
 		}
 	}
 	
 	class ChooseSubscriberAction extends SyncViewerToolbarDropDownAction {
-		public ChooseSubscriberAction(SyncViewerActionGroup actionGroup) {
+		public void run() {
+			RefreshAction refresh = new RefreshAction(SyncViewerActions.this, true /* refresh all */);
+			refresh.run();
+		}
+
+		public ChooseSubscriberAction(SyncViewerActionGroup[] actionGroup) {
 			super(actionGroup);
 			setText("Select Subscriber");
-			setToolTipText("Select Subscriber");
+			setToolTipText("Refresh with remote");
 			setImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_SITE_ELEMENT));
 		}		
 	}
 	
-	class ChooseComparisonCriteriaAction extends SyncViewerToolbarDropDownAction {
-		public ChooseComparisonCriteriaAction(SyncViewerActionGroup actionGroup) {
-			super(actionGroup);
-			setText("Select Comparison Criteria");
-			setToolTipText("Select Comparison Criteria");
-			setImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_CONTENTS));
-		}
+	class ChooseChangeFilterAction extends SyncViewerToolbarDropDownAction {
+		private SyncViewerChangeFilters filters;
+		public void run() {		
+			Action[] enabled = filters.getActiveFilters();
+			Action[] actions = filters.getFilters();
+			if(actions.length != enabled.length) {
+				filters.setAllEnabled();
+				refreshFilters();
+			}
+		}		
+		public ChooseChangeFilterAction(SyncViewerChangeFilters filters) {
+			super(filters);
+			this.filters = filters;
+			setText("Select a change filter");
+			setToolTipText("Enable all change filters");
+			setImageDescriptor(TeamImages.getImageDescriptor(UIConstants.IMG_CHANGE_FILTER));
+		}		
 	}
 	
 	/* (non-Javadoc)
@@ -256,21 +161,20 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		
 		// initialize the dropdown for choosing a subscriber
 		subscriberInputs = new SyncViewerSubscriberListActions(syncView);
-		chooseSubscriberAction = new ChooseSubscriberAction(subscriberInputs);
-		
-		// initialize the dropdown for choosing a comparison criteria
 		comparisonCriteria = new SyncViewerComparisonCriteria(syncView);
-		chooseComparisonCriteriaAction = new ChooseComparisonCriteriaAction(comparisonCriteria);
+		chooseSubscriberAction = new ChooseSubscriberAction(
+			new SyncViewerActionGroup[] {subscriberInputs, comparisonCriteria});
+		
+		// initialize the dropdown for choosing a change type filter
+		chooseChangeFilterAction = new ChooseChangeFilterAction(changeFilters);
 		
 		// initialize other actions
-		refreshAllAction = new RefreshAction(true);
-		refreshAllAction.setEnabled(false);
-		refreshSelectionAction = new RefreshAction(false);
+		refreshSelectionAction = new RefreshAction(this, false);
 		refreshSelectionAction.setEnabled(false);
 		
 		collapseAll = new CollapseAllAction();
-		expandAll = new ExpandAllAction();
-		cancelSubscription = new CancelSubscription();
+		expandAll = new ExpandAllAction(this);
+		cancelSubscription = new CancelSubscription(this);
 		
 		toggleViewerType = new ToggleViewAction(SyncViewer.TABLE_VIEW);
 		open = new OpenInCompareAction(syncView);
@@ -304,19 +208,15 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		
 		IToolBarManager manager = actionBars.getToolBarManager();
 		manager.add(chooseSubscriberAction);
-		manager.add(chooseComparisonCriteriaAction);
 		manager.add(new Separator());
 		directionsFilters.fillActionBars(actionBars);
+		manager.add(chooseChangeFilterAction);
 		manager.add(new Separator());
-		manager.add(refreshAllAction);
 		manager.add(collapseAll);
 		manager.add(toggleViewerType);
 		
 		IMenuManager dropDownMenu = actionBars.getMenuManager();
 		workingSetGroup.fillActionBars(actionBars);
-		dropDownMenu.add(new Separator());
-		changeFilters.fillContextMenu(dropDownMenu);
-		dropDownMenu.add(new Separator());
 		dropDownMenu.add(cancelSubscription);
 	}
 
@@ -384,7 +284,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	 */
 	protected void initializeActions() {
 		SubscriberInput input = getSubscriberContext();
-		refreshAllAction.setEnabled(input != null);
 		refreshSelectionAction.setEnabled(input != null);
 		cancelSubscription.setEnabled(input.getSubscriber().isCancellable());
 		cancelSubscription.updateTitle(input);
@@ -399,12 +298,12 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 			workingSetGroup.setWorkingSet(getWorkingSet());
 		}
 		
-		// refresh the selecte filter
+		// refresh the selected filter
 		refreshFilters();
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
+	 * @see ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
 	 */
 	public void setContext(ActionContext context) {
 		changeFilters.setContext(context);
@@ -420,7 +319,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
+	 * @see ActionGroup#setContext(org.eclipse.ui.actions.ActionContext)
 	 */
 	public void addContext(ActionContext context) {
 		subscriberInputs.addContext(context);
@@ -432,7 +331,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	
 	/*
 	 * Get the selected working set from the subscriber input
-	 * @return
 	 */
 	private IWorkingSet getWorkingSet() {
 		SubscriberInput input = getSubscriberContext();
@@ -444,9 +342,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		return set;
 	}
 	
-	/**
-	 * @param set
-	 */
 	protected void setWorkingSet(IWorkingSet set) {
 		// Keep track of the last working set selected
 		if (set != null) workingSet = set;
@@ -468,11 +363,6 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		});
 	}
 
-	/**
-	 * @param set
-	 * @param set2
-	 * @return
-	 */
 	private boolean workingSetsEqual(IWorkingSet set, IWorkingSet set2) {
 		if (set == null && set2 == null) return true;
 		if (set == null || set2 == null) return false;

@@ -387,4 +387,7 @@ public class SyncSet {
 		fireChanges();
 	}
 
+	public int size() {
+		return resources.size();		
+	}
 }

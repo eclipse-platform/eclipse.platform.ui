@@ -81,7 +81,7 @@ import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 
-public class SyncViewer extends ViewPart implements ITeamResourceChangeListener {
+public class SyncViewer extends ViewPart implements ITeamResourceChangeListener, ISyncSetChangedListener {
 	
 	/*
 	 * This view's id. The same value as in the plugin.xml.
@@ -137,7 +137,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener 
 				for (int i= 0; i < changed.length; i++) {
 					Object curr = changed[i];
 					if (curr instanceof IResource) {
-						curr = SyncSet.getModelObject(input.getSyncSet(), (IResource)curr);
+						curr = SyncSet.getModelObject(input.getFilteredSyncSet(), (IResource)curr);
 					}
 					others.add(curr);
 				}
@@ -192,7 +192,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener 
 		initializeListeners();
 		
 		if(input != null) {
-			viewer.setInput(input.getSyncSet());
+			viewer.setInput(input.getFilteredSyncSet());
 		}
 	}
 
@@ -371,10 +371,18 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener 
 	public void initializeSubscriberInput(final SubscriberInput input) {
 		Assert.isNotNull(input);
 		
-		if (!hasRunnableContext()) return;
 		this.lastInput = this.input;
 		this.input = input;
-		run(new IRunnableWithProgress() {
+		
+		if(lastInput != null) {
+			lastInput.getFilteredSyncSet().removeSyncSetChangedListener(this);
+			lastInput.getSubscriberSyncSet().removeSyncSetChangedListener(this);
+		}
+		
+		input.getFilteredSyncSet().addSyncSetChangedListener(this);
+		input.getSubscriberSyncSet().addSyncSetChangedListener(this);
+
+		final IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 				try {
 					ActionContext context = new ActionContext(null);
@@ -383,27 +391,39 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener 
 					// important to set the context after the input has been initialized. There
 					// are some actions that depend on the sync set to be initialized.
 					actions.setContext(context);
-					
-					Display.getDefault().asyncExec(new Runnable() {
-								public void run() {
-									viewer.setInput(input.getSyncSet());
-								}
-							});
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
 				}
+			}
+		};
+
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				if (!hasRunnableContext()) return;				
+				SyncViewer.this.run(runnable);
+				viewer.setInput(input.getFilteredSyncSet());
 			}
 		});
 		updateTitle();
 	}
 	
+	/*
+	 * Live Synchronize - {showing N of M changes} {Subscriber name}
+	 */
 	public void updateTitle() {
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
 				SubscriberInput input = getInput();
 				if(input != null) {
 					TeamSubscriber subscriber = input.getSubscriber();
-				 	setTitle(Policy.bind("LiveSyncView.titleWithSubscriber", subscriber.getName()));
+					String changesText = Policy.bind("LiveSyncView.titleChangeNumbers", 
+														new Integer(input.getFilteredSyncSet().size()).toString(), 
+														new Integer(input.getSubscriberSyncSet().size()).toString());
+				 	setTitle(
+				 		Policy.bind("LiveSyncView.titleWithSubscriber", new String[] {
+				 				Policy.bind("LiveSyncView.title"), 
+				 				changesText,
+				 				subscriber.getName()}));
 				 	IWorkingSet ws = input.getWorkingSet();
 				 	if(ws != null) {
 				 		setTitleToolTip(Policy.bind("LiveSyncView.titleTooltip", subscriber.getDescription(), ws.getName()));
@@ -507,7 +527,7 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener 
 	 * @return IRunnableContext
 	 */
 	private IRunnableContext getRunnableContext() {
-		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();									
 	}
 	
 	private boolean hasRunnableContext() {
@@ -690,5 +710,12 @@ public class SyncViewer extends ViewPart implements ITeamResourceChangeListener 
 		} catch (PartInitException pe) {
 			TeamUIPlugin.log(new TeamException("error showing view", pe));
 		}
+	}
+
+	/**
+	 * Update the title when either the subscriber or filter sync set changes.
+	 */
+	public void syncSetChanged(SyncSetChangedEvent event) {
+		updateTitle();
 	}
 }

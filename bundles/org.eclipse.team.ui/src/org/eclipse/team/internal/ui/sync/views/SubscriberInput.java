@@ -66,10 +66,14 @@ public class SubscriberInput {
 		return subscriber;
 	}
 	
-	public SyncSet getSyncSet() {
+	public SyncSet getFilteredSyncSet() {
 		return filteredInput.getSyncSet();
 	}
 	
+	public SyncSet getSubscriberSyncSet() {
+		return subscriberInput.getSyncSet();
+	}
+
 	public void setFilter(SyncInfoFilter filter, IProgressMonitor monitor) throws TeamException {
 		filteredInput.setFilter(filter, monitor);
 	}
@@ -89,9 +93,5 @@ public class SubscriberInput {
 
 	public IResource[] roots() throws TeamException {
 		return subscriberInput.getRoots();
-	}
-	
-	public SyncSet getSubscriberInputSyncSet() {
-		return subscriberInput.getSyncSet();
-	}
+	}	
 }

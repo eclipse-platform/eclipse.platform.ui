@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.team.core.subscribers.SyncInfo;
@@ -32,10 +31,8 @@ public class SyncViewerChangeFilters extends SyncViewerActionGroup {
 	private static final String MEMENTO_KEY_PREFIX = "SyncViewerChangeFilters";
 	
 	// array of actions for filtering by change type (additions, deletions and changes)
-	private ChangeFilterAction[] actions;
-	
-	private FilterSyncViewerAction filterAction;
-	private SyncViewerActions refreshGroup;
+	private ChangeFilterAction[] actions;	
+	private SyncViewerActions actionGroup;
 	
 	/**
 	 * Action for filtering by change type.
@@ -48,18 +45,16 @@ public class SyncViewerChangeFilters extends SyncViewerActionGroup {
 			this.changeFilter = changeFilter;
 		}
 		public void run() {
+			refreshFilters();
 		}
-		/**
-		 * @return
-		 */
 		public int getChangeFilter() {
 			return changeFilter;
 		}
 	}
 	
-	protected SyncViewerChangeFilters(SyncViewer viewer, SyncViewerActions refreshGroup) {
+	protected SyncViewerChangeFilters(SyncViewer viewer, SyncViewerActions actionGroup) {
 		super(viewer);
-		this.refreshGroup = refreshGroup;
+		this.actionGroup = actionGroup;
 		createActions();
 	}
 	
@@ -71,8 +66,6 @@ public class SyncViewerChangeFilters extends SyncViewerActionGroup {
 		ChangeFilterAction changes = new ChangeFilterAction("Show Changes", SyncInfo.CHANGE);
 		changes.setChecked(true);
 		actions = new ChangeFilterAction[] { additions, deletions, changes };
-		
-		filterAction = new FilterSyncViewerAction(getSyncView(), this);
 	}
 
 	/**
@@ -99,12 +92,11 @@ public class SyncViewerChangeFilters extends SyncViewerActionGroup {
 		return changeFilters;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
-	public void fillContextMenu(IMenuManager menu) {
-		super.fillContextMenu(menu);
-		menu.add(filterAction);
+	public void fillMenu(SyncViewerToolbarDropDownAction action) {
+		super.fillMenu(action);
+		for (int i = 0; i < actions.length; i++) {
+			action.add(actions[i]);			
+		}
 	}
 
 	/**
@@ -148,30 +140,15 @@ public class SyncViewerChangeFilters extends SyncViewerActionGroup {
 			action.setChecked(active);
 		}
 	}
-
-	/**
-	 * 
-	 */
-	public ILabelProvider getLabelProvider() {
-		return new LabelProvider() {
-			public String getText(Object element) {
-				if (element instanceof Action) {
-					return ((Action)element).getText();
-				}
-				return super.getText(element);
-			}
-		};
-	}
-
-	/**
-	 * 
-	 */
-	public ChangeFiltersContentProvider getContentProvider() {
-		return new ChangeFiltersContentProvider(this);
+	
+	public void setAllEnabled() {
+		for (int i = 0; i < actions.length; i++) {
+			actions[i].setChecked(true);
+		}
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.team.ccvs.syncviews.actions.SyncViewerActionGroup#restore(org.eclipse.ui.IMemento)
+	 * @see SyncViewerActionGroup#restore(org.eclipse.ui.IMemento)
 	 */
 	public void restore(IMemento memento) {
 		super.restore(memento);
@@ -214,11 +191,7 @@ public class SyncViewerChangeFilters extends SyncViewerActionGroup {
 		}
 	}
 	
-	public SyncViewerActions getRefreshGroup() {
-		return refreshGroup;
-	}
-
 	public void refreshFilters() {
-		getRefreshGroup().refreshFilters();
+		actionGroup.refreshFilters();
 	}
 }

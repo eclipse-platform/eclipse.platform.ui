@@ -96,6 +96,7 @@ public class TeamImages {
 		createImageDescriptor(UIConstants.IMG_DLG_SYNC_OUTGOING, baseURL);
 		createImageDescriptor(UIConstants.IMG_DLG_SYNC_CONFLICTING, baseURL);
 		createImageDescriptor(UIConstants.IMG_REFRESH, baseURL);
+		createImageDescriptor(UIConstants.IMG_CHANGE_FILTER, baseURL);
 		createImageDescriptor(UIConstants.IMG_IGNORE_WHITESPACE, baseURL);
 		createImageDescriptor(UIConstants.IMG_CONTENTS, baseURL);
 

@@ -13,6 +13,7 @@ package org.eclipse.team.internal.ui.sync.actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 
@@ -22,14 +23,16 @@ import org.eclipse.swt.widgets.Menu;
  */
 public class SyncViewerToolbarDropDownAction extends Action implements IMenuCreator {
 
-	SyncViewerActionGroup actionGroup;
+	SyncViewerActionGroup[] actionGroup;
 	private Menu fMenu;
 
-	/**
-	 * 
-	 */
 	public SyncViewerToolbarDropDownAction(SyncViewerActionGroup actionGroup) {
-		this.actionGroup = actionGroup;
+		this.actionGroup = new SyncViewerActionGroup[] {actionGroup};
+		setMenuCreator(this);
+	}
+	
+	public SyncViewerToolbarDropDownAction(SyncViewerActionGroup[] actionGroups) {
+		this.actionGroup = actionGroups;
 		setMenuCreator(this);
 	}
 
@@ -64,12 +67,17 @@ public class SyncViewerToolbarDropDownAction extends Action implements IMenuCrea
 	}
 
 	private void fillMenu() {
-		actionGroup.fillMenu(this);
+		for (int i = 0; i < actionGroup.length; i++) {
+			if(i != 0 && i < (actionGroup.length)) {
+				new Separator().fill(getMenu(), -1);	
+			}
+			actionGroup[i].fillMenu(this);
+		}
 	}
 	 
 	public void add(Action action) {
 		ActionContributionItem item= new ActionContributionItem(action);
-		item.fill(getMenu(), -1);
+		item.fill(getMenu(), -1);		
 	}
 	
 	public Menu getMenu() {
@@ -80,7 +88,10 @@ public class SyncViewerToolbarDropDownAction extends Action implements IMenuCrea
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		// TODO Should show all actions in a dialog or something like that
 		super.run();
 	}
+	
+	public SyncViewerActionGroup[] getActionGroups() {
+		return actionGroup;
+	} 
 }
