@@ -3,18 +3,11 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
-import java.io.File;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.window.Window;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
-
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.ui.help.WorkbenchHelp;
 /**
  * Actions
  */
@@ -26,8 +19,6 @@ public class Actions {
 	static ImageDescriptor print;
 	static ImageDescriptor copy;
 	static ImageDescriptor synchronize;
-
-	static ImageDescriptor actionsImage;
 	static ImageDescriptor hidenav;
 	static {
 		synchronize =
@@ -44,10 +35,7 @@ public class Actions {
 			ImageDescriptor.createFromURL(WorkbenchResources.getImagePath("copy_icon"));
 		hidenav =
 			ImageDescriptor.createFromURL(WorkbenchResources.getImagePath("hidenav_icon"));
-		actionsImage =
-			ImageDescriptor.createFromURL(WorkbenchResources.getImagePath("actions_icon"));
 	}
-
 	/**
 	 */
 	public static abstract class WebAction extends Action {
@@ -57,7 +45,6 @@ public class Actions {
 			this.web = web;
 		}
 	}
-
 	/**
 	 */
 	public static class CopyAction extends WebAction {
@@ -70,13 +57,12 @@ public class Actions {
 				this,
 				new String[] {
 					IHelpUIConstants.COPY_ACTION,
-					IHelpUIConstants.EMBEDDED_HELP_VIEW});
+					IHelpUIConstants.EMBEDDED_HELP_VIEW });
 		}
 		public void run() {
 			web.copy();
 		}
 	}
-
 	/**
 	 */
 	public static class HomeAction extends WebAction {
@@ -91,22 +77,18 @@ public class Actions {
 				this,
 				new String[] {
 					IHelpUIConstants.HOME_ACTION,
-					IHelpUIConstants.EMBEDDED_HELP_VIEW});
+					IHelpUIConstants.EMBEDDED_HELP_VIEW });
 		}
-
 		public HomeAction(IBrowser web) {
 			this(web, null);
 		}
-
 		public void run() {
 			web.navigate(this.fHome);
 		}
-
 		public void setHome(String homeURL) {
 			this.fHome = homeURL;
 		}
 	}
-
 	/**
 	 */
 	public static class BackAction extends WebAction {
@@ -124,12 +106,9 @@ public class Actions {
 		public void run() {
 			web.back();
 		}
-
 		public void update() {
-
 		}
 	}
-
 	/**
 	 */
 	public static class ForwardAction extends WebAction {
@@ -148,7 +127,6 @@ public class Actions {
 			web.forward();
 		}
 	}
-
 	/**
 	 */
 	public static class PrintAction extends WebAction {
@@ -161,21 +139,22 @@ public class Actions {
 				this,
 				new String[] {
 					IHelpUIConstants.PRINT_ACTION,
-					IHelpUIConstants.EMBEDDED_HELP_VIEW});
+					IHelpUIConstants.EMBEDDED_HELP_VIEW });
 		}
 		public void run() {
 			web.print();
 		}
 	}
-
 	/**
 	 * Action that synchronizes document viewed in the browser with TOC
 	 */
 	public static class SynchronizeAction extends WebAction {
 		ISelectionProvider selectionProvider;
 		ShowHideAction showHideAction;
-		
-		public SynchronizeAction(IBrowser web, ISelectionProvider selectionProvider, ShowHideAction showHideAction) {
+		public SynchronizeAction(
+			IBrowser web,
+			ISelectionProvider selectionProvider,
+			ShowHideAction showHideAction) {
 			super(web, WorkbenchResources.getString("synchronize"));
 			this.showHideAction = showHideAction;
 			setText("&Synchronize@Ctrl+S");
@@ -186,25 +165,22 @@ public class Actions {
 				this,
 				new String[] {
 					IHelpUIConstants.SYNCH_ACTION,
-					IHelpUIConstants.EMBEDDED_HELP_VIEW});
+					IHelpUIConstants.EMBEDDED_HELP_VIEW });
 		}
 		public void run() {
 			String currentURL = web.getLocationURL();
 			if (currentURL == null)
 				return;
-			if (this.selectionProvider != null)
-			{
+			if (this.selectionProvider != null) {
 				selectionProvider.setSelection(new StructuredSelection(currentURL));
 				showHideAction.showNavigation();
 			}
 		}
 	}
-
 	/**
 	 * Action that shows/hides the TOC   */
 	public static class ShowHideAction extends WebAction {
 		EmbeddedHelpView view;
-		
 		public ShowHideAction(EmbeddedHelpView view) {
 			super(null, WorkbenchResources.getString("toggle"));
 			setText("&Hide navigation@Ctrl+H");
@@ -215,7 +191,7 @@ public class Actions {
 				this,
 				new String[] {
 					IHelpUIConstants.SHOW_HIDE_ACTION,
-					IHelpUIConstants.EMBEDDED_HELP_VIEW});
+					IHelpUIConstants.EMBEDDED_HELP_VIEW });
 		}
 		public void run() {
 			boolean hidden = view.toggleNavigation();
@@ -227,10 +203,9 @@ public class Actions {
 				setToolTipText(WorkbenchResources.getString("Hide_TOC"));
 			}
 		}
-		public void showNavigation()
-		{
+		public void showNavigation() {
 			if (isChecked()) // i.e. is navigation hidden
-			{
+				{
 				view.toggleNavigation();
 				setText("&Hide navigation@Ctrl+H");
 				setToolTipText(WorkbenchResources.getString("Hide_TOC"));

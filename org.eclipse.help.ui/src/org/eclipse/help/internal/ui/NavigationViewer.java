@@ -3,55 +3,46 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
 import java.util.*;
+import org.eclipse.help.topics.*;
+import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.topics.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.events.*;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.help.internal.contributions.InfoSet;
-import org.eclipse.help.internal.navigation.*;
-import org.eclipse.help.internal.contributors.*;
-import org.eclipse.help.internal.HelpSystem;
-
 /**
  * Navigation Viewer.  Contains combo for InfoSet selection and Workbook for display
  * of views.
  */
-public class NavigationViewer implements ISelectionProvider {
+public class NavigationViewer implements ISelectionProvider, IMenuListener {
 	private Composite contents;
-	private NavigationWorkbook workbook;
-
-	private ArrayList infoSetIds;
-	private Combo infoSetsCombo;
-
-	private InfoSet currentInfoset;
-
+	private EmbeddedHelpView helpView;
+	private ArrayList topicsHrefs = new ArrayList();
+	private Combo topics_Combo;
+	private TreeViewer viewer;
+	private Collection selectionChangedListeners = new ArrayList();
 	/**
-	 * NavigationViewer constructor comment.
+	 * NavigationViewer constructor.
 	 */
-	public NavigationViewer(Composite parent) {
+	public NavigationViewer(Composite parent, EmbeddedHelpView helpView) {
 		super();
-
-		// Create a list of available Info Sets
-		infoSetIds = new ArrayList();
-		infoSetIds.addAll(HelpSystem.getNavigationManager().getInfoSetIds());
-
+		this.helpView = helpView;
 		createControl(parent);
 	}
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
-		workbook.addSelectionChangedListener(listener);
+		viewer.addSelectionChangedListener(listener);
+		selectionChangedListeners.add(listener);
 	}
-	/**
-	 */
 	protected Control createControl(Composite parent) {
+		// Create a list of available Topics_
+		topicsHrefs.addAll(HelpSystem.getTopicsNavigationManager().getTopicsHrefs());
+		//
 		contents = new Composite(parent, SWT.NONE);
-
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 1;
 		layout.verticalSpacing = 5;
@@ -59,88 +50,122 @@ public class NavigationViewer implements ISelectionProvider {
 		layout.marginWidth = 0;
 		contents.setLayout(layout);
 		contents.setLayoutData(new GridData(GridData.FILL_BOTH));
-
 		GridData gd = new GridData();
 		gd.horizontalAlignment = gd.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		gd.verticalAlignment = gd.BEGINNING;
 		gd.grabExcessVerticalSpace = false;
-
 		// Create combo for selection of Info Sets
-		if (infoSetIds.size() > 1) {
-			infoSetsCombo =
-				new Combo(contents, SWT.DROP_DOWN | SWT.READ_ONLY /*| SWT.FLAT*/);
-			infoSetsCombo.setLayoutData(gd);
-			//infoSetsCombo.setBackground(
-			//	Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-
-			HelpNavigationManager navManager = HelpSystem.getNavigationManager();
-			for (int i = 0; i < infoSetIds.size(); i++) {
-				infoSetsCombo.add(navManager.getInfoSetLabel((String) infoSetIds.get(i)));
-			}
-			infoSetsCombo.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) {
-					int index = ((Combo) e.widget).getSelectionIndex();
-					final String id = (String) infoSetIds.get(index);
-					// Switching to another infoset may be time consuming
-					// so display the busy cursor
-					BusyIndicator.showWhile(null, new Runnable()
-					{
-						public void run()
-						{
-							try
-							{
-								InfoSet selectedInfoset = HelpSystem.getNavigationManager().getInfoSet(id);
-								if(currentInfoset != selectedInfoset)
-									setInput(selectedInfoset);
-							}catch(Exception e){}
-						}
-					});
-				}
-				public void widgetDefaultSelected(SelectionEvent e) {
-					widgetSelected(e);
-				}
-			});
+		topics_Combo = new Combo(contents, SWT.DROP_DOWN | SWT.READ_ONLY /*| SWT.FLAT*/
+		);
+		topics_Combo.setLayoutData(gd);
+		TopicsNavigationManager navManager = HelpSystem.getTopicsNavigationManager();
+		for (int i = 0; i < topicsHrefs.size(); i++) {
+			topics_Combo.add(navManager.getTopicsLabel((String) topicsHrefs.get(i)));
 		}
-
-		gd = new GridData();
-		gd.horizontalAlignment = gd.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		gd.verticalAlignment = gd.FILL;
-		gd.grabExcessVerticalSpace = true;
-
-		workbook = new NavigationWorkbook(contents);
-		workbook.getControl().setLayoutData(gd);
-
+		topics_Combo.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				int index = ((Combo) e.widget).getSelectionIndex();
+				final String href = (String) topicsHrefs.get(index);
+				// Switching to another infoset may be time consuming
+				// so display the busy cursor
+				BusyIndicator.showWhile(null, new Runnable() {
+					public void run() {
+						try {
+							ITopics selectedTopics =
+								HelpSystem.getTopicsNavigationManager().getTopics(href);
+							setInput(selectedTopics);
+						} catch (Exception e) {
+						}
+					}
+				});
+			}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
+		viewer = new TreeViewer(contents, SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+		viewer.setContentProvider(TreeContentProvider.getDefault());
+		viewer.setLabelProvider(ElementLabelProvider.getDefault());
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				handleDoubleClick(event);
+			}
+		});
+		for (Iterator it = selectionChangedListeners.iterator(); it.hasNext();) {
+			viewer.addSelectionChangedListener((ISelectionChangedListener) it.next());
+		}
+		WorkbenchHelp.setHelp(
+			viewer.getControl(),
+			new String[] {
+				IHelpUIConstants.TOPICS_VIEWER,
+				IHelpUIConstants.NAVIGATION_VIEWER,
+				IHelpUIConstants.EMBEDDED_HELP_VIEW });
+		// create the pop-up menus in the viewer
+		// For now, do this only for win32. 
+		if (System.getProperty("os.name").startsWith("Win")) {
+			createPopUpMenus();
+		}
 		WorkbenchHelp.setHelp(
 			contents,
 			new String[] {
 				IHelpUIConstants.NAVIGATION_VIEWER,
-				IHelpUIConstants.EMBEDDED_HELP_VIEW});
+				IHelpUIConstants.EMBEDDED_HELP_VIEW });
 		return contents;
+	}
+	private void createPopUpMenus() {
+		// create the Menu Manager for this control. and do
+		// proper initialization
+		Menu shellMenu;
+		MenuManager mgr = new MenuManager();
+		shellMenu = mgr.createContextMenu(viewer.getControl());
+		mgr.setRemoveAllWhenShown(true);
+		mgr.addMenuListener(this);
+		viewer.getControl().setMenu(shellMenu);
+	}
+	public void dispose() {
+		((Tree) viewer.getControl()).removeAll();
 	}
 	public Control getControl() {
 		return contents;
 	}
 	public Object getInput() {
-		return currentInfoset;
+		return viewer.getInput();
 	}
-	/**
-	 * Returns the current selection for this provider.
-	 * 
-	 * @return the current selection
-	 */
 	public ISelection getSelection() {
-		return workbook.getSelection();
+		return viewer.getSelection();
+	}
+	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+		viewer.removeSelectionChangedListener(listener);
+		selectionChangedListeners.remove(listener);
 	}
 	/**
-	 * Removes the given selection change listener from this selection provider.
-	 * Has no affect if an identical listener is not registered.
-	 *
-	 * @param listener a selection changed listener
+	 * Handles double clicks in viewer.
+	 * Opens editor if file double-clicked.
 	 */
-	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-		workbook.removeSelectionChangedListener(listener);
+	void handleDoubleClick(DoubleClickEvent event) {
+		IStructuredSelection s = (IStructuredSelection) event.getSelection();
+		Object element = s.getFirstElement();
+		// Double-clicking in navigator should expand/collapse containers
+		if (viewer != null && viewer.isExpandable(element)) {
+			viewer.setExpandedState(element, !viewer.getExpandedState(element));
+		}
+	}
+	public void menuAboutToShow(IMenuManager mgr) {
+		// Add pop-up Menus depending on current selection
+		// if multiple topics are selected, the Nested print menu is not showed.
+		ISelection selection = getSelection();
+		if (!(selection instanceof IStructuredSelection))
+			return; // should never be here. This is guaranteed by Viewer.
+		// Show nested printing and only if one topic is selected.
+		// make sure to have lazy creation of the printing Browser. 
+		// TODO add printing implementation
+		/*if (((IStructuredSelection) selection).size() == 1) {
+			mgr.add(new NestedPrintAction((IStructuredSelection) selection));
+			mgr.add(new Separator());
+			mgr.update(true);
+		}*/
 	}
 	/**
 	 * @param input an InfoSet or Contribution[]
@@ -151,42 +176,49 @@ public class NavigationViewer implements ISelectionProvider {
 	 *   of InfoView element and each of Infoset's children (InfoViews)
 	 */
 	public void setInput(Object input) {
-		if (input instanceof InfoSet) {
+		if (input instanceof ITopics) {
 			// do nothing if asked to display the same infoset
-			if (input == currentInfoset)
+			if (input == getInput())
 				return;
-				
-			currentInfoset = (InfoSet) input;
-
-			// set global infoset and navigation model
-			HelpSystem.getNavigationManager().setCurrentInfoSet(currentInfoset.getID());
-
-			// If more than 1 infoset, then select it from the combo box
-			if (infoSetIds.size() > 1) {
-				int index = infoSetIds.indexOf(currentInfoset.getID());
-				if (index != -1)
-					infoSetsCombo.select(index);
-
-				// remove selection, so it is gray not blue;
-				infoSetsCombo.clearSelection();
-			}
-
-			// show this infoset    
-			workbook.display(currentInfoset);
-
+			ITopics topics = (ITopics) input;
+			int index = topicsHrefs.indexOf(topics.getHref());
+			if (index != -1)
+				topics_Combo.select(index);
+			// remove selection, so it is gray not blue;
+			topics_Combo.clearSelection();
+			viewer.setInput(input);
 			// update htmlViewer
-			setSelection(new StructuredSelection(currentInfoset));
-		}else{
-			workbook.display(input);
+			setSelection(new StructuredSelection(topics));
 		}
 	}
 	/**
-	 * Sets the selection current selection for this selection provider.
-	 *
-	 * @param selection the new selection
+	 * Selects to topic given in selection
 	 */
 	public void setSelection(ISelection selection) {
-		workbook.setSelection(selection);
+		if (!(selection instanceof IStructuredSelection))
+			return;
+		Object o = ((IStructuredSelection) selection).getFirstElement();
+		if (o == null)
+			return;
+		for (Iterator it = selectionChangedListeners.iterator(); it.hasNext();) {
+			((ISelectionChangedListener) it.next()).selectionChanged(
+				new SelectionChangedEvent(this, selection));
+		}
+		ITopic t = null;
+		if (o instanceof ITopic) {
+			t = ((ITopic) o);
+		} else if (o instanceof String) { // Synchronization to given url
+			String url = (String) o;
+			//		ITopic topic =
+			//			HelpSystem.getTopicsNavigationManager().getNavigationModel(currentTopics.getHref()).getTopic(url);
+			//		if (topic == null)
+			//			return;
+		}
+		if (t != null) {
+			// Expand all nodes between root of model and the given element, exclusive
+			viewer.expandToLevel(t, 0);
+			// Select given element
+			viewer.setSelection(new StructuredSelection(t), true);
+		}
 	}
 }
-

@@ -40,12 +40,12 @@ public class ContextResources extends DocResources{
 	
 		// load context.properties
 		if (properties == null) {
-			properties=loadPropertiesLocally(pluginID,"/context.properties");
+			properties=loadProperties(pluginID,"/context.properties");
 		}
 		
 		// load doc.properties, for compatibility with old specs
 		if (properties == null) {
-			properties=loadPropertiesLocally(pluginID,"/doc.properties");
+			properties=loadProperties(pluginID,"/doc.properties");
 		}
 		
 		if(properties==null){
@@ -66,14 +66,13 @@ public class ContextResources extends DocResources{
 	 * @param propFile file path relative to plugin install directory
 	 * @return property file or null if not exists
 	 */
-	private static Properties loadPropertiesLocally(String pluginID, String propFile){
-		PluginURL propertiesURL = null;
+	private static Properties loadProperties(String pluginID, String propFile){
 		try {
-			propertiesURL =
+			PluginURL propertiesURL =
 				new PluginURL(pluginID + propFile, "lang=" + Locale.getDefault().toString());
 			Properties localProp = new Properties();
 					
-			localProp.load(propertiesURL.openStreamLocally()); //throws
+			localProp.load(propertiesURL.openStream()); //throws
 			
 			propertiesTable.put(pluginID, localProp);
 			return localProp;

@@ -26,9 +26,6 @@ public class HelpContentManager {
 		// search result
 		if (url.getValue("resultof") != null)
 			processors.add(new HighlightProcessor(url));
-
-		// add the CSS to all html files
-		processors.add(new CSSEmbedProcessor(url));
 		
 		return processors;
 	}

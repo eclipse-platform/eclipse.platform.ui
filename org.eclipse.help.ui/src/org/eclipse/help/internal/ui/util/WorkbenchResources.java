@@ -3,14 +3,9 @@ package org.eclipse.help.internal.ui.util;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
+import java.net.*;
 import java.util.*;
-import java.io.File;
-import java.net.URL;
-import java.net.MalformedURLException;
 import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
-
 /**
  * Uses a resource bundle to load images and strings from
  * a property file.
@@ -21,15 +16,15 @@ public class WorkbenchResources {
 	//***       for a desired locale....
 	private static ResourceBundle resBundle;
 	private static URL imageURL;
-
 	static {
 		resBundle = ResourceBundle.getBundle("helpworkbench", Locale.getDefault());
 		try {
 			imageURL =
-				new URL(WorkbenchHelpPlugin.getDefault().getDescriptor().getInstallURL(), "icons/");
+				new URL(
+					WorkbenchHelpPlugin.getDefault().getDescriptor().getInstallURL(),
+					"icons/");
 		} catch (MalformedURLException e) {
 		}
-
 	}
 	/**
 	 * WorkbenchResources constructor comment.
@@ -59,7 +54,6 @@ public class WorkbenchResources {
 		} catch (Exception e) {
 			return name;
 		}
-
 	}
 	/**
 	 * Returns a string from a property file
@@ -73,7 +67,6 @@ public class WorkbenchResources {
 		} catch (Exception e) {
 			return name;
 		}
-
 	}
 	/**
 	 * Returns a string from a property file
@@ -89,7 +82,6 @@ public class WorkbenchResources {
 		} catch (Exception e) {
 			return name;
 		}
-
 	}
 	/**
 	 * Returns a string from a property file
@@ -111,7 +103,6 @@ public class WorkbenchResources {
 		} catch (Exception e) {
 			return name;
 		}
-
 	}
 	/**
 	 * Returns a string from a property file
@@ -136,7 +127,6 @@ public class WorkbenchResources {
 		} catch (Exception e) {
 			return name;
 		}
-
 	}
 	/**
 	 * Returns a string from a property file
@@ -164,7 +154,6 @@ public class WorkbenchResources {
 		} catch (Exception e) {
 			return name;
 		}
-
 	}
 	/**
 	 * Returns a string from a property file
@@ -195,6 +184,5 @@ public class WorkbenchResources {
 		} catch (Exception e) {
 			return name;
 		}
-
 	}
 }

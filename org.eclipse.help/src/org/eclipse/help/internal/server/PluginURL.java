@@ -3,15 +3,18 @@ package org.eclipse.help.internal.server;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
+
+
+
+
 import java.io.*;
 import java.util.*;
 import java.net.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.util.*;
-
+
+
 /**
  * URL for documentation coming from a plugin.
  */
@@ -27,24 +30,28 @@ public class PluginURL extends HelpURL {
 	public PluginURL(String url, String query) {
 		super(url, query);
 	}
-
+
+
 	private String getFile() {
 		if (file == null)
 		{
 			// Strip the plugin id
 			int start = url.indexOf("/") + 1;
-
+
+
 			// Strip query string or anchor bookmark
 			int end = url.indexOf("?");
 			if (end == -1)
 				end = url.indexOf("#");
 			if (end == -1)
 				end = url.length();
-
+
+
 			file = url.substring(start, end);
 		}
 		return file;
-
+
+
 	}
 	private String getLocation() {
 		// Assume the url is pluginID/path_to_topic.html
@@ -81,43 +88,14 @@ public class PluginURL extends HelpURL {
 	 * @return java.io.InputStream
 	 */
 	public InputStream openStream() {
-		// if it is client install,
-		// forward request to the remote server
-		if (HelpSystem.isClient()) {
-			try {
-				URL forwardingURL;
-				if (query != null && !"".equals(query))
-					forwardingURL =
-						new URL(
-							HelpSystem.getRemoteHelpServerURL(),
-							HelpSystem.getRemoteHelpServerPath() + "/help/" + url + "?" + query);
-				else
-					forwardingURL =
-						new URL(
-							HelpSystem.getRemoteHelpServerURL(),
-							HelpSystem.getRemoteHelpServerPath() + "/help/" + url);
-				return forwardingURL.openStream();
-			} catch (MalformedURLException mue) {
-				return null;
-			} catch (IOException ioe) {
-				return null;
-			}
-		}
-		else
-			return openStreamLocally();
-	}
-
-	/**
-	 * Opens an input stream to the plugin url specified, assuming
-	 * the plugin is obtained from the current eclipse session
-	 */
-	public InputStream openStreamLocally(){
 		if (getPlugin() == null)
 			return null;
-
+
+
 		if (getFile() == null)
 			return null;
-
+
+
 		// When the platform supports find() with a locale specified, use this
 		//Locale locale = getLocale();
 					
@@ -131,7 +109,6 @@ public class PluginURL extends HelpURL {
 		
 		return inputStream;
 	}
-	
-	
-	
+
+
 }

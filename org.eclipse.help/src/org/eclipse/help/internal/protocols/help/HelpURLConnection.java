@@ -1,14 +1,15 @@
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 package org.eclipse.help.internal.protocols.help;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
 import org.eclipse.help.internal.server.*;
 import org.eclipse.help.internal.util.*;
-
 public class HelpURLConnection extends URLConnection {
 	private HelpURL helpURL = null;
-
 	/**
 	 * Constructor for HelpURLConnection
 	 */
@@ -19,26 +20,20 @@ public class HelpURLConnection extends URLConnection {
 		if (Logger.DEBUG)
 			Logger.logDebugMessage("HelpURLConnection", "url= " + url);
 	}
-
 	/**
 	 * @see URLConnection#connect()
 	 */
 	public void connect() throws IOException {
 		return;
 	}
-
 	public InputStream getInputStream() throws IOException {
 		// must override parent implementation, since it does nothing.
 		return helpURL.openStream();
 	}
-
-	public String getContentType()
-	{
+	public String getContentType() {
 		return helpURL.getContentType();
 	}
-	
-	public long getExpiration()
-	{
+	public long getExpiration() {
 		Date now = new Date();
 		return now.getTime() + 10000;
 	}

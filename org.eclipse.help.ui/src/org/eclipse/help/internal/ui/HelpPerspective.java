@@ -4,8 +4,8 @@ package org.eclipse.help.internal.ui;
  * All Rights Reserved.
  */
 import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.search.ui.SearchUI;
+
 /**
  * Perspective for holding the help view
  */
@@ -21,8 +21,16 @@ public class HelpPerspective implements IPerspectiveFactory {
 	 */
 	public void createInitialLayout(IPageLayout layout) {
 		String editorArea = layout.getEditorArea();
-		layout.addView(EmbeddedHelpView.ID, IPageLayout.TOP, 0.50f, editorArea);
 		layout.setEditorAreaVisible(false);
+		layout.addView(EmbeddedHelpView.ID, IPageLayout.TOP, 0.80f, editorArea);
+// Uncomment when search becomes available		
+//		IFolderLayout bottomFolder = layout.createFolder("bottom",IPageLayout.BOTTOM, 0.22f, editorArea);
+//		bottomFolder.addView(SearchUI.SEARCH_RESULT_VIEW_ID);
+//		bottomFolder.addPlaceholder(RelatedTopicsView.ID);
+// Comment when search becomes available
+		layout.addPlaceholder(RelatedTopicsView.ID, IPageLayout.BOTTOM, 0.22f, editorArea);
+		// Actions
 		layout.addShowViewShortcut(EmbeddedHelpView.ID);
+		layout.addShowViewShortcut(RelatedTopicsView.ID);	
 	}
 }

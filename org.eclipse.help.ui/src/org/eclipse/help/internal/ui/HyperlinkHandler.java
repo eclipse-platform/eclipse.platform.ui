@@ -3,20 +3,16 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
 import java.util.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.*;
-
 public class HyperlinkHandler
 	implements MouseListener, MouseTrackListener, PaintListener {
 	public static final int UNDERLINE_NEVER = 1;
 	public static final int UNDERLINE_ROLLOVER = 2;
 	public static final int UNDERLINE_ALWAYS = 3;
-
 	private Cursor hyperlinkCursor;
 	private Cursor busyCursor;
 	private boolean hyperlinkCursorUsed = true;
@@ -112,7 +108,6 @@ public class HyperlinkHandler
 			control.setForeground(activeForeground);
 		if (hyperlinkUnderlineMode == UNDERLINE_ROLLOVER)
 			underline(control, true);
-
 		IHyperlinkListener action =
 			(IHyperlinkListener) hyperlinkListeners.get(control);
 		if (action != null)
@@ -185,15 +180,13 @@ public class HyperlinkHandler
 	/**
 	 * @param newActiveBackground org.eclipse.swt.graphics.Color
 	 */
-	public void setActiveBackground(
-		Color newActiveBackground) {
+	public void setActiveBackground(Color newActiveBackground) {
 		activeBackground = newActiveBackground;
 	}
 	/**
 	 * @param newActiveForeground org.eclipse.swt.graphics.Color
 	 */
-	public void setActiveForeground(
-		Color newActiveForeground) {
+	public void setActiveForeground(Color newActiveForeground) {
 		activeForeground = newActiveForeground;
 	}
 	/**

@@ -3,7 +3,6 @@ package org.eclipse.help.internal.ui.util;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.ui.*;
 import org.eclipse.help.internal.util.HelpPreferences;
@@ -14,7 +13,6 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.help.WorkbenchHelp;
-
 /**
  * This class implements a sample preference page that is 
  * added to the preference dialog based on the registration.
@@ -22,21 +20,14 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class HelpPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage, Listener {
-	private Button radioButtonLocal;
-	private Button radioButtonClient;
 	private Text textServerAddr;
 	private Text textServerPort;
-	private Text textServerPath;
-
 	private Button radioButtonError;
 	private Button radioButtonWarning;
 	private Button radioButtonDebug;
-
 	private Text textBrowserPath; // on linux only
-
 	private Button radioButtonLocalServerAutomatic;
 	private Button radioButtonLocalServerManual;
-
 	/**
 	 * Creates an new checkbox instance and sets the default
 	 * layout data.
@@ -62,14 +53,12 @@ public class HelpPreferencePage
 	 */
 	private Composite createComposite(Composite parent, int numColumns) {
 		Composite composite = new Composite(parent, SWT.NULL);
-
 		//GridLayout
 		GridLayout layout = new GridLayout();
 		layout.numColumns = numColumns;
 		layout.verticalSpacing = 1;
-		layout.marginHeight=2;
+		layout.marginHeight = 2;
 		composite.setLayout(layout);
-
 		//GridData
 		GridData data = new GridData();
 		data.verticalAlignment = GridData.FILL;
@@ -84,98 +73,15 @@ public class HelpPreferencePage
 	 * @param parent  the parent for the preference page
 	 */
 	protected Control createContents(Composite parent) {
-		WorkbenchHelp.setHelp(
-			parent,
-			new String[] { IHelpUIConstants.PREF_PAGE });
-
-		/* Installation Options */
-		//composite_tab << parent
-		Composite composite_tab = createComposite(parent, 1);
-		WorkbenchHelp.setHelp(
-			composite_tab,
-			new String[] {
-				IHelpUIConstants.INSTALL_OPTIONS,
-				IHelpUIConstants.PREF_PAGE});
-
-		Label label1 =
-			createLabel(
-				composite_tab,
-				WorkbenchResources.getString("Installation_Options"),
-				1);
-
-		//radio button composite << tab composite
-		Composite composite_radioButton = createComposite(composite_tab, 2);
-		radioButtonLocal =
-			createRadioButton(
-				composite_radioButton,
-				WorkbenchResources.getString("Local_install"));
-		tabForward(composite_radioButton);
-		radioButtonLocal.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent event) {
-				if (((Button) event.widget).getSelection()) {
-					textServerPath.setEnabled(false);
-				}
-			}
-			public void widgetDefaultSelected(SelectionEvent event) {
-				widgetSelected(event);
-			}
-		});
-
-		radioButtonClient =
-			createRadioButton(
-				composite_radioButton,
-				WorkbenchResources.getString("Client_only"));
-		tabForward(composite_radioButton);
-		radioButtonClient.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent event) {
-				if (((Button) event.widget).getSelection()) {
-					textServerPath.setEnabled(true);
-				}
-			}
-			public void widgetDefaultSelected(SelectionEvent event) {
-				widgetSelected(event);
-			}
-		});
-
-		Label label_textField =
-			createLabel(
-				composite_radioButton,
-				WorkbenchResources.getString("Server_path"),
-				1);
-		textServerPath = createTextField(composite_radioButton);
-
-		/* Browser Path */
-		if (!System.getProperty("os.name").startsWith("Win")) {
-			Composite composite_textField2 = createComposite(parent, 2);
-			WorkbenchHelp.setHelp(
-				composite_textField2,
-				new String[] {
-					IHelpUIConstants.BROWSER_PATH,
-					IHelpUIConstants.PREF_PAGE});
-
-			label_textField =
-				createLabel(
-					composite_textField2,
-					WorkbenchResources.getString("Browser_path"),
-					1);
-			textBrowserPath = createTextField(composite_textField2);
-		}
-
-		/* Advanced Group */
-		Group advancedGroup =
-			createGroup(parent, WorkbenchResources.getString("Advanced_Properties"));
-
+		WorkbenchHelp.setHelp(parent, new String[] { IHelpUIConstants.PREF_PAGE });
 		/* Loggin Options */
 		//composite_tab2 << parent
-		Composite composite_tab2 = createComposite(advancedGroup, 1);
+		Composite composite_tab2 = createComposite(parent, 1);
 		WorkbenchHelp.setHelp(
 			composite_tab2,
-			new String[] {
-				IHelpUIConstants.LOGGING_OPTIONS,
-				IHelpUIConstants.PREF_PAGE});
+			new String[] { IHelpUIConstants.LOGGING_OPTIONS, IHelpUIConstants.PREF_PAGE });
 		Label label2 =
 			createLabel(composite_tab2, WorkbenchResources.getString("Logging_Options"), 1);
-
 		//composite_checkBox << composite_tab2
 		Composite composite_radioButton2 = createComposite(composite_tab2, 1);
 		radioButtonError =
@@ -190,21 +96,19 @@ public class HelpPreferencePage
 			createRadioButton(
 				composite_radioButton2,
 				WorkbenchResources.getString("Everything"));
-
 		/* Local Server Configuration */
 		//composite_tab3 << parent
-		Composite composite_tab3 = createComposite(advancedGroup, 1);
+		Composite composite_tab3 = createComposite(parent, 1);
 		WorkbenchHelp.setHelp(
 			composite_tab3,
 			new String[] {
 				IHelpUIConstants.LOCAL_SERVER_CONFIG,
-				IHelpUIConstants.PREF_PAGE});
+				IHelpUIConstants.PREF_PAGE });
 		Label label31 =
 			createLabel(
 				composite_tab3,
 				WorkbenchResources.getString("Local_server_config"),
 				1);
-
 		//radio button composite << tab composite
 		Composite composite_radioButton3 = createComposite(composite_tab3, 2);
 		radioButtonLocalServerAutomatic =
@@ -223,7 +127,6 @@ public class HelpPreferencePage
 				widgetSelected(event);
 			}
 		});
-
 		radioButtonLocalServerManual =
 			createRadioButton(
 				composite_radioButton3,
@@ -240,48 +143,21 @@ public class HelpPreferencePage
 				widgetSelected(event);
 			}
 		});
-		label_textField =
+		Label label_textField =
 			createLabel(
 				composite_radioButton3,
 				WorkbenchResources.getString("Server_address"),
 				1);
 		textServerAddr = createTextField(composite_radioButton3);
-
 		label_textField =
 			createLabel(
 				composite_radioButton3,
 				WorkbenchResources.getString("Server_port"),
 				1);
 		textServerPort = createTextField(composite_radioButton3);
-
 		initializeValues();
-
 		//font = null;
 		return new Composite(parent, SWT.NULL);
-	}
-	/**
-	 * Utility method that creates a group instance
-	 * and sets the default layout data.
-	 *
-	 * @param parent  the parent for the new button
-	 * @param label  the label for the new group
-	 * @return the newly-created group
-	 */
-	private Group createGroup(Composite parent, String label) {
-		Group group = new Group(parent, SWT.SHADOW_NONE);
-		group.setText(label);
-		GridLayout layout = new GridLayout();
-		layout.verticalSpacing = 1;		
-		layout.marginHeight=2;
-		group.setLayout(layout);
-		//GridData
-		GridData data = new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;
-		group.setLayoutData(data);
-
-		return group;
 	}
 	/**
 	 * Utility method that creates a label instance
@@ -371,14 +247,14 @@ public class HelpPreferencePage
 	 * in the preference store.
 	 */
 	private void initializeDefaults() {
-		HelpPreferences store=HelpSystem.getPreferences();
-
+		HelpPreferences store = HelpSystem.getPreferences();
 		// Local Help Server Configuration
 		radioButtonLocalServerAutomatic.setSelection(false);
 		radioButtonLocalServerManual.setSelection(false);
 		textServerAddr.setEnabled(false);
 		textServerPort.setEnabled(false);
-		int serverConfigChoice = store.getDefaultInt(HelpPreferences.LOCAL_SERVER_CONFIG);
+		int serverConfigChoice =
+			store.getDefaultInt(HelpPreferences.LOCAL_SERVER_CONFIG);
 		switch (serverConfigChoice) {
 			case 0 :
 				radioButtonLocalServerAutomatic.setSelection(true);
@@ -389,29 +265,14 @@ public class HelpPreferencePage
 				textServerPort.setEnabled(true);
 				break;
 		}
-		textServerAddr.setText(store.getDefaultString(HelpPreferences.LOCAL_SERVER_ADDRESS_KEY));
-		textServerPort.setText(store.getDefaultString(HelpPreferences.LOCAL_SERVER_PORT_KEY));
-
-		// Documentation local/remote
-		radioButtonLocal.setSelection(false);
-		radioButtonClient.setSelection(false);
-		int choice = store.getDefaultInt(HelpPreferences.INSTALL_OPTION_KEY);
-		switch (choice) {
-			case 0 :
-				radioButtonLocal.setSelection(true);
-				textServerPath.setEnabled(false);
-				break;
-			case 1 :
-				radioButtonClient.setSelection(true);
-				textServerPath.setEnabled(true);
-				break;
-		}
-		textServerPath.setText(store.getDefaultString(HelpPreferences.SERVER_PATH_KEY));
-
+		textServerAddr.setText(
+			store.getDefaultString(HelpPreferences.LOCAL_SERVER_ADDRESS_KEY));
+		textServerPort.setText(
+			store.getDefaultString(HelpPreferences.LOCAL_SERVER_PORT_KEY));
 		radioButtonError.setSelection(false);
 		radioButtonWarning.setSelection(false);
 		radioButtonDebug.setSelection(false);
-		choice = store.getDefaultInt(HelpPreferences.LOG_LEVEL_KEY);
+		int choice = store.getDefaultInt(HelpPreferences.LOG_LEVEL_KEY);
 		switch (choice) {
 			case HelpSystem.LOG_ERROR :
 				radioButtonError.setSelection(true);
@@ -423,17 +284,16 @@ public class HelpPreferencePage
 				radioButtonDebug.setSelection(true);
 				break;
 		}
-
 		if (!System.getProperty("os.name").startsWith("Win")) {
-			textBrowserPath.setText(store.getDefaultString(HelpPreferences.BROWSER_PATH_KEY));
+			textBrowserPath.setText(
+				store.getDefaultString(HelpPreferences.BROWSER_PATH_KEY));
 		}
 	}
 	/**
 	 * Initializes states of the controls from the preference store.
 	 */
 	private void initializeValues() {
-		HelpPreferences store=HelpSystem.getPreferences();
-
+		HelpPreferences store = HelpSystem.getPreferences();
 		// Local Help Server Configuration
 		radioButtonLocalServerAutomatic.setSelection(false);
 		radioButtonLocalServerManual.setSelection(false);
@@ -450,29 +310,13 @@ public class HelpPreferencePage
 				textServerPort.setEnabled(true);
 				break;
 		}
-		textServerAddr.setText(store.getString(HelpPreferences.LOCAL_SERVER_ADDRESS_KEY));
+		textServerAddr.setText(
+			store.getString(HelpPreferences.LOCAL_SERVER_ADDRESS_KEY));
 		textServerPort.setText(store.getString(HelpPreferences.LOCAL_SERVER_PORT_KEY));
-
-		// Documentation local/remote
-		radioButtonLocal.setSelection(false);
-		radioButtonClient.setSelection(false);
-		int choice = store.getInt(HelpPreferences.INSTALL_OPTION_KEY);
-		switch (choice) {
-			case 0 :
-				radioButtonLocal.setSelection(true);
-				textServerPath.setEnabled(false);
-				break;
-			case 1 :
-				radioButtonClient.setSelection(true);
-				textServerPath.setEnabled(true);
-				break;
-		}
-		textServerPath.setText(store.getString(HelpPreferences.SERVER_PATH_KEY));
-
 		radioButtonError.setSelection(false);
 		radioButtonWarning.setSelection(false);
 		radioButtonDebug.setSelection(false);
-		choice = store.getInt(HelpPreferences.LOG_LEVEL_KEY);
+		int choice = store.getInt(HelpPreferences.LOG_LEVEL_KEY);
 		switch (choice) {
 			case HelpSystem.LOG_ERROR :
 				radioButtonError.setSelection(true);
@@ -484,7 +328,6 @@ public class HelpPreferencePage
 				radioButtonDebug.setSelection(true);
 				break;
 		}
-
 		if (!System.getProperty("os.name").startsWith("Win")) {
 			textBrowserPath.setText(store.getString(HelpPreferences.BROWSER_PATH_KEY));
 		}
@@ -509,37 +352,29 @@ public class HelpPreferencePage
 	 * Stores the values of the controls back to the preference store.
 	 */
 	private void storeValues() {
-		HelpPreferences store=HelpSystem.getPreferences();
-
+		// use the old preferences object
+		HelpPreferences store = HelpSystem.getPreferences();
 		int choice = 0;
-		if (radioButtonClient.getSelection())
-			choice = 1;
-		//else if (radioButtonServer.getSelection()) choice = 2;
-		store.setValue(HelpPreferences.INSTALL_OPTION_KEY, choice);
-
-		choice = 0;
 		if (radioButtonLocalServerManual.getSelection())
 			choice = 1;
 		store.setValue(HelpPreferences.LOCAL_SERVER_CONFIG, choice);
-
-		store.setValue(HelpPreferences.LOCAL_SERVER_ADDRESS_KEY, textServerAddr.getText());
+		store.setValue(
+			HelpPreferences.LOCAL_SERVER_ADDRESS_KEY,
+			textServerAddr.getText());
 		store.setValue(HelpPreferences.LOCAL_SERVER_PORT_KEY, textServerPort.getText());
-		store.setValue(HelpPreferences.SERVER_PATH_KEY, textServerPath.getText());
-
 		choice = 0;
 		if (radioButtonWarning.getSelection())
 			choice = 1;
-		else
-			if (radioButtonDebug.getSelection())
-				choice = 2;
+		else if (radioButtonDebug.getSelection())
+			choice = 2;
 		store.setValue(HelpPreferences.LOG_LEVEL_KEY, choice);
 		HelpSystem.setDebugLevel(choice);
-
 		if (!System.getProperty("os.name").startsWith("Win")) {
 			store.setValue(HelpPreferences.BROWSER_PATH_KEY, textBrowserPath.getText());
 		}
-		// set the value in the current session 
-		//WorkbenchHelpPlugin.getDefault().initializeFromStore();
+		// trigger updating values in the rest of help
+		HelpSystem.setPreferences(store);
+		// store is saved on help plugin shutdown
 	}
 	/**
 	 * Creates a tab of one horizontal spans.

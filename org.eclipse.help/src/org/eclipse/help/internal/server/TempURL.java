@@ -8,7 +8,6 @@ package org.eclipse.help.internal.server;
 import java.io.*;
 
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.util.TableOfContentsGenerator;
 
 /**
  * URL to files in the plugin's working directory, as well as
@@ -29,37 +28,11 @@ public class TempURL extends HelpURL {
 	public TempURL(String url, String query) {
 		super(url, query);
 	}
-	/** 
-	 * generates a Table Of Contents as an InputStream
-	 */
-	private InputStream generateTableOfContents() {
-		// delegate to the TableOfContentsGenerator
-		String infosetId = getValue("infosetId");
-		String viewId = getValue("viewId");
-		String topicId = getValue("topicId");
-		TableOfContentsGenerator generator = new TableOfContentsGenerator();
-		return generator.generateTableOfContents(infosetId, viewId, topicId);
-
-	}
-	public String getContentType() {
-		//** this is a special case for a Table Of Contents url
-		//** need to override parent behavior
-		if (isTableOfContentsURL())
-			return "text/html";
-		else
-			return super.getContentType();
-	}
 	/**
 	 * Returns the path prefix that identifies the URL. 
 	 */
 	public static String getPrefix() {
 		return "temp";
-	}
-	public boolean isTableOfContentsURL() {
-		if (url.startsWith(TABLE_OF_CONTENTS_PREFIX))
-			return true;
-		else
-			return false;
 	}
 	/**
 	 * Opens a stream for reading.
@@ -69,12 +42,7 @@ public class TempURL extends HelpURL {
 	public InputStream openStream() {
 		// Ensure that navigation has been generated
 		// important on the server
-		HelpSystem.getNavigationManager();
-
-		// First check if this is a special "Table Of Contents" request.
-		// If it is, do HTML generation on the client.
-		if (isTableOfContentsURL())
-			return generateTableOfContents();
+		HelpSystem.getTopicsNavigationManager();
 
 		String path =
 			HelpPlugin.getDefault().getStateLocation().toFile().getAbsolutePath().replace(

@@ -9,10 +9,9 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.ole.win32.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.util.Logger;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.help.internal.ui.*;
-import org.eclipse.help.internal.contributions.Topic;
 
 /**
  * ActiveX based web browser control.
@@ -83,8 +82,6 @@ public class WebBrowser implements OleListener, IBrowser {
 	// The OLE frame (there should only be one)
 	private OleFrame controlFrame;
 
-	private NestedPrintDelegate aPrintDelegate = null;
-
 	/**
 	 */
 	public WebBrowser(Composite parent) throws HelpWorkbenchException {
@@ -110,15 +107,12 @@ public class WebBrowser implements OleListener, IBrowser {
 			// initialize control
 			controlSite.doVerb(OLE.OLEIVERB_SHOW);
 
-			// create print Delegate (has to be done early, here!).
-			aPrintDelegate = new NestedPrintDelegate(this, oleObject, controlSite);
-
 		} catch (Exception e) {
 			// Display and log error, then delegate to parent UI class. 
 			// The actual translated message goes all the way back to the calling
 			// UI class, for display.
 			String msg = WorkbenchResources.getString("WE001");
-			Util.displayErrorDialog(msg, e);
+			ErrorUtil.displayErrorDialog(msg, e);
 			throw new HelpWorkbenchException(msg);
 		}
 
@@ -377,24 +371,6 @@ public class WebBrowser implements OleListener, IBrowser {
 		if (Logger.DEBUG)
 			Logger.logDebugMessage("WebBrowser", "exec returns: " + Integer.toString(result));
 		return result;
-	}
-	/*
-	 * Print a List of Topics
-	 */
-	public void printFullTopic(Topic rootTopic) {
-		try {
-			// now delegate action
-			if (aPrintDelegate != null) {
-				aPrintDelegate.printFullTopic(rootTopic);
-			}
-
-			if (Logger.DEBUG)
-				Logger.logDebugMessage("WebBrowser", "printTopicTree about to exit");
-
-		} catch (Exception e) {
-
-		}
-
 	}
 	/**
 	 * Refresh the currently viewed page.

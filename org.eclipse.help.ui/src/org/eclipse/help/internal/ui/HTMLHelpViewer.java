@@ -3,28 +3,21 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
-import java.util.*;
 import java.net.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.jface.*;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.help.internal.contributions.*;
-import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.ui.util.*;
-import org.eclipse.help.internal.util.Resources;
-import org.eclipse.help.internal.util.TString;
+import java.util.Locale;
 
+import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.contributions1_0.Contribution;
+import org.eclipse.help.internal.ui.util.*;
+import org.eclipse.help.topics.*;
+import org.eclipse.jface.viewers.*;
+import org.eclipse.swt.widgets.*;
 /**
  * Help viewer based on the IE5 ActiveX component.
  */
 public class HTMLHelpViewer implements ISelectionChangedListener {
-	private final static String defaultSplash = 
-		"/org.eclipse.help/" + Resources.getString("splash_location");
+	private final static String defaultSplash =
+		"/org.eclipse.help/" + WorkbenchResources.getString("splash_location");
 	private IBrowser webBrowser;
 	/**
 	 * HelpViewer constructor comment.
@@ -37,18 +30,14 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 	 */
 	protected Control createControl(Composite parent)
 		throws HelpWorkbenchException {
-
 		Contribution url = null;
-
 		String factoryClass = "org.eclipse.help.internal.ui.win32.BrowserFactory";
 		try {
 			if (!System.getProperty("os.name").startsWith("Win"))
 				factoryClass =
 					factoryClass = "org.eclipse.help.internal.ui.motif.BrowserFactory";
-
 			Class c = Class.forName(factoryClass);
 			IBrowserFactory factory = (IBrowserFactory) c.newInstance();
-
 			// this could throw a HelpDesktopException
 			webBrowser = factory.createBrowser(parent);
 			/*
@@ -58,16 +47,13 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 					IHelpUIConstants.BROWSER,
 					IHelpUIConstants.EMBEDDED_HELP_VIEW});
 			*/
-
 			return webBrowser.getControl();
 		} catch (HelpWorkbenchException e) {
 			// delegate to calling class
 			throw e;
-
 		} catch (Exception e) {
 			// worst case scenario. Should never be here!
 			throw new HelpWorkbenchException(WorkbenchResources.getString("WE001"));
-
 		}
 	}
 	public Control getControl() {
@@ -88,32 +74,31 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 	protected void navigate(Object input) {
 		if (input == null || webBrowser == null)
 			return;
-		
 		// use the client locale to load the correct document
 		String locale = Locale.getDefault().toString();
-		
-		if (input instanceof Topic) {
-			Topic topicElement = (Topic) input;
-			String url = topicElement.getHref();
+		if (input instanceof ITopic || input instanceof String) {
+			String url;
+			if(input instanceof ITopic){
+				ITopic topicElement = (ITopic) input;
+				url = topicElement.getHref();
+			}else{
+				url=(String)input;
+			}
 			if (url == null || url.equals(""))
 				return; // no content in this topic
 			// Check for fragments
 			int fragmentIndex = url.indexOf('#');
 			String fragment = null;
-			if (fragmentIndex != -1)
-			{
+			if (fragmentIndex != -1) {
 				fragment = url.substring(fragmentIndex);
 				url = url.substring(0, fragmentIndex);
 			}
-			
-			if (url.indexOf("?resultof=") != -1) 
-				url = url+"&lang=" + locale;
-			else 
+			if (url.indexOf("?resultof=") != -1)
+				url = url + "&lang=" + locale;
+			else
 				url = url + "?lang=" + locale;
-			
 			if (fragment != null)
 				url = url + fragment;
-				
 			if (url.indexOf("http:") == -1) {
 				try {
 					url = (new URL(HelpSystem.getLocalHelpServerURL(), url)).toExternalForm();
@@ -121,25 +106,22 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 				}
 			}
 			webBrowser.navigate(url);
-		} else
-			if (input instanceof InfoSet) {
-				InfoSet infoset = (InfoSet) input;
-				String url = infoset.getHref();
-				if (url == null || url.equals(""))
-					url = defaultSplash 
-					    + "?title="+URLEncoder.encode(TString.getUnicodeNumbers(infoset.getLabel()))
-					    + "&lang=" + locale;
-				else
-					url = url+ "?lang=" + locale;
-					
-				if (url.indexOf("http:") == -1) {
-					try {
-						url = (new URL(HelpSystem.getLocalHelpServerURL(), url)).toExternalForm();
-					} catch (MalformedURLException mue) {
-					}
+		} else if (input instanceof ITopics) {
+			ITopics topics = (ITopics) input;
+			String url =
+				defaultSplash
+					+ "?title="
+					+ URLEncoder.encode(TString.getUnicodeNumbers(topics.getLabel()))
+					+ "&lang="
+					+ locale;
+			if (url.indexOf("http:") == -1) {
+				try {
+					url = (new URL(HelpSystem.getLocalHelpServerURL(), url)).toExternalForm();
+				} catch (MalformedURLException mue) {
 				}
-				webBrowser.navigate(url);
 			}
+			webBrowser.navigate(url);
+		}
 	}
 	/**
 	 * Notifies that the selection has changed.

@@ -5,8 +5,8 @@ package org.eclipse.help.internal.ui.motif;
  */
 import java.io.IOException;
 
+import org.eclipse.help.topics.ITopic;
 import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.contributions.Topic;
 import org.eclipse.help.internal.ui.IBrowser;
 import org.eclipse.help.internal.ui.util.StreamConsumer;
 import org.eclipse.swt.SWT;
@@ -121,7 +121,7 @@ class WebBrowser implements IBrowser {
 	/**
 	 * Print a Topic and all it's children.
 	 */
-	public void printFullTopic(Topic rootTopic) {
+	public void printFullTopic(ITopic rootTopic) {
 		// This feature is temporarily not supported on Linux.      
 	}
 }

@@ -3,22 +3,17 @@ package org.eclipse.help.internal.ui.util;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.jface.dialogs.*;
-
 /**
  * This is the Dialog box that displays all the errors the occur during the
  * initial load of the Help System. It's data (model) is taken from the
  * RuntimeHelpStatus object.
  */
-
 public class RuntimeErrorDialog extends MessageDialog {
 	private static String errorStringToDisplay = null;
-
 	/**
 	 * RuntimeErrorDialog constructor comment.
 	 * @param dialogTitle java.lang.String
@@ -46,7 +41,6 @@ public class RuntimeErrorDialog extends MessageDialog {
 			defaultIndex);
 	}
 	protected Control createCustomArea(Composite parent) {
-
 		Composite composite = new Composite(parent, SWT.RESIZE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -58,7 +52,6 @@ public class RuntimeErrorDialog extends MessageDialog {
 			convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
 		// set error message
 		if (errorStringToDisplay != null) {
 			Text text =
@@ -79,10 +72,8 @@ public class RuntimeErrorDialog extends MessageDialog {
 				data.heightHint = convertVerticalDLUsToPixels(100);
 			text.setLayoutData(data);
 			text.setBackground(composite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-
 		}
 		return composite;
-
 	}
 	public static void open(
 		Shell parentShell,
@@ -90,16 +81,10 @@ public class RuntimeErrorDialog extends MessageDialog {
 		String message,
 		String errorString) {
 		errorStringToDisplay = errorString;
-			RuntimeErrorDialog dialog =
-				new RuntimeErrorDialog(
-					parentShell,
-					title,
-					null,
-		// accept the default window icon
+		RuntimeErrorDialog dialog = new RuntimeErrorDialog(parentShell, title, null,			// accept the default window icon
 	message, ERROR, new String[] { IDialogConstants.OK_LABEL }, 0);
 		// ok is the default
 		dialog.open();
 		return;
-
 	}
 }

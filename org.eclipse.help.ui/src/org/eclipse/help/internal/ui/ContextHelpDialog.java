@@ -3,8 +3,6 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
 import java.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.*;
@@ -16,90 +14,32 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.help.internal.contributors.ContextManager;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.help.internal.util.*;
-
+import org.eclipse.help.internal.context.*;
 /**
  * ContextHelpDialog
  */
 public class ContextHelpDialog implements Runnable {
-
-	private Cursor defaultCursor = null;
-	private Cursor waitCursor = null;
-	private ContextManager cmgr = HelpSystem.getContextManager();
-	private Object contexts[];
-	private IHelpTopic farRelatedTopics[] = new IHelpTopic[0];
-	private Thread getMoreRelatedTopicsThread = null;
-	private Map menuItems;
-	private IHelpTopic relatedTopics[] = null;
-
-	// TO DO:
-	// Register these resources with the HelpSystem and have them disposed
+	private final static String IMAGE_MORE = "moreImage";
 	private Color backgroundColour = null;
+	private IContextManager cmgr = HelpSystem.getContextManager();
+	private Object contexts[];
+	private Cursor defaultCursor = null;
+	private IHelpTopic farRelatedTopics[] = new IHelpTopic[0];
 	private Color foregroundColour = null;
+	private Thread getMoreRelatedTopicsThread = null;
+	private static ImageRegistry imgRegistry = null;
 	private Color linkColour = null;
 	private static HyperlinkHandler linkManager = new HyperlinkHandler();
-
-	private final static String IMAGE_MORE = "moreImage";
-	private static ImageRegistry imgRegistry = null;
-
+	private Map menuItems;
+	private IHelpTopic relatedTopics[] = null;
 	private Shell shell;
-
+	private Cursor waitCursor = null;
 	private int x;
 	private int y;
-
-	class LinkListener extends HyperlinkAdapter {
-		IHelpTopic topic;
-
-		public LinkListener(IHelpTopic topic) {
-			this.topic = topic;
-		}
-		public void linkActivated(Control c) {
-			launchFullViewHelp(topic);
-		}
-	}
-
-	class MenuItemsListener implements SelectionListener {
-		public void widgetSelected(SelectionEvent e) {
-			IHelpTopic t = (IHelpTopic) menuItems.get(e.widget);
-			shell.close();
-			launchFullViewHelp(t);
-		}
-		public void widgetDefaultSelected(SelectionEvent e) {
-			widgetSelected(e);
-		}
-	}
-
-	class ShowMoreListener implements Listener {
-		public void handleEvent(Event e) {
-			if (e.type == SWT.MouseDown) {
-				if (getMoreRelatedTopicsThread != null &&
-				    getMoreRelatedTopicsThread.isAlive()) 
-				{
-					Display d = shell.getDisplay();
-					if (waitCursor == null)
-						waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
-					if(e.widget instanceof Control)
-						((Control)e.widget).setCursor(waitCursor);
-					try {
-						getMoreRelatedTopicsThread.join();
-					} catch (InterruptedException ie) {
-						return;
-					}
-					if (defaultCursor == null)
-						defaultCursor = new Cursor(d, SWT.CURSOR_ARROW);
-					if(e.widget instanceof Control)
-						((Control) e.widget).setCursor(defaultCursor);
-				}
-
-				showMoreLinks();
-			}
-		}
-	}
-
 	/**
 	 * Constructor:
 	 * @param context an array of String or an array of IContext
@@ -110,28 +50,22 @@ public class ContextHelpDialog implements Runnable {
 		this.contexts = contexts;
 		this.x = x;
 		this.y = y;
-
 		Display display = Display.getCurrent();
 		backgroundColour = display.getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 		foregroundColour = display.getSystemColor(SWT.COLOR_INFO_FOREGROUND);
 		linkColour = display.getSystemColor(SWT.COLOR_BLUE);
-
 		if (imgRegistry == null) {
 			imgRegistry = WorkbenchHelpPlugin.getDefault().getImageRegistry();
 			imgRegistry.put(
 				IMAGE_MORE,
 				ImageDescriptor.createFromURL(WorkbenchResources.getImagePath("moreImage")));
 		}
-
 		shell = new Shell(display.getActiveShell(), SWT.NONE);
-
 		if (Logger.DEBUG)
 			Logger.logDebugMessage(
 				"ContextHelpDialog",
 				" Constructor: Shell is:" + shell.toString());
-
 		WorkbenchHelp.setHelp(shell, new String[] { IHelpUIConstants.F1_SHELL });
-
 		shell.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				if (Logger.DEBUG)
@@ -142,7 +76,6 @@ public class ContextHelpDialog implements Runnable {
 					defaultCursor.dispose();
 			}
 		});
-
 		// This is commented out for now because it does not work on Linux
 		// Using addListener for now.
 		/*shell.addShellListener(new ShellAdapter() {
@@ -154,7 +87,6 @@ public class ContextHelpDialog implements Runnable {
 				});
 			}
 		});*/
-
 		shell.addListener(SWT.Deactivate, new Listener() {
 			public void handleEvent(Event e) {
 				if (Logger.DEBUG)
@@ -164,7 +96,6 @@ public class ContextHelpDialog implements Runnable {
 				close();
 			};
 		});
-
 		shell.addControlListener(new ControlAdapter() {
 			public void controlMoved(ControlEvent e) {
 				if (Logger.DEBUG)
@@ -179,19 +110,14 @@ public class ContextHelpDialog implements Runnable {
 				shell.update();
 			}
 		});
-
 		if (Logger.DEBUG)
 			Logger.logDebugMessage(
 				"ContextHelpDialog",
 				"Constructor: Focus owner is: "
 					+ Display.getCurrent().getFocusControl().toString());
-
 		linkManager.setHyperlinkUnderlineMode(HyperlinkHandler.UNDERLINE_ROLLOVER);
-
 		createContents(shell);
-
 		shell.pack();
-
 		// Correct x and y of the shell if it not contained within the screen
 		int width = shell.getBounds().width;
 		int height = shell.getBounds().height;
@@ -205,9 +131,7 @@ public class ContextHelpDialog implements Runnable {
 		Rectangle screen = display.getBounds();
 		x = x + width <= screen.width ? x : screen.width - width;
 		y = y + height <= screen.height - margin ? y : screen.height - margin - height;
-
 		shell.setLocation(x, y);
-
 	}
 	public synchronized void close() {
 		try {
@@ -219,7 +143,6 @@ public class ContextHelpDialog implements Runnable {
 					shell.dispose();
 				shell = null;
 			}
-
 			if (getMoreRelatedTopicsThread != null
 				&& getMoreRelatedTopicsThread.isAlive()) {
 				try {
@@ -233,65 +156,52 @@ public class ContextHelpDialog implements Runnable {
 	/**
 	 */
 	protected Control createContents(Composite contents) {
-
 		contents.setBackground(backgroundColour);
-
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 5;
 		layout.marginWidth = 5;
 		contents.setLayout(layout);
 		contents.setLayoutData(new GridData(GridData.FILL_BOTH));
-
 		// create the dialog area and button bar
 		createInfoArea(contents);
 		createLinksArea(contents);
 		if (contexts != null && contexts.length > 1)
 			createMoreButton(contents);
-
 		// if any errors or parsing errors have occurred, display them in a pop-up
-		Util.displayStatus();
-
+		ErrorUtil.displayStatus();
 		return contents;
 	}
 	private Control createInfoArea(Composite parent) {
-	
 		// Create the text field.    
 		String styledText = cmgr.getDescription(contexts);
-		if (styledText == null) 
-			// no description found in context objects.
+		if (styledText == null)			// no description found in context objects.
 			styledText = WorkbenchResources.getString("WW002");
-		StyledText text = new StyledText(parent, SWT.MULTI|SWT.READ_ONLY|SWT.WRAP);
+		StyledText text = new StyledText(parent, SWT.MULTI | SWT.READ_ONLY | SWT.WRAP);
 		text.getCaret().setVisible(false);
 		text.setBackground(backgroundColour);
 		text.setForeground(foregroundColour);
 		StyledLineWrapper content = new StyledLineWrapper(styledText);
 		text.setContent(content);
 		text.setStyleRanges(content.getStyles());
-		
 		return text;
 	}
-	
 	private Control createLink(Composite parent, IHelpTopic topic) {
 		Label image = new Label(parent, SWT.NONE);
 		image.setImage(ElementLabelProvider.getDefault().getImage(topic));
 		image.setBackground(backgroundColour);
-
 		GridData data = new GridData();
 		data.horizontalAlignment = data.HORIZONTAL_ALIGN_BEGINNING;
 		data.verticalAlignment = data.VERTICAL_ALIGN_BEGINNING;
 		//data.horizontalIndent = 4;
 		image.setLayoutData(data);
-		
 		Label link = new Label(parent, SWT.NONE);
 		link.setText(topic.getLabel());
 		link.setBackground(backgroundColour);
 		link.setForeground(linkColour);
-
 		data = new GridData();
 		data.horizontalAlignment = data.HORIZONTAL_ALIGN_BEGINNING;
 		data.verticalAlignment = data.VERTICAL_ALIGN_BEGINNING;
 		link.setLayoutData(data);
-
 		linkManager.registerHyperlink(link, new LinkListener(topic));
 		return link;
 	}
@@ -299,15 +209,11 @@ public class ContextHelpDialog implements Runnable {
 		// get links from first context with links
 		relatedTopics = cmgr.getRelatedTopics(contexts);
 		relatedTopics = removeDuplicates(relatedTopics);
-
-		if (relatedTopics == null)
-			// none of the contexts have Topics
+		if (relatedTopics == null)			// none of the contexts have Topics
 			return null;
-
 		// Create control
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setBackground(backgroundColour);
-
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 2;
 		layout.marginWidth = 0;
@@ -315,19 +221,16 @@ public class ContextHelpDialog implements Runnable {
 		layout.horizontalSpacing = 2;
 		layout.numColumns = 2;
 		composite.setLayout(layout);
-
 		GridData data =
 			new GridData(
 				GridData.FILL_BOTH
 					| GridData.HORIZONTAL_ALIGN_BEGINNING
 					| GridData.VERTICAL_ALIGN_CENTER);
 		composite.setLayoutData(data);
-
 		// Create separator.    
 		Label label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);
 		label.setBackground(backgroundColour);
 		label.setForeground(foregroundColour);
-
 		data =
 			new GridData(
 				GridData.HORIZONTAL_ALIGN_BEGINNING
@@ -335,26 +238,43 @@ public class ContextHelpDialog implements Runnable {
 					| GridData.FILL_HORIZONTAL);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
-
 		// Create related links
 		for (int i = 0; i < relatedTopics.length; i++) {
 			createLink(composite, relatedTopics[i]);
 		}
-
 		return composite;
 	}
-
 	private void createMoreButton(Composite parent) {
 		// Create Show More button
 		CLabel showMoreButton = new CLabel(parent, SWT.NONE);
 		showMoreButton.setBackground(backgroundColour);
 		showMoreButton.setImage(imgRegistry.get(IMAGE_MORE));
-
 		Listener l = new ShowMoreListener();
 		showMoreButton.addListener(SWT.MouseDown, l);
-
 		// Before returning start thread obtaining more related links in the bacground
 		getMoreRelatedTopicsInBackground();
+	}
+	/**
+	 * Check if two context topic are the same.
+	 * They are considered the same if both labels and href are equal
+	 */
+	private boolean equal(IHelpTopic topic1, IHelpTopic topic2) {
+		return topic1.getHref().equals(topic2.getHref())
+			&& topic1.getLabel().equals(topic2.getLabel());
+	}
+	/**
+	 * Returns the list of all related topics
+	 */
+	private IHelpTopic[] getAllRelatedTopics() {
+		// group related topics, and far related topics together
+		int len1 = relatedTopics == null ? 0 : relatedTopics.length;
+		int len2 = farRelatedTopics == null ? 0 : farRelatedTopics.length;
+		IHelpTopic allTopics[] = new IHelpTopic[len1 + len2];
+		if (len1 > 0)
+			System.arraycopy(relatedTopics, 0, allTopics, 0, len1);
+		if (len2 > 0)
+			System.arraycopy(farRelatedTopics, 0, allTopics, len1, len2);
+		return allTopics;
 	}
 	private void getMoreRelatedTopicsInBackground() {
 		getMoreRelatedTopicsThread = new Thread(this);
@@ -365,12 +285,23 @@ public class ContextHelpDialog implements Runnable {
 		getMoreRelatedTopicsThread.start();
 	}
 	/**
+	 * Checks if topic labels and href are not null and not empty strings
+	 */
+	private boolean isValidTopic(IHelpTopic topic) {
+		return topic != null
+			&& topic.getHref() != null
+			&& !"".equals(topic.getHref())
+			&& topic.getLabel() != null
+			&& !"".equals(topic.getLabel());
+	}
+	/**
+	 * Called when related link has been chosen
+	 * Opens view with list of all related topics
 	 */
 	private void launchFullViewHelp(IHelpTopic selectedTopic) {
 		// wait for more related links
-		if (getMoreRelatedTopicsThread != null &&
-		    getMoreRelatedTopicsThread.isAlive()) 
-		{
+		if (getMoreRelatedTopicsThread != null
+			&& getMoreRelatedTopicsThread.isAlive()) {
 			Display d = Display.getCurrent();
 			if (waitCursor == null)
 				waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
@@ -381,14 +312,11 @@ public class ContextHelpDialog implements Runnable {
 				return;
 			}
 		}
-
 		// now close the infopop
 		close();
 		if (Logger.DEBUG)
 			Logger.logDebugMessage("ContextHelpDialog", "launchFullViewHelp: closes shell");
-	
 		IHelpTopic[] allTopics = getAllRelatedTopics();
-		
 		// launch help view
 		DefaultHelp.getInstance().displayHelp(allTopics, selectedTopic);
 	}
@@ -400,9 +328,34 @@ public class ContextHelpDialog implements Runnable {
 					"ContextHelpDialog",
 					"open: Focus owner after open is: "
 						+ Display.getCurrent().getFocusControl().toString());
-
 		} catch (Throwable e) {
 		}
+	}
+	/**
+	 * Filters out the duplicate topics from an array
+	 */
+	private IHelpTopic[] removeDuplicates(IHelpTopic links[]) {
+		if (links == null || links.length <= 0)
+			return links;
+		ArrayList filtered = new ArrayList();
+		for (int i = 0; i < links.length; i++) {
+			IHelpTopic topic1 = links[i];
+			if (!isValidTopic(topic1))
+				continue;
+			boolean dup = false;
+			for (int j = 0; j < filtered.size(); j++) {
+				IHelpTopic topic2 = (IHelpTopic) filtered.get(j);
+				if (!isValidTopic(topic2))
+					continue;
+				if (equal(topic1, topic2)) {
+					dup = true;
+					break;
+				}
+			}
+			if (!dup)
+				filtered.add(links[i]);
+		}
+		return (IHelpTopic[]) filtered.toArray(new IHelpTopic[filtered.size()]);
 	}
 	/**
 	 * Obtains more related Links
@@ -413,11 +366,10 @@ public class ContextHelpDialog implements Runnable {
 		IHelpTopic[] temp = getAllRelatedTopics();
 		temp = removeDuplicates(temp);
 		// strip off the related links to obtain just the far related ones
-		int len1 = relatedTopics==null ? 0 : relatedTopics.length;
-		farRelatedTopics = new IHelpTopic[temp.length-len1];
-		System.arraycopy(temp, len1, farRelatedTopics, 0, temp.length-len1);
+		int len1 = relatedTopics == null ? 0 : relatedTopics.length;
+		farRelatedTopics = new IHelpTopic[temp.length - len1];
+		System.arraycopy(temp, len1, farRelatedTopics, 0, temp.length - len1);
 	}
-	
 	private void showMoreLinks() {
 		Menu menu = new Menu(shell);
 		if (farRelatedTopics == null || farRelatedTopics.length < 1) {
@@ -438,65 +390,47 @@ public class ContextHelpDialog implements Runnable {
 		}
 		menu.setVisible(true);
 	}
-	/**
-	 * Filters out the duplicate topics from an array
-	 */
-	private IHelpTopic[] removeDuplicates(IHelpTopic links[]){
-		if (links==null || links.length <=0 )
-			return links;
-		ArrayList filtered = new ArrayList();
-		for(int i=0; i<links.length;i++){
-			IHelpTopic topic1=links[i];
-			if(!isValidTopic(topic1))
-				continue;
-			boolean dup=false;
-			for(int j=0; j<filtered.size(); j++){
-				IHelpTopic topic2=(IHelpTopic)filtered.get(j);
-				if(!isValidTopic(topic2))
-					continue;
-				if(equal(topic1, topic2)){
-					dup=true;
-					break;
-				}
-			}
-			if(!dup)
-				filtered.add(links[i]);
+	class LinkListener extends HyperlinkAdapter {
+		IHelpTopic topic;
+		public LinkListener(IHelpTopic topic) {
+			this.topic = topic;
 		}
-		return (IHelpTopic[])filtered.toArray(new IHelpTopic[filtered.size()]);		
+		public void linkActivated(Control c) {
+			launchFullViewHelp(topic);
+		}
 	}
-	/**
-	 * Check if two context topic are the same.
-	 * They are considered the same if both labels and href are equal
-	 */
-	private boolean equal(IHelpTopic topic1, IHelpTopic topic2){
-		return topic1.getHref().equals( topic2.getHref() ) && topic1.getLabel().equals( topic2.getLabel() );
+	class MenuItemsListener implements SelectionListener {
+		public void widgetSelected(SelectionEvent e) {
+			IHelpTopic t = (IHelpTopic) menuItems.get(e.widget);
+			shell.close();
+			launchFullViewHelp(t);
+		}
+		public void widgetDefaultSelected(SelectionEvent e) {
+			widgetSelected(e);
+		}
 	}
-	/**
-	 * Checks if topic labels and href are not null and not empty strings
-	 */
-	private boolean isValidTopic(IHelpTopic topic){
-		return topic!=null
-			&& topic.getHref() !=null
-			&& !"".equals(topic.getHref())
-			&& topic.getLabel() != null
-			&& !"".equals(topic.getLabel());
-	}
-	
-	/**
-	 * Returns the list of all related topics
-	 */
-	private IHelpTopic[] getAllRelatedTopics()
-	{
-		// group related topics, and far related topics together
-		int len1 = relatedTopics==null?0:relatedTopics.length;
-		int len2 = farRelatedTopics==null?0:farRelatedTopics.length;
-		          
-		IHelpTopic allTopics[] = new IHelpTopic[len1+len2];
-		if (len1 > 0) 
-			System.arraycopy(relatedTopics, 0, allTopics, 0, len1);
-		if (len2 > 0)
-		    System.arraycopy(farRelatedTopics, 0, allTopics, len1,len2);
-		    
-		return allTopics;
+	class ShowMoreListener implements Listener {
+		public void handleEvent(Event e) {
+			if (e.type == SWT.MouseDown) {
+				if (getMoreRelatedTopicsThread != null
+					&& getMoreRelatedTopicsThread.isAlive()) {
+					Display d = shell.getDisplay();
+					if (waitCursor == null)
+						waitCursor = new Cursor(d, SWT.CURSOR_WAIT);
+					if (e.widget instanceof Control)
+						 ((Control) e.widget).setCursor(waitCursor);
+					try {
+						getMoreRelatedTopicsThread.join();
+					} catch (InterruptedException ie) {
+						return;
+					}
+					if (defaultCursor == null)
+						defaultCursor = new Cursor(d, SWT.CURSOR_ARROW);
+					if (e.widget instanceof Control)
+						 ((Control) e.widget).setCursor(defaultCursor);
+				}
+				showMoreLinks();
+			}
+		}
 	}
 }

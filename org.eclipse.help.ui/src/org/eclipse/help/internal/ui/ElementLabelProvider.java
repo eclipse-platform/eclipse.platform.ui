@@ -3,27 +3,22 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
 import java.util.Iterator;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.help.internal.contributions.*;
+import org.eclipse.help.IHelpTopic;
 import org.eclipse.help.internal.ui.util.WorkbenchResources;
-
+import org.eclipse.help.topics.*;
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 /**
  * Label and image provider for topic elements
  */
 public class ElementLabelProvider extends LabelProvider {
 	static ElementLabelProvider instance = null;
-
 	static final String IMAGE_TOPIC = "topic_icon";
 	static final String IMAGE_TOPIC_FOLDER = "topicfolder_icon";
 	static final String IMAGE_TOPIC_AND_FOLDER = "topicandfolder_icon";
 	static ImageRegistry imgRegistry = null;
-
 	/**
 	 * ElementLabelProvider Constructor
 	 */
@@ -47,17 +42,27 @@ public class ElementLabelProvider extends LabelProvider {
 		return instance;
 	}
 	public Image getImage(Object element) {
-		Topic topic = (Topic) element;
-		if (("".equals(topic.getHref())) || (null == topic.getHref()))
+		if (element instanceof IDescriptor) {
+			IDescriptor topic = (IDescriptor) element;
+			if (("".equals(topic.getHref())) || (null == topic.getHref()))
 				return imgRegistry.get(IMAGE_TOPIC_FOLDER);
-		else{
-			Iterator children = topic.getChildren();
-			if (children == null || !children.hasNext())
-				return imgRegistry.get(IMAGE_TOPIC);
+			else {
+				Iterator children = ((ITopicNode) topic).getChildTopics().iterator();
+				if (children == null || !children.hasNext())
+					return imgRegistry.get(IMAGE_TOPIC);
+			}
+			return imgRegistry.get(IMAGE_TOPIC_AND_FOLDER);
 		}
-		return imgRegistry.get(IMAGE_TOPIC_AND_FOLDER);
+		if (element instanceof IHelpTopic) {
+			return imgRegistry.get(IMAGE_TOPIC);
+		}
+		return null;
 	}
 	public String getText(Object element) {
-		return ((Contribution) element).getLabel();
+		if (element instanceof IDescriptor)
+			return ((IDescriptor) element).getLabel();
+		if (element instanceof IHelpTopic)
+			return ((IHelpTopic) element).getLabel();
+		return null;
 	}
 }

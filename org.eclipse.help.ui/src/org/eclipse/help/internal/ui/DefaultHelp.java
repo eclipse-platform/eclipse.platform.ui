@@ -3,17 +3,17 @@ package org.eclipse.help.internal.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-import org.eclipse.ui.*;
+import java.util.*;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.help.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.help.internal.ui.util.WorkbenchResources;
 import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.help.internal.util.Logger;
-import org.eclipse.help.internal.contributions.InfoSet;
-import org.eclipse.help.internal.ui.util.Util;
-
+import org.eclipse.help.topics.ITopics;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.*;
+import org.eclipse.help.internal.context.*;
 /**
  * This class is an implementation of the pluggable help support.
  * In is registered into the support extension point, and all 
@@ -25,7 +25,6 @@ public class DefaultHelp implements IHelp {
 	private static DefaultHelp instance;
 	private IWorkbenchPage helpPage = null;
 	private ContextHelpDialog f1Dialog = null;
-
 	/**
 	 * BaseHelpViewer constructor comment.
 	 */
@@ -34,9 +33,9 @@ public class DefaultHelp implements IHelp {
 		instance = this;
 	}
 	/**
-	 * Makes Help Page Active (visible)
+	 * Makes Help Perspective Active (visible)
 	 */
-	private void activateHelpPage() {
+	private void activateHelpPerspective() {
 		// Make Help Page active
 		IWorkbench workbench = WorkbenchHelpPlugin.getDefault().getWorkbench();
 		IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
@@ -51,10 +50,8 @@ public class DefaultHelp implements IHelp {
 	 * @param y int positioning information
 	 */
 	public void displayHelp(String[] contextIds, int x, int y) {
-
 		if (f1Dialog != null)
 			f1Dialog.close();
-
 		f1Dialog = new ContextHelpDialog(contextIds, x, y);
 		f1Dialog.open();
 	}
@@ -65,10 +62,8 @@ public class DefaultHelp implements IHelp {
 	 * @param y int positioning information
 	 */
 	public void displayHelp(IContext[] contexts, int x, int y) {
-
 		if (f1Dialog != null)
 			f1Dialog.close();
-
 		f1Dialog = new ContextHelpDialog(contexts, x, y);
 		f1Dialog.open();
 	}
@@ -80,71 +75,79 @@ public class DefaultHelp implements IHelp {
 	public void displayHelp(IHelpTopic[] relatedTopics, IHelpTopic topic) {
 		if (topic == null || topic.getHref() == null)
 			return;
-
 		// Do not start help view if documentaton is not available, display error
-		if (HelpSystem.getNavigationManager().getCurrentInfoSet() == null) {
-			Util.displayErrorDialog(WorkbenchResources.getString("WW001"));
+		if (HelpSystem.getTopicsNavigationManager().getTopicsHrefs().size() <= 0) {
+			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
+			//Documentation is not installed.
 			return;
 		}
-
-		EmbeddedHelpView helpView = getHelpViewInCurrentPerpective();
-
-		// if no infoset is available, helpview will be null.
-		if (helpView == null)
+		getHelpView();
+		activateHelpPerspective();
+		// open related topics view
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		if (workbench == null)
 			return;
-		helpView.displayHelp(relatedTopics, topic);
+		IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
+		IWorkbenchPage activeP = workbenchWindow.getActivePage();
+		if (activeP == null) {
+			return;
+		}
+		RelatedTopicsView aRelatedTopicsView;
+		try{
+			aRelatedTopicsView =(RelatedTopicsView) activeP.showView(RelatedTopicsView.ID);
+		}catch(PartInitException pie){
+			return;
+		}
+		// check to see if the view was created successfully
+		if (aRelatedTopicsView==null)
+			return;
+		aRelatedTopicsView.displayHelp(relatedTopics, topic);
 
-		//activateHelpPage();
 	}
-	
 	/**
 	 * Display help.
 	 */
-	public void displayHelp(String infosetId) {
-		displayHelp(infosetId, null);
+	public void displayHelp(String topicsHref) {
+		displayHelp(topicsHref, null);
 	}
-		
 	/**
 	 * Display help and selected specified topic.
 	 */
-	public void displayHelp(String infosetId, String topicURL) {
-		// get the new infoset
-		InfoSet infoset = HelpSystem.getNavigationManager().getInfoSet(infosetId);
-		if (infoset != null)
-			// make this infoset current
-			HelpSystem.getNavigationManager().setCurrentInfoSet(infosetId);
-		else
-		{
-			// infoset not found, or no infoset specified, so use current.
-			// We use current, and not default to avoid refresh. 
-			// revisit for inconsistent refresh.
-			infoset = HelpSystem.getNavigationManager().getCurrentInfoSet();
-			// if infoset not found, log it
-			if (infosetId != null && infosetId.trim().length() != 0)
-				Logger.logWarning(WorkbenchResources.getString("WE008", infosetId));
-		}
-		
+	public void displayHelp(String topicsHref, String topicHref) {
 		// Do not start help view if documentaton is not available, display error
-		if (infoset == null) {
-			Util.displayErrorDialog(WorkbenchResources.getString("WW001"));
+		if (HelpSystem.getTopicsNavigationManager().getTopicsHrefs().size() <= 0) {
+			// There is no documentation
+			ErrorUtil.displayErrorDialog(WorkbenchResources.getString("WW001"));
+			//Documentation is not installed.
 			return;
 		}
-			
-		// First check the current perspective
-		EmbeddedHelpView helpView = getHelpViewInCurrentPerpective();
-		if (helpView == null) {
-			// not found, so open the help in the help perspective
-			helpView = getHelpViewInHelpPerspective();
+		// 1.0 nav support
+		// change topicshref to a href of one of a views
+		if (topicsHref != null) {
+			Collection hrefsCol = HelpSystem.getTopicsNavigationManager().getTopicsHrefs();
+			for (Iterator it = hrefsCol.iterator(); it.hasNext();) {
+				String newHref = (String) it.next();
+				if (newHref.indexOf(topicsHref) == 0
+					&& newHref.indexOf("..") == topicsHref.length()) {
+					topicsHref = newHref;
+					break;
+				}
+			}
 		}
-		
+		// eo 1.0 nav support
+		ITopics topics = HelpSystem.getTopicsNavigationManager().getTopics(topicsHref);
+		if (topics == null) {
+			// if topics href specified, but not found, log it
+			if (topicsHref != null && topicsHref.trim().length() != 0)
+				Logger.logWarning(WorkbenchResources.getString("WE008", topicsHref));
+			//Help Topics %1 are not installed.
+		}
+		EmbeddedHelpView helpView = getHelpView();
 		if (helpView == null)
-			return;
-		else
-		{
-			activateHelpPage();
-			// switch to infoset
-			helpView.displayHelp(infoset, topicURL);
-		}
+			return; // could not open any help view
+		activateHelpPerspective();
+		// switch to specified topics and topic
+		helpView.displayHelp(topics, topicHref);
 	}
 	/**
 	 * Computes context information for a given context ID.
@@ -156,36 +159,44 @@ public class DefaultHelp implements IHelp {
 		return new ContextImpl(contextID);
 	}
 	/**
-	 * Obtains HelpView existing in current perspective.  If it does not
-	 * exists, obtains HelpView in HelpPerspective.
+	 * Obtains HelpView by first checking current perspective.
+	 * If no help view is open, a help view is obtained
+	 * (created if necessary) from help perspective.
 	 * @return org.eclipse.help.internal.ui.EmbeddedHelpView
 	 */
-	public EmbeddedHelpView getHelpViewInCurrentPerpective() {
+	private EmbeddedHelpView getHelpView() {
+		// First check the current perspective
+		EmbeddedHelpView helpView = getHelpViewInCurrentPerpective();
+		if (helpView == null) {
+			// not found, so open the help in the help perspective
+			helpView = getHelpViewInHelpPerspective();
+		}
+		return helpView;
+	}
+	/**
+	 * Obtains HelpView existing in current perspective
+	 * @return EmbeddedHelpView,
+	 * or null if the view does not exist in current perspective.
+	 */
+	private EmbeddedHelpView getHelpViewInCurrentPerpective() {
 		// returning null in this method is the cleanest way to handle error.
 		// what we do is log the error, then die cleanly.
-
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench == null)
 			return null;
 		IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
 		helpPage = null;
-
 		IWorkbenchPage activeP = workbenchWindow.getActivePage();
-
 		if (activeP == null || activeP.findView(EmbeddedHelpView.ID) == null) {
-			EmbeddedHelpView aEmbeddedHelpView = getHelpViewInHelpPerspective();
-			activateHelpPage();
-			return aEmbeddedHelpView;
+			return null;
 		}
-
 		try {
 			EmbeddedHelpView aEmbeddedHelpView =
 				(EmbeddedHelpView) activeP.showView(EmbeddedHelpView.ID);
-			// check to see if the view was created successfully, with a valid Infoset
+			// check to see if the view was created successfully
 			if (aEmbeddedHelpView.isCreationSuccessful())
 				return aEmbeddedHelpView;
-			else
-				// no need to log anything here because it would already be logged
+			else // no need to log anything here because it would already be logged
 				// in the UI classes.
 				return null;
 		} catch (Exception e) {
@@ -193,29 +204,25 @@ public class DefaultHelp implements IHelp {
 			Logger.logError(WorkbenchResources.getString("WE004"), e);
 			return null;
 		}
-
 	}
 	/**
 	 * Obtains HelpView in HelpPerspective.  Opens new HelpPerspective
 	 * if necessary.
 	 * @return org.eclipse.help.internal.ui.EmbeddedHelpView
 	 */
-	public EmbeddedHelpView getHelpViewInHelpPerspective() {
+	private EmbeddedHelpView getHelpViewInHelpPerspective() {
 		// returning null in this method is the cleanest way to handle error.
 		// what we do is log the error, then die cleanly.
-
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench == null)
 			return null;
 		IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow();
 		helpPage = null;
-
 		// Check if active perspective is a help perspective
 		IWorkbenchPage activeP = workbenchWindow.getActivePage();
-		if (activeP != null)
-			if (activeP.getPerspective().getId().equals(HelpPerspective.ID))
-				helpPage = workbenchWindow.getActivePage();
-
+		if (activeP != null
+			&& activeP.getPerspective().getId().equals(HelpPerspective.ID))
+			helpPage = workbenchWindow.getActivePage();
 		if (helpPage == null) {
 			// Find first Help Page out of not active pages
 			IWorkbenchPage[] pages = workbenchWindow.getPages();
@@ -226,8 +233,8 @@ public class DefaultHelp implements IHelp {
 				}
 			}
 		}
-
 		if (helpPage == null) {
+			// Open new Help Page
 			if (activeP != null) {
 				IAdaptable oldInput = activeP.getInput();
 				try {
@@ -254,25 +261,23 @@ public class DefaultHelp implements IHelp {
 			// should never be here.
 			Logger.logError(WorkbenchResources.getString("WE003"), null);
 			return null;
-		} else {
-			try {
-				// workaround for eclipse bug when showing help in an inactive page
-				if (helpPage != workbenchWindow.getActivePage())
-					workbenchWindow.setActivePage(helpPage);
-				EmbeddedHelpView aEmbeddedHelpView =
-					(EmbeddedHelpView) helpPage.showView(EmbeddedHelpView.ID);
-				// check to see if the view was created successfully, with a valid Infoset
-				if (aEmbeddedHelpView.isCreationSuccessful())
-					return aEmbeddedHelpView;
-				else
-					// no need to log anything here because it would already be logged
-					// in the UI classes.
-					return null;
-			} catch (Exception e) {
-				// should never be here.
-				Logger.logError(WorkbenchResources.getString("WE004"), e);
+		}
+		try {
+			// workaround for eclipse bug when showing help in an inactive page
+			if (helpPage != workbenchWindow.getActivePage())
+				workbenchWindow.setActivePage(helpPage);
+			EmbeddedHelpView aEmbeddedHelpView =
+				(EmbeddedHelpView) helpPage.showView(EmbeddedHelpView.ID);
+			// check to see if the view was created successfully
+			if (aEmbeddedHelpView.isCreationSuccessful())
+				return aEmbeddedHelpView;
+			else // no need to log anything here because it would already be logged
+				// in the UI classes.
 				return null;
-			}
+		} catch (Exception e) {
+			// should never be here.
+			Logger.logError(WorkbenchResources.getString("WE004"), e);
+			return null;
 		}
 	}
 	public static DefaultHelp getInstance() {

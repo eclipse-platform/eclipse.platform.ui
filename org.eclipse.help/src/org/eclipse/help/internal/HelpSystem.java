@@ -1,45 +1,46 @@
-package org.eclipse.help.internal;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+package org.eclipse.help.internal;
 import java.net.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.contributors.*;
-import org.eclipse.help.internal.contributors.xml.*;
-import org.eclipse.help.internal.navigation.HelpNavigationManager;
+import org.eclipse.help.internal.context.*;
+import org.eclipse.help.internal.contributors.xml1_0.HelpContributionManager;
+import org.eclipse.help.internal.contributors1_0.ContributionManager;
+import org.eclipse.help.internal.navigation1_0.HelpNavigationManager;
 import org.eclipse.help.internal.server.HelpServer;
+import org.eclipse.help.internal.topics.*;
 import org.eclipse.help.internal.util.*;
 /**
  * The actual implementation of the help system plugin.
  */
 public final class HelpSystem {
 	protected static final HelpSystem instance = new HelpSystem();
+	// TopicsContributorsManager for topics contributors
+	protected TopicsContributorsManager topicsContributorsManager;
+	// 1.0 nav support
+	// ContributionManager for help v1.0 contributions
 	protected ContributionManager contributionManager;
+	// Help Naviagation Manager for v1.0 navigation
 	protected HelpNavigationManager navigationManager;
-	protected ContextManager contextManager;
+	// eo 1.0 nav support
+	// Topics NavigationManager for topics navigation
+	protected TopicsNavigationManager topicsNavigationManager;
+	protected IContextManager contextManager;
 	int debug_level;
 	private String browserPath;
 	// constants
 	private static final String SEARCH_ENGINE_EXTENSION_POINT =
 		"org.eclipse.help.searchEngine";
 	private static final String SEARCH_ENGINE_CONFIG = "config";
-	// public constants (preferences)
-	public static final int INSTALL_LOCAL = 0;
-	public static final int INSTALL_CLIENT = 1;
-	public static final int INSTALL_SERVER = 2;
 	// Contants indicating level of logging
 	public static final int LOG_ERROR = 0; // log errors
 	public static final int LOG_WARNING = 1; // log errors and warnings
 	public static final int LOG_DEBUG = 2;
-	// log errors, warning, debug messages, and information messages
-	// configuration settings
-	int install = INSTALL_LOCAL;
-	private String remoteServerPath;
-	private URL remoteServerURL;
 	private String localServerAddress;
 	private String localServerPort;
-	protected HelpPreferences helpPref = null;
+	protected HelpPreferences preferences = null;
 	/**
 	 * HelpSystem constructor comment.
 	 */
@@ -57,11 +58,12 @@ public final class HelpSystem {
 	 * Used to obtain Print Manager
 	 * returns an instance of HelpPrintManager
 	 */
-	public static ContextManager getContextManager() {
+	public static IContextManager getContextManager() {
 		if (getInstance().contextManager == null)
-			getInstance().contextManager = new HelpContextManager();
+			getInstance().contextManager = new ContextManager();
 		return getInstance().contextManager;
 	}
+	// 1.0 nav support
 	/**
 	 * Used to obtain Contribution Manager
 	 * @return instance of ContributionManager
@@ -73,12 +75,23 @@ public final class HelpSystem {
 		return getInstance().contributionManager;
 	}
 	/**
+	 * Used to obtain Help Navigation Manager
+	 * @return instance of HelpNavigationManager
+	 */
+	public static HelpNavigationManager getNavigationManager() {
+		if (getInstance().navigationManager == null) {
+			getInstance().navigationManager = new HelpNavigationManager();
+		}
+		return getInstance().navigationManager;
+	}
+	// eof 1.0 nav support
+	/**
 	 */
 	public static int getDebugLevel() {
 		return getInstance().debug_level;
 	}
 	public static HelpPreferences getPreferences() {
-		return getInstance().helpPref;
+		return getInstance().preferences;
 	}
 	public static HelpSystem getInstance() {
 		return instance;
@@ -90,52 +103,24 @@ public final class HelpSystem {
 		return HelpServer.getAddress();
 	}
 	/**
-	 * Used to obtain Contribution Manager
-	 * @return instance of ContributionManager
+	 * Used to obtain TopicsContributorsManager
+	 * @return instance of TopicsContributorsManager
 	 */
-	public static HelpNavigationManager getNavigationManager() {
-		if (getInstance().navigationManager == null) {
-			getInstance().navigationManager = new HelpNavigationManager();
+	public static TopicsContributorsManager getTopicsContributorsManager() {
+		if (getInstance().topicsContributorsManager == null) {
+			getInstance().topicsContributorsManager = new TopicsContributorsManager();
 		}
-		return getInstance().navigationManager;
+		return getInstance().topicsContributorsManager;
 	}
 	/**
-	 * Returns the path to the help server.
-	 * This is usually empty, but for remote install it can be
-	 * something like /eclipse/servlet/help
+	 * Used to obtain Topics Naviagiont Manager
+	 * @return instance of TopicsNavigationManager
 	 */
-	public static String getRemoteHelpServerPath() {
-		return getInstance().remoteServerPath;
-	}
-	/**
-	 * Returns the ip and port, as http://ip:port
-	 */
-	public static URL getRemoteHelpServerURL() {
-		return getInstance().remoteServerURL;
-	}
-	private void initializePrefFromStore() {
-		helpPref = new HelpPreferences();
-		HelpSystem.setInstall(helpPref.getInt(HelpPreferences.INSTALL_OPTION_KEY));
-		HelpSystem.setRemoteServerInfo(
-			helpPref.getString(HelpPreferences.SERVER_PATH_KEY));
-		if (helpPref.getInt(HelpPreferences.LOCAL_SERVER_CONFIG) > 0) {
-			HelpSystem.setLocalServerInfo(
-				helpPref.getString(HelpPreferences.LOCAL_SERVER_ADDRESS_KEY),
-				helpPref.getString(HelpPreferences.LOCAL_SERVER_PORT_KEY));
-		} else {
-			HelpSystem.setLocalServerInfo(null, "0");
+	public static TopicsNavigationManager getTopicsNavigationManager() {
+		if (getInstance().topicsNavigationManager == null) {
+			getInstance().topicsNavigationManager = new TopicsNavigationManager();
 		}
-		HelpSystem.setDebugLevel(helpPref.getInt(HelpPreferences.LOG_LEVEL_KEY));
-		HelpSystem.setBrowserPath(helpPref.getString(HelpPreferences.BROWSER_PATH_KEY));
-	}
-	public static boolean isClient() {
-		return getInstance().install == INSTALL_CLIENT;
-	}
-	public static boolean isLocal() {
-		return getInstance().install == INSTALL_LOCAL;
-	}
-	public static boolean isServer() {
-		return getInstance().install == INSTALL_SERVER;
+		return getInstance().topicsNavigationManager;
 	}
 	/**
 	 */
@@ -149,49 +134,23 @@ public final class HelpSystem {
 		getInstance().debug_level = debug_level;
 		Logger.setDebugLevel(debug_level);
 	}
-	public static void setInstall(int install) {
-		int oldInstall = getInstance().install;
-		getInstance().install = install;
-		// when the user has new preference we may need
-		// to cleanup the managers
-		if (oldInstall != install) {
-			// contextManager stays the same
-			// need new contribution manager
-			if (getInstance().contributionManager != null)
-				getInstance().contributionManager = null;
-			// need new navigation manager
-			if (getInstance().navigationManager != null)
-				getInstance().navigationManager = null;
-		}
-	}
 	public static void setLocalServerInfo(String addr, String port) {
 		getInstance().localServerAddress = addr;
 		getInstance().localServerPort = port;
 		HelpServer.setAddress(addr, port);
 	}
-	public static void setRemoteServerInfo(String url) {
-		URL oldURL = getInstance().remoteServerURL;
-		String oldPath = getInstance().remoteServerPath;
-		try {
-			if (url != null) {
-				URL fullURL = new URL(url);
-				getInstance().remoteServerURL =
-					new URL(fullURL.getProtocol(), fullURL.getHost(), fullURL.getPort(), "");
-				getInstance().remoteServerPath = fullURL.getFile();
-			}
-		} catch (MalformedURLException mue) {
+	public static void setPreferences(HelpPreferences newPreferences) {
+		getInstance().preferences = newPreferences;
+		if (newPreferences.getInt(HelpPreferences.LOCAL_SERVER_CONFIG) > 0) {
+			setLocalServerInfo(
+				newPreferences.getString(HelpPreferences.LOCAL_SERVER_ADDRESS_KEY),
+				newPreferences.getString(HelpPreferences.LOCAL_SERVER_PORT_KEY));
+		} else {
+			setLocalServerInfo(null, "0");
 		}
-		if (getInstance().install == 1) { // remote
-			if ((oldURL == null
-				|| !oldURL.equals(getInstance().remoteServerURL)
-				|| (oldPath == null || !oldPath.equals(getInstance().remoteServerPath)))) {
-				// contextManager stays the same
-				// contribution manager stays the same
-				// need new navigation manager
-				if (getInstance().navigationManager != null)
-					getInstance().navigationManager = null;
-			}
-		}
+		HelpSystem.setDebugLevel(newPreferences.getInt(HelpPreferences.LOG_LEVEL_KEY));
+		HelpSystem.setBrowserPath(
+			newPreferences.getString(HelpPreferences.BROWSER_PATH_KEY));
 	}
 	/**
 	 * Shuts down the Help System.
@@ -208,7 +167,7 @@ public final class HelpSystem {
 	 */
 	static void startup() {
 		try {
-			instance.initializePrefFromStore();
+			setPreferences(new HelpPreferences());
 		} catch (Exception e) {
 			HelpPlugin.getDefault().getLog().log(
 				new Status(

@@ -1,14 +1,10 @@
-package org.eclipse.help.internal;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
+package org.eclipse.help.internal;
 import org.eclipse.core.runtime.*;
-
 import org.eclipse.help.*;
-
 /**
  * For displaying help to the user. The Eclipse platform defines an extension 
  * point (<code>"org.eclipse.help.support"</code>) for the help system UI.
@@ -24,20 +20,16 @@ import org.eclipse.help.*;
 public final class Help {
 	// configuration information
 	private static IConfigurationElement viewerCfig = null;
-
 	// pluggable viewer
 	private static IHelp helpSupport = null;
-
 	// constants
 	private static final String HELP_EXTENSION_POINT = "org.eclipse.help.support";
 	private static final String HELP_CONFIG = "config";
 	private static final String HELP_CLASS = "class";
-
 	static {
 		// initialize the unique help browser.
 		init();
 	}
-
 	/**
 	 * Hide default constructor
 	 */
@@ -80,10 +72,10 @@ public final class Help {
 	 * @param infoSet the information set id
 	 * @see IHelp#displayHelp(java.lang.String)
 	 */
-	public static void displayHelp(String infoSet) {
+	public static void displayHelp(String topicsURL) {
 		// delegate to pluggable viewer
 		if (helpSupport != null)
-			helpSupport.displayHelp(infoSet);
+			helpSupport.displayHelp(topicsURL);
 	}
 	/**
 	 * Computes and returns context information for the given context id.
@@ -105,21 +97,17 @@ public final class Help {
 		IExtensionPoint xpt = registry.getExtensionPoint(HELP_EXTENSION_POINT);
 		if (xpt == null)
 			return;
-
 		IExtension[] extList = xpt.getExtensions();
 		if (extList.length == 0)
 			return;
-
 		// only one pluggable viewer allowed ... always take first (only)
 		// extension and its first (only) element
 		IConfigurationElement[] cfigList = extList[0].getConfigurationElements();
 		if (cfigList.length == 0)
 			return;
-
 		if (!cfigList[0].getName().equals(HELP_CONFIG))
 			return;
 		viewerCfig = cfigList[0];
-
 		// create executable viewer and cache it
 		try {
 			//this.viewer = (IHelpViewer) viewerCfig.createExecutableExtension(VIEWER_CLASS);

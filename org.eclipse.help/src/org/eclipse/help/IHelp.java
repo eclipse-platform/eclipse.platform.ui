@@ -1,12 +1,8 @@
-package org.eclipse.help;
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-
-import java.lang.*;
-
+package org.eclipse.help;
 /**
  * Interface to the help system UI.
  * <p>
@@ -33,7 +29,6 @@ import java.lang.*;
  * </p>
  */
 public interface IHelp {
-
 	/**
 	 * Displays context-sensitive help for contexts with the given context ids.
 	 * <p>
@@ -67,27 +62,29 @@ public interface IHelp {
 	 */
 	public void displayHelp(IContext[] contexts, int x, int y);
 	/**
-	 * Displays help content for the information set with the given id.
+	 * Displays help content for the topics with the given URL.
 	 * <p>
 	 * This method is called by the platform to launch the help system UI, displaying
-	 * the documentation identified by the <code>infoSet</code> parameter.
+	 * the documentation identified by the <code>topics</code> parameter.
 	 * </p> 
 	 * <p>
-	 * In the current implementation of the Help system, valid information sets are 
-	 * contributed through the <code>infoSet</code> element of the 
-	 * <code>"org.eclipse.help.contributions"</code> extension point.   
+	 * Valid topics are
+	 * contributed through the <code>topics</code> element of the 
+	 * <code>"org.eclipse.help.topics"</code> extension point.   
 	 * </p> 
 	 *
-	 * @param infoSet the information set id
+	 * @param topics the URL of the topics as specified in
+	 * the <code>"org.eclipse.help.topics"</code> extenstion
+	 * point
 	 */
-	public void displayHelp(String infoSet);
+	public void displayHelp(String topics);
 	/**
 	 * This method is an extension to the 
-	 * <a href="#displayHelp(java.lang.String)">displayHelp(String infoSet)</a>
+	 * <a href="#displayHelp(java.lang.String)">displayHelp(String topics)</a>
 	 * method, providing the ability to open the specified help topic.
 	 * <p>
-	 * <code>topicURL</code> should be a valid help topic url contained in
-	 * the specified <code>infoSet</code> and have the following format: 
+	 * <code>selectedTopic</code> should be a valid help topic url contained in
+	 * the specified <code>topics</code> and have the following format: 
 	 * <em>/pluginID/path_to_document</em>
 	 * <br>where
 	 * <dl>
@@ -97,11 +94,11 @@ public interface IHelp {
 	 * </dt>
 	 * </dl>
 	 * </p>
-	 * @param infoSet the information set id
-	 * @param topicURL the help topic url.
+	 * @param topics the URL of the topics
+	 * @param selectedTopic the help topic url.
 	 * @see #displayHelp(java.lang.String)
 	 */
-	public void displayHelp(String infoSet, String topicURL);
+	public void displayHelp(String topics, String selectedTopic);
 	/**
 	 * Computes and returns context information for the given context id.
 	 * 

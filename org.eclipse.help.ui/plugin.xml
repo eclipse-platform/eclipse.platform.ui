@@ -15,6 +15,7 @@
 
    <requires>
 	<import plugin="org.eclipse.core.runtime"/>
+	<import plugin="org.eclipse.search"/>	
 	<import plugin="org.eclipse.ui"/>
 	<import plugin="org.eclipse.help"/>
 	<import plugin="org.apache.xerces"/>
@@ -38,7 +39,7 @@
       <config class="org.eclipse.help.internal.ui.DefaultHelp"/>
    </extension>
 
-   <!-- The Help System View  --> 
+   <!-- The Help System Views  --> 
    <!-- ===================== -->
    <extension point="org.eclipse.ui.views">
       <category
@@ -46,6 +47,7 @@
            name="%help">
       </category>
 
+      <!-- The Help System View  --> 
       <view
       	id="org.eclipse.help.internal.ui.EmbeddedHelpView"
       	name="%help_view"
@@ -53,7 +55,17 @@
       	category="org.eclipse.help"
       	class="org.eclipse.help.internal.ui.EmbeddedHelpView">
     	</view>
+
+      <!-- The Related Topics View  --> 
+      <view
+      	id="org.eclipse.help.internal.ui.RelatedTopicsView"
+      	name="%related_view"
+      	icon="icons/view.gif"
+      	category="org.eclipse.help"
+      	class="org.eclipse.help.internal.ui.RelatedTopicsView">
+    	</view>
    </extension>
+
 
    <!-- The Help System Perspective  --> 
    <!-- ============================ -->
@@ -96,7 +108,9 @@
           <action id="org.eclipse.help.internal.ui.HelpAction"
                   menubarPath="help/helpEnd"
                   label="%helpcontents"
-                  class="org.eclipse.help.internal.ui.ShowHelp"/>
+                  class="org.eclipse.help.internal.ui.HelpContentsAction"
+                  icon="icons/view.gif"
+                  tooltip="%openhelpcontents"/>
              
      </actionSet>
  </extension>
