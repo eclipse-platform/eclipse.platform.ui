@@ -1515,10 +1515,12 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			}			
 		}
 		
-		if (fCurrentDiff != null && isThreeWay() && !fIgnoreAncestor) {
-			fDirectionLabel.setImage(fCurrentDiff.getImage());
-		} else {
-			fDirectionLabel.setImage(null);
+		if (fDirectionLabel != null) {
+			if (fCurrentDiff != null && isThreeWay() && !fIgnoreAncestor) {
+				fDirectionLabel.setImage(fCurrentDiff.getImage());
+			} else {
+				fDirectionLabel.setImage(null);
+			}
 		}
 		
 		if (fCopyDiffLeftToRightItem != null)			

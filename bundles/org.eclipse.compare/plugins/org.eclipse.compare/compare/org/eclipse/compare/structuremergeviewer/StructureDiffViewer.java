@@ -8,6 +8,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolBar;
 
 import org.eclipse.jface.util.*;
 import org.eclipse.jface.action.*;
@@ -50,7 +51,6 @@ public class StructureDiffViewer extends DiffTreeViewer {
 	
 	private IStructureCreator fStructureCreator;
 	private IDiffContainer fRoot;
-	//private ChangePropertyAction fSmartAction;
 	private ActionContributionItem fSmartActionItem;
 	private IContentChangeListener fContentChangedListener;
 	private ICompareInputChangeListener fThreeWayInputChangedListener;
@@ -120,6 +120,7 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			if (fStructureCreator != null && fSmartActionItem != null) {
 				IAction a= fSmartActionItem.getAction();
 				if (a != null)
+					//setSmartButtonVisible(fStructureCreator.canRewriteTree());
 					a.setEnabled(fStructureCreator.canRewriteTree());
 				// FIXME: if there is an input we should create the trees!
 			}
@@ -192,8 +193,8 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			t= input.getAncestor();
 			
 		fThreeWay= (t != null);
-		fSmartActionItem.setVisible(fThreeWay);
-
+		setSmartButtonVisible(fThreeWay);
+		
 		if (t != fAncestorInput) {
 			if (fAncestorInput instanceof IContentChangeNotifier)
 				((IContentChangeNotifier)fAncestorInput).removeContentChangeListener(fContentChangedListener);
@@ -241,6 +242,23 @@ public class StructureDiffViewer extends DiffTreeViewer {
 			diff();
 	}
 	
+	private void setSmartButtonVisible(boolean visible) {
+		if (fSmartActionItem == null)
+			return;
+		Control c= getControl();
+		if (c == null && c.isDisposed())
+			return;
+			
+		fSmartActionItem.setVisible(visible);
+		ToolBarManager tbm= CompareViewerPane.getToolBarManager(c.getParent());
+		if (tbm != null) {
+			tbm.update(true);
+			ToolBar tb= tbm.getControl();
+			if (!tb.isDisposed())
+				tb.getParent().layout(true);
+		}
+	}
+
 	/**
 	 * Calls <code>diff</code> whenever the byte contents changes.
 	 */
