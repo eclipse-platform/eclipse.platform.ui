@@ -111,7 +111,7 @@ public class BaseExtensionPointManager {
     /**
      * Go through all the configExtension elements and return an array of all
      * extensions that match the attribute and its value. If there are non,
-     * return empty array.
+     * return empty array. This also loads all standby contributions.
      */
     protected IConfigurationElement[] getIntroConfigExtensions(
             String attrributeName, String attributeValue) {

@@ -14,6 +14,7 @@
       <complexType>
          <sequence>
             <element ref="configExtension" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="standbyPart" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -338,6 +339,37 @@
             <annotation>
                <documentation>
                   if &lt;code&gt;true&lt;/code&gt;, style belonging to the page that owns the included element will be added to list of styles of the including page. If &lt;code&gt;false&lt;/code&gt; (the default), the including page is responsible for controling properties of the included element.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="standbyPart">
+      <annotation>
+         <documentation>
+            standby part registration.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="pluginId" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of the plugin that holds the class defined in the &quot;class&quot; attribute.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The name of a class that implements IStandbyContent interface in org.eclipse.ui.intro.
                </documentation>
             </annotation>
          </attribute>

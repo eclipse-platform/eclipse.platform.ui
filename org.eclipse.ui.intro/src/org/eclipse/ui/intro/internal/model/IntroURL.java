@@ -39,7 +39,8 @@ public class IntroURL {
     /**
      * Constants that represent Intro URL actions.
      */
-    public static final String SET_STANDBY = "setStandbyMode";
+    public static final String SET_STANDBY_MODE = "setStandbyMode";
+    public static final String SHOW_STANDBY = "showStandby";
     public static final String CLOSE = "close";
     public static final String SHOW_HELP_TOPIC = "showHelpTopic";
     public static final String SHOW_HELP = "showHelp";
@@ -54,7 +55,7 @@ public class IntroURL {
     public static final String KEY_PLUGIN_ID = "pluginId";
     public static final String KEY_CLASS = "class";
     public static final String KEY_STANDBY = "standby";
-    public static final String KEY_INPUT_ID = "inputId";
+    public static final String KEY_INPUT_ID = "input";
 
     private String action = null;
     private Properties parameters = null;
@@ -83,10 +84,16 @@ public class IntroURL {
         if (action.equals(CLOSE))
             closeIntro();
 
-        else if (action.equals(SET_STANDBY))
-            handleStandbyStateChanged(getParameter(KEY_STANDBY),
-                    getParameter(KEY_PLUGIN_ID), getParameter(KEY_CLASS),
-                    getParameter(KEY_INPUT_ID));
+        /**
+         * Sets the state of the intro part. Does not care about passing input
+         * to the part.
+         */
+        else if (action.equals(SET_STANDBY_MODE))
+            setStandbyState(getParameter(KEY_STANDBY));
+
+        else if (action.equals(SHOW_STANDBY))
+            handleStandbyStateChanged(getParameter(KEY_PLUGIN_ID),
+                    getParameter(KEY_CLASS), getParameter(KEY_INPUT_ID));
 
         else if (action.equals(SHOW_HELP))
             // display the full Help System.
@@ -111,37 +118,28 @@ public class IntroURL {
                 PlatformUI.getWorkbench().findIntro());
     }
 
-    private void handleStandbyStateChanged(String standbyState,
-            String pluginId, String standbyContentClassName, String inputId) {
+    private void handleStandbyStateChanged(String pluginId,
+            String standbyContentClassName, String inputId) {
 
-        boolean standby = standbyState.equals("true") ? true : false;
-        setStandbyState(standby);
+        // set intro to standby mode.
+        CustomizableIntroPart introPart = getCustomizableIntroPart();
+        PlatformUI.getWorkbench().setIntroStandby(introPart, true);
 
-        if (standby) {
-            // now handle standby content.
-            Object standbyContentObject = createClassInstance(pluginId,
-                    standbyContentClassName);
-            try {
-                // we know we have a customizable part.
-                CustomizableIntroPart introPart = (CustomizableIntroPart) IntroPlugin
-                        .getDefault().getIntroModelRoot().getPresentation()
-                        .getIntroPart();
-                StandbyPart standbyPart = introPart.getStandbyPart();
-                if (standbyContentObject instanceof IStandbyContentPart) {
-                    IStandbyContentPart contentPart = (IStandbyContentPart) standbyContentObject;
-                    standbyPart.addStandbyContentPart(contentPart);
-                    standbyPart.setTopControl(contentPart.getClass().getName());
-                }
-                // set the input in all cases because we want to set it to null
-                // if we have a simple standby URL, with no plugin and class
-                // ids.
-                standbyPart.setInput(inputId);
-            } catch (Exception e) {
-                Logger.logError("Could not create standby content for: "
-                        + standbyContentClassName + " in " + pluginId, e);
-                return;
-            }
+        // now handle standby content. we know we have a customizable part.
+        StandbyPart standbyPart = introPart.getStandbyPart();
+        Object standbyContentObject = createClassInstance(pluginId,
+                standbyContentClassName);
+
+        if (standbyContentObject instanceof IStandbyContentPart) {
+            IStandbyContentPart contentPart = (IStandbyContentPart) standbyContentObject;
+            standbyPart.addStandbyContentPart(contentPart);
+            standbyPart.setTopControl(contentPart.getClass().getName());
+        } else {
+            // we failed to instantiate part, show Context help part.
+            standbyPart.setTopControl(ContextHelpPart.class.getName());
         }
+        // set the input in all cases.
+        standbyPart.setInput(inputId);
     }
 
 
@@ -150,12 +148,21 @@ public class IntroURL {
      * 
      * @param state
      */
-    private void setStandbyState(boolean state) {
-        // rely on model to get part.
-        IIntroPart introPart = IntroPlugin.getDefault().getIntroModelRoot()
-                .getPresentation().getIntroPart();
+    private void setStandbyState(String state) {
+        boolean standby = state.equals("true") ? true : false;
+        CustomizableIntroPart introPart = getCustomizableIntroPart();
         // should rely on Workbench api.
-        PlatformUI.getWorkbench().setIntroStandby(introPart, state);
+        PlatformUI.getWorkbench().setIntroStandby(introPart, standby);
+        if (standby)
+            // force the creation of a context help part, if one is not
+            // created.
+            introPart.getStandbyPart().setInput(null);
+    }
+
+    private CustomizableIntroPart getCustomizableIntroPart() {
+        // rely on model to get part.
+        return (CustomizableIntroPart) IntroPlugin.getDefault()
+                .getIntroModelRoot().getPresentation().getIntroPart();
     }
 
 
