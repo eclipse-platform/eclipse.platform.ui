@@ -19,8 +19,6 @@ public class URLHandler extends URLStreamHandler {
 		String protocol = url.getProtocol();
 		if (protocol.equals("help"))
 			return new HelpURLConnection(url);
-		else if (protocol.equals("search"))
-			return new SearchURLConnection(url);
 		else if (protocol.equals("links"))
 			return new LinksURLConnection(url);
 		else

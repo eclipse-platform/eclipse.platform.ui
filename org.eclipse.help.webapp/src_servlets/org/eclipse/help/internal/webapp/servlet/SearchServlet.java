@@ -13,7 +13,8 @@ import javax.servlet.http.*;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.search.*;
-import org.eclipse.help.internal.util.*;
+import org.eclipse.help.internal.util.Logger;
+
 /**
  * Servlet to interface client with remote Eclipse
  */
@@ -34,10 +35,6 @@ public class SearchServlet extends HttpServlet {
 		resp.setHeader("Cache-Control", "max-age=0");
 
 		SearchHit[] hits = loadSearchResults(req);
-		if (hits == null) {
-			Logger.logError(Resources.getString("index_is_busy"), null);
-			throw new ServletException();
-		}
 
 		ResultsWriter resultsWriter = new ResultsWriter(resp.getWriter());
 		resultsWriter.generate(hits, resp);
@@ -62,6 +59,7 @@ public class SearchServlet extends HttpServlet {
 				* indexed documents.
 				*/
 	private SearchHit[] loadSearchResults(HttpServletRequest request) {
+		SearchHit[] hits = null;
 		try {
 			NullProgressMonitor pm = new NullProgressMonitor();
 
@@ -70,9 +68,14 @@ public class SearchServlet extends HttpServlet {
 				createSearchQuery(request),
 				results,
 				pm);
-			return results.getSearchHits();
+			hits = results.getSearchHits();
 		} catch (Exception e) {
-			return null;
+			Logger.logError("", e);
+		}
+		finally {
+			if (hits == null)
+				hits = new SearchHit[0];
+			return hits;
 		}
 	}
 

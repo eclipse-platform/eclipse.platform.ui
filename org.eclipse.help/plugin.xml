@@ -34,10 +34,6 @@
       </handler>
       <handler
             class="org.eclipse.help.internal.protocols.URLHandler"
-            protocol="search">
-      </handler>
-      <handler
-            class="org.eclipse.help.internal.protocols.URLHandler"
             protocol="links">
       </handler>
    </extension>
