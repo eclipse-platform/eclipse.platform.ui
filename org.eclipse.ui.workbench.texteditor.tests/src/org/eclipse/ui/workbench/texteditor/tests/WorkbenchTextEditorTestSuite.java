@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.workbench.texteditor.tests;
 
+import org.eclipse.text.tests.FindReplaceDocumentAdapterTest;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -26,6 +28,7 @@ public class WorkbenchTextEditorTestSuite extends TestSuite {
 		TestSuite suite = new TestSuite("Test Suite for org.eclipse.ui.workbench.texteditor"); //$NON-NLS-1$
 		//$JUnit-BEGIN$
 		suite.addTest(DiffTestSuite.suite());
+		suite.addTest(FindReplaceDocumentAdapterTest.suite());
 		//$JUnit-END$
 		return suite;
 	}
