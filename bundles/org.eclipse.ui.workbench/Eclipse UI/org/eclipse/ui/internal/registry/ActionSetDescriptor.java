@@ -23,7 +23,7 @@ public class ActionSetDescriptor
 	implements IActionSetDescriptor, IAdaptable, IWorkbenchAdapter, IPluginContribution
 {
 	private static final Object[] NO_CHILDREN = new Object[0];
-	private static final String INITIALLY_VISIBLE_PREF_ID_PREFIX = "actionSet.initiallyVisible."; //$NON-NLS-1$
+	private static final String INITIALLY_HIDDEN_PREF_ID_PREFIX = "actionSet.initiallyHidden."; //$NON-NLS-1$
 	
 	private String id;
 	private String pluginId;
@@ -124,15 +124,6 @@ public String getId() {
 }
 
 /**
- * Returns the preference identifier used to store the initially visible preference.
- * 
- * @since 3.0
- */
-private String getInitiallyVisiblePrefId() {
-	return INITIALLY_VISIBLE_PREF_ID_PREFIX + id;
- }
-
-/**
  * Returns this action set's label. 
  * This is the value of its <code>"label"</code> attribute.
  *
@@ -156,10 +147,10 @@ public boolean isInitiallyVisible() {
     if (id == null)
 		return visible;
 	Preferences prefs = WorkbenchPlugin.getDefault().getPluginPreferences();
-	String prefId = getInitiallyVisiblePrefId();
-	if (prefs.isDefault(prefId))
-		return visible;
-	return prefs.getBoolean(prefId);
+	String prefId = INITIALLY_HIDDEN_PREF_ID_PREFIX + getId();
+	if (prefs.getBoolean(prefId))
+	    return false;
+	return visible;
 }
 
 /**
@@ -172,7 +163,8 @@ public void setInitiallyVisible(boolean newValue) {
 	if (id == null)
 		return;
 	Preferences prefs = WorkbenchPlugin.getDefault().getPluginPreferences();
-	prefs.setValue(getInitiallyVisiblePrefId(), newValue);
+	String prefId = INITIALLY_HIDDEN_PREF_ID_PREFIX + getId();
+	prefs.setValue(prefId, !newValue);
 }
 
 /**
