@@ -87,9 +87,6 @@ public class GroupBreakpointsByDialog extends Dialog {
 		}
 	};
 
-	/**
-	 * @param parentShell
-	 */
 	protected GroupBreakpointsByDialog(BreakpointsView view) {
 		super(view.getSite().getShell());
 		fView= view;
@@ -102,6 +99,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 		ILabelProvider labelProvider= new BreakpointContainerFactoryLabelProvider();
 		
 		Composite parentComposite= (Composite) super.createDialogArea(parent);
+		parentComposite.setFont(parent.getFont());
 		Composite composite= new Composite(parentComposite, SWT.NONE);
 		composite.setLayout(new GridLayout());
 		GridData data= new GridData(GridData.FILL_BOTH);
@@ -123,9 +121,6 @@ public class GroupBreakpointsByDialog extends Dialog {
 		return parentComposite;
 	}
 	
-	/**
-	 * 
-	 */
 	private void initializeContent() {
 		IBreakpointContainerFactory[] factories = BreakpointContainerFactoryManager.getDefault().getFactories();
 		for (int i = 0; i < factories.length; i++) {
@@ -138,17 +133,13 @@ public class GroupBreakpointsByDialog extends Dialog {
 		}
 	}
 
-	/**
-	 * @param parent
-	 * @param labelProvider
-	 * @param composite
-	 */
 	private void createAvailableViewer(Composite parent, ILabelProvider labelProvider) {
 		Label label= new Label(parent, SWT.WRAP);
 		label.setText(ActionMessages.getString("GroupBreakpointsByDialog.1")); //$NON-NLS-1$
 		label.setLayoutData(new GridData());
 		
 		Composite availableComposite= new Composite(parent, SWT.NONE);
+		availableComposite.setFont(parent.getFont());
 		GridLayout layout = new GridLayout();
 		layout.marginHeight=0;
 		layout.marginWidth=0;
@@ -177,16 +168,12 @@ public class GroupBreakpointsByDialog extends Dialog {
 		Composite buttonComposite= new Composite(availableComposite, SWT.NONE);
 		buttonComposite.setLayout(layout);
 		buttonComposite.setLayoutData(new GridData());
+		buttonComposite.setFont(parent.getFont());
 		
 		fAddButton= SWTUtil.createPushButton(buttonComposite, ActionMessages.getString("GroupBreakpointsByDialog.2"), null); //$NON-NLS-1$
 		fAddButton.addSelectionListener(fSelectionListener);
 	}
 
-	/**
-	 * @param parent
-	 * @param labelProvider
-	 * @param composite
-	 */
 	private void createSelectedViewer(Composite parent, ILabelProvider labelProvider) {
 		Label label= new Label(parent, SWT.WRAP);
 		label.setText(ActionMessages.getString("GroupBreakpointsByDialog.3")); //$NON-NLS-1$
@@ -222,6 +209,7 @@ public class GroupBreakpointsByDialog extends Dialog {
 		Composite buttonComposite= new Composite(selectedComposite, SWT.NONE);
 		buttonComposite.setLayout(new GridLayout());
 		buttonComposite.setLayoutData(new GridData());
+		buttonComposite.setFont(parent.getFont());
 		
 		fRemoveButton= SWTUtil.createPushButton(buttonComposite, ActionMessages.getString("GroupBreakpointsByDialog.4"), null); //$NON-NLS-1$
 		fRemoveButton.addSelectionListener(fSelectionListener);
