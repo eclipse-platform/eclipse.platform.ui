@@ -315,7 +315,11 @@ public class ForceUpdateSyncAction extends MergeAction {
 	protected boolean isEnabled(ITeamNode node) {
 		// The force update action is enabled only for conflicting and outgoing changes
 		SyncSet set = new SyncSet(new StructuredSelection(node));
-		return (set.hasOutgoingChanges() || set.hasConflicts());
+		if (syncMode == SyncView.SYNC_INCOMING) {
+			return set.hasConflicts();
+		} else {
+			return set.hasOutgoingChanges() || set.hasConflicts();
+		}
 	}
 	
 	/**

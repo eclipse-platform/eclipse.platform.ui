@@ -43,7 +43,7 @@ abstract class MergeAction extends Action {
 	private CVSSyncCompareInput diffModel;
 	private ISelectionProvider selectionProvider;
 
-	private int syncMode;
+	protected int syncMode;
 	private Shell shell;
 	
 	/**
