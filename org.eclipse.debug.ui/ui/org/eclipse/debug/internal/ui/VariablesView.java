@@ -311,24 +311,24 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 	protected void createActions() {
 		IAction action = new ShowTypesAction(getViewer());
 		action.setChecked(false);
-		setAction("ShowTypeNames",action);
+		setAction("ShowTypeNames",action); //$NON-NLS-1$
 		
 		action = new ShowQualifiedAction(getViewer());
 		action.setChecked(false);
-		setAction("ShowQualifiedNames", action);
+		setAction("ShowQualifiedNames", action); //$NON-NLS-1$
 		
-		setAction("AddToInspector", new AddToInspectorAction(getViewer()));
+		setAction("AddToInspector", new AddToInspectorAction(getViewer())); //$NON-NLS-1$
 		
 		action = new ChangeVariableValueAction(getViewer());
 		action.setEnabled(false);
-		setAction("ChangeVariableValue", action);
+		setAction("ChangeVariableValue", action); //$NON-NLS-1$
 		setAction(DOUBLE_CLICK_ACTION, action);
 		
-		setAction("CopyToClipboard", new ControlAction(getViewer(), new CopyVariablesToClipboardActionDelegate()));
+		setAction("CopyToClipboard", new ControlAction(getViewer(), new CopyVariablesToClipboardActionDelegate())); //$NON-NLS-1$
 		
 		action = new ShowVariableDetailPaneAction(this);
 		action.setChecked(false);
-		setAction("ShowDetailPane", action);
+		setAction("ShowDetailPane", action); //$NON-NLS-1$
 	
 		IActionBars actionBars= getViewSite().getActionBars();
 		TextViewerAction textAction= new TextViewerAction(getDetailTextViewer(), getDetailTextViewer().getTextOperationTarget().COPY);
@@ -359,10 +359,10 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 	 */
 	protected void configureToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator(this.getClass().getName()));
-		tbm.add(getAction("ShowTypeNames"));
-		tbm.add(getAction("ShowQualifiedNames"));
+		tbm.add(getAction("ShowTypeNames")); //$NON-NLS-1$
+		tbm.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
 		tbm.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
-		tbm.add(getAction("ShowDetailPane"));
+		tbm.add(getAction("ShowDetailPane")); //$NON-NLS-1$
 	}
 
    /**
@@ -375,13 +375,13 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 
 		menu.add(new Separator(IDebugUIConstants.EMPTY_VARIABLE_GROUP));
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
-		menu.add(getAction("AddToInspector"));
-		menu.add(getAction("ChangeVariableValue"));
-		menu.add(getAction("CopyToClipboard"));
+		menu.add(getAction("AddToInspector")); //$NON-NLS-1$
+		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
+		menu.add(getAction("CopyToClipboard")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-		menu.add(getAction("ShowTypeNames"));
-		menu.add(getAction("ShowQualifiedNames"));
+		menu.add(getAction("ShowTypeNames")); //$NON-NLS-1$
+		menu.add(getAction("ShowQualifiedNames")); //$NON-NLS-1$
 		
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -531,7 +531,7 @@ public class VariablesView extends AbstractDebugView implements ISelectionChange
 	}
 	
 	protected boolean isDetailPaneVisible() {
-		IAction action = getAction("ShowDetailPane");
+		IAction action = getAction("ShowDetailPane"); //$NON-NLS-1$
 		if (action != null) {
 			return action.isChecked();
 		}
