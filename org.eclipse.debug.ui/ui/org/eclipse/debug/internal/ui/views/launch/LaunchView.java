@@ -32,6 +32,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
+import org.eclipse.debug.internal.ui.InstructionPointerAnnotation;
+import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -40,7 +42,11 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -70,6 +76,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
+import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class LaunchView extends AbstractDebugEventHandlerView implements ISelectionChangedListener, IPerspectiveListener, IPageListener, IPropertyChangeListener, IResourceChangeListener {
@@ -460,7 +467,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 					} catch (DebugException de) {
 						DebugUIPlugin.log(de);
 					}
-					openEditorAndSetMarker(getEditorInput(), getEditorId(), lineNumber, start, end);
+					openEditorAndSetMarker(getEditorInput(), getEditorId(), stackFrame, lineNumber, start, end);
 				}
 			} finally {
 				fShowingMarker= false;
@@ -522,7 +529,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * Get the active window and open/bring to the front an editor on the source element.
 	 * Selection is based on the line number OR the char start and end.
 	 */
-	protected void openEditorAndSetMarker(IEditorInput input, String editorId, int lineNumber, int charStart, int charEnd) {
+	protected void openEditorAndSetMarker(IEditorInput input, String editorId, IStackFrame stackFrame, int lineNumber, int charStart, int charEnd) {
 		IWorkbenchWindow dwindow= getSite().getWorkbenchWindow();
 		if (dwindow == null) {
 			return;
@@ -591,13 +598,17 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		} else {
 			editor = openEditor(page, input, editorId, false);
 		}
-		
-		
+				
 		if (editor != null && (lineNumber >= 0 || charStart >= 0)) {
 			//have an editor and either a lineNumber or a starting character
 			IMarker marker= getInstructionPointer(lineNumber, charStart, charEnd);
 			editor.gotoMarker(marker);
 		}
+		
+		// If the editor is a text editor, add an instruction pointer annotation to it
+		if (editor != null && editor instanceof ITextEditor) {
+			InstructionPointerManager.getDefault().addAnnotation((ITextEditor)editor, stackFrame);
+		}		
 	}
 	
 	protected IEditorPart openEditor(final IWorkbenchPage page, final IEditorInput input, final String id, boolean activate) {

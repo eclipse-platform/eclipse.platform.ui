@@ -24,9 +24,11 @@ import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.InstructionPointerManager;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandler;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Handles debug events, updating the launch view and viewer.
@@ -85,6 +87,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 					}
 					break;
 				case DebugEvent.TERMINATE :
+					removeInstructionPointerAnnotations(element);
 					if (element instanceof IThread) {
 						clearSourceSelection((IThread)element);
 						fStackFrameCountByThread.remove(element);
@@ -124,6 +127,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 		
 	protected void doHandleResumeEvent(DebugEvent event, Object element) {
+		removeInstructionPointerAnnotations(element);
 		if (event.isEvaluation() || event.isStepStart()) {
 			// Do not update for step starts and evaluation
 			// starts immediately. Instead, start the timer.
@@ -193,6 +197,16 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 			return;
 		}
 		refresh(element);
+	}
+	
+	/**
+	 * Remove all instruction pointer annotations associated with the specified element.	 */
+	protected void removeInstructionPointerAnnotations(Object element) {
+		if (element instanceof IThread) {
+			InstructionPointerManager.getDefault().removeAnnotations((IThread)element);
+		} else if (element instanceof IDebugTarget) {
+			InstructionPointerManager.getDefault().removeAnnotations((IDebugTarget)element);			
+		}
 	}
 	
 	/**
@@ -547,4 +561,3 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	}
 
 }
-
