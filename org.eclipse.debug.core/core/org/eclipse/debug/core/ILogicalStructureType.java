@@ -44,6 +44,10 @@ import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
  * </ul>
  * </p>
  * <p>
+ * 
+ * TODO: review the doc for the new provider extension point
+ * 
+ * 
  * Clients are not intended to implement this interface. Instead clients
  * providing logical strucutre types provide and implement an
  * <code>ILogicalStructureTypeDelegate</code>. Clients may optionally implement

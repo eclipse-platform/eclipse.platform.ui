@@ -31,6 +31,7 @@ public class LogicalStructureManager {
 
 	private static LogicalStructureManager fgDefault;
 	private List fTypes = null;
+	private List fTypeProviders;
 	
 	public static LogicalStructureManager getDefault() {
 		if (fgDefault == null) {
@@ -41,6 +42,7 @@ public class LogicalStructureManager {
 	
 	public ILogicalStructureType[] getLogicalStructureTypes(IValue value) {
 		initialize();
+		// looks in the logical structure types
 		Iterator iterator = fTypes.iterator();
 		List select = new ArrayList();
 		while (iterator.hasNext()) {
@@ -49,11 +51,19 @@ public class LogicalStructureManager {
 				select.add(type);
 			}
 		}
+		// asks the logical structure providers
+		for (Iterator iter= fTypeProviders.iterator(); iter.hasNext();) {
+			ILogicalStructureType[] logicalStructures= ((LogicalStructureProvider) iter.next()).getLogicalStructures(value);
+			for (int i= 0; i < logicalStructures.length; i++) {
+				select.add(logicalStructures[i]);
+			}
+		}
 		return (ILogicalStructureType[]) select.toArray(new ILogicalStructureType[select.size()]);
 	}
 	
 	private void initialize() {
 		if (fTypes == null) {
+			//get the logical structure types from the extension points
 			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES);
 			IConfigurationElement[] extensions = point.getConfigurationElements();
 			fTypes = new ArrayList(extensions.length);
@@ -63,6 +73,17 @@ public class LogicalStructureManager {
 				try {
 					type = new LogicalStructureType(extension);
 					fTypes.add(type);
+				} catch (CoreException e) {
+					DebugPlugin.log(e);
+				}
+			}
+			// get the logical structure providers from the extension point
+			point= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LOGICAL_STRUCTURE_PROVIDERS);
+			extensions= point.getConfigurationElements();
+			fTypeProviders= new ArrayList(extensions.length);
+			for (int i= 0; i < extensions.length; i++) {
+				try {
+					fTypeProviders.add(new LogicalStructureProvider(extensions[i]));
 				} catch (CoreException e) {
 					DebugPlugin.log(e);
 				}

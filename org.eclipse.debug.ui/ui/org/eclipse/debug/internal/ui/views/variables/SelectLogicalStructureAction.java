@@ -60,9 +60,9 @@ public class SelectLogicalStructureAction extends Action {
 				IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 				for (int i = 0; i < fTypes.length; i++) {
 					if (i == fIndex && isChecked()) {
-						store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + fTypes[i].getId() + fDescription, 1);
+						store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + fTypes[i].getId(), 1);
 					} else {
-						store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + fTypes[i].getId() + fDescription, -1);
+						store.setValue(VariablesView.LOGICAL_STRUCTURE_TYPE_PREFIX + fTypes[i].getId(), -1);
 					}
 				}
 				getView().getViewer().refresh();					
