@@ -448,7 +448,7 @@ public class OverviewRuler implements IOverviewRuler {
 		Point size= fCanvas.getSize();
 		int writable= maxLines * textWidget.getLineHeight();
 		if (size.y > writable)
-			size.y= writable - fHeader.getSize().y;
+			size.y= Math.max(writable - fHeader.getSize().y, 1);
 		
 		for (Iterator iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
 			Object annotationType= iterator.next();
@@ -480,10 +480,12 @@ public class OverviewRuler implements IOverviewRuler {
 							int numbersOfLines= document.getNumberOfLines(annotationOffset, annotationLength);
 							// don't count empty trailing lines
 							IRegion lastLine= document.getLineInformationOfOffset(annotationOffset + annotationLength);
-							if (lastLine.getOffset() == annotationOffset + annotationLength)
-								numbersOfLines--;
-							hh= (numbersOfLines * size.y) / maxLines;
-							if (hh < ANNOTATION_HEIGHT)
+							if (lastLine.getOffset() == annotationOffset + annotationLength) {
+								numbersOfLines -= 2;
+								hh= (numbersOfLines * size.y) / maxLines + ANNOTATION_HEIGHT;
+								if (hh < ANNOTATION_HEIGHT)
+									hh= ANNOTATION_HEIGHT;
+							} else
 								hh= ANNOTATION_HEIGHT;
 						}
 						fAnnotationHeight= hh;
@@ -534,7 +536,7 @@ public class OverviewRuler implements IOverviewRuler {
 		Point size= fCanvas.getSize();
 		int writable= maxLines * textWidget.getLineHeight();
 		if (size.y > writable)
-			size.y= writable - fHeader.getSize().y;
+			size.y= Math.max(writable - fHeader.getSize().y, 1);
 			
 		for (Iterator iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
 			Object annotationType= iterator.next();
@@ -564,8 +566,14 @@ public class OverviewRuler implements IOverviewRuler {
 					try {
 						if (ANNOTATION_HEIGHT_SCALABLE) {
 							int numbersOfLines= document.getNumberOfLines(p.getOffset(), p.getLength());
-							hh= numbersOfLines * (size.y / maxLines);
-							if (hh < ANNOTATION_HEIGHT)
+							// don't count empty trailing lines
+							IRegion lastLine= document.getLineInformationOfOffset(p.getOffset() + p.getLength());
+							if (lastLine.getOffset() == p.getOffset() + p.getLength()) {
+								numbersOfLines -= 2;
+								hh= (numbersOfLines * size.y) / maxLines + ANNOTATION_HEIGHT;
+								if (hh < ANNOTATION_HEIGHT)
+									hh= ANNOTATION_HEIGHT;
+							} else
 								hh= ANNOTATION_HEIGHT;
 						}
 						fAnnotationHeight= hh;
@@ -640,7 +648,7 @@ public class OverviewRuler implements IOverviewRuler {
 		int writable= maxLines * textWidget.getLineHeight();
 
 		if (rulerLength > writable)
-			rulerLength= writable - fHeader.getSize().y;
+			rulerLength= Math.max(writable - fHeader.getSize().y, 1);
 
 		if (y_coordinate >= writable)
 			return new int[] {-1, -1};
