@@ -373,7 +373,9 @@ public class RepositoryManager {
 					dis.close();
 				}
 			} catch (IOException e) {
-				throw new TeamException(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.ioException"), e));
+				CVSUIPlugin.log(new Status(Status.ERROR, CVSUIPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.ioException"), e));
+			} catch (TeamException e) {
+				CVSUIPlugin.log(e.getStatus());
 			}
 		}
 	}
