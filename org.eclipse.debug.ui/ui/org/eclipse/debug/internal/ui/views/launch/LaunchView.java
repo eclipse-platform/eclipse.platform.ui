@@ -796,7 +796,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				// Try to find the editor we want to reuse and activate it
 				IEditorReference[] refs = page.getEditorReferences();
 				for (int i = 0; i < refs.length; i++) {
-					IEditorPart refEditor= refs[i].getEditor(true);
+					IEditorPart refEditor= refs[i].getEditor(false);
 					if (refEditor != null && input.equals(refEditor.getEditorInput())) {
 						editor = refEditor;
 						page.bringToTop(editor);
