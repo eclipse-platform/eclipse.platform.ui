@@ -438,6 +438,9 @@ public class R21EditorStackPresentation extends StackPresentation {
      * active state
      */
     private void updateGradient() {
+        
+        if(isDisposed()) return;
+        
         Color fgColor;
         Color[] bgColors;
         int[] bgPercents;

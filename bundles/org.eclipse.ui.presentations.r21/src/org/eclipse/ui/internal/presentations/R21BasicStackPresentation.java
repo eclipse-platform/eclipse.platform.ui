@@ -453,6 +453,8 @@ public class R21BasicStackPresentation extends StackPresentation {
 	 */
 	protected void updateGradient() {
 
+        if(isDisposed()) return;
+        
         Color fgColor;
         Color[] bgColors;
         int[] bgPercents;
