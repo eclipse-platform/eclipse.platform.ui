@@ -48,9 +48,8 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 		super(marker);
 	}
 	
-	/**
-	 * Initializes the annotation's icon representation and its drawing layer
-	 * based upon the properties of the underlying marker.
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.MarkerAnnotation#initialize()
 	 */
 	protected void initialize() {
 		fImageType= NO_IMAGE;
@@ -88,8 +87,8 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 		return null;
 	}
 		
-	/*
-	 * @see IXMLAnnotation#getMessage()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.IAnnotationExtension#getMessage()
 	 */
 	public String getMessage() {
 		IMarker marker= getMarker();
@@ -99,22 +98,22 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 			return marker.getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
 	}
 
-	/*
-	 * @see IXMLAnnotation#isTemporary()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.IAnnotationExtension#isTemporary()
 	 */
 	public boolean isTemporary() {
 		return false;
 	}
 	
-	/*
-	 * @see IXMLAnnotation#isProblem()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#isProblem()
 	 */
 	public boolean isProblem() {
 		return WARNING_ANNOTATION_TYPE.equals(fType) || ERROR_ANNOTATION_TYPE.equals(fType);
 	}
 	
-	/*
-	 * @see IXMLAnnotation#isRelevant()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#isRelevant()
 	 */
 	public boolean isRelevant() {
 		return !fNotRelevant;
@@ -123,7 +122,7 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 	/**
 	 * Overlays this annotation with the given xmlAnnotation.
 	 * 
-	 * @param javaAnnotation annotation that is overlaid by this annotation
+	 * @param xmlAnnotation annotation that is overlaid by this annotation
 	 */
 	public void setOverlay(IXMLAnnotation xmlAnnotation) {
 		if (fOverlay != null)
@@ -136,15 +135,15 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 			xmlAnnotation.addOverlaid(this);
 	}
 	
-	/*
-	 * @see IXMLAnnotation#hasOverlay()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#hasOverlay()
 	 */
 	public boolean hasOverlay() {
 		return fOverlay != null;
 	}
 	
-	/*
-	 * @see MarkerAnnotation#getImage(Display)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.texteditor.MarkerAnnotation#getImage(org.eclipse.swt.widgets.Display)
 	 */
 	public Image getImage(Display display) {
 		int newImageType= NO_IMAGE;
@@ -204,22 +203,22 @@ public class XMLMarkerAnnotation extends MarkerAnnotation implements IXMLAnnotat
 		return fgGrayMarkersImageRegistry;
 	}
 	
-	/*
-	 * @see IXMLAnnotation#addOverlaid(IXMLAnnotation)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#addOverlaid(org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation)
 	 */
 	public void addOverlaid(IXMLAnnotation annotation) {
 		// not supported
 	}
 
-	/*
-	 * @see IXMLAnnotation#removeOverlaid(IXMLAnnotation)
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#removeOverlaid(org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation)
 	 */
 	public void removeOverlaid(IXMLAnnotation annotation) {
 		// not supported
 	}
 	
-	/*
-	 * @see IXMLAnnotation#getOverlaidIterator()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.text.IXMLAnnotation#getOverlaidIterator()
 	 */
 	public Iterator getOverlaidIterator() {
 		// not supported
