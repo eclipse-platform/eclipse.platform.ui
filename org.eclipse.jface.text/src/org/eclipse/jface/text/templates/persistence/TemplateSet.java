@@ -55,7 +55,7 @@ import org.eclipse.jface.text.templates.TemplateMessages;
  * <code>TemplateSet</code> manages a collection of templates and makes them
  * persistent.
  * 
- * @deprecated will be removed for M9 - use TemplateStore instead
+ * @deprecated use TemplateStore instead
  * @since 3.0
  */
 public class TemplateSet {
