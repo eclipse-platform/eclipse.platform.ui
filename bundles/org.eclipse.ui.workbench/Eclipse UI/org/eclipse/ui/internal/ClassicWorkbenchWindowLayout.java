@@ -25,16 +25,17 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * The layout for the workbench window's shell.
  */
-class WorkbenchWindowLayout extends Layout {
+class ClassicWorkbenchWindowLayout extends Layout {
 
-	private final WorkbenchWindow window;
+	private final ClassicWorkbenchWindow window;
 
 	/**
+	 * Create a new instance of the reciever with the supplied
+	 * window.
 	 * @param WorkbenchWindow
 	 */
-	WorkbenchWindowLayout(WorkbenchWindow window) {
+	ClassicWorkbenchWindowLayout(ClassicWorkbenchWindow window) {
 		this.window = window;
-		// TODO Auto-generated constructor stub
 	}
 
 	protected Point computeSize(

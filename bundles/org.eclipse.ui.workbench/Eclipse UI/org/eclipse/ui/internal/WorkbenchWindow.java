@@ -87,7 +87,7 @@ import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 /**
  * A window within the workbench.
  */
-public class WorkbenchWindow
+public abstract class WorkbenchWindow
 	extends ApplicationWindow
 	implements IWorkbenchWindow {
 
@@ -104,8 +104,6 @@ public class WorkbenchWindow
 	private WWinPartService partService = new WWinPartService(this);
 	private ActionPresentation actionPresentation;
 	private WWinActionBars actionBars;
-	private Label separator2;
-	private Label separator3;
 	private ToolBarManager shortcutBar;
 	private ShortcutBarPart shortcutBarPart;
 	private ShortcutBarPartDragDrop shortcutDND;
@@ -499,12 +497,9 @@ public class WorkbenchWindow
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		shell.setLayout(getLayout());
-		shell.setSize(800, 600);
-		separator2 = new Label(shell, SWT.SEPARATOR | SWT.HORIZONTAL);
-		createShortcutBar(shell);
-		createProgressIndicator(shell);
-		separator3 = new Label(shell, SWT.SEPARATOR | SWT.VERTICAL);
-
+		
+		createTrimWidgets(shell);
+		
 		WorkbenchHelp.setHelp(shell, IHelpContextIds.WORKBENCH_WINDOW);
 
 		trackShellActivation(shell);
@@ -537,7 +532,13 @@ public class WorkbenchWindow
 				children[i].addListener(SWT.MouseDown, listener);
 		}
 		getShortcutBar().getControl().addListener(SWT.MouseDown, listener);
+		shell.setSize(800, 600);
 	}
+	protected void createTrimWidgets(Shell shell) {
+		createShortcutBar(shell);
+		createProgressIndicator(shell);
+	}
+
 	/**
 	 * Create the shortcut toolbar control
 	 */
@@ -807,9 +808,7 @@ public class WorkbenchWindow
 	 * 
 	 * @return the layout for the shell
 	 */
-	protected Layout getLayout() {
-		return new WorkbenchWindowLayout(this);
-	}
+	protected abstract Layout getLayout();
 
 	/**
 	 * @see IWorkbenchWindow
@@ -823,20 +822,6 @@ public class WorkbenchWindow
 	 */
 	Label getPrimarySeperator() {
 		return getSeperator1();
-	}
-
-	/**
-	 * Returns the separator2 control.
-	 */
-	Label getSeparator2() {
-		return separator2;
-	}
-
-	/**
-	 * Returns the separator3 control.
-	 */
-	Label getSeparator3() {
-		return separator3;
 	}
 
 	/**

@@ -1234,7 +1234,7 @@ public class Workbench
 	 * @return the new workbench window
 	*/
 	protected WorkbenchWindow newWorkbenchWindow() {
-		return new WorkbenchWindow(this, getNewWindowNumber());
+		return new IDEWorkbenchWindow(this, getNewWindowNumber());
 	}
 
 	/**
