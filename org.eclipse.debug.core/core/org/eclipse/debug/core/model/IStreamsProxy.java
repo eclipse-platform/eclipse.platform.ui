@@ -8,7 +8,7 @@ package org.eclipse.debug.core.model;
 import java.io.IOException;
 
 /**
- * A streams proxy acts as proxy between the streams of an
+ * A streams proxy acts as proxy between the streams of a
  * process and interested clients. This abstraction allows
  * implementations of <code>IProcess</code> to handle I/O related
  * to the standard input, output, and error streams associated
@@ -33,7 +33,7 @@ public interface IStreamsProxy {
 	 * The monitor is connected to the error stream of the
 	 * associated process.
 	 *
-	 * @return an input stream monitor, or <code>null</code> if none
+	 * @return an error stream monitor, or <code>null</code> if none
 	 */
 	public IStreamMonitor getErrorStreamMonitor();
 	/**
@@ -42,12 +42,12 @@ public interface IStreamsProxy {
 	 * The monitor is connected to the output stream of the
 	 * associated process.
 	 *
-	 * @return an input stream monitor, or <code>null</code> if none
+	 * @return an output stream monitor, or <code>null</code> if none
 	 */
 	public IStreamMonitor getOutputStreamMonitor();
 	/**
 	 * Writes the given text to the output stream connected to the
-	 * standard input stream of a this proxy's process.
+	 * standard input stream of this proxy's process.
 	 *
 	 * @exception IOException when an error occurs writing to the 
 	 *		underlying <code>OutputStream</code>.

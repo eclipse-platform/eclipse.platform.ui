@@ -9,7 +9,7 @@ import org.eclipse.debug.core.DebugException;
 
 /**
  * Provides the ability to modify the value of a variable in
- * the target.
+ * a target.
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -58,7 +58,7 @@ public interface IValueModification {
 	 * setting a new value for this variable.
 	 *
 	 * @param expression an expression to generate a new value
-	 * @return whether the expression is acceptable
+	 * @return whether the expression is valid
 	 * @exception DebugException on failure. Reasons include:<ul>
 	 * <li>TARGET_REQUEST_FAILED - The request failed in the target
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target
@@ -71,14 +71,13 @@ public interface IValueModification {
 	 * a new value for this variable.
 	 *
 	 * @param value a new value
-	 * @return whether the value is acceptable
+	 * @return whether the value is valid
 	 * @exception DebugException on failure. Reasons include:<ul>
 	 * <li>TARGET_REQUEST_FAILED - The request failed in the target
 	 * <li>NOT_SUPPORTED - The capability is not supported by the target
 	 * </ul>
 	 */
 	public boolean verifyValue(IValue value) throws DebugException;
-	
 }
 
 

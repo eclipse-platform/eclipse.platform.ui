@@ -26,21 +26,21 @@ import org.eclipse.debug.core.IStreamListener;
  */
 public interface IStreamMonitor {
 	/**
-	 * Adds the given listener to the registered listeners.
+	 * Adds the given listener to this stream monitor's registered listeners.
 	 * Has no effect if an identical listener is already registered.
 	 *
 	 * @param the listener to add
 	 */
 	public void addListener(IStreamListener listener);
 	/**
-	 * Returns the current contents of the stream. An empty
+	 * Returns the entire current contents of the stream. An empty
 	 * String is returned if the stream is empty.
 	 *
 	 * @return the stream contents as a <code>String</code>
 	 */
 	public String getContents();
 	/**
-	 * Removes the given listener from the registered listeners.
+	 * Removes the given listener from this stream monitor's registered listeners.
 	 * Has no effect if the listener is not already registered.
 	 *
 	 * @param the listener to remove
