@@ -31,10 +31,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
-import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.ICategory;
-import org.eclipse.ui.activities.IMutableActivityManager;
+import org.eclipse.ui.activities.ICategoryActivityBinding;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 /**
  * Utility class that will create controls (two lists and swap buttons) for
@@ -102,8 +102,13 @@ public class SwapActivityHelper {
 	 * @since 3.0
 	 */
 	private boolean belongsToACategory(String activityId) {
-		IActivityManager activityManager =
-			PlatformUI.getWorkbench().getActivityManager();
+		IWorkbenchActivitySupport support =
+			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
+		if (support == null)
+			return false;
+
+		IActivityManager activityManager = support.getActivityManager();
 
 		for (Iterator categoryItr =
 			activityManager.getDefinedCategoryIds().iterator();
@@ -170,8 +175,13 @@ public class SwapActivityHelper {
 
 		createSwapButtons(swapComposite);
 
-		IActivityManager activityManager =
-			PlatformUI.getWorkbench().getActivityManager();
+		IWorkbenchActivitySupport support =
+			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
+		if (support == null)
+			return;
+
+		IActivityManager activityManager = support.getActivityManager();
 		Set activityIds = activityManager.getDefinedActivityIds();
 
 		List active = new ArrayList(), potential = new ArrayList();
@@ -222,9 +232,15 @@ public class SwapActivityHelper {
 		group.setLayoutData(data);
 		group.setLayout(new FillLayout());
 		ListViewer viewer = new ListViewer(group);
-		viewer.setLabelProvider(
-			new ActivityLabelProvider(
-				PlatformUI.getWorkbench().getActivityManager()));
+
+		IActivityManager manager = null;
+		IWorkbenchActivitySupport support =
+			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
+		if (support != null)
+			manager = support.getActivityManager();
+
+		viewer.setLabelProvider(new ActivityLabelProvider(manager));
 		viewer.setContentProvider(new ActivityContentProvider());
 		viewer.setSorter(new ViewerSorter());
 		return viewer;
@@ -246,11 +262,14 @@ public class SwapActivityHelper {
 	 * @since 3.0
 	 */
 	public void updateActivityStates() {
-		// TODO cast
-		IMutableActivityManager activityManager =
-			(IMutableActivityManager) PlatformUI
-				.getWorkbench()
-				.getActivityManager();
+
+		IWorkbenchActivitySupport support =
+			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
+		if (support == null)
+			return;
+
+		IActivityManager activityManager = support.getActivityManager();
 
 		Set finalState = new HashSet(activityManager.getEnabledActivityIds());
 
@@ -264,6 +283,6 @@ public class SwapActivityHelper {
 			finalState.add(((IActivity) i.next()).getId());
 		}
 
-		activityManager.setEnabledActivityIds(finalState);
+		support.setEnabledActivityIds(finalState);
 	}
 }

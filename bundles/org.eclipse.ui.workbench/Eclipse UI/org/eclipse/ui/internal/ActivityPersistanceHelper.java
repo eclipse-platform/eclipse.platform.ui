@@ -15,11 +15,10 @@ import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.jface.preference.IPreferenceStore;
-
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 /**
  * Utility class that manages the persistance of enabled activities.
@@ -60,13 +59,20 @@ class ActivityPersistanceHelper {
 
 		// TODO kim: shouldn't you want to check for any activities (not
 		// categories)?
-		IWorkbench workbench = PlatformUI.getWorkbench();
+
+		IWorkbenchActivitySupport support =
+			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
+
+		if (support == null)
+			return;
+
 		boolean noRoles =
-			workbench.getActivityManager().getDefinedActivityIds().isEmpty();
+			support.getActivityManager().getDefinedCategoryIds().isEmpty();
 
 		if (noRoles) {
-			IActivityManager activityManager = workbench.getActivityManager();
-			workbench.setEnabledActivityIds(
+			IActivityManager activityManager = support.getActivityManager();
+			support.setEnabledActivityIds(
 				activityManager.getDefinedActivityIds());
 		}
 	}
@@ -93,9 +99,14 @@ class ActivityPersistanceHelper {
 		//        if (!store.isDefault(PREFIX + FILTERING_ENABLED))
 		//            setFiltering(store.getBoolean(PREFIX + FILTERING_ENABLED));
 
-		// TODO cast
-		IActivityManager activityManager =
-			PlatformUI.getWorkbench().getActivityManager();
+		IWorkbenchActivitySupport support =
+			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
+
+		if (support == null)
+			return;
+
+		IActivityManager activityManager = support.getActivityManager();
 
 		Iterator values = activityManager.getDefinedActivityIds().iterator();
 		Set enabledActivities = new HashSet();
@@ -107,7 +118,7 @@ class ActivityPersistanceHelper {
 			}
 		}
 
-		PlatformUI.getWorkbench().setEnabledActivityIds(enabledActivities);
+		support.setEnabledActivityIds(enabledActivities);
 	}
 
 	/**
@@ -116,9 +127,14 @@ class ActivityPersistanceHelper {
 	private void saveEnabledStates() {
 		IPreferenceStore store =
 			WorkbenchPlugin.getDefault().getPreferenceStore();
-		//        store.setValue(PREFIX + FILTERING_ENABLED, isFiltering());
-		IActivityManager activityManager =
-			PlatformUI.getWorkbench().getActivityManager();
+
+		IWorkbenchActivitySupport support =
+			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
+		if (support == null)
+			return;
+
+		IActivityManager activityManager = support.getActivityManager();
 		Iterator values = activityManager.getDefinedActivityIds().iterator();
 		while (values.hasNext()) {
 			IActivity activity =

@@ -17,11 +17,11 @@ import java.util.StringTokenizer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IIdentifier;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -120,13 +120,18 @@ public class NewWizard extends Wizard {
 		mainPage.saveWidgetValues();
 		IWizard selectedWizard = mainPage.getSelectedNode().getWizard();
 
-		IActivityManager activityManager =
-			PlatformUI.getWorkbench().getActivityManager();
+		IWorkbenchActivitySupport support =
+			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
+				IWorkbenchActivitySupport.class);
+		if (support == null)
+			return true;
+
+		IActivityManager activityManager = support.getActivityManager();
 		IIdentifier identifier =
 			activityManager.getIdentifier(selectedWizard.getClass().getName());
 		Set activities = new HashSet(activityManager.getEnabledActivityIds());
 		if (activities.addAll(identifier.getActivityIds())) {
-			PlatformUI.getWorkbench().setEnabledActivityIds(activities);
+			support.setEnabledActivityIds(activities);
 		}
 		return true;
 	}

@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.ICategory;
-import org.eclipse.ui.activities.IMutableActivityManager;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 
 /**
  * A simple control provider that will allow the user to toggle on/off the
@@ -45,7 +45,7 @@ import org.eclipse.ui.activities.IMutableActivityManager;
  */
 public class ActivityEnabler {
 	private ListViewer activitiesViewer;
-	private IMutableActivityManager activityManager;
+	private IWorkbenchActivitySupport activitySupport;
 
 	private CheckboxTableViewer categoryViewer;
 	private Set checkedInSession = new HashSet(7),
@@ -58,8 +58,8 @@ public class ActivityEnabler {
 	 * 
 	 * @param activityManager the activity manager that will be used.
 	 */
-	public ActivityEnabler(IMutableActivityManager activityManager) {
-		this.activityManager = activityManager;
+	public ActivityEnabler(IWorkbenchActivitySupport activityManager) {
+		this.activitySupport = activityManager;
 	}
 
 	/**
@@ -68,7 +68,8 @@ public class ActivityEnabler {
 	 */
 	private boolean categoryEnabled(String categoryId) {
 		Collection categoryActivities = getCategoryActivities(categoryId);
-		Set enabledActivities = activityManager.getEnabledActivityIds();
+		Set enabledActivities =
+			activitySupport.getActivityManager().getEnabledActivityIds();
 		return enabledActivities.containsAll(categoryActivities);
 	}
 
@@ -97,9 +98,10 @@ public class ActivityEnabler {
 				new GridData(GridData.FILL_BOTH));
 			categoryViewer.setContentProvider(new CategoryContentProvider());
 			categoryViewer.setLabelProvider(
-				new CategoryLabelProvider(activityManager));
+				new CategoryLabelProvider(
+					activitySupport.getActivityManager()));
 			categoryViewer.setSorter(new ViewerSorter());
-			categoryViewer.setInput(activityManager);
+			categoryViewer.setInput(activitySupport);
 			categoryViewer.setSelection(new StructuredSelection());
 			setCategoryStates();
 		}
@@ -110,7 +112,8 @@ public class ActivityEnabler {
 				new GridData(GridData.FILL_BOTH));
 			activitiesViewer.setContentProvider(new ActivityContentProvider());
 			activitiesViewer.setLabelProvider(
-				new ActivityLabelProvider(activityManager));
+				new ActivityLabelProvider(
+					activitySupport.getActivityManager()));
 			activitiesViewer.setSorter(new ViewerSorter());
 			activitiesViewer.setInput(Collections.EMPTY_SET);
 			activitiesViewer.getControl().setEnabled(false);
@@ -165,7 +168,8 @@ public class ActivityEnabler {
 	 * @return all activity ids in the category.
 	 */
 	private Collection getCategoryActivities(String categoryId) {
-		ICategory category = activityManager.getCategory(categoryId);
+		ICategory category =
+			activitySupport.getActivityManager().getCategory(categoryId);
 		Set activityBindings = category.getCategoryActivityBindings();
 		List categoryActivities = new ArrayList(10);
 		for (Iterator j = activityBindings.iterator(); j.hasNext();) {
@@ -181,7 +185,8 @@ public class ActivityEnabler {
 	 * Set the enabled category states based on current activity enablement.
 	 */
 	private void setCategoryStates() {
-		Set categories = activityManager.getDefinedCategoryIds();
+		Set categories =
+			activitySupport.getActivityManager().getDefinedCategoryIds();
 		List enabledCategories = new ArrayList(10);
 		for (Iterator i = categories.iterator(); i.hasNext();) {
 			String categoryId = (String) i.next();
@@ -199,7 +204,8 @@ public class ActivityEnabler {
 	 */
 	public void updateActivityStates() {
 		Set enabledActivities =
-			new HashSet(activityManager.getEnabledActivityIds());
+			new HashSet(
+				activitySupport.getActivityManager().getEnabledActivityIds());
 
 		for (Iterator i = uncheckedInSession.iterator(); i.hasNext();) {
 			String categoryId = (String) i.next();
@@ -211,6 +217,6 @@ public class ActivityEnabler {
 			enabledActivities.addAll(getCategoryActivities(categoryId));
 		}
 
-		activityManager.setEnabledActivityIds(enabledActivities);
+		activitySupport.setEnabledActivityIds(enabledActivities);
 	}
 }
