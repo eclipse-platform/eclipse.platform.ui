@@ -82,7 +82,7 @@ public abstract class TextChange extends Change {
 		public void setExcludes(TextEdit[] excludes) {
 			Assert.isNotNull(excludes);
 			Assert.isTrue(fIncludes == null);
-			fExcludes= excludes;
+			fExcludes= flatten(excludes);
 		}
 		protected boolean considerEdit(TextEdit edit) {
 			if (fExcludes != null) {
