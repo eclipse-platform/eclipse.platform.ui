@@ -11,15 +11,11 @@ package org.eclipse.ui.keys;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -62,113 +58,10 @@ public final class KeyStroke implements Comparable {
 	private final static int HASH_INITIAL = KeyStroke.class.getName().hashCode();
 
 	/**
-	 * The delimiter for <code>Key</code> objects in the formal string
-	 * representation.
-	 */
-	public final static char KEY_DELIMITER = '\u002B';
-
-	/**
-	 * An internal constant used to find the translation of the key delimiter
-	 * in the resource bundle.
-	 */
-	private final static String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$	
-
-	/**
 	 * The set of delimiters for <code>Key</code> objects allowed during
 	 * parsing of the formal string representation.
 	 */
-	public final static String KEY_DELIMITERS = KEY_DELIMITER + Util.ZERO_LENGTH_STRING;
-
-	/**
-	 * A comparator to sort modifier keys in the order that they would be
-	 * displayed to a user. This comparator is platform-specific.
-	 */
-	private final static Comparator modifierKeyComparator = new Comparator() {
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Comparable#compareTo(java.lang.Object)
-		 */
-		public int compare(Object left, Object right) {
-			ModifierKey modifierKeyLeft = (ModifierKey) left;
-			ModifierKey modifierKeyRight = (ModifierKey) right;
-			int modifierKeyLeftRank = rank(modifierKeyLeft);
-			int modifierKeyRightRank = rank(modifierKeyRight);
-
-			if (modifierKeyLeftRank != modifierKeyRightRank)
-				return modifierKeyLeftRank - modifierKeyRightRank;
-			else
-				return modifierKeyLeft.compareTo(modifierKeyRight);
-		}
-
-		/**
-		 * Calculates a rank for a given modifier key.
-		 * 
-		 * @param modifierKey
-		 *            the modifier key to rank.
-		 * @return the rank of this modifier key. This is a non-negative number
-		 *         where a lower number suggests a higher rank.
-		 */
-		private int rank(ModifierKey modifierKey) {
-			String platform = SWT.getPlatform();
-
-			if ("carbon".equals(platform)) { //$NON-NLS-1$
-				if (ModifierKey.SHIFT.equals(modifierKey))
-					return 0;
-
-				if (ModifierKey.CTRL.equals(modifierKey))
-					return 1;
-
-				if (ModifierKey.ALT.equals(modifierKey))
-					return 2;
-
-				if (ModifierKey.COMMAND.equals(modifierKey))
-					return 3;
-			}
-
-			if ("gtk".equals(platform)) { //$NON-NLS-1$
-				// TODO this is order of modifier keys on gnome
-				if (ModifierKey.SHIFT.equals(modifierKey))
-					return 0;
-
-				if (ModifierKey.CTRL.equals(modifierKey))
-					return 1;
-
-				if (ModifierKey.ALT.equals(modifierKey))
-					return 2;
-
-				/*
-				 * TODO this is order of modifier keys on kde if
-				 * (ModifierKey.ALT.equals(modifierKey)) return 0;
-				 * 
-				 * if (ModifierKey.CTRL.equals(modifierKey)) return 1;
-				 * 
-				 * if (ModifierKey.SHIFT.equals(modifierKey)) return 2;
-				 */
-			}
-
-			if ("win32".equals(platform)) { //$NON-NLS-1$
-				if (ModifierKey.CTRL.equals(modifierKey))
-					return 0;
-
-				if (ModifierKey.ALT.equals(modifierKey))
-					return 1;
-
-				if (ModifierKey.SHIFT.equals(modifierKey))
-					return 2;
-			}
-
-			return Integer.MAX_VALUE;
-		}
-	};
-
-	/**
-	 * The resource bundle used by <code>format()</code> to translate formal
-	 * string representations by locale.
-	 */
-	private final static ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(KeyStroke.class.getName());
+	public final static String KEY_DELIMITERS = KeyFormatter.KEY_DELIMITER;
 
 	/**
 	 * Gets an instance of <code>KeyStroke</code> given a single modifier key
@@ -258,7 +151,8 @@ public final class KeyStroke implements Comparable {
 			if (i % 2 == 0) {
 				if (stringTokenizer.hasMoreTokens()) {
 					token = token.toUpperCase();
-					ModifierKey modifierKey = (ModifierKey) ModifierKey.modifierKeysByName.get(token);
+					ModifierKey modifierKey =
+						(ModifierKey) ModifierKey.modifierKeysByName.get(token);
 
 					if (modifierKey == null || !modifierKeys.add(modifierKey))
 						throw new ParseException();
@@ -318,14 +212,6 @@ public final class KeyStroke implements Comparable {
 	private NaturalKey naturalKey;
 
 	/**
-	 * The cached formal string representation for this object. Because <code>KeyStroke</code>
-	 * objects are immutable, their formal string representations need only to
-	 * be computed once. After the first call to <code>toString()</code>,
-	 * the computed value is cached here for all subsequent calls.
-	 */
-	private transient String string;
-
-	/**
 	 * Constructs an instance of <code>KeyStroke</code> given a set of
 	 * modifier keys and a natural key.
 	 * 
@@ -375,30 +261,28 @@ public final class KeyStroke implements Comparable {
 	}
 
 	/**
-	 * Returns the formal string representation for this key stroke, translated
-	 * for the user's current platform and locale.
+	 * Formats this key stroke into the native look.
 	 * 
-	 * @return The formal string representation for this key stroke, translated
-	 *         for the user's current platform and locale. Guaranteed not to be
-	 *         <code>null</code>.
+	 * @return A string representation for this key stroke using the native
+	 *         look; never <code>null</code>.
 	 */
 	public String format() {
-		// TODO consider platform-specific resource bundles
-		String keyDelimiter = "carbon".equals(SWT.getPlatform()) ? Util.ZERO_LENGTH_STRING : Util.translateString(RESOURCE_BUNDLE, KEY_DELIMITER_KEY, Character.toString(KEY_DELIMITER), false, false); //$NON-NLS-1$
-		SortedSet modifierKeys = new TreeSet(modifierKeyComparator);
-		modifierKeys.addAll(this.modifierKeys);
-		StringBuffer stringBuffer = new StringBuffer();
+		return format(FormatManager.NATIVE);
+	}
 
-		for (Iterator iterator = modifierKeys.iterator(); iterator.hasNext();) {
-			ModifierKey modifierKey = (ModifierKey) iterator.next();
-			stringBuffer.append(modifierKey.format());
-			stringBuffer.append(keyDelimiter);
-		}
-
-		if (naturalKey != null)
-			stringBuffer.append(naturalKey.format());
-
-		return stringBuffer.toString();
+	/**
+	 * Formats this key stroke into the given <code>format</code>.
+	 * 
+	 * @param format
+	 *            The integer constant representing the format you want. This
+	 *            value must be one of the constants defined in the <code>FormatManager</code>.
+	 *            If it is not, then it the <code>FormalKeyFormatter</code>
+	 *            is used.
+	 * @return A string representation for this key stroke in the given format;
+	 *         never <code>null</code>.
+	 */
+	public String format(int format) {
+		return FormatManager.getFormatter(format).formatKeyStroke(this);
 	}
 
 	/**
@@ -455,21 +339,6 @@ public final class KeyStroke implements Comparable {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		if (string == null) {
-			StringBuffer stringBuffer = new StringBuffer();
-
-			for (Iterator iterator = modifierKeys.iterator(); iterator.hasNext();) {
-				ModifierKey modifierKey = (ModifierKey) iterator.next();
-				stringBuffer.append(modifierKey);
-				stringBuffer.append(KEY_DELIMITER);
-			}
-
-			if (naturalKey != null)
-				stringBuffer.append(naturalKey);
-
-			string = stringBuffer.toString();
-		}
-
-		return string;
+		return format(FormatManager.FORMAL);
 	}
 }

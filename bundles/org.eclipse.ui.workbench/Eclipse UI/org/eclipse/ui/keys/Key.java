@@ -108,16 +108,6 @@ public abstract class Key implements Comparable {
 		return equals;
 	}
 
-	/**
-	 * Returns the formal string representation for this key, translated for
-	 * the user's current platform and locale.
-	 * 
-	 * @return The formal string representation for this key, translated for
-	 *         the user's current platform and locale. Guaranteed not to be
-	 *         <code>null</code>.
-	 */
-	public abstract String format();
-
 	/*
 	 * (non-Javadoc)
 	 * 

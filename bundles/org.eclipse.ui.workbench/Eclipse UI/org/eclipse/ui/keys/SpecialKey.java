@@ -9,17 +9,13 @@
 
 package org.eclipse.ui.keys;
 
-import java.util.ResourceBundle;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.ui.internal.util.Util;
-
 /**
  * <p>
- * Instances of <code>SpecialKey</code> represent the keys on
- * keyboard recognized as neither modifier keys nor character keys.
+ * Instances of <code>SpecialKey</code> represent the keys on keyboard
+ * recognized as neither modifier keys nor character keys.
  * </p>
  * <p>
  * <code>SpecialKey</code> objects are immutable. Clients are not permitted
@@ -37,242 +33,242 @@ public final class SpecialKey extends NaturalKey {
 	 * An internal map used to lookup instances of <code>SpecialKey</code>
 	 * given the formal string representation of a special key.
 	 */
-	static SortedMap specialKeysByName = new TreeMap();	
-	
+	static SortedMap specialKeysByName = new TreeMap();
+
 	/**
 	 * The name of the 'Arrow Down' key.
 	 */
-	private final static String ARROW_DOWN_NAME = "ARROW_DOWN"; //$NON-NLS-1$
+	public final static String ARROW_DOWN_NAME = "ARROW_DOWN"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Arrow Left' key.
 	 */
-	private final static String ARROW_LEFT_NAME = "ARROW_LEFT"; //$NON-NLS-1$
+	public final static String ARROW_LEFT_NAME = "ARROW_LEFT"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Arrow Right' key.
 	 */
-	private final static String ARROW_RIGHT_NAME = "ARROW_RIGHT"; //$NON-NLS-1$
+	public final static String ARROW_RIGHT_NAME = "ARROW_RIGHT"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Arrow Up' key.
 	 */
-	private final static String ARROW_UP_NAME = "ARROW_UP"; //$NON-NLS-1$
+	public final static String ARROW_UP_NAME = "ARROW_UP"; //$NON-NLS-1$
 
 	/**
 	 * The name for the 'Break' key.
 	 */
-	private final static String BREAK_NAME = "BREAK"; //$NON-NLS-1$
+	public final static String BREAK_NAME = "BREAK"; //$NON-NLS-1$
 
 	/**
 	 * The name for the 'Caps Lock' key.
 	 */
-	private final static String CAPS_LOCK_NAME = "CAPS_LOCK"; //$NON-NLS-1$
+	public final static String CAPS_LOCK_NAME = "CAPS_LOCK"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'End' key.
 	 */
-	private final static String END_NAME = "END"; //$NON-NLS-1$
+	public final static String END_NAME = "END"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F1' key.
 	 */
-	private final static String F1_NAME = "F1"; //$NON-NLS-1$
+	public final static String F1_NAME = "F1"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F10' key.
 	 */
-	private final static String F10_NAME = "F10"; //$NON-NLS-1$
+	public final static String F10_NAME = "F10"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F11' key.
 	 */
-	private final static String F11_NAME = "F11"; //$NON-NLS-1$
+	public final static String F11_NAME = "F11"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F12' key.
 	 */
-	private final static String F12_NAME = "F12"; //$NON-NLS-1$
+	public final static String F12_NAME = "F12"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F13' key.
 	 */
-	private final static String F13_NAME = "F13"; //$NON-NLS-1$
+	public final static String F13_NAME = "F13"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F14' key.
 	 */
-	private final static String F14_NAME = "F14"; //$NON-NLS-1$
+	public final static String F14_NAME = "F14"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F15' key.
 	 */
-	private final static String F15_NAME = "F15"; //$NON-NLS-1$
+	public final static String F15_NAME = "F15"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F2' key.
 	 */
-	private final static String F2_NAME = "F2"; //$NON-NLS-1$
+	public final static String F2_NAME = "F2"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F3' key.
 	 */
-	private final static String F3_NAME = "F3"; //$NON-NLS-1$
+	public final static String F3_NAME = "F3"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F4' key.
 	 */
-	private final static String F4_NAME = "F4"; //$NON-NLS-1$
+	public final static String F4_NAME = "F4"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F5' key.
 	 */
-	private final static String F5_NAME = "F5"; //$NON-NLS-1$
+	public final static String F5_NAME = "F5"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F6' key.
 	 */
-	private final static String F6_NAME = "F6"; //$NON-NLS-1$
+	public final static String F6_NAME = "F6"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F7' key.
 	 */
-	private final static String F7_NAME = "F7"; //$NON-NLS-1$
+	public final static String F7_NAME = "F7"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F8' key.
 	 */
-	private final static String F8_NAME = "F8"; //$NON-NLS-1$
+	public final static String F8_NAME = "F8"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'F9' key.
 	 */
-	private final static String F9_NAME = "F9"; //$NON-NLS-1$
+	public final static String F9_NAME = "F9"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Home' key.
 	 */
-	private final static String HOME_NAME = "HOME"; //$NON-NLS-1$
+	public final static String HOME_NAME = "HOME"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Insert' key.
 	 */
-	private final static String INSERT_NAME = "INSERT"; //$NON-NLS-1$
+	public final static String INSERT_NAME = "INSERT"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'NumLock' key.
 	 */
-	private final static String NUM_LOCK_NAME = "NUM_LOCK"; //$NON-NLS-1$
+	public final static String NUM_LOCK_NAME = "NUM_LOCK"; //$NON-NLS-1$
 
 	/**
 	 * The name of the '0' key on the numpad.
 	 */
-	private final static String NUMPAD_0_NAME = "NUMPAD_0"; //$NON-NLS-1$
+	public final static String NUMPAD_0_NAME = "NUMPAD_0"; //$NON-NLS-1$
 
 	/**
 	 * The name of the '1' key on the numpad.
 	 */
-	private final static String NUMPAD_1_NAME = "NUMPAD_1"; //$NON-NLS-1$
+	public final static String NUMPAD_1_NAME = "NUMPAD_1"; //$NON-NLS-1$
 
 	/**
 	 * The name of the '2' key on the numpad.
 	 */
-	private final static String NUMPAD_2_NAME = "NUMPAD_2"; //$NON-NLS-1$
+	public final static String NUMPAD_2_NAME = "NUMPAD_2"; //$NON-NLS-1$
 
 	/**
 	 * The name of the '3' key on the numpad.
 	 */
-	private final static String NUMPAD_3_NAME = "NUMPAD_3"; //$NON-NLS-1$
+	public final static String NUMPAD_3_NAME = "NUMPAD_3"; //$NON-NLS-1$
 
 	/**
 	 * The name of the '4' key on the numpad.
 	 */
-	private final static String NUMPAD_4_NAME = "NUMPAD_4"; //$NON-NLS-1$
+	public final static String NUMPAD_4_NAME = "NUMPAD_4"; //$NON-NLS-1$
 
 	/**
 	 * The name of the '5' key on the numpad.
 	 */
-	private final static String NUMPAD_5_NAME = "NUMPAD_5"; //$NON-NLS-1$
+	public final static String NUMPAD_5_NAME = "NUMPAD_5"; //$NON-NLS-1$
 
 	/**
 	 * The name of the '6' key on the numpad.
 	 */
-	private final static String NUMPAD_6_NAME = "NUMPAD_6"; //$NON-NLS-1$
+	public final static String NUMPAD_6_NAME = "NUMPAD_6"; //$NON-NLS-1$
 
 	/**
 	 * The name of the '7' key on the numpad.
 	 */
-	private final static String NUMPAD_7_NAME = "NUMPAD_7"; //$NON-NLS-1$
+	public final static String NUMPAD_7_NAME = "NUMPAD_7"; //$NON-NLS-1$
 
 	/**
 	 * The name of the '8' key on the numpad.
 	 */
-	private final static String NUMPAD_8_NAME = "NUMPAD_8"; //$NON-NLS-1$
+	public final static String NUMPAD_8_NAME = "NUMPAD_8"; //$NON-NLS-1$
 
 	/**
 	 * The name of the '9' key on the numpad.
 	 */
-	private final static String NUMPAD_9_NAME = "NUMPAD_9"; //$NON-NLS-1$
+	public final static String NUMPAD_9_NAME = "NUMPAD_9"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Add' key on the numpad.
 	 */
-	private final static String NUMPAD_ADD_NAME = "NUMPAD_ADD"; //$NON-NLS-1$
+	public final static String NUMPAD_ADD_NAME = "NUMPAD_ADD"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Decimal' key on the numpad.
 	 */
-	private final static String NUMPAD_DECIMAL_NAME = "NUMPAD_DECIMAL"; //$NON-NLS-1$
+	public final static String NUMPAD_DECIMAL_NAME = "NUMPAD_DECIMAL"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Divide' key on the numpad.
 	 */
-	private final static String NUMPAD_DIVIDE_NAME = "NUMPAD_DIVIDE"; //$NON-NLS-1$
+	public final static String NUMPAD_DIVIDE_NAME = "NUMPAD_DIVIDE"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Enter' key on the numpad.
 	 */
-	private final static String NUMPAD_ENTER_NAME = "NUMPAD_ENTER"; //$NON-NLS-1$
+	public final static String NUMPAD_ENTER_NAME = "NUMPAD_ENTER"; //$NON-NLS-1$
 
 	/**
 	 * The name of the '=' key on the numpad.
 	 */
-	private final static String NUMPAD_EQUAL_NAME = "NUMPAD_EQUAL"; //$NON-NLS-1$
+	public final static String NUMPAD_EQUAL_NAME = "NUMPAD_EQUAL"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Multiply' key on the numpad.
 	 */
-	private final static String NUMPAD_MULTIPLY_NAME = "NUMPAD_MULTIPLY"; //$NON-NLS-1$
+	public final static String NUMPAD_MULTIPLY_NAME = "NUMPAD_MULTIPLY"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Subtract' key on the numpad.
 	 */
-	private final static String NUMPAD_SUBTRACT_NAME = "NUMPAD_SUBTRACT"; //$NON-NLS-1$
+	public final static String NUMPAD_SUBTRACT_NAME = "NUMPAD_SUBTRACT"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Page Down' key.
 	 */
-	private final static String PAGE_DOWN_NAME = "PAGE_DOWN"; //$NON-NLS-1$
+	public final static String PAGE_DOWN_NAME = "PAGE_DOWN"; //$NON-NLS-1$
 
 	/**
 	 * The name of the 'Page Up' key.
 	 */
-	private final static String PAGE_UP_NAME = "PAGE_UP"; //$NON-NLS-1$
+	public final static String PAGE_UP_NAME = "PAGE_UP"; //$NON-NLS-1$
 
 	/**
 	 * The name for the 'Pause' key.
 	 */
-	private final static String PAUSE_NAME = "PAUSE"; //$NON-NLS-1$
+	public final static String PAUSE_NAME = "PAUSE"; //$NON-NLS-1$
 
 	/**
 	 * The name for the 'Print Screen' key.
 	 */
-	private final static String PRINT_SCREEN_NAME = "PRINT_SCREEN"; //$NON-NLS-1$
+	public final static String PRINT_SCREEN_NAME = "PRINT_SCREEN"; //$NON-NLS-1$
 
 	/**
 	 * The name for the 'Scroll Lock' key.
 	 */
-	private final static String SCROLL_LOCK_NAME = "SCROLL_LOCK"; //$NON-NLS-1$		
+	public final static String SCROLL_LOCK_NAME = "SCROLL_LOCK"; //$NON-NLS-1$		
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
@@ -555,13 +551,6 @@ public final class SpecialKey extends NaturalKey {
 	 */
 	public final static SpecialKey SCROLL_LOCK = new SpecialKey(SCROLL_LOCK_NAME);
 
-	/**
-	 * The resource bundle used by <code>format()</code> to translate key
-	 * names by locale.
-	 */
-	private final static ResourceBundle RESOURCE_BUNDLE =
-		ResourceBundle.getBundle(SpecialKey.class.getName());
-	
 	static {
 		specialKeysByName.put(SpecialKey.ARROW_DOWN.toString(), SpecialKey.ARROW_DOWN);
 		specialKeysByName.put(SpecialKey.ARROW_LEFT.toString(), SpecialKey.ARROW_LEFT);
@@ -611,7 +600,7 @@ public final class SpecialKey extends NaturalKey {
 		specialKeysByName.put(SpecialKey.PRINT_SCREEN.toString(), SpecialKey.PRINT_SCREEN);
 		specialKeysByName.put(SpecialKey.SCROLL_LOCK.toString(), SpecialKey.SCROLL_LOCK);
 	}
-	
+
 	/**
 	 * Constructs an instance of <code>SpecialKey</code> given a name.
 	 * 
@@ -620,44 +609,5 @@ public final class SpecialKey extends NaturalKey {
 	 */
 	private SpecialKey(String name) {
 		super(name);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.keys.Key#format()
-	 */
-	public String format() {
-		// TODO consider platform-specific resource bundles.
-		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$    	
-			if (ARROW_DOWN_NAME.equals(name))
-				return Character.toString('\u2193');
-
-			if (ARROW_LEFT_NAME.equals(name))
-				return Character.toString('\u2190');
-
-			if (ARROW_RIGHT_NAME.equals(name))
-				return Character.toString('\u2192');
-
-			if (ARROW_UP_NAME.equals(name))
-				return Character.toString('\u2191');
-
-			if (END_NAME.equals(name))
-				return Character.toString('\u2198');
-
-			if (NUMPAD_ENTER_NAME.equals(name))
-				return Character.toString('\u2324');
-
-			if (HOME_NAME.equals(name))
-				return Character.toString('\u2196');
-
-			if (PAGE_DOWN_NAME.equals(name))
-				return Character.toString('\u21DF');
-
-			if (PAGE_UP_NAME.equals(name))
-				return Character.toString('\u21DE');
-		}
-
-		return Util.translateString(RESOURCE_BUNDLE, name, name, false, false);
 	}
 }

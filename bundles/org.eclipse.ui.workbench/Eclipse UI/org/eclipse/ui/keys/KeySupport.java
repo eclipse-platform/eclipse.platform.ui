@@ -17,8 +17,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Event;
 
+/**
+ * TODO javadoc
+ */
 public final class KeySupport {
-
+	
+	/**
+	 * TODO javadoc
+	 */
 	public static KeyStroke convertAcceleratorToKeyStroke(int accelerator) {
 		final SortedSet modifierKeys = new TreeSet();
 		NaturalKey naturalKey = null;
@@ -265,7 +271,10 @@ public final class KeySupport {
 		char character = topKey(event);
 		return modifiers + toUpperCase(character);
 	}
-
+	
+	/**
+	 * TODO javadoc
+	 */
 	public static final int convertKeyStrokeToAccelerator(final KeyStroke keyStroke) {
 		if (keyStroke == null)
 			throw new NullPointerException();
@@ -379,7 +388,10 @@ public final class KeySupport {
 		char character = (char) keyCode;
 		return Character.isLetter(character) ? Character.toUpperCase(character) : keyCode;
 	}
-
+	
+	/**
+	 * TODO javadoc
+	 */
 	private KeySupport() {
 		// This class should never be instantiated.
 	}
