@@ -621,9 +621,10 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			return encoding;
 		
 		// Probe content
+		InputStream stream= new DocumentInputStream(document);
 		try {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(new DocumentInputStream(document), targetFile.getName(), options);
+			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, targetFile.getName(), options);
 			if (description != null) {
 				encoding= description.getCharset();
 				if (encoding != null)
@@ -631,6 +632,11 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 			}
 		} catch (IOException ex) {
 			// continue with next strategy
+		} finally {
+			try {
+				stream.close();
+			} catch (IOException x) {
+			}
 		}
 		
 		// Use file's encoding if the file has a BOM

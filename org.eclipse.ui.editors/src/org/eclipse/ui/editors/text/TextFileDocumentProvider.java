@@ -809,9 +809,10 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			return encoding;
 		
 		// Probe content
+		InputStream stream= new DocumentInputStream(document);
 		try {
 			QualifiedName[] options= new QualifiedName[] { IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK };
-			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(new DocumentInputStream(document), targetFile.getName(), options);
+			IContentDescription description= Platform.getContentTypeManager().getDescriptionFor(stream, targetFile.getName(), options);
 			if (description != null) {
 				encoding= description.getCharset();
 				if (encoding != null)
@@ -819,6 +820,11 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 			}
 		} catch (IOException ex) {
 			// continue with next strategy
+		} finally {
+			try {
+				stream.close();
+			} catch (IOException x) {
+			}
 		}
 		
 		// Use parent chain
