@@ -9,6 +9,7 @@ package org.eclipse.update.internal.ui.wizards;
 import java.util.ArrayList;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -17,6 +18,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -132,15 +134,21 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		createConfigurationsSection(composite);
 		createActivitiesSection(composite);
 		setControl(composite);
-		setPageComplete(false);
+		
+		Object element = configViewer.getElementAt(0);
+		if (element != null)
+			configViewer.setSelection(new StructuredSelection(element));
+		Dialog.applyDialogFont(composite);
 	}
 	
 	private void createConfigurationsSection(Composite parent) {
 		Composite tableContainer = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = layout.marginWidth = 0;
-		layout.verticalSpacing = 0;
 		tableContainer.setLayout(layout);
+		
+		Label label = new Label(tableContainer, SWT.NONE);
+		label.setText("&Past configurations:");
 		
 		Table table = new Table(tableContainer, SWT.BORDER|SWT.V_SCROLL);		
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -184,10 +192,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		configViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent e) {
 				IStructuredSelection ssel = (IStructuredSelection)e.getSelection();
-				if (ssel.size() == 1) {
-					activitiesViewer.setInput(((IInstallConfiguration)ssel.getFirstElement()));
-				}
-				setPageComplete(ssel.size() == 1);
+				activitiesViewer.setInput(((IInstallConfiguration)ssel.getFirstElement()));
 			}
 		});
 
@@ -211,7 +216,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 		line.setLayoutData(gd);
 		
 		Label label = new Label(composite, SWT.NONE);
-		label.setText("Activities that caused the creation of this configuration:");
+		label.setText("&Activities that caused the creation of this configuration:");
 		
 		Table table = new Table(composite, SWT.BORDER);
 		table.setLayoutData(new GridData(GridData.FILL_VERTICAL));
@@ -253,5 +258,7 @@ public class RevertConfigurationWizardPage extends WizardPage {
 			"It's 2:00 a.m.  I'm going to bed now.");
 		return true;
 	}
+	
+	
 	
 }
