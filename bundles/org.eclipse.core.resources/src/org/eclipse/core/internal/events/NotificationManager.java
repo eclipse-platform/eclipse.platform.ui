@@ -93,7 +93,7 @@ private void notify(ResourceChangeListenerList.ListenerEntry[] resourceListeners
 				}
 				public void handleException(Throwable e) {
 					//ResourceStats.notifyException(e);
-					// don't log the exception....it is already being logged in Workspace#run
+					// don't log the exception....it is already being logged in Platform#run
 				}
 			};
 			boolean oldLock = workspace.isTreeLocked();
