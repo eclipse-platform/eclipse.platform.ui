@@ -21,7 +21,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -90,20 +89,12 @@ public class CommitCommentArea extends DialogArea {
 			}
 		});
 		
-		Composite chooseCommentComposite = createComposite(composite, 2);
 		
-		Composite previousCommentComposite = createComposite(chooseCommentComposite, 1);
-		data = new GridData();
-		data.verticalAlignment = GridData.FILL;
-		data.horizontalAlignment = GridData.FILL;
-		data.grabExcessHorizontalSpace = true;
-		previousCommentComposite.setLayoutData(data);
-		
-		label = new Label(previousCommentComposite, SWT.NULL);
+		label = new Label(composite, SWT.NULL);
 		label.setLayoutData(new GridData());
 		label.setText(Policy.bind("ReleaseCommentDialog.choosePrevious")); //$NON-NLS-1$
 		
-		previousCommentsCombo = new Combo(previousCommentComposite, SWT.READ_ONLY);
+		previousCommentsCombo = new Combo(composite, SWT.READ_ONLY);
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		previousCommentsCombo.setLayoutData(data);
@@ -111,16 +102,10 @@ public class CommitCommentArea extends DialogArea {
 			public void widgetSelected(SelectionEvent e) {
 				int index = previousCommentsCombo.getSelectionIndex();
 				if (index != -1)
-					text.setText(previousCommentsCombo.getItem(index));
+					text.setText(comments[index]);
 			}
 		});
 		
-		Button clear = createButton(chooseCommentComposite, Policy.bind("ReleaseCommentDialog.clearTextArea"), GridData.VERTICAL_ALIGN_CENTER| GridData.HORIZONTAL_ALIGN_END); //$NON-NLS-1$
-		clear.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				CommitCommentArea.this.clearCommitText();
-			}
-		});
 		
 		initializeValues();
 		return composite;
@@ -130,12 +115,55 @@ public class CommitCommentArea extends DialogArea {
 	 * Method initializeValues.
 	 */
 	private void initializeValues() {
+		
+		// populate the previous comment list
 		for (int i = 0; i < comments.length; i++) {
-			previousCommentsCombo.add(comments[i]);
+			previousCommentsCombo.add(flattenText(comments[i]));
 		}
-		if (comments.length > 0)
-			previousCommentsCombo.select(0);
-		text.setText(getSelectedComment());
+		
+		// determine the initial comment text
+		String initialComment;
+		boolean selectText = false;
+		try {
+			initialComment = getCommitTemplate();
+		} catch (CVSException e) {
+			CVSUIPlugin.log(e);
+			initialComment = null;
+		}
+		if (initialComment == null || initialComment.length() == 0) {
+			// there is no template, so use the latest comment
+			if (comments.length > 0)
+				previousCommentsCombo.select(0);
+			initialComment = getSelectedComment();
+			selectText = true;
+		} else {
+			// use the template
+			previousCommentsCombo.deselectAll();
+		}
+		text.setText(initialComment);
+		if (selectText) text.selectAll();
+	}
+
+	/*
+	 * Flatten the text in the multiline comment
+	 * @param string
+	 * @return String
+	 */
+	private String flattenText(String string) {
+		StringBuffer buffer = new StringBuffer(string.length() + 20);
+		boolean skipAdjacentLineSeparator = true;
+		for (int i = 0; i < string.length(); i++) {
+			char c = string.charAt(i);
+			if (c == '\r' || c == '\n') {
+				if (!skipAdjacentLineSeparator)
+					buffer.append(Policy.bind("separator")); //$NON-NLS-1$
+				skipAdjacentLineSeparator = true;
+			} else {
+				buffer.append(c);
+				skipAdjacentLineSeparator = false;
+			}
+		}
+		return buffer.toString();
 	}
 
 	/**
@@ -190,7 +218,7 @@ public class CommitCommentArea extends DialogArea {
 		} else {
 			int index = previousCommentsCombo.getSelectionIndex();
 			if (index != -1)
-				return previousCommentsCombo.getItem(index);
+				return comments[index];
 		}
 		return ""; //$NON-NLS-1$
 	}
