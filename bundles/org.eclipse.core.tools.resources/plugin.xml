@@ -6,7 +6,6 @@
     	<dumper file-name=".markers.snap" class="org.eclipse.core.tools.resources.metadata.MarkersSnapshotDumper"/>
     	<dumper file-name=".syncinfo" class="org.eclipse.core.tools.resources.metadata.SyncInfoDumper"/>
     	<dumper file-name=".syncinfo.snap" class="org.eclipse.core.tools.resources.metadata.SyncInfoSnapshotDumper"/>
-    	<dumper file-name=".properties" class="org.eclipse.core.tools.resources.metadata.PropertiesDumper"/>
     	<dumper file-name=".location" class="org.eclipse.core.tools.resources.metadata.LocationDumper"/>    	    	    	    	    	
    </extension>
 <!--  Actions -->
