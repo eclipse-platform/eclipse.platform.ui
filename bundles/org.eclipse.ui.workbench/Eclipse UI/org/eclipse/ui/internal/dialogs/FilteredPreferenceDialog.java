@@ -260,7 +260,10 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 		tab.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
 
-		parentFolder.setTopRight(getContainerToolBar(parentFolder), SWT.RIGHT);
+		Control toolbar = getContainerToolBar(parentFolder);
+		parentFolder.setTopRight(toolbar, SWT.RIGHT);
+		int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
+		parentFolder.setTabHeight(height);
 		parentFolder.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL));
 		parentFolder.setSimple(false);
@@ -454,7 +457,10 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 				return false;
 			}
 		};
-		int styleBits = SWT.SINGLE | SWT.H_SCROLL | SWT.BORDER;
+		int styleBits = SWT.SINGLE | SWT.H_SCROLL;
+		if (hasGroups())
+		    styleBits |= SWT.BORDER;
+		
 		FilteredTree filteredTree = new FilteredTree(parent, styleBits, filter);
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 		TreeViewer tree = filteredTree.getViewer();
@@ -639,7 +645,16 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#updateTitle()
 	 */
 	public void updateTitle() {
-		tab.setText(getCurrentPage().getTitle());
+	    String paddedText = "     " + getCurrentPage().getTitle(); //$NON-NLS-1$
+	    
+	    if (paddedText.length() < 25) {
+	        StringBuffer buf = new StringBuffer(paddedText);
+	        for (int i = paddedText.length(); i < 20; i++) {
+                buf.append(" "); //$NON-NLS-1$
+            }
+	        paddedText = buf.toString();
+	    }
+		tab.setText(paddedText);
 		tab.setImage(getCurrentPage().getImage());
 	}
 
