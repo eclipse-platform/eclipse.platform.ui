@@ -191,7 +191,7 @@ public class ResourceEncodingFieldEditor extends AbstractEncodingFieldEditor {
 				//If we can find a charset then derive from that
 				if (charset != null && charset.length() > 0)
 					return IDEWorkbenchMessages.format("ResourceInfo.fileContentEncodingFormat", //$NON-NLS-1$
-							new String[] {});
+							new String[] {charset});
 
 				return IDEWorkbenchMessages.format("ResourceInfo.fileContainerEncodingFormat", //$NON-NLS-1$
 						new String[] { getDefaultEnc() });
