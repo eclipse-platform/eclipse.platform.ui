@@ -16,8 +16,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -70,7 +73,7 @@ public class FileLink implements IConsoleHyperlink {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
 				try {
-					IEditorPart editorPart = page.openEditor(new FileEditorInput(fFile), fEditorId, false);
+					IEditorPart editorPart = page.openEditor(new FileEditorInput(fFile), getEditorId() , false);
 					if (fFileLineNumber > 0 && editorPart instanceof ITextEditor) {
 						ITextEditor textEditor = (ITextEditor)editorPart;
 						IEditorInput input = editorPart.getEditorInput();
@@ -99,8 +102,7 @@ public class FileLink implements IConsoleHyperlink {
 					}
 				} catch (PartInitException e) {
 					DebugUIPlugin.log(e);
-				}
-				
+				}	
 			}
 		}
 	}
@@ -115,5 +117,19 @@ public class FileLink implements IConsoleHyperlink {
 	 * @see org.eclipse.debug.ui.console.IConsoleHyperlink#linkExited()
 	 */
 	public void linkExited() {
+	}
+	
+	private String getEditorId() {
+		if (fEditorId == null) {
+			IWorkbench workbench= DebugUIPlugin.getDefault().getWorkbench();
+			// If there is a registered editor for the file use it.
+			IEditorDescriptor desc =  workbench.getEditorRegistry().getDefaultEditor(fFile.getName());
+			if (desc == null) {
+				//default editor
+				desc= workbench.getEditorRegistry().findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
+			}
+			fEditorId= desc.getId();
+		}
+		return fEditorId;
 	}
 }
