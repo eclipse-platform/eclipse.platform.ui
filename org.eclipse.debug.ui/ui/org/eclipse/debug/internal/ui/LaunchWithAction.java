@@ -11,6 +11,7 @@ import org.eclipse.debug.core.ILauncher;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -21,21 +22,24 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 /**
  * A cascading sub-menu that shows all launchers pertinent to this action's mode
  * (e.g., 'run' or 'debug').
  */
-public class LaunchWithAction extends Action implements IMenuCreator {
+public class LaunchWithAction extends Action implements IMenuCreator, IWorkbenchWindowActionDelegate {
 	
 	private String fMode;
-
+	
 	/**
 	 * @see IAction#run()
 	 */
 	public void run() {
+		//do nothing 
+		//this action just creates a cascading menu.
 	}
-
+	
 	public LaunchWithAction(String mode) {
 		super();
 		setMode(mode);
@@ -47,31 +51,33 @@ public class LaunchWithAction extends Action implements IMenuCreator {
 		} else {
 			descriptor= DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ACT_RUN);
 		}
-
 		if (descriptor != null) {
 			setImageDescriptor(descriptor);
 		}
 		setMenuCreator(this);
 	}
 	
-	private void createMenuForAction(Menu parent, Action action) {
+	private void createMenuForAction(Menu parent, Action action, int count) {
+		//add the numerical accelerator
+		StringBuffer label= new StringBuffer("&");
+		label.append(count);
+		label.append(' ');
+		label.append(action.getText());
+		action.setText(label.toString());
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
 	}
-
 	/**
 	 * @see IMenuCreator#dispose()
 	 */
 	public void dispose() {
 	}
-
 	/**
 	 * @see IMenuCreator#getMenu(Control)
 	 */
 	public Menu getMenu(Control parent) {
 		return null;
 	}
-
 	/**
 	 * @see IMenuCreator#getMenu(Menu)
 	 */
@@ -88,7 +94,7 @@ public class LaunchWithAction extends Action implements IMenuCreator {
 		for (int i= 0; i < launchers.length; i++) {
 			if (DebugUIPlugin.getDefault().isVisible(launchers[i])) {
 				LaunchSelectionAction newAction= new LaunchSelectionAction(launchers[i], element, getMode());
-				createMenuForAction(menu, newAction);
+				createMenuForAction(menu, newAction, i+1);
 			}
 		}
 		return menu;
@@ -113,12 +119,10 @@ public class LaunchWithAction extends Action implements IMenuCreator {
 			}
 			IEditorPart editor= p.getActiveEditor();
 			Object element= null;
-
 			// first, see if there is an active editor, and try its input element
 			if (editor != null) {
 				element= editor.getEditorInput();
 			}
-
 			if (selection == null && element != null) {
 				selection= new StructuredSelection(element);
 			}
@@ -129,11 +133,33 @@ public class LaunchWithAction extends Action implements IMenuCreator {
 	protected String getMode() {
 		return fMode;
 	}
-
 	protected void setMode(String mode) {
 		fMode = mode;
 	}
+	
+	/**
+	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
+	 */
+	public void init(IWorkbenchWindow window) {
+	}
 
+	/**
+	 * @see IActionDelegate#run(IAction)
+	 */
+	public void run(IAction action) {
+		run();
+	}
+
+	/**
+	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 */
+	public void selectionChanged(IAction action, ISelection selection) {
+		if (action instanceof Action) {
+			((Action)action).setMenuCreator(this);
+		} else {
+			action.setEnabled(false);
+		}
+	}
 }
 
 

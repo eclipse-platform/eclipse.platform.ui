@@ -167,7 +167,6 @@
        <action
             label="%RunWithAction.label"
             icon="icons/full/ctool16/run_exc.gif"
-            helpContextId="run_action_context"
             class="org.eclipse.debug.internal.ui.RunWithAction"
             menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
             id="org.eclipse.debug.internal.ui.RunWithAction">
@@ -175,7 +174,6 @@
       <action
             label="%DebugWithAction.label"
             icon="icons/full/ctool16/debug_exc.gif"
-            helpContextId="debug_action_context"
             class="org.eclipse.debug.internal.ui.DebugWithAction"
     		menubarPath="org.eclipse.debug.ui.DebugMenu/menuGroup"
             id="org.eclipse.debug.internal.ui.DebugWithAction">
