@@ -36,7 +36,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdapterFactory;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IPluginDescriptor;
@@ -773,15 +773,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 			logError(e);
 		}
 	}
-
+
 	/**
-	 * Starts up this plug-in.
-	 * <p>
-	 * This method is automatically invoked by the platform core
-	 * the first time any code in the plug-in is executed.
-	 * <p>
+	 * @see AbstractUIPlugin#startup()
 	 */
 	public void startup() throws CoreException {
+		super.startup();
 		DebugPlugin.getDefault().addDebugEventListener(this);
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
 		launchManager.addLaunchListener(this);
@@ -797,12 +794,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ISelectionChanged
 		for (int i = 0; i < launches.length; i++) {
 			launchRegistered(launches[i]);
 		}
-
+		
+		IAdapterManager manager= Platform.getAdapterManager();
 		// Create & register the adapter factory that will dispense objects that 
 		// know about the properties that different breakpoint types support
-		IAdapterFactory factory = new BreakpointPropertiesAdapterFactory();
-		Platform.getAdapterManager().registerAdapters(factory, IBreakpoint.class);
+		manager.registerAdapters(new BreakpointPropertiesAdapterFactory(), IBreakpoint.class);
 		
+		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IDebugElement.class);
+		manager.registerAdapters(new DebugUIPropertiesAdapterFactory(), IProcess.class);
 	}
 
 	/**
