@@ -180,6 +180,11 @@ public void createPartControl(Composite parent) {
 			handleSelectionChanged(event);
 		}
 	});
+	viewer.addSelectionActivatedListener(new ISelectionActivatedListener() {
+		public void selectionActivated(SelectionActivatedEvent event) {
+			handleSelectionActivated(event);
+		}
+	});
 	viewer.addDoubleClickListener(new IDoubleClickListener() {
 		public void doubleClick(DoubleClickEvent event) {
 			handleDoubleClick(event);
@@ -476,15 +481,27 @@ String getToolTipText(Object element) {
 void handleDoubleClick(DoubleClickEvent event) {
 	IStructuredSelection s = (IStructuredSelection)event.getSelection();
 	Object element = s.getFirstElement();
-	if (element instanceof IFile) {
-		runOpenFileAction(s);
-	}
-	else {
+//	if (element instanceof IFile) {
+//		runOpenFileAction(s);
+//	}
+//	else {
+	if (!(element instanceof IFile)) {
 		// 1GBZIA0: ITPUI:WIN2000 - Double-clicking in navigator should expand/collapse containers
 		if (viewer.isExpandable(element)) {
 			viewer.setExpandedState(element, !viewer.getExpandedState(element));
 		}
 	}
+}
+
+/**
+ * Handles selection activated events in viewer.
+ * Opens editor if file double-clicked.
+ */
+void handleSelectionActivated(SelectionActivatedEvent event) {
+	IStructuredSelection s = (IStructuredSelection)event.getSelection();
+	Object element = s.getFirstElement();
+	if (element instanceof IFile)
+		runOpenFileAction(s);
 }
 /**
  */
@@ -510,8 +527,7 @@ void handleSelectionChanged(SelectionChangedEvent event) {
 	updateStatusLine(sel);
 	goIntoAction.update();
 	updateGlobalActions(sel);
-	if(!linkToEditor(sel))
-		runOpenFileAction(sel);
+	linkToEditor(sel);
 }
 /* (non-Javadoc)
  * Method declared on IViewPart.

@@ -10,6 +10,7 @@ import org.eclipse.ui.help.*;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.part.*;
 import org.eclipse.jface.preference.*;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -22,6 +23,8 @@ public class WorkbenchPreferencePage
 	private Button autoBuildButton;
 	private Button autoSaveAllButton;
 	private Button linkButton;
+	private Button activateSelectionOnClickButton;
+	private Button reuseEditorsButton; 
 
 	//Widgets for menu based perspective operation
 	private Button openInNewWindowButton;
@@ -112,6 +115,14 @@ protected Control createContents(Composite parent) {
 
 	linkButton = new Button(composite, SWT.CHECK);
 	linkButton.setText(WorkbenchMessages.getString("WorkbenchPreference.linkNavigator")); //$NON-NLS-1$
+	
+	activateSelectionOnClickButton = new Button(composite, SWT.CHECK);
+	activateSelectionOnClickButton.setText("Activate selection on single click");
+	//activateSelectionOnClickButton.setText(WorkbenchMessages.getString("WorkbenchPreference.activateSelectionOnClick")); //$NON-NLS-1$
+	
+	reuseEditorsButton = new Button(composite, SWT.CHECK);
+	reuseEditorsButton.setText("Reuse open editors");
+	//reuseEditorsIfSavedButton.setText(WorkbenchMessages.getString("WorkbenchPreference.reuseEditorsButton")); //$NON-NLS-1$
 
 	createSpace(composite);
 
@@ -128,6 +139,10 @@ protected Control createContents(Composite parent) {
 		store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
 	linkButton.setSelection(
 		store.getBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
+	activateSelectionOnClickButton.setSelection(
+		store.getBoolean(IWorkbenchPreferenceConstants.ACTIVATE_SELECTION_ON_CLICK));
+	reuseEditorsButton.setSelection(
+		store.getBoolean(IPreferenceConstants.REUSE_EDITORS));
 
 	return composite;
 }
@@ -362,7 +377,13 @@ protected void performDefaults() {
 	linkButton.setSelection(
 		store.getDefaultBoolean(
 			IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
-
+	activateSelectionOnClickButton.setSelection(
+		store.getDefaultBoolean(
+			IWorkbenchPreferenceConstants.ACTIVATE_SELECTION_ON_CLICK));
+	reuseEditorsButton.setSelection(
+		store.getDefaultBoolean(
+			IPreferenceConstants.REUSE_EDITORS));
+ 
 	//Perspective preferences
 	String defaultPreference =
 		store.getDefaultString(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE);
@@ -440,6 +461,17 @@ public boolean performOk() {
 		IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR,
 		linkButton.getSelection());
 
+	// store the activate selection on click setting
+	store.setValue(
+		IWorkbenchPreferenceConstants.ACTIVATE_SELECTION_ON_CLICK,
+		activateSelectionOnClickButton.getSelection());
+	StructuredViewer.setActivateSelectionOnClick(activateSelectionOnClickButton.getSelection());
+
+	// store the reuse editors setting
+	store.setValue(
+		IPreferenceConstants.REUSE_EDITORS,
+		reuseEditorsButton.getSelection());
+		
 	// store the open in new window settings
 	store.setValue(
 		IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE,

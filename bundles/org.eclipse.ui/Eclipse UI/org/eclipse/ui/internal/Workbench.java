@@ -21,6 +21,8 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.*;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.*;
@@ -392,6 +394,10 @@ private boolean init(String[] commandLineArgs) {
 	
 	openWindows();
 	openWelcomeDialog();
+
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	StructuredViewer.setActivateSelectionOnClick(
+		store.getBoolean(IWorkbenchPreferenceConstants.ACTIVATE_SELECTION_ON_CLICK));
 	
 	isStarting = false;
 	return true;

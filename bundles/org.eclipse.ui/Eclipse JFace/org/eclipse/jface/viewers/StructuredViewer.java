@@ -67,11 +67,37 @@ public abstract class StructuredViewer extends ContentViewer {
 	 * @see #fireDoubleClick
 	 */
 	private ListenerList doubleClickListeners = new ListenerList(1);
+
+	/**
+	 * List of selection-activated state listeners (element type: <code>ISelectionActivatedListener</code>).
+	 * @see #fireSelectionActivated
+	 */
+	private ListenerList selectionActivatedListeners = new ListenerList(1);
+	
+	/**
+	 * If true, selection is activated on single-click
+	 * otherwise selection is activated on double-click
+	 */
+	private static boolean activateSelectionOnClick = false;
+	
 /**
  * Creates a structured element viewer. The viewer has no input, 
  * no content provider, a default label provider, no sorter, and no filters.
  */
 protected StructuredViewer() {
+}
+
+public static void setActivateSelectionOnClick(boolean singleClick) {
+	activateSelectionOnClick = singleClick;
+}
+/**
+ * Adds a listener for selection activated in this viewer.
+ * Has no effect if an identical listener is already registered.
+ *
+ * @param listener a selection activated listener
+ */
+public void addSelectionActivatedListener(ISelectionActivatedListener listener) {
+	selectionActivatedListeners.add(listener);
 }
 /**
  * Adds a listener for double-clicks in this viewer.
@@ -270,6 +296,20 @@ protected void fireDoubleClick(DoubleClickEvent event) {
 	}
 }
 /**
+ * Notifies any selection-activated listeners that a selection has been activated.
+ * Only listeners registered at the time this method is called are notified.
+ *
+ * @param event a double-click event
+ *
+ * @see ISelectionActivatedListener#doubleClick
+ */
+protected void fireSelectionActivated(SelectionActivatedEvent event) {
+	Object[] listeners = selectionActivatedListeners.getListeners();
+	for (int i = 0; i < listeners.length; ++i) {
+		((ISelectionActivatedListener) listeners[i]).selectionActivated(event);
+	}
+}
+/**
  * Returns the filtered array of children of the given element.
  * The resulting array must not be modified,
  * as it may come directly from the model's internal state.
@@ -411,6 +451,8 @@ protected void handleDoubleSelect(SelectionEvent event) {
 		ISelection selection = getSelection();
 		updateSelection(selection);
 		fireDoubleClick(new DoubleClickEvent(this, selection));
+		if(!activateSelectionOnClick)
+			fireSelectionActivated(new SelectionActivatedEvent(this, selection));
 	}
 }
 /**
@@ -461,7 +503,10 @@ protected void handleSelect(SelectionEvent event) {
 	Control control = getControl();
 	if (control != null && !control.isDisposed()) {
 		updateSelection(getSelection());
+		if(activateSelectionOnClick)
+			fireSelectionActivated(new SelectionActivatedEvent(this, getSelection()));
 	}
+	
 }
 /**
  * Returns whether this viewer has any filters.

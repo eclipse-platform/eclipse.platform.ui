@@ -10,6 +10,16 @@ package org.eclipse.ui;
  */
 public interface IWorkbenchPreferenceConstants {
 	
+	/**
+	 * A named preference for how a selection is activated.
+	 * If true, the selection is activated on single click
+	 * otherwise it is activated on double click.
+	 * <p>
+	 * Value is of type <code>boolean</code>.
+	 * </p>
+	 */
+	public static final String ACTIVATE_SELECTION_ON_CLICK = "ACTIVATE_SELECTION_ON_CLICK"; //$NON-NLS-1$
+ 
 	/*
 	 * A named preference for whether to show an editor when its
 	 * input file is selected in the Navigator (and vice versa).

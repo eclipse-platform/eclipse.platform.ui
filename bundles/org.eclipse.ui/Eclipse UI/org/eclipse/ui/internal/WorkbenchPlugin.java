@@ -300,6 +300,8 @@ protected void initializeDefaultPreferences(IPreferenceStore store) {
 	store.setDefault(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, false);
 	store.setDefault(IPreferenceConstants.WELCOME_DIALOG, true);
 	store.setDefault(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
+	store.setDefault(IWorkbenchPreferenceConstants.ACTIVATE_SELECTION_ON_CLICK, false);
+	store.setDefault(IPreferenceConstants.REUSE_EDITORS, false);
 	store.setDefault(IPreferenceConstants.VIEW_TAB_POSITION, SWT.BOTTOM);
 	store.setDefault(IPreferenceConstants.EDITOR_TAB_POSITION, SWT.TOP);
 	store.setDefault(

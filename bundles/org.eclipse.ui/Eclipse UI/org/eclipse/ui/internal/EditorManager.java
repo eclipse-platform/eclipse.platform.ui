@@ -21,6 +21,7 @@ import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.operation.*;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -294,9 +295,12 @@ private IEditorPart openEditor(IFileEditorInput input,boolean setVisible)
  *
  */
 private IReusableEditor findReusableEditor(EditorDescriptor desc) {
-	//Must get global preference: "Reuse opened editors".
-	//if(!reuseEditors)
-	//	return null;
+	
+	IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+	boolean reuseEditors = store.getBoolean(IPreferenceConstants.REUSE_EDITORS);
+	if(!reuseEditors)
+		return null;
+	
 	IEditorPart editors[] = getEditors();
 	IReusableEditor dirtyEditor = null;
 	IWorkbenchPart activePart = page.getActivePart();
@@ -326,7 +330,7 @@ private IReusableEditor findReusableEditor(EditorDescriptor desc) {
 	if(dirtyEditor == null)
 		return null;
 	
-	//Must get global preference: "Open new Editor when dirty"
+	//Should we have a global preference "Open new Editor when dirty"?
 	//if(openNewWhenDirty)
 	//	return null;
 	MessageDialog dialog = new MessageDialog(
