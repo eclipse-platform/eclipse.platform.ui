@@ -8,31 +8,20 @@ Contributors:
 **********************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.GroupMarker;
 
 /**
  */
-public class CoolItemGroupSeparator extends Separator implements ICoolItemGroup {
+public class CoolItemGroup extends GroupMarker implements ICoolItemGroup {
 	private String contributingId;
-	private String beforeGroupId;
-	
-	public CoolItemGroupSeparator(String groupName, String actionSetId) {
-		this(groupName, actionSetId, null);
-	}
-	public CoolItemGroupSeparator(String groupName, String contributingId, String beforeGroupId) {
+	public CoolItemGroup(String groupName, String contributingId) {
 		super(groupName);
 		this.contributingId = contributingId;
-		this.beforeGroupId = beforeGroupId;
 	}
 	/**
+	 * Returns the action set id.
 	 */
 	public String getContributingId() {
 		return contributingId;
-	}
-	/**
-	 * Returns the before group id.
-	 */
-	public String getBeforeGroupId() {
-		return beforeGroupId;
-	}
+}
 }

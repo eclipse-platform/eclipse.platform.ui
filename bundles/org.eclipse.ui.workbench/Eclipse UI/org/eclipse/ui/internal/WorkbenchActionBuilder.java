@@ -1116,8 +1116,7 @@ public class WorkbenchActionBuilder {
 			return;
 		}
 		CoolItemToolBarManager tBarMgr = coolBarItem.getToolBarManager();
-		String groupId = tBarMgr.getSubGroupId(IWorkbenchActionConstants.PIN_GROUP, IWorkbenchActionConstants.TOOLBAR_NAVIGATE);
-		tBarMgr.appendToGroup(groupId, pinEditorAction);
+		tBarMgr.appendToGroup(IWorkbenchActionConstants.PIN_GROUP, pinEditorAction);
 		tBarMgr.update(true);
 	}
 	
@@ -1169,8 +1168,7 @@ public class WorkbenchActionBuilder {
 			return;
 		}
 		CoolItemToolBarManager tBarMgr = coolBarItem.getToolBarManager();
-		String groupId = tBarMgr.getSubGroupId(IWorkbenchActionConstants.BUILD_GROUP, IWorkbenchActionConstants.TOOLBAR_FILE);
-		tBarMgr.appendToGroup(groupId, buildAllAction);
+		tBarMgr.appendToGroup(IWorkbenchActionConstants.BUILD_GROUP, buildAllAction);
 		tBarMgr.update(true);
 	}
 

@@ -265,7 +265,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			activeManager = cbItem.getToolBarManager();		
 			IContributionItem groupMarker = activeManager.find(toolGroupId);
 			if (groupMarker == null) {
-				activeManager.addGroupBefore(toolGroupId, contributingId, beforeGroupId);
+				activeManager.addAdjunctGroupBefore(toolGroupId, contributingId, beforeGroupId);
 			}
 			activeManager.addToGroup(toolGroupId, contributingId, actionContribution);		 
 		}
@@ -318,7 +318,7 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			activeManager = cbItem.getToolBarManager();		
 			IContributionItem groupMarker = activeManager.find(toolGroupId);
 			if (groupMarker == null) {
-				activeManager.addGroupBefore(toolGroupId, contributingId, beforeGroupId);
+				activeManager.addBaseGroup(toolGroupId);
 			}
 			activeManager.addToGroup(toolGroupId, contributingId, actionContribution);		 
 		}

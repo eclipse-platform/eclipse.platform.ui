@@ -8,20 +8,7 @@ Contributors:
 **********************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.action.GroupMarker;
-
-/**
- */
-public class CoolItemSubGroupMarker extends GroupMarker {
-	private String actionSetId;
-	public CoolItemSubGroupMarker(String groupName, String actionSetId) {
-		super(groupName);
-		this.actionSetId = actionSetId;
-	}
-	/**
-	 * Returns the action set id.
-	 */
-	public String getActionSetId() {
-		return actionSetId;
-}
+public interface ICoolItemGroup {
+	public String getContributingId();  // id of the action set that contributed the group
+	public String getId(); // id of the contribution
 }
