@@ -46,6 +46,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PerspectiveAdapter;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
 import org.eclipse.ui.internal.dnd.DragUtil;
@@ -790,12 +791,13 @@ public class PerspectiveSwitcher {
         // Get the tool item under the mouse.
         ToolBar toolBar = perspectiveBar.getControl();
         ToolItem toolItem = toolBar.getItem(toolBar.toControl(pt));
-
+        boolean isCurrentPerspective=false;
+        
         // Get the action for the tool item.
         Object data = null;
-        if (toolItem != null)
+        if (toolItem != null){
             data = toolItem.getData();
-
+        }
         if (toolItem == null
                 || !(data instanceof PerspectiveBarContributionItem)) {
             if (genericMenu == null) {
@@ -825,6 +827,8 @@ public class PerspectiveSwitcher {
         if (data == null || !(data instanceof PerspectiveBarContributionItem))
             return;
 
+        boolean selectedIsActive = selectedPerspectiveIsActive(data); 
+
         // The perspective bar menu is created lazily here.
         // Its data is set (each time) to the tool item, which refers to the SetPagePerspectiveAction
         // which in turn refers to the page and perspective.
@@ -834,20 +838,22 @@ public class PerspectiveSwitcher {
         // corresponding page or perspective is closed.
         // See bug 11282 for more details on why it is done this way.
         if (popupMenu == null) {
-            Menu menu = new Menu(toolBar);
-            addCustomizeItem(menu);
-            addSaveAsItem(menu);
-            addResetItem(menu);
-            addCloseItems(menu);
-            new MenuItem(menu, SWT.SEPARATOR);
-            addDockOnSubMenu(menu);                      
-            addShowTextItem(menu);
-            
-            popupMenu = menu;
+        	popupMenu = createPopup(toolBar, selectedIsActive);
         }
+        
+    	if (!selectedIsActive && popupMenu.getItemCount() > 5) {
+    		popupMenu.getItem(0).dispose();
+        	popupMenu.getItem(0).dispose(); 
+        	popupMenu.getItem(0).dispose(); 
+        } else if(selectedIsActive && popupMenu.getItemCount() <= 5){
+    		popupMenu.dispose();
+    		popupMenu = createPopup(toolBar, selectedIsActive);        		
+    	}
+ 
         popupMenu.setData(toolItem);
 
         // set the state of the menu items to match the preferences
+        if(selectedIsActive){
         popupMenu
                 .getItem(7)
                 .setSelection(
@@ -856,11 +862,51 @@ public class PerspectiveSwitcher {
                                 .getBoolean(
                                         IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
         updateLocationItems(popupMenu.getItem(6).getMenu(), currentLocation);
-
+        }
+        else{
+        	popupMenu
+            .getItem(4)
+            .setSelection(
+                    PrefUtil
+                            .getAPIPreferenceStore()
+                            .getBoolean(
+                                    IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR));
+    updateLocationItems(popupMenu.getItem(3).getMenu(), currentLocation);
+        }
+        
         // Show popup menu.
         popupMenu.setLocation(pt.x, pt.y);
         popupMenu.setVisible(true);
     }
+
+    /**
+     * @param data
+     * @return <code>true</code> if the button whose menu has to be created represents the active perspective 
+     */
+    private boolean selectedPerspectiveIsActive(Object data) {
+        if (data == null || data instanceof PerspectiveBarNewContributionItem)
+            return false;
+        IPerspectiveDescriptor perspectiveInFocus=((PerspectiveBarContributionItem)data).getPerspective();
+        return perspectiveInFocus.equals(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getActivePage().getPerspective());
+    }
+
+	/**
+	 * @param toolBar
+	 */
+	private Menu createPopup(ToolBar toolBar, boolean isActive){//boolean isCurrentPerspective, ToolBar toolBar,PerspectiveDescriptor perspectDescriptor) {
+		Menu menu = new Menu(toolBar);
+		if(isActive){
+			addCustomizeItem(menu);
+			addSaveAsItem(menu);
+			addResetItem(menu);
+		} 
+		addCloseItems(menu);
+		new MenuItem(menu, SWT.SEPARATOR);
+		addDockOnSubMenu(menu);
+		addShowTextItem(menu);
+		return menu;
+	}
 
     /**
      * @param menu

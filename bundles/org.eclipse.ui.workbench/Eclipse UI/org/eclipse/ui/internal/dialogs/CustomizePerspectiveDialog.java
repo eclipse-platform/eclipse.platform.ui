@@ -1004,8 +1004,11 @@ public class CustomizePerspectiveDialog extends Dialog {
 
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        shell.setText(WorkbenchMessages
-                .getString("ActionSetSelection.customize")); //$NON-NLS-1$
+        String title=perspective.getDesc().getLabel();
+        
+        title = WorkbenchMessages
+                .format("ActionSetSelection.customize", new Object[] {title}); //$NON-NLS-1$
+        shell.setText(title); //$NON-NLS-1$
         window.getWorkbench().getHelpSystem().setHelp(shell,
 				IWorkbenchHelpContextIds.ACTION_SET_SELECTION_DIALOG);
     }
