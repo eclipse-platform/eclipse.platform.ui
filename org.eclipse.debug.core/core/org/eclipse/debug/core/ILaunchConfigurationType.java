@@ -55,6 +55,7 @@ import org.eclipse.core.runtime.CoreException;
  * (repeatedly) as the API evolves.
  * </p>
  * @see ILaunchConfiguration
+ * @since 2.0
  */
 public interface ILaunchConfigurationType {
 		

@@ -49,6 +49,7 @@ import org.eclipse.core.runtime.IPath;
  * @see ILaunchConfigurationType
  * @see ILaunchConfigurationDelegate
  * @see ILaunchConfigurationWorkingCopy
+ * @since 2.0
  */
 public interface ILaunchConfiguration extends IAdaptable {
 	

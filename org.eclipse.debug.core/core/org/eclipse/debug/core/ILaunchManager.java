@@ -149,6 +149,7 @@ public interface ILaunchManager {
 	 * Returns all launch configurations defined in the workspace.
 	 * 
 	 * @return all launch configurations defined in the workspace
+	 * @since 2.0
 	 */
 	public ILaunchConfiguration[] getLaunchConfigurations();
 	
@@ -161,6 +162,7 @@ public interface ILaunchManager {
 	 *  of the specified type
 	 * @exception CoreException if an error occurrs while retreiving
 	 *  a launch configuration
+	 * @since 2.0
 	 */
 	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException;
 	
@@ -172,6 +174,7 @@ public interface ILaunchManager {
 	 * @param file launch configuration file
 	 * @return a handle to the launch configuration contained
 	 *  in the specified file
+	 * @since 2.0
 	 */
 	public ILaunchConfiguration getLaunchConfiguration(IFile file);
 	
@@ -182,6 +185,7 @@ public interface ILaunchManager {
 	 * @return a handle to the launch configuration specified by
 	 *  the given memento
 	 * @see ILaunchConfiguration#getMemento()
+	 * @since 2.0
 	 */
 	public ILaunchConfiguration getLaunchConfiguration(String memento);
 	
@@ -189,6 +193,7 @@ public interface ILaunchManager {
 	 * Returns all defined launch configuration type extensions
 	 * 
 	 * @return all defined launch configuration type extensions
+	 * @since 2.0
 	 */
 	public ILaunchConfigurationType[] getLaunchConfigurationTypes();
 	
@@ -199,6 +204,7 @@ public interface ILaunchManager {
 	 * @param id unique identifier for a launch configuration type extension
 	 * @return the lanuch configuration type extension with the specified
 	 * id, or <code>null</code> if it does not exist
+	 * @since 2.0
 	 */
 	public ILaunchConfigurationType getLaunchConfigurationType(String id);
 	
@@ -209,6 +215,7 @@ public interface ILaunchManager {
 	 * is already registered.
 	 * 
 	 * @param listener launch configuration listener
+	 * @since 2.0
 	 */
 	public void addLaunchConfigurationListener(ILaunchConfigurationListener listener);
 	
@@ -219,9 +226,40 @@ public interface ILaunchManager {
 	 * is not already registered.
 	 * 
 	 * @param listener launch configuration listener
+	 * @since 2.0
 	 */
 	public void removeLaunchConfigurationListener(ILaunchConfigurationListener listener);	
 	
+	/**
+	 * Returns the default launch configuration type for the given project,
+	 * or <code>null</code> unspecified.
+	 * The default launch configuration is stored as a persistent property
+	 * with a project.
+	 *
+	 * @param project the project for which to retrieve a default launch
+	 *  configuration type
+	 * @return the default launch configuration type, or <code>null</code> 
+	 *  unspecified
+	 * @exception CoreException if an error occurs accessing the
+	 *   persistent property
+	 * @since 2.0
+	 */
+	public ILaunchConfigurationType getDefaultLaunchConfigurationType(IProject project) throws CoreException;	
+	
+	/**
+	 * Sets the default launch configuration type for the specified project.
+	 * The default launch configuration is stored as a persistent property
+	 * with a project.
+	 *
+	 * @param project the project for which to set a default launch
+	 *  configuration type
+	 * @param type the default launch configuration type for the specified
+	 *  project, or <code>null</code> if unspecified
+	 * @exception CoreException if an error occurs setting the
+	 *   persistent property
+	 * @since 2.0
+	 */
+	public void setDefaultLaunchConfigurationType(IProject project, ILaunchConfigurationType type) throws CoreException;	
 }
 
 

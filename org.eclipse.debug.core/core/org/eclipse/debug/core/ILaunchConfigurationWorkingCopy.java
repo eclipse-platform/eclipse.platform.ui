@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * @see ILaunchConfiguration
  * @see ILaunchConfigurationType
  * @see ILaunchConfigurationDelegate
+ * @since 2.0
  */
 public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, IAdaptable {
 	

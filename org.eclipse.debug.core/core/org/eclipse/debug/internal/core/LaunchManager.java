@@ -93,6 +93,12 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 	 * for persisting the default launcher.
 	 */
 	private static final String DEFAULT_LAUNCHER= "launcher"; //$NON-NLS-1$
+	
+	/**
+	 * Constant for use as local name part of <code>QualifiedName</code>
+	 * for persisting the default launch configuration type.
+	 */
+	private static final String DEFAULT_LAUNCH_CONFIGURATION_TYPE= "default_launch_configuration_type"; //$NON-NLS-1$	
 	 
 	/**
 	 * Types of notifications
@@ -219,6 +225,20 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		return launcher;
 	}
+	
+	/**
+	 * @see ILaunchManager#getDefaultLaunchConfigurationType(IProject)
+	 */
+	public ILaunchConfigurationType getDefaultLaunchConfigurationType(IProject project) throws CoreException {
+		ILaunchConfigurationType type = null;
+		if ((project != null) && project.isOpen()) {
+			String typeID = project.getPersistentProperty(new QualifiedName(DebugPlugin.PLUGIN_ID, DEFAULT_LAUNCH_CONFIGURATION_TYPE));
+			if (typeID != null) {
+				type= getLaunchConfigurationType(typeID);
+			}
+		}
+		return type;
+	}	
 		
 	/**
 	 * Returns the launcher with the given id, or <code>null</code>.
@@ -301,6 +321,17 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		}
 		resource.setPersistentProperty(new QualifiedName(DebugPlugin.PLUGIN_ID, DEFAULT_LAUNCHER), id);
 	}
+	
+	/**
+	 * @see ILaunchManager#setDefaultLaunchConfigurationType(IProject, ILaunchConfigurationType)
+	 */
+	public void setDefaultLaunchConfigurationType(IProject resource, ILaunchConfigurationType type) throws CoreException {
+		String id = null;
+		if (type != null) {
+			id = type.getIdentifier();
+		}
+		resource.setPersistentProperty(new QualifiedName(DebugPlugin.PLUGIN_ID, DEFAULT_LAUNCH_CONFIGURATION_TYPE), id);
+	}	
 
 	/**
 	 * Terminates/Disconnects any active debug targets/processes.
