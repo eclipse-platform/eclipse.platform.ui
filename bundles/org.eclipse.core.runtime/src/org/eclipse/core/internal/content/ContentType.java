@@ -169,6 +169,7 @@ public final class ContentType implements IContentType {
 		}
 		if (!internalAddFileSpec(fileSpec, type | SPEC_USER_DEFINED))
 			return;
+		manager.fireContentTypeChangeEvent(this);		
 		// persist using preferences
 		String key = getPreferenceKey(type);
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
@@ -458,20 +459,19 @@ public final class ContentType implements IContentType {
 		return false;
 	}
 
-	void internalRemoveFileSpec(String fileSpec, int typeMask) {
-		if (aliasTarget != null) {
-			aliasTarget.internalRemoveFileSpec(fileSpec, typeMask);
-			return;
-		}
+	boolean internalRemoveFileSpec(String fileSpec, int typeMask) {
+		if (aliasTarget != null)
+			return aliasTarget.internalRemoveFileSpec(fileSpec, typeMask);
 		if (fileSpecs == null)
-			return;
+			return false;
 		for (Iterator i = fileSpecs.iterator(); i.hasNext();) {
 			FileSpec spec = (FileSpec) i.next();
 			if ((spec.getType() == typeMask) && fileSpec.equals(spec.getText())) {
 				i.remove();
-				return;
+				return true;
 			}
 		}
+		return false;
 	}
 
 	private IContentDescriber invalidateDescriber(Throwable reason) {
@@ -518,7 +518,9 @@ public final class ContentType implements IContentType {
 			getTarget().removeFileSpec(fileSpec, type);
 			return;
 		}
-		internalRemoveFileSpec(fileSpec, type | SPEC_USER_DEFINED);
+		if (!internalRemoveFileSpec(fileSpec, type | SPEC_USER_DEFINED))
+			return;
+		manager.fireContentTypeChangeEvent(this);			
 		// persist using preferences
 		String key = getPreferenceKey(type);
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
@@ -552,8 +554,15 @@ public final class ContentType implements IContentType {
 	 * (non-Javadoc) 
 	 * @see org.eclipse.core.runtime.content.IContentType#setDefaultCharset(java.lang.String)
 	 */
-	public void setDefaultCharset(String userCharset) throws CoreException {
-		this.userCharset = userCharset;
+	public void setDefaultCharset(String newCharset) throws CoreException {
+		if (userCharset == null) {
+			if (newCharset == null)
+				return;
+		} else if (userCharset.equals(newCharset))
+			return;
+		userCharset = newCharset;
+		// notify listeners
+		manager.fireContentTypeChangeEvent(this);
 		Preferences contentTypeNode = manager.getPreferences().node(getId());
 		if (userCharset == null)
 			contentTypeNode.remove(PREF_DEFAULT_CHARSET);

@@ -34,7 +34,7 @@ class FileSpec {
 		return type;
 	}
 
-	public int getBasicType() {
+	public static int getBasicType(int type) {
 		return BASIC_TYPE & type;
 	}
 
@@ -42,12 +42,12 @@ class FileSpec {
 		if (!(other instanceof FileSpec))
 			return false;
 		FileSpec otherFileSpec = (FileSpec) other;
-		return getBasicType() == otherFileSpec.getBasicType() && text.equalsIgnoreCase(otherFileSpec.text);
+		return equals(text, otherFileSpec.getType());
 	}
-	
-	public boolean equals(String text, int basicType) {
-		return getBasicType() == basicType && this.text.equalsIgnoreCase(text);
-	}	
+
+	public boolean equals(String text, int otherType) {
+		return getBasicType(type) == getBasicType(otherType) && this.text.equalsIgnoreCase(text);
+	}
 
 	public int hashCode() {
 		return text.hashCode();

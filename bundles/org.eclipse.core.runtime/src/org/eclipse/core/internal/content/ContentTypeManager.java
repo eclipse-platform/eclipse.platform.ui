@@ -13,6 +13,7 @@ package org.eclipse.core.internal.content;
 import java.io.*;
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.ListenerList;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -28,6 +29,13 @@ public class ContentTypeManager implements IContentTypeManager {
 
 	private ContentTypeBuilder builder;
 	private Map catalog = new HashMap();
+	/** 
+	 * List of registered listeners (element type: 
+	 * <code>IContentTypeChangeListener</code>).
+	 * These listeners are to be informed when 
+	 * something in a content type changes.
+	 */
+	protected ListenerList contentTypeListeners = new ListenerList();	
 
 	// a comparator used when resolving conflicts (two types associated to the same spec) 
 	private Comparator conflictComparator = new Comparator() {
@@ -375,15 +383,31 @@ public class ContentTypeManager implements IContentTypeManager {
 	 * @see IContentTypeManager#addContentTypeChangeListener(IContentTypeChangeListener)
 	 */
 	public void addContentTypeChangeListener(IContentTypeChangeListener listener) {
-		// TODO https://bugs.eclipse.org/bugs/show_bug.cgi?id=67884
-		// Content type change events not reported
+		contentTypeListeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see IContentTypeManager#removeContentTypeChangeListener(IContentTypeChangeListener)
 	 */
 	public void removeContentTypeChangeListener(IContentTypeChangeListener listener) {
-		// TODO https://bugs.eclipse.org/bugs/show_bug.cgi?id=67884
-		// Content type change events not reported
+		contentTypeListeners.remove(listener);
+	}
+
+	public void fireContentTypeChangeEvent(ContentType type) {
+		Object[] listeners = this.contentTypeListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			final ContentTypeChangeEvent event = new ContentTypeChangeEvent(type);
+			final IContentTypeChangeListener listener = (IContentTypeChangeListener) listeners[i];
+			ISafeRunnable job = new ISafeRunnable() {
+				public void handleException(Throwable exception) {
+					// already logged in Platform#run()
+				}
+
+				public void run() throws Exception {
+					listener.contentTypeChanged(event);
+				}
+			};
+			Platform.run(job);
+		}
 	}
 }
