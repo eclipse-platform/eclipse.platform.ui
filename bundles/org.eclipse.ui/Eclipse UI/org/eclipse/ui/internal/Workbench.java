@@ -646,7 +646,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		ImageDescriptor descriptor = getAboutInfo().getWindowImage();
 		if (descriptor == null) {
 			// backward compatibility
-			getProductInfo().getProductImageDescriptor();
+			descriptor = getProductInfo().getProductImageDescriptor();
 		}
 		if (descriptor == null) {
 			// if none was supplied we use a default
