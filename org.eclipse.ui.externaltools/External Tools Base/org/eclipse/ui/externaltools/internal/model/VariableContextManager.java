@@ -12,6 +12,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionService;
@@ -96,7 +97,13 @@ public class VariableContextManager {
 		if (fBuilding) {
 			return new ExpandVariableContext(fProject, fKind);
 		} else {
-			return new ExpandVariableContext(getSelectedResource());
+			final IResource[] resource= new IResource[1];
+			Display.getDefault().syncExec(new Runnable() {
+				public void run() {
+					resource[0]= getSelectedResource();
+				}
+			});
+			return new ExpandVariableContext(resource[0]);
 		}
 	}
 	
