@@ -39,6 +39,8 @@ public class EditorCoolBar {
 	private EditorWorkbook workbook;
 	private int style;
 	
+	private EditorShortcut[] selection;
+	
 	private boolean onBottom;
 	private boolean firstResize = true; // infw cheezy workaround
 	private boolean mouseDownListenerAdded = false;
@@ -62,6 +64,18 @@ public class EditorCoolBar {
 		this.onBottom = (SWT.BOTTOM != 0);
 		this.editorList = new EditorList(window, workbook);
 		this.shortcutList = new ShortcutList();
+		EditorShortcutManager man = getManager();
+		man.addListener(new IEditorShortcutListener() {
+			public void shortcutRemoved(EditorShortcut shortcut) {
+				updateBookMarks();
+			}
+			public void shortcutAdded(EditorShortcut shortcut) {
+				updateBookMarks();
+			}
+			public void shortcutRenamed(EditorShortcut shortcut) {
+				updateBookMarks();
+			}
+		});
 	}
 
 	/**
@@ -88,74 +102,77 @@ public class EditorCoolBar {
 		dropDownItem.setMinimumSize(p4);
 		dropDownItem.setPreferredSize(p4);
 	}	
-	
+	private EditorShortcutManager getManager() {
+		return ((Workbench)PlatformUI.getWorkbench()).getEditorShortcutManager();
+	}	
 	/**
 	 * Update the tab for an editor.  This is typically called
 	 * by a site when the tab title changes.
 	 */
-	public void updateBookMarks(IEditorReference ref) {
-		EditorShortcut shortcut = EditorShortcut.create(ref);
-		updateBookMarks(shortcut);
-	}
-	
-	public void updateBookMarks(EditorShortcut shortcut) {
-		if(shortcut == null)
-			return; //Should tell the user that could not add a short cut for this ref.
+	private void updateBookMarks() {
 		ToolItem[] items = bookMarkToolBar.getItems();
+		EditorShortcut shortcuts[] = getManager().getItems();
+		for (int i = shortcuts.length; i < items.length; i++) {
+			items[i].dispose();
+		}
 		for (int i = 0; i < items.length; i++) {
-			if (shortcut.equals(items[i].getData())) {
-				//Should open a dialog telling the user there
-				//is already one with this name; should replace?
-				//Try IE.
-				return;
-			}
-		}
-		((Workbench) window.getWorkbench()).getEditorShortcutManager().add(shortcut);
-		String title = shortcut.getTitle(); 
-		Image image = shortcut.getTitleImage();
-		String toolTip = shortcut.getTitleToolTip();	
-	
-		final ToolItem bookMarkToolItem = new ToolItem(bookMarkToolBar, SWT.NONE);
-		bookMarkToolItem.setText(title);
-		bookMarkToolItem.setToolTipText(toolTip);
-		bookMarkToolItem.setData(shortcut);
-		shortcut.addListener(new IEditorShortcutListener() {
-			public void shortcutDisposed() {
-				bookMarkToolItem.dispose();
-			}
-			public void shortcutRename(String newString) {
-				bookMarkToolItem.setText(newString);
-			}
-		});
-	
-		// Update the tab image
-		if (image == null) {
-			bookMarkToolItem.setImage(null);
-		} else { 
-			if (!image.equals(bookMarkToolItem.getImage())) {
-				bookMarkToolItem.setImage(image);
-			}
-		}
-				
-		bookMarkToolItem.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				ToolItem item = (ToolItem) event.widget;
-				EditorShortcut shortcut = (EditorShortcut)item.getData();
-				if (shortcut != null && shortcut.getInput() != null)
-					try {
-						((Workbench) window.getWorkbench()).getEditorShortcutManager().setSelection(new EditorShortcut[] {shortcut});					
-						window.getActivePage().openEditor(shortcut.getInput(),shortcut.getId());
-					} catch (PartInitException e) {
+			ToolItem item = items[i];
+			EditorShortcut shortcut = shortcuts[i];
+			if (shortcut == item.getData()) {
+				if(shortcut.getTitle() != item.getText())
+					item.setText(shortcut.getTitle());
+			} else {
+				item.setText(shortcut.getTitle());
+				item.setToolTipText(shortcut.getTitleToolTip());
+				Image image = shortcut.getTitleImage();
+				if (image == null) {
+					item.setImage(null);
+				} else { 
+					if (!image.equals(item.getImage())) {
+						item.setImage(image);
 					}
-
-			}			
-		});
-			
-		Point p1 = bookMarkToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		Point p2 = bookMarkItem.computeSize(p1.x, p1.y);
-		int p3 = bookMarkToolBar.getItem(0).getWidth();
-		bookMarkItem.setMinimumSize(p3, p2.y);
-		bookMarkItem.setPreferredSize(p2);
+				}
+				item.setData(shortcut);			
+			}
+		}
+		for (int i = items.length; i < shortcuts.length; i++) {
+			EditorShortcut shortcut = shortcuts[i];
+			String title = shortcut.getTitle(); 
+			Image image = shortcut.getTitleImage();
+			String toolTip = shortcut.getTitleToolTip();	
+	
+			final ToolItem item = new ToolItem(bookMarkToolBar, SWT.NONE);
+			item.setText(title);
+			item.setToolTipText(toolTip);
+			item.setData(shortcut);
+		
+			// Update the tab image
+			if (image == null) {
+				item.setImage(null);
+			} else { 
+				if (!image.equals(item.getImage())) {
+					item.setImage(image);
+				}
+			}
+				
+			item.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent event) {
+					ToolItem item = (ToolItem) event.widget;
+					EditorShortcut shortcut = (EditorShortcut)item.getData();
+					if (shortcut != null && shortcut.getInput() != null)
+						try {
+							window.getActivePage().openEditor(shortcut.getInput(),shortcut.getId());
+						} catch (PartInitException e) {
+						}
+	
+				}			
+			});
+			Point p1 = bookMarkToolBar.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+			Point p2 = bookMarkItem.computeSize(p1.x, p1.y);
+			int minWidth = bookMarkToolBar.getItem(0).getWidth();
+			bookMarkItem.setMinimumSize(minWidth, p2.y);
+			bookMarkItem.setPreferredSize(p2);
+		}
 	}	
 	
 	public void updateEmptyEditorLabel() {
@@ -198,7 +215,7 @@ public class EditorCoolBar {
 			return;
 		}
 		
-		Shell parent = workbook.getEditorArea().getWorkbenchWindow().getShell();
+		Shell parent = window.getShell();
 		Display display = parent.getDisplay();
 		listComposite = new ViewForm(parent, SWT.BORDER);
 		listComposite.addDisposeListener(new DisposeListener() {
@@ -414,7 +431,7 @@ public class EditorCoolBar {
 		// Add existing entries
 		EditorShortcut[] items = ((Workbench) window.getWorkbench()).getEditorShortcutManager().getItems();
 		for (int i = 0; i < items.length; i++) {
-			updateBookMarks(items[i]);
+			updateBookMarks();
 		}
 
 		coolBar.addListener(SWT.Resize, new Listener() {
@@ -528,7 +545,7 @@ public class EditorCoolBar {
 	}
 	
 	private void openShortcutList(EditorShortcut[] shortcuts) {
-		Shell parent = workbook.getEditorArea().getWorkbenchWindow().getShell();
+		Shell parent = window.getShell();
 		Display display = parent.getDisplay();
 		shortcutListComposite = new ViewForm(parent, SWT.BORDER);
 		shortcutListComposite.addDisposeListener(new DisposeListener() {
@@ -536,7 +553,9 @@ public class EditorCoolBar {
 				shortcutListComposite = null;
 			}
 		});
+		
 		Control shortcutListControl = shortcutList.createControl(shortcutListComposite, shortcuts);
+				
 		Table shortcutTable = ((Table)shortcutListControl);
 		TableItem[] items = shortcutTable.getItems();
  		if (items.length == 0) {
@@ -582,7 +601,7 @@ public class EditorCoolBar {
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getBounds().contains(pt)) {
 				EditorShortcut shortcut = (EditorShortcut)items[i].getData();
-				((Workbench) window.getWorkbench()).getEditorShortcutManager().setSelection(new EditorShortcut[] {shortcut});
+				selection = new EditorShortcut[] {shortcut};
 				found = true;
 				break;
 			}
@@ -644,7 +663,7 @@ public class EditorCoolBar {
 						Adapter a = (Adapter)items[i].getData("Adapter");
 						shortcuts[i] = a.getShortcut();					
 					}					
-					manager.setSelection(shortcuts);
+					selection = shortcuts;
 				}
 				
 				public void widgetDefaultSelected(SelectionEvent e) {
@@ -652,7 +671,6 @@ public class EditorCoolBar {
 					EditorShortcutManager manager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
 					Adapter a = (Adapter)items[0].getData("Adapter");
 					EditorShortcut shortcut = a.getShortcut();				
-					manager.setSelection(null);
 					if (shortcut != null) {
 						if(shortcut.getInput() != null) {
 							try {
@@ -770,28 +788,6 @@ public class EditorCoolBar {
 			}
 		}
 	}
-	private class BookMarkAction extends Action {
-		private ToolItem toolItem;
-		private BookMarkAction(ToolItem toolItem)  {
-		EditorShortcut shortcut = (EditorShortcut) toolItem.getData();
-		setText(shortcut.getTitle());
-		setToolTipText(shortcut.getTitleToolTip());
-		this.toolItem = toolItem;
-		}
-		
-		public void run() {
-			EditorShortcut shortcut = (EditorShortcut) toolItem.getData();
-			if (shortcut != null) {
-				if(shortcut.getInput() != null) {
-					try {
-						window.getActivePage().openEditor(shortcut.getInput(),shortcut.getId());
-					} catch (PartInitException e) {
-					}
-				}
-			}
-		}
-	}
-	
 	/**
 	 * Open the selected shortcut.
 	 */
@@ -808,8 +804,7 @@ public class EditorCoolBar {
 		 * Perform the open.
 		 */
 		public void run() {
-			EditorShortcutManager shortcutManager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
-			EditorShortcut[] selection = shortcutManager.getSelection();
+			EditorShortcutManager shortcutManager = getManager();
 			for (int i = 0; i < selection.length; i++) {
 				EditorShortcut shortcut = selection[i];
 				if (shortcut != null) {
@@ -821,7 +816,6 @@ public class EditorCoolBar {
 					}					
 				}	
 			}
-			shortcutManager.setSelection(null);
 			if (shortcutListComposite != null) {
 				closeShortcutList();
 			}			
@@ -844,8 +838,7 @@ public class EditorCoolBar {
 		 * Performs the delete.
 		 */
 		public void run() {
-			EditorShortcutManager shortcutManager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
-			EditorShortcut[] selection = shortcutManager.getSelection();
+			EditorShortcutManager shortcutManager = getManager();
 			for (int i = 0; i < selection.length; i++) {
 				EditorShortcut shortcut = selection[i];
 				if (shortcut != null) {
@@ -853,7 +846,6 @@ public class EditorCoolBar {
 					shortcut.dispose();
 				}	
 			}
-			shortcutManager.setSelection(null);
 			if (shortcutListComposite != null) {
 				closeShortcutList();
 				handleChevron(chevronToolBar, chevronPosition);
@@ -878,18 +870,16 @@ public class EditorCoolBar {
 		 * Performs the rename.
 		 */
 		public void run() {
-			Shell shell = workbook.getEditorArea().getWorkbenchWindow().getShell();
-			EditorShortcutManager shortcutManager = ((Workbench) window.getWorkbench()).getEditorShortcutManager();
-			EditorShortcut[] selection = shortcutManager.getSelection();
+			EditorShortcutManager shortcutManager = getManager();
 			EditorShortcut[] shortcuts = shortcutManager.getItems();
 			boolean openShortcutList = (shortcutListComposite != null);
 			for (int i = 0; i < selection.length; i++) {
 				EditorShortcut shortcut = selection[i];
 				if (shortcut != null) {
-					if (askForLabel(shell, shortcut.getTitle())) {
+					if (askForLabel(shortcut.getTitle())) {
 						for (int j = 0; j < shortcuts.length; j++) {
 							if (shortcuts[j].getTitle().equals(newValue)) {
-								if (checkOverwrite(shell)) {
+								if (checkOverwrite()) {
 									shortcutManager.remove(shortcuts[j]);
 									shortcuts[j].dispose();	
 								}
@@ -901,14 +891,13 @@ public class EditorCoolBar {
 					}
 				}	
 			}
-			shortcutManager.setSelection(null);
 			// for multiple selections ...
 			if (openShortcutList) {
 				handleChevron(chevronToolBar, chevronPosition);
 			}
 		}			
 				
-		private boolean askForLabel(Shell shell, String oldValue) {
+		private boolean askForLabel(String oldValue) {
 			String proposal = oldValue;
 
 			if (proposal == null) {
@@ -924,7 +913,7 @@ public class EditorCoolBar {
 				}
 			};		
 			
-			InputDialog dialog = new InputDialog(shell, title, message, proposal, inputValidator);
+			InputDialog dialog = new InputDialog(window.getShell(), title, message, proposal, inputValidator);
 			newValue = null;
 						
 			if (dialog.open() != Window.CANCEL) {
@@ -945,11 +934,11 @@ public class EditorCoolBar {
 		 * @param shell the shell to create the dialog in 
 		 * @param destination - the resource to be overwritten
 		 */
-		private boolean checkOverwrite(Shell shell) {
+		private boolean checkOverwrite() {
 			final String RESOURCE_EXISTS_TITLE = WorkbenchMessages.getString("RenameResourceAction.resourceExists"); //$NON-NLS-1$
 			final String RESOURCE_EXISTS_MESSAGE = WorkbenchMessages.getString("RenameResourceAction.overwriteQuestion"); //$NON-NLS-1$
 
-			return MessageDialog.openQuestion(shell, 
+			return MessageDialog.openQuestion(window.getShell(), 
 				RESOURCE_EXISTS_TITLE,
 				MessageFormat.format(RESOURCE_EXISTS_MESSAGE,new Object[] {newValue}));
 		}		

@@ -1,8 +1,5 @@
 package org.eclipse.ui.internal;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -23,8 +20,7 @@ public class EditorShortcut {
 	private String path;
 	
 	private String id;
-	private IEditorInput input;
-	private ArrayList listeners = new ArrayList();
+	private IEditorInput input; 
 	
 	public static EditorShortcut create(IEditorReference editorRef) {
 		WorkbenchPartReference ref = (WorkbenchPartReference)editorRef;
@@ -100,11 +96,7 @@ public class EditorShortcut {
 	}
 	public void setTitle(String title) {
 		this.title = title;
-		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
-			IEditorShortcutListener e = (IEditorShortcutListener) iterator.next();
-			e.shortcutRename(title);
-		}		
-				
+		getManager().fireShortcutRename(this);				
 	}
 	/**
 	 * @see IWorkbenchPart#getTitleImage
@@ -133,11 +125,6 @@ public class EditorShortcut {
 		return tooltip;
 	}
 	public void dispose() {
-		for (Iterator iterator = listeners.iterator(); iterator.hasNext();) {
-			IEditorShortcutListener e = (IEditorShortcutListener) iterator.next();
-			e.shortcutDisposed();
-		}		
-		
 		if(image != null) {
 			ReferenceCounter imageCache = WorkbenchImages.getImageCache();
 			Image image = (Image)imageCache.get(imageDescriptor);
@@ -225,13 +212,7 @@ public class EditorShortcut {
 		EditorShortcut other = (EditorShortcut)o;
 		return title.equals(other.title);
 	}	
-	
-	public void addListener(IEditorShortcutListener listener) {
-		listeners.add(listener);
+	private EditorShortcutManager getManager() {
+		return ((Workbench)PlatformUI.getWorkbench()).getEditorShortcutManager();
 	}
-	
-	public void removeListener(IEditorShortcutListener listener) {
-		listeners.remove(listener);
-	}
-	
 }
