@@ -48,12 +48,12 @@ import org.eclipse.team.internal.core.simpleAccess.SimpleAccessOperations;
  *     Here is an example extension point definition:
  * 
  *  <code>
- *	&lt;extension point="org.eclipse.team.core.repository"&gt;
- *      &lt;repository
- *            class="org.eclipse.myprovider.MyRepositoryProvider"
- *            id="org.eclipse.myprovider.myProviderID"&gt;
- *      &lt;/repository&gt;
- *	&lt;/extension&gt;
+ *	<br>&lt;extension point="org.eclipse.team.core.repository"&gt;
+ *  <br>&nbsp;&lt;repository
+ *  <br>&nbsp;&nbsp;class="org.eclipse.myprovider.MyRepositoryProvider"
+ *  <br>&nbsp;&nbsp;id="org.eclipse.myprovider.myProviderID"&gt;
+ *  <br>&nbsp;&lt;/repository&gt;
+ *	<br>&lt;/extension&gt;
  *  </code>
  * </ol></p>
  * <p>
