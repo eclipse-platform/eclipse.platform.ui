@@ -562,8 +562,8 @@ public class InternalAntRunner {
 	
 	private String getTimeString(long milliseconds) {
 		long seconds = milliseconds / 1000;
-		seconds= seconds % 60;
 		long minutes = seconds / 60;
+		seconds= seconds % 60;
 		
 		StringBuffer result= new StringBuffer(InternalAntMessages.getString("InternalAntRunner.Total_time")); //$NON-NLS-1$
 		if (minutes > 0) {
@@ -575,7 +575,11 @@ public class InternalAntRunner {
 			}
 		}
 		if (seconds > 0) {
+			if (minutes > 0) {
+				result.append(' ');
+			}
 			result.append(seconds);
+			
 			if (seconds > 1) {
 				result.append(InternalAntMessages.getString("InternalAntRunner._seconds_4")); //$NON-NLS-1$
 			} else {
