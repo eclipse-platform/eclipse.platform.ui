@@ -116,13 +116,13 @@ protected void doSetFocus() {
 /**
  * The <code>ComboBoxCellEditor</code> implementation of
  * this <code>CellEditor</code> framework method sets the 
- * minimum width of the cell to 30 pixels to make sure the
- * arrow button is visible even when the list contains long
- * strings.
+ * minimum width of the cell to 50 pixels to make sure the
+ * arrow button and some text is visible. The list of CCombo
+ * will be wide enough to show its longest item.
  */
 public LayoutData getLayoutData() {
 	LayoutData layoutData = super.getLayoutData();
-	layoutData.minimumWidth = Math.max(30, layoutData.minimumWidth);
+	layoutData.minimumWidth = 50;
 	return layoutData;
 }
 /**
