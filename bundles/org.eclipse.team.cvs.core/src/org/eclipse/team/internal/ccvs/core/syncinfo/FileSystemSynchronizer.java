@@ -41,6 +41,7 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 	// sync information that may be shown in the UI.
 	private ICache resourceSyncCache;
 	private ICache folderSyncCache;
+	private ICache cvsIgnoreCache;
 	
 	// a specialized resource listener required to interpret metafile changes made to CVS managed
 	// resources.
@@ -59,6 +60,9 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 		
 		folderSyncCache = new SimpleCache();
 		folderSyncCache.registerLoader(new FolderSyncCacheLoader());
+		
+		cvsIgnoreCache = new SimpleCache();
+		cvsIgnoreCache.registerLoader(new CVSIgnoreFileLoader());
 		
 		resourceListener = new SyncResourceChangeListener();
 		resourceListener.register();
@@ -93,6 +97,31 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 				}
 			} catch(CVSException e) {
 				TeamPlugin.log(IStatus.ERROR, "Error loading from CVS/Entries file", e);
+				return null;
+			}
+			return idInfo;
+		}
+	}
+
+	/**
+	 * For every get request from the cache, load the entire entries and permissions file.
+	 */
+	private class CVSIgnoreFileLoader implements ICacheLoader {
+		/*
+		 * @see ICacheLoader#load(Object, ICache)
+		 */
+		public CacheData load(Object id, ICache cache) {
+			CacheData idInfo = null;
+			try {
+				File file = (File)id;
+				File cvsignore = new File(file, SyncFileUtil.IGNORE_FILE);
+				String[] patterns = SyncFileUtil.readLines(cvsignore);
+				if(patterns.length>0) {
+					CacheData cacheInfo = new CacheData(file, patterns, CACHE_EXPIRATION_MINUTES);
+					cache.put(cacheInfo);
+				}
+			} catch(CVSException e) {
+				TeamPlugin.log(IStatus.ERROR, "Error loading from .cvsignore file", e);
 				return null;
 			}
 			return idInfo;
@@ -202,12 +231,15 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 					// if the resource does not exist on disk, ignore it.
 					if(location!=null) {
 						File file = location.toFile();
+						String name = file.getName();
 						if(SyncFileUtil.isMetaFile(file)) {
 							handleMetaChange(file.getParentFile(), resources[i].getParent());
 							// add all parents children to delta
 						} else {
-							if(!file.getName().equals("CVS")) {
+							if(!name.equals("CVS")) {
 								delta.add(resources[i]);
+							} else if(name.equals(SyncFileUtil.IGNORE_FILE)) {
+								handleMetaChange(file, resource);
 							}
 						}
 					}
@@ -389,23 +421,7 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 	}
 	
 	protected void clearCache(File file, int depth) {
-		if(file.exists()) {
-			if (file.isDirectory()) {
-				if(depth!=IResource.DEPTH_ZERO) {
-					File[] fileList = file.listFiles();
-					for (int i = 0; i < fileList.length; i++) {
-						if(depth==IResource.DEPTH_ONE) {
-							depth = IResource.DEPTH_ZERO;
-						}					
-						clearCache(fileList[i], depth);
-					}
-				}
-				folderSyncCache.remove(file);
-			}
-			resourceSyncCache.remove(file);
-		} else {
-			clearCacheForChildren(file);
-		}
+		clearCacheForChildren(file);
 	}
 	
 	protected void clearCacheForChildren(File file) {
@@ -413,26 +429,18 @@ public class FileSystemSynchronizer implements ICVSSynchronizer {
 		// and be able to traverse children. This is the safest for now.
 		resourceSyncCache.clear();
 		folderSyncCache.clear();
+		cvsIgnoreCache.clear();
 	}
 	
 	/*
 	 * @see ICVSSynchronizer#isIgnored(File)
 	 */
 	public boolean isIgnored(File file) {
-		try {
-			File cvsignore = new File(file.getParentFile(), SyncFileUtil.IGNORE_FILE);
-			String[] patterns;
-			if (!cvsignore.exists()) {
-				patterns = new String[0];			
-			} else {
-				patterns = SyncFileUtil.readLines(cvsignore);
-			}
-			FileNameMatcher matcher = new FileNameMatcher(patterns);
-			return matcher.match(file.getName());
-		} catch(CVSException e) {
-			CVSProviderPlugin.log(e);
-			return false;
-		}
+		CacheData data = cvsIgnoreCache.get(file.getParentFile(), null);		
+		if(data==null) return false;
+		String[] patterns = (String[])data.getData();
+		FileNameMatcher matcher = new FileNameMatcher(patterns);
+		return matcher.match(file.getName());
 	}
 
 	/*

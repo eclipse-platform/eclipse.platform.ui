@@ -3,6 +3,7 @@ package org.eclipse.team.internal.ccvs.core.util;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -47,6 +48,13 @@ public class SyncFileUtil {
 	// Command characters found in the Entries.log file
 	private static final String ADD_TAG="A ";
 	private static final String REMOVE_TAG="R ";
+
+	// file and folder patterns that are ignored by default by the CVS server on import.
+	public static final String[] PREDEFINED_IGNORE_PATTERNS = {"CVS", ".#*", "#*", ",*", "_$*", "*~", "*$", "*.a", "*.bak", "*.BAK", 
+																						"*.elc", "*.exe", "*.ln", "*.o", "*.obj", "*.olb", "*.old", "*.orig", "*.rej", "*.so",
+																						"*.Z", ".del-*", ".make.state", ".nse_depinfo", "core", "CVS", "CVS.adm",
+																						"cvslog.*", "RCS", "RCSLOG", "SCCS", "tags", "TAGS" };
+
 
 	/**
 	 * Reads the CVS/Entry and CVS/Permissions files for the given folder. If the folder does not have a 
@@ -342,6 +350,8 @@ public class SyncFileUtil {
 				fileContentStore.add(line);
 			}
 			fileReader.close();
+		} catch(FileNotFoundException e) {
+			return new String[0];
 		} catch (IOException e) {
 			throw CVSException.wrapException(e);
 		}
@@ -375,7 +385,8 @@ public class SyncFileUtil {
 			if(!cvsignore.exists()) {
 				cvsignore.createNewFile();
 			}
-			String line = pattern == null ? file.getName() : pattern +"\n";
+			String line = pattern == null ? file.getName() : pattern;
+			line += "\n";
 			out = new FileOutputStream(cvsignore.getAbsolutePath(), true /*append*/);
 			out.write(line.getBytes());
 		} catch(IOException e) {

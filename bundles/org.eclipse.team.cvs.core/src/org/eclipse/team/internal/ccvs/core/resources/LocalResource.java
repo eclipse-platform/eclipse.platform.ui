@@ -8,6 +8,9 @@ package org.eclipse.team.internal.ccvs.core.resources;
 import java.io.File;
 
 import org.eclipse.team.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.core.IIgnoreInfo;
+import org.eclipse.team.core.TeamPlugin;
+import org.eclipse.team.core.internal.IgnoreInfo;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.FileNameMatcher;
@@ -97,7 +100,25 @@ public abstract class LocalResource implements ICVSResource {
 	 * @see ICVSResource#isIgnored()
 	 */
 	public boolean isIgnored() {
-		return CVSProviderPlugin.getSynchronizer().isIgnored(ioResource);		
+		// check both the global patterns, the default ignores, and cvs ignore files				
+		IIgnoreInfo[] ignorePatterns = TeamPlugin.getManager().getGlobalIgnore();
+		FileNameMatcher matcher = new FileNameMatcher(SyncFileUtil.PREDEFINED_IGNORE_PATTERNS);
+		for (int i = 0; i < ignorePatterns.length; i++) {
+			IIgnoreInfo info = ignorePatterns[i];
+			matcher.register(info.getPattern(), "true");
+		}
+		boolean ignored = matcher.match(ioResource.getName());
+		if(!ignored) {
+			ignored = CVSProviderPlugin.getSynchronizer().isIgnored(ioResource);		
+		}
+		
+		if(!ignored) {
+			ICVSFolder parent = getParent();
+			if(((LocalResource)parent).getLocalFile()==null) return false;
+			return parent.isIgnored();
+		} else {
+			return ignored;
+		}
 	}
 
 	public void setIgnored() throws CVSException {

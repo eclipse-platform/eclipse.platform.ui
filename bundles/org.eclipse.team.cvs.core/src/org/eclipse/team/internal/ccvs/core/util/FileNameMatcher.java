@@ -12,11 +12,7 @@ import java.util.List;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 
 /**
- * A FileNameMatcher associates a String with a String pattern
- * (e.g. a filename).
- * 
- * XXX How is this classed used, and is it a general .cvsignore
- * mechanism or a generic filename matcher?
+ * A FileNameMatcher associates a String with a String pattern.
  */
 public class FileNameMatcher {
 	
@@ -35,7 +31,6 @@ public class FileNameMatcher {
 		for (int i = 0; i < patterns.length; i++) {
 			register(patterns[i],TRUE);
 		}
-		register("CVS", TRUE); //$NON-NLS-1$
 	}
 	
 	public void register(String pattern, String result) {
