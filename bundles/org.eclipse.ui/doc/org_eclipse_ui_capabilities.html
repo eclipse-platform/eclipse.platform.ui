@@ -11,19 +11,22 @@
 <h1>
 Capabilities</h1></center>
 <b><i>Identifier: </i></b>org.eclipse.ui.capabilities
+
 <p><b><i>Description: </i></b>This extension point is used to register
 project capability extensions. Capabilities are the UI equivalent of CORE's
 project natures, and have a one-to-one relationship with project natures.
 The workbench allows the user to add and remove capabilities from a project
 at any time using the properties dialog or in the new project wizard.
+
 <p>Capabilities represent particular abilities of a project. For example,
-a project may have a “Java” capability that allows the project's *.java
+a project may have a "Java" capability that allows the project's *.java
 files to be compiled using a Java compiler. If the role of the project
-changes over time, the project’s capabilities can be modified to suit the
+changes over time, the project's capabilities can be modified to suit the
 new needs. For example, a project may start as a simple Java capability,
 but may later gain a new requirement to use JNI to some legacy library.
-The user may then add a “C++" capability (if one exists) to the project
+The user may then add a "C++" capability (if one exists) to the project
 to meet this new requirement.
+
 <p>Some capabilities may wish to handle the user interface for other capabilities.
 This generally occurs when a capability requires a number of other capabilities
 (note that prerequisite information is derived from the org.eclipse.core.resources.natures
@@ -31,16 +34,19 @@ extension point). For example, a "Web" capability needs the "Java" capability
 to compile servlets, but may want to present a much more simpler page to
 configure the "Java" capability or maybe not even present any pages about
 the "Java" capability and just add it with appropriate defaults.
+
 <p>The install wizard for a capability is responsible for collecting the
 necessary information from the user in order to add its nature and the
 natures of any capabilities it handles the UI for. The install wizard must
 handle the situation where some or all of the required capabilites are
 already installed and configured.
+
 <p>The uninstall wizard for a capability is responsible for collecting
 the necessary information from the user in order to remove its nature.
 Also must remove any other natures from capabilities that the user wants
 removed and the capability handles the UI for. These other capabilities
 that the user wants removed will be provided in the init method.
+
 <p>Capabilities can specify which perspectives a user can switch to when
 added to the project. This allows the user to discover new perspectives
 that can take advantage of the new capabilities. Capabilities that handle
@@ -48,12 +54,15 @@ the user interface for other capabilities also control the list of perspectives
 for these capabilities. For example, the "Web" capability handles the user
 interface for the "Java" capability it requires. The "Web" capability can
 choose to include the various Java perspectives, or not.
+
 <p>The categories defined by one plug-in can be referenced by other plug-ins
 using the
 <tt>category</tt> attribute.
+
 <p>Note the capability name presented to the user comes from the attribute
 "name" in the extension element of the org.eclipse.core.resources.natures
 extension point.
+
 <p><b><i>Since:</i></b> Release 2.0
 <p><b><i>Configuration Markup:</i></b>
 <p><tt>&nbsp;&nbsp; &lt;!ELEMENT category EMPTY></tt>

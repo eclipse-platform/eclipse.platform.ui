@@ -1,297 +1,67 @@
-<!doctype html public "-//w3c//dtd html 4.0//en">
-<html xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:w="urn:schemas-microsoft-com:office:word"
-xmlns="http://www.w3.org/TR/REC-html40">
-
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
 <head>
-<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
-<meta name=ProgId content=Word.Document>
-<meta name=Generator content="Microsoft Word 9">
-<meta name=Originator content="Microsoft Word 9">
-<link rel=File-List href="./org_eclipse_ui_MarkerResolutions_files/filelist.xml">
-<link rel=Edit-Time-Data
-href="./org_eclipse_ui_MarkerResolutions_files/editdata.mso">
-<!--[if !mso]>
-<style>
-v\:* {behavior:url(#default#VML);}
-o\:* {behavior:url(#default#VML);}
-w\:* {behavior:url(#default#VML);}
-.shape {behavior:url(#default#VML);}
-</style>
-<![endif]-->
-<title>Eclipse Workbench Extension Point: Marker Resolutions</title>
-<!--[if gte mso 9]><xml>
- <o:DocumentProperties>
-  <o:Author>OTI Employee</o:Author>
-  <o:LastAuthor>OTI Employee</o:LastAuthor>
-  <o:Revision>3</o:Revision>
-  <o:TotalTime>7153</o:TotalTime>
-  <o:Created>2002-03-18T14:48:00Z</o:Created>
-  <o:LastSaved>2002-03-18T15:05:00Z</o:LastSaved>
-  <o:Pages>1</o:Pages>
-  <o:Words>344</o:Words>
-  <o:Characters>1964</o:Characters>
-  <o:Company>Object Technology International</o:Company>
-  <o:Lines>16</o:Lines>
-  <o:Paragraphs>3</o:Paragraphs>
-  <o:CharactersWithSpaces>2411</o:CharactersWithSpaces>
-  <o:Version>9.3821</o:Version>
- </o:DocumentProperties>
-</xml><![endif]-->
-<style>
-<!--
- /* Font Definitions */
-@font-face
-	{font-family:Courier;
-	panose-1:0 0 0 0 0 0 0 0 0 0;
-	mso-font-charset:0;
-	mso-generic-font-family:modern;
-	mso-font-format:other;
-	mso-font-pitch:fixed;
-	mso-font-signature:3 0 0 0 1 0;}
-@font-face
-	{font-family:Wingdings;
-	panose-1:5 0 0 0 0 0 0 0 0 0;
-	mso-font-charset:2;
-	mso-generic-font-family:auto;
-	mso-font-pitch:variable;
-	mso-font-signature:0 268435456 0 0 -2147483648 0;}
- /* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{mso-style-parent:"";
-	margin:0in;
-	margin-bottom:.0001pt;
-	mso-pagination:widow-orphan;
-	font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-a:link, span.MsoHyperlink
-	{color:blue;
-	text-decoration:underline;
-	text-underline:single;}
-a:visited, span.MsoHyperlinkFollowed
-	{color:purple;
-	text-decoration:underline;
-	text-underline:single;}
-p
-	{font-size:12.0pt;
-	font-family:"Times New Roman";
-	mso-fareast-font-family:"Times New Roman";}
-tt
-	{mso-ascii-font-family:"Courier New";
-	mso-fareast-font-family:"Courier New";
-	mso-hansi-font-family:"Courier New";
-	mso-bidi-font-family:"Courier New";}
-@page Section1
-	{size:8.5in 11.0in;
-	margin:1.0in 1.25in 1.0in 1.25in;
-	mso-header-margin:.5in;
-	mso-footer-margin:.5in;
-	mso-paper-source:0;}
-div.Section1
-	{page:Section1;}
- /* List Definitions */
-@list l0
-	{mso-list-id:599870951;
-	mso-list-type:hybrid;
-	mso-list-template-ids:-720347308 -1850016468 770982190 355097630 1223572690 -1276081304 2024204458 -2119117800 1231440288 -587538596;}
-@list l0:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l1
-	{mso-list-id:1011641482;
-	mso-list-type:hybrid;
-	mso-list-template-ids:1617569832 -414155344 1240765268 1745537914 -1417142148 -1466639012 -1715858350 -376373330 -2060140344 1503011324;}
-@list l1:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l1:level2
-	{mso-level-number-format:bullet;
-	mso-level-text:o;
-	mso-level-tab-stop:1.0in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:"Courier New";
-	mso-bidi-font-family:"Times New Roman";}
-@list l2
-	{mso-list-id:1025212261;
-	mso-list-type:hybrid;
-	mso-list-template-ids:843219588 -2111028028 1687034398 2053116926 2039542548 -381780390 -1275147224 -1791183816 1587434190 39197310;}
-@list l2:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l3
-	{mso-list-id:1138915638;
-	mso-list-type:hybrid;
-	mso-list-template-ids:-1633537794 -906835892 -977512538 -176022892 118816670 79489230 -397645188 -2103925876 -1078182830 2084348824;}
-@list l3:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-@list l4
-	{mso-list-id:1656881491;
-	mso-list-type:hybrid;
-	mso-list-template-ids:243071546 954530136 706149868 335291734 -1508198108 466783830 603090648 -854416878 729055688 979661282;}
-@list l4:level1
-	{mso-level-number-format:bullet;
-	mso-level-text:\F0B7;
-	mso-level-tab-stop:.5in;
-	mso-level-number-position:left;
-	text-indent:-.25in;
-	mso-ansi-font-size:10.0pt;
-	font-family:Symbol;}
-ol
-	{margin-bottom:0in;}
-ul
-	{margin-bottom:0in;}
--->
-</style>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (Windows NT 5.0; U) [Netscape]">
+   <title>Eclipse Workbench Extension Point: Marker Resolutions</title>
 </head>
+<body link="#0000FF" vlink="#800080">
 
-<body lang=EN-US link=blue vlink=purple style='tab-interval:.5in'>
-
-<div class=Section1>
-
-<h1 align=center style='text-align:center'>Marker Resolutions</h1>
-
-<p class=MsoNormal><b><i>Identifier: </i></b><span style='font-size:10.0pt;
-font-family:Courier;background:white;mso-highlight:white'>org.eclipse.ui.marker</span><span
-style='font-size:10.0pt;font-family:Courier'>Resolution</span></p>
-
-<p><b><i>Description: </i></b>This extension point is used to associate a marker
-resolution generator with a specific &#8220;kind&#8221; of marker (a marker of a certain
-type or having certain attribute values). </p>
-
-<p><b><i>Configuration Markup:</i></b> </p>
-
-<p class=MsoNormal><tt><span style='font-size:10.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
-&lt;!ELEMENT </span></tt><span style='font-size:10.0pt;font-family:Courier;
-background:white;mso-highlight:white'>markerResolutionGenerator</span><tt><span
-style='font-size:10.0pt;font-family:"Courier New"'> (attribute)*&gt;</span></tt>
-<br>
-<tt><span style='font-size:10.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
-&lt;!ATTLIST </span></tt><span style='font-size:10.0pt;font-family:Courier;
-background:white;mso-highlight:white'>markerResolutionGenerator</span><br>
-<tt><span style='font-size:10.0pt;font-family:"Courier New"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="mso-spacerun:
-yes">&nbsp; </span>CDATA #REQUIRED<o:p></o:p></span></tt></p>
-
-<p class=MsoNormal><tt><span style='font-size:10.0pt;font-family:"Courier New"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-markerType&nbsp;&nbsp;&nbsp;&nbsp;CDATA #OPTIONAL</span></tt> <br>
-<tt><span style='font-size:10.0pt;font-family:"Courier New"'>&nbsp;&nbsp; &gt;</span></tt>
-</p>
-
-<p class=MsoNormal style='margin-right:.5in;mso-margin-top-alt:auto;mso-margin-bottom-alt:
-auto'><span style='mso-hansi-font-family:Symbol'><span style="mso-spacerun:
-yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span><span style='font-family:
-Symbol;mso-ascii-font-family:"Times New Roman"'>·</span><span
-style="mso-spacerun: yes">&nbsp; </span><b>class</b> - the name of the class
-implementing <span style='font-size:10.0pt;font-family:Courier;background:white;
-mso-highlight:white'>IMarkerResolutionGenerator</span>.<br clear=all>
-<span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><span
-style='font-family:Symbol;mso-ascii-font-family:"Times New Roman"'>·</span><span
-style="mso-spacerun: yes">&nbsp; </span><b>markerType</b> - the type of the
-marker for which the help context applies. <br clear=all>
-<span style="mso-spacerun: yes">&nbsp;</span></p>
-
-<p class=MsoNormal><tt><span style='font-size:10.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
-&lt;!ELEMENT attribute EMPTY&gt;</span></tt> <br>
-<tt><span style='font-size:10.0pt;font-family:"Courier New"'>&nbsp;&nbsp;
-&lt;!ATTLIST attribute</span></tt> <br>
-<tt><span style='font-size:10.0pt;font-family:"Courier New"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; CDATA #REQUIRED</span></tt>
-<br>
-<tt><span style='font-size:10.0pt;font-family:"Courier New"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</span></tt>
-<br>
-<tt><span style='font-size:10.0pt;font-family:"Courier New"'>&nbsp;&nbsp; &gt;</span></tt>
-</p>
-
+<center>
+<h1>
+Marker Resolutions</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.ui.markerResolution
+<p><b><i>Description: </i></b>This extension point is used to associate
+a marker resolution generator with a specific "kind" of marker (a marker
+of a certain type or having certain attribute values).
+<p><b><i>Since:</i></b> Release 2.0
+<p><b><i>Configuration Markup:</i></b>
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT markerResolutionGenerator(attribute)*></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST markerResolutionGenerator</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; markerType&nbsp;&nbsp;&nbsp; CDATA
+#OPTIONAL</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>class</b> - the name of
+the class implementing IMarkerResolutionGenerator
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>markerType</b> - the
+type of the marker for which the help context applies.
+<br>&nbsp;
+<p><tt>&nbsp;&nbsp; &lt;!ELEMENT attribute EMPTY></tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST attribute</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; value&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp; ></tt>
 <ul type=disc>
- <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
-     mso-list:l3 level1 lfo1;tab-stops:list .5in'><b>name</b> - the name of the
-     attribute whose value is being specified.</li>
- <li class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
-     mso-list:l3 level1 lfo1;tab-stops:list .5in'><b>value</b> - the specified value
-     of the attribute.</li>
+<li>
+<b>name</b> - the name of the attribute whose value is being specified.</li>
+
+<li>
+<b>value</b> - the specified value of the attribute.</li>
 </ul>
-
-<p class=MsoNormal><b><i>Examples:</i></b> </p>
-
-<p>The following is an example of a marker resolution generator extension (note
-the subelement and the way attributes are used): </p>
-
-<p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
-style='font-size:10.0pt;font-family:Courier;background:white;mso-highlight:
-white'><span style="mso-spacerun: yes">&nbsp;&nbsp;
-</span>&lt;markerResolutionGenerator </span><span style='font-size:10.0pt;
-font-family:Courier'><o:p></o:p></span></p>
-
-<p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
-style='font-size:10.0pt;font-family:Courier;background:white;mso-highlight:
-white'><span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span>class=&quot;org.eclipse.ui.examples.readmetool.ReadmeMarkerResolutionGenerator&quot;
-</span><span style='font-size:10.0pt;font-family:Courier'><o:p></o:p></span></p>
-
-<p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
-style='font-size:10.0pt;font-family:Courier;background:white;mso-highlight:
-white'><span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span>markerType=&quot;org.eclipse.ui.examples.readmetool.readmemarker&quot;&gt;
-</span><span style='font-size:10.0pt;font-family:Courier'><o:p></o:p></span></p>
-
-<p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
-style='font-size:10.0pt;font-family:Courier;background:white;mso-highlight:
-white'><span style="mso-spacerun: yes">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-</span>&lt;attribute name=&quot;org.eclipse.ui.examples.readmetool.id&quot;
-value= &quot;1234&quot;/&gt; </span><span style='font-size:10.0pt;font-family:
-Courier'><o:p></o:p></span></p>
-
-<p class=MsoNormal style='mso-layout-grid-align:none;text-autospace:none'><span
-style='font-size:10.0pt;font-family:Courier;background:white;mso-highlight:
-white'><span style="mso-spacerun: yes">&nbsp;&nbsp;
-</span>&lt;/markerResolutionGenerator&gt; </span><span style='font-size:10.0pt;
-font-family:Courier'><o:p></o:p></span></p>
-
+<b><i>Examples:</i></b>
+<p>The following is an example of a marker resolution generator extension
+(note the subelement and the way attributes are used):
+<p><tt>&lt;extension point="org.eclipse.ui.markerResolution"></tt>
+<br><tt>&nbsp;&nbsp; &lt;markerResolutionGenerator</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class="org.eclipse.ui.examples.readmetool.ReadmeMarkerResolutionGenerator"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; markerType="org.eclipse.ui.examples.readmetool.readmemarker"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;attribute</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+name="org.eclipse.ui.examples.readmetool.id"</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+value= "1234"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/attribute></tt>
+<br><tt>&nbsp;&nbsp; &lt;/markerResolutionGenerator></tt>
+<br><tt>&lt;/extension></tt>
 <p>In the example above, a marker resolution generator is associated with
-makers of type <span style='font-size:10.0pt;font-family:Courier;background:
-white;mso-highlight:white'>org.eclipse.ui.examples.readmetool.readmemarker</span><span
-style='font-size:10.0pt;font-family:Courier'> </span>whose <span
-style='font-size:10.0pt;font-family:Courier;background:white;mso-highlight:
-white'>org.eclipse.ui.examples.readmetool.id</span> attribute has a value of
-1234.</p>
-
-<p><b><i>Additional Notes: </i></b>More than one marker help generator may be
-supplied for a given marker.</p>
-
-<p><a href="..\..\..\20020305\plugins\org.eclipse.ui\doc\hglegal.htm"><span
-style='text-decoration:none;text-underline:none'><img border=0 width=195
-height=12 id="_x0000_i1025"
-src="..\..\..\20020305\plugins\org.eclipse.ui\doc\ngibmcpy.gif"
-alt="Copyright IBM Corp. 2000, 2001.  All Rights Reserved."></span></a></p>
-
-</div>
-
+makers of type org.eclipse.ui.examples.readmetool.readmemarker whose org.eclipse.ui.examples.readmetool.id
+attribute has a value of 1234.
+<p><b><i>API Information: </i></b>More than one marker help generator may
+be supplied for a given marker.
+<p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
 </body>
-
 </html>
