@@ -83,7 +83,7 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 	 * 
 	 * @param event debug event to fire
 	 */
-	protected void fireEvent(DebugEvent event) {
+	public void fireEvent(DebugEvent event) {
 		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {event});
 	}    
 
@@ -101,7 +101,7 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 	/**
 	 * Fires a creation event for this debug element.
 	 */
-	protected void fireCreationEvent() {
+    public void fireCreationEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.CREATE));
 	}	
 	
@@ -112,7 +112,7 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 	 * @param detail detail code for the resume event, such 
 	 *  as <code>DebugEvent.STEP_OVER</code>
 	 */
-	protected void fireResumeEvent(int detail) {
+    public void fireResumeEvent(int detail) {
 		fireEvent(new DebugEvent(this, DebugEvent.RESUME, detail));
 	}
 	
@@ -123,14 +123,14 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 	 * @param detail detail code for the suspend event, such
 	 *  as <code>DebugEvent.BREAKPOINT</code>
 	 */
-	protected void fireSuspendEvent(int detail) {
+    public void fireSuspendEvent(int detail) {
 		fireEvent(new DebugEvent(this, DebugEvent.SUSPEND, detail));
 	}	
 	
 	/**
 	 * Fires a terminate event for this debug element.
 	 */
-	protected void fireTerminateEvent() {
+    public void fireTerminateEvent() {
 		fireEvent(new DebugEvent(this, DebugEvent.TERMINATE));
 	}	
 	
@@ -156,5 +156,5 @@ public abstract class DebugElement extends PlatformObject implements IDebugEleme
 	protected void notSupported(String message, Throwable e) throws DebugException {
 		throw new DebugException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), 
 				DebugException.NOT_SUPPORTED, message, e));
-	}		
+	}
 }
