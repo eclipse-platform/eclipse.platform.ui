@@ -450,8 +450,7 @@ public class AntModel implements IAntModel {
 	}
 
 	private void resolveBuildfile() {	
-		Collection nodeCopy= new ArrayList(fTaskNodes.size());
-		nodeCopy.addAll(fTaskNodes);
+		Collection nodeCopy= new ArrayList(fTaskNodes);
 		Iterator iter= nodeCopy.iterator();
 		while (iter.hasNext()) {
 			AntTaskNode node = (AntTaskNode) iter.next();
@@ -1531,7 +1530,7 @@ public class AntModel implements IAntModel {
     
     protected void removeDefiningTaskNodeInfo(AntDefiningTaskNode node) {
         Object identifier= node.getIdentifier();
-        if (identifier != null) {
+        if (identifier != null && fCurrentNodeIdentifiers != null) {
             fCurrentNodeIdentifiers.remove(identifier);
             fDefinersToText.remove(identifier);
         }
