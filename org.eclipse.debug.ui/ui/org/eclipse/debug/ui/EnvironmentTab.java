@@ -122,7 +122,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 					return;
 				}
 				tableViewer.setSorter(new ViewerSorter() {
-					public int compare(Viewer viewer, Object e1, Object e2) {
+					public int compare(Viewer iviewer, Object e1, Object e2) {
 						if (e1 == null) {
 							return -1;
 						} else if (e2 == null) {
