@@ -137,7 +137,9 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			int attempts = 0;
 			while (attempts < MAX_WAIT_FOR_DEATH_ATTEMPTS) {
 				try {
-					fProcess.exitValue();
+					if (fProcess != null) {
+						fProcess.exitValue();
+					}
 					return;
 				} catch (IllegalThreadStateException ie) {
 				}
