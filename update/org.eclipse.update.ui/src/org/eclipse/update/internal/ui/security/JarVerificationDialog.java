@@ -1,22 +1,14 @@
-/**
- * Created on Apr 25, 2002
- *
- * To change this generated comment edit the template variable "filecomment":
- * Workbench>Preferences>Java>Templates.
- */
 package org.eclipse.update.internal.ui.security;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IDialogPage;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.update.core.IVerificationResult;
 import org.eclipse.update.internal.ui.UpdateUIPlugin;
 import org.eclipse.update.internal.ui.UpdateUIPluginImages;
@@ -40,6 +32,7 @@ public class JarVerificationDialog extends TitleAreaDialog {
 	 */
 	public JarVerificationDialog(Shell parentShell,IDialogPage dialogPage, IVerificationResult verificationResult) {
 		super(parentShell);
+		setShellStyle(SWT.TITLE | SWT.BORDER | SWT.APPLICATION_MODAL);		
 		_VerificationResult = verificationResult;
 		_DialogPage = dialogPage;
 	}
