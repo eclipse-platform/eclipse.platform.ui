@@ -10,15 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.internal.expressions.tests;
 
-import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Plugin;
 
 public class ExpressionTestPlugin extends Plugin {
 	
 	private static ExpressionTestPlugin fgDefault;
 	
-	public ExpressionTestPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
+	public ExpressionTestPlugin() {
 		fgDefault= this;
 	}
 
@@ -27,6 +25,6 @@ public class ExpressionTestPlugin extends Plugin {
 	}
 	
 	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return "org.eclipse.core.expressions.tests";
 	}
 }

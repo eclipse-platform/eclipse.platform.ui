@@ -19,8 +19,7 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.expressions.EvaluationContext;
@@ -136,14 +135,6 @@ public class ExpressionTests extends TestCase {
 		SystemTestExpression expression= new SystemTestExpression("os.name", System.getProperty("os.name"));
 		EvaluationResult result= expression.evaluate(new EvaluationContext(null, new Object()));
 		assertTrue(result == EvaluationResult.TRUE);
-	}
-	
-	public void testResolvePluginDescriptor() throws Exception {
-		IEvaluationContext context= new EvaluationContext(null, new Object());
-		IPluginDescriptor descriptor= (IPluginDescriptor)context.resolveVariable(
-			IEvaluationContext.PLUGIN_DESCRIPTOR,
-			new String[] { "org.eclipse.jdt.ui.tests.refactoring" });
-		assertNotNull(descriptor);
 	}
 	
 	public void testAdaptExpression() throws Exception {
@@ -388,7 +379,7 @@ public class ExpressionTests extends TestCase {
 	}
 	
 	public void testReadXMLExpression() throws Exception {
-		IPluginRegistry registry= Platform.getPluginRegistry();
+		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		IConfigurationElement[] ces= registry.getConfigurationElementsFor("org.eclipse.core.expressions.tests", "testParticipants");
 		
 		IConfigurationElement enable= findExtension(ces, "test1").getChildren("enablement")[0];

@@ -29,7 +29,7 @@ public class ExpressionPlugin extends Plugin {
 	}
 	
 	public static String getPluginId() {
-		return getDefault().getDescriptor().getUniqueIdentifier();
+		return "org.eclipse.core.expressions"; //$NON-NLS-1$
 	}
 	
 	/**

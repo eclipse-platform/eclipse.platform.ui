@@ -27,9 +27,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IEvaluationContext {
 
-	/** Variable name to denote a plug-in descriptor */
-	public static final String PLUGIN_DESCRIPTOR= "pluginDescriptor";  //$NON-NLS-1$
-	
 	/**
 	 * Returns the parent context or <code>null</code> if 
 	 * this is the root of the evaluation context hierarchy.

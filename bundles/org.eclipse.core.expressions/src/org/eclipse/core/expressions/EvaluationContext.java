@@ -14,11 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.internal.expressions.Assert;
-import org.eclipse.core.internal.expressions.ExpressionMessages;
-import org.eclipse.core.internal.expressions.ExpressionStatus;
 
 /**
  * A default implementation of an evaluation context.
@@ -132,19 +129,6 @@ public class EvaluationContext implements IEvaluationContext {
 	 * {@inheritDoc}
 	 */
 	public Object resolveVariable(String name, Object[] args) throws CoreException {
-		if (PLUGIN_DESCRIPTOR.equals(name)) {
-			if (args == null ||args.length != 1)
-				throw new CoreException(new ExpressionStatus(
-					ExpressionStatus.VARAIBLE_POOL_WRONG_NUMBER_OF_ARGUMENTS,
-					ExpressionMessages.getFormattedString(
-						"VariablePool.resolveVariable.arguments.wrong_number",  //$NON-NLS-1$
-						new Object[] { "1", args == null ? "0" : ("" + args.length)}))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			if (!(args[0] instanceof String)) 
-				throw new CoreException(new ExpressionStatus(
-					ExpressionStatus.VARAIBLE_POOL_ARGUMENT_IS_NOT_A_STRING,
-					ExpressionMessages.getString("VariablePool.resolveVariable.arguments.not_a_string"))); //$NON-NLS-1$
-			return Platform.getPluginRegistry().getPluginDescriptor((String)(args[0]));
-		}
 		if (fVariableResolvers != null && fVariableResolvers.length > 0) {
 			for (int i= 0; i < fVariableResolvers.length; i++) {
 				IVariableResolver resolver= fVariableResolvers[i];

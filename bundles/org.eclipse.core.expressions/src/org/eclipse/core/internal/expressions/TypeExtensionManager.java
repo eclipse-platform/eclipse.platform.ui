@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginRegistry;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.expressions.IPropertyTester;
@@ -108,7 +108,7 @@ public class TypeExtensionManager {
 		synchronized(this) {
 			if (fConfigurationElementMap == null) {
 				fConfigurationElementMap= new HashMap();
-				IPluginRegistry registry= Platform.getPluginRegistry();
+				IExtensionRegistry registry= Platform.getExtensionRegistry();
 				IConfigurationElement[] ces= registry.getConfigurationElementsFor(
 					ExpressionPlugin.getPluginId(), 
 					fExtensionPoint); 
