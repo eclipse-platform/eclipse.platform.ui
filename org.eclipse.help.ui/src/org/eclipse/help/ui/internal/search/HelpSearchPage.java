@@ -1,23 +1,23 @@
-package org.eclipse.help.ui.internal.search;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+package org.eclipse.help.ui.internal.search;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
-import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.help.IToc;
-import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.ui.*;
+import org.eclipse.help.internal.ui.IHelpUIConstants;
 import org.eclipse.help.internal.ui.util.*;
 import org.eclipse.jface.dialogs.DialogPage;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.search.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
+
 /**
  * HelpSearchPage
  */
@@ -168,21 +168,6 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		if (!previousSearchQueryData.contains(searchQueryData))
 			previousSearchQueryData.add(searchQueryData);
 		try {
-			// NOTE: For now, we directly ask the Search Manager to index.
-			// This should be looked at sometimes and maybe changed.
-			scontainer.getRunnableContext().run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor pm)
-					throws InvocationTargetException, InterruptedException {
-					try {
-						if (HelpSystem
-							.getSearchManager()
-							.isIndexingNeeded(searchQueryData.getLocale()))
-							HelpSystem.getSearchManager().updateIndex(pm, searchQueryData.getLocale());
-					} catch (Exception e) {
-						throw new InterruptedException();
-					}
-				}
-			});
 			SearchUI.activateSearchResultView();
 			scontainer.getRunnableContext().run(
 				true,

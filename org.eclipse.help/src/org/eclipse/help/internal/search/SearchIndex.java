@@ -1,10 +1,11 @@
-package org.eclipse.help.internal.search;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+package org.eclipse.help.internal.search;
+
 import java.io.*;
-import java.util.*;
+import java.util.Iterator;
 
 import org.apache.lucene.HTMLParser.HTMLParser;
 import org.apache.lucene.document.*;
@@ -12,6 +13,7 @@ import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.util.*;
+
 /**
  * Text search index.  Documents added to this index
  * can than be searched against a search query.
@@ -30,10 +32,10 @@ public class SearchIndex {
 	private static final String ANALYZER_VERSION_FILENAME = "indexed_analyzer";
 	private File analyzerVersionFile;
 	private File inconsistencyFile;
-	public SearchIndex(String locale) {
+	public SearchIndex(String locale, AnalyzerDescriptor analyzerDesc) {
 		super();
 		this.locale = locale;
-		analyzerDescriptor = HelpSystem.getSearchManager().getAnalyzer(locale);
+		analyzerDescriptor = analyzerDesc;
 		String helpStatePath = HelpPlugin.getDefault().getStateLocation().toOSString();
 		String searchStatePath =
 			helpStatePath + File.separator + "nl" + File.separator + locale;
@@ -204,23 +206,24 @@ public class SearchIndex {
 	 * Later, we can extend this to return more data (rank, # of occs, etc.)
 	 */
 	public void search(
-		String searchWord,
-		Collection fieldNames,
-		boolean fieldSearchOnly,
-		SearchResult searchResult) {
+		ISearchQuery searchQuery,
+		ISearchResultCollector collector) {
 		try {
 			QueryBuilder queryBuilder =
-				new QueryBuilder(searchWord, analyzerDescriptor.getAnalyzer());
-			Query luceneQuery = queryBuilder.getLuceneQuery(fieldNames, fieldSearchOnly);
+				new QueryBuilder(searchQuery.getSearchWord(), analyzerDescriptor.getAnalyzer());
+			Query luceneQuery =
+				queryBuilder.getLuceneQuery(
+					searchQuery.getFieldNames(),
+					searchQuery.isFieldSearch());
 			String analyzedWords = queryBuilder.getAnalyzedWords();
 			if (luceneQuery != null) {
 				Searcher searcher = new IndexSearcher(indexDir.getAbsolutePath());
 				Hits hits = searcher.search(luceneQuery);
-				searchResult.addHits(hits, analyzedWords);
+				collector.addHits(hits, analyzedWords);
 				searcher.close();
 			}
 		} catch (Exception e) {
-			Logger.logError(Resources.getString("ES21", searchWord), e);
+			Logger.logError(Resources.getString("ES21", searchQuery.getSearchWord()), e);
 		}
 	}
 	public String getLocale() {
@@ -306,11 +309,11 @@ public class SearchIndex {
 	private void setInconsistent(boolean inconsistent) {
 		if (inconsistent) {
 			try {
+				// parent directory already created by beginAddBatch on new index
 				FileOutputStream fos = new FileOutputStream(inconsistencyFile);
 				fos.close();
 			} catch (IOException ioe) {
 			}
-			inconsistencyFile.mkdirs();
 		} else
 			inconsistencyFile.delete();
 	}

@@ -1,8 +1,9 @@
-package org.eclipse.help.internal.search;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+package org.eclipse.help.internal.search;
+
 import java.net.*;
 import java.util.*;
 
@@ -12,6 +13,7 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.util.*;
+
 /**
  * Manages indexing and search for all infosets
  */
@@ -20,28 +22,29 @@ public class SearchManager {
 	private HashMap indexes = new HashMap();
 	// Caches analyzer descriptors for each locale
 	private HashMap analyzerDescriptors = new HashMap();
-	// Progress monitors, indexed by locale
-	private HashMap progressMonitors = new HashMap();
+	private ProgressDirstributor progresDistrib = new ProgressDirstributor();
 	/**
 	 * Constructs a Search manager.
 	 */
 	public SearchManager() {
 		super();
 	}
-	public SearchIndex getIndex(String locale) {
-		SearchIndex index = (SearchIndex) indexes.get(locale);
-		if (index == null) {
-			index = new SearchIndex(locale);
-			indexes.put(locale, index);
+	private SearchIndex getIndex(String locale) {
+		synchronized (indexes) {
+			Object index = indexes.get(locale);
+			if (index == null) {
+				index = new SearchIndex(locale, getAnalyzer(locale));
+				indexes.put(locale, index);
+			}
+			return (SearchIndex) index;
 		}
-		return index;
 	}
 	/**
 	 * Obtains AnalyzerDescriptor that indexing and search should
 	 * use for a given locale.
 	 * @param locale 2 or 5 character locale representation
 	 */
-	public AnalyzerDescriptor getAnalyzer(String locale) {
+	private AnalyzerDescriptor getAnalyzer(String locale) {
 		// get an analyzer from cache
 		AnalyzerDescriptor analyzerDesc =
 			(AnalyzerDescriptor) analyzerDescriptors.get(locale);
@@ -122,9 +125,6 @@ public class SearchManager {
 		}
 		return null;
 	}
-	public IProgressMonitor getProgressMonitor(String locale) {
-		return (IProgressMonitor) progressMonitors.get(locale);
-	}
 	/**
 	 * Returns the documents to be added to index. 
 	 * The collection consists of the associated PluginURL objects.
@@ -179,65 +179,31 @@ public class SearchManager {
 		return removedDocs;
 	}
 	/**
-	 * Obtains locale from query string
-	 * @return locale in the form ll_CC
-	 * @param query String
-	 */
-	private static String getLocale(String query) {
-		int indx = query.indexOf("&lang=");
-		if (indx == -1 || query.length() < indx + 7)
-			return Locale.getDefault().toString();
-		else {
-			String clientLocale = query.substring(indx + 6);
-			if (clientLocale != null && clientLocale.length() >= 2) {
-				String language = clientLocale.substring(0, 2);
-				if (clientLocale.indexOf('_') == 2 && clientLocale.length() >= 5)
-					return language + "_" + clientLocale.substring(3, 5);
-				else
-					return language;
-			} else
-				return Locale.getDefault().toString();
-		}
-	}
-	/**
 	 * Searches index for documents containing an expression.
-	 * If the index hasn't been built then return null.
 	 */
-	public synchronized String getSearchResults(String searchQuery) {
-		String locale = getLocale(searchQuery);
-		SearchIndex index = getIndex(locale);
-		if (index == null)
-			return null;
-		SearchQuery searchQueryObj = new SearchQuery(searchQuery);
-		SearchResult result = searchQueryObj.search(index);
-		// TO DO: Filtering...
-		///result.filterTopicsFromExcludedCategories(searchQuery.getExcludedCategories());
-		if (Logger.DEBUG)
+	public void search(
+		ISearchQuery searchQuery,
+		ISearchResultCollector collector,
+		IProgressMonitor pm) {
+		SearchIndex index = getIndex(searchQuery.getLocale());
+		try {
+			updateIndex(pm, index);
+		} catch (IndexingOperation.IndexingException ie) {
 			Logger.logDebugMessage(
-				"Search Manager",
-				"search results:\n" + result.toString());
-		return result.toString();
+				this.getClass().getName(),
+				"IndexUpdateException occured.");
+		}
+		index.search(searchQuery, collector);
 	}
 	/**
-	 * Returns true when the index for this infosetId in the specified locale
-	 * must be (re)built.
-	 * Side effect: if a pre-built index exists, the first time we call this
-	 * function, we will unzip the pre-built index and check if there are
-	 * more plugins with docs to index.
+	 * Returns true when the index in the specified locale
+	 * must be updated.
 	 */
-	public boolean isIndexingNeeded(String locale) {
-		// If there is an index, check the plugin differences.
-		// If there is no index, copy the pre-built index, if any
-		SearchIndex index = getIndex(locale);
-		if (index.exists())
-			return index.getDocPlugins().detectChange();
-		// find a possible prebuilt index 
-		PrebuiltIndex prebuiltIndex = new PrebuiltIndex(locale);
-		if (prebuiltIndex.exists())
-			if (prebuiltIndex.install())
-				return index.getDocPlugins().detectChange();
-		// in all other cases we need to index
-		return true;
+	private boolean isIndexingNeeded(SearchIndex index) {
+		if (!index.exists()) {
+			return true;
+		}
+		return index.getDocPlugins().detectChange();
 	}
 	/**
 	 * Updates index.  Checks if all contributions were indexed.
@@ -245,34 +211,34 @@ public class SearchManager {
 	 * @throws OperationCanceledException if indexing was cancelled
 	 * @throws Exception if error occured
 	 */
-	public synchronized void updateIndex(IProgressMonitor pm, String locale)
-		throws OperationCanceledException, Exception {
-		// monitor indexing
-		if (pm == null)
-			pm = new IndexProgressMonitor();
-		if (!isIndexingNeeded(locale)){
-			pm.done();
-			return;
-		}
-		progressMonitors.put(locale, pm);
-		SearchIndex index = getIndex(locale);
-		if (Logger.DEBUG)
-			Logger.logDebugMessage("Search Manager", "indexing " + locale);
-		// Perform indexing
-		try {
-			PluginVersionInfo versions = index.getDocPlugins();
-			if (versions == null)
+	private void updateIndex(IProgressMonitor pm, SearchIndex index)
+		throws OperationCanceledException, IndexingOperation.IndexingException {
+		progresDistrib.addMonitor(pm);
+		synchronized (this) {
+			if (!isIndexingNeeded(index)) {
+				pm.beginTask("", 1);
+				pm.worked(1);
+				pm.done();
 				return;
-			Collection removedDocs = getRemovedDocuments(index);
-			Collection addedDocs = getAddedDocuments(index);
-			IndexingOperation indexer =
-				new IndexingOperation(index, removedDocs, addedDocs);
-			indexer.execute(pm);
-		} catch (OperationCanceledException oce) {
-			Logger.logWarning(Resources.getString("Search_cancelled"));
-			throw oce;
-		} finally {
+			}
+			if (Logger.DEBUG)
+				Logger.logDebugMessage("Search Manager", "indexing " + index.getLocale());
+			// Perform indexing
+			try {
+				PluginVersionInfo versions = index.getDocPlugins();
+				if (versions == null)
+					return;
+				Collection removedDocs = getRemovedDocuments(index);
+				Collection addedDocs = getAddedDocuments(index);
+				IndexingOperation indexer =
+					new IndexingOperation(index, removedDocs, addedDocs);
+				indexer.execute(progresDistrib);
+			} catch (OperationCanceledException oce) {
+				Logger.logWarning(Resources.getString("Search_cancelled"));
+				throw oce;
+			}
 		}
+		progresDistrib.removeMonitor(pm);
 	}
 	private boolean isIndexable(String url) {
 		String fileName = url.toLowerCase();

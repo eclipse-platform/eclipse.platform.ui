@@ -1,14 +1,16 @@
-package org.eclipse.help.internal.search;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+package org.eclipse.help.internal.search;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.util.*;
+
 /**
  * Indexing Operation represents a long operation,
  * which performs indexing of the group (Collection) of documents.
@@ -78,7 +80,7 @@ class IndexingOperation {
 	 * @throws Exception if error occured
 	 */
 	protected void execute(IProgressMonitor pm)
-		throws OperationCanceledException, Exception {
+		throws OperationCanceledException, IndexingException {
 		// if collection is empty, we may return right away
 		// need to check if we have to do anything to the progress monitor
 		int numDocs = removedDocs.size() + addedDocs.size();
@@ -92,7 +94,7 @@ class IndexingOperation {
 		// first delete all the removed documents
 		if (removedDocs.size() > 0) {
 			if (!index.beginDeleteBatch())
-				throw new Exception();
+				throw new IndexingException();
 			try {
 				checkCancelled(pm);
 				pm.worked(WORK_PREPARE);
@@ -112,13 +114,13 @@ class IndexingOperation {
 				throw oce;
 			}
 			if (!index.endDeleteBatch())
-				throw new Exception();
+				throw new IndexingException();
 		}
 		// Do not check here if (addedDocs.size() > 0), always perform add batch
 		// to ensure that index is created and saved even if no new documents exist
 		// now add all the new documents
 		if (!index.beginAddBatch())
-			throw new Exception();
+			throw new IndexingException();
 		try {
 			checkCancelled(pm);
 			pm.worked(WORK_PREPARE);
@@ -139,7 +141,7 @@ class IndexingOperation {
 		}
 		pm.subTask(Resources.getString("Writing_index"));
 		if (!index.endAddBatch())
-			throw new Exception();
+			throw new IndexingException();
 		pm.done();
 	}
 	/**
@@ -153,5 +155,7 @@ class IndexingOperation {
 		if (i != -1)
 			name = name.substring(0, i);
 		return name;
+	}
+	public class IndexingException extends Exception {
 	}
 }

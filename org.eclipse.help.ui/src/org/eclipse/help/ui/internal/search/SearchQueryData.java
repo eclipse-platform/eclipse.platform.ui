@@ -1,19 +1,21 @@
-package org.eclipse.help.ui.internal.search;
 /*
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
+package org.eclipse.help.ui.internal.search;
+
 import java.net.URLEncoder;
 import java.util.*;
 
 import org.eclipse.help.IToc;
 import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.search.ISearchQuery;
 import org.eclipse.help.internal.util.URLCoder;
 
 /**
  * Help Search Query Data.
  */
-public class SearchQueryData {
+public class SearchQueryData implements ISearchQuery {
 	/** 
 	 * Default maximum number of hits that a search engine
 	 * will search stop
@@ -45,25 +47,22 @@ public class SearchQueryData {
 		maxHits = MAX_HITS;
 		fieldSearch = false;
 		fieldNames = new ArrayList();
-//		fieldNames.add("h1");
-//		fieldNames.add("h2");
-//		fieldNames.add("h3");
-//		fieldNames.add("keyword");
-//		fieldNames.add("role");
-//		fieldNames.add("solution");
-//		fieldNames.add("technology");
+		//		fieldNames.add("h1");
+		//		fieldNames.add("h2");
+		//		fieldNames.add("h3");
+		//		fieldNames.add("keyword");
+		//		fieldNames.add("role");
+		//		fieldNames.add("solution");
+		//		fieldNames.add("technology");
 		selectedBooks = new ArrayList(0);
-		
+
 		IToc tocs[] = HelpSystem.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++)
 			selectedBooks.add(tocs[i]);
 
 	}
 	/**
-	 * Returns the list of books to be excluded from search.
-	 * (A category is a top level topic in an info view)
-	 * When the list is null (note, empty list is not the same as null)
-	 * no filtering is performed.
+	 * Returns the list of books to be included in search.
 	 */
 	public List getSelectedBooks() {
 		return selectedBooks;
@@ -83,7 +82,7 @@ public class SearchQueryData {
 	/**
 	 * Returns true if search is to be performed on the fields only.
 	 */
-	public boolean isFieldsSearch() {
+	public boolean isFieldSearch() {
 		return fieldSearch;
 	}
 	/**
@@ -107,19 +106,13 @@ public class SearchQueryData {
 		this.fieldSearch = fieldSearch;
 	}
 	/**
-	 * Sets locale in which the search will be performed.
-	 * @param newLocale java.lang.String
-	 */
-	public void setLocale(String newLocale) {
-		locale = newLocale;
+	* Sets the maxHits.
+	* @param maxHits The maxHits to set
+	*/
+	public void setMaxHits(int maxHits) {
+		this.maxHits = maxHits;
 	}
-	/**
-	 * Changes a limit on number of hits returned by the search engine
-	 * @param newMaxHits int
-	 */
-	public void setMaxHits(int newMaxHits) {
-		maxHits = newMaxHits;
-	}
+
 	public String toURLQuery() {
 		String q =
 			"searchWord="
@@ -158,4 +151,19 @@ public class SearchQueryData {
 	public void setSearchWord(String searchWord) {
 		this.searchWord = searchWord;
 	}
+	/**
+	 * Gets the fieldNames.
+	 * @return Returns a Collection
+	 */
+	public Collection getFieldNames() {
+		return fieldNames;
+	}
+	/**
+	 * Gets the maxHits.
+	 * @return Returns a int
+	 */
+	public int getMaxHits() {
+		return maxHits;
+	}
+
 }
