@@ -16,10 +16,14 @@ import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescription;
-import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.ui.WorkbenchEncoding;
+
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
@@ -103,21 +107,26 @@ public class IDEEncoding {
 	 */
 	public static void setResourceEncoding(String value) {
 
-		// set the workspace text file encoding
-		Preferences resourcePrefs = ResourcesPlugin.getPlugin()
-				.getPluginPreferences();
 		if (value != null)
 			addIDEEncoding(value);	
-
-		try {
-			ResourcesPlugin.getWorkspace().getRoot().setDefaultCharset(value, null);
-		} catch (CoreException exception) {
-			ErrorDialog.openError(
-					null,
-					IDEWorkbenchMessages.getString("IDEEditorsPreferencePageEncodingError"),  //$NON-NLS-1$
-					exception.getMessage(),
-					exception.getStatus());
-		}
+		
+		final String finalValue = value;
+		Job charsetJob = new Job(IDEWorkbenchMessages.getString("IDEEncoding.EncodingJob")){ //$NON-NLS-1$
+			/* (non-Javadoc)
+			 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
+			 */
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					ResourcesPlugin.getWorkspace().getRoot().setDefaultCharset(finalValue, monitor);
+				} catch (CoreException exception) {
+					return exception.getStatus();
+				}
+				return Status.OK_STATUS;
+				
+			}
+		};
+		charsetJob.schedule();
+		
 	}
 
 	/**
