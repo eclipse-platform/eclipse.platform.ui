@@ -30,7 +30,7 @@ import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
 
-public class UnifiedTargetPage extends BannerPage2 implements IDynamicPage2 {
+public class UnifiedTargetPage extends UnifiedBannerPage implements IUnifiedDynamicPage {
 	// NL keys
 	private static final String KEY_TITLE =
 		"MultiInstallWizard.TargetPage.title";

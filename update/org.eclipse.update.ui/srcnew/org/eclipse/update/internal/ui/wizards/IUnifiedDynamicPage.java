@@ -20,7 +20,7 @@ import org.eclipse.update.internal.operations.*;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public interface IDynamicPage2 {
+public interface IUnifiedDynamicPage {
 	public void setJobs(PendingOperation [] jobs);
 
 }

@@ -18,10 +18,10 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.UpdateUIImages;
 
-public abstract class BannerPage2 extends WizardPage {
+public abstract class UnifiedBannerPage extends WizardPage {
 	private Image bannerImage;
 	private boolean bannerVisible = true;
-	public BannerPage2(String name) {
+	public UnifiedBannerPage(String name) {
 		super(name);
 	}
 	/**

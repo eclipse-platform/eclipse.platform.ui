@@ -29,7 +29,7 @@ import org.eclipse.update.internal.ui.*;
 //import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 
-public class UnifiedReviewPage extends BannerPage2 {
+public class UnifiedReviewPage extends UnifiedBannerPage {
 	// NL keys
 	private static final String KEY_TITLE =
 		"MultiInstallWizard.MultiReviewPage.title";

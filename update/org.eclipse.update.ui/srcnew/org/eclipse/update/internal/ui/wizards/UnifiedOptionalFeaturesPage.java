@@ -24,7 +24,7 @@ import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
 
-public class UnifiedOptionalFeaturesPage extends BannerPage2 implements IDynamicPage2 {
+public class UnifiedOptionalFeaturesPage extends UnifiedBannerPage implements IUnifiedDynamicPage {
 	// NL keys
 	private static final String KEY_TITLE =
 		"InstallWizard.OptionalFeaturesPage.title";

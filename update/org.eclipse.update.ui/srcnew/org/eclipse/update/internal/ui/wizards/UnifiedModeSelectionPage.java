@@ -20,7 +20,7 @@ import org.eclipse.update.internal.ui.search.*;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class UnifiedModeSelectionPage extends BannerPage2 implements ISearchProvider2 {
+public class UnifiedModeSelectionPage extends UnifiedBannerPage implements ISearchProvider2 {
 	private boolean updateMode=true;
 	private Button updatesButton;
 	private Button newFeaturesButton;

@@ -19,7 +19,7 @@ import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.internal.ui.search.*;
 
-public class UnifiedSitePage extends BannerPage2 implements ISearchProvider2 {
+public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvider2 {
 
 	class TreeContentProvider
 		extends DefaultContentProvider
