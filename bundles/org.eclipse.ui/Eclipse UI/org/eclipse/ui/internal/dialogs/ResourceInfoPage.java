@@ -198,8 +198,7 @@ private String getDateStringValue(IResource resource) {
 		return NOT_LOCAL_TEXT;
 	else {
 		File localFile = resource.getLocation().toFile();
-		SimpleDateFormat format = new SimpleDateFormat();
-		format.setDateFormatSymbols(new DateFormatSymbols(Locale.getDefault()));
+		DateFormat format = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM);
 		return format.format(new Date(localFile.lastModified()));
 	}
 }
