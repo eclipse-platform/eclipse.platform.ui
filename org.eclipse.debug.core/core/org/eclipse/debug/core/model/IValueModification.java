@@ -36,6 +36,17 @@ public interface IValueModification {
 	public void setValue(String expression) throws DebugException;
 	
 	/**
+	 * Sets the value of this variable to the given value.
+	 *
+	 * @param value a new value
+	 * @exception DebugException on failure. Reasons include:<ul>
+	 * <li>TARGET_REQUEST_FAILED - The request failed in the target
+	 * <li>NOT_SUPPORTED - The capability is not supported by the target
+	 * </ul>
+	 */
+	public void setValue(IValue value) throws DebugException;	
+	
+	/**
 	 * Returns whether this variable supports value modification.
 	 *
 	 * @return whether this variable supports value modification
@@ -54,6 +65,19 @@ public interface IValueModification {
 	 * </ul>
 	 */
 	public boolean verifyValue(String expression) throws DebugException;
+	
+	/**
+	 * Returns whether the given value can be used as
+	 * a new value for this variable.
+	 *
+	 * @param value a new value
+	 * @return whether the value is acceptable
+	 * @exception DebugException on failure. Reasons include:<ul>
+	 * <li>TARGET_REQUEST_FAILED - The request failed in the target
+	 * <li>NOT_SUPPORTED - The capability is not supported by the target
+	 * </ul>
+	 */
+	public boolean verifyValue(IValue value) throws DebugException;
 	
 }
 
