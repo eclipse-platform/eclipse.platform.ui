@@ -48,20 +48,26 @@ function mouseout(img)
 		String topic = request.getParameter("topic");
 		if (topic != null && !topic.equals(""))
 		{
+			if (topic.startsWith("/"))
+			{
+				StringBuffer url = request.getRequestURL();
+				url.setLength(url.length() - "links.jsp".length());
+				url.append("content/help:");
+				url.append(topic);
+				topic = url.toString();
+			}
 			// remove the port if the port is 80
 			int i = topic.indexOf(":80/");
 			if (i != -1)
 				topic = topic.substring(0,i) + topic.substring(i+3);
 %>
 			<script language="JavaScript">
-		 		selectTopic('<%=topic%>');
+		 	selectTopic('<%=topic%>');
 			</script>
 <%
 		}
 	}else{
-%>
-		<%=WebappResources.getString("pressF1", null)%>
-<%
+		out.write(WebappResources.getString("pressF1", null));
 	}
 %>
 

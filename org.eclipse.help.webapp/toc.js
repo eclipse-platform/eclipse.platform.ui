@@ -175,6 +175,7 @@ function highlightTopic(topic)
   if (a != null)
   {
   	a.className = "active";
+  	a.blur();
   	if (oldActive && oldActive != a) {
     	oldActive.className="";
   	}

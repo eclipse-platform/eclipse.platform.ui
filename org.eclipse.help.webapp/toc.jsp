@@ -22,7 +22,13 @@
 	if ( tocHref == null || tocHref.equals(""))
 	{
 		if (topic != null && !topic.equals(""))
+		{
+			// allow for both http://...  or just /pluginid/topic.html
+			if (topic.startsWith("/"))
+				topic = "help:" + topic;
+				
 			selectedTOC = tocs.findTocContainingTopic(topic);
+		}
 	}
 	else
 	{

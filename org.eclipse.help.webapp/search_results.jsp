@@ -27,15 +27,38 @@
 <body onload="adjustMargins()" >
  
 <%
+<%
+	// Generate the results
 	if(request.getParameter("searchWord")!=null){
 		// Generate the results
 		Search search = (Search)application.getAttribute("org.eclipse.help.search");
 		if (search != null)
 			search.generateResults(request.getQueryString(), out);
-	}else{
+			
+		// Highlight topic
+		String topic = request.getParameter("topic");
+		if (topic != null && !topic.equals(""))
+		{
+			if (topic.startsWith("/"))
+			{
+				StringBuffer url = request.getRequestURL();
+				url.setLength(url.length() - "search_results.jsp".length());
+				url.append("content/help:");
+				url.append(topic);
+				topic = url.toString();
+			}
+			// remove the port if the port is 80
+			int i = topic.indexOf(":80/");
+			if (i != -1)
+				topic = topic.substring(0,i) + topic.substring(i+3);
 %>
-		<%=WebappResources.getString("doSearch", null)%>
+			<script language="JavaScript">
+		 	selectTopic('<%=topic%>');
+			</script>
 <%
+		}
+	}else{
+		out.write(WebappResources.getString("doSearch", null) );
 	}
 %>
 

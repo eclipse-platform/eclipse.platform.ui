@@ -21,7 +21,18 @@
 	// url of MainFrame
 	String srcMainFrame = "home.jsp";
 	if(request.getParameter("topic")!=null)
-		srcMainFrame=request.getParameter("topic");
+	{
+		String topic = request.getParameter("topic");
+		if (topic.startsWith("/"))
+		{
+			StringBuffer url = request.getRequestURL();
+			url.setLength(url.length() - "help.jsp".length());
+			url.append("content/help:");
+			url.append(topic);
+			topic = url.toString();
+		}
+		srcMainFrame=topic;
+	}
 	
 	// url of TabsFrame
 	String srcTabsFrame = "tabs.jsp";
@@ -63,7 +74,6 @@
 </head>
 
 
-<!-- frames -->
 <frameset  rows="23,*,24">
 	<frame name="ToolbarFrame" src="toolbar.jsp" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
     <frameset id="contentFrameset" cols="25%,*">
@@ -73,6 +83,21 @@
     <frame name="TabsFrame" src="<%=srcTabsFrame%>" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
 </frameset>
 
+<!--
+
+
+<frameset rows="40,*"  frameborder=0 framespacing=0 border=0>
+	<frame name="BannerFrame" src="banner.html" noresize marginwidth="0" marginheight="0" scrolling="no" frameborder="0">
+	<frameset id="helpFrameset" cols="25%,*"  framespacing="0" border="0" >
+        <frame name="NavFrame" src="navFrame.jsp" marginwidth="0" marginheight="0" scrolling="no"frameborder="0" >
+        <frameset id="contentFrameset" rows="20,*", frameborder=0 framespacing=0 border=0>
+        	<frame name="ToolbarFrame" src="toolbar.jsp" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize>
+             <frame name="MainFrame" src="mainFrame.html" marginwidth="10" marginheight="10" scrolling="auto"  frameborder="0">
+        </frameset>
+     </frameset>
+ </frameset>
+
+-->
 
 </html>
 
