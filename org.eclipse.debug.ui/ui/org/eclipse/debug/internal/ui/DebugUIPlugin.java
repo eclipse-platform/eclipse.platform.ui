@@ -50,6 +50,8 @@ import org.eclipse.debug.internal.ui.launchConfigurations.PerspectiveManager;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.views.console.ConsoleDocumentManager;
+import org.eclipse.debug.internal.ui.views.memory.IMemoryBlockViewSynchronizer;
+import org.eclipse.debug.internal.ui.views.memory.MemoryBlockViewSynchronizer;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -137,6 +139,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	 */
 	private StepFilterManager fStepFilterManager = null;
 	
+	
+	private MemoryBlockViewSynchronizer fMemBlkViewSynchronizer = null;
+	
 	/**
 	 * Returns whether the debug UI plug-in is in trace
 	 * mode.
@@ -207,6 +212,14 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	}
 
 
+	public IMemoryBlockViewSynchronizer getMemoryBlockViewSynchronizer(){
+	
+		if (fMemBlkViewSynchronizer == null) {
+			fMemBlkViewSynchronizer = new MemoryBlockViewSynchronizer();
+		}
+		
+		return fMemBlkViewSynchronizer;
+	}
 	
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
 		return getDefault().getWorkbench().getActiveWorkbenchWindow();
@@ -301,6 +314,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			fgPresentation.dispose();
 		}
 		
+		if (fMemBlkViewSynchronizer != null){
+			fMemBlkViewSynchronizer.shutdown();
+		}
+		
 		super.shutdown();
 	}
 
@@ -377,6 +394,10 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		
 		// Step filter preferences
 		prefs.setDefault(IInternalDebugUIConstants.PREF_USE_STEP_FILTERS, false);
+		
+		// set default for column size preference
+		prefs.setDefault(IDebugPreferenceConstants.PREF_COLUMN_SIZE, 
+				IDebugPreferenceConstants.PREF_COLUMN_SIZE_DEFAULT);
 	}
 
 	protected IProcess getProcessFromInput(Object input) {

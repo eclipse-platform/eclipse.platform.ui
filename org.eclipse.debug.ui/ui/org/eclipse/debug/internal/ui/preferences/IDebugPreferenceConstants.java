@@ -117,7 +117,21 @@ public interface IDebugPreferenceConstants {
 	 *
 	 * @since 2.1
 	 */
-	public static final String PREF_DETAIL_PANE_WORD_WRAP = IDebugUIConstants.PLUGIN_ID + ".detail_pane_word_wrap"; //$NON-NLS-1$	
+	public static final String PREF_DETAIL_PANE_WORD_WRAP = IDebugUIConstants.PLUGIN_ID + ".detail_pane_word_wrap"; //$NON-NLS-1$
+	
+	/**
+	 * Column size preference for the Memory View
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PREF_COLUMN_SIZE = "org.eclipse.debug.ui.memory.columnSize"; //$NON-NLS-1$
+	
+	/**
+	 * Default column size for the Memory View
+	 * 
+	 * @since 3.0
+	 */
+	public static final int PREF_COLUMN_SIZE_DEFAULT = 4;
 }
 
 

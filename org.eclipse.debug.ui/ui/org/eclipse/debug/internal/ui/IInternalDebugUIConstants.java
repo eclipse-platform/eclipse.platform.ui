@@ -33,6 +33,11 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_LCL_SHOW_LOGICAL_STRUCTURE = "IMG_LCL_SHOW_LOGICAL_STRUCTURE"; //$NON-NLS-1$
 	public static final String IMG_LCL_RUN_TO_LINE= "IMG_LCL_RUN_TO_LINE"; //$NON-NLS-1$
 	public static final String IMG_SRC_LOOKUP_MENU = "IMG_SRC_LOOKUP_MENU"; //$NON-NLS-1$
+	public static final String IMG_LCL_MONITOR_EXPRESSION= "IMG_LCL_MONITOR_EXPRESSION"; //$NON-NLS-1$
+	public static final String IMG_LCL_REMOVE_MEMORY= "IMG_LCL_REMOVE_MEMORY"; //$NON-NLS-1$
+	public static final String IMG_LCL_RESET_MEMORY= "IMG_LCL_RESET_MEMORY";//$NON-NLS-1$
+	public static final String IMG_LCL_COPY_VIEW_TO_CLIPBOARD = "IMG_LCL_COPY_VIEW_TO_CLIPBOARD"; //$NON-NLS-1$
+	public static final String IMG_LCL_PRINT_TOP_VIEW_TAB = "IMG_LCL_PRINT_TOP_VIEW_TAB"; //$NON-NLS-1$
 	
 	// disabled local tool images
 	public static final String IMG_DLCL_LOCK= "IMG_DLCL_LOCK"; //$NON-NLS-1$
@@ -48,6 +53,11 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_DLCL_REMOVE_ALL = "IMG_DLCL_REMOVE_ALL"; //$NON-NLS-1$
 	public static final String IMG_DLCL_RUN_TO_LINE= "IMG_DLCL_RUN_TO_LINE"; //$NON-NLS-1$
 	public static final String IMG_SRC_LOOKUP_MENU_DLCL = "IMG_SRC_LOOKUP_MENU_DISABLED"; //$NON-NLS-1$
+	public static final String IMG_DLCL_MONITOR_EXPRESSION= "IMG_DLCL_MONITOR_EXPRESSION"; //$NON-NLS-1$
+	public static final String IMG_DLCL_REMOVE_MEMORY= "IMG_DLCL_REMOVE_MEMORY"; //$NON-NLS-1$
+	public static final String IMG_DLCL_RESET_MEMORY= "IMG_DLCL_RESET_MEMORY"; //$NON-NLS-1$
+	public static final String IMG_DLCL_COPY_VIEW_TO_CLIPBOARD= "IMG_DLCL_COPY_VIEW_TO_CLIPBOARD"; //$NON-NLS-1$
+	public static final String IMG_DLCL_PRINT_TOP_VIEW_TAB= "IMG_DLCL_PRINT_TOP_VIEW_TAB"; //$NON-NLS-1$
 	
 	// enabled local tool images	
 	public static final String IMG_ELCL_LOCK= "IMG_ELCL_LOCK"; //$NON-NLS-1$
@@ -61,6 +71,11 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_ELCL_COLLAPSE_ALL = "IMG_ELCL_COLLAPSE_ALL"; //$NON-NLS-1$
 	public static final String IMG_ELCL_TERMINATE = "IMG_ELCL_TERMINATE"; //$NON-NLS-1$
 	public static final String IMG_SRC_LOOKUP_MENU_ELCL = "IMG_SRC_LOOKUP_MENU_ENABLED"; //$NON-NLS-1$
+	public static final String IMG_ELCL_MONITOR_EXPRESSION= "IMG_ELCL_MONITOR_EXPRESSION";  //$NON-NLS-1$
+	public static final String IMG_ELCL_REMOVE_MEMORY= "IMG_ELCL_REMOVE_MEMORY";  //$NON-NLS-1$
+	public static final String IMG_ELCL_RESET_MEMORY= "IMG_ELCL_RESET_MEMORY";  //$NON-NLS-1$
+	public static final String IMG_ELCL_COPY_VIEW_TO_CLIPBOARD= "IMG_ELCL_COPY_VIEW_TO_CLIPBOARD";  //$NON-NLS-1$
+	public static final String IMG_ELCL_PRINT_TOP_VIEW_TAB= "IMG_ELCL_PRINT_TOP_VIEW_TAB";  //$NON-NLS-1$
 	
 	// object images
 	public static final String IMG_OBJS_INSTRUCTION_POINTER_TOP = "IMG_OBJS_INSTRUCTION_POINTER_TOP"; //$NON-NLS-1$
@@ -72,6 +87,8 @@ public interface IInternalDebugUIConstants {
 	public static final String IMG_SRC_LOOKUP_TAB = "IMG_SRC_LOOKUP_TAB"; //$NON-NLS-1$
 	public static final String IMG_ADD_SRC_LOC_WIZ = "IMG_ADD_SRC_LOCATION"; //$NON-NLS-1$
 	public static final String IMG_EDIT_SRC_LOC_WIZ = "IMG_EDIT_SRC_LOCATION"; //$NON-NLS-1$
+	public static final String IMG_OBJECT_MEMORY_CHANGED="IMG_OBJECT_MEMORY_CHANGED";  //$NON-NLS-1$
+	public static final String IMG_OBJECT_MEMORY="IMG_OBJECT_MEMORY";  //$NON-NLS-1$
 	
 	// internal preferenes
 	/**
@@ -171,4 +188,29 @@ public interface IInternalDebugUIConstants {
 	 * @since 3.0
 	 */
 	public static final String PREF_WAIT_FOR_BUILD= IDebugUIConstants.PLUGIN_ID + ".wait_for_build"; //$NON-NLS-1$
+	
+	/**
+	 * Font for Memory View
+	 * 
+	 * @since 3.0
+	 */
+	public final static String FONT_NAME = IDebugUIConstants.PLUGIN_ID + ".MemoryViewTableFont"; //$NON-NLS-1$
+	
+	public final static int BYTES_PER_LINE = 16;	// number of bytes per line
+	public final static int CHAR_PER_BYTE = 2;		// number of characters to represent one byte
+	public final static int BYTE_PER_CELL = 4;		// number of bytes per cell
+	public final static int NUM_COL = BYTES_PER_LINE/BYTE_PER_CELL + 2;	// Number of columns in the table 
+
+	/**
+	 * Memory view identifier (value <code>"org.eclipse.debug.ui.MemoryView"</code>).
+	 * @since 3.0
+	 */
+	public static String ID_MEMORY_VIEW = "org.eclipse.debug.ui.MemoryView";  //$NON-NLS-1$
+
+	/** 
+	 * Memory view image identifier
+	 * 
+	 * @since 3.0
+	 * */
+	public static final String IMG_CVIEW_MEMORY_VIEW= "IMG_CVIEW_MEMORY_VIEW";  //$NON-NLS-1$
 }

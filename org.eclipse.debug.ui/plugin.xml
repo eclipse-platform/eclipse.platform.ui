@@ -105,6 +105,13 @@
             class="org.eclipse.debug.internal.ui.views.registers.RegistersView"
             id="org.eclipse.debug.ui.RegisterView">
       </view>
+      <view
+            name="%MemoryViewName"
+            icon="icons/full/eview16/memory_view.gif"
+            category="org.eclipse.debug.ui"
+            class="org.eclipse.debug.internal.ui.views.memory.MemoryView"
+            id="org.eclipse.debug.ui.MemoryView">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -130,6 +137,12 @@
             category="org.eclipse.debug.ui.DebugPreferencePage"
             class="org.eclipse.debug.internal.ui.preferences.StringVariablePreferencePage"
             id="org.eclipse.debug.ui.StringVariablePreferencePage">
+      </page>
+      <page
+            name="%MemoryViewName"
+            category="org.eclipse.debug.ui.DebugPreferencePage"
+            class="org.eclipse.debug.internal.ui.views.memory.MemoryViewPreferencePage"
+            id="org.eclipse.debug.ui.MemoryViewPreferencePage">
       </page>
    </extension>
    <extension
@@ -1250,6 +1263,14 @@
             id="org.eclipse.debug.ui.DetailPaneFont">
          <description>
             %DetailPaneFontDefinition.description
+         </description>         
+      </fontDefinition>
+      <fontDefinition
+            label="%MemoryViewTableFontDefinition.label"
+            defaultsTo="org.eclipse.jface.textfont"
+            id="org.eclipse.debug.ui.MemoryViewTableFont">
+         <description>
+            %MemoryViewTableFontDefinition.description
          </description>
       </fontDefinition>
    </extension>
@@ -1844,5 +1865,33 @@
             id="org.eclipse.debug.ui.changedVariableColor">
             <description>%changedVariableColor.description</description>             
 		</colorDefinition>  
+		<colorDefinition
+			label="%MemoryViewUnbufferredLines"
+            value="114,119,129"
+            categoryId= "org.eclipse.debug.ui.presentation"
+            id="org.eclipse.debug.ui.MemoryViewLineColor">
+            <description>Text color for lines that are not yet buffered in the Memory View.</description> 
+		</colorDefinition>		
    </extension>
+<!-- raw hex rendering for Memory View -->
+   <extension
+     id="org.eclipse.debug.ui.rendering.raw_memory"
+     name="Raw Hex Memory Rendering"
+     point="org.eclipse.debug.core.memoryRenderings">
+	  <rendering
+	        name="%RawHex"
+	        renderingId="org.eclipse.debug.ui.rendering.raw_memory"
+	        renderingFactory="org.eclipse.debug.internal.ui.views.memoryHexRenderingFactory">
+	        <rendering_property
+	            renderingId="org.eclipse.debug.ui.rendering.raw_memory"
+	            name="viewTabFactory"
+	            value="org.eclipse.debug.internal.ui.views.memory.MemoryRenderingViewTabFactory">
+	        </rendering_property>
+	        <rendering_property
+	            renderingId="org.eclipse.debug.ui.rendering.raw_memory"
+	            name="renderer"
+	            value="org.eclipse.debug.internal.ui.views.memory.HexRenderer">
+	        </rendering_property>
+	  </rendering>
+   </extension>   
 </plugin>
