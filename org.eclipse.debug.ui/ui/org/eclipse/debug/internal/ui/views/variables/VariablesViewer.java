@@ -133,4 +133,14 @@ public class VariablesViewer extends TreeViewer {
 	protected void setNewItem(Item newItem) {
 		fNewItem = newItem;
 	}
+	
+	/**
+	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#setExpandedElements(Object[])
+	 */
+	public void setExpandedElements(Object[] elements) {
+		getControl().setRedraw(false);
+		super.setExpandedElements(elements);
+		getControl().setRedraw(true);
+	}
+
 }
