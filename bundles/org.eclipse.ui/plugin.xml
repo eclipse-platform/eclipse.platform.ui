@@ -4,10 +4,10 @@
    name="%Plugin.name"
    version="2.1.0"
    provider-name="%Plugin.providerName"
-   class="org.eclipse.ui.internal.WorkbenchPlugin">
+   class="org.eclipse.ui.internal.UIPlugin">
 
    <runtime>
-      <library name="workbench.jar">
+      <library name="ui.jar">
          <export name="*"/>
       </library>
    </runtime>
@@ -17,6 +17,11 @@
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.eclipse.help"/>
       <import plugin="org.eclipse.swt" export="true"/>
+      <import plugin="org.eclipse.text" export="true"/>
+      <import plugin="org.eclipse.jface" export="true"/>
+      <import plugin="org.eclipse.ui.views" export="true"/>
+      <import plugin="org.eclipse.ui.workbench" export="true"/>
+      <import plugin="org.eclipse.ui.editors" export="true"/>
    </requires>
 
 
@@ -52,7 +57,7 @@
    <extension-point id="documentProviders" name="%ExtPoint.documentProviders"/>
    <extension-point id="workingSets" name="%ExtPoint.workingSets"/>
    <extension-point id="startup" name="%ExtPoint.startup"/>
-   
+
    <extension
          id="workbench"
          point="org.eclipse.core.runtime.applications">
@@ -93,7 +98,6 @@
       <actionDefinition
             id="org.eclipse.ui.file.properties">
       </actionDefinition>
-
       <actionDefinition
             id="org.eclipse.ui.edit.undo">
       </actionDefinition>
@@ -145,39 +149,36 @@
       <actionDefinition
             id="org.eclipse.ui.edit.addBookmark">
       </actionDefinition>
-
       <actionDefinition
             id="org.eclipse.ui.navigate.goInto">
-      </actionDefinition>     
+      </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.back">
-      </actionDefinition>      
+      </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.forward">
-      </actionDefinition>      
+      </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.up">
-      </actionDefinition>     
+      </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.next">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.previous">
       </actionDefinition>
-      
       <actionDefinition
             id="org.eclipse.ui.project.openProject">
-      </actionDefinition>     
+      </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.project.closeProject">
-      </actionDefinition>     
+      </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.project.buildProject">
-      </actionDefinition> 
+      </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.project.rebuildProject">
-      </actionDefinition>     
-
+      </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.window.switchToEditor">
       </actionDefinition>
@@ -208,7 +209,6 @@
       <actionDefinition
             id="org.eclipse.ui.window.previousPerspective">
       </actionDefinition>
-      
       <actionDefinition
             id="org.eclipse.ui.edit.findNext">
       </actionDefinition>
@@ -217,14 +217,13 @@
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.findIncremental">
-      </actionDefinition>      
+      </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.revertToSaved">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.addTask">
       </actionDefinition>
-      
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.lineUp">
       </actionDefinition>
@@ -361,8 +360,6 @@
             id="org.eclipse.ui.edit.text.encoding.custom">
       </actionDefinition>
    </extension>
-
-
    <extension
          point="org.eclipse.ui.acceleratorConfigurations">
       <acceleratorConfiguration
@@ -390,8 +387,6 @@
             id="org.eclipse.ui.textEditorScope">
       </acceleratorScope>
    </extension>
-  
-  
    <extension
          point="org.eclipse.ui.acceleratorSets">
       <acceleratorSet
@@ -417,20 +412,18 @@
                key="Alt+F9 || Esc F9"
                id="org.eclipse.ui.file.print">
          </accelerator>
-         
          <accelerator
                key=""
                id="org.eclipse.ui.file.revert">
-         </accelerator>         
+         </accelerator>
          <accelerator
                key=""
                id="org.eclipse.ui.file.refresh">
-         </accelerator>    
+         </accelerator>
          <accelerator
                key="Alt+ENTER"
                id="org.eclipse.ui.file.properties">
-         </accelerator>    
-
+         </accelerator>
          <accelerator
                key="F9||Ctrl+X U||Ctrl+_"
                id="org.eclipse.ui.edit.undo">
@@ -474,7 +467,7 @@
          <accelerator
                key=""
                id="org.eclipse.ui.edit.rename">
-         </accelerator>                     
+         </accelerator>
          <accelerator
                key="Ctrl+X H"
                id="org.eclipse.ui.edit.selectAll">
@@ -495,7 +488,6 @@
                key="Alt+R || Esc R"
                id="org.eclipse.ui.edit.findReplace">
          </accelerator>
-         
          <accelerator
                key=""
                id="org.eclipse.ui.navigate.goInto">
@@ -503,7 +495,7 @@
          <accelerator
                key=""
                id="org.eclipse.ui.navigate.back">
-         </accelerator>         
+         </accelerator>
          <accelerator
                key=""
                id="org.eclipse.ui.navigate.forward">
@@ -511,7 +503,7 @@
          <accelerator
                key=""
                id="org.eclipse.ui.navigate.up">
-         </accelerator>         
+         </accelerator>
          <accelerator
                key="Ctrl+."
                id="org.eclipse.ui.navigate.next">
@@ -520,11 +512,10 @@
                key="Ctrl+,"
                id="org.eclipse.ui.navigate.previous">
          </accelerator>
-                           
          <accelerator
                key=""
                id="org.eclipse.ui.project.openProject">
-         </accelerator>         
+         </accelerator>
          <accelerator
                key=""
                id="org.eclipse.ui.project.closeProject">
@@ -532,12 +523,11 @@
          <accelerator
                key=""
                id="org.eclipse.ui.project.buildProject">
-         </accelerator>  
+         </accelerator>
          <accelerator
                key=""
                id="org.eclipse.ui.project.rebuildProject">
-         </accelerator>         
-
+         </accelerator>
          <accelerator
                key="Ctrl+X Ctrl+B"
                id="org.eclipse.ui.window.switchToEditor">
@@ -578,7 +568,6 @@
                key="Ctrl+Shift+F8"
                id="org.eclipse.ui.window.previousPerspective">
          </accelerator>
-                  
          <accelerator
                key=""
                id="org.eclipse.ui.edit.findNext">
@@ -599,7 +588,6 @@
                key=""
                id="org.eclipse.ui.edit.addTask">
          </accelerator>
-         
          <accelerator
                key="Ctrl+P"
                id="org.eclipse.ui.edit.text.goto.lineUp">
@@ -667,7 +655,7 @@
          <accelerator
                key="Ctrl+Z"
                id="org.eclipse.ui.edit.text.scroll.lineDown">
-         </accelerator>         
+         </accelerator>
          <accelerator
                key=""
                id="org.eclipse.ui.edit.text.select.lineUp">
@@ -773,7 +761,6 @@
                id="org.eclipse.ui.edit.text.encoding.custom">
          </accelerator>
       </acceleratorSet>
-      
       <acceleratorSet
             scopeId="org.eclipse.ui.globalScope"
             configurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -797,20 +784,18 @@
                key="Ctrl+P"
                id="org.eclipse.ui.file.print">
          </accelerator>
-         
          <accelerator
                key=""
                id="org.eclipse.ui.file.revert">
-         </accelerator>         
+         </accelerator>
          <accelerator
                key=""
                id="org.eclipse.ui.file.refresh">
-         </accelerator>    
+         </accelerator>
          <accelerator
                key="Alt+ENTER"
                id="org.eclipse.ui.file.properties">
-         </accelerator>  
-                  
+         </accelerator>
          <accelerator
                key="Ctrl+Z"
                id="org.eclipse.ui.edit.undo">
@@ -854,7 +839,7 @@
          <accelerator
                key=""
                id="org.eclipse.ui.edit.rename">
-         </accelerator>         
+         </accelerator>
          <accelerator
                key="Ctrl+A"
                id="org.eclipse.ui.edit.selectAll">
@@ -882,7 +867,7 @@
          <accelerator
                key=""
                id="org.eclipse.ui.navigate.back">
-         </accelerator>         
+         </accelerator>
          <accelerator
                key=""
                id="org.eclipse.ui.navigate.forward">
@@ -890,7 +875,7 @@
          <accelerator
                key=""
                id="org.eclipse.ui.navigate.up">
-         </accelerator> 
+         </accelerator>
          <accelerator
                key="Ctrl+."
                id="org.eclipse.ui.navigate.next">
@@ -899,11 +884,10 @@
                key="Ctrl+,"
                id="org.eclipse.ui.navigate.previous">
          </accelerator>
-                                    
          <accelerator
                key=""
                id="org.eclipse.ui.project.openProject">
-         </accelerator>         
+         </accelerator>
          <accelerator
                key=""
                id="org.eclipse.ui.project.closeProject">
@@ -911,11 +895,11 @@
          <accelerator
                key="Ctrl+B"
                id="org.eclipse.ui.project.buildProject">
-         </accelerator> 
+         </accelerator>
          <accelerator
                key=""
                id="org.eclipse.ui.project.rebuildProject">
-         </accelerator>          
+         </accelerator>
          <accelerator
                key="Ctrl+Shift+W"
                id="org.eclipse.ui.window.switchToEditor">
@@ -956,7 +940,6 @@
                key="Ctrl+Shift+F8"
                id="org.eclipse.ui.window.previousPerspective">
          </accelerator>
-                  
          <accelerator
                key="Ctrl+K"
                id="org.eclipse.ui.edit.findNext">
@@ -977,7 +960,6 @@
                key=""
                id="org.eclipse.ui.edit.addTask">
          </accelerator>
-                  
          <accelerator
                key=""
                id="org.eclipse.ui.edit.text.goto.lineUp">
@@ -1152,7 +1134,6 @@
          </accelerator>
       </acceleratorSet>
    </extension>
-   
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
@@ -1290,16 +1271,18 @@
             name="%NewWizards.Category.Basic"
             id="org.eclipse.ui.Basic">
       </category>
-	<wizard 
-	   id="org.eclipse.ui.wizards.new.project"
-	   name="%NewWizards.project"
-	   class="org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard"
-	   category="org.eclipse.ui.Basic"
-	   project="true"
-	   finalPerspective="org.eclipse.ui.resourcePerspective"
-	   icon="icons/full/ctool16/newprj_wiz.gif">
-       <description>%NewWizards.project.description</description>
-    </wizard>
+      <wizard
+            name="%NewWizards.project"
+            icon="icons/full/ctool16/newprj_wiz.gif"
+            category="org.eclipse.ui.Basic"
+            class="org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard"
+            project="true"
+            finalPerspective="org.eclipse.ui.resourcePerspective"
+            id="org.eclipse.ui.wizards.new.project">
+         <description>
+            %NewWizards.project.description
+         </description>
+      </wizard>
       <wizard
             name="%NewWizards.folder"
             icon="icons/full/ctool16/newfolder_wiz.gif"
@@ -1333,7 +1316,7 @@
             name="%PreferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage"
             id="org.eclipse.ui.preferencePages.Workbench">
-      </page>   
+      </page>
       <page
             name="%PreferencePages.FileEditors"
             category="org.eclipse.ui.preferencePages.Workbench"
@@ -1387,7 +1370,7 @@
             category="org.eclipse.ui.preferencePages.Workbench"
             class="org.eclipse.ui.internal.dialogs.WorkInProgressPreferencePage"
             id="org.eclipse.ui.preferencePages.WorkInProgressPreferencePage">
-      </page>                    
+      </page>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -1477,64 +1460,64 @@
       </filter>
    </extension>
    <extension
-         point="org.eclipse.ui.popupMenus">         
-	  <viewerContribution 
-    	    id="org.eclipse.ui.texteditor.ruler.context.actions" 
-            targetID="#TextRulerContext">
-		 <action
-            id="org.eclipse.ui.texteditor.TaskRulerAction"
-		    label="%AddTask.label"
-		    tooltip="%AddTask.tooltip"
-		    helpContextId="org.eclipse.ui.AddTask_action_context"
-		    menubarPath="additions"
-		    class="org.eclipse.ui.texteditor.TaskRulerAction">
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            targetID="#TextRulerContext"
+            id="org.eclipse.ui.texteditor.ruler.context.actions">
+         <action
+               label="%AddTask.label"
+               helpContextId="org.eclipse.ui.AddTask_action_context"
+               tooltip="%AddTask.tooltip"
+               class="org.eclipse.ui.texteditor.TaskRulerAction"
+               menubarPath="additions"
+               id="org.eclipse.ui.texteditor.TaskRulerAction">
          </action>
          <action
-            id="org.eclipse.ui.texteditor.BookmarkRulerAction"
-            label="%AddBookmark.label"
-            tooltip="%AddBookmark.tooltip"
-		    helpContextId="org.eclipse.ui.bookmark_action_context"
-            menubarPath="additions"
-            class="org.eclipse.ui.texteditor.BookmarkRulerAction">
+               label="%AddBookmark.label"
+               helpContextId="org.eclipse.ui.bookmark_action_context"
+               tooltip="%AddBookmark.tooltip"
+               class="org.eclipse.ui.texteditor.BookmarkRulerAction"
+               menubarPath="additions"
+               id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
-	  </viewerContribution>     	
+      </viewerContribution>
    </extension>
-   <extension point="org.eclipse.ui.editorActions">
+   <extension
+         point="org.eclipse.ui.editorActions">
       <editorContribution
-            id="org.eclipse.ui.texteditor.ruler.actions"
-            targetID="org.eclipse.ui.DefaultTextEditor">
+            targetID="org.eclipse.ui.DefaultTextEditor"
+            id="org.eclipse.ui.texteditor.ruler.actions">
          <action
-            id="org.eclipse.ui.texteditor.BookmarkRulerAction"
-            actionID="RulerDoubleClick"
-            helpContextId="org.eclipse.ui.bookmark_action_context"
-            label="%Dummy.label"
-            class="org.eclipse.ui.texteditor.BookmarkRulerAction">
+               label="%Dummy.label"
+               helpContextId="org.eclipse.ui.bookmark_action_context"
+               class="org.eclipse.ui.texteditor.BookmarkRulerAction"
+               actionID="RulerDoubleClick"
+               id="org.eclipse.ui.texteditor.BookmarkRulerAction">
          </action>
          <action
-            id="org.eclipse.ui.texteditor.SelectRulerAction"
-            actionID="RulerClick"
-            label="%Dummy.label"
-            class="org.eclipse.ui.texteditor.SelectRulerAction">
+               label="%Dummy.label"
+               class="org.eclipse.ui.texteditor.SelectRulerAction"
+               actionID="RulerClick"
+               id="org.eclipse.ui.texteditor.SelectRulerAction">
          </action>
-	  </editorContribution>	
+      </editorContribution>
    </extension>
-  <extension
+   <extension
          point="org.eclipse.ui.workingSets">
       <workingSet
-            id="org.eclipse.ui.resourceWorkingSetPage"
-            name="%WorkingSets.resource"            
+            name="%WorkingSets.resource"
+            pageClass="org.eclipse.ui.internal.dialogs.ResourceWorkingSetPage"
             icon="icons/full/obj16/workset.gif"
-            pageClass="org.eclipse.ui.internal.dialogs.ResourceWorkingSetPage">
+            id="org.eclipse.ui.resourceWorkingSetPage">
       </workingSet>
    </extension>
-
    <extension
          point="org.eclipse.ui.editors">
       <editor
             name="%SystemSummary"
-            class="org.eclipse.ui.internal.SystemSummaryEditor"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             icon="icons/full/obj16/system_summary_editor.gif"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            class="org.eclipse.ui.internal.SystemSummaryEditor"
             id="org.eclipse.ui.SystemSummaryEditor">
       </editor>
    </extension>
