@@ -10,8 +10,11 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Menu;
  
 public class DebugHistoryMenuAction extends DebugDropDownAction implements IMenuCreator {
+	
+	IAction fAction;
 	public DebugHistoryMenuAction() {
 		super(null);
 	}
@@ -21,7 +24,10 @@ public class DebugHistoryMenuAction extends DebugDropDownAction implements IMenu
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (action instanceof Action) {
-			((Action)action).setMenuCreator(this);
+			if (fAction == null) {
+				((Action)action).setMenuCreator(this);
+				fAction= action;
+			}
 		} else {
 			action.setEnabled(false);
 		}
@@ -39,5 +45,12 @@ public class DebugHistoryMenuAction extends DebugDropDownAction implements IMenu
 	 */
 	public void runWithEvent(IAction action, Event event) {
 		//do nothing as the action strictly generates the history sub menu
+	}
+	
+	public Menu getMenu(Menu parent) {
+		Menu menu= new Menu(parent);
+		parent.addMenuListener(getDebugActionSetMenuListener(fAction));
+		Menu newMenu= createMenu(menu);
+		return newMenu;
 	}
 }

@@ -10,8 +10,14 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationHistoryElement;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MenuEvent;
+import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
@@ -81,12 +87,11 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 			total++;
 		}		
 		
-		//used in the tool bar drop down for the cascade launch with menu
-		if (favoriteList.length > 0) {
+		LaunchConfigurationHistoryElement[] historyList= getHistory();
+		if (favoriteList.length > 0 && historyList.length > 0) {
 			new MenuItem(menu, SWT.SEPARATOR);
 		}		
 		
-		LaunchConfigurationHistoryElement[] historyList= getHistory();
 		for (int i = 0; i < historyList.length; i++) {
 			LaunchConfigurationHistoryElement launch= historyList[i];
 			RelaunchHistoryLaunchAction newAction= new RelaunchHistoryLaunchAction(launch);
@@ -163,6 +168,33 @@ public abstract class LaunchDropDownAction implements IWorkbenchWindowPulldownDe
 
 	protected void setLaunchAction(ExecutionAction launchAction) {
 		fLaunchAction = launchAction;
+	}
+	
+	/**
+	 * A menu listener that is used to constantly flag the debug
+	 * action set menu as dirty so that any underlying changes to the
+	 * contributions will be shown.
+	 */
+	protected MenuListener getDebugActionSetMenuListener(final IAction action) {
+		return new MenuListener() {
+			public void menuShown(MenuEvent e) {
+				action.setEnabled(getHistory().length > 0 || getFavorites().length > 0);
+				IWorkbenchWindow window= DebugUIPlugin.getActiveWorkbenchWindow();
+				if (window instanceof ApplicationWindow) {
+					ApplicationWindow appWindow= (ApplicationWindow)window;
+					IMenuManager manager= appWindow.getMenuBarManager();
+					IContributionItem actionSetItem= manager.findUsingPath("org.eclipse.debug.ui.DebugMenu");
+					if (actionSetItem instanceof SubContributionItem) {
+						IContributionItem item= ((SubContributionItem)actionSetItem).getInnerItem();
+						if (item instanceof IMenuManager) {
+							((IMenuManager)item).markDirty();
+						}
+					}
+				}
+			}
+			public void menuHidden(MenuEvent e) {
+			}
+		};
 	}
 }
 
