@@ -37,7 +37,6 @@ import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -89,10 +88,8 @@ import org.eclipse.ui.internal.commands.Manager;
 import org.eclipse.ui.internal.commands.SequenceMachine;
 import org.eclipse.ui.internal.commands.util.Sequence;
 import org.eclipse.ui.internal.commands.SimpleHandlerService;
-
 import org.eclipse.ui.internal.commands.util.Stroke;
 import org.eclipse.ui.internal.contexts.SimpleContextService;
-import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.UIStats;
 import org.eclipse.ui.internal.progress.AnimationItem;
@@ -602,53 +599,6 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		contextAndHandlerManager = new ContextAndHandlerManager(this);
 		getWorkbenchImpl().fireWindowOpened(this);
 		return result;
-	}
-	/* (non-Javadoc)
-	 * Method declared on Window.
-	 */
-	protected boolean canHandleShellCloseEvent() {
-		if (!super.canHandleShellCloseEvent())
-			return false;
-
-		// When closing the last window, prompt for confirmation
-		if (getWorkbenchImpl().getWorkbenchWindowCount() > 1)
-			return true;
-
-		IPreferenceStore store =
-			WorkbenchPlugin.getDefault().getPreferenceStore();
-		boolean promptOnExit =
-			store.getBoolean(
-				IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
-
-		if (promptOnExit) {
-			String message;
-			// @issue Where should we get this product name from?
-			// String productName =	getWorkbenchImpl().getConfigurationInfo().getAboutInfo().getProductName();
-			String productName = null;
-			if (productName == null) {
-				message = WorkbenchMessages.getString("PromptOnExitDialog.message0"); //$NON-NLS-1$
-			} else {
-				message = WorkbenchMessages.format("PromptOnExitDialog.message1", new Object[] { productName }); //$NON-NLS-1$
-			}
-
-			MessageDialogWithToggle dlg = MessageDialogWithToggle.openConfirm(
-				getShell(), 
-				WorkbenchMessages.getString("PromptOnExitDialog.shellTitle"), //$NON-NLS-1$,
-				message,
-				WorkbenchMessages.getString("PromptOnExitDialog.choice"), //$NON-NLS-1$,
-				false);
-
-			if (dlg.getReturnCode() == MessageDialogWithToggle.OK) {
-				store.setValue(
-					IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW,
-					!dlg.getToggleState());
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		return true;
 	}
 	/**
 	 * @see IWorkbenchWindow

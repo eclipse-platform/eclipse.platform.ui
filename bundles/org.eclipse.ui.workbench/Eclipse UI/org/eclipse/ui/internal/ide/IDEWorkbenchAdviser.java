@@ -66,8 +66,8 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdviser;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchActionBuilder;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.dialogs.MessageDialogWithToggle;
 import org.eclipse.ui.internal.dialogs.WelcomeEditorInput;
 import org.eclipse.ui.internal.model.WorkbenchAdapterBuilder;
 import org.eclipse.update.core.SiteManager;
@@ -239,6 +239,62 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.application.WorkbenchAdviser#preWindowClose
+	 */
+	public boolean preWindowClose(IWorkbenchWindowConfigurer windowConfigurer) {
+		if (!super.preWindowClose(windowConfigurer)) {
+			return false;
+		}
+		
+		// if emergency close, then don't prompt at all
+		if (configurer.emergencyClosing()) {
+			return true;
+		}
+
+		// when closing the last window, prompt for confirmation
+		if (configurer.getWorkbench().getWorkbenchWindowCount() > 1)
+			return true;
+
+		// @issue the Exit Prompt On Close preference is IDE specific
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		boolean promptOnExit =	store.getBoolean(IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW);
+
+		if (promptOnExit) {
+			String message;
+			String productName = null;
+			try {
+				productName = configurer.getPrimaryFeatureAboutInfo().getProductName();
+			} catch (WorkbenchException e) {
+				IDEWorkbenchPlugin.log("Failed to access primary feature product name.", e.getStatus()); //$NON-NLS-1$
+			}
+			if (productName == null) {
+				message = IDEWorkbenchMessages.getString("PromptOnExitDialog.message0"); //$NON-NLS-1$
+			} else {
+				message = IDEWorkbenchMessages.format("PromptOnExitDialog.message1", new Object[] { productName }); //$NON-NLS-1$
+			}
+
+			// @issue The MessageDialogWithToggle is private, should it be made public?
+			MessageDialogWithToggle dlg = MessageDialogWithToggle.openConfirm(
+				windowConfigurer.getWindow().getShell(), 
+				IDEWorkbenchMessages.getString("PromptOnExitDialog.shellTitle"), //$NON-NLS-1$,
+				message,
+				IDEWorkbenchMessages.getString("PromptOnExitDialog.choice"), //$NON-NLS-1$,
+				false);
+
+			if (dlg.getReturnCode() == MessageDialogWithToggle.OK) {
+				store.setValue(
+					IPreferenceConstants.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW,
+					!dlg.getToggleState());
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		return true;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.application.WorkbenchAdviser#preWindowOpen
 	 */
@@ -758,8 +814,8 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			} catch (WorkbenchException e) {
 				ErrorDialog.openError(
 					win.getShell(),
-					WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
-					WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
+					IDEWorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
+					IDEWorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
 					e.getStatus());
 				return;
 			}
@@ -779,8 +835,8 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		} catch (PartInitException e) {
 			ErrorDialog.openError(
 				win.getShell(),
-				WorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
-				WorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("Workbench.openEditorErrorDialogTitle"),  //$NON-NLS-1$
+				IDEWorkbenchMessages.getString("Workbench.openEditorErrorDialogMessage"), //$NON-NLS-1$
 				e.getStatus());
 		}
 		return;
@@ -804,7 +860,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 		}
 		
 		if (workspaceLocation != null) {
-			title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { workspaceLocation, title }); //$NON-NLS-1$
+			title = IDEWorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { workspaceLocation, title }); //$NON-NLS-1$
 		}
 
 		IWorkbenchPage currentPage = window.getActivePage();
@@ -812,7 +868,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 			IEditorPart editor = currentPage.getActiveEditor();
 			if (editor != null) {
 				String editorTitle = editor.getTitle();
-				title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { editorTitle, title }); //$NON-NLS-1$
+				title = IDEWorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { editorTitle, title }); //$NON-NLS-1$
 			}
 			IPerspectiveDescriptor persp = currentPage.getPerspective();
 			String label = ""; //$NON-NLS-1$
@@ -823,7 +879,7 @@ class IDEWorkbenchAdviser extends WorkbenchAdviser {
 				label = currentPage.getLabel();
 			}
 			if (label != null && !label.equals("")) { //$NON-NLS-1$	
-				title = WorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { label, title }); //$NON-NLS-1$
+				title = IDEWorkbenchMessages.format("WorkbenchWindow.shellTitle", new Object[] { label, title }); //$NON-NLS-1$
 			}
 		}
 		
