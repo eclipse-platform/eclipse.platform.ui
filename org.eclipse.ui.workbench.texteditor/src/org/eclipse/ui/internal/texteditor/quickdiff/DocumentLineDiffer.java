@@ -358,7 +358,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					try {
 						oldJob.join();
 					} catch (InterruptedException e) {
-						// will not happen as noone interrupst our thread
+						// will not happen as noone interrupts our thread
 						Assert.isTrue(false);
 					}
 				
@@ -450,56 +450,49 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				
 				// 7:	Reset the model to the just gotten differences
 				// 		re-inject stored events to get up to date.
-				List storedEvents;
 				synchronized (DocumentLineDiffer.this) {
 					if (isCanceled(monitor))
 						return Status.CANCEL_STATUS;
 				
 					// set the new differences so we can operate on them
 					fDifferences= diffs;
-					storedEvents= new ArrayList(fStoredEvents);
-					fStoredEvents.clear();
 				}
 
 				// reinject events accumulated in the meantime.
 				try {
-					for (ListIterator iter= storedEvents.listIterator(); iter.hasNext();) {
-						DocumentEvent event= (DocumentEvent) iter.next();
-						// access documents unsynched:
-						handleAboutToBeChanged(event);
-						handleChanged(event);
-						
+					do {
+						DocumentEvent event;
 						synchronized (DocumentLineDiffer.this) {
 							if (isCanceled(monitor))
 								return Status.CANCEL_STATUS;
 						
-							if (fStoredEvents.size() > 0) {
-								// early leave on interfering change
-								left.removeDocumentListener(DocumentLineDiffer.this);
-								right.removeDocumentListener(DocumentLineDiffer.this);
-								clearModel();
-								initialize();
-								return Status.CANCEL_STATUS;
+							if (fStoredEvents.isEmpty()) {
+								// we are done
+								fInitializationJob= null;
+								fIsSynchronized= true;
+								fLastDifference= null;
+								
+								// inform blocking calls.
+								DocumentLineDiffer.this.notifyAll();
+								
+								break;
+							} else {
+								event= (DocumentEvent) fStoredEvents.remove(0);
 							}
 						}
 						
-					}
+						// access documents unsynched:
+						handleAboutToBeChanged(event);
+						handleChanged(event);
+
+					} while (true);
+					
 				} catch (BadLocationException e) {
 					left.removeDocumentListener(DocumentLineDiffer.this);
 					right.removeDocumentListener(DocumentLineDiffer.this);
 					clearModel();
 					initialize();
 					return Status.CANCEL_STATUS;
-				}
-				
-				synchronized (DocumentLineDiffer.this) {
-					// signal done
-					fInitializationJob= null;
-					fIsSynchronized= true;
-					fLastDifference= null;
-					
-					// inform blocking calls.
-					DocumentLineDiffer.this.notifyAll();
 				}
 				
 				fireModelChanged();
