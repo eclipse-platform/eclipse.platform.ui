@@ -146,38 +146,13 @@ protected List addContributorsFor(Class objectClass){
  */
 protected List getContributors(Object object){
 
-	List objectList = null;
-	List adaptedList = null;
-	Class adaptedClass = null;
-	
 	Class objectClass = object.getClass();
 	IResource adapted = getAdaptedResource(object);
-	if (adapted != null)
-		adaptedClass = adapted.getClass();
-
-	// Lookup the results in the cache first
-	if (lookup != null) {
-		objectList = (List) lookup.get(objectClass);
-		if (adaptedClass != null)
-			adaptedList = (List) lookup.get(adaptedClass);		
-	}
 	
-	// If not in cache, build it
-	if (objectList == null) {
-		objectList = getContributors(objectClass);
-	}
-	if (adaptedList == null) {
-		if (adaptedClass == null)
-			adaptedList = EMPTY_LIST;
-		else
-			adaptedList = getContributors(adaptedClass);
-	}
-	
-	// Collect the contribution lists into one result
-	ArrayList results = new ArrayList(objectList.size() + adaptedList.size());
-	results.addAll(objectList);
-	results.addAll(adaptedList);
-	return results;
+	if (adapted == null)
+		return getContributors(objectClass);
+	else
+		return getContributors(objectClass, adapted.getClass());
 }
 
 /**
@@ -283,29 +258,31 @@ protected List getContributors(Class objectClass, Class resourceClass) {
 	}
 	
 	// If not in cache, build it
-	if (objectList == null) {
-		objectList = addContributorsFor(objectClass);
-		if (objectList.size() == 0)
-			objectList = EMPTY_LIST;
-	}
-	if (resourceList == null) {
-		List contributors = addContributorsFor(resourceClass);
-		resourceList = new ArrayList(contributors.size());
-		Iterator enum = contributors.iterator();
-		while (enum.hasNext()){
-			IObjectContributor contributor = (IObjectContributor)enum.next();
-			if (contributor.canAdapt())
-				resourceList.add(contributor);
+	if (objectList == null || resourceList == null) {
+		if (objectList == null) {
+			objectList = addContributorsFor(objectClass);
+			if (objectList.size() == 0)
+				objectList = EMPTY_LIST;
 		}
-		if (resourceList.size() == 0)
-			resourceList = EMPTY_LIST;
+		if (resourceList == null) {
+			List contributors = addContributorsFor(resourceClass);
+			resourceList = new ArrayList(contributors.size());
+			Iterator enum = contributors.iterator();
+			while (enum.hasNext()){
+				IObjectContributor contributor = (IObjectContributor)enum.next();
+				if (contributor.canAdapt())
+					resourceList.add(contributor);
+			}
+			if (resourceList.size() == 0)
+				resourceList = EMPTY_LIST;
+		}
+	
+		// Store the contribution lists into the cache.
+		if (lookup == null)
+		   lookup = new HashMap();
+		lookup.put(objectClass, objectList);
+		lookup.put(resourceClass, resourceList);
 	}
-
-	// Store the contribution lists into the cache.
-	if (lookup == null)
-	   lookup = new HashMap();
-	lookup.put(objectClass, objectList);
-	lookup.put(resourceClass, resourceList);
 	
 	// Collect the contribution lists into one result
 	ArrayList results = new ArrayList(objectList.size() + resourceList.size());
