@@ -63,6 +63,7 @@ public class ActivateEditorAction extends PageEventAction {
             IEditorPart part = page.getActiveEditor(); // may not actually be active
             if (part != null) {
                 page.activate(part);
+                part.setFocus();
             } else {
                 IWorkbenchPartReference ref = page.getActivePartReference();
                 if (ref instanceof IViewReference) {
