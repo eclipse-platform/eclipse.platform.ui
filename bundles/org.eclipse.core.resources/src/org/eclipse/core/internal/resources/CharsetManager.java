@@ -16,6 +16,7 @@ import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.osgi.framework.Bundle;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -25,7 +26,7 @@ import org.osgi.service.prefs.Preferences;
  * @since 3.0
  */
 public class CharsetManager implements IManager {
-
+	protected final Bundle systemBundle = Platform.getBundle("org.eclipse.osgi"); //$NON-NLS-1$
 	/**
 	 * This job implementation is used to allow the resource change listener
 	 * to schedule operations that need to modify the workspace. 
@@ -55,10 +56,17 @@ public class CharsetManager implements IManager {
 			}
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.internal.jobs.InternalJob#run(org.eclipse.core.runtime.IProgressMonitor)
+		 */
 		protected IStatus run(IProgressMonitor monitor) {
 			IProject next;
 			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_SETTING_CHARSET, Policy.bind("resources.updatingEncoding"), null); //$NON-NLS-1$
-			while ((next = getNextChange()) != null)
+			while ((next = getNextChange()) != null) {
+				//just exit if the system is shutting down or has been shut down
+				//it is too late to change the workspace at this point anyway
+				if (systemBundle.getState() != Bundle.ACTIVE)
+					return Status.OK_STATUS;
 				try {
 					getPreferences(next).flush();
 				} catch (BackingStoreException e) {
@@ -66,9 +74,13 @@ public class CharsetManager implements IManager {
 					String message = Policy.bind("resources.savingEncoding"); //$NON-NLS-1$
 					result.add(new ResourceStatus(IResourceStatus.FAILED_SETTING_CHARSET, next.getFullPath(), message, e));
 				}
+			}
 			return result; //$NON-NLS-1$
 		}
 
+		/* (non-Javadoc)
+		 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
+		 */
 		public boolean shouldRun() {
 			synchronized (asyncChanges) {
 				return !asyncChanges.isEmpty();
