@@ -202,6 +202,9 @@ private boolean canonicalize() {
 		if (segment.charAt(0) == '.' && (segment.equals("..") || segment.equals("."))) {
 			//path needs to be canonicalized
 			collapseParentReferences();
+			//paths of length 0 have no trailing separator
+			if (segments.length == 0)
+				separators &= (HAS_LEADING | IS_UNC);
 			//recompute hash because canonicalize affects hash
 			separators = (separators & ALL_SEPARATORS) | (computeHashCode() << 3);
 			return true;
