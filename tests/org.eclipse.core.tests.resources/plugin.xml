@@ -103,6 +103,9 @@
     <test id="resources.performance.BenchMiscWorkspace">
       <run class="org.eclipse.core.tests.resources.perf.BenchMiscWorkspace"/>
     </test>
+    <test id="resources.performance.WorkspacePerformanceTest">
+      <run class="org.eclipse.core.tests.resources.perf.WorkspacePerformanceTest"/>
+    </test>
 
     <test id="regression.AllTests">
       <run class="org.eclipse.core.tests.resources.regression.AllTests"/>
