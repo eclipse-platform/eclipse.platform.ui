@@ -16,7 +16,7 @@
 /**
  * Loads the specified table of contents
  */		
-function selectTOC(tocId)
+function loadTOC(tocId)
 {
 	// navigate to this toc
 	window.location.href = "toc.jsp?toc="+tocId;
@@ -55,11 +55,11 @@ function selectTopic(topic)
 		if (tocNodes[i] == selectedTOC)
 		{
 %>
-		<li class='node'><a class="active" href='javascript:selectTOC("<%=id%>")' xonmouseover='window.status="<%=label%>"'> <nobr> <%=label%> </nobr> </a></li>
+		<li class='node'><a class="active" href='javascript:loadTOC("<%=id%>")' xonmouseover='window.status="<%=label%>"'> <nobr> <%=label%> </nobr> </a></li>
 <%
 		}else{
 %>
-		<li class='node'><a href='javascript:selectTOC("<%=id%>");' xonmouseover='window.status="<%=label%>"'><nobr> <%=label%> </nobr> </a></li>
+		<li class='node'><a href='javascript:loadTOC("<%=id%>");' xonmouseover='window.status="<%=label%>"'><nobr> <%=label%> </nobr> </a></li>
 <%
 		}		
 	}
