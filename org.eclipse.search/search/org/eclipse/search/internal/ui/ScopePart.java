@@ -4,6 +4,8 @@
  */
 package org.eclipse.search.internal.ui;
 
+import java.util.Arrays;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -14,16 +16,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.ui.dialogs.SelectionDialog;
-import java.util.Arrays;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.util.Assert;
 
-import org.eclipse.search.internal.ui.util.SWTUtil;
-import org.eclipse.search.internal.workingsets.WorkingSet;
+import org.eclipse.ui.dialogs.SelectionDialog;
+
 import org.eclipse.search.ui.ISearchPageContainer;
 import org.eclipse.search.ui.IWorkingSet;
 import org.eclipse.search.ui.SearchUI;
+
+import org.eclipse.search.internal.ui.util.SWTUtil;
 
 public class ScopePart {
 
@@ -75,8 +76,8 @@ public class ScopePart {
 		Assert.isLegal(initialScope >= 0 && initialScope <= 3);
 		fScope= initialScope;
 		fWorkingSet= SearchUI.findWorkingSet(fgLRUsedWorkingSetName);
-		if (fWorkingSet == null && WorkingSet.getWorkingSets().length > 0)
-			fWorkingSet= WorkingSet.getWorkingSets()[0];
+		if (fWorkingSet == null && SearchUI.getWorkingSets().length > 0)
+			fWorkingSet= SearchUI.getWorkingSets()[0];
 	}
 
 	/**
@@ -131,6 +132,10 @@ public class ScopePart {
 				break;
 		}
 
+		updateSearchPageContainerActionPerformedEnablement();
+	}
+
+	private void updateSearchPageContainerActionPerformedEnablement() {
 		if (fSearchPageContainer != null)
 			fSearchPageContainer.setPerformActionEnabled(fScope != WORKING_SET_SCOPE || fWorkingSet != null);
 	}
@@ -257,9 +262,10 @@ public class ScopePart {
 			return true;
 		} else {
 			// test if selected working set has been removed
-			if (!Arrays.asList(WorkingSet.getWorkingSets()).contains(fWorkingSet)) {
+			if (!Arrays.asList(SearchUI.getWorkingSets()).contains(fWorkingSet)) {
 				fWorkingSetText.setText(""); //$NON-NLS-1$
 				fWorkingSet= null;
+				updateSearchPageContainerActionPerformedEnablement();
 			}
 		}
 		return false;

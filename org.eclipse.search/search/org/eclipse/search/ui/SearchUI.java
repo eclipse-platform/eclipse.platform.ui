@@ -118,7 +118,23 @@ public final class SearchUI {
 	}
 
 	/**
-	 * Finds a working set by name.
+	 * Returns all working sets for the workspace.
+	 *
+	 * This method is for internal use only due to issue below. Once
+	 * the issues is solved there will be an official API.
+	 * </p>
+	 * <p>
+	 * [Issue: Working set must be provided by platform.]
+	 * </p>
+	 * 
+	 * @return an array of IWorkingSet
+	 */
+	public static IWorkingSet[] getWorkingSets() {
+		return WorkingSet.getWorkingSets();
+	}
+
+	/**
+	 a working set by name.
 	 *
 	 * This method is for internal use only due to issue below. Once
 	 * the issues is solved there will be an official API.

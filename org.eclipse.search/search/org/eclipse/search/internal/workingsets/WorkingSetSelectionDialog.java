@@ -34,9 +34,11 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 
 import org.eclipse.ui.dialogs.SelectionDialog;
+import org.eclipse.ui.model.WorkbenchViewerSorter;
+
+import org.eclipse.search.ui.IWorkingSet;
 
 import org.eclipse.search.internal.ui.util.ListContentProvider;
-import org.eclipse.search.ui.IWorkingSet;
 
 public class WorkingSetSelectionDialog extends SelectionDialog {
 
@@ -161,6 +163,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 	
 		fListViewer.setLabelProvider(fLabelProvider);
 		fListViewer.setContentProvider(fContentProvider);
+		fListViewer.setSorter(new WorkbenchViewerSorter());
 		
 		fListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -240,7 +243,7 @@ public class WorkingSetSelectionDialog extends SelectionDialog {
 	 *
 	 * @return the selected <code>IWorkingSet</code> or <code>null</code> if Cancel was pressed
 	 */
-	public IWorkingSet getWorkingSet() {
+	private IWorkingSet getWorkingSet() {
 		return fResult;
 	}
 

@@ -1,8 +1,14 @@
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 package org.eclipse.search.internal.workingsets;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -11,10 +17,9 @@ import org.eclipse.jface.util.Assert;
 
 import org.eclipse.search.ui.IWorkingSet;
 
-
 public class WorkingSet implements IWorkingSet {
 
-	private static Set fgWorkingSets= new HashSet(5);
+	private static SortedSet fgWorkingSets= new TreeSet(new WorkingSetComparator());
 	
 	String fName;
 	Set fElements; // of IResources
@@ -71,8 +76,17 @@ public class WorkingSet implements IWorkingSet {
 	}
 
 	/**
-	 * Returns the workbench from which this plugin has been loaded.
-	 */	
+	 * Returns all working sets for the workspace.
+	 *
+	 * This method is for internal use only due to issue below. Once
+	 * the issues is solved there will be an official API.
+	 * </p>
+	 * <p>
+	 * [Issue: Working set must be provided by platform.]
+	 * </p>
+	 * 
+	 * @return an array of IWorkingSet
+	 */
 	public static IWorkingSet[] getWorkingSets() {
 		return (IWorkingSet[])fgWorkingSets.toArray(new IWorkingSet[fgWorkingSets.size()]);
 	}

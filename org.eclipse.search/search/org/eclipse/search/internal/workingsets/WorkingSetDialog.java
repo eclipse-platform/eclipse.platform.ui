@@ -1,32 +1,28 @@
+/*
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
+ */
 package org.eclipse.search.internal.workingsets;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
-
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.IStructuredSelection;
+
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.IWorkingSet;
-import org.eclipse.search.internal.ui.util.*;
+
+import org.eclipse.search.internal.ui.SearchPlugin;
 
 
-public class WorkingSetDialog extends InputDialog {
+class WorkingSetDialog extends InputDialog {
 
 	private static class WorkingSetNameInputValidator implements IInputValidator {
 		
@@ -58,11 +54,11 @@ public class WorkingSetDialog extends InputDialog {
 	private IWorkingSet fWorkingSet;
 	private CheckboxTreeViewer fTree;
 	
-	public WorkingSetDialog(Shell parentShell) {
+	WorkingSetDialog(Shell parentShell) {
 		this(parentShell, "");
 	}
 
-	public WorkingSetDialog(Shell parentShell, IWorkingSet workingSet) {
+	WorkingSetDialog(Shell parentShell, IWorkingSet workingSet) {
 		this(parentShell, workingSet.getName());
 		fWorkingSet= workingSet;
 	}
@@ -109,7 +105,7 @@ public class WorkingSetDialog extends InputDialog {
 		super.okPressed();
 	}
 
-	public IWorkingSet getWorkingSet() {
+	IWorkingSet getWorkingSet() {
 		return fWorkingSet;
 	}
 }
