@@ -11,13 +11,14 @@
 package org.eclipse.jface.window;
 
 import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.Sash;
 
 /**
  * ColorSchemeService is the service that sets the colors on widgets as
@@ -43,13 +44,19 @@ public class ColorSchemeService {
 			return;
 		}
 
-		if (control instanceof CTabFolder) {
-			setTabColors((CTabFolder) control);
+		if (control instanceof CTabFolder2) {
+			setTabColors((CTabFolder2) control);
 			return;
 		}
 
 		if (control instanceof Composite) {
 			setCompositeColors((Composite) control);
+			return;
+		}
+
+		if (control instanceof Sash) {
+			control.setBackground(
+			JFaceColors.getSchemeParentBackground(control.getDisplay()));
 			return;
 		}
 
@@ -60,8 +67,12 @@ public class ColorSchemeService {
 
 	}
 
-	static void setTabColors(CTabFolder control) {
-
+	public static void setTabColors(CTabFolder2 control) {
+		
+		control.setBackground(
+				JFaceColors.getSchemeBackground(control.getDisplay()));
+		control.setForeground(
+				JFaceColors.getSchemeForeground(control.getDisplay()));
 		control.setSelectionBackground(
 			JFaceColors.getSchemeSelectionBackground(control.getDisplay()));
 		control.setSelectionForeground(
@@ -69,6 +80,13 @@ public class ColorSchemeService {
 		Control[] children = control.getChildren();
 		for (int i = 0; i < children.length; i++) {
 			setSchemeColors(children[i]);
+		}
+		
+		Composite parent = control.getParent();
+		while (parent != null) {
+			parent.setBackground(
+				JFaceColors.getSchemeParentBackground(parent.getDisplay()));
+			parent = parent.getParent();
 		}
 	}
 

@@ -24,6 +24,7 @@ public final class JFacePreferences {
 	//Identifier for the Active Hyperlink Colour
 	public static final String ACTIVE_HYPERLINK_COLOR = "ACTIVE_HYPERLINK_COLOR"; //$NON-NLS-1$
 	//Identifier for the Color Scheme Background Colour
+	public static final String SCHEME_PARENT_BACKGROUND_COLOR = "SCHEME_PARENT_BACKGROUND_COLOR"; //$NON-NLS-1$
 	public static final String SCHEME_BACKGROUND_COLOR = "SCHEME_BACKGROUND_COLOR"; //$NON-NLS-1$
 	//Identifier for the Color Scheme Foreground Colour
 	public static final String SCHEME_FOREGROUND_COLOR = "SCHEME_FOREGROUND_COLOR"; //$NON-NLS-1$

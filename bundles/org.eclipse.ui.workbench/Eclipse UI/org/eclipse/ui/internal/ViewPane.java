@@ -19,7 +19,7 @@ import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -387,7 +387,7 @@ public Control[] getTabList() {
 	Control c = getControl();
 	if (getContainer() instanceof PartTabFolder) {
 		PartTabFolder tf = (PartTabFolder) getContainer();
-		CTabFolder f = (CTabFolder) tf.getControl();
+		CTabFolder2 f = (CTabFolder2) tf.getControl();
 		if (f.getItemCount() > 1) {
 			if ((f.getStyle() & SWT.TOP) != 0) {
 				return new Control[] { f, c };
@@ -461,7 +461,7 @@ public void showFocus(boolean inFocus) {
 	Control c = getControl();
 	if (getContainer() instanceof PartTabFolder) {
 		PartTabFolder tf = (PartTabFolder) getContainer();
-		CTabFolder f = (CTabFolder) tf.getControl();
+		CTabFolder2 f = (CTabFolder2) tf.getControl();
 		f.setBorderVisible(inFocus);
 	}
 	

@@ -92,6 +92,11 @@ public class JFaceColors {
 	/**
 	 * Get the default background color to use for the color scheme.
 	 */
+	public static Color getSchemeParentBackground(Display display) {
+
+		return getColorSetting(display,JFacePreferences.SCHEME_PARENT_BACKGROUND_COLOR);
+	}
+	
 	public static Color getSchemeBackground(Display display) {
 
 		return getColorSetting(display,JFacePreferences.SCHEME_BACKGROUND_COLOR);

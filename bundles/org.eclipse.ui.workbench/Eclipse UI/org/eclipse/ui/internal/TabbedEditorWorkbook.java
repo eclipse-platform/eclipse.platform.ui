@@ -17,12 +17,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2;
 import org.eclipse.swt.custom.CTabFolderAdapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabFolderListListener;
-import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.CTabItem2;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -52,18 +55,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.JFaceColors;
-
 import org.eclipse.ui.IEditorReference;
 
 public class TabbedEditorWorkbook extends EditorWorkbook {
 
 	private IPreferenceStore preferenceStore = WorkbenchPlugin.getDefault().getPreferenceStore();
 	private int tabLocation = -1; // Initialized in constructor.
-	private CTabFolder tabFolder = null;
+	private CTabFolder2 tabFolder = null;
 	private Map mapTabToEditor = new HashMap();
 	private ToolBar pullDownBar;
 	private ToolItem pullDownButton;
@@ -93,15 +91,15 @@ protected Object createItem(EditorPane editorPane) {
 /**
  * Create a new tab for an item.
  */
-private CTabItem createTab(EditorPane editorPane) {
+private CTabItem2 createTab(EditorPane editorPane) {
 	return createTab(editorPane, tabFolder.getItemCount());
 }
 
 /**
  * Create a new tab for an item at a particular index.
  */
-private CTabItem createTab(EditorPane editorPane, int index) {
-	CTabItem tab = new CTabItem(tabFolder, SWT.NONE, index);
+private CTabItem2 createTab(EditorPane editorPane, int index) {
+	CTabItem2 tab = new CTabItem2(tabFolder, SWT.NONE, index);
 	mapTabToEditor.put(tab, editorPane);
 	enableDrag(editorPane);
 	updateEditorTab((IEditorReference) editorPane.getPartReference());
@@ -125,7 +123,7 @@ protected void setControlSize() {
 protected void createPresentation(Composite parent) {
 	usePulldown = preferenceStore.getBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE);
 	
-	tabFolder = new CTabFolder(parent, SWT.BORDER | SWT.SINGLE | tabLocation);
+	tabFolder = new CTabFolder2(parent, SWT.BORDER | SWT.SINGLE | tabLocation);
 	tabFolder.setBackground(JFaceColors.getSchemeBackground(parent.getDisplay()));
 	tabFolder.setForeground(JFaceColors.getSchemeForeground(parent.getDisplay()));
 	tabFolder.setSelectionBackground(JFaceColors.getSchemeSelectionBackground(parent.getDisplay()));
@@ -203,10 +201,10 @@ protected void createPresentation(Composite parent) {
 			
 			final Text text = new Text(shell, SWT.SINGLE);			
 			final Table table = new Table(shell, SWT.NONE);//SWT.BORDER);
-			CTabItem[] items = tabFolder.getItems();
+			CTabItem2[] items = tabFolder.getItems();
 			final String[] stringItems = new String[items.length];
 			for (int i = 0; i < items.length; i++) {
-				CTabItem tab = items[i];
+				CTabItem2 tab = items[i];
 				stringItems[i] = tab.getText();
 				TableItem item = new TableItem(table, SWT.NONE);
 				item.setText(tab.getText());
@@ -297,7 +295,7 @@ protected void createPresentation(Composite parent) {
 			EditorPane visibleEditor = getVisibleEditor();
 			if (visibleEditor != null) {
 				// switch to the editor
-				CTabItem item = getTab(visibleEditor);
+				CTabItem2 item = getTab(visibleEditor);
 				
 				visibleEditor.setFocus();
 				Rectangle bounds = item.getBounds();
@@ -314,7 +312,7 @@ protected void createPresentation(Composite parent) {
 		public void handleEvent(Event event) {
 			EditorPane visibleEditor = getVisibleEditor();
 			if (event.type == SWT.MenuDetect && visibleEditor != null) {
-				CTabItem item = getTab(visibleEditor);
+				CTabItem2 item = getTab(visibleEditor);
 				visibleEditor.setFocus();
 				Rectangle bounds = item.getBounds();
 				Point pt = tabFolder.toControl(event.x, event.y);
@@ -388,10 +386,10 @@ protected void handleTabSelection(Widget tabItem) {
 /**
  * Returns the tab for a part.
  */
-private CTabItem getTab(LayoutPart child) {
+private CTabItem2 getTab(LayoutPart child) {
 	Iterator tabs = mapTabToEditor.keySet().iterator();
 	while (tabs.hasNext()) {
-		CTabItem tab = (CTabItem) tabs.next();
+		CTabItem2 tab = (CTabItem2) tabs.next();
 		if (mapTabToEditor.get(tab) == child)
 			return tab;
 	}
@@ -400,14 +398,14 @@ private CTabItem getTab(LayoutPart child) {
 }
 
 public boolean isDragAllowed(EditorPane pane, Point p) {
-	CTabItem tab = getTab(pane);
+	CTabItem2 tab = getTab(pane);
 	return tab != null && overImage(tab, p.x);
 }
 
 /**
  * Returns true if <code>x</code> is over the label image.
  */
-private boolean overImage(CTabItem item, int x) {
+private boolean overImage(CTabItem2 item, int x) {
 	if (item.getImage() == null) {
 		return false;
 	} else {
@@ -498,7 +496,7 @@ public void resizeEditorList() {
 public void showPaneMenu() {
 	EditorPane visibleEditor = getVisibleEditor();
 	if (visibleEditor != null) {
-		CTabItem item = getTab(visibleEditor);
+		CTabItem2 item = getTab(visibleEditor);
 		Rectangle bounds = item.getBounds();
 		visibleEditor.showPaneMenu(tabFolder,tabFolder.toDisplay(new Point(bounds.x, bounds.height)));
 	}
@@ -514,7 +512,7 @@ protected void checkEnableDrag() {
 protected void disposePresentation() {
 	// dispose of disabled images
 	for(int i = 0; i < tabFolder.getItemCount(); i++) {
-		CTabItem tab = tabFolder.getItem(i);
+		CTabItem2 tab = tabFolder.getItem(i);
 		if (tab.getDisabledImage() != null)
 			tab.getDisabledImage().dispose();
 	}
@@ -582,7 +580,7 @@ protected void disposeItem(EditorPane editorPane) {
 /**
  * Remove the tab item from the tab folder
  */
-private void removeTab(CTabItem tab) {
+private void removeTab(CTabItem2 tab) {
 	if (tabFolder != null) {
 		if (tab != null) {
 			mapTabToEditor.remove(tab);
@@ -617,7 +615,7 @@ protected void setBorderVisible(boolean visible) {
 }
 
 protected void setVisibleItem(EditorPane editorPane) {
-	CTabItem key = getTab(editorPane);
+	CTabItem2 key = getTab(editorPane);
 	if (key != null) {
 		int index = tabFolder.indexOf(key);
 		tabFolder.setSelection(index);
@@ -632,7 +630,7 @@ public void tabFocusHide() {
 
 protected void updateItem(EditorPane editorPane) {
 	// Get tab.
-	CTabItem tab = getTab(editorPane);
+	CTabItem2 tab = getTab(editorPane);
 	if(tab == null) return;
 	
 	IEditorReference ref = editorPane.getEditorReference();
@@ -685,7 +683,7 @@ protected void disposeAllItems() {
 
 	Iterator tabs = mapTabToEditor.keySet().iterator();
 	while (tabs.hasNext()) {
-		CTabItem tab = (CTabItem) tabs.next();
+		CTabItem2 tab = (CTabItem2) tabs.next();
 		if (tab.getDisabledImage() != null)
 			tab.getDisabledImage().dispose();
 		tab.dispose();
@@ -699,7 +697,7 @@ protected void disposeAllItems() {
 }
 
 public void reorderTab(EditorPane pane, int x, int y) {
-	CTabItem sourceTab = getTab(pane);
+	CTabItem2 sourceTab = getTab(pane);
 	if (sourceTab == null)
 		return;
 
@@ -713,7 +711,7 @@ public void reorderTab(EditorPane pane, int x, int y) {
 		location.x = x;
 		
 	// find the tab under the adjusted location.
-	CTabItem targetTab = tabFolder.getItem(location);
+	CTabItem2 targetTab = tabFolder.getItem(location);
 
 	// no tab under location so move editor's tab to end
 	if (targetTab == null) {
@@ -753,7 +751,7 @@ public void reorderTab(EditorPane pane, int newIndex) {
 /**
  * Reorder the tab representing the specified pane.
  */
-private void reorderTab(EditorPane pane, CTabItem sourceTab, int newIndex) {
+private void reorderTab(EditorPane pane, CTabItem2 sourceTab, int newIndex) {
 	int oldIndex = tabFolder.indexOf(sourceTab);
 	if(newIndex < 0)
 		if(oldIndex == tabFolder.getItemCount() - 1)
@@ -769,7 +767,7 @@ private void reorderTab(EditorPane pane, CTabItem sourceTab, int newIndex) {
 	removeTab(sourceTab);
 
 	// Create the new tab at the specified index
-	CTabItem newTab;
+	CTabItem2 newTab;
 	if (newIndex < 0)
 		newTab = createTab(pane);
 	else
@@ -801,7 +799,7 @@ private void reorderTab(EditorPane pane, CTabItem sourceTab, int newIndex) {
  */
 protected PartDragDrop createDragSource(LayoutPart part) {
 	if (part instanceof EditorPane) {
-		CTabItem tab = getTab(part);
+		CTabItem2 tab = getTab(part);
 		if (tab != null) {
 			return new CTabPartDragDrop(part, this.tabFolder, tab);
 		}

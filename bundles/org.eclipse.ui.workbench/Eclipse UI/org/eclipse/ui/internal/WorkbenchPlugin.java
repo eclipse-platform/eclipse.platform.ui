@@ -448,8 +448,9 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 //		Color parentbk = new Color(display, 162, 178, 205);
 //		Color selectedfg = new Color(display, 83, 98, 134);
 		
+		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_PARENT_BACKGROUND_COLOR, new RGB(162, 178, 205));// new RGB(192, 210, 237));
 		//Set the default colour scheme background to light blue		
-		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_BACKGROUND_COLOR, new RGB(162, 178, 205));// new RGB(192, 210, 237));
+		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_BACKGROUND_COLOR, new RGB(195, 210, 236));// new RGB(192, 210, 237));
 		//Set the default colour scheme foreground to light
 		PreferenceConverter.setDefault(store,JFacePreferences.SCHEME_FOREGROUND_COLOR, new RGB(83, 98, 134)); // new RGB(231, 238, 248));
 		//Set the default colour scheme background to light blue

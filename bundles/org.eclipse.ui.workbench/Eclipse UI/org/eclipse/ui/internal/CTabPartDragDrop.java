@@ -20,13 +20,13 @@ import org.eclipse.swt.graphics.*;
  * tab.
  */
 public class CTabPartDragDrop extends PartDragDrop {
-	private CTabItem tab;
-public CTabPartDragDrop(LayoutPart dragPart, CTabFolder tabFolder, CTabItem tabItem) {
+	private CTabItem2 tab;
+public CTabPartDragDrop(LayoutPart dragPart, CTabFolder2 tabFolder, CTabItem2 tabItem) {
 	super(dragPart, tabFolder);
 	this.tab = tabItem;
 }
-protected CTabFolder getCTabFolder() {
-	return (CTabFolder) getDragControl();
+protected CTabFolder2 getCTabFolder() {
+	return (CTabFolder2) getDragControl();
 }
 /**
  * Returns the source's bounds
@@ -41,8 +41,8 @@ protected Rectangle getSourceBounds() {
  * @see org.eclipse.ui.internal.PartDragDrop#isDragAllowed(Point)
  */
 protected void isDragAllowed(Point position) {
-	CTabFolder tabFolder = getCTabFolder();
-	CTabItem tabUnderPointer = tabFolder.getItem(position);
+	CTabFolder2 tabFolder = getCTabFolder();
+	CTabItem2 tabUnderPointer = tabFolder.getItem(position);
 	if (tabUnderPointer != tab)
 		return;
 	if(tabUnderPointer == null) {
@@ -59,7 +59,7 @@ protected void isDragAllowed(Point position) {
 
 	super.isDragAllowed(position);
 }
-public void setTab(CTabItem newTab) {
+public void setTab(CTabItem2 newTab) {
 	tab = newTab;
 }
 }
