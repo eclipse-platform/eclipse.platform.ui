@@ -725,10 +725,12 @@ public class ResourceSyncInfo {
 		if(fileTimestamp != null) {
 			String syncTimestamp = Util.getSubstring(syncBytes, SEPARATOR_BYTE, 3, false);
 			int syncType = getSyncType(syncTimestamp);
-			if (syncType == TYPE_MERGED_WITH_CONFLICTS && fileTimestamp.equals(getTimestamp(syncTimestamp))) {
-				return TIMESTAMP_SERVER_MERGED_WITH_CONFLICT;
-			} else {
-				return TIMESTAMP_SERVER_MERGED;
+			if (syncType != TYPE_REGULAR) {
+				if (syncType == TYPE_MERGED_WITH_CONFLICTS && fileTimestamp.equals(getTimestamp(syncTimestamp))) {
+					return TIMESTAMP_SERVER_MERGED_WITH_CONFLICT;
+				} else {
+					return TIMESTAMP_SERVER_MERGED;
+				}
 			}
 		}	
 		return null;
