@@ -44,7 +44,7 @@ public class FileUIAdapter implements ISearchElementPresentation {
 	public void showMatch(Object element, int offset, int length) throws PartInitException {
 		IFile file= (IFile) element;
 		IWorkbenchPage page= SearchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		IEditorPart editor= IDE.openEditor(page, file, true);
+		IEditorPart editor= IDE.openEditor(page, file, false);
 		if (!(editor instanceof ITextEditor))
 			return;
 		ITextEditor textEditor= (ITextEditor) editor;
