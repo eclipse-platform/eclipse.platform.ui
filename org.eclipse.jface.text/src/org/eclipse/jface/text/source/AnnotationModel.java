@@ -210,6 +210,19 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			document.addPosition(position);
 	}
 	
+	/**
+	 * Removes the given position from the default position category of the
+	 * given document.
+	 *
+	 * @param document the document to which to add the position
+	 * @param position the position to add
+	 * 
+	 * @since 3.0
+	 */
+	protected void removePosition(IDocument document, Position pos) {
+		document.removePosition(pos);
+	}
+
 	/*
 	 * @see IAnnotationModel#connect(IDocument)
 	 */
@@ -275,7 +288,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 				Iterator e= fAnnotations.values().iterator();
 				while (e.hasNext()) {
 					Position p= (Position) e.next();
-					fDocument.removePosition(p);
+					removePosition(fDocument, p);
 				}
 				fDocument= null;
 			}
@@ -484,7 +497,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			while (e.hasNext()) {
 				Annotation a= (Annotation) e.next();
 				Position p= (Position) fAnnotations.get(a);
-				fDocument.removePosition(p);
+				removePosition(fDocument, p);
 				fModelEvent.annotationRemoved(a);
 			}
 		}
@@ -514,7 +527,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 			
 			if (fDocument != null) {
 				Position p= (Position) fAnnotations.get(annotation);
-				fDocument.removePosition(p);
+				removePosition(fDocument, p);
 			}
 				
 			fAnnotations.remove(annotation);
