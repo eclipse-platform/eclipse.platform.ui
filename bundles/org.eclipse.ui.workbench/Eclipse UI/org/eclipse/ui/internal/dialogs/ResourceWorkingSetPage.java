@@ -126,11 +126,11 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 				});
 			}
 		});
+		initializeCheckedState();
+		disableClosedProjects();
 		if (workingSet != null) {
 			text.setText(workingSet.getName());
 		}
-		initializeCheckedState();
-		disableClosedProjects();
 		setPageComplete(false);
 	}
 	/**
@@ -299,11 +299,16 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 	public void setSelection(IWorkingSet workingSet) {
 		Assert.isNotNull(workingSet, "Working set must not be null"); //$NON-NLS-1$
 		this.workingSet = workingSet;
+		// work around bug 24095
+		if (getContainer() == null) {
+			return;
+		}
 		if (getShell() != null && text != null) {
 			firstCheck = true;
 			text.setText(workingSet.getName());
 			initializeCheckedState();
 			disableClosedProjects();
+			validateInput();
 		}
 	}	
 	/**
