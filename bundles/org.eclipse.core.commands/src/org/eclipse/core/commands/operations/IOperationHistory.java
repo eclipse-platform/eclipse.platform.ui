@@ -354,7 +354,8 @@ public interface IOperationHistory {
 	 * </p>
 	 * <p>
 	 * Open operations cannot be nested. If this method is called when a different
-	 * operation is open, that operation will be closed first.
+	 * operation is open, it is presumed to be an application coding error and
+	 * this method will throw an IllegalStateException.
 	 * </p>
 	 * @param operation -
 	 *            the composite operation to be considered as the parent for all

@@ -260,19 +260,26 @@ public class OperationsAPITest extends TestCase {
 	
 	public void testMultipleOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
+		boolean failure = false;
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
-		history.openOperation(new TriggeredOperations(op1, history), IOperationHistory.EXECUTE);
+		ICompositeOperation comp1 = new TriggeredOperations(op1, history);
+		history.openOperation(comp1, IOperationHistory.EXECUTE);
 		op1.execute(null, null);
 		op2.execute(null, null);
 		history.add(op2);
 		history.execute(op3, null, null);
-		ICompositeOperation batch = new TriggeredOperations(op4, history);
-		history.openOperation(batch, IOperationHistory.EXECUTE);
+		ICompositeOperation comp2 = new TriggeredOperations(op4, history);
+		try {
+			history.openOperation(comp2, IOperationHistory.EXECUTE);
+		} catch (IllegalStateException e) {
+			failure = true;
+		}
+		assertTrue("Exception should have been thrown for second open operation", failure);
 		IUndoableOperation op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
 		assertNull("Unexpected nested open should not add original", op);
 		history.closeOperation(true, true, IOperationHistory.EXECUTE);
 		op = history.getUndoOperation(IOperationHistory.GLOBAL_UNDO_CONTEXT);
-		assertSame("Second operation should be closed", op, batch);
+		assertSame("First operation should be closed", op, comp1);
 	}
 	
 	public void testAbortedOpenOperation() throws ExecutionException {

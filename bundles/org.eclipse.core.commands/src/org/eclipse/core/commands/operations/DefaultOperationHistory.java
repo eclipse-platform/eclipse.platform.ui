@@ -1232,12 +1232,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 	 */
 	public void openOperation(ICompositeOperation operation, int mode) {
 		if (openComposite != null && openComposite != operation) {
-			/*
-			 * unexpected nesting of operations. The original composite
-			 * operation will be closed and will be considered unsuccessful. The
-			 * third parameter does not matter in this case since the operation
-			 * is a failure.
-			 */
+			// unexpected nesting of operations. 
 			if (DEBUG_OPERATION_HISTORY_UNEXPECTED) {
 				System.out
 						.print("OPERATIONHISTORY >>> Open operation called while another operation is open.  old: "); //$NON-NLS-1$ 
@@ -1247,7 +1242,7 @@ public class DefaultOperationHistory implements IOperationHistory {
 				System.out.println();
 			}
 
-			closeOperation(false, false, EXECUTE);
+			throw new IllegalStateException("Cannot open an operation while one is already open"); //$NON-NLS-1$
 		}
 		openComposite = operation;
 		if (DEBUG_OPERATION_HISTORY_OPENOPERATION) {
