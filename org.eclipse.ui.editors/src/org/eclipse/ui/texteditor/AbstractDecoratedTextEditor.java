@@ -1372,6 +1372,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			"org.eclipse.ui.editors.preferencePages.Annotations", //$NON-NLS-1$
 			"org.eclipse.ui.editors.preferencePages.QuickDiff", //$NON-NLS-1$
 			"org.eclipse.ui.editors.preferencePages.Accessibility", //$NON-NLS-1$
+			"org.eclipse.ui.editors.preferencePages.Spelling", //$NON-NLS-1$
 		};
 	}
 	
