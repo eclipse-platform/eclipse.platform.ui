@@ -39,7 +39,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 
 	private ITeamResourceChangeListener listener;
 	private List accumulatedTeamDeltas = new ArrayList();
-	
+
 	public CVSSyncSubscriberTest() {
 		super();
 	}
@@ -54,11 +54,12 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 		return subscriber;
 	}
 	
-	/*
-	 * Refresh the subscriber for the given resource
-	 */
+	public SyncInfoSource getSyncInfoSource() {
+		return SubscriberTestSetup.getSyncInfoSource();
+	}
+	
 	protected void refresh(TeamSubscriber subscriber, IResource resource) throws TeamException {
-		subscriber.refresh(new IResource[] { resource}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
+		getSyncInfoSource().refresh(subscriber, resource);
 	}
 	
 	/*
@@ -91,7 +92,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 	}
 	
 	protected SyncInfo getSyncInfo(TeamSubscriber subscriber, IResource resource) throws TeamException {
-		return subscriber.getSyncInfo(resource, DEFAULT_MONITOR);
+		return getSyncInfoSource().getSyncInfo(subscriber, resource);
 	}
 
 	/**
@@ -212,7 +213,7 @@ public abstract class CVSSyncSubscriberTest extends EclipseTest {
 		SyncInfo[] result = new SyncInfo[resources.length];
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			result[i] = subscriber.getSyncInfo(resource, DEFAULT_MONITOR);
+			result[i] = getSyncInfo(subscriber, resource);
 		}
 		return result;
 	}

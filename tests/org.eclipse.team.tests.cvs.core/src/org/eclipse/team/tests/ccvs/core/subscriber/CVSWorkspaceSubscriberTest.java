@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
@@ -73,6 +74,42 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 	
 	protected TeamSubscriber getSubscriber() throws TeamException {
 		return getWorkspaceSubscriber();
+	}
+	
+	/* (non-Javadoc)
+	 * 
+	 * The shareProject method is invoked when creating new projects.
+	 * @see org.eclipse.team.tests.ccvs.core.EclipseTest#shareProject(org.eclipse.core.resources.IProject)
+	 */
+	protected void shareProject(final IProject project) throws TeamException, CoreException {
+		mapNewProject(project);
+		// Everything should be outgoing addition except he project
+		assertSyncEquals(project.getName(), getSubscriber(), project, SyncInfo.IN_SYNC);
+		assertAllSyncEquals(project.members(true), SyncInfo.OUTGOING | SyncInfo.ADDITION, IResource.DEPTH_INFINITE);
+
+		commitNewProject(project);
+		// Everything should be in-sync
+		assertAllSyncEquals(project, SyncInfo.IN_SYNC, IResource.DEPTH_INFINITE);
+	}
+	
+	protected void assertAllSyncEquals(final IResource rootResource, final int kind, int depth) throws CoreException {
+		if (!rootResource.exists() && !rootResource.isPhantom()) {
+			assertTrue(kind == SyncInfo.IN_SYNC);
+			return;
+		}
+		rootResource.accept(new IResourceVisitor() {
+			public boolean visit(IResource resource) throws CoreException {
+				assertSyncEquals(rootResource.getName(), getSubscriber(), resource, kind);
+				return true;
+			}
+		}, depth, true);
+	}
+	
+	private void assertAllSyncEquals(IResource[] resources, int kind, int depth) throws CoreException {
+		for (int i = 0; i < resources.length; i++) {
+			IResource resource = resources[i];
+			assertAllSyncEquals(resource, kind, depth);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -916,6 +953,38 @@ public class CVSWorkspaceSubscriberTest extends CVSSyncSubscriberTest {
 		assertSyncEquals("sync should be in sync", project, resourceNames, true, inSync);
 	}
 	
+	public void testDeleteProject() throws TeamException, CoreException, IOException {
+		String[] resourceNames = new String[] { "deleted.txt", "file1.txt", "folder1/", "folder1/a.txt" };
+		int[] inSync = new int[] {SyncInfo.IN_SYNC, SyncInfo.IN_SYNC, SyncInfo.IN_SYNC, SyncInfo.IN_SYNC};
+		IProject project = createProject("testDeleteProject", resourceNames);
+		assertSyncEquals("sync should be in sync", project, resourceNames, true, inSync);
+
+		// Make some modifications
+		setContentsAndEnsureModified(project.getFile("folder1/a.txt"));
+		addResources(project, new String[] { "folder2/folder3/add.txt" }, false);
+		deleteResources(project, new String[] {"deleted.txt"}, false);
+		
+		// Get the sync tree for the project
+		assertSyncEquals("testOutgoingChanges", project, 
+			new String[] { "file1.txt", "folder1/", "deleted.txt", "folder1/a.txt", "folder2/", "folder2/folder3/", "folder2/folder3/add.txt"}, 
+			true, new int[] {
+				SyncInfo.IN_SYNC,
+				SyncInfo.IN_SYNC,
+				SyncInfo.OUTGOING | SyncInfo.DELETION,
+				SyncInfo.OUTGOING | SyncInfo.CHANGE,
+				SyncInfo.IN_SYNC, /* adding a folder creates it remotely */
+				SyncInfo.IN_SYNC, /* adding a folder creates it remotely */
+				SyncInfo.OUTGOING | SyncInfo.ADDITION});
+				
+		project.delete(true, false, DEFAULT_MONITOR);
+		
+		assertProjectRemoved(project);
+	}
+	
+	protected void assertProjectRemoved(IProject project) throws TeamException {
+		getSyncInfoSource().assertProjectRemoved(getWorkspaceSubscriber(), project);
+	}
+
 	public void testFolderDeletion() throws TeamException, CoreException {
 		
 		IProject project = createProject("testFolderDeletion", new String[] { "changed.txt", "deleted.txt", "folder1/", "folder1/a.txt", "folder1/folder2/file.txt"});

@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
+import org.eclipse.team.core.subscribers.TeamProvider;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSMergeSubscriber;
@@ -88,6 +89,12 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		action.run(new SyncInfoSet(infos), DEFAULT_MONITOR);
 	}
 
+	private CVSMergeSubscriber createMergeSubscriber(IProject project, CVSTag root, CVSTag branch) {
+		CVSMergeSubscriber subscriber = new CVSMergeSubscriber(new IResource[] { project }, root, branch);
+		TeamProvider.registerSubscriber(subscriber);
+		return subscriber;
+	}
+	
 	/**
 	 * Test the basic incoming changes cases
 	 * - incoming addition
@@ -110,7 +117,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		changeResources(copy, new String[] {"file1.txt"}, true);
 		
 		// create a merge subscriber
-		CVSMergeSubscriber subscriber = new CVSMergeSubscriber(new IResource[] { project }, root, branch);
+		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
 		
 		// check the sync states
 		assertSyncEquals("testIncomingChanges", subscriber, project, 
@@ -167,7 +174,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		appendText(project.getFile("file2.txt"), "first line\n", true);
 		
 		// create a merge subscriber
-		CVSMergeSubscriber subscriber = new CVSMergeSubscriber(new IResource[] { project }, root, branch);
+		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
 		
 		// check the sync states
 		assertSyncEquals("testMergableConflicts", subscriber, project, 
@@ -219,7 +226,7 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		appendText(project.getFile("file2.txt"), "conflict line\n", false);
 		
 		// create a merge subscriber
-		CVSMergeSubscriber subscriber = new CVSMergeSubscriber(new IResource[] { project }, root, branch);
+		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
 		
 		// check the sync states
 		assertSyncEquals("testUnmergableConflicts", subscriber, project, 
@@ -266,4 +273,91 @@ public class CVSMergeSubscriberTest extends CVSSyncSubscriberTest {
 		//TODO: How do we know if the right thing happend to the file contents?
 	}
 	
+	public void testLocalScrub() throws CVSException, CoreException, IOException {
+		// Create a test project
+		IProject project = createProject("testLocalScrub", new String[] { "delete.txt", "file1.txt", "file2.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		setContentsAndEnsureModified(project.getFile("file1.txt"), "some text\nwith several lines\n");
+		setContentsAndEnsureModified(project.getFile("file2.txt"), "some text\nwith several lines\n");
+		commitProject(project);
+		
+		// Checkout and branch a copy
+		CVSTag root = new CVSTag("root_branch1", CVSTag.VERSION);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		IProject branchedProject = branchProject(project, root, branch);
+		
+		// modify the branch
+		appendText(branchedProject.getFile("file1.txt"), "first line\n", true);
+		appendText(branchedProject.getFile("file2.txt"), "last line\n", false);
+		addResources(branchedProject, new String[] {"addition.txt"}, false);
+		deleteResources(branchedProject, new String[] {"delete.txt", "folder1/a.txt"}, false);
+		setContentsAndEnsureModified(branchedProject.getFile("folder1/b.txt"));
+		commitProject(branchedProject);
+		
+		// create a merge subscriber
+		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
+
+		// check the sync states
+		assertSyncEquals("testLocalScrub", subscriber, project, 
+			new String[] { "delete.txt", "file1.txt", "file2.txt", "addition.txt", "folder1/a.txt", "folder1/b.txt"}, 
+			true, new int[] {
+				SyncInfo.INCOMING | SyncInfo.DELETION,
+				SyncInfo.INCOMING | SyncInfo.CHANGE, 
+				SyncInfo.INCOMING | SyncInfo.CHANGE,
+				SyncInfo.INCOMING | SyncInfo.ADDITION,
+				SyncInfo.INCOMING | SyncInfo.DELETION,
+				SyncInfo.INCOMING | SyncInfo.CHANGE});
+				
+		// scrub the project contents
+		IResource[] members = project.members();
+		for (int i = 0; i < members.length; i++) {
+			IResource resource = members[i];
+			if (resource.getName().equals(".project")) continue;
+			resource.delete(false, DEFAULT_MONITOR);
+		}
+		
+		// update
+		mergeResources(subscriber, project, new String[] { "delete.txt", "file1.txt", "file2.txt", "addition.txt", "folder1/a.txt", "folder1/b.txt"});
+		
+		// commit
+		commitProject(project);
+	}
+	
+	public void testCancel() throws CVSException, CoreException, IOException {
+		
+		// Create a test project
+		IProject project = createProject("testMergableConflicts", new String[] { "file1.txt", "file2.txt", "folder1/", "folder1/a.txt", "folder1/b.txt"});
+		setContentsAndEnsureModified(project.getFile("file1.txt"), "some text\nwith several lines\n");
+		setContentsAndEnsureModified(project.getFile("file2.txt"), "some text\nwith several lines\n");
+		commitProject(project);
+
+		// Checkout and branch a copy
+		CVSTag root = new CVSTag("root_branch1", CVSTag.VERSION);
+		CVSTag branch = new CVSTag("branch1", CVSTag.BRANCH);
+		IProject branchedProject = branchProject(project, root, branch);
+		
+		// modify the branch
+		appendText(branchedProject.getFile("file1.txt"), "first line\n", true);
+		appendText(branchedProject.getFile("file2.txt"), "last line\n", false);
+		commitProject(branchedProject);
+		
+		// modify HEAD
+		appendText(project.getFile("file1.txt"), "last line\n", false);
+		commitProject(project);
+		// have one local change
+		appendText(project.getFile("file2.txt"), "first line\n", true);
+		
+		// create a merge subscriber
+		CVSMergeSubscriber subscriber = createMergeSubscriber(project, root, branch);
+		
+		// check the sync states
+		assertSyncEquals("testMergableConflicts", subscriber, project, 
+			new String[] { "file1.txt", "file2.txt"}, 
+			true, new int[] {
+				SyncInfo.CONFLICTING | SyncInfo.CHANGE, 
+				SyncInfo.CONFLICTING | SyncInfo.CHANGE});
+		
+		// cancel the subscriber
+		subscriber.cancel();	
+		
+	}
 }
