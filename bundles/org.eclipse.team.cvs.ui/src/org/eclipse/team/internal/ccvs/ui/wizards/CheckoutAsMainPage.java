@@ -102,7 +102,7 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 		configuredProjectButton = createRadioButton(composite, Policy.bind("CheckoutAsMainPage.asConfiguredProject"), 1); //$NON-NLS-1$
 		if (!allowProjectConfiguration) {
 			configuredProjectButton.setEnabled(false);
-			Label configuredLabel = createWrappingLabel(composite, "(Only available when the .project file does not exist in the repository)", 5);
+			Label configuredLabel = createWrappingLabel(composite, Policy.bind("CheckoutAsMainPage.10"), 5); //$NON-NLS-1$
 			configuredLabel.setEnabled(false);
 		}
 		createCheckoutAsProjectRadioArea(composite);

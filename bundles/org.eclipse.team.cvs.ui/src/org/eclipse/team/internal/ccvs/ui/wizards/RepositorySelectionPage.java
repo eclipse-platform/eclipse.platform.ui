@@ -34,6 +34,8 @@ public class RepositorySelectionPage extends CVSWizardPage {
 	
 	private ICVSRepositoryLocation result;
 	
+	String extendedDescription;
+	
 	/**
 	 * RepositorySelectionPage constructor.
 	 * 
@@ -67,8 +69,10 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		Composite composite = createComposite(parent, 1);
 		// set F1 help
 		WorkbenchHelp.setHelp(composite, IHelpContextIds.SHARING_SELECT_REPOSITORY_PAGE);
-		
-		createWrappingLabel(composite, Policy.bind("RepositorySelectionPage.description"), 0 /* indent */, 1 /* columns */); //$NON-NLS-1$
+		if (extendedDescription == null) {
+			extendedDescription = Policy.bind("RepositorySelectionPage.description"); //$NON-NLS-1$
+		}
+		createWrappingLabel(composite, extendedDescription, 0 /* indent */, 1 /* columns */); 
 		
 		useNewRepo = createRadioButton(composite, Policy.bind("RepositorySelectionPage.useNew"), 1); //$NON-NLS-1$
 		
@@ -124,5 +128,9 @@ public class RepositorySelectionPage extends CVSWizardPage {
 		if (visible) {
 			useExistingRepo.setFocus();
 		}
+	}
+	
+	public void setExtendedDescription(String extendedDescription) {
+		this.extendedDescription = extendedDescription;
 	}
 }

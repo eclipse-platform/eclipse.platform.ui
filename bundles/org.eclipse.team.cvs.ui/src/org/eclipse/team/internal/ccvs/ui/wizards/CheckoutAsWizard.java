@@ -23,6 +23,7 @@ import org.eclipse.team.internal.ccvs.ui.operations.*;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.NewProjectAction;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 
 /**
  * @author Administrator
@@ -89,7 +90,7 @@ public class CheckoutAsWizard extends Wizard {
 		locationSelectionPage = new CheckoutAsLocationSelectionPage(substImage, remoteFolders);
 		addPage(locationSelectionPage);
 		
-		tagSelectionPage = new TagSelectionWizardPage("tagPage", "Select Tag", substImage, "Choose the tag to check out from", "&Select tag", ProjectElement.INCLUDE_ALL_TAGS);
+		tagSelectionPage = new TagSelectionWizardPage("tagPage", Policy.bind("CheckoutAsWizard.3"), substImage, Policy.bind("CheckoutAsWizard.4"), Policy.bind("CheckoutAsWizard.5"), ProjectElement.INCLUDE_ALL_TAGS); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		tagSelectionPage.setFolders(remoteFolders);
 		addPage(tagSelectionPage);
 	}

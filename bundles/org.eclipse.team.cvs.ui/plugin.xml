@@ -134,21 +134,6 @@
             id="org.eclipse.team.ccvs.ui.propertyPages.RepositoryEncodingPage">
       </page>
    </extension>
-<!-- ******************* Action Definitions ******************** -->
-   <extension
-         point="org.eclipse.ui.commands">
-      <category
-            name="%CVSActionSet.categoryName"
-            description="%CVSActionSet.description"
-            id="org.eclipse.team.cvs.ui.actionSet">
-      </category>
-      <command
-            name="%CVSActionSet.newLabel"
-            description="%CVSActionSet.newTooltip"
-            category="org.eclipse.team.cvs.ui.actionSet"
-            id="org.eclipse.team.cvs.ui.new.location">
-      </command>
-   </extension>
 <!-- ******************* Menus ******************** -->
    <extension
          point="org.eclipse.ui.popupMenus">
@@ -984,13 +969,43 @@
          <action
                definitionId="org.eclipse.team.cvs.ui.new.location"
                label="%CVSActionSet.newLabel"
-               icon="icons/full/wizards/newconnect_wiz.gif"
+               icon="icons/full/wizards/newlocation_wiz.gif"
                class="org.eclipse.team.internal.ccvs.ui.actions.NewRepositoryAction"
                tooltip="%CVSActionSet.newTooltip"
                toolbarPath="Normal/CVS"
                id="org.eclipse.team.cvs.ui.actions.NewRepositoryAction">
          </action>
+         <action
+               definitionId="org.eclipse.team.cvs.ui.checkout"
+               label="%CVSActionSet.checkoutLabel"
+               icon="icons/full/wizards/newconnect_wiz.gif"
+               class="org.eclipse.team.internal.ccvs.ui.actions.CheckoutWizardAction"
+               tooltip="%CVSActionSet.checkoutTooltip"
+               toolbarPath="Normal/CVS"
+               id="org.eclipse.team.cvs.ui.actions.CheckoutAction">
+         </action>
       </actionSet>
+   </extension>
+   <!-- ******************* Action Definitions ******************** -->
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            name="%CVSActionSet.categoryName"
+            description="%CVSActionSet.description"
+            id="org.eclipse.team.cvs.ui.actionSet">
+      </category>
+      <command
+            name="%CVSActionSet.newLabel"
+            description="%CVSActionSet.newTooltip"
+            category="org.eclipse.team.cvs.ui.actionSet"
+            id="org.eclipse.team.cvs.ui.new.location">
+      </command>
+            <command
+            name="%CVSActionSet.checkoutLabel"
+            description="%CVSActionSet.checkoutTooltip"
+            category="org.eclipse.team.cvs.ui.actionSet"
+            id="org.eclipse.team.cvs.ui.checkout">
+      </command>
    </extension>
 <!-- ********** Font Definitions ************** -->
    <extension

@@ -102,6 +102,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 			modulePage = new ModuleSelectionPage("modulePage", Policy.bind("SharingWizard.enterModuleName"), sharingImage); //$NON-NLS-1$ //$NON-NLS-2$
 			modulePage.setDescription(Policy.bind("SharingWizard.enterModuleNameDescription")); //$NON-NLS-1$
 			modulePage.setCVSWizard(this);
+			modulePage.setProject(project);
 			addPage(modulePage);
 			
 			addTagPage(sharingImage);
@@ -114,7 +115,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 			Policy.bind("SharingWizard.selectTagTitle"),  //$NON-NLS-1$
 			sharingImage,
 			Policy.bind("SharingWizard.selectTag"), //$NON-NLS-1$
-			Policy.bind("SharingWizard.selectTag"),
+			Policy.bind("SharingWizard.selectTag"), //$NON-NLS-1$
 			ProjectElement.INCLUDE_HEAD_TAG | ProjectElement.INCLUDE_BRANCHES); //$NON-NLS-1$
 		tagPage.setCVSWizard(this);
 		addPage(tagPage);
@@ -155,10 +156,24 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 			if (locationPage.getLocation() == null) {
 				return createLocationPage;
 			} else {
+				if (aboutToShow) {
+					try {
+						modulePage.setLocation(getLocation());
+					} catch (TeamException e1) {
+						CVSUIPlugin.log(e1);
+					}
+				}
 				return modulePage;
 			}
 		}
 		if (page == createLocationPage) {
+			if (aboutToShow) {
+				try {
+					modulePage.setLocation(getLocation());
+				} catch (TeamException e1) {
+					CVSUIPlugin.log(e1);
+				}
+			}
 			return modulePage;
 		}
 		try {
@@ -328,19 +343,6 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		}
 		return location;
 	}
-
-	/**
-	 * Return the module name.
-	 */
-	private String getModuleName() {
-		// If there is an autoconnect page then it has the module name
-		if (autoconnectPage != null) {
-			return autoconnectPage.getSharing().getRepository();
-		}
-		String moduleName = modulePage.getModuleName();
-		if (moduleName == null) moduleName = project.getName();
-		return moduleName;
-	}
 	
 	/*
 	 * @see IConfigurationWizard#init(IWorkbench, IProject)
@@ -444,7 +446,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 		}
 		
 		// Create the remote module for the project
-		ShareProjectOperation op = new ShareProjectOperation(null, location, project, getModuleName());
+		ShareProjectOperation op = new ShareProjectOperation(null, location, project, getRemoteFolder().getRepositoryRelativePath());
 		op.setShell(getShell());
 		op.run(Policy.subMonitorFor(monitor, 50));
 		return true;
@@ -458,14 +460,8 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	}
 	
 	private ICVSRemoteFolder getRemoteFolder() {
-		try {
-			ICVSRepositoryLocation location = getLocation();
-			if (location == null) return null;
-			return location.getRemoteFolder(getModuleName(), getTag());
-		} catch (TeamException e) {
-			CVSProviderPlugin.log(e);
-			return null;
-		}
+		ICVSRemoteFolder folder = modulePage.getSelectedModule();
+		return (ICVSRemoteFolder)folder.forTag(getTag());
 	}
 	
 	private boolean exists(ICVSRemoteFolder folder, IProgressMonitor monitor) throws TeamException {
