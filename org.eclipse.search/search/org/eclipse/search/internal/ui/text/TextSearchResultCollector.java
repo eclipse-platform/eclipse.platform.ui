@@ -4,6 +4,7 @@
  */
 package org.eclipse.search.internal.ui.text;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.IMarker;
@@ -20,14 +21,16 @@ import org.eclipse.search.internal.ui.SearchMessages;
 
 public class TextSearchResultCollector implements ITextSearchResultCollector {
 	
-	private static final String SPACE_MATCH= " " + SearchMessages.getString("SearchResultCollector.match"); //$NON-NLS-2$ //$NON-NLS-1$
-	private static final String SPACE_MATCHES= " " + SearchMessages.getString("SearchResultCollector.matches"); //$NON-NLS-2$ //$NON-NLS-1$
+	private static final String MATCH= SearchMessages.getString("SearchResultCollector.match"); //$NON-NLS-1$
+	private static final String MATCHES= SearchMessages.getString("SearchResultCollector.matches"); //$NON-NLS-1$
+	private static final String DONE= SearchMessages.getString("SearchResultCollector.done"); //$NON-NLS-1$
 
 	private IProgressMonitor fMonitor;
 	private ISearchResultView fView;
 	private TextSearchOperation fOperation;
 	private int fMatchCount= 0;
-		
+	private Integer[] fMessageFormatArgs= new Integer[1];
+			
 	/**
 	 * Returns the progress monitor used to setup and report progress.
 	 */
@@ -73,16 +76,13 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 		String description= resource.getFullPath().lastSegment();
 		if (description == null)
 			description= "";  //$NON-NLS-1$
+
 		fView.addMatch(description, resource, resource, marker);
-		fMatchCount= fMatchCount + 1;
-		if (!getProgressMonitor().isCanceled()) {
-			String text;
-			if (fMatchCount == 1)
-				text= fMatchCount + SPACE_MATCH;
-			else
-				text= fMatchCount + SPACE_MATCHES;
-			getProgressMonitor().subTask(text);
-		}
+		
+		fMatchCount++;
+		if (!getProgressMonitor().isCanceled())
+			getProgressMonitor().subTask(getFormattedMatchesString(fMatchCount));
+		
 	}
 	
 	/**
@@ -90,13 +90,10 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 	 */
 	public void done() {
 		if (!getProgressMonitor().isCanceled()) {
-			String matchString;
-			if (fMatchCount == 1)
-				matchString= fMatchCount + SPACE_MATCH;
-			else
-				matchString= fMatchCount + SPACE_MATCHES;
-			getProgressMonitor().setTaskName(SearchMessages.getString("SearchResultCollector.done") + ": " + matchString + "   "); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
+			String matchesString= getFormattedMatchesString(fMatchCount);
+			getProgressMonitor().setTaskName(MessageFormat.format(DONE, new String[]{matchesString}));
 		}
+
 		if (fView != null)
 			fView.searchFinished();
 			
@@ -107,5 +104,13 @@ public class TextSearchResultCollector implements ITextSearchResultCollector {
 
 	void setOperation(TextSearchOperation operation) {
 		fOperation= operation;
+	}
+
+	private String getFormattedMatchesString(int count) {
+		if (fMatchCount == 1)
+			return MATCH;
+		fMessageFormatArgs[0]= new Integer(count);
+		return MessageFormat.format(MATCHES, fMessageFormatArgs);
+
 	}
 }

@@ -91,7 +91,7 @@ public class MessageLine extends CLabel {
 	 * Sets the default error color used by all message lines.
 	 * Note: a call to this method only affects newly created MessageLines not existing ones. 
 	 */
-	public static void setErrorColor(RGB color) {
+	public static void setDefaultErrorColor(RGB color) {
 		fgErrorRGB= color;
 	}
 
