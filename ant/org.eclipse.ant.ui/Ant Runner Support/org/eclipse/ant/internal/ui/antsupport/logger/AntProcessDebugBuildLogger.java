@@ -229,9 +229,9 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 			stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 			
 			Location location= task.getLocation();
-			stackRepresentation.append(location.getFileName());
+			stackRepresentation.append(getFileName(location));
 			stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
-			stackRepresentation.append(location.getLineNumber());
+			stackRepresentation.append(getLineNumber(location));
 			stackRepresentation.append(DebugMessageIds.MESSAGE_DELIMITER);
 		}	
 		 
@@ -260,7 +260,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
         return null;
     }
     
-    private static int getLineNumber(Location location) {
+    private int getLineNumber(Location location) {
 		try { //succeeds with Ant newer than 1.6
 			return location.getLineNumber();
 		} catch (NoSuchMethodError e) {
@@ -299,9 +299,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 				index= lastIndex; //only the filename is known
 			}
 			if (index != -1) {
-				if (lastIndex == - 1) {
-					lastIndex= locationString.length();
-				}
+				//remove file:
 				return locationString.substring(5, index);
 			}
 			return null;

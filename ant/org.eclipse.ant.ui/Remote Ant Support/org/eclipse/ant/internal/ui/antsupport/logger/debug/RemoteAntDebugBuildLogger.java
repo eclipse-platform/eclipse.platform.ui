@@ -357,7 +357,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		}
 	}
 	
-	private static int getLineNumber(Location location) {
+	private int getLineNumber(Location location) {
 		try {
 			return location.getLineNumber();
 		} catch (NoSuchMethodError e) {
@@ -371,7 +371,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 			int index =locationString.lastIndexOf(':', lastIndex - 1);
 			if (index != -1) {
 				try {
-					return Integer.parseInt(locationString.substring(index+1, lastIndex));
+					return Integer.parseInt(locationString.substring(index + 1, lastIndex));
 				} catch (NumberFormatException nfe) {
 					return 0;
 				}
@@ -396,9 +396,6 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 				index= lastIndex; //only the filename is known
 			}
 			if (index != -1) {
-				if (lastIndex == - 1) {
-					lastIndex= locationString.length();
-				}
 				return locationString.substring(5, index);
 			}
 			return null;
