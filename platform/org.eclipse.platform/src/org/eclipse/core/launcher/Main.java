@@ -1166,7 +1166,7 @@ public class Main {
 		// if the config or parent we are about to read is the same as the base config we read above,
 		// just reuse the base
 		Properties configuration = baseConfiguration;
-		if (configuration == null || !getConfigurationLocation().equals(baseConfigurationLocation.toExternalForm()))
+		if (configuration == null || !getConfigurationLocation().equals(baseConfigurationLocation))
 			configuration = loadConfiguration(getConfigurationLocation());
 		mergeProperties(System.getProperties(), configuration);
 		if ("false".equalsIgnoreCase(System.getProperty(PROP_CONFIG_CASCADED))) //$NON-NLS-1$
