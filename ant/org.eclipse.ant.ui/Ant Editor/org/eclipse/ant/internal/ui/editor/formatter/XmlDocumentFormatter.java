@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     John-Mason P. Shackelford - initial API and implementation
- * 	   IBM Corporation - bug 52076
+ * 	   IBM Corporation - bug fixes
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.formatter;
@@ -425,7 +425,7 @@ public class XmlDocumentFormatter {
 	 * @param line the text line
 	 * @param tabWidth the width of the '\t' character.
 	 */
-	public int computeIndent(String line, int tabWidth) {
+	public static int computeIndent(String line, int tabWidth) {
 		int result= 0;
 		int blanks= 0;
 		int size= line.length();
@@ -451,14 +451,14 @@ public class XmlDocumentFormatter {
 	 * Indent char is a space char but not a line delimiters.
 	 * <code>== Character.isWhitespace(ch) && ch != '\n' && ch != '\r'</code>
 	 */
-	public boolean isIndentChar(char ch) {
+	public static boolean isIndentChar(char ch) {
 		return Character.isWhitespace(ch) && !isLineDelimiterChar(ch);
 	}
 	
 	/**
 	 * Line delimiter chars are  '\n' and '\r'.
 	 */
-	public boolean isLineDelimiterChar(char ch) {
+	public static boolean isLineDelimiterChar(char ch) {
 		return ch == '\n' || ch == '\r';
 	}	
 	
