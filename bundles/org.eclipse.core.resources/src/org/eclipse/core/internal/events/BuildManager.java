@@ -23,7 +23,7 @@ public class BuildManager implements ICoreConstants, IManager {
 public BuildManager(Workspace workspace) {
 	this.workspace = workspace;
 }
-void basicBuild(IProject project, int trigger, ICommand[] commands, IProgressMonitor monitor) throws CoreException {
+void basicBuild(IProject project, int trigger, ICommand[] commands, MultiStatus status, IProgressMonitor monitor) {
 	monitor = Policy.monitorFor(monitor);
 	try {
 		String message = Policy.bind("building", new String[] { project.getFullPath().toString()});
@@ -31,18 +31,25 @@ void basicBuild(IProject project, int trigger, ICommand[] commands, IProgressMon
 		for (int i = 0; i < commands.length; i++) {
 			IProgressMonitor sub = Policy.subMonitorFor(monitor, 1);
 			BuildCommand command = (BuildCommand) commands[i];
-			basicBuild(project, trigger, command.getBuilderName(), command.getArguments(false), sub);
+			basicBuild(project, trigger, command.getBuilderName(), command.getArguments(false), status, sub);
 			Policy.checkCanceled(monitor);
 		}
 	} finally {
 		monitor.done();
 	}
 }
-void basicBuild(IProject project, int trigger, String builderName, Map args, IProgressMonitor monitor) throws CoreException {
-	IncrementalProjectBuilder builder = getBuilder(builderName, project);
+void basicBuild(IProject project, int trigger, String builderName, Map args, MultiStatus status, IProgressMonitor monitor) {
+	IncrementalProjectBuilder builder = null;
+	try {
+		builder = getBuilder(builderName, project);
+	} catch (CoreException e) {
+		status.add(e.getStatus());
+		return;
+	}
 	if (builder == null) {
 		String message = Policy.bind("instantiate", new String[] { builderName });
-		throw new ResourceException(IResourceStatus.BUILD_FAILED, project.getFullPath(), message, null);
+		status.add(new ResourceStatus(IResourceStatus.BUILD_FAILED, project.getFullPath(), message));
+		return;
 	}
 	// get the builder name to be used as a progress message
 	IExtension extension = Platform.getPluginRegistry().getExtension(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_BUILDERS, builderName);
@@ -56,9 +63,9 @@ void basicBuild(IProject project, int trigger, String builderName, Map args, IPr
 	if (message == null)
 		message = Policy.bind("invoking", new String[] {"builder on " + project.getFullPath()});
 	monitor.subTask(message);
-	basicBuild(project, trigger, builder, args, monitor);
+	basicBuild(project, trigger, builder, args, status, monitor);
 }
-void basicBuild(final IProject project, final int trigger, final IncrementalProjectBuilder builder, final Map args, final IProgressMonitor monitor) throws CoreException {
+void basicBuild(final IProject project, final int trigger, final IncrementalProjectBuilder builder, final Map args, final MultiStatus status, final IProgressMonitor monitor) {
 	try {
 		// want to invoke some methods not accessible via IncrementalProjectBuilder
 		currentBuilder = (InternalBuilder) builder;
@@ -74,7 +81,6 @@ void basicBuild(final IProject project, final int trigger, final IncrementalProj
 		workspace.newWorkingTree();
 		try {
 			// ResourceStats.startBuild(builderName);
-			final MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Errors during build.", null);
 			ISafeRunnable code = new ISafeRunnable() {
 				public void run() throws Exception {
 					IProject[] builders = currentBuilder.build(trigger, args, monitor);
@@ -99,10 +105,6 @@ void basicBuild(final IProject project, final int trigger, final IncrementalProj
 				}
 			};
 			Platform.run(code);
-			// if the status is not ok, throw an exception with the first child.  There can only be one child 
-			// since we only ever add one.
-			if (!status.isOK())
-				throw new CoreException(status.getChildren()[0]);
 		} finally {
 			// ResourceStats.endBuild();
 			// Always remember the current state as the last built state.
@@ -121,36 +123,27 @@ void basicBuild(final IProject project, final int trigger, final IncrementalProj
 		lastBuiltTree = null;
 	}
 }
-void basicBuild(final IProject project, final int trigger, final IProgressMonitor monitor) throws CoreException {
+void basicBuild(final IProject project, final int trigger, final MultiStatus status, final IProgressMonitor monitor) {
 	final ICommand[] commands = ((Project) project).internalGetDescription().getBuildSpec(false);
 	if (commands.length == 0)
 		return;
-	final MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Errors during build.", null);
 	ISafeRunnable code = new ISafeRunnable() {
 		public void run() throws Exception {
-			basicBuild(project, trigger, commands, monitor);
+			basicBuild(project, trigger, commands, status, monitor);
 		}
 		public void handleException(Throwable e) {
 			if (e instanceof OperationCanceledException)
 				throw (OperationCanceledException) e;
 			// don't log the exception....it is already being logged in Workspace#run
-			if (e instanceof CoreException)
-				status.add(((CoreException) e).getStatus());
-			else {
-				// should never get here because the lower-level build code wrappers
-				// builder exceptions in core exceptions if required.
-				String message = e.getMessage();
-				if (message == null)
-					message = e.getClass().getName() + " encountered while running " + currentBuilder.getClass().getName();
-				status.add(new Status(Status.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
-			}
+			// should never get here because the lower-level build code wrappers
+			// builder exceptions in core exceptions if required.
+			String message = e.getMessage();
+			if (message == null)
+				message = e.getClass().getName() + " encountered while running " + currentBuilder.getClass().getName();
+			status.add(new Status(Status.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
 		}
 	};
 	Platform.run(code);
-	// if the status is not ok, throw an exception with the first child.  There can only be one child 
-	// since we only ever add one.
-	if (!status.isOK())
-		throw new CoreException(status.getChildren()[0]);
 }
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -158,19 +151,28 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 		monitor.beginTask("Building workspace.", Policy.totalWork);
 		if (!canRun(trigger))
 			return;
-		IProject[] ordered = workspace.getBuildOrder();
-		IProject[] unordered = null;
-		HashSet leftover = new HashSet(5);
-		leftover.addAll(Arrays.asList(workspace.getRoot().getProjects()));
-		leftover.removeAll(Arrays.asList(ordered));
-		unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
-		int num = ordered.length + unordered.length;
-		for (int i = 0; i < ordered.length; i++)
-			if (ordered[i].isAccessible())
-				build(ordered[i], trigger, Policy.subMonitorFor(monitor, Policy.totalWork / num));
-		for (int i = 0; i < unordered.length; i++)
-			if (unordered[i].isAccessible())
-				build(unordered[i], trigger, Policy.subMonitorFor(monitor, Policy.totalWork / num));
+		try {
+			building = true;
+			IProject[] ordered = workspace.getBuildOrder();
+			IProject[] unordered = null;
+			HashSet leftover = new HashSet(5);
+			leftover.addAll(Arrays.asList(workspace.getRoot().getProjects()));
+			leftover.removeAll(Arrays.asList(ordered));
+			unordered = (IProject[]) leftover.toArray(new IProject[leftover.size()]);
+			int num = ordered.length + unordered.length;
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Errors during build.", null);
+			for (int i = 0; i < ordered.length; i++)
+				if (ordered[i].isAccessible())
+					basicBuild(ordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
+			for (int i = 0; i < unordered.length; i++)
+				if (unordered[i].isAccessible())
+					basicBuild(unordered[i], trigger, status, Policy.subMonitorFor(monitor, Policy.totalWork / num));
+			// if the status is not ok, throw an exception 
+			if (!status.isOK())
+				throw new ResourceException(status);
+		} finally {
+			building = false;
+		}
 	} finally {
 		monitor.done();
 	}
@@ -184,7 +186,10 @@ public void build(IProject project, int kind, String builderName, Map args, IPro
 			return;
 		try {
 			building = true;
-			basicBuild(project, kind, builderName, args, Policy.subMonitorFor(monitor, 1));
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Errors during build.", null);
+			basicBuild(project, kind, builderName, args, status, Policy.subMonitorFor(monitor, 1));
+			if (!status.isOK())
+				throw new ResourceException(status);
 		} finally {
 			building = false;
 		}
@@ -197,7 +202,10 @@ public void build(IProject project, int trigger, IProgressMonitor monitor) throw
 		return;
 	try {
 		building = true;
-		basicBuild(project, trigger, monitor);
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "Errors during build.", null);
+		basicBuild(project, trigger, status, monitor);
+		if (!status.isOK())
+			throw new ResourceException(status);
 	} finally {
 		building = false;
 	}
