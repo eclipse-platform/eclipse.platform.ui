@@ -908,7 +908,7 @@ public void move(IProjectDescription destination, boolean force, boolean keepHis
  * project.  Relative paths are considered to be relative to the
  * container of the resource being moved. A trailing slash is ignored.
  * </p>
- * <p>Calling this method with a one segement absolute destination
+ * <p>Calling this method with a one segment absolute destination
  * path is equivalent to calling:
  * <pre>
  		move(workspace.newProjectDescription(folder.getName()), force, keepHistory, monitor);
