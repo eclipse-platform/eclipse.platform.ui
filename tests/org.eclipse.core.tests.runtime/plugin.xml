@@ -206,6 +206,9 @@
    <test id="jobs.IJobManagerTest">
       <run class="org.eclipse.core.tests.runtime.jobs.IJobManagerTest"/>
     </test>
+   <test id="jobs.JobTest">
+      <run class="org.eclipse.core.tests.runtime.jobs.JobTest"/>
+    </test>
 
  </extension>
 
