@@ -5,7 +5,9 @@ package org.eclipse.team.internal.ccvs.core.client;
  * All Rights Reserved.
  */
  
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
@@ -22,21 +24,43 @@ import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFile;
 import org.eclipse.team.internal.ccvs.core.resources.LocalFolder;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 public class Session {
 	public static final String CURRENT_LOCAL_FOLDER = ".";
 	public static final String CURRENT_REMOTE_FOLDER = "";
 	public static final String SERVER_SEPARATOR = "/";
 
-	private Connection connection;
-	private CVSRepositoryLocation location;
-	private ICVSFolder localRoot;
-	private String validRequests;
-	private Date modTime;
-	private boolean noLocalChanges;
+	// default file transfer buffer size (in bytes)
+	private static int TRANSFER_BUFFER_SIZE = 8192;
+	// update progress bar in increments of this size (in bytes)
+	//   no incremental progress shown for files smaller than this size
+	private static long TRANSFER_PROGRESS_INCREMENT = 32768;
+
+	// the platform's line termination sequence
+	private static final byte[] PLATFORM_NEWLINE_BYTES =
+		System.getProperty("line.separator").getBytes(); // at least one byte long
+	// the server's line termination sequence
+	private static final int SERVER_NEWLINE_BYTE = 0x0a; // exactly one byte long
+	private static final byte[] SERVER_NEWLINE_BYTES = new byte[] { SERVER_NEWLINE_BYTE };
+	// true iff newlines must be converted between platform and server formats
+	private static boolean MUST_CONVERT_NEWLINES = PLATFORM_NEWLINE_BYTES.length != 1
+		&& PLATFORM_NEWLINE_BYTES[0] != SERVER_NEWLINE_BYTE;
+		
+	// VCM 1.0 comitted files using CR/LF as a delimiter
+	private static final int CARRIAGE_RETURN_BYTE = 0x0d;
+
+	private final CVSRepositoryLocation location;
+	private final ICVSFolder localRoot;
 	private boolean outputToConsole;
+	private Connection connection = null;
+	private String validRequests = null;
+	private Date modTime = null;
+	private boolean noLocalChanges = false;
+
+	// a shared buffer used for file transfers
+	private byte[] transferBuffer = null;
 
 	/**
 	 * Creates a new CVS session.
@@ -51,7 +75,6 @@ public class Session {
 	public Session(ICVSRepositoryLocation location, ICVSFolder localRoot, boolean outputToConsole) {
 		this.location = (CVSRepositoryLocation) location;
 		this.localRoot = localRoot;
-		this.validRequests = "";
 		this.outputToConsole = outputToConsole;
 	}
 	
@@ -163,8 +186,35 @@ public class Session {
 		connection.writeLine("Kopt " + arg);
 	}
 
-	public void sendIsModified(ICVSFile file) throws CVSException {
-		connection.writeLine("Is-modified " + file.getName());
+	/**
+	 * Sends an Is-modified request to the server without the file contents.
+	 * <p>e.g. if a file called "local_file" was modified, sends:
+	 * <pre>
+	 *   Is-modified local_file \n
+	 * </pre></p><p>
+	 * This request is an optimized form of the Modified request and may not
+	 * be supported by all servers.  Hence, if it is not supported, a Modified
+	 * request is sent instead along with the file's contents.  According to
+	 * the CVS protocol specification, this request is only safe for use with
+	 * some forms of: admin, annotate, diff, editors, log, watch-add, watch-off,
+	 * watch-on, watch-remove, and watchers.<br>
+	 * It may be possible to use this for: add, export, remove and status.<br>
+	 * Do not use with co, ci, history, init, import, release, rdiff, rtag, or update.
+	 * </p><p>
+	 * Note: The most recent Directory request must have specified the file's
+	 *       parent folder.
+	 * </p>
+	 * 
+	 * @param file the file that was modified
+	 * @see #sendModified
+	 */
+	public void sendIsModified(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
+		throws CVSException {
+		if (isValidRequest("Is-modified")) {
+			connection.writeLine("Is-modified " + file.getName());
+		} else {
+			sendModified(file, isBinary, monitor);
+		}
 	}
 
 	public void sendStaticDirectory() throws CVSException {
@@ -221,10 +271,22 @@ public class Session {
 		connection.writeLine("Global_option " + option);
 	}
 
-	public void sendUnchanged(String filename) throws CVSException {
-		connection.writeLine("Unchanged " + filename);
+	/**
+	 * Sends an Unchanged request to the server.
+	 * <p>e.g. if a file called "local_file" was not modified, sends:
+	 * <pre>
+	 *   Unchanged local_file \n
+	 * </pre></p><p>
+	 * Note: The most recent Directory request must have specified the file's
+	 *       parent folder.
+	 * </p>
+	 * 
+	 * @param file the file that was not modified
+	 */
+	public void sendUnchanged(ICVSFile file) throws CVSException {
+		connection.writeLine("Unchanged " + file.getName());
 	}
-
+	
 	public void sendQuestionable(String filename) throws CVSException {
 		connection.writeLine("Questionable " + filename);
 	}
@@ -234,46 +296,267 @@ public class Session {
 	}
 
 	/**
-	 * This does not only send the message to the server that the
-	 * file is going to be uploaded.<br>
-	 * It does also acctually upload the file.<br>
-	 * NOTE: The entry line has to be send before calling this method
+	 * Sends a Modified request to the server along with the file contents.
+	 * <p>e.g. if a file called "local_file" was modified, sends:
+	 * <pre>
+	 *   Modified local_file \n
+	 *   file_permissions \n
+	 *   file_size \n
+	 *   [... file_contents ...]
+	 * </pre></p><p>
+	 * Under some circumstances, Is-modified may be used in place of this request.<br>
+	 * Do not use with history, init, import, rdiff, release, rtag, or update.
+	 * </p><p>
+	 * Note: The most recent Directory request must have specified the file's
+	 *       parent folder.
+	 * </p>
+	 * 
+	 * @param file the file that was modified
+	 * @param isBinary if true the file is sent without translating line delimiters
+	 * @param monitor the progress monitor
+	 * @see #sendIsModified
 	 */
-	public void sendModified(ICVSFile file, IProgressMonitor monitor, boolean binary)
+	public void sendModified(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
 		throws CVSException {
-		
-		// boolean binary;
-		
-		// Send
-		// - MODIFIED
-		// - permissions
-		// - size
-		// - Content of the file
-		
-		// Does not send the entryLinde !!
-		connection.writeLine("Modified " + file.getName());					
-		
+		connection.writeLine("Modified " + file.getName());
 		ResourceSyncInfo info = file.getSyncInfo();
-		if (info == null || 
-			info.getPermissions() == null) {
-			connection.writeLine(ResourceSyncInfo.DEFAULT_PERMISSIONS);
-		} else {
+		if (info != null && info.getPermissions() != null) {
 			connection.writeLine(info.getPermissions());
-		} 
+		} else {
+			connection.writeLine(ResourceSyncInfo.DEFAULT_PERMISSIONS);
+		}
+		sendFile(file, isBinary, monitor);
+	}
 
-		String progressTitle =
-			Policy.bind("RequestSender.sendModified", file.getName());
-		monitor.subTask(progressTitle);
-		file.sendTo(connection.getOutputStream(),binary, monitor);
+	/**
+	 * Gets the shared file transfer buffer.
+	 */
+	private byte[] getTransferBuffer() {
+		if (transferBuffer == null) transferBuffer = new byte[TRANSFER_BUFFER_SIZE];
+		return transferBuffer;
 	}
 	
-	InputStream getInputStream() throws CVSException {
-		return connection.getInputStream();
+	/**
+	 * Sends a file to the remote CVS server, possibly translating line delimiters.
+	 * <p>
+	 * Line termination sequences are automatically converted to linefeeds only
+	 * (required by the CVS specification) when sending non-binary files.  This
+	 * may alter the actual size and contents of the file that is sent.
+	 * </p><p>
+	 * Note: Non-binary files must be small enough to fit in available memory.
+	 * </p>
+	 * @param file the file to be sent
+	 * @param isBinary is true if the file should be sent without translation
+	 * @param monitor the progress monitor
+	 */
+	public void sendFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
+		throws CVSException {
+		// update progress monitor
+		String title = Policy.bind("LocalFile.sending", new Object[]{ file.getName() });
+		monitor.subTask(Policy.bind("LocalFile.transferNoSize", title));
+		// obtain an input stream for the file and its size
+		long size = file.getSize();
+		InputStream in = file.getInputStream();
+		OutputStream out = connection.getOutputStream();
+		try {
+			if (isBinary || PLATFORM_NEWLINE_BYTES.length == 1) {
+				writeLine(Long.toString(size));
+				if (! isBinary && MUST_CONVERT_NEWLINES) {
+					/*** convert newlines on-the-fly ***/
+					transferWithProgress(in, out, size,
+						PLATFORM_NEWLINE_BYTES[0], SERVER_NEWLINE_BYTES, monitor, title);
+				} else {
+					/*** perform no conversion ***/
+					transferWithProgress(in, out, size, 0, null, monitor, title);
+				}
+			} else {
+				// implies file is text, and we must convert newlines since size of platform newline
+				// sequence is not 1, but the server's is
+				/*** convert newlines in memory, since file size may change ***/
+				Assert.isTrue(size < Integer.MAX_VALUE);
+				int fsize = (int) size;
+				byte[] fileContents;
+				if (fsize <= TRANSFER_BUFFER_SIZE) fileContents = getTransferBuffer();
+				else fileContents = new byte[fsize];
+				// translate the file from non-LF delimiters in memory and
+				// compute its reduced size
+				try {
+					// read exactly _size_ bytes
+					try {
+						for (int pos = 0, read; pos < fsize; pos += read) {
+							Policy.checkCanceled(monitor);
+							read = in.read(fileContents, pos, fsize - pos);
+							if (read == -1) {
+								// file ended prematurely
+								throw new IOException("Read finished prematurely");
+							}
+						}
+					} finally {
+						in.close(); // remember to close the source file
+						in = null;
+					}
+				} catch (IOException e) {
+					throw CVSException.wrapException(e);
+				}
+				// convert platform line termination sequences
+				// conservative since it leaves any partial sequences alone (like stray CR's)
+				// assumes no prefix of a sequence
+				int cur = 0, match = 0;
+				for (int pos = 0; pos < fsize; ++pos) {
+					byte b = fileContents[pos];
+					if (PLATFORM_NEWLINE_BYTES[match] == b) {
+						if (match == PLATFORM_NEWLINE_BYTES.length - 1) {
+							b = SERVER_NEWLINE_BYTE;
+							cur -= match;
+							match = 0;
+						} else match += 1;
+					} else {
+						match = 0;
+					}
+					fileContents[cur++] = b;
+				}
+				// send file
+				writeLine(Integer.toString(cur));
+				in = new ByteArrayInputStream(fileContents, 0, cur);
+				transferWithProgress(in, out, cur, 0, null, monitor, title);
+			}
+		} finally {
+			try {
+				if (in != null) in.close();
+			} catch (IOException e) {
+				throw CVSException.wrapException(e);
+			}
+		}
+	}
+
+	/**
+	 * Receives a file from the remote CVS server, possibly translating line delimiters.
+	 * <p>
+	 * Line termination sequences are automatically converted to platform format
+	 * only when receiving non-binary files.  This may alter the actual size and
+	 * contents of the file that is received.
+	 * </p><p>
+	 * Translation is performed on-the-fly, so the file need not fit in available memory.
+	 * </p>
+	 * @param file the file to be received
+	 * @param isBinary is true if the file should be received without translation
+	 * @param monitor the progress monitor
+	 */
+	public void receiveFile(ICVSFile file, boolean isBinary, IProgressMonitor monitor)
+	throws CVSException {
+		// update progress monitor
+		String title = Policy.bind("LocalFile.receiving", new Object[]{ file.getName() });
+		monitor.subTask(Policy.bind("LocalFile.transferNoSize", title));
+		// get the file size from the server
+		long size;
+		try {
+			size = Long.parseLong(readLine(), 10);
+		} catch (NumberFormatException e) {
+			throw new CVSException("Malformed file transmission received", e);
+		}
+		// obtain an output stream for the file
+		OutputStream out = file.getOutputStream();
+		try {
+			transferWithProgress(connection.getInputStream(), out, size, SERVER_NEWLINE_BYTE,
+				isBinary ? null : PLATFORM_NEWLINE_BYTES, monitor, title);
+		} finally {
+			try {
+				out.close();
+			} catch (IOException e) {
+				throw CVSException.wrapException(e);
+			}
+		}
 	}
 	
-	OutputStream getOutputStream() throws CVSException {
-		return connection.getOutputStream();
-	}
+	/**
+	 * Transfers a file to or from the remove CVS server, possibly expanding line delimiters.
+	 * <p>
+	 * Line termination sequences are only converted upon request by specifying an
+	 * array containing the expected sequence of bytes representing an outbound newline,
+	 * and a single byte representing an inbound newline.  If null is passed for the
+	 * former, the file is assumed to have binary contents, hence no translation is
+	 * performed.
+	 * </p><p>
+	 * Translation is performed on-the-fly, so the file need not fit in available memory.
+	 * </p>
+	 * @param in the input stream
+	 * @param out the output stream
+	 * @param size the source file size
+	 * @param newlineIn the single byte for a received newline, ignored if binary
+	 * @param newlineOut the sequence of bytes for sent newline, or null if binary
+	 * @param monitor the progress monitor
+	 * @param title the name of the file being received (as shown in the monitor)
+	 */
+	private void transferWithProgress(InputStream in, OutputStream out,
+		long size, int newlineIn, byte[] newlineOut, IProgressMonitor monitor, String title)
+		throws CVSException {
+		long nextProgressThresh = TRANSFER_PROGRESS_INCREMENT;
+		Long ksize = new Long(size / 1024);
+		try {
+			byte[] buffer = getTransferBuffer();
+			final int wfirst, wlast;
+			if (newlineOut != null) {
+				wfirst = buffer.length / 2;
+				wlast = buffer.length - newlineOut.length - 1; // reserve space for newline & stray CR
+			} else {
+				wfirst = buffer.length;
+				wlast = wfirst;
+			}
+			int wpos = wfirst;
+			// read exactly _size_ bytes
+			boolean fixCRLF = (newlineIn == SERVER_NEWLINE_BYTE);
+			boolean seenCR = false; // only true if fixCRLF and last byte was a CR
+			for (long totalRead = 0; totalRead < size;) {
+				Policy.checkCanceled(monitor);
+				int read = in.read(buffer, 0, (int) Math.min(wfirst, size - totalRead));
+				if (read == -1) {
+					// file ended prematurely
+					throw new IOException("Read finished prematurely");
+				}
+				totalRead += read;
+				if (newlineOut == null) {
+					// dump binary data
+					out.write(buffer, 0, read);
+				} else {
+					// filter newline sequences in memory from first half of buffer into second half
+					// then dump to output stream
+					for (int p = 0; p < read; ++p) {
+						final byte b = buffer[p];
+						if (b == CARRIAGE_RETURN_BYTE && fixCRLF) {
+							seenCR = true;
+						} else {
+							if (b == newlineIn) {
+								// if fixCRLF we ignore previous CR (if there was one)
+								// replace newlineIn with newlineOut
+								for (int x = 0; x < newlineOut.length; ++x) buffer[wpos++] = newlineOut[x];
+							} else {
+								if (seenCR) buffer[wpos++] = CARRIAGE_RETURN_BYTE; // preserve stray CR's
+								buffer[wpos++] = b;
+							}
+							seenCR = false;
+						}
+						if (wpos >= wlast) {
+							// flush output buffer
+							out.write(buffer, wfirst, wpos - wfirst);
+							wpos = wfirst;
+						}
+					}
+				}
+				// update progress monitor
+				if (totalRead > nextProgressThresh) {
+					monitor.subTask(Policy.bind("LocalFile.transfer",
+							new Object[] { title, new Long(totalRead / 1024), ksize}));
+					monitor.worked(read);
+					nextProgressThresh = totalRead + TRANSFER_PROGRESS_INCREMENT;
+				}
+			}
+			// flush pending buffered output
+			if (seenCR) buffer[wpos++] = CARRIAGE_RETURN_BYTE; // preserve stray CR's
+			if (wpos != wfirst) out.write(buffer, wfirst, wpos - wfirst);
+		} catch (IOException e) {
+			throw CVSException.wrapException(e);
+		}
+	}	 
 	
 	public ICVSRepositoryLocation getCVSRepositoryLocation() {
 		return location;

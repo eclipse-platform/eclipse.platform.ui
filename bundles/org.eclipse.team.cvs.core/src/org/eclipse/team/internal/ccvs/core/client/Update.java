@@ -42,11 +42,6 @@ public class Update extends Command {
 		LocalOption[] localOptions, ICVSResource[] resources, IProgressMonitor monitor)
 		throws CVSException {			
 		
-		// XXX other clients send this. Should we?
-		// requestSender.writeLine("UseUnchanged");
-		// requestSender.writeLine("Case");
-		// requestSender.sendArgument("-u");	
-		
 		// Send all folders that are already managed to the server
 		// even folders that are empty
 		sendFileStructure(session, resources, false, true, monitor);

@@ -48,72 +48,12 @@ public class ModuleDefinitionsListener implements ICommandOutputListener {
 		else
 			lastLine = line;
 		
-		StringTokenizer tokenizer = new StringTokenizer(line);
-		
-		String module = tokenizer.nextToken();
-		
-		List expansions = new ArrayList(10);
-		
-		// Read the options associated with the module
-		List localOptionsList = new ArrayList();
-		String next = tokenizer.nextToken();
-		while (next.charAt(0) == '-') {
-			switch (next.charAt(1)) {
-				case 'a': // alias
-					localOptionsList.add(Checkout.ALIAS);
-					break;
-				case 'l': // don't recurse
-					localOptionsList.add(Checkout.DO_NOT_RECURSE);
-					break;
-				case 'd': // directory
-					localOptionsList.add(Checkout.makeDirectoryNameOption(tokenizer.nextToken()));
-					break;
-				case 'e':
-				case 'i':
-				case 'o':
-				case 't':
-				case 'u': // Ignore any programs
-					tokenizer.nextToken();
-					break;
-				case 's': // status
-					localOptionsList.add(Checkout.makeStatusOption(tokenizer.nextToken()));
-					break;
-				default: // unanticipated option. Ignore it and go on
-			}
-			next = tokenizer.nextToken();
+		// Use the module name as the key so that multi-line modules will be recorded properly
+		int firstSpace = line.indexOf(" ");
+		if (firstSpace > -1) {
+			String module = line.substring(firstSpace);;
+			moduleMap.put(module, line);
 		}
-		LocalOption[] localOptions = (LocalOption[]) localOptionsList.toArray(new LocalOption[localOptionsList.size()]);
-		
-		if (Checkout.ALIAS.isElementOf(localOptions)) {
-			// An alias expands to one or more projects or modules
-			expansions.add(next);
-			while (tokenizer.hasMoreTokens())
-				expansions.add(tokenizer.nextToken());
-		} else {
-			// The module definition can have a leading directory followed by some files
-			if (!(next.charAt(0) == '&')) {
-				String directory = next;
-				List files = new ArrayList();
-				while (tokenizer.hasMoreTokens() && (next.charAt(0) != '&')) {
-					next = tokenizer.nextToken() ;
-					if ((next.charAt(0) != '&'))
-						files.add(next);
-				}
-				if (files.size() > 0) {
-					for (int i=0;i<files.size();i++)
-						expansions.add(directory + "/" + (String)files.get(i));
-				}
-				else
-					expansions.add(directory);
-			} 
-			// It can also have one or more module references
-			if (next.charAt(0) == '&') {
-				expansions.add(next);
-				while (tokenizer.hasMoreTokens())
-					expansions.add(tokenizer.nextToken());
-			}
-		}
-		moduleMap.put(module, new ModuleExpansion(module, (String[])expansions.toArray(new String[expansions.size()]), localOptions));
 		return OK;
 	}
 
@@ -125,12 +65,12 @@ public class ModuleDefinitionsListener implements ICommandOutputListener {
 		ICVSFolder commandRoot,
 		IProgressMonitor monitor) {
 			
-		// XXX We should get any errors!!!
+		// XXX We should not get any errors!!!
 		return OK;
 	}
 	
-	public ModuleExpansion[] getModuleExpansions() {
-		return (ModuleExpansion[])moduleMap.values().toArray(new ModuleExpansion[moduleMap.size()]);
+	public String[] getModuleExpansions() {
+		return (String[])moduleMap.values().toArray(new String[moduleMap.size()]);
 	}
 
 	public void reset() {

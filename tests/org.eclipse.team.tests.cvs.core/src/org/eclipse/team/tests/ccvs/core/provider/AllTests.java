@@ -31,6 +31,7 @@ public class AllTests extends EclipseTest {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
+		//suite.addTestSuite(ModuleTest.class);
 		suite.addTestSuite(ImportTest.class);
 		suite.addTestSuite(CVSProviderTest.class);
 		suite.addTestSuite(RemoteResourceTest.class);

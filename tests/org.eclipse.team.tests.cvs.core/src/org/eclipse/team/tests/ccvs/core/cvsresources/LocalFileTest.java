@@ -102,42 +102,42 @@ public class LocalFileTest extends JUnitTestCase {
 		assertEquals(file1.getSyncInfo(),fileInfo3);
 	}
 	
-	public void testSendReceive() throws Exception {
-		
-		String sendTxt;
-		String expectTxt;
-		InputStream in;
-
-		sendTxt = "This is my text";
-		expectTxt = sendTxt.length() + "\n" + sendTxt;
-		
-		byte[] result = new byte[sendTxt.length()];
-		
-		PipedInputStream pIn;
-		PipedOutputStream pOut;
-		
-		pIn = new PipedInputStream();
-		pOut = new PipedOutputStream(pIn);
-		
-		in = new BufferedInputStream(pIn,sendTxt.length());
-		
-		pOut.write(sendTxt.getBytes());
-		file1.receiveFrom(in,sendTxt.length(),false,false, new NullProgressMonitor());
-		in.close();
-		pOut.close();
-		
-		result = new byte[expectTxt.length()];
-		pIn = new PipedInputStream();
-		pOut = new PipedOutputStream(pIn);
-		
-		in = new BufferedInputStream(pIn,sendTxt.length());
-		file1.sendTo(pOut,false, new NullProgressMonitor());
-		in.read(result);
-		in.close();
-		pOut.close();
-		
-		assertEquals(new String(result),expectTxt);	
-	}
+//	public void testSendReceive() throws Exception {
+//		
+//		String sendTxt;
+//		String expectTxt;
+//		InputStream in;
+//
+//		sendTxt = "This is my text";
+//		expectTxt = sendTxt.length() + "\n" + sendTxt;
+//		
+//		byte[] result = new byte[sendTxt.length()];
+//		
+//		PipedInputStream pIn;
+//		PipedOutputStream pOut;
+//		
+//		pIn = new PipedInputStream();
+//		pOut = new PipedOutputStream(pIn);
+//		
+//		in = new BufferedInputStream(pIn,sendTxt.length());
+//		
+//		pOut.write(sendTxt.getBytes());
+//		file1.receiveFrom(in,sendTxt.length(),false,false, new NullProgressMonitor());
+//		in.close();
+//		pOut.close();
+//		
+//		result = new byte[expectTxt.length()];
+//		pIn = new PipedInputStream();
+//		pOut = new PipedOutputStream(pIn);
+//		
+//		in = new BufferedInputStream(pIn,sendTxt.length());
+//		file1.sendTo(pOut,false, new NullProgressMonitor());
+//		in.read(result);
+//		in.close();
+//		pOut.close();
+//		
+//		assertEquals(new String(result),expectTxt);	
+//	}
 	
 	public void testTimestamp() throws Exception {
 		

@@ -7,15 +7,16 @@ package org.eclipse.team.internal.ccvs.core.client;
  
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.Command.Option;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ModuleDefinitionsListener;
-import org.eclipse.team.internal.ccvs.core.client.listeners.ModuleExpansion;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSResourceVisitor;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteModule;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 
 public class Checkout extends Command {
@@ -95,7 +96,7 @@ public class Checkout extends Command {
 	/**
 	 * Perform a checkout to get the module expansions defined in the CVSROOT/modules file
 	 */
-	public ModuleExpansion[] getModuleExpansions(Session session, IProgressMonitor monitor)
+	public RemoteModule[] getRemoteModules(Session session, CVSTag tag, IProgressMonitor monitor)
 		throws CVSException {
 		
 		ModuleDefinitionsListener moduleDefinitionListener = new ModuleDefinitionsListener();
@@ -108,6 +109,6 @@ public class Checkout extends Command {
 			throw new CVSServerException(status);
 		}
 		
-		return moduleDefinitionListener.getModuleExpansions();
+		return RemoteModule.createRemoteModules(moduleDefinitionListener.getModuleExpansions(), session.getCVSRepositoryLocation(), tag);
 	}
 }

@@ -475,8 +475,8 @@ public final class SameResultEnv extends JUnitTestCase {
 			assertEquals("both timestamps should show same conflict state", merge1, merge2);
 			assertEquals("both timestamps should show same dummy state", dummy1, dummy2);
 			if(!merge1 && !dummy1) {
-				long time1 = timestampFormat.toMilliseconds(timestamp1);
-				long time2 = timestampFormat.toMilliseconds(timestamp2);
+				long time1 = timestampFormat.toDate(timestamp1).getTime();
+				long time2 = timestampFormat.toDate(timestamp2).getTime();
 				/* timestamp tests don't seem to work on some systems.
 				long difference = Math.abs(time1 - time2);
 				assertTrue("timestamps should be in same timezone:" + timestamp1 + ":" + timestamp2, difference < (5*60*1000)); // 5 minutes

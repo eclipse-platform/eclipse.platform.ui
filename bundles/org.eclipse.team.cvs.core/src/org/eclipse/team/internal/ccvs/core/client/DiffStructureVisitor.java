@@ -42,9 +42,9 @@ class DiffStructureVisitor extends FileStructureVisitor {
 		}
 
 		if (mFile.isModified() || newFile) {
-			session.sendModified(mFile, monitor, binary);
+			session.sendModified(mFile, binary, monitor);
 		} else {
-			session.sendUnchanged(mFile.getName());
+			session.sendUnchanged(mFile);
 		}
 	}			
 }

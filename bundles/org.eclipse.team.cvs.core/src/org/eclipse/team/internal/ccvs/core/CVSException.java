@@ -125,7 +125,7 @@ public class CVSException extends TeamException {
 				IStatus.ERROR,
 				CVSProviderPlugin.ID,
 				UNABLE,
-				e.getMessage(),
+				e.getMessage() != null ? e.getMessage() : "",
 				e));
 	}
 }

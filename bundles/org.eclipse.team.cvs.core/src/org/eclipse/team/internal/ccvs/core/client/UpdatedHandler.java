@@ -9,10 +9,8 @@ import java.util.Date;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.core.util.EntryFileDateFormat;
@@ -69,14 +67,6 @@ class UpdatedHandler extends ResponseHandler {
 		Date modTime = session.getModTime();
 		session.setModTime(null);
 		
-		// prepare for a file transfer
-		int size;
-		try {
-			size = Integer.parseInt(session.readLine());
-		} catch (NumberFormatException e) {
-			throw new CVSException(Policy.bind("Updated.numberFormat"));
-		}
-
 		// Get the local file
 		String fileName =
 			repositoryFile.substring(repositoryFile.lastIndexOf("/") + 1);
@@ -87,11 +77,12 @@ class UpdatedHandler extends ResponseHandler {
 		boolean binary = entryLine.indexOf("/" + ResourceSyncInfo.BINARY_TAG) != -1;
 		boolean readOnly = permissionsLine.indexOf(READ_ONLY_FLAG) == -1;
 		
-		mFile.receiveFrom(session.getInputStream(), size, binary, readOnly, monitor);
+		session.receiveFile(mFile, binary, monitor);
+		if (readOnly) mFile.setReadOnly();
 		
 		// Set the timestamp in the file, set the result in the fileInfo
 		String timestamp = null;
-		if (modTime != null) timestamp = dateFormatter.format(modTime.getTime());
+		if (modTime != null) timestamp = dateFormatter.formatDate(modTime);
 		mFile.setTimeStamp(timestamp);
 		if (updateResponse) {
 			timestamp = mFile.getTimeStamp();

@@ -53,75 +53,29 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		return ioResource.length();
 	}
 
-	public void receiveFrom(InputStream in, long size, boolean binary, boolean readOnly, IProgressMonitor monitor) throws CVSException {
-		OutputStream out;
-		String title;
-
-		title = Policy.bind("LocalFile.receiving", ioResource.getName());
-
-		try {
-			// We don't need to buffer here because the methods used below do
-			out = new FileOutputStream(ioResource);
-
-			try {
-				if (binary) {
-					transferWithProgress(in, out, size, title, monitor);
-				} else {
-					transferText(in, out, size, title, false, monitor);
-				}
-			} finally {
-				out.close();
-			}
-
-			if (readOnly) {
-				ioResource.setReadOnly();
-			}
+	public InputStream getInputStream() throws CVSException {
+ 		try {
+			return new FileInputStream(ioResource);
 		} catch (IOException e) {
-			throw CVSException.wrapException(e);
+ 			throw CVSException.wrapException(e);
+ 		}
+ 	}
+	
+	public OutputStream getOutputStream() throws CVSException {
+		try {
+			return new FileOutputStream(ioResource);
+ 		} catch (IOException e) {
+ 			throw CVSException.wrapException(e);
 		}
 	}
 	
-	public void sendTo(
-		OutputStream out,
-		boolean binary,
-		IProgressMonitor monitor)
-		throws CVSException {
-		
-		InputStream in;
-		String title;
-		long size = getSize();
-		title = Policy.bind("LocalFile.sending",
-							new Object[]{ioResource.getName()});
-		
-		try {
-			// We don't need to buffer here because the methods used below do
-			in = new FileInputStream(ioResource);
-			
-			try {
-				if (binary) {
-					
-					// Send the size to the server
-					out.write(("" + getSize()).getBytes());
-					out.write(SERVER_NEWLINE.getBytes());
-					transferWithProgress(in,out,size,title,monitor);
-				} else {
-					
-					// In this case the size has to be computed.
-					// Therefore we do send the size in transferText
-					transferText(in,out,getSize(),title,true,monitor);
-				}
-			} finally {
-				in.close();
-			}
-			
-		} catch (IOException e) {
-			throw CVSException.wrapException(e);
-		}	
+	public void setReadOnly() throws CVSException {
+		ioResource.setReadOnly();
 	}	
 
 	public String getTimeStamp() throws CVSFileNotFoundException {						
 		EntryFileDateFormat timestamp = new EntryFileDateFormat();		
-		return timestamp.format(ioResource.lastModified());
+		return timestamp.format(new Date(ioResource.lastModified()));
 	}
  
 	public void setTimeStamp(String date) throws CVSException {
@@ -132,7 +86,7 @@ public class LocalFile extends LocalResource implements ICVSFile {
 		} else {
 			try {
 				EntryFileDateFormat timestamp = new EntryFileDateFormat();
-				millSec = timestamp.toMilliseconds(date);
+				millSec = timestamp.toDate(date).getTime();
 			} catch (ParseException e) {
 				throw new CVSException(0,0,"Format of the Date for a TimeStamp not parseable",e);
 			}

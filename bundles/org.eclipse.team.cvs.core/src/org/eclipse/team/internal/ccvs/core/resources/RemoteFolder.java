@@ -56,7 +56,7 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 
 	public static final String VIRTUAL_DIRECTORY = "CVSROOT/Emptydir";
 	
-	private FolderSyncInfo folderInfo;
+	protected FolderSyncInfo folderInfo;
 	private ICVSRemoteResource[] children;
 	private ICVSRepositoryLocation repository;
 	
@@ -68,13 +68,14 @@ public class RemoteFolder extends RemoteResource implements ICVSRemoteFolder, IC
 			repositoryRelativePath.lastSegment() == null ? "" : repositoryRelativePath.lastSegment(),
 			repository,
 			repositoryRelativePath,
-			tag);	
+			tag, 
+			false);	
 	}
 	
-	public RemoteFolder(RemoteFolder parent, String name, ICVSRepositoryLocation repository, IPath repositoryRelativePath, CVSTag tag) {
+	public RemoteFolder(RemoteFolder parent, String name, ICVSRepositoryLocation repository, IPath repositoryRelativePath, CVSTag tag, boolean isStatic) {
 		this.info = new ResourceSyncInfo(name);
 		this.parent = parent;
-		this.folderInfo = new FolderSyncInfo(repositoryRelativePath.toString(), repository.getLocation(), tag, false);
+		this.folderInfo = new FolderSyncInfo(repositoryRelativePath.toString(), repository.getLocation(), tag, isStatic);
 		this.repository = repository;	
 	}
 

@@ -25,18 +25,23 @@ public interface ICVSFile extends ICVSResource {
 	 */
 	long getSize();
 	
-	/**
-	 * Transfer the contents of the file to the given output stream. If the file is
-	 * not binary the line-endings may be converted.
-	 */
-	void sendTo(OutputStream outputStream, boolean binary, IProgressMonitor monitor) throws CVSException;
-	
-	/**
-	 * Transfer the contents of an input stream to this file. If the file is
-	 * not binary the line-endings may be converted.
-	 */
-	void receiveFrom(InputStream inputStream, long size, boolean binary, boolean readOnly, IProgressMonitor monitor) throws CVSException;	
+ 	/**
+	 * Gets an input stream for reading from the file.
+	 * It is the responsibility of the caller to close the stream when finished.
+ 	 */
+	InputStream getInputStream() throws CVSException;
 
+ 	/**
+	 * Gets an output stream for writing to the file.
+	 * It is the responsibility of the caller to close the stream when finished.
+ 	 */
+	OutputStream getOutputStream() throws CVSException;
+
+	/**
+	 * Sets the file's read-only permission.
+	 */
+	void setReadOnly() throws CVSException;
+	
 	/**
 	 * Move the resource to another location. Does overwrite without
 	 * promting.

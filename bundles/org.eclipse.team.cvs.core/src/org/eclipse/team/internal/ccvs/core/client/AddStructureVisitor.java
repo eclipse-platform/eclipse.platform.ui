@@ -47,9 +47,10 @@ class AddStructureVisitor extends AbstractStructureVisitor {
 			mFile.getParent().accept(this);
 		}
 		
-		// We just send the fact, that the file is modified
-		// not the data, we do not need it.
-		session.sendIsModified(mFile);
+		// Sends the Is-modified request if it is supported, otherwise
+		// the file contents are sent as binary.  The server does not
+		// need the contents at this stage so this should not be a problem.
+		session.sendIsModified(mFile, true, monitor);
 		
 	}
 

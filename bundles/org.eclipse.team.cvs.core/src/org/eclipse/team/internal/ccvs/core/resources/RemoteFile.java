@@ -260,36 +260,24 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, ICVSFi
 		info = new ResourceSyncInfo(info.getName(), revision, info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions());
 	}
 		
-	/**
-	 * @see IManagedFile#sendTo(OutputStream, IProgressMonitor, boolean)
-	 */
-	public void sendTo(OutputStream out, boolean binary, IProgressMonitor monitor) throws CVSException {
-		try {
-			String SERVER_NEWLINE = "\n";
-			// Send the size to the server and no contents
-			out.write("0".getBytes());
-			out.write(SERVER_NEWLINE.getBytes());				
-		} catch(IOException e) {
-		}				
+	
+	public InputStream getInputStream() throws CVSException {
+		return new ByteArrayInputStream(new byte[0]);
 	}
-
-	/**
-	 * @see IManagedFile#receiveFrom(InputStream, IProgressMonitor, long, boolean)
-	 */
-	public void receiveFrom(InputStream inputStream, long size, boolean binary, boolean readOnly, IProgressMonitor monitor) throws CVSException {
-		// NOTE: This should be changed such that the client or connection handles
-		// the proper transfer
-		try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			if (binary)
-				LocalFile.transferWithProgress(inputStream, bos, (long)size, "", monitor);
-			else
-				LocalFile.transferText(inputStream, bos, (long)size, "", false, monitor);
-			contents = bos.toByteArray();
-		} catch (IOException ex) {
-			throw CVSException.wrapException(ex);
-		}
-	}
+	
+	public OutputStream getOutputStream() throws CVSException {
+		// stores the contents of the file when the stream is closed
+		// could perhaps be optimized in some manner to avoid excessive array copying
+		return new ByteArrayOutputStream() {
+			public void close() throws IOException {
+				contents = toByteArray();
+				super.close();
+			}
+		};
+ 	}
+ 
+	public void setReadOnly() throws CVSException {
+ 	}
 
 	/**
 	 * @see IManagedFile#getTimeStamp()

@@ -25,17 +25,18 @@ public class EntryFileDateFormat extends SimpleDateFormat {
 	}
 	
 	/**
-	 * Returns the number of milliseconds since January 1, 1970, 00:00:00 GMT 
-	 * represented by this Entry file string date format.
+	 * Returns a date representing the number of milliseconds since
+	 * January 1, 1970, 00:00:00 GMT represented by this Entry file
+	 * string date format.
 	 */
-	public long toMilliseconds(String text) throws ParseException {
-		return parse(text).getTime();
+	public Date toDate(String text) throws ParseException {
+		return parse(text);
 	}
 
 	/**
 	 * long since 1970 => "Thu Oct 18 20:21:13 2001"
 	 */	
-	public String format(long milliseconds) {
-		return format(new Date(milliseconds));
+	public String formatDate(Date date) {
+		return format(date);
 	}
 }
