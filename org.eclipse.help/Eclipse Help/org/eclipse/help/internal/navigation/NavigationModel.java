@@ -147,10 +147,6 @@ public class NavigationModel {
 						+ "/"
 						+ infosetID
 						+ "/"
-						+ File.separator
-						+ "nl"
-						+ File.separator
-						+ Locale.getDefault().toString()
 						+ HelpNavigationManager.NAV_XML_FILENAME);
 
 			in = new BufferedInputStream(remoteNavFile.openStream());
