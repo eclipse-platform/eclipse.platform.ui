@@ -596,7 +596,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     }
     
     /**
-     * Tests the code completion for custom task that an enumerated attribute
+     * Tests the code completion for custom task that have a reference attribute
      */
     public void testCustomReferenceProposals() throws BadLocationException {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor(getAntModel("extensionPointTaskSepVM.xml"));
