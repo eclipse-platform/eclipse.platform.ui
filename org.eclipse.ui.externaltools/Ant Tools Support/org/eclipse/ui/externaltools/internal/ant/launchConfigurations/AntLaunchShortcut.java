@@ -209,7 +209,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IExternalToolConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		StringBuffer buffer = new StringBuffer(file.getProject().getName());
-		buffer.append(" "); //$NON-NLS-1$
+		buffer.append(' ');
 		buffer.append(file.getName());
 		String name = buffer.toString().trim();
 		name= manager.generateUniqueLaunchConfigurationNameFrom(name);
