@@ -27,7 +27,7 @@ public class OpenDeclarationAction extends OpenAction {
 
 		setText(AntEditorMessages.getString("OpenDeclarationAction.0"));  //$NON-NLS-1$
 		setDescription(AntEditorMessages.getString("OpenDeclarationAction.1")); //$NON-NLS-1$
-		setToolTipText(AntEditorMessages.getString("OpenDeclarationAction.2")); //$NON-NLS-1$
+		setToolTipText(AntEditorMessages.getString("OpenDeclarationAction.1")); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
