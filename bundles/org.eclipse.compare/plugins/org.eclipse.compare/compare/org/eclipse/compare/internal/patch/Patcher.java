@@ -645,7 +645,6 @@ public class Patcher {
 					failedHunks.add(hunk);
 				}
 			}
-			oldShift= oldShift;	// prevent compiler warning about unused local variable
 		}
 		return shift;
 	}

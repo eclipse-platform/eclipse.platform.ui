@@ -88,7 +88,7 @@ public class AddFromHistoryAction implements IActionDelegate {
 		}
 	}
 	
-	private void createContainers(IResource resource) throws CoreException {
+	void createContainers(IResource resource) throws CoreException {
 		IContainer container= resource.getParent();
 		if (container instanceof IFolder) {
 			IFolder parent= (IFolder) container;
