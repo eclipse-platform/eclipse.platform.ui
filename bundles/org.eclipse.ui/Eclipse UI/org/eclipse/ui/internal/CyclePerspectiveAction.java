@@ -3,14 +3,12 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.awt.Label;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.dialogs.PerspLabelProvider;
-import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 /**
  * Implements a action to enable the user switch between perspectives
  * using keyboard.
@@ -51,21 +49,23 @@ protected void dispose() {
 /**
  * Activate the selected item.
  */
-public void activate(IWorkbenchPage page,Object selection) {
-	Perspective persp = (Perspective)selection;
-	page.setPerspective(persp.getDesc());
+public void activate(IWorkbenchPage page, Object selection) {
+	if (selection != null) {
+		Perspective persp = (Perspective)selection;
+		page.setPerspective(persp.getDesc());
+	}
 }
 /**
  * Updates the enabled state.
  */
 public void updateState() {
-	WorkbenchPage page = (WorkbenchPage)getActivePage();
+	WorkbenchPage page = (WorkbenchPage) getActivePage();
 	if (page == null) {
 		setEnabled(false);
 		return;
 	}
 	// enable iff there is at least one other editor to switch to
-	setEnabled(page.getSortedPerspectives().length >= 2);
+	setEnabled(page.getSortedPerspectives().length >= 1);
 }
 
 /**

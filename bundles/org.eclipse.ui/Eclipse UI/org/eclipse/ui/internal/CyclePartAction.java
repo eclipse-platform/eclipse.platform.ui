@@ -5,9 +5,9 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
+
 import org.eclipse.ui.*;
 
 /**
@@ -89,7 +89,7 @@ protected void updateState() {
 	if (page.getEditors().length > 0) {
 		++count;
 	}
-	setEnabled(count >= 2);
+	setEnabled(count >= 1);
 }
 /**
  * @see Action#run()

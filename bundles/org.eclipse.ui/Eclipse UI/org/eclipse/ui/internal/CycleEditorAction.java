@@ -3,6 +3,7 @@ package org.eclipse.ui.internal;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+
 import org.eclipse.ui.*;
 
 /**
@@ -41,7 +42,7 @@ public void updateState() {
 		return;
 	}
 	// enable iff there is at least one other editor to switch to
-	setEnabled(page.getEditors().length >= 2);
+	setEnabled(page.getEditors().length >= 1);
 }
 
 /**
