@@ -171,6 +171,14 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 		}
 	}
 	
+	/**
+	 * Return the top seperator.
+	 * @return Label
+	 */
+	protected Label getSeperator1() {
+		return seperator1;
+	}
+
 /**
  * Create an application window instance, whose shell will be created under the
  * given parent shell.
