@@ -25,7 +25,7 @@ public interface IWorkbenchPartSite {
  * <p>
  * The part should come up with the text and image for the element (including
  * any of the part's own decorations) before calling the decorator manager.
- * It should also hook a listener to be notified when decorations change.
+ * It should also add a listener to be notified when decorations change.
  * </p>
  * <p>
  * Note that if the element implements <code>IAdaptable</code>, decorators may use this
