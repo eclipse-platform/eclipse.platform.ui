@@ -1245,44 +1245,59 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 						} else {
 							newItem = new Separator();
 						}
-					} else if ((id != null) && (type.equals(IWorkbenchConstants.TAG_TYPE_GROUPMARKER))) {
-						newItem = new GroupMarker(id);
-					} else if ((id != null) && (type.equals(IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION))) {
+					} else if (id != null) {
+					    if (type.equals(IWorkbenchConstants.TAG_TYPE_GROUPMARKER)) {
+							newItem = new GroupMarker(id);
+							
+					    } else if (type.equals(IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION) 
+					            || type.equals(IWorkbenchConstants.TAG_TYPE_PLACEHOLDER)) {
 
-						// Get Width and height
-						Integer width = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_X);
-						Integer height = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_Y);
-						// Look for the object in the current cool bar manager
-						IContributionItem oldItem = coolBarMgr.find(id);
-						// If a tool bar contribution item already exists for this id then use the old object
-						if (oldItem instanceof ToolBarContributionItem) {
-							newItem = (ToolBarContributionItem) oldItem;
-						} else {
-							newItem =
-								new ToolBarContributionItem(
-										new ToolBarManager(coolBarMgr.getStyle()),
-										id);
-							// make it invisible by default
-							newItem.setVisible(false);
-							// Need to add the item to the cool bar manager so that its canonical order can be preserved
-							IContributionItem refItem =
-								findAlphabeticalOrder(
-										IWorkbenchActionConstants.MB_ADDITIONS,
-										id,
-										coolBarMgr);
-							if (refItem != null) {
-								coolBarMgr.insertAfter(refItem.getId(), newItem);
-							}else {
-								coolBarMgr.add(newItem);
-							}
-						}
-						// Set the current height and width
-						if (width != null) {
-							((ToolBarContributionItem) newItem).setCurrentWidth(width.intValue());
-						}
-						if (height != null) {
-							((ToolBarContributionItem) newItem).setCurrentHeight(height.intValue());
-						}
+					        // Get Width and height
+					        Integer width = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_X);
+					        Integer height = contributionMem.getInteger(IWorkbenchConstants.TAG_ITEM_Y);
+					        // Look for the object in the current cool bar manager
+					        IContributionItem oldItem = coolBarMgr.find(id);
+					        // If a tool bar contribution item already exists for this id then use the old object
+					        if (oldItem != null) {
+					            newItem = oldItem;
+					        } else {
+					            newItem =
+					                new ToolBarContributionItem(
+					                        new ToolBarManager(coolBarMgr.getStyle()),
+					                        id);
+					            if (type.equals(IWorkbenchConstants.TAG_TYPE_PLACEHOLDER)) {
+					                ToolBarContributionItem newToolBarItem = (ToolBarContributionItem) newItem;
+					                if (height != null) {
+					                    newToolBarItem.setCurrentHeight(height.intValue());
+					                }
+					                if (width != null) {
+					                    newToolBarItem.setCurrentWidth(width.intValue());
+					                }
+					                newItem = new PlaceholderContributionItem(newToolBarItem);
+					            }
+					            // make it invisible by default
+					            newItem.setVisible(false);
+					            // Need to add the item to the cool bar manager so that its canonical order can be preserved
+					            IContributionItem refItem =
+					                findAlphabeticalOrder(
+					                        IWorkbenchActionConstants.MB_ADDITIONS,
+					                        id,
+					                        coolBarMgr);
+					            if (refItem != null) {
+					                coolBarMgr.insertAfter(refItem.getId(), newItem);
+					            } else {
+					                coolBarMgr.add(newItem);
+					            }
+					        }
+					        
+					        // Set the current height and width
+					        if ((width != null) && (newItem instanceof ToolBarContributionItem)) {
+					            ((ToolBarContributionItem) newItem).setCurrentWidth(width.intValue());
+					        }
+					        if ((height != null) && (newItem instanceof ToolBarContributionItem)) {
+					            ((ToolBarContributionItem) newItem).setCurrentHeight(height.intValue());
+					        }
+					    }
 					}
 					// Add new item into cool bar manager
 					if (newItem != null) {
@@ -1691,10 +1706,16 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 							IWorkbenchConstants.TAG_ITEM_TYPE,
 							IWorkbenchConstants.TAG_TYPE_GROUPMARKER);
 				} else {
-				    // Store the identifier.
-					coolItemMem.putString(
-							IWorkbenchConstants.TAG_ITEM_TYPE,
-							IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION);
+				    if (item instanceof PlaceholderContributionItem) {
+				        coolItemMem.putString(
+				                IWorkbenchConstants.TAG_ITEM_TYPE,
+				                IWorkbenchConstants.TAG_TYPE_PLACEHOLDER);
+				    } else {
+				        // Store the identifier.
+				        coolItemMem.putString(
+				                IWorkbenchConstants.TAG_ITEM_TYPE,
+				                IWorkbenchConstants.TAG_TYPE_TOOLBARCONTRIBUTION);
+				    }
 					
 					/* Retrieve a reasonable approximation of the height and
 					 * width, if possible.

@@ -158,6 +158,7 @@ public interface IWorkbenchConstants {
 	public static final String TAG_TYPE_SEPARATOR = "typeSeparator";	//$NON-NLS-1$
 	public static final String TAG_TYPE_GROUPMARKER = "typeGroupMarker";	//$NON-NLS-1$
 	public static final String TAG_TYPE_TOOLBARCONTRIBUTION = "typeToolBarContribution"; //$NON-NLS-1$
+	public static final String TAG_TYPE_PLACEHOLDER = "typePlaceholder"; //$NON-NLS-1$
 	public static final String TAG_COOLITEM = "coolItem";	//$NON-NLS-1$
 	public static final String TAG_INDEX = "index";	//$NON-NLS-1$
 	public static final String TAG_PINNED = "pinned";	//$NON-NLS-1$

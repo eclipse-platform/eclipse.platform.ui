@@ -255,7 +255,7 @@ final class PlaceholderContributionItem implements IContributionItem {
      * @see org.eclipse.jface.action.IContributionItem#setVisible(boolean)
      */
     public void setVisible(boolean visible) {
-        throw new UnsupportedOperationException();
+        // Do nothing.
     }
 
     /**
