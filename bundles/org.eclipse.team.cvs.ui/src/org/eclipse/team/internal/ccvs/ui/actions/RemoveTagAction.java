@@ -58,7 +58,12 @@ public class RemoveTagAction extends TeamAction {
 				if (tags.length == 0) return;
 				RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();
 				for (int i = 0; i < tags.length; i++) {
-					manager.removeTag((ICVSRepositoryLocation)tags[i].getParent(tags[i]), tags[i]);
+					Tag tag = tags[i];
+					if (tag.isBranch()) {
+						manager.removeBranchTag((ICVSRepositoryLocation)tag.getParent(tag), tag);
+					} else {
+						manager.removeVersionTag((ICVSRepositoryLocation)tag.getParent(tag), tag);
+					}
 				}
 			}
 		}, Policy.bind("RemoveTagAction.removeTag"), this.PROGRESS_DIALOG);

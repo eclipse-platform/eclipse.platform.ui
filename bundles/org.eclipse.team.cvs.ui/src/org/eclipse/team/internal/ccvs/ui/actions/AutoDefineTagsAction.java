@@ -81,12 +81,17 @@ public class AutoDefineTagsAction extends TeamAction {
 					for (int j = 0; j < entries.length; j++) {
 						ICVSTag[] tags = entries[j].getTags();
 						for (int k = 0; k < tags.length; k++) {
-							tagSet.add(tags[k].getName());
+							tagSet.add(tags[k]);
 						}
 					}
 					Iterator it = tagSet.iterator();
 					while (it.hasNext()) {
-						manager.addTag(root, new Tag((String)it.next(), root));
+						ICVSTag tag = (ICVSTag)it.next();
+						if (tag.isBranch()) {
+							manager.addBranchTag(root, new Tag(tag.getName(), true, root));
+						} else {
+							manager.addVersionTag(root, new Tag(tag.getName(), false, root));
+						}
 					}
 				}
 			}

@@ -35,7 +35,10 @@ public class RepositoryManager {
 	private static final String STATE_FILE = ".repositoryManagerState";
 	
 	Hashtable repositories = new Hashtable();
-	Hashtable tags = new Hashtable();
+	// Map ICVSRepositoryLocation -> List of Tags
+	Hashtable branchTags = new Hashtable();
+	// Map ICVSRepositoryLocation -> List of Tags
+	Hashtable versionTags = new Hashtable();
 	
 	List listeners = new ArrayList();
 	
@@ -75,13 +78,10 @@ public class RepositoryManager {
 		try {
 			result = CVSProviderPlugin.getProvider().createRepository(properties);
 			repositories.put(result.getLocation(), result);
-			Tag tag = new Tag("HEAD", result);
-			addTag(result, tag);
 			Iterator it = listeners.iterator();
 			while (it.hasNext()) {
 				IRepositoryListener listener = (IRepositoryListener)it.next();
 				listener.repositoryAdded(result);
-				listener.tagAdded(tag, result);
 			}
 		} catch (TeamException e) {
 			CVSUIPlugin.log(e.getStatus());
@@ -90,22 +90,30 @@ public class RepositoryManager {
 		return result;
 	}
 	/**
-	 * Get the list of known tags for a given remote root.
+	 * Get the list of known branch tags for a given remote root.
 	 */
-	public Tag[] getKnownTags(ICVSRepositoryLocation root) {
-		Set set = (Set)tags.get(root);
+	public Tag[] getKnownBranchTags(ICVSRepositoryLocation root) {
+		Set set = (Set)branchTags.get(root);
 		if (set == null) return new Tag[0];
 		return (Tag[])set.toArray(new Tag[0]);
 	}
 	/**
-	 * Add the given tag to the list of known tags for the given
+	 * Get the list of known version tags for a given remote root.
+	 */
+	public Tag[] getKnownVersionTags(ICVSRepositoryLocation root) {
+		Set set = (Set)versionTags.get(root);
+		if (set == null) return new Tag[0];
+		return (Tag[])set.toArray(new Tag[0]);
+	}
+	/**
+	 * Add the given branch tag to the list of known tags for the given
 	 * remote root.
 	 */
-	public void addTag(ICVSRepositoryLocation root, Tag tag) {
-		Set set = (Set)tags.get(root);
+	public void addBranchTag(ICVSRepositoryLocation root, Tag tag) {
+		Set set = (Set)branchTags.get(root);
 		if (set == null) {
 			set = new HashSet();
-			tags.put(root, set);
+			branchTags.put(root, set);
 		}
 		set.add(tag);
 		Iterator it = listeners.iterator();
@@ -115,11 +123,42 @@ public class RepositoryManager {
 		}
 	}
 	/**
+	 * Add the given version tag to the list of known tags for the given
+	 * remote root.
+	 */
+	public void addVersionTag(ICVSRepositoryLocation root, Tag tag) {
+		Set set = (Set)versionTags.get(root);
+		if (set == null) {
+			set = new HashSet();
+			versionTags.put(root, set);
+		}
+		set.add(tag);
+		Iterator it = listeners.iterator();
+		while (it.hasNext()) {
+			IRepositoryListener listener = (IRepositoryListener)it.next();
+			listener.tagAdded(tag, root);
+		}
+	}
+	/**
+	 * Remove the given branch tag from the list of known tags for the
+	 * given remote root.
+	 */
+	public void removeBranchTag(ICVSRepositoryLocation root, Tag tag) {
+		Set set = (Set)branchTags.get(root);
+		if (set == null) return;
+		set.remove(tag);
+		Iterator it = listeners.iterator();
+		while (it.hasNext()) {
+			IRepositoryListener listener = (IRepositoryListener)it.next();
+			listener.tagRemoved(tag, root);
+		}
+	}
+	/**
 	 * Remove the given tag from the list of known tags for the
 	 * given remote root.
 	 */
-	public void removeTag(ICVSRepositoryLocation root, Tag tag) {
-		Set set = (Set)tags.get(root);
+	public void removeVersionTag(ICVSRepositoryLocation root, Tag tag) {
+		Set set = (Set)versionTags.get(root);
 		if (set == null) return;
 		set.remove(tag);
 		Iterator it = listeners.iterator();
@@ -133,15 +172,20 @@ public class RepositoryManager {
 	 * Also removed the tags defined for this root.
 	 */
 	public void removeRoot(ICVSRepositoryLocation root) {
-		Tag[] tags = getKnownTags(root);
+		Tag[] branchTags = getKnownBranchTags(root);
+		Tag[] versionTags = getKnownVersionTags(root);
 		Object o = repositories.remove(root.getLocation());
 		if (o == null) return;
-		this.tags.remove(root);
+		this.branchTags.remove(root);
+		this.versionTags.remove(root);
 		Iterator it = listeners.iterator();
 		while (it.hasNext()) {
 			IRepositoryListener listener = (IRepositoryListener)it.next();
-			for (int i = 0; i < tags.length; i++) {
-				listener.tagRemoved(tags[i], root);
+			for (int i = 0; i < branchTags.length; i++) {
+				listener.tagRemoved(branchTags[i], root);
+			}
+			for (int i = 0; i < versionTags.length; i++) {
+				listener.tagRemoved(versionTags[i], root);
 			}
 			listener.repositoryRemoved(root);
 		}
@@ -200,13 +244,15 @@ public class RepositoryManager {
 			dos.writeUTF(root.getHost());
 			dos.writeUTF("" + root.getPort());
 			dos.writeUTF(root.getRootDirectory());
-			// Don't store HEAD, as it is automatically created when reading.
-			Tag[] tags = getKnownTags(root);
-			dos.writeInt(tags.length - 1);
-			for (int i = 0; i < tags.length - 1; i++) {
-				if (!tags[i].getTag().equals("HEAD")) {
-					dos.writeUTF(tags[i].getTag());
-				}
+			Tag[] branchTags = getKnownBranchTags(root);
+			dos.writeInt(branchTags.length - 1);
+			for (int i = 0; i < branchTags.length - 1; i++) {
+				dos.writeUTF(branchTags[i].getTag());
+			}
+			Tag[] versionTags = getKnownVersionTags(root);
+			dos.writeInt(versionTags.length - 1);
+			for (int i = 0; i < versionTags.length - 1; i++) {
+				dos.writeUTF(versionTags[i].getTag());
 			}
 		}
 	}
@@ -226,8 +272,14 @@ public class RepositoryManager {
 			int tagsSize = dis.readInt();
 			for (int j = 0; j < tagsSize; j++) {
 				String tag = dis.readUTF();
-				addTag(root, new Tag(tag, root));
+				addBranchTag(root, new Tag(tag, true, root));
 			}
+			tagsSize = dis.readInt();
+			for (int j = 0; j < tagsSize; j++) {
+				String tag = dis.readUTF();
+				addVersionTag(root, new Tag(tag, false, root));
+			}
+			
 		}
 	}
 	

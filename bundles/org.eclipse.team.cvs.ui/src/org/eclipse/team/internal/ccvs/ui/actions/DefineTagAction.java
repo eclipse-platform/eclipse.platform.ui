@@ -77,8 +77,9 @@ public class DefineTagAction extends TeamAction {
 				if (roots.length != 1) return;
 				ICVSRepositoryLocation root = roots[0];
 				InputDialog dialog = new InputDialog(getShell(), Policy.bind("DefineTagAction.enterTag"), Policy.bind("DefineTagAction.enterTagLong"), null, null);
+				// To do: assume it's a branch tag for now
 				if (dialog.open() == InputDialog.OK) {
-					CVSUIPlugin.getPlugin().getRepositoryManager().addTag(root, new Tag(dialog.getValue(), root));
+					CVSUIPlugin.getPlugin().getRepositoryManager().addBranchTag(root, new Tag(dialog.getValue(), true, root));
 				}
 			}
 		}, Policy.bind("DefineTagAction.tag"), this.PROGRESS_DIALOG);

@@ -10,6 +10,10 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
+/**
+ * AllRootsElement is the model element for the repositories view.
+ * Its children are the array of all known repository roots.
+ */
 public class AllRootsElement extends CVSModelElement implements IAdaptable {
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return null;

@@ -101,6 +101,12 @@
 				tooltip="%CommitAction.tooltip"
 				menubarPath="team.main/checkinGroup"
 				class="org.eclipse.team.internal.ccvs.ui.actions.CommitAction"/>
+			<action
+				id="org.eclipse.team.ccvs.ui.sync"
+				label="Synchronize"
+				tooltip="Synchronize"
+				menubarPath="team.main/advancedGroup"
+				class="org.eclipse.team.internal.ccvs.ui.actions.SyncAction"/>
 		</objectContribution>
 		<objectContribution 
 			id="org.eclipse.team.ccvs.ui.RemoteFolderContributions" 

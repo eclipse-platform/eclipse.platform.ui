@@ -18,9 +18,10 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 
 public class Tag extends CVSModelElement implements IAdaptable {
 	String tag;
+	boolean isBranch;
 	ICVSRepositoryLocation root;
 	
-	public Tag(String tag, ICVSRepositoryLocation root) {
+	public Tag(String tag, boolean isBranch, ICVSRepositoryLocation root) {
 		this.tag = tag;
 		this.root = root;
 	}
@@ -30,6 +31,12 @@ public class Tag extends CVSModelElement implements IAdaptable {
 	}
 	public String getTag() {
 		return tag;
+	}
+	public boolean isBranch() {
+		return isBranch;
+	}
+	public boolean isVersion() {
+		return !isBranch;
 	}
 	public boolean equals(Object o) {
 		if (!(o instanceof Tag)) return false;
@@ -41,6 +48,7 @@ public class Tag extends CVSModelElement implements IAdaptable {
 	 */
 	public Object[] getChildren(Object o) {
 		if (!(o instanceof Tag)) return null;
+		// Return the remote elements for the tag
 		try {
 			ICVSRemoteFolder folder = root.getRemoteFolder(Path.EMPTY, tag);
 			return folder.getMembers(new NullProgressMonitor());
@@ -50,7 +58,12 @@ public class Tag extends CVSModelElement implements IAdaptable {
 	}
 	public ImageDescriptor getImageDescriptor(Object object) {
 		if (!(object instanceof Tag)) return null;
-		return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_TAG);
+		if (isBranch) {
+			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_TAG);
+		} else {
+			// Change this, need project version image
+			return CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_TAG);
+		}
 	}
 	public String getLabel(Object o) {
 		if (!(o instanceof Tag)) return null;
