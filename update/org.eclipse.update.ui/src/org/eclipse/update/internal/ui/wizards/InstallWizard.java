@@ -57,7 +57,7 @@ public class InstallWizard extends Wizard {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					successfulInstall = false;
-					makeConfigurationCurrent();
+					makeConfigurationCurrent(config);
 					execute(targetSite, monitor);
 					saveLocalSite();
 					successfulInstall = true;
@@ -94,7 +94,7 @@ public class InstallWizard extends Wizard {
 		}
 	}
 
-	private IInstallConfiguration createInstallConfiguration() {
+	public static IInstallConfiguration createInstallConfiguration() {
 		try {
 			ILocalSite localSite = SiteManager.getLocalSite();
 			IInstallConfiguration config = localSite.cloneCurrentConfiguration();
@@ -106,12 +106,12 @@ public class InstallWizard extends Wizard {
 		}
 	}
 
-	private void makeConfigurationCurrent() throws CoreException {
+	public static void makeConfigurationCurrent(IInstallConfiguration config) throws CoreException {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		localSite.addConfiguration(config);
 	}
 
-	private void saveLocalSite() throws CoreException {
+	public static void saveLocalSite() throws CoreException {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		localSite.save();
 	}

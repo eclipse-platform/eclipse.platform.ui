@@ -100,11 +100,15 @@ public class MyComputerDirectory
 						SiteBookmark site = createSite(file);
 						if (site != null)
 							children[i] = site;
+						else if (ExtensionRoot.isExtensionRoot(file)) {
+							children[i] = new ExtensionRoot(MyComputerDirectory.this, file);
+						}
 						else
 							children[i] =
 								new MyComputerDirectory(
 									MyComputerDirectory.this,
 									file);
+						
 					} else {
 						children[i] =
 							new MyComputerFile(MyComputerDirectory.this, file);

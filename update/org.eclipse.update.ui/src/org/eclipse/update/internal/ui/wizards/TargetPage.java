@@ -235,23 +235,30 @@ public class TargetPage extends BannerPage {
 		dd.setMessage(UpdateUIPlugin.getResourceString(KEY_LOCATION_MESSAGE));
 		String path = dd.open();
 		if (path != null) {
-			try {
-				File file = new File(path);
-				IConfiguredSite csite = config.createConfiguredSite(file);
-				IStatus status = csite.verifyUpdatableStatus();
-				if (status.isOK())
-					config.addConfiguredSite(csite);
-				else {
-					String title = UpdateUIPlugin.getResourceString(KEY_LOCATION_ERROR_TITLE);
-					String message = UpdateUIPlugin.getFormattedMessage(KEY_LOCATION_ERROR_MESSAGE, path);
-					String message2 = UpdateUIPlugin.getFormattedMessage(KEY_ERROR_REASON, status.getMessage());
-					message = message + "\r\n"+message2;						
-					MessageDialog.openError(getContainer().getShell(), title, message);
-				}
-			} catch (CoreException e) {
-				UpdateUIPlugin.logException(e);
-			}
+			File file = new File(path);
+			addConfiguredSite(getContainer().getShell(), config, file);
 		}
+	}
+	
+	public static boolean addConfiguredSite(Shell shell, IInstallConfiguration config, File file) {
+		try {
+			IConfiguredSite csite = config.createConfiguredSite(file);
+			IStatus status = csite.verifyUpdatableStatus();
+			if (status.isOK())
+				config.addConfiguredSite(csite);
+			else {
+				String title = UpdateUIPlugin.getResourceString(KEY_LOCATION_ERROR_TITLE);
+				String message = UpdateUIPlugin.getFormattedMessage(KEY_LOCATION_ERROR_MESSAGE, file.getPath());
+				String message2 = UpdateUIPlugin.getFormattedMessage(KEY_ERROR_REASON, status.getMessage());
+				message = message + "\r\n"+message2;						
+				MessageDialog.openError(shell, title, message);
+				return false;
+			}
+		} catch (CoreException e) {
+			UpdateUIPlugin.logException(e);
+			return false;
+		}
+		return true;
 	}
 
 	private void updateStatus(Object element) {

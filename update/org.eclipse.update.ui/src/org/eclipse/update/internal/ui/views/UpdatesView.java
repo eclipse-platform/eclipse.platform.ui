@@ -3,6 +3,7 @@ package org.eclipse.update.internal.ui.views;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.io.File;
 import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
@@ -17,6 +18,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.update.configuration.*;
 import org.eclipse.update.configuration.IVolume;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
@@ -41,6 +43,7 @@ public class UpdatesView
 		"UpdatesView.Popup.newLocalSite";
 	private static final String KEY_DELETE = "UpdatesView.Popup.delete";
 	private static final String KEY_REFRESH = "UpdatesView.Popup.refresh";
+	private static final String KEY_LINK_EXTENSION = "UpdatesView.Popup.linkExtension";
 	private static final String KEY_FILTER_FILES = "UpdatesView.menu.showFiles";
 	private static final String KEY_FILTER_ENVIRONMENT =
 		"UpdatesView.menu.filterEnvironment";
@@ -52,6 +55,11 @@ public class UpdatesView
 		"UpdatesView.newBookmark.title";
 	private static final String KEY_NEW_FOLDER_TITLE =
 		"UpdatesView.newFolder.title";
+	private static final String KEY_RESTART_TITLE = 
+		"UpdatesView.restart.title";
+	private static final String KEY_RESTART_MESSAGE = 
+		"UpdatesView.restart.message";
+
 	private Action propertiesAction;
 	private Action newAction;
 	private Action newFolderAction;
@@ -61,7 +69,9 @@ public class UpdatesView
 	private Action fileFilterAction;
 	private Action filterEnvironmentAction;
 	private Action showCategoriesAction;
+	private Action linkExtensionAction;
 	private Image siteImage;
+	private Image installSiteImage;
 	private Image featureImage;
 	private Image categoryImage;
 	private Image discoveryImage;
@@ -266,6 +276,9 @@ public class UpdatesView
 				}
 				return ((MyComputerDirectory) obj).getImage(obj);
 			}
+			if (obj instanceof ExtensionRoot) {
+				return installSiteImage;
+			}
 			if (obj instanceof MyComputerFile) {
 				ImageDescriptor desc =
 					((MyComputerFile) obj).getImageDescriptor(obj);
@@ -411,6 +424,13 @@ public class UpdatesView
 		showCategoriesAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_SHOW_CATEGORIES));
 		showCategoriesAction.setChecked(true);
+		
+		linkExtensionAction = new Action() {
+			public void run() {
+				linkProductExtension();
+			}
+		};
+		linkExtensionAction.setText(UpdateUIPlugin.getResourceString(KEY_LINK_EXTENSION));
 
 		viewer.addSelectionChangedListener(selectionListener);
 	}
@@ -444,6 +464,9 @@ public class UpdatesView
 			SiteBookmark site = (SiteBookmark) obj;
 			if (site.getType() == SiteBookmark.LOCAL)
 				manager.add(newLocalAction);
+		}
+		if (obj instanceof ExtensionRoot) {
+			manager.add(linkExtensionAction);
 		}
 		if (canDelete(obj))
 			manager.add(deleteAction);
@@ -601,6 +624,33 @@ public class UpdatesView
 			});
 		}
 	}
+	
+	private void linkProductExtension() {
+		Object obj = getSelectedObject();
+		ExtensionRoot extension = (ExtensionRoot)obj;
+		File dir = extension.getInstallableDirectory();
+		try {
+			IInstallConfiguration config = InstallWizard.createInstallConfiguration();
+			if (TargetPage.addConfiguredSite(viewer.getControl().getShell(), config, dir)) {
+				InstallWizard.makeConfigurationCurrent(config);
+				InstallWizard.saveLocalSite();
+			}
+		}
+		catch (CoreException e) {
+			UpdateUIPlugin.logException(e);
+		}
+	}
+	private void informRestartNeeded() {
+		String title = UpdateUIPlugin.getResourceString(KEY_RESTART_TITLE);
+		String message= UpdateUIPlugin.getResourceString(KEY_RESTART_MESSAGE);
+		boolean restart =
+			MessageDialog.openConfirm(
+				viewer.getControl().getShell(),
+				title,
+				message);
+		if (restart)
+			PlatformUI.getWorkbench().restart();
+	}
 
 	private boolean confirmDeletion(IStructuredSelection ssel) {
 		String title = "Confirm Delete";
@@ -728,6 +778,7 @@ public class UpdatesView
 
 	private void initializeImages() {
 		siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
+		installSiteImage = UpdateUIPluginImages.DESC_LSITE_OBJ.createImage();
 		featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
 		discoveryImage = UpdateUIPluginImages.DESC_PLACES_OBJ.createImage();
 		bookmarkFolderImage =
@@ -738,6 +789,7 @@ public class UpdatesView
 	}
 	private void disposeImages() {
 		siteImage.dispose();
+		installSiteImage.dispose();
 		featureImage.dispose();
 		discoveryImage.dispose();
 		bookmarkFolderImage.dispose();

@@ -34,15 +34,31 @@
                path="help/helpEnd"
                id="org.eclipse.update.ui.updateMenu">
             <separator
-                  name="group">
+                  name="group1">
+            </separator>
+            <separator
+                  name="group2">
             </separator>
          </menu>
+         <action
+               label="%actionSets.newUpdates.label"
+               icon="icons/full/obj16/usearch_obj.gif"
+               class="org.eclipse.update.internal.ui.NewUpdatesAction"
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
+               id="org.eclipse.update.ui.newUpdates">
+         </action>
          <action
                label="%actionSets.updateManager.label"
                icon="icons/full/cview16/update_pers.gif"
                class="org.eclipse.update.internal.ui.UpdateManagerAction"
-               menubarPath="help/org.eclipse.update.ui.updateMenu/group"
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group2"
                id="org.eclipse.update.ui.updateManager">
+         </action>
+         <action
+               label="%actionSets.pendingChanges.label"
+               class="org.eclipse.update.internal.ui.DeltaWizardAction"
+               menubarPath="help/org.eclipse.update.ui.updateMenu/group1"
+               id="org.eclipse.update.ui.pendingChanges">
          </action>
       </actionSet>
    </extension>

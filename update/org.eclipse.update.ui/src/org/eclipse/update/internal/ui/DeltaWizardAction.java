@@ -32,8 +32,12 @@ public class DeltaWizardAction implements IWorkbenchWindowActionDelegate {
 	public void run(IAction action) {
 		BusyIndicator.showWhile(window.getShell().getDisplay(), new Runnable() {
 			public void run() {
-				InstallDeltaWizard wizard = new InstallDeltaWizard();
-				wizard.open();
+				try {
+					SiteManager.handleNewChanges();
+				}
+				catch (CoreException e) {
+					UpdateUIPlugin.logException(e);
+				}
 			}
 		});
 	}
