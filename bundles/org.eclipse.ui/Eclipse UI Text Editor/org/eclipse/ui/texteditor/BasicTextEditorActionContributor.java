@@ -6,7 +6,12 @@ package org.eclipse.ui.texteditor;
  */
 
 
-import java.util.ResourceBundle;import org.eclipse.jface.action.IAction;import org.eclipse.jface.action.IMenuManager;import org.eclipse.ui.IActionBars;import org.eclipse.ui.IEditorPart;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.part.EditorActionBarContributor;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ResourceBundle;import org.eclipse.jface.action.IAction;import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;import org.eclipse.jface.action.IStatusLineManager;
+
+import org.eclipse.ui.IActionBars;import org.eclipse.ui.IEditorPart;import org.eclipse.ui.IWorkbenchActionConstants;import org.eclipse.ui.part.EditorActionBarContributor;
 
 
 
@@ -43,10 +48,20 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		ITextEditorActionConstants.PRINT		
 	};
 	
+	/** The status fields to be set to the editor */
+	private final static String[] STATUSFIELDS= {
+		ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE,
+		ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE,
+		ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION
+	};
+	
 	/** The active editor part */
 	private IEditorPart fActiveEditorPart;
 	/** The go to line action */
-	private RetargetTextEditorAction fGotoLine;	
+	private RetargetTextEditorAction fGotoLine;
+	/** The map of status fields */
+	private Map fStatusFields;
+	
 	
 	/**
 	 * Creates an empty editor action bar contributor. The action bars are
@@ -56,6 +71,9 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	 */
 	public BasicTextEditorActionContributor() {
 		fGotoLine= new RetargetTextEditorAction(EditorMessages.getResourceBundle(), "GotoLine."); //$NON-NLS-1$
+		fStatusFields= new HashMap(3);
+		for (int i= 0; i < STATUSFIELDS.length; i++)
+			fStatusFields.put(STATUSFIELDS[i], new StatusLineContributionItem(STATUSFIELDS[i]));
 	}
 	
 	/**
@@ -88,6 +106,12 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		if (fActiveEditorPart == part)
 			return;
 			
+		if (fActiveEditorPart instanceof ITextEditorExtension) {
+			ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
+			for (int i= 0; i < STATUSFIELDS.length; i++)
+				extension.setStatusField(null, STATUSFIELDS[i]);
+		}
+
 		fActiveEditorPart= part;
 		ITextEditor editor= (part instanceof ITextEditor) ? (ITextEditor) part : null;
 		
@@ -98,9 +122,15 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		}
 		
 		fGotoLine.setAction(getAction(editor, ITextEditorActionConstants.GOTO_LINE));
+		
+		if (fActiveEditorPart instanceof ITextEditorExtension) {
+			ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
+			for (int i= 0; i < STATUSFIELDS.length; i++)
+				extension.setStatusField((IStatusField) fStatusFields.get(STATUSFIELDS[i]), STATUSFIELDS[i]);
+		}
 	}
 	
-	/**
+	/*
 	 * @see EditorActionBarContributor#contributeToMenu(IMenuManager)
 	 */
 	public void contributeToMenu(IMenuManager menu) {
@@ -108,5 +138,14 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		if (editMenu != null) {
 			editMenu.add(fGotoLine);
 		}
+	}
+	
+	/*
+	 * @see EditorActionBarContributor#contributeToStatusLine(IStatusLineManager)
+	 */
+	public void contributeToStatusLine(IStatusLineManager statusLineManager) {
+		super.contributeToStatusLine(statusLineManager);
+		for (int i= 0; i < STATUSFIELDS.length; i++)
+			statusLineManager.add((IContributionItem) fStatusFields.get(STATUSFIELDS[i]));
 	}
 }

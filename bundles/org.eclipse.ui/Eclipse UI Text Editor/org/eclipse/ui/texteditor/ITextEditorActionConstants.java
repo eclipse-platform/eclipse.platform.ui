@@ -90,4 +90,20 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * Name of the ruler action to manage bookmarks. 
 	 */
 	static final String RULER_MANAGE_BOOKMARKS= "ManageBookmarks"; //$NON-NLS-1$
+	
+	
+	/**
+	 * Status category "input position".
+	 */
+	static final String STATUS_CATEGORY_INPUT_POSITION= "InputPosition";
+
+	/**
+	 * Status category "input mode".
+	 */
+	static final String STATUS_CATEGORY_INPUT_MODE= "InputMode";
+
+	/**
+	 * Status category "element state".
+	 */
+	static final String STATUS_CATEGORY_ELEMENT_STATE= "ElementState";
 }

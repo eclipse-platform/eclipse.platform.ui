@@ -69,7 +69,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 				
 				} else {
 					
-					if (count == 1 && !autoActivated)
+					if (count == 1 && !autoActivated && fContentAssistant.isAutoInserting())
 						
 						insertProposal(proposals[0], (char) 0);
 					

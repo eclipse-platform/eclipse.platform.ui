@@ -6,9 +6,15 @@ package org.eclipse.ui.texteditor;
  */
 
 
-import java.lang.reflect.InvocationTargetException;import java.util.ArrayList;import java.util.HashMap;import java.util.Iterator;import java.util.List;import java.util.Map;import java.util.MissingResourceException;import java.util.ResourceBundle;import org.eclipse.core.resources.IMarker;import org.eclipse.core.resources.IStorage;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.ILog;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.NullProgressMonitor;import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.Status;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.StyledText;import org.eclipse.swt.custom.VerifyKeyListener;import org.eclipse.swt.events.MouseEvent;import org.eclipse.swt.events.MouseListener;import org.eclipse.swt.events.VerifyEvent;import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;import org.eclipse.swt.graphics.FontData;import org.eclipse.swt.graphics.Image;import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Menu;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.action.IAction;import org.eclipse.jface.action.IMenuListener;import org.eclipse.jface.action.IMenuManager;import org.eclipse.jface.action.MenuManager;import org.eclipse.jface.action.Separator;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.dialogs.IDialogConstants;import org.eclipse.jface.dialogs.MessageDialog;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.jface.resource.JFaceResources;import org.eclipse.jface.text.BadLocationException;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.jface.text.IRegion;import org.eclipse.jface.text.ITextListener;import org.eclipse.jface.text.ITextOperationTarget;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.text.Position;import org.eclipse.jface.text.TextEvent;import org.eclipse.jface.text.source.Annotation;import org.eclipse.jface.text.source.IAnnotationModel;import org.eclipse.jface.text.source.ISourceViewer;import org.eclipse.jface.text.source.IVerticalRuler;import org.eclipse.jface.text.source.SourceViewer;import org.eclipse.jface.text.source.SourceViewerConfiguration;import org.eclipse.jface.text.source.VerticalRuler;import org.eclipse.jface.util.Assert;import org.eclipse.jface.util.IPropertyChangeListener;import org.eclipse.jface.util.PropertyChangeEvent;import org.eclipse.jface.viewers.ISelectionChangedListener;import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.IEditorSite;import org.eclipse.ui.IFileEditorInput;
+import java.lang.reflect.InvocationTargetException;import java.util.ArrayList;import java.util.HashMap;import java.util.Iterator;import java.util.List;import java.util.Map;import java.util.MissingResourceException;import java.util.ResourceBundle;import org.eclipse.core.resources.IMarker;import org.eclipse.core.resources.IStorage;import org.eclipse.core.runtime.CoreException;import org.eclipse.core.runtime.ILog;import org.eclipse.core.runtime.IProgressMonitor;import org.eclipse.core.runtime.IStatus;import org.eclipse.core.runtime.NullProgressMonitor;import org.eclipse.core.runtime.Platform;import org.eclipse.core.runtime.Status;import org.eclipse.swt.SWT;import org.eclipse.swt.custom.ST;
+import org.eclipse.swt.custom.StyledText;import org.eclipse.swt.custom.VerifyKeyListener;import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.MouseEvent;import org.eclipse.swt.events.MouseListener;import org.eclipse.swt.events.VerifyEvent;import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;import org.eclipse.swt.graphics.FontData;import org.eclipse.swt.graphics.Image;import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Composite;import org.eclipse.swt.widgets.Control;import org.eclipse.swt.widgets.Display;import org.eclipse.swt.widgets.Menu;import org.eclipse.swt.widgets.Shell;import org.eclipse.jface.action.IAction;import org.eclipse.jface.action.IMenuListener;import org.eclipse.jface.action.IMenuManager;import org.eclipse.jface.action.MenuManager;import org.eclipse.jface.action.Separator;import org.eclipse.jface.dialogs.ErrorDialog;import org.eclipse.jface.dialogs.IDialogConstants;import org.eclipse.jface.dialogs.MessageDialog;import org.eclipse.jface.preference.IPreferenceStore;import org.eclipse.jface.preference.PreferenceConverter;import org.eclipse.jface.resource.ImageDescriptor;import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.BadLocationException;import org.eclipse.jface.text.IDocument;import org.eclipse.jface.text.IFindReplaceTarget;import org.eclipse.jface.text.IRegion;import org.eclipse.jface.text.ITextListener;import org.eclipse.jface.text.ITextOperationTarget;import org.eclipse.jface.text.ITextSelection;import org.eclipse.jface.text.Position;import org.eclipse.jface.text.TextEvent;import org.eclipse.jface.text.source.Annotation;import org.eclipse.jface.text.source.IAnnotationModel;import org.eclipse.jface.text.source.ISourceViewer;import org.eclipse.jface.text.source.IVerticalRuler;import org.eclipse.jface.text.source.SourceViewer;import org.eclipse.jface.text.source.SourceViewerConfiguration;import org.eclipse.jface.text.source.VerticalRuler;
+import org.eclipse.jface.util.Assert;import org.eclipse.jface.util.IPropertyChangeListener;import org.eclipse.jface.util.PropertyChangeEvent;import org.eclipse.jface.viewers.ISelectionChangedListener;import org.eclipse.jface.viewers.ISelectionProvider;import org.eclipse.jface.viewers.SelectionChangedEvent;import org.eclipse.ui.IEditorInput;import org.eclipse.ui.IEditorSite;import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPartListener;import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IStorageEditorInput;import org.eclipse.ui.IWorkbenchPart;import org.eclipse.ui.PartInitException;import org.eclipse.ui.PlatformUI;import org.eclipse.ui.actions.WorkspaceModifyOperation;import org.eclipse.ui.help.WorkbenchHelp;import org.eclipse.ui.part.EditorPart;
 
@@ -24,14 +30,12 @@ import org.eclipse.ui.IStorageEditorInput;import org.eclipse.ui.IWorkbenchPart;
  *
  * @see org.eclipse.ui.editors.text.TextEditor
  */
-public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor {
+public abstract class AbstractTextEditor extends EditorPart implements ITextEditor, IReusableEditor, ITextEditorExtension {
 	
 	/**
 	 * Internal element state listener.
 	 */
 	class ElementStateListener implements IElementStateListener {
-		
-		private ITextSelection fRememberedSelection;
 		
 		/*
 		 * @see IElementStateListener#elementDirtyStateChanged
@@ -49,9 +53,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		public void elementContentAboutToBeReplaced(Object element) {
 			if (element != null && element.equals(getEditorInput())) {
+				rememberSelection();
 				resetHighlightRange();
-				ISelectionProvider sp= getSelectionProvider();
-				fRememberedSelection= (sp == null ? null : (ITextSelection) sp.getSelection());
 			}
 		}
 		
@@ -61,9 +64,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		public void elementContentReplaced(Object element) {
 			if (element != null && element.equals(getEditorInput())) {
 				firePropertyChange(PROP_DIRTY);
-				restoreSelection(fRememberedSelection);
 				if (fSourceViewer != null)
 					fSourceViewer.resetPlugins();
+				restoreSelection();
 			}
 		}
 		
@@ -82,12 +85,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (originalElement != null && 
 					originalElement.equals(getEditorInput()) &&
 					(movedElement == null || movedElement instanceof IEditorInput)) {
-				
-				ITextSelection s= null;
-				ISelectionProvider p= getSelectionProvider();
-				if (p != null)
-					s= (ITextSelection) p.getSelection();
-					
+						
+				rememberSelection();
+									
 				IDocumentProvider d= getDocumentProvider();
 				IDocument changed= null;
 				if (isDirty())
@@ -98,34 +98,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				if (changed != null)
 					d.getDocument(getEditorInput()).set(changed.get());
 					
-				restoreSelection(s);
+				restoreSelection();
 			}
 		}
-		
-		/**
-		 * Restores the given selection in the editor.
-		 * 
-		 * @param selection the selection to be restored
-		 */
-		private void restoreSelection(final ITextSelection selection) {
-			
-			if (selection == null || fSourceViewer == null)
-				return;
-				
-			IDocument document= fSourceViewer.getDocument();
-			int offset= selection.getOffset();
-			int length= selection.getLength();
-			if (offset + length <= document.getLength()) {
-
-				try {
-					selectAndReveal(offset, length);
-				} catch (IllegalArgumentException x) {
-					/*
-					 * Catching IllegalArgumentException because of 1GEUUH3 and 1GDXEKW.
-					 */
-				}
-			}
-		} 
 	};
 	
 	/**
@@ -272,6 +247,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	
 	};
 	
+	/**
+	 * Internal interface for a cursor listener. I.e. aggregation 
+	 * of mouse and key listener.
+	 */
+	interface ICursorListener extends MouseListener, KeyListener {
+	};
+	
+	
+	
 	/** Key used to look up font preference */
 	public final static String PREFERENCE_FONT= JFaceResources.TEXT_FONT;
 	/** Key used to look up foreground color preference */
@@ -346,6 +330,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private IPropertyChangeListener fPropertyChangeListener= new PropertyChangeListener();
 	/** The editor's part listener */
 	private IPartListener fPartListener= new PartListener();
+	/** The map of the editor's status fields */
+	private Map fStatusFields;
+	/** The editor's cursor listener */
+	private ICursorListener fCursorListener;
+	/** The editor's insert mode */
+	private boolean fOverwriting= false;
+	/** The editor's remembered text selection */
+	private ITextSelection fRememberedSelection;
 	
 	
 	/**
@@ -562,6 +554,73 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
+	 * Remembers the current selection of this editor. This method is called when, e.g., 
+	 * the content of the editor is about to be reverted to the saved state. This method
+	 * remembers the selection in a semantic format, i.e., in a format which allows to
+	 * restore the selection even if the originally selected text is no longer part of the
+	 * editor's content.<p>
+	 * Subclasses should implement this method including all necessary state. This
+	 * default implementation remembers the textual range only and is thus purely
+	 * syntactic.
+	 * 
+	 * @see #restoreSelection
+	 */
+	protected void rememberSelection() {
+		ISelectionProvider sp= getSelectionProvider();
+		fRememberedSelection= (sp == null ? null : (ITextSelection) sp.getSelection());
+	}
+	
+	/**
+	 * Restores a selection previously remembered by <code>rememberSelection</code>.
+	 * Subclasses should implement this method. This default implementation selects the
+	 * remembered textual range after having check whether it is valid or not.
+	 * 
+	 * @see #rememberSelection
+	 */
+	protected void restoreSelection() {
+		ISourceViewer viewer= getSourceViewer();
+		if (viewer == null)
+			return;
+		
+		if (fRememberedSelection == null)
+			return;
+				
+		int offset= fRememberedSelection.getOffset();
+		int length= fRememberedSelection.getLength();
+		fRememberedSelection= null;
+		
+		IDocument document= viewer.getDocument();
+		if (offset + length <= document.getLength()) {
+			
+			try {
+				
+				IRegion line= document.getLineInformationOfOffset(offset);
+				int lineEnd= line.getOffset() + line.getLength();
+				int delta= offset - lineEnd;
+				if (delta > 0) {
+					// in the middle of a multi byte line delimiter
+					offset -= delta;
+					length += delta;
+				}
+				
+				int end= offset + length;
+				line= document.getLineInformationOfOffset(end);
+				lineEnd= line.getOffset() + line.getLength();
+				delta= end - lineEnd;
+				if (delta > 0) {
+					// in the middle of a multi byte line delimiter
+					length -= delta;
+				}
+					
+				selectAndReveal(offset, length);
+			
+			} catch (BadLocationException x) {
+				// select nothing
+			}
+		}
+	}
+	
+	/**
 	 * Creates and returns the listener on this editor's context menus.
 	 *
 	 * @return the menu listener
@@ -627,7 +686,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 
 	/**
-	 * Returns this editor's the selection changed listener to be installed
+	 * Returns this editor's selection changed listener to be installed
 	 * on the editor's source viewer.
 	 *
 	 * @return the listener
@@ -639,6 +698,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				private Runnable fRunnable= new Runnable() {
 					public void run() {
 						updateSelectionDependentActions();
+						handleCursorPositionChanged();
 					}
 				};
 				
@@ -654,6 +714,45 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		
 		return fSelectionChangedListener;
+	}
+	
+	/**
+	 * Returns this editor's "cursor" listener to be installed on the editor's
+	 * source viewer. This listener is listening to key and mouse button events.
+	 * 
+	 * @return the listener
+	 */
+	protected final ICursorListener getCursorListener() {
+		if (fCursorListener == null) {
+			fCursorListener= new ICursorListener() {
+				
+				public void keyPressed(KeyEvent e) {
+				}
+				
+				public void keyReleased(KeyEvent e) {
+					handleCursorPositionChanged();
+					if (e.keyCode != 0) {
+						StyledText styledText= (StyledText) e.widget;
+						int action = styledText.getKeyBinding(e.keyCode | e.stateMask);
+						if (ST.TOGGLE_OVERWRITE == action) {
+							fOverwriting= !fOverwriting;
+							handleInsertModeChanged();
+						}
+					}
+				}
+				
+				public void mouseDoubleClick(MouseEvent e) {
+				}
+				
+				public void mouseDown(MouseEvent e) {
+				}
+				
+				public void mouseUp(MouseEvent e) {
+					handleCursorPositionChanged();
+				}
+			};
+		}
+		return fCursorListener;
 	}
 
 	/*
@@ -717,9 +816,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		fSourceViewer.addTextListener(fTextListener);
 		getSelectionProvider().addSelectionChangedListener(getSelectionChangedListener());
 				
+		initializeViewerFont(fSourceViewer);
+		initializeViewerColors(fSourceViewer);
+		
 		StyledText styledText= fSourceViewer.getTextWidget();
-		initializeWidgetFont(styledText);
-		initializeWidgetColors(styledText);
+		styledText.addMouseListener(getCursorListener());
+		styledText.addKeyListener(getCursorListener());
 		
 		if (getHelpContextId() != null)
 			WorkbenchHelp.setHelp(styledText, new Object[] { getHelpContextId() });
@@ -752,7 +854,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * 
 	 * @param styledText the widget to be initialized
 	 */
-	private void initializeWidgetFont(StyledText styledText) {
+	private void initializeViewerFont(ISourceViewer viewer) {
 		
 		IPreferenceStore store= getPreferenceStore();
 		if (store != null) {
@@ -766,8 +868,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			if (data != null) {
 				
-				Font font= new Font(styledText.getDisplay(), data);
-				styledText.setFont(font);
+				Font font= new Font(viewer.getTextWidget().getDisplay(), data);
+				setFont(viewer, font);
 				
 				if (fFont != null)
 					fFont.dispose();
@@ -778,9 +880,34 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 		
 		// if all the preferences failed
-		styledText.setFont(JFaceResources.getTextFont());
+		setFont(viewer, JFaceResources.getTextFont());
 	}
 	
+	/**
+	 * Sets the font for the given viewer sustaining selection and scroll position.
+	 * 
+	 * @param sourceViewer the source viewer
+	 * @param font the font
+	 */
+	private void setFont(ISourceViewer sourceViewer, Font font) {
+		if (sourceViewer.getDocument() != null) {
+		
+			Point selection= sourceViewer.getSelectedRange();
+			int topIndex= sourceViewer.getTopIndex();
+			
+			StyledText styledText= sourceViewer.getTextWidget();
+			styledText.setRedraw(false);
+			
+			styledText.setFont(font);
+			sourceViewer.setSelectedRange(selection.x , selection.y);
+			sourceViewer.setTopIndex(topIndex);
+			
+			styledText.setRedraw(true);
+		} else {
+			StyledText styledText= sourceViewer.getTextWidget();
+			styledText.setFont(font);
+		}	
+	}
 	
 	/**
 	 * Creates a color from the information stored in the given preference store.
@@ -805,14 +932,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Initializes the given widget's colors.
+	 * Initializes the given viewer's colors.
 	 * 
-	 * @param styledText the widget to be initialized
+	 * @param viewer the viewer to be initialized
 	 */
-	private void initializeWidgetColors(StyledText styledText) {
+	private void initializeViewerColors(ISourceViewer viewer) {
 		
 		IPreferenceStore store= getPreferenceStore();
 		if (store != null) {
+			
+			StyledText styledText= viewer.getTextWidget();
 			
 			// ----------- foreground color --------------------
 			Color color= createColor(store, PREFERENCE_COLOR_FOREGROUND, styledText.getDisplay());
@@ -930,6 +1059,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			initializeTitle(input);
 			if (fSourceViewer != null)
 				initializeSourceViewer(input);
+				
+			updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
 		}
 	}
 	
@@ -1072,10 +1203,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		String property= event.getProperty();
 		
 		if (PREFERENCE_FONT.equals(property))
-			initializeWidgetFont(fSourceViewer.getTextWidget());
+			initializeViewerFont(fSourceViewer);
 			
 		if (PREFERENCE_COLOR_FOREGROUND.equals(property) || PREFERENCE_COLOR_BACKGROUND.equals(property))
-			initializeWidgetColors(fSourceViewer.getTextWidget());
+			initializeViewerColors(fSourceViewer);
 			
 		if (affectsTextPresentation(event))
 			fSourceViewer.invalidateTextPresentation();
@@ -1874,4 +2005,115 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	protected void firePropertyChange(int property) {
 		super.firePropertyChange(property);
 	}
+	
+	/*
+	 * @see ITextEditorExtension#setStatusField(IStatusField, String)
+	 */
+	public void setStatusField(IStatusField field, String category) {
+		Assert.isNotNull(category);
+		if (field != null) {
+			
+			if (fStatusFields == null)
+				fStatusFields= new HashMap(3);			
+			
+			fStatusFields.put(category, field);
+			updateStatusField(category);
+			
+		} else if (fStatusFields != null)
+			fStatusFields.remove(category);
+	}
+	
+	/**
+	 * Returns the current status field for the given status category.
+	 * 
+	 * @param category the status category
+	 * @return the current status field for the given status category.
+	 */
+	protected IStatusField getStatusField(String category) {
+		if (category != null && fStatusFields != null)
+			return (IStatusField) fStatusFields.get(category);
+		return null;
+	}
+	
+	/**
+	 * Returns whether this editor is in overwrite or insert mode.
+	 * 
+	 * @return <code>true</code> if in insert mode,
+	 * 	<code>false</code> for overwrite mode
+	 */
+	protected boolean isInInsertMode() {
+		return !fOverwriting;
+	}
+	
+	/**
+	 * Handles a potential change of the cursor position.
+	 */
+	protected void handleCursorPositionChanged() {
+		updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
+	}
+	
+	/**
+	 * Handles a change of the editor's insert mode.
+	 */
+	protected void handleInsertModeChanged() {
+		updateStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE);
+	}
+	
+	/**
+	 * Updates the status fields for the given category.
+	 * 
+	 * @param category
+	 */
+	protected void updateStatusField(String category) {
+		if (ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION.equals(category)) {
+			
+			IStatusField field= getStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION);
+			if (field != null)
+				field.setText(getCursorPosition());
+		
+		} else if (ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE.equals(category)) {
+			
+			IStatusField field= getStatusField(ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE);
+			if (field != null)
+				field.setText(isEditable() ? "Writable" : "Read Only");
+		
+		} else if (ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE.equals(category)) {
+			
+			IStatusField field= getStatusField(ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE);
+			if (field != null)
+				field.setText(isInInsertMode() ? "Insert" : "Overwrite");
+		}	
+	}
+	
+	/**
+	 * Returns a description of the cursor position.
+	 * 
+	 * @return a description of the cursor position
+	 */
+	protected String getCursorPosition() {
+		StyledText styledText= fSourceViewer.getTextWidget();
+		
+		int offset= fSourceViewer.getVisibleRegion().getOffset();
+		int caret= styledText.getCaretOffset();
+		IDocument document= fSourceViewer.getDocument();
+		
+		try {
+			
+			int line=document.getLineOfOffset(offset + caret);
+			
+			int lineOffset= document.getLineOffset(line);
+			int occurrences= 0;
+			for (int i= lineOffset; i < caret; i++)
+				if ('\t' == document.getChar(i))
+					++ occurrences;
+					
+			int tabWidth= styledText.getTabs();
+			int column= caret - lineOffset + (tabWidth -1) * occurrences;
+			
+			return ((line + 1) + " : " + (column + 1));
+			
+		} catch (BadLocationException x) {
+			return "??";
+		}
+	}	
 }

@@ -79,7 +79,8 @@ public class ContentAssistant implements IContentAssistant {
 			if (Helper.okToUse(w)) {
 				
 				Control shell= w.getShell();
-				shell.removeControlListener(this);
+				if (Helper.okToUse(shell))
+					shell.removeControlListener(this);
 				
 				w.removeMouseListener(this);
 				w.removeFocusListener(this);
@@ -905,7 +906,12 @@ public class ContentAssistant implements IContentAssistant {
 	 * @see IContentAssist#uninstall
 	 */
 	public void uninstall() {
+		
+		fProposalPopup.hide();
+		fContextInfoPopup.hide();
+		
 		manageAutoActivation(false);
+		
 		fViewer= null;
 	}
 

@@ -13,8 +13,50 @@ Eclipse Platform Build Notes</h1>
 
 <h1>
 Text Editor Support (including JFace Text)</h1>
+&nbsp;
+<p>&nbsp;
+<p>Eclipse SDK Build 20011127
+<h2>
+Breaking API changes</h2>
 
-<p><br>Eclipse SDK Build 20011120
+<h2>
+Other highlights</h2>
+
+<ul>
+<li>
+An BasicTextEditorActionContributor now contributes three status fields
+into the window's status line. Each field is dedicated to show information
+of a particular category. The categories are defined in ITextEditorActionConstants.
+A new interface ITextEditorExtension has been introduced. On activation,
+implementing editors of this interface are informed about the status fields
+they can use to publish status information. AbstractTextEditor implements
+ITextEditorExtension. Subclasses of AbstractTextEditor can get access to
+the editor's current status fields using the method getStatusField(String
+category). By default, AbstractTextEditor publishes the following information:
+cursor position, input mode, reade only state of its input. Subclasses
+may change this behavior by overriding updateStatusField(String category)
+or callers of this method.</li>
+
+<li>
+The default text editor uses the feature described above and now provides
+status information.</li>
+</ul>
+
+<h2>
+Known deficiencies</h2>
+
+<h2>
+Problem reports closed</h2>
+#4071&nbsp;&nbsp;&nbsp; Format option loses place in editor (1GHQFU6)
+<br>#6168&nbsp;&nbsp;&nbsp; code assist preference (auto complete) does
+not work
+<br>#6087&nbsp;&nbsp;&nbsp; NPE closing content assist from DisplayView
+on exit
+<br>#6013&nbsp;&nbsp;&nbsp; Repeatable Java editor hang in 200111115
+<br>#4947&nbsp;&nbsp;&nbsp; No indication of Insert/Overwrite mode
+<p>
+<hr WIDTH="100%">
+<p>Eclipse SDK Build 20011120
 <h2>
 Breaking API changes</h2>
 
