@@ -14,6 +14,7 @@ import junit.framework.AssertionFailedError;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
@@ -50,6 +51,7 @@ public class SyncInfoFromSyncSet extends SyncInfoSource {
 		if (subscriber != input.getSubscriber()) {
 			// ensure that the CVS subscriber is active
 			syncView.activateSubscriber(subscriber);
+			while (Display.getCurrent().readAndDispatch()) {};
 			input = syncView.getInput();
 		}
 		if (subscriber != input.getSubscriber()) {
