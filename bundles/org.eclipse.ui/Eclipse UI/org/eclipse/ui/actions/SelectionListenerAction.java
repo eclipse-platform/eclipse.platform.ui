@@ -57,14 +57,14 @@ public abstract class SelectionListenerAction extends Action
 	 * (element type: <code>IResource</code>); meaningful only when
 	 * <code>selectionDirty == true</code>.
 	 */
-	private List resources = new ArrayList();
+	private List resources;
 
 	/**
 	 * The list of non-resource elements in the current selection
 	 * (element type: <code>Object</code>); meaningful only when
 	 * <code>selectionDirty == true</code>.
 	 */
-	private List nonResources = new ArrayList();
+	private List nonResources;
 /**
  * Creates a new action with the given text.
  *
@@ -73,14 +73,21 @@ public abstract class SelectionListenerAction extends Action
  */
 protected SelectionListenerAction(String text) {
 	super(text);
+	initCollections();
+}
+/*
+ * Init <code>resources</code> and <code>nonResources</code>.
+ */
+private void initCollections() {
+	resources = new ArrayList();
+	nonResources = new ArrayList();
 }
 /**
  * Extracts <code>IResource</code>s from the current selection and adds them to
  * the resources list, and puts non-resources in the non-resources list.
  */
 private final void computeResources() {
-	resources.clear();
-	nonResources.clear();
+	initCollections();
 	for (Iterator e = selection.iterator(); e.hasNext();) {
 		Object next = e.next();
 		if (next instanceof IResource) {
@@ -165,8 +172,7 @@ protected boolean resourceIsType(IResource resource, int resourceMask) {
 public final void selectionChanged(IStructuredSelection selection) {
 	this.selection = selection;
 	selectionDirty = true;
-	resources.clear();
-	nonResources.clear();
+	initCollections();
 	setEnabled(updateSelection(selection));
 }
 /**
