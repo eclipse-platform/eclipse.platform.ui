@@ -30,6 +30,8 @@
 			bootclasspath="${bootclasspath}" 
 			classpath="${basedir}/../org.eclipse.core.runtime/runtime.jar;
 					${basedir}/../org.eclipse.core.runtime/bin;
+					${basedir}/../org.eclipse.core.runtime.compatibility/compatibility.jar;
+					${basedir}/../org.eclipse.core.runtime.compatibility/bin;
 					${basedir}/../org.apache.ant/lib/ant.jar;
 					${basedir}/bin">
 			<src path="src_ant/"/>

@@ -14,8 +14,9 @@
       </library>
    </runtime>
 
-<requires>
+   <requires>
       <import plugin="org.eclipse.core.variables"/>
+      <import plugin="org.eclipse.core.runtime.compatibility"/>
    </requires>
    
    <extension-point id="extraClasspathEntries" name="%classpathName" schema="schema/extraClasspathEntries.exsd"/>
