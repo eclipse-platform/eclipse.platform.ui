@@ -197,14 +197,6 @@
             id="org.eclipse.team.ui">
       </category>
       <view
-            name="%OldSyncView.name"
-            icon="icons/full/cview16/synch_synch.gif"
-            fastViewWidthRatio="0.75"
-            category="org.eclipse.team.ui"
-            class="org.eclipse.team.internal.ui.sync.SyncView"
-            id="org.eclipse.team.ui.sync.SyncView">
-      </view>
-      <view
             name="%SyncView.name"
             icon="icons/full/cview16/synch_synch.gif"
             fastViewWidthRatio="0.25"
