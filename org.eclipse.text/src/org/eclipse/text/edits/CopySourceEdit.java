@@ -238,6 +238,8 @@ public final class CopySourceEdit extends TextEdit {
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.no_target")); //$NON-NLS-1$
 		if (fTarget.getSourceEdit() != this)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.different_source")); //$NON-NLS-1$
+		if (getRoot() != fTarget.getRoot())
+			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("CopySourceEdit.different_tree")); //$NON-NLS-1$
 	}
 	
 	//---- source computation -------------------------------------------------------
@@ -257,7 +259,8 @@ public final class CopySourceEdit extends TextEdit {
 			fSourceRoot.moveTree(-getOffset());
 			if (fSourceRoot.hasChildren()) {
 				EditDocument subDocument= new EditDocument(fSourceContent);
-				fSourceRoot.apply(subDocument, TextEdit.NONE);
+				TextEditProcessor subProcessor= TextEditProcessor.createSourceComputationProcessor(subDocument, fSourceRoot, TextEdit.NONE);
+				subProcessor.performEdits();
 				if (needsTransformation())
 					applyTransformation(subDocument);
 				fSourceContent= subDocument.get();

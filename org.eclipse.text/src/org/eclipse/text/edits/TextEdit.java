@@ -297,6 +297,20 @@ public abstract class TextEdit {
 	}
 	
 	/**
+	 * Returns the root edit of the edit tree.
+	 * 
+	 * @return the root edit of the edit tree
+	 * @since 3.1
+	 */
+	public final TextEdit getRoot() {
+		TextEdit result= this;
+		while (result.fParent != null) {
+			result= result.fParent;
+		}
+		return result;
+	}
+	
+	/**
 	 * Adds the given edit <code>child</code> to this edit.
 	 * 
 	 * @param child the child edit to add
@@ -775,6 +789,16 @@ public abstract class TextEdit {
 	
 	//---- Edit processing ----------------------------------------------
 	
+	/**
+	 * Traverses the edit tree to perform the consistency check.
+	 * 
+	 * @param processor the text edit processor
+	 * @param document the document to be manipulated
+	 * @param sourceEdits the list of source edits to be performed before
+	 *  the actual tree is applied to the document
+	 * 
+	 * @return the number of indirect move or copy target edit children 
+	 */
 	/* package */ int traverseConsistencyCheck(TextEditProcessor processor, IDocument document, List sourceEdits) {
 		int result= 0;
 		if (fChildren != null) {

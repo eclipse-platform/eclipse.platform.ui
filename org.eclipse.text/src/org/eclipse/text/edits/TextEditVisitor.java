@@ -79,7 +79,7 @@ public class TextEditVisitor {
 	
 	/**
 	 * Visits the given text edit. This method is called by default from
-	 * type-specific visits. It is not called by a edit's accept method. 
+	 * type-specific visits. It is not called by an edit's accept method. 
 	 * The default implementation returns <code>true</code>.
 	 *
 	 * @param edit the node to visit 

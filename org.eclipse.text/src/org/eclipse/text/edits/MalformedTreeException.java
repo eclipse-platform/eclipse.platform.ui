@@ -14,6 +14,9 @@ package org.eclipse.text.edits;
  * Thrown to indicate that an edit got added to a parent edit
  * but the child edit somehow conflicts with the parent or
  * one of it siblings.
+ * <p>
+ * This class is not intended to be serialized.
+ * </p>
  * 
  * @see TextEdit#addChild(TextEdit)
  * @see TextEdit#addChildren(TextEdit[])
@@ -21,6 +24,9 @@ package org.eclipse.text.edits;
  * @since 3.0
  */
 public class MalformedTreeException extends RuntimeException {
+	
+	// Not intended to be serialized
+	private static final long serialVersionUID= 1L;
 	
 	private TextEdit fParent;
 	private TextEdit fChild;

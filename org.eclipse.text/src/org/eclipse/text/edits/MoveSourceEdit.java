@@ -26,12 +26,12 @@ import org.eclipse.jface.text.Region;
 /**
  * A move source edit denotes the source of a move operation. Move
  * source edits are only valid inside an edit tree if they have a
- * corresponding traget edit. Furthermore the corresponding target 
+ * corresponding target edit. Furthermore the corresponding target 
  * edit can't be a direct or indirect child of the source edit. 
  * Violating one of two requirements will result in a <code>
  * MalformedTreeException</code> when executing the edit tree.
  * <p>
- * A move source edit can manange an optional source modifier. A
+ * A move source edit can manage an optional source modifier. A
  * source modifier can provide a set of replace edits which will
  * to applied to the source before it gets inserted at the target
  * position.
@@ -134,7 +134,7 @@ public final class MoveSourceEdit extends TextEdit {
 		return fSourceContent;
 	}
 	
-	/* package */ MultiTextEdit getRoot() {
+	/* package */ MultiTextEdit getSourceRoot() {
 		return fSourceRoot;
 	}
 	
@@ -207,6 +207,8 @@ public final class MoveSourceEdit extends TextEdit {
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.no_target")); //$NON-NLS-1$
 		if (fTarget.getSourceEdit() != this)
 			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.different_source"));  //$NON-NLS-1$
+		if (getRoot() != fTarget.getRoot())
+			throw new MalformedTreeException(getParent(), this, TextEditMessages.getString("MoveSourceEdit.different_tree")); //$NON-NLS-1$
 	}
 
 	//---- source computation --------------------------------------------------------------
@@ -227,7 +229,8 @@ public final class MoveSourceEdit extends TextEdit {
 				fSourceRoot.addChildren(children);
 				fSourceRoot.moveTree(-getOffset());
 				int processingStyle= getStyle(processor);
-				fSourceRoot.apply(subDocument, processingStyle);
+				TextEditProcessor subProcessor= TextEditProcessor.createSourceComputationProcessor(subDocument, fSourceRoot, processingStyle);
+				subProcessor.performEdits();
 				if (needsTransformation())
 					applyTransformation(subDocument, processingStyle);
 				fSourceContent= subDocument.get();

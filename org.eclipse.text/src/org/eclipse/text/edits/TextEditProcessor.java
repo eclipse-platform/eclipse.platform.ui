@@ -49,9 +49,14 @@ public class TextEditProcessor {
 	 *  processor the ownership of the edit is transfered to the
 	 *  text edit processors. Clients must not modify the edit
 	 *  (e.g adding new children) any longer.
+	 *
 	 * @param style {@link TextEdit#NONE}, {@link TextEdit#CREATE_UNDO} or {@link TextEdit#UPDATE_REGIONS}) 
 	 */
 	public TextEditProcessor(IDocument document, TextEdit root, int style) {
+		this(document, root, style, false);
+	}
+	
+	private TextEditProcessor(IDocument document, TextEdit root, int style, boolean secondary) {
 		Assert.isNotNull(document);
 		Assert.isNotNull(root);
 		fDocument= document;
@@ -59,6 +64,24 @@ public class TextEditProcessor {
 		if (fRoot instanceof MultiTextEdit)
 			((MultiTextEdit)fRoot).defineRegion(0);
 		fStyle= style;
+		if (secondary) {
+			fChecked= true;
+			fSourceEdits= new ArrayList();
+		}
+	}
+	
+	/**
+	 * Creates a special internal processor used to during source computation inside
+	 * move source and copy source edits
+	 * 
+	 * @param document the document to be manipulated
+	 * @param root the edit tree
+	 * @param style {@link TextEdit#NONE}, {@link TextEdit#CREATE_UNDO} or {@link TextEdit#UPDATE_REGIONS})
+	 * @return a secondary text edit processor
+	 * @since 3.1
+	 */
+	/* package */ static TextEditProcessor createSourceComputationProcessor(IDocument document, TextEdit root, int style) {
+		return new TextEditProcessor(document, root, style, true);
 	}
 	
 	/**

@@ -153,7 +153,7 @@ public final class MoveTargetEdit extends TextEdit {
 		document.replace(getOffset(), getLength(), source);
 		fDelta= source.length() - getLength();
 		
-		MultiTextEdit sourceRoot= fSource.getRoot();
+		MultiTextEdit sourceRoot= fSource.getSourceRoot();
 		if (sourceRoot != null) {
 			sourceRoot.moveTree(getOffset());
 			TextEdit[] sourceChildren= sourceRoot.removeChildren();
