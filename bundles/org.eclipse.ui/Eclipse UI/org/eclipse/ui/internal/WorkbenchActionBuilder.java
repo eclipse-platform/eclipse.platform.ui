@@ -25,6 +25,29 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * This is used to add actions to the workbench.
  */
 public class WorkbenchActionBuilder implements IPropertyChangeListener {
+	private static final String saveActionDefId = "file.save";
+	private static final String saveAllActionDefId = "file.saveAll";
+	private static final String printActionDefId = "file.print";
+	private static final String closeActionDefId = "file.close";
+	private static final String closeAllActionDefId = "file.closeAll";
+	private static final String undoActionDefId = "edit.undo";
+	private static final String redoActionDefId = "edit.redo";
+	private static final String cutActionDefId = "edit.cut";
+	private static final String copyActionDefId = "edit.copy";
+	private static final String pasteActionDefId = "edit.paste";
+	private static final String deleteActionDefId = "edit.delete";
+	private static final String selectAllActionDefId = "edit.selectAll";
+	private static final String findActionDefId = "edit.findReplace";
+	private static final String addBookmarkActionDefId = "edit.addBookmark";
+	private static final String showViewMenuActionDefId = "window.showViewMenu";
+	private static final String showPartPaneMenuActionDefId = "window.showSystemMenu";
+	private static final String nextEditorActionDefId = "window.nextEditor";
+	private static final String prevEditorActionDefId = "window.previousEditor";
+	private static final String nextPartActionDefId = "window.nextView";
+	private static final String prevPartActionDefId = "window.previousView";
+	private static final String activateEditorActionDefId = "window.activateEditor";
+	private static final String workbenchEditorsActionDefId = "window.switchToEditor";
+	
 	// target
 	private WorkbenchWindow window;
 
@@ -326,7 +349,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		decoratorFactory.fillMenu(menu);
 
 		menu.add(new Separator(IWorkbenchActionConstants.WINDOW_EXT));
-		menu.add(workbenchEditorsAction = new WorkbenchEditorsAction(window));
+		menu.add(workbenchEditorsAction);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 		menu.add(new SwitchToWindowMenu(window, true));
 		
@@ -416,6 +439,7 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 
 		// Get services for notification.
 		IPartService partService = window.getPartService();
+		WWinKeyBindingService keyBindingService = window.getKeyBindingService();
 
 		// Many actions need the workbench.
 		IWorkbench workbench = window.getWorkbench();
@@ -449,11 +473,12 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		buildAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_HOVER));
 		buildAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_BUILD_EXEC_DISABLED));
 
-		saveAction = new SaveAction(window);
+		saveAction = new SaveAction(window, saveActionDefId);
 		saveAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT));
 		saveAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_HOVER));
 		saveAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVE_EDIT_DISABLED));
 		partService.addPartListener(saveAction);
+		keyBindingService.registerGlobalAction(saveAction);
 
 		saveAsAction = new SaveAsAction(window);
 		saveAsAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT));
@@ -461,78 +486,81 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		saveAsAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEAS_EDIT_DISABLED));
 		partService.addPartListener(saveAsAction);
 
-		saveAllAction = new SaveAllAction(window);
+		saveAllAction = new SaveAllAction(window, saveAllActionDefId);
 		saveAllAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT));
 		saveAllAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_HOVER));
 		saveAllAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SAVEALL_EDIT_DISABLED));
 		partService.addPartListener(saveAllAction);
+		keyBindingService.registerGlobalAction(saveAllAction);
 
-		undoAction = new LabelRetargetAction(IWorkbenchActionConstants.UNDO, WorkbenchMessages.getString("Workbench.undo")); //$NON-NLS-1$
-		undoAction.setToolTipText(WorkbenchMessages.getString("Workbench.undoToolTip")); //$NON-NLS-1$
+		undoAction = new LabelRetargetAction(IWorkbenchActionConstants.UNDO, undoActionDefId); //$NON-NLS-1$
 		undoAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT));
 		undoAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_HOVER));
 		undoAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_UNDO_EDIT_DISABLED));
 		undoAction.setAccelerator(SWT.CTRL | 'z');
 		partService.addPartListener(undoAction);
+		keyBindingService.registerGlobalAction(undoAction);
 
-		redoAction = new LabelRetargetAction(IWorkbenchActionConstants.REDO, WorkbenchMessages.getString("Workbench.redo")); //$NON-NLS-1$
-		redoAction.setToolTipText(WorkbenchMessages.getString("Workbench.redoToolTip")); //$NON-NLS-1$
+		redoAction = new LabelRetargetAction(IWorkbenchActionConstants.REDO, redoActionDefId); //$NON-NLS-1$
 		redoAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT));
 		redoAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_HOVER));
 		redoAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_REDO_EDIT_DISABLED));
 		redoAction.setAccelerator(SWT.CTRL | 'y');
 		partService.addPartListener(redoAction);
+		keyBindingService.registerGlobalAction(redoAction);
 
-		cutAction = new RetargetAction(IWorkbenchActionConstants.CUT, WorkbenchMessages.getString("Workbench.cut")); //$NON-NLS-1$
-		cutAction.setToolTipText(WorkbenchMessages.getString("Workbench.cutToolTip")); //$NON-NLS-1$
+		cutAction = new RetargetAction(IWorkbenchActionConstants.CUT, cutActionDefId); //$NON-NLS-1$
 		cutAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT));
 		cutAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_HOVER));
 		cutAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_CUT_EDIT_DISABLED));
 		cutAction.setAccelerator(SWT.CTRL | 'x');
 		partService.addPartListener(cutAction);
+		keyBindingService.registerGlobalAction(cutAction);
 
-		copyAction = new RetargetAction(IWorkbenchActionConstants.COPY, WorkbenchMessages.getString("Workbench.copy")); //$NON-NLS-1$
-		copyAction.setToolTipText(WorkbenchMessages.getString("Workbench.copyToolTip")); //$NON-NLS-1$
+		copyAction = new RetargetAction(IWorkbenchActionConstants.COPY, copyActionDefId); //$NON-NLS-1$
 		copyAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT));
 		copyAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_HOVER));
 		copyAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_COPY_EDIT_DISABLED));
 		copyAction.setAccelerator(SWT.CTRL | 'c');
 		partService.addPartListener(copyAction);
+		keyBindingService.registerGlobalAction(copyAction);
 
-		pasteAction = new RetargetAction(IWorkbenchActionConstants.PASTE, WorkbenchMessages.getString("Workbench.paste")); //$NON-NLS-1$
-		pasteAction.setToolTipText(WorkbenchMessages.getString("Workbench.pasteToolTip")); //$NON-NLS-1$
+		pasteAction = new RetargetAction(IWorkbenchActionConstants.PASTE, pasteActionDefId); //$NON-NLS-1$
 		pasteAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT));
 		pasteAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_HOVER));
 		pasteAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PASTE_EDIT_DISABLED));
 		pasteAction.setAccelerator(SWT.CTRL | 'v');
 		partService.addPartListener(pasteAction);
+		keyBindingService.registerGlobalAction(pasteAction);
 
-		printAction = new RetargetAction(IWorkbenchActionConstants.PRINT, WorkbenchMessages.getString("Workbench.print")); //$NON-NLS-1$
-		printAction.setToolTipText(WorkbenchMessages.getString("Workbench.printToolTip")); //$NON-NLS-1$
+		printAction = new RetargetAction(IWorkbenchActionConstants.PRINT, printActionDefId); //$NON-NLS-1$
 		printAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT));
 		printAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_HOVER));
 		printAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_PRINT_EDIT_DISABLED));
 		printAction.setAccelerator(SWT.CTRL | 'p');
 		partService.addPartListener(printAction);
+		keyBindingService.registerGlobalAction(printAction);
 
-		selectAllAction = new RetargetAction(IWorkbenchActionConstants.SELECT_ALL, WorkbenchMessages.getString("Workbench.selectAll")); //$NON-NLS-1$
-		selectAllAction.setToolTipText(WorkbenchMessages.getString("Workbench.selectAllToolTip")); //$NON-NLS-1$
+		selectAllAction = new RetargetAction(IWorkbenchActionConstants.SELECT_ALL, selectAllActionDefId); //$NON-NLS-1$
 		selectAllAction.setAccelerator(SWT.CTRL | 'a');
 		partService.addPartListener(selectAllAction);
+		keyBindingService.registerGlobalAction(selectAllAction);
 
-		findAction = new RetargetAction(IWorkbenchActionConstants.FIND, WorkbenchMessages.getString("Workbench.findReplace")); //$NON-NLS-1$
-		findAction.setToolTipText(WorkbenchMessages.getString("Workbench.findReplaceToolTip")); //$NON-NLS-1$
+		findAction = new RetargetAction(IWorkbenchActionConstants.FIND, findActionDefId); //$NON-NLS-1$
 		findAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC));
 		findAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_HOVER));
 		findAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_SEARCH_SRC_DISABLED));
 		findAction.setAccelerator(SWT.CONTROL | 'f');
 		partService.addPartListener(findAction);
+		keyBindingService.registerGlobalAction(findAction);
 
-		closeAction = new CloseEditorAction(window);
+		closeAction = new CloseEditorAction(window, closeActionDefId);
 		partService.addPartListener(closeAction);
+		keyBindingService.registerGlobalAction(closeAction);
 
-		closeAllAction = new CloseAllAction(window);
+		closeAllAction = new CloseAllAction(window, closeAllActionDefId);
 		partService.addPartListener(closeAllAction);
+		keyBindingService.registerGlobalAction(closeAllAction);
 
 		pinEditorAction = new PinEditorAction(window);
 		partService.addPartListener(pinEditorAction);
@@ -545,31 +573,46 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 
 		openPreferencesAction = new OpenPreferencesAction(window);
 
-		addBookmarkAction = new RetargetAction(IWorkbenchActionConstants.BOOKMARK, WorkbenchMessages.getString("Workbench.addBookMark")); //$NON-NLS-1$
-		addBookmarkAction.setToolTipText(WorkbenchMessages.getString("Workbench.addBookMarkToolTip")); //$NON-NLS-1$
+		addBookmarkAction = new RetargetAction(IWorkbenchActionConstants.BOOKMARK, addBookmarkActionDefId); //$NON-NLS-1$
 		partService.addPartListener(addBookmarkAction);
 
-		deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, WorkbenchMessages.getString("Workbench.delete")); //$NON-NLS-1$
-		deleteAction.setToolTipText(WorkbenchMessages.getString("Workbench.deleteToolTip")); //$NON-NLS-1$
+		deleteAction = new RetargetAction(IWorkbenchActionConstants.DELETE, deleteActionDefId); //$NON-NLS-1$
 		deleteAction.setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT));
 		deleteAction.setHoverImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_HOVER));
 		deleteAction.setDisabledImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_CTOOL_DELETE_EDIT_DISABLED));
 		deleteAction.enableAccelerator(false);
 		WorkbenchHelp.setHelp(deleteAction, IHelpContextIds.DELETE_RETARGET_ACTION);
 		partService.addPartListener(deleteAction);
+		keyBindingService.registerGlobalAction(deleteAction);
 
 		// See if a welcome page is specified
 		if (((Workbench) PlatformUI.getWorkbench()).getProductInfo().getWelcomePageURL() != null)
 			quickStartAction = new QuickStartAction(workbench);
 
 		// Actions for invisible accelerators
-		showViewMenuAction = new ShowViewMenuAction(window);
-		showPartPaneMenuAction = new ShowPartPaneMenuAction(window);
-		nextEditorAction = new CycleEditorAction(window, true);
-		prevEditorAction = new CycleEditorAction(window, false);
-		nextPartAction = new CyclePartAction(window, true);
-		prevPartAction = new CyclePartAction(window, false);
-		activateEditorAction = new ActivateEditorAction(window);
+		showViewMenuAction = new ShowViewMenuAction(window, showViewMenuActionDefId);
+		keyBindingService.registerGlobalAction(showViewMenuAction);
+		
+		showPartPaneMenuAction = new ShowPartPaneMenuAction(window, showPartPaneMenuActionDefId);
+		keyBindingService.registerGlobalAction(showPartPaneMenuAction);
+		
+		nextEditorAction = new CycleEditorAction(window, true, nextEditorActionDefId);
+		keyBindingService.registerGlobalAction(nextEditorAction);
+		
+		prevEditorAction = new CycleEditorAction(window, false, prevEditorActionDefId);
+		keyBindingService.registerGlobalAction(prevEditorAction);
+		
+		nextPartAction = new CyclePartAction(window, true, nextPartActionDefId);
+		keyBindingService.registerGlobalAction(nextPartAction);
+		
+		prevPartAction = new CyclePartAction(window, false, prevPartActionDefId);
+		keyBindingService.registerGlobalAction(prevPartAction);
+		
+		activateEditorAction = new ActivateEditorAction(window, activateEditorActionDefId);
+		keyBindingService.registerGlobalAction(activateEditorAction);
+		
+		workbenchEditorsAction = new WorkbenchEditorsAction(window, workbenchEditorsActionDefId);
+		keyBindingService.registerGlobalAction(workbenchEditorsAction);
 
 		decoratorFactory = new DecoratorActionFactory();
 		decoratorFactory.makeActions();

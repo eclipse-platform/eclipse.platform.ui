@@ -5,22 +5,25 @@ package org.eclipse.ui.internal;
  * All Rights Reserved.
  */
 import org.eclipse.swt.SWT;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.IHelpContextIds;
-import org.eclipse.jface.dialogs.*;
+
+import org.eclipse.jface.action.Action;
+
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  */
 public class SaveAction extends BaseSaveAction {
+
 /**
  *	Create an instance of this class
  */
-public SaveAction(IWorkbenchWindow window) {
-	super(WorkbenchMessages.getString("SaveAction.text"), window); //$NON-NLS-1$
-	setToolTipText(WorkbenchMessages.getString("SaveAction.toolTip")); //$NON-NLS-1$
+public SaveAction(IWorkbenchWindow window, String id) {
+	super("", window); //$NON-NLS-1$
+	initializeFromRegistry(id);
 	setId(IWorkbenchActionConstants.SAVE);
-	WorkbenchHelp.setHelp(this, IHelpContextIds.SAVE_ACTION);
 	setAccelerator(SWT.CTRL |'s');
 }
 /**

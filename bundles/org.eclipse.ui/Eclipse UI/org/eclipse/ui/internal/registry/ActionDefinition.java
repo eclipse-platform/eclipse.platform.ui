@@ -14,7 +14,7 @@ public class ActionDefinition {
 	private String icon;
 	private String menubarPath;
 	private String toolbarPath;
-	private String tooltip;
+	private String toolTip;
 	private String helpContextId;
 	private String state;
 
@@ -25,7 +25,7 @@ public class ActionDefinition {
 		this.icon = icon;
 		this.menubarPath = menubarPath;
 		this.toolbarPath = toolbarPath;
-		this.tooltip = tooltip;
+		this.toolTip = tooltip;
 		this.helpContextId = helpContextId;
 		this.state = state;		
 	}
@@ -45,8 +45,8 @@ public class ActionDefinition {
 	public String getToolbarPath() {
 		return toolbarPath;
 	}	
-	public String getTooltip() {
-		return tooltip;
+	public String getToolTip() {
+		return toolTip;
 	}
 	public String getHelpContextId() {
 		return helpContextId;

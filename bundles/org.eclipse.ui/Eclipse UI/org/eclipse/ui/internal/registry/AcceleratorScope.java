@@ -147,7 +147,7 @@ public class AcceleratorScope {
 			super(null);
 		}
 		public boolean isMode() {
-			return false;
+			return true;
 		}	
 		public void run(KeyBindingService service,Event e) {
 			currentMode = this;

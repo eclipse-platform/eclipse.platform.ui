@@ -9,16 +9,8 @@ public class ShowViewMenuAction extends ShowPartPaneMenuAction {
  * Constructor for ShowViewMenuAction.
  * @param window
  */
-public ShowViewMenuAction(WorkbenchWindow window) {
-	super(window);
-}
-
-/**
- * Initialize the menu text and tooltip.
- */
-protected void initText() {
-	setText(WorkbenchMessages.getString("ShowViewMenuAction.text"));
-	setToolTipText(WorkbenchMessages.getString("ShowViewMenuAction.toolTip"));
+public ShowViewMenuAction(WorkbenchWindow window, String id) {
+	super(window, id);
 }
 /**
  * Show the pane title menu.

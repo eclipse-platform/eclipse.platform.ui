@@ -4,15 +4,23 @@ package org.eclipse.jface.action;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.events.*;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
+
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.util.*;
-import java.util.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.PropertyChangeEvent;
+
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.registry.ActionDefinition;
+import org.eclipse.ui.internal.registry.ActionDefinitionRegistry;
 
 
 /**
@@ -128,8 +136,7 @@ protected Action(String text) {
  * @see #setImageDescriptor
  */
 protected Action(String text, ImageDescriptor image) {
-	this();
-	setText(text);
+	this(text);
 	setImageDescriptor(image);
 }
 /* (non-Javadoc)
@@ -467,10 +474,32 @@ public void runWithEvent(Event event) {
 }
 
 /* (non-Javadoc)
- * Method declared on IAciton.
+ * Method declared on IAction.
  */
 public void setActionDefinitionId(String id) {
 	actionDefinitionId = id;	
+}
+
+/*
+ * This method is called by constructors of actions with valid action definitions in the registry.
+ * We do not use a constructor Action(String id) to do this work because that would conflict with
+ * the pre-existing constructor Action(String text).
+ */
+public void initializeFromRegistry(String id) {
+	ActionDefinitionRegistry registry = WorkbenchPlugin.getDefault().getActionDefinitionRegistry();
+	ActionDefinition def = registry.getDefinition(id);
+	/*
+	 * If the String argument was a valid action definition id, then retrieve
+	 * label, tool tip text, and help context from the action definition.
+	 */
+	if(def != null) { 
+		setActionDefinitionId(id);
+		setText(def.getLabel());
+		if(def.getToolTip() != null)
+			setToolTipText(def.getToolTip()); //$NON-NLS-1$
+		if(def.getHelpContextId() != null)
+			WorkbenchHelp.setHelp(this, def.getHelpContextId());
+	}
 }
 
 /* (non-Javadoc)

@@ -24,10 +24,10 @@ public class LabelRetargetAction extends RetargetAction {
 /**
  * Constructs a LabelRetargetAction.
  */
-public LabelRetargetAction(String actionID, String text) {
-	super(actionID, text);
-	this.defaultText = text;
-	this.defaultToolTipText = text;
+public LabelRetargetAction(String actionID, String actionDefId) {
+	super(actionID, actionDefId);
+	this.defaultText = this.getText();
+	this.defaultToolTipText = this.getText();
 }
 /**
  * The action handler has changed.  Update self.

@@ -48,23 +48,11 @@ public class ActionDefinitionRegistryReader extends RegistryReader {
 		if (label==null) {
 			logMissingAttribute(element, ATT_LABEL);
 		}
-		if (icon==null) {
-			logMissingAttribute(element, ATT_ICON);
-		}
-		if (menubarPath==null) {
-			logMissingAttribute(element, ATT_MENUBAR_PATH);
-		}
-		if (toolbarPath==null) {
-			logMissingAttribute(element, ATT_TOOLBAR_PATH);
-		}
 		if (tooltip==null) {
 			logMissingAttribute(element, ATT_TOOLTIP);
 		}
 		if (helpContextId==null) {
 			logMissingAttribute(element, ATT_HELP_CONTEXT_ID);
-		}
-		if (state==null) {
-			logMissingAttribute(element, ATT_STATE);
 		}
 		
 		ActionDefinition a = new ActionDefinition(id, label, icon, menubarPath,

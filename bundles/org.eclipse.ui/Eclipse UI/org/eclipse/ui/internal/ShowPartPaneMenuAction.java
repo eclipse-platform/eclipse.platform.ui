@@ -3,10 +3,10 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.jface.action.Action;
+
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.part.WorkbenchPart;
-import org.eclipse.ui.actions.*;
+import org.eclipse.ui.actions.PartEventAction;
 
 /**
  * Show the menu on top of the icon in the
@@ -18,17 +18,10 @@ public class ShowPartPaneMenuAction extends PartEventAction {
  * Constructor for ShowPartPaneMenuAction.
  * @param text
  */
-public ShowPartPaneMenuAction(WorkbenchWindow window) {
+public ShowPartPaneMenuAction(WorkbenchWindow window, String id) {
 	super("");
-	initText();
+	initializeFromRegistry(id);
 	window.getPartService().addPartListener(this);
-}
-/**
- * Initialize the menu text and tooltip.
- */
-protected void initText() {
-	setText(WorkbenchMessages.getString("ShowPartPaneMenuAction.text"));
-	setToolTipText(WorkbenchMessages.getString("ShowPartPaneMenuAction.toolTip"));
 }
 /**
  * Show the pane title menu.

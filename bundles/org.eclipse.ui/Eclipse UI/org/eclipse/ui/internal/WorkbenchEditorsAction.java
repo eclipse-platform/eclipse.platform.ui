@@ -20,8 +20,9 @@ public class WorkbenchEditorsAction extends Action {
 	 * Constructor for NavigateWorkbenchAction.
 	 * @param text
 	 */
-	public WorkbenchEditorsAction(WorkbenchWindow window) {
-		super(WorkbenchMessages.getString("WorkbenchEditorsAction.label"));
+	public WorkbenchEditorsAction(WorkbenchWindow window, String id) {
+		super();
+		initializeFromRegistry(id);
 		this.window = window;
 
 	}
