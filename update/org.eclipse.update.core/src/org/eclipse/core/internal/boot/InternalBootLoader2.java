@@ -6,15 +6,20 @@ package org.eclipse.core.internal.boot;
  */
 
 import java.io.IOException;
+import java.net.URL;
 
 public class InternalBootLoader2 {
 	
 	private static PlatformConfiguration current = null;
 	
-	public static PlatformConfiguration getPlatformConfiguration() {
+	public static PlatformConfiguration getCurrentPlatformConfiguration() throws IOException {
 		if (current == null) 
 			current = new PlatformConfiguration();
 		return current;
+	}
+	
+	public static PlatformConfiguration getPlatformConfiguration(URL url) throws IOException {
+		return new PlatformConfiguration(url);
 	}
 
 }

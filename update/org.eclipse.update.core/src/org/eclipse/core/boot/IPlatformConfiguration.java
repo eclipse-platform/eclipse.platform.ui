@@ -209,6 +209,14 @@ public interface IPlatformConfiguration {
 	 * Called to save the configuration information
 	 */	
 	public void save() throws IOException;
+	
+	/**
+	 * Called to save the configuration information in the
+	 * specified location
+	 * 
+	 * @param url save location.
+	 */	
+	public void save(URL url) throws IOException;
 
 }
 

@@ -7,18 +7,22 @@ package org.eclipse.core.internal.boot;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.UnknownServiceException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
-import org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy;
 import org.eclipse.core.boot.IPlatformConfiguration.ISiteEntry;
+import org.eclipse.core.boot.IPlatformConfiguration.ISitePolicy;
 
 public class PlatformConfiguration implements IPlatformConfiguration {
 
@@ -47,6 +51,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String VERSION = "1.0";
 	private static final String EOF = "eof";
 	private static final int CFG_LIST_LENGTH = 10;
+	
+	private static final int DEFAULT_POLICY_TYPE = ISitePolicy.USER_EXCLUDE;
+	private static final String[] DEFAULT_POLICY_LIST = new String[0];
 
 	public class SiteEntry implements IPlatformConfiguration.ISiteEntry {
 
@@ -207,10 +214,16 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 
 	}
 
-	PlatformConfiguration() {
+	PlatformConfiguration() throws IOException {
 		this.sites = new HashMap();
 		this.nativeSites = new HashMap();
-		initialize();
+		initializeCurrent();
+	}
+	
+	PlatformConfiguration(URL url) throws IOException {
+		this.sites = new HashMap();
+		this.nativeSites = new HashMap();
+		initialize(url);
 	}
 
 	/*
@@ -297,16 +310,38 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	 * @see IPlatformConfiguration#save()
 	 */
 	public void save() throws IOException {
+		save(configLocation);
+	}
+	
+	/*
+	 * @see IPlatformConfiguration#save(URL)
+	 */
+	public void save(URL url) throws IOException {		
+		if (url == null)
+			throw new IOException(Policy.bind("cfig.unableToSave.noURL"));
 
-		String fn = configLocation.getFile();
-		FileOutputStream fs = new FileOutputStream(fn);
-		PrintWriter w = new PrintWriter(fs);
-		write(w);
-		w.close();
+		URLConnection uc = url.openConnection();
+		uc.setDoOutput(true);
+		OutputStream os = null;
+		try {
+			os = uc.getOutputStream();
+		} catch (UnknownServiceException e) {
+			// retry with direct file i/o
+			if (!url.getProtocol().equals("file"))
+				throw e;
+			os = new FileOutputStream(url.getFile());
+		}
+		PrintWriter w = new PrintWriter(os);
+		try {
+			write(w);
+		} finally {
+			w.close();
+		}
 	}
 
-	private void initialize() {
+	private void initializeCurrent() throws IOException {
 
+		// FIXME:
 		// check for safe mode
 		// flag: -safe		come up in safe mode (loads configuration
 		//                  but compute "safe" plugin path
@@ -321,13 +356,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// if none specified, search order for configuration is
 		// CURRENT, HOME, COMMON
 		// if none found new configuration is created in the first
-		// r/w location in order of COMMON, HOME, CURRENT
+		// r/w location in order of COMMON, HOME, CURRENT	
 
 		// load configuration. 
 
 		// if none found, do default setup
 		setupDefaultConfiguration();
-
+		
 		// detect links
 
 		// detect changes
@@ -336,22 +371,140 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// 	trigger alternate startup (into update app)
 		// else 
 		//	process any plugin-only changes
-
 	}
+	
+	private void initialize(URL url) throws IOException {
+		if (url == null) 
+			return;
+			
+		load(url);
+		configLocation = url;
+	}
+	
+	private void load(URL url) throws IOException {		
+		
+		if (url == null) 
+			throw new IOException(Policy.bind("cfig.unableToLoad.noURL"));
+		
+		// try to load saved properties file
+		Properties props = new Properties();
+		InputStream is = null;
+		try {
+			is = url.openStream();
+			props.load(is);
+			// check to see if we have complete config file
+			if (!EOF.equals(props.getProperty(EOF))) {
+				if (DEBUG)
+					debug("skipping incomplete configuration file " + url.toString());
+				throw new IOException(Policy.bind("cfig.unableToLoad.incomplete",url.toString()));
+			}
+		} finally {
+			if (is!=null) {
+				try {
+					is.close();
+				} catch(IOException e) {
+				}
+			}
+		}
+		
+		if (DEBUG)
+			debug("using configuration file " + url.toString());
+		
+		// load simple properties 
+		// FIXME: currently none
+		
+		// load site properties
+		ISiteEntry se = loadSite(props, CFG_SITE+".0", null);					
+		for (int i=1; se != null; i++) {
+			configureSite(se);
+			se = loadSite(props, CFG_SITE+"."+i, null);	
+		}
+	}
+	
+	private ISiteEntry loadSite(Properties props, String name, ISiteEntry dflt) {
 
-	private void setupDefaultConfiguration() {
+		String urlString = loadAttribute(props, name+"."+CFG_URL, null);
+		if (urlString == null)
+			return dflt;
+			
+		URL url = null;
+		try {
+			url = new URL(urlString);
+		} catch(MalformedURLException e) {
+			return dflt;
+		}
+			
+		int policyType;
+		String[] policyList;
+		String typeString = loadAttribute(props, name+"."+CFG_POLICY, null);
+		if (typeString == null) {
+			policyType = DEFAULT_POLICY_TYPE;
+			policyList = DEFAULT_POLICY_LIST;
+		} else {
+			int i;
+			for (i=0; i<CFG_POLICY_TYPE.length; i++) {
+				if (typeString.equals(CFG_POLICY_TYPE[i])) {
+					break;
+				}
+			}
+			if (i>=CFG_POLICY_TYPE.length) {
+				policyType = DEFAULT_POLICY_TYPE;
+				policyList = DEFAULT_POLICY_LIST;
+			} else {
+				policyType = i;
+				policyList = loadListAttribute(props, name+"."+CFG_LIST, new String[0]);
+			}
+		}
+
+		ISitePolicy sp = createSitePolicy(policyType, policyList);
+		return createSiteEntry(url,sp);
+	}
+	
+	private String[] loadListAttribute(Properties props, String name, String[] dflt) {
+		ArrayList list = new ArrayList();
+		String value = loadAttribute(props, name+".0",null);
+		if (value == null)
+			return dflt;
+			
+		for (int i=1; value != null; i++) {
+			loadListAttributeSegment(list, value);
+			value = loadAttribute(props, name+"."+i, null);
+		}
+		return (String[])list.toArray(new String[0]);
+	}
+	
+	private void loadListAttributeSegment(ArrayList list,String value) {
+		
+		if (value==null) return;
+	
+		StringTokenizer tokens = new StringTokenizer(value, ",");
+		String token;
+		while (tokens.hasMoreTokens()) {
+			token = tokens.nextToken().trim();
+			if (!token.equals("")) 
+				list.add(token);
+		}
+		return;
+	}
+		
+	private String loadAttribute(Properties props, String name, String dflt) {
+		String prop = props.getProperty(name);
+		if (prop == null)
+			return dflt;
+		else
+			return prop.trim();
+	}
+	
+	private void setupDefaultConfiguration() throws IOException {
 		// default initial startup configuration:
 		// site: current install, policy: USER_EXCLUDE, empty list
-		ISitePolicy sp = createSitePolicy(IPlatformConfiguration.ISitePolicy.USER_EXCLUDE, new String[0]);
+		ISitePolicy sp = createSitePolicy(DEFAULT_POLICY_TYPE, DEFAULT_POLICY_LIST);
 		ISiteEntry se =
 			createSiteEntry(
 				BootLoader.getInstallURL(), sp);
 		configureSite(se);
-		try {
-			configLocation =
+		configLocation =
 				new URL(BootLoader.getInstallURL(), INSTALL + "/" + CONFIG_FILE);
-		} catch (MalformedURLException e) {
-		}
 		if (DEBUG)
 			debug("creating default configuration " + configLocation.getFile());
 	}
@@ -378,10 +531,6 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		}
 		writeAttribute(w, id + "." + CFG_POLICY, typeString);
 		writeListAttribute(w, id + "." + CFG_LIST, entry.getSitePolicy().getList());
-		
-		// temp code
-		writeListAttribute(w, id + "." + "features", entry.getDetectedFeatures());
-		writeListAttribute(w, id + "." + "plugins", entry.getDetectedPlugins());
 	}
 	
 	private void writeListAttribute(PrintWriter w, String id, String[] list) {
@@ -415,7 +564,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		// FIXME: implement escaping for property file
 		return value;
 	}
-
+	
 	private static void debug(String s) {
 		System.out.println("PlatformConfiguration: " + s);
 	}
