@@ -64,7 +64,7 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 					StringBuffer targetString= new StringBuffer();
 					// Unroll the loop once to prime the state
 					TargetNode targetNode= (TargetNode) targets.next();
-					IFile previousFile= AntUtil.getFile(((ProjectNode)targetNode.getParent()).getBuildFileName());
+					IFile previousFile= AntUtil.getFile(targetNode.getProject().getBuildFileName());
 					targetString.append(targetNode.getName());
 					while (targets.hasNext() && !monitor.isCanceled()) {
 						// This loop combines successive targets from the same file. When a target
@@ -72,7 +72,7 @@ public class RunActiveTargetsAction extends Action implements IUpdate {
 						// is only launched when a target from a different file is encountered or the loop finishes.
 						targetNode = (TargetNode) targets.next();
 						
-						IFile file= AntUtil.getFile(((ProjectNode)targetNode.getParent()).getBuildFileName());
+						IFile file= AntUtil.getFile(targetNode.getProject().getBuildFileName());
 						if (file.equals(previousFile)) {
 							targetString.append(',').append(targetNode.getName());
 							previousFile= file;

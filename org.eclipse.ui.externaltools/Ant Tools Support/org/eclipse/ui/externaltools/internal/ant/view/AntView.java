@@ -211,7 +211,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		ListIterator iter = activeTargets.listIterator();
 		while (iter.hasNext()) {
 			TargetNode target = (TargetNode) iter.next();
-			if (target.getParent().equals(project)) {
+			if (target.getProject().equals(project)) {
 				TargetNode[] newTargets = project.getTargets();
 				boolean oldTargetFound = false;
 				for (int i = 0; i < newTargets.length; i++) {
@@ -577,7 +577,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		ListIterator targets = targetContentProvider.getTargets().listIterator();
 		while (targets.hasNext()) {
 			TargetNode target = (TargetNode) targets.next();
-			if (project.equals(target.getParent())) {
+			if (project.equals(target.getProject())) {
 				targets.remove();
 			}
 		}
@@ -715,7 +715,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 		while (targets.hasNext()) {
 			target = ((TargetNode) targets.next());
 			targetMemento = memento.createChild(TAG_TARGET);
-			targetMemento.putString(KEY_PATH, ((ProjectNode) target.getParent()).getBuildFileName());
+			targetMemento.putString(KEY_PATH, target.getProject().getBuildFileName());
 			targetMemento.putString(KEY_NAME, target.getName());
 		}
 	}

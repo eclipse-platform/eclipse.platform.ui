@@ -77,6 +77,16 @@ public class TargetNode extends AntNode {
 	}
 	
 	/**
+	 * Returns the ProjectNode containing this target. This method is equivalent
+	 * to calling getParent() and casting the result to a ProjectNode.
+	 * 
+	 * @return ProjectNode the project containing this target
+	 */
+	public ProjectNode getProject() {
+		return (ProjectNode) getParent();
+	}
+	
+	/**
 	 * Returns this target's description
 	 * 
 	 * @return String this target's description

@@ -39,7 +39,7 @@ public class RunTargetAction extends Action implements IUpdate {
 		if (target == null) {
 			return;
 		}
-		IFile file= AntUtil.getFile(((ProjectNode)target.getParent()).getBuildFileName());
+		IFile file= AntUtil.getFile(target.getProject().getBuildFileName());
 		AntLaunchShortcut shortcut= new AntLaunchShortcut();
 		shortcut.launch(file, ILaunchManager.RUN_MODE, target.getName());
 	}
