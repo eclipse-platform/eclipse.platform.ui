@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.workingset;
 
+import java.io.*;
+
 /**
  * The working  set manager stores help working sets. Working sets are persisted
  * whenever one is added or removed.
@@ -21,7 +23,7 @@ public interface IHelpWorkingSetManager {
 	/**
 	 * Adds a new working set and saves it
 	 */
-	public void addWorkingSet(WorkingSet workingSet);
+	public void addWorkingSet(WorkingSet workingSet) throws IOException;
 
 	/**
 	 * Creates a new working set
@@ -54,13 +56,14 @@ public interface IHelpWorkingSetManager {
 	 * 
 	 * @param changedWorkingSet the working set that has changed
 	 */
-	public void workingSetChanged(WorkingSet changedWorkingSet);
+	public void workingSetChanged(WorkingSet changedWorkingSet)
+		throws IOException;
 
 	public AdaptableToc getAdaptableToc(String href);
 
 	public AdaptableTopic getAdaptableTopic(String id);
-	
+
 	public String getCurrentWorkingSet();
-	
+
 	public void setCurrentWorkingSet(String workingSet);
 }

@@ -13,6 +13,7 @@
 <% 
 	WorkingSetManagerData data = new WorkingSetManagerData(application, request, response);
 	WebappPreferences prefs = data.getPrefs();
+	String dataSaveError = data.getSaveError();
 %>
 
 
@@ -70,6 +71,10 @@ function highlightHandler()
 _highlightHandler = highlightHandler;
 
 function onloadHandler() {
+<%if(dataSaveError != null){%>
+	alert("<%=dataSaveError%>");
+	window.location="workingSetManager.jsp"
+<%}%>
 	sizeButtons();
 	enableButtons();
 	document.getElementById("alldocs").focus();

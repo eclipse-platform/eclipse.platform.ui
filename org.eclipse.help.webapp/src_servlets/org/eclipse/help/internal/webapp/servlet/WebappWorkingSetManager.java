@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
+import java.io.*;
+
 import javax.servlet.http.*;
 
 import org.eclipse.help.internal.*;
@@ -53,7 +55,7 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	/**
 	 * Adds a new working set and saves it
 	 */
-	public void addWorkingSet(WorkingSet workingSet) {
+	public void addWorkingSet(WorkingSet workingSet) throws IOException {
 		wSetManager.addWorkingSet(workingSet);
 	}
 
@@ -94,7 +96,7 @@ public class WebappWorkingSetManager implements IHelpWorkingSetManager {
 	 * 
 	 * @param changedWorkingSet the working set that has changed
 	 */
-	public void workingSetChanged(WorkingSet changedWorkingSet) {
+	public void workingSetChanged(WorkingSet changedWorkingSet) throws IOException{
 		wSetManager.workingSetChanged(changedWorkingSet);
 	}
 

@@ -10,13 +10,12 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-
+import java.io.*;
 import java.util.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.webapp.servlet.*;
 import org.eclipse.help.internal.workingset.*;
 
@@ -31,6 +30,8 @@ public class WorkingSetManagerData extends RequestData {
 
 	private String name;
 	private WebappWorkingSetManager wsmgr;
+	// Indicates whether operation specified in the request failed
+	private boolean saved = true;
 
 	public WorkingSetManagerData(
 		ServletContext context,
@@ -39,23 +40,26 @@ public class WorkingSetManagerData extends RequestData {
 		super(context, request);
 		wsmgr = new WebappWorkingSetManager(request, response, getLocale());
 		name = request.getParameter("workingSet");
-
-		switch (getOperation()) {
-			case ADD :
-				addWorkingSet();
-				break;
-			case REMOVE :
-				removeWorkingSet();
-				break;
-			case EDIT :
-				editWorkingSet();
-				break;
-			default :
-				break;
+		try {
+			switch (getOperation()) {
+				case ADD :
+					addWorkingSet();
+					break;
+				case REMOVE :
+					removeWorkingSet();
+					break;
+				case EDIT :
+					editWorkingSet();
+					break;
+				default :
+					break;
+			}
+		} catch (IOException ioe) {
+			saved = false;
 		}
 	}
 
-	public void addWorkingSet() {
+	public void addWorkingSet() throws IOException {
 		if (name != null && name.length() > 0) {
 
 			String[] hrefs = request.getParameterValues("hrefs");
@@ -86,7 +90,7 @@ public class WorkingSetManagerData extends RequestData {
 		}
 	}
 
-	public void editWorkingSet() {
+	public void editWorkingSet() throws IOException {
 		if (name != null && name.length() > 0) {
 
 			String oldName = request.getParameter("oldName");
@@ -132,7 +136,7 @@ public class WorkingSetManagerData extends RequestData {
 	public String getWorkingSetName() {
 		if (name == null || name.length() == 0) {
 			// See if anything is set in the preferences
-			name =wsmgr.getCurrentWorkingSet();
+			name = wsmgr.getCurrentWorkingSet();
 			if (name == null
 				|| name.length() == 0
 				|| wsmgr.getWorkingSet(name) == null)
@@ -170,5 +174,15 @@ public class WorkingSetManagerData extends RequestData {
 		if (res == null)
 			res = wsmgr.getAdaptableTopic(internalId);
 		return res;
+	}
+	/**
+	 * @return null or error message if saving saved
+	 */
+	public String getSaveError() {
+		if (saved) {
+			return null;
+		}
+		return UrlUtil.JavaScriptEncode(
+			ServletResources.getString("cookieSaveFailed", request));
 	}
 }
