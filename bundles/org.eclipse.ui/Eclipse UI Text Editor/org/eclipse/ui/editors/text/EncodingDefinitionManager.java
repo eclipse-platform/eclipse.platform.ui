@@ -10,7 +10,12 @@ Contributors:
 **********************************************************************/
 package org.eclipse.ui.editors.text;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
 
@@ -21,7 +26,7 @@ import org.eclipse.core.runtime.Platform;
  */
 public class EncodingDefinitionManager {
 
-	private static List encodings = null;
+	private static List fgEncodings = null;
 	private static final String USER_ENCODING_ID_PREFIX = "org.eclipse.ui.user."; //$NON-NLS-1$
 	private static final String DEFAULT_ENCODING_ID = "org.eclipse.ui.systemDefaultEncoding"; //$NON-NLS-1$
 
@@ -31,26 +36,26 @@ public class EncodingDefinitionManager {
 	 */
 
 	public static Collection getEncodings() {
-		if (encodings == null) {
-			encodings =
+		if (fgEncodings == null) {
+			fgEncodings =
 				new EncodingRegistryReader().readRegistry(
 					Platform.getPluginRegistry());
 
 			//Add the system default as well
 			String defaultEnc = getDefaultEncoding();
 			if (!hasEncodingWithValue(defaultEnc))
-				encodings.add(
+				fgEncodings.add(
 					new EncodingDefinition(
 						DEFAULT_ENCODING_ID,
 						defaultEnc,
 						defaultEnc));
 		}
-		return encodings;
+		return fgEncodings;
 	}
 
 	/**
 	 * Get all of the currently defined encodings in the system
-	 * sorted in order of thier labels..
+	 * sorted in order of thier labels.
 	 * @return Collection of EncodingDefinition
 	 */
 
@@ -85,8 +90,8 @@ public class EncodingDefinitionManager {
 	}
 
 	/**
-	 * Return the current defualt encoding.
-	 * @return String
+	 * Return the current default encoding.
+	 * @return String - the system value of the default encoding.
 	 */
 	public static String getDefaultEncoding() {
 		return System.getProperty("file.encoding", "UTF-8"); //$NON-NLS-1$
@@ -95,11 +100,11 @@ public class EncodingDefinitionManager {
 	/**
 	 * Return whether or not there is currently an encoding with the
 	 * supplied value.
-	 * @return boolean
-	 * @param encodingString
+	 * @param String - the value we are checking for
+	 * @return boolean - true if there is a defined encoding with that value.
 	 */
 	private static boolean hasEncodingWithValue(String encodingString) {
-		Iterator iterator = encodings.iterator();
+		Iterator iterator = getEncodings().iterator();
 
 		while (iterator.hasNext()) {
 			EncodingDefinition next = (EncodingDefinition) iterator.next();
@@ -113,11 +118,11 @@ public class EncodingDefinitionManager {
 	/**
 	 * Add a new encoding for the encodingString value to the list
 	 * of encodings.
-	 * @param String encodingString
+	 * @param String encodingString - the value of the new encoding
 	 */
 	public static void addEncoding(String encodingString) {
 		if (!hasEncodingWithValue(encodingString))
-			encodings.add(
+			fgEncodings.add(
 				new EncodingDefinition(
 					USER_ENCODING_ID_PREFIX + encodingString,
 					encodingString,

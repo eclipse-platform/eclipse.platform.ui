@@ -20,11 +20,11 @@ public class EncodingDefinition {
 	private String id;
 	private String label;
 	private String value;
-	
+
 	//Initialize the optional values to empty string
-	private String helpContextId = ""; //$NON-NLS-1$
-	private String description = ""; //$NON-NLS-1$
-	private String toolTip = ""; //$NON-NLS-1$	
+	private String helpContextId= ""; //$NON-NLS-1$
+	private String description= ""; //$NON-NLS-1$
+	private String toolTip= ""; //$NON-NLS-1$	
 
 	/**
 	 * Create a new instance of the receiver with the supplied
@@ -32,12 +32,11 @@ public class EncodingDefinition {
 	 */
 
 	EncodingDefinition(String newId, String newLabel, String newValue) {
-		this.id = newId;
-		this.label = newLabel;
-		this.value = newValue;
+		this.id= newId;
+		this.label= newLabel;
+		this.value= newValue;
 	}
 
-	
 	/**
 	 * Returns the helpContextId.
 	 * @return String
@@ -75,7 +74,7 @@ public class EncodingDefinition {
 	 * @param helpContextId The helpContextId to set
 	 */
 	public void setHelpContextId(String helpContextId) {
-		this.helpContextId = helpContextId;
+		this.helpContextId= helpContextId;
 	}
 
 	/**
@@ -99,7 +98,7 @@ public class EncodingDefinition {
 	 * @param description The description to set
 	 */
 	public void setDescription(String description) {
-		this.description = description;
+		this.description= description;
 	}
 
 	/**
@@ -107,7 +106,7 @@ public class EncodingDefinition {
 	 * @param toolTip The toolTip to set
 	 */
 	public void setToolTip(String toolTip) {
-		this.toolTip = toolTip;
+		this.toolTip= toolTip;
 	}
 
 }

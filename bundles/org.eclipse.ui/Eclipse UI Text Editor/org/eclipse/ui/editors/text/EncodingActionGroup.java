@@ -11,16 +11,26 @@ Contributors:
 
 package org.eclipse.ui.editors.text;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ResourceBundle;
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.texteditor.ITextEditor;
+import org.eclipse.ui.texteditor.IUpdate;
+import org.eclipse.ui.texteditor.RetargetTextEditorAction;
+import org.eclipse.ui.texteditor.TextEditorAction;
 
 /**
  * Action group for encoding actions.
@@ -51,11 +61,11 @@ public class EncodingActionGroup extends ActionGroup {
 			EncodingDefinition encoding,
 			ITextEditor editor) {
 			super();
-			fEncoding = encoding;
+			fEncoding= encoding;
 			setText(encoding.getLabel());
 			setToolTipText(encoding.getToolTip());
 			setDescription(encoding.getDescription());
-			fTextEditor = editor;
+			fTextEditor= editor;
 		}
 
 		/**
@@ -73,7 +83,7 @@ public class EncodingActionGroup extends ActionGroup {
 		 * @return the encoding support of the action's editor
 		 */
 		private IEncodingSupport getEncodingSupport() {
-			ITextEditor editor = getTextEditor();
+			ITextEditor editor= getTextEditor();
 			if (editor != null)
 				return (IEncodingSupport) editor.getAdapter(
 					IEncodingSupport.class);
@@ -84,7 +94,7 @@ public class EncodingActionGroup extends ActionGroup {
 		 * @see IAction#run()
 		 */
 		public void run() {
-			IEncodingSupport s = getEncodingSupport();
+			IEncodingSupport s= getEncodingSupport();
 			if (s != null)
 				s.setEncoding(fIsDefault ? null : fEncoding.getValue());
 		}
@@ -96,7 +106,7 @@ public class EncodingActionGroup extends ActionGroup {
 		 * @return the encoding currently used in the given editor
 		 */
 		private String getEncoding(ITextEditor editor) {
-			IEncodingSupport s = getEncodingSupport();
+			IEncodingSupport s= getEncodingSupport();
 			if (s != null)
 				return s.getEncoding();
 			return null;
@@ -109,7 +119,7 @@ public class EncodingActionGroup extends ActionGroup {
 		 * @return the default encoding for the given editor
 		 */
 		private String getDefaultEncoding(ITextEditor editor) {
-			IEncodingSupport s = getEncodingSupport();
+			IEncodingSupport s= getEncodingSupport();
 			if (s != null)
 				return s.getDefaultEncoding();
 			return null;
@@ -134,19 +144,22 @@ public class EncodingActionGroup extends ActionGroup {
 				return;
 			}
 
-			ITextEditor editor = getTextEditor();
+			ITextEditor editor= getTextEditor();
 			if (editor == null) {
 				setEnabled(false);
 				return;
 			}
 
 			// update label
-			String encodingValue = getDefaultEncoding(editor);
+			String encodingValue= getDefaultEncoding(editor);
 			if (encodingValue != null) {
-				fIsDefault = fEncoding.getValue().equals(encodingValue);
-				String label = fEncoding.getLabel();
-				if(fIsDefault)
-					label = TextEditorMessages.format("Editor.ConvertEncoding.default",new String[] {label});
+				fIsDefault= fEncoding.getValue().equals(encodingValue);
+				String label= fEncoding.getLabel();
+				if (fIsDefault)
+					label=
+						TextEditorMessages.format(
+							"Editor.ConvertEncoding.default",
+							new String[] { label });
 				setText(label);
 			}
 
@@ -154,7 +167,7 @@ public class EncodingActionGroup extends ActionGroup {
 			if (editor.isDirty()) {
 				setEnabled(false);
 			} else {
-				String current = getEncoding(editor);
+				String current= getEncoding(editor);
 				if (fIsDefault)
 					setEnabled(current != null);
 				else
@@ -182,7 +195,7 @@ public class EncodingActionGroup extends ActionGroup {
 		 * @see IUpdate#update()
 		 */
 		public void update() {
-			ITextEditor editor = getTextEditor();
+			ITextEditor editor= getTextEditor();
 			setEnabled(editor != null && !editor.isDirty());
 		}
 
@@ -191,25 +204,25 @@ public class EncodingActionGroup extends ActionGroup {
 		 */
 		public void run() {
 
-			ITextEditor editor = getTextEditor();
+			ITextEditor editor= getTextEditor();
 			if (editor == null)
 				return;
 
-			String title = TextEditorMessages.getString("Editor.ConvertEncoding.Custom.dialog.title"); //$NON-NLS-1$
-			String message = TextEditorMessages.getString("Editor.ConvertEncoding.Custom.dialog.message"); //$NON-NLS-1$
-			IInputValidator inputValidator = new IInputValidator() {
+			String title= TextEditorMessages.getString("Editor.ConvertEncoding.Custom.dialog.title"); //$NON-NLS-1$
+			String message= TextEditorMessages.getString("Editor.ConvertEncoding.Custom.dialog.message"); //$NON-NLS-1$
+			IInputValidator inputValidator= new IInputValidator() {
 				public String isValid(String newText) {
 					return (newText == null || newText.length() == 0) ? " " : null; //$NON-NLS-1$
 				}
 			};
 
-			InputDialog d = new InputDialog(editor.getSite().getShell(), title, message, "", inputValidator); //$NON-NLS-1$
+			InputDialog d= new InputDialog(editor.getSite().getShell(), title, message, "", inputValidator); //$NON-NLS-1$
 			if (d.open() == d.OK) {
-				IEncodingSupport s =
+				IEncodingSupport s=
 					(IEncodingSupport) editor.getAdapter(
 						IEncodingSupport.class);
-				if (s != null){
-					String encodingValue = d.getValue();
+				if (s != null) {
+					String encodingValue= d.getValue();
 					s.setEncoding(encodingValue);
 				}
 			}
@@ -217,10 +230,10 @@ public class EncodingActionGroup extends ActionGroup {
 	};
 
 	/** Suffix added to the default encoding action */
-	private static final String DEFAULT_SUFFIX = " " + TextEditorMessages.getString("Editor.ConvertEncoding.default_suffix"); //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String DEFAULT_SUFFIX= " " + TextEditorMessages.getString("Editor.ConvertEncoding.default_suffix"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	/** List of encoding actions of this group */
-	private List fRetargetActions = new ArrayList();
+	private List fRetargetActions= new ArrayList();
 	private RetargetTextEditorAction customAction;
 
 	/**
@@ -228,27 +241,28 @@ public class EncodingActionGroup extends ActionGroup {
 	 */
 	public EncodingActionGroup() {
 
-		ResourceBundle b = TextEditorMessages.getResourceBundle();
+		ResourceBundle b= TextEditorMessages.getResourceBundle();
 
-		Collection encodings = EncodingDefinitionManager.getLabelSortedEncodings();
-		Iterator iterator = encodings.iterator();
+		Collection encodings=
+			EncodingDefinitionManager.getLabelSortedEncodings();
+		Iterator iterator= encodings.iterator();
 		while (iterator.hasNext()) {
 			fRetargetActions.add(new EncodingDefinitionAction((EncodingDefinition) iterator.next())); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		customAction = new RetargetTextEditorAction(b, "Editor.ConvertEncoding.Custom.", IEncodingActionsConstants.CUSTOM); //$NON-NLS-1$
+		customAction= new RetargetTextEditorAction(b, "Editor.ConvertEncoding.Custom.", IEncodingActionsConstants.CUSTOM); //$NON-NLS-1$
 	}
 
 	/*
 	 * @see ActionGroup#fillActionBars(IActionBars)
 	 */
 	public void fillActionBars(IActionBars actionBars) {
-		IMenuManager menuManager = actionBars.getMenuManager();
-		IMenuManager editMenu =
+		IMenuManager menuManager= actionBars.getMenuManager();
+		IMenuManager editMenu=
 			menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null) {
-			MenuManager subMenu = new MenuManager(TextEditorMessages.getString("Editor.ConvertEncoding.submenu.label")); //$NON-NLS-1$
+			MenuManager subMenu= new MenuManager(TextEditorMessages.getString("Editor.ConvertEncoding.submenu.label")); //$NON-NLS-1$
 
-			Iterator e = fRetargetActions.iterator();
+			Iterator e= fRetargetActions.iterator();
 			while (e.hasNext())
 				subMenu.add((IAction) e.next());
 			subMenu.add(customAction);
@@ -263,12 +277,13 @@ public class EncodingActionGroup extends ActionGroup {
 	 * @param editor the target editor
 	 */
 	public void retarget(ITextEditor editor) {
-		Iterator e = fRetargetActions.iterator();
+		Iterator e= fRetargetActions.iterator();
 		while (e.hasNext()) {
-			EncodingDefinitionAction a = (EncodingDefinitionAction) e.next();
+			EncodingDefinitionAction a= (EncodingDefinitionAction) e.next();
 			a.setAction(editor == null ? null : editor.getAction(a.getId()));
 		}
-		customAction.setAction(editor == null ? null : editor.getAction(customAction.getId()));
+		customAction.setAction(
+			editor == null ? null : editor.getAction(customAction.getId()));
 	}
 
 	//------------------------------------------------------------------------------------------
@@ -283,23 +298,23 @@ public class EncodingActionGroup extends ActionGroup {
 	 */
 	public EncodingActionGroup(ITextEditor editor) {
 
-		fTextEditor = editor;
-		ResourceBundle b = TextEditorMessages.getResourceBundle();
+		fTextEditor= editor;
+		ResourceBundle b= TextEditorMessages.getResourceBundle();
 
-
-		Collection encodings = EncodingDefinitionManager.getLabelSortedEncodings();
-		Iterator iterator = encodings.iterator();
+		Collection encodings=
+			EncodingDefinitionManager.getLabelSortedEncodings();
+		Iterator iterator= encodings.iterator();
 
 		while (iterator.hasNext()) {
 			PredefinedEncodingAction action;
-			EncodingDefinition encoding = (EncodingDefinition) iterator.next();
-			action = new PredefinedEncodingAction(encoding, editor); //$NON-NLS-1$ //$NON-NLS-2$
+			EncodingDefinition encoding= (EncodingDefinition) iterator.next();
+			action= new PredefinedEncodingAction(encoding, editor); //$NON-NLS-1$ //$NON-NLS-2$
 			action.setHelpContextId(encoding.getHelpContextId());
 			action.setActionDefinitionId(encoding.getId());
 			editor.setAction(encoding.getId(), action);
 		}
 
-		CustomEncodingAction custom = new CustomEncodingAction(b, "Editor.ConvertEncoding." + IEncodingActionsConstants.CUSTOM + ".", editor); //$NON-NLS-1$ //$NON-NLS-2$
+		CustomEncodingAction custom= new CustomEncodingAction(b, "Editor.ConvertEncoding." + IEncodingActionsConstants.CUSTOM + ".", editor); //$NON-NLS-1$ //$NON-NLS-2$
 		custom.setHelpContextId(IEncodingActionsHelpContextIds.CUSTOM);
 		custom.setActionDefinitionId(IEncodingActionsDefinitionIds.CUSTOM);
 		editor.setAction(IEncodingActionsConstants.CUSTOM, custom);
@@ -310,19 +325,20 @@ public class EncodingActionGroup extends ActionGroup {
 	 */
 	public void update() {
 
-		IAction a = fTextEditor.getAction(IEncodingActionsConstants.SYSTEM);
+		IAction a= fTextEditor.getAction(IEncodingActionsConstants.SYSTEM);
 		if (a instanceof IUpdate)
 			 ((IUpdate) a).update();
 
-		Iterator encodings = EncodingDefinitionManager.getEncodings().iterator();
-		while(encodings.hasNext()) {
-			EncodingDefinition definition = (EncodingDefinition) encodings.next();
-			a = fTextEditor.getAction(definition.getId());
+		Iterator encodings= EncodingDefinitionManager.getEncodings().iterator();
+		while (encodings.hasNext()) {
+			EncodingDefinition definition=
+				(EncodingDefinition) encodings.next();
+			a= fTextEditor.getAction(definition.getId());
 			if (a instanceof IUpdate)
 				 ((IUpdate) a).update();
 		}
 
-		a = fTextEditor.getAction(IEncodingActionsConstants.CUSTOM);
+		a= fTextEditor.getAction(IEncodingActionsConstants.CUSTOM);
 		if (a instanceof IUpdate)
 			 ((IUpdate) a).update();
 	}
@@ -333,14 +349,16 @@ public class EncodingActionGroup extends ActionGroup {
 	public void dispose() {
 		if (fTextEditor != null) {
 			fTextEditor.setAction(IEncodingActionsConstants.SYSTEM, null);
-			Iterator encodings = EncodingDefinitionManager.getEncodings().iterator();
-			while(encodings.hasNext()) {
-				EncodingDefinition definition = (EncodingDefinition) encodings.next();
+			Iterator encodings=
+				EncodingDefinitionManager.getEncodings().iterator();
+			while (encodings.hasNext()) {
+				EncodingDefinition definition=
+					(EncodingDefinition) encodings.next();
 				fTextEditor.setAction(definition.getId(), null);
 			}
 			fTextEditor.setAction(IEncodingActionsConstants.CUSTOM, null);
 
-			fTextEditor = null;
+			fTextEditor= null;
 		}
 	}
 }

@@ -26,9 +26,9 @@ class EncodingDefinitionAction extends Action {
 	/** The target action */
 	private IAction fAction;
 	/** The default label if there is no target action */
-	private EncodingDefinition definition;
+	private EncodingDefinition fDefinition;
 	/** The listener to pick up changes of the target action */
-	private IPropertyChangeListener fListener = new IPropertyChangeListener() {
+	private IPropertyChangeListener fListener= new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
 			update(event);
 		}
@@ -36,31 +36,31 @@ class EncodingDefinitionAction extends Action {
 
 	/**
 	 * Creates a new action using the values in newDefinition.
-	 * @param newDefinition
+	 * @param newDefinition - the definition used to create the action
 	 * 
 	 */
 	EncodingDefinitionAction(EncodingDefinition newDefinition) {
-		this.definition = newDefinition;
-		setId(this.definition.getId());
+		fDefinition= newDefinition;
+		setId(fDefinition.getId());
 		setText(newDefinition.getLabel());
-		
+
 	}
 
 	/**
 	 * Updates to the changes of the underlying action.
 	 *
-	 * @param event the change event describing the state change
+	 * @param PropertyChangeEvent the change event describing the state change
 	 */
 	private void update(PropertyChangeEvent event) {
 		if (ENABLED.equals(event.getProperty())) {
-			Boolean bool = (Boolean) event.getNewValue();
+			Boolean bool= (Boolean) event.getNewValue();
 			setEnabled(bool.booleanValue());
 		} else if (TEXT.equals(event.getProperty()))
 			setText((String) event.getNewValue());
 		else if (TOOL_TIP_TEXT.equals(event.getProperty()))
 			setToolTipText((String) event.getNewValue());
 		else if (CHECKED.equals(event.getProperty())) {
-			Boolean bool = (Boolean) event.getNewValue();
+			Boolean bool= (Boolean) event.getNewValue();
 			setChecked(bool.booleanValue());
 		}
 	}
@@ -74,15 +74,15 @@ class EncodingDefinitionAction extends Action {
 
 		if (fAction != null) {
 			fAction.removePropertyChangeListener(fListener);
-			fAction = null;
+			fAction= null;
 		}
 
-		fAction = action;
+		fAction= action;
 
 		if (fAction == null) {
 
 			setEnabled(false);
-			setText(this.definition.getLabel());
+			setText(fDefinition.getLabel());
 			setToolTipText(""); //$NON-NLS-1$
 
 		} else {
@@ -115,7 +115,7 @@ class EncodingDefinitionAction extends Action {
 	/**
 	 * Sets the action's help context id.
 	 * 
-	 * @param contextId the help context id
+	 * @param String the help context id
 	 */
 	public final void setHelpContextId(String contextId) {
 		WorkbenchHelp.setHelp(this, contextId);
