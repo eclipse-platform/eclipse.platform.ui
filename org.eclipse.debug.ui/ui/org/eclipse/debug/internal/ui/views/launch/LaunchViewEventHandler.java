@@ -471,7 +471,7 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		Runnable r= new Runnable() {
 			public void run() {
 				if (isAvailable()) {	
-					if (launches.length > 1) {
+					if (launches.length != 1) {
 						refresh();
 					} else {
 						refresh(launches[0]);
