@@ -7,7 +7,6 @@
 <% 
 	WorkingSetData data = new WorkingSetData(application, request);
 	WebappPreferences prefs = data.getPrefs();
-	boolean isEditMode = "edit".equals(data.getOperation());
 %>
 
 
@@ -121,7 +120,7 @@ minus.src = "<%=prefs.getImagesDirectory()%>"+"/minus.gif";
 var plus = new Image();
 plus.src = "<%=prefs.getImagesDirectory()%>"+"/plus.gif";
 
-var oldName = '<%=isEditMode?data.getWorkingSetName():""%>';
+var oldName = '<%=data.isEditMode()?data.getWorkingSetName():""%>';
 
 function doSubmit()
 {
@@ -244,7 +243,7 @@ function getGrayed(node) {
 	<table id="wsTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
 		<tr><td style="padding:5px 10px 0px 10px;"><%=WebappResources.getString("WorkingSetName", request)%>:
 		</td></tr>
-		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=isEditMode?data.getWorkingSetName():""%>' maxlength=256 alt='<%=WebappResources.getString("WorkingSetName", request)%>'>
+		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=data.isEditMode()?data.getWorkingSetName():""%>' maxlength=256 alt='<%=WebappResources.getString("WorkingSetName", request)%>'>
         </td></tr>
         <tr><td><div id="selectBook" style="padding-top:5px; margin-left:10px;"><%=WebappResources.getString("Select", request)%></div>
 		</td></tr>
@@ -256,17 +255,21 @@ function getGrayed(node) {
 for (int i=0; i<data.getTocCount(); i++)
 {
 	String label = data.getTocLabel(i);
-	String checked =isEditMode && data.isTocIncluded(i) ? "checked" : "";
+	short state = data.getTocState(i);
+	String checked = state == WorkingSetData.STATE_CHECKED || state == WorkingSetData.STATE_GRAYED ? "checked" : "";
+	String className = state == WorkingSetData.STATE_GRAYED ? "grayed" : "checkbox";
 %>
 				<div class="book" id='<%="id"+i%>'>
 					<img id='<%="img"+i%>' src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseExpand('<%=i%>')">
-					<input class="checkbox" type="checkbox" id='<%=data.getTocHref(i)%>' name='<%=data.getTocHref(i)%>' alt="<%=label%>" <%=checked%> onclick="setSubtreeChecked(this, '<%="div"+i%>')"><%=label%>
+					<input class='<%=className%>' type="checkbox" id='<%=data.getTocHref(i)%>' name='<%=data.getTocHref(i)%>' alt="<%=label%>" <%=checked%> onclick="setSubtreeChecked(this, '<%="div"+i%>')"><%=label%>
 					<div id='<%="div"+i%>' class="collapsed">
 <%
 	for (int topic=0; topic<data.getTopicCount(i); topic++)
 	{
 		String topicLabel = data.getTopicLabel(i, topic);
-		String topicChecked = isEditMode && data.isTopicIncluded(i,topic) ? "checked" : "";
+		String topicChecked = (state == WorkingSetData.STATE_CHECKED) || 
+							  (state == WorkingSetData.STATE_GRAYED && data.getTopicState(i,topic) == WorkingSetData.STATE_CHECKED) 
+							  ? "checked" : "";
 %>
 						<div class="topic" id='<%="id"+i+"_"+topic%>'>
 							<input class="checkbox" type="checkbox" name='<%=data.getTocHref(i)+"_"+topic+"_"%>' alt="<%=topicLabel%>" <%=topicChecked%> onclick="updateParentState(this, '<%="div"+i%>')"><%=topicLabel%>

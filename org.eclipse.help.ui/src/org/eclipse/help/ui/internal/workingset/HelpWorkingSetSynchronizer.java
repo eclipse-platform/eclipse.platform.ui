@@ -83,8 +83,8 @@ public class HelpWorkingSetSynchronizer
 			if (helpWSM.getWorkingSet(ws.getName()) == null) {
 				WorkingSet w = createHelpWorkingSet(ws);
 				if (w != null) {
-					helpWSM.addWorkingSet(w);
 					mapping.addMapping(w, ws);
+					helpWSM.addWorkingSet(w);
 				}
 			}
 		} else if (event.getProperty().equals(IWorkingSetManager.CHANGE_WORKING_SET_REMOVE)) {
@@ -92,8 +92,8 @@ public class HelpWorkingSetSynchronizer
 			IWorkingSet ws = (IWorkingSet) event.getOldValue();
 			WorkingSet w = helpWSM.getWorkingSet(ws.getName());
 			if (w != null) {
-				helpWSM.removeWorkingSet(w);
 				mapping.removeMapping(w, ws);
+				helpWSM.removeWorkingSet(w);
 			}
 		} else if (event.getProperty().equals(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE)) {
 			// change the content of the help working set
@@ -124,16 +124,16 @@ public class HelpWorkingSetSynchronizer
 			WorkingSet ws = (WorkingSet) event.getNewValue();
 			if (eclipseWSM.getWorkingSet(ws.getName()) == null) {
 				IWorkingSet w = createEclipseWorkingSet(ws);
-				eclipseWSM.addWorkingSet(w);
 				mapping.addMapping(ws, w);
+				eclipseWSM.addWorkingSet(w);
 			}
 		} else if (event.getProperty().equals(WorkingSetManager.CHANGE_WORKING_SET_REMOVE)) {
 			// remove the eclipse working set
 			WorkingSet ws = (WorkingSet) event.getOldValue();
 			if (eclipseWSM.getWorkingSet(ws.getName()) != null) {
 				IWorkingSet w = eclipseWSM.getWorkingSet(ws.getName());
-				eclipseWSM.removeWorkingSet(w);
 				mapping.removeMapping(ws, w);
+				eclipseWSM.removeWorkingSet(w);
 			}
 		} else if (event.getProperty().equals(WorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE)) {
 			// change the content of the eclipse working set

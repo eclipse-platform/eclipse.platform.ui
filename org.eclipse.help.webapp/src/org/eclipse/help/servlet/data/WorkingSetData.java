@@ -15,18 +15,26 @@ import org.eclipse.help.internal.workingset.*;
  * This class manages help working sets
  */
 public class WorkingSetData extends RequestData {
-
+	public final static short STATE_UNCHECKED = 0;
+	public final static short STATE_GRAYED = 1;
+	public final static short STATE_CHECKED = 2;
+	
 	private WorkingSetManager wsmgr =
 		HelpSystem.getWorkingSetManager(getLocale());
 		
 	private AdaptableToc[] tocs;
+	private boolean isEditMode;
 
 	public WorkingSetData(ServletContext context, HttpServletRequest request) {
 		super(context, request);
 		AdaptableTocs adaptableTocs = HelpSystem.getWorkingSetManager(getLocale()).getRoot();
 		tocs = (AdaptableToc[])adaptableTocs.getChildren();
+		isEditMode = "edit".equals(getOperation());
 	}
 
+	public boolean isEditMode() {
+		return isEditMode;
+	}
 
 	public String getWorkingSetName() {
 		String name = request.getParameter("workingSet");
@@ -44,43 +52,74 @@ public class WorkingSetData extends RequestData {
 	}
 
 	/**
-	 * Returns true if the specified toc is included in the working set.
+	 * Returns the state of the TOC
 	 * @param href
 	 * @return boolean
 	 */
-	public boolean isTocIncluded(int toc) {
+	public short getTocState(int toc) {
+		if (!isEditMode())
+			return STATE_UNCHECKED;
 		WorkingSet ws = getWorkingSet();
 		if (ws == null)
-			return false;
+			return STATE_UNCHECKED;
 		if (toc <0 || toc >= tocs.length)
-			return false;
+			return STATE_UNCHECKED;
+			
+		// See if the toc is in the working set
 		AdaptableToc adaptableToc = tocs[toc];
 		AdaptableHelpResource[] elements = ws.getElements();
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i] == adaptableToc)
-				return true;
+				return STATE_CHECKED;
 		}
-		return false;
+		
+		// Check if it is grayed out
+		int topics = adaptableToc.getChildren().length;
+		boolean allTheSame = true;
+		short baseValue = STATE_UNCHECKED;
+		// base value is that of the first topic
+		if (topics > 0)
+			baseValue = getTopicState(toc, 0);
+		for (int i=1; allTheSame && i<topics; i++)
+			allTheSame = allTheSame && (getTopicState(toc, i) == baseValue);
+		
+		if (!allTheSame)
+			return STATE_GRAYED;
+		else			
+			return STATE_UNCHECKED;
 	}
 
-	public boolean isTopicIncluded(int toc, int topic) {
+	/**
+	 * Returns the state of the topic. The state is not dependent on the parent
+	 * toc, but only whether it was part of the working set. To get the real
+	 * state, the caller must use the parent state as well. This is not done
+	 * here for performance reasons. 
+	 * In the JSP, by the time one looks at the topic, the parent toc has
+	 * already been processed.
+	 * @param toc
+	 * @param topic
+	 * @return short
+	 */
+	public short getTopicState(int toc, int topic) {
+		if (!isEditMode)
+			return STATE_UNCHECKED;
 		WorkingSet ws = getWorkingSet();
 		if (ws == null)
-			return false;
+			return STATE_UNCHECKED;
 		if (toc <0 || toc >= tocs.length)
-			return false;
+			return STATE_UNCHECKED;
 			
 		AdaptableToc parent = tocs[toc];
 		AdaptableTopic[] topics = (AdaptableTopic[])parent.getChildren();
 		if (topic < 0 || topic >= topics.length)
-			return false;
+			return STATE_UNCHECKED;
 		AdaptableTopic adaptableTopic = topics[topic];
 		AdaptableHelpResource[] elements = ws.getElements();
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i] == adaptableTopic)
-				return true;
+				return STATE_CHECKED;
 		}
-		return false;
+		return STATE_UNCHECKED;
 	}
 
 	public String getOperation() {

@@ -405,7 +405,7 @@ public class WorkingSetManager {
 		int len = id.length();
 		if (id.charAt(len-1) == '_') {
 			// This is a first level topic
-			String indexStr = id.substring( id.lastIndexOf('_', len-2), len-1);
+			String indexStr = id.substring( id.lastIndexOf('_', len-2)+1, len-1);
 			int index = 0;
 			try {
 				index = Integer.parseInt(indexStr);
