@@ -1115,7 +1115,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				actionBuilder.populateCoolBar(actionConfigurer);
 			}
 		} else {
-			// make, fill, and hook listeners to actionbuilderconfigurer
+			// make, fill, and hook listeners to action builder
 			// reference to IWorkbenchConfigurer is need for the ABOUT action
 			windowConfigurer.setData(ACTION_BUILDER,actionBuilder);
 			actionBuilder.makeAndPopulateActions(configurer, actionConfigurer);
