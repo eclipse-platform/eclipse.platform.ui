@@ -9,7 +9,6 @@
  **********************************************************************/
 package org.eclipse.core.internal.jobs;
 
-import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -151,10 +150,9 @@ class WorkerPool {
 				JobManager.debug("worker added to pool: " + worker); //$NON-NLS-1$
 			worker.start();
 			return;
-		} else if (JobManager.DEBUG) {
+		} else if (JobManager.DEBUG && threadCount >= MAX_THREADS) {
 			//this is a potential problem, but we don't want to flood the user with these messages
-			String msg = "The job manager has stopped allocating worker threads because too many background tasks are running."; //$NON-NLS-1$
-			InternalPlatform.getDefault().log(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, 1, msg, null));
+			JobManager.debug("Stopped allocating worker threads. Thread count: " + threadCount); //$NON-NLS-1$
 		}
 	}
 	/**
