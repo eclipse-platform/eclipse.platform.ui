@@ -40,6 +40,7 @@ import org.eclipse.ui.internal.ide.Category;
 public class NewProjectWizard extends MultiStepCapabilityWizard implements INewWizard {
 	// init method parameters supplied
 	private IWorkbench workbench;
+	private IStructuredSelection selection;
 	
 	// Reference to the pages provided by this wizard
 	private WizardNewProjectNameAndLocationPage creationPage;
