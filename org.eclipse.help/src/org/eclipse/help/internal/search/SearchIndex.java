@@ -5,8 +5,8 @@ package org.eclipse.help.internal.search;
  */
 import java.io.*;
 import java.util.*;
+
 import org.apache.lucene.HTMLParser.HTMLParser;
-import org.apache.lucene.analysis.*;
 import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
 import org.apache.lucene.search.*;
@@ -21,23 +21,27 @@ public class SearchIndex {
 	private IndexWriter iw;
 	private File indexDir;
 	private String locale;
-	private Analyzer analyzer;
+	private AnalyzerDescriptor analyzerDescriptor;
 	private PluginVersionInfo docPlugins;
 	private HelpProperties indexedDocs;
 	private static final String INDEXED_CONTRIBUTION_INFO_FILE =
 		"indexed_contributions";
 	public static final String INDEXED_DOCS_FILE = "indexed_docs";
+	public static final String ANALYZER_VERSION_FILENAME = "analyzer_ver";
+	private File analyzerVersionFile;
 	private File inconsistencyFile;
 	public SearchIndex(String locale) {
 		super();
 		this.locale = locale;
-		analyzer = HelpSystem.getSearchManager().getAnalyzer(locale);
+		analyzerDescriptor = HelpSystem.getSearchManager().getAnalyzer(locale);
 		String helpStatePath = HelpPlugin.getDefault().getStateLocation().toOSString();
 		String searchStatePath =
 			helpStatePath + File.separator + "nl" + File.separator + locale;
 		indexDir = new File(searchStatePath);
 		inconsistencyFile =
 			new File(indexDir.getParentFile(), locale + ".inconsistent");
+		analyzerVersionFile =
+			new File(searchStatePath + File.separator + ANALYZER_VERSION_FILENAME);
 		indexedDocs =
 			new HelpProperties(
 				"nl" + File.separator + locale + File.separator + INDEXED_DOCS_FILE,
@@ -90,7 +94,7 @@ public class SearchIndex {
 			}
 			indexedDocs.restore();
 			setInconsistent(true);
-			iw = new IndexWriter(indexDir, analyzer, create);
+			iw = new IndexWriter(indexDir, analyzerDescriptor.getAnalyzer(), create);
 			iw.mergeFactor = 20;
 			iw.maxFieldLength = 1000000;
 			return true;
@@ -150,6 +154,7 @@ public class SearchIndex {
 			//  - plugins (and their version) that were indexed
 			indexedDocs.save();
 			getDocPlugins().save();
+			saveAnalyzerId();
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
@@ -171,6 +176,7 @@ public class SearchIndex {
 			//  - plugins (and their version) that were indexed
 			indexedDocs.save();
 			getDocPlugins().save();
+			saveAnalyzerId();
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
@@ -203,7 +209,8 @@ public class SearchIndex {
 		boolean fieldSearchOnly,
 		SearchResult searchResult) {
 		try {
-			QueryBuilder queryBuilder = new QueryBuilder(searchWord, analyzer);
+			QueryBuilder queryBuilder =
+				new QueryBuilder(searchWord, analyzerDescriptor.getAnalyzer());
 			Query luceneQuery = queryBuilder.getLuceneQuery(fieldNames, fieldSearchOnly);
 			String analyzedWords = queryBuilder.getAnalyzedWords();
 			if (luceneQuery != null) {
@@ -235,7 +242,8 @@ public class SearchIndex {
 						+ File.separator
 						+ INDEXED_CONTRIBUTION_INFO_FILE,
 					docPluginsIterator,
-					HelpPlugin.getDefault());
+					HelpPlugin.getDefault(),
+					!exists());
 		}
 		return docPlugins;
 	}
@@ -254,10 +262,43 @@ public class SearchIndex {
 		return indexedDocs;
 	}
 	/**
+	 * Gets analyzer identifier from a file.
+	 */
+	private String readAnalyzerId() {
+		if (!analyzerVersionFile.exists())
+			return "";
+		try {
+			DataInputStream dis =
+				new DataInputStream(new FileInputStream(analyzerVersionFile));
+			String id = dis.readUTF();
+			dis.close();
+			return id;
+		} catch (IOException ioe) {
+		}
+		return "";
+	}
+	/**
+	 * Saves analyzer identifier to a file.
+	 */
+	private void saveAnalyzerId() {
+		try {
+			DataOutputStream dos =
+				new DataOutputStream(new FileOutputStream(analyzerVersionFile));
+			dos.writeUTF(analyzerDescriptor.getId());
+			dos.flush();
+			dos.close();
+		} catch (IOException ioe) {
+		}
+	}
+	/**
 	 * @return Returns true if index has been left in inconsistent state
+	 * If analyzer has changed, index is treated as inconsistent as well.
 	 */
 	private boolean isInconsistent() {
-		return inconsistencyFile.exists();
+		if (inconsistencyFile.exists()) {
+			return true;
+		}
+		return !analyzerDescriptor.getId().equals(readAnalyzerId());
 	}
 	/**
 	 * Writes a deletes inconsistency flag file
