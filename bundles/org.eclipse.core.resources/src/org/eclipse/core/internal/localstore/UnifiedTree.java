@@ -25,7 +25,7 @@ public class UnifiedTree {
 	/** tree's root */
 	protected IResource root;
 
-	/** cache root's location */
+	/** cache root's location (may be null) */
 	protected IPath rootLocalLocation;
 
 	/** tree's actual level */
@@ -103,6 +103,7 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
 			int comp = localName != null ? name.compareTo(localName) : -1;
 			//special handling for linked resources
 			if (parentType == IResource.PROJECT && target.isLinked()) {
+				//child will be null if location is undefined
 				child = createChildForLinkedResource(target);
 				workspaceIndex++;
 				//if there is a matching local file, skip it - it will be blocked by the linked resource
@@ -125,7 +126,8 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
 					child = createNode(target, 0, null, null, true);
 					workspaceIndex++;
 				}
-			addChildToTree(node, child);
+			if (child != null)
+				addChildToTree(node, child);
 		}
 	}
 
@@ -141,6 +143,8 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
  */
 protected UnifiedTreeNode createChildForLinkedResource(IResource target) {
 	IPath location = target.getLocation();
+	if (location == null)
+		return null;
 	String locationString = location.toOSString();
 	long stat = CoreFileSystemLibrary.getStat(locationString);
 	return createNode(target, stat, locationString, location.lastSegment(), true);
@@ -189,6 +193,9 @@ protected void addNodeChildrenToQueue(UnifiedTreeNode node) throws CoreException
 		addElementToQueue(levelMarker);
 }
 protected void addRootToQueue() throws CoreException {
+	//can't refresh a resource with an undefined location
+	if (rootLocalLocation == null)
+		return;
 	String rootLocationString = rootLocalLocation.toOSString();
 	long stat = CoreFileSystemLibrary.getStat(rootLocationString);
 	UnifiedTreeNode node = createNode(root, stat, rootLocationString, rootLocalLocation.lastSegment(), root.exists());
