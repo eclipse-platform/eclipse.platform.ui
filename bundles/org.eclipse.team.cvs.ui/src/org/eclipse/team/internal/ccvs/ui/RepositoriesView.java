@@ -18,6 +18,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -60,6 +62,7 @@ public class RepositoriesView extends ViewPart {
 	private Action showFoldersAction;
 	private Action showModulesAction;
 	private OpenRemoteFileAction openAction;	
+	private Action refreshAction;
 	
 	IRepositoryListener listener = new IRepositoryListener() {
 		public void repositoryAdded(ICVSRepositoryLocation root) {
@@ -97,7 +100,7 @@ public class RepositoriesView extends ViewPart {
 		// Create actions
 		
 		// Refresh (toolbar)
-		final Action refreshAction = new Action(Policy.bind("RepositoriesView.refresh"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH)) {
+		refreshAction = new Action(Policy.bind("RepositoriesView.refresh"), CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_REFRESH)) {
 			public void run() {
 				viewer.refresh();
 			}
@@ -187,6 +190,13 @@ public class RepositoriesView extends ViewPart {
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setInput(root);
 		viewer.setSorter(new RepositorySorter());
+		viewer.getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.keyCode == SWT.F5) {
+					refreshAction.run();
+				}
+			}
+		});
 		drillPart = new DrillDownAdapter(viewer);
 		contributeActions();
 		CVSUIPlugin.getPlugin().getRepositoryManager().addRepositoryListener(listener);
