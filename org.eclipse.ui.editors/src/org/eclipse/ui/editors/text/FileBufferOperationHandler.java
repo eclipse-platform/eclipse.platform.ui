@@ -48,7 +48,7 @@ import org.eclipse.ui.commands.AbstractHandler;
 import org.eclipse.ui.commands.ExecutionException;
 
 /**
- * Not yet for public use. API under construction.
+ * Operation handler for a file buffer.
  * 
  * @since 3.1
  */

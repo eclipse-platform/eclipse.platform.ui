@@ -1399,7 +1399,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/**
-	 * Not yet for public use. API under construction.
+	 * Starts the given rewrite session.
 	 * 
 	 * @param session the rewrite session
 	 * @since 3.1
@@ -1445,7 +1445,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/**
-	 * Not yet for public use. API under construction.
+	 * Stops the given rewrite session.
 	 * 
 	 * @param session the rewrite session
 	 * @since 3.1
@@ -1488,7 +1488,8 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	}
 	
 	/**
-	 * Not yet for public use. API under construction.
+	 * Checks the state for the given partitioner and stops the
+	 * active rewrite session.
 	 * 
 	 * @param partitioner the document partitioner to be checked
 	 * @param partitioning the document partitioning the partitioner is registered for

@@ -757,7 +757,7 @@ public class FastPartitioner implements IDocumentPartitioner, IDocumentPartition
 	}
 	
 	/**
-	 * Not yet for public use. API under construction.
+	 * Flushes the active rewrite session.
 	 */
 	protected final void flushRewriteSession() {
 		fActiveRewriteSession= null;

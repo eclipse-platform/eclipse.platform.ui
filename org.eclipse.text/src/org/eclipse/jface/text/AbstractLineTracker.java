@@ -655,7 +655,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	}
 	
 	/**
-	 * Not yet for public use. API under construction.
+	 * Tells whether there's an active rewrite session.
 	 * 
 	 * @return <code>true</code> if there is an active rewrite session,
 	 *         <code>false</code> otherwise
@@ -666,7 +666,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	}
 	
 	/**
-	 * Not yet for public use. API under construction.
+	 * Flushes the active rewrite session.
 	 * 
 	 * @throws BadLocationException in case the recorded requests cannot be
 	 *             processed correctly
@@ -692,8 +692,7 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	
 	/**
 	 * Checks the presence of a rewrite session and flushes it.
-	 * <p>
-	 * Not yet for public use. API under construction.
+	 *
 	 * @throws BadLocationException in case flushing does not succeed
 	 * 
 	 * @since 3.1

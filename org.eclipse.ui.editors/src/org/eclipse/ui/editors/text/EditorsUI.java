@@ -142,9 +142,6 @@ public final class EditorsUI {
 
 	/**
 	 * Returns the spelling service.
-	 * <p>
-	 * Not yet for public use. API under construction.
-	 * </p>
 	 * 
 	 * @return the spelling service
 	 * @since 3.1

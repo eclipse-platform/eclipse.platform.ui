@@ -11,12 +11,12 @@
 package org.eclipse.jface.text;
 
 
-
 /**
  * Interface for objects which are interested in getting informed about document
- * rewrite sessions. Clients may implement this interface.
+ * rewrite sessions.
  * <p>
- * This call is not yet for public use. API under construction.
+ * Clients may implement this interface.
+ * </p>
  * 
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.IDocumentExtension4

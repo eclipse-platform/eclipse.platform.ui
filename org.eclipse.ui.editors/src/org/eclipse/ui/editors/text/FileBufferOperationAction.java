@@ -48,7 +48,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Not yet for public use. API under construction.
+ * File buffer operation action.
  * 
  * @since 3.1
  */

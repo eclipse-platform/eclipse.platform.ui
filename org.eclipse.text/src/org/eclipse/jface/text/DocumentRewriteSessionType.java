@@ -12,12 +12,15 @@ package org.eclipse.jface.text;
 
 
 /**
- * A document rewrite session type. Allowed values are
- * {@link DocumentRewriteSessionType#UNRESTRICTED},
- * {@link DocumentRewriteSessionType#SEQUENTIAL},
- * {@link DocumentRewriteSessionType#STRICTLY_SEQUENTIAL}.
+ * A document rewrite session type.
  * <p>
- * This class is not yet for public use. API under construction.
+ * Allowed values are:
+ * <ul>
+ * 	<li>{@link DocumentRewriteSessionType#UNRESTRICTED}</li>
+ * 	<li>{@link DocumentRewriteSessionType#SEQUENTIAL}</li>
+ * 	<li>{@link DocumentRewriteSessionType#STRICTLY_SEQUENTIAL}</li>
+ * </ul>
+ * </p>
  * 
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.IDocumentExtension4

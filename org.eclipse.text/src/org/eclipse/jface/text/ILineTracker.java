@@ -25,7 +25,7 @@ package org.eclipse.jface.text;
  * exist:
  * <ul>
  * <li> {@link org.eclipse.jface.text.ILineTrackerExtension} since version 3.1 introducing the concept
- *      of rewrite sessions. </li>
+ *      of rewrite sessions.</li>
  * </ul>
  * <p>
  * Clients may implement this interface or use the standard implementation

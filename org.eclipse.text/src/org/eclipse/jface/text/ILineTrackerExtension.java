@@ -14,8 +14,6 @@ package org.eclipse.jface.text;
  * Extension interface for {@link org.eclipse.jface.text.ILineTracker}. Adds the
  * concept of rewrite sessions. A rewrite session is a sequence of replace
  * operations that form a semantic unit.
- * <p>
- * This class is not yet for public use. API under construction.
  * 
  * @since 3.1
  */

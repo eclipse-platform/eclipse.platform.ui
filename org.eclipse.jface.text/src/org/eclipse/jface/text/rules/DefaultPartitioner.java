@@ -708,7 +708,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 	}
 	
 	/**
-	 * Not yet for public use. API under construction.
+	 * Flushes the active rewrite session.
 	 * 
 	 * @since 3.1
 	 */

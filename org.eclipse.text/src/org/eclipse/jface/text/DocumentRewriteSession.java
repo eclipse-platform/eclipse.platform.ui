@@ -13,8 +13,6 @@ package org.eclipse.jface.text;
 
 /**
  * A document rewrite session.
- * <p>
- * This class is not yet for public use. API under construction.
  * 
  * @see org.eclipse.jface.text.IDocument
  * @see org.eclipse.jface.text.IDocumentExtension4
