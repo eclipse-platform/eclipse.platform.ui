@@ -18,7 +18,7 @@ import org.xml.sax.Attributes;
 
 public class AntAntNode extends AntTaskNode {
 
-    String fFile;
+    private String fFile;
 
     public AntAntNode(Task task, Attributes attributes) {
         super(task);
