@@ -94,7 +94,7 @@ public class ExternalToolsUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static boolean getCaptureOutput(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IExternalToolConstants.ATTR_CAPTURE_OUTPUT, true);
+	    return configuration.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, true);
 	}
 
 	/**
