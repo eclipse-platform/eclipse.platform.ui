@@ -129,14 +129,25 @@ public class ContextualLaunchObjectActionDelegate
 				Object object = ss.getFirstElement(); // already tested size above
 				if(object instanceof IResource) {
 					fSelection = (IResource)object;
-					action.setEnabled(true);
-					return;
+					if (fSelection.getType() == IResource.FILE) {
+						action.setEnabled(true);
+						return;
+					}
 				}
 			}
 		}
 		action.setEnabled(false);
 	}
-
+	/*
+	 * Fake action to put in the Run context menu when no actions apply
+     * This action is always disabled
+	 */
+	private class FakeAction extends Action {
+		public FakeAction(String name) {
+			super(name);
+			setEnabled(false);
+		}
+	}
 	/**
 	 * Fill pull down menu with the pages of the JTabbedPane
 	 */
@@ -172,9 +183,9 @@ public class ContextualLaunchObjectActionDelegate
 			}
 		} else {
 			// put in a fake action to show there are none
-//			IAction action = new FakeAction("{ }");
-//			ActionContributionItem item= new ActionContributionItem(action);
-//			item.fill(menu, -1);
+			IAction action = new FakeAction(ActionMessages.getString("ContextualLaunchObjectActionDelegate.0")); //$NON-NLS-1$
+			ActionContributionItem item= new ActionContributionItem(action);
+			item.fill(menu, -1);
 		}
 	}
 	
