@@ -48,16 +48,13 @@ public void readSyncInfo(DataInputStream input) throws IOException {
 		List readPartners = new ArrayList(5);
 		while (true) {
 			IPath path = new Path(input.readUTF());
-			Resource resource = (Resource) workspace.getRoot().findMember(path, true);
-			readSyncInfo(resource, input, readPartners);
-			if (resource == null)
-				return;
+			readSyncInfo(path, input, readPartners);
 		}
 	} catch (EOFException e) {
 		// ignore end of file
 	}
 }
-private void readSyncInfo(Resource resource, DataInputStream input, List readPartners) throws IOException {
+private void readSyncInfo(IPath path, DataInputStream input, List readPartners) throws IOException {
 	int size = input.readInt();
 	HashMap table = new HashMap(size);
 	for (int i = 0; i < size; i++) {
@@ -84,7 +81,10 @@ private void readSyncInfo(Resource resource, DataInputStream input, List readPar
 		table.put(name, bytes);
 	}
 	// set the table on the resource info
-	ResourceInfo info = resource.getResourceInfo(true, true);
+	ResourceInfo info = workspace.getResourceInfo(path, true, false);
+	if (info == null)
+		return;
 	info.setSyncInfo(table);
+	info.clear(ICoreConstants.M_SYNCINFO_SNAP_DIRTY);
 }
 }

@@ -49,10 +49,9 @@ public void readSyncInfo(DataInputStream input) throws IOException {
 	IPath path = new Path(input.readUTF());
 	HashMap map = internalReadSyncInfo(input);
 	// set the table on the resource info
-	Resource resource = (Resource) workspace.getRoot().findMember(path, true);
-	if (resource == null)
+	ResourceInfo info = workspace.getResourceInfo(path, true, false);
+	if (info == null)
 		return;
-	ResourceInfo info = resource.getResourceInfo(true, true);
 	info.setSyncInfo(map);
 	info.clear(ICoreConstants.M_SYNCINFO_SNAP_DIRTY);
 }

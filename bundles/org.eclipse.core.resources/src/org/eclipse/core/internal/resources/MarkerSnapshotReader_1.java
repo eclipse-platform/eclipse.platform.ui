@@ -60,10 +60,9 @@ public void read(DataInputStream input) throws IOException {
 		markers.add(readMarkerInfo(input, readTypes));
 	// we've read all the markers from the file for this snap. if the resource
 	// doesn't exist in the workspace then consider this a delete and return
-	Resource resource = (Resource) workspace.getRoot().findMember(path);
-	if (resource == null)
+	ResourceInfo info = workspace.getResourceInfo(path, false, false);
+	if (info == null)
 		return;
-	ResourceInfo info = resource.getResourceInfo(false, true);
 	info.setMarkers(markers);
 	info.clear(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 }

@@ -58,18 +58,22 @@ public void read(DataInputStream input, boolean generateDeltas) throws IOExcepti
 		List readTypes = new ArrayList(5);
 		while (true) {
 			IPath path = new Path(input.readUTF());
-			Resource resource = (Resource) workspace.getRoot().findMember(path);
-			if (resource == null)
-				return;
-			ResourceInfo resourceInfo = resource.getResourceInfo(false, false);
 			int markersSize = input.readInt();
-			resourceInfo.markers = new MarkerSet(markersSize);
+			MarkerSet markers = new MarkerSet(markersSize);
 			for (int i = 0; i < markersSize; i++)
-				resourceInfo.markers.add(readMarkerInfo(input, readTypes));
+				markers.add(readMarkerInfo(input, readTypes));
+			// if the resource doesn't exist then return. ensure we do this after
+			// reading the markers from the file so we don't get into an
+			// inconsistent state.
+			ResourceInfo info = workspace.getResourceInfo(path, false, false);
+			if (info == null)
+				continue;
+			info.setMarkers(markers);
 			if (generateDeltas) {
+				Resource resource = workspace.newResource(path, info.getType());
 				// Iterate over all elements and add not null ones. This saves us from copying
 				// and shrinking the array.
-				IMarkerSetElement[] infos = resourceInfo.markers.elements;
+				IMarkerSetElement[] infos = markers.elements;
 				ArrayList deltas = new ArrayList(infos.length);
 				for (int i = 0; i < infos.length; i++)
 					if (infos[i] != null)
