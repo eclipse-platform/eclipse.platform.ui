@@ -154,7 +154,6 @@ public class ResourceNavigator
 		TreeViewer viewer = createViewer(parent);
 		this.viewer = viewer;
 
-		viewer.setInput(getInitialInput());
 		if (memento != null)
 			restoreFilters();
 		frameList = createFrameList();
@@ -166,6 +165,10 @@ public class ResourceNavigator
 		makeActions();
 		initResourceSorter();
 		initWorkingSetFilter();
+		
+		// make sure input is set after sorters and filters,
+		// to avoid unnecessary refreshes
+		viewer.setInput(getInitialInput());
 
 		// Fill the action bars and update the global action handlers'
 		// enabled state to match the current selection.
