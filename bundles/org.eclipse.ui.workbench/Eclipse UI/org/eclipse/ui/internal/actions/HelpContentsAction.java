@@ -10,6 +10,7 @@ package org.eclipse.ui.internal.actions;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
@@ -18,6 +19,7 @@ import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * Action to open the help contents.
@@ -47,8 +49,17 @@ public class HelpContentsAction extends Action implements IWorkbenchAction {
 		}
 		this.workbenchWindow = window;
 		setActionDefinitionId("org.eclipse.ui.help.helpContents"); //$NON-NLS-1$
-		setText(WorkbenchMessages.getString("HelpContentsAction.text")); //$NON-NLS-1$
-		setToolTipText(WorkbenchMessages.getString("HelpContentsAction.toolTip")); //$NON-NLS-1$
+		
+		// support for allowing a product to override the text for the action
+		String overrideText = PrefUtil.getAPIPreferenceStore().getString(IWorkbenchPreferenceConstants.HELP_CONTENTS_ACTION_TEXT);
+		if ("".equals(overrideText)) { //$NON-NLS-1$
+		    setText(WorkbenchMessages.getString("HelpContentsAction.text")); //$NON-NLS-1$ 
+			setToolTipText(WorkbenchMessages.getString("HelpContentsAction.toolTip")); //$NON-NLS-1$
+		}
+		else {
+		    setText(overrideText);
+		    setToolTipText(Action.removeMnemonics(overrideText));
+		}
 		setImageDescriptor(WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_CONTENTS));
 		WorkbenchHelp.setHelp(this, IHelpContextIds.HELP_CONTENTS_ACTION);
 	}

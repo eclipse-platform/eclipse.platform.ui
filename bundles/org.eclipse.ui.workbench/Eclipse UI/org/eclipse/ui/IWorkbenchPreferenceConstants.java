@@ -251,5 +251,17 @@ public interface IWorkbenchPreferenceConstants {
      * 
      * @since 3.0
      */
-    public static String SHOW_TEXT_ON_PERSPECTIVE_BAR = "SHOW_TEXT_ON_PERSPECTIVE_BAR"; //$NON-NLS-1$	
+    public static String SHOW_TEXT_ON_PERSPECTIVE_BAR = "SHOW_TEXT_ON_PERSPECTIVE_BAR"; //$NON-NLS-1$
+    
+    /**
+     * A named preference for the text of the Help Contents action. 
+     * 
+     * String-valued.  If not specified, <code>"&Help Contents"</code> is used.
+     * <p>
+     * The default value for this preference is: <code>null</code>
+     * </p>
+     * 
+     * @since 3.0
+     */
+    public static String HELP_CONTENTS_ACTION_TEXT = "helpContentsActionText"; //$NON-NLS-1$
 }
