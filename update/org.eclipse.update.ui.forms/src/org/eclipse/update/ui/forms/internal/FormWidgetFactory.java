@@ -14,6 +14,7 @@ import org.eclipse.jface.resource.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.custom.*;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.update.ui.forms.internal.engine.FormEngine;
 
 
 public class FormWidgetFactory {
@@ -106,6 +107,10 @@ public Label createHeadingLabel(Composite parent, String text) {
 	return createHeadingLabel(parent, text, null, SWT.NONE);
 }
 
+public Label createHeadingLabel(Composite parent, String text, int style) {
+	return createHeadingLabel(parent, text, null, style);
+}
+
 public Label createHeadingLabel(Composite parent, String text, Color bg) {
 	return createHeadingLabel(parent, text, bg, SWT.NONE);
 }
@@ -148,6 +153,16 @@ public SelectableFormLabel createSelectableLabel(Composite parent, String text, 
 	label.setBackground(backgroundColor);
 	label.setForeground(foregroundColor);
 	return label;	
+}
+
+public FormEngine createFormEngine(Composite parent) {
+	FormEngine engine = new FormEngine(parent, SWT.WRAP);
+	engine.setBackground(backgroundColor);
+	engine.setForeground(foregroundColor);
+	engine.marginWidth = 0;
+	engine.marginHeight = 0;
+	engine.setHyperlinkSettings(getHyperlinkHandler());
+	return engine;
 }
 
 public Label createSeparator(Composite parent, int style) {

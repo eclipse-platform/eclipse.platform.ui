@@ -11,6 +11,7 @@ import org.eclipse.ui.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.update.ui.forms.internal.engine.*;
 
 public class MainForm extends UpdateWebForm {
 private static final String KEY_TITLE = "HomePage.title";
@@ -24,14 +25,23 @@ private static final String KEY_HISTORY_TITLE = "HomePage.history.title";
 private static final String KEY_HISTORY_DESC = "HomePage.history.desc";
 
 	Image itemImage;
+	Image historyImage;
+	Image myEclipseImage;
+	Image sitesImage;
 	
 public MainForm(UpdateFormPage page) {
 	super(page);
 	itemImage = UpdateUIPluginImages.DESC_ITEM.createImage();
+	historyImage = UpdateUIPluginImages.DESC_HISTORY_VIEW.createImage();
+	myEclipseImage = UpdateUIPluginImages.DESC_MY_ECLIPSE_VIEW.createImage();
+	sitesImage = UpdateUIPluginImages.DESC_SITES_VIEW.createImage();
 }
 
 public void dispose() {
 	itemImage.dispose();
+	historyImage.dispose();
+	myEclipseImage.dispose();
+	sitesImage.dispose();
 	super.dispose();
 }
 
@@ -52,93 +62,86 @@ protected void createContents(Composite parent) {
 	parent.setLayout(layout);
 	layout.leftMargin = layout.rightMargin = 10;
 	layout.topMargin = 15;
-	layout.horizontalSpacing = 0;
+	layout.horizontalSpacing = 5;
 	layout.verticalSpacing = 0;
 	layout.numColumns = 2;
 	
 	FormWidgetFactory factory = getFactory();
 	
+	Label topicImage;
 	Label topic;
-	SelectableFormLabel link;
-	Label text;
-	IHyperlinkListener listener;
+	FormEngine text;
+	HyperlinkAction action;
 
-	listener = new HyperlinkAdapter() {
-		public void linkActivated(Control link) {
+	action = new HyperlinkAction() {
+		public void linkActivated(IHyperlinkSegment link) {
 			LocalSiteView view = (LocalSiteView)showView(UpdatePerspective.ID_LOCAL_SITE);
 			if (view!=null) {
 				view.selectUpdateObject();
 			}
 		}
 	};
-	topic = factory.createLabel(parent, null);
-	topic.setImage(itemImage);
-	link = new SelectableFormLabel(parent, SWT.NULL);
-	link.setFont(JFaceResources.getBannerFont());
-	link.setText(UpdateUIPlugin.getResourceString(KEY_UPDATES_TITLE));
-	factory.turnIntoHyperlink(link, listener);
-
+	topicImage = factory.createLabel(parent, null);
+	topicImage.setImage(itemImage);
+	topic = factory.createHeadingLabel(parent, UpdateUIPlugin.getResourceString(KEY_UPDATES_TITLE), SWT.WRAP);
 	factory.createLabel(parent, null);	
-	text = factory.createLabel(parent, null, SWT.WRAP);	
-	text.setText(UpdateUIPlugin.getResourceString(KEY_UPDATES_DESC));
+	text =factory.createFormEngine(parent);
+	text.load(UpdateUIPlugin.getResourceString(KEY_UPDATES_DESC), true, false);
+	text.registerTextObject("action1", action);
+	text.registerTextObject("image1", myEclipseImage);
 	TableData td = new TableData();
-	//td.colspan = 2;
+	td.grabHorizontal=true;
 	text.setLayoutData(td);
 	
-	listener = new HyperlinkAdapter() {
-		public void linkActivated(Control link) {
+	action = new HyperlinkAction() {
+		public void linkActivated(IHyperlinkSegment link) {
 			showView(UpdatePerspective.ID_SITES);
 		}
 	};
-	topic = factory.createLabel(parent, null);
-	topic.setImage(itemImage);
-	link = new SelectableFormLabel(parent, SWT.NULL);
-	link.setFont(JFaceResources.getBannerFont());
-	link.setText(UpdateUIPlugin.getResourceString(KEY_INSTALLS_TITLE));
-	factory.turnIntoHyperlink(link, listener);
-
+	topicImage = factory.createLabel(parent, null);
+	topicImage.setImage(itemImage);
+	topic = factory.createHeadingLabel(parent, UpdateUIPlugin.getResourceString(KEY_INSTALLS_TITLE), SWT.WRAP);
 	factory.createLabel(parent, null);	
-	text = factory.createLabel(parent, null, SWT.WRAP);
-	text.setText(UpdateUIPlugin.getResourceString(KEY_INSTALLS_DESC));
+	text = factory.createFormEngine(parent);
+	text.load(UpdateUIPlugin.getResourceString(KEY_INSTALLS_DESC), true, false);
+	text.registerTextObject("action1", action);
+	text.registerTextObject("image1", sitesImage);
 	td = new TableData();
-	//td.colspan = 2;
+	td.grabHorizontal=true;
 	text.setLayoutData(td);
 	
-	listener = new HyperlinkAdapter() {
-		public void linkActivated(Control link) {
+	action = new HyperlinkAction() {
+		public void linkActivated(IHyperlinkSegment link) {
 			showView(UpdatePerspective.ID_LOCAL_SITE);
 		}
 	};
-	topic = factory.createLabel(parent, null);
-	topic.setImage(itemImage);
-	link = new SelectableFormLabel(parent, SWT.NULL);
-	link.setFont(JFaceResources.getBannerFont());
-	link.setText(UpdateUIPlugin.getResourceString(KEY_UNINSTALLS_TITLE));
-	factory.turnIntoHyperlink(link, listener);
-
+	topicImage = factory.createLabel(parent, null);
+	topicImage.setImage(itemImage);
+	topic = factory.createHeadingLabel(parent, UpdateUIPlugin.getResourceString(KEY_UNINSTALLS_TITLE), SWT.WRAP);
 	factory.createLabel(parent, null);		
-	text = factory.createLabel(parent, null, SWT.WRAP);
-	text.setText(UpdateUIPlugin.getResourceString(KEY_UNINSTALLS_DESC));
+	text = factory.createFormEngine(parent);
+	text.load(UpdateUIPlugin.getResourceString(KEY_UNINSTALLS_DESC), true, false);
+	text.registerTextObject("action1", action);
+	text.registerTextObject("image1", myEclipseImage);
 	td = new TableData();
-	//td.colspan = 2;
+	td.grabHorizontal=true;
 	text.setLayoutData(td);
 
-	listener = new HyperlinkAdapter() {
-		public void linkActivated(Control link) {
+	action = new HyperlinkAction() {
+		public void linkActivated(IHyperlinkSegment link) {
 			showView(UpdatePerspective.ID_HISTORY);
 		}
 	};
-	topic = factory.createLabel(parent, null);
-	topic.setImage(itemImage);
-	link = new SelectableFormLabel(parent, SWT.NULL);
-	link.setFont(JFaceResources.getBannerFont());
-	link.setText(UpdateUIPlugin.getResourceString(KEY_HISTORY_TITLE));
-	factory.turnIntoHyperlink(link, listener);
+	topicImage = factory.createLabel(parent, null);
+	topicImage.setImage(itemImage);
+	topic = factory.createHeadingLabel(parent, UpdateUIPlugin.getResourceString(KEY_HISTORY_TITLE), SWT.WRAP);
 	factory.createLabel(parent, null);	
-	text = factory.createLabel(parent, null, SWT.WRAP);
-	text.setText(UpdateUIPlugin.getResourceString(KEY_HISTORY_DESC));
+	text = factory.createFormEngine(parent);
+	text.load(UpdateUIPlugin.getResourceString(KEY_HISTORY_DESC), true, false);
+	text.registerTextObject("action1", action);
+	text.registerTextObject("image1", historyImage);
 	td = new TableData();
-	//td.colspan = 2;
+	td.grabHorizontal=true;
 	text.setLayoutData(td);
 }
 

@@ -1,0 +1,18 @@
+<form>
+<p>
+Hello, world
+</p>
+<p>
+This is a longer text that should show how I can present HTML-like
+text. New lines 
+should
+not 
+be 
+presented within the paragraph. If the are, it is a 
+<b>mistake</b>. We
+can also demonstate IBM web site as http://www.ibm.com</p>
+<p>
+
+Now, whithin this text, <a href="link">a hyperlink!</a>.
+</p>
+</form>

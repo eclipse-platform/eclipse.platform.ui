@@ -15,4 +15,5 @@ public interface ITextSegment extends IParagraphSegment {
 	String getText();
 	Color getColor();
 	Font getFont();
+	boolean isWordWrapAllowed();
 }

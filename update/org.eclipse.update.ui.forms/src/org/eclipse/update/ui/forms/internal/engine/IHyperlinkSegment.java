@@ -12,5 +12,7 @@ import org.eclipse.update.ui.forms.internal.IHyperlinkListener;
  * @author
  */
 public interface IHyperlinkSegment extends ITextSegment, IObjectReference {
-	IHyperlinkListener getListener(Hashtable objectTable);
+	HyperlinkAction getAction(Hashtable objectTable);
+	
+	boolean contains(int x, int y);
 }

@@ -12,4 +12,12 @@ public class Locator {
 	public int x, y;
 	public int width, height;
 	public int rowHeight;
+	public int marginWidth;
+	public int marginHeight;
+	
+	public void newLine() {
+		x = marginWidth;
+		y += rowHeight;
+		rowHeight = 0;
+	}
 }

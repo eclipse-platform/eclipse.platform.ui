@@ -9,6 +9,11 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.events.*;
+import java.io.InputStream;
+import org.eclipse.swt.program.Program;
+import org.eclipse.update.ui.forms.internal.engine.*;
+import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.action.StatusLineManager;
 
 public class TableLayoutTest {
 
@@ -124,17 +129,29 @@ public static void main (String [] args) {
      exp.getControl().setLayoutData(td);
      
      new Label(c, SWT.NULL);
-     
-     HTMLFormLabel html = new HTMLFormLabel(c, SWT.WRAP);
+ 
+     StatusLineManager manager = new StatusLineManager();
+     final FormEngine html = new FormEngine(c, SWT.WRAP);
      html.setHyperlinkSettings(factory.getHyperlinkHandler());
-     html.setBackground(factory.getBackgroundColor());
+     HTTPAction action = new HTTPAction();
+     action.setStatusLineManager(manager);
+     html.registerTextObject("urlHandler", action);
+     //html.setBackground(factory.getBackgroundColor());
      html.setForeground(factory.getForegroundColor());
-     String htmlText = "Just a random text. A link: http://www.ibm.com .\nThis is a new paragraph.\nThis is too.";
-     html.setText(htmlText, false, true);
+     InputStream is = TableLayoutTest.class.getResourceAsStream("index.xml");
+     //html.setParagraphsSeparated(false);
+     html.load(is, true);
      td = new TableData();
      td.colspan = 1;
      td.align = TableData.FILL;
      html.setLayoutData(td);
+     
+
+     Control mcontrol = manager.createControl(c);
+     td = new TableData();
+     td.colspan = 2;
+     td.align = TableData.FILL;
+     mcontrol.setLayoutData(td);
      
      factory.setHyperlinkUnderlineMode(HyperlinkHandler.UNDERLINE_ROLLOVER);
      

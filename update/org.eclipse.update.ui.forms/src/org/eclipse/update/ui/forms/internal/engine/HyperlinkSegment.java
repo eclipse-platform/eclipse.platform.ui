@@ -15,23 +15,24 @@ import org.eclipse.swt.graphics.GC;
 public class HyperlinkSegment
 	extends TextSegment
 	implements IHyperlinkSegment {
-	private String listenerId;
+	private String actionId;
 	private HyperlinkSettings settings;
+
 	
-	public HyperlinkSegment(String text, HyperlinkSettings settings) {
-		super(text);
+	public HyperlinkSegment(String text, HyperlinkSettings settings, String fontId) {
+		super(text, fontId);
 		this.settings = settings;
 		underline = true;
 	}
-
+	
 	/*
 	 * @see IHyperlinkSegment#getListener(Hashtable)
 	 */
-	public IHyperlinkListener getListener(Hashtable objectTable) {
-		if (listenerId==null) return null;
-		Object obj = objectTable.get(listenerId);
+	public HyperlinkAction getAction(Hashtable objectTable) {
+		if (actionId==null) return null;
+		Object obj = objectTable.get(actionId);
 		if (obj==null) return null;
-		if (obj instanceof IHyperlinkListener) return (IHyperlinkListener)obj;
+		if (obj instanceof HyperlinkAction) return (HyperlinkAction)obj;
 		return null;
 	}
 
@@ -39,11 +40,11 @@ public class HyperlinkSegment
 	 * @see IObjectReference#getObjectId()
 	 */
 	public String getObjectId() {
-		return listenerId;
+		return actionId;
 	}
 	
-	void setListenerId(String id) {
-		this.listenerId = id;
+	void setActionId(String id) {
+		this.actionId = id;
 	}
 	public void paint(GC gc, int width, Locator locator, Hashtable objectTable, boolean selected) {
 		setColor(settings.getForeground());

@@ -13,6 +13,7 @@ import org.eclipse.update.ui.forms.internal.HyperlinkSettings;
  * @author
  */
 public class Paragraph implements IParagraph {
+	public static final String HTTP = "http://";
 	private Vector segments;
 
 	/*
@@ -31,32 +32,47 @@ public class Paragraph implements IParagraph {
 		segments.add(segment);
 	}
 	
-	public void parseRegularText(String text, boolean expandURLs, HyperlinkSettings settings) {
+	public void parseRegularText(String text, boolean expandURLs, HyperlinkSettings settings, String fontId) {
+		if (text.length()==0) return;
 		if (expandURLs) {
-			int loc = text.indexOf("http://");
+			int loc = text.indexOf(HTTP);
 			
 			if (loc == -1)
-			   addSegment(new TextSegment(text));
+			   addSegment(new TextSegment(text, fontId));
 			else {
 				int textLoc = 0;
 				while (loc != -1) {
-					addSegment(new TextSegment(text.substring(textLoc, loc)));
+					addSegment(new TextSegment(text.substring(textLoc, loc), fontId));
+					boolean added=false;
 					for (textLoc=loc; textLoc<text.length(); textLoc++) {
 						char c = text.charAt(textLoc);
 						if (Character.isSpaceChar(c)) {
-							addSegment(new HyperlinkSegment(text.substring(loc, textLoc), settings));
+							addHyperlinkSegment(text.substring(loc, textLoc), settings, fontId);
+							added=true;
 							break;
 						}
 					}
-					loc = text.indexOf("http://", textLoc);
+					if (!added) {
+						// there was no space - just end of text
+						addHyperlinkSegment(text.substring(loc), settings, fontId);
+						break;
+					}
+					loc = text.indexOf(HTTP, textLoc);
 				}
 				if (textLoc<text.length()) {
-					addSegment(new TextSegment(text.substring(textLoc)));
+					addSegment(new TextSegment(text.substring(textLoc), fontId));
 				}
 			}
 		}
 		else {
-			addSegment(new TextSegment(text));
+			addSegment(new TextSegment(text, fontId));
 		}
+	}
+	
+	private void addHyperlinkSegment(String text, HyperlinkSettings settings, String fontId) {
+		HyperlinkSegment hs = new HyperlinkSegment(text, settings, fontId);
+		hs.setWordWrapAllowed(false);
+		hs.setActionId(FormEngine.URL_HANDLER_ID);
+		addSegment(hs);
 	}
 }

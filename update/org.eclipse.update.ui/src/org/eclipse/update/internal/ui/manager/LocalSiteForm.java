@@ -16,6 +16,7 @@ import org.eclipse.update.ui.internal.model.*;
 import org.eclipse.swt.custom.BusyIndicator;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.update.ui.forms.internal.engine.*;
 // FIXME: we cannot talk to the internal classes
 import org.eclipse.ui.internal.*;
 
@@ -63,13 +64,22 @@ protected void createContents(Composite parent) {
 		Label ilabel = factory.createLabel(parent, null);
 		ilabel.setImage(image);
 	}
-
+	
+	HTTPAction action = new HTTPAction();
+	IActionBars bars = getPage().getView().getViewSite().getActionBars();
+	action.setStatusLineManager(bars.getStatusLineManager());
 	// text on the right
-	Label label = factory.createLabel(parent, null, SWT.WRAP );
+	//Label label = factory.createLabel(parent, null, SWT.WRAP );
+	FormEngine engine = new FormEngine(parent, SWT.WRAP);
+	engine.registerTextObject(FormEngine.URL_HANDLER_ID, action);
+	engine.setForeground(factory.getForegroundColor());
+	engine.setBackground(factory.getBackgroundColor());
+	engine.setParagraphsSeparated(false);
+	engine.setHyperlinkSettings(factory.getHyperlinkHandler());
 	TableData data = new TableData();
 	data.align = TableData.FILL;
-	label.setText(productText());
-	label.setLayoutData(data);
+	engine.load(productText(), false, true);
+	engine.setLayoutData(data);
 	
 	Composite sep = factory.createCompositeSeparator(parent);
 	data = new TableData();
@@ -81,11 +91,16 @@ protected void createContents(Composite parent) {
 	if (image!=null) factory.createLabel(parent, null);
 	
 	// text on the right
-	label = factory.createLabel(parent, null, SWT.WRAP );
+	engine = new FormEngine(parent, SWT.WRAP);
+	engine.setForeground(factory.getForegroundColor());
+	engine.setBackground(factory.getBackgroundColor());
+	engine.setParagraphsSeparated(false);
+	engine.setHyperlinkSettings(factory.getHyperlinkHandler());
+	engine.registerTextObject(FormEngine.URL_HANDLER_ID, action);
 	data = new TableData();
 	data.align = TableData.FILL;
-	label.setText(platformText());
-	label.setLayoutData(data);
+	engine.load(platformText(), false, true);
+	engine.setLayoutData(data);
 	
 	sep = factory.createCompositeSeparator(parent);
 	data = new TableData();

@@ -82,6 +82,14 @@ public class UpdateUIPluginImages {
 	 * TOOL16
 	 */
 	//public static final ImageDescriptor DESC_DEFCON_TOOL = create(PATH_TOOL, "defcon_wiz.gif");
+	
+	
+	/**
+	 * VIEW16
+	 */
+	public static final ImageDescriptor DESC_HISTORY_VIEW = create(PATH_VIEW, "history.gif");
+	public static final ImageDescriptor DESC_MY_ECLIPSE_VIEW = create(PATH_VIEW, "myEclipse.gif");
+	public static final ImageDescriptor DESC_SITES_VIEW = create(PATH_VIEW, "sites.gif");
 
 	/**
 	 * LCL

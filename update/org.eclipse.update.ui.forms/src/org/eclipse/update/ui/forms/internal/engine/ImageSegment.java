@@ -49,18 +49,17 @@ public class ImageSegment extends ParagraphSegment implements IImageSegment {
 			iwidth = rect.width;
 			iheight = rect.height;
 		}
-		loc.width = iwidth;
-		loc.height = iheight;
-		loc.x += iwidth;
-
-		if (wHint != SWT.DEFAULT) {
-			if (loc.x > wHint) {
-				loc.x = iwidth;
-				loc.y += loc.rowHeight;
-				loc.rowHeight = iheight;
-			}
+		if (wHint != SWT.DEFAULT && loc.x + iwidth > wHint) {
+			// new line
+			loc.x = iwidth;
+			loc.width = loc.x;
+			loc.y += loc.rowHeight;
+			loc.rowHeight = iheight;
 		}
-		loc.rowHeight = Math.max(loc.rowHeight, iwidth);
+		else {
+			loc.x += iwidth;
+			loc.rowHeight = Math.max(loc.rowHeight, iheight);
+		}
 	}
 
 	public void paint(GC gc, int width, Locator loc, Hashtable objectTable, boolean selected) {
@@ -76,16 +75,12 @@ public class ImageSegment extends ParagraphSegment implements IImageSegment {
 		loc.width = iwidth;
 		loc.height = iheight;
 		
-		if (loc.x + iwidth > width) {
-			loc.x = 0;
-		}
-		
 		int ix = loc.x;
 		int iy = loc.y;
 		
 		if (ix + iwidth > width) {
 			// new row
-			ix = 0;
+			ix = loc.marginWidth;
 			iy += loc.rowHeight;
 			loc.rowHeight = 0;
 		}

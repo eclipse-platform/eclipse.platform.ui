@@ -12,7 +12,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface ITextModel {
 	IParagraph [] getParagraphs();
-	public void parseTaggedText(String taggedText) throws CoreException;
+	public void parseTaggedText(String taggedText, boolean expandURLs) throws CoreException;
 	public void parseRegularText(String regularText, boolean expandURLs) throws CoreException;
 	public void dispose();
 }
