@@ -10,6 +10,8 @@ Contributors:
 **********************************************************************/
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
@@ -21,14 +23,18 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchShortcut;
 import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 import org.eclipse.ui.externaltools.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
@@ -79,14 +85,22 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	protected void launch(IFile file, String mode) {
 		if ("xml".equalsIgnoreCase(file.getFileExtension())) {
 			if (verifyMode(mode)) {
-				ILaunchConfiguration configuration = findExistingLaunchConfiguration(file);
-				if (configuration == null) {
+				ILaunchConfiguration configuration= null;
+				List configurations = findExistingLaunchConfigurations(file);
+				if (configurations.isEmpty()) {
 					configuration = createDefaultLaunchConfiguration(file);
 					if (configuration != null) {
 						DebugUITools.openLaunchConfigurationDialogOnGroup(ExternalToolsPlugin.getActiveWorkbenchWindow().getShell(), new StructuredSelection(configuration), IExternalToolConstants.ID_EXTERNAL_TOOLS_LAUNCH_GROUP);
 					}
 				} else {
-					DebugUITools.launch(configuration, mode);
+					if (configurations.size() == 1) {
+						configuration= (ILaunchConfiguration)configurations.get(0);
+					} else {
+						configuration= chooseConfig(configurations);
+					}
+					if (configuration != null) {
+						DebugUITools.launch(configuration, mode);
+					}
 				}
 			}			
 		} else {
@@ -115,7 +129,7 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 			buffer.append(" ");
 		}
 		String name = buffer.toString().trim();
-		manager.generateUniqueLaunchConfigurationNameFrom(name);
+		name= manager.generateUniqueLaunchConfigurationNameFrom(name);
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, name);
 			StringBuffer buf = new StringBuffer();
@@ -130,15 +144,15 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 	}
 	
 	/**
-	 * Returns an existing launch configuration for the given file, if one
-	 * exists, otherwise <code>null</code>.
+	 * Returns a list of existing launch configuration for the given file.
 	 * 
 	 * @param file
-	 * @return launch configuration or <code>null</code>
+	 * @return list of launch configurations
 	 */
-	protected ILaunchConfiguration findExistingLaunchConfiguration(IFile file) {
+	protected List findExistingLaunchConfigurations(IFile file) {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IExternalToolConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+		List validConfigs= new ArrayList();
 		if (type != null) {
 			try {
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
@@ -149,12 +163,35 @@ public class AntLaunchShortcut implements ILaunchShortcut {
 						ILaunchConfiguration configuration = configs[i];
 						IPath location = ExternalToolsUtil.getLocation(configuration, context);
 						if (filePath.equals(location)) {
-							return configuration;
+							validConfigs.add(configuration);
 						}	
 					}
 				}
 			} catch (CoreException e) {
 			}
+		}
+		return validConfigs;
+	}
+	
+	/**
+	 * Prompts the user to choose from the list of given launch configurations
+	 * and returns the config the user choose of <code>null</code> if the user
+	 * pressed Cancel or if the given list is empty.
+	 */
+	private ILaunchConfiguration chooseConfig(List configs) {
+		if (configs.isEmpty()) {
+			return null;
+		}
+		ILabelProvider labelProvider = DebugUIPlugin.getModelPresentation();
+		ElementListSelectionDialog dialog= new ElementListSelectionDialog(Display.getCurrent().getActiveShell(), labelProvider);
+		dialog.setElements((ILaunchConfiguration[]) configs.toArray(new ILaunchConfiguration[configs.size()]));
+		dialog.setTitle("Ant Configuration Selection");
+		dialog.setMessage("Choose an ant configuration to run");
+		dialog.setMultipleSelection(false);
+		int result = dialog.open();
+		labelProvider.dispose();
+		if (result == ElementListSelectionDialog.OK) {
+			return (ILaunchConfiguration) dialog.getFirstResult();
 		}
 		return null;
 	}
