@@ -45,5 +45,8 @@ public interface IDebugHelpContextIds {
 	// Dialogs
 	public static final String LAUNCH_CONFIGURATION_DIALOG = PREFIX + "launch_configuration_dialog"; //$NON-NLS-1$
 	
+	// Launch configuration dialog pages
+	public static final String LAUNCH_CONFIGURATION_DIALOG_COMMON_TAB = PREFIX + "launch_configuration_dialog_common_tab"; //$NON-NLS-1$	
+	
 }
 
