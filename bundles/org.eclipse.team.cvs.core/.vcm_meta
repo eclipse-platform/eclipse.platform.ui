@@ -3,7 +3,6 @@
 	<comment></comment>
 	<nature id="org.eclipse.jdt.core.javanature"/>
 	<nature id="org.eclipse.pde.PluginNature"/>
-	<nature id="org.eclipse.team.cvs.core.cvsnature"/>
 	<reference project-name="org.eclipse.team.core"/>
 	<builder name="org.eclipse.jdt.core.javabuilder">
 	</builder>
