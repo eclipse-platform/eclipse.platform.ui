@@ -1723,7 +1723,7 @@ public class EditorManager implements IExtensionChangeHandler {
             // Get the input factory.
             IMemento editorMem = getMemento();
             if (editorMem == null) {
-                throw new PartInitException(WorkbenchMessages.EditorManager_no_persisted_state); //$NON-NLS-1$
+                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_no_persisted_state, getId(), getName()));
             }
             IMemento inputMem = editorMem
                     .getChild(IWorkbenchConstants.TAG_INPUT);
@@ -1733,7 +1733,7 @@ public class EditorManager implements IExtensionChangeHandler {
                         .getString(IWorkbenchConstants.TAG_FACTORY_ID);
             }
             if (factoryID == null) {
-                throw new PartInitException(WorkbenchMessages.EditorManager_no_input_factory_ID); //$NON-NLS-1$
+                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_no_input_factory_ID, getId(), getName()));
             }
             IAdaptable input = null;
             String label = null; // debugging only
@@ -1745,19 +1745,19 @@ public class EditorManager implements IExtensionChangeHandler {
                 IElementFactory factory = PlatformUI.getWorkbench()
                         .getElementFactory(factoryID);
                 if (factory == null) {
-                    throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_bad_element_factory, factoryID)); //$NON-NLS-1$
+                    throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_bad_element_factory, new Object[] { factoryID, getId(), getName() }));
                 }
 
                 // Get the input element.
                 input = factory.createElement(inputMem);
                 if (input == null) {
-                    throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_create_element_returned_null, factoryID)); //$NON-NLS-1$
+                    throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_create_element_returned_null, new Object[] { factoryID, getId(), getName() }));
                 }
             } finally {
                 UIStats.end(UIStats.CREATE_PART_INPUT, input, label);
             }
             if (!(input instanceof IEditorInput)) {
-                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_wrong_createElement_result, factoryID)); //$NON-NLS-1$
+                throw new PartInitException(NLS.bind(WorkbenchMessages.EditorManager_wrong_createElement_result, new Object[] { factoryID, getId(), getName() }));
             }
             restoredInput = (IEditorInput) input;
             return restoredInput;
@@ -1800,7 +1800,7 @@ public class EditorManager implements IExtensionChangeHandler {
                 imgHashtable.put(imgHashKey, image);
             }
             return image;
-        }
+        }        
     }
     
     private class InnerEditor extends Editor {
