@@ -15,6 +15,8 @@ package org.eclipse.ui.tests.util;
 
 import junit.framework.Assert;
 
+import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
@@ -22,10 +24,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
-
+import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.internal.util.VerifyDialog;
 
@@ -122,6 +121,13 @@ public class DialogCheck {
 	private static void verifyCompositeText(Composite composite, Assert assert) {
 		Control children[] = composite.getChildren();
 		for (int i = 0; i < children.length; i++) {
+			if (children[i] instanceof TabFolder) {
+				TabFolder folder = (TabFolder)children[i];
+				int numPages = folder.getItemCount();
+				for (int j=0; j<numPages; j++) {
+					folder.setSelection(j);
+				}
+			}
 			try {
 				//verify the text if the child is a button
 				verifyButtonText((Button) children[i], assert);
