@@ -17,10 +17,19 @@ public interface IProblem extends IRegion {
 
 	/**
 	 * Answer a localized, human-readable message string which describes the problem.
+	 * The message has been "escaped" to handle special characters.
 	 *
 	 * @return a localized, human-readable message string which describes the problem
 	 */
 	String getMessage();
+	
+	/**
+	 * Answer a localized, human-readable message string which describes the problem.
+	 * The message is in its original form; special characters have not been escaped.
+	 *
+	 * @return localized, human-readable message string which describes the problem
+	 */
+	String getUnmodifiedMessage();
 
 	/**
 	 * Checks the severity to see if the Error bit is set.

@@ -21,6 +21,7 @@ public class XMLProblem extends Region implements IProblem {
 	public static final int SEVERITY_FATAL_ERROR= 2;
 	
 	private String fMessage;
+	private String fEscapedMessage;
 	private int fSeverity;
 	private int fAdjustedLength= -1;
 	private int fLineNumber= -1;
@@ -28,6 +29,7 @@ public class XMLProblem extends Region implements IProblem {
 	public XMLProblem(String message, int severity, int offset, int length, int lineNumber) {
 		super(offset, length);
 		fMessage= message;
+		fEscapedMessage= getEscaped(message);
 		fSeverity= severity;
 		fLineNumber= lineNumber;
 	}
@@ -36,7 +38,7 @@ public class XMLProblem extends Region implements IProblem {
 	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#getMessage()
 	 */
 	public String getMessage() {
-		return fMessage;
+		return fEscapedMessage;
 	}
 	
 	/* (non-Javadoc)
@@ -75,5 +77,48 @@ public class XMLProblem extends Region implements IProblem {
 	 */
 	public int getLineNumber() {
 		return fLineNumber;
+	}
+	
+	private void appendEscapedChar(StringBuffer buffer, char c) {
+		String replacement= getReplacement(c);
+		if (replacement != null) {
+			buffer.append(replacement);
+		} else {
+			buffer.append(c);
+		}
+	}
+	
+	private String getEscaped(String s) {
+		StringBuffer result= new StringBuffer(s.length() + 10);
+		for (int i= 0; i < s.length(); ++i) {
+			appendEscapedChar(result, s.charAt(i));
+		}
+		return result.toString();
+	}
+	
+	private String getReplacement(char c) {
+		// Encode special characters into the equivalent character references.
+		// Ensures that error messages that include special characters do not get
+		//incorrectly represented as HTML in the text hover (bug 56258)
+		switch (c) {
+			case '<' :
+				return "&lt;"; //$NON-NLS-1$
+			case '>' :
+				return "&gt;"; //$NON-NLS-1$
+			case '"' :
+				return "&quot;"; //$NON-NLS-1$
+			case '\'' :
+				return "&apos;"; //$NON-NLS-1$
+			case '&' :
+				return "&amp;"; //$NON-NLS-1$
+		}
+		return null;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#getUnmodifiedMessage()
+	 */
+	public String getUnmodifiedMessage() {
+		return fMessage;
 	}
 }

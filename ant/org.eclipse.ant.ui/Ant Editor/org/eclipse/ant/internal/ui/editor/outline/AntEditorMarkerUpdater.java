@@ -68,7 +68,7 @@ public class AntEditorMarkerUpdater {
 							IMarker.LINE_NUMBER
 					},
 					new Object[] {
-							problem.getMessage(),
+							problem.getUnmodifiedMessage(),
 							new Integer(severity), 
 							problem.getMessage(),
 							new Integer(problem.getOffset()),
