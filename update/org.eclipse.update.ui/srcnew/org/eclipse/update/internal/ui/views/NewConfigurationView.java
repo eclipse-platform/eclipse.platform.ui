@@ -54,8 +54,6 @@ public class NewConfigurationView
 		"ConfigurationView.showNestedFeatures";
 	private static final String KEY_PRESERVE =
 		"ConfigurationView.Popup.preserve";
-	private static final String KEY_SHOW_STATUS =
-		"ConfigurationView.Popup.showStatus";
 	private static final String KEY_MISSING_FEATURE =
 		"ConfigurationView.missingFeature";
 
@@ -68,7 +66,6 @@ public class NewConfigurationView
 	private RevertConfigurationAction revertAction;
 	private SaveConfigurationAction preserveAction;
 	private Action propertiesAction;
-	private ShowFeatureStatusAction showStatusAction;
 	private SiteStateAction siteStateAction;
 
 	private IUpdateModelChangedListener modelListener;
@@ -269,7 +266,7 @@ public class NewConfigurationView
 					== null) {
 
 					int code =
-						ShowFeatureStatusAction.getStatusCode(
+						getStatusCode(
 							feature,
 							getLocalSite().getFeatureStatus(feature));
 					switch (code) {
@@ -412,12 +409,6 @@ public class NewConfigurationView
 			preserveAction,
 			"org.eclipse.update.ui.CofigurationView_preserveAction");
 
-		showStatusAction =
-			new ShowFeatureStatusAction(UpdateUI.getString(KEY_SHOW_STATUS));
-		WorkbenchHelp.setHelp(
-			showStatusAction,
-			"org.eclipse.update.ui.CofigurationView_showStatusAction");
-
 		revertAction = new RevertConfigurationAction("Revert...");
 		WorkbenchHelp.setHelp(
 			revertAction,
@@ -555,10 +546,7 @@ public class NewConfigurationView
 		addDrillDownAdapter(manager);
 
 		if (obj instanceof IFeatureAdapter) {
-			IFeatureAdapter adapter = (IFeatureAdapter) obj;
 			manager.add(new Separator());
-			showStatusAction.setFeature(adapter);
-			manager.add(showStatusAction);
 			manager.add(propertiesAction);
 		}
 	}
@@ -738,5 +726,31 @@ public class NewConfigurationView
 		getTreeViewer().expandToLevel(2);
 	}
 
+	private int getStatusCode(IFeature feature, IStatus status) {
+		int code = status.getCode();
+		if (code == IFeature.STATUS_UNHAPPY) {
+			if (status.isMultiStatus()) {
+				IStatus[] children = status.getChildren();
+				for (int i = 0; i < children.length; i++) {
+					IStatus child = children[i];
+					if (child.isMultiStatus()
+						|| child.getCode() != IFeature.STATUS_DISABLED)
+						return code;
+				}
+				// If we are here, global status is unhappy
+				// because one or more included features
+				// is disabled.
+				if (UpdateManager.hasObsoletePatches(feature)) {
+					// The disabled included features
+					// are old patches that are now
+					// subsumed by better versions of
+					// the features they were designed to
+					// patch.
+					return IFeature.STATUS_HAPPY;
+				}
+			}
+		}
+		return code;
+	}
 
 }
