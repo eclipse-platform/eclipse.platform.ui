@@ -145,6 +145,9 @@ public class LaunchWizard extends Wizard {
 			IResource res= null;
 			if (e instanceof IAdaptable) {
 				res= (IResource) ((IAdaptable) e).getAdapter(IResource.class);
+				if (res == null) {
+					res= (IResource) ((IAdaptable) e).getAdapter(IProject.class);
+				}
 			}
 			if (res != null) {
 				IProject p= res.getProject();
