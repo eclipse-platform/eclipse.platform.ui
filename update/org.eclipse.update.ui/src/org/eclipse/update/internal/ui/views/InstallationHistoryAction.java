@@ -58,14 +58,15 @@ public class InstallationHistoryAction extends Action {
 
 	private void openLog() throws CoreException {
 		try {
-			buffRead = new BufferedReader(new FileReader(path.toOSString()));
+		    // throws FileNotFoundException, IOException
+		    InputStream is = new FileInputStream(path.toOSString());
+		    // throws UnsupportedEncodingException
+		    InputStreamReader isr = new InputStreamReader(is,"UTF-8");
+		    buffRead = new BufferedReader(isr);
 			htmlLog = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(getTempFile()), "UTF-8")));
-		} catch (FileNotFoundException e) {
-			throwCoreException(e);
-		} catch (UnsupportedEncodingException e) {
+		} catch (Exception e) {
 			throwCoreException(e);
 		}
-
 	}
 
 	private File getTempFile() throws CoreException {
