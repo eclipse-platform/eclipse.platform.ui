@@ -195,7 +195,7 @@ protected Image getImage() {
  */
 protected List createDropDownList(Composite parent) {
 	// create the list
-	list = new List(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+	list = new List(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI);
 
 	// fill the list
 	populateList(list);
