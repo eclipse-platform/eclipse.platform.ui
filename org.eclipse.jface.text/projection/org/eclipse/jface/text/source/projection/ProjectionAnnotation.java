@@ -36,6 +36,20 @@ import org.eclipse.jface.text.source.ImageUtilities;
  */
 public class ProjectionAnnotation extends Annotation implements IAnnotationPresentation {
 	
+	private static class DisplayDisposeRunnable implements Runnable {
+
+		public void run() {
+			if (fgCollapsedImage != null) {
+				fgCollapsedImage.dispose();
+				fgCollapsedImage= null;
+			}
+			if (fgExpandedImage != null) {
+				fgExpandedImage.dispose();
+				fgExpandedImage= null;
+			}
+		}
+	}
+
 	/**
 	 * The type of projection annotations.
 	 */
@@ -111,18 +125,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 			descriptor= ImageDescriptor.createFromFile(ProjectionAnnotation.class, "images/expanded.gif"); //$NON-NLS-1$
 			fgExpandedImage= descriptor.createImage(display);
 			
-			display.disposeExec(new Runnable() {
-				public void run() {
-					if (fgCollapsedImage != null) {
-						fgCollapsedImage.dispose();
-						fgCollapsedImage= null;
-					}
-					if (fgExpandedImage != null) {
-						fgExpandedImage.dispose();
-						fgExpandedImage= null;
-					}
-				}
-			});
+			display.disposeExec(new DisplayDisposeRunnable());
 		}
 	}
 	
