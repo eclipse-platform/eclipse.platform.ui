@@ -182,11 +182,10 @@ public class InternalProject extends Project {
 					Class typeClass= Class.forName(className);
 					typeNameToClass.put(typeName, typeClass);
 				} catch (NoClassDefFoundError e) {
-					throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Missing_Class"), e); //$NON-NLS-1$
+					//ignore
 				} catch (ClassNotFoundException c) {
-					throw new BuildException(InternalAntMessages.getString("InternalAntRunner.Missing_Class"), c); //$NON-NLS-1$
+					//ignore
 				}
-				
 			}
 		} catch (IOException ioe) {
 			return;

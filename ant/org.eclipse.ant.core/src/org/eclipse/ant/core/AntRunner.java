@@ -190,8 +190,10 @@ public class AntRunner implements IPlatformRunnable {
 	public synchronized TargetInfo[] getAvailableTargets() throws CoreException {
 		Class classInternalAntRunner= null;
 		Object runner= null;
+		ClassLoader originalClassLoader= Thread.currentThread().getContextClassLoader();
 		try {
 			ClassLoader loader = AntCorePlugin.getPlugin().getNewClassLoader();
+			Thread.currentThread().setContextClassLoader(loader);
 			classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
 			runner = classInternalAntRunner.newInstance();
 			// set build file
@@ -232,6 +234,8 @@ public class AntRunner implements IPlatformRunnable {
 		} catch (Exception e) {
 			String message = (e.getMessage() == null) ? InternalCoreAntMessages.getString("AntRunner.Build_Failed._3") : e.getMessage(); //$NON-NLS-1$
 			throw new CoreException(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_RUNNING_BUILD, message, e));
+		} finally {
+			Thread.currentThread().setContextClassLoader(originalClassLoader);
 		}
 	}
 
