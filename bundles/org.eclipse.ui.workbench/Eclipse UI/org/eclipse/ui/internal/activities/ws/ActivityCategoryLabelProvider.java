@@ -19,6 +19,7 @@ import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.NotDefinedException;
 
+import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 
 /**
@@ -34,9 +35,9 @@ public class ActivityCategoryLabelProvider extends LabelProvider {
 	 */
 	public Image getImage(Object element) {
 		if (element instanceof ICategory) {
-			return WorkbenchImages.getImage(ISharedImages.IMG_OBJ_ACTIVITY_CATEGORY);
+			return WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY_CATEGORY);
 		} else {
-			return WorkbenchImages.getImage(ISharedImages.IMG_OBJ_ACTIVITY);
+			return WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY);
 		}
 	}
 

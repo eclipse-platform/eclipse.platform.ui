@@ -108,4 +108,16 @@ public interface IWorkbenchGraphicConstants {
 	public final static String IMG_OBJS_DND_OFFSCREEN_MASK = "IMG_OBJS_DND_OFFSCREEN_MASK"; //$NON-NLS-1$
 	public static final String IMG_OBJS_DND_TOFASTVIEW_SOURCE = "IMG_OBJS_DND_TOFASTVIEW_SOURCE"; //$NON-NLS-1$
 	public static final String IMG_OBJS_DND_TOFASTVIEW_MASK = "IMG_OBJS_DND_TOFASTVIEW_MASK"; //$NON-NLS-1$    
+    /**
+     * Identifies an activity category.
+     * 
+     * @since 3.0
+     */
+    public static final String IMG_OBJ_ACTIVITY_CATEGORY = "IMG_OBJ_ACTIVITY_CATEGORY"; //$NON-NLS-1$
+    /**
+     * Identifies an activity.
+     * 
+     * @since 3.0
+     */
+    public static final String IMG_OBJ_ACTIVITY = "IMG_OBJ_ACTIVITY"; //$NON-NLS-1$
 }

@@ -209,8 +209,8 @@ private final static void declareImages() {
 
 	declareImage(IWorkbenchGraphicConstants.IMG_DLGBAN_SAVEAS_DLG, PATH_WIZBAN+"saveas_dlg.gif", false); //$NON-NLS-1$
 
-	declareImage(ISharedImages.IMG_OBJ_ACTIVITY, PATH_OBJECT+"activity.gif", true); //$NON-NLS-1$
-	declareImage(ISharedImages.IMG_OBJ_ACTIVITY_CATEGORY, PATH_OBJECT+"activity_category.gif", true); //$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY, PATH_OBJECT+"activity.gif", true); //$NON-NLS-1$
+	declareImage(IWorkbenchGraphicConstants.IMG_OBJ_ACTIVITY_CATEGORY, PATH_OBJECT+"activity_category.gif", true); //$NON-NLS-1$
 
 	declareImage(ISharedImages.IMG_OBJ_FILE, PATH_OBJECT+"file_obj.gif", true); //$NON-NLS-1$
 	declareImage(ISharedImages.IMG_OBJ_FOLDER, PATH_OBJECT+"fldr_obj.gif", true); //$NON-NLS-1$
