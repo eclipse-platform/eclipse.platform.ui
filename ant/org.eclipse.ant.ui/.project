@@ -15,9 +15,7 @@
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
-					<value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;launchConfiguration local=&quot;false&quot; path=&quot;/org.eclipse.ant.ui/.externalToolBuilders/Build Ant Runner Support JAR.launch&quot;/&gt;
-</value>
+					<value>&lt;project&gt;/.externalToolBuilders/Build Ant Runner Support JAR.launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
@@ -36,9 +34,7 @@
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
-					<value>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-&lt;launchConfiguration local=&quot;false&quot; path=&quot;/org.eclipse.ant.ui/.externalToolBuilders/Build Remote Ant JAR.launch&quot;/&gt;
-</value>
+					<value>&lt;project&gt;/.externalToolBuilders/Build Remote Ant JAR.launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>
