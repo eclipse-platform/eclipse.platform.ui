@@ -26,6 +26,7 @@ public class CloseConsoleAction extends Action {
     
     public CloseConsoleAction(IConsole console) {
         super(ConsoleMessages.getString("CloseConsoleAction.0"), ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_CLOSE)); //$NON-NLS-1$
+        setToolTipText(ConsoleMessages.getString("CloseConsoleAction.1")); //$NON-NLS-1$
         fConsole = console;
     }
 
