@@ -30,7 +30,7 @@ public class SearchResult {
 	public SearchResult(String query, List scope, int maxHits) {
 		this.urlEncodedQuery = URLCoder.encode(query);
 		this.scope = scope;
-		this.maxHits=maxHits;
+		this.maxHits = maxHits;
 		// instantiate the xml factory and create the root element
 		factory = new DocumentImpl();
 		factory.appendChild(factory.createElement(IToc.TOC));
@@ -40,6 +40,7 @@ public class SearchResult {
 	 * @param Hits hits
 	 */
 	public void addHits(Hits hits) {
+		float scoreScale = 1.0f;
 		for (int h = 0; h < hits.length() && h < maxHits; h++) {
 			org.apache.lucene.document.Document doc;
 			float score;
@@ -48,6 +49,14 @@ public class SearchResult {
 				score = hits.score(h);
 			} catch (IOException ioe) {
 				return;
+			}
+			if (h == 0) {
+				if (score > 0) {
+					scoreScale = 1 / score;
+					score = 1;
+				}
+			} else {
+				score *= scoreScale;
 			}
 			String href = doc.get("name");
 			ITopic topic = findTopic(href);
