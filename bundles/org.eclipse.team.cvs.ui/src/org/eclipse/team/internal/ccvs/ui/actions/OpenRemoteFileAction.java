@@ -22,6 +22,9 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RemoteFileEditorInput;
 import org.eclipse.team.ui.actions.TeamAction;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
@@ -67,7 +70,7 @@ public class OpenRemoteFileAction extends TeamAction {
 	public void run(IAction action) {
 		run(new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws InvocationTargetException {
-				IWorkbenchPage page = CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+/*				IWorkbenchPage page = CVSUIPlugin.getPlugin().getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
 				for (int i = 0; i < files.length; i++) {
 					try {
@@ -75,9 +78,9 @@ public class OpenRemoteFileAction extends TeamAction {
 					} catch (PartInitException e) {
 						throw new InvocationTargetException(e);
 					}
-				}
+				}*/
 
-/*				IWorkbench workbench = CVSUIPlugin.getPlugin().getWorkbench();
+				IWorkbench workbench = CVSUIPlugin.getPlugin().getWorkbench();
 				IEditorRegistry registry = workbench.getEditorRegistry();
 				IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
 				ICVSRemoteFile[] files = getSelectedRemoteFiles();
@@ -87,7 +90,7 @@ public class OpenRemoteFileAction extends TeamAction {
 					IEditorDescriptor descriptor = registry.getDefaultEditor(filename);
 					String id;
 					if (descriptor == null) {
-						id = "org.eclipse.ui.DefaultTextEditor";
+						id = "org.eclipse.ui.DefaultTextEditor"; //$NON-NLS-1$
 					} else {
 						id = descriptor.getId();
 					}
@@ -96,7 +99,7 @@ public class OpenRemoteFileAction extends TeamAction {
 					} catch (PartInitException e) {
 						throw new InvocationTargetException(e);
 					}
-				}*/
+				}
 			}
 		}, Policy.bind("OpenRemoteFileAction.open"), this.PROGRESS_BUSYCURSOR); //$NON-NLS-1$
 	}
