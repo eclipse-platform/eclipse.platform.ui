@@ -10,7 +10,6 @@ import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.context.*;
 import org.eclipse.help.internal.ui.util.*;
-import org.eclipse.help.internal.util.URLCoder;
 
 /**
  * This class is an implementation of the pluggable help support.
