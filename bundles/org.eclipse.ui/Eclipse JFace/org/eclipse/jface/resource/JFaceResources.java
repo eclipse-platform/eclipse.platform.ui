@@ -236,8 +236,9 @@ public static String getString(String key) {
 
 /**
  * Returns the resource object with the given key in
- * JFace's resource bundle upper cased. If there isn't any value under
- * the given key, the default is returned.
+ * JFace's resource bundle, converted to upper case. 
+ * If there isn't any value under the given key, 
+ * the given default is returned (no conversion is done on the default).
  *
  * @param key the resource name
  * @param default the default value
@@ -245,9 +246,9 @@ public static String getString(String key) {
  */	
 public static String getStringUppercase(String key, String defaultString) {
 	try {
-		return bundle.getString(key).toUpperCase(Locale.getDefault());
+		return bundle.getString(key).toUpperCase();
 	} catch (MissingResourceException e) {
-		return defaultString.toUpperCase(Locale.getDefault());
+		return defaultString;
 	}
 }
 
