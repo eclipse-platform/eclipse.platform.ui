@@ -205,7 +205,7 @@ public class ResourceLocator {
 	 * @return an InputStream to the file or <code>null</code> if the file
 	 *         wasn't found
 	 */
-	public static InputStream openFromZip(Bundle pluginDesc, String zip, String file, String locale) {;
+	public static InputStream openFromZip(Bundle pluginDesc, String zip, String file, String locale) {
 		
 		String pluginID = pluginDesc.getSymbolicName();
 		Map cache = zipCache;
