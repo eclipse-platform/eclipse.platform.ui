@@ -17,6 +17,7 @@
 		for (int i = 0; i < cookies.length; i++) {
 			if ("cookiesEnabled".equals(cookies[i].getName()) && "yes".equals(cookies[i].getValue())) {
 				cookiesEnabled = true;
+				break;
 			}
 		}
 	}
