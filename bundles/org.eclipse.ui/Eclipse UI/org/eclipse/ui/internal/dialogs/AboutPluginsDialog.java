@@ -34,7 +34,7 @@ public class AboutPluginsDialog extends Dialog {
 	 */
 	private static final int TABLE_HEIGHT = 200;
 
-	private static final String PLUGININFO = "plugin.html";	//$NON-NLS-1$
+	private static final String PLUGININFO = "about.html";	//$NON-NLS-1$
 
 	private boolean webBrowserOpened = false;
 
