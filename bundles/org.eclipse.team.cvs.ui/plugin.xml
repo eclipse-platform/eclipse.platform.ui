@@ -349,17 +349,6 @@
 		</view>
 	</extension>
 	
-	<extension point="org.eclipse.ui.resourceFilters">
-		<filter pattern="CVS" selected="true"/> 
-	</extension>
-
-	<!-- ** Temporary Filter ** -->
-	<extension point="org.eclipse.jdt.ui.javaElementFilters">
-		<filter pattern="CVS" selected="true"/> 
-		<filter pattern="*.CVS" selected="true"/> 
-	</extension>
-
-	
 	<!-- **************** PREFERENCES ******************* -->
 	<extension
 		point = "org.eclipse.ui.preferencePages">
