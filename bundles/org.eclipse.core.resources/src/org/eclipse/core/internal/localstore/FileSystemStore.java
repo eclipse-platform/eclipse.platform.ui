@@ -286,10 +286,12 @@ public void transferStreams(InputStream source, OutputStream destination, String
 		try {
 			source.close();
 		} catch (IOException e) {
-		}
-		try {
-			destination.close();
-		} catch (IOException e) {
+		} finally {
+			//close destination in finally in case source.close fails
+			try {
+				destination.close();
+			} catch (IOException e) {
+			}
 		}
 	}
 }
