@@ -34,6 +34,7 @@ public class ConcurrencyPerformanceTest extends CorePerformanceTest {
 
 		IWorkspaceRunnable job = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
+				// do nothing
 			}
 		};
 		startBench();

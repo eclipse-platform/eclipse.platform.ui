@@ -31,6 +31,7 @@ public class ConcurrencyTest extends EclipseWorkspaceTest {
 			try {
 				Thread.sleep(100 * i); // fancy sleep
 			} catch (InterruptedException e) {
+				// ignore
 			}
 			assertTrue(label, !op.isRunning());
 		}
@@ -75,9 +76,6 @@ public class ConcurrencyTest extends EclipseWorkspaceTest {
 		assertTrue("2.2", op2.getStatus().isOK());
 
 		/* remove trash */
-		try {
-			ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
-		} catch (Exception e) {
-		}
+		ensureDoesNotExistInWorkspace(getWorkspace().getRoot());
 	}
 }

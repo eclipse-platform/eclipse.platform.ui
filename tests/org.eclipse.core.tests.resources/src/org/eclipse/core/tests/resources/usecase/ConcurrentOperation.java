@@ -75,6 +75,7 @@ public abstract class ConcurrentOperation implements Runnable, IWorkspaceRunnabl
 				try {
 					startedLock.wait();
 				} catch (InterruptedException e) {
+					// ignore
 				}
 			}
 		}
@@ -125,6 +126,7 @@ public abstract class ConcurrentOperation implements Runnable, IWorkspaceRunnabl
 			try {
 				wait();
 			} catch (InterruptedException e) {
+				// ignore
 			}
 		}
 	}
@@ -165,6 +167,7 @@ public abstract class ConcurrentOperation implements Runnable, IWorkspaceRunnabl
 			try {
 				wait();
 			} catch (InterruptedException e) {
+				// ignore
 			}
 		}
 		isWaiting = false;
