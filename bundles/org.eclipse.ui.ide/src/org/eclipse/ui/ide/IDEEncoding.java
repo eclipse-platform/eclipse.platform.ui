@@ -244,7 +244,7 @@ public class IDEEncoding {
 
 		byte[] bom = (byte[]) description.getProperty(IContentDescription.BYTE_ORDER_MARK);
 		if (bom == null)
-			return (String) description.getProperty(IContentDescription.CHARSET);
+			return null;
 		if (bom == IContentDescription.BOM_UTF_8)
 			return IDEEncoding.BOM_UTF_8;
 		if (bom == IContentDescription.BOM_UTF_16BE)
