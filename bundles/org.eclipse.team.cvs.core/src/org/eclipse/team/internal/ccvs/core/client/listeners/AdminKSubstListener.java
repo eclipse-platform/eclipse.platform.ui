@@ -17,6 +17,7 @@ import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * Used with 'admin -ksubst' to capture lines of text that are issued
@@ -45,7 +46,7 @@ public class AdminKSubstListener extends CommandOutputListener {
 				return new CVSStatus(CVSStatus.ERROR,
 					Policy.bind("AdminKSubstListener.expectedRCSFile", rcsFile)); //$NON-NLS-1$
 			}
-			IPath rcsFilePath = new Path(null, rcsFile.substring(0, rcsFile.length() - 2));
+			IPath rcsFilePath = new Path(null, Util.removeAtticSegment(rcsFile.substring(0, rcsFile.length() - 2)));
 			try {
 				ICVSFile file = findLocalFileFor(commandRoot, rcsFilePath);
 				//ResourceSyncInfo info = file.getSyncInfo();
