@@ -1137,7 +1137,7 @@ public class AntModel {
 			//wait for the reconcile from the edit
 			//or if that fails, timeout
 			try {
-				wait(XMLReconcilingStrategy.DELAY * 2);
+				wait(XMLReconcilingStrategy.DELAY * 10);
 			} catch (InterruptedException e) {
 			}
 		}
