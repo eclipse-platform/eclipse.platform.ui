@@ -232,7 +232,8 @@ public class OutlinePreparingHandler extends DefaultHandler implements LexicalHa
                     return super.getDisplayName();
                 }
         	};        
-        } else if (tempElementName.equalsIgnoreCase("macrodef")) { //$NON-NLS-1$
+        } else if (tempElementName.equalsIgnoreCase("macrodef")  //$NON-NLS-1$
+        		|| tempElementName.equalsIgnoreCase("presetdef")) { //$NON-NLS-1$
             elementType= IAntEditorConstants.TYPE_MACRODEF;
             tempElement = new XmlElement(tempElementName) {
                 public String getDisplayName() {
