@@ -35,7 +35,7 @@ public class AddBuildFileAction extends Action {
 	 */
 	public void run() {
 		FileSelectionDialog dialog = new FileSelectionDialog(Display.getCurrent().getActiveShell(), ResourcesPlugin.getWorkspace().getRoot(), "&Select a build file:");
-		dialog.addFileFilter("*.xml", true); //$NON-NLS-1$
+		dialog.setFileFilter("*.xml", true); //$NON-NLS-1$
 		dialog.open();
 		IFile file= dialog.getResult();
 		if (file == null) {

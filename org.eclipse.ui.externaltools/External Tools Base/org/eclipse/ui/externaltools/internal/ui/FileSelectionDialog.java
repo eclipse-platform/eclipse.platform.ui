@@ -69,7 +69,7 @@ public FileSelectionDialog(Shell parentShell, IAdaptable rootElement, String mes
  * @param ignoreCase if true, case is ignored. If the pattern argument is
  * <code>null</code>, this argument is ignored.
  */
-public void addFileFilter(String pattern, boolean ignoreCase) {
+public void setFileFilter(String pattern, boolean ignoreCase) {
 	if (pattern != null) {
 		stringMatcher= new StringMatcher(pattern, ignoreCase, false);
 	} else {

@@ -54,18 +54,18 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 
 	protected Text locationField;
 	protected Text workDirectoryField;
-	private Button fileLocationButton;
-	private Button workspaceLocationButton;
-	private Button fileWorkingDirectoryButton;
-	private Button workspaceWorkingDirectoryButton;
+	protected Button fileLocationButton;
+	protected Button workspaceLocationButton;
+	protected Button fileWorkingDirectoryButton;
+	protected Button workspaceWorkingDirectoryButton;
 
 	protected Button runBackgroundButton;
 	protected Text argumentField;
-	private Button variableButton;
+	protected Button variableButton;
 
-	private SelectionAdapter selectionAdapter;
+	protected SelectionAdapter selectionAdapter;
 	
-	private ModifyListener modifyListener = new ModifyListener() {
+	protected ModifyListener modifyListener = new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
 			updateLaunchConfigurationDialog();
 		}
@@ -288,7 +288,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		updateRunBackground(configuration);
 	}
 	
-	private void updateWorkingDirectory(ILaunchConfiguration configuration) {
+	protected void updateWorkingDirectory(ILaunchConfiguration configuration) {
 		String workingDir= ""; //$NON-NLS-1$
 		try {
 			workingDir= configuration.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, ""); //$NON-NLS-1$
@@ -300,7 +300,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		
 	}
 	
-	private void updateLocation(ILaunchConfiguration configuration) {
+	protected void updateLocation(ILaunchConfiguration configuration) {
 		String location= ""; //$NON-NLS-1$
 		try {
 			location= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, ""); //$NON-NLS-1$
@@ -311,7 +311,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		locationField.addModifyListener(modifyListener);
 	}
 
-	private void updateArgument(ILaunchConfiguration configuration) {
+	protected void updateArgument(ILaunchConfiguration configuration) {
 		String arguments= ""; //$NON-NLS-1$
 		try {
 			arguments= configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, ""); //$NON-NLS-1$
@@ -321,7 +321,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		argumentField.setText(arguments);
 	}
 
-	private void updateRunBackground(ILaunchConfiguration configuration) {
+	protected void updateRunBackground(ILaunchConfiguration configuration) {
 		boolean  runInBackgroud= true;
 		try {
 			runInBackgroud= configuration.getAttribute(IExternalToolConstants.ATTR_RUN_IN_BACKGROUND, false);
@@ -439,7 +439,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		return true;
 	}
 	
-	private void handleLocationButtonSelected() {
+	protected void handleLocationButtonSelected() {
 		FileDialog fileDialog = new FileDialog(getShell(), SWT.NONE);
 		fileDialog.setFileName(locationField.getText());
 		String text= fileDialog.open();
@@ -449,11 +449,11 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/**
-	 * Prompts the user for a workspace location and returns the location
-	 * as a String containing the workspace_loc variable or <code>null</code>
-	 * if no location was obtained from the user.
+	 * Prompts the user for a workspace location within the workspace and sets
+	 * the location as a String containing the workspace_loc variable or
+	 * <code>null</code> if no location was obtained from the user.
 	 */
-	private void handleWorkspaceLocationButtonSelected() {
+	protected void handleWorkspaceLocationButtonSelected() {
 		ResourceSelectionDialog dialog;
 		dialog = new ResourceSelectionDialog(getShell(), ResourcesPlugin.getWorkspace().getRoot(), ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.Select_a_resource_22")); //$NON-NLS-1$
 		dialog.open();
@@ -470,7 +470,12 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 	
-	private void handleWorkspaceWorkingDirectoryButtonSelected() {
+	/**
+	 * Prompts the user for a working directory location within the workspace
+	 * and sets the working directory as a String containing the workspace_loc
+	 * variable or <code>null</code> if no location was obtained from the user.
+	 */
+	protected void handleWorkspaceWorkingDirectoryButtonSelected() {
 		ContainerSelectionDialog containerDialog;
 		containerDialog = new ContainerSelectionDialog(
 			getShell(), 
@@ -488,7 +493,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 	
-	private void handleFileWorkingDirectoryButtonSelected() {
+	protected void handleFileWorkingDirectoryButtonSelected() {
 		DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SAVE);
 		dialog.setMessage(ExternalToolsLaunchConfigurationMessages.getString("ExternalToolsMainTab.&Select_a_directory__23")); //$NON-NLS-1$
 		dialog.setFilterPath(workDirectoryField.getText());
@@ -509,7 +514,7 @@ public class ExternalToolsMainTab extends AbstractLaunchConfigurationTab {
 	 * Method getSelectionAdapter.
 	 * @return SelectionListener
 	 */
-	private SelectionListener getSelectionAdapter() {
+	protected SelectionListener getSelectionAdapter() {
 		if (selectionAdapter == null) {
 			selectionAdapter= new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
