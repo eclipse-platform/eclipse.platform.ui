@@ -468,13 +468,14 @@ public class JobManager implements IJobManager {
 	 * @see org.eclipse.core.runtime.jobs.Job#job(org.eclipse.core.runtime.jobs.Job)
 	 */
 	protected void join(InternalJob job) throws InterruptedException {
-		IJobChangeListener listener = null;
-		final Semaphore barrier = new Semaphore(null);
+		final IJobChangeListener listener;
+		final Semaphore barrier;
 		synchronized (lock) {
 			int state = job.getState();
 			if (state == Job.NONE || state == Job.SLEEPING)
 				return;
 			//the semaphore will be released when the job is done
+			barrier = new Semaphore(null);
 			listener = new JobChangeAdapter() {
 				public void done(IJobChangeEvent event) {
 					barrier.release();
