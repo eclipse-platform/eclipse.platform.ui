@@ -228,7 +228,6 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		String root = configuration.getProperty("root");//$NON-NLS-1$ 
 		if (root == null)
 			throw new CVSException(new Status(IStatus.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSRepositoryLocation.rootRequired"), null));//$NON-NLS-1$ 
-		root = root.replace('\\', '/');
 
 		String encoding = configuration.getProperty("encoding"); //$NON-NLS-1$
 		
@@ -364,7 +363,7 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 			// Get the repository path (translating backslashes to slashes)
 			partId = "CVSRepositoryLocation.parsingRoot";//$NON-NLS-1$ 
 			start = end + 1;
-			String root = location.substring(start).replace('\\', '/');
+			String root = location.substring(start);
 			
 			if (validateOnly)
 				throw new CVSException(new CVSStatus(IStatus.OK, Policy.bind("ok")));//$NON-NLS-1$ 		

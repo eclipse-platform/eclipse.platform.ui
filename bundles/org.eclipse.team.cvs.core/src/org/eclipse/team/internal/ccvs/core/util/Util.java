@@ -103,7 +103,7 @@ public class Util {
 		}
 		
 		// Remove leading slash if there is one
-		String result = resourceName.substring(rootName.length()).replace('\\', '/');
+		String result = resourceName.substring(rootName.length());
 		if (result.startsWith("/")) { //$NON-NLS-1$
 			result = result.substring(1);
 		}
