@@ -37,7 +37,7 @@ public interface IProcess extends IAdaptable, ITerminate {
 	public String getLabel();
 	/**
 	 * Returns the launch this element originated from, or
-	 * <code>null</code> if this element has not yet been registered with
+	 * <code>null</code> if this element is not registered with
 	 * an launch. This is a convenience method for
 	 * <code>ILaunchManager.findLaunch(IProcess)</code>.
 	 *
