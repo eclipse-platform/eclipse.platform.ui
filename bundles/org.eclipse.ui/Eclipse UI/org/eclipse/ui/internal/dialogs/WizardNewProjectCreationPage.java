@@ -315,7 +315,7 @@ public class WizardNewProjectCreationPage extends WizardPage {
 		if (!dirName.equals("")) { //$NON-NLS-1$
 			File path = new File(dirName);
 			if (path.exists())
-				dialog.setFilterPath(dirName);
+				dialog.setFilterPath(new Path(dirName).toOSString());
 		}
 
 		String selectedDirectory = dialog.open();
