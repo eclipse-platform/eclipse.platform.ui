@@ -24,7 +24,7 @@ import org.eclipse.update.search.*;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class UnifiedSearchCategory2 extends UpdateSearchCategory {
+public class UnifiedSiteSearchCategory extends UpdateSearchCategory {
 	private IUpdateSearchQuery [] queries;
 	private static final String CATEGORY_ID = "org.eclipse.update.core.unified-search";
 
@@ -84,7 +84,7 @@ public class UnifiedSearchCategory2 extends UpdateSearchCategory {
 		}
 	}
 
-	public UnifiedSearchCategory2() {
+	public UnifiedSiteSearchCategory() {
 		super(CATEGORY_ID);
 		queries = new IUpdateSearchQuery[] {new UnifiedQuery()};
 	}

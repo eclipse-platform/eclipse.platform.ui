@@ -118,7 +118,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 		setDescription("Select update sites to visit while looking for new features.");
 		UpdateUI.getDefault().getLabelProvider().connect(this);
 		discoveryFolder = new DiscoveryFolder();
-		searchRequest = new UpdateSearchRequest(new UnifiedSearchCategory2(), new UpdateSearchScope());
+		searchRequest = new UpdateSearchRequest(new UnifiedSiteSearchCategory(), new UpdateSearchScope());
 		searchRequest.addFilter(new EnvironmentFilter());
 		searchRequest.addFilter(new BackLevelFilter());
 		this.searchRunner = searchRunner;

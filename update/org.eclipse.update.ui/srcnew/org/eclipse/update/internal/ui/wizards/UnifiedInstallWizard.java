@@ -9,24 +9,25 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.ui.wizards;
-import java.lang.reflect.*;
-import java.net.*;
-import java.util.*;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.ArrayList;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.operation.*;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.*;
-import org.eclipse.update.configuration.*;
+import org.eclipse.update.configuration.IInstallConfiguration;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.model.*;
+import org.eclipse.update.core.model.InstallAbortedException;
 import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.ui.*;
-import org.eclipse.update.internal.ui.security.*;
+import org.eclipse.update.internal.ui.security.JarVerificationService;
 import org.eclipse.update.operations.*;
+import org.eclipse.update.search.UpdateSearchRequest;
 
 public class UnifiedInstallWizard
 	extends Wizard
-	implements IOperationListener {
+	implements IOperationListener, ISearchProvider2 {
 	private UnifiedModeSelectionPage modePage;
 	private UnifiedSitePage sitePage;
 	private UnifiedReviewPage reviewPage;
@@ -36,8 +37,14 @@ public class UnifiedInstallWizard
 	private IInstallConfiguration config;
 	private int installCount = 0;
 	private SearchRunner2 searchRunner;
+	private UpdateSearchRequest searchRequest;
 
 	public UnifiedInstallWizard() {
+		this(null);
+	}
+	
+	public UnifiedInstallWizard(UpdateSearchRequest searchRequest) {
+		this.searchRequest = searchRequest;
 		setDialogSettings(UpdateUI.getDefault().getDialogSettings());
 		setDefaultPageImageDescriptor(UpdateUIImages.DESC_INSTALL_WIZ);
 		setForcePreviousAndNextButtons(true);
@@ -138,10 +145,15 @@ public class UnifiedInstallWizard
 
 	public void addPages() {
 		searchRunner = new SearchRunner2(getShell(), getContainer());
-		modePage = new UnifiedModeSelectionPage(searchRunner);
-		addPage(modePage);
-		sitePage = new UnifiedSitePage(searchRunner);
-		addPage(sitePage);
+		if (searchRequest==null) {
+			modePage = new UnifiedModeSelectionPage(searchRunner);
+			addPage(modePage);
+			sitePage = new UnifiedSitePage(searchRunner);
+			addPage(sitePage);
+		}
+		else {
+			searchRunner.setSearchProvider(this);
+		}
 		reviewPage = new UnifiedReviewPage(searchRunner);
 		searchRunner.setResultCollector(reviewPage);
 		addPage(reviewPage);
@@ -161,7 +173,7 @@ public class UnifiedInstallWizard
 	}
 
 	private void saveSettings() {
-		modePage.saveSettings();
+		if (modePage!=null) modePage.saveSettings();
 	}
 
 	private boolean isPageRequired(IWizardPage page) {
@@ -184,14 +196,14 @@ public class UnifiedInstallWizard
 		boolean start = false;
 		IWizardPage nextPage = null;
 
-		if (page.equals(modePage)) {
+		if (modePage!=null && page.equals(modePage)) {
 			boolean update = modePage.isUpdateMode();
 			if (update)
 				return reviewPage;
 			else
 				return sitePage;
 		}
-		if (page.equals(sitePage))
+		if (sitePage!=null && page.equals(sitePage))
 			return reviewPage;
 
 		if (page.equals(reviewPage)) {
@@ -313,6 +325,12 @@ public class UnifiedInstallWizard
 //				return false;
 //		}
 		return true;
+	}
+	/* (non-Javadoc)
+	 * @see org.eclipse.update.internal.ui.wizards.ISearchProvider2#getSearchRequest()
+	 */
+	public UpdateSearchRequest getSearchRequest() {
+		return searchRequest;
 	}
 
 }

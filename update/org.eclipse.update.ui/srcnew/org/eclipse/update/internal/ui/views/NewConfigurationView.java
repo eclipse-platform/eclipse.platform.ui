@@ -479,7 +479,7 @@ public class NewConfigurationView
 
 		uninstallFeatureAction = new UninstallFeatureAction("Uninstall");
 
-		installOptFeatureAction = new InstallOptionalFeatureAction("Install");
+		installOptFeatureAction = new InstallOptionalFeatureAction(getControl().getShell(), "Install");
 
 		swapVersionAction = new SwapVersionAction("&Another Version...");
 
@@ -870,6 +870,7 @@ public class NewConfigurationView
 					MissingFeature mf = (MissingFeature) feature;
 					installOptFeatureAction.setEnabled(
 						mf.isOptional() && mf.getOriginatingSiteURL() != null);
+					installOptFeatureAction.setFeature(mf);
 					uninstallFeatureAction.setEnabled(false);
 				} else {
 					uninstallFeatureAction.setEnabled(
