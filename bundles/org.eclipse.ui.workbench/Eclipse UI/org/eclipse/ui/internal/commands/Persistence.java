@@ -19,9 +19,12 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.commands.ws.HandlerProxy;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
@@ -204,6 +207,25 @@ final class Persistence {
 
         return value;
     }
+    
+    /**
+     * Retrieves the active key configuration from the preference store.
+     * 
+     * @return The active key configuration identifier stored in the preference
+     *         store; never <code>null</code>.
+     * @since 3.1
+     */
+    static final ActiveKeyConfigurationDefinition readActiveKeyConfigurationDefinition() {
+        final IPreferenceStore store = PlatformUI.getWorkbench()
+                .getPreferenceStore();
+        if (!store.contains(IPreferenceConstants.KEY_CONFIGURATION_ID)) {
+            return null;
+        }
+
+        final String keyConfigurationId = store
+                .getString(IPreferenceConstants.KEY_CONFIGURATION_ID);
+        return new ActiveKeyConfigurationDefinition(keyConfigurationId, null);
+    }
 
     static ActiveKeyConfigurationDefinition readActiveKeyConfigurationDefinition(
             IMemento memento, String sourceIdOverride) {
@@ -244,6 +266,12 @@ final class Persistence {
         for (int i = 0; i < mementos.length; i++)
             list.add(readActiveKeyConfigurationDefinition(mementos[i],
                     sourceIdOverride));
+        
+        // Add the standalone preference key.
+        final ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = readActiveKeyConfigurationDefinition();
+        if (activeKeyConfigurationDefinition != null) {
+            list.add(activeKeyConfigurationDefinition);
+        }
 
         return list;
     }
@@ -512,6 +540,23 @@ final class Persistence {
 
         return list;
     }
+    
+    /**
+     * This writes the active key configuration to its own preference key. This
+     * key is used by RCP applications as part of their plug-in customization.
+     * 
+     * @param activeKeyConfigurationDefinition
+     *            The key configuration identifier to write to the preference
+     *            store.
+     * @since 3.1
+     */
+    static final void writeActiveKeyConfigurationDefinition(
+            final ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition) {
+        final IPreferenceStore store = PlatformUI.getWorkbench()
+                .getPreferenceStore();
+        store.setValue(IPreferenceConstants.KEY_CONFIGURATION_ID,
+                activeKeyConfigurationDefinition.getKeyConfigurationId());
+    }
 
     static void writeActiveKeyConfigurationDefinition(IMemento memento,
             ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition) {
@@ -538,11 +583,26 @@ final class Persistence {
             Util.assertInstance(iterator.next(),
                     ActiveKeyConfigurationDefinition.class);
 
-        iterator = activeKeyConfigurationDefinitions.iterator();
+        final IPreferenceStore store = PlatformUI.getWorkbench()
+                .getPreferenceStore();
+        final String defaultConfig = store
+                .getDefaultString(IPreferenceConstants.KEY_CONFIGURATION_ID);
 
-        while (iterator.hasNext())
-            writeActiveKeyConfigurationDefinition(memento.createChild(name),
-                    (ActiveKeyConfigurationDefinition) iterator.next());
+		iterator = activeKeyConfigurationDefinitions.iterator();
+        while (iterator.hasNext()) {
+            final ActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = (ActiveKeyConfigurationDefinition) iterator
+                    .next();
+            final String currentConfig = activeKeyConfigurationDefinition.getKeyConfigurationId();
+            if ((defaultConfig == null) ? (currentConfig != null)
+                    : (!defaultConfig.equals(currentConfig))) {
+                writeActiveKeyConfigurationDefinition(
+                        memento.createChild(name),
+                        activeKeyConfigurationDefinition);
+                writeActiveKeyConfigurationDefinition(activeKeyConfigurationDefinition);
+            } else {
+                store.setToDefault(IPreferenceConstants.KEY_CONFIGURATION_ID);
+            }
+        }
     }
 
     static void writeCategoryDefinition(IMemento memento,

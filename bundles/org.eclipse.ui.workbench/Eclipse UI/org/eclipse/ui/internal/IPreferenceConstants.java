@@ -222,4 +222,16 @@ public interface IPreferenceConstants {
      * @since 3.0
      */
     public static final String SHOULD_PROMPT_FOR_ENABLEMENT = "shouldPromptForEnablement"; //$NON-NLS-1$
+    
+    /**
+     * <p>
+     * Workbench preference id for the key configuration identifier to be
+     * treated as the default.
+     * </p>
+     * The default value for this preference is
+     * <code>"org.eclipse.ui.defaultAcceleratorConfiguration"</code>
+     * <p>
+     * </p>
+     */
+    public static final String KEY_CONFIGURATION_ID = "KEY_CONFIGURATION_ID"; //$NON-NLS-1$
 }
