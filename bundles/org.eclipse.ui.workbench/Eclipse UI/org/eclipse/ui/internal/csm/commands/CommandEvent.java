@@ -17,26 +17,26 @@ import org.eclipse.ui.internal.csm.commands.api.ICommandEvent;
 final class CommandEvent implements ICommandEvent {
 
 	private boolean activeChanged;
+	private boolean categoryIdChanged;
 	private ICommand command;
 	private boolean definedChanged;
 	private boolean descriptionChanged;
 	private boolean enabledChanged;
+	private boolean keySequenceBindingsChanged;
 	private boolean nameChanged;
-	private boolean parentIdChanged;
-	private boolean patternBindingsChanged;
 
-	CommandEvent(ICommand command, boolean activeChanged, boolean definedChanged, boolean descriptionChanged, boolean enabledChanged, boolean nameChanged, boolean parentIdChanged, boolean patternBindingsChanged) {
+	CommandEvent(ICommand command, boolean activeChanged, boolean categoryIdChanged, boolean definedChanged, boolean descriptionChanged, boolean enabledChanged, boolean keySequenceBindingsChanged, boolean nameChanged) {
 		if (command == null)
 			throw new NullPointerException();
 		
 		this.command = command;
 		this.activeChanged = activeChanged;
+		this.categoryIdChanged = categoryIdChanged;		
 		this.definedChanged = definedChanged;
 		this.descriptionChanged = descriptionChanged;
 		this.enabledChanged = enabledChanged;
+		this.keySequenceBindingsChanged = keySequenceBindingsChanged;		
 		this.nameChanged = nameChanged;
-		this.parentIdChanged = parentIdChanged;		
-		this.patternBindingsChanged = patternBindingsChanged;		
 	}
 
 	public ICommand getCommand() {
@@ -63,11 +63,11 @@ final class CommandEvent implements ICommandEvent {
 		return nameChanged;
 	}
 
-	public boolean hasParentIdChanged() {
-		return parentIdChanged;
+	public boolean hasCategoryIdChanged() {
+		return categoryIdChanged;
 	}
 	
-	public boolean havePatternBindingsChanged() {
-		return patternBindingsChanged;
+	public boolean haveKeySequenceBindingsChanged() {
+		return keySequenceBindingsChanged;
 	}
 }

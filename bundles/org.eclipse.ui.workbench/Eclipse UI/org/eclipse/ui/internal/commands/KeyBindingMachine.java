@@ -20,7 +20,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
+import org.eclipse.ui.internal.csm.commands.IKeySequenceBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
@@ -183,7 +183,7 @@ final class KeyBindingMachine {
 	}	
 
 	boolean setKeyBindings0(SortedSet keyBindings0) {
-		keyBindings0 = Util.safeCopy(keyBindings0, IKeyBindingDefinition.class);
+		keyBindings0 = Util.safeCopy(keyBindings0, IKeySequenceBindingDefinition.class);
 		
 		if (!this.keyBindings[0].equals(keyBindings0)) {
 			this.keyBindings[0] = keyBindings0;
@@ -195,7 +195,7 @@ final class KeyBindingMachine {
 	}
 
 	boolean setKeyBindings1(SortedSet keyBindings1) {
-		keyBindings1 = Util.safeCopy(keyBindings1, IKeyBindingDefinition.class);
+		keyBindings1 = Util.safeCopy(keyBindings1, IKeySequenceBindingDefinition.class);
 		
 		if (!this.keyBindings[1].equals(keyBindings1)) {
 			this.keyBindings[1] = keyBindings1;
@@ -227,7 +227,7 @@ final class KeyBindingMachine {
 				Iterator iterator = keyBindings[i].iterator();
 			
 				while (iterator.hasNext()) {
-					IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();
+					IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();
 					KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), i, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
 				}
 			}

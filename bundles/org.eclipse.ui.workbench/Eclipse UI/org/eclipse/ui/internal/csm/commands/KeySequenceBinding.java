@@ -11,65 +11,52 @@
 
 package org.eclipse.ui.internal.csm.commands;
 
-import java.util.regex.Pattern;
-
-import org.eclipse.ui.internal.csm.commands.api.IPatternBinding;
+import org.eclipse.ui.internal.csm.commands.api.IKeySequenceBinding;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.KeySequence;
 
-final class PatternBinding implements IPatternBinding {
+final class KeySequenceBinding implements IKeySequenceBinding {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = PatternBinding.class.getName().hashCode();
-	
-	private boolean inclusive;
-	private Pattern pattern;
+	private final static int HASH_INITIAL = KeySequenceBinding.class.getName().hashCode();
+
+	private KeySequence keySequence;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	PatternBinding(boolean inclusive, Pattern pattern) {	
-		if (pattern == null)
+	KeySequenceBinding(KeySequence keySequence) {	
+		if (keySequence == null)
 			throw new NullPointerException();
 
-		this.inclusive = inclusive;
-		this.pattern = pattern;
+		this.keySequence = keySequence;
 	}
 
 	public int compareTo(Object object) {
-		PatternBinding patternBinding = (PatternBinding) object;
-		int compareTo = Util.compare(inclusive, patternBinding.inclusive);			
-		
-		if (compareTo == 0)			
-			compareTo = Util.compare(pattern.pattern(), patternBinding.pattern.pattern());
-		
+		KeySequenceBinding keySequenceBinding = (KeySequenceBinding) object;
+		int compareTo = Util.compare(keySequence, keySequenceBinding.keySequence);		
 		return compareTo;	
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof PatternBinding))
+		if (!(object instanceof KeySequenceBinding))
 			return false;
 
-		PatternBinding patternBinding = (PatternBinding) object;	
+		KeySequenceBinding keySequenceBinding = (KeySequenceBinding) object;	
 		boolean equals = true;
-		equals &= Util.equals(inclusive, patternBinding.inclusive);
-		equals &= Util.equals(pattern, patternBinding.pattern);
+		equals &= Util.equals(keySequence, keySequenceBinding.keySequence);
 		return equals;
 	}
 
-	public Pattern getPattern() {
-		return pattern;
-	}
-
-	public boolean isInclusive() {
-		return inclusive;
+	public KeySequence getKeySequence() {
+		return keySequence;
 	}
 	
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(inclusive);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pattern);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequence);
 			hashCodeComputed = true;
 		}
 			
@@ -80,9 +67,7 @@ final class PatternBinding implements IPatternBinding {
 		if (string == null) {
 			final StringBuffer stringBuffer = new StringBuffer();
 			stringBuffer.append('[');
-			stringBuffer.append(inclusive);
-			stringBuffer.append(',');
-			stringBuffer.append(pattern);
+			stringBuffer.append(keySequence);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}

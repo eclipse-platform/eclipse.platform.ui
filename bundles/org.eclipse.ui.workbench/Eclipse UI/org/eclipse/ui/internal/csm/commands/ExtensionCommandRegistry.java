@@ -26,9 +26,14 @@ import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
-	private List commandDefinitions;
-	private List commandPatternBindingDefinitions;
+	protected List activeKeyConfigurationDefinitions;
+	protected List categoryDefinitions; 
+	protected List commandDefinitions; 
+	protected List contextBindingDefinitions;
 	private IExtensionRegistry extensionRegistry;
+	protected List imageBindingDefinitions;
+	protected List keyConfigurationDefinitions;	
+	protected List keySequenceBindingDefinitions;
 	
 	ExtensionCommandRegistry(IExtensionRegistry extensionRegistry) {
 		if (extensionRegistry == null)
@@ -56,39 +61,99 @@ final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
 	private void load()
 		throws IOException {	
+		if (activeKeyConfigurationDefinitions == null)
+			activeKeyConfigurationDefinitions = new ArrayList();
+		else 
+			activeKeyConfigurationDefinitions.clear();
+			
+		if (categoryDefinitions == null)
+			categoryDefinitions = new ArrayList();
+		else 
+			categoryDefinitions.clear();
+		
 		if (commandDefinitions == null)
 			commandDefinitions = new ArrayList();
 		else 
 			commandDefinitions.clear();
 
-		if (commandPatternBindingDefinitions == null)
-			commandPatternBindingDefinitions = new ArrayList();
+		if (contextBindingDefinitions == null)
+			contextBindingDefinitions = new ArrayList();
 		else 
-			commandPatternBindingDefinitions.clear();		
-				
+			contextBindingDefinitions.clear();		
+
+		if (imageBindingDefinitions == null)
+			imageBindingDefinitions = new ArrayList();
+		else 
+			imageBindingDefinitions.clear();				
+			
+		if (keyConfigurationDefinitions == null)
+			keyConfigurationDefinitions = new ArrayList();
+		else 
+			keyConfigurationDefinitions.clear();		
+		
+		if (keySequenceBindingDefinitions == null)
+			keySequenceBindingDefinitions = new ArrayList();
+		else 
+			keySequenceBindingDefinitions.clear();		
+			
 		IConfigurationElement[] configurationElements = extensionRegistry.getConfigurationElementsFor(Persistence.PACKAGE_FULL);
 
 		for (int i = 0; i < configurationElements.length; i++) {
 			IConfigurationElement configurationElement = configurationElements[i];			
 			String name = configurationElement.getName();
 
-			if (Persistence.TAG_COMMAND.equals(name))
+			if (Persistence.TAG_ACTIVE_KEY_CONFIGURATION.equals(name))
+				readActiveKeyConfigurationDefinition(configurationElement);
+			else if (Persistence.TAG_CATEGORY.equals(name))
+				readCategoryDefinition(configurationElement);
+			else if (Persistence.TAG_COMMAND.equals(name))
 				readCommandDefinition(configurationElement);
-			else if (Persistence.TAG_COMMAND_PATTERN_BINDING.equals(name))
-				readCommandPatternBindingDefinition(configurationElement);			
+			else if (Persistence.TAG_CONTEXT_BINDING.equals(name))
+				readContextBindingDefinition(configurationElement);
+			else if (Persistence.TAG_IMAGE_BINDING.equals(name))
+				readImageBindingDefinition(configurationElement);
+			else if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
+				readKeyConfigurationDefinition(configurationElement);
+			else if (Persistence.TAG_KEY_SEQUENCE_BINDING.equals(name))
+				readKeySequenceBindingDefinition(configurationElement);
 		}
 
 		boolean commandRegistryChanged = false;
-			
+
+		if (!activeKeyConfigurationDefinitions.equals(super.activeKeyConfigurationDefinitions)) {
+			super.activeKeyConfigurationDefinitions = Collections.unmodifiableList(activeKeyConfigurationDefinitions);		
+			commandRegistryChanged = true;
+		}			
+		
+		if (!categoryDefinitions.equals(super.categoryDefinitions)) {
+			super.categoryDefinitions = Collections.unmodifiableList(categoryDefinitions);		
+			commandRegistryChanged = true;
+		}		
+		
 		if (!commandDefinitions.equals(super.commandDefinitions)) {
 			super.commandDefinitions = Collections.unmodifiableList(commandDefinitions);		
 			commandRegistryChanged = true;
-		}				
+		}	
 
-		if (!commandPatternBindingDefinitions.equals(super.commandPatternBindingDefinitions)) {
-			super.commandPatternBindingDefinitions = Collections.unmodifiableList(commandPatternBindingDefinitions);		
+		if (!contextBindingDefinitions.equals(super.contextBindingDefinitions)) {
+			super.contextBindingDefinitions = Collections.unmodifiableList(contextBindingDefinitions);		
+			commandRegistryChanged = true;
+		}			
+		
+		if (!imageBindingDefinitions.equals(super.imageBindingDefinitions)) {
+			super.imageBindingDefinitions = Collections.unmodifiableList(imageBindingDefinitions);		
+			commandRegistryChanged = true;
+		}			
+		
+		if (!keyConfigurationDefinitions.equals(super.keyConfigurationDefinitions)) {
+			super.keyConfigurationDefinitions = Collections.unmodifiableList(keyConfigurationDefinitions);		
 			commandRegistryChanged = true;
 		}		
+		
+		if (!keySequenceBindingDefinitions.equals(super.keySequenceBindingDefinitions)) {
+			super.keySequenceBindingDefinitions = Collections.unmodifiableList(keySequenceBindingDefinitions);		
+			commandRegistryChanged = true;
+		}
 
 		if (commandRegistryChanged)
 			fireCommandRegistryChanged();
@@ -105,19 +170,54 @@ final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 		}
 
 		return pluginId;
+	}	
+	
+	private void readActiveKeyConfigurationDefinition(IConfigurationElement configurationElement) {
+		IActiveKeyConfigurationDefinition activeKeyConfigurationDefinition = Persistence.readActiveKeyConfigurationDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
+	
+		if (activeKeyConfigurationDefinition != null)
+			activeKeyConfigurationDefinitions.add(activeKeyConfigurationDefinition);	
 	}
 
+	private void readCategoryDefinition(IConfigurationElement configurationElement) {
+		ICategoryDefinition categoryDefinition = Persistence.readCategoryDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
+	
+		if (categoryDefinition != null)
+			categoryDefinitions.add(categoryDefinition);	
+	}
+	
 	private void readCommandDefinition(IConfigurationElement configurationElement) {
 		ICommandDefinition commandDefinition = Persistence.readCommandDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
 	
 		if (commandDefinition != null)
 			commandDefinitions.add(commandDefinition);	
 	}
+
+	private void readContextBindingDefinition(IConfigurationElement configurationElement) {
+		IContextBindingDefinition contextBindingDefinition = Persistence.readContextBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
 	
-	private void readCommandPatternBindingDefinition(IConfigurationElement configurationElement) {
-		ICommandPatternBindingDefinition commandPatternBindingDefinition = Persistence.readCommandPatternBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
+		if (contextBindingDefinition != null)
+			contextBindingDefinitions.add(contextBindingDefinition);	
+	}
+
+	private void readImageBindingDefinition(IConfigurationElement configurationElement) {
+		IImageBindingDefinition imageBinding = Persistence.readImageBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
 	
-		if (commandPatternBindingDefinition != null)
-			commandPatternBindingDefinitions.add(commandPatternBindingDefinition);	
-	}	
+		if (imageBinding != null)
+			imageBindingDefinitions.add(imageBinding);	
+	}
+	
+	private void readKeyConfigurationDefinition(IConfigurationElement configurationElement) {
+		IKeyConfigurationDefinition keyConfigurationDefinition = Persistence.readKeyConfigurationDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
+	
+		if (keyConfigurationDefinition != null)
+			keyConfigurationDefinitions.add(keyConfigurationDefinition);	
+	}
+
+	private void readKeySequenceBindingDefinition(IConfigurationElement configurationElement) {
+		IKeySequenceBindingDefinition keySequenceBindingDefinition = Persistence.readKeySequenceBindingDefinition(new ConfigurationElementMemento(configurationElement), getPluginId(configurationElement));
+	
+		if (keySequenceBindingDefinition != null)
+			keySequenceBindingDefinitions.add(keySequenceBindingDefinition);	
+	}
 }

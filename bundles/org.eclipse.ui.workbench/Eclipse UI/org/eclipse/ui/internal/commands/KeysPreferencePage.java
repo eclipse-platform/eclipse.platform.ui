@@ -59,7 +59,6 @@ import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.csm.commands.ICategoryDefinition;
 import org.eclipse.ui.internal.csm.commands.ICommandDefinition;
@@ -67,6 +66,7 @@ import org.eclipse.ui.internal.csm.commands.ICommandRegistry;
 import org.eclipse.ui.internal.csm.commands.IContextBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IImageBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IKeyConfigurationDefinition;
+import org.eclipse.ui.internal.csm.commands.IKeySequenceBindingDefinition;
 import org.eclipse.ui.internal.keys.KeySequenceText;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
@@ -346,7 +346,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			List pluginKeyBindingDefinitions = new ArrayList(pluginCommandRegistry.getKeySequenceBindingDefinitions());
 
 			for (Iterator iterator = pluginKeyBindingDefinitions.iterator(); iterator.hasNext();) {
-				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
+				IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();				
 				KeySequence keySequence = keyBindingDefinition.getKeySequence();
 				String commandId = keyBindingDefinition.getCommandId();
 				String activityId = keyBindingDefinition.getActivityId();
@@ -365,7 +365,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			List preferenceKeyBindingDefinitions = new ArrayList(preferenceCommandRegistry.getKeySequenceBindingDefinitions());
 
 			for (Iterator iterator = preferenceKeyBindingDefinitions.iterator(); iterator.hasNext();) {
-				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
+				IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();				
 				KeySequence keySequence = keyBindingDefinition.getKeySequence();
 				String commandId = keyBindingDefinition.getCommandId();
 				String activityId = keyBindingDefinition.getActivityId();
@@ -384,12 +384,12 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 			tree = new TreeMap();
 			
 			for (Iterator iterator = pluginKeyBindingDefinitions.iterator(); iterator.hasNext();) {
-				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
+				IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();				
 				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), 1, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
 			}
 
 			for (Iterator iterator = preferenceKeyBindingDefinitions.iterator(); iterator.hasNext();) {
-				IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();				
+				IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();				
 				KeyBindingNode.add(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), 0, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
 			}			
 		
@@ -810,7 +810,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				Iterator iterator = preferenceKeyBindingDefinitions.iterator();
 				
 				while (iterator.hasNext()) {
-					IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();
+					IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();
 					KeyBindingNode.remove(tree, keyBindingDefinition.getKeySequence(), keyBindingDefinition.getActivityId(), keyBindingDefinition.getKeyConfigurationId(), 0, keyBindingDefinition.getPlatform(), keyBindingDefinition.getLocale(), keyBindingDefinition.getCommandId());
 				}
 			}

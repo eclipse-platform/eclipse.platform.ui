@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.WeakHashMap;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.csm.commands.api.ICommand;
@@ -30,8 +29,9 @@ import org.eclipse.ui.internal.csm.commands.api.ICommandEvent;
 import org.eclipse.ui.internal.csm.commands.api.ICommandManager;
 import org.eclipse.ui.internal.csm.commands.api.ICommandManagerEvent;
 import org.eclipse.ui.internal.csm.commands.api.ICommandManagerListener;
-import org.eclipse.ui.internal.csm.commands.api.IPatternBinding;
+import org.eclipse.ui.internal.csm.commands.api.IKeySequenceBinding;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.KeySequence;
 
 public final class CommandManager implements ICommandManager {
 
@@ -42,7 +42,7 @@ public final class CommandManager implements ICommandManager {
 			ICommandDefinition commandDefinition = (ICommandDefinition) commandDefinitionsById.get(id);				
 			visited.add(id);
 
-			if (commandDefinition != null && Util.equals(id = commandDefinition.getParentId(), ancestor))
+			if (commandDefinition != null && Util.equals(id = commandDefinition.getCategoryId(), ancestor))
 				return true;
 		}
 
@@ -57,7 +57,7 @@ public final class CommandManager implements ICommandManager {
 	private ICommandRegistry commandRegistry;	
 	private Set definedCommandIds = new HashSet();
 	private Set enabledCommandIds = new HashSet();	
-	private Map patternBindingsByCommandId = new HashMap();
+	private Map keySequenceBindingsByCommandId = new HashMap();
 
 	public CommandManager() {
 		this(new ExtensionCommandRegistry(Platform.getExtensionRegistry()));
@@ -114,19 +114,6 @@ public final class CommandManager implements ICommandManager {
 
 	public Set getEnabledCommandIds() {
 		return Collections.unmodifiableSet(enabledCommandIds);
-	}	
-
-	public boolean match(String string, Set commandIds) {
-		commandIds = Util.safeCopy(commandIds, String.class);
-		
-		for (Iterator iterator = commandIds.iterator(); iterator.hasNext();) {			
-			ICommand command = getCommand((String) iterator.next());
-						
-			if (command.match(string))
-				return true;
-		}
-			
-		return false;
 	}	
 
 	public void removeCommandManagerListener(ICommandManagerListener commandManagerListener) {
@@ -215,38 +202,38 @@ public final class CommandManager implements ICommandManager {
 			if (!isCommandDefinitionChildOf(null, (String) iterator.next(), commandDefinitionsById))
 				iterator.remove();
 
-		Map commandPatternBindingDefinitionsByCommandId = CommandPatternBindingDefinition.commandPatternBindingDefinitionsByCommandId(commandRegistry.getCommandPatternBindingDefinitions());
-		Map patternBindingsByCommandId = new HashMap();		
+		Map keySequenceBindingDefinitionsByCommandId = KeySequenceBindingDefinition.keySequenceBindingDefinitionsByCommandId(commandRegistry.getKeySequenceBindingDefinitions());
+		Map keySequenceBindingsByCommandId = new HashMap();		
 
-		for (Iterator iterator = commandPatternBindingDefinitionsByCommandId.entrySet().iterator(); iterator.hasNext();) {
+		for (Iterator iterator = keySequenceBindingDefinitionsByCommandId.entrySet().iterator(); iterator.hasNext();) {
 			Map.Entry entry = (Map.Entry) iterator.next();
 			String commandId = (String) entry.getKey();
 			
 			if (commandDefinitionsById.containsKey(commandId)) {			
-				Collection commandPatternBindingDefinitions = (Collection) entry.getValue();
+				Collection keySequenceBindingDefinitions = (Collection) entry.getValue();
 				
-				if (commandPatternBindingDefinitions != null)
-					for (Iterator iterator2 = commandPatternBindingDefinitions.iterator(); iterator2.hasNext();) {
-						ICommandPatternBindingDefinition commandPatternBindingDefinition = (ICommandPatternBindingDefinition) iterator2.next();
-						String pattern = commandPatternBindingDefinition.getPattern();
+				if (keySequenceBindingDefinitions != null)
+					for (Iterator iterator2 = keySequenceBindingDefinitions.iterator(); iterator2.hasNext();) {
+						IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) iterator2.next();
+						KeySequence keySequence = keySequenceBindingDefinition.getKeySequence();
 					
-						if (pattern != null && pattern.length() != 0) {
-							IPatternBinding patternBinding = new PatternBinding(commandPatternBindingDefinition.isInclusive(), Pattern.compile(pattern));	
-							List patternBindings = (List) patternBindingsByCommandId.get(commandId);
+						if (keySequence != null && keySequence.isComplete()) {
+							IKeySequenceBinding keySequenceBinding = new KeySequenceBinding(keySequence);	
+							List keySequenceBindings = (List) keySequenceBindingsByCommandId.get(commandId);
 							
-							if (patternBindings == null) {
-								patternBindings = new ArrayList();
-								patternBindingsByCommandId.put(commandId, patternBindings);
+							if (keySequenceBindings == null) {
+								keySequenceBindings = new ArrayList();
+								keySequenceBindingsByCommandId.put(commandId, keySequenceBindings);
 							}
 							
-							patternBindings.add(patternBinding);
+							keySequenceBindings.add(keySequenceBinding);
 						}
 					}
 			}
 		}		
 		
 		this.commandDefinitionsById = commandDefinitionsById;
-		this.patternBindingsByCommandId = patternBindingsByCommandId;			
+		this.keySequenceBindingsByCommandId = keySequenceBindingsByCommandId;			
 		boolean commandManagerChanged = false;			
 		Set definedCommandIds = new HashSet(commandDefinitionsById.keySet());		
 
@@ -271,12 +258,12 @@ public final class CommandManager implements ICommandManager {
 		boolean descriptionChanged = command.setDescription(commandDefinition != null ? commandDefinition.getDescription() : null);		
 		boolean enabledChanged = command.setEnabled(enabledCommandIds.contains(command.getId()));
 		boolean nameChanged = command.setName(commandDefinition != null ? commandDefinition.getName() : null);
-		boolean parentIdChanged = command.setParentId(commandDefinition != null ? commandDefinition.getParentId() : null);				
-		List patternBindings = (List) patternBindingsByCommandId.get(command.getId());
-		boolean patternBindingsChanged = command.setPatternBindings(patternBindings != null ? patternBindings : Collections.EMPTY_LIST);
+		boolean parentIdChanged = command.setCategoryId(commandDefinition != null ? commandDefinition.getCategoryId() : null);				
+		List keySequenceBindings = (List) keySequenceBindingsByCommandId.get(command.getId());
+		boolean keySequenceBindingsChanged = command.setKeySequenceBindings(keySequenceBindings != null ? keySequenceBindings : Collections.EMPTY_LIST);
 
-		if (activeChanged || definedChanged || descriptionChanged || enabledChanged || nameChanged || parentIdChanged || patternBindingsChanged)
-			return new CommandEvent(command, activeChanged, definedChanged, descriptionChanged, enabledChanged, nameChanged, parentIdChanged, patternBindingsChanged); 
+		if (activeChanged || definedChanged || descriptionChanged || enabledChanged || nameChanged || parentIdChanged || keySequenceBindingsChanged)
+			return new CommandEvent(command, activeChanged, parentIdChanged, definedChanged, descriptionChanged, enabledChanged, keySequenceBindingsChanged, nameChanged); 
 		else 
 			return null;
 	}

@@ -9,17 +9,38 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.csm.commands;
+package org.eclipse.ui.internal.commands;
 
-public interface ICommandDefinition extends Comparable {
+/**
+ * <p>
+ * This interface is not intended to be extended by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
+public interface XIPropertyListener {
 
-	String getCategoryId();
-
-	String getDescription();
-		
-	String getId();
+	/**
+	 * JAVADOC
+	 * 
+	 * @param propertyEvent
+	 */	
+	void propertyAdded(XPropertyEvent propertyEvent);
 	
-	String getName();
+	/**
+	 * JAVADOC
+	 * 
+	 * @param propertyEvent
+	 */	
+	void propertyChanged(XPropertyEvent propertyEvent);
 	
-	String getPluginId();
+	/**
+	 * JAVADOC
+	 * 
+	 * @param propertyEvent
+	 */	
+	void propertyRemoved(XPropertyEvent propertyEvent);
 }

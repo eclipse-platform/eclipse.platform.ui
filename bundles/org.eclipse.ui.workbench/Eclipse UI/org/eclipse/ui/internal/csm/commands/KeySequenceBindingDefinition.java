@@ -9,18 +9,50 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands;
+package org.eclipse.ui.internal.csm.commands;
 
-import org.eclipse.ui.internal.csm.commands.IKeySequenceBindingDefinition;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 
-//TODO private
-public final class KeyBindingDefinition implements IKeySequenceBindingDefinition {
+final class KeySequenceBindingDefinition implements IKeySequenceBindingDefinition {
 
 	private final static int HASH_FACTOR = 89;
-	private final static int HASH_INITIAL = KeyBindingDefinition.class.getName().hashCode();
+	private final static int HASH_INITIAL = KeySequenceBindingDefinition.class.getName().hashCode();
 
+	static Map keySequenceBindingDefinitionsByCommandId(Collection keySequenceBindingDefinitions) {
+		if (keySequenceBindingDefinitions == null)
+			throw new NullPointerException();
+
+		Map map = new HashMap();			
+		Iterator iterator = keySequenceBindingDefinitions.iterator();
+		
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			Util.assertInstance(object, IKeySequenceBindingDefinition.class);			
+			IKeySequenceBindingDefinition keySequenceBindingDefinition = (IKeySequenceBindingDefinition) object;
+			String commandId = keySequenceBindingDefinition.getCommandId();
+			
+			if (commandId != null) {
+				Collection keySequenceBindingDefinitions2 = (Collection) map.get(commandId);
+					
+				if (keySequenceBindingDefinitions2 == null) {
+					keySequenceBindingDefinitions2 = new ArrayList();
+					map.put(commandId, keySequenceBindingDefinitions2);					
+				}
+	
+				keySequenceBindingDefinitions2.add(keySequenceBindingDefinition);		
+			}											
+		}				
+	
+		return map;
+	}	
+	
 	private String activityId;
 	private String commandId;
 	private String keyConfigurationId;
@@ -33,8 +65,7 @@ public final class KeyBindingDefinition implements IKeySequenceBindingDefinition
 	private transient boolean hashCodeComputed;
 	private transient String string;
 
-	// TODO private
-	public KeyBindingDefinition(String activityId, String commandId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId) {	
+	KeySequenceBindingDefinition(String activityId, String commandId, String keyConfigurationId, KeySequence keySequence, String locale, String platform, String pluginId) {	
 		this.activityId = activityId;
 		this.commandId = commandId;
 		this.keyConfigurationId = keyConfigurationId;
@@ -45,26 +76,26 @@ public final class KeyBindingDefinition implements IKeySequenceBindingDefinition
 	}
 	
 	public int compareTo(Object object) {
-		KeyBindingDefinition keyBindingDefinition = (KeyBindingDefinition) object;
-		int compareTo = Util.compare(activityId, keyBindingDefinition.activityId);
+		KeySequenceBindingDefinition keySequenceBindingDefinition = (KeySequenceBindingDefinition) object;
+		int compareTo = Util.compare(activityId, keySequenceBindingDefinition.activityId);
 		
 		if (compareTo == 0) {		
-			compareTo = Util.compare(commandId, keyBindingDefinition.commandId);			
+			compareTo = Util.compare(commandId, keySequenceBindingDefinition.commandId);			
 
 			if (compareTo == 0) {		
-				compareTo = Util.compare(keyConfigurationId, keyBindingDefinition.keyConfigurationId);			
+				compareTo = Util.compare(keyConfigurationId, keySequenceBindingDefinition.keyConfigurationId);			
 
 				if (compareTo == 0) {
-					compareTo = Util.compare(keySequence, keyBindingDefinition.keySequence);
+					compareTo = Util.compare(keySequence, keySequenceBindingDefinition.keySequence);
 
 					if (compareTo == 0) {		
-						compareTo = Util.compare(locale, keyBindingDefinition.locale);			
+						compareTo = Util.compare(locale, keySequenceBindingDefinition.locale);			
 	
 						if (compareTo == 0) {		
-							compareTo = Util.compare(platform, keyBindingDefinition.platform);			
+							compareTo = Util.compare(platform, keySequenceBindingDefinition.platform);			
 			
 							if (compareTo == 0)
-								compareTo = Util.compare(pluginId, keyBindingDefinition.pluginId);
+								compareTo = Util.compare(pluginId, keySequenceBindingDefinition.pluginId);
 						}
 					}
 				}
@@ -75,18 +106,18 @@ public final class KeyBindingDefinition implements IKeySequenceBindingDefinition
 	}
 	
 	public boolean equals(Object object) {
-		if (!(object instanceof KeyBindingDefinition))
+		if (!(object instanceof KeySequenceBindingDefinition))
 			return false;
 
-		KeyBindingDefinition keyBindingDefinition = (KeyBindingDefinition) object;	
+		KeySequenceBindingDefinition keySequenceBindingDefinition = (KeySequenceBindingDefinition) object;	
 		boolean equals = true;
-		equals &= Util.equals(activityId, keyBindingDefinition.activityId);
-		equals &= Util.equals(commandId, keyBindingDefinition.commandId);
-		equals &= Util.equals(keyConfigurationId, keyBindingDefinition.keyConfigurationId);
-		equals &= Util.equals(keySequence, keyBindingDefinition.keySequence);
-		equals &= Util.equals(locale, keyBindingDefinition.locale);
-		equals &= Util.equals(platform, keyBindingDefinition.platform);
-		equals &= Util.equals(pluginId, keyBindingDefinition.pluginId);
+		equals &= Util.equals(activityId, keySequenceBindingDefinition.activityId);
+		equals &= Util.equals(commandId, keySequenceBindingDefinition.commandId);
+		equals &= Util.equals(keyConfigurationId, keySequenceBindingDefinition.keyConfigurationId);
+		equals &= Util.equals(keySequence, keySequenceBindingDefinition.keySequence);
+		equals &= Util.equals(locale, keySequenceBindingDefinition.locale);
+		equals &= Util.equals(platform, keySequenceBindingDefinition.platform);
+		equals &= Util.equals(pluginId, keySequenceBindingDefinition.pluginId);
 		return equals;
 	}
 
@@ -156,5 +187,5 @@ public final class KeyBindingDefinition implements IKeySequenceBindingDefinition
 		}
 	
 		return string;
-	}
+	}	
 }

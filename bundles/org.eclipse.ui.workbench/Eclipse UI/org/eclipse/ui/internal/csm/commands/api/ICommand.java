@@ -40,7 +40,7 @@ import java.util.List;
  * @since 3.0
  * @see ICommandListener
  * @see ICommandManager
- * @see IPatternBinding
+ * @see IKeySequenceBinding
  */
 public interface ICommand extends Comparable {
 
@@ -57,6 +57,24 @@ public interface ICommand extends Comparable {
 	 */	
 	void addCommandListener(ICommandListener commandListener);
 
+	/**
+	 * <p>
+	 * Returns the identifier of the category of the command represented by this 
+	 * handle.
+	 * </p>
+	 * <p>
+	 * Notification is set to all registered listeners if this attribute 
+	 * changes.
+	 * </p>
+	 *  
+	 * @return the identifier of the category of the command represented by this 
+	 * 		   handle. May be <code>null</code>. 
+	 * @throws CommandNotDefinedException if the command represented by this 
+	 *                                    handle is not defined.
+	 */	
+	String getCategoryId()
+		throws CommandNotDefinedException;	
+	
 	/**
 	 * <p>
 	 * Returns the description of the command represented by this handle, 
@@ -100,42 +118,24 @@ public interface ICommand extends Comparable {
 	 */	
 	String getName()
 		throws CommandNotDefinedException;
-
-	/**
-	 * <p>
-	 * Returns the identifier of the parent of the command represented by this 
-	 * handle, suitable for display to the user.
-	 * </p>
-	 * <p>
-	 * Notification is set to all registered listeners if this attribute 
-	 * changes.
-	 * </p>
-	 *  
-	 * @return the identifier of the parent of the command represented by this 
-	 * 		   handle. May be <code>null</code>. 
-	 * @throws CommandNotDefinedException if the command represented by this 
-	 *                                    handle is not defined.
-	 */	
-	String getParentId()
-		throws CommandNotDefinedException;
 	
 	/**
 	 * <p>
-	 * Returns the list of pattern bindings for this handle. This method will
-	 * return all pattern bindings for this handle's identifier, whether or not 
-	 * the command represented by this handle is defined. 
+	 * Returns the list of key sequence bindings for this handle. This method 
+	 * will return all key sequence bindings for this handle's identifier, 
+	 * whether or not the command represented by this handle is defined. 
 	 * </p>
 	 * <p>
 	 * Notification is set to all registered listeners if this attribute 
 	 * changes.
 	 * </p>
 	 *
-	 * @return the list of pattern bindings. This list may be empty, but is 
+	 * @return the list of key sequence bindings. This list may be empty, but is 
 	 * 		   guaranteed not to be <code>null</code>. If this list is not 
 	 * 		   empty, it is guaranteed to only contain instances of 
-	 *         <code>IPatternBinding</code>.
+	 *         <code>IKeySequenceBinding</code>.
 	 */	
-	List getPatternBindings();
+	List getKeySequenceBindings();
 	
 	/**
 	 * <p>
@@ -180,12 +180,7 @@ public interface ICommand extends Comparable {
 	 * 
 	 * @return <code>true</code>, iff this command is enabled. 
 	 */	
-	boolean isEnabled();	
-
-	/**
-	 * TODO javadoc
-	 */	
-	boolean match(String string);		
+	boolean isEnabled();
 	
 	/**
 	 * Unregisters an instance of <code>ICommandListener</code> listening for

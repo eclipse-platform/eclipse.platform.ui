@@ -20,8 +20,13 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 	private ICommandRegistryEvent commandRegistryEvent;
 	private List commandRegistryListeners;
 	
-	protected List commandDefinitions = Collections.EMPTY_LIST;
-	protected List commandPatternBindingDefinitions = Collections.EMPTY_LIST;	
+	protected List activeKeyConfigurationDefinitions = Collections.EMPTY_LIST;
+	protected List categoryDefinitions = Collections.EMPTY_LIST; 
+	protected List commandDefinitions = Collections.EMPTY_LIST; 
+	protected List contextBindingDefinitions = Collections.EMPTY_LIST;
+	protected List imageBindingDefinitions = Collections.EMPTY_LIST;
+	protected List keyConfigurationDefinitions = Collections.EMPTY_LIST;	
+	protected List keySequenceBindingDefinitions = Collections.EMPTY_LIST;
 	
 	protected AbstractCommandRegistry() {
 	}
@@ -37,14 +42,34 @@ abstract class AbstractCommandRegistry implements ICommandRegistry {
 			commandRegistryListeners.add(commandRegistryListener);
 	}
 
+	public List getActiveKeyConfigurationDefinitions() {
+		return activeKeyConfigurationDefinitions;
+	}
+
+	public List getCategoryDefinitions() {
+		return categoryDefinitions;
+	}
+	
 	public List getCommandDefinitions() {
 		return commandDefinitions;
 	}
 
-	public List getCommandPatternBindingDefinitions() {
-		return commandPatternBindingDefinitions;
-	}	
+	public List getContextBindingDefinitions() {
+		return contextBindingDefinitions;
+	}
+
+	public List getImageBindingDefinitions() {
+		return imageBindingDefinitions;
+	}
 	
+	public List getKeyConfigurationDefinitions() {
+		return keyConfigurationDefinitions;
+	}
+
+	public List getKeySequenceBindingDefinitions() {
+		return keySequenceBindingDefinitions;
+	}
+
 	public void removeCommandRegistryListener(ICommandRegistryListener commandRegistryListener) {
 		if (commandRegistryListener == null)
 			throw new NullPointerException();

@@ -11,12 +11,12 @@
 
 package org.eclipse.ui.internal.csm.commands.api;
 
-import java.util.regex.Pattern;
+import org.eclipse.ui.keys.KeySequence;
 
 /**
  * <p>
- * An instance of <code>IPatternBinding</code> represents a binding between an
- * command and a pattern.
+ * An instance of <code>IKeySequenceBinding</code> represents a binding between 
+ * a command and a key sequence.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -28,21 +28,12 @@ import java.util.regex.Pattern;
  * @since 3.0
  * @see org.eclipse.ui.commands.ICommand
  */
-public interface IPatternBinding extends Comparable {
+public interface IKeySequenceBinding extends Comparable {
 
 	/**
-	 * Returns the pattern represented in this binding.
+	 * Returns the key sequence represented in this binding.
 	 * 
-	 * @return the pattern. Guaranteed not to be <code>null</code>.
+	 * @return the key sequence. Guaranteed not to be <code>null</code>.
 	 */	
-	Pattern getPattern();
-	
-	/**
-	 * <p>
-	 * Returns whether or not this pattern binding is inclusive. 
-	 * </p>
-	 * 
-	 * @return <code>true</code>, iff this pattern binding is inclusive. 
-	 */	
-	boolean isInclusive();
+	KeySequence getKeySequence();
 }

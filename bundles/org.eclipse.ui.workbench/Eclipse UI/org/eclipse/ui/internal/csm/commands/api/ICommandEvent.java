@@ -41,7 +41,12 @@ public interface ICommandEvent {
 	 * TODO javadoc
 	 */	
 	boolean hasActiveChanged();
-	
+
+	/**
+	 * TODO javadoc
+	 */	
+	boolean hasCategoryIdChanged();	
+
 	/**
 	 * TODO javadoc
 	 */	
@@ -61,14 +66,9 @@ public interface ICommandEvent {
 	 * TODO javadoc
 	 */		
 	boolean hasNameChanged();
-
-	/**
-	 * TODO javadoc
-	 */	
-	boolean hasParentIdChanged();	
 	
 	/**
 	 * TODO javadoc
 	 */		
-	boolean havePatternBindingsChanged();		
+	boolean haveKeySequenceBindingsChanged();		
 }

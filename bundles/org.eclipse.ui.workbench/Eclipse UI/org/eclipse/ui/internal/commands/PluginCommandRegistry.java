@@ -21,13 +21,13 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.csm.commands.ICategoryDefinition;
 import org.eclipse.ui.internal.csm.commands.ICommandDefinition;
 import org.eclipse.ui.internal.csm.commands.IContextBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IImageBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IKeyConfigurationDefinition;
+import org.eclipse.ui.internal.csm.commands.IKeySequenceBindingDefinition;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.internal.util.OldConfigurationElementMemento;
 
@@ -227,7 +227,7 @@ final class PluginCommandRegistry extends AbstractCommandRegistry {
 	}
 
 	private boolean readKeyBindingDefinition(IConfigurationElement element) {
-		IKeyBindingDefinition keyBindingDefinition = Persistence.readKeyBindingDefinition(new OldConfigurationElementMemento(element), getPluginId(element));
+		IKeySequenceBindingDefinition keyBindingDefinition = Persistence.readKeyBindingDefinition(new OldConfigurationElementMemento(element), getPluginId(element));
 	
 		if (keyBindingDefinition != null)
 			keyBindingDefinitions.add(keyBindingDefinition);	

@@ -9,9 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.api;
-
-import org.eclipse.ui.keys.KeySequence;
+package org.eclipse.ui.internal.csm.commands;
 
 /**
  * <p>
@@ -26,14 +24,7 @@ import org.eclipse.ui.keys.KeySequence;
  * 
  * @since 3.0
  */
-public interface IKeyBindingDefinition extends Comparable {
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getActivityId();
+public interface IContextBindingDefinition extends Comparable {
 
 	/**
 	 * JAVADOC
@@ -47,33 +38,12 @@ public interface IKeyBindingDefinition extends Comparable {
 	 * 
 	 * @return
 	 */	
-	String getKeyConfigurationId();
+	String getContextId();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	KeySequence getKeySequence();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getLocale();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPlatform();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();
+	String getPluginId();		
 }

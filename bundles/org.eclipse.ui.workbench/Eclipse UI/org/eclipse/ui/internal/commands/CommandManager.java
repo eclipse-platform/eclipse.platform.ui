@@ -39,7 +39,6 @@ import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IKeyBinding;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.csm.commands.ICategoryDefinition;
 import org.eclipse.ui.internal.csm.commands.ICommandDefinition;
@@ -49,6 +48,7 @@ import org.eclipse.ui.internal.csm.commands.ICommandRegistryListener;
 import org.eclipse.ui.internal.csm.commands.IContextBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IImageBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IKeyConfigurationDefinition;
+import org.eclipse.ui.internal.csm.commands.IKeySequenceBindingDefinition;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.CharacterKey;
@@ -107,7 +107,7 @@ public final class CommandManager implements ICommandManager {
 		Iterator iterator = keyBindingDefinitions.iterator();
 		
 		while (iterator.hasNext()) {
-			IKeyBindingDefinition keyBindingDefinition = (IKeyBindingDefinition) iterator.next();
+			IKeySequenceBindingDefinition keyBindingDefinition = (IKeySequenceBindingDefinition) iterator.next();
 			KeySequence keySequence = keyBindingDefinition.getKeySequence();
 			
 			if (keySequence == null || !validateKeySequence(keySequence))

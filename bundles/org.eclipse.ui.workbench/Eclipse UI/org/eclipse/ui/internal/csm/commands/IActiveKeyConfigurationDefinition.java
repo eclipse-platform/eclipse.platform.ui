@@ -9,11 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.commands.api;
+package org.eclipse.ui.internal.csm.commands;
 
 /**
  * <p>
- * This interface is not intended to be extended by clients.
+ * JAVADOC
+ * </p>
+ * <p>
+ * This interface is not intended to be extended or implemented by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -21,26 +24,19 @@ package org.eclipse.ui.internal.commands.api;
  * 
  * @since 3.0
  */
-public interface XIPropertyListener {
+public interface IActiveKeyConfigurationDefinition extends Comparable {
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @param propertyEvent
+	 * @return
 	 */	
-	void propertyAdded(XPropertyEvent propertyEvent);
+	String getKeyConfigurationId();
 	
 	/**
 	 * JAVADOC
 	 * 
-	 * @param propertyEvent
+	 * @return
 	 */	
-	void propertyChanged(XPropertyEvent propertyEvent);
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @param propertyEvent
-	 */	
-	void propertyRemoved(XPropertyEvent propertyEvent);
+	String getPluginId();
 }

@@ -12,14 +12,13 @@
 package org.eclipse.ui.internal.csm.commands;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ui.internal.csm.commands.api.CommandNotDefinedException;
 import org.eclipse.ui.internal.csm.commands.api.ICommand;
 import org.eclipse.ui.internal.csm.commands.api.ICommandEvent;
 import org.eclipse.ui.internal.csm.commands.api.ICommandListener;
-import org.eclipse.ui.internal.csm.commands.api.IPatternBinding;
+import org.eclipse.ui.internal.csm.commands.api.IKeySequenceBinding;
 import org.eclipse.ui.internal.util.Util;
 
 final class Command implements ICommand {
@@ -28,19 +27,19 @@ final class Command implements ICommand {
 	private final static int HASH_INITIAL = Command.class.getName().hashCode();
 
 	private boolean active;
+	private String categoryId;
 	private List commandListeners;
 	private CommandManager commandManager;
 	private boolean defined;
 	private String description;
 	private boolean enabled;
 	private String id;
+	private List keySequenceBindings;
 	private String name;
-	private String parentId;
-	private List patternBindings;
 
 	private transient int hashCode;
 	private transient boolean hashCodeComputed;
-	private transient IPatternBinding[] patternBindingsAsArray;
+	private transient IKeySequenceBinding[] keySequenceBindingsAsArray;
 	private transient String string;
 	
 	Command(CommandManager commandManager, String id) {	
@@ -69,25 +68,25 @@ final class Command implements ICommand {
 		int compareTo = Util.compare(active, command.active);
 
 		if (compareTo == 0) {
-			compareTo = Util.compare(defined, command.defined);
-			
+			compareTo = Util.compare(categoryId, command.categoryId);
+		
 			if (compareTo == 0) {
-				compareTo = Util.compare(description, command.description);
-
+				compareTo = Util.compare(defined, command.defined);
+				
 				if (compareTo == 0) {
-					compareTo = Util.compare(enabled, command.enabled);
-								
-					if (compareTo == 0) {		
-						compareTo = Util.compare(id, command.id);			
-					
-						if (compareTo == 0) {
-							compareTo = Util.compare(name, command.name);
-
+					compareTo = Util.compare(description, command.description);
+	
+					if (compareTo == 0) {
+						compareTo = Util.compare(enabled, command.enabled);
+									
+						if (compareTo == 0) {		
+							compareTo = Util.compare(id, command.id);			
+						
 							if (compareTo == 0) {
-								compareTo = Util.compare(parentId, command.parentId);
+								compareTo = Util.compare(name, command.name);
 
 								if (compareTo == 0) 
-									compareTo = Util.compare((Comparable[]) patternBindingsAsArray, (Comparable[]) command.patternBindingsAsArray); 
+									compareTo = Util.compare((Comparable[]) keySequenceBindingsAsArray, (Comparable[]) command.keySequenceBindingsAsArray); 
 							}
 						}
 					}
@@ -105,14 +104,22 @@ final class Command implements ICommand {
 		Command command = (Command) object;	
 		boolean equals = true;
 		equals &= Util.equals(active, command.active);
+		equals &= Util.equals(categoryId, command.categoryId);
 		equals &= Util.equals(defined, command.defined);
 		equals &= Util.equals(description, command.description);
 		equals &= Util.equals(enabled, command.enabled);
 		equals &= Util.equals(id, command.id);
+		equals &= Util.equals(keySequenceBindings, command.keySequenceBindings);		
 		equals &= Util.equals(name, command.name);
-		equals &= Util.equals(parentId, command.parentId);
-		equals &= Util.equals(patternBindings, command.patternBindings);		
 		return equals;
+	}
+
+	public String getCategoryId()
+		throws CommandNotDefinedException {
+		if (!defined)
+			throw new CommandNotDefinedException();
+
+		return categoryId;
 	}
 
 	public String getDescription()
@@ -126,7 +133,11 @@ final class Command implements ICommand {
 	public String getId() {
 		return id;	
 	}
-	
+
+	public List getKeySequenceBindings() {
+		return keySequenceBindings;
+	}
+
 	public String getName()
 		throws CommandNotDefinedException {
 		if (!defined)
@@ -134,30 +145,18 @@ final class Command implements ICommand {
 
 		return name;
 	}	
-
-	public String getParentId()
-		throws CommandNotDefinedException {
-		if (!defined)
-			throw new CommandNotDefinedException();
-
-		return parentId;
-	}			
-	
-	public List getPatternBindings() {
-		return patternBindings;
-	}		
 	
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(active);			
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);	
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(enabled);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(keySequenceBindings);
 			hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(parentId);
-			hashCode = hashCode * HASH_FACTOR + Util.hashCode(patternBindings);
 			hashCodeComputed = true;
 		}
 			
@@ -176,22 +175,6 @@ final class Command implements ICommand {
 		return enabled;
 	}
 
-	public boolean match(String string) {
-		boolean match = false;
-			
-		if (isDefined())
-			for (Iterator iterator = patternBindings.iterator(); iterator.hasNext();) {
-				IPatternBinding patternBinding = (IPatternBinding) iterator.next();
-			
-				if (patternBinding.isInclusive() && !match)
-					match = patternBinding.getPattern().matcher(string).matches();
-				else if (!patternBinding.isInclusive() && match)
-					match = !patternBinding.getPattern().matcher(string).matches();
-			}
-
-		return match;
-	}
-	
 	public void removeCommandListener(ICommandListener commandListener) {
 		if (commandListener == null)
 			throw new NullPointerException();
@@ -209,6 +192,8 @@ final class Command implements ICommand {
 			stringBuffer.append('[');
 			stringBuffer.append(active);
 			stringBuffer.append(',');
+			stringBuffer.append(categoryId);
+			stringBuffer.append(',');
 			stringBuffer.append(defined);
 			stringBuffer.append(',');
 			stringBuffer.append(description);
@@ -217,11 +202,9 @@ final class Command implements ICommand {
 			stringBuffer.append(',');
 			stringBuffer.append(id);
 			stringBuffer.append(',');
+			stringBuffer.append(keySequenceBindings);
+			stringBuffer.append(',');
 			stringBuffer.append(name);
-			stringBuffer.append(',');
-			stringBuffer.append(parentId);
-			stringBuffer.append(',');
-			stringBuffer.append(patternBindings);
 			stringBuffer.append(']');
 			string = stringBuffer.toString();
 		}
@@ -241,6 +224,18 @@ final class Command implements ICommand {
 	boolean setActive(boolean active) {
 		if (active != this.active) {
 			this.active = active;
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+
+		return false;
+	}
+
+	boolean setCategoryId(String categoryId) {
+		if (!Util.equals(categoryId, this.categoryId)) {
+			this.categoryId = categoryId;
 			hashCodeComputed = false;
 			hashCode = 0;
 			string = null;
@@ -286,6 +281,21 @@ final class Command implements ICommand {
 		return false;
 	}
 
+	boolean setKeySequenceBindings(List keySequenceBindings) {
+		keySequenceBindings = Util.safeCopy(keySequenceBindings, IKeySequenceBinding.class);
+		
+		if (!Util.equals(keySequenceBindings, this.keySequenceBindings)) {
+			this.keySequenceBindings = keySequenceBindings;
+			this.keySequenceBindingsAsArray = (IKeySequenceBinding[]) this.keySequenceBindings.toArray(new IKeySequenceBinding[this.keySequenceBindings.size()]);
+			hashCodeComputed = false;
+			hashCode = 0;
+			string = null;
+			return true;
+		}		
+	
+		return false;
+	}	
+	
 	boolean setName(String name) {
 		if (!Util.equals(name, this.name)) {
 			this.name = name;
@@ -297,31 +307,4 @@ final class Command implements ICommand {
 
 		return false;
 	}
-
-	boolean setParentId(String parentId) {
-		if (!Util.equals(parentId, this.parentId)) {
-			this.parentId = parentId;
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}		
-
-		return false;
-	}	
-	
-	boolean setPatternBindings(List patternBindings) {
-		patternBindings = Util.safeCopy(patternBindings, IPatternBinding.class);
-		
-		if (!Util.equals(patternBindings, this.patternBindings)) {
-			this.patternBindings = patternBindings;
-			this.patternBindingsAsArray = (IPatternBinding[]) this.patternBindings.toArray(new IPatternBinding[this.patternBindings.size()]);
-			hashCodeComputed = false;
-			hashCode = 0;
-			string = null;
-			return true;
-		}		
-	
-		return false;
-	}	
 }

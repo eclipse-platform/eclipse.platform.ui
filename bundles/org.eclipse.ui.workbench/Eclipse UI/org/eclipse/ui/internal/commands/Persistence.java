@@ -20,13 +20,13 @@ import java.util.TreeMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.csm.commands.ICategoryDefinition;
 import org.eclipse.ui.internal.csm.commands.ICommandDefinition;
 import org.eclipse.ui.internal.csm.commands.IContextBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IImageBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IKeyConfigurationDefinition;
+import org.eclipse.ui.internal.csm.commands.IKeySequenceBindingDefinition;
 import org.eclipse.ui.internal.keys.KeySupport;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
@@ -241,7 +241,7 @@ final class Persistence {
 		return list;				
 	}
 
-	static IKeyBindingDefinition readKeyBindingDefinition(IMemento memento, String pluginIdOverride) {
+	static IKeySequenceBindingDefinition readKeyBindingDefinition(IMemento memento, String pluginIdOverride) {
 		if (memento == null)
 			throw new NullPointerException();			
 
@@ -508,7 +508,7 @@ final class Persistence {
 			writeImageBindingDefinition(memento.createChild(name), (IImageBindingDefinition) iterator.next());
 	}
 
-	static void writeKeyBindingDefinition(IMemento memento, IKeyBindingDefinition keyBindingDefinition) {
+	static void writeKeyBindingDefinition(IMemento memento, IKeySequenceBindingDefinition keyBindingDefinition) {
 		if (memento == null || keyBindingDefinition == null)
 			throw new NullPointerException();
 
@@ -529,12 +529,12 @@ final class Persistence {
 		Iterator iterator = keyBindingDefinitions.iterator();
 
 		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), IKeyBindingDefinition.class);
+			Util.assertInstance(iterator.next(), IKeySequenceBindingDefinition.class);
 
 		iterator = keyBindingDefinitions.iterator();
 
 		while (iterator.hasNext()) 
-			writeKeyBindingDefinition(memento.createChild(name), (IKeyBindingDefinition) iterator.next());
+			writeKeyBindingDefinition(memento.createChild(name), (IKeySequenceBindingDefinition) iterator.next());
 	}
 
 	static void writeKeyConfigurationDefinition(IMemento memento, IKeyConfigurationDefinition keyConfigurationDefinition) {

@@ -13,14 +13,13 @@ package org.eclipse.ui.internal.commands;
 
 import java.util.List;
 
-import org.eclipse.ui.internal.commands.api.IKeyBindingDefinition;
-import org.eclipse.ui.internal.commands.api.IMutableCommandRegistry;
 import org.eclipse.ui.internal.csm.commands.IActiveKeyConfigurationDefinition;
 import org.eclipse.ui.internal.csm.commands.ICategoryDefinition;
 import org.eclipse.ui.internal.csm.commands.ICommandDefinition;
 import org.eclipse.ui.internal.csm.commands.IContextBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IImageBindingDefinition;
 import org.eclipse.ui.internal.csm.commands.IKeyConfigurationDefinition;
+import org.eclipse.ui.internal.csm.commands.IKeySequenceBindingDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry implements IMutableCommandRegistry {
@@ -74,7 +73,7 @@ abstract class AbstractMutableCommandRegistry extends AbstractCommandRegistry im
 	}
 	
 	public void setKeyBindingDefinitions(List keyBindingDefinitions) {
-		keyBindingDefinitions = Util.safeCopy(keyBindingDefinitions, IKeyBindingDefinition.class);	
+		keyBindingDefinitions = Util.safeCopy(keyBindingDefinitions, IKeySequenceBindingDefinition.class);	
 		
 		if (!keyBindingDefinitions.equals(this.keyBindingDefinitions)) {
 			this.keyBindingDefinitions = keyBindingDefinitions;			

@@ -11,13 +11,21 @@
 
 package org.eclipse.ui.internal.csm.commands;
 
-public interface ICommandPatternBindingDefinition extends Comparable {
+import org.eclipse.ui.keys.KeySequence;
 
+public interface IKeySequenceBindingDefinition extends Comparable {
+
+	String getActivityId();
+	
 	String getCommandId();
 
-	String getPattern();
-
-	String getPluginId();
+	String getKeyConfigurationId();	
 	
-	boolean isInclusive();
+	KeySequence getKeySequence();
+
+	String getLocale();
+	
+	String getPlatform();
+	
+	String getPluginId();
 }

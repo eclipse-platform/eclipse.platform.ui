@@ -107,11 +107,6 @@ public interface ICommandManager {
 	Set getEnabledCommandIds();	
 	
 	/**
-	 * TODO javadoc
-	 */	
-	boolean match(String string, Set commandIds);	
-	
-	/**
 	 * Unregisters an instance of <code>ICommandManagerListener</code> 
 	 * listening for changes to attributes of this instance.
 	 *
