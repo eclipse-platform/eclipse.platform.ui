@@ -33,8 +33,9 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	private static final byte[] BYTE_ARRAY_DEFAULT_DEFAULT = new byte[0];
 
 	private IEclipsePreferences pluginRoot = (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(Plugin.PLUGIN_PREFERENCE_SCOPE);
-	private IEclipsePreferences defaultsRoot = (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(DefaultScope.SCOPE);
+	private DefaultPreferences defaultsRoot = (DefaultPreferences) Platform.getPreferencesService().getRootNode().node(DefaultScope.SCOPE);
 	private String pluginID;
+	private Plugin plugin;
 
 	/**
 	 * Class to wrap property change events. Have to use a subclass since we
@@ -47,8 +48,16 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 		}
 	}
 
+	/*
+	 * Used for test suites only.
+	 */
 	public PreferenceForwarder(String pluginID) {
+		this(null, pluginID);
+	}
+
+	public PreferenceForwarder(Plugin plugin, String pluginID) {
 		super();
+		this.plugin = plugin;
 		this.pluginID = pluginID;
 		getPluginPreferences().addPreferenceChangeListener(this);
 		// TODO see bug 59975.
@@ -114,7 +123,7 @@ public class PreferenceForwarder extends Preferences implements IEclipsePreferen
 	}
 
 	private IEclipsePreferences getDefaultPreferences() {
-		return (IEclipsePreferences) defaultsRoot.node(pluginID);
+		return defaultsRoot.node(pluginID, plugin);
 	}
 
 	/**

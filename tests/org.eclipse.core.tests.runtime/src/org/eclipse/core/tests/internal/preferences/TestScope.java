@@ -11,8 +11,7 @@
 package org.eclipse.core.tests.internal.preferences;
 
 import org.eclipse.core.internal.preferences.EclipsePreferences;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -49,7 +48,7 @@ public class TestScope extends EclipsePreferences implements IScopeContext {
 		return (IEclipsePreferences) Platform.getPreferencesService().getRootNode().node(SCOPE).node(qualifier);
 	}
 
-	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {
+	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
 		return new TestScope(nodeParent, nodeName);
 	}
 

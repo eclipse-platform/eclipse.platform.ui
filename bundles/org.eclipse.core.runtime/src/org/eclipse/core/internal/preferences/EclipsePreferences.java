@@ -201,7 +201,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 					key = childPath.lastSegment();
 					IPath child = childPath.removeLastSegments(1);
 					//use internal methods to avoid notifying listeners
-					EclipsePreferences childNode = (EclipsePreferences) internalNode(child, false);
+					EclipsePreferences childNode = (EclipsePreferences) internalNode(child, false, null);
 					if (InternalPlatform.DEBUG_PREFERENCES)
 						Policy.debug("Setting preference: " + childNode.absolutePath() + '/' + key + '=' + value); //$NON-NLS-1$
 					childNode.internalPut(key, value);
@@ -244,7 +244,11 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.eclipse.core.runtime.preferences.IScope#create(org.eclipse.core.runtime.preferences.IEclipsePreferences)
 	 */
 	public IEclipsePreferences create(IEclipsePreferences nodeParent, String nodeName) {
-		EclipsePreferences result = internalCreate(nodeParent, nodeName);
+		return create(nodeParent, nodeName, null);
+	}
+
+	public IEclipsePreferences create(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
+		EclipsePreferences result = internalCreate(nodeParent, nodeName, context);
 		((EclipsePreferences) nodeParent).addChild(nodeName, result);
 		IEclipsePreferences loadLevel = result.getLoadLevel();
 
@@ -345,7 +349,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Thread safe way to obtain a child for a given key. Returns the child
 	 * that matches the given key, or null if there is no matching child
 	 */
-	protected synchronized IEclipsePreferences getChild(String key) {
+	protected synchronized IEclipsePreferences getChild(String key, Plugin context) {
 		if (children == null)
 			return null;
 		Object value = children.get(key);
@@ -353,7 +357,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			return null;
 		if (value instanceof IEclipsePreferences)
 			return (IEclipsePreferences) value;
-		value = create(this, key);
+		value = create(this, key, context);
 		addChild(key, (IEclipsePreferences) value);
 		return (IEclipsePreferences) value;
 	}
@@ -365,7 +369,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		ArrayList result = new ArrayList();
 		String[] names = internalChildNames();
 		for (int i = 0; i < names.length; i++)
-			result.add(getChild(names[i]));
+			result.add(getChild(names[i], null));
 		return (IEclipsePreferences[]) result.toArray(EMPTY_NODE_ARRAY);
 	}
 
@@ -440,7 +444,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		return result;
 	}
 
-	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {
+	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
 		return new EclipsePreferences(nodeParent, nodeName);
 	}
 
@@ -467,7 +471,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	/**
 	 * Implements the node(IPath) method, and optionally notifies listeners.
 	 */
-	protected IEclipsePreferences internalNode(IPath path, boolean notify) {
+	protected IEclipsePreferences internalNode(IPath path, boolean notify, Plugin context) {
 		// use the root relative to this node instead of the global root
 		// in case we have a different hierarchy. (e.g. export)
 		if (path.isAbsolute())
@@ -486,9 +490,9 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 		boolean added = false;
 		IEclipsePreferences child;
 		synchronized (this) {
-			child = getChild(key);
+			child = getChild(key, context);
 			if (child == null) {
-				child = create(this, key);
+				child = create(this, key, context);
 				added = true;
 			}
 		}
@@ -564,7 +568,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 					if (fullPath.isPrefixOf(childPath)) {
 						child = child.removeFirstSegments(fullPath.segmentCount());
 						//use internal methods to avoid notifying listeners
-						EclipsePreferences childNode = (EclipsePreferences) internalNode(child, false);
+						EclipsePreferences childNode = (EclipsePreferences) internalNode(child, false, null);
 						if (InternalPlatform.DEBUG_PREFERENCES)
 							Policy.debug("Setting preference: " + childNode.absolutePath() + '/' + key + '=' + value); //$NON-NLS-1$
 						childNode.internalPut(key, value);
@@ -646,14 +650,14 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.eclipse.core.runtime.IEclipsePreferences#node(org.eclipse.core.runtime.IPath)
 	 */
 	public IEclipsePreferences node(IPath path) {
-		return internalNode(path, true);
+		return internalNode(path, true, null);
 	}
 
 	/*
 	 * @see org.osgi.service.prefs.Preferences#node(java.lang.String)
 	 */
 	public Preferences node(String pathName) {
-		return internalNode(new Path(pathName), true);
+		return internalNode(new Path(pathName), true, null);
 	}
 
 	protected void nodeAdded(IEclipsePreferences child) {
@@ -692,7 +696,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 			return !removed;
 		// illegal state if this node has been removed
 		checkRemoved();
-		IEclipsePreferences child = getChild(path.segment(0));
+		IEclipsePreferences child = getChild(path.segment(0), null);
 		if (child == null)
 			return false;
 		return child.nodeExists(path.removeFirstSegments(1));

@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.preferences;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -49,9 +48,9 @@ public class RootPreferences extends EclipsePreferences {
 	}
 
 	/*
-	 * @see EclipsePreferences#getChild(String)
+	 * @see EclipsePreferences#getChild(String, Plugin)
 	 */
-	protected synchronized IEclipsePreferences getChild(String key) {
+	protected synchronized IEclipsePreferences getChild(String key, Plugin context) {
 		Object value = null;
 		IEclipsePreferences child = null;
 		if (children != null)
@@ -74,7 +73,7 @@ public class RootPreferences extends EclipsePreferences {
 		String[] childNames = childrenNames();
 		IEclipsePreferences[] childNodes = new IEclipsePreferences[childNames.length];
 		for (int i = 0; i < childNames.length; i++)
-			childNodes[i] = getChild(childNames[i]);
+			childNodes[i] = getChild(childNames[i], null);
 		return childNodes;
 	}
 
@@ -85,7 +84,7 @@ public class RootPreferences extends EclipsePreferences {
 		if (path.segmentCount() == 0)
 			return this;
 		String scope = path.segment(0);
-		IEclipsePreferences child = getChild(scope);
+		IEclipsePreferences child = getChild(scope, null);
 		if (child == null) {
 			child = new EclipsePreferences(this, scope);
 			addChild(scope, child);

@@ -14,8 +14,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 
@@ -116,7 +115,7 @@ public class ConfigurationPreferences extends EclipsePreferences {
 		}
 	}
 
-	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {
+	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
 		return new ConfigurationPreferences(nodeParent, nodeName);
 	}
 }

@@ -312,7 +312,7 @@ public abstract class Plugin implements BundleActivator {
 
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Loading preferences for plugin: " + bundle.getSymbolicName()); //$NON-NLS-1$
-		preferences = new PreferenceForwarder(bundle.getSymbolicName());
+		preferences = new PreferenceForwarder(this, bundle.getSymbolicName());
 		return preferences;
 	}
 

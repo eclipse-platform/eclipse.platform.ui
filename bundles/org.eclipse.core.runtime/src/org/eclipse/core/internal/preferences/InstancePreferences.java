@@ -217,7 +217,7 @@ public class InstancePreferences extends EclipsePreferences {
 		}
 	}
 
-	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {
+	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
 		return new InstancePreferences(nodeParent, nodeName);
 	}
 }

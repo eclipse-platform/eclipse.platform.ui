@@ -41,6 +41,7 @@ public class DefaultPreferences extends EclipsePreferences {
 	// cached values
 	private String qualifier;
 	private int segmentCount;
+	private Plugin plugin;
 
 	/**
 	 * Default constructor for this class.
@@ -49,8 +50,16 @@ public class DefaultPreferences extends EclipsePreferences {
 		this(null, null);
 	}
 
+	private DefaultPreferences(IEclipsePreferences parent, String name, Plugin context) {
+		this(parent, name);
+		this.plugin = context;
+	}
+
 	private DefaultPreferences(IEclipsePreferences parent, String name) {
 		super(parent, name);
+
+		if (parent instanceof DefaultPreferences)
+			this.plugin = ((DefaultPreferences) parent).plugin;
 
 		// get the children
 		initializeChildren();
@@ -129,7 +138,7 @@ public class DefaultPreferences extends EclipsePreferences {
 				value = translatePreference(value, translations);
 				if (InternalPlatform.DEBUG_PREFERENCES)
 					Policy.debug("Setting default preference: " + (new Path(absolutePath()).append(childPath).append(key)) + '=' + value); //$NON-NLS-1$
-				((EclipsePreferences) internalNode(childPath, false)).internalPut(key, value);
+				((EclipsePreferences) internalNode(childPath, false, null)).internalPut(key, value);
 			}
 		}
 	}
@@ -139,13 +148,17 @@ public class DefaultPreferences extends EclipsePreferences {
 		try {
 			initializer = (AbstractPreferenceInitializer) element.createExecutableExtension(ATTRIBUTE_CLASS);
 		} catch (ClassCastException e) {
-			String message = "Extension not of type IPreferenceInitializer";
+			String message = "Extension does not extend class AbstractPreferenceInitializer.";
 			IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, message, e);
 			log(status);
 		} catch (CoreException e) {
 			log(e.getStatus());
 		}
 		initializer.initializeDefaultPreferences();
+	}
+
+	public IEclipsePreferences node(String childName, Plugin context) {
+		return internalNode(new Path(childName), true, context);
 	}
 
 	/*
@@ -180,7 +193,8 @@ public class DefaultPreferences extends EclipsePreferences {
 		}
 
 		// No extension exists. Get the plug-in object and call #initializeDefaultPluginPreferences()
-		Plugin plugin = Platform.getPlugin(name());
+		if (plugin == null)
+			plugin = Platform.getPlugin(name());
 		if (plugin == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
 				Policy.debug("No plug-in object available to set plug-in default preference overrides for:" + name()); //$NON-NLS-1$
@@ -272,8 +286,8 @@ public class DefaultPreferences extends EclipsePreferences {
 		}
 	}
 
-	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName) {
-		return new DefaultPreferences(nodeParent, nodeName);
+	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent, String nodeName, Plugin context) {
+		return new DefaultPreferences(nodeParent, nodeName, context);
 	}
 
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
