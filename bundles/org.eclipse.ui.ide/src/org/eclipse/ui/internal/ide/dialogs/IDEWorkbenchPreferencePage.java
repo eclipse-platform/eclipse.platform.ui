@@ -28,7 +28,6 @@ import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
@@ -156,13 +155,6 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 	 */
 	protected IPreferenceStore getIDEPreferenceStore() {
 		return IDEWorkbenchPlugin.getDefault().getPreferenceStore();
-	}
-	
-	/**
-	 *	@see IWorkbenchPreferencePage
-	 */
-	public void init(IWorkbench aWorkbench) {
-		// do nothing
 	}
 	
 	/**
