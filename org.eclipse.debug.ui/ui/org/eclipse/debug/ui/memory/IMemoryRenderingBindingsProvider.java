@@ -60,20 +60,20 @@ public interface IMemoryRenderingBindingsProvider {
 		
     /**
      * Adds a listener to this binding provider.  The listener will be notified
-     * when the rendering bindings has changed.
-     * 
+     * when rendering bindings change.
+     * <p>
      * Has no affect if an identical listener is already registered.
-     *
-     * @param listener to add
+     * </p>
+     * @param listener listener to add
      */
 	public void addListener(IMemoryRenderingBindingsListener listener);
 	
     /**
      * Removes a listener from this binding provider.  
-     * 
-     * Has no affect if an identical listener is not registered.
-     *
-     * @param listener to remove
+     * <p>
+     * Has no affect if an identical listener is not already registered.
+     * </p>
+     * @param listener listener to remove
      */
 	public void removeListener(IMemoryRenderingBindingsListener listener);
 }

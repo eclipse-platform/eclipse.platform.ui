@@ -65,6 +65,7 @@ public interface IMemoryRenderingSynchronizationService {
     /**
      * Returns the rendering currengly providing synchronization information for
      * this synchronization service, or <code>null</code if none.
+     * 
      * @return rendering providing synchronization information or <code>null</null>
      */
     public IMemoryRendering getSynchronizationProvider(); 
