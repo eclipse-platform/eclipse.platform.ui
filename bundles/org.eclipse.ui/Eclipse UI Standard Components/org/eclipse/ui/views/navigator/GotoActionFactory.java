@@ -8,6 +8,7 @@ package org.eclipse.ui.views.navigator;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.views.internal.framelist.*;
 import org.eclipse.ui.views.navigator.*;
 
@@ -77,6 +78,10 @@ public class GotoActionFactory extends ActionFactory {
 		gotoMenu.add(forwardAction);
 		gotoMenu.add(upAction);
 		gotoMenu.add(gotoResourceAction);
+		//Add the additions for the end
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_GOTO_ADDITIONS));
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_GOTO_ADDITIONS + IWorkbenchActionConstants.MB_ADDITIONS_END));
+		
 	}
 
 	/**

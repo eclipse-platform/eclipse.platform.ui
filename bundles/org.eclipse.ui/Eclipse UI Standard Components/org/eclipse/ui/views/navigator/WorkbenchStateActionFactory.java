@@ -6,13 +6,14 @@ package org.eclipse.ui.views.navigator;
  */
 
 import org.eclipse.core.resources.*;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.views.navigator.ResourceSelectionUtil;
 
 /**
  * The WorkbenchStateActionFactory is the 
@@ -75,6 +76,9 @@ public class WorkbenchStateActionFactory
 			menu.add(rebuildAllAction);
 		}
 		menu.add(localRefreshAction);
+		
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_WORKBENCH_STATE_ADDITIONS));
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_WORKBENCH_STATE_ADDITIONS + IWorkbenchActionConstants.MB_ADDITIONS_END));
 
 	}
 

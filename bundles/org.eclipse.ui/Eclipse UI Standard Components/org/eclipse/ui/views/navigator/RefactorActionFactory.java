@@ -6,16 +6,14 @@ package org.eclipse.ui.views.navigator;
  */
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.views.navigator.*;
 import org.eclipse.ui.internal.TextActionHandler;
 
 /**
@@ -131,6 +129,10 @@ public class RefactorActionFactory
 		}
 		if (onlyFilesSelected)
 			menu.add(addBookmarkAction);
+			
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_REFACTOR_ADDITIONS));
+		menu.add(new GroupMarker(IWorkbenchActionConstants.MB_REFACTOR_ADDITIONS + IWorkbenchActionConstants.MB_ADDITIONS_END));
+
 
 	}
 	
