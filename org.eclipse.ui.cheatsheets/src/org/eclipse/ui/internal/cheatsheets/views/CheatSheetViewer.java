@@ -15,6 +15,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -480,12 +481,12 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 		layout.horizontalSpacing = 0;
 		layout.numColumns = 1;
 		control.setLayout(layout);
-		// TODO: this can be used if the ICheatSheetViewer.dispose() is removed
-//		control.addDisposeListener(new DisposeListener(){
-//			public void widgetDisposed(DisposeEvent e) {
-//				dispose();
-//			}
-//		});
+
+		control.addDisposeListener(new DisposeListener(){
+			public void widgetDisposed(DisposeEvent e) {
+				dispose();
+			}
+		});
 
 		howToBegin = new Label(control, SWT.WRAP);
 		howToBegin.setText(CheatSheetPlugin.getResourceString(ICheatSheetResource.INITIAL_VIEW_DIRECTIONS));
@@ -501,9 +502,9 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 	}
 
 	/**
-	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
+	 * Disposes of this cheat sheet viewer.
 	 */
-	public void dispose() {
+	private void dispose() {
 		if(manager != null)
 			manager.fireEvent(ICheatSheetEvent.CHEATSHEET_CLOSED);
 
@@ -513,9 +514,6 @@ public class CheatSheetViewer implements ICheatSheetViewer {
 
 		if (busyCursor != null)
 			busyCursor.dispose();
-
-		if (control != null)
-			control.dispose();
 	}
 
 	/* (non-Javadoc)

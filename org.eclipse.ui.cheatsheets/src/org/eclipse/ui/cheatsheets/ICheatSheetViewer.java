@@ -41,16 +41,15 @@ public interface ICheatSheetViewer {
 
 	/**
 	 * Creates the SWT controls for this cheat sheet viewer.
+	 * <p>
+	 * When the parent Composite is disposed, this will automatically
+	 * dispose the controls added by this viewer (and release any other 
+	 * viewer-specific state).
+	 * </p>
 	 *
 	 * @param parent the parent control
 	 */
 	public void createPartControl(Composite parent);
-
-	/**
-	 * Disposes of this cheat sheet viewer.
-	 */
-	// TODO - to may be possible to get rid of this as API method
-	public void dispose();
 
 	/**
 	 * Returns the primary control associated with this viewer.
