@@ -44,9 +44,9 @@ public class IWorkbenchTest extends UITestCase {
 	public void testGetActiveWorkbenchWindow() throws Throwable {
 		IWorkbenchWindow win1, win2;
 
-		// PR 1GkD5O0 - Fails on linux.
+		// Bug 41400 - Fails on GTK.
 		String platform = SWT.getPlatform();
-		if (platform.equals("motif"))
+		if (platform.equals("gtk"))
 			return;
 		
 		// Test initial window.
