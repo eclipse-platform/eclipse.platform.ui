@@ -144,6 +144,17 @@ public interface IWorkbenchPreferenceConstants {
 	 */
 	public static final String PRESENTATION_FACTORY_ID = "presentationFactoryId"; //$NON-NLS-1$
 
+    /**
+     * A named preference indicating where the perspective bar should be docked.
+     * The default value (when this preference is not set) is topRight.
+     *
+     * @see #TOP_RIGHT 
+     * @see #TOP_LEFT
+     * @see #LEFT
+     * @since 3.0
+     */
+    public static String DOCK_PERSPECTIVE_BAR = "DOCK_PERSPECTIVE_BAR"; //$NON-NLS-1$	
+
 	/**
 	 * A named preference indicating where the fast view bar should be docked in a
 	 * fresh workspace.  This preference is meaningless after a workspace has been
@@ -152,37 +163,54 @@ public interface IWorkbenchPreferenceConstants {
 	 * to be somewhere specific.  The default value (when this preference is not set)
 	 * is the bottom.
 	 * 
+	 * @see #LEFT
+	 * @see #BOTTOM
+	 * @see #RIGHT
 	 * @since 3.0
 	 */ 
 	public static final String INITIAL_FAST_VIEW_BAR_LOCATION = "initialFastViewBarLocation"; //$NON-NLS-1$
 
 	/**
-	 * Setting the INITIAL_FAST_VIEW_BAR_LOCATION preference to this value will cause
-	 * the fast view bar to be docked on the bottom of a fresh workspace.
-	 * 
-	 * @see #INITIAL_FAST_VIEW_BAR_LOCATION
+	 * Constant to be used when referring to the top right of the workbench window. 
+	 *
+	 * @see #DOCK_PERSPECTIVE_BAR
 	 * @since 3.0
 	 */
-	public static final String BOTTOM = "bottom"; //$NON-NLS-1$
+	public static final String TOP_RIGHT = "topRight"; //$NON-NLS-1$
 
 	/**
-	 * Setting the INITIAL_FAST_VIEW_BAR_LOCATION preference to this value will cause
-	 * the fast view bar to be docked on the left of a fresh workspace.
-	 * 
+	 * Constant to be used when referring to the top left of the workbench window. 
+	 *
+	 * @see #DOCK_PERSPECTIVE_BAR
+	 * @since 3.0
+	 */
+	public static final String TOP_LEFT = "topLeft"; //$NON-NLS-1$
+
+	/**
+	 * Constant to be used when referring to the left side of the workbench window. 
+	 *
+	 * @see #DOCK_PERSPECTIVE_BAR
 	 * @see #INITIAL_FAST_VIEW_BAR_LOCATION
 	 * @since 3.0
 	 */
 	public static final String LEFT = "left"; //$NON-NLS-1$
 
 	/**
-	 * Setting the INITIAL_FAST_VIEW_BAR_LOCATION preference to this value will cause
-	 * the fast view bar to be docked on the right of a fresh workspace.
+	 * Constant to be used when referring to the bottom of the workbench window. 
+	 *
 	 * @see #INITIAL_FAST_VIEW_BAR_LOCATION
-	 * 
+	 * @since 3.0
+	 */
+	public static final String BOTTOM = "bottom"; //$NON-NLS-1$
+
+	/**
+	 * Constant to be used when referring to the right side of the workbench window. 
+	 *
+	 * @see #INITIAL_FAST_VIEW_BAR_LOCATION
 	 * @since 3.0
 	 */
 	public static final String RIGHT = "right"; //$NON-NLS-1$
-	
+
     /**
      * A named preference indicating whether the workbench should show the 
      * introduction component (if available) on startup.
@@ -211,20 +239,6 @@ public interface IWorkbenchPreferenceConstants {
     public static String SHOW_TRADITIONAL_STYLE_TABS = "SHOW_TRADITIONAL_STYLE_TABS"; //$NON-NLS-1$
 
     /**
-     * A named preference for whether the workbench perspective bar should be docked in the 
-     * main toolbar. 
-     * 
-     * Boolean-valued: <code>true</code>, if bar should be docked in the main toolbar,
-     * <code>false</code> otherwise.
-     * <p>
-     * The default value for this preference is: <code>true</code>
-     * </p>
-     * 
-     * @since 3.0
-     */
-    public static String DOCK_PERSPECTIVE_BAR = "DOCK_PERSPECTIVE_BAR"; //$NON-NLS-1$	
-
-    /**
      * A named preference for whether the workbench should show text 
      * on the perspective bar. 
      * 
@@ -237,5 +251,4 @@ public interface IWorkbenchPreferenceConstants {
      * @since 3.0
      */
     public static String SHOW_TEXT_ON_PERSPECTIVE_BAR = "SHOW_TEXT_ON_PERSPECTIVE_BAR"; //$NON-NLS-1$	
-	
 }

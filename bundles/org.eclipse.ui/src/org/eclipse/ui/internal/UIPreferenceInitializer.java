@@ -43,7 +43,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 		// Appearance / Presentation preferences
 		store.setDefault(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID, "org.eclipse.ui.presentations.default"); //$NON-NLS-1$
 		store.setDefault(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, true);
-		store.setDefault(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, true);
+	    store.setDefault(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, IWorkbenchPreferenceConstants.TOP_LEFT);
 		store.setDefault(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR, true);
 		// the fast view bar should be on the bottom of a fresh workspace
 		store.setDefault(
