@@ -46,7 +46,7 @@ import org.eclipse.ui.IEditorPart;
  * <ul>
  * <li><code>id</code> specifies a unique identifier for this launch shortcut.</li>
  * <li><code>class</code> specifies a fully qualified name of a Java class
- *  that implements <code>ILanuchShortcut</code>.</li>
+ *  that implements <code>IlaunchShortcut</code>.</li>
  * <li><code>label</code> specifies a label used to render this shortcut.</li>
  * <li><code>icon</code> specifies a plug-in relative path to an icon used to
  * 	render this shortcut.</li>

@@ -124,7 +124,7 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 	/**
 	 * Returns the run tab.
 	 * 
-	 * @return a lanuch history preference tab
+	 * @return a launch history preference tab
 	 */
 	protected LaunchHistoryPreferenceTab getRunTab() {
 		return fRunTab;
@@ -133,7 +133,7 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 	/**
 	 * Sets the run tab.
 	 * 
-	 * @param tab lanuch history preference tab
+	 * @param tab launch history preference tab
 	 */
 	private void setRunTab(LaunchHistoryPreferenceTab tab) {
 		fRunTab = tab;
@@ -142,7 +142,7 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 	/**
 	 * Returns the debug tab.
 	 * 
-	 * @return a lanuch history preference tab
+	 * @return a launch history preference tab
 	 */
 	protected LaunchHistoryPreferenceTab getDebugTab() {
 		return fDebugTab;
@@ -151,7 +151,7 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 	/**
 	 * Sets the debug tab.
 	 * 
-	 * @param tab lanuch history preference tab
+	 * @param tab launch history preference tab
 	 */
 	private void setDebugTab(LaunchHistoryPreferenceTab tab) {
 		fDebugTab = tab;
