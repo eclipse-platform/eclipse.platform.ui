@@ -1094,6 +1094,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 			// is already disposed
 			return;
 		}
+		
 		ReusableRegion range= new ReusableRegion();
 
 		int vOffset= getInclusiveTopIndexStartOffset();
