@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -29,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -58,6 +60,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -79,6 +82,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -109,6 +113,7 @@ import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.text.source.VerticalRuler;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
@@ -1944,7 +1949,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * default implementation remembers the textual range only and is thus purely
 	 * syntactic.</p>
 	 * 
-	 * @see #restoreSelection
+	 * @see #restoreSelection()
 	 * @since 2.0
 	 */
 	protected void rememberSelection() {
@@ -1969,7 +1974,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * remembered selection. This default implementation just selects the
 	 * remembered textual range. 
 	 * 
-	 * @see #rememberSelection
+	 * @see #rememberSelection()
 	 * @since 2.0
 	 */
 	protected void restoreSelection() {
