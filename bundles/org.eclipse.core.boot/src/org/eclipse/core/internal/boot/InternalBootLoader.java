@@ -518,9 +518,10 @@ private static String[] initialize(URL pluginPathLocation, String location, Stri
 	plugins = pluginPathLocation;
 	baseLocation = location;
 	String[] appArgs = processCommandLine(args);
+	// Do setupSystemContext() ASAP after processCommandLine
+	setupSystemContext();
 	// setup the devClassPath if any
 	DelegatingURLClassLoader.devClassPath = devClassPath;
-	setupSystemContext();
 
 	// if a platform location was not found in the arguments, compute one.		
 	if (baseLocation == null) {

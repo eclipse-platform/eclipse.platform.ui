@@ -167,6 +167,9 @@ private static void debugStartup(String s) {
 
 	System.out.println("URL "+s);
 }
+public URL[] getAuxillaryURLs () throws IOException {
+	return null;
+}
 public synchronized InputStream getInputStream() throws IOException {
 	if (!connected) connect();
 	return connection.getInputStream();

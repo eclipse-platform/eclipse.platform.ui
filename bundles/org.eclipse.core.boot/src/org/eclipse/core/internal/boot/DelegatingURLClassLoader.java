@@ -42,7 +42,12 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 	public static String[] DEBUG_FILTER_RESOURCE = new String[0];
 	public static String[] DEBUG_FILTER_NATIVE = new String[0];
 	
+	public static final String PLUGIN = "plugin";
+
 	private static boolean isHotSwapEnabled = InternalBootLoader.inDevelopmentMode() & ((VM.class.getModifiers() & java.lang.reflect.Modifier.ABSTRACT) == 0);
+	
+	private static String[] JAR_VARIANTS = buildJarVariants();
+	private static String[] LIBRARY_VARIANTS = buildLibraryVariants();
 
 	// DelegateLoader. Represents a single class loader this loader delegates to.
 	protected static class DelegateLoader {
@@ -121,6 +126,40 @@ public abstract class DelegatingURLClassLoader extends URLClassLoader {
 			}
 		}
 	}
+	
+private static String[] buildJarVariants() {
+	ArrayList result = new ArrayList();
+	
+	result.add("ws/" + InternalBootLoader.getWS() + "/");
+	result.add("os/" + InternalBootLoader.getOS() + "/" + System.getProperty("os.arch") + "/");
+	result.add("os/" + InternalBootLoader.getOS() + "/");
+	String nl = InternalBootLoader.getNL();
+	nl = nl.replace('_', '/');
+	while (nl.length() > 0) {
+		result.add("nl/" + nl + "/");
+		int i = nl.lastIndexOf('/');
+		nl = (i < 0) ? "" : nl.substring(0, i);
+	}
+	result.add("");
+	return (String[])result.toArray(new String[result.size()]);
+}
+
+private static String[] buildLibraryVariants() {
+	ArrayList result = new ArrayList();
+	
+	result.add("ws/" + InternalBootLoader.getWS() + "/");
+	result.add("os/" + InternalBootLoader.getOS() + "/" + System.getProperty("os.arch") + "/");
+	result.add("os/" + InternalBootLoader.getOS() + "/");
+	String nl = InternalBootLoader.getNL();
+	nl = nl.replace('_', '/');
+	while (nl.length() > 0) {
+		result.add("nl/" + nl + "/");
+		int i = nl.lastIndexOf('/');
+		nl = (i < 0) ? "" : nl.substring(0, i);
+	}
+	result.add ("");
+	return (String[])result.toArray(new String[result.size()]);
+}
 
 public DelegatingURLClassLoader(URL[] codePath, URLContentFilter[] codeFilters, URL[] resourcePath, URLContentFilter[] resourceFilters, ClassLoader parent) {
 
@@ -217,44 +256,6 @@ private static URL[] mungeJarURLs(URL[] urls) {
 	return urls;
 }
 
-/**
- * Returns the absolute path name of a native library. The VM
- * invokes this method to locate the native libraries that belong
- * to classes loaded with this class loader. If this method returns
- * <code>null</code>, the VM searches the library along the path
- * specified as the <code>java.library.path</code> property.
- *
- * @param      libname   the library name
- * @return     the absolute path of the native library
- */
-protected String basicFindLibrary(String libName) {
-	if (DEBUG && DEBUG_SHOW_ACTIONS && debugNative(libName))
-		debug("findLibrary(" + libName + ")");
-	if (base == null)
-		return null;
-	File libFile = null;
-	if (base.getProtocol().equals(PlatformURLHandler.FILE) || base.getProtocol().equals(PlatformURLHandler.VA)) {
-		// directly access library	
-		String libFileName = (base.getFile() + libName).replace('/', File.separatorChar);
-		libFile = new File(libFileName);
-	} else
-		if (base.getProtocol().equals(PlatformURLHandler.PROTOCOL))
-			// access library through eclipse URL
-			libFile = getNativeLibraryAsLocal(libName);
-
-	if (libFile == null)
-		return null;
-	if (!libFile.exists()) {
-		if (DEBUG && DEBUG_SHOW_FAILURE && debugNative(libName))
-			debug("not found " + libName);
-		return null; // can't find the file
-	}
-
-	if (DEBUG && DEBUG_SHOW_SUCCESS && debugNative(libName))
-		debug("found " + libName + " as " + libFile.getAbsolutePath());
-
-	return libFile.getAbsolutePath();
-}
 /**
  * Returns the given class or <code>null</code> if the class is not visible to the
  * given requestor.  The <code>inCache</code> flag controls how this action is
@@ -439,41 +440,46 @@ protected Class findClassPrerequisites(final String name, DelegatingURLClassLoad
 protected URL findClassResource(String name) {
 	return super.findResource(name);
 }
+/**
+ * Returns the absolute path name of a native library. The VM
+ * invokes this method to locate the native libraries that belong
+ * to classes loaded with this class loader. If this method returns
+ * <code>null</code>, the VM searches the library along the path
+ * specified as the <code>java.library.path</code> property.
+ *
+ * @param      libname   the library name
+ * @return     the absolute path of the native library
+ */
 protected String findLibrary(String libName) {
 	if (libName.length() == 0)
 		return null;
 	if (libName.charAt(0) == '/' || libName.charAt(0) == '\\')
 		libName = libName.substring(1);
 	libName = System.mapLibraryName(libName);
-	String result;
-	result = basicFindLibrary(libName);
-	if (result != null)
-		return result;
-	result = basicFindLibrary("ws/" + InternalBootLoader.getWS() + "/" + libName);
-	if (result != null)
-		return result;
-	result = basicFindLibrary("os/" + InternalBootLoader.getOS() + "/" + libName);
-	if (result != null)
-		return result;
-	return findLibraryNL(libName);
-}
-/**
- * Scan all the possible NL-based locations in which there might be a 
- * requested library.
- */
-private String findLibraryNL(String libName) {
-	String nl = InternalBootLoader.getNL();
-	String result = null;
-	while (result == null && nl.length() > 0) {
-		String location = "nl/" + nl + libName;
-		result = basicFindLibrary(location);
-		int i = nl.lastIndexOf('_');
-		if (i < 0)
-			nl = "";
-		else
-			nl = nl.substring(0, i);
+
+	if (DEBUG && DEBUG_SHOW_ACTIONS && debugNative(libName))
+		debug("findLibrary(" + libName + ")");
+	if (base == null)
+		return null;
+	String libFileName = null;
+	if (base.getProtocol().equals(PlatformURLHandler.FILE) || base.getProtocol().equals(PlatformURLHandler.VA)) {
+		// directly access library	
+		libFileName = (base.getFile() + libName).replace('/', File.separatorChar);
+	} else {
+		if (base.getProtocol().equals(PlatformURLHandler.PROTOCOL)) {
+			URL[] searchList = getSearchURLs (base);
+			if ((searchList != null) && (searchList.length != 0)) {
+				URL foundPath = searchVariants(searchList, LIBRARY_VARIANTS, libName);
+				if (foundPath != null) 
+					libFileName = foundPath.getFile();
+			}
+		}
 	}
-	return result;
+
+	if (libFileName == null)
+		return null;
+		
+	return new File(libFileName).getAbsolutePath();
 }
 /**
  * Finds the resource with the specified name on the URL search path.
@@ -573,16 +579,92 @@ protected String getFileFromURL(URL target) {
 	}
 	return null;
 }
-private File getNativeLibraryAsLocal(String osname) {
-	File result = null;
+private File[] getNativeLibraryAsLocal(String osname) {
+	URL[] tempResult = null;
+	File[] result = null;
+
 	try {
 		URL liburl = new URL(base, osname);
 		PlatformURLConnection c = (PlatformURLConnection) liburl.openConnection();
 		URL localName = c.getURLAsLocal();
-		result = new File(localName.getFile());
+		tempResult = c.getAuxillaryURLs();
+		int tempLength = (tempResult == null) ? 0 : tempResult.length;
+	
+		result = new File[tempLength + 1];	
+		result[0] = new File(localName.getFile());
+		
+		// Now add the fragment URLs to the result
+		for (int i = 1; i < result.length; i++) {
+			liburl = new URL(tempResult[i-1], osname);
+			c = (PlatformURLConnection) liburl.openConnection();
+			localName = c.getURLAsLocal();
+			result[i] = new File(localName.getFile());
+		}
 	} catch (IOException e) {
+		// Why don't we do anything with this exception??
 	}
+	
 	return result;
+}
+
+private URL[] getSearchURLs (URL base) {
+	URL[] auxList = null;
+	ArrayList result = new ArrayList();
+
+	PlatformURLConnection c = null;
+	try {
+		c = (PlatformURLConnection) base.openConnection();
+		result.add(c.getURLAsLocal());
+	} catch (IOException e) {
+		// Catch intentionally left empty.  Skip 
+		// poorly formed URLs
+	}
+
+	try {
+		auxList = c.getAuxillaryURLs();
+		int auxLength = (auxList == null) ? 0 : auxList.length;
+	
+		// Now add the fragment URLs to the result
+		for (int i = 0; i < auxLength; i++) {
+			try {
+				c = (PlatformURLConnection) auxList[i].openConnection();
+				result.add(c.getURLAsLocal());
+			} catch (IOException e) {
+				// Catch intentionally left empty.  Skip 
+				// poorly formed URLs
+			}
+		}
+	} catch (IOException e) {
+		// Catch intentionally left empty.  Skip 
+		// poorly formed URLs
+	}
+	
+	return (URL[])result.toArray(new URL[result.size()]);
+}
+
+private URL searchVariants (URL[] basePaths, String[] variants, String path) {
+	// This method assumed basePaths are 'resolved' URLs
+	for (int i = 0; i < variants.length; i++) {
+		for (int j = 0; j < basePaths.length; j++) {
+			String fileName = basePaths[j].getFile() + variants[i] + path;
+			File file = new File(fileName);
+			if (!file.exists()) {
+				if (DEBUG && DEBUG_SHOW_FAILURE)
+					debug("not found " + path);
+			} else {	
+				if (DEBUG && DEBUG_SHOW_SUCCESS)
+					debug("found " + path + " as " + file.getAbsolutePath());
+				try {
+					return new URL ("file:" + fileName);
+				} catch (MalformedURLException e) {
+					// Intentionally ignore this exception
+					// so we continue looking for a matching
+					// URL.
+				}
+			}		
+		}
+	}
+	return null;
 }
 public URL getResource(String name) {
 	if (DEBUG && DEBUG_SHOW_ACTIONS && debugResource(name))
