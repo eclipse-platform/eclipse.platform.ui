@@ -556,4 +556,17 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		}
 		return null;
 	}
+    
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.wizard.IWizardPage#isPageComplete()
+     */
+    public boolean isPageComplete() {
+        // check if all jobs have a target site set
+        for (int i = 0; jobs != null && i < jobs.length; i++) {
+            if (jobs[i].getTargetSite() == null)
+                return false;
+        }
+        return super.isPageComplete();
+    }
 }
