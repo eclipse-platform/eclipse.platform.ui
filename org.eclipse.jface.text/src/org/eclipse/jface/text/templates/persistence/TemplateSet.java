@@ -19,6 +19,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -82,7 +84,7 @@ public class TemplateSet {
 
 		try {
 			stream= new FileInputStream(file);
-			addFromStream(stream, allowDuplicates, false);
+			addFromStream(stream, allowDuplicates, false, null);
 
 		} catch (IOException e) {
 			throwReadException(e);
@@ -103,7 +105,7 @@ public class TemplateSet {
 	/**
 	 * Reads templates from a XML stream and adds them to the templates
 	 */	
-	public void addFromStream(InputStream stream, boolean allowDuplicates, boolean doTranslations) throws CoreException {
+	public void addFromStream(InputStream stream, boolean allowDuplicates, boolean doTranslations, ResourceBundle bundle) throws CoreException {
 		try {
 			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
 			DocumentBuilder parser= factory.newDocumentBuilder();		
@@ -122,7 +124,7 @@ public class TemplateSet {
 				String name= getAttributeValue(attributes, NAME_ATTRIBUTE);
 				String description= getAttributeValue(attributes, DESCRIPTION_ATTRIBUTE);
 				if (doTranslations) {
-					description= translateString(description);
+					description= translateString(description, bundle);
 				} 
 				String context= getAttributeValue(attributes, CONTEXT_ATTRIBUTE);
 				Node enabledNode= attributes.getNamedItem(ENABLED_ATTRIBUTE);
@@ -141,7 +143,7 @@ public class TemplateSet {
 				}
 				String pattern= buffer.toString().trim();
 				if (doTranslations) {
-					pattern= translateString(pattern);
+					pattern= translateString(pattern, bundle);
 				}				
 
 				Template template= new Template(name, description, context, pattern);
@@ -169,7 +171,7 @@ public class TemplateSet {
 		}
 	}
 	
-	private String translateString(String str) {
+	private String translateString(String str, ResourceBundle bundle) {
 		int idx= str.indexOf('%');
 		if (idx == -1) {
 			return str;
@@ -182,13 +184,24 @@ public class TemplateSet {
 				// loop
 			}
 			String key= str.substring(idx + 1, k);
-			buf.append(TemplateMessages.getString(key));
+			buf.append(getBundleString(key, bundle));
 			idx= str.indexOf('%', k);
 		}
 		buf.append(str.substring(k));
 		return buf.toString();
 	}
 	
+	private String getBundleString(String key, ResourceBundle bundle) {
+		if (bundle != null) {
+			try {
+				return bundle.getString(key);
+			} catch (MissingResourceException e) {
+				return '!' + key + '!';
+			}
+		} else
+			return TemplateMessages.getString(key); // default messages
+	}
+
 	protected String validateTemplate(Template template) throws CoreException {
 		ContextType type= ContextTypeRegistry.getInstance().getContextType(template.getContextTypeName());
 		if (type == null) {
