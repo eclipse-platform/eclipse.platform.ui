@@ -65,7 +65,7 @@ public class AnnotationPreference {
 	 * Constant defining squiggly decoration for the show in text style preference.
 	 * @since 3.0
 	 */
-	public static final String STYLE_SQUIGGLIES= "SQUIGGLIES"; //$NON-NLS-1$
+	public static final String STYLE_SQUIGGLES= "SQUIGGLES"; //$NON-NLS-1$
 	/** 
 	 * Constant defining box decoration for the show in text style preference.
 	 * @since 3.0
@@ -803,7 +803,7 @@ public class AnnotationPreference {
 	 */
 	public void setTextStyleValue(String value) {
 		if (!STYLE_NONE.equals(value) && !STYLE_BOX.equals(value)
-				&& !STYLE_IBEAM.equals(value) && !STYLE_SQUIGGLIES.equals(value)
+				&& !STYLE_IBEAM.equals(value) && !STYLE_SQUIGGLES.equals(value)
 				&& !STYLE_UNDERLINE.equals(value))
 			throw new IllegalArgumentException();
 		

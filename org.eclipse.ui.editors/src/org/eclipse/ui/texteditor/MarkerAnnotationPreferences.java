@@ -328,7 +328,7 @@ public class MarkerAnnotationPreferences {
 
 			if (AnnotationPreference.STYLE_BOX.equals(s)
 					|| AnnotationPreference.STYLE_IBEAM.equals(s) 
-					|| AnnotationPreference.STYLE_SQUIGGLIES.equals(s)
+					|| AnnotationPreference.STYLE_SQUIGGLES.equals(s)
 					|| AnnotationPreference.STYLE_UNDERLINE.equals(s))
 				info.setTextStyleValue(s);
 			else

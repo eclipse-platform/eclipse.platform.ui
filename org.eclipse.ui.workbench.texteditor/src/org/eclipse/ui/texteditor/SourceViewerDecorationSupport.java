@@ -152,10 +152,10 @@ public class SourceViewerDecorationSupport {
 	private static IDrawingStrategy fgIBeamStrategy= new IBeamStrategy();
 	
 	/**
-	 * The squigglies drawing strategy.
+	 * The squiggles drawing strategy.
 	 * @since 3.0
 	 */
-	private static IDrawingStrategy fgSquiggliesStrategy= new AnnotationPainter.SquiggliesStrategy();
+	private static IDrawingStrategy fgSquigglesStrategy= new AnnotationPainter.SquigglesStrategy();
 	
 	/*
 	 * @see IPropertyChangeListener
@@ -312,7 +312,7 @@ public class SourceViewerDecorationSupport {
 					return fPreferenceStore.getString(key);
 				else
 					// legacy
-					return AnnotationPreference.STYLE_SQUIGGLIES;
+					return AnnotationPreference.STYLE_SQUIGGLES;
 			}
 		}
 		return AnnotationPreference.STYLE_NONE;
@@ -781,7 +781,7 @@ public class SourceViewerDecorationSupport {
 		// TODO add extension point for drawing strategies?
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_BOX, fgBoxStrategy);
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_NONE, fgNullStrategy);
-		painter.addDrawingStrategy(AnnotationPreference.STYLE_SQUIGGLIES, fgSquiggliesStrategy);
+		painter.addDrawingStrategy(AnnotationPreference.STYLE_SQUIGGLES, fgSquigglesStrategy);
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_UNDERLINE, fgUnderlineStrategy);
 		painter.addDrawingStrategy(AnnotationPreference.STYLE_IBEAM, fgIBeamStrategy);
 		

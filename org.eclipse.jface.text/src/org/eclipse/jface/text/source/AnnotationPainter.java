@@ -79,7 +79,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * 
 	 * @since 3.0
 	 */
-	public static class SquiggliesStrategy implements IDrawingStrategy {
+	public static class SquigglesStrategy implements IDrawingStrategy {
 		/**
 		 * {@inheritdoc}
 		 */
@@ -172,12 +172,12 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * The squiggly painter strategy.
 	 * @since 3.0
 	 */
-	private static final IDrawingStrategy fgSquigglyDrawer= new SquiggliesStrategy();
+	private static final IDrawingStrategy fgSquigglyDrawer= new SquigglesStrategy();
 	/** 
-	 * The squigglies painter id. 
+	 * The squiggles painter id. 
 	 * @since 3.0
 	 */
-	private static final Object SQUIGGLIES= new Object();
+	private static final Object SQUIGGLES= new Object();
 	/**
 	 * The default strategy that does nothing.
 	 * @since 3.0
@@ -295,8 +295,8 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		fAnnotationAccess= access;
 		fTextWidget= sourceViewer.getTextWidget();
 		
-		// default drawing strategies: squigglies are the only pre-3.0 drawing style,
-		fRegisteredDrawingStrategies.put(SQUIGGLIES, fgSquigglyDrawer);
+		// default drawing strategies: squiggles are the only pre-3.0 drawing style,
+		fRegisteredDrawingStrategies.put(SQUIGGLES, fgSquigglyDrawer);
 	}
 	
 	/** 
@@ -836,7 +836,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 * @param annotationType the annotation type
 	 */
 	public void addAnnotationType(Object annotationType) {
-		addAnnotationType(annotationType, SQUIGGLIES);
+		addAnnotationType(annotationType, SQUIGGLES);
 	}
 	
 	/**
