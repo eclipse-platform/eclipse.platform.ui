@@ -15,9 +15,8 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
-public class TeamPrivateMemberTest extends EclipseWorkspaceTest {
+public class TeamPrivateMemberTest extends ResourceTest {
 	public TeamPrivateMemberTest() {
 		super();
 	}

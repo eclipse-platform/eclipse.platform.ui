@@ -18,9 +18,8 @@ import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
-public class CharsetTest extends EclipseWorkspaceTest {
+public class CharsetTest extends ResourceTest {
 	private static final String SAMPLE_XML_DEFAULT_ENCODING = "<?xml version=\"1.0\"?><org.eclipse.core.resources.tests.root/>";
 	private static final String SAMPLE_XML_US_ASCII_ENCODING = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><org.eclipse.core.resources.tests.root/>";
 	private static final String SAMPLE_XML_UTF_8_ENCODING = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.resources.tests.root/>";

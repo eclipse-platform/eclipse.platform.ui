@@ -16,9 +16,9 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class NLTest extends EclipseWorkspaceTest {
+public class NLTest extends ResourceTest {
 
 	public NLTest() {
 		super();

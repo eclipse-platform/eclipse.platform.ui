@@ -16,7 +16,7 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.tests.harness.CorePerformanceTest;
+import org.eclipse.core.tests.resources.CorePerformanceTest;
 
 public class BenchWorkspace extends CorePerformanceTest {
 	IProject project;
@@ -109,7 +109,7 @@ public class BenchWorkspace extends CorePerformanceTest {
 	}
 
 	/**
-	 * @see EclipseWorkspaceTest#setUp()
+	 * @see ResourceTest#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();

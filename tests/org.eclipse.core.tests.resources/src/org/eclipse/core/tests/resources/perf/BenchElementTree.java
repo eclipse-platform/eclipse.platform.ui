@@ -17,7 +17,7 @@ import org.eclipse.core.internal.watson.DefaultElementComparator;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.tests.harness.CorePerformanceTest;
+import org.eclipse.core.tests.resources.CorePerformanceTest;
 
 /**
  * Benchmarks for <code>ElementTree</code>.

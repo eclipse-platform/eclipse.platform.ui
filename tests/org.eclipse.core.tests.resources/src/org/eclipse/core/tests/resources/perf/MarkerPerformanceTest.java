@@ -14,7 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.CorePerformanceTest;
+import org.eclipse.core.tests.resources.CorePerformanceTest;
 
 public class MarkerPerformanceTest extends CorePerformanceTest {
 	IProject project;
@@ -90,7 +90,7 @@ public class MarkerPerformanceTest extends CorePerformanceTest {
 	}
 
 	/**
-	 * @see EclipseWorkspaceTest#setUp()
+	 * @see ResourceTest#setUp()
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();

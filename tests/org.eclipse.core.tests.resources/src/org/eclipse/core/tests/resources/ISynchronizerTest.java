@@ -19,10 +19,9 @@ import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.watson.IPathRequestor;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 //
-public class ISynchronizerTest extends EclipseWorkspaceTest {
+public class ISynchronizerTest extends ResourceTest {
 	public static int NUMBER_OF_PARTNERS = 100;
 	public IResource[] resources;
 

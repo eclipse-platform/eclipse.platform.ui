@@ -27,13 +27,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.CancelingProgressMonitor;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.core.tests.harness.TestBarrier;
+import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
  * Tests concurrency issues when dealing with operations on the worspace
  */
-public class WorkspaceConcurrencyTest extends EclipseWorkspaceTest {
+public class WorkspaceConcurrencyTest extends ResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(WorkspaceConcurrencyTest.class);

@@ -16,7 +16,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 import org.eclipse.osgi.service.environment.Constants;
 
 /**
@@ -24,7 +24,7 @@ import org.eclipse.osgi.service.environment.Constants;
  * its children could not be deleted for some reason. These platform-
  * specific test cases ensure that it does not happen.
  */
-public class Bug_26294 extends EclipseWorkspaceTest {
+public class Bug_26294 extends ResourceTest {
 
 	public Bug_26294(String name) {
 		super(name);
@@ -475,7 +475,7 @@ public class Bug_26294 extends EclipseWorkspaceTest {
 	}
 
 	/**
-	 * @see org.eclipse.core.tests.harness.EclipseWorkspaceTest#tearDown()
+	 * @see org.eclipse.core.tests.harness.ResourceTest#tearDown()
 	 */
 	protected void tearDown() throws Exception {
 		super.tearDown();

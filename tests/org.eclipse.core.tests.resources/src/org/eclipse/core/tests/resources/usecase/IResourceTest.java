@@ -13,9 +13,9 @@ package org.eclipse.core.tests.resources.usecase;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public abstract class IResourceTest extends EclipseWorkspaceTest {
+public abstract class IResourceTest extends ResourceTest {
 	public static QualifiedName Q_NAME_SESSION = new QualifiedName("prop", "session");
 	public static String STRING_VALUE = "value";
 	public static String PROJECT = "Project";

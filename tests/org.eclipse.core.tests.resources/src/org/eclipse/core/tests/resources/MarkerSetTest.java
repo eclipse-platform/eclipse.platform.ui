@@ -15,9 +15,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
-public class MarkerSetTest extends EclipseWorkspaceTest {
+public class MarkerSetTest extends ResourceTest {
 
 	/**
 	 * Need a zero argument constructor to satisfy the test harness.

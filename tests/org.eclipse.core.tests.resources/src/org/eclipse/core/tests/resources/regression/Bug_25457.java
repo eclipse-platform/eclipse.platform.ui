@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 import org.eclipse.osgi.service.environment.Constants;
 
 /**
@@ -25,7 +25,7 @@ import org.eclipse.osgi.service.environment.Constants;
  * that is only a case change, where the move fails due to another handle being
  * open on a file in the hierarchy, would cause deletion of the source.
  */
-public class Bug_25457 extends EclipseWorkspaceTest {
+public class Bug_25457 extends ResourceTest {
 	public static Test suite() {
 		return new TestSuite(Bug_25457.class);
 	}

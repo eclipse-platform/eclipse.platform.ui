@@ -19,14 +19,14 @@ import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 import org.eclipse.osgi.service.environment.Constants;
 
 /**
  * When moving a resource "x" from parent "a" to parent "b", if "x" or any of 
  * its children can't be deleted, both "a" and "b" become out-of-sync and resource info is lost.
  */
-public class Bug_32076 extends EclipseWorkspaceTest {
+public class Bug_32076 extends ResourceTest {
 
 	public Bug_32076() {
 		super("");

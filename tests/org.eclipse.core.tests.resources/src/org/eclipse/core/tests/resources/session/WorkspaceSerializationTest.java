@@ -11,7 +11,7 @@
 package org.eclipse.core.tests.resources.session;
 
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.tests.harness.WorkspaceSessionTest;
+import org.eclipse.core.tests.resources.WorkspaceSessionTest;
 
 public class WorkspaceSerializationTest extends WorkspaceSessionTest {
 	protected static final String PROJECT = "CrashProject";

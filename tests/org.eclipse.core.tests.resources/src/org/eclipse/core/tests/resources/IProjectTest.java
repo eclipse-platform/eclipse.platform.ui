@@ -16,10 +16,9 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.osgi.service.environment.Constants;
 
-public class IProjectTest extends EclipseWorkspaceTest {
+public class IProjectTest extends ResourceTest {
 	public IProjectTest() {
 		super();
 	}

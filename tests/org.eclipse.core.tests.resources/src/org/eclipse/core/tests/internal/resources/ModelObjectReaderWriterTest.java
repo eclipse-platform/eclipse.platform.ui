@@ -20,13 +20,13 @@ import org.eclipse.core.internal.plugins.PluginDescriptor;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 import org.xml.sax.InputSource;
 
 /**
  * 
  */
-public class ModelObjectReaderWriterTest extends EclipseWorkspaceTest {
+public class ModelObjectReaderWriterTest extends ResourceTest {
 	private static final boolean WINDOWS = Platform.getOS().equals(Platform.OS_WIN32);
 	static final IPath LONG_LOCATION = new Path("/eclipse/dev/i0218/eclipse/pffds/fds//fds///fdsfsdfsd///fdsfdsf/fsdfsdfsd/lugi/dsds/fsd//f/ffdsfdsf/fsdfdsfsd/fds//fdsfdsfdsf/fdsfdsfds/fdsfdsfdsf/fdsfdsfdsds/ns/org.eclipse.help.ui_2.1.0/contexts.xml").setDevice(WINDOWS ? "D:" : null);
 

@@ -16,9 +16,9 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public abstract class LocalStoreTest extends EclipseWorkspaceTest {
+public abstract class LocalStoreTest extends ResourceTest {
 	// test configuration attributes
 	protected static int numberOfProjects = 3;
 	protected static int numberOfProperties = 5;

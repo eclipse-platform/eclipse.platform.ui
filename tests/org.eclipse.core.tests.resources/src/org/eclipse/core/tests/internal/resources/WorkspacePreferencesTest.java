@@ -15,9 +15,9 @@ import junit.framework.*;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class WorkspacePreferencesTest extends EclipseWorkspaceTest {
+public class WorkspacePreferencesTest extends ResourceTest {
 	private IWorkspace workspace;
 	private Preferences preferences;
 

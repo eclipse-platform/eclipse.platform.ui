@@ -20,7 +20,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.*;
 
-public class IResourceTest extends EclipseWorkspaceTest {
+public class IResourceTest extends ResourceTest {
 	protected static final Boolean[] FALSE_AND_TRUE = new Boolean[] {Boolean.FALSE, Boolean.TRUE};
 	protected static IPath[] interestingPaths;
 	protected static IResource[] interestingResources;

@@ -17,14 +17,14 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
  * Tests regression of bug 25457.  In this case, attempting to move a project
  * that is only a case change, where the move fails due to another handle being
  * open on a file in the hierarchy, would cause deletion of the source.
  */
-public class Bug_29851 extends EclipseWorkspaceTest {
+public class Bug_29851 extends ResourceTest {
 
 	public static Test suite() {
 		return new TestSuite(Bug_29851.class);

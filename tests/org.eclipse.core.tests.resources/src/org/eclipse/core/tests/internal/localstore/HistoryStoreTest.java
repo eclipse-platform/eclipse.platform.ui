@@ -22,13 +22,13 @@ import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
  * This class defines all tests for the HistoryStore Class.
  */
 
-public class HistoryStoreTest extends EclipseWorkspaceTest {
+public class HistoryStoreTest extends ResourceTest {
 
 	class VerificationFailedException extends Exception {
 		/**

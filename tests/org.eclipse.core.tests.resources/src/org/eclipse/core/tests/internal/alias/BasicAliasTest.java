@@ -18,13 +18,13 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
  * Tests basic API methods in the face of aliased resources, and ensures that
  * nothing is ever out of sync.
  */
-public class BasicAliasTest extends EclipseWorkspaceTest {
+public class BasicAliasTest extends ResourceTest {
 	//resource handles (p=project, f=folder, l=file)
 	private IProject pNoOverlap;
 	private IProject pOverlap;

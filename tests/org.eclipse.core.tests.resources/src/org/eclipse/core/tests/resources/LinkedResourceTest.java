@@ -25,7 +25,7 @@ import org.eclipse.core.tests.harness.*;
  * 
  * This test supports both variable-based and non-variable-based locations.
  * Although the method used for creating random locations
- * <code>EclipseWorkspaceTest#getRandomLocation()</code> never returns variable-
+ * <code>ResourceTest#getRandomLocation()</code> never returns variable-
  * based paths, this method is overriden in the derived class
  * <code>LinkedResourceWithPathVariable</code> to always return variable-based
  * paths.
@@ -35,7 +35,7 @@ import org.eclipse.core.tests.harness.*;
  * <code>IFile#createLink</code> and <code>IFolder#createLink</code> and when
  * the location is obtained using <code>IResource#getLocation()</code>.
  */
-public class LinkedResourceTest extends EclipseWorkspaceTest {
+public class LinkedResourceTest extends ResourceTest {
 	protected IProject existingProject;
 	protected IProject otherExistingProject;
 	protected IProject closedProject;

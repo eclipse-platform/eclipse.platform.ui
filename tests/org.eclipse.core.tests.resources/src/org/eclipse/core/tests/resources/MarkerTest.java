@@ -19,9 +19,8 @@ import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.watson.IPathRequestor;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
-public class MarkerTest extends EclipseWorkspaceTest {
+public class MarkerTest extends ResourceTest {
 
 	public static final String TRANSIENT_MARKER = "org.eclipse.core.tests.resources.transientmarker";
 
@@ -48,7 +47,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	 * Tests the appearance of marker changes in the resource delta.
 	 */
 	public void testMarkerChangesInDelta3() {
-		log("TestMarkerChangesInDelta3");
+		debug("TestMarkerChangesInDelta3");
 
 		// Create and register a listener.
 		final MarkersChangeListener listener = new MarkersChangeListener();
@@ -108,7 +107,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	}
 
 	public void _testPerformanceManyResources() {
-		log("testPerformanceManyResources");
+		debug("testPerformanceManyResources");
 		long start;
 		long stop;
 
@@ -198,7 +197,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	}
 
 	public void _testPerformanceOneResource() {
-		log("testPerformanceOneResource");
+		debug("testPerformanceOneResource");
 		long start;
 		long stop;
 		final int numMarkers = 4000;
@@ -431,11 +430,11 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	 * Tests whether markers correctly copy with resources.
 	 */
 	public void testCopyResource() {
-		log("TestCopyResource");
+		debug("TestCopyResource");
 	}
 
 	public void testCreateMarker() {
-		log("TestCreateMarker");
+		debug("TestCreateMarker");
 
 		// Create and register a listener.
 		MarkersChangeListener listener = new MarkersChangeListener();
@@ -502,7 +501,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	}
 
 	public void testDeleteMarker() {
-		log("TestDeleteMarker");
+		debug("TestDeleteMarker");
 		IMarker marker = null;
 
 		// Create and register a listener.
@@ -568,7 +567,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	}
 
 	public void testDeleteMarkers() {
-		log("TestDeleteMarkers");
+		debug("TestDeleteMarkers");
 		IMarker[] markers = null;
 		try {
 			markers = createMarkers(resources, IMarker.PROBLEM);
@@ -594,7 +593,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	}
 
 	public void testFindMarkers() {
-		log("TestFindMarkers");
+		debug("TestFindMarkers");
 
 		// test finding some markers which actually exist
 		IMarker[] markers = null;
@@ -690,7 +689,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	}
 
 	public void test_10989() {
-		log("test_10989");
+		debug("test_10989");
 
 		try {
 			IProject project = getWorkspace().getRoot().getProject("MyProject");
@@ -713,7 +712,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	 * Tests the appearance of marker changes in the resource delta.
 	 */
 	public void testMarkerChangesInDelta() {
-		log("TestMarkerChangesInDelta");
+		debug("TestMarkerChangesInDelta");
 
 		// Create and register a listener.
 		MarkersChangeListener listener = new MarkersChangeListener();
@@ -833,7 +832,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	 * state of the marker before the change occurred.
 	 */
 	public void testMarkerDeltaAttributes() {
-		log("testMarkerDeltaAttributes");
+		debug("testMarkerDeltaAttributes");
 
 		// create markers on various resources
 		final IMarker[] markers = new IMarker[3];
@@ -919,7 +918,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	 * Tests the appearance of marker changes in the resource delta.
 	 */
 	public void testMarkerDeltasCopyResource() {
-		log("testMarkerDeltasCopyResource");
+		debug("testMarkerDeltasCopyResource");
 
 		// Create and register a listener.
 		final MarkersChangeListener listener = new MarkersChangeListener();
@@ -1004,7 +1003,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	 * Tests the appearance of marker changes in the resource delta.
 	 */
 	public void testMarkerDeltasMerge() {
-		log("testMarkerDeltasMerge");
+		debug("testMarkerDeltasMerge");
 
 		// Create and register a listener.
 		final MarkersChangeListener listener = new MarkersChangeListener();
@@ -1133,7 +1132,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	 * Tests the appearance of marker changes in the resource delta.
 	 */
 	public void testMarkerDeltasMoveFolder() {
-		log("testMarkerDeltasMoveFolder");
+		debug("testMarkerDeltasMoveFolder");
 
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		final IProject project = root.getProject("MyProject");
@@ -1202,7 +1201,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	 * Tests the appearance of marker changes in the resource delta.
 	 */
 	public void testMarkerDeltasMoveFile() {
-		log("testMarkerDeltasMoveFile");
+		debug("testMarkerDeltasMoveFile");
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		final IProject project = root.getProject("MyProject");
 		IFolder folder = project.getFolder("folder");
@@ -1271,7 +1270,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	 * Tests the appearance of marker changes in the resource delta.
 	 */
 	public void testMarkerDeltasMoveProject() {
-		log("testMarkerDeltasMoveProject");
+		debug("testMarkerDeltasMoveProject");
 
 		// Create and register a listener.
 		final MarkersChangeListener listener = new MarkersChangeListener();
@@ -1346,7 +1345,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	}
 
 	public void testMarkerSave() {
-		log("TestMarkerSave");
+		debug("TestMarkerSave");
 
 		IMarker[] newMarkers = null;
 		IMarker[] expected = null;
@@ -1471,7 +1470,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	}
 
 	public void testMarkerSaveTransient() {
-		log("TestMarkerSaveTransient");
+		debug("TestMarkerSaveTransient");
 
 		// create the markers on the resources. create both transient
 		// and persistent markers.
@@ -1612,14 +1611,14 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	 * Tests whether markers correctly move with resources.
 	 */
 	public void testMoveResource() {
-		log("TestMoveResource");
+		debug("TestMoveResource");
 	}
 
 	/*
 	 * Test for PR: "1FWT3V5: ITPCORE:WINNT - Task view shows entries for closed projects" 
 	 */
 	public void testProjectCloseOpen() {
-		log("testProjectCloseOpen");
+		debug("testProjectCloseOpen");
 		IProject project = null;
 		IMarker marker = null;
 
@@ -1656,7 +1655,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	}
 
 	public void testSetGetAttribute() {
-		log("testSetGetAttribute");
+		debug("testSetGetAttribute");
 
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
@@ -1790,7 +1789,7 @@ public class MarkerTest extends EclipseWorkspaceTest {
 	}
 
 	public void testSetGetAttribute2() {
-		log("testSetGetAttribute2");
+		debug("testSetGetAttribute2");
 
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];

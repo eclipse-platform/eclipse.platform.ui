@@ -17,10 +17,9 @@ import org.eclipse.core.internal.resources.TestingSupport;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.osgi.service.environment.Constants;
 
-public class IWorkspaceTest extends EclipseWorkspaceTest {
+public class IWorkspaceTest extends ResourceTest {
 
 	public IWorkspaceTest() {
 		super();

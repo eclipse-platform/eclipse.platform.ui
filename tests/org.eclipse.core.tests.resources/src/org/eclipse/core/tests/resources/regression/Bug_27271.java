@@ -15,14 +15,14 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
  * Tests how changes in the underlying preference store may affect the path
  * variable manager. 
  */
 
-public class Bug_27271 extends EclipseWorkspaceTest {
+public class Bug_27271 extends ResourceTest {
 
 	static final String VARIABLE_PREFIX = "pathvariable."; //$NON-NLS-1$
 

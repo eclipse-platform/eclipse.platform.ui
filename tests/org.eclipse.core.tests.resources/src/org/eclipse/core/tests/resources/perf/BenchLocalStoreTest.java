@@ -19,7 +19,7 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.tests.harness.CorePerformanceTest;
+import org.eclipse.core.tests.resources.CorePerformanceTest;
 
 public class BenchLocalStoreTest extends CorePerformanceTest {
 

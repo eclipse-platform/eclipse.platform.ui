@@ -15,12 +15,11 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 /**
  * Tests path variables.
  */
-public class IPathVariableTest extends EclipseWorkspaceTest {
+public class IPathVariableTest extends ResourceTest {
 	IPathVariableManager manager = getWorkspace().getPathVariableManager();
 
 	class PathVariableChangeVerifier implements IPathVariableChangeListener {
@@ -143,7 +142,7 @@ public class IPathVariableTest extends EclipseWorkspaceTest {
 	/**
 	 * Return the tests to run.
 	 *  
-	 * @see org.eclipse.core.tests.harness.EclipseWorkspaceTest#suite()
+	 * @see org.eclipse.core.tests.harness.ResourceTest#suite()
 	 */
 	public static Test suite() {
 		return new TestSuite(IPathVariableTest.class);

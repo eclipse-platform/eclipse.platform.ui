@@ -16,10 +16,10 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 import org.eclipse.osgi.service.environment.Constants;
 
-public class IFileTest extends EclipseWorkspaceTest {
+public class IFileTest extends ResourceTest {
 	/**
 	 * Constructor for IFileTest.
 	 */

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.indexing;
 
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class IntegratedTestEnvironment extends EclipseWorkspaceTest implements TestEnvironment {
+public class IntegratedTestEnvironment extends ResourceTest implements TestEnvironment {
 
 	public String getFileName() {
 		return getWorkspace().getRoot().getLocation().append("test.dat").toOSString();

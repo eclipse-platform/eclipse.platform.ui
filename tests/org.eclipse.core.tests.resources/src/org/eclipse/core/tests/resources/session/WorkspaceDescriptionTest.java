@@ -13,8 +13,8 @@ package org.eclipse.core.tests.resources.session;
 import junit.framework.Test;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.resources.WorkspaceSessionTest;
 import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**

@@ -15,13 +15,13 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
  * Test regression of bug 29116.  In this bug, triggering a builder during
  * installation of a nature caused an assertion failure.
  */
-public class Bug_29116 extends EclipseWorkspaceTest {
+public class Bug_29116 extends ResourceTest {
 	public Bug_29116() {
 		super();
 	}

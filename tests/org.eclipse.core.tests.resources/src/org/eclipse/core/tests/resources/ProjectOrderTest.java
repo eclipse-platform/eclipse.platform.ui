@@ -15,14 +15,13 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 /**
  * Performs black box testing of the following API methods:
  * <code>IWorkspace.computeProjectOrder(IProject[])</code>
  * <code>IWorkspace.computePrerequisiteOrder(IProject[])</code>
  */
-public class ProjectOrderTest extends EclipseWorkspaceTest {
+public class ProjectOrderTest extends ResourceTest {
 
 	public ProjectOrderTest() {
 		super();

@@ -12,13 +12,13 @@ package org.eclipse.core.tests.internal.alias;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
  * Tests out of sync cases and refreshLocal in the presence of duplicate
  * resources.
  */
-public class SyncAliasTest extends EclipseWorkspaceTest {
+public class SyncAliasTest extends ResourceTest {
 	public static Test suite() {
 		return new TestSuite(SyncAliasTest.class);
 	}

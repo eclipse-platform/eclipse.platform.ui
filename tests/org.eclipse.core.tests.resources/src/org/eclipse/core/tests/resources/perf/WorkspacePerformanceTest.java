@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.tests.harness.CorePerformanceTest;
+import org.eclipse.core.tests.resources.CorePerformanceTest;
 
 /**
  * Basic performance calculations for standard workspace operations.

@@ -17,10 +17,10 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
 //
-public class RefreshLocalPerformanceTest extends EclipseWorkspaceTest {
+public class RefreshLocalPerformanceTest extends ResourceTest {
 	/** big site default volume (windows) */
 	public static final String bigSiteDevice = "d:";
 

@@ -15,14 +15,14 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 import org.eclipse.core.tests.resources.ResourceVisitorVerifier;
 
 /**
  * Resource#accept doesn't obey member flags for the traversal entry point.
  */
 
-public class Bug_28981 extends EclipseWorkspaceTest {
+public class Bug_28981 extends ResourceTest {
 	public Bug_28981(String name) {
 		super(name);
 	}

@@ -17,10 +17,10 @@ import junit.framework.TestSuite;
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 import org.eclipse.osgi.service.environment.Constants;
 
-public class IResourceTest extends EclipseWorkspaceTest {
+public class IResourceTest extends ResourceTest {
 	public IResourceTest() {
 		super();
 	}
@@ -124,7 +124,7 @@ public class IResourceTest extends EclipseWorkspaceTest {
 		// FIXME: remove when fix this PR
 		String os = BootLoader.getOS();
 		if (!os.equals(Constants.OS_LINUX)) {
-			log("Skipping testCreate_1FW87XF because it is still not supported by the platform.");
+			debug("Skipping testCreate_1FW87XF because it is still not supported by the platform.");
 			return;
 		}
 

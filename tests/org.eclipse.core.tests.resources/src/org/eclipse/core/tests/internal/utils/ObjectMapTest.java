@@ -14,9 +14,9 @@ import java.util.*;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.utils.ObjectMap;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class ObjectMapTest extends EclipseWorkspaceTest {
+public class ObjectMapTest extends ResourceTest {
 	private static final int MAXIMUM = 100;
 	private Object[] values;
 

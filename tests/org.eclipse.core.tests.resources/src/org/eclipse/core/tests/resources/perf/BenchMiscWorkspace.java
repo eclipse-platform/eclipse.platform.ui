@@ -14,7 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.tests.harness.CorePerformanceTest;
+import org.eclipse.core.tests.resources.CorePerformanceTest;
 
 public class BenchMiscWorkspace extends CorePerformanceTest {
 	public static Test suite() {

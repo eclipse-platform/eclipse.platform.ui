@@ -15,13 +15,13 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
  * When a container was moved, its children were not added to phantom space.
  *
  */
-public class Bug_29671 extends EclipseWorkspaceTest {
+public class Bug_29671 extends ResourceTest {
 
 	public Bug_29671(String name) {
 		super(name);

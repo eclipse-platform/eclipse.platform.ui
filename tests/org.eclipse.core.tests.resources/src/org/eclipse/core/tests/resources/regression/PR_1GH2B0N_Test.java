@@ -15,9 +15,9 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class PR_1GH2B0N_Test extends EclipseWorkspaceTest {
+public class PR_1GH2B0N_Test extends ResourceTest {
 	/**
 	 * Constructor for PR_1GH2B0N_Test
 	 */

@@ -51,7 +51,7 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	}
 
 	/**
-	 * @see org.eclipse.core.tests.harness.EclipseWorkspaceTest#getRandomLocation()
+	 * @see org.eclipse.core.tests.harness.ResourceTest#getRandomLocation()
 	 */
 	public IPath getRandomLocation() {
 		IPathVariableManager pathVars = getWorkspace().getPathVariableManager();

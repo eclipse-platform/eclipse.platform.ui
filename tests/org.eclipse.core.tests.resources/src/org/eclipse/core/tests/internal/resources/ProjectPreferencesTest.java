@@ -21,14 +21,14 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 /**
  * @since 3.0
  */
-public class ProjectPreferencesTest extends EclipseWorkspaceTest {
+public class ProjectPreferencesTest extends ResourceTest {
 	class Tracer implements IEclipsePreferences.IPreferenceChangeListener {
 		public StringBuffer log = new StringBuffer();
 

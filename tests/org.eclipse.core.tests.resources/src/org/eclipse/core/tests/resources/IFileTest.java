@@ -17,11 +17,10 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
 import org.eclipse.osgi.service.environment.Constants;
 
-public class IFileTest extends EclipseWorkspaceTest {
+public class IFileTest extends ResourceTest {
 	IProject[] projects = null;
 
 	ArrayList allFiles = new ArrayList();

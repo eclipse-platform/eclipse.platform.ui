@@ -15,7 +15,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.tests.harness.CorePerformanceTest;
+import org.eclipse.core.tests.resources.CorePerformanceTest;
 
 public class ConcurrencyPerformanceTest extends CorePerformanceTest {
 	public ConcurrencyPerformanceTest() {

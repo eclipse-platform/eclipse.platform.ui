@@ -15,12 +15,11 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 /**
  * This class tests the public API of IResourceChangeEvent.
  */
-public class IResourceChangeEventTest extends EclipseWorkspaceTest {
+public class IResourceChangeEventTest extends ResourceTest {
 	/* some random resource handles */
 	protected IProject project1;
 	protected IProject project2;

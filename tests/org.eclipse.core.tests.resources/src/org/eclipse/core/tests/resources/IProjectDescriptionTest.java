@@ -15,13 +15,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 /**
  * Tests protocol of IProjectDescription and other specified behavior
  * that relates to the project description.
  */
-public class IProjectDescriptionTest extends EclipseWorkspaceTest {
+public class IProjectDescriptionTest extends ResourceTest {
 	public static Test suite() {
 		return new TestSuite(IProjectDescriptionTest.class);
 	}

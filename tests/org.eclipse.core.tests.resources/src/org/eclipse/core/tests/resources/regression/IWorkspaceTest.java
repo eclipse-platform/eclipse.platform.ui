@@ -16,9 +16,9 @@ import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class IWorkspaceTest extends EclipseWorkspaceTest {
+public class IWorkspaceTest extends ResourceTest {
 	public IWorkspaceTest() {
 		super();
 	}

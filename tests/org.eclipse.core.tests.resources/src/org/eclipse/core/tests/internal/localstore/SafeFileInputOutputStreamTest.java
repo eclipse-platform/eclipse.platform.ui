@@ -16,9 +16,9 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class SafeFileInputOutputStreamTest extends EclipseWorkspaceTest {
+public class SafeFileInputOutputStreamTest extends ResourceTest {
 	protected File temp;
 
 	public SafeFileInputOutputStreamTest() {

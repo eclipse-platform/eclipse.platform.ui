@@ -15,9 +15,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class Bug_6708 extends EclipseWorkspaceTest {
+public class Bug_6708 extends ResourceTest {
 	/**
 	 * Constructor for Bug_6708.
 	 */

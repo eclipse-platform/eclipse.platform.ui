@@ -15,13 +15,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 /**
  * This class should be refactored into the black box tests for
  * solution, project, folder and file.
  */
-public class WorkspaceTest extends EclipseWorkspaceTest {
+public class WorkspaceTest extends ResourceTest {
 	/**
 	 * Need a zero argument constructor to satisfy the test harness.
 	 * This constructor should not do any real work nor should it be

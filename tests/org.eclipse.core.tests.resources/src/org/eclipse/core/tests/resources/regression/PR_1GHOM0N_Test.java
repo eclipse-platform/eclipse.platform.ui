@@ -15,9 +15,9 @@ import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class PR_1GHOM0N_Test extends EclipseWorkspaceTest {
+public class PR_1GHOM0N_Test extends ResourceTest {
 	public PR_1GHOM0N_Test() {
 		super();
 	}

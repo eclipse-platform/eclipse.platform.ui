@@ -13,12 +13,12 @@ package org.eclipse.core.tests.internal.builders;
 import java.util.Map;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
 /**
  * This class does not define any tests, just convenience methods for other builder tests.
  */
-public abstract class AbstractBuilderTest extends EclipseWorkspaceTest {
+public abstract class AbstractBuilderTest extends ResourceTest {
 
 	private boolean autoBuilding;
 

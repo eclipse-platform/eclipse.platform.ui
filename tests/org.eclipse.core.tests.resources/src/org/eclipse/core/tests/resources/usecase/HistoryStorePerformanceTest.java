@@ -14,9 +14,9 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
+import org.eclipse.core.tests.resources.ResourceTest;
 
-public class HistoryStorePerformanceTest extends EclipseWorkspaceTest {
+public class HistoryStorePerformanceTest extends ResourceTest {
 	public HistoryStorePerformanceTest() {
 		super();
 	}

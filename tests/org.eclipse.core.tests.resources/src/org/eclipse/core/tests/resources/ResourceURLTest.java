@@ -17,9 +17,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
-public class ResourceURLTest extends EclipseWorkspaceTest {
+public class ResourceURLTest extends ResourceTest {
 	static boolean noSideEffects = false;
 	protected static IResource[] interestingResources;
 	protected static Set nonExistingResources = new HashSet();

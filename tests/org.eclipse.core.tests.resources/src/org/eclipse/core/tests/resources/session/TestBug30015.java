@@ -14,8 +14,8 @@ import junit.framework.Test;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 import org.eclipse.core.tests.resources.AutomatedTests;
+import org.eclipse.core.tests.resources.WorkspaceSessionTest;
 import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
 /**

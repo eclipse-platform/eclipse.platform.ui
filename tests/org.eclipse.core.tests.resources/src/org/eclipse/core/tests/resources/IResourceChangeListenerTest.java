@@ -17,13 +17,12 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 
 /**
  * Tests behavior of IResourceChangeListener, including validation
  * that correct deltas are received for all types of workspace changes.
  */
-public class IResourceChangeListenerTest extends EclipseWorkspaceTest {
+public class IResourceChangeListenerTest extends ResourceTest {
 	protected static final String VERIFIER_NAME = "TestListener";
 	IFile file1; //below folder1
 	IFile file2; //below folder1
