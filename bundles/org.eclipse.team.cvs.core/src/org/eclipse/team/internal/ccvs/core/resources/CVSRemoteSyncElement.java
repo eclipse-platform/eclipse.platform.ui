@@ -252,7 +252,22 @@ public class CVSRemoteSyncElement extends RemoteSyncElement {
 		FolderSyncInfo remoteInfo = remote.getFolderSyncInfo();
 		FolderSyncInfo localInfo = local.getParent().getFolderSyncInfo();
 		local.setFolderSyncInfo(new FolderSyncInfo(remoteInfo.getRepository(), remoteInfo.getRoot(), localInfo.getTag(), false));
-	 }	 	
+	}
+	/*
+	 * Make all the folders that have both a remote and local in sync by copying
+	 * the sync information from the remote to the local
+	 */
+	protected void makeFoldersInSync(IProgressMonitor progress) throws TeamException {
+		FolderSyncInfo remoteInfo = ((RemoteFolder)getRemote()).getFolderSyncInfo();
+		((ICVSFolder)localSync.getCVSResource()).setFolderSyncInfo(remoteInfo);
+		ILocalSyncElement[] children = members(progress);
+		for (int i = 0; i < children.length; i++) {
+			CVSRemoteSyncElement child = (CVSRemoteSyncElement)children[i];
+			if (child.isContainer() && child.getLocal().exists() && child.getRemote() != null) {
+				child.makeFoldersInSync(progress);
+			}
+		}
+	}
 	/*
 	 * @see ILocalSyncElement#getSyncKind(int, IProgressMonitor)
 	 */

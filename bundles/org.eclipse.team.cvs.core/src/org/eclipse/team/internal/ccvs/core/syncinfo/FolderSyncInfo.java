@@ -50,9 +50,7 @@ public class FolderSyncInfo {
 		this.repository = repo;
 		this.root = root;
 		this.isStatic = isStatic;
-		if(tag != null) {
-			this.tag = new CVSEntryLineTag(tag);
-		}
+		setTag(tag);
 	}
 	
 	public boolean equals(Object other) {
@@ -169,7 +167,7 @@ public class FolderSyncInfo {
 	 * @param tag The tag to set
 	 */
 	private void setTag(CVSTag tag) {
-		if (tag == null) {
+		if (tag == null || tag.equals(CVSTag.DEFAULT)) {
 			this.tag = null;
 		} else {
 			this.tag = new CVSEntryLineTag(tag);

@@ -7,14 +7,17 @@ package org.eclipse.team.internal.ccvs.core.resources;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProvider;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
@@ -117,6 +120,26 @@ public class CVSWorkspaceRoot {
 			remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)location, (ICVSFolder)managed, tag, progress);
 		}
 		return new CVSRemoteSyncElement(true /*three way*/, resource, baseTree, remote);
+	}
+	
+	/**
+	 * Sync the given unshared project against the given repository and module.
+	 */
+	public static IRemoteSyncElement getRemoteSyncTree(IProject project, ICVSRepositoryLocation location, String moduleName, CVSTag tag, IProgressMonitor progress) throws TeamException {
+		progress.beginTask(null, 100);
+		RemoteFolder folder = new RemoteFolder(null, location, new Path(moduleName), tag);
+		RemoteFolderTree remote = RemoteFolderTreeBuilder.buildRemoteTree((CVSRepositoryLocation)folder.getRepository(), folder, folder.getTag(), Policy.subMonitorFor(progress, 80));
+		CVSRemoteSyncElement tree = new CVSRemoteSyncElement(true /*three way*/, project, null, remote);
+		tree.makeFoldersInSync(Policy.subMonitorFor(progress, 10));
+		try {
+			if (!project.getDescription().hasNature(CVSProviderPlugin.getTypeId())) {
+				Team.addNatureToProject(project, CVSProviderPlugin.getTypeId(), Policy.subMonitorFor(progress, 10));
+			}
+		} catch (CoreException e) {
+			throw CVSException.wrapException(e);
+		}
+		progress.done();
+		return tree;
 	}
 	
 	public static ICVSRemoteResource getRemoteTree(IResource resource, CVSTag tag, IProgressMonitor progress) throws TeamException {

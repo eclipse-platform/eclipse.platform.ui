@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -22,6 +23,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
@@ -30,7 +32,9 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
+import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareUnsharedInput;
 import org.eclipse.team.internal.ui.sync.SyncView;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
@@ -136,6 +140,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 		final boolean[] result = new boolean[] { true };
 		try {
 			final boolean[] doSync = new boolean[] { false };
+			final boolean[] projectExists = new boolean[] { false };
 			getContainer().run(false, false, new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) throws InvocationTargetException {
 					try {
@@ -196,9 +201,10 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 								String moduleName = getModuleName();
 								ICVSRemoteFolder folder = location.getRemoteFolder(moduleName, null);
 								if (folder.exists(new SubProgressMonitor(monitor, 50))) {
-									MessageDialog.openInformation(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong")); //$NON-NLS-1$ //$NON-NLS-2$
-									result[0] = false;
-									doSync[0] = false;
+									projectExists[0] = true;
+									boolean sync = MessageDialog.openQuestion(getShell(), Policy.bind("SharingWizard.couldNotImport"), Policy.bind("SharingWizard.couldNotImportLong", getModuleName())); //$NON-NLS-1$ //$NON-NLS-2$
+									result[0] = sync;
+									doSync[0] = sync;
 									return;
 								}
 							} catch (TeamException e) {
@@ -233,7 +239,28 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 					} catch (PartInitException e) {
 						CVSUIPlugin.log(e.getStatus());
 					}
-					view.showSync(new CVSSyncCompareInput(new IResource[] {project}));
+					CVSSyncCompareInput input;
+					if (projectExists[0]) {
+						try {
+							ICVSRepositoryLocation location = getLocation();
+							String moduleName = getModuleName();
+							TagSelectionDialog dialog = new TagSelectionDialog(getShell(), 
+								new ICVSFolder[] {(ICVSFolder)location.getRemoteFolder(moduleName, null)}, 
+								Policy.bind("SharingWizard.selectTagTitle"), 
+								Policy.bind("SharingWizard.selectTag"), true);
+							dialog.setBlockOnOpen(true);
+							if (dialog.open() == Dialog.CANCEL) {
+								return false;
+							}
+							CVSTag tag = dialog.getResult();
+							input = new CVSSyncCompareUnsharedInput(project, getLocation(), moduleName, tag);
+						} catch (TeamException e) {
+							throw new InvocationTargetException(e);
+						}
+					} else {
+						input = new CVSSyncCompareInput(new IResource[] {project});
+					}
+					view.showSync(input);
 				}
 			}
 		} catch (InterruptedException e) {
