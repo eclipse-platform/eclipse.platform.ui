@@ -648,7 +648,8 @@ public class EditorManager {
 		} else {
 			// There is no registered editor.  
 			// Use the default text editor's.
-			iDesc = desc.getImageDescriptor();
+			IEditorRegistry reg = getEditorRegistry();
+			iDesc = reg.getDefaultEditor().getImageDescriptor();
 		}
 		return iDesc;
 	}
