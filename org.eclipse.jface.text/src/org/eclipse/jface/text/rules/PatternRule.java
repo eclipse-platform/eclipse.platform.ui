@@ -70,6 +70,16 @@ public class PatternRule implements IPredicateRule {
 	 * @since 3.1
 	 */
 	private Comparator fLineDelimiterComparator= new DecreasingCharArrayLengthComparator();
+	/**
+	 * Cached line delimiters.
+	 * @since 3.1
+	 */
+	private char[][] fLineDelimiters;
+	/**
+	 * Cached sorted {@linkplain #fLineDelimiters}.
+	 * @since 3.1
+	 */
+	private char[][] fSortedLineDelimiters;
 
 	/**
 	 * Creates a rule for the given starting and ending sequence.
@@ -211,10 +221,20 @@ public class PatternRule implements IPredicateRule {
 	 * @return <code>true</code> if the end sequence has been detected
 	 */
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
+		
 		char[][] originalDelimiters= scanner.getLegalLineDelimiters();
-		char[][] delimiters= new char[originalDelimiters.length][];
-		System.arraycopy(originalDelimiters, 0, delimiters, 0, originalDelimiters.length);
-		Arrays.sort(delimiters, fLineDelimiterComparator);
+		int count= originalDelimiters.length;
+		if (fLineDelimiters == null || originalDelimiters.length != count) {
+			fSortedLineDelimiters= new char[count][]; 
+		} else {
+			while (count > 0 && fLineDelimiters[count-1] == originalDelimiters[count-1])
+				count--;
+		}
+		if (count != 0) {
+			fLineDelimiters= originalDelimiters;
+			System.arraycopy(fLineDelimiters, 0, fSortedLineDelimiters, 0, fLineDelimiters.length);
+			Arrays.sort(fSortedLineDelimiters, fLineDelimiterComparator);
+		}
 		
 		int c;
 		while ((c= scanner.read()) != ICharacterScanner.EOF) {
@@ -222,8 +242,8 @@ public class PatternRule implements IPredicateRule {
 				// Skip escaped character(s)
 				if (fEscapeContinuesLine) {
 					c= scanner.read();
-					for (int i= 0; i < delimiters.length; i++) {
-						if (c == delimiters[i][0] && sequenceDetected(scanner, delimiters[i], true))
+					for (int i= 0; i < fSortedLineDelimiters.length; i++) {
+						if (c == fSortedLineDelimiters[i][0] && sequenceDetected(scanner, fSortedLineDelimiters[i], true))
 							break;
 					}
 				} else
@@ -235,8 +255,8 @@ public class PatternRule implements IPredicateRule {
 					return true;
 			} else if (fBreaksOnEOL) {
 				// Check for end of line since it can be used to terminate the pattern.
-				for (int i= 0; i < delimiters.length; i++) {
-					if (c == delimiters[i][0] && sequenceDetected(scanner, delimiters[i], true))
+				for (int i= 0; i < fSortedLineDelimiters.length; i++) {
+					if (c == fSortedLineDelimiters[i][0] && sequenceDetected(scanner, fSortedLineDelimiters[i], true))
 						return true;
 				}
 			}
