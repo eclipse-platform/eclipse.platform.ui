@@ -176,6 +176,19 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	}
 	
 	/**
+	 * Creates and returns a new radio button with the given
+	 * label and/or image.
+	 * 
+	 * @param parent parent control
+	 * @param label button label or <code>null</code>
+	 * 
+	 * @return a new radio button
+	 */
+	protected Button createRadioButton(Composite parent, String label) {
+		return SWTUtil.createRadioButton(parent, label);	
+	}	
+	
+	/**
 	 * @see ILaunchConfigurationTab#canSave()
 	 */
 	public boolean canSave() {

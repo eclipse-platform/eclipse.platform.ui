@@ -125,4 +125,23 @@ public class SWTUtil {
 		return button;	
 	}	
 
+	/**
+	 * Creates and returns a new radio button with the given
+	 * label.
+	 * 
+	 * @param parent parent control
+	 * @param label button label or <code>null</code>
+	 * 
+	 * @return a new radio button
+	 */
+	public static Button createRadioButton(Composite parent, String label) {
+		Button button = new Button(parent, SWT.RADIO);
+		if (label != null) {
+			button.setText(label);
+		}
+		GridData gd = new GridData();
+		button.setLayoutData(gd);	
+		SWTUtil.setButtonDimensionHint(button);
+		return button;	
+	}	
 }
