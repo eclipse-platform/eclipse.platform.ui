@@ -25,15 +25,10 @@ import org.eclipse.ui.help.WorkbenchHelp;
 /**
  *	Page 1 of the base resource export-to-zip Wizard
  */
-/*package*/
-class WizardZipFileResourceExportPage1
-	extends WizardFileSystemResourceExportPage1 {
+/*package*/ class WizardZipFileResourceExportPage1 extends WizardFileSystemResourceExportPage1 {
 
 	// widgets
 	protected Button compressContentsCheckbox;
-
-	// constants
-	protected static final int COMBO_HISTORY_LENGTH = 5;
 
 	// dialog store id constants
 	private final static String STORE_DESTINATION_NAMES_ID = "WizardZipFileResourceExportPage1.STORE_DESTINATION_NAMES_ID"; //$NON-NLS-1$
