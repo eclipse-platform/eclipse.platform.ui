@@ -434,7 +434,7 @@ class NewWizardNewPage
 			//If the element has no wizard then it is an empty category
 			//and we should collapse
 			if (element.getWizards().length == 0) {
-				Object[] children = element.getChildren();
+				Object[] children = element.getChildren(null);
 				elements = new WizardCollectionElement[children.length];
 				System.arraycopy(children, 0, elements, 0, elements.length);
 			} else

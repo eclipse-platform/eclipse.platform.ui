@@ -24,7 +24,7 @@ import org.eclipse.ui.model.AdaptableList;
  * @issue need own copy of RegistryReader
  */
 public class WizardsRegistryReader extends RegistryReader {
-	protected AdaptableList wizards;
+	private AdaptableList wizards;
 	private String pluginPoint;
 
 	protected final static String TAG_WIZARD = "wizard";//$NON-NLS-1$
@@ -47,15 +47,15 @@ public WizardsRegistryReader(String pluginPointId) {
  * Adds new wizard to the provided collection. Override to
  * provide more logic.
  */
-protected void addNewElementToResult(WorkbenchWizardElement wizard, IConfigurationElement config, AdaptableList result) {
-	result.add(wizard);
+protected void addNewElementToResult(WorkbenchWizardElement wizard, IConfigurationElement config) {
+	wizards.add(wizard);
 }
 /**
  * Creates empty element collection. Overrider to fill
  * initial elements, if needed.
  */
-protected AdaptableList createEmptyWizardCollection() {
-	return new AdaptableList();
+protected void createEmptyWizardCollection() {
+	wizards = new AdaptableList();
 }
 /**
  * Returns a new WorkbenchWizardElement configured according to the parameters
@@ -81,7 +81,7 @@ protected WorkbenchWizardElement createWizardElement(IConfigurationElement eleme
  *	Returns the first wizard with a given id.
  */
 public WorkbenchWizardElement findWizard(String id) {
-	Object [] wizards = getWizards().toArray();
+	Object [] wizards = getWizardCollectionElements();
 	for (int nX = 0; nX < wizards.length; nX ++) {
 		WizardCollectionElement collection = (WizardCollectionElement)wizards[nX];
 		WorkbenchWizardElement element = collection.findWizard(id,true);
@@ -97,8 +97,9 @@ public WorkbenchWizardElement findWizard(String id) {
  * requires non-trivial work.  
  */
 public AdaptableList getWizards() {
-	if (wizards == null)
+	if (!areWizardsRead()) {
 		readWizards();
+	}
 	return wizards;
 }
 /**
@@ -136,17 +137,26 @@ protected boolean readElement(IConfigurationElement element) {
 		return false;
 	WorkbenchWizardElement wizard = createWizardElement(element);
 	if (wizard != null)
-	   addNewElementToResult(wizard, element, wizards);
+	   addNewElementToResult(wizard, element);
 	return true;
 }
 /**
  * Reads the wizards in a registry.  
  */
 protected void readWizards() {
-	if (wizards == null) {
-		wizards = createEmptyWizardCollection();
+	if (!areWizardsRead()) {
+		createEmptyWizardCollection();
 		IPluginRegistry pregistry = Platform.getPluginRegistry();
 		readRegistry(pregistry, PlatformUI.PLUGIN_ID, pluginPoint);
 	}
+}
+/**
+ * Returns whether the wizards have been read already
+ */
+protected boolean areWizardsRead() {
+	return wizards != null;
+}
+protected Object[] getWizardCollectionElements() {
+	return wizards.toArray();
 }
 }

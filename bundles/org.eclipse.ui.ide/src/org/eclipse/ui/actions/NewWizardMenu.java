@@ -205,8 +205,7 @@ public class NewWizardMenu extends ContributionItem {
 	private boolean hasExamples() {
 		NewWizardsRegistryReader rdr = new NewWizardsRegistryReader(false);
 
-		Object[] children = rdr.getWizards().getChildren(null);
-
+		Object[] children = rdr.getWizardElements().getChildren(null);
 		for (int i = 0; i < children.length; i++) {
 			WizardCollectionElement currentChild =
 				(WizardCollectionElement) children[i];

@@ -39,8 +39,7 @@ public class NewWizard extends Wizard {
 	public void addPages() {
 		NewWizardsRegistryReader rdr =
 			new NewWizardsRegistryReader(projectsOnly);
-		WizardCollectionElement wizards =
-			(WizardCollectionElement) rdr.getWizards();
+		WizardCollectionElement wizards = rdr.getWizardElements();
 
 		if (categoryId != null) {
 			WizardCollectionElement categories = wizards;
@@ -66,7 +65,7 @@ public class NewWizard extends Wizard {
 	private WizardCollectionElement getChildWithID(
 		WizardCollectionElement parent,
 		String id) {
-		Object[] children = parent.getChildren();
+		Object[] children = parent.getChildren(null);
 		for (int i = 0; i < children.length; ++i) {
 			WizardCollectionElement currentChild =
 				(WizardCollectionElement) children[i];
