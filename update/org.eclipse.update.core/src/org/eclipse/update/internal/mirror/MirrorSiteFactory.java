@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -119,14 +119,15 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 		}
 		String[] dir = pluginDir.list(FeaturePackagedContentProvider.filter);
 		for (int i = 0; i < dir.length; i++) {
+			InputStream in = null;
 			try {
 				File file = new File(pluginDir, dir[i]);
 				JarContentReference jarReference = new JarContentReference(
 						null, file);
 				ContentReference ref = jarReference.peek("META-INF/MANIFEST.MF", null, null); //$NON-NLS-1$
 				if (ref != null) {
-					BundleManifest manifest = new BundleManifest(ref
-							.getInputStream());
+					in = ref.getInputStream();
+					BundleManifest manifest = new BundleManifest(in);
 					if (manifest.exists()) {
 						site
 								.addDownloadedPluginEntry(manifest
@@ -139,8 +140,8 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 					ref = jarReference.peek("fragment.xml", null, null); //$NON-NLS-1$
 				}
 				if (ref != null) {
-					PluginEntry entry = new DefaultPluginParser().parse(ref
-							.getInputStream());
+					in = ref.getInputStream();
+					PluginEntry entry = new DefaultPluginParser().parse(in);
 					site.addDownloadedPluginEntry(entry);
 				}
 			} catch (IOException e) {
@@ -149,6 +150,13 @@ public class MirrorSiteFactory extends BaseSiteFactory {
 			} catch (SAXException e) {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(e);
+			} finally {
+				if(in !=null){
+					try{
+						in.close();
+					}catch(IOException ce){
+					}
+				}
 			}
 		}
 	}

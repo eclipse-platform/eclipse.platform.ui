@@ -22,12 +22,21 @@ public class BundleManifest {
 	/**
 	 * Constructor for local file
 	 */
-	public BundleManifest(File manifest) {
+public BundleManifest(File manifest) {
 		super();
 		if (manifest.exists() && !manifest.isDirectory()) {
+			FileInputStream fos = null;
 			try {
-				parse(new FileInputStream(manifest));
+				fos = new FileInputStream(manifest);
+				parse(fos);
 			} catch (IOException ioe) {
+			} finally {
+				if (fos != null) {
+					try {
+						fos.close();
+					} catch (IOException e) {
+					}
+				}
 			}
 		}
 	}
