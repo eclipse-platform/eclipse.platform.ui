@@ -31,18 +31,11 @@ public class CVSUIMessages extends NLS {
 	public static String UserValidationDialog_5;
 	public static String UserValidationDialog_6;
 	public static String UserValidationDialog_7;
-	public static String details;
 	public static String simpleInternal;
 	public static String internal;
 	public static String yes;
 	public static String no;
 	public static String information;
-	public static String exception;
-	public static String confirmOverwriteTitle;
-	public static String confirmOverwrite;
-	public static String question;
-	public static String localChanges;
-	public static String error;
 	public static String cvs;
 	public static String notAvailable;
 	public static String buildError;
@@ -61,14 +54,9 @@ public class CVSUIMessages extends NLS {
 	public static String AddToVersionControlDialog_thereIsAnUnaddedResource;
 	public static String AddToVersionControlDialog_thereAreUnaddedResources;
 
-	public static String CheckoutAction_overlappingModuleExpansions;
-
-	public static String AutoDefineTagsAction_defineTags;
-
 	public static String AvoidableMessageDialog_dontShowAgain;
 
 	public static String BranchWizard_title;
-	public static String BranchWizard_errorBranching;
 	public static String BranchWizardPage_pageDescription;
 	public static String BranchWizardPage_pageDescriptionVersion;
 	public static String BranchWizardPage_specifyVersion;
@@ -79,16 +67,12 @@ public class CVSUIMessages extends NLS {
 	public static String BranchWizard_versionNameWarning;
 	public static String BranchWizard_branchNameWarning;
 	public static String BranchWizard_branchAndVersionMustBeDifferent;
-	public static String BranchWizard_branchNameAlreadyExists;
-	public static String BranchWizard_versionNameAlreadyExists;
 	public static String BranchWizardPage_existingVersionsAndBranches;
 
 	public static String ConsolePreferencePage_consoleColorSettings;
 	public static String ConsolePreferencePage_commandColor;
 	public static String ConsolePreferencePage_messageColor;
 	public static String ConsolePreferencePage_errorColor;
-	public static String ConsolePreferencePage_font;
-
 	public static String CVSAction_errorTitle;
 	public static String CVSAction_warningTitle;
 	public static String CVSAction_multipleProblemsMessage;
@@ -107,26 +91,6 @@ public class CVSUIMessages extends NLS {
 	public static String ShowAnnotationOperation_2;
 	public static String ShowAnnotationOperation_4;
 
-	public static String CVSCatchupReleaseViewer_commit;
-	public static String CVSCatchupReleaseViewer_update;
-	public static String CVSCatchupReleaseViewer_forceCommit;
-	public static String CVSCatchupReleaseViewer_forceUpdate;
-	public static String CVSCatchupReleaseViewer_ignore;
-	public static String CVSCatchupReleaseViewer_mergeUpdate;
-	public static String CVSCatchupReleaseViewer_commonFile;
-	public static String CVSCatchupReleaseViewer_commonFileRevision;
-	public static String CVSCatchupReleaseViewer_noCommonFile;
-	public static String CVSCatchupReleaseViewer_noRepositoryFile;
-	public static String CVSCatchupReleaseViewer_repositoryFile;
-	public static String CVSCatchupReleaseViewer_repositoryFileRevision;
-	public static String CVSCatchupReleaseViewer_workspaceFile;
-	public static String CVSCatchupReleaseViewer_showInHistory;
-	public static String CVSCatchupReleaseViewer_fileDecoration;
-	public static String CVSCatchupReleaseViewer_folderDecoration;
-	public static String CVSCatchupReleaseViewer_confirmMerge;
-	public static String CVSCatchupReleaseViewer_addAction;
-	public static String CVSCatchupReleaseViewer_labelWithSyncKind;
-
 	public static String CVSCompareEditorInput_branchLabel;
 	public static String CVSCompareEditorInput_headLabel;
 	public static String CVSCompareEditorInput_comparing;
@@ -139,21 +103,10 @@ public class CVSUIMessages extends NLS {
 	public static String CVSCompareEditorInput_titleAncestor;
 	public static String CVSCompareEditorInput_titleNoAncestor;
 	public static String CVSCompareEditorInput_titleNoAncestorDifferent;
-	public static String CVSCompareEditorInput_workspace;
-	public static String CVSCompareEditorInput_workspaceLabel;
-	public static String CVSCompareEditorInput_noWorkspaceFile;
-	public static String CVSCompareEditorInput_noRepositoryFile;
-
-	public static String CVSCompareRevisionsInput_addToWorkspace;
 	public static String CVSCompareRevisionsInput_compareResourceAndVersions;
-	public static String CVSCompareRevisionsInput_errorReplacingTitle;
-	public static String CVSCompareRevisionsInput_errorReplacingMessage;
 	public static String CVSCompareRevisionsInput_repository;
-	public static String CVSCompareRevisionsInput_structureCompare;
 	public static String CVSCompareRevisionsInput_workspace;
 	public static String CVSCompareRevisionsInput_truncate;
-
-	public static String CVSDecorator_projectDecoration;
 
 	public static String CVSDecoratorPreferencesPage_0;
 	public static String CVSDecoratorPreferencesPage_1;
@@ -192,17 +145,11 @@ public class CVSUIMessages extends NLS {
 	public static String CVSDecoratorPreferencesPage_34;
 	public static String CVSDecoratorPreferencesPage_35;
 
-	public static String CVSDecorator_projectDecorationWithTag;
-	public static String CVSDecorator_fileDecorationWithTag;
-	public static String CVSDecorator_fileDecorationNoTag;
-	public static String CVSDecorator_folderDecoration;
-
 	public static String CVSFilePropertiesPage_ignored;
 	public static String CVSFilePropertiesPage_notManaged;
 	public static String CVSFilePropertiesPage_isAdded;
 	public static String CVSFilePropertiesPage_baseRevision;
 	public static String CVSFilePropertiesPage_baseTimestamp;
-	public static String CVSFilePropertiesPage_dirty;
 	public static String CVSFilePropertiesPage_modified;
 	public static String CVSFilePropertiesPage_keywordMode;
 	public static String CVSFilePropertiesPage_tag;
@@ -211,9 +158,6 @@ public class CVSUIMessages extends NLS {
 	public static String CVSFilePropertiesPage_branch;
 	public static String CVSFilePropertiesPage_date;
 	public static String CVSFilePropertiesPage_error;
-	public static String CVSFilePropertiesPage_permissions;
-	public static String CVSFilePropertiesPage_notAvailable;
-
 	public static String CVSFolderPropertiesPage_ignored;
 	public static String CVSFolderPropertiesPage_notManaged;
 	public static String CVSFolderPropertiesPage_notCVSFolder;
@@ -223,10 +167,6 @@ public class CVSUIMessages extends NLS {
 	public static String CVSFolderPropertiesPage_disconnect;
 	public static String CVSFolderPropertiesPage_disconnectTitle;
 	public static String CVSFolderPropertiesPage_disconnectQuestion;
-
-	public static String CVSLocalCompareEditorInput_title;
-
-	public static String CVSOperationCancelledException_operationCancelled;
 
 	public static String CVSPropertiesPage_connectionType;
 	public static String CVSPropertiesPage_user;
@@ -281,7 +221,6 @@ public class CVSUIMessages extends NLS {
 	public static String CVSPreferencesPage_41;
 	public static String CVSPreferencesPage_42;
 	public static String CVSPreferencesPage_43;
-	public static String CVSPropertiesPage_update;
 	public static String CVSPropertiesPage_virtualModule;
 
 
@@ -290,8 +229,6 @@ public class CVSUIMessages extends NLS {
 	public static String CVSRemoteFilePropertySource_date;
 	public static String CVSRemoteFilePropertySource_author;
 	public static String CVSRemoteFilePropertySource_comment;
-	public static String CVSRemoteFilePropertySource_tag;
-
 	public static String CVSRemoteFolderPropertySource_name;
 	public static String CVSRemoteFolderPropertySource_tag;
 	public static String CVSRemoteFolderPropertySource_none;
@@ -303,23 +240,9 @@ public class CVSUIMessages extends NLS {
 	public static String CVSRepositoryLocationPropertySource_root;
 	public static String CVSRepositoryLocationPropertySource_method;
 
-	public static String CVSSyncCompareInput_confirmMergeMessageTitle;
-	public static String CVSSyncCompareInput_confirmMergeMessage;
-	public static String CVSSyncCompareInput_projectDeleted;
-	public static String CVSSyncCompareInput_filteringOutgoingChanges;
-
-	public static String CVSSyncSet_conflicts;
-	public static String CVSSyncSet_incomings;
-	public static String CVSSyncSet_noConflicts;
-	public static String CVSSyncSet_noIncomings;
-	public static String CVSSyncSet_noOutgoings;
-	public static String CVSSyncSet_outgoings;
-	public static String CVSSyncSet_noNew;
 	public static String CVSParticipant_0;
 	public static String CVSParticipant_1;
 	public static String CVSParticipant_2;
-	public static String CVSSyncSet_new;
-
 	public static String CVSUIPlugin_refreshTitle;
 	public static String CVSUIPlugin_refreshQuestion;
 	public static String CVSUIPlugin_refreshMultipleQuestion;
@@ -346,24 +269,12 @@ public class CVSUIMessages extends NLS {
 	public static String CommitSyncAction_releaseAll;
 	public static String CommitSyncAction_releasePart;
 	public static String CommitSyncAction_cancelRelease;
-	public static String CommitSyncAction_errorCommitting;
-
-	public static String CompareWithRemoteAction_compare;
-	public static String CompareWithRemoteAction_noRemote;
-	public static String CompareWithRemoteAction_noRemoteLong;
-	public static String CompareWithRemoteAction_fetching;
-
 	public static String CompareWithRevisionAction_compare;
 	public static String CompareWithRevisionAction_noRevisions;
 	public static String CompareWithRevisionAction_noRevisionsLong;
 	public static String CompareWithRevisionAction_fetching;
 
 	public static String CompareWithTagAction_message;
-	public static String CompareWithTagAction_replace;
-	public static String CompareWithTagAction_noRemote;
-	public static String CompareWithTagAction_noRemoteLong;
-	public static String CompareWithTagAction_fetching;
-
 	public static String CompareEditorInput_fileProgress;
 
 	public static String ConfigurationWizardAutoconnectPage_description;
@@ -402,11 +313,7 @@ public class CVSUIMessages extends NLS {
 	public static String ConfigurationWizardMainPage_invalidPathWithSlashes;
 	public static String ConfigurationWizardMainPage_useNTFormat;
 
-	public static String Console_copy;
-	public static String Console_selectAll;
-	public static String Console_clearOutput;
 	public static String Console_resultServerError;
-	public static String Console_resultWarnings;
 	public static String Console_resultException;
 	public static String Console_resultAborted;
 	public static String Console_resultOk;
@@ -421,10 +328,6 @@ public class CVSUIMessages extends NLS {
 	public static String AddToBranchAction_enterTag;
 	public static String AddToBranchAction_enterTagLong;
 
-	public static String DiffAction_diff;
-
-	public static String FixTypeAction_fix;
-
 	public static String GenerateCVSDiff_title;
 	public static String GenerateCVSDiff_pageTitle;
 	public static String GenerateCVSDiff_pageDescription;
@@ -436,16 +339,6 @@ public class CVSUIMessages extends NLS {
 	public static String GenerateCVSDiff_noDiffsFoundTitle;
 	public static String GenerateCVSDiff_1;
 	public static String GenerateCVSDiff_2;
-	public static String GenerateCVSDiff_3;
-	public static String GenerateCVSDiff_4;
-
-	public static String GetSyncAction_questionCatchup;
-	public static String GetSyncAction_titleCatchup;
-	public static String GetSyncAction_catchupAll;
-	public static String GetSyncAction_catchupPart;
-	public static String GetSyncAction_cancelCatchup;
-	public static String UpdateSyncAction_errorUpdating;
-
 	public static String HistoryFilterDialog_title;
 	public static String HistoryFilterDialog_showMatching;
 	public static String HistoryFilterDialog_matchingAny;
@@ -455,7 +348,6 @@ public class CVSUIMessages extends NLS {
 	public static String HistoryFilterDialog_fromDate;
 	public static String HistoryFilterDialog_toDate;
 
-	public static String HistoryView_getAnnotateAction;
 	public static String HistoryView_getContentsAction;
 	public static String HistoryView_getRevisionAction;
 	public static String HistoryView_tagWithExistingAction;
@@ -471,20 +363,12 @@ public class CVSUIMessages extends NLS {
 	public static String HistoryView_selectAll;
 	public static String HistoryView_showComment;
 	public static String HistoryView_showTags;
-	public static String HistoryView_title;
-	public static String HistoryView_titleWithArgument;
 	public static String HistoryView_overwriteTitle;
 	public static String HistoryView_overwriteMsg;
 	public static String HistoryView_fetchHistoryJob;
-	public static String HistoryView_fetchHistoryJobFile;
 	public static String HistoryView_errorFetchingEntries;
 
 	public static String IgnoreAction_ignore;
-
-	public static String MergeAction_saveChangesTitle;
-	public static String MergeAction_saveChanges;
-
-	public static String MergeEditorInput_title;
 
 	public static String MergeWizard_title;
 	public static String MergeWizard_0;
@@ -503,15 +387,11 @@ public class CVSUIMessages extends NLS {
 	public static String MergeWizardPage_11;
 	public static String MergeWizardPage_12;
 	public static String MergeWizardPage_13;
-	public static String MergeWizard_preparing;
-	public static String MergeWizard_preparingStart;
-	public static String MergeWizard_preparingEnd;
 	public static String MergeWizardEndPage_branches;
 
 	public static String ModuleSelectionPage_moduleIsProject;
 	public static String ModuleSelectionPage_specifyModule;
 
-	public static String MoveTagAction_errorMessage;
 	public static String ModeWizardSelectionPage_10;
 	public static String ModeWizardSelectionPage_11;
 	public static String ModeWizardSelectionPage_12;
@@ -542,24 +422,14 @@ public class CVSUIMessages extends NLS {
 	public static String OpenLogEntryAction_deleted;
 
 	public static String ReleaseCommentDialog_title;
-	public static String ReleaseCommentDialog_choosePrevious;
-	public static String ReleaseCommentDialog_enterComment;
 	public static String ReleaseCommentDialog_unaddedResources;
 	public static String ReleaseCommentDialog_selectAll;
 	public static String ReleaseCommentDialog_deselectAll;
-	public static String ReleaseCommentDialog_clearTextArea;
-
 	public static String RemoteFolderElement_nameAndTag;
 	public static String RemoteFolderElement_fetchingRemoteChildren;
 
-	public static String RemoveRootAction_removeRoot;
-
 	public static String ReplaceWithTagAction_message;
 	public static String ReplaceWithTagAction_replace;
-	public static String ReplaceWithTagAction_replacing;
-	public static String ReplaceWithTagAction_mixingTags;
-
-	public static String ReplaceWithRemoteAction_replacing;
 	public static String ReplaceWithRemoteAction_problemMessage;
 
 	public static String ReplaceWithAction_confirmOverwrite;
@@ -573,14 +443,7 @@ public class CVSUIMessages extends NLS {
 	public static String ReplaceWithLatestAction_singleBranch;
 	public static String ReplaceWithLatestAction_singleHEAD;
 
-	public static String RepositoryDialog_getRepository;
-	public static String RepositoryDialog_description;
-
-	public static String RepositoryManager_getting;
 	public static String RepositoryManager_committing;
-	public static String RepositoryManager_updating;
-	public static String RepositoryManager_deleting;
-	public static String RepositoryManager_adding;
 	public static String RepositoryManager_rename;
 	public static String RepositoryManager_save;
 	public static String RepositoryManager_ioException;
@@ -608,68 +471,17 @@ public class CVSUIMessages extends NLS {
 	public static String ResourcePropertiesPage_notManaged;
 	public static String ResourcePropertiesPage_versioned;
 	public static String ResourcePropertiesPage_notVersioned;
-	public static String ResourcePropertiesPage_state;
-	public static String ResourcePropertiesPage_checkedOut;
-	public static String ResourcePropertiesPage_checkedIn;
 	//ResourcePropertiesPage.baseRevision=Base Revision
 	//ResourcePropertiesPage.none=none
 	public static String ResourcePropertiesPage_error;
 
-	public static String KSubstWizard_title;
-	public static String KSubstWizard_working;
-	public static String KSubstWizard_problemsMessage;
-	public static String KSubstWizard_errorTitle;
-	public static String KSubstWizard_warningTitle;
-
-	public static String KSubstWizardSharedFilesPage_pageTitle;
-	public static String KSubstWizardSharedFilesPage_pageDescription;
-	public static String KSubstWizardSharedFilesPage_contents;
-	public static String KSubstWizardSharedFilesPage_includeSharedFiles;
-	public static String KSubstWizardSharedFilesPage_sharedFilesViewer_title;
-
-	public static String KSubstWizardDirtyFilesPage_pageTitle;
-	public static String KSubstWizardDirtyFilesPage_pageDescription;
-	public static String KSubstWizardDirtyFilesPage_contents;
-	public static String KSubstWizardDirtyFilesPage_includeDirtyFiles;
-	public static String KSubstWizardDirtyFilesPage_dirtyFilesViewer_title;
-
-	public static String KSubstWizardSelectionPage_pageTitle;
-	public static String KSubstWizardSelectionPage_pageDescription;
-	public static String KSubstWizardSelectionPage_automaticButton;
-	public static String KSubstWizardSelectionPage_automaticLabel;
-	public static String KSubstWizardSelectionPage_binaryButton;
-	public static String KSubstWizardSelectionPage_binaryLabel;
-	public static String KSubstWizardSelectionPage_textButton;
-	public static String KSubstWizardSelectionPage_textLabel;
-	public static String KSubstWizardSelectionPage_textWithSubstitutionsButton;
-	public static String KSubstWizardSelectionPage_textWithSubstitutionsLabel;
-
-	public static String KSubstWizardCommitCommentPage_pageTitle;
-	public static String KSubstWizardCommitCommentPage_pageDescription;
-
-	public static String KSubstWizardSummaryPage_pageTitle;
-	public static String KSubstWizardSummaryPage_pageDescription;
-	public static String KSubstWizardSummaryPage_contents;
-	public static String KSubstWizardSummaryPage_showUnaffectedFiles;
-	public static String KSubstWizardSummaryPage_summaryViewer_title;
-	public static String KSubstWizardSummaryPage_summaryViewer_fileHeader;
-	public static String KSubstWizardSummaryPage_summaryViewer_ksubstHeader;
-
-	public static String SetKeywordSubstitutionAction_label;
-	public static String SetKeywordSubstitutionAction_tooltip;
-
 	public static String SharingWizard_autoConnectTitle;
-	public static String SharingWizard_autoConnectOneOTitle;
 	public static String SharingWizard_autoConnectTitleDescription;
-	public static String SharingWizard_couldNotImport;
-	public static String SharingWizard_couldNotImportLong;
 	public static String SharingWizard_selectTagTitle;
 	public static String SharingWizard_selectTag;
-	public static String SharingWizard_description;
 	public static String SharingWizard_importTitle;
 	public static String SharingWizard_importTitleDescription;
 	public static String SharingWizard_title;
-	public static String SharingWizard_heading;
 	public static String SharingWizard_enterInformation;
 	public static String SharingWizard_enterInformationDescription;
 	public static String SharingWizard_enterModuleName;
@@ -677,14 +489,7 @@ public class CVSUIMessages extends NLS {
 	public static String SharingWizard_validationFailedText;
 	public static String SharingWizard_validationFailedTitle;
 
-	public static String SharingWizardFinishPage_message;
-
 	public static String ShowHistoryAction_showHistory;
-	public static String ShowHistoryAction_noHistory;
-	public static String ShowHistoryAction_noHistoryLong;
-
-	public static String SyncAction_sync;
-	public static String SyncAction_workingSetName;
 	public static String SyncAction_noChangesTitle;
 	public static String SyncAction_noChangesMessage;
 
@@ -701,7 +506,6 @@ public class CVSUIMessages extends NLS {
 	public static String TagRefreshButtonArea_5;
 	public static String TagRefreshButtonArea_6;
 	public static String TagRefreshButtonArea_7;
-	public static String TagRefreshButtonArea_8;
 	public static String TagAction_enterTag;
 	public static String TagAction_moveTag;
 	public static String TagRootElement_0;
@@ -713,14 +517,12 @@ public class CVSUIMessages extends NLS {
 	public static String TagAction_moveTagConfirmMessage;
 	public static String TagAction_uncommittedChangesTitle;
 	public static String TagAction_uncommittedChanges;
-	public static String TagAction_tagAlreadyExists;
 	public static String TagAction_existingVersions;
 
 	public static String TagInRepositoryAction_tagProblemsMessage;
 	public static String TagInRepositoryAction_tagProblemsMessageMultiple;
 
 	public static String UpdateAction_update;
-	public static String UpdateAction_updating;
 	public static String UpdateAction_promptForUpdateSeveral;
 	public static String UpdateAction_promptForUpdateOne;
 	public static String UpdateAction_promptForUpdateTitle;
@@ -728,9 +530,6 @@ public class CVSUIMessages extends NLS {
 	public static String UpdateWizard_title;
 	public static String UpdateWizard_0;
 	public static String UpdateWizard_1;
-	public static String UpdateWizard_updatePage;
-	public static String UpdateWizardPage_description;
-
 	public static String UserValidationDialog_required;
 	public static String UserValidationDialog_labelUser;
 	public static String UserValidationDialog_labelPassword;
@@ -743,14 +542,8 @@ public class CVSUIMessages extends NLS {
 	public static String VersionsElement_versions;
 
 	public static String WorkbenchUserAuthenticator_cancelled;
-	public static String WorkbenchUserAuthenticator_0;
 	public static String WorkbenchUserAuthenticator_1;
 	public static String WorkbenchUserAuthenticator_2;
-	public static String WorkbenchUserAuthenticator_errorFlushing;
-	public static String WorkbenchUserAuthenticator_errorSaving;
-
-	public static String Unmanage_unmanaging;
-	public static String Unmanage_unmanage;
 	public static String Unmanage_title;
 	public static String Unmanage_titleN;
 	public static String Unmanage_option1;
@@ -777,22 +570,10 @@ public class CVSUIMessages extends NLS {
 	public static String Advanced_options_19;
 	public static String Configure_the_options_used_for_the_CVS_diff_command_20;
 
-	public static String After_configuring_the_project__1;
-	public static String Open_the_Synchronize_view_on_the_project_2;
-	public static String Automatically_import_the_local_resources_into_the_repository_3;
-	public static String Run_update_4;
-	public static String Do_nothing_5;
-	public static String Validate_Connection_on_Finish_7;
-
 	public static String TagSelectionDialog_Select_a_Tag_1;
 	public static String TagSelectionDialog_recurseOption;
 	public static String TagSelectionDialog_0;
 	public static String TagSelectionDialog_1;
-	public static String TagSelectionDialog_2;
-	public static String TagSelectionDialog_3;
-	public static String TagSelectionDialog_4;
-	public static String TagSelectionDialog_5;
-	public static String TagSelectionDialog_6;
 	public static String TagSelectionDialog_7;
 	public static String TagSelectionDialog_8;
 
@@ -803,13 +584,6 @@ public class CVSUIMessages extends NLS {
 	public static String TagSelectionWizardPage_0;
 	public static String TagSelectionWizardPage_1;
 
-	public static String UpdateSyncAction_Conflicting_changes_found_1;
-	public static String UpdateSyncAction_You_have_local_changes_you_are_about_to_overwrite_2;
-	public static String UpdateSyncAction_Only_update_resources_that_can_be_automatically_merged_3;
-	public static String UpdateSyncAction_Update_all_resources__overwriting_local_changes_with_remote_contents_4;
-	public static String UpdateSyncAction_Overwrite_local_changes__5;
-	public static String UpdateSyncAction_You_have_local_changes_you_are_about_to_overwrite__Do_you_wish_to_continue__6;
-
 	public static String ExtMethodPreferencePage_message;
 	public static String ExtMethodPreferencePage_CVS_RSH;
 	public static String ExtMethodPreferencePage_Browse;
@@ -818,13 +592,9 @@ public class CVSUIMessages extends NLS {
 	public static String ExtMethodPreferencePage_1;
 	public static String ExtMethodPreferencePage_Details;
 	public static String ExtMethodPreferencePage_CVS_RSH_Parameters;
-	public static String ExtMethodPreferencePage_Add_Variable;
 	public static String ExtMethodPreferencePage_CVS_SERVER__7;
 	public static String UpdateMergeActionProblems_merging_remote_resources_into_workspace_1;
-	public static String UpdateMergeActionProblems_merging_remote_resources_into_workspace_2;
-
 	public static String TagConfigurationDialog_1;
-	public static String TagConfigurationDialog_4;
 	public static String TagConfigurationDialog_5;
 	public static String TagConfigurationDialog_6;
 	public static String TagConfigurationDialog_7;
@@ -840,9 +610,6 @@ public class CVSUIMessages extends NLS {
 	public static String TagConfigurationDialog_21;
 	public static String TagConfigurationDialog_22;
 
-	public static String ChangeListener_Deleting_CVS_folders_1;
-	public static String ChangeListener_Folders_cannot_be_deleted_from_a_CVS_server_from_the_client__To_delete_the_folder_2;
-	public static String ChangeListener_Do_not_ask_me_about_this_again_3;
 	public static String ConfigureTagsFromRepoViewConfigure_Tag_Error_1;
 	public static String RemoteRootAction_label;
 	public static String RemoteLogOperation_0;
@@ -850,13 +617,10 @@ public class CVSUIMessages extends NLS {
 	public static String RemoveDateTagAction_0;
 	public static String RemoteRootAction_Unable_to_Discard_Location_1;
 	public static String RemoteRootAction_Projects_in_the_local_workspace_are_shared_with__2;
-	public static String RemoveRootAction_removeRoot_3;
 	public static String RemoteRootAction_The_projects_that_are_shared_with_the_above_repository_are__4;
 
 	public static String BranchCategory_Branches_1;
-	public static String GroupedByVersionCategory_Versions_1;
 	public static String VersionCategory_Versions_1;
-	public static String ModulesCategory_label;
 	public static String HistoryView_______4;
 
 	public static String CVSProjectPropertiesPage_connectionType;
@@ -870,11 +634,8 @@ public class CVSUIMessages extends NLS {
 	public static String CVSProjectPropertiesPage_setReadOnly;
 	public static String CVSProjectPropertiesPage_clearReadOnly;
 	public static String CVSRepositoryPropertiesPage_Confirm_Project_Sharing_Changes_1;
-	public static String CVSPreferencePage_Save_dirty_editors_before_CVS_operations_1;
 	public static String CVSRepositoryPropertiesPage_There_are_projects_in_the_workspace_shared_with_this_repository_2;
 	public static String CVSRepositoryPropertiesPage_sharedProject;
-	public static String CVSRepositoryPropertiesPage_useDefaultProgramName;
-	public static String CVSRepositoryPropertiesPage_useProgramName;
 	public static String CVSRepositoryPropertiesPage_useLocationAsLabel;
 	public static String CVSRepositoryPropertiesPage_useCustomLabel;
 
@@ -893,9 +654,6 @@ public class CVSUIMessages extends NLS {
 	public static String IgnoreResourcesDialog_patternMustNotBeEmpty;
 	public static String IgnoreResourcesDialog_patternDoesNotMatchFile;
 
-	public static String ContentAction_Confirm_Long_Operation_1;
-	public static String ContentAction_Changing_this_setting_will_involve_contacting_the_server_and_may_be_long_running_2;
-
 	public static String CVSProjectPropertiesPage_You_can_change_the_sharing_of_this_project_to_another_repository_location__However__this_is_only_possible_if_the_new_location_is___compatible____on_the_same_host_with_the_same_repository_path___1;
 
 	public static String ConfigurationWizardMainPage_Location_1;
@@ -906,11 +664,6 @@ public class CVSUIMessages extends NLS {
 	public static String AlternateUserValidationDialog_Cancel_7;
 	public static String AlternateUserValidationDialog_message;
 	public static String WorkbenchUserAuthenticator_The_operation_was_canceled_by_the_user_1;
-	public static String CVSCatchupReleaseViewer_No_workspace_file_1;
-	public static String CVSCatchupReleaseViewer_Select__Outgoing_Additions_1;
-	public static String ForceCommitSyncAction_Outgoing_Changes_Not_Added_1;
-	public static String ForceCommitSyncAction_You_have_chosen_to_commit_new_resources_which_have_not_been_added_to_version_control__Do_you_wish_to_add_them_to_version_control_now__2;
-
 	public static String WorkingSetSelectionArea_workingSetOther;
 	public static String ListSelectionArea_selectAll;
 	public static String ListSelectionArea_deselectAll;
@@ -933,26 +686,6 @@ public class CVSUIMessages extends NLS {
 	public static String RepositoriesViewContentHandler_missingAttribute;
 	public static String RepositoriesViewContentHandler_errorCreatingRoot;
 
-	public static String CVSWorkingSetFolderSelectionPage_projectSelectionPageTitle;
-	public static String CVSWorkingSetFolderSelectionPage_projectSelectionPageDescription;
-	public static String CVSWorkingSetFolderSelectionPage_name;
-	public static String CVSWorkingSetFolderSelectionPage_treeLabel;
-	public static String CVSWorkingSetFolderSelectionPage_refresh;
-	public static String CVSWorkingSetFolderSelectionPage_invalidWorkingSetName;
-	public static String CVSWorkingSetFolderSelectionPage_duplicateWorkingSetName;
-	public static String CVSWorkingSetFolderSelectionPage_mustSelectFolder;
-
-	public static String WorkingSetSelectionDialog_title;
-	public static String WorkingSetSelectionDialog_title_multiSelect;
-	public static String WorkingSetSelectionDialog_message;
-	public static String WorkingSetSelectionDialog_message_multiSelect;
-	public static String WorkingSetSelectionDialog_detailsButton_label;
-	public static String WorkingSetSelectionDialog_newButton_label;
-	public static String WorkingSetSelectionDialog_removeButton_label;
-
-	public static String RefreshTagsAction_title;
-	public static String RefreshTagsAction_message;
-
 	public static String WatchEditPreferencePage_description;
 	public static String WatchEditPreferencePage_checkoutReadOnly;
 	public static String WatchEditPreferencePage_validateEditSaveAction;
@@ -966,8 +699,6 @@ public class CVSUIMessages extends NLS {
 	public static String Uneditaction_confirmMessage;
 	public static String Uneditaction_confirmTitle;
 
-	public static String FileModificationValidator_promptTitle;
-	public static String FileModificationValidator_promptMessage;
 	public static String FileModificationValidator_vetoMessage;
 
 	public static String RefreshRemoteProjectWizard_title;
@@ -991,12 +722,6 @@ public class CVSUIMessages extends NLS {
 	public static String EditorsDialog_question;
 	public static String EditorsAction_classNotInitialized;
 
-	public static String SynchronizeProjectsDialog_title;
-	public static String SynchronizeProjectsDialog_selectProjects;
-	public static String SynchronizeProjectsDialog_syncOutgoingChanges;
-	public static String SynchronizeProjectsDialog_allSharedProjects;
-	public static String SynchronizeProjectsDialog_sharedWorkingSetProjects;
-
 	public static String RemoteFileEditorInput_fullPathAndRevision;
 
 	public static String CheckoutOperation_thisResourceExists;
@@ -1015,16 +740,6 @@ public class CVSUIMessages extends NLS {
 	public static String CheckoutIntoOperation_mappingAlreadyExists;
 	public static String CheckoutIntoOperation_cancelled;
 	public static String CheckoutIntoOperation_overwriteMessage;
-
-	public static String AddToWorkspace_taskName1;
-	public static String AddToWorkspace_taskNameN;
-
-	public static String CheckoutAsAction_checkoutFailed;
-
-	public static String CheckoutAsAction_enterProjectTitle;
-	public static String CheckoutAsAction_enterLocationTitle;
-	public static String CheckoutAsAction_taskname;
-	public static String CheckoutAsAction_multiCheckout;
 
 	public static String CheckoutAsWizard_title;
 	public static String CheckoutAsWizard_error;
@@ -1060,21 +775,6 @@ public class CVSUIMessages extends NLS {
 	public static String CheckoutAsProjectSelectionPage_showSameRepo;
 	public static String CheckoutAsProjectSelectionPage_invalidFolderName;
 
-	public static String TargetLocationSelectionDialog_projectNameLabel;
-	public static String TargetLocationSelectionDialog_useDefaultLabel;
-	public static String TargetLocationSelectionDialog_locationLabel;
-	public static String TargetLocationSelectionDialog_parentDirectoryLabel;
-	public static String TargetLocationSelectionDialog_browseLabel;
-	public static String TargetLocationSelectionDialog_messageForSingle;
-	public static String TargetLocationSelectionDialog_messageForMulti;
-	public static String TagetLocationSelectionDialog_locationEmpty;
-	public static String TagetLocationSelectionDialog_invalidLocation;
-	public static String TagetLocationSelectionDialog_alreadyExists;
-	public static String CheckoutIntoWizard_title;
-	public static String CheckoutIntoWizard_projectSelectionPageTitle;
-	public static String CheckoutIntoWizard_projectSelectionPageDescription;
-	public static String CheckoutIntoWizard_error;
-
 	public static String WorkspaceChangeSetCapability_1;
 	public static String OpenCommitSetAction_20;
 	public static String OpenCommitSetAction_21;
@@ -1084,19 +784,6 @@ public class CVSUIMessages extends NLS {
 	public static String CVSChangeSetCollector_0;
 	public static String WorkspaceChangeSetCapability_7;
 	public static String WorkspaceChangeSetCapability_8;
-
-	public static String CheckoutIntoWizard_thisResourceExists;
-	public static String CheckoutIntoWizard_confirmOverwrite;
-	public static String CheckoutIntoWizard_mappingAlreadyExists;
-	public static String CheckoutIntoProjectSelectionPage_description;
-	public static String CheckoutIntoProjectSelectionPage_name;
-	public static String CheckoutIntoProjectSelectionPage_treeLabel;
-	public static String CheckoutIntoProjectSelectionPage_showLabel;
-	public static String CheckoutIntoProjectSelectionPage_showAll;
-	public static String CheckoutIntoProjectSelectionPage_showUnshared;
-	public static String CheckoutIntoProjectSelectionPage_showSameRepo;
-	public static String CheckoutIntoProjectSelectionPage_recurse;
-	public static String CheckoutIntoProjectSelectionPage_invalidFolderName;
 
 	public static String HasProjectMetaFile_taskName;
 	public static String TagFromWorkspace_taskName;
@@ -1110,8 +797,6 @@ public class CVSUIMessages extends NLS {
 	public static String SafeUpdateAction_warnFilesWithConflictsTitle;
 	public static String SafeUpdateAction_warnFilesWithConflictsDescription;
 
-	public static String Error_unableToShowSyncView;
-	public static String ShowAnnotationAction_1;
 	public static String ShowAnnotationAction_2;
 	public static String ShowAnnotationAction_3;
 
@@ -1125,11 +810,6 @@ public class CVSUIMessages extends NLS {
 	public static String CommitCommentArea_2;
 	public static String CommitCommentArea_3;
 	public static String CommitCommentArea_4;
-
-	public static String OverrideAndUpdateAction_jobName;
-	public static String WorkInProgressPreferencePage_6;
-
-
 
 	public static String CheckoutProjectOperation_8;
 	public static String CheckoutProjectOperation_9;
@@ -1147,66 +827,10 @@ public class CVSUIMessages extends NLS {
 	public static String RemoteRevisionQuickDiffProvider_fetchingFile;
 	public static String RemoteCompareOperation_0;
 
-	public static String WorkspaceToolbarCommitAction_label;
-	public static String WorkspaceToolbarCommitAction_tooltip;
-	public static String WorkspaceToolbarCommitAction_description;
-	public static String WorkspaceToolbarCommitAction_image;
-
-	public static String WorkspaceToolbarUpdateAction_label;
-	public static String WorkspaceToolbarUpdateAction_tooltip;
-	public static String WorkspaceToolbarUpdateAction_description;
-	public static String WorkspaceToolbarUpdateAction_image;
-
-	public static String SharingWizardIgnore_label;
-	public static String SharingWizardIgnore_tooltip;
-	public static String SharingWizardIgnore_description;
-	public static String SharingWizardIgnore_image;
-
-	public static String ConsoleRemoveAction_label;
-	public static String ConsoleRemoveAction_tooltip;
-	public static String ConsoleRemoveAction_image;
-
-	public static String WorkspaceUpdateAction_label;
-	public static String WorkspaceUpdateAction_tooltip;
-	public static String WorkspaceUpdateAction_helpContextId;
-
-	public static String OverrideAndUpdateAction_label;
-	public static String OverrideAndUpdateAction_tooltip;
-	public static String OverrideAndUpdateAction_helpContextId;
-
-	public static String RefreshDirtyStateAction_label;
 	public static String RefreshDirtyStateOperation_0;
 	public static String RefreshDirtyStateOperation_1;
-	public static String RefreshDirtyStateAction_tooltip;
-	public static String RefreshDirtyStateAction_helpContextId;
-
-	public static String WorkspaceCommitAction_label;
-	public static String WorkspaceCommitAction_tooltip;
-	public static String WorkspaceCommitAction_helpContextId;
-
-	public static String OverrideAndCommitAction_label;
-	public static String OverrideAndCommitAction_tooltip;
-	public static String OverrideAndCommitAction_helpContextId;
-
-	public static String ConfirmMergedAction_label;
-	public static String ConfirmMergedAction_tooltip;
-	public static String ConfirmMergedAction_helpContextId;
-
-	public static String BranchAction_label;
-	public static String BranchAction_tooltip;
-
-	public static String IgnoreAction_label;
 	public static String IgnoreAction_0;
 	public static String IgnoreAction_1;
-	public static String IgnoreAction_tooltip;
-
-	public static String ShowResourceInHistoryAction_label;
-	public static String ShowResourceInHistoryAction_tooltip;
-
-	public static String ShowAnnotationAction_label;
-	public static String ShowAnnotationAction_tooltip;
-
-	public static String GenerateDiffFileAction_label;
 	public static String GenerateDiffFileOperation_0;
 	public static String GenerateDiffFileOperation_1;
 	public static String GenerateDiffFileOperation_2;
@@ -1215,21 +839,6 @@ public class CVSUIMessages extends NLS {
 	public static String GenerateDiffFileWizard_3;
 	public static String GenerateDiffFileWizard_4;
 	public static String GenerateDiffFileWizard_5;
-	public static String GenerateDiffFileAction_tooltip;
-
-	public static String MergeUpdateAction_label;
-	public static String MergeUpdateAction_tooltip;
-	public static String MergeUpdateAction_helpContextId;
-
-	public static String CompareRevertAction_label;
-	public static String CompareRevertAction_tooltip;
-	public static String CompareRevertAction_helpContextId;
-
-	public static String SharingCommitAction_label;
-	public static String SharingCommitAction_tooltip;
-	public static String SharingCommitAction_description;
-	public static String SharingCommitAction_image;
-
 	public static String MergeSynchronizeParticipant_8;
 	public static String MergeSynchronizeParticipant_9;
 	public static String MergeSynchronizeParticipant_10;
@@ -1240,13 +849,8 @@ public class CVSUIMessages extends NLS {
 	public static String SubscriberConfirmMergedAction_0;
 	public static String SubscriberConfirmMergedAction_jobName;
 	public static String CVSSubscriberAction_0;
-	public static String ReleaseCommentDialog_6;
 	public static String ReconcileProjectOperation_0;
 	public static String CheckoutToRemoteFolderOperation_0;
-	public static String CVSRepositoryPropertiesPage_21;
-	public static String CVSRepositoryPropertiesPage_22;
-	public static String CVSRepositoryPropertiesPage_23;
-	public static String CVSRepositoryPropertiesPage_24;
 	public static String CVSRepositoryPropertiesPage_0;
 	public static String CVSRepositoryPropertiesPage_1;
 	public static String CompareRevertAction_0;
@@ -1261,16 +865,9 @@ public class CVSUIMessages extends NLS {
 
 	public static String FileModificationValidator_3;
 	public static String FileModificationValidator_4;
-	public static String CVSSynchronizeViewPage_0;
 	public static String CVSSynchronizeWizard_0;
 	public static String Participant_comparing;
 	public static String Participant_merging;
-	public static String Participant_synchronizing;
-
-	public static String Participant_comparingDetail;
-	public static String Participant_mergingDetail;
-	public static String Participant_synchronizingDetail;
-
 	public static String CompareWithRevisionAction_4;
 	public static String ReplaceWithRevisionAction_0;
 	public static String ReplaceWithRevisionAction_1;
@@ -1285,7 +882,6 @@ public class CVSUIMessages extends NLS {
 	public static String SharingWizard_23;
 	public static String SharingWizard_24;
 	public static String SharingWizard_25;
-	public static String SharingWizardSyncPage_0;
 	public static String ReconcileProjectOperation_1;
 	public static String ReconcileProjectOperation_2;
 	public static String ShareProjectOperation_0;
@@ -1296,8 +892,6 @@ public class CVSUIMessages extends NLS {
 	public static String SharingWizardSyncPage_5;
 	public static String SharingWizardSyncPage_8;
 	public static String SharingWizardSyncPage_9;
-	public static String SharingWizardSyncPage_10;
-	public static String SharingWizardSyncPage_11;
 	public static String SharingWizardSyncPage_12;
 	public static String ShareProjectOperation_1;
 	public static String CVSProjectPropertiesPage_31;
@@ -1347,10 +941,6 @@ public class CVSUIMessages extends NLS {
 	public static String DateTagDialog_3;
 	public static String DateTagDialog_4;
 	public static String DateTagDialog_5;
-	public static String WorkbenchPreference_defaultEncoding;
-	public static String WorkbenchPreference_otherEncoding;
-	public static String WorkbenchPreference_unsupportedEncoding;
-
 	public static String LogEntryCacheUpdateHandler_0;
 	public static String LogEntryCacheUpdateHandler_1;
 	public static String LogEntryCacheUpdateHandler_2;
