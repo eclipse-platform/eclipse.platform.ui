@@ -1,15 +1,16 @@
 html, body { width : 100%; height : 100%; }
 
-/*
- * Set default background color to white, and let others specifically override
- */
+/* Set default background color to white, and let others specifically override */
 html, body { background-color : #FFFFFF; }
+
+/* General font color (let others specifically override) */
+H1, H2, H3, H4, p, a { color : #4D4D4D; }
 
 /* 
  * Set up general fonts, sizes and colors 
  */
 body {
-	font-family : Arial;
+	font-family : Arial, sans-serif;
 }
 
 .intro-header H1 {
@@ -43,8 +44,19 @@ H4 .div-label {
 	font-weight : bold;
 }
 
+a {
+	font-weight : bold;
+	text-decoration : none;
+	color : #4D4D4D;
+}
+
 a .link-label {
 	font-size : 10pt;
+	font-weight : normal;
+}
+
+#navigation-links a .link-label {
+	font-size : 8pt;
 	font-weight : normal;
 }
 
@@ -58,16 +70,6 @@ p .group-description {
 	font-weight : normal;
 }
 
-a {
-	font-weight : bold;
-	text-decoration : none;
-	color : #4D4D4D;
-}
-
-#navigation-links a .link-label {
-	font-size : 8pt;
-	font-weight : normal;
-}
 
 /* 
  * Set up other general properties like padding/margins
