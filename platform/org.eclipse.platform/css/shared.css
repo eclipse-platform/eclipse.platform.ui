@@ -1,21 +1,14 @@
-html, body { width : 100%; height : 100%; }
-
-/* Set default background color to white, and let others specifically override */
-html, body { background-color : #FFFFFF; }
-
-/* General font color (let others specifically override) */
-H1, H2, H3, H4, p, a { color : #4D4D4D; }
-
 /* 
  * Set up general fonts, sizes and colors 
  */
-body {
-	font-family : Arial, sans-serif;
-}
+body { font-family : Arial, sans-serif; }
+
+H1, H2, H3, H4, p, a { color : #4D4D4D; }
 
 .intro-header H1 {
-	font-size : 13pt;
-	color : #656A72;
+	font-size : 16pt;
+	font-weight : normal;
+	color : #E5E5E5;
 }
 
 h2 {
@@ -25,8 +18,8 @@ h2 {
 }
 
 .page-title {
-	font-size : 12pt;
-	font-weight : bold;
+	font-size : 14pt;
+	font-weight : normal;
 	color : #8C96A2;
 	float : none;
 	clear : both;
@@ -37,7 +30,6 @@ h2 {
 	float : none;
 	clear : both;
 }
-
 
 H4 .div-label {
 	font-size : 10pt;
@@ -56,8 +48,9 @@ a .link-label {
 }
 
 #navigation-links a .link-label {
-	font-size : 8pt;
+	font-size : 9pt;
 	font-weight : normal;
+	color : #E5E5E5;
 }
 
 a .text {
@@ -74,20 +67,11 @@ p .group-description {
 /* 
  * Set up other general properties like padding/margins
  */
+html, body { width : 100%; height : 100%; }
+
 html, body, div, h1, h4, p, a { margin : 0px; padding : 0px; }
- 
-/*
- * to get scrollbars working in both IE and Mozilla
- */
-html,body { overflow: auto; }
-html>body { overflow: visible; }
 
-body {
-	background-repeat : no-repeat;
-	background-position : bottom right;
-}
-
-.intro-header p { padding-top : 5px; margin-left : 10px; }
+.intro-header H1 { padding-top : 10px; margin-left : 10px; }
 
 H4 .div-label {
 	padding : 10px;
@@ -99,38 +83,69 @@ a img {
 	background-repeat : no-repeat;
 }
 
-base { width : 0px; height : 0px; margin : 0px; padding : 0px; }
+/*
+ * to get scrollbars working in both IE and Mozilla
+ */
+html,body { overflow: auto; }
+html>body { overflow: visible; }
+
 /*
  * Set up the body, decorative background, and navigation for the content 
  * pages. 
  * Note: the root page handles its own background and navigation; these
- * settins apply to the content pages
+ * settings primarily apply to the content pages
  */
-body, .page{
-	min-width : 770px;
-	/* since IE doesn't support min-width, try expression */
-	width:expression(document.body.clientWidth < 770? "770px": "auto" );	
-}
-
-.intro-header {
-	background-color : #BCCEE4;
+body {
+	background-color : #FFFFFF;
+	background-repeat : no-repeat;
+	background-position : bottom right;
 }
 
 #background-image {
-	position : relative;
-	height : 120px;
 	width : 100%;
-	background-image : url(graphics/background/content_background.jpg);
-	background-repeat : repeat-x;
-	text-align : center;
+	height : 164px;
+	background-image : url(graphics/contentpage/background.jpg);
+	background-repeat : no-repeat;
+	background-position : top left;	
+	position : absolute;
+	top : 0px;
+	z-index : -100;
 }
 
-#curve-image {
-	height : 120px;
-	width : 600px;
-	background-image : url(graphics/background/content_curve.gif);
+#curve-image { 
+	width : 100%;
+	height : 164px;
+	position : absolute;
+	top : 0px;
+	background-image : url(graphics/contentpage/backgroundcurve.gif);
 	background-repeat : no-repeat;
-	margin : 0px auto;
+	background-position : top center;
+	margin : 0;
+	padding : 0;
+}
+
+.intro-header {	background-color : transparent; z-index : 100;}
+
+body, .page{
+	min-width : 770px;
+	/* since IE doesn't support min-width, try expression */
+	width:expression(document.body.clientWidth < 770? "770px": "auto" );
+	min-height : 425px;
+	height : 100%;
+	height : expression(document.body.clientHeight < 425? "425px": "100%" );
+}
+
+.page { 
+	background-image : url(graphics/contentpage/wordmark.gif);
+	background-repeat : no-repeat;
+	background-position : bottom left;
+	min-height : 475px;
+}
+
+#page-content {
+	background-repeat : no-repeat;
+	background-position : bottom right;
+	height : 70%;
 }
 
 /* 
@@ -139,8 +154,8 @@ body, .page{
  */
 #navigation-links {
 	position : relative;
-	top : -110px;
 	left : 10px;
+	top : 5px;
 	height : 60;
 	width : 98%;
 }
@@ -153,37 +168,40 @@ body, .page{
 }
 
 #navigation-links a img {
-	height : 40px;
-	width : 40px;
+	height : 52px;
+	width : 52px;
 	vertical-align : middle;
 }
 
-#navigation-links a .link-label { display : block; }
+#navigation-links a .link-label { display : block; margin-top : 5px;}
 
 #navigation-links a .text { display : none; }
-
-#navigation-links a#workbench .link-label {display : inline; }
 
 #navigation-links a:hover { border-right : 0px; }
 
 /* properties for each of the navigation-links  */
-#navigation-links a#overview img { background-image : url(graphics/obj_32/overview_obj.gif); }
-#navigation-links a#overview:hover img { background-image : url(graphics/obj_32/hovoverview_obj.gif); }
+#navigation-links a#overview img { background-image : url(graphics/icons/etool/overview48.gif); }
+#navigation-links a#overview:hover img { background-image : url(graphics/icons/ctool/overview48.gif); }
+#navigation-links a#overview:active img { background-image : url(graphics/icons/ctool/overview48sel.gif); }
 
-#navigation-links a#tutorials img { background-image : url(graphics/obj_32/tutorials_obj.gif); }
-#navigation-links a#tutorials:hover img { background-image : url(graphics/obj_32/hovtutorials_obj.gif); }
+#navigation-links a#tutorials img { background-image : url(graphics/icons/etool/tutorials48.gif); }
+#navigation-links a#tutorials:hover img { background-image : url(graphics/icons/ctool/tutorials48.gif); }
+#navigation-links a#tutorials:active img { background-image : url(graphics/icons/ctool/tutorials48sel.gif); }
 
-#navigation-links a#samples img { background-image : url(graphics/obj_32/examples_obj.gif); }
-#navigation-links a#samples:hover img { background-image : url(graphics/obj_32/hovexamples_obj.gif); }
+#navigation-links a#samples img { background-image : url(graphics/icons/etool/samples48.gif); }
+#navigation-links a#samples:hover img { background-image : url(graphics/icons/ctool/samples48.gif); }
+#navigation-links a#samples:active img { background-image : url(graphics/icons/ctool/samples48sel.gif); }
 
-#navigation-links a#news img { background-image : url(graphics/obj_32/whatsnew_obj.gif); }
-#navigation-links a#news:hover img { background-image : url(graphics/obj_32/hovwhatsnew_obj.gif); }
+#navigation-links a#news img { background-image : url(graphics/icons/etool/whatsnew48.gif); }
+#navigation-links a#news:hover img { background-image : url(graphics/icons/ctool/whatsnew48.gif); }
+#navigation-links a#news:active img { background-image : url(graphics/icons/ctool/whatsnew48sel.gif); }
 
-#navigation-links a#workbench { position : absolute;  right : 0px; text-align : left;}
-#navigation-links a#workbench span { display : inline; }
+#navigation-links a#workbench { position : absolute;  right : 0px; top : -35px; text-align : right;}
+#navigation-links a#workbench .link-label { visibility : hidden; }
+#navigation-links a#workbench:hover .link-label { visibility : visible; }
 #navigation-links a#workbench .text { display : none; }
-#navigation-links a#workbench img { background-image : url(graphics/obj_32/workbench_obj.gif); width : 40px; height : 41px;}
-#navigation-links a#workbench:hover img { background-image : url(graphics/obj_32/hovworkbench_obj.gif); }
+#navigation-links a#workbench img { background-image : url(graphics/icons/etool/wb48.gif); width : 53px; height : 53px;}
+#navigation-links a#workbench:hover img { background-image : url(graphics/icons/ctool/wb48.gif); }
 
 /* 
  * Lay out the page title and description 
@@ -193,18 +211,14 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 /* position the page content so that the page title overlays the bottom
  * of the background image, but make sure the content is always on top 
  * (using z-index) */
-#background-image { z-index : -1; }
 #page-content {
 	float : none;
 	clear : both;
 	text-align : center;
-	margin-top : -95px;
-	z-index : 1;
+	margin-top : 35px;
 }
-/* Fix positioning on Moz 1.4 */
-.page > #page-content {
-	margin-top : -40px;
-}
+
+.page > #page-content { margin-top : 50px; }
 
 #page-content p { 
 	padding-bottom : 15px; 

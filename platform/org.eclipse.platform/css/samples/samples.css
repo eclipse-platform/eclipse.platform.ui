@@ -1,11 +1,11 @@
 body {
-	background-image : url(../graphics/watermark/examples_wmk.gif);
-	background-repeat : no-repeat;
-	background-position : bottom right;
+	background-image : url(../graphics/contentpage/samples_wtr.jpg);
 }
 
+.page { min-height : 700px; }
+
 /* show the "selected" image for this page */
-#navigation-links a#samples img, #navigation-links a#samples:hover img { background-image : url(../graphics/obj_32/selexamples_obj.gif); }
+#navigation-links a#samples img, #navigation-links a#samples:hover img { background-image : url(../graphics/icons/ctool/samples48sel.gif); }
 
 /* Lay out the real content of the samples page: */
 
@@ -22,38 +22,58 @@ body {
 .samples-group H4 { margin-top : 10px; }
 
 .sample-link { 
-	float : left; 
-	height : 5em; 
 	width : 360px;
 	text-align : left; 
 	margin-left : 5px;
 	margin-right : 5px;
 	margin-top : 10px;
-	margin-bottom : 10px;
+	margin-bottom : -30px;
+	vertical-align : top;
+}
+
+.samples-group > .sample-link {
+	float : left;
+	height : 150px;
+	vertical-align : middle;
 }
 
 .sample-link .link-label {
+	display : block;
+	width : 300px;
 	position : relative;
-	top : -15px;
+	top : -50px;
+	left : 60px;
 }
 
 .sample-link p .text {
 	display : block;
-	margin-left : 53px;
-	margin-top : -25px;
+	width : 300px;
+	position : relative;
+	top : -45px;
+	left : 53px;
 }
 
 .sample-link img {
-	background-image : url(../graphics/obj_48/examples_obj.gif);
 	height : 56px;
 	width : 56px;
 	vertical-align : middle;
 }
 
-.sample-link:hover img {
-	background-image : url(../graphics/obj_48/hovexamples_obj.gif);
-}
-
 .sample-link:hover { border-right : 0px; }
 
+#swt .sample-link img {
+	background-image : url(../graphics/icons/obj48/samplered_obj.gif);
+}
+
+#swt .sample-link:hover img {
+	background-image : url(../graphics/icons/obj48/sampleredhov_obj.gif);
+}
+
+#workbench .sample-link img {
+	background-image : url(../graphics/icons/obj48/samplepurp_obj.gif);
+}
+
+#workbench .sample-link:hover img {
+	background-image : url(../graphics/icons/obj48/samplepurphov_obj.gif);
+}
 

@@ -6,50 +6,44 @@
                id="root"
                class-id="page"> 
             <title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
-            <div
-                  id="root-background">
-               <div
-                     id="variable-space">
-               </div>
-               <div
-                     id="root-background-image">
-                  <div
-                        id="root-curve-image">
-                  </div>
-               </div>
-            </div>
-            <div
+            <div id="links-background">
+	            <div
                   id="page-links">
-               <link
+	               <link
                      label="Overview"
                      url="http://org.eclipse.ui.intro/showPage?id=overview"
-                     id="overview">
-                  <text>Find out what Eclipse is all about</text>
-               </link>
-               <link
+                     id="overview"
+					 class-id="left">
+	                  <text>Find out what Eclipse is all about</text>
+	               </link>
+	               <link
                      label="Tutorials"
                      url="http://org.eclipse.ui.intro/showPage?id=tutorials"
-                     id="tutorials">
-                  <text>Let us guide you through Eclipse end-to-end tutorials</text>
-               </link>
-               <link
+                     id="tutorials"
+					 class-id="left">
+	                  <text>Let us guide you through Eclipse end-to-end tutorials</text>
+	               </link>
+	               <link
                      label="Samples"
                      url="http://org.eclipse.ui.intro/showPage?id=samples"
-                     id="samples">
-                  <text>Explore Eclipse development through code samples</text>
-               </link>
-               <link
+                     id="samples"
+					 class-id="right">
+	                  <text>Explore Eclipse development through code samples</text>
+	               </link>
+	               <link
                      label="What&apos;s New" 
                      url="http://org.eclipse.ui.intro/showPage?id=news"
-                     id="news">
-                  <text>Find out what is new in this release</text>
-               </link>
-            </div>
+                     id="news"
+					 class-id="right">
+	                  <text>Find out what is new in this release</text>
+	               </link>
+	            </div>
+	        </div>
             <div
                   id="action-links">
                <link
                      url="http://org.eclipse.ui.intro/showStandby?partId=org.eclipse.ui.intro.contextHelp"
-                     label="Go To The Workbench"
+                     label="Workbench"
                      id="workbench">
                   <text>Go to the workbench but stay around helping me as I browse</text>
                </link>
@@ -61,17 +55,17 @@
                title="OVERVIEW"
                id="overview"
                class-id="page">
-			<title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
-            <div
+   			<title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
+			<div
                   id="background-image">
-               <div
-                     id="curve-image">
-               </div>
+            </div>
+            <div
+                  id="curve-image">
             </div>
             <div 
             	  id="navigation-links">
                <include
-                     path="root/page-links">
+                     path="root/links-background/page-links">
                </include>
 			   <include
                      path="root/action-links">
@@ -108,9 +102,9 @@
 		  <title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
             <div
                   id="background-image">
-               <div
-                     id="curve-image">
-               </div>
+            </div>
+            <div
+                  id="curve-image">
             </div>
             <include
                   path="overview/navigation-links">
@@ -132,9 +126,9 @@
             <title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
             <div
                   id="background-image">
-               <div
-                     id="curve-image">
-               </div>
+            </div>
+            <div
+                  id="curve-image">
             </div>
             <include
                   path="overview/navigation-links">
@@ -205,9 +199,9 @@
             <title class-id="intro-header">Welcome to Eclipse Platform 3.0</title>
             <div
                   id="background-image">
-               <div
-                     id="curve-image">
-               </div>
+            </div>
+            <div
+                  id="curve-image">
             </div>
             <include
                   path="overview/navigation-links">
