@@ -41,7 +41,13 @@ public static Test suite() {
  * FAILED_WRITE_LOCAL.
  */
 public void testBug25658() {
-	
+
+	// This test is no longer valid since the error code is dependant on whether 
+	// or not the parent folder is marked as read-only. We need to write a different
+	// test to make the file.create file.	
+	if (true)
+		return;
+
 	// We need to know whether or not we can set the folder to be read-only
 	// in order to perform this test.
 	if (!CoreFileSystemLibrary.usingNatives())
@@ -64,6 +70,41 @@ public void testBug25658() {
 			fail("0.1");
 		} catch (CoreException e) {
 			assertEquals("0.2", IResourceStatus.FAILED_WRITE_LOCAL, e.getStatus().getCode());
+		}
+	} finally {
+		folder.setReadOnly(false);
+	}
+}
+/**
+ * Bug requests that if a failed file write occurs on Linux that we check the immediate
+ * parent to see if it is read-only so we can return a better error code and message
+ * to the user.
+ */
+public void testBug25662() {
+	
+	// We need to know whether or not we can set the folder to be read-only
+	// in order to perform this test.
+	if (!CoreFileSystemLibrary.usingNatives())
+		return;
+	
+	// Only run this test on Linux for now since Windows lets you create
+	// a file within a read-only folder.
+	if (!BootLoader.getOS().equals(BootLoader.OS_LINUX))
+		return;
+
+	IProject project = getWorkspace().getRoot().getProject("MyProject");
+	IFolder folder = project.getFolder("folder");
+	ensureExistsInWorkspace(new IResource[] {project, folder}, true);
+	IFile file = folder.getFile("file.txt");
+
+	try {
+		folder.setReadOnly(true);
+		assertTrue("0.0", folder.isReadOnly());
+		try {
+			file.create(getRandomContents(), true, getMonitor());
+			fail("0.1");
+		} catch (CoreException e) {
+			assertEquals("0.2", IResourceStatus.PARENT_READ_ONLY, e.getStatus().getCode());
 		}
 	} finally {
 		folder.setReadOnly(false);
