@@ -22,11 +22,8 @@ import java.util.List;
 
 import org.apache.xml.utils.URI;
 import org.apache.xml.utils.URI.MalformedURIException;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.ant.internal.ui.editor.AntEditorException;
-import org.eclipse.ant.internal.ui.model.AntUtil;
+import org.eclipse.core.runtime.Path;
 
 /**
  * General representation of an xml element.
@@ -35,7 +32,7 @@ import org.eclipse.ant.internal.ui.model.AntUtil;
  * '<elementName>' in an xml file.
  * 
  */
-public class XmlElement implements IAdaptable {
+public class XmlElement {
 	
 	/*
 	 * (T)
@@ -429,17 +426,5 @@ public class XmlElement implements IAdaptable {
 		XmlElement e1= (XmlElement) o1;
 		
 		return e1.getElementPath().hashCode();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
-	public Object getAdapter(Class adapter) {
-		if (adapter == IResource.class) {
-			if (getFilePath() != null) {
-				return AntUtil.getFile(getFilePath());
-			}
-		}
-		return null;
 	}
 }
