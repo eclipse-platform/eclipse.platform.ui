@@ -35,7 +35,7 @@ public class PluginDescriptor implements IPluginDescriptor {
 	private boolean active = false; // plugin is active
 	private volatile boolean activePending = false; // being activated
 	private boolean deactivated = false; // plugin deactivated due to startup errors
-
+	private ResourceBundle resources = null; 
 	private PluginClassLoader classLoader;
 
 	// constants
@@ -126,7 +126,9 @@ public class PluginDescriptor implements IPluginDescriptor {
 	 * @see IPluginDescriptor
 	 */
 	public ResourceBundle getResourceBundle() throws MissingResourceException {
-		return ResourceTranslator.getResourceBundle(bundleOsgi);
+		if (resources==null)
+			resources = ResourceTranslator.getResourceBundle(bundleOsgi);
+		return resources;
 	}
 
 	/**
