@@ -103,14 +103,14 @@ Launch configuration instances of this type will delegate to instances of this c
          <attribute name="sourcePathComputerId" type="string">
             <annotation>
                <documentation>
-                  The unique identifier of a sourcePathComputer extension that is used to compute a default source lookup path for launch configurations of this type
+                  The unique identifier of a sourcePathComputer extension that is used to compute a default source lookup path for launch configurations of this type. This atttribute was added in the 3.0 release.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="sourceLocatorId" type="string">
             <annotation>
                <documentation>
-                  The unique identifier of a sourceLocator extension that is used to create the source locator for sessions launched using launch configurations of this type
+                  The unique identifier of a sourceLocator extension that is used to create the source locator for sessions launched using launch configurations of this type. This atttribute was added in the 3.0 release.
                </documentation>
             </annotation>
          </attribute>

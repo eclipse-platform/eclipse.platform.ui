@@ -32,6 +32,8 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
  *      delegate="com.example.ExampleLaunchConfigurationDelegate"
  *      modes="run, debug"
  *      name="Example Application"&gt;
+ *      sourceLocatorId="com.example.SourceLocator"&gt;
+ *      sourcePathComputerId="com.example.SourcePathComputer"&gt;
  *   &lt;/launchConfigurationType&gt;
  * &lt;/extension&gt;
  * </pre>
@@ -50,9 +52,14 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
  * <li><code>category</code> is an optional attribute that specifies a category
  * for this launch configuration type. Categories are client defined. This
  * attribute was added in the 2.1 release.</li>
+ * <li><code>sourceLocatorId</code> an optional unique identifier of a sourceLocator extension that
+ * is used to create the source locator for sessions launched using launch configurations
+ * of this type. This atttribute was added in the 3.0 release.</li>
+ * <li><code>sourcePathComputerId</code> an optional unique identifier of a sourcePathComputer extension
+ * that is used to compute a default source lookup path for launch configurations of this type.
+ * This atttribute was added in the 3.0 release.</li>
  * </ul>
  * </p>
- * TODO: add new attributes - sourcePathComputerId and sourceLocatorId
  * <p>
  * The <code>category</code> attribute has been added in release 2.1, such that other
  * tools may re-use the launch configuration framework for purposes other than

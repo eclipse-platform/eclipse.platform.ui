@@ -63,7 +63,6 @@ public class FolderSourceContainerType extends AbstractSourceContainerTypeDelega
 				boolean nested = "true".equals(nest); //$NON-NLS-1$
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IFolder folder = workspace.getRoot().getFolder(new Path(string));
-				// TODO: what if folder does not exist
 				return new FolderSourceContainer(folder, nested);
 			} 
 			abort(SourceLookupMessages.getString("FolderSourceContainerType.11"), null); //$NON-NLS-1$
