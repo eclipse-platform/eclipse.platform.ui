@@ -39,8 +39,11 @@ private DataTreeLookup() {
  * Factory method for creating a new lookup object.
  */
 public static DataTreeLookup newLookup(IPath nodeKey, boolean isPresent, Object data) {
-	DataTreeLookup instance = instancePool[nextFree];
-	nextFree = ++nextFree % POOL_SIZE;
+	DataTreeLookup instance;
+	synchronized (instancePool) {
+		instance = instancePool[nextFree];
+		nextFree = ++nextFree % POOL_SIZE;
+	}
 	instance.key = nodeKey;
 	instance.isPresent = isPresent;
 	instance.data = data;
@@ -51,8 +54,11 @@ public static DataTreeLookup newLookup(IPath nodeKey, boolean isPresent, Object 
  * Factory method for creating a new lookup object.
  */
 public static DataTreeLookup newLookup(IPath nodeKey, boolean isPresent, Object data, boolean foundInFirstDelta) {
-	DataTreeLookup instance = instancePool[nextFree];
-	nextFree = ++nextFree % POOL_SIZE;
+	DataTreeLookup instance;
+	synchronized (instancePool) {
+		instance = instancePool[nextFree];
+		nextFree = ++nextFree % POOL_SIZE;
+	}
 	instance.key = nodeKey;
 	instance.isPresent = isPresent;
 	instance.data = data;
