@@ -572,7 +572,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	}
 
 	/**
-	 * Returns the IAntClasspathEntry for the tools.jar associated with the path supplied
+	 * Returns the IAntClasspathEntry for the tools.jar associated with the path supplied.
 	 * May return <code>null</code> if no tools.jar is found (e.g. the path
 	 * points to a JRE install).
 	 * 
