@@ -1199,7 +1199,7 @@
             </parameter>
          </colorFactory>
          <description>
-            %Color.activeTabBGStartDesc
+            %Color.activeTabBGEndDesc
          </description>
          <colorValue
                ws="motif"
@@ -1212,7 +1212,7 @@
             categoryId="org.eclipse.ui.presentation.default"
             id="org.eclipse.ui.workbench.ACTIVE_TAB_BG_START">
          <description>
-            %Color.activeTabBGEndDesc
+            %Color.activeTabBGStartDesc
          </description>
          <colorValue
                ws="motif"
