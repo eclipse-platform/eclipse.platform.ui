@@ -20,7 +20,7 @@ This infopop opened because you pressed F1 while an infopop was already open.</d
    
 <!-- Search Menu: Help -->   
    <context  id="helpSearchMenu" >
-      <description>Type an expression for which you want to search the documentation. You can use the indicated boolean operators and wildcards, and/or search only the specific books as needed.</description>
+      <description>This action will open the Search dialog that allows documentation searching.</description>
    </context>
    
    <context  id="searchFilteringOpts" >
@@ -38,6 +38,7 @@ This infopop opened because you pressed F1 while an infopop was already open.</d
 You can use OR and NOT qualifiers between terms. Also, if you put double-quotation marks around a query, search will return only results that contain specified phrase.
 
 Click <b>Choose</b> to see the book selection dialog, allowing for additional filtering to be specified.</description>
+       <topic label="Searching online help" href="/org.eclipse.platform.doc.user/tasks/tsearch.htm" />
    </context>
 
 </contexts>
