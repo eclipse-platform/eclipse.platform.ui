@@ -1111,10 +1111,8 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 			ILaunchConfigurationWorkingCopy wc = getWorkingCopy();
 			if (wc != null) {
 				setInitializingTabs(true);
-				// apply changes when leaving a tab
-				tab.performApply(wc);
-				// re-initialize a tab when entering it
-				getActiveTab().initializeFrom(wc);
+				tab.deactivated(wc);
+				getActiveTab().activated(wc);
 				setInitializingTabs(false);
 			}
 		}

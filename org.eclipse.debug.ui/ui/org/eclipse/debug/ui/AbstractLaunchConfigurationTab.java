@@ -296,5 +296,48 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	protected void setDirty(boolean dirty) {
 		fDirty = dirty;
 	}
+	
+	/**
+	 * This method was added to the <code>ILaunchConfiugrationTab</code> interface
+	 * in the 3.0 release to allow tabs to distinguish between a tab being activated
+	 * and a tab group be initialized for the first time, from a selected launch
+	 * configuration. To maintain backwards compatible behavior, the default
+	 * implementation provided, calls this tab's <code>initializeFrom</code> method.
+	 * Tabs should override this method as required.
+	 * <p>
+	 * The launch tab framework was originially designed to take care of inter tab
+	 * communication by applying attributes from the active tab to the launch configuration
+	 * being edited, when a tab is exited, and by initializing a tab when activated.
+	 * The addition of the methods <code>tabActivated</code> and <code>tabDeactivated</code>
+	 * allow tabs to determine the appropriate course of action. 
+	 * </p>
+	 * 
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 * @since 3.0
+	 */
+	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
+		initializeFrom(workingCopy);
+	}
+
+	/**
+	 * This method was added to the <code>ILaunchConfiugrationTab</code> interface
+	 * in the 3.0 release to allow tabs to distinguish between a tab being deactivated
+	 * and saving its attributes to a launch configuration. To maintain backwards
+	 * compatible behavior, the default implementation provided, calls this tab's
+	 * <code>applyChanges</code> method. Tabs should override this method as required.
+	 * <p>
+	 * The launch tab framework was originially designed to take care of inter tab
+	 * communication by applying attributes from the active tab to the launch configuration
+	 * being edited, when a tab is exited, and by initializing a tab when activated.
+	 * The addition of the methods <code>tabActivated</code> and <code>tabDeactivated</code>
+	 * allow tabs to determine the appropriate course of action. 
+	 * </p>
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
+	 * @since 3.0
+	 */
+	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
+		performApply(workingCopy);
+	}
+
 }
 

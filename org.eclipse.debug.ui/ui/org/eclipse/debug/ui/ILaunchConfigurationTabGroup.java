@@ -25,29 +25,30 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  * and provides a mechanism for overriding configuration
  * initialization performed by tabs.
  * <p>
- * The tab group's lifecycle begins when <code>createTabs(ILaunchConfigurationDialog, String)</code>
- * is called. A tab group may then be asked repeatedly to initialize its
- * tabs to display values for a launch configuration (see
- * <code>initializeFrom(ILaunchConfiguration)</code>), and to
- * apply its current settings to a launch configuration (see
- * <code>performApply(ILaunchConfigurationWorkingCopy)</code>).
- * While a user manipulates a tab's controls, the tab is not
- * intended to update a launch configuration. Updating a launch
- * configuration should only be performed when <code>performApply</code>
- * is called. To end a tab group's lifecyle, <code>dispose()</code> will
- * be called. Note that a tab group can be disposed before its controls
- * have been created.
+ * A tab group has the following lifecycle methods:
+ * <ul>
+ * <li><code>createTabs(ILaunchConfigurationDialog, String)</code> - 
+ *  this is the first method called on a tab group after it is instantiated.</li>
+ * <li><code>initializeFrom(ILaunchConfiguration)</code> - called when a 
+ *  launch configuration is selected to be displayed.</li>
+ * <li><code>performApply(ILaunchConfigurationWorkingCopy)</code> - called when
+ *  a tab group's values are to be written to a launch configuration.</li>
+ * <li><code>dispose()</code> - the last method called on a tab group, when it is
+ *  to perform any required cleanup. Note that a tab can be disposed before its control
+ *  has been created.</li>
+ * </ul>
+ * The method <code>setDefaults(ILaunchConfigurationWorkingCopy)</code>
+ * can be called before a tab's controls are created.
  * </p>
- * When a user leaves a tab, a tab is asked to apply its current settings
- * to a launch configuration working copy. When a tab is entered, it is
- * asked to initialize itself from a working copy. This mechanism is used
- * to support inter-tab dependencies.
  * <p>
- * To support single-click launching, a tab group is required to initialize
- * default values into launch configurations (possibly when controls
- * have not been created). See <code>setDefaults(ILaunchConfigurationWorkingCopy)</code>.
- * As well, the method <code>launched</code> can be called when the tab's
- * control does not exist.
+ * The launch tab framework was originially designed to handle inter tab
+ * communication by applying attributes from the active tab to a launch configuration
+ * being edited, when a tab is exited, and by initializing a tab when activated.
+ * In 3.0, the addition of the methods <code>activated</code> and <code>deactivated</code>
+ * allow tabs to determine the appropriate course of action. The default implementation
+ * in <code>AbstractLaunchConfigurationTab</code> is to call the old methods
+ * (<code>initializeFrom</code> and <code>performApply</code>). Tabs should overeride
+ * the new methods as required.
  * </p>
  * <p>
  * A launch configuration group extension is defined in <code>plugin.xml</code>.
@@ -116,7 +117,7 @@ public interface ILaunchConfigurationTabGroup {
 	 * is called when a new launch configuration is created
 	 * such that the configuration can be initialized with
 	 * meaningful values. This method may be called before
-	 * tab controls are created, to support single-click launching.
+	 * tab controls are created.
 	 * 
 	 * @param configuration launch configuration
 	 */
