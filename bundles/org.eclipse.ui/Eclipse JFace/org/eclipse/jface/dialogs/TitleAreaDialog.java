@@ -71,7 +71,7 @@ public class TitleAreaDialog extends Dialog {
 	private Label titleLabel;
 	private Label titleImage;
 	private Label bottomFillerLabel;
-	private Label rightFillerLabel;
+	private Label leftFillerLabel;
 	private Color titleAreaColor;
 	private RGB titleAreaRGB;
 
@@ -242,8 +242,8 @@ private Control createTitleArea(Composite parent) {
 
 	
 	// Filler labels
-	rightFillerLabel = new Label(parent, SWT.CENTER);
-	rightFillerLabel.setBackground(background);
+	leftFillerLabel = new Label(parent, SWT.CENTER);
+	leftFillerLabel.setBackground(background);
 	
 	bottomFillerLabel = new Label(parent, SWT.CENTER);
 	bottomFillerLabel.setBackground(background);
@@ -309,7 +309,7 @@ private void setLayoutsForNormalMessage(
 	data.left = new FormAttachment(0, 0);
 	data.bottom = new FormAttachment(messageImageLabel, 0, SWT.BOTTOM);
 	data.right = new FormAttachment(messageImageLabel, 0);
-	rightFillerLabel.setLayoutData(data);
+	leftFillerLabel.setLayoutData(data);
 }
 /**
  * The <code>TitleAreaDialog</code> implementation of this 
@@ -415,7 +415,7 @@ private void layoutForNewMessage(){
 	} else {
 		messageImageLabel.setVisible(true);
 		bottomFillerLabel.setVisible(true);
-		rightFillerLabel.setVisible(true);
+		leftFillerLabel.setVisible(true);
 		
 		/**
 		 * Note that we do not use horizontalSpacing here 
@@ -442,7 +442,7 @@ private void layoutForNewMessage(){
 		data.left = new FormAttachment(0, 0);
 		data.bottom = new FormAttachment(messageImageLabel, 0, SWT.BOTTOM);
 		data.right = new FormAttachment(messageImageLabel, 0);
-		rightFillerLabel.setLayoutData(data);
+		leftFillerLabel.setLayoutData(data);
 		
 		FormData messageLabelData = new FormData();
 		messageLabelData.top = new FormAttachment(titleLabel,verticalSpacing);
@@ -598,7 +598,7 @@ public void setTitleImage(Image newTitleImage) {
 private void setImageLabelVisible(boolean visible){
 	messageImageLabel.setVisible(visible);
 	bottomFillerLabel.setVisible(visible);
-	rightFillerLabel.setVisible(visible);
+	leftFillerLabel.setVisible(visible);
 	
 }
 
@@ -617,7 +617,7 @@ private void setMessageBackgrounds(boolean showingError){
 	messageLabel.setBackground(color);
 	messageImageLabel.setBackground(color);
 	bottomFillerLabel.setBackground(color);
-	rightFillerLabel.setBackground(color); 
+	leftFillerLabel.setBackground(color); 
 }
 		
 }
