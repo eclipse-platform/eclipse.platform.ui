@@ -74,14 +74,14 @@ public class DeltaInstallHandler extends BaseInstallHandler {
 		}
 	}
 
-	private IPluginEntry getPluginEntry(IPluginEntry[] plugins, String id) {
+	protected IPluginEntry getPluginEntry(IPluginEntry[] plugins, String id) {
 		for (int i = 0; i < plugins.length; i++)
 			if (plugins[i].getVersionedIdentifier().getIdentifier().equals(id))
 				return plugins[i];
 		return null;
 	}
 
-	private boolean referenceExists(
+	protected boolean referenceExists(
 		ContentReference[] references,
 		ContentReference ref) {
 		String id = ref.getIdentifier();
@@ -94,7 +94,9 @@ public class DeltaInstallHandler extends BaseInstallHandler {
 		return false;
 	}
 
-	private void overlayPlugin(IPluginEntry oldPlugin, IPluginEntry newPlugin)
+	protected void overlayPlugin(
+		IPluginEntry oldPlugin,
+		IPluginEntry newPlugin)
 		throws CoreException, IOException {
 		// copy the content of the old plugin over the new one, but only
 		// those files that do not exist on the target
@@ -112,43 +114,38 @@ public class DeltaInstallHandler extends BaseInstallHandler {
 				newPlugin,
 				null);
 
-		URL newURL = new URL(oldFeature.getSite().getURL(), Site.DEFAULT_PLUGIN_PATH + newPlugin.getVersionedIdentifier().toString());
-		String pluginPath = newURL.getFile(); 
+		URL newURL =
+			new URL(
+				oldFeature.getSite().getURL(),
+				Site.DEFAULT_PLUGIN_PATH
+					+ newPlugin.getVersionedIdentifier().toString());
+		String pluginPath = newURL.getFile();
 		for (int i = 0; i < oldReferences.length; i++) {
 			if (isPluginXml(oldReferences[i])
 				|| referenceExists(newReferences, oldReferences[i]))
 				continue;
 
-			//IContentConsumer pluginConsumer = new PluginEntryContentConsumer(getContentConsumer().open(newPlugin));
-			//pluginConsumer.store(oldReferences[i], null);
-			
 			try {
 				File sourceFile = oldReferences[i].asFile();
-				File targetFile = new File(pluginPath, oldReferences[i].getIdentifier());
+				File targetFile =
+					new File(pluginPath, oldReferences[i].getIdentifier());
 				InputStream input = new FileInputStream(sourceFile);
-				UpdateManagerUtils.copyToLocal(input, targetFile.getAbsolutePath(), null);
-				UpdateManagerUtils.checkPermissions(oldReferences[i], pluginPath); // 20305
+				UpdateManagerUtils.copyToLocal(
+					input,
+					targetFile.getAbsolutePath(),
+					null);
+				UpdateManagerUtils.checkPermissions(
+					oldReferences[i],
+					pluginPath);
+				// 20305
 			} catch (IOException e) {
 				continue;
 			}
 		}
 	}
 
-	private boolean isPluginXml(ContentReference ref) {
+	protected boolean isPluginXml(ContentReference ref) {
 		String id = ref.getIdentifier();
 		return PLUGIN_XML.equals(id) || FRAGMENT_XML.equals(id);
-	}
-	
-	private ISiteContentConsumer getContentConsumer() throws CoreException {
-		if (contentConsumer == null)
-			// We need to use the oldFeature here as the new one is not installed yet.
-			// Assume colocation affinity.
-			if (oldFeature.getSite() instanceof SiteFile) {
-				SiteFile site= (SiteFile) oldFeature.getSite();
-				contentConsumer= site.createSiteContentConsumer(oldFeature);
-			} else {
-				return null;
-			}
-		return contentConsumer;
 	}
 }
