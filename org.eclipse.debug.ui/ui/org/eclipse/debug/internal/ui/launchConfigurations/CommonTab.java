@@ -64,20 +64,20 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private Combo fRunPerspectiveCombo;
 	
 	/**
+	 * Label for the run perspective combo box
+	 */
+	private Label fRunPerspectiveLabel;
+	
+	/**
 	 * The combo box specifying the debug perspective
 	 */
 	private Combo fDebugPerspectiveCombo;
 	
 	/**
-	 * The check box specifying whether to use the run perspective
+	 * Label for the debug perspective combo box
 	 */
-	private Button fRunPerspectiveButton;
-	
-	/**
-	 * The check box specifying whether to use the debug perspective
-	 */
-	private Button fDebugPerspectiveButton;	
-	
+	private Label fDebugPerspectiveLabel;
+
 	/**
 	 * The label that acts as header for the 'switch to perspective' widgets
 	 */
@@ -92,6 +92,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * The check box specifying debug favoite
 	 */
 	private Button fDebugFavoriteButton;
+		
+	/**
+	 * Constant for perspective Combo widgets
+	 */
+	private static final String PERSPECTIVE_NONE = "none";
 		
 	/**
 	 * @see ILaunchConfigurationTab#createControl(Composite)
@@ -163,7 +168,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		createVerticalSpacer(comp);
 		
 		setSwitchToLabel(new Label(comp, SWT.HORIZONTAL | SWT.LEFT));
-		getSwitchToLabel().setText("Switch/Open perspective when launched:");
+		getSwitchToLabel().setText("Switch to/Open perspective when launched in:");
 		gd = new GridData();
 		gd.horizontalAlignment = GridData.BEGINNING;
 		gd.horizontalSpan = 3;
@@ -174,26 +179,16 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		perspLayout.numColumns = 2;
 		perspComp.setLayout(perspLayout);
 		
-		setRunPerspectiveButton(new Button(perspComp, SWT.CHECK));
-		getRunPerspectiveButton().setText("R&un Mode:");
-		getRunPerspectiveButton().addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleRunPerspectiveSelected();
-			}
-		});
-				
+		setRunPerspectiveLabel(new Label(perspComp, SWT.NONE));
+		getRunPerspectiveLabel().setText("Run mode");
+		
 		setRunPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN | SWT.READ_ONLY));
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
 		getRunPerspectiveCombo().setLayoutData(gd);
 		fillWithPerspectives(getRunPerspectiveCombo());
 		
-		setDebugPerspectiveButton(new Button(perspComp, SWT.CHECK));
-		getDebugPerspectiveButton().setText("&Debug Mode:");
-		getDebugPerspectiveButton().addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleDebugPerspectiveSelected();
-			}
-		});
+		setDebugPerspectiveLabel(new Label(perspComp, SWT.NONE));
+		getDebugPerspectiveLabel().setText("Debug mode");
 		
 		setDebugPerspectiveCombo(new Combo(perspComp, SWT.DROP_DOWN |SWT.READ_ONLY));
 		gd = new GridData(GridData.GRAB_HORIZONTAL);
@@ -296,26 +291,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 
 	/**
-	 * Returns the check box indicating whether the perspective should
-	 * be changed when the configuration is launched in debug mode.
-	 * 
-	 * @return a check box button
-	 */
-	protected Button getDebugPerspectiveButton() {
-		return fDebugPerspectiveButton;
-	}
-
-	/**
-	 * Sets the check box indicating whether the perspective should
-	 * be changed when the configuration is launched in debug mode.
-	 * 
-	 * @param button a check box button
-	 */
-	private void setDebugPerspectiveButton(Button button) {
-		fDebugPerspectiveButton = button;
-	}
-
-	/**
 	 * Returns the perspective combo assoicated with the
 	 * run perspective button.
 	 * 
@@ -335,24 +310,20 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		fRunPerspectiveCombo = combo;
 	}
 
-	/**
-	 * Returns the check box indicating whether the perspective should
-	 * be changed when the configuration is launched in run mode.
-	 * 
-	 * @return a check box button
-	 */
-	protected Button getRunPerspectiveButton() {
-		return fRunPerspectiveButton;
+	private void setRunPerspectiveLabel(Label fRunPerspectiveLabel) {
+		this.fRunPerspectiveLabel = fRunPerspectiveLabel;
 	}
 
-	/**
-	 * Sets the check box indicating whether the perspective should
-	 * be changed when the configuration is launched in run mode.
-	 * 
-	 * @param button a check box button
-	 */
-	private void setRunPerspectiveButton(Button button) {
-		fRunPerspectiveButton = button;
+	private Label getRunPerspectiveLabel() {
+		return fRunPerspectiveLabel;
+	}
+
+	private void setDebugPerspectiveLabel(Label fDebugPerspectiveLabel) {
+		this.fDebugPerspectiveLabel = fDebugPerspectiveLabel;
+	}
+
+	private Label getDebugPerspectiveLabel() {
+		return fDebugPerspectiveLabel;
 	}
 
 	private void setSwitchToLabel(Label switchToLabel) {
@@ -376,14 +347,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	
 	protected boolean isShared() {
 		return getSharedRadioButton().getSelection();
-	}
-	
-	protected void handleRunPerspectiveSelected() {
-		fRunPerspectiveCombo.setEnabled(fRunPerspectiveButton.getSelection());
-	}
-	
-	protected void handleDebugPerspectiveSelected() {
-		fDebugPerspectiveCombo.setEnabled(fDebugPerspectiveButton.getSelection());
 	}
 	
 	protected void handleSharedLocationButtonSelected() {
@@ -438,11 +401,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Fills the given combo box with the labels of all existing
-	 * perspectives.
+	 * perspectives and one to indicate 'none'.
 	 * 
 	 * @param combo combo box
 	 */
 	protected void fillWithPerspectives(Combo combo) {
+		combo.add(PERSPECTIVE_NONE);
 		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		IPerspectiveDescriptor[] persps = reg.getPerspectives();
 		for (int i = 0; i < persps.length; i++) {
@@ -459,8 +423,6 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		updateRunPerspectiveFromConfig(configuration);
 		updateDebugPerspectiveFromConfig(configuration);
 		updateFavoritesFromConfig(configuration);
-		handleDebugPerspectiveSelected();
-		handleRunPerspectiveSelected();
 	}
 	
 	protected void updateLocalSharedFromConfig(ILaunchConfiguration config) {
@@ -482,21 +444,39 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	protected void updateRunPerspectiveFromConfig(ILaunchConfiguration config) {
+		ILaunchConfigurationType type = null;
 		String runPerspID = null;
 		try {
 			runPerspID = config.getAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
+			type = config.getType();
 		} catch (CoreException ce) {
+			updatePerspectiveCombo(getRunPerspectiveCombo(), null);
+			getRunPerspectiveCombo().setEnabled(false);
+			getRunPerspectiveLabel().setEnabled(false);
+			return;
 		}
-		updateButtonAndCombo(getRunPerspectiveButton(), getRunPerspectiveCombo(), runPerspID);
+		updatePerspectiveCombo(getRunPerspectiveCombo(), runPerspID);
+		boolean enable = type.supportsMode(ILaunchManager.RUN_MODE);
+		getRunPerspectiveCombo().setEnabled(enable);
+		getRunPerspectiveLabel().setEnabled(enable);
 	}
 	
 	protected void updateDebugPerspectiveFromConfig(ILaunchConfiguration config) {
+		ILaunchConfigurationType type = null;
 		String debugPerspID = null;
-		try {
+		try {			
 			debugPerspID = config.getAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
+			type = config.getType();
 		} catch (CoreException ce) {
+			updatePerspectiveCombo(getDebugPerspectiveCombo(), null);
+			getDebugPerspectiveCombo().setEnabled(false);
+			getDebugPerspectiveLabel().setEnabled(false);
+			return;
 		}
-		updateButtonAndCombo(getDebugPerspectiveButton(), getDebugPerspectiveCombo(), debugPerspID);
+		updatePerspectiveCombo(getDebugPerspectiveCombo(), debugPerspID);
+		boolean enable = type.supportsMode(ILaunchManager.DEBUG_MODE);
+		getDebugPerspectiveCombo().setEnabled(enable);
+		getDebugPerspectiveLabel().setEnabled(enable);
 	}
 	
 	protected void updateFavoritesFromConfig(ILaunchConfiguration config) {
@@ -531,16 +511,14 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * @param combo combo box with perspective labels
 	 * @param id perspective identifier or <code>null</code>
 	 */
-	protected void updateButtonAndCombo(Button button, Combo combo, String id) {
+	protected void updatePerspectiveCombo(Combo combo, String id) {
 		if (id == null) {
-			button.setSelection(false);
-			combo.setText(getPerspectiveWithId(IDebugUIConstants.ID_DEBUG_PERSPECTIVE).getLabel());
+			combo.setText(PERSPECTIVE_NONE);
 		} else {
-			button.setSelection(true);
 			IPerspectiveDescriptor pd = getPerspectiveWithId(id);
 			if (pd == null) {
 				// perpective does not exist - reset
-				updateButtonAndCombo(button, combo, null);
+				updatePerspectiveCombo(combo, null);
 			} else {
 				combo.setText(pd.getLabel());
 			}
@@ -562,12 +540,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * UI settings.
 	 */
 	protected void updateConfigFromRunPerspective(ILaunchConfigurationWorkingCopy config) {
-		if (getRunPerspectiveButton().getSelection()) {
-			config.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE,
-				getPerspectiveWithLabel(getRunPerspectiveCombo().getText()).getId());
-		} else {
-			config.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, (String)null);
-		}	
+		IPerspectiveDescriptor descriptor = getPerspectiveWithLabel(getRunPerspectiveCombo().getText());
+		String perspID = null;
+		if (descriptor != null) {
+			perspID = descriptor.getId();
+		}
+		config.setAttribute(IDebugUIConstants.ATTR_TARGET_RUN_PERSPECTIVE, perspID);
 	}
 	
 	/**
@@ -575,12 +553,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 * UI settings.
 	 */
 	protected void updateConfigFromDebugPerspective(ILaunchConfigurationWorkingCopy config) {
-		if (getDebugPerspectiveButton().getSelection()) {
-			config.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE,
-				getPerspectiveWithLabel(getDebugPerspectiveCombo().getText()).getId());
-		} else {
-			config.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, (String)null);
-		}		
+		IPerspectiveDescriptor descriptor = getPerspectiveWithLabel(getDebugPerspectiveCombo().getText());
+		String perspID = null;
+		if (descriptor != null) {
+			perspID = descriptor.getId();
+		}
+		config.setAttribute(IDebugUIConstants.ATTR_TARGET_DEBUG_PERSPECTIVE, perspID);
 	}
 	
 	/**
