@@ -1,7 +1,7 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2004 IBM Corporation and others.
- * Portions Copyright  2000-2004 The Apache Software Foundation
- * All rights reserved.  This program and the accompanying materials are made 
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Portions Copyright  2000-2005 The Apache Software Foundation
+ * All rights reserved. This program and the accompanying materials are made 
  * available under the terms of the Apache Software License v2.0 which 
  * accompanies this distribution and is available at 
  * http://www.apache.org/licenses/LICENSE-2.0.
@@ -46,6 +46,7 @@ import org.apache.tools.ant.Target;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.TaskAdapter;
 import org.apache.tools.ant.util.FileUtils;
+import org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger;
 
 /**
  * Eclipse application entry point into Ant in a separate VM. Derived from the original Ant Main class
@@ -102,7 +103,7 @@ public class InternalAntRunner {
 	 * The Ant logger class. There may be only one logger. It will have the
 	 * right to use the 'out' PrintStream. The class must implement the BuildLogger
 	 * interface.  An empty String indicates that no logger is to be used.  A <code>null</code>
-	 * name indicates that the org.apache.tools.ant.DefaultLogger will be used.
+	 * name indicates that the <code>org.apache.tools.ant.DefaultLogger</code> will be used.
 	 */
 	private String loggerClassname = null;
 
@@ -120,7 +121,7 @@ public class InternalAntRunner {
     
     /** 
      * Indicates whether to execute all targets that 
-     * do not depend on failed targes(s)
+     * do not depend on failed targets
      * @since Ant 1.6.0
      */
     private boolean keepGoing= false;
@@ -130,6 +131,8 @@ public class InternalAntRunner {
      * @since Ant 1.6.0
      */
     private boolean allowInput = true;
+    
+    private String fEarlyErrorMessage= null;
     
     public static void main(String[] args) {
     	try {
@@ -317,12 +320,10 @@ public class InternalAntRunner {
 				}
 			}
 			
+            boolean exceptionState= processProperties(argList);
+            
 			addBuildListeners(getCurrentProject());
-		
-			processProperties(argList);
-			
-			setProperties(getCurrentProject());
-			
+            
 			addInputHandler(getCurrentProject());
 			
 			remapSystemIn();
@@ -332,6 +333,20 @@ public class InternalAntRunner {
 			if (!projectHelp) {
 				fireBuildStarted(getCurrentProject());
 			}
+            
+            if (fEarlyErrorMessage != null) {
+                //an error occurred processing the properties
+                //build started has fired and we have
+                //listeners/loggers to report the error
+                logMessage(getCurrentProject(), fEarlyErrorMessage, Project.MSG_ERR);
+                if (exceptionState) {
+                    throw new BuildException(fEarlyErrorMessage);
+                }
+            }
+            
+            //properties can only be set after buildStarted as some listeners/loggers
+            //depend on this (e.g. XMLLogger)
+            setProperties(getCurrentProject());
 			
 			if (argList != null && !argList.isEmpty()) {
 				try {
@@ -345,6 +360,7 @@ public class InternalAntRunner {
 				return;
 			}
 			
+            //needs to occur after processCommandLine(List)
 			if (allowInput && (inputHandlerClassname != null && inputHandlerClassname.length() > 0)) {
 				if (isVersionCompatible("1.6")) { //$NON-NLS-1$
 					getCurrentProject().setDefaultInputStream(originalIn);
@@ -380,10 +396,10 @@ public class InternalAntRunner {
 			if (targets == null) {
                 targets= new Vector(1);
             }
-			if (targets.isEmpty() && getCurrentProject().getDefaultTarget() != null) {
-			    targets.add(getCurrentProject().getDefaultTarget());
-			}
-			getCurrentProject().addReference("eclipse.ant.targetVector", targets); //$NON-NLS-1$
+            if (targets.isEmpty() && getCurrentProject().getDefaultTarget() != null) {
+                targets.add(getCurrentProject().getDefaultTarget());
+            }
+            getCurrentProject().addReference("eclipse.ant.targetVector", targets); //$NON-NLS-1$
 			getCurrentProject().executeTargets(targets);
         } catch (Throwable e) {
 			error = e;
@@ -520,6 +536,9 @@ public class InternalAntRunner {
 			buildLogger.setOutputPrintStream(out);
 			buildLogger.setErrorPrintStream(err);
 			buildLogger.setEmacsMode(emacsMode);
+            if (buildLogger instanceof RemoteAntBuildLogger) {
+                ((RemoteAntBuildLogger) buildLogger).configure(userProperties);
+            }
 		}
 
 		return buildLogger;
@@ -907,32 +926,33 @@ public class InternalAntRunner {
 	 * Any user properties that have been explicitly set are set as well.
 	 * Ensures that -D properties take precedence.
 	 */
-	private void processProperties(List commands) {
+	private boolean processProperties(List commands) {
+        boolean exceptionToBeThrown= false;
 		//MULTIPLE property files are allowed
 		String arg= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		while (arg != null) {
 			if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
-				logMessage(currentProject, RemoteAntMessages.getString("InternalAntRunner.Specifying_property_files_is_a_Ant_1.5.*_feature._Please_update_your_Ant_classpath._6"), Project.MSG_ERR); //$NON-NLS-1$
+				fEarlyErrorMessage= RemoteAntMessages.getString("InternalAntRunner.Specifying_property_files_is_a_Ant_1.5.*_feature._Please_update_your_Ant_classpath._6"); //$NON-NLS-1$
 				break;
 			}
 			if (arg.length() == 0) {
-				String message= RemoteAntMessages.getString("InternalAntRunner.You_must_specify_a_property_filename_when_using_the_-propertyfile_argument_3"); //$NON-NLS-1$
-				logMessage(currentProject, message, Project.MSG_ERR); 
-				throw new BuildException(message);
+                fEarlyErrorMessage= RemoteAntMessages.getString("InternalAntRunner.You_must_specify_a_property_filename_when_using_the_-propertyfile_argument_3"); //$NON-NLS-1$
+                exceptionToBeThrown= true;
+                break;
 			} 
 			
 			propertyFiles.add(arg);
 			arg= getArgument(commands, "-propertyfile"); //$NON-NLS-1$
 		}
-		
-		if (propertyFiles != null && !propertyFiles.isEmpty()) {
-			loadPropertyFiles();
-		}
-		
-		if (commands == null) {
-			return;
-		}
-		processMinusDProperties(commands);
+        
+        if (propertyFiles != null && !propertyFiles.isEmpty()) {
+            loadPropertyFiles();
+        }
+        
+        if (commands != null) {
+            processMinusDProperties(commands);
+        }
+        return exceptionToBeThrown;
 	}
 
 	private void processMinusDProperties(List commands) {
@@ -1154,8 +1174,7 @@ public class InternalAntRunner {
                 fis = new FileInputStream(file);
                 props.load(fis);
             } catch (IOException e) {
-            	String msg= MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Could_not_load_property_file_{0}__{1}_4"), new String[]{filename, e.getMessage()}); //$NON-NLS-1$
-            	logMessage(getCurrentProject(), msg, Project.MSG_ERR);
+            	fEarlyErrorMessage= MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Could_not_load_property_file_{0}__{1}_4"), new String[]{filename, e.getMessage()}); //$NON-NLS-1$
             } finally {
                 if (fis != null) {
                     try {

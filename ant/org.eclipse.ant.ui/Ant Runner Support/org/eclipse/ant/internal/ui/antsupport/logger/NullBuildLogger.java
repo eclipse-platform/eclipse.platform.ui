@@ -19,10 +19,11 @@ import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.util.StringUtils;
 import org.eclipse.ant.core.AntSecurityException;
+import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
 import org.eclipse.ant.internal.ui.antsupport.AntSupportMessages;
 import org.eclipse.core.runtime.OperationCanceledException;
 
-public class NullBuildLogger implements BuildLogger {
+public class NullBuildLogger extends AbstractEclipseBuildLogger implements BuildLogger{
 
 	protected int fMessageOutputLevel = Project.MSG_INFO;
 	private PrintStream fErr= null;

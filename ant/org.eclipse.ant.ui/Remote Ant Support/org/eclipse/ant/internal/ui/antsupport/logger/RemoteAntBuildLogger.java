@@ -20,6 +20,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
@@ -56,6 +57,8 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	 * Port to connect to.
 	 */
 	private int fEventPort= -1;
+    
+    private String fProcessId= null;
 	
 	/**
 	 * Is the debug mode enabled?
@@ -131,7 +134,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	 */
 	public void buildFinished(BuildEvent event) {
 		if (!fSentProcessId) {
-			establishConnection(event);
+			establishConnection();
 		}
 		handleException(event);
         printMessage( getTimeString(System.currentTimeMillis() - fStartTime), out, Project.MSG_INFO); 
@@ -200,7 +203,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	 */
 	public void targetStarted(BuildEvent event) {
 		if (!fSentProcessId) {
-			establishConnection(event);
+			establishConnection();
 		}
 
 		if (Project.MSG_INFO <= msgOutputLevel) {
@@ -209,11 +212,8 @@ public class RemoteAntBuildLogger extends DefaultLogger {
         }
 	}
 
-	protected void establishConnection(BuildEvent event) {
-		String portProperty= event.getProject().getProperty("eclipse.connect.port"); //$NON-NLS-1$
-		
-		if (portProperty != null) {
-			fEventPort= Integer.parseInt(portProperty);
+	protected void establishConnection() {
+		if (fEventPort != -1) {
 			connect();
 		} else {
 			shutDown();
@@ -222,7 +222,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		
 		fSentProcessId= true;
 		StringBuffer message= new StringBuffer(MessageIds.PROCESS_ID);
-		message.append(event.getProject().getProperty("org.eclipse.ant.ui.ATTR_ANT_PROCESS_ID")); //$NON-NLS-1$
+		message.append(fProcessId);
 		sendMessage(message.toString());
 		if (fEventQueue != null) {
 			for (Iterator iter = fEventQueue.iterator(); iter.hasNext();) {
@@ -246,7 +246,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 					return;
 				}
 				//no buildstarted or project started for project help option
-				establishConnection(event);
+				establishConnection();
 				return;
 			}
 			if (fEventQueue == null){
@@ -334,7 +334,17 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildStarted(BuildEvent event) {
-		establishConnection(event);
+		establishConnection();
 		super.buildStarted(event);
 	}
+    
+    public void configure(Map userProperties) {
+        String portProperty= (String) userProperties.remove("eclipse.connect.port"); //$NON-NLS-1$
+        
+        if (portProperty != null) {
+            fEventPort= Integer.parseInt(portProperty);
+        }
+        
+        fProcessId= (String) userProperties.remove("org.eclipse.ant.core.ANT_PROCESS_ID"); //$NON-NLS-1$
+    } 
 }

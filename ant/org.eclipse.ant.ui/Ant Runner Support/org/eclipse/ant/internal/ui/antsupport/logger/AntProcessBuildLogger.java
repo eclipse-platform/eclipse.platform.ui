@@ -20,6 +20,7 @@ import java.io.StringReader;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.Location;
 import org.apache.tools.ant.Project;
+import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.antsupport.AntSupportMessages;
@@ -52,7 +53,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		if (priority > getMessageOutputLevel()) {
 			return;
 		}
-		AntProcess antProcess = getAntProcess(event.getProject().getUserProperty(AntProcess.ATTR_ANT_PROCESS_ID));
+		AntProcess antProcess = getAntProcess(fProcessId);
 		if (antProcess == null) {
 			return;
 		}
@@ -131,7 +132,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			IRegion region= new Region(offset, label.length() - 3); // only want the name length "[name] "
 			IHyperlink link= getTaskLink(location);
 			if (link != null) {
-				TaskLinkManager.addTaskHyperlink(getAntProcess(null), link, region, newLine);
+				TaskLinkManager.addTaskHyperlink(getAntProcess(fProcessId), link, region, newLine);
 			}
 		}
 	}
@@ -190,7 +191,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			IProcess[] all = DebugPlugin.getDefault().getLaunchManager().getProcesses();
 			for (int i = 0; i < all.length; i++) {
 				IProcess process = all[i];
-				if (process instanceof AntProcess && processId.equals(process.getAttribute(AntProcess.ATTR_ANT_PROCESS_ID))) {
+				if (process instanceof AntProcess && processId.equals(process.getAttribute(AbstractEclipseBuildLogger.ANT_PROCESS_ID))) {
 					fProcess = (AntProcess)process;
 					break;
 				}

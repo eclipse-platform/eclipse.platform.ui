@@ -13,7 +13,7 @@ package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.ant.internal.ui.IAntUIConstants;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
@@ -23,12 +23,6 @@ import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.ui.console.IConsole;
 
 public class AntProcess implements IProcess, IProgressMonitor {
-	
-	/**
-	 * Process attribute with process identifier - links the Ant process build
-	 * logger to a process.
-	 */
-	public static final String ATTR_ANT_PROCESS_ID = IAntUIConstants.PLUGIN_ID + ".ATTR_ANT_PROCESS_ID"; //$NON-NLS-1$
 	
 	private AntStreamsProxy fProxy = new AntStreamsProxy();
 	private String fLabel = null;

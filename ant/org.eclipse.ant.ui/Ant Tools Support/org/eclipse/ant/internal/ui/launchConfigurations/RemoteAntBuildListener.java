@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.apache.tools.ant.Project;
+import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -191,7 +192,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 				IProcess[] all = DebugPlugin.getDefault().getLaunchManager().getProcesses();
 				for (int i = 0; i < all.length; i++) {
 					IProcess process = all[i];
-					if (fProcessId.equals(process.getAttribute(AntProcess.ATTR_ANT_PROCESS_ID))) {
+					if (fProcessId.equals(process.getAttribute(AbstractEclipseBuildLogger.ANT_PROCESS_ID))) {
 						fProcess = process;
 						break;
 					}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2005 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,16 +13,19 @@ package org.eclipse.ant.tests.core.support.testloggers;
 
 import java.io.PrintStream;
 
-import org.apache.tools.ant.*;
+import org.apache.tools.ant.BuildEvent;
+import org.apache.tools.ant.BuildLogger;
+import org.apache.tools.ant.Project;
 import org.eclipse.ant.core.AntSecurityException;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 public class TestBuildLogger implements BuildLogger {
 
-	private int messageOutputLevel =Project.MSG_INFO;
+	private int fMessageOutputLevel= Project.MSG_INFO;
 	private PrintStream fErr= null;
 	private PrintStream fOut= null;
+    private boolean fSetProperties= true;
 	
 	/**
 	 * An exception that has already been logged.
@@ -37,11 +40,11 @@ public class TestBuildLogger implements BuildLogger {
 	 * @see org.apache.tools.ant.BuildLogger#setMessageOutputLevel(int)
 	 */
 	public void setMessageOutputLevel(int level) {
-		messageOutputLevel= level;
+		fMessageOutputLevel= level;
 	}
 	
 	protected int getMessageOutputLevel() {
-		return messageOutputLevel;
+		return fMessageOutputLevel;
 	}
 
 	/**
@@ -55,7 +58,6 @@ public class TestBuildLogger implements BuildLogger {
 	 */
 	public void buildStarted(BuildEvent event) {
 		AntTestChecker.getDefault().buildStarted(event.getProject().getName());
-		AntTestChecker.getDefault().setUserProperties(event.getProject().getProperties());
 	}
 
 	/**
@@ -72,6 +74,10 @@ public class TestBuildLogger implements BuildLogger {
 	 */
 	public void targetStarted(BuildEvent event) {
 		AntTestChecker.getDefault().targetStarted(event.getTarget().getName());
+        if (fSetProperties) {
+            fSetProperties= false;
+            AntTestChecker.getDefault().setUserProperties(event.getProject().getProperties());
+        }
 	}
 
 	/**

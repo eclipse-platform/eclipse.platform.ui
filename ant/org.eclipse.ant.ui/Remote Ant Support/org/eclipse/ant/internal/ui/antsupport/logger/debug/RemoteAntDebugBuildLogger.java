@@ -190,9 +190,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 	public synchronized void buildStarted(BuildEvent event) {
 		super.buildStarted(event);
 		marshalMessage(-1, DebugMessageIds.BUILD_STARTED);
-		String requestPortProperty= event.getProject().getProperty("eclipse.connect.request_port"); //$NON-NLS-1$
-		if (requestPortProperty != null) {
-			fRequestPort= Integer.parseInt(requestPortProperty);
+		if (fRequestPort != -1) {
 			try {
 				fServerSocket= new ServerSocket(fRequestPort);
 			} catch (IOException ioe) {
@@ -368,4 +366,12 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger {
 		    }
 		}
 	}
+    
+    public void configure(Map userProperties) {
+       super.configure(userProperties);
+       String requestPortProperty= (String) userProperties.remove("eclipse.connect.request_port"); //$NON-NLS-1$
+        if (requestPortProperty != null) {
+            fRequestPort= Integer.parseInt(requestPortProperty);
+        }
+    } 
 }

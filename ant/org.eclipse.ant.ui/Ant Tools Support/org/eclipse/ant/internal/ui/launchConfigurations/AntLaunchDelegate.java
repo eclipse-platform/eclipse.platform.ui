@@ -24,6 +24,7 @@ import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.Property;
 import org.eclipse.ant.core.Task;
 import org.eclipse.ant.core.Type;
+import org.eclipse.ant.internal.core.AbstractEclipseBuildLogger;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -131,7 +132,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 		long timeStamp = System.currentTimeMillis();
 		String idStamp = Long.toString(timeStamp);
 		StringBuffer idProperty = new StringBuffer("-D"); //$NON-NLS-1$
-		idProperty.append(AntProcess.ATTR_ANT_PROCESS_ID);
+		idProperty.append(AbstractEclipseBuildLogger.ANT_PROCESS_ID);
 		idProperty.append('=');
 		idProperty.append(idStamp);
 		
@@ -173,7 +174,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 				userProperties= new HashMap();
 			}
 			port= SocketUtil.findFreePort();
-			userProperties.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
+			userProperties.put(AbstractEclipseBuildLogger.ANT_PROCESS_ID, idStamp);
 			userProperties.put("eclipse.connect.port", Integer.toString(port)); //$NON-NLS-1$
 			if (fMode.equals(ILaunchManager.DEBUG_MODE)) {
 				requestPort= SocketUtil.findFreePort();
@@ -196,7 +197,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	private void runInSameVM(ILaunchConfiguration configuration, ILaunch launch, IProgressMonitor monitor, IPath location, String idStamp, AntRunner runner, StringBuffer commandLine, boolean captureOutput) throws CoreException {
 		Map attributes= new HashMap(2);
 		attributes.put(IProcess.ATTR_PROCESS_TYPE, IAntLaunchConfigurationConstants.ID_ANT_PROCESS_TYPE);
-		attributes.put(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
+		attributes.put(AbstractEclipseBuildLogger.ANT_PROCESS_ID, idStamp);
 				
 		final AntProcess process = new AntProcess(location.toOSString(), launch, attributes);
 		setProcessAttributes(process, idStamp, commandLine, captureOutput);
@@ -305,7 +306,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 
 	private void setProcessAttributes(IProcess process, String idStamp, StringBuffer commandLine, boolean captureOutput) {
 		// link the process to its build logger via a timestamp
-		process.setAttribute(AntProcess.ATTR_ANT_PROCESS_ID, idStamp);
+		process.setAttribute(AbstractEclipseBuildLogger.ANT_PROCESS_ID, idStamp);
 		
 		// create "fake" command line for the process
 		if (commandLine != null) {

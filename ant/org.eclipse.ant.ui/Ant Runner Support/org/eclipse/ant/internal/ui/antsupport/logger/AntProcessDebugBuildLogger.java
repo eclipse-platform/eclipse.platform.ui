@@ -26,7 +26,6 @@ import org.eclipse.ant.internal.ui.antsupport.logger.util.AntDebugUtil;
 import org.eclipse.ant.internal.ui.debug.IAntDebugController;
 import org.eclipse.ant.internal.ui.debug.model.AntDebugTarget;
 import org.eclipse.ant.internal.ui.debug.model.AntThread;
-import org.eclipse.ant.internal.ui.launchConfigurations.AntProcess;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
@@ -64,7 +63,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 */
 	public void buildStarted(BuildEvent event) {
 		super.buildStarted(event);
-		IProcess process= getAntProcess(event.getProject().getUserProperty(AntProcess.ATTR_ANT_PROCESS_ID));
+		IProcess process= getAntProcess(fProcessId);
 		ILaunch launch= process.getLaunch();
 		fAntDebugTarget= new AntDebugTarget(launch, process, this);
 		launch.addDebugTarget(fAntDebugTarget);
