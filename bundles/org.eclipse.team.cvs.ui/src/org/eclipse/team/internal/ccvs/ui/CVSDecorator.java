@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -24,6 +25,8 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -33,9 +36,13 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.ui.internal.DecoratorDefinition;
 import org.eclipse.ui.internal.DecoratorManager;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -273,8 +280,7 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 
 	/*
 	 * Return the ILabelDecorator for our CVS decorator, null if its not active.
-	 */
-	 
+	 */	 
 	private static ILabelDecorator findCVSDecorator() {
 		DecoratorManager decoratorManager = WorkbenchPlugin.getDefault().getDecoratorManager();
 		DecoratorDefinition[] definitions = decoratorManager.getDecoratorDefinitions();
@@ -440,5 +446,69 @@ public class CVSDecorator extends LabelProvider implements ILabelDecorator, IRes
 		// refresh the decorators in the resource delta listener
 		deconfiguredProjects.add(project);
 	}
+	
+	public static boolean isDirty(ICVSFile cvsFile) {
+		try {
+			// file is dirty or file has been merged by an update
+			if(!cvsFile.isIgnored()) {
+				return cvsFile.isModified();
+			} else {
+				return false;
+			} 
+		} catch (CVSException e) {
+			//if we get an error report it to the log but assume dirty
+			CVSUIPlugin.log(e.getStatus());
+			return true;
+		}
+	}
 
+	public static boolean isDirty(IFile file) {
+		return isDirty(CVSWorkspaceRoot.getCVSFileFor(file));
+	}
+
+	public static boolean isDirty(IResource resource) {
+		if(resource.getType() == IResource.FILE) {
+			return isDirty((IFile) resource);
+		}
+		
+		final CoreException DECORATOR_EXCEPTION = new CoreException(new Status(IStatus.OK, "id", 1, "", null)); //$NON-NLS-1$ //$NON-NLS-2$
+		try {
+			resource.accept(new IResourceVisitor() {
+				public boolean visit(IResource resource) throws CoreException {
+
+					// a project can't be dirty, continue with its children
+					if (resource.getType() == IResource.PROJECT) {
+						return true;
+					}
+					
+					// if the resource does not exist in the workbench or on the file system, stop searching.
+					if(!resource.exists()) {
+						return false;
+					}
+
+					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+
+					if (!cvsResource.isManaged()) {
+						if (cvsResource.isIgnored()) {
+							return false;
+						} else {
+							// new resource, show as dirty
+							throw DECORATOR_EXCEPTION;
+						}
+					}
+					if (!cvsResource.isFolder()) {
+						if(isDirty((ICVSFile) cvsResource)) {
+							throw DECORATOR_EXCEPTION;
+						}
+					}
+					// no change -- keep looking in children
+					return true;
+				}
+			}, IResource.DEPTH_INFINITE, true);
+		} catch (CoreException e) {
+			//if our exception was caught, we know there's a dirty child
+			return e == DECORATOR_EXCEPTION;
+		}
+		return false;
+	}
 }

@@ -127,7 +127,7 @@ public class CVSDecorationRunnable implements Runnable {
 		boolean computeDeepDirtyCheck = store.getBoolean(ICVSUIConstants.PREF_CALCULATE_DIRTY);
 		int type = resource.getType();
 		if(type == IResource.FILE || computeDeepDirtyCheck) {
-			isDirty = isDirty(resource);
+			isDirty = CVSDecorator.isDirty(resource);
 		}
 
 		// compute decorations						
@@ -256,70 +256,5 @@ public class CVSDecorationRunnable implements Runnable {
 		} else {		
 			return overlays;
 		}
-	}
-
-	private boolean isDirty(ICVSFile cvsFile) {
-		try {
-			// file is dirty or file has been merged by an update
-			if(!cvsFile.isIgnored()) {
-				return cvsFile.isModified();
-			} else {
-				return false;
-			} 
-		} catch (CVSException e) {
-			//if we get an error report it to the log but assume dirty
-			CVSUIPlugin.log(e.getStatus());
-			return true;
-		}
-	}
-
-	private boolean isDirty(IFile file) {
-		return isDirty(CVSWorkspaceRoot.getCVSFileFor(file));
-	}
-
-	private boolean isDirty(IResource resource) {
-		if(resource.getType() == IResource.FILE) {
-			return isDirty((IFile) resource);
-		}
-		
-		final CoreException DECORATOR_EXCEPTION = new CoreException(new Status(IStatus.OK, "id", 1, "", null)); //$NON-NLS-1$ //$NON-NLS-2$
-		try {
-			resource.accept(new IResourceVisitor() {
-				public boolean visit(IResource resource) throws CoreException {
-
-					// a project can't be dirty, continue with its children
-					if (resource.getType() == IResource.PROJECT) {
-						return true;
-					}
-					
-					// if the resource does not exist in the workbench or on the file system, stop searching.
-					if(!resource.exists()) {
-						return false;
-					}
-
-					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-
-					if (!cvsResource.isManaged()) {
-						if (cvsResource.isIgnored()) {
-							return false;
-						} else {
-							// new resource, show as dirty
-							throw DECORATOR_EXCEPTION;
-						}
-					}
-					if (!cvsResource.isFolder()) {
-						if(isDirty((ICVSFile) cvsResource)) {
-							throw DECORATOR_EXCEPTION;
-						}
-					}
-					// no change -- keep looking in children
-					return true;
-				}
-			}, IResource.DEPTH_INFINITE, true);
-		} catch (CoreException e) {
-			//if our exception was caught, we know there's a dirty child
-			return e == DECORATOR_EXCEPTION;
-		}
-		return false;
 	}
 }

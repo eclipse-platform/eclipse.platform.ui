@@ -20,6 +20,7 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
@@ -33,7 +34,7 @@ public class ReplaceWithRemoteAction extends ReplaceWithAction {
 					List targetResources = new ArrayList();
 					for (int i = 0; i < candidateResources.length; i++) {
 						IResource resource = candidateResources[i];
-						if (isDirty(resource) && getConfirmOverwrite()) {
+						if (CVSDecorator.isDirty(resource) && getConfirmOverwrite()) {
 							if (confirmOverwrite(Policy.bind("ReplaceWithRemoteAction.localChanges", resource.getName()))) { //$NON-NLS-1$
 								targetResources.add(resource);
 							}

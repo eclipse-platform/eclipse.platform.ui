@@ -29,6 +29,7 @@ import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.ui.CVSDecorator;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -52,7 +53,7 @@ public class ReplaceWithTagAction extends ReplaceWithAction {
 				final IResource[] resources = getSelectedResources();
 				boolean isAnyDirty = false;
 				for (int i = 0; i < resources.length; i++) {
-					if(isDirty(resources[i])) { 
+					if(CVSDecorator.isDirty(resources[i])) { 
 						isAnyDirty = true;
 					}
 				}
