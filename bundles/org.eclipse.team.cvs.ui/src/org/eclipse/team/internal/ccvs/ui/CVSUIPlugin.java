@@ -14,20 +14,11 @@ package org.eclipse.team.internal.ccvs.ui;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPluginDescriptor;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -40,11 +31,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.KSubstOption;
 import org.eclipse.team.internal.ccvs.ui.model.CVSAdapterFactory;
 import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
@@ -54,10 +41,8 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.team.ui.synchronize.ISynchronizeView;
+import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -703,6 +688,32 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 			return (WorkspaceSynchronizeParticipant)instances[0];
 		} else {
 			return null;
+		}
+	}
+	
+	/**
+	 * This is a convenience method to show the CVS workspace subscriber in the sync view.
+	 * The working set of the workspace participant will be set to the provided working set
+	 * and the provided resources will be refreshed.
+	 * @param shell shell used to display errors (can be <code>null</code>)
+	 * @param resources the resources to be refreshed (can be <code>null</code>)
+	 * @param workingSet the working set to be assigned to the participant (can be <code>null</code>)
+	 * @param mode the mode to place the participant in (can be 0)
+	 */
+	public static void showInSyncView(Shell shell, IResource[] resources, IWorkingSet workingSet, int mode) {
+		ISynchronizeView view = TeamUI.getSynchronizeManager().showSynchronizeViewInActivePage(null);
+		if(view != null) {
+			WorkspaceSynchronizeParticipant cvsPage = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
+			view.display(cvsPage);
+			cvsPage.setWorkingSet(workingSet);
+			if (resources != null) {
+				cvsPage.refreshWithRemote(resources);
+			}
+			if (mode != 0) {
+				cvsPage.setMode(mode);
+			}
+		} else {
+			CVSUIPlugin.openError(shell, Policy.bind("error"), Policy.bind("Error.unableToShowSyncView"), null); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }
