@@ -564,7 +564,8 @@ public class CVSUIPlugin extends AbstractUIPlugin implements IPropertyChangeList
 		super.shutdown();
 		TeamUI.removePropertyChangeListener(listener);
 		try {
-			repositoryManager.shutdown();
+			if (repositoryManager != null)
+				repositoryManager.shutdown();
 		} catch (TeamException e) {
 			throw new CoreException(e.getStatus());
 		}
