@@ -37,12 +37,9 @@ public interface IExtension {
 	 * @return the plug-in that declares this extension
 	 * @deprecated IPluginDescriptor is not part of the new runtime and its function
 	 * has been split over several parts of the new runtime.  This method
-	 * is not available (returns null) if the compatibility layer is not installed.  Use getNamespace()
+	 * is not available (returns <tt>null</tt>) if the compatibility layer is not installed.  Use getNamespace()
 	 * to get the symbolic id of the declaring plugin.  See {@link IPluginDescriptor} to see how to 
 	 * update your usecases.
-	 * <p>
-	 * <b>Note</b>: This is method only available if runtime compatibility
-	 * support (see org.eclipse.core.runtime.compatibility) is installed.  </p>
 	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor();
 

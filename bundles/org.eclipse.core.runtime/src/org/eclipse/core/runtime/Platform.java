@@ -549,10 +549,6 @@ public final class Platform {
 
 	/**
 	 * Returns the content type manager.
-	 * <p>
-	 * <b>Note</b>: This method is part of early access API that may well 
-	 * change in incompatible ways until it reaches its finished form. 
-	 * </p>
 	 * 
 	 * @return the content type manager
 	 * @since 3.0
@@ -564,7 +560,7 @@ public final class Platform {
 	/**
 	 * Returns the identified option.  <code>null</code>
 	 * is returned if no such option is found.   Options are specified
-	 * in the general form <i>&ltplug-in id&gt/&ltoption-path&gt</i>.  
+	 * in the general form <i>&lt;plug-in id&gt;/&lt;option-path&gt;</i>.  
 	 * For example, <code>org.eclipse.core.runtime/debug</code>
 	 *
 	 * @param option the name of the option to lookup
@@ -616,20 +612,17 @@ public final class Platform {
 	 * the plug-in is defined but not yet activated, the plug-in will
 	 * be activated before being returned.
 	 * <p>
-	 * <b>Note</b>: This is method is only able to find and return plug-in
+	 * <b>Note</b>: This method is only able to find and return plug-in
 	 * objects for plug-ins described using plugin.xml according to the 
 	 * traditional Eclipse conventions.  Eclipse 3.0 permits plug-ins to be
 	 * described in manifest.mf files and to define their own bundle 
 	 * activators.  Such plug-ins cannot be discovered by this method.</p>
-	 * <p>
-	 * <b>Note</b>: This is method only available if runtime compatibility
-	 * support (see org.eclipse.core.runtime.compatibility) is installed.  </p>
 	 *
 	 * @param id the unique identifier of the desired plug-in 
 	 *		(e.g., <code>"com.example.acme"</code>).
 	 * @return the plug-in runtime object, or <code>null</code>
 	 * @deprecated If the compatibility layer is installed, this method works
-	 * as described above.  If the compatibility layer is not installed, <code>null</code>
+	 * as described. If the compatibility layer is not installed, <code>null</code>
 	 * is returned in all cases.
 	 */
 	public static Plugin getPlugin(String id) {
@@ -652,13 +645,9 @@ public final class Platform {
 	 *
 	 * @return the plug-in registry
 	 * @see IPluginRegistry
-	 * @deprecated 
-	 * <code>IPluginRegistry</code> was refactored in Eclipse 3.0.
-	 * This method only works if the compatibility layer is present and must not be used otherwise.
+	 * @deprecated <code>IPluginRegistry</code> was refactored in Eclipse 3.0.
+	 * This method only works if the compatibility layer is installed and must not be used otherwise.
 	 * See the comments on {@link IPluginRegistry} and its methods for details.
-	 * <p>
-	 * <b>Note</b>: This is method only available if runtime compatibility
-	 * support (see org.eclipse.core.runtime.compatibility) is installed.  </p>
 	 */
 	public static IPluginRegistry getPluginRegistry() {
 		Bundle compatibility = InternalPlatform.getDefault().getBundle(CompatibilityHelper.PI_RUNTIME_COMPATIBILITY);
@@ -1197,8 +1186,8 @@ public final class Platform {
 	}
 
 	/**
-	 * Gets the Bundles with the specified symbolic name.  If no bundles are 
-	 * resolved that have the specified symbolic name then null is returned.  
+	 * Returns all bundles with the specified symbolic name.  If no resolved bundles 
+	 * with the specified symbolic name can be found, <tt>null</tt> is returned.  
 	 * If the version argument is not null then only the Bundles that have 
 	 * the specified symbolic name and a version greater than or equal to the 
 	 * specified version are returned. The returned bundles are ordered in 

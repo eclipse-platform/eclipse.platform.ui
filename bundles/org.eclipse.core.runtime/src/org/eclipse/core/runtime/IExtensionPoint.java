@@ -40,9 +40,6 @@ public interface IExtensionPoint {
 	 * is not available (returns null) if the compatibility layer is not installed.  Use getNamespace()
 	 * to get the symbolic id of the declaring plugin.  See {@link IPluginDescriptor} to see how to 
 	 * update your usecases.
-	 * <p>
-	 * <b>Note</b>: This is method only available if runtime compatibility
-	 * support (see org.eclipse.core.runtime.compatibility) is installed.  </p>
 	 */
 	public IPluginDescriptor getDeclaringPluginDescriptor();
 

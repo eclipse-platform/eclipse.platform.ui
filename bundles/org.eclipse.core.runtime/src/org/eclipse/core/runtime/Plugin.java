@@ -154,7 +154,7 @@ public abstract class Plugin implements BundleActivator {
 	/**
 	 * Creates a new plug-in runtime object.  This method is called by the platform
 	 * if this class is used as a <code>BundleActivator</code>.  This method is not 
-	 * needed/used if this plug-in requries the org.eclipse.core.runtime.compatibility plug-in.  
+	 * needed/used if this plug-in requires the org.eclipse.core.runtime.compatibility plug-in.  
 	 * Subclasses of <code>Plugin</code> 
 	 * must call this method first in their constructors.  
 	 * 

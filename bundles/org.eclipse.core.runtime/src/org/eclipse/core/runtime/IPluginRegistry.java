@@ -25,7 +25,7 @@ package org.eclipse.core.runtime;
  * The plug-in registry has been generalized in Eclipse 3.0.  It is now the
  * {@link IExtensionRegistry}.  Most of the <code>IPluginRegistry</code> function
  * is directly supported on the new interface without change.  Most clients
- * of <code>IPluginRegistry</code> need only change there reference to use
+ * of <code>IPluginRegistry</code> need only to change their references to use
  * <code>IExtensionRegistry</code>.  The only exceptions are 
  * methods that return <code>IPluginDescriptor</code>s.  See the relevant method
  * comments for details.
