@@ -78,6 +78,8 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 	
 	/** The viewer's content assistant */
 	protected IContentAssistant fContentAssistant;
+	/** Flag indicating whether the viewer's content assistant is installed */
+	protected boolean fContentAssistantInstalled;
 	/** The viewer's content formatter */
 	protected IContentFormatter fContentFormatter;
 	/** The viewer's model reconciler */
@@ -175,8 +177,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 			fReconciler.install(this);
 			
 		fContentAssistant= configuration.getContentAssistant(this);
-		if (fContentAssistant != null)
+		if (fContentAssistant != null) {
 			fContentAssistant.install(this);
+			fContentAssistantInstalled= true;
+		}
 			
 		fContentFormatter= configuration.getContentFormatter(this);
 		
@@ -307,6 +311,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 		
 		if (fContentAssistant != null) {
 			fContentAssistant.uninstall();
+			fContentAssistantInstalled= false;
 			fContentAssistant= null;
 		}
 		
@@ -341,10 +346,10 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 			return false;
 		
 		if (operation == CONTENTASSIST_PROPOSALS)
-			return fContentAssistant != null && isEditable();
+			return fContentAssistant != null && fContentAssistantInstalled && isEditable();
 			
 		if (operation == CONTENTASSIST_CONTEXT_INFORMATION)
-			return fContentAssistant != null && isEditable();
+			return fContentAssistant != null && fContentAssistantInstalled && isEditable();
 			
 		if (operation == INFORMATION)
 			return fInformationPresenter != null;
@@ -400,7 +405,32 @@ public class SourceViewer extends TextViewer implements ISourceViewer {
 			default:
 				super.doOperation(operation);
 		}
-	}		
+	}
+	
+	/*
+	 * @see ITextOperationTargetExtension#enableOperation(int, boolean)
+	 */
+	public void enableOperation(int operation, boolean enable) {
+		
+		switch (operation) {
+			case CONTENTASSIST_PROPOSALS:
+			case CONTENTASSIST_CONTEXT_INFORMATION: {
+				
+				if (fContentAssistant == null)
+					return;
+			
+				if (enable) {
+					if (!fContentAssistantInstalled) {
+						fContentAssistant.install(this);
+						fContentAssistantInstalled= true;
+					}
+				} else if (fContentAssistantInstalled) {
+					fContentAssistant.uninstall();
+					fContentAssistantInstalled= false;
+				}
+			}
+		}
+	}
 		
 	/*
 	 * @see ISourceViewer#setRangeIndicator

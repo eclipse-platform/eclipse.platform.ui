@@ -63,7 +63,10 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  * @see ITextViewer
  */  
-public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtension, ITextOperationTarget, IWidgetTokenOwner {
+public class TextViewer extends Viewer implements 
+		ITextViewer, ITextViewerExtension, 
+		ITextOperationTarget, ITextOperationTargetExtension,
+		IWidgetTokenOwner {
 	
 	
 	public static boolean TRACE_ERRORS= false;
@@ -2295,9 +2298,6 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			fMarkPosition.isDeleted() ||
 			fMarkPosition.offset < offset ||
 			fMarkPosition.offset > offset + length;
-			
-//			ignore empty mark region			
-//			fMarkPosition.getOffset() == fTextWidget.getCaretOffset();
 	}
 
 	/*
@@ -2396,7 +2396,17 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 				break;
 		}
 	}
-
+	
+	/*
+	 * @see ITextOperationTargetExtension#enableOperation(int, boolean)
+	 */
+	public void enableOperation(int operation, boolean enable) {
+		/* 
+		 * No-op by default.
+		 * Will be changed to regularily disable the known operations.
+		 */
+	}
+	
 	/*
 	 * Copies/cuts the marked region.
 	 */
