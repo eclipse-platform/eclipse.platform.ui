@@ -37,13 +37,13 @@ import org.eclipse.team.internal.ccvs.ui.Policy;
 public class GenerateDiffFileOperation implements IRunnableWithProgress {
 
 	private File outputFile;
-	private IResource[] resources;
+	private IResource resource;
 	private Shell shell;
 	private LocalOption[] options;
 	private boolean toClipboard;
 
-	GenerateDiffFileOperation(IResource[] resources, File file, boolean toClipboard, LocalOption[] options, Shell shell) {
-		this.resources = resources;
+	GenerateDiffFileOperation(IResource resource, File file, boolean toClipboard, LocalOption[] options, Shell shell) {
+		this.resource = resource;
 		this.outputFile = file;
 		this.shell = shell;
 		this.options = options;
@@ -55,9 +55,9 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 	 */
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 		try {
-			monitor.beginTask("", resources.length * 500); //$NON-NLS-1$
+			monitor.beginTask("", 500); //$NON-NLS-1$
 			monitor.setTaskName(
-			Policy.bind("GenerateCVSDiff.working")); //$NON-NLS-1$
+				Policy.bind("GenerateCVSDiff.working")); //$NON-NLS-1$
 			
 			OutputStream os;
 			if(toClipboard) {
@@ -66,11 +66,8 @@ public class GenerateDiffFileOperation implements IRunnableWithProgress {
 				os = new FileOutputStream(outputFile);
 			}
 			try {
-				for (int i = 0; i < resources.length; i++) {
-					IResource resource = resources[i];
-					CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
-					provider.diff(new IResource[] {resource}, options, new PrintStream(os), new SubProgressMonitor(monitor, 500));
-				}
+				CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());
+				provider.diff(resource, options, new PrintStream(os), new SubProgressMonitor(monitor, 500));
 			} finally {
 				os.close();
 			}

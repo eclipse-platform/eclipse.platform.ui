@@ -64,7 +64,7 @@ public class GenerateDiffFileWizard extends Wizard {
 	private PatchFileCreationOptionsPage optionsPage;
 	
 	private IStructuredSelection selection;
-	private IResource[] resources;
+	private IResource resource;
 
 	/**
 	 * Page to select a patch file. Overriding validatePage was necessary to allow
@@ -433,10 +433,10 @@ public class GenerateDiffFileWizard extends Wizard {
 	}
 	// end of PatchFileCreationOptionsPage
 	
-	public GenerateDiffFileWizard(IStructuredSelection selection, IResource[] resources) {
+	public GenerateDiffFileWizard(IStructuredSelection selection, IResource resource) {
 		super();
 		this.selection = selection;
-		this.resources = resources;
+		this.resource = resource;
 		setWindowTitle(Policy.bind("GenerateCVSDiff.title")); //$NON-NLS-1$
 		initializeDefaultPageImageDescriptor();
 	}
@@ -517,12 +517,12 @@ public class GenerateDiffFileWizard extends Wizard {
 						return false;
 					}
 				}
-				getContainer().run(false, true, new GenerateDiffFileOperation(resources, file, false, optionsPage.getOptions(), getShell()));
+				getContainer().run(false, true, new GenerateDiffFileOperation(resource, file, false, optionsPage.getOptions(), getShell()));
 				if(type==mainPage.WORKSPACE) {
 					ws.getParent().refreshLocal(IResource.DEPTH_ONE, null);
 				}
 			} else {
-				getContainer().run(false, true, new GenerateDiffFileOperation(resources, null, true, optionsPage.getOptions(), getShell()));
+				getContainer().run(false, true, new GenerateDiffFileOperation(resource, null, true, optionsPage.getOptions(), getShell()));
 			}
 			return true;
 		} catch (InterruptedException e1) {

@@ -406,15 +406,15 @@ public class CVSTeamProvider extends RepositoryProvider {
 	}
 	
 	/** 
-	 * Diff the resources against the repository and write the
-	 * output to the provided PrintStream in a form that is usable
-	 * as a patch
+	 * Diff the resources against the repository and write the output to the provided 
+	 * PrintStream in a form that is usable as a patch. The patch is rooted at the
+	 * project.
 	 */
-	public void diff(IResource[] resources, LocalOption[] options, PrintStream stream,
+	public void diff(IResource resource, LocalOption[] options, PrintStream stream,
 		IProgressMonitor progress) throws TeamException {
 		
 		// Build the arguments list
-		String[] arguments = getValidArguments(resources, options);
+		String[] arguments = getValidArguments(new IResource[] {resource}, options);
 
 		Session s = new Session(workspaceRoot.getRemoteLocation(), workspaceRoot.getLocalRoot());
 		progress.beginTask(null, 100);

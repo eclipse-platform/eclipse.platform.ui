@@ -6,9 +6,7 @@ package org.eclipse.team.internal.ccvs.ui.actions;
  */
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.core.RepositoryProvider;
@@ -30,42 +28,40 @@ public class GenerateDiffFileAction extends TeamAction {
 	 * Makes sure that the projects of all selected resources are shared.
 	 * Returns true if all resources are shared, and false otherwise.
 	 */
-	protected boolean checkSharing(IResource[] resources) throws CoreException {
+	protected boolean checkSharing(IResource[] resources) {
 		for (int i = 0; i < resources.length; i++) {
-			CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(resources[i].getProject(), CVSProviderPlugin.getTypeId());
+			CVSTeamProvider provider = (CVSTeamProvider)RepositoryProvider.getProvider(
+						resources[i].getProject(), 
+						CVSProviderPlugin.getTypeId());
 			if (provider==null) {
 				return false;
 			}
 		}
 		return true;
 	}
+	
 	/** (Non-javadoc)
 	 * Method declared on IActionDelegate.
 	 */
 	public void run(IAction action) {
 		final String title = Policy.bind("GenerateCVSDiff.title"); //$NON-NLS-1$
-		try {
-			final IResource[] resources = getSelectedResources();
-			if (!checkSharing(resources)) {
-				return;
-			}
-			GenerateDiffFileWizard wizard = new GenerateDiffFileWizard(new StructuredSelection(resources), resources);
-			wizard.setWindowTitle(title);
-			WizardDialog dialog = new WizardDialog(getShell(), wizard);
-			dialog.setMinimumPageSize(350, 250);
-			dialog.open();
-		} catch (CoreException e) {
-			ErrorDialog.openError(getShell(), title, null, e.getStatus());
-		}
+		final IResource[] resources = getSelectedResources();
+		GenerateDiffFileWizard wizard = new GenerateDiffFileWizard(new StructuredSelection(resources), resources[0]);
+		wizard.setWindowTitle(title);
+		WizardDialog dialog = new WizardDialog(getShell(), wizard);
+		dialog.setMinimumPageSize(350, 250);
+		dialog.open();
 	}
+
 	/** (Non-javadoc)
 	 * Method declared on IActionDelegate.
 	 */
 	protected boolean isEnabled() throws TeamException {
 		IResource[] resources = getSelectedResources();
-		for (int i = 0; i < resources.length; i++) {
-			if (!resources[i].isAccessible()) return false;
+		if(resources.length != 1) {
+			return false;
 		}
+		if (!resources[0].isAccessible() || !checkSharing(new IResource[] {resources[0]})) return false;
 		return true;
 	}
 }
