@@ -45,12 +45,10 @@ public class ConfigurationProperty extends RegistryModelObject {
 
 	/**
 	 * Sets the value of this property.
-	 * This object must not be read-only.
 	 * 
 	 * @param value the new value of this property.  May be <code>null</code>.
 	 */
 	public void setValue(String value) {
-		assertIsWriteable();
 		this.value = value;
 	}
 
@@ -58,8 +56,6 @@ public class ConfigurationProperty extends RegistryModelObject {
 	 * Optimization to replace a non-localized key with its localized value.  Avoids having
 	 * to access resource bundles for further lookups.
 	 */
-	// TODO unclear why we do not make sure object is not read-only.
-	// should update javadoc or perform check.
 	public void setLocalizedValue(String value) {
 		this.value = value;
 		((ExtensionRegistry) InternalPlatform.getDefault().getRegistry()).setDirty(true);

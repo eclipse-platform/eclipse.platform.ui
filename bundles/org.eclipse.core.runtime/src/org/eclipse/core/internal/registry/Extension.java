@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.*;
  * This class may be instantiated, or further subclassed.
  * </p>
  */
-public class Extension extends RegistryModelObject implements IExtension {
+public class Extension extends NestedRegistryModelObject implements IExtension {
 
 	// DTD properties (included in plug-in manifest)
 	private String extensionPoint;
@@ -99,24 +99,10 @@ public class Extension extends RegistryModelObject implements IExtension {
 	}
 
 	/**
-	 * Sets this model object and all of its descendents to be read-only.
-	 * Subclasses may extend this implementation.
-	 *
-	 * @see RegistryModelObject#isReadOnly()
-	 */
-	public void markReadOnly() {
-		super.markReadOnly();
-		if (elements != null)
-			for (int i = 0; i < elements.length; i++)
-				((ConfigurationElement) elements[i]).markReadOnly();
-	}
-
-	/**
 	 * Set the extension point with which this extension is associated.
-	 *	May be <code>null</code>. This object must not be read-only.
+	 *	May be <code>null</code>. 
 	 */
 	public void setExtensionPointIdentifier(String value) {
-		assertIsWriteable();
 		extensionPoint = value;
 	}
 
@@ -126,25 +112,21 @@ public class Extension extends RegistryModelObject implements IExtension {
 	 * This identifier is specified in the plug-in manifest as a non-empty
 	 * string containing no period characters (<code>'.'</code>) and 
 	 * must be unique within the defining plug-in.
-	 * This object must not be read-only.
 	 *
 	 * @param value the simple identifier of the extension (e.g. <code>"main"</code>).
 	 *		May be <code>null</code>.
 	 */
 	public void setSimpleIdentifier(String value) {
-		assertIsWriteable();
 		id = value;
 	}
 
 	/**
 	 * Sets the configuration element children of this extension.
-	 * This object must not be read-only.
 	 *
 	 * @param value the configuration elements in this extension.  
 	 *		May be <code>null</code>.
 	 */
 	public void setSubElements(IConfigurationElement[] value) {
-		assertIsWriteable();
 		elements = value;
 	}
 
@@ -186,8 +168,6 @@ public class Extension extends RegistryModelObject implements IExtension {
 	 * Optimization to replace a non-localized key with its localized value.  Avoids having
 	 * to access resource bundles for further lookups.
 	 */
-	// TODO unclear why we do not make sure object is not read-only.
-	// should update javadoc or perform check.
 	public void setLocalizedName(String value) {
 		name = value;
 		((ExtensionRegistry) InternalPlatform.getDefault().getRegistry()).setDirty(true);

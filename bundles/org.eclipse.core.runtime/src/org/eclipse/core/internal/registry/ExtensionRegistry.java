@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.jobs.Job;
 /**
  * An OSGi-free implementation for the extension registry API.
  */
-public class ExtensionRegistry extends RegistryModelObject implements IExtensionRegistry {
+public class ExtensionRegistry extends NestedRegistryModelObject implements IExtensionRegistry {
 
 	private static final String OPTION_DEBUG_EVENTS_EXTENSION = "org.eclipse.core.runtime/registry/debug/events/extension"; //$NON-NLS-1$	
 	public static boolean DEBUG;
@@ -555,4 +555,10 @@ public class ExtensionRegistry extends RegistryModelObject implements IExtension
 	public void setDirty(boolean value) {
 		isDirty = value;
 	}
+	
+	public RegistryModelObject getRegistry() {
+		return this;
+	}
+
+
 }

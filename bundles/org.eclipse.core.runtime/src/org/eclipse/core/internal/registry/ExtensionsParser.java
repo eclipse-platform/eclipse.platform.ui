@@ -42,8 +42,6 @@ public class ExtensionsParser extends DefaultHandler {
 	// populating in this plugin descriptor
 	private Stack objectStack = new Stack();
 
-	private Locator locator = null;
-
 	private ServiceReference parserReference;
 	private String schemaVersion = null;
 
@@ -112,7 +110,6 @@ public class ExtensionsParser extends DefaultHandler {
 	 * @see org.xml.sax.Locator
 	 */
 	public void setDocumentLocator(Locator locator) {
-		this.locator = locator;
 	}
 
 	public void characters(char[] ch, int start, int length) {
@@ -229,14 +226,12 @@ public class ExtensionsParser extends DefaultHandler {
 	}
 
 	private void handleExtensionPointState(String elementName, Attributes attributes) {
-
 		// We ignore all elements under extension points (if there are any)
 		stateStack.push(new Integer(IGNORED_ELEMENT_STATE));
 		internalError(Policy.bind("parse.unknownElement", EXTENSION_POINT, elementName)); //$NON-NLS-1$
 	}
 
 	private void handleExtensionState(String elementName, Attributes attributes) {
-
 		// You need to change the state here even though we will be executing the same
 		// code for ExtensionState and ConfigurationElementState.  We ignore the name
 		// of the element for ConfigurationElements.  When we are wrapping up, we will
@@ -270,7 +265,6 @@ public class ExtensionsParser extends DefaultHandler {
 		stateStack.push(new Integer(BUNDLE_STATE));
 		BundleModel current = factory.createBundle();
 		current.setSchemaVersion(schemaVersion);
-		current.setStartLine(locator.getLineNumber());
 		objectStack.push(current);
 	}
 
@@ -383,10 +377,7 @@ public class ExtensionsParser extends DefaultHandler {
 	}
 
 	private void parseConfigurationElementAttributes(Attributes attributes) {
-
 		ConfigurationElement parentConfigurationElement = (ConfigurationElement) objectStack.peek();
-		parentConfigurationElement.setStartLine(locator.getLineNumber());
-
 		Vector propVector = null;
 
 		// process attributes
@@ -394,7 +385,6 @@ public class ExtensionsParser extends DefaultHandler {
 		if (len == 0)
 			return;
 		propVector = new Vector();
-
 		for (int i = 0; i < len; i++) {
 			String attrName = attributes.getLocalName(i);
 			String attrValue = attributes.getValue(i);
@@ -409,10 +399,8 @@ public class ExtensionsParser extends DefaultHandler {
 	}
 
 	private void parseExtensionAttributes(Attributes attributes) {
-
 		BundleModel parent = (BundleModel) objectStack.peek();
 		Extension currentExtension = factory.createExtension();
-		currentExtension.setStartLine(locator.getLineNumber());
 		objectStack.push(currentExtension);
 
 		// Process Attributes
@@ -440,9 +428,7 @@ public class ExtensionsParser extends DefaultHandler {
 	}
 
 	private void parseExtensionPointAttributes(Attributes attributes) {
-
 		ExtensionPoint currentExtPoint = factory.createExtensionPoint();
-		currentExtPoint.setStartLine(locator.getLineNumber());
 
 		// Process Attributes
 		int len = (attributes != null) ? attributes.getLength() : 0;

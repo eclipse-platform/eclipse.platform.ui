@@ -24,15 +24,11 @@ import org.osgi.framework.Bundle;
  * </p>
  */
 
-public class ConfigurationElement extends RegistryModelObject implements IConfigurationElement {
+public class ConfigurationElement extends NestedRegistryModelObject implements IConfigurationElement {
 	// DTD properties (included in plug-in manifest)
 	private String value = null;
 	private ConfigurationProperty[] properties = null;
 	private IConfigurationElement[] children = null;
-
-	//This field is only used when doing createExecutableExtension 
-	// TODO should this be removed? it does not get referenced.
-	private Object oldStyleConfigurationElement = null;
 
 	public Object createExecutableExtension(String attributeName) throws CoreException {
 		String prop = null;
@@ -280,50 +276,30 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 	}
 
 	/**
-	 * Sets this model object and all of its descendents to be read-only.
-	 * Subclasses may extend this implementation.
-	 *
-	 * @see RegistryModelObject#isReadOnly()
-	 */
-	public void markReadOnly() {
-		super.markReadOnly();
-		if (children != null)
-			for (int i = 0; i < children.length; i++)
-				((ConfigurationElement) children[i]).markReadOnly();
-		if (properties != null)
-			for (int i = 0; i < properties.length; i++)
-				properties[i].markReadOnly();
-	}
-
-	/**
-	 * Sets the properties associated with this element.  This object must not be read-only.
+	 * Sets the properties associated with this element. 
 	 *
 	 * @param value the properties to associate with this element.  May be <code>null</code>.
 	 */
 	public void setProperties(ConfigurationProperty[] value) {
-		assertIsWriteable();
 		properties = value;
 	}
 
 	/**
 	 * Sets configuration elements contained by this element
-	 * This object must not be read-only.
 	 *
 	 * @param value the configuration elements to be associated with this element.  
 	 *		May be <code>null</code>.
 	 */
 	public void setChildren(IConfigurationElement[] value) {
-		assertIsWriteable();
 		children = value;
 	}
 
 	/**
-	 * Sets the value of this element.  This object must not be read-only.
+	 * Sets the value of this element.  
 	 * 
 	 * @param value the new value of this element.  May be <code>null</code>.
 	 */
 	public void setValue(String value) {
-		assertIsWriteable();
 		this.value = value;
 	}
 
@@ -331,8 +307,6 @@ public class ConfigurationElement extends RegistryModelObject implements IConfig
 	 * Optimization to replace a non-localized key with its localized value.  Avoids having
 	 * to access resource bundles for further lookups.
 	 */
-	// TODO unclear why we do not make sure object is not read-only.
-	// should update javadoc or perform check.
 	public void setLocalizedValue(String value) {
 		this.value = value;
 		((ExtensionRegistry) InternalPlatform.getDefault().getRegistry()).setDirty(true);

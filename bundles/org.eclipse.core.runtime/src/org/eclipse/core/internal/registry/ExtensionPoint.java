@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.*;
  * This class may be instantiated, or further subclassed.
  * </p>
  */
-public class ExtensionPoint extends RegistryModelObject implements IExtensionPoint {
+public class ExtensionPoint extends NestedRegistryModelObject implements IExtensionPoint {
 
 	// DTD properties (included in plug-in manifest)
 	private String id = null;
@@ -63,20 +63,18 @@ public class ExtensionPoint extends RegistryModelObject implements IExtensionPoi
 	}
 
 	public String getUniqueIdentifier() {
-		return this.getNamespace() + "." + getSimpleIdentifier(); //$NON-NLS-1$
+		return getNamespace() + "." + getSimpleIdentifier(); //$NON-NLS-1$
 	}
 
 	public void setExtensions(IExtension[] value) {
 		extensions = value;
 	}
 
-	public void setSchema(String schemaReference) {
-		assertIsWriteable();
-		this.schemaReference = schemaReference;
+	public void setSchema(String value) {
+		schemaReference = value;
 	}
 
 	public void setSimpleIdentifier(String value) {
-		assertIsWriteable();
 		id = value;
 	}
 

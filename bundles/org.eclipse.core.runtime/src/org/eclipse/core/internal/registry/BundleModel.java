@@ -20,7 +20,7 @@ import org.osgi.framework.Bundle;
  * An object which represents the user-defined contents of a bundle model
  * in a extensions manifest.
  */
-public class BundleModel extends RegistryModelObject implements IRegistryElement {
+public class BundleModel extends NestedRegistryModelObject implements IRegistryElement {
 	private String hostId;
 	private IExtensionPoint[] extensionPoints;
 	private IExtension[] extensions;
@@ -67,7 +67,6 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 	}
 
 	public void setExtensions(IExtension[] value) {
-		assertIsWriteable();
 		extensions = value;
 		fixRenamedExtensionPoints();
 	}
@@ -89,18 +88,7 @@ public class BundleModel extends RegistryModelObject implements IRegistryElement
 		return extensions == null ? new IExtension[0] : extensions;
 	}
 
-	public void markReadOnly() {
-		super.markReadOnly();
-		if (extensionPoints != null)
-			for (int i = 0; i < extensionPoints.length; i++)
-				((ExtensionPoint) extensionPoints[i]).markReadOnly();
-		if (extensions != null)
-			for (int i = 0; i < extensions.length; i++)
-				((Extension) extensions[i]).markReadOnly();
-	}
-
 	public void setExtensionPoints(IExtensionPoint[] value) {
-		assertIsWriteable();
 		extensionPoints = value;
 	}
 
