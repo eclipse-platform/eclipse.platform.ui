@@ -92,7 +92,6 @@ public class DebugPluginImages {
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_DISCONNECT, LOCALTOOL + "disconnect_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IDebugUIConstants.IMG_LCL_REMOVE_ALL, LOCALTOOL + "rem_all_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_LCL_SHOW_LOGICAL_STRUCTURE, LOCALTOOL + "var_cntnt_prvdr.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalDebugUIConstants.IMG_LCL_AVAILABLE_LOGICAL_STRUCTURES, LOCALTOOL + "var_avail_str.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_LCL_COLLAPSE_ALL, LOCALTOOL + "collapseall.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_LCL_TERMINATE, LOCALTOOL + "terminate_co.gif"); //$NON-NLS-1$
 			
@@ -104,7 +103,6 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_LOCK, DLCL + "lock_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TYPE_NAMES, DLCL + "tnames_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_SHOW_LOGICAL_STRUCTURE, DLCL + "var_cntnt_prvdr.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_AVAILABLE_LOGICAL_STRUCTURES, DLCL + "var_avail_str.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_COLLAPSE_ALL, DLCL + "collapseall.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TERMINATE, DLCL + "terminate_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_REMOVE_ALL, DLCL + "rem_all_co.gif"); //$NON-NLS-1$
@@ -117,7 +115,6 @@ public class DebugPluginImages {
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_LOCK, ELCL + "lock_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_TYPE_NAMES, ELCL + "tnames_co.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_SHOW_LOGICAL_STRUCTURE, ELCL + "var_cntnt_prvdr.gif"); //$NON-NLS-1$
-		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_AVAILABLE_LOGICAL_STRUCTURES, ELCL + "var_avail_str.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_COLLAPSE_ALL, ELCL + "collapseall.gif"); //$NON-NLS-1$
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_TERMINATE, ELCL + "terminate_co.gif"); //$NON-NLS-1$
 		

@@ -746,9 +746,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		action = new ToggleLogicalStructureAction(this);
 		setAction("ToggleContentProviders", action); //$NON-NLS-1$
 		
-		action = new AvailableLogicalStructuresAction(this);
-		setAction("SelectLogicalStructure", action); //$NON-NLS-1$
-		
 		action = new CollapseAllAction(getVariablesViewer());
 		setAction("CollapseAll", action); //$NON-NLS-1$
 
@@ -821,7 +818,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		tbm.add(getAction("ShowTypeNames")); //$NON-NLS-1$
 		tbm.add(getAction("ToggleContentProviders")); //$NON-NLS-1$
-		tbm.add(getAction("SelectLogicalStructure")); //$NON-NLS-1$
 		tbm.add(getAction("CollapseAll")); //$NON-NLS-1$
 	}
 
@@ -836,6 +832,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		menu.add(new Separator(IDebugUIConstants.EMPTY_VARIABLE_GROUP));
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
 		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
+		IAction action = new AvailableLogicalStructuresAction(this);
+		if (action.isEnabled()) {
+			menu.add(action);
+		}
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_NAVIGATION_GROUP));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
@@ -1288,10 +1288,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	public void setShowLogicalStructure(boolean flag) {
 		((VariablesViewContentProvider)getStructuredViewer().getContentProvider()).setShowLogicalStructure(flag);
-		AvailableLogicalStructuresAction action = (AvailableLogicalStructuresAction) getAction("SelectLogicalStructure"); //$NON-NLS-1$
-		if (action != null) {
-			action.selectionChanged(new SelectionChangedEvent(getVariablesViewer(), getVariablesViewer().getSelection()));
-		}
 	}	
 	
 	/** 

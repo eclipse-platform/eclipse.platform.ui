@@ -16,18 +16,14 @@ import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -36,7 +32,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
  * Drop down action that displays available logical structues for a selected
  * variable or expression.
  */
-public class AvailableLogicalStructuresAction extends Action implements IMenuCreator, ISelectionChangedListener {
+public class AvailableLogicalStructuresAction extends Action implements IMenuCreator {
 	
 	private VariablesView fView;
 	private Menu fMenu;
@@ -46,13 +42,11 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 	public AvailableLogicalStructuresAction(VariablesView view) {
 		setView(view);
 		setToolTipText(VariablesViewMessages.getString("AvailableLogicalStructuresAction.0")); //$NON-NLS-1$
-		setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_LCL_AVAILABLE_LOGICAL_STRUCTURES));
-		setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_DLCL_AVAILABLE_LOGICAL_STRUCTURES));
-		setImageDescriptor(DebugPluginImages.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_AVAILABLE_LOGICAL_STRUCTURES));
+		setText("Show As");
 		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.VARIABLES_SELECT_LOGICAL_STRUCTURE);
 		setEnabled(false);
-		getView().getSite().getSelectionProvider().addSelectionChangedListener(this);
 		setMenuCreator(this);
+		init();
 	}
 
 	/**
@@ -76,15 +70,27 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 		if (fMenu != null) {
 			fMenu.dispose();
 		}
-		getView().getSite().getSelectionProvider().removeSelectionChangedListener(this);
 		fView= null;
-		
+		fValue = null;
+		fTypes = null;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
 	 */
 	public Menu getMenu(Control parent) {
+		return null;
+	}
+
+	protected void addActionToMenu(Menu parent, Action action) {
+		ActionContributionItem item= new ActionContributionItem(action);
+		item.fill(parent, -1);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
+	 */
+	public Menu getMenu(Menu parent) {
 		if (fMenu != null) {
 			fMenu.dispose();
 		}
@@ -116,26 +122,14 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 		return fMenu;
 	}
 
-	protected void addActionToMenu(Menu parent, Action action) {
-		ActionContributionItem item= new ActionContributionItem(action);
-		item.fill(parent, -1);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
-	 */
-	public Menu getMenu(Menu parent) {
-		return null;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
-	public void selectionChanged(SelectionChangedEvent event) {
+	public void init() {
 		setValue(null);
 		setTypes(null);
 		if (getView().isShowLogicalStructure()) {
-			ISelection s = event.getSelection();
+			ISelection s = getView().getVariablesViewer().getSelection();
 			if (s instanceof IStructuredSelection) {
 				IStructuredSelection selection = (IStructuredSelection) s;
 				if (selection.size() == 1) {
