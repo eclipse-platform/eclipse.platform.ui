@@ -25,8 +25,10 @@ import org.eclipse.swt.accessibility.AccessibleControlEvent;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
+import org.eclipse.ui.internal.progress.ProgressMessages;
 
 public class AnimationItem {
 
@@ -119,6 +121,7 @@ public class AnimationItem {
 		imageCanvas = new Canvas(parent, SWT.NONE);
 		imageCanvas.setBackground(
 			parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		imageCanvas.setToolTipText(ProgressMessages.getString("AnimationItem.HoverHelp")); //$NON-NLS-1$
 
 		imageCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
@@ -164,6 +167,16 @@ public class AnimationItem {
 					arg0.result = ProgressMessages.getString("AnimationItem.InProgressStatus"); //$NON-NLS-1$
 				else
 					arg0.result = ProgressMessages.getString("AnimationItem.NotRunningStatus"); //$NON-NLS-1$
+			}
+		});
+		
+		imageCanvas.addHelpListener(new HelpListener(){
+			/* (non-Javadoc)
+			 * @see org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse.swt.events.HelpEvent)
+			 */
+			public void helpRequested(HelpEvent e) {
+				// XXX Auto-generated method stub
+
 			}
 		});
 
