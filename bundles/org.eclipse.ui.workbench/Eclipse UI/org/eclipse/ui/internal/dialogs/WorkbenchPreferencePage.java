@@ -24,7 +24,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	private IWorkbench workbench;
 	private Button autoBuildButton;
 	private Button autoSaveAllButton;
-	private Button linkButton;
 	private Button refreshButton;
 	private IntegerFieldEditor saveInterval;
 
@@ -88,11 +87,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		autoSaveAllButton.setFont(font);
 		setButtonLayoutData(autoSaveAllButton);
 
-		linkButton = new Button(composite, SWT.CHECK);
-		linkButton.setText(WorkbenchMessages.getString("WorkbenchPreference.linkNavigator")); //$NON-NLS-1$
-		linkButton.setFont(font);
-		setButtonLayoutData(linkButton);
-
 		refreshButton = new Button(composite, SWT.CHECK);
 		refreshButton.setText(WorkbenchMessages.getString("WorkbenchPreference.refreshButton")); //$NON-NLS-1$
 		refreshButton.setFont(font);
@@ -108,7 +102,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		autoBuildButton.setSelection(ResourcesPlugin.getWorkspace().isAutoBuilding());
 		autoSaveAllButton.setSelection(store.getBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
-		linkButton.setSelection(store.getBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
 		refreshButton.setSelection(store.getBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
 
 		return composite;
@@ -307,7 +300,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		autoBuildButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.AUTO_BUILD));
 		autoSaveAllButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD));
-		linkButton.setSelection(store.getDefaultBoolean(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR));
 		refreshButton.setSelection(store.getDefaultBoolean(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP));
 		saveInterval.loadDefault();
 		
@@ -339,9 +331,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		// store the save all prior to build setting
 		store.setValue(IPreferenceConstants.SAVE_ALL_BEFORE_BUILD, autoSaveAllButton.getSelection());
-
-		// store the link navigator to editor setting
-		store.setValue(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, linkButton.getSelection());
 
 		// store the link navigator to editor setting
 		store.setValue(IPreferenceConstants.REFRESH_WORKSPACE_ON_STARTUP, refreshButton.getSelection());
