@@ -13,12 +13,9 @@ package org.eclipse.jface.text.link;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -32,9 +29,13 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.BadPartitioningException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DefaultPositionUpdater;
+import org.eclipse.jface.text.DocumentCommand;
+import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
@@ -42,20 +43,23 @@ import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.ITextViewerExtension2;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.jface.text.link.ILinkedListener;
-import org.eclipse.jface.text.link.LinkedEnvironment;
-import org.eclipse.jface.text.link.LinkedPosition;
-import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
 import org.eclipse.jface.text.source.ISourceViewer;
 
 /**
- * The UI for linked mode. Detects events that influence behaviour of the
- * linked position UI and acts upon them.
+ * The UI for linked mode. Detects events that influence behaviour of the linked
+ * position UI and acts upon them.
+ * <p>
+ * <code>LinkedUIControl</code> relies on all added
+ * <code>LinkedUITarget</code> s to provide implementations of
+ * <code>ITextViewer</code> that implement <code>ITextViewerExtension</code>,
+ * and the documents being edited to implement <code>IDocumentExtension3</code>.
+ * </p>
  * 
  * @since 3.0
  */
@@ -112,26 +116,6 @@ public class LinkedUIControl {
 		}
 	}
 	
-	/**
-	 * Listens on a styled text for events before (Verify) and after (Modify)
-	 * modifications. Used to update the caret after linked changes.
-	 */
-	private final class CaretListener implements ModifyListener, VerifyListener {
-		/*
-		 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
-		 */
-		public void modifyText(ModifyEvent e) {
-			updateSelection(e);
-		}
-
-		/*
-		 * @see org.eclipse.swt.events.VerifyListener#verifyText(org.eclipse.swt.events.VerifyEvent)
-		 */
-		public void verifyText(VerifyEvent e) {
-			rememberSelection(e);
-		}
-	}
-
 	/**
 	 * A link target consists of a viewer and gets notified if the linked UI on
 	 * it is being shown.
@@ -509,8 +493,6 @@ public class LinkedUIControl {
 	private ILinkedListener fLinkedListener= new ExitListener();
 	/** The selection listener. */
 	private MySelectionListener fSelectionListener= new MySelectionListener();
-	/** The styled text listener. */
-	private CaretListener fCaretListener= new CaretListener();
 	/** The content assist listener. */
 	private ProposalListener fProposalListener= new ProposalListener();
 	
@@ -536,6 +518,20 @@ public class LinkedUIControl {
 	private boolean fHasOpenCompoundChange= false;
 	/** The position listener. */
 	private ILinkedFocusListener fPositionListener= new EmtpyFocusListener();
+	private IAutoEditStrategy fAutoEditVetoer= new IAutoEditStrategy() {
+		
+		/*
+		 * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.DocumentCommand)
+		 */
+		public void customizeDocumentCommand(IDocument document, DocumentCommand command) {
+			// invalidate the change to ensure that the change is performed on the document only.
+			if (fEnvironment.anyPositionContains(command.offset)) {
+				command.doit= false;
+				command.caretOffset= command.offset + command.length;
+			}
+			
+		}
+	};
 
 	/**
 	 * Creates a new UI on the given model (environment) and the set of
@@ -853,13 +849,13 @@ public class LinkedUIControl {
 		} else
 			fCurrentTarget.fKeyListener.setEnabled(true);
 		
+		registerAutoEditVetoer(viewer);
+		
 		((IPostSelectionProvider) viewer).addPostSelectionChangedListener(fSelectionListener);
 
 		createAnnotationModel();
 		
 		fCurrentTarget.fWidget.showSelection();
-		fCurrentTarget.fWidget.addVerifyListener(fCaretListener);
-		fCurrentTarget.fWidget.addModifyListener(fCaretListener);
 
 		fCurrentTarget.fShell= fCurrentTarget.fWidget.getShell();
 		if (fCurrentTarget.fShell == null)
@@ -867,6 +863,50 @@ public class LinkedUIControl {
 		fCurrentTarget.fShell.addShellListener(fCloser);
 
 		fAssistant.install(viewer);
+	}
+
+	/**
+	 * Registers our auto edit vetoer with the viewer.
+	 * 
+	 * @param viewer the viewer we want to veto ui-triggered changes within
+	 *        linked positions
+	 */
+	private void registerAutoEditVetoer(ITextViewer viewer) {
+		try {
+			if (viewer.getDocument() instanceof IDocumentExtension3) {
+				IDocumentExtension3 ext= (IDocumentExtension3) viewer.getDocument();
+				String[] contentTypes= ext.getLegalContentTypes(IDocumentExtension3.DEFAULT_PARTITIONING);
+				if (viewer instanceof ITextViewerExtension2) {
+					ITextViewerExtension2 vExtension= ((ITextViewerExtension2) viewer);
+					for (int i= 0; i < contentTypes.length; i++) {
+						vExtension.prependAutoEditStrategy(fAutoEditVetoer, contentTypes[i]);
+					}
+				} else {
+					Assert.isTrue(false);
+				}
+			}
+
+		} catch (BadPartitioningException e) {
+			leave(ILinkedListener.EXIT_ALL);
+		}
+	}
+
+	private void unregisterAutoEditVetoer(ITextViewer viewer) {
+		try {
+			if (viewer.getDocument() instanceof IDocumentExtension3) {
+				IDocumentExtension3 ext= (IDocumentExtension3) viewer.getDocument();
+				String[] contentTypes= ext.getLegalContentTypes(IDocumentExtension3.DEFAULT_PARTITIONING);
+				if (viewer instanceof ITextViewerExtension2) {
+					ITextViewerExtension2 vExtension= ((ITextViewerExtension2) viewer);
+					for (int i= 0; i < contentTypes.length; i++) {
+						vExtension.removeAutoEditStrategy(fAutoEditVetoer, contentTypes[i]);
+					}
+				}
+			}
+
+		} catch (BadPartitioningException e) {
+			leave(ILinkedListener.EXIT_ALL);
+		}
 	}
 
 	private void createAnnotationModel() {
@@ -891,7 +931,6 @@ public class LinkedUIControl {
 		fAssistant.uninstall();
 		fAssistant.removeProposalListener(fProposalListener);
 
-		StyledText text= fCurrentTarget.fWidget;
 		fCurrentTarget.fWidget= null;
 		
 		Shell shell= fCurrentTarget.fShell;
@@ -900,16 +939,13 @@ public class LinkedUIControl {
 		if (shell != null && !shell.isDisposed())
 			shell.removeShellListener(fCloser);
 		
-		if (text != null && !text.isDisposed()) {
-			text.removeModifyListener(fCaretListener);
-			text.removeVerifyListener(fCaretListener);
-		}
-		
 		// this one is asymmetric: we don't install the model in
 		// connect, but leave it to its callers to ensure they
 		// have the model installed if they need it
 		uninstallAnnotationModel(fCurrentTarget);
 
+		unregisterAutoEditVetoer(viewer);
+		
 		// don't remove the verify key listener to let it keep its position
 		// in the listener queue
 		fCurrentTarget.fKeyListener.setEnabled(false);
@@ -1017,50 +1053,7 @@ public class LinkedUIControl {
 			return new Region(fFramePosition.getOffset(), fFramePosition.getLength());
 	}
 
-	private void rememberSelection(VerifyEvent event) {
-		// don't update other editor's carets
-		if (event.getSource() != fCurrentTarget.fWidget)
-			return;
-
-		Point selection= fCurrentTarget.getViewer().getSelectedRange();
-		fCaretPosition.offset= selection.x + selection.y;
-		fCaretPosition.length= 0;
-		fCaretPosition.isDeleted= false;
-		try {
-			IDocument document= fCurrentTarget.getViewer().getDocument();
-			boolean installCat= true;
-			String[] cats= document.getPositionCategories();
-			for (int i= 0; i < cats.length; i++) {
-				if (getCategory().equals(cats[i]))
-					installCat= false;
-			}
-			if (installCat) {
-				document.addPositionCategory(getCategory());
-				document.addPositionUpdater(fPositionUpdater);
-			}
-			if (document.getPositions(getCategory()).length != 0)
-				document.removePosition(getCategory(), fCaretPosition);
-			document.addPosition(getCategory(), fCaretPosition);
-		} catch (BadLocationException e) {
-			// will not happen
-			Assert.isTrue(false);
-		} catch (BadPositionCategoryException e) {
-			// will not happen
-			Assert.isTrue(false);
-		}
-	}
-
-	private void updateSelection(ModifyEvent event) {
-		// don't set the caret if we've left already (we're still called as the listener
-		// has just been removed) or the event does not happen on our current viewer
-		if (!fIsActive || event.getSource() != fCurrentTarget.fWidget)
-			return;
-
-		if (!fCaretPosition.isDeleted())
-			fCurrentTarget.getViewer().setSelectedRange(fCaretPosition.getOffset(), 0);
-
-		fCaretPosition.isDeleted= true;
-	}
+	
 
 	private String getCategory() {
 		return toString();

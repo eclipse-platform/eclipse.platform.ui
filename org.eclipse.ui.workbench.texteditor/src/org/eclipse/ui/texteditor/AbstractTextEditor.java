@@ -1696,7 +1696,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (fPreferenceStore != null)
 			fPreferenceStore.removePropertyChangeListener(fPropertyChangeListener);
 		fPreferenceStore= pre_3_0_Store;
-		
 		setNewPreferenceStore(store);
 	}
 	
@@ -3576,6 +3575,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		setActionActivationCode(ITextEditorActionDefinitionIds.LINE_START, (char) 0, SWT.HOME, SWT.NONE);
 		setActionActivationCode(ITextEditorActionDefinitionIds.SELECT_LINE_END, (char) 0, SWT.END, SWT.SHIFT);
 		setActionActivationCode(ITextEditorActionDefinitionIds.SELECT_LINE_START, (char) 0, SWT.HOME, SWT.SHIFT);
+		
+		// to accomodate https://bugs.eclipse.org/bugs/show_bug.cgi?id=51516
+		// nullify handling of DELETE key by StyledText
+		textWidget.setKeyBinding(SWT.DEL, SWT.NULL);
 	}
 
 	/**

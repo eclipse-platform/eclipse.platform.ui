@@ -43,11 +43,6 @@ public class DocumentCommand {
 		private final String fText;
 		/** The listern who owns this command */
 		private final IDocumentListener fOwner;
-		/** 
-		 * Indicates whether the caret should be shifted.
-		 * @since 3.0 
-		 */
-		private final boolean fShiftsCaret;
 		
 		/**
 		 * Creates a new command with the given specification.
@@ -55,17 +50,15 @@ public class DocumentCommand {
 		 * @param offset the offset of the replace command
 		 * @param length the length of the replace command
 		 * @param text the text to replace with, may be <code>null</code>
-		 * @param shiftsCaret <code>true</code> if caret should be shifted by this command
 		 * @param owner the document command owner, may be <code>null</code>
 		 * @since 3.0
 		 */
-		public Command(int offset, int length, String text, boolean shiftsCaret, IDocumentListener owner) {
+		public Command(int offset, int length, String text, IDocumentListener owner) {
 			if (offset < 0 || length < 0)
 				throw new IllegalArgumentException();
 			fOffset= offset;
 			fLength= length;
 			fText= text;
-			fShiftsCaret= shiftsCaret;
 			fOwner= owner;
 		}
 
@@ -140,6 +133,7 @@ public class DocumentCommand {
 		
 		/**
 		 * Creates a reverse list iterator.
+		 * @param listIterator the iterator that this reverse iterator is based upon
 		 */
 		public ReverseListIterator(ListIterator listIterator) {
 			if (listIterator == null)
@@ -325,13 +319,12 @@ public class DocumentCommand {
 	 * @param offset the offset of the region to replace
 	 * @param length the length of the region to replace
 	 * @param text the text to replace with, may be <code>null</code>
-	 * @param shiftsCaret <code>true</code> if the command shifts the caret
 	 * @param owner the command owner, may be <code>null</code>
 	 * @throws BadLocationException if the added command intersects with an existing one
-	 * @since 3.0
+	 * @since 2.1
 	 */
-	public void addCommand(int offset, int length, String text, boolean shiftsCaret, IDocumentListener owner) throws BadLocationException {
-		final Command command= new Command(offset, length, text, shiftsCaret, owner);
+	public void addCommand(int offset, int length, String text, IDocumentListener owner) throws BadLocationException {
+		final Command command= new Command(offset, length, text, owner);
 
 		if (intersects(command))
 			throw new BadLocationException();		
@@ -356,23 +349,6 @@ public class DocumentCommand {
 		fCommands.add(insertionIndex, command);	
 	}
 
-
-	/**
-	 * Adds an additional replace command. The added replace command must not overlap
-	 * with existing ones. If the document command owner is not <code>null</code>, it will not
-	 * get document change notifications for the particular command.
-	 *
-	 * @param offset the offset of the region to replace
-	 * @param length the length of the region to replace
-	 * @param text the text to replace with, may be <code>null</code>
-	 * @param owner the command owner, may be <code>null</code>
-	 * @throws BadLocationException if the added command intersects with an existing one
-	 * @since 2.1
-	 */
-	public void addCommand(int offset, int length, String text, IDocumentListener owner) throws BadLocationException {
-		addCommand(offset, length, text, true, owner);
-	}	
-
 	/**
 	 * Returns an iterator over the commands in ascending position order.
 	 * The iterator includes the original document command.
@@ -381,7 +357,7 @@ public class DocumentCommand {
 	 * @return returns the command iterator
 	 */
 	public Iterator getCommandIterator() {
-		Command command= new Command(offset, length, text, shiftsCaret, owner); 
+		Command command= new Command(offset, length, text, owner); 
 		return new CommandIterator(fCommands, command, true);
 	}
 	
@@ -436,15 +412,56 @@ public class DocumentCommand {
 		
 		if (length == 0 && text == null && fCommands.size() == 0)
 			return;
-
-		final Command originalCommand= new Command(offset, length, text, shiftsCaret, owner);
-
-		for (final Iterator iterator= new CommandIterator(fCommands, originalCommand, false); iterator.hasNext(); ) {
-			final Command command= (Command) iterator.next();
-			command.execute(document);
-			if (caretOffset != -1 && command.fOffset + command.fLength <= caretOffset && command.fShiftsCaret)
-				caretOffset += command.getDeltaLength();
+		
+		DefaultPositionUpdater updater= new DefaultPositionUpdater(getCategory());
+		Position caretPosition= null;
+		try {
+			if (updateCaret()) {
+				document.addPositionCategory(getCategory());
+				document.addPositionUpdater(updater);
+				caretPosition= new Position(caretOffset);
+				document.addPosition(getCategory(), caretPosition);
+			}
+			
+			final Command originalCommand= new Command(offset, length, text, owner);
+			for (final Iterator iterator= new CommandIterator(fCommands, originalCommand, false); iterator.hasNext(); )
+				((Command) iterator.next()).execute(document);
+		
+		} catch (BadLocationException e) {
+			// ignore
+		} catch (BadPositionCategoryException e) {
+			// ignore
+		} finally {
+			if (updateCaret()) {
+				document.removePositionUpdater(updater);
+				try {
+					document.removePositionCategory(getCategory());
+				} catch (BadPositionCategoryException e) {
+					Assert.isTrue(false);
+				}
+				caretOffset= caretPosition.getOffset();
+			}
 		}
+	}
+
+	/**
+	 * Returns <code>true</code> if the caret offset should be updated, <code>false</code> otherwise.
+	 * 
+	 * @return <code>true</code> if the caret offset should be updated, <code>false</code> otherwise
+	 * @since 3.0
+	 */
+	private boolean updateCaret() {
+		return shiftsCaret && caretOffset != -1;
+	}
+
+	/**
+	 * Returns the position category for the caret offset position.
+	 * 
+	 * @return the position category for the caret offset position
+	 * @since 3.0
+	 */
+	private String getCategory() {
+		return toString();
 	}
 
 }
