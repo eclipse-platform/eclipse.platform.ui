@@ -112,264 +112,264 @@ public interface IWorkbenchActionConstants {
 	 * ]
 	 * </p>
 	 */
-	public static final String MENU_PREFIX = "";
+	public static final String MENU_PREFIX = ""; //$NON-NLS-1$
 
 	/**
 	 * <p>
 	 * [Issue: SEP is "/". It is not used anywhere. Recommend deleting it.]
 	 * </p>
 	 */
-	public static final String SEP = "/";
+	public static final String SEP = "/"; //$NON-NLS-1$
 
 	/**
 	 * Name of standard File menu (value <code>"file"</code>).
 	 */
-	public static final String M_FILE = MENU_PREFIX+"file";
+	public static final String M_FILE = MENU_PREFIX+"file"; //$NON-NLS-1$
 
 	/**
 	 * Name of standard Edit menu (value <code>"edit"</code>).
 	 */
-	public static final String M_EDIT = MENU_PREFIX+"edit";
+	public static final String M_EDIT = MENU_PREFIX+"edit"; //$NON-NLS-1$
 
 	/**
 	 * Name of standard Workbench menu (value <code>"workbench"</code>).
 	 */
-	public static final String M_WORKBENCH = MENU_PREFIX+"workbench";
+	public static final String M_WORKBENCH = MENU_PREFIX+"workbench"; //$NON-NLS-1$
 
 	/**
 	 * Name of standard View menu (value <code>"view"</code>).
 	 */
-	public static final String M_VIEW = MENU_PREFIX+"view";
+	public static final String M_VIEW = MENU_PREFIX+"view"; //$NON-NLS-1$
 
 	/**
 	 * Name of standard Window menu (value <code>"window"</code>).
 	 */
-	public static final String M_WINDOW = MENU_PREFIX+"window";
+	public static final String M_WINDOW = MENU_PREFIX+"window"; //$NON-NLS-1$
 
 	/**
 	 * Name of Launch window menu (value <code>"launch"</code>).
 	 */
-	public static final String M_LAUNCH = MENU_PREFIX + "launch";
+	public static final String M_LAUNCH = MENU_PREFIX + "launch"; //$NON-NLS-1$
 
 	/**
 	 * Name of standard Help menu (value <code>"help"</code>).
 	 */
-	public static final String M_HELP = MENU_PREFIX+"help";
+	public static final String M_HELP = MENU_PREFIX+"help"; //$NON-NLS-1$
 		
 // Standard area for adding top level menus:
 	/**
 	 * Name of group for adding new top-level menus (value <code>"additions"</code>).
 	 */
-	public static final String MB_ADDITIONS = "additions";	// Group.
+	public static final String MB_ADDITIONS = "additions";	// Group. //$NON-NLS-1$
 	
 // Standard file actions:
 	/**
 	 * File menu: name of group for start of menu (value <code>"fileStart"</code>).
 	 */
-	public static final String FILE_START = "fileStart";	// Group.
+	public static final String FILE_START = "fileStart";	// Group. //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of group for end of menu (value <code>"fileEnd"</code>).
 	 */
-	public static final String FILE_END = "fileEnd";		// Group.
+	public static final String FILE_END = "fileEnd";		// Group. //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of standard New action (value <code>"new"</code>).
 	 */
-	public static final String NEW = "new";
+	public static final String NEW = "new"; //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of group for extra New-like actions (value <code>"new.ext"</code>).
 	 */
-	public static final String NEW_EXT = "new.ext";			// Group.
+	public static final String NEW_EXT = "new.ext";			// Group. //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of standard Close action (value <code>"close"</code>).
 	 */
-	public static final String CLOSE = "close";
+	public static final String CLOSE = "close"; //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of standard Close All action (value <code>"closeAll"</code>).
 	 */
-	public static final String CLOSE_ALL = "closeAll";
+	public static final String CLOSE_ALL = "closeAll"; //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of group for extra Close-like actions (value <code>"close.ext"</code>).
 	 */
-	public static final String CLOSE_EXT = "close.ext";		// Group.
+	public static final String CLOSE_EXT = "close.ext";		// Group. //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of standard Save action (value <code>"save"</code>).
 	 */
-	public static final String SAVE = "save";
+	public static final String SAVE = "save"; //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of standard Save As action (value <code>"saveAs"</code>).
 	 */
-	public static final String SAVE_AS = "saveAs"; 	
+	public static final String SAVE_AS = "saveAs"; 	 //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of standard Save All action (value <code>"saveAll"</code>).
 	 */
-	public static final String SAVE_ALL = "saveAll";
+	public static final String SAVE_ALL = "saveAll"; //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of group for extra Save-like actions (value <code>"save.ext"</code>).
 	 */
-	public static final String SAVE_EXT = "save.ext";		// Group.
+	public static final String SAVE_EXT = "save.ext";		// Group. //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of standard Import action (value <code>"import"</code>).
 	 */
-	public static final String IMPORT = "import";
+	public static final String IMPORT = "import"; //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of standard Export action (value <code>"export"</code>).
 	 */
-	public static final String EXPORT = "export";
+	public static final String EXPORT = "export"; //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of group for extra Import-like actions (value <code>"import.ext"</code>).
 	 */
-	public static final String IMPORT_EXT = "import.ext";	// Group.
+	public static final String IMPORT_EXT = "import.ext";	// Group. //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of "Most Recently Used File" group.
 	 * (value <code>"mru"</code>).
 	 */
-	public static final String MRU = "mru";
+	public static final String MRU = "mru"; //$NON-NLS-1$
 	
 	/**
 	 * File menu: name of standard Quit action (value <code>"quit"</code>).
 	 */
-	public static final String QUIT = "quit";
+	public static final String QUIT = "quit"; //$NON-NLS-1$
 
 // Standard edit actions:
 	/**
 	 * Edit menu: name of group for start of menu (value <code>"editStart"</code>).
 	 */
-	public static final String EDIT_START = "editStart";	// Group.
+	public static final String EDIT_START = "editStart";	// Group. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of group for end of menu (value <code>"editEnd"</code>).
 	 */
-	public static final String EDIT_END = "editEnd";		// Group.
+	public static final String EDIT_END = "editEnd";		// Group. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of standard Undo global action 
 	 * (value <code>"undo"</code>).
 	 */
-	public static final String UNDO = "undo"; 				// Global action.
+	public static final String UNDO = "undo"; 				// Global action. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of standard Redo global action 
 	 * (value <code>"redo"</code>).
 	 */
-	public static final String REDO = "redo"; 				// Global action.
+	public static final String REDO = "redo"; 				// Global action. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of group for extra Undo-like actions (value <code>"undo.ext"</code>).
 	 */
-	public static final String UNDO_EXT = "undo.ext";		// Group.
+	public static final String UNDO_EXT = "undo.ext";		// Group. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of standard Cut global action 
 	 * (value <code>"cut"</code>).
 	 */
-	public static final String CUT = "cut"; 				// Global action.
+	public static final String CUT = "cut"; 				// Global action. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of standard Copy global action
 	 * (value <code>"copy"</code>).
 	 */
-	public static final String COPY = "copy"; 				// Global action.
+	public static final String COPY = "copy"; 				// Global action. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of standard Paste global action 
 	 * (value <code>"paste"</code>).
 	 */
-	public static final String PASTE = "paste"; 			// Global action.
+	public static final String PASTE = "paste"; 			// Global action. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of group for extra Cut-like actions (value <code>"cut.ext"</code>).
 	 */
-	public static final String CUT_EXT = "cut.ext";			// Group.
+	public static final String CUT_EXT = "cut.ext";			// Group. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of standard Delete global action 
 	 * (value <code>"delete"</code>).
 	 */
-	public static final String DELETE = "delete"; 			// Global action.
+	public static final String DELETE = "delete"; 			// Global action. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of standard Find global action
 	 * (value <code>"find"</code>).
 	 */
-	public static final String FIND = "find"; 				// Global action.
+	public static final String FIND = "find"; 				// Global action. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of standard Select All global action
 	 * (value <code>"selectAll"</code>).
 	 */
-	public static final String SELECT_ALL = "selectAll";	// Global action.
+	public static final String SELECT_ALL = "selectAll";	// Global action. //$NON-NLS-1$
 	
 	/**
 	 * Edit menu: name of standard Bookmark global action
 	 * (value <code>"bookmark"</code>).
 	 */
-	public static final String BOOKMARK = "bookmark"; 		// Global action.
+	public static final String BOOKMARK = "bookmark"; 		// Global action. //$NON-NLS-1$
 
 // Standard workbench actions:
 	/**
 	 * Workbench menu: name of group for start of menu
 	 * (value <code>"wbstart"</code>).
 	 */
-	public static final String WB_START = "wbStart";		// Group.
+	public static final String WB_START = "wbStart";		// Group. //$NON-NLS-1$
 	
 	/**
 	 * Workbench menu: name of group for end of menu
 	 * (value <code>"wbEnd"</code>).
 	 */
-	public static final String WB_END = "wbEnd";			// Group.
+	public static final String WB_END = "wbEnd";			// Group. //$NON-NLS-1$
 	
 	/**
 	 * Workbench menu: name of group for extra Build-like actions
 	 * (value <code>"build.ext"</code>).
 	 */
-	public static final String BUILD_EXT = "build.ext";		// Group.
+	public static final String BUILD_EXT = "build.ext";		// Group. //$NON-NLS-1$
 	
 	/**
 	 * Workbench menu: name of standard Build action 
 	 * (value <code>"build"</code>).
 	 */
-	public static final String BUILD = "build";
+	public static final String BUILD = "build"; //$NON-NLS-1$
 	
 	/**
 	 * Workbench menu: name of standard Rebuild All action 
 	 * (value <code>"rebuildAll"</code>).
 	 */
-	public static final String REBUILD_ALL = "rebuildAll";
+	public static final String REBUILD_ALL = "rebuildAll"; //$NON-NLS-1$
 
 // Pop-up menu groups:
 	/**
 	 * Pop-up menu: name of group for Managing actions (value <code>"group.managing"</code>).
 	 */
-	public static final String GROUP_MANAGING = "group.managing";
+	public static final String GROUP_MANAGING = "group.managing"; //$NON-NLS-1$
 	
 	/**
 	 * Pop-up menu: name of group for Reorganize actions (value <code>"group.reorganize"</code>).
 	 */
-	public static final String GROUP_REORGANIZE = "group.reorganize";
+	public static final String GROUP_REORGANIZE = "group.reorganize"; //$NON-NLS-1$
 	
 	/**
 	 * Pop-up menu: name of group for Add actions (value <code>"group.add"</code>).
 	 */
-	public static final String GROUP_ADD = "group.add";
+	public static final String GROUP_ADD = "group.add"; //$NON-NLS-1$
 	
 	/**
 	 * Pop-up menu: name of group for File actions (value <code>"group.file"</code>).
 	 */
-	public static final String GROUP_FILE = "group.file";
+	public static final String GROUP_FILE = "group.file"; //$NON-NLS-1$
 
 // Standard view actions:
 	/**
@@ -396,19 +396,19 @@ public interface IWorkbenchActionConstants {
 	 * Help menu: name of group for start of menu
 	 * (value <code>"helpStart"</code>).
 	 */
-	public static final String HELP_START = "helpStart";	// Group.
+	public static final String HELP_START = "helpStart";	// Group. //$NON-NLS-1$
 	
 	/**
 	 * Help menu: name of group for end of menu
 	 * (value <code>"helpEnd"</code>).
 	 */
-	public static final String HELP_END = "helpEnd";		// Group.
+	public static final String HELP_END = "helpEnd";		// Group. //$NON-NLS-1$
 	
 	/**
 	 * Help menu: name of standard About action 
 	 * (value <code>"about"</code>).
 	 */
-	public static final String ABOUT = "about";
+	public static final String ABOUT = "about"; //$NON-NLS-1$
 
 	/**
 	 * Standard global actions in a workbench window.

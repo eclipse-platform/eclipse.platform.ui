@@ -39,7 +39,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 *
 	 * @see #openEditor
  	 */	
-	public static final String EDITOR_ID_ATTR = "org.eclipse.ui.editorID";
+	public static final String EDITOR_ID_ATTR = "org.eclipse.ui.editorID"; //$NON-NLS-1$
 
 	/**
 	 * Change event id when the perspective is reset to its
@@ -47,21 +47,21 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 *
 	 * @see IPerspectiveListener
 	 */
-	 public static final String CHANGE_RESET = "reset";
+	 public static final String CHANGE_RESET = "reset"; //$NON-NLS-1$
 
 	/**
 	 * Change event id when one or more perspective views are shown.
 	 *
 	 * @see IPerspectiveListener
 	 */
-	 public static final String CHANGE_VIEW_SHOW = "viewShow";
+	 public static final String CHANGE_VIEW_SHOW = "viewShow"; //$NON-NLS-1$
 
 	/**
 	 * Change event id when one or more perspective views are hidden.
 	 *
 	 * @see IPerspectiveListener
 	 */
-	 public static final String CHANGE_VIEW_HIDE = "viewHide";
+	 public static final String CHANGE_VIEW_HIDE = "viewHide"; //$NON-NLS-1$
 
 
 	/**
@@ -69,56 +69,56 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 *
 	 * @see IPerspectiveListener
 	 */
-	 public static final String CHANGE_EDITOR_OPEN = "editorOpen";
+	 public static final String CHANGE_EDITOR_OPEN = "editorOpen"; //$NON-NLS-1$
 
 	/**
 	 * Change event id when one or more perspective editors are closed.
 	 *
 	 * @see IPerspectiveListener
 	 */
-	 public static final String CHANGE_EDITOR_CLOSE = "editorClose";
+	 public static final String CHANGE_EDITOR_CLOSE = "editorClose"; //$NON-NLS-1$
 
 	/**
 	 * Change event id when the perspective editor area is shown.
 	 *
 	 * @see IPerspectiveListener
 	 */
-	 public static final String CHANGE_EDITOR_AREA_SHOW = "editorAreaShow";
+	 public static final String CHANGE_EDITOR_AREA_SHOW = "editorAreaShow"; //$NON-NLS-1$
 
 	/**
 	 * Change event id when the perspective editor area is hidden.
 	 *
 	 * @see IPerspectiveListener
 	 */
-	 public static final String CHANGE_EDITOR_AREA_HIDE = "editorAreaHide";
+	 public static final String CHANGE_EDITOR_AREA_HIDE = "editorAreaHide"; //$NON-NLS-1$
 
 	/**
 	 * Change event id when a perspective action set is shown.
 	 *
 	 * @see IPerspectiveListener
 	 */
-	 public static final String CHANGE_ACTION_SET_SHOW = "actionSetShow";
+	 public static final String CHANGE_ACTION_SET_SHOW = "actionSetShow"; //$NON-NLS-1$
 
 	/**
 	 * Change event id when the perspective action set is hidden.
 	 *
 	 * @see IPerspectiveListener
 	 */
-	 public static final String CHANGE_ACTION_SET_HIDE = "actionSetHide";
+	 public static final String CHANGE_ACTION_SET_HIDE = "actionSetHide"; //$NON-NLS-1$
 	 
 	/**
 	 * Change event id when a perspective fast view added.
 	 *
 	 * @see IPerspectiveListener
 	 */
-	 public static final String CHANGE_FAST_VIEW_ADD = "fastViewAdd";
+	 public static final String CHANGE_FAST_VIEW_ADD = "fastViewAdd"; //$NON-NLS-1$
 
 	/**
 	 * Change event id when the perspective fast view removed.
 	 *
 	 * @see IPerspectiveListener
 	 */
-	 public static final String CHANGE_FAST_VIEW_REMOVE = "fastViewRemove";
+	 public static final String CHANGE_FAST_VIEW_REMOVE = "fastViewRemove"; //$NON-NLS-1$
 /**
  * Activates the given part. The part will be brought to the front and given
  * focus. The part must belong to this page.

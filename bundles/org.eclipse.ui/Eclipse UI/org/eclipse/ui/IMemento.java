@@ -42,7 +42,7 @@ public interface IMemento {
 	 *
 	 * @see #getId
 	 */
-	public static final String TAG_ID = "IMemento.internal.id";
+	public static final String TAG_ID = "IMemento.internal.id"; //$NON-NLS-1$
 /**
  * Creates a new child of this memento with the given type.
  * <p>

@@ -25,61 +25,61 @@ public interface ISharedImages {
 	/**
 	 * Identifies a file image.
 	 */
-	public final static String IMG_OBJ_FILE = "IMG_OBJ_FILE";
+	public final static String IMG_OBJ_FILE = "IMG_OBJ_FILE"; //$NON-NLS-1$
 
 	/**
 	 * Identifies a folder image.
 	 */
-	public final static String IMG_OBJ_FOLDER = "IMG_OBJ_FOLDER";
+	public final static String IMG_OBJ_FOLDER = "IMG_OBJ_FOLDER"; //$NON-NLS-1$
 
 	/**
 	 * Identifies a project image.
 	 */
-	public final static String IMG_OBJ_PROJECT = "IMG_OBJ_PROJECT";
+	public final static String IMG_OBJ_PROJECT = "IMG_OBJ_PROJECT"; //$NON-NLS-1$
 
 	/**
 	 * Identifies a closed project image.
 	 */
-	public final static String IMG_OBJ_PROJECT_CLOSED = "IMG_OBJ_PROJECT_CLOSED";
+	public final static String IMG_OBJ_PROJECT_CLOSED = "IMG_OBJ_PROJECT_CLOSED"; //$NON-NLS-1$
 	
 	/**
 	 * Identifies an element image.
 	 */
-	public final static String IMG_OBJ_ELEMENT = "IMG_OBJ_ELEMENTS";
+	public final static String IMG_OBJ_ELEMENT = "IMG_OBJ_ELEMENTS"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the image used for "open marker".
 	 */
-	public final static String IMG_OPEN_MARKER = "IMG_OPEN_MARKER";
+	public final static String IMG_OPEN_MARKER = "IMG_OPEN_MARKER"; //$NON-NLS-1$
 	
 	/**
 	 * Identifies the default image used for views.
 	 */
-	public final static String IMG_DEF_VIEW = "IMG_DEF_VIEW";
+	public final static String IMG_DEF_VIEW = "IMG_DEF_VIEW"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the default image used to indicate errors.
 	 */
-	public final static String IMG_OBJS_ERROR_TSK = "IMG_OBJS_ERROR_TSK";
+	public final static String IMG_OBJS_ERROR_TSK = "IMG_OBJS_ERROR_TSK"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the default image used to indicate warnings.
 	 */
-	public final static String IMG_OBJS_WARN_TSK = "IMG_OBJS_WARN_TSK";
+	public final static String IMG_OBJS_WARN_TSK = "IMG_OBJS_WARN_TSK"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the default image used to indicate information only.
 	 */
-	public final static String IMG_OBJS_INFO_TSK = "IMG_OBJS_INFO_TSK";
+	public final static String IMG_OBJS_INFO_TSK = "IMG_OBJS_INFO_TSK"; //$NON-NLS-1$
 
 	/**
 	 * Identifies the default image used to indicate a task.
 	 */
-	public final static String IMG_OBJS_TASK_TSK = "IMG_OBJS_TASK_TSK";
+	public final static String IMG_OBJS_TASK_TSK = "IMG_OBJS_TASK_TSK"; //$NON-NLS-1$
 	/**
 	 * Identifies the default image used to indicate a bookmark.
 	 */
-	public final static String IMG_OBJS_BKMRK_TSK = "IMG_OBJS_BKMRK_TSK";
+	public final static String IMG_OBJS_BKMRK_TSK = "IMG_OBJS_BKMRK_TSK"; //$NON-NLS-1$
 /**
  * Retrieves the specified image from the workbench plugin's image registry.
  * Note: The returned <code>Image</code> is managed by the workbench; clients

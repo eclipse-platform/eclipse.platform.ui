@@ -23,30 +23,30 @@ public interface IResourceActionFilter extends IActionFilter {
 	 * The attribute value in xml is unconstrained.  "*" may be used at the start or
 	 * the end to represent "one or more characters".
 	 */
-	public static final String NAME = "name";
+	public static final String NAME = "name"; //$NON-NLS-1$
 	
 	/**
 	 * An attribute indicating the file extension (value <code>"extension"</code>).
 	 * The attribute value in xml is unconstrained.
 	 */
-	public static final String EXTENSION = "extension";
+	public static final String EXTENSION = "extension"; //$NON-NLS-1$
 
 	/**
 	 * An attribute indicating the file path (value <code>"path"</code>).
 	 * The attribute value in xml is unconstrained.  "*" may be used at the start or
 	 * the end to represent "one or more characters".
 	 */
-	public static final String PATH = "path";
+	public static final String PATH = "path"; //$NON-NLS-1$
 
 	/**
 	 * An attribute indicating whether the file is read only (value <code>"readOnly"</code>).
 	 * The attribute value in xml must be one of <code>"true" or "false"</code>.
 	 */
-	public static final String READ_ONLY = "readOnly";
+	public static final String READ_ONLY = "readOnly"; //$NON-NLS-1$
 
 	/**
 	 * An attribute indicating the project nature (value <code>"projectNature"</code>).
 	 * The attribute value in xml is unconstrained.
 	 */
-	public static final String PROJECT_NATURE = "projectNature";	
+	public static final String PROJECT_NATURE = "projectNature";	 //$NON-NLS-1$
 }

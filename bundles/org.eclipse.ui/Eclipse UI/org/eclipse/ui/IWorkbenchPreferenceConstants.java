@@ -18,7 +18,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * </p>
 	 */
 	public static final String LINK_NAVIGATOR_TO_EDITOR =
-		"LINK_NAVIGATOR_TO_EDITOR";
+		"LINK_NAVIGATOR_TO_EDITOR"; //$NON-NLS-1$
 
 	/**
 	 * A named preference for how a new perspective is opened.
@@ -28,7 +28,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * OPEN_PERSPECTIVE_REPLACE</code>.
 	 * </p>
 	 */
-	public static final String OPEN_NEW_PERSPECTIVE = "OPEN_NEW_PERSPECTIVE";
+	public static final String OPEN_NEW_PERSPECTIVE = "OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
 	
 	/**
 	 * A named preference for how a new perspective is opened
@@ -41,7 +41,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * </p>
 	 */
 	public static final String ALTERNATE_OPEN_NEW_PERSPECTIVE =
-		"ALTERNATE_OPEN_NEW_PERSPECTIVE";
+		"ALTERNATE_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
 		
 	/**
 	 * A named preference for how a new perspective is opened
@@ -53,7 +53,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * </p>
 	 */
 	public static final String SHIFT_OPEN_NEW_PERSPECTIVE =
-		"SHIFT_OPEN_NEW_PERSPECTIVE";
+		"SHIFT_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
 
 	/**
 	 * A named preference for how a new perspective should be opened
@@ -65,31 +65,31 @@ public interface IWorkbenchPreferenceConstants {
 	 * </p>
 	 */
 	public static final String PROJECT_OPEN_NEW_PERSPECTIVE =
-		"PROJECT_OPEN_NEW_PERSPECTIVE";
+		"PROJECT_OPEN_NEW_PERSPECTIVE"; //$NON-NLS-1$
 
 	/**
 	 * A preference value indicating that an action should open a new 
 	 * perspective in a new window.
 	 */
-	public static final String OPEN_PERSPECTIVE_WINDOW = "OPEN_PERSPECTIVE_WINDOW";
+	public static final String OPEN_PERSPECTIVE_WINDOW = "OPEN_PERSPECTIVE_WINDOW"; //$NON-NLS-1$
 	
 	/**
 	 * A preference value indicating that an action should open a new 
 	 * perspective in a new page.
 	 */
-	public static final String OPEN_PERSPECTIVE_PAGE = "OPEN_PERSPECTIVE_PAGE";
+	public static final String OPEN_PERSPECTIVE_PAGE = "OPEN_PERSPECTIVE_PAGE"; //$NON-NLS-1$
 	
 	/**
 	 * A preference value indicating that an action should open a new 
 	 * perspective by replacing the current perspective.
 	 */
 	public static final String OPEN_PERSPECTIVE_REPLACE =
-		"OPEN_PERSPECTIVE_REPLACE";
+		"OPEN_PERSPECTIVE_REPLACE"; //$NON-NLS-1$
 		
 	/**
 	 * A preference value indicating that an action should not open a 
 	 * new perspective.
 	 */
-	public static final String NO_NEW_PERSPECTIVE = "NO_NEW_PERSPECTIVE";
+	public static final String NO_NEW_PERSPECTIVE = "NO_NEW_PERSPECTIVE"; //$NON-NLS-1$
 
 }

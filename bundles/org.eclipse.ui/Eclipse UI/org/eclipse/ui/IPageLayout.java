@@ -48,33 +48,33 @@ public interface IPageLayout {
 	 * The part id for the workbench's editor area.  This may only be used
 	 * as a reference part for view addition.
 	 */
-	public static String ID_EDITOR_AREA = "org.eclipse.ui.editorss";
+	public static String ID_EDITOR_AREA = "org.eclipse.ui.editorss"; //$NON-NLS-1$
 	
 	/**
 	 * The view id for the workbench's Resource Navigator standard component.
 	 */
-	public static String ID_RES_NAV = "org.eclipse.ui.views.ResourceNavigator";
+	public static String ID_RES_NAV = "org.eclipse.ui.views.ResourceNavigator"; //$NON-NLS-1$
 
 	/**
 	 * The view id for the workbench's Property Sheet standard component.
 	 */
-	public static String ID_PROP_SHEET = "org.eclipse.ui.views.PropertySheet";
+	public static String ID_PROP_SHEET = "org.eclipse.ui.views.PropertySheet"; //$NON-NLS-1$
 
 	/**
 	 * The view id for the workbench's Content Outline standard component.
 	 */
-	public static String ID_OUTLINE = "org.eclipse.ui.views.ContentOutline";
+	public static String ID_OUTLINE = "org.eclipse.ui.views.ContentOutline"; //$NON-NLS-1$
 
 
 	/**
 	 * The view id for the workbench's Task List standard component.
 	 */
-	public static String ID_TASK_LIST = "org.eclipse.ui.views.TaskList";
+	public static String ID_TASK_LIST = "org.eclipse.ui.views.TaskList"; //$NON-NLS-1$
 
 	/**
 	 * The view id for the workbench's Bookmark Navigator standard component.
 	 */
-	public static String ID_BOOKMARKS = "org.eclipse.ui.views.BookmarkNavigator";
+	public static String ID_BOOKMARKS = "org.eclipse.ui.views.BookmarkNavigator"; //$NON-NLS-1$
 
 	/**
 	 * Relationship constant indicating a part should be placed to the left of
