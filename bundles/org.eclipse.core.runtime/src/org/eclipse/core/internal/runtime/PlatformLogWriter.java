@@ -11,6 +11,7 @@
 package org.eclipse.core.internal.runtime;
 
 import java.io.*;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.eclipse.core.boot.BootLoader;
@@ -107,7 +108,10 @@ protected void openLogFile() {
 protected void writeHeader() throws IOException {
 	write(SESSION);
 	writeSpace();
-	for (int i=SESSION.length(); i<78; i++) {
+	String date = getDate();
+	write(date);
+	writeSpace();
+	for (int i=SESSION.length()+date.length(); i<78; i++) {
 		write("-");//$NON-NLS-1$
 	}
 	writeln();
@@ -147,6 +151,17 @@ protected void writeHeader() throws IOException {
 		writeln();
 	}
 
+}
+protected String getDate() {
+	try {
+		DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy kk:mm:ss.SS"); //$NON-NLS-1$
+		return formatter.format(new Date());
+	} catch (Exception e) {
+		// If there were problems writing out the date, ignore and
+		// continue since that shouldn't stop us from losing the rest
+		// of the information
+	}
+	return Long.toString(System.currentTimeMillis());
 }
 protected Writer logForStream(OutputStream output) {
 	try {
@@ -217,13 +232,7 @@ protected void write(IStatus status, int depth) throws IOException {
 	writeSpace();
 	write(Integer.toString(status.getCode()));
 	writeSpace();
-	try {
-		write(new SimpleDateFormat().format(new Date()));
-	} catch (Exception e) {
-		// If there were problems writing out the date, ignore and
-		// continue since that shouldn't stop us from losing the rest
-		// of the information
-	}
+	write(getDate());
 	writeln();
 
 	write(MESSAGE);
