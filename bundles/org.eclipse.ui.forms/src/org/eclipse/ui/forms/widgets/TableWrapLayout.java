@@ -746,8 +746,8 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 						} else {
 							// distribute the delta to the growing
 							// columns
-							int percolumn = (current - td.colspan) / ndiv;
-							if ((current - td.colspan) % ndiv > 0)
+							int percolumn = (current - minWidth) / ndiv;
+							if ((current - minWidth) % ndiv > 0)
 								percolumn++;
 							for (int k = j; k < j + td.colspan; k++) {
 								if (isGrowingColumn(k))
@@ -812,8 +812,8 @@ public final class TableWrapLayout extends Layout implements ILayoutExtension {
 						} else {
 							// distribute the delta to the growing
 							// columns
-							int percolumn = (current - td.colspan) / ndiv;
-							if ((current - td.colspan) % ndiv > 0)
+							int percolumn = (current - maxWidth) / ndiv;
+							if ((current - maxWidth) % ndiv > 0)
 								percolumn++;
 							// divide the distribution per row
 							// if the control will span multiple rows
