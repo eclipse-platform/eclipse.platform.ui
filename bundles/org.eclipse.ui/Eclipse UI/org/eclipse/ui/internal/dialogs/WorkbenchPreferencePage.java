@@ -114,8 +114,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		createSpace(composite);
 		createEditorReuseGroup(composite);
 				
-//		createSpace(composite);
-//		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
+		createSpace(composite);
+		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration"));
 
 		createSpace(composite);
 		createSingleClickGroup(composite);
@@ -377,7 +377,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	public void init(IWorkbench aWorkbench) {
 		workbench = aWorkbench;
-//		acceleratorInit(aWorkbench);
+		acceleratorInit(aWorkbench);
 		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
 		openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK); //$NON-NLS-1$
 		selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER); //$NON-NLS-1$
@@ -420,7 +420,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		selectOnHoverButton.setEnabled(openOnSingleClick);
 		openAfterDelayButton.setEnabled(openOnSingleClick);		
 		
-//		acceleratorPerformDefaults(store);
+		acceleratorPerformDefaults(store);
 		super.performDefaults();
 	}
 	
@@ -493,7 +493,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		}
 		OpenStrategy.setOpenMethod(singleClickMethod);
 		
-//		acceleratorPerformOk(store);
+		acceleratorPerformOk(store);
 
 		WorkbenchPlugin.getDefault().savePluginPreferences();
 		return true;

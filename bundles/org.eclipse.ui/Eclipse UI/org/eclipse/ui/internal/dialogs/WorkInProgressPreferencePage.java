@@ -45,9 +45,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 	 */
 	public void init(IWorkbench aWorkbench) {
 		super.init(aWorkbench);
-		
-		//Call commented out on WorkbenchPreferencePage. 
-		acceleratorInit(aWorkbench);
 	}
 	
 	/**
@@ -88,9 +85,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 		layout.marginHeight = 0;
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_FILL | GridData.HORIZONTAL_ALIGN_FILL));
-
-		// Call commented out on WorkbenchPreferencePage. 
-		createAcceleratorConfigurationGroup(composite, WorkbenchMessages.getString("WorkbenchPreference.acceleratorConfiguration")); //$NON-NLS-1$
 		
 		// Temporary option to enable cool bars
 		createSpace(composite);
@@ -231,9 +225,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 	 */
 	protected void performDefaults() {
 		IPreferenceStore store = getPreferenceStore();
-
-		//Call commented out on WorkbenchPreferencePage. 
-		acceleratorPerformDefaults(store);
 		
 		coolBarsButton.setSelection(store.getDefaultBoolean("ENABLE_COOL_BARS")); //$NON-NLS-1$				
 //		newMenusButton.setSelection(store.getDefaultBoolean("ENABLE_NEW_MENUS")); //$NON-NLS-1$
@@ -249,9 +240,6 @@ public class WorkInProgressPreferencePage extends WorkbenchPreferencePage {
 
 //		store.setValue("ENABLE_NEW_MENUS", newMenusButton.getSelection()); //$NON-NLS-1$
 		store.setValue("ENABLE_COOL_BARS", coolBarsButton.getSelection()); //$NON-NLS-1$
-
-		//Call commented out on WorkbenchPreferencePage. 
-		acceleratorPerformOk(store);
 		
 		Preferences resourcePrefs = ResourcesPlugin.getPlugin().getPluginPreferences();
 		if (defaultEncodingButton.getSelection()) {
