@@ -162,6 +162,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 			fDirection= dir;
 			fControl= c;
 			fLiveResize= !(fControl instanceof Sash);
+			updateCursor(c, dir);
 			fControl.addMouseListener(this);
 			fControl.addMouseMoveListener(this);
 			fControl.addDisposeListener(
@@ -172,7 +173,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 				}
 			);
 		}
-		
+				
 		public void mouseDoubleClick(MouseEvent e) {
 			if ((fDirection & HORIZONTAL) != 0)
 				fHSplit= HSPLIT;
@@ -271,6 +272,11 @@ public abstract class ContentMergeViewer extends ContentViewer
 	private Image fRightArrow;
 	private Image fLeftArrow;
 	private Image fBothArrow;
+	Cursor fNormalCursor;
+	private Cursor fHSashCursor;
+	private Cursor fVSashCursor;
+	private Cursor fHVSashCursor;
+
 	//---- end
 	
 	/**
@@ -461,10 +467,47 @@ public abstract class ContentMergeViewer extends ContentViewer
 		if (key.equals(ANCESTOR_ENABLED)) {
 			fAncestorEnabled= Utilities.getBoolean(getCompareConfiguration(), ANCESTOR_ENABLED, fAncestorEnabled);
 			fComposite.layout(true);
+			
+			updateCursor(fLeftLabel, VERTICAL);
+			updateCursor(fDirectionLabel, HORIZONTAL | VERTICAL);
+			updateCursor(fRightLabel, VERTICAL);
+			
 			return;
 		}
 	}
 	
+	void updateCursor(Control c, int dir) {
+		if (!(c instanceof Sash)) {
+			Cursor cursor= null;
+			switch (dir) {
+			case VERTICAL:
+				if (fAncestorEnabled) {
+					if (fVSashCursor == null) fVSashCursor= new Cursor(c.getDisplay(), SWT.CURSOR_SIZENS);
+					cursor= fVSashCursor;
+				} else {
+					if (fNormalCursor == null) fNormalCursor= new Cursor(c.getDisplay(), SWT.CURSOR_ARROW);
+					cursor= fNormalCursor;
+				}
+				break;
+			case HORIZONTAL:
+				if (fHSashCursor == null) fHSashCursor= new Cursor(c.getDisplay(), SWT.CURSOR_SIZEWE);
+				cursor= fHSashCursor;
+				break;
+			case VERTICAL + HORIZONTAL:
+				if (fAncestorEnabled) {
+					if (fHVSashCursor == null) fHVSashCursor= new Cursor(c.getDisplay(), SWT.CURSOR_SIZEALL);
+					cursor= fHVSashCursor;
+				} else {
+					if (fHSashCursor == null) fHSashCursor= new Cursor(c.getDisplay(), SWT.CURSOR_SIZEWE);
+					cursor= fHSashCursor;
+				}
+				break;
+			}
+			if (cursor != null)
+				c.setCursor(cursor);
+		}
+	}
+
 	void setAncestorVisibility(boolean visible, boolean enabled) {
 		if (fAncestorItem != null) {
 			Action action= (Action) fAncestorItem.getAction();
@@ -634,7 +677,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	 * @return the new control
 	 */
 	protected final Control buildControl(Composite parent) {
-									
+											
 		fComposite= new Composite(parent, fStyles) {
 			public boolean setFocus() {
 				return internalSetFocus();
@@ -788,7 +831,24 @@ public abstract class ContentMergeViewer extends ContentViewer
 			fBothArrow.dispose();
 			fBothArrow= null;
 		}
-		
+
+		if (fNormalCursor != null) {
+			fNormalCursor.dispose();
+			fNormalCursor= null;
+		}
+		if (fHSashCursor != null) {
+			fHSashCursor.dispose();
+			fHSashCursor= null;
+		}
+		if (fVSashCursor != null) {
+			fVSashCursor.dispose();
+			fVSashCursor= null;
+		}
+		if (fHVSashCursor != null) {
+			fHVSashCursor.dispose();
+			fHVSashCursor= null;
+		}
+
 		super.handleDispose(event);
   	}
   	
