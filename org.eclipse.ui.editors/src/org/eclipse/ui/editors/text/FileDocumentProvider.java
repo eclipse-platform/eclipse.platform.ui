@@ -894,13 +894,34 @@ public class FileDocumentProvider extends StorageDocumentProvider {
 	 * @since 3.1
 	 */
 	public IContentType getContentType(Object element) throws CoreException {
-		if (!canSaveDocument(element) && element instanceof IFileEditorInput) {
-			IContentDescription desc= ((IFileEditorInput) element).getFile().getContentDescription();
-			if (desc != null && desc.getContentType() != null)
-				return desc.getContentType();
-		}
+		IContentType contentType= null;
+		if (!canSaveDocument(element) && element instanceof IFileEditorInput)
+			contentType= getContentType((IFileEditorInput) element);
 		
-		return super.getContentType(element);
+		if (contentType == null)
+			contentType= super.getContentType(element);
+		
+		if (contentType == null && element instanceof IFileEditorInput)
+			contentType= getContentType((IFileEditorInput) element);
+		
+		return contentType;
+	}
+	
+	/**
+	 * Returns the content type of for the given file editor input or
+	 * <code>null</code> if none could be determined.
+	 * 
+	 * @param input the element
+	 * @return the content type or <code>null</code>
+	 * @throws CoreException if reading or accessing the underlying store
+	 *                 fails
+	 * @since 3.1
+	 */
+	private IContentType getContentType(IFileEditorInput input) throws CoreException {
+		IContentDescription desc= input.getFile().getContentDescription();
+		if (desc != null)
+			return desc.getContentType();
+		return null;
 	}
 	
 	// --------------- Encoding support ---------------
