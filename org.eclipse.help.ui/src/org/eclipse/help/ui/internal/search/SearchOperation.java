@@ -31,7 +31,8 @@ public class SearchOperation extends WorkspaceModifyOperation {
 	// Images
 	private static final ImageDescriptor IMAGE_DSCR_SEARCH =
 		ImageDescriptor.createFromURL(
-			WorkbenchResources.getImagePath(IHelpUIConstants.IMAGE_FILE_SEARCH));
+			WorkbenchResources.getImagePath(
+				IHelpUIConstants.IMAGE_FILE_SEARCH));
 	private static final ImageDescriptor IMAGE_DSCR_TOPIC =
 		ImageDescriptor.createFromURL(
 			WorkbenchResources.getImagePath(IHelpUIConstants.IMAGE_FILE_TOPIC));
@@ -64,7 +65,7 @@ public class SearchOperation extends WorkspaceModifyOperation {
 			if (queryData.isBookFiltering()) {
 				scope = new ArrayList();
 				IWorkingSet[] workingSets = queryData.getSelectedWorkingSets();
-				for (int i=0; i<workingSets.length; i++) {
+				for (int i = 0; i < workingSets.length; i++) {
 					scope.add(workingSets[i].getName());
 				}
 			}
@@ -92,7 +93,7 @@ public class SearchOperation extends WorkspaceModifyOperation {
 		if (sView != null)
 			sView
 				.searchStarted(
-					IHelpUIConstants.RESULTS_PAGE_ID,
+					(IActionGroupFactory) null,
 					WorkbenchResources.getString(
 						"singleSearchResult",
 						queryData.getSearchWord()),
@@ -101,7 +102,7 @@ public class SearchOperation extends WorkspaceModifyOperation {
 						queryData.getSearchWord(),
 						"{0}"),
 					IMAGE_DSCR_SEARCH,
-					(IContextMenuContributor) null,
+					IHelpUIConstants.RESULTS_PAGE_ID,
 					new LabelProvider() {
 			public String getText(Object element) {
 				if (element instanceof ISearchResultViewEntry)
