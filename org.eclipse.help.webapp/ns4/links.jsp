@@ -1,4 +1,4 @@
-<%@ page import="org.eclipse.help.servlet.Links" errorPage="err.jsp"%>
+<%@ page import="org.eclipse.help.servlet.*" errorPage="err.jsp"%>
 
 <% 
 	// calls the utility class to initialize the application
