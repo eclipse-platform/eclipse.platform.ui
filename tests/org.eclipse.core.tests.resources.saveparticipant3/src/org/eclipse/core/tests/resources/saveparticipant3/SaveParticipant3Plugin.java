@@ -1,13 +1,13 @@
 /*******************************************************************************
  * Copyright (c) 2002 IBM Corporation and others.
- * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- * IBM - Initial API and implementation
- ******************************************************************************/
+ *     IBM - Initial API and implementation
+ *******************************************************************************/
 package org.eclipse.core.tests.resources.saveparticipant3;
 
 import org.eclipse.core.resources.ISaveContext;
