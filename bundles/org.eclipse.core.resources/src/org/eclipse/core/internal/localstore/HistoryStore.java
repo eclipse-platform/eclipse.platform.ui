@@ -100,21 +100,33 @@ protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastMod
  * Add an entry to the history store for the specified resource.
  *
  * @param key Full workspace path to resource being logged.
+ * @param localFile Local file system file handle
+ * @param lastModified Timestamp for resource.
+ *
+ * @return true if state added to history store and false otherwise.
+ */
+public void addState(IPath key, java.io.File localFile, long lastModified, boolean moveContents) {
+	if (!isValid(localFile))
+		return;
+	try {
+		UniversalUniqueIdentifier uuid = blobStore.addBlob(localFile, moveContents);
+		addState(key, uuid, lastModified);
+		store.commit();
+	} catch (CoreException e) {
+		ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
+	}
+}
+/**
+ * Add an entry to the history store for the specified resource.
+ *
+ * @param key Full workspace path to resource being logged.
  * @param localLocation Local file system path to resource.
  * @param lastModified Timestamp for resource.
  *
  * @return true if state added to history store and false otherwise.
  */
 public void addState(IPath key, IPath localLocation, long lastModified, boolean moveContents) {
-	if (!isValid(localLocation))
-		return;
-	try {
-		UniversalUniqueIdentifier uuid = blobStore.addBlob(localLocation.toFile(), moveContents);
-		addState(key, uuid, lastModified);
-		store.commit();
-	} catch (CoreException e) {
-		ResourcesPlugin.getPlugin().getLog().log(e.getStatus());
-	}
+	addState(key, localLocation.toFile(), lastModified, moveContents);
 }
 /**
  * Clean this store applying the current policies.
@@ -205,9 +217,9 @@ public IFileState[] getStates(final IPath key) {
  * Verifies whether the specified file at the specified file system location
  * meets current size policies.
  */
-public boolean isValid(IPath location) {
+public boolean isValid(java.io.File localFile) {
 	WorkspaceDescription description = workspace.internalGetDescription();
-	return location.toFile().length() <= description.getMaxFileStateSize();
+	return localFile.length() <= description.getMaxFileStateSize();
 }
 protected void remove(HistoryStoreEntry entry) throws IndexedStoreException {
 	blobStore.deleteBlob(entry.getUUID());
