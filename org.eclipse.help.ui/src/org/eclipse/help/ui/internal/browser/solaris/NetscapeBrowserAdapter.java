@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.help.ui.internal.browser.solaris;
@@ -23,10 +23,21 @@ public class NetscapeBrowserAdapter implements IBrowser {
 		return instance;
 	}
 	/*
+	 * @see IBrowser#close()
+	 */
+	public void close() {
+	}
+	/*
 	 * @see IBrowser#displayURL(String)
 	 */
 	public synchronized void displayURL(String url) {
 		new BrowserThread(url).start();
+	}
+	/*
+	 * @see IBrowser#isCloseSupported()
+	 */
+	public boolean isCloseSupported() {
+		return false;
 	}
 	/*
 	 * @see IBrowser#isSetLocationSupported()

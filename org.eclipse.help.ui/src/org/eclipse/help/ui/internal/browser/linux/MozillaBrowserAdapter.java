@@ -1,13 +1,10 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.help.ui.internal.browser.linux;
-import java.io.IOException;
 import java.io.*;
-import java.net.URL;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
 import org.eclipse.help.internal.ui.util.StreamConsumer;
 import org.eclipse.help.ui.browser.IBrowser;
@@ -23,6 +20,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 	private static boolean setLocationPending;
 	private static boolean setSizePending;
 	/**
+	 * Constructor
 	 */
 	private MozillaBrowserAdapter() {
 	}
@@ -32,6 +30,11 @@ public class MozillaBrowserAdapter implements IBrowser {
 		if (instance == null)
 			instance = new MozillaBrowserAdapter();
 		return instance;
+	}
+	/*
+	 * @see IBrowser#close()
+	 */
+	public void close() {
 	}
 	/*
 	 * @see IBrowser#displayURL(String)
@@ -46,6 +49,12 @@ public class MozillaBrowserAdapter implements IBrowser {
 		lastBrowserThread.start();
 		setLocationPending = false;
 		setSizePending = false;
+	}
+	/*
+	 * @see IBrowser#isCloseSupported()
+	 */
+	public boolean isCloseSupported() {
+		return false;
 	}
 	/*
 	 * @see IBrowser#isSetLocationSupported()

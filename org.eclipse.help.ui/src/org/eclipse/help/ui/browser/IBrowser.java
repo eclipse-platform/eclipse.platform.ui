@@ -11,6 +11,16 @@ import org.eclipse.help.ui.internal.browser.*;
  */
 public interface IBrowser {
 	/**
+	 * Closes the browser.
+	 */
+	public void close();
+	/**
+	 * Queries the browser if close
+	 * method is supported.
+	 * @return true if the method is fully implemented
+	 */
+	public boolean isCloseSupported();
+	/**
 	 * Displays document with the given URL,
 	 * and makes the browser visible.
 	 * This method starts the browser if necessary.
