@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -50,10 +49,8 @@ public class LaunchConfigurationWorkingSetActionManager {
 	private IWorkingSet fWorkingSet;
 
 	private int fLRUMenuCount;
-	private IPropertyChangeListener fPropertyChangeListener;
 	private IPropertyChangeListener fTitleUpdater;
 	private IMenuManager fMenuManager;
-	private IMenuListener fMenuListener;
 
 	public LaunchConfigurationWorkingSetActionManager(StructuredViewer viewer, Shell shell, IPropertyChangeListener titleUpdater) {
 		setViewer(viewer);
@@ -142,12 +139,6 @@ public class LaunchConfigurationWorkingSetActionManager {
 	 * Remove the menu listener from the menu manager.
 	 */
 	public void dispose() {
-	}
-	
-	private void removePreviousLRUWorkingSetActions(IMenuManager mm) {
-		for (int i = 1; i <= fLRUMenuCount; i++) {
-			mm.remove(LaunchConfigurationWorkingSetMenuContributionItem.getId(i));
-		}
 	}
 
 	private void addLRUWorkingSetActions(IMenuManager mm) {
