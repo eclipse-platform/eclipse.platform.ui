@@ -12,7 +12,6 @@ package org.eclipse.ui.internal;
 
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -26,7 +25,6 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -64,30 +62,7 @@ public abstract class PartPane extends LayoutPart
 		public Sash top;
 		public Sash bottom;
 	}
-	// TODO: PaneContribution is no longer required... track down the remaining uses of PaneContribution and remove them
 	
-	/* package */ class PaneContribution extends ContributionItem {
-		public boolean isDynamic() {
-			return true;
-		}
-		public void fill(Menu menu, int index) {
-			// add view context menu items
-			final boolean isFastView = (page.getActiveFastView() == partReference);			
-			//addRestoreMenuItem(menu);
-			//addMoveMenuItem(menu);
-			//addSizeMenuItem(menu);			
-			addFastViewMenuItem(menu,isFastView);
-			//addMaximizeMenuItem(menu);		
-			addPinEditorItem(menu);						
-			//addCloseMenuItem(menu);	
-			addCloseOthersItem(menu);			
-		}
-	}
-	
-	
-	/* package */ PaneContribution createPaneContribution() {
-		return new PaneContribution();
-	}
 /**
  * Construct a pane for a part.
  */
@@ -146,16 +121,6 @@ protected void createChildControl() {
 	page.firePartOpened(part[0]);	
 }
 
-protected void addMoveMenuItem (Menu menu) {
-	//Add move menu
-	MenuItem item = new MenuItem(menu, SWT.CASCADE);
-	item.setText(WorkbenchMessages.getString("PartPane.move")); //$NON-NLS-1$
-	Menu moveMenu = new Menu(menu);
-	item.setMenu(moveMenu);
-	addMoveItems(moveMenu);
-	
-}
-
 public void addSizeMenuItem (Menu menu) {
 	//Add size menu
 	MenuItem item = new MenuItem(menu, SWT.CASCADE);
@@ -163,22 +128,6 @@ public void addSizeMenuItem (Menu menu) {
 	Menu sizeMenu = new Menu(menu);
 	item.setMenu(sizeMenu);
 	addSizeItems(sizeMenu);
-}
-
-protected void addCloseMenuItem (Menu menu) {
-	// add close item
-	new MenuItem(menu, SWT.SEPARATOR);
-	MenuItem item = new MenuItem(menu, SWT.NONE);
-	item.setText(WorkbenchMessages.getString("PartPane.close")); //$NON-NLS-1$
-	item.addSelectionListener(new SelectionAdapter() {
-		public void widgetSelected(SelectionEvent e) {
-			doHide();
-		}
-	});		
-}
-
-protected void addCloseOthersItem (Menu menu) {
-	// do nothing
 }
 
 /**
@@ -426,19 +375,7 @@ public abstract void showPaneMenu();
  * Show the context menu for this part.
  */
 public abstract void showViewMenu();
-/**
- * Show a title label menu for this pane.
- */
-final protected void showPaneMenu(Control parent, Point point) {
-	if(paneMenuManager == null) {
-		paneMenuManager = new MenuManager();
-		paneMenuManager.add(new PaneContribution());			
-	}
-	Menu aMenu = paneMenuManager.createContextMenu(parent);
-	// open menu    
-	aMenu.setLocation(point.x, point.y);
-	aMenu.setVisible(true);
-}
+
 /**
  * Return the sashes around this part.
  */
@@ -503,24 +440,8 @@ protected void addSizeItems(Menu sizeMenu) {
 	addSizeItem(sizeMenu,"PartPane.sizeTop",sashes.top); //$NON-NLS-1$
 	addSizeItem(sizeMenu,"PartPane.sizeBottom",sashes.bottom); //$NON-NLS-1$
 }
-/**
- * Add the pin menu item on the editor system menu
- */
-protected void addPinEditorItem(Menu parent) {
-	// do nothing
-}
-/**
- * Add the move items to the Move menu.
- */
-protected void addMoveItems(Menu parent) {
-	// do nothing
-}
-/**
- * Add the Fast View menu item to the part title menu.
- */
-protected void addFastViewMenuItem(Menu parent,boolean isFastView) {
-	// do nothing
-}
+
+
 /**
  * Pin this part.
  */
