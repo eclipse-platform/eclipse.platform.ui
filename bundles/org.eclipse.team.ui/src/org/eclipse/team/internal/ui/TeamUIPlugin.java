@@ -84,10 +84,11 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	 */
 	public TeamUIPlugin(IPluginDescriptor descriptor) {
 		super(descriptor);
-		instance = this;
-		initializeImages();
+		initializeImages(this);
 		initializePreferences();
+		instance = this;
 	}
+
 	/**
 	 * Creates an extension.  If the extension plugin has not
 	 * been loaded a busy cursor will be activated during the duration of
@@ -265,9 +266,9 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	 * @param id  the identifier for the image
 	 * @param baseURL  the base URL for the image
 	 */
-	protected static void createImageDescriptor(String id, URL baseURL) {
+	protected static void createImageDescriptor(TeamUIPlugin plugin, String id, URL baseURL) {
 		// Delegate to the plugin instance to avoid concurrent class loading problems
-		getPlugin().privateCreateImageDescriptor(id, baseURL);
+		plugin.privateCreateImageDescriptor(id, baseURL);
 	}
 	private void privateCreateImageDescriptor(String id, URL baseURL) {
 		URL url = null;
@@ -292,7 +293,7 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 	private ImageDescriptor privateGetImageDescriptor(String id) {
 		if(! imageDescriptors.containsKey(id)) {
 			URL baseURL = TeamUIPlugin.getPlugin().getDescriptor().getInstallURL();
-			createImageDescriptor(id, baseURL);
+			createImageDescriptor(getPlugin(), id, baseURL);
 		}
 		return (ImageDescriptor)imageDescriptors.get(id);
 	}	
@@ -314,71 +315,74 @@ public class TeamUIPlugin extends AbstractUIPlugin implements IPropertyChangeLis
 		}
 		return null;
 	}
-	/**
-	 * Initializes the table of images used in this plugin.
+	/*
+	 * Initializes the table of images used in this plugin. The plugin is
+	 * provided because this method is called before the plugin staic
+	 * variable has been set. See the comment on the getPlugin() method
+	 * for a description of why this is required. 
 	 */
-	private void initializeImages() {
-		URL baseURL = TeamUIPlugin.getPlugin().getDescriptor().getInstallURL();
+	private void initializeImages(TeamUIPlugin plugin) {
+		URL baseURL = plugin.getDescriptor().getInstallURL();
 
 		// Overlays
-		createImageDescriptor(ISharedImages.IMG_DIRTY_OVR, baseURL);
-		createImageDescriptor(ISharedImages.IMG_CONFLICT_OVR, baseURL);
-		createImageDescriptor(ISharedImages.IMG_CHECKEDIN_OVR, baseURL);
-		createImageDescriptor(ISharedImages.IMG_CHECKEDOUT_OVR, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_DIRTY_OVR, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_CONFLICT_OVR, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_CHECKEDIN_OVR, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_CHECKEDOUT_OVR, baseURL);
 		
 		
-		createImageDescriptor(ISharedImages.IMG_SYNC_VIEW, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_VIEW, baseURL);
 		
 		// Collapse all
-		createImageDescriptor(ISharedImages.IMG_COLLAPSE_ALL, baseURL);
-		createImageDescriptor(ISharedImages.IMG_COLLAPSE_ALL_ENABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_COLLAPSE_ALL, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_COLLAPSE_ALL_ENABLED, baseURL);
 		
 		// Target Management Icons
-		createImageDescriptor(ISharedImages.IMG_SITE_ELEMENT, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_SITE_ELEMENT, baseURL);
 		
 		// Sync View Icons
-		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_INCOMING, baseURL);
-		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_OUTGOING, baseURL);
-		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING, baseURL);
-		createImageDescriptor(ISharedImages.IMG_REFRESH, baseURL);
-		createImageDescriptor(ISharedImages.IMG_CHANGE_FILTER, baseURL);
-		createImageDescriptor(ISharedImages.IMG_IGNORE_WHITESPACE, baseURL);
-		createImageDescriptor(ISharedImages.IMG_CONTENTS, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_DLG_SYNC_INCOMING, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_DLG_SYNC_OUTGOING, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_DLG_SYNC_CONFLICTING, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_REFRESH, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_CHANGE_FILTER, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_IGNORE_WHITESPACE, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_CONTENTS, baseURL);
 
-		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_INCOMING_DISABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_OUTGOING_DISABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING_DISABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_REFRESH_DISABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_IGNORE_WHITESPACE_DISABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_CONTENTS_DISABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_DLG_SYNC_INCOMING_DISABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_DLG_SYNC_OUTGOING_DISABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_DLG_SYNC_CONFLICTING_DISABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_REFRESH_DISABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_IGNORE_WHITESPACE_DISABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_CONTENTS_DISABLED, baseURL);
 
-		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_INCOMING_ENABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_OUTGOING_ENABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_DLG_SYNC_CONFLICTING_ENABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_REFRESH_ENABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_IGNORE_WHITESPACE_ENABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_CONTENTS_ENABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_DLG_SYNC_INCOMING_ENABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_DLG_SYNC_OUTGOING_ENABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_DLG_SYNC_CONFLICTING_ENABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_REFRESH_ENABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_IGNORE_WHITESPACE_ENABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_CONTENTS_ENABLED, baseURL);
 
-		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP, baseURL);
-		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE, baseURL);
-		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_FREE, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_MODE_CATCHUP, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_MODE_RELEASE, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_MODE_FREE, baseURL);
 
-		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP_DISABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE_DISABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_FREE_DISABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_MODE_CATCHUP_DISABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_MODE_RELEASE_DISABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_MODE_FREE_DISABLED, baseURL);
 
-		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_CATCHUP_ENABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_RELEASE_ENABLED, baseURL);
-		createImageDescriptor(ISharedImages.IMG_SYNC_MODE_FREE_ENABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_MODE_CATCHUP_ENABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_MODE_RELEASE_ENABLED, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_SYNC_MODE_FREE_ENABLED, baseURL);
 
-		createImageDescriptor(ISharedImages.IMG_WIZBAN_SHARE, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_WIZBAN_SHARE, baseURL);
 		
 		// Wizard banners
-		createImageDescriptor(ISharedImages.IMG_PROJECTSET_IMPORT_BANNER, baseURL);
-		createImageDescriptor(ISharedImages.IMG_PROJECTSET_EXPORT_BANNER, baseURL);	
+		createImageDescriptor(plugin, ISharedImages.IMG_PROJECTSET_IMPORT_BANNER, baseURL);
+		createImageDescriptor(plugin, ISharedImages.IMG_PROJECTSET_EXPORT_BANNER, baseURL);	
 		
 		// Live Sync View icons
-		createImageDescriptor(ISharedImages.IMG_COMPRESSED_FOLDER, baseURL);	
+		createImageDescriptor(plugin, ISharedImages.IMG_COMPRESSED_FOLDER, baseURL);	
 	}
 
 	/**
