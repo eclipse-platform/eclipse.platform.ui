@@ -4,6 +4,7 @@
  */
 package org.eclipse.help.internal.toc;
 import java.util.*;
+
 import org.eclipse.help.*;
 import org.xml.sax.Attributes;
 /** 
@@ -17,7 +18,11 @@ public class Toc extends TocNode implements IToc {
 	private TocFile tocFile;
 	private ITopic[] topicArray;
 	private Topic descriptionTopic;
-	
+	/**
+	 * Collection of IToc
+	 */
+	private Collection childrenTocs;
+	private DirectoryToc directoryToc;
 	/**
 	 * Map of all topics in a TOC for fast lookup by href
 	 */
@@ -35,13 +40,17 @@ public class Toc extends TocNode implements IToc {
 		this.href = HrefUtil.normalizeHref(tocFile.getPluginID(), tocFile.getHref());
 		// create the description topic
 		String topic = attrs.getValue("topic");
-		if (topic!= null && topic.trim().length() > 0) {
-			try{
+		if (topic != null && topic.trim().length() > 0) {
+			try {
 				this.descriptionTopic = new Topic(tocFile, null);
 				this.descriptionTopic.setLabel(this.label);
-				this.descriptionTopic.setHref(HrefUtil.normalizeHref(tocFile.getPluginID(), topic));
-			}catch(Exception e){}
+				this.descriptionTopic.setHref(
+					HrefUtil.normalizeHref(tocFile.getPluginID(), topic));
+			} catch (Exception e) {
+			}
 		}
+		childrenTocs = new ArrayList();
+		directoryToc = new DirectoryToc(tocFile);
 	}
 	/**
 	 * Implements abstract method.
@@ -83,7 +92,7 @@ public class Toc extends TocNode implements IToc {
 	public ITopic getTopic(String href) {
 		if (href == null)
 			return descriptionTopic;
-			
+
 		if (topicMap == null) {
 			// traverse TOC and fill in the topicMap
 			topicMap = new HashMap();
@@ -108,7 +117,7 @@ public class Toc extends TocNode implements IToc {
 	}
 	/**
 	 * Note: assumes the toc has been built....
-	 * @return ITopic list
+	 * @return ITopic[]
 	 */
 	public ITopic[] getTopics() {
 		if (topicArray == null) {
@@ -119,9 +128,43 @@ public class Toc extends TocNode implements IToc {
 		return topicArray;
 	}
 	/**
+	 * @return ITopic[]
+	 */
+	public ITopic[] getExtraTopics() {
+		ITopic[] dirTopics = directoryToc.getExtraTopics();
+		// add extra topics from children TOCs.
+		for (Iterator it = childrenTocs.iterator(); it.hasNext();) {
+			IToc toc = (IToc) it.next();
+			if (toc instanceof Toc) {
+				ITopic[] moreDirTopics = ((Toc) toc).getExtraTopics();
+				if (moreDirTopics.length > 0) {
+					ITopic[] newDirTopics = new ITopic[dirTopics.length + moreDirTopics.length];
+					System.arraycopy(dirTopics, 0, newDirTopics, 0, dirTopics.length);
+					System.arraycopy(
+						moreDirTopics,
+						0,
+						newDirTopics,
+						dirTopics.length,
+						moreDirTopics.length);
+					dirTopics = newDirTopics;
+				}
+			}
+		}
+
+		return dirTopics;
+	}
+	/**
 	 * Used by debugger
 	 */
 	public String toString() {
 		return href != null ? href : super.toString();
+	}
+
+	/**
+	 * Gets the childrenTocs.
+	 * @return Returns a Collection
+	 */
+	public Collection getChildrenTocs() {
+		return childrenTocs;
 	}
 }

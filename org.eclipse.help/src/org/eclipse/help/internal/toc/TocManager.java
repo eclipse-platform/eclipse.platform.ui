@@ -39,10 +39,10 @@ public class TocManager {
 	 * Returns the list of TOC's available in the help system
 	 */
 	public IToc[] getTocs(String locale) {
-		
-		if (locale == null) 
+
+		if (locale == null)
 			return new IToc[0];
-			
+
 		IToc[] tocs = (IToc[]) tocsByLang.get(locale);
 		if (tocs == null) {
 			build(locale);
@@ -61,7 +61,7 @@ public class TocManager {
 		if (href == null || href.equals(""))
 			return null;
 		IToc[] tocs = getTocs(locale);
-		
+
 		for (int i = 0; i < tocs.length; i++) {
 			if (tocs[i].getHref().equals(href))
 				return tocs[i];
@@ -194,8 +194,11 @@ public class TocManager {
 							.getUniqueIdentifier();
 					String href = configElements[j].getAttribute("file");
 					boolean isPrimary = "true".equals(configElements[j].getAttribute("primary"));
-					if (href != null)
-						contributedTocFiles.add(new TocFile(pluginId, href, isPrimary, locale));
+					String extraDir = configElements[j].getAttribute("extradir");
+					if (href != null) {
+						contributedTocFiles.add(
+							new TocFile(pluginId, href, isPrimary, locale, extraDir));
+					}
 				}
 		}
 		return contributedTocFiles;

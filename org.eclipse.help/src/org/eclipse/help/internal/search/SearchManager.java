@@ -5,11 +5,12 @@ package org.eclipse.help.internal.search;
  */
 import java.net.*;
 import java.util.*;
-import org.apache.lucene.analysis.*;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+
+import org.apache.lucene.analysis.Analyzer;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.util.*;
 /**
  * Manages indexing and search for all infosets
@@ -165,18 +166,17 @@ public class SearchManager {
 	 */
 	private static String getLocale(String query) {
 		int indx = query.indexOf("&lang=");
-		if (indx == -1 || query.length() < indx+7)
+		if (indx == -1 || query.length() < indx + 7)
 			return Locale.getDefault().toString();
 		else {
-			String clientLocale = query.substring(indx+6);
+			String clientLocale = query.substring(indx + 6);
 			if (clientLocale != null && clientLocale.length() >= 2) {
-				String language = clientLocale.substring(0,2);
-				if (clientLocale.indexOf('_') == 2 && clientLocale.length() >= 5) 
-					return language +"_"+ clientLocale.substring(3,5);
+				String language = clientLocale.substring(0, 2);
+				if (clientLocale.indexOf('_') == 2 && clientLocale.length() >= 5)
+					return language + "_" + clientLocale.substring(3, 5);
 				else
-					return language;	
-			}
-			else
+					return language;
+			} else
 				return Locale.getDefault().toString();
 		}
 	}
@@ -270,8 +270,15 @@ public class SearchManager {
 		IToc[] tocs = HelpSystem.getTocManager().getTocs(locale);
 		for (int i = 0; i < tocs.length; i++) {
 			ITopic[] topics = tocs[i].getTopics();
-			for (int j = 0; j < topics.length; j++)
+			for (int j = 0; j < topics.length; j++) {
 				add(topics[j], hrefs);
+			}
+			if (tocs[i] instanceof Toc) {
+				topics = ((Toc) tocs[i]).getExtraTopics();
+				for (int j = 0; j < topics.length; j++) {
+					add(topics[j], hrefs);
+				}
+			}
 		}
 		return hrefs;
 	}

@@ -5,8 +5,8 @@
 package org.eclipse.help.internal.toc;
 import java.io.*;
 import java.util.*;
+
 import org.eclipse.help.internal.util.ResourceLocator;
-import org.xml.sax.SAXException;
 
 public class TocFile {
 
@@ -16,6 +16,7 @@ public class TocFile {
 	protected String href;
 	protected boolean primary;
 	protected String locale;
+	protected String extraDir;
 
 	// used for fast access to anchors
 	protected Map anchors;
@@ -23,11 +24,17 @@ public class TocFile {
 	/**
 	 * Toc File Constructor
 	 */
-	protected TocFile(String plugin, String href, boolean primary, String locale) {
+	protected TocFile(
+		String plugin,
+		String href,
+		boolean primary,
+		String locale,
+		String extraDir) {
 		this.plugin = plugin;
 		this.href = href;
 		this.primary = primary;
 		this.locale = locale;
+		this.extraDir = extraDir;
 	}
 
 	/**
@@ -114,4 +121,18 @@ public class TocFile {
 		return primary;
 	}
 
+	/**
+	 * Gets the extraDir.
+	 * @return Returns a String
+	 */
+	public String getExtraDir() {
+		return extraDir;
+	}
+	/**
+	 * Gets the locale.
+	 * @return Returns a String
+	 */
+	public String getLocale() {
+		return locale;
+	}
 }

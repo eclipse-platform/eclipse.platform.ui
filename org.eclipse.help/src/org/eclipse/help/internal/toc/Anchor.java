@@ -3,12 +3,12 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.toc;
-import org.eclipse.help.internal.util.Resources;
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
 /**
  * Anchor.  Place holder that Toc objects can atatch to.
  */
 class Anchor extends TocNode {
+	protected Toc parentToc;
 	protected String id;
 	protected TocFile tocFile;
 	/**
@@ -20,9 +20,8 @@ class Anchor extends TocNode {
 			return;
 		id = attrs.getValue("id");
 		id =
-			HrefUtil.normalizeHref(
-				tocFile.getPluginID(),
-				tocFile.getHref() + "#" + id);
+			HrefUtil.normalizeHref(tocFile.getPluginID(), tocFile.getHref() + "#" + id);
+		parentToc = tocFile.getToc();
 	}
 	/**
 	 * Implements abstract method.
@@ -41,5 +40,15 @@ class Anchor extends TocNode {
 	 */
 	public TocFile getTocFile() {
 		return tocFile;
+	}
+	/**
+	 * Adds another element as child of this element
+	 * Modifies parents of a child as well
+	 */
+	public void addChild(ITocNode child) {
+		super.addChild(child);
+		if (child instanceof Toc && parentToc != null) {
+			parentToc.getChildrenTocs().add(child);
+		}
 	}
 }

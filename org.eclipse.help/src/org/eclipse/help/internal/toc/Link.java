@@ -3,12 +3,12 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.toc;
-import org.eclipse.help.internal.util.Resources;
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
 /**
  *  Include.  Place holder to link to other Toc objects.
  */
 class Link extends TocNode {
+	protected Toc parentToc;
 	protected String toc;
 	/**
 	 * Contstructor.  Used when parsing help contributions.
@@ -18,6 +18,7 @@ class Link extends TocNode {
 			return;
 		toc = attrs.getValue("toc");
 		toc = HrefUtil.normalizeHref(tocFile.getPluginID(), toc);
+		parentToc = tocFile.getToc();
 	}
 	/**
 	 * Implements abstract method.
@@ -30,5 +31,15 @@ class Link extends TocNode {
 	 */
 	protected String getToc() {
 		return toc;
+	}
+	/**
+	 * Adds another element as child of this element
+	 * Modifies parents of a child as well
+	 */
+	public void addChild(ITocNode child) {
+		super.addChild(child);
+		if (child instanceof Toc && parentToc != null) {
+			parentToc.getChildrenTocs().add(child);
+		}
 	}
 }

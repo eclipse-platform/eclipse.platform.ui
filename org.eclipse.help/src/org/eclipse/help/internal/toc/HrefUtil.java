@@ -4,13 +4,25 @@ package org.eclipse.help.internal.toc;
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
- 
-import java.io.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.util.ResourceLocator;
-import org.eclipse.help.internal.HelpPlugin;
 
 public class HrefUtil {
+	/**
+	 * Creates /pluginid/directory from directory name
+	 */
+	public static String normalizeDirectoryHref(String pluginID, String dir) {
+		// "" is treated as if extra directory was not provided
+		if (dir == null || dir.length() <= 0)
+			return null;
+		// "." means all the files in the plugin
+		if (".".equals(dir))
+			dir = "";
+		// remove not needed trailing separator
+		if (dir.length() > 0 && dir.lastIndexOf('/') == dir.length() - 1) {
+			dir = dir.substring(0, dir.length() - 1);
+		}
+		return normalizeHref(pluginID, dir);
+	}
+
 	/**
 	 * Creates /pluginid/href from href
 	 * relative to the current plugin
@@ -27,7 +39,7 @@ public class HrefUtil {
 		if (href.startsWith("/"))
 			// already normalized
 			return href;
-		if(href.startsWith("http://"))
+		if (href.startsWith("http://"))
 			// external doc
 			return href;
 		int ddIndex = href.indexOf("../");
@@ -73,10 +85,9 @@ public class HrefUtil {
 		if (secondSlashIx < 0) // href is /pluginID
 			return null;
 		if (secondSlashIx + 1 < href.length()) // href is /pluginID/path
-			return href.substring(secondSlashIx+1);
+			return href.substring(secondSlashIx + 1);
 		else // href is /pluginID/
 			return "";
 	}
-	
-}
 
+}
