@@ -41,7 +41,7 @@
 			<fileset dir="src_ant/" excludes="**/*.java"/>
 		</copy>
 		<mkdir dir="${build.result.folder}/lib"/>
-		<jar jarfile="${build.result.folder}/lib/antsupportlib.jar" basedir="${temp.folder}/lib/antsupportlib.jar.bin"/>
+		<jar destfile="${build.result.folder}/lib/antsupportlib.jar" basedir="${temp.folder}/lib/antsupportlib.jar.bin"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 

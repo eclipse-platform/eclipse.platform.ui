@@ -17,7 +17,7 @@
 		<mkdir dir="${dest}" />
 		<delete dir="${dest}/lib"/>
 		<mkdir dir="${dest}/lib"/>
-		<jar jarfile="${dest}/antui.jar">
+		<jar destfile="${dest}/antui.jar">
 			<fileset dir="bin">
 				<exclude name="org/eclipse/ant/ui/internal/antsupport/*"/>
 				<exclude name="org/eclipse/ant/ui/internal/antsupport/inputhandler/*"/>
@@ -25,7 +25,7 @@
 			</fileset>
 		</jar>
 		<!-- Create the source zip -->
-		<zip zipfile="${dest}/antuisrc.zip">
+		<zip destfile="${dest}/antuisrc.zip">
 			<fileset dir="Ant Tools Support"/>
 			<fileset dir="Ant Runner Support"/>
 			<fileset dir="Ant Editor"/>

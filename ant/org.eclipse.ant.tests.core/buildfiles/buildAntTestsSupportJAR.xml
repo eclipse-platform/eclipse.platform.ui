@@ -31,7 +31,7 @@
 			<src path="test support/"/>
 		</javac>
 		<mkdir dir="${build.result.folder}/lib"/>
-		<jar jarfile="${build.result.folder}/lib/antTestsSupport.jar" basedir="${temp.folder}/lib/antTestsSupport.jar.bin"/>
+		<jar destfile="${build.result.folder}/lib/antTestsSupport.jar" basedir="${temp.folder}/lib/antTestsSupport.jar.bin"/>
 		<delete dir="${temp.folder}"/>
 	</target>
 
