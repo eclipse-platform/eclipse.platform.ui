@@ -195,6 +195,20 @@ public void clean() {
 		ResourcesPlugin.getPlugin().getLog().log(status);
 	}
 }
+private boolean stateAlreadyExists(IPath path, final UniversalUniqueIdentifier uuid, long lastModifiedTime) {
+	final boolean[] rc = new boolean[] {false};
+	IHistoryStoreVisitor visitor = new IHistoryStoreVisitor() {
+		public boolean visit(HistoryStoreEntry entry) throws IndexedStoreException {
+			if (uuid.equals(entry.getUUID())) {
+				rc[0] = true;
+				return false;
+			}
+			return true;
+		}
+	};
+	accept(path, visitor, false);
+	return rc[0];
+}
 /**
  * Copies the history store information from the source path given destination path.
  * Note that destination may already have some history store information. Also note
@@ -210,7 +224,7 @@ public void copyHistory(final IPath source, final IPath destination) {
 	// have the same timestamp as a state for the local history
 	// for source, the local history for destination will appear 
 	// as an older state than the one for source.
-	
+
 	// return early if either of the paths are null or if the source and
 	// destination are the same.
 	if (source == null || destination == null) {
@@ -242,8 +256,10 @@ public void copyHistory(final IPath source, final IPath destination) {
 				return false;
 			}
 			path = destination.append(path.removeFirstSegments(prefixSegments));
-			matches.add(path);
-			addState(path, entry.getUUID(), entry.getLastModified());
+			if (!stateAlreadyExists(path, entry.getUUID(), entry.getLastModified())) {
+				matches.add(path);
+				addState(path, entry.getUUID(), entry.getLastModified());
+			}
 			return true;
 		}
 	};
