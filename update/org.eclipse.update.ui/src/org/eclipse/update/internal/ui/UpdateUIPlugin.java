@@ -446,7 +446,7 @@ public class UpdateUIPlugin extends AbstractUIPlugin {
 		store.setDefault(
 			MainPreferencePage.P_UPDATE_VERSIONS,
 			MainPreferencePage.EQUIVALENT_VALUE);
-		store.setDefault(AppServerPreferencePage.P_MASTER_SWITCH, true);
+		store.setDefault(AppServerPreferencePage.P_MASTER_SWITCH, false);
 		store.setDefault(AppServerPreferencePage.P_ENCODE_URLS, true);
 		UpdateColors.setDefaults(store);
 	}
