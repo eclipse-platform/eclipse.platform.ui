@@ -44,6 +44,7 @@ is what goes into the plugin.xml file)<b>:</b></i>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT toc EMPTY></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc file CDATA #REQUIRED></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc primary (true | false) "false"></tt>
+<br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc extradir CDATA #IMPLIED></tt>
 <ul>
 <li>
 <b>file<i> </i></b>- the name of the TOC file which contains the table
@@ -56,8 +57,17 @@ of contents or section&nbsp; for this plug-in's online help</li>
 and is meant to be the master table of contents or not primary and intended
 to be integrated into another table of contents</li>
 </ul>
-<i><b>Configuration Markup for toc </b>(this is what goes into the TOC
-file)<b>:</b></i>
+
+<ul>
+<li>
+<b>extradir</b> - specifies relative directory name of containing additional
+documents that are associated with the table of contents; all help documents
+in this directory, and all sub directories, will be indexed, and accessible
+through the documentation search, even if&nbsp; <tt>topic</tt> elements
+in the TOC file do not refer to these documents</li>
+</ul>
+<b><i>Configuration Markup for toc </i></b><i>(this is what goes into the
+TOC file)<b>:</b></i>
 <p><tt>&nbsp;&nbsp;&nbsp; &lt;!ELEMENT toc (topic | anchor | link)* ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc link_to CDATA #IMPLIED ></tt>
 <br><tt>&nbsp;&nbsp;&nbsp; &lt;!ATTLIST toc label CDATA #REQUIRED ></tt>
@@ -217,7 +227,8 @@ the appropriate manifest files mentioned in the <tt>plugin.xml</tt> file.
 <br>&nbsp;
 <p><i><b>Supplied Implementation:</b> </i>The default implementation of
 the help system UI supplied with the Eclipse platform fully supports the
-<tt>toc</tt> extension point.
+<tt>toc</tt>
+extension point.
 <p><a href="hglegal.htm"><img SRC="ngibmcpy.gif" ALT="Copyright IBM Corp. 2000, 2001.  All Rights Reserved." BORDER=0 height=12 width=195></a>
 </body>
 </html>
