@@ -21,6 +21,12 @@ public class SyncTests extends BenchmarkTest {
 	private static final int FILE_SIZE_VARIANCE = 0;
 	private static final int PROB_BINARY = 0;
 	
+	private static final String NO_CHANGES_GROUP_SUFFIX = "NoChanges";
+	private static final String ADDED_GROUP_SUFFIX = "AddedFiles";
+	private static final String REMOVED_GROUP_SUFFIX = "RemovedFiles";
+	private static final String MODIFIED_GROUP_SUFFIX = "ModifiedFiles";
+    private static final String[] PERFORMANCE_GROUPS = new String[] {ADDED_GROUP_SUFFIX, MODIFIED_GROUP_SUFFIX, REMOVED_GROUP_SUFFIX};
+	
 	public SyncTests() {
 		super();
 	}
@@ -32,13 +38,16 @@ public class SyncTests extends BenchmarkTest {
 	public static Test suite() {
 		return suite(SyncTests.class);
 	}
-
+    
 	public void testSync0() throws Exception {
-		// test sync on project with no changes
+	    setupGroups(new String[] {NO_CHANGES_GROUP_SUFFIX} );
 		IProject project = setupOutProject();
-		startGroup("test sync with no changes");
-		syncCommitResources(new IResource[] { project }, "");
-		endGroup();
+		for (int i = 0; i < BenchmarkTestSetup.LOOP_COUNT; i++) {
+			startGroup(NO_CHANGES_GROUP_SUFFIX);
+			syncCommitResources(new IResource[] { project }, "");
+			endGroup();
+        }
+		commitGroups();
 	}
 
     public void testSync1() throws Exception {
@@ -54,10 +63,8 @@ public class SyncTests extends BenchmarkTest {
 	}
 
 	protected IProject setupOutProject() throws Exception {
-	    disableLog();
 		IProject project = createUniqueProject(BenchmarkTestSetup.SMALL_ZIP_FILE);
 		shareProject(project);
-		enableLog();
 		return project;
 	}
 	
@@ -66,47 +73,39 @@ public class SyncTests extends BenchmarkTest {
 	 * A parallel project is used to generate incoming changes.
 	 */
 	protected void runTestSync(int size) throws Exception {
-		final SequenceGenerator gen = new SequenceGenerator();
-
-		// setup out project then move it out of the way
-		IProject outProject = setupOutProject();
-		String moduleName = outProject.getName();
-		BenchmarkUtils.renameResource(outProject, moduleName + "out");
-		outProject = BenchmarkUtils.getProject(moduleName + "out");
-
-		// setup in project
-		IProject inProject = BenchmarkUtils.getProject(moduleName);
-		checkoutProject(inProject, moduleName, null);
-		
-		/*** outgoing and incoming changes ***/
-		startGroup("synchronize " + size + " added file(s)");
-		BenchmarkUtils.createRandomDeepFiles(gen, outProject, size, FILE_SIZE_MEAN, FILE_SIZE_VARIANCE, PROB_BINARY);
-		startGroup("as outgoing changes");
-		syncCommitResources(new IResource[] { outProject }, "");
-		endGroup();
-		startGroup("as incoming changes");
-		syncUpdateResources(new IResource[] { inProject });
-		endGroup();
-		endGroup();
-		
-		startGroup("synchronize " + size + " modified file(s)");
-		BenchmarkUtils.modifyRandomDeepFiles(gen, outProject, size);
-		startGroup("as outgoing changes");
-		syncCommitResources(new IResource[] { outProject }, "");
-		endGroup();
-		startGroup("as incoming changes");
-		syncUpdateResources(new IResource[] { inProject });
-		endGroup();
-		endGroup();
-
-		startGroup("synchronize " + size + " removed file(s)");
-		BenchmarkUtils.deleteRandomDeepFiles(gen, outProject, size);
-		startGroup("as outgoing changes");
-		syncCommitResources(new IResource[] { outProject }, "");
-		endGroup();
-		startGroup("as incoming changes");
-		syncUpdateResources(new IResource[] { inProject });
-		endGroup();
-		endGroup();
+	    setupGroups(PERFORMANCE_GROUPS);
+	    for (int i = 0; i < BenchmarkTestSetup.LOOP_COUNT; i++) {
+			final SequenceGenerator gen = new SequenceGenerator();
+	
+			// setup out project then move it out of the way
+			IProject outProject = setupOutProject();
+			String moduleName = outProject.getName();
+			BenchmarkUtils.renameResource(outProject, moduleName + "out");
+			outProject = BenchmarkUtils.getProject(moduleName + "out");
+	
+			// setup in project
+			IProject inProject = BenchmarkUtils.getProject(moduleName);
+			checkoutProject(inProject, moduleName, null);
+			
+			/*** outgoing and incoming changes ***/
+			startGroup(ADDED_GROUP_SUFFIX);
+			BenchmarkUtils.createRandomDeepFiles(gen, outProject, size, FILE_SIZE_MEAN, FILE_SIZE_VARIANCE, PROB_BINARY);
+			syncCommitResources(new IResource[] { outProject }, "");
+			syncUpdateResources(new IResource[] { inProject });
+			endGroup();
+			
+			startGroup(MODIFIED_GROUP_SUFFIX);
+			BenchmarkUtils.modifyRandomDeepFiles(gen, outProject, size);
+			syncCommitResources(new IResource[] { outProject }, "");
+			syncUpdateResources(new IResource[] { inProject });
+			endGroup();
+	
+			startGroup(REMOVED_GROUP_SUFFIX);
+			BenchmarkUtils.deleteRandomDeepFiles(gen, outProject, size);
+			syncCommitResources(new IResource[] { outProject }, "");
+			syncUpdateResources(new IResource[] { inProject });
+			endGroup();
+        }
+	    commitGroups();
 	}
 }

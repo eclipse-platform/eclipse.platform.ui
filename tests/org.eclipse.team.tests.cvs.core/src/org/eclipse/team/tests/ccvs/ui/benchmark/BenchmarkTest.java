@@ -13,6 +13,8 @@ package org.eclipse.team.tests.ccvs.ui.benchmark;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.zip.ZipException;
 
 import org.eclipse.core.resources.IProject;
@@ -23,13 +25,20 @@ import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
+import org.eclipse.team.tests.ccvs.ui.SynchronizeViewTestAdapter;
+import org.eclipse.test.performance.Performance;
+import org.eclipse.test.performance.PerformanceMeter;
 
 /**
  * Benchmark test superclass
  */
 public abstract class BenchmarkTest extends EclipseTest {
 
-	protected BenchmarkTest() {
+	private HashMap groups;
+    private PerformanceMeter currentMeter;
+    private static SyncInfoSource source = new SynchronizeViewTestAdapter();
+
+    protected BenchmarkTest() {
 	}
 
 	protected BenchmarkTest(String name) {
@@ -64,19 +73,72 @@ public abstract class BenchmarkTest extends EclipseTest {
     }
 	
     /**
+     * Create a set of perforance meters that can be started with the
+     * startGroup method.
+     * @param performance_groups
+     */
+	protected void setupGroups(String[] performance_groups) {
+        groups = new HashMap();
+	    Performance perf = Performance.getDefault();
+        for (int i = 0; i < performance_groups.length; i++) {
+            String suffix = performance_groups[i];
+		    PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this) + suffix);
+            groups.put(suffix, meter);
+        }
+    }
+    
+    /**
+     * Commit the performance meters that were created by setupGroups and started and
+     * stoped using startGroup/endGroup
+     */
+    protected void commitGroups() {
+        for (Iterator iter = groups.values().iterator(); iter.hasNext();) {
+            PerformanceMeter meter = (PerformanceMeter) iter.next();
+            meter.commit();
+        }
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.tests.ccvs.core.EclipseTest#tearDown()
+     */
+    protected void tearDown() throws Exception {
+        try {
+            if (groups != null) {
+                Performance perf = Performance.getDefault();
+                try {
+                    for (Iterator iter = groups.values().iterator(); iter.hasNext();) {
+                        PerformanceMeter meter = (PerformanceMeter) iter.next();
+                        perf.assertPerformance(meter);
+                    }
+                } finally {
+                    for (Iterator iter = groups.values().iterator(); iter.hasNext();) {
+                        PerformanceMeter meter = (PerformanceMeter) iter.next();
+                        meter.dispose();
+                    }
+                }
+                groups = null;
+            }
+        } finally {
+            super.tearDown();
+        }
+    }
+    
+    /**
+     * Start the meter that was created for the given key
      * @param string
      */
-    protected void startGroup(String string) {
-        // TODO Auto-generated method stub
-        
+    protected void startGroup(String key) {
+        assertNull(currentMeter);
+        currentMeter = (PerformanceMeter)groups.get(key);
+        currentMeter.start();
     }
     
 	/**
-     * 
+     * End the current meter
      */
 	protected void endGroup() {
-        // TODO Auto-generated method stub
-        
+        currentMeter.stop();
+        currentMeter = null;
     }
 	
 	protected void disableLog() {
@@ -100,10 +162,12 @@ public abstract class BenchmarkTest extends EclipseTest {
      * @throws TeamException
      */
     protected void syncCommitResources(IResource[] resources, String comment) throws TeamException, CoreException {
+       startTask("Synchronize outgoing changes");
        syncResources(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), resources);
-       startTask("Sync View Commit action");
+       endTask();
        // TODO: Commit all outgoing changes that are children of the given resource
        // by extracting them from the subscriber sync set
+       startTask("Commit outgoing changes");
        commitResources(resources, IResource.DEPTH_INFINITE);
        endTask();
     }
@@ -113,28 +177,20 @@ public abstract class BenchmarkTest extends EclipseTest {
      * @throws TeamException
      */
     protected void syncUpdateResources(IResource[] resources) throws TeamException {
+        startTask("Synchronize incoming changes");
         syncResources(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(), resources);
+        endTask();
         // TODO: Update all incoming changes that are children of the given resource
         // by extracting them from the subscriber sync set
-        updateResources(resources, IResource.DEPTH_INFINITE, false);
+        startTask("Update incoming changes");
+        updateResources(resources, false);
+        endTask();
     }
 
     /**
      * @return
      */
     private SyncInfoSource getSyncInfoSource() {
-        // TODO Auto-generated method stub
-        return null;
+        return source;
     }
-    
-    /**
-     * @param resources
-     * @param depth_infinite
-     * @param b
-     */
-    private void updateResources(IResource[] resources, int depth_infinite, boolean ignoreLocalChanges) {
-        // TODO Auto-generated method stub
-        
-    }
-
 }

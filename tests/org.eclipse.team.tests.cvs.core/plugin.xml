@@ -30,6 +30,7 @@
       <import plugin="org.eclipse.update.core"/>
       <import plugin="org.junit"/>
       <import plugin="org.eclipse.team.tests.core"/>
+      <import plugin="org.eclipse.test.performance"/>
    </requires>
 
 

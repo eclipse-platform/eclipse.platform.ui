@@ -25,9 +25,11 @@ public class BenchmarkTestSetup extends CVSTestSetup {
 	public static final File BIG_ZIP_FILE;
 	public static final File SMALL_ZIP_FILE;
 	public static final File TINY_ZIP_FILE;
+	public static final int LOOP_COUNT;
 
 	// Static initializer for constants
 	static {
+	    LOOP_COUNT = Integer.valueOf(System.getProperty("eclipse.cvs.loopCount", "1")).intValue();
 		try {
 			BIG_ZIP_FILE = getTestFile("benchmarkBig.zip");
 			SMALL_ZIP_FILE = getTestFile("benchmarkSmall.zip");

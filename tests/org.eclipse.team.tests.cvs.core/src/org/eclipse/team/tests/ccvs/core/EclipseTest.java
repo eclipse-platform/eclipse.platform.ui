@@ -202,21 +202,28 @@ public class EclipseTest extends EclipseWorkspaceTest {
 			CVSWorkspaceRoot.getCVSResourceFor(resources[i]).unmanage(null);
 		}
 	}
+	
 	/**
 	 * Update the resources from an existing container with the changes from the CVS repository
 	 */
 	public IResource[] updateResources(IContainer container, String[] hierarchy, boolean ignoreLocalChanges) throws CoreException, TeamException {
 		IResource[] resources = getResources(container, hierarchy);
-		LocalOption[] options = Command.NO_LOCAL_OPTIONS;
+		return updateResources(resources, ignoreLocalChanges);
+	}
+	
+	/**
+	 * Update the resources from an existing container with the changes from the CVS repository
+	 */
+    protected IResource[] updateResources(IResource[] resources, boolean ignoreLocalChanges) throws CVSException {
+        LocalOption[] options = Command.NO_LOCAL_OPTIONS;
 		if(ignoreLocalChanges) {
 			options = new LocalOption[] {Update.IGNORE_LOCAL_CHANGES};
 		}
 		executeHeadless(new UpdateOperation(null, resources, options, null));
 		return resources;
-	}
-	
-	
-	protected void replace(IContainer container, String[] hierarchy, CVSTag tag, boolean recurse) throws CoreException {
+    }
+
+    protected void replace(IContainer container, String[] hierarchy, CVSTag tag, boolean recurse) throws CoreException {
 		IResource[] resources = getResources(container, hierarchy);
 		replace(resources, tag, recurse);
 	}
