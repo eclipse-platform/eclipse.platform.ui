@@ -52,6 +52,39 @@ public class AntPropertiesBlock {
 
 	private IDialogSettings dialogSettings;
 	
+	/**
+	 * Button listener that delegates for widget selection events.
+	 */
+	private SelectionAdapter buttonListener= new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent event) {
+			if (event.widget == addButton) {
+				addProperty();
+			} else if (event.widget == editButton) {
+				edit();
+			} else if (event.widget == removeButton) {
+				remove(propertyTableViewer);
+			} else if (event.widget == addFileButton) {
+				addPropertyFile();
+			} else if (event.widget == removeFileButton) {
+				remove(fileTableViewer);
+			} else if (event.widget == removeButton) {
+			}
+		}
+	};
+	
+	/**
+	 * Selection changed listener that delegates selection events.
+	 */
+	private ISelectionChangedListener tableListener= new ISelectionChangedListener() {
+		public void selectionChanged(SelectionChangedEvent event) {
+			if (event.getSource() == propertyTableViewer) {
+				propertyTableSelectionChanged((IStructuredSelection) event.getSelection());
+			} else if (event.getSource() == fileTableViewer) {
+				fileTableSelectionChanged((IStructuredSelection) event.getSelection());
+			}
+		}
+	};
+	
 	public AntPropertiesBlock(IAntBlockContainer container) {
 		this.container= container; 
 	}
@@ -60,7 +93,6 @@ public class AntPropertiesBlock {
 		Font font= top.getFont();
 		dialogSettings= ExternalToolsPlugin.getDefault().getDialogSettings();
 		
-
 		createVerticalSpacer(top, 2);
 
 		Label label = new Label(top, SWT.NONE);
@@ -70,7 +102,7 @@ public class AntPropertiesBlock {
 		label.setFont(font);
 		label.setText(propertyLabel);
 
-		createTable(top);
+		propertyTableViewer= createTableViewer(top);
 		createButtonGroup(top);
 
 		label = new Label(top, SWT.NONE);
@@ -80,7 +112,7 @@ public class AntPropertiesBlock {
 		label.setFont(font);
 		label.setText(propertyFileLabel);
 
-		createTable(top);
+		fileTableViewer= createTableViewer(top);
 		createButtonGroup(top);
 	}
 	
@@ -110,40 +142,20 @@ public class AntPropertiesBlock {
 	}
 	
 	/**
-	 * Creates the table viewer.
+	 * Creates and returns a configured table viewer in the given parent
 	 */
-	private void createTable(Composite parent) {
-		if (propertyTableViewer == null) {
-			Table table = new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
-			GridData data= new GridData(GridData.FILL_BOTH);
-			data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-			table.setLayoutData(data);
-			table.setFont(parent.getFont());
+	private TableViewer createTableViewer(Composite parent) {
+		Table table = new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
+		GridData data= new GridData(GridData.FILL_BOTH);
+		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
+		table.setLayoutData(data);
+		table.setFont(parent.getFont());
 		
-			propertyTableViewer = new TableViewer(table);
-			propertyTableViewer.setContentProvider(new ExternalToolsContentProvider());
-			propertyTableViewer.setLabelProvider(labelProvider);
-			propertyTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-				public void selectionChanged(SelectionChangedEvent event) {
-					propertyTableSelectionChanged((IStructuredSelection) event.getSelection());
-				}
-			});
-		} else {
-			Table table = new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
-			GridData data= new GridData(GridData.FILL_BOTH);
-			data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
-			table.setLayoutData(data);
-			table.setFont(parent.getFont());
-		
-			fileTableViewer = new TableViewer(table);
-			fileTableViewer.setContentProvider(new ExternalToolsContentProvider());
-			fileTableViewer.setLabelProvider(labelProvider);
-			fileTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-				public void selectionChanged(SelectionChangedEvent event) {
-					fileTableSelectionChanged((IStructuredSelection) event.getSelection());
-				}
-			});
-		}
+		TableViewer tableViewer= new TableViewer(table);
+		tableViewer.setContentProvider(new ExternalToolsContentProvider());
+		tableViewer.setLabelProvider(labelProvider);
+		tableViewer.addSelectionChangedListener(tableListener);
+		return tableViewer;
 	}
 	
 	/* (non-Javadoc)
@@ -151,41 +163,26 @@ public class AntPropertiesBlock {
 	 */
 	protected void addButtonsToButtonGroup(Composite parent) {
 		if (editButton == null) {
-			addButton= container.createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.addButton")); //$NON-NLS-1$
-			addButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					addProperty();
-				}
-			});
-		
-			editButton= container.createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.editButton"));  //$NON-NLS-1$
-			editButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					edit();
-				}
-			});
-		
-			removeButton= container.createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.removeButton"));  //$NON-NLS-1$
-			removeButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					remove(propertyTableViewer);
-				}
-			});
+			addButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.addButton")); //$NON-NLS-1$
+			editButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.editButton"));  //$NON-NLS-1$
+			removeButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.removeButton"));  //$NON-NLS-1$
 		} else {
-			addFileButton= container.createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.addFileButton")); //$NON-NLS-1$
-			addFileButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					addPropertyFile();
-				}
-			});
-			removeFileButton= container.createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.removeFileButton")); //$NON-NLS-1$
-			removeFileButton.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent e) {
-					remove(fileTableViewer);
-				}
-			});
+			addFileButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.addFileButton")); //$NON-NLS-1$
+			removeFileButton= createPushButton(parent, AntPreferencesMessages.getString("AntPropertiesBlock.removeFileButton")); //$NON-NLS-1$
 		}
 	}
+	
+	/**
+	 * Creates and returns a configured button in the given composite with the given
+	 * label. Widget selection callbacks for the returned button will be processed
+	 * by the <code>buttonListener</code>
+	 */
+	private Button createPushButton(Composite parent, String label) {
+		Button button= container.createPushButton(parent, label);
+		button.addSelectionListener(buttonListener);
+		return button;
+	}
+	
 	/**
 	 * Allows the user to enter property files
 	 */
