@@ -1415,8 +1415,8 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * @return boolean
 	 */
 	public boolean isWatchEditEnabled() throws CVSException {
+		IProject project = getProject();
 		try {
-			IProject project = getProject();
 			String property = (String)project.getSessionProperty(WATCH_EDIT_PROP_KEY);
 			if (property == null) {
 				property = project.getPersistentProperty(WATCH_EDIT_PROP_KEY);
@@ -1430,8 +1430,12 @@ public class CVSTeamProvider extends RepositoryProvider {
 			}
 			return Boolean.valueOf(property).booleanValue();
 		} catch (CoreException e) {
-			throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorGettingWatchEdit", project.getName()), e)); //$NON-NLS-1$
+			if (project.exists()) {
+				// We only care if the project still exists
+				throw new CVSException(new CVSStatus(IStatus.ERROR, Policy.bind("CVSTeamProvider.errorGettingWatchEdit", project.getName()), e)); //$NON-NLS-1$
+			}
 		}
+		return false;
 	}
 	
 	public void setWatchEditEnabled(boolean enabled) throws CVSException {
