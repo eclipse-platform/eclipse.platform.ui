@@ -315,7 +315,7 @@ public class InfosetBuilder {
 			Insert insertNode = (Insert)deferredInserts.get(i);
 			String from = insertNode.getSource();
 			String to = insertNode.getTarget();
-			Logger.logWarning(Resources.getString("WS03", "from=\""+from+"\" to=\""+to+"\""));
+			Logger.logWarning(Resources.getString("W002", "from=\""+from+"\" to=\""+to+"\""));
 		}
 	}
 	
