@@ -11,15 +11,19 @@
 
 package org.eclipse.core.internal.plugins;
 
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.model.*;
+import org.eclipse.core.internal.plugins.*;
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.boot.BootLoader;
+
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
-
-import org.eclipse.core.boot.BootLoader;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.model.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class RegistryCacheReader {
 
@@ -32,7 +36,7 @@ public class RegistryCacheReader {
 
 	public MultiStatus cacheReadProblems = null;
 
-	public static final byte REGISTRY_CACHE_VERSION = 7;
+	public static final byte REGISTRY_CACHE_VERSION = 8;
 
 	public static final byte NONLABEL = 0;
 
@@ -53,6 +57,7 @@ public class RegistryCacheReader {
 	public static final byte EXTENSION_POINT_EXTENSIONS_LABEL = 12;
 	public static final byte EXTENSION_POINT_PARENT_LABEL = 13;
 	public static final byte EXTENSION_POINT_SCHEMA_LABEL = 14;
+	public static final byte EXTENSION_POINT_INDEX_LABEL = 56;
 	
 	public static final byte FRAGMENT_INDEX_LABEL = 47;
 	public static final byte FRAGMENT_LABEL = 48;
@@ -66,6 +71,7 @@ public class RegistryCacheReader {
 	public static final byte LIBRARY_EXPORTS_LABEL = 17;
 	public static final byte LIBRARY_EXPORTS_LENGTH_LABEL = 18;
 	public static final byte NAME_LABEL = 19;
+	public static final byte LIBRARY_INDEX_LABEL = 57;
 
 	public static final byte PLUGIN_CLASS_LABEL = 20;
 	public static final byte PLUGIN_ENABLED_LABEL = 21;
@@ -92,6 +98,7 @@ public class RegistryCacheReader {
 	public static final byte REQUIRES_OPTIONAL_LABEL = 52;
 	public static final byte REQUIRES_PLUGIN_NAME_LABEL = 40;
 	public static final byte REQUIRES_RESOLVED_VERSION_LABEL = 41;
+	public static final byte REQUIRES_INDEX_LABEL = 58;
 	public static final byte SOURCE_LABEL = 53;
 	public static final byte SUBELEMENTS_LENGTH_LABEL = 42;
 	public static final byte TYPE_LABEL = 54;
@@ -99,7 +106,7 @@ public class RegistryCacheReader {
 	public static final byte VERSION_LABEL = 44;
 	
 	// So it's easier to add a new label ...
-	public static final byte LARGEST_LABEL = 55;
+	public static final byte LARGEST_LABEL = 58;
 	
 	// String constants for those byte values in the cache that
 	// do not translate directly to strings found in manifest xml
@@ -143,7 +150,6 @@ public int addToObjectTable(Object object) {
 	objectTable.add(object);
 	// return the index of the object just added (i.e. size - 1)
 	return (objectTable.size() - 1);
-
 }
 private void debug(String msg) {
 	System.out.println("RegistryCacheReader: " + msg); //$NON-NLS-1$
@@ -762,6 +768,7 @@ public ExtensionPointModel readExtensionPoint(DataInputStream in, boolean debugF
 }
 public LibraryModel readLibrary(DataInputStream in, boolean debugFlag) {
 	LibraryModel library = cacheFactory.createLibrary();
+	addToObjectTable(library);
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
 	// library.
@@ -900,6 +907,22 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 					}
 					requires = null;
 					break;
+				case REQUIRES_INDEX_LABEL :
+					requires = (PluginPrerequisiteModel) objectTable.get(in.readInt());
+					PluginPrerequisiteModel[] requiresList = plugin.getRequires();
+					PluginPrerequisiteModel[] newRequiresValues = null;
+					if (requiresList == null) {
+						newRequiresValues = new PluginPrerequisiteModel[1];
+						newRequiresValues[0] = requires;
+					} else {
+						newRequiresValues = new PluginPrerequisiteModel[requiresList.length + 1];
+						System.arraycopy(requiresList, 0, newRequiresValues, 0, requiresList.length);
+						newRequiresValues[requiresList.length] = requires;
+					}
+					plugin.setRequires(newRequiresValues);
+					requires = null;
+					requiresList = newRequiresValues = null;
+					break;
 				case PLUGIN_LIBRARY_LABEL :
 					LibraryModel library = readLibrary(in, debugFlag);
 					if (library == null) {
@@ -928,6 +951,22 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 						libraryList = newLibraryValues = null;
 					}
 					library = null;
+					break;
+				case LIBRARY_INDEX_LABEL :
+					library = (LibraryModel) objectTable.get(in.readInt());
+					LibraryModel[] libraryList = plugin.getRuntime();
+					LibraryModel[] newLibraryValues = null;
+					if (libraryList == null) {
+						newLibraryValues = new LibraryModel[1];
+						newLibraryValues[0] = library;
+					} else {
+						newLibraryValues = new LibraryModel[libraryList.length + 1];
+						System.arraycopy(libraryList, 0, newLibraryValues, 0, libraryList.length);
+						newLibraryValues[libraryList.length] = library;
+					}
+					plugin.setRuntime(newLibraryValues);
+					library = null;
+					libraryList = newLibraryValues = null;
 					break;
 				case PLUGIN_EXTENSION_LABEL :
 					ExtensionModel extension = readExtension(in, debugFlag);
@@ -1001,6 +1040,22 @@ public PluginDescriptorModel readPluginDescriptor(DataInputStream in, boolean de
 						extensionPoint = null;
 						extPointList = newExtPointValues = null;
 					}
+					break;
+				case EXTENSION_POINT_INDEX_LABEL:
+					extensionPoint = (ExtensionPointModel) objectTable.get(in.readInt());
+					ExtensionPointModel[] extPointList = plugin.getDeclaredExtensionPoints();
+					ExtensionPointModel[] newExtPointValues = null;
+					if (extPointList == null) {
+						newExtPointValues = new ExtensionPointModel[1];
+						newExtPointValues[0] = extensionPoint;
+					} else {
+						newExtPointValues = new ExtensionPointModel[extPointList.length + 1];
+						System.arraycopy(extPointList, 0, newExtPointValues, 0, extPointList.length);
+						newExtPointValues[extPointList.length] = extensionPoint;
+					}
+					plugin.setDeclaredExtensionPoints(newExtPointValues);
+					extensionPoint = null;
+					extPointList = newExtPointValues = null;
 					break;
 				case FRAGMENT_LABEL :
 					PluginFragmentModel fragment = readPluginFragment(in, debugFlag);
@@ -1145,6 +1200,22 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 						requiresList = newRequiresValues = null;
 					}
 					break;
+				case REQUIRES_INDEX_LABEL :
+					requires = (PluginPrerequisiteModel) objectTable.get(in.readInt());
+					PluginPrerequisiteModel[] requiresList = fragment.getRequires();
+					PluginPrerequisiteModel[] newRequiresValues = null;
+					if (requiresList == null) {
+						newRequiresValues = new PluginPrerequisiteModel[1];
+						newRequiresValues[0] = requires;
+					} else {
+						newRequiresValues = new PluginPrerequisiteModel[requiresList.length + 1];
+						System.arraycopy(requiresList, 0, newRequiresValues, 0, requiresList.length);
+						newRequiresValues[requiresList.length] = requires;
+					}
+					fragment.setRequires(newRequiresValues);
+					requires = null;
+					requiresList = newRequiresValues = null;
+					break;
 				case PLUGIN_LIBRARY_LABEL :
 					LibraryModel library = readLibrary(in, debugFlag);
 					if (library == null) {
@@ -1173,6 +1244,22 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 						library = null;
 						libraryList = newLibraryValues = null;
 					}
+					break;
+				case LIBRARY_INDEX_LABEL :
+					library = (LibraryModel) objectTable.get(in.readInt());
+					LibraryModel[] libraryList = fragment.getRuntime();
+					LibraryModel[] newLibraryValues = null;
+					if (libraryList == null) {
+						newLibraryValues = new LibraryModel[1];
+						newLibraryValues[0] = library;
+					} else {
+						newLibraryValues = new LibraryModel[libraryList.length + 1];
+						System.arraycopy(libraryList, 0, newLibraryValues, 0, libraryList.length);
+						newLibraryValues[libraryList.length] = library;
+					}
+					fragment.setRuntime(newLibraryValues);
+					library = null;
+					libraryList = newLibraryValues = null;
 					break;
 				case PLUGIN_EXTENSION_LABEL :
 					ExtensionModel extension = readExtension(in, debugFlag);
@@ -1247,6 +1334,22 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 						extPointList = newExtPointValues = null;
 					}
 					break;
+				case EXTENSION_POINT_INDEX_LABEL:
+					extensionPoint = (ExtensionPointModel) objectTable.get(in.readInt());
+					ExtensionPointModel[] extPointList = fragment.getDeclaredExtensionPoints();
+					ExtensionPointModel[] newExtPointValues = null;
+					if (extPointList == null) {
+						newExtPointValues = new ExtensionPointModel[1];
+						newExtPointValues[0] = extensionPoint;
+					} else {
+						newExtPointValues = new ExtensionPointModel[extPointList.length + 1];
+						System.arraycopy(extPointList, 0, newExtPointValues, 0, extPointList.length);
+						newExtPointValues[extPointList.length] = extensionPoint;
+					}
+					fragment.setDeclaredExtensionPoints(newExtPointValues);
+					extensionPoint = null;
+					extPointList = newExtPointValues = null;
+					break;
 				case PLUGIN_PARENT_LABEL :
 					fragment.setRegistry((PluginRegistryModel) objectTable.get(in.readInt()));
 					break;
@@ -1274,6 +1377,7 @@ public PluginFragmentModel readPluginFragment(DataInputStream in, boolean debugF
 }
 public PluginPrerequisiteModel readPluginPrerequisite(DataInputStream in, boolean debugFlag) {
 	PluginPrerequisiteModel requires = cacheFactory.createPluginPrerequisite();
+	addToObjectTable(requires);
 	// Use this flag to determine if the read-only flag should be set.  You
 	// can't set it now or you won't be able to add anything more to this
 	// prerequisite.
