@@ -738,42 +738,36 @@ private ArrayList getArrayList(String[] args) {
  */
 private ArrayList getArrayList(String args) {
 	StringBuffer sb = new StringBuffer();
-	boolean missingQuote = false;
+	boolean waitingForQuote = false;
 	ArrayList result = new ArrayList();
-	for (StringTokenizer tokens = new StringTokenizer(args, ", ", true); tokens.hasMoreTokens();) { //$NON-NLS-1$
+	for (StringTokenizer tokens = new StringTokenizer(args, ", \"", true); tokens.hasMoreTokens();) { //$NON-NLS-1$
 		String token = tokens.nextToken();
-		int quotes = countChars(token, '\"'); //$NON-NLS-1$
-		if (!missingQuote) {
-			if (isEven(quotes)) {
-				if (!(token.equals(",") || token.equals(" "))) //$NON-NLS-1$ //$NON-NLS-2$
-					result.add(token);
-			} else {
-				sb.append(token);
-				missingQuote = true;
-			}
-		} else {
-			if (isEven(quotes))
-				sb.append(token);
-			else {
-				sb.append(token);
+		if (waitingForQuote) {
+			sb.append(token);
+			if (token.equals("\"")) {
 				result.add(sb.toString());
 				sb.setLength(0);
-				missingQuote = false;
+				waitingForQuote = false;
+			}
+		} else {
+			if (token.equals("\"")) {
+				// test if we have something like -Dproperty="value"
+				if (result.size() > 0) {
+					int index = result.size() - 1;
+					String last = (String) result.get(index);
+					if (last.charAt(last.length()-1) == '=') {
+						result.remove(index);
+						sb.append(last);
+					}
+				}
+				sb.append(token);
+				waitingForQuote = true;
+			} else {
+				if (!(token.equals(",") || token.equals(" ")))
+					result.add(token);
 			}
 		}
 	}
-	return result;
-}
-
-private boolean isEven(int n) {
-	return (n % 2) == 0;
-}
-
-private int countChars(String string, char target) {
-	int result = 0;
-	for (int i = 0; i < string.length(); i++)
-		if (string.charAt(i) == target)
-			result++;
 	return result;
 }
 
