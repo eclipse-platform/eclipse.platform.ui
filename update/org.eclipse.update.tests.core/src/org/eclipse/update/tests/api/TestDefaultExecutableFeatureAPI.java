@@ -32,7 +32,7 @@ public class TestDefaultExecutableFeatureAPI extends UpdateManagerTestCase {
 		if (remoteFeature == null){
 
 		ISite site = SiteManager.getSite(SOURCE_FILE_SITE);
-		URL url = UpdateManagerUtils.getURL(site.getURL(),Site.DEFAULT_INSTALLED_FEATURE_PATH+"feature3/",null);
+		URL url = UpdateManagerUtils.getURL(site.getURL(),"testAPI/"+Site.DEFAULT_INSTALLED_FEATURE_PATH+"feature3/",null);
 		FeatureReference ref = new FeatureReference();
 		ref.setSite(site);
 		ref.setURL(url);

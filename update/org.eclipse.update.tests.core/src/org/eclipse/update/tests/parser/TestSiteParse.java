@@ -34,7 +34,7 @@ public class TestSiteParse extends UpdateManagerTestCase {
 
 		String path = remoteUrl.getFile();
 		String path2 = remoteSite.getDescription().getURL().getFile();
-		assertEquals(path + "index.html", path2);
+		assertEquals(path + "index.html", "/"+path2);
 
 	}
 

@@ -45,7 +45,7 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 		assertTrue(instSites.length>0);
 		System.out.println("Local Site:"+instSites[0].getSite().getURL().toExternalForm());
 		
-		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE);
+		ISite remoteSite = SiteManager.getSite(SOURCE_FILE_SITE_INSTALLED);
 		IFeature remoteFeature = remoteSite.getFeatureReferences()[0].getFeature();
 		instSites[0].getSite().install(remoteFeature,null,null);
 		
@@ -53,6 +53,7 @@ public class TestSiteManagerAPI extends UpdateManagerTestCase {
 		assertTrue(features.length>0);
 
 		//cleanup
+		assertNotNull(remoteFeature);		
 		File file = new File(instSites[0].getSite().getURL().getFile()+File.separator+Site.DEFAULT_INSTALLED_FEATURE_PATH+remoteFeature.getVersionedIdentifier());
 		UpdateManagerUtils.removeFromFileSystem(file);
 		file = new File(instSites[0].getSite().getURL().getFile()+File.separator+Site.DEFAULT_PLUGIN_PATH+"org.eclipse.update.plugin1_1.1.1");

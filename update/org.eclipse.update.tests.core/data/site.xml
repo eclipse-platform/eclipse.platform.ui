@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site type="org.eclipse.update.core.file">
 <description url="info/siteInfo.html"/>
-  <feature url="install/features/feature3">
+  <feature url="testAPI/features/feature3">
     <category name="eclipse/UML"/>
   </feature>
   <feature url="http://www.eclipse.org/feature2">

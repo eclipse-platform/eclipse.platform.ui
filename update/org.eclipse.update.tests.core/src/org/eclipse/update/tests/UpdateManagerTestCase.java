@@ -26,6 +26,7 @@ public abstract class UpdateManagerTestCase extends TestCase {
 	protected static String dataPath;
 
 	protected static URL SOURCE_FILE_SITE;
+	protected static URL SOURCE_FILE_SITE_INSTALLED;	
 	protected static URL SOURCE_HTTP_SITE;
 	protected static URL TARGET_FILE_SITE;
 
@@ -59,6 +60,7 @@ public abstract class UpdateManagerTestCase extends TestCase {
 
 		try {
 			SOURCE_FILE_SITE = new File(dataPath).toURL();
+			SOURCE_FILE_SITE_INSTALLED = new File(dataPath+"testAPI/").toURL();
 			SOURCE_HTTP_SITE = new URL("http", getHttpHost(),getHttpPort(), bundle.getString("HTTP_PATH_1"));
 			TARGET_FILE_SITE = new URL("file",null, homePath +"/target/");
 		} catch (Exception e) {

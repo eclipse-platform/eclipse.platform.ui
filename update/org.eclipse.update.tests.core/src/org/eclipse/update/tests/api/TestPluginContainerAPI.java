@@ -19,10 +19,10 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 	/**
 	 * the Site to test
 	 */
-	private Site getSite() throws CoreException {
+	private Site getSite() throws CoreException, MalformedURLException {
 		if (site == null) {
 
-			site = (Site)SiteManager.getSite(SOURCE_FILE_SITE);
+			site = (Site)SiteManager.getSite(new URL(SOURCE_FILE_SITE,"testAPI/"));
 
 		}
 		return site;
@@ -50,7 +50,7 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 
 	public void testAbstractFeature() throws CoreException, MalformedURLException {
 		PluginEntry pluginEntry = new PluginEntry();
-		pluginEntry.setVersionedIdentifier(new VersionedIdentifier("id", "ver"));
+		pluginEntry.setVersionedIdentifier(new VersionedIdentifier("id", "6"));
 		Feature _feature = getFeature();
 		((DefaultFeature)_feature).addPluginEntry(pluginEntry);
 		assertEquals(_feature.getPluginEntryCount(), 1);
@@ -58,9 +58,9 @@ public class TestPluginContainerAPI extends UpdateManagerTestCase {
 
 	}
 
-	public void testAbstactSite() throws CoreException {
+	public void testAbstactSite() throws CoreException, MalformedURLException {
 		PluginEntry pluginEntry = new PluginEntry();
-		pluginEntry.setVersionedIdentifier(new VersionedIdentifier("id", "ver"));
+		pluginEntry.setVersionedIdentifier(new VersionedIdentifier("id", "6"));
 		Site _site = getSite();
 		_site.addPluginEntry(pluginEntry);
 		assertEquals(_site.getPluginEntryCount(), 1);
