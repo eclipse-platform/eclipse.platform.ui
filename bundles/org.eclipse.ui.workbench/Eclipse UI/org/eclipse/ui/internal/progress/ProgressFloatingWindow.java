@@ -49,7 +49,12 @@ class ProgressFloatingWindow extends AssociatedWindow {
 			Control associatedControl) {
 		super(workbenchWindow.getShell(), associatedControl);
 		this.window = workbenchWindow;
-		setShellStyle(SWT.NO_TRIM | SWT.ON_TOP );
+		
+		//Workaround for Bug 50917
+		if("carbon".equals(SWT.getPlatform())) //$NON-NLS-1$
+			setShellStyle(SWT.NO_TRIM | SWT.ON_TOP );
+		else
+			setShellStyle(SWT.NO_TRIM);
 	}
 	/*
 	 * (non-Javadoc)
