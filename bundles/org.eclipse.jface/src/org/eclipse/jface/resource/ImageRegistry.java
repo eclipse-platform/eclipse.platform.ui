@@ -146,9 +146,7 @@ public class ImageRegistry {
     /**
      * Returns the image associated with the given key in this registry, 
      * or <code>null</code> if none.
-     *
-     * @deprecated use getDescriptor(String)
-     *
+     * 
      * @param key the key
      * @return the image, or <code>null</code> if none
      */
