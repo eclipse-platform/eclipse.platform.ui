@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import java.util.Arrays;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.tests.harness.EclipseWorkspaceTest;
 import org.osgi.service.prefs.BackingStoreException;
