@@ -36,7 +36,7 @@ public class InstallConfigurationModel extends ModelObject {
 			// file doesn't exist, ok, log it and continue 
 			// log no config
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_WARNINGS) {
-				UpdateManagerPlugin.getPlugin().debug(getLocationURLString() + " does not exist, the local site is not in synch with the filesystem and is pointing to a file taht doesn;t exist.");
+				UpdateManagerPlugin.getPlugin().debug(getLocationURLString() + " does not exist, the local site is not in synch with the filesystem and is pointing to a file that doesn't exist.");
 			}
 		} catch (SAXException exception) {
 			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();

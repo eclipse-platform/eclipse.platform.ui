@@ -278,7 +278,8 @@ public class InternalSiteManager {
 				siteLocation.mkdirs();
 				URL siteURL = siteLocation.toURL();
 				site = (Site) getSite(siteURL, true);
-				site.save();
+				// FIXME, when creating a site, should we manage site.xml ?
+				//site.save();
 			} catch (MalformedURLException e) {
 				throw newCoreException("Cannot create a URL from:" + siteLocation.getAbsolutePath(), e);
 			}
