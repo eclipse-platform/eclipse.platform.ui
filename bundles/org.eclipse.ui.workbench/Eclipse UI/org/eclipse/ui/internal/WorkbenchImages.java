@@ -14,6 +14,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Assert;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 
@@ -63,7 +64,7 @@ public /*final*/ class WorkbenchImages {
 	/* Declare Common paths */
 
 	// Subdirectory (under the package containing this class) where 16 color images are
-	private static final URL URL_BASIC = WorkbenchPlugin.getDefault().getDescriptor().getInstallURL();
+	private static final URL URL_BASIC = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
 
 	public final static String ICONS_PATH = "icons/full/";//$NON-NLS-1$
 	

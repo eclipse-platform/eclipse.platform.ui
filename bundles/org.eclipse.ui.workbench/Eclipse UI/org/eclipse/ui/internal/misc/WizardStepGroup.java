@@ -14,6 +14,7 @@ activated and used by other components.
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
@@ -24,6 +25,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.WizardStep;
@@ -105,7 +107,7 @@ public class WizardStepGroup {
 		String iconPath = "icons/full/clcl16/"; //$NON-NLS-1$
 		ImageDescriptor desc = null;
 		try {
-			URL url_basic = WorkbenchPlugin.getDefault().getDescriptor().getInstallURL();
+			URL url_basic = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
 			URL url = new URL(url_basic, iconPath + iconFileName);
 			desc = ImageDescriptor.createFromURL(url);
 		} catch (MalformedURLException e) {

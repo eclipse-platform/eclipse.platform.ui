@@ -11,9 +11,11 @@
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * A LinkedResourceDecorator decorates an element's image with a linked 
@@ -28,7 +30,7 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 	static {
 		String fileName = WorkbenchImages.ICONS_PATH + "ovr16/" + ICON_NAME;
 		
-		LINKED = WorkbenchImages.getImageDescriptorFromPlugin(WorkbenchPlugin.getDefault().getDescriptor(), fileName); 
+		LINKED = WorkbenchImages.getImageDescriptorFromPlugin(Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor(), fileName); 
 	}
 		
 	/**

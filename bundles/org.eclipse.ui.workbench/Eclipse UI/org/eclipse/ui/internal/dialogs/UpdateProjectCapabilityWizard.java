@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -222,7 +223,7 @@ public class UpdateProjectCapabilityWizard extends MultiStepCapabilityWizard {
 	protected void initializeDefaultPageImageDescriptor() {
 		String iconPath = "icons/full/";//$NON-NLS-1$		
 		try {
-			URL installURL = WorkbenchPlugin.getDefault().getDescriptor().getInstallURL();
+			URL installURL = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
 			URL url = new URL(installURL, iconPath + "wizban/newprj_wiz.gif");//$NON-NLS-1$
 			ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 			setDefaultPageImageDescriptor(desc);

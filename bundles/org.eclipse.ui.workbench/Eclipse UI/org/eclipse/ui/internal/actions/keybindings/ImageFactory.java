@@ -13,10 +13,11 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 
 final class ImageFactory {
 
@@ -34,7 +35,7 @@ final class ImageFactory {
 
 	private static ImageDescriptor create(String path) {
 		try {
-			URL url = WorkbenchPlugin.getDefault().getDescriptor().getInstallURL();
+			URL url = Platform.getPlugin(PlatformUI.PLUGIN_ID).getDescriptor().getInstallURL();
 			url = new URL(url, path);
 			return ImageDescriptor.createFromURL(url);
 		} catch (MalformedURLException eMalformedURL) {
