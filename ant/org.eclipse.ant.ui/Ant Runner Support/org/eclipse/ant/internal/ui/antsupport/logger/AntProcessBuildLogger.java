@@ -36,8 +36,6 @@ import org.eclipse.debug.ui.console.IConsoleHyperlink;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
 	
-/**
- */
 public class AntProcessBuildLogger extends NullBuildLogger {
 	
 	private File fBuildFileParent= null;
@@ -199,7 +197,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		return fProcess;
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * Set the start time.
 	 * 
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
@@ -208,9 +206,8 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		fStartTime= System.currentTimeMillis();
 	}
 	
-	/**
-	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.
-	 * ant.BuildEvent)
+	/* (non-Javadoc)
+	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	public void buildFinished(BuildEvent event) {
 		handleException(event);
@@ -269,14 +266,16 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			return result.toString();
 		}
 	
-	/**
-	 * @see BuildListener#messageLogged(BuildEvent)
+	/* (non-Javadoc)
+	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
 	public void messageLogged(BuildEvent event) {
 		if (event.getPriority() > getMessageOutputLevel()) {
 			return;
 		}
-		logMessage(event.getMessage(), event, -1);
+		if (event.getMessage() != null && event.getMessage().length() > 0) {
+			logMessage(event.getMessage(), event, -1);
+		}
 	}
 	
 	protected void handleException(BuildEvent event) {
@@ -291,7 +290,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 					event, Project.MSG_ERR);	
 	}
 
-	/**
+	/* (non-Javadoc)
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	public void targetStarted(BuildEvent event) {
@@ -303,5 +302,4 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		msg.append(':');
 		logMessage(msg.toString(), event, Project.MSG_INFO);
 	}
-
 }

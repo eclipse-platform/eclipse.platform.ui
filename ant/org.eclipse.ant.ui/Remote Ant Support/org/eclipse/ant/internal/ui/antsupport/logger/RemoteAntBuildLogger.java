@@ -244,8 +244,12 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		}
 	}
 	private void marshalMessage(BuildEvent event) {
+		String eventMessage= event.getMessage().trim();
+		if (eventMessage.length() == 0) {
+			return;
+		}
 		try {
-			BufferedReader r = new BufferedReader(new StringReader(event.getMessage().trim()));
+			BufferedReader r = new BufferedReader(new StringReader(eventMessage));
 			String line = r.readLine();
 			StringBuffer message;
 			int priority= event.getPriority();
@@ -262,7 +266,11 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	}
 
 	private void marshalTaskMessage(BuildEvent event) throws IOException {
-		BufferedReader r = new BufferedReader(new StringReader(event.getMessage()));
+		String eventMessage= event.getMessage().trim();
+		if (eventMessage.length() == 0) {
+			return;
+		}
+		BufferedReader r = new BufferedReader(new StringReader(eventMessage));
 		String line = r.readLine();
 		StringBuffer message;
 		String taskName= event.getTask().getTaskName();
