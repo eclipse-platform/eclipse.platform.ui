@@ -35,6 +35,7 @@ public interface IClasspathEntry {
 	public IClasspathEntry getParent();
 	
 	/**
+	 * Move this entries child entry in the direction indicated.
 	 * @param up if <code>true</code> move the child up one position in the order of the entries.
 	 * Otherwise, move the child down one position.
 	 * @param child the child entry to move

@@ -21,10 +21,6 @@ import java.util.StringTokenizer;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.ui.model.AntUtil;
 
-/** 
- * This class is a work in progress
- *
- */
 public class ClasspathModel extends AbstractClasspathEntry {
 	
 	public static final int GLOBAL= 0;
