@@ -12,9 +12,6 @@ package org.eclipse.core.internal.plugins;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.StringTokenizer;
-import java.util.Vector;
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.ILibrary;
 import org.eclipse.core.runtime.Platform;
@@ -38,7 +35,7 @@ public class PluginClassLoader extends URLClassLoader {
 			throw new IllegalArgumentException();
 
 		ILibrary[] libs = descriptor.getRuntimeLibraries();
-		String[] devPath = computeDevPath();
+		String[] devPath = computeDevPath(bundle);
 		URL pluginBase = descriptor.getInstallURL();
 		try {
 			pluginBase = Platform.resolve(descriptor.getInstallURL());
@@ -65,22 +62,14 @@ public class PluginClassLoader extends URLClassLoader {
 		return urls;
 	}
 
-	private static String[] computeDevPath() { //TODO This must use the new classpath computer for dev.properties //TODO Do we want to put much effort for this non API thing?
-		//Code copied from DefaultAdaptor
-		if (!BootLoader.inDevelopmentMode())
+	private static String[] computeDevPath(Bundle bundle) {
+		if (!DevClassPathHelper.inDevelopmentMode())
 			return new String[0];
 
-		Vector devClassPath = new Vector(6);
-		StringTokenizer st = new StringTokenizer(System.getProperty("osgi.dev"), ","); //$NON-NLS-1$ //$NON-NLS-2$
-		while (st.hasMoreTokens()) {
-			String tok = st.nextToken();
-			if (!tok.equals("")) { //$NON-NLS-1$
-				devClassPath.addElement(tok);
-			}
-		}
-		String[] devCP = new String[devClassPath.size()];
-		devClassPath.toArray(devCP);
-		return devCP;
+		String pluginId = bundle.getSymbolicName();
+		if (pluginId == null)
+			return new String[0];
+		return DevClassPathHelper.getDevClassPath(pluginId);
 	}
 
 	protected Class findClass(String name) throws ClassNotFoundException {
