@@ -212,7 +212,8 @@ public class FormToolkit {
 				Rectangle bounds = composite.getBounds();
 				GC gc = e.gc;
 				gc.setForeground(colors.getColor(FormColors.SEPARATOR));
-				gc.setBackground(colors.getBackground());
+				if (colors.getBackground()!=null)
+					gc.setBackground(colors.getBackground());
 				gc.fillGradientRectangle(0, 0, bounds.width, bounds.height,
 						false);
 			}

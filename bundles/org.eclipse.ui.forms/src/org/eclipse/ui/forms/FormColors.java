@@ -122,7 +122,9 @@ public class FormColors {
 		if (getColor(FormColors.TB_BG)!=null) return;
 			
 		RGB tbBg = getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT);
-		RGB formBackground = getBackground().getRGB();
+		Color bg = getImpliedBackground();
+		RGB formBackground = bg.getRGB();
+			
 		// blend 77% white with the title background gradient
 		tbBg = blend(formBackground, tbBg, 77);
 		createColor(FormColors.TB_BG, tbBg);
@@ -195,9 +197,10 @@ public class FormColors {
 			border = getColor(BORDER);
 		else {
 			border = display.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
-			if (border.getRed()==background.getRed() &&
-					border.getGreen()==background.getGreen() &&
-					border.getBlue()==background.getBlue())
+			Color bg = getImpliedBackground();
+			if (border.getRed()==bg.getRed() &&
+					border.getGreen()==bg.getGreen() &&
+					border.getBlue()==bg.getBlue())
 				border = display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW);
 		}
 	}
@@ -230,6 +233,7 @@ public class FormColors {
 	public Color getBackground() {
 		return background;
 	}
+	
 	/**
 	 * Returns the current foreground color.
 	 * 
@@ -255,8 +259,9 @@ public class FormColors {
 	 *         otherwise.
 	 */
 	public boolean isWhiteBackground() {
-		return background.getRed() == 255 && background.getGreen() == 255
-				&& background.getBlue() == 255;
+		Color bg = getImpliedBackground();
+		return bg.getRed() == 255 && bg.getGreen() == 255
+				&& bg.getBlue() == 255;
 	}
 	/**
 	 * Returns the color object for the provided key or <samp>null </samp> if
@@ -315,5 +320,11 @@ public class FormColors {
 	 */
 	private int blend(int v1, int v2, int ratio) {
 		return (ratio*v1 + (100-ratio)*v2)/100;
+	}
+	
+	private Color getImpliedBackground() {
+		if (getBackground()!=null)
+			return getBackground();
+		return getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 	}
 }
