@@ -167,7 +167,7 @@ public class JarVerifier extends Verifier {
 	/*
 	 * 
 	 */
-	private List readJarFile(JarFile jarFile)
+	private List readJarFile(JarFile jarFile, String identifier)
 		throws IOException, InterruptedException {
 		List list = new ArrayList();
 		byte[] buffer = new byte[4096];
@@ -175,7 +175,7 @@ public class JarVerifier extends Verifier {
 		JarEntry currentEntry = null;
 		InputStream in = null;
 		if (monitor != null)
-			monitor.setTaskName(Policy.bind("JarVerifier.Verify", jarFile.getName())); //$NON-NLS-1$ 
+			monitor.setTaskName(Policy.bind("JarVerifier.Verify", identifier == null ? jarFile.getName(): identifier)); //$NON-NLS-1$ 
 
 		try {
 			while (entries.hasMoreElements()) {
@@ -230,7 +230,7 @@ public class JarVerifier extends Verifier {
 		result.isFeatureVerification(isFeatureVerification);
 
 		if (jarFile!=null) {
-				result = verify(jarFile.getAbsolutePath());
+				result = verify(jarFile.getAbsolutePath(), reference.getIdentifier());
 		} else {
 			result.setVerificationCode(IVerificationResult.TYPE_ENTRY_UNRECOGNIZED);
 		}
@@ -241,12 +241,12 @@ public class JarVerifier extends Verifier {
 	/*
 	 * 
 	 */
-	private JarVerificationResult verify(String file) {
+	private JarVerificationResult verify(String file, String identifier) {
 
 		try {
 
 			// verify integrity
-			verifyIntegrity(file);
+			verifyIntegrity(file, identifier);
 
 			// do not close input stream
 			// as verifyIntegrity already did it
@@ -309,7 +309,7 @@ public class JarVerifier extends Verifier {
 	/*
 	 * Verifies the integrity of the JAR
 	 */
-	private void verifyIntegrity(String file) {
+	private void verifyIntegrity(String file, String identifier) {
 
 		JarFile jarFile = null;
 
@@ -318,7 +318,7 @@ public class JarVerifier extends Verifier {
 			// a security exception will be thrown
 			// while reading it
 			jarFile = new JarFile(file, true);
-			List filesInJar = readJarFile(jarFile);
+			List filesInJar = readJarFile(jarFile, identifier);
 
 			// you have to read all the files once
 			// before getting the certificates 
