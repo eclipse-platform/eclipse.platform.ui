@@ -143,7 +143,7 @@ public class WorkingSetManagerData extends RequestData {
 		if (name == null || name.length() == 0) {
 			// See if anything is set in the preferences
 			name = HelpPlugin.getDefault().getPluginPreferences().getString(HelpSystem.WORKING_SET);
-			if (name == null || name.length() == 0)
+			if (name == null || name.length() == 0 || wsmgr.getWorkingSet(name) == null)
 				name = WebappResources.getString("All", request);
 		}
 		return name;

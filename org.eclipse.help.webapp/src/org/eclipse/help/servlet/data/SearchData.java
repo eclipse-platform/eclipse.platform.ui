@@ -195,15 +195,17 @@ public class SearchData extends RequestData {
 					HelpSystem.WORKING_SET);
 		}
 
-		if (workingSetName == null || workingSetName.length() == 0)
+		if (workingSetName == null
+			|| workingSetName.length() == 0
+			|| HelpSystem.getWorkingSetManager(getLocale()).getWorkingSet(
+				workingSetName)
+				== null)
 			workingSetName = WebappResources.getString("All", request);
 		return workingSetName;
-	}
-
-	/**
-	 * This method is used to persist the working set name and is called
-	 * from the search view, after each search.
-	 */
+	} /**
+			 * This method is used to persist the working set name and is called
+			 * from the search view, after each search.
+			 */
 	public void saveScope() {
 		if (getMode() == MODE_INFOCENTER)
 			return;
@@ -218,19 +220,16 @@ public class SearchData extends RequestData {
 				workingSet);
 			HelpPlugin.getDefault().savePluginPreferences();
 		}
-	}
-
-	/**
-	* Call the search engine, and get results or the percentage of 
-	* indexed documents.
-	*/
+	} /**
+		* Call the search engine, and get results or the percentage of 
+		* indexed documents.
+		*/
 	private void loadSearchResults() {
 		try {
 			SearchProgressMonitor pm =
 				SearchProgressMonitor.getProgressMonitor(getLocale());
 			if (pm.isDone()) {
 				this.indexCompletion = 100;
-
 				SearchResults results = createHitCollector();
 				HelpSystem.getSearchManager().search(
 					createSearchQuery(),
@@ -257,7 +256,6 @@ public class SearchData extends RequestData {
 			fieldSearchStr != null
 				? new Boolean(fieldSearchStr).booleanValue()
 				: false;
-
 		return new SearchQuery(
 			searchWord,
 			fieldSearch,

@@ -57,7 +57,8 @@ TD, TR {
 #booksContainer {
 	background:Window;
 	border:1px solid ThreeDShadow;
-	margin:0px 10px;
+	margin:10px;
+	padding-left:5px;
 	overflow:auto;
 	height:350px;
 }
@@ -128,9 +129,11 @@ function doSubmit()
 	{
 		var workingSet = document.getElementById("workingSet").value;
 		if (!workingSet || workingSet == "")
-			return;
+			return false;
 	
 		var hrefs = getSelectedResources();
+		if (!hrefs || hrefs == "")
+			return false;
 		var query = "operation="+'<%=data.getOperation()%>'+"&workingSet="+escape(workingSet)+ hrefs+"&oldName="+escape(oldName);
 		window.opener.location.replace("workingSetManager.jsp?"+query);
 		window.opener.focus();
