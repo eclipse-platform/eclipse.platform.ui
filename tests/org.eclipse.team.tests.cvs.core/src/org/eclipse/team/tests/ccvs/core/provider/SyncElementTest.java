@@ -57,9 +57,13 @@ public class SyncElementTest extends EclipseTest {
 	}
 
 	public static Test suite() {
-		TestSuite suite = new TestSuite(SyncElementTest.class);
-		return new CVSTestSetup(suite);
-		//return new CVSTestSetup(new SyncElementTest("testAdditionConflicts"));
+		String testName = System.getProperty("eclipse.cvs.testName");
+		if (testName == null) {
+			TestSuite suite = new TestSuite(SyncElementTest.class);
+			return new CVSTestSetup(suite);
+		} else {
+			return new CVSTestSetup(new SyncElementTest(testName));
+		}
 	}
 	
 	/*
@@ -669,12 +673,12 @@ public class SyncElementTest extends EclipseTest {
 		
 		// Checkout a copy and make some modifications
 		IProject copy = checkoutCopy(project, "-copy");
-		appendText(copy.getFile("file1.txt"), "", true);
+		appendText(copy.getFile("file1.txt"), "start", true);
 		setContentsAndEnsureModified(copy.getFile("folder1/a.txt"));
 		getProvider(copy).checkin(new IResource[] {copy}, IResource.DEPTH_INFINITE, DEFAULT_MONITOR);
 
 		// Make the same modifications to the original
-		appendText(project.getFile("file1.txt"), "", false);
+		appendText(project.getFile("file1.txt"), "start", true);
 		setContentsAndEnsureModified(project.getFile("folder1/a.txt"), "unique text");
 		
 		// Get the sync tree for the project
@@ -682,7 +686,7 @@ public class SyncElementTest extends EclipseTest {
 		assertSyncEquals("testGranularityContents", tree, 
 			new String[] { "file1.txt", "folder1/", "folder1/a.txt"}, 
 			new int[] {
-				IRemoteSyncElement.IN_SYNC,
+				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE | IRemoteSyncElement.PSEUDO_CONFLICT,
 				IRemoteSyncElement.IN_SYNC,
 				IRemoteSyncElement.CONFLICTING | IRemoteSyncElement.CHANGE },
 			IRemoteSyncElement.GRANULARITY_CONTENTS);

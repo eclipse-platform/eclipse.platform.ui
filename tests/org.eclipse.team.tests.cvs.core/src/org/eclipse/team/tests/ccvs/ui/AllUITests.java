@@ -29,6 +29,7 @@ public class AllUITests extends EclipseTest {
 		TestSuite suite = new TestSuite();
 		suite.addTest(CheckoutOperationTests.suite());
 		suite.addTest(CompareOperationTests.suite());
+		suite.addTest(MiscOperationsTests.suite());
 		return suite;
 	}
 	
