@@ -19,12 +19,14 @@ package org.eclipse.ui.branding;
  */
 public interface IProductConstants {
 	/**
-	 * The application name, used to initialize the SWT Display.  This
-	 * value is distinct from the string displayed in the application
-	 * title bar.
+	 * The SWT application name, used to initialize the SWT Display.
+	 * <p>  
+	 * This value is used to refer to the application in .XDefaults
+	 * files on X server based window systems such as Motif.
+	 * </p>
 	 * <p>
-	 * E.g., On motif, this can be used to set the name used for
-	 * resource lookup.
+	 * To obtain a human-readable name for the product, use
+	 * <code>IProduct.getName()</code>.
 	 * </p>
 	 * @see org.eclipse.swt.widgets.Display#setAppName
 	 */
