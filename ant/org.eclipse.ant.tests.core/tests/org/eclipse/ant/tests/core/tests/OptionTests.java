@@ -409,4 +409,32 @@ public class OptionTests extends AbstractAntTest {
 		
 	}
 	
+	/**
+	 * Tests the "-diagnostics" option with no ANT_HOME set
+	 * bug 25693
+	 */
+	public void testDiagnosticsWithNoAntHome() throws CoreException {
+		
+		run("input.xml", new String[]{"-diagnostics"});
+		String msg= (String)AntTestChecker.getDefault().getMessages().get(0);
+		String msg2= (String)AntTestChecker.getDefault().getMessages().get(12);
+		assertTrue("Message incorrect: " + msg, msg.equals("------- Ant diagnostics report -------"));
+		assertTrue("Message2 incorrect: " + msg2, msg2.equals("ANT_HOME must be set to use Ant diagnostics"));
+	}
+	
+	/**
+	 * Tests the "-diagnostics" option with ANT_HOME set
+	 * bug 25693
+	 */
+	/*public void testDiagnostics() throws CoreException {
+		AntCorePlugin.getPlugin().getPreferences().setAntHome(getAntHome());
+		try {
+			run("input.xml", new String[]{"-diagnostics"});
+		} finally {
+			restorePreferenceDefaults();
+		}
+		
+		String msg= (String)AntTestChecker.getDefault().getMessages().get(1);
+		assertTrue("Message incorrect: " + msg, msg.equals("testing handling input requests"));
+	}*/
 }
