@@ -27,6 +27,10 @@ public class AntSourceLookupParticipant extends AbstractSourceLookupParticipant 
 		if (object instanceof AntStackFrame) {
 			return ((AntStackFrame)object).getSourceName();
 		}
+        if (object instanceof String) {
+            // assume it's a file name
+            return (String)object;
+        }
 		return null;
 	}
 }
