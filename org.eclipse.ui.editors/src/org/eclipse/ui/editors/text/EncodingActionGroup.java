@@ -153,15 +153,17 @@ public class EncodingActionGroup extends ActionGroup {
 			}
 			
 			// update enable state
-			if (editor.isDirty()) {
+			if (editor.isDirty())
 				setEnabled(false);
-			} else {
-				String current= getEncoding(editor);
-				if (fIsDefault)
-					setEnabled(current != null);
-				else
-					setEnabled(!fEncoding.equals(current));
-			}
+			else
+				setEnabled(true);
+
+			// update checked state
+			String current= getEncoding(editor);
+			if (fIsDefault)
+				setChecked(current == null);
+			else
+				setChecked(fEncoding.equals(current));
 		}
 	};
 	
@@ -185,6 +187,11 @@ public class EncodingActionGroup extends ActionGroup {
 			ITextEditor editor= getTextEditor();
 			setEnabled(editor != null && !editor.isDirty());
 		}
+		
+
+
+
+
 		
 		/*
 		 * @see IAction#run()
@@ -279,12 +286,12 @@ public class EncodingActionGroup extends ActionGroup {
 		ResourceBundle b= TextEditorMessages.getResourceBundle();
 		
 		if (SYSTEM_ENCODING != null)
-			fRetargetActions.add(new RetargetTextEditorAction(b, "Editor.ConvertEncoding.System.", IEncodingActionsConstants.SYSTEM)); //$NON-NLS-1$
+			fRetargetActions.add(new RetargetTextEditorAction(b, "Editor.ConvertEncoding.System.", IEncodingActionsConstants.SYSTEM, IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$
 		
 		for (int i= 0; i < ENCODINGS.length; i++)
-			fRetargetActions.add(new RetargetTextEditorAction(b, "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0])); //$NON-NLS-1$ //$NON-NLS-2$
+			fRetargetActions.add(new RetargetTextEditorAction(b, "Editor.ConvertEncoding." + ENCODINGS[i][0] + ".", ENCODINGS[i][0], IAction.AS_RADIO_BUTTON)); //$NON-NLS-1$ //$NON-NLS-2$
 		
-		fRetargetActions.add(new RetargetTextEditorAction(b, "Editor.ConvertEncoding.Custom.", IEncodingActionsConstants.CUSTOM)); //$NON-NLS-1$
+		fRetargetActions.add(new RetargetTextEditorAction(b, "Editor.ConvertEncoding.Custom.", IEncodingActionsConstants.CUSTOM, IAction.AS_PUSH_BUTTON)); //$NON-NLS-1$
 	}
 	
 	/*

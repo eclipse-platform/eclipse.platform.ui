@@ -1,5 +1,5 @@
 /**********************************************************************
-Copyright (c) 2000, 2002 IBM Corp. and others.
+Copyright (c) 2000, 2003 IBM Corp. and others.
 All rights reserved. This program and the accompanying materials
 are made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
@@ -43,6 +43,31 @@ public final class RetargetTextEditorAction extends ResourceAction {
 			update(event);
 		}
 	};
+
+	/**
+	 * Creates a new action. The action configures its initial visual 
+	 * representation from the given resource bundle. If this action's
+	 * wrapped action is set to <code>null</code> it also uses the 
+	 * information in the resource bundle.
+	 *
+	 * @param bundle the resource bundle
+	 * @param prefix a prefix to be prepended to the various resource keys
+	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   <code>null</code> if none
+	 * @param	style one of <code>IAction.AS_PUSH_BUTTON</code>, <code>IAction.AS_CHECK_BOX</code>,
+ 	 *			and <code>IAction.AS_RADIO_BUTTON</code>.
+	 *
+	 * @see ResourceAction#ResourceAction
+	 * @see IAction#AS_CHECK_BOX
+	 * @see IAction#AS_DROP_DOWN_MENU
+	 * @see IAction#AS_PUSH_BUTTON
+	 * @see IAction#AS_RADIO_BUTTON
+	 * @since 2.1
+	 */
+	public RetargetTextEditorAction(ResourceBundle bundle, String prefix, int style) {
+		super(bundle, prefix, style);
+		fDefaultText= getText();
+	}
 	
 	/**
 	 * Creates a new action. The action configures its initial visual 
@@ -59,6 +84,33 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	public RetargetTextEditorAction(ResourceBundle bundle, String prefix) {
 		super(bundle, prefix);
 		fDefaultText= getText();
+	}
+
+	/**
+	 * Creates a new action. The action configures its initial visual 
+	 * representation from the given resource bundle. If this action's
+	 * wrapped action is set to <code>null</code> it also uses the 
+	 * information in the resource bundle. The action gets the given
+	 * action id.
+	 *
+	 * @param bundle the resource bundle
+	 * @param prefix a prefix to be prepended to the various resource keys
+	 *   (described in <code>ResourceAction</code> constructor), or <code>null</code> if none
+	 * @param actionId the action id
+	 * @param	style one of <code>IAction.AS_PUSH_BUTTON</code>, <code>IAction.AS_CHECK_BOX</code>,
+ 	 *			and <code>IAction.AS_RADIO_BUTTON</code>.
+	 *
+	 * @see ResourceAction#ResourceAction
+	 * @see IAction#AS_CHECK_BOX
+	 * @see IAction#AS_DROP_DOWN_MENU
+	 * @see IAction#AS_PUSH_BUTTON
+	 * @see IAction#AS_RADIO_BUTTON
+	 * @since 2.1
+	 */
+	public RetargetTextEditorAction(ResourceBundle bundle, String prefix, String actionId, int style) {
+		super(bundle, prefix, style);
+		fDefaultText= getText();
+		setId(actionId);
 	}
 	
 	/**
@@ -117,12 +169,14 @@ public final class RetargetTextEditorAction extends ResourceAction {
 		if (fAction == null) {
 			
 			setEnabled(false);
+			setChecked(false);
 			setText(fDefaultText);
 			setToolTipText(""); //$NON-NLS-1$
 		
 		} else {
 						
 			setEnabled(fAction.isEnabled());
+			super.setChecked(fAction.isChecked());
 			setText(fAction.getText());
 			setToolTipText(fAction.getToolTipText());
 			fAction.addPropertyChangeListener(fListener);

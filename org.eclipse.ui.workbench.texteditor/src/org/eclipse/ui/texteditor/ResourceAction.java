@@ -47,6 +47,38 @@ public abstract class ResourceAction extends Action {
 		
 		return value;
 	}
+
+	/**
+	 * Creates a new action that configures itself from the given resource
+	 * bundle.
+	 * <p>
+	 * The following keys, prepended by the given option prefix,
+	 * are used for retrieving resources from the given bundle:
+	 * <ul>
+	 *   <li><code>"label"</code> - <code>setText</code></li>
+	 *   <li><code>"tooltip"</code> - <code>setToolTipText</code></li>
+	 *   <li><code>"image"</code> - <code>setImageDescriptor</code></li>
+	 *   <li><code>"description"</code> - <code>setDescription</code></li>
+	 * </ul>
+	 * </p>
+	 *
+	 * @param bundle the resource bundle
+	 * @param prefix a prefix to be prepended to the various resource keys, or 
+	 *   <code>null</code> if none
+ 	 * @param	style one of <code>IAction.AS_PUSH_BUTTON</code>, <code>IAction.AS_CHECK_BOX</code>,
+ 	 *			and <code>IAction.AS_RADIO_BUTTON</code>.
+	 *
+	 * @see ResourceAction#ResourceAction
+	 * @see IAction#AS_CHECK_BOX
+	 * @see IAction#AS_DROP_DOWN_MENU
+	 * @see IAction#AS_PUSH_BUTTON
+	 * @see IAction#AS_RADIO_BUTTON
+	 * @since 2.1
+	 */
+	public ResourceAction(ResourceBundle bundle, String prefix, int style) {
+		super(null, style);
+		initialize(bundle, prefix);
+	}
 	
 	/**
 	 * Creates a new action that configures itself from the given resource
@@ -68,7 +100,19 @@ public abstract class ResourceAction extends Action {
 	 */
 	public ResourceAction(ResourceBundle bundle, String prefix) {
 		super();
-		
+		initialize(bundle, prefix);
+	}
+	
+	/**
+	 * Sets the action's help context id.
+	 * 
+	 * @param contextId the help context id
+	 */
+	public final void setHelpContextId(String contextId) {
+		WorkbenchHelp.setHelp(this, contextId);
+	}	
+
+	private void initialize(ResourceBundle bundle, String prefix) {
 		String labelKey= "label"; //$NON-NLS-1$
 		String tooltipKey= "tooltip"; //$NON-NLS-1$
 		String imageKey= "image"; //$NON-NLS-1$
@@ -89,13 +133,4 @@ public abstract class ResourceAction extends Action {
 		if (file != null && file.trim().length() > 0)
 			setImageDescriptor(ImageDescriptor.createFromFile(getClass(), file));
 	}
-	
-	/**
-	 * Sets the action's help context id.
-	 * 
-	 * @param contextId the help context id
-	 */
-	public final void setHelpContextId(String contextId) {
-		WorkbenchHelp.setHelp(this, contextId);
-	}	
 }
