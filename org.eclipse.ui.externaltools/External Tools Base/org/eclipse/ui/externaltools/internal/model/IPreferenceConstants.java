@@ -13,17 +13,12 @@ Contributors:
  * Constants used to identify user preferences.
  */
 public interface IPreferenceConstants {
-	public static final String OUPUT_LEVEL = "externaltools.outputLevel"; // $NON-NLS-1$
- 	public static final String INFO_LEVEL = "externaltools.infoLevel"; // $NON-NLS-1$
- 	public static final String VERBOSE_LEVEL = "externaltools.verboseLevel"; // $NON-NLS-1$
- 	public static final String DEBUG_LEVEL = "externaltools.levelLevel"; // $NON-NLS-1$
 	
 	public static final String CONSOLE_ERROR_RGB = "externaltools.console.errorColor"; // $NON-NLS-1$
 	public static final String CONSOLE_WARNING_RGB = "externaltools.console.warningColor"; // $NON-NLS-1$
  	public static final String CONSOLE_INFO_RGB = "externaltools.console.infoColor"; // $NON-NLS-1$
  	public static final String CONSOLE_VERBOSE_RGB = "externaltools.console.verboseColor"; // $NON-NLS-1$
  	public static final String CONSOLE_DEBUG_RGB = "externaltools.console.debugColor"; // $NON-NLS-1$
- 	public static final String CONSOLE_FONT = "externaltools.console.font"; // $NON-NLS-1$
  	
  	// temporary work-in-progress preference (a boolean)
  	public static final String LAUNCH_CONFIG_MODE = "externaltools.launch_config_mode"; // $NON-NLS-1$

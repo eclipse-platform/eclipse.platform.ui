@@ -141,10 +141,6 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	 * Method declared in AbstractUIPlugin.
 	 */
 	protected void initializeDefaultPreferences(IPreferenceStore prefs) {
-		prefs.setDefault(IPreferenceConstants.INFO_LEVEL, true);
-		prefs.setDefault(IPreferenceConstants.VERBOSE_LEVEL, false);
-		prefs.setDefault(IPreferenceConstants.DEBUG_LEVEL, false);
-
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_ERROR_RGB, new RGB(255, 0, 0)); // red - exactly the same as debug Consol
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_WARNING_RGB, new RGB(255, 100, 0)); // orange
 		PreferenceConverter.setDefault(prefs, IPreferenceConstants.CONSOLE_INFO_RGB, new RGB(0, 0, 255)); // blue

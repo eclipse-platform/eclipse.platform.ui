@@ -70,21 +70,21 @@
 
 	<extension point="org.eclipse.ui.preferencePages">
 		<page 
-			id="org.eclipse.ui.externaltools.ToolsPreferencePage" 
-			name="%PreferencePage.toolsPreferences"
-			class="org.eclipse.ui.externaltools.internal.ui.ToolsPreferencePage">
-		</page>
-		<page 
 			id="org.eclipse.ui.externaltools.AntPreferencePage" 
 			name="%PreferencePage.antPreferences"
-			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntPreferencePage"
-			category="org.eclipse.ui.externaltools.ToolsPreferencePage">
+			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntPreferencePage">
 		</page>
+		<page 
+			id="org.eclipse.ui.externaltools.AntConsolePreferencePage" 
+			name="%PreferencePage.antConsolePreferences"
+			class="org.eclipse.ui.externaltools.internal.ant.preferences.AntConsolePreferencePage"
+			category="org.eclipse.ui.externaltools.AntPreferencePage">
+		</page>		
 	    <page
 	        id="org.eclipse.ui.externaltools.AntViewPreferencePage"
 	        name="%View.antView"
 	        class="org.eclipse.ui.externaltools.internal.ant.antview.preferences.AntViewPreferencePage"
-	        category="org.eclipse.ui.externaltools.ToolsPreferencePage">
+	        category="org.eclipse.ui.externaltools.AntPreferencePage">
 	    </page>
 	</extension>
 	

@@ -22,6 +22,7 @@ import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.*;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -307,7 +308,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 				InputPartition partition = null;
 				if (fInputBuffer.length() > 0) { 
 					// replace the last partition
-					partition = new InputPartition(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, bufferStartOffset, fInputBuffer.length());
+					partition = new InputPartition(IDebugUIConstants.ID_STANDARD_INPUT_STREAM, bufferStartOffset, fInputBuffer.length());
 					fPartitions.set(fPartitions.size() - 1, partition);
 				} else {
 					// remove last partition - it is now empty
@@ -335,9 +336,9 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 						remaining = remaining.substring(split);
 						String buffer = fInputBuffer.toString();
 						fInputBuffer.setLength(0);
-						addPartition(new InputPartition(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, partitionOffset, split));
+						addPartition(new InputPartition(IDebugUIConstants.ID_STANDARD_INPUT_STREAM, partitionOffset, split));
 						partitionOffset += split;
-						addPartition(new InputPartition(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, partitionOffset, 0));
+						addPartition(new InputPartition(IDebugUIConstants.ID_STANDARD_INPUT_STREAM, partitionOffset, 0));
 						if (fProxy != null) {
 							try {
 								fProxy.write(buffer);
@@ -353,7 +354,7 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 				}	
 				if (remaining.length() > 0) {
 					fInputBuffer.append(remaining);
-					addPartition(new InputPartition(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB, partitionOffset, remaining.length()));
+					addPartition(new InputPartition(IDebugUIConstants.ID_STANDARD_INPUT_STREAM, partitionOffset, remaining.length()));
 				}
 			}
 		}
@@ -673,8 +674,8 @@ public class ConsoleDocumentPartitioner implements IDocumentPartitioner, IDocume
 	 */
 	public void connect(IStreamsProxy streamsProxy) {
 		fProxy = streamsProxy;
-		connect(streamsProxy.getOutputStreamMonitor(), IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB);
-		connect(streamsProxy.getErrorStreamMonitor(), IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB);
+		connect(streamsProxy.getOutputStreamMonitor(), IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM);
+		connect(streamsProxy.getErrorStreamMonitor(), IDebugUIConstants.ID_STANDARD_ERROR_STREAM);
 	}
 	
 	protected boolean isTerminated() {

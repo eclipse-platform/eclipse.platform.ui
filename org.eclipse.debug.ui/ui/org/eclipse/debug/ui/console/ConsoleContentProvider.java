@@ -9,7 +9,8 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.ui.console.*;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.swt.graphics.Color;
 
 /**
@@ -55,7 +56,16 @@ public class ConsoleContentProvider implements IConsoleContentProvider {
 	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleContentProvider#getForeground(java.lang.String)
 	 */
 	public Color getColor(String streamIdentifer) {
-		return DebugUIPlugin.getPreferenceColor(streamIdentifer);
+		if (IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM.equals(streamIdentifer)) {
+			return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_OUT_RGB);
+		}
+		if (IDebugUIConstants.ID_STANDARD_ERROR_STREAM.equals(streamIdentifer)) {
+			return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_ERR_RGB);
+		}		
+		if (IDebugUIConstants.ID_STANDARD_INPUT_STREAM.equals(streamIdentifer)) {
+			return DebugUIPlugin.getPreferenceColor(IDebugPreferenceConstants.CONSOLE_SYS_IN_RGB);
+		}		
+		return null;
 	}
 
 	/**

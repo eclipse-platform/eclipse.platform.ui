@@ -236,6 +236,32 @@ public interface IDebugUIConstants {
 	 */
 	public static final String ID_CONSOLE_VIEW= "org.eclipse.debug.ui.ConsoleView"; //$NON-NLS-1$
 	
+	// Console stream identifiers
+	
+	/**
+	 * Identifier for the standard out stream.
+	 * 
+	 * @see org.eclipse.debug.ui.console.IConsoleContentProvider#getColor(String)
+	 * @since 2.1
+	 */
+	public static final String ID_STANDARD_OUTPUT_STREAM = IDebugUIConstants.PLUGIN_ID + ".ID_STANDARD_OUTPUT_STREAM";
+	
+	/**
+	 * Identifier for the standard error stream.
+	 *
+	 * @see org.eclipse.debug.ui.console.IConsoleContentProvider#getColor(String)
+	 * @since 2.1
+	 */	
+	public static final String ID_STANDARD_ERROR_STREAM = IDebugUIConstants.PLUGIN_ID + ".ID_STANDARD_ERROR_STREAM";
+	
+	/**
+	 * Identifier for the standard input stream.
+	 *
+	 * @see org.eclipse.debug.ui.console.IConsoleContentProvider#getColor(String)
+	 * @since 2.1
+	 */	
+	public static final String ID_STANDARD_INPUT_STREAM = IDebugUIConstants.PLUGIN_ID + ".ID_STANDARD_INPUT_STREAM";
+	
 	// Debug Action images
 	
 	/**

@@ -8,6 +8,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.ConsoleContentProvider;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.swt.graphics.Color;
@@ -26,6 +27,12 @@ public class AntConsoleContentProvider extends ConsoleContentProvider {
 	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleContentProvider#getColor(java.lang.String)
 	 */
 	public Color getColor(String streamIdentifer) {
+		if (streamIdentifer.equals(IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM)) {
+			return ExternalToolsPlugin.getPreferenceColor(IPreferenceConstants.CONSOLE_INFO_RGB);
+		}
+		if (streamIdentifer.equals(IDebugUIConstants.ID_STANDARD_ERROR_STREAM)) {
+			return ExternalToolsPlugin.getPreferenceColor(IPreferenceConstants.CONSOLE_ERROR_RGB);
+		}				
 		if (streamIdentifer.equals(AntStreamsProxy.ANT_DEBUG_STREAM)) {
 			return ExternalToolsPlugin.getPreferenceColor(IPreferenceConstants.CONSOLE_DEBUG_RGB);
 		}
