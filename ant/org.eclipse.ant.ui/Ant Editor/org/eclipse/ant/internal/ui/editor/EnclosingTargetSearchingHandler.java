@@ -21,7 +21,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.w3c.dom.Element;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 /**
  * SAX Parsing Handler that determines the enclosing target task element in
@@ -54,8 +53,7 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
     /* (non-Javadoc)
      * @see org.xml.sax.ContentHandler#endElement(String, String, String)
      */
-    public void endElement(String aUri, String aLocalName, String aQualifiedName)
-        throws SAXException {
+    public void endElement(String aUri, String aLocalName, String aQualifiedName) {
 
 		if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
         	AntUIPlugin.log("AntEditorSaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -91,12 +89,7 @@ public class EnclosingTargetSearchingHandler extends AntEditorSaxDefaultHandler 
     /* (non-Javadoc)
      * @see org.xml.sax.ContentHandler#startElement(String, String, String, Attributes)
      */
-    public void startElement(
-        String aUri,
-        String aLocalName,
-        String aQualifiedName,
-        Attributes anAttributes)
-        throws SAXException {
+    public void startElement(String aUri, String aLocalName, String aQualifiedName, Attributes anAttributes) {
         /*
          * While the crimson parser passes the tag name as local name, apache's
          * xerces parser, passes the tag name as qualilfied name and an empty 

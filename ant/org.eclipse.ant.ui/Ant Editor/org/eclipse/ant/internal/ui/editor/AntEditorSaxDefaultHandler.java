@@ -207,8 +207,7 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
     /* (non-Javadoc)
      * @see org.xml.sax.ContentHandler#endElement(String, String, String)
      */
-    public void endElement(String aUri, String aLocalName, String aQualifiedName)
-        throws SAXException {
+    public void endElement(String aUri, String aLocalName, String aQualifiedName) {
 
 		if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
 			AntUIPlugin.log("AntEditorSaxDefaultHandler.endElement(" +aUri+ ", " +aLocalName+ ", "+aQualifiedName+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
@@ -282,7 +281,7 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
      * 
      * @see org.xml.sax.ErrorHandler#fatalError(SAXParseException)
      */
-    public void fatalError(SAXParseException anException) throws SAXException {
+    public void fatalError(SAXParseException anException) {
         if(locator != null) {
           //  int tempLineNr = locator.getLineNumber() -1;
           //  int tempColumnNr = locator.getColumnNumber() -1;
@@ -293,7 +292,7 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
 	/**
 	 * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
 	 */
-	public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
+	public InputSource resolveEntity(String publicId, String systemId) {
 		int index= systemId.indexOf(':');
 		if (index > 0) {
 			//remove file:

@@ -64,7 +64,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     /**
      * Tests the code completion for attributes of tasks.
      */
-    public void testAttributeProposals() throws IOException {
+    public void testAttributeProposals() {
         TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
         ICompletionProposal[] proposals = processor.getAttributeProposals("contains", "ca");
@@ -224,7 +224,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     /**
      * Tests the code completion for tasks having parent tasks.
      */
-    public void testTaskProposals() throws IOException, ParserConfigurationException {
+    public void testTaskProposals() throws ParserConfigurationException {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
         DocumentBuilder docBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -343,7 +343,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
         assertEquals("secondchild", childElement.getTagName());
     }
     
-    private Element createTestProjectElement(Document aDocument) throws ParserConfigurationException {
+    private Element createTestProjectElement(Document aDocument) {
         Element parentElement = aDocument.createElement("project");
         Element childElement = aDocument.createElement("property");
         parentElement.appendChild(childElement);
@@ -364,7 +364,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     /**
      * Tests how the processor determines the proposal mode.
      */
-    public void testDeterminingAttributeProposalMode() throws IOException {
+    public void testDeterminingAttributeProposalMode() {
         TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
         // Modes:
@@ -392,7 +392,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	/**
 	* Tests how the processor determines the proposal mode.
 	*/
-   public void testDeterminingPropertyProposalMode() throws IOException {
+   public void testDeterminingPropertyProposalMode() {
 	   TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
 	   // Modes:
@@ -417,7 +417,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	/**
 	 * Tests how the processor determines the proposal mode.
 	 */
-	public void testDeterminingTaskProposalMode() throws IOException {
+	public void testDeterminingTaskProposalMode() {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
 		// Modes:
@@ -461,7 +461,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	/**
 	 * Tests how the processor determines the proposal mode.
 	 */
-	public void testDeterminingTaskClosingProposalMode() throws IOException {
+	public void testDeterminingTaskClosingProposalMode() {
 		TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 	
 		// Modes:
@@ -556,7 +556,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
     /**
      * Tests how the processor determines the proposal mode.
      */
-    public void testDeterminingNoneProposalMode() throws IOException {
+    public void testDeterminingNoneProposalMode() {
         TestTextCompletionProcessor processor = new TestTextCompletionProcessor();
 
         // Modes:

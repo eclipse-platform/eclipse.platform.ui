@@ -70,7 +70,7 @@ public class SchemaFactory implements DeclHandler {
 	/**
 	 * @see org.xml.sax.ext.DeclHandler#attributeDecl(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public void attributeDecl(String eName, String aName, String type, String valueDefault, String value) throws SAXException {
+	public void attributeDecl(String eName, String aName, String type, String valueDefault, String value) {
 		Element element = getElement(eName);
 		Attribute attr = (Attribute) element.getAttributes().get(aName);
 		if (attr == null) {
@@ -270,13 +270,13 @@ public class SchemaFactory implements DeclHandler {
 	/**
 	 * @see org.xml.sax.ext.DeclHandler#externalEntityDecl(java.lang.String, java.lang.String, java.lang.String)
 	 */
-	public void externalEntityDecl(String name, String publicId, String systemId) throws SAXException {
+	public void externalEntityDecl(String name, String publicId, String systemId) {
 	}
 
 	/**
 	 * @see org.xml.sax.ext.DeclHandler#internalEntityDecl(java.lang.String, java.lang.String)
 	 */
-	public void internalEntityDecl(String name, String value) throws SAXException {
+	public void internalEntityDecl(String name, String value) {
 	}
 
 	public void setErrorException(Exception e) {

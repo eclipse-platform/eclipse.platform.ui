@@ -175,11 +175,10 @@ public class Parser {
 		/**
 		 * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
 		 */
-		public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
+		public InputSource resolveEntity(String publicId, String systemId) {
 			if (publicId.equals(INTERNAL) && systemId.equals(INTERNAL))
 				return new InputSource(reader);
 			return null;
 		}
-	}
-	
+	}	
 }

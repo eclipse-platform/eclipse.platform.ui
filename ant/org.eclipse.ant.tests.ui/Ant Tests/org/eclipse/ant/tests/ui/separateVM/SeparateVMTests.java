@@ -89,7 +89,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 	 * Tests launching Ant in a separate vm and that the
 	 * correct working directory is set
 	 */
-	public void testWorkingDirectory() throws BadLocationException, CoreException {
+	public void testWorkingDirectory() throws CoreException {
 		ILaunchConfiguration config = getLaunchConfiguration("echoingSepVM");
 		assertNotNull("Could not locate launch configuration for " + "echoingSepVM", config);
 		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();

@@ -14,19 +14,15 @@
 
 package org.eclipse.ant.tests.ui.editor;
 
-import java.io.IOException;
 import java.util.List;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.ant.internal.ui.editor.outline.AntModel;
 import org.eclipse.ant.internal.ui.editor.xml.IAntEditorConstants;
 import org.eclipse.ant.internal.ui.editor.xml.XmlElement;
-import org.xml.sax.SAXException;
+import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 
 /**
  * Tests the correct creation of the outline for an xml file.
@@ -41,7 +37,7 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
     /**
      * Tests parsing an XML file with the use of our OutlinePreparingHandler.
      */
-    public void testOutlinePreparingHandler() throws SAXException, ParserConfigurationException, IOException {
+    public void testOutlinePreparingHandler() {
 		AntModel model= getAntModel("test2.xml");
         
 		XmlElement[] roots = model.getRootElements();
