@@ -9,19 +9,23 @@
  **********************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
+import junit.framework.*;
 import org.eclipse.core.internal.jobs.Worker;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import junit.framework.TestCase;
 
 /**
  * Tests the implemented get/set methods of the abstract class Job
  */
 public class JobTest extends TestCase {
-	Job shortJob;
-	Job longJob;
+	private Job shortJob;
+	private Job longJob;
+	
+	public static Test suite() {
+		return new TestSuite(JobTest.class);
+	}
 	
 	/*
 	 * @see TestCase#setUp()
@@ -61,7 +65,7 @@ public class JobTest extends TestCase {
 		
 		for(int i = 0; i < priority.length; i++) {
 			shortJob.setPriority(priority[i]);
-			assertTrue("1." + (i+1), shortJob.getPriority() == priority[i]);
+			assertTrue("1." + i, shortJob.getPriority() == priority[i]);
 		}
 	}
 
@@ -127,7 +131,7 @@ public class JobTest extends TestCase {
 	}
 
 	//see bug #43458
-	public void _testSetPriority() {
+	public void testSetPriority() {
 		int [] wrongPriority = {1000, -Job.DECORATE, 25, 0, 5, Job.INTERACTIVE - Job.BUILD};
 		
 		for(int i = 0; i < wrongPriority.length; i++) {
