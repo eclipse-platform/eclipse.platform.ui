@@ -12,7 +12,6 @@
 package org.eclipse.jface.text.source;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -246,13 +245,23 @@ public class OverviewRuler implements IOverviewRuler {
 	private Set fAnnotationTypes= new HashSet();
 	/** The list of annotation types to be shown in the header of this ruler */
 	private Set fHeaderAnnotationTypes= new HashSet();
-	/** The mapping between annotation types and drawing layers */
-	private Map fAnnotationTypes2Layers= new HashMap();
 	/** The mapping between annotation types and colors */
 	private Map fAnnotationTypes2Colors= new HashMap();
 	/** The color manager */
 	private ISharedTextColors fSharedTextColors;
-	
+	/**
+	 * All available annotation types sorted by layer.
+	 * 
+	 * @since 3.0
+	 */
+	private List fAnnotationsSortedByLayer= new ArrayList();
+	/**
+	 * All available layers sorted by layer.
+	 * This list may contain duplicates.
+	 * 
+	 * @since 3.0
+	 */
+	private List fLayersSortedByLayer= new ArrayList();
 	
 	
 	/**
@@ -369,8 +378,9 @@ public class OverviewRuler implements IOverviewRuler {
 		
 		fAnnotationTypes.clear();
 		fHeaderAnnotationTypes.clear();
-		fAnnotationTypes2Layers.clear();
 		fAnnotationTypes2Colors.clear();
+		fAnnotationsSortedByLayer.clear();
+		fLayersSortedByLayer.clear();
 	}
 
 	/**
@@ -437,13 +447,8 @@ public class OverviewRuler implements IOverviewRuler {
 		if (size.y > writable)
 			size.y= writable;
 		
-		
-		List indices= new ArrayList(fAnnotationTypes2Layers.keySet());
-		Collections.sort(indices);
-		
-		for (Iterator iterator= indices.iterator(); iterator.hasNext();) {
-			Object layer= iterator.next();
-			Object annotationType= fAnnotationTypes2Layers.get(layer);
+		for (Iterator iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
+			Object annotationType= iterator.next();
 			
 			if (skip(annotationType))
 				continue;
@@ -524,12 +529,8 @@ public class OverviewRuler implements IOverviewRuler {
 		if (size.y > writable)
 			size.y= writable;
 			
-		List indices= new ArrayList(fAnnotationTypes2Layers.keySet());
-		Collections.sort(indices);
-
-		for (Iterator iterator= indices.iterator(); iterator.hasNext();) {
-			Object layer= iterator.next();
-			Object annotationType= fAnnotationTypes2Layers.get(layer);
+		for (Iterator iterator= fAnnotationsSortedByLayer.iterator(); iterator.hasNext();) {
+			Object annotationType= iterator.next();
 
 			if (skip(annotationType))
 				continue;
@@ -776,17 +777,17 @@ public class OverviewRuler implements IOverviewRuler {
 	 * @see org.eclipse.jface.text.source.IOverviewRuler#setAnnotationTypeLayer(java.lang.Object, int)
 	 */
 	public void setAnnotationTypeLayer(Object annotationType, int layer) {
-		if (layer >= 0)
-			fAnnotationTypes2Layers.put(new Integer(layer), annotationType);
-		else {
-			Iterator e= fAnnotationTypes2Layers.keySet().iterator();
-			while (e.hasNext()) {
-				Object key= e.next();
-				if (annotationType.equals(fAnnotationTypes2Layers.get(key))) {
-					fAnnotationTypes2Layers.remove(key);
-					return;
-				}
-			}
+		Integer layerObj= new Integer(layer);
+		if (layer >= 0) {
+			int i= 0;
+			int size= fLayersSortedByLayer.size();
+			while (i < size && layer >= ((Integer)fLayersSortedByLayer.get(i)).intValue())
+				i++;
+			fLayersSortedByLayer.add(i, layerObj);
+			fAnnotationsSortedByLayer.add(i, annotationType);
+		} else {
+			fLayersSortedByLayer.remove(layerObj);
+			fAnnotationsSortedByLayer.remove(annotationType);
 		}
 	}
 	
@@ -968,14 +969,10 @@ public class OverviewRuler implements IOverviewRuler {
 		if (fHeader == null || fHeader.isDisposed())
 			return;
 	
-		List indices= new ArrayList(fAnnotationTypes2Layers.keySet());
-		Collections.sort(indices);
-		
 		Object colorType= null;
-		outer: for (int i= indices.size() -1; i >= 0; i--) {
+		outer: for (int i= fAnnotationsSortedByLayer.size() -1; i >= 0; i--) {
 			
-			Object layer=indices.get(i);
-			Object annotationType= fAnnotationTypes2Layers.get(layer);
+			Object annotationType= fAnnotationsSortedByLayer.get(i);
 			
 			if (!fHeaderAnnotationTypes.contains(annotationType))
 				continue;
