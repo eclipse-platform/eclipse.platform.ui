@@ -213,6 +213,7 @@ public class CustomBuildTriggerTest extends AbstractBuilderTest {
 		SortBuilder builder = SortBuilder.getInstance();
 		assertTrue("2.0", builder.wasBuilt());
 		assertTrue("2.1", builder.wasFullBuild());
+		assertEquals("2.2", command, builder.getCommand());
 
 		try {
 			project.touch(getMonitor());
