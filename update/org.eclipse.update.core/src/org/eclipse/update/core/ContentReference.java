@@ -187,6 +187,8 @@ public class ContentReference {
 			File result = new File(url.getFile());
 			if (result.exists())
 				return result;
+			else 
+				throw new IOException(Policy.bind("ContentReference.FileDoesNotExist", this.toString())); //$NON-NLS-1$ 			
 		}
 
 		throw new IOException(Policy.bind("ContentReference.UnableToReturnReferenceAsFile", this.toString())); //$NON-NLS-1$ 
