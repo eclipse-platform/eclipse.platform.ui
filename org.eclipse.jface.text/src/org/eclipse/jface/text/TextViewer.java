@@ -2371,6 +2371,10 @@ public class TextViewer extends Viewer implements
 		try {
 			
 			IDocument d= getDocument();
+			
+			if (d == null)
+				return -1;
+			
 			int startLine= d.getLineOfOffset(coverage.getOffset());
 			int endLine= d.getLineOfOffset(coverage.getOffset()  + coverage.getLength() - 1);
 			int lines= getVisibleLinesInViewport();
