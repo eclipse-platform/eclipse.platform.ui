@@ -41,11 +41,12 @@ public class TestingSupport {
 	 *    the default workspace behavior
 	 */
 	public static void installMoveDeleteHook(IWorkspace workspace, IMoveDeleteHook hook) {
+		Workspace ws = (Workspace)workspace;
 		if (hook != null) {
-			Workspace.moveDeleteHook = hook;
+			ws.moveDeleteHook = hook;
 		} else {
-			Workspace.moveDeleteHook = null;
-			Workspace.initializeMoveDeleteHook();
+			ws.moveDeleteHook = null;
+			ws.initializeMoveDeleteHook();
 		}
 	}
 	

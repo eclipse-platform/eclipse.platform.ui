@@ -73,6 +73,25 @@ public interface IWorkspaceRoot extends IContainer, IAdaptable {
  */
 public void delete(boolean deleteContent, boolean force, IProgressMonitor monitor) throws CoreException;
 /**
+ * Returns a handle to the  workspace root, project or folder which is mapped 
+ * to the given path in the local file system, or <code>null</code> if none.
+ * If the path maps to the platform working location, the returned object
+ * will be of type <code>ROOT</code>.  If the path maps to a  project, the 
+ * resulting object will be of type <code>PROJECT</code>; otherwise 
+ * the resulting object will be a folder (type <code>FOLDER</code>).
+ * The path must be absolute; its segments need not be valid names;
+ * a trailing separator is ignored.
+ * The resulting resource need not exist in the workspace.
+ */
+public IContainer[] findContainersForLocation(IPath location);
+/**
+ * Returns the handles of all files that are mapped to the given path 
+ * in the local file system.  Returns an empty array if there are none.
+ * The path must be absolute; its segments need not be valid names.
+ * The resulting file need not exist in the workspace.
+ */
+public IFile[] findFilesForLocation(IPath location);
+/**
  * Returns a handle to the  workspace root, project or folder 
  * which is mapped to the given path
  * in the local file system, or <code>null</code> if none.
@@ -84,7 +103,14 @@ public void delete(boolean deleteContent, boolean force, IProgressMonitor monito
  * The path must be absolute; its segments need not be valid names;
  * a trailing separator is ignored.
  * The resulting resource need not exist in the workspace.
- *
+ * <p>
+ * Warning: This method ignores linked resources and their children.  Since
+ * linked resources may overlap other resources, a unique mapping from a
+ * file system location to a single resource is not guaranteed.  To find all 
+ * resources for a given location, including linked resources, use the method
+ * <code>findContainersForLocation</code>.
+ * </p>
+ * 
  * @param location a path in the local file system
  * @return the corresponding project or folder in the workspace,
  *    or <code>null</code> if none
@@ -96,6 +122,12 @@ public IContainer getContainerForLocation(IPath location);
  * The path must be absolute; its segments need not be valid names.
  * The resulting file need not exist in the workspace.
  * <p>
+ * Warning: This method ignores linked resources and their children.  Since
+ * linked resources may overlap other resources, a unique mapping from a
+ * file system location to a single resource is not guaranteed.  To find all 
+ * resources for a given location, including linked resources, use the method
+ * <code>findFilesForLocation</code>.
+ * </p>
  *
  * @param location a path in the local file system
  * @return the corresponding file in the workspace,

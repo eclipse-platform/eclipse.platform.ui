@@ -165,7 +165,7 @@ public interface IResource extends IAdaptable {
 	public static final int ALWAYS_DELETE_PROJECT_CONTENT = 0x4;
 
 	/**
-	 * Update flag constant (bit mask value 4) indicating that the operation
+	 * Update flag constant (bit mask value 8) indicating that the operation
 	 * should preserve the files and folders of a project.
 	 * <p>
 	 * Deleting a project that is open ordinarily deletes all its files and folders, 
@@ -181,6 +181,15 @@ public interface IResource extends IAdaptable {
 	 * @since 2.0
 	 */
 	public static final int NEVER_DELETE_PROJECT_CONTENT = 0x8;
+	
+	/**
+	 * Update flag constant (bit mask value 16) indicating that the link creation
+	 * should proceed even if the local file is missing.
+	 * 
+	 * @see IFolder#createLink
+	 * @see IFile#createLink
+	 * @since 2.1	 */
+	public static final int ALLOW_MISSING_LOCAL = 0x10;
 
 	/*====================================================================
 	 * Other constants:
@@ -329,46 +338,6 @@ public void accept(IResourceVisitor visitor, int depth, int memberFlags) throws 
  *    reporting and cancellation are not desired
  */
 public void clearHistory(IProgressMonitor monitor) throws CoreException;
-
-/**
- * Makes a copy of this project using the given project description.
- * <p>
- * This is a convenience method, fully equivalent to:
- * <pre>
- *   copy(description, (force ? FORCE : IResource.NONE), monitor);
- * </pre>
- * </p>
- * <p> 
- * This operation changes resources; these changes will be reported
- * in a subsequent resource change event that will include 
- * an indication that the resource copy has been added to its new parent.
- * </p>
- * <p>
- * This operation is long-running; progress and cancellation are provided
- * by the given progress monitor. 
- * </p>
- *
- * @param description the destination project description
- * @param force a flag controlling whether resources that are not
- *    in sync with the local file system will be tolerated
- * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
- * @exception CoreException if this resource could not be copied. Reasons include:
- * <ul>
- * <li> This resource does not exist.</li>
- * <li> This resource or one of its descendents is not local.</li>
- * <li> This resource is not a project.</li>
- * <li> The project described by the given description already exists.</li>
- * <li> This resource or one of its descendents is out of sync with the local file
- *      system and <code>force</code> is <code>false</code>.</li>
- * <li> The workspace and the local file system are out of sync
- *      at the destination resource or one of its descendents.</li>
- * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
- * </ul>
- */
-public void copy(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
-
 /**
  * Makes a copy of this resource at the given path. 
  * <p>
@@ -412,6 +381,140 @@ public void copy(IProjectDescription description, boolean force, IProgressMonito
  * </ul>
  */
 public void copy(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
+/**
+ * Makes a copy of this resource at the given path. The resource's
+ * descendents are copied as well.  The path of this resource must not be a
+ * prefix of the destination path. The workspace root may not be the source or
+ * destination location of a copy operation, and a project can only be copied to
+ * another project. After successful completion, corresponding new resources
+ * will exist at the given path; their contents and properties will be copies of
+ * the originals. The original resources are not affected.
+ * <p>
+ * The supplied path may be absolute or relative.  Absolute paths fully specify
+ * the new location for the resource, including its project. Relative paths are
+ * considered to be relative to the container of the resource being copied. A
+ * trailing separator is ignored.
+ * </p>
+ * <p>
+ * Calling this method with a one segment absolute destination path is
+ * equivalent to calling:
+ * <pre>
+ *   copy(workspace.newProjectDescription(folder.getName()),updateFlags,monitor);
+ * </pre>
+ * </p>
+ * <p>When a linked resource is copied into another project, a new linked
+ * resource is created in the destination project that points to the same file
+ * system location.  When a project containing linked resources is copied, the
+ * new project will contain the same linked resources pointing to the same file
+ * system locations.  For either of these cases, no files on disk under the
+ * linked resource are actually copied.  Copying of linked resources into
+ * anything other than a project is not permitted.
+ * </p>
+ * <p>
+ * When a resource is copied, its persistent properties are copied with it.
+ * Session properties and markers are not copied.
+ * </p>
+ * <p>
+ * The <code>FORCE</code> update flag controls how this method deals with
+ * cases where the workspace is not completely in sync with the local file 
+ * system. If <code>FORCE</code> is not specified, the method will only attempt
+ * to copy resources that are in sync with the corresponding files and
+ * directories in the local file system; it will fail if it
+ * encounters a resource that is out of sync with the file system.
+ * However, if <code>FORCE</code> is specified, the method
+ * copies all corresponding files and directories from the local
+ * file system, including ones that have been recently updated or created.
+ * Note that in both settings of the <code>FORCE</code> flag,
+ * the operation fails if the newly created resources in the 
+ * workspace would be out of sync with the local file system; 
+ * this ensures files in the file system cannot be accidentally
+ * overwritten.
+ * </p>
+ * <p>
+ * Update flags other than <code>FORCE</code> are ignored.
+ * </p>
+ * <p> 
+ * This operation changes resources; these changes will be reported
+ * in a subsequent resource change event that will include 
+ * an indication that the resource copy has been added to its new parent.
+ * </p>
+ * <p>
+ * This operation is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ *
+ * @param destination the destination path 
+ * @param updateFlags bit-wise or of update flag constants
+ *   (only <code>FORCE</code> is relevant here)
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @exception CoreException if this resource could not be copied. Reasons include:
+ * <ul>
+ * <li> This resource does not exist.</li>
+ * <li> This resource or one of its descendents is not local.</li>
+ * <li> The source or destination is the workspace root.</li>
+ * <li> The source is a project but the destination is not.</li>
+ * <li> The destination is a project but the source is not.</li>
+ * <li> The resource corresponding to the parent destination path does not exist.</li>
+ * <li> The resource corresponding to the parent destination path is a closed project.</li>
+ * <li> A resource at destination path does exist.</li>
+ * <li> This resource or one of its descendents is out of sync with the local file
+ *      system and <code>FORCE</code> is not specified.</li>
+ * <li> The workspace and the local file system are out of sync
+ *      at the destination resource or one of its descendents.</li>
+ * <li> The source resource is a file and the destination path specifies a project.</li>
+ * <li> The source is a linked resource, and the destination path does not
+ * 	specify a project.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
+ * </ul>
+ * @see #FORCE
+ * @since 2.0
+ */
+public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+/**
+ * Makes a copy of this project using the given project description.
+ * <p>
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   copy(description, (force ? FORCE : IResource.NONE), monitor);
+ * </pre>
+ * </p>
+ * <p> 
+ * This operation changes resources; these changes will be reported
+ * in a subsequent resource change event that will include 
+ * an indication that the resource copy has been added to its new parent.
+ * </p>
+ * <p>
+ * This operation is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ *
+ * @param description the destination project description
+ * @param force a flag controlling whether resources that are not
+ *    in sync with the local file system will be tolerated
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @exception CoreException if this resource could not be copied. Reasons include:
+ * <ul>
+ * <li> This resource does not exist.</li>
+ * <li> This resource or one of its descendents is not local.</li>
+ * <li> This resource is not a project.</li>
+ * <li> The project described by the given description already exists.</li>
+ * <li> This resource or one of its descendents is out of sync with the local file
+ *      system and <code>force</code> is <code>false</code>.</li>
+ * <li> The workspace and the local file system are out of sync
+ *      at the destination resource or one of its descendents.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
+ * </ul>
+ */
+public void copy(IProjectDescription description, boolean force, IProgressMonitor monitor) throws CoreException;
+
+
+
+
+
 
 /**
  * Makes a copy of this project using the given project description. 
@@ -475,88 +578,7 @@ public void copy(IPath destination, boolean force, IProgressMonitor monitor) thr
  */
 public void copy(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
-/**
- * Makes a copy of this resource at the given path. The resource's
- * descendents are copied as well. 
- * The path of this resource must not be a prefix of the destination path.
- * The workspace root may not be the source or destination location 
- * of a copy operation, and a project can only be copied to another project.
- * After successful completion, corresponding new resources will exist 
- * at the given path; their contents and properties will be copies of 
- * the originals. The original resources are not affected.
- * <p>
- * The supplied path may be absolute or relative.  Absolute paths
- * fully specify the new location for the resource, including its project.
- * Relative paths are considered to be relative to the
- * container of the resource being copied. A trailing separator is ignored.
- * </p>
- * <p>
- * Calling this method with a one segment absolute destination
- * path is equivalent to calling:
- * <pre>
- *   copy(workspace.newProjectDescription(folder.getName()),updateFlags,monitor);
- * </pre>
- * </p>
- * <p>
- * When a resource is copied, its persistent properties are 
- * copied with it. Session properties and markers are not copied.
- * </p>
- * <p>
- * The <code>FORCE</code> update flag controls how this method deals with
- * cases where the workspace is not completely in sync with the local file 
- * system. If <code>FORCE</code> is not specified, the method will only attempt
- * to copy resources that are in sync with the corresponding files and
- * directories in the local file system; it will fail if it
- * encounters a resource that is out of sync with the file system.
- * However, if <code>FORCE</code> is specified, the method
- * copies all corresponding files and directories from the local
- * file system, including ones that have been recently updated or created.
- * Note that in both settings of the <code>FORCE</code> flag,
- * the operation fails if the newly created resources in the 
- * workspace would be out of sync with the local file system; 
- * this ensures files in the file system cannot be accidentally
- * overwritten.
- * </p>
- * <p>
- * Update flags other than <code>FORCE</code> are ignored.
- * </p>
- * <p> 
- * This operation changes resources; these changes will be reported
- * in a subsequent resource change event that will include 
- * an indication that the resource copy has been added to its new parent.
- * </p>
- * <p>
- * This operation is long-running; progress and cancellation are provided
- * by the given progress monitor. 
- * </p>
- *
- * @param destination the destination path 
- * @param updateFlags bit-wise or of update flag constants
- *   (only <code>FORCE</code> is relevant here)
- * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
- * @exception CoreException if this resource could not be copied. Reasons include:
- * <ul>
- * <li> This resource does not exist.</li>
- * <li> This resource or one of its descendents is not local.</li>
- * <li> The source or destination is the workspace root.</li>
- * <li> The source is a project but the destination is not.</li>
- * <li> The destination is a project but the source is not.</li>
- * <li> The resource corresponding to the parent destination path does not exist.</li>
- * <li> The resource corresponding to the parent destination path is a closed project.</li>
- * <li> A resource at destination path does exist.</li>
- * <li> This resource or one of its descendents is out of sync with the local file
- *      system and <code>FORCE</code> is not specified.</li>
- * <li> The workspace and the local file system are out of sync
- *      at the destination resource or one of its descendents.</li>
- * <li> The source resource is a file and the destination path specifies a project.</li>
- * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
- * </ul>
- * @see #FORCE
- * @since 2.0
- */
-public void copy(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
 
 /**
  * Creates and returns the marker with the specified type on this resource.
@@ -610,32 +632,31 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
 
 /**
  * Deletes this resource from the workspace.
- * Deletion applies recursively to all members of this resource
- * in a "best-effort" fashion.  That is, all resources which can be
- * deleted are deleted.  Resources which could not be deleted are
- * noted in a thrown exception.
- * The method does not fail if resources do not exist;
- * it fails only if resources could not be deleted.
+ * Deletion applies recursively to all members of this resource in a "best-
+ * effort" fashion.  That is, all resources which can be deleted are deleted.
+ * Resources which could not be deleted are noted in a thrown exception. The
+ * method does not fail if resources do not exist; it fails only if resources
+ * could not be deleted.
  * <p>
- * Deleting a resource also deletes its contents from the local file system.
- * In the case of a file or folder resource, the corresponding file 
- * or directory in the local file system is deleted.
- * Deleting an open project recursively deletes its members;
- * deleting a closed project just gets rid of the project itself
- * (closed projects have no members); files in the project's
+ * Deleting a non-linked resource also deletes its contents from the local file
+ * system. In the case of a file or folder resource, the corresponding file or
+ * directory in the local file system is deleted. Deleting an open project
+ * recursively deletes its members; deleting a closed project just gets rid of
+ * the project itself (closed projects have no members); files in the project's
  * local content area are retained; referenced projects are unaffected.
- * Deleting the workspace root deletes all projects from the workspace
- * and all properties, markers, etc. from the root.  The root itself is not
- * deleted though its properties and markers are deleted.
  * </p>
  * <p>
- * Deleting a resource also deletes its session and persistent 
- * properties and markers.
+ * Deleting a linked resource does not delete its contents from the file system,
+ * it just removes that resource and its children from the workspace.  Deleting
+ * children of linked resources does remove the contents from the file system.
  * </p>
  * <p>
- * Deleting a non-project resource which has sync information 
- * converts the resource to a phantom and retains the sync information for
- * future use.
+ * Deleting a resource also deletes its session and persistent properties and
+ * markers.
+ * </p>
+ * <p>
+ * Deleting a non-project resource which has sync information converts the
+ * resource to a phantom and retains the sync information for future use.
  * </p>
  * <p>
  * Deleting the workspace root resource recursively deletes all projects,
@@ -652,41 +673,41 @@ public void delete(boolean force, IProgressMonitor monitor) throws CoreException
  * </p>
  * <p>
  * The <code>FORCE</code> update flag controls how this method deals with
- * cases where the workspace is not completely in sync with the local file system.
- * If <code>FORCE</code> is not specified, the method will only attempt
- * to delete files and directories in the local file system that correspond
- * to, and are in sync with, resources in the workspace; it will fail if it
- * encounters a file or directory in the file system that is out of sync with the
- * workspace.  This option ensures there is no unintended data loss; it is
- * the recommended setting.
- * However, if <code>FORCE</code> is specified, the method will ruthlessly 
- * attempt to delete corresponding files and directories in the local
- * file system, including ones that have been recently updated or created.
+ * cases where the workspace is not completely in sync with the local
+ * file system. If <code>FORCE</code> is not specified, the method will only
+ * attempt to delete files and directories in the local file system that
+ * correspond to, and are in sync with, resources in the workspace; it will fail
+ * if it encounters a file or directory in the file system that is out of sync
+ * with  the workspace.  This option ensures there is no unintended data loss;
+ * it is the recommended setting. However, if <code>FORCE</code> is specified,
+ * the method will ruthlessly attempt to delete corresponding files and
+ * directories in the local file system, including ones that have been recently
+ * updated or created.
  * </p>
  * <p>
- * The <code>KEEP_HISTORY</code> update flag controls whether or not 
- * file that are about to be deleted from the local file system have their
- * current contents saved in the workspace's local history. The local history
- * mechanism serves as a safety net to help the user recover from mistakes that
- * might otherwise result in data loss. Specifying <code>KEEP_HISTORY</code>
- * is recommended except in circumstances where past states of the files are of
- * no conceivable interested to the user. Note that local history is maintained
+ * The <code>KEEP_HISTORY</code> update flag controls whether or not file that
+ * are about to be deleted from the local file system have their current
+ * contents saved in the workspace's local history. The local history mechanism
+ * serves as a safety net to help the user recover from mistakes that might
+ * otherwise result in data loss. Specifying <code>KEEP_HISTORY</code> is
+ * recommended except in circumstances where past states of the files are of no
+ * conceivable interested to the user. Note that local history is maintained
  * with each individual project, and gets discarded when a project is deleted
  * from the workspace. Hence <code>KEEP_HISTORY</code> is only really applicable
  * when deleting files and folders, but not projects.
  * </p>
  * <p>
- * The <code>ALWAYS_DELETE_PROJECT_CONTENTS</code> update flag controls how project
- * deletions are handled. If <code>ALWAYS_DELETE_PROJECT_CONTENTS</code> is specified,
- * then the files and folders in a project's local content area are deleted, 
- * regardless of whether the project is open or closed; <code>FORCE</code> is
- * assumed regardless of whether it is specified.
- * If <code>NEVER_DELETE_PROJECT_CONTENTS</code> is specified, then the files and
+ * The <code>ALWAYS_DELETE_PROJECT_CONTENTS</code> update flag controls how
+ * project deletions are handled. If <code>ALWAYS_DELETE_PROJECT_CONTENTS</code>
+ * is specified, then the files and folders in a project's local content area
+ * are deleted, regardless of whether the project is open or closed;
+ * <code>FORCE</code> is assumed regardless of whether it is specified. If
+ * <code>NEVER_DELETE_PROJECT_CONTENTS</code> is specified, then the files and
  * folders in a project's local content area are retained, regardless of whether
- * the project is open or closed; the <code>FORCE</code> flag is ignored.
- * If neither of these flags is specified, files and folders in a project's local
- * content area from open projects (subject to the <code>FORCE</code> flag), but never
- * from closed projects.
+ * the project is open or closed; the <code>FORCE</code> flag is ignored. If
+ * neither of these flags is specified, files and folders in a project's local
+ * content area from open projects (subject to the <code>FORCE</code> flag), but
+ * never from closed projects.
  * </p>
  * 
  * @param updateFlags bit-wise or of update flag constants (
@@ -1101,6 +1122,16 @@ public IWorkspace getWorkspace();
  */
 public boolean isAccessible();
 /**
+ * Returns whether this resource subtree is marked as derived. Returns
+ * <code>false</code> if this resource does not exist.
+ *
+ * @return <code>true</code> if this resource is marked as derived, and
+ *   <code>false</code> otherwise
+ * @see #setDerived
+ * @since 2.0
+ */
+public boolean isDerived();
+/**
  * Returns whether this resource and its members (to the 
  * specified depth) are expected to have their contents (and properties)
  * available locally.  Returns <code>false</code> in all other cases,
@@ -1119,6 +1150,24 @@ public boolean isAccessible();
  * @see #setLocal
  */
 public boolean isLocal(int depth);
+/**
+ * Returns <code>true</code> if this resource has been linked to 
+ * a location outside of the project's content area.  Returns <code>false</code>. 
+ * in all other cases, including the case where this resource does not exist.
+ * The workspace root and projects are never linked.
+ * <p>
+ * This method returns true only for a resource that has been linked using
+ * the <code>createLink</code> method.  This method returns false for
+ * children of linked resources.
+ * </p>
+ * 
+ * @return <code>true</code> if this resource is linked, and 
+ *   <code>false</code> otherwise
+ *
+ * @see IFile#createLink
+ * @see IFolder#createLink
+ */
+public boolean isLinked();
 /**
  * Returns whether this resource is a phantom resource.
  * <p>
@@ -1186,54 +1235,16 @@ public boolean isReadOnly();
  * @since 2.0
  */
 public boolean isSynchronized(int depth);
-
-
 /**
- * Renames or relocates this project so that it is the project specified by the given project 
- * description.
- * <p>
- * This is a convenience method, fully equivalent to:
- * <pre>
- *   move(description, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
- * </pre>
- * </p>
- * <p>
- * This operation changes resources; these changes will be reported
- * in a subsequent resource change event that will include 
- * an indication that the resource has been removed from its parent
- * and that a corresponding resource has been added to its new parent.
- * Additional information provided with resource delta shows that these
- * additions and removals are related.
- * </p>
- * <p>
- * This method is long-running; progress and cancellation are provided
- * by the given progress monitor. 
- * </p>
+ * Returns whether this resource is a team private member of its parent container.
+ * Returns <code>false</code> if this resource does not exist.
  *
- * @param description the destination project description
- * @param force a flag controlling whether resources that are not
- *    in sync with the local file system will be tolerated
- * @param keepHistory a flag indicating whether or not to keep
- *    local history for files
- * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
- * @exception CoreException if this resource could not be moved. Reasons include:
- * <ul>
- * <li> This resource does not exist.</li>
- * <li> This resource or one of its descendents is not local.</li>
- * <li> This resource is not a project.</li>
- * <li> The project at the destination already exists.</li>
- * <li> This resource or one of its descendents is out of sync with the local file
- *      system and <code>force</code> is <code>false</code>.</li>
- * <li> The workspace and the local file system are out of sync
- *      at the destination resource or one of its descendents.</li>
- * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
- * </ul>
- * @see IResourceDelta#getFlags
+ * @return <code>true</code> if this resource is a team private member, and
+ *   <code>false</code> otherwise
+ * @see #setTeamPrivateMember
+ * @since 2.0
  */
-public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
-
+public boolean isTeamPrivateMember();
 /**
  * Moves this resource so that it is located at the given path.  
  * <p>
@@ -1283,6 +1294,161 @@ public void move(IProjectDescription description, boolean force, boolean keepHis
  * @see IResourceDelta#getFlags
  */
 public void move(IPath destination, boolean force, IProgressMonitor monitor) throws CoreException;
+/**
+ * Moves this resource so that it is located at the given path.  
+ * The path of the resource must not be a prefix of the destination path.
+ * The workspace root may not be the source or destination location 
+ * of a move operation, and a project can only be moved to another project.
+ * After successful completion, the resource and any direct or indirect members
+ * will no longer exist; but corresponding new resources will now exist at the
+ * given path.
+ * <p>
+ * The supplied path may be absolute or relative.  Absolute paths fully specify
+ * the new location for the resource, including its project.  Relative paths are
+ * considered to be relative to the container of the resource being moved. A
+ * trailing slash is ignored.
+ * </p>
+ * <p>
+ * Calling this method with a one segment absolute destination
+ * path is equivalent to calling:
+ * <pre>
+ 		IProjectDescription description = getDescription();
+ 		description.setName(path.lastSegment());
+ 		move(description, updateFlags, monitor);
+ * </pre>
+ * </p>
+ * <p>When a linked resource is moved into another project, a new linked
+ * resource is created in the destination project that points to the same file
+ * system location.  When a project containing linked resources is moved, the
+ * new project will contain the same linked resources pointing to the same file
+ * system locations.  For either of these cases, no files on disk under the
+ * linked resource are actually moved.  Moving of linked resources into anything
+ * other than a project is not permitted.
+ * </p>
+ * <p>
+ * When a resource moves, its session and persistent properties move with it.
+ * Likewise for all other attributes of the resource including markers.
+ * </p>
+ * <p>
+ * The <code>FORCE</code> update flag controls how this method deals with cases
+ * where the workspace is not completely in sync with the local file system. If
+ * <code>FORCE</code> is not specified, the method will only attempt to move
+ * resources that are in sync with the corresponding files and directories in
+ * the local file system; it will fail if it encounters a resource that is out
+ * of sync with the file system. However, if <code>FORCE</code> is specified,
+ * the method moves all corresponding files and directories from the local file
+ * system, including ones that have been recently updated or created. Note that
+ * in both settings of the <code>FORCE</code> flag, the operation fails if the
+ * newly created resources in the workspace would be out of sync with the local
+ * file system; this ensures files in the file system cannot be accidentally
+ * overwritten.
+ * </p>
+ * <p>
+ * The <code>KEEP_HISTORY</code> update flag controls whether or not 
+ * file that are about to be deleted from the local file system have their
+ * current contents saved in the workspace's local history. The local history
+ * mechanism serves as a safety net to help the user recover from mistakes that
+ * might otherwise result in data loss. Specifying <code>KEEP_HISTORY</code>
+ * is recommended except in circumstances where past states of the files are of
+ * no conceivable interested to the user. Note that local history is maintained
+ * with each individual project, and gets discarded when a project is deleted
+ * from the workspace. Hence <code>KEEP_HISTORY</code> is only really applicable
+ * when moving files and folders, but not whole projects.
+ * </p>
+ * <p>
+ * Update flags other than <code>FORCE</code> and <code>KEEP_HISTORY</code> 
+ * are ignored.
+ * </p>
+ * <p>
+ * This method changes resources; these changes will be reported in a subsequent
+ * resource change event that will include an indication that the resource has
+ * been removed from its parent and that a corresponding resource has been added
+ * to its new parent. Additional information provided with resource delta shows
+ * that these additions and removals are related.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ *
+ * @param destination the destination path 
+ * @param updateFlags bit-wise or of update flag constants
+ *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @exception CoreException if this resource could not be moved. Reasons include:
+ * <ul>
+ * <li> This resource does not exist.</li>
+ * <li> This resource or one of its descendents is not local.</li>
+ * <li> The source or destination is the workspace root.</li>
+ * <li> The source is a project but the destination is not.</li>
+ * <li> The destination is a project but the source is not.</li>
+ * <li> The resource corresponding to the parent destination path does not exist.</li>
+ * <li> The resource corresponding to the parent destination path is a closed 
+ *      project.</li>
+ * <li> A resource at destination path does exist.</li>
+ * <li> A resource of a different type exists at the destination path.</li>
+ * <li> This resource or one of its descendents is out of sync with the local file system
+ *      and <code>force</code> is <code>false</code>.</li>
+ * <li> The workspace and the local file system are out of sync
+ *      at the destination resource or one of its descendents.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
+ * <li> The source resource is a file and the destination path specifies a project.</li>
+ * </ul>
+ * @see IResourceDelta#getFlags
+ * @see #FORCE
+ * @see #KEEP_HISTORY
+ * @since 2.0
+ */
+public void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+/**
+ * Renames or relocates this project so that it is the project specified by the given project 
+ * description.
+ * <p>
+ * This is a convenience method, fully equivalent to:
+ * <pre>
+ *   move(description, (keepHistory ? KEEP_HISTORY : IResource.NONE) | (force ? FORCE : IResource.NONE), monitor);
+ * </pre>
+ * </p>
+ * <p>
+ * This operation changes resources; these changes will be reported
+ * in a subsequent resource change event that will include 
+ * an indication that the resource has been removed from its parent
+ * and that a corresponding resource has been added to its new parent.
+ * Additional information provided with resource delta shows that these
+ * additions and removals are related.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ *
+ * @param description the destination project description
+ * @param force a flag controlling whether resources that are not
+ *    in sync with the local file system will be tolerated
+ * @param keepHistory a flag indicating whether or not to keep
+ *    local history for files
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @exception CoreException if this resource could not be moved. Reasons include:
+ * <ul>
+ * <li> This resource does not exist.</li>
+ * <li> This resource or one of its descendents is not local.</li>
+ * <li> This resource is not a project.</li>
+ * <li> The project at the destination already exists.</li>
+ * <li> This resource or one of its descendents is out of sync with the local file
+ *      system and <code>force</code> is <code>false</code>.</li>
+ * <li> The workspace and the local file system are out of sync
+ *      at the destination resource or one of its descendents.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
+ * </ul>
+ * @see IResourceDelta#getFlags
+ */
+public void move(IProjectDescription description, boolean force, boolean keepHistory, IProgressMonitor monitor) throws CoreException;
+
+
 
 /**
  * Renames or relocates this project so that it is the project specified by the given
@@ -1376,110 +1542,7 @@ public void move(IPath destination, boolean force, IProgressMonitor monitor) thr
  */
 public void move(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
-/**
- * Moves this resource so that it is located at the given path.  
- * The path of the resource must not be a prefix of the destination path.
- * The workspace root may not be the source or destination location 
- * of a move operation, and a project can only be moved to another project.
- * After successful completion, the resource and 
- * any direct or indirect members will no longer exist; but corresponding 
- * new resources will now exist at the given path.
- * <p>
- * The supplied path may be absolute or relative.  Absolute paths
- * fully specify the new location for the resource, including its
- * project.  Relative paths are considered to be relative to the
- * container of the resource being moved. A trailing slash is ignored.
- * </p>
- * <p>
- * Calling this method with a one segment absolute destination
- * path is equivalent to calling:
- * <pre>
- 		IProjectDescription description = getDescription();
- 		description.setName(path.lastSegment());
- 		move(description, updateFlags, monitor);
- * </pre>
- * </p>
- * <p>
- * When a resource moves, its session and persistent properties move
- * with it. Likewise for all the other attributes of the resource including
- * markers.
- * </p>
- * <p>
- * The <code>FORCE</code> update flag controls how this method deals with
- * cases where the workspace is not completely in sync with the local file 
- * system. If <code>FORCE</code> is not specified, the method will only attempt
- * to move resources that are in sync with the corresponding files and
- * directories in the local file system; it will fail if it
- * encounters a resource that is out of sync with the file system.
- * However, if <code>FORCE</code> is specified, the method
- * moves all corresponding files and directories from the local
- * file system, including ones that have been recently updated or created.
- * Note that in both settings of the <code>FORCE</code> flag,
- * the operation fails if the newly created resources in the 
- * workspace would be out of sync with the local file system; 
- * this ensures files in the file system cannot be accidentally
- * overwritten.
- * </p>
- * <p>
- * The <code>KEEP_HISTORY</code> update flag controls whether or not 
- * file that are about to be deleted from the local file system have their
- * current contents saved in the workspace's local history. The local history
- * mechanism serves as a safety net to help the user recover from mistakes that
- * might otherwise result in data loss. Specifying <code>KEEP_HISTORY</code>
- * is recommended except in circumstances where past states of the files are of
- * no conceivable interested to the user. Note that local history is maintained
- * with each individual project, and gets discarded when a project is deleted
- * from the workspace. Hence <code>KEEP_HISTORY</code> is only really applicable
- * when moving files and folders, but not whole projects.
- * </p>
- * <p>
- * Update flags other than <code>FORCE</code> and <code>KEEP_HISTORY</code> 
- * are ignored.
- * </p>
- * <p>
- * This method changes resources; these changes will be reported
- * in a subsequent resource change event that will include 
- * an indication that the resource has been removed from its parent
- * and that a corresponding resource has been added to its new parent.
- * Additional information provided with resource delta shows that these
- * additions and removals are related.
- * </p>
- * <p>
- * This method is long-running; progress and cancellation are provided
- * by the given progress monitor. 
- * </p>
- *
- * @param destination the destination path 
- * @param updateFlags bit-wise or of update flag constants
- *   (<code>FORCE</code> and <code>KEEP_HISTORY</code>)
- * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
- * @exception CoreException if this resource could not be moved. Reasons include:
- * <ul>
- * <li> This resource does not exist.</li>
- * <li> This resource or one of its descendents is not local.</li>
- * <li> The source or destination is the workspace root.</li>
- * <li> The source is a project but the destination is not.</li>
- * <li> The destination is a project but the source is not.</li>
- * <li> The resource corresponding to the parent destination path does not exist.</li>
- * <li> The resource corresponding to the parent destination path is a closed 
- *      project.</li>
- * <li> A resource at destination path does exist.</li>
- * <li> A resource of a different type exists at the destination path.</li>
- * <li> This resource or one of its descendents is out of sync with the local file system
- *      and <code>force</code> is <code>false</code>.</li>
- * <li> The workspace and the local file system are out of sync
- *      at the destination resource or one of its descendents.</li>
- * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
- * <li> The source resource is a file and the destination path specifies a project.</li>
- * </ul>
- * @see IResourceDelta#getFlags
- * @see #FORCE
- * @see #KEEP_HISTORY
- * @since 2.0
- */
-public void move(IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
 
 /**
  * Refreshes the resource hierarchy from this resource and its 
@@ -1516,6 +1579,52 @@ public void move(IPath destination, int updateFlags, IProgressMonitor monitor) t
  * @see IResource#DEPTH_INFINITE
  */
 public void refreshLocal(int depth, IProgressMonitor monitor) throws CoreException;
+/**
+ * Sets whether this resource subtree is marked as derived.
+ * <p>
+ * A <b>derived</b> resource is a regular file or folder that is
+ * created in the course of translating, compiling, copying, or otherwise 
+ * processing other files. Derived resources are not original data, and can be
+ * recreated from other resources. It is commonplace to exclude derived 
+ * resources from version and configuration management because they would
+ * otherwise clutter the team repository with version of these ever-changing
+ * files as each user regenerates them.
+ * </p>
+ * <p>
+ * If a resource or any of its ancestors is marked as derived, a team 
+ * provider should assume that the resource is not under version and
+ * configuration management <it>by default</it>. That is, the resource
+ * should only be stored in a team repository if the user explicitly indicates
+ * that this resource is worth saving.
+ * </p>
+ * <p>
+ * Newly-created resources are not marked as derived; rather, the mark must be
+ * set explicitly using <code>setDerived(true)</code>. Derived marks are maintained
+ * in the in-memory resource tree, and are discarded when the resources is deleted.
+ * Derived marks are saved to disk when a project is closed, or when the workspace
+ * is saved.
+ * </p>
+ * <p>
+ * Projects and the workspace root are never considered derived; attempts to
+ * mark them as derived are ignored.
+ * </p>
+ * <p>
+ * This operation does <b>not</b> result in a resource change event, and does not
+ * trigger auto-builds.
+ * </p>
+ * 
+ * @param isDerived <code>true</code> if this resource is to be marked
+ *   as derived, and <code>false</code> otherwise
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This resource does not exist.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
+ * </ul>
+ * @see #isDerived
+ * @since 2.0
+ */
+public void setDerived(boolean isDerived) throws CoreException;
 /**
  * Set whether or not this resource and its members (to the 
  * specified depth) are expected to have their contents (and properties)
@@ -1615,102 +1724,6 @@ public void setReadOnly(boolean readOnly);
  */
 public void setSessionProperty(QualifiedName key, Object value) throws CoreException;
 /**
- * Marks this resource as having changed even though its content
- * may not have changed. This method can be used to trigger 
- * the rebuilding of resources/structures derived from this resource.
- * Touching the workspace root has no effect.
- * </p>
- * <p>
- * This method changes resources; these changes will be reported
- * in a subsequent resource change event.
- * </p>
- * <p>
- * This method is long-running; progress and cancellation are provided
- * by the given progress monitor. 
- * </p>
- *
- * @param monitor a progress monitor, or <code>null</code> if progress
- *    reporting and cancellation are not desired
- * @exception CoreException if this method fails. Reasons include:
- * <ul>
- * <li> This resource does not exist.</li>
- * <li> This resource is not local.</li>
- * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
- * </ul>
- */ 
-public void touch(IProgressMonitor monitor) throws CoreException;
-
-/**
- * Returns whether this resource subtree is marked as derived. Returns
- * <code>false</code> if this resource does not exist.
- *
- * @return <code>true</code> if this resource is marked as derived, and
- *   <code>false</code> otherwise
- * @see #setDerived
- * @since 2.0
- */
-public boolean isDerived();
-
-/**
- * Sets whether this resource subtree is marked as derived.
- * <p>
- * A <b>derived</b> resource is a regular file or folder that is
- * created in the course of translating, compiling, copying, or otherwise 
- * processing other files. Derived resources are not original data, and can be
- * recreated from other resources. It is commonplace to exclude derived 
- * resources from version and configuration management because they would
- * otherwise clutter the team repository with version of these ever-changing
- * files as each user regenerates them.
- * </p>
- * <p>
- * If a resource or any of its ancestors is marked as derived, a team 
- * provider should assume that the resource is not under version and
- * configuration management <it>by default</it>. That is, the resource
- * should only be stored in a team repository if the user explicitly indicates
- * that this resource is worth saving.
- * </p>
- * <p>
- * Newly-created resources are not marked as derived; rather, the mark must be
- * set explicitly using <code>setDerived(true)</code>. Derived marks are maintained
- * in the in-memory resource tree, and are discarded when the resources is deleted.
- * Derived marks are saved to disk when a project is closed, or when the workspace
- * is saved.
- * </p>
- * <p>
- * Projects and the workspace root are never considered derived; attempts to
- * mark them as derived are ignored.
- * </p>
- * <p>
- * This operation does <b>not</b> result in a resource change event, and does not
- * trigger auto-builds.
- * </p>
- * 
- * @param isDerived <code>true</code> if this resource is to be marked
- *   as derived, and <code>false</code> otherwise
- * @exception CoreException if this method fails. Reasons include:
- * <ul>
- * <li> This resource does not exist.</li>
- * <li> Resource changes are disallowed during certain types of resource change 
- *       event notification. See IResourceChangeEvent for more details.</li>
- * </ul>
- * @see #isDerived
- * @since 2.0
- */
-public void setDerived(boolean isDerived) throws CoreException;
-
-/**
- * Returns whether this resource is a team private member of its parent container.
- * Returns <code>false</code> if this resource does not exist.
- *
- * @return <code>true</code> if this resource is a team private member, and
- *   <code>false</code> otherwise
- * @see #setTeamPrivateMember
- * @since 2.0
- */
-public boolean isTeamPrivateMember();
-
-/**
  * Sets whether this resource subtree is a team private member of its parent container.
  * <p>
  * A <b>team private member</b> resource is a special file or folder created by a team
@@ -1746,5 +1759,30 @@ public boolean isTeamPrivateMember();
  * @since 2.0
  */
 public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException;
-
+/**
+ * Marks this resource as having changed even though its content
+ * may not have changed. This method can be used to trigger 
+ * the rebuilding of resources/structures derived from this resource.
+ * Touching the workspace root has no effect.
+ * </p>
+ * <p>
+ * This method changes resources; these changes will be reported
+ * in a subsequent resource change event.
+ * </p>
+ * <p>
+ * This method is long-running; progress and cancellation are provided
+ * by the given progress monitor. 
+ * </p>
+ *
+ * @param monitor a progress monitor, or <code>null</code> if progress
+ *    reporting and cancellation are not desired
+ * @exception CoreException if this method fails. Reasons include:
+ * <ul>
+ * <li> This resource does not exist.</li>
+ * <li> This resource is not local.</li>
+ * <li> Resource changes are disallowed during certain types of resource change 
+ *       event notification. See IResourceChangeEvent for more details.</li>
+ * </ul>
+ */ 
+public void touch(IProgressMonitor monitor) throws CoreException;
 }

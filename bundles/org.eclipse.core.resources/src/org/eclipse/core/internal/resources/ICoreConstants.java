@@ -15,7 +15,7 @@ import org.eclipse.core.resources.*;
 
 public interface ICoreConstants {
 	
-	// Standard resource SessionProperties
+	// Standard resource properties
 	/** map of builders to their last built state. */
 	public static final QualifiedName K_BUILD_MAP = new QualifiedName(ResourcesPlugin.PI_RESOURCES, "BuildMap"); //$NON-NLS-1$
 
@@ -43,6 +43,11 @@ public interface ICoreConstants {
 	 * @since 2.0
 	 */
 	static final int M_TEAM_PRIVATE_MEMBER = 0x8000;
+	/** 
+	 * Marks this resource as a linked resource.
+	 * @since 2.1
+	 */
+	static final int M_LINK = 0x10000;
 	static final int NULL_FLAG = -1;
 
 	// Internal status codes	

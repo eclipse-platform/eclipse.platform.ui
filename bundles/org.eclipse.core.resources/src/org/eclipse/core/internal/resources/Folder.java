@@ -10,12 +10,10 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 
 public class Folder extends Container implements IFolder {
 protected Folder(IPath path, Workspace container) {
@@ -158,5 +156,8 @@ public void internalCreate(boolean force, boolean local, IProgressMonitor monito
 		monitor.done();
 	}
 }
+
+
+
 
 }

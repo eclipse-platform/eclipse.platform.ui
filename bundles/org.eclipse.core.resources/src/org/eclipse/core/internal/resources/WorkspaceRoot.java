@@ -53,16 +53,28 @@ public boolean exists(int flags, boolean checkType) {
 	return true;
 }
 /**
+ * @see IWorkspaceRoot#findContainersForLocation
+ */
+public IContainer[] findContainersForLocation(IPath location) {
+	return (IContainer[]) getLocalManager().allResourcesFor(location, false);
+}
+/**
+ * @see IWorkspaceRoot#findFilesForLocation
+ */
+public IFile[] findFilesForLocation(IPath location) {
+	return (IFile[])getLocalManager().allResourcesFor(location, true);
+}
+/**
  * @see IWorkspaceRoot
  */
 public IContainer getContainerForLocation(IPath location) {
-	return getLocalManager().containerFor(location);
+	return getLocalManager().containerForLocation(location);
 }
 /**
  * @see IWorkspaceRoot
  */
 public IFile getFileForLocation(IPath location) {
-	return getLocalManager().fileFor(location);
+	return getLocalManager().fileForLocation(location);
 }
 /**
  * @see IResource#getLocation

@@ -201,8 +201,12 @@ protected IProjectNature createNature(Project project, String natureID) throws C
 		String message = Policy.bind("resources.natureClass", natureID); //$NON-NLS-1$
 		throw new ResourceException(Platform.PLUGIN_ERROR, project.getFullPath(), message, null);
 	}
-	IConfigurationElement config = configs[0];
-	if (!"runtime".equals(config.getName())) { //$NON-NLS-1$
+	//find the runtime configuration element
+	IConfigurationElement config = null;
+	for (int i = 0; config == null && i < configs.length; i++) 
+		if ("runtime".equalsIgnoreCase(configs[i].getName()))  //$NON-NLS-1$
+			config = configs[i];
+	if (config == null) {
 		String message = Policy.bind("resources.natureFormat", natureID); //$NON-NLS-1$
 		throw new ResourceException(Platform.PLUGIN_ERROR, project.getFullPath(), message, null);
 	}
@@ -488,6 +492,23 @@ protected IStatus validateAdditions(HashSet newNatures, HashSet additions) {
 					return failure(Policy.bind("natures.multipleSetMembers", overlap)); //$NON-NLS-1$
 				}
 			}
+		}
+	}
+	return ResourceStatus.OK_STATUS;
+}
+/**
+ * Validates whether a project with the given set of natures should allow
+ * linked resources.  Returns an OK status if linking is allowed, 
+ * otherwise a non-OK status indicating why linking is not allowed.
+ * Linking is allowed if there is no project nature that explicitly disallows it.
+ * No validation is done on the nature ids themselves (ids that don't have
+ * a corresponding nature definition will be ignored). */
+public IStatus validateLinkCreation(String[] natureIds) {
+	for (int i = 0; i < natureIds.length; i++) {
+		IProjectNatureDescriptor desc = getNatureDescriptor(natureIds[i]);
+		if (desc != null && !desc.isLinkingAllowed()) {
+			String msg = Policy.bind("links.natureVeto", natureIds[i]); //$NON-NLS-1$
+			return new ResourceStatus(IResourceStatus.LINKING_NOT_ALLOWED, msg);
 		}
 	}
 	return ResourceStatus.OK_STATUS;

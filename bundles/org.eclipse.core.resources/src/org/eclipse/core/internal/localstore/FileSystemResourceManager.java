@@ -35,22 +35,87 @@ public FileSystemResourceManager(Workspace workspace) {
 	localStore = new FileSystemStore();
 }
 /**
+ * Returns the workspace paths of all resources that may correspond to
+ * the given file system location.  Returns an empty ArrayList if there are no 
+ * such paths.  This method does not consider whether resources actually 
+ * exist at the given locations.
+ */
+protected ArrayList allPathsForLocation(IPath location) {
+	IProject[] projects = getWorkspace().getRoot().getProjects();
+	final ArrayList results = new ArrayList();
+	for (int i = 0; i < projects.length; i++) {
+		IProject project = projects[i];
+		//check the project location
+		IPath testLocation = project.getLocation();
+		IPath suffix;
+		if (testLocation != null && testLocation.isPrefixOf(location)) {
+			suffix = location.removeFirstSegments(testLocation.segmentCount());
+			results.add(project.getFullPath().append(suffix));
+		}
+		if (!project.isAccessible())
+			continue;
+		IResource[] children= null;
+		try {
+			children = project.members();
+		} catch (CoreException e) {
+			//ignore projects that cannot be accessed
+		}
+		if (children == null)
+			continue;
+		for (int j = 0; j < children.length; j++) {
+			IResource child = children[j];
+			if (child.isLinked()) {
+				testLocation = child.getLocation();
+				if (testLocation != null && testLocation.isPrefixOf(location)) {
+					//add the full workspace path of the corresponding child of the linked resource
+					suffix = location.removeFirstSegments(testLocation.segmentCount());
+					results.add(child.getFullPath().append(suffix));
+				}
+			}
+		}
+	}
+	return results;
+}
+/**
+ * Returns all resources that correspond to the given file system location,
+ * including resources under linked resources.  Returns an empty array
+ * if there are no corresponding resources.
+ * @param location the file system location
+ * @param files resources that may exist below the project level can
+ * be either files or folders.  If this parameter is true, files will be returned,
+ * otherwise containers will be returned.
+ */
+public IResource[] allResourcesFor(IPath location, boolean files) {
+	ArrayList result = allPathsForLocation(location);
+	int count = 0;
+	for (int i = 0, imax = result.size(); i < imax; i++) {
+		//replace the path in the list with the appropriate resource type
+		IResource resource = resourceFor((IPath)result.get(i), files);
+		result.set(i, resource);
+		//count actual resources - some paths won't have a corresponding resource
+		if (resource != null)
+			count++;
+	}
+	//convert to array and remove null elements
+	IResource[] toReturn = files ? (IResource[])new IFile[count] : (IResource[])new IContainer[count];
+	count = 0;
+	for (Iterator it = result.iterator(); it.hasNext();) {
+		IResource resource = (IResource) it.next();
+		if (resource != null)
+			toReturn[count++] = resource;
+	}
+	return toReturn;
+}
+/**
  * Returns a container for the given file system location or null if there
  * is no mapping for this path. If the path has only one segment, then an 
  * <code>IProject</code> is returned.  Otherwise, the returned object
  * is a <code>IFolder</code>.  This method does NOT check the existence
  * of a folder in the given location. Location cannot be null.
  */
-public IContainer containerFor(IPath location) {
-	IPath path = resourcePathFor(location);
-	if (path == null)
-		return null;
-	if (path.isRoot())
-		return getWorkspace().getRoot();
-	if (path.segmentCount() == 1)
-		return getWorkspace().getRoot().getProject(path.segment(0));
-	else
-		return getWorkspace().getRoot().getFolder(path);
+public IContainer containerForLocation(IPath location) {
+	IPath path = pathForLocation(location);
+	return path == null ? null : (IContainer)resourceFor(path, false);
 }
 public void copy(IResource target, IResource destination, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
@@ -106,9 +171,9 @@ public void delete(IResource target, boolean force, boolean convertToPhantom, bo
  * is no mapping for this path. This method does NOT check the existence
  * of a file in the given location. Location cannot be null.
  */
-public IFile fileFor(IPath location) {
-	IPath path = resourcePathFor(location);
-	return path != null ? getWorkspace().getRoot().getFile(path) : null;
+public IFile fileForLocation(IPath location) {
+	IPath path = pathForLocation(location);
+	return path == null ? null : (IFile)resourceFor(path, true);
 }
 /**
  * The project description file is the only metadata file stored
@@ -238,20 +303,44 @@ public boolean isSynchronized(IResource resource, int depth) {
 			return true;
 	}
 }
+public void link(Resource target, IPath localLocation) {
+	//resource already exists when linking -- just need to update sync info
+	long lastModified = CoreFileSystemLibrary.getLastModified(localLocation.toFile().getAbsolutePath());
+	ResourceInfo info = ((Resource) target).getResourceInfo(false, true);
+	updateLocalSync(info, lastModified, false);
+}
+
 public IPath locationFor(IResource target) {
+	//note: this method is a critical performance path,
+	//code may be inlined to prevent method calls
 	switch (target.getType()) {
 		case IResource.ROOT :
 			return Platform.getLocation();
 		case IResource.PROJECT :
 			Project project = (Project) target.getProject();
-			IProjectDescription description = project.internalGetDescription();
+			ProjectDescription description = project.internalGetDescription();
 			if (description != null && description.getLocation() != null) {
 				return description.getLocation();
 			}
 			return getProjectDefaultLocation(project);
 		default:
-			//first get the location of the project (without the project name)
+			//check if the resource is a linked resource
+			IPath targetPath = target.getFullPath();
+			int numSegments = targetPath.segmentCount();
+			IResource linked = target;
+			if (numSegments > 2) {
+				//parent could be a linked resource
+				linked = workspace.getRoot().getFolder(
+					targetPath.removeLastSegments(numSegments-2));
+			}
 			description = ((Project)target.getProject()).internalGetDescription();
+			if (linked.isLinked()) {
+				IPath location = description.getLinkLocation(linked.getName());
+				//location may have been deleted from the project description between sessions
+				if (location != null)
+					return location.append(targetPath.removeFirstSegments(2));
+			}
+			//not a linked resource -- get location of project
 			if (description != null && description.getLocation() != null) {
 				return description.getLocation().append(target.getProjectRelativePath());
 			} else {
@@ -259,6 +348,8 @@ public IPath locationFor(IResource target) {
 			}
 	}
 }
+
+
 public void move(IResource target, IPath destination, boolean keepHistory, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
@@ -383,7 +474,10 @@ public ProjectDescription read(IProject target, boolean creation) throws CoreExc
 		//create a new resource on the sly -- don't want to start an operation
 		info = getWorkspace().createResource(descriptionFile, false);
 	}
-	updateLocalSync(info, lastModified, true);
+	//if the project description has changed between sessions, let it remain
+	//out of sync -- that way link changes will be reconciled on next refresh
+	if (!creation)
+		updateLocalSync(info, lastModified, true);
 	
 	//update the timestamp on the project as well so we know when it has
 	//been changed from the outside
@@ -453,34 +547,27 @@ protected boolean refreshRoot(IWorkspaceRoot target, int depth, IProgressMonitor
 	}
 }
 /**
- * Returns null if there is no mapping for this path or the resource
- * does not exist in the file system.
+ * Returns the resource corresponding to the given workspace path.  The 
+ * "files" parameter is used for paths of two or more segments.  If true,
+ * a file is returned, otherwise a folder is returned.  Returns null if files is true
+ * and the path is not of sufficient length.
  */
-public IResource resourceFor(IPath location) throws CoreException {
-	IPath resourcePath = resourcePathFor(location);
-	if (resourcePath == null)
+protected IResource resourceFor(IPath path, boolean files) {
+	int numSegments = path.segmentCount();
+	if (files && numSegments < ICoreConstants.MINIMUM_FILE_SEGMENT_LENGTH)
 		return null;
-	if (resourcePath.equals(Path.ROOT))
-		return getWorkspace().getRoot();
-	// check the workspace first
-	IResource target = getWorkspace().getRoot().findMember(resourcePath);
-	if (target != null)
-		return target;
-
-	// couldn't find it in the workspace so look in the filesystem
-	if (location.toFile().isFile())
-		return getWorkspace().getRoot().getFile(resourcePath);
-	if (location.toFile().isDirectory())
-		return getWorkspace().getRoot().getFolder(resourcePath);
-
-	// can't find any trace of this resource so return null
-	return null;
+	IWorkspaceRoot root = getWorkspace().getRoot();
+	if (path.isRoot())
+		return root;
+	if (numSegments == 1)
+		return root.getProject(path.segment(0));
+	return files ? (IResource)root.getFile(path) : (IResource)root.getFolder(path);
 }
 /**
  * Returns a resource path to the given local location. Returns null if
  * it is not under a project's location.
  */
-protected IPath resourcePathFor(IPath location) {
+protected IPath pathForLocation(IPath location) {
 	if (Platform.getLocation().equals(location))
 		return Path.ROOT;
 	IProject[] projects = getWorkspace().getRoot().getProjects();

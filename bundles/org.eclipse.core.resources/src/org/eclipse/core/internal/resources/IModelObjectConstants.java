@@ -39,4 +39,6 @@ public interface IModelObjectConstants {
 	public static final String VALUE = "value"; //$NON-NLS-1$
 	public static final String VERSION = "version"; //$NON-NLS-1$
 	public static final String WORKSPACE_DESCRIPTION = "workspaceDescription"; //$NON-NLS-1$
+	public static final String LINKED_RESOURCES= "linkedResources"; //$NON-NLS-1$
+	public static final String LINK = "link"; //$NON-NLS-1$
 }

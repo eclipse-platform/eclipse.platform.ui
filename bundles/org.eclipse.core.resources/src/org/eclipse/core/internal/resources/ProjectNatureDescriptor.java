@@ -25,6 +25,7 @@ public class ProjectNatureDescriptor implements IProjectNatureDescriptor {
 	protected String[] requiredNatures;
 	protected String[] natureSets;
 	protected String[] builderIds;
+	protected boolean allowLinking = true;
 	
 	//descriptors that are in a dependency cycle are never valid
 	protected boolean hasCycle = false;
@@ -77,6 +78,12 @@ public String[] getNatureSetIds() {
 	return natureSets;
 }
 /**
+ * @see IProjectNatureDescriptor#isLinkingAllowed()
+ */
+public boolean isLinkingAllowed() {
+	return allowLinking;
+}
+/**
  * Initialize this nature descriptor based on the provided extension point.
  */
 protected void readExtension(IExtension natureExtension) throws CoreException {
@@ -109,6 +116,10 @@ protected void readExtension(IExtension natureExtension) throws CoreException {
 			if (attribute == null)
 				fail();
 			builderList.add(attribute);
+		} else if (name.equalsIgnoreCase("options")) { //$NON-NLS-1$
+			String attribute = element.getAttribute("allowLinking"); //$NON-NLS-1$
+			//when in doubt (missing attribute, wrong value) default to allow linking
+			allowLinking = !Boolean.FALSE.toString().equalsIgnoreCase(attribute);
 		}
 	}
 	requiredNatures = (String[])requiredList.toArray(new String[requiredList.size()]);

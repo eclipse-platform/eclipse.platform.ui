@@ -71,4 +71,12 @@ public String[] getRequiredNatureIds();
  * 	possibly an empty array.
  */
 public String[] getNatureSetIds();
+/**
+ * Returns whether this project nature allows linked resources to be created
+ * in projects where this nature is installed.
+ *  * @return boolean true if creating links is allowed, and false otherwise.
+ * @see IFolder#createLink
+ * @see IFile#createLink
+ * @since 2.1 */
+public boolean isLinkingAllowed();
 }

@@ -1015,6 +1015,37 @@ public String[] sortNatureSet(String[] natureIds);
  */
 public IStatus validateEdit(IFile[] files, Object context);
 /**
+ * Validates the given path as the location of the given resource on disk.
+ * In addition to the restrictions for paths in general (see 
+ * <code>IPath.isValidPath</code>), a link location must also obey the 
+ * following rules:
+ * <ul>
+ * <li> must not overlap with the platform's metadata directory</li>
+ * <li> must not be the same as or a parent of the root directory of the 
+ * project the linked resource is contained in</li>
+ * </ul>
+ * <p>
+ * This method will return a status with severity <code>IStatus.ERROR</code>
+ * if the location does not obey the above rules. Also, this method will
+ * return a status with severity <code>IStatus.WARNING</code> if the 
+ * location overlaps the location of any existing resource in the workspace.
+ * </p>
+ * <p>
+ * Note: this method does not consider whether files or directories exist in 
+ * the filesystem at the specified path.
+ * 
+ * @param resource the resource to validate the location for
+ * @param location the location of the linked resource contents on disk
+ * @return a status object with code <code>IStatus.OK</code> if
+ *		the given location is valid as the linked resource location, otherwise a 
+ * 	status object with severity <code>IStatus.WARNING</code> or 
+ * 	<code>IStatus.ERROR</code> indicating what is wrong with the string
+ * @see IProjectDescription#getLocation
+ * @see IProjectDescription#setLocation
+ * @see IStatus#OK
+ */
+public IStatus validateLinkLocation(IResource resource, IPath location);
+/**
  * Validates the given string as the name of a resource
  * valid for one of the given types.
  * <p>

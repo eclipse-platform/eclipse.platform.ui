@@ -80,58 +80,70 @@ protected void addChildren(UnifiedTreeNode node) throws CoreException {
 	IResource parent = node.getResource();
 
 	/* is there a possibility to have children? */
-	if (parent.getType() == IResource.FILE && node.isFile())
+	int parentType = parent.getType();
+	if (parentType == IResource.FILE && node.isFile())
 		return;
 
 	/* get the list of resources in the file system */
 	String parentLocalLocation = node.getLocalLocation();
 	Object[] list = getLocalList(node, parentLocalLocation);
-	int index = 0;
+	int localIndex = 0;
 
 	/* get the list of resources in the workspace */
-	if (node.existsInWorkspace() && (parent.getType() == IResource.FOLDER || parent.getType() == IResource.PROJECT)) {
+	if (parent.exists() && (parentType == IResource.FOLDER || parentType == IResource.PROJECT)) {
 		IResource target = null;
-		boolean next = true;
 		UnifiedTreeNode child = null;
 		IResource[] members = ((IContainer) parent).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-		int i = 0;
-		while (true) {
-			if (next) {
-				if (i >= members.length)
-					break;
-				target = members[i++];
-			}
+		int workspaceIndex = 0;
+		//iterate simultaneously over file system and workspace members
+		while (workspaceIndex < members.length) {
+			target = members[workspaceIndex];
 			String name = target.getName();
-			String localName = (list != null && index < list.length) ? (String) list[index] : null;
+			String localName = (list != null && localIndex < list.length) ? (String) list[localIndex] : null;
 			int comp = localName != null ? name.compareTo(localName) : -1;
-			if (comp == 0) {
+			//special handling for linked resources
+			if (parentType == IResource.PROJECT && target.isLinked()) {
+				child = createChildForLinkedResource(target);
+				workspaceIndex++;
+				//if there is a matching local file, skip it - it will be blocked by the linked resource
+				if (comp == 0)
+					localIndex++;
+			} else if (comp == 0) {
 				// resource exists in workspace and file system
 				String localLocation = createChildLocation(parentLocalLocation, localName);
 				long stat = CoreFileSystemLibrary.getStat(localLocation);
 				child = createNode(target, stat, localLocation, localName, true);
-				index++;
-				next = true;
+				localIndex++;
+				workspaceIndex++;
 			} else
 				if (comp > 0) {
 					// resource exists only in file system
 					child = createChildNodeFromFileSystem(node, parentLocalLocation, localName);
-					index++;
-					next = false;
+					localIndex++;
 				} else {
 					// resource exists only in the workspace
 					child = createNode(target, 0, null, null, true);
-					next = true;
+					workspaceIndex++;
 				}
 			addChildToTree(node, child);
 		}
 	}
 
 	/* process any remaining resource from the file system */
-	addChildrenFromFileSystem(node, parentLocalLocation, list, index);
+	addChildrenFromFileSystem(node, parentLocalLocation, list, localIndex);
 
 	/* if we added children, add the childMarker separator */
 	if (node.getFirstChild() != null)
 		addChildrenMarker();
+}
+/**
+ * Creates a tree node for a resource that is linked in a different file system location.
+ */
+protected UnifiedTreeNode createChildForLinkedResource(IResource target) {
+	IPath location = target.getLocation();
+	String locationString = location.toOSString();
+	long stat = CoreFileSystemLibrary.getStat(locationString);
+	return createNode(target, stat, locationString, location.lastSegment(), true);
 }
 protected void addChildrenFromFileSystem(UnifiedTreeNode node, String parentLocalLocation, Object[] list, int index) throws CoreException {
 	if (list == null)

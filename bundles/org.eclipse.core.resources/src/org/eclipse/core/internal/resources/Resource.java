@@ -12,6 +12,7 @@ package org.eclipse.core.internal.resources;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.properties.PropertyManager;
 import org.eclipse.core.internal.utils.Assert;
@@ -77,6 +78,38 @@ protected void assertCopyRequirements(IPath destination, int destinationType) th
 		// check method above indicate assertion conditions.
 		Assert.isTrue(false, status.getChildren()[0].getMessage());
 	}
+}
+protected void assertLinkRequirements(IPath localLocation, int updateFlags) throws CoreException {
+	checkDoesNotExist(getFlags(getResourceInfo(false, false)), true);
+	Container parent = (Container) getParent();
+	if (parent == null || parent.getType() != IResource.PROJECT) {
+		String msg = Policy.bind("resources.linkNonProject", getFullPath().toString());//$NON-NLS-1$
+		Assert.isLegal(false, msg);
+	}
+	parent.checkAccessible(getFlags(parent.getResourceInfo(false, false)));
+	java.io.File localFile = localLocation.toFile();
+	boolean localExists = localFile.exists();
+	if ((updateFlags & IResource.ALLOW_MISSING_LOCAL) == 0 && !localExists) {
+		String msg = Policy.bind("resources.linkDoesNotExist", getFullPath().toString());//$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.NOT_FOUND_LOCAL, getFullPath(), msg, null);
+	}
+	//resource type and file system type must match
+	if (localExists && ((getType() == IResource.FOLDER) != localFile.isDirectory())) {
+		String msg = Policy.bind("resources.linkWrongType", getFullPath().toString());//$NON-NLS-1$
+		throw new ResourceException(IResourceStatus.WRONG_TYPE_LOCAL, getFullPath(), msg, null);
+	}
+	//check nature veto
+	String[] natureIds = ((Project)getProject()).internalGetDescription().getNatureIds();
+	IStatus result = workspace.getNatureManager().validateLinkCreation(natureIds);
+	if (!result.isOK())
+		throw new ResourceException(result);
+	//check team provider veto
+	if (getType() == IResource.FILE)
+		result = workspace.getTeamHook().validateCreateLink((IFile)this, updateFlags, localLocation);
+	else
+		result = workspace.getTeamHook().validateCreateLink((IFolder)this, updateFlags, localLocation);
+	if (!result.isOK())
+		throw new ResourceException(result);
 }
 protected void assertMoveRequirements(IPath destination, int destinationType) throws CoreException {
 	IStatus status = checkMoveRequirements(destination, destinationType);
@@ -145,6 +178,24 @@ public IStatus checkCopyRequirements(IPath destination, int destinationType) thr
 	}
 
 	return status.isOK() ? (IStatus) new ResourceStatus(IResourceStatus.OK, Policy.bind("resources.copyMet")) : (IStatus) status; //$NON-NLS-1$
+}
+/**
+ * Helper method that considers case insensitive file systems.
+ */
+protected void checkDoesNotExist() throws CoreException {
+	// should consider getting the ResourceInfo as a paramenter to reduce tree lookups
+	
+	//first check the tree for an exact case match
+	checkDoesNotExist(getFlags(getResourceInfo(false, false)), false);
+	if (CoreFileSystemLibrary.isCaseSensitive()) {
+		return;
+	}
+	//now look for a matching case variant in the tree
+	IResource variant = findExistingResourceVariant(getFullPath());
+	if (variant == null)
+		return;
+	String msg = Policy.bind("resources.existsDifferentCase", variant.getFullPath().toString()); //$NON-NLS-1$
+	throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, variant.getFullPath(), msg, null);
 }
 /**
  * Checks that this resource does not exist.  
@@ -377,6 +428,46 @@ public int countResources(int depth, boolean phantom) throws CoreException {
 	return workspace.countResources(path, depth, phantom);
 }
 /**
+ * @see org.eclipse.core.resources.IFolder#createLink(IPath, int, IProgressMonitor)
+ * @see org.eclipse.core.resources.IFile#createLink(IPath, int, IProgressMonitor)
+ */
+public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	monitor = Policy.monitorFor(monitor);
+	try {
+		String message = Policy.bind("resources.creatingLink", getFullPath().toString()); //$NON-NLS-1$
+		monitor.beginTask(message, Policy.totalWork);
+		checkValidPath(path, FOLDER);
+		try {
+			workspace.prepareOperation();
+			assertLinkRequirements(localLocation, updateFlags);
+			workspace.beginOperation(true);
+			ResourceInfo info = workspace.createResource(this, false);
+			info.set(M_LINK);
+			getLocalManager().link(this, localLocation);
+			monitor.worked(Policy.opWork * 5 / 100);
+			//save the location in the project description
+			Project project = (Project)getProject();
+			project.internalGetDescription().setLinkLocation(getName(), 
+				new LinkDescription(this,localLocation));
+			project.writeDescription(IResource.NONE);
+			monitor.worked(Policy.opWork * 5 / 100);
+			
+			//refresh to discover any new resources below this linked location
+			if (getType() != IResource.FILE)
+				refreshLocal(DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 90 / 100));
+			else
+				monitor.worked(Policy.opWork * 90 / 100);
+		} catch (OperationCanceledException e) {
+			workspace.getWorkManager().operationCanceled();
+			throw e;
+		} finally {
+			workspace.endOperation(true, Policy.subMonitorFor(monitor, Policy.buildWork));
+		}
+	} finally {
+		monitor.done();
+	}
+}
+/**
  * @see IResource
  */
 public IMarker createMarker(String type) throws CoreException {
@@ -495,7 +586,7 @@ public void deleteMarkers(String type, boolean includeSubtypes, int depth) throw
  * added, otherwise they are thrown.  If major exceptions occur, they are always thrown.
  */
 public void deleteResource(boolean convertToPhantom, MultiStatus status) throws CoreException {
-	/* delete properties */
+	// delete properties
 	CoreException err = null;
 	try {
 		getPropertyManager().deleteProperties(this, IResource.DEPTH_INFINITE);
@@ -505,9 +596,18 @@ public void deleteResource(boolean convertToPhantom, MultiStatus status) throws 
 		else 
 			err = e;
 	}
-	/* remove markers on this resource and its descendents. */
+	// remove markers on this resource and its descendents
 	if (exists())
 		getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
+	// if this is a linked resource, remove the entry from the project description
+	if (isLinked()) {
+		Project project = (Project)getProject();
+		ProjectDescription description = project.internalGetDescription();
+		description.setLinkLocation(getName(), null);
+		project.internalSetDescription(description, true);
+		project.writeDescription(IResource.FORCE);
+	}
+	
 	/* if we are synchronizing, do not delete the resource. Convert it
 	   into a phantom. Actual deletion will happen when we refresh or push. */
 	if (convertToPhantom && getType() != PROJECT && synchronizing(getResourceInfo(true, false)))
@@ -763,6 +863,7 @@ public boolean isLocal(int flags, int depth) {
 	else
 		return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_LOCAL_EXISTS);
 }
+
 /**
  * @see IResource
  */
@@ -793,6 +894,7 @@ protected IPath makePathAbsolute(IPath target) {
 		return target;
 	return getParent().getFullPath().append(target);
 }
+
 
 /*
  * @see IResource#move
@@ -1064,24 +1166,7 @@ public void touch(IProgressMonitor monitor) throws CoreException {
 		monitor.done();
 	}
 }
-/**
- * Helper method that considers case insensitive file systems.
- */
-protected void checkDoesNotExist() throws CoreException {
-	// should consider getting the ResourceInfo as a paramenter to reduce tree lookups
-	
-	//first check the tree for an exact case match
-	checkDoesNotExist(getFlags(getResourceInfo(false, false)), false);
-	if (CoreFileSystemLibrary.isCaseSensitive()) {
-		return;
-	}
-	//now look for a matching case variant in the tree
-	IResource variant = findExistingResourceVariant(getFullPath());
-	if (variant == null)
-		return;
-	String msg = Policy.bind("resources.existsDifferentCase", variant.getFullPath().toString()); //$NON-NLS-1$
-	throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, variant.getFullPath(), msg, null);
-}
+
 /**
  * Helper method for case insensitive file systems.  Returns
  * an existing resource whose path differs only in case from
@@ -1129,6 +1214,13 @@ public boolean isDerived() {
  */
 public boolean isDerived(int flags) {
 	return flags != NULL_FLAG && ResourceInfo.isSet(flags, ICoreConstants.M_DERIVED);
+}
+/**
+ * @see org.eclipse.core.resources.IResource#isLinked()
+ */
+public boolean isLinked() {
+	ResourceInfo info = getResourceInfo(false, false);
+	return info != null && info.isSet(M_LINK);
 }/*
  * @see IResource
  */
@@ -1185,7 +1277,4 @@ public void setTeamPrivateMember(boolean isTeamPrivate) throws CoreException {
 		}
 	}
 }
-
-
-
 }

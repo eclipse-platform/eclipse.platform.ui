@@ -148,7 +148,7 @@ protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int le
 	
 	if (existsInWorkspace) {
 		if (!node.existsInFileSystem()) {
-			if (target.isLocal(IResource.DEPTH_ZERO)) {
+			if (target.isLocal(IResource.DEPTH_ZERO) && !target.isLinked()) {
 				deleteResource(node, target);
 				resourceChanged = true;
 				return RL_NOT_IN_SYNC;

@@ -29,6 +29,9 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 
 	/** force flag */
 	protected boolean force;
+	
+	/** update flags */
+	protected int updateFlags;
 
 	/** segments to drop from the source name */
 	protected int segmentsToDrop;
@@ -44,33 +47,39 @@ public CopyVisitor(IResource rootSource, IResource destination, boolean force, I
 	this.force = force;
 	this.monitor = monitor;
 	this.segmentsToDrop = rootSource.getFullPath().segmentCount();
-	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INFO, Policy.bind("localstore.copyProblem"), null); //$NON-NLS-1$
+	this.updateFlags = force ? IResource.FORCE : IResource.NONE;
+	this.status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INFO, Policy.bind("localstore.copyProblem"), null); //$NON-NLS-1$
 }
-protected void copy(UnifiedTreeNode node) {
+protected boolean copy(UnifiedTreeNode node) {
 	Resource source = (Resource) node.getResource();
-	IPath sufix = getDestinationSufix(node);
+	IPath sufix = source.getFullPath().removeFirstSegments(segmentsToDrop);
 	Resource destination = getDestinationResource(source, sufix);
 	if (!copyProperties(source, destination))
-		return;
-	copyContents(node, source, destination);
+		return false;
+	return copyContents(node, source, destination);
 }
-protected void copyContents(UnifiedTreeNode node, Resource source, Resource destination) {
+protected boolean copyContents(UnifiedTreeNode node, Resource source, Resource destination) {
 	try {
-		if (destination.getType() == IResource.FOLDER)
-			 ((IFolder) destination).create(force, true, null);
-		else {
-			// XXX: should use transfer streams in order to report better progress
-			((IFile) destination).create(((IFile) source).getContents(false), force, null);
-			// update the destination timestamp on disk
-			long lastModified = node.getLastModified();
-			destination.getResourceInfo(false, true).setLocalSyncInfo(lastModified);
-			destination.getLocation().toFile().setLastModified(lastModified);
-			// update file attributes
-			CoreFileSystemLibrary.copyAttributes(source.getLocation().toOSString(), destination.getLocation().toOSString(), false);
+		if (source.isLinked()) {
+			destination.createLink(source.getLocation(), updateFlags, null);
+			return false;
 		}
+		if (destination.getType() == IResource.FOLDER) {
+			((IFolder)destination).create(updateFlags, true, null);
+			return true;
+		}
+		// XXX: should use transfer streams in order to report better progress
+		((IFile) destination).create(((IFile) source).getContents(false), updateFlags, null);
+		// update the destination timestamp on disk
+		long lastModified = node.getLastModified();
+		destination.getResourceInfo(false, true).setLocalSyncInfo(lastModified);
+		destination.getLocation().toFile().setLastModified(lastModified);
+		// update file attributes
+		CoreFileSystemLibrary.copyAttributes(source.getLocation().toOSString(), destination.getLocation().toOSString(), false);
 	} catch (CoreException e) {
 		status.add(e.getStatus());
 	}
+	return false;
 }
 protected boolean copyProperties(Resource target, Resource destination) {
 	try {
@@ -84,10 +93,6 @@ protected boolean copyProperties(Resource target, Resource destination) {
 protected Resource getDestinationResource(Resource source, IPath sufix) {
 	IPath destinationPath = rootDestination.getFullPath().append(sufix);
 	return getWorkspace().newResource(destinationPath, source.getType());
-}
-protected IPath getDestinationSufix(UnifiedTreeNode node) {
-	IPath source = node.getResource().getFullPath();
-	return source.removeFirstSegments(segmentsToDrop);
 }
 /**
  * This is done in order to generate less garbage.
@@ -107,6 +112,16 @@ protected FileSystemStore getStore() {
 }
 protected Workspace getWorkspace() {
 	return (Workspace) rootDestination.getWorkspace();
+}
+/**
+ * Returns true if this node represents the project description file,
+ * and false otherwise.
+ */
+protected boolean isProjectDescriptionFile(UnifiedTreeNode node) {
+	IResource resource = node.getResource();
+	return resource.getType() == IResource.FILE && 
+		resource.getFullPath().segmentCount() == 2 &&
+		resource.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME);
 }
 protected boolean isSynchronized(UnifiedTreeNode node) {
 	/* does the resource exist in workspace and file system? */
@@ -129,6 +144,9 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 	Policy.checkCanceled(monitor);
 	int work = 1;
 	try {
+		//skip copying the project description file
+		if (isProjectDescriptionFile(node))
+			return false;
 		boolean wasSynchronized = isSynchronized(node);
 		if (force && !wasSynchronized) {
 			synchronize(node);
@@ -142,10 +160,10 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 			status.add(new ResourceStatus(IResourceStatus.OUT_OF_SYNC_LOCAL, path, message, null));
 			return true;
 		}
-		copy(node);
-		return true;
+		return copy(node);
 	} finally {
 		monitor.worked(work);
 	}
 }
+
 }

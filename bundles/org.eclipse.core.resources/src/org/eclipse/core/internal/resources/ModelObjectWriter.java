@@ -55,6 +55,10 @@ protected void write(Object obj, XMLWriter writer) throws IOException {
 		write((WorkspaceDescription) obj, writer);
 		return;
 	}
+	if (obj instanceof LinkDescription) {
+		write((LinkDescription)obj, writer);
+		return;
+	}
 	writer.printTabulation();
 	writer.println(obj.toString());
 }
@@ -111,6 +115,15 @@ protected void write(BuildCommand command, XMLWriter writer) throws IOException 
 	}
 	writer.endTag(BUILD_COMMAND);
 }
+protected void write(LinkDescription description, XMLWriter writer) throws IOException {
+	writer.startTag(LINK, null);
+	if (description != null) {
+		writer.printSimpleTag(NAME, description.getName());
+		writer.printSimpleTag(TYPE, Integer.toString(description.getType()));
+		writer.printSimpleTag(LOCATION, description.getLocation());
+	}
+	writer.endTag(LINK);
+}
 protected void write(ProjectDescription description, XMLWriter writer) throws IOException {
 	writer.startTag(PROJECT_DESCRIPTION, null);
 	if (description != null) {
@@ -120,6 +133,9 @@ protected void write(ProjectDescription description, XMLWriter writer) throws IO
 		write(PROJECTS, PROJECT, getReferencedProjects(description), writer);
 		write(BUILD_SPEC, Arrays.asList(description.getBuildSpec(false)), writer);
 		write(NATURES, NATURE, description.getNatureIds(false), writer);
+		HashMap links = description.getLinks();
+		if (links != null)
+			write(LINKED_RESOURCES, links.values(), writer);
 	}
 	writer.endTag(PROJECT_DESCRIPTION);
 }

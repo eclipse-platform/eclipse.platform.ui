@@ -240,21 +240,14 @@ public boolean movedProjectSubtree(IProject project, IProjectDescription destDes
 
 	// If the locations are the not the same then make sure the new location is written to disk.
 	// (or the old one removed)
-	if (srcDescription.getLocation() == null) {
-		if (destDescription.getLocation() != null) {
-			try {
-				workspace.getMetaArea().writeLocation(destination);
-			} catch (CoreException e) {
-				failed(e.getStatus());
-			}
-		}
-	} else {
-		if (!srcDescription.getLocation().equals(destDescription.getLocation())) {
-			try {
-				workspace.getMetaArea().writeLocation(destination);
-			} catch(CoreException e) {
-				failed(e.getStatus());
-			}
+	IPath srcLocation = srcDescription.getLocation();
+	IPath destLocation = destDescription.getLocation();
+	if ((srcLocation == null && destLocation != null) || 
+		(srcLocation != null && !srcLocation.equals(destLocation))) {
+		try {
+			workspace.getMetaArea().writeLocation(destination);
+		} catch (CoreException e) {
+			failed(e.getStatus());
 		}
 	}
 
@@ -445,6 +438,11 @@ private boolean internalDeleteFile(IFile file, int updateFlags, IProgressMonitor
 			// Indicate that the delete was successful.
 			return true;
 		}
+		// Don't delete contents if this is a linked resource
+		if (file.isLinked()) {
+			deletedFile(file);
+			return true;
+		}
 		// If the file doesn't exist on disk then signal to the workspace to delete the
 		// file and return.
 		java.io.File fileOnDisk = file.getLocation().toFile();
@@ -511,6 +509,12 @@ public void standardDeleteFolder(IFolder folder, int updateFlags, IProgressMonit
 		// Do nothing if the folder doesn't exist in the workspace.
 		if (!folder.exists())
 			return;
+			
+		// Don't delete contents if this is a linked resource
+		if (folder.isLinked()) {
+			deletedFolder(folder);
+			return;
+		}
 
 		// If the folder doesn't exist on disk then update the tree and return.
 		java.io.File folderOnDisk = folder.getLocation().toFile();

@@ -36,6 +36,7 @@ public interface IResourceStatus extends IStatus {
 	// Information Only [0-32]
 
 	// Warnings [33-65]
+
 	/** Status code constant (value 35) indicating that a given 
 	 * nature set does not satisfy its constraints.
  	 * Severity: warning. Category: general.
@@ -44,7 +45,6 @@ public interface IResourceStatus extends IStatus {
 
 	// Errors [66-98]
 
-	 
 	/** Status code constant (value 75) indicating that a builder failed.
  	 * Severity: error. Category: general.
  	 */
@@ -70,6 +70,12 @@ public interface IResourceStatus extends IStatus {
  	 * Severity: warning. Category: local file system.
  	 */
 	public static final int MISSING_DESCRIPTION_REPAIRED = 234;
+
+	/** Status code constant (value 235) indicating the local file system location
+	 * for a resource overlaps the location of another resource.
+	 * Severity: warning. Category: local file system.
+	 */
+	public static final int OVERLAPPING_LOCATION = 235;
 
 	// Errors [266-298]
 	
@@ -122,6 +128,13 @@ public interface IResourceStatus extends IStatus {
  	 * Severity: error. Category: local file system.
  	 */
 	public static final int CASE_VARIANT_EXISTS = 275;
+
+	/** Status code constant (value 276) indicating a file exists in the
+	 * file system but is not of the expected type (file instead of directory,
+	 * or vice-versa).
+ 	 * Severity: error. Category: workspace.
+ 	 */
+	public static final int WRONG_TYPE_LOCAL = 276;
 
 	// Workspace constants [300-398]
 	// Information Only [300-332]
@@ -185,6 +198,21 @@ public interface IResourceStatus extends IStatus {
  	 */
 	public static final int MARKER_NOT_FOUND = 376;
 		
+	/** Status code constant (value 377) indicating a resource is 
+	 * unexpectedly not a linked resource.
+ 	 * Severity: error. Category: workspace.
+ 	 * @since 2.1
+ 	 */
+	public static final int RESOURCE_NOT_LINKED = 377;
+	
+	/** Status code constant (value 378) indicating that linking is
+	 * not permitted on a certain project.
+ 	 * Severity: error. Category: workspace.
+ 	 * @since 2.1
+ 	 */
+	public static final int LINKING_NOT_ALLOWED = 378;
+	
+
 	// Internal constants [500-598]
 	// Information Only [500-532]
 

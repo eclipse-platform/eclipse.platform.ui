@@ -10,8 +10,9 @@
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import java.util.*;
 import java.io.IOException;
+import java.util.*;
+
 import org.eclipse.core.internal.events.*;
 import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
@@ -20,6 +21,7 @@ import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.team.IMoveDeleteHook;
+import org.eclipse.core.resources.team.TeamHook;
 import org.eclipse.core.runtime.*;
 
 
@@ -50,16 +52,21 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * File modification validation.  If it is true and validator is null, we try/initialize 
 	 * validator first time through.  If false, there is no validator.
 	 */
-	protected static boolean shouldValidate = true;
+	protected boolean shouldValidate = true;
 	/**
 	 * The currently installed file modification validator.
 	 */
-	protected static IFileModificationValidator validator = null;
+	protected IFileModificationValidator validator = null;
 	
 	/**
 	 * The currently installed Move/Delete hook.
 	 */
-	protected static IMoveDeleteHook moveDeleteHook = null;
+	protected IMoveDeleteHook moveDeleteHook = null;
+	
+	/**
+	 * The currently installed team hook.
+	 */
+	protected TeamHook teamHook = null;
 
 	// whether the resources plugin is in debug mode.
 	public static boolean DEBUG = false;
@@ -781,77 +788,6 @@ private static List findRootNodes(HashMap counts) {
 	return result;
 }
 /**
- * A file modification validator hasn't been initialized. Check the extension point and 
- * try to create a new validator if a user has one defined as an extension.
- */
-protected static void initializeValidator() {
-	shouldValidate = false;
-	IConfigurationElement[] configs = Platform.getPluginRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILE_MODIFICATION_VALIDATOR);
-	// no-one is plugged into the extension point so disable validation
-	if (configs == null || configs.length == 0) {
-		return;
-	}
-	// can only have one defined at a time. log a warning, disable validation, but continue with
-	// the #setContents (e.g. don't throw an exception)
-	if (configs.length > 1) {
-		//XXX: shoud provide a meaningful status code
-		IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.oneValidator"), null); //$NON-NLS-1$
-		ResourcesPlugin.getPlugin().getLog().log(status);
-		return;
-	}
-	// otherwise we have exactly one validator extension. Try to create a new instance 
-	// from the user-specified class.
-	try {
-		IConfigurationElement config = configs[0];
-		validator = (IFileModificationValidator) config.createExecutableExtension("class"); //$NON-NLS-1$
-		shouldValidate = true;
-	} catch (CoreException e) {
-		//XXX: shoud provide a meaningful status code
-		IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.initValidator"), e); //$NON-NLS-1$
-		ResourcesPlugin.getPlugin().getLog().log(status);
-	}
-}
-/**
- * A move/delete hook hasn't been initialized. Check the extension point and 
- * try to create a new hook if a user has one defined as an extension. Otherwise
- * use the Core's implementation as the default.
- */
-protected static void initializeMoveDeleteHook() {
-	try {
-		IConfigurationElement[] configs = Platform.getPluginRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MOVE_DELETE_HOOK);
-		// no-one is plugged into the extension point so disable validation
-		if (configs == null || configs.length == 0) {
-			return;
-		}
-		// can only have one defined at a time. log a warning
-		if (configs.length > 1) {
-			//XXX: shoud provide a meaningful status code
-			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.oneHook"), null); //$NON-NLS-1$
-			ResourcesPlugin.getPlugin().getLog().log(status);
-			return;
-		}
-		// otherwise we have exactly one hook extension. Try to create a new instance 
-		// from the user-specified class.
-		try {
-			IConfigurationElement config = configs[0];
-			moveDeleteHook = (IMoveDeleteHook) config.createExecutableExtension("class"); //$NON-NLS-1$
-		} catch (CoreException e) {
-			//XXX: shoud provide a meaningful status code
-			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.initHook"), e); //$NON-NLS-1$
-			ResourcesPlugin.getPlugin().getLog().log(status);
-		}
-	} finally {
-		// for now just use Core's implementation
-		if (moveDeleteHook == null)
-			moveDeleteHook = new MoveDeleteHook();
-	}
-}
-protected IMoveDeleteHook getMoveDeleteHook() {
-	if (moveDeleteHook == null)
-		initializeMoveDeleteHook();
-	return moveDeleteHook;
-}
-/**
  * Flush the build order cache for the workspace.  Only needed if the
  * description does not already have a build order.  That is, if this
  * is really a cache.
@@ -933,6 +869,11 @@ public MarkerManager getMarkerManager() {
 public LocalMetaArea getMetaArea() {
 	return localMetaArea;
 }
+protected IMoveDeleteHook getMoveDeleteHook() {
+	if (moveDeleteHook == null)
+		initializeMoveDeleteHook();
+	return moveDeleteHook;
+}
 /**
  * @see IWorkspace#getNatureDescriptor(String)
  */
@@ -1002,6 +943,13 @@ public ISynchronizer getSynchronizer() {
 	return synchronizer;
 }
 /**
+ * Returns the installed team hook.  Never returns null. */
+protected TeamHook getTeamHook() {
+	if (teamHook == null)
+		initializeTeamHook();
+	return teamHook;
+}
+/**
  * We should not have direct references to this field. All references should go through
  * this method.
  */
@@ -1012,10 +960,107 @@ public WorkManager getWorkManager() throws CoreException {
 	}
 	return workManager;
 }
-protected IWorkspace getWorkspace() {
-	return this;
+/**
+ * A file modification validator hasn't been initialized. Check the extension point and 
+ * try to create a new validator if a user has one defined as an extension.
+ */
+protected void initializeValidator() {
+	shouldValidate = false;
+	IConfigurationElement[] configs = Platform.getPluginRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILE_MODIFICATION_VALIDATOR);
+	// no-one is plugged into the extension point so disable validation
+	if (configs == null || configs.length == 0) {
+		return;
+	}
+	// can only have one defined at a time. log a warning, disable validation, but continue with
+	// the #setContents (e.g. don't throw an exception)
+	if (configs.length > 1) {
+		//XXX: shoud provide a meaningful status code
+		IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.oneValidator"), null); //$NON-NLS-1$
+		ResourcesPlugin.getPlugin().getLog().log(status);
+		return;
+	}
+	// otherwise we have exactly one validator extension. Try to create a new instance 
+	// from the user-specified class.
+	try {
+		IConfigurationElement config = configs[0];
+		validator = (IFileModificationValidator) config.createExecutableExtension("class"); //$NON-NLS-1$
+		shouldValidate = true;
+	} catch (CoreException e) {
+		//XXX: shoud provide a meaningful status code
+		IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.initValidator"), e); //$NON-NLS-1$
+		ResourcesPlugin.getPlugin().getLog().log(status);
+	}
 }
-
+/**
+ * A move/delete hook hasn't been initialized. Check the extension point and 
+ * try to create a new hook if a user has one defined as an extension. Otherwise
+ * use the Core's implementation as the default.
+ */
+protected void initializeMoveDeleteHook() {
+	try {
+		IConfigurationElement[] configs = Platform.getPluginRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MOVE_DELETE_HOOK);
+		// no-one is plugged into the extension point so disable validation
+		if (configs == null || configs.length == 0) {
+			return;
+		}
+		// can only have one defined at a time. log a warning
+		if (configs.length > 1) {
+			//XXX: shoud provide a meaningful status code
+			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.oneHook"), null); //$NON-NLS-1$
+			ResourcesPlugin.getPlugin().getLog().log(status);
+			return;
+		}
+		// otherwise we have exactly one hook extension. Try to create a new instance 
+		// from the user-specified class.
+		try {
+			IConfigurationElement config = configs[0];
+			moveDeleteHook = (IMoveDeleteHook) config.createExecutableExtension("class"); //$NON-NLS-1$
+		} catch (CoreException e) {
+			//XXX: shoud provide a meaningful status code
+			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.initHook"), e); //$NON-NLS-1$
+			ResourcesPlugin.getPlugin().getLog().log(status);
+		}
+	} finally {
+		// for now just use Core's implementation
+		if (moveDeleteHook == null)
+			moveDeleteHook = new MoveDeleteHook();
+	}
+}
+/**
+ * A team hook hasn't been initialized. Check the extension point and 
+ * try to create a new hook if a user has one defined as an extension. 
+ * Otherwise use the Core's implementation as the default.
+ */
+protected void initializeTeamHook() {
+	try {
+		IConfigurationElement[] configs = Platform.getPluginRegistry().getConfigurationElementsFor(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_TEAM_HOOK);
+		// no-one is plugged into the extension point so disable validation
+		if (configs == null || configs.length == 0) {
+			return;
+		}
+		// can only have one defined at a time. log a warning
+		if (configs.length > 1) {
+			//XXX: shoud provide a meaningful status code
+			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.oneHook"), null); //$NON-NLS-1$
+			ResourcesPlugin.getPlugin().getLog().log(status);
+			return;
+		}
+		// otherwise we have exactly one hook extension. Try to create a new instance 
+		// from the user-specified class.
+		try {
+			IConfigurationElement config = configs[0];
+			teamHook = (TeamHook) config.createExecutableExtension("class"); //$NON-NLS-1$
+		} catch (CoreException e) {
+			//XXX: shoud provide a meaningful status code
+			IStatus status = new ResourceStatus(IResourceStatus.ERROR, 1, null, Policy.bind("resources.initHook"), e); //$NON-NLS-1$
+			ResourcesPlugin.getPlugin().getLog().log(status);
+		}
+	} finally {
+		// default to use Core's implementation
+		if (teamHook == null)
+			teamHook = new TeamHook();
+	}
+}
 public WorkspaceDescription internalGetDescription() {
 	return description;
 }
@@ -1042,6 +1087,20 @@ private static boolean isDuplicate(Object[] array, int position) {
  */
 public boolean isOpen() {
 	return openFlag;
+}
+/**
+ * Returns true if the given file system locations overlap (they are the same,
+ * or one is a proper prefix of the other), and false otherwise.  
+ * Does the right thing with respect to case insensitive platforms. */
+protected boolean isOverlapping(IPath location1, IPath location2) {
+	IPath one = location1;
+	IPath two = location2;
+	// If we are on a case-insensitive file system then convert to all lowercase.
+	if (!CoreFileSystemLibrary.isCaseSensitive()) {
+		one = new Path(location1.toOSString().toLowerCase());
+		two = new Path(location2.toOSString().toLowerCase());
+	}
+	return one.isPrefixOf(two) || two.isPrefixOf(one);
 }
 public boolean isTreeLocked() {
 	return treeLocked;
@@ -1559,6 +1618,72 @@ public IStatus validateEdit(final IFile[] files, final Object context) {
 	Platform.run(body);
 	return status[0];
 }
+/* (non-javadoc)
+ * Method declared on IWorkspace.
+ */
+public IStatus validateLinkLocation(IResource resource, IPath location) {
+	//check the standard path name restrictions
+	int segmentCount = location.segmentCount();
+	for (int i = 0; i < segmentCount; i++) {
+		IStatus result = validateName(location.segment(i), resource.getType());
+		if (!result.isOK())
+			return result;
+	}
+	//if the location doesn't have a device, see if the OS will assign one
+	if (location.getDevice() == null)
+		location = new Path(location.toFile().getAbsolutePath());
+	// test if the given location overlaps the platform metadata location
+	IPath testLocation = getMetaArea().getLocation();
+	String message;
+	if (isOverlapping(location, testLocation)) {
+		message = Policy.bind("resources.linkInvalidLocation", location.toString(), testLocation.toString()); //$NON-NLS-1$
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
+	//test if the given path overlaps the location of the given project
+	testLocation = resource.getProject().getLocation();
+	if (isOverlapping(location, testLocation)) {
+		message = Policy.bind("resources.linkOverlapProject", location.toString(), testLocation.toString()); //$NON-NLS-1$
+		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+	}
+	// Iterate over each known project and ensure that the location does not
+	// conflict with any project locations or linked resource locations
+	IProject[] projects = getRoot().getProjects();
+	for (int i = 0; i < projects.length; i++) {
+		IProject project = (IProject) projects[i];
+		// since we are iterating over the project in the workspace, we
+		// know that they have been created before and must have a description
+		IProjectDescription desc  = ((Project) project).internalGetDescription();
+		testLocation = desc.getLocation();
+		// if the project uses the default location then continue
+		if (testLocation == null)
+			continue;
+		if (isOverlapping(location, testLocation)) {
+			message = Policy.bind("resources.linkOverlapResource", location.toString(), testLocation.toString()); //$NON-NLS-1$
+			return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, null, message);
+		}
+		//iterate over linked resources and check for overlap
+		if (!project.isOpen())
+			continue;
+		IResource[] children = null;
+		try {
+			children = project.members();
+		} catch (CoreException e) {
+			//ignore projects that cannot be accessed
+		}
+		if (children == null)
+			continue;
+		for (int j = 0; j < children.length; j++) {
+			if (children[j].isLinked()) {
+				testLocation = children[j].getLocation();
+				if (isOverlapping(location, testLocation)) {
+					message = Policy.bind("resources.linkOverlapResource", location.toString(), testLocation.toString()); //$NON-NLS-1$
+					return new ResourceStatus(IResourceStatus.OVERLAPPING_LOCATION, null, message);
+				}
+			}				
+		}
+	}
+	return ResourceStatus.OK_STATUS;
+}
 /**
  * @see IWorkspace#validateName
  */
@@ -1695,7 +1820,7 @@ public IStatus validateProjectLocation(IProject context, IPath location) {
 		location = new Path(location.toFile().getAbsolutePath());
 	// test if the given location overlaps the default default location
 	IPath defaultDefaultLocation = Platform.getLocation();
-	if (defaultDefaultLocation.isPrefixOf(location) || location.isPrefixOf(defaultDefaultLocation)) {
+	if (isOverlapping(location, defaultDefaultLocation)) {
 		message = Policy.bind("resources.overlapLocal", location.toString(), defaultDefaultLocation.toString()); //$NON-NLS-1$
 		return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
 	}
@@ -1711,21 +1836,13 @@ public IStatus validateProjectLocation(IProject context, IPath location) {
 		// if the project uses the default location then continue
 		if (definedLocalLocation == null)
 			continue;
-		if (definedLocalLocation != null && location != null)
-			//tolerate locations being the same if this is the project being tested
-			if (project.equals(context) && definedLocalLocation.equals(location))
-				continue;
-			IPath one = location;
-			IPath two = definedLocalLocation;
-			// If we are on a case-insensitive file system then we will convert to all lowercase.
-			if (!CoreFileSystemLibrary.isCaseSensitive()) {
-				one = new Path(location.toOSString().toLowerCase());
-				two = new Path(definedLocalLocation.toOSString().toLowerCase());
-			}
-			if (one.isPrefixOf(two) || two.isPrefixOf(one)) {
-				message = Policy.bind("resources.overlapLocal", location.toString(), definedLocalLocation.toString()); //$NON-NLS-1$
-				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
-			}
+		//tolerate locations being the same if this is the project being tested
+		if (project.equals(context) && definedLocalLocation.equals(location))
+			continue;
+		if (isOverlapping(location, definedLocalLocation)) {
+			message = Policy.bind("resources.overlapLocal", location.toString(), definedLocalLocation.toString()); //$NON-NLS-1$
+			return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+		}
 	}
 	message = Policy.bind("resources.validLocation"); //$NON-NLS-1$
 	return new ResourceStatus(IResourceStatus.OK, message);
@@ -1765,5 +1882,7 @@ protected void validateSave(final IFile file) throws CoreException {
 	if (!status[0].isOK())
 		throw new ResourceException(status[0]);
 }
+
+
 
 }

@@ -41,7 +41,7 @@ public void appendContents(InputStream content, int updateFlags, IProgressMonito
 			checkAccessible(getFlags(info));
 
 			workspace.beginOperation(true);
-			if (Workspace.shouldValidate) {
+			if (workspace.shouldValidate) {
 				workspace.validateSave(this);
 				info = getResourceInfo(false, false);
 				checkAccessible(getFlags(info));
@@ -254,7 +254,7 @@ public void setContents(InputStream content, int updateFlags, IProgressMonitor m
 			checkAccessible(getFlags(info));
 
 			workspace.beginOperation(true);
-			if (Workspace.shouldValidate) {
+			if (workspace.shouldValidate) {
 				workspace.validateSave(this);
 				info = getResourceInfo(false, false);
 				checkAccessible(getFlags(info));

@@ -119,8 +119,8 @@ protected void checkDescription(IProject project, IProjectDescription desc, bool
 		// throw an Overlapping mapping exception in this case) So if the source description's location
 		// is null (we are using the default) or if the locations aren't equal, then validate the location
 		// of the new description. Otherwise both locations aren't null and they are equal so ignore validation.
-		IProjectDescription sourceDesc = internalGetDescription();
-		if (sourceDesc.getLocation() == null || !locationsEqual(sourceDesc, desc))
+		IPath sourceLocation = internalGetDescription().getLocation();
+		if (sourceLocation == null || !sourceLocation.equals(location))
 			status.merge(workspace.validateProjectLocation(project, location));
 	} else
 		// otherwise continue on like before
@@ -386,6 +386,28 @@ public boolean hasNature(String natureID) throws CoreException {
 		checkAccessible(NULL_FLAG);
 	return desc.hasNature(natureID);
 }
+/**
+ * Closes the project.  This is called during restore when there is a failure
+ * to read the project description.  Since it is called during workspace restore,
+ * it cannot start any operations.
+ */
+protected void internalClose() throws CoreException {
+	workspace.flushBuildOrder();
+	getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
+	// remove each member from the resource tree. 
+	// DO NOT use resource.delete() as this will delete it from disk as well.
+	IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
+	for (int i = 0; i < members.length; i++) {
+		Resource member = (Resource) members[i];
+		workspace.deleteResource(member);
+	}
+	// finally mark the project as closed.
+	ResourceInfo info = getResourceInfo(false, true);
+	info.clear(M_OPEN);
+	info.clearSessionProperties();
+	info.setModificationStamp(IResource.NULL_STAMP);
+	info.setSyncInfo(null);
+}
 protected void internalCopy(IProjectDescription destDesc, boolean force, IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);
 	try {
@@ -521,13 +543,7 @@ public boolean isLocal(int depth) {
 	// the flags parm is ignored for projects so pass anything
 	return isLocal(-1, depth);
 }
-/**
- * @see IProject#isNatureEnabled(String)
- */
-public boolean isNatureEnabled(String natureId) throws CoreException {
-	checkAccessible(getFlags(getResourceInfo(false, false)));
-	return workspace.getNatureManager().isNatureEnabled(this, natureId);
-}
+
 /**
  * @see IResource#isLocal
  */
@@ -546,6 +562,13 @@ public boolean isLocal(int flags, int depth) {
 	return true;
 }
 /**
+ * @see IProject#isNatureEnabled(String)
+ */
+public boolean isNatureEnabled(String natureId) throws CoreException {
+	checkAccessible(getFlags(getResourceInfo(false, false)));
+	return workspace.getNatureManager().isNatureEnabled(this, natureId);
+}
+/**
  * @see IProject
  */
 public boolean isOpen() {
@@ -558,6 +581,7 @@ public boolean isOpen() {
 public boolean isOpen(int flags) {
 	return flags != NULL_FLAG && ResourceInfo.isSet(flags, M_OPEN);
 }
+
 /**
  * @see IProject#move
  */
@@ -565,15 +589,7 @@ public void move(IProjectDescription destination, boolean force, IProgressMonito
 	Assert.isNotNull(destination);
 	move(destination, force ? IResource.FORCE : IResource.NONE, monitor);
 }
-protected boolean locationsEqual(IProjectDescription desc1, IProjectDescription desc2) {
-	IPath loc1 = desc1.getLocation();
-	IPath loc2 = desc2.getLocation();
-	if (loc1 == null && loc2 == null)
-		return true;
-	if (loc1 == null || loc2 == null)
-		return false;
-	return loc1.equals(loc2);
-}
+
 /**
  * @see IResource#move
  */
@@ -622,6 +638,70 @@ public void open(IProgressMonitor monitor) throws CoreException {
 	} finally {
 		monitor.done();
 	}
+}
+/**
+ * The project description file has changed on disk, resulting in a changed
+ * set of linked resources.  Perform the necessary creations and deletions of
+ * links to bring the links in sync with those described in the project description.
+ * @param newDescription the new project description that may have
+ * 	changed link descriptions.
+ * @param status ok if everything went well, otherwise an ERROR multistatus 
+ * 	describing the problems encountered. */
+public IStatus reconcileLinks(ProjectDescription newDescription) {
+	HashMap newLinks = newDescription.getLinks();
+	IResource[] children = null;
+	try {
+		children = members();
+	} catch (CoreException e) {
+		return e.getStatus();
+	}
+	String msg = Policy.bind("resources.errorMountReconcile"); //$NON-NLS-1$
+	MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.OPERATION_FAILED, msg, null);
+	//walk over old linked resources and remove those that are no longer defined
+	for (int i = 0; i < children.length; i++) {
+		Resource oldMount = (Resource)children[i];
+		if (!oldMount.isLinked())
+			continue;
+		LinkDescription newLink = null;
+		if (newLinks != null) 
+			newLink = (LinkDescription)newLinks.get(oldMount.getName());
+		//if the new link is missing, or has different location or gender, then remove old link
+		if (newLink == null || !newLink.getLocation().equals(oldMount.getLocation()) || newLink.getType() != oldMount.getType()) { 
+			try {
+				oldMount.delete(IResource.NONE, null);
+			} catch (CoreException e) {
+				status.merge(e.getStatus());
+			}
+		}
+	}
+	//walk over new links and create if necessary
+	if (newLinks == null)
+		return status;
+	for (Iterator it = newLinks.values().iterator(); it.hasNext();) {
+		LinkDescription newLink = (LinkDescription) it.next();
+		IResource existing = findMember(newLink.getName());
+		if (existing != null) {
+			if (!existing.isLinked())
+				//cannot create a link if a normal resource is blocking it
+				status.add(new ResourceStatus(IResourceStatus.RESOURCE_EXISTS, existing.getFullPath(), msg));
+		} else {
+			//no conflicting old resource, just create the new link
+			try {
+				Resource toLink = newLink.getType() == IResource.FILE ?
+					(Resource)getFile(newLink.getName()) :
+					(Resource)getFolder(newLink.getName());
+				toLink.createLink(newLink.getLocation(), IResource.ALLOW_MISSING_LOCAL, null);
+			} catch (CoreException e) {
+				status.merge(e.getStatus());
+			}
+		}
+	}
+	return status;
+}
+protected void renameMetaArea(IProject source, IProject destination, IProgressMonitor monitor) throws CoreException {
+	java.io.File oldMetaArea = workspace.getMetaArea().locationFor(source).toFile();
+	java.io.File newMetaArea = workspace.getMetaArea().locationFor(destination).toFile();
+	getLocalManager().getStore().move(oldMetaArea, newMetaArea, false, monitor);
 }
 /**
  * @see IProject
@@ -722,6 +802,7 @@ protected void updateDescription() throws CoreException {
 		return;
 	workspace.changing(this);
 	ProjectDescription description = getLocalManager().read(this, false);
+	reconcileLinks(description);
 	internalSetDescription(description, true);
 }
 /**
@@ -747,31 +828,6 @@ public void writeDescription(IProjectDescription description, int updateFlags) t
 		isWritingDescription = false;
 	}
 }
-protected void renameMetaArea(IProject source, IProject destination, IProgressMonitor monitor) throws CoreException {
-	java.io.File oldMetaArea = workspace.getMetaArea().locationFor(source).toFile();
-	java.io.File newMetaArea = workspace.getMetaArea().locationFor(destination).toFile();
-	getLocalManager().getStore().move(oldMetaArea, newMetaArea, false, monitor);
-}
-/**
- * Closes the project.  This is called during restore when there is a failure
- * to read the project description.  Since it is called during workspace restore,
- * it cannot start any operations.
- */
-protected void internalClose() throws CoreException {
-	workspace.flushBuildOrder();
-	getMarkerManager().removeMarkers(this, IResource.DEPTH_INFINITE);
-	// remove each member from the resource tree. 
-	// DO NOT use resource.delete() as this will delete it from disk as well.
-	IResource[] members = members(IContainer.INCLUDE_PHANTOMS | IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
-	for (int i = 0; i < members.length; i++) {
-		Resource member = (Resource) members[i];
-		workspace.deleteResource(member);
-	}
-	// finally mark the project as closed.
-	ResourceInfo info = getResourceInfo(false, true);
-	info.clear(M_OPEN);
-	info.clearSessionProperties();
-	info.setModificationStamp(IResource.NULL_STAMP);
-	info.setSyncInfo(null);
-}
+
+
 }

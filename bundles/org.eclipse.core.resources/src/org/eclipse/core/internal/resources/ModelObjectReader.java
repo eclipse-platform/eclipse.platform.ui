@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
@@ -171,6 +171,46 @@ protected Hashtable readHashtable(Node target) {
 	}
 	return result;
 }
+/**
+ * Reads and returns the definition of a link description.  Returns null
+ * if a link definition could not be read (missing or invalid information)
+ */
+private LinkDescription readLinkDescription(Node node) {
+	String name = getString(node, NAME);
+	int type;
+	try {
+		type = Integer.parseInt(getString(node, TYPE));
+	} catch (NumberFormatException e) {
+		return null;
+	}
+	String location = getString(node, LOCATION);
+	if (name == null || location == null)
+		return null;
+	return new LinkDescription(name, type, new Path(location));
+}
+/**
+ * Reads and returns the table of links, if any
+ * @param node, may be null
+ * @return HashMap, may be null
+ */
+protected HashMap readLinks(Node node) {
+	if (node == null)
+		return null;
+	NodeList list = node.getChildNodes();
+	int numChildren = list.getLength();
+	if (numChildren <= 0)
+		return null;
+	HashMap result = new HashMap(numChildren*2+1);
+	for (int i = 0; i < numChildren; i++) {
+		Node item = list.item(i);
+		if (item.getNodeType() == Node.ELEMENT_NODE && item.getNodeName().equals(LINK)) {
+			LinkDescription link = readLinkDescription(item);
+			if (link != null)
+				result.put(link.getName(), link);
+		}
+	}
+	return result;
+}
 protected ProjectDescription readProjectDescription(Node node) {
 	// get values
 	String name = getString(node, NAME);
@@ -178,6 +218,7 @@ protected ProjectDescription readProjectDescription(Node node) {
 	IProject[] projects = getProjects(searchNode(node, PROJECTS));
 	String location = getString(node, LOCATION);
 	ICommand[] buildSpec = readBuildSpec(searchNode(node, BUILD_SPEC));
+	HashMap links = readLinks(searchNode(node, LINKED_RESOURCES));
 	String[] natures = getStrings(searchNode(node, NATURES));
 	// build instance
 	ProjectDescription description = new ProjectDescription();
@@ -192,6 +233,8 @@ protected ProjectDescription readProjectDescription(Node node) {
 	if (natures == null)
 		natures = EMPTY_STRING_ARRAY;
 	description.setNatureIds(natures);
+	if (links != null)
+		description.setLinkDescriptions(links);
 	return description;
 }
 protected WorkspaceDescription readWorkspaceDescription(Node node) {
@@ -256,8 +299,6 @@ protected WorkspaceDescription readWorkspaceDescription(Node node) {
 	}
 	return description;
 }
-
-
 protected Node searchNode(Node target, String tagName) {
 	NodeList list = target.getChildNodes();
 	for (int i = 0; i < list.getLength(); i++) {

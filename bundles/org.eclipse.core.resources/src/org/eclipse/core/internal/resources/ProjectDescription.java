@@ -1,14 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2000, 2002 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
  ******************************************************************************/
 package org.eclipse.core.internal.resources;
+
+import java.util.HashMap;
 
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.utils.Assert;
@@ -21,18 +23,21 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	protected IProject[] projects;
 	protected String[] natures;
 	protected ICommand[] buildSpec;
+	protected HashMap linkDescriptions;
 	protected String comment =""; //$NON-NLS-1$
 	protected boolean dirty = true;
 
 	// constants
-	private static IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
-	private static String[] EMPTY_STRING_ARRAY = new String[0];
-	private static ICommand[] EMPTY_COMMAND_ARRAY = new ICommand[0];
+	private static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
+	private static final ICommand[] EMPTY_COMMAND_ARRAY = new ICommand[0];
+	
 public ProjectDescription() {
 	super();
 	buildSpec = EMPTY_COMMAND_ARRAY;
 	projects = EMPTY_PROJECT_ARRAY;
 }
+
 /**
  * Clears the dirty bit.  This should be used after saving descriptions to disk
  */
@@ -61,6 +66,24 @@ public String getComment() {
  */
 public IPath getLocation() {
 	return location;
+}
+/**
+ * Returns the link location for the given resource name.  Returns null
+ * if no such link exists. */
+public IPath getLinkLocation(String name) {
+	if (linkDescriptions == null)
+		return null;
+	LinkDescription desc = (LinkDescription)linkDescriptions.get(name);
+	return desc == null ? null : desc.getLocation();
+}
+/**
+ * Returns the map of link descriptions (String name -> LinkDescription).
+ * Since this method is only used internally, it never creates a copy.
+ * Returns null if the project does not have any linked resources.
+ * @return HashMap
+ */
+public HashMap getLinks() {
+	return linkDescriptions;
 }
 /**
  * @see IProjectDescription
@@ -130,6 +153,34 @@ public void setComment(String value) {
 public void setLocation(IPath location) {
 	this.location = location;
 	dirty = true;
+}
+/**
+ * Sets the description of a link.  Setting to a description
+ * of null will remove the link from the project description.
+ */
+public void setLinkLocation(String name, LinkDescription description) {
+	if (description != null) {
+		//addition or modification
+		if (linkDescriptions == null)
+			linkDescriptions = new HashMap(10);
+		linkDescriptions.put(name, description);
+	} else {
+		//removal
+		if (linkDescriptions != null) {
+			linkDescriptions.remove(name);
+			if (linkDescriptions.size() == 0)
+				linkDescriptions = null;
+		}
+	}
+}
+/**
+ * Sets the map of link descriptions (String name -> LinkDescription).
+ * Since this method is only used internally, it never creates a copy.
+ * May pass null if this project does not have any linked resources
+ * @return HashMap
+ */
+public void setLinkDescriptions(HashMap linkDescriptions) {
+	this.linkDescriptions = linkDescriptions;
 }
 /**
  * @see IProjectDescription
