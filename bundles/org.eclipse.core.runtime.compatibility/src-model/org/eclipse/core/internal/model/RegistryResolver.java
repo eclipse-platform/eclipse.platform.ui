@@ -13,7 +13,7 @@ package org.eclipse.core.internal.model;
 
 import java.util.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Policy;
+import org.eclipse.core.internal.runtime.Messages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 
@@ -697,7 +697,7 @@ public class RegistryResolver {
 			// this plugin is not in the registry.
 			if (idmap.get(requires[i].getPlugin()) == null) {
 				// We know this plugin doesn't exist
-				error(Policy.bind("parse.badPrereqOnFrag", fragment.getName(), requires[i].getPlugin())); //$NON-NLS-1$
+				error(Messages.bind(Messages.parse_badPrereqOnFrag, fragment.getName(), requires[i].getPlugin()));
 				return false;
 			}
 		}
@@ -716,11 +716,11 @@ public class RegistryResolver {
 				// ignore it.
 				String id, name;
 				if ((id = fragment.getId()) != null)
-					error(Policy.bind("parse.fragmentMissingAttr", id)); //$NON-NLS-1$
+					error(Messages.bind(Messages.parse_fragmentMissingAttr, id));
 				else if ((name = fragment.getName()) != null)
-					error(Policy.bind("parse.fragmentMissingAttr", name)); //$NON-NLS-1$
+					error(Messages.bind(Messages.parse_fragmentMissingAttr, name));
 				else
-					error(Policy.bind("parse.fragmentMissingIdName")); //$NON-NLS-1$
+					error(Messages.parse_fragmentMissingIdName);
 				continue;
 			}
 			if (!fragmentHasPrerequisites(fragment)) {
@@ -764,7 +764,7 @@ public class RegistryResolver {
 
 			if (plugin == null) {
 				// We couldn't find this fragment's plugin
-				error(Policy.bind("parse.missingFragmentPd", fragment.getPluginId(), fragment.getId())); //$NON-NLS-1$
+				error(Messages.bind(Messages.parse_missingFragmentPd, fragment.getPluginId(), fragment.getId()));
 				continue;
 			}
 
@@ -810,11 +810,11 @@ public class RegistryResolver {
 				pluginList[i].setEnabled(false);
 				String id, name;
 				if ((id = pluginList[i].getId()) != null)
-					error(Policy.bind("parse.pluginMissingAttr", id)); //$NON-NLS-1$
+					error(Messages.bind(Messages.parse_pluginMissingAttr, id));
 				else if ((name = pluginList[i].getName()) != null)
-					error(Policy.bind("parse.pluginMissingAttr", name)); //$NON-NLS-1$
+					error(Messages.bind(Messages.parse_pluginMissingAttr, name));
 				else
-					error(Policy.bind("parse.pluginMissingIdName")); //$NON-NLS-1$
+					error(Messages.parse_pluginMissingIdName);
 				continue;
 			}
 			add(pluginList[i]);
@@ -849,7 +849,7 @@ public class RegistryResolver {
 			resolvePluginRegistry();
 			idmap = null;
 			reg = null;
-			error(Policy.bind("plugin.unableToResolve")); //$NON-NLS-1$
+			error(Messages.plugin_unableToResolve);
 			return;
 		}
 
@@ -933,19 +933,19 @@ public class RegistryResolver {
 
 		PluginDescriptorModel plugin = (PluginDescriptorModel) reg.getPlugin(pluginId);
 		if (plugin == null) {
-			message = Policy.bind("parse.extPointUnknown", target, ext.getParentPluginDescriptor().getId()); //$NON-NLS-1$
+			message = Messages.bind(Messages.parse_extPointUnknown, target, ext.getParentPluginDescriptor().getId());
 			error(message);
 			return;
 		}
 		if (!plugin.getEnabled()) {
-			message = Policy.bind("parse.extPointDisabled", target, ext.getParentPluginDescriptor().getId()); //$NON-NLS-1$
+			message = Messages.bind(Messages.parse_extPointDisabled, target, ext.getParentPluginDescriptor().getId());
 			error(message);
 			return;
 		}
 
 		ExtensionPointModel extPt = (ExtensionPointModel) getExtensionPoint(plugin, extPtId);
 		if (extPt == null) {
-			message = Policy.bind("parse.extPointUnknown", target, ext.getParentPluginDescriptor().getId()); //$NON-NLS-1$
+			message = Messages.bind(Messages.parse_extPointUnknown, target, ext.getParentPluginDescriptor().getId());
 			error(message);
 			return;
 		}
@@ -1003,7 +1003,7 @@ public class RegistryResolver {
 			if (prq.getOptional() && parent != null && child != null)
 				return cookie;
 			if (parent != null)
-				error(Policy.bind("parse.prereqDisabled", new String[] {parent.getId(), child})); //$NON-NLS-1$
+				error(Messages.bind(Messages.parse_prereqDisabled, parent.getId(), child));
 			if (DEBUG_RESOLVE)
 				debug("<POP  " + child + " not found"); //$NON-NLS-1$ //$NON-NLS-2$
 			cookie.isOk(false);
@@ -1021,11 +1021,11 @@ public class RegistryResolver {
 					// This is an optional prerequisite.  Ignore the conflict and this
 					// prerequisite.
 					orphans.add(ix.getId());
-					information(Policy.bind("parse.unsatisfiedOptPrereq", parent.getId(), child)); //$NON-NLS-1$
+					information(Messages.bind(Messages.parse_unsatisfiedOptPrereq, parent.getId(), child));
 					return cookie;
 				} else {
 					// This prerequisite is mandatory.  
-					String message = Policy.bind("parse.unsatisfiedPrereq", parent.getId(), child); //$NON-NLS-1$
+					String message = Messages.bind(Messages.parse_unsatisfiedPrereq, parent.getId(), child);
 					error(message);
 					if (DEBUG_RESOLVE)
 						debug("<POP  " + child + " unable to satisfy constraint"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1036,10 +1036,10 @@ public class RegistryResolver {
 				if (prq.getOptional()) {
 					// This is an optional prerequisite.  Ignore the loop, and the
 					// prerequisite
-					information(Policy.bind("parse.prereqOptLoop", parent.getId(), child)); //$NON-NLS-1$
+					information(Messages.bind(Messages.parse_prereqOptLoop, parent.getId(), child));
 					return cookie;
 				} else {
-					String message = Policy.bind("parse.prereqLoop", parent.getId(), child); //$NON-NLS-1$
+					String message = Messages.bind(Messages.parse_prereqLoop, parent.getId(), child);
 					error(message);
 					if (DEBUG_RESOLVE)
 						debug("<POP  " + child + " prerequisite loop"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1095,7 +1095,7 @@ public class RegistryResolver {
 					orphans.add(prereqs[i].getPlugin());
 			}
 			if (parent != null)
-				error(Policy.bind("parse.prereqDisabled", parent.getId(), child)); //$NON-NLS-1$
+				error(Messages.bind(Messages.parse_prereqDisabled, parent.getId(), child));
 			childPd.setEnabled(false);
 			if (DEBUG_RESOLVE)
 				debug("<POP  " + child + " failed to resolve subtree"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1166,7 +1166,7 @@ public class RegistryResolver {
 				dirty = true;
 				if (getVersionIdentifier(fragmentList[i]).equals(getVersionIdentifier(latestVersion)))
 					// ignore duplicates
-					error(Policy.bind("parse.duplicateFragment", fragmentId, fragmentList[i].getVersion())); //$NON-NLS-1$
+					error(Messages.bind(Messages.parse_duplicateFragment, fragmentId, fragmentList[i].getVersion()));
 				if (getVersionIdentifier(fragmentList[i]).isGreaterThan(getVersionIdentifier(latestVersion))) {
 					latestFragments.put(fragmentId, fragmentList[i]);
 				}
@@ -1199,7 +1199,7 @@ public class RegistryResolver {
 						// We know this library name didn't get added to the set.
 						// Ignore the duplicate but indicate an error
 						String[] bindings = {latestFragment.getId(), plugin.getId(), libraries[i].getName()};
-						error(Policy.bind("parse.duplicateLib", bindings)); //$NON-NLS-1$
+						error(Messages.bind(Messages.parse_duplicateLib, bindings));
 					} else {
 						setSize = libNames.size();
 					}
