@@ -13,11 +13,7 @@ package org.eclipse.ui;
 
 /**
  * Objects implementing this interface are capable of saving their
- * state in an IMemento. 
- * <p>
- * Note that parts that implement this interface will typically take 
- * an ISavedState in their constructor which supplies their initial state.
- * </p>
+ * state in an {@link IMemento}. 
  * 
  * @since 3.1
  */
