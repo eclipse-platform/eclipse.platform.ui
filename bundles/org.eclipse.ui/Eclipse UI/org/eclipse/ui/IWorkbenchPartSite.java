@@ -4,11 +4,8 @@ package org.eclipse.ui;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * The primary interface between a workbench part and the outside world.
@@ -16,7 +13,7 @@ import org.eclipse.swt.widgets.Shell;
  * This interface is not intended to be implemented or extended by clients.
  * </p>
  */
-public interface IWorkbenchPartSite {
+public interface IWorkbenchPartSite extends IWorkbenchSite {
 	
 
 /**
@@ -30,12 +27,6 @@ public interface IWorkbenchPartSite {
  * @see #getConfigurationElement
  */
 public String getId();
-/**
- * Returns the page containing this workbench site's part.
- *
- * @return the page containing this part
- */
-public IWorkbenchPage getPage();
 /**
  * Returns the unique identifier of the plug-in that defines this workbench
  * site's part.
@@ -54,24 +45,6 @@ public String getPluginId();
  * @return the part name
  */
 public String getRegisteredName();
-/**
- * Returns the selection provider for this workbench site's part.
- *
- * @return the selection provider, or <code>null</code> if none
- */
-public ISelectionProvider getSelectionProvider();
-/**
- * Returns the shell containing this workbench site's part.
- *
- * @return the shell containing the part's controls
- */
-public Shell getShell();
-/**
- * Returns the workbench window containing this workbench site's part.
- *
- * @return the workbench window containing this part
- */
-public IWorkbenchWindow getWorkbenchWindow();
 /**
  * Registers a pop-up menu with a particular id for extension.
  * This method should only be called if the target part has more
@@ -124,10 +97,4 @@ public void registerContextMenu(String menuId, MenuManager menuManager,
  */
 public void registerContextMenu(MenuManager menuManager,
 	ISelectionProvider selectionProvider);
-/**
- * Sets the selection provider for this workbench site's part.
- *
- * @param provider the selection provider, or <code>null</code> to clear it
- */
-public void setSelectionProvider(ISelectionProvider provider);
 }

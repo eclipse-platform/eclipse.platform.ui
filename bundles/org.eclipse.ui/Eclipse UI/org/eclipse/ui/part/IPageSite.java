@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -20,31 +21,7 @@ import org.eclipse.ui.IWorkbenchWindow;
  * </p>
  */
 
-public interface IPageSite {
-	/**
-	 * Returns the workbench page containing this site's page.
-	 *
-	 * @return the workbench page containing this site's page
-	 */
-	public IWorkbenchPage getPage();
-	/**
-	 * Returns the selection provider for this site's page.
-	 *
-	 * @return the selection provider, or <code>null</code> if none
-	 */
-	public ISelectionProvider getSelectionProvider();
-	/**
-	 * Returns the shell containing this site's page.
-	 *
-	 * @return the shell containing the page's controls
-	 */
-	public Shell getShell();
-	/**
-	 * Returns the workbench window containing this site's page.
-	 *
-	 * @return the workbench window containing this site's page
-	 */
-	public IWorkbenchWindow getWorkbenchWindow();
+public interface IPageSite extends IWorkbenchSite {
 	/**
 	 * Registers a pop-up menu with a particular id for extension.
 	 * <p>
@@ -74,13 +51,6 @@ public interface IPageSite {
 		String menuId,
 		MenuManager menuManager,
 		ISelectionProvider selectionProvider);
-	/**
-	 * Sets the selection provider for this site's page.
-	 *
-	 * @param provider the selection provider, or <code>null</code> to clear it
-	 */
-	public void setSelectionProvider(ISelectionProvider provider);
-
 	/**
 	 * Returns the action bars for this page site.
 	 * Pages have exclusive use of their site's action bars.
