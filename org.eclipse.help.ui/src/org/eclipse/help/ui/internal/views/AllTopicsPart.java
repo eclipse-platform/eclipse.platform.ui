@@ -12,7 +12,9 @@ package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.*;
 import org.eclipse.help.ui.internal.*;
+import org.eclipse.help.ui.internal.util.OverlayIcon;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
@@ -36,6 +38,7 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 
 	private TreeItem lastItem;
 	private Cursor handCursor;
+	private Image containerWithTopicImage;
 
 	class TopicsProvider implements ITreeContentProvider {
 		public Object[] getChildren(Object parentElement) {
@@ -109,6 +112,11 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 			}
 			if (obj instanceof ITopic) {
 				boolean expandable = treeViewer.isExpandable(obj);
+				if (expandable) {
+					ITopic topic = (ITopic)obj;
+					if (topic.getHref()!=null)
+						return containerWithTopicImage;
+				}
 				String key = expandable ? IHelpUIConstants.IMAGE_CONTAINER
 						: IHelpUIConstants.IMAGE_FILE_F1TOPIC;
 				return HelpUIResources.getImage(key);
@@ -135,6 +143,7 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gd.heightHint = 1;
 		sep.setLayoutData(gd);
+		initializeImages();
 
 		treeViewer = new TreeViewer(container, SWT.H_SCROLL | SWT.V_SCROLL);
 		treeViewer.setContentProvider(new TopicsProvider());
@@ -262,8 +271,16 @@ public class AllTopicsPart extends AbstractFormPart implements IHelpPart {
 		contributeToToolBar(tbm);
 	}
 	
+	private void initializeImages() {
+		ImageDescriptor base = HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_CONTAINER);
+		ImageDescriptor ovr = HelpUIResources.getImageDescriptor(IHelpUIConstants.IMAGE_DOC_OVR);
+		ImageDescriptor desc = new OverlayIcon(base, new ImageDescriptor[][] { {ovr}});
+		containerWithTopicImage = desc.createImage();
+	}
+	
 	public void dispose() {
 		handCursor.dispose();
+		containerWithTopicImage.dispose();
 		super.dispose();
 	}
 

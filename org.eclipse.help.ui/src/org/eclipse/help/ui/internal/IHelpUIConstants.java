@@ -37,6 +37,7 @@ public interface IHelpUIConstants {
 	public static final String IMAGE_SHOW_DESC = "elcl16/desc_obj.gif"; //$NON-NLS-1$
 	public static final String IMAGE_REMOVE_ALL = "elcl16/search_remall.gif"; //$NON-NLS-1$
 	public static final String IMAGE_COLLAPSE_ALL = "elcl16/collapseall.gif"; //$NON-NLS-1$
+	public static final String IMAGE_DOC_OVR = "ovr16/doc_co.gif"; //$NON-NLS-1$
 	// Help view constants
 	public static final String HV_SEARCH = "search"; //$NON-NLS-1$
 	public static final String HV_FSEARCH = "fsearch"; //$NON-NLS-1$
