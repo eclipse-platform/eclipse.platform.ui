@@ -207,7 +207,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(location);
 		if (files.length > 0) {
 			IResourceRuleFactory fac = ResourcesPlugin.getWorkspace().getRuleFactory();
-			rules.add(fac.modifyRule(files[0].getParent()));
+			rules.add(MultiRule.combine(fac.createRule(files[0]), fac.validateEditRule(files)));
 		}
 	}
 
