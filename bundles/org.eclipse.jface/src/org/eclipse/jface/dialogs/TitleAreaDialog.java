@@ -461,6 +461,8 @@ private void layoutForNewMessage(){
  * <p>
  * Shortcut for <code>setMessage(newMessage, IMessageProvider.NONE)</code>
  * </p> 
+ * This method should be called after the dialog has been opened as it
+ * updates the message label immediately.
  * 
  * @param newMessage the message, or <code>null</code> to clear
  *   the message
