@@ -10,10 +10,9 @@ import java.util.EventObject;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 
 /**
- * A debug event describes an event in a program being debugged.
- * Debug model implementations are required to generate debug events as
- * specified by this class. Debug events also indicate the creation and
- * termination of system processes.
+ * A debug event describes an event in a program being debugged or
+ * in a running process. Debug models and process implementations
+ * are required to generate debug events as specified by this class.
  * <p>
  * The following list defines the events generated for each debug
  * model element.
@@ -47,6 +46,11 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
  * </ul>
  * </p>
  * <ul>
+ * <li><code>IProcess</code>
+ *	<ul>
+ *	<li><code>CREATE</code> - a process has been created and is executing.</li>
+ *	<li><code>TERMINATE</code> - a process has terminated.</li>
+ *  </ul>
  * <li><code>IDebugTarget</code>
  *	<ul>
  *	<li><code>CREATE</code> - a debug target has been created and is ready
