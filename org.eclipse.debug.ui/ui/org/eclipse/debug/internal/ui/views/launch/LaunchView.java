@@ -21,6 +21,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.DebugException;
@@ -1247,7 +1248,12 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (isActive()) { 
 			IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
 			if (selection != null && !selection.isEmpty()) { 
-				return new ShowInContext(null, new StructuredSelection(getSourceElement()));
+				Object sourceElement = getSourceElement();
+				if (sourceElement instanceof IAdaptable) {
+					if (((IAdaptable)sourceElement).getAdapter(IResource.class) != null) {
+						return new ShowInContext(null, new StructuredSelection(getSourceElement()));
+					}
+				}
 			}
 		}
 		return null;
