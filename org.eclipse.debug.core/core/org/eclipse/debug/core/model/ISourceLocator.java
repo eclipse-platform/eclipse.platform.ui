@@ -17,7 +17,7 @@ import org.eclipse.debug.core.model.IStackFrame;
  * <p>
  * Generally, an implementor of a debug model will also implement launchers
  * and source locators that work together as a whole. That is, the implementation
- * if a source locator will have knowledge of how to locate a source element
+ * of a source locator will have knowledge of how to locate a source element
  * for a stack frame. For example, a Java stack frame could define API which
  * specifies a source file name. A Java source locator would use this information
  * to locate the associated file in the workspace.
