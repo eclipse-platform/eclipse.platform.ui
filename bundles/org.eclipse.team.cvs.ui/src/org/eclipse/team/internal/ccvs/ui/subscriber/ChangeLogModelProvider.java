@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
 import java.util.*;
-
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
@@ -217,22 +216,22 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			return family == ISynchronizeManager.FAMILY_SYNCHRONIZE_OPERATION;
 		}
 		public IStatus run(IProgressMonitor monitor) {
-			if (syncSets != null && !shutdown) {
-				// Determine the sync sets for which to fetch comment nodes
-				SyncInfoSet[] updates;
-				synchronized(syncSets) {
-					updates = (SyncInfoSet[])syncSets.toArray(new SyncInfoSet[syncSets.size()]);
-					syncSets.clear();
+			
+				if (syncSets != null && !shutdown) {
+					// Determine the sync sets for which to fetch comment nodes
+					SyncInfoSet[] updates;
+					synchronized (syncSets) {
+						updates = (SyncInfoSet[]) syncSets.toArray(new SyncInfoSet[syncSets.size()]);
+						syncSets.clear();
+					}
+					for (int i = 0; i < updates.length; i++) {
+						SyncInfoSet set = updates[i];
+						calculateRoots(updates[i], monitor);
+					}
+					refreshViewer();
 				}
-				
-				for (int i = 0; i < updates.length; i++) {
-					SyncInfoSet set = updates[i];
-					calculateRoots(updates[i], monitor);
-				}
-								
-				refreshViewer();				
-			}
-			return Status.OK_STATUS;
+				return Status.OK_STATUS;
+		
 		}
 		public void add(SyncInfoSet set) {
 			synchronized(syncSets) {
@@ -328,6 +327,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	
 	private void calculateRoots(SyncInfoSet set, IProgressMonitor monitor) {
 		try {
+			monitor.beginTask(null, 100);
 			// Decide which nodes we have to fetch log histories
 			SyncInfo[] infos = set.getSyncInfos();
 			ArrayList commentNodes = new ArrayList();
@@ -350,22 +350,38 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			
 			// Fetch log histories then add elements
 			SyncInfo[] commentInfos = (SyncInfo[]) commentNodes.toArray(new SyncInfo[commentNodes.size()]);
-			RemoteLogOperation logs = getSyncInfoComment(commentInfos, monitor);
-			if (logs != null) {
-				for (int i = 0; i < commentInfos.length; i++) {
-					addSyncInfoToCommentNode(commentInfos[i], logs);
-				}
-				// Don't cache log entries when in two way mode.
-				if(getConfiguration().getComparisonType().equals(ISynchronizePageConfiguration.TWO_WAY)) {
-					logs.clearEntries();
-				}
-			}
+			RemoteLogOperation logs = getSyncInfoComment(commentInfos, Policy.subMonitorFor(monitor, 80));
+			addLogEntries(commentInfos, logs, Policy.subMonitorFor(monitor, 20));
 		} catch (CVSException e) {
 			Utils.handle(e);
 		} catch (InterruptedException e) {
+		} finally {
+			monitor.done();
 		}
 	}
 	
+	/**
+	 * Add the followinf sync info elements to the viewer. It is assumed that these elements have associated
+	 * log entries cached in the log operation.
+	 */
+	private void addLogEntries(SyncInfo[] commentInfos, RemoteLogOperation logs, IProgressMonitor monitor) {
+		try {
+			monitor.beginTask(null, commentInfos.length * 10);
+			if (logs != null) {
+				for (int i = 0; i < commentInfos.length; i++) {
+					addSyncInfoToCommentNode(commentInfos[i], logs);
+					monitor.worked(10);
+				}
+				// Don't cache log entries when in two way mode.
+				if (getConfiguration().getComparisonType().equals(ISynchronizePageConfiguration.TWO_WAY)) {
+					logs.clearEntries();
+				}
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
 	/**
 	 * Create a node for the given sync info object. The logs should contain the log for this info.
 	 * 
