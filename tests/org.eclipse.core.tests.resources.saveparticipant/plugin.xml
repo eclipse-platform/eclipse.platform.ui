@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
 <plugin
   name="Eclipse Core Tests Save Participant"
   id="org.eclipse.core.tests.resources.saveparticipant"
-  version="2.1.0"
+  version="3.0"
   provider-name="Eclipse.org">
 
   <requires>
     <import plugin="org.eclipse.core.resources"/>
     <import plugin="org.eclipse.core.tests.harness"/>
+    <import plugin="org.eclipse.core.runtime.compatibility"/> 
     <import plugin="org.junit"/>
     <import plugin="org.eclipse.core.tests.resources"/>
     <import plugin="org.eclipse.core.tests.resources.saveparticipant1"/>
