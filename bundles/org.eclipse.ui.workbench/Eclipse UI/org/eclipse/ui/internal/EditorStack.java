@@ -13,18 +13,13 @@
 
 package org.eclipse.ui.internal;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.internal.presentations.PresentationFactoryUtil;
 import org.eclipse.ui.internal.presentations.SystemMenuPinEditor;
 import org.eclipse.ui.internal.presentations.SystemMenuSize;
 import org.eclipse.ui.internal.presentations.UpdatingActionContributionItem;
-import org.eclipse.ui.presentations.AbstractPresentationFactory;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
@@ -45,7 +40,7 @@ public class EditorStack extends PartStack {
     private SystemMenuPinEditor pinEditorItem = new SystemMenuPinEditor(null);
 	 
     public EditorStack(EditorSashContainer editorArea, WorkbenchPage page) {
-        super(); //$NON-NLS-1$
+        super(PresentationFactoryUtil.ROLE_EDITOR); //$NON-NLS-1$
         this.editorArea = editorArea;
         setID(this.toString());
         // Each folder has a unique ID so relative positioning is unambiguous.
@@ -56,6 +51,13 @@ public class EditorStack extends PartStack {
         this.page = page;
     }
     
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.PartStack#getPage()
+	 */
+	protected WorkbenchPage getPage() {
+		return page;
+	}
+	
 	public void addSystemActions(IMenuManager menuManager) {
 		pinEditorItem = new SystemMenuPinEditor((EditorPane)getVisiblePart());
 		appendToGroupIfPossible(menuManager, "misc", new UpdatingActionContributionItem(pinEditorItem)); //$NON-NLS-1$
@@ -102,58 +104,12 @@ public class EditorStack extends PartStack {
 	        ((EditorPane) child).setWorkbook(this);
     	}
     }
-
-    public void createControl(Composite parent) {
-
-    	if (!isDisposed()) {
-    		return;
-    	}
-    	
-        AbstractPresentationFactory factory = ((WorkbenchWindow) page
-                .getWorkbenchWindow()).getWindowConfigurer()
-                .getPresentationFactory();
-        super.createControl(parent, factory.createEditorPresentation(parent,
-                getPresentationSite()));
-    }
     
     protected void updateActions() {
         EditorPane pane = (EditorPane)getVisiblePart();
         
         sizeItem.setPane(pane);
         pinEditorItem.setPane(pane);
-    }
-
-    /**
-     * Update the container to show the correct visible tab based on the
-     * activation list.
-     * 
-     * @param org.eclipse.ui.internal.ILayoutContainer
-     */
-    private void updateContainerVisibleTab() {
-        LayoutPart[] parts = getChildren();
-
-        if (parts.length < 1) {
-            setSelection(null);
-            return;
-        }
-
-        PartPane selPart = null;
-        int topIndex = 0;
-        IWorkbenchPartReference sortedPartsArray[] = page.getSortedParts();
-        List sortedParts = Arrays.asList(sortedPartsArray);
-        for (int i = 0; i < parts.length; i++) {
-            if (parts[i] instanceof PartPane) {
-                IWorkbenchPartReference part = ((PartPane) parts[i])
-                        .getPartReference();
-                int index = sortedParts.indexOf(part);
-                if (index >= topIndex) {
-                    topIndex = index;
-                    selPart = (PartPane) parts[i];
-                }
-            }
-        }
-
-        setSelection(selPart);
     }
     
     public Control[] getTabList() {
