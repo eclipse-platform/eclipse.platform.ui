@@ -431,7 +431,7 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 					//indicator = determineDirtyCount(indicator, shared);
 				}
 			}
-			return indicator == EclipseSynchronizer.IS_DIRTY_INDICATOR;
+			return EclipseSynchronizer.IS_DIRTY_INDICATOR.equals(indicator);
 		} else {
 			return isModified(count.intValue(), shared);
 		}
