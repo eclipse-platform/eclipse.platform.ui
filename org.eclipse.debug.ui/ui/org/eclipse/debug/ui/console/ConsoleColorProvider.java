@@ -86,10 +86,10 @@ public class ConsoleColorProvider implements IConsoleColorProvider {
 	}
 	
 	/**
-	 * Returns the consonle this color provider is connected to, or
+	 * Returns the console this color provider is connected to, or
 	 * <code>null</code> if none.
 	 * 
-	 * @return IConsole the consonle this color provider is connected to, or
+	 * @return IConsole the console this color provider is connected to, or
 	 * <code>null</code> if none
 	 */
 	protected IConsole getConsole() {
