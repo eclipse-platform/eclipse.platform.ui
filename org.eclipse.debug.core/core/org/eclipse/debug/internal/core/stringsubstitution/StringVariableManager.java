@@ -457,10 +457,6 @@ public class StringVariableManager implements IStringVariableManager {
 	
 	private Document getDocument() throws ParserConfigurationException {
 		DocumentBuilderFactory dfactory = DocumentBuilderFactory.newInstance();
-
-		dfactory.setNamespaceAware(true);
-		dfactory.setValidating(true);
-
 		DocumentBuilder docBuilder = dfactory.newDocumentBuilder();
 		Document doc =docBuilder.newDocument();
 		return doc;
@@ -472,8 +468,10 @@ public class StringVariableManager implements IStringVariableManager {
 	 * 
 	 * @param doc document to serialize
 	 * @return the document as a string
+	 * @throws TransformerException if an unrecoverable error occurs during the serialization
+	 * @throws IOException if the encoding attempted to be used is not supported
 	 */
-	public String serializeDocument(Document doc) throws TransformerException, UnsupportedEncodingException {
+	private String serializeDocument(Document doc) throws TransformerException, UnsupportedEncodingException {
 		ByteArrayOutputStream s= new ByteArrayOutputStream();
 		
 		TransformerFactory factory= TransformerFactory.newInstance();
@@ -511,7 +509,7 @@ public class StringVariableManager implements IStringVariableManager {
 	}
 
 	/**
-	 * Fire a change notificaiton for the given variable.
+	 * Fire a change notification for the given variable.
 	 * 
 	 * @param variable the variable that has changed
 	 */
@@ -525,8 +523,8 @@ public class StringVariableManager implements IStringVariableManager {
 		}
 	}	
 
-	/**
-	 * @see IStringVariableManager#newVariableExpression(String, String)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.stringsubstitution.IStringVariableManager#generateVariableExpression(java.lang.String, java.lang.String)
 	 */
 	public String generateVariableExpression(String varName, String arg) {
 		StringBuffer buffer = new StringBuffer();
