@@ -20,7 +20,7 @@
     </library>
   </runtime>
 
-	<extension id="platform-preferences" point="org.eclipse.core.runtime.preferences" name="platform-preferences">
+	<extension id="test-preferences" point="org.eclipse.core.runtime.preferences" name="test-preferences">
 		<preferences scope="test" class="org.eclipse.core.tests.internal.preferences.TestScope"/>
 	</extension>
 
