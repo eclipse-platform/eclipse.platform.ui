@@ -16,6 +16,7 @@ import org.eclipse.ui.help.WorkbenchHelp;
 public class FilterSelectionAction extends ResourceNavigatorAction {
 	private static final String FILTER_TOOL_TIP = ResourceNavigatorMessages.getString("FilterSelection.toolTip"); //$NON-NLS-1$
 	private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessages.getString("FilterSelection.message"); //$NON-NLS-1$
+	private static final String FILTER_TITLE_MESSAGE = ResourceNavigatorMessages.getString("FilterSelection.title"); //$NON-NLS-1$
 	
 	private Shell shell;
 /**
@@ -46,6 +47,7 @@ public void run() {
 			new LabelProvider(),
 			FILTER_SELECTION_MESSAGE);
 
+	dialog.setTitle(FILTER_TITLE_MESSAGE);
 	dialog.setInitialSelections(contentProvider.getInitialSelections());
 	dialog.open();
 	if (dialog.getReturnCode() == dialog.OK) {
