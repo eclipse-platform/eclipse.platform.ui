@@ -401,35 +401,58 @@ public final class LegacyResourceSupport {
             if (contributorResourceAdapterClass == null) {
                 return null;
             }
+            Class contributorResourceAdapter2Class = LegacyResourceSupport.getIContributorResourceAdapter2Class();
+            if (contributorResourceAdapter2Class == null) {
+                return null;
+            }
             Object resourceAdapter = adaptable.getAdapter(contributorResourceAdapterClass);
-            if (resourceAdapter == null || ! LegacyResourceSupport.getIContributorResourceAdapter2Class().isInstance(resourceAdapter)) {
-                // reflective equivalent of
-                //    resourceAdapter = DefaultContributorResourceAdapter.getDefault();
+            Object resourceMappingAdapter;
+			if (resourceAdapter != null && contributorResourceAdapter2Class.isInstance(resourceAdapter)) {
+            	// The registered adapter also handles resource mappings
+            	resourceMappingAdapter = resourceAdapter;
+            } else {
+            	// Either there is no registered adapter or it doesn't handle resource mappings.
+            	// In this case, we will use the default contribution adapter
                 try {
+		            // reflective equivalent of
+		            //    resourceAdapter = DefaultContributorResourceAdapter.getDefault();
                     Class c = LegacyResourceSupport.getDefaultContributorResourceAdapterClass();
                     Method m = c.getDeclaredMethod("getDefault", new Class[0]); //$NON-NLS-1$
-                    resourceAdapter = m.invoke(null, new Object[0]);
+                    resourceMappingAdapter = m.invoke(null, new Object[0]);
                 } catch (Exception e) {
                     // shouldn't happen - but play it safe
                     return null;
                 }
             }
-            Object result;
-            // reflective equivalent of
-            //    result = ((IContributorResourceAdapter2) resourceAdapter).getAdaptedResource(adaptable);
+            
             try {
-                Class contributorResourceAdapter2Class = LegacyResourceSupport.getIContributorResourceAdapter2Class();
-                if (contributorResourceAdapter2Class == null)
-                    return null;
-                Method m = contributorResourceAdapter2Class.getDeclaredMethod("getAdaptedResourceMapping", new Class[]{IAdaptable.class}); //$NON-NLS-1$
-                result = m.invoke(resourceAdapter, new Object[]{adaptable});
+	            // reflective equivalent of
+	            //    result = ((IContributorResourceAdapter2) resourceAdapter).getAdaptedResource(adaptable);
+
+	            Method m = contributorResourceAdapter2Class.getDeclaredMethod("getAdaptedResourceMapping", new Class[]{IAdaptable.class}); //$NON-NLS-1$
+	            Object result = m.invoke(resourceMappingAdapter, new Object[]{adaptable});
+	            if (result != null)
+	                return result;
+
             } catch (Exception e) {
                 // shouldn't happen - but play it safe
                 return null;
             }
-            return result;
+            
+            // If we get here, that means that the object in question doesn't adapt to resource mapping
+            // and it's contributed adapter doesn't do the adaptation either.
+            // Before we fail, we will attempt to adapt the object to IResource and then to ResourceMapping
+            if (resourceAdapter != null) {
+	            Object r = getAdaptedContributorResource(object);
+	            if (r != null) {
+	            	return Platform.getAdapterManager().getAdapter(r, resourceMappingClass);
+	            }
+            }
+            
+            // we've exhausted every avenue so just return null
+            return null;
         }
-        // Fallback to querying the adapter manager directly
+        // Fallback to querying the adapter manager directly when the object isn't an IAdaptable
         Object result = Platform.getAdapterManager().getAdapter(object, resourceMappingClass);
         return result;
     }

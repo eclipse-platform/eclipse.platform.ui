@@ -70,6 +70,16 @@ public class ObjectContributionClasses implements IAdapterFactory {
 			return null;
 		}		
 	}
+	
+	// Returns a contribution adapter that doesn't handle ResourceMappings
+	public static class CResourceOnly implements IAdaptable {
+		public Object getAdapter(Class adapter) {
+			if(adapter == IContributorResourceAdapter.class) {
+				return new ResourceOnlyAdapter();
+			}			
+			return null;
+		}		
+	}
     
     public interface IModelElement {
     }
@@ -92,6 +102,17 @@ public class ObjectContributionClasses implements IAdapterFactory {
         public ResourceMapping getAdaptedResourceMapping(IAdaptable adaptable) {
             return (ResourceMapping)getAdaptedResource(adaptable).getAdapter(ResourceMapping.class);
         }	
+	}
+	
+	// Contributor adapter that doesn't handle resource mappings
+	
+	public static class ResourceOnlyAdapter implements IContributorResourceAdapter {
+		public IResource getAdaptedResource(IAdaptable adaptable) {
+			if(adaptable instanceof CResourceOnly) {
+				return ResourcesPlugin.getWorkspace().getRoot();
+			}
+			return null;
+		}
 	}
 	
 	// Adapter methods

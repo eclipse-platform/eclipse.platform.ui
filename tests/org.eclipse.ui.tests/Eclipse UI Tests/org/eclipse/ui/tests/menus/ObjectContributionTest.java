@@ -130,6 +130,14 @@ public final class ObjectContributionTest extends UITestCase {
                 ResourceMapping.class,
                 true
             );
+        // Ensure that the case where an object uses a contribution adapter that doesn't handle mappings
+        // will still show the menus for resource mappings
+        assertPopupMenus("8", 
+                new String[] {"ResourceMapping.1", "IResource.1"}, 
+                new StructuredSelection(new Object[] {new ObjectContributionClasses.CResourceOnly()}),
+                ResourceMapping.class,
+                true
+            );
     }
     
     /**
