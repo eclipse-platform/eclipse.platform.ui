@@ -73,6 +73,7 @@ public class StatusLineContributionGroup extends ActionGroup implements ISyncInf
 		// Listen to changes to update the counts
 		SyncInfoSet set = getSyncInfoSet();
 		set.addSyncSetChangedListener(this);
+		updateCounts();
 	}
 
 	private boolean isThreeWay() {
