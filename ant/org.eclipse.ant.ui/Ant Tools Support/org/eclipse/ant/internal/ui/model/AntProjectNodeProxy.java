@@ -188,4 +188,34 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		}
 		return super.getAntModel();
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getLength()
+	 */
+	public int getLength() {
+		if (fProject == null) {
+			parseBuildFile();
+		}
+		return fModel.getProjectNode().getLength();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getOffset()
+	 */
+	public int getOffset() {
+		if (fProject == null) {
+			parseBuildFile();
+		}
+		return fModel.getProjectNode().getOffset();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getSelectionLength()
+	 */
+	public int getSelectionLength() {
+		if (fProject == null) {
+			parseBuildFile();
+		}
+		return fModel.getProjectNode().getSelectionLength();
+	}
 }
