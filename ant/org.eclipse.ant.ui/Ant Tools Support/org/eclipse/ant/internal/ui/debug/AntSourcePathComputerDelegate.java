@@ -61,7 +61,10 @@ public class AntSourcePathComputerDelegate extends JavaSourcePathComputer {
 			sourceContainer = new WorkspaceSourceContainer();
 		}
         sourceContainers.add(sourceContainer);
-        sourceContainers.addAll(Arrays.asList(super.computeSourceContainers(configuration, monitor)));
+        
+        ISourceContainer[] classpathContainers= super.computeSourceContainers(configuration, monitor);
+        sourceContainers.addAll(Arrays.asList(classpathContainers));
+        
 		return (ISourceContainer[]) sourceContainers.toArray(new ISourceContainer[sourceContainers.size()]);
 	}
 }
