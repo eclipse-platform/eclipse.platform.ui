@@ -55,6 +55,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor;
 import org.eclipse.ui.internal.dialogs.WorkbenchDialogBlockedHandler;
 import org.eclipse.ui.internal.util.BundleUtility;
+import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.progress.WorkbenchJob;
 /**
@@ -68,7 +69,7 @@ public class ProgressManager extends ProgressProvider
 	//dialog.
 	private static final String IN_DIALOG = "inDialog"; //$NON-NLS-1$
 	public static final QualifiedName PROPERTY_IN_DIALOG = new QualifiedName(
-			JobView.PROPERTY_PREFIX, IN_DIALOG);
+			IProgressConstants.PROPERTY_PREFIX, IN_DIALOG);
 	private static ProgressManager singleton;
 	final private Map jobs = Collections.synchronizedMap(new HashMap());
 	final private Map familyListeners = Collections
