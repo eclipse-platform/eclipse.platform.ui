@@ -1027,6 +1027,51 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			newWindow.open();
 		}
 	}
+	public IPluginDescriptor[] getEarlyActivatedPlugins() {
+		IPluginRegistry registry = Platform.getPluginRegistry();
+		String pluginId = "org.eclipse.ui"; 
+		String extensionPoint = "startup";
+		
+		IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
+		IExtension[] extensions = point.getExtensions();
+		IPluginDescriptor result[] = new IPluginDescriptor[extensions.length];
+		for (int i = 0; i < extensions.length; i++) {
+			result[i] = extensions[i].getDeclaringPluginDescriptor();
+		}
+		return result;
+	}
+	/**
+	 * Starts plugins on startup.
+	 */
+	protected void startPlugins() {
+		Runnable work = new Runnable() {
+			IPreferenceStore store = getPreferenceStore();
+			final String pref = store.getString(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
+			public void run() {
+				IPluginDescriptor descriptors[] = getEarlyActivatedPlugins();
+				for (int i = 0; i < descriptors.length; i++) {
+					final IPluginDescriptor pluginDescriptor = descriptors[i]; 
+					SafeRunnableAdapter code = new SafeRunnableAdapter() {
+						public void run() throws Exception {
+							String id = pluginDescriptor.getUniqueIdentifier() + IPreferenceConstants.SEPARATOR;
+							if(pref.indexOf(id) < 0) {
+								Plugin plugin = pluginDescriptor.getPlugin();
+								IStartup startup = (IStartup)plugin;
+								startup.earlyStartup();
+							}
+						}
+						public void handleException(Throwable exception) {
+							WorkbenchPlugin.log("Unhandled Exception", new Status(IStatus.ERROR, "org.eclipse.ui", 0, "Unhandled Exception", exception));
+						}
+					};
+					Platform.run(code);
+				}
+			}
+		};
+		
+		Thread thread = new Thread(work);
+		thread.start();
+	}
 	/**
 	 * Runs the workbench.
 	 */
@@ -1054,6 +1099,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 			if (initOK) 
 				checkUpdates(); // may trigger a close/restart
 			if (initOK && runEventLoop) {
+				startPlugins();
 				runEventLoop();
 			}
 			shutdown();

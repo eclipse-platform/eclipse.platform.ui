@@ -58,4 +58,11 @@ public interface IPreferenceConstants {
 	//Boolean: true = refresh workspace on startup if the command line does 
 	//not have the -refresh option
 	public static final String REFRESH_WORKSPACE_ON_STARTUP = "REFRESH_WORKSPACE_ON_STARTUP"; //$NON-NLS-1$
+	
+	//List of plugins but that extends "startup" extension point but are overriden by the user.
+	//String of plugin unique ids separated by ";"
+	public static final String PLUGINS_NOT_ACTIVATED_ON_STARTUP = "PLUGINS_NOT_ACTIVATED_ON_STARTUP"; //$NON-NLS-1$
+	
+	//Separator for PLUGINS_NOT_ACTIVATED_ON_STARTUP
+	public static char SEPARATOR = ';'; //$NON-NLS-1$	
 }

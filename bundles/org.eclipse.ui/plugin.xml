@@ -51,7 +51,8 @@
    <extension-point id="markerUpdaters" name="%ExtPoint.markerUpdaters"/>
    <extension-point id="documentProviders" name="%ExtPoint.documentProviders"/>
    <extension-point id="workingSets" name="%ExtPoint.workingSets"/>
-
+   <extension-point id="startup" name="%ExtPoint.startup"/>
+   
    <extension
          id="workbench"
          point="org.eclipse.core.runtime.applications">
@@ -1263,6 +1264,12 @@
             class="org.eclipse.ui.internal.dialogs.DecoratorsPreferencePage"
             id="org.eclipse.ui.preferencePages.Decorators">
       </page>
+      <page
+            name="%PreferencePages.Startup"
+            category="org.eclipse.ui.preferencePages.Workbench"
+            class="org.eclipse.ui.internal.dialogs.StartupPreferencePage"
+            id="org.eclipse.ui.preferencePages.Startup">
+      </page>      
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
