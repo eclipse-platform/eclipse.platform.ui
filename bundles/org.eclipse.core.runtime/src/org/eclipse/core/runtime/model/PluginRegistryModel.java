@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.core.runtime.model;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.internal.runtime.Assert;
+import java.util.HashMap;
+import java.util.List;
+
+import org.eclipse.core.internal.plugins.PluginMap;
 import org.eclipse.core.internal.plugins.RegistryResolver;
-import java.util.*;
+import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * A container for a collection of plug-in descriptors.
@@ -21,11 +24,11 @@ import java.util.*;
  * This class may be instantiated, or further subclassed.
  * </p>
  */
-public class PluginRegistryModel {
+public class PluginRegistryModel {	
 
 	// transient properties (not included in plug-in manifest)
-	private Map plugins = new HashMap(30);
-	private Map fragments = new HashMap(30);
+	protected PluginMap plugins = new PluginMap(new HashMap(30),false,true);
+	protected PluginMap fragments = new PluginMap(new HashMap(30),false,true);
 	private boolean readOnly = false;
 	private boolean resolved = false;
 /**
@@ -43,26 +46,7 @@ public PluginRegistryModel() {
  */
 public void addFragment(PluginFragmentModel fragment) {
 	assertIsWriteable();
-	String key = fragment.getId();
-	PluginFragmentModel[] list = getFragments(key);
-	if (list == null) {
-		list = new PluginFragmentModel[1];
-		list[0] = fragment;
-		fragments.put(key, list);
-	} else {
-		//XXX should we check for duplicates?  See javadoc comment.
-//		for (int i = 0; i < list.length; i++) {
-//			if (list[i].getVersion().equals(fragment.getVersion())) {
-//				//replace with new plugin
-//				list[i] = fragment;
-//				return;
-//			}
-//		}
-		PluginFragmentModel[] newList = new PluginFragmentModel[list.length + 1];
-		System.arraycopy(list, 0, newList, 0, list.length);
-		newList[list.length] = fragment;
-		fragments.put(key, newList);
-	}
+	fragments.add(fragment);
 }
 /**
  * Adds the specified plug-in to this registry.  An existing plug-in
@@ -73,26 +57,7 @@ public void addFragment(PluginFragmentModel fragment) {
  */
 public void addPlugin(PluginDescriptorModel plugin) {
 	assertIsWriteable();
-	String key = plugin.getId();
-	PluginDescriptorModel[] pluginList = getPlugins(key);
-	if (pluginList == null) {
-		pluginList = new PluginDescriptorModel[1];
-		pluginList[0] = plugin;
-		plugins.put(key, pluginList);
-	} else {
-		//check for duplicates
-		for (int i = 0; i < pluginList.length; i++) {
-			if (pluginList[i].getVersion().equals(plugin.getVersion())) {
-				//replace with new plugin
-				pluginList[i] = plugin;
-				return;
-			}
-		}
-		PluginDescriptorModel[] newPluginList = new PluginDescriptorModel[pluginList.length + 1];
-		System.arraycopy(pluginList, 0, newPluginList, 0, pluginList.length);
-		newPluginList[pluginList.length] = plugin;
-		plugins.put(key, newPluginList);
-	}
+	plugins.add(plugin);
 }
 /**
  * Checks that this model object is writeable.  A runtime exception
@@ -112,8 +77,7 @@ protected void assertIsWriteable() {
  * @return the plug-in fragment, or <code>null</code>
  */
 public PluginFragmentModel getFragment(String id) {
-	PluginFragmentModel[] result = (PluginFragmentModel[]) fragments.get(id);
-	return result == null ? null : result[0];
+	return (PluginFragmentModel) fragments.getAny(id);
 }
 /**
  * Returns the identified plug-in fragment or <code>null</code> if
@@ -126,19 +90,7 @@ public PluginFragmentModel getFragment(String id) {
  * @return the matching fragment in this registry, or <code>null</code>
  */
 public PluginFragmentModel getFragment(String id, String version) {
-	PluginFragmentModel[] list = getFragments(id);
-	if (list == null || list.length == 0)
-		return null;
-	if (version == null)
-		// Just return the first one in the list (random)
-		return list[0];
-
-	for (int i = 0; i < list.length; i++) {
-		PluginFragmentModel element = list[i];
-		if (element.getVersion().equals(version))
-			return element;
-	}
-	return null;
+	return (PluginFragmentModel) fragments.get(id,version);
 }
 /**
  * Returns the list of plug-in fragments managed by this registry.
@@ -146,13 +98,9 @@ public PluginFragmentModel getFragment(String id, String version) {
  * @return the fragments in this registry
  */
 public PluginFragmentModel[] getFragments() {
-	List result = new ArrayList(fragments.size());
-	for (Iterator i = fragments.values().iterator(); i.hasNext();) {
-		PluginFragmentModel[] entries = (PluginFragmentModel[]) i.next();
-		for (int j = 0; j < entries.length; j++)
-			result.add(entries[j]);
-	}
-	return (PluginFragmentModel[]) result.toArray(new PluginFragmentModel[result.size()]);
+	PluginFragmentModel[] result = new PluginFragmentModel[fragments.size()];
+	fragments.copyToArray(result);
+	return result;
 }
 /**
  * Returns all versions of the identified plug-in fragment
@@ -165,7 +113,10 @@ public PluginFragmentModel[] getFragments() {
  * @return the fragments known to this plug-in registry with the given id
  */
 public PluginFragmentModel[] getFragments(String id) {
-	return (PluginFragmentModel[]) fragments.get(id);
+	List versions = fragments.getVersions(id);
+	if (versions == null || versions.isEmpty())
+		return new PluginFragmentModel[0];
+	return (PluginFragmentModel[]) versions.toArray(new PluginFragmentModel[versions.size()]);
 }
 /**
  * Returns the plug-in descriptor with the given plug-in identifier
@@ -178,8 +129,7 @@ public PluginFragmentModel[] getFragments(String id) {
  * @return the plug-in descriptor, or <code>null</code>
  */
 public PluginDescriptorModel getPlugin(String pluginId) {
-	PluginDescriptorModel[] result = (PluginDescriptorModel[]) plugins.get(pluginId);
-	return result == null ? null : result[0];
+	return (PluginDescriptorModel) plugins.getAny(pluginId);
 }
 /**
  * Returns the identified plug-in or <code>null</code> if
@@ -213,13 +163,9 @@ public PluginDescriptorModel getPlugin(String pluginId, String version) {
  * @return the plug-ins in this registry
  */
 public PluginDescriptorModel[] getPlugins() {
-	List result = new ArrayList(plugins.size());
-	for (Iterator i = plugins.values().iterator(); i.hasNext();) {
-		PluginDescriptorModel[] entries = (PluginDescriptorModel[]) i.next();
-		for (int j = 0; j < entries.length; j++)
-			result.add(entries[j]);
-	}
-	return (PluginDescriptorModel[]) result.toArray(new PluginDescriptorModel[result.size()]);
+	PluginDescriptorModel[] result = new PluginDescriptorModel[plugins.size()];
+	plugins.copyToArray(result);
+	return result;
 }
 /**
  * Returns all versions of the identified plug-in descriptor
@@ -232,7 +178,11 @@ public PluginDescriptorModel[] getPlugins() {
  * @return the plug-in descriptors known to this plug-in registry
  */
 public PluginDescriptorModel[] getPlugins(String pluginId) {
-	return (PluginDescriptorModel[]) plugins.get(pluginId);
+	List versions = plugins.getVersions(pluginId);
+	if (versions == null || versions.isEmpty())
+		return new PluginDescriptorModel[0];
+	return (PluginDescriptorModel[]) versions.toArray(new PluginDescriptorModel[versions.size()]);
+
 }
 /**
  * Returns whether or not this model object is read-only.
@@ -262,16 +212,8 @@ public boolean isResolved() {
  */
 public void markReadOnly() {
 	readOnly = true;
-	for (Iterator it = plugins.values().iterator(); it.hasNext();) {
-		PluginDescriptorModel[] list = (PluginDescriptorModel[]) it.next();
-		for (int i = 0; i < list.length; i++)
-			list[i].markReadOnly();
-	}
-	for (Iterator it = fragments.values().iterator(); it.hasNext();) {
-		PluginFragmentModel[] list = (PluginFragmentModel[]) it.next();
-		for (int i = 0; i < list.length; i++)
-			list[i].markReadOnly();
-	}
+	plugins.markReadOnly();
+	fragments.markReadOnly();
 }
 /**
  * Sets this model object to be resolved.
@@ -289,28 +231,7 @@ public void markResolved() {
  */
 public void removeFragment(String id, String version) {
 	assertIsWriteable();
-	PluginFragmentModel[] list = getFragments(id);
-	if (list == null || list.length == 0)
-		return;
-	int removedCount = 0;
-	for (int i = 0; i < list.length; i++) {
-		if (version.equals(list[i].getVersion())) {
-			list[i] = null;
-			removedCount++;
-		}
-	}
-	// If all were removed, toss the whole entry.  Otherwise, compact the array
-	if (removedCount == list.length)
-		removeFragments(id);
-	else {
-		PluginFragmentModel[] newList = new PluginFragmentModel[list.length - removedCount];
-		int index = 0;
-		for (int i = 0; i < list.length; i++) {
-			if (list[i] != null)
-				newList[index++] = list[i];
-		}
-		fragments.put(id, newList);
-	}
+	fragments.remove(id,version);
 }
 /**
  * Removes all versions of the identified plug-in fragment from this registry.
@@ -320,7 +241,7 @@ public void removeFragment(String id, String version) {
  */
 public void removeFragments(String id) {
 	assertIsWriteable();
-	fragments.remove(id);
+	fragments.removeVersions(id);
 }
 /**
  * Removes the plug-in with id and version if it exists in this registry.
@@ -332,28 +253,7 @@ public void removeFragments(String id) {
  */
 public void removePlugin(String pluginId, String version) {
 	assertIsWriteable();
-	PluginDescriptorModel[] plugins = getPlugins(pluginId);
-	if (plugins == null || plugins.length == 0)
-		return;
-	int removedCount = 0;
-	for (int i = 0; i < plugins.length; i++) {
-		if (version.equals(plugins[i].getVersion())) {
-			plugins[i] = null;
-			removedCount++;
-		}
-	}
-	// If all were removed, toss the whole entry.  Otherwise, compact the array
-	if (removedCount == plugins.length)
-		removePlugins(pluginId);
-	else {
-		PluginDescriptorModel[] newList = new PluginDescriptorModel[plugins.length - removedCount];
-		int index = 0;
-		for (int i = 0; i < plugins.length; i++) {
-			if (plugins[i] != null)
-				newList[index++] = plugins[i];
-		}
-		this.plugins.put(pluginId,newList);
-	}
+	plugins.remove(pluginId,version);
 }
 /**
  * Removes all versions of the given plug-in from this registry.
@@ -363,7 +263,7 @@ public void removePlugin(String pluginId, String version) {
  */
 public void removePlugins(String pluginId) {
 	assertIsWriteable();
-	plugins.remove(pluginId);
+	plugins.removeVersions(pluginId);
 }
 /**
  * Runs a resolve through the entire registry.  This resolve will

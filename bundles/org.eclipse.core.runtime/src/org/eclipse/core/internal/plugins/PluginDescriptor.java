@@ -187,6 +187,9 @@ synchronized void doPluginActivation() throws CoreException {
 				PluginStats.startActivation(this.getUniqueIdentifier());			
 			internalDoPluginActivation();
 			errorExit = false;
+			// send a notification that this plugin has been started
+			IPluginEvent event = new PluginEvent(this,IPluginEvent.STARTED);
+			PluginEventDispatcher.getInstance().firePluginEvent(event);
 		} finally {
 			pluginActivationExit(errorExit);
 			if (DelegatingURLClassLoader.MONITOR_PLUGINS)			
@@ -200,6 +203,9 @@ synchronized void doPluginDeactivation() {
 	active = false;
 	activePending = false;
 	deactivated = false;
+	// send a notification that this plugin has been stopped
+	IPluginEvent event = new PluginEvent(this,IPluginEvent.STOPPED);
+	PluginEventDispatcher.getInstance().firePluginEvent(event);
 }
 /**
  * convert a list of comma-separated tokens into an array

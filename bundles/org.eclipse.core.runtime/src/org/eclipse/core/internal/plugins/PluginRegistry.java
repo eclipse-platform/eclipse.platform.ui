@@ -14,29 +14,32 @@ package org.eclipse.core.internal.plugins;
 import java.io.*;
 import java.util.*;
 
+import org.eclipse.core.internal.dependencies.IDependencySystem;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.model.*;
 
-public class PluginRegistry extends PluginRegistryModel implements IPluginRegistry {
+public final class PluginRegistry extends PluginRegistryModel implements IPluginRegistry {
 
-	private static final String URL_PROTOCOL_FILE = "file"; //$NON-NLS-1$
 	private static final String F_DEBUG_REGISTRY = ".debugregistry"; //$NON-NLS-1$
 
-	// lifecycle events
-	private static final int STARTUP = 0;
-	private static final int SHUTDOWN = 1;
-	
 	// the registry keeps a reference to the cache reader for lazily loading extensions
 	private RegistryCacheReader registryCacheReader;
 	final private File registryCacheFile;
 	
 	//indicates if the registry cache needs to be rewritten
 	private boolean cacheDirty = false;
-
+	
+	// this should be kept in disk
+	private IDependencySystem dependencyState;
+	// unresolved plugins
+	private PluginMap unresolvedPlugins = new PluginMap(new HashMap(20));
+	
 public PluginRegistry() {
 	this.registryCacheFile = InternalPlatform.getMetaArea().getRegistryPath().toFile();
+	this.dependencyState = RegistryDependencySystemHelper.createDependencySystem();
 }  
 /**
  * Iterate over the plug-ins in this registry.  Plug-ins are visited in dependent order.  That is, 
@@ -212,7 +215,7 @@ public void saveRegistry() throws IOException {
 	DataOutputStream output = null;
 	//write to a temp file first, because the old registry cache file may still 
 	//be in use for lazy loading of extensions
-	java.io.File tempFile = new java.io.File(path.toOSString().concat(".tmp"));
+	java.io.File tempFile = new java.io.File(path.toOSString().concat(".tmp")); //$NON-NLS-1$
 	try {
 		output = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(tempFile)));
 	} catch (IOException ioe) {
@@ -350,5 +353,40 @@ public void setCacheDirty() {
 }
 void setCacheReader(RegistryCacheReader registryCacheReader) {
 	this.registryCacheReader = registryCacheReader;
+}
+/* Initial resolution - do not generate extension deltas, but save dependency system. */
+public IStatus incrementalResolve() {
+	IncrementalRegistryResolver resolver = new IncrementalRegistryResolver(null);
+	Assert.isTrue(!isResolved());
+	PluginDescriptorModel[] newPlugins = getPlugins();
+	PluginFragmentModel[] newFragments = getFragments();
+	// start from scratch
+	this.plugins = new PluginMap(new HashMap(newPlugins.length));
+	this.fragments = new PluginMap(new HashMap(newFragments.length));	
+	MultiStatus status = resolver.resolve(newPlugins,newFragments,plugins,unresolvedPlugins,dependencyState);
+	this.markResolved();
+	return status;
+}
+/* Subsequent resolution - modify existing dependency system and generate extension deltas. */ 
+public synchronized IStatus incrementalResolve(PluginRegistryModel additions) {
+	Assert.isTrue(this.isResolved());
+	Assert.isTrue(this.dependencyState != null);
+	Assert.isTrue(!additions.isResolved());	
+	
+	IncrementalRegistryResolver resolver = new IncrementalRegistryResolver(PluginEventDispatcher.getInstance());	
+	return resolver.resolve(additions.getPlugins(),additions.getFragments(),plugins,unresolvedPlugins,dependencyState);
+}
+public IStatus resolve(boolean trimDisabledPlugins, boolean doCrossLinking) {
+	if (!InternalPlatform.isDynamic())
+		return super.resolve(trimDisabledPlugins,doCrossLinking);
+	// non-incremental usage of the incremental registry resolver
+	IncrementalRegistryResolver resolver = new IncrementalRegistryResolver(null);
+	MultiStatus status = resolver.resolve(getPlugins(),getFragments());
+	if (trimDisabledPlugins)
+		resolver.trimRegistry(this);
+	if (doCrossLinking)
+		ExtensionResolver.resolve(this);	
+	markResolved();
+	return status;
 }
 }
