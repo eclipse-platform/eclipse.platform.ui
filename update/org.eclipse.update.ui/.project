@@ -8,6 +8,7 @@
 		<project>org.eclipse.help.base</project>
 		<project>org.eclipse.ui</project>
 		<project>org.eclipse.ui.forms</project>
+		<project>org.eclipse.update.configurator</project>
 		<project>org.eclipse.update.core</project>
 		<project>org.eclipse.update.core.linux</project>
 	</projects>
