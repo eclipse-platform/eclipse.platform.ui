@@ -18,6 +18,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ant.internal.ui.editor.outline.AntModel;
+import org.eclipse.ant.internal.ui.editor.outline.IProblem;
+import org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor;
+import org.eclipse.ant.internal.ui.editor.outline.LocationProvider;
+import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
+import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -32,12 +38,6 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
-import org.eclipse.ant.internal.ui.editor.outline.AntModel;
-import org.eclipse.ant.internal.ui.editor.outline.IProblem;
-import org.eclipse.ant.internal.ui.editor.outline.LocationProvider;
-import org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor;
-import org.eclipse.ant.internal.ui.editor.outline.XMLCore;
-import org.eclipse.ant.internal.ui.model.AntUIPlugin;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.ResourceMarkerAnnotationModel;
 
@@ -58,10 +58,6 @@ public class AntEditorDocumentProvider extends FileDocumentProvider {
 		private List fPreviouslyOverlaid= null; 
 		private List fCurrentlyOverlaid= new ArrayList();
 
-		/**
-		 * Constructor for XMLAnnotationModel.
-		 * @param resource
-		 */
 		public XMLAnnotationModel(IFileEditorInput input) {
 			super(input.getFile());
 		}
