@@ -78,6 +78,8 @@ public final class InternalPlatform implements IPlatform {
 	private ArrayList groupProviders = new ArrayList(3);
 	private IProduct product;
 
+	private Path cachedInstanceLocation; // Cache the path of the instance location
+
 	// execution options
 	private static final String OPTION_DEBUG = PI_RUNTIME + "/debug"; //$NON-NLS-1$
 	private static final String OPTION_DEBUG_SYSTEM_CONTEXT = PI_RUNTIME + "/debug/context"; //$NON-NLS-1$
@@ -280,11 +282,14 @@ public final class InternalPlatform implements IPlatform {
 	 * @see Platform#getLocation()
 	 */
 	public IPath getLocation() throws IllegalStateException {
-		Location location = getInstanceLocation();
-		if (location == null)
-			return null;
-		// TODO assumes the instance location is a file: URL
-		return new Path(location.getURL().getPath());
+		if (cachedInstanceLocation == null) {
+			Location location = getInstanceLocation();
+			if (location == null)
+				return null;
+			//	This makes the assumption that the instance location is a file: URL
+			cachedInstanceLocation = new Path(location.getURL().getPath());
+		}
+		return cachedInstanceLocation;
 	}
 
 	/**
@@ -447,8 +452,8 @@ public final class InternalPlatform implements IPlatform {
 	private String[] processCommandLine(String[] args) {
 		final String TRUE = "true"; //$NON-NLS-1$
 
-		// disables lazy registry cache loading 
-		System.setProperty(PROP_NO_LAZY_CACHE_LOADING, TRUE);
+		//		// disables lazy registry cache loading 
+		//		System.setProperty(PROP_NO_LAZY_CACHE_LOADING, "false");
 		if (args == null)
 			return args;
 		allArgs = args;
