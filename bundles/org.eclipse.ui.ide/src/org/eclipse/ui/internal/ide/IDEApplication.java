@@ -203,17 +203,23 @@ public class IDEApplication implements IPlatformRunnable, IExecutableExtension {
                     writeWorkspaceVersion();
                     return true;
                 }
+                MessageDialog
+                .openError(
+                        shell,
+                        IDEWorkbenchMessages
+                                .getString("IDEApplication.workspaceCannotLockTitle"), //$NON-NLS-1$
+                        IDEWorkbenchMessages
+                                .getString("IDEApplication.workspaceCannotLockMessage")); //$NON-NLS-1$                
             } catch (IOException e) {
-                // do nothing
-            }
-
-            MessageDialog
-                    .openError(
-                            shell,
-                            IDEWorkbenchMessages
-                                    .getString("IDEApplication.workspaceCannotLockTitle"), //$NON-NLS-1$
-                            IDEWorkbenchMessages
-                                    .getString("IDEApplication.workspaceCannotLockMessage")); //$NON-NLS-1$
+                IDEWorkbenchPlugin.log("Could not obtain lock for workspace location",
+                        e);            	
+                MessageDialog
+                .openError(
+                        shell,
+                        IDEWorkbenchMessages
+                                .getString("InternalError"), //$NON-NLS-1$
+                        e.getMessage()); //$NON-NLS-1$                
+            }            
             return false;
         }
 
