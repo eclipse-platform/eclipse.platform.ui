@@ -31,6 +31,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	public static final String LAST_CONFIG_STAMP = "last.config.stamp"; //$NON-NLS-1$
 	public static final String NAME_SPACE = "org.eclipse.update"; //$NON-NLS-1$
 	public static final String UPDATE_PREFIX = "update@"; //$NON-NLS-1$
+	private static final String INITIAL_PREFIX = "initial@"; //$NON-NLS-1$
 	
 	// debug options
 	public static String OPTION_DEBUG = PI_CONFIGURATOR + "/debug"; //$NON-NLS-1$
@@ -203,6 +204,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				}
 			}
 			context.ungetService(reference);
+			removeInitialBundles(toRefresh, cachedBundles);
 			refreshPackages((Bundle[]) toRefresh.toArray(new Bundle[toRefresh.size()]));
 			
 			if (System.getProperty(ECLIPSE_PRODUCT) == null && configuration.getPrimaryFeatureIdentifier() != null)
@@ -214,6 +216,34 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		} catch (Exception e) {
 			return false;
 		} 
+	}
+
+	private void removeInitialBundles(List bundles, Bundle[] cachedBundles) {
+		String[] initialSymbolicNames = getInitialSymbolicNames(cachedBundles);
+		Iterator iter = bundles.iterator();
+		while(iter.hasNext()) {
+			Bundle bundle = (Bundle) iter.next();
+			String symbolicName = bundle.getSymbolicName();
+			for(int i = 0; i < initialSymbolicNames.length; i++) {
+				if (initialSymbolicNames[i].equals(symbolicName)) {
+					iter.remove();
+					break;
+				}
+			}
+		}
+	}
+
+	private String[] getInitialSymbolicNames(Bundle[] cachedBundles) {
+		ArrayList initial = new ArrayList();
+		for (int i = 0; i < cachedBundles.length; i++) {
+			Bundle bundle = cachedBundles[i];
+			if (bundle.getLocation().startsWith(INITIAL_PREFIX)) {
+				String symbolicName = bundle.getSymbolicName();
+				if (symbolicName != null)
+					initial.add(symbolicName);
+			}
+		}
+		return (String[]) initial.toArray(new String[initial.size()]);
 	}
 
 	private List getUnresolvedBundles() {
