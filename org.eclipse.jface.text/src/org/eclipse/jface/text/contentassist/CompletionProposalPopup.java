@@ -156,7 +156,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
 		
 		fProposalTable.setLocation(0, 0);
-		fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
+		if (fAdditionalInfoController != null)
+			fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
 		
 		GridLayout layout= new GridLayout();
 		layout.marginWidth= 0;
@@ -170,15 +171,17 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		fProposalShell.pack();
 		
-		fProposalShell.addControlListener(new ControlListener() {
-			
-			public void controlMoved(ControlEvent e) {}
-			
-			public void controlResized(ControlEvent e) {
-				// resets the cached resize constraints
-				fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
-			}
-		});
+		if (fAdditionalInfoController != null) {
+			fProposalShell.addControlListener(new ControlListener() {
+				
+				public void controlMoved(ControlEvent e) {}
+				
+				public void controlResized(ControlEvent e) {
+					// resets the cached resize constraints
+					fAdditionalInfoController.setSizeConstraints(50, 10, true, false);
+				}
+			});
+		}
 
 		
 		fProposalShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
