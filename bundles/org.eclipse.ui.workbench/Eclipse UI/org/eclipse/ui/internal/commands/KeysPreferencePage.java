@@ -31,8 +31,6 @@ import java.util.TreeSet;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -40,7 +38,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
@@ -135,31 +132,19 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		}
 	}
 
-	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(KeysPreferencePage.class.getName());
-	private final static String COMMAND_CONFLICT = Util.translateString(RESOURCE_BUNDLE, "commandConflict"); //$NON-NLS-1$
-	private final static String COMMAND_NOTHING = Util.translateString(RESOURCE_BUNDLE, "commandNothing"); //$NON-NLS-1$
-	private final static String COMMAND_UNDEFINED = Util.translateString(RESOURCE_BUNDLE, "commandUndefined"); //$NON-NLS-1$
 	private final static int DIFFERENCE_ADD = 0;
 	private final static int DIFFERENCE_CHANGE = 1;
 	private final static int DIFFERENCE_MINUS = 2;
 	private final static int DIFFERENCE_NONE = 3;
 	private final static Image IMAGE_BLANK = ImageFactory.getImage("blank"); //$NON-NLS-1$
 	private final static Image IMAGE_CHANGE = ImageFactory.getImage("change"); //$NON-NLS-1$
-	private final static Image IMAGE_CLEAR = ImageFactory.getImage("clear"); //$NON-NLS-1$
-	private final static Image IMAGE_EXCLAMATION = ImageFactory.getImage("exclamation"); //$NON-NLS-1$
 	private final static Image IMAGE_MINUS = ImageFactory.getImage("minus"); //$NON-NLS-1$
 	private final static Image IMAGE_PLUS = ImageFactory.getImage("plus"); //$NON-NLS-1$
-	private final static RGB RGB_CONFLICT = new RGB(255, 0, 0);
-	private final static RGB RGB_CONFLICT_MINUS = new RGB(255, 160, 160);
+	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(KeysPreferencePage.class.getName());
 	private final static RGB RGB_MINUS = new RGB(160, 160, 160);
-	private final static char SPACE = ' ';
 
-	private static Map getCategoriesByUniqueName() {
-		return null;
-	}
 	private Map activityIdsByCommandId;
 	private Map activityIdsByUniqueName;
-
 	private IActivityManager activityManager;
 	private Map activityUniqueNamesById;
 	private Map assignmentsByActivityIdByKeySequence;
@@ -229,7 +214,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					if (preferenceCommandId != null) {
 						difference = DIFFERENCE_CHANGE;
 						commandString = /* commandUniqueNamesById.get(preferenceCommandId) */
-						keySequence.format() + "";
+						keySequence.format() + ""; //$NON-NLS-1$
 					} else {
 						difference = DIFFERENCE_MINUS;
 						commandString = /* "Unassigned" */
@@ -237,14 +222,14 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 					}
 
 					if (pluginCommandId != null)
-						commandString += " (was: " + commandUniqueNamesById.get(pluginCommandId) + ")";
+						commandString += " (was: " + commandUniqueNamesById.get(pluginCommandId) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 					else
-						commandString += " (was: " + "Unassigned" + ")";
+						commandString += " (was: " + "Unassigned" + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				} else {
 					if (preferenceCommandId != null) {
 						difference = DIFFERENCE_ADD;
 						commandString = /* commandUniqueNamesById.get(preferenceCommandId) */
-						keySequence.format() + "";
+						keySequence.format() + ""; //$NON-NLS-1$
 					} else {
 						difference = DIFFERENCE_MINUS;
 						commandString = /* "Unassigned" */
@@ -262,7 +247,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 				if (pluginCommandId != null) {
 					difference = DIFFERENCE_NONE;
 					commandString = /* commandUniqueNamesById.get(preferenceCommandId) */
-					keySequence.format() + "";
+					keySequence.format() + ""; //$NON-NLS-1$
 				} else {
 					difference = DIFFERENCE_MINUS;
 					commandString = /* "Unassigned" */
@@ -331,23 +316,23 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 					if (preferenceCommandId != null) {
 						difference = DIFFERENCE_CHANGE;
-						commandString = commandUniqueNamesById.get(preferenceCommandId) + "";
+						commandString = commandUniqueNamesById.get(preferenceCommandId) + ""; //$NON-NLS-1$
 					} else {
 						difference = DIFFERENCE_MINUS;
-						commandString = "Unassigned";
+						commandString = "Unassigned"; //$NON-NLS-1$
 					}
 
 					if (pluginCommandId != null)
-						commandString += " (was: " + commandUniqueNamesById.get(pluginCommandId) + ")";
+						commandString += " (was: " + commandUniqueNamesById.get(pluginCommandId) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 					else
-						commandString += " (was: " + "Unassigned" + ")";
+						commandString += " (was: " + "Unassigned" + ")"; //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 				} else {
 					if (preferenceCommandId != null) {
 						difference = DIFFERENCE_ADD;
-						commandString = commandUniqueNamesById.get(preferenceCommandId) + "";
+						commandString = commandUniqueNamesById.get(preferenceCommandId) + ""; //$NON-NLS-1$
 					} else {
 						difference = DIFFERENCE_MINUS;
-						commandString = "Unassigned";
+						commandString = "Unassigned"; //$NON-NLS-1$
 					}
 				}
 			} else {
@@ -360,10 +345,10 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 				if (pluginCommandId != null) {
 					difference = DIFFERENCE_NONE;
-					commandString = commandUniqueNamesById.get(pluginCommandId) + "";
+					commandString = commandUniqueNamesById.get(pluginCommandId) + ""; //$NON-NLS-1$
 				} else {
 					difference = DIFFERENCE_MINUS;
-					commandString = "Unassigned";
+					commandString = "Unassigned"; //$NON-NLS-1$
 				}
 			}
 
@@ -484,7 +469,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 60;
 		gridData.horizontalSpan = 2;
-		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 520 : 420;
+		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 520 : 420; //$NON-NLS-1$
 		tableAssignmentsForCommand.setLayoutData(gridData);
 		TableColumn tableColumnDelta = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 0);
 		tableColumnDelta.setResizable(false);
@@ -494,7 +479,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableColumnActivity.setResizable(true);
 		tableColumnActivity.setText(Util.translateString(RESOURCE_BUNDLE, "tableColumnActivity")); //$NON-NLS-1$
 		tableColumnActivity.pack();
-		tableColumnActivity.setWidth("carbon".equals(SWT.getPlatform()) ? 110 : 100);
+		tableColumnActivity.setWidth("carbon".equals(SWT.getPlatform()) ? 110 : 100); //$NON-NLS-1$
 		TableColumn tableColumnKeySequence = new TableColumn(tableAssignmentsForCommand, SWT.NULL, 2);
 		tableColumnKeySequence.setResizable(true);
 		tableColumnKeySequence.setText(Util.translateString(RESOURCE_BUNDLE, "tableColumnKeySequence")); //$NON-NLS-1$
@@ -527,21 +512,8 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		// The text widget into which the key strokes will be entered.
 		textKeySequence = new Text(groupKeySequence, SWT.BORDER);
-		final Font font;
-		if ("carbon".equals(SWT.getPlatform())) { //$NON-NLS-1$
-			// don't worry about this font name here, it is the official
-			// menu font and point size on the mac.
-			font = new Font(textKeySequence.getDisplay(), "Lucida Grande", 13, SWT.NORMAL); //$NON-NLS-1$
-			textKeySequence.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					font.dispose();
-				}
-			});
-
-		} else {
-			font = groupKeySequence.getFont();
-		}
-		textKeySequence.setFont(font);
+		// On MacOS X, this font will be changed by KeySequenceText
+		textKeySequence.setFont(groupKeySequence.getFont());
 		gridData = new GridData();
 		gridData.horizontalSpan = 2;
 		gridData.widthHint = 300;
@@ -592,7 +564,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		gridData = new GridData(GridData.FILL_BOTH);
 		gridData.heightHint = 60;
 		gridData.horizontalSpan = 3;
-		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 520 : 420;
+		gridData.widthHint = "carbon".equals(SWT.getPlatform()) ? 520 : 420; //$NON-NLS-1$
 		tableAssignmentsForKeySequence.setLayoutData(gridData);
 		tableColumnDelta = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 0);
 		tableColumnDelta.setResizable(false);
@@ -602,7 +574,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		tableColumnActivity.setResizable(true);
 		tableColumnActivity.setText(Util.translateString(RESOURCE_BUNDLE, "tableColumnActivity")); //$NON-NLS-1$
 		tableColumnActivity.pack();
-		tableColumnActivity.setWidth("carbon".equals(SWT.getPlatform()) ? 110 : 100);
+		tableColumnActivity.setWidth("carbon".equals(SWT.getPlatform()) ? 110 : 100); //$NON-NLS-1$
 		TableColumn tableColumnCommand = new TableColumn(tableAssignmentsForKeySequence, SWT.NULL, 2);
 		tableColumnCommand.setResizable(true);
 		tableColumnCommand.setText(Util.translateString(RESOURCE_BUNDLE, "tableColumnCommand")); //$NON-NLS-1$
@@ -789,6 +761,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		try {
 			preferenceCommandRegistry.save();
 		} catch (IOException eIO) {
+			// Do nothing
 		}
 
 		// TODO remove the dependancy on Workbench. have Workbench rely on
@@ -909,7 +882,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		if (selection >= 0 && selection < commandAssignmentsAsList.size() && tableAssignmentsForCommand.getSelectionCount() == 1) {
 			CommandAssignment commandAssignment = (CommandAssignment) commandAssignmentsAsList.get(selection);
-			KeySequenceBindingNode.Assignment assignment = commandAssignment.assignment;
 			String activityId = commandAssignment.activityId;
 			KeySequence keySequence = commandAssignment.keySequence;
 			setActivityId(activityId);
@@ -925,7 +897,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 		if (selection >= 0 && selection < keySequenceAssignmentsAsList.size() && tableAssignmentsForKeySequence.getSelectionCount() == 1) {
 			KeySequenceAssignment keySequenceAssignment = (KeySequenceAssignment) keySequenceAssignmentsAsList.get(selection);
-			KeySequenceBindingNode.Assignment assignment = keySequenceAssignment.assignment;
 			String activityId = keySequenceAssignment.activityId;
 			setActivityId(activityId);
 		}
@@ -1017,23 +988,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		buildKeySequenceAssignmentsTable();
 	}
 
-	private void setCategoryId(String categoryId) {
-		comboCategory.clearSelection();
-		comboCategory.deselectAll();
-		String categoryUniqueName = (String) categoryUniqueNamesById.get(categoryId);
-
-		if (categoryUniqueName != null) {
-			String items[] = comboCategory.getItems();
-
-			for (int i = commandIdsByCategoryId.containsKey(null) ? 1 : 0; i < items.length; i++)
-				if (categoryUniqueName.equals(items[i])) {
-					comboCategory.select(i);
-					break;
-				}
-		} else if (commandIdsByCategoryId.containsKey(null))
-			comboCategory.select(0);
-	}
-
 	private void setCommandId(String commandId) {
 		comboCommand.clearSelection();
 		comboCommand.deselectAll();
@@ -1104,6 +1058,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 					activities.add(activity);
 				} catch (org.eclipse.ui.activities.NotDefinedException eNotDefined) {
+					// Do nothing
 				}
 			}
 
@@ -1123,6 +1078,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 					categories.add(category);
 				} catch (org.eclipse.ui.commands.NotDefinedException eNotDefined) {
+					// Do nothing
 				}
 			}
 
@@ -1142,6 +1098,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 					commands.add(command);
 				} catch (org.eclipse.ui.commands.NotDefinedException eNotDefined) {
+					// Do nothing
 				}
 			}
 
@@ -1161,6 +1118,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 					keyConfigurations.add(keyConfiguration);
 				} catch (org.eclipse.ui.commands.NotDefinedException eNotDefined) {
+					// Do nothing
 				}
 			}
 
@@ -1290,6 +1248,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 					commandIds.add(command.getId());
 				} catch (org.eclipse.ui.commands.NotDefinedException eNotDefined) {
+					// Do nothing
 				}
 			}
 
@@ -1421,7 +1380,6 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		assignmentsByActivityIdByKeySequence = KeySequenceBindingNode.getAssignmentsByActivityIdKeySequence(tree, KeySequence.getInstance());
 		setAssignmentsForKeySequence();
 		setAssignmentsForCommand();
-		String categoryId = getCategoryId();
 		String commandId = getCommandId();
 		String activityId = getActivityId();
 		selectAssignmentForKeySequence(activityId);
@@ -1446,7 +1404,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		String activityId = getActivityId();
 
 		if (activityId != null) {
-			IActivity activity = (IActivity) activityManager.getActivity(getActivityId());
+			IActivity activity = activityManager.getActivity(getActivityId());
 
 			if (activity.isDefined()) {
 				try {
@@ -1459,6 +1417,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 					return;
 				} catch (org.eclipse.ui.activities.NotDefinedException eNotDefined) {
+					// Do nothing
 				}
 			}
 		}
@@ -1470,7 +1429,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 		String keyConfigurationId = getKeyConfigurationId();
 
 		if (keyConfigurationId != null) {
-			IKeyConfiguration keyConfiguration = (IKeyConfiguration) commandManager.getKeyConfiguration(keyConfigurationId);
+			IKeyConfiguration keyConfiguration = commandManager.getKeyConfiguration(keyConfigurationId);
 
 			try {
 				String name = (String) keyConfigurationUniqueNamesById.get(keyConfiguration.getParentId());
@@ -1482,6 +1441,7 @@ public class KeysPreferencePage extends org.eclipse.jface.preference.PreferenceP
 
 				return;
 			} catch (org.eclipse.ui.commands.NotDefinedException eNotDefined) {
+				// Do nothing
 			}
 		}
 
