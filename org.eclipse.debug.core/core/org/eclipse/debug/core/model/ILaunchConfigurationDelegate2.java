@@ -75,8 +75,9 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 * @param mode
 	 * @param monitor
 	 * @return whether the launch should proceed
+	 * @throws CoreException if an exception occurs during final checks
 	 */
-	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor);
+	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException;
 	
 	/**
 	 * Returns whether a launch should proceed. This method is called first
@@ -87,6 +88,7 @@ public interface ILaunchConfigurationDelegate2 extends ILaunchConfigurationDeleg
 	 * @param mode launch mode
 	 * @param monitor progress monitor
 	 * @return whether the launch should proceed
+	 * @throws CoreException if an exception occurs while performing pre launch checks
 	 */
-	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor);
+	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException;
 }
