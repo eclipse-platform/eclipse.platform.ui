@@ -146,7 +146,7 @@ public boolean resourcesChanged() {
 protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int level) throws CoreException {
 	boolean existsInWorkspace = node.existsInWorkspace();
 	if (!existsInWorkspace && !CoreFileSystemLibrary.isCaseSensitive() && level == 0) {
-		// do we have any alphabetic variants on the workspace?
+		// do we have any alphabetic variants or gender variants on the workspace?
 		IResource variant = target.findExistingResourceVariant(target.getFullPath());
 		if (variant != null)
 			return RL_UNKNOWN;
@@ -186,6 +186,12 @@ protected int synchronizeExistence(UnifiedTreeNode node, Resource target, int le
  * gender change -- Returns true if gender was in sync.
  */
 protected boolean synchronizeGender(UnifiedTreeNode node, Resource target) throws CoreException {
+	if (!node.existsInWorkspace()) {
+		//may be an existing resource in the workspace of different gender
+		IResource genderVariant = workspace.getRoot().findMember(target.getFullPath());
+		if (genderVariant != null)
+			target = (Resource)genderVariant;
+	}
 	if (target.getType() == IResource.FILE) {
 		if (!node.isFile()) {
 			fileToFolder(node, target);

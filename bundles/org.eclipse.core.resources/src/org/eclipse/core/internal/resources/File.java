@@ -81,9 +81,15 @@ public void appendContents(InputStream content, boolean force, boolean keepHisto
  */
 public IFolder changeToFolder() throws CoreException {
 	getPropertyManager().deleteProperties(this, IResource.DEPTH_ZERO);
-	workspace.deleteResource(this);
 	IFolder result = workspace.getRoot().getFolder(path);
-	workspace.createResource(result, false);
+	if (isLinked()) {
+		IPath location = getRawLocation();
+		delete(IResource.NONE, null);
+		result.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
+	} else {
+		workspace.deleteResource(this);
+		workspace.createResource(result, false);
+	}
 	return result;
 }
 

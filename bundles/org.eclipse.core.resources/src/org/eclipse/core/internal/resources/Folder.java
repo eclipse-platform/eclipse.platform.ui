@@ -45,20 +45,26 @@ protected void assertCreateRequirements(IPath location, int updateFlags) throws 
 	}
 }
 /**
- * Changes this folder to be a file in the resource tree and returns
- * the newly created file.  All related
- * properties are deleted.  It is assumed that on disk the resource is
- * already a file so no action is taken to delete the disk contents.
+ * Changes this folder to be a file in the resource tree and returns the newly
+ * created file.  All related properties are deleted.  It is assumed that on
+ * disk the resource is already a file so no action is taken to delete the disk
+ * contents.
  * <p>
- * <b>This method is for the exclusive use of the local resource manager</b>
+ * <b>This method is for the exclusive use of the local refresh mechanism</b>
  *
- * @see FileSystemResourceManager#reportChanges
+ * @see RefreshLocalVisitor#folderToFile
  */
 public IFile changeToFile() throws CoreException {
 	getPropertyManager().deleteProperties(this, IResource.DEPTH_INFINITE);
-	workspace.deleteResource(this);
 	IFile result = workspace.getRoot().getFile(path);
-	workspace.createResource(result, false);
+	if (isLinked()) {
+		IPath location = getRawLocation();
+		delete(IResource.NONE, null);
+		result.createLink(location, IResource.ALLOW_MISSING_LOCAL, null);
+	} else {
+		workspace.deleteResource(this);
+		workspace.createResource(result, false);
+	}
 	return result;
 }
 
