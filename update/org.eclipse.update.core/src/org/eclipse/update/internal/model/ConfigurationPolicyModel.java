@@ -88,17 +88,18 @@ public class ConfigurationPolicyModel extends ModelObject {
 	/**
 	 * 
 	 */
-	private void remove(FeatureReferenceModel feature, List list) {
-		String featureURLString = feature.getURL().toExternalForm();
+	private boolean remove(FeatureReferenceModel feature, List list) {
+		URL featureURL = feature.getURL();
 		boolean found = false;
 		Iterator iter = list.iterator();
 		while (iter.hasNext() && !found) {
 			FeatureReferenceModel element = (FeatureReferenceModel) iter.next();
-			if (element.getURL().toExternalForm().trim().equalsIgnoreCase(featureURLString)) {
+			if (sameURL(element.getURL(),featureURL)) {
 				list.remove(element);
 				found = true;
 			}
 		}
+		return found;
 	}
 
 	/**
@@ -111,12 +112,12 @@ public class ConfigurationPolicyModel extends ModelObject {
 	 * 
 	 */
 	private void add(FeatureReferenceModel feature, List list) {
-		String featureURLString = feature.getURL().toExternalForm();
+		URL featureURL = feature.getURL();
 		boolean found = false;
 		Iterator iter = list.iterator();
 		while (iter.hasNext() && !found) {
 			FeatureReferenceModel element = (FeatureReferenceModel) iter.next();
-			if (element.getURL().toExternalForm().trim().equalsIgnoreCase(featureURLString)) {
+			if (sameURL(element.getURL(),featureURL)) {
 				found = true;
 			}
 		}
@@ -147,10 +148,9 @@ public class ConfigurationPolicyModel extends ModelObject {
 		// we have to remove it from unconfigured feature if it exists
 		// because the user doesn't know...
 		if (unconfiguredFeatureReferences != null) {
-			//if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
-			//	UpdateManagerPlugin.debug("Removed from unconfigured: "+feature.getURLString());
-			//}
-			remove(feature, unconfiguredFeatureReferences);
+			boolean success = remove(feature, unconfiguredFeatureReferences);
+			if (!success)
+				UpdateManagerPlugin.warn("Unable to removed from unconfigured: "+feature.getURLString(), new Exception());			
 		}
 
 	}
@@ -167,17 +167,15 @@ public class ConfigurationPolicyModel extends ModelObject {
 			if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
 				UpdateManagerPlugin.debug("Unconfiguring "+feature.getURLString());
 			}
-			
 			this.add(feature, unconfiguredFeatureReferences);
 		}	
 
 		// an unconfigured feature is always from a configured one no ?
 		// unless it was parsed right ?
 		if (configuredFeatureReferences != null) {
-			//if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION){
-			//	UpdateManagerPlugin.debug("Removed from configured: "+feature.getURLString());
-			//}
-			remove(feature, configuredFeatureReferences);
+			boolean success = remove(feature, configuredFeatureReferences);
+			if (!success)
+				UpdateManagerPlugin.warn("Unable to removed from configured: "+feature.getURLString(), new Exception());				
 		}
 	}
 
@@ -186,11 +184,16 @@ public class ConfigurationPolicyModel extends ModelObject {
 	 */
 	public void removeFeatureReference(FeatureReferenceModel feature) {
 		assertIsWriteable();
-		if (unconfiguredFeatureReferences!=null)
-			remove(feature, unconfiguredFeatureReferences);	
+		if (unconfiguredFeatureReferences!=null){
+			boolean success = remove(feature, unconfiguredFeatureReferences);
+			if (!success)
+				UpdateManagerPlugin.warn("Unable to removed from unconfigured: "+feature.getURLString(), new Exception());							
+		}
 
 		if (configuredFeatureReferences != null) {
-			remove(feature, configuredFeatureReferences);
+			boolean success = remove(feature, configuredFeatureReferences);
+			if (!success)
+				UpdateManagerPlugin.warn("Unable to removed from unconfigured: "+feature.getURLString(), new Exception());							
 		}
 	}
 	
@@ -215,4 +218,31 @@ public class ConfigurationPolicyModel extends ModelObject {
 		unconfiguredFeatureReferences.addAll(Arrays.asList(featureReferences));
 	}
 
+	/*
+	 * Compares two URL for equality
+	 * Return false if one of them is null
+	 */
+	private boolean sameURL(URL url1, URL url2) {
+		if (url1 == null)
+			return false;
+		if (url1.equals(url2))
+			return true;
+
+		// check if URL are file: URL as we may
+		// have 2 URL pointing to the same featureReference
+		// but with different representation
+		// (i.e. file:/C;/ and file:C:/)
+		if (!"file".equalsIgnoreCase(url1.getProtocol()))
+			return false;
+		if (!"file".equalsIgnoreCase(url2.getProtocol()))
+			return false;
+
+		File file1 = new File(url1.getFile());
+		File file2 = new File(url2.getFile());
+
+		if (file1 == null)
+			return false;
+
+		return (file1.equals(file2));
+	}
 }

@@ -171,6 +171,7 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 				feature,
 				feature.getInstallHandlerEntry(),
 				null);
+				
 		boolean success = false;
 		Throwable originalException = null;
 
@@ -217,6 +218,11 @@ public class ConfigurationPolicy extends ConfigurationPolicyModel {
 					newException);
 		}
 
+		if (!success){
+			URL url = featureReference.getURL();
+			String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";			
+			UpdateManagerPlugin.warn("Unable to unconfigure:"+urlString,new Exception());			
+		}
 		return success;
 	}
 

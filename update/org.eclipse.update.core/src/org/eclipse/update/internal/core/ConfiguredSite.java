@@ -6,6 +6,7 @@ package org.eclipse.update.internal.core;
  */
 
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
@@ -388,11 +389,25 @@ public class ConfiguredSite
 		IFeatureReference featureReference =
 			getSite().getFeatureReference(feature);
 
+		if (featureReference==null){
+			UpdateManagerPlugin.warn("Unable to retrieve Feature Reference for feature"+feature,new Exception());
+			return false;
+		}
+
 		ConfigurationPolicy configPolicy = getConfigurationPolicy();
 		if (configPolicy == null)
 			return false;
-
-		if (configPolicy.unconfigure(featureReference)) {
+			
+		boolean sucessfullyUnconfigured=false;
+		try {
+		 sucessfullyUnconfigured = configPolicy.unconfigure(featureReference);
+		} catch (CoreException e){
+			URL url = featureReference.getURL();
+			String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";			
+			UpdateManagerPlugin.warn("Unable to unconfigure"+urlString,e);
+			throw e;
+		}
+		if (sucessfullyUnconfigured) {
 
 			// top down approach, same configuredSite
 			IFeatureReference[] childrenRef =
@@ -408,9 +423,12 @@ public class ConfiguredSite
 				((IConfiguredSiteChangedListener) siteListeners[i]);
 				listener.featureUnconfigured(feature);
 			}
-			
+
 			return true;
 		} else {
+			URL url = featureReference.getURL();
+			String urlString = (url!=null)?url.toExternalForm():"<no feature reference url>";	
+			UpdateManagerPlugin.warn("Unable to unconfigure:"+urlString,new Exception());
 			return false;
 		}
 	}

@@ -591,7 +591,7 @@ public class SiteLocal
 
 				// the array may have hole as we set found site to null
 				if (configured[index] != null) {
-					if (configured[index].getSite().getURL().equals(resolvedURL)) {
+					if (sameURL(configured[index].getSite().getURL(),resolvedURL)) {
 						found = true;
 						String[] listOfPlugins = siteEntries[siteIndex].getSitePolicy().getList();
 						((ConfiguredSite) configured[index]).setPreviousPluginPath(listOfPlugins);
@@ -848,6 +848,35 @@ public class SiteLocal
 		}
 		return 0;
 	}
+
+	/*
+	 * Compares two URL for equality
+	 * Return false if one of them is null
+	 */
+	private boolean sameURL(URL url1, URL url2) {
+		if (url1 == null)
+			return false;
+		if (url1.equals(url2))
+			return true;
+
+		// check if URL are file: URL as we may
+		// have 2 URL pointing to the same featureReference
+		// but with different representation
+		// (i.e. file:/C;/ and file:C:/)
+		if (!"file".equalsIgnoreCase(url1.getProtocol()))
+			return false;
+		if (!"file".equalsIgnoreCase(url2.getProtocol()))
+			return false;
+
+		File file1 = new File(url1.getFile());
+		File file2 = new File(url2.getFile());
+
+		if (file1 == null)
+			return false;
+
+		return (file1.equals(file2));
+	}
+
 
 	/*
 	 *  check if the Plugins of the feature are on the plugin path
