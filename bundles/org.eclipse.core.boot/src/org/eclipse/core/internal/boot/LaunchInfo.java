@@ -1226,7 +1226,7 @@ synchronized public void revertTo(History history) {
 private ArrayList revertToInactive(List curAct, List curInact, List oldAct, List oldInact) {
 
 	// start with old inactive list
-	ArrayList inactive = (ArrayList)oldInact;
+	ArrayList inactive = new ArrayList(oldInact); // clone
 	VersionedIdentifier vid;
 
 	// add current inactive
@@ -1243,6 +1243,12 @@ private ArrayList revertToInactive(List curAct, List curInact, List oldAct, List
 			if (!inactive.contains(vid))
 				inactive.add(vid);
 		}
+	}
+	
+	// remove all that are active in new state
+	for (int i=0; i<oldAct.size(); i++) {
+		vid = (VersionedIdentifier) oldAct.get(i);
+		inactive.remove(vid);
 	}
 	
 	return inactive;
@@ -1535,11 +1541,11 @@ static void startup(URL base) {
 		dir = new File(path);
 		list = dir.list(dirfilter);
 		if (DEBUG) debug("Detecting configuration changes");
+		profile.synchConfigurations(list);
 		VersionedIdentifier[] configDelta;
 		if (list == null)
 			configDelta = new VersionedIdentifier[0];
 		else {
-			profile.synchConfigurations(list);
 			configDelta = profile.computeDelta(list, profile.configs, profile.configsInact, profile.configsPendingDelete);
 		}
 
@@ -1548,11 +1554,11 @@ static void startup(URL base) {
 		dir = new File(path);
 		list = dir.list(dirfilter);
 		if (DEBUG) debug("Detecting component changes");
+		profile.synchComponents(list);
 		VersionedIdentifier[] compDelta;
 		if (list == null)
 			compDelta = new VersionedIdentifier[0];
 		else {
-			profile.synchComponents(list);
 			compDelta = profile.computeDelta(list, profile.comps, profile.compsInact, profile.compsPendingDelete);
 		}
 
@@ -1565,11 +1571,11 @@ static void startup(URL base) {
 		dir = new File(path);
 		list = dir.list(dirfilter);
 		if (DEBUG) debug("Detecting plugin changes");
+		profile.synchPlugins(list);
 		VersionedIdentifier[] pluginDelta;
 		if (list == null)
 			pluginDelta = new VersionedIdentifier[0];
 		else {
-			profile.synchPlugins(list);
 			pluginDelta = profile.computeDelta(list, profile.plugins, profile.pluginsInact, profile.pluginsPendingDelete);
 		}
 		for (int i=0; i<pluginDelta.length; i++)
@@ -1580,11 +1586,11 @@ static void startup(URL base) {
 		dir = new File(path);
 		list = dir.list(dirfilter);
 		if (DEBUG) debug("Detecting fragment changes");
+		profile.synchFragments(list);
 		VersionedIdentifier[] fragmentDelta;
 		if (list == null)
 			fragmentDelta = new VersionedIdentifier[0];
 		else {
-			profile.synchFragments(list);
 			fragmentDelta = profile.computeDelta(list, profile.fragments, profile.fragmentsInact, profile.fragmentsPendingDelete);
 		}
 		for (int i=0; i<fragmentDelta.length; i++)
@@ -1684,22 +1690,22 @@ private synchronized void synch(List dirlist, List infoList) {
 }
 
 private void synchComponents(String[] dirlist) {
-	List list = Arrays.asList(dirlist);
+	List list = Arrays.asList(dirlist!=null ? dirlist : new String[0]);
 	synch(list, comps);
 	synch(list, compsInact);
 	synch(list, compsDang);
 	synch(list, compsPendingDelete);
 }
 
-private void synchConfigurations(String[] dirlist) {	
-	List list = Arrays.asList(dirlist);
+private void synchConfigurations(String[] dirlist) {
+	List list = Arrays.asList(dirlist!=null ? dirlist : new String[0]);
 	synch(list, configs);
 	synch(list, configsInact);
 	synch(list, configsPendingDelete);
 }
 
 private void synchFragments(String[] dirlist) {
-	List list = Arrays.asList(dirlist);
+	List list = Arrays.asList(dirlist!=null ? dirlist : new String[0]);
 	synch(list, fragments);
 	synch(list, fragmentsInact);
 	synch(list, fragmentsUnmgd);
@@ -1707,7 +1713,7 @@ private void synchFragments(String[] dirlist) {
 }
 
 private void synchPlugins(String[] dirlist) {
-	List list = Arrays.asList(dirlist);
+	List list = Arrays.asList(dirlist!=null ? dirlist : new String[0]);
 	synch(list, plugins);
 	synch(list, pluginsInact);
 	synch(list, pluginsUnmgd);

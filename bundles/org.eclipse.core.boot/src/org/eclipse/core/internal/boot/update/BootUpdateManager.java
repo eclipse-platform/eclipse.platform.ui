@@ -4,7 +4,7 @@ package org.eclipse.core.internal.boot.update;
  * All Rights Reserved.
  */
 
-import java.io.IOException;import java.io.InputStream;import java.net.URL;import java.util.PropertyResourceBundle;import java.util.StringTokenizer;import java.util.Vector;import org.eclipse.core.internal.boot.LaunchInfo;import org.eclipse.core.internal.boot.Policy;import org.eclipse.core.internal.boot.LaunchInfo.Status;import org.eclipse.core.internal.boot.LaunchInfo.VersionedIdentifier;
+import java.io.IOException;import java.io.InputStream;import java.net.URL;import java.util.ArrayList;import java.util.PropertyResourceBundle;import java.util.StringTokenizer;import java.util.Vector;import org.eclipse.core.internal.boot.LaunchInfo;import org.eclipse.core.internal.boot.Policy;import org.eclipse.core.internal.boot.LaunchInfo.Status;import org.eclipse.core.internal.boot.LaunchInfo.VersionedIdentifier;
 
 public class BootUpdateManager {
 /**
@@ -110,6 +110,13 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 	//-------------------------------
 	Vector vectorMessages = new Vector();
 	
+	// Create lists to keep track of any items that need to be inactivated as a result of conflicts
+	// --------------------------------------------------------------------------------------------
+	ArrayList inactConfigs = new ArrayList();
+	ArrayList inactComps = new ArrayList();
+	ArrayList inactPlugins = new ArrayList();
+	ArrayList inactFragments = new ArrayList();
+	
 	// Obtain the registry of the installed tree
 	//------------------------------------------
 	URL urlBase = UMEclipseTree.getBaseInstallURL();
@@ -141,11 +148,12 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 					launchInfo.setConfiguration(vidConfigurations[i], productDescriptor.getApplication());
 				}
 
-				// Create error message string
-				//----------------------------
+				// Create error message string and mark for inactivation
+				//------------------------------------------------------
 				else {
 					String strError = createErrorString(productDescriptor, manifestsConflicting);
 					vectorMessages.add(new LaunchInfo.Status(strError));
+					inactConfigs.add(vidConfigurations[i]);
 				}
 			}
 		}
@@ -200,14 +208,38 @@ public static LaunchInfo.Status[] install(LaunchInfo.VersionedIdentifier[] vidCo
 					}
 				}
 
-				// Obtain error message string
-				//----------------------------
+				// Obtain error message string and mark for inactivation
+				//------------------------------------------------------
 				else {
 					String strError = createErrorString(componentDescriptor, manifestsConflicting);
 					vectorMessages.add(new LaunchInfo.Status(strError));
+					inactComps.add(vidComponents[i]);	
+
+					IPluginEntryDescriptor[] plugList = componentDescriptor.getPluginEntries();
+					for (int ix = 0; plugList!=null && ix < plugList.length; ++ix) {
+						inactPlugins.add(new LaunchInfo.VersionedIdentifier(plugList[ix].getUniqueIdentifier(),plugList[ix].getVersionStr()));
+					}
+					IFragmentEntryDescriptor[] fragList = componentDescriptor.getFragmentEntries();
+					for (int ix = 0; fragList != null && ix < fragList.length; ++ix) {
+						inactFragments.add(new LaunchInfo.VersionedIdentifier(fragList[ix].getUniqueIdentifier(),fragList[ix].getVersionStr()));
+					}
 				}
 			}
 		}
+	}
+	
+	// Inactivate any conflicting items
+	// --------------------------------
+	if ((inactConfigs.size() + inactComps.size() + inactPlugins.size() + inactFragments.size()) > 0) {
+		LaunchInfo.VersionedIdentifier[] inactConfigsList = new LaunchInfo.VersionedIdentifier[inactConfigs.size()];
+		LaunchInfo.VersionedIdentifier[] inactCompsList = new LaunchInfo.VersionedIdentifier[inactComps.size()];
+		LaunchInfo.VersionedIdentifier[] inactPluginsList = new LaunchInfo.VersionedIdentifier[inactPlugins.size()];	
+		LaunchInfo.VersionedIdentifier[] inactFragmentsList = new LaunchInfo.VersionedIdentifier[inactFragments.size()];
+		inactConfigs.toArray(inactConfigsList);
+		inactComps.toArray(inactCompsList);
+		inactPlugins.toArray(inactPluginsList);
+		inactFragments.toArray(inactFragmentsList);	
+		launchInfo.setInactive(inactConfigsList, inactCompsList, inactPluginsList, inactFragmentsList);
 	}
 
 	// Return status array of localized error messages
