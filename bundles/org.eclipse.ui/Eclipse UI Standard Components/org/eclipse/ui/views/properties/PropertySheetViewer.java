@@ -861,7 +861,15 @@ private void updateCategory(PropertySheetCategory category, TableTreeItem item) 
 	item.setText(1, "");//$NON-NLS-1$
 
 	// update the "+" icon	
-	updatePlus(category, item);
+	if (category.getAutoExpand()) {
+		// we auto expand categories when they first appear
+		createChildren(item);
+		item.setExpanded(true);
+		category.setAutoExpand(false);
+	} else {
+		// we do not want to auto expand categories if the user has collpased them
+		updatePlus(category, item);
+	}
 }
 /**
  * Update the child entries or categories of the given entry or category.

@@ -13,6 +13,7 @@ import java.util.List;
 /*package*/ class PropertySheetCategory {
 	private String categoryName;
 	private List entries = new ArrayList();
+	private boolean shouldAutoExpand = true;
 /**
  * Create a PropertySheet category with name.
  */
@@ -31,6 +32,23 @@ public void addEntry(IPropertySheetEntry entry) {
  */
 public String getCategoryName() {
 	return categoryName;
+}
+/**
+ * Returns <code>true</code> if this category should be automatically 
+ * expanded. The default value is <code>true</code>.
+ * 
+ * @return <code>true</code> if this category should be automatically 
+ * expanded, <code>false</code> otherwise
+ */
+public boolean getAutoExpand() {
+	return shouldAutoExpand;
+}
+/**
+ * Sets if this category should be automatically 
+ * expanded.
+ */
+public void setAutoExpand(boolean autoExpand) {
+	shouldAutoExpand = autoExpand;
 }
 /**
  * Returns the entries in this category.
