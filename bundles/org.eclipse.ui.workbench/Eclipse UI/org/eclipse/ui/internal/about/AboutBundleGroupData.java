@@ -10,10 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.about;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
@@ -48,22 +46,11 @@ public class AboutBundleGroupData extends AboutData {
 	}
 
 	public URL getLicenseUrl() {
-	    if(licenseUrl == null) {
-		    try {
-		        licenseUrl = new File("features/" //$NON-NLS-1$
-            			+ bundleGroup.getIdentifier() + "_" //$NON-NLS-1$
-            			+ bundleGroup.getVersion()+ "/license.html").toURL(); //$NON-NLS-1$
-		    }
-		    catch(MalformedURLException e) {
-		        // do nothing
-		    }
+        if (licenseUrl == null)
+            licenseUrl = getURL(bundleGroup
+                    .getProperty(IBundleGroupConstants.LICENSE_HREF));
 
-		    // TODO replace above with this when 60434 is resolved
-//	        licenseUrl = getURL(bundleGroup
-//	                    .getProperty(IBundleGroupConstants.LICENSE_PAGE));
-	    }
-
-	    return licenseUrl;
+        return licenseUrl;
     }
 
 	public URL getFeatureImageUrl() {

@@ -40,4 +40,9 @@ public interface IBundleGroupConstants {
 	 * (optional).
 	 */
 	public static final String WELCOME_PERSPECTIVE = "welcomePerspective"; //$NON-NLS-1$
+	
+	/**
+	 * The URL of the license page for the feature (optional).
+	 */
+	public static final String LICENSE_HREF = "licenseHref"; //$NON-NLS-1$
 }
