@@ -128,7 +128,9 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		Iterator perspectiveIds= LaunchViewContextListener.parseList(perspectiveList).iterator();
 		while (perspectiveIds.hasNext()) {
 			IPerspectiveDescriptor descriptor = registry.findPerspectiveWithId((String) perspectiveIds.next());
-			fPerspectiveViewer.setChecked(descriptor, true);
+            if (descriptor != null) {
+                fPerspectiveViewer.setChecked(descriptor, true);
+            }
 		}
 	}
 
