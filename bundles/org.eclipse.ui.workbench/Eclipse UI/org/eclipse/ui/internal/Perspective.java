@@ -999,6 +999,12 @@ public IStatus restoreState() {
 			showInPartIds.add(id);
 		}
 	}
+	ArrayList regIds = getShowInIdsFromRegistry();
+	for (int i = 0; i < regIds.size(); ++i) {
+		String regId = (String) regIds.get(i);
+		if (!showInPartIds.contains(regId))
+			showInPartIds.add(regId);
+	}
 	
 	// Load "new wizard actions".
 	actions = memento.getChildren(IWorkbenchConstants.TAG_NEW_WIZARD_ACTION);
@@ -1028,6 +1034,18 @@ public IStatus restoreState() {
 	shouldHideEditorsOnActivate = (areaVisible != null && areaVisible.intValue() == 0);
 	return result;
 }
+
+/**
+ * Returns the Show In... part ids read from the registry.  
+ */
+private ArrayList getShowInIdsFromRegistry() {
+	PerspectiveExtensionReader reader = new PerspectiveExtensionReader();
+	reader.setIncludeOnlyTags(new String[] { PerspectiveExtensionReader.TAG_SHOW_IN_PART });
+	PageLayout layout = new PageLayout();
+	reader.extendLayout(descriptor.getId(), layout);
+	return layout.getShowInPartIds();
+}
+
 /**
  * Save the layout.
  */

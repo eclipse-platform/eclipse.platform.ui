@@ -61,7 +61,7 @@ public class PageLayout implements IPageLayout {
 	private ArrayList showInPartIds = new ArrayList(3);
 
 /**
- * LayoutFactory constructor comment.
+ * Constructs a new PageLayout for the normal case of creating a new perspective.
  */
 public PageLayout(RootLayoutContainer container, ViewFactory viewFactory, LayoutPart editorFolder) {
 	super();
@@ -70,6 +70,13 @@ public PageLayout(RootLayoutContainer container, ViewFactory viewFactory, Layout
 	this.editorFolder = editorFolder;
 	prefill();
 }
+
+/**
+ * Constructs a new PageLayout for other purposes.
+ */
+public PageLayout() {
+}
+
 /**
  * Adds the initial part to a layout.
  */
