@@ -220,13 +220,16 @@ public class LaunchShortcutExtension implements ILaunchShortcut {
 	 */
 	public ImageDescriptor getImageDescriptor() {
 		if (fImageDescriptor == null) {
-			URL iconURL = getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
 			String iconPath = getIconPath();
-			try {
-				iconURL = new URL(iconURL, iconPath);
-				fImageDescriptor = ImageDescriptor.createFromURL(iconURL);
-			} catch (MalformedURLException e) {
-				DebugUIPlugin.log(e);
+			// iconPath may be null because imageIcon is optional
+			if (iconPath != null) {
+				try {
+					URL iconURL = getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor().getInstallURL();
+					iconURL = new URL(iconURL, iconPath);
+					fImageDescriptor = ImageDescriptor.createFromURL(iconURL);
+				} catch (MalformedURLException e) {
+					DebugUIPlugin.log(e);
+				}
 			}
 		}
 		return fImageDescriptor;
