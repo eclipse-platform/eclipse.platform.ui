@@ -19,6 +19,7 @@ import org.eclipse.debug.core.DebugException;
  * (repeatedly) as the API evolves.
  * </p>
  * @see IMemoryBlockRetreival
+ * @since 2.0
  */
 public interface IMemoryBlock extends IDebugElement {
 	

@@ -19,6 +19,7 @@ import org.eclipse.debug.core.DebugException;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
+ * @since 2.0
  */
 public interface IRegisterGroup extends IDebugElement {
 	
@@ -44,6 +45,17 @@ public interface IRegisterGroup extends IDebugElement {
 	 * the failure.</li>
 	 */
 	public IRegister[] getRegisters() throws DebugException;
+	
+	/**
+	 * Returns whether this register group currently contains any registers.
+	 * 
+	 * @return whether this register group currently contains any registers
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 */
+	public boolean hasRegisters() throws DebugException;	
 
 }
 

@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -130,7 +131,21 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	 * @see ITreeContentProvider#hasChildren(Object)
 	 */
 	public boolean hasChildren(Object element) {
-		return getChildren(element).length > 0;
+		try {
+			if (element instanceof IVariable) {
+				return ((IVariable)element).getValue().hasVariables();
+			}
+			if (element instanceof IValue) {
+				return ((IValue)element).hasVariables();
+			}
+			if (element instanceof IStackFrame) {
+				return ((IStackFrame)element).hasVariables();
+			}
+		} catch (DebugException e) {
+			DebugUIPlugin.log(e.getStatus());
+			return false;
+		}
+		return false;
 	}
 
 	/**

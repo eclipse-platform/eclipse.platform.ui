@@ -56,8 +56,22 @@ public interface IDebugTarget extends IDebugElement, ITerminate, ISuspendResume,
 	 * <ul><li>Failure communicating with the debug target.  The DebugException's
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
+	 * @since 2.0
 	 */
 	public IThread[] getThreads() throws DebugException;
+	
+	/**
+	 * Returns whether this debug target contains any threads.
+	 * 
+	 * @return whether this debug target contains any threads
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * @since 2.0
+	 */
+	public boolean hasThreads() throws DebugException;
+	
 	/**
 	 * Returns the name of this debug target. Name format is debug model
 	 * specific, and should be specified by a debug model.

@@ -150,5 +150,15 @@ public interface ILaunch extends ITerminate, IAdaptable {
 	 * @since 2.0
 	 */
 	public String getAttribute(String key);	
+	
+	/**
+	 * Returns whether this launch contains at least one process
+	 * or debug target.
+	 * 
+	 * @return whether this launch contains at least one process
+	 * or debug target
+	 * @since 2.0
+	 */
+	public boolean hasChildren();
 
 }

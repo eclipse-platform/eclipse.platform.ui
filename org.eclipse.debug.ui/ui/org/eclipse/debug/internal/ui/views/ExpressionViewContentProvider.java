@@ -55,4 +55,14 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 		}
 		return super.getParent(item);
 	}
+	
+	/**
+	 * @see ITreeContentProvider#hasChildren(Object)
+	 */
+	public boolean hasChildren(Object element) {
+		if (element instanceof IExpressionManager) {
+			return ((IExpressionManager)element).hasExpressions();
+		}
+		return super.hasChildren(element);
+	}	
 }

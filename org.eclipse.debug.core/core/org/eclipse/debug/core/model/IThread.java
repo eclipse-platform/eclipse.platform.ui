@@ -47,6 +47,20 @@ public interface IThread extends IDebugElement, ISuspendResume, IStep, ITerminat
 	 * the failure.</li>
 	 */
 	public IStackFrame[] getStackFrames() throws DebugException;
+	
+	/**
+	 * Returns whether this thread currently contains any stack
+	 * frames.
+	 * 
+	 * @return whether this thread currently contains any stack frames
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * @since 2.0
+	 */
+	public boolean hasStackFrames() throws DebugException;
+	
 	/**
 	 * Returns the priority of this thread. The meaning of this
 	 * number is operating-system dependent.

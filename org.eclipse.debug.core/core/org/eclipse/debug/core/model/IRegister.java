@@ -17,6 +17,7 @@ import org.eclipse.debug.core.DebugException;
  * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
  * (repeatedly) as the API evolves.
  * </p>
+ * @since 2.0
  */
 public interface IRegister extends IVariable {
 	

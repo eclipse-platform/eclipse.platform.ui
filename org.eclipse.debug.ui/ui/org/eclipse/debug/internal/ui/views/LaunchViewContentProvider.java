@@ -75,11 +75,27 @@ public class LaunchViewContentProvider implements ITreeContentProvider {
 		if (element instanceof IStackFrame) {
 			return false;
 		}
-		if (element instanceof IDebugElement) {
-			return getChildren(element).length > 0;
+		if (element instanceof IDebugTarget) {
+			try {
+				return ((IDebugTarget)element).hasThreads();
+			} catch (DebugException e) {
+				DebugUIPlugin.log(e.getStatus());
+				return false;
+			}
 		} 
+		if (element instanceof IThread) {
+			try {
+				return ((IThread)element).hasStackFrames();
+			} catch (DebugException e) {
+				DebugUIPlugin.log(e.getStatus());
+				return false;
+			}
+		}
+		if (element instanceof IProcess) {
+			return false;
+		}
 		if (element instanceof ILaunch) {
-			return true;
+			return ((ILaunch)element).hasChildren();
 		}
 		if (element instanceof ILaunchManager) {
 			return ((ILaunchManager) element).getLaunches().length > 0;

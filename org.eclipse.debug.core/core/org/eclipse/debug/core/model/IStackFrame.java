@@ -64,6 +64,19 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * </ul>
 	 */
 	public IVariable[] getVariables() throws DebugException;
+	
+	/**
+	 * Returns whether this stack frame currently contains any visible variables.
+	 * 
+	 * @return whether this stack frame currently contains any visible variables
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * @since 2.0
+	 */
+	public boolean hasVariables() throws DebugException;
+		
 	/**
 	 * Returns the line number of the instruction pointer in 
 	 * this stack frame that corresponds to a line in an associated source
@@ -148,6 +161,19 @@ public interface IStackFrame extends IDebugElement, IStep, ISuspendResume, ITerm
 	 * status code contains the underlying exception responsible for
 	 * the failure.</li>
 	 * </ul>
+	 * @since 2.0
 	 */
 	public IRegisterGroup[] getRegisterGroups() throws DebugException;
+	
+	/**
+	 * Returns whether this stack frame contains any register groups.
+	 * 
+	 * @return whether this stack frame contains any visible register groups
+	 * @exception DebugException if this method fails.  Reasons include:
+	 * <ul><li>Failure communicating with the debug target.  The DebugException's
+	 * status code contains the underlying exception responsible for
+	 * the failure.</li>
+	 * @since 2.0
+	 */
+	public boolean hasRegisterGroups() throws DebugException;	
 }

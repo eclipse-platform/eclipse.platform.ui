@@ -423,6 +423,13 @@ public class Launch extends PlatformObject implements ILaunch {
 		}
 	}
 
+	/**
+	 * @see ILaunch#hasChildren()
+	 */
+	public boolean hasChildren() {
+		return getProcesses0().size() > 0 || (getDebugTargets0().size() > 0);
+	}
+
 }
 
 
