@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntRunner;
@@ -48,7 +47,6 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.RefreshTab;
-import org.eclipse.jdt.internal.launching.JavaLocalApplicationLaunchConfigurationDelegate;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.SocketUtil;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -434,7 +432,8 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		});
 		//copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, "-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"); //$NON-NLS-1$
 		IProgressMonitor subMonitor= new SubProgressMonitor(monitor, 10);
-		JavaLocalApplicationLaunchConfigurationDelegate delegate= new JavaLocalApplicationLaunchConfigurationDelegate();
+		AntJavaLaunchDelegate delegate= new AntJavaLaunchDelegate();
+		delegate.preLaunchCheck(copy, ILaunchManager.RUN_MODE, subMonitor);
 		delegate.launch(copy, ILaunchManager.RUN_MODE, launch, subMonitor);
 		final IProcess[] processes= launch.getProcesses();
 		for (int i = 0; i < processes.length; i++) {
