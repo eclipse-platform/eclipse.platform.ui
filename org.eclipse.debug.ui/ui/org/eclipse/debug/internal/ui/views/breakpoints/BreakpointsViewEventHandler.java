@@ -155,10 +155,11 @@ public class BreakpointsViewEventHandler implements IBreakpointsListener, IActiv
 	 * breakpoints related to the affected activities.
 	 */
 	public void activityManagerChanged(final IActivityManagerEvent activityManagerEvent) {
-		if (fView.isAvailable() & fView.isVisible() && activityManagerEvent.haveDefinedActivityIdsChanged() || activityManagerEvent.haveEnabledActivityIdsChanged()) {
+		if (fView.isAvailable() & fView.isVisible() && activityManagerEvent.haveEnabledActivityIdsChanged()) {
 			fView.asyncExec(new Runnable() {
 				public void run() {
 					fView.getViewer().refresh();
+					fView.initializeCheckedState();
 				}
 			});
 		}
