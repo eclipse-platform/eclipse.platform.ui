@@ -75,7 +75,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
 		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/AntUITests/buildfiles/" + launchConfigName + ".xml}");
-		config.setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, true);
+		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
 		 
 		setVM(config);
 		setClasspath(config);		
@@ -109,7 +109,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 	
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, getJavaProject().getElementName());
 		config.setAttribute(IExternalToolConstants.ATTR_LOCATION, "${workspace_loc:/AntUITests/buildfiles/" + launchConfigName + ".xml}");
-		config.setAttribute(IDebugUIConstants.ATTR_RUN_IN_BACKGROUND, true);
+		config.setAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, true);
 	 
 		//setClasspath(config);		
 	

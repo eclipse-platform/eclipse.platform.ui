@@ -74,7 +74,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 			AntUIPlugin.log(ce);			
 		}
 		
-		if (CommonTab.isRunInBackground(configuration)) {
+		if (CommonTab.isLaunchInBackground(configuration)) {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Launching_{0}_1"), new String[] {configuration.getName()}), 10); //$NON-NLS-1$
 		} else {
 			monitor.beginTask(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntLaunchDelegate.Running_{0}_2"), new String[] {configuration.getName()}), 100); //$NON-NLS-1$
@@ -196,7 +196,7 @@ public class AntLaunchDelegate implements ILaunchConfigurationDelegate {
 		final AntProcess process = new AntProcess(location.toOSString(), launch, attributes);
 		setProcessAttributes(process, idStamp, commandLine);
 		
-		if (CommonTab.isRunInBackground(configuration)) {
+		if (CommonTab.isLaunchInBackground(configuration)) {
 			final AntRunner finalRunner= runner;
 			Runnable r = new Runnable() {
 				public void run() {
