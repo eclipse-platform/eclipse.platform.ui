@@ -10,7 +10,7 @@
    <runtime>
       <library name="cvsssh2.jar">
          <export name="*"/>
-         <packages prefixes="org.eclipse.team.cvs.ssh2"/>
+         <packages prefixes="org.eclipse.team.ccvs.ssh2"/>
       </library>
       <library name="jsch-0.1.11.jar">
          <packages prefixes="com.jcraft.jsch"/>
