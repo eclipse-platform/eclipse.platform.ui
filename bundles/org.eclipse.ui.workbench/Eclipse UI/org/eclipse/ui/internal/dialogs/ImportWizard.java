@@ -18,12 +18,15 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizardNode;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
+
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.IHelpContextIds;
 import org.eclipse.ui.internal.IWorkbenchConstants;
@@ -59,6 +62,7 @@ public class ImportWizard extends Wizard {
 			};
 		}
 	}
+
 	private IStructuredSelection selection;
 	private IWorkbench workbench;
 
@@ -66,14 +70,21 @@ public class ImportWizard extends Wizard {
 	 * Creates the wizard's pages lazily.
 	 */
 	public void addPages() {
-		addPage(new SelectionPage(this.workbench, this.selection, getAvailableImportWizards(), WorkbenchMessages.getString("ImportWizard.selectSource"))); //$NON-NLS-1$
+		addPage(
+			new SelectionPage(
+				this.workbench,
+				this.selection,
+				getAvailableImportWizards(),
+				WorkbenchMessages.getString("ImportWizard.selectSource"))); //$NON-NLS-1$
 	}
+
 	/**
 	 * Returns the import wizards that are available for invocation.
 	 */
 	protected AdaptableList getAvailableImportWizards() {
 		return new WizardsRegistryReader(IWorkbenchConstants.PL_IMPORT).getWizards();
 	}
+
 	/**
 	 * Initializes the wizard.
 	 */
@@ -86,9 +97,9 @@ public class ImportWizard extends Wizard {
 			WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_IMPORT_WIZ));
 		setNeedsProgressMonitor(true);
 	}
-	/**
-	 * Subclasses must implement this <code>IWizard</code> method to perform
-	 * any special finish processing for their wizard.
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
 	 */
 	public boolean performFinish() {
 		SelectionPage first = (SelectionPage) getPages()[0];
@@ -101,12 +112,18 @@ public class ImportWizard extends Wizard {
 			return true;
 
 		IActivityManager activityManager = support.getActivityManager();
-		IIdentifier identifier =
-			activityManager.getIdentifier(first.getSelectedNode().getWizard().getClass().getName());
-		Set activities = new HashSet(activityManager.getEnabledActivityIds());
-		if (activities.addAll(identifier.getActivityIds())) {
-			support.setEnabledActivityIds(activities);
+
+		if (first.getSelectedNode() instanceof IPluginContribution) {
+			IIdentifier identifier =
+				activityManager.getIdentifier(
+					WorkbenchActivityHelper.createUnifiedId(
+						(IPluginContribution) first.getSelectedNode()));
+			Set activities = new HashSet(activityManager.getEnabledActivityIds());
+			if (activities.addAll(identifier.getActivityIds())) {
+				support.setEnabledActivityIds(activities);
+			}
 		}
+
 		return true;
 	}
 }

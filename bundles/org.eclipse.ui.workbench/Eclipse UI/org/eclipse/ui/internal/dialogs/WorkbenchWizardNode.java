@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.IWizardNode;
 
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 
@@ -39,7 +40,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * AND ensuring that this wizard is the "right" type of wizard (eg.-
  * New, Import, etc.).</p>
  */
-public abstract class WorkbenchWizardNode implements IWizardNode {
+public abstract class WorkbenchWizardNode implements IWizardNode, IPluginContribution {
 	protected WorkbenchWizardSelectionPage parentWizardPage;
 	protected IWizard wizard;
 	protected WorkbenchWizardElement wizardElement;
@@ -82,6 +83,20 @@ public abstract class WorkbenchWizardNode implements IWizardNode {
 	 */
 	public Point getExtent() {
 		return new Point(-1, -1);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {
+		return wizardElement.getLocalId();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {
+		return wizardElement.getPluginId();
 	}
 
 	/* (non-Javadoc)

@@ -15,13 +15,16 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
+
+import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
+import org.eclipse.ui.activities.WorkbenchActivityHelper;
+
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -40,6 +43,7 @@ public class NewWizard extends Wizard {
 	private IStructuredSelection selection;
 
 	private IWorkbench workbench;
+	
 	/**
 	 * Create the wizard pages
 	 */
@@ -62,6 +66,7 @@ public class NewWizard extends Wizard {
 		mainPage = new NewWizardSelectionPage(this.workbench, this.selection, wizards);
 		addPage(mainPage);
 	}
+	
 	/**
 	 * Returns the id of the category of wizards to show or <code>null</code>
 	 * to show all categories. If no entries can be found with this id then all
@@ -72,6 +77,7 @@ public class NewWizard extends Wizard {
 	public String getCategoryId() {
 		return categoryId;
 	}
+	
 	/**
 	 * Returns the child collection element for the given id
 	 */
@@ -84,6 +90,7 @@ public class NewWizard extends Wizard {
 		}
 		return null;
 	}
+	
 	/**
 	 * Lazily create the wizards pages
 	 */
@@ -99,6 +106,7 @@ public class NewWizard extends Wizard {
 			WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_WIZBAN_NEW_WIZ));
 		setNeedsProgressMonitor(true);
 	}
+	
 	/**
 	 * The user has pressed Finish. Instruct self's pages to finish, and answer
 	 * a boolean indicating success.
@@ -108,7 +116,6 @@ public class NewWizard extends Wizard {
 	public boolean performFinish() {
 		//save our selection state
 		mainPage.saveWidgetValues();
-		IWizard selectedWizard = mainPage.getSelectedNode().getWizard();
 
 		IWorkbenchActivitySupport support =
 			(IWorkbenchActivitySupport) PlatformUI.getWorkbench().getAdapter(
@@ -117,13 +124,20 @@ public class NewWizard extends Wizard {
 			return true;
 
 		IActivityManager activityManager = support.getActivityManager();
-		IIdentifier identifier = activityManager.getIdentifier(selectedWizard.getClass().getName());
-		Set activities = new HashSet(activityManager.getEnabledActivityIds());
-		if (activities.addAll(identifier.getActivityIds())) {
-			support.setEnabledActivityIds(activities);
+		if (mainPage.getSelectedNode() instanceof IPluginContribution) {
+			IIdentifier identifier =
+				activityManager.getIdentifier(
+					WorkbenchActivityHelper.createUnifiedId(
+						(IPluginContribution) mainPage.getSelectedNode()));
+			Set activities = new HashSet(activityManager.getEnabledActivityIds());
+			if (activities.addAll(identifier.getActivityIds())) {
+				support.setEnabledActivityIds(activities);
+			}
 		}
+
 		return true;
 	}
+	
 	/**
 	 * Sets the id of the category of wizards to show or <code>null</code> to
 	 * show all categories. If no entries can be found with this id then all
@@ -134,6 +148,7 @@ public class NewWizard extends Wizard {
 	public void setCategoryId(String id) {
 		categoryId = id;
 	}
+	
 	/**
 	 * Sets the projects only flag. If <code>true</code> only projects will
 	 * be shown in this wizard.
