@@ -11,17 +11,17 @@
 package org.eclipse.team.tests.core;
 
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.target.TargetManager;
-import org.eclipse.team.core.target.TargetProvider;
+import org.eclipse.team.internal.core.target.TargetManager;
+import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.core.target.UrlUtil;
 
 /**

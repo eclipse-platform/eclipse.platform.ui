@@ -10,20 +10,21 @@
  ******************************************************************************/
 package org.eclipse.team.tests.core;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.Properties;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.core.runtime.Path;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.core.target.*;
+import org.eclipse.team.internal.core.target.ISiteFactory;
+import org.eclipse.team.internal.core.target.Site;
+import org.eclipse.team.internal.core.target.TargetManager;
+import org.eclipse.team.internal.core.target.TargetProvider;
 
 /**
  * A set of test cases for org.eclipse.team.core.sync.IRemoteResource

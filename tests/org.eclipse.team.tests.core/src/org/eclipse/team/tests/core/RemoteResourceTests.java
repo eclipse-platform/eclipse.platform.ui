@@ -15,13 +15,13 @@ import java.io.InputStream;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteResource;
-import org.eclipse.team.core.target.TargetProvider;
+import org.eclipse.team.internal.core.target.TargetProvider;
 
 /**
  * A set of test cases for org.eclipse.team.core.sync.IRemoteResource

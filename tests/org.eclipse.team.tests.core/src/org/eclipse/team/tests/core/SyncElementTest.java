@@ -30,8 +30,8 @@ import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.ILocalSyncElement;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
 import org.eclipse.team.core.sync.RemoteSyncElement;
-import org.eclipse.team.core.target.TargetManager;
-import org.eclipse.team.core.target.TargetProvider;
+import org.eclipse.team.internal.core.target.TargetManager;
+import org.eclipse.team.internal.core.target.TargetProvider;
 import org.eclipse.team.internal.core.target.UrlUtil;
 
 public class SyncElementTest extends TeamTest {
