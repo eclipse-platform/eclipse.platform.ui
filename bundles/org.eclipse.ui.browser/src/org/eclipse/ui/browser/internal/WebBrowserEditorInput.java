@@ -11,10 +11,14 @@
 package org.eclipse.ui.browser.internal;
 
 import java.net.URL;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.*;
-import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IElementFactory;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPersistableElement;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 /**
  * The editor input for the integrated web browser.
  */

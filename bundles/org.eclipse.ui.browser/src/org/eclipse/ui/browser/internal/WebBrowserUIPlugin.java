@@ -12,7 +12,7 @@ package org.eclipse.ui.browser.internal;
 
 import java.text.MessageFormat;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 /**

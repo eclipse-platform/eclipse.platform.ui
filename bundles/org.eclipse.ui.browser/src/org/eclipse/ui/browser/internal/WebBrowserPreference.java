@@ -10,8 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.browser.internal;
 
-import java.util.*;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 /**

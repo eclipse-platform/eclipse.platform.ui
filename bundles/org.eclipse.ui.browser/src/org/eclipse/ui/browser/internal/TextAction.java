@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.browser.internal;
 
-import org.eclipse.swt.SWTError;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.dnd.*;
 import org.eclipse.jface.action.Action;
+import org.eclipse.swt.SWTError;
+import org.eclipse.swt.SWTException;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.graphics.Point;
 /**
  * Text actions (cut, copy, paste) for the Web browser.
  */
