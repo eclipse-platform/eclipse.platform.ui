@@ -60,13 +60,13 @@
             class="org.eclipse.core.tools.runtime.PluginListView"
             id="org.eclipse.core.tools.runtime.PluginListView"/>
       <view
-            name="Eclipse Preferences"
+            name="Preferences Spy"
             icon="icons/spy.gif"
             category="org.eclipse.core.tools.runtime"
             class="org.eclipse.core.tools.runtime.EclipsePreferencesView"
             id="org.eclipse.core.tools.runtime.EclipsePreferencesView"/>
       <view
-            name="Eclipse Preference Stats Spy"
+            name="Preference Stats Spy"
             icon="icons/spy.gif"
             category="org.eclipse.core.tools.runtime"
             class="org.eclipse.core.tools.runtime.PreferenceStatsView"
