@@ -645,6 +645,8 @@ public static boolean hasChanges(ElementTree newLayer, ElementTree oldLayer, IEl
 	// if any of the layers are null, assume that things have changed
 	if (newLayer == null || oldLayer == null)
 		return true;
+	if (newLayer == oldLayer)
+		return false;
 	//if the tree data has changed, then the tree has changed
 	if (comparator.compare(newLayer.getTreeData(), oldLayer.getTreeData()) != IElementComparator.K_NO_CHANGE)
 		return true;
