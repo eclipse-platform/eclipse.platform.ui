@@ -59,8 +59,8 @@ public class IOConsolePartition implements IConsolePartition {
      * appends a string to this partition
      * @param s
      */
-    public void append(String s) {
-        buffer.append(s);
+    public void append(String s, int location) {
+        buffer.replace(location, location, s);
         length += s.length();
     }
       
