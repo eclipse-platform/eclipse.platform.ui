@@ -100,7 +100,12 @@ final void execute(IProgressMonitor monitor) {
 	Iterator resourcesEnum = resources.iterator();
 
 	// 1FV0B3Y: ITPUI:ALL - sub progress monitors granularity issues
-	monitor.beginTask(getOperationMessage(), resources.size() * 1000);
+	monitor.beginTask("", resources.size() * 1000); //$NON-NLS-1$
+	// Fix for bug 31768 - Don't provide a task name in beginTask
+	// as it will be appended to each subTask message. Need to
+	// call setTaskName as its the only was to assure the task name is
+	// set in the monitor (see bug 31824)
+	monitor.setTaskName(getOperationMessage());
 
 	try {
 		while (resourcesEnum.hasNext()) {

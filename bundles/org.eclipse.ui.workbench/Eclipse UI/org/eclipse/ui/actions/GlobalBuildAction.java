@@ -128,7 +128,15 @@ private Shell getShell() {
 		return shell;
 	}
 }
-
+/**
+ * Returns the operation name to use
+ */
+private String getOperationMessage() {
+	if (buildType == IncrementalProjectBuilder.INCREMENTAL_BUILD)
+		return WorkbenchMessages.getString("GlobalBuildAction.buildOperationTitle"); //$NON-NLS-1$
+	else
+		return WorkbenchMessages.getString("GlobalBuildAction.rebuildAllOperationTitle"); //$NON-NLS-1$
+}
 /**
  * Builds all projects within the workspace. Does
  * not save any open editors.
@@ -150,11 +158,20 @@ public void doBuild() {
 
 	IRunnableWithProgress op = new IRunnableWithProgress() {
 		public void run(IProgressMonitor monitor) {
+			monitor.beginTask("", 1); //$NON-NLS-1$
+			// Fix for bug 31768 - Don't provide a task name in beginTask
+			// as it will be appended to each subTask message. Need to
+			// call setTaskName as its the only was to assure the task name is
+			// set in the monitor (see bug 31824)
+			monitor.setTaskName(getOperationMessage());
 			try {
-				ResourcesPlugin.getWorkspace().build(buildType, monitor);
+				ResourcesPlugin.getWorkspace().build(buildType, new SubProgressMonitor(monitor,1));
 			}
 			catch (CoreException e) {
 				status.add(e.getStatus());
+			}
+			finally {
+				monitor.done();
 			}
 		}
 	};
