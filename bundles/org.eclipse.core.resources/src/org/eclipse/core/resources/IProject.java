@@ -106,6 +106,8 @@ public interface IProject extends IContainer, IAdaptable {
 	 *		<ul>
 	 *		<li> <code>IncrementalProjectBuilder.FULL_BUILD</code> - indicates a full build.</li>
 	 *		<li> <code>IncrementalProjectBuilder.INCREMENTAL_BUILD</code> - indicates an incremental build.</li>
+	 * 		<li><code>CLEAN_BUILD</code>- indicates a clean request. Clean does
+	 * 		not actually build anything, but rather discards all problems and build states.
 	 *		</ul>
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *		reporting is not desired
