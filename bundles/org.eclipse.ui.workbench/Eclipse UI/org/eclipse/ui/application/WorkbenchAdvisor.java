@@ -78,6 +78,11 @@ import org.eclipse.ui.internal.WorkbenchWindowConfigurer;
  * <li><code>postWindowRestore</code> - called after a window has been
  * recreated from a previously saved state; use to adjust the restored
  * window</li>
+ * <li><code>postWindowCreate</code> -  called after a window has been created,
+ * either from an initial state or from a restored state;  used to adjust the
+ * window</li>
+ * <li><code>openIntro</code> - called immediately before a window is opened in
+ * order to create the introduction component, if any.
  * <li><code>postWindowOpen</code> - called after a window has been
  * opened; use to hook window listeners, etc.</li>
  * <li><code>preWindowShellClose</code> - called when a window's shell
@@ -132,6 +137,8 @@ public abstract class WorkbenchAdvisor {
 	 * The workbench configurer.
 	 */
 	private IWorkbenchConfigurer workbenchConfigurer;
+
+    private boolean introOpened;
 	
 	/**
 	 * Creates and initializes a new workbench advisor instance.
@@ -418,6 +425,46 @@ public abstract class WorkbenchAdvisor {
 	 */
 	public void postWindowRestore(IWorkbenchWindowConfigurer configurer) throws WorkbenchException {
 		// do nothing
+	}
+	
+	/**
+	 * Opens the introduction componenet.  
+	 * <p>
+	 * Clients must not call this method directly (although super calls are okay).
+	 * The default implementation opens the intro in the first window provided
+	 * the preference IWorkbenchPreferences.SHOW_INTRO is <code>true</code>.  If 
+	 * an intro is shown then this preference will be set to <code>false</code>.  
+	 * Subsequently, and intro will be shown only if 
+	 * <code>WorkbenchConfigurer.getSaveAndRestore()</code> returns 
+	 * <code>true</code> and the introduction was visible on last shutdown.  
+	 * Subclasses may override.
+	 * </p>
+	 * 
+	 * @param configurer configurer an object for configuring the particular workbench
+	 * window just created
+	 */
+	public void openIntro(IWorkbenchWindowConfigurer configurer) {
+        if (introOpened) 
+            return;
+
+        introOpened = true;
+
+	    boolean showIntro = WorkbenchPlugin.getDefault().getPluginPreferences().getBoolean(
+                IWorkbenchPreferences.SHOULD_SHOW_INTRO);
+	    
+	    if (!showIntro)
+	        return;
+	    
+		if (getWorkbenchConfigurer().getWorkbench().getIntroManager().hasIntro()) {
+		    getWorkbenchConfigurer()
+		    	.getWorkbench()
+		    	.getIntroManager().showIntro(
+		    	        configurer.getWindow(), 
+		    	        false);
+		    
+		    WorkbenchPlugin.getDefault().getPluginPreferences().setValue(IWorkbenchPreferences.SHOULD_SHOW_INTRO, false);
+		    WorkbenchPlugin.getDefault().savePluginPreferences();
+		}
 	}
 
 	/**

@@ -186,8 +186,8 @@
       <editor
             name="%Editors.WelcomeEditor"
             icon="icons/full/obj16/welcome_editor.gif"
-            contributorClass="org.eclipse.ui.internal.ide.dialogs.WelcomeEditorActionContributor"
             class="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor"
+            contributorClass="org.eclipse.ui.internal.ide.dialogs.WelcomeEditorActionContributor"
             id="org.eclipse.ui.internal.ide.dialogs.WelcomeEditor">
       </editor>
    </extension>
@@ -230,8 +230,8 @@
                definitionId="org.eclipse.ui.navigate.goToResource"
                label="%GoToResourceAction.label"
                icon="icons/full/elcl16/gotoobj_tsk.gif"
-               retarget="true"
                menubarPath="navigate/goTo/"
+               retarget="true"
                id="goToResource">
          </action>
          <action
@@ -260,11 +260,11 @@
          point="org.eclipse.ui.decorators">
       <decorator
             lightweight="true"
-            quadrant="BOTTOM_RIGHT"
             adaptable="true"
+            quadrant="BOTTOM_RIGHT"
             label="%DecoratorLinkedResource.label"
-            state="true"
             class="org.eclipse.ui.internal.ide.LinkedResourceDecorator"
+            state="true"
             id="org.eclipse.ui.LinkedResourceDecorator">
          <description>
             %DecoratorLinkedResource.description
@@ -348,7 +348,6 @@
             class="org.eclipse.ui.internal.commands.KeysPreferencePage"
             id="org.eclipse.ui.preferencePages.Keys">
       </page>
-     
    </extension>
    <extension
          point="org.eclipse.ui.views">
@@ -359,7 +358,6 @@
             class="org.eclipse.ui.internal.progress.JobView"
             id="org.eclipse.ui.views.ProgressView">
       </view>
-   
       <view
             name="%Views.ResourceNavigator"
             icon="icons/full/eview16/filenav_nav.gif"
@@ -388,15 +386,6 @@
             class="org.eclipse.ui.views.markers.internal.ProblemView"
             id="org.eclipse.ui.views.ProblemView">
       </view>
-      <view
-            name="%Views.IntroAdapter"
-            category="org.eclipse.ui"
-            class="org.eclipse.ui.internal.ViewIntroAdapterPart"
-            id="org.eclipse.ui.internal.introview">
-      </view>
-      <stickyView
-            id="org.eclipse.ui.internal.introview">
-      </stickyView>
    </extension>
    <extension
          point="org.eclipse.ui.ide.resourceFilters">
@@ -408,15 +397,15 @@
    <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
             name="%PropertyPages.project.reference"
             class="org.eclipse.ui.internal.ide.dialogs.ProjectReferencePage"
             id="org.eclipse.ui.propertypages.project.reference">
       </page>
       <page
-            objectClass="org.eclipse.core.resources.IResource"
             adaptable="true"
+            objectClass="org.eclipse.core.resources.IResource"
             name="%PropertyPages.info.file"
             class="org.eclipse.ui.internal.ide.dialogs.ResourceInfoPage"
             id="org.eclipse.ui.propertypages.info.file">
@@ -512,14 +501,14 @@
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.navigate.openResource"
+            platform="carbon"
             keySequence="Command+Shift+R"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
-            platform="carbon"
             commandId="org.eclipse.ui.project.buildAll"
+            platform="carbon"
             keySequence="Command+B"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>

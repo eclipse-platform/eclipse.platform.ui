@@ -115,5 +115,16 @@ public interface IWorkbenchPreferences {
 	 * </p>
 	 */
 	public static String SHOULD_SAVE_WORKBENCH_STATE = "SHOULD_SAVE_WORKBENCH_STATE"; //$NON-NLS-1$
+
+    /**
+     * Workbench preference id for whether the workbench should show the 
+     * introduction component (if available) on startup.
+     * 
+	 * <p>
+	 * The default value for this preference is: <code>true</code> (show intro)
+	 * </p> 
+     * @see org.eclipse.ui.application.WorkbenchAdvisor#openIntro(IWorkbenchWindowConfigurer)
+     */
+    public static final String SHOULD_SHOW_INTRO = "SHOULD_SHOW_INTRO"; //$NON-NLS-1$
 	
 }

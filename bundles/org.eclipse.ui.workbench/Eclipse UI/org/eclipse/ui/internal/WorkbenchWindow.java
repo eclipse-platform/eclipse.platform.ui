@@ -439,6 +439,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 	 */
 	public int open() {
 	    getAdvisor().postWindowCreate(getWindowConfigurer());
+	    getAdvisor().openIntro(getWindowConfigurer());
 		int result = super.open();
 		getWorkbenchImpl().fireWindowOpened(this);
 		getAdvisor().postWindowOpen(getWindowConfigurer());
@@ -1386,7 +1387,7 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 
 		// Set active page.
 		if (newActivePage == null)
-			newActivePage = (IWorkbenchPage) pageList.getNextActive();
+			newActivePage = pageList.getNextActive();
 
 		setActivePage(newActivePage);
 		

@@ -879,26 +879,6 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		getWorkbenchConfigurer().declareImage(symbolicName, desc, shared);
-	}
-	
-	
-	/** 
-	 * @return Returns <code>true</code> if there is a known intro part in the system, 
-     * <code>false</code> otherwise
-	 */
-	private boolean openIntro(IWorkbenchWindow window) {	    
-	    boolean hasIntro = getWorkbenchConfigurer().getWorkbench().getIntroManager().hasIntro();
-	    
-		if (hasIntro && IDEWorkbenchPlugin.getDefault().getPreferenceStore().getBoolean(IDEInternalPreferences.INTRO)) {
-		    getWorkbenchConfigurer()
-		    	.getWorkbench()
-		    	.getIntroManager().showIntro(
-		    	        window, 
-		    	        false);
-		    IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(IDEInternalPreferences.INTRO, false);
-		}
-					
-        return hasIntro;
 	}	
 	
 	public void fillActionBars(IWorkbenchWindow window, IActionBarConfigurer actionConfigurer, int flags) {
@@ -939,25 +919,31 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		return WORKBENCH_PREFERENCE_CATEGORY_ID;
 	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.application.WorkbenchAdvisor#postWindowCreate(org.eclipse.ui.application.IWorkbenchWindowConfigurer)
+    /**
+     * Tries to open the intro,if one exists and otherwise will open the legacy 
+     * Welcome pages.
+     * 
+     * @see org.eclipse.ui.application.WorkbenchAdvisor#openIntro(org.eclipse.ui.application.IWorkbenchWindowConfigurer)
      */
-    public void postWindowCreate(IWorkbenchWindowConfigurer windowConfigurer) {
-        super.postWindowCreate(windowConfigurer);
+    public void openIntro(IWorkbenchWindowConfigurer windowConfigurer) {
         if (editorsAndIntrosOpened) 
             return;
-        
+
         editorsAndIntrosOpened = true;
         
-		if (!openIntro(windowConfigurer.getWindow())) { // only try to open the editors if there is no intro in the system
+        // don't try to open the welcome editors if there is an intro
+        if (windowConfigurer.getWorkbenchConfigurer().getWorkbench().getIntroManager().hasIntro())
+            super.openIntro(windowConfigurer);
+        else {        
 			try {
 				openWelcomeEditors(windowConfigurer.getWindow());
 			} catch (WorkbenchException e) {
 				IDEWorkbenchPlugin.log("Fail to open remaining welcome editors.", e.getStatus()); //$NON-NLS-1$
-			}
-		}
-		// save any preferences changes caused by the above actions
-		IDEWorkbenchPlugin.getDefault().savePluginPreferences();
+			}        
+	
+			// save any preferences changes caused by the above actions
+			IDEWorkbenchPlugin.getDefault().savePluginPreferences();
+        }
     }
 
     /**

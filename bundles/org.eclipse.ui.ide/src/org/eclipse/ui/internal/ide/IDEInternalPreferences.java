@@ -42,7 +42,4 @@ public interface IDEInternalPreferences {
 
 	// (boolean) Whether or not to display the Welcome dialog on startup.
 	public static final String WELCOME_DIALOG = "WELCOME_DIALOG"; //$NON-NLS-1$
-	
-	// (boolean) Whether or not to display the intro extension on startup.
-	public static final String INTRO = "INTRO"; //$NON-NLS-1$
 }

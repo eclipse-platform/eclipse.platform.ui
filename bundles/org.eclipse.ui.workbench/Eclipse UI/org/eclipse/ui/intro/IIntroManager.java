@@ -17,10 +17,8 @@ import org.eclipse.ui.IWorkbenchWindow;
  * The intro part is typically shown the first time a product is started up.
  * <p>
  * The initial behavior of the intro part is controlled by the application
- * from its workbench adviser (typically by code in the advisor's
- * {@link org.eclipse.ui.application.WorkbenchAdvisor#preStartup()}
- * or {@link org.eclipse.ui.application.WorkbenchAdvisor#postWindowCreate(org.eclipse.ui.application.IWorkbenchWindowConfigurer)})
- * methods.
+ * from via the {@link org.eclipse.ui.application.WorkbenchAdvisor#openIntro(IWorkbenchWindowConfigurer)}
+ * method.
  * </p>
  * <p>
  * See {@link org.eclipse.ui.intro.IIntroPart} for details on where intro parts

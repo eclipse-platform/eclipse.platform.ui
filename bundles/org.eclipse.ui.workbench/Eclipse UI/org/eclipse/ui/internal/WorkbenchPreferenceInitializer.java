@@ -41,6 +41,9 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_PERSPECTIVE_BAR, false);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_STATUS_LINE, true);
 		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_PROGRESS_INDICATOR, false);			
+		// default to showing intro on startup
+		store.setDefault(IWorkbenchPreferences.SHOULD_SHOW_INTRO, true);
+
 
 		// workbench preferences that are API (but non-RCP)
 		// @issue these should probably be on org.eclipse.ui's preference store, 
