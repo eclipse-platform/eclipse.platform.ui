@@ -132,7 +132,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		usePulldown = preferenceStore.getBoolean(IPreferenceConstants.EDITORLIST_PULLDOWN_ACTIVE);
 
 		boolean single = !preferenceStore.getBoolean(IWorkbenchPreferences.SHOW_MULTIPLE_EDITOR_TABS); 
-		int style = SWT.BORDER | SWT.FLAT | tabLocation;
+		int style = SWT.BORDER | tabLocation;
 
 		if (single)
 			style |= SWT.SINGLE;
@@ -140,7 +140,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);
 		
 		tabFolder = new CTabFolder2(parent, style);
-		tabFolder.setBorderVisible(false);
+		tabFolder.setBorderVisible(true);
 		ColorSchemeService.setTabColors(tabFolder);
 
 		// prevent close button and scroll buttons from taking focus
@@ -564,7 +564,7 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 
 	protected void drawGradient(Color fgColor, Color[] bgColors, int[] bgPercents, boolean active) {
 		tabFolder.setSelectionForeground(fgColor);
-		tabFolder.setBorderVisible(active);
+		//tabFolder.setBorderVisible(active);
 		if (bgPercents == null)
 			tabFolder.setSelectionBackground(bgColors[0]);
 		else

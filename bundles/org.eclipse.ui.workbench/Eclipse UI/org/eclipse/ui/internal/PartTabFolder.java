@@ -61,39 +61,61 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	private Map mapTabToPart = new HashMap();
 	private LayoutPart current;
 	private boolean assignFocusOnSelection = true;
-	private boolean minimized = false;
+	private BooleanModel minimizedState = new BooleanModel(false);
 
 	// inactiveCurrent is only used when restoring the persisted state of
 	// perspective on startup.
 	private LayoutPart inactiveCurrent;
 	private Composite parent;
 	private boolean active = false;
+
+	/**
+	 * Makes changes in the minimize state be exposed in the tab folder 
+	 */
+	IChangeListener minimizeListener = new IChangeListener() {
+		public void update(boolean changed) {
+			if (tabFolder != null && !tabFolder.isDisposed()) {
+				boolean expanded = !minimizedState.get();
+				
+				tabFolder.setExpanded(expanded);		
+			}
+		}
+	};
 	
+	/**
+	 * Sets the minimized state based on the state of the tab folder
+	 */
 	CTabFolderExpandListener expandListener = new CTabFolderExpandListener() {
 		public void collapse(CTabFolderEvent event) {
-			parent.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					PartSashContainer cont = (PartSashContainer) getContainer();
-					if (cont != null) {
-						WorkbenchPage page = ((PartPane) current).getPage();
-						if (page.isZoomed()) {
-							page.zoomOut();
-						}
-						
-						tabFolder.setSize(tabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-						
-						cont.getLayoutTree().setBounds(PartTabFolder.this.parent.getClientArea());
-					}
-				}
-			});
+			minimizedState.set(true, minimizeListener);		
+			
+			reflectChangesInPage();	
 		}
+		
 		public void expand(CTabFolderEvent event) {
+			minimizedState.set(false, minimizeListener);
+			
+			reflectChangesInPage();
+		}
+		
+		public void reflectChangesInPage() {
 			parent.getDisplay().asyncExec(new Runnable() {
-				public void run() {
+				public void run() {			
+					if (current != null) {
+						boolean expanded = !minimizedState.get();
+						
+						current.setVisible(expanded);
+					}
+					
+					tabFolder.setSize(getMinimumWidth(), getMinimumHeight());
+					
+					WorkbenchPage page = ((PartPane) current).getPage();
+					if (page.isZoomed()) {
+						page.zoomOut();
+					}
+		
 					PartSashContainer cont = (PartSashContainer) getContainer();
 					if (cont != null) {
-						tabFolder.setSize(tabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-						
 						cont.getLayoutTree().setBounds(PartTabFolder.this.parent.getClientArea());
 					}
 				}
@@ -264,10 +286,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 
 		// Create control.	
 		this.parent = parent;
-		tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER | SWT.FLAT);
-		tabFolder.setBorderVisible(false);
+		tabFolder = new CTabFolder2(parent, tabLocation | SWT.BORDER);
+		tabFolder.setBorderVisible(true);
 		ColorSchemeService.setTabColors(tabFolder);
-		tabFolder.setExpanded(!minimized);
 		
 		// listener to switch between visible tabItems
 		tabFolder.addListener(SWT.Selection, new Listener() {
@@ -414,6 +435,8 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		if (!active)
 			return;
 
+		minimizedState.removeChangeListener(minimizeListener);
+		
 		// combine active and inactive entries into one
 		TabInfo[] newInvisibleChildren = new TabInfo[mapTabToPart.size()];
 
@@ -845,7 +868,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		}
 		
 		Integer expanded = memento.getInteger(IWorkbenchConstants.TAG_EXPANDED);
-		setMinimized(expanded != null && expanded.intValue() == 0);
+		minimizedState.set(expanded != null && expanded.intValue() == 0);
 		
 		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 	}
@@ -929,7 +952,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	}
 
 	public boolean isMinimized() {
-		return !tabFolder.getExpanded();
+		return minimizedState.get();
 	}
 	
 	public void setSelection(int index) {
@@ -966,7 +989,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		current = part;
 		if (current != null) {
 			setControlSize();
-			current.setVisible(true);
+			current.setVisible(!isMinimized());
 		}
 
 		// set the title of the detached window to reflect the active tab
@@ -1013,7 +1036,7 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	 * @param active
 	 */
 	public void setActive(boolean active) {
-		tabFolder.setBorderVisible(active);
+		//tabFolder.setBorderVisible(active);
 		if (active) {
 			tabFolder.setSelectionBackground(
 				WorkbenchColors.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
@@ -1028,13 +1051,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 		}
 	}
 	
-	private void setMinimized(boolean state) {
-		minimized = state;
-		if (tabFolder != null && !tabFolder.isDisposed()) {
-			tabFolder.setExpanded(!minimized);
-		}
-	}
-
 	/**
 	 * Indicate busy state in the supplied partPane.
 	 * @param partPane PartPane.
@@ -1092,8 +1108,10 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 	private void attachExpandListener(boolean b) {
 		if (container != null) {
 			tabFolder.addCTabFolderExpandListener(expandListener);
+			minimizedState.addChangeListener(minimizeListener);
 		} else {
 			tabFolder.removeCTabFolderExpandListener(expandListener);
+			minimizedState.removeChangeListener(minimizeListener);
 		}
 	}
 }
