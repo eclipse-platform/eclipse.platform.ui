@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui" id="importWizards" name="Import Wizards"/>
       </appInfo>
       <documentation>
-         This extension point is used to register import wizard extensions. Import wizards appear as choices within the &quot;Import Dialog&quot; and are used to import resources into the workbench. 
+         This extension point is used to register import wizard extensions. Import wizards appear as choices within the &quot;Import&quot; dialog. 
 &lt;p&gt;
 Wizards may optionally specify a description subelement whose body should contain short text about the wizard.
 &lt;/p&gt;
@@ -169,7 +169,7 @@ Wizards may optionally specify a description subelement whose body should contai
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench comes preloaded with the basic import engines for files and directories.
+         The generic workbench does not include any import wizards. (However, the IDE plug-in defines wizards for basic import engines for files and directories.)
       </documentation>
    </annotation>
 

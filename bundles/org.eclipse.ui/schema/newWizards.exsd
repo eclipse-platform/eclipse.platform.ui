@@ -6,9 +6,9 @@
          <meta.schema plugin="org.eclipse.ui" id="newWizards" name="Creation Wizards"/>
       </appInfo>
       <documentation>
-         This extension point is used to register resource creation wizard extensions. Creation wizards appear as choices within the &quot;New Dialog&quot;, and are typically used to create folders and files. 
+         This extension point is used to register creation wizard extensions. Creation wizards appear as choices within the &quot;New&quot; dialog. 
 &lt;p&gt;
-In the &quot;New Dialog&quot;, wizards are organized into categories which usually reflect a particular problem domain.  For instance, a Java oriented plugin may define a category called &quot;Java&quot; which is appropriate for &quot;Class&quot; or &quot;Package&quot; creation wizards.  The categories defined by one plug-in can be referenced by other plug-ins using the category attribute. Uncategorized wizards, as well as wizards with invalid category paths, will end up in an &quot;Other&quot; category. 
+In the &quot;New&quot; dialog, wizards are organized into categories which usually reflect a particular problem domain.  For instance, a Java oriented plugin may define a category called &quot;Java&quot; which is appropriate for &quot;Class&quot; or &quot;Package&quot; creation wizards.  The categories defined by one plug-in can be referenced by other plug-ins using the category attribute. Uncategorized wizards, as well as wizards with invalid category paths, will end up in an &quot;Other&quot; category. 
 &lt;/p&gt;
 
 &lt;p&gt;
@@ -231,7 +231,7 @@ that implements &lt;samp&gt;org.eclipse.ui.INewWizard&lt;/samp&gt;.
 If the wizard is created from within the 
 New Wizard it will be inserted into the existing wizard.  
 If the wizard is launched as a shortcut 
-(from the File New menu or a toolbar button) it will 
+(from a menu or a toolbar button) it will 
 appear standalone as a separate dialog box.
       </documentation>
    </annotation>
@@ -241,12 +241,8 @@ appear standalone as a separate dialog box.
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The workbench comes with wizards for creating empty 
-resources of the following types: 
-project, folder and file. These wizards are registered 
-using the same mechanism as described above. 
-Additional wizards may also appear, subject to 
-particular platform installation.
+         The generic workbench does not include any new wizards. (However, the IDE plug-in defines wizards for creating empty resources of the following types: 
+project, folder and file.)
       </documentation>
    </annotation>
 
