@@ -3,8 +3,8 @@
 <meta NAME="keywords" content="">
 <meta NAME="since" content="">
 </head><body><h2>Performing a Merge</h2>
-<p>Since: M8<br>
-Last Modified: $Date: 2004/06/01 15:23:56 $</p>
+<p>Since: 3.1 M4<br>
+Last Modified: $Date: 2004/06/01 19:14:48 $</p>
 
 
 <h3>Scenario 1: One Time Merge</h3>
@@ -14,6 +14,13 @@ Using Team>Merge, merge the changes from a branch into HEAD. Once completed, in 
 update the incoming changes, resolve any conflicts and ensure they worked, After updating, 
 redo the same merge. A no-changes dialog should be 
 presented since the local contents match the end-point.
+
+<p>
+Things to try:
+<ul>
+<li>Use content assist to select an existing branch for the end tag. A root versions should ne automatically found if it exists.
+<li>Choose to perform the merge into the local workspace. Ensure it works with and without a start tag.
+</ul>
 
 <h3>Scenario 2: Ongoing Merge</h3>
 

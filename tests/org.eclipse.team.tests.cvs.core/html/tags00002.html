@@ -1,0 +1,31 @@
+<html><head><title>Tag Selection in Dialogs</title>
+<LINK REL=STYLESHEET HREF=../book.css CHARSET=ISO-8859-1 TYPE=text/css>
+<meta NAME="keywords" content="">
+<meta NAME="since" content="">
+</head><body><h2>Tag Selection in Dialogs</h2>
+<p>Since: 3.1 M4<br>
+Last Modified: $Date: 2004/06/01 15:24:23 $</p>
+
+Tag lists appear in many dialogs:
+<ul>
+<li>Replace with Branch or Version
+<li>Compare with Branch or Version
+<li>Share of existing project
+<li>Switch to Another Branch or Versions
+<li>Tag with Existing
+<li>Tag as Version
+</ul>
+
+<p>
+In each of these places, typing in the tag text field will filter the list of shown tags. 
+The option to Refresh and Configure tags should also be present. Refreshing behavior should be as follows:
+
+<ol>
+	<li>If an auto-refresh file (.project by default) exists and has tags, the tags are obtained from the file.
+	<li>If there is no auto-refresh file, the log command is used to determine if there are any tags in the files
+	that are direct children of the remote folder.
+	<li>If no tags are found, the user is prompted to either perform a deep log to find any tags or configure the
+	tags manually.
+</ol>
+
+</body></html>

@@ -1,0 +1,24 @@
+<html><head><title>Tag Caching</title>
+<LINK REL=STYLESHEET HREF=../book.css CHARSET=ISO-8859-1 TYPE=text/css>
+<meta NAME="keywords" content="">
+<meta NAME="since" content="">
+</head><body><h2>Tag Caching</h2>
+<p>Since: 3.1 M4<br>
+Last Modified: $Date: 2004/06/01 15:24:23 $</p>
+
+Discovered tags are cached locally to improve performance. Caching is done in the following ways:
+
+<ol>
+<li>Tags discovered for local resources are cached with the rmeote folder that the resource's project is mapped to.
+<li>Tags discovered for remote resources are cached with the resource if it is a folder or the resource's parent if it is a file.
+</ol>
+
+To test this, you can try one or more of the following:
+<ol>
+<li>Perform Compare With on folders and subfolders in the repositories view. The first time, you will need to perform a Refresh \
+but subsequent times, the tags should be cached.
+<li>Load non-root folders as projects and ensure tags are cached and obtained properly.
+<li>Perform Tag with Existing in the History view and ensure that tags are obtained from the file
+</ol>
+
+</body></html>
