@@ -60,6 +60,13 @@
   by the debug plug-in and could not be overridden by a debug model. In release 
   3.0, a debug model presentation (<code>IDebugModelPresentation</code>) can provide 
   specialized images by implementing the debug editor presentation interface (<code>IDebugEditorPresentation</code>).</p>
+<h3>Editor Positioning and Custom Decorations</h3>
+<p>In release 3.0, debug model presentations can control the positioning of editors 
+  opened by the debugger for a stack frame, and may add extra decorations to the 
+  editor for a stack frame (for example, custom background coloring, etc.). This 
+  can be acheived by having a debug model presentation implement the new interface 
+  <code>IDebugEditorPresentation</code>, and implementing the appropriate methods 
+  - <code>selectAndReveal</code> and <code>decorateEditor</code>.</p>
 <h2>API Changes</h2>
 <h3>Extensible Launch Modes</h3>
 <p>With the introduction of extensible launch modes, more than one launch delegate 
