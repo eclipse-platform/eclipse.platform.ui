@@ -115,7 +115,7 @@ class WorkerPool {
 	/**
 	 * Returns a new job to run. Returns null if the thread should die. 
 	 */
-	protected Job startJob() {
+	protected Job startJob(Worker worker) {
 		//if we're above capacity, kill the thread
 		synchronized (this) {
 			if (!running || threads.size() > MAX_THREADS)
@@ -132,8 +132,12 @@ class WorkerPool {
 			//if we were already idle, and there are still no new jobs, then
 			// the thread can expire
 			synchronized (this) {
-				if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && (threads.size() - busyThreads) > MIN_THREADS)
+				if (job == null && (System.currentTimeMillis() - idleStart > BEST_BEFORE) && (threads.size() - busyThreads) > MIN_THREADS) {
+					//must remove the worker immediately to prevent all threads from
+					//checking this condition one after the other and all expiring
+					threads.remove(worker);
 					break;
+				}
 			}
 		}
 		if (job != null) {

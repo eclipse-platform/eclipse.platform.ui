@@ -51,7 +51,7 @@ public class Worker extends Thread {
 	}
 	public void run() {
 		try {
-			while ((currentJob = pool.startJob()) != null) {
+			while ((currentJob = pool.startJob(this)) != null) {
 				//if job is null we've been shutdown
 				if (currentJob == null)
 					return;
