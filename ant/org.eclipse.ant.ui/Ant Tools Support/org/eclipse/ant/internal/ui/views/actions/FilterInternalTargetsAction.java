@@ -37,5 +37,4 @@ public class FilterInternalTargetsAction extends Action {
 	public void run() {
 		fView.setFilterInternalTargets(isChecked());
 	}
-
 }
