@@ -109,7 +109,7 @@ public class PluginVersionInfo extends HelpProperties {
 				String oldVersions = (String) oldContrs.get(oneContr);
 				if (!compare(versions, oldVersions)) {
 					// plugin version changed or fragments changed
-					added.add(oneContr);
+					removed.add(oneContr);
 				}
 			}
 		}
