@@ -18,7 +18,6 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	protected boolean keepHistory;
 	protected MultiStatus status;
 	protected List skipList;
-	protected FileSystemStore localStore;
 
 	/**
 	 * Flag to indicate if resources are going to be removed
@@ -31,31 +30,33 @@ public DeleteVisitor(List skipList, boolean force, boolean convertToPhantom, boo
 	this.convertToPhantom = convertToPhantom;
 	this.keepHistory = keepHistory;
 	this.monitor = monitor;
-	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, Policy.bind("deleteProblem", null), null);
+	status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_DELETE_LOCAL, Policy.bind("deleteProblem", null), null);
 }
-protected void delete(UnifiedTreeNode node) {
+protected void deleteAndKeepHistory(UnifiedTreeNode node) {
 	IPath location = node.getLocalLocation();
 	Resource target = (Resource) node.getResource();
 	try {
-		if (keepHistory) {
-			if (target.getType() == IResource.FOLDER) {
-				for (Enumeration children = node.getChildren(); children.hasMoreElements();)
-					delete((UnifiedTreeNode) children.nextElement());
-				node.removeChildrenFromTree();
-				if(!getStore().delete(location.toFile(), status))
-					return;
-			} else {
-				target.getLocalManager().getHistoryStore().addState(target.getFullPath(), location, node.getLastModified(), true);
-				if (target.getLocation().toFile().exists()) {
-					String message = "Could not delete file: " + target.getFullPath();
-					status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, target.getFullPath(), message));
-					return;
-				}
-			}
-		} else {
-			if(!getStore().delete(location.toFile(), status))
-				return;
+		if (target.getType() == IResource.FOLDER) {
+			for (Enumeration children = node.getChildren(); children.hasMoreElements();)
+				deleteAndKeepHistory((UnifiedTreeNode) children.nextElement());
+			node.removeChildrenFromTree();
+			delete(target, location);
+			return;
 		}
+		HistoryStore store = target.getLocalManager().getHistoryStore();
+		store.addState(target.getFullPath(), location, node.getLastModified(), true);
+		if (target.getLocation().toFile().exists())
+			delete(target, location);
+		else
+			target.deleteResource(convertToPhantom, status);
+	} catch (CoreException e) {
+		status.add(e.getStatus());
+	}
+}
+protected void delete(Resource target, IPath location) {
+	if(!target.getLocalManager().getStore().delete(location.toFile(), status))
+		return;
+	try {
 		target.deleteResource(convertToPhantom, status);
 	} catch (CoreException e) {
 		status.add(e.getStatus());
@@ -66,11 +67,6 @@ protected boolean equals(IResource one, IResource another) throws CoreException 
 }
 public MultiStatus getStatus() {
 	return status;
-}
-protected FileSystemStore getStore() {
-	if (localStore == null)
-		localStore = new FileSystemStore();
-	return localStore;
 }
 protected boolean isAncestor(IResource one, IResource another) throws CoreException {
 	return one.getFullPath().isPrefixOf(another.getFullPath()) && !equals(one, another);
@@ -109,7 +105,10 @@ public boolean visit(UnifiedTreeNode node) throws CoreException {
 		}
 		if (isAncestorOfResourceToSkip(target))
 			return true;
-		delete(node);
+		if (keepHistory)
+			deleteAndKeepHistory(node);
+		else
+			delete(target, node.getLocalLocation());
 		return false;
 	} finally {
 		monitor.worked(1);

@@ -85,7 +85,7 @@ public boolean delete(File root, MultiStatus status) {
 	} catch (Exception e) {
 		// we caught a runtime exception so log it
 		String message = "Exception trying to delete file: " + root.getAbsolutePath();
-		status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, message));
+		status.add(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, new Path(root.getAbsolutePath()), message, e));
 		return false;
 	}
 	if (failedThis) {
