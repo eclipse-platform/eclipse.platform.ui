@@ -299,7 +299,7 @@ protected void initializeDialogUnits(Control control) {
  * @param button the button to set the <code>GridData</code>
  * @return the <code>GridData</code> set on the specified button
  */
-public GridData setButtonLayoutData(Button button) {
+protected GridData setButtonLayoutData(Button button) {
 	GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 	data.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 	int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
