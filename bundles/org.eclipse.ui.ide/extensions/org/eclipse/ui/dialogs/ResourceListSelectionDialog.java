@@ -359,7 +359,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
             // the < character indicates an exact match search
             return text.substring(0, text.length() - 1);
         }
-        if (!text.equals("") && !text.endsWith("*")) { //$NON-NLS-1$
+        if (!text.equals("") && !text.endsWith("*")) { //$NON-NLS-1$ //$NON-NLS-2$
         	return text + "*"; //$NON-NLS-1$
         }
         return text;
