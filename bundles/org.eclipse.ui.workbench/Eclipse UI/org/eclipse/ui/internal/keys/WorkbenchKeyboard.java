@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -50,6 +51,8 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.commands.CommandManager;
+import org.eclipse.ui.internal.util.StatusLineContributionItem;
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -79,6 +82,11 @@ public class WorkbenchKeyboard {
 	static final String OUT_OF_ORDER_KEYS = "OutOfOrderKeys"; //$NON-NLS-1$
 	/** The collection of keys that are to be processed out-of-order. */
 	static KeySequence outOfOrderKeys;
+	/**
+	 * The translation bundle in which to look up internationalized text.
+	 */
+	private final static ResourceBundle RESOURCE_BUNDLE =
+		ResourceBundle.getBundle(WorkbenchKeyboard.class.getName());
 
 	/**
 	 * Generates any key strokes that are near matches to the given event. The
@@ -237,19 +245,19 @@ public class WorkbenchKeyboard {
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
+		 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
 		 */
-		public void windowDeactivated(IWorkbenchWindow window) {
-			// Do nothing
+		public void windowClosed(IWorkbenchWindow window) {
+			// Do nothing.
 		}
 
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.ui.IWindowListener#windowClosed(org.eclipse.ui.IWorkbenchWindow)
+		 * @see org.eclipse.ui.IWindowListener#windowDeactivated(org.eclipse.ui.IWorkbenchWindow)
 		 */
-		public void windowClosed(IWorkbenchWindow window) {
-			// Do nothing.
+		public void windowDeactivated(IWorkbenchWindow window) {
+			// Do nothing
 		}
 
 		/*
@@ -433,58 +441,7 @@ public class WorkbenchKeyboard {
 		display.timerExec(1000, new Runnable() {
 			public void run() {
 				if (System.currentTimeMillis() > (startTime - 1000L)) {
-					// Set up the shell.
-					multiKeyAssistShell = new Shell(display, SWT.NO_TRIM);
-					multiKeyAssistShell.setLayout(new GridLayout());
-					Composite composite = new Composite(multiKeyAssistShell, SWT.NULL);
-					composite.setLayoutData(new GridData(GridData.FILL_BOTH));
-					composite.setLayout(new GridLayout());
-
-					// Get the list of items.
-					Map partialMatches =
-						commandManager.getPartialMatches(state.getCurrentSequence());
-					String[] items = new String[partialMatches.size()];
-					Iterator partialMatchItr = partialMatches.entrySet().iterator();
-					int i = 0;
-					while (partialMatchItr.hasNext()) {
-						Map.Entry entry = (Map.Entry) partialMatchItr.next();
-						KeySequence partialMatch = (KeySequence) entry.getKey();
-						String commandId = (String) entry.getValue();
-						ICommand command = commandManager.getCommand(commandId);
-						try {
-							// TODO The enabled property of ICommand is broken.
-							if (command.isDefined()
-								&& command.isActive() /* && command.isEnabled() */
-								) {
-								items[i++] = partialMatch.format() + "   " + command.getName(); //$NON-NLS-1$
-							}
-						} catch (NotDefinedException e) {
-							// Simply don't insert the item.
-						}
-					}
-					if (i < items.length) {
-						String[] tempItems = new String[i];
-						System.arraycopy(items, 0, tempItems, 0, i);
-						items = tempItems;
-					}
-
-					// Layout the partial matches.
-					if (items.length < 1) {
-						Label noMatchesLabel = new Label(composite, SWT.NULL);
-						noMatchesLabel.setText("No Matches Possible");
-						noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
-					} else {
-						org.eclipse.swt.widgets.List completionsList =
-							new org.eclipse.swt.widgets.List(composite, SWT.SINGLE);
-						completionsList.setLayoutData(new GridData(GridData.FILL_BOTH));
-						completionsList.setItems(items);
-					}
-
-					// Size and position the shell, and then open it.
-					multiKeyAssistShell.pack();
-					Point point = multiKeyAssistShell.getSize();
-					Rectangle displayBounds = display.getBounds();
-					multiKeyAssistShell.open();
+					openMultiKeyAssistShell(display);
 				}
 			}
 		});
@@ -516,6 +473,99 @@ public class WorkbenchKeyboard {
 	 */
 	private boolean isPerfectMatch(KeySequence keySequence) {
 		return commandManager.isPerfectMatch(keySequence);
+	}
+
+	/**
+	 * Opens a <code>Shell</code> to assist the user in completing a
+	 * multi-stroke key binding. After this method completes, <code>multiKeyAssistShell</code>
+	 * should point at the newly opened window.
+	 * 
+	 * @param display
+	 *            The display on which the shell should be opened; must not be
+	 *            <code>null</code>.
+	 */
+	private void openMultiKeyAssistShell(final Display display) {
+		// Get the status line. If none, then abort.
+		StatusLineContributionItem statusLine = state.getStatusLine();
+		if (statusLine == null) {
+			return;
+		}
+		Point statusLineLocation = statusLine.getDisplayLocation();
+		if (statusLineLocation == null) {
+			return;
+		}
+
+		// Set up the shell.
+		multiKeyAssistShell = new Shell(display, SWT.NO_TRIM);
+		multiKeyAssistShell.setLayout(new GridLayout());
+		Composite composite = new Composite(multiKeyAssistShell, SWT.NULL);
+		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		composite.setLayout(new GridLayout());
+
+		// Get the list of items.
+		Map partialMatches = commandManager.getPartialMatches(state.getCurrentSequence());
+		String[] items = new String[partialMatches.size()];
+		Iterator partialMatchItr = partialMatches.entrySet().iterator();
+		int i = 0;
+		while (partialMatchItr.hasNext()) {
+			Map.Entry entry = (Map.Entry) partialMatchItr.next();
+			KeySequence partialMatch = (KeySequence) entry.getKey();
+			String commandId = (String) entry.getValue();
+			ICommand command = commandManager.getCommand(commandId);
+			try {
+				// TODO The enabled property of ICommand is broken.
+				if (command.isDefined() && command.isActive() /*
+															   * &&
+															   * command.isEnabled()
+															   */
+					) {
+					items[i++] = partialMatch.format() + "   " + command.getName(); //$NON-NLS-1$
+				}
+			} catch (NotDefinedException e) {
+				// Simply don't insert the item.
+			}
+		}
+
+		// Compact the list of items.
+		if (i < items.length) {
+			String[] tempItems = new String[i];
+			System.arraycopy(items, 0, tempItems, 0, i);
+			items = tempItems;
+		}
+
+		// Layout the partial matches.
+		if (items.length < 1) {
+			Label noMatchesLabel = new Label(composite, SWT.NULL);
+			noMatchesLabel.setText(Util.translateString(RESOURCE_BUNDLE, "NoMatches.Message")); //$NON-NLS-1$
+			noMatchesLabel.setLayoutData(new GridData(GridData.FILL_BOTH));
+			multiKeyAssistShell.pack();
+		} else {
+			org.eclipse.swt.widgets.List completionsList =
+				new org.eclipse.swt.widgets.List(composite, SWT.SINGLE);
+			completionsList.setLayoutData(new GridData(GridData.FILL_BOTH));
+			completionsList.setItems(items);
+			multiKeyAssistShell.setSize(300, 400);
+		}
+
+		// Position the shell, and then open it.
+		Point assistShellSize = multiKeyAssistShell.getSize();
+		Point assistShellLocation =
+			new Point(statusLineLocation.x, statusLineLocation.y - assistShellSize.y);
+		Rectangle displayBounds = display.getBounds();
+		final int displayRightEdge = displayBounds.x + displayBounds.width;
+		if (assistShellLocation.x < displayBounds.x) {
+			assistShellLocation.x = displayBounds.x;
+		} else if ((assistShellLocation.x + assistShellSize.x) > displayRightEdge) {
+			assistShellLocation.x = displayRightEdge - assistShellSize.x;
+		}
+		final int displayBottomEdge = displayBounds.y + displayBounds.height;
+		if (assistShellLocation.y < displayBounds.y) {
+			assistShellLocation.y = displayBounds.y;
+		} else if ((assistShellLocation.y + assistShellSize.y) > displayBottomEdge) {
+			assistShellLocation.y = displayBottomEdge - assistShellSize.y;
+		}
+		multiKeyAssistShell.setLocation(assistShellLocation);
+		multiKeyAssistShell.open();
 	}
 
 	/**

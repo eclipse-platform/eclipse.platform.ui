@@ -131,6 +131,28 @@ class KeyBindingState {
 	}
 
 	/**
+	 * Gets the status line contribution item which the key binding
+	 * architecture uses to keep the user up-to-date as to the current state.
+	 * 
+	 * @return The status line contribution item, if any; <code>null</code>,
+	 *         if none.
+	 */
+	StatusLineContributionItem getStatusLine() {
+		if (associatedWindow instanceof WorkbenchWindow) {
+			WorkbenchWindow window = (WorkbenchWindow) associatedWindow;
+			IStatusLineManager statusLine = window.getStatusLineManager();
+			// TODO implicit dependency on IDE's action builder
+			// @issue implicit dependency on IDE's action builder
+			IContributionItem item = statusLine.find("ModeContributionItem"); //$NON-NLS-1$
+			if (item instanceof StatusLineContributionItem) {
+				return ((StatusLineContributionItem) item);
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Whether it is safe for someone to issue a reset after switching to a
 	 * fully collapsable state. This checks to see if they have been any
 	 * changes to the sequence made since the last reset.
@@ -211,36 +233,13 @@ class KeyBindingState {
 	}
 
 	/**
-	 * Updates the text of the given window's status line with the given text.
-	 * 
-	 * @param window
-	 *            the window
-	 * @param text
-	 *            the text
-	 */
-	private void updateStatusLine(IWorkbenchWindow window, String text) {
-		if (window instanceof WorkbenchWindow) {
-			IStatusLineManager statusLine = ((WorkbenchWindow) window).getStatusLineManager();
-			// TODO implicit dependency on IDE's action builder
-			// @issue implicit dependency on IDE's action builder
-			IContributionItem item = statusLine.find("ModeContributionItem"); //$NON-NLS-1$
-			if (item instanceof StatusLineContributionItem) {
-				((StatusLineContributionItem) item).setText(text);
-			}
-		}
-	}
-
-	/**
 	 * Updates the text of the status line of the associated shell with the
 	 * current sequence.
 	 */
 	private void updateStatusLines() {
-		String text = getCurrentSequence().format();
-		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-			if (windows[i].equals(getAssociatedWindow())) {
-				updateStatusLine(windows[i], text);
-			}
+		StatusLineContributionItem statusLine = getStatusLine();
+		if (statusLine != null) {
+			statusLine.setText(getCurrentSequence().format());
 		}
 	}
 }
