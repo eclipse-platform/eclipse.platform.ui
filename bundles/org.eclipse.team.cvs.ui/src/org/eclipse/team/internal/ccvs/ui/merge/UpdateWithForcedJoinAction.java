@@ -14,6 +14,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
 import org.eclipse.team.internal.ccvs.ui.sync.CVSSyncCompareInput;
 import org.eclipse.team.ui.sync.ITeamNode;
+import org.eclipse.team.ui.sync.SyncSet;
 
 /*
  * Used only in the merge editor. This action allows the user to select a single conflict and use
@@ -69,5 +70,12 @@ public class UpdateWithForcedJoinAction extends UpdateMergeAction {
 	protected boolean promptForConflicts() {
 		// don't prompt for overriding conflicts, because this action is simply merging and creating a backup copy of the original file.
 		return true;
+	}
+
+	/*
+	 * Override removeNonApplicableNodes because conflicting nodes should not be removed from this set.
+	 */	
+	protected void removeNonApplicableNodes(SyncSet set, int syncMode) {
+		set.removeOutgoingNodes();
 	}
 }
