@@ -311,25 +311,6 @@ public class TabbedEditorWorkbook extends EditorWorkbook {
 			}
 		});
 		
-		tabFolder.addCTabFolderExpandListener(new CTabFolderExpandListener(){
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.custom.CTabFolderExpandListener#collapse(org.eclipse.swt.custom.CTabFolderEvent)
-			 */
-			public void collapse(CTabFolderEvent event) {
-				// TODO Auto-generated method stub
-
-			}
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.custom.CTabFolderExpandListener#expand(org.eclipse.swt.custom.CTabFolderEvent)
-			 */
-			public void expand(CTabFolderEvent event) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-		
-
 		// Listen for popup menu mouse event
 		tabFolder.addListener(SWT.MenuDetect, new Listener() {
 			public void handleEvent(Event event) {

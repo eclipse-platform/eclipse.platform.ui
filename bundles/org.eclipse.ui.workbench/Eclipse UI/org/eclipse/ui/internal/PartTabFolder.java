@@ -273,25 +273,6 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			}
 		});
 		
-		tabFolder.addCTabFolderExpandListener(new CTabFolderExpandListener(){
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.custom.CTabFolderExpandListener#collapse(org.eclipse.swt.custom.CTabFolderEvent)
-			 */
-			public void collapse(CTabFolderEvent event) {
-				//Cancel the event for now
-				event.doit = false;
-
-			}
-			
-			/* (non-Javadoc)
-			 * @see org.eclipse.swt.custom.CTabFolderExpandListener#expand(org.eclipse.swt.custom.CTabFolderEvent)
-			 */
-			public void expand(CTabFolderEvent event) {
-				//Cancel the event for now
-				event.doit = false;
-			}
-		});
-
 		// enable for drag & drop target
 		tabFolder.setData(this);
 
