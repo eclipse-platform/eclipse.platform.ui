@@ -336,6 +336,12 @@ public void openTracker() {
 			tracker.setCursor(cursor);
 		}
 	});
+	Listener shellListener = new Listener() {
+		public void handleEvent(Event event) {
+			tracker.close();
+		}
+	};
+	dragControl.getShell().addListener(SWT.Deactivate, shellListener);
 
 	// Create a drag rect.
 	Control sourceControl = sourcePart.getControl();
@@ -359,6 +365,7 @@ public void openTracker() {
 	// Run tracker until mouse up occurs or escape key pressed.
 	boolean trackingOk = tracker.open();
 	mouseDown = false;
+	dragControl.getShell().removeListener(SWT.Deactivate, shellListener);
 		
 	// Generate drop event.  
 	PartDropEvent event = createDropEvent(tracker);
