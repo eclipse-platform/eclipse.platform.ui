@@ -30,8 +30,11 @@ public class DecorationScheduler implements IResourceChangeListener {
 	// When decorations are computed they are added to this cache via decorated() method
 	private Map resultCache = Collections.synchronizedMap(new HashMap());
 
-	// Resources that need an icon and text computed for display to the user
+	// Objects that need an icon and text computed for display to the user
 	private List awaitingDecoration = new ArrayList();
+
+	// Objects that are awaiting a label update.
+	private List pendingUpdate = new ArrayList();
 
 	private Map awaitingDecorationValues = new HashMap();
 
@@ -81,9 +84,9 @@ public class DecorationScheduler implements IResourceChangeListener {
 		if (decoration == null) {
 			queueForDecoration(element, adaptedElement);
 			return text;
-		} else{
+		} else
 			return decoration.decorateWithText(text);
-		}
+
 	}
 	/**
 	 * Queue the element and its adapted value if it has not been
@@ -145,24 +148,28 @@ public class DecorationScheduler implements IResourceChangeListener {
 	}
 
 	/**
-	 * Add the list of decorations for the resource supplied
+	 * Execute a label update using the pending decorations.
 	 * @param resources
 	 * @param decorationResults
 	 */
-	public void decorated(final Object[] elements) {
-		
-		//No need to send a message for nothing
-		if(elements.length == 0)
-			return;
+	public void decorated() {
 
 		//Don't bother if we are shutdown now
 		if (!shutdown) {
 			Display.getDefault().asyncExec(new Runnable() {
 				public void run() {
+
+					if (pendingUpdate.isEmpty())
+						return;
+					//Get the elements awaiting update and then
+					//clear the list
+					Object[] elements =
+						pendingUpdate.toArray(new Object[pendingUpdate.size()]);
+					pendingUpdate.clear();
 					decoratorManager.labelProviderChanged(
 						new LabelProviderChangedEvent(
 							decoratorManager,
-							elements));					
+							elements));
 					resultCache.clear();
 				}
 			});
@@ -298,12 +305,13 @@ public class DecorationScheduler implements IResourceChangeListener {
 									suffixes,
 									descriptors);
 							resultCache.put(reference.getElement(), result);
-						}
+							pendingUpdate.add(reference.getElement());
+						};
 					}
 
 					// notify that decoration is ready
 					if (awaitingDecoration.isEmpty()) {
-						decorated(resultCache.keySet().toArray());
+						decorated();
 					}
 				}
 			};
