@@ -13,7 +13,9 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.model.*;
+import org.eclipse.update.core.*;
 import org.eclipse.update.core.*;
 
 /**
@@ -105,6 +107,9 @@ public class SiteFile extends SiteURL {
 
 	}
 
+	/**
+ 	 * 
+ 	 */
 	private String getFeaturePath(VersionedIdentifier featureIdentifier) {
 		String path = UpdateManagerUtils.getPath(getURL());
 		String featurePath = path + INSTALL_FEATURE_PATH + featureIdentifier.toString();
@@ -347,4 +352,70 @@ public class SiteFile extends SiteURL {
 		return SITE_TYPE;
 	}	
 	
+	/*
+	 * @see Site#removeFeatureInfo(VersionedIdentifier)
+	 */
+	protected void removeFeatureInfo(VersionedIdentifier featureIdentifier) throws CoreException {
+
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();		
+		MultiStatus multiStatus = new MultiStatus(id,IStatus.ERROR,"Some files cannot be removed",null);
+		
+		String featurePath = getFeaturePath(featureIdentifier);
+		File file = new File(featurePath);
+		removeFromFileSystem(file,multiStatus);
+		
+		if (multiStatus.getChildren().length>0){
+			throw new CoreException(multiStatus);
+		}
+		
+	}
+
+	/*
+	 * @see IPluginContainer#remove(IPluginEntry)
+	 */
+	public void remove(IPluginEntry pluginEntry) throws CoreException {
+		
+		String path = UpdateManagerUtils.getPath(getURL());
+
+		// FIXME: fragment code
+		String pluginPath = null;
+		if (pluginEntry.isFragment()) {
+			pluginPath = path + DEFAULT_FRAGMENT_PATH + pluginEntry.getIdentifier().toString();
+		} else {
+			pluginPath = path + DEFAULT_PLUGIN_PATH + pluginEntry.getIdentifier().toString();
+		}
+
+		String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();		
+		MultiStatus multiStatus = new MultiStatus(id,IStatus.ERROR,"Some files cannot be removed",null);
+
+		File file = new File(pluginPath);
+		removeFromFileSystem(file,multiStatus);
+		
+		if (multiStatus.getChildren().length>0){
+			throw new CoreException(multiStatus);
+		}
+	}
+	
+	/**
+	 * remove a file or directory from the file system.
+	 */
+	public static void removeFromFileSystem(File file, MultiStatus multiStatus) throws CoreException{
+
+		if (!file.exists())
+			return;
+		if (file.isDirectory()) {
+			String[] files = file.list();
+			if (files != null) // be careful since file.list() can return null
+				for (int i = 0; i < files.length; ++i)
+					removeFromFileSystem(new File(file, files[i]),multiStatus);
+		}
+		if (!file.delete()) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();				
+			IStatus status = new Status(IStatus.WARNING,id,IStatus.OK,"cannot remove: " + file.getPath()+" from the filesystem",new Exception());
+			multiStatus.add(status);
+		}
+		
+		
+	}
+
 }

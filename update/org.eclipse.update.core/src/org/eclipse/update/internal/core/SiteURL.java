@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeature;
+import org.eclipse.update.core.*;
 
 public class SiteURL extends Site {
 	
@@ -148,6 +150,19 @@ public class SiteURL extends Site {
 	 */
 	public Object getAdapter(Class adapter) {
 		return null;
+	}
+
+	/*
+	 * @see Site#removeFeatureInfo(VersionedIdentifier)
+	 */
+	protected void removeFeatureInfo(VersionedIdentifier featureIdentifier) throws CoreException {
+	}
+
+	/*
+	 * @see IPluginContainer#remove(IPluginEntry)
+	 */
+	public void remove(IPluginEntry entry) throws CoreException {
+		//FIXME: should not be called should it ? Can I remove from any URL Site ?		
 	}
 
 }

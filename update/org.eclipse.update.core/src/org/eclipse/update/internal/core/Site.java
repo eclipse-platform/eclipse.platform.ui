@@ -9,6 +9,7 @@ import java.net.URLClassLoader;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
 import org.xml.sax.SAXException;
 
@@ -160,103 +161,25 @@ public abstract class Site implements ISite, IWritable {
 	 */
 	public void remove(IFeature feature, IProgressMonitor monitor) throws CoreException {
 
-		// remove the feature and the plugins if they are not used and not activated
+		((Feature)feature).remove(monitor);
 
-		// get the plugins from the feature
-		IPluginEntry[] entries = feature.getPluginEntries();
-
-		if (entries != null) {
-
-			// get all the other plugins from all the other features
-			Set allPluginID = new HashSet();
-			IConfigurationSite[] allConfiguredSites = SiteManager.getLocalSite().getCurrentConfiguration().getConfigurationSites();
-			if (allConfiguredSites != null) {
-				for (int indexSites = 0; indexSites < allConfiguredSites.length; indexSites++) {
-					IFeatureReference[] features = allConfiguredSites[indexSites].getSite().getFeatureReferences();
-					if (features != null) {
-						for (int indexFeatures = 0; indexFeatures < features.length; indexFeatures++) {
-							if (!features[indexFeatures].getURL().equals(feature.getURL())) {
-								IPluginEntry[] pluginEntries = features[indexFeatures].getFeature().getPluginEntries();
-								if (pluginEntries != null) {
-									for (int indexEntries = 0; indexEntries < pluginEntries.length; indexEntries++) {
-										allPluginID.add(entries[indexEntries].getIdentifier());
-									}
-								}
-							}
-						}
-					}
+		// remove feature reference
+		IFeatureReference[] featureReferences = getFeatureReferences();
+		if (featureReferences != null) {
+			for (int indexRef = 0; indexRef < featureReferences.length; indexRef++) {
+				IFeatureReference element = featureReferences[indexRef];
+				if (element.getURL().equals(feature.getURL())) {
+					features.remove(element);
+					break;
 				}
 			}
-
-			// create the delta with the plugins that may be still used by other configured or unconfigured feature
-			List pluginsToRemove = new ArrayList();
-			for (int indexPlugins = 0; indexPlugins < entries.length; indexPlugins++) {
-				if (!allPluginID.contains(entries[indexPlugins].getIdentifier())) {
-					pluginsToRemove.add(entries[indexPlugins]);
-				}
-			}
-
-			// find if the plugins are activated
-			boolean somePluginsAreRunning = false;
-			Iterator pluginsIter = pluginsToRemove.iterator();
-			while (pluginsIter.hasNext() && !somePluginsAreRunning) {
-				IPluginEntry entry = (IPluginEntry) pluginsIter.next();
-				VersionedIdentifier element = entry.getIdentifier();
-				Plugin plugin = Platform.getPlugin(element.getIdentifier());
-				if (plugin != null) {
-					PluginVersionIdentifier elementVersion = new PluginVersionIdentifier(element.getVersion().getMajorComponent(), element.getVersion().getMinorComponent(), element.getVersion().getServiceComponent());
-					if (plugin.getDescriptor().getVersionIdentifier().equals(elementVersion) && plugin.getDescriptor().isPluginActivated()) {
-						somePluginsAreRunning = true;
-					}
-				}
-			}
-
-			// if some plugins are running, we have to unconfigure the feature
-			// restart and remove the feature
-			// otherwise, we can unconfigure the feature and remove it
-			if (!somePluginsAreRunning) {
-
-				// remove plugins
-				Iterator pluginsIterator = pluginsToRemove.iterator();
-				while (pluginsIterator.hasNext()) {
-					IPluginEntry entry = (IPluginEntry) pluginsIterator.next();
-					remove(entry, monitor);
-				}
-
-				// remove feature
-				 ((Feature) feature).remove(monitor);
-
-				// remove feature reference
-				IFeatureReference[] featureReferences = getFeatureReferences();
-				if (featureReferences != null) {
-					for (int indexRef = 0; indexRef < featureReferences.length; indexRef++) {
-						IFeatureReference element = featureReferences[indexRef];
-						if (element.getURL().equals(feature.getURL())) {
-							features.remove(element);
-							break;
-						}
-					}
-				}
-
-				// notify listeners
-				ISiteChangedListener[] siteListeners = (ISiteChangedListener[]) listeners.getListeners();
-				for (int i = 0; i < siteListeners.length; i++) {
-					siteListeners[i].featureUninstalled(feature);
-				}
-
-			} else {
-				// FIXME: throw error ? shoudl notfiy user, also should log which pugin are running
-
-			}
-
 		}
-	}
 
-	/**
-	 * remove a plugin entry from the site...
-	 */
-	public void remove(IPluginEntry pluginEntry, IProgressMonitor monitor) throws CoreException {
-		//FIXME: hum... just delete the directory or the JAR ? delegate to subclass ?
+		// notify listeners
+		ISiteChangedListener[] siteListeners = (ISiteChangedListener[]) listeners.getListeners();
+		for (int i = 0; i < siteListeners.length; i++) {
+			siteListeners[i].featureUninstalled(feature);
+		}
 
 	}
 
@@ -266,9 +189,15 @@ public abstract class Site implements ISite, IWritable {
 	public abstract Feature createExecutableFeature(IFeature sourceFeature) throws CoreException;
 
 	/**
-	 * store Feature files/ Fetaures info into the Site
+	 * store Feature files/ Features info into the Site
 	 */
 	protected abstract void storeFeatureInfo(VersionedIdentifier featureIdentifier, String contentKey, InputStream inStream) throws CoreException;
+
+	/**
+	 * removes Feature files/ Feature info from the Site
+	 */
+	protected abstract void removeFeatureInfo(VersionedIdentifier featureIdentifier) throws CoreException;
+
 
 	/**
 	 * return the URL of the archive ID

@@ -1,5 +1,7 @@
 package org.eclipse.update.core;
 
+import org.eclipse.core.runtime.MultiStatus;
+
 /*
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
@@ -16,6 +18,13 @@ public interface IProblemHandler {
 	 */
 
 	boolean reportProblem(String problemText);
+	
+	/**
+	 * 
+	 * @since 2.0 
+	 */
+
+	boolean reportProblem(String problemText, MultiStatus status);	
 		
 }
 

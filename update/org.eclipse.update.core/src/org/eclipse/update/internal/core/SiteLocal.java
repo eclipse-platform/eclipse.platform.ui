@@ -12,7 +12,6 @@ import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.core.IInstallConfiguration;
 import org.xml.sax.SAXException;
 
 /**
@@ -407,7 +406,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 */
 	public void addToPreservedConfigurations(IInstallConfiguration configuration) throws CoreException {
 		if (configuration != null) {
-			
+
 			// create new configuration based on the one to preserve
 			InstallConfiguration newConfiguration = null;
 			String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(DEFAULT_PRESERVED_CONFIG_FILE);
@@ -415,7 +414,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 				URL newFile = UpdateManagerUtils.getURL(getLocation(), newFileName, null);
 				Date currentDate = configuration.getCreationDate();
 				// pass the date onto teh name
-				String	name = DEFAULT_PRESERVED_CONFIG_LABEL + currentDate.getTime();
+				String name = DEFAULT_PRESERVED_CONFIG_LABEL + currentDate.getTime();
 				newConfiguration = new InstallConfiguration(configuration, newFile, name);
 				// set teh same date in the installConfig
 				newConfiguration.setCreationDate(currentDate);
@@ -425,7 +424,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 				throw new CoreException(status);
 			}
 			((InstallConfiguration) configuration).saveConfigurationFile();
-			
+
 			// add to the list			
 			addPreservedInstallConfiguration(configuration);
 		}
@@ -468,22 +467,71 @@ public class SiteLocal implements ILocalSite, IWritable {
 	 * @see ILocalSite#getPreservedConfigurationFor(IInstallConfiguration)
 	 */
 	public IInstallConfiguration getPreservedConfigurationFor(IInstallConfiguration configuration) {
-		
+
 		// based on time stamp for now
 		IInstallConfiguration preservedConfig = null;
-		if (configuration!=null){
+		if (configuration != null) {
 			IInstallConfiguration[] preservedConfigurations = getPreservedConfigurations();
-			if (preservedConfigurations!=null){
+			if (preservedConfigurations != null) {
 				for (int indexPreserved = 0; indexPreserved < preservedConfigurations.length; indexPreserved++) {
-					if (configuration.getCreationDate().equals(preservedConfigurations[indexPreserved].getCreationDate())){
+					if (configuration.getCreationDate().equals(preservedConfigurations[indexPreserved].getCreationDate())) {
 						preservedConfig = preservedConfigurations[indexPreserved];
 						break;
 					}
 				}
 			}
 		}
-		
+
 		return preservedConfig;
 	}
 
+	/**
+	 * returns a list of PluginEntries that are not used by any other configured feature
+	 */
+	public IPluginEntry[] getDeltaPluginEntries(IFeature feature) throws CoreException {
+
+		IPluginEntry[] pluginsToRemove = new IPluginEntry[0];
+
+		// get the plugins from the feature
+		IPluginEntry[] entries = feature.getPluginEntries();
+		if (entries != null) {
+			// get all the other plugins from all the other features
+			Set allPluginID = new HashSet();
+			IConfigurationSite[] allConfiguredSites = getCurrentConfiguration().getConfigurationSites();
+			if (allConfiguredSites != null) {
+				for (int indexSites = 0; indexSites < allConfiguredSites.length; indexSites++) {
+					IFeatureReference[] features = allConfiguredSites[indexSites].getConfiguredFeatures();
+					if (features != null) {
+						for (int indexFeatures = 0; indexFeatures < features.length; indexFeatures++) {
+							if (!features[indexFeatures].getURL().equals(feature.getURL())) {
+								IPluginEntry[] pluginEntries = features[indexFeatures].getFeature().getPluginEntries();
+								if (pluginEntries != null) {
+									for (int indexEntries = 0; indexEntries < pluginEntries.length; indexEntries++) {
+										allPluginID.add(entries[indexEntries].getIdentifier());
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+			// create the delta with the plugins that may be still used by other configured or unconfigured feature
+			List plugins = new ArrayList();
+			for (int indexPlugins = 0; indexPlugins < entries.length; indexPlugins++) {
+				if (!allPluginID.contains(entries[indexPlugins].getIdentifier())) {
+					plugins.add(entries[indexPlugins]);
+				}
+			}
+
+			// move List into Array
+			if (!plugins.isEmpty()) {
+				pluginsToRemove = new IPluginEntry[plugins.size()];
+				plugins.toArray(pluginsToRemove);
+			}
+
+		}
+
+		return pluginsToRemove;
+	}
 }

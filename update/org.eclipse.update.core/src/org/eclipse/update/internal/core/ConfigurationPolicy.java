@@ -9,6 +9,8 @@ import java.util.*;
 
 import org.eclipse.core.boot.IPlatformConfiguration;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeatureReference;
 
@@ -129,22 +131,59 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	}
 
 	/**
+	 * check if the plugins to unconfigure are required by other configured feature and
 	 * adds teh feature to teh list of features if the policy is USER_EXCLUDE
 	 */
 	/*package*/
 	void unconfigure(IFeatureReference feature, IProblemHandler handler) throws CoreException {
 
-		//Start UOW ?
-		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
-		activity.setLabel(feature.getFeature().getIdentifier().toString());
-		activity.setDate(new Date());
+		boolean unconfigure = true;
+		String uniqueId = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+		MultiStatus multiStatus = new MultiStatus(uniqueId,IStatus.WARNING,"Some plugin of this feature are required by the following running plugins",null);
 
-		addUnconfiguredFeatureReference(feature);
+		// plugins to remove		
+		IPluginEntry[] pluginsToRemove = ((SiteLocal)SiteManager.getLocalSite()).getDeltaPluginEntries(feature.getFeature());
+		
+		// all other plugins that are configured
+		IPluginDescriptor[] descriptors =Platform.getPluginRegistry().getPluginDescriptors();
 
-		// everything done ok
-		activity.setStatus(IActivity.STATUS_OK);
-		((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+		for (int i = 0; i < descriptors.length; i++) {
+			if (require(descriptors[i],pluginsToRemove)){
+				Status status = new Status(IStatus.WARNING,uniqueId,IStatus.OK,descriptors[i].getUniqueIdentifier(),null);
+				multiStatus.add(status);				
+			}
+		}
+		
+		if (multiStatus.getChildren().length>0){
+			unconfigure = handler.reportProblem("Are you certain to want to unconfigure this feature ?",multiStatus);
+		}
 
+		if (unconfigure){
+			//Start UOW ?
+			ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);
+			activity.setLabel(feature.getFeature().getIdentifier().toString());
+			activity.setDate(new Date());
+	
+			addUnconfiguredFeatureReference(feature);
+	
+			// everything done ok
+			activity.setStatus(IActivity.STATUS_OK);
+			((InstallConfiguration) SiteManager.getLocalSite().getCurrentConfiguration()).addActivity(activity);
+		}
+	}
+
+	/**
+	 * returns true if the pluginDescripto requires one or more pluginEntry
+	 * and the pluginDescriptor is not part of the pluginEntries
+	 */
+	private boolean require(IPluginDescriptor descriptor, IPluginEntry[] entries){
+		boolean result = false;
+		if (descriptor != null && entries!=null){
+			IPluginPrerequisite[] prereq = descriptor.getPluginPrerequisites();
+			//FIXME: todo  list
+				
+			}
+		return result;
 	}
 
 	/**

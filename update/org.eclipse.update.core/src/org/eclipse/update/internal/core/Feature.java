@@ -8,7 +8,9 @@ import java.net.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.update.core.*;
+import org.eclipse.update.core.IPluginEntry;
 import org.xml.sax.SAXException;
 /**
  * Abstract Class that implements most of the behavior of a feature
@@ -656,12 +658,76 @@ public abstract class Feature implements IFeature {
 	 * remove myself...
 	 */
 	public void remove(IProgressMonitor monitor) throws CoreException {
-		// do not remove related plugins as some willbe removed soem won;t
-		// the computaion has been done in Site#remove
 		
-		//FIXME: remove the directory or teh JAR ? delegate to subclass
+		// remove the feature and the plugins if they are not used and not activated
+
+		// get the plugins from the feature
+		IPluginEntry[] pluginsToRemove = ((SiteLocal) SiteManager.getLocalSite()).getDeltaPluginEntries(this);
+
+		try {
 		
+			// obtain the list of *Streamable Storage Unit*
+			// from the archive
+			if (monitor != null) {
+				int total = pluginsToRemove == null ? 1 : pluginsToRemove.length + 1;
+				monitor.beginTask("Uninstall feature " + getLabel(), total);
+			}
+			if (pluginsToRemove != null) {
+				for (int i = 0; i < pluginsToRemove.length; i++) {
+					if (monitor != null) {
+						monitor.subTask("Removing plug-in: " + pluginsToRemove[i]);
+						if (monitor.isCanceled()) {
+							throw CANCEL_EXCEPTION;
+						}
+					}
+
+					remove(pluginsToRemove[i]);
+
+					if (monitor != null) {
+						monitor.worked(1);
+						if (monitor.isCanceled()) {
+							throw CANCEL_EXCEPTION;
+						}
+					}
+
+				}
+			}
+
+			// install the Feature info
+			String[] names = getStorageUnitNames();
+			if (names != null) {
+				if (monitor != null) {
+					monitor.subTask("Removing Feature information");
+					if (monitor.isCanceled()) {
+						throw CANCEL_EXCEPTION;
+					}
+				}
+
+				 ((Site)this.getSite()).removeFeatureInfo(getIdentifier());
+
+				closeFeature();
+				if (monitor != null) {
+					monitor.worked(1);
+					if (monitor.isCanceled()) {
+						throw CANCEL_EXCEPTION;
+					}
+				}
+
+			}
+
+		} catch (IOException e) {
+			String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+			IStatus status = new Status(IStatus.ERROR, id, IStatus.OK, "Error during Uninstall", e);
+			throw new CoreException(status);
+		}		
 	}
+	
+	/*
+	 * @see IPluginContainer#remove(IPluginEntry)
+	 */
+	public void remove(IPluginEntry entry) throws CoreException {
+		((Site)getSite()).remove(entry);		
+	}	
 	
 	/** 
 	 * initialize teh feature by reading the feature.xml if it exists
