@@ -42,7 +42,7 @@ public class ProjectCreator {
 			IJavaProject javaProject = createJavaProject(projectName);
 			
 			File destDir= javacTask.getDestdir();
-			String destDirName= destDir.getName();
+			String destDirName= destDir == null ? null : destDir.getName();
 			org.apache.tools.ant.types.Path sourceDirs= javacTask.getSrcdir();
 			createSourceDirectories(destDir, destDirName, sourceDirs, javaProject);
 			
@@ -82,12 +82,16 @@ public class ProjectCreator {
 	}
 
 	private void createSourceDirectories(File destDir, String destDirName, org.apache.tools.ant.types.Path sourceDirs, IJavaProject javaProject) throws CoreException {
-		//create the source directories
 		String[] sourceDirectories= sourceDirs.list();
 		for (int i = 0; i < sourceDirectories.length; i++) {
 			String srcDir = sourceDirectories[i];
 			File srcDirectory= new File(srcDir);
-			addSourceContainer(javaProject, srcDirectory.getName(), srcDir, destDirName, destDir.getAbsolutePath());
+			String srcDirectoryName= srcDirectory.getName();
+			String destDirPath= destDir == null ? srcDir : destDir.getAbsolutePath();
+			if (destDirName == null) {
+			    destDirName= srcDirectoryName;
+			}
+			addSourceContainer(javaProject, srcDirectoryName, srcDir, destDirName, destDirPath);
 		}
 	}
 
@@ -142,15 +146,16 @@ public class ProjectCreator {
 		}
 		IPackageFragmentRoot root= jproject.getPackageFragmentRoot(container);
 
-		IFolder output = null;
+		IPath output= null;
 		if (outputName!= null) {
-			output = project.getFolder(outputName);
-			if (!output.exists()) {
-				output.createLink(new Path(outputPath), IResource.ALLOW_MISSING_LOCAL, null);
+			IFolder outputFolder = project.getFolder(outputName);
+			if (!outputFolder.exists()) {
+			    outputFolder.createLink(new Path(outputPath), IResource.ALLOW_MISSING_LOCAL, null);
 			}
+			output= outputFolder.getFullPath();
 		}
 				
-		IClasspathEntry cpe= JavaCore.newSourceEntry(root.getPath(), new IPath[0], output.getFullPath());
+		IClasspathEntry cpe= JavaCore.newSourceEntry(root.getPath(), new IPath[0], output);
 		
 		addToClasspath(jproject, cpe);		
 		return root;
