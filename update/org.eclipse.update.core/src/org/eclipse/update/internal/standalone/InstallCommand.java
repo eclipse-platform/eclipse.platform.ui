@@ -135,12 +135,10 @@ public class InstallCommand extends ScriptedCommand {
 			} 
 		} catch (CoreException ce) {
 			IStatus status = ce.getStatus();
-			if (status != null
-				&& status.getCode() == ISite.SITE_ACCESS_EXCEPTION) {
-				// Just show this but do not throw exception
-				// because there may be results anyway.
+			if (status == null)
 				System.out.println("Connection Error");
-			}
+			else
+				System.out.println(status.getMessage());
 			return false;
 		}
 	}
