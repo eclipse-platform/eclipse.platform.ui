@@ -148,14 +148,11 @@ public class DefaultPreferences extends EclipsePreferences {
 			IConfigurationElement[] elements = extensions[i].getConfigurationElements();
 			for (int j = 0; j < elements.length; j++)
 				if (ELEMENT_CUSTOMIZATION.equals(elements[j].getName())) {
-					IConfigurationElement[] childElements = elements[j].getChildren();
-					for (int k = 0; k < childElements.length; k++) {
-						if (name().equals(childElements[k].getAttribute(ATTRIBUTE_QUALIFIER))) {
-							if (InternalPlatform.DEBUG_PREFERENCES)
-								Policy.debug("Running default preference customization as defined by: " + childElements[k].getDeclaringExtension().getDeclaringPluginDescriptor()); //$NON-NLS-1$
-							runCustomizer(childElements[k]);
-							return;
-						}
+					if (name().equals(elements[j].getDeclaringExtension().getNamespace())) {
+						if (InternalPlatform.DEBUG_PREFERENCES)
+							Policy.debug("Running default preference customization as defined by: " + elements[j].getDeclaringExtension().getDeclaringPluginDescriptor()); //$NON-NLS-1$
+						runCustomizer(elements[j]);
+						return;
 					}
 				}
 		}
