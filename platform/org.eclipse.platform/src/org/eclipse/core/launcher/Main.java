@@ -295,8 +295,7 @@ public class Main {
 				for (int i = 0; i < len; i++) {
 					char c = urlString.charAt(i);
 					if (c == '+')
-						buf.append("%2B");
-					//$NON-NLS-1$
+						buf.append("%2B"); //$NON-NLS-1$
 					else
 						buf.append(c);
 				}
@@ -656,7 +655,6 @@ public class Main {
 	 * Runs this launcher with the arguments specified in the given string.
 	 * 
 	 * @param argString the arguments string
-	 * @exception Exception thrown if a problem occurs during launching
 	 */
 	public static void main(String argString) {
 		Vector list = new Vector(5);
@@ -679,7 +677,7 @@ public class Main {
 	 * </p>
 	 * 
 	 * @param args the command line arguments
-	 * @see #run
+	 * @see #run(String[])
 	 */
 	public static void main(String[] args) {
 		int result = new Main().run(args);
