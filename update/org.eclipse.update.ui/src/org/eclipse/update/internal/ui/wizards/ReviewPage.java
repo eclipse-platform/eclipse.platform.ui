@@ -90,9 +90,9 @@ public class ReviewPage
                 Object[] children = category.getChildren();
                 ArrayList list = new ArrayList(children.length);
                 for (int i=0; i<children.length; i++) {
-                    if (children[i] instanceof IFeatureAdapter) {
+                    if (children[i] instanceof FeatureReferenceAdapter) {
                         try {
-                            IInstallFeatureOperation job = findJob(((IFeatureAdapter)children[i]).getFeature(null));
+                            IInstallFeatureOperation job = findJob((FeatureReferenceAdapter)children[i]);
                             if (job != null)
                                 list.add(job);
                         } catch (CoreException e) {
@@ -1137,12 +1137,16 @@ public class ReviewPage
 		}
 	}
     
-    private IInstallFeatureOperation findJob(IFeature feature) {
+    private IInstallFeatureOperation findJob(FeatureReferenceAdapter feature)
+            throws CoreException {
         if (jobs == null)
             return null;
-        for (int i=0; i<jobs.size(); i++)
-            if (((IInstallFeatureOperation)jobs.get(i)).getFeature() == feature)
-                return (IInstallFeatureOperation)jobs.get(i);
+        for (int i = 0; i < jobs.size(); i++)
+            if (((IInstallFeatureOperation) jobs.get(i)).getFeature()
+                    .getVersionedIdentifier().equals(feature.getFeatureReference()
+                    .getVersionedIdentifier()))
+                return (IInstallFeatureOperation) jobs.get(i);
+
         return null;
     }
     
