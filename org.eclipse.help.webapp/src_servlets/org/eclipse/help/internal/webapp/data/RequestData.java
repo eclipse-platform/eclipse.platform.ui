@@ -3,12 +3,10 @@
  * All Rights Reserved.
  */
 package org.eclipse.help.internal.webapp.data;
-import java.util.Locale;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.webapp.servlet.*;
 
@@ -34,14 +32,7 @@ public class RequestData {
 		this.request = request;
 		preferences=new WebappPreferences();
 
-		if ((HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER)
-			&& request != null)
-			locale = request.getLocale().toString();
-		else
-			locale = BootLoader.getNL();
-			
-		if (locale == null)
-			locale = Locale.getDefault().toString();
+		locale = UrlUtil.getLocale(request);
 	}
 
 	/**

@@ -9,6 +9,8 @@ import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.eclipse.core.boot.BootLoader;
+import org.eclipse.help.internal.HelpSystem;
 import org.eclipse.help.internal.util.TString;
 
 public class UrlUtil {
@@ -236,4 +238,17 @@ public class UrlUtil {
 		return agent.indexOf("opera") >= 0;
 	}
 
+	public static String getLocale(HttpServletRequest request) {
+		String locale = null;
+		if ((HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER)
+			&& request != null)
+			locale = request.getLocale().toString();
+		else
+			locale = BootLoader.getNL();
+			
+		if (locale == null)
+			locale = Locale.getDefault().toString();
+		
+		return locale;
+	}
 }
