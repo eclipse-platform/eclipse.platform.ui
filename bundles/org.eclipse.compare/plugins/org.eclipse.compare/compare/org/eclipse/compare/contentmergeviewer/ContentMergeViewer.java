@@ -118,7 +118,7 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 				handleResizeAncestor(0, 0, 0, 0);
 			}
 			
-			fLeftLabel.getSize();	// WORKAROUND FOR PR
+			fLeftLabel.getSize();	// without this resizing would not always work
 			
 			if (centerWidth > 3) {
 				fLeftLabel.setBounds(0, y, width1+1, headerHeight);

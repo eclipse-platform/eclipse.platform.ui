@@ -485,11 +485,8 @@ public class Differencer {
 	 * @param input the object for which to return children
 	 */
 	protected Object[] getChildren(Object input) {
-		if (input instanceof IStructureComparator) {
-			Object[] children= ((IStructureComparator)input).getChildren();
-			if (children != null && children.length > 0)
-				return children;
-		}
+		if (input instanceof IStructureComparator)
+			return ((IStructureComparator)input).getChildren();
 		return null;
 	}
 	

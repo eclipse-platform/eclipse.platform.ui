@@ -584,7 +584,20 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		);
 	}
 	
+	/**
+	 * Called whenever setFocus() is called on the ContentViewer's top level SWT Composite.
+	 * This implementation sets the focus to the first enabled text widget.
+	 */
 	/* package */ boolean internalSetFocus() {
+		if (fFocusPart == null) {
+			if (fLeft != null && fLeft.getEnabled()) {
+				fFocusPart= fLeft;
+			} else if (fRight != null && fRight.getEnabled()) {
+				fFocusPart= fRight;
+			} else if (fAncestor != null && fAncestor.getEnabled()) {
+				fFocusPart= fAncestor;
+			}
+		}
 		if (fFocusPart != null) {
 			StyledText st= fFocusPart.getTextWidget();
 			if (st != null)
@@ -887,12 +900,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		}
 		
 		tp.setEnabled(enabled);
-		if (fFocusPart == null) {
-			if (enabled) {
-				fFocusPart= tp;
-				fFocusPart.getTextWidget().setFocus();
-			}
-		}
 
 		return enabled;
 	}
@@ -2068,7 +2075,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 			// before we set fCurrentDiff we change the selection
 			// so that the paint code uses the old background colors
-			// otherwise we get screen cheese
+			// otherwise selection isn't drawn correctly
 			if (isThreeWay())
 				fAncestor.setSelection(d.fAncestorPos);
 			fLeft.setSelection(d.fLeftPos);

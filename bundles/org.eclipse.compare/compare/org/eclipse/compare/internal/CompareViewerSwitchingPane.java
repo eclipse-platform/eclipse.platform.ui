@@ -76,6 +76,8 @@ public abstract class CompareViewerSwitchingPane extends Pane
 		fControlVisibility= visibility;
 		
 		setViewer(new NullViewer(this));
+		
+		CompareNavigator.hookNavigation(this);
 
 		addDisposeListener(
 			new DisposeListener() {
@@ -98,7 +100,7 @@ public abstract class CompareViewerSwitchingPane extends Pane
 	public Viewer getViewer() {
 		return fViewer;
 	}
-
+	
 	/**
 	 * Sets the current viewer.
 	 */
@@ -122,9 +124,9 @@ public abstract class CompareViewerSwitchingPane extends Pane
 			
 			fViewer.setInput(null);
 								
-			if (content != null && !content.isDisposed()) {
+			if (content != null && !content.isDisposed())
 				content.dispose();
-			}		
+
 		} else
 			oldEmpty= false;			
 		setContent(null);
@@ -132,11 +134,12 @@ public abstract class CompareViewerSwitchingPane extends Pane
 		fViewer= newViewer;
 
 		if (fViewer != null) {
-			// workaround: setContent changes the visibility of the CustomPane
-			boolean old= getVisible();	
+			// we have to remember and restore the old visibility of the CustomPane
+			// since setContent changes the visibility
+			boolean old= getVisible();
+			Control newControl= fViewer.getControl();
 			setContent(fViewer.getControl());
-			setVisible(old);
-			// end of workaround
+			setVisible(old);	// restore old visibility
 
 			boolean newEmpty= isEmpty();
 
@@ -145,15 +148,12 @@ public abstract class CompareViewerSwitchingPane extends Pane
 			if (fViewer instanceof StructuredViewer)
 				((StructuredViewer)fViewer).addDoubleClickListener(this);
 
-			if (oldEmpty != newEmpty) {// relayout my container
+			if (oldEmpty != newEmpty) {	// relayout my container
 				Composite parent= getParent();
 				if (parent instanceof Splitter)
 					((Splitter)parent).setVisible(this, fControlVisibility ? !newEmpty : true);
-				//else 
-				//	parent.layout(true);
 			}
 				
-			//else if (!newEmpty)// otherwise just relayout myself
 			layout(true);
 		}
 	}
@@ -204,11 +204,27 @@ public abstract class CompareViewerSwitchingPane extends Pane
 		for (int i= 0; i < listeners.length; i++)
 			((ISelectionChangedListener) listeners[i]).selectionChanged(ev);
 	}
+	
+	private boolean hasFocus2() {
+		// do we have focus?
+		Display display= getDisplay();
+		if (display != null)
+			for (Control focus= display.getFocusControl(); focus != null; focus= focus.getParent())
+				if (focus == this)
+					return true;
+		return false;
+	}
 		
+	/**
+	 * If the old viewer had focus, new setInput tries to set
+	 * focus on new viewer too.
+	 */ 
 	public void setInput(Object input) {
 
 		if (fInput == input)
 			return;
+			
+		boolean hadFocus= hasFocus2();
 		
 		try {
 			if (fViewer != null)
@@ -247,7 +263,9 @@ public abstract class CompareViewerSwitchingPane extends Pane
 				Object data= c.getData(CompareUI.COMPARE_VIEWER_TITLE);
 				if (data instanceof String)
 					title= (String) data;
-			}
+				if (hadFocus)
+					c.setFocus();
+			}	
 		}
 			
 		setText(title != null ? title : "");

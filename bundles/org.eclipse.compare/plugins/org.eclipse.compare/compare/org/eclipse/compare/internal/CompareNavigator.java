@@ -15,7 +15,7 @@ import org.eclipse.compare.CompareEditorInput;
 
 /**
  * Supports cross-pane navigation through differences.
- * XXX: Design is bogus because the feature had to be added without touching API.
+ * XXX: Design is as it is because the feature had to be added without touching API.
  */
 public class CompareNavigator {
 	

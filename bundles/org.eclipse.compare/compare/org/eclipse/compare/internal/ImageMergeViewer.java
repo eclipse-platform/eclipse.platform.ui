@@ -62,15 +62,9 @@ public class ImageMergeViewer extends ContentMergeViewer {
 	}
 	
 	public void createControls(Composite composite) {
-		fAncestor= new ImageCanvas(composite, SWT.NONE);
-		CompareNavigator.hookNavigation(fAncestor);
-		
-		fLeft= new ImageCanvas(composite, SWT.NONE);
-		CompareNavigator.hookNavigation(fLeft);
-		fLeft.setFocus();
-		
-		fRight= new ImageCanvas(composite, SWT.NONE);
-		CompareNavigator.hookNavigation(fRight);
+		fAncestor= new ImageCanvas(composite, SWT.NO_FOCUS);
+		fLeft= new ImageCanvas(composite, SWT.NO_FOCUS);
+		fRight= new ImageCanvas(composite, SWT.NO_FOCUS);
 	}
 
 	private static void setInput(ImageCanvas canvas, Object input) {
