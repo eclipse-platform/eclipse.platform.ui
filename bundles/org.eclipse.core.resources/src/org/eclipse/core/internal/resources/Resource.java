@@ -695,7 +695,10 @@ public boolean isPhantom(int flags) {
  * @see IResource
  */
 public boolean isReadOnly() {
-	return CoreFileSystemLibrary.isReadOnly(getLocation().toOSString());
+	IPath location = getLocation();
+	if (location == null)
+		return false;
+	return CoreFileSystemLibrary.isReadOnly(location.toOSString());
 }
 protected IPath makePathAbsolute(IPath target) {
 	if (target.isAbsolute())
