@@ -21,11 +21,15 @@ import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
 
 /**
  * 
@@ -58,6 +62,20 @@ public class WatchAction implements IObjectActionDelegate {
 		}
 	}
 
+	private void showExpressionsView() {
+		IWorkbenchPage page = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IViewPart part = page.findView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+		if (part == null) {
+			try {
+				page.showView(IDebugUIConstants.ID_EXPRESSION_VIEW);
+			} catch (PartInitException e) {
+			}
+		} else {
+			page.bringToTop(part);
+		}
+
+	}
+
 	private void createExpression(IVariable variable) {
 		IWatchExpression expression;
 		try {
@@ -75,6 +93,7 @@ public class WatchAction implements IObjectActionDelegate {
 			context = ((ILaunch) object).getDebugTarget();
 		}
 		expression.setExpressionContext(context);
+		showExpressionsView();
 	}
 
 	/**
