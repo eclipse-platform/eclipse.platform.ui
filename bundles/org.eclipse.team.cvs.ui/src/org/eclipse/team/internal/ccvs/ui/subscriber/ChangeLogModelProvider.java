@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.team.core.synchronize.*;
@@ -58,6 +59,8 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	private CVSTag tag1;
 	private CVSTag tag2;
 	private final static String SORT_ORDER_GROUP = "changelog_sort"; //$NON-NLS-1$
+	private static final String P_LAST_COMMENTSORT = TeamUIPlugin.ID + ".P_LAST_COMMENT_SORT"; //$NON-NLS-1$
+	private static final String P_LAST_RESOURCESORT = TeamUIPlugin.ID + ".P_LAST_RESOURCE_SORT"; //$NON-NLS-1$
 	
 	/**
 	 * Action that allows changing the model providers sort order.
@@ -67,11 +70,11 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		private int sortType;
 		public final static int RESOURCE_NAME = 1;
 		public final static int COMMENT = 2;
-		protected ToggleSortOrderAction(String name, int criteria, int sortType) {
+		protected ToggleSortOrderAction(String name, int criteria, int sortType, int defaultCriteria) {
 			super(name, Action.AS_RADIO_BUTTON);
 			this.criteria = criteria;
 			this.sortType = sortType;
-			update();
+			setChecked(criteria == defaultCriteria);		
 		}
 
 		public void run() {
@@ -80,6 +83,11 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 				ChangeLogModelSorter sorter = (ChangeLogModelSorter) viewer.getSorter();
 				if (isChecked() && sorter != null && getCriteria(sorter) != criteria) {
 					viewer.setSorter(createSorter(sorter));
+					String key = sortType == RESOURCE_NAME ? P_LAST_RESOURCESORT : P_LAST_COMMENTSORT;
+					IDialogSettings pageSettings = getConfiguration().getSite().getPageSettings();
+					if(pageSettings != null) {
+						pageSettings.put(key, criteria);
+					}
 					update();
 				}
 			}
@@ -119,6 +127,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 			super.initialize(configuration);
 			MenuManager sortByComment = new MenuManager(Policy.bind("ChangeLogModelProvider.0"));	 //$NON-NLS-1$
 			MenuManager sortByResource = new MenuManager(Policy.bind("ChangeLogModelProvider.6"));	 //$NON-NLS-1$
+			
 			appendToGroup(
 					ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 					SORT_ORDER_GROUP, 
@@ -128,17 +137,15 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 					SORT_ORDER_GROUP, 
 					sortByResource);
 			
-			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.1"), ChangeLogModelSorter.COMMENT, ToggleSortOrderAction.COMMENT)); //$NON-NLS-1$
-			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.2"), ChangeLogModelSorter.DATE, ToggleSortOrderAction.COMMENT)); //$NON-NLS-1$
-			Action a = new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.3"), ChangeLogModelSorter.USER, ToggleSortOrderAction.COMMENT); //$NON-NLS-1$
-			a.setChecked(true);
-			sortByComment.add(a);
+			ChangeLogModelSorter sorter = (ChangeLogModelSorter)getViewerSorter();
 			
-			a = new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.8"), ChangeLogModelSorter.PATH, ToggleSortOrderAction.RESOURCE_NAME); //$NON-NLS-1$
-			a.setChecked(true);
-			sortByResource.add(a);
-			sortByResource.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.7"), ChangeLogModelSorter.NAME, ToggleSortOrderAction.RESOURCE_NAME)); //$NON-NLS-1$
-			sortByResource.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.9"), ChangeLogModelSorter.PARENT_NAME, ToggleSortOrderAction.RESOURCE_NAME)); //$NON-NLS-1$
+			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.1"), ChangeLogModelSorter.COMMENT, ToggleSortOrderAction.COMMENT, sorter.getCommentCriteria())); //$NON-NLS-1$
+			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.2"), ChangeLogModelSorter.DATE, ToggleSortOrderAction.COMMENT, sorter.getCommentCriteria())); //$NON-NLS-1$
+			sortByComment.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.3"), ChangeLogModelSorter.USER, ToggleSortOrderAction.COMMENT, sorter.getCommentCriteria())); //$NON-NLS-1$
+
+			sortByResource.add( new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.8"), ChangeLogModelSorter.PATH, ToggleSortOrderAction.RESOURCE_NAME, sorter.getResourceCriteria())); //$NON-NLS-1$
+			sortByResource.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.7"), ChangeLogModelSorter.NAME, ToggleSortOrderAction.RESOURCE_NAME, sorter.getResourceCriteria())); //$NON-NLS-1$
+			sortByResource.add(new ToggleSortOrderAction(Policy.bind("ChangeLogModelProvider.9"), ChangeLogModelSorter.PARENT_NAME, ToggleSortOrderAction.RESOURCE_NAME, sorter.getResourceCriteria())); //$NON-NLS-1$
 		}
 	}
 	
@@ -387,7 +394,7 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 		if(info.getComparator().isThreeWay()) {
 			return (kind & SyncInfo.DIRECTION_MASK) != SyncInfo.OUTGOING;
 		}
-		return true;
+		return kind != SyncInfo.DELETION;
 	}
 
 	/**
@@ -463,7 +470,18 @@ public class ChangeLogModelProvider extends SynchronizeModelProvider {
 	 * @see org.eclipse.team.ui.synchronize.viewers.SynchronizeModelProvider#getViewerSorter()
 	 */
 	public ViewerSorter getViewerSorter() {
-		return new ChangeLogModelSorter(ChangeLogModelSorter.USER, ChangeLogModelSorter.PATH);
+		int commentSort = ChangeLogModelSorter.USER;
+		int resourceSort = ChangeLogModelSorter.PATH;
+		try {
+			IDialogSettings pageSettings = getConfiguration().getSite().getPageSettings();
+			if(pageSettings != null) {
+				commentSort = pageSettings.getInt(P_LAST_COMMENTSORT);
+				resourceSort = pageSettings.getInt(P_LAST_RESOURCESORT);
+			}
+		} catch(NumberFormatException e) {
+			// ignore and use the defaults.
+		}
+		return new ChangeLogModelSorter(commentSort, resourceSort);
 	}
 
 	/* (non-Javadoc)

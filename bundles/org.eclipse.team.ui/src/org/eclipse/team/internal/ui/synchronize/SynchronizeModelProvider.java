@@ -547,10 +547,6 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 		pendingLabelUpdates.add(diffNode);
 	}
 	
-	/**
-	 * @param tree
-	 * @return
-	 */
 	private boolean canUpdateViewer() {
 		StructuredViewer viewer = getViewer();
 		return getAllowRefreshViewer() && viewer != null && ! viewer.getControl().isDisposed();
@@ -728,7 +724,7 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * @param changes the model elements that have changed.
 	 */
 	private void processMarkerChanges(final Map changes) {
-		Job job = new Job("Synchronize View: Processing marker changes") {
+		Job job = new Job("Synchronize View: Processing marker changes") { //$NON-NLS-1$
 			protected IStatus run(IProgressMonitor monitor) {
 				long start = System.currentTimeMillis();
 				synchronized (this) {

@@ -230,6 +230,7 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 	 */
 	public void initialize(final ISynchronizePageConfiguration configuration) {
 		super.initialize(configuration);
+		actionsInitialized = true;
 		final Object[] listeners = actionContributions.getListeners();
 		for (int i= 0; i < listeners.length; i++) {
 			final SynchronizePageActionGroup contribution = (SynchronizePageActionGroup)listeners[i];
@@ -242,7 +243,6 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 				}
 			});
 		}
-		actionsInitialized = true;
 	}
 	
 	/* (non-Javadoc)

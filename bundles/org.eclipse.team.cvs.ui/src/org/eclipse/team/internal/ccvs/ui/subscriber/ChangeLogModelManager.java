@@ -19,7 +19,6 @@ import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 
-
 /**
  * Manager for hierarchical models
  */

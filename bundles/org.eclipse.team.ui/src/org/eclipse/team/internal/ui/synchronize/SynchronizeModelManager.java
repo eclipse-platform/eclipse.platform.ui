@@ -11,20 +11,27 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.internal.ui.TeamUIPlugin;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 import org.eclipse.ui.IActionBars;
 
 /**
  * Manages the models that can be displayed by a synchronize page
  */
 public abstract class SynchronizeModelManager extends SynchronizePageActionGroup {
+	
+	private static final String P_LAST_PROVIDER = TeamUIPlugin.ID + ".P_LAST_MODELPROVIDER"; //$NON-NLS-1$
 	
 	private ISynchronizeModelProvider modelProvider;
 	private List toggleModelProviderActions;
@@ -107,6 +114,10 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 			modelProvider.dispose();
 		}
 		modelProvider = createModelProvider(id);		
+		IDialogSettings pageSettings = getConfiguration().getSite().getPageSettings();
+		if(pageSettings != null) {
+			pageSettings.put(P_LAST_PROVIDER, modelProvider.getDescriptor().getId());
+		}
 		return modelProvider.prepareInput(monitor);
 	}
 	
@@ -171,7 +182,12 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 		// The input may of been set already. In that case, don't change it and
 		// simply assign it to the view.
 		if(modelProvider == null) {
-			internalPrepareInput(null, null);
+			String defaultProviderId = null; /* use providers prefered */
+			IDialogSettings pageSettings = configuration.getSite().getPageSettings();
+			if(pageSettings != null) {
+				defaultProviderId = pageSettings.get(P_LAST_PROVIDER); 
+			}
+			internalPrepareInput(defaultProviderId, null);
 		}
 		setInput();
 	}
@@ -184,7 +200,7 @@ public abstract class SynchronizeModelManager extends SynchronizePageActionGroup
 		if(advisor != null)
 			advisor.setInput(modelProvider);
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#setActionBars(org.eclipse.ui.IActionBars)
 	 */
