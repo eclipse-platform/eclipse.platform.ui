@@ -120,6 +120,7 @@ var oldName = '<%=data.isEditMode()?data.getWorkingSetName():""%>';
 
 function onloadHandler() {
 	sizeButtons();
+	document.getElementById("workingSet").focus();
 }
 
 function sizeButtons() {
@@ -310,7 +311,7 @@ function keyDownHandler(folderId, key, target)
 <body onload="onloadHandler()">
 
 	<table id="wsTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
-		<tr><td style="padding:5px 10px 0px 10px;"><%=ServletResources.getString("WorkingSetName", request)%>:
+		<tr><td style="padding:5px 10px 0px 10px;"><label for="workingSet"><%=ServletResources.getString("WorkingSetName", request)%>:</label>
 		</td></tr>
 		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" value='<%=data.isEditMode()?data.getWorkingSetName():""%>' maxlength=256 alt='<%=ServletResources.getString("WorkingSetName", request)%>'>
         </td></tr>
