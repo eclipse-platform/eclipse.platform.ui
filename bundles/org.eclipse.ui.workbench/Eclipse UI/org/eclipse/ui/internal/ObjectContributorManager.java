@@ -301,6 +301,8 @@ public abstract class ObjectContributorManager implements IConfigurationElementR
         if (contributorList == null)
             return;
         contributorList.remove(contributor);
+        if (contributorList.isEmpty()) // if we've removed the last one clean out the list
+        	contributors.remove(targetType);
         flushLookup();
     }
 
