@@ -4574,7 +4574,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			int column= 0;
 			for (int i= lineOffset; i < caret; i++)
 				if ('\t' == document.getChar(i))
-					column += tabWidth - (column % tabWidth);
+					column += tabWidth - (tabWidth == 0 ? 0 : column % tabWidth);
 				else
 					column++;
 					
