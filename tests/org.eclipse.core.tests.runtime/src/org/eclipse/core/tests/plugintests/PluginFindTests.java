@@ -13,7 +13,9 @@ package org.eclipse.core.tests.plugintests;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.core.boot.BootLoader;
@@ -26,6 +28,10 @@ import org.eclipse.core.runtime.model.PluginFragmentModel;
 import org.eclipse.core.tests.harness.WorkspaceSessionTest;
 
 public class PluginFindTests extends WorkspaceSessionTest {
+	
+	// Set this to true if you want to make sure that this test
+	// is really testing all the combinations of directories.
+	private boolean verifyCheckingAllCombos = false;
 
 public PluginFindTests() {
 	super(null);
@@ -35,7 +41,7 @@ public PluginFindTests(String name) {
 	super(name);
 }
 
-private void findHelper(String pluginId, String fragmentId, String errorPrefix, String filePrefix, String pluginSubDir) {
+private void findHelper(String pluginId, String fragmentId, String errorPrefix, String filePrefix, String pluginSubDir, Map override) {
 	// Look for a file called <filePrefix>/<pluginId>.txt
 	// Make sure this doesn't cause the plugin to be activated.
 	// Make sure the data in file looks like:
@@ -50,7 +56,11 @@ private void findHelper(String pluginId, String fragmentId, String errorPrefix, 
 	if (fragmentId != null)
 		whichId = fragmentId;
 	path = new Path(filePrefix + "/" + whichId + ".txt");
-	URL result = plugin.find(path);
+	URL result = null;
+	if (override == null)
+		result = plugin.find(path);
+	else
+		result = plugin.find(path, override);
 	assertTrue(errorPrefix + ".1 Plugin should not be activated", !plugin.isPluginActivated());
 	assertNotNull(errorPrefix + ".2 Can't find text file, " + path.toString(), result);
 	// Make sure this is the right URL
@@ -81,7 +91,7 @@ private void findHelper(String pluginId, String fragmentId, String errorPrefix, 
 		assertEquals(errorPrefix + ".5 Data string incorrect", "Test string from " + whichId + " fragment " + pluginSubDir + " directory.", dataString);
 }
 
-private void findFailsHelper(String pluginId, String fragmentId, String errorPrefix, String filePrefix) {
+private void findFailsHelper(String pluginId, String fragmentId, String errorPrefix, String filePrefix, Map override) {
 	IPluginDescriptor plugin = InternalPlatform.getPluginRegistry().getPluginDescriptor(pluginId);
 	assertNotNull(errorPrefix + ".0 Can't find plugin " + pluginId);
 	String whichId = pluginId;
@@ -89,7 +99,11 @@ private void findFailsHelper(String pluginId, String fragmentId, String errorPre
 		whichId = fragmentId;
 	// Now make sure we can't find the file
 	IPath path = new Path(filePrefix + "/" + whichId + ".txt");
-	URL result = plugin.find(path);
+	URL result = null;
+	if (override == null)
+		result = plugin.find(path);
+	else
+		result = plugin.find(path, override);
 	assertNull(errorPrefix + ".1 Found text file, " + path.toString(), result);
 }
 
@@ -157,9 +171,9 @@ private boolean buildFragmentTestFile(String pluginId, String fragmentId, String
 	return true;
 }
 
-private String buildNLTestFile(String pluginId, String fragmentId, int chopSegment) {
+private String buildNLTestFile(String pluginId, String fragmentId, int chopSegment, String fullNL) {
 	// Build up nl related directories and test files
-	String nl = InternalBootLoader.getNL();
+	String nl = fullNL;
 	nl = nl.replace('_', '/');
 	// Chop off the number of segments stated
 	int i = chopSegment;
@@ -187,9 +201,9 @@ private String buildNLTestFile(String pluginId, String fragmentId, int chopSegme
  * Build a test file in the OLD nl/en_US form instead of replacing
  * the under-scores with slashes.
  */
-private String buildOldNLTestFile(String pluginId, String fragmentId, int chopSegment) {
+private String buildOldNLTestFile(String pluginId, String fragmentId, int chopSegment, String fullNL) {
 	// Build up nl related directories and test files
-	String nl = BootLoader.getNL();
+	String nl = fullNL;
 	// Chop off the number of segments stated
 	int i = chopSegment;
 	while (nl.length() > 0 && i > 0) {
@@ -213,42 +227,42 @@ private String buildOldNLTestFile(String pluginId, String fragmentId, int chopSe
 	return null;
 }
 
-private String buildOSTestFile(String pluginId, String fragmentId, int chopSegment) {
+private String buildOSTestFile(String pluginId, String fragmentId, int chopSegment, String fullOS) {
 	// Build up os related directories and test files
-	String fullOS = InternalBootLoader.getOS() + "/" + InternalBootLoader.getOSArch();
+	String strOS = fullOS;
 	int i = chopSegment;
-	while (fullOS.length() > 0 && i > 0) {
+	while (strOS.length() > 0 && i > 0) {
 		i--;
-		int idx = fullOS.lastIndexOf('/');
+		int idx = strOS.lastIndexOf('/');
 		if (idx != -1)
-			fullOS = fullOS.substring(0, idx);
+			strOS = strOS.substring(0, idx);
 		else 
-			fullOS = "";
+			strOS = "";
 	}
-	if ((fullOS.length() == 0) && (i > 0))
+	if ((strOS.length() == 0) && (i > 0))
 		// We couldn't get rid of all the segments we wanted to
 		return null;
 	if (fragmentId == null) {
-		if (buildPluginTestFile(pluginId, "os/" + fullOS))
-			return fullOS;
+		if (buildPluginTestFile(pluginId, "os/" + strOS))
+			return strOS;
 	} else {
-		if (buildFragmentTestFile(pluginId, fragmentId, "os/" + fullOS))
-			return fullOS;
+		if (buildFragmentTestFile(pluginId, fragmentId, "os/" + strOS))
+			return strOS;
 	}
 	return null;
 }
 
-private String buildWSTestFile(String pluginId, String fragmentId, int chopSegments) {
+private String buildWSTestFile(String pluginId, String fragmentId, int chopSegments, String ws) {
 	// Build up ws related directories and test files
-	String ws = InternalBootLoader.getWS();
+	String localws = ws;
 	if (chopSegments > 0)
-		ws = "";
+		localws = "";
 	if (fragmentId == null) {
-		if (buildPluginTestFile(pluginId, "ws/" + ws))
-			return ws;
+		if (buildPluginTestFile(pluginId, "ws/" + localws))
+			return localws;
 	} else {
-		if (buildFragmentTestFile(pluginId, fragmentId, "ws/" + ws))
-			return ws;
+		if (buildFragmentTestFile(pluginId, fragmentId, "ws/" + localws))
+			return localws;
 	}
 	return null;
 }
@@ -348,7 +362,7 @@ public void testFindInteresting () {
 		} catch (IOException ioe) {
 			System.out.println ("Unable to write to test file " + testFile.getPath());
 		}
-		findFailsHelper("interestingPluginFindTest", null, "1", "..");
+		findFailsHelper("interestingPluginFindTest", null, "1", "..", null);
 		testFile.delete();
 		testFile = null;
 
@@ -367,7 +381,7 @@ public void testFindInteresting () {
 		} catch (IOException ioe) {
 			System.out.println ("Unable to write to test file " + testFile.getPath());
 		}
-		findFailsHelper("interestingPluginFindTest", "interestingFragmentFindTest", "2", "..");
+		findFailsHelper("interestingPluginFindTest", "interestingFragmentFindTest", "2", "..", null);
 		testFile.delete();
 
 		// Check for a file in a sibling directory to this plugin
@@ -386,7 +400,7 @@ public void testFindInteresting () {
 		} catch (IOException ioe) {
 			System.out.println ("Unable to write to test file " + testFile.getPath());
 		}
-		findFailsHelper("interestingPluginFindTest", null, "3", "../siblingTestDirectory");
+		findFailsHelper("interestingPluginFindTest", null, "3", "../siblingTestDirectory", null);
 		deleteDirectory(testDirs);
 
 		// Check for a file in a sibling directory to this fragment
@@ -405,7 +419,7 @@ public void testFindInteresting () {
 		} catch (IOException ioe) {
 			System.out.println ("Unable to write to test file " + testFile.getPath());
 		}
-		findFailsHelper("interestingPluginFindTest", "interestingFragmentFindTest", "4", "../siblingFragmentTestDirectory");
+		findFailsHelper("interestingPluginFindTest", "interestingFragmentFindTest", "4", "../siblingFragmentTestDirectory", null);
 		deleteDirectory(testDirs);
 	} finally {
 		if (testFile != null)
@@ -422,21 +436,21 @@ public void testRootFind () {
 	// Do a find for something in the plugin root directory
 	try {
 		if (buildPluginTestFile("rootPluginFindTest", null))
-			findHelper("rootPluginFindTest", null, "1", ".", null);
+			findHelper("rootPluginFindTest", null, "1", ".", null, null);
 	} finally {
 		cleanupTestDirectory("rootPluginFindTest", null, "rootPluginFindTest.txt");
 	}
 	// Do a find for something in the fragment root directory
 	try {
 		if (buildFragmentTestFile("rootPluginFindTest", "rootFragmentFindTest", null))
-			findHelper("rootPluginFindTest", "rootFragmentFindTest", "2", ".", null);
+			findHelper("rootPluginFindTest", "rootFragmentFindTest", "2", ".", null, null);
 	} finally {
 		cleanupTestDirectory("rootPluginFindTest", "rootFragmentFindTest", "rootFragmentFindTest.txt");
 	}
 }
 
 public void testNLFind() {
-	IPluginRegistry registry = InternalPlatform.getPluginRegistry();
+	String fullNL = InternalBootLoader.getNL();
 	// How many segments in the default locale?
 	String nl = InternalBootLoader.getNL();
 	// there is at least one segment
@@ -449,9 +463,11 @@ public void testNLFind() {
 	}
 	// Build up nl related directories and test files
 	try {
-		String subDirectory = buildNLTestFile("nlPluginFindTest", null, 0);
+		String subDirectory = buildNLTestFile("nlPluginFindTest", null, 0, fullNL);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findHelper("nlPluginFindTest", null, "1", "$nl$", "nl/" + subDirectory);
+			findHelper("nlPluginFindTest", null, "1", "$nl$", "nl/" + subDirectory, null);
 		else
 			// We don't expect this one to fail
 			fail ("0.1 Could not build first nl test data for nlPluginFindTest");
@@ -461,9 +477,11 @@ public void testNLFind() {
 	
 	if (localeSegments > 1) {
 		try {
-			String subDirectory = buildNLTestFile("nlPluginFindTest", null, 1);
+			String subDirectory = buildNLTestFile("nlPluginFindTest", null, 1, fullNL);
+			if (verifyCheckingAllCombos)
+				System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 			if (subDirectory != null)
-				findHelper("nlPluginFindTest", null, "2", "$nl$", "nl/" + subDirectory);
+				findHelper("nlPluginFindTest", null, "2", "$nl$", "nl/" + subDirectory, null);
 			else
 				// We don't expect this one to fail
 				fail ("0.2 Could not build first nl test data for nlPluginFindTest");
@@ -474,9 +492,11 @@ public void testNLFind() {
 
 	// Do a find for something in the plugin nl directory
 	try {
-		String subDirectory = buildNLTestFile("nlPluginFindTest", null, localeSegments);
+		String subDirectory = buildNLTestFile("nlPluginFindTest", null, localeSegments, fullNL);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findFailsHelper("nlPluginFindTest", null, "3", "$nl$");
+			findFailsHelper("nlPluginFindTest", null, "3", "$nl$", null);
 		else
 			// We don't expect this one to fail
 			fail ("0.3 Could not build first nl test data for nlPluginFindTest");
@@ -487,7 +507,7 @@ public void testNLFind() {
 	// Do a find for something in the plugin root directory
 	try {
 		if (buildPluginTestFile("nlPluginFindTest", null))
-			findHelper("nlPluginFindTest", null, "4", "$nl$", null);
+			findHelper("nlPluginFindTest", null, "4", "$nl$", null, null);
 	} finally {
 		cleanupTestDirectory("nlPluginFindTest", null, "nlPluginFindTest.txt");
 	}
@@ -495,16 +515,18 @@ public void testNLFind() {
 	// Do a find for something in the plugin ja/CA directory which is a nonsense locale
 	try {
 		if (buildPluginTestFile("nlPluginFindTest", "nl/ja/CA"))
-			findFailsHelper("nlPluginFindTest", null, "5", "$nl$");
+			findFailsHelper("nlPluginFindTest", null, "5", "$nl$", null);
 	} finally {
 		cleanupTestDirectory("nlPluginFindTest", null, "nl");
 	}
 
 	// Do a find for something in the fragment directory
 	try {
-		String subDirectory = buildNLTestFile("nlPluginFindTest", "nlFragmentFindTest", 0);
+		String subDirectory = buildNLTestFile("nlPluginFindTest", "nlFragmentFindTest", 0, fullNL);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findHelper("nlPluginFindTest", "nlFragmentFindTest", "6", "$nl$", "nl/" + subDirectory);
+			findHelper("nlPluginFindTest", "nlFragmentFindTest", "6", "$nl$", "nl/" + subDirectory, null);
 		else
 			// We don't expect this one to fail
 			fail ("0.4 Could not build first nl test data for nlPluginFindTest");
@@ -514,9 +536,11 @@ public void testNLFind() {
 
 	if (localeSegments > 1) {
 		try {
-			String subDirectory = buildNLTestFile("nlPluginFindTest", "nlFragmentFindTest", 1);
+			String subDirectory = buildNLTestFile("nlPluginFindTest", "nlFragmentFindTest", 1, fullNL);
+			if (verifyCheckingAllCombos)
+				System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 			if (subDirectory != null)
-				findHelper("nlPluginFindTest", "nlFragmentFindTest", "7", "$nl$", "nl/" + subDirectory);
+				findHelper("nlPluginFindTest", "nlFragmentFindTest", "7", "$nl$", "nl/" + subDirectory, null);
 			else
 				// We don't expect this one to fail
 				fail ("0.5 Could not build first nl test data for nlPluginFindTest");
@@ -527,9 +551,11 @@ public void testNLFind() {
 
 	// Do a find for something in the fragment nl directory
 	try {
-		String subDirectory = buildNLTestFile("nlPluginFindTest", "nlFragmentFindTest", localeSegments);
+		String subDirectory = buildNLTestFile("nlPluginFindTest", "nlFragmentFindTest", localeSegments, fullNL);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findFailsHelper("nlPluginFindTest", "nlFragmentFindTest", "8", "$nl$");
+			findFailsHelper("nlPluginFindTest", "nlFragmentFindTest", "8", "$nl$", null);
 		else
 			// We don't expect this one to fail
 			fail ("0.6 Could not build first nl test data for nlPluginFindTest");
@@ -540,7 +566,7 @@ public void testNLFind() {
 	// Do a find for something in the fragment root directory
 	try {
 		if (buildFragmentTestFile("nlPluginFindTest", "nlFragmentFindTest", null))
-			findHelper("nlPluginFindTest", "nlFragmentFindTest", "9", "$nl$", null);
+			findHelper("nlPluginFindTest", "nlFragmentFindTest", "9", "$nl$", null, null);
 	} finally {
 		cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nlFragmentFindTest.txt");
 	}
@@ -548,7 +574,139 @@ public void testNLFind() {
 	// Do a find for something in the fragment ja/CA directory which is a nonsense locale
 	try {
 		if (buildFragmentTestFile("nlPluginFindTest", "nlFragmentFindTest", "nl/ja/CA"))
-			findFailsHelper("nlPluginFindTest", "nlFragmentFindTest", "10", "$nl$");
+			findFailsHelper("nlPluginFindTest", "nlFragmentFindTest", "10", "$nl$", null);
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nl");
+	}
+}
+public void testNLFindWithOverride() {
+	String fullNL = "ja_XX";
+	Map override = new HashMap();
+	override.put("$nl$", "ja_XX");
+	// How many segments in the default locale?
+	String nl = "ja_XX";
+	// there is at least one segment
+	int localeSegments = 1;
+	int i = nl.indexOf('_');
+	while (i != -1) {
+		localeSegments++;
+		nl = nl.substring(i+1);
+		i = nl.indexOf('_');
+	}
+	// Build up nl related directories and test files
+	try {
+		String subDirectory = buildNLTestFile("nlPluginFindTest", null, 0, fullNL);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findHelper("nlPluginFindTest", null, "1", "$nl$", "nl/" + subDirectory, override);
+		else
+			// We don't expect this one to fail
+			fail ("0.1 Could not build first nl test data for nlPluginFindTest");
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", null, "nl");
+	}
+	
+	if (localeSegments > 1) {
+		try {
+			String subDirectory = buildNLTestFile("nlPluginFindTest", null, 1, fullNL);
+			if (verifyCheckingAllCombos)
+				System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+			if (subDirectory != null)
+				findHelper("nlPluginFindTest", null, "2", "$nl$", "nl/" + subDirectory, override);
+			else
+				// We don't expect this one to fail
+				fail ("0.2 Could not build first nl test data for nlPluginFindTest");
+		} finally {
+			cleanupTestDirectory("nlPluginFindTest", null, "nl");
+		}
+	}
+
+	// Do a find for something in the plugin nl directory
+	try {
+		String subDirectory = buildNLTestFile("nlPluginFindTest", null, localeSegments, fullNL);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findFailsHelper("nlPluginFindTest", null, "3", "$nl$", override);
+		else
+			// We don't expect this one to fail
+			fail ("0.3 Could not build first nl test data for nlPluginFindTest");
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", null, "nl");
+	}
+	
+	// Do a find for something in the plugin root directory
+	try {
+		if (buildPluginTestFile("nlPluginFindTest", null))
+			findHelper("nlPluginFindTest", null, "4", "$nl$", null, override);
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", null, "nlPluginFindTest.txt");
+	}
+		
+	// Do a find for something in the plugin ja/CA directory which is a nonsense locale
+	try {
+		if (buildPluginTestFile("nlPluginFindTest", "nl/ja/CA"))
+			findFailsHelper("nlPluginFindTest", null, "5", "$nl$", override);
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", null, "nl");
+	}
+
+	// Do a find for something in the fragment directory
+	try {
+		String subDirectory = buildNLTestFile("nlPluginFindTest", "nlFragmentFindTest", 0, fullNL);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findHelper("nlPluginFindTest", "nlFragmentFindTest", "6", "$nl$", "nl/" + subDirectory, override);
+		else
+			// We don't expect this one to fail
+			fail ("0.4 Could not build first nl test data for nlPluginFindTest");
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nl");
+	}
+
+	if (localeSegments > 1) {
+		try {
+			String subDirectory = buildNLTestFile("nlPluginFindTest", "nlFragmentFindTest", 1, fullNL);
+			if (verifyCheckingAllCombos)
+				System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+			if (subDirectory != null)
+				findHelper("nlPluginFindTest", "nlFragmentFindTest", "7", "$nl$", "nl/" + subDirectory, override);
+			else
+				// We don't expect this one to fail
+				fail ("0.5 Could not build first nl test data for nlPluginFindTest");
+		} finally {
+			cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nl");
+		}
+	}
+
+	// Do a find for something in the fragment nl directory
+	try {
+		String subDirectory = buildNLTestFile("nlPluginFindTest", "nlFragmentFindTest", localeSegments, fullNL);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findFailsHelper("nlPluginFindTest", "nlFragmentFindTest", "8", "$nl$", override);
+		else
+			// We don't expect this one to fail
+			fail ("0.6 Could not build first nl test data for nlPluginFindTest");
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nl");
+	}
+
+	// Do a find for something in the fragment root directory
+	try {
+		if (buildFragmentTestFile("nlPluginFindTest", "nlFragmentFindTest", null))
+			findHelper("nlPluginFindTest", "nlFragmentFindTest", "9", "$nl$", null, override);
+	} finally {
+		cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nlFragmentFindTest.txt");
+	}
+
+	// Do a find for something in the fragment ja/CA directory which is a nonsense locale
+	try {
+		if (buildFragmentTestFile("nlPluginFindTest", "nlFragmentFindTest", "nl/ja/CA"))
+			findFailsHelper("nlPluginFindTest", "nlFragmentFindTest", "10", "$nl$", override);
 	} finally {
 		cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nl");
 	}
@@ -558,6 +716,7 @@ public void testNLFind() {
  * the under-scores wtih slashes)
  */
 public void _testOldNLFind() {
+	String fullNL = BootLoader.getNL();
 	// How many segments in the default locale?
 	String nl = BootLoader.getNL();
 	// there is at least one segment
@@ -570,9 +729,9 @@ public void _testOldNLFind() {
 	}
 	// Build up nl related directories and test files
 	try {
-		String subDirectory = buildOldNLTestFile("nlPluginFindTest", null, 0);
+		String subDirectory = buildOldNLTestFile("nlPluginFindTest", null, 0, fullNL);
 		if (subDirectory != null)
-			findHelper("nlPluginFindTest", null, "1", "$nl$", "nl/" + subDirectory);
+			findHelper("nlPluginFindTest", null, "1", "$nl$", "nl/" + subDirectory, null);
 		else
 			// We don't expect this one to fail
 			fail ("0.1 Could not build first nl test data for nlPluginFindTest");
@@ -582,9 +741,9 @@ public void _testOldNLFind() {
 	
 	if (localeSegments > 1) {
 		try {
-			String subDirectory = buildOldNLTestFile("nlPluginFindTest", null, 1);
+			String subDirectory = buildOldNLTestFile("nlPluginFindTest", null, 1, fullNL);
 			if (subDirectory != null)
-				findHelper("nlPluginFindTest", null, "2", "$nl$", "nl/" + subDirectory);
+				findHelper("nlPluginFindTest", null, "2", "$nl$", "nl/" + subDirectory, null);
 			else
 				// We don't expect this one to fail
 				fail ("0.2 Could not build first nl test data for nlPluginFindTest");
@@ -595,9 +754,9 @@ public void _testOldNLFind() {
 
 	// Do a find for something in the plugin nl directory
 	try {
-		String subDirectory = buildOldNLTestFile("nlPluginFindTest", null, localeSegments);
+		String subDirectory = buildOldNLTestFile("nlPluginFindTest", null, localeSegments, fullNL);
 		if (subDirectory != null)
-			findFailsHelper("nlPluginFindTest", null, "3", "$nl$");
+			findFailsHelper("nlPluginFindTest", null, "3", "$nl$", null);
 		else
 			// We don't expect this one to fail
 			fail ("0.3 Could not build first nl test data for nlPluginFindTest");
@@ -608,7 +767,7 @@ public void _testOldNLFind() {
 	// Do a find for something in the plugin root directory
 	try {
 		if (buildPluginTestFile("nlPluginFindTest", null))
-			findHelper("nlPluginFindTest", null, "4", "$nl$", null);
+			findHelper("nlPluginFindTest", null, "4", "$nl$", null, null);
 	} finally {
 		cleanupTestDirectory("nlPluginFindTest", null, "nlPluginFindTest.txt");
 	}
@@ -616,16 +775,16 @@ public void _testOldNLFind() {
 	// Do a find for something in the plugin ja/CA directory which is a nonsense locale
 	try {
 		if (buildPluginTestFile("nlPluginFindTest", "nl/ja/CA"))
-			findFailsHelper("nlPluginFindTest", null, "5", "$nl$");
+			findFailsHelper("nlPluginFindTest", null, "5", "$nl$", null);
 	} finally {
 		cleanupTestDirectory("nlPluginFindTest", null, "nl");
 	}
 
 	// Do a find for something in the fragment directory
 	try {
-		String subDirectory = buildOldNLTestFile("nlPluginFindTest", "nlFragmentFindTest", 0);
+		String subDirectory = buildOldNLTestFile("nlPluginFindTest", "nlFragmentFindTest", 0, fullNL);
 		if (subDirectory != null)
-			findHelper("nlPluginFindTest", "nlFragmentFindTest", "6", "$nl$", "nl/" + subDirectory);
+			findHelper("nlPluginFindTest", "nlFragmentFindTest", "6", "$nl$", "nl/" + subDirectory, null);
 		else
 			// We don't expect this one to fail
 			fail ("0.4 Could not build first nl test data for nlPluginFindTest");
@@ -635,9 +794,9 @@ public void _testOldNLFind() {
 
 	if (localeSegments > 1) {
 		try {
-			String subDirectory = buildOldNLTestFile("nlPluginFindTest", "nlFragmentFindTest", 1);
+			String subDirectory = buildOldNLTestFile("nlPluginFindTest", "nlFragmentFindTest", 1, fullNL);
 			if (subDirectory != null)
-				findHelper("nlPluginFindTest", "nlFragmentFindTest", "7", "$nl$", "nl/" + subDirectory);
+				findHelper("nlPluginFindTest", "nlFragmentFindTest", "7", "$nl$", "nl/" + subDirectory, null);
 			else
 				// We don't expect this one to fail
 				fail ("0.5 Could not build first nl test data for nlPluginFindTest");
@@ -648,9 +807,9 @@ public void _testOldNLFind() {
 
 	// Do a find for something in the fragment nl directory
 	try {
-		String subDirectory = buildOldNLTestFile("nlPluginFindTest", "nlFragmentFindTest", localeSegments);
+		String subDirectory = buildOldNLTestFile("nlPluginFindTest", "nlFragmentFindTest", localeSegments, fullNL);
 		if (subDirectory != null)
-			findFailsHelper("nlPluginFindTest", "nlFragmentFindTest", "8", "$nl$");
+			findFailsHelper("nlPluginFindTest", "nlFragmentFindTest", "8", "$nl$", null);
 		else
 			// We don't expect this one to fail
 			fail ("0.6 Could not build first nl test data for nlPluginFindTest");
@@ -661,7 +820,7 @@ public void _testOldNLFind() {
 	// Do a find for something in the fragment root directory
 	try {
 		if (buildFragmentTestFile("nlPluginFindTest", "nlFragmentFindTest", null))
-			findHelper("nlPluginFindTest", "nlFragmentFindTest", "9", "$nl$", null);
+			findHelper("nlPluginFindTest", "nlFragmentFindTest", "9", "$nl$", null, null);
 	} finally {
 		cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nlFragmentFindTest.txt");
 	}
@@ -669,19 +828,22 @@ public void _testOldNLFind() {
 	// Do a find for something in the fragment ja/CA directory which is a nonsense locale
 	try {
 		if (buildFragmentTestFile("nlPluginFindTest", "nlFragmentFindTest", "nl/ja/CA"))
-			findFailsHelper("nlPluginFindTest", "nlFragmentFindTest", "10", "$nl$");
+			findFailsHelper("nlPluginFindTest", "nlFragmentFindTest", "10", "$nl$", null);
 	} finally {
 		cleanupTestDirectory("nlPluginFindTest", "nlFragmentFindTest", "nl");
 	}
 }
 
 public void testOSFind() {
+	String fullOS = InternalBootLoader.getOS() + "/" + InternalBootLoader.getOSArch();
 	String subDirectory = null;
 	// Do a find for something in the plugin os/* directory
 	try {
-		subDirectory = buildOSTestFile("osPluginFindTest", null, 0);
+		subDirectory = buildOSTestFile("osPluginFindTest", null, 0, fullOS);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findHelper("osPluginFindTest", null, "1", "$os$", "os/" + subDirectory);
+			findHelper("osPluginFindTest", null, "1", "$os$", "os/" + subDirectory, null);
 		else
 			// We don't expect this one to fail
 			fail ("0.1 Could not build os test data");
@@ -691,9 +853,11 @@ public void testOSFind() {
 
 	// Now chop off a segment
 	try {
-		subDirectory = buildOSTestFile("osPluginFindTest", null, 1);
+		subDirectory = buildOSTestFile("osPluginFindTest", null, 1, fullOS);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findHelper("osPluginFindTest", null, "2", "$os$", "os/" + subDirectory);
+			findHelper("osPluginFindTest", null, "2", "$os$", "os/" + subDirectory, null);
 		else
 			// We don't expect this one to fail
 			fail ("0.2 Could not build os test data");
@@ -703,9 +867,11 @@ public void testOSFind() {
 	
 	// Do a find for something in the plugin os directory
 	try {
-		subDirectory = buildOSTestFile("osPluginFindTest", null, 2);
+		subDirectory = buildOSTestFile("osPluginFindTest", null, 2, fullOS);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findFailsHelper("osPluginFindTest", null, "3", "$os$");
+			findFailsHelper("osPluginFindTest", null, "3", "$os$", null);
 		else
 			// We don't expect this one to fail
 			fail ("0.3 Could not build os test data");
@@ -716,7 +882,7 @@ public void testOSFind() {
 	// Do a find for something in the plugin root directory
 	try {
 		if (buildPluginTestFile("osPluginFindTest", null))
-			findHelper("osPluginFindTest", null, "4", "$os$", null);
+			findHelper("osPluginFindTest", null, "4", "$os$", null, null);
 	} finally {
 		cleanupTestDirectory("osPluginFindTest", null, "osPluginFindTest.txt");
 	}
@@ -725,16 +891,18 @@ public void testOSFind() {
 	// nonsense os
 	try {
 		if (buildPluginTestFile("osPluginFindTest", "os/badOS"))
-			findFailsHelper("osPluginFindTest", null, "5", "$os$");
+			findFailsHelper("osPluginFindTest", null, "5", "$os$", null);
 	} finally {
 		cleanupTestDirectory("osPluginFindTest", null, "os");
 	}
 
 	// Do a find for something in the fragment os/* directory
 	try {
-		subDirectory = buildOSTestFile("osPluginFindTest", "osFragmentFindTest", 0);
+		subDirectory = buildOSTestFile("osPluginFindTest", "osFragmentFindTest", 0, fullOS);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findHelper("osPluginFindTest", "osFragmentFindTest", "6", "$os$", "os/" + subDirectory);
+			findHelper("osPluginFindTest", "osFragmentFindTest", "6", "$os$", "os/" + subDirectory, null);
 		else
 			// We don't expect this one to fail
 			fail ("0.4 Could not build os test data");
@@ -744,9 +912,11 @@ public void testOSFind() {
 
 	// Get rid of one segment (the osArch portion)
 	try {
-		subDirectory = buildOSTestFile("osPluginFindTest", "osFragmentFindTest", 1);
+		subDirectory = buildOSTestFile("osPluginFindTest", "osFragmentFindTest", 1, fullOS);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findHelper("osPluginFindTest", "osFragmentFindTest", "7", "$os$", "os/" + subDirectory);
+			findHelper("osPluginFindTest", "osFragmentFindTest", "7", "$os$", "os/" + subDirectory, null);
 		else
 			// We don't expect this one to fail
 			fail ("0.5 Could not build os test data");
@@ -756,9 +926,11 @@ public void testOSFind() {
 	
 	// Do a find for something in the fragment os directory
 	try {
-		subDirectory = buildOSTestFile("osPluginFindTest", "osFragmentFindTest", 2);
+		subDirectory = buildOSTestFile("osPluginFindTest", "osFragmentFindTest", 2, fullOS);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findFailsHelper("osPluginFindTest", "osFragmentFindTest", "8", "$os$");
+			findFailsHelper("osPluginFindTest", "osFragmentFindTest", "8", "$os$", null);
 		else
 			// We don't expect this one to fail
 			fail ("0.6 Could not build os test data");
@@ -769,7 +941,7 @@ public void testOSFind() {
 	// Do a find for something in the fragment root directory
 	try {
 		if (buildFragmentTestFile("osPluginFindTest", "osFragmentFindTest", null))
-			findHelper("osPluginFindTest", "osFragmentFindTest", "9", "$os$", null);
+			findHelper("osPluginFindTest", "osFragmentFindTest", "9", "$os$", null, null);
 	} finally {
 		cleanupTestDirectory("osPluginFindTest", "osFragmentFindTest", "osFragmentFindTest.txt");
 	}
@@ -778,19 +950,147 @@ public void testOSFind() {
 	// nonsense os
 	try {
 		if (buildFragmentTestFile("osPluginFindTest", "osFragmentFindTest", "os/badOS"))
-			findFailsHelper("osPluginFindTest", "osFragmentFindTest", "10", "$os$");
+			findFailsHelper("osPluginFindTest", "osFragmentFindTest", "10", "$os$", null);
+	} finally {
+		cleanupTestDirectory("osPluginFindTest", "osFragmentFindTest", "os");
+	}
+}
+
+public void testOSFindWithOverride() {
+	// An impossible combination but the test should work
+	String fullOS = "linux/xxi86";
+	Map override = new HashMap();
+	override.put("$os$", "linux/xxi86");
+	String subDirectory = null;
+	// Do a find for something in the plugin os/* directory
+	try {
+		subDirectory = buildOSTestFile("osPluginFindTest", null, 0, fullOS);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findHelper("osPluginFindTest", null, "1", "$os$", "os/" + subDirectory, override);
+		else
+			// We don't expect this one to fail
+			fail ("0.1 Could not build os test data");
+	} finally {
+		cleanupTestDirectory("osPluginFindTest", null, "os");
+	}
+
+	// Now chop off a segment
+	try {
+		subDirectory = buildOSTestFile("osPluginFindTest", null, 1, fullOS);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findHelper("osPluginFindTest", null, "2", "$os$", "os/" + subDirectory, override);
+		else
+			// We don't expect this one to fail
+			fail ("0.2 Could not build os test data");
+	} finally {
+		cleanupTestDirectory("osPluginFindTest", null, "os");
+	}
+	
+	// Do a find for something in the plugin os directory
+	try {
+		subDirectory = buildOSTestFile("osPluginFindTest", null, 2, fullOS);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findFailsHelper("osPluginFindTest", null, "3", "$os$", override);
+		else
+			// We don't expect this one to fail
+			fail ("0.3 Could not build os test data");
+	} finally {
+		cleanupTestDirectory("osPluginFindTest", null, "os");
+	}
+
+	// Do a find for something in the plugin root directory
+	try {
+		if (buildPluginTestFile("osPluginFindTest", null))
+			findHelper("osPluginFindTest", null, "4", "$os$", null, override);
+	} finally {
+		cleanupTestDirectory("osPluginFindTest", null, "osPluginFindTest.txt");
+	}
+
+	// Do a find for something in the plugin os/badOS directory which is a 
+	// nonsense os
+	try {
+		if (buildPluginTestFile("osPluginFindTest", "os/badOS"))
+			findFailsHelper("osPluginFindTest", null, "5", "$os$", override);
+	} finally {
+		cleanupTestDirectory("osPluginFindTest", null, "os");
+	}
+
+	// Do a find for something in the fragment os/* directory
+	try {
+		subDirectory = buildOSTestFile("osPluginFindTest", "osFragmentFindTest", 0, fullOS);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findHelper("osPluginFindTest", "osFragmentFindTest", "6", "$os$", "os/" + subDirectory, override);
+		else
+			// We don't expect this one to fail
+			fail ("0.4 Could not build os test data");
+	} finally {
+		cleanupTestDirectory("osPluginFindTest", "osFragmentFindTest", "os");
+	}
+
+	// Get rid of one segment (the osArch portion)
+	try {
+		subDirectory = buildOSTestFile("osPluginFindTest", "osFragmentFindTest", 1, fullOS);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findHelper("osPluginFindTest", "osFragmentFindTest", "7", "$os$", "os/" + subDirectory, override);
+		else
+			// We don't expect this one to fail
+			fail ("0.5 Could not build os test data");
+	} finally {
+		cleanupTestDirectory("osPluginFindTest", "osFragmentFindTest", "os");
+	}
+	
+	// Do a find for something in the fragment os directory
+	try {
+		subDirectory = buildOSTestFile("osPluginFindTest", "osFragmentFindTest", 2, fullOS);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findFailsHelper("osPluginFindTest", "osFragmentFindTest", "8", "$os$", override);
+		else
+			// We don't expect this one to fail
+			fail ("0.6 Could not build os test data");
+	} finally {
+		cleanupTestDirectory("osPluginFindTest", "osFragmentFindTest", "os");
+	}
+
+	// Do a find for something in the fragment root directory
+	try {
+		if (buildFragmentTestFile("osPluginFindTest", "osFragmentFindTest", null))
+			findHelper("osPluginFindTest", "osFragmentFindTest", "9", "$os$", null, override);
+	} finally {
+		cleanupTestDirectory("osPluginFindTest", "osFragmentFindTest", "osFragmentFindTest.txt");
+	}
+
+	// Do a find for something in the fragment os/badOS directory which is a 
+	// nonsense os
+	try {
+		if (buildFragmentTestFile("osPluginFindTest", "osFragmentFindTest", "os/badOS"))
+			findFailsHelper("osPluginFindTest", "osFragmentFindTest", "10", "$os$", override);
 	} finally {
 		cleanupTestDirectory("osPluginFindTest", "osFragmentFindTest", "os");
 	}
 }
 
 public void testWSFind() {
+	String ws = InternalBootLoader.getWS();
 	String subDirectory = null;
 	// Do a find for something in the plugin ws/* directory
 	try {
-		subDirectory = buildWSTestFile("wsPluginFindTest", null, 0);
+		subDirectory = buildWSTestFile("wsPluginFindTest", null, 0, ws);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findHelper("wsPluginFindTest", null, "1", "$ws$", "ws/" + subDirectory);
+			findHelper("wsPluginFindTest", null, "1", "$ws$", "ws/" + subDirectory, null);
 		else
 			// We don't expect this one to fail
 			fail ("0.1 Could not build ws test data");
@@ -800,9 +1100,11 @@ public void testWSFind() {
 
 	// Do a find for something in the plugin ws directory
 	try {
-		subDirectory = buildWSTestFile("wsPluginFindTest", null, 1);
+		subDirectory = buildWSTestFile("wsPluginFindTest", null, 1, ws);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findFailsHelper("wsPluginFindTest", null, "2", "$ws$");
+			findFailsHelper("wsPluginFindTest", null, "2", "$ws$", null);
 		else
 			// We don't expect this one to fail
 			fail ("0.2 Could not build ws test data");
@@ -813,7 +1115,7 @@ public void testWSFind() {
 	// Do a find for something in the plugin root directory
 	try {
 		if (buildPluginTestFile("wsPluginFindTest", null))
-			findHelper("wsPluginFindTest", null, "3", "$ws$", null);
+			findHelper("wsPluginFindTest", null, "3", "$ws$", null, null);
 	} finally {
 		cleanupTestDirectory("wsPluginFindTest", null, "wsPluginFindTest.txt");
 	}
@@ -822,16 +1124,18 @@ public void testWSFind() {
 	// nonsense ws
 	try {
 		if (buildPluginTestFile("wsPluginFindTest", "ws/badWS"))
-			findFailsHelper("wsPluginFindTest", null, "4", "$ws$");
+			findFailsHelper("wsPluginFindTest", null, "4", "$ws$", null);
 	} finally {
 		cleanupTestDirectory("wsPluginFindTest", null, "ws");
 	}
 
 	// Do a find for something in the fragment ws/* directory
 	try {
-		subDirectory = buildWSTestFile("wsPluginFindTest", "wsFragmentFindTest", 0);
+		subDirectory = buildWSTestFile("wsPluginFindTest", "wsFragmentFindTest", 0, ws);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findHelper("wsPluginFindTest", "wsFragmentFindTest", "5", "$ws$", "ws/" + subDirectory);
+			findHelper("wsPluginFindTest", "wsFragmentFindTest", "5", "$ws$", "ws/" + subDirectory, null);
 		else
 			// We don't expect this one to fail
 			fail ("0.3 Could not build ws test data");
@@ -841,9 +1145,11 @@ public void testWSFind() {
 
 	// Do a find for something in the fragment ws directory
 	try {
-		subDirectory = buildWSTestFile("wsPluginFindTest", "wsFragmentFindTest", 1);
+		subDirectory = buildWSTestFile("wsPluginFindTest", "wsFragmentFindTest", 1, ws);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
 		if (subDirectory != null)
-			findFailsHelper("wsPluginFindTest", "wsFragmentFindTest", "6", "$ws$");
+			findFailsHelper("wsPluginFindTest", "wsFragmentFindTest", "6", "$ws$", null);
 		else
 			// We don't expect this one to fail
 			fail ("0.4 Could not build ws test data");
@@ -854,7 +1160,7 @@ public void testWSFind() {
 	// Do a find for something in the fragment root directory
 	try {
 		if (buildFragmentTestFile("wsPluginFindTest", "wsFragmentFindTest", null))
-			findHelper("wsPluginFindTest", "wsFragmentFindTest", "7", "$ws$", null);
+			findHelper("wsPluginFindTest", "wsFragmentFindTest", "7", "$ws$", null, null);
 	} finally {
 		cleanupTestDirectory("wsPluginFindTest", "wsFragmentFindTest", "wsFragmentFindTest.txt");
 	}
@@ -863,7 +1169,104 @@ public void testWSFind() {
 	// nonsense ws
 	try {
 		if (buildFragmentTestFile("wsPluginFindTest", "wsFragmentFindTest", "ws/badWS"))
-			findFailsHelper("wsPluginFindTest", "wsFragmentFindTest", "8", "$ws$");
+			findFailsHelper("wsPluginFindTest", "wsFragmentFindTest", "8", "$ws$", null);
+	} finally {
+		cleanupTestDirectory("wsPluginFindTest", "wsFragmentFindTest", "ws");
+	}
+}
+
+public void testWSFindWithOverride() {
+	// An impossible combination but the test should work
+	String ws = "win4k";
+	Map override = new HashMap();
+	override.put("$ws$", "win4k");
+	String subDirectory = null;
+	// Do a find for something in the plugin ws/* directory
+	try {
+		subDirectory = buildWSTestFile("wsPluginFindTest", null, 0, ws);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findHelper("wsPluginFindTest", null, "1", "$ws$", "ws/" + subDirectory, override);
+		else
+			// We don't expect this one to fail
+			fail ("0.1 Could not build ws test data");
+	} finally {
+		cleanupTestDirectory("wsPluginFindTest", null, "ws");
+	}
+
+	// Do a find for something in the plugin ws directory
+	try {
+		subDirectory = buildWSTestFile("wsPluginFindTest", null, 1, ws);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findFailsHelper("wsPluginFindTest", null, "2", "$ws$", override);
+		else
+			// We don't expect this one to fail
+			fail ("0.2 Could not build ws test data");
+	} finally {
+		cleanupTestDirectory("wsPluginFindTest", null, "ws");
+	}
+
+	// Do a find for something in the plugin root directory
+	try {
+		if (buildPluginTestFile("wsPluginFindTest", null))
+			findHelper("wsPluginFindTest", null, "3", "$ws$", null, override);
+	} finally {
+		cleanupTestDirectory("wsPluginFindTest", null, "wsPluginFindTest.txt");
+	}
+
+	// Do a find for something in the plugin ws/badWS directory which is a 
+	// nonsense ws
+	try {
+		if (buildPluginTestFile("wsPluginFindTest", "ws/badWS"))
+			findFailsHelper("wsPluginFindTest", null, "4", "$ws$", override);
+	} finally {
+		cleanupTestDirectory("wsPluginFindTest", null, "ws");
+	}
+
+	// Do a find for something in the fragment ws/* directory
+	try {
+		subDirectory = buildWSTestFile("wsPluginFindTest", "wsFragmentFindTest", 0, ws);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findHelper("wsPluginFindTest", "wsFragmentFindTest", "5", "$ws$", "ws/" + subDirectory, override);
+		else
+			// We don't expect this one to fail
+			fail ("0.3 Could not build ws test data");
+	} finally {
+		cleanupTestDirectory("wsPluginFindTest", "wsFragmentFindTest", "ws");
+	}
+
+	// Do a find for something in the fragment ws directory
+	try {
+		subDirectory = buildWSTestFile("wsPluginFindTest", "wsFragmentFindTest", 1, ws);
+		if (verifyCheckingAllCombos)
+			System.out.println ("Testing with subdirectory \"" + subDirectory + "\"");
+		if (subDirectory != null)
+			findFailsHelper("wsPluginFindTest", "wsFragmentFindTest", "6", "$ws$", override);
+		else
+			// We don't expect this one to fail
+			fail ("0.4 Could not build ws test data");
+	} finally {
+		cleanupTestDirectory("wsPluginFindTest", "wsFragmentFindTest", "ws");
+	}
+
+	// Do a find for something in the fragment root directory
+	try {
+		if (buildFragmentTestFile("wsPluginFindTest", "wsFragmentFindTest", null))
+			findHelper("wsPluginFindTest", "wsFragmentFindTest", "7", "$ws$", null, override);
+	} finally {
+		cleanupTestDirectory("wsPluginFindTest", "wsFragmentFindTest", "wsFragmentFindTest.txt");
+	}
+
+	// Do a find for something in the fragment ws/badWS directory which is a 
+	// nonsense ws
+	try {
+		if (buildFragmentTestFile("wsPluginFindTest", "wsFragmentFindTest", "ws/badWS"))
+			findFailsHelper("wsPluginFindTest", "wsFragmentFindTest", "8", "$ws$", override);
 	} finally {
 		cleanupTestDirectory("wsPluginFindTest", "wsFragmentFindTest", "ws");
 	}

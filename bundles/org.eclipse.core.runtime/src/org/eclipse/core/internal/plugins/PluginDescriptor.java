@@ -45,7 +45,7 @@ public class PluginDescriptor extends PluginDescriptorModel implements IPluginDe
 	// Places to look for library files 
 	private static String[] WS_JAR_VARIANTS = buildWSVariants();
 	private static String[] OS_JAR_VARIANTS = buildOSVariants();
-	private static String[] NL_JAR_VARIANTS = buildNLVariants();
+	private static String[] NL_JAR_VARIANTS = buildNLVariants(BootLoader.getNL());
 	private static String[] JAR_VARIANTS = buildVanillaVariants();
 
 public PluginDescriptor() {
@@ -64,8 +64,7 @@ private static String[] buildOSVariants() {
 	result.add(""); //$NON-NLS-1$
 	return (String[])result.toArray(new String[result.size()]);
 }
-private static String[] buildNLVariants() {
-	String nl = BootLoader.getNL();	
+private static String[] buildNLVariants(String nl) {
 	ArrayList result = new ArrayList();
 	IPath base = new Path("nl"); //$NON-NLS-1$
 	
@@ -909,6 +908,7 @@ private URL findWS(URL install, IPath path, Map override) {
 
 private URL findNL(URL install, IPath path, Map override) {
 	String nl = null;
+	String[] nlVariants = null;
 	if (override != null)
 		try {
 			// check for override
@@ -916,15 +916,13 @@ private URL findNL(URL install, IPath path, Map override) {
 		} catch (ClassCastException e) {
 			// just in case
 		}
-	if (nl == null)
-		// use default
-		nl = BootLoader.getNL();
-	if (nl.length() == 0)
+	nlVariants = nl == null ? NL_JAR_VARIANTS : buildNLVariants(nl);
+	if (nl != null && nl.length() == 0)
 		return null;
 
 	URL result = null;
-	for (int i=0; i<NL_JAR_VARIANTS.length; i++) {
-		IPath filePath = new Path(NL_JAR_VARIANTS[i]).append(path);
+	for (int i=0; i<nlVariants.length; i++) {
+		IPath filePath = new Path(nlVariants[i]).append(path);
 		result = findInPlugin(install, filePath);
 		if (result != null)
 			return result;
