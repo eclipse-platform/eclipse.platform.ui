@@ -24,6 +24,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.configurator.PlatformConfiguration;
 import org.eclipse.update.internal.core.*;
 import org.eclipse.update.operations.*;
+import org.osgi.framework.*;
 
 /**
  *  
@@ -700,7 +701,7 @@ public class OperationValidator implements IOperationValidator {
 
 		checkEnvironment(features, status);
 		checkPlatformFeature(features, plugins, status);
-		checkPrimaryFeature(features, status);
+		checkPrimaryFeature(features, plugins, status);
 		checkPrereqs(features, plugins, status);
 	}
 
@@ -762,29 +763,26 @@ public class OperationValidator implements IOperationValidator {
 		ArrayList plugins,
 		ArrayList status) {
 
-		String[] bootstrapPlugins =
-			ConfiguratorUtils
-				.getCurrentPlatformConfiguration()
-				.getBootstrapPluginIdentifiers();
-
-		for (int i = 0; i < bootstrapPlugins.length; i++) {
-			boolean found = false;
-			for (int j = 0; j < plugins.size(); j++) {
-				IPluginEntry plugin = (IPluginEntry) plugins.get(j);
-				if (bootstrapPlugins[i]
-					.equals(plugin.getVersionedIdentifier().getIdentifier())) {
-					found = true;
-					break;
-				}
+		// find the plugin that defines the product
+		IProduct product = Platform.getProduct();
+		if (product == null)
+			return; // normally this shouldn't happen
+		Bundle primaryBundle = product.getDefiningBundle();
+		// check if that plugin is among the resulting plugins
+		boolean found = false;
+		for (int j = 0; j < plugins.size(); j++) {
+			IPluginEntry plugin = (IPluginEntry) plugins.get(j);
+			if (primaryBundle.getSymbolicName().equals(plugin.getVersionedIdentifier().getIdentifier())) {
+				found = true;
+				break;
 			}
-			if (!found) {
-				IStatus s =
-					createStatus(null, FeatureStatus.CODE_OTHER, Policy.bind(KEY_PLATFORM));
-				if (!status.contains(s))
-					status.add(s);
-
-				return;
-			}
+		}
+		
+		if (!found) {
+			IStatus s =
+				createStatus(null, FeatureStatus.CODE_OTHER, Policy.bind(KEY_PLATFORM));
+			if (!status.contains(s))
+				status.add(s);
 		}
 	}
 
@@ -793,6 +791,7 @@ public class OperationValidator implements IOperationValidator {
 	 */
 	private static void checkPrimaryFeature(
 		ArrayList features,
+		ArrayList plugins,
 		ArrayList status) {
 
 		String featureId =
@@ -800,19 +799,38 @@ public class OperationValidator implements IOperationValidator {
 				.getCurrentPlatformConfiguration()
 				.getPrimaryFeatureIdentifier();
 		
-		if (featureId == null)
-			return; // no existing primary feature, nothing to worry about
+		if (featureId != null) {
+			// primary feature is defined
+			for (int i = 0; i < features.size(); i++) {
+				IFeature feature = (IFeature) features.get(i);
+				if (featureId
+					.equals(feature.getVersionedIdentifier().getIdentifier()))
+					return;
+			}
+	
+			IStatus s = createStatus(null, FeatureStatus.CODE_OTHER, Policy.bind(KEY_PRIMARY));
+			if (!status.contains(s))
+				status.add(s);
+		} else {
+			// check if the product still ends up contributed
+			// find the plugin that defines the product
+			IProduct product = Platform.getProduct();
+			if (product == null)
+				return; // normally this shouldn't happen
+			Bundle primaryBundle = product.getDefiningBundle();
+			// check if that plugin is among the resulting plugins
 
-		for (int i = 0; i < features.size(); i++) {
-			IFeature feature = (IFeature) features.get(i);
-			if (featureId
-				.equals(feature.getVersionedIdentifier().getIdentifier()))
-				return;
+			for (int j = 0; j < plugins.size(); j++) {
+				IPluginEntry plugin = (IPluginEntry) plugins.get(j);
+				if (primaryBundle.getSymbolicName().equals(plugin.getVersionedIdentifier().getIdentifier())) {
+					return; // product found
+				}
+			}
+			IStatus s =
+				createStatus(null, FeatureStatus.CODE_OTHER, Policy.bind(KEY_PRIMARY));
+			if (!status.contains(s))
+				status.add(s);
 		}
-
-		IStatus s = createStatus(null, FeatureStatus.CODE_OTHER, Policy.bind(KEY_PRIMARY));
-		if (!status.contains(s))
-			status.add(s);
 	}
 
 	/*
