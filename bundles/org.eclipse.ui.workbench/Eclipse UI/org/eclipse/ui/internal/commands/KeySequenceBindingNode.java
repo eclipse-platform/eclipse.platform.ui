@@ -875,35 +875,11 @@ final class KeySequenceBindingNode {
                                                             /*
                                                              * Make sure we
                                                              * don't consider
-                                                             * this key
-                                                             * configuration
-                                                             * again (or its
-                                                             * parents).
+                                                             * any higher key
+                                                             * configurations
+                                                             * again.
                                                              */
-                                                            if (commandId == null) {
-                                                                /*
-                                                                 * We have a
-                                                                 * removed
-                                                                 * binding, so
-                                                                 * consider this
-                                                                 * configuration
-                                                                 * again (but
-                                                                 * nothing
-                                                                 * higher).
-                                                                 */
-                                                                maxKeyConfiguration = keyConfiguration + 1;
-                                                            } else {
-                                                                /*
-                                                                 * We have a
-                                                                 * real match,
-                                                                 * so only
-                                                                 * consider
-                                                                 * lower
-                                                                 * specific key
-                                                                 * configuration.
-                                                                 */
-                                                                maxKeyConfiguration = keyConfiguration;
-                                                            }
+                                                            maxKeyConfiguration = keyConfiguration + 1;
 
                                                             // Record the match
                                                             match = new Match(
