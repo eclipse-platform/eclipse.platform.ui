@@ -115,7 +115,7 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 	private EditorHistory editorHistory;
 	private PerspectiveHistory perspHistory;
 	private boolean runEventLoop;
-	private boolean isStarting = false;
+	private boolean isStarting = true;
 	private boolean isClosing = false;
 	private KeyConfiguration acceleratorConfiguration;
 	private Object returnCode;
@@ -685,7 +685,6 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 		KeyManager.getInstance();
 		
 		this.commandLineArgs = commandLineArgs;
-		isStarting = true;
 
 		if (WorkbenchPlugin.getDefault().isDebugging()) {
 			WorkbenchPlugin.DEBUG = true;
