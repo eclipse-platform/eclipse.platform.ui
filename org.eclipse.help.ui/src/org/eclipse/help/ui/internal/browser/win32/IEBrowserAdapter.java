@@ -1,61 +1,71 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
 package org.eclipse.help.ui.internal.browser.win32;
-import org.eclipse.help.internal.HelpSystem;
-import org.eclipse.help.internal.ui.util.WorkbenchResources;
-import org.eclipse.help.internal.util.HelpPreferences;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.help.internal.ui.WorkbenchHelpPlugin;
+import org.eclipse.help.internal.ui.util.StreamConsumer;
 import org.eclipse.help.ui.browser.IBrowser;
-import org.eclipse.swt.widgets.Display;
-public class IEBrowserAdapter implements IBrowser {
-	IEHost ieHost;
-	int x, y;
-	int width, height;
-	boolean setLocationPending;
-	boolean setSizePending;
+/**
+ * Web browser.  Win32 implmentation of IBrowser interface.
+ * Launches Browser as an external process.
+ */
+public class IEBrowserAdapter implements IBrowser, Runnable {
+	private static final String PLUGIN_ID_HELPUI = "org.eclipse.help.ui";
+	private static final String PLUGIN_ID_SWT = "org.eclipse.swt";
+	private static final String IE_CLASS =
+		"org.eclipse.help.ui.internal.browser.win32.IEHost";
+	PrintWriter commandWriter;
+	boolean launched = false;
+	String[] cmd;
+	/**
+	 * Adapter constructor.
+	 */
 	public IEBrowserAdapter() {
-		Display display = new Display();
-		display.setAppName(WorkbenchResources.getString("browserTitle"));
-		setLocationPending = false;
-		setSizePending = false;
+		try {
+			// Create command string for launching the process
+			cmd =
+				new String[] {
+					System.getProperty("java.home") + "\\bin\\javaw.exe",
+					"-D"
+						+ IEHost.SYS_PROPERTY_INSTALLURL
+						+ "="
+						+ Platform.resolve(
+							WorkbenchHelpPlugin.getDefault().getDescriptor().getInstallURL()),
+					"-D"
+						+ IEHost.SYS_PROPERTY_STATELOCATION
+						+ "="
+						+ WorkbenchHelpPlugin.getDefault().getStateLocation().toString(),
+					"-Djava.library.path="
+						+ getPath(PLUGIN_ID_SWT)
+						+ System.getProperty("java.library.path"),
+					"-cp",
+					getClassPath(PLUGIN_ID_HELPUI),
+					IE_CLASS };
+		} catch (IOException ioe) {
+		}
+	}
+	/*
+	 * @see IBrowser#close()
+	 */
+	public void close() {
+		sendCommand(IEHost.CMD_CLOSE);
 	}
 	/*
 	 * @see IBrowser#displayURL(String)
 	 */
 	public void displayURL(String url) {
-		if (ieHost == null || ieHost.isDisposed()) {
-			// browser not opened yet
-			ieHost = new IEHost();
-			if (setLocationPending) {
-				// use given location
-				ieHost.setLocation(x, y);
-			} else {
-				// use saved locacation and size
-				HelpPreferences pref = HelpSystem.getPreferences();
-				int x = pref.getInt(IEHost.BROWSER_X);
-				int y = pref.getInt(IEHost.BROWSER_Y);
-				setLocation(x, y);
-			}
-			setLocationPending = false;
-			if (setSizePending) {
-				// use given size
-				ieHost.setSize(width, height);
-			} else {
-				// use saved locacation and size
-				HelpPreferences pref = HelpSystem.getPreferences();
-				int w = pref.getInt(IEHost.BROWSER_WIDTH);
-				int h = pref.getInt(IEHost.BROWSER_HEIGTH);
-				if (w == 0 || h == 0) {
-					// use defaults
-					w = 640;
-					h = 480;
-				}
-				setSize(w, h);
-			}
-			setSizePending = false;
-		}
-		ieHost.displayURL(url);
+		sendCommand(IEHost.CMD_DISPLAY_URL + " " + url);
+	}
+	/*
+	 * @see IBrowser#isCloseSupported()
+	 */
+	public boolean isCloseSupported() {
+		return true;
 	}
 	/*
 	 * @see IBrowser#isSetLocationSupported()
@@ -73,24 +83,124 @@ public class IEBrowserAdapter implements IBrowser {
 	 * @see IBrowser#setLocation(int, int)
 	 */
 	public void setLocation(int x, int y) {
-		this.x = x;
-		this.y = y;
-		if (ieHost != null && !ieHost.isDisposed()) {
-			ieHost.setLocation(x, y);
-		} else {
-			setLocationPending = true;
-		}
+		sendCommand(IEHost.CMD_SET_LOCATION + " " + x + " " + y);
 	}
 	/*
 	 * @see IBrowser#setSize(int, int)
 	 */
 	public void setSize(int width, int height) {
-		this.width = width;
-		this.height = height;
-		if (ieHost != null && !ieHost.isDisposed()) {
-			ieHost.setSize(width, height);
-		} else {
-			setSizePending = true;
+		sendCommand(IEHost.CMD_SET_SIZE + " " + width + " " + height);
+	}
+	/**
+	 * Launches IE as external process.
+	 * initializes commandWriter to this process standard input.
+	 */
+	public void run() {
+		Process pr;
+		try {
+			pr = Runtime.getRuntime().exec(cmd /*, new String[]{"PATH=%PATH%;d:\\"}*/
+			);
+			(new StreamConsumer(pr.getInputStream())).start();
+			(new StreamConsumer(pr.getErrorStream())).start();
+			commandWriter = new PrintWriter(pr.getOutputStream(), true);
+		} catch (IOException e) {
+			pr = null;
 		}
+		launched = true;
+		if (pr == null)
+			return;
+		try {
+			pr.waitFor();
+		} catch (InterruptedException e) {
+		}
+		if (commandWriter != null) {
+			PrintWriter w = commandWriter;
+			commandWriter = null;
+			w.close();
+		}
+	}
+	/**
+	 * Writes specified command to IE standard input
+	 */
+	private void sendCommand(String command) {
+		if (cmd == null) // did not initialize propertly
+			return;
+		if (commandWriter == null) {
+			if (IEHost.CMD_CLOSE.equals(command))
+				// do not start browser just to close it again
+				return;
+			new Thread(this).start();
+			while (!launched) {
+				try {
+					Thread.currentThread().sleep(50);
+				} catch (InterruptedException ie) {
+					launched = false;
+					return;
+				}
+			}
+			launched = false;
+		}
+		try {
+			commandWriter.println(command);
+		} catch (Exception e) {
+		}
+	}
+	/** 
+	 * Calculates classpath for a specified plugin
+	 */
+	private String getClassPath(String pluginID) {
+		Collection pluginIDs = getRequiredPluginIDs(pluginID);
+		pluginIDs.add(pluginID);
+		Collection cpaths = new HashSet();
+		for (Iterator it = pluginIDs.iterator(); it.hasNext();) {
+			URLClassLoader cl =
+				(URLClassLoader) Platform
+					.getPlugin((String) it.next())
+					.getDescriptor()
+					.getPluginClassLoader();
+			URL urls[] = cl.getURLs();
+			for (int i = 0; i < urls.length; i++) {
+				cpaths.add(new File(urls[i].getFile()).toString());
+			}
+		}
+		String classPath = "";
+		for (Iterator i = cpaths.iterator(); i.hasNext();) {
+			String cp = (String) i.next();
+			if (cp.length() > 0)
+				classPath += cp + ";";
+		}
+		return classPath;
+	}
+	/**
+	 * Obtains IDs of plugins required by given plugin
+	 */
+	private Collection getRequiredPluginIDs(String pluginID) {
+		Collection IDs = new ArrayList();
+		IPluginPrerequisite[] preqs =
+			Platform.getPlugin(pluginID).getDescriptor().getPluginPrerequisites();
+		for (int i = 0; i < preqs.length; i++) {
+			IDs.add(preqs[i].getUniqueIdentifier());
+			IDs.addAll(getRequiredPluginIDs(preqs[i].getUniqueIdentifier()));
+		}
+		return IDs;
+	}
+	/** 
+	 * Calculates library path for a specified plugin
+	 */
+	private String getPath(String pluginID) {
+		URL urls[] =
+			((URLClassLoader) Platform
+				.getPlugin(pluginID)
+				.getDescriptor()
+				.getPluginClassLoader())
+				.getURLs();
+		String path = "";
+		for (int i = 0; i < urls.length; i++) {
+			File cp = new File(urls[i].getFile());
+			if (!cp.isDirectory())
+				cp = cp.getParentFile();
+			path += cp.toString() + ";";
+		}
+		return path;
 	}
 }
