@@ -536,6 +536,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		return new ISafeRunnable() {
 			public void handleException(Throwable e) {
 				if (e instanceof OperationCanceledException) {
+					//just discard built state when a builder cancels, to ensure
+					//that it is called again on the very next build.
 					currentBuilder.forgetLastBuiltState();
 					throw (OperationCanceledException) e;
 				}
