@@ -12,7 +12,6 @@ package org.eclipse.update.internal.ui.views;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.update.internal.ui.forms.ConfigurationPreviewForm;
 
 public class ConfigurationPreview {
 	private ConfigurationPreviewForm form;

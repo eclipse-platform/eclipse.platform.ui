@@ -45,7 +45,7 @@ public class FindUpdatesAction extends Action {
 			category.setFeatures(new IFeature[] { feature });
 		BusyIndicator.showWhile(shell.getDisplay(), new Runnable() {
 			public void run() {
-				UnifiedInstallWizard wizard = new UnifiedInstallWizard(searchRequest);
+				InstallWizard wizard = new InstallWizard(searchRequest);
 				WizardDialog dialog = new ResizableWizardDialog(shell, wizard);
 				dialog.create();
 				dialog.getShell().setText("Updates");

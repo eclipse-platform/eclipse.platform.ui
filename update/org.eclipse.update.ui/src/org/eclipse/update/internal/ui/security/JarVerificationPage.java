@@ -23,7 +23,7 @@ import org.eclipse.update.internal.ui.wizards.*;
 /**
  * 
  */
-public class JarVerificationPage extends UnifiedBannerPage {
+public class JarVerificationPage extends BannerPage {
 
 	private IVerificationResult _VerificationResult = null;
 	private String _fileName = null;

@@ -62,7 +62,7 @@ public class InstallOptionalFeatureAction extends Action {
 		});
 	}
 	private void openWizard(UpdateSearchRequest searchRequest) {
-		UnifiedInstallWizard wizard = new UnifiedInstallWizard(searchRequest);
+		InstallWizard wizard = new InstallWizard(searchRequest);
 		WizardDialog dialog = new ResizableWizardDialog(shell, wizard);
 		dialog.create();
 		dialog.getShell().setText(

@@ -26,7 +26,7 @@ import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.operations.*;
 
-public class UnifiedOptionalFeaturesPage extends UnifiedBannerPage implements IUnifiedDynamicPage {
+public class OptionalFeaturesPage extends BannerPage implements IDynamicPage {
 	// NL keys
 	private static final String KEY_TITLE =
 		"InstallWizard.OptionalFeaturesPage.title";
@@ -104,7 +104,7 @@ public class UnifiedOptionalFeaturesPage extends UnifiedBannerPage implements IU
 	/**
 	 * Constructor for ReviewPage2
 	 */
-	public UnifiedOptionalFeaturesPage(IInstallConfiguration config) {
+	public OptionalFeaturesPage(IInstallConfiguration config) {
 		super("OptionalFeatures");
 		setTitle(UpdateUI.getString(KEY_TITLE));
 		setDescription(UpdateUI.getString(KEY_DESC));

@@ -25,7 +25,7 @@ import org.eclipse.update.internal.ui.parts.*;
 /**
  * 
  */
-public class DuplicateConflictsDialog2 extends MessageDialog {
+public class DuplicateConflictsDialog extends MessageDialog {
 	private static final String KEY_TITLE = "DuplicateConflictsDialog.title";
 	private static final String KEY_MESSAGE =
 		"DuplicateConflictsDialog.message";
@@ -82,7 +82,7 @@ public class DuplicateConflictsDialog2 extends MessageDialog {
 		}
 	}
 
-	public DuplicateConflictsDialog2(Shell shell, ArrayList conflicts) {
+	public DuplicateConflictsDialog(Shell shell, ArrayList conflicts) {
 		super(
 			shell,
 			UpdateUI.getString(KEY_TITLE),

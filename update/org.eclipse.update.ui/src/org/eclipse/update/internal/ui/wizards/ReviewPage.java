@@ -34,8 +34,8 @@ import org.eclipse.update.internal.ui.views.*;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.IUpdateSearchResultCollector;
 
-public class UnifiedReviewPage
-	extends UnifiedBannerPage
+public class ReviewPage
+	extends BannerPage
 	implements IUpdateSearchResultCollector {
 	// NL keys
 	private static final String KEY_C_FEATURE =
@@ -60,7 +60,7 @@ public class UnifiedReviewPage
 	private Button propertiesButton;
 	private Button filterCheck;
 	private ContainmentFilter filter = new ContainmentFilter();
-	private SearchRunner2 searchRunner;
+	private SearchRunner searchRunner;
 	class JobsContentProvider
 		extends DefaultContentProvider
 		implements IStructuredContentProvider {
@@ -163,7 +163,7 @@ public class UnifiedReviewPage
 	/**
 	 * Constructor for ReviewPage2
 	 */
-	public UnifiedReviewPage(SearchRunner2 searchRunner) {
+	public ReviewPage(SearchRunner searchRunner) {
 		super("UnifiedMultiReview");
 		setTitle(UpdateUI.getString("Search Results"));
 		setDescription("Select features to install from the search result list.");
@@ -198,7 +198,7 @@ public class UnifiedReviewPage
 				if (tableViewer != null) {
 					tableViewer.refresh();
 					tableViewer.getTable().layout(true);
-					if (searchRunner.getSearchProvider() instanceof UnifiedModeSelectionPage) {
+					if (searchRunner.getSearchProvider() instanceof ModeSelectionPage) {
 						selectTrueUpdates();
 					}
 				}

@@ -23,16 +23,16 @@ import org.eclipse.update.search.*;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class UnifiedModeSelectionPage extends UnifiedBannerPage implements ISearchProvider2 {
+public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 	private boolean updateMode=true;
 	private Button updatesButton;
 	private Button newFeaturesButton;
 	private UpdateSearchRequest searchRequest;
-	private SearchRunner2 searchRunner;
+	private SearchRunner searchRunner;
 	private static final String SECTION_ID = "ModeSelectionPage";
 	private static final String P_NEW_FEATURES_MODE = "new-features-mode";
 	
-	public UnifiedModeSelectionPage(SearchRunner2 searchRunner) {
+	public ModeSelectionPage(SearchRunner searchRunner) {
 		super("modeSelection");
 		setTitle("Feature Updates");
 		setDescription("Choose the way you want to search for features to install");

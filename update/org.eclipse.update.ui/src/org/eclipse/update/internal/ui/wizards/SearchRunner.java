@@ -22,14 +22,14 @@ import org.eclipse.update.search.*;
  * To change the template for this generated type comment go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-public class SearchRunner2 {
+public class SearchRunner {
 	private Shell shell;
 	private IRunnableContext context;
-	private ISearchProvider2 searchProvider;
+	private ISearchProvider searchProvider;
 	private IUpdateSearchResultCollector collector;
 	private boolean newSearchNeeded;
 	
-	public SearchRunner2(Shell shell, IRunnableContext context) {
+	public SearchRunner(Shell shell, IRunnableContext context) {
 		this.shell = shell;
 		this.context = context;
 	}
@@ -38,11 +38,11 @@ public class SearchRunner2 {
 		this.collector = collector;
 	}
 	
-	public ISearchProvider2 getSearchProvider() {
+	public ISearchProvider getSearchProvider() {
 		return searchProvider;
 	}
 	
-	public void setSearchProvider(ISearchProvider2 searchProvider) {
+	public void setSearchProvider(ISearchProvider searchProvider) {
 		if (this.searchProvider!=searchProvider)
 			newSearchNeeded = true;
 		this.searchProvider = searchProvider;

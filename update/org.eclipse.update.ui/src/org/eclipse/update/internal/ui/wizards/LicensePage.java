@@ -20,7 +20,7 @@ import org.eclipse.update.core.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.operations.*;
 
-public class UnifiedLicensePage extends WizardPage implements IUnifiedDynamicPage {
+public class LicensePage extends WizardPage implements IDynamicPage {
 	private static final String KEY_TITLE = "InstallWizard.LicensePage.title"; //$NON-NLS-1$
 	private static final String KEY_DESC = "InstallWizard.LicensePage.desc"; //$NON-NLS-1$
 	private static final String KEY_DESC2 = "InstallWizard.LicensePage.desc2"; //$NON-NLS-1$
@@ -36,7 +36,7 @@ public class UnifiedLicensePage extends WizardPage implements IUnifiedDynamicPag
 	/**
 	 * Constructor for LicensePage2
 	 */
-	public UnifiedLicensePage(boolean multiLicenseMode) {
+	public LicensePage(boolean multiLicenseMode) {
 		super("License"); //$NON-NLS-1$
 		setTitle(UpdateUI.getString(KEY_TITLE));
 		setPageComplete(false);
@@ -51,7 +51,7 @@ public class UnifiedLicensePage extends WizardPage implements IUnifiedDynamicPag
 		super.dispose();
 	}
 
-	public UnifiedLicensePage(IInstallFeatureOperation job) {
+	public LicensePage(IInstallFeatureOperation job) {
 		this(false);
 		setJobs(new IInstallFeatureOperation[] { job });
 	}

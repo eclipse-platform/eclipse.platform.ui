@@ -21,7 +21,7 @@ import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
 import org.eclipse.update.search.*;
 
-public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvider2 {
+public class SitePage extends BannerPage implements ISearchProvider {
 
 	class TreeContentProvider
 		extends DefaultContentProvider
@@ -110,7 +110,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 	private Button editButton;
 	private Button removeButton;
 	private Button envFilterCheck;
-	private SearchRunner2 searchRunner;
+	private SearchRunner searchRunner;
 	private EnvironmentFilter envFilter;
 	private UpdateSearchRequest searchRequest;
 	private ModelListener modelListener;
@@ -118,7 +118,7 @@ public class UnifiedSitePage extends UnifiedBannerPage implements ISearchProvide
 	/**
 	 * @param name
 	 */
-	public UnifiedSitePage(SearchRunner2 searchRunner) {
+	public SitePage(SearchRunner searchRunner) {
 		super("SitePage");
 		setTitle("Update sites to visit");
 		setDescription("Select update sites to visit while looking for new features.");

@@ -21,7 +21,7 @@ import org.eclipse.update.operations.*;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public interface IUnifiedDynamicPage {
+public interface IDynamicPage {
 	public void setJobs(IInstallFeatureOperation [] jobs);
 
 }

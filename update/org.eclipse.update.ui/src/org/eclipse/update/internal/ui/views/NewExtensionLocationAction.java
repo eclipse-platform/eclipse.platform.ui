@@ -78,7 +78,7 @@ public class NewExtensionLocationAction extends Action {
 		try {
 			IInstallConfiguration config =
 				UpdateUtils.createInstallConfiguration();
-			if (UnifiedTargetPage
+			if (TargetPage
 				.addConfiguredSite(UpdateUI.getActiveWorkbenchShell(), config, dir, true)
 				!= null) {
 				UpdateUtils.makeConfigurationCurrent(config, null);

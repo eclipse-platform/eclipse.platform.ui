@@ -15,7 +15,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.*;
-import org.eclipse.update.internal.ui.search.*;
 import org.eclipse.update.internal.ui.wizards.*;
 
 /**
@@ -26,7 +25,6 @@ public class UnifiedWizardAction implements IWorkbenchWindowActionDelegate {
 	private static final String KEY_TITLE = "NewUpdates.noUpdates.title";
 
 	IWorkbenchWindow window;
-	ISearchCategory category;
 	/**
 	 * The constructor.
 	 */
@@ -51,7 +49,7 @@ public class UnifiedWizardAction implements IWorkbenchWindowActionDelegate {
 	}
 	
 	private void openNewUpdatesWizard() {
-		UnifiedInstallWizard wizard = new UnifiedInstallWizard();
+		InstallWizard wizard = new InstallWizard();
 		WizardDialog dialog = new ResizableWizardDialog(window.getShell(), wizard);
 		dialog.create();
 		dialog.getShell().setText(UpdateUI.getString(KEY_TITLE));

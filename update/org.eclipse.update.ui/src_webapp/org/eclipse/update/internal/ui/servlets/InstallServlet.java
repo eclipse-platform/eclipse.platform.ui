@@ -194,7 +194,7 @@ public class InstallServlet extends HttpServlet {
 
 
 	private void openWizard(Shell shell, UpdateSearchRequest searchRequest) {
-		UnifiedInstallWizard wizard = new UnifiedInstallWizard(searchRequest);
+		InstallWizard wizard = new InstallWizard(searchRequest);
 		WizardDialog dialog = new ResizableWizardDialog(shell, wizard);
 		dialog.create();
 //		dialog.getShell().setText(

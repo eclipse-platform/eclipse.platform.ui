@@ -25,25 +25,25 @@ import org.eclipse.update.internal.ui.security.JarVerificationService;
 import org.eclipse.update.operations.*;
 import org.eclipse.update.search.UpdateSearchRequest;
 
-public class UnifiedInstallWizard
+public class InstallWizard
 	extends Wizard
-	implements IOperationListener, ISearchProvider2 {
-	private UnifiedModeSelectionPage modePage;
-	private UnifiedSitePage sitePage;
-	private UnifiedReviewPage reviewPage;
-	private UnifiedLicensePage licensePage;
-	private UnifiedOptionalFeaturesPage optionalFeaturesPage;
-	private UnifiedTargetPage targetPage;
+	implements IOperationListener, ISearchProvider {
+	private ModeSelectionPage modePage;
+	private SitePage sitePage;
+	private ReviewPage reviewPage;
+	private LicensePage licensePage;
+	private OptionalFeaturesPage optionalFeaturesPage;
+	private TargetPage targetPage;
 	private IInstallConfiguration config;
 	private int installCount = 0;
-	private SearchRunner2 searchRunner;
+	private SearchRunner searchRunner;
 	private UpdateSearchRequest searchRequest;
 
-	public UnifiedInstallWizard() {
+	public InstallWizard() {
 		this(null);
 	}
 	
-	public UnifiedInstallWizard(UpdateSearchRequest searchRequest) {
+	public InstallWizard(UpdateSearchRequest searchRequest) {
 		this.searchRequest = searchRequest;
 		setDialogSettings(UpdateUI.getDefault().getDialogSettings());
 		setDefaultPageImageDescriptor(UpdateUIImages.DESC_INSTALL_WIZ);
@@ -71,8 +71,8 @@ public class UnifiedInstallWizard
 				targetPage.getTargetSites(),
 				config);
 		if (conflicts != null) {
-			DuplicateConflictsDialog2 dialog =
-				new DuplicateConflictsDialog2(getShell(), conflicts);
+			DuplicateConflictsDialog dialog =
+				new DuplicateConflictsDialog(getShell(), conflicts);
 			if (dialog.open() != 0)
 				return false;
 		}
@@ -108,7 +108,7 @@ public class UnifiedInstallWizard
 								optionalFeatures,
 								unconfiguredOptionalFeatures,
 								new JarVerificationService(
-									UnifiedInstallWizard.this.getShell()));
+									InstallWizard.this.getShell()));
 					operations[i] = op;
 				}
 				IOperation installOperation =
@@ -119,7 +119,7 @@ public class UnifiedInstallWizard
 				try {
 					installOperation.execute(
 						monitor,
-						UnifiedInstallWizard.this);
+						InstallWizard.this);
 				} catch (CoreException e) {
 					throw new InvocationTargetException(e);
 				} finally {
@@ -144,17 +144,17 @@ public class UnifiedInstallWizard
 	}
 
 	public void addPages() {
-		searchRunner = new SearchRunner2(getShell(), getContainer());
+		searchRunner = new SearchRunner(getShell(), getContainer());
 		if (searchRequest==null) {
-			modePage = new UnifiedModeSelectionPage(searchRunner);
+			modePage = new ModeSelectionPage(searchRunner);
 			addPage(modePage);
-			sitePage = new UnifiedSitePage(searchRunner);
+			sitePage = new SitePage(searchRunner);
 			addPage(sitePage);
 		}
 		else {
 			searchRunner.setSearchProvider(this);
 		}
-		reviewPage = new UnifiedReviewPage(searchRunner);
+		reviewPage = new ReviewPage(searchRunner);
 		searchRunner.setResultCollector(reviewPage);
 		addPage(reviewPage);
 
@@ -164,11 +164,11 @@ public class UnifiedInstallWizard
 			UpdateUI.logException(e);
 		}
 
-		licensePage = new UnifiedLicensePage(true);
+		licensePage = new LicensePage(true);
 		addPage(licensePage);
-		optionalFeaturesPage = new UnifiedOptionalFeaturesPage(config);
+		optionalFeaturesPage = new OptionalFeaturesPage(config);
 		addPage(optionalFeaturesPage);
-		targetPage = new UnifiedTargetPage(config);
+		targetPage = new TargetPage(config);
 		addPage(targetPage);
 	}
 
