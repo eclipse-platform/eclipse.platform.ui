@@ -14,6 +14,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
+import org.eclipse.team.internal.core.Policy;
 
 /**
  * Wraps an input stream that blocks indefinitely to simulate timeouts on read(),
@@ -302,6 +303,9 @@ public class TimeoutInputStream extends FilterInputStream {
 	private synchronized void growBuffer() {
 		int newSize = 2 * iobuffer.length;
 		if (newSize > iobuffer.length) {
+			if (Policy.DEBUG_STREAMS) {
+				System.out.println("InputStream growing to " + newSize + " bytes"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 			byte[] newBuffer = new byte[newSize];
 			int pos = 0;
 			int len = length;
