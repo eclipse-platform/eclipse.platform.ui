@@ -21,6 +21,16 @@ public CTabPartDragDrop(LayoutPart dragPart, CTabFolder tabFolder, CTabItem tabI
 	super(dragPart, tabFolder);
 	this.tab = tabItem;
 }
+
+/**
+ * Returns a drag event representing the current state of dragging.
+ */
+protected PartDropEvent createDropEvent(Tracker tracker) {
+	PartDropEvent result = super.createDropEvent(tracker);
+	result.dragSourceActive = tab == tab.getParent().getSelection();
+	return result;
+}
+
 protected CTabFolder getCTabFolder() {
 	return (CTabFolder) getDragControl();
 }

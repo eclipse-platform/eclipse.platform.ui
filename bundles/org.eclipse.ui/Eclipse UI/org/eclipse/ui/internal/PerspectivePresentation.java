@@ -944,7 +944,7 @@ private void onPartDrop(PartDropEvent e) {
 			}
 			if (e.dragSource instanceof ViewPane && e.dropTarget instanceof PartTabFolder) {
 				if (e.dragSource.getContainer() == e.dropTarget) {
-					((PartTabFolder)e.dropTarget).reorderTab((ViewPane)e.dragSource, e.cursorX, e.cursorY);
+					((PartTabFolder)e.dropTarget).reorderTab((ViewPane)e.dragSource, e.cursorX, e.cursorY,e.dragSourceActive);
 					break;
 				}
 			}
