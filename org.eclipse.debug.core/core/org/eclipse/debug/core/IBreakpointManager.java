@@ -109,7 +109,7 @@ public interface IBreakpointManager {
 
 	/**
 	 * Removes the given breakpoint from the breakpoint manager, deletes
-	 * the marker assocaited with the breakpoint if the <code>delete</code> flag
+	 * the marker associated with the breakpoint if the <code>delete</code> flag
 	 * is <code>true</code>, and notifies all registered
 	 * listeners. Has no effect if the given breakpoint is not currently
 	 * registered.
