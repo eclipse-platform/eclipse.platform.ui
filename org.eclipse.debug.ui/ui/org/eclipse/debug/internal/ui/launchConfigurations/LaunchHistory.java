@@ -399,6 +399,7 @@ public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListe
 					fFavorites.add(index, newConfig);
 				}
 			}
+			checkIfFavorite(newConfig);
 		}
 		if (changed) {
 			setDirty();
