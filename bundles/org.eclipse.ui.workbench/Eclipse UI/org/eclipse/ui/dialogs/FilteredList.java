@@ -281,9 +281,10 @@ public class FilteredList extends Composite {
 			fList.deselectAll();
 		else {
 			//If there is a current working update defer the setting
-			if (fUpdateThread == null || fUpdateThread.fStop)
+			if (fUpdateThread == null || fUpdateThread.fStop){
 				fList.setSelection(selection);
-			else
+				fList.notifyListeners(SWT.Selection, new Event());
+			}else
 				fUpdateThread.selectIndices(selection);
 		}
 	}
@@ -564,8 +565,12 @@ public class FilteredList extends Composite {
 
 			fDisplay.syncExec(new Runnable() {
 				public void run() {
-					if (fTable.getSelectionCount() == 0)
-						selectAndNotify(new int[] { 0 });
+					/**
+					 * Reset to the first selection if no
+					 * index has been queued.
+					 */
+					
+					selectAndNotify(new int[] { 0 });
 				}
 			});
 
