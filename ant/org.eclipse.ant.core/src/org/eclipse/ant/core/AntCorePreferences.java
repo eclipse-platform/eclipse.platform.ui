@@ -1194,7 +1194,7 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		}
 		StringBuffer entries = new StringBuffer();
 		for (int i = 0; i < antHomeEntries.length; i++) {
-			entries.append(antHomeEntries[i]);
+			entries.append(antHomeEntries[i].getLabel());
 			entries.append(',');
 		}
 		
