@@ -1,10 +1,10 @@
-Bundle-Name: org.eclipse.core.runtime.compatibility
+Bundle-Name: %pluginName
 Bundle-GlobalName: org.eclipse.core.runtime.compatibility
 Bundle-Description: Eclipse Runtime (System Bundle)
 Bundle-Version: 3.0.0
 Build-Information: ${build-information}
 Bundle-Copyright: Open Source Materials 
-Bundle-Vendor: Eclipse
+Bundle-Vendor: %providerName
 Bundle-DocUrl: http://www.eclipse.org
 Bundle-ContactAddress: www.eclipse.org
 Bundle-Activator: org.eclipse.core.internal.plugins.CompatibilityActivator
