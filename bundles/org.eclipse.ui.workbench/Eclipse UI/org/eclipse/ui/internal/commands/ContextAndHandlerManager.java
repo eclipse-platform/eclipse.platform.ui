@@ -311,6 +311,9 @@ public class ContextAndHandlerManager implements IContextResolver {
 			MenuItem parentItem = parent.getItem(parent.getItemCount() - 1);
 			parent = parentItem.getMenu();
 			
+			if (parent == null)
+				return;
+			
 			if (acceleratorMenu != null)
 				acceleratorMenu.dispose();
 			
