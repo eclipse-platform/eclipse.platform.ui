@@ -34,12 +34,14 @@ public final class FileBuffers {
 	}
 
 	/**
-	 * Returns the text file buffer manager.
+	 * Returns the text file buffer manager. May return <code>null</code> if
+	 * the file buffers plug-in may no be activated.
 	 * 
 	 * @return the text file buffer manager
 	 */
 	public static ITextFileBufferManager getTextFileBufferManager()  {
-		return FileBuffersPlugin.getDefault().getFileBufferManager();
+		FileBuffersPlugin plugin= FileBuffersPlugin.getDefault();
+		return plugin != null ? plugin.getFileBufferManager() : null;
 	}
 	
 	/**
