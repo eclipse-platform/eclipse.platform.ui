@@ -127,9 +127,10 @@ class SearchResultViewEntry implements ISearchResultViewEntry {
 		}
 		else {
 			fMarkers.remove(marker);
-			if (fMarkers.size() == 1)
+			if (fMarkers.size() == 1) {
 				fMarker= (IMarker)fMarkers.get(0);
 				fMarkers= null;
+			}
 		}
 	}
 	

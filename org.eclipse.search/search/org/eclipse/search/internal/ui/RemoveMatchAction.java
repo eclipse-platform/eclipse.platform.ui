@@ -46,12 +46,20 @@ class RemoveMatchAction extends Action {
 		int size= selection.size();
 		if (size != 1)
 			return null;
-		IMarker[] result= new IMarker[size];
+		if (selection.getFirstElement() instanceof ISearchResultViewEntry) {
+			IMarker marker= ((ISearchResultViewEntry)selection.getFirstElement()).getSelectedMarker();
+			if (marker != null)
+				return new IMarker[] {marker};
+		}
+		return null;
+		/*
 		Iterator iter= selection.iterator();
 		for(int i= 0; iter.hasNext(); i++) {
 			ISearchResultViewEntry entry= (ISearchResultViewEntry)iter.next();
 			result[i]= entry.getSelectedMarker();
 		}
 		return result;
+		*/
+		
 	}
 }

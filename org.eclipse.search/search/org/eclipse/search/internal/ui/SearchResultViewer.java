@@ -98,7 +98,7 @@ class SearchResultViewer extends TableViewer {
 		addSelectionChangedListener(
 			new ISelectionChangedListener() {
 				public void selectionChanged(SelectionChangedEvent event) {
-					int selectionCount= getSelectedMarkerCount();
+					int selectionCount= getSelectedEntriesCount();
 					boolean hasSingleSelection= selectionCount == 1;
 					boolean hasElements= getItemCount() > 0;
 					fShowNextResultAction.setEnabled(hasSingleSelection || (hasElements && selectionCount == 0));
@@ -136,22 +136,30 @@ class SearchResultViewer extends TableViewer {
 		getTable().setMenu(menu);		
 	}
 	void enableActions() {
+		/*
+		 * Note: The check before each set operation reduces flickering
+		 */
 		boolean state= getItemCount() > 0;
-		if (state != fShowNextResultAction.isEnabled()) {
+		if (state != fShowNextResultAction.isEnabled())
 			fShowNextResultAction.setEnabled(state);
+		if (state != fShowPreviousResultAction.isEnabled())
 			fShowPreviousResultAction.setEnabled(state);
+		if (state != fSortDropDownAction.isEnabled())
 			fSortDropDownAction.setEnabled(state);
-		}
+
 		state= SearchManager.getDefault().getCurrentSearch() != null;
 		if (state != fRemoveAllSearchesAction.isEnabled())
 			fRemoveAllSearchesAction.setEnabled(state);
+		if (state != fSearchDropDownAction.isEnabled())
 			fSearchDropDownAction.setEnabled(state);
-		if (fGotoMarkerAction.isEnabled())
-			fGotoMarkerAction.setEnabled(false);
-		if (fRemoveMatchAction.isEnabled())
-			fRemoveMatchAction.setEnabled(false);			
 		if (state != fSearchAgainAction.isEnabled())
 			fSearchAgainAction.setEnabled(state);
+
+		state= !getSelection().isEmpty();
+		if (state != fGotoMarkerAction.isEnabled())
+			fGotoMarkerAction.setEnabled(state);
+		if (state != fRemoveMatchAction.isEnabled())
+			fRemoveMatchAction.setEnabled(state);
 	}
 
 	protected void inputChanged(Object input, Object oldInput) {
@@ -162,7 +170,7 @@ class SearchResultViewer extends TableViewer {
 		enableActions();
 	}
 
-	protected int getSelectedMarkerCount() {
+	protected int getSelectedEntriesCount() {
 		ISelection s= getSelection();
 		if (s == null || s.isEmpty() || !(s instanceof IStructuredSelection))
 			return 0;
@@ -170,18 +178,31 @@ class SearchResultViewer extends TableViewer {
 		return selection.size();
 	}
 
+
 	//--- Contribution management -----------------------------------------------
+
+	protected boolean enableRemoveMenuItem() {
+		if (getSelectedEntriesCount() != 1)
+			return false;
+		Table table= getTable();
+		int index= table.getSelectionIndex();
+		SearchResultViewEntry entry= null;
+		if (index > -1)
+			entry= (SearchResultViewEntry)table.getItem(index).getData();
+		return (entry != null && entry.getMatchCount() > 1);
+			
+	}
 	
 	void fillContextMenu(IMenuManager menu) {
 		if (fgContextMenuContributor != null)
 			fgContextMenuContributor.fill(menu, this);
 			
 		menu.add(new Separator());
-		if (! getSelection().isEmpty()) {
-			menu.add(new GotoMarkerAction(this));
-			if (getSelectedMarkerCount() == 1)
-				menu.add(fRemoveMatchAction);
-			menu.add(new RemoveResultAction(this));
+		if (!getSelection().isEmpty()) {
+			menu.add(fGotoMarkerAction);
+			if (enableRemoveMenuItem())
+				menu.add(new RemoveResultAction(this));				
+			menu.add(fRemoveMatchAction);
 			menu.add(new Separator());
 		}
 		// If we have elements
