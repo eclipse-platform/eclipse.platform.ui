@@ -1,17 +1,38 @@
 package org.eclipse.jface.action;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import java.util.*;
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * A contribution item which delegates to an action.
@@ -178,18 +199,20 @@ public boolean equals(Object o) {
 	return action.equals(((ActionContributionItem) o).action);
 }
 /**
- * The <code>ActionContributionItem</code> implementation of this <code>IContributionItem</code>
- * method creates a SWT Button for the action. 
- * If the action's checked property has been set, a toggle button is created 
- * and primed to the value of the checked property.
+ * The <code>ActionContributionItem</code> implementation of this
+ * <code>IContributionItem</code> method creates an SWT <code>Button</code> for
+ * the action using the action's style. If the action's checked property has
+ * been set, the button is created and primed to the value of the checked
+ * property.
  */
 public void fill(Composite parent) {
 	if (widget == null && parent != null) {
 		int flags = SWT.PUSH;
-		
 		if (action != null) {
 			if (action.getStyle() == IAction.AS_CHECK_BOX)
 				flags = SWT.TOGGLE;
+			if (action.getStyle() == IAction.AS_RADIO_BUTTON)
+				flags = SWT.RADIO;
 		}
 		
 		Button b = new Button(parent, flags);
@@ -208,21 +231,23 @@ public void fill(Composite parent) {
 	}
 }
 /**
- * The <code>ActionContributionItem</code> implementation of this <code>IContributionItem</code>
- * method creates a SWT MenuItem for the action. 
- * If the action's checked property has been set, a toggle button is created 
- * and primed to the value of the checked property.
- * If the action's menu creator property has been set, a cascading submenu is created.
+ * The <code>ActionContributionItem</code> implementation of this
+ * <code>IContributionItem</code> method creates an SWT <code>MenuItem</code>
+ * for the action using the action's style. If the action's checked property has
+ * been set, a button is created and primed to the value of the checked
+ * property. If the action's menu creator property has been set, a cascading
+ * submenu is created.
  */
 public void fill(Menu parent, int index) {
 	if (widget == null && parent != null) {
-		int flags = SWT.PUSH;
 		Menu subMenu= null;
-		
+		int flags = SWT.PUSH;
 		if (action != null) {
 			int style = action.getStyle();
 			if (style == IAction.AS_CHECK_BOX)
 				flags= SWT.CHECK;
+			else if (style == IAction.AS_RADIO_BUTTON)
+				flags = SWT.RADIO;
 			else if (style == IAction.AS_DROP_DOWN_MENU) {
 				IMenuCreator mc = action.getMenuCreator();
 				subMenu = mc.getMenu(parent);
@@ -254,21 +279,22 @@ public void fill(Menu parent, int index) {
 	}
 }
 /**
- * The <code>ActionContributionItem</code> implementation of this <code>IContributionItem</code>
- * method creates a SWT ToolItem for the action. 
- * If the action's checked property has been set, a toggle button is created 
- * and primed to the value of the checked property.
- * If the action's menu creator property has been set, a drop-down
+ * The <code>ActionContributionItem</code> implementation of this ,
+ * <code>IContributionItem</code> method creates an SWT <code>ToolItem</code>
+ * for the action using the action's style. If the action's checked property has
+ * been set, a button is created and primed to the value of the checked
+ * property. If the action's menu creator property has been set, a drop-down
  * tool item is created.
  */
 public void fill(ToolBar parent, int index) {
 	if (widget == null && parent != null) {
 		int flags = SWT.PUSH;
-		
 		if (action != null) {
 			int style = action.getStyle();
 			if (style == IAction.AS_CHECK_BOX)
 				flags = SWT.CHECK;
+			else if (style == IAction.AS_RADIO_BUTTON)
+				flags = SWT.RADIO;
 			else if (style == IAction.AS_DROP_DOWN_MENU)
 				flags = SWT.DROP_DOWN;					
 		}
@@ -323,20 +349,6 @@ private ImageCache getImageCache() {
 	}
 	return cache;
 }
-/** 
- * Handles a widget arm event.
- */
-private void handleWidgetArm(Event e) {
-	/*
-	String description= null;
-	if (fAction instanceof Action)	// getDescription should go into IAction
-		description= ((Action)fAction).getDescription();
-	if (description != null)
-		ApplicationWindow.showDescription(e.widget, description);
-	else
-		ApplicationWindow.resetDescription(e.widget);
-	*/
-}
 /**
  * Handles a widget dispose event for the widget corresponding to this item.
  */
@@ -355,9 +367,6 @@ private void handleWidgetDispose(Event e) {
  */
 private void handleWidgetEvent(Event e) {
 	switch (e.type) {
-		case SWT.Arm:
-			handleWidgetArm(e);
-			break;
 		case SWT.Dispose:
 			handleWidgetDispose(e);
 			break;
@@ -372,14 +381,16 @@ private void handleWidgetEvent(Event e) {
 private void handleWidgetSelection(Event e) {
 	Widget item= e.widget;
 	if (item != null) {
-		
 		int style = item.getStyle();
 					
 		if ((style & (SWT.TOGGLE | SWT.CHECK)) != 0) {
 			if (action.getStyle() == IAction.AS_CHECK_BOX) {
 				action.setChecked(!action.isChecked());
 			}
-			
+		} else if ((style & SWT.RADIO) != 0) {
+			if (action.getStyle() == IAction.AS_RADIO_BUTTON) {
+				action.setChecked(!action.isChecked());
+			}
 		} else if ((style & SWT.DROP_DOWN) != 0) {
 			if (e.detail == 4) {	// on drop-down button
 				if (action.getStyle() == IAction.AS_DROP_DOWN_MENU) {
@@ -431,10 +442,12 @@ public boolean isEnabled() {
  */
 public boolean isDynamic() {
 	if(widget instanceof MenuItem) {
-		//Optimization. Only recreate the item is the check style has changed. 
+		//Optimization. Only recreate the item is the check or radio style has changed. 
 		boolean itemIsCheck = (widget.getStyle() & SWT.CHECK) != 0;
 		boolean actionIsCheck = getAction() != null && getAction().getStyle() == IAction.AS_CHECK_BOX;
-		return itemIsCheck != actionIsCheck;
+		boolean itemIsRadio = (widget.getStyle() & SWT.RADIO) != 0;
+		boolean actionIsRadio = getAction() != null && getAction().getStyle() == IAction.AS_RADIO_BUTTON;
+		return (itemIsCheck != actionIsCheck) || (itemIsRadio != actionIsRadio);
 	}
 	return false;
 }
@@ -474,8 +487,9 @@ public void update(String propertyName) {
 		boolean tooltipTextChanged = propertyName == null || propertyName.equals(Action.TOOL_TIP_TEXT);
 		boolean enableStateChanged = propertyName == null || propertyName.equals(Action.ENABLED) || 
 			propertyName.equals(IContributionManagerOverrides.P_ENABLED);
-		boolean checkChanged = (action.getStyle() == IAction.AS_CHECK_BOX) &&
-			(propertyName == null || propertyName.equals(Action.CHECKED));
+		boolean checkChanged = 
+			(action.getStyle() == IAction.AS_CHECK_BOX || action.getStyle() == IAction.AS_RADIO_BUTTON)
+			&& (propertyName == null || propertyName.equals(Action.CHECKED));
 					
 		if (widget instanceof ToolItem) {
 			ToolItem ti = (ToolItem) widget;

@@ -54,8 +54,8 @@ public class WWinPluginAction extends PluginAction implements IActionSetContribu
 	/**
 	 * Constructs a new WWinPluginAction object..
 	 */
-	public WWinPluginAction(IConfigurationElement actionElement, String runAttribute, IWorkbenchWindow window, String definitionId) {
-		super(actionElement, runAttribute, definitionId);
+	public WWinPluginAction(IConfigurationElement actionElement, String runAttribute, IWorkbenchWindow window, String definitionId, int style) {
+		super(actionElement, runAttribute, definitionId, style);
 		this.window = window;
 
 		// If config specifies a retarget action, create it now

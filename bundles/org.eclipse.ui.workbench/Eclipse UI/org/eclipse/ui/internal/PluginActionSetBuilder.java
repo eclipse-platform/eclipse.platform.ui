@@ -16,6 +16,7 @@ import org.eclipse.ui.*;
  */
 public class PluginActionSetBuilder extends PluginActionBuilder {
 	public static final String TAG_ACTION_SET="actionSet";//$NON-NLS-1$
+	// As of 2.1, the "pulldown" attribute is deprecated, use "style" attribute instead.
 	public static final String ATT_PULLDOWN="pulldown";//$NON-NLS-1$
 	
 	private PluginActionSet actionSet;
@@ -71,9 +72,19 @@ protected void addGroup(IContributionManager mgr, String name) {
  * configuration element.  
  */
 protected ActionDescriptor createActionDescriptor(IConfigurationElement element) {
-	String pulldown = element.getAttribute(ATT_PULLDOWN);
+	// As of 2.1, the "pulldown" attribute was deprecated and replaced by
+	// the attribute "style". See doc for more details.
+	boolean pullDownStyle = false;
+	String style = element.getAttribute(ActionDescriptor.ATT_STYLE);
+	if (style != null) {
+		pullDownStyle = style.equals(ActionDescriptor.STYLE_PULLDOWN);
+	} else {
+		String pulldown = element.getAttribute(ATT_PULLDOWN);
+		pullDownStyle = pulldown != null && pulldown.equals("true"); //$NON-NLS-1$
+	}
+	
 	ActionDescriptor desc = null;
-	if (pulldown != null && pulldown.equals("true"))//$NON-NLS-1$
+	if (pullDownStyle)
 		desc = new ActionDescriptor(element, ActionDescriptor.T_WORKBENCH_PULLDOWN, window);
 	else
 		desc = new ActionDescriptor(element, ActionDescriptor.T_WORKBENCH, window);

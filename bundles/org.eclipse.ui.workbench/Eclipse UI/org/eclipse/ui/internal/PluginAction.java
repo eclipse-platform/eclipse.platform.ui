@@ -70,8 +70,8 @@ public abstract class PluginAction extends Action
 	/**
 	 * PluginAction constructor.
 	 */
-	public PluginAction(IConfigurationElement actionElement, String runAttribute, String definitionId) {
-		super();
+	public PluginAction(IConfigurationElement actionElement, String runAttribute, String definitionId, int style) {
+		super(null, style);
 
 		// Create unique action id.
 		setId("PluginAction." + Integer.toString(actionCount)); //$NON-NLS-1$

@@ -1,14 +1,25 @@
 package org.eclipse.jface.action;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
-import java.util.*;
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Event;
@@ -22,6 +33,10 @@ import org.eclipse.swt.widgets.Event;
  * </p>
  */
 public abstract class Action implements IAction {
+	private static final Integer RADIO_BTN_ON = new Integer(1);
+	private static final Integer RADIO_BTN_OFF = new Integer(0);
+	private static final Boolean TOGGLE_BTN_ON = Boolean.TRUE;
+	private static final Boolean TOGGLE_BTN_OFF = Boolean.FALSE;
 
 	/**
 	 * Table of key codes (key type: <code>String</code>,
@@ -108,9 +123,12 @@ public abstract class Action implements IAction {
 	private ImageDescriptor disabledImage;
 	
 	/**
-	 * Holds the action's menu creator (an IMenuCreator) or checked state (a Boolean),
-	 * or <code>null</code> if neither have been set.
+	 * Holds the action's menu creator (an IMenuCreator) or checked state (a
+	 * Boolean for toggle button, or an Integer for radio button), or
+	 * <code>null</code> if neither have been set.
+	 * <p>
 	 * The value of this field affects the value of <code>getStyle()</code>.
+	 * </p>
 	 */
 	private Object value = null;
 	
@@ -123,6 +141,7 @@ public abstract class Action implements IAction {
 	 * Indicates this action is enabled.
 	 */
 	private boolean enabled = true;
+
 /**
  * Creates a new action with no text and no image.
  * <p>
@@ -155,6 +174,23 @@ protected Action(String text) {
 protected Action(String text, ImageDescriptor image) {
 	this(text);
 	setImageDescriptor(image);
+}
+/**
+ * Creates a new action with the given text and style. Note that the
+ * <code>AS_DROP_DOWN_MENU</code> style is not supported thru the constructor;
+ * instead use the <code>setMenuCreator</code> method.
+ * 
+ * @param text the action's text, or <code>null</code> if there is no text
+ * @param style one of <code>AS_PUSH_BUTTON</code>, <code>AS_CHECK_BOX</code>,
+ * 		and <code>AS_RADIO_BUTTON</code>.
+ */
+protected Action(String text, int style) {
+	this(text);
+	if (AS_CHECK_BOX == style) {
+		value = TOGGLE_BTN_OFF;
+	} else if (AS_RADIO_BUTTON == style) {
+		value = RADIO_BTN_OFF;
+	}
 }
 /* (non-Javadoc)
  * Method declared on IAction.
@@ -572,10 +608,12 @@ public IMenuCreator getMenuCreator() {
  * Method declared on IAction.
  */
 public int getStyle() {
-	// Infer the style form the fValue field.
+	// Infer the style form the value field.
 	if (value != null) {
-		if (value instanceof Boolean)
+		if (value == TOGGLE_BTN_ON || value == TOGGLE_BTN_OFF)
 			return AS_CHECK_BOX;
+		if (value == RADIO_BTN_ON || value == RADIO_BTN_OFF)
+			return AS_RADIO_BUTTON;
 		if (value instanceof IMenuCreator)
 			return AS_DROP_DOWN_MENU;
 	}
@@ -712,10 +750,7 @@ private static void initKeyStrings() {
  * Method declared on IAction.
  */
 public boolean isChecked() {
-	Object o = value;
-	if (o instanceof Boolean)
-		return ((Boolean) o).booleanValue();
-	return false;
+	return value == TOGGLE_BTN_ON || value == RADIO_BTN_ON;
 }
 /* (non-Javadoc)
  * Method declared on IAction.
@@ -775,23 +810,25 @@ public void runWithEvent(Event event) {
 public void setActionDefinitionId(String id) {
 	actionDefinitionId = id;	
 }
-
-/*
- * This method is called by constructors of actions with valid action definitions in the registry.
- * We do not use a constructor Action(String id) to do this work because that would conflict with
- * the pre-existing constructor Action(String text).
- */
-
 /* (non-Javadoc)
  * Method declared on IAction.
  */
 public void setChecked(boolean checked) {
-	// Use prefab Booleans so that != check in Action.setValue() works.
-	Object newValue = checked ? Boolean.TRUE : Boolean.FALSE;
+	Object newValue = null;
+	// For backward compatibility, if the style is not
+	// radio button, then convert it to a toggle button.
+	if (value == RADIO_BTN_ON || value == RADIO_BTN_OFF) {
+		newValue = checked ? RADIO_BTN_ON : RADIO_BTN_OFF;
+	} else {
+		newValue = checked ? TOGGLE_BTN_ON : TOGGLE_BTN_OFF;
+	}
+	
 	if (newValue != value) {
-		Object oldValue = value;
 		value = newValue;
-		firePropertyChange(CHECKED, oldValue, value);
+		if (checked)
+			firePropertyChange(CHECKED, Boolean.FALSE, Boolean.TRUE);
+		else
+			firePropertyChange(CHECKED, Boolean.TRUE, Boolean.FALSE);
 	}
 }
 /* (non-Javadoc)

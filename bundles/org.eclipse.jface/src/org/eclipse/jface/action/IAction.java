@@ -1,9 +1,16 @@
 package org.eclipse.jface.action;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
+/************************************************************************
+Copyright (c) 2000, 2003 IBM Corporation and others.
+All rights reserved.   This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM - Initial implementation
+************************************************************************/
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.events.HelpListener;
@@ -43,7 +50,7 @@ public interface IAction {
 
 	/**
 	 * Action style constant (value <code>2</code>) indicating action is 
-	 * a check box.
+	 * a check box (i.e. toggle button).
 	 */
 	public static int AS_CHECK_BOX = 0x02;
 
@@ -52,6 +59,14 @@ public interface IAction {
 	 * a drop down menu.
 	 */
 	public static int AS_DROP_DOWN_MENU = 0x04;
+
+	/**
+	 * Action style constant (value <code>8</code>) indicating action is 
+	 * a radio button.
+	 * 
+	 * @since 2.1
+	 */
+	public static int AS_RADIO_BUTTON = 0x08;
 
 	/**
 	 * Property name of an action's text (value <code>"text"</code>).
@@ -84,7 +99,9 @@ public interface IAction {
 	public static final String DESCRIPTION= "description"; //$NON-NLS-1$
 	
 	/**
-	 * Property name of an action's checked status (value <code>"checked"</code>).
+	 * Property name of an action's checked status (value
+	 * <code>"checked"</code>). Applicable when the style is
+	 * <code>AS_CHECK_BOX</code> or <code>AS_RADIO_BUTTON</code>.
 	 */
 	public static final String CHECKED= "checked"; //$NON-NLS-1$
 
@@ -174,8 +191,8 @@ public IMenuCreator getMenuCreator();
 /**
  * Return this action's style.
  *
- * @return one of <code>AS_PUSH_BUTTON</code>, <code>AS_CHECK_BOX</code>, 
- *  and <code>AS_DROP_DOWN</code>.
+ * @return one of <code>AS_PUSH_BUTTON</code>, <code>AS_CHECK_BOX</code>,
+ * <code>AS_RADIO_BUTTON</code> and <code>AS_DROP_DOWN</code>.
  */
 public int getStyle();
 /**
@@ -201,7 +218,8 @@ public String getText();
  */
 public String getToolTipText();
 /**
- * Returns the checked status of this action.
+ * Returns the checked status of this action. Applicable only if the style is
+ * <code>AS_CHECK_BOX</code> or <code>AS_RADIO_BUTTON</code>.
  * <p>
  * This method is associated with the <code>CHECKED</code> property;
  * property change events are reported when its value changes.
@@ -252,7 +270,6 @@ public void run();
  * @since 2.0
  */
 public void runWithEvent(Event event);
-
 /**
  * Sets the action definition id of this action.
  * 
@@ -261,7 +278,8 @@ public void runWithEvent(Event event);
  */
 public void setActionDefinitionId(String id);
 /**
- * Sets the checked status of this action.
+ * Sets the checked status of this action. Applicable for the styles
+ * <code>AS_CHECK_BOX</code> or <code>AS_RADIO_BUTTON</code>.
  * <p>
  * Fires a property change event for the <code>CHECKED</code> property
  * if the checked status actually changes as a consequence.

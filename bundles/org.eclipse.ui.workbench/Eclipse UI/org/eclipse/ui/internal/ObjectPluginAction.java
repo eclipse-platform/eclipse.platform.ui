@@ -29,8 +29,8 @@ public class ObjectPluginAction extends PluginAction {
 	/**
 	 * Constructs a new ObjectPluginAction.
 	 */
-	public ObjectPluginAction(IConfigurationElement actionElement, String runAttribute, String definitionId) {
-		super(actionElement, runAttribute, definitionId);
+	public ObjectPluginAction(IConfigurationElement actionElement, String runAttribute, String definitionId, int style) {
+		super(actionElement, runAttribute, definitionId, style);
 	}
 
 	/* (non-Javadoc)

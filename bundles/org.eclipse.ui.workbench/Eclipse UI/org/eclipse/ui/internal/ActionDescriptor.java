@@ -22,7 +22,6 @@ public class ActionDescriptor {
 	private String toolbarPath;
 	private String menuPath;
 	private String id;
-	private String definitionId;
 	private String menuGroup;
 	private String toolbarGroup;
 	
@@ -36,6 +35,7 @@ public class ActionDescriptor {
 	public static final String ATT_DEFINITION_ID = "definitionId";//$NON-NLS-1$
 	public static final String ATT_HELP_CONTEXT_ID = "helpContextId";//$NON-NLS-1$
 	public static final String ATT_LABEL = "label";//$NON-NLS-1$
+	public static final String ATT_STYLE = "style";//$NON-NLS-1$
 	public static final String ATT_STATE = "state";//$NON-NLS-1$
 	public static final String ATT_DESCRIPTION = "description";//$NON-NLS-1$
 	public static final String ATT_TOOLTIP = "tooltip";//$NON-NLS-1$
@@ -48,6 +48,12 @@ public class ActionDescriptor {
 	public static final String ATT_RETARGET = "retarget";//$NON-NLS-1$
 	public static final String ATT_ALLOW_LABEL_UPDATE = "allowLabelUpdate";//$NON-NLS-1$
 	public static final String ATT_ACCELERATOR = "accelerator";//$NON-NLS-1$
+	
+	public static final String STYLE_PUSH = "push"; //$NON-NLS-1$
+	public static final String STYLE_RADIO = "radio"; //$NON-NLS-1$
+	public static final String STYLE_TOGGLE = "toggle"; //$NON-NLS-1$
+	public static final String STYLE_PULLDOWN = "pulldown"; //$NON-NLS-1$
+	
 /**
  * Creates a new descriptor with the specified target.
  */
@@ -67,7 +73,7 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	String helpContextId = actionElement.getAttribute(ATT_HELP_CONTEXT_ID);
 	String mpath = actionElement.getAttribute(ATT_MENUBAR_PATH);
 	String tpath = actionElement.getAttribute(ATT_TOOLBAR_PATH);
-	String state = actionElement.getAttribute(ATT_STATE);
+	String style = actionElement.getAttribute(ATT_STYLE);
 	String icon = actionElement.getAttribute(ATT_ICON);
 	String hoverIcon = actionElement.getAttribute(ATT_HOVERICON);
 	String disabledIcon = actionElement.getAttribute(ATT_DISABLEDICON);
@@ -79,10 +85,7 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 		WorkbenchPlugin.log("Invalid action declaration (label == null): " + id); //$NON-NLS-1$
 		label = WorkbenchMessages.getString("ActionDescriptor.invalidLabel"); //$NON-NLS-1$
 	}
-	definitionId = defId;
-//	if(defId == null)
-//		WorkbenchPlugin.log("Invalid action declaration (definitionId == null): " + id);
-//  }
+
 	// Calculate menu and toolbar paths.
 	String mgroup = null;
 	String tgroup = null;
@@ -114,7 +117,7 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	toolbarGroup = tgroup;
 
 	// Create action.
-	action = createAction(targetType, actionElement, target);
+	action = createAction(targetType, actionElement, target, defId, style);
 	if (action.getText() == null) // may have been set by delegate
 		action.setText(label);
 	action.setId(id);
@@ -129,9 +132,24 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
 	}
 	if (description != null)
 		action.setDescription(description);
-	if (state != null) {
-		action.setChecked(state.equals("true"));//$NON-NLS-1$
+		
+	if (style != null) {
+		// Since 2.1, the "state" and "pulldown" attributes means something different
+		// when the new "style" attribute has been set. See doc for more info.
+		String state = actionElement.getAttribute(ATT_STATE);
+		if (state != null) {
+			if (style.equals(STYLE_RADIO) || style.equals(STYLE_TOGGLE))
+				action.setChecked(state.equals("true"));//$NON-NLS-1$
+		}
+	} else {
+		// Keep for backward compatibility for actions not using the
+		// new style attribute.
+		String state = actionElement.getAttribute(ATT_STATE);
+		if (state != null) {
+			action.setChecked(state.equals("true"));//$NON-NLS-1$
+		}
 	}
+	
 	if (icon != null) {
 		action.setImageDescriptor(WorkbenchImages.getImageDescriptorFromExtension(actionElement.getDeclaringExtension(), icon));
 	}
@@ -149,18 +167,27 @@ public ActionDescriptor(IConfigurationElement actionElement, int targetType, Obj
  * Creates an instance of PluginAction. Depending on the target part,
  * subclasses of this class may be created.
  */
-private PluginAction createAction(int targetType, IConfigurationElement actionElement, Object target) {
+private PluginAction createAction(int targetType, IConfigurationElement actionElement, Object target, String defId, String style) {
+	int actionStyle = IAction.AS_PUSH_BUTTON;
+	if (style != null) {
+		if (style.equals(STYLE_RADIO)) {
+			actionStyle = IAction.AS_RADIO_BUTTON;
+		} else if (style.equals(STYLE_TOGGLE)) {
+			actionStyle = IAction.AS_CHECK_BOX;
+		}
+	}
+	
 	switch (targetType) {
 		case T_VIEW:
-			return new ViewPluginAction(actionElement, ATT_CLASS, (IViewPart)target,definitionId);
+			return new ViewPluginAction(actionElement, ATT_CLASS, (IViewPart)target, defId, actionStyle);
 		case T_EDITOR:
-			return new EditorPluginAction(actionElement, ATT_CLASS, (IEditorPart)target,definitionId);
+			return new EditorPluginAction(actionElement, ATT_CLASS, (IEditorPart)target, defId, actionStyle);
 		case T_WORKBENCH:
-			return new WWinPluginAction(actionElement, ATT_CLASS, (IWorkbenchWindow)target,definitionId);
+			return new WWinPluginAction(actionElement, ATT_CLASS, (IWorkbenchWindow)target, defId, actionStyle);
 		case T_WORKBENCH_PULLDOWN:
-			return new WWinPluginPulldown(actionElement, ATT_CLASS, (IWorkbenchWindow)target,definitionId);
+			return new WWinPluginPulldown(actionElement, ATT_CLASS, (IWorkbenchWindow)target, defId, actionStyle);
 		case T_POPUP:
-			return new ObjectPluginAction(actionElement, ATT_CLASS,definitionId);
+			return new ObjectPluginAction(actionElement, ATT_CLASS, defId, actionStyle);
 		default:
 			WorkbenchPlugin.log("Unknown Action Type: " + targetType);//$NON-NLS-1$
 			return null;

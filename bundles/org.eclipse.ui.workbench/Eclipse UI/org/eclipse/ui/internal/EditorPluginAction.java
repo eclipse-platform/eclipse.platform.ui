@@ -12,6 +12,7 @@ Contributors:
 package org.eclipse.ui.internal;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IEditorActionDelegate;
 import org.eclipse.ui.IEditorPart;
@@ -26,10 +27,20 @@ public final class EditorPluginAction extends PartPluginAction {
 
 	/**
 	 * This class adds the requirement that action delegates
-	 * loaded on demand implement IViewActionDelegate
+	 * loaded on demand implement IViewActionDelegate.
+	 * 
+	 * @deprecated
 	 */
 	public EditorPluginAction(IConfigurationElement actionElement, String runAttribute, IEditorPart part, String definitionId) {
-		super(actionElement, runAttribute, definitionId);
+		this(actionElement, runAttribute, part, definitionId, IAction.AS_PUSH_BUTTON);
+	}
+
+	/**
+	 * This class adds the requirement that action delegates
+	 * loaded on demand implement IViewActionDelegate
+	 */
+	public EditorPluginAction(IConfigurationElement actionElement, String runAttribute, IEditorPart part, String definitionId, int style) {
+		super(actionElement, runAttribute, definitionId, style);
 		if (part != null)
 			editorChanged(part);
 	}
