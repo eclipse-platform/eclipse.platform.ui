@@ -533,8 +533,15 @@ public class ProjectionDocument extends AbstractDocument {
 		 * to become unfolded, resulting in re-entrant calls to this method. In
 		 * order to not add a region twice, we have to compute the next region
 		 * to add in every iteration.
+		 * 
+		 * To place an upper bound on the number of iterations, we use the number
+		 * of fragments * 2 as the limit.
 		 */
+		int limit= Math.max(getFragments().length * 2, 20);
 		while (true) {
+			if (limit-- < 0)
+				throw new IllegalArgumentException("safety loop termination"); //$NON-NLS-1$
+			
 			IRegion gap= computeFirstUnprojectedMasterRegion(offsetInMaster, lengthInMaster);
 			if (gap == null)
 				return;
