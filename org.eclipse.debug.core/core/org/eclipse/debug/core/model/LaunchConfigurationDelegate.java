@@ -123,7 +123,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 			monitor.subTask(DebugCoreMessages.getString("LaunchConfigurationDelegate.6")); //$NON-NLS-1$
 			for (int i = 0; i < projects.length; i++) {
 				monitor.subTask(DebugCoreMessages.getString("LaunchConfigurationDelegate.7") + projects[i].getName()); //$NON-NLS-1$
-				if (existsProblems(projects[i], IMarker.SEVERITY_ERROR)) {
+				if (existsProblems(projects[i])) {
 					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 					if (prompter != null) {
 						continueLaunch = ((Boolean) prompter.handleStatus(complileErrorPromptStatus, configuration)).booleanValue();
@@ -255,22 +255,35 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * specified severity.
 	 * 
 	 * @param proj the project to search
-	 * @param severity the severity of error(s) to search for
-	 * @return whether the given project contains any problem markers of the
-	 * specified or greater severity
+	 * @return whether the given project contains any problems that should
+	 *  stop it from launching
 	 * @throws CoreException if an error occurs while searching for
 	 *  problem markers
 	 */
-	protected boolean existsProblems(IProject proj, int severity) throws CoreException {
+	protected boolean existsProblems(IProject proj) throws CoreException {
 		IMarker[] markers = proj.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 		if (markers.length > 0) {
 			for (int i = 0; i < markers.length; i++) {
-				if (((Integer)markers[i].getAttribute(IMarker.SEVERITY)).intValue() >= severity) {
+				if (isLaunchProblem(markers[i])) {
 					return true;
 				}
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns whether the given problem should potentially abort the launch.
+	 * By default if the problem has an error severity, the problem is considered
+	 * a potential launch problem. Subclasses may override to specialize error
+	 * detection.
+	 * 
+	 * @param problemMarker candidate problem
+	 * @return whether the given problem should potentially abort the launch
+	 * @throws CoreException if any exceptions occurr while accessing marker attributes
+	 */
+	protected boolean isLaunchProblem(IMarker problemMarker) throws CoreException {
+		return ((Integer)problemMarker.getAttribute(IMarker.SEVERITY)).intValue() >= IMarker.SEVERITY_ERROR;
 	}
 	
 	/**
