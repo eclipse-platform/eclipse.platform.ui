@@ -64,9 +64,9 @@ class FileStructureVisitor extends AbstractStructureVisitor {
 		boolean exists = mFolder.exists();
 		boolean isCVSFolder = mFolder.isCVSFolder();
 		
-		// We are only interested in folders that exist or are CVS folders
+		// We are only interested in CVS folders
 		// A folder could be a non-existant CVS folder if it is a holder for outgoing file deletions
-		if ( ! exists && ! isCVSFolder) return;
+		if ( ! isCVSFolder) return;
 		
 		if (exists &&  isOrphanedSubtree(mFolder)) {
 			return;
