@@ -12,6 +12,7 @@ package org.eclipse.ant.internal.ui.editor.outline;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * XMLCore.java
@@ -28,7 +29,7 @@ public class XMLCore {
 		return inst;
 	}
 	
-	private ArrayList fModelChangeListeners= new ArrayList();
+	private List fModelChangeListeners= new ArrayList();
 	
 	private XMLCore() { }
 
