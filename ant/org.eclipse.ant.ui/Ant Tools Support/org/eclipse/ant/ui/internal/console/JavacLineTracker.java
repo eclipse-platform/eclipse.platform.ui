@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ant.ui.internal.launchConfigurations;
+package org.eclipse.ant.ui.internal.console;
 
 
 import org.eclipse.core.resources.IFile;
