@@ -428,7 +428,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					actual= createCopy(right);
 					
 					synchronized (DocumentLineDiffer.this) {
-						if (fStoredEvents.size() == 0)
+						if (fStoredEvents.size() == 0 && reference != null && actual != null)
 							break;
 					}
 					
@@ -510,21 +510,26 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 				fDifferences.clear();
 			}
 			
+			/**
+			 * Creates a copy of <code>document</code> and catches any
+			 * exceptions that may occur if the document is not modified concurrently.
+			 * Do not call this method in a synchronized block as document.get() is called
+			 * and may result in a deadlock otherwise.
+			 * 
+			 * @param document the document to create a copy of
+			 * @return a copy of the document, or <code>null</code> if an exception was thrown
+			 */
 			private IDocument createCopy(IDocument document) {
 				Assert.isNotNull(document);
 				// TODO needs for sure a safer synchronization method
 				// this is a temporary workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=56091
-				int count= 0;
-				while (count < 100) {
-					try {
-						return new Document(document.get());
-					} catch (NullPointerException x) {
-					} catch (ArrayStoreException x) {
-					} catch (IndexOutOfBoundsException x) {
-					}
-					++ count;
+				try {
+					return new Document(document.get());
+				} catch (NullPointerException x) {
+				} catch (ArrayStoreException x) {
+				} catch (IndexOutOfBoundsException x) {
 				}
-				return new Document();
+				return null;
 			}
 		};
 		
