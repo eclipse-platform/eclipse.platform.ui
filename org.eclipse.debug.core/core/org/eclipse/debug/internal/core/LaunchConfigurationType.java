@@ -237,7 +237,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 					if (getIdentifier().equals(contributedDelegate.getLaunchConfigurationType())) {
 						modes = contributedDelegate.getModes();
 						if (modes.contains(mode)) {
-							delegate = (ILaunchConfigurationDelegate)contributedDelegate.getDelegate();
+							delegate = contributedDelegate.getDelegate();
 							Iterator modesIterator = modes.iterator();
 							while (modesIterator.hasNext()) {
 								fDelegates.put(modesIterator.next(), delegate); 
