@@ -64,7 +64,7 @@ import java.util.*;
  *  provide synchronized access to a <Code>ReferenceMap</Code>.
  *
  *  @author Paul Jack 
- *  @version $Id: ReferenceMap.java,v 1.3 2004/12/16 14:41:45 prapicau Exp $
+ *  @version $Id: ReferenceMap.java,v 1.4 2004/12/16 19:19:39 prapicau Exp $
  *  @since 2.1
  *  @see java.lang.ref.Reference
  */
@@ -351,9 +351,7 @@ public class ReferenceMap extends AbstractMap {
      *  be copied from the old smaller table to the new 
      *  bigger table.
      */
-    private int countResize=0;  
     private void resize() {
-    	countResize++;
         Entry[] old = table;
         table = new Entry[old.length * 2];
 
