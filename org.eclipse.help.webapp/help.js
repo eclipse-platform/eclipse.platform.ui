@@ -72,11 +72,11 @@ function setToolbarTitle(title)
 /* 
  * Switch tabs.
  */ 
-function switchTab(nav, title)
+function switchTab(nav, newTitle)
 {
 	// set the title on the navigation toolbar to match the tab
-  	if (title)
-     	NavToolbarFrame.document.getElementById("titleText").innerHTML = title;
+  	if (newTitle)
+     	NavToolbarFrame.document.getElementById("titleText").innerHTML = newTitle;
     else
     	NavToolbarFrame.document.getElementById("titleText").innerHTML = titleArray[nav];
     	
