@@ -20,6 +20,7 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -60,7 +61,7 @@ import org.eclipse.team.internal.ccvs.core.util.Assert;
  * This class provides the implementation of ICVSRemoteFile and IManagedFile for
  * use by the repository and sync view.
  */
-public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IStorage  {
+public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 	
 	// sync info in byte form
 	private byte[] syncBytes;
@@ -605,13 +606,22 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile, IStora
 	public IStorage getBufferedStorage(IProgressMonitor monitor) throws TeamException {
 		// Invoke getContents which ensures that contents are cached
 		getContents(monitor);
-		return this;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IStorage#getFullPath()
-	 */
-	public IPath getFullPath() {
-		return new Path(getRepositoryRelativePath());
+		return new IStorage() {
+			public InputStream getContents() throws CoreException {
+				return RemoteFile.this.getContents();
+			}
+			public IPath getFullPath() {
+				return new Path(getRepositoryRelativePath());
+			}
+			public String getName() {
+				return RemoteFile.this.getName();
+			}
+			public boolean isReadOnly() {
+				return true;
+			}
+			public Object getAdapter(Class adapter) {
+				return RemoteFile.this.getAdapter(adapter);
+			}
+		};
 	}
 }
