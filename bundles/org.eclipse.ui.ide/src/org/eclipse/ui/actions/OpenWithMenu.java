@@ -21,14 +21,20 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.internal.IWorkbenchConstants;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorRegistry;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.DialogUtil;
+import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.misc.Sorter;
-import org.eclipse.ui.internal.registry.EditorDescriptor;
-import org.eclipse.ui.internal.registry.EditorRegistry;
+import org.eclipse.ui.part.FileEditorInput;
 
 /**
  * A menu for opening files in the workbench.
@@ -45,8 +51,7 @@ import org.eclipse.ui.internal.registry.EditorRegistry;
 public class OpenWithMenu extends ContributionItem {
 	private IWorkbenchPage page;
 	private IAdaptable file;
-	// @issue Enough api on IEditorRegistry to suppor this action?
-	private EditorRegistry registry = (EditorRegistry) PlatformUI.getWorkbench().getEditorRegistry();
+	private IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 
 	private static Hashtable imageCache = new Hashtable(11);
 	 
@@ -120,14 +125,14 @@ private Image getImage(IEditorDescriptor editorDesc) {
 private ImageDescriptor getImageDescriptor(IEditorDescriptor editorDesc) {
 	ImageDescriptor imageDesc = null;
 	if (editorDesc == null) {
-		imageDesc = registry.getImageDescriptor(getFileResource());
+		imageDesc = registry.getImageDescriptor(getFileResource().getName());
 	}
 	else {
 		imageDesc = editorDesc.getImageDescriptor();
 	}
 	if (imageDesc == null) {
-		if (editorDesc.getId().equals(IWorkbenchConstants.SYSTEM_EDITOR_ID))
-			imageDesc = registry.getSystemEditorImageDescriptor(getFileResource());
+		if (editorDesc.getId().equals(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID))
+			imageDesc = registry.getSystemExternalEditorImageDescriptor(getFileResource().getName());
 	}
 	return imageDesc;
 }
@@ -169,10 +174,11 @@ public void fill(Menu menu, int index) {
 		return;
 	}
 
+	// @issue this use to be a text editor, but now returns system editor!
 	IEditorDescriptor defaultEditor = registry.getDefaultEditor(); // should not be null
-	IEditorDescriptor preferredEditor = registry.getDefaultEditor(file); // may be null
+	IEditorDescriptor preferredEditor = registry.getDefaultEditor(file.getName()); // may be null
 	
-	Object[] editors = sorter.sort(registry.getEditors(file));
+	Object[] editors = sorter.sort(registry.getEditors(file.getName()));
 	boolean defaultFound = false;
 	
 	//Check that we don't add it twice. This is possible
@@ -198,8 +204,8 @@ public void fill(Menu menu, int index) {
 		createMenuItem(menu, defaultEditor, preferredEditor);
 	}
 
-	// Add system editor.
-	IEditorDescriptor descriptor = EditorDescriptor.getSystemEditorDescriptor();
+	// Add system editor (should never be null)
+	IEditorDescriptor descriptor = registry.findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 	createMenuItem(menu, descriptor, preferredEditor);
 	createDefaultMenuItem(menu, file);
 }
@@ -233,9 +239,9 @@ private void openEditor(IEditorDescriptor editor) {
 	IFile file = getFileResource();
 	try {
 		if (editor == null) {
-			page.openSystemEditor(file);
+			page.openEditor(new FileEditorInput(file), IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID);
 		} else {
-			page.openEditor(file, editor.getId());
+			page.openEditor(new FileEditorInput(file), editor.getId());
 		}
 	} catch (PartInitException e) {
 		DialogUtil.openError(
@@ -255,7 +261,7 @@ private void openEditor(IEditorDescriptor editor) {
  */
 private void createDefaultMenuItem(Menu menu, final IFile file) {
 	final MenuItem menuItem = new MenuItem(menu, SWT.RADIO);
-	menuItem.setSelection(registry.getDefaultEditor(file) == null);
+	menuItem.setSelection(registry.getDefaultEditor(file.getName()) == null);
 	menuItem.setText(IDEWorkbenchMessages.getString("DefaultEditorDescription.name")); //$NON-NLS-1$
 	
 	Listener listener = new Listener() {
@@ -263,9 +269,9 @@ private void createDefaultMenuItem(Menu menu, final IFile file) {
 			switch (event.type) {
 				case SWT.Selection:
 					if(menuItem.getSelection()) {
-						registry.setDefaultEditor(file,null);
+						registry.setDefaultEditor(file.getName(), null);
 						try{
-							page.openEditor(file);
+							IDE.openEditor(page, file, true);
 						} catch (PartInitException e) {
 							DialogUtil.openError(
 								page.getWorkbenchWindow().getShell(),
