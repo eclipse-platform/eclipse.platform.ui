@@ -34,12 +34,26 @@ public class ExpressionTests extends TestCase {
 		return new TestSuite(ExpressionTests.class);
 	}
 	
+	public void testEscape() throws Exception {
+		assertEquals("Str'ing", Expressions.unEscapeString("Str''ing"));
+		assertEquals("'", Expressions.unEscapeString("''"));
+		boolean caught= false;
+		try {
+			Expressions.unEscapeString("'");
+		} catch (CoreException e) {
+			caught= true;
+		}
+		assertTrue(caught);
+	}
+	
 	public void testArgumentConversion() throws Exception {
 		assertNull(Expressions.convertArgument(null));
 		assertEquals("", Expressions.convertArgument(""));
 		assertEquals("", Expressions.convertArgument("''"));
 		assertEquals("eclipse", Expressions.convertArgument("eclipse"));
+		assertEquals("e'clips'e", Expressions.convertArgument("e'clips'e"));
 		assertEquals("eclipse", Expressions.convertArgument("'eclipse'"));
+		assertEquals("'ecl'ipse'", Expressions.convertArgument("'''ecl''ipse'''"));
 		assertEquals("true", Expressions.convertArgument("'true'"));
 		assertEquals("1.7", Expressions.convertArgument("'1.7'"));
 		assertEquals("007", Expressions.convertArgument("'007'"));
@@ -53,7 +67,7 @@ public class ExpressionTests extends TestCase {
 		Object[] result= null;
 		
 		result= Expressions.parseArguments("");
-		assertEquals(0, result.length);
+		assertEquals("", result[0]);
 		
 		result= Expressions.parseArguments("s1");
 		assertEquals("s1", result[0]);
@@ -83,6 +97,29 @@ public class ExpressionTests extends TestCase {
 		
 		result= Expressions.parseArguments("''''");
 		assertEquals("'", result[0]);
+		
+		result= Expressions.parseArguments("''',''',','");
+		assertEquals("','", result[0]);		
+		assertEquals(",", result[1]);
+		
+		result= Expressions.parseArguments("' s1 ', true ");
+		assertEquals(" s1 ", result[0]);
+		assertEquals(Boolean.TRUE, result[1]);
+		
+		boolean caught= false;
+		try {
+			Expressions.parseArguments("' s1");
+		} catch (CoreException e) {
+			caught= true;
+		}
+		assertTrue(caught);
+		caught= false;
+		try {
+			Expressions.parseArguments("'''s1");
+		} catch (CoreException e) {
+			caught= true;
+		}
+		assertTrue(caught);
 	}
 	
 	public void testSystemProperty() throws Exception {

@@ -91,7 +91,9 @@ public class Expressions {
 	
 	//---- Argument parsing --------------------------------------------
 	
-	public static Object[] getArguments(IConfigurationElement element, String attributeName) {
+	private static final Object[] EMPTY_ARGS= new Object[0];
+	
+	public static Object[] getArguments(IConfigurationElement element, String attributeName) throws CoreException {
 		String args= element.getAttribute(attributeName);
 		if (args != null) {
 			return parseArguments(args);
@@ -100,92 +102,53 @@ public class Expressions {
 		}
 	}
 	
-	public static Object[] parseArguments(String args) {
+	public static Object[] parseArguments(String args) throws CoreException {
 		List result= new ArrayList();
-		Tokenizer tokenizer= new Tokenizer(args);
-		String arg;
-		while ((arg= tokenizer.next()) != null) {
-			result.add(convertArgument(arg));
+		int start= 0;
+		int comma;
+		while ((comma= findNextComma(args, start)) != -1) {
+			result.add(convertArgument(args.substring(start, comma).trim()));
+			start= comma + 1;
 		}
+		result.add(convertArgument(args.substring(start).trim()));
 		return result.toArray();
 	}
-		
-	private static final Object[] EMPTY_ARGS= new Object[0];
 	
-	private static class Tokenizer {
-		private String fString;
-		private int fPosition;
-		public Tokenizer(String s) {
-			fString= s.trim();
-			fPosition= 0;
-		}
-		public String next() {
-			if (fPosition >= fString.length())
-				return null;
-			char ch= fString.charAt(fPosition);
-			while (ch == ' ') {
-				fPosition++;
-				ch= fString.charAt(fPosition);
-			}
+	private static int findNextComma(String str, int start) throws CoreException {
+		boolean inString= false;
+		for (int i= start; i < str.length(); i++) {
+			char ch= str.charAt(i);
+			if (ch == ',' && ! inString) 
+				return i;
 			if (ch == '\'') {
-				String result= getString();
-				fPosition++;
-				int comma= fString.indexOf(',', fPosition);
-				if (comma != -1)
-					fPosition= comma + 1;
-				else
-					fPosition= fString.length();
-				return result;
-			} else {
-				int nextComma= fString.indexOf(',', fPosition);
-				String result;
-				if (nextComma == -1) {
-					result= fString.substring(fPosition, fString.length());
-					fPosition= fString.length();
+				if (!inString) {
+					inString= true;
 				} else {
-					result= fString.substring(fPosition, nextComma);
-					
-					fPosition= nextComma + 1;
+					if (i + 1 < str.length() && str.charAt(i + 1) == '\'') {
+						i++;
+					} else {
+						inString= false;
+					}
 				}
-				return result.trim();
+			} else if (ch == ',' && !inString) {
+				return i;
 			}
 		}
-		private String getString() {
-			StringBuffer result= new StringBuffer();
-			result.append('\'');
-			fPosition++;
-			loop: for (; fPosition < fString.length(); fPosition++) {
-				char ch= fString.charAt(fPosition);
-				switch (ch) {
-					case '\'':
-						if (fPosition == fString.length() - 1) {
-							break loop;
-						} else {
-							char next= fString.charAt(fPosition + 1);
-							if (next == '\'') {
-								result.append('\'');
-								fPosition++;
-							} else {
-								break loop;
-							}
-						}
-						break;
-					default:
-						result.append(ch);
-				}
-			}
-			result.append('\'');
-			return result.toString();
-		}
+		if (inString)
+			throw new CoreException(new ExpressionStatus(
+				ExpressionStatus.STRING_NOT_TERMINATED, 
+				ExpressionMessages.getFormattedString("Expression.string_not_terminated", str))); //$NON-NLS-1$
+			
+		return -1;
 	}
-	
-	public static Object convertArgument(String arg) {
+		
+	public static Object convertArgument(String arg) throws CoreException {
 		if (arg == null) {
 			return null;
 		} else if (arg.length() == 0) {
 			return arg;
 		} else if (arg.charAt(0) == '\'' && arg.charAt(arg.length() - 1) == '\'') {
-			return arg.substring(1, arg.length() - 1);
+			return unEscapeString(arg.substring(1, arg.length() - 1));
 		} else if ("true".equals(arg)) { //$NON-NLS-1$
 			return Boolean.TRUE;
 		} else if ("false".equals(arg)) { //$NON-NLS-1$
@@ -203,5 +166,23 @@ public class Expressions {
 				return arg;
 			}
 		}
-	}	
+	}
+
+	public static String unEscapeString(String str) throws CoreException {
+		StringBuffer result= new StringBuffer();
+		for (int i= 0; i < str.length(); i++) {
+			char ch= str.charAt(i);
+			if (ch == '\'') {
+				if (i == str.length() - 1 || str.charAt(i + 1) != '\'')
+					throw new CoreException(new ExpressionStatus(
+						ExpressionStatus.STRING_NOT_CORRECT_ESCAPED, 
+						ExpressionMessages.getFormattedString("Expression.string_not_correctly_escaped", str))); //$NON-NLS-1$
+				result.append('\'');
+				i++;
+			} else {
+				result.append(ch);
+			}
+		}
+		return result.toString();
+	}
 }

@@ -63,6 +63,11 @@ public class ExpressionStatus extends Status {
 	/** Error indicating that a variable accessed in a with expression isn't available in the evaluation context */
 	public static final int VARIABLE_NOT_DEFINED= 301;
 	
+	/** Error indicating that in a string passed via a arg attribute the apostrophe character isn't correctly escaped */
+	public static final int STRING_NOT_CORRECT_ESCAPED= 302;
+	
+	/** Error indicating that a string passed via a arg attribute isn't correctly terminated with an apostrophe */
+	public static final int STRING_NOT_TERMINATED= 303;
 	
 	/**
 	 * Creates a new expression status.
