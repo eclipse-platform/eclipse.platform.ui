@@ -69,7 +69,10 @@ public class AntPropertyNode extends AntTaskNode {
 			getTask().execute();
 			configured= true;
 		} catch (BuildException be) {
-			getAntModel().handleBuildException(be, this);
+			//configuration of reporting build exceptions from property nodes has been
+			//deferred to post 3.0
+			//bug 61830
+			//getAntModel().handleBuildException(be, this, XMLProblem.SEVERITY_WARNING);
 		}
 		return false;
 	}
