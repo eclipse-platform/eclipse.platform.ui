@@ -255,16 +255,27 @@ public class DragUtil {
             }
         });
 
-        if (sourceBounds != null) {
-            tracker.setRectangles(new Rectangle[] { new Rectangle(
-                    sourceBounds.x, sourceBounds.y, sourceBounds.width,
-                    sourceBounds.height) });
+        IDropTarget target = null;
+        Control startControl = display.getCursorControl();
+        
+        if (startControl != null && allowSnapping) {
+            target = getDropTarget(startControl,
+                draggedItem, initialLocation,
+                sourceBounds);
+        }
+        
+        if (target != null) {
+            tracker.setRectangles(new Rectangle[] {target.getSnapRectangle()});
+
+            tracker.setCursor(target.getCursor());
+
+        } else if (sourceBounds != null) {
+            tracker.setRectangles(new Rectangle[] { Geometry.copy(sourceBounds) });
         }
 
         // HACK:
         // Some control needs to capture the mouse during the drag or other 
         // controls will interfere with the cursor
-        Control startControl = display.getCursorControl();
         if (startControl != null) {
             startControl.setCapture(true);
         }
