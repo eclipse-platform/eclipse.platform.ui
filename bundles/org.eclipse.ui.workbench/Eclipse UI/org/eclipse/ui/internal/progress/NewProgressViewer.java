@@ -21,8 +21,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TreeListener;
@@ -50,6 +48,8 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.misc.Assert;
+import org.eclipse.ui.actions.ActionFactory;
+
 
 public class NewProgressViewer extends ProgressTreeViewer implements FinishedJobs.KeptJobsListener {
 	
@@ -80,7 +80,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	private Color errorColor2;
 	private Color darkColor;
 	private Color lightColor;
-	private Color taskColor;
+	private Color textColor;
 	private Color selectedColor;
 	private Color selectedTextColor;
 	private Cursor handCursor;
@@ -262,13 +262,13 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		final static int MARGINHEIGHT = 1;
 		
 		boolean hasFocus;
-		String text= ""; //$NON-NLS-1$
+		boolean mouseOver;
+		boolean isError;
 		boolean linkEnabled;
+		boolean foundImage;
+		String text= ""; //$NON-NLS-1$
 		IAction gotoAction;
 		IStatus result;
-		Color lColor= linkColor;
-		Color lColor2= linkColor2;
-		boolean foundImage;
 		JobItem jobitem;
 		
 		Hyperlink(JobItem parent, JobTreeElement info) {
@@ -289,19 +289,29 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			
  			refresh();
 		}
+		private void unhookAction() {
+			if (gotoAction != null) {
+				gotoAction.removePropertyChangeListener(this);
+				if (gotoAction instanceof ActionFactory.IWorkbenchAction)
+					((ActionFactory.IWorkbenchAction)gotoAction).dispose();
+				gotoAction= null;
+			}			
+		}
 		public void handleEvent(Event e) {
 			super.handleEvent(e);
 			switch (e.type) {
 			case SWT.Dispose:
-				if (gotoAction != null)
-					gotoAction.removePropertyChangeListener(this);
+				unhookAction();
 				break;
 			case SWT.KeyDown:
 				//System.out.println("SWT.KeyDown3 " + this);
 				if (e.character == '\r')
 					handleActivate();
-				else
+				else if (e.keyCode == SWT.DEL) {
+					cancelSelection();
+				} else {
 					select(null, e);
+				}
 				break;
 			case SWT.Paint:
 				paint(e.gc);
@@ -310,7 +320,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				hasFocus = true;
 			case SWT.MouseEnter :
 				if (linkEnabled) {
-					setForeground(lColor2);
+					mouseOver = true;
 					redraw();
 				}
 				break;
@@ -318,7 +328,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 				hasFocus = false;
 			case SWT.MouseExit :
 				if (linkEnabled) {
-					setForeground(lColor);
+					mouseOver = false;
 					redraw();
 				}
 				break;
@@ -346,9 +356,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	    		if (message.length() > 0) {
 	    			if (r.getSeverity() == IStatus.ERROR) {
 	    				setKeep();
-	    				
-	    				lColor= errorColor;
-	    				lColor2= errorColor2;
+	    				isError= true;
 	    				setText("Error: " + message);
 		    			setAction(new Action() {
 		    				public void run() {
@@ -374,8 +382,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		void setAction(IAction action) {
 			if (action == gotoAction)
 				return;
-			if (gotoAction != null)
-				gotoAction.removePropertyChangeListener(this);
+			unhookAction();
 			gotoAction= action;
 			if (gotoAction != null)
 				gotoAction.addPropertyChangeListener(this);
@@ -384,7 +391,6 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		private void setLinkEnable(boolean enable) {
 			if (enable != linkEnabled) {
 				linkEnabled= enable;
-				setForeground(linkEnabled ? lColor : taskColor);
 				if (linkEnabled)
 					setCursor(handCursor);
 				redraw();	
@@ -414,13 +420,36 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		}
 		protected void paint(GC gc) {
 			Rectangle clientArea= getClientArea();
+			
+			Color fg, bg= getBackground();
+			if (jobitem.selected) {
+				fg= selectedTextColor;
+				bg= selectedColor;
+			} else {
+				if (linkEnabled) {
+					if (mouseOver) {
+						if (isError)
+							fg= errorColor2;
+						else	
+							fg= linkColor2;
+					} else {
+						if (isError)
+							fg= errorColor;
+						else
+							fg= linkColor;
+					}
+				} else {
+					fg= textColor;
+				}
+			}
+			
 			Image buffer= new Image(getDisplay(), clientArea.width, clientArea.height);
-			buffer.setBackground(getBackground());
+			buffer.setBackground(bg);
 			GC bufferGC= new GC(buffer, gc.getStyle());
-			bufferGC.setBackground(getBackground());
+			bufferGC.setBackground(bg);
 			bufferGC.fillRectangle(0, 0, clientArea.width, clientArea.height);
 			bufferGC.setFont(getFont());
-			bufferGC.setForeground(getForeground());
+			bufferGC.setForeground(fg);
 			String t= shortenText(bufferGC, clientArea.height, text);
 			bufferGC.drawText(t, MARGINWIDTH, MARGINHEIGHT, true);
 			int sw= bufferGC.stringExtent(t).x;
@@ -705,9 +734,9 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			Color fg, bg;
 			if (selected) {
 				fg= selectedTextColor;
-				bg= selectedColor;				
+				bg= selectedColor;
 			} else {
-				fg= taskColor;
+				fg= textColor;
 				bg= dark ? darkColor : lightColor;
 			}
 			setForeground(fg);
@@ -715,10 +744,9 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			
 			Control[] cs= getChildren();
 			for (int i= 0; i < cs.length; i++) {
-				if (cs[i] != this.progressBar) {
+				if (!(cs[i] instanceof ProgressBar))
 					cs[i].setForeground(fg);
-					cs[i].setBackground(bg);
-				}
+				cs[i].setBackground(bg);
 			}
 		}
 		
@@ -919,7 +947,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		int shift= isCarbon ? -25 : -10; // Mac has different Gamma value
 		lightColor= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
 		darkColor= new Color(display, lightColor.getRed()+shift, lightColor.getGreen()+shift, lightColor.getBlue()+shift);
-		taskColor= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
+		textColor= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND);
 		selectedTextColor= display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT);
 		selectedColor= display.getSystemColor(SWT.COLOR_LIST_SELECTION);
 		linkColor= display.getSystemColor(SWT.COLOR_DARK_BLUE);
@@ -1092,8 +1120,19 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 		
 	public void reveal(JobTreeItem jti) {
 		if (jti != null && !jti.isDisposed()) {
+			
 			Rectangle bounds= jti.getBounds();
-			scroller.setOrigin(0, bounds.y);
+			
+			int s= bounds.y;
+			int e= bounds.y + bounds.height;
+			
+			int as= scroller.getOrigin().y;
+			int ae= as + scroller.getClientArea().height;
+			
+			if (s < as)
+				scroller.setOrigin(0, s);
+			else if (e > ae)
+				scroller.setOrigin(0, as+(e-ae));
 		}
 	}
 
@@ -1206,6 +1245,9 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 			ji.updateBackground(dark);
 			dark= !dark;
 		}
+		
+		if (newSel != null)
+			reveal(newSel);
 	}
 	
 	/**
@@ -1402,19 +1444,6 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
     
 	protected void createChildren(Widget widget) {
 		refresh(true);
-		getControl().addKeyListener(new KeyAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.KeyAdapter#keyPressed(org.eclipse.swt.events.KeyEvent)
-			 */
-			public void keyPressed(KeyEvent e) {
-				//Bind escape to cancel
-				if (e.keyCode == SWT.DEL) {
-					cancelSelection();
-				}
-			}
-		});
 	}
 	
 	protected void internalRefresh(Object element, boolean updateLabels) {
