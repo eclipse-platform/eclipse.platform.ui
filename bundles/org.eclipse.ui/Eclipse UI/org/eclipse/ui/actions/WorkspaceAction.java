@@ -310,20 +310,17 @@ boolean shouldPerformResourcePruning() {
  * <code>SelectionListenerAction</code> method ensures that this action is
  * disabled if any of the selected resources are inaccessible. Subclasses may
  * extend to react to selection changes; however, if the super method returns
- * <code>false</code>, the overriding method must also return <code>false</code>.
+ * <code>false</code>, the overriding method should also return <code>false</code>.
  */
 protected boolean updateSelection(IStructuredSelection selection) {
 	if (!super.updateSelection(selection) || selection.isEmpty()) {
 		return false;
 	}
 
-	Iterator enum = selection.iterator();
-	while (enum.hasNext()) {
-		Object next = enum.next();
-		if (next instanceof IResource) {
-			if (!isAccessible((IResource) next)) {
-				return false;
-			}
+	for (Iterator i = getSelectedResources().iterator(); i.hasNext();) {
+		IResource r = (IResource) i.next();
+		if (!isAccessible(r)) {
+			return false;
 		}
 	}
 	return true;
