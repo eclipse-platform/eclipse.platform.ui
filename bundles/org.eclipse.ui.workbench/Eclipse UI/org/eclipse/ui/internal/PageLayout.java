@@ -44,9 +44,7 @@ import org.eclipse.ui.internal.registry.*;
  * </ol>
  * </p>
  */
-public class PageLayout implements IPageLayout {
-	private static final String MISSING_REF_PART = "Referenced part does not exist yet: "; //$NON-NLS-1$
-	
+public class PageLayout implements IPageLayout {	
 	private ViewFactory viewFactory;
 	private LayoutPart editorFolder;
 	private boolean editorVisible = true;
@@ -156,7 +154,7 @@ private void addPart(LayoutPart newPart, String partId, int relationship, float 
 		ratio = normalizeRatio(ratio);
 		rootLayoutContainer.add(newPart, getPartSashConst(relationship), ratio, refPart);
 	} else {
-		WorkbenchPlugin.log(MISSING_REF_PART + refId);//$NON-NLS-1$
+		WorkbenchPlugin.log(WorkbenchMessages.format("PageLayout.missingRefPart", new Object[] {refId}));//$NON-NLS-1$
 		rootLayoutContainer.add(newPart);
 	}
 }
@@ -224,7 +222,7 @@ public void addView(String viewId, int relationship, float ratio, String refId) 
  */
 /*package*/ boolean checkPartInLayout(String partId) {
 	if (getRefPart(partId) != null) {
-		WorkbenchPlugin.log("Part already exists in page layout: " + partId);//$NON-NLS-1$
+		WorkbenchPlugin.log(WorkbenchMessages.format("PageLayout.duplicateRefPart", new Object[] {partId}));//$NON-NLS-1$
 		return true;
 	}
 	for(int i = 0; i<fastViews.size(); i++) {
@@ -454,7 +452,7 @@ private void stackPart(LayoutPart newPart, String viewId, String refId) {
 	}
 
 	// If ref part is not found then just do add.
-	WorkbenchPlugin.log(MISSING_REF_PART + refId);//$NON-NLS-1$
+	WorkbenchPlugin.log(WorkbenchMessages.format("PageLayout.missingRefPart", new Object[] {refId}));//$NON-NLS-1$
 	rootLayoutContainer.add(newPart);
 }
 // stackPlaceholder(String, String) added by dan_rubel@instantiations.com

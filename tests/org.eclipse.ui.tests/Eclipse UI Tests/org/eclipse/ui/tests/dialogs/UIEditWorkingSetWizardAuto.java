@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 
+import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 
@@ -72,7 +73,7 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		IWorkingSet workingSet = workingSetManager.createWorkingSet(WORKING_SET_NAME_1, new IAdaptable[] {p1, f2});
 		((WorkingSetEditWizard) fWizard).setSelection(workingSet);
 						 
-		List widgets = getWidgets(fWizardDialog.getShell(), Text.class);
+		List widgets = getWidgets((Composite) page.getControl(), Text.class);
 		Text text = (Text) widgets.get(0);
 		assertEquals(WORKING_SET_NAME_1, text.getText());
 		assertTrue(page.canFlipToNextPage() == false);
@@ -82,13 +83,13 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		Tree tree = (Tree) widgets.get(0);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();		
 		assertEquals(workspace.getRoot().getProjects().length, tree.getItemCount());
-		setTextWidgetText(WORKING_SET_NAME_2);
+		setTextWidgetText(WORKING_SET_NAME_2,page);
 		assertTrue(fWizard.canFinish());
 		
 		/*
 		 * Test page state with partial page input
 		 */
- 		setTextWidgetText("");
+ 		setTextWidgetText("",page);
 		assertTrue(page.canFlipToNextPage() == false);
 		assertTrue(fWizard.canFinish() == false);		
 		assertNotNull(page.getErrorMessage());		
@@ -96,7 +97,7 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		/*
 		 * Test page state with complete page input
 		 */
-		setTextWidgetText(WORKING_SET_NAME_2);
+		setTextWidgetText(WORKING_SET_NAME_2,page);
 		checkTreeItems();
 		assertTrue(page.canFlipToNextPage() == false);
 		assertTrue(fWizard.canFinish());

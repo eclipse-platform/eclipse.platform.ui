@@ -32,39 +32,101 @@ public final class KeySupport {
 	private final static String SHIFT = "Shift"; //$NON-NLS-1$
 	private final static String STROKE_SEPARATOR = " "; //$NON-NLS-1$
 
+	private static Map localizedStringToValueMap = new TreeMap();
 	private static Map stringToValueMap = new TreeMap();	
+	private static Map valueToLocalizedStringMap = new TreeMap();
 	private static Map valueToStringMap = new TreeMap();
 
-	static {
-		stringToValueMap.put("BACKSPACE", new Integer(8)); //$NON-NLS-1$
-		stringToValueMap.put("TAB", new Integer(9)); //$NON-NLS-1$
-		stringToValueMap.put("RETURN", new Integer(13)); //$NON-NLS-1$
-		stringToValueMap.put("ENTER", new Integer(13)); //$NON-NLS-1$
-		stringToValueMap.put("ESCAPE", new Integer(27)); //$NON-NLS-1$
-		stringToValueMap.put("ESC", new Integer(27)); //$NON-NLS-1$
-		stringToValueMap.put("DELETE", new Integer(127)); //$NON-NLS-1$
-		stringToValueMap.put("SPACE", new Integer(' ')); //$NON-NLS-1$
-		stringToValueMap.put("ARROW_UP", new Integer(SWT.ARROW_UP)); //$NON-NLS-1$
-		stringToValueMap.put("ARROW_DOWN", new Integer(SWT.ARROW_DOWN)); //$NON-NLS-1$
-		stringToValueMap.put("ARROW_LEFT", new Integer(SWT.ARROW_LEFT)); //$NON-NLS-1$
-		stringToValueMap.put("ARROW_RIGHT", new Integer(SWT.ARROW_RIGHT)); //$NON-NLS-1$
-		stringToValueMap.put("PAGE_UP", new Integer(SWT.PAGE_UP)); //$NON-NLS-1$
-		stringToValueMap.put("PAGE_DOWN", new Integer(SWT.PAGE_DOWN)); //$NON-NLS-1$
-		stringToValueMap.put("HOME", new Integer(SWT.HOME)); //$NON-NLS-1$
-		stringToValueMap.put("END", new Integer(SWT.END)); //$NON-NLS-1$
-		stringToValueMap.put("INSERT", new Integer(SWT.INSERT)); //$NON-NLS-1$
-		stringToValueMap.put("F1", new Integer(SWT.F1)); //$NON-NLS-1$
-		stringToValueMap.put("F2", new Integer(SWT.F2)); //$NON-NLS-1$
-		stringToValueMap.put("F3", new Integer(SWT.F3)); //$NON-NLS-1$
-		stringToValueMap.put("F4", new Integer(SWT.F4)); //$NON-NLS-1$
-		stringToValueMap.put("F5", new Integer(SWT.F5)); //$NON-NLS-1$
-		stringToValueMap.put("F6", new Integer(SWT.F6)); //$NON-NLS-1$
-		stringToValueMap.put("F7", new Integer(SWT.F7)); //$NON-NLS-1$
-		stringToValueMap.put("F8", new Integer(SWT.F8)); //$NON-NLS-1$
-		stringToValueMap.put("F9", new Integer(SWT.F9)); //$NON-NLS-1$
-		stringToValueMap.put("F10", new Integer(SWT.F10)); //$NON-NLS-1$
-		stringToValueMap.put("F11", new Integer(SWT.F11)); //$NON-NLS-1$
-		stringToValueMap.put("F12", new Integer(SWT.F12)); //$NON-NLS-1$
+	static {		
+		localizedStringToValueMap.put(u(l("Backspace")), new Integer(8)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Tab")), new Integer(9)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Return")), new Integer(13)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Enter")), new Integer(13)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Escape")), new Integer(27)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Esc")), new Integer(27)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Delete")), new Integer(127)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Space")), new Integer(' ')); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Arrow_Up")), new Integer(SWT.ARROW_UP)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Arrow_Down")), new Integer(SWT.ARROW_DOWN)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Arrow_Left")), new Integer(SWT.ARROW_LEFT)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Arrow_Right")), new Integer(SWT.ARROW_RIGHT)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Page_Up")), new Integer(SWT.PAGE_UP)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Page_Down")), new Integer(SWT.PAGE_DOWN)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Home")), new Integer(SWT.HOME)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("End")), new Integer(SWT.END)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("Insert")), new Integer(SWT.INSERT)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("F1")), new Integer(SWT.F1)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("F2")), new Integer(SWT.F2)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("F3")), new Integer(SWT.F3)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("F4")), new Integer(SWT.F4)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("F5")), new Integer(SWT.F5)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("F6")), new Integer(SWT.F6)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("F7")), new Integer(SWT.F7)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("F8")), new Integer(SWT.F8)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("F9")), new Integer(SWT.F9)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("F10")), new Integer(SWT.F10)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("F11")), new Integer(SWT.F11)); //$NON-NLS-1$
+		localizedStringToValueMap.put(u(l("F12")), new Integer(SWT.F12)); //$NON-NLS-1$		
+
+		stringToValueMap.put(u("Backspace"), new Integer(8)); //$NON-NLS-1$
+		stringToValueMap.put(u("Tab"), new Integer(9)); //$NON-NLS-1$
+		stringToValueMap.put(u("Return"), new Integer(13)); //$NON-NLS-1$
+		stringToValueMap.put(u("Enter"), new Integer(13)); //$NON-NLS-1$
+		stringToValueMap.put(u("Escape"), new Integer(27)); //$NON-NLS-1$
+		stringToValueMap.put(u("Esc"), new Integer(27)); //$NON-NLS-1$
+		stringToValueMap.put(u("Delete"), new Integer(127)); //$NON-NLS-1$
+		stringToValueMap.put(u("Space"), new Integer(' ')); //$NON-NLS-1$
+		stringToValueMap.put(u("Arrow_Up"), new Integer(SWT.ARROW_UP)); //$NON-NLS-1$
+		stringToValueMap.put(u("Arrow_Down"), new Integer(SWT.ARROW_DOWN)); //$NON-NLS-1$
+		stringToValueMap.put(u("Arrow_Left"), new Integer(SWT.ARROW_LEFT)); //$NON-NLS-1$
+		stringToValueMap.put(u("Arrow_Right"), new Integer(SWT.ARROW_RIGHT)); //$NON-NLS-1$
+		stringToValueMap.put(u("Page_Up"), new Integer(SWT.PAGE_UP)); //$NON-NLS-1$
+		stringToValueMap.put(u("Page_Down"), new Integer(SWT.PAGE_DOWN)); //$NON-NLS-1$
+		stringToValueMap.put(u("Home"), new Integer(SWT.HOME)); //$NON-NLS-1$
+		stringToValueMap.put(u("End"), new Integer(SWT.END)); //$NON-NLS-1$
+		stringToValueMap.put(u("Insert"), new Integer(SWT.INSERT)); //$NON-NLS-1$
+		stringToValueMap.put(u("F1"), new Integer(SWT.F1)); //$NON-NLS-1$
+		stringToValueMap.put(u("F2"), new Integer(SWT.F2)); //$NON-NLS-1$
+		stringToValueMap.put(u("F3"), new Integer(SWT.F3)); //$NON-NLS-1$
+		stringToValueMap.put(u("F4"), new Integer(SWT.F4)); //$NON-NLS-1$
+		stringToValueMap.put(u("F5"), new Integer(SWT.F5)); //$NON-NLS-1$
+		stringToValueMap.put(u("F6"), new Integer(SWT.F6)); //$NON-NLS-1$
+		stringToValueMap.put(u("F7"), new Integer(SWT.F7)); //$NON-NLS-1$
+		stringToValueMap.put(u("F8"), new Integer(SWT.F8)); //$NON-NLS-1$
+		stringToValueMap.put(u("F9"), new Integer(SWT.F9)); //$NON-NLS-1$
+		stringToValueMap.put(u("F10"), new Integer(SWT.F10)); //$NON-NLS-1$
+		stringToValueMap.put(u("F11"), new Integer(SWT.F11)); //$NON-NLS-1$
+		stringToValueMap.put(u("F12"), new Integer(SWT.F12)); //$NON-NLS-1$		
+		
+		valueToLocalizedStringMap.put(new Integer(8), l("Backspace")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(9), l("Tab")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(13), l("Return")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(13), l("Enter")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(27), l("Escape")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(27), l("Esc")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(127), l("Delete")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(' '), l("Space")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.ARROW_UP), l("Arrow_Up")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.ARROW_DOWN), l("Arrow_Down")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.ARROW_LEFT), l("Arrow_Left")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.ARROW_RIGHT), l("Arrow_Right")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.PAGE_UP), l("Page_Up")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.PAGE_DOWN), l("Page_Down")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.HOME), l("Home")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.END), l("End")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.INSERT), l("Insert")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.F1), l("F1")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.F2), l("F2")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.F3), l("F3")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.F4), l("F4")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.F5), l("F5")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.F6), l("F6")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.F7), l("F7")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.F8), l("F8")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.F9), l("F9")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.F10), l("F10")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.F11), l("F11")); //$NON-NLS-1$
+		valueToLocalizedStringMap.put(new Integer(SWT.F12), l("F12")); //$NON-NLS-1$		
 
 		valueToStringMap.put(new Integer(8), "Backspace"); //$NON-NLS-1$
 		valueToStringMap.put(new Integer(9), "Tab"); //$NON-NLS-1$
@@ -97,7 +159,15 @@ public final class KeySupport {
 		valueToStringMap.put(new Integer(SWT.F12), "F12"); //$NON-NLS-1$		
 	}
 
-	public static String formatSequence(Sequence sequence, boolean localize)
+	private static String l(String string) {
+		return Util.getString(resourceBundle, string);
+	}
+	
+	private static String u(String string) {
+		return string.toUpperCase();
+	}
+
+	public static String formatSequence(Sequence sequence, boolean localized)
 		throws IllegalArgumentException {
 		if (sequence == null)
 			throw new IllegalArgumentException();
@@ -110,14 +180,14 @@ public final class KeySupport {
 			if (i != 0)
 				stringBuffer.append(STROKE_SEPARATOR);
 
-			stringBuffer.append(formatStroke((Stroke) iterator.next(), localize));
+			stringBuffer.append(formatStroke((Stroke) iterator.next(), localized));
 			i++;
 		}
 
 		return stringBuffer.toString();
 	}
 
-	public static String formatStroke(Stroke stroke, boolean localize)
+	public static String formatStroke(Stroke stroke, boolean localized)
 		throws IllegalArgumentException {
 		if (stroke == null)
 			throw new IllegalArgumentException();		
@@ -126,45 +196,45 @@ public final class KeySupport {
 		int value = stroke.getValue();
 		
 		if ((value & SWT.CTRL) != 0) {
-			stringBuffer.append(localize ? Util.getString(resourceBundle, CTRL) : CTRL);
+			stringBuffer.append(localized ? l(CTRL) : CTRL);
 		}
 		
 		if ((value & SWT.ALT) != 0) {
 			if (stringBuffer.length() > 0)
 				stringBuffer.append(MODIFIER_SEPARATOR);
 			
-			stringBuffer.append(localize ? Util.getString(resourceBundle, ALT) : ALT);								
+			stringBuffer.append(localized ? l(ALT) : ALT);								
 		}
 
 		if ((value & SWT.SHIFT) != 0) {
 			if (stringBuffer.length() > 0)
 				stringBuffer.append(MODIFIER_SEPARATOR);
 			
-			stringBuffer.append(localize ? Util.getString(resourceBundle, SHIFT) : SHIFT);								
+			stringBuffer.append(localized ? l(SHIFT) : SHIFT);								
 		}
 
 		if ((value & SWT.COMMAND) != 0) {
 			if (stringBuffer.length() > 0)
 				stringBuffer.append(MODIFIER_SEPARATOR);
 			
-			stringBuffer.append(localize ? Util.getString(resourceBundle, COMMAND) : COMMAND);								
+			stringBuffer.append(localized ? l(COMMAND) : COMMAND);								
 		}		
 
 		if (stringBuffer.length() > 0)
 			stringBuffer.append(MODIFIER_SEPARATOR);
 
 		value &= ~(SWT.CTRL | SWT.ALT | SWT.SHIFT | SWT.COMMAND);
-		String string = (String) valueToStringMap.get(new Integer(value));
+		String string = localized ? (String) valueToLocalizedStringMap.get(new Integer(value)) : (String) valueToStringMap.get(new Integer(value));
 
 		if (string != null)
-			stringBuffer.append(localize ? Util.getString(resourceBundle, string) : string);
+			stringBuffer.append(string);
 		else 
 			stringBuffer.append(Character.toUpperCase((char) value));
 
 		return stringBuffer.toString();				
 	}
 	
-	public static Sequence parseSequence(String string)
+	public static Sequence parseSequence(String string, boolean localized)
 		throws IllegalArgumentException {
 		if (string == null)
 			throw new IllegalArgumentException();
@@ -173,12 +243,12 @@ public final class KeySupport {
 		StringTokenizer stringTokenizer = new StringTokenizer(string);
 				
 		while (stringTokenizer.hasMoreTokens())
-			strokes.add(parseStroke(stringTokenizer.nextToken()));
+			strokes.add(parseStroke(stringTokenizer.nextToken(), localized));
 			
 		return Sequence.create(strokes);
 	}	
 	
-	public static Stroke parseStroke(String string)
+	public static Stroke parseStroke(String string, boolean localized)
 		throws IllegalArgumentException {
 		if (string == null)
 			throw new IllegalArgumentException();
@@ -194,34 +264,34 @@ public final class KeySupport {
 
 		if (size % 2 == 1) {
 			String token = (String) list.get(size - 1);			
-			Integer integer = (Integer) stringToValueMap.get(token.toUpperCase());
+			Integer integer = localized ? (Integer) localizedStringToValueMap.get(u(token)) : (Integer) stringToValueMap.get(u(token));
 		
 			if (integer != null)
 				value = integer.intValue();
 			else if (token.length() == 1)
-				value = token.toUpperCase().charAt(0);
+				value = u(token).charAt(0);
 
 			if (value != 0) {
 				for (int i = 0; i < size - 1; i++) {
 					token = (String) list.get(i);			
 					
 					if (i % 2 == 0) {
-						if (CTRL.equalsIgnoreCase(token)) {
+						if (token.equalsIgnoreCase(localized ? l(CTRL) : CTRL)) {
 							if ((value & SWT.CTRL) != 0)
 								return Stroke.create(0);
 							
 							value |= SWT.CTRL;
-						} else if (ALT.equalsIgnoreCase(token)) {
+						} else if (token.equalsIgnoreCase(localized ? l(ALT) : ALT)) {
 							if ((value & SWT.ALT) != 0)
 								return Stroke.create(0);
 
 							value |= SWT.ALT;
-						} else if (SHIFT.equalsIgnoreCase(token)) {
+						} else if (token.equalsIgnoreCase(localized ? l(SHIFT) : SHIFT)) {
 							if ((value & SWT.SHIFT) != 0)
 								return Stroke.create(0);
 
 							value |= SWT.SHIFT;
-						} else if (COMMAND.equalsIgnoreCase(token)) {
+						} else if (token.equalsIgnoreCase(localized ? l(COMMAND) : COMMAND)) {
 							if ((value & SWT.COMMAND) != 0)
 								return Stroke.create(0);
 

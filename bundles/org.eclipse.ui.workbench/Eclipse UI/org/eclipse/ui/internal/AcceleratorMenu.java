@@ -18,6 +18,8 @@ import org.eclipse.swt.events.*;
 
 public class AcceleratorMenu {
 
+	private final static String PERMANENT = "lkg84hsdf098a!243lkjha9SDFlkjhsdfXlkjhsfdkljhfds$#$%sdfa68fgh"; //$NON-NLS-1$
+
 	private int[] accelerators;
 	private Menu parent, menu;
 	private MenuItem item;
@@ -34,6 +36,7 @@ public AcceleratorMenu(Menu parent) {
 		item = new MenuItem(parent, SWT.CASCADE,0);
 		item.setText(""); //$NON-NLS-1$
 		item.setMenu(menu);
+		item.setData(PERMANENT, PERMANENT);
 	}
 	
 	focusControlListener  = new Listener () {
@@ -82,6 +85,7 @@ public AcceleratorMenu(Menu parent) {
 					break;
 				case SWT.Hide:
 					item = new MenuItem(AcceleratorMenu.this.parent, SWT.CASCADE,0);
+					item.setData(PERMANENT, PERMANENT);
 					if(menu.isDisposed()) {
 						//doing more than needed;
 						setAccelerators(getAccelerators());
@@ -112,13 +116,23 @@ public boolean isDisposed() {
 
 public void dispose() {
 	setMultiMode(false);
-	parent.removeListener(SWT.Show, parentListener);
-	parent.removeListener(SWT.Hide, parentListener);
-	parent.removeListener(SWT.Dispose, parentListener);
-	menu.dispose();
-	menu = null;
-	if (item != null) item.dispose();
-	item = null;
+	
+	if (parent != null) {
+		parent.removeListener(SWT.Show, parentListener);
+		parent.removeListener(SWT.Hide, parentListener);
+		parent.removeListener(SWT.Dispose, parentListener);
+	}
+
+	if (menu != null) {	
+		menu.dispose();
+		menu = null;
+	}
+	
+	if (item != null) {
+		item.dispose(); 
+		item = null;
+	}
+	
 	focusControl = null;
 	parent = null;
 	verifyListener = null;

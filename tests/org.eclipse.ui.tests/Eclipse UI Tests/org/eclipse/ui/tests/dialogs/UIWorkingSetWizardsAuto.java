@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
+import org.eclipse.jface.wizard.*;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 
@@ -129,8 +130,8 @@ public abstract class UIWorkingSetWizardsAuto extends UITestCase {
 		f1 = FileUtil.createFile("f1.txt", p1);
 		f2 = FileUtil.createFile("f2.txt", p2);
 	}
-	protected void setTextWidgetText(String text) {
-		List widgets = getWidgets(fWizardDialog.getShell(), Text.class);
+	protected void setTextWidgetText(String text,IWizardPage page) {
+		List widgets = getWidgets((Composite) page.getControl(), Text.class);
 		Text textWidget = (Text) widgets.get(0);
 		textWidget.setText(text);
 		textWidget.notifyListeners(SWT.Modify, new Event());

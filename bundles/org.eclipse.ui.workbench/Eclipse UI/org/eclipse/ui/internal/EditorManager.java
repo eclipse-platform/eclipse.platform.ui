@@ -972,6 +972,7 @@ public class EditorManager {
 			title + ':' + targetExc.getMessage());
 		} catch (InterruptedException e) {
 			// Ignore.  The user pressed cancel.
+			wasCanceled[0] = true;
 		}
 		return !wasCanceled[0];
 	}

@@ -132,7 +132,7 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		/*
 		 * Test page state with partial page input
 		 */
-		setTextWidgetText(WORKING_SET_NAME_1);
+		setTextWidgetText(WORKING_SET_NAME_1,page);
 		assertTrue(page.canFlipToNextPage() == false);
 		assertTrue(fWizard.canFinish() == false);		
 		assertNotNull(page.getErrorMessage());		
