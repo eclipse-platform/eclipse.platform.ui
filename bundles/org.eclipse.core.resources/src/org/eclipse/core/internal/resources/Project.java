@@ -1,9 +1,9 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * are made available under the terms of the Common Public License v1.0 which
+ * accompanies this distribution, and is available at 
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors:
  * IBM - Initial API and implementation
@@ -63,17 +63,19 @@ public void build(int kind, String builderName, Map args, IProgressMonitor monit
 		int flags = getFlags(info);
 		if (!exists(flags, true) || !isOpen(flags))
 			return;
-
+			
 		workspace.beginOperation(true);
 		workspace.getBuildManager().build(this, kind, builderName, args, monitor);
-		// FIXME: should we catch OperationCanceledExceptions?
 	} finally {
+		//building may close the tree, but we are still inside an operation so open it
+		if (workspace.getElementTree().isImmutable())
+			workspace.newWorkingTree();
 		workspace.getWorkManager().avoidAutoBuild();
 		workspace.endOperation(false, null);
 	}
 }
 /** 
- * @see IProject
+ * @see IProject#build
  */
 public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	try {
@@ -85,8 +87,10 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 
 		workspace.beginOperation(true);
 		workspace.getBuildManager().build(this, trigger, monitor);
-		// FIXME: should we catch OperationCanceledExceptions?
 	} finally {
+		//building may close the tree, but we are still inside an operation so open it
+		if (workspace.getElementTree().isImmutable())
+			workspace.newWorkingTree();
 		workspace.getWorkManager().avoidAutoBuild();
 		workspace.endOperation(false, null);
 	}
