@@ -389,7 +389,6 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 	 */
 	protected void handleDefaults() {
 		handleSyntaxColorListSelection();
-		//initializeBackgroundColorFields();
 		restoreWorkingValuesToDefaults();
 	}
 	
