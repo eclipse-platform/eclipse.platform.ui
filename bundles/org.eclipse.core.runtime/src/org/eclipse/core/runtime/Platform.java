@@ -321,7 +321,9 @@ public final class Platform {
 	}
 
 	/**
-	 * Returns the command line args provided to the platform when it was first run.
+	 * Returns the command line args provided to the Eclipse runtime layer when it was first run.
+	 * The returned value does not include arguments consumed by the lower levels of Eclipse
+	 * (e.g., OSGi or the launcher).
 	 * Note that individual platform runnables may be provided with different arguments
 	 * if they are being run individually rather than with <code>Platform.run()</code>.
 	 * 
