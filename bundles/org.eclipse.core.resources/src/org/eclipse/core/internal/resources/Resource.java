@@ -591,7 +591,7 @@ public void createLink(IPath localLocation, int updateFlags, IProgressMonitor mo
 public IMarker createMarker(String type) throws CoreException {
 	Assert.isNotNull(type);
 	try {
-		workspace.prepareOperation(this, null);
+		workspace.prepareOperation(null, null);
 		checkAccessible(getFlags(getResourceInfo(false, false)));
 		workspace.beginOperation(true);
 		MarkerInfo info = new MarkerInfo();
@@ -600,7 +600,7 @@ public IMarker createMarker(String type) throws CoreException {
 		workspace.getMarkerManager().add(this, info);
 		return new Marker(this, info.getId());
 	} finally {
-		workspace.endOperation(this, false, null);
+		workspace.endOperation(null, false, null);
 	}
 }
 

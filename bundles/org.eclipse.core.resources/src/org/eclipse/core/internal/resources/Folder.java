@@ -14,6 +14,7 @@ import org.eclipse.core.internal.localstore.CoreFileSystemLibrary;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 public class Folder extends Container implements IFolder {
 protected Folder(IPath path, Workspace container) {
@@ -78,8 +79,10 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
 		String message = Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$
 		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FOLDER, true);
+		ISchedulingRule rule = null;
 		try {
-			workspace.prepareOperation(this, monitor);
+			rule = getParent();
+			workspace.prepareOperation(rule, monitor);
 			IPath location = getLocalManager().locationFor(this);
 			assertCreateRequirements(location, updateFlags);
 			workspace.beginOperation(true);
@@ -100,7 +103,7 @@ public void create(int updateFlags, boolean local, IProgressMonitor monitor) thr
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();

@@ -17,6 +17,7 @@ import org.eclipse.core.internal.utils.Assert;
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 
 public class File extends Resource implements IFile {
 
@@ -100,8 +101,10 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 		String message = monitorNull ? "" : Policy.bind("resources.creating", getFullPath().toString()); //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.beginTask(message, Policy.totalWork);
 		checkValidPath(path, FILE, true);
+		ISchedulingRule rule = null;
 		try {
-			workspace.prepareOperation(this, monitor);
+			rule = getParent();
+			workspace.prepareOperation(rule, monitor);
 			checkDoesNotExist();
 			Container parent = (Container) getParent();
 			ResourceInfo info = parent.getResourceInfo(false, false);
@@ -164,7 +167,7 @@ public void create(InputStream content, int updateFlags, IProgressMonitor monito
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
-			workspace.endOperation(this, true, Policy.subMonitorFor(monitor, Policy.buildWork));
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.buildWork));
 		}
 	} finally {
 		monitor.done();

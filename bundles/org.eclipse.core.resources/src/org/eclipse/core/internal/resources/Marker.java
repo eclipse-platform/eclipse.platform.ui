@@ -207,7 +207,7 @@ public void setAttribute(String attributeName, Object value) throws CoreExceptio
 	Workspace workspace = getWorkspace();
 	MarkerManager manager = workspace.getMarkerManager();
 	try {
-		workspace.prepareOperation(resource, null);
+		workspace.prepareOperation(null, null);
 		workspace.beginOperation(true);
 		MarkerInfo markerInfo = getInfo();
 		checkInfo(markerInfo);
@@ -223,7 +223,7 @@ public void setAttribute(String attributeName, Object value) throws CoreExceptio
 			manager.changedMarkers(resource, new MarkerDelta[] {delta});
 		}
 	} finally {
-		workspace.endOperation(resource, false, null);
+		workspace.endOperation(null, false, null);
 	}
 }
 /**
@@ -241,7 +241,7 @@ public void setAttributes(String[] attributeNames, Object[] values) throws CoreE
 	Workspace workspace = getWorkspace();
 	MarkerManager manager = workspace.getMarkerManager();
 	try {
-		workspace.prepareOperation(resource, null);
+		workspace.prepareOperation(null, null);
 		workspace.beginOperation(true);
 		MarkerInfo markerInfo = getInfo();
 		checkInfo(markerInfo);
@@ -257,7 +257,7 @@ public void setAttributes(String[] attributeNames, Object[] values) throws CoreE
 			manager.changedMarkers(resource, new MarkerDelta[] {delta});
 		}
 	} finally {
-		workspace.endOperation(resource, false, null);
+		workspace.endOperation(null, false, null);
 	}
 }
 /**
@@ -267,7 +267,7 @@ public void setAttributes(Map values) throws CoreException {
 	Workspace workspace = getWorkspace();
 	MarkerManager manager = workspace.getMarkerManager();
 	try {
-		workspace.prepareOperation(resource, null);
+		workspace.prepareOperation(null, null);
 		workspace.beginOperation(true);
 		MarkerInfo markerInfo = getInfo();
 		checkInfo(markerInfo);
@@ -283,7 +283,7 @@ public void setAttributes(Map values) throws CoreException {
 			manager.changedMarkers(resource, new MarkerDelta[] {delta});
 		}
 	} finally {
-		workspace.endOperation(resource, false, null);
+		workspace.endOperation(null, false, null);
 	}
 }
 void setId(int value) {
