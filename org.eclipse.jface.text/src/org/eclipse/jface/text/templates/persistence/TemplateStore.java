@@ -275,17 +275,11 @@ public class TemplateStore {
 	 * @since 3.1
 	 */
 	public Template findTemplateById(String id) {
-		Assert.isNotNull(id);
-		
-		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
-			if (data.isEnabled() && !data.isDeleted() 
-					&& id.equals(data.getId()))
-				return data.getTemplate();
-		}
+		TemplatePersistenceData data= getTemplateData(id);
+		if (data != null && !data.isDeleted())
+			return data.getTemplate();
 		
 		return null;
-		
 	}
 	
 	/**
@@ -303,6 +297,24 @@ public class TemplateStore {
 		}
 		
 		return (TemplatePersistenceData[]) datas.toArray(new TemplatePersistenceData[datas.size()]);
+	}
+	
+	/**
+	 * Returns the template data of the template with id <code>id</code> or
+	 * <code>null</code> if no such template can be found.
+	 * 
+	 * @param id the id of the template data
+	 * @return the template data of the template with id <code>id</code> or <code>null</code>
+	 */
+	public TemplatePersistenceData getTemplateData(String id) {
+		Assert.isNotNull(id);
+		for (Iterator it= fTemplates.iterator(); it.hasNext();) {
+			TemplatePersistenceData data= (TemplatePersistenceData) it.next();
+			if (id.equals(data.getId()))
+				return data;
+		}
+		
+		return null;
 	}
 	
 	private void loadCustomTemplates() throws IOException {
