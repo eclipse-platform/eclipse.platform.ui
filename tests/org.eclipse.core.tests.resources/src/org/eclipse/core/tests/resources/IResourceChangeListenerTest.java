@@ -341,6 +341,50 @@ public void testCloseOpenReplaceFile() {
 		handleCoreException(e);
 	}
 }
+public void testDeleteInPostBuildListener() {
+	// create the resource change listener
+	IResourceChangeListener listener = new IResourceChangeListener() {
+		public void resourceChanged(final IResourceChangeEvent event) {
+			try {
+				event.getDelta().accept(new IResourceDeltaVisitor() {
+					public boolean visit(IResourceDelta delta) throws CoreException {
+						IResource resource = delta.getResource();
+						if (resource.getType() == IResource.FILE) {
+							try {
+								((IFile)resource).delete(true, true, null);
+							} catch (RuntimeException e) {
+								throw e;
+							}
+						}
+						return true;
+					}
+				});
+			} catch (CoreException e) {
+				fail("1.0", e);
+			}
+		}
+	};
+	// register the listener with the workspace.
+	getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_AUTO_BUILD);
+	try {
+		getWorkspace().run(new IWorkspaceRunnable() {
+			// cause a delta by touching all resources
+			public void run(IProgressMonitor monitor) throws CoreException {
+				getWorkspace().getRoot().accept(new IResourceVisitor() {
+				public boolean visit(IResource resource) throws CoreException {
+					resource.touch(getMonitor());
+					return true;
+				}
+				});
+			}
+		}, getMonitor());
+	} catch (CoreException e) {
+		fail("2.0", e);
+	} finally {
+		// cleanup: ensure that the listener is removed
+		getWorkspace().removeResourceChangeListener(listener);
+	}
+}
 public void testMoveFile() {
 	try {
 		verifier.addExpectedChange(folder2, IResourceDelta.ADDED, 0);

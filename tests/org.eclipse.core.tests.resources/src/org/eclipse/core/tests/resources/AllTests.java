@@ -19,13 +19,12 @@ public AllTests(String name) {
 }
 	public static Test suite() {
 		TestSuite suite = new TestSuite();
-		//suite.addTest(BaseBuilderTest.suite());
 		suite.addTest(IFileTest.suite());
 		suite.addTest(IFolderTest.suite());
 		suite.addTest(IProjectTest.suite());
-//		suite.addTest(IResourceChangeEventTest.suite());
+		suite.addTest(IResourceChangeEventTest.suite());
 		suite.addTest(IResourceChangeListenerTest.suite());
-//		suite.addTest(IResourceDeltaTest.suite());
+		suite.addTest(IResourceDeltaTest.suite());
 		suite.addTest(IResourceTest.suite());
 		suite.addTest(ISynchronizerTest.suite());
 		suite.addTest(IWorkspaceRootTest.suite());
