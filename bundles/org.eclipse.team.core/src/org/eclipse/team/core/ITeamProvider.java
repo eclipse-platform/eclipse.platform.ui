@@ -4,9 +4,11 @@ package org.eclipse.team.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
- import org.eclipse.core.resources.IResource;
+ import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 /**
  * The <code>ITeamProvider</code> interface exposes a basic team model that
  * providers should implement to allow third-party plug-ins to perform team operations
@@ -308,5 +310,13 @@ public interface ITeamProvider {
 	 * </ul>
 	 */
 	public void refreshState(IResource[] resources, int depth, IProgressMonitor progress) throws TeamException;
-
+	
+	/*
+	 * @see IFileModificationValidator#validateEdit(IFile[], Object)
+	 */
+	public IStatus validateEdit(IFile[] files, Object context);
+	/*
+	 * @see IFileModificationValidator#validateSave(IFile)
+	 */
+	public IStatus validateSave(IFile file);
 }

@@ -1069,5 +1069,18 @@ public class CVSTeamProvider implements ITeamNature, ITeamProvider {
 	public boolean isOutOfDate(IResource resource) {
 		return false;
 	}
+	
+	/*
+	 * @see IFileModificationValidator#validateEdit(IFile[], Object)
+	 */
+	public IStatus validateEdit(IFile[] files, Object context) {
+		return new Status(Status.OK, TeamPlugin.ID, Status.OK, "OK", null);
+	}
+	/*
+	 * @see IFileModificationValidator#validateSave(IFile)
+	 */
+	public IStatus validateSave(IFile file) {
+		return new Status(Status.OK, TeamPlugin.ID, Status.OK, "OK", null);
+	}	
 }
 
