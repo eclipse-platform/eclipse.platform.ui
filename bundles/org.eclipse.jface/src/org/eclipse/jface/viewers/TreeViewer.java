@@ -193,39 +193,60 @@ public class TreeViewer extends AbstractTreeViewer {
 			tprov = (ITableLabelProvider) prov;
 		} 
         int columnCount = tree.getColumnCount();
-		for (int column = 0; column < columnCount || column == 0; column++) {
-			// Similar code in TableViewer.doUpdateItem()
-			String text = "";//$NON-NLS-1$
-			Image image = null;
-			treeColorAndFont.setFontsAndColors(treeItem, element,column);
+		if(columnCount == 0){//If no columns were created use the label provider
 
-			if (tprov == null) {
-				if (column == 0) {
-					ViewerLabel updateLabel = new ViewerLabel(treeItem
-							.getText(), treeItem.getImage());
-					buildLabel(updateLabel,element);
-					
-//						As it is possible for user code to run the event 
-		            //loop check here.
-					if (treeItem.isDisposed()) {
-		                unmapElement(element);
-		                return;
-		            }   
-					
-					text = updateLabel.getText();
-					image = updateLabel.getImage();
+			ViewerLabel updateLabel = new ViewerLabel(treeItem
+					.getText(), treeItem.getImage());
+			buildLabel(updateLabel,element);
+			
+			//As it is possible for user code to run the event 
+            //loop check here.
+			if (treeItem.isDisposed()) {
+                unmapElement(element);
+                return;
+            }   
+			
+			if(updateLabel.hasNewText())
+				treeItem.setText(updateLabel.getText());
+			if(updateLabel.hasNewImage())
+				treeItem.setImage(updateLabel.getImage());
+		
+		}
+		else{//Use the table based support
+			for (int column = 0; column < columnCount; column++) {
+				// Similar code in TableViewer.doUpdateItem()
+				String text = "";//$NON-NLS-1$
+				Image image = null;
+				treeColorAndFont.setFontsAndColors(treeItem, element,column);
+	
+				if (tprov == null) {
+					if (column == 0) {
+						ViewerLabel updateLabel = new ViewerLabel(treeItem
+								.getText(), treeItem.getImage());
+						buildLabel(updateLabel,element);
+						
+						//As it is possible for user code to run the event 
+			            //loop check here.
+						if (treeItem.isDisposed()) {
+			                unmapElement(element);
+			                return;
+			            }   
+						
+						text = updateLabel.getText();
+						image = updateLabel.getImage();
+					}
+				} else {
+					text = tprov.getColumnText(element, column);
+					image = tprov.getColumnImage(element, column);
 				}
-			} else {
-				text = tprov.getColumnText(element, column);
-				image = tprov.getColumnImage(element, column);
-			}
-
-			//Avoid setting text to null
-			if (text == null)
-				text = ""; //$NON-NLS-1$
-			treeItem.setText(column, text);
-			if (treeItem.getImage(column) != image) {
-				treeItem.setImage(column, image);
+	
+				//Avoid setting text to null
+				if (text == null)
+					text = ""; //$NON-NLS-1$
+				treeItem.setText(column, text);
+				if (treeItem.getImage(column) != image) {
+					treeItem.setImage(column, image);
+				}
 			}
 		}
 		colorAndFontCollector.applyFontsAndColors(treeItem);
