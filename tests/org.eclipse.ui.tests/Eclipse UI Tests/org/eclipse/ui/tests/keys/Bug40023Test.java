@@ -11,6 +11,18 @@
 
 package org.eclipse.ui.tests.keys;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.keys.KeyStroke;
+import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -19,6 +31,26 @@ import org.eclipse.ui.tests.util.UITestCase;
  * @since 3.0
  */
 public class Bug40023Test extends UITestCase {
+
+	/**
+	 * Retrieves a menu item matching or starting with the given name from an
+	 * array of menu items.
+	 * 
+	 * @param menuItems
+	 *           The array of menu items to search; must not be <code>null</code>
+	 * @param text
+	 *           The text to look for; may be <code>null</code>.
+	 * @return The menu item, if any is found; <code>null</code> otherwise.
+	 */
+	public static MenuItem getMenuItem(MenuItem[] menuItems, String text) {
+		for (int i = 0; i < menuItems.length; i++) {
+			if (menuItems[i].getText().startsWith(text)) {
+				return menuItems[i];
+			}
+		}
+
+		return null;
+	}
 
 	/**
 	 * Constructor for Bug40023Test.
@@ -31,41 +63,43 @@ public class Bug40023Test extends UITestCase {
 	}
 
 	/**
-	 * Tests that check box items on the menu are checked when activated from 
+	 * Tests that check box items on the menu are checked when activated from
 	 * the keyboard.
+	 * 
+	 * @throws CoreException
+	 *            If the exported preferences file is invalid for some reason.
+	 * @throws FileNotFoundException
+	 *            If the temporary file is removed before it can be read in.
+	 *            (Wow)
+	 * @throws IOException
+	 *            If the creation of or the writing to the temporary file fails
+	 *            for some reason.
+	 * @throws ParseException
+	 *            If the key binding cannot be parsed.
 	 */
-	public void testCheckOnCheckbox()  {
-		// TODO Need a way to set a key binding.
-//		IWorkbenchWindow window = openTestWindow();
-//		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-//		IProject testProject = workspace.getRoot().getProject("TestProject"); //$NON-NLS-1$
-//		testProject.create(null);
-//		testProject.open(null);
-//		AbstractTextEditor editor = (AbstractTextEditor) window.getActivePage().openEditor(testProject.getFile(".project")); //$NON-NLS-1$
-//		editor.selectAndReveal(0, 1);
-//
-//		// Update the display.
-//		Shell shell = window.getShell();
-//		Display display = shell.getDisplay();
-//		while (display.readAndDispatch());
-//
-//		// Press "Ctrl+C" to perform a copy.
-//		KeyStroke[] keyStrokes = { KeyStroke.getInstance("CTRL+C")}; //$NON-NLS-1$
-//		Event event = new Event();
-//		((Workbench) window.getWorkbench()).press(keyStrokes, event);
-//
-//		// Get the menu item we've just selected.
-//		IAction action = editor.getEditorSite().getActionBars().getGlobalActionHandler(IWorkbenchActionConstants.COPY);
-//		assertTrue("Non-checkbox menu item is checked.", !action.isChecked()); //$NON-NLS-1$
-	}
+	public void testCheckOnCheckbox() throws CoreException, FileNotFoundException, IOException, ParseException {
+		// Open a window to run the test.
+		IWorkbenchWindow window = openTestWindow();
+		Workbench workbench = (Workbench) window.getWorkbench();
 
-//	public static MenuItem getMenuItem(MenuItem[] menuItems, String text) {
-//		for (int i = 0; i < menuItems.length; i++) {
-//			if (menuItems[i].getText().equals(text)) {
-//				return menuItems[i];
-//			}
-//		}
-//
-//		return null;
-//	}
+		// Set up a key binding for "Lock Toolbars".
+		String commandId = "org.eclipse.ui.window.lockToolBar"; //$NON-NLS-1$
+		String keySequenceText = "CTRL+ALT+L"; //$NON-NLS-1$
+		PreferenceMutator.setKeyBinding(commandId, keySequenceText);
+
+		// Update the display.
+		Shell shell = window.getShell();
+		Display display = shell.getDisplay();
+		while (display.readAndDispatch());
+
+		// Press "CTRL+ALT+L" to lock the toolbars.
+		KeyStroke[] keyStrokes = { KeyStroke.getInstance(keySequenceText)};
+		Event event = new Event();
+		workbench.press(keyStrokes, event);
+
+		// Check that the "Lock Toolbars" menu item is now checked.
+		MenuItem windowMenu = getMenuItem(shell.getMenuBar().getItems(), "&Window"); //$NON-NLS-1$
+		MenuItem lockToolBarsMenuItem = getMenuItem(windowMenu.getMenu().getItems(), "Lock the &Toolbars"); //$NON-NLS-1$
+		assertTrue("Checkbox menu item is not checked.", lockToolBarsMenuItem.getSelection()); //$NON-NLS-1$
+	}
 }
