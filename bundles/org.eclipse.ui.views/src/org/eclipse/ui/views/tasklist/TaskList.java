@@ -1,35 +1,106 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM Corporation - Initial implementation
+	Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
+***********************************************************************/
+
 package org.eclipse.ui.views.tasklist;
 
-/**********************************************************************
-Copyright (c) 2000, 2001, 2002, International Business Machines Corp and others.
-All rights reserved.   This program and the accompanying materials
-are made available under the terms of the Common Public License v0.5
-which accompanies this distribution, and is available at
-http://www.eclipse.org/legal/cpl-v05.html
- 
-Contributors:
-  Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
-**********************************************************************/
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.action.*;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.util.Assert;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IMarkerDelta;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.*;
-import org.eclipse.swt.dnd.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSourceAdapter;
+import org.eclipse.swt.dnd.DragSourceEvent;
+import org.eclipse.swt.dnd.DragSourceListener;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.viewers.CellEditor;
+import org.eclipse.jface.viewers.CheckboxCellEditor;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.IOpenListener;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.OpenEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TextCellEditor;
+
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.CellEditorActionHandler;
+import org.eclipse.ui.part.MarkerTransfer;
+import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -341,6 +412,13 @@ void createColumns() {
  * Method declared on IWorkbenchPart.
  */
 public void createPartControl(Composite parent) {
+	long t = System.currentTimeMillis();
+	createPartControl0(parent);
+	t = System.currentTimeMillis() - t;
+	System.out.println("TaskList.createPartControl: " + t + "ms");
+}
+
+private void createPartControl0(Composite parent) {
 	this.parent = parent;
 	clipboard = new Clipboard(parent.getDisplay());
 	createTable(parent);
@@ -1202,29 +1280,26 @@ void toggleLockInput(boolean value) {
  * Updates the focus resource, and refreshes if we're showing only tasks for the focus resource.
  */
 void updateFocusResource(ISelection selection) {
-	java.util.List list = new ArrayList();
+	ArrayList list = new ArrayList();
 
 	if (selection instanceof IStructuredSelection) {
 		Iterator iterator = ((IStructuredSelection) selection).iterator();
-		Object object;
-		Object adapter;
-		ITaskListResourceAdapter taskListResourceAdapter;
+		while (iterator.hasNext()) {	
+			Object object = iterator.next();
 
-		if (iterator != null) {
-			while (iterator.hasNext()) {	
-				object = iterator.next();
+			if (object instanceof IAdaptable) {
+				ITaskListResourceAdapter taskListResourceAdapter;
+				Object adapter = ((IAdaptable) object).getAdapter(ITaskListResourceAdapter.class);
+				if (adapter != null && adapter instanceof ITaskListResourceAdapter) {
+					taskListResourceAdapter = (ITaskListResourceAdapter) adapter;
+				}
+				else {
+					taskListResourceAdapter = DefaultTaskListResourceAdapter.getDefault();
+				}
 
-				if (object instanceof IAdaptable) {
-					adapter = ((IAdaptable) object).getAdapter(ITaskListResourceAdapter.class);
-
-					if (adapter != null) {
-						taskListResourceAdapter = (ITaskListResourceAdapter) adapter;
-					}
-					else {
-						taskListResourceAdapter = DefaultTaskListResourceAdapter.getDefault();
-					}
-
-					list.add(taskListResourceAdapter.getAffectedResource((IAdaptable) object));
+				IResource resource = taskListResourceAdapter.getAffectedResource((IAdaptable) object);
+				if (resource != null) {
+					list.add(resource);
 				}
 			}
 		}
@@ -1235,48 +1310,46 @@ void updateFocusResource(ISelection selection) {
 
 		if (input != null) {
 			if (input instanceof IFileEditorInput) {
-				list.add(((IFileEditorInput) input).getFile());
+				IFile file = ((IFileEditorInput) input).getFile();
+				if (file != null) {
+					list.add(file);
+				}
 			}
 			else {
 				IResource resource = (IResource) input.getAdapter(IResource.class);
-				
 				if (resource == null) {
 					resource = (IFile) input.getAdapter(IFile.class);
 				}
-				
-				list.add(resource);
+				if (resource != null) {
+					list.add(resource);
+				}
 			}
 		}
 	}
 
-	IResource[] resources = (IResource[]) list.toArray(new IResource[list.size()]);
-
-	if (resources.length < 1) {
+	int l = list.size();
+	if (l < 1) {
 		return; // required to achieve lazy update behavior.
 	}
 	
-	if (!java.util.Arrays.equals(resources, focusResources)) {
+	IResource[] resources = (IResource[]) list.toArray(new IResource[l]);
+	for (int i = 0; i < l; i++) {
+		Assert.isNotNull(resources[i]);
+	}
+	
+	if (!Arrays.equals(resources, focusResources)) {
 		boolean updateNeeded = false;
-
-		if (resources == null || focusResources == null) {
-			updateNeeded = true;			
-		}
-		else if (showOwnerProject()) {
-			int l = resources.length;
-
-			if (l != focusResources.length) {
+		
+		if (showOwnerProject()) {
+			int m = focusResources == null ? 0 : focusResources.length;
+			if (l != m) {
 				updateNeeded = true;
 			}
 			else {
-				IProject oldProject;
-				IProject newProject;
-				boolean projectsEqual;
-					
 				for (int i = 0; i < l; i++) {
-					oldProject = focusResources[0] == null ? null : focusResources[0].getProject();
-					newProject = resources[0] == null ? null : resources[0].getProject();
-					projectsEqual = (oldProject == null ? newProject == null : oldProject.equals(newProject));
-					
+					IProject oldProject = m < 1 ? null : focusResources[0].getProject();
+					IProject newProject = resources[0].getProject();
+					boolean projectsEqual = (oldProject == null ? newProject == null : oldProject.equals(newProject));
 					if (!projectsEqual) {
 						updateNeeded = true;
 						break;
@@ -1288,8 +1361,8 @@ void updateFocusResource(ISelection selection) {
 			updateNeeded = true;
 		}
 		
-		// remember the focus resource even if update is not needed,
-		// so that we know it if the filter settings change
+		// remember the focus resources even if update is not needed,
+		// so that we know them if the filter settings change
 		focusResources = resources;
 		
 		if (updateNeeded) {

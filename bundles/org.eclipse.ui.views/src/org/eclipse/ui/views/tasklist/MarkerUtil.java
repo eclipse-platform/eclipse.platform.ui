@@ -1,12 +1,20 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.views.tasklist;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,11 +22,13 @@ import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.swt.graphics.Image;
 
 /**
  * Utility class for accessing marker attributes.
@@ -30,6 +40,10 @@ import org.eclipse.swt.graphics.Image;
 	static {
 		createImageDescriptors();
 	}
+	
+	private static MessageFormat line = new MessageFormat(TaskListMessages.getString("TaskList.line")); //$NON-NLS-1$
+	private static MessageFormat lineAndLocation = new MessageFormat(TaskListMessages.getString("TaskList.lineAndLocation")); //$NON-NLS-1$
+	
 /**
  * Don't allow instantiation.
  */
@@ -160,13 +174,23 @@ public static String getKindText(IMarker marker) {
  * Returns the container name if it is defined, or empty string if not.
  */
 public static String getContainerName(IMarker marker) {
-	// taking substring from resource's path string is 40x faster 
-	// than getting relative path string from resource's parent
-	String path = marker.getResource().getFullPath().toString();
-	int i = path.lastIndexOf(IPath.SEPARATOR);
-	if (i == 0)
-		return ""; //$NON-NLS-1$
-	return path.substring(1, i);
+	IPath path = marker.getResource().getFullPath();
+	int n = path.segmentCount() - 1; // n is the number of segments in container, not path
+	if (n <= 0)
+		return "";
+	int len = 0;
+	for (int i = 0; i < n; ++i)
+		len += path.segment(i).length();
+	// account for /'s
+	if (n > 1)
+		len += n-1;
+	StringBuffer sb = new StringBuffer(len);
+	for (int i = 0; i < n; ++i) {
+		if (i != 0)
+			sb.append('/');
+		sb.append(path.segment(i));
+	}
+	return sb.toString();
 }
 	
 /**
@@ -240,10 +264,10 @@ public static String getLineAndLocation(int lineNumber, String location) {
 	}
 	else {
 		if (location.equals("")) {//$NON-NLS-1$
-			return TaskListMessages.format("TaskList.line", new Object[] { new Integer(lineNumber) }); //$NON-NLS-1$
+			return line.format(new Object[] { new Integer(lineNumber) });
 		}
 		else {
-			return TaskListMessages.format("TaskList.lineAndLocation", new Object[] { new Integer(lineNumber), location }); //$NON-NLS-1$
+			return lineAndLocation.format(new Object[] { new Integer(lineNumber), location });
 		}
 	}
 }

@@ -1,16 +1,25 @@
+/**********************************************************************
+Copyright (c) 2000, 2002 IBM Corp. and others.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Common Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/cpl-v10.html
+
+Contributors:
+	IBM Corporation - Initial implementation
+**********************************************************************/
+
 package org.eclipse.ui.views.tasklist;
 
-/*
- * (c) Copyright IBM Corp. 2000, 2001.
- * All Rights Reserved.
- */
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
- * This is the abstract superclass of sorters in the task list.
+ * This is the task list's sorter.
  */
 /* package */ class TaskSorter extends ViewerSorter {
 	private TaskList tasklist;
@@ -75,15 +84,21 @@ private int compareColumnValue(int columnNumber, IMarker m1, IMarker m2) {
 		case 4: /* resource name */
 			// Optimization: if the markers' resources are equal, then their names are the same.
 			// If resources are equal, chances are they're identical; don't take hit for full equality comparison.
-			if (m1.getResource() == m2.getResource())
+			IResource r1 = m1.getResource();
+			IResource r2 = m2.getResource();
+			if (r1 == r2)
 				return 0;
-			return collator.compare(MarkerUtil.getResourceName(m1), MarkerUtil.getResourceName(m2));
+			String n1 = r1.getName();
+			String n2 = r2.getName();
+			return collator.compare(n1, n2);
 		case 5: /* container name */
 			// Optimization: if the markers' resources are equal, then container names are the same.
 			// If resources are equal, chances are they're identical; don't take hit for full equality comparison.
 			if (m1.getResource() == m2.getResource())
 				return 0;
-			return collator.compare(MarkerUtil.getContainerName(m1), MarkerUtil.getContainerName(m2));
+			String c1 = MarkerUtil.getContainerName(m1);
+			String c2 = MarkerUtil.getContainerName(m2);
+			return c1.equals(c2) ? 0 : collator.compare(c1, c2);
 		case 6: /* line and location */
 			return compareLineAndLocation(m1, m2);
 		case 7: /* creation time */
