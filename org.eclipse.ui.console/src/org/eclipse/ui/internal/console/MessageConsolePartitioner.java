@@ -222,5 +222,4 @@ public class MessageConsolePartitioner implements IDocumentPartitioner, IDocumen
 	public IDocument getDocument() {
 		return fDocument;
 	}
-
 }

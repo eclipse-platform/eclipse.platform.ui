@@ -33,14 +33,14 @@ public class MessageConsoleViewer extends TextViewer implements LineStyleListene
 	 * Internal document listener.
 	 */
 	class InternalDocumentListener implements IDocumentListener {
-		/**
-		 * @see IDocumentListener#documentAboutToBeChanged(DocumentEvent)
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentAboutToBeChanged(DocumentEvent e) {
 		}
 		
-		/**
-		 * @see IDocumentListener#documentChanged(DocumentEvent)
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 		 */
 		public void documentChanged(DocumentEvent e) {
 			revealEndOfDocument();
@@ -92,8 +92,8 @@ public class MessageConsoleViewer extends TextViewer implements LineStyleListene
 		}
 	}
 
-	/**
-	 * @see ITextViewer#setDocument(IDocument)
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.ITextViewer#setDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public void setDocument(IDocument doc) {
 		IDocument oldDoc= getDocument();
@@ -116,8 +116,8 @@ public class MessageConsoleViewer extends TextViewer implements LineStyleListene
 		}
 	}
 	
-	/**
-	 * @see IFindReplaceTarget#canPerformFind()
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.text.TextViewer#canPerformFind()
 	 */
 	protected boolean canPerformFind() {
 		return (getTextWidget() != null && getVisibleDocument() != null && getVisibleDocument().getLength() > 0);
@@ -129,7 +129,7 @@ public class MessageConsoleViewer extends TextViewer implements LineStyleListene
 	public void dispose() {
 	}
 	
-	/**
+	/* (non-Javadoc)
 	 * @see org.eclipse.swt.custom.LineStyleListener#lineGetStyle(org.eclipse.swt.custom.LineStyleEvent)
 	 */
 	public void lineGetStyle(LineStyleEvent event) {
@@ -147,7 +147,5 @@ public class MessageConsoleViewer extends TextViewer implements LineStyleListene
 				event.styles = styles;
 			}
 		}
-	}
-	
+	}	
 }
-

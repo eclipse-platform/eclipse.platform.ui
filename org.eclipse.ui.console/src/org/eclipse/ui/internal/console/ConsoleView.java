@@ -14,15 +14,12 @@ import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -33,6 +30,7 @@ import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleListener;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsoleView;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
@@ -69,13 +67,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	// actions
 	private PinConsoleAction fPinAction = null; 
 	private ConsoleDropDownAction fDisplayConsoleAction = null;
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractDebugView#getControl()
-	 */
-	protected Control getControl() {
-		return getPageBook();
-	}
 
 	private boolean isAvailable() {
 		return getPageBook() != null && !getPageBook().isDisposed();
@@ -202,7 +193,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsoleListener#consolesAdded(org.eclipse.debug.internal.ui.console.IConsole[])
+	 * @see org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.console.IConsole[])
 	 */
 	public void consolesAdded(final IConsole[] consoles) {
 		if (isAvailable()) {
@@ -259,25 +250,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		fConsoleToPart = new HashMap();
 		fPartToConsole = new HashMap();
 	}
-
-	/**
-	 * This method is never called for this view.
-	 * 
-	 * @see org.eclipse.debug.ui.AbstractDebugView#createViewer(org.eclipse.swt.widgets.Composite)
-	 */
-	protected Viewer createViewer(Composite parent) {
-		return null;
-	}
 	
 	/**
 	 * Creates a pop-up menu on the given control. The menu
 	 * is registered with this view's site, such that other
-	 * plug-ins may contribute to the menu. Subclasses should
-	 * call this method, specifying the menu control as the
-	 * control used in their viewer (for example, tree viewer).
-	 * Subclasses must implement the method
-	 * <code>#fillContextMenu(IMenuManager)</code> which will
-	 * be called each time the context menu is realized.
+	 * plug-ins may contribute to the menu.
 	 * 
 	 * @param menuControl the control with which the pop-up
 	 *  menu will be associated with.
@@ -285,11 +262,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	protected void createContextMenu(Control menuControl) {
 		MenuManager menuMgr= new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager mgr) {
-				fillContextMenu(mgr);
-			}
-		});
 		Menu menu= menuMgr.createContextMenu(menuControl);
 		menuControl.setMenu(menu);
 
@@ -299,30 +271,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractDebugView#createActions()
-	 */
 	protected void createActions() {
 		fPinAction = new PinConsoleAction(this);
 		fDisplayConsoleAction = new ConsoleDropDownAction(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractDebugView#getHelpContextId()
-	 */
-	protected String getHelpContextId() {
-		return IConsoleHelpContextIds.CONSOLE_VIEW;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
-	 */
-	protected void fillContextMenu(IMenuManager menu) {
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractDebugView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
-	 */
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.add(new Separator(IConsoleConstants.LAUNCH_GROUP));
 		mgr.add(new Separator(IConsoleConstants.OUTPUT_GROUP));
@@ -331,7 +284,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsoleView#display(org.eclipse.debug.internal.ui.console.IConsole)
+	 * @see org.eclipse.ui.console.IConsoleView#display(org.eclipse.ui.console.IConsole)
 	 */
 	public void display(IConsole console) {
 		if (!isPinned()) {
@@ -342,8 +295,8 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsoleView#pin(org.eclipse.debug.internal.ui.console.IConsole)
+	/*/* (non-Javadoc)
+	 * @see org.eclipse.ui.console.IConsoleView#pin(org.eclipse.ui.console.IConsole)
 	 */
 	public void pin(IConsole console) {
 		if (console == null) {
@@ -358,14 +311,14 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsoleView#isPinned()
+	 * @see org.eclipse.ui.console.IConsoleView#isPinned()
 	 */
 	public boolean isPinned() {
 		return fPinned;
 	}
 
-	/**
-	 * @see PageBookView#getBootstrapPart()
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
 	 */
 	protected IWorkbenchPart getBootstrapPart() {
 		return null;
@@ -379,7 +332,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 */
 	public void asyncExec(Runnable r) {
 		if (isAvailable()) {
-			getControl().getDisplay().asyncExec(r);
+			getPageBook().getDisplay().asyncExec(r);
 		}
 	}
 	
@@ -398,11 +351,6 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 	 * <li><code>getHelpContextId()</code></li>
 	 * </ul>
 	 * @see IWorkbenchPart#createPartControl(Composite)
-	 * @see AbstractDebugView#createPartControl(Composite)
-	 * @see AbstractDebugView#createActions()
-	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
-	 * @see AbstractDebugView#getHelpContextId()
-	 * @see AbstractDebugView#fillContextMenu(IMenuManager)
 	 */
 	public void createPartControl(Composite parent) {
 		//registerPartListener();
@@ -416,7 +364,7 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 //		if (viewer != null) {
 //			createContextMenu(viewer.getControl());
 //		}
-		//WorkbenchHelp.setHelp(parent, getHelpContextId());
+		WorkbenchHelp.setHelp(parent, IConsoleHelpContextIds.CONSOLE_VIEW);
 //		if (viewer != null) {
 //			getViewer().getControl().addKeyListener(new KeyAdapter() {
 //				public void keyPressed(KeyEvent e) {

@@ -35,7 +35,6 @@ public class MessageConsolePartition extends TypedRegion {
 		fStream = stream;
 	}
 	
-	
 	/**
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */

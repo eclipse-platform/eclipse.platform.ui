@@ -115,9 +115,9 @@ public class ConsoleWorkbenchPart implements IWorkbenchPart {
 	}
 
 	/**
-	 * Returns the console assocaited with this part.
+	 * Returns the console associated with this part.
 	 * 
-	 * @return console assocaited with this part
+	 * @return console associated with this part
 	 */
 	protected IConsole getConsole() {
 		return fConsole;

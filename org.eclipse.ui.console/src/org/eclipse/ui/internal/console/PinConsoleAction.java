@@ -53,5 +53,4 @@ public class PinConsoleAction extends Action implements IUpdate {
 		setEnabled(fView.getConsole() != null);
 		setChecked(fView.isPinned());
 	}
-
 }

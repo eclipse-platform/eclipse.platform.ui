@@ -54,7 +54,7 @@ public class ConsoleManager implements IConsoleManager {
 		private int fType;
 		private IConsole[] fChanged;
 		
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.ISafeRunnable#handleException(java.lang.Throwable)
 		 */
 		public void handleException(Throwable exception) {
@@ -62,7 +62,7 @@ public class ConsoleManager implements IConsoleManager {
 			ConsolePlugin.log(status);
 		}
 
-		/**
+		/* (non-Javadoc)
 		 * @see org.eclipse.core.runtime.ISafeRunnable#run()
 		 */
 		public void run() throws Exception {
@@ -99,7 +99,7 @@ public class ConsoleManager implements IConsoleManager {
 	}	
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsoleManager#addConsoleListener(org.eclipse.debug.internal.ui.console.IConsoleListener)
+	 * @see org.eclipse.ui.console.IConsoleManager#addConsoleListener(org.eclipse.ui.console.IConsoleListener)
 	 */
 	public void addConsoleListener(IConsoleListener listener) {
 		if (fListeners == null) {
@@ -109,7 +109,7 @@ public class ConsoleManager implements IConsoleManager {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsoleManager#removeConsoleListener(org.eclipse.debug.internal.ui.console.IConsoleListener)
+	 * @see org.eclipse.ui.console.IConsoleManager#removeConsoleListener(org.eclipse.ui.console.IConsoleListener)
 	 */
 	public void removeConsoleListener(IConsoleListener listener) {
 		if (fListeners != null) {
@@ -118,7 +118,7 @@ public class ConsoleManager implements IConsoleManager {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsoleManager#addConsoles(org.eclipse.debug.internal.ui.console.IConsole[])
+	 * @see org.eclipse.ui.console.IConsoleManager#addConsoles(org.eclipse.ui.console.IConsole[])
 	 */
 	public synchronized void addConsoles(IConsole[] consoles) {
 		List added = new ArrayList(consoles.length);
@@ -135,7 +135,7 @@ public class ConsoleManager implements IConsoleManager {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsoleManager#removeConsoles(org.eclipse.debug.internal.ui.console.IConsole[])
+	 * @see org.eclipse.ui.console.IConsoleManager#removeConsoles(org.eclipse.ui.console.IConsole[])
 	 */
 	public synchronized void removeConsoles(IConsole[] consoles) {
 		List removed = new ArrayList(consoles.length);
@@ -151,7 +151,7 @@ public class ConsoleManager implements IConsoleManager {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsoleManager#getConsoles()
+	 * @see org.eclipse.ui.console.IConsoleManager#getConsoles()
 	 */
 	public synchronized IConsole[] getConsoles() {
 		return (IConsole[])fConsoles.toArray(new IConsole[fConsoles.size()]);

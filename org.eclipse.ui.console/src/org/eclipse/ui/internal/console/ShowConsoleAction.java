@@ -11,7 +11,8 @@
 package org.eclipse.ui.internal.console;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.ui.console.*;
+import org.eclipse.ui.console.IConsole;
+import org.eclipse.ui.console.IConsoleView;
 
 /**
  * Shows a specific console in the console view
@@ -45,7 +46,4 @@ public class ShowConsoleAction extends Action {
 		setText(console.getName());
 		setImageDescriptor(console.getImageDescriptor());
 	}
-	
-	
-
 }

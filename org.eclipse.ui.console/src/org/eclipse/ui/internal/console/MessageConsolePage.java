@@ -186,7 +186,6 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.GOTO_LINE));
 		menu.add(fClearOutputAction);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		
 	}
 
 	/* (non-Javadoc)
@@ -286,9 +285,6 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 		return fViewer;
 	}	
 
-	/**
-	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
-	 */
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fClearOutputAction);
 	}
@@ -311,8 +307,8 @@ public class MessageConsolePage implements IPageBookViewPage, IAdaptable, IPrope
 		return fConsole;
 	}
 	
-	/**
-	 * @see WorkbenchPart#getAdapter(Class)
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class required) {
 		if (IFindReplaceTarget.class.equals(required)) {

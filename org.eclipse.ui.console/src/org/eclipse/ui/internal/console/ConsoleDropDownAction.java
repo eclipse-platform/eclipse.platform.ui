@@ -52,21 +52,32 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 		update();
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuCreator#dispose()
+	 */
 	public void dispose() {
-		if (fMenu != null)
+		if (fMenu != null) {
 			fMenu.dispose();
+		}
 		
 		fView= null;
 		ConsolePlugin.getDefault().getConsoleManager().removeConsoleListener(this);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
+	 */
 	public Menu getMenu(Menu parent) {
 		return null;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Control)
+	 */
 	public Menu getMenu(Control parent) {
-		if (fMenu != null)
+		if (fMenu != null) {
 			fMenu.dispose();
+		}
 		
 		fMenu= new Menu(parent);
 		IConsole[] consoles= ConsolePlugin.getDefault().getConsoleManager().getConsoles();
@@ -89,12 +100,15 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 		new MenuItem(fMenu, SWT.SEPARATOR);		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.action.IAction#run()
+	 */
 	public void run() {
 		// do nothing - this is a menu
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.console.IConsoleListener#consolesAdded(org.eclipse.debug.internal.ui.console.IConsole[])
+	 * @see org.eclipse.ui.console.IConsoleListener#consolesAdded(org.eclipse.ui.console.IConsole[])
 	 */
 	public void consolesAdded(IConsole[] consoles) {
 		Display display = ConsolePlugin.getStandardDisplay();
@@ -110,7 +124,7 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 	 * Dispose the menu when a launch is removed, such that the actions in this
 	 * menu do not hang on to associated resources.
 	 * 
-	 * @see org.eclipse.debug.internal.ui.console.IConsoleListener#consolesRemoved(org.eclipse.debug.internal.ui.console.IConsole[])
+	 * @see org.eclipse.ui.console.IConsoleListener#consolesRemoved(org.eclipse.ui.console.IConsole[])
 	 */
 	public void consolesRemoved(IConsole[] consoles) {
 		Display display = ConsolePlugin.getStandardDisplay();
@@ -123,5 +137,4 @@ class ConsoleDropDownAction extends Action implements IMenuCreator, IConsoleList
 			}
 		});
 	}
-
 }
