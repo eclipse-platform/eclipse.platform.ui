@@ -14,6 +14,10 @@ package org.eclipse.ui.internal;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -285,6 +289,46 @@ public IContextService getContextService() {
 		contextService = new SimpleContextService();
 
 	return contextService;		
+}
+
+private SortedMap actionSetsCommandIdToActionMap = new TreeMap();
+private SortedMap globalActionsCommandIdToActionMap = new TreeMap();
+
+void registerActionSets(IActionSet[] actionSets) {
+	actionSetsCommandIdToActionMap.clear();
+		
+	for (int i = 0; i < actionSets.length; i++) {
+		if (actionSets[i] instanceof PluginActionSet) {
+			PluginActionSet pluginActionSet = (PluginActionSet) actionSets[i];
+			IAction[] pluginActions = pluginActionSet.getPluginActions();
+				
+			for (int j = 0; j < pluginActions.length; j++) {
+				IAction pluginAction = (IAction) pluginActions[j];
+				String command = pluginAction.getActionDefinitionId();
+					
+				if (command != null)
+					actionSetsCommandIdToActionMap.put(command, pluginAction);
+			}
+		}
+	}
+	
+	updateActionMap();
+}
+
+void registerGlobalAction(IAction globalAction) {
+	String command = globalAction.getActionDefinitionId();
+
+	if (command != null) {	
+		globalActionsCommandIdToActionMap.put(command, globalAction);
+		updateActionMap();
+	}
+}
+
+private void updateActionMap() {
+	SortedMap actionMap = new TreeMap();
+	actionMap.putAll(globalActionsCommandIdToActionMap);
+	actionMap.putAll(actionSetsCommandIdToActionMap);
+	actionService.setActionMap(actionMap);
 }
 
 /*

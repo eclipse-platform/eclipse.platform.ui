@@ -31,31 +31,10 @@ final class KeyBindingService implements IKeyBindingService {
 		return (IAction) commandIdToActionMap.get(command);
 	}
 	
-	void registerExtendedActions(ActionDescriptor[] actionDescriptors) {
-		if (actionDescriptors != null) {
-			for (int i = 0; i < actionDescriptors.length; i++) {
-				ActionDescriptor actionDescriptor = actionDescriptors[i];
-				
-				if (actionDescriptor != null) {
-					IAction action = actionDescriptors[i].getAction();
-			
-					if (action != null && action.getActionDefinitionId() != null)
-						registerAction(action);
-				}
-			}
-		}		
-	}
-
-	/*
-	 * @see IKeyBindingService#getScopes()
-	 */
 	public String[] getScopes() {
     	return (String[]) scopes.clone();
     }
 
-	/*
-	 * @see IKeyBindingService#setScopes(String[] scopes)
-	 */
 	public void setScopes(String[] scopes)
 		throws IllegalArgumentException {
 		if (scopes == null || scopes.length < 1)
@@ -68,9 +47,6 @@ final class KeyBindingService implements IKeyBindingService {
 				throw new IllegalArgumentException();    	
     }
 
-	/*
-	 * @see IKeyBindingService#registerAction(IAction)
-	 */
 	public void registerAction(IAction action) {
     	String command = action.getActionDefinitionId();
 
@@ -78,9 +54,6 @@ final class KeyBindingService implements IKeyBindingService {
 			commandIdToActionMap.put(command, action);
     }
     
-   	/*
-	 * @see IKeyBindingService#unregisterAction(IAction)
-	 */
 	public void unregisterAction(IAction action) {   		
     	String command = action.getActionDefinitionId();
 
@@ -88,38 +61,23 @@ final class KeyBindingService implements IKeyBindingService {
 			commandIdToActionMap.remove(command);
     }
 
-	/*
-	 * @see IKeyBindingService#getActiveAcceleratorConfigurationId()
-	 */
     public String getActiveAcceleratorConfigurationId() {
     	return org.eclipse.ui.internal.commands.Manager.getInstance().getKeyMachine().getConfiguration();
     }
 
-	/*
-	 * @see IKeyBindingService#getActiveAcceleratorScopeId()
-	 */
 	public String getActiveAcceleratorScopeId() {
    		return getScopes()[0];
     }
 
-	/*
-	 * @see IKeyBindingService#setActiveAcceleratorScopeId(String)
-	 */ 
     public void setActiveAcceleratorScopeId(String scopeId)
     	throws IllegalArgumentException {
    		setScopes(new String[] { scopeId });
     }
     
-   	/*
-	 * @see IKeyBindingService#processKey(Event)
-	 */
 	public boolean processKey(KeyEvent event) {
 		return false;
     }
 
-    /*
-	 * @see IKeyBindingService#registerAction(IAction)
-	 */
 	public void enable(boolean enable) {
 	}
 }

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
@@ -235,8 +236,22 @@ public class PartSite implements IWorkbenchPartSite {
 			if (this instanceof EditorSite) {
 				EditorActionBuilder.ExternalContributor contributor = (EditorActionBuilder.ExternalContributor) ((EditorSite) this).getExtensionActionBarContributor();
 			
-				if (contributor != null)
-					keyBindingService.registerExtendedActions(contributor.getExtendedActions());
+				if (contributor != null) {
+					ActionDescriptor[] actionDescriptors = contributor.getExtendedActions();
+			
+					if (actionDescriptors != null) {
+						for (int i = 0; i < actionDescriptors.length; i++) {
+							ActionDescriptor actionDescriptor = actionDescriptors[i];
+					
+							if (actionDescriptor != null) {
+								IAction action = actionDescriptors[i].getAction();
+				
+								if (action != null && action.getActionDefinitionId() != null)
+								keyBindingService.registerAction(action);
+							}
+						}
+					}
+				}				
 			}			
 			
 			keyBindingService.setScopes(new String[] { getInitialScopeId()}); //$NON-NLS-1$

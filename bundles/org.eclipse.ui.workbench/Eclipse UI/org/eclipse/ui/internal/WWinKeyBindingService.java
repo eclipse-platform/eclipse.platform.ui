@@ -141,6 +141,8 @@ final class WWinKeyBindingService {
 	};
 
 	private AcceleratorMenu acceleratorMenu;
+	
+	
 	private SortedMap actionSetsCommandIdToActionMap = new TreeMap();
 	private KeyBindingService activeKeyBindingService;
 	private SortedMap globalActionsCommandIdToActionMap = new TreeMap();

@@ -217,9 +217,21 @@ protected void createChildControl() {
 			IViewPart part = (IViewPart)getViewReference().getPart(true);
 			if(part != null) {
 				builder.readActionExtensions(part);
-				ActionDescriptor[] extendedActions = builder.getExtendedActions();
+				ActionDescriptor[] actionDescriptors = builder.getExtendedActions();
 				KeyBindingService keyBindingService = (KeyBindingService)part.getSite().getKeyBindingService();
-				keyBindingService.registerExtendedActions(extendedActions);
+				
+				if (actionDescriptors != null) {
+					for (int i = 0; i < actionDescriptors.length; i++) {
+						ActionDescriptor actionDescriptor = actionDescriptors[i];
+				
+						if (actionDescriptor != null) {
+							IAction action = actionDescriptors[i].getAction();
+			
+							if (action != null && action.getActionDefinitionId() != null)
+							keyBindingService.registerAction(action);
+						}
+					}
+				}	
 			}
 			updateActionBars();
 		}
