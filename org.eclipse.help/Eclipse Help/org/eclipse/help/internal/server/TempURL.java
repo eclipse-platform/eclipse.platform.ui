@@ -6,8 +6,9 @@ package org.eclipse.help.internal.server;
 
 
 import java.io.*;
-import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.util.*;
+
+import org.eclipse.help.internal.*;
+import org.eclipse.help.internal.util.TableOfContentsGenerator;
 
 /**
  * URL to files in the plugin's working directory, as well as
@@ -66,6 +67,9 @@ public class TempURL extends HelpURL {
 	 * @return java.io.InputStream
 	 */
 	public InputStream openStream() {
+		// Ensure that navigation has been generated
+		// important on the server
+		HelpSystem.getNavigationManager();
 
 		// First check if this is a special "Table Of Contents" request.
 		// If it is, do HTML generation on the client.

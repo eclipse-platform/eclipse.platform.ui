@@ -39,6 +39,7 @@ public final class HelpSystem {
 	private URL remoteServerURL;
 	private String localServerAddress;
 	private String localServerPort;
+	protected HelpPreferences helpPref = null;
 	/**
 	 * HelpSystem constructor comment.
 	 */
@@ -76,6 +77,9 @@ public final class HelpSystem {
 	public static int getDebugLevel() {
 		return getInstance().debug_level;
 	}
+	public static HelpPreferences getPreferences() {
+		return getInstance().helpPref;
+	}
 	public static HelpSystem getInstance() {
 		return instance;
 	}
@@ -108,6 +112,21 @@ public final class HelpSystem {
 	 */
 	public static URL getRemoteHelpServerURL() {
 		return getInstance().remoteServerURL;
+	}
+	private void initializePrefFromStore() {
+		helpPref = new HelpPreferences();
+		HelpSystem.setInstall(helpPref.getInt(HelpPreferences.INSTALL_OPTION_KEY));
+		HelpSystem.setRemoteServerInfo(
+			helpPref.getString(HelpPreferences.SERVER_PATH_KEY));
+		if (helpPref.getInt(HelpPreferences.LOCAL_SERVER_CONFIG) > 0) {
+			HelpSystem.setLocalServerInfo(
+				helpPref.getString(HelpPreferences.LOCAL_SERVER_ADDRESS_KEY),
+				helpPref.getString(HelpPreferences.LOCAL_SERVER_PORT_KEY));
+		} else {
+			HelpSystem.setLocalServerInfo(null, "0");
+		}
+		HelpSystem.setDebugLevel(helpPref.getInt(HelpPreferences.LOG_LEVEL_KEY));
+		HelpSystem.setBrowserPath(helpPref.getString(HelpPreferences.BROWSER_PATH_KEY));
 	}
 	public static boolean isClient() {
 		return getInstance().install == INSTALL_CLIENT;
@@ -179,24 +198,17 @@ public final class HelpSystem {
 	 * @exception CoreException if this method fails to shut down
 	 *   this plug-in 
 	 */
-	public static void shutdown() throws CoreException {
-		HelpServer.instance().close();
+	static void shutdown() throws CoreException {
+		getPreferences().save();
 		Logger.logInfo(Resources.getString("I003"));
 		Logger.shutdown();
 	}
 	/**
 	 * Called by Platform after loading the plugin
 	 */
-	public static void startup() {
+	static void startup() {
 		try {
-			// launch the help server to serve documents
-			// Do this first to ensure that the HelpSystem server info is valid.
-			HelpServer.instance();
-			if (isServer()) {
-				// This is a server install, so need to generate navigation first
-				getNavigationManager();
-			}
-			Logger.logInfo(Resources.getString("I002"));
+			instance.initializePrefFromStore();
 		} catch (Exception e) {
 			HelpPlugin.getDefault().getLog().log(
 				new Status(
