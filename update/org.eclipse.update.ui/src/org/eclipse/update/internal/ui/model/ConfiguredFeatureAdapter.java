@@ -13,7 +13,6 @@ package org.eclipse.update.internal.ui.model;
 import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
-import org.eclipse.update.internal.operations.*;
 
 /**
  * @version 	1.0
@@ -23,8 +22,6 @@ public class ConfiguredFeatureAdapter
 	extends SimpleFeatureAdapter
 	implements IConfiguredFeatureAdapter {
 	private IConfiguredSiteAdapter adapter;
-	private IConfiguredFeatureAdapter parent;
-	private ConfiguredFeatureAdapter[] children;
 	private boolean configured;
 	private boolean updated;
 
@@ -34,19 +31,8 @@ public class ConfiguredFeatureAdapter
 		boolean configured,
 		boolean updated,
 		boolean optional) {
-		this(adapter,null,feature,configured,updated,optional);
-	}
-	
-	public ConfiguredFeatureAdapter(
-		IConfiguredSiteAdapter adapter,
-		IConfiguredFeatureAdapter parent,
-		IFeature feature,
-		boolean configured,
-		boolean updated,
-		boolean optional) {
 		super(feature, optional);
 		this.adapter = adapter;
-		this.parent = parent;
 		this.configured = configured;
 		this.updated = updated;
 	}
@@ -66,11 +52,7 @@ public class ConfiguredFeatureAdapter
 		}
 		return false;
 	}
-	
-	public Object getParent(Object obj) {
-		return parent;
-	}
-	
+
 	public IConfiguredSite getConfiguredSite() {
 		return adapter.getConfiguredSite();
 	}
@@ -88,12 +70,7 @@ public class ConfiguredFeatureAdapter
 		try {
 			IIncludedFeatureReference[] included =
 				getFeature(null).getIncludedFeatureReferences();
-				
-			// use cached data
-			if (children != null && children.length == included.length)
-				return children;
-
-			children =
+			ConfiguredFeatureAdapter[] result =
 				new ConfiguredFeatureAdapter[included.length];
 			if (monitor == null)
 				monitor = new NullProgressMonitor();
@@ -125,36 +102,18 @@ public class ConfiguredFeatureAdapter
 					childConfigured = false;
 				}
 
-				children[i] =
+				result[i] =
 					new ConfiguredFeatureAdapter(
 						adapter,
-						this,
 						feature,
 						childConfigured,
 						updated,
 						fref.isOptional());
-				children[i].setIncluded(true);
+				result[i].setIncluded(true);
 			}
-			return children;
+			return result;
 		} catch (CoreException e) {
 			return new IFeatureAdapter[0];
-		}
-	}
-	
-	public void uninstall(ConfiguredFeatureAdapter child) {
-		try {
-			getIncludedFeatures(null);
-			IIncludedFeatureReference[] included =
-				getFeature(null).getIncludedFeatureReferences();
-			for (int i=0; i<children.length; i++) {
-				if (children[i] == child) {
-					IFeature feature = new MissingFeature(getFeature(null), included[i]);
-					children[i].feature = feature;
-					break;
-				}
-			}
-		} catch (CoreException e) {
-			UpdateUtils.log(e.getStatus(), false);
 		}
 	}
 }
