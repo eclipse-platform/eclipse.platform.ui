@@ -70,6 +70,7 @@ protected boolean copyContents(UnifiedTreeNode node, Resource source, Resource d
 		}
 		if (destination.getType() == IResource.FOLDER) {
 			((IFolder)destination).create(updateFlags, true, null);
+			CoreFileSystemLibrary.copyAttributes(source.getLocation().toOSString(), destination.getLocation().toOSString(), false);
 			return true;
 		}
 		// XXX: should use transfer streams in order to report better progress
