@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004 John-Mason P. Shackelford and others.
+ * Copyright (c) 2004, 2005 John-Mason P. Shackelford and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     John-Mason P. Shackelford - initial API and implementation
+ *     IBM Corporation - bug 84342
  *******************************************************************************/
 package org.eclipse.ant.tests.ui.editor.formatter;
 
@@ -27,9 +28,10 @@ public class XmlFormatterTest extends TestCase {
         prefs.setValue(AntEditorPreferenceConstants.FORMATTER_ALIGN, false);
         prefs.setValue(AntEditorPreferenceConstants.FORMATTER_TAB_CHAR, true);
         prefs.setValue(AntEditorPreferenceConstants.FORMATTER_TAB_SIZE, 4);
+        String lineSep= System.getProperty("line.separator");
         String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target></project>";
         String formattedDoc = XmlFormatter.format(xmlDoc);
-        String expected = "<project default=\"go\">\r\n\t<target name=\"go\"\r\n\t        description=\"Demonstrate the wrapping of long tags.\">\r\n\t\t<echo>hi</echo>\r\n\t</target>\r\n</project>";
+        String expected = "<project default=\"go\">" + lineSep + "\t<target name=\"go\"" + lineSep + "\t        description=\"Demonstrate the wrapping of long tags.\">" + lineSep + "\t\t<echo>hi</echo>" + lineSep + "\t</target>" + lineSep + "</project>";
         assertEquals(expected, formattedDoc);
     }
 
@@ -41,9 +43,10 @@ public class XmlFormatterTest extends TestCase {
             public boolean useSpacesInsteadOfTabs() { return true;}
             public int getTabWidth() { return 6;}
         };
+        String lineSep= System.getProperty("line.separator");
         String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target></project>";
         String formattedDoc = XmlFormatter.format(xmlDoc, prefs);
-        String expected = "<project default=\"go\">\r\n      <target name=\"go\"\r\n              description=\"Demonstrate the wrapping of long tags.\">\r\n            <echo>hi</echo>\r\n      </target>\r\n</project>";
+        String expected = "<project default=\"go\">" + lineSep + "      <target name=\"go\"" + lineSep + "              description=\"Demonstrate the wrapping of long tags.\">" + lineSep + "            <echo>hi</echo>" + lineSep + "      </target>" + lineSep + "</project>";
         assertEquals(expected, formattedDoc);
     }
     
@@ -58,9 +61,10 @@ public class XmlFormatterTest extends TestCase {
             public boolean useSpacesInsteadOfTabs() { return true;}
             public int getTabWidth() { return 6;}
         };
-        String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target>\r\n\r\n</project>";
+        String lineSep= System.getProperty("line.separator");
+        String xmlDoc = "<project default=\"go\"><target name=\"go\" description=\"Demonstrate the wrapping of long tags.\"><echo>hi</echo></target>" + lineSep + lineSep + "</project>";
         String formattedDoc = XmlFormatter.format(xmlDoc, prefs);
-        String expected = "<project default=\"go\">\r\n      <target name=\"go\"\r\n              description=\"Demonstrate the wrapping of long tags.\">\r\n            <echo>hi</echo>\r\n      </target>\r\n\r\n</project>";
+        String expected = "<project default=\"go\">" + lineSep + "      <target name=\"go\"" + lineSep + "              description=\"Demonstrate the wrapping of long tags.\">" + lineSep + "            <echo>hi</echo>" + lineSep + "      </target>" + lineSep + lineSep + "</project>";
         assertEquals(expected, formattedDoc);
     }
 
