@@ -33,6 +33,7 @@
    <extension-point id="launchShortcuts" name="%LaunchShortcutsName" schema="schema/launchShortcuts.exsd"/>
    <extension-point id="objectBrowsers" name="%ObjectBrowsersName"/>
    <extension-point id="launchVariableComponents" name="%LaunchVariableComponentsName"/>
+   <extension-point id="stringVariablePresentations" name="%StringVariablePresentationsName"/>
 
 <!-- Extensions -->
    <extension
@@ -1396,5 +1397,16 @@
             description="%folder_prompt.description">
       </variable>      
    </extension>	
+
+<!-- Launch Config Comparators -->	   
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationComparators">
+      <launchConfigurationComparator
+            attribute="org.eclipse.debug.core.ATTR_REFRESH_SCOPE"
+            class="org.eclipse.debug.internal.ui.launchConfigurations.WorkingSetComparator"
+            id="org.eclipse.debug.ui.workingSetComparator">
+      </launchConfigurationComparator>
+   </extension>
+   
 
 </plugin>
