@@ -17,6 +17,9 @@
 </style>
 
 <script type="text/javascript" language="JavaScript">
+
+var args = parent.parseQueryString();
+
 // listen for clicks
 var isMozilla = navigator.userAgent.toLowerCase().indexOf('mozilla') != -1 && parseInt(navigator.appVersion) >= 5;
 var isIE = navigator.userAgent.toLowerCase().indexOf('msie') != -1;
@@ -64,17 +67,44 @@ function displayTocFor(topic)
 }
 
 </script>
+
    </head>
    
    <body>
       <div id="frames" style="top:0;">
-         <iframe src="tocs.jsp" name="toc" id="toc" class="nav" title="Table of Contents"></iframe> 
-		 <iframe src="search.html" name="search" id="search" class="nav" title="Search"></iframe> 
-		 <iframe src="links.html" name="links" id="links" class="nav" title="Links"></iframe>
+         <iframe name="toc" id="toc" class="nav" title="Table of Contents"></iframe> 
+		 <iframe name="search" id="search" class="nav" title="Search"></iframe> 
+		 <iframe name="links" id="links" class="nav" title="Links"></iframe>
       </div>
+      
 <script type="text/javascript" language="JavaScript">
-resizeContent()
+	
+	// load frames
+	var tocUrl="";
+	if(args.toc)
+	{
+		tocUrl="toc.jsp?toc="+args.toc;
+		if(args.topic)
+			tocUrl=tocUrl+"&topic="+args.topic;
+	}
+	else
+		tocUrl="tocs.jsp";
+	toc.location=tocUrl;
+		
+	if(args.query)
+		search.location="search.html?query="+args.query;
+	else
+		search.location="search.html";
+		
+	if(args.contextId)
+		links.location="links.html?contextId="+args.contextId;
+	else
+		links.location="links.html";
+	//
+	resizeContent();
+		
 </script>
+
    </body>
 </html>
 
