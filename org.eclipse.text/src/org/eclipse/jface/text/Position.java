@@ -173,6 +173,7 @@ public class Position {
 	 * @param length the new length of this position
 	 */
 	public void setLength(int length) {
+		Assert.isTrue(length >= 0);
 		this.length= length;
 	}
 	
@@ -182,6 +183,7 @@ public class Position {
 	 * @param offset the new offset of this position
 	 */
 	public void setOffset(int offset) {
+		Assert.isTrue(offset >= 0);
 		this.offset= offset;
 	}
 }
