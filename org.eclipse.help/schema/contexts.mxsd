@@ -72,6 +72,14 @@ with topics that are part of on line help.
                </appInfo>
             </annotation>
          </attribute>
+         <attribute name="plugin" type="string">
+            <annotation>
+               <documentation>
+                  Plugin to which its context definitions are extended with extra information.
+&lt;p&gt;If a plugin defines some context id&apos;s, one can extend the description or related links of a context by declaring another context with the same id.&lt;/p&gt;
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
