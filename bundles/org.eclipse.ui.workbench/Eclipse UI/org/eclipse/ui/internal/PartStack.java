@@ -994,6 +994,8 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
             return;
         }
 
+        Rectangle initialBounds = Geometry.toDisplay(getControl().getParent(), getBounds());
+        
         int oldState = presentationSite.getState();
 
         if (current != null) {
@@ -1023,6 +1025,10 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
                 page.refreshActiveView();
             }
         }
+        
+        Rectangle finalBounds = Geometry.toDisplay(getControl().getParent(), getBounds());
+        RectangleAnimation animation = new RectangleAnimation(getWorkbenchWindow().getShell(), initialBounds, finalBounds);
+        animation.schedule(1);
     }
 
     public void setZoomed(boolean isZoomed) {

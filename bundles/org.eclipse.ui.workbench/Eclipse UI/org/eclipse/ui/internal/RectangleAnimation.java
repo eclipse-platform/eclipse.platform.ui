@@ -14,12 +14,15 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
  * This job creates an animated rectangle that moves from a source rectangle to
@@ -147,13 +150,19 @@ public class RectangleAnimation extends Job {
 
         setSystem(true);
 
-        theShell = new Shell(parentShell, SWT.NO_TRIM | SWT.ON_TOP);
-        Color color = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
-        theShell.setBackground(color);
-
-        theShell.setBounds(start);
-
-        shellRegion = new Region(display);
+        IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
+        boolean enableAnimations = preferenceStore
+        	.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS);
+        	
+        if (enableAnimations) {
+	        theShell = new Shell(parentShell, SWT.NO_TRIM | SWT.ON_TOP);
+	        Color color = display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND);
+	        theShell.setBackground(color);
+	
+	        theShell.setBounds(start);
+	
+	        shellRegion = new Region(display);
+        }
     }
 
     /* (non-Javadoc)

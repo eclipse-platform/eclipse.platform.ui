@@ -15,10 +15,13 @@ import junit.framework.Assert;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.util.FileUtil;
@@ -194,6 +197,13 @@ public class DragTest extends UITestCase {
             file1 = FileUtil.createFile("DragTest1.txt", project); //$NON-NLS-1$
             file2 = FileUtil.createFile("DragTest2.txt", project); //$NON-NLS-1$
             file3 = FileUtil.createFile("DragTest3.txt", project); //$NON-NLS-1$
+
+            // Disable animations since they occur concurrently and can interferre
+            // with locating drop targets
+            IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+            apiStore.setValue(
+                    IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
+                    false);
         }
 
         page.resetPerspective();

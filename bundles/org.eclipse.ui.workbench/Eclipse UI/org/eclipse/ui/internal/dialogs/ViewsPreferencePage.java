@@ -69,6 +69,8 @@ public class ViewsPreferencePage extends PreferencePage implements
      */
     private Button showTraditionalStyleTabs;
 
+    private Button enableAnimations;
+    
     private Button editorTopButton;
 
     private Button editorBottomButton;
@@ -229,6 +231,7 @@ public class ViewsPreferencePage extends PreferencePage implements
 
         createShowTextOnPerspectiveBarPref(composite);
         createShowTraditionalStyleTabsPref(composite);
+        createEnableAnimationsPref(composite);
 
         return composite;
     }
@@ -648,6 +651,19 @@ public class ViewsPreferencePage extends PreferencePage implements
                         .getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
         setButtonLayoutData(showTraditionalStyleTabs);
     }
+    
+    protected void createEnableAnimationsPref(Composite composite) {
+        IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+
+        enableAnimations = new Button(composite, SWT.CHECK);
+        enableAnimations.setText(WorkbenchMessages
+                .getString("ViewsPreference.enableAnimations")); //$NON-NLS-1$
+        enableAnimations.setFont(composite.getFont());
+        enableAnimations
+                .setSelection(apiStore
+                        .getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
+        setButtonLayoutData(enableAnimations);
+    }
 
     /**
      * Returns preference store that belongs to the our plugin.
@@ -684,7 +700,11 @@ public class ViewsPreferencePage extends PreferencePage implements
         showTraditionalStyleTabs
                 .setSelection(apiStore
                         .getDefaultBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
-
+        enableAnimations
+        		.setSelection(apiStore
+        		        .getDefaultBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
+        
+        
         int editorTopValue = store
                 .getDefaultInt(IPreferenceConstants.EDITOR_TAB_POSITION);
         editorTopButton.setSelection(editorTopValue == SWT.TOP);
@@ -734,7 +754,10 @@ public class ViewsPreferencePage extends PreferencePage implements
         apiStore.setValue(
                 IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
                 showTraditionalStyleTabs.getSelection());
-
+        apiStore.setValue(
+                IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
+                enableAnimations.getSelection());
+        
         // store the editor tab value to setting
         store.setValue(IPreferenceConstants.EDITOR_TAB_POSITION,
                 editorAlignment);

@@ -51,10 +51,10 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
         // Appearance / Presentation preferences
         store.setDefault(IWorkbenchPreferenceConstants.PRESENTATION_FACTORY_ID,
                 "org.eclipse.ui.presentations.default"); //$NON-NLS-1$
-        store
-                .setDefault(
+        store.setDefault(
                         IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS,
                         true);
+        store.setDefault(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, true);
         store.setDefault(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR,
                 IWorkbenchPreferenceConstants.TOP_LEFT);
         store.setDefault(

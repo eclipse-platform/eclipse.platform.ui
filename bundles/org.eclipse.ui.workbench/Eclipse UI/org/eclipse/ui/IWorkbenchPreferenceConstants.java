@@ -21,7 +21,7 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
  * @see PlatformUI#getPreferenceStore()
  */
 public interface IWorkbenchPreferenceConstants {
-
+    
     /**
      * A named preference for whether to show an editor when its
      * input file is selected in the Navigator (and vice versa).
@@ -261,4 +261,14 @@ public interface IWorkbenchPreferenceConstants {
      * @since 3.0
      */
     public static String HELP_CONTENTS_ACTION_TEXT = "helpContentsActionText"; //$NON-NLS-1$
+    
+    /**
+     * A named preference for enabling animations when a layout transition occurs
+     * <p>
+     * The default value for this preference is: <code>true</code> (show animations when a transition occurs)
+     * </p>
+     * 
+     * @since 3.1
+     */
+    public static final String ENABLE_ANIMATIONS = "ENABLE_ANIMATIONS"; //$NON-NLS-1$
 }
