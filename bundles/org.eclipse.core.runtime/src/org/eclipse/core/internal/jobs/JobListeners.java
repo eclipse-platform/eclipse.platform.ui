@@ -95,7 +95,7 @@ class JobListeners {
 					IJobChangeListener listener = null;
 					try {
 						listener = (IJobChangeListener) global.get(i);
-					} catch (ArrayIndexOutOfBoundsException e) {
+					} catch (IndexOutOfBoundsException e) {
 						//concurrently removed
 					}
 					if (listener != null)
@@ -110,7 +110,7 @@ class JobListeners {
 						IJobChangeListener listener = null;
 						try {
 							listener = (IJobChangeListener) local.get(i);
-						} catch (ArrayIndexOutOfBoundsException e) {
+						} catch (IndexOutOfBoundsException e) {
 							//concurrently removed
 						}
 						if (listener != null)
