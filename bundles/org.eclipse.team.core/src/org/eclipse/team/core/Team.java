@@ -30,6 +30,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -39,9 +40,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.team.internal.core.*;
 import org.eclipse.team.internal.core.Policy;
 import org.eclipse.team.internal.core.StringMatcher;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * The Team class provides a global point of reference for the global ignore set
@@ -98,18 +99,18 @@ public final class Team {
 	};
 	
 	/**
-	 * Return the type of the given file.
+	 * Return the type of the given IStorage.
 	 * 
 	 * Valid return values are:
 	 * Team.TEXT
 	 * Team.BINARY
 	 * Team.UNKNOWN
 	 * 
-	 * @param file  the file
-	 * @return whether files with the given extension are TEXT, BINARY, or UNKNOWN
+	 * @param storage  the IStorage
+	 * @return whether the given IStorage is TEXT, BINARY, or UNKNOWN
 	 */
-	public static int getType(IFile file) {
-		String extension = file.getFileExtension();
+	public static int getType(IStorage storage) {
+		String extension = getFileExtension(storage.getName());
 		if (extension == null) return UNKNOWN;
 		Integer integer = (Integer)table.get(extension);
 		if (integer == null) return UNKNOWN;
@@ -557,5 +558,15 @@ public final class Team {
 		MultiStatus status = new MultiStatus(TeamPlugin.ID, 0, message, e);
 		status.merge(e.getStatus());
 		return new TeamException(status);
+	}
+	
+	private static String getFileExtension(String name) {
+		if (name == null) return null;
+		int index = name.lastIndexOf('.');
+		if (index == -1)
+			return null;
+		if (index == (name.length() - 1))
+			return ""; //$NON-NLS-1$
+		return name.substring(index + 1);
 	}
 }
