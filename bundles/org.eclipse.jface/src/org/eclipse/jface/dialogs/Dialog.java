@@ -799,7 +799,7 @@ public abstract class Dialog extends Window {
 	 * @param defaultFont the default font to compare against
 	 */
 	private static void applyDialogFont(Control control, Font dialogFont) {
-
+		
 		if (hasDefaultFont(control))
 			control.setFont(dialogFont);
 
@@ -857,8 +857,17 @@ public abstract class Dialog extends Window {
 	 * @return boolean if the two are the same
 	 */
 	protected static boolean dialogFontIsDefault() {
-		return JFaceResources.getDialogFont().equals(
-			JFaceResources.getDefaultFont());
+		
+		FontData[] dialogFontData = JFaceResources.getDialogFont().getFontData();
+		FontData[] defaultFontData = JFaceResources.getDefaultFont().getFontData();
+		if(dialogFontData.length != defaultFontData.length)
+			return false;
+		for(int i = 0; i < defaultFontData.length; i++){
+			if(dialogFontData[i].equals(defaultFontData[i]))
+				continue;
+			return false;
+		}
+		return true;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#create()
