@@ -150,31 +150,7 @@ protected void configureShell(Shell shell) {
 		shell.setImage(titleImage);
 }
 
-/*
- * @see Dialog.createContents(Composite)
- */
-protected Control createContents(Composite parent) {
-	
-	// initialize the dialog units
-	initializeDialogUnits(parent);
-	
-	GridLayout layout = new GridLayout();
-	layout.numColumns = 2;
-	layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-	layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
-	layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-	layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-	layout.makeColumnsEqualWidth = false;
-	parent.setLayout(layout);
-	parent.setLayoutData(new GridData(GridData.FILL_BOTH));
-	
-	// create the dialog area and button bar
-	dialogArea = createDialogArea(parent);
-	buttonBar = createButtonBar(parent);
-	
-	
-	return parent;
-}/* (non-Javadoc)
+/* (non-Javadoc)
  * Method declared on Dialog.
  */
 protected void createButtonsForButtonBar(Composite parent) {
