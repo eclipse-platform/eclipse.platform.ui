@@ -2,7 +2,7 @@
 <classpath>
     <classpathentry kind="src" path="Eclipse Debug UI"/>
     <classpathentry kind="src" path="/org.eclipse.debug.core"/>
-    <classpathentry kind="var" path="JRE_LIB"/>
+    <classpathentry kind="var" path="JRE_LIB" rootpath="JRE_SRCROOT" sourcepath="JRE_SRC"/>
     <classpathentry kind="var" path="WORKSPACE_ROOT/org.apache.xerces/xerces.jar"/>
     <classpathentry kind="var"
         path="WORKSPACE_ROOT/org.eclipse.core.resources/resources.jar" sourcepath="WORKSPACE_ROOT/org.eclipse.core.resources/resourcessrc.zip"/>
