@@ -46,7 +46,8 @@
 		<replace
 			file="${destination.temp.folder}/${full.name}/WEB-INF/web.xml"
 			token="&lt;!-- placeholder for JSPs web.xml --&gt;"
-			value="${web.xml.fragment}" />
+			value="${web.xml.fragment}"
+			encoding="ISO-8859-1" />
 <!-- custom end -->
 	</target>
 
