@@ -201,8 +201,8 @@ public class Utils {
 	 * </pre>
 	 * </p>
 	 * 
-	 * @param bundle resource bundle.
-	 * @param s translatable string from model
+	 * @param resourceBundle resource bundle.
+	 * @param string translatable string from model
 	 * @return string, or <code>null</code>
 	 * @since 2.0
 	 */

@@ -165,8 +165,6 @@ public final class AboutInfo {
 	 * </p>
 	 *
 	 * @return the application name, or <code>null</code>
-	 * 
-	 * @see org.eclipse.swt.widgets.Display#setAppName
 	 */
 	public String getAppName() {
 		return appName;

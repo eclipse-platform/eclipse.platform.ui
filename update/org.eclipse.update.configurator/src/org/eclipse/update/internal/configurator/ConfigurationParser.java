@@ -12,6 +12,7 @@ package org.eclipse.update.internal.configurator;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
+import java.text.*;
 import java.util.*;
 import javax.xml.parsers.*;
 

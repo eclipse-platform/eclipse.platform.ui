@@ -26,7 +26,6 @@ public interface IProductConstants {
 	 * E.g., On motif, this can be used to set the name used for
 	 * resource lookup.
 	 * </p>
-	 * @see org.eclipse.swt.widgets.Display#setAppName
 	 */
 	public static final String APP_NAME = "appName"; //$NON-NLS-1$
 
