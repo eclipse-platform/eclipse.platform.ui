@@ -711,8 +711,8 @@ public void updateTitles() {
 			
 			// notify the page that this view's title has changed
 			// in case it needs to update its fast view button
+			page.updateTitle(ref);
 		}
-		page.updateTitle(ref);
 	}
 }
 }
