@@ -738,7 +738,7 @@ void partClosed(IWorkbenchPart part) {
 	focusPart = null;
 }
 /**
- * The user is attempting to drop marker data.  Add the appropriate
+ * The user is attempting to drag marker data.  Add the appropriate
  * data to the event depending on the transfer type.
  */
 void performDragSetData(DragSourceEvent event) {

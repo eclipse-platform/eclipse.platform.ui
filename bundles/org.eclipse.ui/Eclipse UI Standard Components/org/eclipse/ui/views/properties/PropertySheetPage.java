@@ -7,21 +7,17 @@ package org.eclipse.ui.views.properties;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.events.HelpListener;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.help.IContext;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
-
+import org.eclipse.swt.custom.TableTree;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.HelpEvent;
+import org.eclipse.swt.events.HelpListener;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.actions.CopyProjectAction;
 import org.eclipse.ui.help.IContextComputer;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.CellEditorActionHandler;
@@ -104,6 +100,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 				handleEntrySelection((IStructuredSelection) event.getSelection());
 			}
 		});
+		initDragAndDrop();
 
 		// Create the popup menu for the page.
 		copyAction = new CopyPropertyAction(viewer, "copy"); //$NON-NLS-1$
@@ -218,6 +215,44 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	 */
 	public void handleEntrySelection(ISelection selection) {
 		defaultsAction.setEnabled(!selection.isEmpty());
+	}
+	/**
+	 * Adds drag and drop support.
+	 */
+	protected void initDragAndDrop() {
+		int operations = DND.DROP_COPY;
+		Transfer[] transferTypes = new Transfer[]{
+			TextTransfer.getInstance()};
+		DragSourceListener listener = new DragSourceAdapter() {
+			public void dragSetData(DragSourceEvent event){
+				performDragSetData(event);
+			}
+			public void dragFinished(DragSourceEvent event){
+			}
+		};
+		DragSource dragSource = new DragSource(((TableTree)viewer.getControl()).getTable(), operations);
+		dragSource.setTransfer(transferTypes);
+		dragSource.addDragListener(listener);
+	}
+	/**
+	 * The user is attempting to drag.  Add the appropriate
+	 * data to the event.
+	 */
+	void performDragSetData(DragSourceEvent event) {
+		// Get the selected property
+		IStructuredSelection selection = (IStructuredSelection)viewer.getSelection();
+		if (selection.isEmpty()) 
+			return;
+		// Assume single selection
+		IPropertySheetEntry entry = (IPropertySheetEntry)selection.getFirstElement();
+
+		// Place text as the data
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(entry.getDisplayName());
+		buffer.append("\t"); //$NON-NLS-1$
+		buffer.append(entry.getValueAsString());
+		
+		event.data = buffer.toString();			
 	}
 	/**
 	 * Make action objects.

@@ -4,25 +4,28 @@ package org.eclipse.ui.views.bookmarkexplorer;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.internal.*;
-import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 import org.eclipse.jface.action.*;
-import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.dnd.*;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.*;
-import java.net.*;
-import java.util.ArrayList;
+import org.eclipse.ui.*;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.part.MarkerTransfer;
+import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 
 /**
  * Main class for the bookmark navigator for displaying bookmarks on
@@ -134,6 +137,7 @@ public void createPartControl(Composite parent) {
 	viewer.setLabelProvider(new BookmarkLabelProvider(this));
 	viewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
 	addContributions();
+	initDragAndDrop();
 
 	if(memento != null) restoreState(memento);
 	memento = null;
@@ -222,6 +226,47 @@ void handleSelectionChanged(IStructuredSelection selection) {
 public void init(IViewSite site,IMemento memento) throws PartInitException {
 	super.init(site,memento);
 	this.memento = memento;
+}
+/**
+ * Adds drag and drop support to the bookmark navigator.
+ */
+protected void initDragAndDrop() {
+	int operations = DND.DROP_COPY;
+	Transfer[] transferTypes = new Transfer[]{
+		MarkerTransfer.getInstance(), 
+		TextTransfer.getInstance()};
+	DragSourceListener listener = new DragSourceAdapter() {
+		public void dragSetData(DragSourceEvent event){
+			performDragSetData(event);
+		}
+		public void dragFinished(DragSourceEvent event){
+		}
+	};
+	viewer.addDragSupport(operations, transferTypes, listener);	
+}
+/**
+ * The user is attempting to drag marker data.  Add the appropriate
+ * data to the event depending on the transfer type.
+ */
+void performDragSetData(DragSourceEvent event) {
+	if (MarkerTransfer.getInstance().isSupportedType(event.dataType)) {
+		event.data = ((IStructuredSelection) viewer.getSelection()).toArray();
+		return;
+	}
+	if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
+		Object[] markers = ((IStructuredSelection) viewer.getSelection()).toArray();
+		if (markers != null) {
+			StringBuffer buffer = new StringBuffer();
+			ILabelProvider provider = (ILabelProvider)getViewer().getLabelProvider();
+			for (int i = 0; i < markers.length; i++) {
+				if (i > 0)
+					buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
+				buffer.append(provider.getText((IMarker)markers[i]));
+			} 
+			event.data = buffer.toString();
+		}
+		return;
+	}
 }
 void restoreState(IMemento memento) {
 	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
