@@ -38,7 +38,7 @@ import org.eclipse.ui.IWorkbenchPart;
 /**
  * Action for container compare with stream.
  */
-public class CompareWithStreamAction implements IObjectActionDelegate {
+public class CompareWithRemoteAction implements IObjectActionDelegate {
 	private ISelection selection;
 	
 	/**

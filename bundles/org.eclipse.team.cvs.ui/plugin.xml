@@ -104,10 +104,10 @@
 				class="org.eclipse.team.internal.ccvs.ui.actions.DiffAction"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.compareWithStream"
-				label="%CompareWithStreamAction.label"
-				tooltip="%CompareWithStreamAction.tooltip"
+				label="%CompareWithRemoteAction.label"
+				tooltip="%CompareWithRemoteAction.tooltip"
 				menubarPath="compareWithMenu/compareWithGroup"
-				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithStreamAction"/>
+				class="org.eclipse.team.internal.ccvs.ui.actions.CompareWithRemoteAction"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.update"
 				label="%UpdateAction.label"
