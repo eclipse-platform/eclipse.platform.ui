@@ -61,9 +61,6 @@ public class InstancePreferences extends EclipsePreferences {
 	 * @see org.osgi.service.prefs.Preferences#sync()
 	 */
 	public void sync() throws BackingStoreException {
-		// legacy - load old values
-		if (isLoadLevel())
-			loadLegacy();
 		if (location == null) {
 			if (InternalPlatform.DEBUG_PREFERENCES)
 				System.out.println("Unable to determine location of preference file for node: " + absolutePath()); //$NON-NLS-1$
