@@ -19,8 +19,13 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.commands.ICommand;
 
 /**
+ * <p>
  * The interface that is used to access the workbench help system. Replaces
  * static methods on <code>WorkbenchHelp</code>.
+ * </p>
+ * <p>
+ * This interface is not intended to be implemented by clients.
+ * </p>
  * 
  * @see org.eclipse.ui.help.WorkbenchHelp
  * @since 3.1
