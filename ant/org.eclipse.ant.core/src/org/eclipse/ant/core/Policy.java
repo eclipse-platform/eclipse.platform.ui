@@ -4,9 +4,7 @@ package org.eclipse.ant.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-
-import org.eclipse.core.runtime.*;
-import java.util.*;
+import java.util.*;
 
 public class Policy {
 	private static ResourceBundle bundle;
@@ -82,29 +80,10 @@ public static String bind(String id, String[] bindings) {
 	}
 	return output.toString();
 }
-public static IProgressMonitor monitorFor(IProgressMonitor monitor) {
-	if (monitor == null)
-		return new NullProgressMonitor();
-	return monitor;
-}
 /**
  * Creates a NLS catalog for the given locale.
  */
 public static void relocalize() {
 	bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
-}
-public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks) {
-	if (monitor == null)
-		return new NullProgressMonitor();
-	if (monitor instanceof NullProgressMonitor)
-		return monitor;
-	return new SubProgressMonitor(monitor, ticks);
-}
-public static IProgressMonitor subMonitorFor(IProgressMonitor monitor, int ticks, int style) {
-	if (monitor == null)
-		return new NullProgressMonitor();
-	if (monitor instanceof NullProgressMonitor)
-		return monitor;
-	return new SubProgressMonitor(monitor, ticks, style);
 }
 }
