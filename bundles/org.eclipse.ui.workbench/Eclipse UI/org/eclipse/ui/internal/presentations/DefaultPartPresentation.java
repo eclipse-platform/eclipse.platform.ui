@@ -946,8 +946,13 @@ public class DefaultPartPresentation extends StackPresentation {
 	 * @see org.eclipse.ui.internal.skins.StackPresentation#removePart(org.eclipse.ui.internal.skins.IPresentablePart)
 	 */
 	public void removePart(IPresentablePart oldPart) {
-	    if (current == oldPart)
-	        current = null;
+	    if (current == oldPart) {
+	    	current = null;
+			// Remove any references to the old widget
+			tabFolder.setTopLeft(null);
+			tabFolder.setTopCenter(null);
+			tabFolder.setTopRight(null);
+	    }
 	    
 		CTabItem item = getTab(oldPart);
 		if (item == null) {
@@ -1016,11 +1021,6 @@ public class DefaultPartPresentation extends StackPresentation {
 				activationList.remove(toSelect);
 				activationList.add(toSelect);
 			}
-		} else {
-			// Remove any references to the old widget
-			tabFolder.setTopLeft(null);
-			tabFolder.setTopCenter(null);
-			tabFolder.setTopRight(null);
 		}
 		
 		if (oldPart != null) {
