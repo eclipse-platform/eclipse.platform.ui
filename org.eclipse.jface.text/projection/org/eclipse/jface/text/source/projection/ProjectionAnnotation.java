@@ -17,10 +17,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationPresentation;
 
@@ -44,6 +40,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	public static final String TYPE= "org.eclipse.folding";
 		
 	private static final boolean PLUS= false;
+	private static final int COLOR= SWT.COLOR_DARK_GRAY;
 	
 	private static final int OUTER_MARGIN= 1;
 	private static final int INNER_MARGIN= 1;
@@ -52,21 +49,16 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	private static final int MIDDLE= PIXELS + INNER_MARGIN + LEGS;
 	private static final int SIZE= 2 * MIDDLE + PIXELS;
 
-	/** The range in the master document */
-	private Position fProjectionRange;
 	/** The state of this annotation */
 	private boolean fIsFolded= false;
 	/** Indicates whether this annotation should be painted as range */
 	private boolean fIsRangeIndication= false;
 	
 	/** 
-	 * Creates a new projection annotation for the given range of the master document.
-	 * 
-	 * @param range the range.
+	 * Creates a new projection annotation.
 	 */
-	public ProjectionAnnotation(Position range) {
+	public ProjectionAnnotation() {
 		super(TYPE, false, null);
-		fProjectionRange= range;
 	}
 	
 	public void setRangeIndication(boolean rangeIndication) {
@@ -75,7 +67,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	
 	private void paintPlus(GC gc, Canvas canvas, Rectangle rectangle) {
 		Color fg= gc.getForeground();
-		gc.setForeground(canvas.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+		gc.setForeground(canvas.getDisplay().getSystemColor(COLOR));
 					
 
 		Rectangle r= new Rectangle(rectangle.x + OUTER_MARGIN, rectangle.y + OUTER_MARGIN, SIZE -1 , SIZE -1);
@@ -129,12 +121,12 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 		int[] polygon= computePolygon(computeRectangle(rectangle, lineHeight));
 		if (isFolded()) {
 			Color bg= gc.getBackground();
-			gc.setBackground(canvas.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+			gc.setBackground(canvas.getDisplay().getSystemColor(COLOR));
 			gc.fillPolygon(polygon);
 			gc.setBackground(bg);
 		} else {
 			Color fg= gc.getForeground();
-			gc.setForeground(canvas.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+			gc.setForeground(canvas.getDisplay().getSystemColor(COLOR));
 			gc.drawPolygon(polygon);
 			gc.setForeground(fg);
 			endPoint= new Point(polygon[polygon.length -2], polygon[polygon.length -1]);
@@ -145,7 +137,7 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	private void paintRangeIndication(GC gc, Canvas canvas, Rectangle rectangle, Point startPoint) {
 		final int MARGIN= 1;
 		Color fg= gc.getForeground();
-		gc.setForeground(canvas.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+		gc.setForeground(canvas.getDisplay().getSystemColor(COLOR));
 		gc.drawLine(startPoint.x, startPoint.y, startPoint.x, rectangle.y + rectangle.height - MARGIN);
 		gc.drawLine(startPoint.x, rectangle.y + rectangle.height - MARGIN, rectangle.x + rectangle.width - MARGIN, rectangle.y + rectangle.height - MARGIN);
 		gc.setForeground(fg);
@@ -165,44 +157,25 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	}
 	
 	/**
-	 * Toggles the state of this annotation and updates the given viewer accordingly.
-	 * 
-	 * @param viewer the viewer
-	 */
-	public void run(ITextViewer viewer) {
-		
-		if (viewer instanceof ProjectionViewer) {
-			ProjectionViewer projectionViewer= (ProjectionViewer) viewer;
-			
-			if (fIsFolded) {
-				
-				fIsFolded= false;
-				projectionViewer.expand(fProjectionRange.getOffset(), fProjectionRange.getLength());
-			
-			} else {
-				
-				try {
-					IDocument document= projectionViewer.getDocument();
-					int line= document.getLineOfOffset(fProjectionRange.getOffset());
-					int offset= document.getLineOffset(line + 1);
-					
-					int length= fProjectionRange.getLength() - (offset - fProjectionRange.getOffset());
-					if (length > 0)	{
-						fIsFolded= true;
-						projectionViewer.collapse(offset, length);
-					}
-				} catch (BadLocationException x) {
-				}
-			}
-		}
-	}
-	
-	/**
 	 * Returns the state of this annotation.
 	 * 
 	 * @return <code>true</code> if collapsed 
 	 */
 	public boolean isFolded() {
 		return fIsFolded;
+	}
+
+	/**
+	 * Marks this annotation as being folded.
+	 */
+	public void markFolded() {
+		fIsFolded= true;
+	}
+
+	/**
+	 * Marks this annotation as being unfolded.
+	 */
+	public void markUnfolded() {
+		fIsFolded= false;
 	}
 }

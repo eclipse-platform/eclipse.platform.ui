@@ -35,7 +35,7 @@ import org.eclipse.jface.text.source.IAnnotationModel;
  * A ruler column for controlling the behavior of a
  * <code>ProjectionSourceViewer</code>.
  * <p>
- * Internal class. Do not use. Public for testing purposes only.
+ * Internal class. Do not use. Public only for testing purposes.
  * 
  * @since 3.0
  */
@@ -54,12 +54,15 @@ public class ProjectionRulerColumn extends AnnotationRulerColumn {
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#mouseDoubleClicked(int)
+	 * @see org.eclipse.jface.text.source.AnnotationRulerColumn#mouseClicked(int)
 	 */
-	protected void mouseDoubleClicked(int line) {
+	protected void mouseClicked(int line) {
+		clearCurrentAnnotation();
 		ProjectionAnnotation annotation= findAnnotation(line);
-		if (annotation != null)
-			annotation.run(getCachedTextViewer());
+		if (annotation != null) {
+			ProjectionAnnotationModel model= (ProjectionAnnotationModel) getModel();
+			model.toggleExpansionState(annotation);
+		}
 	}
 	
 	/**
@@ -70,51 +73,61 @@ public class ProjectionRulerColumn extends AnnotationRulerColumn {
 	 * @return the projection annotation containing the given line
 	 */
 	private ProjectionAnnotation findAnnotation(int line) {
+		
+		ProjectionAnnotation previousAnnotation= null;
+		
 		IAnnotationModel model= getModel();
 		if (model != null) {
+			IDocument document= getCachedTextViewer().getDocument();
+			
+			int previousDistance= Integer.MAX_VALUE;
+			
 			Iterator e= model.getAnnotationIterator();
 			while (e.hasNext()) {
 				Object next= e.next();
 				if (next instanceof ProjectionAnnotation) {
 					ProjectionAnnotation annotation= (ProjectionAnnotation) next;
 					Position p= model.getPosition(annotation);
-					if (contains(p, line))
-						return annotation;
+					
+					int distance= getDistance(p, document, line);
+					if (distance == -1)
+						continue;
+					
+					if (distance < previousDistance) {
+						previousAnnotation= annotation;
+						previousDistance= distance;
+					}
 				}
 			}
+			
 		}
-		return null;
+		
+		return previousAnnotation;
 	}
 	
 	/**
-	 * Returns whether the given position contains the given line.
+	 * Returns the distance of the given line to the the start line of the given position in the given document. The distance is  
+	 * <code>-1</code> when the line is not included in the given position.
 	 * 
-	 * @param p the position
+	 * @param position the position
+	 * @param document the document
 	 * @param line the line
-	 * @return <code>true</code> if the given position contains the given line, <code>false</code> otherwise
+	 * @return <code>-1</code> if line is not contained, a position number otherwise
 	 */
-	private boolean contains(Position p, int line) {
-		
-		IDocument document= getCachedTextViewer().getDocument();
-		
-		try {
-			
-			int startLine= document.getLineOfOffset(p.getOffset());
-			if (line < startLine)
-				return false;
-			if (line == startLine)
-				return true;
-				
-			int endLine= document.getLineOfOffset(p.getOffset() + Math.max(p.getLength() -1, 0));
-			return  (startLine < line && line <= endLine);
-		
-		} catch (BadLocationException x) {
+	private int getDistance(Position position, IDocument document, int line) {
+		if (position.getOffset() > -1 && position.getLength() > -1) {
+			try {
+				int startLine= document.getLineOfOffset(position.getOffset());
+				int endLine= document.getLineOfOffset(position.getOffset() + position.getLength());
+				if (startLine <= line && line < endLine)
+					return line - startLine;
+			} catch (BadLocationException x) {
+			}
 		}
-		
-		return false;
+		return -1;
 	}
 	
-	protected boolean clearCurrentAnnotation() {
+	private boolean clearCurrentAnnotation() {
 		if (fCurrentAnnotation != null) {
 			fCurrentAnnotation.setRangeIndication(false);
 			fCurrentAnnotation= null;
@@ -137,7 +150,7 @@ public class ProjectionRulerColumn extends AnnotationRulerColumn {
 			public void mouseHover(MouseEvent e) {
 				boolean redraw= clearCurrentAnnotation();
 				ProjectionAnnotation annotation= findAnnotation(toDocumentLineNumber(e.y));
-				if (annotation != null) {
+				if (annotation != null && !annotation.isFolded()) {
 					annotation.setRangeIndication(true);
 					fCurrentAnnotation= annotation;
 					redraw= true;

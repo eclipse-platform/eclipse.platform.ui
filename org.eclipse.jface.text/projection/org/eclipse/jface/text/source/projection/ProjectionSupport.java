@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text.source.projection;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextContent;
 import org.eclipse.swt.graphics.Color;
@@ -17,6 +18,7 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
@@ -98,6 +100,12 @@ public class ProjectionSupport {
 	
 	private final static Object PROJECTION= new Object();
 	
+	private static RGB getColor() {
+		// TODO read out preference settings
+		Color c= Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY);
+		return c.getRGB();
+	}
+	
 	/**
 	 * Enable projection for the given viewer
 	 * 
@@ -113,11 +121,12 @@ public class ProjectionSupport {
 			AnnotationPainter painter= new ProjectionAnnotationsPainter(projectionViewer, annotationAccess);
 			painter.addDrawingStrategy(PROJECTION, new ProjectionDrawingStrategy());
 			painter.addAnnotationType(ProjectionAnnotation.TYPE, PROJECTION);
-			painter.setAnnotationTypeColor(ProjectionAnnotation.TYPE, sharedTextColors.getColor(new RGB(0, 0, 255)));
+			painter.setAnnotationTypeColor(ProjectionAnnotation.TYPE, sharedTextColors.getColor(getColor()));
 			projectionViewer.addPainter(painter);
 			
 			ProjectionRulerColumn column= new ProjectionRulerColumn(projectionViewer.getProjectionAnnotationModel(), 9, annotationAccess);
 			column.addAnnotationType(ProjectionAnnotation.TYPE);
+			column.setHover(new ProjectionAnnotationHover());
 			projectionViewer.addVerticalRulerColumn(column);
 		}
 	}
@@ -126,7 +135,7 @@ public class ProjectionSupport {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public static Object getAdapter(ISourceViewer viewer, Class required) {
-		if (IProjectionAnnotationModel.class.equals(required)) {
+		if (ProjectionAnnotationModel.class.equals(required)) {
 			if (viewer instanceof ProjectionViewer) {
 				ProjectionViewer projectionViewer= (ProjectionViewer) viewer;
 				return projectionViewer.getProjectionAnnotationModel();

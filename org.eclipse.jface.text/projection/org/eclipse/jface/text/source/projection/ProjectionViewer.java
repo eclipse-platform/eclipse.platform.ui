@@ -8,11 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.source.projection;
 
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.VerifyEvent;
@@ -25,12 +26,16 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISlaveDocumentManager;
 import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.projection.ProjectionDocument;
 import org.eclipse.jface.text.projection.ProjectionDocumentManager;
-import org.eclipse.jface.text.source.AnnotationModel;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.AnnotationModelEvent;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IAnnotationModelExtension;
+import org.eclipse.jface.text.source.IAnnotationModelListener;
+import org.eclipse.jface.text.source.IAnnotationModelListenerExtension;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
@@ -52,9 +57,23 @@ import org.eclipse.jface.text.source.SourceViewer;
 public class ProjectionViewer extends SourceViewer implements ITextViewerExtension5 {
 	
 	/**
-	 * Internal implementer of <code>IProjectionAnnotationModel</code>.
+	 * Internal listener to changes of the projection annotation model.
 	 */
-	private static class ProjectionAnnotationModel extends AnnotationModel implements IProjectionAnnotationModel {
+	private class ProjectionAnnotationModelListener implements IAnnotationModelListener, IAnnotationModelListenerExtension {
+
+		/*
+		 * @see org.eclipse.jface.text.source.IAnnotationModelListener#modelChanged(org.eclipse.jface.text.source.IAnnotationModel)
+		 */
+		public void modelChanged(IAnnotationModel model) {
+			catchupWithProjectionAnnotationModel(null);
+		}
+
+		/*
+		 * @see org.eclipse.jface.text.source.IAnnotationModelListenerExtension#modelChanged(org.eclipse.jface.text.source.AnnotationModelEvent)
+		 */
+		public void modelChanged(AnnotationModelEvent event) {
+			catchupWithProjectionAnnotationModel(event);
+		}
 	}
 	
 	/**
@@ -65,6 +84,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	
 	/** The projection annotation model used by this viewer. */
 	private ProjectionAnnotationModel fProjectionAnnotationModel;
+	/** The projection annotation model listener */
+	private IAnnotationModelListener fProjectionAnnotationModelListener= new ProjectionAnnotationModelListener();
 	
 	
 	/**
@@ -79,14 +100,28 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	}
 	
 	/**
-	 * Creates the projection annotation model and adds it to the given annotation model.
+	 * Adds the projection annotation model to the given annotation model.
 	 * 
 	 * @param model the model to which the projection annotation model is added
 	 */
-	protected void addProjectionAnnotationModel(IAnnotationModel model) {
+	private void addProjectionAnnotationModel(IAnnotationModel model) {
 		if (model instanceof IAnnotationModelExtension) {
 			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
 			extension.addAnnotationModel(PROJECTION_ANNOTATION_MODEL, fProjectionAnnotationModel);
+			fProjectionAnnotationModel.addAnnotationModelListener(fProjectionAnnotationModelListener);
+		}
+	}
+	
+	/**
+	 * Removes the projection annotation model from the given annotation model.
+	 * 
+	 * @param model the mode from which the projection annotation model is removed
+	 */
+	private void removeProjectionAnnotationModel(IAnnotationModel model) {
+		if (model instanceof IAnnotationModelExtension) {
+			fProjectionAnnotationModel.removeAnnotationModelListener(fProjectionAnnotationModelListener);
+			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
+			extension.removeAnnotationModel(PROJECTION_ANNOTATION_MODEL);
 		}
 	}
 	
@@ -105,11 +140,11 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * 
 	 * @return the projection annotation model
 	 */
-	public IProjectionAnnotationModel getProjectionAnnotationModel() {
+	public ProjectionAnnotationModel getProjectionAnnotationModel() {
 		IAnnotationModel model= getVisualAnnotationModel();
 		if (model instanceof IAnnotationModelExtension) {
 			IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
-			return (IProjectionAnnotationModel) extension.getAnnotationModel(PROJECTION_ANNOTATION_MODEL);
+			return (ProjectionAnnotationModel) extension.getAnnotationModel(PROJECTION_ANNOTATION_MODEL);
 		}
 		return null;
 	}
@@ -148,11 +183,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 */
 	private void disableProjection() {
 		if (isProjectionMode()) {
-			IAnnotationModel model= getVisualAnnotationModel();
-			if (model instanceof IAnnotationModelExtension) {
-				IAnnotationModelExtension extension= (IAnnotationModelExtension) model;
-				extension.removeAnnotationModel(PROJECTION_ANNOTATION_MODEL);
-			}
+			removeProjectionAnnotationModel(getVisualAnnotationModel());
 			fProjectionAnnotationModel.removeAllAnnotations();
 		}
 	}
@@ -206,7 +237,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	private void replaceVisibleDocument(IDocument visibleDocument) {
 		StyledText textWidget= getTextWidget();
 		try {
-			if (textWidget != null)
+			if (textWidget != null && !textWidget.isDisposed())
 				textWidget.setRedraw(false);
 			
 			int topIndex= getTopIndex();
@@ -216,36 +247,38 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 			setTopIndex(topIndex);
 
 		} finally {
-			if (textWidget != null)
+			if (textWidget != null && !textWidget.isDisposed())
 				textWidget.setRedraw(true);
 		}
 	}
-	
+		
 	/**
-	 * Hides the given range by collapsing it.
-	 *
+	 * Hides the given range by collapsing it. If requested, a redraw request is issued.
+	 * 
 	 * @param offset the offset of the range to hide
 	 * @param length the length of the range to hide
+	 * @param fireRedraw <code>true</code> if a redraw request should be issued, <code>false</code> otherwise
+	 * @throws BadLocationException in case the range is invalid
 	 */
-	public void collapse(int offset, int length) {
-		try {
-			ProjectionDocument projection= null;
-			
-			IDocument visibleDocument= getVisibleDocument();
-			if (visibleDocument instanceof ProjectionDocument)
-				projection= (ProjectionDocument) visibleDocument;
-			else {
-				IDocument master= getDocument();
-				IDocument slave= createSlaveDocument(getDocument());
-				if (slave instanceof ProjectionDocument) {
-					projection= (ProjectionDocument) slave;
-					projection.addMasterDocumentRange(0, master.getLength());
-					replaceVisibleDocument(projection);
-				}
+	private void collapse(int offset, int length, boolean fireRedraw) throws BadLocationException {
+		ProjectionDocument projection= null;
+		
+		IDocument visibleDocument= getVisibleDocument();
+		if (visibleDocument instanceof ProjectionDocument)
+			projection= (ProjectionDocument) visibleDocument;
+		else {
+			IDocument master= getDocument();
+			IDocument slave= createSlaveDocument(getDocument());
+			if (slave instanceof ProjectionDocument) {
+				projection= (ProjectionDocument) slave;
+				projection.addMasterDocumentRange(0, master.getLength());
+				replaceVisibleDocument(projection);
 			}
-			
-			if (projection != null) {
-				projection.removeMasterDocumentRange(offset, length);
+		}
+		
+		if (projection != null) {
+			projection.removeMasterDocumentRange(offset, length);
+			if (fireRedraw) {
 				// repaint line above
 				IDocument document= getDocument();
 				int line= document.getLineOfOffset(offset);
@@ -254,36 +287,206 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 					invalidateTextPresentation(info.getOffset(), info.getLength());
 				}
 			}
-			
-		} catch (BadLocationException x) {
-			throw new IllegalArgumentException();
 		}
 	}
 	
 	/**
-	 * Makes all hidden ranges in the given range visible again.
-	 *
-	 * @param offset the offset of the range
-	 * @param length the length of the range
+	 * Makes the given range visible again while keeping the given collapsed
+	 * ranges. If requested, a redraw request is issued.
+	 * 
+	 * @param expanded the range to be expanded
+	 * @param collapsed a sequence of collapsed ranges completely contained by
+	 *            the expanded range
+	 * @param fireRedraw <code>true</code> if a redraw request should be
+	 *            issued, <code>false</code> otherwise
+	 * @throws BadLocationException in case the range is invalid
 	 */
-	public void expand(int offset, int length) {
-		try {
-			IDocument slave= getVisibleDocument();
-			if (slave instanceof ProjectionDocument) {
-				ProjectionDocument projection= (ProjectionDocument) slave;
-				projection.addMasterDocumentRange(offset, length);
+	private void expand(Position expanded, Position[] collapsed, boolean fireRedraw) throws BadLocationException {
+		IDocument slave= getVisibleDocument();
+		if (slave instanceof ProjectionDocument) {
+			ProjectionDocument projection= (ProjectionDocument) slave;
+			
+			StyledText textWidget= getTextWidget();
+			try {
 				
-				IDocument master= getDocument();
-				if (slave.getLength() == master.getLength()) {
-					replaceVisibleDocument(master);
-					freeSlaveDocument(slave);
-				} else {
-					invalidateTextPresentation(offset, length);
+				if (textWidget != null && !textWidget.isDisposed())
+					textWidget.setRedraw(false);
+				
+				// expand
+				projection.addMasterDocumentRange(expanded.getOffset(), expanded.getLength());
+				
+				// collapse contained regions
+				if (collapsed != null) {
+					for (int i= 0; i < collapsed.length; i++) {
+						IRegion p= adaptCollapsedRegion(collapsed[i]);
+						projection.removeMasterDocumentRange(p.getOffset(), p.getLength());
+					}
+				}
+			
+			} finally {
+				if (textWidget != null && !textWidget.isDisposed())
+					textWidget.setRedraw(true);
+			}
+			
+			
+			
+			IDocument master= getDocument();
+			if (slave.getLength() == master.getLength()) {
+				replaceVisibleDocument(master);
+				freeSlaveDocument(slave);
+			} else if (fireRedraw){
+				invalidateTextPresentation(expanded.getOffset(), expanded.getLength());
+			}
+		}
+	}
+
+	/**
+	 * Adapts the slave visual document of this viewer to the changes described
+	 * in the annotation model event. When the event is <code>null</code>,
+	 * this is identical to a world change event.
+	 * 
+	 * @param event the annotation model event or <code>null</code>
+	 */
+	protected final void catchupWithProjectionAnnotationModel(AnnotationModelEvent event) {
+		try {
+			if (event == null || event.isWorldChange()) {
+				
+				reinitializeProjection();
+				
+			} else {
+				
+				boolean fireRedraw= true;
+				
+				processDeletions(event, fireRedraw);
+				processAdditions(event, fireRedraw);
+				processModifications(event, fireRedraw);
+				
+				if (!fireRedraw) {
+					//TODO compute minimal scope for invalidation
+					invalidateTextPresentation();
 				}
 			}
 		} catch (BadLocationException e) {
 			throw new IllegalArgumentException();
 		}
+	}
+	
+	private boolean includes(Position expanded, Position position) {
+		if (!expanded.equals(position) && !position.isDeleted())
+			return expanded.getOffset() <= position.getOffset() &&  position.getOffset() + position.getLength() <= expanded.getOffset() + expanded.getLength();
+		return false;
+	}
+	
+	private Position[] computeCollapsedRanges(Position expanded) {
+		List positions= new ArrayList(5);
+		Iterator e= fProjectionAnnotationModel.getAnnotationIterator();
+		while (e.hasNext()) {
+			ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
+			if (annotation.isFolded()) {
+				Position position= fProjectionAnnotationModel.getPosition(annotation);
+				if (includes(expanded, position))
+					positions.add(position);
+			}
+		}
+		
+		if (positions.size() > 0) {
+			Position[] result= new Position[positions.size()];
+			positions.toArray(result);
+			return result;
+		}
+		
+		return null;
+	}
+
+	private void processDeletions(AnnotationModelEvent event, boolean fireRedraw) throws BadLocationException {
+		Annotation[] annotations= event.getRemovedAnnotations();
+		for (int i= 0; i < annotations.length; i++) {
+			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
+			if (annotation.isFolded()) {
+				Position expanded= fProjectionAnnotationModel.getPosition(annotation);
+				Position[] collapsed= computeCollapsedRanges(expanded);
+				expand(expanded, collapsed, false);
+				if (fireRedraw)
+					invalidateTextPresentation(expanded.getOffset(), expanded.getLength());
+			}
+		}
+	}
+
+	private IRegion adaptCollapsedRegion(Position position) {
+		try {
+			IDocument document= getDocument();
+			int line= document.getLineOfOffset(position.getOffset());
+			int offset= document.getLineOffset(line + 1);
+			
+			int length= position.getLength() - (offset - position.getOffset());
+			if (length > 0)
+				return new Region(offset, length);
+		} catch (BadLocationException x) {
+		}
+		
+		return null;
+	}
+	
+	private void processAdditions(AnnotationModelEvent event, boolean fireRedraw) throws BadLocationException {
+		Annotation[] annotations= event.getAddedAnnotations();
+		for (int i= 0; i < annotations.length; i++) {
+			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
+			if (annotation.isFolded()) {
+				Position position= fProjectionAnnotationModel.getPosition(annotation);
+				IRegion region= adaptCollapsedRegion(position);
+				if (region != null)
+					collapse(region.getOffset(), region.getLength(), fireRedraw);
+			}
+		}
+	}
+	
+	private void processModifications(AnnotationModelEvent event, boolean fireRedraw) throws BadLocationException {
+		Annotation[] annotations= event.getChangedAnnotations();
+		for (int i= 0; i < annotations.length; i++) {
+			ProjectionAnnotation annotation= (ProjectionAnnotation) annotations[i];
+			Position position= fProjectionAnnotationModel.getPosition(annotation);
+			if (annotation.isFolded()) {
+				IRegion region= adaptCollapsedRegion(position);
+				if (region != null)
+					collapse(region.getOffset(), region.getLength(), fireRedraw);
+			} else {
+				Position[] collapsed= computeCollapsedRanges(position);
+				expand(position, collapsed, false);
+				if (fireRedraw)
+					invalidateTextPresentation(position.getOffset(), position.getLength());
+			}
+		}
+	}
+
+	private void reinitializeProjection() throws BadLocationException {
+		
+		ProjectionDocument projection= null;
+		
+		ISlaveDocumentManager manager= getSlaveDocumentManager();
+		if (manager != null) {
+			IDocument master= getDocument();
+			if (master != null) {
+				IDocument slave= manager.createSlaveDocument(master);
+				if (slave instanceof ProjectionDocument) {
+					projection= (ProjectionDocument) slave;
+					projection.addMasterDocumentRange(0, master.getLength());
+				}
+			}
+		}
+		
+		if (projection != null) {
+			Iterator e= fProjectionAnnotationModel.getAnnotationIterator();
+			while (e.hasNext()) {
+				ProjectionAnnotation annotation= (ProjectionAnnotation) e.next();
+				if (annotation.isFolded()) {
+					Position position= fProjectionAnnotationModel.getPosition(annotation);
+					projection.removeMasterDocumentRange(position.getOffset(), position.getLength());
+				}
+			}
+			
+		}
+		
+		replaceVisibleDocument(projection);
 	}
 	
 	/*
@@ -312,20 +515,8 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 	 * @see org.eclipse.jface.text.ITextViewerExtension5#exposeModelRange(org.eclipse.jface.text.IRegion)
 	 */
 	public boolean exposeModelRange(IRegion modelRange) {
-		IAnnotationModel model= getProjectionAnnotationModel();
-		if (model != null) {
-			Iterator iterator= model.getAnnotationIterator();
-			while (iterator.hasNext()) {
-				ProjectionAnnotation annotation= (ProjectionAnnotation) iterator.next();
-				if (annotation.isFolded()) {
-					Position position= model.getPosition(annotation);
-					if (position.overlapsWith(modelRange.getOffset(), modelRange.getLength()) /* || is a delete at the boundary */ ) {
-						annotation.run(this);
-						return true;
-					}
-				}
-			}	
-		}
+		if (isProjectionMode())
+			return fProjectionAnnotationModel.expandAll(modelRange.getOffset(), modelRange.getLength());
 		return false;
 	}
 }
