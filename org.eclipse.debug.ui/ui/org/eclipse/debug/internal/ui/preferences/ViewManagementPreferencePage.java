@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
-import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.debug.internal.ui.views.launch.LaunchViewContextListener;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -128,7 +127,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	private void checkPerspectives(String perspectiveList) {
 		fPerspectiveViewer.setAllChecked(false);
 		IPerspectiveRegistry registry= PlatformUI.getWorkbench().getPerspectiveRegistry();
-		Iterator perspectiveIds= LaunchView.parseList(perspectiveList).iterator();
+		Iterator perspectiveIds= LaunchViewContextListener.parseList(perspectiveList).iterator();
 		while (perspectiveIds.hasNext()) {
 			IPerspectiveDescriptor descriptor = registry.findPerspectiveWithId((String) perspectiveIds.next());
 			fPerspectiveViewer.setChecked(descriptor, true);

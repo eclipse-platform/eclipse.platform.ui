@@ -11,10 +11,7 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -170,12 +167,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private AddToFavoritesAction fAddToFavoritesAction = null;
 	private EditSourceLookupPathAction fEditSourceAction = null;
 	private LookupSourceAction fLookupAction = null;
-	
-	/**
-	 * Collection of perspectives in which views should be
-	 * automatically opened and closed.
-	 */
-	private List fAutoManagePerspectives= new ArrayList();
+
 	/**
 	 * Context manager which automatically opens and closes views
 	 * based on debug contexts.
@@ -245,8 +237,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		
 		// determine if active
 		setActive(getSite().getPage().findView(getSite().getId()) != null);
-		
-		loadAutoManagePerspectives();
 		
 		return lv;
 	}
@@ -482,7 +472,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		clearStatusLine();
 		updateObjects();
 		showEditorForCurrentSelection();
-		updateContextListener();
+		fContextListener.updateForSelection(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
 	}
 
 	/**
@@ -493,67 +483,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		selectionChanged(null);
 	}
 
-	private void updateContextListener() {
-		if (isActive() && isAutoManageViews()) {
-			fContextListener.updateForSelection(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
-		}
-	}
-
-	
-	/**
-	 * Returns whether this view automatically opens and closes
-	 * views based on contexts
-	 * @return whether or not this view automatically manages
-	 * views based on contexts
-	 */
-	public boolean isAutoManageViews() {
-		IWorkbenchPage page = getViewSite().getWorkbenchWindow().getActivePage();
-		if (page != null) {
-			IPerspectiveDescriptor descriptor = page.getPerspective();
-			if (descriptor != null) {
-				return fAutoManagePerspectives.contains(descriptor.getId());
-			}
-		}
-		return false;
-	}
-	
-	/**
-	 * Load the collection of perspectives in which perspectives
-	 * for view management from the preference store.
-	 */
-	private void loadAutoManagePerspectives() {
-		String prefString = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
-		fAutoManagePerspectives= parseList(prefString);
-	}
-	
-	/**
-	 * Parses the comma separated string into a list of strings
-	 * 
-	 * @return list
-	 */
-	public static List parseList(String listString) {
-		List list = new ArrayList(10);
-		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
-		while (tokenizer.hasMoreTokens()) {
-			String token = tokenizer.nextToken();
-			list.add(token);
-		}
-		return list;
-	}
-	
-	/**
-	 * Sets the collection of perspectives in which this 
-	 * view will automatically open and close views based
-	 * on contexts.
-	 * @param perspectiveIds the collection of perspectives
-	 * in which this view should automatically manage views
-	 * based on contexts
-	 */
-	public void setAutoManagePerspectives(List perspectiveIds) {
-		fAutoManagePerspectives= perspectiveIds;
-		updateContextListener();
-	}
-	
 	/**
 	 * Notifies this view that the given launches have terminated. When a launch
 	 * terminates, remove all context submissions associated with it.
@@ -563,9 +492,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 * @param launches the terminated launches
 	 */
 	protected void launchesTerminated(ILaunch[] launches) {
-		if (isAutoManageViews()) {
-			fContextListener.launchesTerminated(launches);
-		}
+		fContextListener.launchesTerminated(launches);
 		IStackFrame frame = getStackFrame();
 		if (frame != null) {
 			ILaunch launch= frame.getLaunch();
@@ -576,25 +503,6 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 				}
 			}
 		}
-	}
-
-	/**
-	 * Returns the ILaunch associated with the given selection or
-	 * <code>null</code> if none can be determined.
-	 * 
-	 * @param selection the selection or <code>null</code>
-	 * @return the ILaunch associated with the given selection or <code>null</code>
-	 */
-	protected static ILaunch getLaunch(Object selection) {
-		ILaunch launch= null;
-		if (selection instanceof ILaunch) {
-			launch= (ILaunch) selection;
-		} else if (selection instanceof IDebugElement) {
-			launch= ((IDebugElement) selection).getLaunch();
-		} else if (selection instanceof IProcess) {
-			launch= ((IProcess) selection).getLaunch();
-		}
-		return launch;
 	}
 
 	/* (non-Javadoc)
@@ -622,7 +530,9 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setActive(page.findView(getSite().getId()) != null);
 		updateObjects();
 		showEditorForCurrentSelection();
-		updateContextListener();
+		if (isActive()) {
+			fContextListener.updateForSelection(((IStructuredSelection) getViewer().getSelection()).getFirstElement());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -1212,7 +1122,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		if (property.equals(IDebugUIConstants.PREF_REUSE_EDITOR)) {
 			fReuseEditor = DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_REUSE_EDITOR);
 		} else if (property.equals(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES)) {
-			loadAutoManagePerspectives();
+			fContextListener.loadAutoManagePerspectives();
 		} else if (property.equals(LaunchViewContextListener.PREF_OPENED_VIEWS) && fContextListener != null) {
 			fContextListener.loadOpenedViews();
 		} else if (property.equals(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN) && fContextListener != null) {
@@ -1344,7 +1254,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	public ShowInContext getShowInContext() {
 		if (isActive()) { 
 			IStructuredSelection selection = (IStructuredSelection)getViewer().getSelection();
-			if (selection != null && !selection.isEmpty()) { 
+			if (!selection.isEmpty()) { 
 				Object sourceElement = getSourceElement();
 				if (sourceElement instanceof IAdaptable) {
 					if (((IAdaptable)sourceElement).getAdapter(IResource.class) != null) {

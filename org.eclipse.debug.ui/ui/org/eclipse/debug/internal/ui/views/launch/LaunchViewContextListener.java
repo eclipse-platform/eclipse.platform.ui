@@ -18,13 +18,16 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -32,6 +35,7 @@ import org.eclipse.debug.internal.ui.actions.DebugContextManager;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbench;
@@ -153,6 +157,11 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * perspective change events by the LaunchView.
 	 */
 	private boolean fIsTrackingPartChanges;
+	/**
+	 * Collection of perspectives in which views should be
+	 * automatically opened and closed.
+	 */
+	private List fAutoManagePerspectives= new ArrayList();
 	
 	/**
 	 * Creates a fully initialized context listener.
@@ -414,7 +423,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * 	enabled
 	 */
 	public void contextEnabled(Set contextIds) {
-		if (!launchView.isAutoManageViews()) {
+		if (!isAutoManageViews()) {
 			return;
 		}
 		IWorkbenchPage page= getPage();
@@ -471,6 +480,7 @@ public class LaunchViewContextListener implements IContextManagerListener {
 			}
 		}
 		loadTrackViews();
+		loadAutoManagePerspectives();
 	}
 	
 	/**
@@ -622,13 +632,35 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * to automatically open/close/activate views as appropriate.
 	 */
 	public void updateForSelection(Object selection) {
-		ILaunch launch= LaunchView.getLaunch(selection);
+		if (!isAutoManageViews()) {
+			return;
+		}
+		ILaunch launch= getLaunch(selection);
 		if (launch == null) {
 			return;
 		}
 		String[] modelIds= getDebugModelIdsForSelection(selection);
 		enableContexts(getContextsForModels(modelIds), launch);
 		enableActivities(getActivitiesForModels(modelIds));
+	}
+
+	/**
+	 * Returns the ILaunch associated with the given selection or
+	 * <code>null</code> if none can be determined.
+	 * 
+	 * @param selection the selection or <code>null</code>
+	 * @return the ILaunch associated with the given selection or <code>null</code>
+	 */
+	protected static ILaunch getLaunch(Object selection) {
+		ILaunch launch= null;
+		if (selection instanceof ILaunch) {
+			launch= (ILaunch) selection;
+		} else if (selection instanceof IDebugElement) {
+			launch= ((IDebugElement) selection).getLaunch();
+		} else if (selection instanceof IProcess) {
+			launch= ((IProcess) selection).getLaunch();
+		}
+		return launch;
 	}
 	
 	/**
@@ -793,6 +825,9 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 * @param launches the terminated launches
 	 */
 	protected void launchesTerminated(ILaunch[] launches) {
+		if (!isAutoManageViews()) {
+			return;
+		}
 		List allSubmissions= new ArrayList();
 		for (int i = 0; i < launches.length; i++) {
 			List submissions= (List) fContextSubmissions.remove(launches[i]);
@@ -842,6 +877,23 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	public static boolean isAutoClose(IConfigurationElement element) {
 		String autoClose = element.getAttribute(ATTR_AUTO_CLOSE);
 		return autoClose == null || Boolean.valueOf(autoClose).booleanValue();
+	}
+	
+	/**
+	 * Returns whether this view automatically opens and closes
+	 * views based on contexts
+	 * @return whether or not this view automatically manages
+	 * views based on contexts
+	 */
+	private boolean isAutoManageViews() {
+		IWorkbenchPage page = launchView.getViewSite().getWorkbenchWindow().getActivePage();
+		if (page != null) {
+			IPerspectiveDescriptor descriptor = page.getPerspective();
+			if (descriptor != null) {
+				return fAutoManagePerspectives.contains(descriptor.getId());
+			}
+		}
+		return false;
 	}
 	
 	/**
@@ -900,6 +952,30 @@ public class LaunchViewContextListener implements IContextManagerListener {
 	 */
 	public void loadTrackViews() {
 		fIsTrackingPartChanges= DebugUITools.getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS);
+	}
+	
+	/**
+	 * Load the collection of perspectives in which perspectives
+	 * for view management from the preference store.
+	 */
+	public void loadAutoManagePerspectives() {
+		String prefString = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES);
+		fAutoManagePerspectives= parseList(prefString);
+	}
+	
+	/**
+	 * Parses the comma separated string into a list of strings
+	 * 
+	 * @return list
+	 */
+	public static List parseList(String listString) {
+		List list = new ArrayList(10);
+		StringTokenizer tokenizer = new StringTokenizer(listString, ","); //$NON-NLS-1$
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			list.add(token);
+		}
+		return list;
 	}
 
 	/**
