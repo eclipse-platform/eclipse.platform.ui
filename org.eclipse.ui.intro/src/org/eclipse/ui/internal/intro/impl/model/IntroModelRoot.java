@@ -274,7 +274,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             if (extensionContentElement.hasAttribute("failed")) { //$NON-NLS-1$
                 // we failed to resolve this configExtension, because target
                 // could not be found or is not an anchor, add the extension
-                // as a (unresolved) child of this model, and log fact.
+                // as an (unresolved) child of this model, and log fact.
                 children.add(new IntroExtensionContent(extensionContentElement,
                         bundle));
                 // INTRO: fix log strings.
@@ -300,6 +300,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
             loadSharedGroups(dom, bundle);
         }
     }
+
 
     /**
      * load the extension content of this configExtension into model classes,
@@ -341,7 +342,6 @@ public class IntroModelRoot extends AbstractIntroContainer {
             extensionContentElement.setAttribute("failed", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 
         return extensionContentElement;
-
     }
 
 
@@ -512,7 +512,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
     /**
      * @return Returns the standby Page. May return null if standby page is not
-     *         defined.
+     *               defined.
      */
     public IntroHomePage getStandbyPage() {
         return standbyPage;
@@ -520,7 +520,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
     /**
      * @return all pages *excluding* the Home Page. If all pages are needed,
-     *         call <code>(AbstractIntroPage[])
+     *               call <code>(AbstractIntroPage[])
      *         getChildrenOfType(IntroElement.ABSTRACT_PAGE);</code>
      */
     public IntroPage[] getPages() {
@@ -554,12 +554,12 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * id, the message is logged, and the model retains its old current page.
      * 
      * @param currentPageId
-     *            The currentPageId to set. *
+     *                   The currentPageId to set. *
      * @param fireEvent
-     *            flag to indicate if event notification is needed.
+     *                   flag to indicate if event notification is needed.
      * @return true if the model has a page with the passed id, false otherwise.
-     *         If the method fails, the current page remains the same as the
-     *         last state.
+     *               If the method fails, the current page remains the same as the
+     *               last state.
      */
     public boolean setCurrentPageId(String pageId, boolean fireEvent) {
         if (pageId == currentPageId)
@@ -597,7 +597,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
      * trigger a UI refresh.
      * 
      * @param propertyId
-     *            the id of the property that changed
+     *                   the id of the property that changed
      */
     public void firePropertyChange(final int propertyId) {
         Object[] array = propChangeListeners.getListeners();
@@ -625,7 +625,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
     /**
      * @return Returns the currentPage. return null if page is not found, or if
-     *         we are not in a dynamic intro mode.
+     *               we are not in a dynamic intro mode.
      */
     public AbstractIntroPage getCurrentPage() {
         if (!isdynamicIntro)

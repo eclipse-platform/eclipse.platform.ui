@@ -25,8 +25,16 @@ public class ModelUtil {
     private static String TAG_BODY = "body"; //$NON-NLS-1$
     private static String TAG_HEAD = "head"; //$NON-NLS-1$
     private static String TAG_BASE = "base"; //$NON-NLS-1$
+    private static String TAG_PARAM = "param"; //$NON-NLS-1$
     private static String ATT_SRC = "src"; //$NON-NLS-1$
     private static String ATT_HREF = "href"; //$NON-NLS-1$
+    private static String ATT_CITE = "cite"; //$NON-NLS-1$
+    private static String ATT_LONGDESC = "longdesc"; //$NON-NLS-1$
+    private static String ATT_DATA = "data"; //$NON-NLS-1$
+    private static String ATT_CODEBASE = "codebase"; //$NON-NLS-1$
+    private static String ATT_VALUE = "value"; //$NON-NLS-1$
+    private static String ATT_VALUE_TYPE = "valuetype"; //$NON-NLS-1$
+
 
     /*
      * ********* Model util methods ************************************
@@ -179,15 +187,14 @@ public class ModelUtil {
 
 
     /**
-     * Updates the "src" attribute of the passed element to point to a local
-     * resolved url.
+     * Updates all the resource attributes of the passed element to point to a
+     * local resolved url.
      * 
      * @param element
      * @param extensionContent
      */
     public static void updateResourceAttributes(Element element,
             String localContentFilePath) {
-
         String folderLocalPath = getFolderPath(localContentFilePath);
         doUpdateResourceAttributes(element, folderLocalPath);
         NodeList children = element.getElementsByTagName("*"); //$NON-NLS-1$
@@ -201,6 +208,11 @@ public class ModelUtil {
             String folderLocalPath) {
         qualifyAttribute(element, ATT_SRC, folderLocalPath);
         qualifyAttribute(element, ATT_HREF, folderLocalPath);
+        qualifyAttribute(element, ATT_CITE, folderLocalPath);
+        qualifyAttribute(element, ATT_LONGDESC, folderLocalPath);
+        qualifyAttribute(element, ATT_CODEBASE, folderLocalPath);
+        qualifyAttribute(element, ATT_DATA, folderLocalPath);
+        qualifyValueAttribute(element, folderLocalPath);
     }
 
     private static void qualifyAttribute(Element element, String attributeName,
@@ -215,6 +227,20 @@ public class ModelUtil {
         }
     }
 
+    private static void qualifyValueAttribute(Element element,
+            String folderLocalPath) {
+        if (element.hasAttribute(ATT_VALUE)
+                && element.hasAttribute(ATT_VALUE_TYPE)
+                && element.getAttribute(ATT_VALUE_TYPE).equals("ref") //$NON-NLS-1$
+                && element.getLocalName().equals(TAG_PARAM)) {
+            String value = element.getAttribute(ATT_VALUE);
+            if (new IntroURLParser(value).hasProtocol())
+                return;
+            IPath localSrcPath = new Path(folderLocalPath).append(value);
+            element.setAttribute(ATT_VALUE, localSrcPath.toOSString());
+        }
+    }
+
 
     /**
      * Returns an array version of the passed NodeList. Used to work around DOM
@@ -225,7 +251,6 @@ public class ModelUtil {
         for (int i = 0; i < nodeList.getLength(); i++)
             nodes[i] = nodeList.item(i);
         return nodes;
-
     }
 
 

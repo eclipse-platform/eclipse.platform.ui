@@ -142,8 +142,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * will resolve this page. might be expensive.
      * 
      * @return Returns all the inherited styles of this page. Returns an empty
-     *         array if page is not expandable or does not have inherited
-     *         styles.
+     *               array if page is not expandable or does not have inherited
+     *               styles.
      */
     public String[] getStyles() {
         // call get children first to resolve includes and populate styles
@@ -163,8 +163,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * be expensive.
      * 
      * @return Returns all the inherited styles of this page. Returns an empty
-     *         hashtable if page is not expandable, does not have any includes,
-     *         or has includes that do not merge styles.
+     *               hashtable if page is not expandable, does not have any includes,
+     *               or has includes that do not merge styles.
      */
     public Hashtable getAltStyles() {
         // call get children first to resolve includes and populate hashtable.
@@ -496,6 +496,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         // insert base meta-tag, and resolve includes.
         ModelUtil.insertBase(dom, ModelUtil.getFolderPath(content));
         resolveIncludes();
+        removeAnchors();
         resolved = true;
     }
 
@@ -515,8 +516,8 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
             Element includeElement = (Element) nodes[i];
             IntroInclude include = new IntroInclude(includeElement, getBundle());
             // result[0] is target parent page, result[1] is target element.
-            Object[] results = new Object[2];
-            Element targetElement = findDOMIncludeTarget(include, results);
+            Object[] results = findDOMIncludeTarget(include);
+            Element targetElement = (Element) results[1];
             if (targetElement == null) {
                 // INTRO: fix log strings.
                 String message = "Could not resolve following include:  " //$NON-NLS-1$
@@ -544,7 +545,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
 
     /**
-     * Find the target element pointed to by the path in the include. It is
+     * Find the target Element pointed to by the path in the include. It is
      * assumed that configId always points to an external config, and not the
      * same config of the inlcude.
      * 
@@ -552,7 +553,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * @param path
      * @return
      */
-    private Element findDOMIncludeTarget(IntroInclude include, Object[] results) {
+    private Object[] findDOMIncludeTarget(IntroInclude include) {
         String path = include.getPath();
         IntroModelRoot targetModelRoot = (IntroModelRoot) getParentPage()
                 .getParent();
@@ -563,8 +564,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
         if (targetModelRoot == null)
             // if the target config was not found, skip this include.
             return null;
-        Element target = findDOMTarget(targetModelRoot, path, results);
-        return target;
+        return findDOMTarget(targetModelRoot, path);
 
     }
 
@@ -575,39 +575,35 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
      * model.
      * 
      * @param model
-     *            model containing target path.
+     *                   model containing target path.
      * @param path
-     *            the path to look for
+     *                   the path to look for
      * @param results
-     *            two object array that will return the target intro page as the
-     *            first result, and the actual target DOM element as the second
-     *            result.
+     *                   two object array that will return the target intro page as the
+     *                   first result, and the actual target DOM Element as the second
+     *                   result. It is gauranteed to not be null. Content may be null.
      * @return target DOM element
      */
-    public Element findDOMTarget(IntroModelRoot model, String path,
-            Object[] results) {
+    public Object[] findDOMTarget(IntroModelRoot model, String path) {
+        Object[] results = new Object[2];
         // path must be pageId/anchorID in the case of of XHTML pages.
         // pages.
         String[] pathSegments = path.split("/"); //$NON-NLS-1$
         if (pathSegments.length != 2)
-            // path does not have correct format.
-            return null;
+            // path does not have correct format. Return empty results.
+            return results;
+
         // save to cast.
         AbstractIntroPage targetPage = (AbstractIntroPage) model.findChild(
                 pathSegments[0], ABSTRACT_PAGE);
-        if (targetPage == null)
-            // target could not be found. Signal failure.
-            return null;
-        else {
+
+        if (targetPage != null) {
             results[0] = targetPage;
             Element targetElement = targetPage.findDomChild(pathSegments[1]);
-            if (targetElement == null)
-                return null;
-            else {
+            if (targetElement != null)
                 results[1] = targetElement;
-                return targetElement;
-            }
         }
+        return results;
     }
 
 
@@ -617,6 +613,25 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
     public String getContent() {
         return content;
     }
+
+    /**
+     * Remove all anchors from this page.
+     *  
+     */
+    private void removeAnchors() {
+        // get all anchor elements in DOM and remove them.
+        NodeList anchors = dom.getElementsByTagNameNS("*", //$NON-NLS-1$
+                IntroAnchor.TAG_ANCHOR);
+        // get the array version of the nodelist to work around
+        // removeChild() DOM api design.
+        Node[] anchorArray = ModelUtil.getArray(anchors);
+        for (int i = 0; i < anchorArray.length; i++) {
+            Node anchor = anchorArray[i];
+            anchor.getParentNode().removeChild(anchor);
+        }
+
+    }
+
 
 
     /**
