@@ -14,9 +14,7 @@ package org.eclipse.ui.activities;
 import org.eclipse.ui.internal.activities.MutableActivityManager;
 
 /**
- * <p>
  * This class allows clients to broker instances of <code>IActivityManager</code>.
- * </p>
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
@@ -25,16 +23,15 @@ import org.eclipse.ui.internal.activities.MutableActivityManager;
  * </p>
  * 
  * @since 3.0
- * @see IActivityManager
  */
 public final class ActivityManagerFactory {
 
 	/**
-	 * Creates a new instance of IMutableActivityManager.
+	 * Creates a new instance of <code>IMutableActivityManager</code>.
 	 * 
-	 * @return a new instance of IMutableActivityManager. Clients should not
-	 *         make assumptions about the concrete implementation outside the
-	 *         contract of <code>IMutableActivityManager</code>. Guaranteed
+	 * @return a new instance of <code>IMutableActivityManager</code>.
+	 *         Clients should not make assumptions about the concrete
+	 *         implementation outside the contract of the interface. Guaranteed
 	 *         not to be <code>null</code>.
 	 */
 	public static IMutableActivityManager getMutableActivityManager() {

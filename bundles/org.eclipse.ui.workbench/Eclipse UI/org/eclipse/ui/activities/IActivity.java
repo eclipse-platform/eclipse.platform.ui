@@ -14,22 +14,18 @@ package org.eclipse.ui.activities;
 import java.util.Set;
 
 /**
+ * An instance of this interface is an activity as defined by the extension
+ * point <code>org.eclipse.ui.activities</code>.
  * <p>
- * An instance of <code>IActivity</code> is a handle representing an activity
- * as defined by the extension point <code>org.eclipse.ui.activities</code>.
- * The identifier of the handle is identifier of the activity being
- * represented.
- * </p>
- * <p>
- * An instance of <code>IActivity</code> can be obtained from an instance of
- * <code>IActivityManager</code> for any identifier, whether or not an
- * activity with that identifier defined in the plugin registry.
+ * An instance of this interface can be obtained from an instance of <code>IActivityManager</code>
+ * for any identifier, whether or not an activity with that identifier is
+ * defined in the extension registry.
  * </p>
  * <p>
  * The handle-based nature of this API allows it to work well with runtime
  * plugin activation and deactivation, which causes dynamic changes to the
- * plugin registry, and therefore, potentially, dynamic changes to the set of
- * activity definitions.
+ * extension registry, and therefore, potentially, dynamic changes to the set
+ * of activity definitions.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
@@ -39,34 +35,30 @@ import java.util.Set;
  * </p>
  * 
  * @since 3.0
- * @see IActivityListener
  * @see IActivityManager
- * @see IActivityPatternBinding
  */
 public interface IActivity extends Comparable {
 
 	/**
 	 * Registers an instance of <code>IActivityListener</code> to listen for
-	 * changes to attributes of this instance.
+	 * changes to properties of this activity.
 	 * 
 	 * @param activityListener
-	 *            the instance of <code>IActivityListener</code> to register.
-	 *            Must not be <code>null</code>. If an attempt is made to
-	 *            register an instance of <code>IActivityListener</code>
-	 *            which is already registered with this instance, no operation
-	 *            is performed.
+	 *            the instance to register. Must not be <code>null</code>.
+	 *            If an attempt is made to register an instance which is
+	 *            already registered with this activity, no operation is
+	 *            performed.
 	 */
 	void addActivityListener(IActivityListener activityListener);
 
 	/**
+	 * Returns the set of activity activity bindings for this activity.
 	 * <p>
-	 * Returns the set of activity activity bindings for this handle. This
-	 * method will return all activity activity bindings for this handle's
-	 * identifier, whether or not the activity represented by this handle is
-	 * defined.
+	 * This method will return all activity activity bindings for this
+	 * activity, whether or not this activity is defined.
 	 * </p>
 	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
@@ -77,14 +69,13 @@ public interface IActivity extends Comparable {
 	Set getActivityActivityBindings();
 
 	/**
+	 * Returns the set of activity pattern bindings for this activity.
 	 * <p>
-	 * Returns the set of activity pattern bindings for this handle. This
-	 * method will return all activity pattern bindings for this handle's
-	 * identifier, whether or not the activity represented by this handle is
-	 * defined.
+	 * This method will return all activity pattern bindings for this activity,
+	 * whether or not this activity is defined.
 	 * </p>
 	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
@@ -95,118 +86,93 @@ public interface IActivity extends Comparable {
 	Set getActivityPatternBindings();
 
 	/**
+	 * Returns the description of this activity suitable for display to the
+	 * user.
 	 * <p>
-	 * Returns the description of the activity represented by this handle,
-	 * suitable for display to the user.
-	 * </p>
-	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
-	 * @return the description of the activity represented by this handle.
-	 *         Guaranteed not to be <code>null</code>.
+	 * @return the description of this activity. Guaranteed not to be <code>null</code>.
 	 * @throws NotDefinedException
-	 *             if the activity represented by this handle is not defined.
+	 *             if this activity is not defined.
 	 */
 	String getDescription() throws NotDefinedException;
 
 	/**
-	 * Returns the identifier of this handle.
+	 * Returns the identifier of this activity.
 	 * 
-	 * @return the identifier of this handle. Guaranteed not to be <code>null</code>.
+	 * @return the identifier of this activity. Guaranteed not to be <code>null</code>.
 	 */
 	String getId();
 
 	/**
+	 * Returns the name of this activity suitable for display to the user.
 	 * <p>
-	 * Returns the name of the activity represented by this handle, suitable
-	 * for display to the user.
-	 * </p>
-	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
-	 * @return the name of the activity represented by this handle. Guaranteed
-	 *         not to be <code>null</code>.
+	 * @return the name of this activity. Guaranteed not to be <code>null</code>.
 	 * @throws NotDefinedException
-	 *             if the activity represented by this handle is not defined.
+	 *             if this activity is not defined.
 	 */
 	String getName() throws NotDefinedException;
 
 	/**
+	 * Returns the identifier of the parent of this activity.
 	 * <p>
-	 * Returns the identifier of the parent of the activity represented by this
-	 * handle.
-	 * </p>
-	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
-	 * @return the identifier of the parent of the activity represented by this
-	 *         handle. May be <code>null</code>.
+	 * @return the identifier of the parent of this activity. May be <code>null</code>.
 	 * @throws NotDefinedException
-	 *             if the activity represented by this handle is not defined.
+	 *             if this activity is not defined.
 	 */
 	String getParentId() throws NotDefinedException;
 
 	/**
+	 * Returns whether or not this activity is defined.
 	 * <p>
-	 * Returns whether or not the activity represented by this handle is
-	 * defined.
-	 * </p>
-	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
-	 * @return <code>true</code>, iff the activity represented by this
-	 *         handle is defined.
+	 * @return true, iff this activity is defined.
 	 */
 	boolean isDefined();
 
 	/**
+	 * Returns whether or not this activity is enabled.
 	 * <p>
-	 * Returns whether or not this activity is enabled. Instances of <code>IActivity</code>
-	 * are enabled and disabled by the instance of <code>IActivityManager</code>
-	 * from whence they were brokered.
-	 * </p>
-	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
+	 * Notification is sent to all registered listeners if this property
 	 * changes.
 	 * </p>
 	 * 
-	 * @return <code>true</code>, iff this activity is enabled.
+	 * @return true, iff this activity is enabled.
 	 */
 	boolean isEnabled();
-	
+
 	/**
-	 * This method is only included to prevent compile errors in I20031125.
-	 * @param string
-	 * @return
 	 * @deprecated
 	 */
 	boolean isMatch(String string);
 
 	/**
-	 * TODO javadoc
-	 * 
 	 * @deprecated
 	 */
 	boolean match(String string);
 
 	/**
 	 * Unregisters an instance of <code>IActivityListener</code> listening
-	 * for changes to attributes of this instance.
+	 * for changes to properties of this activity.
 	 * 
 	 * @param activityListener
-	 *            the instance of <code>IActivityListener</code> to
-	 *            unregister. Must not be <code>null</code>. If an attempt
-	 *            is made to unregister an instance of <code>IActivityListener</code>
-	 *            which is not already registered with this instance, no
-	 *            operation is performed.
+	 *            the instance to unregister. Must not be <code>null</code>.
+	 *            If an attempt is made to unregister an instance which is not
+	 *            already registered with this activity, no operation is
+	 *            performed.
 	 */
 	void removeActivityListener(IActivityListener activityListener);
 }
