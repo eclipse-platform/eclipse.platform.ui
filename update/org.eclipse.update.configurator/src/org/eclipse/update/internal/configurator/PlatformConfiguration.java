@@ -531,6 +531,8 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		} else {
 			// file protocol - do safe i/o
 			File cfigFile = new File(url.getFile().replace('/', File.separatorChar));
+			if (!cfigFile.getName().equals(CONFIG_NAME))
+				cfigFile = new File(cfigFile, CONFIG_NAME);
 			File cfigDir = cfigFile.getParentFile();
 			if (cfigDir != null)
 				cfigDir.mkdirs();
