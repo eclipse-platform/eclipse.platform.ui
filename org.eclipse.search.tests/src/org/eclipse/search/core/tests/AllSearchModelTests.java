@@ -34,6 +34,7 @@ public class AllSearchModelTests extends TestSuite {
 		addTest(new TestSuite(QueryManagerTest.class));
 		addTest(new TestSuite(TestSearchResult.class));
 		addTest(new TestSuite(QueryManagerTest.class));
+		addTest(new TestSuite(LineConversionTest.class));
 	}
 
 }

@@ -43,10 +43,6 @@ import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.search.ui.text.RemoveAllEvent;
 
 
-/**
- * @author Thomas Mäder
- *
- */
 public class PositionTracker implements IQueryListener, ISearchResultListener, IFileBufferListener {
 
 	private Map fMatchesToPositions= new HashMap();
@@ -151,12 +147,17 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	}
 
 	public static Position convertToCharacterPosition(Position linePosition, IDocument doc) throws BadLocationException {
-		int offset= linePosition.getOffset();
-		int length= linePosition.getLength();
-		int endPosition= doc.getLineOffset(offset+length);
-		offset= doc.getLineOffset(offset);
-		length= endPosition-offset;
-		return new Position(offset, length);
+		int lineOffset= linePosition.getOffset();
+		int lineLength= linePosition.getLength();
+		
+		int charOffset= doc.getLineOffset(lineOffset);
+		int charLength= 0;
+		if (lineLength > 0) {
+			int lastLine= lineOffset+lineLength-1;
+			int endPosition= doc.getLineOffset(lastLine)+doc.getLineLength(lastLine)-1;
+			charLength= endPosition-charOffset;
+		}
+		return new Position(charOffset, charLength);
 	}
 
 	private void addFileBufferMapping(ITextFileBuffer fb, Match match) {
@@ -212,7 +213,12 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	public static Position convertToLinePosition(Position pos, IDocument doc) throws BadLocationException {
 		int offset= doc.getLineOfOffset(pos.getOffset());
 		int end= doc.getLineOfOffset(pos.getOffset()+pos.getLength());
-		return new Position(offset, end-offset);
+		int lineLength= end-offset;
+		if (pos.getLength() > 0) {
+			// if the character length is > 0, add the last line, too
+			lineLength++;
+		}
+		return new Position(offset, lineLength);
 	}
 
 	public void dispose() {
