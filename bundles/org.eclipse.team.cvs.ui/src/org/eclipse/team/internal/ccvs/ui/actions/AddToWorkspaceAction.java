@@ -113,7 +113,9 @@ public class AddToWorkspaceAction extends TeamAction {
 						}
 					}
 					if (targetFolders.size() > 0) {
-						CVSProviderPlugin.getProvider().checkout((ICVSRemoteFolder[]) targetFolders.toArray(new ICVSRemoteFolder[targetFolders.size()]), (IProject[])targetProjects.toArray(new IProject[targetProjects.size()]), monitor);
+						CVSProviderPlugin.getProvider().checkout((ICVSRemoteFolder[])targetFolders.toArray(new ICVSRemoteFolder[targetFolders.size()]),
+																 (IProject[])targetProjects.toArray(new IProject[targetProjects.size()]), 
+																 Policy.subMonitorFor(monitor, 100));
 					}
 				} catch (TeamException e) {
 					throw new InvocationTargetException(e);
