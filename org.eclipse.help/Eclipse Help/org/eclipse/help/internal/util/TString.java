@@ -320,6 +320,9 @@ public class TString {
 		}
 	}
 	
+	/**
+	 * Returns the unicode encoding of word...
+	 */
 	public static String getUnicodeEncoding(String word)
 	{
 		int len = word.length();
@@ -346,5 +349,25 @@ public class TString {
 			}
 		}
 		return encodedChars.toString();
+	}
+	
+	/**
+	 * Returns the unicode encoding of word as u1,u2,u3...
+	 * where u_i is the unicode code (decimal) of the i'th char of word.
+	 */
+	public static String getUnicodeNumbers(String word)
+	{
+		int len = word.length();
+		if (len == 0)
+			return word;
+		StringBuffer buf = new StringBuffer(len);
+		for (int i=0; i<len; i++)
+		{
+			if (i != 0)
+				buf.append(',');
+			int unicode = word.charAt(i);
+			buf.append(String.valueOf(unicode));
+		}
+		return buf.toString();
 	}
 }

@@ -18,7 +18,7 @@ if (document.layers)
 	window.onresize = resizeFix;
 
 /** 
- * Parses the query string
+ * Parses the query string.
  */
 function parseQueryString (str) 
 {
@@ -40,10 +40,27 @@ function parseQueryString (str)
     return args;
 }
 
-// Get the infoset title
-var args = parseQueryString ();
-var infosetTitle = args['title'];
+/**
+ * Builds a string from its unicode codes.
+ * We assume that codes sequence is a comma separated list of unicode codes
+ */
+function getUnicodeString(codesSequence)
+{
+    if (!codesSequence) return "";
+  
+    var unicodeString = "";
+    var codes = codesSequence.split(',');
+  
+    for (var i=0; i<codes.length; i++)
+    {
+        unicodeString += String.fromCharCode(codes[i]);
+    }
+    return unicodeString;
+}
 
+// Get the infoset title (passed in as a comma separated list of unicode codes)
+var args = parseQueryString ();
+var infosetTitle = getUnicodeString(args['title']);
 </script>
 
 

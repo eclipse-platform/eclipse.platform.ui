@@ -128,7 +128,7 @@ public class HTMLHelpViewer implements ISelectionChangedListener {
 				String url = infoset.getHref();
 				if (url == null || url.equals(""))
 					url = defaultSplash 
-					    + "?title="+TString.getUnicodeEncoding(infoset.getLabel()).replace('\\','%')
+					    + "?title="+TString.getUnicodeNumbers(infoset.getLabel())
 					    + "&lang=" + locale;
 				else
 					url = url+ "?lang=" + locale;
