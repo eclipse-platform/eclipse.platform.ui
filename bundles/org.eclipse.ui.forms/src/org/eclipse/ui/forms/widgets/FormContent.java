@@ -195,9 +195,10 @@ public class FormContent extends Composite {
 	 */
 	public void setText(String text) {
 		this.text = text;
-		layout(true);
+		layout();
 		redraw();
 	}
+
 	/**
 	 * Returns the optional background image of this form. The image is
 	 * rendered starting at the position 0,0 and is painted behind the title.

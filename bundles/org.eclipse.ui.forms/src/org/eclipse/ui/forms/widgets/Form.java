@@ -141,6 +141,7 @@ public class Form extends SharedScrolledComposite {
 	 *            compute new one.
 	 */
 	public void reflow(boolean flushCache) {
+		content.getBody().layout();
 		content.layout();
 		super.reflow(flushCache);
 	}

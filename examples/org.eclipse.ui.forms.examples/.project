@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.eclipse.ui.forms</name>
+	<name>org.eclipse.ui.forms.examples</name>
 	<comment></comment>
 	<projects>
-		<project>org.eclipse.core.boot</project>
+		<project>org.eclipse.core.resources</project>
 		<project>org.eclipse.core.runtime.compatibility</project>
 		<project>org.eclipse.ui</project>
-		<project>org.eclipse.ui.ide</project>
+		<project>org.eclipse.ui.forms</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -26,7 +26,7 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
 </projectDescription>
