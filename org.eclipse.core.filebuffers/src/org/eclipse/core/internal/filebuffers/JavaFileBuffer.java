@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.core.filebuffers.FileBuffers;
@@ -184,7 +183,7 @@ public abstract class JavaFileBuffer extends AbstractFileBuffer  {
 	 * @param message the message to be logged
 	 */
 	protected void handleCoreException(CoreException exception) {
-		ILog log= Platform.getPlugin(FileBuffersPlugin.PLUGIN_ID).getLog();
+		ILog log= FileBuffersPlugin.getDefault().getLog();
 		log.log(exception.getStatus());
 	}
 	

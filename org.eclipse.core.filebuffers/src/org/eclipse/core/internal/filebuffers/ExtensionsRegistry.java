@@ -192,7 +192,7 @@ public class ExtensionsRegistry {
 	 * @param status the status to log
 	 */
 	private void log(IStatus status) {
-		ILog log=  Platform.getPlugin(FileBuffersPlugin.PLUGIN_ID).getLog();
+		ILog log= FileBuffersPlugin.getDefault().getLog();
 		log.log(status);
 	}
 	
