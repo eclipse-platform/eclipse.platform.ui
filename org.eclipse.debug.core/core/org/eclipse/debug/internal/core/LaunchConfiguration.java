@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
  
 import java.io.IOException;
 import java.io.StringReader;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -105,6 +106,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				location = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(path)).getLocation();
 			}
 			setLocation(location);
+			if (location == null) {
+				IStatus s = newStatus(MessageFormat.format(DebugCoreMessages.getString("LaunchConfiguration.Unable_to_restore_location_for_launch_configuration_from_memento__{0}_1"), new String[]{path}), DebugPlugin.INTERNAL_ERROR, null); //$NON-NLS-1$
+				throw new CoreException(s);
+			}
 			return;
 		} catch (ParserConfigurationException e) {
 			ex = e;			
