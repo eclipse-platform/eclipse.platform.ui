@@ -421,16 +421,14 @@ public class Workbench
 		final Map matchesByKeySequenceForModeBeforeKeyStroke =
 			commandManager.getMatchesByKeySequenceForMode();
 		commandManager.setMode(modeAfterKeyStroke);
-		modeContributionItem.setText(
-			"carbon".equals(SWT.getPlatform())
-				? KeySupport.formatOSX(modeAfterKeyStroke)
-				: modeAfterKeyStroke.format());
 		final Map matchesByKeySequenceForModeAfterKeyStroke =
 			commandManager.getMatchesByKeySequenceForMode();
 		boolean consumeKeyStroke = false;
 
 		if (!matchesByKeySequenceForModeAfterKeyStroke.isEmpty()) {
-			// this key stroke is part of one or more possible completions: consume the keystroke						
+			// this key stroke is part of one or more possible completions: consume the keystroke
+			modeContributionItem.setText(
+				"carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format());						
 			consumeKeyStroke = true;
 		} else {
 			// there are no possible longer multi-stroke sequences, allow a completion now if possible
@@ -451,6 +449,8 @@ public class Workbench
 
 					if (action.isEnabled()) {
 						try {
+							modeContributionItem.setText(
+								"carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(modeAfterKeyStroke) : modeAfterKeyStroke.format());
 							action.execute(event);
 						} catch (final Exception e) {
 							// TODO 						
