@@ -306,7 +306,7 @@ public class ContextHelpDialog implements Runnable {
 		composite.setBackground(backgroundColour);
 
 		GridLayout layout = new GridLayout();
-		layout.marginHeight = 0;
+		layout.marginHeight = 2;
 		layout.marginWidth = 0;
 		layout.verticalSpacing = 3;
 		layout.horizontalSpacing = 2;
