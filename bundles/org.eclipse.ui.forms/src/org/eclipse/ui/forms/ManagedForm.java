@@ -151,14 +151,22 @@ public class ManagedForm implements IManagedForm {
 	/**
 	 * Refreshes the form by refreshes all the stale parts. 
 	 * Since 3.1, this method is performed on a UI thread
-	 * so it is safe to call it from a non-UI thread.
+	 * when called from another thread so it is not needed
+	 * to wrap the call in <code>Display.syncExec</code>
+	 * or <code>asyncExec</code>.
 	 */
 	public void refresh() {
-		toolkit.getColors().getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				doRefresh();
-			}
-		});
+		Thread t = Thread.currentThread();
+		Thread dt = toolkit.getColors().getDisplay().getThread();
+		if (t.equals(dt))
+			doRefresh();
+		else {
+			toolkit.getColors().getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					doRefresh();
+				}
+			});
+		}
 	}
 	
 	private void doRefresh() {
