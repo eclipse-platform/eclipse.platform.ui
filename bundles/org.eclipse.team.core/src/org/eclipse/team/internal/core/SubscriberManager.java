@@ -51,15 +51,26 @@ public class SubscriberManager implements ISubscriberManager, ISaveParticipant {
 	
 	static private ISubscriberManager instance;
 	
-	public static synchronized ISubscriberManager getInstance() {
-		if (instance == null) {
-			// Initialize the variable before trigering startup.
-			// This is done because the startup code can invoke
-			// subscriber factories which, in turn will ask for the 
-			// subscriber manager.
-			instance = new SubscriberManager();
+	private static final Object GET_INSTANCE_LOCK = new Object();
+	
+	public static ISubscriberManager getInstance() {
+		boolean startup = false;
+		synchronized(GET_INSTANCE_LOCK) {
+			if (instance == null) {
+				// Initialize the variable before trigering startup.
+				// This is done because the startup code can invoke
+				// subscriber factories which, in turn will ask for the 
+				// subscriber manager.
+				instance = new SubscriberManager();
+				startup = true;
+			}
+		}
+		if (startup) {
+			// The startup of the manager must be done outside the lock as it
+			// can invoke client code
 			((SubscriberManager)instance).startup();
 		}
+
 		return instance;
 	}
 	
