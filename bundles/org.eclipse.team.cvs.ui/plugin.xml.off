@@ -86,7 +86,7 @@
 				label="%ReplaceWithAction.label"
 				tooltip="%ReplaceWithAction.tooltip"
 				menubarPath="replaceWithMenu/replaceWithGroup"
-				class="org.eclipse.team.ui.actions.GetAction"/>
+				class="org.eclipse.team.internal.ccvs.ui.actions.ReplaceWithRemoteAction"/>
 			<action 
 				id="org.eclipse.team.ccvs.ui.commit"
 				label="%CommitAction.label"
