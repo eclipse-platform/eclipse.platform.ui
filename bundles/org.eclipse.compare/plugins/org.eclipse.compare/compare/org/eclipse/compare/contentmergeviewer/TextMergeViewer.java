@@ -62,6 +62,7 @@ import org.eclipse.compare.internal.MergeViewerAction;
 import org.eclipse.compare.internal.INavigatable;
 import org.eclipse.compare.internal.CompareNavigator;
 import org.eclipse.compare.internal.TimeoutContext;
+import org.eclipse.compare.internal.IStatusLine;
 import org.eclipse.compare.rangedifferencer.*;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 
@@ -112,7 +113,7 @@ import org.eclipse.compare.structuremergeviewer.Differencer;
  * @see org.eclipse.compare.IStreamContentAccessor
  */
 public class TextMergeViewer extends ContentMergeViewer  {
-		
+	
 	private static final String[] GLOBAL_ACTIONS= {
 		IWorkbenchActionConstants.UNDO,
 		IWorkbenchActionConstants.REDO,
@@ -121,7 +122,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		IWorkbenchActionConstants.PASTE,
 		IWorkbenchActionConstants.DELETE,
 		IWorkbenchActionConstants.SELECT_ALL,
-		IWorkbenchActionConstants.SAVE,
+		//IWorkbenchActionConstants.SAVE
 	};
 	private static final String[] TEXT_ACTIONS= {
 		MergeSourceViewer.UNDO_ID,
@@ -131,7 +132,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		MergeSourceViewer.PASTE_ID,
 		MergeSourceViewer.DELETE_ID,
 		MergeSourceViewer.SELECT_ALL_ID,
-		MergeSourceViewer.SAVE_ID
+		//MergeSourceViewer.SAVE_ID
 	};
 		
 	private static final String MY_UPDATER= "my_updater"; //$NON-NLS-1$
@@ -252,6 +253,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		boolean fResolved;
 		int fDirection;
 		boolean fIsToken= false;
+		/** child token diffs */
 		ArrayList fDiffs;
 
 		/**
@@ -267,6 +269,16 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fRightPos= createPosition(rightDoc, rightStart, rightEnd);
 			if (ancestorDoc != null)
 				fAncestorPos= createPosition(ancestorDoc, ancestorStart, ancestorEnd);
+		}
+		
+		String changeType() {
+			boolean leftEmpty= fLeftPos.length == 0;
+			boolean rightEmpty= fRightPos.length == 0;
+			if (leftEmpty && !rightEmpty)
+				return "Addition";
+			if (!leftEmpty && rightEmpty)
+				return "Deletion";
+			return "Change";
 		}
 		
 		Image getImage() {
@@ -724,7 +736,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	private void connectGlobalActions(MergeSourceViewer part) {
-		IActionBars actionBars= CompareEditor.findActionBars(fComposite);
+		IActionBars actionBars= Utilities.findActionBars(fComposite);
 		if (actionBars != null) {
 			for (int i= 0; i < GLOBAL_ACTIONS.length; i++) {
 				IAction action= null;
@@ -743,8 +755,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	protected void updateContent(Object ancestor, Object left, Object right) {
 		
 		boolean emptyInput= (ancestor == null && left == null && right == null);
-
-		//System.out.println("updateContent: " + emptyInput);
 
 		// clear stuff
 		fCurrentDiff= null;
@@ -1458,12 +1468,14 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		boolean leftToRight= false;
 		boolean rightToLeft= false;
 		
+		updateStatus(fCurrentDiff);
+
 		if (fCurrentDiff != null) {
 			IMergeViewerContentProvider cp= getMergeContentProvider();
 			if (cp != null) {
 				rightToLeft= cp.isLeftEditable(getInput());
 				leftToRight= cp.isRightEditable(getInput());
-			}
+			}			
 		}
 		
 		if (fCurrentDiff != null && isThreeWay() && !fIgnoreAncestor) {
@@ -1479,6 +1491,38 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			
 		
 	}
+
+	private void updateStatus(Diff diff) {
+		/*
+		IStatusLine status= Utilities.findStatusLine(fComposite);
+		if (status != null) {
+//			String n= "";	//$NON-NLS-1$
+			String s= "";	//$NON-NLS-1$
+			if (diff != null) {
+				switch(diff.fDirection) {
+				case RangeDifference.LEFT:
+					s= "left";	//$NON-NLS-1$
+					break;
+				case RangeDifference.RIGHT:
+					s= "right";	//$NON-NLS-1$
+					break;
+				case RangeDifference.CONFLICT:
+					s= "conflicting";	//$NON-NLS-1$
+					break;
+				}
+				s+= diff.changeType();
+//				n= "1 of n";
+			}
+			
+			status.setStatus("Main", s);		//$NON-NLS-1$
+//			status.setStatus("Right", n);		//$NON-NLS-1$
+		}
+		*/
+	}
+	
+	private IStatusLine getStatus() {
+		return null;
+	}
 	
 	protected void updateHeader() {
 		
@@ -1493,7 +1537,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	 */
 	protected void createToolItems(ToolBarManager tbm) {
 		
-		//PR1GI3HDZ
 		final String ignoreAncestorActionKey= "action.IgnoreAncestor.";	//$NON-NLS-1$
 		Action ignoreAncestorAction= new Action() {
 			public void run() {
@@ -1508,7 +1551,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		fIgnoreAncestorItem= new ActionContributionItem(ignoreAncestorAction);
 		fIgnoreAncestorItem.setVisible(false);
 		tbm.appendToGroup("modes", fIgnoreAncestorItem); //$NON-NLS-1$
-		// end PR1GI3HDZ
 
 		tbm.add(new Separator());
 					
@@ -1638,10 +1680,8 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					
 	protected void updateToolItems() {
 					
-		//PR1GI3HDZ
 		if (fIgnoreAncestorItem != null)
 			fIgnoreAncestorItem.setVisible(isThreeWay());
-		//end PR1GI3HDZ
 		
 		super.updateToolItems();
 	}
@@ -1757,7 +1797,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				if (Math.min(ly, ry) >= visibleHeight)
 					break;
 	
-				fPts[0]= x;	fPts[1]= ly;		fPts[2]= w;	fPts[3]= ry;
+				fPts[0]= x;	fPts[1]= ly;	fPts[2]= w;	fPts[3]= ry;
 				fPts[6]= x;	fPts[7]= ly+lh;	fPts[4]= w;	fPts[5]= ry+rh;
 							
 				g.setBackground(getColor(getFillColor(diff)));

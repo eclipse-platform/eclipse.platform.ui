@@ -5,7 +5,7 @@
 package org.eclipse.compare.patch;
 
 import java.io.*;
-import java.util.ArrayList;
+import java.util.*;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.*;
@@ -42,7 +42,7 @@ import org.eclipse.compare.internal.Utilities;
 	private final static String STORE_USE_CLIPBOARD_ID= PAGE_NAME + ".USE_CLIPBOARD";	//$NON-NLS-1$
 
 	// help IDs
-	private final static String PATCH_HELP_CONTEXT_ID= "PatchWizardHelpId";	
+	private final static String PATCH_HELP_CONTEXT_ID= "PatchWizardHelpId";	//$NON-NLS-1$
 	
 	// SWT widgets
 	private Button fUseClipboardButton;
@@ -146,10 +146,77 @@ import org.eclipse.compare.internal.Utilities;
 				return this;
 			}
 			
+			// guess prefix count
+			int guess= guessPrefix(diffs);
+			patcher.setStripPrefixSegments(guess);
 		}
 		return super.getNextPage();
 	}
 		
+	private int guessPrefix(Diff[] diffs) {
+		ArrayList list= new ArrayList();
+		IResource target= fPatchWizard.getTarget();
+		if (target instanceof IFile) {
+			list.add(target.getFullPath());
+		} else if (target instanceof IContainer) {
+			addLeaf(list, (IContainer) target);
+		}
+		
+		// guess prefix count
+		for (int i= 0; i < diffs.length; i++) {
+			IPath p= diffs[i].fOldPath;
+			int matches= match(p, list);
+			if (matches > 0) {
+				return p.segmentCount() - matches;
+			}
+		}
+		return 0;
+	}
+	
+	private int match(IPath path, ArrayList list) {
+		System.out.println("match: " + path);
+		Iterator iter= list.iterator();
+		while (iter.hasNext()) {
+			IPath filePath= (IPath) iter.next();
+			int matches= matchTrailingSegments(path, filePath);
+			if (matches > 0)
+				return matches;
+			//System.out.println("  " + filePath + ": " + matches);
+		}
+		return 0;
+	}
+	
+	private int matchTrailingSegments(IPath p1, IPath p2) {
+		int matches= 0;
+		int i1= p1.segmentCount()-1;
+		int i2= p2.segmentCount()-1;
+		for (; i1 >= 0 && i2 >= 0; i1--, i2--) {
+			String s1= p1.segment(i1);
+			String s2= p2.segment(i2);
+			if (!s1.equals(s2))
+				break;
+			matches++;
+		}
+		return matches;
+	}
+	
+	private void addLeaf(ArrayList list, IContainer c) {
+		IResource[] rs= null;
+		try {
+			rs= c.members();
+		} catch(CoreException ex) {
+		}
+		if (rs != null) {
+			for (int i= 0; i < rs.length; i++) {
+				IResource r= rs[i];
+				if (r instanceof IFile)
+					list.add(r.getFullPath());
+				else if (r instanceof IContainer)
+					addLeaf(list, (IContainer) r);
+			}
+		}
+	}
+
 	/* (non-JavaDoc)
 	 * Method declared in IWizardPage.
 	 */

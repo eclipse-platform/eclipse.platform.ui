@@ -6,23 +6,17 @@ package org.eclipse.compare.internal;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.*;
 
-import org.eclipse.jface.util.*;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.jface.action.IToolBarManager;
-
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.*;
+import org.eclipse.jface.util.*;
 
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.part.EditorPart;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.*;
 
 import org.eclipse.compare.*;
 
@@ -36,6 +30,7 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 	public final static String CONFIRM_SAVE_PROPERTY= "org.eclipse.compare.internal.CONFIRM_SAVE_PROPERTY"; //$NON-NLS-1$
 	
 	private IActionBars fActionBars;
+	private IStatusLine fStatusLine;
 	
 	
 	public CompareEditor() {
@@ -65,14 +60,22 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 			((IPropertyChangeNotifier)input).addPropertyChangeListener(this);
 	}
 
-	public void setActionBars(IActionBars actionBars) {
-		fActionBars= actionBars;
-	}
-	
 	public IActionBars getActionBars() {
 		return fActionBars;
 	}
 	
+	public void setActionBars(IActionBars actionBars) {
+		fActionBars= actionBars;
+	}
+	
+	public IStatusLine getStatusLine() {
+		return fStatusLine;
+	}
+	
+	public void setStatusLine(IStatusLine statusLine) {
+		fStatusLine= statusLine;
+	}
+
 	/*
 	 * @see IDesktopPart#createPartControl(Composite)
 	 */
@@ -132,15 +135,6 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 		
 		final IEditorInput input= getEditorInput();
 		
-		// flush changes in any dirty viewer
-		Object adapter= input.getAdapter(CompareNavigator.class);
-		if (adapter instanceof CompareNavigator) {
-			CompareViewerSwitchingPane[] panes= ((CompareNavigator) adapter).getPanes();
-			for (int i= panes.length-1; i >= 0; i--)
-				if (panes[i] != null)
-					panes[i].setInput(null);
-		}
-		
 		WorkspaceModifyOperation operation= new WorkspaceModifyOperation() {
 			public void execute(IProgressMonitor pm) throws CoreException {
 				if (input instanceof CompareEditorInput)
@@ -178,22 +172,6 @@ public class CompareEditor extends EditorPart implements IPropertyChangeListener
 	public void propertyChange(PropertyChangeEvent event) {
 		if (isDirty())
 			firePropertyChange(PROP_DIRTY);
-	}
-		
-	public static IActionBars findActionBars(Control c) {
-		while (c != null) {
-			Object data= c.getData();
-			if (data instanceof CompareEditor)
-				return ((CompareEditor)data).getActionBars();
-				
-			// PR 1GDVZV7: ITPVCM:WIN98 - CTRL + C does not work in Java source compare
-			if (data instanceof IViewPart)
-				return ((IViewPart)data).getViewSite().getActionBars();
-			// end PR 1GDVZV7
-			
-			c= c.getParent();
-		}
-		return null;
 	}
 }
 

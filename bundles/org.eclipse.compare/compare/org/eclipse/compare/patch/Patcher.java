@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.*;
  */
 public class Patcher {
 	
-	private static final String DEV_NULL= "/dev/null";
+	private static final String DEV_NULL= "/dev/null"; //$NON-NLS-1$
 
 	// diff formats
 	private static final int CONTEXT= 0;
@@ -26,9 +26,9 @@ public class Patcher {
 	
 	// we recognize the following date/time formats
 	private static DateFormat[] DATE_FORMATS= new DateFormat[] {
-		new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy"),
-		new SimpleDateFormat("yyyy/MM/dd kk:mm:ss"),
-		new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy", Locale.US)
+		new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy"), //$NON-NLS-1$
+		new SimpleDateFormat("yyyy/MM/dd kk:mm:ss"), //$NON-NLS-1$
+		new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy", Locale.US) //$NON-NLS-1$
 	};
 		
 	private String fName;
@@ -78,6 +78,10 @@ public class Patcher {
 		return false;
 	}
 	
+	int getStripPrefixSegments() {
+		return fStripPrefixSegments;
+	}
+	
 	/**
 	 * Returns <code>true</code> if new value differs from old.
 	 */
@@ -122,20 +126,20 @@ public class Patcher {
 				continue;	// too short
 								
 			// remember some infos
-			if (line.startsWith("Index: ")) {
+			if (line.startsWith("Index: ")) { //$NON-NLS-1$
 				fileName= line.substring(7).trim();
 				continue;
 			}
-			if (line.startsWith("diff")) {
+			if (line.startsWith("diff")) { //$NON-NLS-1$
 				diffArgs= line.substring(4).trim();
 				continue;
 			}
 
-			if (line.startsWith("--- ")) {
+			if (line.startsWith("--- ")) { //$NON-NLS-1$
 				line= readUnifiedDiff(diffs, lr, line, diffArgs, fileName);
 				diffArgs= fileName= null;
 				reread= true;
-			} else if (line.startsWith("*** ")) {
+			} else if (line.startsWith("*** ")) { //$NON-NLS-1$
 				line= readContextDiff(diffs, lr, line, diffArgs, fileName);
 				diffArgs= fileName= null;
 				reread= true;
@@ -156,7 +160,7 @@ public class Patcher {
 
 		// read info about new file
 		line= reader.readLine();
-		if (line == null || !line.startsWith("+++ "))
+		if (line == null || !line.startsWith("+++ ")) //$NON-NLS-1$
 			return line;
 			
 		String[] newArgs= split(line.substring(4));
@@ -177,51 +181,58 @@ public class Patcher {
 				if (line == null)
 					return null;
 					
-				if (line.length() > 0) {
-					char c= line.charAt(0);
-					switch (c) {
-					case '@':
-						if (line.startsWith("@@ ")) {
-							// flush old hunk
-							if (lines.size() > 0) {
-								new Hunk(diff, oldRange, newRange, lines);
-								lines.clear();
-							}
-									
-							// format: @@ -oldStart,oldLength +newStart,newLength @@
-							extractPair(line, '-', oldRange);
-							extractPair(line, '+', newRange);
-							continue;
+				if (reader.lineContentLength(line) == 0) {
+					lines.add(' ' + line);
+					continue;
+				}
+				
+				char c= line.charAt(0);
+				switch (c) {
+				case '@':
+					if (line.startsWith("@@ ")) { //$NON-NLS-1$
+						// flush old hunk
+						if (lines.size() > 0) {
+							new Hunk(diff, oldRange, newRange, lines);
+							lines.clear();
 						}
-						break;
-					case ' ':
-					case '+':
-					case '-':
-						lines.add(line);
+								
+						// format: @@ -oldStart,oldLength +newStart,newLength @@
+						extractPair(line, '-', oldRange);
+						extractPair(line, '+', newRange);
 						continue;
-					case '\\':
-						if (line.startsWith("No newline at end of file", 2)) {
-							int lastIndex= lines.size();
-							if (lastIndex > 0) {
-								line= (String) lines.get(lastIndex-1);
-								int end= line.length()-1;
-								char lc= line.charAt(end);
-								if (lc == '\n') {
-									end--;
-									if (end > 0 && line.charAt(end-1) == '\r')
-										end--;
-								} else if (lc == '\r') {
-									end--;
-								}
-								line= line.substring(0, end);
-								lines.set(lastIndex-1, line);
-							}
-							continue;
-						}
-						break;
-					default:
-						break;
 					}
+					break;
+				case ' ':
+				case '+':
+				case '-':
+					lines.add(line);
+					continue;
+				case '\\':
+					if (line.startsWith("No newline at end of file", 2)) { //$NON-NLS-1$
+						int lastIndex= lines.size();
+						if (lastIndex > 0) {
+							line= (String) lines.get(lastIndex-1);
+							int end= line.length()-1;
+							char lc= line.charAt(end);
+							if (lc == '\n') {
+								end--;
+								if (end > 0 && line.charAt(end-1) == '\r')
+									end--;
+							} else if (lc == '\r') {
+								end--;
+							}
+							line= line.substring(0, end);
+							lines.set(lastIndex-1, line);
+						}
+						continue;
+					}
+					break;
+				default:
+					int a1= c, a2= 0;
+					if (line.length() > 1)
+						a2= line.charAt(1);
+					System.out.println("char: " + a1 + " " + a2);
+					break;
 				}
 				return line;
 			}
@@ -241,7 +252,7 @@ public class Patcher {
 		
 		// read info about new file
 		line= reader.readLine();
-		if (line == null || !line.startsWith("--- "))
+		if (line == null || !line.startsWith("--- ")) //$NON-NLS-1$
 			return line;
 		
 		String[] newArgs= split(line.substring(4));
@@ -270,7 +281,7 @@ public class Patcher {
 				if (l > 1) {
 					switch (line.charAt(0)) {
 					case '*':	
-						if (line.startsWith("***************")) {	// new hunk
+						if (line.startsWith("***************")) {	// new hunk //$NON-NLS-1$
 							// flush old hunk
 							if (oldLines.size() > 0 || newLines.size() > 0) {
 								new Hunk(diff, oldRange, newRange, unifyLines(oldLines, newLines));
@@ -279,7 +290,7 @@ public class Patcher {
 							}
 							continue;
 						}
-						if (line.startsWith("*** ")) {	// old range
+						if (line.startsWith("*** ")) {	// old range //$NON-NLS-1$
 							// format: *** oldStart,oldEnd ***
 							extractPair(line, ' ', oldRange);
 							oldRange[1]= oldRange[1]-oldRange[0]+1;
@@ -300,7 +311,7 @@ public class Patcher {
 							lines.add(line);
 							continue;
 						}
-						if (line.startsWith("--- ")) {	// new range
+						if (line.startsWith("--- ")) {	// new range //$NON-NLS-1$
 							// format: *** newStart,newEnd ***
 							extractPair(line, ' ', newRange);
 							newRange[1]= newRange[1]-newRange[0]+1;
@@ -404,7 +415,7 @@ public class Patcher {
 			// context lines
 			if (oc == ' ' && nc == ' ') {
 				do {
-					Assert.isTrue(o.equals(n), "non matching context lines");
+					Assert.isTrue(o.equals(n), "non matching context lines"); //$NON-NLS-1$
 					result.add(' ' + o.substring(2));
 					oi++;
 					ni++;
@@ -438,7 +449,7 @@ public class Patcher {
 				continue;
 			}
 			
-			Assert.isTrue(false, "unexpected char <" + oc + "> <" + nc + ">");
+			Assert.isTrue(false, "unexpected char <" + oc + "> <" + nc + ">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		
 		return result;
@@ -450,7 +461,7 @@ public class Patcher {
 	 */ 
 	private String[] split(String line) {
 		List l= new ArrayList();
-		StringTokenizer st= new StringTokenizer(line, "\t");
+		StringTokenizer st= new StringTokenizer(line, "\t"); //$NON-NLS-1$
 		while (st.hasMoreElements()) {
 			String token= st.nextToken().trim();
 			if (token.length() > 0)
@@ -663,7 +674,7 @@ public class Patcher {
 			switch (type) {
 			case ' ':	// context lines
 				while (true) {
-					Assert.isTrue(pos < lines.size(), "3");
+					Assert.isTrue(pos < lines.size(), "3"); //$NON-NLS-1$
 					if (linesMatch(line, (String) lines.get(pos))) {
 						pos++;
 						break;
@@ -673,7 +684,7 @@ public class Patcher {
 				break;
 			case '-':	// deleted lines
 				while (true) {
-					Assert.isTrue(pos < lines.size(), "3");
+					Assert.isTrue(pos < lines.size(), "3"); //$NON-NLS-1$
 					if (linesMatch(line, (String) lines.get(pos))) {
 						break;
 					}

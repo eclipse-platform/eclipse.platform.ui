@@ -182,6 +182,8 @@ import org.eclipse.compare.structuremergeviewer.*;
 	 *	Create the group for setting various patch options
 	 */
 	private void buildPatchOptionsGroup(Composite parent) {
+				
+		final Patcher patcher= fPatchWizard.getPatcher();
 		
 		Group group= new Group(parent, SWT.NONE);
 		group.setText("Patch Options");
@@ -194,8 +196,10 @@ import org.eclipse.compare.structuremergeviewer.*;
 		new Label(group, SWT.NONE).setText("Ignore leading path name segments:");
 
 		fStripPrefixSegments= new Combo(group, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.SIMPLE);
-		fStripPrefixSegments.add("0");
-		fStripPrefixSegments.setText("0");
+		int prefixCnt= patcher.getStripPrefixSegments();
+		String prefix= Integer.toString(prefixCnt);
+		fStripPrefixSegments.add(prefix);
+		fStripPrefixSegments.setText(prefix);
 		
 		addSpacer(group);
 		
@@ -217,7 +221,6 @@ import org.eclipse.compare.structuremergeviewer.*;
 		
 		// register listeners
 		
-		final Patcher patcher= fPatchWizard.getPatcher();
 			
 		if (fStripPrefixSegments != null) 
 			fStripPrefixSegments.addSelectionListener(
@@ -246,7 +249,7 @@ import org.eclipse.compare.structuremergeviewer.*;
 			}
 		);
 	}
-	
+		
 	ICompareInput createInput(Hunk hunk) {
 		
 		String[] lines= hunk.fLines;
@@ -326,8 +329,8 @@ import org.eclipse.compare.structuremergeviewer.*;
 		if (target instanceof IFile) {
 			IFile file= (IFile) target;
 			IPath path2= file.getFullPath().removeFirstSegments(1);
-			System.out.println("target: " + path2.toOSString());
-			System.out.println("  path: " + path.toOSString());
+			//System.out.println("target: " + path2.toOSString());
+			//System.out.println("  path: " + path.toOSString());
 			if (path.equals(path2))
 				return file;
 //			String name= file.getName();

@@ -72,7 +72,7 @@ import org.eclipse.jface.util.Assert;
 		sb.append(Integer.toString(fOldStart));
 		sb.append(',');
 		sb.append(Integer.toString(fOldLength));
-		sb.append(" -> ");
+		sb.append(" -> "); //$NON-NLS-1$
 		sb.append(Integer.toString(fNewStart));
 		sb.append(',');
 		sb.append(Integer.toString(fNewLength));

@@ -68,6 +68,7 @@ public class EditionAction implements IActionDelegate {
 	private ISelection fSelection;
 	private String fBundleName;
 	private boolean fReplaceMode;
+	protected boolean fPrevious= false;
 	
 	EditionAction(boolean replaceMode, String bundleName) {
 		fReplaceMode= replaceMode;
@@ -133,10 +134,16 @@ public class EditionAction implements IActionDelegate {
 			editions[i+1]= new HistoryItem(base, states[i]);
 
 		EditionSelectionDialog d= new EditionSelectionDialog(parentShell, bundle);
-		d.setHideIdenticalEntries(false);
+		//d.setHideIdenticalEntries(false);
 		
 		if (fReplaceMode) {
-			final ITypedElement ti= d.selectEdition(target, editions, null);		
+			
+			ITypedElement ti= null;
+			if (fPrevious)
+				ti= d.selectPreviousEdition(target, editions, null);
+			else
+				ti= d.selectEdition(target, editions, null);
+			
 			if (ti instanceof IStreamContentAccessor) {
 				IStreamContentAccessor sa= (IStreamContentAccessor)ti;
 				try {

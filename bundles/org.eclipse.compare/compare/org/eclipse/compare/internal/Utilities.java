@@ -26,12 +26,45 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewPart;
+
 import org.eclipse.compare.CompareConfiguration;
 
 /**
  * Convenience and utility methods.
  */
 public class Utilities {
+
+	public static IStatusLine findStatusLine(Control c) {
+		while (c != null) {
+			Object data= c.getData();
+			if (data instanceof CompareEditor)
+				return ((CompareEditor)data).getStatusLine();
+				
+			//if (data instanceof IViewPart)
+			//	return ((IViewPart)data).getViewSite().getStatusLine();
+			
+			c= c.getParent();
+		}
+		return null;
+	}
+
+	public static IActionBars findActionBars(Control c) {
+		while (c != null) {
+			Object data= c.getData();
+			if (data instanceof CompareEditor)
+				return ((CompareEditor)data).getActionBars();
+				
+			// PR 1GDVZV7: ITPVCM:WIN98 - CTRL + C does not work in Java source compare
+			if (data instanceof IViewPart)
+				return ((IViewPart)data).getViewSite().getActionBars();
+			// end PR 1GDVZV7
+			
+			c= c.getParent();
+		}
+		return null;
+	}
 
 	public static void setEnableComposite(Composite composite, boolean enable) {
 		Control[] children= composite.getChildren();

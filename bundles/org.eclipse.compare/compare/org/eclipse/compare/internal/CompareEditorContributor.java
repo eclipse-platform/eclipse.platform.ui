@@ -6,8 +6,9 @@ package org.eclipse.compare.internal;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.IStatusLineManager;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorInput;
@@ -24,7 +25,21 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 	private IgnoreWhiteSpaceAction fIgnoreWhitespace;
 	private NavigationAction fNext;
 	private NavigationAction fPrevious;
-	//private ShowPseudoConflicts fShowPseudoConflicts;
+//	private StatusLineContributionItem fStatusLineContributionItem;
+	private IStatusLine fStatusLine=
+		new IStatusLine() {
+			public void setStatus(String key, String message) {
+				
+				if ("Main".equals(key)) {
+					IStatusLineManager slm= getActionBars().getStatusLineManager();
+					if (slm != null)
+						slm.setMessage(message);
+//				} else {
+//					if (fStatusLineContributionItem != null)
+//						fStatusLineContributionItem.setText(message);
+				}
+			}
+		};
 
 
 	public CompareEditorContributor() {
@@ -32,39 +47,51 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 		fIgnoreWhitespace= new IgnoreWhiteSpaceAction(bundle, null);
 		fNext= new NavigationAction(bundle, true);
 		fPrevious= new NavigationAction(bundle, false);
-		//fShowPseudoConflicts= new ShowPseudoConflicts(bundle, null);
 	}
 
+	/*
+	 * @see EditorActionBarContributor#contributeToToolBar(IToolBarManager)
+	 */
 	public void contributeToToolBar(IToolBarManager tbm) {
 		tbm.add(new Separator());
 		tbm.add(fIgnoreWhitespace);
 		tbm.add(fNext);
 		tbm.add(fPrevious);
-		//tbm.add(fShowPseudoConflicts);
+	}
+	
+	/*
+	 * @see EditorActionBarContributor#contributeToStatusLine(IStatusLineManager)
+	 */
+	public void contributeToStatusLine(IStatusLineManager slm) {
+		super.contributeToStatusLine(slm);
+//		if (fStatusLineContributionItem == null)
+//			fStatusLineContributionItem= new StatusLineContributionItem("ID");
+//		slm.add(fStatusLineContributionItem);
 	}
 
 	public void setActiveEditor(IEditorPart targetEditor) {
 				
-		if (fActiveEditorPart != targetEditor) {
-			fActiveEditorPart= targetEditor;
+		if (fActiveEditorPart == targetEditor)
+			return;
 			
-			if (fActiveEditorPart != null) {
-				IEditorInput input= fActiveEditorPart.getEditorInput();
-				if (input instanceof CompareEditorInput) {
-					CompareEditorInput compareInput= (CompareEditorInput) input;
-					fNext.setCompareEditorInput(compareInput);
-					fPrevious.setCompareEditorInput(compareInput);
-				}
+		fActiveEditorPart= targetEditor;
+		
+		if (fActiveEditorPart != null) {
+			IEditorInput input= fActiveEditorPart.getEditorInput();
+			if (input instanceof CompareEditorInput) {
+				CompareEditorInput compareInput= (CompareEditorInput) input;
+				fNext.setCompareEditorInput(compareInput);
+				fPrevious.setCompareEditorInput(compareInput);
 			}
-				
-			if (targetEditor instanceof CompareEditor) {
-				CompareEditor editor= (CompareEditor) targetEditor;
-				editor.setActionBars(getActionBars());
+		}
 			
-				CompareConfiguration cc= editor.getCompareConfiguration();
-				fIgnoreWhitespace.setCompareConfiguration(cc);
-				//fShowPseudoConflicts.setCompareConfiguration(cc);			
-			}
+		if (targetEditor instanceof CompareEditor) {
+			CompareEditor editor= (CompareEditor) targetEditor;
+			editor.setActionBars(getActionBars());
+			editor.setStatusLine(fStatusLine);
+		
+			CompareConfiguration cc= editor.getCompareConfiguration();
+			fIgnoreWhitespace.setCompareConfiguration(cc);
 		}
 	}
 }

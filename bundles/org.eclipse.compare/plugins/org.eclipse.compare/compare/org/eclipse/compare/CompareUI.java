@@ -175,5 +175,13 @@ public final class CompareUI {
 		
 		return CompareUIPlugin.findContentViewer(oldViewer, input, parent, configuration);
 	}
+		
+	public static void addStructureViewerAlias(String type, String alias) {
+		CompareUIPlugin.addStructureViewerAlias(type, alias);
+	}
+	
+	public static void removeStructureViewerAlias(String type, String alias) {
+		CompareUIPlugin.removeStructureViewerAlias(type, alias);
+	}
 }
 

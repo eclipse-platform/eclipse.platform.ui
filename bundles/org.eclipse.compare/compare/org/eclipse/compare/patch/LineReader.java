@@ -82,6 +82,23 @@ import java.util.*;
 		}
 		return null;
 	}
+	/**
+	 * Returns the number of characters in the given string without
+	 * counting a trailing line separator.
+	 */
+	/* package */ int lineContentLength(String line) {
+		if (line == null)
+			return 0;
+		int length= line.length();
+		for (int i= length-1; i >= 0; i--) {
+			char c= line.charAt(i);
+			if (c =='\n' || c == '\r')
+				length--;
+			else
+				break;
+		}
+		return length;
+	}
 	
 	//---- private
 	

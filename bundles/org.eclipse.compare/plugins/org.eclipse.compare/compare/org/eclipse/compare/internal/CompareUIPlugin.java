@@ -63,6 +63,8 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	
 	private static final String COMPARE_EDITOR= PLUGIN_ID + ".CompareEditor"; //$NON-NLS-1$
 	
+	private static final String STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME= "StructureViewerAliases";
+	
 	/** Maps type to icons */
 	private static Map fgImages= new Hashtable(10);
 	/** Maps type to ImageDescriptors */
@@ -72,6 +74,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	
 	private static Map fgStructureCreators= new Hashtable(10);
 	private static Map fgStructureViewerDescriptors= new Hashtable(10);
+	private static Map fgStructureViewerAliases= new Hashtable(10);
 	private static Map fgContentViewerDescriptors= new Hashtable(10);
 	private static Map fgContentMergeViewerDescriptors= new Hashtable(10);
 	
@@ -100,6 +103,8 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		fgResourceBundle= descriptor.getResourceBundle();
 		
 		registerExtensions();
+		
+		initPreferenceStore();
 	}
 	
 	/**
@@ -489,7 +494,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			fgStructureViewerDescriptors.put(normalizeCase(extension), descriptor);
 		}
 	}
-		
+	
 	/**
 	 * Registers the given content merge viewer descriptor for one or more types.
 	 *
@@ -544,6 +549,11 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		type= normalizeCase(type);
 			
 		IViewerDescriptor vd= (IViewerDescriptor) fgStructureViewerDescriptors.get(type);
+		if (vd == null) {
+			String alias= (String) fgStructureViewerAliases.get(type);
+			if (alias != null)
+				vd= (IViewerDescriptor) fgStructureViewerDescriptors.get(alias);
+		}
 		if (vd != null)
 			return vd.createViewer(oldViewer, parent, configuration);
 			
@@ -727,5 +737,67 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			return s.toUpperCase();
 		return s;
 	}
-}
+	
+	//---- alias mgmt
+	
+	private void initPreferenceStore() {
+		//System.out.println("initPreferenceStore");
+		IPreferenceStore ps= getPreferenceStore();
+		if (ps != null) {
+			String aliases= ps.getString(STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME);
+			//System.out.println("  <" + aliases + ">");
+			if (aliases != null && aliases.length() > 0) {
+				StringTokenizer st= new StringTokenizer(aliases, " ");
+				while (st.hasMoreTokens()) {
+					String pair= st.nextToken();
+					int pos= pair.indexOf('.');
+					if (pos > 0) {
+						String key= pair.substring(0, pos);
+						String alias= pair.substring(pos+1);
+						fgStructureViewerAliases.put(key, alias);
+						//System.out.println("<" + key + "><" + alias + ">");
+					}
+				}
+			}
+		}		
+	}
+	
+	/**
+	 * Converts the aliases into a single string before they are stored
+	 * in the preference store.
+	 * The format is:
+	 * <key> '.' <alias> ' ' <key> '.' <alias> ...
+	 */
+	protected void savePreferenceStore() {
+		//System.out.println("savePreferenceStore");
+		IPreferenceStore ps= getPreferenceStore();
+		if (ps != null) {
+			StringBuffer sb= new StringBuffer();
+			Iterator iter= fgStructureViewerAliases.keySet().iterator();
+			while (iter.hasNext()) {
+				String key= (String) iter.next();
+				String alias= (String) fgStructureViewerAliases.get(key);
+				sb.append(key);
+				sb.append('.');
+				sb.append(alias);
+				sb.append(' ');
+			}
+			//System.out.println("  <" + sb.toString() + ">");
+			ps.setValue(STRUCTUREVIEWER_ALIASES_PREFERENCE_NAME, sb.toString());
+		}
+		super.savePreferenceStore();
+	}
 
+	public static void addStructureViewerAlias(String type, String alias) {
+		//System.out.println("addStructureViewerAlias: " + type + " " + alias);
+		fgStructureViewerAliases.put(normalizeCase(alias), normalizeCase(type));
+	}
+	
+	public static void removeStructureViewerAlias(String type, String alias) {
+		//System.out.println("removeStructureViewerAlias: " + type + " " + alias);
+		String a= normalizeCase(alias);
+		String oldType= (String) fgStructureViewerAliases.get(a);
+		if (oldType != null && oldType.equals(type))
+			fgStructureViewerAliases.remove(a);
+	}
+}

@@ -155,8 +155,8 @@ public class StructureDiffViewer extends DiffTreeViewer {
 		if (input instanceof ICompareInput) {
 			compareInputChanged((ICompareInput) input);
 			diff();
-			//expandToLevel(3);
-			navigate(true);
+			if (input != oldInput)
+				navigate(true);
 		}
 	}
 	

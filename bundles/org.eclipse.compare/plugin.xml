@@ -112,6 +112,14 @@
 				enablesFor="1"
 				class="org.eclipse.compare.internal.ReplaceWithEditionAction">
 			</action>
+			<action
+				id="replaceWithPreviousFromHistory"
+				label="%ReplaceWithPreviousFromHistoryAction.label"
+				tooltip="%ReplaceWithPreviousFromHistoryAction.tooltip"
+				menubarPath="replaceWithMenu/replaceWithGroup"
+				enablesFor="1"
+				class="org.eclipse.compare.internal.ReplaceWithPreviousEditionAction">
+			</action>
 		</objectContribution>
 		
 		<objectContribution
@@ -144,7 +152,7 @@
 	
 	<extension point="org.eclipse.compare.contentMergeViewers">
 		<viewer
-			extensions="class,exe,dll,binary"
+			extensions="class,exe,dll,binary,zip,jar"
 			class="org.eclipse.compare.internal.BinaryCompareViewerCreator">
 		</viewer>
 		<viewer

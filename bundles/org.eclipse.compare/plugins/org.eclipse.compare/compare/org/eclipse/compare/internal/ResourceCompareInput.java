@@ -182,6 +182,7 @@ class ResourceCompareInput extends CompareEditorInput {
 	}
 		
 	public void saveChanges(IProgressMonitor pm) throws CoreException {
+		super.saveChanges(pm);
 		if (fRoot instanceof DiffNode) {
 			try {
 				commit(pm, (DiffNode) fRoot);

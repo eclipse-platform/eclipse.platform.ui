@@ -227,6 +227,76 @@ public class EditionSelectionDialog extends Dialog {
 	}
 	
 	/**
+	 * Select the previous edition.
+	 *
+	 * @param target the input object against which the editions are compared; must not be <code>null</code>
+	 * @param editions the list of editions (element type: <code>ITypedElement</code>s)
+	 * @param path If <code>null</code> dialog shows full input; if non <code>null</code> it extracts a subsection
+	 * @return returns the selected edition or <code>null</code> if dialog was cancelled.
+	 * The returned <code>ITypedElement</code> is one of the original editions
+	 * if <code>path</code> was <code>null</code>; otherwise
+	 * it is an <code>ITypedElement</code> returned from <code>IStructureCreator.locate(path, item)</code>
+	 */
+	public ITypedElement selectPreviousEdition(final ITypedElement target, ITypedElement[] inputEditions, Object ppath) {
+		Assert.isNotNull(target);
+		fTargetPair= new Pair(target);
+		
+		// sort input editions
+		final int count= inputEditions.length;
+		final IModificationDate[] editions= new IModificationDate[count];
+		for (int i= 0; i < count; i++)
+			editions[i]= (IModificationDate) inputEditions[i];
+		if (count > 1)
+			internalSort(editions, 0, count-1);
+			
+		// find StructureCreator if ppath is not null
+		IStructureCreator structureCreator= null;
+		if (ppath != null) {
+			String type= target.getType();
+			IStructureCreatorDescriptor scd= CompareUIPlugin.getStructureCreator(type);
+			if (scd != null)
+				structureCreator= scd.createStructureCreator();
+		}
+
+		if (fAddMode) {
+			// does not work in add mode
+			return null;
+		}
+			
+		if (structureCreator != null) {
+			Object item= structureCreator.locate(ppath, target);
+			if (item instanceof ITypedElement)
+				fTargetPair= new Pair(target, (ITypedElement) item, structureCreator);
+			else
+				ppath= null;	// couldn't extract item because of error
+		}
+					
+		// from front (newest) to back (oldest)
+		for (int i= 0; i < count; i++) {
+				
+			ITypedElement edition= (ITypedElement) editions[i];
+			Pair pair= null;
+			
+			if (structureCreator != null && ppath != null) {
+				// extract sub element from edition
+				Object item= structureCreator.locate(ppath, edition);
+				if (item instanceof ITypedElement) {	// if not empty
+					pair= new Pair(edition, (ITypedElement) item, structureCreator);
+				}
+			} else {
+				pair= new Pair(edition);
+			}
+			
+			if (! fTargetPair.equals(pair)) {
+				return pair.fItem;
+			}
+		}
+		
+		// nothing found
+		return null;
+	}
+	
+	/**
 	 * Presents this modal dialog with the functionality described in the class comment above.
 	 *
 	 * @param target the input object against which the editions are compared; must not be <code>null</code>

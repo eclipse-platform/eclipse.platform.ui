@@ -136,7 +136,11 @@ public class MergeSourceViewer extends SourceViewer
 		
 			region.x-= getDocumentRegionOffset();
 		
-			t.setLineBackground(region.x, region.y, c);
+			try {
+				t.setLineBackground(region.x, region.y, c);
+			} catch (IllegalArgumentException ex) {
+				System.out.println("ill range: " + region.x + " " + region.y);
+			}
 		}
 	}
 	

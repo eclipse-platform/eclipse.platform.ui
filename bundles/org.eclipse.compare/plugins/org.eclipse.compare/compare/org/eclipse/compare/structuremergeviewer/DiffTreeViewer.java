@@ -315,8 +315,10 @@ public class DiffTreeViewer extends TreeViewer {
 		super.inputChanged(in, oldInput);
 		//expandToLevel(2);
 		
-		navigate(true);
-		updateActions();
+		if (in != oldInput) {
+			navigate(true);
+			updateActions();
+		}
 	}
 
 	/**

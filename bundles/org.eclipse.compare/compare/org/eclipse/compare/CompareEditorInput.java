@@ -353,6 +353,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				return null;
 			}
 		};
+		fFocusPane= fStructureInputPane;
 		
 		fStructurePane1= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
@@ -685,12 +686,30 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	/**
 	 * Save any unsaved changes.
 	 * Subclasses must override to save any changes.
-	 * This implementation calls the deprecated method save(IProgressMonitor pm).
+	 * This implementation tries to flush changes in all viewers by
+	 * calling <code>setInput</code> on them.
 	 *
 	 * @param progressMonitor an <code>IProgressMonitor</code> that the implementation of save may use to show progress
 	 */
 	public void saveChanges(IProgressMonitor pm) throws CoreException {
+		
+		// flush changes in any dirty viewer
+		flushViewer(fStructureInputPane);
+		flushViewer(fStructurePane1);
+		flushViewer(fStructurePane2);
+		flushViewer(fContentInputPane);
+
 		save(pm);
+	}
+	
+	private static void flushViewer(CompareViewerSwitchingPane pane) {
+		if (pane != null) {
+			Viewer v= pane.getViewer();
+			if (v != null) {
+				Object input= pane.getInput();
+				v.setInput(input);
+			}
+		}
 	}
 }
 

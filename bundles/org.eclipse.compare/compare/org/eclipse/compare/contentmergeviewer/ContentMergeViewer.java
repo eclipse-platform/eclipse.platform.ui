@@ -489,8 +489,9 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 	 */
 	protected final void inputChanged(Object input, Object oldInput) {
 		
-		if (oldInput instanceof ICompareInput)
-			((ICompareInput)oldInput).removeCompareInputChangeListener(fCompareInputChangeListener);
+		if (input != oldInput)
+			if (oldInput instanceof ICompareInput)
+				((ICompareInput)oldInput).removeCompareInputChangeListener(fCompareInputChangeListener);
 		
 		// before setting the new input we have to save the old
 		if (fLeftSaveAction.isEnabled() || fRightSaveAction.isEnabled()) {
@@ -526,15 +527,17 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 				saveContent(oldInput);
 		}
 			
-		if (input instanceof ICompareInput)
-			((ICompareInput)input).addCompareInputChangeListener(fCompareInputChangeListener);
+		if (input != oldInput)
+			if (input instanceof ICompareInput)
+				((ICompareInput)input).addCompareInputChangeListener(fCompareInputChangeListener);
 		
 		setLeftDirty(false);
 		setRightDirty(false);
 
-		internalRefresh(input);
+		if (input != oldInput)
+			internalRefresh(input);
 	}
-	
+		
 	/* (non Javadoc)
 	 * see Viewer.refresh
 	 */
@@ -543,10 +546,6 @@ public abstract class ContentMergeViewer extends ContentViewer implements IPrope
 	}
 	
 	private void internalRefresh(Object input) {
-		
-		// determine the merge direction
-		//boolean rightEditable= fMergeViewerContentProvider.isRightEditable(input);
-		//boolean leftEditable= fMergeViewerContentProvider.isLeftEditable(input);
 		
 		IMergeViewerContentProvider content= getMergeContentProvider();
 		if (content != null) {
