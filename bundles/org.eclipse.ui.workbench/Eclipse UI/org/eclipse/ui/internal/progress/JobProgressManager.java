@@ -29,7 +29,8 @@ public class JobProgressManager
 	private ArrayList listeners = new ArrayList();
 	private static JobProgressManager singleton;
 	private Map jobs = Collections.synchronizedMap(new HashMap());
-	private Collection filteredJobs = Collections.synchronizedList(new ArrayList());
+	private Collection filteredJobs =
+		Collections.synchronizedList(new ArrayList());
 	boolean debug = false;
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 
@@ -260,13 +261,13 @@ public class JobProgressManager
 	 * @param info
 	 */
 	public void refresh(JobInfo info) {
-		
+
 		//If we never displayed this job then add it instead.
-		if (isFiltered(info.getJob())){
+		if (isFiltered(info.getJob())) {
 			add(info);
 			removeFromFiltered(info.getJob());
 		}
-			Iterator iterator = listeners.iterator();
+		Iterator iterator = listeners.iterator();
 		while (iterator.hasNext()) {
 			IJobProgressManagerListener listener =
 				(IJobProgressManagerListener) iterator.next();
@@ -296,7 +297,7 @@ public class JobProgressManager
 	 */
 	public void remove(JobInfo info) {
 		removeFromFiltered(info.getJob());
-		
+
 		Iterator iterator = listeners.iterator();
 		while (iterator.hasNext()) {
 			IJobProgressManagerListener listener =
@@ -352,19 +353,18 @@ public class JobProgressManager
 	 * Get the jobs currently being displayed.
 	 * @return Object[]
 	 */
-	public synchronized Object[] getJobs() {
-
-		//Move to an array to prevent concurrent modification of the keySet
-		Job[] jobArray = new Job[jobs.size()];
-		
-		jobs.keySet().toArray(jobArray);
-		Collection result = new ArrayList();
-		for(int i = 0; i < jobArray.length; i++){
-			if (isNonDisplayableJob(jobArray[i]))
-				continue;
-			result.add(jobs.get(jobArray[i]));
+	public Object[] getJobs() {
+		synchronized (jobs) {
+			Iterator iterator = jobs.keySet().iterator();
+			Collection result = new ArrayList();
+			while (iterator.hasNext()) {
+				Job next = (Job) iterator.next();
+				if (isNonDisplayableJob(next))
+					continue;
+				result.add(jobs.get(next));
+			}
+			return result.toArray();
 		}
-		return result.toArray();
 	}
 
 	/**
