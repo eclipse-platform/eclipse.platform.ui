@@ -99,7 +99,7 @@ public class JobManager implements IJobManager {
 	/**
 	 * Cancels a job
 	 */
-	protected boolean cancel(Job job) {
+	protected boolean cancel(InternalJob job) {
 		boolean canceled = true;
 		synchronized (lock) {
 			switch (job.getState()) {
@@ -110,7 +110,7 @@ public class JobManager implements IJobManager {
 					sleeping.remove(job);
 					break;
 				case Job.RUNNING:
-					((InternalJob)job).getMonitor().setCanceled(true);
+					job.getMonitor().setCanceled(true);
 					canceled = false;
 					break;
 				case Job.NONE:
@@ -120,8 +120,8 @@ public class JobManager implements IJobManager {
 		}
 		//only notify listeners if the job was waiting or sleeping
 		if (canceled) {
-			((InternalJob) job).setState(Job.NONE);
-			jobListeners.done(job, Status.CANCEL_STATUS);
+			job.setState(Job.NONE);
+			jobListeners.done((Job)job, Status.CANCEL_STATUS);
 		}
 		return canceled;
 	}
@@ -129,10 +129,9 @@ public class JobManager implements IJobManager {
 	 * @see org.eclipse.core.runtime.jobs.IJobManager#cancel(java.lang.String)
 	 */
 	public void cancel(Object family) {
-		synchronized (lock) {
-			for (Iterator it = select(family).iterator(); it.hasNext();) {
-				((Job)it.next()).cancel();
-			}
+		//don't synchronize because cancel calls listeners
+		for (Iterator it = select(family).iterator(); it.hasNext();) {
+			cancel((Job)it.next());
 		}
 	}
 	/**
@@ -419,10 +418,9 @@ public class JobManager implements IJobManager {
 	 * @see IJobManager#sleep(String)
 	 */
 	public void sleep(Object family) {
-		synchronized (lock) {
-			for (Iterator it = select(family).iterator(); it.hasNext();) {
-				((Job)it.next()).sleep();
-			}
+		//don't synchronize because sleep calls listeners
+		for (Iterator it = select(family).iterator(); it.hasNext();) {
+			sleep((InternalJob)it.next());
 		}
 	}
 	/**
@@ -564,10 +562,9 @@ public class JobManager implements IJobManager {
 	 * @see IJobFamily#wakeUp(String)
 	 */
 	public void wakeUp(Object family) {
-		synchronized (lock) {
-			for (Iterator it = select(family).iterator(); it.hasNext();) {
-				((Job)it.next()).wakeUp();
-			}
+		//don't synchronize because wakeUp calls listeners
+		for (Iterator it = select(family).iterator(); it.hasNext();) {
+			wakeUp((InternalJob)it.next());
 		}
 	}
 }
