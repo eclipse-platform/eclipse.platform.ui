@@ -210,6 +210,9 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	final void setMonitor(IProgressMonitor monitor) {
 		this.monitor = monitor;
 	}
+	protected void setName(String name) {
+		this.name = name;
+	}
 	final void setNext(InternalJob entry) {
 		this.next = entry;
 	}
