@@ -73,12 +73,6 @@ public final class PreferenceCommandRegistry
 							memento,
 							Persistence.TAG_ACTIVE_KEY_CONFIGURATION,
 							null));
-				List contextBindingDefinitions =
-					Collections.unmodifiableList(
-						Persistence.readContextBindingDefinitions(
-							memento,
-							Persistence.TAG_CONTEXT_BINDING,
-							null));
 				List categoryDefinitions =
 					Collections.unmodifiableList(
 						Persistence.readCategoryDefinitions(
@@ -90,12 +84,6 @@ public final class PreferenceCommandRegistry
 						Persistence.readCommandDefinitions(
 							memento,
 							Persistence.TAG_COMMAND,
-							null));
-				List imageBindingDefinitions =
-					Collections.unmodifiableList(
-						Persistence.readImageBindingDefinitions(
-							memento,
-							Persistence.TAG_IMAGE_BINDING,
 							null));
 				List keyConfigurationDefinitions =
 					Collections.unmodifiableList(
@@ -135,12 +123,6 @@ public final class PreferenceCommandRegistry
 					commandRegistryChanged = true;
 				}
 
-				if (!imageBindingDefinitions
-					.equals(this.imageBindingDefinitions)) {
-					this.imageBindingDefinitions = imageBindingDefinitions;
-					commandRegistryChanged = true;
-				}
-
 				if (!keyConfigurationDefinitions
 					.equals(this.keyConfigurationDefinitions)) {
 					this.keyConfigurationDefinitions =
@@ -171,10 +153,6 @@ public final class PreferenceCommandRegistry
 			xmlMemento,
 			Persistence.TAG_ACTIVE_KEY_CONFIGURATION,
 			activeKeyConfigurationDefinitions);
-		Persistence.writeContextBindingDefinitions(
-			xmlMemento,
-			Persistence.TAG_CONTEXT_BINDING,
-			contextBindingDefinitions);
 		Persistence.writeCategoryDefinitions(
 			xmlMemento,
 			Persistence.TAG_CATEGORY,
@@ -183,10 +161,6 @@ public final class PreferenceCommandRegistry
 			xmlMemento,
 			Persistence.TAG_COMMAND,
 			commandDefinitions);
-		Persistence.writeImageBindingDefinitions(
-			xmlMemento,
-			Persistence.TAG_IMAGE_BINDING,
-			imageBindingDefinitions);
 		Persistence.writeKeyConfigurationDefinitions(
 			xmlMemento,
 			Persistence.TAG_KEY_CONFIGURATION,

@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -38,7 +37,6 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.commands.CommandEvent;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandListener;
-import org.eclipse.ui.commands.IImageBinding;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.help.WorkbenchHelp;
@@ -797,13 +795,11 @@ public class CommandContributionItem
 
 			// Determine what to do
 			boolean descriptionChanged = true;
-			boolean imageChanged = true;
 			boolean nameChanged = true;
 			boolean enabledChanged = true;
 			boolean checkedChanged = true;
 			if (event != null) {
 				descriptionChanged = event.hasDescriptionChanged();
-				imageChanged = event.haveImageBindingsChanged();
 				nameChanged = event.hasNameChanged();
 				// TODO Enable change notification
 				//enabledChanged = event.hasEnabledChanged();
@@ -820,9 +816,6 @@ public class CommandContributionItem
 				// Update the widget as a ToolItem
 				if (widget instanceof ToolItem) {
 					ToolItem ti = (ToolItem) widget;
-
-					if (imageChanged)
-						updateImages(true);
 
 					if (descriptionChanged)
 						ti.setToolTipText(currentCommand.getDescription());
@@ -896,9 +889,6 @@ public class CommandContributionItem
 							mi.setText(name + '\t' + acceleratorText);
 					}
 
-					if (imageChanged)
-						updateImages(false);
-
 					if (enabledChanged) {
 						boolean shouldBeEnabled =
 							isEnabled(currentCommand) && isEnabledAllowed();
@@ -921,10 +911,6 @@ public class CommandContributionItem
 				// Update the widget as a button.
 				if (widget instanceof Button) {
 					Button button = (Button) widget;
-
-					if (imageChanged && updateImages(false))
-						nameChanged = false; // don't update text if it has an
-					// image
 
 					if (nameChanged) {
 						String name = currentCommand.getName();
@@ -964,122 +950,5 @@ public class CommandContributionItem
 				// TODO Dispose of the item.
 			}
 		}
-	}
-
-	/**
-	 * Updates the images for this command.
-	 * 
-	 * @param forceImage
-	 *            <code>true</code> if some form of image is compulsory, and
-	 *            <code>false</code> if it is acceptable for this item to
-	 *            have no image
-	 * @return <code>true</code> if there are images for this command, <code>false</code>
-	 *         if not
-	 */
-	private boolean updateImages(boolean forceImage) {
-		ImageCache cache = getImageCache();
-		String normalImageURI = null;
-		String disabledImageURI = null;
-		String hoverImageURI = null;
-
-		// Extract the various image bindings from the command.
-		Iterator imageBindingItr = getCommand().getImageBindings().iterator();
-		while (imageBindingItr.hasNext()) {
-			IImageBinding imageBinding = (IImageBinding) imageBindingItr.next();
-			String imageStyle = imageBinding.getImageStyle();
-			if (imageStyle.equals("normal")) { //$NON-NLS-1$
-				normalImageURI = imageBinding.getImageUri();
-			} else if (imageStyle.equals("disabled")) { //$NON-NLS-1$
-				disabledImageURI = imageBinding.getImageUri();
-			} else if (imageStyle.equals("hover")) { //$NON-NLS-1$
-				hoverImageURI = imageBinding.getImageUri();
-			}
-		}
-
-		if (widget instanceof ToolItem) {
-			if (getUseColourIconsInToolbars()) {
-				Image image = cache.getImage(hoverImageURI);
-				if (image == null) {
-					image = cache.getImage(normalImageURI);
-				}
-				Image disabledImage = cache.getImage(disabledImageURI);
-
-				// Make sure there is a valid image.
-				if ((image == null) && forceImage) {
-					image = cache.getMissingImage();
-				}
-
-				// performance: more efficient in SWT to set disabled and hot
-				// image before regular image
-				if (disabledImage != null) {
-					// Set the disabled image if we were able to create one.
-					// Assumes that SWT.ToolItem will use platform's default
-					// behavior to show item when it is disabled and a disabled
-					// image has not been set.
-					 ((ToolItem) widget).setDisabledImage(disabledImage);
-				}
-				((ToolItem) widget).setImage(image);
-
-				return (image != null);
-
-			} else {
-				Image image = cache.getImage(normalImageURI);
-				Image hoverImage = cache.getImage(hoverImageURI);
-				Image disabledImage = cache.getImage(disabledImageURI);
-
-				// If there is no regular image, but there is a hover image,
-				// convert the hover image to gray and use it as the regular
-				// image.
-				if ((image == null) && (hoverImage != null)) {
-					image = cache.getGrayImage(hoverImageURI);
-				} else {
-					// If there is no hover image, use the regular image as the
-					// hover image,
-					// and convert the regular image to gray
-					if ((hoverImage == null) && (image != null)) {
-						hoverImage = image;
-						image = cache.getGrayImage(normalImageURI);
-					}
-				}
-
-				// Make sure there is a valid image.
-				if ((hoverImage == null) && (image == null) && forceImage) {
-					image = cache.getMissingImage();
-				}
-
-				// performance: more efficient in SWT to set disabled and hot
-				// image before regular image
-				if (disabledImage != null) {
-					// Set the disabled image if we were able to create one.
-					// Assumes that SWT.ToolItem will use platform's default
-					// behavior to show item when it is disabled and a disabled
-					// image has not been set.
-					 ((ToolItem) widget).setDisabledImage(disabledImage);
-				}
-				((ToolItem) widget).setHotImage(hoverImage);
-				((ToolItem) widget).setImage(image);
-
-				return (image != null);
-			}
-
-		} else if ((widget instanceof Item) || (widget instanceof Button)) {
-			// Use hover image if there is one, otherwise use regular image.
-			Image image = cache.getImage(hoverImageURI);
-			if (image == null) {
-				image = cache.getImage(normalImageURI);
-			}
-			// Make sure there is a valid image.
-			if ((image == null) && forceImage) {
-				image = cache.getMissingImage();
-			}
-			if (widget instanceof Item) {
-				((Item) widget).setImage(image);
-			} else if (widget instanceof Button) {
-				((Button) widget).setImage(image);
-			}
-			return image != null;
-		}
-
-		return false;
 	}
 }

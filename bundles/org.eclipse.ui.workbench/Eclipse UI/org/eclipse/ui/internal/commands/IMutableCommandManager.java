@@ -9,16 +9,20 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.ui.commands;
+package org.eclipse.ui.internal.commands;
 
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ui.internal.commands.CommandManagerFactory;
+import org.eclipse.ui.commands.ICommandManager;
 
 /**
+ * <p>
  * An instance of this interface allows clients to manage commands, as defined
- * by the extension point <code>org.eclipse.ui.commands</code>.
+ * by the extension point <code>org.eclipse.ui.commands</code>.  This interface
+ * allows full control over the command manager -- changing the handlers,
+ * contexts, locale or platform to arbitrary values.
+ * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
  * </p>
@@ -29,39 +33,39 @@ import org.eclipse.ui.internal.commands.CommandManagerFactory;
 public interface IMutableCommandManager extends ICommandManager {
    
 	/**
-	 * Sets the set of identifiers to active contexts.
-	 * 
-	 * @param activeContextIds
-	 *            the set of identifiers to active contexts. This set may be
-	 *            empty, but it must not be <code>null</code>. If this set
-	 *            is not empty, it must only contain instances of <code>String</code>.
-	 */
+     * Sets the set of identifiers to active contexts.
+     * 
+     * @param activeContextIds
+     *            the set of identifiers to active contexts. This set may be
+     *            empty, but it must not be <code>null</code>. If this set is
+     *            not empty, it must only contain instances of
+     *            <code>String</code>.
+     */
 	void setActiveContextIds(Set activeContextIds);
     
 	/**
-	 * Sets the active key configuration.
-	 * 
-	 * @param activeKeyConfigurationId
-	 *            the active key configuration. 
-	 * @TODO Must not be <code>null</code>?
-	 */
+     * Sets the active key configuration.
+     * 
+     * @param activeKeyConfigurationId
+     *            the active key configuration; must not be <code>null</code>.
+     */
     void setActiveKeyConfigurationId(String activeKeyConfigurationId);
 
 	/**
-	 * Sets the active locale.
-	 * 
-	 * @param activeLocale
-	 *            the active locale. 
-	 * @TODO Must not be <code>null</code>?
-	 */
+     * Sets the active locale. The locale can be any arbitrary string, but is
+     * typically the locale returned from {@link java.util.Locale#getDefault()}.
+     * 
+     * @param activeLocale
+     *            the active locale; must not be <code>null</code>.
+     */
     void setActiveLocale(String activeLocale);
 
 	/**
-	 * Sets the active platform.
+	 * Sets the active platform.  The locale can be any arbitrary string, but is
+	 * typically the locale returned from {@link org.eclipse.swt.SWT#getPlatform()}.
 	 * 
 	 * @param activePlatform
-	 *            the active platform.
-	 * @TODO Must not be <code>null</code>?
+	 *            the active platform; must not be <code>null</code>.
 	 */
     void setActivePlatform(String activePlatform);
 

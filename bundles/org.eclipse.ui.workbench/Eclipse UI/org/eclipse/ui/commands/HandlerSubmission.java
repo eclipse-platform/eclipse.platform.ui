@@ -12,121 +12,98 @@ package org.eclipse.ui.commands;
 
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchSite;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.util.Util;
 
 /**
- * An instance of this class represents a request to handle a command, under
- * particular conditions.
+ * </p>
+ * An instance of this class represents a request to handle a command. A handler
+ * submission specifies a list of conditions under which it would be appropriate
+ * for a particular command to have a particular handler. These conditions
+ * include things like the active part or the active shell. So, it is possible
+ * to say things like: "when my part is active, please consider calling these
+ * classes when you want to perform a cut, copy or paste".
+ * </p>
+ * <p>
+ * The workbench considers all of the submissions it has received and choses the
+ * ones it views as the best possible match.
+ * </p>
  * <p>
  * This class is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.0
- * @see IWorkbenchCommandSupport
+ * @see org.eclipse.ui.commands.IWorkbenchCommandSupport
  */
 public final class HandlerSubmission implements Comparable {
 
+    /**
+     * A factor used in the hash function.
+     */
     private final static int HASH_FACTOR = 89;
 
+    /**
+     * The seed for the hash function -- computed from this class' name's hash
+     * code.
+     */
     private final static int HASH_INITIAL = HandlerSubmission.class.getName()
             .hashCode();
 
-    private String activePartId;
+    /**
+     * The part identifier for the part that should be active before this
+     * submission can be considered.  This value can be <code>null</code>, which
+     * indicates that it should match any part.
+     */
+    private final String activePartId;
 
-    private Shell activeShell;
+    /**
+     * The shell that must be active before this submission can be considered.
+     * This value can be <code>null</code>, which indicates that it should match
+     * any shell.
+     */
+    private final Shell activeShell;
 
-    private IWorkbenchPartSite activeWorkbenchPartSite;
+    /**
+     * The workbench site that must be active before this submission can be
+     * considered.  This value can be <code>null</code>, which indicates that it
+     * should match an workbench part site.
+     */
+    private final IWorkbenchPartSite activeWorkbenchPartSite;
 
-    private String commandId;
+    /**
+     * The identifier for the command which the submitted handler handles.  This
+     * value cannot be <code>null</code>.
+     */
+    private final String commandId;
 
-    private IHandler handler;
+    /**
+     * The handler being submitted.  This value cannot be <code>null</code>.  
+     */
+    private final IHandler handler;
 
+    /**
+     * A lazily computed cache of the hash code.  This value is computed once on
+     * demand.
+     */
     private transient int hashCode;
 
+    /**
+     * Whether the hash code has been computed yet.
+     */
     private transient boolean hashCodeComputed;
 
-    private Priority priority;
+    /**
+     * The priority for this submission.  In the event of all other factors
+     * being equal, the priority will be considered in an attempt to resolve
+     * conflicts.  This value cannot be <code>null</code>.
+     */
+    private final Priority priority;
 
+    /**
+     * A lazily computed cache of the string representation of this submission.
+     * This value is computed once; before it is computed, it is
+     * <code>null</code>.
+     */
     private transient String string;
-
-    /**
-     * @deprecated to be removed for 3.0
-     * 
-     * @param activeWorkbenchSite
-     * @param activeWorkbenchWindow
-     * @param commandId
-     * @param handler
-     * @param priority
-     */
-    public HandlerSubmission(IWorkbenchSite activeWorkbenchSite,
-            IWorkbenchWindow activeWorkbenchWindow, String commandId,
-            IHandler handler, int priority) {
-        if (commandId == null || handler == null)
-                throw new NullPointerException();
-
-        if (activeWorkbenchSite instanceof IWorkbenchPartSite)
-                this.activeWorkbenchPartSite = (IWorkbenchPartSite) activeWorkbenchSite;
-
-        this.commandId = commandId;
-        this.handler = handler;
-
-        switch (priority) {
-        case 0:
-        case 1:
-            this.priority = Priority.MEDIUM;
-            break;
-        case 2:
-        case 3:
-        case 4:
-            this.priority = Priority.LOW;
-            break;
-        case 5:
-        default:
-            this.priority = Priority.LEGACY;
-            break;
-        }
-    }
-
-    /**
-     * @deprecated to be removed for 3.0
-     * 
-     * @param activeWorkbenchSite
-     * @param commandId
-     * @param handler
-     * @param priority
-     * @param activeShell
-     */
-    public HandlerSubmission(IWorkbenchSite activeWorkbenchSite,
-            String commandId, IHandler handler, int priority, Shell activeShell) {
-        if (commandId == null || handler == null)
-                throw new NullPointerException();
-
-        this.activeShell = activeShell;
-
-        if (activeWorkbenchSite instanceof IWorkbenchPartSite)
-                this.activeWorkbenchPartSite = (IWorkbenchPartSite) activeWorkbenchSite;
-
-        this.commandId = commandId;
-        this.handler = handler;
-
-        switch (priority) {
-        case 0:
-        case 1:
-            this.priority = Priority.MEDIUM;
-            break;
-        case 2:
-        case 3:
-        case 4:
-            this.priority = Priority.LOW;
-            break;
-        case 5:
-        default:
-            this.priority = Priority.LEGACY;
-            break;
-        }
-    }
 
     /**
      * Creates a new instance of this class.
@@ -162,6 +139,9 @@ public final class HandlerSubmission implements Comparable {
         this.priority = priority;
     }
 
+    /**
+     * @see Comparable#compareTo(java.lang.Object)
+     */
     public int compareTo(Object object) {
         HandlerSubmission castedObject = (HandlerSubmission) object;
         int compareTo = Util.compare(activeWorkbenchPartSite,
@@ -251,6 +231,9 @@ public final class HandlerSubmission implements Comparable {
         return priority;
     }
 
+    /**
+     * @see Object#hashCode()
+     */
     public int hashCode() {
         if (!hashCodeComputed) {
             hashCode = HASH_INITIAL;
@@ -267,6 +250,9 @@ public final class HandlerSubmission implements Comparable {
         return hashCode;
     }
 
+    /**
+     * @see Object#toString()
+     */
     public String toString() {
         if (string == null) {
             final StringBuffer stringBuffer = new StringBuffer();

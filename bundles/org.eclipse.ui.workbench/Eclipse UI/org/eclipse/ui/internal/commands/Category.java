@@ -101,7 +101,8 @@ final class Category implements ICategory {
 
 	public String getDescription() throws NotDefinedException {
 		if (!defined)
-			throw new NotDefinedException();
+			throw new NotDefinedException(
+                        "Cannot get the description from an undefined category."); //$NON-NLS-1$
 
 		return description;
 	}
@@ -112,7 +113,8 @@ final class Category implements ICategory {
 
 	public String getName() throws NotDefinedException {
 		if (!defined)
-			throw new NotDefinedException();
+			throw new NotDefinedException(
+                        "Cannot get the name from an undefined category"); //$NON-NLS-1$
 
 		return name;
 	}

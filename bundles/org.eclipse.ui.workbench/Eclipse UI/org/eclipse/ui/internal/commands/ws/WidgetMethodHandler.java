@@ -15,7 +15,7 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.swt.widgets.Control;
@@ -70,7 +70,9 @@ public class WidgetMethodHandler extends AbstractHandler implements
             } catch (IllegalAccessException e) {
                 // The method is protected, so do nothing.
             } catch (InvocationTargetException e) {
-                throw new ExecutionException(e.getTargetException());
+                throw new ExecutionException(
+                        "An exception occurred while executing " //$NON-NLS-1$
+                                + getMethodToExecute(), e.getTargetException());
             }
         }
         
@@ -107,7 +109,7 @@ public class WidgetMethodHandler extends AbstractHandler implements
      *      java.lang.String, java.lang.Object)
      */
     public void setInitializationData(IConfigurationElement config,
-            String propertyName, Object data) throws CoreException {
+            String propertyName, Object data) {
         // The data is really just a string (i.e., the method name).
         methodName = data.toString();
     }

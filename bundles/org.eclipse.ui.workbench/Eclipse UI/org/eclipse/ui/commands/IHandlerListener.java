@@ -18,14 +18,15 @@ package org.eclipse.ui.commands;
  * </p>
  * 
  * @since 3.0
- * @see IHandler#addHandlerListener
- * @see IHandler#removeHandlerListener
+ * @see IHandler#addHandlerListener(IHandlerListener)
+ * @see IHandler#removeHandlerListener(IHandlerListener)
  */
 public interface IHandlerListener {
 
     /**
-     * Notifies that one or more properties of an instance of <code>IHandler</code>
-     * have changed. Specific details are described in the <code>HandlerEvent</code>.
+     * Notifies that one or more properties of an instance of
+     * <code>IHandler</code> have changed. Specific details are described in
+     * the <code>HandlerEvent</code>.
      * 
      * @param handlerEvent
      *            the handler event. Guaranteed not to be <code>null</code>.

@@ -22,30 +22,55 @@ import org.eclipse.ui.internal.util.Util;
  * </p>
  * 
  * @since 3.0
- * @see ICommandListener#commandChanged
+ * @see ICommandListener#commandChanged(CommandEvent)
  */
 public final class CommandEvent {
 
-    private boolean attributeValuesByNameChanged;
+    /**
+     * Whether the attributes of the command have changed.  These are name and
+     * value pairs representing properties of the command.
+     */
+    private final boolean attributeValuesByNameChanged;
 
-    private boolean categoryIdChanged;
+    /**
+     * Whether the category identifier has changed.
+     */
+    private final boolean categoryIdChanged;
 
-    private ICommand command;
+    /**
+     * The command that has changed; this value is never <code>null</code>.
+     */
+    private final ICommand command;
 
-    private boolean contextBindingsChanged;
+    /**
+     * Whether the defined state of the command has changed.
+     */
+    private final boolean definedChanged;
 
-    private boolean definedChanged;
+    /**
+     * Whether the description of the command has changed.
+     */
+    private final boolean descriptionChanged;
 
-    private boolean descriptionChanged;
+    /**
+     * Whether the command has either gained or lost a handler.
+     */
+    private final boolean handledChanged;
 
-    private boolean handledChanged;
+    /**
+     * Whether the key bindings for the command have changed.
+     */
+    private final boolean keySequenceBindingsChanged;
 
-    private boolean imageBindingsChanged;
+    /**
+     * Whether the name of the command has changed.
+     */
+    private final boolean nameChanged;
 
-    private boolean keySequenceBindingsChanged;
-
-    private boolean nameChanged;
-
+    /**
+     * The map of attributes before the change.  This is a map of attribute name
+     * (strings) to values (any object).
+     */
     private Map previousAttributeValuesByName;
 
     /**
@@ -57,18 +82,12 @@ public final class CommandEvent {
      *            true, iff the attributeValuesByName property changed.
      * @param categoryIdChanged
      *            true, iff the categoryId property changed.
-     * @param contextBindingsChanged
-     *            true, iff the contextBindings property changed.
-     * @param definedAttributeNamesChanged
-     *            true, iff the definedAttributeNames property changed.
      * @param definedChanged
      *            true, iff the defined property changed.
      * @param descriptionChanged
      *            true, iff the description property changed.
      * @param handledChanged
      *            true, iff the handled property changed.
-     * @param imageBindingsChanged
-     *            true, iff the imageBindings property changed.
      * @param keySequenceBindingsChanged
      *            true, iff the keySequenceBindings property changed.
      * @param nameChanged
@@ -82,10 +101,10 @@ public final class CommandEvent {
      *            attributeValuesByNameChanged is <code>true</code>.
      */
     public CommandEvent(ICommand command, boolean attributeValuesByNameChanged,
-            boolean categoryIdChanged, boolean contextBindingsChanged,
-            boolean definedChanged, boolean descriptionChanged,
-            boolean handledChanged, boolean imageBindingsChanged, boolean keySequenceBindingsChanged,
-            boolean nameChanged, Map previousAttributeValuesByName) {
+            boolean categoryIdChanged, boolean definedChanged,
+            boolean descriptionChanged, boolean handledChanged,
+            boolean keySequenceBindingsChanged, boolean nameChanged,
+            Map previousAttributeValuesByName) {
         if (command == null) throw new NullPointerException();
 
         if (!attributeValuesByNameChanged
@@ -100,11 +119,9 @@ public final class CommandEvent {
         this.command = command;
         this.attributeValuesByNameChanged = attributeValuesByNameChanged;
         this.categoryIdChanged = categoryIdChanged;
-        this.contextBindingsChanged = contextBindingsChanged;
         this.definedChanged = definedChanged;
         this.descriptionChanged = descriptionChanged;
         this.handledChanged = handledChanged;
-        this.imageBindingsChanged = imageBindingsChanged;
         this.keySequenceBindingsChanged = keySequenceBindingsChanged;
         this.nameChanged = nameChanged;
     }
@@ -186,24 +203,6 @@ public final class CommandEvent {
      */
     public boolean haveAttributeValuesByNameChanged() {
         return attributeValuesByNameChanged;
-    }
-
-    /**
-     * Returns whether or not the contextBindings property changed.
-     * 
-     * @return true, iff the contextBindings property changed.
-     */
-    public boolean haveContextBindingsChanged() {
-        return contextBindingsChanged;
-    }
-
-    /**
-     * Returns whether or not the imageBindings property changed.
-     * 
-     * @return true, iff the imageBindings property changed.
-     */
-    public boolean haveImageBindingsChanged() {
-        return imageBindingsChanged;
     }
 
     /**

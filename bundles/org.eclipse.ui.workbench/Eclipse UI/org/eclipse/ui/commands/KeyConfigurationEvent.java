@@ -19,19 +19,35 @@ package org.eclipse.ui.commands;
  * </p>
  * 
  * @since 3.0
- * @see IKeyConfigurationListener#keyConfigurationChanged
+ * @see IKeyConfigurationListener#keyConfigurationChanged(KeyConfigurationEvent)
  */
 public final class KeyConfigurationEvent {
 
-    private boolean activeChanged;
+    /**
+     * whether the key configuration has become or active or inactive.
+     */
+    private final boolean activeChanged;
 
-    private boolean definedChanged;
+    /**
+     * Whether the key configuration has become defined or undefined.
+     */
+    private final boolean definedChanged;
 
-    private IKeyConfiguration keyConfiguration;
+    /**
+     * The key configuration that has changed; this value is never
+     * <code>null</code>.
+     */
+    private final IKeyConfiguration keyConfiguration;
 
-    private boolean nameChanged;
+    /**
+     * Whether the name of the key configuration has changed.
+     */
+    private final boolean nameChanged;
 
-    private boolean parentIdChanged;
+    /**
+     * Whether the parent identifier has changed.
+     */
+    private final boolean parentIdChanged;
 
     /**
      * Creates a new instance of this class.
@@ -48,8 +64,7 @@ public final class KeyConfigurationEvent {
      *            true, iff the parentId property changed.
      */
     public KeyConfigurationEvent(IKeyConfiguration keyConfiguration,
-            boolean activeChanged, boolean definedChanged,
-            boolean descriptionChanged, boolean nameChanged,
+            boolean activeChanged, boolean definedChanged, boolean nameChanged,
             boolean parentIdChanged) {
         if (keyConfiguration == null) throw new NullPointerException();
 

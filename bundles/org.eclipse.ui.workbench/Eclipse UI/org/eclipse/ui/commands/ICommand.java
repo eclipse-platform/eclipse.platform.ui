@@ -26,21 +26,19 @@ import java.util.Map;
  * </p>
  * <p>
  * The handle-based nature of this API allows it to work well with runtime
- * plugin activation and deactivation, which causes dynamic changes to the
- * plugin registry, and therefore, potentially, dynamic changes to the set of
- * command definitions.
+ * plugin activation and deactivation. If a key configuration is defined, that
+ * means that its corresponding plug-in is active. If the plug-in is then
+ * deactivated, the configuration will still exist but it will be undefined.
+ * An attempts to use an undefined key configuration will result in a
+ * <code>NotDefinedException</code> being thrown.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
  * @see ICommandListener
  * @see ICommandManager
- * @see IKeySequenceBinding
  */
 public interface ICommand extends Comparable {
 
@@ -108,24 +106,6 @@ public interface ICommand extends Comparable {
 
     /**
      * <p>
-     * Returns the list of activity bindings for this handle. This method will
-     * return all activity bindings for this handle's identifier, whether or not
-     * the command represented by this handle is defined.
-     * </p>
-     * <p>
-     * Notification is sent to all registered listeners if this attribute
-     * changes.
-     * </p>
-     * 
-     * @return the list of activity bindings. This list may be empty, but is
-     *         guaranteed not to be <code>null</code>. If this list is not
-     *         empty, it is guaranteed to only contain instances of
-     *         <code>IActivityBinding</code>.
-     */
-    List getContextBindings();
-
-    /**
-     * <p>
      * Returns the description of the command represented by this handle,
      * suitable for display to the user.
      * </p>
@@ -151,24 +131,6 @@ public interface ICommand extends Comparable {
 
     /**
      * <p>
-     * Returns the list of image bindings for this handle. This method will
-     * return all image bindings for this handle's identifier, whether or not
-     * the command represented by this handle is defined.
-     * </p>
-     * <p>
-     * Notification is sent to all registered listeners if this attribute
-     * changes.
-     * </p>
-     * 
-     * @return the list of image bindings. This list may be empty, but is
-     *         guaranteed not to be <code>null</code>. If this list is not
-     *         empty, it is guaranteed to only contain instances of
-     *         <code>IImageBinding</code>.
-     */
-    List getImageBindings();
-
-    /**
-     * <p>
      * Returns the list of key sequence bindings for this handle. This method
      * will return all key sequence bindings for this handle's identifier,
      * whether or not the command represented by this handle is defined.
@@ -181,7 +143,7 @@ public interface ICommand extends Comparable {
      * @return the list of key sequence bindings. This list may be empty, but is
      *         guaranteed not to be <code>null</code>. If this list is not
      *         empty, it is guaranteed to only contain instances of
-     *         <code>IKeySequenceBinding</code>.
+     *         <code>KeySequence</code>.
      */
     List getKeySequenceBindings();
 
@@ -218,9 +180,10 @@ public interface ICommand extends Comparable {
 
     /**
      * <p>
-     * Returns whether or not this command is enabled. Instances of
-     * <code>ICommand</code> are enabled and disabled by the instance of
-     * <code>ICommandManager</code> from whence they were brokered.
+     * Returns whether or not this command is handled. A command is handled if
+     * it currently has an <code>IHandler</code> instance associated with it.
+     * A command needs a handler to carry out the {@link ICommand#execute(Map)}
+     * method.
      * </p>
      * <p>
      * Notification is sent to all registered listeners if this attribute

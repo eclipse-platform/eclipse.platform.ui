@@ -13,10 +13,16 @@ package org.eclipse.ui.commands;
 
 /**
  * <p>
+ * A category is a grouping of commands by functional area. For example, in the
+ * Eclipse workbench, "Text Editing" is a category containing various commands
+ * related to text editing. A category's primary functionality is to control the
+ * display of commands to the user. When appropriate, commands displayed to the
+ * user (e.g., keys preference page) will be grouped by category.
+ * </p>
+ * <p>
  * An instance of <code>ICategory</code> is a handle representing a category
  * as defined by the extension point <code>org.eclipse.ui.commands</code>.
- * The identifier of the handle is identifier of the category being
- * represented.
+ * The identifier of the handle is identifier of the category being represented.
  * </p>
  * <p>
  * An instance of <code>ICategory</code> can be obtained from an instance of
@@ -31,9 +37,6 @@ package org.eclipse.ui.commands;
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0

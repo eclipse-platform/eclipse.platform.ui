@@ -14,26 +14,25 @@ package org.eclipse.ui.commands;
 /**
  * <p>
  * An instance of <code>IKeyConfiguration</code> is a handle representing a
- * key configuration as defined by the extension point <code>org.eclipse.ui.commands</code>.
- * The identifier of the handle is identifier of the key configuration being
- * represented.
+ * key configuration as defined by the extension point
+ * <code>org.eclipse.ui.commands</code>. The identifier of the handle is
+ * identifier of the key configuration being represented.
  * </p>
  * <p>
  * An instance of <code>IKeyConfiguration</code> can be obtained from an
- * instance of <code>ICommandManager</code> for any identifier, whether or
- * not a key configuration with that identifier defined in the plugin registry.
+ * instance of <code>ICommandManager</code> for any identifier, whether or not
+ * a key configuration with that identifier defined in the plugin registry.
  * </p>
  * <p>
  * The handle-based nature of this API allows it to work well with runtime
- * plugin activation and deactivation, which causes dynamic changes to the
- * plugin registry, and therefore, potentially, dynamic changes to the set of
- * key configuration definitions.
+ * plugin activation and deactivation. If a key configuration is defined, that
+ * means that its corresponding plug-in is active. If the plug-in is then
+ * deactivated, the configuration will still exist but it will be undefined.
+ * An attempt to use an undefined key configuration will result in a
+ * <code>NotDefinedException</code> being thrown.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
@@ -74,10 +73,11 @@ public interface IKeyConfiguration extends Comparable {
 	String getDescription() throws NotDefinedException;
 
 	/**
-	 * Returns the identifier of this handle.
-	 * 
-	 * @return the identifier of this handle. Guaranteed not to be <code>null</code>.
-	 */
+     * Returns the identifier of this handle.
+     * 
+     * @return the identifier of this handle. Guaranteed not to be
+     *         <code>null</code>.
+     */
 	String getId();
 
 	/**
@@ -117,18 +117,18 @@ public interface IKeyConfiguration extends Comparable {
 	String getParentId() throws NotDefinedException;
 
 	/**
-	 * <p>
-	 * Returns whether or not this command is active. Instances of <code>ICommand</code>
-	 * are activated and deactivated by the instance of <code>ICommandManager</code>
-	 * from whence they were brokered.
-	 * </p>
-	 * <p>
-	 * Notification is sent to all registered listeners if this attribute
-	 * changes.
-	 * </p>
-	 * 
-	 * @return <code>true</code>, iff this command is active.
-	 */
+     * <p>
+     * Returns whether or not this command is active. Instances of
+     * <code>ICommand</code> are activated and deactivated by the instance of
+     * <code>ICommandManager</code> from whence they were brokered.
+     * </p>
+     * <p>
+     * Notification is sent to all registered listeners if this attribute
+     * changes.
+     * </p>
+     * 
+     * @return <code>true</code>, iff this command is active.
+     */
 	boolean isActive();
 
 	/**
@@ -147,15 +147,15 @@ public interface IKeyConfiguration extends Comparable {
 	boolean isDefined();
 
 	/**
-	 * Unregisters an instance of <code>IKeyConfigurationListener</code>
-	 * listening for changes to attributes of this instance.
-	 * 
-	 * @param keyConfigurationListener
-	 *            the instance of <code>IKeyConfigurationListener</code> to
-	 *            unregister. Must not be <code>null</code>. If an attempt
-	 *            is made to unregister an instance of <code>IKeyConfigurationListener</code>
-	 *            which is not already registered with this instance, no
-	 *            operation is performed.
-	 */
+     * Unregisters an instance of <code>IKeyConfigurationListener</code>
+     * listening for changes to attributes of this instance.
+     * 
+     * @param keyConfigurationListener
+     *            the instance of <code>IKeyConfigurationListener</code> to
+     *            unregister. Must not be <code>null</code>. If an attempt is
+     *            made to unregister an instance of
+     *            <code>IKeyConfigurationListener</code> which is not already
+     *            registered with this instance, no operation is performed.
+     */
 	void removeKeyConfigurationListener(IKeyConfigurationListener keyConfigurationListener);
 }

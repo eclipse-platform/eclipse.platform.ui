@@ -19,15 +19,24 @@ package org.eclipse.ui.commands;
  * </p>
  * 
  * @since 3.0
- * @see ICategoryListener#categoryChanged
+ * @see org.eclipse.ui.commands.ICategoryListener#categoryChanged(CategoryEvent)
  */
 public final class CategoryEvent {
 
-    private ICategory category;
+    /**
+     * The category that has changed; this value is never <code>null</code>.
+     */
+    private final ICategory category;
 
-    private boolean definedChanged;
+    /**
+     * Whether the defined state of the category has changed.
+     */
+    private final boolean definedChanged;
 
-    private boolean nameChanged;
+    /**
+     * Whether the name of the category has changed.
+     */
+    private final boolean nameChanged;
 
     /**
      * Creates a new instance of this class.
@@ -40,7 +49,7 @@ public final class CategoryEvent {
      *            true, iff the name property changed.
      */
     public CategoryEvent(ICategory category, boolean definedChanged,
-            boolean descriptionChanged, boolean nameChanged) {
+            boolean nameChanged) {
         if (category == null) throw new NullPointerException();
 
         this.category = category;

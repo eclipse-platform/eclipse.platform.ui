@@ -33,12 +33,11 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.IMutableCommandManager;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
-import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.commands.CommandManagerFactory;
+import org.eclipse.ui.internal.commands.IMutableCommandManager;
 import org.eclipse.ui.internal.commands.MutableCommandManager;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
@@ -224,17 +223,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         processHandlerSubmissions(true);
     }
 
-    // TODO Remove this method -- deprecated.
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.IWorkbenchCommandSupport#deregisterFromKeyBindings(org.eclipse.swt.widgets.Shell)
-     */
-    public void deregisterFromKeyBindings(Shell shell) {
-        IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
-        contextSupport.unregisterShell(shell);
-    }
-
     /**
      * An accessor for the underlying command manager.
      * 
@@ -243,16 +231,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     public ICommandManager getCommandManager() {
         // TODO need to proxy this to prevent casts to IMutableCommandManager
         return mutableCommandManager;
-    }
-
-    // TODO Remove this method -- deprecated.
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.IWorkbenchCommandSupport#isKeyFilterEnabled()
-     */
-    public final boolean isKeyFilterEnabled() {
-        return workbench.getContextSupport().isKeyFilterEnabled();
     }
 
     private void processHandlerSubmissions(boolean force) {
@@ -421,23 +399,6 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         }
     }
 
-    // TODO Remove this method -- deprecated
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.IWorkbenchCommandSupport#registerForKeyBindings(org.eclipse.swt.widgets.Shell,boolean)
-     */
-    public void registerForKeyBindings(Shell shell, boolean dialogOnly) {
-        IWorkbenchContextSupport contextSupport = workbench.getContextSupport();
-        if (dialogOnly) {
-            contextSupport.registerShell(shell,
-                    IWorkbenchContextSupport.TYPE_DIALOG);
-        } else {
-            contextSupport.registerShell(shell,
-                    IWorkbenchContextSupport.TYPE_WINDOW);
-        }
-    }
-
     public void removeHandlerSubmission(HandlerSubmission handlerSubmission) {
         removeHandlerSubmissions(Collections.singleton(handlerSubmission));
     }
@@ -467,15 +428,5 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
     public void setActiveContextIds(Set activeContextIds) {
         mutableCommandManager.setActiveContextIds(activeContextIds);
-    }
-
-    // TODO Remove this method -- deprecated
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.commands.IWorkbenchCommandSupport#setKeyFilterEnabled(boolean)
-     */
-    public final void setKeyFilterEnabled(boolean keyFilterEnabled) {
-        workbench.getContextSupport().setKeyFilterEnabled(keyFilterEnabled);
     }
 }

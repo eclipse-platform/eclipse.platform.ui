@@ -20,14 +20,11 @@ package org.eclipse.ui.commands;
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
  * 
  * @since 3.0
- * @see IKeyConfiguration#addKeyConfigurationListener
- * @see IKeyConfiguration#removeKeyConfigurationListener
- * @see KeyConfigurationEvent
+ * @see IKeyConfiguration#addKeyConfigurationListener(IKeyConfigurationListener)
+ * @see IKeyConfiguration#removeKeyConfigurationListener(IKeyConfigurationListener)
+ * @see org.eclipse.ui.commands.KeyConfigurationEvent
  */
 public interface IKeyConfigurationListener {
 

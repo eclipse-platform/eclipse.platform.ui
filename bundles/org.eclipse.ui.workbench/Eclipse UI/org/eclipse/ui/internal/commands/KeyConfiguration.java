@@ -117,7 +117,8 @@ final class KeyConfiguration implements IKeyConfiguration {
 
 	public String getDescription() throws NotDefinedException {
 		if (!defined)
-			throw new NotDefinedException();
+			throw new NotDefinedException(
+                        "Cannot get the description from an undefined key configuration."); //$NON-NLS-1$
 
 		return description;
 	}
@@ -128,14 +129,16 @@ final class KeyConfiguration implements IKeyConfiguration {
 
 	public String getName() throws NotDefinedException {
 		if (!defined)
-			throw new NotDefinedException();
+			throw new NotDefinedException(
+                        "Cannot get name from an undefined key configuration."); //$NON-NLS-1$
 
 		return name;
 	}
 
 	public String getParentId() throws NotDefinedException {
 		if (!defined)
-			throw new NotDefinedException();
+			throw new NotDefinedException(
+                        "Cannot get the parent id from an undefined key configuration."); //$NON-NLS-1$
 
 		return parentId;
 	}

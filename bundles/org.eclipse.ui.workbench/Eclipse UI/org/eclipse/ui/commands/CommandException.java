@@ -21,19 +21,13 @@ package org.eclipse.ui.commands;
 public abstract class CommandException extends Exception {
 
     /**
-     * Creates a new instance of this class with no specified detail message.
-     */
-    public CommandException() {
-    }
-
-    /**
      * Creates a new instance of this class with the specified detail message.
      * 
-     * @param s
+     * @param message
      *            the detail message.
      */
-    public CommandException(String s) {
-        super(s);
+    public CommandException(String message) {
+        super(message);
     }
 
     /**
@@ -47,15 +41,5 @@ public abstract class CommandException extends Exception {
      */
     public CommandException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /**
-     * Creates a new instance of this class with the specified cause.
-     * 
-     * @param cause
-     *            the cause.
-     */
-    public CommandException(Throwable cause) {
-        super(cause);
     }
 }

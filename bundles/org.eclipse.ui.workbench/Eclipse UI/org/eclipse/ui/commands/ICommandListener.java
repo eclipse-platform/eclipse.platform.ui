@@ -18,8 +18,8 @@ package org.eclipse.ui.commands;
  * </p>
  * 
  * @since 3.0
- * @see ICommand#addCommandListener
- * @see ICommand#removeCommandListener
+ * @see ICommand#addCommandListener(ICommandListener)
+ * @see ICommand#removeCommandListener(ICommandListener)
  */
 public interface ICommandListener {
 

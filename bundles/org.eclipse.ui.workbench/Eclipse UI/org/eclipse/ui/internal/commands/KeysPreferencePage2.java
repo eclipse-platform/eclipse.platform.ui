@@ -76,7 +76,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICategory;
 import org.eclipse.ui.commands.ICommand;
-import org.eclipse.ui.commands.IContextBinding;
 import org.eclipse.ui.commands.IKeyConfiguration;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IContextManager;
@@ -355,8 +354,6 @@ public class KeysPreferencePage2 extends
     private MutableCommandManager commandManager;
 
     private Map commandUniqueNamesById;
-
-    private Map contextIdsByCommandId;
 
     private Map contextIdsByUniqueName;
 
@@ -1229,13 +1226,7 @@ public class KeysPreferencePage2 extends
     private void setContextsForCommand() {
         String commandId = getCommandId();
         String contextId = getContextId();
-        Set contextIds = (Set) contextIdsByCommandId.get(commandId);
         Map contextIdsByName = new HashMap(contextIdsByUniqueName);
-        // TODO for context bound commands, this code retains only those
-        // contexts explictly bound. what about assigning key bindings to
-        // implicit descendant contexts?
-        if (contextIds != null)
-                contextIdsByName.values().retainAll(contextIds);
         List contextNames = new ArrayList(contextIdsByName.keySet());
         Collections.sort(contextNames, Collator.getInstance());
         comboContext.setItems((String[]) contextNames
@@ -1439,25 +1430,6 @@ public class KeysPreferencePage2 extends
             }
             String activeKeyConfigurationId = commandManager
                     .getActiveKeyConfigurationId();
-            contextIdsByCommandId = new HashMap();
-            for (Iterator iterator = commandManager.getDefinedCommandIds()
-                    .iterator(); iterator.hasNext();) {
-                ICommand command = commandManager.getCommand((String) iterator
-                        .next());
-                List contextBindings = command.getContextBindings();
-                if (!contextBindings.isEmpty()) {
-                    Set contextIds = new HashSet();
-                    for (Iterator iterator2 = contextBindings.iterator(); iterator2
-                            .hasNext();) {
-                        IContextBinding contextBinding = (IContextBinding) iterator2
-                                .next();
-                        String contextId = contextBinding.getContextId();
-                        if (contextManager.getDefinedContextIds().contains(
-                                contextId)) contextIds.add(contextId);
-                    }
-                    contextIdsByCommandId.put(command.getId(), contextIds);
-                }
-            }
             commandIdsByCategoryId = new HashMap();
             for (Iterator iterator = commandManager.getDefinedCommandIds()
                     .iterator(); iterator.hasNext();) {
@@ -1492,7 +1464,6 @@ public class KeysPreferencePage2 extends
                 String contextId = keySequenceBindingDefinition.getContextId();
                 String keyConfigurationId = keySequenceBindingDefinition
                         .getKeyConfigurationId();
-                Set contextIds = (Set) contextIdsByCommandId.get(commandId);
                 boolean validKeySequence = keySequence != null
                         && MutableCommandManager
                                 .validateKeySequence(keySequence);
@@ -1505,11 +1476,8 @@ public class KeysPreferencePage2 extends
                 boolean validKeyConfigurationId = keyConfigurationId == null
                         || commandManager.getDefinedKeyConfigurationIds()
                                 .contains(keyConfigurationId);
-                boolean validContextIdForCommandId = contextIds == null
-                        || contextIds.contains(contextId);
                 if (!validKeySequence || !validCommandId || !validContextId
-                        || !validKeyConfigurationId
-                        || !validContextIdForCommandId) iterator.remove();
+                        || !validKeyConfigurationId) iterator.remove();
             }
             List preferenceKeySequenceBindingDefinitions = new ArrayList(
                     mutableCommandRegistry.getKeySequenceBindingDefinitions());
@@ -1523,7 +1491,6 @@ public class KeysPreferencePage2 extends
                 String contextId = keySequenceBindingDefinition.getContextId();
                 String keyConfigurationId = keySequenceBindingDefinition
                         .getKeyConfigurationId();
-                Set contextIds = (Set) contextIdsByCommandId.get(commandId);
                 boolean validKeySequence = keySequence != null
                         && MutableCommandManager
                                 .validateKeySequence(keySequence);
@@ -1536,11 +1503,8 @@ public class KeysPreferencePage2 extends
                 boolean validKeyConfigurationId = keyConfigurationId == null
                         || commandManager.getDefinedKeyConfigurationIds()
                                 .contains(keyConfigurationId);
-                boolean validContextIdForCommandId = contextIds == null
-                        || contextIds.contains(contextId);
                 if (!validKeySequence || !validCommandId || !validContextId
-                        || !validKeyConfigurationId
-                        || !validContextIdForCommandId) iterator.remove();
+                        || !validKeyConfigurationId) iterator.remove();
             }
             tree = new TreeMap();
             for (Iterator iterator = pluginKeySequenceBindingDefinitions

@@ -14,28 +14,27 @@ package org.eclipse.ui.commands;
 /**
  * <p>
  * An instance of <code>ICategoryListener</code> can be used by clients to
- * receive notification of changes to one or more instances of <code>ICategory</code>.
+ * receive notification of changes to one or more instances of
+ * <code>ICategory</code>.
  * </p>
  * <p>
  * This interface may be implemented by clients.
  * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
  * 
  * @since 3.0
  * @see CategoryEvent
- * @see ICategory#addCategoryListener
- * @see ICategory#removeCategoryListener
+ * @see org.eclipse.ui.commands.ICategory#addCategoryListener(ICategoryListener)
+ * @see org.eclipse.ui.commands.ICategory#removeCategoryListener(ICategoryListener)
  */
 public interface ICategoryListener {
 
 	/**
-	 * Notifies that one or more attributes of an instance of <code>ICategory</code>
-	 * have changed. Specific details are described in the <code>CategoryEvent</code>.
-	 * 
-	 * @param categoryEvent
-	 *            the category event. Guaranteed not to be <code>null</code>.
-	 */
+     * Notifies that one or more attributes of an instance of
+     * <code>ICategory</code> have changed. Specific details are described in
+     * the <code>CategoryEvent</code>.
+     * 
+     * @param categoryEvent
+     *            the category event. Guaranteed not to be <code>null</code>.
+     */
 	void categoryChanged(CategoryEvent categoryEvent);
 }

@@ -32,14 +32,4 @@ public final class ExecutionException extends CommandException {
     public ExecutionException(String message, Throwable cause) {
         super(message, cause);
     }
-
-    /**
-     * Creates a new instance of this class with the specified cause.
-     * 
-     * @param cause
-     *            the cause.
-     */
-    public ExecutionException(Throwable cause) {
-        super(cause);
-    }
 }

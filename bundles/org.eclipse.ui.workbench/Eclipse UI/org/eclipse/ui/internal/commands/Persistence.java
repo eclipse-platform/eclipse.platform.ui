@@ -19,18 +19,15 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.swt.SWT;
-
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.commands.IHandler;
+import org.eclipse.ui.internal.commands.ws.HandlerProxy;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.keys.SWTKeySupport;
-
-import org.eclipse.ui.internal.commands.ws.HandlerProxy;
-import org.eclipse.ui.internal.util.Util;
 
 final class Persistence {
 
@@ -82,15 +79,11 @@ final class Persistence {
 	final static String TAG_CATEGORY = "category"; //$NON-NLS-1$	
 	final static String TAG_CATEGORY_ID = "categoryId"; //$NON-NLS-1$
 	final static String TAG_COMMAND = "command"; //$NON-NLS-1$	
-	final static String TAG_COMMAND_ID = "commandId"; //$NON-NLS-1$
-	final static String TAG_CONTEXT_BINDING = "contextBinding"; //$NON-NLS-1$	
+	final static String TAG_COMMAND_ID = "commandId"; //$NON-NLS-1$	
 	final static String TAG_CONTEXT_ID = "contextId"; //$NON-NLS-1$	
 	final static String TAG_DESCRIPTION = "description"; //$NON-NLS-1$
 	final static String TAG_HANDLER = "handlerSubmission"; //$NON-NLS-1$
 	final static String TAG_ID = "id"; //$NON-NLS-1$
-	final static String TAG_IMAGE_BINDING = "imageBinding"; //$NON-NLS-1$	
-	final static String TAG_IMAGE_STYLE = "imageStyle"; //$NON-NLS-1$	
-	final static String TAG_IMAGE_URI = "imageUri"; //$NON-NLS-1$
 	final static String TAG_KEY_CONFIGURATION = "keyConfiguration"; //$NON-NLS-1$	
 	final static String TAG_KEY_CONFIGURATION_ID = "keyConfigurationId"; //$NON-NLS-1$	
 	final static String TAG_KEY_SEQUENCE = "keySequence"; //$NON-NLS-1$	
@@ -241,48 +234,6 @@ final class Persistence {
 		return list;
 	}
 
-	static ContextBindingDefinition readContextBindingDefinition(
-		IMemento memento,
-		String sourceIdOverride) {
-		if (memento == null)
-			throw new NullPointerException();
-
-		String contextId = memento.getString(TAG_CONTEXT_ID); //$NON-NLS-1$
-
-		// TODO deprecated start
-		if ("org.eclipse.ui.globalScope".equals(contextId)) //$NON-NLS-1$
-			contextId = null;
-		// TODO deprecated end
-
-		String commandId = memento.getString(TAG_COMMAND_ID);
-		String sourceId =
-			sourceIdOverride != null
-				? sourceIdOverride
-				: memento.getString(TAG_SOURCE_ID);
-		return new ContextBindingDefinition(contextId, commandId, sourceId);
-	}
-
-	static List readContextBindingDefinitions(
-		IMemento memento,
-		String name,
-		String sourceIdOverride) {
-		if (memento == null || name == null)
-			throw new NullPointerException();
-
-		IMemento[] mementos = memento.getChildren(name);
-
-		if (mementos == null)
-			throw new NullPointerException();
-
-		List list = new ArrayList(mementos.length);
-
-		for (int i = 0; i < mementos.length; i++)
-			list.add(
-				readContextBindingDefinition(mementos[i], sourceIdOverride));
-
-		return list;
-	}
-
 	static CategoryDefinition readCategoryDefinition(
 		IMemento memento,
 		String sourceIdOverride) {
@@ -428,50 +379,6 @@ final class Persistence {
         return new HandlerProxy(commandId, new Integer(priority),
                 configurationElement);
     }
-
-	static ImageBindingDefinition readImageBindingDefinition(
-		IMemento memento,
-		String sourceIdOverride) {
-		if (memento == null)
-			throw new NullPointerException();
-
-		String commandId = memento.getString(TAG_COMMAND_ID);
-		String imageStyle = memento.getString(TAG_IMAGE_STYLE);
-		String imageUri = memento.getString(TAG_IMAGE_URI);
-		String locale = memento.getString(TAG_LOCALE);
-		String platform = memento.getString(TAG_PLATFORM);
-		String sourceId =
-			sourceIdOverride != null
-				? sourceIdOverride
-				: memento.getString(TAG_SOURCE_ID);
-		return new ImageBindingDefinition(
-			commandId,
-			imageStyle,
-			imageUri,
-			locale,
-			platform,
-			sourceId);
-	}
-
-	static List readImageBindingDefinitions(
-		IMemento memento,
-		String name,
-		String sourceIdOverride) {
-		if (memento == null || name == null)
-			throw new NullPointerException();
-
-		IMemento[] mementos = memento.getChildren(name);
-
-		if (mementos == null)
-			throw new NullPointerException();
-
-		List list = new ArrayList(mementos.length);
-
-		for (int i = 0; i < mementos.length; i++)
-			list.add(readImageBindingDefinition(mementos[i], sourceIdOverride));
-
-		return list;
-	}
 
 	static KeyConfigurationDefinition readKeyConfigurationDefinition(
 		IMemento memento,
@@ -678,48 +585,6 @@ final class Persistence {
 				(ActiveKeyConfigurationDefinition) iterator.next());
 	}
 
-	static void writeContextBindingDefinition(
-		IMemento memento,
-		ContextBindingDefinition contextBindingDefinition) {
-		if (memento == null || contextBindingDefinition == null)
-			throw new NullPointerException();
-
-		memento.putString(
-			TAG_CONTEXT_ID,
-			contextBindingDefinition.getContextId());
-		memento.putString(
-			TAG_COMMAND_ID,
-			contextBindingDefinition.getCommandId());
-		memento.putString(
-			TAG_SOURCE_ID,
-			contextBindingDefinition.getSourceId());
-	}
-
-	static void writeContextBindingDefinitions(
-		IMemento memento,
-		String name,
-		List contextBindingDefinitions) {
-		if (memento == null
-			|| name == null
-			|| contextBindingDefinitions == null)
-			throw new NullPointerException();
-
-		contextBindingDefinitions = new ArrayList(contextBindingDefinitions);
-		Iterator iterator = contextBindingDefinitions.iterator();
-
-		while (iterator.hasNext())
-			Util.assertInstance(
-				iterator.next(),
-				ContextBindingDefinition.class);
-
-		iterator = contextBindingDefinitions.iterator();
-
-		while (iterator.hasNext())
-			writeContextBindingDefinition(
-				memento.createChild(name),
-				(ContextBindingDefinition) iterator.next());
-	}
-
 	static void writeCategoryDefinition(
 		IMemento memento,
 		CategoryDefinition categoryDefinition) {
@@ -785,45 +650,6 @@ final class Persistence {
 			writeCommandDefinition(
 				memento.createChild(name),
 				(CommandDefinition) iterator.next());
-	}
-
-	static void writeImageBindingDefinition(
-		IMemento memento,
-		ImageBindingDefinition imageBindingDefinition) {
-		if (memento == null || imageBindingDefinition == null)
-			throw new NullPointerException();
-
-		memento.putString(
-			TAG_COMMAND_ID,
-			imageBindingDefinition.getCommandId());
-		memento.putString(
-			TAG_IMAGE_STYLE,
-			imageBindingDefinition.getImageStyle());
-		memento.putString(TAG_IMAGE_URI, imageBindingDefinition.getImageUri());
-		memento.putString(TAG_LOCALE, imageBindingDefinition.getLocale());
-		memento.putString(TAG_PLATFORM, imageBindingDefinition.getPlatform());
-		memento.putString(TAG_SOURCE_ID, imageBindingDefinition.getSourceId());
-	}
-
-	static void writeImageBindingDefinitions(
-		IMemento memento,
-		String name,
-		List imageBindingDefinitions) {
-		if (memento == null || name == null || imageBindingDefinitions == null)
-			throw new NullPointerException();
-
-		imageBindingDefinitions = new ArrayList(imageBindingDefinitions);
-		Iterator iterator = imageBindingDefinitions.iterator();
-
-		while (iterator.hasNext())
-			Util.assertInstance(iterator.next(), ImageBindingDefinition.class);
-
-		iterator = imageBindingDefinitions.iterator();
-
-		while (iterator.hasNext())
-			writeImageBindingDefinition(
-				memento.createChild(name),
-				(ImageBindingDefinition) iterator.next());
 	}
 
 	static void writeKeyConfigurationDefinition(

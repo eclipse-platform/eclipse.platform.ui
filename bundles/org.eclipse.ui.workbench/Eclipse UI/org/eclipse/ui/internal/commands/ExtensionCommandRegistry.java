@@ -22,16 +22,13 @@ import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IRegistryChangeListener;
-
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.commands.IHandler;
-
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
 	private List activeKeyConfigurationDefinitions;
-	private List contextBindingDefinitions;
 	private List categoryDefinitions;
 	private List commandDefinitions;
 	private IExtensionRegistry extensionRegistry;
@@ -42,7 +39,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 	 * <code>load</code>.
 	 */
 	private List handlers;
-	private List imageBindingDefinitions;
 	private List keyConfigurationDefinitions;
 	private List keySequenceBindingDefinitions;
 
@@ -203,27 +199,22 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 				Persistence.PACKAGE_FULL);
 
 		for (int i = 0; i < configurationElements.length; i++) {
-			IConfigurationElement configurationElement =
-				configurationElements[i];
-			String name = configurationElement.getName();
+            IConfigurationElement configurationElement = configurationElements[i];
+            String name = configurationElement.getName();
 
-			if (Persistence.TAG_ACTIVE_KEY_CONFIGURATION.equals(name))
-				readActiveKeyConfigurationDefinition(configurationElement);
-			else if (Persistence.TAG_CONTEXT_BINDING.equals(name))
-				readContextBindingDefinition(configurationElement);
-			else if (Persistence.TAG_CATEGORY.equals(name))
-				readCategoryDefinition(configurationElement);
-			else if (Persistence.TAG_COMMAND.equals(name))
-				readCommandDefinition(configurationElement);
-			else if (Persistence.TAG_HANDLER.equals(name)) {
-			    readHandlerSubmissionDefinition(configurationElement);
-			} else if (Persistence.TAG_IMAGE_BINDING.equals(name))
-				readImageBindingDefinition(configurationElement);
-			else if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
-				readKeyConfigurationDefinition(configurationElement);
-			else if (Persistence.TAG_KEY_SEQUENCE_BINDING.equals(name))
-				readKeySequenceBindingDefinition(configurationElement);
-		}
+            if (Persistence.TAG_ACTIVE_KEY_CONFIGURATION.equals(name))
+                readActiveKeyConfigurationDefinition(configurationElement);
+            else if (Persistence.TAG_CATEGORY.equals(name))
+                readCategoryDefinition(configurationElement);
+            else if (Persistence.TAG_COMMAND.equals(name))
+                readCommandDefinition(configurationElement);
+            else if (Persistence.TAG_HANDLER.equals(name)) {
+                readHandlerSubmissionDefinition(configurationElement);
+            } else if (Persistence.TAG_KEY_CONFIGURATION.equals(name))
+                readKeyConfigurationDefinition(configurationElement);
+            else if (Persistence.TAG_KEY_SEQUENCE_BINDING.equals(name))
+                    readKeySequenceBindingDefinition(configurationElement);
+        }
 
 		boolean commandRegistryChanged = false;
 
@@ -293,16 +284,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 				activeKeyConfigurationDefinition);
 	}
 
-	private void readContextBindingDefinition(IConfigurationElement configurationElement) {
-		ContextBindingDefinition contextBindingDefinition =
-			Persistence.readContextBindingDefinition(
-				new ConfigurationElementMemento(configurationElement),
-				getNamespace(configurationElement));
-
-		if (contextBindingDefinition != null)
-			contextBindingDefinitions.add(contextBindingDefinition);
-	}
-
 	private void readCategoryDefinition(IConfigurationElement configurationElement) {
 		CategoryDefinition categoryDefinition =
 			Persistence.readCategoryDefinition(
@@ -337,16 +318,6 @@ public final class ExtensionCommandRegistry extends AbstractCommandRegistry {
 
 		if (handler != null)
 			handlers.add(handler);
-	}
-
-	private void readImageBindingDefinition(IConfigurationElement configurationElement) {
-		ImageBindingDefinition imageBinding =
-			Persistence.readImageBindingDefinition(
-				new ConfigurationElementMemento(configurationElement),
-				getNamespace(configurationElement));
-
-		if (imageBinding != null)
-			imageBindingDefinitions.add(imageBinding);
 	}
 
 	private void readKeyConfigurationDefinition(IConfigurationElement configurationElement) {

@@ -14,18 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.ui.commands.CommandEvent;
 import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandListener;
-import org.eclipse.ui.commands.IContextBinding;
 import org.eclipse.ui.commands.IHandler;
-import org.eclipse.ui.commands.IImageBinding;
 import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.util.Util;
+import org.eclipse.ui.keys.KeySequence;
 
 final class Command implements ICommand {
 
@@ -50,10 +50,6 @@ final class Command implements ICommand {
 
     private Set commandsWithListeners;
 
-    private List contextBindings;
-
-    private transient IContextBinding[] contextBindingsAsArray;
-
     private boolean defined;
 
     private String description;
@@ -66,13 +62,9 @@ final class Command implements ICommand {
 
     private String id;
 
-    private List imageBindings;
-
-    private transient IImageBinding[] imageBindingsAsArray;
-
     private List keySequenceBindings;
 
-    private transient IKeySequenceBinding[] keySequenceBindingsAsArray;
+    private IKeySequenceBinding[] keySequenceBindingsAsArray;
 
     private String name;
 
@@ -95,34 +87,17 @@ final class Command implements ICommand {
 
     public int compareTo(Object object) {
         Command castedObject = (Command) object;
-        int compareTo = Util.compare((Comparable[]) contextBindingsAsArray,
-                (Comparable[]) castedObject.contextBindingsAsArray);
+        int compareTo = Util.compare(categoryId, castedObject.categoryId);
         if (compareTo == 0) {
-            compareTo = Util.compare(categoryId, castedObject.categoryId);
+            compareTo = Util.compare(defined, castedObject.defined);
             if (compareTo == 0) {
-                compareTo = Util.compare(defined, castedObject.defined);
+                compareTo = Util.compare(description, castedObject.description);
                 if (compareTo == 0) {
-                    compareTo = Util.compare(description,
-                            castedObject.description);
+                    compareTo = Util.compare(handler, castedObject.handler);
                     if (compareTo == 0) {
-                        compareTo = Util.compare(handler, castedObject.handler);
+                        compareTo = Util.compare(id, castedObject.id);
                         if (compareTo == 0) {
-                            compareTo = Util.compare(id, castedObject.id);
-                            if (compareTo == 0) {
-                                compareTo = Util
-                                        .compare(
-                                                (Comparable[]) imageBindingsAsArray,
-                                                (Comparable[]) castedObject.imageBindingsAsArray);
-                                if (compareTo == 0) {
-                                    compareTo = Util
-                                            .compare(
-                                                    (Comparable[]) keySequenceBindingsAsArray,
-                                                    (Comparable[]) castedObject.keySequenceBindingsAsArray);
-                                    if (compareTo == 0)
-                                            compareTo = Util.compare(name,
-                                                    castedObject.name);
-                                }
-                            }
+                            compareTo = Util.compare(name, castedObject.name);
                         }
                     }
                 }
@@ -135,13 +110,11 @@ final class Command implements ICommand {
         if (!(object instanceof Command)) return false;
         Command castedObject = (Command) object;
         boolean equals = true;
-        equals &= Util.equals(contextBindings, castedObject.contextBindings);
         equals &= Util.equals(categoryId, castedObject.categoryId);
         equals &= Util.equals(defined, castedObject.defined);
         equals &= Util.equals(description, castedObject.description);
         equals &= Util.equals(handler, castedObject.handler);
         equals &= Util.equals(id, castedObject.id);
-        equals &= Util.equals(imageBindings, castedObject.imageBindings);
         equals &= Util.equals(keySequenceBindings,
                 castedObject.keySequenceBindings);
         equals &= Util.equals(name, castedObject.name);
@@ -153,8 +126,9 @@ final class Command implements ICommand {
         IHandler handler = this.handler;
         if (handler != null)
             return handler.execute(parameterValuesByName);
-        else
-            throw new NotHandledException();
+        else {
+            throw new NotHandledException("There is no handler to execute."); //$NON-NLS-1$
+        }
     }
 
     void fireCommandChanged(CommandEvent commandEvent) {
@@ -170,20 +144,21 @@ final class Command implements ICommand {
         if (handler != null)
             return handler.getAttributeValuesByName();
         else
-            throw new NotHandledException();
+            throw new NotHandledException(
+                    "There is no handler from which to retrieve attributes."); //$NON-NLS-1$
     }
 
     public String getCategoryId() throws NotDefinedException {
-        if (!defined) throw new NotDefinedException();
+        if (!defined)
+                throw new NotDefinedException(
+                        "Cannot get category identifier from an undefined command."); //$NON-NLS-1$
         return categoryId;
     }
 
-    public List getContextBindings() {
-        return contextBindings;
-    }
-
     public String getDescription() throws NotDefinedException {
-        if (!defined) throw new NotDefinedException();
+        if (!defined)
+                throw new NotDefinedException(
+                        "Cannot get a description from an undefined command."); //$NON-NLS-1$
         return description;
     }
 
@@ -191,29 +166,25 @@ final class Command implements ICommand {
         return id;
     }
 
-    public List getImageBindings() {
-        return imageBindings;
-    }
-
     public List getKeySequenceBindings() {
         return keySequenceBindings;
     }
 
     public String getName() throws NotDefinedException {
-        if (!defined) throw new NotDefinedException();
+        if (!defined)
+                throw new NotDefinedException(
+                        "Cannot get the name from an undefined command."); //$NON-NLS-1$
         return name;
     }
 
     public int hashCode() {
         if (!hashCodeComputed) {
             hashCode = HASH_INITIAL;
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(contextBindings);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(defined);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(handler);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(id);
-            hashCode = hashCode * HASH_FACTOR + Util.hashCode(imageBindings);
             hashCode = hashCode * HASH_FACTOR
                     + Util.hashCode(keySequenceBindings);
             hashCode = hashCode * HASH_FACTOR + Util.hashCode(name);
@@ -229,8 +200,8 @@ final class Command implements ICommand {
     public boolean isHandled() {
         if (handler == null) return false;
         Map attributeValuesByName = handler.getAttributeValuesByName();
-        if (attributeValuesByName.containsKey("handled")
-                && !Boolean.TRUE.equals(attributeValuesByName.get("handled")))
+        if (attributeValuesByName.containsKey("handled") //$NON-NLS-1$
+                && !Boolean.TRUE.equals(attributeValuesByName.get("handled"))) //$NON-NLS-1$
             return false;
         else
             return true;
@@ -245,20 +216,6 @@ final class Command implements ICommand {
     boolean setCategoryId(String categoryId) {
         if (!Util.equals(categoryId, this.categoryId)) {
             this.categoryId = categoryId;
-            hashCodeComputed = false;
-            hashCode = 0;
-            string = null;
-            return true;
-        }
-        return false;
-    }
-
-    boolean setContextBindings(List contextBindings) {
-        contextBindings = Util.safeCopy(contextBindings, IContextBinding.class);
-        if (!Util.equals(contextBindings, this.contextBindings)) {
-            this.contextBindings = contextBindings;
-            this.contextBindingsAsArray = (IContextBinding[]) this.contextBindings
-                    .toArray(new IContextBinding[this.contextBindings.size()]);
             hashCodeComputed = false;
             hashCode = 0;
             string = null;
@@ -313,28 +270,13 @@ final class Command implements ICommand {
         return false;
     }
 
-    boolean setImageBindings(List imageBindings) {
-        imageBindings = Util.safeCopy(imageBindings, IImageBinding.class);
-        if (!Util.equals(imageBindings, this.imageBindings)) {
-            this.imageBindings = imageBindings;
-            this.imageBindingsAsArray = (IImageBinding[]) this.imageBindings
-                    .toArray(new IImageBinding[this.imageBindings.size()]);
-            hashCodeComputed = false;
-            hashCode = 0;
-            string = null;
-            return true;
-        }
-        return false;
-    }
-
     boolean setKeySequenceBindings(List keySequenceBindings) {
         keySequenceBindings = Util.safeCopy(keySequenceBindings,
                 IKeySequenceBinding.class);
         if (!Util.equals(keySequenceBindings, this.keySequenceBindings)) {
             this.keySequenceBindings = keySequenceBindings;
             this.keySequenceBindingsAsArray = (IKeySequenceBinding[]) this.keySequenceBindings
-                    .toArray(new IKeySequenceBinding[this.keySequenceBindings
-                            .size()]);
+                    .toArray(new IKeySequenceBinding[this.keySequenceBindings.size()]);
             hashCodeComputed = false;
             hashCode = 0;
             string = null;
@@ -358,8 +300,6 @@ final class Command implements ICommand {
         if (string == null) {
             final StringBuffer stringBuffer = new StringBuffer();
             stringBuffer.append('[');
-            stringBuffer.append(contextBindings);
-            stringBuffer.append(',');
             stringBuffer.append(categoryId);
             stringBuffer.append(',');
             stringBuffer.append(defined);
@@ -369,8 +309,6 @@ final class Command implements ICommand {
             stringBuffer.append(handler);
             stringBuffer.append(',');
             stringBuffer.append(id);
-            stringBuffer.append(',');
-            stringBuffer.append(imageBindings);
             stringBuffer.append(',');
             stringBuffer.append(keySequenceBindings);
             stringBuffer.append(',');

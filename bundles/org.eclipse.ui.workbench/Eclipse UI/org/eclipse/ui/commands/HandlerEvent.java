@@ -22,15 +22,26 @@ import org.eclipse.ui.internal.util.Util;
  * </p>
  * 
  * @since 3.0
- * @see IHandlerListener#handlerChanged
+ * @see IHandlerListener#handlerChanged(HandlerEvent)
  */
 public final class HandlerEvent {
 
-    private boolean attributeValuesByNameChanged;
+    /**
+     * Whether the attributes of the handler changed.
+     */
+    private final boolean attributeValuesByNameChanged;
 
-    private IHandler handler;
+    /**
+     * The handler that changed; this value is never <code>null</code>.
+     */
+    private final IHandler handler;
 
-    private Map previousAttributeValuesByName;
+    /**
+     * The map of previous attributes, if they changed.  If they did not change,
+     * then this value is <code>null</code>.  The map's keys are the attribute
+     * names (strings), and its value are any object.
+     */
+    private final Map previousAttributeValuesByName;
 
     /**
      * Creates a new instance of this class.
@@ -55,10 +66,13 @@ public final class HandlerEvent {
                 && previousAttributeValuesByName != null)
                 throw new IllegalArgumentException();
 
-        if (attributeValuesByNameChanged)
+        if (attributeValuesByNameChanged) {
                 this.previousAttributeValuesByName = Util.safeCopy(
                         previousAttributeValuesByName, String.class,
                         Object.class, false, true);
+        } else {
+            this.previousAttributeValuesByName = null;
+        }
 
         this.handler = handler;
         this.attributeValuesByNameChanged = attributeValuesByNameChanged;

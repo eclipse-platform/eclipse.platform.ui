@@ -26,9 +26,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.IKeySequenceBinding;
-import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.internal.IWorkbenchConstants;
+import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.tests.util.UITestCase;
 
 /**
@@ -58,12 +57,9 @@ public class Bug36420Test extends UITestCase {
 	 *             before it is opened. (Wow)
 	 * @throws IOException
 	 *             If something fails during output of the preferences file.
-	 * @throws NotDefinedException
-	 *             If the command for which the preference is stored is not
-	 *             defined.
 	 */
 	public void testImportKeyPreferences()
-		throws CoreException, FileNotFoundException, IOException, NotDefinedException {
+		throws CoreException, FileNotFoundException, IOException {
 		String commandId = "org.eclipse.ui.window.nextView"; //$NON-NLS-1$
 		String keySequenceText = "F S C K"; //$NON-NLS-1$
 
@@ -103,8 +99,8 @@ public class Bug36420Test extends UITestCase {
 		Iterator keyBindingItr = keyBindings.iterator();
 		boolean found = false;
 		while (keyBindingItr.hasNext()) {
-			IKeySequenceBinding keyBinding = (IKeySequenceBinding) keyBindingItr.next();
-			String currentText = keyBinding.getKeySequence().toString();
+			KeySequence keyBinding = (KeySequence) keyBindingItr.next();
+			String currentText = keyBinding.toString();
 			if (keySequenceText.equals(currentText)) {
 				found = true;
 			}

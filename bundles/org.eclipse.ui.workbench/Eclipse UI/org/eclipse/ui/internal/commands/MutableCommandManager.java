@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.commands.CategoryEvent;
@@ -34,7 +35,6 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IKeyConfiguration;
-import org.eclipse.ui.commands.IMutableCommandManager;
 import org.eclipse.ui.commands.KeyConfigurationEvent;
 import org.eclipse.ui.commands.NotDefinedException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -82,27 +82,6 @@ public final class MutableCommandManager implements IMutableCommandManager {
 		}
 		return false;
 	}
-	static void validateContextBindingDefinitions(
-			Collection contextBindingDefinitions) {
-		Iterator iterator = contextBindingDefinitions.iterator();
-		while (iterator.hasNext()) {
-			ContextBindingDefinition contextBindingDefinition = (ContextBindingDefinition) iterator
-					.next();
-			if (contextBindingDefinition.getCommandId() == null)
-				iterator.remove();
-		}
-	}
-	static void validateImageBindingDefinitions(
-			Collection imageBindingDefinitions) {
-		Iterator iterator = imageBindingDefinitions.iterator();
-		while (iterator.hasNext()) {
-			ImageBindingDefinition imageBindingDefinition = (ImageBindingDefinition) iterator
-					.next();
-			if (imageBindingDefinition.getCommandId() == null
-					|| imageBindingDefinition.getImageUri() == null)
-				iterator.remove();
-		}
-	}
 	static boolean validateKeySequence(KeySequence keySequence) {
 		if (keySequence == null)
 			return false;
@@ -134,7 +113,6 @@ public final class MutableCommandManager implements IMutableCommandManager {
 	private String activeKeyConfigurationId = null;
 	private String activeLocale = null;
 	private String activePlatform = null;
-	private Map contextBindingsByCommandId = new HashMap();
 	private Map categoriesById = new WeakHashMap();
 	private Set categoriesWithListeners = new HashSet();
 	private Map categoryDefinitionsById = new HashMap();
@@ -147,7 +125,6 @@ public final class MutableCommandManager implements IMutableCommandManager {
 	private Set definedCommandIds = new HashSet();
 	private Set definedHandlers = new HashSet();
 	private Set definedKeyConfigurationIds = new HashSet();
-	private Map imageBindingsByCommandId = new HashMap();
 	private Map keyConfigurationDefinitionsById = new HashMap();
 	private Map keyConfigurationsById = new WeakHashMap();
 	private Set keyConfigurationsWithListeners = new HashSet();
@@ -340,18 +317,6 @@ public final class MutableCommandManager implements IMutableCommandManager {
 				.getMatchesByKeySequence().get(keySequence);
 		return match != null ? match.getCommandId() : null;
 	}
-	private boolean isInContext(Collection contextBindings) {
-		if (contextBindings.isEmpty())
-			return true;
-		Iterator iterator = activeContextIds.iterator();
-		while (iterator.hasNext()) {
-			String activeContextId = (String) iterator.next();
-			if (contextBindings.contains(new ContextBinding(activeContextId)))
-				;
-			return true;
-		}
-		return false;
-	}
 	public boolean isPartialMatch(KeySequence keySequence) {
 		for (Iterator iterator = keySequenceBindingMachine
 				.getMatchesByKeySequence().entrySet().iterator(); iterator
@@ -524,36 +489,6 @@ public final class MutableCommandManager implements IMutableCommandManager {
 			this.definedKeyConfigurationIds = definedKeyConfigurationIds;
 			definedKeyConfigurationIdsChanged = true;
 		}
-		List contextBindingDefinitions = new ArrayList();
-		contextBindingDefinitions.addAll(commandRegistry
-				.getContextBindingDefinitions());
-		contextBindingDefinitions.addAll(mutableCommandRegistry
-				.getContextBindingDefinitions());
-		validateContextBindingDefinitions(contextBindingDefinitions);
-		Map contextBindingsByCommandId = new HashMap();
-		for (Iterator iterator = contextBindingDefinitions.iterator(); iterator
-				.hasNext();) {
-			ContextBindingDefinition contextBindingDefinition = (ContextBindingDefinition) iterator
-					.next();
-			String contextId = contextBindingDefinition.getContextId();
-			String commandId = contextBindingDefinition.getCommandId();
-			SortedSet sortedSet = (SortedSet) contextBindingsByCommandId
-					.get(commandId);
-			if (sortedSet == null) {
-				sortedSet = new TreeSet();
-				contextBindingsByCommandId.put(commandId, sortedSet);
-			}
-			sortedSet.add(new ContextBinding(contextId));
-		}
-		this.contextBindingsByCommandId = contextBindingsByCommandId;
-		List commandRegistryImageBindingDefinitions = new ArrayList(
-				commandRegistry.getImageBindingDefinitions());
-		validateImageBindingDefinitions(commandRegistryImageBindingDefinitions);
-		List mutableCommandRegistryImageBindingDefinitions = new ArrayList(
-				mutableCommandRegistry.getImageBindingDefinitions());
-		validateImageBindingDefinitions(mutableCommandRegistryImageBindingDefinitions);
-		// TODO prepare imageBindingMachine with ImageBindingDefinitions
-		calculateImageBindings();
 		List commandRegistryKeySequenceBindingDefinitions = new ArrayList(
 				commandRegistry.getKeySequenceBindingDefinitions());
 		validateKeySequenceBindingDefinitions(commandRegistryKeySequenceBindingDefinitions);
@@ -700,18 +635,12 @@ public final class MutableCommandManager implements IMutableCommandManager {
 				? categoryDefinition.getName()
 				: null);
 		if (definedChanged || descriptionChanged || nameChanged)
-			return new CategoryEvent(category, definedChanged,
-					descriptionChanged, nameChanged);
+			return new CategoryEvent(category, definedChanged, nameChanged);
 		else
 			return null;
 	}
 	private CommandEvent updateCommand(Command command) {
-		SortedSet contextBindings = (SortedSet) contextBindingsByCommandId
-				.get(command.getId());
 		// TODO list to sortedset in api?
-		boolean contextBindingsChanged = command
-				.setContextBindings(contextBindings != null ? new ArrayList(
-						contextBindings) : Collections.EMPTY_LIST);
 		CommandDefinition commandDefinition = (CommandDefinition) commandDefinitionsById
 				.get(command.getId());
 		boolean categoryIdChanged = command
@@ -721,14 +650,9 @@ public final class MutableCommandManager implements IMutableCommandManager {
 		boolean descriptionChanged = command
 				.setDescription(commandDefinition != null ? commandDefinition
 						.getDescription() : null);
-		SortedSet imageBindings = (SortedSet) imageBindingsByCommandId
-				.get(command.getId());
 		IHandler handler = (IHandler) handlersByCommandId.get(command.getId());
 		boolean handlerChanged = command.setHandler(handler);
 		// TODO list to sortedset in api?
-		boolean imageBindingsChanged = command
-				.setImageBindings(imageBindings != null ? new ArrayList(
-						imageBindings) : Collections.EMPTY_LIST);
 		SortedSet keySequenceBindings = (SortedSet) keySequenceBindingsByCommandId
 				.get(command.getId());
 		// TODO list to sortedset in api?
@@ -739,13 +663,13 @@ public final class MutableCommandManager implements IMutableCommandManager {
 		boolean nameChanged = command.setName(commandDefinition != null
 				? commandDefinition.getName()
 				: null);
-		if (contextBindingsChanged || categoryIdChanged || definedChanged
-				|| descriptionChanged || imageBindingsChanged
-				|| keySequenceBindingsChanged || nameChanged)
+        if (categoryIdChanged || definedChanged
+                || descriptionChanged || keySequenceBindingsChanged
+                || nameChanged)
 			return new CommandEvent(command, false /* TODO */,
-					contextBindingsChanged, categoryIdChanged, definedChanged,
-					descriptionChanged, handlerChanged, imageBindingsChanged,
-					keySequenceBindingsChanged, nameChanged, null); // TODO
+                    categoryIdChanged, definedChanged,
+                    descriptionChanged, handlerChanged,
+                    keySequenceBindingsChanged, nameChanged, null); // TODO
 		else
 			return null;
 	}
@@ -785,8 +709,7 @@ public final class MutableCommandManager implements IMutableCommandManager {
 		if (activeChanged || definedChanged || descriptionChanged
 				|| nameChanged || parentIdChanged)
 			return new KeyConfigurationEvent(keyConfiguration, activeChanged,
-					definedChanged, descriptionChanged, nameChanged,
-					parentIdChanged);
+					definedChanged, nameChanged, parentIdChanged);
 		else
 			return null;
 	}

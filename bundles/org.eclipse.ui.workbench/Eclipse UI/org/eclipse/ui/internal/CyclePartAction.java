@@ -11,6 +11,8 @@ package org.eclipse.ui.internal;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -30,10 +32,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -42,9 +40,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.ICommandManager;
-import org.eclipse.ui.commands.IKeySequenceBinding;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.SWTKeySupport;
 
@@ -154,11 +152,10 @@ public class CyclePartAction extends PageEventAction {
 				        Iterator iterator = forwardKeySequenceBindings.iterator();
 
 						while (iterator.hasNext()) {
-							IKeySequenceBinding keySequenceBinding =
-								(IKeySequenceBinding) iterator.next();
+                            KeySequence keySequenceBinding = (KeySequence) iterator.next();
 
 							// Compare the last key stroke of the binding.
-							List keyStrokes = keySequenceBinding.getKeySequence().getKeyStrokes();
+							List keyStrokes = keySequenceBinding.getKeyStrokes();
 							if ((!keyStrokes.isEmpty())
 								&& (keyStrokes.get(keyStrokes.size() - 1).equals(keyStroke))) {
 								acceleratorForward = true;
@@ -173,11 +170,11 @@ public class CyclePartAction extends PageEventAction {
 				        Iterator iterator = backwardKeySequenceBindings.iterator();
 
 						while (iterator.hasNext()) {
-							IKeySequenceBinding keySequenceBinding =
-								(IKeySequenceBinding) iterator.next();
+							KeySequence keySequenceBinding = (KeySequence) iterator
+                                    .next();
 
 							// Compare the last key stroke of the binding.
-							List keyStrokes = keySequenceBinding.getKeySequence().getKeyStrokes();
+							List keyStrokes = keySequenceBinding.getKeyStrokes();
 							if ((!keyStrokes.isEmpty())
 									&& (keyStrokes.get(keyStrokes.size() - 1).equals(keyStroke))) {
 								acceleratorBackward = true;

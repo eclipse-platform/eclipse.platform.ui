@@ -844,9 +844,8 @@ public final class Workbench implements IWorkbench {
                             for (int i = 0; i < size; i++) {
                                 IKeySequenceBinding keySequenceBinding = (IKeySequenceBinding) keySequenceBindings
                                         .get(i);
-                                KeySequence keySequence = keySequenceBinding
-                                        .getKeySequence();
-                                List keyStrokes = keySequence.getKeyStrokes();
+                                List keyStrokes = keySequenceBinding
+                                        .getKeySequence().getKeyStrokes();
 
                                 if (keyStrokes.size() == 1) {
                                     KeyStroke keyStroke = (KeyStroke) keyStrokes

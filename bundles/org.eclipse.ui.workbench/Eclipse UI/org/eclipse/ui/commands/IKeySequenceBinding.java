@@ -16,13 +16,11 @@ import org.eclipse.ui.keys.KeySequence;
 /**
  * <p>
  * An instance of <code>IKeySequenceBinding</code> represents a binding
- * between a command and a key sequence.
+ * between a command and a key sequence. This is a wrapper for the a key
+ * sequence.
  * </p>
  * <p>
  * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0

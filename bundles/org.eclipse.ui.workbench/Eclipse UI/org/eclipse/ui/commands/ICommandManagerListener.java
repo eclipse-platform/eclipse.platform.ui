@@ -18,17 +18,19 @@ package org.eclipse.ui.commands;
  * </p>
  * 
  * @since 3.0
- * @see ICommandManager#addCommandManagerListener
- * @see ICommandManager#removeCommandManagerListener
+ * @see ICommandManager#addCommandManagerListener(ICommandManagerListener)
+ * @see ICommandManager#removeCommandManagerListener(ICommandManagerListener)
  */
 public interface ICommandManagerListener {
 
 	/**
-	 * Notifies that one or more properties of an instance of <code>ICommandManager</code>
-	 * have changed. Specific details are described in the <code>CommandManagerEvent</code>.
-	 * 
-	 * @param commandManagerEvent
-	 *            the commandManager event. Guaranteed not to be <code>null</code>.
-	 */
+     * Notifies that one or more properties of an instance of
+     * <code>ICommandManager</code> have changed. Specific details are
+     * described in the <code>CommandManagerEvent</code>.
+     * 
+     * @param commandManagerEvent
+     *            the commandManager event. Guaranteed not to be
+     *            <code>null</code>.
+     */
 	void commandManagerChanged(CommandManagerEvent commandManagerEvent);
 }

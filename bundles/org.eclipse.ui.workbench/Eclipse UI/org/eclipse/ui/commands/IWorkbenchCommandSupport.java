@@ -13,16 +13,11 @@ package org.eclipse.ui.commands;
 
 import java.util.Collection;
 
-import org.eclipse.swt.widgets.Shell;
-
 /**
  * An instance of this interface provides support for managing commands at the
  * <code>IWorkbench</code> level.
  * <p>
  * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
  * </p>
  * 
  * @since 3.0
@@ -30,30 +25,31 @@ import org.eclipse.swt.widgets.Shell;
 public interface IWorkbenchCommandSupport {
 
     /**
-     * TODO
+     * Adds a single handler submissions for consideration by the workbench. The
+     * submission indicates to the workbench a set of conditions under which the
+     * handler should become active. The workbench, however, ultimately decides
+     * which handler becomes active (in the event of conflicts or changes in
+     * state). This could cause the handlers for one or more commands to change.
      * 
      * @param handlerSubmission
+     *            The submission to be added; must not be <code>null</code>.
      */
     void addHandlerSubmission(HandlerSubmission handlerSubmission);
 
     /**
-     * TODO
+     * Adds a collection of handler submissions for consideration by the
+     * workbench. The submission indicates to the workbench a set of conditions
+     * under which the handler should become active. The workbench, however,
+     * ultimately decides which handler becomes active (in the event of
+     * conflicts or changes in state). This could cause the handlers for one or
+     * more commands to change.
      * 
      * @param handlerSubmissions
+     *            The submissions to be added; must not be <code>null</code>,
+     *            and must contain zero or more instances of
+     *            <code>HandlerSubmission</code>.
      */
     void addHandlerSubmissions(Collection handlerSubmissions);
-
-    /**
-     * Deregisters the given <code>shell</code> from the global key bindings.
-     * This is not strictly necessary (as the internal storage uses a weak hash
-     * map), but is good for cleanliness.
-     * 
-     * @param shell
-     *            The shell to deregister; may be <code>null</code>.
-     * @deprecated to be removed for 3.0 Use the equivalent methods on IWorkbenchContextSupport
-     * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#unregisterShell(Shell)
-     */
-    void deregisterFromKeyBindings(Shell shell);
 
     /**
      * Returns the command manager for the workbench.
@@ -64,67 +60,26 @@ public interface IWorkbenchCommandSupport {
     ICommandManager getCommandManager();
 
     /**
-     * Tests whether the global key binding architecture is currently active.
-     * 
-     * @return <code>true</code> if the key bindings are active;
-     *         <code>false</code> otherwise.
-     * @deprecated Please use the equivalent method on IWorkbenchContextSupport
-     * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#isKeyFilterEnabled()
-     */
-    boolean isKeyFilterEnabled();
-
-    /**
-     * Indicates that the given <code>shell</code> wishes to participate in
-     * the global key binding architecture. This means that key and traversal
-     * events might be intercepted before reaching any of the widgets on the
-     * shell.
-     * 
-     * @param shell
-     *            The shell to register for key bindings; may be
-     *            <code>null</code>.
-     * @param dialogOnly
-     *            Whether the shell only wants the restricted set of key
-     *            bindings normally used in dialogs (e.g., text editing
-     *            commands). All workbench windows say <code>false</code>
-     *            here.
-     * @deprecated to be removed for 3.0. Use the equivalent methods on IWorkbenchContextSupport
-     * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#registerShell(Shell,
-     *      int)
-     */
-    void registerForKeyBindings(Shell shell, boolean dialogOnly);
-
-    /**
-     * TODO
+     * Removes a single handler submission from consideration by the workbench.
+     * The handler submission must be the same as the one added (not just
+     * equivalent). This could cause the handlers for one or more commands to
+     * change.
      * 
      * @param handlerSubmission
+     *            The submission to be removed; must not be <code>null</code>.
      */
     void removeHandlerSubmission(HandlerSubmission handlerSubmission);
 
     /**
-     * TODO
+     * Removes a single handler submission from consideration by the workbench.
+     * The handler submission must be the same as the one added (not just
+     * equivalent). This could cause the handlers for one or more commands to
+     * change.
      * 
      * @param handlerSubmissions
+     *            The submissions to be removed; must not be <code>null</code>,
+     *            and must contain instance of <code>HandlerSubmission</code>
+     *            only.
      */
     void removeHandlerSubmissions(Collection handlerSubmissions);
-
-    /**
-     * Enables or disables the global key binding architecture. The architecture
-     * should be enabled by default.
-     * 
-     * When enabled, keyboard shortcuts are active, and that key events can
-     * trigger commands. This also means that widgets may not see all key events
-     * (as they might be trapped as a keyboard shortcut).
-     * 
-     * When disabled, no key events will trapped as keyboard shortcuts, and that
-     * no commands can be triggered by keyboard events. (Exception: it is
-     * possible that someone listening for key events on a widget could trigger
-     * a command.)
-     * 
-     * @param enabled
-     *            Whether the key filter should be enabled.
-     * 
-     * @deprecated Please use the equivalent method on IWorkbenchContextSupport
-     * @see org.eclipse.ui.contexts.IWorkbenchContextSupport#setKeyFilterEnabled(boolean)
-     */
-    void setKeyFilterEnabled(boolean enabled);
 }

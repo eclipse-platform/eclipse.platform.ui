@@ -16,14 +16,28 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class is a partial implementation of <code>IHandler</code>.
+ * This class is a partial implementation of <code>IHandler</code>. This
+ * abstract implementation provides support for handler listeners. You should
+ * subclass from this method unless you want to implement your own listener
+ * support. Subclasses should call
+ * {@link AbstractHandler#fireHandlerChanged(HandlerEvent)}when the handler
+ * changes. Subclasses should also override
+ * {@link AbstractHandler#getAttributeValuesByName()}if they have any
+ * attributes.
  * 
  * @since 3.0
  */
 public abstract class AbstractHandler implements IHandler {
 
+    /**
+     * Those interested in hearing about changes to this instance of
+     * <code>IHandler</code>.
+     */
     private List handlerListeners;
 
+    /**
+     * @see IHandler#addHandlerListener(IHandlerListener)
+     */
     public void addHandlerListener(IHandlerListener handlerListener) {
         if (handlerListener == null) throw new NullPointerException();
         if (handlerListeners == null) handlerListeners = new ArrayList();
@@ -47,10 +61,19 @@ public abstract class AbstractHandler implements IHandler {
                             .handlerChanged(handlerEvent);
     }
 
+    /**
+     * This simply return an empty map. The default implementation has no
+     * attributes.
+     * 
+     * @see IHandler#getAttributeValuesByName()
+     */
     public Map getAttributeValuesByName() {
         return Collections.EMPTY_MAP;
     }
 
+    /**
+     * @see IHandler#removeHandlerListener(IHandlerListener)
+     */
     public void removeHandlerListener(IHandlerListener handlerListener) {
         if (handlerListener == null) throw new NullPointerException();
         if (handlerListeners != null) handlerListeners.remove(handlerListener);

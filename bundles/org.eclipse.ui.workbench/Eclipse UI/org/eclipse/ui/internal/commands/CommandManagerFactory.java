@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.commands;
 
-import org.eclipse.ui.commands.IMutableCommandManager;
 
 /**
  * This class allows clients to broker instances of <code>ICommandManager</code>.

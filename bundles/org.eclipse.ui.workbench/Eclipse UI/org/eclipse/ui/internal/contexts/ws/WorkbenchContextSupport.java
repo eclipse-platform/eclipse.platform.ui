@@ -495,7 +495,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
                 if (DEBUG) {
                     System.out.println("CONTEXTS >>> NotDefinedException('" //$NON-NLS-1$
                             + e.getMessage()
-                            + "') while filtering dialog/window contexts`"); //$NON-NLS-1$
+                            + "') while filtering dialog/window contexts"); //$NON-NLS-1$
                 }
             }
 

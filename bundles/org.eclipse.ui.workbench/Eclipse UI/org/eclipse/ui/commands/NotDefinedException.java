@@ -22,12 +22,6 @@ package org.eclipse.ui.commands;
 public final class NotDefinedException extends CommandException {
 
     /**
-     * Creates a new instance of this class with no specified detail message.
-     */
-    public NotDefinedException() {
-    }
-
-    /**
      * Creates a new instance of this class with the specified detail message.
      * 
      * @param s

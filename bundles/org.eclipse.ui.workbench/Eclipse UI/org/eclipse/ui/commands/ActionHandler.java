@@ -13,6 +13,7 @@ package org.eclipse.ui.commands;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -27,11 +28,24 @@ import org.eclipse.ui.actions.RetargetAction;
  */
 public final class ActionHandler extends AbstractHandler {
 
+    /**
+     * The attribute name for the checked property of the wrapped action.  This
+     * indicates whether the action should be displayed with as a checked check
+     * box.
+     */
     private final static String ATTRIBUTE_CHECKED = "checked"; //$NON-NLS-1$
 
+    /**
+     * The attribute name for the enabled property of the wrapped action.
+     */
     private final static String ATTRIBUTE_ENABLED = "enabled"; //$NON-NLS-1$
 
-    /*
+    /**
+     * <p>
+     * The name of the attribute indicating whether the wrapped instance of
+     * <code>RetargetAction</code> has a handler.
+     * </p>
+     * <p>
      * TODO This should be changed. CommandManager should not look for this
      * attribute (search by string "handled" to find it..). Instead, code in
      * workbench should be changed such that if a RetargetAction loses its
@@ -39,15 +53,33 @@ public final class ActionHandler extends AbstractHandler {
      * should be removed. In any case, this attribute especially should never be
      * made public. Also, RetargetAction doesn't not notify that this property
      * has changed. All handler attributes must notify listeners on change.
+     * </p>
      */
     private final static String ATTRIBUTE_HANDLED = "handled"; //$NON-NLS-1$
 
+    /**
+     * The attribute name for the identifier of the wrapped action.  This is the
+     * action identifier, and not the command identifier. 
+     */
     private final static String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 
+    /**
+     * The attribute name for the visual style of the wrapped action.  The style
+     * can be things like a pull-down menu, a check box, a radio button or a
+     * push button.
+     */
     private final static String ATTRIBUTE_STYLE = "style"; //$NON-NLS-1$
 
+    /**
+     * The wrapped action.  This value is never <code>null</code>.
+     */
     private IAction action;
 
+    /**
+     * The map of attributes values.  The keys are <code>String</code> values of
+     * the attribute names (given above).  The values can be any type of
+     * <code>Object</code>.
+     */
     private Map attributeValuesByName;
 
     /**
@@ -80,6 +112,9 @@ public final class ActionHandler extends AbstractHandler {
         });
     }
 
+    /**
+     * @see IHandler#execute(Map)
+     */
     public Object execute(Map parameterValuesByName) throws ExecutionException {
         if ((action.getStyle() == IAction.AS_CHECK_BOX)
                 || (action.getStyle() == IAction.AS_RADIO_BUTTON))
@@ -87,31 +122,41 @@ public final class ActionHandler extends AbstractHandler {
         try {
             action.runWithEvent(new Event());
         } catch (Exception e) {
-            throw new ExecutionException(e);
+            throw new ExecutionException(
+                    "While executing the action, an exception occurred", e); //$NON-NLS-1$
         }
         return null;
     }
 
+    /**
+     * @see IHandler#getAttributeValuesByName()
+     */
     public Map getAttributeValuesByName() {
         return attributeValuesByName;
     }
 
+    /**
+     * An accessor for the attribute names from the action. This reads out all
+     * of the attributes from an action into a local map.
+     * 
+     * @return A map of the attribute values indexed by the attribute name. The
+     *         attributes names are strings, but the values can by any object.
+     *  
+     */
     private Map getAttributeValuesByNameFromAction() {
-        Map attributeValuesByName = new HashMap();
-        attributeValuesByName.put(ATTRIBUTE_CHECKED,
-                action.isChecked() ? Boolean.TRUE : Boolean.FALSE);
-        attributeValuesByName.put(ATTRIBUTE_ENABLED,
-                action.isEnabled() ? Boolean.TRUE : Boolean.FALSE);
+        Map map = new HashMap();
+        map.put(ATTRIBUTE_CHECKED, action.isChecked() ? Boolean.TRUE
+                : Boolean.FALSE);
+        map.put(ATTRIBUTE_ENABLED, action.isEnabled() ? Boolean.TRUE
+                : Boolean.FALSE);
         boolean handled = true;
         if (action instanceof RetargetAction) {
             RetargetAction retargetAction = (RetargetAction) action;
             handled = retargetAction.getActionHandler() != null;
         }
-        attributeValuesByName.put(ATTRIBUTE_HANDLED, handled ? Boolean.TRUE
-                : Boolean.FALSE);
-        attributeValuesByName.put(ATTRIBUTE_ID, action.getId());
-        attributeValuesByName.put(ATTRIBUTE_STYLE, new Integer(action
-                .getStyle()));
-        return Collections.unmodifiableMap(attributeValuesByName);
+        map.put(ATTRIBUTE_HANDLED, handled ? Boolean.TRUE : Boolean.FALSE);
+        map.put(ATTRIBUTE_ID, action.getId());
+        map.put(ATTRIBUTE_STYLE, new Integer(action.getStyle()));
+        return Collections.unmodifiableMap(map);
     }
 }

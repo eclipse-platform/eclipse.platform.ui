@@ -13,14 +13,16 @@ package org.eclipse.ui.commands;
 import java.util.Map;
 
 /**
- * An instance of this interface is an handler as defined by the extension point
- * <code>org.eclipse.ui.commands</code>.
+ * A handler is the pluggable piece of a command that handles execution. Each
+ * command can have zero or more handlers associated with it (in general), of
+ * which only one will be active at any given moment in time. When the command
+ * is asked to execute, it will simply pass that request on to its active
+ * handler, if any.
  * <p>
  * This interface is not intended to be extended by clients.
  * </p>
  * 
  * @since 3.0
- * @see IHandler#getHandler
  */
 public interface IHandler {
 

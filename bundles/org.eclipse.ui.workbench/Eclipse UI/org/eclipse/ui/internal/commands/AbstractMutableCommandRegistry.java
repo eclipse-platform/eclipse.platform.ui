@@ -20,6 +20,7 @@ public abstract class AbstractMutableCommandRegistry
 	implements IMutableCommandRegistry {
 
 	protected AbstractMutableCommandRegistry() {
+	    // Nothing to initialize.
 	}
 
 	public void setActiveKeyConfigurationDefinitions(List activeKeyConfigurationDefinitions) {
@@ -32,19 +33,6 @@ public abstract class AbstractMutableCommandRegistry
 			.equals(this.activeKeyConfigurationDefinitions)) {
 			this.activeKeyConfigurationDefinitions =
 				activeKeyConfigurationDefinitions;
-			fireCommandRegistryChanged();
-		}
-	}
-
-	public void setContextBindingDefinitions(List contextBindingDefinitions) {
-		contextBindingDefinitions =
-			Util.safeCopy(
-				contextBindingDefinitions,
-				ContextBindingDefinition.class);
-
-		if (!contextBindingDefinitions
-			.equals(this.contextBindingDefinitions)) {
-			this.contextBindingDefinitions = contextBindingDefinitions;
 			fireCommandRegistryChanged();
 		}
 	}
@@ -65,18 +53,6 @@ public abstract class AbstractMutableCommandRegistry
 
 		if (!commandDefinitions.equals(this.commandDefinitions)) {
 			this.commandDefinitions = commandDefinitions;
-			fireCommandRegistryChanged();
-		}
-	}
-
-	public void setImageBindingDefinitions(List imageBindingDefinitions) {
-		imageBindingDefinitions =
-			Util.safeCopy(
-				imageBindingDefinitions,
-				ImageBindingDefinition.class);
-
-		if (!imageBindingDefinitions.equals(this.imageBindingDefinitions)) {
-			this.imageBindingDefinitions = imageBindingDefinitions;
 			fireCommandRegistryChanged();
 		}
 	}

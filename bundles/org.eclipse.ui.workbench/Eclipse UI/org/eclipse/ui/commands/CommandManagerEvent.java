@@ -22,31 +22,67 @@ import org.eclipse.ui.internal.util.Util;
  * </p>
  * 
  * @since 3.0
- * @see ICommandManagerListener#commandManagerChanged
+ * @see ICommandManagerListener#commandManagerChanged(CommandManagerEvent)
  */
 public final class CommandManagerEvent {
 
-    private boolean activeContextIdsChanged;
+    /**
+     * Whether the set of active contexts has changed.
+     */
+    private final boolean activeContextIdsChanged;
 
-    private boolean activeKeyConfigurationIdChanged;
+    /**
+     * Whether the active key configuration has changed.
+     */
+    private final boolean activeKeyConfigurationIdChanged;
 
-    private boolean activeLocaleChanged;
+    /**
+     * Whether the locale has changed.
+     */
+    private final boolean activeLocaleChanged;
 
-    private boolean activePlatformChanged;
+    /**
+     * Whether the platform has changed.
+     */
+    private final boolean activePlatformChanged;
 
-    private ICommandManager commandManager;
+    /**
+     * Whether the command manager has changed.
+     */
+    private final ICommandManager commandManager;
 
-    private boolean definedCategoryIdsChanged;
+    /**
+     * Whether the list of defined categories has changed.
+     */
+    private final boolean definedCategoryIdsChanged;
 
-    private boolean definedCommandIdsChanged;
+    /** 
+     * Whether the list of defined commands has changed.
+     */
+    private final boolean definedCommandIdsChanged;
 
-    private boolean definedKeyConfigurationIdsChanged;
+    /**
+     * Whether the list of defined key configurations has changed.
+     */
+    private final boolean definedKeyConfigurationIdsChanged;
 
-    private Set previouslyDefinedCategoryIds;
+    /**
+     * The set of the defined categories before the change occurred.  This is a
+     * set of strings (category identifiers).
+     */
+    private final Set previouslyDefinedCategoryIds;
 
-    private Set previouslyDefinedCommandIds;
+    /**
+     * The set of the defined commands before the change occurred.  This is a
+     * set of strings (command identifiers).
+     */
+    private final Set previouslyDefinedCommandIds;
 
-    private Set previouslyDefinedKeyConfigurationIds;
+    /**
+     * The set of the defined key configurations before the change occurred.
+     * This is a set of strings (key configuration identifiers).
+     */
+    private final Set previouslyDefinedKeyConfigurationIds;
 
     /**
      * Creates a new instance of this class.
@@ -76,11 +112,11 @@ public final class CommandManagerEvent {
      *            <code>null</code> if definedCategoryIdsChanged is
      *            <code>false</code> and must not be null if
      *            definedCategoryIdsChanged is <code>true</code>.
-     * @param previouslyDefinedContextIds
-     *            the set of identifiers to previously defined contexts. This
+     * @param previouslyDefinedCommandIds
+     *            the set of identifiers to previously defined commands. This
      *            set may be empty. If this set is not empty, it must only
      *            contain instances of <code>String</code>. This set must be
-     *            <code>null</code> if definedContextIdsChanged is
+     *            <code>null</code> if definedCommandIdsChanged is
      *            <code>false</code> and must not be null if
      *            definedContextIdsChanged is <code>true</code>.
      * @param previouslyDefinedKeyConfigurationIds
@@ -113,17 +149,26 @@ public final class CommandManagerEvent {
                 && previouslyDefinedKeyConfigurationIds != null)
                 throw new IllegalArgumentException();
 
-        if (definedCategoryIdsChanged)
-                this.previouslyDefinedCategoryIds = Util.safeCopy(
-                        previouslyDefinedCategoryIds, String.class);
+        if (definedCategoryIdsChanged) {
+            this.previouslyDefinedCategoryIds = Util.safeCopy(
+                    previouslyDefinedCategoryIds, String.class);
+        } else {
+            this.previouslyDefinedCategoryIds = null;
+        }
 
-        if (definedCommandIdsChanged)
-                this.previouslyDefinedCommandIds = Util.safeCopy(
-                        previouslyDefinedCommandIds, String.class);
+        if (definedCommandIdsChanged) {
+            this.previouslyDefinedCommandIds = Util.safeCopy(
+                    previouslyDefinedCommandIds, String.class);
+        } else {
+            this.previouslyDefinedCommandIds = null;
+        }
 
-        if (definedKeyConfigurationIdsChanged)
+        if (definedKeyConfigurationIdsChanged) {
                 this.previouslyDefinedKeyConfigurationIds = Util.safeCopy(
                         previouslyDefinedKeyConfigurationIds, String.class);
+        } else {
+            this.previouslyDefinedKeyConfigurationIds = null;
+        }
 
         this.commandManager = commandManager;
         this.activeContextIdsChanged = activeContextIdsChanged;
