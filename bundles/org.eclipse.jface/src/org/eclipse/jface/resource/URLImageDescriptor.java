@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.ImageData;
 /**
@@ -50,7 +51,10 @@ public ImageData getImageData() {
 			return new ImageData(in);
 		}
 		catch (SWTException e) {
-			return null;
+			if (e.code == SWT.ERROR_INVALID_IMAGE)
+				return null;
+			else
+				throw e;
 		}
 		finally {
 			try {
