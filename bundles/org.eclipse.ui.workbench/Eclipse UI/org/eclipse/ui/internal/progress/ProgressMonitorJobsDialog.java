@@ -43,7 +43,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	
 	//Cache initial enablement in case the enablement state is set
 	//before the button is created
-	private boolean enableDetailsButton = true;
+	protected boolean enableDetailsButton = false;
 	/**
 	 * Create a new instance of the receiver.
 	 * 
@@ -216,6 +216,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	 */
 	protected void updateForSetBlocked(IStatus reason) {
 		super.updateForSetBlocked(reason);
+		enableDetails(true);
 		if (viewer == null) //Open the viewer if there is a block
 			handleDetailsButtonSelect();
 	}
@@ -230,11 +231,20 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 			InterruptedException {
 		//if it is run in the UI Thread don't do anything.
 		if (!fork) {
-			if (detailsButton == null)
-				enableDetailsButton = false;
-			else
-				detailsButton.setEnabled(false);
+			enableDetails(false);
 		}
 		super.run(fork, cancelable, runnable);
+	}
+	/**
+	 * Set the enable state of the details button now or 
+	 * when it will be created.
+	 * @param enableState a boolean to indicate the preferred'
+	 * state
+	 */
+	protected void enableDetails(boolean enableState) {
+		if (detailsButton == null)
+			enableDetailsButton = enableState;
+		else
+			detailsButton.setEnabled(enableState);
 	}
 }
