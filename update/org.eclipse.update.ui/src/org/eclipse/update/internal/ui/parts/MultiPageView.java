@@ -114,8 +114,8 @@ public IUpdateFormPage showPage(final IUpdateFormPage page) {
 	formWorkbook.selectPage(page);
 	return page;
 }
-public void init(IViewSite site, IMemento memento)
-	throws PartInitException {
+
+public void init(IViewSite site) throws PartInitException {
 	setSite(site);
 	site.getPage().addSelectionListener(this);
 	for (Iterator iter = pages.iterator(); iter.hasNext();) {
@@ -123,8 +123,8 @@ public IUpdateFormPage showPage(final IUpdateFormPage page) {
 		page.init(null);
 	}
 }
-
-public void dispose() {
+	
+public void dispose() {
 	// remove ourselves as a selection listener
 	getSite().getPage().removeSelectionListener(this);
 	for (int i = 0; i < pages.size(); i++) {

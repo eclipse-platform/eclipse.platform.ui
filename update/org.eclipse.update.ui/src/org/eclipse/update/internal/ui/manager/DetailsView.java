@@ -20,6 +20,7 @@ public class DetailsView extends MultiPageView {
 public static final String HOME_PAGE = "Home";
 public static final String DETAILS_PAGE = "Details";
 public static final String BROWSER_PAGE = "Browser";
+public static final String HOME_URL = "update://index.html";
 
 private Action homeAction;
 private Action backAction;
@@ -31,7 +32,8 @@ private Action forwardAction;
 	public DetailsView() {
 	}
 	
-	public void createPages() {
+public void createPages() {
+	if (SWT.getPlatform().equals("win32")==false) {
 		firstPageId = HOME_PAGE;
 		formWorkbook.setFirstPageSelected(false);
 		MainPage mainPage =
@@ -40,26 +42,33 @@ private Action forwardAction;
 		DetailsPage detailsPage = 
 			new DetailsPage(this, "Details");
 		addPage(DETAILS_PAGE, detailsPage);
-		if (SWT.getPlatform().equals("win32")) {
-			EmbeddedBrowser browser = 
-				new EmbeddedBrowser();
-		   addPage(BROWSER_PAGE, browser);
-		} 
 	}
-	
-	public void showURL(String url) {
-		if (SWT.getPlatform().equals("win32")) {
-			showPage(BROWSER_PAGE, url);
-		}
-		else {
-			Program.launch(url);
-		}
+	else {
+		EmbeddedBrowser browser = 
+			new EmbeddedBrowser();
+		firstPageId = BROWSER_PAGE;
+	   	addPage(BROWSER_PAGE, browser);
 	}
+}
 	
+public void showURL(String url) {
+	if (SWT.getPlatform().equals("win32")) {
+		showPage(BROWSER_PAGE, url);
+	}
+	else {
+		Program.launch(url);
+	}
+}
+
 public void createPartControl(Composite parent) {
 	super.createPartControl(parent);
 	makeActions();
 	fillActionBars();
+	performHome();
+}
+
+private void showDetails(Object el) {
+//	showPage(DETAILS_PAGE, el);
 }
 	
 public void selectionChanged(IWorkbenchPart part, ISelection sel) {
@@ -69,16 +78,11 @@ public void selectionChanged(IWorkbenchPart part, ISelection sel) {
 		if (ssel.size()==1) {
 			Object el = ssel.getFirstElement();
 			if (el instanceof IFeature || el instanceof ChecklistJob) {
-				showPage(DETAILS_PAGE, el);
+				showDetails(el);
 				return;
 			}
 		}
 	}
-	/*
-	if (getCurrentPage() != getPage(HOME_PAGE)) 
-		// go back to the home page
-		showPage(HOME_PAGE);
-	*/
 }
 
 private void makeActions() {
@@ -124,7 +128,10 @@ private void fillActionBars() {
 }
 
 private void performHome() {
-	showPage(HOME_PAGE);
+	if (SWT.getPlatform().equals("win32"))
+		showPage(BROWSER_PAGE, HOME_URL);
+	else
+	   	showPage(HOME_PAGE);
 }
 
 private void performBackward() {
