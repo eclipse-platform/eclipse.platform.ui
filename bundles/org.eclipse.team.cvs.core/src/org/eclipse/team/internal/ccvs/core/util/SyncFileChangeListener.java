@@ -10,7 +10,6 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.util;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,8 +23,6 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.Policy;
@@ -87,7 +84,7 @@ public class SyncFileChangeListener implements IResourceChangeListener {
 						handleCVSDir((IContainer)resource, kind);
 					} else {
 						// Inform the synchronizer about folder creations
-						if (kind == delta.ADDED && resource.getType() == IResource.FOLDER) {
+						if (kind == IResourceDelta.ADDED && resource.getType() == IResource.FOLDER) {
 							try {
 								EclipseSynchronizer.getInstance().folderCreated((IFolder)resource);
 							} catch (CVSException e) {

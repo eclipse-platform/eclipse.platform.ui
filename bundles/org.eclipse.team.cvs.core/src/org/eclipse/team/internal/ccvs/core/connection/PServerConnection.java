@@ -211,7 +211,7 @@ public class PServerConnection implements IServerConnection {
 	protected Socket createSocket(IProgressMonitor monitor) throws IOException {
 		// Determine what port to use
 		int port = cvsroot.getPort();
-		if (port == cvsroot.USE_DEFAULT_PORT)
+		if (port == ICVSRepositoryLocation.USE_DEFAULT_PORT)
 			port = DEFAULT_PORT;
 		// Make the connection
 		Socket result;

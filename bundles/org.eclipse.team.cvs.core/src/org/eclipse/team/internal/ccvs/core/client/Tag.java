@@ -12,8 +12,6 @@ import org.eclipse.team.internal.ccvs.core.CVSStatus;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
-import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
-import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.client.listeners.ICommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.TagListener;
 
@@ -57,7 +55,7 @@ public class Tag extends Command {
 		}
 		
 		// Add the CREATE_BRANCH option for a branch tag
-		if (tag.getType() == tag.BRANCH) {
+		if (tag.getType() == CVSTag.BRANCH) {
 			if ( ! CREATE_BRANCH.isElementOf(localOptions)) {
 				LocalOption[] newLocalOptions = new LocalOption[localOptions.length + 1];
 				System.arraycopy(localOptions, 0, newLocalOptions, 0, localOptions.length);

@@ -47,6 +47,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Log;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
@@ -56,7 +57,6 @@ import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
 import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.NotifyInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
-import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * This class provides the implementation of ICVSRemoteFile and IManagedFile for
@@ -195,7 +195,7 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 						IStatus status = Command.LOG.execute(
 							Command.NO_GLOBAL_OPTIONS,
 							new LocalOption[] { 
-								Command.LOG.makeRevisionOption(info.getRevision())},
+								Log.makeRevisionOption(info.getRevision())},
 							new ICVSResource[] { RemoteFile.this },
 							new LogListener(RemoteFile.this, entries),
 							Policy.subMonitorFor(monitor, 100));

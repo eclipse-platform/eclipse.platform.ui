@@ -13,7 +13,6 @@ package org.eclipse.team.internal.ccvs.core.client;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.client.Command.GlobalOption;
 
 public class Log extends AbstractMessageCommand {
 	/*** Local options: specific to log ***/

@@ -21,7 +21,6 @@ import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Session;
-import org.eclipse.team.internal.core.target.SynchronizedTargetProvider;
 
 /**
  * Unsorted static helper-methods 
@@ -90,7 +89,7 @@ public class Util {
 			int segments = path.segmentCount();
 			if(segments>split) {				
 				IPath last = path.removeFirstSegments(segments - split);
-				return "..." + path.SEPARATOR + last.toString(); //$NON-NLS-1$
+				return "..." + IPath.SEPARATOR + last.toString(); //$NON-NLS-1$
 			}
 			return path.toString();
 		} catch(CVSException e) {
@@ -114,7 +113,7 @@ public class Util {
 				try {
 					Socket newSocket = new Socket(host, port);
 					synchronized (socket) {
-						if (Thread.currentThread().interrupted()) {
+						if (Thread.interrupted()) {
 							// we we're either cancelled or timed out so just close the socket
 							newSocket.close();
 						} else {

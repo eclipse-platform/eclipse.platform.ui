@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
@@ -122,7 +123,7 @@ abstract class AbstractStructureVisitor implements ICVSResourceVisitor {
 
 			CVSEntryLineTag tag = info.getTag();
 
-			if (tag != null && tag.getType() != tag.HEAD) {
+			if (tag != null && tag.getType() != CVSTag.HEAD) {
 				session.sendSticky(tag.toEntryLineFormat(false));
 			}
 		}

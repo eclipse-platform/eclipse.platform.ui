@@ -297,7 +297,7 @@ public class Session {
 			
 			ResponseHandler mtHandler = Request.getResponseHandler("MT"); //$NON-NLS-1$
 			// accept MT messages for all non-standard server
-			boolean useMT = ! (location.getServerPlatform() == location.CVS_SERVER);
+			boolean useMT = ! (location.getServerPlatform() == CVSRepositoryLocation.CVS_SERVER);
 			try {
 				// If we're connected to a CVSNT server or we don't know the platform, 
 				// accept MT. Otherwise don't.
@@ -340,7 +340,7 @@ public class Session {
 			}
 			
 			// get the server platform if it is unknown
-			if (CVSProviderPlugin.getPlugin().isDetermineVersionEnabled() && location.getServerPlatform() == location.UNDETERMINED_PLATFORM) {
+			if (CVSProviderPlugin.getPlugin().isDetermineVersionEnabled() && location.getServerPlatform() == CVSRepositoryLocation.UNDETERMINED_PLATFORM) {
 				Command.VERSION.execute(this, location, Policy.subMonitorFor(monitor, 10));
 			}
 		} catch (CVSException e) {
@@ -389,10 +389,10 @@ public class Session {
 	}
 	
 	public boolean isCVSNT() {
-		if (location.getServerPlatform() == location.UNDETERMINED_PLATFORM) {
+		if (location.getServerPlatform() == CVSRepositoryLocation.UNDETERMINED_PLATFORM) {
 			return location.getRootDirectory().indexOf(':') == 1;
 		} else {
-			return location.getServerPlatform() == location.CVSNT_SERVER;
+			return location.getServerPlatform() == CVSRepositoryLocation.CVSNT_SERVER;
 		}
 	}
 
