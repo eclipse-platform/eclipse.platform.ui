@@ -161,15 +161,25 @@ private boolean processView(IConfigurationElement element) {
 	String relationship = element.getAttribute(ATT_RELATIONSHIP);
 	String ratioString = element.getAttribute(ATT_RATIO);
 	boolean visible = !VAL_FALSE.equals(element.getAttribute(ATT_VISIBLE));
-	boolean closeable = !VAL_FALSE.equals(element.getAttribute(ATT_CLOSEABLE));
-	boolean moveable = !VAL_FALSE.equals(element.getAttribute(ATT_MOVEABLE));
-	boolean standalone = VAL_TRUE.equals(element.getAttribute(ATT_STANDALONE));
-	boolean showTitle = !VAL_FALSE.equals(element.getAttribute(ATT_SHOW_TITLE));
+	String closeable = element.getAttribute(ATT_CLOSEABLE);
+	String moveable = element.getAttribute(ATT_MOVEABLE);
+	String standalone = element.getAttribute(ATT_STANDALONE);
+	String showTitle = element.getAttribute(ATT_SHOW_TITLE);
 	
 	float ratio;
 	
-	if (id == null || relative == null || relationship == null)
+	if (id == null) {
+	    logMissingAttribute(element, ATT_ID);
+	    return false;
+	}
+	if (relationship == null) {
+	    logMissingAttribute(element, ATT_RELATIONSHIP); 
+	    return false;
+	}
+	if (!VAL_FAST.equals(relationship) && relative == null) {
+	    logMissingAttribute(element, ATT_RELATIVE);
 		return false;
+	}
 	
 	// Get the ratio.
 	if (ratioString == null) {
@@ -211,40 +221,40 @@ private boolean processView(IConfigurationElement element) {
 			pageLayout.stackView(id, relative);
 		else
 			pageLayout.stackPlaceholder(id, relative);
-		return true;
 	}
 	
 	// If the view is a fast view...
-	if (fast) {
+	else if (fast) {
 		if (ratio == IPageLayout.NULL_RATIO) {
 			// The ratio has not been specified.
 			pageLayout.addFastView(id);
 		} else {
 			pageLayout.addFastView(id, ratio);
 		}
-		return true;
 	}
+	else {
+		
+		// The view is a regular view.
+		// If the ratio is not specified or is invalid, use the default ratio.
+		if (ratio == IPageLayout.NULL_RATIO || ratio == IPageLayout.INVALID_RATIO)
+			ratio = IPageLayout.DEFAULT_VIEW_RATIO;
 	
-	// The view is a regular view.
-	// If the ratio is not specified or is invalid, use the default ratio.
-	if (ratio == IPageLayout.NULL_RATIO || ratio == IPageLayout.INVALID_RATIO)
-		ratio = IPageLayout.DEFAULT_VIEW_RATIO;
-
-	if (visible) {
-	    if (standalone) {
-	        pageLayout.addStandaloneView(id, showTitle, intRelation, ratio, relative);
-	    }
-	    else {
-	        pageLayout.addView(id, intRelation, ratio, relative);
-	    }
-	} else {
-		pageLayout.addPlaceholder(id, intRelation, ratio, relative);
+		if (visible) {
+		    if (VAL_TRUE.equals(standalone)) {
+		        pageLayout.addStandaloneView(id, !VAL_FALSE.equals(showTitle), intRelation, ratio, relative);
+		    }
+		    else {
+		        pageLayout.addView(id, intRelation, ratio, relative);
+		    }
+		} else {
+			pageLayout.addPlaceholder(id, intRelation, ratio, relative);
+		}
 	}
-	if (!closeable) {
-	    pageLayout.getViewLayout(id).setCloseable(false);
+	if (closeable != null) {
+	    pageLayout.getViewLayout(id).setCloseable(!VAL_FALSE.equals(closeable));
 	}
-	if (!moveable) {
-	    pageLayout.getViewLayout(id).setMoveable(false);
+	if (moveable != null) {
+	    pageLayout.getViewLayout(id).setMoveable(!VAL_FALSE.equals(moveable));
 	}
 	
 	return true;

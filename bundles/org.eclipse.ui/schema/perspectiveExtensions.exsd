@@ -141,10 +141,10 @@ are appended to the initial definition.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="relative" type="string" use="required">
+         <attribute name="relative" type="string">
             <annotation>
                <documentation>
-                  the unique identifier of a view which already exists in the perspective.  This will be used as a reference point for placement of the view.  The relationship between these two views is defined by &lt;samp&gt;relationship&lt;/samp&gt;.
+                  the unique identifier of a view which already exists in the perspective.  This will be used as a reference point for placement of the view.  The relationship between these two views is defined by &lt;samp&gt;relationship&lt;/samp&gt;.  Ignored if relationship is &quot;fast&quot;.
                </documentation>
             </annotation>
          </attribute>
