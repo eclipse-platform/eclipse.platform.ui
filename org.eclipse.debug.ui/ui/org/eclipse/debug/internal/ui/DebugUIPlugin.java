@@ -885,10 +885,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 
 		final Job[] builds = getCurrentBuildJobs();
-		String waitForBuild = store.getString(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD);
-		if (builds.length > 0) { // if there are build jobs running, do we wait or not??
-			if (waitForBuild.equals(AlwaysNeverDialog.PROMPT)) {
-				boolean wait = false;
+		boolean wait = (builds.length > 0);
+		
+		String waitPref = store.getString(IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD);
+		if (wait) { // if there are build jobs running, do we wait or not??
+			if (waitPref.equals(AlwaysNeverDialog.PROMPT)) {
 				PromptDialog prompt = new PromptDialog(getShell(), DebugUIMessages.getString("DebugUIPlugin.25"), DebugUIMessages.getString("DebugUIPlugin.26"), IInternalDebugUIConstants.PREF_WAIT_FOR_BUILD, store); //$NON-NLS-1$ //$NON-NLS-2$
 				prompt.open();
 				
@@ -902,18 +903,16 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 						wait = true;
 						break;
 				}
-				
-				if (wait) {
-					waitForBuild = AlwaysNeverDialog.ALWAYS;
-				}
 			}
 		}
+
 		
-		final boolean wait = waitForBuild.equals(AlwaysNeverDialog.ALWAYS);
+		
+		final boolean waitInJob = wait;
 		Job job = new Job(DebugUIMessages.getString("DebugUITools.3")) { //$NON-NLS-1$
 			public IStatus run(IProgressMonitor monitor) {
 				try {
-					if(wait) {
+					if(waitInJob) {
 						String configName = configuration.getName();
 						for (int i = 0; i < builds.length; i++) {
 							try {
@@ -949,13 +948,15 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 			}
 		};
 
-		IWorkbench workbench = DebugUIPlugin.getDefault().getWorkbench();			
+		IWorkbench workbench = DebugUIPlugin.getDefault().getWorkbench();
 		IProgressService progressService = workbench.getProgressService();
-		
+
 		job.setPriority(Job.INTERACTIVE);
 		job.setName(DebugUIMessages.getString("DebugUITools.8")); //$NON-NLS-1$
+		if (wait) {
+			progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job, true); //returns immediately
+		}
 		job.schedule();
-		progressService.showInDialog(workbench.getActiveWorkbenchWindow().getShell(), job, true); //returns immediately
 	}
 	
 	static class PromptDialog extends MessageDialog {
