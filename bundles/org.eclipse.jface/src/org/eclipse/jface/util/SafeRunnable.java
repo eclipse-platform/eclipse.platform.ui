@@ -18,6 +18,8 @@ import org.eclipse.jface.resource.JFaceResources;
  * Implements a default implementation of ISafeRunnable.
  * The default implementation of <code>handleException</code>
  * opens a message dialog.
+ * <p><b>Note:<b> This class can open an error dialog and should not 
+ *  be used outside of the UI Thread.</p>
  */
 public abstract class SafeRunnable implements ISafeRunnable {
 	private String message;
