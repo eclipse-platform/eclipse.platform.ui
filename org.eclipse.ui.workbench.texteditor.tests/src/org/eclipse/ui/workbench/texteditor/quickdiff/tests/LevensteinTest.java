@@ -19,7 +19,6 @@ import org.eclipse.jface.text.Assert;
 
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Levenstein;
-import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.LevensteinTestHelper;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifference;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.RangeDifferencer;
 

@@ -16,7 +16,6 @@ import junit.framework.TestCase;
 
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.IRangeComparator;
 import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.Levenstein;
-import org.eclipse.ui.internal.texteditor.quickdiff.compare.rangedifferencer.LevensteinTestHelper;
 
 
 /**
