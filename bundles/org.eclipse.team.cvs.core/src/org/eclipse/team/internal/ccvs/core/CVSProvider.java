@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -136,12 +137,14 @@ public class CVSProvider implements ICVSProvider {
 					// should be removed once nature support is added to the UI.
 					// delete children, keep project 
 					monitor.subTask(Policy.bind("CVSProvider.Scrubbing_local_project_1")); //$NON-NLS-1$
-					IResource[] children = project.members();
+					IResource[] children = project.members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
 					IProgressMonitor subMonitor = Policy.subMonitorFor(monitor, 80);
 					subMonitor.beginTask(null, children.length * 100);
 					try {
 						for (int j = 0; j < children.length; j++) {
-							children[j].delete(true /*force*/, Policy.subMonitorFor(subMonitor, 100));
+							if ( ! children[j].getName().equals(".project")) {
+								children[j].delete(true /*force*/, Policy.subMonitorFor(subMonitor, 100));
+							}
 						}
 					} finally {
 						subMonitor.done();
