@@ -854,6 +854,7 @@ public final class Workbench implements IWorkbench {
 		contextManager = new ContextManager();
 		services[IWorkbenchServices.CONTEXT] = new ContextService(
 				contextManager);
+		BindingManager.DEBUG = Policy.DEBUG_KEY_BINDINGS;
 		bindingManager = new BindingManager(contextManager);
 		services[IWorkbenchServices.BINDING] = new BindingService(
 				bindingManager);
