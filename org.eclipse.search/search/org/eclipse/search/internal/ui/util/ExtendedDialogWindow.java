@@ -41,7 +41,6 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	private Button fCancelButton;
 	private Button fSearchButton;
 	
-	private MessageLine fMessageLine;
 	private String fPerformActionLabel= JFaceResources.getString("finish"); //$NON-NLS-1$
 	
 	// The number of long running operation executed from the dialog.	
@@ -88,31 +87,6 @@ public abstract class ExtendedDialogWindow extends Dialog  implements IRunnableC
 	 */
 	protected abstract Control createPageArea(Composite parent); 
 	 
-	/**
-	 * Creates and returns the contents of the dialog's 
-	 * button bar.
-	 *
-	 * Subclasses may override.
-	 *
-	 * @param parent the parent composite to contain the button bar
-	 * @return the button bar control
-	 */
-	protected Control createButtonBar(Composite parent) {
-		Composite composite= new Composite(parent, SWT.NULL);
-		GridLayout layout= new GridLayout();
-		layout.numColumns= 2;
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		fMessageLine= new MessageLine(composite);
-		fMessageLine.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-		fMessageLine.setMessage(""); //$NON-NLS-1$
-
-		return super.createButtonBar(composite);
-	}
-
 	/**
 	 * Add buttons to the dialog's button bar.
 	 *
