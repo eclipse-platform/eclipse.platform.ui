@@ -247,7 +247,9 @@ public class PartTabFolder extends LayoutPart implements ILayoutContainer, IWork
 			 */
 			public void itemClosed(CTabFolderEvent event) {
 				LayoutPart item = (LayoutPart) mapTabToPart.get(event.item);
-				remove(item);
+				if(item instanceof ViewPane)
+					((ViewPane ) item).doHide();
+				//remove(item);
 			}
 		});
 
