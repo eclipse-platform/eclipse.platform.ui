@@ -185,6 +185,23 @@ public void accept(IResourceDeltaVisitor visitor) throws CoreException;
  */
 public void accept(IResourceDeltaVisitor visitor, boolean includePhantoms) throws CoreException;
 /**
+ * Finds and returns the descendent delta identified by the given path in
+ * this delta, or <code>null</code> if no such descendent exists.
+ * The supplied path may be absolute or relative; in either case, it is
+ * interpreted as relative to this delta.   Trailing separators are ignored.
+ * If the path is empty this delta is returned.
+ * <p>
+ * This is a convenience method to avoid manual traversal of the delta
+ * tree in cases where the listener is only interested in changes to
+ * particular resources.  Calling this method will generally be
+ * faster than manually traversing the delta to a particular descendent.
+ * </p>
+ * @param path the path of the desired descendent delta
+ * @return the descendent delta, or <code>null</code> if no such
+ * 		descendent exists in the delta
+ */
+public IResourceDelta findMember(IPath path);
+/**
  * Returns resource deltas for all children of this resource 
  * which were added, removed, or changed. Returns an empty
  * array if there are no affected children.

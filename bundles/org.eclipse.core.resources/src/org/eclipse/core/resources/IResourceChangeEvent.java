@@ -133,6 +133,23 @@ public interface IResourceChangeEvent {
 	 */
 	public static final int 	POST_AUTO_BUILD = 16;
 /**
+ * Returns all marker deltas of the specified type that are associated
+ * with resource deltas for this event. If <code>includeSubtypes</code>
+ * is <code>false</code>, only marker deltas whose type exactly matches 
+ * the given type are returned.  Returns an empty array if there 
+ * are no matching marker deltas.
+ * <p>
+ * Calling this method is equivalent to walking the entire resource
+ * delta for this event, and collecting all marker deltas of a given type.
+ * The speed of this method will be proportional to the number of changed
+ * markers, regardless of the size of the resource delta tree.
+ * </p>
+ * @param type the type of marker to consider, or <code>null</code> to indicate all types
+ * @param includeSubtypes whether or not to consider subtypes of the given type
+ * @return an array of marker deltas
+ */
+public IMarkerDelta[] findMarkerDeltas(String type, boolean includeSubtypes);
+/**
  * Returns a resource delta, rooted at the workspace, describing the set
  * of changes that happened to resources in the workspace. 
  * Returns <code>null</code> if not applicable to this type of event.

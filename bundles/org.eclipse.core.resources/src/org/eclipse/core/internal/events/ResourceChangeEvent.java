@@ -5,13 +5,18 @@ package org.eclipse.core.internal.events;
  * All Rights Reserved.
  */
 
+import java.util.*;
+
+import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
-import java.util.EventObject;
 
 public class ResourceChangeEvent extends EventObject implements IResourceChangeEvent {
 	int type;
 	IResource resource;
 	IResourceDelta delta;
+	
+	private static final IMarkerDelta[] NO_MARKER_DELTAS = new IMarkerDelta[0];
+	
 protected ResourceChangeEvent(Object source, int type, IResource resource) {
 	super (source);
 	this.resource = resource;
@@ -21,6 +26,33 @@ protected ResourceChangeEvent(Object source, int type, IResourceDelta delta) {
 	super (source);
 	this.delta = delta;
 	this.type = type;
+}
+/**
+ * @see IResourceChangeEvent#findMarkerDeltas(String, boolean)
+ */
+public IMarkerDelta[] findMarkerDeltas(String type, boolean includeSubtypes) {
+	if (delta == null)
+		return NO_MARKER_DELTAS;
+	ResourceDeltaInfo info = ((ResourceDelta)delta).getDeltaInfo();
+	if (info == null)
+		return NO_MARKER_DELTAS;
+	//Map of IPath -> MarkerSet containing MarkerDelta objects
+	Map markerDeltas = info.getMarkerDeltas();
+	if (markerDeltas == null || markerDeltas.size() == 0) 
+		return NO_MARKER_DELTAS;
+	ArrayList matching = new ArrayList();
+	Iterator deltaSets = markerDeltas.values().iterator();
+	while (deltaSets.hasNext()) {
+		MarkerSet deltas = (MarkerSet)deltaSets.next();
+		IMarkerSetElement[] elements = deltas.elements();
+		for (int i = 0; i < elements.length; i++) {
+			MarkerDelta delta = (MarkerDelta)elements[i];
+			//our inclusion test depends on whether we are considering subtypes
+			if (type == null || (includeSubtypes ? delta.isSubtypeOf(type) : delta.getType().equals(type)))
+				matching.add(delta);
+		}
+	}
+	return (IMarkerDelta[])matching.toArray(new IMarkerDelta[matching.size()]);
 }
 /**
  * @see IResourceChangeEvent#getDelta
