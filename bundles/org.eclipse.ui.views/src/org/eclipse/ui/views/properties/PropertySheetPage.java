@@ -101,7 +101,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 			}
 		});
 		initDragAndDrop();
-
+		makeActions();
+		
 		// Create the popup menu for the page.
 		copyAction = new CopyPropertyAction(viewer, "copy"); //$NON-NLS-1$
 		copyAction.setImageDescriptor(getImageDescriptor("etool16/copy_edit.gif")); //$NON-NLS-1$
@@ -109,6 +110,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.add(copyAction);
+		menuMgr.add(new Separator());
+		menuMgr.add(defaultsAction);
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 
@@ -212,8 +215,15 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	 * @param selection the new selection
 	 */
 	public void handleEntrySelection(ISelection selection) {
-		if (defaultsAction != null)
-			defaultsAction.setEnabled(!selection.isEmpty());
+		if (defaultsAction != null) {
+			if (selection.isEmpty()) {
+				defaultsAction.setEnabled(false);
+				return;
+			}
+			// see if item is editable
+			boolean editable = viewer.getActiveCellEditor() != null;
+			defaultsAction.setEnabled(editable);
+		}
 	}
 	/**
 	 * Adds drag and drop support.
@@ -260,6 +270,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		// Default values
 		defaultsAction = new DefaultsAction(viewer, "defaults"); //$NON-NLS-1$
 		defaultsAction.setToolTipText(PropertiesMessages.getString("Page.defaultToolTip")); //$NON-NLS-1$
+		defaultsAction.setText(PropertiesMessages.getString("Page.defaultToolTip")); //$NON-NLS-1$
 		defaultsAction.setImageDescriptor(getImageDescriptor("elcl16/defaults_ps.gif")); //$NON-NLS-1$
 		defaultsAction.setHoverImageDescriptor(getImageDescriptor("clcl16/defaults_ps.gif")); //$NON-NLS-1$
 		defaultsAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/defaults_ps.gif")); //$NON-NLS-1$
@@ -268,6 +279,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		// Filter (expert)
 		filterAction = new FilterAction(viewer, "filter"); //$NON-NLS-1$
 		filterAction.setToolTipText(PropertiesMessages.getString("Page.filterToolTip")); //$NON-NLS-1$
+		filterAction.setText(PropertiesMessages.getString("Page.filterToolTip")); //$NON-NLS-1$
 		filterAction.setImageDescriptor(getImageDescriptor("elcl16/filter_ps.gif")); //$NON-NLS-1$
 		filterAction.setHoverImageDescriptor(getImageDescriptor("clcl16/filter_ps.gif")); //$NON-NLS-1$
 		filterAction.setChecked(false);
@@ -275,6 +287,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 		// Categories
 		categoriesAction = new CategoriesAction(viewer, "categories"); //$NON-NLS-1$
 		categoriesAction.setToolTipText(PropertiesMessages.getString("Page.categoriesToolTip")); //$NON-NLS-1$
+		categoriesAction.setText(PropertiesMessages.getString("Page.categoriesToolTip")); //$NON-NLS-1$
 		categoriesAction.setImageDescriptor(getImageDescriptor("elcl16/tree_mode.gif")); //$NON-NLS-1$
 		categoriesAction.setHoverImageDescriptor(getImageDescriptor("clcl16/tree_mode.gif")); //$NON-NLS-1$
 		categoriesAction.setChecked(true);
@@ -284,14 +297,15 @@ public class PropertySheetPage extends Page implements IPropertySheetPage {
 	 */
 	public void makeContributions(IMenuManager menuManager, IToolBarManager toolBarManager, IStatusLineManager statusLineManager) {
 
-		// make the actions
-		makeActions();
-
 		// add actions to the tool bar
 		toolBarManager.add(categoriesAction);
 		toolBarManager.add(filterAction);
 		toolBarManager.add(defaultsAction);
 
+		// add actions to the menu
+		menuManager.add(categoriesAction);
+		menuManager.add(filterAction);
+		
 		// set status line manager into the viewer
 		viewer.setStatusLineManager(statusLineManager);
 	}
