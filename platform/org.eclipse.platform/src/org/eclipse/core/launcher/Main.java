@@ -189,6 +189,7 @@ public class Main {
 	private static final String PRODUCT_SITE_VERSION = "version"; //$NON-NLS-1$
 
 	// constants: System property keys and/or configuration file elements
+	private static final String CFG_INSTALLLOCATION= "osgi.installLocation"; //$NON-NLS-1$
 	private static final String CFG_FRAMEWORK = "osgi.framework"; //$NON-NLS-1$
 	private static final String CFG_SPLASHPATH = "osgi.splashPath"; //$NON-NLS-1$
 	private static final String CFG_SPLASHLOCATION = "osgi.splashLocation"; //$NON-NLS-1$
@@ -738,6 +739,8 @@ public class Main {
 		String[] passThruArgs = processCommandLine(args);
 		setConfigurationLocation();
 		passThruArgs = processConfiguration(passThruArgs);
+		// need to ensure that getInstallLocation is called at least once to initialize the value.
+		getInstallLocation();
 		return basicRun(passThruArgs);
 	}
 
@@ -854,7 +857,7 @@ public class Main {
 		if (installLocation != null)
 			return installLocation;
 
-		installLocation = System.getProperty("eclipse.installURL");
+		installLocation = System.getProperty(CFG_INSTALLLOCATION);
 		if (installLocation != null)
 			return installLocation;
 
@@ -1428,7 +1431,7 @@ public class Main {
 	
 	private void setInstallLocation(String location) {
 		installLocation = location;
-		System.getProperties().setProperty("eclipse.installURL", installLocation); //$NON-NLS-1$
+		System.getProperties().setProperty(CFG_INSTALLLOCATION, installLocation); //$NON-NLS-1$
 	}
 	/**
 	 * Return a boolean value indicating whether or not the version of the JVM is
