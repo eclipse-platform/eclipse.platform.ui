@@ -45,7 +45,7 @@
    <element name="renderingType">
       <annotation>
          <documentation>
-            This element defines a rendering type.  
+            This element defines a rendering type.
          </documentation>
       </annotation>
       <complexType>
@@ -137,54 +137,27 @@
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         The following is an example for defining a new rendering type.
+         The following is an example for defining a new rendering type and binding. 
 
 &lt;p&gt;
 &lt;pre&gt;
-&lt;extension
-    id=&quot;org.eclipse.debug.ui.renderings&quot;
-    name=&quot;Sample Rendering Type&quot;
-    point=&quot;org.eclipse.debug.ui.memoryRenderingTypes&quot;&gt;
-    &lt;rendering 
+&lt;extension point=&quot;org.eclipse.debug.ui.memoryRenderings&quot;&gt;
+    &lt;renderingType 
         name=&quot;Sample Rendering&quot;
-        renderingId=&quot;com.example.sampleRendering&quot;
-        renderingFactory=&quot;com.example.SampleRenderingsFactory&quot;&gt;
-        &lt;renderingProperty
-            name=&quot;viewTabFactory&quot;
-            value=&quot;com.example.SampleViewTabFactory&quot;&gt;
-        &lt;/renderingProperty&gt;
-        &lt;viewBinding viewIds=&quot;org.eclipse.debug.ui.MemoryView.RenderingViewPane&quot;/&gt;
-    &lt;/rendering&gt;        
+        id=&quot;com.example.sampleRendering&quot;
+        class=&quot;com.example.SampleRenderingTypeDelegate&quot;&gt;
+    &lt;/renderingType&gt;
+    &lt;renderingBindings
+        renderingIds=&quot;com.example.sampleRendering&quot;&gt;
+        &lt;enablement&gt;
+            &lt;instanceof value=&quot;com.example.SampleMemoryBlock&quot;/&gt;
+        &lt;/enablement&gt;    
+    &lt;/renderingBindings&gt;          
 &lt;/extension&gt;        
 &lt;/pre&gt;
 &lt;/p&gt;
 
-In the above example, a new rendering type, Sample Rendering, is defined. This rendering type supports the rendering view pane from the Memory View.
-&lt;br&gt;&lt;br&gt;
-The following is an example for allowing Sample Rendering to be displayed in the rendering view pane from the Memory View.  
-&lt;p&gt;
-&lt;pre&gt;
-&lt;extension
-    id=&quot;com.example&quot;
-    name=&quot;Sample Rendering Extension&quot;
-    point=&quot;org.eclipse.debug.ui.memoryRenderingTypes&quot;&gt;
-    &lt;renderingBinding
-        renderingIds=&quot;com.example.sampleRendering&quot;&gt;
-        &lt;enablement&gt;
-            &lt;instanceof value=&quot;com.example.SampleMemoryBlock&quot;/&gt;
-        &lt;/enablement&gt;    
-    &lt;/renderingBinding&gt;  
-    &lt;defaultRenderings
-        renderingIds=&quot;com.example.sampleRendering&quot;&gt;
-        &lt;enablement&gt;
-            &lt;instanceof value=&quot;com.example.SampleMemoryBlock&quot;/&gt;
-        &lt;/enablement&gt;    
-    &lt;/defaultRenderings&gt;
-&lt;/extension&gt;  
-&lt;/pre&gt;
-&lt;/p&gt;   
-
-In the above example, the Sample Rendering is defined as a valid rendering for SampleMemoryBlock. Whenever SampleMemoryBlock is created in the Memory View, a Sample Rendering will be created.
+In the above example, a new rendering type, Sample Rendering, is defined. The class &lt;code&gt;com.example.SampleRenderingTypeDelegate&lt;/code&gt; implements &lt;code&gt;org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate&lt;/code&gt; and will be used to create new renderings of this type. The rendering is bound to instances of &lt;code&gt;com.exmaple.SampleMemoryBlock&lt;/code&gt;.
       </documentation>
    </annotation>
 
@@ -194,9 +167,8 @@ In the above example, the Sample Rendering is defined as a valid rendering for S
       </appInfo>
       <documentation>
          &lt;p&gt;
-&lt;li&gt;Value of the attribute &lt;b&gt;renderingFactory &lt;/b&gt; must be a fully qualifed name of a Java class that implements &lt;b&gt;IMemoryRenderingFactory&lt;/b&gt;.&lt;/li&gt;
-&lt;li&gt;Value of the attribute &lt;b&gt; value &lt;/b&gt; from the &lt;b&gt;viewTabFactory&lt;/b&gt; rendering property must be a fully qualifed name of a Java class that implements &lt;b&gt;IMemoryViewTabFactory&lt;/b&gt;.&lt;/li&gt;
-&lt;li&gt;Value of the attribute &lt;b&gt;instanceof&lt;/b&gt; from the &lt;b&gt; enablement &lt;/b&gt; element must be a fully qualified name of a Java class that implements the interface &lt;b&gt;IMemoryBlock&lt;/b&gt;.&lt;/li&gt;
+&lt;li&gt;Value of the attribute &lt;b&gt;class&lt;/b&gt; in a &lt;b&gt;renderingType&lt;/b&gt; element must be a fully qualifed name of a Java class that implements &lt;b&gt;org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate&lt;/b&gt;.&lt;/li&gt;
+&lt;li&gt;Value of the attribute &lt;b&gt;class&lt;/b&gt; in a &lt;b&gt;renderingBindings&lt;/b&gt; element must be a fully qualifed name of a Java class that implements &lt;b&gt;org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider&lt;/b&gt;.&lt;/li&gt;
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -206,13 +178,17 @@ In the above example, the Sample Rendering is defined as a valid rendering for S
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The debug platform provides the following rendering types:&lt;br&gt;
+         &lt;p&gt;
+The debug platform provides the following rendering types:&lt;br&gt;
 &lt;li&gt;Hex Rendering (rendering id: org.eclipse.debug.ui.rendering.raw_memory)&lt;/li&gt;
 &lt;li&gt;ASCII Rendering (rendering id: org.eclipse.debug.ui.rendering.ascii)&lt;/li&gt;
 &lt;li&gt;Signed Integer Rendering (rendering id: org.eclipse.debug.ui.rendering.signedint)&lt;/li&gt;
 &lt;li&gt;Unsigned Integer Rendering (rendering id: org.eclipse.debug.ui.rendering.unsignedint) &lt;/li&gt;
 &lt;br&gt;
+&lt;/p&gt;
+&lt;p&gt;
 The debug platform provides a memory view to host renderings.
+&lt;/p&gt;
       </documentation>
    </annotation>
 
