@@ -405,9 +405,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 				setMemento(null);
 			}
 		};
-		if (!isAvailable()) {
-			return;
-		}
 		asyncExec(r);
 	}
 	
