@@ -205,14 +205,16 @@ public class ObjectMap implements Map {
 
 		int emptyIndex = -1;
 		// replace existing value if it exists
-		for (int i = 0; i < elements.length; i = i + 2) {
-			// keep track of the first empty index
-			if (emptyIndex == -1 && elements[i] == null) 
+		for (int i = 0; i < elements.length; i += 2) {
+			if (elements[i] != null) {
+				if (elements[i].equals(key)) {
+					Object oldValue = elements[i + 1];
+					elements[i + 1] = value;
+					return oldValue;
+				}
+			} else if (emptyIndex == -1) {
+				// keep track of the first empty index
 				emptyIndex = i;
-			if (elements[i] != null && elements[i].equals(key)) {
-				Object oldValue = elements[i + 1];
-				elements[i + 1] = value;
-				return oldValue;
 			}
 		}
 		// this will put the emptyIndex greater than the size but
