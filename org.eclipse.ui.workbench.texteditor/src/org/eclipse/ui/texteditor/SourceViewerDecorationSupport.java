@@ -332,13 +332,16 @@ public class SourceViewerDecorationSupport {
 	 * Updates the annotation overview for all configured annotation types.
 	 */
 	public void updateOverviewDecorations() {
-		Iterator e= fAnnotationTypeKeyMap.keySet().iterator();
-		while (e.hasNext()) {
-			Object type= e.next();
-			if (isAnnotationOverviewShown(type))
-				showAnnotationOverview(type);
-			else
-				hideAnnotationOverview(type);
+		if (fOverviewRuler != null) {
+			Iterator e= fAnnotationTypeKeyMap.keySet().iterator();
+			while (e.hasNext()) {
+				Object type= e.next();
+				if (isAnnotationOverviewShown(type))
+					showAnnotationOverview(type, false);
+				else
+					hideAnnotationOverview(type, false);
+			}
+			fOverviewRuler.update();
 		}
 	}
 	
@@ -563,9 +566,9 @@ public class SourceViewerDecorationSupport {
 
 			if (info.getOverviewRulerPreferenceKey().equals(p)) {
 				if (isAnnotationOverviewShown(info.getAnnotationType()))
-					showAnnotationOverview(info.getAnnotationType());
+					showAnnotationOverview(info.getAnnotationType(), true);
 				else
-					hideAnnotationOverview(info.getAnnotationType());
+					hideAnnotationOverview(info.getAnnotationType(), true);
 				return;
 			}
 		}			
@@ -892,24 +895,28 @@ public class SourceViewerDecorationSupport {
 	 * Enable annotation overview for the given annotation type.
 	 * 
 	 * @param annotationType the annotation type
+	 * @param update <code>true</code> iff the overview should be updated
 	 */	
-	private void showAnnotationOverview(Object annotationType) {
+	private void showAnnotationOverview(Object annotationType, boolean update) {
 		if (fOverviewRuler != null) {
 			fOverviewRuler.setAnnotationTypeColor(annotationType, getAnnotationTypeColor(annotationType));
 			fOverviewRuler.setAnnotationTypeLayer(annotationType, getAnnotationTypeLayer(annotationType));
 			fOverviewRuler.addAnnotationType(annotationType);
-			fOverviewRuler.update();
+			if (update)
+				fOverviewRuler.update();
 		}
 	}
 	
 	/**
 	 * Hides the annotation overview for the given type.
 	 * @param annotationType the annotation type
+	 * @param update <code>true</code> iff the overview should be updated
 	 */
-	private void hideAnnotationOverview(Object annotationType) {
+	private void hideAnnotationOverview(Object annotationType, boolean update) {
 		if (fOverviewRuler != null) {
 			fOverviewRuler.removeAnnotationType(annotationType);
-			fOverviewRuler.update();
+			if (update)
+				fOverviewRuler.update();
 		}
 	}
 	
