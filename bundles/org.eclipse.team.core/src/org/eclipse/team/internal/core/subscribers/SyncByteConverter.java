@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core.subscribers;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Policy;
 
@@ -22,27 +19,7 @@ import org.eclipse.team.internal.core.Policy;
 public class SyncByteConverter {
 
 	protected static final byte SEPARATOR_BYTE = (byte)'/';
-	
-	public static String[] parseIntoSubstrings(String string, String delimiter) {
-		List result = new ArrayList();
-		int start = 0;
-		int index = string.indexOf(delimiter);
-		String next;
-		while (index != -1) {
-			next = string.substring(start, index);
-			result.add(next);
-			start = index + 1;
-			index = string.indexOf(delimiter, start);
-		}
-		if (start >= string.length()) {
-			next = "";//$NON-NLS-1$
-		} else {
-			next = string.substring(start);
-		}
-		result.add(next);
-		return (String[]) result.toArray(new String[result.size()]);
-	}
-	
+
 	/**
 	 * Method setSlot.
 	 * @param syncBytes

@@ -172,21 +172,7 @@ public final class SubscriberSyncInfoCollector extends SubscriberResourceCollect
 		filteredInput.setFilter(filter);
 		filteredInput.reset();
 	}
-	
-	/**
-	 * Return the filter that is filtering the output of this collector.
-	 * @return a sync info filter
-	 */
-	public SyncInfoFilter getFilter() {
-		if(filteredInput != null) {
-			return filteredInput.getFilter();
-		}
-		return null;
-	}
 
-	/**
-	 * @param roots2
-	 */
 	public void setRoots(IResource[] roots) {
 		this.roots = roots;
 		reset();

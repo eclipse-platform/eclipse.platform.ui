@@ -111,10 +111,6 @@ final public class TeamPlugin extends Plugin {
 	/*
 	 * Static helper methods for creating exceptions
 	 */
-	public static TeamException wrapException(Exception e) {
-		return new TeamException(new Status(IStatus.ERROR, ID, 0, e.getMessage() != null ? e.getMessage() : "",	e)); //$NON-NLS-1$
-	}
-	
 	public static TeamException wrapException(CoreException e) {
 		IStatus status = e.getStatus();
 		return new TeamException(new Status(status.getSeverity(), ID, status.getCode(), status.getMessage(), e));

@@ -28,10 +28,6 @@ public class SyncSetInputFromSyncSet extends SyncSetInput implements ISyncInfoSe
 		this.inputSyncSet = set;
 		inputSyncSet.addSyncSetChangedListener(this);
 	}
-
-	public SyncInfoSet getInputSyncSet() {
-		return inputSyncSet;
-	}
 	
 	public void disconnect() {
 		if (inputSyncSet == null) return;

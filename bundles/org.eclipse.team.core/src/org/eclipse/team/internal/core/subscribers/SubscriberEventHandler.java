@@ -474,13 +474,6 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 		this.ticks = ticks;
 	}
 	
-	/**
-	 * @return Returns the started.
-	 */
-	protected boolean isStarted() {
-		return started;
-	}
-	
 	private void handlePreemptiveEvents(IProgressMonitor monitor) {
 		Event event = peek();
 		if (event instanceof RunnableEvent && ((RunnableEvent)event).isPreemtive()) {

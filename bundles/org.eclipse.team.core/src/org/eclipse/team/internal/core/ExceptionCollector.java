@@ -10,17 +10,9 @@
  *******************************************************************************/
 package org.eclipse.team.internal.core;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 
 /**
  * Collects exceptions and can be configured to ignore duplicates exceptions. Exceptions can be logged
@@ -33,13 +25,11 @@ import org.eclipse.core.runtime.Status;
  */
 public class ExceptionCollector {
 
-	private Map exceptionBucket = new HashMap();
 	private List statuses = new ArrayList();
 	private String message;
 	private String pluginId;
 	private int severity;
 	private ILog log;
-	private boolean ignoreDuplicates = false;
 		
 	/**
 	 * Creates a collector and initializes the parameters for the top-level exception
@@ -65,7 +55,6 @@ public class ExceptionCollector {
 	 */
 	public void clear() {
 		statuses.clear();
-		exceptionBucket.clear();
 	}
 
 	/**
@@ -87,24 +76,6 @@ public class ExceptionCollector {
 			}
 			return multiStatus; 
 		}
-	}
-
-	/**
-	 * Returns whether duplicate exceptions are being ignored.
-	 * @return <code>true</code> if this collector is ignoring duplicate exceptions, and
- 	 * <code>false</code> otherwise.
-	 */
-	public boolean isIgnoreDuplicates() {
-		return ignoreDuplicates;
-	}
-
-	/**
-	 * Sets whether duplicate exceptions are being ignored.
-	 * @param ignoreDuplicates <code>true</code> if this collector should ignore duplicate 
-	 * exceptions, and <code>false</code> otherwise.
-	 */
-	public void setIgnoreDuplicates(boolean ignoreDuplicates) {
-		this.ignoreDuplicates = ignoreDuplicates;
 	}
 	
 	/**
@@ -133,24 +104,12 @@ public class ExceptionCollector {
 	 * Log and accumulate exceptions once for each {plugid,code} combination.
 	 */
 	private void logStatus(IStatus status) {
-		String pluginId = status.getPlugin();
-		List codes = (List)exceptionBucket.get(pluginId);
-		Integer code = new Integer(status.getCode());
-		if(codes != null) {
-			if(codes.contains(code) && isIgnoreDuplicates()) {
-				return;
-			}
-		}
 		// collect the status
 		statuses.add(status);
 		
-		// update counts for this exception
-		codes = new ArrayList(1);
-		codes.add(code);
-		exceptionBucket.put(pluginId, codes);
-		
 		// log if necessary
 		if(log != null) {
+    		String pluginId = status.getPlugin();
 			log.log(new Status(status.getSeverity(), pluginId, status.getCode(), message, status.getException()));
 		}		
 	}

@@ -11,7 +11,6 @@
 package org.eclipse.team.internal.core.subscribers;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.team.core.subscribers.Subscriber;
 
 public class WorkingSetSyncSetInput extends SyncSetInputFromSyncSet {
 
@@ -28,9 +27,5 @@ public class WorkingSetSyncSetInput extends SyncSetInputFromSyncSet {
 	
 	public IResource[] getWorkingSet() {
 		return workingSetFilter.getWorkingSet();
-	}
-	
-	public IResource[] roots(Subscriber subscriber) {
-		return workingSetFilter.getRoots(subscriber);
 	}
 }

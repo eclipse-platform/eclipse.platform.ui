@@ -13,12 +13,7 @@ package org.eclipse.team.internal.core.subscribers;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoFilter;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
-import org.eclipse.team.core.synchronize.SyncInfoTree;
-import org.eclipse.team.internal.core.Policy;
+import org.eclipse.team.core.synchronize.*;
 
 /**
  * This collector maintains a {@link SyncInfoSet} for a particular team subscriber keeping
@@ -73,35 +68,6 @@ public final class WorkingSetFilteredSyncInfoCollector {
 	}
 
 	/**
-	 * This causes the calling thread to wait any background collection of out-of-sync resources
-	 * to stop before returning.
-	 * @param monitor a progress monitor
-	 */
-	public void waitForCollector(IProgressMonitor monitor) {
-		monitor.worked(1);
-		// wait for the event handler to process changes.
-		while(eventHandler.getEventHandlerJob().getState() != Job.NONE) {
-			monitor.worked(1);
-			try {
-				Thread.sleep(10);		
-			} catch (InterruptedException e) {
-			}
-			Policy.checkCanceled(monitor);
-		}
-		monitor.worked(1);
-	}
-	
-	/**
-	 * Return the roots that are being considered by this collector.
-	 * By default, the collector is interested in the roots of its
-	 * subscriber. However, the set can be reduced using {@link setRoots(IResource)).
-	 * @return
-	 */
-	public IResource[] getRoots() {
-		return roots;
-	}
-	
-	/**
 	 * Clears this collector's sync info sets and causes them to be recreated from the
 	 * associated <code>Subscriber</code>. The reset will occur in the background. If the
 	 * caller wishes to wait for the reset to complete, they should call 
@@ -135,24 +101,6 @@ public final class WorkingSetFilteredSyncInfoCollector {
 	}
 	
 	/**
-	 * Set the working set resources used to filter the output <code>SyncInfoSet</code>.
-	 * @see getWorkingSetSyncInfoSet()
-	 * @param resources the working set resources
-	 */
-	public void setWorkingSet(IResource[] resources) {
-		workingSetInput.setWorkingSet(resources);
-		workingSetInput.reset();
-	}
-	
-	/**
-	 * Get th working set resources used to filter the output sync info set.
-	 * @return the working set resources
-	 */
-	public IResource[] getWorkingSet() {
-		return workingSetInput.getWorkingSet();
-	}
-	
-	/**
 	 * Set the filter for this collector. Only elements that match the filter will
 	 * be in the out sync info set.
 	 * @see getSyncInfoSet()
@@ -161,17 +109,6 @@ public final class WorkingSetFilteredSyncInfoCollector {
 	public void setFilter(SyncInfoFilter filter) {
 		filteredInput.setFilter(filter);
 		filteredInput.reset();
-	}
-	
-	/**
-	 * Return the filter that is filtering the output of this collector.
-	 * @return a sync info filter
-	 */
-	public SyncInfoFilter getFilter() {
-		if(filteredInput != null) {
-			return filteredInput.getFilter();
-		}
-		return null;
 	}
 	
 	/**
