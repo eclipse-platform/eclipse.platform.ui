@@ -13,7 +13,9 @@ package org.eclipse.ui.internal.commands;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.SortedSet;
@@ -70,6 +72,29 @@ public class Manager {
 		return text != null ? text : Util.ZERO_LENGTH_STRING;
 	}
 
+	public static void validateSequenceBindings(Collection sequenceBindings) {
+		Iterator iterator = sequenceBindings.iterator();
+		
+		while (iterator.hasNext()) {
+			SequenceBinding sequenceBinding = (SequenceBinding) iterator.next();
+			Sequence sequence = sequenceBinding.getSequence();
+			List strokes = sequence.getStrokes();
+			int size = strokes.size();
+			
+			if (size == 0)
+				iterator.remove();
+			else 
+				for (int i = 0; i < size; i++) {
+					Stroke stroke = (Stroke) strokes.get(i);	
+
+					if (stroke.getValue() == 0) {
+						iterator.remove();
+						break;
+					}						
+				}
+		}
+	}
+
 	public void reset() {
 		CoreRegistry coreRegistry = CoreRegistry.getInstance();		
 		LocalRegistry localRegistry = LocalRegistry.getInstance();
@@ -120,7 +145,8 @@ public class Manager {
 		gestureBindingSet.addAll(coreRegistry.getGestureBindings());
 		gestureBindingSet.addAll(localRegistry.getGestureBindings());
 		gestureBindingSet.addAll(preferenceRegistry.getGestureBindings());
-
+		Manager.validateSequenceBindings(gestureBindingSet);
+		
 		List gestureConfigurations = new ArrayList();
 		gestureConfigurations.addAll(coreRegistry.getGestureConfigurations());
 		gestureConfigurations.addAll(localRegistry.getGestureConfigurations());
@@ -131,6 +157,7 @@ public class Manager {
 		keyBindingSet.addAll(coreRegistry.getKeyBindings());
 		keyBindingSet.addAll(localRegistry.getKeyBindings());
 		keyBindingSet.addAll(preferenceRegistry.getKeyBindings());
+		Manager.validateSequenceBindings(keyBindingSet);
 
 		List keyConfigurations = new ArrayList();
 		keyConfigurations.addAll(coreRegistry.getKeyConfigurations());

@@ -286,6 +286,7 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	
 		preferenceActiveKeyConfigurations = new ArrayList(preferenceRegistry.getActiveKeyConfigurations());
 		preferenceKeyBindings = new ArrayList(preferenceRegistry.getKeyBindings());
+		Manager.validateSequenceBindings(preferenceKeyBindings);		
 		preferenceKeyConfigurations = new ArrayList(preferenceRegistry.getKeyConfigurations());
 	}
 
@@ -374,10 +375,12 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 
 			coreActiveKeyConfigurations = new ArrayList(coreRegistry.getActiveKeyConfigurations());
 			coreKeyBindings = new ArrayList(coreRegistry.getKeyBindings());
+			Manager.validateSequenceBindings(coreKeyBindings);
 			coreKeyConfigurations = new ArrayList(coreRegistry.getKeyConfigurations());
 
 			localActiveKeyConfigurations = new ArrayList(localRegistry.getActiveKeyConfigurations());
 			localKeyBindings = new ArrayList(localRegistry.getKeyBindings());
+			Manager.validateSequenceBindings(localKeyBindings);
 			localKeyConfigurations = new ArrayList(localRegistry.getKeyConfigurations());
 
 			copyToUI();
@@ -425,7 +428,6 @@ public class KeyPreferencePage extends org.eclipse.jface.preference.PreferencePa
 	}
 
 	private void copyToUI() {	
-		// TODO validate lists for referential integrity
 		List activeKeyConfigurations = new ArrayList();
 		activeKeyConfigurations.addAll(coreActiveKeyConfigurations);
 		activeKeyConfigurations.addAll(localActiveKeyConfigurations);
