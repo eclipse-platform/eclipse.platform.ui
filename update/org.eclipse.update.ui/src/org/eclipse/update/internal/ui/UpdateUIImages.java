@@ -13,7 +13,6 @@ package org.eclipse.update.internal.ui;
 import java.net.*;
 
 import org.eclipse.jface.resource.*;
-import org.eclipse.core.runtime.Path;
 
 /**
  * Bundle of all images used by the PDE plugin.
