@@ -64,9 +64,11 @@ class TextSearchActionGroup extends ActionGroup {
 		fOpenPropertiesDialog= new PropertyDialogAction(site.getShell(), fSelectionProvider);
 
 		ISelection selection= fSelectionProvider.getSelection();
-		// XXXX: is this test needed?
+
 		if (selection instanceof IStructuredSelection)
 			fOpenPropertiesDialog.selectionChanged((IStructuredSelection)selection);
+		else
+			fOpenPropertiesDialog.selectionChanged(selection);
 	}
 	
 	public void fillContextMenu(IMenuManager menu) {
