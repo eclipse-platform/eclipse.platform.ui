@@ -283,12 +283,19 @@
       </page>
       <page
             name="%PreferencePages.LinkedResources"
-            category="org.eclipse.ui.preferencePages.Workbench"
+            category="org.eclipse.ui.preferencePages.IDEWorkbench"
             class="org.eclipse.ui.internal.dialogs.LinkedResourcesPreferencePage"
             id="org.eclipse.ui.preferencePages.LinkedResources">
       </page>
       <page
+            name="%PreferencePages.FileStates"
+            category="org.eclipse.ui.preferencePages.IDEWorkbench"
+            class="org.eclipse.ui.internal.dialogs.FileStatesPage"
+            id="org.eclipse.ui.preferencePages.FileStates">
+      </page>
+      <page
             name="%PreferencePages.BuildOrder"
+            category="org.eclipse.ui.preferencePages.IDEWorkbench"
             class="org.eclipse.ui.internal.dialogs.BuildOrderPreferencePage"
             id="org.eclipse.ui.preferencePages.BuildOrder">
       </page>
