@@ -1343,14 +1343,14 @@ public void updateActionSets() {
 /**
  * Updates the shorcut item
  */
-/* package */ void updatePerspectiveShortcut(IPerspectiveDescriptor perspective, WorkbenchPage page) {
+/* package */ void updatePerspectiveShortcut(IPerspectiveDescriptor oldDesc, IPerspectiveDescriptor newDesc, WorkbenchPage page) {
 	if(updateDisabled)
 		return;
 		
-	IContributionItem item = findPerspectiveShortcut(perspective, page);
+	IContributionItem item = findPerspectiveShortcut(oldDesc, page);
 	if (item != null) {
 		SetPagePerspectiveAction action = (SetPagePerspectiveAction)((ActionContributionItem)item).getAction();
-		action.update();
+		action.update(newDesc);
 		if (page == getActiveWorkbenchPage())
 			updateTitle();
 	}

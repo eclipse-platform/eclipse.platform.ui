@@ -1863,22 +1863,22 @@ public void savePerspective() {
 /**
  * Saves the perspective.
  */
-public void savePerspectiveAs(IPerspectiveDescriptor desc) {
+public void savePerspectiveAs(IPerspectiveDescriptor newDesc) {
 	Perspective persp = getActivePerspective();
 	if (persp == null)
 		return;
-		
+	IPerspectiveDescriptor oldDesc = persp.getDesc();
+	
 	// Always unzoom.
 	if (isZoomed())
 		zoomOut();
 
-	persp.saveDescAs(desc);
-	
-	window.updatePerspectiveShortcut(persp.getDesc(), this);
+	persp.saveDescAs(newDesc);
+	window.updatePerspectiveShortcut(oldDesc, newDesc, this);
 	
 	// Update MRU list.
 	Workbench wb = (Workbench)window.getWorkbench();
-	wb.getPerspectiveHistory().add(desc);
+	wb.getPerspectiveHistory().add(newDesc);
 }
 /**
  * Save the state of the page.
