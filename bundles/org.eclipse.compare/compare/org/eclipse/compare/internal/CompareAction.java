@@ -23,22 +23,22 @@ import org.eclipse.compare.CompareUI;
 /*
  * The "Compare with each other" action
  */
-public class CompareAction implements IObjectActionDelegate {
+public class CompareAction extends BaseCompareAction implements IObjectActionDelegate {
 
 	private ResourceCompareInput fInput;
 	private IWorkbenchPage fWorkbenchPage;
-	private ISelection fSelection;
 
-	public void run(IAction action) {
+
+	public void run(ISelection selection) {
 		if (fInput != null) {
-			fInput.setSelection(fSelection);
+			fInput.setSelection(selection);
 			fInput.initializeCompareConfiguration();
 			CompareUI.openCompareEditorOnPage(fInput, fWorkbenchPage);
 			fInput= null;	// don't reuse this input!
 		}
 	}
 
-	public void selectionChanged(IAction action, ISelection selection) {
+	protected boolean isEnabled(ISelection selection) {
 		if (fInput == null) {
 			CompareConfiguration cc= new CompareConfiguration();
 			// buffered merge mode: don't ask for confirmation
@@ -47,8 +47,7 @@ public class CompareAction implements IObjectActionDelegate {
 						
 			fInput= new ResourceCompareInput(cc);
 		}
-		fSelection= selection;
-		action.setEnabled(fInput.isEnabled(selection));
+		return fInput.isEnabled(selection);
 	}
 
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {

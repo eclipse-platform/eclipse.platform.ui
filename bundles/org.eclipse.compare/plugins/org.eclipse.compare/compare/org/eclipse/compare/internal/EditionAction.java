@@ -22,10 +22,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.BadLocationException;
 
@@ -40,7 +40,7 @@ import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.IStreamContentAccessor;
 
 
-public class EditionAction implements IActionDelegate {
+public class EditionAction extends BaseCompareAction {
 
 	/**
 	 * Implements the IStreamContentAccessor and ITypedElement protocols
@@ -73,7 +73,6 @@ public class EditionAction implements IActionDelegate {
 		}
 	}
 
-	private ISelection fSelection;
 	private String fBundleName;
 	private boolean fReplaceMode;
 	protected boolean fPrevious= false;
@@ -84,16 +83,13 @@ public class EditionAction implements IActionDelegate {
 		fBundleName= bundleName;
 	}
 
-	public final void selectionChanged(IAction action, ISelection selection) {
-		fSelection= selection;
-		if (action != null) {
-			IFile[] files= getFiles(selection, fReplaceMode);
-			action.setEnabled(files.length == 1);	// we don't support multiple selection for now
-		}
+	protected boolean isEnabled(ISelection selection) {
+		IFile[] files= getFiles(selection);
+		return files.length == 1;		// we don't support multiple selection for now
 	}
-	
-	public void run(IAction action) {
-		IFile[] files= getFiles(fSelection, fReplaceMode);
+
+	protected void run(ISelection selection) {
+		IFile[] files= getFiles(selection);
 		for (int i= 0; i < files.length; i++)
 			doFromHistory(files[i]);
 	}
@@ -236,32 +232,29 @@ public class EditionAction implements IActionDelegate {
 		return null;
 	}
 	
-	private IFile[] getFiles(ISelection selection, boolean modifiable) {
+	private IFile[] getFiles(ISelection selection) {
 		ArrayList result= new ArrayList();
-		Object[] s= Utilities.toArray(selection);	
+		Object[] s= (selection instanceof IStructuredSelection)
+						? ((IStructuredSelection) selection).toArray()
+						: new Object[0];
 		for (int i= 0; i < s.length; i++) {
 			Object o= s[i];
 			IFile file= null;
+			
 			if (o instanceof IFile) {
 				file= (IFile) o;
+				
 			} else if (o instanceof IAdaptable) {
 				IAdaptable a= (IAdaptable) o;
 				Object adapter= a.getAdapter(IResource.class);
 				if (adapter instanceof IFile)
 					file= (IFile) adapter;
 			}
-			if (file != null) {
-				if (modifiable) {
-					if (!file.isReadOnly())
-						result.add(file);
-				} else {
-					result.add(file);
-				}					
-			}
+			
+			if (file != null)
+				result.add(file);
 		}
 		return (IFile[]) result.toArray(new IFile[result.size()]);
 	}
-
-
 }
 

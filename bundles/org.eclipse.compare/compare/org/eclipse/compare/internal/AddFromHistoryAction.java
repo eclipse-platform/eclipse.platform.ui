@@ -15,32 +15,23 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.viewers.ISelection;
 
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.eclipse.ui.IActionDelegate;
-
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 
-public class AddFromHistoryAction implements IActionDelegate {
+public class AddFromHistoryAction extends BaseCompareAction {
 	
 	private static final String BUNDLE_NAME= "org.eclipse.compare.internal.AddFromHistoryAction"; //$NON-NLS-1$
 
-	private ISelection fSelection;
-	
 	public AddFromHistoryAction() {
 	}
 	
-	public void selectionChanged(IAction a, ISelection s) {
-		fSelection= s;
-	}
-
-	public void run(IAction action) {
+	protected void run(ISelection selection) {
 			
 		ResourceBundle bundle= ResourceBundle.getBundle(BUNDLE_NAME);
 		String title= Utilities.getString(bundle, "title"); //$NON-NLS-1$
@@ -48,7 +39,7 @@ public class AddFromHistoryAction implements IActionDelegate {
 		Shell parentShell= CompareUIPlugin.getShell();
 		AddFromHistoryDialog dialog= null;
 
-		Object[] s= Utilities.getResources(fSelection);
+		Object[] s= Utilities.getResources(selection);
 		
 		for (int i= 0; i < s.length; i++) {
 			Object o= s[i];

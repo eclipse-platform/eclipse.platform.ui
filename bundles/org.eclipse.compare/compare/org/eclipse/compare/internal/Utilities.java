@@ -100,26 +100,6 @@ public class Utilities {
 		return widget != null && !widget.isDisposed();
 	}
 	
-	public static boolean isMotif() {
-		return false;
-	}
-		
-	/**
-	 * Returns the elements of the given selection. 
-	 * Returns an empty array if the selection is empty or if 
-	 * the given selection is not of type <code>IStructuredSelection</code>.
-	 *
-	 * @param selection the selection
-	 * @return the selected elements
-	 */
-	public static Object[] toArray(ISelection selection) {
-		if (!(selection instanceof IStructuredSelection)) {
-			return new Object[0];
-		}
-		IStructuredSelection ss= (IStructuredSelection) selection;
-		return ss.toArray();
-	}
-
 	/**
 	 * Convenience method: extract all <code>IResources</code> from given selection.
 	 * Never returns null.
@@ -404,6 +384,52 @@ public class Utilities {
 			return true;
 		}
 		return false;
+	}
+	*/
+	
+	/* validate edit stuff */
+	
+	/**
+	 * Makes the given resources committable. Committable means that all
+	 * resources are writeable and that the content of the resources hasn't
+	 * changed by calling <code>validateEdit</code> for a given file on
+	 * <tt>IWorkspace</tt>.
+	 * 
+	 * @param resources the resources to be checked
+	 * @param context the context passed to <code>validateEdit</code> 
+	 * @return IStatus status describing the method's result. If <code>status.
+	 * isOK()</code> returns <code>true</code> then the add resources are
+	 * committable
+	 * 
+	 * @see org.eclipse.core.resources.IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
+	 */
+	/*
+	public static IStatus makeCommittable(IResource[] resources, Object context) {
+		List readOnlyFiles= new ArrayList();
+		for (int i= 0; i < resources.length; i++) {
+			IResource resource= resources[i];
+			if (resource.getType() == IResource.FILE && resource.isReadOnly())	
+				readOnlyFiles.add(resource);
+		}
+		if (readOnlyFiles.size() == 0)
+			return new Status(IStatus.OK, JavaPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+			
+		Map oldTimeStamps= createModificationStampMap(readOnlyFiles);
+		IStatus status= ResourcesPlugin.getWorkspace().validateEdit(
+			(IFile[]) readOnlyFiles.toArray(new IFile[readOnlyFiles.size()]), context);
+		if (!status.isOK())
+			return status;
+			
+		IStatus modified= null;
+		Map newTimeStamps= createModificationStampMap(readOnlyFiles);
+		for (Iterator iter= oldTimeStamps.keySet().iterator(); iter.hasNext();) {
+			IFile file= (IFile) iter.next();
+			if (!oldTimeStamps.get(file).equals(newTimeStamps.get(file)))
+				modified= addModified(modified, file);
+		}
+		if (modified != null)	
+			return modified;
+		return new Status(IStatus.OK, JavaPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
 	}
 	*/
 }
