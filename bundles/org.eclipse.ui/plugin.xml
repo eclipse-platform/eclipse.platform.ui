@@ -80,291 +80,291 @@
          point="org.eclipse.ui.actionDefinitions">
       <actionDefinition
             id="org.eclipse.ui.file.close"
-            label="Close">
+            name="Close">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.file.closeAll"
-            label="Close All">
+            name="Close All">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.file.save"
-            label="Save">
+            name="Save">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.file.saveAll"
-            label="Save All">
+            name="Save All">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.file.print"
-            label="Print">
+            name="Print">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.file.revert"
-            label="Revert">
+            name="Revert">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.file.refresh"
-            label="Refresh">
+            name="Refresh">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.file.properties"
-            label="Properties">
+            name="Properties">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.undo"
-            label="Undo">
+            name="Undo">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.redo"
-            label="Redo">
+            name="Redo">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.cut"
-            label="Cut">
+            name="Cut">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.copy"
-            label="Copy">
+            name="Copy">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.paste"
-            label="Paste">
+            name="Paste">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.delete"
-            label="Delete">
+            name="Delete">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.delete.line"
-            label="Delete Line">
+            name="Delete Line">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.delete.line.to.beginning"
-            label="Delete to Beginning of Line">
+            name="Delete to Beginning of Line">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.delete.line.to.end"
-            label="Delete to End of Line">
+            name="Delete to End of Line">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.move"
-            label="Move">
+            name="Move">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.rename"
-            label="Rename">
+            name="Rename">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.selectAll"
-            label="Select All">
+            name="Select All">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.set.mark"
-            label="Set Mark">
+            name="Set Mark">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.clear.mark"
-            label="Clear Mark">
+            name="Clear Mark">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.swap.mark"
-            label="Swap Mark">
+            name="Swap Mark">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.findReplace"
-            label="Find and Replace">
+            name="Find and Replace">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.addBookmark"
-            label="Add Bookmark">
+            name="Add Bookmark">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.goInto"
-            label="Go Into">
+            name="Go Into">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.back"
-            label="Back">
+            name="Back">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.forward"
-            label="Forward">
+            name="Forward">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.up"
-            label="Up">
+            name="Up">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.next"
-            label="Next">
+            name="Next">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.backwardHistory"
-            label="Backward History">
+            name="Backward History">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.forwardHistory"
-            label="Forward History">
+            name="Forward History">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.navigate.previous"
-            label="Previous">
+            name="Previous">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.project.openProject"
-            label="Open Project">
+            name="Open Project">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.project.closeProject"
-            label="Close Project">
+            name="Close Project">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.project.buildProject"
-            label="Build">
+            name="Build">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.project.rebuildProject"
-            label="Rebuild">
+            name="Rebuild">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.window.switchToEditor"
-            label="Switch to Editor">
+            name="Switch to Editor">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.window.showSystemMenu"
-            label="Show System Menu">
+            name="Show System Menu">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.window.showViewMenu"
-            label="Show View Menu">
+            name="Show View Menu">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.window.activateEditor"
-            label="Activate Editor">
+            name="Activate Editor">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.window.nextEditor"
-            label="Next Editor">
+            name="Next Editor">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.window.previousEditor"
-            label="Previous Editor">
+            name="Previous Editor">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.window.nextView"
-            label="Next View">
+            name="Next View">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.window.previousView"
-            label="Previous View">
+            name="Previous View">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.window.nextPerspective"
-            label="Next Perspective">
+            name="Next Perspective">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.window.previousPerspective"
-            label="Previous Perspective">
+            name="Previous Perspective">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.findNext"
-            label="Find Next">
+            name="Find Next">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.findPrevious"
-            label="Find Previous">
+            name="Find Previous">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.findIncremental"
-            label="Find Incremental">
+            name="Find Incremental">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.findIncrementalReverse"
-            label="Find Reverse">
+            name="Find Reverse">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.revertToSaved"
-            label="Revert to Saved">
+            name="Revert to Saved">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.addTask"
-            label="Add Task">
+            name="Add Task">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.lineUp"
-            label="Line Up">
+            name="Line Up">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.lineDown"
-            label="Line Down">
+            name="Line Down">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.lineStart"
-            label="Line Start">
+            name="Line Start">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.lineEnd"
-            label="Line End">
+            name="Line End">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.line"
-            label="Goto Line">
+            name="Goto Line">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.columnPrevious"
-            label="Previous Column">
+            name="Previous Column">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.columnNext"
-            label="Next Column">
+            name="Next Column">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.pageUp"
-            label="Page Up">
+            name="Page Up">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.pageDown"
-            label="Page Down">
+            name="Page Down">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.wordPrevious"
-            label="Previous Word">
+            name="Previous Word">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.wordNext"
-            label="Next Word">
+            name="Next Word">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.textStart"
-            label="Text Start">
+            name="Text Start">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.textEnd"
-            label="Text End">
+            name="Text End">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.windowStart"
-            label="Window Start">
+            name="Window Start">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.goto.windowEnd"
-            label="Window End">
+            name="Window End">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.scroll.lineUp"
-            label="Scroll Line Up">
+            name="Scroll Line Up">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.scroll.lineDown"
-            label="Scroll Line Down">
+            name="Scroll Line Down">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.select.lineUp"
-            label="Select Line Up">
+            name="Select Line Up">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.select.lineDown"
-            label="Select Line Down">
+            name="Select Line Down">
       </actionDefinition>
       <actionDefinition
             id="org.eclipse.ui.edit.text.select.lineStart">
