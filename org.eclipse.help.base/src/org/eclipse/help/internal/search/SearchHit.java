@@ -106,4 +106,7 @@ public class SearchHit implements ISearchEngineResult {
 	public void setSummary(String summary) {
 		this.summary = summary;
 	}
+	public boolean getForceExternalWindow() {
+		return false;
+	}
 }

@@ -75,6 +75,9 @@ public class Google implements ISearchEngine {
         public IHelpResource getCategory() {
             return null;
         }
+		public boolean getForceExternalWindow() {
+			return true;
+		}
 }
     
     /* (non-Javadoc)

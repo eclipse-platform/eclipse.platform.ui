@@ -32,7 +32,7 @@ public interface IHelpUIConstants {
 	public static final String IMAGE_TOC_OPEN = "toc_open.gif"; //$NON-NLS-1$
 	public static final String IMAGE_HELP_SEARCH = "e_search_menu.gif"; //$NON-NLS-1$
 	public static final String IMAGE_CLEAR = "clear.gif"; //$NON-NLS-1$
-	public static final String IMAGE_NW = "nw.gif"; //$NON-NLS-1$
+	public static final String IMAGE_NW = "browser.gif"; //$NON-NLS-1$
 	public static final String IMAGE_SHOW_CATEGORIES = "show_categories.gif"; //$NON-NLS-1$
 	public static final String IMAGE_SHOW_DESC = "desc_obj.gif";
 	public static final String IMAGE_REMOVE_ALL = "search_remall.gif";

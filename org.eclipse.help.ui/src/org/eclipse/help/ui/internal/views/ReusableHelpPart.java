@@ -18,6 +18,7 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.appserver.WebappManager;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.search.federated.IndexerJob;
+import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.action.Action;
@@ -32,6 +33,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTError;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -139,7 +141,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 
 		private String text;
 		private SubToolBarManager toolBarManager;
-		private ArrayList partRecs;
+		protected ArrayList partRecs;
 		private int nflexible;
 		private Control focusControl;
 
@@ -192,24 +194,48 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		
 		public int getNumberOfFlexibleParts() {
 			return nflexible;
-			
+		}
+		
+		public boolean canOpen() {
+			for (int i = 0; i < partRecs.size(); i++) {
+				PartRec rec = (PartRec) partRecs.get(i);
+
+				if (rec.id.equals(IHelpUIConstants.HV_BROWSER)) {
+					//Try to create a browser and watch
+					// for 'no-handle' error - it means
+					// that the embedded browser is not
+					// available
+					try {
+						createRecPart(rec);
+						rec.part.setVisible(false);
+					}
+					catch (SWTError error) {
+						// cannot create a browser
+						return false;
+					}
+				}
+			}
+			return true;
 		}
 
 		public void setVisible(boolean visible) {
 			for (int i = 0; i < partRecs.size(); i++) {
 				PartRec rec = (PartRec) partRecs.get(i);
 				if (visible) {
-					if (rec.part == null) {
-						rec.part = createPart(rec.id, toolBarManager);
-						rec.part.getControl().addListener(SWT.Activate, new Listener() {
-							public void handleEvent(Event e) {
-								focusControl = e.widget.getDisplay().getFocusControl();
-							}
-						});
-					}
+					createRecPart(rec);
 				}
 				rec.part.setVisible(visible);
 				toolBarManager.setVisible(visible);
+			}
+		}
+		private void createRecPart(PartRec rec) throws SWTError {
+			if (rec.part == null) {
+				rec.part = createPart(rec.id, toolBarManager);
+				rec.part.getControl().addListener(SWT.Activate, new Listener() {
+					public void handleEvent(Event e) {
+						focusControl = e.widget.getDisplay().getFocusControl();
+					}
+				});
 			}
 		}
 		public IHelpPart findPart(String id) {
@@ -230,6 +256,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			rec.part.setFocus();
 		}
 	}
+
 	class HelpPartLayout extends Layout implements ILayoutExtension {
 		public int computeMaximumWidth(Composite parent, boolean changed) {
 			return computeSize(parent, SWT.DEFAULT, SWT.DEFAULT, changed).x;
@@ -470,8 +497,8 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		for (int i=0; i<pages.size(); i++) {
 			HelpPartPage page = (HelpPartPage)pages.get(i);
 			if (page.getId().equals(id)) {
-				flipPages(currentPage, page);
-				return page;
+				boolean success = flipPages(currentPage, page);
+				return success?page:null;
 			}
 		}
 		return null;
@@ -490,7 +517,9 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			part.startSearch(phrase);
 	}
 
-	private void flipPages(HelpPartPage oldPage, HelpPartPage newPage) {
+	private boolean flipPages(HelpPartPage oldPage, HelpPartPage newPage) {
+		if (newPage.canOpen()==false)
+			return false;
 		if (oldPage!=null)
 			oldPage.setVisible(false);
 		mform.getForm().setText(newPage.getText());			
@@ -505,6 +534,7 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			}
 			updateNavigation();
 		}
+		return true;
 	}
 	void addPageHistoryEntry(String id, Object data) {
 		if (!history.isBlocked()) {
@@ -654,19 +684,30 @@ public class ReusableHelpPart implements IHelpUIConstants {
 			BrowserPart bpart = (BrowserPart)findPart(IHelpUIConstants.HV_BROWSER);
 			if (bpart!=null) {
 				bpart.showURL(toAbsoluteURL(url));
+				return;
 			}
 		}
-		else {
-			//try {
-				//URL fullURL = new URL(toAbsoluteURL(url));
-				//WebBrowser.openURL(fullURL, 0, "org.eclipse.help");
-				
-			//}
-			//catch (MalformedURLException e) {
-			//}
+		// fallback - open in help resource
+		
+		//try {
+			//URL fullURL = new URL(toAbsoluteURL(url));
+			//WebBrowser.openURL(fullURL, 0, "org.eclipse.help");
+			
+		//}
+		//catch (MalformedURLException e) {
+		//}
+		if (isHelpResource(url))
 			WorkbenchHelp.displayHelpResource(url);
+		else {
+			try {
+				BaseHelpSystem.getHelpBrowser(true).displayURL(url);
+			}
+			catch (Exception e) {
+				HelpUIPlugin.logError("Error opening browser", e);
+			}
 		}
 	}
+	
 	public IHelpPart findPart(String id) {
 		if (mform==null) return null;
 		IFormPart [] parts = (IFormPart[])mform.getParts();
@@ -677,6 +718,13 @@ public class ReusableHelpPart implements IHelpUIConstants {
 		}
 		return null;
 	}
+	
+	private boolean isHelpResource(String url) {
+		if (url==null || url.indexOf("://")!= -1) //$NON-NLS-1$
+			return true;
+		return false;
+	}
+	
 	private String toAbsoluteURL(String url) {
 		if (url==null || url.indexOf("://")!= -1) //$NON-NLS-1$
 			return url;

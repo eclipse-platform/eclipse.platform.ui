@@ -265,6 +265,8 @@ public class EngineResultSection {
 			buff.append(desc.getId());
 			buff.append("\">"); //$NON-NLS-1$
 			buff.append("<a href=\""); //$NON-NLS-1$
+			if (hit.getForceExternalWindow())
+				buff.append("nw:");
 			buff.append(escapeSpecialChars(hit.getHref()));
 			buff.append("\""); //$NON-NLS-1$
 			if (hit.getCategory() != null) {
@@ -275,23 +277,26 @@ public class EngineResultSection {
 			buff.append(">"); //$NON-NLS-1$
 			buff.append(hit.getLabel());
 			buff.append("</a>"); //$NON-NLS-1$
-		    buff.append(" <a href=\""); //$NON-NLS-1$ 
-		    buff.append("nw:");//$NON-NLS-1$ 
-		    buff.append(escapeSpecialChars(hit.getHref())); 
-		    buff.append("\"><img href=\""); //$NON-NLS-1$ 
-		    buff.append(IHelpUIConstants.IMAGE_NW);
-			buff.append("\" alt=\""); //$NON-NLS-1$
-			buff.append(HelpUIResources.getString("SearchResultsPart.nwtooltip"));//$NON-NLS-1$ 
-			buff.append("\""); //$NON-NLS-1$ 
-			buff.append("/>"); //$NON-NLS-1$ 
-			buff.append("</a>"); //$NON-NLS-1$
+			if (!hit.getForceExternalWindow()) {
+				buff.append(" <a href=\""); //$NON-NLS-1$ 
+				buff.append("nw:");//$NON-NLS-1$ 
+				buff.append(escapeSpecialChars(hit.getHref()));
+				buff.append("\"><img href=\""); //$NON-NLS-1$ 
+				buff.append(IHelpUIConstants.IMAGE_NW);
+				buff.append("\" alt=\""); //$NON-NLS-1$
+				buff.append(HelpUIResources
+						.getString("SearchResultsPart.nwtooltip"));//$NON-NLS-1$ 
+				buff.append("\""); //$NON-NLS-1$ 
+				buff.append("/>"); //$NON-NLS-1$ 
+				buff.append("</a>"); //$NON-NLS-1$
+			}
 			if (part.getShowDescription()) {
 				String summary = getSummary(hit);
 				if (summary != null) {
 					buff.append("<br/>");
-					//buff.append("<span color=\"summary\">");
+					// buff.append("<span color=\"summary\">");
 					buff.append(summary);
-					//buff.append("</span>");
+					// buff.append("</span>");
 					buff.append("...");
 				}
 			}
@@ -315,7 +320,7 @@ public class EngineResultSection {
 				// navContainer.setBackground(container.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 				GridLayout glayout = new GridLayout();
 				glayout.numColumns = 2;
-				//glayout.horizontalSpacing = 0;
+				// glayout.horizontalSpacing = 0;
 				// glayout.makeColumnsEqualWidth=true;
 				navContainer.setLayout(glayout);
 				Label sep = toolkit.createLabel(navContainer, null,
@@ -335,19 +340,19 @@ public class EngineResultSection {
 						asyncUpdateResults(false, true);
 					}
 				});
-				//Label space = toolkit.createLabel(navContainer, null);
-				//gd = new GridData(GridData.FILL_HORIZONTAL);
-				//gd.widthHint = 5;
-				//space.setLayoutData(gd);
+				// Label space = toolkit.createLabel(navContainer, null);
+				// gd = new GridData(GridData.FILL_HORIZONTAL);
+				// gd.widthHint = 5;
+				// space.setLayoutData(gd);
 				nextLink = toolkit
 						.createImageHyperlink(navContainer, SWT.RIGHT);
 				int remainder = Math.min(hits.size() - resultOffset
-						- HITS_PER_PAGE-HITS_PER_PAGE, HITS_PER_PAGE);
+						- HITS_PER_PAGE - HITS_PER_PAGE, HITS_PER_PAGE);
 				nextLink.setText("Next " + remainder);
 				nextLink.setImage(PlatformUI.getWorkbench().getSharedImages()
 						.getImage(ISharedImages.IMG_TOOL_FORWARD));
 				gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-				gd.grabExcessHorizontalSpace=true;
+				gd.grabExcessHorizontalSpace = true;
 				nextLink.setLayoutData(gd);
 				nextLink.addHyperlinkListener(new HyperlinkAdapter() {
 					public void linkActivated(HyperlinkEvent e) {

@@ -84,7 +84,10 @@ public class EclipseOrg implements ISearchEngine {
         public IHelpResource getCategory() {
             return null;
         }
-}
+		public boolean getForceExternalWindow() {
+			return true;
+		}
+    }
     
     /* (non-Javadoc)
      * @see org.eclipse.help.internal.search.federated.ISearchEngine#run(java.lang.String, org.eclipse.help.internal.search.ISearchScope, org.eclipse.help.internal.search.federated.ISearchEngineResultCollector, org.eclipse.core.runtime.IProgressMonitor)

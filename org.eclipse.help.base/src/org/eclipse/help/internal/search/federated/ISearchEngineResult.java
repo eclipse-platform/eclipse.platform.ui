@@ -69,4 +69,16 @@ public interface ISearchEngineResult {
 	 * @return
 	 */
 	float getScore();
+	/**
+	 * Tests if the result link must be shown in an external web
+	 * browser or a separate Help window, or it can also be
+	 * shown embedded. Contributors should force external
+	 * window only if the link points at a web page that
+	 * cannot be displayed in a narrow view without 
+	 * distorsion.   
+	 * @return <code>true</code> if external window must
+	 * be used, <code>false</code> if the link opening mode
+	 * can be chosen by the help system.
+	 */
+	boolean getForceExternalWindow();
 }
