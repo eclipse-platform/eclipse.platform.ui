@@ -1044,7 +1044,7 @@ public class NewProgressViewer extends ProgressTreeViewer implements FinishedJob
 	        ji.getDisplay().asyncExec(new Runnable() {
 	            public void run() {
 	                if (DEBUG) System.err.println("  forced remove");
-	                if (ji.remove())
+	                if (!list.isDisposed() && ji.remove())
 	                    relayout(true, true);
 	            }
 	        });
