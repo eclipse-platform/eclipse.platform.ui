@@ -25,6 +25,7 @@ package org.eclipse.jface.text;
  * as position categories and position updaters. <p>
  *
  * For internal use only.
+ * @deprecated
  */
 public final class ChildDocumentManager implements IDocumentListener, ISlaveDocumentManager {
 	

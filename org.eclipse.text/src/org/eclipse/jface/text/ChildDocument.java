@@ -25,6 +25,7 @@ package org.eclipse.jface.text;
  * This class is for internal use only.
  *
  * @see ITextStore
+ * @deprecated
  */
 public final class ChildDocument extends AbstractDocument {
 	

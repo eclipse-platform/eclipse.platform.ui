@@ -61,7 +61,8 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 
-
+import org.eclipse.jface.text.projection.ChildDocument;
+import org.eclipse.jface.text.projection.ChildDocumentManager;
 
 /**
  * SWT based implementation of <code>ITextViewer</code>. Once the viewer and its SWT control
@@ -2516,10 +2517,9 @@ public class TextViewer extends Viewer implements
 	public int getTopIndex() {
 		
 		if (fTextWidget != null) {
-			
 			int top= fTextWidget.getTopIndex();
 			return widgetlLine2ModelLine(top);
-				}
+		}
 			
 		return -1;
 	}

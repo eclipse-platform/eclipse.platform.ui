@@ -14,6 +14,8 @@ package org.eclipse.jface.text;
  * Implementation of <code>IDocumentInformationMapping</code> matching <code>ChildDocument</code> and
  * <code>ChildDocumentManager</code>. The parent document is considered the original document, the child
  * document is considered the image document.
+ * 
+ * @deprecated
  */
 public class ParentChildMapping  implements IDocumentInformationMapping {
 	
