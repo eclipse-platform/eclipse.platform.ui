@@ -31,6 +31,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
 import org.eclipse.debug.ui.variables.VariableContextManager;
+import org.eclipse.debug.ui.variables.VariableUtil;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -57,7 +58,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
-import org.eclipse.ui.externaltools.internal.model.ToolUtil;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntTargetsTab extends AbstractLaunchConfigurationTab {
@@ -240,7 +240,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		if (fAllTargets == null) {
 			setErrorMessage(null);
 			MultiStatus status = new MultiStatus(IAntUIConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-			String expandedLocation = ToolUtil.expandFileLocation(fLocation, VariableContextManager.getDefault().getVariableContext(), status);
+			String expandedLocation = VariableUtil.expandLocationText(fLocation, VariableContextManager.getDefault().getVariableContext(), status);
 			if (expandedLocation != null && status.isOK()) {
 				try {
 					String[] arguments = ExternalToolsUtil.getArguments(fLaunchConfiguration, VariableContextManager.getDefault().getVariableContext());
