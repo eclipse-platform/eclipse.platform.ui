@@ -721,6 +721,43 @@ public DataTreeLookup lookup(IPath key) {
 	return DataTreeLookup.newLookup(key, false, null);
 }
 /**
+ * Returns an object containing:
+ *  - the node key
+ * 	- a flag indicating whether the specified node was found
+ *  - the data for the node, if it was found
+ * 
+ * This is a case-insensitive variant of the <code>lookup</code>
+ * method.
+ *
+ * @param key  key of node for which we want to retrieve data.
+ */
+public DataTreeLookup lookupIgnoreCase(IPath key) {
+	int keyLength = key.segmentCount();
+	for (DeltaDataTree tree = this; tree != null; tree = tree.parent) {
+		AbstractDataTreeNode node = tree.rootNode;
+		boolean complete = !node.isDelta();
+		for (int i = 0; i < keyLength; i++) {
+			node = node.childAtIgnoreCase(key.segment(i));
+			if (node == null) {
+				break;
+			}
+			complete |= !node.isDelta();
+		}
+		if (node != null) {
+			if (node.hasData()) {
+				return DataTreeLookup.newLookup(key, true, node.getData(), tree==this);
+			} else if (node.isDeleted()) {
+				break;
+			}
+		}
+		if (complete) {
+			// Not found, but complete node encountered, so should not check parent tree.
+			break;
+		}
+	}
+	return DataTreeLookup.newLookup(key, false, null);
+}
+/**
  * Converts this tree's representation to be a complete tree, not a delta.
  * This disconnects this tree from its parents.
  * The parent trees are unaffected.

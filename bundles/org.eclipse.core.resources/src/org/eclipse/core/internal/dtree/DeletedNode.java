@@ -42,7 +42,6 @@ AbstractDataTreeNode asBackwardDelta (DeltaDataTree myTree,
  * Returns the child with the given local name
  */
  AbstractDataTreeNode childAt (String localName) {
- 	
  	/* deleted nodes do not have children */
  	throw new ObjectNotFoundException(Policy.bind("dtree.missingChild", localName)); //$NON-NLS-1$
 }
@@ -50,7 +49,6 @@ AbstractDataTreeNode asBackwardDelta (DeltaDataTree myTree,
  * Returns the child with the given local name
  */
  AbstractDataTreeNode childAtOrNull (String localName) {
- 	
  	/* deleted nodes do not have children */
  	return null;
 }
@@ -121,4 +119,9 @@ public String toString () {
 int type() {
 	return T_DELETED_NODE;
 }
+AbstractDataTreeNode childAtIgnoreCase(String localName) {
+	/* deleted nodes do not have children */
+	return null;
+}
+
 }

@@ -299,17 +299,8 @@ public void createElement(IPath key, Object data) {
 	/* don't allow modification of the implicit root */
 	if (key.isRoot()) return;
 	
-	/**
-	 * Clear the child IDs cache in case it's referring to this parent.
-	 * This is conservative.
-	 */
+	// Clear the child IDs cache in case it's referring to this parent. This is conservative.
 	childIDsCache = null;
-	
-	/**
-	 * Clear the lookup cache, in case the element being created is the same
-	 * as for the last lookup.
-	 */
-	lookupCache = null;
 	
 	IPath parent = key.removeLastSegments(1);
 	try {
@@ -317,6 +308,8 @@ public void createElement(IPath key, Object data) {
 	} catch (ObjectNotFoundException e) {
 		elementNotFound(parent);
 	}
+	// Set the lookup to be this newly created object.
+	lookupCache = DataTreeLookup.newLookup(key, true, data, true);
 }
 /**
  * Creates or replaces the subtree below the given path with 
@@ -708,6 +701,14 @@ public boolean includes(IPath key) {
 		lookupCache = lookup = tree.lookup(key);
 	}
 	return lookup.isPresent;
+}
+/**
+ * Returns true if this element tree includes an element with the given
+ * key, ignoring the case of the key, and false otherwise.
+ */
+public boolean includesIgnoreCase(IPath key) {
+	//don't use cache because it's a different kind of lookup
+	return tree.lookupIgnoreCase(key).isPresent;
 }
 protected void initialize(DataTreeNode rootNode) {
 	/* create the implicit root node */

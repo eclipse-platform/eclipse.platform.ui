@@ -208,6 +208,21 @@ AbstractDataTreeNode childAtOrNull(String localName) {
 	int index = indexOfChild(localName);
 	return index >= 0 ? children[index] : null;
 }
+/**
+ * Returns the child with the given local name, ignoring case.  
+ * Returns null if the child does not exist.
+ * 
+ * @param localName
+ *	name of child to retrieve
+ */
+AbstractDataTreeNode childAtIgnoreCase(String localName) {
+	AbstractDataTreeNode[] children = this.children;
+	for (int i = 0; i < children.length; i++) {
+		if (children[i].getName().equalsIgnoreCase(localName))
+			return children[i];
+	}
+	return null;
+}
 /** 
  */
 protected static AbstractDataTreeNode[] compareWith(AbstractDataTreeNode[] oldNodes, AbstractDataTreeNode[] newNodes, IComparator comparator) {
