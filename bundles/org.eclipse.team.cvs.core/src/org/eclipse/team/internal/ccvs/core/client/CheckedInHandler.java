@@ -9,7 +9,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * Handles a "Checked-in" response from the CVS server.
@@ -43,6 +45,7 @@ class CheckedInHandler extends ResponseHandler {
 		ICVSFolder mParent = session.getLocalRoot().getFolder(localDir);
 		ICVSFile mFile = mParent.getFile(fileName);
 		
+		monitor.subTask(Policy.bind("CheckInHandler.checkedIn", Util.toTruncatedPath(mFile, session.getLocalRoot(), 3))); //$NON-NLS-1$
 		ResourceSyncInfo newInfo = mFile.getSyncInfo();
 		
 		if (newInfo==null) {
