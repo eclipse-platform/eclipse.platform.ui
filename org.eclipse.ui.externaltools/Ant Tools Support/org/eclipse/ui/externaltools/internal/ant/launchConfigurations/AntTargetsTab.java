@@ -11,10 +11,8 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.core.runtime.CoreException;
@@ -54,7 +52,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	private Label descriptionLabel;
 	private Label executeLabel;
 	private TableViewer executeTargetsTable;
-	private Button showSubTargetsButton;
 	
 	private TargetInfo defaultTarget = null;
 	private TargetInfo[] allTargets= null;
@@ -62,8 +59,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	
 	private String location= null;
 	private Button addButton;
-	
-	private Map targetNamesToTargetInfos = new HashMap();
 	private Button removeButton;
 	
 	/**
@@ -109,7 +104,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		lowerComposite.setLayoutData(gridData);		
 		
 		createDescriptionField(lowerComposite);
-		//createShowSubTargetsButton(lowerComposite);
 	}
 	
 	/*
@@ -132,7 +126,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 	}
 	 	descriptionLabel.setEnabled(enabled);
 	 	descriptionField.setEnabled(enabled);
-	 	//showSubTargetsButton.setEnabled(enabled);
 	 	updateButtonEnablement();
 	}
 	
@@ -153,7 +146,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 
 		new Label(buttonComposite, SWT.NONE);
 		
-		addButton = createPushButton(buttonComposite, "Add", null);
+		addButton = createPushButton(buttonComposite, "Add...", null);
 		addButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
 					addTargets();
@@ -188,6 +181,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	
 	private TargetInfo[] getTargets() {
 		if (allTargets == null) {
+			setErrorMessage(null);
 			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 			String expandedLocation = ToolUtil.expandFileLocation(location, ExpandVariableContext.EMPTY_CONTEXT, status);
 			if (expandedLocation != null && status.isOK()) {
@@ -199,28 +193,15 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 					allTargets= null;
 					return allTargets;
 				}
-				List targetNameList = new ArrayList();
-				List subTargets = new ArrayList();
 				for (int i=0; i < allTargets.length; i++) {
 					if (! AntUtil.isInternalTarget(allTargets[i])) {
-						// Add the target to the map of target names to target infos.
-						targetNamesToTargetInfos.put(allTargets[i].getName(), allTargets[i]);
-
 						if (allTargets[i].isDefault()) {
 							defaultTarget = allTargets[i];
 							runDefaultTargetButton.setText(MessageFormat.format("Run default target ({0})", new Object[] {allTargets[i].getName()})); //NON-NLS-1$
-						}
-						
-						if (AntUtil.isSubTarget(allTargets[i])) {
-							subTargets.add(allTargets[i].getName());
-						} else {
-							targetNameList.add(allTargets[i].getName());
+							break;
 						}
 					}
 				}
-				//if (showSubTargetsButton.getSelection()) {
-					targetNameList.addAll(subTargets);
-				//}
 			}
 				
 			if (allTargets != null) {
@@ -248,10 +229,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		}					
 		SelectionDialog dialog= new ListSelectionDialog(getShell(), targets, new AntTargetContentProvider(), labelProvider, "Select Ant Targets:");
 		if (dialog.open() == SelectionDialog.OK) {
-			Object[] results = dialog.getResult();
-			for (int i = 0; i < results.length; i++) {
-				getContentProvider().add(results[i]);
-			}
+			getContentProvider().addAll(Arrays.asList(dialog.getResult()));
 		}
 	}
 	
@@ -344,21 +322,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	/*
-	 * Shows the descriptionField of the given target in the
-	 * descriptionField field.
-	 */
-	private void showDescription(String targetName) {
-		descriptionField.setText("");
-		if (targetName == null) {
-			return;
-		}
-		TargetInfo targetInfo = (TargetInfo) targetNamesToTargetInfos.get(targetName);
-		if (targetInfo != null && targetInfo.getDescription() != null) {
-			descriptionField.setText(targetInfo.getDescription());
-		}
-	}
-	
-	/*
 	 * Creates the text field which displays the descriptionField of the selected target.
 	 */
 	private void createDescriptionField(Composite parent) {
@@ -370,26 +333,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		descriptionField.setLayoutData(data);
 	}
 	
-	/*
-	 * Creates the checkbox button for the
-	 * "Show sub-targets" preference.
-	 */
-	private void createShowSubTargetsButton(Composite parent) {
-		showSubTargetsButton = new Button(parent, SWT.CHECK);
-		showSubTargetsButton.setText("Show sub-targets");
-		showSubTargetsButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (showSubTargetsButton.getSelection()) {
-					//showSubTargets();
-				} else {
-					//hideSubTargets();
-				}
-			}			
-		});
-		showSubTargetsButton.setSelection(false);			
-	}
-
-	/*
+	/**
 	 * Creates the checkbox button for the
 	 * "Run default target" preference.
 	 */
