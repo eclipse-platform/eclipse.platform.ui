@@ -31,11 +31,12 @@
 	</target>
 
 	<target name="gather.bin.parts" depends="init" if="destination.temp.folder">
+		<mkdir dir="${destination.temp.folder}/${full.name}"/>
 		<mkdir dir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
-		<copy file="${build.result.folder}/WEB-INF/lib/webapp.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy file="${build.result.folder}/WEB-INF/lib/jsp.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
+		<copy file="${build.result.folder}/WEB-INF/lib/webapp.jar" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy todir="${destination.temp.folder}/${full.name}">
-			<fileset dir="${basedir}" includes="advanced/,basic/,WEB-INF/,*.css,*.html,*.js,*.jsp,plugin.properties,plugin.xml,webapp.properties" excludes="cpl-v10.html,notice.html,WEB-INF/classes/"/>
+			<fileset dir="${basedir}" includes="advanced/,basic/,WEB-INF/,*.html,*.jsp,plugin.properties,plugin.xml" excludes="WEB-INF/classes/"/>
 		</copy>
 <!-- custom begin -->
 		<loadfile
@@ -145,12 +146,12 @@
 
 	<target name="gather.sources" depends="init" if="destination.temp.folder">
 		<mkdir dir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
-		<copy file="${build.result.folder}/WEB-INF/lib/webappsrc.zip" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 <!-- custom begin -->
 <!--
 		<copy file="${build.result.folder}/WEB-INF/lib/jspsrc.zip" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 -->
 <!-- custom end -->
+		<copy file="${build.result.folder}/WEB-INF/lib/webappsrc.zip" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy todir="${destination.temp.folder}/${full.name}">
 			<fileset dir="${basedir}" includes="about.html"/>
 		</copy>
@@ -158,15 +159,15 @@
 
 	<target name="gather.logs" depends="init" if="destination.temp.folder">
 		<mkdir dir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
-		<copy file="${temp.folder}/WEB-INF/lib/webapp.jar.bin.log" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 		<copy file="${temp.folder}/WEB-INF/lib/jsp.jar.bin.log" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
+		<copy file="${temp.folder}/WEB-INF/lib/webapp.jar.bin.log" todir="${destination.temp.folder}/${full.name}/WEB-INF/lib"/>
 	</target>
 
 	<target name="clean" depends="init">
-		<delete file="${build.result.folder}/WEB-INF/lib/webapp.jar"/>
-		<delete file="${build.result.folder}/WEB-INF/lib/webappsrc.zip"/>
 		<delete file="${build.result.folder}/WEB-INF/lib/jsp.jar"/>
 		<delete file="${build.result.folder}/WEB-INF/lib/jspsrc.zip"/>
+		<delete file="${build.result.folder}/WEB-INF/lib/webapp.jar"/>
+		<delete file="${build.result.folder}/WEB-INF/lib/webappsrc.zip"/>
 		<delete file="${plugin.destination}/${full.name}.jar"/>
 		<delete file="${plugin.destination}/${full.name}.zip"/>
 		<delete dir="${temp.folder}"/>
