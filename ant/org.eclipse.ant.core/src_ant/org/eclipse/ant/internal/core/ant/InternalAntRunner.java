@@ -107,19 +107,10 @@ public class InternalAntRunner {
 	public InternalAntRunner() {
 	}
 
-	/**
-	 *
-	 */
 	protected IProgressMonitor fMonitor;
 
-	/**
-	 *
-	 */
 	protected List fBuildListeners;
 
-	/**
-	 *
-	 */
 	protected String fBuildFileLocation;
 
 	/** 
@@ -153,7 +144,7 @@ public class InternalAntRunner {
 
 	/**
 	 * The Ant logger class. There may be only one logger. It will have the
-	 * right to use the 'out' PrintStream. The class must implements the BuildLogger
+	 * right to use the 'out' PrintStream. The class must implement the BuildLogger
 	 * interface.
 	 */
 	protected String fLoggerClassname = null;
@@ -161,7 +152,6 @@ public class InternalAntRunner {
 	/** Extra arguments to be parsed as command line arguments. */
 	protected String[] fExtraArguments = null;
 
-	// properties
 	private static final String PROPERTY_ECLIPSE_RUNNING = "eclipse.running"; //$NON-NLS-1$
 
 	/**
@@ -178,8 +168,6 @@ public class InternalAntRunner {
 
 	/**
 	 * Adds a build logger.
-	 * 
-	 * @param
 	 */
 	public void addBuildLogger(String className) {
 		fLoggerClassname = className;
@@ -257,7 +245,7 @@ public class InternalAntRunner {
 	protected void parseScript(Project project) {
 		File buildFile = new File(getBuildFileLocation());
 		if (!buildFile.exists()) {
-			throw new BuildException(MessageFormat.format("Buildfile: {0} does not exist!",
+			throw new BuildException(MessageFormat.format(InternalAntMessages.getString("InternalAntRunner.Buildfile__{0}_does_not_exist_!_1"), //$NON-NLS-1$
 						 new String[]{buildFile.getAbsolutePath()}));
 		}
 		ProjectHelper.configureProject(project, buildFile);
