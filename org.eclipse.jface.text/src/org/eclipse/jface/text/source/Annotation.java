@@ -79,7 +79,7 @@ public abstract class Annotation {
 			switch (valign) {
 				case SWT.TOP:
 					FontMetrics fontMetrics= gc.getFontMetrics();
-					y= fontMetrics.getHeight() + fontMetrics.getAscent() + fontMetrics.getDescent() - image.getBounds().height / 2;
+					y= (fontMetrics.getHeight() - bounds.height)/2;
 					break;
 				case SWT.CENTER:
 					y= (r.height - bounds.height) / 2;
