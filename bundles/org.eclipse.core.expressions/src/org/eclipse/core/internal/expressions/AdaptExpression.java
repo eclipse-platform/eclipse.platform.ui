@@ -11,9 +11,9 @@
 package org.eclipse.core.internal.expressions;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IPluginDescriptor;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -23,14 +23,15 @@ public class AdaptExpression extends CompositeExpression {
 	private static final String ATT_TYPE= "type"; //$NON-NLS-1$
 	
 	private String fTypeName;
-	private Class fType;
-
-	private IPluginDescriptor fPluginDescriptor;
 	
 	public AdaptExpression(IConfigurationElement configElement) throws CoreException {
 		fTypeName= configElement.getAttribute(ATT_TYPE);
 		Expressions.checkAttribute(ATT_TYPE, fTypeName);
-		fPluginDescriptor= configElement.getDeclaringExtension().getDeclaringPluginDescriptor();
+	}
+	
+	public AdaptExpression(String typeName) {
+		Assert.isNotNull(typeName);
+		fTypeName= typeName;
 	}
 	
 	/* (non-Javadoc)
@@ -40,21 +41,20 @@ public class AdaptExpression extends CompositeExpression {
 		if (fTypeName == null)
 			return EvaluationResult.FALSE;
 		Object var= context.getDefaultVariable();
-		if (!(var instanceof IAdaptable))
-			return EvaluationResult.FALSE;
-		
-		if (fType == null) {
-			ClassLoader loader= fPluginDescriptor.getPluginClassLoader();
-			try {
-				fType= loader.loadClass(fTypeName);
-			} catch (ClassNotFoundException e) {
-				fTypeName= null;
+		Object adapted= null;
+		if (Expressions.isInstanceOf(var, fTypeName)) {
+			adapted= var;
+		} else {
+			IAdapterManager manager= Platform.getAdapterManager();
+			if (!manager.hasAdapter(var, fTypeName))
 				return EvaluationResult.FALSE;
-			}
+		
+			adapted= manager.getAdapter(var, fTypeName);
 		}
-		Object adapted= ((IAdaptable)var).getAdapter(fType);
-		if (adapted == null)
-			return EvaluationResult.FALSE;
+		// the adapted result is null but hasAdapter returned true. This means
+		// that there is an adapter but the adapter isn't loaded yet.
+		if (adapted == null) 
+			return EvaluationResult.NOT_LOADED;
 		return evaluateAnd(new DefaultVariable(context, adapted));
 	}
 }

@@ -19,7 +19,6 @@ import org.eclipse.core.internal.expressions.Assert;
 import org.eclipse.core.internal.expressions.CompositeExpression;
 import org.eclipse.core.internal.expressions.ExpressionMessages;
 import org.eclipse.core.internal.expressions.ExpressionPlugin;
-import org.eclipse.core.internal.expressions.StandardElementHandler;
 
 /**
  * An expression converter converts an XML expression represented by a 
@@ -37,7 +36,7 @@ public final class ExpressionConverter {
 	
 	private ElementHandler[] fHandlers;
 	private static final ExpressionConverter INSTANCE= new ExpressionConverter( 
-		new ElementHandler[] { StandardElementHandler.getDefault() } ); 
+		new ElementHandler[] { ElementHandler.getDefault() } ); 
 	
 	/** 
 	 * Returns the default expression converter. The default expression converter

@@ -19,7 +19,9 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.core.internal.expressions.AdaptExpression;
 import org.eclipse.core.internal.expressions.Expressions;
+import org.eclipse.core.internal.expressions.InstanceofExpression;
 import org.eclipse.core.internal.expressions.SystemTestExpression;
 
 
@@ -91,5 +93,25 @@ public class ExpressionTests extends TestCase {
 			IEvaluationContext.PLUGIN_DESCRIPTOR,
 			new String[] { "org.eclipse.jdt.ui.tests.refactoring" });
 		assertNotNull(descriptor);
+	}
+	
+	public void testAdaptExpression() throws Exception {
+		AdaptExpression expression= new AdaptExpression("org.eclipse.core.internal.expressions.tests.Adapter");
+		expression.add(new InstanceofExpression("org.eclipse.core.internal.expressions.tests.Adapter"));
+		EvaluationResult result= expression.evaluate(new EvaluationContext(null, new Adaptee()));
+		assertTrue(result == EvaluationResult.TRUE);
+	}
+	
+	public void testAdaptExpressionFail() throws Exception {
+		AdaptExpression expression= new AdaptExpression("org.eclipse.core.internal.expressions.tests.NotExisting");
+		EvaluationResult result= expression.evaluate(new EvaluationContext(null, new Adaptee()));
+		assertTrue(result == EvaluationResult.FALSE);
+	}
+	
+	public void testAdaptExpressionFail2() throws Exception {
+		AdaptExpression expression= new AdaptExpression("org.eclipse.core.internal.expressions.tests.Adapter");
+		expression.add(new InstanceofExpression("org.eclipse.core.internal.expressions.tests.NotExisting"));
+		EvaluationResult result= expression.evaluate(new EvaluationContext(null, new Adaptee()));
+		assertTrue(result == EvaluationResult.FALSE);
 	}
 }

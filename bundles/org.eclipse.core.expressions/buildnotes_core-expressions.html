@@ -1,0 +1,25 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.75 [en] (WinNT; U) [Netscape]">
+   <title>Core Expressions Release Notes</title>
+</head>
+<body>
+
+<h1>
+Eclipse Platform Build Notes&nbsp;<br>
+Core Expressions</h1>
+March 16, 2004
+<h3>Problem Reports Fixed</h3>
+<h3>Implemenation Changes</h3>
+The adapt expression now uses the new IAdapterManager API hasAdapter(Object, String) and 
+getAdapter(Object, String). This ensures that the right class loader is used to convert
+the string representing a type into a corresponding Class. However, this change now requires
+that the adpters requested via an adapt expression must be declared in XML using the new
+org.eclipse.core.runtime.adapters extension point.
+</body>
+</html>
+

@@ -10,6 +10,7 @@
  ******************************************************************************/
 package org.eclipse.core.internal.expressions;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 import org.eclipse.core.expressions.EvaluationResult;
@@ -18,10 +19,16 @@ import org.eclipse.core.expressions.IEvaluationContext;
 
 public class InstanceofExpression extends Expression {
 
-	private String fValue;
+	private String fTypeName;
 	
-	public InstanceofExpression(IConfigurationElement element) {
-		fValue= element.getAttribute(ATT_VALUE);
+	public InstanceofExpression(IConfigurationElement element) throws CoreException {
+		fTypeName= element.getAttribute(ATT_VALUE);
+		Expressions.checkAttribute(ATT_VALUE, fTypeName);
+	}
+	
+	public InstanceofExpression(String typeName) {
+		Assert.isNotNull(typeName);
+		fTypeName= typeName;
 	}
 	
 	/* (non-Javadoc)
@@ -29,7 +36,7 @@ public class InstanceofExpression extends Expression {
 	 */
 	public EvaluationResult evaluate(IEvaluationContext context) {
 		Object element= context.getDefaultVariable();
-		return EvaluationResult.valueOf(Expressions.isInstanceOf(element, fValue));
+		return EvaluationResult.valueOf(Expressions.isInstanceOf(element, fTypeName));
 	}
 	
 	//---- Debugging ---------------------------------------------------
@@ -38,6 +45,6 @@ public class InstanceofExpression extends Expression {
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return "<instanceof value=\"" + fValue + "\"/>"; //$NON-NLS-1$ //$NON-NLS-2$
+		return "<instanceof value=\"" + fTypeName + "\"/>"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }
