@@ -316,7 +316,7 @@ private void loadCustom() {
 				InputStream stream = null;
 				try {
 					stream = new FileInputStream(file);
-					reader = new InputStreamReader(stream, "utf-8"); //$NON-NLS-1$
+					reader = new BufferedReader(new InputStreamReader(stream, "utf-8")); //$NON-NLS-1$
 					
 					// Restore the layout state.
 					XMLMemento memento = XMLMemento.createReadRoot(reader);
