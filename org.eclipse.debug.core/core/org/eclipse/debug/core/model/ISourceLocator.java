@@ -11,7 +11,7 @@ import org.eclipse.debug.core.model.IStackFrame;
  * A source locator locates source elements for stack frames. Each
  * debug session launch (optionally) specifies a source locator which is
  * used to locate source for that debug session. If a launch does not
- * provide a source locator, source cannot not be displayed.
+ * provide a source locator, source cannot be displayed.
  * Abstraction of source lookup allows clients to hide implementation
  * details of source location and representation.
  * <p>
