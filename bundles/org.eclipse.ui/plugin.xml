@@ -2109,12 +2109,6 @@
             class="org.eclipse.ui.internal.dialogs.BuildOrderPreferencePage"
             id="org.eclipse.ui.preferencePages.BuildOrder">
       </page>
-       <page
-            name="%PreferencePages.Roles"
-            category="org.eclipse.ui.preferencePages.Workbench"
-            class="org.eclipse.ui.internal.roles.RolePreferencePage"
-            id="org.eclipse.ui.preferencePages.Roles">
-      </page>
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
