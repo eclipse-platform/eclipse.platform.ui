@@ -836,7 +836,9 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			for (int x= 0; x < pages.length; x++) {
 				IEditorPart[] editors= pages[x].getDirtyEditors();
 				for (int z= 0; z < editors.length; z++) {
-					result.add(editors[z]);
+					IEditorPart ep= editors[z];
+					if (!result.contains(ep))
+						result.add(ep);
 				}
 			}
 		}
