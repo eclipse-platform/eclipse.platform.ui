@@ -17,6 +17,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
@@ -49,6 +50,8 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	private SyncViewerToolbarDropDownAction chooseSubscriberAction;
 	private SyncViewerToolbarDropDownAction chooseChangeFilterAction;
 	
+	private RefactorActionGroup refactoringActions;
+	
 	// other view actions
 	private Action collapseAll;
 	private Action refreshSelectionAction;
@@ -66,6 +69,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		directionsFilters.updateActionBars();
 		comparisonCriteria.updateActionBars();
 		subscriberInputs.updateActionBars();
+		refactoringActions.updateActionBars();
 		expandAll.update();
 	}
 
@@ -159,6 +163,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		};
 		workingSetGroup = new WorkingSetFilterActionGroup(syncView.getSite().getShell(), workingSetUpdater);
 		openWithActionGroup = new OpenWithActionGroup(getSyncView());
+		refactoringActions = new RefactorActionGroup(getSyncView());
 	}
 
 	/* (non-Javadoc)
@@ -181,6 +186,8 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		dropDownMenu.add(refreshViewContents);
 		dropDownMenu.add(new Separator());
 		dropDownMenu.add(new SyncViewerShowPreferencesAction(getSyncView().getSite().getShell()));
+		
+		refactoringActions.fillActionBars(actionBars);
 	}
 
 	/* (non-Javadoc)
@@ -191,6 +198,8 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		openWithActionGroup.fillContextMenu(manager);		
 		manager.add(new Separator());
 		manager.add(expandAll);
+		manager.add(new Separator());
+		refactoringActions.fillContextMenu(manager);
 		manager.add(new Separator());
 		manager.add(refreshSelectionAction);
 		manager.add(new Separator("SubscriberActionsGroup1")); //$NON-NLS-1$
@@ -288,5 +297,9 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 			PlatformUI.getWorkbench().getWorkingSetManager().addRecentWorkingSet(workingSet);
 		}
 		workingSetGroup.setWorkingSet(workingSet);
+	}
+
+	public void handleKeyPressed(KeyEvent event) {
+		refactoringActions.handleKeyPressed(event);
 	}
 }

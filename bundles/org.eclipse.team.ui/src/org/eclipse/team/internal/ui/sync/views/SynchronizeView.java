@@ -11,12 +11,9 @@
 package org.eclipse.team.internal.ui.sync.views;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -40,12 +37,13 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -59,7 +57,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.ITeamResourceChangeListener;
-import org.eclipse.team.core.subscribers.SyncInfo;
 import org.eclipse.team.core.subscribers.TeamDelta;
 import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.core.Assert;
@@ -184,7 +181,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		updateTitle();
 		
 		initializeJobListener();
-		actions.setContext(null);	
+		actions.setContext(null);
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
@@ -299,6 +296,14 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 		viewer.addOpenListener(new IOpenListener() {
 			public void open(OpenEvent event) {
 				handleOpen(event);
+			}
+		});
+		viewer.getControl().addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent event) {
+				handleKeyPressed(event);
+			}
+			public void keyReleased(KeyEvent event) {
+				// do nothing
 			}
 		});
 	}	
@@ -447,6 +452,14 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 			}
 		}
 
+	}
+	
+	/**
+	 * Handles a key press event from the viewer.
+	 * Delegates to the action group.
+	 */
+	protected void handleKeyPressed(KeyEvent event) {
+		actions.handleKeyPressed(event);
 	}
 	
 	public void activateSubscriber(TeamSubscriber subscriber) {
@@ -637,22 +650,7 @@ public class SynchronizeView extends ViewPart implements ITeamResourceChangeList
 	}
 	
 	public ISelection getSelection() {
-		ISelection selection = getViewer().getSelection();
-		if (! selection.isEmpty() && viewer instanceof AbstractTreeViewer) {
-			// For a tree, selection should be deep and only include out-of-sync resources
-			Object[] selected = ((IStructuredSelection)selection).toArray();
-			Set result = new HashSet();
-			for (int i = 0; i < selected.length; i++) {
-				Object object = selected[i];
-				if (object instanceof SynchronizeViewNode) {
-					SynchronizeViewNode syncResource = (SynchronizeViewNode) object;
-					SyncInfo[] infos = syncResource.getChildSyncInfos();
-					result.addAll(Arrays.asList(infos));
-				}
-			}
-			selection = new StructuredSelection((Object[]) result.toArray(new Object[result.size()]));
-		}
-		return selection;
+		return getViewer().getSelection();
 	}
 	
 	/**
