@@ -13,20 +13,12 @@ package org.eclipse.search2.internal.ui;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-/**
- * @author Thomas Mäder
- *
- */
 public class SearchMessages {
 
 	private static final String BUNDLE_NAME= "org.eclipse.search2.internal.ui.SearchMessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE= ResourceBundle.getBundle(BUNDLE_NAME);
 
-	/**
-	 * @param key
-	 * @return
-	 */
 	public static String getString(String key) {
 		try {
 			return RESOURCE_BUNDLE.getString(key);

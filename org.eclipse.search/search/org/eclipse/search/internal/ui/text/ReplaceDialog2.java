@@ -81,6 +81,7 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
+import org.eclipse.search.internal.core.text.PatternConstructor;
 import org.eclipse.search.internal.ui.ISearchHelpContextIds;
 import org.eclipse.search.internal.ui.SearchMessages;
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -148,10 +149,10 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		initializeMarkers(entries);
 	}
 	
-	private boolean isRegexQuery() {
-		return ((FileSearchQuery)fPage.getInput().getQuery()).isRegexSearch();
+	private FileSearchQuery getQuery() {
+		return (FileSearchQuery) fPage.getInput().getQuery();
 	}
-	
+		
 	private void initializeMarkers(IFile[] entries) {
 		for (int j= 0; j < entries.length; j++) {
 			IFile entry = entries[j];
@@ -228,11 +229,12 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		
 		initializeDialogUnits(result);
 		
+		FileSearchQuery query= getQuery();
+		
 		Label label= new Label(result, SWT.NONE);
 		label.setText(SearchMessages.getString("ReplaceDialog.replace_label")); //$NON-NLS-1$
-		Text clabel= new Text(result, SWT.BORDER);
-		clabel.setEnabled(false);
-		clabel.setText(((FileSearchQuery)fPage.getInput().getQuery()).getSearchString());
+		Text clabel= new Text(result, SWT.BORDER | SWT.READ_ONLY);
+		clabel.setText(query.getSearchString());
 		GridData gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.widthHint= convertWidthInCharsToPixels(50);
 		clabel.setLayoutData(gd);
@@ -255,7 +257,7 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 				setContentAssistsEnablement(fReplaceWithRegex.getSelection());
 			}
 		});
-		if (isRegexQuery()) {
+		if (query.isRegexSearch()) {
 			fReplaceWithRegex.setSelection(true);
 		} else {
 			fReplaceWithRegex.setSelection(false);
@@ -401,8 +403,9 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 	
 	private void doReplaceInFile(IProgressMonitor pm, IFile file, String replacementText, final Match[] markers) throws BadLocationException, CoreException {
 		Pattern pattern= null;
-		if (fReplaceWithRegex.getSelection()) {
-			pattern= createReplacePattern();
+		FileSearchQuery query= getQuery();
+		if (query.isRegexSearch()) {
+			pattern= createReplacePattern(query);
 		}
 		try {
 			if (file.isReadOnly()) {
@@ -429,21 +432,21 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 				ITextFileBuffer fb= bm.getTextFileBuffer(file.getFullPath());
 				boolean wasDirty= fb.isDirty();
 				IDocument doc= fb.getDocument();
-					for (int i= 0; i < markers.length; i++) {
-						PositionTracker tracker= InternalSearchUI.getInstance().getPositionTracker();
-						int offset= markers[i].getOffset();
-						int length= markers[i].getLength();
-						Position currentPosition= tracker.getCurrentPosition(markers[i]);
-						if (currentPosition != null) {
-							offset= currentPosition.offset;
-							length= currentPosition.length;
-						}
-						String originalText= doc.get(offset, length);
-						String replacementString= computeReplacementString(pattern, originalText, replacementText);
-						doc.replace(offset, length, replacementString);
-						fMarkers.remove(0);
-						fPage.getInput().removeMatch(markers[i]);
+				for (int i= 0; i < markers.length; i++) {
+					PositionTracker tracker= InternalSearchUI.getInstance().getPositionTracker();
+					int offset= markers[i].getOffset();
+					int length= markers[i].getLength();
+					Position currentPosition= tracker.getCurrentPosition(markers[i]);
+					if (currentPosition != null) {
+						offset= currentPosition.offset;
+						length= currentPosition.length;
 					}
+					String originalText= doc.get(offset, length);
+					String replacementString= computeReplacementString(pattern, originalText, replacementText);
+					doc.replace(offset, length, replacementString);
+					fMarkers.remove(0);
+					fPage.getInput().removeMatch(markers[i]);
+				}
 				if (!wasDirty) {
 					fb.commit(new SubProgressMonitor(pm, 1), true);
 					fSaved= true;
@@ -456,12 +459,8 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 		}
 	}
 	
-	private Pattern createReplacePattern() {
-		FileSearchQuery query= (FileSearchQuery)fPage.getInput().getQuery();
-		if (!query.isCaseSensitive())
-			return Pattern.compile(query.getSearchString(), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-		else
-			return Pattern.compile(query.getSearchString());
+	private Pattern createReplacePattern(FileSearchQuery query) {
+		return PatternConstructor.createPattern(query.getSearchString(), query.isCaseSensitive(), true);
 	}
 
 	private String computeReplacementString(Pattern pattern, String originalText, String replacementText) {
@@ -580,8 +579,8 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 					if (editor instanceof IReusableEditor)
 						fEditor= (IReusableEditor) editor;
 					return (ITextEditor)editor;
-				} else
-					activePage.closeEditor(editor, false);
+				}
+				activePage.closeEditor(editor, false);
 			}
 		}
 		IEditorPart editor= activePage.openEditor(new FileEditorInput(file), "org.eclipse.ui.DefaultTextEditor"); //$NON-NLS-1$
@@ -613,10 +612,9 @@ class ReplaceDialog2 extends ExtendedDialogWindow {
 				fEditor.setInput(new FileEditorInput(file));
 				page.bringToTop(fEditor);
 				return (ITextEditor) fEditor;
-			} else {
-				page.closeEditor(fEditor, false);
-				fEditor= null;
 			}
+			page.closeEditor(fEditor, false);
+			fEditor= null;
 		}
 		return openNewTextEditor(file, page);
 	}

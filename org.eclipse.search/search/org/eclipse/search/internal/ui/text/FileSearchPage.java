@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui.text;
 
+import java.text.Collator;
 import java.text.MessageFormat;
 import java.util.HashMap;
 
@@ -24,11 +25,14 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
@@ -52,6 +56,36 @@ import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
 import org.eclipse.search.ui.text.Match;
 
 public class FileSearchPage extends AbstractTextSearchViewPage implements IAdaptable {
+	
+	public static class DecoratorIgnoringViewerSorter extends ViewerSorter {
+		private final ILabelProvider fLabelProvider;
+
+		public DecoratorIgnoringViewerSorter(ILabelProvider labelProvider) {
+			super(null); // lazy initialization
+			fLabelProvider= labelProvider;
+		}
+		
+	    public int compare(Viewer viewer, Object e1, Object e2) {
+	        String name1= fLabelProvider.getText(e1);
+	        String name2= fLabelProvider.getText(e2);
+	        if (name1 == null)
+	            name1 = "";//$NON-NLS-1$
+	        if (name2 == null)
+	            name2 = "";//$NON-NLS-1$
+	        return getCollator().compare(name1, name2);
+	    }
+	    
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.ViewerSorter#getCollator()
+		 */
+		public final Collator getCollator() {
+			if (collator == null) {
+				collator= Collator.getInstance();
+			}
+			return collator;
+		}
+	}
+	
 	private static final String KEY_SORTING= "org.eclipse.search.resultpage.sorting"; //$NON-NLS-1$
 
 	private ActionGroup fActionGroup;
@@ -94,16 +128,19 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	protected void configureTableViewer(TableViewer viewer) {
 		viewer.setUseHashlookup(true);
-		viewer.setLabelProvider(new DecoratingLabelProvider(new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
+		FileLabelProvider innerLabelProvider= new FileLabelProvider(this, fCurrentSortOrder);
+		viewer.setLabelProvider(new DecoratingLabelProvider(innerLabelProvider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		viewer.setContentProvider(new FileTableContentProvider(this));
-		setSortOrder(fCurrentSortOrder);
+		viewer.setSorter(new DecoratorIgnoringViewerSorter(innerLabelProvider));
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
 	}
 
 	protected void configureTreeViewer(TreeViewer viewer) {
 		viewer.setUseHashlookup(true);
-		viewer.setLabelProvider(new DecoratingLabelProvider(new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL), PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
+		FileLabelProvider innerLabelProvider= new FileLabelProvider(this, FileLabelProvider.SHOW_LABEL);
+		viewer.setLabelProvider(new DecoratingLabelProvider(innerLabelProvider, PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		viewer.setContentProvider(new FileTreeContentProvider(viewer));
+		viewer.setSorter(new DecoratorIgnoringViewerSorter(innerLabelProvider));
 		fContentProvider= (FileContentProvider) viewer.getContentProvider();
 	}
 
@@ -186,14 +223,9 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	public void setSortOrder(int sortOrder) {
 		fCurrentSortOrder= sortOrder;
-		StructuredViewer viewer= getViewer();
-		DecoratingLabelProvider lpWrapper= (DecoratingLabelProvider) viewer.getLabelProvider();
-		((FileLabelProvider)lpWrapper.getLabelProvider()).setOrder(sortOrder);
-		if (sortOrder == FileLabelProvider.SHOW_LABEL_PATH) {
-			viewer.setSorter(new NameSorter());
-		} else {
-			viewer.setSorter(new PathSorter());
-		}
+		DecoratingLabelProvider lpWrapper= (DecoratingLabelProvider) getViewer().getLabelProvider();
+		((FileLabelProvider) lpWrapper.getLabelProvider()).setOrder(sortOrder);
+		getViewer().refresh();
 		getSettings().put(KEY_SORTING, fCurrentSortOrder);
 	}
 	

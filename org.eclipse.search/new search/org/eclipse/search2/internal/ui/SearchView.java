@@ -367,9 +367,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 	
 	// Methods related to saving page state. -------------------------------------------
-	/**
-	 * { @inheritDoc }
-	 */
+
 	public void saveState(IMemento memento) {
 		for (Iterator pages = fPagesToParts.keySet().iterator(); pages.hasNext(); ) {
 			ISearchResultPage page = (ISearchResultPage) pages.next();
@@ -378,9 +376,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		}
 	}
 	
-	/**
-	 * { @inheritDoc }
-	 */
+
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		createStandardGroups(site.getActionBars().getMenuManager());
@@ -390,9 +386,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 			progressService.showBusyForFamily(InternalSearchUI.FAMILY_SEARCH);
 	}
 	
-	/**
-	 * { @inheritDoc }
-	 */
+
 	protected void initPage(IPageBookViewPage page) {
 		super.initPage(page);
 		page.getSite().getActionBars().setGlobalActionHandler(ActionFactory.REFRESH.getId(), fSearchAgainAction);

@@ -11,9 +11,8 @@
 
 package org.eclipse.search2.internal.ui.text;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.source.IAnnotationModel;
+import java.util.ArrayList;
+
 import org.eclipse.search.ui.ISearchResultListener;
 import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
@@ -22,6 +21,13 @@ import org.eclipse.search.ui.text.ISearchEditorAccess;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
 import org.eclipse.search.ui.text.RemoveAllEvent;
+
+import org.eclipse.core.resources.IFile;
+
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.util.Assert;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -30,9 +36,10 @@ import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 public class EditorAnnotationManager implements ISearchResultListener {
+	
 	private AbstractTextSearchResult fResult;
 	private IEditorPart fEditor;
-	private Highlighter fHighlighter;
+	private Highlighter fHighlighter; // initialized lazy
 	
 	public static final int HIGHLLIGHTER_ANY= 0;
 	public static final int HIGHLIGHTER_MARKER= 1;
@@ -42,9 +49,10 @@ public class EditorAnnotationManager implements ISearchResultListener {
 	
 	
 	public EditorAnnotationManager(IEditorPart editorPart) {
+		Assert.isNotNull(editorPart);
 		fEditor= editorPart;
-		fHighlighter= createHighlighter(editorPart);
-
+		fHighlighter= null; // lazy initialization
+		fResult= null;
 	}
 	
 
@@ -80,26 +88,47 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		if (fResult == null)
 			return;
 		if (e instanceof MatchEvent) {
-			MatchEvent me= (MatchEvent) e;
-			Match[] matches = me.getMatches();
-			int kind = me.getKind();
-			for (int i = 0; i < matches.length; i++) {
-				updateMatch(matches[i], kind);
+			IEditorMatchAdapter adapter= fResult.getEditorMatchAdapter();
+			if (adapter != null) { 
+				MatchEvent me= (MatchEvent) e;
+				Match[] matchesInEditor= getMatchesInEditor(me.getMatches(), adapter);
+				if (matchesInEditor != null && matchesInEditor.length > 0) {
+					if (me.getKind() == MatchEvent.ADDED) {
+						addAnnotations(matchesInEditor);
+					} else {
+						removeAnnotations(matchesInEditor);
+					}
+				}
 			}
-		} else if (e instanceof RemoveAllEvent)
+		} else if (e instanceof RemoveAllEvent) {
 			removeAnnotations();
-	}
-
-	private void updateMatch(Match match, int kind) {
-		IEditorMatchAdapter adapter= fResult.getEditorMatchAdapter();
-		if (fEditor != null && adapter != null && adapter.isShownInEditor(match, fEditor)) {
-			if (kind == MatchEvent.ADDED) {
-				addAnnotations(new Match[]{match});
-			} else {
-				removeAnnotations(new Match[]{match});
-			}
 		}
 	}
+
+	private Match[] getMatchesInEditor(Match[] matches, IEditorMatchAdapter adapter) {
+		// optimize the array-length == 1 case (most common)
+		if (matches.length == 1) {
+			return adapter.isShownInEditor(matches[0], fEditor) ? matches : null;
+		}
+		
+		ArrayList matchesInEditor= null; // lazy initialization
+		for (int i= 0; i < matches.length; i++) {
+			Match curr= matches[i];
+			if (adapter.isShownInEditor(curr, fEditor)) {
+				if (matchesInEditor == null) {
+					matchesInEditor= new ArrayList();
+				}
+				matchesInEditor.add(curr);
+			}
+		}
+		if (matchesInEditor != null) {
+			return (Match[]) matchesInEditor.toArray(new Match[matchesInEditor.size()]);
+		}
+		return null;
+	}
+
+
+
 
 
 	private void removeAnnotations() {
@@ -107,7 +136,8 @@ public class EditorAnnotationManager implements ISearchResultListener {
 			fHighlighter.removeAll();
 	}
 
-	private static Highlighter createHighlighter(IEditorPart editor) {
+	private Highlighter createHighlighter() {
+		IEditorPart editor= fEditor;
 		if (fgHighlighterType != HIGHLLIGHTER_ANY) {
 			return debugCreateHighlighter(editor);
 		}
@@ -123,7 +153,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 			if (file != null)
 				return new MarkerHighlighter(file);
 		}
-		return null;
+		return new Highlighter(); // does nothing
 	}
 
 	private static Highlighter debugCreateHighlighter(IEditorPart editor) {
@@ -154,22 +184,22 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		if (matchAdapter == null)
 			return;
 		Match[] matches= matchAdapter.computeContainedMatches(fResult, fEditor);
-		if (matches == null)
+		if (matches == null || matches.length == 0)
 			return;
 		addAnnotations(matches);
 	}
 
 	private void addAnnotations(Match[] matches) {
-		if (fHighlighter != null)
-			fHighlighter.addHighlights(matches);
+		if (fHighlighter == null) {
+			fHighlighter= createHighlighter();
+		}
+		fHighlighter.addHighlights(matches);
 	}
 
 	private void removeAnnotations(Match[] matches) {
 		if (fHighlighter != null)
 			fHighlighter.removeHighlights(matches);
 	}
-
-
 
 	private static IAnnotationModel getAnnotationModel(IWorkbenchPart part) {
 		IAnnotationModel model= null;

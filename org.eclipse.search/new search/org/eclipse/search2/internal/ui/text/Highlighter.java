@@ -16,7 +16,7 @@ import org.eclipse.core.filebuffers.IFileBufferListener;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.search.ui.text.Match;
 
-public abstract class Highlighter {
+public class Highlighter {
 	private IFileBufferListener fBufferListener;
 
 	public Highlighter() {
@@ -54,14 +54,21 @@ public abstract class Highlighter {
 		};
 		FileBuffers.getTextFileBufferManager().addFileBufferListener(fBufferListener);
 	}
-	public abstract void addHighlights(Match[] matches);
+	
+	public void addHighlights(Match[] matches) {
+	}
 
-	public abstract void removeHighlights(Match[] matches);
-	public abstract void removeAll();
+	public void removeHighlights(Match[] matches) {
+	}
+	
+	public void removeAll() {
+	}
+	
 	public void dispose() {
 		FileBuffers.getTextFileBufferManager().removeFileBufferListener(fBufferListener);
 	}
 	
-	protected abstract void handleContentReplaced(IFileBuffer buffer);
+	protected void handleContentReplaced(IFileBuffer buffer) {
+	}
 
 }

@@ -20,7 +20,7 @@ class ShowSearchAction extends Action {
 	private ISearchResult fSearch;
 	private SearchView fView;
 	
-	/**
+	/*
 	 *	Create a new instance of this class
 	 */
 	public ShowSearchAction(SearchView view, ISearchResult search, String text, ImageDescriptor image, String tooltip) {

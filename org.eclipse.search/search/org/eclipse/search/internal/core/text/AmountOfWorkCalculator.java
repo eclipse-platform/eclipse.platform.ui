@@ -16,6 +16,7 @@ import java.util.Iterator;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.search.internal.core.ISearchScope;
@@ -23,49 +24,51 @@ import org.eclipse.search.internal.core.ISearchScope;
 /**
  * The visitor that does the actual work.
  */
-public class AmountOfWorkCalculator extends TypedResourceVisitor {
+public class AmountOfWorkCalculator implements IResourceProxyVisitor {
+	
 	private ISearchScope fScope;
-	private int fResult;
+	private int fFileCount;
 	private boolean fVisitDerived;
+	private final MultiStatus fStatus;
 
 	AmountOfWorkCalculator(MultiStatus status, boolean visitDerived) {
-		super(status);
+		fStatus= status;
 		fVisitDerived= visitDerived;
 	}
 		
-	protected boolean visitFile(IResourceProxy proxy) throws CoreException {
-		if (shouldVisit(proxy))
-			fResult++;
+	public boolean visit(IResourceProxy proxy) {
+		if (proxy.getType() == IResource.FILE) {
+			if (shouldVisit(proxy))
+				fFileCount++;
+		}
 		return true;	
 	}
-	
 	
 	private boolean shouldVisit(IResourceProxy proxy) {
 		if (!fScope.encloses(proxy))
 			return false;
-		if (fVisitDerived)
-			return true;
-		return !proxy.isDerived();
+		return fVisitDerived || !proxy.isDerived();
 	}
 
 	public int process(Collection projects, ISearchScope scope) {
-		fResult= 0;
+		fFileCount= 0;
 		fScope= scope;
 		
 		Iterator i= projects.iterator();
-		while(i.hasNext()) {
+		while (i.hasNext()) {
 			IProject project= (IProject)i.next();
-			int save= fResult;
+			int save= fFileCount;
 			try {
 				project.accept(this, IResource.NONE);
 			} catch (CoreException ex) {
-				addToStatus(ex);
+				fStatus.add(ex.getStatus());
 			}
 			// Project doesn't contain any files that are in scope
-			if (save == fResult)
-				i.remove();	
+			if (save == fFileCount) {
+				i.remove();
+			}	
 		}
 		
-		return fResult;
+		return fFileCount;
 	}
 }

@@ -29,6 +29,36 @@ import org.eclipse.core.runtime.IStatus;
 
 
 public class FileSearchQuery implements ISearchQuery {
+	
+	private final static class TextSearchResultCollector implements ITextSearchResultCollector {
+		
+		private final AbstractTextSearchResult fResult;
+		private final IProgressMonitor fProgressMonitor;
+		
+		private TextSearchResultCollector(AbstractTextSearchResult result, IProgressMonitor monitor) {
+			super();
+			fResult= result;
+			fProgressMonitor= monitor;
+		}
+		public IProgressMonitor getProgressMonitor() {
+			return fProgressMonitor;
+		}
+		public void aboutToStart() {
+			// do nothing
+		}
+		public void accept(IResourceProxy proxy, int start, int length) {
+			IFile file= (IFile) proxy.requestResource();
+			if (start < 0)
+				start= 0;
+			if (length < 0)
+				length= 0;
+			fResult.addMatch(new FileMatch(file, start, length));
+		}
+		public void done() {
+			// do nothing
+		}
+	}
+
 	private String fSearchString;
 	private String fSearchOptions;
 	private TextSearchScope fScope;
@@ -53,28 +83,7 @@ public class FileSearchQuery implements ISearchQuery {
 	public IStatus run(final IProgressMonitor pm) {
 		final AbstractTextSearchResult textResult= (AbstractTextSearchResult) getSearchResult();
 		textResult.removeAll();
-		ITextSearchResultCollector collector= new ITextSearchResultCollector() {
-			public IProgressMonitor getProgressMonitor() {
-				return pm;
-			}
-	
-			public void aboutToStart() {
-				// do nothing
-			}
-	
-			public void accept(IResourceProxy proxy, String line, int start, int length, int lineNumber) {
-				IResource resource= proxy.requestResource();
-				if (start < 0)
-					start= 0;
-				if (length < 0)
-					length= 0;
-				textResult.addMatch(createMatch((IFile)resource, start, length, lineNumber));
-			}
-	
-			public void done() {
-				// do nothing
-			}
-		};
+		ITextSearchResultCollector collector= new TextSearchResultCollector(textResult, pm);
 		return new TextSearchEngine().search(SearchPlugin.getWorkspace(), fScope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
 	}
 
@@ -113,28 +122,7 @@ public class FileSearchQuery implements ISearchQuery {
 	 * @return returns the status of the operation
 	 */
 	public IStatus searchInFile(final AbstractTextSearchResult result, final IProgressMonitor monitor, IFile file) {
-		ITextSearchResultCollector collector= new ITextSearchResultCollector() {
-			public IProgressMonitor getProgressMonitor() {
-				return monitor;
-			}
-
-			public void aboutToStart() {
-				// do nothing
-			}
-
-			public void accept(IResourceProxy proxy, String line, int start, int length, int lineNumber) {
-				IResource resource= proxy.requestResource();
-				if (start < 0)
-					start= 0;
-				if (length < 0)
-					length= 0;
-				result.addMatch(new FileMatch((IFile) resource, start, length));
-			}
-
-			public void done() {
-				// do nothing
-			}
-		};
+		ITextSearchResultCollector collector= new TextSearchResultCollector(result, monitor);
 		SearchScope scope= new SearchScope("", new IResource[] { file }); //$NON-NLS-1$
 		return new TextSearchEngine().search(SearchPlugin.getWorkspace(), scope, fVisitDerived, collector, new MatchLocator(fSearchString, isCaseSensitive(), isRegexSearch()));
 	}
@@ -165,9 +153,5 @@ public class FileSearchQuery implements ISearchQuery {
 			new SearchResultUpdater(fResult);
 		}
 		return fResult;
-	}
-
-	protected FileMatch createMatch(IFile file, int start, int length, int lineNumber) {
-		return new FileMatch(file, start, length);
 	}
 }

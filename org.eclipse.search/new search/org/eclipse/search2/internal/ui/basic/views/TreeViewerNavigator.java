@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui.basic.views;
 
+import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
+
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.search.ui.text.AbstractTextSearchViewPage;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
 
 public class TreeViewerNavigator implements INavigate {
 	private TreeViewer fViewer;
@@ -76,15 +78,14 @@ public class TreeViewerNavigator implements INavigate {
 			if (hasMatches(previousSibling))
 				return previousSibling;
 			return null;
-		} else {
-			TreeItem parent= currentItem.getParentItem();
-			if (parent != null) {
-				if (hasMatches(parent))
-					return parent;
-				return getNextItemBackward(parent);
-			}
-			return null;
 		}
+		TreeItem parent= currentItem.getParentItem();
+		if (parent != null) {
+			if (hasMatches(parent))
+				return parent;
+			return getNextItemBackward(parent);
+		}
+		return null;
 	}
 
 	private TreeItem getLastChildWithMatches(TreeItem currentItem) {
@@ -106,19 +107,18 @@ public class TreeViewerNavigator implements INavigate {
 			if (hasMatches(nextSibling))
 				return nextSibling;
 			return getFirstChildWithMatches(nextSibling);
-		} else {
-			TreeItem parent= currentItem.getParentItem();
-			while (parent != null) {
-				nextSibling= getNextSibling(parent, true);
-				if (nextSibling != null) {
-					if (hasMatches(nextSibling))
-						return nextSibling;
-					return getFirstChildWithMatches(nextSibling);
-				}
-				parent= parent.getParentItem();
-			}
-			return null;
 		}
+		TreeItem parent= currentItem.getParentItem();
+		while (parent != null) {
+			nextSibling= getNextSibling(parent, true);
+			if (nextSibling != null) {
+				if (hasMatches(nextSibling))
+					return nextSibling;
+				return getFirstChildWithMatches(nextSibling);
+			}
+			parent= parent.getParentItem();
+		}
+		return null;
 	}
 
 	private TreeItem getFirstChildWithMatches(TreeItem item) {

@@ -819,9 +819,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		if (currentMatch != null) {
 			showMatch(currentMatch, activateEditor);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 	/**
@@ -959,12 +958,12 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	/**
-	 * { @inheritDoc }
+	 * Sets the view part
+	 * @param part View part to set
 	 */
 	public void setViewPart(ISearchResultViewPart part) {
 		fViewPart = part;
 	}
-	
 
 	/**
 	 * Returns the view part set with
@@ -1086,9 +1085,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 	}
 
-	/**
-	 * { @inheritDoc }
-	 * Subclasses my extend this method.
+	/* (non-Javadoc)
+	 * @see org.eclipse.search.ui.ISearchResultPage#saveState(org.eclipse.ui.IMemento)
 	 */
 	public void saveState(IMemento memento) {
 		if (countBits(fSupportedLayouts) > 1) {

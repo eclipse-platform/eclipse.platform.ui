@@ -59,7 +59,25 @@ public class SearchScope implements ISearchScope {
 	 * Implements method from ISearchScope
 	 */
 	public boolean encloses(IResourceProxy proxy) {
-		IPath elementPath= proxy.requestFullPath();
+		return encloses(proxy.requestFullPath(), proxy.getType());
+	}
+	
+	/**
+	 * Implements method from ISearchScope
+	 * @param element
+	 * @return Returns <code>true</code> if the given resource is included in the scope
+	 */
+	public boolean encloses(IResource element) {
+		return encloses(element.getFullPath(), element.getType());
+	}
+	
+	/**
+	 * Tests if an element is in the scope
+	 * @param elementPath The full workspace path of the element
+	 * @param elementType The element type
+	 * @return Returns <code>true</code> if the element is in the scope
+	 */
+	protected boolean encloses(IPath elementPath, int elementType) {
 		Iterator iter= elements();
 		while (iter.hasNext()) {
 			IResource resource= (IResource)iter.next();
@@ -78,24 +96,11 @@ public class SearchScope implements ISearchScope {
 	
 	/**
 	 * Returns the search scope elements
+	 * @return Returns an iterator over all elements
 	 */
 	protected Iterator elements() {
 		return fElements.iterator();
 	}
 
-	/**
-	 * Implements method from ISearchScope
-	 * 
-	 * @deprecated as of 2.1 use @link #encloses(IResourceProxy)
-	 */
-	public boolean encloses(IResource element) {
-		IPath elementPath= element.getFullPath();
-		Iterator iter= elements();
-		while (iter.hasNext()) {
-			IResource resource= (IResource)iter.next();
-			if (resource.getFullPath().isPrefixOf(elementPath))
-				return true;
-		}
-		return false;
-	}
+
 }

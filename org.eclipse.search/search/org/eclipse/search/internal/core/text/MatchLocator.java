@@ -12,15 +12,16 @@ package org.eclipse.search.internal.core.text;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.eclipse.search.internal.ui.SearchMessages;
+
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-
-import org.eclipse.search.internal.ui.SearchMessages;
 
 /**
  * A class finding matches withing a file.
@@ -34,128 +35,49 @@ public class MatchLocator {
 	private Matcher fMatcher;
 	protected int fPushbackChar;
 	protected boolean fPushback;
-	private String fPattern;
+	
+	public MatchLocator(Pattern pattern) {
+		fMatcher= pattern.matcher(""); //$NON-NLS-1$
+	}
 	
 	public MatchLocator(String pattern, boolean isCaseSensitive, boolean isRegexSearch) throws PatternSyntaxException {
-		fPattern= pattern;
-		Pattern regExPattern;
-		
-		if (!isRegexSearch)
-			pattern= asRegEx(pattern);
-		
-		if (!isCaseSensitive)
-			regExPattern= Pattern.compile(pattern, Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
-		else
-			regExPattern= Pattern.compile(pattern);
-
-		fMatcher= regExPattern.matcher(""); //$NON-NLS-1$
-		
+		this(PatternConstructor.createPattern(pattern, isCaseSensitive, isRegexSearch));		
 	}
 	
-
 	public boolean isEmtpy() {
-		return getPattern().length() == 0;
+		return fMatcher.pattern().pattern().length() == 0;
 	}
 	
-	public String getPattern() {
-		return fPattern;
-	}
-	
-	public void locateMatches(IProgressMonitor monitor, Reader reader, IMatchCollector collector) throws IOException, InvocationTargetException {
+	public void locateMatches(IProgressMonitor monitor, Reader reader, ITextSearchResultCollector collector, IResourceProxy proxy) throws IOException, CoreException {
 		int lineCounter= 1;
 		int charCounter=0;
 		boolean eof= false;
-		try {
-			while (!eof) {
-				StringBuffer sb= new StringBuffer(200);
-				int eolStrLength= readLine(reader, sb);
-				int lineLength= sb.length();
-				int start= 0;
-				eof= eolStrLength == -1;
-				String line= sb.toString();
-				while (start < lineLength) {
-					fMatcher.reset(line);
-					if (fMatcher.find(start)) {
-						start= charCounter + fMatcher.start();
-						int length= fMatcher.end() - fMatcher.start();
-						collector.accept(line.trim(), start, length, lineCounter);
-						start= fMatcher.end();
-					}
-					else	// no match in this line
-						start= lineLength;
+		while (!eof) {
+			StringBuffer sb= new StringBuffer(200);
+			int eolStrLength= readLine(reader, sb);
+			int lineLength= sb.length();
+			int start= 0;
+			eof= eolStrLength == -1;
+			String line= sb.toString();
+			while (start < lineLength) {
+				fMatcher.reset(line);
+				if (fMatcher.find(start)) {
+					start= charCounter + fMatcher.start();
+					int length= fMatcher.end() - fMatcher.start();
+					collector.accept(proxy, start, length);
+					start= fMatcher.end();
 				}
-				charCounter+= lineLength + eolStrLength;
-				lineCounter++;
-				if (monitor.isCanceled())
-					throw new OperationCanceledException(SearchMessages.getString("TextSearchVisitor.canceled")); //$NON-NLS-1$
+				else	// no match in this line
+					start= lineLength;
 			}
-		} finally {
-			if (reader != null)
-				reader.close();
-		}		
+			charCounter+= lineLength + eolStrLength;
+			lineCounter++;
+			if (monitor.isCanceled())
+				throw new OperationCanceledException(SearchMessages.getString("TextSearchVisitor.canceled")); //$NON-NLS-1$
+		}
 	}
 	
-	/*
-	 * Converts '*' and '?' to regEx variables.
-	 */
-	private String asRegEx(String pattern) {
-		
-		StringBuffer out= new StringBuffer(pattern.length());
-		
-		boolean escaped= false;
-		boolean quoting= false;
-		
-		int i= 0;
-		while (i < pattern.length()) {
-			char ch= pattern.charAt(i++);
-			
-			if (ch == '*' && !escaped) {
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append(".*"); //$NON-NLS-1$
-				escaped= false;
-				continue;
-			} else if (ch == '?' && !escaped) {
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append("."); //$NON-NLS-1$
-				escaped= false;
-				continue;
-			} else if (ch == '\\' && !escaped) {
-				escaped= true;
-				continue;								
-				
-			} else if (ch == '\\' && escaped) {
-				escaped= false;
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append("\\\\"); //$NON-NLS-1$
-				continue;								
-			}
-			
-			if (!quoting) {
-				out.append("\\Q"); //$NON-NLS-1$
-				quoting= true;
-			}
-			if (escaped && ch != '*' && ch != '?' && ch != '\\')
-				out.append('\\');
-			out.append(ch);
-			escaped= ch == '\\';
-			
-		}
-		if (quoting)
-			out.append("\\E"); //$NON-NLS-1$
-		
-		return out.toString();
-	}
-
-	protected int readLine(Reader reader, StringBuffer sb) throws IOException {
+	private int readLine(Reader reader, StringBuffer sb) throws IOException {
 		int ch= -1;
 		if (fPushback) {
 			ch= fPushbackChar;
@@ -170,15 +92,38 @@ public class MatchLocator {
 				ch= reader.read();
 				if (ch == fgLF)
 					return 2;
-				else {
-					fPushbackChar= ch;
-					fPushback= true;
-					return 1;
-				}
+				
+				fPushbackChar= ch;
+				fPushback= true;
+				return 1;
 			}
 			sb.append((char)ch);
 			ch= reader.read();
 		}
 		return -1;
-	}	
+	}
+
+	public void locateMatches(IProgressMonitor progressMonitor, CharSequence searchInput, ITextSearchResultCollector collector, IResourceProxy proxy) throws CoreException {
+		fMatcher.reset(searchInput);
+		int pos= 0;
+		int k= 0;
+		while (pos < searchInput.length() && fMatcher.find(pos)) {
+			int start= fMatcher.start();
+			int end= fMatcher.end();
+			collector.accept(proxy, start, end - start);
+			if (end == start) {
+				end++;
+			}
+			pos= end;
+			if (k++ == 20) {
+				if (progressMonitor.isCanceled()) {
+					throw new OperationCanceledException(SearchMessages.getString("TextSearchVisitor.canceled")); //$NON-NLS-1$
+				}
+				k= 0;
+			}
+		}
+	}
+
+
+
 }

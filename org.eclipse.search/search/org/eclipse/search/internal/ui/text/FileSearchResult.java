@@ -42,7 +42,7 @@ public class FileSearchResult extends AbstractTextSearchResult implements IEdito
 	public String getLabel() {
 		if (getMatchCount() == 1)
 			return fQuery.getSingularLabel();
-		else return MessageFormat.format(fQuery.getPluralPattern(), new Object[] { new Integer(getMatchCount()) });
+		return MessageFormat.format(fQuery.getPluralPattern(), new Object[] { new Integer(getMatchCount()) });
 	}
 	public String getTooltip() {
 		return getLabel();

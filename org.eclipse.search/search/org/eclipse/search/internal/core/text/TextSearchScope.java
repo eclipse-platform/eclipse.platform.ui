@@ -17,15 +17,15 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IFile;
+import org.eclipse.search.internal.core.SearchScope;
+import org.eclipse.search.internal.ui.SearchMessages;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
 
 import org.eclipse.ui.IWorkingSet;
-
-import org.eclipse.search.internal.core.SearchScope;
-import org.eclipse.search.internal.ui.SearchMessages;
 
 /**
  * A special text search scope that take file extensions into account.
@@ -42,17 +42,31 @@ public class TextSearchScope extends SearchScope {
 			// do nothing
 		}
 		
+		/* (non-Javadoc)
+		 * @see org.eclipse.search.internal.core.text.TextSearchScope#encloses(IResourceProxy)
+		 */
 		public boolean encloses(IResourceProxy proxy) {
-			if (proxy.getType() == IResource.FILE && skipFile(proxy))
+			// avoid to get the full path of the proxy
+			if (proxy.getType() == IResource.FILE && skipFile(proxy.getName()))
 				return false;
 			return true;	
-		}	
+		}
+		
+		/* (non-Javadoc)
+		 * @see org.eclipse.search.internal.core.text.TextSearchScope#encloses(org.eclipse.core.runtime.IPath, int)
+		 */
+		public boolean encloses(IPath elementPath, int elementType) {
+			if (elementType == IResource.FILE && skipFile(elementPath.lastSegment()))
+				return false;
+			return true;	
+		}
+		
 	}
 	
 	private Set fExtensions= new HashSet(3);
 
 	/**
-	 * Returns a new Workbench scope.
+	 * @return Returns a workbench scope.
 	 */
 	public static TextSearchScope newWorkspaceScope() {
 		return new WorkspaceScope();
@@ -97,76 +111,19 @@ public class TextSearchScope extends SearchScope {
 	
 	/**
 	 * Adds an extension to the scope.
+	 * @param extension
 	 */
 	public void addExtension(String extension) {
-		Pattern pattern= Pattern.compile(asRegEx(extension), Pattern.CASE_INSENSITIVE | Pattern.UNICODE_CASE);
+		Pattern pattern= PatternConstructor.createPattern(extension, true, false); // case insensitive pattern
 		fExtensions.add(pattern.matcher("")); //$NON-NLS-1$
 	}
 
-	/*
-	 * Converts '*' and '?' to regEx variables.
-	 */
-	private String asRegEx(String pattern) {
-		
-		StringBuffer out= new StringBuffer(pattern.length());
-		
-		boolean escaped= false;
-		boolean quoting= false;
-	
-		int i= 0;
-		while (i < pattern.length()) {
-			char ch= pattern.charAt(i++);
-	
-			if (ch == '*' && !escaped) {
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append(".*"); //$NON-NLS-1$
-				escaped= false;
-				continue;
-			} else if (ch == '?' && !escaped) {
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append("."); //$NON-NLS-1$
-				escaped= false;
-				continue;
-			} else if (ch == '\\' && !escaped) {
-				escaped= true;
-				continue;								
-	
-			} else if (ch == '\\' && escaped) {
-				escaped= false;
-				if (quoting) {
-					out.append("\\E"); //$NON-NLS-1$
-					quoting= false;
-				}
-				out.append("\\\\"); //$NON-NLS-1$
-				continue;								
-			}
-	
-			if (!quoting) {
-				out.append("\\Q"); //$NON-NLS-1$
-				quoting= true;
-			}
-			if (escaped && ch != '*' && ch != '?' && ch != '\\')
-				out.append('\\');
-			out.append(ch);
-			escaped= ch == '\\';
-	
-		}
-		if (quoting)
-			out.append("\\E"); //$NON-NLS-1$
-		
-		return out.toString();
-	}
 
 	/**
 	 * Adds all string patterns contained in <code>extensions</code> to this
 	 * scope. The allowed pattern characters are <code>*</code> for any character
 	 * and <code>?</code> for one character.
+	 * @param extensions
 	 */
 	public void addExtensions(Set extensions) {
 		if (extensions == null)
@@ -183,40 +140,25 @@ public class TextSearchScope extends SearchScope {
 	 * Implements method from ISearchScope
 	 */
 	public boolean encloses(IResourceProxy proxy) {
-		if (proxy.getType() == IResource.FILE && skipFile(proxy))
+		if (proxy.getType() == IResource.FILE && skipFile(proxy.getName()))
 			return false;
 		return super.encloses(proxy);	
 	}
 
-	boolean skipFile(IResourceProxy proxy) {
-		if (proxy != null) {
-			Iterator iter= fExtensions.iterator();
-			while (iter.hasNext()) {
-				if (((Matcher)iter.next()).reset(proxy.getName()).matches())
-					return false;
-			}
-		}
-		return true;
-	}
-
-	/**
-	 * Implements method from ISearchScope
-	 * 
-	 * @deprecated As of 2.1, replaced by {@link #encloses(IResourceProxy)}
-	 */
-	public boolean encloses(IResource element) {
-		if (element.getType() == IResource.FILE && skipFile((IFile)element))
+	protected boolean encloses(IPath elementPath, int elementType) {
+		if (elementType == IResource.FILE && skipFile(elementPath.lastSegment()))
 			return false;
-		return super.encloses(element);	
+		return super.encloses(elementPath, elementType);	
 	}
 
-	boolean skipFile(IFile file) {
-		if (file != null) {
-			Iterator iter= fExtensions.iterator();
-			while (iter.hasNext()) {
-				if (((Matcher)iter.next()).reset(file.getName()).matches())
-					return false;
-			}
+	boolean skipFile(String fileName) {
+		if (fExtensions.isEmpty()) {
+			return false;
+		}
+		Iterator iter= fExtensions.iterator();
+		while (iter.hasNext()) {
+			if (((Matcher) iter.next()).reset(fileName).matches())
+				return false;
 		}
 		return true;
 	}

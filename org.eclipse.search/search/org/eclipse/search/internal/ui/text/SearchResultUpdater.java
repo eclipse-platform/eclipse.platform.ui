@@ -41,9 +41,9 @@ public class SearchResultUpdater implements IResourceChangeListener, IQueryListe
 			handleDelta(delta);
 	}
 
-	private void handleDelta(IResourceDelta delta) {
+	private void handleDelta(IResourceDelta d) {
 		try {
-			delta.accept(new IResourceDeltaVisitor() {
+			d.accept(new IResourceDeltaVisitor() {
 				public boolean visit(IResourceDelta delta) throws CoreException {
 					switch (delta.getKind()) {
 						case IResourceDelta.ADDED :

@@ -30,7 +30,7 @@ class ShowSearchesAction extends Action {
 	private SearchView fSearchView;
 
 
-	/**
+	/*
 	 *	Create a new instance of this class
 	 */
 	public ShowSearchesAction(SearchView searchView) {

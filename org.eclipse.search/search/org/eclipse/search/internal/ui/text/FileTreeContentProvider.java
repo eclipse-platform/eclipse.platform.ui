@@ -71,7 +71,7 @@ public class FileTreeContentProvider extends FileContentProvider implements ITre
 	 * 
 	 * @param parent
 	 * @param child
-	 * @return
+	 * @return Returns <code>trye</code> if the child was added
 	 */
 	private boolean insertChild(Object parent, Object child) {
 		Set children= (Set) fChildrenMap.get(parent);

@@ -17,10 +17,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
+import org.eclipse.search.internal.ui.util.ListContentProvider;
+import org.eclipse.search.internal.ui.util.SWTUtil;
+import org.eclipse.search.ui.IReplacePage;
+import org.eclipse.search.ui.ISearchPage;
+import org.eclipse.search.ui.ISearchPageContainer;
+import org.eclipse.search.ui.ISearchPageScoreComputer;
+
 import org.eclipse.core.resources.IWorkspace;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -39,8 +49,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -63,15 +71,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.help.WorkbenchHelp;
-
-import org.eclipse.search.ui.IReplacePage;
-import org.eclipse.search.ui.ISearchPage;
-import org.eclipse.search.ui.ISearchPageContainer;
-import org.eclipse.search.ui.ISearchPageScoreComputer;
-
-import org.eclipse.search.internal.ui.util.ExtendedDialogWindow;
-import org.eclipse.search.internal.ui.util.ListContentProvider;
-import org.eclipse.search.internal.ui.util.SWTUtil;
 
 public class SearchDialog extends ExtendedDialogWindow implements ISearchPageContainer {
 
@@ -135,6 +134,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		fEditorPart= editor;
 		fDescriptors= filterByActivities(SearchPlugin.getDefault().getEnabledSearchPageDescriptors(pageId));
 		fInitialPageId= pageId;
+		
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
 	/* (non-Javadoc)
@@ -185,8 +186,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 						i= label.indexOf('&');
 					}
 					return label;
-				} else
-					return null;
+				}
+				return null;
 			}
 			public Image getImage(Object element) {
 				if (element instanceof SearchPageDescriptor) {
@@ -197,8 +198,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 					if (image != null)
 						createdImages.add(image);
 					return image;
-				} else
-					return null;
+				}
+				return null;
 			}
 		};
 
@@ -283,50 +284,49 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 		if (numPages == 1)
 			return getControl(fCurrentPage, parent, 0);
-		else {
-			Composite border= new Composite(parent, SWT.NONE);
-			FillLayout layout= new FillLayout();
-			layout.marginWidth= 7;
-			layout.marginHeight= 7;
-			border.setLayout(layout);
-			
-			TabFolder folder= new TabFolder(border, SWT.NONE);
-			folder.setLayout(new TabFolderLayout());
+		
+		Composite border= new Composite(parent, SWT.NONE);
+		FillLayout layout= new FillLayout();
+		layout.marginWidth= 7;
+		layout.marginHeight= 7;
+		border.setLayout(layout);
+		
+		CTabFolder folder= new CTabFolder(border, SWT.NONE);
+		folder.setLayout(new TabFolderLayout());
 
-			for (int i= 0; i < numPages; i++) {			
-				SearchPageDescriptor descriptor= (SearchPageDescriptor)fDescriptors.get(i);
-				if (WorkbenchActivityHelper.filterItem(descriptor))
-				    continue;
-				
-				final TabItem item= new TabItem(folder, SWT.NONE);
-				item.setText(descriptor.getLabel());
-				item.addDisposeListener(new DisposeListener() {
-					public void widgetDisposed(DisposeEvent e) {
-						item.setData(null);
-						if (item.getImage() != null)
-							item.getImage().dispose();
-					}
-				});
-				ImageDescriptor imageDesc= descriptor.getImage();
-				if (imageDesc != null)
-					item.setImage(imageDesc.createImage());
-				item.setData(descriptor);
-				if (i == fCurrentIndex) {
-					item.setControl(getControl(fCurrentPage, folder, i));
-					item.setData(fCurrentPage);
-				}
-			}
+		for (int i= 0; i < numPages; i++) {			
+			SearchPageDescriptor descriptor= (SearchPageDescriptor)fDescriptors.get(i);
+			if (WorkbenchActivityHelper.filterItem(descriptor))
+			    continue;
 			
-			folder.addSelectionListener(new SelectionAdapter() {
-				public void widgetSelected(SelectionEvent event) {
-					turnToPage(event);
+			final CTabItem item= new CTabItem(folder, SWT.NONE);
+			item.setText(descriptor.getLabel());
+			item.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					item.setData(null);
+					if (item.getImage() != null)
+						item.getImage().dispose();
 				}
 			});
+			ImageDescriptor imageDesc= descriptor.getImage();
+			if (imageDesc != null)
+				item.setImage(imageDesc.createImage());
+			item.setData(descriptor);
+			if (i == fCurrentIndex) {
+				item.setControl(getControl(fCurrentPage, folder, i));
+				item.setData(fCurrentPage);
+			}
+		}
 		
-			folder.setSelection(fCurrentIndex);
-			
-			return border;
-		}	
+		folder.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent event) {
+				turnToPage(event);
+			}
+		});
+
+		folder.setSelection(fCurrentIndex);
+		
+		return border;	
 	}
 	
 	protected void createButtonsForButtonBar(Composite parent) {
@@ -379,10 +379,10 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			fCustomizeButton.setEnabled(false);
 			if (actionID == SEARCH_ID)
 				return fCurrentPage.performAction();
-			else
-				// safe cast, replace button is only visible when the curren page is 
-				// a replace page.
-				return ((IReplacePage)fCurrentPage).performReplace();
+			
+			// safe cast, replace button is only visible when the curren page is 
+			// a replace page.
+			return ((IReplacePage)fCurrentPage).performReplace();
 		} finally {
 			fCustomizeButton.setEnabled(true);
 			if (isAutoBuilding)
@@ -415,8 +415,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	}
 	
 	private void turnToPage(SelectionEvent event) {
-		final TabItem item= (TabItem)event.item;
-		TabFolder folder= item.getParent();
+		final CTabItem item= (CTabItem)event.item;
+		CTabFolder folder= item.getParent();
 		Control oldControl= folder.getItem(fCurrentIndex).getControl();
 		Point oldSize= oldControl.getSize();
 		if (item.getControl() == null) {
@@ -484,8 +484,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		if (fScopeParts[fCurrentIndex] == null)
 			// safe code - should not happen
 			return ISearchPageContainer.WORKSPACE_SCOPE;
-		else
-			return fScopeParts[fCurrentIndex].getSelectedScope();
+		
+		return fScopeParts[fCurrentIndex].getSelectedScope();
 	}
 
 	/*
@@ -495,8 +495,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		if (fScopeParts[fCurrentIndex] == null)
 			// safe code - should not happen
 			return null;
-		else		
-			return fScopeParts[fCurrentIndex].getSelectedWorkingSets();
+		
+		return fScopeParts[fCurrentIndex].getSelectedWorkingSets();
 	}
 
 	/*
@@ -536,6 +536,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	 * <p>
 	 * Note: This is a special method to be called only from the ScopePart
 	 * </p>
+	 * @param state True if the scope is valid
 	 */
 	public void setPerformActionEnabledFromScopePart(boolean state) {
 		if (fPageStateIgnoringScopePart)
