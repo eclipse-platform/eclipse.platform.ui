@@ -1052,10 +1052,12 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 				Element entry = (Element) node;
 				if (entry.getNodeName().equalsIgnoreCase(HISTORY_LAUNCH_NODE)) { 
 					LaunchConfigurationHistoryElement item = createHistoryElement(entry);
-					if (item.getMode().equals(ILaunchManager.DEBUG_MODE)) {
-						fDebugHistory.add(item);
-					} else {
-						fRunHistory.add(item);
+					if (item != null) {
+						if (item.getMode().equals(ILaunchManager.DEBUG_MODE)) {
+							fDebugHistory.add(item);
+						} else {
+							fRunHistory.add(item);
+						}
 					}
 				} else if (entry.getNodeName().equalsIgnoreCase(HISTORY_LAST_LAUNCH_NODE)) { 
 					fRecentLaunch = createHistoryElement(entry);
@@ -1081,7 +1083,11 @@ public class DebugUIPlugin extends AbstractUIPlugin implements IDocumentListener
 		String mode = entry.getAttribute(HISTORY_MODE_ATT);       
 		String label = entry.getAttribute(HISTORY_LABEL_ATT);     
 		ILaunchConfiguration launchConfig = getLaunchManager().getLaunchConfiguration(memento);
-		return new LaunchConfigurationHistoryElement(launchConfig, mode, label);
+		if (launchConfig.exists()) {
+			return new LaunchConfigurationHistoryElement(launchConfig, mode, label);
+		} else {
+			return null;
+		}
 	}
 	
 	protected LaunchConfigurationHistoryElement createOldHistoryElement(Element entry) {

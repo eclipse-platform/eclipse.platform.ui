@@ -288,7 +288,10 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 			// First check on the resource itself
 			String defaultConfigTypeID = resource.getPersistentProperty(fgQualNameDefaultConfigType);
 			if (defaultConfigTypeID != null) {
-				return getLaunchConfigurationType(defaultConfigTypeID);
+				ILaunchConfigurationType type = getLaunchConfigurationType(defaultConfigTypeID);
+				if (type != null) {
+					return type;
+				}
 			} else  if (considerResourceOnly) {
 				return null;
 			}
@@ -538,6 +541,19 @@ public class LaunchManager implements ILaunchManager, IResourceChangeListener {
 		// restore launch configuration indices
 		restoreNonLocalIndex();
 		restoreLocalIndex();
+		
+		// delete invalid configurations - temp code while configurations
+		// are unstable
+		ILaunchConfiguration[] configs = getLaunchConfigurations();
+		for (int i = 0; i < configs.length; i++) {
+			try {
+				configs[i].getType();
+			} catch (CoreException e) {
+				IPath path = configs[i].getLocation();
+				configs[i].delete();
+				DebugPlugin.log(e.getStatus());
+			}
+		}
 	}
 	
 	/**
