@@ -17,17 +17,18 @@ import java.util.Comparator;
 
 
 /**
- * A patch document represent a projection of its parent document. 
- * The patch document is always in sync with its parent document
- * by utilizing the parent document as its <code>ITextStore</code>.
- * This class is for internal use only.
+ * A <code>ProjectionDocument</code> represents a projection of its master document.
+ * The contents of a projection document is a sequence of fragments of the master document, i.e.
+ * the projection document can be thought as being constructed from the master document by
+ * not copying the whole master document by omitting serveral ranges of the master document. <p>
+ * The projection document utilizes its master document as <code>ITextStore</code>.<p>
+ * This class if for internal use only.
  * 
- * TODO: sorting Fragments on creation/joining
- *
- * @see ITextStore
+ * @since 2.1
  */
 public final class ProjectionDocument extends AbstractDocument {
 	
+	/** The position category used by <code>ProjectionDocument</code>s to manage the fragments they consist of. */
 	final public static String FRAGMENT_CATEGORY= "__fragment_category"; //$NON-NLS-1$
 	
 	/** The parent document */
@@ -38,15 +39,15 @@ public final class ProjectionDocument extends AbstractDocument {
 	private String fProjectionCategory;
 	/** The document event issued by the parent document */
 	private DocumentEvent fParentEvent;
-	/** The document event issued and to be issued by the patch document */
+	/** The document event issued and to be issued by the projection document */
 	private SlaveDocumentEvent fEvent;
-	/** Indicates whether the patch document initiated a parent document update or not */
+	/** Indicates whether the projection document initiated a parent document update or not */
 	private boolean fIsUpdating= false;	
-	/** The fragment updater */
+	/** The position updater for the positions managing the fragments */
 	private FragmentUpdater fFragmentUpdater= new FragmentUpdater(FRAGMENT_CATEGORY);
 	
 	/**
-	 * Creates a projection document of the given parent document.
+	 * Creates a projection document for the given parent document.
 	 *
 	 * @param parentDocument the parent Document
 	 * @param projectionCategory the document position category whose positions define the projection of the parent document
@@ -71,8 +72,8 @@ public final class ProjectionDocument extends AbstractDocument {
 	}
 
 	/**
-	 * Initializes the projection document from the parent document based on the given
-	 * projection category.
+	 * Initializes the projection document from the parent document based on the given projection category.
+	 * 
 	 * @param projectionCategory the document position category whose positions define the projection of the parent document
 	 */
 	private void initializeProjection(String projectionCategory) {
@@ -99,6 +100,7 @@ public final class ProjectionDocument extends AbstractDocument {
 	
 	/**
 	 * Creates a fragment from a postion of the parent document.
+	 * 
 	 * @param parentPosition a position of the parent document
 	 * @return the fragment representing the range given by the parent position
 	 */
@@ -120,6 +122,18 @@ public final class ProjectionDocument extends AbstractDocument {
 		return null;
 	}
 
+	/**
+	 * Returns the index of the position of the given category of the given document that includes the
+	 * given offset. <code>direction</code> indicates the direction into which the algorithm should search.
+	 * 
+	 * @param document the document
+	 * @param category the position category of <code>document</code>
+	 * @param offset the offset into <code>document</code>
+	 * @param direction the search direction
+	 * @return the index of the position
+	 * @throws BadPositionCategoryException if <code>category</code> is not valid in <code>document</code>
+	 * @throws BadLocationException if <code>offset</code> is not valid in <code>document</code>
+	 */
 	private int getPositionOfOffset(IDocument document, String category, int offset, int direction ) throws BadPositionCategoryException, BadLocationException{
 			
 		Position[] positions= document.getPositions(category);
@@ -241,6 +255,14 @@ public final class ProjectionDocument extends AbstractDocument {
 		return null;
 	}
 	
+	/**
+	 * Returns the offset in the parent document that corresponds to the given offset in this
+	 * projection document.
+	 * 
+	 * @param offset the offset in the projection document
+	 * @return the corresponding parent document offset
+	 * @throws BadLocationException if <code>offset</code> is not valid in this projection document
+	 */
 	public int toParentDocumentOffset(int offset) throws BadLocationException {
 		Fragment fragment= getFragmentOfOffset(offset);
 		
@@ -266,6 +288,15 @@ public final class ProjectionDocument extends AbstractDocument {
 		return fragment.getOrigin().offset + relative;
 	}
 	
+	/**
+	 * Computes and returns the region of the parent document that corresponds to the given region of the
+	 * projection document.
+	 * 
+	 * @param offset the offset of the projection document region
+	 * @param length the length of the projection document region
+	 * @return the corresponding region of the parent document
+	 * @throws BadLocationException if the given projection document region is not valid
+	 */
 	public IRegion computeParentDocumentRegion(int offset, int length) throws BadLocationException {
 		
 		if (length == 0) {
@@ -280,7 +311,7 @@ public final class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/**
-	 * Removes all fragments and thus empties this projection document.
+	 * Removes all fragments and thereby clears this projection document.
 	 */
 	public void removeAllFragments() {
 		Position[] projection= getProjection();
@@ -326,6 +357,9 @@ public final class ProjectionDocument extends AbstractDocument {
 		
 	}
 	
+	/**
+	 * Joins all fragments that represent neighboring regions in the parent document.
+	 */
 	public void joinFragments() {
 		try {
 			while (joinTwoFragments()) {}
@@ -333,6 +367,11 @@ public final class ProjectionDocument extends AbstractDocument {
 		}
 	}
 	
+	/**
+	 * Joins the first tow fragments that represent neighboring regions of the parent document.
+	 * @return
+	 * @throws BadPositionCategoryException
+	 */
 	private boolean joinTwoFragments() throws BadPositionCategoryException {
 		Position[] projection= getProjection();
 		if (projection != null && projection.length > 0) {
@@ -349,6 +388,14 @@ public final class ProjectionDocument extends AbstractDocument {
 		return false;
 	}
 	
+	/**
+	 * Joins the fragments of this projection document that correspond to the two given,
+	 * neighboring ranges of the parent document.
+	 * 
+	 * @param p1 lower range in the parent document
+	 * @param p2 higher range of the parent document
+	 * @throws BadPositionCategoryException if the fragment position category is not defined in this projection document
+	 */
 	private void join(Position p1, Position p2) throws BadPositionCategoryException {
 		// remove p2
 		Fragment fragment= findCorrespondingFragment(p2);
@@ -361,10 +408,10 @@ public final class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/**
-	 * Removes the given parent document range from this projection document.
+	 * Removes the fragment that corresponds to the given parent document range.
 	 * 
 	 * @param parentPosition the position representing the parent document range
-	 * @throws BadLocationException
+	 * @throws BadLocationException if the fragment position category is not defined in this projection document
 	 */
 	public void removeFragment(Position parentPosition) throws BadLocationException {
 		try {
@@ -381,6 +428,14 @@ public final class ProjectionDocument extends AbstractDocument {
 		}
 	}
 	
+	/**
+	 * Returns the list of fragments whose corresponding ranges in the parent document overlap with
+	 * the specifed range of the parent document.
+	 * 
+	 * @param offsetInParent the offset of the parent document range
+	 * @param lengthInParent the length of the parent document range
+	 * @return the list of affected fragments
+	 */
 	public Position[] getAffectedFragments(int offsetInParent, int lengthInParent) {
 		
 		Position p= computeProjectionDocumentPosition(offsetInParent, lengthInParent);
@@ -422,6 +477,7 @@ public final class ProjectionDocument extends AbstractDocument {
 	 * 
 	 * @param offset the offset
 	 * @return the fragment that contains the given offset
+	 * @throws BadLocationException if <code>offset</code> is not a valid offset
 	 */
 	protected Fragment getFragmentOfOffset(int offset) throws BadLocationException {
 		try {
@@ -471,8 +527,9 @@ public final class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/**
-	 * Sorts a list of fragments based on the sequence of their origins in the parent document.
-	 * @param result
+	 * Sorts a list of fragments based on the offsets of their corresponding ranges in the parent document.
+	 * 
+	 * @param result the list for fragments
 	 */
 	private void sortFragments(Object[] result) {
 		
@@ -493,7 +550,8 @@ public final class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/**
-	 * Returns the minimal range of the parent document that covers all fragments.
+	 * Returns the minimal range of the parent document that covers all ranges that
+	 * correspond to the fragments of this projection document.
 	 * 
 	 * @return a position describing the minimal parent document range covering all fragments
 	 */
@@ -507,6 +565,14 @@ public final class ProjectionDocument extends AbstractDocument {
 		return new Position(0, 0);
 	}
 	
+	/**
+	 * The projection of the parent document has been changed by inserting or removing
+	 * new fragments into this projection document. The projection change is described in
+	 * the given <code>DocumentEvent</code>. All positions managed by this projection 
+	 * document must be adapted accordingly.
+	 * 
+	 * @param event the document event
+	 */
 	private void fireDocumentProjectionChanged(DocumentEvent event) {
 		fFragmentUpdater.enableShiftMode(true);
 		try {
@@ -517,7 +583,7 @@ public final class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/**
-	 * Returns parent document
+	 * Returns parent document.
 	 *
 	 * @return the parent document
 	 */
@@ -526,9 +592,10 @@ public final class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/**
-	 * Returns the ranges of the parent document covered by this patch document.
+	 * Returns the ranges of the parent document that correspond to the fragments of this
+	 * projection document.
 	 *
-	 * @return the child document's parent document range
+	 * @return the ranges of the parent document corresponding to the fragments
 	 */
 	public Position[] getProjection() {
 		try {
@@ -538,6 +605,11 @@ public final class ProjectionDocument extends AbstractDocument {
 		return null;
 	}
 	
+	/**
+	 * Returns the list of all fragments of this projection document.
+	 * 
+	 * @return the list of all fragments of this projection document 
+	 */
 	public Position[] getFragmentation() {
 		try {
 			
@@ -551,11 +623,11 @@ public final class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/**
-	 * Transforms a document event of the parent document into a patch document
+	 * Transforms a document event of the parent document into a projection document
 	 * based document event.
 	 *
 	 * @param e the parent document event
-	 * @return the child document event
+	 * @return the slave document event
 	 */
 	private SlaveDocumentEvent normalize(DocumentEvent e) {
 		
@@ -574,8 +646,8 @@ public final class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/**
-	 * When called this patch document is informed about a forthcoming change
-	 * of its parent document. This child document checks whether the parent
+	 * When called, this projection document is informed about a forthcoming change
+	 * of its parent document. This projection document checks whether the parent
 	 * document change affects it and if so informs all document listeners.
 	 *
 	 * @param event the parent document event
@@ -588,8 +660,8 @@ public final class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/**
-	 * When called this child document is informed about a change of its parent document.
-	 * If this child document is affected it informs all of its document listeners.
+	 * When called, this projection document is informed about a change of its parent document.
+	 * If this projection document is affected it informs all of its document listeners.
 	 *
 	 * @param event the parent document event
 	 */
@@ -605,7 +677,7 @@ public final class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/*
-	 * @see AbstractDocument#fireDocumentAboutToBeChanged
+	 * @see AbstractDocument#fireDocumentAboutToBeChanged(DocumentEvent)
 	 */
 	protected void fireDocumentAboutToBeChanged(DocumentEvent event) {
 		// delay it until there is a notification from the parent document
@@ -613,14 +685,14 @@ public final class ProjectionDocument extends AbstractDocument {
 	}
 	
 	/**
-	 * Fires the child document event as about-to-be-changed event to all registed listeners.
+	 * Fires the slave document event as about-to-be-changed event to all registed listeners.
 	 */
 	private void delayedFireDocumentAboutToBeChanged() {
 		super.fireDocumentAboutToBeChanged(fEvent);
 	}
 	
 	/**
-	 * Ignores the given event and sends the similar child document event instead.
+	 * Ignores the given event and sends the semantically equal slave document event instead.
 	 *
 	 * @param event the event to be ignored
 	 */
@@ -630,7 +702,6 @@ public final class ProjectionDocument extends AbstractDocument {
 	
 	/*
 	 * @see IDocument#replace(int, int, String)
-	 * @since 2.0
 	 */
 	public void replace(int offset, int length, String text) throws BadLocationException {
 		try {
@@ -649,7 +720,6 @@ public final class ProjectionDocument extends AbstractDocument {
 	
 	/*
 	 * @see IDocument#set(String)
-	 * @since 2.0
 	 */
 	public void set(String text) {
 		try {
@@ -668,7 +738,6 @@ public final class ProjectionDocument extends AbstractDocument {
 	
 	/*
 	 * @see IDocumentExtension#registerPostNotificationReplace(IDocumentListener, IDocumentExtension.IReplace)
-	 * @since 2.0
 	 */
 	public void registerPostNotificationReplace(IDocumentListener owner, IDocumentExtension.IReplace replace) {
 		if (!fIsUpdating)
@@ -678,11 +747,12 @@ public final class ProjectionDocument extends AbstractDocument {
 
 
 	/**
-	 * Convenience method for hiding the specified region of the document.
+	 * Convenience method for removing and adapting the fragments whose corresponding
+	 * ranges in the parent document are included or overlap with the given range of the 
+	 * parent document.
 	 * 
-	 * @param document
-	 * @param offsetInParent
-	 * @param lengthInParent
+	 * @param offsetInParent the offset of the parent document range
+	 * @param lengthInParent the length of the parent document range
 	 */
 	public void hide(int offsetInParent, int lengthInParent) {
 		
@@ -715,6 +785,13 @@ public final class ProjectionDocument extends AbstractDocument {
 		}
 	}
 
+	/**
+	 * Convenience method for adding fragments or adapting existing fragments so that their corresponding
+	 * ranges in the parent document include the given range of the parent document.
+	 * 
+	 * @param offsetInParent the offset of the parent document range
+	 * @param lengthInParent the length of the parent document range
+	 */
 	public void show(int offsetInParent, int lengthInParent) {
 		
 		Position[] effected= getAffectedFragments(offsetInParent, lengthInParent);
@@ -732,6 +809,14 @@ public final class ProjectionDocument extends AbstractDocument {
 
 	}
 
+	/**
+	 * Removes the given fragments and inserts a new fragment whose parent document
+	 * range corresponds the given range of the parent document.
+	 * 
+	 * @param offsetInParent the offset of the parent document range
+	 * @param lengthInParent the length of the parent document range
+	 * @param effected the list for fragments to be removed
+	 */
 	private void internalShow(int offsetInParent, int lengthInParent, Position[] effected) {
 		try {
 			

@@ -30,8 +30,8 @@ public final class ChildDocumentManager implements IDocumentListener, ISlaveDocu
 	
 	
 	/** 
-	 * Name of the position category used to keep track of the child
-	 * documents offset ranges into the parent document.
+	 * Name of the position category used to keep track of the ranges of the parent documents
+	 * that correspond to child documents.
 	 */
 	public final static String CHILDDOCUMENTS= "__childdocuments"; //$NON-NLS-1$
 	

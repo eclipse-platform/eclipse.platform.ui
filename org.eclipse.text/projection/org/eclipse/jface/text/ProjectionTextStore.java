@@ -13,16 +13,32 @@ package org.eclipse.jface.text;
 
 
 /**
- * ProjectionTextStore.java
+ * The text store of a <code>ProjectionDocument</code>. Implements the projection onto
+ * the master document.<p>
+ * This class is for internal use only.
+ * 
+ * @since 2.1
  */
 public class ProjectionTextStore implements ITextStore {
 	
+	/** The projection document */
 	private ProjectionDocument fProjectionDocument;
 
+	/** 
+	 * Creates a new projection text store for the given projection document.
+	 * 
+	 * @param projectionDocument the projection document
+	 */
 	public ProjectionTextStore(ProjectionDocument projectionDocument) {
 		fProjectionDocument= projectionDocument;
 	}
 	
+	/**
+	 * Computes the offset in the parent document that corresponds to the given offset.
+	 * 
+	 * @param offset the offset
+	 * @return the corresponding parent document offset
+	 */
 	private int computeParentDocumentOffset(int offset) {
 		try {
 			return fProjectionDocument.toParentDocumentOffset(offset);
@@ -32,7 +48,7 @@ public class ProjectionTextStore implements ITextStore {
 	}
 
 	/*
-	 * @see ITextStore#set
+	 * @see ITextStore#set(String)
 	 */
 	public void set(String contents) {
 		
@@ -53,7 +69,7 @@ public class ProjectionTextStore implements ITextStore {
 	}
 
 	/*
-	 * @see ITextStore#replace
+	 * @see ITextStore#replace(int, int, String)
 	 */
 	public void replace(int offset, int length, String text) {
 		
@@ -75,7 +91,7 @@ public class ProjectionTextStore implements ITextStore {
 	}
 
 	/*
-	 * @see ITextStore#getLength
+	 * @see ITextStore#getLength()
 	 */
 	public int getLength() {
 		Position[] projection= fProjectionDocument.getProjection();
@@ -89,7 +105,7 @@ public class ProjectionTextStore implements ITextStore {
 	}
 
 	/*
-	 * @see ITextStore#get
+	 * @see ITextStore#get(int, int)
 	 */
 	public String get(int offset, int length) {
 		try {
@@ -113,12 +129,17 @@ public class ProjectionTextStore implements ITextStore {
 		return null;
 	}
 
+	/**
+	 * Returns the parent document of the store's document.
+	 * 
+	 * @return the parent document of the store's document
+	 */
 	private IDocument getParentDocument() {
 		return fProjectionDocument.getParentDocument();
 	}
 
 	/*
-	 * @see ITextStore#get
+	 * @see ITextStore#get(int)
 	 */
 	public char get(int offset) {
 		try {

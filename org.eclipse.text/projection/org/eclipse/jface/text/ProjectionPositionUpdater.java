@@ -14,31 +14,41 @@ package org.eclipse.jface.text;
 import org.eclipse.jface.text.DefaultPositionUpdater;
 
 /**
- * The position updater used to adapt the positions representing
- * the child document ranges to changes of the parent document.
+ * The position updater used to adapt the positions corresponding to the fragments of 
+ * projection documents. The startegy of this updater differs from the 
+ * <code>DefaultPositionUpdater</code>. If an insertion happens at a start offset of a
+ * range corresponding to a fragment, the range is extended rather than  shifted. Also, if 
+ * text is added  right behind the end of such a range, the range is extended rather than
+ * kept stable.<p>
+ * This class is for internal use only.
+ * 
+ * @since 2.1
  */
 public class ProjectionPositionUpdater extends DefaultPositionUpdater {
 
 	/**
-	 * Creates the position updated.
+	 * Creates the position updater for the given category.
+	 * 
+	 * @param category the category used to manage the positions representing the ranges corresponding to fragments
 	 */
 	protected ProjectionPositionUpdater(String category) {
 		super(category); 
 	}
 	
 	/**
-	 * Child document ranges cannot be deleted other then by calling
-	 * freeChildDocument.
+	 * Projection document ranges cannot be deleted other then by calling
+	 * <code>ProjectionDocumentManager#removeFragment</code>.
+	 * @return <code>true</code>
 	 */
 	protected boolean notDeleted() {
 		return true;
 	}
 	
 	/**
-	 * If an insertion happens at a child document's start offset, the
-	 * position is extended rather than shifted. Also, if something is added 
-	 * right behind the end of the position, the position is extended rather
-	 * than kept stable.
+	 * If an insertion happens at a start offset of a
+	 * range corresponding to a fragment, the range is extended rather than  shifted. Also, if 
+	 * text is added  right behind the end of such a range, the range is extended rather than
+	 * kept stable.
 	 */
 	protected void adaptToInsert() {
 		

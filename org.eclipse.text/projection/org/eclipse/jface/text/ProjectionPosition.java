@@ -11,22 +11,43 @@
 package org.eclipse.jface.text;
 
 /**
- * ProjectionPosition.java
+ * Represents the corresponding parent document range of a fragment of a <code>ProjectionDocument</code>.<p>
+ * This calss is for internal use only.
+ * 
+ * @since 2.1
  */
 public class ProjectionPosition extends Position {
 	
+	/** The projection document. */
 	private IDocument fProjectionDocument;
+	/** The corresponding fragment. */
 	private Fragment fFragment;
 	
+	/**
+	 * Creates a new position representing the corresponding range of a fragment.
+	 * 
+	 * @param projectionDocument the projection document
+	 * @param offset the offset of the range of the parent document
+	 * @param length the length of the range of the parent document
+	 */
 	public ProjectionPosition(IDocument projectionDocument, int offset, int length) {
 		super(offset, length);
 		fProjectionDocument= projectionDocument;
 	}
 	
+	/**
+	 * Sets the corresponding fragment.
+	 * 
+	 * @param fragment the corresponding fragment
+	 */
 	public void setFragment(Fragment fragment) {
 		fFragment= fragment;
 	}
 	
+	/**
+	 * Returns the corresponding fragment.
+	 * @return the corresponding fragment
+	 */
 	public Fragment getFragment() {
 		return fFragment;
 	}

@@ -21,35 +21,36 @@ import java.util.Map;
 
 
 /**
- * Manages a set of child documents for given parent documents. 
- * A child document represents a particular range of the parent 
+ * <code>ProjectionDocumentManager</code> is one particular implementation of 
+ * <code>ISlaveDocumentManager</code>. This manager creates so called projection
+ * documents as slave documents for given master documents.<p>
+ * 
+ * A projection document represents a particular projection of the parent 
  * document and is accordingly adapted to changes of the parent document. 
  * Vice versa, the parent document is accordingly adapted to changes of
  * its child documents. The manager does not maintain any particular management
  * structure but utilizes mechanisms given by <code>IDocument</code> such
  * as position categories and position updaters. <p>
- *
- * For internal use only.
+ * This class if for internal use only.
+ * 
+ * @since 2.1
  */
 public final class ProjectionDocumentManager implements IDocumentListener, ISlaveDocumentManager {
 	
 	
 	/** 
-	 * Name of the position categories used to keep track of the child
-	 * documents offset ranges into the parent document.
+	 * Name of the position category used to keep track of the parent document
+	 * ranges that correspond to the fragments of the projection documents.
 	 */
 	public final static String PROJECTION_DOCUMENTS= "__projectiondocuments"; //$NON-NLS-1$
 	
 	
-//	/**
-//	 * The child document partitioner uses the parent document to answer all questions.
-//	 */
-//	static class ChildPartitioner implements IDocumentPartitioner {
+//	static class ProjectionDocumentPartitioner implements IDocumentPartitioner {
 //		
-//		protected ProjectionDocument fChildDocument;
+//		protected ProjectionDocument fProjectionDocument;
 //		protected IDocument fParentDocument;
 //		
-//		protected ChildPartitioner() {
+//		protected ProjectionDocumentPartitioner() {
 //		}
 //		
 //		/*
@@ -57,7 +58,7 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 //		 */
 //		public ITypedRegion getPartition(int offset) {
 //			try {
-//				offset += fChildDocument.getParentDocumentRange().getOffset();
+//				offset += fProjectionDocument.getParentDocumentRange().getOffset();
 //				return fParentDocument.getPartition(offset);
 //			} catch (BadLocationException x) {
 //			}
@@ -70,7 +71,7 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 //		 */
 //		public ITypedRegion[] computePartitioning(int offset, int length) {
 //			try {
-//				offset += fChildDocument.getParentDocumentRange().getOffset();
+//				offset += fProjectionDocument.getParentDocumentRange().getOffset();
 //				return fParentDocument.computePartitioning(offset, length);
 //			} catch (BadLocationException x) {
 //			}
@@ -83,7 +84,7 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 //		 */
 //		public String getContentType(int offset) {
 //			try {
-//				offset += fChildDocument.getParentDocumentRange().getOffset();
+//				offset += fProjectionDocument.getParentDocumentRange().getOffset();
 //				return fParentDocument.getContentType(offset);
 //			} catch (BadLocationException x) {
 //			}
@@ -117,7 +118,7 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 //		 * @see IDocumentPartitioner#disconnect()
 //		 */
 //		public void disconnect() {
-//			fChildDocument= null;
+//			fProjectionDocument= null;
 //			fParentDocument= null;
 //		}
 //		
@@ -126,16 +127,16 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 //		 */
 //		public void connect(IDocument childDocument) {
 //			Assert.isTrue(childDocument instanceof ProjectionDocument);
-//			fChildDocument= (ProjectionDocument) childDocument;
-//			fParentDocument= fChildDocument.getParentDocument();
+//			fProjectionDocument= (ProjectionDocument) childDocument;
+//			fParentDocument= fProjectionDocument.getParentDocument();
 //		}	
 //	};
 	
 	
 	
-	/** The position updater shared by all documents which have projection documents */
+	/** The position updater shared by all master documents which have projection documents */
 	private IPositionUpdater fProjectionPositionUpdater;
-	
+	/** Registry for master documents and their projection documents. */
 	private Map fRegistar= new HashMap();
 	
 	
@@ -149,7 +150,13 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 			fProjectionPositionUpdater= new FragmentUpdater(PROJECTION_DOCUMENTS);
 		return fProjectionPositionUpdater;
 	}
-
+	
+	/**
+	 * Registers the given projection document for the given master document.
+	 * 
+	 * @param parent the master document
+	 * @param projection the projection document
+	 */
 	private void add(IDocument parent, ProjectionDocument projection) {
 		List list= (List) fRegistar.get(parent);
 		if (list == null) {
@@ -159,6 +166,12 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 		list.add(projection);
 	}
 	
+	/**
+	 * Unregisters the given projection document from its master.
+	 * 
+	 * @param parent the master document
+	 * @param projection the projection document
+	 */
 	private void remove(IDocument parent, ProjectionDocument projection) {
 		List list= (List) fRegistar.get(parent);
 		if (list != null) {
@@ -168,10 +181,23 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 		}
 	}
 	
+	/**
+	 * Returns whether the given document is a master document.
+	 * 
+	 * @param parent the document
+	 * @return <code>true</code> if the given document is a master document known to this manager
+	 */
 	private boolean hasProjection(IDocument parent) {
 		return (fRegistar.get(parent) instanceof List);
 	}
 	
+	/**
+	 * Returns an iterator enumerating all projection documents registered for the given document or
+	 * <code>null</code> if the document is not a known master document.
+	 * 
+	 * @param parent the document
+	 * @return an iterator for all registered projection documents or <code>null</code>
+	 */
 	private Iterator getProjectionsIterator(IDocument parent) {
 		List list= (List) fRegistar.get(parent);
 		if (list != null)
@@ -180,10 +206,10 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 	}
 		
 	/**
-	 * Informs all child documents of the document which issued this document event.
+	 * Informs all projection documents of the master document that issued the given document event.
 	 *
 	 * @param about indicates whether the change is about to happen or alread happend
-	 * @param event the document event which will be processed to inform child documents
+	 * @param event the document event which will be processed to inform the projection documents
 	 */
 	protected void fireDocumentEvent(boolean about, DocumentEvent event) {
 		IDocument parent= event.getDocument();
@@ -214,7 +240,7 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 		fireDocumentEvent(true, event);
 	}
 		
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ISlaveDocumentManager#createMasterSlaveMapping(org.eclipse.jface.text.IDocument)
 	 */
 	public IDocumentInformationMapping createMasterSlaveMapping(IDocument slave) {
@@ -225,7 +251,7 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ISlaveDocumentManager#createSlaveDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public IDocument createSlaveDocument(IDocument master) {
@@ -236,15 +262,15 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 		}
 
 		ProjectionDocument slave= new ProjectionDocument(master, PROJECTION_DOCUMENTS);
-//		IDocumentPartitioner partitioner= new ChildPartitioner();
-//		child.setDocumentPartitioner(partitioner);
-//		partitioner.connect(child);
+//		IDocumentPartitioner partitioner= new ProjectionDocumentPartitioner();
+//		slave.setDocumentPartitioner(partitioner);
+//		partitioner.connect(master);
 
 		add(master, slave);
 		return slave;
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ISlaveDocumentManager#freeSlaveDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public void freeSlaveDocument(IDocument slave) {
@@ -254,7 +280,7 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 			
 		ProjectionDocument projectionDocument= (ProjectionDocument) slave;
 			
-//		childDocument.getDocumentPartitioner().disconnect();
+//		projectionDocument.getDocumentPartitioner().disconnect();
 
 		IDocument parent= projectionDocument.getParentDocument();
 		remove(parent, projectionDocument);
@@ -269,7 +295,7 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ISlaveDocumentManager#getMasterDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public IDocument getMasterDocument(IDocument slave) {
@@ -278,7 +304,7 @@ public final class ProjectionDocumentManager implements IDocumentListener, ISlav
 		return null;
 	}
 	
-	/* (non-Javadoc)
+	/*
 	 * @see org.eclipse.jface.text.ISlaveDocumentManager#isSlaveDocument(org.eclipse.jface.text.IDocument)
 	 */
 	public boolean isSlaveDocument(IDocument document) {

@@ -14,28 +14,44 @@ package org.eclipse.jface.text;
 
 /**
  * The position updater used to adapt the fragments of a projection document to
- * changes of the master document.
+ * changes of the master document. The updater supports two modes: a shifting mode
+ * and a non shifting mode. In the shifting mode the updater behaves identical to the
+ * <code>DefaultPositionUpdater</code>. In non shifting mode,  if an insertion happens at
+ * a fragment's offset, the fragment is extended rather than shifted. Also, the
+ * last fragment is extended if an inserte operation happens at the end of the fragment.<p>
+ * This class is for internal use only.
+ * 
+ * @since 2.1
  */
 public class FragmentUpdater extends DefaultPositionUpdater {
 	
+	/** Indicates whether this updater is in shift mode. */
 	private boolean fShiftMode= false;
+	/** Indicates whether the positon currently being updated represents the last fragment. */
 	private boolean fIsLast= false;
 	
 	/**
-	 * Creates the fragment updater.
+	 * Creates the fragment updater for the given category.
+	 * 
+	 * @param fragmentCategory the position category used for managing the fragments of a projection document
 	 */
 	protected FragmentUpdater(String fragmentCategory) {
 		super(fragmentCategory);
 	}
 	
+	/**
+	 * Enables/disables the shift mode of this updater.
+	 * 
+	 * @param enable <code>true</code> if shift mode should be enabled
+	 */
 	public void enableShiftMode(boolean enable) {
 		fShiftMode= enable;
 	}
 	
 	/**
 	 * If an insertion happens at a fragment's offset, the fragment is extended
-	 * rather than shifted. Also, the last fragment is extended if an inserted
-	 * happends at the end of the fragment.
+	 * rather than shifted. Also, the last fragment is extended if an inserte operation
+	 * happens at the end of the fragment.
 	 */
 	protected void adaptToInsert() {
 		
@@ -101,4 +117,4 @@ public class FragmentUpdater extends DefaultPositionUpdater {
 			// do nothing
 		}
 	}
-};
+}
