@@ -31,11 +31,13 @@ public class LayoutData extends RequestData {
 
 	public String getBannerURL() {
 		String banner = preferences.getBanner();
-		if (banner != null) {
-			if (banner.trim().length() == 0)
-				banner = null;
-			else
-				banner = UrlUtil.getHelpURL(banner);
+		if (banner == null || banner.trim().length() == 0) {
+			banner = "about:blank";
+		} else if (banner.startsWith("http:/")) {
+		} else if (banner.startsWith("file:/")) {
+			banner = "topic/" + banner;
+		} else {
+			banner = "topic" + banner;
 		}
 		return banner;
 	}
@@ -72,7 +74,8 @@ public class LayoutData extends RequestData {
 					new View(
 						"toc",
 						"",
-						preferences.getImagesDirectory() + "/contents_view.gif"),
+						preferences.getImagesDirectory()
+							+ "/contents_view.gif"),
 					new View(
 						"search",
 						"",
@@ -86,7 +89,8 @@ public class LayoutData extends RequestData {
 					new View(
 						"toc",
 						"",
-						preferences.getImagesDirectory() + "/contents_view.gif"),
+						preferences.getImagesDirectory()
+							+ "/contents_view.gif"),
 					new View(
 						"search",
 						"",
@@ -99,7 +103,8 @@ public class LayoutData extends RequestData {
 					new View(
 						"bookmarks",
 						"",
-						preferences.getImagesDirectory() + "/bookmarks_view.gif")};
+						preferences.getImagesDirectory()
+							+ "/bookmarks_view.gif")};
 		}
 		return views;
 	}

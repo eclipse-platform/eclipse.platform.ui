@@ -22,15 +22,7 @@ public class WebappPreferences {
 	 * @return String - URL of banner page or null
 	 */
 	public String getBanner() {
-		String banner = prefs.getString("banner");
-		if (banner != null) {
-			if (banner.trim().length() == 0)
-				banner = null;
-			else
-				banner = UrlUtil.getHelpURL(banner);
-		}
-
-		return banner;
+		return prefs.getString("banner");
 	}
 
 	public String getBannerHeight() {
