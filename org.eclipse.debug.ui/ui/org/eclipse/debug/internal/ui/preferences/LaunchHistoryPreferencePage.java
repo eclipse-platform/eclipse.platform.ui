@@ -131,9 +131,12 @@ public class LaunchHistoryPreferencePage extends PreferencePage implements IWork
 		for (int i = 0; i < fTabs.length; i++) {
 			LaunchHistoryPreferenceTab tab = fTabs[i];
 			tab.performOK();
-		}			
+		}
 		
-		fHistoryMaxEditor.store();
+		if (fHistoryMaxEditor.getIntValue() != fHistoryMaxEditor.getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_HISTORY_SIZE)) {
+			fHistoryMaxEditor.store();
+			LaunchHistory.launchHistoryChanged();
+		}		
 		
 		DebugUIPlugin.getDefault().savePluginPreferences();
 		return true;

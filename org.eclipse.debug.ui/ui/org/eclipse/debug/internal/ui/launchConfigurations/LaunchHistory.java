@@ -9,6 +9,7 @@ http://www.eclipse.org/legal/cpl-v10.html
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +27,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 /**
  * A history of launches and favorites for a launch group
  */
-public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, ILaunchConfigurationListener {
+public class LaunchHistory implements ILaunchListener, ILaunchConfigurationListener {
 
 	private LaunchGroupExtension fGroup;
 	
@@ -34,6 +35,8 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 	private List fFavorites = new ArrayList();
 	private boolean fDirty = false;
 	private ILaunchConfiguration fRecentLaunch;
+	
+	private static List launchHistoryInstances= new ArrayList();
 	
 	/**
 	 * Creates a new launch history for the given launch group
@@ -43,7 +46,7 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager(); 
 		manager.addLaunchListener(this);
 		manager.addLaunchConfigurationListener(this);
-		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+		launchHistoryInstances.add(this);
 	}
 	
 	/**
@@ -53,7 +56,7 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
 		manager.removeLaunchListener(this);
 		manager.removeLaunchConfigurationListener(this);
-		DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
+		launchHistoryInstances.remove(this);
 	}
 
 	/**
@@ -271,13 +274,16 @@ public class LaunchHistory implements ILaunchListener, IPropertyChangeListener, 
 	}	
 	
 	/**
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 * Notifies all launch histories that the launch history size has changed.
 	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (event.getProperty().equals(IDebugUIConstants.PREF_MAX_HISTORY_SIZE)) {
-			resizeHistory();
-			save();
+	public static void launchHistoryChanged() {
+		Iterator iter= launchHistoryInstances.iterator();
+		while (iter.hasNext()) {
+			LaunchHistory history= (LaunchHistory) iter.next();
+			history.resizeHistory();
+			history.save();			
 		}
+
 	}
 	
 	/**
