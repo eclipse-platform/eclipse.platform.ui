@@ -99,8 +99,10 @@ public class LastSaveReferenceProvider implements IQuickDiffProviderImplementati
 	private void readDocument() {
 		if (!initialized())
 			return;
-		fEditor.getDocumentProvider().addElementStateListener(this);
 		IDocumentProvider provider= fEditor.getDocumentProvider();
+		if (provider == null)
+			return;
+		provider.addElementStateListener(this);
 		IEditorInput input= fEditor.getEditorInput();
 		if (!(input instanceof IFileEditorInput))
 			return;
