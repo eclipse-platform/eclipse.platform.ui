@@ -184,7 +184,7 @@ public class SourceViewerConfiguration {
 	/**
 	 * Returns the annotation hover which will provide the information to be
 	 * shown in a hover popup window when requested for the given
-	 * source viewer.This implementation always returns <code>null</code>.
+	 * source viewer. This implementation always returns <code>null</code>.
 	 *
 	 * @param sourceViewer the source viewer to be configured by this configuration
 	 * @return an annotation hover or <code>null</code> if no hover support should be installed
