@@ -18,6 +18,8 @@ public AutomatedTests(String name) {
 public static Test suite() {
 	TestSuite suite = new TestSuite();
 	suite.addTest(org.eclipse.core.tests.runtime.AllTests.suite());
+	suite.addTest(org.eclipse.core.tests.internal.plugins.AllTests.suite());
+	suite.addTest(org.eclipse.core.tests.internal.registrycache.AllTests.suite());
 	return suite;
 }
 }
