@@ -23,11 +23,7 @@ public class ExportedPreferences extends EclipsePreferences implements IExported
 	private boolean isExportRoot = false;
 	private String version;
 
-	public static IExportedPreferences newRoot() {
-		return new ExportedPreferences(null, ""); //$NON-NLS-1$
-	}
-
-	private ExportedPreferences(EclipsePreferences parent, String name) {
+	protected ExportedPreferences(EclipsePreferences parent, String name) {
 		super(parent, name);
 	}
 

@@ -12,7 +12,8 @@ package org.eclipse.core.internal.preferences;
 
 import java.io.*;
 import java.util.*;
-import org.eclipse.core.internal.runtime.*;
+import org.eclipse.core.internal.runtime.InternalPlatform;
+import org.eclipse.core.internal.runtime.Policy;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.osgi.service.prefs.BackingStoreException;
@@ -50,10 +51,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	protected boolean dirty = false;
 	protected boolean loading = false;
 	protected final String name;
-	protected ListenerList nodeListeners;
 	// the parent of an EclipsePreference node is always an EclipsePreference node. (or null)
 	protected final EclipsePreferences parent;
-	protected ListenerList preferenceListeners;
 	protected Properties properties;
 	protected boolean removed = false;
 
@@ -107,9 +106,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	public void addNodeChangeListener(INodeChangeListener listener) {
 		checkRemoved();
-		if (nodeListeners == null)
-			nodeListeners = new ListenerList();
-		nodeListeners.add(listener);
+		getNodeChangeListenerRegistry().add(absolutePath(), listener);
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Added preference node change listener: " + listener + " to: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -119,11 +116,17 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	public void addPreferenceChangeListener(IPreferenceChangeListener listener) {
 		checkRemoved();
-		if (preferenceListeners == null)
-			preferenceListeners = new ListenerList();
-		preferenceListeners.add(listener);
+		getPreferenceChangeListenerRegistry().add(absolutePath(), listener);
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Added preference property change listener: " + listener + " to: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
+	}
+
+	protected ListenerRegistry getNodeChangeListenerRegistry() {
+		return parent.getNodeChangeListenerRegistry();
+	}
+
+	protected ListenerRegistry getPreferenceChangeListenerRegistry() {
+		return parent.getPreferenceChangeListenerRegistry();
 	}
 
 	private IEclipsePreferences calculateRoot() {
@@ -269,7 +272,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * @see org.eclipse.core.runtime.preferences.IScope#create(org.eclipse.core.runtime.preferences.IEclipsePreferences)
 	 */
 	public IEclipsePreferences create(IEclipsePreferences nodeParent, String nodeName) {
-		return create((EclipsePreferences)nodeParent, nodeName, null);
+		return create((EclipsePreferences) nodeParent, nodeName, null);
 	}
 
 	public IEclipsePreferences create(EclipsePreferences nodeParent, String nodeName, Plugin context) {
@@ -662,9 +665,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	}
 
 	protected void fireNodeEvent(final NodeChangeEvent event, final boolean added) {
-		if (nodeListeners == null)
-			return;
-		Object[] listeners = nodeListeners.getListeners();
+		Object[] listeners = getNodeChangeListenerRegistry().getListeners(absolutePath());
 		for (int i = 0; i < listeners.length; i++) {
 			final INodeChangeListener listener = (INodeChangeListener) listeners[i];
 			ISafeRunnable job = new ISafeRunnable() {
@@ -721,10 +722,8 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 * Convenience method for notifying preference change listeners.
 	 */
 	protected void firePreferenceEvent(String key, Object oldValue, Object newValue) {
-		if (preferenceListeners == null)
-			return;
 		final PreferenceChangeEvent event = new PreferenceChangeEvent(this, key, oldValue, newValue);
-		Object[] listeners = preferenceListeners.getListeners();
+		Object[] listeners = getPreferenceChangeListenerRegistry().getListeners(absolutePath());
 		for (int i = 0; i < listeners.length; i++) {
 			final IPreferenceChangeListener listener = (IPreferenceChangeListener) listeners[i];
 			ISafeRunnable job = new ISafeRunnable() {
@@ -898,11 +897,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	public void removeNodeChangeListener(INodeChangeListener listener) {
 		checkRemoved();
-		if (nodeListeners == null)
-			return;
-		nodeListeners.remove(listener);
-		if (nodeListeners.size() == 0)
-			nodeListeners = null;
+		getNodeChangeListenerRegistry().remove(absolutePath(), listener);
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Removed preference node change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -912,11 +907,7 @@ public class EclipsePreferences implements IEclipsePreferences, IScope {
 	 */
 	public void removePreferenceChangeListener(IPreferenceChangeListener listener) {
 		checkRemoved();
-		if (preferenceListeners == null)
-			return;
-		preferenceListeners.remove(listener);
-		if (preferenceListeners.size() == 0)
-			preferenceListeners = null;
+		getPreferenceChangeListenerRegistry().remove(absolutePath(), listener);
 		if (InternalPlatform.DEBUG_PREFERENCES)
 			Policy.debug("Removed preference property change listener: " + listener + " from: " + absolutePath()); //$NON-NLS-1$ //$NON-NLS-2$
 	}

@@ -20,6 +20,9 @@ import org.osgi.service.prefs.Preferences;
  */
 public class RootPreferences extends EclipsePreferences {
 
+	ListenerRegistry nodeChangeListeners = new ListenerRegistry();
+	ListenerRegistry preferenceChangeListeners = new ListenerRegistry();
+
 	/**
 	 * Default constructor.
 	 */
@@ -114,5 +117,19 @@ public class RootPreferences extends EclipsePreferences {
 		}
 		if (exception != null)
 			throw exception;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.preferences.EclipsePreferences#getNodeChangeListenerRegistry()
+	 */
+	protected ListenerRegistry getNodeChangeListenerRegistry() {
+		return nodeChangeListeners;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.internal.preferences.EclipsePreferences#getPreferenceChangeListenerRegistry()
+	 */
+	protected ListenerRegistry getPreferenceChangeListenerRegistry() {
+		return preferenceChangeListeners;
 	}
 }
