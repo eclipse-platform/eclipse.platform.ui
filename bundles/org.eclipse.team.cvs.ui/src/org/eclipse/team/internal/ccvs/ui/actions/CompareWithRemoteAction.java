@@ -107,4 +107,14 @@ public class CompareWithRemoteAction extends WorkspaceAction {
 		}
 	}
 	
+	/*
+	 * Update the text label for the action based on the tags in the
+	 * selection.
+	 * @see TeamAction#setActionEnablement(org.eclipse.jface.action.IAction)
+	 */
+	protected void setActionEnablement(IAction action) {
+		super.setActionEnablement(action);
+		action.setText(calculateActionTagValue());
+	}
+
 }

@@ -37,11 +37,13 @@ import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 
@@ -427,5 +429,97 @@ public abstract class WorkspaceAction extends CVSAction {
 	
 	protected void executeProviderAction(IProviderAction action, IProgressMonitor monitor) throws InvocationTargetException {
 		executeProviderAction(action, getSelectedResources(), monitor);
+	}
+
+	/**
+	 * Given the current selection this method returns a text label that can
+	 * be shown to the user that reflects the tags in the current selection.
+	 * These can be used in the <b>Compare With</b> and <b>Replace With</b> actions.
+	 */
+	protected String calculateActionTagValue() {
+		try {
+			IResource[] resources = getSelectedResources();
+			CVSTag commonTag = null;
+			boolean sameTagType = true; 
+			boolean multipleSameNames = true;
+			
+			for (int i = 0; i < resources.length; i++) {
+				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resources[i]);
+				CVSTag tag = null;
+				if(cvsResource.isFolder()) {
+					FolderSyncInfo info = ((ICVSFolder)cvsResource).getFolderSyncInfo();
+					if(info != null) {
+						tag = info.getTag();									
+					}
+				} else {
+					ResourceSyncInfo info = cvsResource.getSyncInfo();
+					if(info != null) {
+						tag = info.getTag();
+					}
+					// This magic is required because of a bug in CVS which doesn't store the
+					// type of tag for files correctly in the Entries file. They will always appear
+					// as branch tags "Tv1". By comparing the revision number to the tag name
+					// you can determine if the tag is a branch or version.
+					FolderSyncInfo parentInfo = cvsResource.getParent().getFolderSyncInfo();
+					CVSTag parentTag = null;
+					if(parentInfo != null) {
+						parentTag = parentInfo.getTag();
+					}
+					if(tag != null) {
+						if(tag.getName().equals(info.getRevision())) {
+							tag = new CVSTag(tag.getName(), CVSTag.VERSION);
+						} else if(parentTag != null){
+							tag = new CVSTag(tag.getName(), parentTag.getType());
+						}
+					} else {
+						// if a file doesn't have tag info, very possible for example
+						// when the file is in HEAD, use the parents.
+						tag = parentTag;
+					}
+				}
+				if(tag == null) {
+					tag = new CVSTag();
+				}
+				if(commonTag == null) {
+					commonTag = tag;
+				} else if(!commonTag.equals(tag)) {					
+					if(commonTag.getType() != tag.getType()) {
+						sameTagType = false;
+					}
+					if(!commonTag.getName().equals(tag.getName())) {
+						multipleSameNames = false;
+					}
+				}
+			}
+			
+			// set text to default
+			String actionText = Policy.bind("ReplaceWithLatestAction.multipleTags"); //$NON-NLS-1$
+			if(commonTag != null) {
+				int tagType = commonTag.getType();
+				String tagName = commonTag.getName();
+				// multiple tag names but of the same type
+				if(sameTagType && !multipleSameNames) {
+					if(tagType == CVSTag.BRANCH) {
+						actionText = Policy.bind("ReplaceWithLatestAction.multipleBranches"); //$NON-NLS-1$					
+					} else {
+						actionText = Policy.bind("ReplaceWithLatestAction.multipleVersions"); //$NON-NLS-1$
+					}
+				// same tag names and types
+				} else if(sameTagType && multipleSameNames) {
+					if(tagType == CVSTag.BRANCH) {
+						actionText = Policy.bind("ReplaceWithLatestAction.singleBranch", tagName); //$NON-NLS-1$					
+					} else if(tagType == CVSTag.VERSION){
+						actionText = Policy.bind("ReplaceWithLatestAction.singleVersion", tagName); //$NON-NLS-1$
+					} else if(tagType == CVSTag.HEAD) {
+						actionText = Policy.bind("ReplaceWithLatestAction.singleHEAD", tagName); //$NON-NLS-1$
+					}
+				}
+			}
+			
+			return actionText;
+		} catch (CVSException e) {
+			// silently ignore
+			return Policy.bind("ReplaceWithLatestAction.multipleTags"); //$NON-NLS-1$ 
+		}
 	}
 }
