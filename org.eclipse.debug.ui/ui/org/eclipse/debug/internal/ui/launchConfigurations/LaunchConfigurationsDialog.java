@@ -1467,6 +1467,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			shells[i].setCursor(cursor);
 		}
 	}
+	
+	/**
+	 * Convenience method that replies whether the tab viewer is in a launchable state.
+	 */
+	private boolean canLaunch() {
+		return getTabViewer().canLaunch();
+	}
 
 	/**
 	 * @see ILaunchConfigurationDialog#updateButtons()
@@ -1482,9 +1489,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 		// Launch button
 		getTabViewer().refresh();
-		boolean canLaunch = getTabViewer().canLaunch();
-		getButton(ID_LAUNCH_BUTTON).setEnabled(canLaunch);
-		fDoubleClickAction.setEnabled(canLaunch);		
+		getButton(ID_LAUNCH_BUTTON).setEnabled(canLaunch());
 	}
 	
 	/**
@@ -1702,7 +1707,9 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			IStructuredSelection selection = (IStructuredSelection)fLaunchConfigurationView.getViewer().getSelection();
 			Object target = selection.getFirstElement();
 			if (target instanceof ILaunchConfiguration) {
-				handleLaunchPressed();
+				if (canLaunch()) {
+					handleLaunchPressed();
+				}
 			} else {
 				getNewAction().run();
 			}
