@@ -74,7 +74,6 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
      * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
      */
     public Menu getMenu(Menu parent) {
-        // TODO Auto-generated method stub
         return null;
     }
     
