@@ -293,11 +293,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Returns the appropriate text for the launch button - run or debug.
 	 */
 	protected String getLaunchButtonText() {
-		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
-			return LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Deb&ug_4"); //$NON-NLS-1$
-		} else {
-			return LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.R&un_5"); //$NON-NLS-1$
-		}
+		return DebugPlugin.getDefault().getLaunchManager().getLaunchMode(getMode()).getLabel();
 	}
 
 	/* (non-Javadoc)

@@ -11,9 +11,11 @@
 package org.eclipse.debug.ui.actions;
 
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
-import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.LaunchShortcutAction;
@@ -69,11 +71,8 @@ public class LaunchAsAction extends Action implements IMenuCreator, IWorkbenchWi
 	public LaunchAsAction(String launchGroupIdentifier) {
 		super();
 		fLaunchGroupIdentifier = launchGroupIdentifier;
-		if (getMode().equals(ILaunchManager.DEBUG_MODE)) {
-			setText(ActionMessages.getString("LaunchAsAction.Debug_As_1")); //$NON-NLS-1$
-		} else {
-			setText(ActionMessages.getString("LaunchAsAction.Run_As_2")); //$NON-NLS-1$
-		}
+		ILaunchMode launchMode = DebugPlugin.getDefault().getLaunchManager().getLaunchMode(getMode());
+		setText(MessageFormat.format(ActionMessages.getString("LaunchAsAction.0"), new String[]{launchMode.getLabel()})); //$NON-NLS-1$
 		setMenuCreator(this);
 	}
 	
