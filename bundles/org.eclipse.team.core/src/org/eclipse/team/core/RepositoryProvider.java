@@ -453,6 +453,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 * @see getProvider(IProject)
 	 */
 	public static boolean isShared(IProject project) {
+		if (!project.isAccessible()) return false;
 		try {
 			if (lookupProviderProp(project) != null) return true;
 			return project.getPersistentProperty(PROVIDER_PROP_KEY) != null;

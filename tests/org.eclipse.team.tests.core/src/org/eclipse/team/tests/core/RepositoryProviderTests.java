@@ -371,6 +371,10 @@ public class RepositoryProviderTests extends TeamTest {
 		IProject project1 = getUniqueTestProject("testGetProviderById_1");
 		RepositoryProvider.map(project1, RepositoryProviderBic.NATURE_ID);
 		assertTrue(RepositoryProvider.isShared(project1));
+		project1.close(null);
+		assertTrue(!RepositoryProvider.isShared(project1));
+		project1.open(null);
+		assertTrue(RepositoryProvider.isShared(project1));
 		RepositoryProvider.unmap(project1);
 		assertTrue(!RepositoryProvider.isShared(project1));
 	}
