@@ -735,11 +735,12 @@ private IStatus createReferences(IMemento views[]) {
 		// Get the view details.
 		IMemento childMem = views[x];
 		String viewID = childMem.getString(IWorkbenchConstants.TAG_ID);
-	
 		// Create and open the view.
 		try {
-			viewFactory.createView(viewID);
+			if(!"true".equals(childMem.getString(IWorkbenchConstants.TAG_REMOVED)))
+				viewFactory.createView(viewID);
 		} catch (PartInitException e) {
+			childMem.putString(IWorkbenchConstants.TAG_REMOVED,"true");
 			result.add(new Status(IStatus.ERROR,PlatformUI.PLUGIN_ID,0,e.getMessage(),e));
 		}
 	}
