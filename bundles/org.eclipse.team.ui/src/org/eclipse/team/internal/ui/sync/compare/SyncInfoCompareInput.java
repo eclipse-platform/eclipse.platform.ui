@@ -51,7 +51,7 @@ public class SyncInfoCompareInput extends CompareEditorInput {
 		
 		// Create the base ITypedElement
 		ITypedElement baseTypedElement = null;
-		IRemoteResource baseResource = sync.getRemote();
+		IRemoteResource baseResource = sync.getBase();
 		if (baseResource != null) {
 			baseTypedElement = SyncInfoDiffNode.createTypeElement(baseResource);
 		}
