@@ -57,6 +57,7 @@ public class TomcatPreferencePage
 		label.setFont(font);
 
 		label = new Label(mainComposite, SWT.NONE);
+		label.setFont(font);
 		label.setText(
 			WorkbenchResources.getString(
 				"TomcatPreferencePage.hostDescription"));
@@ -88,6 +89,7 @@ public class TomcatPreferencePage
 		label.setFont(font);
 
 		label = new Label(mainComposite, SWT.NONE);
+		label.setFont(font);
 		label.setText(
 			WorkbenchResources.getString(
 				"TomcatPreferencePage.portDescription"));

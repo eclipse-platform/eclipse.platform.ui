@@ -113,6 +113,7 @@ public class HelpSearchPage extends DialogPage implements ISearchPage {
 		gd.grabExcessHorizontalSpace = true;
 		gd.grabExcessVerticalSpace = true;
 		filteringGroup.setLayoutData(gd);
+		filteringGroup.setFont(font);
 		filteringGroup.setText(WorkbenchResources.getString("limit_to"));
 		layout = new GridLayout();
 		layout.numColumns = 3;
