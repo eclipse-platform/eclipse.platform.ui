@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -343,7 +344,8 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, ITextPres
 	
 	private Point getMinimumLocation(StyledText text, int offset, int length) {
 		int max= text.getCharCount();
-		Point minLocation= new Point(max, max);
+		Rectangle bounds= text.getBounds();
+		Point minLocation= new Point(bounds.width, bounds.height);
 		for (int i= 0; i <= length; i++) {
 			int k= offset + i;
 			if (k < 0 || k > max)
