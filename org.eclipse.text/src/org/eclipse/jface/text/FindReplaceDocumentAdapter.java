@@ -146,7 +146,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				findString= "\\b" + findString + "\\b"; //$NON-NLS-1$ //$NON-NLS-2$
 
 			if (!regExSearch && !wholeWord)
-				findString= "\\Q" + findString + "\\E"; //$NON-NLS-1$ //$NON-NLS-2$
+				findString= asRegPattern(findString);
 
 			fFindReplaceMatchOffset= startOffset;
 			if (fFindReplaceMatcher != null && fFindReplaceMatcher.pattern().pattern().equals(findString) && fFindReplaceMatcher.pattern().flags() == patternFlags) {
@@ -219,6 +219,40 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Converts a non-regex string to a pattern
+	 * that can be used with the regex search engine.
+	 * 
+	 * @param string the non-regex pattern
+	 * @return the string converted to a regex pattern
+	 */
+	private String asRegPattern(String string) {
+		StringBuffer out= new StringBuffer(string.length());
+		boolean quoting= false;
+		
+		int i= 0;
+		while (i < string.length()) {
+			char ch= string.charAt(i++);
+			if (ch == '\\') {
+				if (quoting) {
+					out.append("\\E"); //$NON-NLS-1$
+					quoting= false;
+				}
+				out.append("\\\\"); //$NON-NLS-1$
+				continue;								
+			}
+			if (!quoting) {
+				out.append("\\Q"); //$NON-NLS-1$
+				quoting= true;
+			}
+			out.append(ch);
+		}
+		if (quoting)
+			out.append("\\E"); //$NON-NLS-1$
+		
+		return out.toString();
 	}
 	
 	/**
