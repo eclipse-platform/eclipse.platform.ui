@@ -7,7 +7,11 @@ which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
 **********************************************************************/
 
+import java.io.File;
+
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
@@ -22,7 +26,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.model.ExternalTool;
 import org.eclipse.ui.externaltools.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.model.ToolUtil;
+import org.eclipse.ui.externaltools.variable.ExpandVariableContext;
 
 public class ExternalToolMainTab extends AbstractLaunchConfigurationTab {
 
@@ -252,6 +259,92 @@ public class ExternalToolMainTab extends AbstractLaunchConfigurationTab {
 	 * @see ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
-		return false;
+		setErrorMessage(null);
+		setMessage(null);
+		return validateLocation() && validateName() && validateWorkDirectory();
+	}
+	
+	/**
+	 * Validates the content of the location field.
+	 */
+	protected boolean validateLocation() {
+		String value = locationField.getText().trim();
+		if (value.length() < 1) {
+			setErrorMessage("External tool location cannot be empty");
+			setMessage(null);
+			return false;
+		}
+
+		// Translate field contents to the actual file location so we
+		// can check to ensure the file actually exists.
+		MultiStatus multiStatus = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+		value = ToolUtil.expandFileLocation(value, ExpandVariableContext.EMPTY_CONTEXT, multiStatus);
+		if (!multiStatus.isOK()) {
+			IStatus[] children = multiStatus.getChildren();
+			if (children.length > 0) {
+				setErrorMessage(children[0].getMessage());
+				setMessage(null);
+			}
+			return false;
+		}
+		
+		File file = new File(value);
+		if (!file.exists()) { // The file does not exist.
+			setErrorMessage("External tool location does not exist");
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Validates the content of the name field.
+	 */
+	protected boolean validateName() {
+		String value = nameField.getText().trim();
+		if (value.length() < 1) {
+			setErrorMessage("Name required");
+			return false;
+		}
+		
+		String errorText = ExternalTool.validateToolName(value);
+		if (errorText != null) {
+			setErrorMessage(errorText);
+			return false;
+		}
+		
+		boolean exists = ExternalToolsPlugin.getDefault().getToolRegistry(nameField.getShell()).hasToolNamed(value);
+		if (exists) {
+			setErrorMessage("An external tool with this name already exists");
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Validates the content of the working directory field.
+	 */
+	protected boolean validateWorkDirectory() {
+		
+		String value = workDirectoryField.getText().trim();
+		if (value.length() > 0) {
+			// Translate field contents to the actual directory location so we
+			// can check to ensure the directory actually exists.
+			MultiStatus multiStatus = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+			value = ToolUtil.expandDirectoryLocation(value, ExpandVariableContext.EMPTY_CONTEXT, multiStatus);
+			if (!multiStatus.isOK()) {
+				IStatus[] children = multiStatus.getChildren();
+				if (children.length > 0) {
+					setErrorMessage(children[0].getMessage());
+				}
+				return false;
+			}
+				
+			File file = new File(value);
+			if (!file.exists()) { // The directory does not exist.
+				setErrorMessage("External tool working directory does not exist or is invalid");
+				return false;
+			}
+		}
+		return true;
 	}
 }

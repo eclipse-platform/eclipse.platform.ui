@@ -11,6 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -213,6 +214,7 @@ public class ExternalToolRefreshTab extends AbstractLaunchConfigurationTab imple
 	 * @see org.eclipse.ui.externaltools.group.IGroupDialogPage#setMessage(java.lang.String, int)
 	 */
 	public void setMessage(String newMessage, int newType) {
+		setMessage(newMessage);
 	}
 
 	/**
@@ -226,7 +228,12 @@ public class ExternalToolRefreshTab extends AbstractLaunchConfigurationTab imple
 	 * @see org.eclipse.jface.dialogs.IMessageProvider#getMessageType()
 	 */
 	public int getMessageType() {
-		return 0;
+		if (getErrorMessage() != null) {
+			return IMessageProvider.ERROR;
+		} else if (getMessage() != null) {
+			return IMessageProvider.WARNING;
+		}
+		return IMessageProvider.NONE;
 	}
 
 }
