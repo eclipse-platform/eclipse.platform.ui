@@ -85,18 +85,14 @@
             id="org.eclipse.ui.examples.templateeditor.xml">
       </contextType>
       <template
-            name="%ant.tasks.javac.name"
+            name="%ant.tasks.copy.name"
             icon="icons/template.gif"
-            description="%ant.tasks.javac.description"
+            description="%ant.tasks.copy.description"
             contextTypeId="org.eclipse.ui.examples.templateeditor.xml"
             id="org.eclipse.ui.examples.templateeditor.ant.javac">
-         <pattern>
-            &lt;javac srcdir=&quot;${src}&quot;
-	destdir=&quot;${dst}&quot;
-	classpath=&quot;${classpath}&quot;
-	debug=&quot;${debug}&quot;
-/&gt;
-         </pattern>
+         <pattern>&lt;copy todir=&quot;${dst}&quot;&gt;
+	&lt;fileset dir=&quot;${src}&quot;/&gt;
+&lt;/copy&gt;</pattern>
       </template>
       <resolver
             name="%ant.resolvers.src"

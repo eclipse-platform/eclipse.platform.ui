@@ -143,6 +143,9 @@ public class DocumentTemplateContext extends TemplateContext {
 		
 		TemplateTranslator translator= new TemplateTranslator();
 		TemplateBuffer buffer= translator.translate(template);
+		
+		if (buffer == null)
+			return buffer;
 
 		getContextType().resolve(buffer, this);
 		
