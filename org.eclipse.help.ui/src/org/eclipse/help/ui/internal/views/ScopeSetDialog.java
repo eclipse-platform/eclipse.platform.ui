@@ -34,22 +34,27 @@ public class ScopeSetDialog extends ListDialog {
 	private EngineDescriptorManager descManager;
 	private static final int NEW_ID = IDialogConstants.CLIENT_ID + 1;
 	private static final int EDIT_ID = IDialogConstants.CLIENT_ID + 2;
-	private static final int REMOVE_ID = IDialogConstants.CLIENT_ID + 3;
+	private static final int RENAME_ID = IDialogConstants.CLIENT_ID +3;
+	private static final int REMOVE_ID = IDialogConstants.CLIENT_ID + 4;
 	private Button newButton;
 	private Button editButton;
+	private Button renameButton;
 	private Button removeButton;
 	private ArrayList sets;
 	private ArrayList operations;
 	
 	private abstract class PendingOperation {
+		ScopeSet set;
+		public PendingOperation(ScopeSet set) {
+			this.set = set;
+		}
 		public abstract void commit();
 		public abstract void cancel();
 	}
 	
 	private class AddOperation extends PendingOperation {
-		private ScopeSet set;
 		public AddOperation(ScopeSet set) {
-			this.set = set;
+			super(set);
 		}
 		public void commit() {
 			manager.add(set);
@@ -61,9 +66,8 @@ public class ScopeSetDialog extends ListDialog {
 
 	private class RenameOperation extends PendingOperation {
 		private String newName;
-		private ScopeSet set;
 		public RenameOperation(ScopeSet set, String newName) {
-			this.set = set;
+			super(set);
 			this.newName = newName;
 		}
 		public void commit() {
@@ -74,10 +78,8 @@ public class ScopeSetDialog extends ListDialog {
 	}
 
 	private class EditOperation extends PendingOperation {
-		private ScopeSet set;
-	
 		public EditOperation(ScopeSet set) {
-			this.set = set;
+			super(set);
 		}
 		public void commit() {
 		}
@@ -86,10 +88,8 @@ public class ScopeSetDialog extends ListDialog {
 	}
 
 	private class RemoveOperation extends PendingOperation {
-		private ScopeSet set;
-		
 		public RemoveOperation(ScopeSet set) {
-			this.set = set;
+			super(set);
 		}
 		public void commit() {
 			manager.remove(set);
@@ -124,15 +124,10 @@ public class ScopeSetDialog extends ListDialog {
 			return ((ScopeSet)obj).getName();
 		}
 		private String findNewName(ScopeSet set) {
-			if (operations!=null) {
-				for (int i=0; i<operations.size(); i++) {
-					PendingOperation op = (PendingOperation)operations.get(i);
-					if (op instanceof RenameOperation) {
-						RenameOperation rop = (RenameOperation)op;
-						if (rop.set.equals(set))
-							return rop.newName;
-					}
-				}
+			PendingOperation op = findOperation(set, RenameOperation.class);
+			if (op!=null) {
+				RenameOperation rop = (RenameOperation)op;
+				return rop.newName;
 			}
 			return null;
 		}
@@ -182,6 +177,7 @@ public class ScopeSetDialog extends ListDialog {
 		data.grabExcessHorizontalSpace= true;
 		composite.setData(data);
     	newButton = createButton(buttonComposite, NEW_ID, HelpUIResources.getString("ScopeSetDialog.new"), false); //$NON-NLS-1$
+       	renameButton = createButton(buttonComposite, RENAME_ID, HelpUIResources.getString("ScopeSetDialog.rename"), false); //$NON-NLS-1$
        	editButton = createButton(buttonComposite, EDIT_ID, HelpUIResources.getString("ScopeSetDialog.edit"), false); //$NON-NLS-1$
        	removeButton = createButton(buttonComposite, REMOVE_ID, HelpUIResources.getString("ScopeSetDialog.remove"), false); //$NON-NLS-1$
        	updateButtons();
@@ -224,6 +220,9 @@ public class ScopeSetDialog extends ListDialog {
 		case EDIT_ID:
 			doEdit();
 			break;
+		case RENAME_ID:
+			doRename();
+			break;
 		case REMOVE_ID:
 			doRemove();
 			break;
@@ -235,10 +234,14 @@ public class ScopeSetDialog extends ListDialog {
 		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
 		ScopeSet newSet = new ScopeSet(set);
-		scheduleOperation(new AddOperation(newSet));
-		sets.add(newSet);
-		getTableViewer().refresh();
-		updateButtons();
+		String name = getNewName(newSet.getName());
+		if (name!=null) {
+			newSet.setName(name);
+			scheduleOperation(new AddOperation(newSet));
+			sets.add(newSet);
+			getTableViewer().refresh();
+			updateButtons();
+		}
 	}
 
 	private void doEdit() {
@@ -252,6 +255,38 @@ public class ScopeSetDialog extends ListDialog {
 			dialog.getShell().setText(HelpUIResources.getString("ScopePreferenceDialog.wtitle", set.getName())); //$NON-NLS-1$
 			dialog.open();
 		}
+	}
+
+	private void doRename() {
+		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
+		ScopeSet set = (ScopeSet)ssel.getFirstElement();
+		if (set!=null) {
+			RenameOperation rop = (RenameOperation)findOperation(set, RenameOperation.class);
+			String oldName = rop!=null?rop.newName:set.getName();
+			String newName = getNewName(oldName);
+			if (newName!=null) {
+				if (rop!=null)
+					rop.newName = newName;
+				else 
+					scheduleOperation(new RenameOperation(set, newName));
+				getTableViewer().update(set, null);
+				updateButtons();
+			}
+		}
+	}
+
+	private String getNewName(String oldName) {
+		RenameDialog dialog = new RenameDialog(getShell(), oldName);
+		for (int i=0; i<sets.size(); i++) {
+			ScopeSet set = (ScopeSet)sets.get(i);
+			dialog.addOldName(set.getName());
+		}
+		dialog.create();
+		dialog.getShell().setText(HelpUIResources.getString("RenameDialog.wtitle"));
+		if (dialog.open()==RenameDialog.OK) {
+			return dialog.getNewName();
+		}
+		return null;
 	}
 	
 	private void doRemove() {
@@ -275,9 +310,24 @@ public class ScopeSetDialog extends ListDialog {
 		IStructuredSelection ssel = (IStructuredSelection)getTableViewer().getSelection();
 		editButton.setEnabled(ssel.isEmpty()==false);
 		ScopeSet set = (ScopeSet)ssel.getFirstElement();
-		removeButton.setEnabled(set!=null && !set.isDefault());
+		boolean editableSet = set!=null && !set.isDefault();
+		removeButton.setEnabled(editableSet);
+		renameButton.setEnabled(editableSet);
 		Button okButton = getOkButton();
 		if (okButton!=null)
 			okButton.setEnabled(set!=null);
 	}
+	
+	private PendingOperation findOperation(ScopeSet set, Class type) {
+		if (operations!=null) {
+			for (int i=0; i<operations.size(); i++) {
+				PendingOperation op = (PendingOperation)operations.get(i);
+				if (op.getClass().equals(type)) {
+					if (op.set.equals(set))
+						return op;
+				}
+			}
+		}
+		return null;
+	}	
 }
