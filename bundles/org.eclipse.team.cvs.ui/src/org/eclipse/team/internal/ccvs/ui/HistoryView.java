@@ -213,7 +213,7 @@ public class HistoryView extends ViewPart {
 				}
 			}
 		});
-		WorkbenchHelp.setHelp(getContentsAction, IHelpContextIds.GET_FILE_CONTENTS_ACTION);	
+		
 
 		getRevisionAction = getContextMenuAction(Policy.bind("HistoryView.getRevisionAction"), new IWorkspaceRunnable() { //$NON-NLS-1$
 			public void run(IProgressMonitor monitor) throws CoreException {
@@ -235,7 +235,6 @@ public class HistoryView extends ViewPart {
 				}
 			}
 		});
-		WorkbenchHelp.setHelp(getRevisionAction, IHelpContextIds.GET_FILE_REVISION_ACTION);	
 		
 		// Toggle text visible action
 		final IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
@@ -246,7 +245,6 @@ public class HistoryView extends ViewPart {
 			}
 		};
 		toggleTextAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_COMMENTS));
-		WorkbenchHelp.setHelp(toggleTextAction, IHelpContextIds.SHOW_COMMENT_IN_HISTORY_ACTION);	
 		// Toggle list visible action
 		toggleListAction = new Action(Policy.bind("HistoryView.showTags")) { //$NON-NLS-1$
 			public void run() {
@@ -255,7 +253,6 @@ public class HistoryView extends ViewPart {
 			}
 		};
 		toggleListAction.setChecked(store.getBoolean(ICVSUIConstants.PREF_SHOW_TAGS));
-		WorkbenchHelp.setHelp(toggleListAction, IHelpContextIds.SHOW_TAGS_IN_HISTORY_ACTION);	
 		
 		// Contribute actions to popup menu
 		MenuManager menuMgr = new MenuManager();
@@ -374,7 +371,7 @@ public class HistoryView extends ViewPart {
 		contributeActions();
 		setViewerVisibility();
 		// set F1 help
-		WorkbenchHelp.setHelp(sashForm, IHelpContextIds.RESOURCE_HISTORY_VIEW);
+		WorkbenchHelp.setHelp(tableViewer.getControl(), IHelpContextIds.RESOURCE_HISTORY_VIEW);
 		initDragAndDrop();
 	}
 	private void initializeImages() {
