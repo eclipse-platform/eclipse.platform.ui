@@ -22,15 +22,15 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class LaunchSelectionAction extends Action {
 	
-	protected ILauncher fLauncher;
-	protected String fMode;
-	protected Object fElement;
+	private ILauncher fLauncher;
+	private String fMode;
+	private Object fElement;
 	
 	public LaunchSelectionAction(ILauncher launcher, Object element, String mode) {
 		super();
-		fLauncher= launcher;
-		fMode= mode;
-		fElement= element;
+		setLauncher(launcher);
+		setMode(mode);
+		setElement(element);
 		setText(new DelegatingModelPresentation().getText(launcher));
 		ImageDescriptor descriptor= DebugPluginImages.getImageDescriptor(launcher.getIdentifier());
 		if (descriptor == null) {
@@ -56,8 +56,8 @@ public class LaunchSelectionAction extends Action {
 	public void run() {
 		BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
 			public void run() {
-				if (fElement != null || !DebugUIPlugin.getDefault().hasWizard(fLauncher)) {
-					fLauncher.launch(new Object[] {fElement}, fMode);
+				if (getElement() != null || !DebugUIPlugin.getDefault().hasWizard(getLauncher())) {
+					getLauncher().launch(new Object[] {getElement()}, getMode());
 				} else {
 					Shell shell= DebugUIPlugin.getActiveWorkbenchWindow().getShell();
 					if (shell != null) {
@@ -73,7 +73,7 @@ public class LaunchSelectionAction extends Action {
 						if (projects.length == 1) {
 							project = projects[0];
 						}
-						useWizard(new Object[] {fLauncher}, shell, StructuredSelection.EMPTY, fLauncher, project);
+						useWizard(new Object[] {getLauncher()}, shell, StructuredSelection.EMPTY, getLauncher(), project);
 					}
 				}
 			}
@@ -84,9 +84,33 @@ public class LaunchSelectionAction extends Action {
 	 * Use the launch wizard to do the launch.
 	 */
 	protected void useWizard(Object[] launchers, Shell shell, IStructuredSelection selection, ILauncher launcher, IProject project) {
-		LaunchWizard wizard= new LaunchWizard(launchers, selection, fMode, project, launcher);
+		LaunchWizard wizard= new LaunchWizard(launchers, selection, getMode(), project, launcher);
 		LaunchWizardDialog dialog= new LaunchWizardDialog(shell, wizard);
 		dialog.open();
+	}
+	
+	protected Object getElement() {
+		return fElement;
+	}
+
+	public void setElement(Object element) {
+		fElement = element;
+	}
+
+	protected ILauncher getLauncher() {
+		return fLauncher;
+	}
+
+	protected void setLauncher(ILauncher launcher) {
+		fLauncher = launcher;
+	}
+
+	protected String getMode() {
+		return fMode;
+	}
+
+	protected void setMode(String mode) {
+		fMode = mode;
 	}
 }
 

@@ -5,6 +5,10 @@ package org.eclipse.debug.internal.ui;
  * All Rights Reserved.
  */
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILauncher;
@@ -16,7 +20,6 @@ import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IEditorPart;
@@ -31,7 +34,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 public class LaunchWithAction extends Action implements IMenuCreator, IWorkbenchWindowActionDelegate {
 	
 	private String fMode;
-	
+	private List fActionItems;
 	/**
 	 * @see IAction#run()
 	 */
@@ -66,11 +69,16 @@ public class LaunchWithAction extends Action implements IMenuCreator, IWorkbench
 		action.setText(label.toString());
 		ActionContributionItem item= new ActionContributionItem(action);
 		item.fill(parent, -1);
+		if (getActionItems() != null) {
+			//have to do our own menu updating
+			getActionItems().add(item);
+		}
 	}
 	/**
 	 * @see IMenuCreator#dispose()
 	 */
 	public void dispose() {
+		setActionItems(null);
 	}
 	/**
 	 * @see IMenuCreator#getMenu(Control)
@@ -82,13 +90,9 @@ public class LaunchWithAction extends Action implements IMenuCreator, IWorkbench
 	 * @see IMenuCreator#getMenu(Menu)
 	 */
 	public Menu getMenu(Menu parent) {
-		Object element= null;
 		ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
 		ILauncher[] launchers= manager.getLaunchers(getMode());
-		IStructuredSelection selection = resolveSelection(DebugUIPlugin.getActiveWorkbenchWindow());
-		if (selection != null) {
-			element= selection.getFirstElement();
-		}
+		Object element = resolveSelectedElement(DebugUIPlugin.getActiveWorkbenchWindow());
 	
 		Menu menu= new Menu(parent);
 		for (int i= 0; i < launchers.length; i++) {
@@ -101,10 +105,10 @@ public class LaunchWithAction extends Action implements IMenuCreator, IWorkbench
 	}
 	
 	/**
-	 * Determines and returns the selection that provides context for the launch,
+	 * Determines and returns the selected element that provides context for the launch,
 	 * or <code>null</code> if there is no selection.
 	 */
-	protected IStructuredSelection resolveSelection(IWorkbenchWindow window) {
+	protected Object resolveSelectedElement(IWorkbenchWindow window) {
 		if (window == null) {
 			return null;
 		}
@@ -123,11 +127,9 @@ public class LaunchWithAction extends Action implements IMenuCreator, IWorkbench
 			if (editor != null) {
 				element= editor.getEditorInput();
 			}
-			if (selection == null && element != null) {
-				selection= new StructuredSelection(element);
-			}
+			return element;
 		}
-		return (IStructuredSelection)selection;
+		return ((IStructuredSelection)selection).getFirstElement();
 	}
 	
 	protected String getMode() {
@@ -141,6 +143,7 @@ public class LaunchWithAction extends Action implements IMenuCreator, IWorkbench
 	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window) {
+		setActionItems(new ArrayList(5));
 	}
 
 	/**
@@ -149,16 +152,36 @@ public class LaunchWithAction extends Action implements IMenuCreator, IWorkbench
 	public void run(IAction action) {
 		run();
 	}
-
+	
 	/**
 	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (action instanceof Action) {
 			((Action)action).setMenuCreator(this);
+			List items= getActionItems();
+			if (items != null) {
+				Object element= null;
+				if (!items.isEmpty()) {
+					element= resolveSelectedElement(DebugUIPlugin.getActiveWorkbenchWindow());
+				}
+				Iterator actionItems= items.iterator();
+				while (actionItems.hasNext()) {
+					ActionContributionItem item = (ActionContributionItem) actionItems.next();
+					((LaunchSelectionAction)item.getAction()).setElement(element);
+				}
+			}                
 		} else {
 			action.setEnabled(false);
 		}
+	}
+	
+	protected List getActionItems() {
+		return fActionItems;
+	}
+
+	protected void setActionItems(List actionItems) {
+		fActionItems = actionItems;
 	}
 }
 
