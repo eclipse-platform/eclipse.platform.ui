@@ -785,7 +785,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer {
 		String key,
 		boolean enabled) {
 		if (w != null) {
-			h.put(key, new Boolean(w.isEnabled()));
+			h.put(key, new Boolean(w.getEnabled()));
 			w.setEnabled(enabled);
 		}
 	}
