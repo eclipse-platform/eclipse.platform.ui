@@ -72,22 +72,23 @@ public class RefactoringWizardOpenOperation {
 	/**
 	 * Returns the outcome of the initial condition checking.
 	 * 
-	 * @return the outcome of the initial condition checking
+	 * @return the outcome of the initial condition checking or <code>null</code>
+	 *  if the condition checking hasn't been performed yet
 	 */
 	public RefactoringStatus getInitialConditionCheckingStatus() {
 		return fInitialConditions;
 	}
 	
 	/**
-	 * Opens the refactoring dialog for the refactoring wizard passed in the constructor. 
+	 * Opens the refactoring dialog for the refactoring wizard passed to the constructor. 
 	 * The method first checks the initial conditions of the refactoring. If the condition 
-	 * checking returns a status with a severity of <code>RefactoringStatus#Fatal</code> then
-	 * a message dialog is posted containing the corresponding status message. No wizard 
+	 * checking returns a status with a severity of {@link RefactoringStatus#FATAL} then
+	 * a message dialog is opened containing the corresponding status message. No wizard 
 	 * dialog is opened in this situation. If the condition checking passes then the 
 	 * refactoring dialog is opened. 
 	 * 
 	 * @param parent the parent shell for the dialog or <code>null</code> if the dialog
-	 *  is unparanted
+	 *  is a top level dialog
 	 * @param dialogTitle the dialog title of the message box presenting the failed
 	 *  condition check (if any)
 	 *   

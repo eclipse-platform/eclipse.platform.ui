@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.ltk.ui.refactoring">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ltk.ui.refactoring" id="chnagePreviewViewers" name="Refactoring Change Preview Viewers"/>
+         <meta.schema plugin="org.eclipse.ltk.ui.refactoring" id="changePreviewViewers" name="Refactoring Change Preview Viewers"/>
       </appInfo>
       <documentation>
-         This extension point is used to define a special viewer capable to change objects. The reader of 
+         This extension point is used to define a special viewer capable to present change objects. The reader of 
          the extension point provides the following predefined variables which can be accessed during 
          expression evaluation using the &amp;lt;with variable=&quot;...&quot;/&amp;gt; tag: 
 &lt;p&gt;

@@ -85,7 +85,8 @@ public abstract class RefactoringWizard extends Wizard {
 	/**
 	 * Flag indicating that a normal wizard based user interface consisting
 	 * of a back, next, finish and cancel button should be used to present
-	 * this refactoring wizard.
+	 * this refactoring wizard. This flag can't be specified together with
+	 * the flag {@link #DIALOG_BASED_UESR_INTERFACE}.
 	 */
 	public static final int WIZARD_BASED_USER_INTERFACE= 1 << 1;
 	
@@ -96,7 +97,8 @@ public abstract class RefactoringWizard extends Wizard {
 	 * is based on the first user input page. This flag is only valid if only
 	 * one user input page is present. Specifying this flag together with more
 	 * than one input page will result in an exception when adding the user input
-	 * pages.
+	 * pages. This flag can't be specified together with the flag 
+	 * {@link #WIZARD_BASED_USER_INTERFACE}.
 	 */
 	public static final int DIALOG_BASED_UESR_INTERFACE= 1 << 2;
 	
@@ -148,7 +150,7 @@ public abstract class RefactoringWizard extends Wizard {
 	 * Creates a new refactoring wizard for the given refactoring. 
 	 * 
 	 * @param refactoring the refactoring the wizard is presenting
-	 * @param flags flags specifying the bahaviour of the wizard. If neither 
+	 * @param flags flags specifying the behaviour of the wizard. If neither 
 	 *  <code>WIZARD_BASED_USER_INTERFACE</code> nor <code>DIALOG_BASED_UESR_INTERFACE</code> 
 	 *  is specified then <code>WIZARD_BASED_USER_INTERFACE</code> will be
 	 *  taken as a default.
@@ -196,7 +198,7 @@ public abstract class RefactoringWizard extends Wizard {
 	 * Returns the default page title used for pages that don't provide their 
 	 * own page title.
 	 * 
-	 * @return the default page title
+	 * @return the default page title or <code>null</code> if non has been set
 	 * 
 	 * @see #setDefaultPageTitle(String)
 	 */
@@ -337,7 +339,7 @@ public abstract class RefactoringWizard extends Wizard {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * This method ensures that the pages added to the refactoring wizard
+	 * This method asserts that the pages added to the refactoring wizard
 	 * are instances of type {@link RefactoringWizardPage}.
 	 */
 	public final void addPage(IWizardPage page) {
@@ -349,7 +351,7 @@ public abstract class RefactoringWizard extends Wizard {
 	 * Hook method to add user input pages to this refactoring wizard. Pages
 	 * added via this call have to be instances of the type {@link UserInputWizardPage}.
 	 * Adding pages of a different kind is not permitted and will result
-	 * in unexpected behavior.
+	 * in unexpected behaviour.
 	 */
 	protected abstract void addUserInputPages();
 	
@@ -425,6 +427,9 @@ public abstract class RefactoringWizard extends Wizard {
 		}
 	} 
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean canFinish() {
 		if (fForcePreviewReview && !fPreviewShown)
 			return false;
@@ -524,7 +529,7 @@ public abstract class RefactoringWizard extends Wizard {
 	 * @param api internal instance to avoid access from external clients
 	 * @param op the perform change operation
 	 * 
-	 * @return whether the finish ended ok or not
+	 * @return whether the finish ended OK or not
 	 */
 	public final FinishResult internalPerformFinish(InternalAPI api, PerformChangeOperation op) {
 		op.setUndoManager(RefactoringCore.getUndoManager(), fRefactoring.getName());

@@ -38,18 +38,20 @@ public class RefactoringUI {
 	}
 	
 	/**
-	 * Creates a dialog to present a {@link RefactoringStatus} to the user. Depending
-	 * on the parameter <code>backButton</code> the following values are returned
-	 * from the dialogs open method: {@link org.eclipse.jface.dialogs.IDialogConstants#OK_ID
-	 * IDialogConstants#OK_ID} if the user has pressed the continue button, 
-	 * {@link org.eclipse.jface.dialogs.IDialogConstants#CANCEL_ID IDialogConstants#CANCEL_ID}
-	 * if the user has pressed the cancel button or 
-	 * {@link org.eclipse.jface.dialogs.IDialogConstants#BACK_ID IDialogConstants#BACK_ID} if
-	 * the user has pressed the back button.
+	 * Creates a dialog to present a {@link RefactoringStatus} to the user. The following values are 
+	 * returned from the dialogs open method: 
+	 * <ul>
+	 *   <li>{@link org.eclipse.jface.dialogs.IDialogConstants#OK_ID IDialogConstants#OK_ID}:
+	 *       if the user has pressed the continue button.</li> 
+	 *   <li>{@link org.eclipse.jface.dialogs.IDialogConstants#CANCEL_ID IDialogConstants#CANCEL_ID}:
+	 *       if the user has pressed the cancel button.</li>
+	 *   <li>{@link org.eclipse.jface.dialogs.IDialogConstants#BACK_ID IDialogConstants#BACK_ID}: 
+	 *       if the user has pressed the back button.</li>
+	 * </ul>
 	 * 
 	 * @param status the status to present
 	 * @param parent the parent shell of the dialog. May be <code>null</code>
-	 *  if the dialog is unparented
+	 *  if the dialog is a top-level dialog
 	 * @param windowTitle the dialog's window title
 	 * @param backButton if <code>true</code> the dialog will contain a back button;
 	 *  otherwise no back button will be present.
@@ -67,8 +69,7 @@ public class RefactoringUI {
 	 * WizardDialog}.
 	 * 
 	 * @param wizard the refactoring wizard to create a dialog for
-	 * @param parent the parent of the created dialog or <code>null</code> if the dialog
-	 *  is unparanted
+	 * @param parent the parent of the created dialog or <code>null</code> to create a top-level dialog
 	 * 
 	 * @return the dialog 
 	 */
@@ -90,7 +91,8 @@ public class RefactoringUI {
 	 * @param change the change to perform
 	 * 
 	 * @return a special perform change operation that knows how to batch
-	 *  undo operations for open editors
+	 *  undo operations for open editors if they implement <code>IRewriteTarget
+	 *  </code>
 	 */
 	public static PerformChangeOperation createUIAwareChangeOperation(Change change) {
 		return new UIPerformChangeOperation(null, change, null);

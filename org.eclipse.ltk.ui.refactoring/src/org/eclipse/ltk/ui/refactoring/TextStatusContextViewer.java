@@ -52,7 +52,8 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 	/**
 	 * Returns the internal source viewer.
 	 * 
-	 * @return the internal source viewer
+	 * @return the internal source viewer or <code>null</code> if the
+	 *  source viewer hasn't been created yet
 	 */
 	protected SourceViewer getSourceViewer() {
 		return fSourceViewer;
@@ -71,11 +72,11 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 	//---- Helper methods to populate viewer -------------------------------
 
 	/**
-	 * Updates the title image and text of the pane surounding the source
+	 * Updates the title image and text of the pane surrounding the source
 	 * viewer. The image and text is determined by retrieving the <code>
 	 * IWorkbenchAdapter</code> for the given element. If the element doen't
 	 * provide a <code>IWorkbenchAdapter</code> or if the element is <code>
-	 * null</code> the image is resetted and a default label is shown.  
+	 * null</code> the image is reseted and a default label is shown.  
 	 * 
 	 * @param element the element providing the image and label for the title.
 	 *  Can be <code>null</code> to reset the image and text

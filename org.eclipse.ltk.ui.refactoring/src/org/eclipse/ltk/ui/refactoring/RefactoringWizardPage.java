@@ -47,8 +47,11 @@ public abstract class RefactoringWizardPage extends WizardPage {
 		super(name);
 	}
 	
-	/* (non-Javadoc)
-	 * Method declared on IWizardPage.
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * This method asserts that the wizard passed as a parameter is of 
+	 * type <code>RefactoringWizard</code>.
 	 */
 	public void setWizard(IWizard newWizard) {
 		Assert.isTrue(newWizard instanceof RefactoringWizard);
@@ -61,6 +64,7 @@ public abstract class RefactoringWizardPage extends WizardPage {
 	 * wizard yet.
 	 * 
 	 * @return the refactoring associated with this refactoring wizard page
+	 *  or <code>null</code>
 	 */
 	protected Refactoring getRefactoring() {
 		RefactoringWizard wizard= getRefactoringWizard();
@@ -72,7 +76,8 @@ public abstract class RefactoringWizardPage extends WizardPage {
 	/**
 	 * Returns the page's refactoring wizard.
 	 * 
-	 * @return the page's refactoring wizard
+	 * @return the page's refactoring wizard or <code>null</code> if
+	 *  the wizard hasn't been set yet
 	 */
 	protected RefactoringWizard getRefactoringWizard() {
 		return (RefactoringWizard)getWizard();
@@ -95,7 +100,8 @@ public abstract class RefactoringWizardPage extends WizardPage {
 	/**
 	 * Returns the refactoring wizard's dialog settings.
 	 * 
-	 * @return the refactoring wizard's dialog settings.
+	 * @return the refactoring wizard's dialog settings or <code>null</code>
+	 *  if no settings are associated with the refactoring wizard dialog
 	 */
 	protected IDialogSettings getRefactoringSettings() {
 		IDialogSettings settings= getDialogSettings();

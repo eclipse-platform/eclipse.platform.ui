@@ -17,8 +17,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
 
 /**
  * Viewer to present the the context object of a {@linkplain org.eclipse.ltk.core.refactoring.RefactoringStatusEntry
- * refactoring status entry}. It is guaranteed that the methods <code>setInput</code> 
- * and <code>getControl</code> are called after <code>createControl</code> has been called.
+ * refactoring status entry}.
  * <p>
  * Status context viewers are associated with a context object via the extension point <code>
  * org.eclipse.ltk.ui.refactoring.statusContextViewers</code>. Implementors of this
@@ -29,7 +28,10 @@ import org.eclipse.ltk.core.refactoring.RefactoringStatusContext;
  * hierarchy provided through the method {@link #createControl(Composite)} has to
  * use a {@link org.eclipse.swt.custom.ViewForm} as its root widget.
  * </p>
- * 
+ * <p>
+ * Clients of this interface should call <code>createControl</code> before calling
+ * <code>setInput</code>.
+ * </p>
  * @since 3.0
  */
 public interface IStatusContextViewer {
@@ -48,7 +50,8 @@ public interface IStatusContextViewer {
 	/**
 	 * Returns the status context viewer's SWT control.
 	 * 
-	 * @return the status context viewer's SWT control
+	 * @return the status context viewer's SWT control or <code>null</code>
+	 *  is the widget hierarchy hasn't been created yet
 	 */
 	public Control getControl();	
 	

@@ -15,8 +15,6 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * Viewer to present the preview for a {@link org.eclipse.ltk.core.refactoring.Change}.
- * It is guaranteed that the methods <code>setInput</code> and <code>getControl</code>
- * are called after <code>createControl</code> has been called.
  * <p>
  * Viewers are associated with a change object via the extension point <code>
  * org.eclipse.ltk.ui.refactoring.changePreviewViewers</code>. Implementors of this
@@ -27,6 +25,10 @@ import org.eclipse.swt.widgets.Control;
  * hierarchy provided through the method {@link #createControl(Composite)} has to
  * use a {@link org.eclipse.swt.custom.ViewForm} as its root widget.
  * </p>
+ * <p>
+ * Clients of this interface should call <code>createControl</code> before calling
+ * <code>setInput</code>.
+ * </p>
  * 
  * @since 3.0
  */
@@ -35,7 +37,7 @@ public interface IChangePreviewViewer {
 	/**
 	 * Creates the preview viewer's widget hierarchy. This method 
 	 * is only called once. Method <code>getControl()</code>
-	 * should be use retrieve the widget hierarchy.
+	 * should be used to retrieve the widget hierarchy.
 	 * 
 	 * @param parent the parent for the widget hierarchy
 	 * 
@@ -46,7 +48,8 @@ public interface IChangePreviewViewer {
 	/**
 	 * Returns the preview viewer's SWT control.
 	 * 
-	 * @return the preview viewer's SWT control
+	 * @return the preview viewer's SWT control or <code>null</code>
+	 *  is the widget hierarchy hasn't been created yet
 	 */
 	public Control getControl();	
 	
