@@ -23,13 +23,15 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import org.eclipse.jface.contentassist.*;
+import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextPresentation;
@@ -473,14 +475,21 @@ class ContextInformationPopup implements IContentAssistListener {
 		
 		Control control= fContentAssistSubjectControlAdapter.getControl();
 		fContextSelectorShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE);
-		fContextSelectorTable= new Table(fContextSelectorShell, SWT.H_SCROLL | SWT.V_SCROLL);
-
-		int height= fContextSelectorTable.getItemHeight() * 10;
-		fContextSelectorShell.setSize(302, height + 2);
-		fContextSelectorTable.setSize(300, height);
-		fContextSelectorTable.setLocation(1, 1);
-		
+		GridLayout layout= new GridLayout();
+		layout.marginWidth= 0;
+		layout.marginHeight= 0;
+		fContextSelectorShell.setLayout(layout);
 		fContextSelectorShell.setBackground(control.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+
+		
+		fContextSelectorTable= new Table(fContextSelectorShell, SWT.H_SCROLL | SWT.V_SCROLL);
+		fContextSelectorTable.setLocation(1, 1);
+		GridData gd= new GridData(GridData.FILL_BOTH);
+		gd.heightHint= fContextSelectorTable.getItemHeight() * 10;
+		gd.widthHint= 300;
+		fContextSelectorTable.setLayoutData(gd);
+
+		fContextSelectorShell.pack(true);
 		
 		Color c= fContentAssistant.getContextSelectorBackground();
 		if (c == null)
