@@ -95,6 +95,13 @@ public interface IResourceStatus extends IStatus {
  	 */
 	public static final int OUT_OF_SYNC_LOCAL = 274;
 
+	/** Status code constant (value 275) indicating this file system is not case
+	 * sensitive and a resource that differs only in case unexpectedly exists on 
+	 * the local file system.
+ 	 * Severity: error. Category: local file system.
+ 	 */
+	public static final int CASE_VARIANT_EXISTS = 275;
+
 	// Workspace constants [300-398]
 	// Information Only [300-332]
 
