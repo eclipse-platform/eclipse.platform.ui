@@ -730,18 +730,7 @@
          </action>
       </viewContribution>
    </extension>
-<!-- **************** Markers ******************* -->
-   <extension
-         point="org.eclipse.ui.markerResolution">
-      <markerResolutionGenerator
-            markerType="org.eclipse.team.cvs.core.cvsremove"
-            class="org.eclipse.team.internal.ccvs.ui.CVSRemoveResolutionGenerator">
-      </markerResolutionGenerator>
-      <markerResolutionGenerator
-            markerType="org.eclipse.team.cvs.core.cvsadd"
-            class="org.eclipse.team.internal.ccvs.ui.CVSAddResolutionGenerator">
-      </markerResolutionGenerator>
-   </extension>
+
 <!-- **************** CVS Perspective ******************* -->
    <extension
          point="org.eclipse.ui.perspectives">

@@ -67,7 +67,6 @@ public interface IHelpContextIds {
 	public static final String PREF_KEYWORDMODE = PREFIX + "default_keywordmode_pref"; //$NON-NLS-1$
 	public static final String PREF_COMMS_TIMEOUT = PREFIX + "comms_timeout_pref"; //$NON-NLS-1$
 	public static final String PREF_CONSIDER_CONTENT = PREFIX + "consider_content_pref"; //$NON-NLS-1$
-	public static final String PREF_MARKERS_ENABLED = PREFIX + "markers_enabled_pref"; //$NON-NLS-1$
 	public static final String PREF_REPLACE_DELETE_UNMANAGED = PREFIX + "replace_deletion_of_unmanaged_pref"; //$NON-NLS-1$
 	public static final String PREF_SAVE_DIRTY_EDITORS = PREFIX + "save_dirty_editors_pref"; //$NON-NLS-1$
 	public static final String PREF_TREAT_NEW_FILE_AS_BINARY = PREFIX + "treat_new_files_as_binary_pref"; //$NON-NLS-1$

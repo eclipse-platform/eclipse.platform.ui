@@ -59,7 +59,6 @@ public interface ICVSUIConstants {
 	public final String PREF_CVS_RSH_PARAMETERS = "pref_cvs_rsh_parameters"; //$NON-NLS-1$
 	public final String PREF_CVS_SERVER = "pref_cvs_server"; //$NON-NLS-1$
 	public final String PREF_CONSIDER_CONTENTS = "pref_consider_contents"; //$NON-NLS-1$
-	public final String PREF_SHOW_MARKERS = "pref_show_markers"; //$NON-NLS-1$
 	public final String PREF_REPLACE_UNMANAGED = "pref_replace_unmanaged"; //$NON-NLS-1$
 	public final String PREF_COMPRESSION_LEVEL = "pref_compression_level"; //$NON-NLS-1$
 	public final String PREF_TEXT_KSUBST = "pref_text_ksubst"; //$NON-NLS-1$

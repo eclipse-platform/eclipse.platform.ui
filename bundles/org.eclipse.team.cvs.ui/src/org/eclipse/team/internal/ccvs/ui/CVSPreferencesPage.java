@@ -66,7 +66,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 	private Combo ksubstCombo;
 	private List ksubstOptions;
 	private Button considerContentsInCompare;
-	private Button showMarkers;
 	private Button replaceUnmanaged;
 	private Button repositoriesAreBinary;
 	private Button determineVersionEnabled;
@@ -177,7 +176,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 
 		pruneEmptyDirectoriesField = createCheckBox(composite, Policy.bind("CVSPreferencePage.pruneEmptyDirectories")); //$NON-NLS-1$
 		considerContentsInCompare = createCheckBox(composite, Policy.bind("CVSPreferencePage.considerContentsInCompare")); //$NON-NLS-1$		
-		showMarkers = createCheckBox(composite, Policy.bind("CVSPreferencePage.showAddRemoveMarkers")); //$NON-NLS-1$		
 		replaceUnmanaged = createCheckBox(composite, Policy.bind("CVSPreferencePage.replaceUnmanaged")); //$NON-NLS-1$
 		repositoriesAreBinary = createCheckBox(composite, Policy.bind("CVSPreferencePage.repositoriesAreBinary")); //$NON-NLS-1$
 		determineVersionEnabled = createCheckBox(composite, Policy.bind("CVSPreferencePage.determineVersionEnabled")); //$NON-NLS-1$
@@ -246,7 +244,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		WorkbenchHelp.setHelp(timeoutValue, IHelpContextIds.PREF_COMMS_TIMEOUT);
 		WorkbenchHelp.setHelp(considerContentsInCompare, IHelpContextIds.PREF_CONSIDER_CONTENT);
 		WorkbenchHelp.setHelp(replaceUnmanaged, IHelpContextIds.PREF_REPLACE_DELETE_UNMANAGED);
-		WorkbenchHelp.setHelp(showMarkers, IHelpContextIds.PREF_MARKERS_ENABLED);
 		WorkbenchHelp.setHelp(repositoriesAreBinary, IHelpContextIds.PREF_TREAT_NEW_FILE_AS_BINARY);
 		WorkbenchHelp.setHelp(determineVersionEnabled, IHelpContextIds.PREF_DETERMINE_SERVER_VERSION);
 		Dialog.applyDialogFont(parent);
@@ -303,7 +300,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		}
 		ksubstCombo.select(getKSubstComboIndexFor(store.getString(ICVSUIConstants.PREF_TEXT_KSUBST)));
 		considerContentsInCompare.setSelection(store.getBoolean(ICVSUIConstants.PREF_CONSIDER_CONTENTS));
-		showMarkers.setSelection(store.getBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 		replaceUnmanaged.setSelection(store.getBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		determineVersionEnabled.setSelection(store.getBoolean(ICVSUIConstants.PREF_DETERMINE_SERVER_VERSION));
 		
@@ -332,8 +328,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		// listeners invoked from the preference store change may need these
 		// values
 		
-		CVSProviderPlugin.getPlugin().setShowTasksOnAddAndDelete(showMarkers.getSelection());
-		
 		store.setValue(ICVSUIConstants.PREF_PRUNE_EMPTY_DIRECTORIES, pruneEmptyDirectoriesField.getSelection());
 		store.setValue(ICVSUIConstants.PREF_TIMEOUT, timeout);
 		store.setValue(ICVSUIConstants.PREF_QUIETNESS, quietnessCombo.getSelectionIndex());
@@ -345,7 +339,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		}
 		store.setValue(ICVSUIConstants.PREF_TEXT_KSUBST, mode);
 		store.setValue(ICVSUIConstants.PREF_CONSIDER_CONTENTS, considerContentsInCompare.getSelection());
-		store.setValue(ICVSUIConstants.PREF_SHOW_MARKERS, showMarkers.getSelection());
 		store.setValue(ICVSUIConstants.PREF_REPLACE_UNMANAGED, replaceUnmanaged.getSelection());
 		store.setValue(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS, getSaveRadio());
 		store.setValue(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY, repositoriesAreBinary.getSelection());
@@ -388,7 +381,6 @@ public class CVSPreferencesPage extends PreferencePage implements IWorkbenchPref
 		quietnessCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_QUIETNESS));
 		compressionLevelCombo.select(store.getDefaultInt(ICVSUIConstants.PREF_COMPRESSION_LEVEL));
 		ksubstCombo.select(getKSubstComboIndexFor(store.getDefaultString(ICVSUIConstants.PREF_TEXT_KSUBST)));
-		showMarkers.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_SHOW_MARKERS));
 		replaceUnmanaged.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPLACE_UNMANAGED));
 		initializeSaveRadios(store.getDefaultInt(ICVSUIConstants.PREF_SAVE_DIRTY_EDITORS));
 		repositoriesAreBinary.setSelection(store.getDefaultBoolean(ICVSUIConstants.PREF_REPOSITORIES_ARE_BINARY));

@@ -107,7 +107,7 @@ public abstract class CVSOperation implements IRunnableWithProgress {
 		startOperation();
 		try {
 			if (isModifiesWorkspace()) {
-				new CVSWorkspaceModifyOperation(this).execute(monitor);
+				new CVSWorkspaceModifyOperation(this).run(monitor);
 			} else {
 				execute(monitor);
 			}

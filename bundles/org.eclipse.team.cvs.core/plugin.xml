@@ -99,17 +99,6 @@
 		<super type="org.eclipse.team.cvs.core.cvsmarker"/>
 		<persistent value="true"/>
 	</extension>
-	<extension id="cvsremove" point="org.eclipse.core.resources.markers" name="%cvsRemove">
-		<super type="org.eclipse.core.resources.problemmarker"/>
-		<super type="org.eclipse.team.cvs.core.cvsmarker"/>
-		<attribute name="name"/>
-		<persistent value="true"/>
-	</extension>
-	<extension id="cvsadd" point="org.eclipse.core.resources.markers" name="%cvsAdd">
-		<super type="org.eclipse.core.resources.problemmarker"/>
-		<super type="org.eclipse.team.cvs.core.cvsmarker"/>
-		<persistent value="true"/>
-	</extension>
 	
 	<!-- ************ File Types *************** -->
 	<extension point="org.eclipse.team.core.fileTypes">

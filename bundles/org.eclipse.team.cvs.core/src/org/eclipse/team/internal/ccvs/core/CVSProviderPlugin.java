@@ -109,7 +109,6 @@ public class CVSProviderPlugin extends Plugin {
 	private boolean fetchAbsentDirectories = DEFAULT_FETCH;
 	private boolean promptOnFileDelete = true;
 	private boolean promptOnFolderDelete = true;
-	private boolean showTasksOnAddAndDelete = false;
 	private boolean replaceUnmanaged = true;
 	private boolean repositoriesAreBinary = false;
 	private String cvsRshCommand = DEFAULT_CVS_RSH;
@@ -318,7 +317,6 @@ public class CVSProviderPlugin extends Plugin {
 		workspace.addResourceChangeListener(addDeleteMoveListener, IResourceChangeEvent.POST_AUTO_BUILD);
 		workspace.addResourceChangeListener(fileModificationManager, IResourceChangeEvent.POST_CHANGE);
 		fileModificationManager.registerSaveParticipant();
-		CVSProviderPlugin.addResourceStateChangeListener(addDeleteMoveListener);
 		
 		createCacheDirectory();
 		
@@ -537,21 +535,6 @@ public class CVSProviderPlugin extends Plugin {
 		}
 	}
 	
-	/**
-	 * Gets the showTasksOnAddAndDelete.
-	 * @return Returns a boolean
-	 */
-	public boolean getShowTasksOnAddAndDelete() {
-		return showTasksOnAddAndDelete;
-	}
-
-	/**
-	 * Sets the showTasksOnAddAndDelete.
-	 * @param showTasksOnAddAndDelete The showTasksOnAddAndDelete to set
-	 */
-	public void setShowTasksOnAddAndDelete(boolean showTasksOnAddAndDelete) {
-		this.showTasksOnAddAndDelete = showTasksOnAddAndDelete;
-	}
 	/**
 	 * Gets the replaceUnmanaged.
 	 * @return Returns a boolean

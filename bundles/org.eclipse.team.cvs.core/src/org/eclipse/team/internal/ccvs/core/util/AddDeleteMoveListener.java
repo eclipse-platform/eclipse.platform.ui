@@ -11,20 +11,15 @@
 package org.eclipse.team.internal.ccvs.core.util;
 
  
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -36,9 +31,7 @@ import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.ICVSResourceVisitor;
 import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
-import org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
@@ -47,13 +40,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 /**
  * Listen for the addition of orphaned subtrees as a result of a copy or move.
  */
-public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceChangeListener, IResourceStateChangeListener {
-
-	public static final String CVS_MARKER = "org.eclipse.team.cvs.core.cvsmarker";//$NON-NLS-1$
-	public static final String DELETION_MARKER = "org.eclipse.team.cvs.core.cvsremove";//$NON-NLS-1$
-	public static final String ADDITION_MARKER = "org.eclipse.team.cvs.core.cvsadd";//$NON-NLS-1$
-	
-	public static final String NAME_ATTRIBUTE = "name";//$NON-NLS-1$
+public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceChangeListener {
 	
 	public static IResource getResourceFor(IProject container, IResource destination, IPath originating) {
 		switch(destination.getType()) {
@@ -165,19 +152,12 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 				if (ResourceSyncInfo.isDeletion(syncBytes)) {
 					// Handle a replaced deletion
 					mFile.setSyncBytes(ResourceSyncInfo.convertFromDeletion(syncBytes), ICVSFile.UNKNOWN);
-					try {
-						IMarker marker = getDeletionMarker(resource);
-						if (marker != null) marker.delete();
-					} catch (CoreException e) {
-						CVSProviderPlugin.log(e);
-					}
 				} else if (ResourceSyncInfo.isFolder(syncBytes)) {
 					// This is a gender change against the server! 
 					// We will allow it but the user will get an error if they try to commit
 					mFile.unmanage(null);
 				}
 			}
-			createNecessaryMarkers(new IResource[] {resource});
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
 		}
@@ -195,7 +175,6 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 					mFolder.unmanage(null);
 				}
 			}
-			createNecessaryMarkers(new IResource[] {resource});
 		} catch (CVSException e) {
 			CVSProviderPlugin.log(e);
 		}
@@ -254,178 +233,5 @@ public class AddDeleteMoveListener implements IResourceDeltaVisitor, IResourceCh
 			Util.logError(Policy.bind("ResourceDeltaVisitor.visitError"), e);//$NON-NLS-1$
 		}
 	}
-	
-	/*
-	 * @see IResourceStateChangeListener#resourceStateChanged(IResource[])
-	 */
-	public void resourceSyncInfoChanged(IResource[] changedResources) {
-		createNecessaryMarkers(changedResources);
-	}
-			
-	/**
-	 * @see IResourceStateChangeListener#projectConfigured(IProject)
-	 */
-	public void projectConfigured(final IProject project) {
-		try {
-			// Create deletion tasks for any deleted resources
-			final ICVSFolder root = CVSWorkspaceRoot.getCVSFolderFor(project);
-			root.accept(new ICVSResourceVisitor() {
-				public void visitFile(ICVSFile file) throws CVSException {
-					if (file.getParent().isCVSFolder()) {
-						byte[] syncBytes = file.getSyncBytes();
-						if (syncBytes != null && ResourceSyncInfo.isDeletion(syncBytes)) {
-							createDeleteMarker(project.getFile(file.getRelativePath(root)));
-						}
-					}
-				}
-				public void visitFolder(ICVSFolder folder) throws CVSException {
-					if (folder.isCVSFolder()) {
-						folder.acceptChildren(this);
-					}
-				}
-			});
-		} catch (CVSException e) {
-			CVSProviderPlugin.log(e);
-		}
-	}
 
-	/**
-	 * @see IResourceStateChangeListener#projectDeconfigured(IProject)
-	 */
-	public void projectDeconfigured(IProject project) {
-		try {
-			clearCVSMarkers(project);
-		} catch (CoreException e) {
-			CVSProviderPlugin.log(e);
-		}
-	}
-	
-	public static void refreshAllMarkers() throws CoreException {
-		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
-			if(RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId()) != null) {
-				refreshMarkers(project);
-			}
-		}		
-	}
-	
-	private static IMarker createDeleteMarker(IResource resource) {
-		if (! CVSProviderPlugin.getPlugin().getShowTasksOnAddAndDelete()) {
-			return null;
-		}
-		try {
-			IMarker marker = getDeletionMarker(resource);
-			if (marker != null) {
-				return marker;
-			}
-			IContainer parent = resource.getParent();
-			if (! parent.exists()) return null;
-			marker = parent.createMarker(DELETION_MARKER);
-			marker.setAttribute("name", resource.getName());//$NON-NLS-1$
-			marker.setAttribute(IMarker.MESSAGE, Policy.bind("AddDeleteMoveListener.deletedResource", resource.getName()));//$NON-NLS-1$
-			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
-			return marker;
-		} catch (CoreException e) {
-			Util.logError(Policy.bind("AddDeleteMoveListener.Error_creating_deletion_marker_1"), e); //$NON-NLS-1$
-		}
-		return null;
-	}
-	
-	private static IMarker getAdditionMarker(IResource resource) throws CoreException {
-   		IMarker[] markers = resource.findMarkers(ADDITION_MARKER, false, IResource.DEPTH_ZERO);
-   		if (markers.length == 1) {
-   			return markers[0];
-   		}
-		return null;
-	}
-	
-	private static IMarker getDeletionMarker(IResource resource) throws CoreException {
-		if (resource.getParent().exists()) {
-			String name = resource.getName();
-	   		IMarker[] markers = resource.getParent().findMarkers(DELETION_MARKER, false, IResource.DEPTH_ZERO);
-	   		for (int i = 0; i < markers.length; i++) {
-				IMarker iMarker = markers[i];
-				String markerName = (String)iMarker.getAttribute(NAME_ATTRIBUTE);
-				if (markerName.equals(name))
-					return iMarker;
-			}
-		}
-		return null;
-	}
-	
-	private static void createNecessaryMarkers(IResource[] changedResources) {
-		for (int i = 0; i < changedResources.length; i++) {
-			try {
-				final IResource resource = changedResources[i];
-				
-				if (resource.exists()) {
-					// First, delete any addition markers even though we no longer create them
-					IMarker marker = getAdditionMarker(resource);
-					if (marker != null)
-						marker.delete();
-					// Also, delete any deletion markers stored on the parent
-					if (resource.getType() == IResource.FILE) {
-						marker = getDeletionMarker(resource);
-						if (marker != null)
-							marker.delete();
-					}
-				} else if (resource.getType() == IResource.FILE) {
-					// Handle deletion markers on non-existant files
-					RepositoryProvider provider = RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId());	
-					if (provider == null) break;
-					ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
-					if (cvsResource.isManaged()) {
-						createDeleteMarker(resource);
-					} else {
-						IMarker marker = getDeletionMarker(resource);
-						if (marker != null)
-							marker.delete();
-					}
-				}
-			} catch (CVSException e) {
-				Util.logError(Policy.bind("AddDeleteMoveListener.Error_updating_marker_state_4"), e); //$NON-NLS-1$
-			} catch (CoreException e) {
-				Util.logError(Policy.bind("AddDeleteMoveListener.Error_updating_marker_state_4"), e); //$NON-NLS-1$
-			}
-		}
-	}
-	
-	private static void refreshMarkers(IResource resource) throws CoreException {
-		final List resources = new ArrayList();
-		clearCVSMarkers(resource);
-		resource.accept(new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
-				if(resource.getType() != IResource.PROJECT) { 
-					resources.add(resource);
-				}
-				return true;
-			}
-		}, IResource.DEPTH_INFINITE, true /*include phantoms*/);
-		createNecessaryMarkers((IResource[]) resources.toArray(new IResource[resources.size()]));
-	}
-	
-	public static void clearAllCVSMarkers() throws CoreException {
-		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			IProject project = projects[i];
-			if(RepositoryProvider.getProvider(project, CVSProviderPlugin.getTypeId()) != null) {
-				clearCVSMarkers(project);
-			}
-		}
-	}
-	
-	private static void clearCVSMarkers(IResource resource) throws CoreException {
-		IMarker[] markers = resource.findMarkers(CVS_MARKER, true, IResource.DEPTH_INFINITE);
-		for (int i = 0; i < markers.length; i++) {
-			markers[i].delete();
-		}
-	}
-	
-	/**
-	 * @see org.eclipse.team.internal.ccvs.core.IResourceStateChangeListener#resourceModificationStateChanged(org.eclipse.core.resources.IResource[])
-	 */
-	public void resourceModified(IResource[] changedResources) {
-		// Nothing to do here
-	}
 }
