@@ -51,19 +51,43 @@ public final class XMLMemento implements IMemento {
 	 * Creates a <code>Document</code> from the <code>Reader</code>
 	 * and returns a memento on the first <code>Element</code> for reading
 	 * the document.
+	 * <p>
+	 * Same as calling createReadRoot(reader, null)
+	 * </p>
 	 * 
 	 * @param reader the <code>Reader</code> used to create the memento's document
 	 * @return a memento on the first <code>Element</code> for reading the document
 	 * @throws <code>WorkbenchException</code> if IO problems, invalid format, or no element.
 	 */
 	public static XMLMemento createReadRoot(Reader reader) throws WorkbenchException {
+		return createReadRoot(reader, null);
+	}
+
+	/**
+	 * Creates a <code>Document</code> from the <code>Reader</code>
+	 * and returns a memento on the first <code>Element</code> for reading
+	 * the document.
+	 * 
+	 * @param reader the <code>Reader</code> used to create the memento's document
+	 * @param baseDir the directory used to resolve relative file names
+	 * 		in the XML document. This directory must exist and include the
+	 * 		trailing separator. The directory format, including the separators,
+	 * 		must be valid for the platform. Can be <code>null</code> if not
+	 * 		needed.
+	 * @return a memento on the first <code>Element</code> for reading the document
+	 * @throws <code>WorkbenchException</code> if IO problems, invalid format, or no element.
+	 */
+	public static XMLMemento createReadRoot(Reader reader, String baseDir) throws WorkbenchException {
 		String messageKey = "XMLMemento.noElement"; //$NON-NLS-1$
 		Exception exception = null;
 		
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder parser = factory.newDocumentBuilder();
-			Document document = parser.parse(new InputSource(reader));
+			InputSource source = new InputSource(reader);
+			if (baseDir != null)
+				source.setSystemId(baseDir);
+			Document document = parser.parse(source);
 			NodeList list = document.getChildNodes();
 			for (int i = 0; i < list.getLength(); i++) {
 				Node node = list.item(i);
