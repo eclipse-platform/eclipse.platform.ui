@@ -8,6 +8,7 @@ import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -65,6 +66,8 @@ public class UpdatesView
 		"ConfirmDelete.multiple";
 	private static final String KEY_CONFIRM_DELETE_SINGLE =
 		"ConfirmDelete.single";
+		
+	private static final String P_FILTER = "UpdatesView.matchingFilter";
 
 	private Action propertiesAction;
 	private Action newAction;
@@ -414,16 +417,19 @@ public class UpdatesView
 
 		filterEnvironmentAction = new Action() {
 			public void run() {
-				if (filterEnvironmentAction.isChecked()) {
+				boolean checked = filterEnvironmentAction.isChecked();
+				if (checked) {
 					viewer.addFilter(environmentFilter);
 				} else
 					viewer.removeFilter(environmentFilter);
+				setStoredEnvironmentValue(checked);
 			}
 		};
 
 		filterEnvironmentAction.setText(
 			UpdateUIPlugin.getResourceString(KEY_FILTER_ENVIRONMENT));
-		filterEnvironmentAction.setChecked(true);
+		boolean envValue = getStoredEnvironmentValue();
+		filterEnvironmentAction.setChecked(envValue);
 
 		viewer.addFilter(environmentFilter);
 
@@ -445,6 +451,16 @@ public class UpdatesView
 			UpdateUIPlugin.getResourceString(KEY_LINK_EXTENSION));
 
 		viewer.addSelectionChangedListener(selectionListener);
+	}
+	
+	private boolean getStoredEnvironmentValue() {
+		IDialogSettings settings = UpdateUIPlugin.getDefault().getDialogSettings();
+		return !settings.getBoolean(P_FILTER);
+	}
+	
+	private void setStoredEnvironmentValue(boolean value) {
+		IDialogSettings settings = UpdateUIPlugin.getDefault().getDialogSettings();
+		settings.put(P_FILTER, !value);
 	}
 
 	private void updateForSelection(IStructuredSelection selection) {
