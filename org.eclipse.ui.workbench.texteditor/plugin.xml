@@ -436,20 +436,20 @@
 	        commandId="org.eclipse.ui.edit.text.delete.line.to.end"
 	        contextId="org.eclipse.ui.textEditorScope"
 			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        keySequence="Ctrl+Shift+Delete">
+	        keySequence="Ctrl+Shift+Del">
 	  </keyBinding>
       <keyBinding
             platform="gtk"
 	        contextId="org.eclipse.ui.textEditorScope"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Ctrl+Shift+Delete">
+            keySequence="Ctrl+Shift+Del">
       </keyBinding>
       <keyBinding
             platform="gtk"
 	        commandId="org.eclipse.ui.edit.text.delete.line.to.end"
  	        contextId="org.eclipse.ui.textEditorScope"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Esc Ctrl+Delete">
+            keySequence="Esc Ctrl+Del">
       </keyBinding>
 	  <keyBinding
 	        commandId="org.eclipse.ui.edit.findNext"
@@ -523,13 +523,13 @@
 			keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        keySequence="Shift+ENTER"
+	        keySequence="Shift+CR"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.smartEnter"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        keySequence="Ctrl+Shift+ENTER"
+	        keySequence="Ctrl+Shift+CR"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.smartEnterInverse"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -589,13 +589,13 @@
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        keySequence="Ctrl+Delete"
+	        keySequence="Ctrl+Del"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.deleteNextWord"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
 	  </keyBinding>
 	  <keyBinding
-	        keySequence="Ctrl+Backspace"
+	        keySequence="Ctrl+BS"
 	        contextId="org.eclipse.ui.textEditorScope"
 	        commandId="org.eclipse.ui.edit.text.deletePreviousWord"
 	        keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -651,7 +651,7 @@
             platform="carbon"
 	        contextId="org.eclipse.ui.textEditorScope"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Ctrl+Shift+Delete">
+            keySequence="Ctrl+Shift+Del">
       </keyBinding>
       <keyBinding
             platform="carbon"
@@ -720,7 +720,7 @@
             commandId="org.eclipse.ui.edit.text.delete.line.to.end"
             contextId="org.eclipse.ui.textEditorScope"
             keyConfigurationId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            keySequence="Command+Shift+Delete">
+            keySequence="Command+Shift+Del">
       </keyBinding>
       <keyBinding
             platform="carbon"
