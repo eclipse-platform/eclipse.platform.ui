@@ -27,6 +27,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -267,6 +269,11 @@ public class ConfigurationWizardMainPage extends CVSWizardPage {
 		warningText.setText(Policy.bind("UserValidationDialog.7")); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = 300;
+		GC gc= new GC(composite);
+		gc.setFont(parent.getFont());
+		FontMetrics fontMetrics= gc.getFontMetrics();
+		gc.dispose();
+		data.heightHint= Dialog.convertHeightInCharsToPixels(fontMetrics, 3);
 		warningText.setLayoutData(data);
 		
 		initializeValues();
