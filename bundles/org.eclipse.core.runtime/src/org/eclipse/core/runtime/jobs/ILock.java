@@ -32,14 +32,16 @@ package org.eclipse.core.runtime.jobs;
  * It is very important that acquired locks eventually get released.  Calls to release
  * should be done in a finally block to ensure they execute.  For example:
  * <pre>
- * lock.acquire();
  * try {
+ * 	lock.acquire();
  * 	// ... do work here ...
  * } finally {
  * 	lock.release();
  * }
  * </pre>
- * 
+ * Note: although <tt>lock.acquire</tt> should never fail, it is good practice to place 
+ * it inside the try block anyway.  Releasing without acquiring is far less catastrophic 
+ * than acqiring without releasing.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
