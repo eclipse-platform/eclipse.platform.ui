@@ -513,7 +513,7 @@ public class DebugUITools {
 	
 	/**
 	 * Builds the workspace according to current preference settings and
-	 * launches the given launch configuration in the specified mode in a the
+	 * launches the given launch configuration in the specified mode in the
 	 * foreground with a progress dialog. Reports any exceptions that occur
 	 * in an error dialog.
 	 * 
