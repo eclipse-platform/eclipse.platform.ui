@@ -41,13 +41,13 @@ public class SearchQueryData {
 		maxHits = MAX_HITS;
 		fieldSearch = false;
 		fieldNames = new ArrayList();
-		fieldNames.add("h1");
-		fieldNames.add("h2");
-		fieldNames.add("h3");
-		fieldNames.add("keyword");
-		fieldNames.add("role");
-		fieldNames.add("solution");
-		fieldNames.add("technology");
+//		fieldNames.add("h1");
+//		fieldNames.add("h2");
+//		fieldNames.add("h3");
+//		fieldNames.add("keyword");
+//		fieldNames.add("role");
+//		fieldNames.add("solution");
+//		fieldNames.add("technology");
 		selectedBooks = new ArrayList(0);
 	}
 	/**
