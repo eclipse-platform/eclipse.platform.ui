@@ -42,6 +42,10 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 		super(name);
 	}
 
+	private void cleanHistory() {
+		((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore().clean(getMonitor());
+	}
+
 	/**
 	 * Creates a tree of resources containing history. 
 	 */
@@ -188,6 +192,11 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 				ensureDoesNotExistInWorkspace(base);
 			}
 
+			protected void tearDown() throws CoreException {
+				if (original != null)
+					getWorkspace().setDescription(original);
+			}
+
 			protected void test() {
 				try {
 					base.clearHistory(getMonitor());
@@ -195,60 +204,19 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 					fail("", e);
 				}
 			}
-
-			protected void tearDown() throws CoreException {
-				if (original != null)
-					getWorkspace().setDescription(original);
-			}
 		}.run(this, 4, 3);
-	}
-
-	private void testHistoryCleanUp(final int filesPerFolder, final int statesPerFile) {
-		IProject project = getWorkspace().getRoot().getProject("proj1");
-		final IFolder base = project.getFolder("base");
-		ensureDoesNotExistInWorkspace(base);
-		new PerformanceTestRunner() {
-			private IWorkspaceDescription original;
-
-			protected void setUp() {
-				original = setMaxFileStates("0.1", 1);
-				// make sure we start with no garbage
-				cleanHistory();
-				// create our own garbage
-				createTree(base, filesPerFolder, statesPerFile);
-				ensureDoesNotExistInWorkspace(base);
-			}
-
-			protected void test() {
-				cleanHistory();
-			}
-
-			protected void tearDown() throws CoreException {
-				if (original != null)
-					getWorkspace().setDescription(original);
-			}
-
-		}.run(this, 5, 1);
-	}
-
-	private void cleanHistory() {
-		((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore().clean(getMonitor());
 	}
 
 	public void testClearHistory100x4() {
 		testClearHistory(100, 4);
 	}
 
+	public void testClearHistory20x20() {
+		testClearHistory(20, 20);
+	}
+
 	public void testClearHistory4x100() {
 		testClearHistory(4, 100);
-	}
-
-	public void testHistoryCleanUp100x4() {
-		testHistoryCleanUp(100, 4);
-	}
-
-	public void testHistoryCleanUp4x100() {
-		testHistoryCleanUp(4, 100);
 	}
 
 	private void testCopyHistory(int filesPerFolder, int statesPerFile) {
@@ -332,5 +300,45 @@ public class LocalHistoryPerformanceTest extends ResourceTest {
 				}
 			}
 		}.run(this, 1, 150);
+	}
+
+	private void testHistoryCleanUp(final int filesPerFolder, final int statesPerFile) {
+		IProject project = getWorkspace().getRoot().getProject("proj1");
+		final IFolder base = project.getFolder("base");
+		ensureDoesNotExistInWorkspace(base);
+		new PerformanceTestRunner() {
+			private IWorkspaceDescription original;
+
+			protected void setUp() {
+				original = setMaxFileStates("0.1", 1);
+				// make sure we start with no garbage
+				cleanHistory();
+				// create our own garbage
+				createTree(base, filesPerFolder, statesPerFile);
+				ensureDoesNotExistInWorkspace(base);
+			}
+
+			protected void tearDown() throws CoreException {
+				if (original != null)
+					getWorkspace().setDescription(original);
+			}
+
+			protected void test() {
+				cleanHistory();
+			}
+
+		}.run(this, 5, 1);
+	}
+
+	public void testHistoryCleanUp100x4() {
+		testHistoryCleanUp(100, 4);
+	}
+
+	public void testHistoryCleanUp20x20() {
+		testHistoryCleanUp(20, 20);
+	}
+
+	public void testHistoryCleanUp4x100() {
+		testHistoryCleanUp(4, 100);
 	}
 }
