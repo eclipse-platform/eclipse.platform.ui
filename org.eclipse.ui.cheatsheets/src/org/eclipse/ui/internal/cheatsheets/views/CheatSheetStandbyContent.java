@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.cheatsheets;
+package org.eclipse.ui.internal.cheatsheets.views;
 
 
 import org.eclipse.jface.action.*;

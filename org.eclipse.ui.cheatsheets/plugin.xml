@@ -67,7 +67,7 @@
    <extension point="org.eclipse.ui.intro.configExtension">
       <standbyPart
             id="org.eclipse.ui.cheatsheets.standbyPart"
-            class="org.eclipse.ui.cheatsheets.CheatSheetStandbyContent"
+            class="org.eclipse.ui.internal.cheatsheets.views.CheatSheetStandbyContent"
             pluginId="org.eclipse.ui.cheatsheets"/>
    </extension>
 
