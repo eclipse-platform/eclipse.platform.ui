@@ -322,9 +322,9 @@ public class ConsoleView extends AbstractDebugEventHandlerView implements IDocum
 	protected void configureToolBar(IToolBarManager mgr) {
 		mgr.add(new Separator(IDebugUIConstants.LAUNCH_GROUP));
 		mgr.add(new Separator(IDebugUIConstants.OUTPUT_GROUP));
-		mgr.add(fClearOutputAction);
 		mgr.add(fProcessDropDownAction);
 		mgr.add(fScrollLockAction);
+		mgr.add(fClearOutputAction);
 	}
 
 	/**
