@@ -191,6 +191,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	private static final int[] DEFAULT_SASH_WEIGHTS = {6, 2};
 	private int[] fLastSashWeights;
 	private boolean fToggledDetailOnce;
+
+	protected static final String DETAIL_SELECT_ALL_ACTION = SELECT_ALL_ACTION + ".Detail";
+
+	protected static final String VARIABLES_SELECT_ALL_ACTION=  SELECT_ALL_ACTION + ".Variables";
 	
 	/**
 	 * Remove myself as a selection listener
@@ -294,6 +298,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			 */
 			public void focusGained(FocusEvent e) {
 				getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(vv);
+				setAction(SELECT_ALL_ACTION, getAction(VARIABLES_SELECT_ALL_ACTION));
+				getViewSite().getActionBars().updateActionBars();
 			}
 		});
 		vv.addSelectionChangedListener(getTreeSelectionChangedListener());
@@ -316,6 +322,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			 */
 			public void focusGained(FocusEvent e) {
 				getVariablesViewSelectionProvider().setUnderlyingSelectionProvider(getDetailViewer().getSelectionProvider());
+				setAction(SELECT_ALL_ACTION, getAction(DETAIL_SELECT_ALL_ACTION));
+				getViewSite().getActionBars().updateActionBars();
 			}
 		});
 		// add a context menu to the detail area
@@ -490,6 +498,10 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		textAction.configureAction(DebugUIMessages.getString("ConsoleView.&Copy@Ctrl+C_6"), DebugUIMessages.getString("ConsoleView.Copy_7"), DebugUIMessages.getString("ConsoleView.Copy_8")); //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 		setGlobalAction(actionBars, ITextEditorActionConstants.COPY, textAction);
 
+		textAction= new TextViewerAction(getDetailViewer(), getDetailViewer().getTextOperationTarget().SELECT_ALL);
+		textAction.configureAction("Select &All", "", "");
+		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
+
 		//XXX Still using "old" resource access
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.DebugUIMessages"); //$NON-NLS-1$
 		setGlobalAction(actionBars, ITextEditorActionConstants.FIND, new FindReplaceAction(bundle, "find_replace_action.", this));	 //$NON-NLS-1$
@@ -557,7 +569,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		menu.add(getAction("ContentAssist")); //$NON-NLS-1$
 		menu.add(new Separator());
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.COPY));
-
+		menu.add(getAction(DETAIL_SELECT_ALL_ACTION));
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
 		menu.add((IAction)fGlobalActions.get(ITextEditorActionConstants.FIND));
 		menu.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
@@ -592,7 +604,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 */
 	protected void populateDetailPaneFromSelection(IStructuredSelection selection) {
 		try {
-			if (!selection.isEmpty()) {
+			if (!selection.isEmpty() && selection.size() == 1) {
 				IValue val = null;
 				Object obj = selection.getFirstElement();
 				if (obj instanceof IVariable) {
