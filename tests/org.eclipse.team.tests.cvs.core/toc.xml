@@ -109,4 +109,12 @@
         </topic>
         <topic label="EXT" href="html/ext_connection_method00001.html">
         </topic>
+        <topic label="Performance" href="html/perf00001.html">
+            <topic label="Timings" href="html/perf00002.html">
+            </topic>
+            <topic label="Memory Usage" href="html/perf00003.html">
+                <topic label="Resource Data Structures" href="html/perf00004.html">
+                </topic>
+            </topic>
+        </topic>
 </toc>
