@@ -75,7 +75,10 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	protected ILaunchConfiguration fConfig;
 	//whether duplicates should be searched for or not
 	protected boolean fDuplicates = false;
-	// cache of resolved source elements for stack frames with dups
+	/**
+	 * Cache of resolved source elements when duplicates exist.
+	 * Keys are the duplicates, values are the source element to use.
+	 */
 	protected Map fResolvedElements = null;
 	
 	protected static final IStatus fPromptStatus = new Status(IStatus.INFO, "org.eclipse.debug.ui", 200, "", null);  //$NON-NLS-1$//$NON-NLS-2$
@@ -360,6 +363,8 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 			ISourceContainer container = containers[i];
 			container.init(this);
 		}
+		// clear resolved duplicates
+		fResolvedElements = null;
 	}
 	
 	/* (non-Javadoc)
@@ -367,10 +372,7 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * Would be better to accept Object so this can be used for breakpoints and other objects.
 	 */
 	public Object getSourceElement(IStackFrame stackFrame) {
-		SourceLookupQuery query = new SourceLookupQuery(stackFrame);
-		Platform.run(query);
-		List sources = query.getSourceElements();
-		query.dispose();
+		List sources = doSourceLookup(stackFrame);
 		if(sources.size() == 1) {
 			return sources.get(0);
 		} else if(sources.size() > 1) {
@@ -378,6 +380,21 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		} else { 
 			return null;
 		}
+	}
+	
+	/**
+	 * Performs a source lookup query for the given stack frame
+	 * returning the source elements associated with the frame.
+	 * 
+	 * @param frame stack frame
+	 * @return list of associated source elements
+	 */
+	protected List doSourceLookup(IStackFrame frame) {
+		SourceLookupQuery query = new SourceLookupQuery(frame);
+		Platform.run(query);
+		List sources = query.getSourceElements();
+		query.dispose();
+		return sources;
 	}
 	
 	/**
@@ -394,12 +411,22 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	 * @return a single source element for the given stack frame
 	 */
 	public Object resolveSourceElement(IStackFrame frame, List sources) {
+		// check the duplicates cache first
+		Iterator duplicates = sources.iterator();
+		while (duplicates.hasNext()) {
+			Object dup = duplicates.next();
+			Object resolved = getCachedElement(dup);
+			if (resolved != null) {
+				return resolved;
+			}
+		}
+		// consult a status handler
 		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(fPromptStatus);
 		if (prompter != null) {
 			try {
 				Object result = prompter.handleStatus(fResolveDuplicatesStatus, new Object[]{frame, sources});
 				if (result != null) {
-					cacheResolvedElement(frame, result);
+					cacheResolvedElement(sources, result);
 					return result;
 				}
 			} catch (CoreException e) {
@@ -498,27 +525,62 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 	}
 	
 	/**
-	 * Caches the resolved source element to use for a stack frame when
-	 * there are duplicates.
+	 * Caches the resolved source element to use when one of the following
+	 * duplicates is found.
 	 * 
-	 * @param frame stack frame
-	 * @param sourceElement source element to use for the frame
+	 * @param duplicates duplicates source elemnets
+	 * @param sourceElement chosen source element to use in place of the
+	 *  duplicates
 	 */
-	protected void cacheResolvedElement(IStackFrame frame, Object sourceElement) {
+	protected void cacheResolvedElement(List duplicates, Object sourceElement) {
 		if (fResolvedElements == null) {
 			fResolvedElements = new HashMap(10);
 		}
-		fResolvedElements.put(frame, sourceElement);
+		Iterator iterator = duplicates.iterator();
+		while (iterator.hasNext()) {
+			Object dup = iterator.next();
+			fResolvedElements.put(dup, sourceElement);
+		}
+		
 	}
 	
 	/**
-	 * Clears any resolved source element for the given stack frame.
+	 * Returns the cached source element to use when the given duplicate
+	 * is encountered.
 	 * 
-	 * @param frame stack frame
+	 * @param duplicate duplicates source element
+	 * @return element to use in the duplicate's place
 	 */
-	protected void clearResolvedElement(IStackFrame frame) {
+	protected Object getCachedElement(Object duplicate) {
 		if (fResolvedElements != null) {
-			fResolvedElements.remove(frame);
+			return fResolvedElements.get(duplicate);
+		}
+		return null;
+	}
+	
+	/**
+	 * Clears any cached source element associated with the given duplicate
+	 * is source elemnet.
+	 * 
+	 * @param duplicate duplicate source element to cache resolved results
+	 *  for
+	 */
+	protected void clearCachedElement(Object duplicate) {
+		if (fResolvedElements != null) {
+			fResolvedElements.remove(duplicate);
+		}
+	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector#clearSourceElements(org.eclipse.debug.core.model.IStackFrame)
+	 */
+	public void clearSourceElements(IStackFrame frame) {
+		List list = doSourceLookup(frame);
+		if (list.size() > 0) {
+			Iterator iterator = list.iterator();
+			while (iterator.hasNext()) {
+				clearCachedElement(iterator.next());
+			}
 		}
 	}
 }

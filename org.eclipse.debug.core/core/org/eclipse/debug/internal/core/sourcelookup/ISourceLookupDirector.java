@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.core.sourcelookup;
 
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.model.IStackFrame;
 
 /**
  * A source lookup director directs the source lookup process
@@ -93,4 +94,13 @@ public interface ISourceLookupDirector extends IPersistableSourceLocator2 {
 	 * of source location
 	 */
 	public boolean supportsSourceContainerType(ISourceContainerType type);
+	
+	/**
+	 * Clears any source lookup results associated with the given
+	 * stack frame, such that a subsequent lookup will force a new search
+	 * to be performed.
+	 *  
+	 * @param frame stack frame to clear source lookup results for
+	 */
+	public void clearSourceElements(IStackFrame frame);
 }

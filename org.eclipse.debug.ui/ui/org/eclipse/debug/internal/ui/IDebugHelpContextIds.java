@@ -46,6 +46,7 @@ public interface IDebugHelpContextIds {
 	public static final String EDIT_WATCH_EXPRESSION_DIALOG= PREFIX + "edit_watch_expression_dialog_context"; //$NON-NLS-1$
 	public static final String LINK_BREAKPOINTS_WITH_DEBUG_ACTION= PREFIX + "link_breakpoints_with_debug_context"; //$NON-NLS-1$
 	public static final String EDIT_SOURCELOOKUP_ACTION = PREFIX + "edit_source_lookup_path_action";//$NON-NLS-1$
+	public static final String LOOKUP_SOURCE_ACTION = PREFIX + "lookup_source_action";//$NON-NLS-1$
 	public static final String SKIP_ALL_BREAKPOINT_ACTION = PREFIX + "skip_all_breakpoints_context"; //$NON-NLS-1$
 	
 	// Views

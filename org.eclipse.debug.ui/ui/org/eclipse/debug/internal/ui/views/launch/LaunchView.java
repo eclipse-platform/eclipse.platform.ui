@@ -55,6 +55,7 @@ import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.sourcelookup.CommonSourceNotFoundEditorInput;
 import org.eclipse.debug.internal.ui.sourcelookup.EditSourceLookupPathAction;
+import org.eclipse.debug.internal.ui.sourcelookup.LookupSourceAction;
 import org.eclipse.debug.internal.ui.views.AbstractDebugEventHandlerView;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.DebugViewDecoratingLabelProvider;
@@ -185,6 +186,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	private EditLaunchConfigurationAction fEditConfigAction = null;
 	private AddToFavoritesAction fAddToFavoritesAction = null;
 	private EditSourceLookupPathAction fEditSourceAction = null;
+	private LookupSourceAction fLookupAction = null;
 	
 	/**
 	 * Whether or not this view automatically opens and closes views
@@ -224,7 +226,8 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		setAction("Properties", new PropertyDialogAction(getSite().getWorkbenchWindow().getShell(), getSite().getSelectionProvider())); //$NON-NLS-1$
 		fEditConfigAction = new EditLaunchConfigurationAction();
 		fAddToFavoritesAction = new AddToFavoritesAction();
-		fEditSourceAction = new EditSourceLookupPathAction();
+		fEditSourceAction = new EditSourceLookupPathAction(this);
+		fLookupAction = new LookupSourceAction(this);
 				
 		// submit an async exec to update the selection once the
 		// view has been created - i.e. auto-expand and select the
@@ -502,6 +505,14 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		updateObjects();
 		showEditorForCurrentSelection();
 		showViewsForCurrentSelection();
+	}
+	
+	/**
+	 * Lookup source element for current stack frame again.
+	 */
+	public void redoSourceLookup() {
+		setStackFrame(null);
+		selectionChanged(null);
 	}
 	
 	/**
@@ -1053,6 +1064,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		updateAndAdd(menu, fEditConfigAction, selection);
 		updateAndAdd(menu, fAddToFavoritesAction, selection);
 		updateAndAdd(menu, fEditSourceAction, selection);
+		updateAndAdd(menu, fLookupAction, selection);
 		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		menu.add(new Separator(IDebugUIConstants.PROPERTY_GROUP));

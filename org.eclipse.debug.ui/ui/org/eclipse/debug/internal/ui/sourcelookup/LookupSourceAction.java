@@ -11,35 +11,29 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import org.eclipse.debug.core.ILaunch;
-import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.views.launch.LaunchView;
-import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
- * The action for editing the source lookup path. Brings up the 
- * EditSourceLookupPathDialog.
+ * Does source lookup for the selected stack frame again.
  * 
  * @since 3.0
  */
-public class EditSourceLookupPathAction extends SelectionListenerAction {
+public class LookupSourceAction extends SelectionListenerAction {
 	
 	private ISourceLookupDirector director = null;
 	private LaunchView fView = null;
+	private IStackFrame frame = null;
 	
-	public EditSourceLookupPathAction(LaunchView view) {
-		super(SourceLookupUIMessages.getString("EditSourceLookupPathAction.0")); //$NON-NLS-1$
+	public LookupSourceAction(LaunchView view) {
+		super(SourceLookupUIMessages.getString("LookupSourceAction.0")); //$NON-NLS-1$
 		setEnabled(false);
-		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.EDIT_SOURCELOOKUP_ACTION);
-		setImageDescriptor(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_SRC_LOOKUP_MENU));
+		WorkbenchHelp.setHelp(this, IDebugHelpContextIds.LOOKUP_SOURCE_ACTION);
 		fView = view;
 	}
 	
@@ -48,17 +42,16 @@ public class EditSourceLookupPathAction extends SelectionListenerAction {
 	 */
 	protected boolean updateSelection(IStructuredSelection selection) {
 		director = null;
+		frame = null;
 		if (selection.size() == 1) {
 			Object object = selection.getFirstElement();
-			ILaunch launch = null;
-			if (object instanceof IDebugElement) {
-				launch = ((IDebugElement)object).getLaunch();
-			} else if (object instanceof ILaunch) {
-				launch = (ILaunch)object;
-			}
-			if (launch != null && launch.getLaunchConfiguration() != null &&
-					launch.getSourceLocator() instanceof ISourceLookupDirector) {
-				director = (ISourceLookupDirector) launch.getSourceLocator();
+			if (object instanceof IStackFrame) {
+				frame = (IStackFrame)object;
+				ILaunch launch = frame.getLaunch();
+				if (launch != null && launch.getLaunchConfiguration() != null &&
+						launch.getSourceLocator() instanceof ISourceLookupDirector) {
+					director = (ISourceLookupDirector) launch.getSourceLocator();
+				}
 			}
 		}
 		return director != null;
@@ -67,10 +60,7 @@ public class EditSourceLookupPathAction extends SelectionListenerAction {
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
-		Shell shell = DebugUIPlugin.getShell();		
-		EditSourceLookupPathDialog dialog = new EditSourceLookupPathDialog(shell, director);
-		if (dialog.open() == Window.OK) {
-			fView.redoSourceLookup();
-		}
+		director.clearSourceElements(frame);
+		fView.redoSourceLookup();
 	}
 }
