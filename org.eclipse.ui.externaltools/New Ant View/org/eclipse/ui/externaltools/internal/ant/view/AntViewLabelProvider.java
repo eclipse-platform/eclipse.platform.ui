@@ -12,7 +12,9 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.DependencyNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ExecutionPathNode;
+import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectErrorNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
+import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetErrorNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.ui.IExternalToolsUIConstants;
@@ -27,7 +29,11 @@ public class AntViewLabelProvider implements ILabelProvider {
 	 * @see org.eclipse.jface.viewers.ILabelProvider#getImage(java.lang.Object)
 	 */
 	public Image getImage(Object element) {
-		if (element instanceof ProjectNode) {
+		if (element instanceof ProjectErrorNode) {
+			return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_PROJECT_ERROR);
+		} else if (element instanceof TargetErrorNode) {
+			return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_TARGET_ERROR);
+		}else if (element instanceof ProjectNode) {
 			return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_PROJECT);
 		} else if (element instanceof TargetNode) {
 			return ExternalToolsImages.getImage(IExternalToolsUIConstants.IMG_ANT_TARGET);

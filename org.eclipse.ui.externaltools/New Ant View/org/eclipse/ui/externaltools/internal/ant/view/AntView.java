@@ -5,7 +5,11 @@ Copyright (c) 2000, 2002 IBM Corp.  All rights reserved.
 This file is made available under the terms of the Common Public License v1.0
 which accompanies this distribution, and is available at
 http://www.eclipse.org/legal/cpl-v10.html
-**********************************************************************/
+
+Contributors:
+	Roscoe Rush - Prototype implementation
+	IBM Corporation - Final implementation
+*********************************************************************/
 
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -20,24 +24,35 @@ import org.eclipse.ant.core.AntRunner;
 import org.eclipse.ant.core.TargetInfo;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.AddProjectAction;
 import org.eclipse.ui.externaltools.internal.ant.view.actions.RemoveProjectAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.RunActiveTargetsAction;
+import org.eclipse.ui.externaltools.internal.ant.view.actions.RunTargetAction;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectErrorNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.RootNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * A view which displays a hierarchical view of ant build files and allows the
@@ -47,28 +62,28 @@ public class AntView extends ViewPart {
 	/**
 	 * The root node of the project viewer as restored during initialization
 	 */
-	private RootNode restoredRoot= null;
+	private RootNode restoredRoot = null;
 	/**
 	 * The selected targets of the target viewer as restored during
 	 * initialization
 	 */
-	private List restoredTargets= new ArrayList();
+	private List restoredTargets = new ArrayList();
 	/**
 	 * XML tag used to identify an ant project in storage
 	 */
-	private static final String TAG_PROJECT= "project";
+	private static final String TAG_PROJECT = "project";
 	/**
 	 * XML key used to store an ant project's path
 	 */
-	private static final String TAG_PATH= "path";
+	private static final String TAG_PATH = "path";
 	/**
 	 * XML tag used to identify an ant target in storage
 	 */
-	private String TAG_TARGET= "target";
+	private String TAG_TARGET = "target";
 	/**
 	 * XML key used to store an ant node's name
 	 */
-	private String TAG_NAME= "name";
+	private String TAG_NAME = "name";
 
 	/**
 	 * The sash form containing the project viewer and target viewer
@@ -91,10 +106,21 @@ public class AntView extends ViewPart {
 	 * The label provider used by viewers in this view
 	 */
 	AntViewLabelProvider labelProvider = new AntViewLabelProvider();
-	
+
+	/**
+	 * Collection of <code>IUpdate</code> actions that need to update on
+	 * selection changed.
+	 */
+	private List updateActions = new ArrayList();
 	// Actions
-	private AddProjectAction addProjectAction;
-	private RemoveProjectAction removeProjectAction;
+	AddProjectAction addProjectAction;
+	RemoveProjectAction removeProjectAction;
+	RunActiveTargetsAction runActiveTargetsAction;
+	RunTargetAction runTargetAction;
+	ActivateTargetAction activateTargetAction;
+	DeactivateTargetAction deactivateTargetAction;
+	TargetMoveUpAction moveUpAction;
+	TargetMoveDownAction moveDownAction;
 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
@@ -107,18 +133,79 @@ public class AntView extends ViewPart {
 		createTargetViewer();
 	}
 
+	/**
+	 * Creates a pop-up menu on the given control
+	 *
+	 * @param menuControl the control with which the pop-up
+	 *  menu will be associated
+	 */
+	private void createContextMenu(final Viewer viewer) {
+		Control menuControl = viewer.getControl();
+		MenuManager menuMgr = new MenuManager("#PopUp"); //$NON-NLS-1$
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager mgr) {
+				fillContextMenu(viewer, mgr);
+			}
+		});
+		Menu menu = menuMgr.createContextMenu(menuControl);
+		menuControl.setMenu(menu);
+
+		// register the context menu such that other plugins may contribute to it
+		getSite().registerContextMenu(menuMgr, viewer);
+	}
+
+	/**
+	 * Adds actions to the context menu
+	 *
+	 * @param viewer the viewer who's menu we're configuring
+	 * @param menu The menu to contribute to
+	 */
+	protected void fillContextMenu(Viewer viewer, IMenuManager menu) {
+		if (viewer == projectViewer) {
+			menu.add(addProjectAction);
+			menu.add(removeProjectAction);
+			menu.add(new Separator());
+			menu.add(runTargetAction);
+			menu.add(activateTargetAction);
+		} else if (viewer == targetViewer) {
+			menu.add(deactivateTargetAction);
+			menu.add(new Separator());
+			menu.add(moveUpAction);
+			menu.add(moveDownAction);
+		}
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+
+	/**
+	 * Adds the actions to the toolbar
+	 */
 	private void createToolbarActions() {
 		IToolBarManager toolBarMgr = getViewSite().getActionBars().getToolBarManager();
+		toolBarMgr.add(runActiveTargetsAction);
 		toolBarMgr.add(addProjectAction);
 		toolBarMgr.add(removeProjectAction);
 	}
 
 	/**
-	 * Initialize the collection of actions for this view
+	 * Initialize the actions for this view
 	 */
 	private void initializeActions() {
 		addProjectAction = new AddProjectAction(this);
 		removeProjectAction = new RemoveProjectAction(this);
+		updateActions.add(removeProjectAction);
+		runTargetAction = new RunTargetAction(this);
+		updateActions.add(runTargetAction);
+		runActiveTargetsAction = new RunActiveTargetsAction(this);
+		updateActions.add(runActiveTargetsAction);
+		activateTargetAction = new ActivateTargetAction(this);
+		updateActions.add(activateTargetAction);
+		deactivateTargetAction = new DeactivateTargetAction(this);
+		updateActions.add(deactivateTargetAction);
+		moveUpAction = new TargetMoveUpAction(this);
+		updateActions.add(moveUpAction);
+		moveDownAction = new TargetMoveDownAction(this);
+		updateActions.add(moveDownAction);
 	}
 	/**
 	 * Create the viewer which displays the active targets
@@ -127,13 +214,22 @@ public class AntView extends ViewPart {
 		targetViewer = new ListViewer(sashForm, SWT.H_SCROLL | SWT.V_SCROLL);
 		targetContentProvider = new TargetListContentProvider();
 		targetViewer.setContentProvider(targetContentProvider);
-		Iterator targets= restoredTargets.iterator();
+		Iterator targets = restoredTargets.iterator();
 		while (targets.hasNext()) {
 			targetContentProvider.addTarget((TargetNode) targets.next());
 		}
 		targetViewer.setLabelProvider(labelProvider);
 		// The content provider doesn't use the input, but it input has to be set to something.
 		targetViewer.setInput(ResourcesPlugin.getWorkspace());
+		targetViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				Iterator iter = updateActions.iterator();
+				while (iter.hasNext()) {
+					((IUpdate) iter.next()).update();
+				}
+			}
+		});
+		createContextMenu(targetViewer);
 	}
 
 	/**
@@ -147,9 +243,13 @@ public class AntView extends ViewPart {
 		projectViewer.setInput(restoredRoot);
 		projectViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				removeProjectAction.update();
+				Iterator iter = updateActions.iterator();
+				while (iter.hasNext()) {
+					((IUpdate) iter.next()).update();
+				}
 			}
 		});
+		createContextMenu(projectViewer);
 	}
 
 	/**
@@ -159,6 +259,26 @@ public class AntView extends ViewPart {
 	 */
 	public TreeViewer getProjectViewer() {
 		return projectViewer;
+	}
+
+	/**
+	 * Returns the list viewer that displays the active targets in this view
+	 * 
+	 * @return ListViewer this view's active target viewer
+	 */
+	public ListViewer getTargetViewer() {
+		return targetViewer;
+	}
+	
+	/**
+	 * Returns a list of <code>TargetNode</code> objects that have been
+	 * activated by the user
+	 * 
+	 * @return List a list of <code>TargetNode</code> objects that have been
+	 * activated by the user.
+	 */
+	public List getActiveTargets() {
+		return targetContentProvider.getTargets();
 	}
 
 	/**
@@ -172,13 +292,43 @@ public class AntView extends ViewPart {
 	}
 
 	/**
+	 * Activates the given target by adding it to the active targets viewer.
+	 * 
+	 * @param target the target to activate
+	 */
+	public void activateTarget(TargetNode target) {
+		targetContentProvider.addTarget(target);
+		targetViewer.refresh();
+	}
+
+	/**
+	 * Deactivates the given target by removing it from the active targets
+	 * viewer.
+	 *
+	 * @param target the target to deactivate
+	 */
+	public void deactivateTarget(TargetNode target) {
+		targetContentProvider.removeTarget(target);
+		targetViewer.refresh();
+	}
+
+	/**
 	 * Removes the given project from the view
 	 * 
 	 * @param project the project to remove
 	 */
 	public void removeProject(ProjectNode project) {
+		ListIterator targets= targetContentProvider.getTargets().listIterator();
+		while (targets.hasNext()) {
+			TargetNode target= (TargetNode) targets.next();
+			if (project.equals(target.getParent())) {
+				targets.remove();
+				//deactivateTarget(target);
+			}
+		}
 		projectContentProvider.getRootNode().removeProject(project);
 		projectViewer.refresh();
+		targetViewer.refresh();
 	}
 
 	/**
@@ -197,7 +347,7 @@ public class AntView extends ViewPart {
 		restoreRoot(memento);
 		restoreTargets(memento);
 	}
-	
+
 	/**
 	 * Initialize the target selection by restoring the persisted targets. This
 	 * method should be called only after restoreRoot(IMemento) has been called.
@@ -208,16 +358,16 @@ public class AntView extends ViewPart {
 		if (memento == null || restoredRoot == null) {
 			return;
 		}
-		IMemento[] targets= memento.getChildren(TAG_TARGET);
+		IMemento[] targets = memento.getChildren(TAG_TARGET);
 		for (int i = 0; i < targets.length; i++) {
-			IMemento target= targets[i];
-			String buildFileName= target.getString(TAG_PATH);
-			String targetName= target.getString(TAG_NAME);
-			ProjectNode[] projects= restoredRoot.getProjects();
+			IMemento target = targets[i];
+			String buildFileName = target.getString(TAG_PATH);
+			String targetName = target.getString(TAG_NAME);
+			ProjectNode[] projects = restoredRoot.getProjects();
 			for (int j = 0; j < projects.length; j++) {
 				ProjectNode project = projects[j];
 				if (project.getBuildFileName().equals(buildFileName)) {
-					TargetNode[] projectTargets= project.getTargets();
+					TargetNode[] projectTargets = project.getTargets();
 					for (int k = 0; k < projectTargets.length; k++) {
 						if (projectTargets[k].getName().equals(targetName)) {
 							restoredTargets.add(projectTargets[k]);
@@ -235,12 +385,12 @@ public class AntView extends ViewPart {
 	 */
 	private void restoreRoot(IMemento memento) {
 		if (memento == null) {
-			restoredRoot= new RootNode();
+			restoredRoot = new RootNode();
 			return;
 		}
 		IMemento[] projects = memento.getChildren(TAG_PROJECT);
 		if (projects.length < 1) {
-			restoredRoot= new RootNode();
+			restoredRoot = new RootNode();
 			return;
 		}
 		List projectNodes = new ArrayList(projects.length);
@@ -252,7 +402,7 @@ public class AntView extends ViewPart {
 				projectNodes.add(node);
 			}
 		}
-		restoredRoot= new RootNode((ProjectNode[]) projectNodes.toArray(new ProjectNode[projectNodes.size()]));
+		restoredRoot = new RootNode((ProjectNode[]) projectNodes.toArray(new ProjectNode[projectNodes.size()]));
 	}
 
 	/**
@@ -267,17 +417,17 @@ public class AntView extends ViewPart {
 			projectMemento = memento.createChild(TAG_PROJECT);
 			projectMemento.putString(TAG_PATH, projects[i].getBuildFileName());
 		}
-		Iterator targets= targetContentProvider.getTargets().iterator();
+		Iterator targets = targetContentProvider.getTargets().iterator();
 		IMemento targetMemento;
 		TargetNode target;
 		while (targets.hasNext()) {
-			target= ((TargetNode)targets.next());
-			targetMemento= memento.createChild(TAG_TARGET);
-			targetMemento.putString(TAG_PATH, ((ProjectNode)target.getParent()).getBuildFileName());
+			target = ((TargetNode) targets.next());
+			targetMemento = memento.createChild(TAG_TARGET);
+			targetMemento.putString(TAG_PATH, ((ProjectNode) target.getParent()).getBuildFileName());
 			targetMemento.putString(TAG_NAME, target.getName());
 		}
 	}
-	
+
 	/**
 	 * Parses the given build file and returns a project node representing the
 	 * build file. If an error occurs while parsing the file, an error node will
@@ -295,10 +445,10 @@ public class AntView extends ViewPart {
 		try {
 			infos = runner.getAvailableTargets();
 		} catch (CoreException e) {
-			return new ProjectErrorNode(filename, "An exception occurred retrieving targets: " + e.getMessage());
+			return new ProjectErrorNode("An exception occurred retrieving targets: " + e.getMessage(), filename);
 		}
 		if (infos.length < 1) {
-			return new ProjectErrorNode(filename, "No targets found");
+			return new ProjectErrorNode("No targets found", filename);
 		}
 		Project project = new Project();
 		if (infos[0].getProject() != null) {
@@ -326,7 +476,7 @@ public class AntView extends ViewPart {
 			project.addTarget(target);
 		}
 		if (project.getDefaultTarget() == null) {
-			return new ProjectErrorNode(filename, "No project element found");
+			return new ProjectErrorNode("No project element found", filename);
 		}
 
 		String projectName = project.getName();
@@ -338,7 +488,7 @@ public class AntView extends ViewPart {
 		while (projTargets.hasMoreElements()) {
 			Target target = (Target) projTargets.nextElement();
 			// Target Node -----------------
-			Enumeration targetDependencies= target.getDependencies();
+			Enumeration targetDependencies = target.getDependencies();
 			TargetNode targetNode = new TargetNode(target.getName(), target.getDescription());
 			while (targetDependencies.hasMoreElements()) {
 				targetNode.addDependency((String) targetDependencies.nextElement());
@@ -358,6 +508,20 @@ public class AntView extends ViewPart {
 			}
 		}
 		return projectNode;
+	}
+	/**
+	 * Moves the given target up in the list of active targets
+	 */
+	public void moveUpTarget(TargetNode target) {
+		targetContentProvider.moveUpTarget(target);
+		targetViewer.refresh();
+	}
+	/**
+	 * Moves the given target down in the list of active targets
+	 */
+	public void moveDownTarget(TargetNode target) {
+		targetContentProvider.moveDownTarget(target);
+		targetViewer.refresh();
 	}
 
 }

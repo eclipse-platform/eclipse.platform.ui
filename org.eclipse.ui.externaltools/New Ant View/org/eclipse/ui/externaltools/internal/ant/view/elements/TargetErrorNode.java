@@ -12,11 +12,10 @@ public class TargetErrorNode extends TargetNode {
 	 * Creates a new target error node with the given parent and the given error
 	 * message
 	 * 
-	 * @param parent the target's enclosing project
 	 * @param error the target's error message
 	 */
 	public TargetErrorNode(String error) {
-		super(error, error);
+		super(error);
 	}
 
 }

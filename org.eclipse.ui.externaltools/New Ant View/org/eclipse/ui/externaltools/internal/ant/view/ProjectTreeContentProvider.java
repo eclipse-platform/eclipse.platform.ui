@@ -14,6 +14,7 @@ import org.eclipse.ui.externaltools.internal.ant.view.elements.DependencyNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ExecutionPathNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.RootNode;
+import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetErrorNode;
 import org.eclipse.ui.externaltools.internal.ant.view.elements.TargetNode;
 
 /**
@@ -83,10 +84,14 @@ public class ProjectTreeContentProvider implements ITreeContentProvider {
 			return ((RootNode) element).getProjects();
 		} else if (element instanceof ProjectNode) {
 			return ((ProjectNode) element).getTargets();
+		} else if (element instanceof TargetErrorNode) {
+			return null;
 		} else if (element instanceof TargetNode) {
-			return new Object[] {((TargetNode) element).getDependencies()};
+			return new Object[] {((TargetNode) element).getDependencies(), ((TargetNode) element).getExecutionPath()};
 		} else if (element instanceof DependencyNode) {
 			return ((DependencyNode) element).getDependencies();
+		} else if (element instanceof ExecutionPathNode) {
+			return ((ExecutionPathNode) element).getTargets();
 		}
 		return null;
 	}
@@ -109,6 +114,8 @@ public class ProjectTreeContentProvider implements ITreeContentProvider {
 			return ((RootNode) element).getProjects().length > 0;
 		} else if (element instanceof ProjectNode) {
 			return ((ProjectNode) element).getTargets().length > 0;
+		} else if (element instanceof TargetErrorNode) {
+			return false;
 		} else if (element instanceof TargetNode) {
 			return true;
 		} else if (element instanceof DependencyNode) {

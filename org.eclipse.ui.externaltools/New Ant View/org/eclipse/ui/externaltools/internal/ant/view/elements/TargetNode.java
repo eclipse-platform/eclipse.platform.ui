@@ -32,6 +32,16 @@ public class TargetNode extends AntNode {
 	}
 	
 	/**
+	 * Creates a new target node with the given name. This should only be called
+	 * by subclasses.
+	 * 
+	 * @param name the new node's name
+	 */
+	protected TargetNode(String name) {
+		super(name);
+	}
+	
+	/**
 	 * Adds the given dependency to the list of this target's dependencies
 	 * 
 	 * @param dependency the dependency to add
@@ -61,6 +71,18 @@ public class TargetNode extends AntNode {
 	 */
 	public DependencyNode getDependencies() {
 		return dependencies;
+	}
+	
+	/**
+	 * Returns the execution path node containing the names of targets which
+	 * will be executed when this target is run in the order that they will be
+	 * run.
+	 * 
+	 * @return ExecutionPathNode the node containing the execution path of this
+	 * target
+	 */
+	public ExecutionPathNode getExecutionPath() {
+		return executionPath;
 	}
 	
 	/**

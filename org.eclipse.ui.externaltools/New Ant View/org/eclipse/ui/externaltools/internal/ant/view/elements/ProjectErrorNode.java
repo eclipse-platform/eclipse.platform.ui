@@ -20,15 +20,8 @@ public class ProjectErrorNode extends ProjectNode {
 	 * @param buildFileName the project's build file name
 	 */
 	public ProjectErrorNode(String error, String buildFileName) {
-		super(error, buildFileName);
+		super(buildFileName, buildFileName);
 		addTarget(new TargetErrorNode(error));
-	}
-	
-	/**
-	 * @see org.eclipse.ui.externaltools.internal.ant.view.elements.ProjectNode#addTarget(TargetNode)
-	 */
-	public void addTarget(TargetNode target) {
-		target.setParent(this);
 	}
 
 }
