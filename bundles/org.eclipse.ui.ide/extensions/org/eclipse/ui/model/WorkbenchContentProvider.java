@@ -160,21 +160,30 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider imple
 
 		// @issue several problems here:
 		//  - should process removals before additions, to avoid multiple equal elements in viewer
+        //   - Kim: processing removals before additions was the indirect cause of 44081 and its varients
+		//   - Nick: no delta should have an add and a remove on the same element, so processing adds first is probably OK
 		//  - using setRedraw will cause extra flashiness
 		//  - setRedraw is used even for simple changes
 		//  - to avoid seeing a rename in two stages, should turn redraw on/off around combined removal and addition
-		
+        //   - Kim: done, and only in the case of a rename (both remove and add changes in one delta).
+        
+        boolean addedAndRemoved = false;
 		try {
+            IResourceDelta [] addedChildren = delta.getAffectedChildren(IResourceDelta.ADDED);
+            IResourceDelta [] removedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
+            addedAndRemoved = addedChildren.length > 0 & removedChildren.length > 0;
+            
 			// Disable redraw until the operation is finished so we don't get a flash of both the new and old item (in the case of rename)
-			viewer.getControl().setRedraw(false);
+            // Only do this if we're both adding and removing files (the rename case)
+            if (addedAndRemoved) 
+            	viewer.getControl().setRedraw(false);
 			
 			// Process additions before removals as to not cause selection preservation prior to new objects being added    
 			// Handle added children. Issue one update for all insertions.
-			affectedChildren = delta.getAffectedChildren(IResourceDelta.ADDED);
-			if (affectedChildren.length > 0) {
-				Object[] affected = new Object[affectedChildren.length];
-				for (int i = 0; i < affectedChildren.length; i++)
-					affected[i] = affectedChildren[i].getResource();
+			if (addedChildren.length > 0) {
+				Object[] affected = new Object[addedChildren.length];
+				for (int i = 0; i < addedChildren.length; i++)
+					affected[i] = addedChildren[i].getResource();
 				if (viewer instanceof AbstractTreeViewer) {
 					((AbstractTreeViewer) viewer).add(resource, affected);
 				}
@@ -182,22 +191,23 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider imple
 					((StructuredViewer) viewer).refresh(resource);
 				}
 			}        
-		}
-		finally {
-			viewer.getControl().setRedraw(true);
-		}
 		
-		// Handle removed children. Issue one update for all removals.
-		affectedChildren = delta.getAffectedChildren(IResourceDelta.REMOVED);
-		if (affectedChildren.length > 0) {
-			Object[] affected = new Object[affectedChildren.length];
-			for (int i = 0; i < affectedChildren.length; i++)
-				affected[i] = affectedChildren[i].getResource();
-			if (viewer instanceof AbstractTreeViewer) {
-				((AbstractTreeViewer) viewer).remove(affected);
-			} else {
-				((StructuredViewer) viewer).refresh(resource);
-			}
-		}
+    		// Handle removed children. Issue one update for all removals.
+    		if (removedChildren.length > 0) {
+    			Object[] affected = new Object[removedChildren.length];
+    			for (int i = 0; i < removedChildren.length; i++)
+    				affected[i] = removedChildren[i].getResource();
+    			if (viewer instanceof AbstractTreeViewer) {
+    				((AbstractTreeViewer) viewer).remove(affected);
+    			} else {
+    				((StructuredViewer) viewer).refresh(resource);
+    			}
+    		}        
+        }
+        finally {
+            if (addedAndRemoved) 
+            	viewer.getControl().setRedraw(true);
+        }
+        
 	}
 }
