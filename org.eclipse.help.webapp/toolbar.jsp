@@ -58,6 +58,16 @@ else if (isMozilla)
 document.write(extraStyle);
 	
 	
+function goBack(button) {
+	parent.MainFrame.history.back();
+	if (isIE) button.blur();
+}
+
+function goForward(button) {
+	parent.MainFrame.history.forward();
+	if (isIE) button.blur();
+}
+
 function showBookshelf(button)
 {
 	parent.NavFrame.switchTab("toc");
@@ -147,10 +157,10 @@ function setTitle(label)
 					&nbsp;
 				</td>
 				<td align="middle" width="22">
-					<a href="#" onclick="parent.history.back();" onmouseover="window.status='<%=WebappResources.getString("back_tip", request)%>';return true;" onmouseout="window.status='';"><img src="images/back.gif" alt='<%=WebappResources.getString("back_tip", request)%>' border="0" name="back"></a>
+					<a href="#" onclick="goBack(this);" onmouseover="window.status='<%=WebappResources.getString("back_tip", request)%>';return true;" onmouseout="window.status='';"><img src="images/back.gif" alt='<%=WebappResources.getString("back_tip", request)%>' border="0" name="back"></a>
 				</td>
 				<td align="middle" width="22">
-					<a href="#" onclick="parent.history.forward();" onmouseover="window.status='<%=WebappResources.getString("forward_tip", request)%>';return true;" onmouseout="window.status='';"><img src="images/forward.gif" alt='<%=WebappResources.getString("forward_tip", request)%>' border="0" name="forward"></a>
+					<a href="#" onclick="goForward(this);" onmouseover="window.status='<%=WebappResources.getString("forward_tip", request)%>';return true;" onmouseout="window.status='';"><img src="images/forward.gif" alt='<%=WebappResources.getString("forward_tip", request)%>' border="0" name="forward"></a>
 				</td>
 				<td align="middle" width="9">
 					<img width="1" height=16 src="images/tool_separator.gif" alt='' border="0">
