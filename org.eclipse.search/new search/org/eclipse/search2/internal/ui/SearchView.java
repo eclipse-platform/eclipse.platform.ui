@@ -368,7 +368,9 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
 		fPageState= memento;
-		getProgressService().showBusyForFamily(InternalSearchUI.FAMILY_SEARCH);
+		IWorkbenchSiteProgressService progressService= getProgressService();
+		if (progressService != null)
+			progressService.showBusyForFamily(InternalSearchUI.FAMILY_SEARCH);
 	}
 	
 	/**
