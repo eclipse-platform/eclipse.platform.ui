@@ -433,9 +433,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 					AntCorePlugin.getPlugin().getLog().log(status);
 					continue;
 				}
-			} catch (Exception e) {
+			} catch (MalformedURLException e) {
 				// if the URL does not have a valid format, just log and ignore the exception
 				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
+				AntCorePlugin.getPlugin().getLog().log(status);
+				continue;
+			} catch (Exception e) {
+				//likely extra classpath entry library that does not exist
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.7"), new String[]{descriptor.getLabel()}), null); //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
@@ -482,9 +487,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 					AntCorePlugin.getPlugin().getLog().log(status);
 					continue;
 				}
-			} catch (Exception e) {
+			} catch (MalformedURLException e) {
 				// if the URL does not have a valid format, just log and ignore the exception
 				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
+				AntCorePlugin.getPlugin().getLog().log(status);
+				continue;
+			} catch (Exception e) {
+				//likely extra classpath entry library that does not exist
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.8"), new String[]{descriptor.getLabel()}), null); //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
@@ -523,9 +533,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 					AntCorePlugin.getPlugin().getLog().log(status);
 					continue;
 				}
-			} catch (Exception e) {
-				// if the URL does not have a valid format, just log and ignore the exception
+			} catch (MalformedURLException e) {
+				//if the URL does not have a valid format, just log and ignore the exception
 				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.getString("AntCorePreferences.Malformed_URL._1"), e); //$NON-NLS-1$
+				AntCorePlugin.getPlugin().getLog().log(status);
+				continue;
+			} catch (Exception e) {
+				//likely extra classpath entry that does not exist
+				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_LIBRARY_NOT_SPECIFIED, MessageFormat.format(InternalCoreAntMessages.getString("AntCorePreferences.6"), new String[]{descriptor.getLabel()}), null); //$NON-NLS-1$
 				AntCorePlugin.getPlugin().getLog().log(status);
 				continue;
 			}
