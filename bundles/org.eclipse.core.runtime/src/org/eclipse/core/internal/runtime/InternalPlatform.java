@@ -451,8 +451,8 @@ public final class InternalPlatform implements IPlatform {
 		//shutdown all running jobs
 		JobManager.shutdown();
 		debugTracker.close();
-		if (writeVersion)
-			writeVersion();
+//		if (writeVersion)
+//			writeVersion();
 		initialized = false;
 	}
 
