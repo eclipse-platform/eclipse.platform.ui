@@ -18,6 +18,9 @@
   </runtime>
 
   <extension point="org.eclipse.core.tests.harness.tests">
+    <test id="runtime.AutomatedTests">
+      <run class="org.eclipse.core.tests.runtime.AutomatedTests"/>
+    </test>
     <test id="runtime.AllTests">
       <run class="org.eclipse.core.tests.runtime.AllTests"/>
     </test>
