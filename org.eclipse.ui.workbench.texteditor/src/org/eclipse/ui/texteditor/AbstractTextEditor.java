@@ -887,8 +887,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			
 			if (newCaretOffset == -1)
-				// do nothing
-				return;
+				newCaretOffset= caretOffset;
+			else
+				st.setCaretOffset(newCaretOffset);
 
 			st.setCaretOffset(newCaretOffset);
 			if (fDoSelect) {
@@ -979,10 +980,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			
 			if (newCaretOffset == -1)
-				// do nothing
-				return;
+				newCaretOffset= caretOffset;
+			else
+				st.setCaretOffset(newCaretOffset);
 
-			st.setCaretOffset(newCaretOffset);
 			if (fDoSelect) {
 				if (caretOffset < oldSelection.y)	
 					st.setSelection(oldSelection.y, newCaretOffset);
