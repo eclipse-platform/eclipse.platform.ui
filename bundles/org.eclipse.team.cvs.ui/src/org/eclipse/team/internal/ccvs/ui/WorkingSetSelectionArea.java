@@ -228,7 +228,12 @@ public class WorkingSetSelectionArea extends DialogArea {
 	 */
 	private void initializeWorkingSet() {
 		if (workingSet == null && settings != null && settings.getBoolean(USE_WORKING_SET)) {
-			setWorkingSet(PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(settings.get(SELECTED_WORKING_SET)));
+			IWorkingSet mruSet = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(settings.get(SELECTED_WORKING_SET));
+			if (mruSet != null) {
+				// the call to setWorkingSet will re-invoke the initializeWorkingSet method
+				setWorkingSet(mruSet);
+				return;
+			}
 		}
 		workingSetButton.setSelection(workingSet != null);
 		handleWorkingSetButtonSelection();
