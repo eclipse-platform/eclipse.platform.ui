@@ -9,42 +9,62 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.tests;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.eclipse.ui.tests.activities.ActivitiesTestSuite;
+import org.eclipse.ui.tests.adaptable.AdaptableTestSuite;
+import org.eclipse.ui.tests.api.ApiTestSuite;
+import org.eclipse.ui.tests.commands.CommandsTestSuite;
+import org.eclipse.ui.tests.contexts.ContextsTestSuite;
+import org.eclipse.ui.tests.datatransfer.DataTransferTestSuite;
+import org.eclipse.ui.tests.dialogs.UIAutomatedSuite;
+import org.eclipse.ui.tests.internal.InternalTestSuite;
 import org.eclipse.ui.tests.intro.IntroTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
+import org.eclipse.ui.tests.navigator.NavigatorTestSuite;
+import org.eclipse.ui.tests.preferences.PreferencesTestSuite;
+import org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite;
 import org.eclipse.ui.tests.util.PlatformUtil;
+import org.eclipse.ui.tests.zoom.ZoomTestSuite;
+
 /**
  * Test all areas of the UI.
  */
 public class UiTestSuite extends TestSuite {
-	/**
-	 * Returns the suite. This is required to use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new UiTestSuite();
-	}
-	/**
-	 * Construct the test suite.
-	 */
-	public UiTestSuite() {
-	    addTest(new IntroTestSuite());
-		addTest(new org.eclipse.ui.tests.api.ApiTestSuite());
 
-		if (!PlatformUtil.onLinux()) {
-			addTest(new org.eclipse.ui.tests.dialogs.UIAutomatedSuite());
-		}
-		addTest(new org.eclipse.ui.tests.propertysheet.PropertySheetTestSuite());
-		addTest(new org.eclipse.ui.tests.internal.InternalTestSuite());
-		addTest(new org.eclipse.ui.tests.navigator.NavigatorTestSuite());
-		addTest(new org.eclipse.ui.tests.adaptable.AdaptableTestSuite());
-		addTest(new org.eclipse.ui.tests.zoom.ZoomTestSuite());
-		addTest(new org.eclipse.ui.tests.datatransfer.DataTransferTestSuite());
-		addTest(new org.eclipse.ui.tests.preferences.PreferencesTestSuite());
-		addTest(new KeysTestSuite());
-		addTest(new MultiPageEditorTestSuite());
-//		addTest(new org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite());
-		addTest(new org.eclipse.ui.tests.activities.ActivitiesTestSuite());
-	}
+    /**
+     * Returns the suite. This is required to use the JUnit Launcher.
+     */
+    public static Test suite() {
+        return new UiTestSuite();
+    }
+
+    /**
+     * Construct the test suite.
+     */
+    public UiTestSuite() {
+        addTest(new IntroTestSuite());
+        addTest(new ApiTestSuite());
+
+        if (!PlatformUtil.onLinux()) {
+            addTest(new UIAutomatedSuite());
+        }
+
+        addTest(new PropertySheetTestSuite());
+        addTest(new InternalTestSuite());
+        addTest(new NavigatorTestSuite());
+        addTest(new AdaptableTestSuite());
+        addTest(new ZoomTestSuite());
+        addTest(new DataTransferTestSuite());
+        addTest(new PreferencesTestSuite());
+        addTest(new KeysTestSuite());
+        addTest(new MultiPageEditorTestSuite());
+        //addTest(new DynamicPluginsTestSuite());
+        addTest(new ActivitiesTestSuite());
+        addTest(new CommandsTestSuite());
+        addTest(new ContextsTestSuite());
+    }
 }
