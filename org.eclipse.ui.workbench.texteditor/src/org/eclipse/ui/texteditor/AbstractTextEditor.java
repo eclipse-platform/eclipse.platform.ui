@@ -358,11 +358,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		/** The posted updater code. */
 		private Runnable fRunnable= new Runnable() {
 			public void run() {
+				
+				TextEvent textEvent= (TextEvent) fTextEventQueue.remove(0);
+				
 				if (fSourceViewer != null) {
 					// check whether editor has not been disposed yet
-					updateContentDependentActions();
+					if (fTextEventQueue.isEmpty())
+						updateContentDependentActions();
+						
 					// remember the last edit position
-					if (isDirty()) {
+					if (isDirty() && (textEvent.getDocumentEvent() != null)) {
 						ISelection sel= getSelectionProvider().getSelection();
 						IEditorInput input= getEditorInput();
 						Position pos= null;
@@ -384,6 +389,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		
 		/** Display used for posting the updater code. */
 		private Display fDisplay;
+		/** Display used for posting the updater code. */
+		private ArrayList fTextEventQueue= new ArrayList(5);
 		
 		/*
 		 * @see ITextListener#textChanged(TextEvent)
@@ -398,11 +405,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 							
 			if (fDisplay == null)
 				fDisplay= getSite().getShell().getDisplay();
-				
+
+			fTextEventQueue.add(event);
 			fDisplay.asyncExec(fRunnable);
 		}
 	};
-
+	
 	/**
 	 * Compare configuration elements according to the prerequisite relation
 	 * of their defining plug-ins.
