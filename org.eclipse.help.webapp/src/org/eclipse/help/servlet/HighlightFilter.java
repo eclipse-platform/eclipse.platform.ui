@@ -1,5 +1,5 @@
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000-2002.
  * All Rights Reserved.
  */
  
@@ -12,10 +12,7 @@ import java.net.URLDecoder;
 public class HighlightFilter implements IFilter
 {
 	private String searchWord;
-	
-	private static final byte[] headTagBegin = "<head".getBytes();
-	private static final byte[] headTagBeginCaps = "<HEAD".getBytes();
-	private static final char headTagEnd = '>';
+
 	private static final String scriptPart1 =
 		"\n<script language=\"JavaScript\">\n<!--\nvar keywords = new Array (";
 	private static final String scriptPart3 =
@@ -44,44 +41,7 @@ public class HighlightFilter implements IFilter
 		if (script == null)
 			return input;
 
-		// Create new buffer
-		byte[] buffer = new byte[input.length + script.length];
-		int bufPointer = 0;
-		int inputPointer = 0;
-		boolean foundHeadTagBegin = false;
-		boolean foundHeadTagEnd = false;
-		while (inputPointer < input.length) {
-			// copy character
-			buffer[bufPointer++] = input[inputPointer++];
-			// look for head tag copied
-			if (!foundHeadTagEnd
-				&& !foundHeadTagBegin
-				&& (bufPointer >= headTagBegin.length)) {
-				for (int i = 0; i < headTagBegin.length; i++) {
-					if ((buffer[bufPointer - headTagBegin.length + i] != headTagBegin[i])
-						&& (buffer[bufPointer - headTagBegin.length + i] != headTagBeginCaps[i])) {
-						break;
-					}
-					if (i == headTagBegin.length - 1)
-						foundHeadTagBegin = true;
-				}
-			}
-			if (!foundHeadTagEnd && foundHeadTagBegin && buffer[bufPointer - 1] == '>') {
-				foundHeadTagEnd = true;
-				//embed Script
-				System.arraycopy(script, 0, buffer, bufPointer, script.length);
-				bufPointer += script.length;
-				// copy rest
-				System.arraycopy(
-					input,
-					inputPointer,
-					buffer,
-					bufPointer,
-					input.length - inputPointer);
-				return buffer;
-			}
-		}
-		return buffer;
+		return HeadFilterHelper.filter(input, script);
 	}
 	
 	/**

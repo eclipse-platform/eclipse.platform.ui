@@ -16,7 +16,9 @@ import javax.servlet.http.*;
  */
 public class EclipseConnector {
 	private ServletContext context;
-	private IFilter[] nullFilter = new IFilter[0];
+	private static IFilter[] noFilters = new IFilter[0];
+	private static CSSFilter cssFilter = new CSSFilter();
+	private static IFilter[] basicFilters = new IFilter[] { cssFilter };
 
 	/**
 	 * Constructor.
@@ -158,10 +160,25 @@ public class EclipseConnector {
 	 * @return array of IFilter
 	 */
 	private IFilter[] getFilters(HttpServletRequest req) {
-		// search result
-		if (req.getParameter("resultof") != null)
-			return new IFilter[] { new HighlightFilter(req.getParameter("resultof"))};
-		else
-			return nullFilter;
+		String uri = req.getRequestURI();
+		String agent = req.getHeader("User-Agent").toLowerCase();
+		boolean ie = (agent.indexOf("msie") != -1);
+		// we only insert css for ie
+		if (ie) {
+			if (uri != null && (uri.endsWith("html") || uri.endsWith("htm"))) {
+				if (req.getParameter("resultof") != null)
+					return new IFilter[] {
+						cssFilter,
+						new HighlightFilter(req.getParameter("resultof"))};
+				else
+					return basicFilters;
+			} else
+				return noFilters;
+		} else {
+			if (req.getParameter("resultof") != null)
+				return new IFilter[] { new HighlightFilter(req.getParameter("resultof"))};
+			else
+				return noFilters;
+		}
 	}
 }

@@ -12,15 +12,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
  
  <style type="text/css">
+ 
  BODY {
 	background-color: Window;
 	/*font: 9pt ms sans serif,sans-serif;*/
 	font: 8pt Tahoma;
 	margin:0;
 	padding:0;
-	border:0;
+	border-bottom:1px solid black;
+	border-right:1px solid black;
 	cursor:default;
-
 	scrollbar-highlight-color:ThreeDShadow;
 	scrollbar-shadow-color:ThreeDShadow;
 	scrollbar-arrow-color:#000000;
@@ -33,8 +34,9 @@
 
 <body>
 
-<div id="bannerTitle" style="background:ActiveBorder; width:100%; position:absolute; left:10; top:20; font: 14pt Tahoma;">
+<div id="bannerTitle" style="background:ActiveBorder; width:100%; position:absolute; left:10px; top:20; font: 14pt Tahoma;">
 	<%=request.getParameter("title") != null ?request.getParameter("title") : WebappResources.getString("Bookshelf", request)%>
 </div>
+
 </body>
 </html>
