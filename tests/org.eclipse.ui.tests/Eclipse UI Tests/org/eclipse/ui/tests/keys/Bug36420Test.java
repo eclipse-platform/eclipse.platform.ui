@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.tests.keys;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,7 +25,6 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.commands.IKeyBinding;
 import org.eclipse.ui.commands.NotDefinedException;
@@ -66,9 +66,11 @@ public class Bug36420Test extends UITestCase {
 		String commandId = "org.eclipse.ui.window.nextView"; //$NON-NLS-1$
 		String keySequenceText = "F S C K"; //$NON-NLS-1$
 
-		// Open a new window to hold stuff.
-		IWorkbenchWindow window = openTestWindow();
-
+		/*
+		 * DO NOT USE PreferenceMutator for this section. This test case must
+		 * use these exact steps, while PreferenceMutator might use something
+		 * else in the future.
+		 */
 		// Set up the preferences.
 		Properties preferences = new Properties();
 		String key = "org.eclipse.ui.workbench/org.eclipse.ui.commands"; //$NON-NLS-1$
@@ -82,16 +84,18 @@ public class Bug36420Test extends UITestCase {
 		// Export the preferences.
 		File file = File.createTempFile("preferences", ".txt"); //$NON-NLS-1$//$NON-NLS-2$
 		file.deleteOnExit();
-		FileOutputStream fos = new FileOutputStream(file);
-		preferences.store(fos, null);
-		fos.close();
+		BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+		preferences.store(bos, null);
+		bos.close();
 
 		// Attempt to import the key binding.
 		Preferences.importPreferences(new Path(file.getAbsolutePath()));
+		/*
+		 * END SECTION
+		 */
 
 		// Check to see that the key binding for the given command matches.
-		Workbench workbench = (Workbench) window.getWorkbench();
-		ICommandManager manager = workbench.getCommandManager();
+		ICommandManager manager = ((Workbench) fWorkbench).getCommandManager();
 		SortedSet keyBindings = manager.getCommand(commandId).getKeyBindings();
 		Iterator keyBindingItr = keyBindings.iterator();
 		boolean found = false;
