@@ -577,16 +577,15 @@ public class ProjectHelper extends ProjectHelper2 {
 	 * @see org.apache.tools.ant.ProjectHelper#parse(org.apache.tools.ant.Project, java.lang.Object)
 	 */
 	public void parse(Project project, Object source) throws BuildException {
-		getImportStack().addElement(source);
-		currentImportStackSize= getImportStack().size();
-        AntXMLContext context = null;
-        context = (AntXMLContext) project.getReference("ant.parsing.context"); //$NON-NLS-1$
+		AntXMLContext context = (AntXMLContext) project.getReference("ant.parsing.context"); //$NON-NLS-1$
         if (context == null) {
+        	getImportStack().removeAllElements();
             context = new AntXMLContext(project);
             project.addReference("ant.parsing.context", context); //$NON-NLS-1$
             project.addReference("ant.targets", context.getTargets()); //$NON-NLS-1$
         }
-
+        getImportStack().addElement(source);
+		currentImportStackSize= getImportStack().size();
         if (getImportStack().size() > 1) {
             // we are in an imported file.
             context.setIgnoreProjectTag(true);
