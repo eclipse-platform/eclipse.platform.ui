@@ -29,7 +29,8 @@ public class SiteFile extends Site {
 	 */
 	public ISiteContentConsumer createSiteContentConsumer(IFeature targetFeature)
 		throws CoreException {
-		SiteFileContentConsumer consumer = new SiteFileContentConsumer(targetFeature);
+		SiteFileContentConsumer consumer =
+			new SiteFileContentConsumer(targetFeature);
 		consumer.setSite(this);
 		return consumer;
 	}
@@ -96,10 +97,11 @@ public class SiteFile extends Site {
 		// create new executable feature and install source content into it
 		IFeature localFeature = createExecutableFeature(sourceFeature);
 		parentContentConsumer.addChild(localFeature);
-		
+
 		// set the verifier
 		IVerifier vr = sourceFeature.getFeatureContentProvider().getVerifier();
-		if (vr!=null) vr.setParent(parentVerifier);
+		if (vr != null)
+			vr.setParent(parentVerifier);
 
 		IFeatureReference localFeatureReference =
 			sourceFeature.install(localFeature, verificationListener, monitor);
@@ -111,6 +113,13 @@ public class SiteFile extends Site {
 	 */
 	public void remove(IFeature feature, IProgressMonitor progress)
 		throws CoreException {
+
+		if (feature == null) {
+			UpdateManagerPlugin.warn("Feature to remove is null");
+			return;
+		}
+
+		ErrorRecoveryLog recoveryLog = ErrorRecoveryLog.getLog();
 
 		// make sure we have an InstallMonitor		
 		InstallMonitor monitor;
@@ -132,11 +141,21 @@ public class SiteFile extends Site {
 		Throwable originalException = null;
 
 		try {
+
+			// start log
+			recoveryLog.append(recoveryLog.START_REMOVE_LOG);
+
+			aboutToRemove(feature);
+
+			// log files have been downloaded
+			recoveryLog.append(recoveryLog.END_REMOVE);
+
 			handler.uninstallInitiated();
 
 			// remove the feature and the plugins if they are not used and not activated
 			// get the plugins from the feature
-			IPluginEntry[] pluginsToRemove = getPluginEntriesOnlyReferencedBy(feature);
+			IPluginEntry[] pluginsToRemove =
+				getPluginEntriesOnlyReferencedBy(feature);
 
 			if (monitor != null) {
 				monitor.beginTask(
@@ -145,22 +164,39 @@ public class SiteFile extends Site {
 				//$NON-NLS-1$
 			}
 
-			//finds the contentReferences for this IPluginEntry
-			for (int i = 0; i < pluginsToRemove.length; i++) {
-				remove(feature, pluginsToRemove[i], monitor);
+			// remove feature reference from the site
+			IFeatureReference[] featureReferences = getFeatureReferences();
+			if (featureReferences != null) {
+				for (int indexRef = 0;
+					indexRef < featureReferences.length;
+					indexRef++) {
+					IFeatureReference element = featureReferences[indexRef];
+					if (element.equals(feature)) {
+						removeFeatureReferenceModel(
+							(FeatureReferenceModel) element);
+						break;
+					}
+				}
 			}
 
 			// remove the feature content
 			ContentReference[] references =
-				feature.getFeatureContentProvider().getFeatureEntryArchiveReferences(monitor);
+				feature
+					.getFeatureContentProvider()
+					.getFeatureEntryArchiveReferences(
+					monitor);
 			for (int i = 0; i < references.length; i++) {
 				try {
-					UpdateManagerUtils.removeFromFileSystem(references[i].asFile());
+					UpdateManagerUtils.removeFromFileSystem(
+						references[i].asFile());
 					if (monitor != null)
 						monitor.worked(1);
 				} catch (IOException e) {
 					String id =
-						UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
+						UpdateManagerPlugin
+							.getPlugin()
+							.getDescriptor()
+							.getUniqueIdentifier();
 					throw Utilities.newCoreException(
 						Policy.bind(
 							"SiteFile.CannotRemoveFeature",
@@ -171,25 +207,29 @@ public class SiteFile extends Site {
 				}
 			}
 
-			handler.completeUninstall();
-
-			// remove feature reference from the site
-			IFeatureReference[] featureReferences = getFeatureReferences();
-			if (featureReferences != null) {
-				for (int indexRef = 0; indexRef < featureReferences.length; indexRef++) {
-					IFeatureReference element = featureReferences[indexRef];
-					if (element.equals(feature)) {
-						removeFeatureReferenceModel((FeatureReferenceModel) element);
-						break;
-					}
-				}
+			//finds the contentReferences for an IPluginEntry
+			// and remove it
+			for (int i = 0; i < pluginsToRemove.length; i++) {
+				remove(feature, pluginsToRemove[i], monitor);
 			}
 
 			// remove any children feature
-			IFeatureReference[] childrenRef = feature.getIncludedFeatureReferences();
+			IFeatureReference[] childrenRef =
+				feature.getIncludedFeatureReferences();
 			for (int i = 0; i < childrenRef.length; i++) {
-				remove(childrenRef[i].getFeature(), monitor);
+				IFeature childFeature = null;
+				try {
+					childFeature = childrenRef[i].getFeature();
+				} catch (CoreException e) {
+					UpdateManagerPlugin.warn(
+						"Unable to retrieve feature to remove for:"
+							+ childrenRef[i]);
+				}
+				if (childFeature != null)
+					remove(childrenRef[i].getFeature(), monitor);
 			}
+
+			handler.completeUninstall();
 
 			success = true;
 		} catch (Throwable t) {
@@ -197,6 +237,14 @@ public class SiteFile extends Site {
 		} finally {
 			Throwable newException = null;
 			try {
+				if (success) {
+					// close the log
+					recoveryLog.append(recoveryLog.END_REMOVE_LOG);
+					recoveryLog.close();
+					recoveryLog.delete();
+				} else {
+					recoveryLog.close();
+				}
 				handler.uninstallCompleted(success);
 			} catch (Throwable t) {
 				newException = t;
@@ -229,15 +277,18 @@ public class SiteFile extends Site {
 		long result = 0;
 		IPluginEntry[] entriesToInstall = feature.getPluginEntries();
 		IPluginEntry[] siteEntries = this.getPluginEntries();
-		entriesToInstall = UpdateManagerUtils.diff(entriesToInstall, siteEntries);
+		entriesToInstall =
+			UpdateManagerUtils.diff(entriesToInstall, siteEntries);
 
 		try {
 			result =
-				feature.getFeatureContentProvider().getDownloadSizeFor(entriesToInstall,
+				feature
+					.getFeatureContentProvider()
+					.getDownloadSizeFor(entriesToInstall,
 			/* non plugin entry []*/
 			null);
 		} catch (CoreException e) {
-			UpdateManagerPlugin.warn(null,e);
+			UpdateManagerPlugin.warn(null, e);
 			result = ContentEntryModel.UNKNOWN_SIZE;
 		}
 		return result;
@@ -258,15 +309,18 @@ public class SiteFile extends Site {
 		long result = 0;
 		IPluginEntry[] entriesToInstall = feature.getPluginEntries();
 		IPluginEntry[] siteEntries = this.getPluginEntries();
-		entriesToInstall = UpdateManagerUtils.diff(entriesToInstall, siteEntries);
+		entriesToInstall =
+			UpdateManagerUtils.diff(entriesToInstall, siteEntries);
 
 		try {
 			result =
-				feature.getFeatureContentProvider().getInstallSizeFor(entriesToInstall,
+				feature
+					.getFeatureContentProvider()
+					.getInstallSizeFor(entriesToInstall,
 			/* non plugin entry []*/
 			null);
 		} catch (CoreException e) {
-			UpdateManagerPlugin.warn(null,e);
+			UpdateManagerPlugin.warn(null, e);
 			result = ContentEntryModel.UNKNOWN_SIZE;
 		}
 
@@ -311,7 +365,8 @@ public class SiteFile extends Site {
 		throws CoreException {
 		IFeature result = null;
 		IFeatureFactory factory =
-			FeatureTypeFactory.getInstance().getFactory(DEFAULT_INSTALLED_FEATURE_TYPE);
+			FeatureTypeFactory.getInstance().getFactory(
+				DEFAULT_INSTALLED_FEATURE_TYPE);
 		result = factory.createFeature(/*URL*/
 		null, this);
 
@@ -336,7 +391,9 @@ public class SiteFile extends Site {
 			return;
 
 		ContentReference[] references =
-			feature.getFeatureContentProvider().getPluginEntryArchiveReferences(
+			feature
+				.getFeatureContentProvider()
+				.getPluginEntryArchiveReferences(
 				pluginEntry,
 				monitor);
 		for (int i = 0; i < references.length; i++) {
@@ -353,6 +410,92 @@ public class SiteFile extends Site {
 					e);
 				//$NON-NLS-1$
 			}
+		}
+	}
+
+	/*
+	 * 
+	 */
+	private void aboutToRemove(IFeature feature) throws CoreException {
+		ErrorRecoveryLog recoveryLog = ErrorRecoveryLog.getLog();
+
+		//logFeature
+		if (feature != null) {
+			// log feature URL
+			ContentReference[] references =
+				feature
+					.getFeatureContentProvider()
+					.getFeatureEntryArchiveReferences(
+					null);
+			for (int i = 0; i < references.length; i++) {
+				try {
+					recoveryLog.appendPath(
+						ErrorRecoveryLog.FEATURE_ENTRY,
+						references[i].asFile().getAbsolutePath());
+				} catch (IOException e) {
+					String id =
+						UpdateManagerPlugin
+							.getPlugin()
+							.getDescriptor()
+							.getUniqueIdentifier();
+					throw Utilities.newCoreException(
+						Policy.bind(
+							"SiteFile.CannotRemoveFeature",
+							feature.getVersionedIdentifier().getIdentifier(),
+							getURL().toExternalForm()),
+						e);
+					//$NON-NLS-1$
+				}
+			}
+			// log pluginEntry URL
+			IPluginEntry[] pluginsToRemove =
+				getPluginEntriesOnlyReferencedBy(feature);
+			IPluginEntry pluginEntry;
+			for (int i = 0; i < pluginsToRemove.length; i++) {
+				pluginEntry = pluginsToRemove[i];
+
+				references =
+					feature
+						.getFeatureContentProvider()
+						.getPluginEntryArchiveReferences(
+						pluginEntry,
+						null);
+				for (int j = 0; j < references.length; j++) {
+					try {
+						String entry = null;
+						if (pluginEntry.isFragment())
+						 entry=ErrorRecoveryLog.FRAGMENT_ENTRY;
+					else
+						 entry=ErrorRecoveryLog.PLUGIN_ENTRY;
+					recoveryLog.appendPath(
+						entry,
+						references[j].asFile().getAbsolutePath());
+					} catch (IOException e) {
+						throw Utilities.newCoreException(
+							Policy.bind(
+								"SiteFile.CannotRemovePlugin",
+								pluginEntry.getVersionedIdentifier().toString(),
+								getURL().toExternalForm()),
+							e);
+						//$NON-NLS-1$
+					}
+				}
+			}
+		}
+
+		// call recursively for each children	 
+		IFeatureReference[] childrenRef =
+			feature.getIncludedFeatureReferences();
+		IFeature childFeature = null;
+		for (int i = 0; i < childrenRef.length; i++) {
+			try {
+				childFeature = childrenRef[i].getFeature();
+			} catch (CoreException e) {
+				UpdateManagerPlugin.warn(
+					"Unable to retrieve feature to remove for:"
+						+ childrenRef[i]);
+			}
+			aboutToRemove(childFeature);
 		}
 	}
 }

@@ -141,6 +141,14 @@ public class ConfiguredSiteModel extends ModelObject {
 	 * creates a Status
 	 */
 	protected IStatus createStatus(int statusType, String msg, Exception e){
+		if (statusType!=IStatus.OK) statusType = IStatus.ERROR;
+		return createStatus(statusType,IStatus.OK, msg.toString(), e);
+	}
+
+	/*
+	 * creates a Status
+	 */
+	protected IStatus createStatus(int statusSeverity, int statusCode, String msg, Exception e){
 		String id =
 			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
 	
@@ -152,7 +160,6 @@ public class ConfiguredSiteModel extends ModelObject {
 			completeString.append(e.toString());
 			completeString.append("]\r\n");
 		}
-		if (statusType!=IStatus.OK) statusType = IStatus.ERROR;
-		return new Status(statusType, id, IStatus.OK, completeString.toString(), e);
+		return new Status(statusSeverity, id, statusCode, completeString.toString(), e);
 	}
 }

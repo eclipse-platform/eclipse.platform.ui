@@ -59,12 +59,18 @@ public class SiteFilePluginContentConsumer extends ContentConsumer {
 				: File.separator + contentKey;
 
 			// error recovery
-			if (pluginPath.endsWith("plugin.xml") || pluginPath.endsWith("fragment.xml")) {
+			if (pluginPath.endsWith("plugin.xml")) {
 				oldPath=pluginPath.replace(File.separatorChar,'/');
 				pluginPath = ErrorRecoveryLog.getLocalRandomIdentifier(pluginPath);
 				newPath=pluginPath;
 				ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.PLUGIN_ENTRY, pluginPath);
 			}
+			if (pluginPath.endsWith("fragment.xml")) {
+				oldPath=pluginPath.replace(File.separatorChar,'/');
+				pluginPath = ErrorRecoveryLog.getLocalRandomIdentifier(pluginPath);
+				newPath=pluginPath;
+				ErrorRecoveryLog.getLog().appendPath(ErrorRecoveryLog.FRAGMENT_ENTRY, pluginPath);
+			}			
 			UpdateManagerUtils.copyToLocal(inStream, pluginPath, null);
 		} catch (IOException e) {
 			throw Utilities.newCoreException(

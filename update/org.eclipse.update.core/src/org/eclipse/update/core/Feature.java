@@ -385,6 +385,9 @@ public class Feature extends FeatureModel implements IFeature {
 			// call handler to complete installation (eg. handle non-plugin entries)
 			handler.completeInstall(consumer);
 			monitorWork(monitor,1);
+					
+			// log files have been downloaded
+			recoveryLog.append(recoveryLog.END_INSTALL);					
 						
 			// indicate install success
 			success = true;
@@ -406,11 +409,12 @@ public class Feature extends FeatureModel implements IFeature {
 						consumer.abort();
 					}
 				}
-				recoveryLog.close();
-				recoveryLog.delete();				
 				handler.installCompleted(success);
 			} catch (Exception e) {
 				newException = e;
+			} finally{
+				recoveryLog.close();
+				recoveryLog.delete();								
 			}
 			if (originalException != null) // original exception wins
 				throw Utilities.newCoreException(

@@ -1182,22 +1182,4 @@ public class ConfiguredSite
 
 		return (file1.equals(file2));
 	}		 
-	
-	/*
-	 * creates a Status
-	 */
-	private IStatus createStatus(int statusSeverity, int statusCode, String msg, Exception e){
-		String id =
-			UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
-	
-		StringBuffer completeString = new StringBuffer("");
-		if (msg!=null)
-			completeString.append(msg);
-		if (e!=null){
-			completeString.append("\r\n[");
-			completeString.append(e.toString());
-			completeString.append("]\r\n");
-		}
-		return new Status(statusSeverity, id, statusCode, completeString.toString(), e);
-	}		
 }
