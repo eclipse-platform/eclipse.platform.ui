@@ -131,8 +131,7 @@ public class SourceViewerDecorationSupport {
 				gc.drawLine(x1, y1, x1, left.y + textWidget.getLineHeight() - 1);
 									
 			} else {
-//				textWidget.redrawRange(offset, length, true);
-				textWidget.redrawRange(offset, Math.max(1, length), true);
+				textWidget.redrawRange(offset, length, true);
 			}
 		}
 	}
