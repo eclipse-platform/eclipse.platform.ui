@@ -21,8 +21,7 @@ import org.eclipse.ui.part.MarkerTransfer;
 /**
  * Copies a task to the clipboard.
  */
-/*package*/
-class CopyTaskAction extends TaskAction {
+/*package*/ class CopyTaskAction extends TaskAction {
 	/**
 	 * System clipboard
 	 */
@@ -54,14 +53,12 @@ class CopyTaskAction extends TaskAction {
 
 		// Place the markers on the clipboard
 		Object[] data = new Object[] {
-					markers, 
-					TaskList.createMarkerReport(markers)};				
+			markers,
+			TaskList.createMarkerReport(markers)};				
 		Transfer[] transferTypes = new Transfer[] {
-					MarkerTransfer.getInstance(), 
-					TextTransfer.getInstance()};
-		clipboard.setContents(
-					data,
-					transferTypes);
+			MarkerTransfer.getInstance(),
+			TextTransfer.getInstance()};
+		clipboard.setContents(data, transferTypes);
 	}
 }
 
