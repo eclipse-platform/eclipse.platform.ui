@@ -1210,6 +1210,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private final String fInsertModeLabel = EditorMessages.getString("Editor.statusline.mode.insert.label"); //$NON-NLS-1$
 	private final String fOverwriteModeLabel = EditorMessages.getString("Editor.statusline.mode.overwrite.label"); //$NON-NLS-1$
 	
+	/** The error message shown in the status line in case of failed information look up. */
+	protected final String fErrorLabel= EditorMessages.getString("Editor.statusline.error.label"); //$NON-NLS-1$
+
+	/**
+	 * Data structure for the position label value.
+	 */
 	private static class PositionLabelValue {
 		
 		public int fValue;
@@ -1218,13 +1224,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return String.valueOf(fValue);
 		}
 	};
-	
-	/** The error message shown in the status line in case of failed information look up. */
-	protected final String fErrorLabel= EditorMessages.getString("Editor.statusline.error.label"); //$NON-NLS-1$
+	/** The pattern used to show the position label in the status line. */
 	private final String fPositionLabelPattern= EditorMessages.getString("Editor.statusline.position.pattern"); //$NON-NLS-1$
-
+	/** The position label value of the current line. */
 	private final PositionLabelValue fLineLabel= new PositionLabelValue();
+	/** The position label value of the current column. */
 	private final PositionLabelValue fColumnLabel= new PositionLabelValue();
+	/** The arguments for the position label pattern. */
 	private final Object[] fPositionLabelPatternArguments= new Object[] { fLineLabel, fColumnLabel };
 
 	
@@ -4286,12 +4292,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * Converts the the given source viewer's widget offset to the offset in the model.
+	 * Returns the offset of the given source viewer's document that corresponds
+	 * to the given widget offset or <code>-1</code> if there is no such offset.
 	 * 
 	 * @param viewer the source viewer
 	 * @param widgetOffset the widget offset
-	 * 
-	 * @return the model offset
+	 * @return the corresponding offset in the source viewer's document or <code>-1</code>
 	 * @since 2.1
 	 */
 	protected final static int widgetOffset2ModelOffset(ISourceViewer viewer, int widgetOffset) {
@@ -4303,7 +4309,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/**
-	 * ???
+	 * Returns the minimal region of the given source viewer's document that completely
+	 * comprises everything that is visible in the viewer's widget.
+	 * 
+	 * @return the minimal region of the source viewer's document comprising the contents of the viewer's widget
 	 * @since 2.1
 	 */
 	protected final static IRegion getCoverage(ISourceViewer viewer) {
