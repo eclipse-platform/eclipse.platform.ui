@@ -38,6 +38,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.variables.LaunchVariableUtil;
 import org.eclipse.debug.ui.console.FileLink;
+import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -177,6 +178,7 @@ public final class AntUtil {
 		String[] propertyFiles= getPropertyFiles(config);
 		AntRunner runner = new AntRunner();
 		runner.setBuildFileLocation(path);
+		runner.setRemoveXerces(isSetToRunInSeparateVM(config));
 		if (properties != null){
 			runner.addUserProperties(properties);
 		}
@@ -319,18 +321,6 @@ public final class AntUtil {
 	}
 	
 	/**
-	 * Returns whether the target described by the given
-	 * <code>TargetInfo</code> is a sub-target.
-	 * 
-	 * @param info the info of the target in question
-	 * @return <code>true</code> if the target is a sub-target,
-	 * 		<code>false</code> otherwise
-	 */
-	public static boolean isSubTarget(TargetInfo info) {
-		return info.getDescription() == null;
-	}
-	
-	/**
 	 * Returns the list of target names to run
 	 * 
 	 * @param extraAttibuteValue the external tool's extra attribute value
@@ -435,5 +425,17 @@ public final class AntUtil {
 			return file;
 		}
 		return null;
+	}
+	
+	public static boolean isSetToRunInSeparateVM(ILaunchConfiguration configuration) {
+		String vmTypeID= null;
+		try {
+			//check if set to run in a separate VM
+			vmTypeID = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, (String)null);
+		} catch (CoreException ce) {
+			AntUIPlugin.log(ce);			
+		}
+		
+		return vmTypeID != null;
 	}
 }
