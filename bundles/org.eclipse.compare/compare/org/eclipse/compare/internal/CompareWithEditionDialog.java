@@ -15,5 +15,5 @@ public class CompareWithEditionDialog extends EditionSelectionDialog {
 	
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.CANCEL_ID, Utilities.getString("CompareWithEditionDialog.closeButton.label"), false); //$NON-NLS-1$
-	}
+	}		/**	 * Overidden to disable dismiss on double click (see PR 1GI3KUR).	 */	protected void okPressed() {	}
 }

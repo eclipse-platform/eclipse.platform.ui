@@ -146,7 +146,7 @@ public class EditionSelectionDialog extends Dialog {
 		}
 	}
 	
-	private static final boolean HIDE_IDENTICAL= true;
+	private boolean fHideIdentical= true;
 	
 	private Button fCommitButton;
 	private boolean fReplaceMode= true;
@@ -364,6 +364,16 @@ public class EditionSelectionDialog extends Dialog {
 		if (getReturnCode() == OK)
 			return fSelectedItem;
 		return null;
+	}
+	
+	/**
+	 * Controls whether identical entries are shown or not.
+	 * This method must be called before <code>selectEdition</code>.
+	 * *
+	 * @param hide if true identical entries are hidden; otherwise they are shown.
+	 */
+	public void setHideIdenticalEntries(boolean hide) {
+		fHideIdentical= hide;
 	}
 		
 	/**
@@ -639,7 +649,7 @@ public class EditionSelectionDialog extends Dialog {
 				ti.setData(editions);
 			}
 		}
-		if (HIDE_IDENTICAL) {
+		if (fHideIdentical) {
 			Pair last= fTargetPair;
 			int size= editions.size();
 			if (size > 0)
