@@ -483,6 +483,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	public Viewer createViewer(Composite parent) {
 		TreeViewer variablesViewer = createTreeViewer(parent);
 		createDetailsViewer();
+		getSashForm().setMaximizedControl(variablesViewer.getControl());
 
 		createOrientationActions();
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
