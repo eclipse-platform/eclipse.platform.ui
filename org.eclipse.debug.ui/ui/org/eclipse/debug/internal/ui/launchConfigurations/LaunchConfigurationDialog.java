@@ -2022,6 +2022,7 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 			ILaunchConfigurationWorkingCopy wc = configType.newInstance(null, getLaunchManager().generateUniqueLaunchConfigurationNameFrom(DEFAULT_NEW_CONFIG_NAME));
 			setLastSavedName(null);
 			setLaunchConfiguration(wc, true);
+			updateWorkingCopyFromPages();
 			doSave();
 		} catch (CoreException ce) {
 			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Error_19"), LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_creating_new_launch_configuration_45"), ce); //$NON-NLS-1$ //$NON-NLS-2$
