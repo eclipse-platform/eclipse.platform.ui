@@ -12,6 +12,8 @@ package org.eclipse.ui.internal.progress;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobStatus;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IconAndMessageDialog;
 import org.eclipse.jface.resource.JFaceResources;
@@ -50,7 +52,11 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	/**
 	 * The name of the task that is being blocked.
 	 */
-	private String blockedTaskName = null;
+	private String blockedTaskName = null;	
+	/**
+	 * The Job blocking the blocked task.
+	 */
+	private Job blockingJob;
 	/**
 	 * The Cancel button control.
 	 */
@@ -210,6 +216,8 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 				? ProgressManagerUtil.getDefaultParent()
 				: parentShell);
 		blockingMonitor = blocking;
+		if (blockingStatus instanceof IJobStatus)
+			blockingJob= ((IJobStatus)blockingStatus).getJob();
 		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL);
 		// no close button
 		setBlockOnOpen(false);
@@ -253,6 +261,8 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 					setNotRunningColor(treeItem);
 			}
 		};
+		if (viewer instanceof NewProgressViewer && blockingJob != null)
+			((NewProgressViewer)viewer).setHighlightJob(blockingJob);
 		viewer.setUseHashlookup(true);
 		viewer.setSorter(new ViewerSorter() {
 			/*
