@@ -45,10 +45,10 @@ public class SearchCommand extends ScriptedCommand {
 
 	/**
 	 */
-	public boolean run() {
+	public boolean run(IProgressMonitor monitor) {
 		try {
 			System.out.println("Searching on " + remoteSiteURL.toString());
-			searchRequest.performSearch(collector, new NullProgressMonitor());
+			searchRequest.performSearch(collector, monitor);
 			System.out.println("Done.");
 			return true;
 		} catch (CoreException ce) {
@@ -66,19 +66,6 @@ public class SearchCommand extends ScriptedCommand {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.operations.IOperationListener#afterExecute(org.eclipse.update.operations.IOperation)
-	 */
-	public boolean afterExecute(IOperation operation, Object data) {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.operations.IOperationListener#beforeExecute(org.eclipse.update.operations.IOperation)
-	 */
-	public boolean beforeExecute(IOperation operation, Object data) {
-		return true;
-	}
 
 	class UpdateSearchResultCollector implements IUpdateSearchResultCollector {
 		public void accept(IFeature feature) {

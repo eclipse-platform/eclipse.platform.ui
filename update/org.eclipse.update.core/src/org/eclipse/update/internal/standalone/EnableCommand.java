@@ -95,7 +95,7 @@ public class EnableCommand extends ScriptedCommand {
 	/**
 	 * @see Wizard#performFinish()
 	 */
-	public boolean run() {
+	public boolean run(IProgressMonitor monitor) {
 		if (isVerifyOnly()) {
 			IStatus status =
 				OperationsManager.getValidator().validatePendingConfig(feature);
@@ -110,7 +110,7 @@ public class EnableCommand extends ScriptedCommand {
 				feature);
 
 		try {
-			return configOperation.execute(null, null);
+			return configOperation.execute(monitor, this);
 		} catch (CoreException e) {
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(e);

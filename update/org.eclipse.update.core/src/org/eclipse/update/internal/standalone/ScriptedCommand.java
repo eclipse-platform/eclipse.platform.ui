@@ -13,34 +13,56 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.operations.*;
 import org.eclipse.update.internal.api.operations.*;
 
+/**
+ * Parent class for all the update manager standalone commands.
+ * Subclasses will provide specific operations and the implementation of the run() method.
+ */
 public abstract class ScriptedCommand implements IOperationListener {
 
 	private IInstallConfiguration config;
 	protected boolean verifyOnly;
 
+	/**
+	 * Constructor
+	 *
+	 */
 	public ScriptedCommand() {
 		this(null);
 	}
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param verifyOnly if true, the command is not executed, but will only attempt to run the command. 
+	 * This is mostly used when wanted to know if the command would fail.
+	 */
 	public ScriptedCommand(String verifyOnly) {
 		this.verifyOnly = "true".equals(verifyOnly);
 	}
 
 	/**
-	 * Returns true if the command should only be run in simulation mode,
+	 * @return  true if the command should only be run in simulation mode,
 	 * to verify if it can execute.
-	 * @return
 	 */
-	public boolean isVerifyOnly() {
+	protected final boolean isVerifyOnly() {
 		return verifyOnly;
 	}
 
 	/**
+	 * Convenience method that executes the command with a null progress monitor.
 	 */
-	public abstract boolean run();
+	public final boolean run() {
+		return run(new NullProgressMonitor());
+	}
+	
+	/**
+	 * Executes the command. Subclasses are responsible for implementing this method.
+	 * If the command was constructed with verifyOnly=true, the command should not execute, but only verify it can execute.
+	 * @param monitor progress monitor during command execution.
+	 */
+	public abstract boolean run(IProgressMonitor monitor);
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.update.operations.IOperationListener#afterExecute(org.eclipse.update.operations.IOperation)
@@ -56,7 +78,10 @@ public abstract class ScriptedCommand implements IOperationListener {
 		return true;
 	}
 
-	protected IInstallConfiguration getConfiguration() {
+	/**
+	 * @return the installation configuration affected by the command
+	 */
+	public final IInstallConfiguration getConfiguration() {
 		if (config == null) {
 			try {
 				ILocalSite localSite = SiteManager.getLocalSite();

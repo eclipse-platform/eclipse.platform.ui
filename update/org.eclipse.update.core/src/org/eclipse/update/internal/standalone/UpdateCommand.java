@@ -82,9 +82,9 @@ public class UpdateCommand extends ScriptedCommand {
 
 	/**
 	 */
-	public boolean run() {
+	public boolean run(IProgressMonitor monitor) {
 		try {
-			searchRequest.performSearch(collector, new NullProgressMonitor());
+			searchRequest.performSearch(collector, new SubProgressMonitor(monitor,1));
 			IInstallFeatureOperation[] operations = collector.getOperations();
 			if (operations == null || operations.length == 0) {
 				StandaloneUpdateApplication.exceptionLogged();
@@ -123,7 +123,7 @@ public class UpdateCommand extends ScriptedCommand {
 					.createBatchInstallOperation(
 					operations);
 			try {
-				installOperation.execute(new NullProgressMonitor(), this);
+				installOperation.execute(monitor, this);
 				System.out.println(
 					"Feature " + featureId + " has successfully been updated");
 				return true;
@@ -150,19 +150,6 @@ public class UpdateCommand extends ScriptedCommand {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.operations.IOperationListener#afterExecute(org.eclipse.update.operations.IOperation)
-	 */
-	public boolean afterExecute(IOperation operation, Object data) {
-		return true;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.update.operations.IOperationListener#beforeExecute(org.eclipse.update.operations.IOperation)
-	 */
-	public boolean beforeExecute(IOperation operation, Object data) {
-		return true;
-	}
 
 	class UpdateSearchResultCollector implements IUpdateSearchResultCollector {
 		private ArrayList operations = new ArrayList();

@@ -95,7 +95,7 @@ public class UninstallCommand extends ScriptedCommand {
 	/**
 	 * @see Wizard#performFinish()
 	 */
-	public boolean run() {
+	public boolean run(IProgressMonitor monitor) {
 		if (InstallRegistry.getInstance().get("feature_"+ feature.getVersionedIdentifier()) == null) {
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(Utilities.newCoreException("Feature " + feature + " was not installed by the update manager, so it cannot be uninstalled.",null));
@@ -113,7 +113,7 @@ public class UninstallCommand extends ScriptedCommand {
 				feature);
 
 		try {
-			return uninstallOperation.execute(null, null);
+			return uninstallOperation.execute(monitor, this);
 		} catch (CoreException e) {
 			StandaloneUpdateApplication.exceptionLogged();
 			UpdateCore.log(e);

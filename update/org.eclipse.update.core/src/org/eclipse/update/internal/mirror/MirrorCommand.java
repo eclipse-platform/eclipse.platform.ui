@@ -47,7 +47,7 @@ public class MirrorCommand extends ScriptedCommand {
 	/**
 	 * true if success
 	 */
-	public boolean run() {
+	public boolean run(IProgressMonitor monitor) {
 		if (!validateParameters()) {
 			return false;
 		}
