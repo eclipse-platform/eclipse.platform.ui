@@ -479,23 +479,14 @@ function mouseDblClickHandler(e) {
 function keyDownHandler(e)
 {
 	var key;
-	var altKey;
-	var shiftKey;
-	var ctrlKey;
-	
+
 	if (isIE) {
 		key = window.event.keyCode;
-		altKey = window.event.altKey;
-		shiftKey = window.event.shiftKey;
-		ctrlKey = window.event.ctrlKey;
 	} else if (isMozilla) {
 		key = e.keyCode;
-		altKey = e.altKey;
-		shiftKey = e.shiftKey;
-		ctrlKey = e.ctrlKey;
 	}
 		
-	if (key == 9 || key == 13 || altKey || shiftKey || ctrlKey ) // tab, enter or modifiers
+	if (key <37 || key > 40) 
 		return true;
 	
 	if (isMozilla)
