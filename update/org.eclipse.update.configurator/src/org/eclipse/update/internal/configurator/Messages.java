@@ -14,7 +14,7 @@ import java.text.MessageFormat;
 import java.util.*;
 
 public class Messages {
-	private static String bundleName = "org.eclipse.update.configurator.messages"; //$NON-NLS-1$
+	private static String bundleName = "org.eclipse.update.internal.configurator.messages"; //$NON-NLS-1$
 	private static ResourceBundle bundle = ResourceBundle.getBundle(bundleName, Locale.getDefault());
 
 	/**

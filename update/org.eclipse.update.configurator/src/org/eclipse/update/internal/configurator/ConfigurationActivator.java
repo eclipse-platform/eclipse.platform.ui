@@ -26,18 +26,18 @@ import org.osgi.util.tracker.*;
 
 public class ConfigurationActivator implements BundleActivator, IBundleGroupProvider, IConfigurationConstants {
 
-	public static String PI_CONFIGURATOR = "org.eclipse.update.configurator";
-	public static final String INSTALL_LOCATION = "osgi.installLocation";
-	public static final String LAST_CONFIG_STAMP = "last.config.stamp";
-	public static final String NAME_SPACE = "org.eclipse.update";
-	public static final String UPDATE_PREFIX = "update@";
+	public static String PI_CONFIGURATOR = "org.eclipse.update.configurator"; //$NON-NLS-1$
+	public static final String INSTALL_LOCATION = "osgi.installLocation"; //$NON-NLS-1$
+	public static final String LAST_CONFIG_STAMP = "last.config.stamp"; //$NON-NLS-1$
+	public static final String NAME_SPACE = "org.eclipse.update"; //$NON-NLS-1$
+	public static final String UPDATE_PREFIX = "update@"; //$NON-NLS-1$
 	
 	// debug options
-	public static String OPTION_DEBUG = PI_CONFIGURATOR + "/debug";
+	public static String OPTION_DEBUG = PI_CONFIGURATOR + "/debug"; //$NON-NLS-1$
 	// debug values
 	public static boolean DEBUG = false;
 	// os
-	private static boolean isWindows = System.getProperty("os.name").startsWith("Win");
+	private static boolean isWindows = System.getProperty("os.name").startsWith("Win"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private static BundleContext context;
 	private ServiceTracker platformTracker;
@@ -72,20 +72,20 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		String product = configuration.getPrimaryFeatureIdentifier();
 		
 		if (canRunWithCachedData()) {		
-			Utils.debug("Same last time stamp *****");
+			Utils.debug("Same last time stamp *****"); //$NON-NLS-1$
 			if (System.getProperty(ECLIPSE_APPLICATION) == null && application != null) {
-				Utils.debug("no eclipse.application, setting it and returning");
+				Utils.debug("no eclipse.application, setting it and returning"); //$NON-NLS-1$
 				System.setProperty(ECLIPSE_APPLICATION, application);
 			}
 			if (System.getProperty(ECLIPSE_PRODUCT) == null && product != null) {
-				Utils.debug("no eclipse.product, setting it and returning");
+				Utils.debug("no eclipse.product, setting it and returning"); //$NON-NLS-1$
 				System.setProperty(ECLIPSE_PRODUCT, product);
 			}
 			platform.registerBundleGroupProvider(this);
 			return;
 		}
 
-		Utils.debug("Starting update configurator...");
+		Utils.debug("Starting update configurator..."); //$NON-NLS-1$
 
 		installBundles();
 		platform.registerBundleGroupProvider(this);
@@ -95,7 +95,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	private void initialize() throws Exception {
 		platform = acquirePlatform();
 		if (platform==null)
-			throw new Exception("Can not start");
+			throw new Exception(Messages.getString("ConfigurationActivator.initialize")); //$NON-NLS-1$
 		
 		installURL = platform.getInstallURL();
 		configLocation = platform.getConfigurationLocation();
@@ -113,7 +113,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		configurationFactorySR = context.registerService(IPlatformConfigurationFactory.class.getName(), new PlatformConfigurationFactory(), null);
 		configuration = getPlatformConfiguration(installURL, configLocation);
 		if (configuration == null)
-			throw Utils.newCoreException("Cannot create configuration in " + configLocation.getURL(), null);
+			throw Utils.newCoreException(Messages.getString("ConfigurationActivator.createConfig", configLocation.getURL().toExternalForm()), null); //$NON-NLS-1$
 
 		DataInputStream stream = null;
 		try {
@@ -147,7 +147,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	}
 
 	public boolean installBundles() {
-		Utils.debug("Installing bundles...");
+		Utils.debug("Installing bundles..."); //$NON-NLS-1$
 		ServiceReference reference = context.getServiceReference(StartLevel.class.getName());
 		StartLevel start = null;
 		if (reference != null)
@@ -162,10 +162,10 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			for (int i=0; i<bundlesToUninstall.length; i++) {
 				try {
 					if (DEBUG)
-						Utils.debug("Uninstalling " + bundlesToUninstall[i].getLocation());
+						Utils.debug("Uninstalling " + bundlesToUninstall[i].getLocation()); //$NON-NLS-1$
 					bundlesToUninstall[i].uninstall();
 				} catch (Exception e) {
-					Utils.log("Could not uninstall unused bundle " + bundlesToUninstall[i].getLocation());
+					Utils.log(Messages.getString("ConfigurationActivator.uninstallBundle", bundlesToUninstall[i].getLocation())); //$NON-NLS-1$
 				}
 			}
 			
@@ -178,8 +178,8 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			for (int i = 0; i < bundlesToInstall.length; i++) {
 				try {
 					if (DEBUG)
-						Utils.debug("Installing " + bundlesToInstall[i]);
-					URL bundleURL = new URL("reference:file:"+bundlesToInstall[i]);
+						Utils.debug("Installing " + bundlesToInstall[i]); //$NON-NLS-1$
+					URL bundleURL = new URL("reference:file:"+bundlesToInstall[i]); //$NON-NLS-1$
 					//Bundle target = context.installBundle(bundlesToInstall[i]);
 					Bundle target = context.installBundle(UPDATE_PREFIX+bundlesToInstall[i], bundleURL.openStream());
 					// any new bundle should be refreshed as well
@@ -189,7 +189,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 				
 				} catch (Exception e) {
 					if (!Utils.isAutomaticallyStartedBundle(bundlesToInstall[i]))
-						Utils.log("Could not install bundle " + bundlesToInstall[i] + "   " + e.getMessage());
+						Utils.log(Messages.getString("ConfigurationActivator.installBundle", bundlesToInstall[i]) + "   " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 			context.ungetService(reference);
@@ -298,7 +298,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			if (platformTracker != null) {
 				String message = e.getMessage();
 				if (message == null)
-					message = "";
+					message = ""; //$NON-NLS-1$
 				Utils.log(Utils.newStatus(message, e));
 			}
 		}
@@ -405,8 +405,8 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	}
 	
 	private boolean canRunWithCachedData() {
-		return  !"true".equals(System.getProperty("osgi.checkConfiguration")) &&
-				System.getProperties().get("osgi.dev") == null &&
+		return  !"true".equals(System.getProperty("osgi.checkConfiguration")) && //$NON-NLS-1$ //$NON-NLS-2$
+				System.getProperties().get("osgi.dev") == null && //$NON-NLS-1$
 				lastTimeStamp==configuration.getChangeStamp();
 	}
 				
@@ -428,7 +428,7 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	 * @see org.eclipse.core.runtime.IBundleGroupProvider#getName()
 	 */
 	public String getName() {
-		return Messages.getString("BundleGroupProvider");
+		return Messages.getString("BundleGroupProvider"); //$NON-NLS-1$
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.runtime.IBundleGroupProvider#getBundleGroups()

@@ -77,13 +77,12 @@ public class FeatureParser extends DefaultHandler {
 	 */
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
-		Utils.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName);
-		//$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		Utils.debug("Start Element: uri:" + uri + " local Name:" + localName + " qName:" + qName); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-		if ("feature".equals(localName)) {
+		if ("feature".equals(localName)) { //$NON-NLS-1$
 			processFeature(attributes);
 			// stop parsing now
-			throw new SAXException("");
+			throw new SAXException(""); //$NON-NLS-1$
 		} else {
 		}
 		
@@ -100,7 +99,7 @@ public class FeatureParser extends DefaultHandler {
 
 		if (id == null || id.trim().equals("") //$NON-NLS-1$
 		|| ver == null || ver.trim().equals("")) { //$NON-NLS-1$
-			System.out.println(Messages.getString("FeatureParser.IdOrVersionInvalid", new String[] { id, ver}));
+			System.out.println(Messages.getString("FeatureParser.IdOrVersionInvalid", new String[] { id, ver})); //$NON-NLS-1$
 			//$NON-NLS-1$
 		} else {
 //			String label = attributes.getValue("label"); //$NON-NLS-1$
@@ -116,21 +115,21 @@ public class FeatureParser extends DefaultHandler {
 //			String affinity = attributes.getValue("colocation-affinity"); //$NON-NLS-1$
 
 			String primary = attributes.getValue("primary"); //$NON-NLS-1$
-			boolean isPrimary = "true".equals(primary);
+			boolean isPrimary = "true".equals(primary); //$NON-NLS-1$
 			String application = attributes.getValue("application"); //$NON-NLS-1$
-			String plugin = attributes.getValue("plugin");
+			String plugin = attributes.getValue("plugin"); //$NON-NLS-1$
 
 			//TODO rootURLs
-			feature = new FeatureEntry(id, ver, plugin, "", isPrimary, application, null );
-			if ("file".equals(url.getProtocol())) {
+			feature = new FeatureEntry(id, ver, plugin, "", isPrimary, application, null ); //$NON-NLS-1$
+			if ("file".equals(url.getProtocol())) { //$NON-NLS-1$
 				File f = new File(url.getFile().replace('/', File.separatorChar));
-				feature.setURL("features" + "/" + f.getParentFile().getName() + "/");// + f.getName());
+				feature.setURL("features" + "/" + f.getParentFile().getName() + "/");// + f.getName()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			} else {
 				feature.setURL(url.toExternalForm());
 			}
 
 			Utils.
-				debug("End process DefaultFeature tag: id:" +id + " ver:" +ver + " url:" + feature.getURL()); 	
+				debug("End process DefaultFeature tag: id:" +id + " ver:" +ver + " url:" + feature.getURL()); 	 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 }
