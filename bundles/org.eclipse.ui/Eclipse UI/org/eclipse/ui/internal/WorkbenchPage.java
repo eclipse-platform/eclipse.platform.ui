@@ -1913,6 +1913,8 @@ public IStatus restoreState(IMemento memento) {
 	// Restore editor manager.
 	IMemento childMem = memento.getChild(IWorkbenchConstants.TAG_EDITORS);
 	result.merge(getEditorManager().restoreState(childMem));
+	if(getActiveEditor() != null)
+		getNavigationHistory().add(getActiveEditor());
 	
 	childMem = memento.getChild(IWorkbenchConstants.TAG_VIEWS);
 	if(childMem != null)
@@ -1957,6 +1959,9 @@ public IStatus restoreState(IMemento memento) {
 		if (view != null)
 			activePart = view;
 	}
+	
+	if(getActivePart() != getActiveEditor())
+		getNavigationHistory().add((IEditorPart)null);
 	return result;
 }
 /**
