@@ -21,6 +21,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupFilter;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -31,9 +32,9 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -41,6 +42,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.model.WorkbenchViewerSorter;
@@ -63,15 +65,15 @@ public class LaunchHistoryPreferenceTab {
 	/**
 	 * Favorite Buttons
 	 */
+	private Button fAddFavoriteButton;
 	private Button fRemoveFavoritesButton;
 	private Button fMoveUpButton;
 	private Button fMoveDownButton;
 	private Button fMakeRecentButton;
-	
 	/**
 	 * Recent Buttons
 	 */
-	private Button fAddToFavoritesButton;
+	private Button fMakeFavoritesButton;
 	private Button fRemoveRecentButton;
 	
 	/**
@@ -81,12 +83,67 @@ public class LaunchHistoryPreferenceTab {
 	private List fRecents;
 	
 	/**
-	 * Launch group.	 */
+	 * Launch group.
+	 */
 	private LaunchHistory fLaunchHistory;
 	
 	/**
-	 * Tab image	 */
+	 * Tab image
+	 */
 	private Image fImage;
+	
+	/**
+	 * Listener that delegates when a button is pressed
+	 */
+	private SelectionAdapter fButtonListener= new SelectionAdapter() {
+		public void widgetSelected(SelectionEvent e) {
+			Button button = (Button) e.widget;
+			if (button == fAddFavoriteButton) {
+				handleAddConfigButtonSelected();
+			} else if (button == fRemoveFavoritesButton) {
+				removeSelectedFavorites();
+			} else if (button == fMoveUpButton) {
+				handleMoveUpButtonSelected();
+			} else if (button == fMoveDownButton) {
+				handleMoveDownButtonSelected();
+			} else if (button == fMakeRecentButton) {
+				handleMakeRecentButtonSelected();
+			} else if (button == fMakeFavoritesButton) {
+				handleMakeFavoriteButtonSelected();
+			} else if (button == fRemoveRecentButton) {
+				removeSelectedRecent();
+			}
+		}
+	};
+	
+	/**
+	 * Listener that delegates when the selection changes in a table
+	 */
+	private ISelectionChangedListener fSelectionChangedListener= new ISelectionChangedListener() {
+		public void selectionChanged(SelectionChangedEvent event) {
+			TableViewer table = (TableViewer) event.getSource();
+			if (table == getRecentTable()) {
+				handleRecentSelectionChanged();
+			} else if (table == getFavoritesTable()) {
+				handleFavoriteSelectionChanged();
+			}
+		}
+	};
+	
+	/**
+	 * Listener that delegates when a key is pressed in a table
+	 */
+	private KeyListener fKeyListener= new KeyAdapter() {
+		public void keyPressed(KeyEvent event) {
+			if (event.character == SWT.DEL && event.stateMask == 0) {
+				if (event.widget == getRecentTable().getTable()) {
+					removeSelectedRecent();
+				} else if (event.widget == getFavoritesTable().getTable()) {
+					removeSelectedFavorites();
+				} 
+			}
+		}
+	};
 	
 	/**
 	 * Constructs a launch history preference tab for the given launch history
@@ -104,7 +161,6 @@ public class LaunchHistoryPreferenceTab {
 	 * Creates the control for this tab
 	 */
 	protected Control createControl(Composite parent) {
-		Font font = parent.getFont();
 		Composite topComp = new Composite(parent, SWT.NULL);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -112,165 +168,85 @@ public class LaunchHistoryPreferenceTab {
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		topComp.setLayoutData(gd);
 	
-		Label favoritesLabel = new Label(topComp, SWT.LEFT);
-		favoritesLabel.setText(DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Fa&vorites__1")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		favoritesLabel.setLayoutData(gd);
-		favoritesLabel.setFont(font);
-		
-		setFavoritesTable(new TableViewer(topComp, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION));
-		getFavoritesTable().setContentProvider(new FavoritesContentProvider());
-		getFavoritesTable().setLabelProvider(DebugUITools.newDebugModelPresentation());
-		getFavoritesTable().addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent evt) {
-				handleFavoriteSelectionChanged();
-			}
-		});
-		getFavoritesTable().getControl().addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent event) {
-				if (event.character == SWT.DEL && event.stateMask == 0) {
-					removeSelectedFavorites();
-				}
-			}
-		});
-		gd = new GridData(GridData.FILL_BOTH);
-		getFavoritesTable().getTable().setLayoutData(gd);
-		getFavoritesTable().getTable().setFont(font);
-		getFavoritesTable().setInput(DebugUIPlugin.getDefault());
-		
-		Composite buttonComp = new Composite(topComp, SWT.NONE);
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		buttonComp.setLayoutData(gd);
-		layout = new GridLayout();
-		layout.numColumns = 1;
-		buttonComp.setLayout(layout);
-		
-		Button addFav = SWTUtil.createPushButton(buttonComp,DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Add_&Config_1"), null); //$NON-NLS-1$
-		addFav.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleAddConfigButtonSelected();
-			}
-		});
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		addFav.setLayoutData(gd);
-		addFav.setFont(font);	
-		SWTUtil.setButtonDimensionHint(addFav);
-		
-		fRemoveFavoritesButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Re&move_2"), null); //$NON-NLS-1$
-		fRemoveFavoritesButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				removeSelectedFavorites();
-			}
-		});
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		fRemoveFavoritesButton.setLayoutData(gd);
-		fRemoveFavoritesButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fRemoveFavoritesButton);
-		fRemoveFavoritesButton.setEnabled(false);
-		
-		fMoveUpButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.U&p_3"), null); //$NON-NLS-1$
-		fMoveUpButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleMoveUpButtonSelected();
-			}
-		});
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		fMoveUpButton.setLayoutData(gd);
-		fMoveUpButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fMoveUpButton);
-		fMoveUpButton.setEnabled(false);
-		
-		fMoveDownButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Do&wn_4"), null); //$NON-NLS-1$
-		fMoveDownButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleMoveDownButtonSelected();
-			}
-		});
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		fMoveDownButton.setLayoutData(gd);
-		fMoveDownButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fMoveDownButton);
-		fMoveDownButton.setEnabled(false);
-		
-		fMakeRecentButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Ma&ke_Recent_2"), null);					 //$NON-NLS-1$
-		fMakeRecentButton.addSelectionListener(new SelectionAdapter() {
-			/**
-			 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			public void widgetSelected(SelectionEvent e) {
-				handleMakeRecentButtonSelected();
-			}
-		});
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		fMakeRecentButton.setLayoutData(gd);
-		fMakeRecentButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fMakeRecentButton);
-		fMakeRecentButton.setEnabled(false);
+		// Create "favorite config" area
+		createLabel(topComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Fa&vorites__1")); //$NON-NLS-1$
+		fFavoritesTable = createTable(topComp, new FavoritesContentProvider());
+		Composite buttonComp = createButtonComposite(topComp);
+		fAddFavoriteButton = createPushButton(buttonComp,DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Add_&Config_1")); //$NON-NLS-1$
+		fAddFavoriteButton.setEnabled(true);
+		fRemoveFavoritesButton = createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Re&move_2")); //$NON-NLS-1$
+		fMoveUpButton = createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.U&p_3")); //$NON-NLS-1$
+		fMoveDownButton = createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Do&wn_4")); //$NON-NLS-1$
+		fMakeRecentButton = createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Ma&ke_Recent_2")); //$NON-NLS-1$
 	
 		createSpacer(topComp, 1);
-	
-		Label recent = new Label(topComp, SWT.LEFT);
-		recent.setText(DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.&Launch_History__3")); //$NON-NLS-1$
-		gd = new GridData();
-		gd.horizontalSpan = 2;
-		recent.setLayoutData(gd);
-		recent.setFont(font);
-	
-		setRecentTable(new TableViewer(topComp, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION));
-		getRecentTable().setContentProvider(new RecentContentProvider());
-		getRecentTable().setLabelProvider(DebugUITools.newDebugModelPresentation());
-		getRecentTable().addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent evt) {
-				handleRecentSelectionChanged();
-			}
-		});
-		gd = new GridData(GridData.FILL_BOTH);
-		gd.widthHint = 100;
-		gd.heightHint = 100;
-		getRecentTable().getTable().setLayoutData(gd);
-		getRecentTable().getTable().setFont(font);
-		getRecentTable().setInput(DebugUIPlugin.getDefault());
-		getRecentTable().getControl().addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent event) {
-				if (event.character == SWT.DEL && event.stateMask == 0) {
-					removeSelectedRecent();
-				}
-			}
-		});
-		
-		buttonComp = new Composite(topComp, SWT.NONE);
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
-		buttonComp.setLayoutData(gd);
-		layout = new GridLayout();
-		layout.numColumns = 1;
-		buttonComp.setLayout(layout);
-		
-		fAddToFavoritesButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Make_&Favorite_5"), null); //$NON-NLS-1$
-		fAddToFavoritesButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				handleMakeFavoriteButtonSelected();
-			}
-		});
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		fAddToFavoritesButton.setLayoutData(gd);
-		fAddToFavoritesButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fAddToFavoritesButton);
-		fAddToFavoritesButton.setEnabled(false);
-		
-		fRemoveRecentButton = SWTUtil.createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Remo&ve_6"), null); //$NON-NLS-1$
-		fRemoveRecentButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent evt) {
-				removeSelectedRecent();
-			}
-		});
-		gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
-		fRemoveRecentButton.setLayoutData(gd);
-		fRemoveRecentButton.setFont(font);
-		SWTUtil.setButtonDimensionHint(fRemoveRecentButton);
-		fRemoveRecentButton.setEnabled(false);				
+
+		// Create "recent config" area
+		createLabel(topComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.&Launch_History__3")); //$NON-NLS-1$
+		fRecentTable = createTable(topComp, new RecentContentProvider());
+		buttonComp = createButtonComposite(topComp);
+		fMakeFavoritesButton = createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Make_&Favorite_5")); //$NON-NLS-1$
+		fRemoveRecentButton = createPushButton(buttonComp, DebugPreferencesMessages.getString("LaunchHistoryPreferenceTab.Remo&ve_6")); //$NON-NLS-1$	
 				
 		return topComp;
+	}
+	
+	/**
+	 * Creates a fully configured composite to add buttons to.
+	 */
+	private Composite createButtonComposite(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING);
+		composite.setLayoutData(gd);
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		composite.setLayout(layout);
+		return composite;
+	}
+	
+	/**
+	 * Creates a fully configured label with the given text
+	 */
+	private Label createLabel(Composite parent, String labelText) {
+		Label label = new Label(parent, SWT.LEFT);
+		label.setText(labelText);
+		GridData gd = new GridData();
+		gd.horizontalSpan = 2;
+		label.setLayoutData(gd);
+		label.setFont(parent.getFont());
+		return label;
+	}
+	
+	/**
+	 * Creates a fully configured table with the given content provider
+	 */
+	private TableViewer createTable(Composite parent, IContentProvider contentProvider) {
+		TableViewer tableViewer= new TableViewer(parent, SWT.MULTI | SWT.BORDER | SWT.FULL_SELECTION);
+		tableViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());
+		tableViewer.setContentProvider(contentProvider);
+		tableViewer.setInput(DebugUIPlugin.getDefault());
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.widthHint = 100;
+		gd.heightHint = 100;
+		tableViewer.getTable().setLayoutData(gd);
+		tableViewer.getTable().setFont(parent.getFont());
+		tableViewer.addSelectionChangedListener(fSelectionChangedListener);
+		tableViewer.getControl().addKeyListener(fKeyListener);
+		return tableViewer; 
+	}
+	
+	/**
+	 * Creates and returns a fully configured push button in the given paren with the given label.
+	 */
+	private Button createPushButton(Composite parent, String label) {
+		Button button= SWTUtil.createPushButton(parent, label, null);
+		GridData data = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_FILL);
+		button.setLayoutData(data);
+		button.setFont(parent.getFont());
+		SWTUtil.setButtonDimensionHint(button);
+		button.addSelectionListener(fButtonListener);
+		button.setEnabled(false);
+		return button;
 	}
 
 	/**
@@ -293,15 +269,6 @@ public class LaunchHistoryPreferenceTab {
 	 */
 	protected TableViewer getFavoritesTable() {
 		return fFavoritesTable;
-	}
-
-	/**
-	 * Sets the table of favorite launch configurations.
-	 * 
-	 * @param favoritesTable table viewer
-	 */
-	private void setFavoritesTable(TableViewer favoritesTable) {
-		fFavoritesTable = favoritesTable;
 	}
 
 	/**
@@ -341,15 +308,6 @@ public class LaunchHistoryPreferenceTab {
 	}
 
 	/**
-	 * Sets the table of recent launch configurations.
-	 * 
-	 * @param table table viewer
-	 */
-	private void setRecentTable(TableViewer table) {
-		fRecentTable = table;
-	}
-
-	/**
 	 * The selection in the recent list has changed
 	 */
 	protected void handleRecentSelectionChanged() {
@@ -357,7 +315,7 @@ public class LaunchHistoryPreferenceTab {
 		boolean notEmpty = !selection.isEmpty();
 		
 		fRemoveRecentButton.setEnabled(notEmpty);
-		fAddToFavoritesButton.setEnabled(notEmpty);
+		fMakeFavoritesButton.setEnabled(notEmpty);
 	}	
 	
 	/**
