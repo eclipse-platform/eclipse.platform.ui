@@ -211,6 +211,8 @@ private static synchronized void clearLockFile() {
  * using the same meta-area.
  */
 private static synchronized void createLockFile() throws CoreException {
+	if (System.getProperty("org.eclipse.core.runtime.ignoreLockFile") != null) //$NON-NLS-1$
+			return;
 	String lockLocation = metaArea.getLocation().append(PlatformMetaArea.F_LOCK_FILE).toOSString();	
 	metaAreaLock = new PlatformMetaAreaLock(new File(lockLocation));
 	try {
