@@ -43,9 +43,9 @@ public class AntContext extends DocumentTemplateContext {
 		}
 	
 		FormattingPreferences prefs = new FormattingPreferences();
-		XmlDocumentFormatter formatter= new XmlDocumentFormatter(templateBuffer.getString(), prefs);
+		XmlDocumentFormatter formatter= new XmlDocumentFormatter();
 		
-		formatter.format(templateBuffer, this);
+		formatter.format(templateBuffer, this, prefs);
 		return templateBuffer;
 	}
 	
