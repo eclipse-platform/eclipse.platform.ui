@@ -54,6 +54,8 @@ public abstract class Key implements Comparable {
 		return equals;
 	}
 
+	public abstract String format();
+
 	public int hashCode() {
 		if (!hashCodeComputed) {
 			hashCode = HASH_INITIAL;

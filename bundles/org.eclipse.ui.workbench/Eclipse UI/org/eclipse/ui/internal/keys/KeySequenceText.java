@@ -20,6 +20,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -99,6 +100,10 @@ public final class KeySequenceText {
 		text.addModifyListener(updateSequenceListener);
 	}
 
+	public void setFont(Font font) {
+		text.setFont(font);
+	}
+	
 	/**
 	 * Adds a listener for modification of the text component.
 	 * @param modifyListener The listener that is to be added; must not be
@@ -262,8 +267,7 @@ public final class KeySequenceText {
 		
 		// We need to update the text, but we don't need to synchronize.
 		text.removeModifyListener(updateSequenceListener);
-		text.setText(/* TODO "carbon".equals(SWT.getPlatform()) ? KeySupport.formatCarbon(dummySequence) : */
-		dummySequence.format());
+		text.setText(dummySequence.format());
 		text.addModifyListener(updateSequenceListener);
 
 		// Update the caret position.

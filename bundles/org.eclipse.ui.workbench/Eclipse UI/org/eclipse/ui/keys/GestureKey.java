@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.keys;
 
+import java.util.ResourceBundle;
+
+import org.eclipse.ui.internal.util.Util;
 
 /**
  * <p>
@@ -24,12 +27,23 @@ package org.eclipse.ui.keys;
  */
 /*public*/ final class GestureKey extends NaturalKey {
 
-	/*public*/ final static GestureKey EAST = new GestureKey("EAST"); 
-	/*public*/ final static GestureKey NORTH = new GestureKey("NORTH"); 
-	/*public*/ final static GestureKey SOUTH = new GestureKey("SOUTH"); 
-	/*public*/ final static GestureKey WEST = new GestureKey("WEST"); 
-
+	private final static String EAST_NAME = "EAST"; //$NON-NLS-1$
+	private final static String NORTH_NAME = "NORTH"; //$NON-NLS-1$
+	private final static String SOUTH_NAME = "SOUTH"; //$NON-NLS-1$
+	private final static String WEST_NAME = "WEST"; //$NON-NLS-1$	
+	
+	/*public*/ final static GestureKey EAST = new GestureKey(EAST_NAME); 
+	/*public*/ final static GestureKey NORTH = new GestureKey(NORTH_NAME);
+	/*public*/ final static GestureKey SOUTH = new GestureKey(SOUTH_NAME); 
+	/*public*/ final static GestureKey WEST = new GestureKey(WEST_NAME); 
+	
+	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(GestureKey.class.getName());
+	
 	private GestureKey(String name) {
 		super(name);
+	}
+
+	public String format() {		
+		return Util.translateString(RESOURCE_BUNDLE, name, name, false, false);
 	}
 }

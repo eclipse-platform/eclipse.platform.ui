@@ -34,7 +34,7 @@ import org.eclipse.ui.internal.util.Util;
 public final class KeySequence implements Comparable {
 
 	public final static char KEY_STROKE_DELIMITER = '\u0020'; 
-	public final static String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER + "\0\b\t\n\f\r\u001B\u007F"; //$NON-NLS-1$
+	public final static String KEY_STROKE_DELIMITERS = KEY_STROKE_DELIMITER + "\b\r\u007F\u001B\f\n\0\t\u000B"; //$NON-NLS-1$
 
 	private final static int HASH_FACTOR = 89;
 	private final static int HASH_INITIAL = KeySequence.class.getName().hashCode();
@@ -97,8 +97,12 @@ public final class KeySequence implements Comparable {
 				
 		while (stringTokenizer.hasMoreTokens())
 			keyStrokes.add(KeyStroke.getInstance(stringTokenizer.nextToken()));
-			
-		return new KeySequence(keyStrokes);
+
+		try {
+			return new KeySequence(keyStrokes);
+		} catch (Throwable t) {
+			throw new ParseException();
+		}		
 	}
 
 	private List keyStrokes;
@@ -109,6 +113,13 @@ public final class KeySequence implements Comparable {
 		
 	private KeySequence(List keyStrokes) {
 		this.keyStrokes = Util.safeCopy(keyStrokes, KeyStroke.class);
+		
+		for (int i = 0; i < this.keyStrokes.size() - 1; i++) {
+			KeyStroke keyStroke = (KeyStroke) this.keyStrokes.get(i);
+			
+			if (!keyStroke.isComplete())
+				throw new IllegalArgumentException();
+		}
 	}
 
 	public int compareTo(Object object) {
@@ -133,7 +144,20 @@ public final class KeySequence implements Comparable {
 	 * @return
 	 */
 	public String format() {
-		return format(true);
+		int i = 0;
+		String keyStrokeDelimiter = Util.translateString(RESOURCE_BUNDLE, KEY_STROKE_DELIMITER_KEY, Character.toString(KEY_STROKE_DELIMITER), false, false);
+		StringBuffer stringBuffer = new StringBuffer();
+		
+		for (Iterator iterator = keyStrokes.iterator(); iterator.hasNext();) {
+			if (i != 0)
+				stringBuffer.append(keyStrokeDelimiter);
+				
+			KeyStroke keyStroke = (KeyStroke) iterator.next();
+			stringBuffer.append(keyStroke.format());
+			i++;
+		}
+
+		return stringBuffer.toString();
 	}
 
 	/**
@@ -169,27 +193,32 @@ public final class KeySequence implements Comparable {
 		return Util.isChildOf(keyStrokes, keySequence.keyStrokes, equals);
 	}
 
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */
+	public boolean isComplete() {
+		return keyStrokes.isEmpty() || ((KeyStroke) keyStrokes.get(keyStrokes.size() - 1)).isComplete();
+	}	
+	
 	public String toString() {
-		if (string == null)
-			string = format(false);
+		if (string == null) {	
+		    int i = 0;
+			StringBuffer stringBuffer = new StringBuffer();
+		
+		    for (Iterator iterator = keyStrokes.iterator(); iterator.hasNext();) {
+			    if (i != 0)
+			        stringBuffer.append(KEY_STROKE_DELIMITER);
+				
+				KeyStroke keyStroke = (KeyStroke) iterator.next();
+				stringBuffer.append(keyStroke.toString());
+				i++;
+			}
+
+		    string = stringBuffer.toString();
+	    }
 	
 		return string;
-	}
-
-	String format(boolean localize) {
-		int i = 0;
-		Iterator iterator = keyStrokes.iterator();
-		StringBuffer stringBuffer = new StringBuffer();
-			
-		while (iterator.hasNext()) {
-			if (i != 0)							
-				// TODO 1.4 Character.toString(KEY_DELIMITER);
-				stringBuffer.append(Util.translateString(RESOURCE_BUNDLE, localize ? KEY_STROKE_DELIMITER_KEY : null, "" + KEY_STROKE_DELIMITER, false, false)); //$NON-NLS-1$
-	
-			stringBuffer.append(((KeyStroke) iterator.next()).format(localize));
-			i++;
-		}
-	
-		return stringBuffer.toString();
 	}
 }

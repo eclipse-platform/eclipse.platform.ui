@@ -12,40 +12,18 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.keys.CharacterKey;
-import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ModifierKey;
 import org.eclipse.ui.keys.NaturalKey;
 import org.eclipse.ui.keys.SpecialKey;
 
 public final class KeySupport {
-
-	public static int convertEventToAccelerator(Event event) {
-		int key = event.character;
-
-		if (key == 0)
-			key = event.keyCode;
-		else {
-			if (0 <= key && key <= 0x1F) {
-				if ((event.stateMask & SWT.CTRL) != 0 && event.keyCode != event.character)
-					key += 0x40;
-			} else {
-				if ('a' <= key && key <= 'z')
-					key -= 'a' - 'A';
-			}
-		}
-
-		int modifiers = event.stateMask & SWT.MODIFIER_MASK;
-		return modifiers + key;
-	}
 
 	public static KeyStroke convertAcceleratorToKeyStroke(int accelerator) {
 		final SortedSet modifierKeys = new TreeSet();
@@ -136,6 +114,25 @@ public final class KeySupport {
 		return KeyStroke.getInstance(modifierKeys, naturalKey);
 	}
 
+	public static int convertEventToAccelerator(Event event) {
+		int key = event.character;
+
+		if (key == 0)
+			key = event.keyCode;
+		else {
+			if (0 <= key && key <= 0x1F) {
+				if ((event.stateMask & SWT.CTRL) != 0 && event.keyCode != event.character)
+					key += 0x40;
+			} else {
+				if ('a' <= key && key <= 'z')
+					key -= 'a' - 'A';
+			}
+		}
+
+		int modifiers = event.stateMask & SWT.MODIFIER_MASK;
+		return modifiers + key;
+	}
+	
 	public static final int convertKeyStrokeToAccelerator(final KeyStroke keyStroke) {
 		if (keyStroke == null)
 			throw new NullPointerException();
@@ -208,71 +205,6 @@ public final class KeySupport {
 		}
 
 		return accelerator;
-	}
-
-	public static String formatOSX(KeySequence keySequence) {
-		StringBuffer stringBuffer = new StringBuffer();
-		List keyStrokes = keySequence.getKeyStrokes();
-
-		for (int i = 0; i < keyStrokes.size(); i++) {
-			if (i >= 1)
-				stringBuffer.append(',');
-
-			KeyStroke keyStroke = (KeyStroke) keyStrokes.get(i);
-			stringBuffer.append(formatOSX(keyStroke));
-		}
-
-		return stringBuffer.toString();
-	}
-
-	public static String formatOSX(KeyStroke keyStroke) {
-		StringBuffer stringBuffer = new StringBuffer();
-		Set modifierKeys = keyStroke.getModifierKeys();
-
-		if (modifierKeys.contains(ModifierKey.SHIFT))
-			stringBuffer.append('\u21E7');
-
-		if (modifierKeys.contains(ModifierKey.CTRL))
-			stringBuffer.append('\u2303');
-
-		if (modifierKeys.contains(ModifierKey.ALT))
-			stringBuffer.append('\u2325');
-
-		if (modifierKeys.contains(ModifierKey.COMMAND))
-			stringBuffer.append('\u2318');
-
-		NaturalKey naturalKey = keyStroke.getNaturalKey();
-		
-		if (CharacterKey.getInstance('\b').equals(naturalKey))
-			stringBuffer.append('\u232B');
-		else if (CharacterKey.getInstance('\r').equals(naturalKey))
-			stringBuffer.append('\u21A9');
-		else if (CharacterKey.getInstance('\u007F').equals(naturalKey))
-			stringBuffer.append('\u2326');		
-		else if (SpecialKey.ARROW_DOWN.equals(naturalKey))
-			stringBuffer.append('\u2193');
-		else if (SpecialKey.ARROW_LEFT.equals(naturalKey))
-			stringBuffer.append('\u2190');
-		else if (SpecialKey.ARROW_RIGHT.equals(naturalKey))
-			stringBuffer.append('\u2192');
-		else if (SpecialKey.ARROW_UP.equals(naturalKey))
-			stringBuffer.append('\u2191');
-		else if (SpecialKey.END.equals(naturalKey))
-			stringBuffer.append('\u2198');
-		/* TODO SWT does not distinguish the enter key from the return key
-		else if (SpecialKey.ENTER.equals(naturalKey))
-			stringBuffer.append('\u2324');
-		*/
-		else if (SpecialKey.HOME.equals(naturalKey))
-			stringBuffer.append('\u2196');
-		else if (SpecialKey.PAGE_DOWN.equals(naturalKey))
-			stringBuffer.append('\u21DF');
-		else if (SpecialKey.PAGE_UP.equals(naturalKey))
-			stringBuffer.append('\u21DE');
-		else 
-			stringBuffer.append(KeyStroke.getInstance(naturalKey).format());
-					
-		return stringBuffer.toString();
 	}
 
 	private KeySupport() {

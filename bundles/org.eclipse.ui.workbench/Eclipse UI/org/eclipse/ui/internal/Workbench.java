@@ -489,7 +489,7 @@ public class Workbench
 			final Iterator modeLineItr = modeContributionItems.values().iterator();
 			while (modeLineItr.hasNext()) {
 				final StatusLineContributionItem modeLine = (StatusLineContributionItem) modeLineItr.next();
-				modeLine.setText("carbon".equals(SWT.getPlatform()) ? KeySupport.formatOSX(mode) : mode.format()); //$NON-NLS-1$
+				modeLine.setText(mode.format()); //$NON-NLS-1$
 			}
 		}
 	}
