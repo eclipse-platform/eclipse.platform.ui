@@ -755,11 +755,10 @@ public final class Workbench implements IWorkbench {
 		// create workbench window manager
 		windowManager = new WindowManager();
 
-		IIntroRegistry introRegistry = WorkbenchPlugin.getDefault().getIntroRegistry();
+		IIntroRegistry introRegistry = getIntroRegistry();
 		if (introRegistry.getIntroCount() > 0) {
 			introDescriptor = (IntroDescriptor) introRegistry.getIntros()[0];
-		}
-		
+		}		
 		
 		// begin the initialization of the activity, command, and context
 		// mangers
@@ -2122,6 +2121,13 @@ public final class Workbench implements IWorkbench {
 		return introDescriptor;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.IWorkbench#getIntroRegistry()
+	 */
+	public IIntroRegistry getIntroRegistry() {
+		return WorkbenchPlugin.getDefault().getIntroRegistry();
+	}	
+	
 	/**
 	 * The currently active introPart in this workspace, <code>null</code> if none.
 	 */
@@ -2131,5 +2137,4 @@ public final class Workbench implements IWorkbench {
 	 * The descriptor for the intro extension that is valid for this workspace, <code>null</code> if none.
 	 */
 	private IntroDescriptor introDescriptor;
-
 }

@@ -27,6 +27,8 @@ import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.IProgressService;
 
+import org.eclipse.ui.internal.intro.IIntroRegistry;
+
 /**
  * A workbench is the root object for the Eclipse Platform user interface.
  * <p>
@@ -484,6 +486,7 @@ public interface IWorkbench {
 	 * @param standby if <code>false</code>, the intro area will be fully visible. 
 	 * Otherwise, it will go into standby mode and only be partially visible to 
 	 * allow users quick return to the starting point.
+	 * @since 3.0
 	 */	
 	public void setIntroStandby(IIntroPart part, boolean standby);
 	
@@ -495,6 +498,17 @@ public interface IWorkbench {
 	 * 
 	 * @param part the <code>IIntroPart</code> to test.
 	 * @return the activity state of the area.
+	 * @since 3.0
 	 */
 	boolean isIntroStandby(IIntroPart part);	
+	
+	/**
+	 * Returns the introduction registry for the workbench.
+	 * <p>
+	 * <em>EXPERIMENTAL</em> 
+	 * 
+	 * @return the workbench introduction registry
+	 * @since 3.0
+	 */
+	public IIntroRegistry getIntroRegistry();
 }

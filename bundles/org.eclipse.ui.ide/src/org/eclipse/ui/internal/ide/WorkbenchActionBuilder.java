@@ -12,6 +12,7 @@ package org.eclipse.ui.internal.ide;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Preferences;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -24,6 +25,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
+
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -40,10 +42,10 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.ide.IIDEActionConstants;
+
 import org.eclipse.ui.internal.AboutInfo;
 import org.eclipse.ui.internal.EditorWorkbook;
 import org.eclipse.ui.internal.EditorsDropDownAction;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.StatusLineContributionItem;
 
 /**
@@ -1191,7 +1193,7 @@ public final class WorkbenchActionBuilder {
 			registerGlobalAction(editorsDropDownAction);
 		}
 		
-		if (WorkbenchPlugin.getDefault().getIntroRegistry().getIntroCount() > 0) {
+		if (getWindow().getWorkbench().getIntroRegistry().getIntroCount() > 0) {
 			introAction = ActionFactory.INTRO.create(window);
 			registerGlobalAction(introAction);
 		}
