@@ -4,8 +4,12 @@ package org.eclipse.ui.internal;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.jface.viewers.*;
 import java.util.*;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IContributorResourceAdapter;
 
 /**
  * This class is a default implementation of <code>IObjectContributorManager</code>.
@@ -142,7 +146,23 @@ protected List addContributorsFor(Class objectClass){
  * this object.
  */
 public boolean hasContributorsFor(Object object) {
-	List contributors = getContributors(object.getClass());
+	
+	List contributors = null;
+	Class objectClass = object.getClass();
+	
+	//No need for adapted checks if there is already a lookup
+	if(lookup != null)
+		contributors = (List) lookup.get(objectClass);
+		
+	//Nothing is found or no lookup so do the search
+	if(contributors == null){
+		IResource adapted = getAdaptedResource(object);
+		if(adapted == null)
+			contributors  = getContributors(objectClass);
+		else
+			contributors = getContributors(objectClass, adapted.getClass());
+	}
+	
 	return (contributors!=null && contributors.size()>0);
 }
 /**
@@ -258,5 +278,34 @@ protected List getContributors(Class objectClass, Class resourceClass) {
 	lookup.put(objectClass, result);
 	
 	return result;
+}	
+
+/**
+ * Get the adapted resource for the supplied object. If the
+ * object is an instance of IResource or is not an instance
+ * of IAdaptable return null. Otherwise see if it adapts
+ * to IResource via IContributorResourceAdapter.
+ * @return IResource or null
+ * @param object Object 
+ */
+
+protected IResource getAdaptedResource(Object object){
+	
+	if(object instanceof IResource)
+		return null;
+		
+	if(object instanceof IAdaptable){
+		IAdaptable adaptable = (IAdaptable) object;
+
+		Object resourceAdapter =
+			adaptable.getAdapter(IContributorResourceAdapter.class);
+		if(resourceAdapter == null)
+			resourceAdapter = DefaultContributorResourceAdapter.getDefault();
+				
+		return((IContributorResourceAdapter) resourceAdapter).
+					getAdaptedResource(adaptable);
+	}
+	return null;
 }
+	
 }

@@ -70,7 +70,7 @@ public boolean contribute(PropertyPageManager manager, IAdaptable object) {
 	if (!contributorsLoaded)
 		loadContributors();
 		
-	Object adaptedObject = getAdaptedObject(object);
+	Object adaptedObject = getAdaptedResource(object);
 	List result;
 	if(adaptedObject == null)
 		result = getContributors(object.getClass());
@@ -120,23 +120,5 @@ private void loadContributors() {
 	contributorsLoaded=true;
 	
 }
-
-/**
- * Get the Resource this object adapts to so long
- * as it is not already an IResource.
- * @return IResource or null.
- * @param IAdaptable the object to adapt.
- */
-
-private Object getAdaptedObject(IAdaptable adaptable){
-
-	Object resourceAdapter =
-		adaptable.getAdapter(IContributorResourceAdapter.class);
-	if(resourceAdapter == null)
-		resourceAdapter = DefaultContributorResourceAdapter.getDefault();
-				
-	return((IContributorResourceAdapter) resourceAdapter).
-					getAdaptedResource(adaptable);
-}
-		
+	
 }
