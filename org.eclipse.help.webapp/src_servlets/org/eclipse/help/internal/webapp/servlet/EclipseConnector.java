@@ -11,7 +11,6 @@ import java.util.Enumeration;
 import javax.servlet.ServletContext;
 import javax.servlet.http.*;
 
-import org.eclipse.core.boot.BootLoader;
 import org.eclipse.help.internal.HelpSystem;
 
 /**
@@ -137,10 +136,7 @@ public class EclipseConnector {
 		URLConnection con = null;
 		if (HelpSystem.getMode() == HelpSystem.MODE_INFOCENTER) {
 			// it is an infocentre, add client locale to url
-			String locale =
-				request == null
-					? BootLoader.getNL()
-					: request.getLocale().toString();
+			String locale = UrlUtil.getLocale(request);
 			if (url.indexOf('?') >= 0) {
 				url = url + "&lang=" + locale;
 			} else {
