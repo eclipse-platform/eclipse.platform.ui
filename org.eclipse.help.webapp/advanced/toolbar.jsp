@@ -253,7 +253,7 @@ if(buttons.length > 0){
 		<table width="100%" border="0" cellspacing="1" cellpadding="0" height="100%">
 			<tr>
 				<td align="<%=isRTL?"left":"right"%>">
-					<table border="0" cellspacing="0" cellpadding="0" height="100%" style="background:<%=prefs.getToolbarBackground()%>">
+					<table align="<%=isRTL?"left":"right"%>" border="0" cellspacing="0" cellpadding="0" height="100%" style="background:<%=prefs.getToolbarBackground()%>">
 					<tr>
 <%
 	for (int i=0; i<buttons.length; i++) {
