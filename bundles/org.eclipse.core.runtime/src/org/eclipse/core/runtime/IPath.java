@@ -14,7 +14,7 @@ package org.eclipse.core.runtime;
  * A path is an ordered collection of string segments,
  * separated by a standard separator character, "/".
  * A path may also have a leading and/or a trailing separator.
- * Paths also be prefixed by an optional device id, which includes
+ * Paths may also be prefixed by an optional device id, which includes
  * the character(s) which separate the device id from the rest 
  * of the path. For example, "C:" and "Server/Volume:" are typical
  * device ids.
