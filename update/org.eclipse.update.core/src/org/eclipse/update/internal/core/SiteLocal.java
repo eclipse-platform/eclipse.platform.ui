@@ -17,9 +17,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.update.configuration.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.configurator.*;
-import org.eclipse.update.internal.configurator.*;
 import org.eclipse.update.internal.model.*;
-import org.xml.sax.*;
 
 /**
  * This class manages the configurations.

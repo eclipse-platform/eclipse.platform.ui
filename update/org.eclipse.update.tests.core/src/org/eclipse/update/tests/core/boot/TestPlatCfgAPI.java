@@ -13,7 +13,6 @@ package org.eclipse.update.tests.core.boot;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
 
 import junit.framework.Assert;
 import org.eclipse.update.configurator.*;

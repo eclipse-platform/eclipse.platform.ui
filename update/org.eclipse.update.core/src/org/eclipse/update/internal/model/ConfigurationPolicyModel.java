@@ -15,7 +15,6 @@ import java.util.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.operations.UpdateUtils;
 
 /**
  * 

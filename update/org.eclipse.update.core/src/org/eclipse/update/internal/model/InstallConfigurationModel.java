@@ -18,8 +18,6 @@ import org.eclipse.update.configurator.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.core.URLEncoder;
-import org.xml.sax.*;
 
 /**
  * An InstallConfigurationModel is 
