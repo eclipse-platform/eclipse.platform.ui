@@ -17,6 +17,7 @@ import org.eclipse.debug.core.model.IVariable;
 public class AntValue extends AntDebugElement implements IValue  {
 
     private String fValueString;
+    protected static final IVariable[] EMPTY = new IVariable[0];
     
     /**
      * @param target
@@ -51,7 +52,7 @@ public class AntValue extends AntDebugElement implements IValue  {
      * @see org.eclipse.debug.core.model.IValue#getVariables()
      */
     public IVariable[] getVariables() {
-        return null;
+        return EMPTY;
     }
 
     /* (non-Javadoc)
