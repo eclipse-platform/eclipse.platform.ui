@@ -1104,6 +1104,47 @@ public class IJobManagerTest extends AbstractJobManagerTest {
 			manager.removeJobChangeListener(listener);
 		}
 	}
+	/**
+	 * Tests conditions where there is a race to schedule the same job multiple times.
+	 */
+	public void testScheduleRace() {
+		final int[] count = new int[1];
+		final boolean[] running= new boolean[] {false};
+		final boolean[] failure= new boolean[] {false};
+		final Job testJob = new Job("testScheduleRace") {
+			protected IStatus run(IProgressMonitor monitor) {
+				try {
+					synchronized (running) {
+						//indicate job is running, and assert the job is not already running
+						if (running[0])
+							failure[0] = true;
+						else
+							running[0] = true;
+					}
+					//sleep for awhile to let duplicate job start running
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					//ignore
+				} finally {
+					synchronized (running) {
+						running[0] = false;
+					}
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		testJob.addJobChangeListener(new JobChangeAdapter() {
+			public void scheduled(IJobChangeEvent event) {
+				while (count[0]++ < 2) {
+					testJob.schedule();
+				}
+			}
+		});
+		testJob.schedule();
+		waitForCompletion(testJob, 5000);
+		assertTrue("1.0", !failure[0]);
+	}
+	
 
 	public void testSimple() {
 		final int JOB_COUNT = 10;
