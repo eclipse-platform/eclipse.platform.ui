@@ -3915,6 +3915,50 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         findSashParts(parent, sashes, info);
     }
     
+	/**
+	 * Returns all parts that are owned by this page
+	 * 
+	 * @return
+	 */
+	IWorkbenchPartReference[] getAllParts() {
+		IViewReference[] views = viewFactory.getViews();
+		IEditorReference[] editors = getEditorReferences();
+		
+		IWorkbenchPartReference[] result = new IWorkbenchPartReference[views.length + editors.length];
+		int resultIdx = 0;
+		
+		for (int i = 0; i < views.length; i++) {
+			result[resultIdx++] = views[i];
+		}
+		
+		for (int i = 0; i < editors.length; i++) {
+			result[resultIdx++] = editors[i];
+		}
+		
+		return result;
+	}
+	
+	/**
+	 * Returns all open parts that are owned by this page (that is, all parts
+	 * for which a part opened event would have been sent -- these would be
+	 * activated parts whose controls have already been created.
+	 */
+	IWorkbenchPartReference[] getOpenParts() {
+		IWorkbenchPartReference[] refs = getAllParts();
+		List result = new ArrayList();
+		
+		for (int i = 0; i < refs.length; i++) {
+			IWorkbenchPartReference reference = refs[i];
+			
+			IWorkbenchPart part = reference.getPart(false);
+			if (part != null) {
+				result.add(reference);
+			}
+		}
+		
+		return (IWorkbenchPartReference[]) result.toArray(new IWorkbenchPartReference[result.size()]);
+	}    	
+    
     /**
      * Sanity-checks the objects in this page. Throws an Assertation exception
      * if an object's internal state is invalid. ONLY INTENDED FOR USE IN THE 
