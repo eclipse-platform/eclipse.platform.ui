@@ -301,6 +301,15 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	private ViewerState fLastState = null;
 	
 	/**
+	 * The last part and selection change notification
+	 * sent by the debug view. Cached, since selection
+	 * changes are ignored when the variable is not visible.
+	 * Used to update when the view becomes visible again.
+	 */
+	private ISelection fLastSelection = null;
+	private IWorkbenchPart fLastPart = null;
+	
+	/**
 	 * Remembers which viewer (tree viewer or details viewer) had focus, so we
 	 * can reset the focus properly when re-activated.
 	 */
@@ -338,6 +347,8 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		if (viewer != null) {
 			getDetailDocument().removeDocumentListener(getDetailDocumentListener());
 		}
+		fLastPart = null;
+		fLastSelection = null;
 		super.dispose();
 	}
 
@@ -1194,7 +1205,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * @see ISelectionListener#selectionChanged(IWorkbenchPart, ISelection)
 	 */
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-		if (!isAvailable()) {
+		fLastPart = part;
+		fLastSelection = selection;
+		if (!isAvailable() || !isVisible()) {
 			return;
 		}
 		
@@ -1325,4 +1338,20 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		return 100;
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesHidden()
+	 */
+	protected void becomesHidden() {
+		setViewerInput(new StructuredSelection());
+		super.becomesHidden();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesVisible()
+	 */
+	protected void becomesVisible() {
+		super.becomesVisible();
+		selectionChanged(fLastPart, fLastSelection);
+	}
+
 }
