@@ -12,6 +12,7 @@ package org.eclipse.core.internal.jobs;
 
 import java.text.*;
 import java.util.*;
+
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -457,8 +458,14 @@ public class JobManager implements IJobManager {
 	 */
 	private IProgressMonitor monitorFor(IProgressMonitor monitor) {
 		if (monitor == null || (monitor instanceof NullProgressMonitor)) {
-			if (progressProvider != null)
-				monitor = progressProvider.getDefaultMonitor();
+			if (progressProvider != null) {
+				try {
+					monitor = progressProvider.getDefaultMonitor();
+				} catch (Exception e) {
+					String msg = Policy.bind("meta.pluginProblems", IPlatform.PI_RUNTIME); //$NON-NLS-1$
+					InternalPlatform.getDefault().log(new Status(IStatus.ERROR, IPlatform.PI_RUNTIME, IPlatform.PLUGIN_ERROR, msg, e));
+				}
+			}
 		}
 		return Policy.monitorFor(monitor);
 	}
