@@ -44,7 +44,13 @@ if (data.isMozilla()){
 	margin:0px;
 	padding:0px;
 	border-top:1px solid ThreeDShadow;
+<% 
+if (!data.isMozilla()){
+%>
 	border-bottom:1px solid ThreeDShadow;
+<%
+}
+%>
 	cursor:default;
 }
 
