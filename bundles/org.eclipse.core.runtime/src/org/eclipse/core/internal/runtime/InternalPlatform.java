@@ -114,7 +114,7 @@ private static void activateDefaultPlugins() throws CoreException {
 	descriptor.setPluginClassLoader(loader);
 	descriptor.getPlugin();
 
-	descriptor = (PluginDescriptor) registry.getPluginDescriptor(PI_XML);
+	descriptor = (PluginDescriptor) registry.getPluginDescriptor(PI_XML, xmlClassLoader.getPluginDescriptor().getVersionIdentifier());
 	descriptor.activateDefaultPlugins(xmlClassLoader);
 	descriptor.setPluginClassLoader(xmlClassLoader);
 	xmlClassLoader.setPluginDescriptor(descriptor);
