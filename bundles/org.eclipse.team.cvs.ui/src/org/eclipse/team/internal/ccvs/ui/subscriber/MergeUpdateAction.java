@@ -195,12 +195,14 @@ public class MergeUpdateAction extends SafeUpdateAction {
 			}
 		}
 		// make sure that the folder sync info is set;
-		if (info instanceof CVSSyncInfo) {
-			CVSSyncInfo cvsInfo = (CVSSyncInfo)info;
-			IStatus status = cvsInfo.makeInSync();
-			if (status.getSeverity() == IStatus.ERROR) {
-				logError(status);
-				return false;
+		if (isOutOfSync(info)) {
+			if (info instanceof CVSSyncInfo) {
+				CVSSyncInfo cvsInfo = (CVSSyncInfo)info;
+				IStatus status = cvsInfo.makeInSync();
+				if (status.getSeverity() == IStatus.ERROR) {
+					logError(status);
+					return false;
+				}
 			}
 		}
 		// create the folder if it doesn't exist
