@@ -401,21 +401,28 @@ public class TaskList extends ViewPart {
 			}
 		}
 
+		boolean gtk = "gtk".equals(SWT.getPlatform());
 		TableLayout layout = new TableLayout();
 		table.setLayout(layout);
 		table.setHeaderVisible(true);
-		for (int i = 0; i < columnHeaders.length; i++) {
-			layout.addColumnData(columnLayouts[i]);
-			TableColumn tc = new TableColumn(table, SWT.NONE, i);
-			tc.setResizable(columnLayouts[i].resizable);
 
-			if (i == 1)
+		for (int i = 0; i < columnHeaders.length; i++) {
+			TableColumn tc = new TableColumn(table, SWT.NONE, i);
+
+			if (i == 1 && !gtk)
 				tc.setImage(MarkerUtil.getImage("header_complete")); //$NON-NLS-1$
-			else if (i == 2)
+			else if (i == 2 && !gtk)
 				tc.setImage(MarkerUtil.getImage("header_priority")); //$NON-NLS-1$
 			else 
 				tc.setText(columnHeaders[i]);
 
+			if (gtk && (i == 1 || i == 2)) {
+				tc.pack();
+				columnLayouts[i] = new ColumnPixelData(Math.max(19, tc.getWidth()), false);		
+			}
+			
+			tc.setResizable(columnLayouts[i].resizable);
+			layout.addColumnData(columnLayouts[i]);
 			tc.addSelectionListener(headerListener);
 		}
 	}
