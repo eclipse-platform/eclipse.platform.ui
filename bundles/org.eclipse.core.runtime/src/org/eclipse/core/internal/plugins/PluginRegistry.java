@@ -362,7 +362,6 @@ public IStatus incrementalResolve() {
 	PluginFragmentModel[] newFragments = getFragments();
 	// start from scratch
 	this.plugins = new PluginMap(new HashMap(newPlugins.length));
-	this.fragments = new PluginMap(new HashMap(newFragments.length));	
 	MultiStatus status = resolver.resolve(newPlugins,newFragments,plugins,unresolvedPlugins,dependencyState);
 	this.markResolved();
 	return status;
