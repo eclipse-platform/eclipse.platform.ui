@@ -292,6 +292,13 @@ public interface IDebugUIConstants {
 	public static final String IMG_LCL_CHANGE_VARIABLE_VALUE= "IMG_LCL_CHANGE_VARIABLE_VALUE"; //$NON-NLS-1$
 	
 	/**
+	 * Toggle variables content providers action image identifier
+	 * 
+	 * @since 3.0
+	 */
+	public static final String IMG_LCL_VARIABLES_CONTENT_PROVIDERS = "IMG_LCL_VARIABLES_CONTENT_PROVIDERS"; //$NON-NLS-1$
+	
+	/**
 	 * Disconnect action image identifier
 	 * 
 	 * @since 2.0

@@ -43,6 +43,7 @@ import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
 import org.eclipse.debug.internal.ui.views.ViewerState;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.debug.ui.IRootVariablesContentProvider;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -304,7 +305,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * These are used to initialize and persist the position of the sash that
 	 * separates the tree viewer from the detail pane.
 	 */
-	private static final int[] DEFAULT_SASH_WEIGHTS = {6, 2};
+	private static final int[] DEFAULT_SASH_WEIGHTS = {6, 3};
 	private int[] fLastSashWeights;
 	private boolean fToggledDetailOnce;
 
@@ -544,14 +545,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		detailsLabel.setText(VariablesViewMessages.getString("VariablesView.44")); //$NON-NLS-1$
 		detailsLabel.setImage(DebugPluginImages.getImage(IDebugUIConstants.IMG_VIEW_VARIABLES));
 		viewForm.setTopLeft(detailsLabel);
-								
-		ToolBar toolBar = new ToolBar(viewForm, SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
-		new ToolBarManager(toolBar);
-		GridData gd = new GridData();
-		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_END;
-		toolBar.setLayoutData(gd);
-		viewForm.setTopCenter(toolBar);
-
+			
 		// Create & configure a SourceViewer
 		SourceViewer detailsViewer= new SourceViewer(viewForm, null, SWT.V_SCROLL | SWT.H_SCROLL);
 		setDetailViewer(detailsViewer);
@@ -560,7 +554,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		getDetailDocument().addDocumentListener(getDetailDocumentListener());
 		detailsViewer.setEditable(false);
 		Control control = detailsViewer.getControl();
-		gd = new GridData(GridData.FILL_BOTH);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
 		viewForm.setContent(control);
 		
@@ -588,7 +582,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 	 * @return a content provider
 	 */
 	protected IContentProvider createContentProvider() {
-		VariablesViewContentProvider cp = new VariablesViewContentProvider();
+		VariablesViewContentProvider cp = new VariablesViewContentProvider(this);
 		cp.setExceptionHandler(this);
 		return cp;
 	}
@@ -709,6 +703,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		IAction action = new ShowTypesAction(this);
 		setAction("ShowTypeNames",action); //$NON-NLS-1$
 				
+		action = new VariablesContentProvidersToggleAction(this);
+		setAction("ToggleContentProviders", action); //$NON-NLS-1$
+
 		action = new ChangeVariableValueAction(getViewer());
 		action.setEnabled(false);
 		setAction("ChangeVariableValue", action); //$NON-NLS-1$
@@ -766,6 +763,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		tbm.add(new Separator(this.getClass().getName()));
 		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
 		tbm.add(getAction("ShowTypeNames")); //$NON-NLS-1$
+		tbm.add(getAction("ToggleContentProviders")); //$NON-NLS-1$
 		tbm.add(new Separator("TOGGLE_VIEW")); //$NON-NLS-1$
 		tbm.add(getAction("ShowDetailPane")); //$NON-NLS-1$
 	}
@@ -1030,6 +1028,9 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 			if (labelProvider instanceof VariablesViewLabelProvider) {
 				return ((VariablesViewLabelProvider)labelProvider).getPresentation();
 			}
+		}
+		if (IRootVariablesContentProvider.class.equals(required)) {
+			return (IRootVariablesContentProvider)getStructuredViewer().getContentProvider();
 		}
 		return super.getAdapter(required);
 	}

@@ -39,7 +39,7 @@ public class ExpressionView extends VariablesView {
 	 * @return a content provider
 	 */
 	protected IContentProvider createContentProvider() {
-		return new ExpressionViewContentProvider();
+		return new ExpressionViewContentProvider(this);
 	}
 	
 	/**

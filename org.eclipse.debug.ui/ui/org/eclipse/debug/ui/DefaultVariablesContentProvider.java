@@ -17,16 +17,16 @@ import org.eclipse.debug.core.model.IVariable;
 public class DefaultVariablesContentProvider implements IVariablesContentProvider {
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IVariablesContentProvider#getVariableChildren(org.eclipse.debug.core.model.IVariable)
+	 * @see org.eclipse.debug.ui.IVariablesContentProvider#getVariableChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.debug.core.model.IVariable)
 	 */
-	public IVariable[] getVariableChildren(IVariable parent) throws DebugException {
+	public IVariable[] getVariableChildren(IDebugView view, IVariable parent) throws DebugException {
 		return ((IVariable)parent).getValue().getVariables();
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.IVariablesContentProvider#hasVariableChildren(org.eclipse.debug.core.model.IVariable)
+	 * @see org.eclipse.debug.ui.IVariablesContentProvider#hasVariableChildren(org.eclipse.debug.ui.IDebugView, org.eclipse.debug.core.model.IVariable)
 	 */
-	public boolean hasVariableChildren(IVariable parent) throws DebugException {
+	public boolean hasVariableChildren(IDebugView view, IVariable parent) throws DebugException {
 		IValue value = ((IVariable)parent).getValue();
 		return value != null && value.hasVariables();
 	}

@@ -10,13 +10,11 @@
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
-import org.eclipse.debug.core.DebugException;
-import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.core.model.IThread;
 
-public interface IVariablesContentProvider {
+public interface IRootVariablesContentProvider {
 
-	public IVariable[] getVariableChildren(IDebugView view, IVariable parent) throws DebugException;
+	public void setUseContentProviders(boolean flag);
 	
-	public boolean hasVariableChildren(IDebugView view, IVariable parent) throws DebugException;
-	
+	public IThread getThread();
 }

@@ -19,11 +19,16 @@ import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.variables.VariablesViewContentProvider;
+import org.eclipse.debug.ui.IDebugView;
  
 /**
  * Provides contents for the expression view
  */
 public class ExpressionViewContentProvider extends VariablesViewContentProvider {
+
+	public ExpressionViewContentProvider(IDebugView view) {
+		super(view);
+	}
 
 	/**
 	 * @see ITreeContentProvider#getChildren(Object)

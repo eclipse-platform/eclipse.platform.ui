@@ -18,10 +18,13 @@ import java.util.List;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.IDebugExceptionHandler;
+import org.eclipse.debug.ui.IDebugView;
+import org.eclipse.debug.ui.IRootVariablesContentProvider;
 import org.eclipse.debug.ui.IVariablesContentProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
@@ -29,8 +32,14 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * Provide the contents for a variables viewer.
  */
-public class VariablesViewContentProvider implements ITreeContentProvider {
-
+public class VariablesViewContentProvider implements ITreeContentProvider,
+														IRootVariablesContentProvider {
+	
+	/**
+	 * The view that owns this content provider.
+	 */
+	private IDebugView fDebugView;
+	
 	/**
 	 * A table that maps children to their parent element
 	 * such that this content provider can walk back up the
@@ -46,10 +55,18 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	private IDebugExceptionHandler fExceptionHandler = null;
 	
 	/**
+	 * Flag indicating whether contributed content providers should be used or not.
+	 */
+	private boolean fUseContentProviders;
+	
+	private IStackFrame fStackFrameInput;
+	
+	/**
 	 * Constructs a new provider
 	 */
-	public VariablesViewContentProvider() {
+	public VariablesViewContentProvider(IDebugView view) {
 		fParentCache = new HashMap(10);
+		setDebugView(view);
 	}
 
 	/**
@@ -74,11 +91,11 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 				cache(parent, children);
 				return children;
 			}
-		} catch (DebugException e) {
+		} catch (DebugException de) {
 			if (getExceptionHandler() != null) {
-				getExceptionHandler().handleException(e);
+				getExceptionHandler().handleException(de);
 			} else {
-				DebugUIPlugin.log(e);
+				DebugUIPlugin.log(de);
 			}
 		}
 		return new Object[0];
@@ -86,7 +103,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	
 	protected IVariable[] getModelSpecificVariableChildren(IVariable parent) throws DebugException {
 		IVariablesContentProvider contentProvider = getContentProvider(getDebugModelId(parent));
-		return contentProvider.getVariableChildren(parent);
+		return contentProvider.getVariableChildren(getDebugView(), parent);
 	}
 	
 	/**
@@ -161,7 +178,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	
 	protected boolean hasModelSpecificVariableChildren(IVariable parent) throws DebugException {
 		IVariablesContentProvider contentProvider = getContentProvider(getDebugModelId(parent));
-		return contentProvider.hasVariableChildren(parent);
+		return contentProvider.hasVariableChildren(getDebugView(), parent);
 	}
 	
 	/**
@@ -169,6 +186,7 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		clearCache();
+		fStackFrameInput = (IStackFrame) newInput;
 	}
 	
 	/**
@@ -218,7 +236,11 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 		
 	protected IVariablesContentProvider getContentProvider(String debugModelId) {
 		VariablesContentProviderManager mgr = DebugUIPlugin.getDefault().getVariablesContentProviderManager();
-		return mgr.getContentProvider(debugModelId);		
+		if (getUseContentProviders()) {
+			return mgr.getContentProvider(debugModelId);		
+		} else {
+			return mgr.getDefaultContentProvider();
+		}
 	}
 
 	/**
@@ -238,5 +260,35 @@ public class VariablesViewContentProvider implements ITreeContentProvider {
 	protected IDebugExceptionHandler getExceptionHandler() {
 		return fExceptionHandler;
 	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IRootVariablesContentProvider#setUseContentProviders(boolean)
+	 */
+	public void setUseContentProviders(boolean flag) {
+		fUseContentProviders = flag;
+	}
+	
+	public boolean getUseContentProviders() {
+		return fUseContentProviders;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.ui.IRootVariablesContentProvider#getThread()
+	 */
+	public IThread getThread() {
+		if (fStackFrameInput == null) {
+			return null;
+		}
+		return fStackFrameInput.getThread();
+	}
+
+	private void setDebugView(IDebugView view) {
+		fDebugView = view;
+	}
+
+	private IDebugView getDebugView() {
+		return fDebugView;
+	}
+	
 }
 

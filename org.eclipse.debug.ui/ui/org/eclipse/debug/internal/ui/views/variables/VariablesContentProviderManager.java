@@ -111,7 +111,7 @@ public class VariablesContentProviderManager {
 	/**
 	 * Return the default content provider, creating it if necessary.
 	 */
-	protected IVariablesContentProvider getDefaultContentProvider() {
+	public IVariablesContentProvider getDefaultContentProvider() {
 		if (fDefaultContentProvider == null) {
 			fDefaultContentProvider = new DefaultVariablesContentProvider();
 		}
