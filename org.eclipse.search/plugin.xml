@@ -4,10 +4,10 @@
 <!-- Search Plugin                                                           -->
 <!-- ======================================================================= -->
 <plugin
-	name= "Search"
+	name= "Search Support"
 	id= "org.eclipse.search"
-	version= "1.0"
-	vendor-name= "IBM"
+	version= "0.9"
+	vendor-name= "Object Technology International, Inc."
 	class= "org.eclipse.search.internal.ui.SearchPlugin">
 
 <requires>
