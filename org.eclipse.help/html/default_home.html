@@ -4,12 +4,60 @@
 <head>
 <title>Websphere Studio Workbench</title>
 <meta content="text/html; charset=windows-1252" http-equiv="Content-Type">
+
+<script>
+
+/** 
+ * Parses the query string
+ */
+function parseQueryString (str) 
+{
+    //str = str ? str : unescape(document.URL);
+    str = str ? str : unescape(window.location.href);
+    var longquery = str.split("?");
+    if (longquery.length <= 1) return "";
+    var query = longquery[1];
+    var args = new Object();
+    if (query) 
+    {
+        var fields = query.split('&');
+        for (var f = 0; f < fields.length; f++) 
+        {
+            var field = fields[f].split('=');
+            args[unescape(field[0].replace(/\+/g, ' '))] = unescape(field[1].replace(/\+/g, ' '));
+        }
+    }
+    return args;
+}
+
+var args = parseQueryString ();
+var infosetTitle = args['title'];
+
+</script>
+
+
+
+
 </head>
 
-<body bgColor="#FFFFFF" >
-<img border="0" src="workbench.jpg" width="604" height="45">
-<!--
-<div style="position:absolute; left:20; top:25; font-weight:bold;">Splash title</div>
--->
+<body bgColor="#FFFFFF" style="margin:0;" >
+<div style="position:absolute; left:0; top:0; "></div>
+     <img border="0" src="workbench.jpg" width="604" height="45"  margin=0>
+</div>
+
+<div id="bannerTitle" style="position:absolute; left:10; top:13; font-weight:bold;">
+  <script> 
+     if (document.all)
+     {
+         document.all("bannerTitle").document.write(infosetTitle); 
+         document.all("bannerTitle").document.close();
+     }
+     else 
+     {
+          window.document.bannerTitle.document.write(infosetTitle);
+     }
+  </script>
+</div>
+
 </body>
 </html>
