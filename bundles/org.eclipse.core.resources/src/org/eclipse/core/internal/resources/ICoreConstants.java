@@ -48,6 +48,23 @@ public interface ICoreConstants {
 	 * @since 2.1
 	 */
 	static final int M_LINK = 0x10000;
+	/**
+	 * The file has no content description.
+	 * @since 3.0
+	 */
+	static final int M_NO_CONTENT_DESCRIPTION = 0x20000;
+	/**
+	 * The file has a default content description.
+	 * @since 3.0
+	 */
+	static final int M_DEFAULT_CONTENT_DESCRIPTION = 0x40000;
+	
+	/**
+	 * Set of flags that should be cleared when the contents for a file change.
+	 * @since 3.0 
+	 */
+	static final int M_CONTENT_CACHE = M_NO_CONTENT_DESCRIPTION | M_DEFAULT_CONTENT_DESCRIPTION;
+	
 	static final int NULL_FLAG = -1;
 
 	// Internal status codes	

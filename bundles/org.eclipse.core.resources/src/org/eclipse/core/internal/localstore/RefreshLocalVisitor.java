@@ -147,6 +147,8 @@ public class RefreshLocalVisitor implements IUnifiedTreeVisitor, ILocalStoreCons
 			return;
 		target.getLocalManager().updateLocalSync(info, node.getLastModified());
 		info.incrementContentId();
+		// forget content-related caching flags		
+		info.clear(ResourceInfo.M_CONTENT_CACHE);	
 		workspace.updateModificationStamp(info);
 	}
 

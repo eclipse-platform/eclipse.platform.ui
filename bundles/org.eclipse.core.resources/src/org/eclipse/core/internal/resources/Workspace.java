@@ -611,6 +611,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// preserve local sync info
 		ResourceInfo oldInfo = ((Resource) source).getResourceInfo(true, false);
 		newInfo.setFlags(newInfo.getFlags() | (oldInfo.getFlags() & M_LOCAL_EXISTS));
+		
+		// forget content-related caching flags
+		newInfo.clear(M_CONTENT_CACHE);
 
 		// update link locations in project descriptions
 		if (source.isLinked()) {

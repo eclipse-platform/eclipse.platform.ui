@@ -1333,6 +1333,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				// fake a change by incrementing the content ID
 				info = getResourceInfo(false, true);
 				info.incrementContentId();
+				// forget content-related caching flags
+				info.clear(M_CONTENT_CACHE);
 				workspace.updateModificationStamp(info);
 				monitor.worked(Policy.opWork);
 			} catch (OperationCanceledException e) {

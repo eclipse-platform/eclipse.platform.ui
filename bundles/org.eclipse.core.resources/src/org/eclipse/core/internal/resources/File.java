@@ -236,7 +236,15 @@ public class File extends Resource implements IFile {
 	 * @see org.eclipse.core.resources.IFile#getContentDescription()
 	 */
 	public IContentDescription getContentDescription() throws CoreException {
-		return workspace.getContentDescriptionManager().getDescriptionFor(this);
+		try {
+			workspace.prepareOperation(null, null);
+			ResourceInfo info = getResourceInfo(false, false);
+			checkAccessible(getFlags(info));			
+			workspace.beginOperation(true);			
+			return workspace.getContentDescriptionManager().getDescriptionFor(this);			
+		} finally {
+			workspace.endOperation(null, false, null);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -289,7 +297,8 @@ public class File extends Resource implements IFile {
 			content = new ByteArrayInputStream(new byte[0]);
 		getLocalManager().write(this, location, content, force, keepHistory, append, monitor);
 		ResourceInfo info = getResourceInfo(false, true);
-		info.incrementContentId();
+		info.incrementContentId();		
+		info.clear(M_CONTENT_CACHE);		
 		workspace.updateModificationStamp(info);
 		updateProjectDescription();
 		workspace.getAliasManager().updateAliases(this, location, IResource.DEPTH_ZERO, monitor);
