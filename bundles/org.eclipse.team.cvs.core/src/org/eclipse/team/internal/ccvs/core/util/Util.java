@@ -30,7 +30,7 @@ public class Util {
 	public static String getRelativePath(String rootName, String resourceName) 
 		throws CVSException {
 
-		if (!resourceName.startsWith(rootName)) {
+		if (!resourceName.startsWith(rootName) || rootName.length() > resourceName.length()) {
 			throw new CVSException(Policy.bind("Util.Internal_error,_resource_does_not_start_with_root_3")); //$NON-NLS-1$
 		}
 		
@@ -40,9 +40,12 @@ public class Util {
 			return ""; //$NON-NLS-1$
 		}
 		
-		// Get rid of the seperator, that would be in the 
-		// beginning, if we did not go from +1
-		return resourceName.substring(rootName.length() + 1).replace('\\', '/');
+		// Remove leading slash if there is one
+		String result = resourceName.substring(rootName.length()).replace('\\', '/');
+		if (resourceName.startsWith("/")) {
+			result = result.substring(1);
+		}
+		return result;
 	}
 	
 	/**
