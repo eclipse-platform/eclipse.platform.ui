@@ -250,7 +250,7 @@ public class ConfigureTargetWizard extends Wizard implements IConfigurationWizar
 			try {				
 				TargetProvider provider = TargetManager.getProvider(project);
 				if(provider != null) {
-					if(! MessageDialog.openQuestion(container.getShell(),
+					if(!provider.getSite().equals(site) && !MessageDialog.openQuestion(container.getShell(),
 						Policy.bind("ConfigureTargetWizardQuestion_2"), //$NON-NLS-1$
 						Policy.bind("ConfigureTargetWizard.alreadyMapped", project.getName(), provider.getURL().toExternalForm()))) { //$NON-NLS-1$
 					return false;
