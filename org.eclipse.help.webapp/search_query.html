@@ -3,9 +3,8 @@
 <head>
 	<title>Search</title>
 	<base target="MainFrame">
-      <link rel="stylesheet" TYPE="text/css" HREF="search.css" TITLE="sea">
-      <link rel="stylesheet" TYPE="text/css" HREF="toc.css" TITLE="nav">
-
+    <link rel="stylesheet" TYPE="text/css" HREF="search.css" TITLE="sea">
+     
 <script language="JavaScript">
 function mouseover(img)
 {
@@ -23,18 +22,21 @@ function mouseout(img)
 </head>
 
 
-<body style="background-color:#D4D0C8;overflow:hidden;" >
-    <form action="search_results.jsp" method="get" name="searchForm" target="ResultsFrame" >
+<body style="overflow:hidden;" >
+	<table width="100%" style="background-color:#D4D0C8;font: 8pt Tahoma;" border="0" cellspacing="0" cellpadding="3">
+	  <tr>
+    	<form action="search_results.jsp" method="get" name="searchForm" target="ResultsFrame" >
   
-      <div id="query" style="width:100%;padding:3px;background-color:#D4D0C8;">
-      
+		 <td width="100%">
             <input type="text" class="txtInput" name="keyword" 
                    onblur="if (value == '') {value = 'search'}" 
                    onfocus="if (value == 'search') {value =''}" 
-                   maxlength=256 style="width:75%">
-                         
-            <input style="width:22px;" type="image" alt="Search" src="images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)">
-            
+                   maxlength=256 style="font: 8pt Tahoma;">
+          </td>
+          <td>  
+            <input value="Go" style="font: 8pt Tahoma;" type="submit" alt="Search" src="images/go.gif" class="normal" onmouseover="mouseover(this)" onmouseout="mouseout(this)" >
+          </td> 
+          <td>
            <!--
             <input type="checkbox" name="fieldSearch" <%= request.getParameter("fieldSearch")!=null?"checked='true'":""%>>Search headings only
    			-->
@@ -46,8 +48,19 @@ function mouseout(img)
             <input type="hidden" name="field" value="technology" >
             <input type="hidden" name="maxHits" value="500" >
             <input type="hidden" name="lang" value="en_US" >
-      </div>
-    </form>
+		   </td>
+    	</form>
+       </tr>
+     </table>
+
+<!-- seperator line -->
+
+<table align="bottom" width="100%" border="0" cellspacing="0" cellpadding="0">
+<tr>
+	<td align="bottom" bgcolor="#808080"><img src="images/transparentDot.gif" width="1" height="1" alt="" border="0"></td>
+</tr>
+</table>
+
 
 </body>
 </html>
