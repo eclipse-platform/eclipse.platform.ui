@@ -11,7 +11,9 @@ import org.eclipse.jface.operation.IRunnableContext;
   * A launch configuration dialog is used to edit and launch
   * launch configurations. It contains a launch configuration
   * tab group.
-  * 
+  * <p>
+  * Clients are not intended to implement this interface.
+  * </p>
   * @see ILaunchConfigurationTabGroup
   * @see ILaunchConfigurationTab
   * @since 2.0
@@ -86,6 +88,25 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * @return one of <code>RUN_MODE</code> or <code>DEBUG_MODE</code> defined in <code>ILaunchManager</code>
 	 * @see ILaunchManager
 	 */
-	public String getMode();		
+	public String getMode();	
+	
+	/**
+	 * Sets the displayed tab to the given tab. Has no effect if the specified
+	 * tab is not one of the tabs being displayed in the dialog currently.
+	 * 
+	 * @param tab the tab to display/activate
+	 * @since 2.1
+	 */
+	public void setActiveTab(ILaunchConfigurationTab tab);
+	
+	/**
+	 * Sets the displayed tab to the tab with the given index. Has no effect if
+	 * the specified index is not within the limits of the tabs returned by
+	 * <code>getTabs()</code>.
+	 * 
+	 * @param index the index of the tab to dispay
+	 * @since 2.1
+	 */
+	public void setActiveTab(int index);	
 		
 }

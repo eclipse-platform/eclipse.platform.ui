@@ -1026,4 +1026,36 @@ public class LaunchConfigurationTabGroupViewer extends Viewer {
 	protected Composite getVisibleArea() {
 		return fVisibleArea;
 	}
+	
+	/**
+	 * Sets the displayed tab to the given tab. Has no effect if the specified
+	 * tab is not one of the tabs being displayed in the dialog currently.
+	 * 
+	 * @param tab the tab to display/activate
+	 */
+	public void setActiveTab(ILaunchConfigurationTab tab) {
+		ILaunchConfigurationTab[] tabs = getTabs();
+		for (int i = 0; i < tabs.length; i++) {
+			ILaunchConfigurationTab configurationTab = tabs[i];
+			if (configurationTab.equals(tab)) {
+				setActiveTab(i);
+				return;
+			}
+		}
+	}
+	
+	/**
+	 * Sets the displayed tab to the tab with the given index. Has no effect if
+	 * the specified index is not within the limits of the tabs returned by
+	 * <code>getTabs()</code>.
+	 * 
+	 * @param index the index of the tab to dispay
+	 */
+	public void setActiveTab(int index) {
+		ILaunchConfigurationTab[] tabs = getTabs();
+		if (index >= 0 && index < tabs.length) {
+			getTabFolder().setSelection(index);
+			handleTabSelected();
+		}
+	}
 }

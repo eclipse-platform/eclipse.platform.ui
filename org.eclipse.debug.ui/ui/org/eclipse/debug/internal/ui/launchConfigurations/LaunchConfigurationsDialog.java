@@ -1848,4 +1848,18 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		}			
 	}
 
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(org.eclipse.debug.ui.ILaunchConfigurationTab)
+	 */
+	public void setActiveTab(ILaunchConfigurationTab tab) {
+		getTabViewer().setActiveTab(tab);
+	}
+
+	/**
+	 * @see org.eclipse.debug.ui.ILaunchConfigurationDialog#setActiveTab(int)
+	 */
+	public void setActiveTab(int index) {
+		getTabViewer().setActiveTab(index);
+	}
+
 }
