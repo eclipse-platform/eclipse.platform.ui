@@ -89,7 +89,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 	private EditActionSetsAction editActionSetAction;
 	private ClosePerspectiveAction closePerspAction;
 	private LockToolBarAction lockToolBarAction;
-	private ResetToolBarAction resetToolBarAction;
 	private CloseAllPerspectivesAction closeAllPerspsAction;
 	private PinEditorAction pinEditorAction;
 	private ShowViewMenuAction showViewMenuAction;
@@ -255,7 +254,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		hideShowEditorAction.setEnabled(value);
 		savePerspectiveAction.setEnabled(value);
 		lockToolBarAction.setEnabled(value);
-		resetToolBarAction.setEnabled(value);
 		resetPerspectiveAction.setEnabled(value);
 		editActionSetAction.setEnabled(value);
 		closePerspAction.setEnabled(value);
@@ -477,7 +475,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(hideShowEditorAction);
 			if (manager instanceof CoolBarManager) {
 				menu.add(lockToolBarAction);	
-				menu.add(resetToolBarAction);	
 			}
 			menu.add(new Separator());
 			menu.add(editActionSetAction);
@@ -493,7 +490,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			menu.add(editActionSetAction);
 			if (manager instanceof CoolBarManager) {
 				menu.add(lockToolBarAction);	
-				menu.add(resetToolBarAction);	
 			}
 			menu.add(resetPerspectiveAction);
 			menu.add(new Separator());
@@ -631,7 +627,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			coolBarItem.setVisible(true);
 			toolsManager = (IContributionManager)coolBarItem.getToolBarManager();
 			cBarMgr.addToMenu(new ActionContributionItem(lockToolBarAction));
-			cBarMgr.addToMenu(new ActionContributionItem(resetToolBarAction));
 			cBarMgr.addToMenu(new ActionContributionItem(editActionSetAction));
 		} else {
 			toolsManager = manager;
@@ -928,7 +923,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 		savePerspectiveAction = new SavePerspectiveAction(window);
 		editActionSetAction = new EditActionSetsAction(window);
 		lockToolBarAction = new LockToolBarAction(window);
-		resetToolBarAction = new ResetToolBarAction(window);
 		resetPerspectiveAction = new ResetPerspectiveAction(window);
 		closePerspAction = new ClosePerspectiveAction(window);
 		closeAllPerspsAction = new CloseAllPerspectivesAction(window);
@@ -971,7 +965,6 @@ public class WorkbenchActionBuilder implements IPropertyChangeListener {
 			savePerspectiveAction.setText(WorkbenchMessages.getString("Workbench.savePerspectiveAs")); //$NON-NLS-1$
 			editActionSetAction.setText(WorkbenchMessages.getString("Workbench.customizePerspective")); //$NON-NLS-1$
 			lockToolBarAction.setText(WorkbenchMessages.getString("Workbench.lockPerspectiveToolBar")); //$NON-NLS-1$
-			resetToolBarAction.setText(WorkbenchMessages.getString("Workbench.resetPerspectiveToolBar")); //$NON-NLS-1$
 			resetPerspectiveAction.setText(WorkbenchMessages.getString("Workbench.resetPerspective")); //$NON-NLS-1$
 			closePerspAction.setText(WorkbenchMessages.getString("Workbench.closePerspective")); //$NON-NLS-1$
 			closeAllPerspsAction.setText(WorkbenchMessages.getString("Workbench.closeAllPerspectives")); //$NON-NLS-1$
