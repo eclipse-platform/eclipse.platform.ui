@@ -383,7 +383,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 			}
 			
 			public boolean isValidSubjectRegion(IRegion focus) {
-				return focus.getOffset() <= offset && focus.getOffset() + focus.getLength() <= offset;
+				return focus.getOffset() <= offset && focus.getOffset() + focus.getLength() >= offset;
 			}
 			
 			public boolean hasShellFocus() {
@@ -624,28 +624,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 			IDocument document= fContentAssistSubjectControlAdapter.getDocument();
 			if (document != null)
 				document.addDocumentListener(fDocumentListener);		
-			
-			// let any document listeners know that we have a shell up
-			IEditorHelper helper= new IEditorHelper() {
-
-				public boolean isSourceOfEvent(Object event) {
-					return false;
-				}
-
-				public boolean isValidSubjectRegion(IRegion focus) {
-					Point selection= fViewer.getSelectedRange();
-					return selection.x <= focus.getOffset() + focus.getLength() && selection.x + selection.y >= focus.getOffset();
-				}
-
-				public boolean hasShellFocus() {
-					return true;
-				}
-				
-			};
-			if (fViewer instanceof IEditorHelperRegistry) {
-				IEditorHelperRegistry registry= (IEditorHelperRegistry) fViewer;
-				registry.register(helper);
-			}
 			
 			/* https://bugs.eclipse.org/bugs/show_bug.cgi?id=52646
 			 * on GTK, setVisible and such may run the event loop

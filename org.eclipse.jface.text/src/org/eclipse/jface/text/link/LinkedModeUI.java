@@ -381,7 +381,7 @@ public class LinkedModeUI {
 			// default behavior: any document change outside a linked position
 			// causes us to exit
 			int end= event.getOffset() + event.getLength();
-			for (int offset= event.getOffset(); offset < end; offset++) {
+			for (int offset= event.getOffset(); offset <= end; offset++) {
 				if (!fModel.anyPositionContains(offset)) {
 					ITextViewer viewer= fCurrentTarget.getViewer();
 					if (fFramePosition != null && viewer instanceof IEditorHelperRegistry) {
@@ -1046,9 +1046,6 @@ public class LinkedModeUI {
 	}
 
 	private void disconnect() {
-		if (!fIsActive)
-			return;
-		
 		Assert.isNotNull(fCurrentTarget);
 		ITextViewer viewer= fCurrentTarget.getViewer();
 		Assert.isNotNull(viewer);
@@ -1075,7 +1072,8 @@ public class LinkedModeUI {
 		
 		// don't remove the verify key listener to let it keep its position
 		// in the listener queue
-		fCurrentTarget.fKeyListener.setEnabled(false);
+		if (fCurrentTarget.fKeyListener != null)
+			fCurrentTarget.fKeyListener.setEnabled(false);
 		
 		((IPostSelectionProvider) viewer).removePostSelectionChangedListener(fSelectionListener);
 
@@ -1192,13 +1190,11 @@ public class LinkedModeUI {
 	 * @return the currently selected region or <code>null</code>
 	 */
 	public IRegion getSelectedRegion() {
-		if (fFramePosition == null)
-			if (fExitPosition != null)
-				return new Region(fExitPosition.getOffset(), fExitPosition.getLength());
-			else
-				return null;
-		else
+		if (fFramePosition != null)
 			return new Region(fFramePosition.getOffset(), fFramePosition.getLength());
+		if (fExitPosition != null)
+			return new Region(fExitPosition.getOffset(), fExitPosition.getLength());
+		return null;
 	}
 
 	private String getCategory() {
