@@ -71,12 +71,14 @@ public class CharsetTest extends ResourceTest {
 	private static final String SAMPLE_XML_ISO_8859_1_ENCODING = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><org.eclipse.core.resources.tests.root/>";
 	private static final String SAMPLE_XML_US_ASCII_ENCODING = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><org.eclipse.core.resources.tests.root/>";
 
+	private String savedWorkspaceCharset;
+
 	public static Test suite() {
 		//		TestSuite suite = new TestSuite();
 		//		suite.addTest(new CharsetTest("testFileCreation"));
 		//		suite.addTest(new CharsetTest("testPrefsFileCreation"));
 		//		return suite;
-		//		return new CharsetTest("testBug79151");
+//		return new CharsetTest("testMovingProject");
 
 		return new TestSuite(CharsetTest.class);
 
@@ -85,10 +87,6 @@ public class CharsetTest extends ResourceTest {
 		//		for (int i = 0; i < 1000; i++)
 		//			suite.addTest(new CharsetTest("testDeltasFile"));
 		//		return suite;
-	}
-
-	public CharsetTest() {
-		super();
 	}
 
 	public CharsetTest(String name) {
@@ -167,6 +165,18 @@ public class CharsetTest extends ResourceTest {
 
 	private Reader getTextContents(String text) {
 		return new StringReader(text);
+	}
+
+	protected void setUp() throws Exception {
+		super.setUp();
+		// save the workspace charset so it can be restored after the test
+		savedWorkspaceCharset = ResourcesPlugin.getPlugin().getPluginPreferences().getString(ResourcesPlugin.PREF_ENCODING);
+	}
+
+	protected void tearDown() throws Exception {
+		// restore the workspace charset 
+		ResourcesPlugin.getPlugin().getPluginPreferences().setValue(ResourcesPlugin.PREF_ENCODING, savedWorkspaceCharset);
+		super.tearDown();
 	}
 
 	public void testBug59899() {
