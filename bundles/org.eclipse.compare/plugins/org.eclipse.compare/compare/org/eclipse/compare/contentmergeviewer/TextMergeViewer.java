@@ -48,7 +48,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.texteditor.IUpdate;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import org.eclipse.compare.*;
 import org.eclipse.compare.internal.MergeSourceViewer;
@@ -172,10 +171,9 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	
 	// Colors
 	
-	private boolean fUseSystemBackground;
-	
 	private RGB fBackground;
 	private RGB fForeground;
+	private boolean fPollSystemForeground= true;
 		
 	private RGB SELECTED_INCOMING;
 	private RGB INCOMING;
@@ -551,8 +549,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			};
 			fPreferenceStore.addPropertyChangeListener(fPreferenceChangeListener);
 			
-			fUseSystemBackground= fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
-
 			Display display= parent.getDisplay();
 			updateFont(fPreferenceStore, display);
 			checkForColorUpdate(display);
@@ -611,24 +607,49 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	}
 	
 	private void checkForColorUpdate(Display display) {
-		RGB fg= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND).getRGB();
-		if (fForeground == null || !fg.equals(fForeground)) {
-			fForeground= fg;
-			updateColors(fPreferenceStore, display);
+		if (fPollSystemForeground) {
+			RGB fg= display.getSystemColor(SWT.COLOR_LIST_FOREGROUND).getRGB();
+			if (fForeground == null || !fg.equals(fForeground)) {
+				fForeground= fg;
+				updateColors(display);
+			}
 		}
 	}
 	
-	private void updateColors(IPreferenceStore ps, Display display) {
+	public void setBackgroundColor(RGB background) {
+		fBackground= background;
+		updateColors(null);
+	}
+	
+	private RGB getBackground(Display display) {
+		if (fBackground != null)
+			return fBackground;
+		if (display == null)
+			display= fComposite.getDisplay();
+		return display.getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();
+	}
+	
+	public void setForegroundColor(RGB foreground) {
+		fPollSystemForeground= (foreground == null);
+		fForeground= foreground;
+		updateColors(null);
+	}
+	
+	private RGB getForeground(Display display) {
+		if (fForeground != null)
+			return fForeground;
+		if (display == null)
+			display= fComposite.getDisplay();
+		return display.getSystemColor(SWT.COLOR_LIST_FOREGROUND).getRGB();
+	}
+	
+	private void updateColors(Display display) {
 		
-		fBackground= null;
-		if (! fUseSystemBackground && ps != null)
-			fBackground= createColor(ps, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND);
+		if (display == null)
+			display= fComposite.getDisplay();
 		
-		if (fBackground == null)
-			fBackground= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND).getRGB();			
-				
 		Color color= null;
-		if (! fUseSystemBackground)
+		if (fBackground != null)
 			color= getColor(display, fBackground);
 		
 		if (fAncestor != null)
@@ -638,18 +659,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (fRight != null)
 			fRight.setBackgroundColor(color);
 						
-										
+		RGB bg= getBackground(display);
 		SELECTED_INCOMING= new RGB(0, 0, 255);
-		INCOMING= interpolate(SELECTED_INCOMING, fBackground, 0.6);
-		INCOMING_FILL= interpolate(SELECTED_INCOMING, fBackground, 0.97);
+		INCOMING= interpolate(SELECTED_INCOMING, bg, 0.6);
+		INCOMING_FILL= interpolate(SELECTED_INCOMING, bg, 0.97);
 
 		SELECTED_CONFLICT= new RGB(255, 0, 0);
-		CONFLICT= interpolate(SELECTED_CONFLICT, fBackground, 0.6);
-		CONFLICT_FILL= interpolate(SELECTED_CONFLICT, fBackground, 0.97);
+		CONFLICT= interpolate(SELECTED_CONFLICT, bg, 0.6);
+		CONFLICT_FILL= interpolate(SELECTED_CONFLICT, bg, 0.97);
 	
-		SELECTED_OUTGOING= fForeground;
-		OUTGOING= interpolate(SELECTED_OUTGOING, fBackground, 0.6);
-		OUTGOING_FILL= interpolate(SELECTED_OUTGOING, fBackground, 0.97);
+		SELECTED_OUTGOING= getForeground(display);
+		OUTGOING= interpolate(SELECTED_OUTGOING, bg, 0.6);
+		OUTGOING_FILL= interpolate(SELECTED_OUTGOING, bg, 0.97);
 		
 		// invalidate color cache
 		fColors= null;
@@ -664,18 +685,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			fLeft.invalidateTextPresentation();
 		if (fRight != null)
 			fRight.invalidateTextPresentation();
-	}
-	
-	/**
-	 * Creates a color from the information stored in the given preference store.
-	 * Returns <code>null</code> if there is no such information available.
-	 */
-	private static RGB createColor(IPreferenceStore store, String key) {
-		if (!store.contains(key))
-			return null;
-		if (store.isDefault(key))
-			return PreferenceConverter.getDefaultColor(store, key);
-		return PreferenceConverter.getColor(store, key);
 	}
 	
 	/**
@@ -1071,7 +1080,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 		if (fFont != null)
 			te.setFont(fFont);
 			
-		if (! fUseSystemBackground)
+		if (fBackground != null)	// not default
 			te.setBackground(getColor(parent.getDisplay(), fBackground));			
 		
 		configureTextViewer(part);
@@ -2490,17 +2499,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					clearStatus();
 			}
 		
-		} else if (key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND)) {
-
-			if (DEBUG) System.out.println("prop: PREFERENCE_COLOR_BACKGROUND");
-			updateColors(fPreferenceStore, fComposite.getDisplay());
-						
-		} else if (key.equals(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)) {
-
-			fUseSystemBackground= fPreferenceStore.getBoolean(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT);
-			if (DEBUG) System.out.println("prop: PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT: " + fUseSystemBackground);
-			updateColors(fPreferenceStore, fComposite.getDisplay());
-						
 		} else
 			super.propertyChange(event);
 	}
@@ -2820,7 +2818,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 	private RGB getFillColor(Diff diff) {
 		boolean selected= fCurrentDiff != null && fCurrentDiff.fParent == diff;
 		
-		RGB selected_fill= fBackground;
+		RGB selected_fill= getBackground(null);
 
 		if (isThreeWay() && !fIgnoreAncestor) {
 			switch (diff.fDirection) {
