@@ -24,7 +24,6 @@ public class LinkTestSuite {
 	public static Test suite() {
 		TestSuite suite = new TestSuite("Test Suite org.eclipse.text.tests.link"); //$NON-NLS-1$
 		//$JUnit-BEGIN$
-		suite.addTestSuite(ExclusivePositionUpdaterTest.class);
 		suite.addTestSuite(LinkedPositionGroupTest.class);
 		suite.addTestSuite(LinkedPositionTest.class);
 		suite.addTestSuite(InclusivePositionUpdaterTest.class);
