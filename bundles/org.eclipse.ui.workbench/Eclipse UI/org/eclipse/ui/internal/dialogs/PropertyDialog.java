@@ -30,48 +30,48 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * type.
  */
 public class PropertyDialog extends PreferenceDialog {
-    private ISelection selection;
+	private ISelection selection;
 
-    //The id of the last page that was selected
-    private static String lastPropertyId = null;
+	//The id of the last page that was selected
+	private static String lastPropertyId = null;
 
-    /**
+	/**
 	 * The constructor.
 	 */
-    public PropertyDialog(Shell parentShell, PreferenceManager mng, ISelection selection) {
-        super(parentShell, mng);
-        setSelection(selection);
-    }
-    /**
+	public PropertyDialog(Shell parentShell, PreferenceManager mng, ISelection selection) {
+		super(parentShell, mng);
+		setSelection(selection);
+	}
+	
+	/**
 	 * Returns selection in the "Properties" action context.
 	 */
+	public ISelection getSelection() {
+		return selection;
+	}
 
-    public ISelection getSelection() {
-        return selection;
-    }
-    /**
+	/**
 	 * Sets the selection that will be used to determine target object.
 	 */
+	public void setSelection(ISelection newSelection) {
+		selection = newSelection;
+	}
 
-    public void setSelection(ISelection newSelection) {
-        selection = newSelection;
-    }
-
-    /**
+	/**
 	 * Get the name of the selected item preference
 	 */
-    protected String getSelectedNodePreference() {
-        return lastPropertyId;
-    }
+	protected String getSelectedNodePreference() {
+		return lastPropertyId;
+	}
 
-    /**
+	/**
 	 * Get the name of the selected item preference
 	 */
-    protected void setSelectedNodePreference(String pageId) {
-        lastPropertyId = pageId;
-    }
+	protected void setSelectedNodePreference(String pageId) {
+		lastPropertyId = pageId;
+	}
 
-    /**
+	/**
 	 * Checks whether the given property node (based on its
 	 * RegistryPageContributor) should be filtered from view (as specified by
 	 * the preference page ObjectActivityManager). Note that if a given node is
@@ -80,15 +80,18 @@ public class PropertyDialog extends PreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#createTreeItemFor(org.eclipse.swt.widgets.Widget,
 	 *      org.eclipse.jface.preference.IPreferenceNode)
 	 */
-    protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
-        IObjectActivityManager propManager =
-            WorkbenchPlugin.getDefault().getWorkbench().getObjectActivityManager(IWorkbenchConstants.PL_PROPERTY_PAGES, false);
-        if (propManager != null) {
-            Collection activeContributions = propManager.getActiveObjects();
-            if (node instanceof PropertyPageNode && !activeContributions.contains(((PropertyPageNode) node).getContributor())) {
-                return;
-            }
-        }
-        super.createTreeItemFor(parent, node);
-    }
+	protected void createTreeItemFor(Widget parent, IPreferenceNode node) {
+		IObjectActivityManager propManager =
+			WorkbenchPlugin.getDefault().getWorkbench().getObjectActivityManager(
+				IWorkbenchConstants.PL_PROPERTY_PAGES,
+				false);
+		if (propManager != null) {
+			Collection activeContributions = propManager.getActiveObjects();
+			if (node instanceof PropertyPageNode
+				&& !activeContributions.contains(((PropertyPageNode) node).getContributor())) {
+				return;
+			}
+		}
+		super.createTreeItemFor(parent, node);
+	}
 }

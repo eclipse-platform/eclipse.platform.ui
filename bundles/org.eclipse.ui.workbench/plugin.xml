@@ -18,6 +18,4 @@
       <import plugin="org.eclipse.jface"/>
       <import plugin="org.eclipse.swt"/>
    </requires>
-
-
 </plugin>
