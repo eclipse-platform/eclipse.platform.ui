@@ -408,6 +408,8 @@ public class NewProgressViewer extends TreeViewer implements FinishedJobs.KeptJo
 		}
 		protected void paint(GC gc) {
 			Rectangle clientArea= getClientArea();
+			if (clientArea.isEmpty())
+				return;
 			Color fg= getFGColor(), bg= getBackground();
 			if (jobitem.selected)
 				bg= selectedColor;
