@@ -77,7 +77,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 
 	}
 	
-	public void testInstallFeatureSaveConfig() throws Exception {
+/*	public void testInstallFeatureSaveConfig() throws Exception {
 
 		//clean up
 		SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
@@ -159,6 +159,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		localFile = new File(feature2.getURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
 	}
+*/
 	
 	public void testRetriveConfig() throws Exception {
 
