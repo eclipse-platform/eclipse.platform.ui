@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.properties;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+
 /**
  * This type acts as a container for the results of
  * a query over the property store.

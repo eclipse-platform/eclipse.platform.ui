@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.properties;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -42,7 +41,8 @@ protected boolean basicExists(StoreKey searchKey) throws CoreException {
 		cursor.close();
 		return exists;
 	} catch (Exception e) {
-		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("couldNotReadProp"), e);
+		String message = Policy.bind("properties.couldNotReadProp", searchKey.getQualifier(), searchKey.getLocalName());
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, searchKey.getResourceName().getPath(), message, e);
 	}
 }
 /**
@@ -54,7 +54,8 @@ protected void basicInsert(StoreKey key, String value) throws CoreException {
 		ObjectID valueID = store.createObject(value);
 		store.getIndex().insert(key.toBytes(), valueID);
 	} catch (Exception e) {
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, null, Policy.bind("couldNotWriteProp"), e);
+		String message = Policy.bind("properties.couldNotWriteProp", key.getQualifier(), key.getLocalName());
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, key.getResourceName().getPath(), message, e);
 	}
 }
 protected boolean basicRemove(ResourceName resourceName, QualifiedName propertyName) throws CoreException {
@@ -72,7 +73,8 @@ protected boolean basicRemove(ResourceName resourceName, QualifiedName propertyN
 		}
 		cursor.close();
 	} catch (Exception e) {
-		throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, null, Policy.bind("couldNotDeleteProp"), e);
+		String message = Policy.bind("properties.couldNotDeleteProp", key.getQualifier(), key.getLocalName());
+		throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, resourceName.getPath(), message, e);
 	}
 	return wasFound;
 }
@@ -88,7 +90,8 @@ protected void basicUpdate(StoreKey key, String value) throws CoreException {
 		}
 		cursor.close();
 	} catch (Exception e) {
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, null, Policy.bind("couldNotWriteProp"), e);
+		String message = Policy.bind("properties.couldNotWriteProp", key.getQualifier(), key.getLocalName());
+		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, key.getResourceName().getPath(), message, e);
 	}
 }
 protected synchronized void commonSet(ResourceName resourceName, StoredProperty[] properties, int depth, int setMode, QueryResults failures) throws CoreException {
@@ -249,7 +252,7 @@ protected void recordsDeepMatching(ResourceName resourceName, IVisitor visitor) 
 		}
 		cursor.close();
 	} catch (Exception e) {
-		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("storeProblem"), e);
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Policy.bind("properties.storeProblem"), e);
 	}
 }
 /**
@@ -273,7 +276,7 @@ protected void recordsMatching(ResourceName resourceName, IVisitor visitor) thro
 		cursor.close();
 	} catch (Exception e) {
 		store.reset();
-		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("storeProblem"), e);
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Policy.bind("properties.storeProblem"), e);
 	}
 }
 /**
@@ -296,7 +299,7 @@ protected void recordsMatching(ResourceName resourceName, QualifiedName property
 		cursor.close();
 	} catch (Exception e) {
 		store.reset();
-		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("storeProblem"), e);
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, resourceName.getPath(), Policy.bind("properties.storeProblem"), e);
 	}
 }
 /**
@@ -429,7 +432,7 @@ protected void visitPropertyAt(IndexCursor cursor, IVisitor visitor) throws Core
 			propertyValue = store.getObjectAsString(cursor.getValueAsObjectID());
 		visitor.visit(resourceName, new StoredProperty(propertyName, propertyValue), cursor);
 	} catch (Exception e) {
-		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("storeProblem"), e);
+		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, null, Policy.bind("properties.storeProblem"), e);
 	}
 }
 public void commit() throws CoreException {

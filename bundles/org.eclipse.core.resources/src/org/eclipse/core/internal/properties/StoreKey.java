@@ -1,10 +1,10 @@
 package org.eclipse.core.internal.properties;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
+import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.utils.Policy;
@@ -90,7 +90,8 @@ private void initializeBytes() throws CoreException {
 			writeBytes(buffer, path);
 			// If prefix matching, cannot allow other fields to be specified
 			if (qualifier != null || localName != null) {
-				throw new ResourceException(Platform.INTERNAL_ERROR, null, Policy.bind("invalidPropName"), null);
+				String message = Policy.bind("properties.invalidPropName", qualifier, localName);
+				throw new ResourceException(IResourceStatus.INVALID_VALUE, null, message, null);
 			}
 		} else {
 			// Zero depth requires full path matching including null
@@ -105,12 +106,13 @@ private void initializeBytes() throws CoreException {
 		} else
 			if (localName != null) {
 				// Specifying a local name without a qualifier is illegal
-				throw new ResourceException(Platform.INTERNAL_ERROR, null, Policy.bind("invalidPropName"), null);
+				String message = Policy.bind("properties.invalidPropName", qualifier, localName);
+				throw new ResourceException(IResourceStatus.INVALID_VALUE, null, message, null);
 			}
 		value = buffer.toByteArray();
 	} catch (IOException e) {
 		// should never happen
-		throw new ResourceException(Platform.INTERNAL_ERROR, null, Policy.bind("storeProblem"), e);
+		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Policy.bind("properties.storeProblem"), e);
 	}
 }
 /**
@@ -127,7 +129,7 @@ protected void initializeObjects() throws CoreException {
 		localName = readNullTerminated(stream);
 	} catch (IOException e) {
 		// should never happen
-		throw new ResourceException(Platform.INTERNAL_ERROR, null, Policy.bind("storeProblem"), e);
+		throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, Policy.bind("properties.storeProblem"), e);
 	}
 }
 public boolean isFullyDefined() {

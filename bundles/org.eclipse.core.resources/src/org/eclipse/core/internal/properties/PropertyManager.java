@@ -1,9 +1,8 @@
 package org.eclipse.core.internal.properties;
 
 /*
- * Licensed Materials - Property of IBM,
- * WebSphere Studio Workbench
- * (c) Copyright IBM Corp 2000
+ * (c) Copyright IBM Corp. 2000, 2001.
+ * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -45,20 +44,12 @@ public void copy(IResource source, IResource destination, int depth) throws Core
 	// cache stores to avoid problems in concurrency
 	PropertyStore sourceStore = getPropertyStore(source);
 	PropertyStore destinationStore = getPropertyStore(destination);
-	if (sourceStore == null)
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, source.getFullPath(), Policy.bind("storeNotAvaiable"), null);
-	if (destinationStore == null)
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), Policy.bind("storeNotAvaiable"), null);
 	sourceStore.commit();
 	destinationStore.commit();
 }
 protected void copyProperties(IResource source, IResource destination, int depth) throws CoreException {
 	PropertyStore sourceStore = getPropertyStore(source);
 	PropertyStore destStore = getPropertyStore(destination);
-	if (sourceStore == null)
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, source.getFullPath(), Policy.bind("storeNotAvaiable"), null);
-	if (destStore == null)
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, destination.getFullPath(), Policy.bind("storeNotAvaiable"), null);
 	ResourceName sourceName = getPropertyKey(source);
 	ResourceName destName = getPropertyKey(destination);
 	QueryResults results = sourceStore.getAll(sourceName, depth);
@@ -80,8 +71,6 @@ public void deleteProperties(IResource target) throws CoreException {
 		case IResource.FILE :
 		case IResource.FOLDER :
 			PropertyStore store = getPropertyStore(target);
-			if (store == null)
-				throw new ResourceException(IResourceStatus.FAILED_DELETE_LOCAL, target.getFullPath(), Policy.bind("storeNotAvaiable"), null);
 			store.removeAll(getPropertyKey(target), IResource.DEPTH_INFINITE);
 			store.commit();
 			break;
@@ -102,8 +91,6 @@ public void deleting(IProject project) {
  */
 public String getProperty(IResource target, QualifiedName name) throws CoreException {
 	PropertyStore store = getPropertyStore(target);
-	if (store == null)
-		throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), Policy.bind("storeNotAvaiable"), null);
 	StoredProperty result = store.get(getPropertyKey(target), name);
 	return result == null ? null : result.getStringValue();
 }
@@ -125,15 +112,23 @@ protected ResourceName getPropertyKey(IResource target) {
  * Returns the property store to use when storing a property for the 
  * given resource.
  */
-protected PropertyStore getPropertyStore(IResource target) {
-	Resource host = (Resource) getPropertyHost(target);
-	ResourceInfo info = (ResourceInfo) host.getResourceInfo(false, false);
-	if (info == null)
-		return null;
-	PropertyStore store = info.getPropertyStore();
-	if (store == null)
-		store = openPropertyStore(host);
-	return store;
+protected PropertyStore getPropertyStore(IResource target) throws CoreException {
+	PropertyStore store = null;
+	try {
+		Resource host = (Resource) getPropertyHost(target);
+		ResourceInfo info = (ResourceInfo) host.getResourceInfo(false, false);
+		if (info == null)
+			return null;
+		store = info.getPropertyStore();
+		if (store == null)
+			store = openPropertyStore(host);
+		return store;
+	} finally {
+		if (store == null) {
+			String message = Policy.bind("properties.storeNotAvaiable", target.getFullPath().toString());
+			throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, target.getFullPath(), message, null);
+		}
+	}
 }
 public void opening(IProject target) throws CoreException {
 }
@@ -149,8 +144,6 @@ protected PropertyStore openPropertyStore(IResource target) {
 }
 public void setProperty(IResource target, QualifiedName key, String value) throws CoreException {
 	PropertyStore store = getPropertyStore(target);
-	if (store == null)
-		throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, target.getFullPath(), Policy.bind("storeNotAvaiable"), null);
 	if (value == null) {
 		store.remove(getPropertyKey(target), key);
 	} else {
