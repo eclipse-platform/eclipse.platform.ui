@@ -208,9 +208,12 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 				if ((delta.getFlags() & IResourceDelta.OPEN) != 0) {
 					IProject project = resource.getProject();
 					if (!project.isOpen()) {
-						handleProjectClosed();
+						handleProjectRemoved();
 						return false;
 					}
+				} else if ((delta.getKind() & IResourceDelta.REMOVED) != 0) {
+					handleProjectRemoved();
+					return false;
 				}
 			}
 			return true;
@@ -281,12 +284,13 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	 * If any files present in the view no longer exist, remove them from the
 	 * view.
 	 */
-	private void handleProjectClosed() {
+	private void handleProjectRemoved() {
 		ProjectNode[] projects = projectContentProvider.getRootNode().getProjects();
 		final List projectsToRemove = new ArrayList();
 		for (int i = 0; i < projects.length; i++) {
 			ProjectNode projectNode = projects[i];
-			if (!AntUtil.getFile(projectNode.getBuildFileName()).exists()) {
+			IFile file= AntUtil.getFile(projectNode.getBuildFileName());
+			if (file == null || !file.exists()) {
 				projectsToRemove.add(projectNode);
 			}
 		}
@@ -967,7 +971,7 @@ public class AntView extends ViewPart implements IResourceChangeListener {
 	}
 	
 	/**
-	 * Sets  the orientation of the view's sash.
+	 * Sets the orientation of the view's sash.
 	 * 
 	 * @param orientation the orientation to use. Value must be one of either
 	 * <code>SWT.HORIZONTAL</code> or <code>SWT.VERTICAL</code>
