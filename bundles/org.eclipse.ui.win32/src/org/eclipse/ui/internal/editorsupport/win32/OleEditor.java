@@ -339,6 +339,26 @@ public class OleEditor extends EditorPart {
 	 */
 	public void gotoMarker(IMarker marker) {
 	}
+
+	private void handleWord() {
+		OleAutomation dispInterface = new OleAutomation(clientSite);
+			// Get Application
+			int[] appId = dispInterface.getIDsOfNames(new String[]{"Application"});
+			if (appId != null) {
+				Variant pVarResult = dispInterface.getProperty(appId[0]);
+				if (pVarResult != null) {
+					OleAutomation application = pVarResult.getAutomation();
+					int[] dispid = application.getIDsOfNames(new String[] {"DisplayScrollBars"});
+					if (dispid != null) {
+						Variant rgvarg = new Variant(true);
+						boolean result = application.setProperty(dispid[0], rgvarg);
+					}
+					application.dispose();
+				}
+			}
+			dispInterface.dispose();
+	}
+
 	/* (non-Javadoc)
 	 * Initializes the editor when created from scratch.
 	 * 
@@ -528,6 +548,9 @@ public class OleEditor extends EditorPart {
 		if (!oleActivated) {
 			clientSite.doVerb(OLE.OLEIVERB_SHOW);
 			oleActivated = true;
+			if (clientSite.getProgramID().startsWith("Word.Document")){
+				handleWord();
+			}
 		}
 	}
 	
