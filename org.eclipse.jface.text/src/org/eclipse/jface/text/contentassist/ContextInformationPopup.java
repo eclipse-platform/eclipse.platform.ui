@@ -302,6 +302,9 @@ class ContextInformationPopup implements IContentAssistListener {
 				}
 			}
 		}
+		
+		if (fContextInfoPopup == null)
+			fContentAssistant.contextInformationClosed();
 	}
 	
 	/**
@@ -411,6 +414,9 @@ class ContextInformationPopup implements IContentAssistListener {
 			fContextSelectorShell.dispose();
 			fContextSelectorShell= null;
 		}
+		
+		if (!Helper.okToUse(fContextInfoPopup))
+			fContentAssistant.contextInformationClosed();
 	}
 	
 	/**

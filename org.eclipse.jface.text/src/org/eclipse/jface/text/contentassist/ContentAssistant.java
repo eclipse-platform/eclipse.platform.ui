@@ -1199,11 +1199,24 @@ public class ContentAssistant implements IContentAssistant, IWidgetTokenKeeper {
 		return fProposalPopup.showProposals(false);
 	}
 	
+	/**
+	 * Callback to signal this content assistant that the presentation of the possible completions has been stopped.
+	 * @since 2.1 	 */
+	protected void possibleCompletionsClosed() {
+	}
+	
 	/*
 	 * @see IContentAssist#showContextInformation
 	 */
 	public String showContextInformation() {
 		return fContextInfoPopup.showContextProposals(false);
+	}
+	
+	/**
+	 * Callback to signal this content assistant that the presentation of the context information has been stopped.
+	 * @since 2.1 
+	 */
+	protected void contextInformationClosed() {
 	}
 	
 	/**

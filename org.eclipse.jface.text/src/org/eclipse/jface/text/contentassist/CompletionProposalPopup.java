@@ -372,7 +372,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 			fProposalShell= null;
 		}
 		
-		fFilteredProposals= null;		
+		fFilteredProposals= null;
+		
+		fContentAssistant.possibleCompletionsClosed();
 	}
 	
 	/**
@@ -649,7 +651,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		int length= proposals.length;
 		List filtered= new ArrayList(length);
 		for (int i= 0; i < length; i++) {
-			
+				
 			if (proposals[i] instanceof ICompletionProposalExtension2) {
 
 				ICompletionProposalExtension2 p= (ICompletionProposalExtension2) proposals[i];
