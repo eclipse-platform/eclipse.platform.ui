@@ -59,8 +59,8 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 
     public void createControl(Composite parent) {
 		viewer = new IOConsoleViewer(parent, console.getDocument());
-		viewer.setDocument(console.getDocument());
 		viewer.setWordWrap(console.getWordWrap());
+		viewer.setConsoleWidth(console.getConsoleWidth());
 		console.addPropertyChangeListener(this);
 		createActions();
 		configureToolBar(getSite().getActionBars().getToolBarManager());
@@ -113,6 +113,8 @@ public class IOConsolePage implements IPageBookViewPage, IPropertyChangeListener
 			}
 		} else if(source.equals(console) && property.equals(IOConsole.P_WORD_WRAP)) {
 		    viewer.setWordWrap(console.getWordWrap());
+		} else if (source.equals(console) && property.equals(IOConsole.P_CONSOLE_WIDTH)) {
+		    viewer.setConsoleWidth(console.getConsoleWidth()); 
 		}
 	}
 

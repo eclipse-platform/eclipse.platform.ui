@@ -6,11 +6,14 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.LineBackgroundEvent;
+import org.eclipse.swt.custom.LineBackgroundListener;
 import org.eclipse.swt.custom.LineStyleEvent;
 import org.eclipse.swt.custom.LineStyleListener;
 import org.eclipse.swt.custom.StyleRange;
@@ -40,25 +43,27 @@ import org.eclipse.ui.console.IConsoleHyperlink;
  * @since 3.1
  *
  */
-public class IOConsoleViewer extends TextViewer implements LineStyleListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener {
+public class IOConsoleViewer extends TextViewer implements LineStyleListener, LineBackgroundListener, MouseTrackListener, MouseMoveListener, MouseListener, PaintListener {
+
     private boolean autoScroll = false;
+    private IOConsoleDocumentAdapter documentAdapter;
     private IConsoleHyperlink hyperlink;
     private Cursor handCursor;
     private Cursor textCursor;
+    private int consoleWidth = -1;
     
     public IOConsoleViewer(Composite parent, IDocument document) {
         super(parent, SWT.H_SCROLL | SWT.V_SCROLL);
         setDocument(document);
+        
         StyledText text = getTextWidget();
         text.setDoubleClickEnabled(true);
-        text.setFont(parent.getFont());
         text.addLineStyleListener(this);
+        text.addLineBackgroundListener(this);
         text.setEditable(true);
-        
-        StyledText styledText = getTextWidget();
-        styledText.setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
-        styledText.addMouseTrackListener(this);
-        styledText.addPaintListener(this);
+        text.setFont(JFaceResources.getFont(IConsoleConstants.CONSOLE_FONT));
+        text.addMouseTrackListener(this);
+        text.addPaintListener(this);
 		
         document.addDocumentListener(new IDocumentListener() {
             public void documentAboutToBeChanged(DocumentEvent event) {
@@ -78,7 +83,6 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Mo
     }
     
     public void setTabWidth(int tabWidth) {
-        
     }
     
     /* (non-Javadoc)
@@ -163,6 +167,13 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Mo
             event.styles = styles;
         }
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.swt.custom.LineBackgroundListener#lineGetBackground(org.eclipse.swt.custom.LineBackgroundEvent)
+     */
+    public void lineGetBackground(LineBackgroundEvent event) {
+        event.lineBackground = null;
+    }
 
     public void setWordWrap(final boolean wordWrap) {
         ConsolePlugin.getStandardDisplay().asyncExec(new Runnable() {
@@ -179,8 +190,9 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Mo
 	public void paintControl(PaintEvent e) {
 		if (hyperlink != null) {
 			IDocument doc = getDocument();
+			StyledText text = getTextWidget();
 			
-			if (doc == null) {
+			if (doc == null || text == null) {
 				return;
 			}
 			IOConsolePartitioner partitioner = (IOConsolePartitioner)doc.getDocumentPartitioner();
@@ -193,33 +205,34 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Mo
 				int start = linkRegion.getOffset();
 				int end = start + linkRegion.getLength();
 
-				try {
+//				try {
 					Color fontColor = JFaceColors.getActiveHyperlinkText(Display.getCurrent());
-					int startLine = doc.getLineOfOffset(start);
-					int endLine = doc.getLineOfOffset(end);
+					Color color = e.gc.getForeground();
+					e.gc.setForeground(fontColor);
+					FontMetrics metrics = e.gc.getFontMetrics();
+					int height = metrics.getHeight();
+					int width = metrics.getAverageCharWidth();
+					
+					int startLine = text.getLineAtOffset(start);
+					int endLine = text.getLineAtOffset(end);
+
 					for (int i = startLine; i <= endLine; i++) {
-						IRegion lineRegion = doc.getLineInformation(i);
-						int lineStart = lineRegion.getOffset();
-						int lineEnd = lineStart + lineRegion.getLength();
+					    int styleStart = i==startLine ? start : text.getOffsetAtLine(i);
+						int styleEnd = i==endLine ? end : text.getOffsetAtLine(i+1);  
+												
+						Point p1 = text.getLocationAtOffset(styleStart);
+						Point p2 = text.getLocationAtOffset(styleEnd-1);
 						
-						Color color = e.gc.getForeground();
-						e.gc.setForeground(fontColor);
-						if (lineStart < end) {
-							lineStart = Math.max(start, lineStart);
-							lineEnd = Math.min(end, lineEnd);
-							Point p1 = getTextWidget().getLocationAtOffset(lineStart);
-							Point p2 = getTextWidget().getLocationAtOffset(lineEnd);
-							FontMetrics metrics = e.gc.getFontMetrics();
-							int height = metrics.getHeight();
-							e.gc.drawLine(p1.x, p1.y + height, p2.x, p2.y + height);
-							
-							String text = doc.get(start, linkRegion.getLength());
-							e.gc.drawString(text, p1.x, p1.y);
-						}
-						e.gc.setForeground(color);
+						e.gc.drawLine(p1.x, p1.y + height, p2.x + width, p2.y + height);
+						
+//						String content = doc.get(styleStart, styleEnd-styleStart);
+//						e.gc.drawText(content, p1.x, p1.y);
+						
 					}
-				} catch (BadLocationException ex) {
-				}
+					
+					e.gc.setForeground(color);
+//				} catch (BadLocationException ex) {
+//				}
 			}
 		}
 	}
@@ -366,5 +379,26 @@ public class IOConsoleViewer extends TextViewer implements LineStyleListener, Mo
 	        }
 	    }
 	}
+
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.text.TextViewer#createDocumentAdapter()
+     */
+    protected IDocumentAdapter createDocumentAdapter() {
+        if(documentAdapter == null) {
+            documentAdapter = new IOConsoleDocumentAdapter(getDocument(), consoleWidth = -1);
+        }
+        return documentAdapter;
+    }
+
+    /**
+     * @param consoleWidth
+     */
+    public void setConsoleWidth(int width) {
+        consoleWidth = width;
+        if (documentAdapter != null) {
+            documentAdapter.setWidth(consoleWidth);
+            
+        }
+    }
 
 }

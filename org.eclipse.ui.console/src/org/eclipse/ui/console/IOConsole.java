@@ -57,6 +57,11 @@ public class IOConsole extends AbstractConsole {
 	public  static final String P_WORD_WRAP = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_WORD_WRAP"; //$NON-NLS-1$
 	
 	/**
+	 * Property constant indicating the width of a fixed width console has changed.
+	 */
+	public static final String P_CONSOLE_WIDTH = ConsolePlugin.getUniqueIdentifier() + "IOConsole.P_CONSOLE_WIDTH"; //$NON-NLS-1$
+	
+	/**
 	 * The default tab size
 	 */
 	public static final int DEFAULT_TAB_SIZE = 8;
@@ -67,6 +72,11 @@ public class IOConsole extends AbstractConsole {
     private boolean wordWrap;
 
     private IOConsolePatternMatcher patternMatcher;
+    
+    /**
+     * -1 console isn't fixed width.
+     */
+    private int consoleWidth = -1;
 
     public IOConsole(String name, ImageDescriptor imageDescriptor) {
         super(name, imageDescriptor);
@@ -131,6 +141,19 @@ public class IOConsole extends AbstractConsole {
     
     public boolean getWordWrap() {
         return wordWrap;
+    }
+
+    public int getConsoleWidth() {
+        return consoleWidth;
+    }
+    
+    public void setConsoleWidth(int width) {
+        if (consoleWidth != width) {
+            int old = consoleWidth;
+            consoleWidth = width;
+            
+            firePropertyChange(this, IOConsole.P_CONSOLE_WIDTH, new Integer(old), new Integer(consoleWidth));
+        }
     }
 
     public void setWordWrap(boolean wrap) {
