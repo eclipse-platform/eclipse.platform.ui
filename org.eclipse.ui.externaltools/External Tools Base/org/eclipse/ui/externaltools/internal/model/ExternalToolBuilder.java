@@ -12,10 +12,7 @@ package org.eclipse.ui.externaltools.internal.model;
 
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -61,8 +58,6 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 	
 	private static IProject buildProject= null;
 	
-	private List fProjectsWithinScope;
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.events.InternalBuilder#build(int, java.util.Map, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -71,17 +66,24 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 			return null;
 		}
 		
-		fProjectsWithinScope= new ArrayList();
 		ILaunchConfiguration config= BuilderUtils.configFromBuildCommandArgs(getProject(), args, new String[1]);
         if (config == null) {
             throw ExternalToolsPlugin.newError(ExternalToolsModelMessages.getString("ExternalToolBuilder.0"), null); //$NON-NLS-1$
         }
+		IProject[] projectsWithinScope= null;
+		IResource[] resources = ExternalToolsUtil.getResourcesForBuildScope(config);
+		if (resources != null) {
+			projectsWithinScope= new IProject[resources.length];
+			for (int i = 0; i < resources.length; i++) {
+				projectsWithinScope[i]= resources[i].getProject();
+			}
+		}
         boolean kindCompatible= commandConfiguredForKind(config, kind);
         if (kindCompatible && configEnabled(config)) {
-            doBuildBasedOnScope(kind, config, monitor);
+            doBuildBasedOnScope(resources, kind, config, monitor);
         }
         
-		return getProjectsWithinScope();
+		return projectsWithinScope;
 	}
 
     private boolean commandConfiguredForKind(ILaunchConfiguration config, int kind) {
@@ -150,23 +152,10 @@ public final class ExternalToolBuilder extends IncrementalProjectBuilder {
 		return true;
 	}
 
-	private IProject[] getProjectsWithinScope() {
-		if (fProjectsWithinScope == null || fProjectsWithinScope.isEmpty()) {
-			fProjectsWithinScope = null;
-			return null;
-		}
-		return (IProject[])fProjectsWithinScope.toArray(new IProject[fProjectsWithinScope.size()]);
-	}
-
-	private void doBuildBasedOnScope(int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
+	private void doBuildBasedOnScope(IResource[] resources, int kind, ILaunchConfiguration config, IProgressMonitor monitor) throws CoreException {
 		boolean buildForChange = true;
 		if (kind != FULL_BUILD) { //scope not applied for full builds
-			IResource[] resources = ExternalToolsUtil.getResourcesForBuildScope(config);
 			if (resources != null && resources.length > 0) {
-				for (int i = 0; i < resources.length; i++) {
-					IResource resource = resources[i];
-					fProjectsWithinScope.add(resource.getProject());
-				}
 				buildForChange = buildScopeIndicatesBuild(resources);
 			}
 		}
