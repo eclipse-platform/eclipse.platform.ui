@@ -360,11 +360,11 @@ public class StringVariableManager implements IStringVariableManager {
 	 */
 	public void addVariables(IValueVariable[] variables) throws CoreException {
 		initialize();
-		MultiStatus status = new MultiStatus(VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, VariablesMessages.getString("StringVariableManager.26"), null); //$NON-NLS-1$
+		MultiStatus status = new MultiStatus(VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, VariablesMessages.StringVariableManager_26, null); //$NON-NLS-1$
 		for (int i = 0; i < variables.length; i++) {
 			IValueVariable variable = variables[i];
 			if (getValueVariable(variable.getName()) != null) {
-				status.add(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, MessageFormat.format(VariablesMessages.getString("StringVariableManager.27"), new String[]{variable.getName()}), null)); //$NON-NLS-1$
+				status.add(new Status(IStatus.ERROR, VariablesPlugin.getUniqueIdentifier(), VariablesPlugin.INTERNAL_ERROR, MessageFormat.format(VariablesMessages.StringVariableManager_27, new String[]{variable.getName()}), null)); //$NON-NLS-1$
 			}			
 		}
 		if (status.isOK()) {
