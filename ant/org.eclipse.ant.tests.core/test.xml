@@ -5,9 +5,10 @@
   <!-- The property ${eclipse-home} should be passed into this script -->
   <!-- Set a meaningful default value for when it is not. -->
   <property name="eclipse-home" value="${basedir}\..\.."/>
+<property name="plugin-name" value="org.eclipse.ant.tests.core"/>
   <property name="library-file"
             value="${eclipse-home}/plugins/org.eclipse.test/library.xml"/>
- <property name="plugin-name" value="org.eclipse.ant.tests.core"/>
+ 
   <!-- This target holds all initialization code that needs to be done for -->
   <!-- all tests that are to be run. Initialization for individual tests -->
   <!-- should be done within the body of the suite target. -->
@@ -23,7 +24,7 @@
     <property name="jdt-folder" 
               value="${eclipse-home}/jdt_folder"/>
     <delete dir="${jdt-folder}" quiet="true"/>
-    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
+    <ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
       <property name="data-dir" value="${jdt-folder}"/>
       <property name="plugin-name" value="${plugin-name}"/>
       <property name="classname" 
