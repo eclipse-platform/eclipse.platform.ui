@@ -34,6 +34,7 @@
 <extension id="searchmarker" point="org.eclipse.core.resources.markers" name="%searchMarker">
 	<super type="org.eclipse.core.resources.textmarker"/>
 	<attribute name="line"/>
+	<attribute name="potentialMatch"/>
 </extension>
 
 <extension 
