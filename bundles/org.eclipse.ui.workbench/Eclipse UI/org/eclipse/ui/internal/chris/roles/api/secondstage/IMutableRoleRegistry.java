@@ -9,27 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles.api;
+package org.eclipse.ui.internal.chris.roles.api.secondstage;
 
-/**
- * <p>
- * JAVADOC
- * </p>
- * <p>
- * This interface is not intended to be extended or implemented by clients.
- * </p>
- * <p>
- * <em>EXPERIMENTAL</em>
- * </p>
- * 
- * @since 3.0
- */
-public interface IContextBinding extends Comparable {
+import java.util.List;
 
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getContextId();
+public interface IMutableRoleRegistry extends IRoleRegistry {
+
+	void setRoleDefinitions(List roleDefinitions);
 }

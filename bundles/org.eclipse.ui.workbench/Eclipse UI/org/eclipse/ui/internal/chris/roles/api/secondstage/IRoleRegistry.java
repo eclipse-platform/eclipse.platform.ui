@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles.api.secondstage;
+package org.eclipse.ui.internal.chris.roles.api.secondstage;
 
 import java.util.List;
 

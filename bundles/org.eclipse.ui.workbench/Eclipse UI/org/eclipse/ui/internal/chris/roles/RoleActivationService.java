@@ -18,9 +18,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.internal.roles.api.IRoleActivationService;
-import org.eclipse.ui.internal.roles.api.IRoleActivationServiceEvent;
-import org.eclipse.ui.internal.roles.api.IRoleActivationServiceListener;
+import org.eclipse.ui.internal.chris.roles.api.IRoleActivationService;
+import org.eclipse.ui.internal.chris.roles.api.IRoleActivationServiceEvent;
+import org.eclipse.ui.internal.chris.roles.api.IRoleActivationServiceListener;
 
 public final class RoleActivationService implements IRoleActivationService {
 

@@ -15,10 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.internal.roles.api.IRole;
-import org.eclipse.ui.internal.roles.api.IRoleEvent;
-import org.eclipse.ui.internal.roles.api.IRoleListener;
-import org.eclipse.ui.internal.roles.api.NotDefinedException;
+import org.eclipse.ui.internal.chris.roles.api.IRole;
+import org.eclipse.ui.internal.chris.roles.api.IRoleEvent;
+import org.eclipse.ui.internal.chris.roles.api.IRoleListener;
+import org.eclipse.ui.internal.chris.roles.api.NotDefinedException;
 
 final class Role implements IRole {
 

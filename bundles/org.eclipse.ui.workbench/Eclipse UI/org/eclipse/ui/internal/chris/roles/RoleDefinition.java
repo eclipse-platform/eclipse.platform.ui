@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.ui.internal.roles.api.secondstage.IRoleDefinition;
+import org.eclipse.ui.internal.chris.roles.api.secondstage.IRoleDefinition;
 import org.eclipse.ui.internal.util.Util;
 
 public final class RoleDefinition implements Comparable, IRoleDefinition {

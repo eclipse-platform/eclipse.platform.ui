@@ -9,14 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles.api.secondstage;
+package org.eclipse.ui.internal.chris.roles.api;
 
 /**
  * <p>
  * JAVADOC
  * </p>
  * <p>
- * This interface is not intended to be extended or implemented by clients.
+ * This interface is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,40 +24,12 @@ package org.eclipse.ui.internal.roles.api.secondstage;
  * 
  * @since 3.0
  */
-public interface IRoleDefinition extends Comparable {
+public interface IRoleManagerListener {
 
 	/**
 	 * JAVADOC
 	 * 
-	 * @return
-	 */	
-	String getDescription();
-		
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getName();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getParentId();
-	
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	String getPluginId();
+	 * @param roleManagerEvent
+	 */
+	void roleManagerChanged(IRoleManagerEvent roleManagerEvent);
 }

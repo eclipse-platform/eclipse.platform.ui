@@ -9,14 +9,14 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles.api;
+package org.eclipse.ui.internal.chris.roles.api;
 
 /**
  * <p>
  * JAVADOC
  * </p>
  * <p>
- * This interface is not intended to be extended by clients.
+ * This class is not intended to be extended by clients.
  * </p>
  * <p>
  * <em>EXPERIMENTAL</em>
@@ -24,12 +24,20 @@ package org.eclipse.ui.internal.roles.api;
  * 
  * @since 3.0
  */
-public interface IRoleManagerListener {
+public class NotDefinedException extends Exception {
 
 	/**
 	 * JAVADOC
-	 * 
-	 * @param roleManagerEvent
-	 */
-	void roleManagerChanged(IRoleManagerEvent roleManagerEvent);
+	 */	
+	public NotDefinedException() {
+	}
+
+	/**
+	 * JAVADOC
+	 *
+	 * @param s
+	 */	
+	public NotDefinedException(String s) {
+		super(s);
+	}
 }

@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.RegistryReader;
-import org.eclipse.ui.internal.roles.api.secondstage.IRoleDefinition;
+import org.eclipse.ui.internal.chris.roles.api.secondstage.IRoleDefinition;
 import org.eclipse.ui.internal.util.ConfigurationElementMemento;
 
 final class PluginRoleRegistry extends AbstractRoleRegistry {

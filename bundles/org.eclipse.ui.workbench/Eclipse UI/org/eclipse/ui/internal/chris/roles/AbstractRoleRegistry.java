@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistry;
-import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistryEvent;
-import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistryListener;
+import org.eclipse.ui.internal.chris.roles.api.secondstage.IRoleRegistry;
+import org.eclipse.ui.internal.chris.roles.api.secondstage.IRoleRegistryEvent;
+import org.eclipse.ui.internal.chris.roles.api.secondstage.IRoleRegistryListener;
 
 abstract class AbstractRoleRegistry implements IRoleRegistry {
 

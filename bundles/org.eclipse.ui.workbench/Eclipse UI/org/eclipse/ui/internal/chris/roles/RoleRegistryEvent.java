@@ -11,8 +11,8 @@
 
 package org.eclipse.ui.internal.chris.roles;
 
-import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistry;
-import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistryEvent;
+import org.eclipse.ui.internal.chris.roles.api.secondstage.IRoleRegistry;
+import org.eclipse.ui.internal.chris.roles.api.secondstage.IRoleRegistryEvent;
 
 final class RoleRegistryEvent implements IRoleRegistryEvent {
 

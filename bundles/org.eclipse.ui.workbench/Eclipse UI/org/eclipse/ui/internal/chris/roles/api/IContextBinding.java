@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles.api;
+package org.eclipse.ui.internal.chris.roles.api;
 
 /**
  * <p>
@@ -24,12 +24,12 @@ package org.eclipse.ui.internal.roles.api;
  * 
  * @since 3.0
  */
-public interface IRoleEvent {
+public interface IContextBinding extends Comparable {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	IRole getRole();
+	String getContextId();
 }

@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles.api;
+package org.eclipse.ui.internal.chris.roles.api.secondstage;
 
 /**
  * <p>
@@ -24,23 +24,15 @@ package org.eclipse.ui.internal.roles.api;
  * 
  * @since 3.0
  */
-public interface IRole extends Comparable {
-
-	/**
-	 * Registers an IRoleListener instance with this role.
-	 *
-	 * @param roleListener the IRoleListener instance to register.
-	 */	
-	void addRoleListener(IRoleListener roleListener);
+public interface IRoleDefinition extends Comparable {
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getDescription()
-		throws NotDefinedException;
-	
+	String getDescription();
+		
 	/**
 	 * JAVADOC
 	 * 
@@ -53,35 +45,19 @@ public interface IRole extends Comparable {
 	 * 
 	 * @return
 	 */	
-	String getName()
-		throws NotDefinedException;
+	String getName();
 
 	/**
 	 * JAVADOC
 	 * 
 	 * @return
 	 */	
-	String getParentId()
-		throws NotDefinedException;
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isActive();
-
-	/**
-	 * JAVADOC
-	 * 
-	 * @return
-	 */	
-	boolean isDefined();
+	String getParentId();
 	
 	/**
-	 * Unregisters an IRoleListener instance with this role.
-	 *
-	 * @param roleListener the IRoleListener instance to unregister.
-	 */
-	void removeRoleListener(IRoleListener roleListener);
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	String getPluginId();
 }

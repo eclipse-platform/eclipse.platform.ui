@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles.api;
+package org.eclipse.ui.internal.chris.roles.api;
 
 import java.util.List;
 import java.util.SortedSet;

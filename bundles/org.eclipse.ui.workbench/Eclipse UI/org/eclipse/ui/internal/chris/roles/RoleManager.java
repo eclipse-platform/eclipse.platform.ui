@@ -27,15 +27,15 @@ import java.util.TreeSet;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.roles.api.secondstage.IRoleDefinition;
-import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistry;
-import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistryEvent;
-import org.eclipse.ui.internal.roles.api.secondstage.IRoleRegistryListener;
+import org.eclipse.ui.internal.chris.roles.api.secondstage.IRoleDefinition;
+import org.eclipse.ui.internal.chris.roles.api.secondstage.IRoleRegistry;
+import org.eclipse.ui.internal.chris.roles.api.secondstage.IRoleRegistryEvent;
+import org.eclipse.ui.internal.chris.roles.api.secondstage.IRoleRegistryListener;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.internal.roles.api.IRole;
-import org.eclipse.ui.internal.roles.api.IRoleManager;
-import org.eclipse.ui.internal.roles.api.IRoleManagerEvent;
-import org.eclipse.ui.internal.roles.api.IRoleManagerListener;
+import org.eclipse.ui.internal.chris.roles.api.IRole;
+import org.eclipse.ui.internal.chris.roles.api.IRoleManager;
+import org.eclipse.ui.internal.chris.roles.api.IRoleManagerEvent;
+import org.eclipse.ui.internal.chris.roles.api.IRoleManagerListener;
 
 public final class RoleManager implements IRoleManager {
 

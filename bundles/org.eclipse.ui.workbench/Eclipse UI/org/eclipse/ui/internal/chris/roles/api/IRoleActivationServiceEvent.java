@@ -9,11 +9,27 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.internal.roles.api.secondstage;
+package org.eclipse.ui.internal.chris.roles.api;
 
-import java.util.List;
+/**
+ * <p>
+ * JAVADOC
+ * </p>
+ * <p>
+ * This interface is not intended to be extended or implemented by clients.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
+public interface IRoleActivationServiceEvent {
 
-public interface IMutableRoleRegistry extends IRoleRegistry {
-
-	void setRoleDefinitions(List roleDefinitions);
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	IRoleActivationService getRoleActivationService();
 }
