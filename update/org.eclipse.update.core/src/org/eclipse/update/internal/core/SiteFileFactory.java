@@ -182,10 +182,12 @@ public class SiteFileFactory extends BaseSiteFactory {
 					featureURL = new File(featureDir,newFilePath).toURL();
 					IFeature newFeature = createFeature(featureURL);
 
-					featureRef = archiveFactory.createFeatureReferenceModel();
-					featureRef.setSiteModel(site);
-					featureRef.setURLString(featureURL.toExternalForm());
-					((Site) site).addFeatureReferenceModel(featureRef);
+					if (newFeature!=null){
+						featureRef = archiveFactory.createFeatureReferenceModel();
+						featureRef.setSiteModel(site);
+						featureRef.setURLString(featureURL.toExternalForm());
+						((Site) site).addFeatureReferenceModel(featureRef);
+					}
 				}
 			} catch (MalformedURLException e) {
 				String id = UpdateManagerPlugin.getPlugin().getDescriptor().getUniqueIdentifier();
