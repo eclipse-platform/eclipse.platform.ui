@@ -11,9 +11,13 @@
 package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.IPreferencePageContainer;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.dialogs.PreferenceLinkArea;
+import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 /**
  * Preference page for configuring CVS comparisons
@@ -64,6 +68,14 @@ public class ComparePreferencePage extends CVSFieldEditorPreferencePage {
 		        Policy.bind("ComparePreferencePage.2"), //$NON-NLS-1$
 				BooleanFieldEditor.DEFAULT, 
 				getFieldEditorParent()));
+        
+        IPreferencePageContainer container = getContainer();
+        if (container instanceof IWorkbenchPreferenceContainer) {
+            IWorkbenchPreferenceContainer workbenchContainer = (IWorkbenchPreferenceContainer) container;
+            new PreferenceLinkArea(getFieldEditorParent(), SWT.BORDER,
+                    "org.eclipse.compare.internal.ComparePreferencePage", Policy.bind("ComparePreferencePage.6"), //$NON-NLS-1$ //$NON-NLS-2$
+                    workbenchContainer, null); 
+        }
     }
     
     /* (non-Javadoc)
