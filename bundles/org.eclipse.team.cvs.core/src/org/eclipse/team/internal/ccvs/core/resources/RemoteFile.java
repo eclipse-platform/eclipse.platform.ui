@@ -459,11 +459,4 @@ public class RemoteFile extends RemoteResource implements ICVSRemoteFile  {
 		RemoteFile remote = (RemoteFile) target;
 		return super.equals(target) && remote.getRevision().equals(getRevision());
 	}
-	
-	/*
-	 * @see ICVSFile#getAppendingOutputStream()
-	 */
-	public OutputStream getAppendingOutputStream() throws CVSException {
-		return null;
-	}
 }
