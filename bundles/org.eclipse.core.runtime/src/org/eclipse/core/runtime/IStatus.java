@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,33 +40,33 @@ public interface IStatus {
 
 	/** Status severity constant (value 0) indicating this status represents the nominal case.
 	 * This constant is also used as the status code representing the nominal case.
-	 * @see #getSeverity
-	 * @see #isOK
+	 * @see #getSeverity()
+	 * @see #isOK()
 		 */
 	public static final int OK = 0;
 
 	/** Status type severity (bit mask, value 1) indicating this status is informational only.
-	 * @see #getSeverity
-	 * @see #matches
+	 * @see #getSeverity()
+	 * @see #matches(int)
 		 */
 	public static final int INFO = 0x01;
 
 	/** Status type severity (bit mask, value 2) indicating this status represents a warning.
-	 * @see #getSeverity
-	 * @see #matches
+	 * @see #getSeverity()
+	 * @see #matches(int)
 		 */
 	public static final int WARNING = 0x02;
 
 	/** Status type severity (bit mask, value 4) indicating this status represents an error.
-	 * @see #getSeverity
-	 * @see #matches
+	 * @see #getSeverity()
+	 * @see #matches(int)
 		 */
 	public static final int ERROR = 0x04;
 
 	/** Status type severity (bit mask, value 8) indicating this status represents a
 	 * cancelation
-	 * @see #getSeverity
-	 * @see #matches
+	 * @see #getSeverity()
+	 * @see #matches(int)
 	 */
 	public static final int CANCEL = 0x08;
 
@@ -75,7 +75,7 @@ public interface IStatus {
 	 * multi-status, or an empty list if this is not a multi-status.
 	 *
 	 * @return an array of status objects
-	 * @see #isMultiStatus
+	 * @see #isMultiStatus()
 	 */
 	public IStatus[] getChildren();
 	/**
@@ -124,7 +124,7 @@ public interface IStatus {
 	 *
 	 * @return the severity: one of <code>OK</code>,
 	 *   <code>ERROR</code>, <code>INFO</code>, or <code>WARNING</code>
-	 * @see #matches
+	 * @see #matches(int)
 	 */
 	public int getSeverity();
 	/**
@@ -142,7 +142,7 @@ public interface IStatus {
 	 *
 	 * @return <code>true</code> for a multi-status, 
 	 *    <code>false</code> otherwise
-	 * @see #getChildren
+	 * @see #getChildren()
 	 */
 	public boolean isMultiStatus();
 	/**
@@ -162,7 +162,7 @@ public interface IStatus {
 	 *    <code>INFO</code>)
 	 * @return <code>true</code> if there is at least one match, 
 	 *    <code>false</code> if there are no matches
-	 * @see #getSeverity
+	 * @see #getSeverity()
 	 * @see #ERROR
 	 * @see #WARNING
 	 * @see #INFO

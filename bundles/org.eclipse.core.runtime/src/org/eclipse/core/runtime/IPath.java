@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -74,8 +74,8 @@ public interface IPath extends Cloneable {
 	 * </p>
 	 *
 	 * @return the new path
-	 * @see #hasTrailingSeparator
-	 * @see #removeTrailingSeparator
+	 * @see #hasTrailingSeparator()
+	 * @see #removeTrailingSeparator()
 	 */
 	public IPath addTrailingSeparator();
 	/**
@@ -91,7 +91,7 @@ public interface IPath extends Cloneable {
 	 * 
 	 * @param path the string path to concatenate
 	 * @return the new path
-	 * @see #isValidPath 
+	 * @see #isValidPath(String)
 	 */
 	public IPath append(String path);
 	/**
@@ -133,7 +133,7 @@ public interface IPath extends Cloneable {
 	 * path has no device id. Note that the result will end in ':'.
 	 *
 	 * @return the device id, or <code>null</code>
-	 * @see #setDevice
+	 * @see #setDevice(String)
 	 */
 	public String getDevice();
 	/**
@@ -159,8 +159,8 @@ public interface IPath extends Cloneable {
 	 *
 	 * @return <code>true</code> if this path has a trailing
 	 *    separator, and <code>false</code> otherwise
-	 * @see #addTrailingSeparator
-	 * @see #removeTrailingSeparator
+	 * @see #addTrailingSeparator()
+	 * @see #removeTrailingSeparator()
 	 */
 	public boolean hasTrailingSeparator();
 	/**
@@ -227,9 +227,10 @@ public interface IPath extends Cloneable {
 	 * the path proper is correct if each of the segments in its canonicalized
 	 * form is valid.
 	 *
+	 * @param path the path to check
 	 * @return <code>true</code> if the given string is a valid path,
 	 *    and <code>false</code> otherwise
-	 * @see #isValidSegment
+	 * @see #isValidSegment(String)
 	 */
 	public boolean isValidPath(String path);
 	/**
@@ -247,7 +248,7 @@ public interface IPath extends Cloneable {
 	 * @param segment the path segment to check
 	 * @return <code>true</code> if the given path segment is valid,
 	 *    and <code>false</code> otherwise
-	 * @see java.lang.Character#isWhitespace
+	 * @see java.lang.Character#isWhitespace(char)
 	 */
 	public boolean isValidSegment(String segment);
 	/**
@@ -317,6 +318,7 @@ public interface IPath extends Cloneable {
 	 * to this path.  If the number equals or exceeds the number
 	 * of segments in this path, an empty relative path is returned.
 	 *
+	 * @param count the number of segments to remove
 	 * @return the new path
 	 */
 	public IPath removeFirstSegments(int count);
@@ -335,6 +337,7 @@ public interface IPath extends Cloneable {
 	 * of segments in this path, an empty path is returned.
 	 * </p>
 	 *
+	 * @param count the number of segments to remove
 	 * @return the new path
 	 */
 	public IPath removeLastSegments(int count);
@@ -349,8 +352,8 @@ public interface IPath extends Cloneable {
 	 * </p>
 	 *
 	 * @return the new path
-	 * @see #addTrailingSeparator
-	 * @see #hasTrailingSeparator
+	 * @see #addTrailingSeparator()
+	 * @see #hasTrailingSeparator()
 	 */
 	public IPath removeTrailingSeparator();
 	/**
@@ -386,7 +389,7 @@ public interface IPath extends Cloneable {
 	 *
 	 * @param device the device id or <code>null</code>
 	 * @return a new path
-	 * @see #getDevice
+	 * @see #getDevice()
 	 */
 	public IPath setDevice(String device);
 	/**

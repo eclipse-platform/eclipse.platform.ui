@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ public class MultiStatus extends Status {
 	 *
 	 * @param pluginId the unique identifier of the relevant plug-in
 	 * @param code the plug-in-specific status code
-	 * @param children the list of children status objects
+	 * @param newChildren the list of children status objects
 	 * @param message a human-readable message, localized to the
 	 *    current locale
 	 * @param exception a low-level exception, or <code>null</code> if not
@@ -110,8 +110,8 @@ public class MultiStatus extends Status {
 	 * given status is a multi-status. 
 	 *
 	 * @param status the status to merge into this one
-	 * @see #add
-	 * @see #addAll
+	 * @see #add(IStatus)
+	 * @see #addAll(IStatus)
 	 */
 	public void merge(IStatus status) {
 		Assert.isLegal(status != null);

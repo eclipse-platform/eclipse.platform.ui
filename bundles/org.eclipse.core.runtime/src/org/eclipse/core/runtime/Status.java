@@ -11,6 +11,7 @@
 package org.eclipse.core.runtime;
 
 import org.eclipse.core.internal.runtime.Assert;
+import org.eclipse.core.internal.runtime.Policy;
 
 /**
  * A concrete status implementation, suitable either for 
@@ -18,11 +19,11 @@ import org.eclipse.core.internal.runtime.Assert;
  */
 public class Status implements IStatus {
 	/**
-	 * A standard OK status with no message.
+	 * A standard OK status with an "ok"  message.
 	 *
 	 * @since 3.0
 	 */
-	public static final IStatus OK_STATUS = new Status(OK, IPlatform.PI_RUNTIME, OK, "", null); //$NON-NLS-1$
+	public static final IStatus OK_STATUS = new Status(OK, IPlatform.PI_RUNTIME, OK, Policy.bind("ok"), null); //$NON-NLS-1$
 	/**
 	 * A standard CANCEL status with no message.
 	 * 

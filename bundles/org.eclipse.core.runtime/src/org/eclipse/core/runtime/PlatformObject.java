@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ import org.eclipse.core.internal.runtime.InternalPlatform;
  * Clients may subclass.
  * </p>
  *
- * @see Platform#getAdapterManager
+ * @see Platform#getAdapterManager()
  */
 public abstract class PlatformObject implements IAdaptable {
 	/**
@@ -54,8 +54,10 @@ public abstract class PlatformObject implements IAdaptable {
 	 * Platform's adapter manager is consulted).
 	 * </p>
 	 *
-	 * @see IAdaptable#getAdapter
-	 * @see Platform#getAdapterManager
+	 * @param adapter the class to adapt to
+	 * @return the adapted object or <code>null</code>
+	 * @see IAdaptable#getAdapter(Class)
+	 * @see Platform#getAdapterManager()
 	 */
 	public Object getAdapter(Class adapter) {
 		return InternalPlatform.getDefault().getAdapterManager().getAdapter(this, adapter);

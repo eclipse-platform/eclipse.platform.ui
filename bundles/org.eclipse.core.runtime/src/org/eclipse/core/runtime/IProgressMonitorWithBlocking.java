@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2003, 2004 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Common Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/cpl-v10.html
@@ -32,17 +32,19 @@ public interface IProgressMonitorWithBlocking extends IProgressMonitor {
 	 * a running operation ever calls <code>setBlocked</code>, it must
 	 * eventually call <code>clearBlocked</code> before the operation
 	 * completes.
-	 * @param status an optional status object whose message describes the
+	 * 
+	 * @param reason an optional status object whose message describes the
 	 * reason why this operation is blocked, or <code>null</code> if this
 	 * information is not available.
-	 * @see #clearBlocked
+	 * @see #clearBlocked()
 	 */
 	public void setBlocked(IStatus reason);
 	/**
 	 * Clears the blocked state of the running operation. If a running
 	 * operation ever calls <code>setBlocked</code>, it must eventually call
 	 * <code>clearBlocked</code> before the operation completes.
-	 * @see #setBlocked
+	 * 
+	 * @see #setBlocked(IStatus)
 	 */
 	public void clearBlocked();
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,8 @@ public final class OperationCanceledException extends RuntimeException {
 	}
 	/**
 	 * Creates a new exception with the given message.
+	 * 
+	 * @param message the message for the exception
 	 */
 	public OperationCanceledException(String message) {
 		super(message);

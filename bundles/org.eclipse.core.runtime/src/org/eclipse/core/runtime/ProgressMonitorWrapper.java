@@ -40,7 +40,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	 * Clients may override this method to do additional
 	 * processing.
 	 *
-	 * @see IProgressMonitor#beginTask
+	 * @see IProgressMonitor#beginTask(String, int)
 	 */
 	public void beginTask(String name, int totalWork) {
 		progressMonitor.beginTask(name, totalWork);
@@ -51,7 +51,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	 * Clients may override this method to do additional
 	 * processing.
 	 *
-	 * @see IProgressMonitor#clearBlocked
+	 * @see IProgressMonitorWithBlocking#clearBlocked()
 	 * @since 3.0
 	 */
 	public void clearBlocked() {
@@ -64,7 +64,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	 * Clients may override this method to do additional
 	 * processing.
 	 *
-	 * @see IProgressMonitor#done
+	 * @see IProgressMonitor#done()
 	 */
 	public void done() {
 		progressMonitor.done();
@@ -83,7 +83,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	 * Clients may override this method to do additional
 	 * processing.
 	 *
-	 * @see IProgressMonitor#internalWorked
+	 * @see IProgressMonitor#internalWorked(double)
 	 */
 	public void internalWorked(double work) {
 		progressMonitor.internalWorked(work);
@@ -94,7 +94,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	 * Clients may override this method to do additional
 	 * processing.
 	 *
-	 * @see IProgressMonitor#isCanceled
+	 * @see IProgressMonitor#isCanceled()
 	 */
 	public boolean isCanceled() {
 		return progressMonitor.isCanceled();
@@ -105,7 +105,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	 * Clients may override this method to do additional
 	 * processing.
 	 *
-	 * @see IProgressMonitor#setBlocked
+	 * @see IProgressMonitorWithBlocking#setBlocked(IStatus)
 	 * @since 3.0
 	 */
 	public void setBlocked(IStatus reason) {
@@ -118,7 +118,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	 * Clients may override this method to do additional
 	 * processing.
 	 *
-	 * @see IProgressMonitor#setCanceled
+	 * @see IProgressMonitor#setCanceled(boolean)
 	 */
 	public void setCanceled(boolean b) {
 		progressMonitor.setCanceled(b);
@@ -129,7 +129,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	 * Clients may override this method to do additional
 	 * processing.
 	 *
-	 * @see IProgressMonitor#setTaskName
+	 * @see IProgressMonitor#setTaskName(String)
 	 */
 	public void setTaskName(String name) {
 		progressMonitor.setTaskName(name);
@@ -140,7 +140,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	 * Clients may override this method to do additional
 	 * processing.
 	 *
-	 * @see IProgressMonitor#subTask
+	 * @see IProgressMonitor#subTask(String)
 	 */
 	public void subTask(String name) {
 		progressMonitor.subTask(name);
@@ -151,7 +151,7 @@ public abstract class ProgressMonitorWrapper implements IProgressMonitor, IProgr
 	 * Clients may override this method to do additional
 	 * processing.
 	 *
-	 * @see IProgressMonitor#worked
+	 * @see IProgressMonitor#worked(int)
 	 */
 	public void worked(int work) {
 		progressMonitor.worked(work);

@@ -55,6 +55,8 @@ public class CoreException extends Exception {
 	 * Prints a stack trace out for the exception, and
 	 * any nested exception that it may have embedded in
 	 * its Status object.
+	 * 
+	 * @param output the stream to write to
 	 */
 	public void printStackTrace(PrintStream output) {
 		synchronized (output) {
@@ -69,6 +71,8 @@ public class CoreException extends Exception {
 	 * Prints a stack trace out for the exception, and
 	 * any nested exception that it may have embedded in
 	 * its Status object.
+	 * 
+	 * @param output the stream to write to
 	 */
 	public void printStackTrace(PrintWriter output) {
 		synchronized (output) {

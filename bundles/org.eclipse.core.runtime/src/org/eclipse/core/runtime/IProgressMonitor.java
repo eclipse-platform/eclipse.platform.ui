@@ -79,7 +79,7 @@ public interface IProgressMonitor {
 	 *
 	 * @return <code>true</code> if cancellation has been requested,
 	 *    and <code>false</code> otherwise
-	 * @see #setCanceled
+	 * @see #setCanceled(boolean)
 	 */
 	public boolean isCanceled();
 	/**
@@ -88,8 +88,7 @@ public interface IProgressMonitor {
 	 * @param value <code>true</code> indicates that cancelation has
 	 *     been requested (but not necessarily acknowledged);
 	 *     <code>false</code> clears this flag
-	 *
-	 * @see #isCanceled
+	 * @see #isCanceled()
 	 */
 	public void setCanceled(boolean value);
 	/**

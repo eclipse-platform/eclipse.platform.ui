@@ -78,7 +78,7 @@ public class SubProgressMonitor extends ProgressMonitorWrapper {
 	 * @param monitor the parent progress monitor
 	 * @param ticks the number of work ticks allocated from the
 	 *    parent monitor
-	 * @param styles one of
+	 * @param style one of
 	 *    <ul>
 	 *    <li> <code>SUPPRESS_SUBTASK_LABEL</code> </li>
 	 *    <li> <code>PREPEND_MAIN_LABEL_TO_SUBTASK</code> </li>

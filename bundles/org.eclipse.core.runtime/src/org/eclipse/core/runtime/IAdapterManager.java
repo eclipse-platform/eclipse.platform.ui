@@ -29,23 +29,23 @@ package org.eclipse.core.runtime;
  * 
  * <pre>
  *  IAdapterFactory pr = new IAdapterFactory() {
- *  public Class[] getAdapterList() {
- *  return new Class[] { com.example.acme.Sticky.class };
- *  }
- *  public Object getAdapter(Object adaptableObject, adapterType) {
- *  IResource res = (IResource) adaptableObject;
- *  QualifiedName key = new QualifiedName(&quot;com.example.acme&quot;, &quot;sticky-note&quot;);
- *  try {
- *  com.example.acme.Sticky v = (com.example.acme.Sticky) res.getSessionProperty(key);
- *  if (v == null) {
- *  v = new com.example.acme.Sticky();
- *  res.setSessionProperty(key, v);
- *  }
- *  } catch (CoreException e) {
- *  // unable to access session property - ignore
- *  }
- *  return v;
- *  }
+ *  	public Class[] getAdapterList() {
+ *  		return new Class[] { com.example.acme.Sticky.class };
+ *  	}
+ *  	public Object getAdapter(Object adaptableObject, adapterType) {
+ *  		IResource res = (IResource) adaptableObject;
+ *  		QualifiedName key = new QualifiedName(&quot;com.example.acme&quot;, &quot;sticky-note&quot;);
+ *  		try {
+ *  			com.example.acme.Sticky v = (com.example.acme.Sticky) res.getSessionProperty(key);
+ *  			if (v == null) {
+ *  				v = new com.example.acme.Sticky();
+ *  				res.setSessionProperty(key, v);
+ *  			}
+ *  		} catch (CoreException e) {
+ *  			// unable to access session property - ignore
+ *  		}
+ *  		return v;
+ *  	}
  *  }
  *  Platform.getAdapterManager().registerAdapters(pr, IResource.class);
  *   </pre>
@@ -146,7 +146,8 @@ public interface IAdapterManager {
 	 * 
 	 * @param factory the adapter factory
 	 * @param adaptable the type being extended
-	 * @see #unregisterAdapters
+	 * @see #unregisterAdapters(IAdapterFactory)
+	 * @see #unregisterAdapters(IAdapterFactory, Class)
 	 */
 	public void registerAdapters(IAdapterFactory factory, Class adaptable);
 	/**
@@ -156,7 +157,7 @@ public interface IAdapterManager {
 	 * nothing if the given factory is not currently registered.
 	 * 
 	 * @param factory the adapter factory to remove
-	 * @see #registerAdapters
+	 * @see #registerAdapters(IAdapterFactory, Class)
 	 */
 	public void unregisterAdapters(IAdapterFactory factory);
 	/**
@@ -167,7 +168,7 @@ public interface IAdapterManager {
 	 * @param factory the adapter factory to remove
 	 * @param adaptable one of the types against which the given factory is
 	 * registered
-	 * @see #registerAdapters
+	 * @see #registerAdapters(IAdapterFactory, Class)
 	 */
 	public void unregisterAdapters(IAdapterFactory factory, Class adaptable);
 }
