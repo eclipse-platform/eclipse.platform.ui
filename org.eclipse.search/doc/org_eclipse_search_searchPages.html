@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en"><html><head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Eclipse Search Infrastructure Extension Point: Search Pages</title></head>
+
+<body>
+
+<center>
+<h1>
+Search Pages</h1></center>
+<b><i>Identifier: </i></b>org.eclipse.search.searchPages
+<p><b><i>Description</i>: </b>This extension point allows a plug-in to register
+search pages for specialized searches. When the search action is performed on
+a resource, the search infrastructure locates the most specific registered search
+page for it.
+
+</p><p><b><i>Configuration Markup:</i></b>
+</p><p><tt>&nbsp;&nbsp; &lt;!ELEMENT page EMPTY&gt;</tt>
+<br><tt>&nbsp;&nbsp; &lt;!ATTLIST page</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sizeHint&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tabPosition&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; showScopeSection&nbsp;CDATA #IMPLIED</tt><br>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; enabled &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;CDATA #IMPLIED</tt>
+<br><tt>&nbsp;&nbsp; &gt;</tt>
+</p><ul><li><b>id</b> - a unique name that will be used to identify this search page</li>
+
+<li>
+<b>label</b> - a translatable label that will be used in the search page tab</li>
+
+<li>
+<b>class</b> - a name of the class that implements <tt>org.eclipse.search.ui.ISearchPage</tt>.
+We recommend subclassing <tt>org.eclipse.jface.dialogs.DialogPage</tt>.
+</li>
+
+<li>
+<b>icon</b> - a relative name of the image that will be used for all resources
+that match the specified extensions. If omitted, the
+search page's tab will only contain a label.</li>
+
+<li>
+<b>sizeHint</b> - a hint for the initial size of the page. This is a string
+containing the width and height separated by comma (e.g. &quot;50, 60&quot;). In the case
+this hint is omitted the page will be no larger than the other pages.</li>
+
+<li>
+<b>tabPosition</b> - an integer defining where the page is placed in the
+page book. The value does not define the absolute position but the position
+relative to the other pages. The ordering of pages is as follows: 	<ol>
+	<li>if the tabPosition is not specified for a page then <tt>Integer.MAX_VALUE / 2</tt> is used</li>
+	<li>the page with the lower value comes first. If the values are equal
+then the pages are are ordered alphabetically according to their labels</li>
+	</ol>
+</li>
+
+<li>
+<b>extensions</b> - a comma separated list with file extensions on which the
+search page can operate. Each extension must also include a weight (0 meaning
+lowest weight) which enables the search infrastructure to find the best fitting
+page. The weight is separated from the extension by a colon.
+If a search page can search all possible resources then <tt>&quot;*&quot;</tt> can be used.</li>
+
+<li>
+<b>showScopeSection</b> - if this attribute is missing or set to <tt>&quot;false&quot;</tt> then the
+scope section is not shown in the Search dialog. To see the scope section this
+attribute has to be set to <tt>&quot;true&quot;</tt>. Plug-ins which add their own Search page and
+want to see the scope section have to add this to their plugin.xml.</li><li><b>enabled</b> - if this attribute is missing or set to <tt>&quot;false&quot;</tt>
+ then the page is not initially shown in the Search dialog. The page can
+be activated by the user via the &quot;Customize...&quot; button on the Search dialog.</li>
+
+
+</ul>
+<b><i>Examples:</i></b>
+<p>The following is an example of a search page extension definition:
+</p><p><tt>&nbsp;&nbsp; &lt;extension point=&quot;org.eclipse.search.searchPages&quot;&gt;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;page</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; id=&quot;org.eclipse.search.ui.text.TextSearchPage&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; label=&quot;Text Search&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; icon=&quot;icons/full/obj16/tsearch_pref.gif&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; sizeHint=&quot;250,160&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; tabPosition=&quot;1&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; extensions=&quot;*:1&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; showScopeSection=&quot;true&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; class=&quot;org.eclipse.search.ui.text.TextSearchPage&quot;</tt>
+<br><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/page&gt;</tt>
+<br><tt>&nbsp;&nbsp; &lt;/extension&gt;</tt>
+
+</p><p><b><i>Supplied Implementation: </i></b>The search infrastructure provides
+ a search page for full-text search.
+</p>
+
+<p><br>
+<p>&nbsp;<a href="hglegal2002.htm"><img src="ngibmcpy2002.gif" alt="Copyright IBM Corporation 2000, 2002. All Rights Reserved." border="0" width="324" height="14"></a>
+</p>
+
+</body></html>
