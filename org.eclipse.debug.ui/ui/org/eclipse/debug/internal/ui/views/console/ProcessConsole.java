@@ -47,6 +47,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.ConsolePlugin;
+import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.eclipse.ui.console.IOConsoleOutputStream;
@@ -344,6 +345,16 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.ui.console.IConsole#addLink(org.eclipse.ui.console.IHyperlink, int, int)
+     */
+    public void addLink(IHyperlink link, int offset, int length) {
+        try {
+            addHyperlink(link, offset, length);
+        } catch (BadLocationException e) {
+            DebugUIPlugin.log(e);
+        }
+    }
 
     /* (non-Javadoc)
      * @see org.eclipse.debug.ui.console.IConsole#getRegion(org.eclipse.debug.ui.console.IConsoleHyperlink)

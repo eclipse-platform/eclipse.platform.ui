@@ -16,6 +16,7 @@ import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.console.IPatternMatchListener;
 
 /**
@@ -61,8 +62,25 @@ public interface IConsole {
 	 * @param offset the character offset within the console document where the
 	 * text assoicated with the hyperlink begins
 	 * @param length the length of the associated hyperlink text
+	 * @deprecated replaced with addLink(IHyperlink link, int offset, int length)
 	 */
 	public void addLink(IConsoleHyperlink link, int offset, int length);
+
+	/**
+	 * Adds the given hyperlink to this console. The link will be notified when
+	 * entered, exited, and activated.
+	 * <p>
+	 * If the link's region (offset/length) is within the console's document
+	 * current bounds, it is added immediately. Otherwise, the link is added
+	 * when the console's document grows to contain the link's region.
+	 * </p>
+	 * @param link the hyperlink to add 
+	 * @param offset the character offset within the console document where the
+	 * text assoicated with the hyperlink begins
+	 * @param length the length of the associated hyperlink text
+	 * @ since 3.1
+	 */
+	public void addLink(IHyperlink link, int offset, int length);
 	
 	/**
 	 * Returns the region of text associated with the given hyperlink, or
@@ -71,9 +89,21 @@ public interface IConsole {
 	 * 
 	 * @param link a console hyperlink
 	 * @return region of text associated with the hyperlink, or <code>null</code>
+	 * @deprecated replaced with getRegion(IHyperlink link) instead
 	 */
 	public IRegion getRegion(IConsoleHyperlink link);
 
+	/**
+	 * Returns the region of text associated with the given hyperlink, or
+	 * <code>null</code> if the given hyperlink is not contained in this
+	 * console.
+	 * 
+	 * @param link a console hyperlink
+	 * @return region of text associated with the hyperlink, or <code>null</code>
+	 * @since 3.1
+	 */
+	public IRegion getRegion(IHyperlink link);
+	
 	/**
 	 * Returns the document associated with this console.
 	 * 
