@@ -29,4 +29,11 @@ public class TestsUserAuthenticator implements IUserAuthenticator {
 	public int prompt(ICVSRepositoryLocation location, int promptType, String title, String message, int[] promptResponses, int defaultResponseIndex) {
 		return defaultResponseIndex;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ccvs.core.IUserAuthenticator#promptForKeyboradInteractive(org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation, java.lang.String, java.lang.String, java.lang.String, java.lang.String[], boolean[])
+	 */
+	public String[] promptForKeyboradInteractive(ICVSRepositoryLocation location, String destination, String name, String instruction, String[] prompt, boolean[] echo) throws CVSException {
+		return prompt;
+	}
 }

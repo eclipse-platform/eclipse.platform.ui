@@ -51,7 +51,7 @@ class JSchSession {
 	 * User information delegates to the IUserAuthenticator. This allows
 	 * headless access to the connection method.
 	 */
-	private static class MyUserInfo implements UserInfo {
+	private static class MyUserInfo implements UserInfo, UIKeyboardInteractive {
 		private String username;
 		private String password;
 		private String passphrase;
@@ -134,7 +134,28 @@ class JSchSession {
 					new int[] {IUserAuthenticator.OK_ID},
 					IUserAuthenticator.OK_ID
 					);
-		}		
+		}
+		public String[] promptKeyboardInteractive(String destination,   
+				String name,   
+				String instruction,   
+				String lang,   
+				String[] prompt,   
+				boolean[] echo){   
+			IUserAuthenticator authenticator = location.getUserAuthenticator();
+			try{
+				String[] result=
+					authenticator.promptForKeyboradInteractive(location,
+																destination,   
+																name,   	
+																instruction,
+																prompt,   
+																echo);   
+				return result;
+			}
+			catch(CVSException e){
+				return null;
+			}
+		} 		
 	}
 	
 	static Session getSession(ICVSRepositoryLocation location, String username, String password, String hostname, int port, final IProgressMonitor monitor) throws JSchException {

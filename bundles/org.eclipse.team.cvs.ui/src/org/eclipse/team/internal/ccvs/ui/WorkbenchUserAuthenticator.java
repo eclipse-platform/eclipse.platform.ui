@@ -7,7 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *     Atsuhiko Yamanaka, JCraft,Inc. - implementation of promptForKeyboradInteractive
+ * *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
 import org.eclipse.core.runtime.OperationCanceledException;
@@ -107,6 +108,59 @@ public class WorkbenchUserAuthenticator implements IUserAuthenticator {
 		
 		result[0] = dialog.getUsername();
 		result[1] = dialog.getPassword();
+	}
+
+	/**
+	 * Asks the user to enter values. 
+	 * 
+	 * @param location  the location to obtain the password for
+	 * @param destication the location
+	 * @param name the name
+	 * @param instruction the instruction
+	 * @param prompt the titles for textfields
+	 * @param echo '*' should be used or not
+	 * @param result the entered values, or null if user canceled.
+	 */
+	public String[] promptForKeyboradInteractive(final ICVSRepositoryLocation location,
+						     final String destination,
+						     final String name,
+						     final String instruction,
+						     final String[] prompt,
+						     final boolean[] echo) throws CVSException {
+	    final String[][] result = new String[1][];
+	    Display display = Display.getCurrent();
+	    if (display != null) {
+		result[0]=_promptForUserInteractive(location, destination, name, instruction, prompt, echo);
+	    } 
+	    else {
+	    	// sync exec in default thread
+	    	Display.getDefault().syncExec(new Runnable() {
+	    		public void run() {
+	    			result[0]=_promptForUserInteractive(location, destination, name, instruction, prompt, echo);
+	    		}
+		    });
+	    }
+	    return result[0];
+	}
+
+	private String[] _promptForUserInteractive(final ICVSRepositoryLocation location, 
+						   final String destination,
+						   final String name,
+						   final String instruction,
+						   final String[] prompt,
+						   final boolean[] echo) {
+		Display display = Display.getCurrent();
+		Shell shell = new Shell(display);
+		KeyboardInteractiveDialog dialog = new KeyboardInteractiveDialog(shell, 
+										 location.getLocation(),
+										 destination,
+										 name,
+										 instruction,
+										 prompt,
+										 echo);
+		dialog.open();
+		shell.dispose();
+		return dialog.getResult();
 	}
 	
 	/**

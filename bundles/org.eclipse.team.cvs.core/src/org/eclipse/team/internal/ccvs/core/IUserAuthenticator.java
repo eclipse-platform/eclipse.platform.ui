@@ -7,7 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
+ *     Atsuhiko Yamanaka, JCraft,Inc. - adding promptForKeyboradInteractive method
+ ********************************************************************************/
 package org.eclipse.team.internal.ccvs.core;
 
 /**
@@ -79,6 +80,23 @@ public interface IUserAuthenticator {
 	 */
 	public void promptForUserInfo(ICVSRepositoryLocation location, IUserInfo userInfo, String message) throws CVSException;
 	
+	/**
+	 * Prompts the user for a number values using text fields. The labels are provided in
+	 * the <core>prompt</code> array.  Implementors will return the entered values, or null if
+	 * the user cancel the prompt.
+	 *
+	 * @param location The repository location to authenticate the user for.
+	 * @param destination The destination in the format like username@hostname:port
+	 * @param name A name about this dialog.
+	 * @param instruction A message for the instruction.
+	 * @param prompt Labels for text fields.
+	 * @param echo the array to show which fields are secret.
+	 * @return the entered values, or null if the user canceled.
+	 *
+	 * @since 3.0
+	 */
+	public String[] promptForKeyboradInteractive(ICVSRepositoryLocation location, String destination, String name, String instruction, String[] prompt, boolean[] echo) throws CVSException;
+
 	/**
 	 * Prompts the authenticator for additional information regarding this authentication 
 	 * request. A default implementation of this method should return the <code>defaultResponse</code>,
