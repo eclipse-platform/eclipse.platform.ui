@@ -826,6 +826,7 @@ public void setPageSize(Point size) {
  */
 protected void setWizard(IWizard newWizard) {
 	wizard = newWizard;
+	wizard.setContainer(this);
 	if (!createdWizards.contains(wizard)) {
 		createdWizards.add(wizard);
 
@@ -854,7 +855,6 @@ protected void setWizard(IWizard newWizard) {
 			// Assume we are going forward to revisit a wizard
 			nestedWizards.add(wizard);
 	}
-	wizard.setContainer(this);
 }
 /* (non-Javadoc)
  * Method declared on IWizardContainer.
