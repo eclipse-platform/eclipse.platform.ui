@@ -119,7 +119,7 @@ public class CreateProjectAction implements IWorkbenchWindowActionDelegate {
 				getJavacNodes(javacNodes, node);
 			} else if (node instanceof AntTaskNode) {
 				AntTaskNode task= (AntTaskNode)node;
-				if (task.getName() == "javac") {
+				if (task.getName() == "javac") { //$NON-NLS-1$
 					javacNodes.add(task);
 				}
 			}
