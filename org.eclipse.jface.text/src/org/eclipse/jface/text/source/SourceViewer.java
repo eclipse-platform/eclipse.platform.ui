@@ -549,6 +549,11 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			fOverviewRulerHoveringController= null;
 		}
 		
+		if (fUndoManager != null) {
+			fUndoManager.disconnect();
+			fUndoManager= null;
+		}
+		
 		setHyperlinkDetectors(null, SWT.NONE);
 	}
 	
