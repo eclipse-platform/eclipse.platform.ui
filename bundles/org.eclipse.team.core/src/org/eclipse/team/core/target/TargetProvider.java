@@ -82,7 +82,7 @@ public abstract class TargetProvider {
 	 * @param resources an array of local resources to be put.
 	 * @param progress a progress monitor to indicate the duration of the operation, or
 	 * <code>null</code> if progress reporting is not required.
-	 * @throws TeanException if there is a problem put'ing one or more of the resources.
+	 * @throws TeamException if there is a problem put'ing one or more of the resources.
 	 * The exception will contain multiple status', one for each resource in the <code>resources</code>
 	 * array.
 	 */
@@ -121,8 +121,9 @@ public abstract class TargetProvider {
 	/**
 	 * Answers true if the base identifier of the given resource is different to the
 	 * current released state of the resource.
+	 * @throws TeamException if there is a problem getting this information from the server.
 	 */
-	public abstract boolean isOutOfDate(IResource resource);
+	public abstract boolean isOutOfDate(IResource resource) throws TeamException;
 	
 	/**
 	 * Answer if the local resource currently has a different timestamp to the

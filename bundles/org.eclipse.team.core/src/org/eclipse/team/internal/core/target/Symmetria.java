@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.core.Assert;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * Synchronizes the given folder between the workspace and provider.
@@ -34,98 +35,78 @@ public class Symmetria {
 	/**
 	 * Remote knows best.
 	 */
-	public IStatus get(
+	public void get(
 		ResourceState resourceState,
 		int depth,
-		IProgressMonitor progress) {
+		IProgressMonitor progress) throws TeamException {
 
 		IResource localResource = resourceState.getLocal();
 
 		// If remote does not exist then simply ensure no local resource exists.
-		if (!resourceState.hasRemote())
-			return deleteLocal(localResource, progress);
-
+		if (!resourceState.hasRemote()) {
+			deleteLocal(localResource, progress);
+			return;
+		}
+		
 		// If the remote resource is a file.
 		if (resourceState.getRemoteType() == IResource.FILE) {
 			// Replace any existing local resource with a copy of the remote file.
-			IStatus deleteStatus = deleteLocal(localResource, progress);
-			if (!deleteStatus.isOK())
-				return deleteStatus;
-			return resourceState.download(progress);
+			deleteLocal(localResource, progress);
+			resourceState.download(progress);
+			return;
 		}
 
 		// The remote resource is a container.
 
 		// If the local resource is a file, we must remove it first.
-		if (localResource.getType() == IResource.FILE) {
-			IStatus deleteStatus = deleteLocal(localResource, progress); // May not exist.
-			if (!deleteStatus.isOK())
-				return deleteStatus;
-		}
+		if (localResource.getType() == IResource.FILE)
+			deleteLocal(localResource, progress); // May not exist.
 
 		// If the local resource does not exist then it is created as a container.
 		if (!localResource.exists()) {
 			// Create a corresponding local directory.
-			IStatus mkdirsStatus = mkLocalDirs(localResource, progress);
-			if (!mkdirsStatus.isOK())
-				return mkdirsStatus;
+			mkLocalDirs(localResource, progress);
 		}
 
 		// Finally, resolve the collection membership based upon the depth parameter.
 		switch (depth) {
 			case IResource.DEPTH_ZERO :
 				// If we are not considering members of the collection then we are done.
-				return ITeamStatusConstants.OK_STATUS;
+				return;
 			case IResource.DEPTH_ONE :
 				// If we are considering only the immediate members of the collection
-				try {
-					getFolderShallow(resourceState, progress);
-				} catch (TeamException exception) {
-					return exception.getStatus();
-				}
-				return ITeamStatusConstants.OK_STATUS;
+				getFolderShallow(resourceState, progress);
+				return;
 			case IResource.DEPTH_INFINITE :
 				// We are going in deep.
-				return getFolderDeep(resourceState, progress);
+				getFolderDeep(resourceState, progress);
+				return;
 			default :
 				// We have covered all the legal cases.
 				Assert.isLegal(false);
-				return null; // Never reached.
+				return; // Never reached.
 		} // end switch
 	}
 
 	/**
 	 * Synch the remote and local folder to depth.
 	 */
-	protected IStatus getFolderDeep(
+	protected void getFolderDeep(
 		ResourceState collection,
-		IProgressMonitor progress) {
+		IProgressMonitor progress) throws TeamException {
 
-		ResourceState[] childFolders;
-		try {
-			childFolders = getFolderShallow(collection, progress);
-		} catch (TeamException exception) {
-			// Problem getting the folder at this level.
-			return exception.getStatus();
-		}
+		// Could throw if problem getting the folder at this level.
+		ResourceState[] childFolders = getFolderShallow(collection, progress);
 
 		// If there are no further children then we are done.
 		if (childFolders.length == 0)
-			return ITeamStatusConstants.OK_STATUS;
-
-		// There are children and we are going deep, the response will be a multi-status.
-		MultiStatus multiStatus =
-			new MultiStatus(
-				ITeamStatusConstants.OK_STATUS.getPlugin(),
-				ITeamStatusConstants.OK_STATUS.getCode(),
-				ITeamStatusConstants.OK_STATUS.getMessage(),
-				ITeamStatusConstants.OK_STATUS.getException());
+			return;
 
 		// Collect the responses in the multistatus.
 		for (int i = 0; i < childFolders.length; i++)
-			multiStatus.add(get(childFolders[i], IResource.DEPTH_INFINITE, progress));
+			get(childFolders[i], IResource.DEPTH_INFINITE, progress);
 
-		return multiStatus;
+		return;
 	}
 
 	/**
@@ -164,9 +145,7 @@ public class Symmetria {
 				// The remote resource is a file.  Copy the content of the remote file
 				// to the local file, overwriting any existing content that may exist, and
 				// creating the file if it doesn't.
-				IStatus downloadStatus = remoteChildState.download(progress);
-				if (!downloadStatus.isOK())
-					throw new TeamException(downloadStatus);
+				remoteChildState.download(progress);
 				// Remember that we have processed this child.
 				surplusLocalChildren.remove(remoteChildState.getLocal());
 			} else {
@@ -175,7 +154,7 @@ public class Symmetria {
 				// If the local child is not a container then it must be deleted.
 				IResource localChild = remoteChildState.getLocal();
 				if (localChild.exists() && (!(localChild instanceof IContainer)))
-					checkedDeleteLocal(localChild, progress);
+					deleteLocal(localChild, progress);
 			} // end if
 		} // end for
 
@@ -183,7 +162,7 @@ public class Symmetria {
 		Iterator childrenItr = surplusLocalChildren.iterator();
 		while (childrenItr.hasNext()) {
 			IResource unseenChild = (IResource) childrenItr.next();
-			checkedDeleteLocal(unseenChild, progress);
+			deleteLocal(unseenChild, progress);
 		} // end-while
 
 		// Answer the array of children seen on the remote collection that are
@@ -193,41 +172,24 @@ public class Symmetria {
 	}
 
 	/**
-	 * Calls delete local and throws an exceptionif a problem arises.
-	 */
-	protected void checkedDeleteLocal(
-		IResource resource,
-		IProgressMonitor progress) throws TeamException {
-			
-		IStatus deleteStatus = deleteLocal(resource, progress);
-		if (!deleteStatus.isOK())
-			throw new TeamException(ITeamStatusConstants.CONFLICT_STATUS);
-	}
-		
-	/**
 	 * Delete the local resource represented by the resource state.  Do not complain if the resource does not exist.
 	 */
-	protected IStatus deleteLocal(
+	protected void deleteLocal(
 		IResource resource,
-		IProgressMonitor progress) {
+		IProgressMonitor progress) throws TeamException {
 
 		try {
 			resource.delete(true, progress);
 		} catch (CoreException exception) {
-			//todo: we need to return the real exception
-			return ITeamStatusConstants.IO_FAILED_STATUS;
+			throw TeamPlugin.wrapException(exception);
 		}
-		
-		// The delete succeeded.
-		return ITeamStatusConstants.OK_STATUS;
 	}
 
 	/**
 	 * Make local directories matching the description of the local resource state.
 	 * XXX There has to be a better way.
 	 */
-	protected IStatus mkLocalDirs(IResource resource, IProgressMonitor progress) {
-		
+	protected void mkLocalDirs(IResource resource, IProgressMonitor progress) throws TeamException {	
 		IContainer project = resource.getProject();
 		IPath path = resource.getProjectRelativePath();
 		IFolder folder = project.getFolder(path);
@@ -236,9 +198,8 @@ public class Symmetria {
 			folder.create(false, true, progress);	// No force, yes make local.
 		} catch (CoreException exception) {
 			// The creation failed.
-			return ITeamStatusConstants.IO_FAILED_STATUS;
+			throw TeamPlugin.wrapException(exception);
 		}	
-		return ITeamStatusConstants.OK_STATUS;
 	}
 	
 	/**

@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.team.core.Team;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.TargetManager;
 
 /**
@@ -96,4 +97,17 @@ final public class TeamPlugin extends Plugin {
 	public static void log(IStatus status) {
 		plugin.getLog().log(status);
 	}
+	
+	/*
+	 * Static helper methods for creating exceptions
+	 */
+	public static TeamException wrapException(Exception e) {
+		return new TeamException(new Status(IStatus.ERROR, ID, 0, e.getMessage() != null ? e.getMessage() : "",	e)); //$NON-NLS-1$
+	}
+	
+	public static TeamException wrapException(CoreException e) {
+		IStatus status = e.getStatus();
+		return new TeamException(new Status(status.getSeverity(), ID, status.getCode(), status.getMessage(), e));
+	}
+
 }

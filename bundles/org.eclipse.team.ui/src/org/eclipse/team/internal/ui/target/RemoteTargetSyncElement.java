@@ -124,7 +124,13 @@ public class RemoteTargetSyncElement extends RemoteSyncElement {
 		int description = IN_SYNC;
 		IResource local = getLocal();
 		boolean isDirty = provider.isDirty(local);
-		boolean isOutOfDate = provider.isOutOfDate(local);
+		boolean isOutOfDate;
+		try{
+			isOutOfDate = provider.isOutOfDate(local);
+		} catch(TeamException e) {
+			isOutOfDate = true; // who knows?
+		}
+		
 		boolean localExists = local.exists();
 		
 		if (remote == null) {

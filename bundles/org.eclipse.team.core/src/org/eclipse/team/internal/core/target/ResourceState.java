@@ -28,6 +28,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.target.Site;
+import org.eclipse.team.internal.core.TeamPlugin;
 
 /**
  * This abstract class implements the state of a local and corresponding remote resource,
@@ -156,72 +157,67 @@ public abstract class ResourceState {
 	public abstract String getReleasedIdentifier() throws TeamException;
 
 	/**
-	 * Check out the receiver.
+	 * Check out the receiver. Return a status if the receiver is in the wrong state for the operation to be performed.
 	 * 
-	 * @see ITeamProvider#checkout(IResource[], int, IProgressMonitor)
+	 * @throws TeamException if there is a error communicating with the resource from the server.
 	 */
-	public IStatus checkout(IProgressMonitor progress) {
+	public void checkout(IProgressMonitor progress) throws TeamException {
 		// Not going to allow branching.
 		if (isOutOfDate())
-			return ITeamStatusConstants.CONFLICT_STATUS;
+			throw new TeamException(ITeamStatusConstants.CONFLICT_STATUS);
 
 		// Sanity check.
 		if (!hasRemote())
-			return ITeamStatusConstants.NO_REMOTE_RESOURCE_STATUS;
+			throw new TeamException(ITeamStatusConstants.NO_REMOTE_RESOURCE_STATUS);
 
 		// Legally, the resource must be checked in before it can be checked out.
 		if (isCheckedOut())
-			return ITeamStatusConstants.NOT_CHECKED_IN_STATUS;
+			throw new TeamException(ITeamStatusConstants.NOT_CHECKED_IN_STATUS);
 
 		// Do the provider specific action for check-out.
-		return basicCheckout(progress);
+		basicCheckout(progress);
 	}
-
+	
 	/**
 	 * A basic checkout is provider specific.
 	 * Unless overridden, work in an optimistic mode.
 	 */
-	protected IStatus basicCheckout(IProgressMonitor progress) {
+	protected void basicCheckout(IProgressMonitor progress) throws TeamException {
 		checkedOut = true;
-		return ITeamStatusConstants.OK_STATUS;
 	}
-
+	
+	
 	/**
-	 * Check in the receiver.
+	 * Check in the receiver. Return a status if the receiver is in the wrong state for the operation to be performed.
 	 * 
-	 * @see ITeamProvider#checkin(IResource[], int, IProgressMonitor)
+	 * @throws TeamException if there is a error communicating with the resource from the server.
 	 */
-	public IStatus checkin(IProgressMonitor progress) {
+	public void checkin(IProgressMonitor progress) throws TeamException {
 		// The resource must be checked out before it can be checked in.
 		if (!isCheckedOut())
-			return ITeamStatusConstants.NOT_CHECKED_OUT_STATUS;
+			throw new TeamException(ITeamStatusConstants.NOT_CHECKED_OUT_STATUS);
 
 		// Check to see if we can do this without conflict.
 		if (isOutOfDate())
-			return ITeamStatusConstants.CONFLICT_STATUS;
-
+			throw new TeamException(ITeamStatusConstants.CONFLICT_STATUS);
+			
 		// Copy from the local resource to the repository.	
-		IStatus uploadStatus = upload(progress);
-		if (uploadStatus.isOK())
-			checkedOut = false;
-
-		return uploadStatus;
+		upload(progress);
+		//if we got to here the upload succeeded (didn't throw)
+		checkedOut = false;
 	}
-
+	
 	/**
 	 * Uncheckout the receiver.
-	 * 
-	 * @see ITeamProvider#uncheckout(IResource[], int, IProgressMonitor)
 	 */
-	public IStatus uncheckout(IProgressMonitor progress) {
+	public void uncheckout(IProgressMonitor progress) throws TeamException {
 		// Has to be checked-out before it can be reversed.
 		if (!isCheckedOut())
-			return ITeamStatusConstants.NOT_CHECKED_OUT_STATUS;
+			throw new TeamException(ITeamStatusConstants.NOT_CHECKED_OUT_STATUS);
 
 		// Nothing interesting to do since the API spec. requires that we do not reverse
 		// any local changes.
 		checkedOut = false;
-		return ITeamStatusConstants.OK_STATUS;
 	}
 
 	/**
@@ -261,17 +257,12 @@ public abstract class ResourceState {
 	 * Answers true if the base identifier of the given resource is different to the
 	 * current released state of the resource.
 	 */
-	public boolean isOutOfDate() {
+	public boolean isOutOfDate() throws TeamException {
 		if (remoteBaseIdentifier.equals(EMPTY_REMOTEBASEID))
 			return false; // by definition.
 
 		String releasedIdentifier = null;
-		try {
-			releasedIdentifier = getReleasedIdentifier();
-		} catch (TeamException exception) {
-			// XXX This exception should be propogated out to the caller, requires an API change.
-			throw new RuntimeException(exception.getMessage());
-		}
+		releasedIdentifier = getReleasedIdentifier();
 		return !remoteBaseIdentifier.equals(releasedIdentifier);
 	}
 
@@ -283,7 +274,7 @@ public abstract class ResourceState {
 	 * The provider may (and should wherever possible) optimize the case where it
 	 * knows the local resource is identical to the remote resource.
 	 */
-	public abstract IStatus download(IProgressMonitor progress);
+	public abstract void download(IProgressMonitor progress) throws TeamException;
 
 	/**
 	 * Upload the resource represented by the local resource to the remote
@@ -291,17 +282,17 @@ public abstract class ResourceState {
 	 * the provider <em>and</em> sets the local base timestamp and remote base
 	 * identifier.
 	 */
-	public abstract IStatus upload(IProgressMonitor progress);
+	public abstract void upload(IProgressMonitor progress) throws TeamException;
 
 	/**
 	 * Delete the remote resource.
 	 */
-	public abstract IStatus delete(IProgressMonitor progress);
+	public abstract void delete(IProgressMonitor progress) throws TeamException;
 
 	/**
 	 * Answer if the remote resource exists.
 	 */
-	public abstract boolean hasRemote();
+	public abstract boolean hasRemote() throws TeamException;
 
 	/**
 	 * Answer the type of the remote resource (if it exists).

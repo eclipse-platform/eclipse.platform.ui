@@ -50,10 +50,10 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	protected static interface IOperation {
 	}
 	protected static interface IIterativeOperation extends IOperation {
-		public IStatus visit(IResource resource, int depth, IProgressMonitor progress);
+		public void visit(IResource resource, int depth, IProgressMonitor progress) throws TeamException;
 	}
 	protected static interface IRecursiveOperation extends IOperation {
-		public IStatus visit(IResource resource, IProgressMonitor progress);
+		public void visit(IResource resource, IProgressMonitor progress) throws TeamException;
 	}
 
 	/**
@@ -103,9 +103,9 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	public void get(IResource[] resources, IProgressMonitor progress)
 		throws TeamException {
 		execute(new IIterativeOperation() {
-			public IStatus visit(IResource resource, int depth, IProgressMonitor progress) {
+			public void visit(IResource resource, int depth, IProgressMonitor progress) throws TeamException {
 				ResourceState state = getState(resource);
-				return new Symmetria().get(state, depth, progress);
+				new Symmetria().get(state, depth, progress);
 			}
 		}, resources, depth, progress);
 	}
@@ -119,9 +119,9 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	public void get(IResource resource, final IRemoteTargetResource remote, IProgressMonitor progress)
 		throws TeamException {
 		execute(new IIterativeOperation() {
-			public IStatus visit(IResource resource, int depth, IProgressMonitor progress) {
+			public void visit(IResource resource, int depth, IProgressMonitor progress) throws TeamException {
 				ResourceState state = getState(resource, remote);
-				return new Symmetria().get(state, IResource.DEPTH_INFINITE, progress);
+				new Symmetria().get(state, IResource.DEPTH_INFINITE, progress);
 			}
 		}, new IResource[] {resource}, IResource.DEPTH_ZERO, progress);
 	}
@@ -133,10 +133,9 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	public void put(IResource[] resources, IProgressMonitor progress)
 		throws TeamException {
 		execute(new IRecursiveOperation() {
-			public IStatus visit(IResource resource, IProgressMonitor progress) {
+			public void visit(IResource resource, IProgressMonitor progress) throws TeamException {
 				// The resource state must be checked-out.
-				ResourceState state = getState(resource);
-				return state.checkin(progress);
+				getState(resource).checkin(progress);
 			}
 		}, resources, depth, progress);
 	}
@@ -148,9 +147,8 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	public void delete(IResource[] resources, IProgressMonitor progress)
 		throws TeamException {
 		execute(new IIterativeOperation() {
-			public IStatus visit(IResource resource, int depth, IProgressMonitor progress) {
-				ResourceState state = getState(resource);
-				return state.delete(progress);
+			public void visit(IResource resource, int depth, IProgressMonitor progress) throws TeamException {
+				getState(resource).delete(progress);
 			}
 		}, resources, IResource.DEPTH_INFINITE, progress);
 	}
@@ -178,7 +176,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * current released state of the resource, and <code>false</code> otherwise.
 	 * @see ITeamSynch#isOutOfDate(IResource)
 	 */
-	public boolean isOutOfDate(IResource resource) {
+	public boolean isOutOfDate(IResource resource) throws TeamException {
 		ResourceState state = getState(resource);
 		return state.isOutOfDate();
 	}
@@ -191,7 +189,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	 * and <code>false</code> otherwise.
 	 * @see ITeamSynch#hasRemote(IResource)
 	 */
-	public boolean hasRemote(IResource resource) {
+	public boolean hasRemote(IResource resource) throws TeamException {
 		ResourceState state = getState(resource);
 		return state.hasRemote();
 	}
@@ -210,31 +208,13 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 		IProgressMonitor progress)
 		throws TeamException {
 			
-		// Create an array to hold the status for each resource.
-		IStatus[] statuses = new IStatus[resources.length];
-		
-		// Remember if a failure occurred in any resource, so we can throw an exception at the end.
-		boolean failureOccurred = false;
-
 		// For each resource in the local resources array.
 		for (int i = 0; i < resources.length; i++) {
 			if (operation instanceof IRecursiveOperation)
-				statuses[i] = execute((IRecursiveOperation)operation, resources[i], depth, progress);
+				execute((IRecursiveOperation)operation, resources[i], depth, progress);
 			else
-				statuses[i] = ((IIterativeOperation)operation).visit(resources[i], depth, progress);
-			failureOccurred = failureOccurred || (!statuses[i].isOK());
+				((IIterativeOperation)operation).visit(resources[i], depth, progress);
 		}
-
-		// Finally, if any problems occurred, throw the exeption with all the statuses,
-		// but if there were no problems exit silently.
-		if (failureOccurred)
-			throw new TeamException(
-				new MultiStatus(
-					TeamPlugin.ID,
-					0,	// code - we don't have one
-					statuses,
-					Policy.bind("multiStatus.errorsOccurred"), //$NON-NLS-1$
-					null));
 
 		// Cause all the resource changes to be broadcast to listeners.
 //		TeamPlugin.getManager().broadcastResourceStateChanges(resources);
@@ -243,40 +223,27 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 	/**
 	 * Perform the given operation on a resource to the given depth.
 	 */
-	protected IStatus execute(
+	protected void execute(
 		IRecursiveOperation operation,
 		IResource resource,
 		int depth,
-		IProgressMonitor progress) {
+		IProgressMonitor progress) throws TeamException {
 
-		// Visit the given resource first.
-		IStatus status = operation.visit(resource, progress);
+		operation.visit(resource, progress);
 
 		// If the resource is a file then the depth parameter is irrelevant.
 		if (resource.getType() == IResource.FILE)
-			return status;
+			return;
 
 		// If we are not considering any members of the container then we are done.
 		if (depth == IResource.DEPTH_ZERO)
-			return status;
-
-		// If the operation was unsuccessful, do not attempt to go deep.
-		if (!status.isOK())
-			return status;
+			return;
 
 		// If the container has no children then we are done.
 		IResource[] members = getMembers(resource);
 		if (members.length == 0)
-			return status;
-		
-		// There are children and we are going deep, the response will be a multi-status.
-		MultiStatus multiStatus =
-			new MultiStatus(
-				status.getPlugin(),
-				status.getCode(),
-				status.getMessage(),
-				status.getException());
-				
+			return;
+						
 		// The next level will be one less than the current level...
 		int childDepth =
 			(depth == IResource.DEPTH_ONE)
@@ -285,9 +252,7 @@ public abstract class SynchronizedTargetProvider extends TargetProvider {
 				
 		// Collect the responses in the multistatus.
 		for (int i = 0; i < members.length; i++)
-			multiStatus.add(execute(operation, members[i], childDepth, progress));
-
-		return multiStatus;
+			execute(operation, members[i], childDepth, progress);
 	}
 
 	/**
