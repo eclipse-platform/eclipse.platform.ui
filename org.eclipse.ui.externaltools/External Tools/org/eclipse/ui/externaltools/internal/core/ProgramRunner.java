@@ -33,11 +33,18 @@ public class ProgramRunner extends ExternalToolsRunner {
 	public void execute(IProgressMonitor monitor, IRunnerContext runnerContext) throws CoreException {
 		String commandLine = runnerContext.getExpandedLocation() + " " + runnerContext.getExpandedArguments(); //$NON-NLS-1$;
 		try {
+			File workingDir = null;
+			if (runnerContext.getExpandedWorkingDirectory().length() > 0)
+				workingDir = new File(runnerContext.getExpandedWorkingDirectory());
 			startMonitor(monitor, runnerContext, monitor.UNKNOWN);
-			Process p = Runtime.getRuntime().exec(commandLine);
 			boolean[] finished = new boolean[1];
 			
 			finished[0] = false;
+			Process p;
+			if (workingDir != null)
+				p = Runtime.getRuntime().exec(commandLine, null, workingDir);
+			else
+				p = Runtime.getRuntime().exec(commandLine);		
 			new Thread(getRunnable(p.getInputStream(), LogConsoleDocument.getInstance(), LogConsoleDocument.MSG_INFO, finished)).start();
 			new Thread(getRunnable(p.getErrorStream(), LogConsoleDocument.getInstance(), LogConsoleDocument.MSG_ERR, finished)).start();
 
