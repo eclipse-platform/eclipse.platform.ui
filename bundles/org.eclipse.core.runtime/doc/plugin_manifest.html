@@ -10,16 +10,23 @@
 
 <h1>IBM Eclipse Platform Plug-in Manifest</h1>
 
-<p>Version 2.0 - Last revised June 20, 2002</p>
+<p>Version 2.0 - Last revised June 25, 2002</p>
 
 <p>The manifest markup definitions below make use of various naming tokens and
 identifiers. To eliminate ambiguity, here are some production rules for these [are
 referenced in text below]. In general, all identifiers are case-sensitive. </p>
 
-<pre>SimpleToken := sequence of characters from ('a-z','A-Z','0-9')&nbsp;</pre><pre>ComposedToken := SimpleToken | (SimpleToken '.' ComposedToken)&nbsp;</pre><pre>JavaClassName := ComposedToken&nbsp;</pre><pre>PlugInId := ComposedToken</pre><pre>PlugInPrereq := PlugInId | 'export' PlugInId&nbsp;</pre><pre>ExtensionId := SimpleToken&nbsp;</pre><pre>ExtensionPointId := SimpleToken&nbsp;</pre><pre>ExtensionPointReference := ExtensionPointID | (PlugInId '.' ExtensionPointId)</pre>
+<pre>SimpleToken := sequence of characters from ('a-z','A-Z','0-9')
+ComposedToken := SimpleToken | (SimpleToken '.' ComposedToken)
+JavaClassName := ComposedToken
+PlugInId := ComposedToken
+PlugInPrereq := PlugInId | 'export' PlugInId
+ExtensionId := SimpleToken&
+ExtensionPointId := SimpleToken
+ExtensionPointReference := ExtensionPointID | (PlugInId '.' ExtensionPointId)</pre>
 
 <p>The remainder of this section describes the plugin.xml file structure as a series
-of DTD fragments. File <a href="rplugdtd.htm">plugin.dtd</a> presents the DTD
+of DTD fragments. File <a href="plugin_dtd.html">plugin.dtd</a> presents the DTD
 definition in its entirety. </p>
 
 <tt><p>&lt;?xml encoding=&quot;US-ASCII&quot;?&gt;&nbsp;
@@ -288,7 +295,9 @@ logically added to the matching plug-in.</p>
      &lt;plugin-version&gt;. See the definition of &lt;match&gt; in the &lt;requires&gt; clause for
      complete details.</li>
 </ul>
-<p><i>(c) Copyright IBM Corp. 2002 All Rights Reserved.</i> </p>
+<p>&nbsp;<br>
+<a href="hglegal2002.htm"><img src = "ngibmcpy2002.gif" alt="Copyright IBM Corporation and others 2000, 2002" border="0"></a>
+</p>
 </div>
 </body>
 </html>
