@@ -34,7 +34,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * TeamUIPlugin is the plugin for generic, non-provider specific,
  * team UI functionality in the workbench.
  */
-public class TeamUIPlugin extends AbstractUIPlugin implements ISharedImages {
+public class TeamUIPlugin extends AbstractUIPlugin {
 
 	private static TeamUIPlugin instance;
 	public static final String ID = "org.eclipse.team.ui"; //$NON-NLS-1$
