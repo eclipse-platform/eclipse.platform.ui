@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.SWTUtil;
 import org.eclipse.debug.internal.ui.views.launch.LaunchView;
 import org.eclipse.debug.internal.ui.views.launch.LaunchViewContextListener;
@@ -89,7 +90,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		fTrackViewsButton= new Button(group, SWT.CHECK);
 		fTrackViewsButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		fTrackViewsButton.setText(DebugPreferencesMessages.getString("ViewManagementPreferencePage.3")); //$NON-NLS-1$
-		fTrackViewsButton.setSelection(DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_TRACK_VIEWS));
+		fTrackViewsButton.setSelection(DebugUITools.getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS));
 		
 		Label label= new Label(group, SWT.WRAP);
 		label.setText(DebugPreferencesMessages.getString("ViewManagementPreferencePage.4")); //$NON-NLS-1$
@@ -155,7 +156,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 		}
 		
 		getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, buffer.toString());
-		getPreferenceStore().setValue(IDebugUIConstants.PREF_TRACK_VIEWS, fTrackViewsButton.getSelection());
+		getPreferenceStore().setValue(IInternalDebugUIConstants.PREF_TRACK_VIEWS, fTrackViewsButton.getSelection());
 		return super.performOk();
 	}
 
@@ -164,7 +165,7 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 	 */
 	protected void performDefaults() {
 		checkPerspectives(getPreferenceStore().getDefaultString(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES));
-		fTrackViewsButton.setSelection(getPreferenceStore().getDefaultBoolean(IDebugUIConstants.PREF_TRACK_VIEWS));
+		fTrackViewsButton.setSelection(getPreferenceStore().getDefaultBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS));
 		super.performDefaults();
 	}
 

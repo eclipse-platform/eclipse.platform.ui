@@ -218,4 +218,13 @@ public interface IInternalDebugUIConstants {
 	 * @since 3.0
 	 * */
 	public static final String IMG_CVIEW_MEMORY_VIEW= "IMG_CVIEW_MEMORY_VIEW";  //$NON-NLS-1$
+
+	/**
+	 * Boolean preference controlling whether the debug view tracks
+	 * views as the user manually opens/closes them for the purpose
+	 * of not automatically opening/closing such views.
+	 * 
+	 * @since 3.0
+	 */
+	public static final String PREF_TRACK_VIEWS= IDebugUIConstants.PLUGIN_ID + ".track_views"; //$NON-NLS-1$
 }

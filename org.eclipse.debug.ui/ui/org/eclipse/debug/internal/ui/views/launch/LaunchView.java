@@ -524,7 +524,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 	 *  opened and closed.
 	 */
 	public boolean isTrackViews() {
-		return DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_TRACK_VIEWS);
+		return DebugUITools.getPreferenceStore().getBoolean(IInternalDebugUIConstants.PREF_TRACK_VIEWS);
 	}
 	
 	/**
@@ -1233,7 +1233,7 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 			fContextListener.loadOpenedViews();
 		} else if (property.equals(LaunchViewContextListener.PREF_VIEWS_TO_NOT_OPEN) && fContextListener != null) {
 			fContextListener.loadViewsToNotOpen();
-		} else if (property.equals(IDebugUIConstants.PREF_TRACK_VIEWS) && fContextListener != null) {
+		} else if (property.equals(IInternalDebugUIConstants.PREF_TRACK_VIEWS) && fContextListener != null) {
 			if (isTrackViews()) {
 				getSite().getPage().addPartListener(fContextListener);
 			} else {
