@@ -275,16 +275,16 @@ public final class Section extends ExpandableComposite {
 		Point tsize = null;
 		Point tcsize = null;
 		if (toggle != null)
-			tsize = toggle.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			tsize = toggle.getSize();
 		int twidth = bounds.width - marginWidth - marginWidth;
 		if (tsize != null)
 			twidth -= tsize.x + GAP;
 		if (getTextClient() != null)
 			tcsize = getTextClient()
-					.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+					.getSize();
 		if (tcsize != null)
 			twidth -= tcsize.x + GAP;
-		Point size = textLabel.computeSize(twidth, SWT.DEFAULT, true);
+		Point size = textLabel.getSize();
 		int tvmargin = GAP;
 		int theight = 0;
 		if (tsize != null)
