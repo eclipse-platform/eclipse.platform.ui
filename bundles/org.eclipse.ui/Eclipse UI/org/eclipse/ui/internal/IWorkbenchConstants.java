@@ -20,6 +20,7 @@ public interface IWorkbenchConstants {
 	public static final String PL_PERSPECTIVES ="perspectives"; //$NON-NLS-1$
 	public static final String PL_PROJECT_NATURE_IMAGES ="projectNatureImages"; //$NON-NLS-1$
 	public static final String PL_PERSPECTIVE_EXTENSIONS ="perspectiveExtensions"; //$NON-NLS-1$
+	public static final String PL_ACTION_SET_PART_ASSOCIATIONS ="actionSetPartAssociations"; //$NON-NLS-1$
 	public static final String PL_PREFERENCES ="preferencePages"; //$NON-NLS-1$
 	public static final String PL_PROPERTY_PAGES ="propertyPages"; //$NON-NLS-1$
 	public static final String PL_EDITOR ="editors"; //$NON-NLS-1$
@@ -112,6 +113,8 @@ public interface IWorkbenchConstants {
 	public static final String TAG_ACTIVE_PERSPECTIVE = "activePerspective"; //$NON-NLS-1$
 	public static final String TAG_ACTIVE_PART = "activePart"; //$NON-NLS-1$
 	public static final String TAG_ACTION_SET = "actionSet"; //$NON-NLS-1$
+	public static final String TAG_ALWAYS_ON_ACTION_SET = "alwaysOnActionSet"; //$NON-NLS-1$
+	public static final String TAG_ALWAYS_OFF_ACTION_SET = "alwaysOffActionSet"; //$NON-NLS-1$
 	public static final String TAG_SHOW_VIEW_ACTION = "show_view_action"; //$NON-NLS-1$
 	public static final String TAG_NEW_WIZARD_ACTION = "new_wizard_action"; //$NON-NLS-1$
 	public static final String TAG_PERSPECTIVE_ACTION = "perspective_action"; //$NON-NLS-1$

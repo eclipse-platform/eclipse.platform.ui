@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.model.WorkbenchAdapter;
 import java.util.*;
 
@@ -19,6 +20,7 @@ public class ActionSetRegistry extends Object
 	public static final String OTHER_CATEGORY = "org.eclipse.ui.actionSetCategory";//$NON-NLS-1$
 	private ArrayList children = new ArrayList();
 	private ArrayList categories = new ArrayList(1);
+	private Map mapPartToActionSets = new HashMap();
 
 /**
  * Creates the action set registry.
@@ -32,6 +34,27 @@ public ActionSetRegistry() {
  */
 public void addActionSet(ActionSetDescriptor desc) {
 	children.add(desc);
+}
+/**
+ * Adds an association between an action set an a part.
+ */
+public void addAssociation(String actionSetId, String partId) {
+	// get the action set ids for this part
+	ArrayList actionSets = (ArrayList)mapPartToActionSets.get(partId);
+	if (actionSets == null) {
+		actionSets = new ArrayList();
+		mapPartToActionSets.put(partId, actionSets);
+	}
+	// get the action set
+	IActionSetDescriptor desc = findActionSet(actionSetId);
+	if (desc == null) {
+		WorkbenchPlugin.log("Unable to associate action set with part: " +//$NON-NLS-1$
+			partId + ". Action set " + actionSetId + " not found."); //$NON-NLS-2$ //$NON-NLS-1$
+		return;
+	}
+	// add the action set if it is not already present
+	if (!actionSets.contains(desc))
+		actionSets.add(desc);
 }
 /**
  * Finds and returns the registered action set with the given id.
@@ -75,6 +98,19 @@ public IActionSetDescriptor[] getActionSets() {
 	return array;
 }
 /**
+ * Returns a list of the action sets associated with the given part id.
+ *
+ * @return a list of action sets
+ */
+public IActionSetDescriptor[] getActionSetsFor(String partId) {
+	// get the action set ids for this part
+	ArrayList actionSets = (ArrayList)mapPartToActionSets.get(partId);
+	if (actionSets == null)
+		return new IActionSetDescriptor[0];
+	return (IActionSetDescriptor[])actionSets.toArray(new IActionSetDescriptor[actionSets.size()]);
+}
+		
+/**
  * Returns a list of action set categories.
  *
  * @return a list of action sets categories
@@ -110,5 +146,8 @@ public void mapActionSetsToCategories() {
 public void readFromRegistry() {
 	ActionSetRegistryReader reader = new ActionSetRegistryReader();
 	reader.readRegistry(Platform.getPluginRegistry(), this);
+	
+	ActionSetPartAssociationsReader assocReader = new ActionSetPartAssociationsReader();
+	assocReader.readRegistry(Platform.getPluginRegistry(), this);
 }
 }

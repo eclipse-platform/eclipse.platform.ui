@@ -30,6 +30,8 @@ public class Perspective
 	private PartPlaceholder editorHolder;
 	private ViewFactory viewFactory;
 	private ArrayList visibleActionSets;
+	private ArrayList alwaysOnActionSets;
+	private ArrayList alwaysOffActionSets;
 	private ArrayList newWizardActions;
 	private ArrayList showViewActions;
 	private ArrayList perspectiveActions;
@@ -128,6 +130,8 @@ protected Perspective(WorkbenchPage page) throws WorkbenchException {
 	this.editorArea = page.getEditorPresentation().getLayoutPart();
 	this.viewFactory = page.getViewFactory();
 	visibleActionSets = new ArrayList(2);
+	alwaysOnActionSets = new ArrayList(2);
+	alwaysOffActionSets = new ArrayList(2);
 	fastViews = new ArrayList(2);
 }
 /**
@@ -377,6 +381,8 @@ public IViewPart [] getViews() {
 public void hideActionSet(String id) {
 	ActionSetRegistry reg = WorkbenchPlugin.getDefault().getActionSetRegistry();
 	IActionSetDescriptor desc = reg.findActionSet(id);
+	if (alwaysOnActionSets.contains(desc))
+		return;
 	if (desc != null)
 		visibleActionSets.remove(desc);
 }
@@ -700,6 +706,26 @@ public void restoreState(IMemento memento) {
 	}
 	createInitialActionSets(result);
 
+	// Load the always on action sets.
+	actions = memento.getChildren(IWorkbenchConstants.TAG_ALWAYS_ON_ACTION_SET);
+	for (int x = 0; x < actions.length; x ++) {
+		String actionSetID = actions[x].getString(IWorkbenchConstants.TAG_ID);
+		IActionSetDescriptor d = 
+			WorkbenchPlugin.getDefault().getActionSetRegistry().findActionSet(actionSetID);
+		if (d != null) 
+			alwaysOnActionSets.add(d);	
+	}
+
+	// Load the always off action sets.
+	actions = memento.getChildren(IWorkbenchConstants.TAG_ALWAYS_OFF_ACTION_SET);
+	for (int x = 0; x < actions.length; x ++) {
+		String actionSetID = actions[x].getString(IWorkbenchConstants.TAG_ID);
+		IActionSetDescriptor d = 
+			WorkbenchPlugin.getDefault().getActionSetRegistry().findActionSet(actionSetID);
+		if (d != null) 
+			alwaysOffActionSets.add(d);	
+	}
+
 	// Load "show view actions".
 	actions = memento.getChildren(IWorkbenchConstants.TAG_SHOW_VIEW_ACTION);
 	showViewActions = new ArrayList(actions.length);
@@ -819,11 +845,27 @@ private void saveState(IMemento memento, PerspectiveDescriptor p,
 		boundsMem.putInteger(IWorkbenchConstants.TAG_WIDTH,bounds.width);
 	}
 	
-	// Save the action sets.
+	// Save the visible action sets.
 	Iterator enum = visibleActionSets.iterator();
 	while (enum.hasNext()) {
 		IActionSetDescriptor desc = (IActionSetDescriptor)enum.next();
 		IMemento child = memento.createChild(IWorkbenchConstants.TAG_ACTION_SET);
+		child.putString(IWorkbenchConstants.TAG_ID, desc.getId());
+	}
+
+	// Save the "always on" action sets.
+	enum = alwaysOnActionSets.iterator();
+	while (enum.hasNext()) {
+		IActionSetDescriptor desc = (IActionSetDescriptor)enum.next();
+		IMemento child = memento.createChild(IWorkbenchConstants.TAG_ALWAYS_ON_ACTION_SET);
+		child.putString(IWorkbenchConstants.TAG_ID, desc.getId());
+	}
+
+	// Save the "always off" action sets.
+	enum = alwaysOffActionSets.iterator();
+	while (enum.hasNext()) {
+		IActionSetDescriptor desc = (IActionSetDescriptor)enum.next();
+		IMemento child = memento.createChild(IWorkbenchConstants.TAG_ALWAYS_OFF_ACTION_SET);
 		child.putString(IWorkbenchConstants.TAG_ID, desc.getId());
 	}
 
@@ -925,6 +967,25 @@ private boolean saveView(final IViewPart view, final IMemento memento) {
  * Note: The page is expected to update action bars.
  */
 public void setActionSets(IActionSetDescriptor[] newArray) {
+	// We assume that changes to action set visibilty should be remembered
+	// and not reversed as parts are activated.
+	ArrayList turnedOff = (ArrayList)visibleActionSets.clone();
+	for (int i = 0; i < newArray.length; i++) {
+		IActionSetDescriptor desc = newArray[i];
+		turnedOff.remove(desc);
+		if (!visibleActionSets.contains(desc)) {
+			// make sure this always stays visible
+			alwaysOnActionSets.add(desc);
+			alwaysOffActionSets.remove(desc);
+		}
+	}
+	for (int i = 0; i < turnedOff.size(); i++) {
+		IActionSetDescriptor desc = (IActionSetDescriptor)turnedOff.get(i);
+		// make sure this always stays hidden
+		alwaysOnActionSets.remove(desc);
+		alwaysOffActionSets.add(desc);
+	}
+	
 	visibleActionSets.clear();
 	int newSize = newArray.length;
 	for (int nX = 0; nX < newSize; nX ++) {
@@ -991,7 +1052,9 @@ public void setShowViewActions(ArrayList list) {
 public void showActionSet(String id) {
 	ActionSetRegistry reg = WorkbenchPlugin.getDefault().getActionSetRegistry();
 	IActionSetDescriptor desc = reg.findActionSet(id);
-	if (desc != null)
+	if (alwaysOffActionSets.contains(desc))
+		return;
+	if (desc != null && !visibleActionSets.contains(desc))
 		visibleActionSets.add(desc);
 }
 /**

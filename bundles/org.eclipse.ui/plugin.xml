@@ -36,6 +36,7 @@
 <extension-point name="%ExtPoint.actionDefinitions" id="actionDefinitions" />
 <extension-point name="%ExtPoint.perspectives" id="perspectives"/>
 <extension-point name="%ExtPoint.perspectiveExtensions" id="perspectiveExtensions"/>
+<extension-point name="%ExtPoint.actionSetPartAssociations" id="actionSetPartAssociations"/>
 <extension-point name="%ExtPoint.preferencePages" id="preferencePages"/>
 <extension-point name="%ExtPoint.propertyPages" id="propertyPages"/>
 <extension-point name="%ExtPoint.editors" id="editors"/>

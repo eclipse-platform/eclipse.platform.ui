@@ -17,7 +17,6 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
-import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.dialogs.*;
 import org.eclipse.ui.internal.registry.*;
 import org.eclipse.ui.model.*;
@@ -965,6 +964,7 @@ public void hideView(IViewPart view) {
 		
 	// Hide the part.  
 	persp.hideView(view);
+	
 
 	// If the part is no longer reference then dispose it.
 	boolean exists = viewFactory.hasView(view.getSite().getId());
@@ -1555,7 +1555,7 @@ private void setActivePart(IWorkbenchPart newPart) {
 	// Optimize it.
 	if (activePart == newPart)
 		return;
-	
+
 	// Notify perspective.  It may deactivate fast view.
 	Perspective persp = getActivePerspective();
 	if (persp != null)
@@ -1563,14 +1563,20 @@ private void setActivePart(IWorkbenchPart newPart) {
 	
 	// We will switch actions only if the part types are different.
 	boolean switchActions = true;
+	String newID = null;
+	if (newPart != null) 
+		newID = newPart.getSite().getId();
+	String oldID = null;
+	if (activePart != null)
+		oldID = activePart.getSite().getId();
+
 	if (activePart != null && newPart != null) {
-		String newID = newPart.getSite().getId();
-		String oldID = activePart.getSite().getId();
 		switchActions = (oldID != newID);
 	}
-	// Try to get away with only changing the enablement of the
-	// tool items if possible - workaround for layout flashing
-	// when editors contribute lots of items in the toolbar.
+
+	// Only change the enablement of the menu and tool items if 
+	// possible - workaround for layout flashing
+	// when editors contribute lots of items.
 	boolean switchActionsForced = false;
 	if (switchActions)
 		switchActionsForced = isActionSwitchForced(newPart);
@@ -1580,32 +1586,101 @@ private void setActivePart(IWorkbenchPart newPart) {
 	activePart = null;		
 	if (oldPart != null) {
 		deactivatePart(oldPart, switchActions, switchActionsForced);
-		firePartDeactivated(oldPart);
 	}
 
 	// Set active part.
 	activePart = newPart;
+	IEditorPart tempLastActiveEditor = lastActiveEditor;
 	if (newPart != null) {	
 		activationList.setActive(newPart);
 		// Upon a new editor being activated, make sure the previously
-		// active editor's toolbar contributions are removed.
+		// active editor's menubar/toolbar contributions are removed.
 		if (newPart instanceof IEditorPart) {
 			if (lastActiveEditor != null) {
-				String newID = newPart.getSite().getId();
-				String oldID = lastActiveEditor.getSite().getId();
-				if (newID != oldID)
+				String newPartID = newPart.getSite().getId();
+				String oldPartID = lastActiveEditor.getSite().getId();
+				if (newPartID != oldPartID)
 					deactivateLastEditor();
 			}
 			lastActiveEditor = (IEditorPart)newPart;
 			editorMgr.setVisibleEditor(lastActiveEditor,true);
 		}
 		activatePart(newPart, switchActions, switchActionsForced);
-		firePartActivated(newPart);
+	}
+
+	boolean changedActionSets = false;
+	if (persp != null && switchActions) {
+		// update the action sets
+		List newActionSets = new ArrayList();
+		if (newPart != null) {
+			IActionSetDescriptor[] partActionSets = 
+				WorkbenchPlugin.getDefault().getActionSetRegistry().getActionSetsFor(newID);
+			for (int i = 0; i < partActionSets.length; i++) {
+				newActionSets.add(partActionSets[i]);
+			}
+	
+			// add the action sets for the active editor (if the new part is a view)
+			if (newPart instanceof IViewPart) {
+				if (tempLastActiveEditor != null) {
+					IActionSetDescriptor[] editorActionSets =
+						WorkbenchPlugin.getDefault().getActionSetRegistry().getActionSetsFor(
+							tempLastActiveEditor.getSite().getId());
+					for (int i = 0; i < editorActionSets.length; i++) {
+						newActionSets.add(editorActionSets[i]);
+					}
+				} 	
+			}
+		}
+
+		// hide the action sets associated only with the old part
+		if (oldPart != null) {
+			IActionSetDescriptor[] oldActionSets = 
+				WorkbenchPlugin.getDefault().getActionSetRegistry().getActionSetsFor(oldID);
+			for (int i = 0; i < oldActionSets.length; i++) {
+				if (!newActionSets.contains(oldActionSets[i])) {
+					persp.hideActionSet(oldActionSets[i].getId());
+					changedActionSets = true;
+				}
+			}
+		}
+		
+		// hide the action sets associated with the last editor if the new part is an editor
+		if (tempLastActiveEditor != null && newPart != null &&
+			newPart instanceof IEditorPart) {
+			IActionSetDescriptor[] oldActionSets = 
+				WorkbenchPlugin.getDefault().getActionSetRegistry().getActionSetsFor(
+					tempLastActiveEditor.getSite().getId());
+			for (int i = 0; i < oldActionSets.length; i++) {
+				if (!newActionSets.contains(oldActionSets[i])) {
+					persp.hideActionSet(oldActionSets[i].getId());
+					changedActionSets = true;
+				}
+			}
+		}
+	
+		// show the action sets associated with the new part
+		for (int i = 0; i < newActionSets.size(); i++) {
+			persp.showActionSet(((IActionSetDescriptor)newActionSets.get(i)).getId());
+			changedActionSets = true;
+		}
 	}
 
 	// Update actions.
-	if (switchActions)
-		updateActionBars();
+	if (changedActionSets) {
+		window.updateActionSets(); // this calls updateActionBars
+		window.firePerspectiveChanged(this, getPerspective(), CHANGE_ACTION_SET_SHOW);
+	} else {
+		if (switchActions)
+			updateActionBars();
+	}
+
+	// fire notifications
+	if (oldPart != null)
+		firePartDeactivated(oldPart);
+	if (newPart != null)
+		firePartActivated(newPart);
+
+	
 }
 /**
  * See IWorkbenchPage.
