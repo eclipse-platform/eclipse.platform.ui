@@ -31,7 +31,7 @@ public class BinaryCompareViewer extends AbstractViewer {
 	private static final String BUNDLE_NAME= "org.eclipse.compare.internal.BinaryCompareViewerResources"; //$NON-NLS-1$
 
 	private static final int EOF= -1;
-	private Text fControl;
+	private Label fControl;
 	private ICompareInput fInput;
 	private ResourceBundle fBundle;
 	private boolean fLeftIsLocal;
@@ -43,8 +43,7 @@ public class BinaryCompareViewer extends AbstractViewer {
 
 		fBundle= ResourceBundle.getBundle(BUNDLE_NAME);
 
-		fControl= new Text(parent, SWT.NONE);
-		fControl.setEditable(false);
+		fControl= new Label(parent, SWT.WRAP);
 		fControl.setData(CompareUI.COMPARE_VIEWER_TITLE, Utilities.getString(fBundle, "title")); //$NON-NLS-1$
 		
 		fLeftIsLocal= Utilities.getBoolean(cc, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
