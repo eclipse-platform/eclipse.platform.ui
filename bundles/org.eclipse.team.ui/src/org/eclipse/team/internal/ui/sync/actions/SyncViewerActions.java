@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.sync.actions;
 
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
@@ -22,11 +22,6 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.sync.sets.SubscriberInput;
 import org.eclipse.team.internal.ui.sync.views.INavigableControl;
 import org.eclipse.team.internal.ui.sync.views.SynchronizeView;
-import org.eclipse.team.ui.sync.AndSyncInfoFilter;
-import org.eclipse.team.ui.sync.PseudoConflictFilter;
-import org.eclipse.team.ui.sync.SyncInfoChangeTypeFilter;
-import org.eclipse.team.ui.sync.SyncInfoDirectionFilter;
-import org.eclipse.team.ui.sync.SyncInfoFilter;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IMemento;
@@ -60,6 +55,7 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 	private Action refreshSelectionAction;
 	private Action toggleViewerType;
 	private Action open;
+	private Action refreshViewContents;
 	private ExpandAllAction expandAll;
 	private SelectAllAction selectAllAction;
 	
@@ -102,20 +98,11 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		
 		selectAllAction = new SelectAllAction(getSyncView());
 		getSyncView().getViewSite().getActionBars().setGlobalActionHandler(ITextEditorActionConstants.SELECT_ALL, selectAllAction);
-
-		
-		Action a= new Action() {
-			public void  run() {
-				getSyncView().collapseAll();
-			}
-		};
-		Utils.initAction(a, "action.collapseAll."); //$NON-NLS-1$
-		
 		
 		expandAll = new ExpandAllAction(this);
 		
 		IKeyBindingService kbs = getSyncView().getSite().getKeyBindingService();
-		a= new Action() {
+		IAction a= new Action() {
 			public void run() {
 				getSyncView().gotoDifference(INavigableControl.NEXT);
 			}
@@ -139,6 +126,21 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 			}
 		};
 		Utils.initAction(collapseAll, "action.collapseAll."); //$NON-NLS-1$
+		
+		refreshViewContents = new Action() {
+			public void run() {
+				SubscriberInput input = 	getSyncView().getInput();
+				if(input != null) {
+					try {
+						input.reset();
+					} catch (TeamException e) {
+						Utils.handle(e);
+					}
+				}
+			}
+		};
+		Utils.initAction(refreshViewContents, "action.refreshViewContents."); //$NON-NLS-1$
+		
 		
 		toggleViewerType = new ToggleViewAction(getSyncView(), getSyncView().getCurrentViewType());
 		open = new OpenInCompareAction(syncView);
@@ -181,6 +183,8 @@ public class SyncViewerActions extends SyncViewerActionGroup {
 		
 		IMenuManager dropDownMenu = actionBars.getMenuManager();
 		workingSetGroup.fillActionBars(actionBars);
+		dropDownMenu.add(refreshViewContents);
+		dropDownMenu.add(new Separator());
 		dropDownMenu.add(new SyncViewerShowPreferencesAction(getSyncView().getSite().getShell()));
 	}
 
