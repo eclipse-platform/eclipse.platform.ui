@@ -37,15 +37,11 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPropertiesDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchWizard;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchWizardDialog;
-import org.eclipse.debug.internal.ui.preferences.DebugWorkInProgressPreferencePage;
 import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
@@ -338,27 +334,21 @@ public class DebugUITools {
 			 * @see java.lang.Runnable#run()
 			 */
 			public void run() {
-			    if (isUseLaunchWizard()) {
-					LaunchWizard wizard = new LaunchWizard(DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier), selection);
-					WizardDialog dialog = new LaunchWizardDialog(DebugUIPlugin.getShell(), wizard);
-					result[0] = dialog.open();		        
-			    } else {			    
-					LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog) LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
-					if (dialog != null) {
-						dialog.setInitialSelection(selection);
-						dialog.doInitialTreeSelection();
-						if (status != null) {
-							dialog.handleStatus(status); 
-						}
-						result[0] = Window.OK;
-					} else {
-						dialog = new LaunchConfigurationsDialog(shell, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier));
-						dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
-						dialog.setInitialSelection(selection);
-						dialog.setInitialStatus(status);
-						result[0] = dialog.open();			
+				LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog) LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+				if (dialog != null) {
+					dialog.setInitialSelection(selection);
+					dialog.doInitialTreeSelection();
+					if (status != null) {
+						dialog.handleStatus(status); 
 					}
-			    }
+					result[0] = Window.OK;
+				} else {
+					dialog = new LaunchConfigurationsDialog(shell, DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(groupIdentifier));
+					dialog.setOpenMode(LaunchConfigurationsDialog.LAUNCH_CONFIGURATION_DIALOG_OPEN_ON_SELECTION);
+					dialog.setInitialSelection(selection);
+					dialog.setInitialStatus(status);
+					result[0] = dialog.open();			
+				}
 			}
 		};
 		BusyIndicator.showWhile(DebugUIPlugin.getStandardDisplay(), r);
@@ -646,13 +636,4 @@ public class DebugUITools {
 		return DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchGroup(configuration, mode);
 	}
 	
-	/**
-	 * Return whether to use the launch wizard instead of the launch dialog
-	 * 
-	 * @return whether to use the launch wizard instead of the launch dialog
-	 * TODO: to be removed
-	 */
-	private static boolean isUseLaunchWizard() {
-	    return DebugUIPlugin.getDefault().getPluginPreferences().getBoolean(DebugWorkInProgressPreferencePage.WIP_PREF_USE_LAUNCH_WIZARD);
-	}
 }
