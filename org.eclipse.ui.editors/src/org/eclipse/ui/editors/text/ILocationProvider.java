@@ -20,15 +20,9 @@ public interface ILocationProvider {
 	/**
 	 * Returns the location of the given object or <code>null</code>.
 	 * <p>
-	 * The provided location must fulfill the following requirements:
+	 * The provided location is either a full path of a workspace resource or
+	 * an absolute path in the local file system.
 	 * </p>
-	 * <ul>
-	 * <li>It is given as an absolute path in the local file system.</li>
-	 * <li>If the element is a workspace resource, the location describes the
-	 * location inside the workspace. I.e. for linked resources the location is
-	 * the unresolved location and the not the resolved location to the lnked
-	 * resource's local content.</li>
-	 * </ul>
 	 * 
 	 * @return the location of the given object or <code>null</code>
 	 */

@@ -374,18 +374,6 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 		return new FileInfo();
 	}
 	
-	/**
-	 * Returns the workspace file at the given location or <code>null</code> if
-	 * the location is not a valid location in the workspace.
-	 * 
-	 * @param location the location
-	 * @return the workspace file at the location or <code>null</code>
-	 */
-	protected IFile getWorkspaceFileAtLocation(IPath location) {
-		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		return workspace.getRoot().getFileForLocation(location);
-	}
-	
 	protected FileInfo createFileInfo(Object element) throws CoreException {
 		
 		IPath location= null;
@@ -406,7 +394,7 @@ public class TextFileDocumentProvider  implements IDocumentProvider, IDocumentPr
 			info.fTextFileBuffer= fileBuffer;
 			info.fCachedReadOnlyState= isSystemFileReadOnly(info);
 			
-			IFile file= getWorkspaceFileAtLocation(location);
+			IFile file= FileBuffers.getWorkspaceFileAtLocation(location);
 			if (file != null && file.exists())
 				info.fModel= createAnnotationModel(file);
 			return info;
