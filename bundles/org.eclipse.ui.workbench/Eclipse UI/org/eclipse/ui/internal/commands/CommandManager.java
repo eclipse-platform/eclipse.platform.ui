@@ -758,6 +758,8 @@ public final class CommandManager implements ICommandManager {
 	}
 
 
+
+
 	// TODO move to workbench?
 	public Integer getAccelerator(String commandId) {
 		Integer accelerator = null;
@@ -805,23 +807,26 @@ public final class CommandManager implements ICommandManager {
 	 
 	// TODO move to workbench?
 	public String getCommandId(int accelerator) {
-		KeySequence mode = getMode();
-		List keyStrokes = new ArrayList(mode.getKeyStrokes());
-		keyStrokes.add(KeySupport.convertAcceleratorToKeyStroke(accelerator));
-		KeySequence childMode = KeySequence.getInstance(keyStrokes);
-		Match match = (Match) getMatchesByKeySequence().get(childMode);
+		return getCommandId(KeySequence.getInstance(KeySupport.convertAcceleratorToKeyStroke(accelerator)));
+	}
+	
+	public String getCommandId(KeySequence keySequence) {
+		Match match = (Match) getMatchesByKeySequence().get(keySequence);
 		return match != null ? match.getCommandId() : null;
-	}	
+	}
+
+	boolean isPartialMatch() {
+		return true;
+	}
+	
+	
+	
 	
 	
 	public Map getKeySequenceBindingsByCommandId() {
 		return keySequenceBindingMachine.getKeySequenceBindingsByCommandId();
 	}
 	
-	public Map getKeySequenceBindingsByCommandIdForMode() {
-		return keySequenceBindingMachine.getKeySequenceBindingsByCommandIdForMode();
-	}
-
 	public Map getMatchesByKeySequence() {
 		return keySequenceBindingMachine.getMatchesByKeySequence();
 	}
@@ -857,8 +862,6 @@ public final class CommandManager implements ICommandManager {
 	}
 	
 	/* TODO			
-
-	
 		HashSet categoryIdsReferencedByCommandDefinitions = new HashSet();
 
 		for (Iterator iterator = commandDefinitionsById.values().iterator(); iterator.hasNext();) {
