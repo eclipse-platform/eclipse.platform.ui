@@ -979,7 +979,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @param size the minimal size of the range 
 	 * @return the first range found, or the last range in the differ if none can be found
 	 */
-	private RangeDifference findConsistentRangeAfterRight(int line, int size) throws BadLocationException {
+	private RangeDifference findConsistentRangeAfterRight(int line, int size) {
 		RangeDifference found= null;
 		
 		int unchanged= -1; // the number of unchanged lines after line
