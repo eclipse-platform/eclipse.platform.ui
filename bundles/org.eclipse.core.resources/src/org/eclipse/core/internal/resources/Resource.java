@@ -1163,7 +1163,7 @@ public boolean isTeamPrivateMember() {
 /**
  * Returns whether the team private member flag is set in the given resource info flags.
  * 
- * @param flags resource info flags (bitwuise or of M_* constants)
+ * @param flags resource info flags (bitwise or of M_* constants)
  * @return <code>true</code> if the team private member flag is set, and 
  *    <code>false</code> if the flag is not set or if the flags are <code>NULL_FLAG</code>
  */
