@@ -15,7 +15,8 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 /**
  * Manages the decorators contributed via the decorators extension point.
  * Views which allow decoration of their elements should use the label
- * decorator returned by <code>getLabelDecorator()</code>.
+ * decorator returned by <code>getLabelDecorator()</code>.This class is not
+ * intended to be implemented by clients.
  */
 
 public interface IDecoratorManager {
