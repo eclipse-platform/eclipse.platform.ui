@@ -32,6 +32,12 @@ public class SearchIndex {
 	private static final String ANALYZER_VERSION_FILENAME = "indexed_analyzer";
 	private File analyzerVersionFile;
 	private File inconsistencyFile;
+	
+	/**
+	 * Constructor.
+	 * @param locale the locale this index uses
+	 * @param analyzerDesc the analyzer used to index
+	 */
 	public SearchIndex(String locale, AnalyzerDescriptor analyzerDesc) {
 		super();
 		this.locale = locale;

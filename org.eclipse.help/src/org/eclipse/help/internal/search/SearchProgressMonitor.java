@@ -2,7 +2,7 @@
  * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
-package org.eclipse.help.internal.protocols;
+package org.eclipse.help.internal.search;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 

@@ -7,7 +7,6 @@ package org.eclipse.help.internal.search;
 import java.net.*;
 import java.util.*;
 
-import org.apache.lucene.analysis.Analyzer;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.help.internal.*;
@@ -18,12 +17,13 @@ import org.eclipse.help.internal.util.*;
  * Manages indexing and search for all infosets
  */
 public class SearchManager {
-	/** Search indexes, indexed (no pun!) by locale */
+	/** Search indexes, by locale */
 	private Map indexes = new HashMap();
 	/** Caches analyzer descriptors for each locale */
 	private Map analyzerDescriptors = new HashMap();
 	/** Progress Distributors indexed by index */
 	private Map progressDistibutors = new HashMap();
+	
 	/**
 	 * Constructs a Search manager.
 	 */
@@ -61,81 +61,18 @@ public class SearchManager {
 			(AnalyzerDescriptor) analyzerDescriptors.get(locale);
 		if (analyzerDesc != null)
 			return analyzerDesc;
+			
 		// obtain configured analyzer for this locale
-		analyzerDesc = createAnalyzer(locale);
-		if (analyzerDesc != null) {
-			// save analyzer in the cache
-			analyzerDescriptors.put(locale, analyzerDesc);
-			return analyzerDesc;
-		}
-		// obtains configured analyzer for the language only
-		String language = null;
-		if (locale.length() > 2) {
-			language = locale.substring(0, 2);
-			analyzerDesc = createAnalyzer(language);
-			if (analyzerDesc != null) {
-				// save analyzer in the cache
-				analyzerDescriptors.put(language, analyzerDesc);
-				analyzerDescriptors.put(locale, analyzerDesc);
-				return analyzerDesc;
-			}
-		}
-		// create default analyzer
-		String defaultAnalyzerID =
-			HelpPlugin.getDefault().getDescriptor().getUniqueIdentifier()
-				+ "#"
-				+ HelpPlugin.getDefault().getDescriptor().getVersionIdentifier().toString();
-		analyzerDesc =
-			new AnalyzerDescriptor(new DefaultAnalyzer(locale), defaultAnalyzerID);
+		analyzerDesc = new AnalyzerDescriptor(locale);
+		// save analyzer in the cache
 		analyzerDescriptors.put(locale, analyzerDesc);
+		String lang = analyzerDesc.getLang();
+		if (locale!=null && !locale.equals(lang)) 
+			analyzerDescriptors.put(lang, analyzerDesc);
+
 		return analyzerDesc;
 	}
-	/**
-	 * Creates analyzer descriptor for a locale, 
-	 * if it is configured in the org.eclipse.help.luceneAnalyzer
-	 * extension point.
-	 * @return AnalyzerDescriptro or null if no analyzer is configured
-	 * for given locale.
-	 */
-	private AnalyzerDescriptor createAnalyzer(String locale) {
-		Collection contributions = new ArrayList();
-		// find extension point
-		IConfigurationElement configElements[] =
-			Platform.getPluginRegistry().getConfigurationElementsFor(
-				"org.eclipse.help",
-				"luceneAnalyzer");
-		for (int i = 0; i < configElements.length; i++) {
-			if (!configElements[i].getName().equals("analyzer"))
-				continue;
-			String analyzerLocale = configElements[i].getAttribute("locale");
-			if (analyzerLocale == null || !analyzerLocale.equals(locale))
-				continue;
-			try {
-				Object analyzer = configElements[i].createExecutableExtension("class");
-				if (!(analyzer instanceof Analyzer))
-					continue;
-				String pluginId =
-					configElements[i]
-						.getDeclaringExtension()
-						.getDeclaringPluginDescriptor()
-						.getUniqueIdentifier();
-				String pluginVersion =
-					configElements[i]
-						.getDeclaringExtension()
-						.getDeclaringPluginDescriptor()
-						.getVersionIdentifier()
-						.toString();
-				AnalyzerDescriptor analyzerDesc =
-					new AnalyzerDescriptor((Analyzer) analyzer, pluginId + "#" + pluginVersion);
-				return analyzerDesc;
-			} catch (CoreException ce) {
-				Logger.logError(
-					Resources.getString("ES23", configElements[i].getAttribute("class"), locale),
-					ce);
-			}
-		}
-		return null;
-	}
+
 	/**
 	 * Returns the documents to be added to index. 
 	 * The collection consists of the associated PluginURL objects.
