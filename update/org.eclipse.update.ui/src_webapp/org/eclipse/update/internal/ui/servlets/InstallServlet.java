@@ -158,6 +158,7 @@ public class InstallServlet extends HttpServlet {
 		URL siteURL,
 		VersionedIdentifier vid,
 		final boolean needLicensePage) {
+		shell.forceActive();
 		IFeature feature =
 			DetailsForm.fetchFeatureFromServer(shell, siteURL, vid);
 		if (feature == null)
