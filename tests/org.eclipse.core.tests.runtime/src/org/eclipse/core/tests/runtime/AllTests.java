@@ -42,7 +42,7 @@ public static Test suite() {
 	suite.addTest(org.eclipse.core.tests.internal.preferences.AllTests.suite());
 	suite.addTest(PreferenceForwarderTest.suite());
 	suite.addTest(org.eclipse.core.tests.internal.osgi.AllTests.suite());
-	suite.addTest(org.eclipse.core.tests.runtime.content.IContentTypeManagerTest.suite());	
+	suite.addTest(org.eclipse.core.tests.runtime.content.AllTests.suite());	
 	return suite;
 }
 }
