@@ -22,7 +22,6 @@ import org.eclipse.update.core.IFeatureContentProvider;
 import org.eclipse.update.core.IPluginEntry;
 import org.eclipse.update.core.JarContentReference;
 import org.eclipse.update.core.model.InstallAbortedException;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * Converts eclipse build .zip files into packaged feature

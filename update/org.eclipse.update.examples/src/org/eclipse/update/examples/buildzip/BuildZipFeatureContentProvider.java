@@ -8,7 +8,6 @@ package org.eclipse.update.examples.buildzip;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.jar.JarEntry;
 
@@ -27,7 +26,6 @@ import org.eclipse.update.core.JarContentReference;
 import org.eclipse.update.core.JarContentReference.ContentSelector;
 import org.eclipse.update.core.model.FeatureModel;
 import org.eclipse.update.core.model.InstallAbortedException;
-import org.eclipse.update.internal.core.UpdateManagerUtils;
 
 /**
  * An example feature content provider. It handles features packaged as

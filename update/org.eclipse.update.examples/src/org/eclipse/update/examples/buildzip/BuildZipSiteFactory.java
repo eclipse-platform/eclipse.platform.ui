@@ -15,13 +15,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.BaseSiteFactory;
 import org.eclipse.update.core.ISite;
 import org.eclipse.update.core.Site;
-import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.InvalidSiteTypeException;
 import org.eclipse.update.core.model.CategoryModel;
 

@@ -15,7 +15,6 @@ import java.util.StringTokenizer;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.update.core.ContentReference;
 import org.eclipse.update.core.model.FeatureModel;
-import org.eclipse.update.core.model.NonPluginEntryModel;
 import org.eclipse.update.core.model.PluginEntryModel;
 import org.eclipse.update.core.model.URLEntryModel;
 
