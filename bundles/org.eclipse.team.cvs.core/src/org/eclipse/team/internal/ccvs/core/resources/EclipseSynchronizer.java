@@ -1276,7 +1276,7 @@ public class EclipseSynchronizer {
 			} 					
 			
 			if (Policy.DEBUG_DIRTY_CACHING) {
-				debug(resource, indicator, "adjusting dirty state");
+				debug(resource, indicator, "adjusting dirty state"); //$NON-NLS-1$
 			}
 
 			getSyncInfoCacheFor(resource).setDirtyIndicator(resource, indicator);										
@@ -1370,13 +1370,13 @@ public class EclipseSynchronizer {
 	static public void debug(IResource resource, String indicator, String string) {
 		String di = EclipseSynchronizer.IS_DIRTY_INDICATOR;
 		if(indicator == EclipseSynchronizer.IS_DIRTY_INDICATOR) {
-			di = "dirty";
+			di = "dirty";	//$NON-NLS-1$
 		} else if(indicator == EclipseSynchronizer.NOT_DIRTY_INDICATOR) {
-			di = "clean";
+			di = "clean";	//$NON-NLS-1$
 		} else {
-			di = "needs recomputing";
+			di = "needs recomputing";	//$NON-NLS-1$
 		} 
-		System.out.println("["+string + ":" + di + "]  "  + resource.getFullPath());
+		System.out.println("["+string + ":" + di + "]  "  + resource.getFullPath()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	static public void debug(IResource resource, boolean modified, String string) {
@@ -1390,7 +1390,7 @@ public class EclipseSynchronizer {
 	public int getModificationState(IResource resource) throws CVSException {
 		String indicator =  getDirtyIndicator(resource);
 		if (Policy.DEBUG_DIRTY_CACHING) {
-			debug(resource, indicator, "getModificationState");
+			debug(resource, indicator, "getModificationState"); //$NON-NLS-1$
 		}
 		if (indicator == null || indicator == RECOMPUTE_INDICATOR) {
 			return ICVSFile.UNKNOWN;
