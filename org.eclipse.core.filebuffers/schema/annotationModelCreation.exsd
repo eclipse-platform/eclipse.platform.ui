@@ -85,7 +85,7 @@
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         [Enter the first release in which this extension point appears.]
+         3.0
       </documentation>
    </annotation>
 
@@ -129,7 +129,12 @@
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         
+         &lt;p&gt;
+&lt;a href=&quot;hglegal.htm&quot;&gt;
+ &lt;img SRC=&quot;ngibmcpy.gif&quot;
+   ALT=&quot;Copyright (c) 2003, 2004 IBM Corporation and others. All Rights Reserved.&quot;
+   BORDER=0 height=14 width=324&gt;&lt;/a&gt;
+&lt;/p&gt;
       </documentation>
    </annotation>
 
