@@ -283,7 +283,7 @@ public class AntPropertiesBlock {
 	private void propertyTableSelectionChanged(IStructuredSelection newSelection) {
 		int size= newSelection.size();
 		removeButton.setEnabled(size > 0);
-		editButton.setEnabled(size > 0);
+		editButton.setEnabled(size == 1);
 	}
 	
 	public void populatePropertyViewer(Map properties) {
