@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     John-Mason P. Shackelford - initial API and implementation
- *     IBM - Bug 73411
+ *     IBM Corporation - Bug 73411, 84342
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.editor.formatter;
 
