@@ -21,7 +21,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.internal.*;
+import org.eclipse.compare.internal.CompareUIPlugin;
+import org.eclipse.compare.internal.DiffImage;
 import org.eclipse.compare.structuremergeviewer.*;
 
 

@@ -173,7 +173,7 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		
 		getShell().setText(Utilities.getString(fBundle, "title")); //$NON-NLS-1$
 		
-		Splitter vsplitter= new Splitter(parent,  SWT.VERTICAL);
+		org.eclipse.compare.Splitter vsplitter= new org.eclipse.compare.Splitter(parent,  SWT.VERTICAL);
 		vsplitter.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL
 					| GridData.VERTICAL_ALIGN_FILL | GridData.GRAB_VERTICAL));
 
@@ -189,7 +189,7 @@ public class AddFromHistoryDialog extends ResizableDialog {
 		);
 		
 		// we need two panes: the left for the elements, the right one for the editions
-		Splitter hsplitter= new Splitter(vsplitter,  SWT.HORIZONTAL);
+		org.eclipse.compare.Splitter hsplitter= new org.eclipse.compare.Splitter(vsplitter,  SWT.HORIZONTAL);
 		
 		Composite c= new Composite(hsplitter, SWT.NONE);
 		GridLayout layout= new GridLayout();
