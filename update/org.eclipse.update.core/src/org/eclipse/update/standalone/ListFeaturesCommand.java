@@ -19,7 +19,7 @@ import org.eclipse.update.internal.core.*;
 
 
 /**
- * Lists installed features.
+ * Command to list all installed features.
  * <p>
  * <b>Note:</b> This class/interface is part of an interim API that is still under development and expected to
  * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
