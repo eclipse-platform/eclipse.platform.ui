@@ -205,6 +205,12 @@ public class WWinKeyBindingService {
     public boolean acceleratorsAllowed() {
     	return acceleratorsAllowed;
     }
+    public String getDefinitionId(int accelerator[]) {
+    	if(activeService == null) return null;
+    	AcceleratorScope scope = activeService.getActiveAcceleratorScope();
+    	if(scope == null) return null;
+    	return scope.getDefinitionId(accelerator);
+    }
     public String getAcceleratorText(String definitionId) {
     	if(activeService == null) return null;
     	AcceleratorScope scope = activeService.getActiveAcceleratorScope();

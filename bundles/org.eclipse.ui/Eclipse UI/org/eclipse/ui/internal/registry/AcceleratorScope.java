@@ -83,6 +83,25 @@ public class AcceleratorScope {
 		return result;
 	}
 	/**
+	 * Returns the defition id of the action registered for the
+	 * specified accelerator;
+	 */
+	public String getDefinitionId(int accelerator[]) {
+		if(accelerator == null)
+			return null;
+		AcceleratorMode mode = defaultMode;
+		for (int i = 0; i < accelerator.length; i++) {
+			AcceleratorAction action = mode.getAction(accelerator[i]);
+			if(action == null)
+				return null;
+			if(action.isMode())
+				mode = (AcceleratorMode)action;
+			else
+				return action.getId();
+		}
+		return null;
+	}
+	/**
 	 * Returns the parent scope of the current scope. For example, if the current
 	 * scope is that of a page of a multi-page editor, the parent scope would be
 	 * the scope of the editor.
@@ -240,6 +259,9 @@ public class AcceleratorScope {
 		String id;
 		AcceleratorAction(String defId) {
 			id = defId;
+		}
+		public String getId() {
+			return id;
 		}
 		public boolean isMode() {
 			return false;
