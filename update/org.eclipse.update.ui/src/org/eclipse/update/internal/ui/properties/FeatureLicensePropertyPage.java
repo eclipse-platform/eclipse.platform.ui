@@ -32,7 +32,7 @@ public class FeatureLicensePropertyPage extends PropertyPage implements IWorkben
 			String annotation = (license != null) ? license.getAnnotation() : null;
 			
 			if (annotation != null && annotation.length() > 0) {
-				Text text = new Text(composite, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+				Text text = new Text(composite, SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER | SWT.WRAP);
 				GridData gd = new GridData(GridData.FILL_BOTH);
 				gd.heightHint = 200;
 				gd.widthHint = 350;
