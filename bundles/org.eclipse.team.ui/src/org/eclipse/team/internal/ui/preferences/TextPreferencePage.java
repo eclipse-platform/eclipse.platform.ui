@@ -12,8 +12,10 @@ package org.eclipse.team.internal.ui.preferences;
 
  
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -33,6 +35,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.team.core.IFileContentManager;
 import org.eclipse.team.core.IStringMapping;
 import org.eclipse.team.core.Team;
 import org.eclipse.team.internal.ui.IHelpContextIds;
@@ -95,6 +98,9 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 	private Button fChangeButton;
 
     protected FileTypeTable fTable;
+
+	private Set fPluginNames;
+	private Set fPluginExtensions;
     
     public TextPreferencePage() {
         fItems= new ArrayList();
@@ -104,9 +110,14 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
     private void initializeItems() {
         
         fItems.clear();
+        
+        final IFileContentManager manager= Team.getFileContentManager();
 
-	    final IStringMapping [] extensionInfoArray= Team.getFileContentManager().getExtensionMappings();
-        final IStringMapping [] nameInfoArray= Team.getFileContentManager().getNameMappings();
+	    final IStringMapping [] extensionInfoArray= manager.getExtensionMappings();
+        final IStringMapping [] nameInfoArray= manager.getNameMappings();
+        
+        fPluginNames= makeSetOfStrings(manager.getDefaultNameMappings());
+        fPluginExtensions= makeSetOfStrings(manager.getDefaultExtensionMappings());
         
         for (int i = 0; i < extensionInfoArray.length; i++) {
             final IStringMapping info= extensionInfoArray[i];
@@ -122,6 +133,14 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
             fItems.add(name);
         }
 
+    }
+    
+    private static Set makeSetOfStrings(IStringMapping [] mappings) {
+    	final Set set= new HashSet(mappings.length);
+    	for (int i = 0; i < mappings.length; i++) {
+			set.add(mappings[i].getString());
+		}
+    	return set;
     }
 	
 	/* (non-Javadoc)
@@ -173,6 +192,8 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		fChangeButton.setText(Policy.bind("TextPreferencePage.change")); //$NON-NLS-1$
 		fRemoveButton= new Button(buttonsComposite, SWT.PUSH);
 		fRemoveButton.setText(Policy.bind("TextPreferencePage.remove")); //$NON-NLS-1$
+		
+		SWTUtils.createLabel(composite, Policy.bind("TextPreferencePage.1"), 2); //$NON-NLS-1$
 		
 		/**
 		 * Calculate and set the button size 
@@ -325,6 +346,10 @@ public class TextPreferencePage extends PreferencePage implements IWorkbenchPref
 		
 		for (final Iterator it = selection.iterator(); it.hasNext(); ) {
 			final FileTypeTable.Item item= (FileTypeTable.Item)it.next();
+			if (item instanceof FileTypeTable.Extension && fPluginExtensions.contains(item.name))
+				continue;
+			if (item instanceof FileTypeTable.Name && fPluginNames.contains(item.name))
+				continue;
 			fItems.remove(item);
 		}
 		fTable.getViewer().refresh();
