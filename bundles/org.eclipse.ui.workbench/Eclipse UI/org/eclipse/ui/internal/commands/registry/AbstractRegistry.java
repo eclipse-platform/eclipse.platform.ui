@@ -12,7 +12,9 @@
 package org.eclipse.ui.internal.commands.registry;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 abstract class AbstractRegistry 
@@ -28,9 +30,20 @@ abstract class AbstractRegistry
 	protected List gestureConfigurations = Collections.EMPTY_LIST;
 	protected List keyBindings = Collections.EMPTY_LIST;
 	protected List keyConfigurations = Collections.EMPTY_LIST;
+	
+	private RegistryEvent registryEvent;
+	private List registryListeners;
 
 	protected AbstractRegistry() {
 		super();
+	}
+
+	public void addRegistryListener(IRegistryListener registryListener) {
+		if (registryListeners == null)
+			registryListeners = new ArrayList();
+		
+		if (!registryListeners.contains(registryListener))
+			registryListeners.add(registryListener);
 	}
 
 	public List getActiveGestureConfigurations() {
@@ -72,7 +85,29 @@ abstract class AbstractRegistry
 	public List getKeyConfigurations() {
 		return keyConfigurations;
 	}
-	
+
 	public abstract void load()
 		throws IOException;
+
+	public void removeRegistryListener(IRegistryListener registryListener) {
+		if (registryListeners != null) {
+			registryListeners.remove(registryListener);
+			
+			if (registryListeners.isEmpty())
+				registryListeners = null;
+		}
+	}
+
+	protected void fireRegistryChanged() {
+		if (registryListeners != null) {
+			Iterator iterator = registryListeners.iterator();
+			
+			while (iterator.hasNext()) {
+				if (registryEvent == null)
+					registryEvent = new RegistryEvent(this);
+				
+				((IRegistryListener) iterator.next()).registryChanged(registryEvent);
+			}							
+		}			
+	}
 }	

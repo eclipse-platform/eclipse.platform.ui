@@ -67,6 +67,7 @@ public final class PreferenceRegistry extends AbstractMutableRegistry {
 				throw new IOException();
 			} finally {
 				reader.close();
+				fireRegistryChanged();				
 			}
 		}
 	}

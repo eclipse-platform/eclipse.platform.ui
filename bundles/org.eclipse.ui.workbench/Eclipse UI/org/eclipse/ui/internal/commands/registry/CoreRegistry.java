@@ -237,6 +237,7 @@ public final class CoreRegistry extends AbstractRegistry {
 		if (!loaded) {
 			new RegistryReader(Platform.getPluginRegistry());
 			loaded = true;
+			fireRegistryChanged();
 		}
 	}
 }
