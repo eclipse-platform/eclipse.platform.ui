@@ -70,7 +70,7 @@ public final class ObjectContributionTest extends UITestCase {
         testProject.create(null);
         testProject.open(null);
         final IFile xmlFile = testProject.getFile("ObjectContributionTest.xml");
-        final String contents = "<project></project>";
+        final String contents = "<testObjectStateContentTypeElement></testObjectStateContentTypeElement>";
         final ByteArrayInputStream inputStream = new ByteArrayInputStream(
                 contents.getBytes());
         xmlFile.create(inputStream, true, null);
