@@ -1094,7 +1094,7 @@ public final class Workbench implements IWorkbench {
 	 */
 	private int openPreviousWorkbenchState() {
 		
-		if (!getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOULD_SAVE_WORKBENCH_STATE)) {
+		if (!getWorkbenchConfigurer().getSaveAndRestore()) {
 			return RESTORE_CODE_RESET;
 		}
 		// Read the workbench state file.
