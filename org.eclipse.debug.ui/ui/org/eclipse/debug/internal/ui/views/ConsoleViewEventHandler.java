@@ -27,19 +27,28 @@ public class ConsoleViewEventHandler extends AbstractDebugEventHandler {
 	}
 	
 	/**
-	 * @see AbstractDebugEventHandler#doHandleDebugEvent(DebugEvent)
+	 * @see AbstractDebugEventHandler#doHandleDebugEvents(DebugEvent[])
 	 */
-	protected void doHandleDebugEvent(DebugEvent event) {
+	protected void doHandleDebugEvents(DebugEvent[] events) {
 		boolean update= false;
-		Object source= event.getSource();
-		IProcess process= getConsoleView().getProcess();
-		if (source.equals(process)) {
-			update= true;
-		} else {
-			if (process != null) {
-				Object obj = process.getAdapter(IDebugTarget.class);
-				if (source.equals(obj)) {
-					update= true;	
+		
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			Object source= event.getSource();
+			if (source == null) {
+				continue;
+			}
+			IProcess process= getConsoleView().getProcess();
+			if (source.equals(process)) {
+				update= true;
+				break;
+			} else {
+				if (process != null) {
+					Object obj = process.getAdapter(IDebugTarget.class);
+					if (source.equals(obj)) {
+						update= true;	
+						break;
+					}
 				}
 			}
 		}

@@ -6,13 +6,12 @@ package org.eclipse.debug.internal.core;
  */
  
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.IExpressionListener;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.model.IExpression;
@@ -26,7 +25,7 @@ import org.eclipse.debug.core.model.IExpression;
  *
  * @see IExpressionManager
  */
-public class ExpressionManager implements IExpressionManager, IDebugEventListener {
+public class ExpressionManager implements IExpressionManager, IDebugEventSetListener {
 	
 	/**
 	 * Collection of registered expressions.
@@ -127,19 +126,22 @@ public class ExpressionManager implements IExpressionManager, IDebugEventListene
 	/**
 	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
 	 */
-	public void handleDebugEvent(DebugEvent event) {
-		if (event.getSource() instanceof IExpression) {
-			switch (event.getKind()) {
-				case DebugEvent.CHANGE:
-					fireExpressionChanged((IExpression)event.getSource());
-					break;
-				case DebugEvent.TERMINATE:
-					removeExpression((IExpression)event.getSource());
-					break;
-				default:
-					break;
-			}
-		} 
+	public void handleDebugEvents(DebugEvent[] events) {
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getSource() instanceof IExpression) {
+				switch (event.getKind()) {
+					case DebugEvent.CHANGE:
+						fireExpressionChanged((IExpression)event.getSource());
+						break;
+					case DebugEvent.TERMINATE:
+						removeExpression((IExpression)event.getSource());
+						break;
+					default:
+						break;
+				}
+			} 
+		}
 	}
 	
 	/**

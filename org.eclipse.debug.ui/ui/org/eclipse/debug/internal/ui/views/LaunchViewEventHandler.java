@@ -48,38 +48,45 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 	
 
 	/**
-	 * @see AbstractDebugEventHandler#doHandleDebugEvent(DebugEvent)
+	 * @see AbstractDebugEventHandler#doHandleDebugEvents(DebugEvent[])
 	 */
-	protected void doHandleDebugEvent(DebugEvent event) {
-		Object element= event.getSource();
-		if (element instanceof IVariable || element instanceof IValue || element instanceof IExpression) {
-			// the debug view does not show variables
-			return;
-		}
-		switch (event.getKind()) {
-			case DebugEvent.CREATE :
-				insert(element);
-				break;
-			case DebugEvent.TERMINATE :
-				if (element instanceof IThread) {
-					clearSourceSelection((IThread)element);
-					fStackFrameCountByThread.remove(element);
-					remove(element);
-				} else {
-					clearSourceSelection(null);
-					Object parent = ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(element);
-					refresh(parent);
-				}
-				break;
-			case DebugEvent.RESUME :
-				doHandleResumeEvent(event, element);
-				break;
-			case DebugEvent.SUSPEND :
-				doHandleSuspendEvent(element, event);
-				break;
-			case DebugEvent.CHANGE :
-				refresh(element);
-				break;
+	protected void doHandleDebugEvents(DebugEvent[] events) {
+		Object suspendee = null;
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			Object element= event.getSource();
+			if (element instanceof IVariable || element instanceof IValue || element instanceof IExpression) {
+				// the debug view does not show variables
+				return;
+			}
+			switch (event.getKind()) {
+				case DebugEvent.CREATE :
+					insert(element);
+					break;
+				case DebugEvent.TERMINATE :
+					if (element instanceof IThread) {
+						clearSourceSelection((IThread)element);
+						fStackFrameCountByThread.remove(element);
+						remove(element);
+					} else {
+						clearSourceSelection(null);
+						Object parent = ((ITreeContentProvider)getTreeViewer().getContentProvider()).getParent(element);
+						refresh(parent);
+					}
+					break;
+				case DebugEvent.RESUME :
+					doHandleResumeEvent(event, element);
+					break;
+				case DebugEvent.SUSPEND :
+					if (suspendee == null || !suspendee.equals(element)) {
+						doHandleSuspendEvent(element, event);
+						suspendee = element;
+					}
+					break;
+				case DebugEvent.CHANGE :
+					refresh(element);
+					break;
+			}
 		}
 	}
 		

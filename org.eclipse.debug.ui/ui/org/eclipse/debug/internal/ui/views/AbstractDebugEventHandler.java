@@ -7,7 +7,7 @@ package org.eclipse.debug.internal.ui.views;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * Handles debug events, updating a view and viewer.
  */
-public abstract class AbstractDebugEventHandler implements IDebugEventListener {
+public abstract class AbstractDebugEventHandler implements IDebugEventSetListener {
 	
 	/**
 	 * This event handler's view
@@ -37,20 +37,16 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	}
 	
 	/**
-	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
-	public void handleDebugEvent(final DebugEvent event) {
-		Object element= event.getSource();
-		if (element == null) {
-			return;
-		}
+	public void handleDebugEvents(final DebugEvent[] events) {
 		if (!isAvailable()) {
 			return;
 		}
 		Runnable r= new Runnable() {
 			public void run() {
 				if (isAvailable()) {
-					doHandleDebugEvent(event);
+					doHandleDebugEvents(events);
 				}
 			}
 		};
@@ -63,7 +59,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventListener {
 	 * Implementation specific handling of debug events.
 	 * Subclasses should override.
 	 */
-	protected abstract void doHandleDebugEvent(DebugEvent event);	
+	protected abstract void doHandleDebugEvents(DebugEvent[] events);	
 		
 	/**
 	 * Helper method for inserting the given element - must be called in UI thread

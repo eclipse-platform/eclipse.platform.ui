@@ -26,28 +26,35 @@ public class VariablesViewEventHandler extends AbstractDebugEventHandler {
 	}
 	
 	/**
-	 * @see BasicContentProvider#doHandleDebug(Event)
+	 * @see AbstractDebugEventHandler#handleDebugEvents(DebugEvent[])
 	 */
-	protected void doHandleDebugEvent(DebugEvent event) {		
-		switch (event.getKind()) {
-			case DebugEvent.SUSPEND:
-				if (event.getDetail() != DebugEvent.EVALUATION_READ_ONLY) {
-					refresh();
-				}
-				if (event.getDetail() == DebugEvent.STEP_END) {
-					getVariablesView().populateDetailPane();
-				}
-				break;
-			case DebugEvent.CHANGE:
-				if (event.getDetail() == DebugEvent.STATE) {
-					// only process variable state changes
-					if (event.getSource() instanceof IVariable) {
-						refresh(event.getSource());
+	protected void doHandleDebugEvents(DebugEvent[] events) {	
+		for (int i = 0; i < events.length; i++) {	
+			DebugEvent event = events[i];
+			switch (event.getKind()) {
+				case DebugEvent.SUSPEND:
+					if (event.getDetail() != DebugEvent.EVALUATION_READ_ONLY) {
+						refresh();
+						if (event.getDetail() == DebugEvent.STEP_END) {
+							getVariablesView().populateDetailPane();
+						}
+						// return since we've done a complete refresh
+						return;
 					}
-				} else {
-					refresh();
-				}
-				break;
+					break;
+				case DebugEvent.CHANGE:
+					if (event.getDetail() == DebugEvent.STATE) {
+						// only process variable state changes
+						if (event.getSource() instanceof IVariable) {
+							refresh(event.getSource());
+						}
+					} else {
+						refresh();
+						// return since we've done a complete refresh
+						return;
+					}
+					break;
+			}
 		}
 	}
 

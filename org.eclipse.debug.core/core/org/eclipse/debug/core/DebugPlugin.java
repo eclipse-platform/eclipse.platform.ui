@@ -6,6 +6,7 @@ package org.eclipse.debug.core;
  */
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -173,10 +174,22 @@ public class DebugPlugin extends Plugin {
 	 * registered.
 	 *
 	 * @param listener the listener to add
+	 * @deprecated use #addDebugEventListener(IDebugEventSetListener)
 	 */
 	public void addDebugEventListener(IDebugEventListener listener) {
 		fEventListeners.add(listener);
 	}
+	
+	/**
+	 * Adds the given listener to the collection of registered debug
+	 * event listeners. Has no effect if an identical listener is already
+	 * registered.
+	 *
+	 * @param listener the listener to add
+	 */
+	public void addDebugEventListener(IDebugEventSetListener listener) {
+		fEventListeners.add(listener);
+	}	
 
 	/**
 	 * Notifies all registered debug event listeners of the given event.
@@ -187,12 +200,73 @@ public class DebugPlugin extends Plugin {
 	 * @see IDebugEventFilter
 	 */
 	public void fireDebugEvent(DebugEvent event) {
-		if (isShuttingDown() || event == null || isFiltered(event))
+		fireDebugEventSet(new DebugEvent[] {event});
+	}
+	
+	/**
+	 * Notifies all registered debug event set listeners of the given
+	 * debug events. Events which are filtered by a registered debug event
+	 * filter are not fired.
+	 * 
+	 * @param events array of debug events to fire
+	 * @see IDebugEventFilter
+	 * @see IDebugEventSetListener
+	 */
+	public void fireDebugEventSet(DebugEvent[] events) {
+		if (isShuttingDown() || events == null)
 			return;
-		
-		Object[] listeners= getEventListeners();
-		for (int i= 0; i < listeners.length; i++) {
-			((IDebugEventListener)listeners[i]).handleDebugEvent(event);
+		events = filterEvents(events);
+		if (events == null) {
+			return;
+		} else {
+			Object[] listeners= getEventListeners();
+			for (int i= 0; i < listeners.length; i++) {
+				Object listener = listeners[i];
+				if (listener instanceof IDebugEventSetListener) {
+					((IDebugEventSetListener)listener).handleDebugEvents(events);
+				} else {
+					for (int j = 0; j < events.length; j++) {
+						((IDebugEventListener)listener).handleDebugEvent(events[j]);
+					}
+				}
+			}		
+		}
+	}
+	
+	/**
+	 * Returns a collection of events, based on the given event
+	 * set, removing any events that are filtered by registered
+	 * debug event filters. Returns <code>null</code> if all
+	 * events are filtered.
+	 * 
+	 * @param events the event set to filter
+	 * @return filter event set
+	 */
+	private DebugEvent[] filterEvents(DebugEvent[] events) {
+		if (hasEventFilters()) {
+			ArrayList filteredEvents = null;
+			boolean isFilteredEvent = false;
+			for (int i = 0; i < events.length; i++) {
+				if (isFiltered(events[i])) {
+					isFilteredEvent = true;
+				} else if (isFilteredEvent) {
+					if (filteredEvents == null) {
+						filteredEvents = new ArrayList(events.length - 1);
+					}
+					filteredEvents.add(events[i]);
+				}
+			}
+			if (isFilteredEvent) {
+				if (filteredEvents == null) {
+					return null;
+				} else {
+					return (DebugEvent[]) filteredEvents.toArray(new DebugEvent[filteredEvents.size()]);
+				}
+			} else {
+				return events;
+			}
+		} else {
+			return events;
 		}
 	}
 	
@@ -283,11 +357,34 @@ public class DebugPlugin extends Plugin {
 	 * registered.
 	 *
 	 * @param listener the listener to remove
+	 * @deprecated use #removeDebugEventListener(IDebugEventSetListener)
 	 */
 	public void removeDebugEventListener(IDebugEventListener listener) {
 		fEventListeners.remove(listener);
 	}
-
+	
+	/**
+	 * Removes the given listener from the collection of registered debug
+	 * event listeners. Has no effect if an identical listener is not already
+	 * registered.
+	 *
+	 * @param listener the listener to remove
+	 */
+	public void removeDebugEventListener(IDebugEventSetListener listener) {
+		fEventListeners.remove(listener);
+	}	
+	/**
+	 * Logs the given message if in debug mode.
+	 * 
+	 * @param String message to log
+	 */
+	public static void logDebugMessage(String message) {
+		if (getDefault().isDebugging()) {
+			// this message is intentionally not internationalized, as an exception may
+			// be due to the resource bundle itself
+			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from Debug Core: " + message, null));
+		}
+	}
 	/**
 	 * Shuts down this debug plug-in and discards all plug-in state.
 	 * <p> 
@@ -429,19 +526,6 @@ public class DebugPlugin extends Plugin {
 	}	
 	
 	/**
-	 * Logs the given message if in debug mode.
-	 * 
-	 * @param String message to log
-	 */
-	public static void logDebugMessage(String message) {
-		if (getDefault().isDebugging()) {
-			// this message is intentionally not internationalized, as an exception may
-			// be due to the resource bundle itself
-			log(new Status(IStatus.ERROR, getDefault().getDescriptor().getUniqueIdentifier(), INTERNAL_ERROR, "Internal message logged from Debug Core: " + message, null));
-		}
-	}
-	
-	/**
 	 * Logs the specified status with this plug-in's log.
 	 * 
 	 * @param status status to log
@@ -525,6 +609,16 @@ public class DebugPlugin extends Plugin {
 			return false;
 		}
 	}
+
+	/**
+	 * Returns whether any event filters are registered
+	 * 
+	 * @return whether any event filters are registered
+	 */
+	private boolean hasEventFilters() {
+		return fEventFilters != null && fEventFilters.size() > 0;
+	}
+
 	
 	
 }

@@ -18,12 +18,16 @@ package org.eclipse.debug.core;
  * (repeatedly) as the API evolves.
  * </p>
  * @see DebugEvent
+ * @deprecated implementors should implement the new interface
+ *  <code>IDebugEventSetListener</code>
  */
 public interface IDebugEventListener {
 	/**
 	 * Notifies this listener of the given debug event.
 	 *
 	 * @param event the debug event
+	 * @deprecated impementors should implement the new interface
+	 * 	<code>IDebugEventSetListener</code>
 	 */
 	public void handleDebugEvent(DebugEvent event);
 }

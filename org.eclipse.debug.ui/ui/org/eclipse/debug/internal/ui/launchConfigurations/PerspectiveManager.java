@@ -11,7 +11,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchListener;
@@ -40,7 +40,7 @@ import org.eclipse.ui.WorkbenchException;
  * @see IDebugUIContants.ATTR_RUN_PERSPECTIVE
  * @see IDebugUIContants.ATTR_DEBUG_PERSPECTIVE
  */
-public class PerspectiveManager implements ILaunchListener, IDebugEventListener {
+public class PerspectiveManager implements ILaunchListener, IDebugEventSetListener {
 	
 	/**
 	 * Singleton perspective manager
@@ -187,61 +187,64 @@ public class PerspectiveManager implements ILaunchListener, IDebugEventListener 
 	 * On a SUSPEND event, show the debug view. If no debug view is open,
 	 * switch to the perspective specified by the launcher.
 	 *
-	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
-	public void handleDebugEvent(final DebugEvent event) {
+	public void handleDebugEvents(DebugEvent[] events) {
 		// open the debugger if this is a suspend event and the debug view is not yet open
 		// and the preferences are set to switch
-		if (event.getKind() == DebugEvent.SUSPEND && event.getDetail() == event.BREAKPOINT) {
-			// apply event filters
-			if (!DebugUIPlugin.getDefault().showSuspendEvent(event)) {
-				return;
-			}
-			ILaunch launch = null;
-			Object source = event.getSource();
-			if (source instanceof IDebugElement) {
-				launch = ((IDebugElement)source).getLaunch();
-			} else if (source instanceof IProcess) {
-				launch = ((IProcess)source).getLaunch();
-			}
-			String perspectiveId = null;
-			try {
-				perspectiveId = getPerspectiveId(launch);
-			} catch (CoreException e) {
-				DebugUIPlugin.log(e.getStatus());
-			}
-			// if no perspective specified, always switch to debug
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getKind() == DebugEvent.SUSPEND && event.getDetail() == event.BREAKPOINT) {
+				// apply event filters
+				if (!DebugUIPlugin.getDefault().showSuspendEvent(event)) {
+					continue;
+				}
+				ILaunch launch = null;
+				Object source = event.getSource();
+				if (source instanceof IDebugElement) {
+					launch = ((IDebugElement)source).getLaunch();
+				} else if (source instanceof IProcess) {
+					launch = ((IProcess)source).getLaunch();
+				}
+				String perspectiveId = null;
+				try {
+					perspectiveId = getPerspectiveId(launch);
+				} catch (CoreException e) {
+					DebugUIPlugin.log(e.getStatus());
+				}
+				// if no perspective specified, always switch to debug
 			// perspective 
 
 			// this has to be done in an asynch, such that the workbench
-			// window can be accessed
-			final String id = perspectiveId;
-			Runnable r = new Runnable() {
-				public void run() {
-					String targetId = id;
-					IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
-					if (targetId == null) {
-						if (window != null) {
-							IWorkbenchPage page = window.getActivePage();
-							if (page != null) {
-								IViewPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
-								if (part == null) {
-									targetId = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
+				// window can be accessed
+				final String id = perspectiveId;
+				Runnable r = new Runnable() {
+					public void run() {
+						String targetId = id;
+						IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+						if (targetId == null) {
+							if (window != null) {
+								IWorkbenchPage page = window.getActivePage();
+								if (page != null) {
+									IViewPart part = page.findView(IDebugUIConstants.ID_DEBUG_VIEW);
+									if (part == null) {
+										targetId = IDebugUIConstants.ID_DEBUG_PERSPECTIVE;
+									}
 								}
 							}
 						}
+						if (targetId != null) {
+							// re-open the window if minimized 
+							Shell shell= window.getShell();
+							if (shell != null && shell.getMinimized()) {
+								shell.setMinimized(false);
+							}						
+							switchToPerspective(targetId);
+						}
 					}
-					if (targetId != null) {
-						// re-open the window if minimized 
-						Shell shell= window.getShell();
-						if (shell != null && shell.getMinimized()) {
-							shell.setMinimized(false);
-						}						
-						switchToPerspective(targetId);
-					}
-				}
-			};
-			async(r);
+				};
+				async(r);
+			}
 		}
 	}	
 	

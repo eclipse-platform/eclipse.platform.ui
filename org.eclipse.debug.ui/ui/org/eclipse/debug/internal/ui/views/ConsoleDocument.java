@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.IStreamListener;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
@@ -29,7 +29,7 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
 
-public class ConsoleDocument extends AbstractDocument implements IDebugEventListener {
+public class ConsoleDocument extends AbstractDocument implements IDebugEventSetListener {
 
 	private boolean fClosed= false;
 
@@ -384,22 +384,25 @@ public class ConsoleDocument extends AbstractDocument implements IDebugEventList
 	}
 	
 	/**
-	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 * @see IDebugEventListener#handleDebugEvents(DebugEvent[])
 	 */
-	public void handleDebugEvent(DebugEvent event) {
+	public void handleDebugEvents(DebugEvent[] events) {
 		if (fProcess == null) {
 			return;
 		}
-		if (event.getKind() == DebugEvent.TERMINATE) {
-			Object element= event.getSource();
-			if (element != null && element.equals(fProcess)) {
-				
-				update( new Runnable() {
-					public void run() {
-						fireDocumentChanged(new DocumentEvent(ConsoleDocument.this, 0, 0, null));
-					}
-				});
-			}					
+		for (int i = 0; i < events.length; i++) {
+			DebugEvent event = events[i];
+			if (event.getKind() == DebugEvent.TERMINATE) {
+				Object element= event.getSource();
+				if (element != null && element.equals(fProcess)) {
+					
+					update( new Runnable() {
+						public void run() {
+							fireDocumentChanged(new DocumentEvent(ConsoleDocument.this, 0, 0, null));
+						}
+					});
+				}					
+			}
 		}
 	}
 	

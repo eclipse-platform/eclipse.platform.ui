@@ -7,7 +7,7 @@ package org.eclipse.debug.internal.ui.actions;
  
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventListener;
+import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelection;
@@ -19,7 +19,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
-public abstract class AbstractListenerActionDelegate extends AbstractDebugActionDelegate implements IDebugEventListener, IPartListener, IPageListener {
+public abstract class AbstractListenerActionDelegate extends AbstractDebugActionDelegate implements IDebugEventSetListener, IPartListener, IPageListener {
 
 	/**
 	 * The window associated with this action delegate
@@ -71,14 +71,10 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 	}
 	
 	/**
-	 * @see IDebugEventListener#handleDebugEvent(DebugEvent)
+	 * @see IDebugEventSetListener#handleDebugEvents(DebugEvent[])
 	 */
-	public void handleDebugEvent(final DebugEvent event) {
+	public void handleDebugEvents(final DebugEvent[] events) {
 		if (getPage() == null || getAction() == null) {
-			return;
-		}
-		Object element= event.getSource();
-		if (element == null) {
 			return;
 		}
 		Shell shell= getWindow().getShell();
@@ -91,7 +87,11 @@ public abstract class AbstractListenerActionDelegate extends AbstractDebugAction
 				if (shell == null || shell.isDisposed()) {
 					return;
 				}
-				doHandleDebugEvent(event);
+				for (int i = 0; i < events.length; i++) {
+					if (events[i].getSource() != null) {
+						doHandleDebugEvent(events[i]);
+					}
+				}
 			}
 		};
 		
