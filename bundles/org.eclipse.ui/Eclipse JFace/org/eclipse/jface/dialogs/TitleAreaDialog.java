@@ -68,24 +68,106 @@ public class TitleAreaDialog extends Dialog {
 		reg.put(DLG_IMG_TITLE_BANNER, ImageDescriptor.createFromFile(TitleAreaDialog.class, "images/title_banner.gif"));//$NON-NLS-1$
 	}
 
+	private Composite titleArea;
 	private Label titleLabel;
 	private Label titleImage;
-	private Label fillerLabel;
 	private Color titleAreaColor;
 	private RGB titleAreaRGB;
 
 	private String message = ""; //$NON-NLS-1$
 	private String errorMessage;
+	private Composite messageArea;
 	private Label messageLabel;
 
 	private Label messageImageLabel;
 	private Image messageImage;
 	private Color normalMsgAreaBackground;
 	private Color errorMsgAreaBackground;
+	private Color errorMsgAreaBorderColor;
 	private Image errorMsgImage;
 	private boolean showingError = false;
-	private boolean titleImageLargest = true;
 
+	/**
+	 * Layout the contents of the title area.
+	 */
+	class TitleAreaLayout extends Layout {
+		
+		protected Point computeSize(Composite composite, int wHint, int hHint, boolean flushCache) {
+			// get the title size
+			Point titleSize = titleLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+
+			// get the message image size
+			Point messageImageSize = new Point(0,0);
+			if (messageImageLabel.getVisible()) 
+				messageImageSize = messageImageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+
+			// get the message size
+			String temp = messageLabel.getText();
+			messageLabel.setText(" \n ");//$NON-NLS-1$
+			Point messageSize = messageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			messageLabel.setText(temp);
+	
+			// get the title image size
+			Point titleImageSize = new Point(0,0);	
+			if (titleImage.getVisible()) 
+				titleImageSize = titleImage.computeSize(SWT.DEFAULT, SWT.DEFAULT, true); 
+
+			int width = Math.max(
+				H_INDENT_TITLE + titleSize.x, 
+				H_INDENT_MSG + messageImageSize.x + (messageImageSize.x > 0 ? H_GAP_IMAGE : 0) + messageSize.x) 
+					+ (titleImageSize.x > 0 ? H_GAP_IMAGE : 0) + titleImageSize.x;
+			int height = Math.max(
+				V_INDENT_TITLE + titleSize.y + V_INDENT_MSG_AREA + V_INDENT_MSG +
+					Math.max(messageImageSize.y, messageSize.y) + V_INDENT_MSG, 
+				titleImageSize.y);
+			return new Point(width, height);
+		}
+		
+		protected void layout(Composite composite, boolean flushCache) {
+			Rectangle bounds = composite.getClientArea();
+			int currentXEnd = bounds.width;
+
+			// layout the title image
+			if (titleImage.getVisible()) {
+				Point imageSize = titleImage.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+				int imageWidth = Math.max(imageSize.x, MIN_TITLE_IMAGE_WIDTH);
+				currentXEnd -= imageWidth;
+				titleImage.setBounds(
+					currentXEnd, 
+					0, 
+					imageWidth, 
+					Math.max(imageSize.y, MIN_TITLE_IMAGE_HEIGHT));
+			}
+
+			// layout the title
+			Point titleSize = titleLabel.computeSize(currentXEnd - H_INDENT_TITLE, SWT.DEFAULT, true);
+			titleLabel.setBounds(H_INDENT_TITLE, V_INDENT_TITLE, titleSize.x, titleSize.y);
+
+			// layout the message area composite
+			int currentY = V_INDENT_TITLE + titleSize.y + V_INDENT_MSG_AREA;
+			int messageAreaHeight = bounds.height - currentY;
+			messageArea.setBounds(0, currentY, currentXEnd, messageAreaHeight);
+
+			if (titleImage.getVisible())
+				currentXEnd -= H_GAP_IMAGE;
+
+			// layout the message image
+			int currentXBegin = H_INDENT_MSG;
+			if (messageImageLabel.getVisible()) {
+				Point imageSize = messageImageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+				messageImageLabel.setBounds(currentXBegin, V_INDENT_MSG, imageSize.x, imageSize.y);
+				currentXBegin += imageSize.x + H_GAP_IMAGE;
+			}
+
+			// layout the message
+			String temp = messageLabel.getText();
+			messageLabel.setText(" \n ");  // 2 line limit//$NON-NLS-1$
+			int labelHeight = messageLabel.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).y;
+			messageLabel.setText(temp);
+			messageLabel.setBounds(currentXBegin, V_INDENT_MSG, currentXEnd - currentXBegin, 
+				labelHeight);
+		}
+	}
 /**
  * Instantiate a new title area dialog.
  *
@@ -94,52 +176,6 @@ public class TitleAreaDialog extends Dialog {
 public TitleAreaDialog(Shell parentShell) {
 	super(parentShell);
 }
-
-/*
- * @see Dialog.createContents(Composite)
- */
-protected Control createContents(Composite parent) {
-	
-	// initialize the dialog units
-	initializeDialogUnits(parent);
-
-	
-	FormLayout layout = new FormLayout();
-	parent.setLayout(layout);
-	FormData data = new FormData();
-	data.top = new FormAttachment(0,0);
-	data.bottom = new FormAttachment(100,100);
-	parent.setLayoutData(data);
-	
-	Control top = createTitleArea(parent);
-	
-	//Now create a work area for the rest of the dialog
-	Composite composite = new Composite(parent, SWT.NULL);
-	GridLayout childLayout = new GridLayout();
-	childLayout.marginHeight = 0;
-	childLayout.marginWidth = 0;
-	childLayout.verticalSpacing = 0;
-	composite.setLayout(childLayout);
-	
-	FormData childData = new FormData();
-	childData.top = new FormAttachment(top);
-	childData.right = new FormAttachment(100,0);
-	childData.left = new FormAttachment(0,0);
-	childData.bottom = new FormAttachment(100,0);
-	composite.setLayoutData(childData);
-	
-	composite.setFont(JFaceResources.getDialogFont());
-
-	// initialize the dialog units
-	initializeDialogUnits(composite);
-	
-	// create the dialog area and button bar
-	dialogArea = createDialogArea(composite);
-	buttonBar = createButtonBar(composite);
-	
-	return parent;
-}
-
 /**
  * Creates and returns the contents of the upper part 
  * of this dialog (above the button bar).
@@ -164,6 +200,9 @@ protected Control createDialogArea(Composite parent) {
 	composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 	composite.setFont(parent.getFont());
 
+	// create the title area
+	createTitleArea(composite);
+
 	// Build the separator line
 	Label titleBarSeparator = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
 	titleBarSeparator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -173,19 +212,26 @@ protected Control createDialogArea(Composite parent) {
 /**
  * Creates the dialog's title area.
  *
- * @param parent the SWT parent for the title area widgets
- * @return Control with the highest x axis value.
+ * @param parent the SWT parent for the title area composite
+ * @return the created title area composite
  */
-private Control createTitleArea(Composite parent) {
-		
+private Composite createTitleArea(Composite parent) {
+	// Create the title area which will contain
+	// a title, message, and image.
+	titleArea = new Composite(parent, SWT.NONE);
+	titleArea.setLayout(new TitleAreaLayout());
+	titleArea.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 	// add a dispose listener
-	parent.addDisposeListener(new DisposeListener() {
+	titleArea.addDisposeListener(new DisposeListener() {
 		public void widgetDisposed(DisposeEvent e) {
 
 			if (titleAreaColor != null)
 				titleAreaColor.dispose();
 			if (errorMsgAreaBackground != null)
 				errorMsgAreaBackground.dispose();
+			if (errorMsgAreaBorderColor != null)
+				errorMsgAreaBorderColor.dispose();
 		}
 	});
 	
@@ -202,105 +248,55 @@ private Control createTitleArea(Composite parent) {
 		background = JFaceColors.getBannerBackground(display);
 		foreground = JFaceColors.getBannerForeground(display);
 	}	
+	titleArea.setBackground(background);
 
-	int verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-	int horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-	parent.setBackground(background);
-	
-	// Dialog image @ right
-	titleImage = new Label(parent, SWT.CENTER);
-	titleImage.setBackground(background);
-	titleImage.setImage(JFaceResources.getImage(DLG_IMG_TITLE_BANNER));
-	
-	FormData imageData = new FormData();
-	imageData.top = new FormAttachment(0,verticalSpacing);
-	imageData.right = new FormAttachment(100,horizontalSpacing);
-	titleImage.setLayoutData(imageData);
-	
 	// Title label @ top, left
-	titleLabel = new Label(parent, SWT.LEFT);
+	titleLabel = new Label(titleArea, SWT.LEFT);
 	JFaceColors.setColors(titleLabel,foreground,background);
 	titleLabel.setFont(JFaceResources.getBannerFont());
 	titleLabel.setText(" ");//$NON-NLS-1$
 
-	FormData titleData = new FormData();
-	titleData.top = new FormAttachment(0,verticalSpacing);
-	titleData.right = new FormAttachment(titleImage);
-	titleData.left = new FormAttachment(0,horizontalSpacing);
-	titleLabel.setLayoutData(titleData);
+	// Composite to hold message label & icon
+	// Need it to draw background color box when error msg
+	messageArea = new Composite(titleArea, SWT.NONE); 
+	messageArea.setBackground(background);
+
+	// Draw a border for the top and right side of the msg area
+	messageArea.addPaintListener(new PaintListener() {
+		public void paintControl(PaintEvent event) {
+			if (showingError) {
+				Rectangle area = messageArea.getClientArea();
+				GC gc = event.gc;
+				if (errorMsgAreaBorderColor == null)
+					errorMsgAreaBorderColor = JFaceColors.getErrorBorder(messageArea.getDisplay());
+				gc.setForeground(errorMsgAreaBorderColor);
+				gc.setLineWidth(1);
+				gc.drawLine(area.x, area.y, area.x + area.width - 1, area.y);
+				gc.drawLine(area.x + area.width  - 1, area.y, area.x + area.width - 1, area.y + area.height - 1);
+			}
+		}
+	});
 	
 	// Message image @ bottom, left
-	messageImageLabel = new Label(parent, SWT.CENTER);
+	messageImageLabel = new Label(messageArea, SWT.LEFT);
 	messageImageLabel.setBackground(background);
+	messageImageLabel.setVisible(false);
 	
-	
-
 	// Message label @ bottom, center
-	messageLabel = new Label(parent, SWT.WRAP);
+	messageLabel = new Label(messageArea, SWT.WRAP);
 	JFaceColors.setColors(messageLabel,foreground,background);
 	messageLabel.setText(" \n "); // two lines//$NON-NLS-1$
 	messageLabel.setFont(JFaceResources.getDialogFont());
 
+	// Dialog image @ right
+	titleImage = new Label(titleArea, SWT.CENTER);
+	titleImage.setBackground(background);
+	titleImage.setImage(JFaceResources.getImage(DLG_IMG_TITLE_BANNER));
+	GridData gd = new GridData(); 
+	gd.horizontalAlignment = gd.END;
+	titleImage.setLayoutData(gd);
 	
-	// Message image @ bottom, left
-	fillerLabel = new Label(parent, SWT.CENTER);
-	fillerLabel.setBackground(background);
-	
-	setLayoutsForNormalMessage(verticalSpacing, horizontalSpacing);
-	
-	determineTitleImageLargest();
-	if(titleImageLargest)
-		return titleImage;
-	else
-		return messageLabel;
-	
-}
-
-/**
- * Determine if the title image is larger than the title message
- * and message area. This is used for layout decisions.
- */
-private void determineTitleImageLargest (){
-	
-	int titleY = titleImage.computeSize(SWT.DEFAULT,SWT.DEFAULT).y;
-	
-	int labelY = titleLabel.computeSize(SWT.DEFAULT,SWT.DEFAULT).y;
-	labelY += messageLabel.computeSize(SWT.DEFAULT,SWT.DEFAULT).y;
-	
-	titleImageLargest = titleY > labelY;
-}
-	
-
-/**
- * Set the layout values for the messageLabel, messageImageLabel and 
- * fillerLabel for the case where there is a normal message.
- * @param verticalSpacing int The spacing between widgets on the vertical axis.
- * @param horizontalSpacing int The spacing between widgets on the horizontal axis.
- */
-
-private void setLayoutsForNormalMessage(
-	int verticalSpacing,
-	int horizontalSpacing) {
-	FormData messageImageData = new FormData();
-	messageImageData.top = new FormAttachment(titleLabel,verticalSpacing);
-	messageImageData.left = new FormAttachment(0,horizontalSpacing);
-	messageImageLabel.setLayoutData(messageImageData);
-	
-	FormData messageLabelData = new FormData();
-	messageLabelData.top = new FormAttachment(titleLabel,verticalSpacing);
-	messageLabelData.right = new FormAttachment(titleImage);
-	messageLabelData.left = new FormAttachment(messageImageLabel,horizontalSpacing);
-	
-	if(titleImageLargest)
-		messageLabelData.bottom = new FormAttachment(titleImage,0,SWT.BOTTOM);
-		
-	messageLabel.setLayoutData(messageLabelData);
-	
-	FormData fillerData = new FormData();
-	fillerData.left = new FormAttachment(0,horizontalSpacing);
-	fillerData.top = new FormAttachment(messageImageLabel,0);
-	fillerData.bottom = new FormAttachment(messageLabel,0,SWT.BOTTOM);
-	fillerLabel.setLayoutData(fillerData);	
+	return titleArea;
 }
 /**
  * The <code>TitleAreaDialog</code> implementation of this 
@@ -315,17 +311,15 @@ protected Point getInitialSize() {
 		Math.max(convertHorizontalDLUsToPixels(MIN_DIALOG_WIDTH), shellSize.x),
 		Math.max(convertVerticalDLUsToPixels(MIN_DIALOG_HEIGHT), shellSize.y));
 }
-
 /**
- * Retained for backward compatibility.
+ * Returns the title area composite.
  * 
- * Returns the title area composite. There is no composite in this
- * implementation so the shell is returned.
- * @deprecated
+ * @return the title area composite
  */
 protected Composite getTitleArea() {
-	return getShell();
-}/**
+	return titleArea;
+}
+/**
  * Returns the title image label.
  * 
  * @return the title image label
@@ -350,7 +344,9 @@ public void setErrorMessage(String newErrorMessage) {
 		if (showingError) {
 			// we were previously showing an error
 			showingError = false;
-			setMessageBackgrounds(false);
+			messageLabel.setBackground(normalMsgAreaBackground);
+			messageImageLabel.setBackground(normalMsgAreaBackground);
+			messageArea.setBackground(normalMsgAreaBackground);
 		}
 
 		// show the message
@@ -358,13 +354,13 @@ public void setErrorMessage(String newErrorMessage) {
 		// which would result in a recursive infinite loop
 		if (message == null)	//this should probably never happen since setMessage does this conversion....
 			message = "";		//$NON-NLS-1$
-		updateMessage(message);
+		messageLabel.setText(message);
 		messageImageLabel.setImage(messageImage);
-		setImageLabelVisible(messageImage != null);
+		messageImageLabel.setVisible(messageImage != null);
 		messageLabel.setToolTipText(message);
 
 	} else {
-		updateMessage(errorMessage);
+		messageLabel.setText(errorMessage);
 		messageLabel.setToolTipText(errorMessage);
 		if (!showingError) {
 			// we were not previously showing an error
@@ -372,66 +368,21 @@ public void setErrorMessage(String newErrorMessage) {
 
 			// lazy initialize the error background color and image
 			if (errorMsgAreaBackground == null) {
-				errorMsgAreaBackground = JFaceColors.getErrorBackground(messageLabel.getDisplay());
+				errorMsgAreaBackground = JFaceColors.getErrorBackground(messageArea.getDisplay());
 				errorMsgImage = JFaceResources.getImage(DLG_IMG_TITLE_ERROR);
 			}
 
 			// show the error	
 			normalMsgAreaBackground = messageLabel.getBackground();
-			setMessageBackgrounds(true);
+			messageLabel.setBackground(errorMsgAreaBackground);
+			messageImageLabel.setBackground(errorMsgAreaBackground);
+			messageArea.setBackground(errorMsgAreaBackground);
 			messageImageLabel.setImage(errorMsgImage);
-			setImageLabelVisible(true);
+			messageImageLabel.setVisible(true);
 		}
 	}
-	layoutForNewMessage();
+	titleArea.layout(true);
 }
-
-/**
- * Re-layout the labels for the new message.
- */
-private void layoutForNewMessage(){
-	
-	int verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-	int horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-	
-	if (errorMessage == null) {
-		setImageLabelVisible(false);
-		
-		setLayoutsForNormalMessage(verticalSpacing,horizontalSpacing);
-		
-	} else {
-		messageImageLabel.setImage(errorMsgImage);
-		messageImageLabel.setVisible(true);
-		fillerLabel.setVisible(true);
-
-		FormData data = new FormData();
-		data.left = new FormAttachment(0, 0);
-		data.top = new FormAttachment(titleLabel, verticalSpacing);
-		messageImageLabel.setLayoutData(data);
-		
-		data = new FormData();
-		data.top = new FormAttachment(messageImageLabel, 0);
-		data.left = new FormAttachment(0, 0);
-		data.bottom = new FormAttachment(messageLabel, 0, SWT.BOTTOM);
-		data.right = new FormAttachment(messageImageLabel, 0, SWT.RIGHT);
-		fillerLabel.setLayoutData(data);
-		
-		FormData messageLabelData = new FormData();
-		messageLabelData.top = new FormAttachment(titleLabel,verticalSpacing);
-		messageLabelData.right = new FormAttachment(titleImage);
-		messageLabelData.left = new FormAttachment(messageImageLabel,0);
-		
-		if(titleImageLargest)
-			messageLabelData.bottom = new FormAttachment(titleImage,0,SWT.BOTTOM);
-			
-		messageLabel.setLayoutData(messageLabelData);
-		
-		}
-	getShell().layout(true);
-	
-}
-
-
 /**
  * Set the message text. If the message line currently displays an error,
  * the message is saved and will be redisplayed when the error message is set
@@ -502,25 +453,12 @@ private void showMessage(String newMessage, Image newImage) {
 
 	if (!showingError) {
 		// we are not showing an error
-		updateMessage(message);
+		messageLabel.setText(message);
 		messageImageLabel.setImage(messageImage);
-		setImageLabelVisible(messageImage != null);
+		messageImageLabel.setVisible(messageImage != null);
 		messageLabel.setToolTipText(message);
-		layoutForNewMessage();
+		titleArea.layout(true);
 	}
-}
-
-/**
- * Update the contents of the messageLabel.
- * @param String the message to use
- */
-private void updateMessage(String newMessage) {
-	
-	//Be sure there are always 2 lines for layout purposes
-	if(newMessage != null && newMessage.indexOf('\n') == -1)
-		newMessage = newMessage + "\n ";
-		
-	messageLabel.setText(newMessage);
 }
 
 /**
@@ -553,32 +491,4 @@ public void setTitleImage(Image newTitleImage) {
 	titleImage.setImage(newTitleImage);
 	titleImage.setVisible(newTitleImage != null);
 }
-
-/**
- * Make the label used for displaying error images visible
- * depending on boolean.
- */
-private void setImageLabelVisible(boolean visible){
-	messageImageLabel.setVisible(visible);
-	fillerLabel.setVisible(visible);
-	
-}
-
-/**
- * Set the message backgrounds to be the error or normal color
- * depending on whether or not showingError is true.
- */
-private void setMessageBackgrounds(boolean showingError){
-	
-	Color color;
-	if(showingError)
-		color = errorMsgAreaBackground;
-	else
-		color = normalMsgAreaBackground;
-		
-	messageLabel.setBackground(color);
-	messageImageLabel.setBackground(color);
-	fillerLabel.setBackground(color);
-}
-		
 }
