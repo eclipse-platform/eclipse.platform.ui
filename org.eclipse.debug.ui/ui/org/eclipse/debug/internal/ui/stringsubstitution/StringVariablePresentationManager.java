@@ -33,7 +33,7 @@ public class StringVariablePresentationManager {
 	 * 
 	 * @since 3.0
 	 */
-	public static final String EXTENSION_POINT_STRING_VARIABLE_PRESENTATIONS = DebugUIPlugin.getUniqueIdentifier() + ".stringVariablePresentations"; //$NON-NLS-1$
+	public static final String EXTENSION_POINT_STRING_VARIABLE_PRESENTATIONS = "stringVariablePresentations"; //$NON-NLS-1$
 	
 	// default manager
 	private static StringVariablePresentationManager fgManager;

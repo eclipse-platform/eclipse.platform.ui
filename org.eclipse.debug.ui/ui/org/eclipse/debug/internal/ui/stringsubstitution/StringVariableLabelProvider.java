@@ -22,14 +22,7 @@ class StringVariableLabelProvider extends LabelProvider {
 		public String getText(Object element) {
 			if (element instanceof IStringVariable) {
 				IStringVariable variable = (IStringVariable)element;
-				StringBuffer buffer = new StringBuffer();
-				buffer.append(variable.getName());
-				String desc = variable.getDescription();
-				if (desc != null) {
-					buffer.append(" - "); //$NON-NLS-1$
-					buffer.append(desc);
-				}
-				return buffer.toString();
+				return variable.getName();
 			}
 			return super.getText(element);
 		}
