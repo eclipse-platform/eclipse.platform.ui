@@ -256,6 +256,8 @@ private void determineTitleImageLargest (){
 	
 	int labelY = titleLabel.computeSize(SWT.DEFAULT,SWT.DEFAULT).y;
 	labelY += messageLabel.computeSize(SWT.DEFAULT,SWT.DEFAULT).y;
+	FontData[] data = messageLabel.getFont().getFontData();
+	labelY += data[0].getHeight();
 	
 	titleImageLargest = titleY > labelY;
 }
