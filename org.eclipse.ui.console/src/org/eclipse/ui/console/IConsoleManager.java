@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.console;
 
-import org.eclipse.ui.internal.console.ConsoleFactoryExtension;
 
 
 /**
@@ -49,7 +48,8 @@ public interface IConsoleManager {
 	
 	/**
 	 * Removes the given consoles from the console manager. If the consoles are
-	 * being displayed in any console views, the associated pages will be closed.
+	 * being displayed in any console views, the associated pages will be removed
+	 * and disposed.
 	 * 
 	 * @param consoles consoles to remove
 	 */
@@ -66,6 +66,7 @@ public interface IConsoleManager {
 	 * Opens the console view and displays given the console.
 	 * If the view is already open, it is brought to the front unless
 	 * the view is pinned on a console other than the given console.
+	 * Has no effect if the given console is not currently registered.
 	 * 
 	 * @param console console to display
 	 */
@@ -73,33 +74,36 @@ public interface IConsoleManager {
 	
 	/**
 	 * Warns that the content of the given console has changed in
-	 * all console views.
+	 * all console views. Has no effect if the given console is not
+	 * currently registered.
 	 * 
 	 * @param console the console that has changed
 	 */
 	public void warnOfContentChange(IConsole console);
 	
 	/**
-	 * Returns an array of pattern match listeners which should be enabled for
-	 * the given console.
-	 * @param console The console for which IPatternMatchListeners are required
-	 * @return an array of IPatternMatchListner
+	 * Returns a collection of pattern match listeners which are enabled for
+	 * the given console. The pattern match listeners are new instances, intended
+	 * to be used in a new console. No methods on the participants have been
+	 * called. Clients are responsible for connecting to and disconnecting from
+	 * the pattern match listeners.
+	 * 
+	 * @param console the console for which pattern match listeners are requested
+	 * @return a collection of new pattern match listeners
 	 * @since 3.1
 	 */
 	public IPatternMatchListener[] getPatternMatchListeners(IConsole console);
 	
 	/**
-	 * Returns an array of Page Participants which should be active for the given 
-	 * console 
-	 * @param console the console for which IConsolePageParticipantDelegate are required
-	 * @return an array of IConsolePageParticipantDelegate
+	 * Returns a collection of page participants which are enabled for the given 
+	 * console. The participants are new instances, intended to be used in a new
+	 * page for the given console. No methods on the participants have been called.
+	 * Clients are responsible for disposing the participants.
+	 * 
+	 * @param console the console for which page participants are requested
+	 * @return a collection of new page participants
 	 * @since 3.1
 	 */
 	public IConsolePageParticipant[] getPageParticipants(IConsole console);
 
-    /**
-     * 
-     * @since 3.1
-     */
-    public ConsoleFactoryExtension[] getConsoleFactoryExtensions();
 }

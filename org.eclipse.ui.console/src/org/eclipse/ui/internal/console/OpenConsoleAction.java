@@ -31,7 +31,7 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
     private Menu fMenu;
 
     public OpenConsoleAction() {
-        fFactoryExtensions = ConsolePlugin.getDefault().getConsoleManager().getConsoleFactoryExtensions();
+        fFactoryExtensions = ((ConsoleManager)ConsolePlugin.getDefault().getConsoleManager()).getConsoleFactoryExtensions();
 		setText(ConsoleMessages.getString("OpenConsoleAction.0")); //$NON-NLS-1$
 		setToolTipText(ConsoleMessages.getString("OpenConsoleAction.1"));  //$NON-NLS-1$
 		setImageDescriptor(ConsolePluginImages.getImageDescriptor(IInternalConsoleConstants.IMG_ELCL_NEW_CON));
