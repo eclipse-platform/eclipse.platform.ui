@@ -104,11 +104,11 @@ public final class CustomizableIntroPart extends IntroPart implements
             // you pass corret memento.
             presentation = model.getPresentation();
             if (presentation != null)
-                presentation.init(this, getMomento(memento,
+                presentation.init(this, getMemento(memento,
                         MEMENTO_PRESENTATION_TAG));
             standbyPart = new StandbyPart(model);
             standbyPart.init(this,
-                    getMomento(memento, MEMENTO_STANDBY_PART_TAG));
+                    getMemento(memento, MEMENTO_STANDBY_PART_TAG));
         }
 
         if (model == null || !model.hasValidConfig())
@@ -241,7 +241,7 @@ public final class CustomizableIntroPart extends IntroPart implements
      * 
      * @see org.eclipse.ui.intro.IIntroPart#saveState(org.eclipse.ui.IMemento)
      */
-    public IMemento getMomento(IMemento memento, String key) {
+    private IMemento getMemento(IMemento memento, String key) {
         if (memento == null)
             return null;
         return memento.getChild(key);
