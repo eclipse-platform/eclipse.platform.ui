@@ -302,8 +302,8 @@ public URL find(IPath path);
  *   fragment2 root/about.properties
  *   ...
  * 
- * If a locale other than the default locale is desired, use 
- * public URL find(IPath path, Map override)
+ * If a locale other than the default locale is desired, use an
+ * override map.
  * 
  * @param path file path relative to plug-in installation location
  * @param override map of override substitution arguments to be used for
