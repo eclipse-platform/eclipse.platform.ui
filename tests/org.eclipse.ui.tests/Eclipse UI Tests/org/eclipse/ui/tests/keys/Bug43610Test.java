@@ -60,6 +60,8 @@ public class Bug43610Test extends UITestCase {
 		robot.keyPress(KeyEvent.VK_ALT);
 		robot.keyRelease(KeyEvent.VK_ALT);
 		robot.keyRelease(KeyEvent.VK_SHIFT);
+		robot.keyPress(KeyEvent.VK_ESCAPE);
+		robot.keyRelease(KeyEvent.VK_ESCAPE);
 		while (display.readAndDispatch());
 
 		// Clean up the working environment.
