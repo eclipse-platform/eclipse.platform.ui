@@ -580,7 +580,23 @@ public class CodeCompletionTest extends TestCase {
 
 
     public static Test suite() {
-        return new TestSuite(CodeCompletionTest.class);
+		TestSuite suite = new TestSuite("CodeCompletionTest");
+        
+		suite.addTest(new CodeCompletionTest("testAttributeProposals"));
+		suite.addTest(new CodeCompletionTest("testBuildWithProperties"));
+		suite.addTest(new CodeCompletionTest("testParsingOfEmptyBuildFile"));
+		suite.addTest(new CodeCompletionTest("testDeterminingAttributeProposalMode"));
+		suite.addTest(new CodeCompletionTest("testDeterminingNoneProposalMode"));
+		suite.addTest(new CodeCompletionTest("testDeterminingPrefix"));
+		suite.addTest(new CodeCompletionTest("testDeterminingPropertyProposalMode"));
+		suite.addTest(new CodeCompletionTest("testDeterminingTaskProposalMode"));
+		suite.addTest(new CodeCompletionTest("testFindChildElement"));
+		suite.addTest(new CodeCompletionTest("testPropertyProposalDefinedInDependantTargets"));
+		suite.addTest(new CodeCompletionTest("testPropertyProposals"));
+		suite.addTest(new CodeCompletionTest("testTaskProposals"));
+		suite.addTest(new CodeCompletionTest("testXMLParsing WithAntEditorDefaultHandler"));
+		
+		return suite;
     }
     
 	private SAXParser getSAXParser() throws SAXException {
