@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.configuration.*;
@@ -18,6 +19,7 @@ import org.eclipse.update.configuration.ISessionDelta;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.IFeatureReference;
 import org.eclipse.update.core.SiteManager;
+import org.eclipse.update.core.model.FeatureReferenceModel;
 import org.eclipse.update.core.model.ModelObject;
 import org.eclipse.update.internal.model.InstallChangeParser;
 
@@ -101,7 +103,13 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 								if (featureToConfigure!=null){
 									if (pm!=null) pm.worked(1);
 									try {
-										configSites[i].configure(featureToConfigure);									
+										// make sure only the latest version of the configured features
+										// is configured across sites [16502]													
+										if (enable(featureToConfigure)){
+											configSites[i].configure(featureToConfigure);									
+										} else {
+											configSites[i].unconfigure(featureToConfigure);
+										}
 									} catch (CoreException e){
 										// if I cannot configure one, 
 										//then continue with others 
@@ -114,7 +122,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 				}
 			}
 		}
-
+		
 		delete();
 		saveLocalSite();
 	}
@@ -188,4 +196,98 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 		ILocalSite localSite = SiteManager.getLocalSite();
 		localSite.save();
 	}
+	
+	/**
+	 * return true if this feature should be configured 
+	 * A feature should be configure if it has the highest version across 
+	 * all configured features with the same identifier
+	 */
+	private boolean enable(IFeature newlyConfiguredFeatures)
+		throws CoreException {
+
+			ILocalSite siteLocal = SiteManager.getLocalSite();
+			IInstallConfiguration currentConfiguration = siteLocal.getCurrentConfiguration();			
+			IConfiguredSite[] configuredSites;
+			IFeatureReference[] configuredFeaturesRef;
+			IFeature feature;
+			configuredSites = currentConfiguration.getConfiguredSites();
+			for (int i = 0; i < configuredSites.length; i++) {
+				configuredFeaturesRef = configuredSites[i].getConfiguredFeatures();
+				for (int j = 0; j < configuredFeaturesRef.length; j++) {
+					try {
+						feature = configuredFeaturesRef[j].getFeature();
+						int result = compare(newlyConfiguredFeatures,feature);
+						if (result!=0){
+							if (result==1){
+								ConfiguredSite cSite = (ConfiguredSite)configuredSites[i];
+								cSite.unconfigure(feature);
+								return true;
+							}
+							if (result==2){
+								return false;
+							}
+						}
+					} catch (CoreException e) {
+						UpdateManagerPlugin.warn(null, e);
+					}
+				}
+			}
+			// feature not found, configure it then
+			return true;
+	}
+	
+	/**
+	 * compare two feature references
+	 * returns 0 if the feature are different
+	 * returns 1 if the version of feature 1 is greater than the version of feature 2
+	 * returns 2 if opposite
+	 */
+	private int compare(
+		IFeature feature1,
+		IFeature feature2)
+		throws CoreException {
+			
+		// TRACE
+		if (UpdateManagerPlugin.DEBUG
+			&& UpdateManagerPlugin.DEBUG_SHOW_RECONCILER) {
+			UpdateManagerPlugin.debug(
+				"Compare: "
+					+ feature1
+					+ " && "
+					+ feature2);
+		}
+					
+		if (feature1 == null)
+			return 0;
+
+		if (feature1 == null || feature2 == null) {
+			return 0;
+		}
+
+		VersionedIdentifier id1 = feature1.getVersionedIdentifier();
+		VersionedIdentifier id2 = feature2.getVersionedIdentifier();
+
+		if (id1 == null || id2 == null) {
+			return 0;
+		}
+
+		if (id1.getIdentifier() != null
+			&& id1.getIdentifier().equals(id2.getIdentifier())) {
+			PluginVersionIdentifier version1 = id1.getVersion();
+			PluginVersionIdentifier version2 = id2.getVersion();
+			if (version1 != null) {
+				if (version1.isGreaterThan(version2)) {
+					return 1;
+				} else {
+					return 2;
+				}
+			} else {
+				return 2;
+			}
+		}
+		return 0;
+	};
+	
+		
+			
 }

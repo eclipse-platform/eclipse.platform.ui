@@ -26,7 +26,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite, IWritable {
 	private ListenersList listeners = new ListenersList();
 	private SiteReconciler reconciler;
 	private boolean isTransient = false;
-	private List /* of IPluginEntry */
+	private List /* of IFeature */
 	allConfiguredFeatures;
 
 	private static final String UPDATE_STATE_SUFFIX = ".metadata";

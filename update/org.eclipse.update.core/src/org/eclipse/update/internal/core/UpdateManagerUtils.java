@@ -241,7 +241,6 @@ public class UpdateManagerUtils {
 					Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath());
 			//$NON-NLS-1$ //$NON-NLS-2$
 			UpdateManagerPlugin.log(msg,new Exception());
-System.err.println("!!!!!!!!!!!!!!!!!!!!!!!! No delete:"+file);
 		}
 	}
 
@@ -253,7 +252,6 @@ System.err.println("!!!!!!!!!!!!!!!!!!!!!!!! No delete:"+file);
 	public static void removeEmptyDirectoriesFromFileSystem(File file) {
 		if (!file.isDirectory())
 			return;
-System.err.println("Attempting to remove :"+file);			
 			
 		File childDir;
 		String[] files = file.list();
@@ -263,7 +261,6 @@ System.err.println("Attempting to remove :"+file);
 			}
 		}
 		if (!file.delete()) {
-System.err.println("Unable to remove :"+file);				
 			String msg = 
 					Policy.bind("UpdateManagerUtils.UnableToRemoveFile", file.getAbsolutePath());
 			//$NON-NLS-1$ //$NON-NLS-2$
