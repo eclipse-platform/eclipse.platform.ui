@@ -1,0 +1,95 @@
+package org.eclipse.update.ui.forms;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.custom.*;
+import org.eclipse.swt.graphics.*;
+
+public class TableLayoutTest {
+
+public static void main (String [] args) {
+     Display display = new Display ();
+     Shell shell = new Shell (display);
+     shell.setLayout(new FillLayout());
+     final ScrolledComposite sc = new ScrolledComposite(shell, SWT.H_SCROLL | SWT.V_SCROLL);
+    // sc.setAlwaysShowScrollBars(true);
+     sc.setBackground(sc.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+     final Composite c = new Composite(sc, SWT.NONE);
+     sc.setContent(c);
+     sc.addListener (SWT.Resize,  new Listener () {
+		public void handleEvent (Event e) {
+			Rectangle ssize = sc.getClientArea();
+			int swidth = ssize.width;
+			HTMLTableLayout layout = (HTMLTableLayout)c.getLayout();
+			Point size = layout.computeSize(c, swidth, SWT.DEFAULT, true);
+			if (size.x < swidth) size.x = swidth;
+			Rectangle trim = c.computeTrim(0, 0, size.x, size.y);
+			size = new Point(trim.width, trim.height);
+			/*
+			Point size = c.computeSize(swidth, SWT.DEFAULT, true);
+			*/
+			//System.out.println("in: "+swidth+", out: "+size.x);
+			c.setSize(size);
+		}
+	});
+     c.setBackground(c.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+     HTMLTableLayout layout = new HTMLTableLayout();
+     layout.numColumns = 2;
+     layout.makeColumnsEqualWidth=false;
+     //layout.marginWidth = layout.marginHeight = 0;
+     //layout.horizontalSpacing = 0;
+     c.setLayout(layout);
+     
+     Label label = new Label(c, SWT.NULL);
+     label.setText("Single line1");
+     
+     label = new Label(c, SWT.WRAP);
+     label.setText("This is a much longer text that I want wrapped,"+
+     " but depending on the window size it can be rendered completely.");
+     
+     Button b = new Button(c, SWT.PUSH);
+     b.setText("Simple button");
+     
+     label = new Label(c, SWT.WRAP);
+     label.setText("Another text that may or may not be wrapped");
+
+     label = new Label(c, SWT.NULL);
+     TableData td = new TableData(TableData.RIGHT, TableData.BOTTOM);
+     label.setLayoutData(td);
+     label.setText("Fixed label");
+     
+     Composite nested = new Composite(c, SWT.NULL);
+     layout = new HTMLTableLayout();
+     layout.numColumns = 2;
+     nested.setLayout(layout);
+     b = new Button(nested, SWT.PUSH);
+     b.setText("Button2");
+     label = new Label(nested, SWT.WRAP);
+     td = new TableData(TableData.LEFT, TableData.MIDDLE);
+     label.setLayoutData(td);
+     label.setText("Some text in the nested label that can be wrapped");
+     
+     label = new Label(c, SWT.NULL);
+     label.setText("Text in the left column");
+     
+     b = new Button(c, SWT.CHECK);
+     b.setText("Checkbox in the right column");
+
+     
+     label = new Label(c, SWT.WRAP);
+     label.setText("This assignment step is then repeated for nested tables using the minimum and maximum widths derived for all such tables in the first pass. In this case, the width of the parent table cell plays the role of the current window size in the above description. This process is repeated recursively for all nested tables. The topmost table is then rendered using the assigned widths. Nested tables are subsequently rendered as part of the parent table's cell contents.");
+     td = new TableData();
+     td.colspan = 2;
+     td.align = TableData.FILL;
+     label.setLayoutData(td);
+
+     
+     shell.open ();
+     while (!shell.isDisposed ()) {
+          if (!display.readAndDispatch ()) display.sleep ();
+     }
+     display.dispose ();
+}
+
+}
+
