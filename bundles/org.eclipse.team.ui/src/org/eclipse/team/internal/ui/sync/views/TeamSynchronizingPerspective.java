@@ -16,7 +16,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 
 public class TeamSynchronizingPerspective implements IPerspectiveFactory {
 
-	public final static String ID = "org.eclipse.team.internal.ui.sync.views.TeamSynchronizingPerspective"; //$NON-NLS-1$
+	public final static String ID = "org.eclipse.team.ui.TeamSynchronizingPerspective"; //$NON-NLS-1$
 
 	/* (Non-javadoc)
 	 * Method declared on IPerpsectiveFactory
