@@ -750,6 +750,7 @@ public class SyncElementTest extends EclipseTest {
 		// make changes on the branch		
 		addResources(copy, new String[] {"addition.txt", "folderAddition/", "folderAddition/new.txt"}, true);
 		deleteResources(copy, new String[] {"folder1/b.txt"}, true);
+		JUnitTestCase.waitMsec(1500);
 		changeResources(copy, new String[] {"file1.txt", "file2.txt"}, true);
 		
 		// make change to workspace working on HEAD
@@ -783,6 +784,7 @@ public class SyncElementTest extends EclipseTest {
 
 		// Checkout and modify a copy
 		IProject copy = checkoutCopy(project, branch);
+		JUnitTestCase.waitMsec(1500);
 		addResources(copy, new String[] {"addition.txt", "folderAddition/", "folderAddition/new.txt"}, true);
 		deleteResources(copy, new String[] {"folder1/b.txt"}, true);
 		changeResources(copy, new String[] {"file1.txt", "file2.txt"}, true);
