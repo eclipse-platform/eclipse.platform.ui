@@ -43,7 +43,7 @@ public class Token implements IToken {
 	public static final IToken WHITESPACE= new Token(T_WHITESPACE);
 	
 	/**
-	 * Standard token: Neither Undefine, Whitespace, nor End Of File.
+	 * Standard token: Neither {@link #UNDEFINED}, {@link #WHITESPACE}, nor {@link #EOF}.
 	 * @deprecated will be removed
 	 */
 	public static final IToken OTHER= new Token(T_OTHER);
@@ -78,9 +78,9 @@ public class Token implements IToken {
 	
 	/**
 	 * Reinitializes the data of this token. The token may not represent
-	 * undefined, whitepsace, or EOF.
+	 * undefined, whitespace, or EOF.
 	 * 
-	 * @param the data to be attached to the token
+	 * @param data to be attached to the token
 	 * @since 2.0
 	 */
 	public void setData(Object data) {

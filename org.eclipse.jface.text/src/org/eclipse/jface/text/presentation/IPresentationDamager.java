@@ -25,7 +25,7 @@ import org.eclipse.jface.text.ITypedRegion;
  * specific for a particular document content type. A presentation damager is 
  * expected to return a damage region which is a valid input for a presentation repairer.
  * I.e. having access to the damage region only the repairer must be able to derive
- * all the information neede to sucessfully repair this region.<p>
+ * all the information needed to successfully repair this region.<p>
  * This interface must either be implemented by clients or clients use the rule-based
  * default implementation <code>RuleBasedDamagerRepairer</code>. Implementers should be
  * registered with a presentation reconciler in order get involved in the reconciling 
@@ -53,7 +53,7 @@ public interface IPresentationDamager {
 	 *
 	 * @param partition the partition inside which the damage must be determined
 	 * @param event the event describing the change whose damage must be determined
-	 * @param documentPartitioningChange indicates whether the given change changed the document's partitioning
+	 * @param documentPartitioningChanged indicates whether the given change changed the document's partitioning
 	 * @return the computed damage
 	 */
 	IRegion getDamageRegion(ITypedRegion partition, DocumentEvent event, boolean documentPartitioningChanged);

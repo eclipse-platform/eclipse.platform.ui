@@ -70,7 +70,7 @@ public class RuleBasedScanner implements ICharacterScanner, ITokenScanner {
 	 * which is returned when non of the rules fired and EOF has not been
 	 * reached.
 	 * 
-	 * @param token the default return token
+	 * @param defaultReturnToken the default return token
 	 * @since 2.0
 	 */
 	public void setDefaultReturnToken(IToken defaultReturnToken) {

@@ -37,6 +37,8 @@ public abstract class AbstractReconcileStep implements IReconcileStep {
 	/**
 	 * Creates an intermediate reconcile step which adds
 	 * the given step to the pipe.
+	 * 
+	 * @param step the reconcile step
 	 */
 	public AbstractReconcileStep(IReconcileStep step) {
 		Assert.isNotNull(step);

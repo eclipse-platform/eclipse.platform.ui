@@ -44,7 +44,7 @@ public interface IPresentationReconciler {
 	 * works without requesting further client actions until <code>uninstall</code> 
 	 * is called.
 	 * 
-	 * @param textViewer the viewer on which this presentation reconciler is installed
+	 * @param viewer the viewer on which this presentation reconciler is installed
 	 */
 	void install(ITextViewer viewer);
 	

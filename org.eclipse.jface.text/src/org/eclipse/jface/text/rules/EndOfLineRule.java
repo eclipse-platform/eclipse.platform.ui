@@ -59,6 +59,7 @@ public class EndOfLineRule extends SingleLineRule {
 	 *        character is used for line continuation, so that an end of
 	 *        line immediately after the escape character does not 
 	 *        terminate the line, even if <code>breakOnEOL</code> is true
+	 * @since 3.0
 	 */
 	public EndOfLineRule(String startSequence, IToken token, char escapeCharacter, boolean escapeContinuesLine) {
 		super(startSequence, null, token, escapeCharacter, true, escapeContinuesLine);

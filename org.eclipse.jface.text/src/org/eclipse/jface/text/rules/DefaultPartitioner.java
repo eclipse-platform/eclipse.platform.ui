@@ -493,6 +493,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
     
 	/*
 	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getZeroLengthContentType(int)
+	 * @since 3.0
 	 */
 	public String getContentType(int offset, boolean preferOpenPartitions) {
 		return getPartition(offset, preferOpenPartitions).getType();
@@ -500,6 +501,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 
 	/*
 	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#getZeroLengthPartition(int)
+	 * @since 3.0
 	 */
 	public ITypedRegion getPartition(int offset, boolean preferOpenPartitions) {
 		ITypedRegion region= getPartition(offset);
@@ -518,6 +520,7 @@ public class DefaultPartitioner implements IDocumentPartitioner, IDocumentPartit
 
 	/*
 	 * @see org.eclipse.jface.text.IDocumentPartitionerExtension2#computeZeroLengthPartitioning(int, int)
+	 * @since 3.0
 	 */
 	public ITypedRegion[] computePartitioning(int offset, int length, boolean includeZeroLengthPartitions) {
 		List list= new ArrayList();

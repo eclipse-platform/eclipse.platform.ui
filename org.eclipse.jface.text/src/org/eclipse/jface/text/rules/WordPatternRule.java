@@ -33,7 +33,7 @@ public class WordPatternRule extends SingleLineRule {
 	 * pattern which, if detected, will return the specified token.
 	 * A word detector is used to identify words.
 	 *
-	 * @param detected the word detector to be used
+	 * @param detector the word detector to be used
 	 * @param startSequence the start sequence of the word pattern
 	 * @param endSequence the end sequence of the word pattern
 	 * @param token the token to be returned on success
@@ -49,7 +49,7 @@ public class WordPatternRule extends SingleLineRule {
 	 * A word detector is used to identify words.
 	 * Any character which follows the given escapeCharacter will be ignored.
 	 *
-	 * @param detected the word detector to be used
+	 * @param detector the word detector to be used
 	 * @param startSequence the start sequence of the word pattern
 	 * @param endSequence the end sequence of the word pattern
 	 * @param token the token to be returned on success

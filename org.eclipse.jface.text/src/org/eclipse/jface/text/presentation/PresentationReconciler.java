@@ -68,7 +68,10 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 				
 		/** Set to <code>true</code> if between a document about to be changed and a changed event. */
 		private boolean fDocumentChanging= false;
-		/** The cached redraw state of the text viewer */
+		/**
+		 * The cached redraw state of the text viewer.
+		 * @since 3.0
+		 */
 		private boolean fCachedRedrawState= true;
 		
 		/*
@@ -139,6 +142,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 		
 		/*
 		 * @see org.eclipse.jface.text.IDocumentPartitioningListenerExtension2#documentPartitioningChanged(org.eclipse.jface.text.DocumentPartitioningChangedEvent)
+		 * @since 3.0
 		 */
 		public void documentPartitioningChanged(DocumentPartitioningChangedEvent event) {
 			IRegion changedRegion= event.getChangedRegion(getDocumentPartitioning());
@@ -459,6 +463,7 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 	 * @param e the event describing the document change
 	 * @param optimize <code>true</code> if partition changes should be considered for optimization
 	 * @return the damaged caused by the change
+	 * @since 3.0
 	 */
 	private IRegion getDamage(DocumentEvent e, boolean optimize) {
 		

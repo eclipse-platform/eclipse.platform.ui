@@ -50,7 +50,7 @@ public class WordRule implements IRule {
 	 *
 	 * @param detector the word detector to be used by this rule, may not be <code>null</code>
 	 *
-	 * @see #addWord
+	 * @see #addWord(String, IToken)
 	 */
 	public WordRule(IWordDetector detector) {
 		this(detector, Token.UNDEFINED);
@@ -65,7 +65,7 @@ public class WordRule implements IRule {
 	 * @param defaultToken the default token to be returned on success 
 	 *		if nothing else is specified, may not be <code>null</code>
 	 *
-	 * @see #addWord
+	 * @see #addWord(String, IToken)
 	 */
 	public WordRule(IWordDetector detector, IToken defaultToken) {
 		

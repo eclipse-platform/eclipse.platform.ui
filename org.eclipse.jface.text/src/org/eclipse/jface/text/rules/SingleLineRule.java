@@ -25,6 +25,7 @@ public class SingleLineRule extends PatternRule {
 	 * which, if detected, will return the specified token.
 	 *
 	 * @param startSequence the pattern's start sequence
+	 * @param endSequence the pattern's end sequence
 	 * @param token the token to be returned on success
 	 */
 	public SingleLineRule(String startSequence, String endSequence, IToken token) {
