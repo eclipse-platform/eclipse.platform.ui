@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chriss Gross (schtoo@schtoo.com) - fix for 61670
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 import org.eclipse.swt.SWT;
@@ -110,7 +111,7 @@ public class ImageHyperlink extends Hyperlink {
 		if (getText() != null) {
 			int innerWHint = wHint;
 			if (wHint != SWT.DEFAULT) {
-				innerWHint = wHint - 2 * marginWidth;
+				innerWHint = wHint - 2 * marginWidth - isize.x - textSpacing;
 			}
 			textSize = super.computeSize(innerWHint, hHint, changed);
 		}

@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Chriss Gross (schtoo@schtoo.com) - fix for 61670
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
@@ -96,6 +97,9 @@ public class FormUtil {
 			width = Math.max(width, extent.x);
 			last = loc;
 		}
+		String lastWord = text.substring(last);
+		Point extent = gc.textExtent(lastWord);
+		width = Math.max(width, extent.x);
 		return width;
 	}
 
@@ -115,11 +119,13 @@ public class FormUtil {
 			loc = wb.next()) {
 			String word = text.substring(saved, loc);
 			Point extent = gc.textExtent(word);
-			maxWidth = Math.max(maxWidth, extent.x);
 			if (extent.x > wHint) {
 				// overflow
 				saved = last;
 				height += extent.y;
+			}
+			else {
+				maxWidth = Math.max(maxWidth, extent.x);
 			}
 			last = loc;
 		}
