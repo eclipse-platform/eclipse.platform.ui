@@ -62,8 +62,9 @@ public interface IVariable extends IDebugElement, IValueModification {
 	String getName() throws DebugException;	
 	/**
 	 * Returns a description of the type of data this variable is
-	 * declared to reference. Note that the type of a variable
-	 * and the type of its value are not always the same.
+	 * declared to reference. Note that the declared type of a
+	 * variable and the concrete type of its value are not neccessarily
+	 * the same.
 	 *
 	 * @return declared type of variable
 	 * @exception DebugException if unable to retrieve this variables reference type
