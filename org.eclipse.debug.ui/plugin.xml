@@ -1336,14 +1336,12 @@
             annotationType="org.eclipse.debug.core.breakpoint"
             colorPreferenceKey="breakpointIndicationColor"
             overviewRulerPreferenceValue="true"
-            markerType="org.eclipse.debug.core.breakpointMarker"
             presentationLayer="3"
             label="%BreakpointMarkerPreference.label"
             textPreferenceValue="false"
             textPreferenceKey="breakpointIndication"
             verticalRulerPreferenceKey="breakpointVerticalRuler"
             verticalRulerPreferenceValue="true"
-            markerSeverity="0"
             overviewRulerPreferenceKey="breakpointIndicationInOverviewRuler">
       </specification>
       <specification
@@ -1352,7 +1350,6 @@
             icon="icons/full/obj16/inst_ptr_top.gif"
             verticalRulerPreferenceValue="true"
             colorPreferenceKey="currentIPColor"
-            markerType="org.eclipse.debug.ui.instructionPointer.current"
             overviewRulerPreferenceValue="true"
             highlightPreferenceKey="currentIPHighlight"
             presentationLayer="6"
@@ -1361,7 +1358,6 @@
             textPreferenceValue="false"
             textPreferenceKey="currentIPIndication"
             verticalRulerPreferenceKey="currentIPVerticalRuler"
-            markerSeverity="0"
             overviewRulerPreferenceKey="currentIPOverviewRuler">
       </specification>
       <specification
@@ -1370,7 +1366,6 @@
             icon="icons/full/obj16/inst_ptr.gif"
             verticalRulerPreferenceValue="true"
             colorPreferenceKey="secondaryIPColor"
-            markerType="org.eclipse.debug.ui.instructionPointer.secondary"
             overviewRulerPreferenceValue="true"
             highlightPreferenceKey="secondaryIPHighlight"
             presentationLayer="6"
@@ -1379,7 +1374,6 @@
             textPreferenceValue="false"
             textPreferenceKey="secondaryIPIndication"
             verticalRulerPreferenceKey="secondaryIPVerticalRuler"
-            markerSeverity="0"
             overviewRulerPreferenceKey="secondaryIPOverviewRuler">
       </specification>
    </extension>
