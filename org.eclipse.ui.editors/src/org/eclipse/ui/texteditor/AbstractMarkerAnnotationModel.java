@@ -315,7 +315,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel {
 			Position p= createPositionFromMarker(marker);
 			if (p != null) {
 				a.update();
-				modifyAnnotation(a, p);
+				modifyAnnotation(a, p, false);
 			}
 		}
 	}
