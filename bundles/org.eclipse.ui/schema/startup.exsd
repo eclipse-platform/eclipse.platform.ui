@@ -6,9 +6,11 @@
          <meta.schema plugin="org.eclipse.ui" id="startup" name="Startup"/>
       </appInfo>
       <documentation>
-         This extension point is used to register plugins that want to be activated on startup. The plugin class must implement the interface &lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;. Once the workbench is started, the method earlyStartup() will be called from a separated thread. 
+         This extension point is used to register plugins that want to be activated on startup. The plugin class or the class given as the attribute on the startup element must implement the interface &lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;. Once the workbench is started, the method earlyStartup() will be called from a separate thread. 
 
-These plugins are listed in the workbench preferences and the user may disable any plugin from early starting up.
+If the startup element has a class attribute, the method earlyStartup() will be called on this class.  Otherwise, this method will be called from the plugin class.
+
+These plugins are listed in the workbench preferences and the user may disable any plugin from early startup.
       </documentation>
    </annotation>
 
@@ -41,7 +43,21 @@ These plugins are listed in the workbench preferences and the user may disable a
       </complexType>
    </element>
 
-   <element name="startup" type="string">
+   <element name="startup">
+      <complexType>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  a fully qualified name of the class that implements 
+&lt;samp&gt;org.eclipse.ui.IStartup&lt;/samp&gt;.
+Since release 3.0.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java"/>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
    </element>
 
    <annotation>

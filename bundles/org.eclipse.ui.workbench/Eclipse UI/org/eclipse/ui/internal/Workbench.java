@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IPath;
@@ -1279,20 +1280,50 @@ public final class Workbench implements IWorkbench {
 			IPreferenceStore store = getPreferenceStore();
 			final String pref = store.getString(IPreferenceConstants.PLUGINS_NOT_ACTIVATED_ON_STARTUP);
 			public void run() {
-				IPluginDescriptor descriptors[] = getEarlyActivatedPlugins();
-				for (int i = 0; i < descriptors.length; i++) {
-					final IPluginDescriptor pluginDescriptor = descriptors[i];
+				IPluginRegistry registry = Platform.getPluginRegistry();
+				IExtensionPoint point = registry.getExtensionPoint(PlatformUI.PLUGIN_ID, IWorkbenchConstants.PL_STARTUP);
+				IExtension[] extensions = point.getExtensions();
+				for (int i = 0; i < extensions.length; i++) {
+					IExtension extension = extensions[i];
+					// Look for the class attribute in the startup element first
+					IConfigurationElement[] configElements = extension.getConfigurationElements();
+					// There should only be one configuration element and it should
+					// be named "startup".
+					IConfigurationElement startupElement = null;
+					for (int j = 0; j < configElements.length && startupElement == null; j++) {
+						if (configElements[j].getName().equals(IWorkbenchConstants.TAG_CLASS)) {
+							startupElement = configElements[j];
+						}
+					}
+					final IConfigurationElement startElement = startupElement;
+					final String startupName;
+					if (startElement != null) {
+						// This will cause startupName to be null if
+						// the class attribute does not exist.
+						startupName = startElement.getAttribute(IWorkbenchConstants.TAG_CLASS);
+					} else {
+						startupName = null;
+					}
+					// If the startup element doesn't specify a class, use the plugin class
+					final IPluginDescriptor pluginDescriptor = extension.getDeclaringPluginDescriptor();
 					SafeRunnable code = new SafeRunnable() {
 						public void run() throws Exception {
-							String id = pluginDescriptor.getUniqueIdentifier() + IPreferenceConstants.SEPARATOR;
+							String id =
+								pluginDescriptor.getUniqueIdentifier()
+									+ IPreferenceConstants.SEPARATOR;
 							if (pref.indexOf(id) < 0) {
-								Plugin plugin = pluginDescriptor.getPlugin();
-								IStartup startup = (IStartup) plugin;
+								IStartup startup = null;
+								if (startupName == null) {
+									Plugin plugin = pluginDescriptor.getPlugin();
+									startup = (IStartup) plugin;
+								} else {
+									startup = (IStartup) WorkbenchPlugin.createExtension(startElement, IWorkbenchConstants.TAG_CLASS);
+								}
 								startup.earlyStartup();
 							}
 						}
 						public void handleException(Throwable exception) {
-							WorkbenchPlugin.log("Unhandled Exception", new Status(IStatus.ERROR, "org.eclipse.ui", 0, "Unhandled Exception", exception)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							WorkbenchPlugin.log("Unhandled Exception", new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0, "Unhandled Exception", exception)); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 					};
 					Platform.run(code);
