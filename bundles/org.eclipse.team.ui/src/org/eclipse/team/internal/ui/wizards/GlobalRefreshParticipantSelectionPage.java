@@ -68,7 +68,7 @@ public class GlobalRefreshParticipantSelectionPage extends WizardPage implements
 		public String getText(Object element) {
 			if(element instanceof ISynchronizeParticipantReference) {
 				ISynchronizeParticipantReference descriptor = (ISynchronizeParticipantReference)element;
-				return descriptor.getDescriptor().getName();
+				return descriptor.getDisplayName();
 			}
 			return null;
 		}	
