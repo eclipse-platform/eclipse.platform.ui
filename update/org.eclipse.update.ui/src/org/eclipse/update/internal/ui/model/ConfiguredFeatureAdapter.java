@@ -85,11 +85,14 @@ public class ConfiguredFeatureAdapter
 		return updated;
 	}
 	public IFeatureAdapter[] getIncludedFeatures(IProgressMonitor monitor) {
-		if (children != null )
-			return children;
 		try {
 			IIncludedFeatureReference[] included =
 				getFeature(null).getIncludedFeatureReferences();
+				
+			// use cached data
+			if (children != null && children.length == included.length)
+				return children;
+
 			children =
 				new ConfiguredFeatureAdapter[included.length];
 			if (monitor == null)
