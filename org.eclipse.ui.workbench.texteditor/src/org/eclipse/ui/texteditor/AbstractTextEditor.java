@@ -3701,14 +3701,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 	
 	/*
-	 * @see EditorPart#isSaveOnCloseNeeded()
-	 */
-	public boolean isSaveOnCloseNeeded() {
-		IDocumentProvider p= getDocumentProvider();
-		return p == null ? false : p.mustSaveDocument(getEditorInput());
-	}
-	
-	/*
 	 * @see EditorPart#isDirty()
 	 */
 	public boolean isDirty() {
