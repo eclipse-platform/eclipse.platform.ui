@@ -1099,7 +1099,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 
 		int vOffset= getInclusiveTopIndexStartOffset();
 		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17147
-		int vLength= fSourceViewer.getBottomIndexEndOffset() + 1;		
+		int vLength= fSourceViewer.getBottomIndexEndOffset() + 1 - vOffset;		
 
 		for (int layer= 0, maxLayer= 1;	layer < maxLayer; layer++) {
 			
