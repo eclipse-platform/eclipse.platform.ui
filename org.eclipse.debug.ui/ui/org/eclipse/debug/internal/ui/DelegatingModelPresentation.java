@@ -275,7 +275,7 @@ public class DelegatingModelPresentation implements IDebugModelPresentation {
 	 */
 	protected boolean showVariableTypeNames() {
 		Boolean show= (Boolean) fAttributes.get(DISPLAY_VARIABLE_TYPE_NAMES);
-		show= show == null ? new Boolean(false) : show;
+		show= show == null ? Boolean.FALSE : show;
 		return show.booleanValue();
 	}
 		
