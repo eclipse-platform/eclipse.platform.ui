@@ -80,7 +80,6 @@ public class OptionTests extends AbstractAntTest {
 		try {
 			run("TestForEcho.xml", new String[]{"-logfile"});
 		} catch (CoreException ce) {
-			String lastMessage= getLastMessageLogged();
 			//You must specify a log file when using the -log argument
 			return;
 		}
