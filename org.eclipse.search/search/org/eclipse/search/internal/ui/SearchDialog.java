@@ -29,8 +29,6 @@ import org.eclipse.core.resources.IWorkspace;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -49,6 +47,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -291,7 +291,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 		layout.marginHeight= 7;
 		border.setLayout(layout);
 		
-		CTabFolder folder= new CTabFolder(border, SWT.NONE);
+		TabFolder folder= new TabFolder(border, SWT.NONE);
 		folder.setLayout(new TabFolderLayout());
 
 		for (int i= 0; i < numPages; i++) {			
@@ -299,7 +299,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 			if (WorkbenchActivityHelper.filterItem(descriptor))
 			    continue;
 			
-			final CTabItem item= new CTabItem(folder, SWT.NONE);
+			final TabItem item= new TabItem(folder, SWT.NONE);
 			item.setText(descriptor.getLabel());
 			item.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
@@ -415,8 +415,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 	}
 	
 	private void turnToPage(SelectionEvent event) {
-		final CTabItem item= (CTabItem)event.item;
-		CTabFolder folder= item.getParent();
+		final TabItem item= (TabItem)event.item;
+		TabFolder folder= item.getParent();
 		Control oldControl= folder.getItem(fCurrentIndex).getControl();
 		Point oldSize= oldControl.getSize();
 		if (item.getControl() == null) {
