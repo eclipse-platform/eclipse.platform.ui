@@ -5,8 +5,6 @@ package org.eclipse.ui.views.tasklist;
  * All Rights Reserved.
  */
 
-import org.eclipse.core.resources.IMarker;
-
 /**
  * This interface defines constants used for marker properties
  * and attributes.

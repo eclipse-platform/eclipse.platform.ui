@@ -4,16 +4,21 @@ package org.eclipse.ui.views.tasklist;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+
+import org.eclipse.swt.graphics.Image;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Display;
-import java.net.*;
-import java.util.*;
 
 /**
  * Utility class for accessing marker attributes.

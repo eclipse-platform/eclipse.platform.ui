@@ -6,13 +6,13 @@ package org.eclipse.ui.views.tasklist;
  */
 
 import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.MarkerResolutionSelectionDialog;
-import org.eclipse.ui.dialogs.SelectionDialog;
 
 /**
  * This action displays a list of resolutions for the selected marker

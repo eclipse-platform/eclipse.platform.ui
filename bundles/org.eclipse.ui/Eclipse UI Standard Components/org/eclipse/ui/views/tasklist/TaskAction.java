@@ -4,9 +4,10 @@ package org.eclipse.ui.views.tasklist;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * This is the base class of all the local actions used

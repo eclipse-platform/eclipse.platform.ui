@@ -7,6 +7,7 @@ package org.eclipse.ui.views.tasklist;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 

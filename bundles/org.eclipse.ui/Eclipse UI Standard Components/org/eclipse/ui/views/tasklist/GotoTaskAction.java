@@ -5,13 +5,14 @@ package org.eclipse.ui.views.tasklist;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.*;
-import org.eclipse.ui.help.*;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.internal.dialogs.DialogUtil;
-import org.eclipse.jface.dialogs.MessageDialog;
+
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.IStructuredSelection;
+
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.internal.dialogs.DialogUtil;
 
 /**
  * This action opens an editor for the resource

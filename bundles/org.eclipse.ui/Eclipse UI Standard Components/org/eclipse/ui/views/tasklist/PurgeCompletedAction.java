@@ -4,13 +4,17 @@ package org.eclipse.ui.views.tasklist;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.help.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.IProgressMonitor;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.dialogs.MessageDialog;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
-import java.util.*;
+import org.eclipse.jface.dialogs.MessageDialog;
+
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This action deletes all the tasks found in the registry that

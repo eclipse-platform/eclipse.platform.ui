@@ -4,17 +4,18 @@ package org.eclipse.ui.views.tasklist;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import org.eclipse.ui.help.*;
-import org.eclipse.core.resources.IWorkspaceRunnable;
+import java.util.List;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.swt.widgets.Table;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.swt.widgets.Table;
-import java.util.List;
+
+import org.eclipse.ui.help.WorkbenchHelp;
 
 /**
  * This action removes the selected task(s) from the task list.

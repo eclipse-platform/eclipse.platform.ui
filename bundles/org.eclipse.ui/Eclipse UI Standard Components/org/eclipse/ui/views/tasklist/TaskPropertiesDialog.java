@@ -7,6 +7,10 @@ package org.eclipse.ui.views.tasklist;
 
 import java.util.*;
 
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
@@ -14,12 +18,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.Dialog;  // disambiguate
 
 import org.eclipse.ui.help.WorkbenchHelp;
 

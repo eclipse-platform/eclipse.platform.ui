@@ -8,10 +8,13 @@ package org.eclipse.ui.views.tasklist;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
+
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.MarkerTransfer;
 

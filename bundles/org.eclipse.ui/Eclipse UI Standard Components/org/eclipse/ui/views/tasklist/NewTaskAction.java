@@ -4,10 +4,7 @@ package org.eclipse.ui.views.tasklist;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
-import java.util.HashMap;
-import java.util.Map;
-
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IMarker;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.StructuredSelection;

@@ -7,14 +7,13 @@ package org.eclipse.ui.views.tasklist;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.ui.PlatformUI;
+
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.part.MarkerTransfer;
 

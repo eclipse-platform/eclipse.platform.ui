@@ -4,12 +4,13 @@ package org.eclipse.ui.views.tasklist;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
+ 
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * Utility class which helps managing messages
+ * Utility class which helps manage messages.
  */
 class TaskListMessages {
 	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.views.tasklist.messages";//$NON-NLS-1$

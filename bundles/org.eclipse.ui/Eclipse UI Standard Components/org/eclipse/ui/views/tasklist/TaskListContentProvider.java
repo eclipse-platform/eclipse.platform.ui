@@ -11,16 +11,14 @@ Contributors:
   Cagatay Kavukcuoglu <cagatayk@acm.org> - Filter for markers in same project
 **********************************************************************/
 
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.*;
+
 import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.jface.viewers.*;
 
 /**
  * Task list content provider returns elements that should be
@@ -73,16 +71,13 @@ class TaskListContentProvider implements IStructuredContentProvider,
 			return ""; //$NON-NLS-1$
 		}
 	
-		String pattern = TaskListMessages.getString(
-				"TaskList.statusSummaryVisible"); //$NON-NLS-1$
-		Object[] arguments = new Object[] {
-			new Integer(sum(visibleMarkerCounts)),
-			getStatusSummaryBreakdown(visibleMarkerCounts)
-		};
-
-		return MessageFormat.format(pattern, arguments);
+		return TaskListMessages.format(
+			"TaskList.statusSummaryVisible", //$NON-NLS-1$
+			new Object[] {
+				new Integer(sum(visibleMarkerCounts)),
+				getStatusSummaryBreakdown(visibleMarkerCounts)});
 	}
-
+	
 	/**
 	 * Returns a one-line string containing a summary of the number
 	 * of selected tasks and problems.
@@ -91,14 +86,11 @@ class TaskListContentProvider implements IStructuredContentProvider,
 	 */
 	public String getStatusSummarySelected(IStructuredSelection selection) {
 		int[] selectedMarkerCounts = getMarkerCounts(selection.toList());
-		String pattern = TaskListMessages.getString(
-				"TaskList.statusSummarySelected"); //$NON-NLS-1$
-		Object[] arguments = new Object[] {
-			new Integer(sum(selectedMarkerCounts)),
-			getStatusSummaryBreakdown(selectedMarkerCounts)
-		};
-
-		return MessageFormat.format(pattern, arguments);
+		return TaskListMessages.format(
+			"TaskList.statusSummarySelected", //$NON-NLS-1$
+			new Object[] {
+				new Integer(sum(selectedMarkerCounts)),
+				getStatusSummaryBreakdown(selectedMarkerCounts)});
 	}
 
 	/**
@@ -106,15 +98,13 @@ class TaskListContentProvider implements IStructuredContentProvider,
 	 * given tasks, errors, warnings, and infos.
 	 */
 	private String getStatusSummaryBreakdown(int[] counts) {
-		String pattern = TaskListMessages.getString(
-				"TaskList.statusSummaryBreakdown"); //$NON-NLS-1$
-		Object[] arguments = new Object[] {
-			new Integer(counts[TASKS]),
-			new Integer(counts[ERRORS]), 
-			new Integer(counts[WARNINGS]), 
-			new Integer(counts[INFOS])};
-
-		return MessageFormat.format(pattern, arguments);
+		return TaskListMessages.format(
+			"TaskList.statusSummaryBreakdown", //$NON-NLS-1$
+			new Object[] {
+				new Integer(counts[TASKS]),
+				new Integer(counts[ERRORS]),
+				new Integer(counts[WARNINGS]),
+				new Integer(counts[INFOS])});
 	}
 
 	/**
@@ -130,23 +120,16 @@ class TaskListContentProvider implements IStructuredContentProvider,
 		TasksFilter filter = (TasksFilter) taskList.getFilter();
 
 		if (filter.isShowingAll()) {
-			String pattern = TaskListMessages.getString(
-					"TaskList.titleSummaryUnfiltered"); //$NON-NLS-1$
-			Object[] arguments = new Object[] {
-				new Integer(visibleMarkerCount)
-			};
-			
-			return MessageFormat.format(pattern, arguments);
+			return TaskListMessages.format(
+				"TaskList.titleSummaryUnfiltered", //$NON-NLS-1$
+				new Object[] { new Integer(visibleMarkerCount)});
 		}
 		else {
-			String pattern = TaskListMessages.getString(
-					"TaskList.titleSummaryFiltered"); //$NON-NLS-1$
-			Object[] arguments = new Object[] {
-				new Integer(visibleMarkerCount),
-				new Integer(getTotalMarkerCount())
-			};
-			
-			return MessageFormat.format(pattern, arguments);
+			return TaskListMessages.format(
+				"TaskList.titleSummaryFiltered", //$NON-NLS-1$
+				new Object[] {
+					new Integer(visibleMarkerCount),
+					new Integer(getTotalMarkerCount())});
 		}
 	}
 

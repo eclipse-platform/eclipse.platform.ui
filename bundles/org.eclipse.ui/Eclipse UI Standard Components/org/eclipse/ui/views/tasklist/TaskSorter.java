@@ -5,8 +5,9 @@ package org.eclipse.ui.views.tasklist;
  * All Rights Reserved.
  */
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.jface.viewers.*;
-import java.text.Collator;
+
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
 
 /**
  * This is the abstract superclass of sorters in the task list.
