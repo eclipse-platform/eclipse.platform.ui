@@ -27,7 +27,6 @@ import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.registry.SynchronizeParticipantDescriptor;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.TeamImages;
-import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
@@ -40,12 +39,16 @@ import org.eclipse.ui.PartInitException;
  * @since 3.0
  */
 public abstract class AbstractSynchronizeParticipant implements ISynchronizeParticipant {
+	
+	private final static String CTX_PINNED = "root"; //$NON-NLS-1$
+	
 	// property listeners
 	private ListenerList fListeners;
 
 	private String fName;
 	private String fId;
 	private String fSecondaryId;
+	private boolean pinned;
 	private ImageDescriptor fImageDescriptor;
 	protected IConfigurationElement configElement;
 
@@ -126,6 +129,31 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 		return fSecondaryId;
 	}
 	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#setPinned(boolean)
+	 */
+	public final void setPinned(boolean pinned) {
+		this.pinned = pinned;
+		pinned(pinned);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#isPinned()
+	 */
+	public final boolean isPinned() {
+		return pinned;
+	}
+	
+	/**
+	 * Called when the pinned state is changed.
+	 *  
+	 * @param pinned whether the participant is pinned.
+	 */
+	protected void pinned(boolean pinned) {
+		// Subclasses can re-act to changes in the pinned state
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
@@ -137,11 +165,17 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	}
 	
 	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		return Utils.getKey(getId(), getSecondaryId()).hashCode();
+	}
+	
+	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#doesSupportRefresh()
 	 */
 	public boolean doesSupportSynchronize() {
-		ISynchronizeParticipantReference ref = TeamUI.getSynchronizeManager().get(getId(), getSecondaryId());
-		return ref == null ? false : ref.getDescriptor().isGlobalSynchronize();
+		return true;
 	}
 	
 	/*
@@ -258,12 +292,15 @@ public abstract class AbstractSynchronizeParticipant implements ISynchronizePart
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
 	public void init(String secondaryId, IMemento memento) throws PartInitException {
+		setSecondaryId(secondaryId);
+		pinned = Boolean.valueOf(memento.getString(CTX_PINNED)).booleanValue();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#saveState(org.eclipse.ui.IMemento)
 	 */
 	public void saveState(IMemento memento) {
+		memento.putString(CTX_PINNED, Boolean.toString(pinned));
 	}
 
 	/* (non-Javadoc)

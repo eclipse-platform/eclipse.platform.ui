@@ -10,19 +10,23 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
-import org.eclipse.team.core.subscribers.Subscriber;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.ui.actions.BranchAction;
 import org.eclipse.team.internal.ccvs.ui.actions.GenerateDiffFileAction;
 import org.eclipse.team.internal.ccvs.ui.actions.IgnoreAction;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
+import org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant;
+import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
+import org.eclipse.team.ui.synchronize.ISynchronizeScope;
 import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 
-public class WorkspaceSynchronizeParticipant extends CVSParticipant {
+public class WorkspaceSynchronizeParticipant extends ScopableSubscriberParticipant {
 
 	public static final String ID = "org.eclipse.team.cvs.ui.cvsworkspace-participant"; //$NON-NLS-1$
 
@@ -115,20 +119,33 @@ public class WorkspaceSynchronizeParticipant extends CVSParticipant {
 		}
 	}
 	
+	/**
+	 * No arg contructor used for
+	 * creation of persisted participant after startup
+	 */
+	public WorkspaceSynchronizeParticipant() {
+	}
+	
+	public WorkspaceSynchronizeParticipant(ISynchronizeScope scope) {
+		super(scope);
+		setSubscriber(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(org.eclipse.ui.IMemento)
 	 */
 	public void init(String secondaryId, IMemento memento) throws PartInitException {
 		super.init(secondaryId, memento);
-		Subscriber subscriber = CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber(); 
-		setSubscriber(subscriber);
+		setSubscriber(CVSProviderPlugin.getPlugin().getCVSWorkspaceSubscriber());
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.subscribers.SubscriberParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
 	 */
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
 		super.initializeConfiguration(configuration);
+		ILabelDecorator labelDecorator = new CVSParticipantLabelDecorator(configuration);
+		configuration.addLabelDecorator(labelDecorator);
 		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, TOOLBAR_CONTRIBUTION_GROUP);
 		configuration.addActionContribution(new WorkspaceActionContribution());
 		configuration.setSupportedModes(ISynchronizePageConfiguration.ALL_MODES);
@@ -149,5 +166,9 @@ public class WorkspaceSynchronizeParticipant extends CVSParticipant {
 		configuration.addMenuGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				CONTEXT_MENU_CONTRIBUTION_GROUP_4);
+	}
+	
+	protected ISynchronizeParticipantDescriptor getDescriptor() {
+		return TeamUI.getSynchronizeManager().getParticipantDescriptor(ID);
 	}
 }

@@ -11,13 +11,18 @@
 package org.eclipse.team.internal.ui.synchronize.actions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -25,26 +30,30 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.0 
  */
 public class RemoveSynchronizeParticipantAction extends Action {
-	private ISynchronizeParticipant participant;
 
-	/**
-	 * Creates the action to remove the participant from the synchronize
-	 * manager.
-	 * @param participant the participant to remove from the synchronize
-	 * manager.
-	 */
-	public RemoveSynchronizeParticipantAction(ISynchronizeParticipant participant) {
-		this.participant = participant;
-		Utils.initAction(this, "action.removePage.", Policy.getBundle()); //$NON-NLS-1$
+	private ISynchronizeParticipant participant;
+	private final ISynchronizeView view;
+	private boolean removeAll;
+
+	public RemoveSynchronizeParticipantAction(ISynchronizeView view, boolean removeAll) {
+		this.view = view;
+		this.removeAll = removeAll;
+		if (removeAll) {
+			Utils.initAction(this, "action.removeAllPage.", Policy.getBundle()); //$NON-NLS-1$
+		} else {
+			Utils.initAction(this, "action.removePage.", Policy.getBundle()); //$NON-NLS-1$
+		}
 	}
-	
+
 	public void run() {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					TeamUI.getSynchronizeManager().removeSynchronizeParticipants(
-							new ISynchronizeParticipant[] {participant});
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					if (removeAll) {
+						removeAll();
+					} else {
+						removeCurrent();
+					}
 				}
 			});
 		} catch (InvocationTargetException e) {
@@ -52,5 +61,45 @@ public class RemoveSynchronizeParticipantAction extends Action {
 		} catch (InterruptedException e) {
 			// Cancelled. Just ignore
 		}
+	}
+
+	private void removeCurrent() {
+		final ISynchronizeParticipant participant = view.getParticipant();
+		if (participant != null) {
+			if (participant.isPinned()) {
+				final boolean[] bail = new boolean[] { false };
+				Display.getDefault().syncExec(new Runnable() {
+					public void run() {
+						bail[0] = !MessageDialog.openQuestion(
+								view.getSite().getShell(), 
+								"Remove Pinned Synchronization?", 
+								"The current synchronization is pinned. Are you sure you want to remove it?");
+
+					}
+				});
+				if (bail[0]) {
+					return;
+				}
+			}
+			TeamUI.getSynchronizeManager().removeSynchronizeParticipants(new ISynchronizeParticipant[]{participant});
+		}
+	}
+
+	private void removeAll() {
+		ISynchronizeManager manager = TeamUI.getSynchronizeManager();
+		ISynchronizeParticipantReference[] refs = manager.getSynchronizeParticipants();
+		ArrayList removals = new ArrayList();
+		for (int i = 0; i < refs.length; i++) {
+			ISynchronizeParticipantReference reference = refs[i];
+			ISynchronizeParticipant p;
+			try {
+				p = reference.getParticipant();
+				if (! p.isPinned())
+					removals.add(p);
+			} catch (TeamException e) {
+				// keep going
+			}
+		}
+		manager.removeSynchronizeParticipants((ISynchronizeParticipant[]) removals.toArray(new ISynchronizeParticipant[removals.size()]));
 	}
 }

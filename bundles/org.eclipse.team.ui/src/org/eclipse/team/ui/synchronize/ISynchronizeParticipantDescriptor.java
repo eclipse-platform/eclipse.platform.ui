@@ -53,34 +53,6 @@ public interface ISynchronizeParticipantDescriptor {
 	public ImageDescriptor getImageDescriptor();
 	
 	/**
-	 * Returns <code>true</code> if the participant is static and 
-	 * <code>false</code> otherwise. Static participants are created 
-	 * automatically by the synchronize manager at startup whereas 
-	 * non-static participants are created by client code and registered 
-	 * with the manager.
-	 * 
-	 * @return <code>true</code> if the participant is static and 
-	 * <code>false</code> otherwise.
-	 */
-	public boolean isStatic();
-
-	/**
-	 * Returns if this participant supports a global synchronize action.
-	 * 
-	 * @return <code>true</code> if this participant supports a global synchronize action and
-	 * <code>false</code> otherwise.
-	 */
-	public boolean isGlobalSynchronize();
-	
-	/**
-	 * Returns if this type of participant allow multiple instances.
-	 * 
-	 * @return <code>true</code> if this type of participant allow multiple instances
-	 * and <code>false</code> otherwise.
-	 */
-	public boolean isMultipleInstances();
-	
-	/**
 	 * Returns if this participant can be persisted between sessions.
 	 * 
 	 * @return <code>true</code> if this participant can be persisted between sessions

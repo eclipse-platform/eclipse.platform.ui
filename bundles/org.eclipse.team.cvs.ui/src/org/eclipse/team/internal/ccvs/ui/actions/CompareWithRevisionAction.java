@@ -113,7 +113,7 @@ public class CompareWithRevisionAction extends WorkspaceAction {
 	 * Return the text describing this action
 	 */
 	protected String getActionTitle() {
-		return Policy.bind("CompareWithRevisionAction.4");
+		return Policy.bind("CompareWithRevisionAction.4"); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)

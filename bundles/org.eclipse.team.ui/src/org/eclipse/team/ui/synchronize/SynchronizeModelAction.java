@@ -238,7 +238,7 @@ public abstract class SynchronizeModelAction extends BaseSelectionListenerAction
 		final boolean[] result = new boolean[1];
 		result[0] = true;
 
-		Platform.run(new SafeRunnable("Error") {
+		Platform.run(new SafeRunnable("Error") { //$NON-NLS-1$
 			public void run() {
 				IResource[] resources = Utils.getResources(getFilteredDiffElements());
 				if (resources.length == 0) return;

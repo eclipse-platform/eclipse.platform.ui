@@ -3,12 +3,12 @@
 <schema targetNamespace="org.eclipse.team.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.team.ui" id="synchronizeParticipants" name="Synchronize View Participants"/>
+         <meta.schema plugin="org.eclipse.team.ui" id="synchronizeParticipants" name="Synchronize Participants"/>
       </appInfo>
       <documentation>
-         This extension point is used to register a synchronize participant with the Synchronize View. A synchronize participant provides a logical connection between local resources and a remote location that is used to share those resources. The Synchronize View displays synchronize participants.
+         This extension point is used to register a synchronize participant. A synchronize participant is a component that displays changes between resources and typically allows the user to manipulate the changes. For example, CVS defines a workspace synchronize participant that allows showing changes between workspace resources and the resources at a remote location that is used to share those resources. Synchronize participants are typically created via a synchronize participant wizard or they can be created via a plug-in action and then registered with the ISynchronizeManager. The Synchronize View displays synchronize participants.
 &lt;p&gt;
-Providers may provide an extension for this extension point, and an implementation of &lt;samp&gt;org.eclipse.team.ui.synchronize.ISynchronizeParticipant&lt;/samp&gt;.
+A participant is a generic component that provides access to creating a page and is shown to the user and a configuration that defines common configuration parameters for the page. The Synchronize View doesn&apos;t enforce any restrictions on how changes are shown to the user, and instead only manages the participants.
 &lt;/p&gt;
       </documentation>
    </annotation>
@@ -61,14 +61,7 @@ Providers may provide an extension for this extension point, and an implementati
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  A fully qualified name of the class the implements &lt;samp&gt;org.eclipse.team.ui.synchronize.ISynchronizeParticipant&lt;/samp&gt;. A common practice is to subclass &lt;samp&gt;org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant&lt;/samp&gt; in order to inherit some of the default functionality. In addition, it is recommended to subclass &lt;samp&gt;org.eclipse.team.ui.synchronize.TeamSubscriberParticipant&lt;/samp&gt; to benefit from a full featured participant based on the &lt;samp&gt;org.eclipse.team.core.TeamSubscriber&lt;/samp&gt; implementation.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="type" type="string">
-            <annotation>
-               <documentation>
-                  A value identifying the type of participant. Possible values are &lt;samp&gt;static&lt;/samp&gt; if the participant is to be created automatically by the Team plugin or &lt;samp&gt;dynamic&lt;/samp&gt; if the participant will be created and registered with the Synchronize Manager at some other time.
+                  A fully qualified name of the class the extends &lt;samp&gt;org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant&lt;/samp&gt;.
                </documentation>
             </annotation>
          </attribute>
@@ -83,36 +76,6 @@ Providers may provide an extension for this extension point, and an implementati
             <annotation>
                <documentation>
                   By default participants will be persisted between sessions. Set this attribute to false if this participant should not be persisted between sessions.
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="true">
-                  </enumeration>
-                  <enumeration value="false">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
-         <attribute name="multipleInstances">
-            <annotation>
-               <documentation>
-                  By default a multiple participant instances can be added to the synchronize manager. If only one instance of this participant is allowed set this property to false.
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="true">
-                  </enumeration>
-                  <enumeration value="false">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
-         <attribute name="globalSynchronize">
-            <annotation>
-               <documentation>
-                  By default participants add a wizard to the global Team Synchronize action. If this participant doesn&apos;t not support a global synchronize action then set this to false.
                </documentation>
             </annotation>
             <simpleType>
@@ -141,22 +104,26 @@ Providers may provide an extension for this extension point, and an implementati
          <meta.section type="examples"/>
       </appInfo>
       <documentation>
-         &lt;extension
-point=&quot;org.eclipse.team.ui.synchronizeParticipants&quot;&gt;
-&lt;participant
-name=&quot;CVS Workspace&quot;
-icon=&quot;icons/full/cview16/server.gif&quot;         class=&quot;org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant&quot;
-type=&quot;static&quot;
-id=&quot;org.eclipse.team.cvs.ui.cvsworkspace-participant&quot;&gt;
-&lt;/participant&gt;
-&lt;participant
-name=&quot;CVS Merge&quot;
-icon=&quot;icons/full/obj16/prjversions_rep.gif&quot;
-class=&quot;org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant&quot;
-type=&quot;dynamic&quot;
-id=&quot;org.eclipse.team.cvs.ui.cvsmerge-participant&quot;&gt;
-&lt;/participant&gt;
+         &lt;p&gt;&lt;pre&gt;
+
+&lt;extension
+	point=&quot;org.eclipse.team.ui.synchronizeParticipants&quot;&gt;
+	&lt;participant
+		name=&quot;CVS Workspace&quot;
+		icon=&quot;icons/full/cview16/server.gif&quot;         
+		class=&quot;org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant&quot;
+		id=&quot;org.eclipse.team.cvs.ui.cvsworkspace-participant&quot;&gt;
+	&lt;/participant&gt;
+	&lt;participant
+		name=&quot;CVS Merge&quot;
+		icon=&quot;icons/full/obj16/prjversions_rep.gif&quot;
+		class=&quot;org.eclipse.team.internal.ccvs.ui.subscriber.MergeSynchronizeParticipant&quot;
+		type=&quot;dynamic&quot;
+		id=&quot;org.eclipse.team.cvs.ui.cvsmerge-participant&quot;&gt;
+	&lt;/participant&gt;
 &lt;/extension&gt;
+
+&lt;/pre&gt;&lt;/p&gt;
       </documentation>
    </annotation>
 
@@ -165,7 +132,7 @@ id=&quot;org.eclipse.team.cvs.ui.cvsmerge-participant&quot;&gt;
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must represent a class that implements &lt;samp&gt;org.eclipse.team.ui.synchronize.ISynchronizeView&lt;/samp&gt;.
+         The value of the &lt;samp&gt;class&lt;/samp&gt; attribute must represent a class that implements &lt;samp&gt;org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -183,7 +150,7 @@ id=&quot;org.eclipse.team.cvs.ui.cvsmerge-participant&quot;&gt;
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2003 IBM Corporation and others.
+         Copyright (c) 2004 IBM Corporation and others.
 All rights reserved. This program and the accompanying materials are made available under the terms of the Common Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/cpl-v10.html&quot;&gt;http://www.eclipse.org/legal/cpl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>

@@ -44,6 +44,8 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	private IProgressMonitor progressGroup;
 
 	private int ticks;
+
+	private IResource[] roots;
 	
 	/**
 	 * Internal resource synchronization event. Can contain a result.
@@ -112,10 +114,11 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	 * the set.
 	 * @param set the subscriber set to feed changes into
 	 */
-	public SubscriberEventHandler(Subscriber subscriber) {
+	public SubscriberEventHandler(Subscriber subscriber, IResource[] roots) {
 		super(
 			Policy.bind("SubscriberEventHandler.jobName", subscriber.getName()), //$NON-NLS-1$
 			Policy.bind("SubscriberEventHandler.errors", subscriber.getName())); //$NON-NLS-1$
+		this.roots = roots;
 		this.syncSetInput = new SyncSetInputFromSubscriber(subscriber, this);
 	}
 	
@@ -127,7 +130,11 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 		// Set the started flag to enable event queueing.
 		// We are gaurenteed to be the first since this method is synchronized.
 		started = true;
-		reset(syncSetInput.getSubscriber().roots(), SubscriberEvent.INITIALIZE);
+		IResource[] resources = this.roots;
+		if (resources == null) {
+			resources = syncSetInput.getSubscriber().roots();
+		}
+		reset(resources, SubscriberEvent.INITIALIZE);
 		initializing = false;
 	}
 
@@ -172,6 +179,8 @@ public class SubscriberEventHandler extends BackgroundEventHandler {
 	public synchronized void reset(IResource[] roots) {
 		if (roots == null) {
 			roots = syncSetInput.getSubscriber().roots();
+		} else {
+			this.roots = roots;
 		}
 		// First, reset the sync set input to clear the sync set
 		run(new IWorkspaceRunnable() {

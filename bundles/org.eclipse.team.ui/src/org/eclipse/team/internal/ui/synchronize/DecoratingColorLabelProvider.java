@@ -56,6 +56,15 @@ public class DecoratingColorLabelProvider extends DecoratingLabelProvider implem
 			}
 			return text;
 		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.viewers.IBaseLabelProvider#dispose()
+		 */
+		public void dispose() {
+			for (int i = 0; i < decorators.length; i++) {
+				ILabelDecorator d = decorators[i];
+				d.dispose();
+			}
+		}
 	}
 	public DecoratingColorLabelProvider(ILabelProvider provider, ILabelDecorator[] decorators) {
 		super(provider, new MultiLabelDecorator(decorators));

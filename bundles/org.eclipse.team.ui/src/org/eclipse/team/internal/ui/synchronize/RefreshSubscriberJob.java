@@ -202,6 +202,8 @@ public final class RefreshSubscriberJob extends WorkspaceJob {
 	public boolean belongsTo(Object family) {	
 		if(family instanceof RefreshSubscriberJob) {
 			return ((RefreshSubscriberJob)family).getSubscriber() == getSubscriber();
+		} else if (family instanceof SubscriberParticipant) {
+			return family == participant;
 		} else {
 			return (family == getFamily() || family == ISynchronizeManager.FAMILY_SYNCHRONIZE_OPERATION);
 		}

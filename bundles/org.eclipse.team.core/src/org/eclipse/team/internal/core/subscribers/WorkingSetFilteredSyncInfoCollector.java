@@ -11,9 +11,13 @@
 package org.eclipse.team.internal.core.subscribers;
 
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.SyncInfo;
+import org.eclipse.team.core.synchronize.SyncInfoFilter;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.core.synchronize.SyncInfoTree;
 import org.eclipse.team.internal.core.Policy;
 
 /**
@@ -179,5 +183,13 @@ public final class WorkingSetFilteredSyncInfoCollector {
 	 */
 	public SyncInfoSet getWorkingSetSyncInfoSet() {
 		return workingSetInput.getSyncSet();
+	}
+
+	/**
+	 * Run the given runnable in the event handler of the collector
+	 * @param runnable a runnable
+	 */
+	public void run(IWorkspaceRunnable runnable) {
+		eventHandler.run(runnable, true /* front of queue */);
 	}
 }

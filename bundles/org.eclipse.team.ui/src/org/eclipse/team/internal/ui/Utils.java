@@ -14,6 +14,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -115,6 +116,17 @@ public class Utils {
 		}
 	}
 
+	public static final Comparator resourceComparator = new Comparator() {
+		public boolean equals(Object obj) {
+			return false;
+		}
+		public int compare(Object o1, Object o2) {
+				IResource resource0 = (IResource) o1;
+				IResource resource1 = (IResource) o2;
+				return resource0.getFullPath().toString().compareTo(resource1.getFullPath().toString());
+		}
+	};
+	
 	/**
 	 * Shows the given errors to the user.
 	 * @param Exception
@@ -547,5 +559,16 @@ public class Utils {
 			return buffer.toString();
 		}
 		return string;
+	}
+	
+	public static String convertSelection(IResource[] resources, int numElements) {
+		StringBuffer  buffer = new StringBuffer();
+		for (int i = 0; i < resources.length && i < numElements; i++) {
+			IResource resource = resources[i];
+			if(i > 0) buffer.append(", ");
+			buffer.append(resource.getFullPath());
+		}
+		if(numElements < resources.length) buffer.append("...");
+		return buffer.toString();
 	}
 }

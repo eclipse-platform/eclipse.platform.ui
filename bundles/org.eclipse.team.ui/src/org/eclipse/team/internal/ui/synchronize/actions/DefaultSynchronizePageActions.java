@@ -23,7 +23,6 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
 	// Actions
 	private OpenWithActionGroup openWithActions;
 	private RefactorActionGroup refactorActions;
-	private RemoveSynchronizeParticipantAction removeAction;
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#initialize(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
@@ -40,9 +39,6 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
 					openWithActions.openInCompareEditor();
 				}
 			});
-			if (configuration.hasMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, ISynchronizePageConfiguration.REMOVE_PARTICPANT_GROUP)) {
-				removeAction = new RemoveSynchronizeParticipantAction(configuration.getParticipant());
-			}
 		} else {
 			// TODO: Add open menu action which opens in compare editor input
 		}
@@ -60,13 +56,5 @@ public class DefaultSynchronizePageActions extends SynchronizePageActionGroup {
 		if (refactorActions != null && group != null) {
 			refactorActions.fillContextMenu(manager, group.getId());
 		}
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.actions.ActionGroup#fillActionBars(org.eclipse.ui.IActionBars)
-	 */
-	public void fillActionBars(IActionBars actionBars) {
-		IToolBarManager menu = actionBars.getToolBarManager();
-		appendToGroup(menu, ISynchronizePageConfiguration.REMOVE_PARTICPANT_GROUP, removeAction);
 	}
 }

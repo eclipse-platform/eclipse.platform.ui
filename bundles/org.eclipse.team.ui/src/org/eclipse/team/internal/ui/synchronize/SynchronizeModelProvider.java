@@ -202,9 +202,6 @@ public abstract class SynchronizeModelProvider implements ISyncInfoSetChangeList
 	 * Dispose of the builder
 	 */
 	public void dispose() {
-		if(! resourceMap.isEmpty()) {
-			saveViewerState();
-		}
 		resourceMap.clear();
 		getSyncInfoSet().removeSyncSetChangedListener(this);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);

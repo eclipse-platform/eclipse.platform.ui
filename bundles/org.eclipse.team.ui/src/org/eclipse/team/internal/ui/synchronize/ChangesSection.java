@@ -226,11 +226,9 @@ public class ChangesSection extends Composite {
 			return composite;
 		}
 		
-		SyncInfoSet workspace = getParticpantSyncInfoSet();
 		SyncInfoSet workingSet = getWorkingSetSyncInfoSet();
 		SyncInfoSet filteredSet = getSyncInfoTree();
 		
-		int changesInWorkspace = workspace.size();
 		int changesInWorkingSet = workingSet.size();
 		int changesInFilter = filteredSet.size();
 		
@@ -259,18 +257,6 @@ public class ChangesSection extends Composite {
 			});
 			forms.getHyperlinkGroup().add(link);
 			createDescriptionLabel(composite, text.toString());
-		} else if(changesInFilter == 0 && changesInWorkingSet == 0 && changesInWorkspace != 0) {
-			Label warning = new Label(composite, SWT.NONE);
-			warning.setImage(TeamUIPlugin.getPlugin().getImage(ISharedImages.IMG_WARNING));
-			
-			Hyperlink link = forms.createHyperlink(composite, Policy.bind("ChangesSection.workingSetRemove"), SWT.WRAP); //$NON-NLS-1$
-			link.addHyperlinkListener(new HyperlinkAdapter() {
-				public void linkActivated(HyperlinkEvent e) {
-					configuration.setWorkingSet(null);
-				}
-			});
-			forms.getHyperlinkGroup().add(link);
-			createDescriptionLabel(composite,Policy.bind("ChangesSection.workingSetHiding", Utils.workingSetToString(configuration.getWorkingSet(), 50)));	 //$NON-NLS-1$
 		} else {
 			createDescriptionLabel(composite,Policy.bind("ChangesSection.noChanges", participant.getName()));	 //$NON-NLS-1$
 		}		
@@ -290,6 +276,7 @@ public class ChangesSection extends Composite {
 	
 	public void dispose() {
 		super.dispose();
+		forms.dispose();
 		configuration.removeActionContribution(changedListener);
 		getParticpantSyncInfoSet().removeSyncSetChangedListener(subscriberListener);
 	}

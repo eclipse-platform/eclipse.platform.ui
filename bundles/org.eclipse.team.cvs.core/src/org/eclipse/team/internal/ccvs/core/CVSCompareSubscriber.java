@@ -203,6 +203,10 @@ public class CVSCompareSubscriber extends CVSSyncTreeSubscriber implements ISubs
 	protected boolean getCacheFileContentsHint() {
 		return true;
 	}
+	
+	public CVSTag getTag() {
+		return tree.getTag(ResourcesPlugin.getWorkspace().getRoot());
+	}
 		
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

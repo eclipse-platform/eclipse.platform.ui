@@ -10,17 +10,14 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
 import org.eclipse.team.core.synchronize.SyncInfo;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.internal.core.subscribers.WorkingSetFilteredSyncInfoCollector;
-import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.SubscriberActionContribution;
-import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.ui.IWorkingSet;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
 
 /**
  * A synchronize view page that works with participants that are subclasses of 
@@ -66,13 +63,6 @@ public final class SubscriberParticipantPage extends SyncInfoSetSynchronizePage 
 	public SubscriberParticipant getParticipant() {
 		return participant;
 	}
-	
-	protected void updateWorkingSet(IWorkingSet workingSet) {
-		if(collector != null) {
-			IResource[] resources = workingSet != null ? Utils.getResources(workingSet.getElements()) : new IResource[0];
-			collector.setWorkingSet(resources);
-		}
-	}
 
 	/*
 	 * This method is invoked from <code>setMode</code> when the mode has changed.
@@ -109,7 +99,6 @@ public final class SubscriberParticipantPage extends SyncInfoSetSynchronizePage 
 		SubscriberParticipant participant = getParticipant();
 		collector = new WorkingSetFilteredSyncInfoCollector(subscriberCollector, participant.getSubscriber().roots());
 		updateMode(configuration.getMode());
-		updateWorkingSet(configuration.getWorkingSet());
 		collector.reset();
 		configuration.setProperty(ISynchronizePageConfiguration.P_SYNC_INFO_SET, collector.getSyncInfoTree());
 		configuration.setProperty(SynchronizePageConfiguration.P_WORKING_SET_SYNC_INFO_SET, collector.getWorkingSetSyncInfoSet());
@@ -127,5 +116,13 @@ public final class SubscriberParticipantPage extends SyncInfoSetSynchronizePage 
 	 */
 	public void reset() {
 		getParticipant().reset();
+	}
+	
+	/*
+	 * Provide internal access to the collector
+	 * @return Returns the collector.
+	 */
+	public WorkingSetFilteredSyncInfoCollector getCollector() {
+		return collector;
 	}
 }

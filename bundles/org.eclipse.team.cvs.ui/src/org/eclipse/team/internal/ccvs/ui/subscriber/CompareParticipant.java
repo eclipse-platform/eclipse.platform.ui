@@ -10,23 +10,25 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.subscriber;
 
+import java.util.Arrays;
+
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.Subscriber;
-import org.eclipse.team.core.synchronize.FastSyncInfoFilter;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoFilter;
+import org.eclipse.team.core.synchronize.*;
 import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowAnnotationAction;
 import org.eclipse.team.internal.ccvs.ui.actions.ShowResourceInHistoryAction;
+import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
-import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
+import org.eclipse.team.ui.synchronize.*;
 
 public class CompareParticipant extends CVSParticipant implements IPropertyChangeListener {
 	
@@ -93,7 +95,39 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeParticipant#getName()
 	 */
 	public String getName() {
-		return getSubscriber().getName();
+		return getSubscriber().getName() + " (" + Utils.convertSelection(getSubscriber().roots(), 4) + ")";
+	}
+	
+	/*
+	 * Returns the tag this participant is comparing against.
+	 */
+	protected CVSTag getTag() {
+		return ((CVSCompareSubscriber)getSubscriber()).getTag();
+	}
+	
+	/*
+	 * Returns a merge participant that exist and is configured with the given set of resources, start, and end tags.
+	 */
+	public static CompareParticipant getMatchingParticipant(IResource[] resources, CVSTag tag) {
+		ISynchronizeParticipantReference[] refs = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
+		for (int i = 0; i < refs.length; i++) {
+			ISynchronizeParticipantReference reference = refs[i];
+			if (reference.getId().equals(CVSCompareSubscriber.ID)) {
+				CompareParticipant p;
+				try {
+					p = (CompareParticipant) reference.getParticipant();
+				} catch (TeamException e) {
+					continue;
+				}
+				IResource[] roots = p.getResources();
+				Arrays.sort(resources, Utils.resourceComparator);
+				Arrays.sort(roots, Utils.resourceComparator);
+				if (Arrays.equals(resources, roots) && p.getTag().equals(tag)) {
+					return p;
+				}
+			}
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -101,7 +135,6 @@ public class CompareParticipant extends CVSParticipant implements IPropertyChang
 	 */
 	protected void initializeConfiguration(ISynchronizePageConfiguration configuration) {
 		super.initializeConfiguration(configuration);
-		configuration.addMenuGroup(ISynchronizePageConfiguration.P_TOOLBAR_MENU, ISynchronizePageConfiguration.REMOVE_PARTICPANT_GROUP);
 		configuration.addMenuGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				CONTEXT_MENU_CONTRIBUTION_GROUP);

@@ -1,0 +1,181 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.ui.synchronize;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.team.internal.ui.Policy;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkingSet;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
+
+/**
+ * A synchronize scope whose roots are defined by a working set.
+ * <p>
+ * Clients are not expected to subclass this class.
+ * @since 3.0
+ */
+public class WorkingSetScope extends AbstractSynchronizeScope implements IPropertyChangeListener {
+	
+	/*
+	 * Constants used to save and restore this scope
+	 */
+	/*
+	 * Constants used to save and restore this scope
+	 */
+	private final static String CTX_SETS = "workingset_scope_sets"; //$NON-NLS-1$
+	private final static String CTX_SET_NAME = "workingset_scope_name"; //$NON-NLS-1$
+	
+	private IWorkingSet[] sets;
+	
+	/**
+	 * Create the scope for the subscriber and working set
+	 * @param subscriber the subscriber that defines this scope
+	 * @param set the working set that defines this scope
+	 */
+	public WorkingSetScope(IWorkingSet[] sets) {
+		this.sets = sets;
+		PlatformUI.getWorkbench().getWorkingSetManager().addPropertyChangeListener(this);
+	}
+	
+	/** 
+	 * Create this scope from it's previously saved state
+	 * @param memento
+	 */
+	protected WorkingSetScope(IMemento memento) {
+		super(memento);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant.SubscriberScope#getName()
+	 */
+	public String getName() {
+		if (sets.length == 0) {
+			return Policy.bind("WorkingSetScope.0"); //$NON-NLS-1$
+		}
+		StringBuffer name = new StringBuffer();
+		for (int i = 0; i < sets.length; i++) {
+			IWorkingSet set = sets[i];
+			name.append(set.getName());
+			if (i < sets.length - 1) {
+				name.append(", ");
+			}
+		}
+		return name.toString();
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant.SubscriberScope#getRoots()
+	 */
+	public IResource[] getRoots() {
+		if (sets.length == 0) {
+			return null;
+		}
+		HashSet roots = new HashSet();
+		for (int i = 0; i < sets.length; i++) {
+			IWorkingSet set = sets[i];
+			IResource[] resources = Utils.getResources(set.getElements());
+			addNonOverlapping(roots, resources);
+	}
+		return (IResource[]) roots.toArray(new IResource[roots.size()]);
+	}
+	
+	private void addNonOverlapping(HashSet roots, IResource[] resources) {
+		for (int i = 0; i < resources.length; i++) {
+			IResource newResource = resources[i];
+			boolean add = true;
+			for (Iterator iter = roots.iterator(); iter.hasNext();) {
+				IResource existingResource = (IResource) iter.next();
+				if (existingResource.equals(newResource)) {
+					// No need to add it since it is already there
+					add = false;
+					break;
+				}
+				if (existingResource.getFullPath().isPrefixOf(newResource.getFullPath())) {
+					// No need to add it since a parent is already there
+					add = false;
+					break;
+				}
+				if (newResource.getFullPath().isPrefixOf(existingResource.getFullPath())) {
+					// Remove existing and continue
+					iter.remove();
+				}
+			}
+			if (add) {
+				roots.add(newResource);
+			}
+		}
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+	 */
+	public void propertyChange(PropertyChangeEvent event) {
+		if (event.getProperty() == IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE) {
+			IWorkingSet newSet = (IWorkingSet)event.getNewValue();
+			for (int i = 0; i < sets.length; i++) {
+				IWorkingSet set = sets[i];
+			if (newSet == set) {
+				fireRootsChanges();
+					return;
+			}
+		}
+	}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.synchronize.ScopableSubscriberParticipant.SubscriberScope#dispose()
+	 */
+	public void dispose() {
+		super.dispose();
+		PlatformUI.getWorkbench().getWorkingSetManager().removePropertyChangeListener(this);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeScope#saveState(org.eclipse.ui.IMemento)
+	 */
+	public void saveState(IMemento memento) {
+		super.saveState(memento);
+		for (int i = 0; i < sets.length; i++) {
+			IWorkingSet set = sets[i];
+			IMemento rootNode = memento.createChild(CTX_SETS);
+			rootNode.putString(CTX_SET_NAME, set.getName());
+		}
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.ui.synchronize.AbstractSynchronizeScope#init(org.eclipse.ui.IMemento)
+	 */
+	protected void init(IMemento memento) {
+		super.init(memento);
+		IMemento[] rootNodes = memento.getChildren(CTX_SETS);
+		if(rootNodes != null) {
+			List sets = new ArrayList();
+			for (int i = 0; i < rootNodes.length; i++) {
+				IMemento rootNode = rootNodes[i];
+				String setName = rootNode.getString(CTX_SET_NAME);
+				IWorkingSet set = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSet(setName);
+				if (set != null) {
+					sets.add(set);
+		}
+	}
+			this.sets = (IWorkingSet[]) sets.toArray(new IWorkingSet[sets.size()]);
+}	}
+}

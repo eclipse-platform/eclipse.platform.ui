@@ -1,0 +1,65 @@
+/*******************************************************************************
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Common Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/cpl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.team.ui.synchronize;
+
+import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.util.IPropertyChangeListener;
+
+/**
+ * A synchronize scope defines the set of resources involved in a synchronize.
+ * Instance of this interface are used to scope the resources of a
+ * {@link SubscriberParticipant}.
+ * <p>
+ * This interface is not intended to be implemented by clients
+ * @see SubscriberParticipant
+ * @since 3.0
+ */
+public interface ISynchronizeScope {
+	
+	/**
+	 * Property used to indicate when the roots of the scope have changed.
+	 */
+	public static final String ROOTS = "prop_roots"; //$NON-NLS-1$
+	
+	/**
+	 * Return the name of the scope
+	 * @return the name of the scope
+	 */
+	public String getName();
+	
+	/**
+	 * Return the root resources that define this scope. A return value
+	 * of <code>null</code> indicates that the participant should use
+	 * its default set of resources.
+	 * 
+	 * @return the root resources of <code>null</code>
+	 */
+	public IResource[] getRoots();
+	
+	/**
+	 * Add a propety change listener that will get invoked when a
+	 * property of the reciever cnahges.
+	 * @param listener
+	 */
+	public void addPropertyChangeListener(IPropertyChangeListener listener);
+	
+	/**
+	 * Remove a propety change listener. Removing an unregistered listener
+	 * has no effect.
+	 * @param listener
+	 */
+	public void removePropertyChangeListener(IPropertyChangeListener listener);
+	
+	/**
+	 * Dispose of the scope when it is no longer needed.
+	 */
+	public void dispose();
+}

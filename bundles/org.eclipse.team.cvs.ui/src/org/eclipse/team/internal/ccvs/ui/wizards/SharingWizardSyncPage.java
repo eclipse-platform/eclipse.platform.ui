@@ -12,7 +12,11 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -22,18 +26,21 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.ITeamStatus;
 import org.eclipse.team.core.TeamStatus;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.synchronize.ISyncInfoSetChangeEvent;
+import org.eclipse.team.core.synchronize.ISyncInfoSetChangeListener;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ParticipantPageSaveablePart;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.team.ui.synchronize.ResourceScope;
 import org.eclipse.ui.part.PageBook;
 
 /**
@@ -134,14 +141,10 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	}
 	
 	private ParticipantPageSaveablePart createCompareInput() {	
-		WorkspaceSynchronizeParticipant participant = CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant();
+		WorkspaceSynchronizeParticipant participant = new WorkspaceSynchronizeParticipant(new ResourceScope(new IResource[] { project }));
 		configuration = participant.createPageConfiguration();
 		configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {SharingWizardPageActionGroup.ACTION_GROUP});
 		configuration.addActionContribution(new SharingWizardPageActionGroup());
-		
-		IWorkingSetManager manager = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager();
-		IWorkingSet newSet = manager.createWorkingSet("sharing wizard", new IAdaptable[] {project});
-		configuration.setWorkingSet(newSet);
 		configuration.setRunnableContext(getContainer());
 		
 		CompareConfiguration cc = new CompareConfiguration();
@@ -156,7 +159,8 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
 	public void dispose() {
-		input.dispose();
+		if (input != null)
+			input.dispose();
 	}
 	
 	/* (non-Javadoc)
@@ -205,5 +209,9 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 
 	public void showError(TeamStatus status) {
 		infos.addError(status);
+	}
+
+	public WorkspaceSynchronizeParticipant getParticipant() {
+		return (WorkspaceSynchronizeParticipant)configuration.getParticipant();
 	}
 }

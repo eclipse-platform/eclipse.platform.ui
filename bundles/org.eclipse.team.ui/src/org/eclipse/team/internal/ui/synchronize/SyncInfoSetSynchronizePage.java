@@ -29,7 +29,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.actions.DirectionFilterActionGroup;
 import org.eclipse.team.ui.synchronize.ISynchronizePage;
@@ -38,8 +37,6 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPageLayout;
-import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.Page;
@@ -178,14 +175,6 @@ public abstract class SyncInfoSetSynchronizePage extends Page implements ISynchr
 				// participant initialized it to an
 				// appropriate value
 			}
-			String workingSetName = settings.get(ISynchronizePageConfiguration.P_WORKING_SET);
-			if (workingSetName != null) {
-				IWorkingSetManager manager = TeamUIPlugin.getPlugin().getWorkbench().getWorkingSetManager();
-				IWorkingSet set = manager.getWorkingSet(workingSetName);
-				configuration.setWorkingSet(set);
-			} else {
-				configuration.setWorkingSet(null);
-			}
 		}
 	}
 	
@@ -222,9 +211,6 @@ public abstract class SyncInfoSetSynchronizePage extends Page implements ISynchr
 		if (key.equals(ISynchronizePageConfiguration.P_MODE)) {
 			return (internalSetMode(configuration.getMode(), ((Integer)newValue).intValue()));
 		}
-		if (key.equals(ISynchronizePageConfiguration.P_WORKING_SET)) {
-			return (internalSetWorkingSet(configuration.getWorkingSet(), (IWorkingSet)newValue));
-		}
 		return true;
 	}
 
@@ -236,23 +222,6 @@ public abstract class SyncInfoSetSynchronizePage extends Page implements ISynchr
 			settings.put(ISynchronizePageConfiguration.P_MODE, mode);
 		}
 		return true;
-	}
-
-	private boolean internalSetWorkingSet(IWorkingSet oldSet, IWorkingSet workingSet) {
-		if (workingSet == null && oldSet == null) return false;
-		if (workingSet == null || !workingSet.equals(oldSet)) {
-			updateWorkingSet(workingSet);
-			IDialogSettings settings = getSettings();
-			if (settings != null) {
-				String name = null;
-				if (workingSet != null) {
-					name = workingSet.getName();
-				}
-				settings.put(ISynchronizePageConfiguration.P_WORKING_SET, name);
-			}
-			return true;
-		}
-		return false;
 	}
 
 	/*
@@ -328,11 +297,4 @@ public abstract class SyncInfoSetSynchronizePage extends Page implements ISynchr
 	 * @param mode the mode to be used
 	 */
 	protected abstract void updateMode(int mode);
-	
-	/**
-	 * Filter the view by the given working set. If the set is <code>null</code>
-	 * then any existing working set filtering should be removed.
-	 * @param workingSet a working set or <code>null</code>
-	 */
-	protected abstract void updateWorkingSet(IWorkingSet workingSet);
 }

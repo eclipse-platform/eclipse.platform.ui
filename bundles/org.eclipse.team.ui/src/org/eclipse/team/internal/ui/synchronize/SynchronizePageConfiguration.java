@@ -12,18 +12,25 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.util.*;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.actions.DefaultSynchronizePageActions;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
+import org.eclipse.team.ui.synchronize.ISynchronizePage;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.ActionContext;
 
 /**
@@ -435,17 +442,6 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 		}
 		return id + "." + group; //$NON-NLS-1$
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.subscribers.ISubscriberPageConfiguration#getWorkingSet()
-	 */
-	public IWorkingSet getWorkingSet() {
-		Object o = getProperty(P_WORKING_SET);
-		if (o instanceof IWorkingSet) {
-			return (IWorkingSet)o;
-		}
-		return null;
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.subscribers.ISubscriberPageConfiguration#getMode()
@@ -456,13 +452,6 @@ public class SynchronizePageConfiguration extends SynchronizePageActionGroup imp
 			return ((Integer)o).intValue();
 		}
 		return 0;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.subscribers.ISubscriberPageConfiguration#setWorkingSet(org.eclipse.ui.IWorkingSet)
-	 */
-	public void setWorkingSet(IWorkingSet set) {
-		setProperty(P_WORKING_SET, set);
 	}
 
 	/* (non-Javadoc)

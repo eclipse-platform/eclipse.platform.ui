@@ -19,7 +19,8 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.internal.ui.wizards.GlobalSynchronizeWizard;
-import org.eclipse.team.ui.TeamUI;
+import org.eclipse.team.ui.*;
+import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate;
@@ -46,6 +47,7 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 
 		public void run() {
 			TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT, participant.getId());
+			TeamUIPlugin.getPlugin().getPreferenceStore().setValue(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT_SEC_ID, participant.getSecondaryId());
 			GlobalRefreshAction.this.run(participant);
 		}
 
@@ -73,6 +75,7 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 				dialog.open();
 			}
 		};
+		synchronizeAction.setImageDescriptor(TeamImages.getImageDescriptor(ISharedImages.IMG_SYNC_VIEW));
 		setMenuCreator(this);
 		updateTooltipMessage();
 	}
@@ -107,12 +110,10 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 		ISynchronizeParticipantReference[] participants = TeamUI.getSynchronizeManager().getSynchronizeParticipants();
 		for (int i = 0; i < participants.length; i++) {
 			ISynchronizeParticipantReference description = participants[i];
-			if (description.getDescriptor().isGlobalSynchronize()) {
-				Action action = new RefreshParticipantAction(i + 1, description);
-				addActionToMenu(fMenu, action);
-			}
+			Action action = new RefreshParticipantAction(i + 1, description);
+			addActionToMenu(fMenu, action);
 		}
-		addMenuSeparator();
+		if(participants.length > 0) addMenuSeparator();
 		addActionToMenu(fMenu, synchronizeAction);
 		return fMenu;
 	}
@@ -140,24 +141,26 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	 */
 	public void run(IAction action) {
 		String id = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT);
+		String secondaryId = TeamUIPlugin.getPlugin().getPreferenceStore().getString(IPreferenceIds.SYNCHRONIZING_DEFAULT_PARTICIPANT_SEC_ID);
 		IWizard wizard = new GlobalSynchronizeWizard();
-		if (id.equals(NO_DEFAULT_PARTICPANT)) {
-			synchronizeAction.run();
-		} else {
-			ISynchronizeParticipantReference participant = TeamUI.getSynchronizeManager().get(id, null);
+		if (! id.equals(NO_DEFAULT_PARTICPANT)) {
+			ISynchronizeParticipantReference participant = TeamUI.getSynchronizeManager().get(id, secondaryId);
 			if (participant != null) {
 				run(participant);
 			}
 		}
+		synchronizeAction.run();
 	}
 		
 	private void run(ISynchronizeParticipantReference participant) {
+		ISynchronizeParticipant p;
 		try {
-			WizardDialog dialog = new WizardDialog(window.getShell(), participant.getParticipant().createSynchronizeWizard());
-			dialog.open();
+			p = participant.getParticipant();
+			p.run(null /* no workbench part */);
 			updateTooltipMessage();
 		} catch (TeamException e) {
-			Utils.handle(e);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -171,5 +174,6 @@ public class GlobalRefreshAction extends Action implements IMenuCreator, IWorkbe
 	
 	protected void updateTooltipMessage() {
 		setToolTipText(Policy.bind("GlobalRefreshAction.4")); //$NON-NLS-1$
+		setToolTipText("THIS IS COOL"); //$NON-NLS-1$
 	}
 }

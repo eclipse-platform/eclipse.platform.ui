@@ -15,16 +15,12 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.team.internal.ccvs.core.CVSCompareSubscriber;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
-import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
-import org.eclipse.team.internal.ccvs.ui.ICVSUIConstants;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.TagSelectionDialog;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CompareParticipant;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 
 public class CompareWithTagAction extends WorkspaceAction {
@@ -35,21 +31,19 @@ public class CompareWithTagAction extends WorkspaceAction {
 		if (tag == null)
 			return;
 		
-		// Run the comparison
-		CVSCompareSubscriber s = new CVSCompareSubscriber(resources, tag);
-		CompareParticipant participant = new CompareParticipant(s);
-		IPreferenceStore store = CVSUIPlugin.getPlugin().getPreferenceStore();
-		boolean showInSyncView = store.getBoolean(ICVSUIConstants.PREF_SHOW_COMPARE_MERGE_IN_SYNCVIEW);
-		if(showInSyncView) {
-			TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[] {participant});
-			participant.refresh(resources, Policy.bind("Participant.comparing"), 	participant.getName(), null); //$NON-NLS-1$
+		CVSCompareSubscriber compareSubscriber = new CVSCompareSubscriber(resources, tag);
+		if (SyncAction.isSingleFile(resources)) {
+			SyncAction.showSingleFileComparison(getShell(), compareSubscriber, resources[0]);
+			compareSubscriber.dispose();
 		} else {
-			ISynchronizePageConfiguration configuration = participant.createPageConfiguration();
-			configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] { 
-					ISynchronizePageConfiguration.NAVIGATE_GROUP, 
-					ISynchronizePageConfiguration.MODE_GROUP, 
-					ISynchronizePageConfiguration.LAYOUT_GROUP });
-			participant.refreshInDialog(getShell(), resources, Policy.bind("Participant.comparing"), 	participant.getName(), configuration, null); //$NON-NLS-1$
+			//	First check if there is an existing matching participant, if so then re-use it
+			CompareParticipant participant = CompareParticipant.getMatchingParticipant(resources, tag);
+			if (participant == null) {
+				CVSCompareSubscriber s = compareSubscriber;
+				participant = new CompareParticipant(s);
+				TeamUI.getSynchronizeManager().addSynchronizeParticipants(new ISynchronizeParticipant[]{participant});
+			}
+			participant.refresh(resources, Policy.bind("Participant.comparing"), participant.getName(), null); //$NON-NLS-1$
 		}
 	}
 	

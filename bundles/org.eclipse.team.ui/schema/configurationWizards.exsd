@@ -97,7 +97,7 @@ which gathers the necessary information and configures the projects.
 
 &lt;p&gt;
 &lt;pre&gt;
- &lt;extension point=&quot;org.eclipse.team.ui.configurationWizard&quot;&gt;
+ &lt;extension point=&quot;org.eclipse.team.ui.configurationWizards&quot;&gt;
   &lt;wizard 
    name=&quot;WebDAV&quot;
    icon=&quot;webdav.gif&quot;

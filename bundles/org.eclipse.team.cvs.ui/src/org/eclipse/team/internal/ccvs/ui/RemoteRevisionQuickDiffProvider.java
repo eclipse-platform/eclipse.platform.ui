@@ -259,7 +259,7 @@ public class RemoteRevisionQuickDiffProvider implements IQuickDiffReferenceProvi
 				if(monitor.isCanceled()) return;
 				fReference.set(""); //$NON-NLS-1$
 			}
-			if(DEBUG) System.out.println("+ CVSQuickDiff: updating document " + (fReference!=null ? "remote found" : "remote empty")); //$NON-NLS-1$ //$NON-NLS-2$
+			if(DEBUG) System.out.println("+ CVSQuickDiff: updating document " + (fReference!=null ? "remote found" : "remote empty")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 	}
 	

@@ -14,8 +14,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public class SynchronizeParticipantDescriptor implements ISynchronizeParticipantDescriptor {
 	public  static final String ATT_ID = "id"; //$NON-NLS-1$
@@ -23,18 +21,13 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 	public  static final String ATT_ICON = "icon"; //$NON-NLS-1$
 	public  static final String ATT_CLASS = "class"; //$NON-NLS-1$
 	private static final String ATT_TYPE = "type"; //$NON-NLS-1$	
-	private static final String ATT_TYPE_STATIC = "static"; //$NON-NLS-1$
-	private static final String ATT_SUPPORTS_REFRESH = "globalSynchronize"; //$NON-NLS-1$
 	private static final String ATT_PERSISTENT = "persistent"; //$NON-NLS-1$
-	private static final String ATT_ALLOW_MULTIPLE = "multipleInstances"; //$NON-NLS-1$
 	
 	private String label;
 	private String className;
 	private String type;
 	private String id;
-	private boolean supportsRefresh;
 	private boolean persistent;
-	private boolean allowMultipleInstances;
 	private ImageDescriptor imageDescriptor;
 	private String description;
 	
@@ -47,13 +40,6 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 		configElement = e;
 		description = desc;
 		loadFromExtension();
-	}
-	/**
-	 * Return an instance of the declared view.
-	 */
-	public IViewPart createView() throws CoreException {
-		Object obj = WorkbenchPlugin.createExtension(configElement, ATT_CLASS);
-		return (IViewPart) obj;
 	}
 
 	public IConfigurationElement getConfigurationElement() {
@@ -91,28 +77,12 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 	public String getName() {
 		return label;
 	}
-
-	public boolean isStatic() {
-		if(type == null) return true;
-		return type.equals(ATT_TYPE_STATIC);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor#doesAllowMultiple()
-	 */
-	public boolean isMultipleInstances() {
-		return allowMultipleInstances;
-	}
 	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor#isPersistent()
 	 */
 	public boolean isPersistent() {
 		return persistent;
-	}
-	
-	public boolean isGlobalSynchronize() {
-		return supportsRefresh;
 	}
 	
 	/**
@@ -123,33 +93,17 @@ public class SynchronizeParticipantDescriptor implements ISynchronizeParticipant
 		label = configElement.getAttribute(ATT_NAME);
 		className = configElement.getAttribute(ATT_CLASS);
 		type = configElement.getAttribute(ATT_TYPE);
-		String supportsRefreshString = configElement.getAttribute(ATT_SUPPORTS_REFRESH);
-		if(supportsRefreshString == null) {
-			supportsRefresh = true;
-		} else {
-			supportsRefresh = Boolean.valueOf(supportsRefreshString).booleanValue();
-		}
-		
 		String persistentString = configElement.getAttribute(ATT_PERSISTENT);
 		if(persistentString == null) {
 			persistent = true;
 		} else {
 			persistent = Boolean.valueOf(persistentString).booleanValue();
 		}
-		
-		String allowMultipleString = configElement.getAttribute(ATT_ALLOW_MULTIPLE);
-		if(allowMultipleString == null) {
-			allowMultipleInstances = true;
-		} else {
-			allowMultipleInstances = Boolean.valueOf(allowMultipleString).booleanValue();
-		}
-
 		// Sanity check.
 		if ((label == null) || (className == null) || (identifier == null)) {
 			throw new CoreException(new Status(IStatus.ERROR, configElement.getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), 0, "Invalid extension (missing label or class name): " + identifier, //$NON-NLS-1$
 					null));
 		}
-		
 		id = identifier;
 	}
 

@@ -77,6 +77,16 @@ public interface ISynchronizeManager {
 	public ISynchronizeParticipantReference[] getSynchronizeParticipants();
 	
 	/**
+	 * Returns the registered synchronize participants with the given type id. It is
+	 * possible to have multiple instances of the same participant type.
+	 * 
+	 * @param id the type indentifier for the participant
+	 * @return the registered synchronize participants with the given id, or 
+	 * an empty list if there are none with that id registered.
+	 */
+	public ISynchronizeParticipantReference[] get(String id);
+	
+	/**
 	 * Returns the registered synchronize participants with the given id. It is
 	 * possible to have multiple instances of the same participant type.
 	 * 

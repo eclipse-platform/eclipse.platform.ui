@@ -52,7 +52,7 @@ public class DateTagDialog extends Dialog {
 		public void createArea(Composite parent) {
 			Composite composite = createComposite(parent, 4);
 			initializeDialogUnits(composite);
-			createLabel(composite, "Date (M/D/Y):", 1);
+			createLabel(composite, "Date (M/D/Y):", 1); //$NON-NLS-1$
 			fromMonthCombo = new Combo(composite, SWT.READ_ONLY);
 			fromDayCombo = new Combo(composite, SWT.READ_ONLY);
 			fromYearCombo = new Combo(composite, SWT.NONE);
@@ -126,8 +126,8 @@ public class DateTagDialog extends Dialog {
 		public void createArea(Composite parent) {
 			Composite composite = createComposite(parent, 2);
 			initializeDialogUnits(composite);
-			includeTime = createCheckbox(composite, "Include time component in tag", 2);
-			createLabel(composite, "Time (HH:MM:SS):", 1);
+			includeTime = createCheckbox(composite, "Include time component in tag", 2); //$NON-NLS-1$
+			createLabel(composite, "Time (HH:MM:SS):", 1); //$NON-NLS-1$
 			Composite dateComposite = new Composite(composite, SWT.NONE);
 			GridLayout dateLayout = new GridLayout();
 			dateLayout.numColumns = 3;
@@ -135,8 +135,8 @@ public class DateTagDialog extends Dialog {
 			hourCombo = new Combo(dateComposite, SWT.READ_ONLY);
 			minuteCombo = new Combo(dateComposite, SWT.READ_ONLY);
 			secondCombo = new Combo(dateComposite, SWT.READ_ONLY);
-			localTime = createRadioButton(composite, "Time is local", 2);
-			utcTime = createRadioButton(composite, "Time is in universal time coordinates (UTC)", 2);
+			localTime = createRadioButton(composite, "Time is local", 2); //$NON-NLS-1$
+			utcTime = createRadioButton(composite, "Time is in universal time coordinates (UTC)", 2); //$NON-NLS-1$
 			
 			String sixty[] = new String[60];
 			for (int i = 0; i < 60; i++) {

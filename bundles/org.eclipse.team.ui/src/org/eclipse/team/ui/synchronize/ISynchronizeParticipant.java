@@ -13,9 +13,7 @@ package org.eclipse.team.ui.synchronize;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.wizard.IWizard;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
@@ -100,6 +98,22 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	public ImageDescriptor getImageDescriptor();
 	
 	/**
+	 * Returns if this participant is pinned. Pinned participants will only be removed from the
+	 * synchronize manager until they are un-pinned. 
+	 * 
+	 * @return <code>true</code> if this participant is pinned and <code>false</code>
+	 * otherwise.
+	 */
+	public boolean isPinned();
+	
+	/**
+	 * Sets whether this participant is pinned.
+	 * 
+	 * @param pinned sets if the participant is pinned. 
+	 */
+	public void setPinned(boolean pinned);
+	
+	/**
 	 * Creates the configuration for the participant page. The configuration controls the
 	 * options for displaying the participant. The configuration used to initialize the page
 	 * when {@link #createPage(ISynchronizePageConfiguration)} is called and as such
@@ -122,16 +136,13 @@ public interface ISynchronizeParticipant extends IExecutableExtension {
 	public IPageBookViewPage createPage(ISynchronizePageConfiguration configuration);
 	
 	/**
-	 * Creates and returns a wizard page used to globally synchronize this participant. Participants
-	 * returning a wizard will get added to the global Team synchronize action and users can
-	 * easily initiate a synchronization on the participant. The implementor can decide exactly
-	 * what information is needed from the user to synchronize and perform the action
-	 * when the wizard is closed.
+	 * Runs the participants action. Typically this would be some action to refresh the synchronizatin
+	 * state of the participant. This action is run from the global synchronize drop-down.
 	 * 
-	 * @return a wizard that prompts the user for information necessary to synchronize this
-	 * participant or <code>null</code> if this participant doesn't want to support global refresh.
+	 * @param part the part in which the action is run or <code>null</code> if the action
+	 * is not being run in a workbench part.
 	 */
-	public IWizard createSynchronizeWizard();
+	public void run(IWorkbenchPart part);
 	
 	/**
 	 * Initializes this participant with the given participant state.  

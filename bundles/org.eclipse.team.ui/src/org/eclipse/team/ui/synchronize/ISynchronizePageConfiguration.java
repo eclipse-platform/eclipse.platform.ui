@@ -15,7 +15,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.ui.IWorkingSet;
 
 /**
  * Configures the model, actions and label decorations of an 
@@ -73,13 +72,6 @@ public interface ISynchronizePageConfiguration {
 	 * included.
 	 */
 	public static final String P_VIEW_MENU = TeamUIPlugin.ID + ".P_VIEW_MENU"; //$NON-NLS-1$
-	
-	/**
-	 * Property constant for the working set used to filter the visible
-	 * elements of the model. The value can be any <code>IWorkingSet</code>
-	 * or <code>null</code>;
-	 */
-	public static final String P_WORKING_SET = TeamUIPlugin.ID + ".P_WORKING_SET"; //$NON-NLS-1$
 
 	/**
 	 * Property constant for the type of comparison used to create
@@ -134,14 +126,6 @@ public interface ISynchronizePageConfiguration {
 	 * actions appear (e.g. move and delete).
 	 */
 	public static final String EDIT_GROUP = "edit"; //$NON-NLS-1$
-	
-	/**
-	 * The id of the working set group that determines whether the
-	 * working set selection appears in the view dropdown. This
-	 * group can only be added as the first group of the view
-	 * dropdoen menu.
-	 */
-	public static final String WORKING_SET_GROUP = "workingset"; //$NON-NLS-1$
 
 	/**
 	 * The id of the preferences group that determines whether the preferences
@@ -154,13 +138,6 @@ public interface ISynchronizePageConfiguration {
 	 * actions appear in the view dropdown or toolbar.
 	 */
 	public static final String LAYOUT_GROUP = "layout"; //$NON-NLS-1$
-
-	/**
-	 * The id of the group that contains the action to remove a particpant
-	 * from a page view (such as the synchronize view). This group can
-	 * be added to the toolbar menu if a particpant supports cancelation.
-	 */
-	public static final String REMOVE_PARTICPANT_GROUP = "remove_particpant"; //$NON-NLS-1$
 
 	/**
 	 * These are the default groups used for the context menu of a page.
@@ -189,7 +166,7 @@ public interface ISynchronizePageConfiguration {
 	 * by adding new unique group ids to the array. Added groups 
 	 * will appear in the order specified but after the default groups.
 	 */
-	public static final String[] DEFAULT_VIEW_MENU = new String[] { WORKING_SET_GROUP, LAYOUT_GROUP, MODE_GROUP, SYNCHRONIZE_GROUP, PREFERENCES_GROUP };
+	public static final String[] DEFAULT_VIEW_MENU = new String[] { LAYOUT_GROUP, MODE_GROUP, SYNCHRONIZE_GROUP, PREFERENCES_GROUP };
 
 	/**
 	 * Comparison type contstants
@@ -319,19 +296,6 @@ public interface ISynchronizePageConfiguration {
 	 * otherwise
 	 */
 	public abstract boolean hasMenuGroup(String menuPropertyId, String groupId);
-	
-	/**
-	 * Return the value of the P_WORKING_SET property of this configuration.
-	 * @return the working set property
-	 */
-	IWorkingSet getWorkingSet();
-	
-	/**
-	 * Set the P_WORKING_SET property of this configuration to the
-	 * given working set (which may be <code>null</code>).
-	 * @param set the working set or <code>null</code>
-	 */
-	void setWorkingSet(IWorkingSet set);
 	
 	/**
 	 * Return the value of the P_MODE property of this configuration.

@@ -12,6 +12,7 @@ package org.eclipse.team.internal.ui.wizards;
 
 import java.util.*;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
@@ -22,11 +23,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.registry.SynchronizeWizardDescription;
+import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.ui.TeamUI;
-import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.views.navigator.ResourceSorter;
 
@@ -38,27 +39,17 @@ import org.eclipse.ui.views.navigator.ResourceSorter;
  * 
  * @since 3.0
  */
-public class GlobalRefreshParticipantSelectionPage extends WizardPage implements IDoubleClickListener, ISelectionChangedListener {
+public class GlobalRefreshWizardSelectionPage extends WizardPage implements IDoubleClickListener, ISelectionChangedListener {
 
 	private TableViewer fViewer;
-	private ISynchronizeParticipantDescriptor selectedParticipantDescriptor;
 	private IWizard wizard;
-	private ISynchronizeParticipantReference participant;
 	private List createdImages;
 
 	class MyContentProvider extends BaseWorkbenchContentProvider {
 		public Object[] getChildren(Object element) {
-			if(element instanceof ISynchronizeManager) {
-				List participants = new ArrayList();
-				ISynchronizeManager manager = (ISynchronizeManager)element;
-				ISynchronizeParticipantReference[] desciptors = manager.getSynchronizeParticipants();
-				for (int i = 0; i < desciptors.length; i++) {
-					ISynchronizeParticipantReference descriptor = desciptors[i];
-					if(descriptor.getDescriptor().isGlobalSynchronize()) {
-						participants.add(descriptor);
-					}
-				}
-				return (ISynchronizeParticipantReference[]) participants.toArray(new ISynchronizeParticipantReference[participants.size()]);
+			if(element instanceof SynchronizeManager) {
+				SynchronizeManager manager = (SynchronizeManager)element;
+				return manager.getWizardDescriptors();
 			}
 			return super.getChildren(element);
 		}
@@ -66,17 +57,17 @@ public class GlobalRefreshParticipantSelectionPage extends WizardPage implements
 	
 	class MyLabelProvider extends LabelProvider {
 		public String getText(Object element) {
-			if(element instanceof ISynchronizeParticipantReference) {
-				ISynchronizeParticipantReference descriptor = (ISynchronizeParticipantReference)element;
-				return descriptor.getDisplayName();
+			if(element instanceof SynchronizeWizardDescription) {
+				SynchronizeWizardDescription descriptor = (SynchronizeWizardDescription)element;
+				return descriptor.getName();
 			}
 			return null;
 		}	
 		
 		public Image getImage(Object element) {
-			if(element instanceof ISynchronizeParticipantReference) {
-				ISynchronizeParticipantReference descriptor = (ISynchronizeParticipantReference)element;
-				ImageDescriptor d = descriptor.getDescriptor().getImageDescriptor();
+			if(element instanceof SynchronizeWizardDescription) {
+				SynchronizeWizardDescription descriptor = (SynchronizeWizardDescription)element;
+				ImageDescriptor d = descriptor.getImageDescriptor();
 				if(createdImages == null) {
 					createdImages = new ArrayList(3);
 				}
@@ -88,7 +79,7 @@ public class GlobalRefreshParticipantSelectionPage extends WizardPage implements
 		}
 	}
 		
-	public GlobalRefreshParticipantSelectionPage() {
+	public GlobalRefreshWizardSelectionPage() {
 		super(Policy.bind("GlobalRefreshParticipantSelectionPage.0")); //$NON-NLS-1$
 		setDescription(Policy.bind("GlobalRefreshParticipantSelectionPage.1")); //$NON-NLS-1$
 		setTitle(Policy.bind("GlobalRefreshParticipantSelectionPage.2")); //$NON-NLS-1$
@@ -126,7 +117,7 @@ public class GlobalRefreshParticipantSelectionPage extends WizardPage implements
 		fViewer.setInput(TeamUI.getSynchronizeManager());
 		fViewer.addSelectionChangedListener(this);
 		fViewer.getTable().setFocus();
-		 Dialog.applyDialogFont(parent2);
+		Dialog.applyDialogFont(parent2);
 	}
 	
 	public void doubleClick(DoubleClickEvent event) {
@@ -152,13 +143,14 @@ public class GlobalRefreshParticipantSelectionPage extends WizardPage implements
 			setPageComplete(false);
 			return;
 		}
-		participant = (ISynchronizeParticipantReference)ss.getFirstElement();
+		SynchronizeWizardDescription selectedDescriptor = (SynchronizeWizardDescription)ss.getFirstElement();
 		try {
-			wizard = participant.getParticipant().createSynchronizeWizard();
+			wizard = selectedDescriptor.createWizard();
 			wizard.addPages();		
 			// Ask the container to update button enablement
 			setPageComplete(true);
-		} catch (TeamException e) {
+			setDescription(selectedDescriptor.getDescription());
+		} catch (CoreException e) {
 			Utils.handle(e);
 			setPageComplete(false);
 		}
@@ -168,17 +160,6 @@ public class GlobalRefreshParticipantSelectionPage extends WizardPage implements
 		return this.wizard;
 	}
 	
-	public ISynchronizeParticipantReference getSelectedParticipant() {
-		return this.participant;
-	}
-	
-	/**
-	 * The <code>WizardSelectionPage</code> implementation of 
-	 * this <code>IWizardPage</code> method returns the first page 
-	 * of the currently selected wizard if there is one.
-	 * 
-	 * @see WizardPage#getNextPage
-	 */
 	public IWizardPage getNextPage() {
 		if (wizard == null) return null;
 		return wizard.getStartingPage();

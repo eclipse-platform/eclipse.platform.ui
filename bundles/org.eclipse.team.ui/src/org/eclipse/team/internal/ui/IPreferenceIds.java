@@ -39,4 +39,11 @@ public interface IPreferenceIds {
 	 * Preference to save the last participant selected via the global synchronize action.
 	 */
 	public static final String SYNCHRONIZING_DEFAULT_PARTICIPANT = PREFIX + "sychronizing_default_participant"; //$NON-NLS-1$
+	public static final String SYNCHRONIZING_DEFAULT_PARTICIPANT_SEC_ID = PREFIX + "sychronizing_default_participant"; //$NON-NLS-1$
+	
+	/*
+	 * Preference for disabling various prompts
+	 */
+	public static final String SYNCVIEW_REMOVE_FROM_VIEW_NO_PROMPT = PREFIX + "remove_from_view_without_prompt"; //$NON-NLS-1$
+
 }

@@ -34,6 +34,7 @@ import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.merge.ProjectElement;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
+import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.ui.IConfigurationWizard;
 import org.eclipse.ui.IWorkbench;
 
@@ -500,7 +501,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 				} else {
 					shareProject(Policy.subMonitorFor(monitor, 50));
 				}
-				CVSUIPlugin.getPlugin().getCvsWorkspaceSynchronizeParticipant().refreshNow(new IResource[] {project}, Policy.bind("ShareProjectOperation.1"), Policy.subMonitorFor(monitor, 50)); //$NON-NLS-1$
+				getParticipant().refreshNow(new IResource[] {project}, Policy.bind("ShareProjectOperation.1"), Policy.subMonitorFor(monitor, 50)); //$NON-NLS-1$
 				if (monitor.isCanceled()) {
 					throw new InterruptedException();
 				}
@@ -523,5 +524,9 @@ public class SharingWizard extends Wizard implements IConfigurationWizard, ICVSW
 	private void prepareTagPage(ICVSRemoteFolder remote) {
 		tagPage.setFolder(remote);
 		tagPage.setDescription(Policy.bind("SharingWizard.25", remote.getRepositoryRelativePath())); //$NON-NLS-1$
+	}
+
+	private WorkspaceSynchronizeParticipant getParticipant() {
+		return syncPage.getParticipant();
 	}
 }

@@ -49,14 +49,11 @@ import org.eclipse.team.internal.core.Assert;
 import org.eclipse.team.internal.ui.IPreferenceIds;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.internal.ui.synchronize.actions.StatusLineContributionGroup;
-import org.eclipse.team.internal.ui.synchronize.actions.WorkingSetFilterActionGroup;
 import org.eclipse.team.ui.synchronize.ISynchronizeModelElement;
 import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipant;
 import org.eclipse.team.ui.synchronize.SynchronizeModelAction;
 import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
@@ -107,7 +104,6 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 	private ISynchronizePageConfiguration configuration;
 	
 	// Special actions that could not be contributed using an ActionGroup
-	private WorkingSetFilterActionGroup workingSetGroup;
 	private StatusLineContributionGroup statusLine;
 	private SynchronizeModelManager modelManager;
 	
@@ -118,16 +114,12 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 	//    - decorator format change selected by the user
 	private IPropertyChangeListener propertyListener = new IPropertyChangeListener() {
 		public void propertyChange(PropertyChangeEvent event) {
-			// Working set changed by user
-			if(event.getProperty().equals(WorkingSetFilterActionGroup.CHANGE_WORKING_SET)) {
-				configuration.setWorkingSet((IWorkingSet)event.getNewValue());
-			} else
-				// Change to showing of sync state in text labels preference
-				if(event.getProperty().equals(IPreferenceIds.SYNCVIEW_VIEW_SYNCINFO_IN_LABEL)) {
-					if(viewer != null && !viewer.getControl().isDisposed()) {
-						viewer.refresh(true /* update labels */);
-					}
+			// Change to showing of sync state in text labels preference
+			if(event.getProperty().equals(IPreferenceIds.SYNCVIEW_VIEW_SYNCINFO_IN_LABEL)) {
+				if(viewer != null && !viewer.getControl().isDisposed()) {
+					viewer.refresh(true /* update labels */);
 				}
+			}
 		}
 	};
 
@@ -198,29 +190,10 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 		return null;
 	}
 	
-	/*
-	 * Initializes actions that are contributed directly by the advisor.
-	 * @param viewer the viewer being installed
-	 */
-	private void initializeWorkingSetActions() {
-		// view menu
-		workingSetGroup = new WorkingSetFilterActionGroup(
-				configuration.getSite().getShell(), 
-				getUniqueId(configuration.getParticipant()), 
-				propertyListener, 
-				configuration.getWorkingSet());
-		configuration.addPropertyChangeListener(new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(ISynchronizePageConfiguration.P_WORKING_SET)) {
-					IWorkingSet set = configuration.getWorkingSet();
-					workingSetGroup.setWorkingSet(set);
-				}
-			}
-		});
+	private void initializeStatusLine() {
 		statusLine = new StatusLineContributionGroup(
 				configuration.getSite().getShell(), 
-				configuration, 
-				workingSetGroup);
+				configuration);
 	}
 	
 	/**
@@ -229,9 +202,6 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 	public void dispose() {
 		if (statusLine != null) {
 			statusLine.dispose();
-		}
-		if (workingSetGroup != null) {
-			workingSetGroup.dispose();
 		}
 		if (getActionGroup() != null) {
 			getActionGroup().dispose();
@@ -424,20 +394,8 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 					o = ISynchronizePageConfiguration.DEFAULT_VIEW_MENU;
 				}
 				groups = (String[]) o;
-				int start = 0;
-				if (groups.length > 0
-						&& groups[0]
-								.equals(ISynchronizePageConfiguration.WORKING_SET_GROUP)) {
-					// Special handling for working set group
-					initializeWorkingSetActions();
-					workingSetGroup.fillActionBars(actionBars);
-					menu.add(new Separator());
-					menu.add(new Separator());
-					menu.add(new Separator(getGroupId("others"))); //$NON-NLS-1$
-					menu.add(new Separator());
-					start = 1;
-				}
-				for (int i = start; i < groups.length; i++) {
+				initializeStatusLine();
+				for (int i = 0; i < groups.length; i++) {
 					String group = groups[i];
 					// The groupIds must be converted to be unique since the
 					// view menu is shared
@@ -542,15 +500,6 @@ public abstract class StructuredViewerAdvisor implements IAdaptable {
 	
 	private String getGroupId(String group) {
 		return ((SynchronizePageConfiguration)configuration).getGroupId(group);
-	}
-	
-	private String getUniqueId(ISynchronizeParticipant particpant) {
-		String id = particpant.getId();
-		if (particpant.getSecondaryId() != null) {
-			id += "."; //$NON-NLS-1$
-			id += particpant.getSecondaryId();
-		}
-		return id;
 	}
 	
 	/*

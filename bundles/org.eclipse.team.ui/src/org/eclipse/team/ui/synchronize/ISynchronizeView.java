@@ -36,6 +36,8 @@ public interface ISynchronizeView extends IViewPart {
 	 */
 	public static final String VIEW_ID = "org.eclipse.team.sync.views.SynchronizeView"; //$NON-NLS-1$
 	
+	public static final String COMPARE_VIEW_ID = "org.eclipse.team.sync.views.CompareView"; //$NON-NLS-1$
+	
 	/**
 	 * Displays the given synchronize participant in the Synchronize View. This
 	 * has no effect if this participant is already being displayed.

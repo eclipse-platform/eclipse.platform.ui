@@ -11,16 +11,17 @@
 package org.eclipse.team.internal.ui.synchronize.actions;
 
 import org.eclipse.core.resources.IResource;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.team.internal.ui.Policy;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.internal.ui.synchronize.ConfigureRefreshScheduleDialog;
-import org.eclipse.team.internal.ui.synchronize.SubscriberRefreshWizard;
-import org.eclipse.team.ui.synchronize.*;
+import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
+import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
+import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.SynchronizePageActionGroup;
 import org.eclipse.ui.IActionBars;
-import org.eclipse.ui.IWorkingSet;
 
 /**
  * Provides the actions to be associated with a synchronize page
@@ -30,8 +31,8 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 	// the changes viewer are contributed via the viewer and not the page.
 	private Action configureSchedule;
 	private SyncViewerShowPreferencesAction showPreferences;
-	private Action refreshAllAction;
 	private Action refreshSelectionAction;
+	private RemoveFromViewAction removeFromViewAction;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.ui.synchronize.IActionContribution#initialize(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
@@ -42,20 +43,7 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 		final ISynchronizePageSite site = configuration.getSite();
 		// toolbar
 		if(participant.doesSupportSynchronize()) {
-			refreshAllAction = new Action() {
-				public void run() {
-					// Prime the refresh wizard with an appropriate initial selection
-					final SubscriberRefreshWizard wizard = new SubscriberRefreshWizard(participant);
-					IWorkingSet set = (IWorkingSet)configuration.getProperty(ISynchronizePageConfiguration.P_WORKING_SET);
-					if(set != null) {
-						int scopeHint = SubscriberRefreshWizard.SCOPE_WORKING_SET;
-						wizard.setScopeHint(scopeHint);
-					}					
-					WizardDialog dialog = new WizardDialog(site.getShell(), wizard);
-					dialog.open();
-				}
-			};
-			Utils.initAction(refreshAllAction, "action.refreshWithRemote."); //$NON-NLS-1$
+
 			refreshSelectionAction = new Action() {
 				public void run() {
 					IStructuredSelection selection = (IStructuredSelection)site.getSelectionProvider().getSelection();
@@ -77,6 +65,7 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 		}
 		
 		showPreferences = new SyncViewerShowPreferencesAction(site.getShell());
+		removeFromViewAction = new RemoveFromViewAction(configuration);
 	}
 
 	/* (non-Javadoc)
@@ -86,9 +75,11 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 		if (findGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP) != null
 			&& findGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP) != null) {
 			// Place synchronize with navigato to save space
-			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, refreshSelectionAction);	
+			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, refreshSelectionAction);
+			appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, removeFromViewAction);
 		} else {
 			appendToGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, refreshSelectionAction);
+			appendToGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, removeFromViewAction);
 		}
 	}
 
@@ -97,16 +88,6 @@ public final class SubscriberActionContribution extends SynchronizePageActionGro
 	 */
 	public void fillActionBars(IActionBars actionBars) {
 		if(actionBars != null) {
-			
-			// toolbar
-			IToolBarManager manager = actionBars.getToolBarManager();
-			if (findGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP) != null
-				&& findGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP) != null) {
-				// Place synchronize with navigato to save space
-				appendToGroup(manager, ISynchronizePageConfiguration.NAVIGATE_GROUP, refreshAllAction);	
-			} else {
-				appendToGroup(manager, ISynchronizePageConfiguration.SYNCHRONIZE_GROUP, refreshAllAction);
-			}
 
 			// view menu
 			IMenuManager menu = actionBars.getMenuManager();

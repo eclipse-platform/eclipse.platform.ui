@@ -24,8 +24,6 @@
    <extension-point id="ignore" name="%GlobalIgnoreRegistry" schema="schema/ignore.exsd"/>
    <extension-point id="projectSets" name="%TeamProjectSets" schema="schema/projectSets.exsd"/>
    <extension-point id="repository" name="%Repository" schema="schema/repository.exsd"/>
-   <extension-point id="deployment" name="%Deployment" schema="schema/deployment.exsd"/>
-   <extension-point id="subscriber" name="%Subscriber"/>
 
 <!-- Define common known file types -->
    <extension
