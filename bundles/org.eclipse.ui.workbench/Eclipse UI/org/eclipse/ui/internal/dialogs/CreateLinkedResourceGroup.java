@@ -383,14 +383,21 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 	if (createLink == false)
 		return createStatus(IStatus.OK, "");
 
+	IStatus locationStatus = workspace.validateLinkLocation(linkHandle,	path);
+	if (locationStatus.getSeverity() == IStatus.ERROR) {
+		if (locationStatus.getCode() == IResourceStatus.VARIABLE_NOT_DEFINED) {
+			// check if path is empty/invalid and give more specific error message
+			// work around for bug 29539.
+			IStatus nameStatus = validateLinkTargetName(linkTargetName); 
+			if (nameStatus.isOK() == false)
+				return nameStatus;		
+		}
+		return locationStatus;
+	}	
 	IStatus nameStatus = validateLinkTargetName(linkTargetName); 
 	if (nameStatus.isOK() == false)
 		return nameStatus;
 			
-	IStatus locationStatus = workspace.validateLinkLocation(linkHandle,	path);
-	if (locationStatus.getSeverity() == IStatus.ERROR) 
-		return locationStatus;
-	
 	String resolvedName = resolvedPathLabel.getText();
 	if (resolvedName.length() > 0) {
 		linkTargetName = resolvedName;
