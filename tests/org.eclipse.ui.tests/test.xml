@@ -78,5 +78,15 @@
       <property name="output-file" value="${plugin-name}.xml"/>
     </ant>
   </target>
+  
+  <target name="performance-suite">
+  	<property name="performance-workspace" value="${eclipse-home}/performance-workspace-platform-ui"/>
+    <delete dir="${performance-workspace}" quiet="true"/>
+  	<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+      <property name="data-dir" value="${performance-workspace}"/>
+      <property name="plugin-name" value="${plugin-name}"/>
+      <property name="classname" value="org.eclipse.ui.tests.performance.UIPerformanceTestSuite"/>
+    </ant>
+  </target>
 
 </project>
