@@ -20,6 +20,7 @@ import org.eclipse.core.internal.boot.PlatformURLHandler;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.Map;
@@ -184,7 +185,8 @@ public abstract class Plugin  {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = "preferences.ini";//$NON-NLS-1$
+	public static final String PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME = "preferences";//$NON-NLS-1$
+	public static final String PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME = PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME + ".ini";//$NON-NLS-1$
 
 	/**
 	 * The preference object for this plug-in; initially <code>null</code>
@@ -533,8 +535,9 @@ private void applyExternalPluginDefaultOverrides() {
  */
 private void applyInternalPluginDefaultOverrides() {
 	
+	IPluginDescriptor pluginDescriptor = getDescriptor();
 	// use URLs so we can find the file in fragments too
-	URL baseURL = getDescriptor().find(new Path(PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME));
+	URL baseURL = pluginDescriptor.find(new Path(PREFERENCES_DEFAULT_OVERRIDE_FILE_NAME));
 
 	if (baseURL == null) {
 		if (InternalPlatform.DEBUG_PREFERENCES) {
@@ -581,11 +584,19 @@ private void applyInternalPluginDefaultOverrides() {
 			}
 		}
 	}
+	
+	// Now get the translation file for these preferences (if one
+	// exists).
+	ResourceBundle bundle = null;
+	if (!overrides.isEmpty()) {
+		bundle = InternalPlatform.getPreferenceTranslator(pluginDescriptor, PREFERENCES_DEFAULT_OVERRIDE_BASE_NAME);
+	}
 
 	for (Iterator it = overrides.entrySet().iterator(); it.hasNext(); ) {
 		Map.Entry entry = (Map.Entry) it.next();
 		String key = (String) entry.getKey();
 		String value = (String) entry.getValue();
+		value = InternalPlatform.translatePreference(value, bundle);
 		preferences.setDefault(key, value);
 	}
 	if (InternalPlatform.DEBUG_PREFERENCES) {

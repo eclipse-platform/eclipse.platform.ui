@@ -61,9 +61,14 @@ public final class InternalPlatform {
 	
 	/**
 	 * Name of the plug-in customization file (value "plugin_customization.ini")
-	 * located in the root of the primary feature plug-in.
+	 * located in the root of the primary feature plug-in and it's 
+	 * companion nl-specific file with externalized strings (value
+	 * "plugin_customization.properties").  The companion file can
+	 * be contained in any nl-specific subdirectories of the primary
+	 * feature or any fragment of this feature.
 	 */
-	private static final String PLUGIN_CUSTOMIZATION_FILE_NAME = "plugin_customization.ini"; //$NON-NLS-1$
+	private static final String PLUGIN_CUSTOMIZATION_BASE_NAME = "plugin_customization"; //$NON-NLS-1$
+	private static final String PLUGIN_CUSTOMIZATION_FILE_NAME = PLUGIN_CUSTOMIZATION_BASE_NAME + ".ini"; //$NON-NLS-1$
 
 	// default plugin data
 	private static final String PI_XML = "org.apache.xerces"; //$NON-NLS-1$
@@ -94,6 +99,10 @@ public final class InternalPlatform {
 	public static boolean DEBUG_SHUTDOWN = false;
 	public static String DEBUG_PLUGINS_DUMP = ""; //$NON-NLS-1$
 	public static boolean DEBUG_PREFERENCES = false;
+	
+	private static final String KEY_PREFIX = "%"; //$NON-NLS-1$
+	private static final String KEY_DOUBLE_PREFIX = "%%"; //$NON-NLS-1$
+
 
 /**
  * Private constructor to block instance creation.
@@ -863,6 +872,94 @@ public static void clearRegIndex() {
 }
 
 /**
+ * Look for the companion preference translation file for a group
+ * of preferences.  This method will attempt to find a companion 
+ * ".properties" file first.  This companion file can be in an
+ * nl-specific directory for this plugin or any of its fragments or 
+ * it can be in the root of this plugin or the root of any of the
+ * plugin's fragments. If one is found, a new class loader 
+ * is created with a single element in its class path (the parent 
+ * directory of the ".properties" file we found previously).  This
+ * new class loader is used to find a resource bundle which is
+ * passed back to the caller.  This bundle can be used to translate
+ * preference values.
+ * 
+ * @param pluginDescriptor the descriptor of the plugin
+ *   who has the preferences
+ * @param basePrefFileName the base name of the preference file
+ *   This base will be used to construct the name of the 
+ *   companion translation file.
+ *   Example: If basePrefFileName is "plugin_customization",
+ *   the preferences are in "plugin_customization.ini" and
+ *   the translations are found in
+ *   "plugin_customization.properties".
+ * @return the resource bundle
+ * 
+ * @since 2.0
+ */
+public static ResourceBundle getPreferenceTranslator (IPluginDescriptor pluginDescriptor, String basePrefFileName) {
+	URL pluginExternalURL = pluginDescriptor.find(new Path("$nl$").append(basePrefFileName + ".properties")); //$NON-NLS-1$ //$NON-NLS-2$
+	// We know the file for externalizing string exists.  Now
+	// we need to pick it up as a resource bundle.
+	ResourceBundle bundle = null;
+	if (pluginExternalURL != null) {
+		// We need to play with this to get just the parent.
+		// Use the class 'Path' since 'URL' doesn't have a
+		// mechanism to get to the parent.
+		URL[] newcp = new URL[1];
+		Path externalPath = new Path(InternalBootLoader.decode(pluginExternalURL.getPath()));
+		try {
+			newcp[0] = new URL("file:" + externalPath.removeLastSegments(1).addTrailingSeparator().toString()); //$NON-NLS-1$
+		} catch (MalformedURLException badURL) {
+			if (DEBUG_PREFERENCES) {
+				System.out.println("Bad URL formed for " + "file:" + externalPath.removeLastSegments(1).addTrailingSeparator().toString()); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			return null;
+		}
+		ClassLoader resourceLoader = new URLClassLoader(newcp, null);
+		try {
+			bundle = ResourceBundle.getBundle(basePrefFileName, Locale.getDefault(), resourceLoader);
+		} catch (MissingResourceException cantFind) {
+			bundle = null;
+			if (DEBUG_PREFERENCES) {
+				System.out.println("Unable to find resource bundle for " + pluginExternalURL.getPath()); //$NON-NLS-1$
+			}
+		}
+	}
+	return bundle;
+}
+
+/**
+ * Takes a preference value and a related resource bundle and
+ * returns the translated version of this value (if one exists).
+ * 
+ * @param value the preference value for potential translation
+ * @param bundle the bundle containing the translated values
+ * 
+ * @since 2.0
+ */
+public static String translatePreference (String value, ResourceBundle bundle) {
+	value = value.trim();
+	if (bundle != null &&
+		value.startsWith(KEY_PREFIX) &&
+		!value.startsWith(KEY_DOUBLE_PREFIX)) {
+			
+		int ix = value.indexOf(" "); //$NON-NLS-1$
+		String key = ix == -1 ? value : value.substring(0,ix);
+		String dflt = ix == -1 ? value : value.substring(ix+1);
+		
+		try {
+			value = bundle.getString(key.substring(1));
+		} catch (MissingResourceException e) {
+			// Just return the value (% and all) if we
+			// can't find a translation for it.
+			value = dflt;
+		}
+	}
+	return value;
+}
+
+/**
  * Applies primary feature-specific overrides to default preferences for the
  * plug-in with the given id.
  * <p>
@@ -915,8 +1012,11 @@ public static void applyPrimaryFeaturePluginDefaultOverrides(
 	if (DEBUG_PREFERENCES) {
 		System.out.println("Loading preferences from " + pluginCustomizationURL); //$NON-NLS-1$
 	}
+	// Now see if we have a file with externalized strings for
+	// this preference file
+	ResourceBundle bundle = getPreferenceTranslator(primaryFeatureDescriptor, PLUGIN_CUSTOMIZATION_BASE_NAME);
 	// apply any defaults for the given plug-in
-	applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences);
+	applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences, bundle);
 }
 
 /**
@@ -950,7 +1050,7 @@ public static void applyCommandLinePluginDefaultOverrides(
 		if (DEBUG_PREFERENCES) {
 			System.out.println("Loading preferences from " + pluginCustomizationURL); //$NON-NLS-1$
 		}
-		applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences);
+		applyPluginDefaultOverrides(pluginCustomizationURL, id, preferences, null);
 	} catch (MalformedURLException e) {
 		// fail silently
 		if (DEBUG_PREFERENCES) {
@@ -977,7 +1077,8 @@ public static void applyCommandLinePluginDefaultOverrides(
 private static void applyPluginDefaultOverrides(
 	URL propertiesURL,
 	String id,
-	Preferences preferences) {
+	Preferences preferences,
+	ResourceBundle bundle) {
 	
 	// read the java.io.Properties file at the given URL
 	Properties overrides = new Properties();
@@ -1026,7 +1127,7 @@ private static void applyPluginDefaultOverrides(
 			}
 		}
 	}
-
+	
 	for (Iterator it = overrides.entrySet().iterator(); it.hasNext();) {
 		Map.Entry entry = (Map.Entry) it.next();
 		String qualifiedKey = (String) entry.getKey();
@@ -1044,10 +1145,11 @@ private static void applyPluginDefaultOverrides(
 			// plig-in-specified property name is non-empty string after "/" 
 			String propertyName = qualifiedKey.substring(s + 1);
 			String value = (String) entry.getValue();
+			value = translatePreference(value, bundle);
 			preferences.setDefault(propertyName, value);
 		}
 	}
-	if (DEBUG_PREFERENCES) {
+ 	if (DEBUG_PREFERENCES) {
 		System.out.println("Preferences now set as follows:"); //$NON-NLS-1$
 		String[] prefNames = preferences.propertyNames();
 		for (int i = 0; i < prefNames.length; i++) {
