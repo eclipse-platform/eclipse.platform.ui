@@ -558,7 +558,7 @@ public abstract class RepositoryProvider implements IProjectNature {
 	 * 
 	 * @see org.eclipe.team.resources.team.IMoveDeleteHook
 	 */
-	private boolean canHandleLinkedResources() {
+	public boolean canHandleLinkedResources() {
 		return false;
 	}
 }	
