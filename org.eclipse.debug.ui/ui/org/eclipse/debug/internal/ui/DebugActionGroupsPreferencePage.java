@@ -179,7 +179,7 @@ public class DebugActionGroupsPreferencePage  extends PreferencePage implements 
 			DebugActionGroupsManager.getDefault().updateDebugActionGroups();
 			persistDebugActionGroups();
 		}
-		return fStateChanged;
+		return true;
 	}
 	
 	protected void persistDebugActionGroups() {
