@@ -40,6 +40,22 @@ BODY {
 	border-left-width:0;
 	border-right-width:0;
 }
+td.button {
+<%
+if (data.isIE()) {
+	// IE already has 3px padding
+%>
+	padding-left:2;
+	padding-right:2;
+<%
+} else {
+%>
+	padding-left:5;
+	padding-right:5;
+<%
+}
+%>
+}
 
 <%
 if (data.isMozilla()) {
@@ -123,7 +139,7 @@ if (data.getScript() != null) {
 			</tr>
 		</table>
 	</div>
-	<div id="borderLayer" style="position:absolute; z-index:3; left:0; top:0; height:100%; width:100%; ">
+	<div id="borderLayer" style="position:absolute; z-index:2; left:0; top:0; height:100%; width:100%; ">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100% ">
 			<tr>
 				<td id="tdborder">
@@ -132,11 +148,11 @@ if (data.getScript() != null) {
 			</tr>
 		</table>
 	</div>	
-	<div id="iconLayer" style="position:absolute; z-index:2; left:0; top:0; height:100%; width:100%;">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%">
+	<div id="iconLayer" style="position:absolute; z-index:3; left:0; top:0; height:100%; width:100%;">
+		<table width="100%" border="0" cellspacing="1" cellpadding="0" height="100%">
 			<tr>
 				<td align="right">
-					<table border="0" cellspacing="0" cellpadding="0" height="100%" style="padding-top:3px; padding-right:3px;background:<%=prefs.getToolbarBackground()%>">
+					<table border="0" cellspacing="0" cellpadding="0" height="100%" style="background:<%=prefs.getToolbarBackground()%>">
 					<tr>
 <%
 	ToolbarButton[] buttons = data.getButtons();
@@ -151,14 +167,15 @@ if (data.getScript() != null) {
 <%
 		} else {
 %>
-						<td align="middle" width="22">
+						<td align="middle" class="button">
 							<a href="#" 
 							   onclick="<%=buttons[i].getAction()%>(this);" 
 							   onmouseover="window.status='<%=buttons[i].getTooltip()%>';return true;" 
 							   onmouseout="window.status='';">
 							   <img src="<%=buttons[i].getImage()%>" 
 							        alt='<%=buttons[i].getTooltip()%>' 
-							        border="0" 
+							        border="0"
+							        style="float:left;"
 							        name="<%=buttons[i].getName()%>">
 							</a>
 						</td>
