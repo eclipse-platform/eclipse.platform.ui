@@ -446,6 +446,12 @@ public class AntModel {
 	
 		notifyProblemRequestor(exception, node, XMLProblem.SEVERTITY_ERROR);
 	}
+	
+	public void error(Exception exception, int start, int count) {
+		notifyProblemRequestor(exception, start, count, XMLProblem.SEVERTITY_ERROR);
+		AntElementNode node= (AntElementNode)fStillOpenElements.peek();
+		node.setIsErrorNode(true);
+	}
 
 	private AntElementNode createProblemElement(SAXParseException exception) {
 		int lineNumber= exception.getLineNumber();

@@ -308,6 +308,23 @@ public class ProjectHelper extends ProjectHelper2 {
 				}
 			}
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#characters(char[], int, int, org.apache.tools.ant.helper.AntXMLContext)
+		 */
+		public void characters(char[] buf, int start, int count, AntXMLContext context) {
+			try {
+				super.characters(buf, start, count, context);
+			} catch (SAXParseException e) {
+				if (fAntModel != null) {
+					fAntModel.error(e, start, count);
+				}
+			} catch (BuildException be) {
+				if (fAntModel != null) {
+					fAntModel.error(be, start, count);
+				}
+			}
+		}
 	}
 	
 	public static class TargetHandler extends ProjectHelper2.TargetHandler {
@@ -330,21 +347,21 @@ public class ProjectHelper extends ProjectHelper2 {
 				}
 			} catch (SAXParseException e) {
 				if (fAntModel != null) {
-					Target newTarget= context.getCurrentTarget();
-					Locator locator= context.getLocator();
-					fAntModel.addTarget(newTarget, locator.getLineNumber(), locator.getColumnNumber());
-					fAntModel.error(e);
+					handleErrorInTarget(context, e);
 				}
 			} catch (BuildException be) {
 				if (fAntModel != null) {
-					Target newTarget= context.getCurrentTarget();
-					Locator locator= context.getLocator();
-					fAntModel.addTarget(newTarget, locator.getLineNumber(), locator.getColumnNumber());
-					fAntModel.error(be);
+					handleErrorInTarget(context, be);
 				}
 			}
 		}
 		
+		private void handleErrorInTarget(AntXMLContext context, Exception e) {
+			Target newTarget= context.getCurrentTarget();
+			Locator locator= context.getLocator();
+			fAntModel.addTarget(newTarget, locator.getLineNumber(), locator.getColumnNumber());
+			fAntModel.error(e);
+		}
 		/* (non-Javadoc)
 		 * @see org.apache.tools.ant.helper.ProjectHelper2.AntHandler#onEndElement(java.lang.String, java.lang.String, org.apache.tools.ant.helper.AntXMLContext)
 		 */
