@@ -1046,6 +1046,7 @@ public class TextMergeViewer extends ContentMergeViewer  {
 				public void handleEvent(Event e) {
 					int vpos= ((ScrollBar)e.widget).getSelection();
 					scrollVertical(vpos, vpos, vpos, null);
+					workaround65205();
 				}
 			}
 		);
@@ -1101,9 +1102,20 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						ScrollBar sb3= st3.getHorizontalBar();
 						st3.setHorizontalPixel((int)((sb3.getMaximum()-sb3.getThumb()) * v));
 					}
+					workaround65205();
 			    }
 			}
 		});
+	}
+
+	/**
+	 * A workaround for bug #65205.
+	 * On MacOS X a Display.update() is required to flush pending paint requests after
+	 * programmatical scolling. 
+	 */
+	private void workaround65205() {
+		if (fIsCarbon && fComposite != null && !fComposite.isDisposed())
+			fComposite.getDisplay().update();
 	}
 
 	private void setCurrentDiff2(Diff diff, boolean reveal) {
