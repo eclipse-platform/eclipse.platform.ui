@@ -11,15 +11,25 @@
 
 package org.eclipse.jface.viewers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.util.*;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.ListenerList;
+import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * Abstract base implementation for tree-structure-oriented viewers (trees and
@@ -109,7 +119,8 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 */
 	public void add(Object parentElement, Object[] childElements) {
 		Assert.isNotNull(parentElement);
-		Assert.isNotNull(childElements);
+		assertElementsNotNull(childElements);
+		
 		Widget widget = findItem(parentElement);
 		// If parent hasn't been realized yet, just ignore the add.
 		if (widget == null)
@@ -311,6 +322,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 *           all levels of the tree
 	 */
 	public void collapseToLevel(Object element, int level) {
+		Assert.isNotNull(element);
 		Widget w = findItem(element);
 		if (w != null)
 			internalCollapseToLevel(w, level);
@@ -490,6 +502,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 *           levels of the tree
 	 */
 	public void expandToLevel(Object element, int level) {
+		Assert.isNotNull(element);
 		Widget w = internalExpand(element, true);
 		if (w != null)
 			internalExpandToLevel(w, level);
@@ -599,6 +612,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 *         if collapsed
 	 */
 	public boolean getExpandedState(Object element) {
+		Assert.isNotNull(element);
 		Widget item = findItem(element);
 		if (item instanceof Item)
 			return getExpanded((Item) item);
@@ -1174,6 +1188,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 *           the elements to remove
 	 */
 	public void remove(final Object[] elements) {
+		assertElementsNotNull(elements);
 		preservingSelection(new Runnable() {
 			public void run() {
 				internalRemove(elements);
@@ -1216,6 +1231,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	}
 	/* Non-Javadoc. Method defined on StructuredViewer. */
 	public void reveal(Object element) {
+		Assert.isNotNull(element);
 		Widget w = internalExpand(element, true);
 		if (w instanceof Item)
 			showItem((Item) w);
@@ -1305,6 +1321,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 * @see #getExpandedElements
 	 */
 	public void setExpandedElements(Object[] elements) {
+		assertElementsNotNull(elements);
 		HashSet expandedElements = new HashSet(elements.length * 2 + 1);
 		for (int i = 0; i < elements.length; ++i) {
 			// Ensure item exists for element
@@ -1324,6 +1341,7 @@ public abstract class AbstractTreeViewer extends StructuredViewer {
 	 *           if collapsed
 	 */
 	public void setExpandedState(Object element, boolean expanded) {
+		Assert.isNotNull(element);
 		Widget item = internalExpand(element, false);
 		if (item instanceof Item) {
 			if (expanded) {

@@ -94,6 +94,7 @@ public ListViewer(org.eclipse.swt.widgets.List list) {
  * @param elements the elements to add
  */
 public void add(Object[] elements) {
+	assertElementsNotNull(elements);
 	Object[] filtered = filter(elements);
 	ILabelProvider labelProvider = (ILabelProvider) getLabelProvider();
 	for (int i = 0; i < filtered.length; i++){
@@ -313,6 +314,7 @@ private void internalRemove(final Object[] elements) {
  * @param elements the elements to remove
  */
 public void remove(final Object[] elements) {
+	assertElementsNotNull(elements);
 	preservingSelection(new Runnable() {
 		public void run() {
 			internalRemove(elements);
@@ -340,6 +342,7 @@ public void remove(Object element) {
  * Method defined on StructuredViewer.
  */
 public void reveal(Object element) {
+	Assert.isNotNull(element);
 	int index = listMap.indexOf(element);
 	if (index == -1)
 		return;
