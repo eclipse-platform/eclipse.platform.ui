@@ -31,6 +31,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.util.Assert;
+import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IOpenListener;
@@ -1168,7 +1169,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 */
 	protected void handleOpen(OpenEvent event) {
 		Viewer viewer= event.getViewer();
-		boolean hasCurrentMatch = showCurrentMatch(true);
+		boolean hasCurrentMatch = showCurrentMatch(OpenStrategy.activateOnOpen());
 		ISelection sel= event.getSelection();
 		if (viewer instanceof TreeViewer && sel instanceof IStructuredSelection) {
 			IStructuredSelection selection= (IStructuredSelection) sel;
@@ -1176,13 +1177,13 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 			Object element = selection.getFirstElement();
 			if (element != null) {
 				if (!hasCurrentMatch && getDisplayedMatchCount(element) > 0)
-					gotoNextMatch(true);
+					gotoNextMatch(OpenStrategy.activateOnOpen());
 				else 
 					tv.setExpandedState(element, !tv.getExpandedState(element));
 			}
 			return;
 		} else if (!hasCurrentMatch) {
-			gotoNextMatch(true);
+			gotoNextMatch(OpenStrategy.activateOnOpen());
 		}
 	}
 
