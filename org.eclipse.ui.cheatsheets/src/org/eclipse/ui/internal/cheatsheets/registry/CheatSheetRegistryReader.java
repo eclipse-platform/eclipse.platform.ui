@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.registry;
 
+import java.lang.reflect.Constructor;
 import java.text.Collator;
 import java.util.*;
 
@@ -92,6 +93,7 @@ public class CheatSheetRegistryReader extends RegistryReader {
 	private final String pluginListenerPoint = "cheatSheetListener"; //$NON-NLS-1$
 	private final String pluginPoint = "cheatSheetContent"; //$NON-NLS-1$
 	private final String csItemExtension = "cheatSheetItemExtension"; //$NON-NLS-1$
+	private final Class[] stringArray = { String.class };
 
 	/**
 	 *	Create an instance of this class.
@@ -492,15 +494,17 @@ public class CheatSheetRegistryReader extends RegistryReader {
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 		}
 		try {
-			if (extClass != null)
-				extElement = (AbstractItemExtensionElement) extClass.newInstance();
+			if (extClass != null) {
+				Constructor c = extClass.getConstructor(stringArray);
+				Object[] parameters = { itemAttribute };
+				extElement = (AbstractItemExtensionElement) c.newInstance(parameters);
+			}
 		} catch (Exception e) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_CLASS_FOR_ACTION), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 		}
 		
-		if(extElement != null){
-			extElement.setAttributeName(itemAttribute);
+		if (extElement != null){
 			cheatsheetItemExtensions.add(extElement);
 		}
 		
