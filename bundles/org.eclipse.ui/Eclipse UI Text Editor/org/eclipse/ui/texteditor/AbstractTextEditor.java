@@ -68,6 +68,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Assert;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -121,6 +122,7 @@ import org.eclipse.ui.internal.EditorPluginAction;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 
 
@@ -775,6 +777,43 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	};
 	
 	
+	/** 
+	 * Editor specific selection provider which wraps the source viewer's selection provider.
+	 * 	 */
+	class SelectionProvider implements ISelectionProvider {
+
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#addSelectionChangedListener(ISelectionChangedListener)
+		 */
+		public void addSelectionChangedListener(ISelectionChangedListener listener) {
+			if (fSourceViewer != null)
+				fSourceViewer.getSelectionProvider().addSelectionChangedListener(listener);
+		}
+
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#getSelection()
+		 */
+		public ISelection getSelection() {
+			return doGetSelection();				
+		}
+
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#removeSelectionChangedListener(ISelectionChangedListener)
+		 */
+		public void removeSelectionChangedListener(ISelectionChangedListener listener) {
+			if (fSourceViewer != null)
+				fSourceViewer.getSelectionProvider().removeSelectionChangedListener(listener);
+		}
+
+		/*
+		 * @see org.eclipse.jface.viewers.ISelectionProvider#setSelection(ISelection)
+		 */
+		public void setSelection(ISelection selection) {
+			doSetSelection(selection);
+		}
+	};
+	
+	
 	
 	/** Key used to look up font preference */
 	public final static String PREFERENCE_FONT= JFaceResources.TEXT_FONT;
@@ -899,6 +938,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private SourceViewerConfiguration fConfiguration;
 	/** The editor's source viewer */
 	private ISourceViewer fSourceViewer;
+	/** The editor's selection provider */
+	private SelectionProvider fSelectionProvider= new SelectionProvider();
 	/** The editor's font */
 	private Font fFont;
 	/** 
@@ -988,7 +1029,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * The editor's remembered text selection
 	 * @since 2.0
 	 */
-	private ITextSelection fRememberedSelection;
+	private ISelection fRememberedSelection;
 	/** 
 	 * Indicates whether the editor runs in 1.0 context menu registration compatibility mode
 	 * @since 2.0
@@ -1230,7 +1271,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @see ITextEditor#getSelectionProvider
 	 */
 	public ISelectionProvider getSelectionProvider() {
-		return (fSourceViewer != null ? fSourceViewer.getSelectionProvider() : null);
+		return fSelectionProvider;
 	}
 	
 	/**
@@ -1247,8 +1288,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	protected void rememberSelection() {
-		ISelectionProvider sp= getSelectionProvider();
-		fRememberedSelection= (sp == null ? null : (ITextSelection) sp.getSelection());
+		fRememberedSelection= doGetSelection();
+	}
+	
+	/**
+	 * Returns the current selection.
+	 * @return ISelection
+	 */
+	protected ISelection doGetSelection() {
+		ISelectionProvider sp= null;
+		if (fSourceViewer != null)
+			sp= fSourceViewer.getSelectionProvider();
+		return (sp == null ? null : sp.getSelection());
 	}
 	
 	/**
@@ -1261,9 +1312,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.0
 	 */
 	protected void restoreSelection() {
-		if (getSourceViewer() != null && fRememberedSelection != null)
-			selectAndReveal(fRememberedSelection.getOffset(), fRememberedSelection.getLength());
+		doSetSelection(fRememberedSelection);
 		fRememberedSelection= null;
+	}
+	
+	/**
+	 * Sets the given selection.	 * @param selection	 */
+	protected void doSetSelection(ISelection selection) {
+		if (selection instanceof ITextSelection) {
+			ITextSelection textSelection= (ITextSelection) selection;
+			selectAndReveal(textSelection.getOffset(), textSelection.getLength());
+		}
 	}
 	
 	/**
@@ -1929,6 +1988,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				fTextListener= null;
 			}
 			
+			fSelectionProvider= null;
 			fSourceViewer= null;
 		}
 		
@@ -3223,8 +3283,18 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			
 			fSourceViewer.revealRange(start, length);
 			fSourceViewer.setSelectedRange(start, length);
+			
+			markInNavigationHistory();
 		}
 		widget.setRedraw(true);
+	}
+	
+	/**
+	 * Writes a check mark of the given situation into the navigation history.
+	 */
+	protected void markInNavigationHistory() {
+		ISelection selection= fSourceViewer.getSelectionProvider().getSelection();
+		getEditorSite().getPage().addNavigationHistoryEntry(selection);
 	}
 	
 	/*

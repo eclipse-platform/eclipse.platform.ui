@@ -133,5 +133,27 @@ public class TextSelection implements ITextSelection {
 		
 		return null;
 	}
+	
+	/*
+	 * @see java.lang.Object#equals(Object)
+	 */
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+			
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+			
+		TextSelection s= (TextSelection) obj;
+		return s.fDocument == fDocument && s.fOffset == fOffset && s.fLength == fLength;
+	}
+	
+	/*
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+	 	int low= fDocument != null ? fDocument.hashCode() : 0;
+	 	return (fOffset << 24) | (fLength << 16) | low;
+	}
 }
 

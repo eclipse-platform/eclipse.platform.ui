@@ -31,6 +31,7 @@ public class NavigationHistory {
 		super();
 		this.page = page;
 	}
+	
 	public void forward() {
 		if(index < (size - 1)) {
 			index++;	
@@ -38,6 +39,7 @@ public class NavigationHistory {
 			enableActions();
 		}
 	}
+	
 	public void backward() {
 		if(index > 0) {
 			index--;			
@@ -45,31 +47,62 @@ public class NavigationHistory {
 			enableActions();
 		}
 	}
+	
 	public void setForwardAction(NavigationHistoryAction action) {
 		forwardAction = action;
 		enableActions();
 	}
+	
 	public void setBackwardAction(NavigationHistoryAction action) {
 		backwardAction = action;
 		enableActions();
 	}
+	
+	private boolean samePart(NavigationHistoryEntry entry, IEditorPart part) {
+		return entry.part == part;
+	}
+	
 	public void add(IEditorPart part) {
-		NavigationHistoryEntry e = new NavigationHistoryEntry();
+		
+		NavigationHistoryEntry e= getEntry();
+		if (e != null && samePart(e, part))
+			return;
+		
+		e = new NavigationHistoryEntry();
 		e.part = part;
 		add(e);
 	}
+	
 	public void add(ISelection selection) {
-		NavigationHistoryEntry e = new NavigationHistoryEntry();
-		e.part = page.getActiveEditor();
+		
+		if (selection == null)
+			return;
+		
+		IEditorPart part= page.getActiveEditor();
+		
+		NavigationHistoryEntry e= getEntry();
+		if (e != null && samePart(e, part)) {
+			if (e.selection == null) {
+				e.selection= selection;
+				return;
+			} else if (e.selection.equals(selection)) {
+				return;
+			}
+		}
+		
+		e = new NavigationHistoryEntry();
+		e.part = part;
 		e.selection = selection;
 		add(e);
 	}
+	
 	private void add(NavigationHistoryEntry o) {
 		if(ignoreEntries)
 			return;
+		
 		size = index + 1;
 		if(size >= history.length) {
-			System.arraycopy(history,1,history,0,history.length - 2);
+			System.arraycopy(history,1,history,0,history.length - 1);
 			history[size - 1] = o;
 			size = history.length;
 		} else {
@@ -83,6 +116,7 @@ public class NavigationHistory {
 		printEntries();
 		enableActions();
 	}
+	
 	private void gotoEntry() {
 		printEntries();
 		try {
@@ -92,6 +126,11 @@ public class NavigationHistory {
 			ignoreEntries = false;
 		}
 	}
+	
+	private NavigationHistoryEntry getEntry() {
+		return (index <= size && size > 0) ? history[index] : null;
+	}
+	
 	private void printEntries() {
 		for (int i = 0; i < size; i++) {
 			String append = "";
@@ -100,6 +139,7 @@ public class NavigationHistory {
 			System.out.println(append + "Index: " + i + " " + history[i]);	
 		};
 	}
+	
 	private void enableActions() {
 		boolean backward = index > 0;
 		boolean forward = index < (size - 1);
@@ -114,15 +154,19 @@ public class NavigationHistory {
 	private static class NavigationHistoryEntry {
 		private IEditorPart part;
 		private ISelection selection;
+		
 		public void gotoEntry(WorkbenchPage page) {
 			if(part != null) {
+				
 				page.activate(part);
+				
 				if(selection != null) {
 					ISelectionProvider prov = part.getEditorSite().getSelectionProvider();
 					prov.setSelection(selection);
 				}
 			}
 		}
+		
 		public String toString() {
 			return "Part<" + part + "> Selection<" + selection + ">";
 		}
