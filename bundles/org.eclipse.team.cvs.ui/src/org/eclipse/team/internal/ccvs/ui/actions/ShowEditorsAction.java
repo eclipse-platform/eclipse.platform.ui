@@ -11,12 +11,11 @@
 package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.internal.ccvs.core.EditorsInfo;
 import org.eclipse.team.internal.ccvs.ui.EditorsView;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 /**
  * 
  * 
@@ -29,9 +28,9 @@ public class ShowEditorsAction extends WorkspaceAction {
 	
 	protected void execute(IAction action) throws InvocationTargetException, InterruptedException {
 		final EditorsAction editorsAction = new EditorsAction();
-		run(new WorkspaceModifyOperation() {
-			public void execute(IProgressMonitor monitor)
-				throws InvocationTargetException, InterruptedException {
+		run(new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor)
+					throws InvocationTargetException, InterruptedException {
 				executeProviderAction(editorsAction, monitor);
 			}
 		}, true /* cancelable */ , PROGRESS_DIALOG);

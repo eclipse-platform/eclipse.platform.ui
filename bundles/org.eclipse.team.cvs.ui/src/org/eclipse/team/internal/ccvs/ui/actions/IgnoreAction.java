@@ -26,7 +26,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 public class IgnoreAction extends WorkspaceAction {
 	
 	protected void execute(final IAction action) throws InvocationTargetException, InterruptedException {
-		run(new WorkspaceModifyOperation() {
+		run(new WorkspaceModifyOperation(null) {
 			public void execute(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
 				IResource[] resources = getSelectedResources();
 				IgnoreResourcesDialog dialog = new IgnoreResourcesDialog(getShell(), resources);
