@@ -65,7 +65,7 @@ public class ReplaceWithTagAction extends CVSAction {
 					projects[i] = resources[i].getProject();
 				}
 				TagSelectionDialog dialog = new TagSelectionDialog(getShell(), projects, Policy.bind("ReplaceWithTagAction.message"), Policy.bind("TagSelectionDialog.Select_a_Tag_1"),  //$NON-NLS-1$ //$NON-NLS-2$
-													true /*show HEAD*/, true /*show recurse*/); //$NON-NLS-1$
+													TagSelectionDialog.INCLUDE_ALL_TAGS, true /*show recurse*/); //$NON-NLS-1$
 				dialog.setBlockOnOpen(true);
 				if (dialog.open() == Dialog.CANCEL) {
 					return;

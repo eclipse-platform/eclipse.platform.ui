@@ -106,7 +106,7 @@ public class UpdateWizardPage extends CVSWizardPage {
 		});
 		
 		setControl(composite);
-		tree.setInput(new ProjectElement(CVSWorkspaceRoot.getCVSFolderFor(project), true /*show HEAD as tag*/));
+		tree.setInput(new ProjectElement(CVSWorkspaceRoot.getCVSFolderFor(project), ProjectElement.INCLUDE_ALL_TAGS));
 		
 		Runnable refresh = new Runnable() {
 			public void run() {

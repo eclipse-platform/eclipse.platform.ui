@@ -61,7 +61,7 @@ public class MoveRemoteTagAction extends TagInRepositoryAction {
 		// Allow the user to select a tag
 		TagSelectionDialog dialog = new TagSelectionDialog(getShell(), folders, 
 			Policy.bind("MoveTagAction.title"), //$NON-NLS-1$
-			Policy.bind("MoveTagAction.message"), false, true); //$NON-NLS-1$
+			Policy.bind("MoveTagAction.message"), TagSelectionDialog.INCLUDE_BRANCHES | TagSelectionDialog.INCLUDE_VERSIONS, true); //$NON-NLS-1$
 		dialog.setBlockOnOpen(true);
 		if (dialog.open() == Dialog.CANCEL) {
 			return null;

@@ -252,7 +252,7 @@ public class SharingWizard extends Wizard implements IConfigurationWizard {
 							TagSelectionDialog dialog = new TagSelectionDialog(getShell(), 
 								new ICVSFolder[] {(ICVSFolder)location.getRemoteFolder(moduleName, null)}, 
 								Policy.bind("SharingWizard.selectTagTitle"),  //$NON-NLS-1$
-								Policy.bind("SharingWizard.selectTag"), true /*show HEAD*/, false /*don't show recurse option*/); //$NON-NLS-1$
+								Policy.bind("SharingWizard.selectTag"), TagSelectionDialog.INCLUDE_HEAD_TAG | TagSelectionDialog.INCLUDE_BRANCHES, false /*don't show recurse option*/); //$NON-NLS-1$
 							dialog.setBlockOnOpen(true);
 							if (dialog.open() == Dialog.CANCEL) {
 								return false;

@@ -164,7 +164,7 @@ public class BranchPromptDialog extends DetailsDialog {
 		label.setFont(composite.getFont());
 		
 		tagTree = createTree(composite);
-		tagTree.setInput(new ProjectElement(folder, false /*show HEAD tag*/));
+		tagTree.setInput(new ProjectElement(folder, ProjectElement.INCLUDE_BRANCHES | ProjectElement.INCLUDE_VERSIONS));
 		Runnable refresh = new Runnable() {
 			public void run() {
 				getShell().getDisplay().syncExec(new Runnable() {

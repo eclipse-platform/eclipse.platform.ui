@@ -39,8 +39,14 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class TagSelectionDialog extends Dialog {
 	private ICVSFolder[] folders;
-	private boolean showHEAD;
+	private int includeFlags;
 	private CVSTag result;
+	
+	public static final int INCLUDE_HEAD_TAG = ProjectElement.INCLUDE_HEAD_TAG;
+	public static final int INCLUDE_BASE_TAG = ProjectElement.INCLUDE_BASE_TAG;
+	public static final int INCLUDE_BRANCHES = ProjectElement.INCLUDE_BRANCHES;
+	public static final int INCLUDE_VERSIONS = ProjectElement.INCLUDE_VERSIONS;
+	public static final int INCLUDE_ALL_TAGS = ProjectElement.INCLUDE_ALL_TAGS;
 	
 	// widgets;
 	private TreeViewer tagTree;
@@ -62,8 +68,8 @@ public class TagSelectionDialog extends Dialog {
 	 * Creates a new TagSelectionDialog.
 	 * @param resource The resource to select a version for.
 	 */
-	public TagSelectionDialog(Shell parentShell, IProject[] projects, String title, String message, boolean showHead, boolean showRecurse) {
-		this(parentShell, getCVSFoldersFor(projects), title, message, showHead, showRecurse); //$NON-NLS-1$		
+	public TagSelectionDialog(Shell parentShell, IProject[] projects, String title, String message, int includeFlags, boolean showRecurse) {
+		this(parentShell, getCVSFoldersFor(projects), title, message, includeFlags, showRecurse); //$NON-NLS-1$		
 	}
 	
 	private static ICVSFolder[] getCVSFoldersFor(IProject[] projects) {
@@ -78,12 +84,12 @@ public class TagSelectionDialog extends Dialog {
 	 * Creates a new TagSelectionDialog.
 	 * @param resource The resource to select a version for.
 	 */
-	public TagSelectionDialog(Shell parentShell, ICVSFolder[] folders, String title, String message, boolean showHEAD, boolean showRecurse) {
+	public TagSelectionDialog(Shell parentShell, ICVSFolder[] folders, String title, String message, int includeFlags, boolean showRecurse) {
 		super(parentShell);
 		this.folders = folders;
 		this.title = title;
 		this.message = message;
-		this.showHEAD = showHEAD;
+		this.includeFlags = includeFlags;
 		this.showRecurse = showRecurse;
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
@@ -153,7 +159,7 @@ public class TagSelectionDialog extends Dialog {
 		l.setText(message); //$NON-NLS-1$
 		
 		tagTree = createTree(inner);
-		tagTree.setInput(new ProjectElement(folders[0], showHEAD /*show HEAD tag*/));
+		tagTree.setInput(new ProjectElement(folders[0], includeFlags));
 		Runnable refresh = new Runnable() {
 			public void run() {
 				getShell().getDisplay().syncExec(new Runnable() {

@@ -254,7 +254,7 @@ public class TagConfigurationDialog extends Dialog {
 		data.horizontalAlignment = GridData.FILL;
 		data.grabExcessHorizontalSpace = true;
 		cvsDefinedTagsTree.getTree().setLayoutData(data);
-		cvsDefinedTagsRootElement = new ProjectElement(roots[0], false /* don't show HEAD */);
+		cvsDefinedTagsRootElement = new ProjectElement(roots[0], ProjectElement.INCLUDE_BRANCHES | ProjectElement.INCLUDE_VERSIONS);
 		cvsDefinedTagsRootElement.getBranches().add(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownBranchTags(root));
 		cvsDefinedTagsRootElement.getVersions().add(CVSUIPlugin.getPlugin().getRepositoryManager().getKnownVersionTags(root));
 		cvsDefinedTagsTree.setInput(cvsDefinedTagsRootElement);
