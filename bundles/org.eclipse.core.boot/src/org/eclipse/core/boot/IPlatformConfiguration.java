@@ -107,6 +107,16 @@ public interface IPlatformConfiguration {
 		 * @since 2.0
 		 */
 		public boolean isUpdateable();			
+		
+		/**
+		 * Returns an indication whether the site represents an install site
+		 * that has been linked via a native installer (using the links/<linkfile>
+		 * mechanism)
+		 * 
+		 * @return <code>true</code> if the site is linked, <code>false</code> otherwise
+		 * @since 2.0
+		 */
+		public boolean isNativelyLinked();				
 	}
 	
 	/**

@@ -260,6 +260,13 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			return updateable;
 		}
 		
+		/*
+		 * @see ISiteEntry#isNativelyLinked()
+		 */
+		public boolean isNativelyLinked() {
+			return isExternallyLinkedSite();
+		}
+		
 		private String[] detectFeatures() {
 			
 			// invalidate stamps ... we are doing discovery
@@ -438,6 +445,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 			features = null;
 			plugins = null;
 		}
+
 	}
 
 	public class SitePolicy implements IPlatformConfiguration.ISitePolicy {
