@@ -36,7 +36,8 @@ public class LayoutData extends RequestData {
 		if (banner == null || banner.trim().length() == 0) {
 			banner = "about:blank";
 		} else if (banner.startsWith("http:/")) {
-		} else if (banner.startsWith("file:/") || banner.startsWith("jar:")) {
+		} else if (
+			banner.startsWith("file:/") || banner.startsWith("jar:file:/")) {
 			banner = "topic/" + banner;
 		} else {
 			banner = "topic" + banner;

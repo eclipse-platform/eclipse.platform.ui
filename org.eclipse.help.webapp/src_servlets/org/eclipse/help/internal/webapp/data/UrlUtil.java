@@ -99,7 +99,7 @@ public class UrlUtil {
 		if (url == null || url.length() == 0)
 			url = "about:blank";
 		else if (url.startsWith("http:/"));
-		else if (url.startsWith("file:/") || url.startsWith("jar:"))
+		else if (url.startsWith("file:/") || url.startsWith("jar:file:/"))
 			url = "../topic/" + url;
 		else
 			url = "../topic" + url;

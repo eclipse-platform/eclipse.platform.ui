@@ -12,12 +12,12 @@ package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.*;
 import java.net.*;
-import java.util.Enumeration;
+import java.util.*;
 
-import javax.servlet.ServletContext;
+import javax.servlet.*;
 import javax.servlet.http.*;
 
-import org.eclipse.help.internal.HelpSystem;
+import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.webapp.data.*;
 
 /**
@@ -60,7 +60,7 @@ public class EclipseConnector {
 			if (url == null)
 				return;
 			if (url.toLowerCase().startsWith("file:/")
-				|| url.toLowerCase().startsWith("jar:")) {
+				|| url.toLowerCase().startsWith("jar:file:/")) {
 				int i = url.indexOf('?');
 				if (i != -1)
 					url = url.substring(0, i);
@@ -83,7 +83,7 @@ public class EclipseConnector {
 			} catch (Exception e) {
 			}
 			resp.setHeader("Cache-Control", "max-age=" + maxAge);
-			
+
 			InputStream is;
 			try {
 				is = con.getInputStream();
