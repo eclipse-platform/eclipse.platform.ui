@@ -2284,6 +2284,10 @@ public class WorkbenchWindow extends ApplicationWindow implements IWorkbenchWind
 		defaultLayout.setCenterControl(getPageComposite());	
 	}
 	
+	public boolean getShowFastViewBars() {
+		return getWindowConfigurer().getShowFastViewBars();
+	}
+	
 	/**
 	 * Set the layout data for the contents of the window.
 	 */
