@@ -122,7 +122,9 @@ public class TargetPage extends BannerPage {
 		defaultTargetSite = getDefaultTargetSite(config, pendingChange);
 	}
 
-	public static IConfiguredSite getDefaultTargetSite(IInstallConfiguration config, PendingChange pendingChange) {
+	public static IConfiguredSite getDefaultTargetSite(
+		IInstallConfiguration config,
+		PendingChange pendingChange) {
 		IFeature oldFeature = pendingChange.getOldFeature();
 		IFeature newFeature = pendingChange.getFeature();
 		if (oldFeature != null) {
@@ -140,7 +142,9 @@ public class TargetPage extends BannerPage {
 		return findSameIdFeatureSite(config, newFeature);
 	}
 
-	private static IConfiguredSite findSameIdFeatureSite(IInstallConfiguration config, IFeature newFeature) {
+	private static IConfiguredSite findSameIdFeatureSite(
+		IInstallConfiguration config,
+		IFeature newFeature) {
 		IConfiguredSite[] sites = config.getConfiguredSites();
 		for (int i = 0; i < sites.length; i++) {
 			IConfiguredSite site = sites[i];
@@ -317,27 +321,30 @@ public class TargetPage extends BannerPage {
 		boolean linked) {
 		try {
 			IConfiguredSite csite = null;
-			if (linked)
+			if (linked) {
 				csite = config.createLinkedConfiguredSite(file);
-			else
-				csite = config.createConfiguredSite(file);
-			IStatus status = csite.verifyUpdatableStatus();
-			if (status.isOK())
 				config.addConfiguredSite(csite);
-			else {
-				String title =
-					UpdateUIPlugin.getResourceString(KEY_LOCATION_ERROR_TITLE);
-				String message =
-					UpdateUIPlugin.getFormattedMessage(
-						KEY_LOCATION_ERROR_MESSAGE,
-						file.getPath());
-				String message2 =
-					UpdateUIPlugin.getFormattedMessage(
-						KEY_ERROR_REASON,
-						status.getMessage());
-				message = message + "\r\n" + message2;
-				MessageDialog.openError(shell, title, message);
-				return false;
+			} else {
+				csite = config.createConfiguredSite(file);
+				IStatus status = csite.verifyUpdatableStatus();
+				if (status.isOK())
+					config.addConfiguredSite(csite);
+				else {
+					String title =
+						UpdateUIPlugin.getResourceString(
+							KEY_LOCATION_ERROR_TITLE);
+					String message =
+						UpdateUIPlugin.getFormattedMessage(
+							KEY_LOCATION_ERROR_MESSAGE,
+							file.getPath());
+					String message2 =
+						UpdateUIPlugin.getFormattedMessage(
+							KEY_ERROR_REASON,
+							status.getMessage());
+					message = message + "\r\n" + message2;
+					MessageDialog.openError(shell, title, message);
+					return false;
+				}
 			}
 		} catch (CoreException e) {
 			UpdateUIPlugin.logException(e);
