@@ -18,6 +18,8 @@ import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -77,6 +79,12 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	private int fMaxWidth= -1;
 	/** The control height constraint */
 	private int fMaxHeight= -1;
+	/**
+	 * The font of the optional status text label.
+	 * 
+	 * @since 3.0
+	 */
+	private Font fStatusTextFont;
 
 	/**
 	 * Creates a default information control with the given shell as parent. The given
@@ -162,6 +170,12 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 			// Status field label
 			Label statusField= new Label(composite, SWT.RIGHT);
 			statusField.setText(statusFieldText);
+			Font font= statusField.getFont();
+			FontData[] fontDatas= font.getFontData();
+			for (int i= 0; i < fontDatas.length; i++)
+				fontDatas[i].setHeight(fontDatas[i].getHeight() * 9 / 10);
+			fStatusTextFont= new Font(statusField.getDisplay(), fontDatas);
+			statusField.setFont(fStatusTextFont);
 			gd= new GridData(GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 			statusField.setLayoutData(gd);
 			statusField.setForeground(display.getSystemColor(SWT.COLOR_INFO_FOREGROUND));
@@ -250,6 +264,9 @@ public class DefaultInformationControl implements IInformationControl, IInformat
 	 * @see IInformationControl#dispose()
 	 */
 	public void dispose() {
+		if (fStatusTextFont != null && !fStatusTextFont.isDisposed())
+			fStatusTextFont.dispose();
+		
 		if (fShell != null) {
 			if (!fShell.isDisposed())
 				fShell.dispose();
