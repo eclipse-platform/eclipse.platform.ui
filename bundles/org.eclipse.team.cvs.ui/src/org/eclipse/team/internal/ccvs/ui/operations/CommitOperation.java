@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.operations;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceMappingContext;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -44,22 +41,6 @@ public class CommitOperation extends SingleCommandOperation {
 				resources, 
 				null,
 				monitor);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#handleErrors(org.eclipse.core.runtime.IStatus[])
-	 */
-	protected void handleErrors(IStatus[] errors) throws CVSException {
-		// We are only concerned with server errors
-		List serverErrors = new ArrayList();
-		for (int i = 0; i < errors.length; i++) {
-			IStatus status = errors[i];
-			if (status.getCode() == CVSStatus.SERVER_ERROR) {
-				serverErrors.add(status);
-			}
-		}
-		if (serverErrors.isEmpty()) return;
-		super.handleErrors((IStatus[]) serverErrors.toArray(new IStatus[serverErrors.size()]));
 	}
 	
 	/* (non-Javadoc)

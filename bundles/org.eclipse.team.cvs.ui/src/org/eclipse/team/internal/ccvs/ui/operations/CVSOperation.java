@@ -182,27 +182,27 @@ public abstract class CVSOperation extends TeamOperation {
 	 * Subclasses may override.
 	 * @throws CVSException an exception if appropriate
 	 */
-	protected void handleErrors(IStatus[] errors) throws CVSException {
+	protected final void handleErrors(IStatus[] errors) throws CVSException {
 		// We are only concerned with reportable errors.
 	    // Others will appear in the console
-		List serverErrors = new ArrayList();
+		List reportableErrors = new ArrayList();
 		for (int i = 0; i < errors.length; i++) {
 			IStatus status = errors[i];
 			if (isReportableError(status)) {
-				serverErrors.add(status);
+				reportableErrors.add(status);
 			} else if (status.isMultiStatus()) {
 				IStatus[] children = status.getChildren();
 				for (int j = 0; j < children.length; j++) {
 					IStatus child = children[j];
 					if (isReportableError(child)) {
-						serverErrors.add(status);
+						reportableErrors.add(status);
 						break;
 					}
 				}
 			}
 		}
-		if (!serverErrors.isEmpty())
-		    asException((IStatus[]) serverErrors.toArray(new IStatus[serverErrors.size()]));
+		if (!reportableErrors.isEmpty())
+		    asException((IStatus[]) reportableErrors.toArray(new IStatus[reportableErrors.size()]));
 	}
 
 	/**
@@ -212,10 +212,10 @@ public abstract class CVSOperation extends TeamOperation {
 	 * @return whether the status is reportable or should be ignored
 	 */
     protected boolean isReportableError(IStatus status) {
-        return status.getCode() == CVSStatus.SERVER_ERROR;
+        return status.getCode() == CVSStatus.SERVER_ERROR || CVSStatus.isInternalError(status);
     }
-    
-	protected String getErrorMessage(IStatus[] failures, int totalOperations) {
+
+    protected String getErrorMessage(IStatus[] failures, int totalOperations) {
 		return Policy.bind("CVSOperation.0", String.valueOf(failures.length),  String.valueOf(totalOperations)); //$NON-NLS-1$
 	}
 
