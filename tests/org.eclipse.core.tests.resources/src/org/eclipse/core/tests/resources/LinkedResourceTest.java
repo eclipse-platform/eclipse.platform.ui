@@ -281,7 +281,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 					 ((FussyProgressMonitor) monitor).prepare();
 				 try {
 		 			source.createLink(localFile, IResource.NONE, null);
-					source.copy(destination.getFullPath(), isDeep ? IResource.DEEP : IResource.NONE, monitor);
+					source.copy(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
 				 } catch (OperationCanceledException e) {
 				 	return CANCELLED;
 				 }
@@ -354,7 +354,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 					 ((FussyProgressMonitor) monitor).prepare();
 				 try {
 		 			source.createLink(existingLocation, IResource.NONE, null);
-					source.copy(destination.getFullPath(), isDeep ? IResource.DEEP : IResource.NONE, monitor);
+					source.copy(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
 				 } catch (OperationCanceledException e) {
 				 	return CANCELLED;
 				 }
@@ -413,18 +413,20 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			IProject destination = getWorkspace().getRoot().getProject("CopyTargetProject");
 
 			try {
-				existingProject.copy(destination.getFullPath(),IResource.NONE, getMonitor());
-			} catch(CoreException e) {
-				fail("2.0",e);
+				existingProject.copy(destination.getFullPath(), IResource.SHALLOW, getMonitor());
+			} catch (CoreException e) {
+				fail("2.0", e);
 			}
 
 			IFile newFile = destination.getFile(file.getProjectRelativePath());
-			assertTrue("3.0",newFile.isLinked());
-			assertEquals("3.1",file.getLocation(),newFile.getLocation());
+			assertTrue("3.0", newFile.isLinked());
+			assertEquals("3.1", file.getLocation(), newFile.getLocation());
 
 			IFolder newFolder = destination.getFolder(folder.getProjectRelativePath());
-			assertTrue("4.0",newFolder.isLinked());
-			assertEquals("4.1",folder.getLocation(),newFolder.getLocation());
+			assertTrue("4.0", newFolder.isLinked());
+			assertEquals("4.1", folder.getLocation(), newFolder.getLocation());
+			
+			//TODO: need test for deep project copy
 
 		} finally {
 			Workspace.clear(resolvePath(fileLocation).toFile());
@@ -457,7 +459,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 					 ((FussyProgressMonitor) monitor).prepare();
 				 try {
 		 			source.createLink(existingLocation, IResource.NONE, null);
-					source.move(destination.getFullPath(), IResource.NONE, monitor);
+					source.move(destination.getFullPath(), IResource.SHALLOW, monitor);
 				 } catch (OperationCanceledException e) {
 				 	return CANCELLED;
 				 }
@@ -511,7 +513,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			assertDoesNotExistInWorkspace("2.0", destination);
 
 			try {
-				existingProject.move(destination.getFullPath(), IResource.NONE, getMonitor());
+				existingProject.move(destination.getFullPath(), IResource.SHALLOW, getMonitor());
 			} catch (CoreException e) {
 				fail("2.1", e);
 			}
@@ -526,7 +528,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 			
 			//now do a deep move back to the original project
 			try {
-				destination.move(existingProject.getFullPath(), IResource.DEEP, getMonitor());
+				destination.move(existingProject.getFullPath(), IResource.NONE, getMonitor());
 			} catch (CoreException e) {
 				fail("5.0", e);
 			}
@@ -768,7 +770,7 @@ public class LinkedResourceTest extends EclipseWorkspaceTest {
 					 ((FussyProgressMonitor) monitor).prepare();
 				 try {
 		 			source.createLink(localFile, IResource.NONE, null);
-					source.move(destination.getFullPath(), isDeep ? IResource.DEEP : IResource.NONE, monitor);
+					source.move(destination.getFullPath(), isDeep ? IResource.NONE : IResource.SHALLOW, monitor);
 				 } catch (OperationCanceledException e) {
 				 	return CANCELLED;
 				 }
