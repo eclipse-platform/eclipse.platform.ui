@@ -471,10 +471,10 @@ public class LaunchViewEventHandler extends AbstractDebugEventHandler implements
 		Runnable r= new Runnable() {
 			public void run() {
 				if (isAvailable()) {	
-					if (launches.length != 1) {
-						refresh();
-					} else {
+					if (launches.length == 1) {
 						refresh(launches[0]);
+					} else {
+						refresh();
 					}
 					for (int i = 0; i < launches.length; i++) {
 						if (launches[i].hasChildren()) {
