@@ -48,7 +48,8 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		ConfiguredSite cSite = (ConfiguredSite) configSite;
 		setSiteModel(cSite.getSiteModel());
 		setConfigurationPolicyModel(new ConfigurationPolicy(cSite.getConfigurationPolicy()));
-		isUpdatable(cSite.isUpdatable());
+		setUpdatable(cSite.isUpdatable());
+		setEnabled(cSite.isEnabled());
 		setPreviousPluginPath(cSite.getPreviousPluginPath());
 		setPlatformURLString(cSite.getPlatformURLString());
 	}
@@ -89,11 +90,13 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		//$NON-NLS-1$ //$NON-NLS-2$
 		w.println(gap + increment + "platformURL=\"" + getPlatformURLString() + "\"");
 		//$NON-NLS-1$ //$NON-NLS-2$
+		w.println(gap + increment + "enable=\"" + (isEnabled()?"true":"false") + "\"");		
+		//$NON-NLS-1$ //$NON-NLS-2$
 		w.println(gap + increment + "policy=\"" + getConfigurationPolicy().getPolicy() + "\" >");
 		//$NON-NLS-1$ //$NON-NLS-2$
 
 		// configured features ref
-		IFeatureReference[] featuresReferences = getConfiguredFeatures();
+		IFeatureReference[] featuresReferences = getRawConfiguredFeatures();
 		if (featuresReferences != null) {
 			for (int index = 0; index < featuresReferences.length; index++) {
 				IFeatureReference element = featuresReferences[index];
@@ -485,6 +488,16 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * @see IConfiguredSite#getConfiguredFeatures()
 	 */
 	public IFeatureReference[] getConfiguredFeatures() {
+		if (isEnabled())
+			return getRawConfiguredFeatures();
+		else
+			return new ISiteFeatureReference[0];
+	}
+
+	/*
+	 * @see IConfiguredSite#getConfiguredFeatures()
+	 */
+	private IFeatureReference[] getRawConfiguredFeatures() {
 		ConfigurationPolicy configPolicy = getConfigurationPolicy();
 		if (configPolicy == null)
 			return new ISiteFeatureReference[0];
@@ -774,6 +787,8 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * 
 	 */
 	public boolean isConfigured(IFeature feature) {
+		if (!isEnabled()) return false;
+		
 		if (getConfigurationPolicy() == null)
 			return false;
 		IFeatureReference featureReference = getSite().getFeatureReference(feature);
@@ -839,7 +854,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		}
 
 		verifyStatus = createStatus(IStatus.OK, "", null);
-		isUpdatable(true);
+		setUpdatable(true);
 		return verifyStatus;
 	}
 
@@ -1134,4 +1149,5 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		IFeatureReference[] parents = UpdateManagerUtils.getParentFeatures(feature, getConfiguredFeatures(), false);
 		return (parents.length == 0);
 	}
+
 }

@@ -157,13 +157,18 @@ public class InstallConfigurationParser extends DefaultHandler {
 		String platformURLString = attributes.getValue("platformURL"); //$NON-NLS-1$
 		configSite.setPlatformURLString(platformURLString);
 
+		//platform url
+		String enableString = attributes.getValue("enable"); //$NON-NLS-1$
+		boolean enable = (enableString==null || enableString.equalsIgnoreCase("true"));
+		configSite.setEnabled(enable);
+
 		// check if the site exists and is updatable
 		// update configSite
 		URL	urlToCheck = new URL(configSite.getPlatformURLString());
 	 	IPlatformConfiguration runtimeConfig = BootLoader.getCurrentPlatformConfiguration();			
 	 	IPlatformConfiguration.ISiteEntry entry = runtimeConfig.findConfiguredSite(urlToCheck);	 
 	 	if (entry!=null){	
-		 	configSite.isUpdatable(entry.isUpdateable());
+		 	configSite.setUpdatable(entry.isUpdateable());
 	 	} else {
 	 		UpdateManagerPlugin.warn("Unable to retrieve site:" +platformURLString+" from platform.");
 	 	}

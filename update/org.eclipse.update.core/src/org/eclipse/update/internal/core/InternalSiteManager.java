@@ -128,6 +128,10 @@ public class InternalSiteManager {
 		// we keep the temp not to create them again
 		JarContentReference.shutdown(); // make sure we are not leaving jars open for this site
 
+		//flush mapping of downloaded JAR files
+		// FIXME : provide better cache flushing after 2.1
+		Utilities.flushLocalFile();
+
 		return site;
 	}
 

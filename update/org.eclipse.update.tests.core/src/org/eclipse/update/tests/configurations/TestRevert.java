@@ -52,7 +52,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		if (!configSite.getSite().equals(oldConfigSite.getSite())) fail("Config sites are not equals");
 		site.addConfiguration(newConfig);	
 		
-		((ConfiguredSite)configSite).isUpdatable(true);			
+		((ConfiguredSite)configSite).setUpdatable(true);			
 		IFeatureReference installedFeature = configSite.install(feature,null,null);
 		site.save();
 

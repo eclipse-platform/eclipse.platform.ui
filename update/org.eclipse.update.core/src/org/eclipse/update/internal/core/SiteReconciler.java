@@ -464,7 +464,8 @@ public class SiteReconciler extends ModelObject implements IWritable {
 
 		// copy values of the old ConfigSite that should be preserved except Features
 		ConfiguredSite newConfigurationSite = (ConfiguredSite) new BaseSiteLocalFactory().createConfigurationSiteModel(siteModel, policy);
-		newConfigurationSite.isUpdatable(cSiteToReconcile.isUpdatable());
+		newConfigurationSite.setUpdatable(cSiteToReconcile.isUpdatable());
+		newConfigurationSite.setEnabled(cSiteToReconcile.isEnabled());
 		newConfigurationSite.setPlatformURLString(cSiteToReconcile.getPlatformURLString());
 
 		return newConfigurationSite;

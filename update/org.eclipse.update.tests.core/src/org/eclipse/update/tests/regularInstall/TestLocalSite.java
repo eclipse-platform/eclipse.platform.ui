@@ -186,7 +186,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		site.addConfiguration(newConfig);
 		assertNotNull(feature);			
 		
-		((ConfiguredSite)configSite).isUpdatable(true);
+		((ConfiguredSite)configSite).setUpdatable(true);
 		remove(feature,configSite);			
 		configSite.install(feature,null,null);
 		site.save();
@@ -268,7 +268,7 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		site.addConfiguration(newConfig);
 		
 	
-		((ConfiguredSite)configSite).isUpdatable(true);				
+		((ConfiguredSite)configSite).setUpdatable(true);				
 		configSite.install(feature,null,null);
 		site.save();
 
@@ -330,6 +330,113 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		localFile = new File(feature2.getURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
 	}
+	
+public void testRetriveConfigHTTPInstallNotEnable() throws Exception {
+
+	//clean up
+	SiteLocal siteLocal = (SiteLocal)SiteManager.getLocalSite();
+	URL newURL = new URL(siteLocal.getLocationURL(),SiteLocal.SITE_LOCAL_FILE);
+	File localFile = new File(newURL.getFile());
+	UpdateManagerUtils.removeFromFileSystem(localFile);
+	UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)siteLocal.getCurrentConfiguration()).getURL().getFile()));	
+	InternalSiteManager.localSite=null;		
+
+	ILocalSite site = SiteManager.getLocalSite();
+	ISite remoteSite = SiteManager.getSite(SOURCE_HTTP_SITE);
+	IFeature feature = remoteSite.getFeatureReferences()[0].getFeature();
+		
+	// we are not checking if this is read only
+	IInstallConfiguration newConfig = site.cloneCurrentConfiguration();
+	newConfig.setLabel("new Label");		
+	IConfiguredSite configSite = newConfig.getConfiguredSites()[0];
+	ConfigurationPolicyModel configPolicy = new BaseSiteLocalFactory().createConfigurationPolicyModel();
+	configPolicy.setPolicy(IPlatformConfiguration.ISitePolicy.USER_INCLUDE);
+	((ConfiguredSite)configSite).setConfigurationPolicyModel((ConfigurationPolicyModel)configPolicy);	
+	int oldNumberOfhistory = site.getConfigurationHistory().length;			
+	site.addConfiguration(newConfig);
+		
+	
+	((ConfiguredSite)configSite).setUpdatable(true);
+	configSite.install(feature,null,null);
+	((ConfiguredSite)configSite).setEnabled(false);	
+	site.save();
+
+	//do not cleanup, we want to reuse previously created local site
+	// but force re-read of xml File
+	InternalSiteManager.localSite=null;
+	site = SiteManager.getLocalSite();
+	feature = remoteSite.getFeatureReferences()[0].getFeature();
+	int oldNumber = site.getCurrentConfiguration().getConfiguredSites().length;		
+		
+	// check
+	// there are 2 configuration
+	String time = ""+site.getCurrentConfiguration().getCreationDate().getTime();
+	URL location = ((SiteLocal)site).getLocationURL();		
+	File file = new File(new URL(location,"Config"+time+".xml").getFile());
+	assertTrue("new configuration does not exist", file.exists());
+		
+	// teh current one points to a real fature
+	// does not throw error.
+	IConfiguredSite configSite2 = site.getCurrentConfiguration().getConfiguredSites()[0];
+		
+	IFeatureReference[] refs = configSite2.getConfiguredFeatures();
+	boolean found = false;
+	IFeature feature2 = null;
+	for (int i = 0; i < refs.length; i++) {
+		IFeature feature3 = refs[i].getFeature();			
+		if ("org.test1.ident1_1.0.0".equals(feature3.getVersionedIdentifier().toString())){
+			feature2 = feature3;
+			found = true;
+		}		
+	}
+
+	//String configuredFeature = feature2.getLabel();
+	assertTrue("found feature org.test1.ident1_1.0.0 in disabled configured Site",!found);
+		
+	//test no configured features
+	assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfiguredSites()[0].getConfiguredFeatures().length==0);
+	
+	
+	configSite2.setEnabled(true);
+	refs = configSite2.getConfiguredFeatures();	
+	for (int i = 0; i < refs.length; i++) {
+		IFeature feature3 = refs[i].getFeature();			
+		if ("org.test1.ident1_1.0.0".equals(feature3.getVersionedIdentifier().toString())){
+			feature2 = feature3;
+			found = true;
+		}		
+	}
+
+	//String configuredFeature = feature2.getLabel();
+	assertTrue("cannot find feature org.test1.ident1_1.0.0 in configured Site",found);
+	assertTrue("Wrong id  version of feature",feature2.getVersionedIdentifier().toString().equalsIgnoreCase("org.test1.ident1_1.0.0"));
+		
+	// test only 2 install config in local site
+	assertEquals("wrong number of history in Local site:",oldNumberOfhistory+1,site.getConfigurationHistory().length);
+		
+	// test same number of sites in current config
+	assertTrue("Wrong number of config sites in current config",site.getCurrentConfiguration().getConfiguredSites().length==oldNumber);
+		
+	//test only one feature for the site
+	assertTrue("wrong number of configured features for config site",site.getCurrentConfiguration().getConfiguredSites()[0].getConfiguredFeatures().length==1);
+		
+	// test only 2 activities
+	assertTrue("Wrong number of activities for install config",site.getCurrentConfiguration().getActivities().length==2);
+		
+		
+	// cleanup
+	localFile = new File(new URL(location,SiteLocal.SITE_LOCAL_FILE).getFile());
+	UpdateManagerUtils.removeFromFileSystem(localFile);		
+	localFile = new File(new URL(location,SiteLocal.DEFAULT_CONFIG_FILE).getFile());
+	UpdateManagerUtils.removeFromFileSystem(localFile);	
+	localFile = new File(new URL(location,Site.DEFAULT_FEATURE_PATH+File.separator+feature.getVersionedIdentifier().toString()).getFile());		
+	UpdateManagerUtils.removeFromFileSystem(localFile);	
+	UpdateManagerUtils.removeFromFileSystem(new File(((InstallConfiguration)site.getCurrentConfiguration()).getURL().getFile()));						
+	UpdateManagerUtils.removeFromFileSystem(file);		
+	localFile = new File(feature2.getURL().getFile());
+	UpdateManagerUtils.removeFromFileSystem(localFile);
+}
+
 
 }
 

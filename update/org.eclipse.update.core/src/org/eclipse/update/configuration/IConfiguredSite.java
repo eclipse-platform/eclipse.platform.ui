@@ -333,4 +333,35 @@ public interface IConfiguredSite extends IAdaptable {
 	 * </p>
 	 */
 	public boolean isNativelyLinked() throws CoreException;
+
+	/**
+	 * Sets if the site is enabled
+	 * 
+	 * @parem <code>true</code> if the site is enable, <code>false</code>
+	 * otherwise
+	 * @since 2.1
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	public void setEnabled(boolean value);
+
+	/**
+	 * Indicates if the site is enabled. 
+	 * If a site is not enable, all teh features are considered disabled.
+	 * 
+	 * @return <code>true</code> if the site is enable, <code>false</code>
+	 * otherwise
+	 * @since 2.1
+	 * <p>
+	 * <b>Note:</b> This method is part of an interim API that is still under development and expected to
+	 * change significantly before reaching stability. It is being made available at this early stage to solicit feedback
+	 * from pioneering adopters on the understanding that any code that uses this API will almost certainly be broken
+	 * (repeatedly) as the API evolves.
+	 * </p>
+	 */
+	public boolean isEnabled();
 }

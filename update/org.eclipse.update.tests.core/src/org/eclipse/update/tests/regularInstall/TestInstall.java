@@ -194,7 +194,7 @@ public class TestInstall extends UpdateManagerTestCase {
 		Listener listener = new Listener();
 		site.addConfiguredSiteChangedListener(listener);
 
-		((ConfiguredSite)site).isUpdatable(true);
+		((ConfiguredSite)site).setUpdatable(true);
 		site.install(remoteFeature, null, null);
 
 		IPluginEntry[] entries = remoteFeature.getRawPluginEntries();

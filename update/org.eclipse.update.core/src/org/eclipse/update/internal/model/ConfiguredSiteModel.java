@@ -20,12 +20,14 @@ public class ConfiguredSiteModel extends ModelObject {
 	private ConfigurationPolicyModel policy;
 	private InstallConfigurationModel installConfiguration;
 	private boolean installable = false;
+	private boolean enable;
 
 	/**
 	 * Constructor
 	 */
 	public ConfiguredSiteModel() {
 		super();
+		enable=true;
 	}
 
 	/**
@@ -73,7 +75,7 @@ public class ConfiguredSiteModel extends ModelObject {
 	/**
 	 * @since 2.0
 	 */
-	public void isUpdatable(boolean installable) {
+	public void setUpdatable(boolean installable) {
 		assertIsWriteable();
 		this.installable = installable;
 	}
@@ -156,4 +158,19 @@ public class ConfiguredSiteModel extends ModelObject {
 		}
 		return new Status(statusSeverity, id, statusCode, completeString.toString(), e);
 	}
+	
+	/**
+	 * @see org.eclipse.update.configuration.IConfiguredSite#isEnabled()
+	 */
+	public boolean isEnabled() {
+		return enable;
+	}
+
+	/**
+	 * @see org.eclipse.update.configuration.IConfiguredSite#setEnabled(boolean)
+	 */
+	public void setEnabled(boolean value) {
+		enable=value;
+	}
+	
 }
