@@ -21,7 +21,7 @@ import org.eclipse.update.ui.forms.internal.*;
 import org.w3c.dom.*;
 import org.xml.sax.*;
 
-public class TextModel {
+public class RichTextModel {
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
 
 	private Vector paragraphs;
@@ -29,7 +29,7 @@ public class TextModel {
 	private int selectedLinkIndex = -1;
 	private HyperlinkSettings hyperlinkSettings;
 	
-	public TextModel() {
+	public RichTextModel() {
 		reset();
 	}
 

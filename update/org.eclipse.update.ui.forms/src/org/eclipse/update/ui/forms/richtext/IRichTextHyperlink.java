@@ -10,12 +10,29 @@
  *******************************************************************************/
 package org.eclipse.update.ui.forms.richtext;
 
-
 /**
- * @version 	1.0
- * @author
+ * Objects that implement this interface represent hyperlinks created from
+ * hyperlink (a) tag in markup.
  */
 public interface IRichTextHyperlink {
+	/**
+	 * Returns the value of <samp>href</samp> attribute as found in the
+	 * loaded text. This attribute is used to reference action that will be
+	 * executed when the link is activated.
+	 * 
+	 * @return value of the href attribute
+	 * @see RichTextHyperlinkAction
+	 */
 	String getHref();
+	/**
+	 * Returns the value of <samp>arg</samp> attribute as found in the loaded
+	 * text. This attribute is used to pass additional information to the
+	 * action that will be executed when the link is activated. This allow one
+	 * hyperlink action to handle multiple individual hyperlinks of the same
+	 * type (e.g. RichTextHTTPAction).
+	 * 
+	 * @return value of the href attribute
+	 * @see RichTextHyperlinkAction
+	 */
 	String getArg();
 }

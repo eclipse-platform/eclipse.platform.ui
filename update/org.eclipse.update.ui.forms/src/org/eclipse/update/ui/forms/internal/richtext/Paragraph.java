@@ -102,6 +102,7 @@ public class Paragraph {
 		HyperlinkSegment hs = new HyperlinkSegment(text, settings, fontId);
 		hs.setWordWrapAllowed(false);
 		hs.setActionId(RichText.URL_HANDLER_ID);
+		hs.setArg(text);
 		addSegment(hs);
 	}
 

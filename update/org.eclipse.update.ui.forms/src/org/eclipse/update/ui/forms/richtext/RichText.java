@@ -26,22 +26,35 @@ import org.eclipse.update.ui.forms.internal.*;
 import org.eclipse.update.ui.forms.internal.richtext.*;
 
 public class RichText extends Canvas {
+	/**
+	 * The object ID to be used when registering action to handle URL
+	 * hyperlinks (those that should result in opening the web browser). Value
+	 * is "urlHandler".
+	 */
 	public static final String URL_HANDLER_ID = "urlHandler";
-	boolean hasFocus;
-	boolean paragraphsSeparated = true;
-	TextModel model;
-	Hashtable objectTable = new Hashtable();
+	/**
+	 * Value of the horizontal margin (default is 0).
+	 */
 	public int marginWidth = 0;
+	/**
+	 * Value of hte horizontal margin (default is 1).
+	 */
 	public int marginHeight = 1;
-	HyperlinkSegment entered;
-	boolean mouseDown = false;
-	Point dragOrigin;
+	//private fields
+	private boolean hasFocus;
+	private boolean paragraphsSeparated = true;
+	private RichTextModel model;
+	private Hashtable objectTable = new Hashtable();
+
+	private HyperlinkSegment entered;
+	private boolean mouseDown = false;
+	private Point dragOrigin;
 	private Action openAction;
 	private Action copyShortcutAction;
 	private boolean loading = true;
 	private String loadingText = "Loading...";
 
-	public class RichTextLayout extends Layout implements ILayoutExtension {
+	private class RichTextLayout extends Layout implements ILayoutExtension {
 		public RichTextLayout() {
 		}
 
@@ -130,42 +143,19 @@ public class RichText extends Canvas {
 		protected void layout(Composite composite, boolean flushCache) {
 		}
 	}
-
-	public boolean getFocus() {
-		return hasFocus;
-	}
-
-	public boolean isLoading() {
-		return loading;
-	}
-
-	public String getLoadingText() {
-		return loadingText;
-	}
-
-	public void setLoadingText(String loadingText) {
-		this.loadingText = loadingText;
-	}
-
-	public int getParagraphSpacing(int lineHeight) {
-		return lineHeight / 2;
-	}
-
-	public void setParagraphsSeparated(boolean value) {
-		paragraphsSeparated = value;
-	}
-
-	public boolean getParagraphsSeparated() {
-		return paragraphsSeparated;
-	}
-
 	/**
-	 * Constructor for SelectableFormLabel
+	 * Contructs a new rich text widget in the provided parent and using the
+	 * styles.
+	 * 
+	 * @param parent
+	 *            rich text parent control
+	 * @param style
+	 *            the widget style
 	 */
 	public RichText(Composite parent, int style) {
 		super(parent, style);
 		setLayout(new RichTextLayout());
-		model = new TextModel();
+		model = new RichTextModel();
 
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -257,6 +247,190 @@ public class RichText extends Canvas {
 		initAccessible();
 		makeActions();
 	}
+	
+	/**
+	 * Test for focus.
+	 * 
+	 * @return <samp>true</samp> if the widget has focus.
+	 */
+	public boolean getFocus() {
+		return hasFocus;
+	}
+	/**
+	 * Test if the widget is currently processing the text it is about to
+	 * render.
+	 * 
+	 * @return <samp>true</samp> if the widget is still loading the text,
+	 *         <samp>false</samp> otherwise.
+	 */
+	public boolean isLoading() {
+		return loading;
+	}
+	/**
+	 * Returns the text that will be shown in the control while the real
+	 * content is loading.
+	 * 
+	 * @return loading text message
+	 */
+
+	public String getLoadingText() {
+		return loadingText;
+	}
+	/**
+	 * Sets the text that will be shown in the control while the real content
+	 * is loading. This is significant when content to render is loaded from
+	 * the input stream that created from a remote URL.
+	 * 
+	 * @param loadingText
+	 *            loading text message
+	 */
+
+	public void setLoadingText(String loadingText) {
+		this.loadingText = loadingText;
+	}
+
+	/**
+	 * If paragraphs are separated, spacing will be added between them.
+	 * Otherwise, new paragraphs will simply start on a new line with no
+	 * spacing.
+	 * 
+	 * @param value
+	 *            <samp>true</samp> if paragraphs are separated,</samp>
+	 *            false</samp> otherwise.
+	 */
+
+	public void setParagraphsSeparated(boolean value) {
+		paragraphsSeparated = value;
+	}
+
+	/**
+	 * Tests if there is some inter-paragraph spacing.
+	 * 
+	 * @return <samp>true</samp> if paragraphs are separated, <samp>false
+	 *         </samp> otherwise.
+	 */
+
+	public boolean getParagraphsSeparated() {
+		return paragraphsSeparated;
+	}
+	
+	
+	/**
+	 * Registers the object referenced by the provided key. Objects referenced
+	 * by keys are hyperlink handlers and images.
+	 * <p>
+	 * For <samp>img</samp> tags, an object of a type <samp>Image</samp>
+	 * must be registered using the key equivalent to the value of the <samp>
+	 * href</samp> attribute.
+	 * <p>
+	 * For <samp>a</samp> tags, an object of a type <samp>HyperlinkAction
+	 * </samp> must be registered using the key equivalent to the value of the
+	 * <samp>href</samp> attribute.
+	 * 
+	 * @param key
+	 *            unique key that matches the value of the <samp>href</samp>
+	 *            attribute.
+	 * @param value
+	 *            an object of a type <samp>Image</samp> for image tags,
+	 *            <samp>HyperlinkAction</samp> for hyperlink tags.
+	 */
+	public void registerTextObject(String key, Object value) {
+		objectTable.put(key, value);
+	}
+	/**
+	 * Renders the provided text. Text can be rendered as-is, or by parsing the
+	 * formatting tags. Optionally, untagged text can be converted to
+	 * hyperlinks.
+	 * 
+	 * @param text
+	 *            the text to render
+	 * @param parseTags
+	 *            if <samp>true</samp>, formatting tags will be parsed.
+	 *            Otherwise, text will be rendered as-is.
+	 * @param expandURLs
+	 *            if <samp>true</samp>, URLs found in the untagged text will
+	 *            be converted into hyperlinks.
+	 */
+	public void setText(String text, boolean parseTags, boolean expandURLs) {
+		try {
+			if (parseTags)
+				model.parseTaggedText(text, expandURLs);
+			else
+				model.parseRegularText(text, expandURLs);
+		} catch (CoreException e) {
+			FormsPlugin.logException(e);
+		} finally {
+			loading = false;
+		}
+	}
+	/**
+	 * Renders the contents of the stream. Optionally, URLs in untagged text
+	 * can be converted into hyperlinks.
+	 * 
+	 * @param is
+	 *            stream to render
+	 * @param expandURLs
+	 *            if <samp>true</samp>, URLs found in untagged text will be
+	 *            converted into hyperlinks.
+	 */
+	public void setContents(InputStream is, boolean expandURLs) {
+		try {
+			model.parseInputStream(is, expandURLs);
+		} catch (CoreException e) {
+			FormsPlugin.logException(e);
+		} finally {
+			loading = false;
+		}
+	}
+	/**
+	 * Sets the focus to the first hyperlink, or the widget itself if there are
+	 * no hyperlinks.
+	 * 
+	 * @return <samp>true</samp> if the control got focus, <samp>false
+	 *         </samp> otherwise.
+	 */
+
+	public boolean setFocus() {
+		/*
+		 * if (!model.hasFocusSegments()) return false;
+		 */
+		return super.setFocus();
+	}
+	
+	/**
+	 * Returns the hyperlink settings that are in effect for this control.
+	 * 
+	 * @return current hyperlinks settings
+	 */
+
+	public HyperlinkSettings getHyperlinkSettings() {
+		return model.getHyperlinkSettings();
+	}
+
+	/**
+	 * Sets the hyperlink settings to be used for this control. Settings will
+	 * affect things like hyperlink color, rendering style, cursor etc.
+	 * 
+	 * @param settings
+	 *            hyperlink settings for this control
+	 */
+	public void setHyperlinkSettings(HyperlinkSettings settings) {
+		model.setHyperlinkSettings(settings);
+	}
+	
+	/**
+	 * Context menu is about to show - override to add actions to the menu
+	 * manager. Subclasses are required to call 'super' when overriding.
+	 * 
+	 * @param manager
+	 *            the pop-up menu manager
+	 */
+	protected void contextMenuAboutToShow(IMenuManager manager) {
+		HyperlinkSegment link = model.getSelectedLink();
+		if (link != null)
+			contributeLinkActions(manager, link);
+	}
+	
 
 	private void makeActions() {
 		openAction = new Action() {
@@ -268,7 +442,7 @@ public class RichText extends Canvas {
 			FormsPlugin.getResourceString("FormEgine.linkPopup.open"));
 		copyShortcutAction = new Action() {
 			public void run() {
-				copyShortcut(getSelectedLink());
+				copyShortcut(model.getSelectedLink());
 			}
 		};
 		copyShortcutAction.setText(
@@ -383,17 +557,6 @@ public class RichText extends Canvas {
 		}
 	}
 
-	private void handleDrag(MouseEvent e) {
-	}
-
-	public HyperlinkSettings getHyperlinkSettings() {
-		return model.getHyperlinkSettings();
-	}
-
-	public void setHyperlinkSettings(HyperlinkSettings settings) {
-		model.setHyperlinkSettings(settings);
-	}
-
 	private boolean advance(boolean next) {
 		HyperlinkSegment current = model.getSelectedLink();
 		if (current != null)
@@ -411,10 +574,6 @@ public class RichText extends Canvas {
 		return !valid;
 	}
 
-	public HyperlinkSegment getSelectedLink() {
-		return model.getSelectedLink();
-	}
-
 	private void handleFocusChange() {
 		if (hasFocus) {
 			model.traverseLinks(true);
@@ -429,7 +588,7 @@ public class RichText extends Canvas {
 	private void enterLink(HyperlinkSegment link) {
 		if (link == null)
 			return;
-		HyperlinkAction action = link.getAction(objectTable);
+		RichTextHyperlinkAction action = link.getAction(objectTable);
 		if (action != null)
 			action.linkEntered(link);
 	}
@@ -437,7 +596,7 @@ public class RichText extends Canvas {
 	private void exitLink(HyperlinkSegment link) {
 		if (link == null)
 			return;
-		HyperlinkAction action = link.getAction(objectTable);
+		RichTextHyperlinkAction action = link.getAction(objectTable);
 		if (action != null)
 			action.linkExited(link);
 	}
@@ -451,7 +610,7 @@ public class RichText extends Canvas {
 			hover ? settings.getActiveForeground() : settings.getForeground());
 		gc.setBackground(getBackground());
 		gc.setFont(getFont());
-		boolean selected = (link == getSelectedLink());
+		boolean selected = (link == model.getSelectedLink());
 		link.repaint(gc, hover);
 		if (selected) {
 			link.paintFocus(gc, getBackground(), getForeground(), false);
@@ -468,14 +627,14 @@ public class RichText extends Canvas {
 
 	private void activateLink(HyperlinkSegment link) {
 		setCursor(model.getHyperlinkSettings().getBusyCursor());
-		HyperlinkAction action = link.getAction(objectTable);
+		RichTextHyperlinkAction action = link.getAction(objectTable);
 		if (action != null)
 			action.linkActivated(link);
 		if (!isDisposed())
 			setCursor(model.getHyperlinkSettings().getHyperlinkCursor());
 	}
 
-	protected void paint(PaintEvent e) {
+	private void paint(PaintEvent e) {
 		int width = getClientArea().width;
 
 		GC gc = e.gc;
@@ -517,43 +676,13 @@ public class RichText extends Canvas {
 			p.paint(gc, width, loc, lineHeight, objectTable, selectedLink);
 		}
 	}
-
-	public void registerTextObject(String key, Object value) {
-		objectTable.put(key, value);
+	private int getParagraphSpacing(int lineHeight) {
+		return lineHeight / 2;
 	}
-
-	public void load(String text, boolean parseTags, boolean expandURLs) {
-		try {
-			if (parseTags)
-				model.parseTaggedText(text, expandURLs);
-			else
-				model.parseRegularText(text, expandURLs);
-		} catch (CoreException e) {
-			FormsPlugin.logException(e);
-		} finally {
-			loading = false;
-		}
-	}
-	public void load(InputStream is, boolean expandURLs) {
-		try {
-			model.parseInputStream(is, expandURLs);
-		} catch (CoreException e) {
-			FormsPlugin.logException(e);
-		} finally {
-			loading = false;
-		}
-	}
-
-	public boolean setFocus() {
-		/*
-		 * if (!model.hasFocusSegments()) return false;
-		 */
-		return super.setFocus();
-	}
-
+	
 	private void paintFocusTransfer(
-		HyperlinkSegment oldLink,
-		HyperlinkSegment newLink) {
+			HyperlinkSegment oldLink,
+			HyperlinkSegment newLink) {
 		GC gc = new GC(this);
 		Color bg = getBackground();
 		Color fg = getForeground();
@@ -572,49 +701,6 @@ public class RichText extends Canvas {
 			newLink.paintFocus(gc, bg, fg, true);
 		}
 		gc.dispose();
-	}
-	/**
-	 * Gets the marginWidth.
-	 * 
-	 * @return Returns a int
-	 */
-	public int getMarginWidth() {
-		return marginWidth;
-	}
-
-	/**
-	 * Sets the marginWidth.
-	 * 
-	 * @param marginWidth
-	 *            The marginWidth to set
-	 */
-	public void setMarginWidth(int marginWidth) {
-		this.marginWidth = marginWidth;
-	}
-
-	/**
-	 * Gets the marginHeight.
-	 * 
-	 * @return Returns a int
-	 */
-	public int getMarginHeight() {
-		return marginHeight;
-	}
-
-	/**
-	 * Sets the marginHeight.
-	 * 
-	 * @param marginHeight
-	 *            The marginHeight to set
-	 */
-	public void setMarginHeight(int marginHeight) {
-		this.marginHeight = marginHeight;
-	}
-
-	public void contextMenuAboutToShow(IMenuManager manager) {
-		HyperlinkSegment link = getSelectedLink();
-		if (link != null)
-			contributeLinkActions(manager, link);
 	}
 
 	private void contributeLinkActions(
@@ -646,7 +732,7 @@ public class RichText extends Canvas {
 			origin,
 			new Point(bounds.width, bounds.height));
 	}
-	ScrolledComposite getScrolledComposite() {
+	private ScrolledComposite getScrolledComposite() {
 		Composite parent = getParent();
 		while (parent != null) {
 			if (parent instanceof ScrolledComposite)
@@ -654,5 +740,8 @@ public class RichText extends Canvas {
 			parent = parent.getParent();
 		}
 		return null;
+	}
+
+	private void handleDrag(MouseEvent e) {
 	}
 }

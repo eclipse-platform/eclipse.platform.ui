@@ -209,7 +209,7 @@ public static void addFormEngine(Composite c, FormWidgetFactory factory, IStatus
 */
      RichText html = new RichText(c, SWT.WRAP);
      html.setHyperlinkSettings(factory.getHyperlinkHandler());
-     HTTPAction action = new HTTPAction(manager);
+     RichTextHTTPAction action = new RichTextHTTPAction(manager);
      URL i1URL = TableLayoutTest.class.getResource("image1.gif");
      ImageDescriptor id1 = ImageDescriptor.createFromURL(i1URL);
      html.registerTextObject("urlHandler", action);
@@ -218,7 +218,7 @@ public static void addFormEngine(Composite c, FormWidgetFactory factory, IStatus
      html.setForeground(factory.getForegroundColor());
      InputStream is = TableLayoutTest.class.getResourceAsStream("index.xml");
      //html.setParagraphsSeparated(false);
-     html.load(is, true);
+     html.setContents(is, true);
      TableData td = new TableData();
      td.colspan = 1;
      td.align = TableData.FILL;

@@ -36,11 +36,11 @@ public class HyperlinkSegment
 	/*
 	 * @see IHyperlinkSegment#getListener(Hashtable)
 	 */
-	public HyperlinkAction getAction(Hashtable objectTable) {
+	public RichTextHyperlinkAction getAction(Hashtable objectTable) {
 		if (actionId==null) return null;
 		Object obj = objectTable.get(actionId);
 		if (obj==null) return null;
-		if (obj instanceof HyperlinkAction) return (HyperlinkAction)obj;
+		if (obj instanceof RichTextHyperlinkAction) return (RichTextHyperlinkAction)obj;
 		return null;
 	}
 	
