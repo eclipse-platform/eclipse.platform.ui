@@ -47,6 +47,16 @@ public class InternalSearchUI {
 
 	public static final Object FAMILY_SEARCH = new Object();
 	
+	// TODO revisit once new Jobs view is finalized
+	private final class ShowJobResultAction extends Action {
+		public ShowJobResultAction() {
+			setToolTipText("Show the Search Results");
+		}
+		public void run() {
+			activateSearchView();
+		}
+	}
+
 	private class SearchJobRecord {
 		public ISearchQuery fQuery;
 		public Job fJob;
@@ -157,11 +167,7 @@ public class InternalSearchUI {
 
 	private void configureJob(Job job) {
 		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "keep"), Boolean.TRUE);
-		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), new Action() {
-			public void run() {
-				activateSearchView();
-			}
-		});
+		job.setProperty(new QualifiedName("org.eclipse.ui.workbench.progress", "goto"), new ShowJobResultAction());
 		try {
 			URL install= SearchPlugin.getDefault().getDescriptor().getInstallURL();
 			URL icon;
