@@ -254,7 +254,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	 * @see AbstractDebugView#getHelpContextId()
 	 * @see AbstractDebugView#fillContextMenu(IMenuManager)
 	 */
-	public final void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 		createActions();
 		initializeToolBar();
