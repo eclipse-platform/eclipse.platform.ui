@@ -169,7 +169,7 @@ public class TocData extends RequestData {
 
 		out.write("<li>");
 
-		boolean hasNodes = topic.getSubtopics().length > 1;
+		boolean hasNodes = topic.getSubtopics().length > 0;
 		if (hasNodes) {
 			out.write("<nobr>");
 			out.write("<img src='");
@@ -237,7 +237,7 @@ public class TocData extends RequestData {
 
 		out.write("<li>");
 
-		boolean hasNodes = topic.getSubtopics().length > 1;
+		boolean hasNodes = topic.getSubtopics().length > 0;
 		if (hasNodes) {
 			out.write("<nobr>");
 			out.write(
