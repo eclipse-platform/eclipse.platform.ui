@@ -277,7 +277,7 @@ public final class SWTKeyLookup implements IKeyLookup {
 			return (String) value;
 		}
 
-		return Util.ZERO_LENGTH_STRING + key;
+		return Util.ZERO_LENGTH_STRING + ((char) key);
 	}
 
 	public final int getAlt() {
