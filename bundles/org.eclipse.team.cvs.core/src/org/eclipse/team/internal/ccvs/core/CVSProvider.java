@@ -1,9 +1,22 @@
 package org.eclipse.team.internal.ccvs.core;
 
+/*
+ * (c) Copyright IBM Corp. 2000, 2002.
+ * All Rights Reserved.
+ */
+ 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -15,6 +28,7 @@ import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -23,7 +37,6 @@ import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.ccvs.core.CVSTag;
 import org.eclipse.team.ccvs.core.ICVSProvider;
 import org.eclipse.team.ccvs.core.ICVSRemoteFolder;
-import org.eclipse.team.ccvs.core.ICVSRemoteResource;
 import org.eclipse.team.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.ccvs.core.IConnectionMethod;
 import org.eclipse.team.ccvs.core.CVSCommandOptions.QuietOption;
@@ -31,17 +44,22 @@ import org.eclipse.team.core.IFileTypeRegistry;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.TeamPlugin;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.resources.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
-import org.eclipse.team.internal.ccvs.core.resources.RemoteResource;
+import org.eclipse.team.internal.ccvs.core.resources.Synchronizer;
 import org.eclipse.team.internal.ccvs.core.util.ProjectDescriptionManager;
 
 public class CVSProvider implements ICVSProvider {
 
+	private static final String STATE_FILE = ".cvsProviderState";
+	
 	private static CVSProvider instance;
 	private PrintStream printStream;
 	private Map repositories;
 	
+	private List listeners = new ArrayList();
+		
 	private CVSProvider() {
 		repositories = new HashMap();
 	}
@@ -198,13 +216,14 @@ public class CVSProvider implements ICVSProvider {
 		throws TeamException {
 			
 		CVSRepositoryLocation location = buildRepository(configuration, false);
+		boolean alreadyExists = isCached(location);
 		try {
 			checkout(location, project, configuration.getProperty("module"), getTagFromProperties(configuration), monitor);
 		} catch (TeamException e) {
 			// The checkout may have triggered password caching
 			// Therefore, if this is a newly created location, we want to clear its cache
-			if (!isCached(location))
-				location.dispose();
+			if ( ! alreadyExists)
+				disposeRepository(location);
 			throw e;
 		}
 		// We succeeded so we should cache the password and the location
@@ -332,6 +351,18 @@ public class CVSProvider implements ICVSProvider {
 	}
 	
 	/**
+	 * @see ICVSProvider#getRepository(String)
+	 */
+	public ICVSRepositoryLocation getRepository(String location) throws CVSException {
+		ICVSRepositoryLocation repository = (ICVSRepositoryLocation)repositories.get(location);
+		if (repository == null) {
+			repository = CVSRepositoryLocation.fromString(location);
+			addToCache(repository);
+		}
+		return repository;
+	}
+	
+	/**
 	 * @see ICVSProvider#getSupportedConnectionMethods()
 	 */
 	public String[] getSupportedConnectionMethods() {
@@ -352,14 +383,15 @@ public class CVSProvider implements ICVSProvider {
 		throws TeamException {
 			
 		CVSRepositoryLocation location = buildRepository(configuration, false);
+		boolean alreadyExists = isCached(location);
 		try {
 			importProject(location, project, configuration, monitor);
 			checkout(location, project, configuration.getProperty("module"), getTagFromProperties(configuration), monitor);
 		} catch (TeamException e) {
 			// The checkout may have triggered password caching
 			// Therefore, if this is a newly created location, we want to clear its cache
-			if (!isCached(location))
-				location.dispose();
+			if ( ! alreadyExists)
+				disposeRepository(location);
 			throw e;
 		}
 		// We succeeded so we should cache the password and the location
@@ -436,8 +468,9 @@ public class CVSProvider implements ICVSProvider {
 		}
 
 	public static void initialize() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new CVSProvider();
+		}
 	}
 	
 	private boolean isCached(ICVSRepositoryLocation repository) {
@@ -464,6 +497,28 @@ public class CVSProvider implements ICVSProvider {
 		printStream = out;
 	}
 	
+	public void setSharing(IProject project, ICVSRepositoryLocation location, String remotePath, CVSTag tag, IProgressMonitor monitor) throws TeamException {
+		
+		// Set folder sync info
+		ICVSFolder folder = (ICVSFolder)Client.getManagedResource(project);
+		FolderSyncInfo info = folder.getFolderSyncInfo();
+		if (info == null) {
+			// Only set the info if there is none.
+			info = new FolderSyncInfo(remotePath, location.getLocation(), tag, false);
+			folder.setFolderSyncInfo(info);
+			Synchronizer.getInstance().save(monitor);
+		}
+		
+		// Register the project with Team
+		// (unless the project already has the proper nature from the project meta-information)
+		try {
+			if (!project.getDescription().hasNature(CVSProviderPlugin.NATURE_ID))
+				TeamPlugin.getManager().setProvider(project, CVSProviderPlugin.NATURE_ID, null, monitor);
+		} catch (CoreException e) {
+			throw wrapException(e);
+		}
+	}
+	
 	private IStatus statusFor(CoreException e) {
 		return new Status(IStatus.ERROR, CVSProviderPlugin.ID, CVSException.UNABLE, getMessageFor(e), e);
 	}
@@ -479,5 +534,63 @@ public class CVSProvider implements ICVSProvider {
 		return message;
 	}
 
+	public void startup() throws TeamException {
+		loadState();
+	}
+	
+	public void shutdown() throws TeamException {
+		saveState();
+	}
+	
+	private void loadState() throws TeamException {
+		IPath pluginStateLocation = CVSProviderPlugin.getPlugin().getStateLocation().append(STATE_FILE);
+		File file = pluginStateLocation.toFile();
+		if (file.exists()) {
+			try {
+				DataInputStream dis = new DataInputStream(new FileInputStream(file));
+				readState(dis);
+				dis.close();
+			} catch (IOException e) {
+				throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("CVSProvider.ioException"), e));
+			}
+		}
+	}
+	
+	private void saveState() throws TeamException {
+		IPath pluginStateLocation = CVSProviderPlugin.getPlugin().getStateLocation();
+		File tempFile = pluginStateLocation.append(STATE_FILE + ".tmp").toFile();
+		File stateFile = pluginStateLocation.append(STATE_FILE).toFile();
+		try {
+			DataOutputStream dos = new DataOutputStream(new FileOutputStream(tempFile));
+			writeState(dos);
+			dos.close();
+			if (stateFile.exists()) {
+				stateFile.delete();
+			}
+			boolean renamed = tempFile.renameTo(stateFile);
+			if (!renamed) {
+				throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.rename", tempFile.getAbsolutePath()), null));
+			}
+		} catch (IOException e) {
+			throw new TeamException(new Status(Status.ERROR, CVSProviderPlugin.ID, TeamException.UNABLE, Policy.bind("RepositoryManager.save",stateFile.getAbsolutePath()), e));
+		}
+	}
+	private void readState(DataInputStream dis) throws IOException, CVSException {
+		int count = dis.readInt();
+		for (int i = 0; i < count; i++) {
+			getRepository(dis.readUTF());
+		}
+	}
+	
+	private void writeState(DataOutputStream dos) throws IOException {
+		// Write the repositories
+		Collection repos = repositories.values();
+		dos.writeInt(repos.size());
+		Iterator it = repos.iterator();
+		while (it.hasNext()) {
+			ICVSRepositoryLocation root = (ICVSRepositoryLocation)it.next();
+			dos.writeUTF(root.getLocation());
+		}
+	}
 }
 

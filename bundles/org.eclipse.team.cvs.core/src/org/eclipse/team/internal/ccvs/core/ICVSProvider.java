@@ -1,7 +1,7 @@
 package org.eclipse.team.ccvs.core;
 
 /*
- * (c) Copyright IBM Corp. 2000, 2001.
+ * (c) Copyright IBM Corp. 2000, 2002.
  * All Rights Reserved.
  */
  
@@ -86,7 +86,7 @@ public interface ICVSProvider {
 	 * should be called
 	 */
 	public ICVSRepositoryLocation createRepository(Properties configuration) throws CVSException;
-
+	
 	/**
 	 * Dispose of the repository location
 	 * 
@@ -102,6 +102,38 @@ public interface ICVSProvider {
 	 * Get the stream to which command message and error output is sent
 	 */
 	public PrintStream getPrintStream();
+	
+	/**
+	 * Get the repository instance which matches the given String. The format of the String is
+	 * the same as that returned by ICVSRepositoryLocation#getLocation().
+	 * The format is:
+	 * 
+	 *   connection:user[:password]@host[#port]:root
+	 * 
+	 * where [] indicates optional and the identier meanings are:
+	 * 
+	 * 	 connection The connection method to be used
+	 *   user The username for the connection
+	 *   password The password used for the connection (optional)
+	 *   host The host where the repository resides
+	 *   port The port to connect to (optional)
+	 *   root The server directory where the repository is located
+	 * 
+	 * If the repository location does not exist, it will be created.
+	 * The created instance will be cached with the provider as a result of the
+	 * invokation of this method.
+	 * 
+	 * WARNING: Providing the password as part of the String will result in the password being part
+	 * of the location permanently. This means that it cannot be modified by the authenticator. 
+	 */
+	public ICVSRepositoryLocation getRepository(String location) throws CVSException;
+	
+	/**
+	 * Set the sharing for a project to enable it to be used with the CVSTeamProvider.
+	 * This method only sets the folder sync info for the project folder and the info
+	 * is only set to the provided parameters if there is no sync info already.
+	 */
+	public void setSharing(IProject project, ICVSRepositoryLocation location, String remotePath, CVSTag tag, IProgressMonitor monitor) throws TeamException;
 	
 	/**
 	 * Get the names of the registered connection methods.
