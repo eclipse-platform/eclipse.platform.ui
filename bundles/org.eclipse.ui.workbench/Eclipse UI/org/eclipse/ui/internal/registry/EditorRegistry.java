@@ -54,6 +54,19 @@ public class EditorRegistry implements IEditorRegistry {
 	// List for prop changed listeners.
 	private ListenerList propChangeListeners = new ListenerList();
 
+	/*
+	 * Compares the labels from two IEditorDescriptor objects 
+	 */
+	private static final Comparator comparer = new Comparator() {
+		private Collator collator = Collator.getInstance();
+
+		public int compare(Object arg0, Object arg1) {
+			String s1 = ((IEditorDescriptor)arg0).getLabel();
+			String s2 = ((IEditorDescriptor)arg1).getLabel();
+			return collator.compare(s1, s2);
+		}
+	}; 
+
 	/**
 	 * Return an instance of the receiver.
 	 */
@@ -744,18 +757,8 @@ public class EditorRegistry implements IEditorRegistry {
 		Object[] array = new Object[unsortedList.size()];
 		unsortedList.toArray(array);
 
-		Sorter s = new Sorter() {
-			private Collator collator = Collator.getInstance();
-
-			public boolean compare(Object o1, Object o2) {
-				String s1 = ((IEditorDescriptor) o1).getLabel();
-				String s2 = ((IEditorDescriptor) o2).getLabel();
-				//Return true if elementTwo is 'greater than' elementOne
-				return collator.compare(s2, s1) > 0;
-			}
-		};
-		return s.sort(array);
-
+		Collections.sort(Arrays.asList(array), comparer);
+		return array;
 	}
 	/**
 	 * Alphabetically sort the internal editors

@@ -11,13 +11,15 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.text.Collator;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.ObjectContributorManager;
-import org.eclipse.ui.internal.misc.Sorter;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 
 /**
@@ -29,34 +31,34 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	private static PropertyPageContributorManager sharedInstance=null;
 	private boolean contributorsLoaded=false;
 	
-	private Sorter sorter = new Sorter() {
+	private static final Comparator comparer = new Comparator() {
 		private Collator collator = Collator.getInstance();
-		
-		public boolean compare(Object o1, Object o2) {
+
+		public int compare(Object arg0, Object arg1) {
 			// Make sure the workbench info page is always at the top.
-			RegistryPageContributor c1 = (RegistryPageContributor)o1;
-			RegistryPageContributor c2 = (RegistryPageContributor)o2;
+			RegistryPageContributor c1 = (RegistryPageContributor)arg0;
+			RegistryPageContributor c2 = (RegistryPageContributor)arg1;
 			if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO.equals(c1.getPageId())) {
 				// c1 is the info page
 				if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO.equals(c2.getPageId())) {
 					// both are the info page so c2 is not greater
-					return false;
+					return 0;
 				}
 				// c2 is any other page so it must be greater
-				return true;
+				return -1;
 			}
 			if (IWorkbenchConstants.WORKBENCH_PROPERTIES_PAGE_INFO.equals(c2.getPageId())) {
 				// c1 is any other page so it is greater
-				return false;
+				return 1;
 			}
 
 			// The other pages are sorted in alphabetical order			 
 			String s1 = c1.getPageName();
 			String s2 = c2.getPageName();
-			//Return true if c2 is 'greater than' c1
-			return collator.compare(s2, s1) > 0;
+			return collator.compare(s1, s2);
 		}
-	};
+	}; 
+
 /**
  * The constructor.
  */
@@ -82,7 +84,8 @@ public boolean contribute(PropertyPageManager manager, IAdaptable object) {
 		return false;
 	
 	// Sort the results 
-	Object[] sortedResult = sorter.sort(result.toArray());
+	Object[] sortedResult = result.toArray();
+	Collections.sort(Arrays.asList(sortedResult), comparer);
 
 	// Allow each contributor to add its page to the manager.
 	boolean actualContributions = false;

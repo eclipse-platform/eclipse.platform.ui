@@ -30,11 +30,20 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.fonts.FontDefinition;
-import org.eclipse.ui.internal.misc.Sorter;
 
 public class FontPreferencePage
 	extends PreferencePage
 	implements IWorkbenchPreferencePage {
+
+	private static final Comparator comparer = new Comparator() {
+		private Collator collator = Collator.getInstance();
+
+		public int compare(Object arg0, Object arg1) {
+			String s1 = (String)arg0;
+			String s2 = (String)arg1;
+			return collator.compare(s1, s2);
+		}
+	}; 
 
 	private Hashtable labelsToDefinitions;
 	private Hashtable fontDataSettings;
@@ -247,24 +256,10 @@ public class FontPreferencePage
 
 		Set names = labelsToDefinitions.keySet();
 		int nameSize = names.size();
-		String[] unsortedItems = new String[nameSize];
-		names.toArray(unsortedItems);
-
-		Sorter sorter = new Sorter() {
-			private Collator collator = Collator.getInstance();
-
-			public boolean compare(Object o1, Object o2) {
-				String s1 = (String) o1;
-				String s2 = (String) o2;
-				return collator.compare(s1, s2) < 0;
-			}
-		};
-
-		Object[] sortedItems = sorter.sort(unsortedItems);
-		String[] listItems = new String[nameSize];
-		System.arraycopy(sortedItems, 0, listItems, 0, nameSize);
-
-		fontList.setItems(listItems);
+		String[] items = new String[nameSize];
+		names.toArray(items);
+		Collections.sort(Arrays.asList(items), comparer);
+		fontList.setItems(items);
 	}
 
 	/**

@@ -12,6 +12,9 @@ package org.eclipse.ui.internal.registry;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -25,7 +28,6 @@ import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.dialogs.EmptyPreferencePage;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
-import org.eclipse.ui.internal.misc.Sorter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -40,6 +42,17 @@ public class PreferencePageRegistryReader extends RegistryReader {
 	public static final String TAG_PAGE = "page";//$NON-NLS-1$
 	public static final String ATT_ICON = "icon";//$NON-NLS-1$
 	public static final String PREFERENCE_SEPARATOR = "/";//$NON-NLS-1$
+
+	private static final Comparator comparer = new Comparator() {
+		private Collator collator = Collator.getInstance();
+
+		public int compare(Object arg0, Object arg1) {
+			String s1 = ((CategoryNode)arg0).getFlatCategory();
+			String s2 = ((CategoryNode)arg1).getFlatCategory();
+			return collator.compare(s1, s2);
+		}
+	}; 
+
 	private List nodes;
 	private IWorkbench workbench;
 
@@ -260,16 +273,7 @@ private Object[] sortByCategories(List nodes) {
 		nodeArray[i] = new CategoryNode((WorkbenchPreferenceNode)nodes.get(i));
 	}
 
-	Sorter sorter = new Sorter() {
-		private Collator collator = Collator.getInstance();
-		
-		public boolean compare(Object o1, Object o2) {
-			String s1 = ((CategoryNode)o1).getFlatCategory();
-			String s2 = ((CategoryNode)o2).getFlatCategory();
-			//Return true if elementTwo is 'greater than' elementOne
-			return collator.compare(s2, s1) > 0;
-		}
-	};
-	return sorter.sort(nodeArray);
+	Collections.sort(Arrays.asList(nodeArray), comparer);
+	return nodeArray;
 }
 }
