@@ -64,6 +64,7 @@ public class ProjectCreationDecorator extends AbstractAntUITest {
 			createLaunchConfigurationForSeparateVM("environmentVar", null);
             
             createLaunchConfigurationForBoth("breakpoints");
+            createLaunchConfigurationForBoth("85769");
 			
 			createLaunchConfiguration("big", ProjectHelper.PROJECT_NAME + "/buildfiles/performance/build.xml");
 			

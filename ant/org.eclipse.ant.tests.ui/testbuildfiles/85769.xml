@@ -1,0 +1,15 @@
+<project name="debugAntCall" default="default">
+	
+	<target name="default">
+		<antcall target="call"></antcall>
+		<echo>default</echo>
+	</target>
+
+	<target name="call" depends="pre-call">
+		<echo>call1</echo>
+	</target>
+	
+	<target name="pre-call">
+		<echo>pre-call1</echo>
+	</target>
+</project>
