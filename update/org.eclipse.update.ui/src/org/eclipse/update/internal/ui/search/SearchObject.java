@@ -271,6 +271,7 @@ public class SearchObject extends NamedModelObject {
 
 	public void computeSearchSources(ArrayList sources) {
 		addMyComputerSites(sources);
+		addDiscoverySites(sources);
 		addBookmarks(sources);
 	}
 
@@ -366,6 +367,16 @@ public class SearchObject extends NamedModelObject {
 		SiteBookmark[] bookmarks = model.getBookmarkLeafs();
 		for (int i = 0; i < bookmarks.length; i++) {
 			SiteBookmark bookmark = bookmarks[i];
+			result.add(bookmark);
+		}
+	}
+	private void addDiscoverySites(ArrayList result) {
+		if (getSearchDiscovery() == false)
+			return;
+		DiscoveryFolder dfolder = new DiscoveryFolder();
+		Object [] children = dfolder.getChildren(dfolder);
+		for (int i=0; i<children.length; i++) {
+			SiteBookmark bookmark = (SiteBookmark)children[i];
 			result.add(bookmark);
 		}
 	}
