@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ui.DetailsDialog;
+import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
@@ -62,6 +63,9 @@ public class AddToVersionControlDialog extends DetailsDialog {
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
+		// set F1 help
+		WorkbenchHelp.setHelp(composite, IHelpContextIds.ADD_TO_VERSION_CONTROL_DIALOG);
+			 
 		// add a description label
 		if (unaddedResources.length==1) {
 			createWrappingLabel(composite, Policy.bind("AddToVersionControlDialog.thereIsAnUnaddedResource", new Integer(unaddedResources.length).toString()));  //$NON-NLS-1$
