@@ -20,6 +20,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected LocalMetaArea localMetaArea;
 	protected boolean openFlag = false;
 	protected ElementTree tree;
+	protected ElementTree operationTree;
 	protected SaveManager saveManager;
 	protected BuildManager buildManager;
 	protected NotificationManager notificationManager;
@@ -93,10 +94,15 @@ public void beginOperation(boolean createNewTree) throws CoreException {
 	}
 	if (getWorkManager().getPreparedOperationDepth() > 1)
 		return;
-	if (createNewTree)
+	if (createNewTree) {
+		// stash the current tree as the basis for this operation.
+		operationTree = tree;
 		newWorkingTree();
+	}
 }
 private IResourceDelta broadcastChanges(IResourceDelta delta, ElementTree tree, int type, boolean lockTree, boolean updateState, IProgressMonitor monitor) {
+	if (!haveResourcesChanged() && !markerManager.hasDeltas())
+		return null;
 	monitor.subTask(Policy.bind("resources.updating"));
 	return notificationManager.broadcastChanges(delta, tree, type, lockTree, updateState);
 }
@@ -116,6 +122,40 @@ public void build(int trigger, IProgressMonitor monitor) throws CoreException {
 	} finally {
 		monitor.done();
 	}
+}
+
+/**
+ * Returns true if there have been changes in the tree since the last
+ * begin operation.  This should only be used from endOperation.
+ */
+private boolean haveResourcesChanged() {
+	if (operationTree == null)
+		return false;
+
+	// The tree structure has the top layer(s) (i.e., tree) parentage pointing down to a complete
+	// layer whose parent is null.  The bottom layers (i.e., operationTree) point up to the 
+	// common complete layer whose parent is null.  The complete layer moves up as
+	// changes happen.  To see if any changes have happened, we should consider only
+	// layers whose parent is not null.  That is, skip the complete layer as it will clearly not be
+	// empty.
+	
+	// look down from the current layer (inclusive)
+	ElementTree layer = tree;
+	while (layer != null && layer.getParent() != null) {
+		if (!layer.getDataTree().isEmptyDelta())
+			return true;
+		layer = layer.getParent();
+	}
+
+	// look up from the layer at which we started (inclusive)
+	layer = operationTree;
+	while (layer != null && layer.getParent() != null) {
+		if (!layer.getDataTree().isEmptyDelta())
+			return true;
+		layer = layer.getParent();
+	}
+	// didn't find anything that changed
+	return false;
 }
 /**
  * Notify the relevant infrastructure pieces that the given project is being
@@ -614,57 +654,63 @@ public void endOperation(boolean build, IProgressMonitor monitor) throws CoreExc
 	try {
 		getWorkManager().setBuild(build);
 		// if we are not exiting a top level operation then just decrement the count and return
-		if (getWorkManager().getPreparedOperationDepth() > 1) {
+		if (getWorkManager().getPreparedOperationDepth() > 1) 
 			return;
-		}
-		// if the tree is locked we likely got here in some finally block after a failed begin.
-		// Since the tree is locked, nothing could have been done so there is nothing to do.
-		Assert.isTrue(!(treeLocked && getWorkManager().shouldBuild()), "The tree should not be locked.");
-		// check for a programming error on using beginOperation/endOperation
-		Assert.isTrue(getWorkManager().getPreparedOperationDepth() > 0, Policy.bind("nestedOperation"));
-
-		// At this time we need to rebalance the nested operations. It is necessary because
-		// build() and snapshot() should not fail if they are called.
-		getWorkManager().rebalanceNestedOperations();
-
-		// If autobuild is on, give each open project a chance to build.  We have to tell each one
-		// because there is no way of knowing whether or not there is a relevant change
-		// for the project without computing the delta for each builder in each project relative
-		// to its last built state.  If we have guaranteed corelation between the notification delta
-		// and the last time autobuild was done, then we could look at the notification delta and
-		// see which projects had changed and only build them.  Currently there is no such
-		// guarantee.   
-		// Note that  building a project when there is actually nothing to do is not free but
-		// is should not be too expensive.  The computed delta will be empty and so the builder itself
-		// will not actually be run.  This does require however the delta computation.
-		//
-		// This is done in a try finally to ensure that we always decrement the operation count.
-		// The operationCount cannot be decremented before this as the build must be done
-		// inside an operation.  Note that we only ever get here if we are at a top level operation.
-		// As such, the operationCount will always be 0 (zero) after this.
-		OperationCanceledException cancel = null;
-		CoreException signal = null;
-		monitor = Policy.monitorFor(monitor);
-		broadcastChanges(null, tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
-		if (getWorkManager().shouldBuild() && isAutoBuilding()) {
-			try {
-				getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
-			} catch (OperationCanceledException e) {
-				cancel = e;
-			} catch (CoreException sig) {
-				signal = sig;
+			
+		// do the following in a try/finally to ensure that the operation tree is null'd at the end
+		// as we are completing a top level operation.
+		try {
+			// if the tree is locked we likely got here in some finally block after a failed begin.
+			// Since the tree is locked, nothing could have been done so there is nothing to do.
+			Assert.isTrue(!(treeLocked && getWorkManager().shouldBuild()), "The tree should not be locked.");
+			// check for a programming error on using beginOperation/endOperation
+			Assert.isTrue(getWorkManager().getPreparedOperationDepth() > 0, "Mismatched begin/endOperation");
+	
+			// At this time we need to rebalance the nested operations. It is necessary because
+			// build() and snapshot() should not fail if they are called.
+			getWorkManager().rebalanceNestedOperations();
+	
+			// If autobuild is on, give each open project a chance to build.  We have to tell each one
+			// because there is no way of knowing whether or not there is a relevant change
+			// for the project without computing the delta for each builder in each project relative
+			// to its last built state.  If we have guaranteed corelation between the notification delta
+			// and the last time autobuild was done, then we could look at the notification delta and
+			// see which projects had changed and only build them.  Currently there is no such
+			// guarantee.   
+			// Note that  building a project when there is actually nothing to do is not free but
+			// is should not be too expensive.  The computed delta will be empty and so the builder itself
+			// will not actually be run.  This does require however the delta computation.
+			//
+			// This is done in a try finally to ensure that we always decrement the operation count.
+			// The operationCount cannot be decremented before this as the build must be done
+			// inside an operation.  Note that we only ever get here if we are at a top level operation.
+			// As such, the operationCount will always be 0 (zero) after this.
+			OperationCanceledException cancel = null;
+			CoreException signal = null;
+			monitor = Policy.monitorFor(monitor);
+			broadcastChanges(null, tree, IResourceChangeEvent.PRE_AUTO_BUILD, false, false, Policy.monitorFor(null));
+			if (shouldBuild() && isAutoBuilding()) {
+				try {
+					getBuildManager().build(IncrementalProjectBuilder.AUTO_BUILD, monitor);
+				} catch (OperationCanceledException e) {
+					cancel = e;
+				} catch (CoreException sig) {
+					signal = sig;
+				}
 			}
+			// XXX consider detecting that the deltas are the same and reusing them
+			broadcastChanges(null, tree, IResourceChangeEvent.POST_AUTO_BUILD, false, false, Policy.monitorFor(null));
+			broadcastChanges(null, tree, IResourceChangeEvent.POST_CHANGE, true, true, Policy.monitorFor(null));
+			getMarkerManager().resetMarkerDeltas();
+			// Perform a snapshot if we are sufficiently out of date
+			saveManager.snapshotIfNeeded();
+			if (cancel != null)
+				throw cancel;
+			if (signal != null)
+				throw signal;
+		} finally {
+			operationTree = null;
 		}
-		// XXX consider detecting that the deltas are the same and reusing them
-		broadcastChanges(null, tree, IResourceChangeEvent.POST_AUTO_BUILD, false, false, Policy.monitorFor(null));
-		broadcastChanges(null, tree, IResourceChangeEvent.POST_CHANGE, true, true, Policy.monitorFor(null));
-		getMarkerManager().resetMarkerDeltas();
-		// Perform a snapshot if we are sufficiently out of date
-		saveManager.snapshotIfNeeded();
-		if (cancel != null)
-			throw cancel;
-		if (signal != null)
-			throw signal;
 	} finally {
 		getWorkManager().checkOut();
 	}
@@ -1184,6 +1230,10 @@ public void setTreeLocked(boolean locked) {
 }
 public void setWorkspaceLock(WorkspaceLock lock) {
 	workManager.setWorkspaceLock(lock);
+}
+
+private boolean shouldBuild() throws CoreException {
+	return getWorkManager().shouldBuild() && haveResourcesChanged();
 }
 protected void shutdown(IProgressMonitor monitor) throws CoreException {
 	monitor = Policy.monitorFor(monitor);

@@ -170,6 +170,8 @@ public void close(boolean save, IProgressMonitor monitor) throws CoreException {
 			workspace.closing(this);
 
 			workspace.beginOperation(true);
+			// flush the build order early in case there is a problem
+			workspace.flushBuildOrder();
 			if (save) {
 				IProgressMonitor sub = Policy.subMonitorFor(monitor, Policy.opWork / 2, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL);
 				workspace.getSaveManager().save(ISaveContext.PROJECT_SAVE, this, sub);
@@ -195,7 +197,6 @@ public void close(boolean save, IProgressMonitor monitor) throws CoreException {
 			info.clearSessionProperties();
 			info.setSyncInfo(null);
 			monitor.worked(Policy.opWork / 2);
-			workspace.flushBuildOrder();
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
@@ -387,6 +388,8 @@ public void delete(boolean deleteContent, boolean force, IProgressMonitor monito
 			workspace.deleting(this);
 
 			workspace.beginOperation(true);
+			// flush the build order early in case there is a problem
+			workspace.flushBuildOrder();
 			if (deleteContent) {
 				if (isOpen(getFlags(info)))
 					info = null;
@@ -407,7 +410,6 @@ public void delete(boolean deleteContent, boolean force, IProgressMonitor monito
 				}
 			}
 			basicDelete(status);
-			workspace.flushBuildOrder();
 			if (!status.isOK())
 				throw new ResourceException(status);
 		} catch (OperationCanceledException e) {
@@ -629,6 +631,8 @@ protected void internalCopyToFolder(IPath destPath, boolean force, IProgressMoni
 			workspace.changing(this);
 
 			workspace.beginOperation(true);
+			// flush the build order early in case there is a problem
+			workspace.flushBuildOrder();
 			getLocalManager().refresh(this, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
 			// copy just the project and not its children
@@ -640,7 +644,6 @@ protected void internalCopyToFolder(IPath destPath, boolean force, IProgressMoni
 				children[i].copy(destFolder.getFullPath().append(children[i].getName()), force, Policy.subMonitorFor(monitor, Policy.opWork * 50 / 100 / children.length));
 
 			monitor.subTask(Policy.bind("resources.syncTree"));
-			workspace.flushBuildOrder();
 			// refresh local
 			getLocalManager().refresh(destFolder, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 		} catch (OperationCanceledException e) {
@@ -683,6 +686,8 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 			workspace.changing(this);
 
 			workspace.beginOperation(true);
+			// flush the build order early in case there is a problem
+			workspace.flushBuildOrder();
 			getLocalManager().refresh(this, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
 			// close the property store
@@ -734,7 +739,6 @@ protected void internalMove(IProjectDescription destDesc, boolean force, IProgre
 			monitor.worked(Policy.opWork * 10 / 100);
 
 			monitor.subTask(Policy.bind("resources.syncTree"));
-			workspace.flushBuildOrder();
 			// refresh local
 			getLocalManager().refresh(destProject, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 10 / 100));
 		} catch (OperationCanceledException e) {
@@ -804,6 +808,8 @@ protected void internalMoveToFolder(IPath destPath, boolean force, IProgressMoni
 			workspace.changing(this);
 
 			workspace.beginOperation(true);
+			// flush the build order early in case there is a problem
+			workspace.flushBuildOrder();
 			getLocalManager().refresh(this, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 
 			// copy just the project and not its children
@@ -822,7 +828,6 @@ protected void internalMoveToFolder(IPath destPath, boolean force, IProgressMoni
 			monitor.worked(Policy.opWork * 10 / 100);
 
 			monitor.subTask(Policy.bind("resources.syncTree"));
-			workspace.flushBuildOrder();
 			// refresh local
 			getLocalManager().refresh(destFolder, DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 		} catch (OperationCanceledException e) {
@@ -960,6 +965,8 @@ public void open(IProgressMonitor monitor) throws CoreException {
 				return;
 
 			workspace.beginOperation(true);
+			// flush the build order early in case there is a problem
+			workspace.flushBuildOrder();
 			info = getResourceInfo(false, true); // get a mutable info
 			info.set(M_OPEN);
 			// the M_USED flag is used to indicate the difference between opening a project
@@ -973,7 +980,6 @@ public void open(IProgressMonitor monitor) throws CoreException {
 			startup();
 			monitor.worked(Policy.opWork * 20 / 100);
 			refreshLocal(DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 50 / 100));
-			workspace.flushBuildOrder();
 		} catch (OperationCanceledException e) {
 			workspace.getWorkManager().operationCanceled();
 			throw e;

@@ -26,7 +26,7 @@ public class BuildManager implements ICoreConstants, IManager {
 	
 public BuildManager(Workspace workspace) {
 	this.workspace = workspace;
-	if (!ResourcesPlugin.getPlugin().isDebugging()) {
+	if (ResourcesPlugin.getPlugin().isDebugging()) {
 		String option = Platform.getDebugOption(OPTION_DEBUG_BUILD);
 		DEBUG_BUILD = "true".equalsIgnoreCase(option);
 	}
@@ -91,6 +91,8 @@ void basicBuild(final IProject project, final int trigger, final IncrementalProj
 	}
 }
 void basicBuild(final IProject project, final int trigger, final MultiStatus status, final IProgressMonitor monitor) {
+	if (!project.isAccessible())
+		return;
 	final ICommand[] commands = ((Project) project).internalGetDescription().getBuildSpec(false);
 	if (commands.length == 0)
 		return;
@@ -262,20 +264,20 @@ private Hashtable getBuilders(IProject project) {
 public IResourceDelta getDelta(IProject project) {
 	if (currentTree == null) {
 		if (DEBUG_BUILD) 
-			System.out.println("Build: no tree for delta" + debugBuilder() + " [" + debugProject() + "]");
+			System.out.println("Build: no tree for delta " + debugBuilder() + " [" + debugProject() + "]");
 		return null;
 	}
 	IProject interestingProject = getInterestingProject(project);
 	if (interestingProject == null) {
 		if (DEBUG_BUILD) 
-			System.out.println("Build: project not interesting for delta" + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
+			System.out.println("Build: project not interesting for delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
 		return null;
 	}
 	
 	IResourceDelta result = ResourceDeltaFactory.computeDelta(workspace, lastBuiltTree, currentTree, interestingProject.getFullPath(), false);
 	createdDeltas.add(result);
 	if (DEBUG_BUILD && result == null) 
-		System.out.println("Build: no delta" + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
+		System.out.println("Build: no delta " + debugBuilder() + " [" + debugProject() + "] " + project.getFullPath());
 	return result;
 }
 

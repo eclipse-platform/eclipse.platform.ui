@@ -386,6 +386,10 @@ public void empty() {
 void emptyDelta() {
 	rootNode = new NoDataDeltaNode(null);
 }
+
+public boolean isEmptyDelta() {
+	return rootNode.getChildren().length == 0;
+}
 /**
  * Returns a node of the tree if it is present, otherwise returns null
  *

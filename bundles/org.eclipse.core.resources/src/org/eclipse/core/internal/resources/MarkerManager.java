@@ -222,6 +222,10 @@ public IMarker[] findMatchingMarkers(IResource target, String type, boolean incl
 		matching = basicFindMatching(markers, type, includeSubtypes);
 	return buildMarkers(matching, target);
 }
+
+public boolean hasDeltas() {
+	return markerDeltas != null && !markerDeltas.isEmpty();
+}
 public MarkerTypeDefinitionCache getCache() {
 	return cache;
 }
