@@ -1250,7 +1250,13 @@
             id="org.eclipse.debug.ui.properties.process">
       </page>
    </extension>
-<!-- commands and their bindings -->
+<!-- commands and their bindings
+NOTE: 
+M1 = CTRL/COMMAND 
+M2 = SHIFT 
+M3 = ALT 
+M4 = Platform-specific fourth key
+-->
    <extension
          point="org.eclipse.ui.commands">
       <category
@@ -1265,7 +1271,7 @@
             id="org.eclipse.debug.ui.commands.ToggleStepFilters">
       </command>
       <keyBinding
-            string="Shift+F5"
+            keySequence="M2+F5"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.ToggleStepFilters"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1277,7 +1283,7 @@
             id="org.eclipse.debug.ui.commands.StepInto">
       </command>
       <keyBinding
-            string="F5"
+            keySequence="F5"
             scope="org.eclipse.debug.ui.debugging"
             command="org.eclipse.debug.ui.commands.StepInto"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1289,7 +1295,7 @@
             id="org.eclipse.debug.ui.commands.StepOver">
       </command>
       <keyBinding
-            string="F6"
+            keySequence="F6"
             scope="org.eclipse.debug.ui.debugging"
             command="org.eclipse.debug.ui.commands.StepOver"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1301,7 +1307,7 @@
             id="org.eclipse.debug.ui.commands.StepReturn">
       </command>
       <keyBinding
-            string="F7"
+            keySequence="F7"
             scope="org.eclipse.debug.ui.debugging"
             command="org.eclipse.debug.ui.commands.StepReturn"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1313,7 +1319,7 @@
             id="org.eclipse.debug.ui.commands.Resume">
       </command>
       <keyBinding
-            string="F8"
+            keySequence="F8"
             scope="org.eclipse.debug.ui.debugging"
             command="org.eclipse.debug.ui.commands.Resume"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1325,7 +1331,7 @@
             id="org.eclipse.debug.ui.commands.Terminate">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.Terminate"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1337,7 +1343,7 @@
             id="org.eclipse.debug.ui.commands.Suspend">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.debug.ui.debugging"
             command="org.eclipse.debug.ui.commands.Suspend"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1349,7 +1355,7 @@
             id="org.eclipse.debug.ui.commands.OpenProfileConfigurations">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1361,7 +1367,7 @@
             id="org.eclipse.debug.ui.commands.OpenProfileConfigurations">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1373,7 +1379,7 @@
             id="org.eclipse.debug.ui.commands.OpenProfileConfigurations">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.OpenProfileConfigurations"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1385,14 +1391,14 @@
             id="org.eclipse.debug.ui.commands.DebugLast">
       </command>
       <keyBinding
-            string="F11"
+            keySequence="F11"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.DebugLast"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
       		platform="carbon"
-            string="Command+F11"
+            keySequence="M1+F11"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.DebugLast"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1404,14 +1410,14 @@
             id="org.eclipse.debug.ui.commands.RunLast">
       </command>
       <keyBinding
-            string="Ctrl+F11"
+            keySequence="M1+F11"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.RunLast"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>
       <keyBinding
       		platform="carbon"
-            string="Command+Shift+F11"
+            keySequence="M1+M2+F11"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.RunLast"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1423,7 +1429,7 @@
             id="org.eclipse.debug.ui.commands.ProfileLast">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.ProfileLast"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1435,18 +1441,11 @@
             id="org.eclipse.debug.ui.commands.RunToLine">
       </command>
       <keyBinding
-            string="Ctrl+R"
+            keySequence="M1+R"
             scope="org.eclipse.debug.ui.debugging"
             command="org.eclipse.debug.ui.commands.RunToLine"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
       </keyBinding>          
-      <keyBinding
-      		platform="carbon"
-            string="Command+R"
-            scope="org.eclipse.debug.ui.debugging"
-            command="org.eclipse.debug.ui.commands.RunToLine"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
       <command
             name="%ActionDefinition.toggleBreakpoint.name"
             description="%ActionDefinition.toggleBreakpoint.description"
@@ -1454,14 +1453,7 @@
             id="org.eclipse.debug.ui.commands.ToggleBreakpoint">
       </command>
       <keyBinding
-            string="Ctrl+Shift+B"
-            scope="org.eclipse.ui.globalScope"
-            command="org.eclipse.debug.ui.commands.ToggleBreakpoint"
-            configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </keyBinding>
-      <keyBinding
-      		platform="carbon"
-            string="Command+Shift+B"
+            keySequence="M1+M2+B"
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.ToggleBreakpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1473,7 +1465,7 @@
             id="org.eclipse.debug.ui.commands.SkipAllBreakpoints">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.SkipAllBreakpoints"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1485,7 +1477,7 @@
             id="org.eclipse.debug.ui.commands.ToggleWatchpoint">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.ToggleWatchpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1497,7 +1489,7 @@
             id="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1510,7 +1502,7 @@
             id="org.eclipse.debug.ui.DebugView">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.DebugView"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1522,7 +1514,7 @@
             id="org.eclipse.debug.ui.BreakpointView">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.BreakpointView"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1534,7 +1526,7 @@
             id="org.eclipse.debug.ui.VariableView">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.VariableView"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1546,7 +1538,7 @@
             id="org.eclipse.debug.ui.ExpressionView">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.ExpressionView"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1558,7 +1550,7 @@
             id="org.eclipse.debug.ui.RegisterView">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.RegisterView"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
@@ -1570,7 +1562,7 @@
             id="org.eclipse.debug.ui.MemoryView">
       </command>
       <keyBinding
-            string=""
+            keySequence=""
             scope="org.eclipse.ui.globalScope"
             command="org.eclipse.debug.ui.MemoryView"
             configuration="org.eclipse.ui.defaultAcceleratorConfiguration">
