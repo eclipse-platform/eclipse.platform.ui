@@ -777,22 +777,32 @@ public static void setupOptions() {
 /**
  * Initializes the execution context for this run of the platform.  The context
  * includes information about the locale, operating system and window system.
+ * 
+ * NOTE: The OS, WS, and ARCH values should never be null. The executable should
+ * be setting these values and therefore this code path is obsolete for Eclipse
+ * when run from the executable.
  */
 private static void setupSystemContext() {
+	// if the user didn't set the locale with a command line argument then
+	// use the default.
 	if (nl == null)
 		nl = Locale.getDefault().toString();
 
+	// if the user didn't set the operating system with a command line 
+	// argument then use the default.
 	if (os == null) {
 		String name = System.getProperty("os.name");//$NON-NLS-1$
-		String[] os_list = BootLoader.knownOSValues();
-		for (int i = 0; os == null && i < os_list.length; i++)
-			if (name.regionMatches(true, 0, os_list[i], 0, 3))
-				os = os_list[i];
+		// check to see if the VM returned "Windows 98" or some other
+		// flavour which should be converted to win32.
+		if (name.regionMatches(true, 0, BootLoader.OS_WIN32, 0, 3))
+			os = BootLoader.OS_WIN32;
 		// EXCEPTION: All mappings of SunOS convert to Solaris
 		if (os == null)
 			os = name.equalsIgnoreCase(INTERNAL_OS_SUNOS) ? BootLoader.OS_SOLARIS : BootLoader.OS_UNKNOWN;
 	}
 
+	// if the user didn't set the window system with a command line 
+	// argument then use the default.
 	if (ws == null) {
 		// setup default values for known OSes if nothing was specified
 		if (os.equals(BootLoader.OS_WIN32))
@@ -801,21 +811,22 @@ private static void setupSystemContext() {
 			ws = BootLoader.WS_MOTIF;
 		else if (os.equals(BootLoader.OS_MACOSX))
 			ws = BootLoader.WS_CARBON;
+		else if (os.equals(BootLoader.OS_HPUX))
+			ws = BootLoader.WS_MOTIF;
+		else if (os.equals(BootLoader.OS_AIX))
+			ws = BootLoader.WS_MOTIF;
+		else if (os.equals(BootLoader.OS_SOLARIS))
+			ws = BootLoader.WS_MOTIF;
 		else
 			ws = BootLoader.WS_UNKNOWN;
 	}
 
+	// if the user didn't set the system architecture with a command line 
+	// argument then use the default.
 	if (arch == null) {
 		String name = System.getProperty("os.arch");//$NON-NLS-1$
 		// Map i386 architecture to x86
-		if (name.equalsIgnoreCase(INTERNAL_ARCH_I386))
-			arch = BootLoader.ARCH_X86;
-		String[] arch_list = BootLoader.knownOSArchValues();
-		for (int i = 0; arch == null && i < arch_list.length; i++)
-			if (name.equalsIgnoreCase(arch_list[i]))
-				arch = arch_list[i];
-		if (arch == null)
-			arch = name;
+		arch = name.equalsIgnoreCase(INTERNAL_ARCH_I386) ? BootLoader.ARCH_X86 : name;
 	}
 }
 /**
