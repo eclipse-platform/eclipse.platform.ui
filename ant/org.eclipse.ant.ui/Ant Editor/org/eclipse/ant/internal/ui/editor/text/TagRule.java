@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2003 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2004 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  * All rights reserved. This program and the accompanying materials 
@@ -10,6 +10,7 @@
  * Contributors:
  *     GEBIT Gesellschaft fuer EDV-Beratung und Informatik-Technologien mbH - initial API and implementation
  * 	   IBM Corporation - bug 24108
+ *     John-Mason P. Shackelford - bug 51215
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.editor.text;
@@ -50,4 +51,62 @@ public class TagRule extends MultiLineRule {
 
         return super.sequenceDetected(scanner, sequence, eofAllowed);
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.text.rules.PatternRule#endSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner)
+     */
+    protected boolean endSequenceDetected(ICharacterScanner scanner) {
+        int c;
+        char[][] delimiters = scanner.getLegalLineDelimiters();
+        boolean previousWasEscapeCharacter = false;
+        while ((c = scanner.read()) != ICharacterScanner.EOF) {
+            if (c == fEscapeCharacter) {
+                // Skip the escaped character.
+                scanner.read();
+            } else if (fEndSequence.length > 0 && c == fEndSequence[0]) {
+                // Check if the specified end sequence has been found.
+                if (sequenceDetected(scanner, fEndSequence, true)) {
+                    if (fEndSequence[0] == '>') {
+                        return endOfTagDetected(scanner);
+                    } else {
+                        return true;
+                    }
+                }
+            } else if (fBreaksOnEOL) {
+                // Check for end of line since it can be used to terminate the
+                // pattern.
+                for (int i = 0; i < delimiters.length; i++) {
+                    if (c == delimiters[i][0]
+                            && sequenceDetected(scanner, delimiters[i], true)) {
+                        if (!fEscapeContinuesLine
+                                || !previousWasEscapeCharacter) return true;
+                    }
+                }
+            }
+            previousWasEscapeCharacter = (c == fEscapeCharacter);
+        }
+        if (fBreaksOnEOF) return true;
+        scanner.unread();
+        return false;
+    }
+
+    private boolean endOfTagDetected(ICharacterScanner scanner) {
+        int c;
+        int scanAhead = 0;
+        int endOfTagOffset = 0;
+        while ((c = scanner.read()) != ICharacterScanner.EOF && c != '<') {
+            scanAhead++;
+            if (c == '>') endOfTagOffset = scanAhead;
+        }
+
+        if (c == '<') {
+            int rewind = (scanAhead - endOfTagOffset) + 1;
+            for (int i = 0; i < rewind; i++) {
+                scanner.unread();
+            }
+        }
+        return true;
+    }    
 }
