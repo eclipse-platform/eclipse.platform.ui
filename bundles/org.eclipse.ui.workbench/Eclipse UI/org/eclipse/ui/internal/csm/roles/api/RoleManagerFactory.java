@@ -13,17 +13,37 @@ package org.eclipse.ui.internal.csm.roles.api;
 
 import org.eclipse.ui.internal.csm.roles.RoleManager;
 
+/**
+ * <p>
+ * This class allows clients to broker instances of <code>IRoleManager</code>. 
+ * </p>
+ * <p>
+ * Clients are not permitted to extend this class.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
 public final class RoleManagerFactory {
 
-	private static IRoleManager roleManager;
-
+	/**
+	 * Creates a new instance of IRoleManager.
+	 * 
+	 * @return a new instance of IRoleManager. Clients should not make 
+	 *         assumptions about the concrete implementation outside the 
+	 *         contract of <code>IRoleManager</code>. Guaranteed not to be 
+	 *         <code>null</code>.
+	 */
 	public static IRoleManager getRoleManager() {
-		if (roleManager == null)
-			roleManager = new RoleManager();
-		
-		return roleManager;
+		return new RoleManager();
 	}
-	
+
+	/**
+	 * Private constructor to ensure that <code>RoleManagerFactory</code> can
+	 * not be instantiated. 
+	 */	
 	private RoleManagerFactory() {		
 	}
 }

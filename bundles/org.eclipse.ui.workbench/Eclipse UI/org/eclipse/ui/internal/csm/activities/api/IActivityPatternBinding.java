@@ -32,4 +32,11 @@ public interface IActivityPatternBinding extends Comparable {
 	 * @return
 	 */	
 	String getActivityId();
+
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	// TODO String getPattern();
 }

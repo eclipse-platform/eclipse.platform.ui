@@ -32,4 +32,11 @@ public interface IRoleActivityBinding extends Comparable {
 	 * @return
 	 */	
 	String getActivityId();
+	
+	/**
+	 * JAVADOC
+	 * 
+	 * @return
+	 */	
+	// TODO String getRoleId();	
 }

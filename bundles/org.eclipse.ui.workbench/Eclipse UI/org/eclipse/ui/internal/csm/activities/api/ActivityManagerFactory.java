@@ -13,17 +13,38 @@ package org.eclipse.ui.internal.csm.activities.api;
 
 import org.eclipse.ui.internal.csm.activities.ActivityManager;
 
+/**
+ * <p>
+ * This class allows clients to broker instances of 
+ * <code>IActivityManager</code>.
+ * </p>
+ * <p>
+ * Clients are not permitted to extend this class.
+ * </p>
+ * <p>
+ * <em>EXPERIMENTAL</em>
+ * </p>
+ * 
+ * @since 3.0
+ */
 public final class ActivityManagerFactory {
 
-	private static IActivityManager activityManager;
-
+	/**
+	 * Creates a new instance of IActivityManager.
+	 * 
+	 * @return a new instance of IActivityManager. Clients should not make 
+	 *         assumptions about the concrete implementation outside the 
+	 *         contract of <code>IActivityManager</code>. Guaranteed not to be 
+	 *         <code>null</code>.
+	 */
 	public static IActivityManager getActivityManager() {
-		if (activityManager == null)
-			activityManager = new ActivityManager();
-		
-		return activityManager;
+		return new ActivityManager();
 	}
-	
+
+	/**
+	 * Private constructor to ensure that <code>ActivityManagerFactory</code> 
+	 * can not be instantiated. 
+	 */	
 	private ActivityManagerFactory() {		
 	}
 }

@@ -89,7 +89,8 @@ public final class KeySequence implements Comparable {
 	/**
 	 * Gets an instance of <code>KeySequence</code>. 
 	 * 
-	 * @return a key sequence. This key sequence will have no key strokes. 
+	 * @return a key sequence. This key sequence will have no key strokes.
+	 *         Guaranteed not to be <code>null</code>. 
 	 */	
 	public static KeySequence getInstance() {
 		return new KeySequence(Collections.EMPTY_LIST);
@@ -99,7 +100,7 @@ public final class KeySequence implements Comparable {
 	 * Gets an instance of <code>KeySequence</code> given a single key stroke.
 	 * 
 	 * @param  keyStroke a single key stroke. Must not be <code>null</code>.
-	 * @return           a key sequence.
+	 * @return           a key sequence. Guaranteed not to be <code>null</code>.
 	 */	
 	public static KeySequence getInstance(KeyStroke keyStroke) {
 		return new KeySequence(Collections.singletonList(keyStroke));
@@ -112,7 +113,8 @@ public final class KeySequence implements Comparable {
 	 * @param  keyStrokes the array of key strokes. This array may be empty, but
 	 *                    it must not be <code>null</code>. This array must not
 	 *                    contain <code>null</code> elements.
-	 * @return            a key sequence.
+	 * @return            a key sequence. Guaranteed not to be 
+	 *                    <code>null</code>.
 	 */
 	public static KeySequence getInstance(KeyStroke[] keyStrokes) {
 		return new KeySequence(Arrays.asList(keyStrokes));
@@ -126,7 +128,8 @@ public final class KeySequence implements Comparable {
 	 *        			  it must not be <code>null</code>. If this list is not 
 	 * 					  empty, it must only contain instances of 
 	 * 					  <code>KeyStroke</code>.
-	 * @return            a key sequence.
+	 * @return            a key sequence. Guaranteed not to be 
+	 *                    <code>null</code>.
 	 */
 	public static KeySequence getInstance(List keyStrokes) {
 		return new KeySequence(keyStrokes);
@@ -137,7 +140,8 @@ public final class KeySequence implements Comparable {
 	 * string representation. 
 	 * 
 	 * @param  string         the formal string representation to parse.
-	 * @return                a key sequence.
+	 * @return                a key sequence. Guaranteed not to be 
+	 *                        <code>null</code>.
 	 * @throws ParseException if the given formal string representation could
 	 * 						  not be parsed to a valid key sequence.
 	 */

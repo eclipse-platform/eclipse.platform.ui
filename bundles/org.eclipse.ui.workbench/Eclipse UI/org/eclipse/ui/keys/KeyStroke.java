@@ -234,7 +234,7 @@ public final class KeyStroke implements Comparable {
 	 * 
 	 * @param  naturalKey the natural key. May be <code>null</code>.
 	 * @return 		      a key stroke. This key stroke will have no modifier 
-	 * 					  keys. 
+	 * 					  keys. Guaranteed not to be <code>null</code>.
 	 */	
 	public static KeyStroke getInstance(NaturalKey naturalKey) {
 		return new KeyStroke(Util.EMPTY_SORTED_SET, naturalKey);
@@ -246,7 +246,7 @@ public final class KeyStroke implements Comparable {
 	 * 
 	 * @param  modifierKey a modifier key. Must not be <code>null</code>.
 	 * @param  naturalKey  the natural key. May be <code>null</code>.
-	 * @return 			   a key stroke.
+	 * @return 			   a key stroke. Guaranteed not to be <code>null</code>.
 	 */	
 	public static KeyStroke getInstance(ModifierKey modifierKey, NaturalKey naturalKey) {
 		if (modifierKey == null)
@@ -264,7 +264,8 @@ public final class KeyStroke implements Comparable {
 	 *                      is not empty, it must not contain <code>null</code> 
 	 *                      elements. 
 	 * @param  naturalKey   the natural key. May be <code>null</code>.
-	 * @return 			    a key stroke.
+	 * @return 			    a key stroke. Guaranteed not to be 
+	 *                      <code>null</code>.
 	 */	
 	public static KeyStroke getInstance(ModifierKey[] modifierKeys, NaturalKey naturalKey) {
 		Util.assertInstance(modifierKeys, ModifierKey.class);		
@@ -280,7 +281,8 @@ public final class KeyStroke implements Comparable {
 	 * 					    empty, it must only contain instances of 
 	 *                      <code>ModifierKey</code>.
 	 * @param  naturalKey   the natural key. May be <code>null</code>.
-	 * @return              a key stroke.
+	 * @return              a key stroke. Guaranteed not to be 
+	 *                      <code>null</code>.
 	 */	
 	public static KeyStroke getInstance(SortedSet modifierKeys, NaturalKey naturalKey) {
 		return new KeyStroke(modifierKeys, naturalKey);
@@ -291,7 +293,8 @@ public final class KeyStroke implements Comparable {
 	 * string representation. 
 	 * 
 	 * @param  string         the formal string representation to parse.
-	 * @return a key stroke.
+	 * @return                a key stroke. Guaranteed not to be 
+	 *                        <code>null</code>.
 	 * @throws ParseException if the given formal string representation could
 	 * 						  not be parsed to a valid key stroke.
 	 */
