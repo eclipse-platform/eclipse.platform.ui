@@ -40,11 +40,12 @@ public class CreateLinkedResourceGroup {
 	private FontMetrics fontMetrics;
 
 	// widgets
+	private Composite groupComposite;
 	private Button linkButton;
 	private Text linkTargetField;
 	private Button browseButton;
 	private Button variablesButton;
-	private Composite groupComposite;
+	private Label resolvedPathLabel;
  
 /**
  * Creates a link target group 
@@ -124,6 +125,7 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 	linkTargetField.setEnabled(enabled);
 	linkTargetField.addModifyListener(new ModifyListener() {
 		public void modifyText(ModifyEvent e) {
+			resolveVariable();
 			if (listener != null)
 				listener.handleEvent(new Event());
 		}
@@ -146,8 +148,11 @@ private void createLinkLocationGroup(Composite locationGroup, boolean enabled) {
 
 	fill = new Label(locationGroup, SWT.NONE);
 	data = new GridData();
-	data.horizontalSpan = 2;
 	fill.setLayoutData(data);
+	
+	resolvedPathLabel = new Label(locationGroup, SWT.SINGLE);
+	data = new GridData(GridData.FILL_HORIZONTAL);
+	resolvedPathLabel.setLayoutData(data);
 
 	// variables button
 	variablesButton = new Button(locationGroup, SWT.PUSH);
@@ -241,18 +246,13 @@ private void handleLinkTargetBrowseButtonPressed() {
  */
 private void handleVariablesButtonPressed() {
 	PathVariableSelectionDialog dialog = 
-		new PathVariableSelectionDialog(linkTargetField.getShell(), type);
+		new PathVariableSelectionDialog(linkTargetField.getShell(), IResource.FILE | IResource.FOLDER);
 	
 	if (dialog.open() == IDialogConstants.OK_ID) {
 		String[] variableNames = (String[]) dialog.getResult();
 				
 		if (variableNames != null) {
-			IPathVariableManager pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
-			IPath path = pathVariableManager.getValue(variableNames[0]);
-		
-			if (path != null) {
-				linkTargetField.setText(path.toOSString());
-			}
+			linkTargetField.setText(variableNames[0]);
 		}
 	}
 }
@@ -272,6 +272,29 @@ protected void initializeDialogUnits(Control control) {
 	gc.setFont(control.getFont());
 	fontMetrics = gc.getFontMetrics();
 	gc.dispose();
+}
+/**
+ * Tries to resolve the value entered in the link target field as 
+ * a variable, if the value is a relative path.
+ * Displays the resolved value if the entered value is a variable.
+ */
+private void resolveVariable() {
+	IPath path = new Path(linkTargetField.getText());
+	
+	if (path.isAbsolute() == false) {
+		IPathVariableManager pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
+		IPath resolvedPath = pathVariableManager.resolvePath(path);
+	
+		if (path != resolvedPath) {
+			resolvedPathLabel.setText(resolvedPath.toOSString());
+		}
+		else {
+			resolvedPathLabel.setText("");	//$NON-NLS-1$
+		}
+	}
+	else {
+		resolvedPathLabel.setText("");	//$NON-NLS-1$
+	}
 }
 /**
  * Sets the <code>GridData</code> on the specified button to
@@ -355,22 +378,27 @@ private IStatus validateLinkTargetName(String linkTargetName) {
  * 	specified link target is valid given the linkHandle.
  */
 public IStatus validateLinkLocation(IResource linkHandle) {
-	IStatus status;
 	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
 	String linkTargetName = linkTargetField.getText();
 	IPath path = new Path(linkTargetName);
+	IPathVariableManager pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
 	
 	if (createLink == false)
 		return createStatus(IStatus.OK, "");
 
-	status = workspace.validateLinkLocation(linkHandle,	path);
-	if (status.isOK() == false) 
-		return status;
-		
-	status = validateLinkTargetName(linkTargetName); 
-	if (status.isOK() == false)
-		return status;
+	IStatus locationStatus = workspace.validateLinkLocation(linkHandle,	path);
+	if (locationStatus.getCode() == IStatus.ERROR) 
+		return locationStatus;
+	
+	IStatus nameStatus = validateLinkTargetName(linkTargetName); 
+	if (nameStatus.isOK() == false)
+		return nameStatus;
 			
+	String resolvedName = resolvedPathLabel.getText();
+	if (resolvedName.length() > 0) {
+		linkTargetName = resolvedName;
+		path = new Path(linkTargetName);
+	}
 	if (path.isAbsolute() == false)
 		return createStatus(
 			IStatus.ERROR,
@@ -382,7 +410,10 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 			IStatus.WARNING,
 			WorkbenchMessages.getString("CreateLinkedResourceGroup.linkTargetNonExistent"));	//$NON-NLS-1$
 	}
-	status = validateFileType(linkTargetFile);
-	return status;	
+	IStatus fileTypeStatus = validateFileType(linkTargetFile);
+	if (fileTypeStatus.isOK() == false) {
+		return fileTypeStatus;
+	}
+	return locationStatus;
 }
 }
