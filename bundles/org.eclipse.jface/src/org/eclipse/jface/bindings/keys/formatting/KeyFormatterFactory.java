@@ -31,12 +31,6 @@ package org.eclipse.jface.bindings.keys.formatting;
 public final class KeyFormatterFactory {
 
     /**
-     * The formatter that renders multiple key stroke bindings in a more compact
-     * form.
-     */
-    private static final IKeyFormatter COMPACT_KEY_FORMATTER = new CompactKeyFormatter();
-
-    /**
      * The formatter that renders key bindings in a platform-dependent manner.
      */
     private static final IKeyFormatter FORMAL_KEY_FORMATTER = new FormalKeyFormatter();
@@ -51,15 +45,6 @@ public final class KeyFormatterFactory {
      * be changed by users of this API.
      */
     private static IKeyFormatter defaultKeyFormatter = FORMAL_KEY_FORMATTER;
-
-    /**
-     * Provides an instance of <code>CompactKeyFormatter</code>.
-     * 
-     * @return The compact formatter; never <code>null</code>.
-     */
-    public static final IKeyFormatter getCompactKeyFormatter() {
-        return COMPACT_KEY_FORMATTER;
-    }
 
     /**
      * An accessor for the current default key formatter.

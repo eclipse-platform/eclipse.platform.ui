@@ -11,6 +11,10 @@
 
 package org.eclipse.ui.keys;
 
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
+import org.eclipse.ui.internal.util.Util;
+
 /**
  * <p>
  * <code>Key</code> is the abstract base class for all objects representing
@@ -30,31 +34,27 @@ package org.eclipse.ui.keys;
  * this class.
  * </p>
  * 
- * @deprecated Please use org.eclipse.jface.bindings.keys.Key
+ * @deprecated Please use org.eclipse.jface.bindings.keys.KeyStroke and
+ *             org.eclipse.jface.bindings.keys.KeyLookupFactory
  * @since 3.0
  */
 public abstract class Key implements Comparable {
 
 	/**
-	 * The key from which this key was constructed. This value will never be
-	 * <code>null</code>.
+	 * The key from which this key was constructed. This value is defined by
+	 * <code>KeyLookupFactory.getDefault()</code>.
 	 */
-	protected final org.eclipse.jface.bindings.keys.Key key;
+	protected final int key;
 
 	/**
 	 * Constructs an instance of <code>Key</code> given its formal string
 	 * representation.
 	 * 
-	 * @param name
-	 *            the formal string representation of this key. Must not be
-	 *            <code>null</code>.
+	 * @param key
+	 *            the integer representation of this key, as defined by
+	 *            <code>KeyLookupFactory.getDefault()</code>.
 	 */
-	Key(final org.eclipse.jface.bindings.keys.Key key) {
-		if (key == null) {
-			throw new NullPointerException(
-					"Cannot construct a key from a null key"); //$NON-NLS-1$
-		}
-
+	Key(final int key) {
 		this.key = key;
 	}
 
@@ -62,7 +62,7 @@ public abstract class Key implements Comparable {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	public final int compareTo(final Object object) {
-		return key.compareTo(((Key) object).key);
+		return Util.compare(key, ((Key) object).key);
 	}
 
 	/**
@@ -72,14 +72,14 @@ public abstract class Key implements Comparable {
 		if (!(object instanceof Key))
 			return false;
 
-		return key.equals(((Key) object).key);
+		return key == ((Key) object).key;
 	}
 
 	/**
 	 * @see java.lang.Object#hashCode()
 	 */
 	public final int hashCode() {
-		return key.hashCode();
+		return Util.hashCode(key);
 	}
 
 	/**
@@ -90,6 +90,7 @@ public abstract class Key implements Comparable {
 	 * @see java.lang.Object#toString()
 	 */
 	public final String toString() {
-		return key.toString();
+		final IKeyLookup lookup = KeyLookupFactory.getDefault();
+		return lookup.formalNameLookup(key);
 	}
 }

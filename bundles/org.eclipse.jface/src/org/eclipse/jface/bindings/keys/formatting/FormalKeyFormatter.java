@@ -11,12 +11,10 @@
 
 package org.eclipse.jface.bindings.keys.formatting;
 
-import java.util.Comparator;
-
-import org.eclipse.jface.bindings.keys.Key;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
-
 
 /**
  * <p>
@@ -33,45 +31,52 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
  */
 public final class FormalKeyFormatter extends AbstractKeyFormatter {
 
-    /**
-     * A comparator that guarantees that modifier keys will be sorted the same
-     * across different platforms.
-     */
-    private static final Comparator FORMAL_MODIFIER_KEY_COMPARATOR = new AlphabeticModifierKeyComparator();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
+	 */
+	public String format(final int key) {
+		final IKeyLookup lookup = KeyLookupFactory.getDefault();
+		return lookup.formalNameLookup(key);
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
-     */
-    public String format(Key key) {
-        return key.toString();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyDelimiter()
+	 */
+	protected String getKeyDelimiter() {
+		return KeyStroke.KEY_DELIMITER;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyDelimiter()
-     */
-    protected String getKeyDelimiter() {
-        return KeyStroke.KEY_DELIMITER;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyStrokeDelimiter()
+	 */
+	protected String getKeyStrokeDelimiter() {
+		return KeySequence.KEY_STROKE_DELIMITER;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.keys.AbstractKeyFormatter#getKeyStrokeDelimiter()
-     */
-    protected String getKeyStrokeDelimiter() {
-        return KeySequence.KEY_STROKE_DELIMITER;
-    }
+	protected int[] sortModifierKeys(final int modifierKeys) {
+		final IKeyLookup lookup = KeyLookupFactory.getDefault();
+		final int[] sortedKeys = new int[4];
+		int index = 0;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.ui.keys.AbstractKeyFormatter#getModifierKeyComparator()
-     */
-    protected Comparator getModifierKeyComparator() {
-        return FORMAL_MODIFIER_KEY_COMPARATOR;
-    }
+		if ((modifierKeys & lookup.getAlt()) != 0) {
+			sortedKeys[index++] = lookup.getAlt();
+		}
+		if ((modifierKeys & lookup.getCommand()) != 0) {
+			sortedKeys[index++] = lookup.getCommand();
+		}
+		if ((modifierKeys & lookup.getCtrl()) != 0) {
+			sortedKeys[index++] = lookup.getCtrl();
+		}
+		if ((modifierKeys & lookup.getShift()) != 0) {
+			sortedKeys[index++] = lookup.getShift();
+		}
+
+		return sortedKeys;
+	}
 }

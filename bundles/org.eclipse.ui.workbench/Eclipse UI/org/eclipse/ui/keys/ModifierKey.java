@@ -14,6 +14,8 @@ package org.eclipse.ui.keys;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.swt.SWT;
 
 /**
@@ -28,7 +30,8 @@ import org.eclipse.swt.SWT;
  * to extend this class.
  * </p>
  * 
- * @deprecated Please use org.eclipse.jface.bindings.keys.ModifierKey
+ * @deprecated Please use org.eclipse.jface.bindings.keys.KeyStroke and
+ *             org.eclipse.jface.bindings.keys.KeyLookupFactory
  * @since 3.0
  * @see org.eclipse.ui.keys.NaturalKey
  */
@@ -44,22 +47,19 @@ public final class ModifierKey extends Key {
 	 * The single static instance of <code>ModifierKey</code> which represents
 	 * the 'Alt' key.
 	 */
-	public final static ModifierKey ALT = new ModifierKey(
-			org.eclipse.jface.bindings.keys.ModifierKey.ALT);
+	public final static ModifierKey ALT;
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which represents
 	 * the 'Command' key.
 	 */
-	public final static ModifierKey COMMAND = new ModifierKey(
-			org.eclipse.jface.bindings.keys.ModifierKey.COMMAND);
+	public final static ModifierKey COMMAND;
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which represents
 	 * the 'Ctrl' key.
 	 */
-	public final static ModifierKey CTRL = new ModifierKey(
-			org.eclipse.jface.bindings.keys.ModifierKey.CTRL);
+	public final static ModifierKey CTRL;
 
 	/**
 	 * The name of the 'M1' key.
@@ -85,10 +85,15 @@ public final class ModifierKey extends Key {
 	 * The single static instance of <code>ModifierKey</code> which represents
 	 * the 'Shift' key.
 	 */
-	public final static ModifierKey SHIFT = new ModifierKey(
-			org.eclipse.jface.bindings.keys.ModifierKey.SHIFT);
+	public final static ModifierKey SHIFT;
 
 	static {
+		final IKeyLookup lookup = KeyLookupFactory.getDefault();
+		ALT = new ModifierKey(lookup.getAlt());
+		COMMAND = new ModifierKey(lookup.getCommand());
+		CTRL = new ModifierKey(lookup.getCtrl());
+		SHIFT = new ModifierKey(lookup.getShift());
+		
 		modifierKeysByName.put(ModifierKey.ALT.toString(), ModifierKey.ALT);
 		modifierKeysByName.put(ModifierKey.COMMAND.toString(),
 				ModifierKey.COMMAND);
@@ -110,9 +115,9 @@ public final class ModifierKey extends Key {
 	 * Constructs an instance of <code>ModifierKey</code> given a name.
 	 * 
 	 * @param key
-	 *            The key which this key wraps; must not be <code>null</code>.
+	 *            The key which this key wraps.
 	 */
-	private ModifierKey(final org.eclipse.jface.bindings.keys.ModifierKey key) {
+	private ModifierKey(final int key) {
 		super(key);
 	}
 }

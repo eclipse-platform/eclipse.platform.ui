@@ -99,6 +99,19 @@ public final class Util {
 	}
 
 	/**
+	 * Compares two integer values.
+	 * 
+	 * @param left
+	 *            The left value to compare
+	 * @param right
+	 *            The right value to compare
+	 * @return <code>left - right</code>
+	 */
+	public static final int compare(final int left, final int right) {
+		return left - right;
+	}
+
+	/**
 	 * Compares to comparable objects -- defending against <code>null</code>.
 	 * 
 	 * @param left

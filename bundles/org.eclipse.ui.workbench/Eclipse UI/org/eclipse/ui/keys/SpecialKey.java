@@ -14,6 +14,9 @@ package org.eclipse.ui.keys;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
+
 /**
  * <p>
  * Instances of <code>SpecialKey</code> represent the keys on keyboard
@@ -28,7 +31,8 @@ import java.util.TreeMap;
  * extend this class.
  * </p>
  * 
- * @deprecated Please use org.eclipse.jface.bindings.keys.SpecialKey
+ * @deprecated Please use org.eclipse.jface.bindings.keys.KeyStroke and
+ *             org.eclipse.jface.bindings.keys.KeyLookupFactory
  * @since 3.0
  */
 public final class SpecialKey extends NaturalKey {
@@ -43,332 +47,361 @@ public final class SpecialKey extends NaturalKey {
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Arrow Down' key.
 	 */
-	public final static SpecialKey ARROW_DOWN = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.ARROW_DOWN);
+	public final static SpecialKey ARROW_DOWN;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Arrow Left' key.
 	 */
-	public final static SpecialKey ARROW_LEFT = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.ARROW_LEFT);
+	public final static SpecialKey ARROW_LEFT;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Arrow Right' key.
 	 */
-	public final static SpecialKey ARROW_RIGHT = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.ARROW_RIGHT);
+	public final static SpecialKey ARROW_RIGHT;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Arrow Up' key.
 	 */
-	public final static SpecialKey ARROW_UP = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.ARROW_UP);
+	public final static SpecialKey ARROW_UP;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Break' key.
 	 */
-	public final static SpecialKey BREAK = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.BREAK);
+	public final static SpecialKey BREAK;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Caps Lock' key.
 	 */
-	public final static SpecialKey CAPS_LOCK = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.CAPS_LOCK);
+	public final static SpecialKey CAPS_LOCK;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'End' key.
 	 */
-	public final static SpecialKey END = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.END);
+	public final static SpecialKey END;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F1' key.
 	 */
-	public final static SpecialKey F1 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F1);
+	public final static SpecialKey F1;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F10' key.
 	 */
-	public final static SpecialKey F10 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F10);
+	public final static SpecialKey F10;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F11' key.
 	 */
-	public final static SpecialKey F11 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F11);
+	public final static SpecialKey F11;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F12' key.
 	 */
-	public final static SpecialKey F12 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F12);
+	public final static SpecialKey F12;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F13' key.
 	 */
-	public final static SpecialKey F13 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F13);
+	public final static SpecialKey F13;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F14' key.
 	 */
-	public final static SpecialKey F14 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F14);
+	public final static SpecialKey F14;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F15' key.
 	 */
-	public final static SpecialKey F15 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F15);
+	public final static SpecialKey F15;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F2' key.
 	 */
-	public final static SpecialKey F2 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F2);
+	public final static SpecialKey F2;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F3' key.
 	 */
-	public final static SpecialKey F3 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F3);
+	public final static SpecialKey F3;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F4' key.
 	 */
-	public final static SpecialKey F4 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F4);
+	public final static SpecialKey F4;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F5' key.
 	 */
-	public final static SpecialKey F5 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F5);
+	public final static SpecialKey F5;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F6' key.
 	 */
-	public final static SpecialKey F6 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F6);
+	public final static SpecialKey F6;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F7' key.
 	 */
-	public final static SpecialKey F7 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F7);
+	public final static SpecialKey F7;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F8' key.
 	 */
-	public final static SpecialKey F8 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F8);
+	public final static SpecialKey F8;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'F9' key.
 	 */
-	public final static SpecialKey F9 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.F9);
+	public final static SpecialKey F9;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Home' key.
 	 */
-	public final static SpecialKey HOME = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.HOME);
+	public final static SpecialKey HOME;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Insert' key.
 	 */
-	public final static SpecialKey INSERT = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.INSERT);
+	public final static SpecialKey INSERT;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'NumLock' key.
 	 */
-	public final static SpecialKey NUM_LOCK = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUM_LOCK);
+	public final static SpecialKey NUM_LOCK;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '0' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_0 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_0);
+	public final static SpecialKey NUMPAD_0;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '1' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_1 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_1);
+	public final static SpecialKey NUMPAD_1;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '2' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_2 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_2);
+	public final static SpecialKey NUMPAD_2;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '3' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_3 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_3);
+	public final static SpecialKey NUMPAD_3;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '4' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_4 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_4);
+	public final static SpecialKey NUMPAD_4;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '5' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_5 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_5);
+	public final static SpecialKey NUMPAD_5;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '6' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_6 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_6);
+	public final static SpecialKey NUMPAD_6;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '7' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_7 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_7);
+	public final static SpecialKey NUMPAD_7;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '8' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_8 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_8);
+	public final static SpecialKey NUMPAD_8;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '9' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_9 = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_9);
+	public final static SpecialKey NUMPAD_9;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Add' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_ADD = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_ADD);
+	public final static SpecialKey NUMPAD_ADD;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Decimal' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_DECIMAL = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_DECIMAL);
+	public final static SpecialKey NUMPAD_DECIMAL;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Divide' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_DIVIDE = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_DIVIDE);
+	public final static SpecialKey NUMPAD_DIVIDE;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Enter' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_ENTER = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_ENTER);
+	public final static SpecialKey NUMPAD_ENTER;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the '=' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_EQUAL = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_EQUAL);
+	public final static SpecialKey NUMPAD_EQUAL;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Multiply' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_MULTIPLY = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_MULTIPLY);
+	public final static SpecialKey NUMPAD_MULTIPLY;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Subtract' key on the numpad.
 	 */
-	public final static SpecialKey NUMPAD_SUBTRACT = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.NUMPAD_SUBTRACT);
+	public final static SpecialKey NUMPAD_SUBTRACT;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Page Down' key.
 	 */
-	public final static SpecialKey PAGE_DOWN = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.PAGE_DOWN);
+	public final static SpecialKey PAGE_DOWN;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Page Up' key.
 	 */
-	public final static SpecialKey PAGE_UP = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.PAGE_UP);
+	public final static SpecialKey PAGE_UP;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Pause' key.
 	 */
-	public final static SpecialKey PAUSE = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.PAUSE);
+	public final static SpecialKey PAUSE;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Print Screen' key.
 	 */
-	public final static SpecialKey PRINT_SCREEN = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.PRINT_SCREEN);
+	public final static SpecialKey PRINT_SCREEN;
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents
 	 * the 'Scroll Lock' key.
 	 */
-	public final static SpecialKey SCROLL_LOCK = new SpecialKey(
-			org.eclipse.jface.bindings.keys.SpecialKey.SCROLL_LOCK);
+	public final static SpecialKey SCROLL_LOCK;
 
 	static {
+		final IKeyLookup lookup = KeyLookupFactory.getDefault();
+		ARROW_DOWN = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.ARROW_DOWN_NAME));
+		ARROW_LEFT = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.ARROW_LEFT_NAME));
+		ARROW_RIGHT = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.ARROW_RIGHT_NAME));
+		ARROW_UP = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.ARROW_UP_NAME));
+		BREAK = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.BREAK_NAME));
+		CAPS_LOCK = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.CAPS_LOCK_NAME));
+		END = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.END_NAME));
+		F1 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F1_NAME));
+		F2 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F2_NAME));
+		F3 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F3_NAME));
+		F4 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F4_NAME));
+		F5 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F5_NAME));
+		F6 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F6_NAME));
+		F7 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F7_NAME));
+		F8 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F8_NAME));
+		F9 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F9_NAME));
+		F10 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F10_NAME));
+		F11 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F11_NAME));
+		F12 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F12_NAME));
+		F13 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F13_NAME));
+		F14 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F14_NAME));
+		F15 = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.F15_NAME));
+		HOME = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.HOME_NAME));
+		INSERT = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.INSERT_NAME));
+		NUM_LOCK = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUM_LOCK_NAME));
+		NUMPAD_0 = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_0_NAME));
+		NUMPAD_1 = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_1_NAME));
+		NUMPAD_2 = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_2_NAME));
+		NUMPAD_3 = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_3_NAME));
+		NUMPAD_4 = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_4_NAME));
+		NUMPAD_5 = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_5_NAME));
+		NUMPAD_6 = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_6_NAME));
+		NUMPAD_7 = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_7_NAME));
+		NUMPAD_8 = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_8_NAME));
+		NUMPAD_9 = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_9_NAME));
+		NUMPAD_ADD = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_ADD_NAME));
+		NUMPAD_DECIMAL = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_DECIMAL_NAME));
+		NUMPAD_DIVIDE = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_DIVIDE_NAME));
+		NUMPAD_ENTER = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_ENTER_NAME));
+		NUMPAD_EQUAL = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_EQUAL_NAME));
+		NUMPAD_MULTIPLY = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_MULTIPLY_NAME));
+		NUMPAD_SUBTRACT = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.NUMPAD_SUBTRACT_NAME));
+		PAGE_DOWN = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.PAGE_DOWN_NAME));
+		PAGE_UP = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.PAGE_UP_NAME));
+		PAUSE = new SpecialKey(lookup.formalKeyLookup(IKeyLookup.PAUSE_NAME));
+		PRINT_SCREEN = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.PRINT_SCREEN_NAME));
+		SCROLL_LOCK = new SpecialKey(lookup
+				.formalKeyLookup(IKeyLookup.SCROLL_LOCK_NAME));
+
 		specialKeysByName.put(SpecialKey.ARROW_DOWN.toString(),
 				SpecialKey.ARROW_DOWN);
 		specialKeysByName.put(SpecialKey.ARROW_LEFT.toString(),
@@ -449,9 +482,9 @@ public final class SpecialKey extends NaturalKey {
 	 * Constructs an instance of <code>SpecialKey</code> given a name.
 	 * 
 	 * @param key
-	 *            The key to be wrapped; must not be <code>null</code>.
+	 *            The key to be wrapped.
 	 */
-	private SpecialKey(final org.eclipse.jface.bindings.keys.SpecialKey key) {
+	private SpecialKey(final int key) {
 		super(key);
 	}
 }

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.swt.SWT;
@@ -191,7 +190,7 @@ public final class KeySequenceText {
                 if (!keyStrokes.isEmpty()) {
                     keyStrokes.remove(keyStrokes.size() - 1);
                 }
-                if (!remainingStroke.getModifierKeys().isEmpty()) {
+                if (remainingStroke.getModifierKeys() != 0) {
                     keyStrokes.add(remainingStroke);
                 }
             }
@@ -237,9 +236,9 @@ public final class KeySequenceText {
              * Only insert the stroke if it is *not ScrollLock. Let's not get
              * silly
              */
-            if ((SpecialKey.NUM_LOCK.equals(stroke.getNaturalKey()))
-                    || (SpecialKey.CAPS_LOCK.equals(stroke.getNaturalKey()))
-                    || (SpecialKey.SCROLL_LOCK.equals(stroke.getNaturalKey()))) {
+			if ((SWT.NUM_LOCK == stroke.getNaturalKey())
+					|| (SWT.CAPS_LOCK == stroke.getNaturalKey())
+					|| (SWT.SCROLL_LOCK == stroke.getNaturalKey())) {
                 return;
             }
 
@@ -585,12 +584,12 @@ public final class KeySequenceText {
          * stroke.
          */
         if (allowIncomplete) {
-            SortedSet modifierKeys = new TreeSet(startStroke.getModifierKeys());
-            KeyStroke incompleteStroke = KeyStroke.getInstance(modifierKeys,
-                    null);
-            int incompleteStrokeLength = incompleteStroke.format().length();
-            if ((startTextIndex + incompleteStrokeLength) <= start) {
-                keyStrokes.add(startStrokeIndex, incompleteStroke);
+            final int modifierKeys = startStroke.getModifierKeys();
+			KeyStroke incompleteStroke = KeyStroke.getInstance(modifierKeys,
+					KeyStroke.NO_KEY);
+			int incompleteStrokeLength = incompleteStroke.format().length();
+			if ((startTextIndex + incompleteStrokeLength) <= start) {
+				keyStrokes.add(startStrokeIndex, incompleteStroke);
             }
         }
 
@@ -681,13 +680,12 @@ public final class KeySequenceText {
         KeyStroke currentStroke = (index >= keyStrokes.size()) ? null
                 : (KeyStroke) keyStrokes.get(index);
         if ((currentStroke != null) && (!currentStroke.isComplete())) {
-            SortedSet modifierKeys = new TreeSet(currentStroke
-                    .getModifierKeys());
-            NaturalKey naturalKey = stroke.getNaturalKey();
-            modifierKeys.addAll(stroke.getModifierKeys());
-            keyStrokes.remove(index);
-            keyStrokes.add(index, KeyStroke.getInstance(modifierKeys,
-                    naturalKey));
+            int modifierKeys = currentStroke.getModifierKeys();
+			final int naturalKey = stroke.getNaturalKey();
+			modifierKeys |= stroke.getModifierKeys();
+			keyStrokes.remove(index);
+			keyStrokes.add(index, KeyStroke.getInstance(modifierKeys,
+					naturalKey));
         } else {
             keyStrokes.add(index, stroke);
         }

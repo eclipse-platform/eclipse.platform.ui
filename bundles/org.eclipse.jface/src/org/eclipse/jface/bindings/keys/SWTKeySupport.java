@@ -11,10 +11,6 @@
 
 package org.eclipse.jface.bindings.keys;
 
-import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
 import org.eclipse.jface.bindings.keys.formatting.IKeyFormatter;
 import org.eclipse.jface.bindings.keys.formatting.NativeKeyFormatter;
 import org.eclipse.swt.SWT;
@@ -50,167 +46,14 @@ public final class SWTKeySupport {
 	 * @return The equivalent key stroke; never <code>null</code>.
 	 */
 	public static final KeyStroke convertAcceleratorToKeyStroke(int accelerator) {
-		final SortedSet modifierKeys = new TreeSet();
-		NaturalKey naturalKey = null;
-
-		if ((accelerator & SWT.ALT) != 0)
-			modifierKeys.add(ModifierKey.ALT);
-
-		if ((accelerator & SWT.COMMAND) != 0)
-			modifierKeys.add(ModifierKey.COMMAND);
-
-		if ((accelerator & SWT.CTRL) != 0)
-			modifierKeys.add(ModifierKey.CTRL);
-
-		if ((accelerator & SWT.SHIFT) != 0)
-			modifierKeys.add(ModifierKey.SHIFT);
-
-		if (((accelerator & SWT.KEY_MASK) == 0) && (accelerator != 0)) {
-			// There were only accelerators
-			naturalKey = null;
+		final int modifierKeys = accelerator & SWT.MODIFIER_MASK;
+		final int naturalKey;
+		if (accelerator == modifierKeys) {
+			naturalKey = Integer.MIN_VALUE;
 		} else {
-			// There were other keys.
-			accelerator &= SWT.KEY_MASK;
-
-			switch (accelerator) {
-			case SWT.ARROW_DOWN:
-				naturalKey = SpecialKey.ARROW_DOWN;
-				break;
-			case SWT.ARROW_LEFT:
-				naturalKey = SpecialKey.ARROW_LEFT;
-				break;
-			case SWT.ARROW_RIGHT:
-				naturalKey = SpecialKey.ARROW_RIGHT;
-				break;
-			case SWT.ARROW_UP:
-				naturalKey = SpecialKey.ARROW_UP;
-				break;
-			case SWT.BREAK:
-				naturalKey = SpecialKey.BREAK;
-				break;
-			case SWT.CAPS_LOCK:
-				naturalKey = SpecialKey.CAPS_LOCK;
-				break;
-			case SWT.END:
-				naturalKey = SpecialKey.END;
-				break;
-			case SWT.F1:
-				naturalKey = SpecialKey.F1;
-				break;
-			case SWT.F10:
-				naturalKey = SpecialKey.F10;
-				break;
-			case SWT.F11:
-				naturalKey = SpecialKey.F11;
-				break;
-			case SWT.F12:
-				naturalKey = SpecialKey.F12;
-				break;
-			case SWT.F2:
-				naturalKey = SpecialKey.F2;
-				break;
-			case SWT.F3:
-				naturalKey = SpecialKey.F3;
-				break;
-			case SWT.F4:
-				naturalKey = SpecialKey.F4;
-				break;
-			case SWT.F5:
-				naturalKey = SpecialKey.F5;
-				break;
-			case SWT.F6:
-				naturalKey = SpecialKey.F6;
-				break;
-			case SWT.F7:
-				naturalKey = SpecialKey.F7;
-				break;
-			case SWT.F8:
-				naturalKey = SpecialKey.F8;
-				break;
-			case SWT.F9:
-				naturalKey = SpecialKey.F9;
-				break;
-			case SWT.HOME:
-				naturalKey = SpecialKey.HOME;
-				break;
-			case SWT.INSERT:
-				naturalKey = SpecialKey.INSERT;
-				break;
-			case SWT.KEYPAD_0:
-				naturalKey = SpecialKey.NUMPAD_0;
-				break;
-			case SWT.KEYPAD_1:
-				naturalKey = SpecialKey.NUMPAD_1;
-				break;
-			case SWT.KEYPAD_2:
-				naturalKey = SpecialKey.NUMPAD_2;
-				break;
-			case SWT.KEYPAD_3:
-				naturalKey = SpecialKey.NUMPAD_3;
-				break;
-			case SWT.KEYPAD_4:
-				naturalKey = SpecialKey.NUMPAD_4;
-				break;
-			case SWT.KEYPAD_5:
-				naturalKey = SpecialKey.NUMPAD_5;
-				break;
-			case SWT.KEYPAD_6:
-				naturalKey = SpecialKey.NUMPAD_6;
-				break;
-			case SWT.KEYPAD_7:
-				naturalKey = SpecialKey.NUMPAD_7;
-				break;
-			case SWT.KEYPAD_8:
-				naturalKey = SpecialKey.NUMPAD_8;
-				break;
-			case SWT.KEYPAD_9:
-				naturalKey = SpecialKey.NUMPAD_9;
-				break;
-			case SWT.KEYPAD_ADD:
-				naturalKey = SpecialKey.NUMPAD_ADD;
-				break;
-			case SWT.KEYPAD_CR:
-				naturalKey = SpecialKey.NUMPAD_ENTER;
-				break;
-			case SWT.KEYPAD_DECIMAL:
-				naturalKey = SpecialKey.NUMPAD_DECIMAL;
-				break;
-			case SWT.KEYPAD_DIVIDE:
-				naturalKey = SpecialKey.NUMPAD_DIVIDE;
-				break;
-			case SWT.KEYPAD_EQUAL:
-				naturalKey = SpecialKey.NUMPAD_EQUAL;
-				break;
-			case SWT.KEYPAD_MULTIPLY:
-				naturalKey = SpecialKey.NUMPAD_MULTIPLY;
-				break;
-			case SWT.KEYPAD_SUBTRACT:
-				naturalKey = SpecialKey.NUMPAD_SUBTRACT;
-				break;
-			case SWT.NUM_LOCK:
-				naturalKey = SpecialKey.NUM_LOCK;
-				break;
-			case SWT.PAGE_DOWN:
-				naturalKey = SpecialKey.PAGE_DOWN;
-				break;
-			case SWT.PAGE_UP:
-				naturalKey = SpecialKey.PAGE_UP;
-				break;
-			case SWT.PAUSE:
-				naturalKey = SpecialKey.PAUSE;
-				break;
-			case SWT.PRINT_SCREEN:
-				naturalKey = SpecialKey.PRINT_SCREEN;
-				break;
-			case SWT.SCROLL_LOCK:
-				naturalKey = SpecialKey.SCROLL_LOCK;
-				break;
-			default:
-				naturalKey = CharacterKey
-						.getInstance((char) (accelerator & 0xFFFF));
-			}
+			naturalKey = accelerator - modifierKeys;
 		}
-
+		
 		return KeyStroke.getInstance(modifierKeys, naturalKey);
 	}
 
@@ -339,74 +182,7 @@ public final class SWTKeySupport {
 	 */
 	public static final int convertKeyStrokeToAccelerator(
 			final KeyStroke keyStroke) {
-		int accelerator = 0;
-		final Iterator iterator = keyStroke.getModifierKeys().iterator();
-
-		while (iterator.hasNext()) {
-			final ModifierKey modifierKey = (ModifierKey) iterator.next();
-
-			if (modifierKey == ModifierKey.ALT)
-				accelerator |= SWT.ALT;
-			else if (modifierKey == ModifierKey.COMMAND)
-				accelerator |= SWT.COMMAND;
-			else if (modifierKey == ModifierKey.CTRL)
-				accelerator |= SWT.CTRL;
-			else if (modifierKey == ModifierKey.SHIFT)
-				accelerator |= SWT.SHIFT;
-		}
-
-		final NaturalKey naturalKey = keyStroke.getNaturalKey();
-
-		if (naturalKey instanceof CharacterKey)
-			accelerator |= ((CharacterKey) naturalKey).getCharacter();
-		else if (naturalKey instanceof SpecialKey) {
-			final SpecialKey specialKey = (SpecialKey) naturalKey;
-
-			if (specialKey == SpecialKey.ARROW_DOWN)
-				accelerator |= SWT.ARROW_DOWN;
-			else if (specialKey == SpecialKey.ARROW_LEFT)
-				accelerator |= SWT.ARROW_LEFT;
-			else if (specialKey == SpecialKey.ARROW_RIGHT)
-				accelerator |= SWT.ARROW_RIGHT;
-			else if (specialKey == SpecialKey.ARROW_UP)
-				accelerator |= SWT.ARROW_UP;
-			else if (specialKey == SpecialKey.END)
-				accelerator |= SWT.END;
-			else if (specialKey == SpecialKey.F1)
-				accelerator |= SWT.F1;
-			else if (specialKey == SpecialKey.F10)
-				accelerator |= SWT.F10;
-			else if (specialKey == SpecialKey.F11)
-				accelerator |= SWT.F11;
-			else if (specialKey == SpecialKey.F12)
-				accelerator |= SWT.F12;
-			else if (specialKey == SpecialKey.F2)
-				accelerator |= SWT.F2;
-			else if (specialKey == SpecialKey.F3)
-				accelerator |= SWT.F3;
-			else if (specialKey == SpecialKey.F4)
-				accelerator |= SWT.F4;
-			else if (specialKey == SpecialKey.F5)
-				accelerator |= SWT.F5;
-			else if (specialKey == SpecialKey.F6)
-				accelerator |= SWT.F6;
-			else if (specialKey == SpecialKey.F7)
-				accelerator |= SWT.F7;
-			else if (specialKey == SpecialKey.F8)
-				accelerator |= SWT.F8;
-			else if (specialKey == SpecialKey.F9)
-				accelerator |= SWT.F9;
-			else if (specialKey == SpecialKey.HOME)
-				accelerator |= SWT.HOME;
-			else if (specialKey == SpecialKey.INSERT)
-				accelerator |= SWT.INSERT;
-			else if (specialKey == SpecialKey.PAGE_DOWN)
-				accelerator |= SWT.PAGE_DOWN;
-			else if (specialKey == SpecialKey.PAGE_UP)
-				accelerator |= SWT.PAGE_UP;
-		}
-
-		return accelerator;
+		return keyStroke.getModifierKeys() + keyStroke.getNaturalKey();
 	}
 
 	/**

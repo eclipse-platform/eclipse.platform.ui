@@ -22,11 +22,11 @@ import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
-import org.eclipse.jface.bindings.keys.CharacterKey;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyBinding;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.bindings.keys.ModifierKey;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.swt.SWT;
 
@@ -187,37 +187,33 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 		final String currentPlatform = SWT.getPlatform();
 
 		// Set-up a table of modifier keys.
-		final ModifierKey[] modifierKeys0 = {};
-		final ModifierKey[] modifierKeys1 = { ModifierKey.ALT };
-		final ModifierKey[] modifierKeys2 = { ModifierKey.COMMAND };
-		final ModifierKey[] modifierKeys3 = { ModifierKey.CTRL };
-		final ModifierKey[] modifierKeys4 = { ModifierKey.SHIFT };
-		final ModifierKey[] modifierKeys5 = { ModifierKey.ALT,
-				ModifierKey.COMMAND };
-		final ModifierKey[] modifierKeys6 = { ModifierKey.ALT, ModifierKey.CTRL };
-		final ModifierKey[] modifierKeys7 = { ModifierKey.ALT,
-				ModifierKey.SHIFT };
-		final ModifierKey[] modifierKeys8 = { ModifierKey.COMMAND,
-				ModifierKey.CTRL };
-		final ModifierKey[] modifierKeys9 = { ModifierKey.COMMAND,
-				ModifierKey.SHIFT };
-		final ModifierKey[] modifierKeys10 = { ModifierKey.CTRL,
-				ModifierKey.SHIFT };
-		final ModifierKey[] modifierKeys11 = { ModifierKey.ALT,
-				ModifierKey.COMMAND, ModifierKey.CTRL };
-		final ModifierKey[] modifierKeys12 = { ModifierKey.ALT,
-				ModifierKey.COMMAND, ModifierKey.SHIFT };
-		final ModifierKey[] modifierKeys13 = { ModifierKey.ALT,
-				ModifierKey.CTRL, ModifierKey.SHIFT };
-		final ModifierKey[] modifierKeys14 = { ModifierKey.COMMAND,
-				ModifierKey.CTRL, ModifierKey.SHIFT };
-		final ModifierKey[] modifierKeys15 = { ModifierKey.ALT,
-				ModifierKey.COMMAND, ModifierKey.CTRL, ModifierKey.SHIFT };
-		final ModifierKey[][] modifierKeyTable = { modifierKeys0,
-				modifierKeys1, modifierKeys2, modifierKeys3, modifierKeys4,
-				modifierKeys5, modifierKeys6, modifierKeys7, modifierKeys8,
-				modifierKeys9, modifierKeys10, modifierKeys11, modifierKeys12,
-				modifierKeys13, modifierKeys14, modifierKeys15 };
+		final IKeyLookup lookup = KeyLookupFactory.getDefault();
+		final int modifierKeys0 = 0;
+		final int modifierKeys1 = lookup.getAlt();
+		final int modifierKeys2 = lookup.getCommand();
+		final int modifierKeys3 = lookup.getCtrl();
+		final int modifierKeys4 = lookup.getShift();
+		final int modifierKeys5 = lookup.getAlt() | lookup.getCommand();
+		final int modifierKeys6 = lookup.getAlt() | lookup.getCtrl();
+		final int modifierKeys7 = lookup.getAlt() | lookup.getShift();
+		final int modifierKeys8 = lookup.getCommand() | lookup.getCtrl();
+		final int modifierKeys9 = lookup.getCommand() | lookup.getShift();
+		final int modifierKeys10 = lookup.getCtrl() | lookup.getShift();
+		final int modifierKeys11 = lookup.getAlt() | lookup.getCommand()
+				| lookup.getCtrl();
+		final int modifierKeys12 = lookup.getAlt() | lookup.getCommand()
+				| lookup.getShift();
+		final int modifierKeys13 = lookup.getAlt() | lookup.getCtrl()
+				| lookup.getShift();
+		final int modifierKeys14 = lookup.getCommand() | lookup.getCtrl()
+				| lookup.getShift();
+		final int modifierKeys15 = lookup.getAlt() | lookup.getCommand()
+				| lookup.getCtrl() | lookup.getShift();
+		final int[] modifierKeyTable = { modifierKeys0, modifierKeys1,
+				modifierKeys2, modifierKeys3, modifierKeys4, modifierKeys5,
+				modifierKeys6, modifierKeys7, modifierKeys8, modifierKeys9,
+				modifierKeys10, modifierKeys11, modifierKeys12, modifierKeys13,
+				modifierKeys14, modifierKeys15 };
 
 		// Initialize the contexts.
 		contextManager = new ContextManager();
@@ -261,12 +257,10 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 
 			// Build a key sequence.
 			final char character = (char) ('A' + (i % 26));
-			final CharacterKey characterKey = CharacterKey
-					.getInstance(character);
-			final ModifierKey[] modifierKeys = modifierKeyTable[(i / 26)
+			final int modifierKeys = modifierKeyTable[(i / 26)
 					% modifierKeyTable.length];
 			final KeyStroke keyStroke = KeyStroke.getInstance(modifierKeys,
-					characterKey);
+					character);
 			final KeySequence keySequence = KeySequence.getInstance(keyStroke);
 
 			// Build the other parameters.
@@ -316,12 +310,10 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 
 			// Build a key sequence.
 			final char character = (char) ('A' + (i % 26));
-			final CharacterKey characterKey = CharacterKey
-					.getInstance(character);
-			final ModifierKey[] modifierKeys = modifierKeyTable[(i / 26)
+			final int modifierKeys = modifierKeyTable[(i / 26)
 					% modifierKeyTable.length];
 			final KeyStroke keyStroke = KeyStroke.getInstance(modifierKeys,
-					characterKey);
+					character);
 			final KeySequence keySequence = KeySequence.getInstance(keyStroke);
 
 			// Build the other parameters.

@@ -11,17 +11,13 @@
 
 package org.eclipse.jface.bindings.keys.formatting;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.ResourceBundle;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
-import org.eclipse.jface.bindings.keys.Key;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.bindings.keys.ModifierKey;
-import org.eclipse.jface.bindings.keys.NaturalKey;
 import org.eclipse.jface.util.Util;
 
 /**
@@ -45,13 +41,19 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	 * The key for the delimiter between keys. This is used in the
 	 * internationalization bundles.
 	 */
-	protected final static String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$
+	protected static final String KEY_DELIMITER_KEY = "KEY_DELIMITER"; //$NON-NLS-1$
 
 	/**
 	 * The key for the delimiter between key strokes. This is used in the
 	 * internationalization bundles.
 	 */
-	protected final static String KEY_STROKE_DELIMITER_KEY = "KEY_STROKE_DELIMITER"; //$NON-NLS-1$
+	protected static final String KEY_STROKE_DELIMITER_KEY = "KEY_STROKE_DELIMITER"; //$NON-NLS-1$
+
+	/**
+	 * An empty integer array that can be used in
+	 * <code>sortModifierKeys(int)</code>.
+	 */
+	protected static final int[] NO_MODIFIER_KEYS = new int[0];
 
 	/**
 	 * The bundle in which to look up the internationalized text for all of the
@@ -59,7 +61,7 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	 * the internationalized strings. Some platforms (namely Carbon) provide
 	 * special Unicode characters and glyphs for some keys.
 	 */
-	private final static ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
 			.getBundle(AbstractKeyFormatter.class.getName());
 
 	/*
@@ -67,8 +69,9 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	 * 
 	 * @see org.eclipse.ui.keys.KeyFormatter#format(org.eclipse.ui.keys.KeySequence)
 	 */
-	public String format(Key key) {
-		String name = key.toString();
+	public String format(final int key) {
+		final IKeyLookup lookup = KeyLookupFactory.getDefault();
+		final String name = lookup.formalNameLookup(key);
 		return Util.translateString(RESOURCE_BUNDLE, name, name);
 	}
 
@@ -97,22 +100,26 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	 * 
 	 * @see org.eclipse.ui.keys.KeyFormatter#formatKeyStroke(org.eclipse.ui.keys.KeyStroke)
 	 */
-	public String format(KeyStroke keyStroke) {
-		String keyDelimiter = getKeyDelimiter();
+	public String format(final KeyStroke keyStroke) {
+		final String keyDelimiter = getKeyDelimiter();
 
 		// Format the modifier keys, in sorted order.
-		SortedSet modifierKeys = new TreeSet(getModifierKeyComparator());
-		modifierKeys.addAll(keyStroke.getModifierKeys());
-		StringBuffer stringBuffer = new StringBuffer();
-		Iterator modifierKeyItr = modifierKeys.iterator();
-		while (modifierKeyItr.hasNext()) {
-			stringBuffer.append(format((ModifierKey) modifierKeyItr.next()));
-			stringBuffer.append(keyDelimiter);
+		final int modifierKeys = keyStroke.getModifierKeys();
+		final int[] sortedModifierKeys = sortModifierKeys(modifierKeys);
+		final StringBuffer stringBuffer = new StringBuffer();
+		if (sortedModifierKeys != null) {
+			for (int i = 0; i < sortedModifierKeys.length; i++) {
+				final int modifierKey = sortedModifierKeys[i];
+				if (modifierKey != KeyStroke.NO_KEY) {
+					stringBuffer.append(format(modifierKey));
+					stringBuffer.append(keyDelimiter);
+				}
+			}
 		}
 
 		// Format the natural key, if any.
-		NaturalKey naturalKey = keyStroke.getNaturalKey();
-		if (naturalKey != null) {
+		final int naturalKey = keyStroke.getNaturalKey();
+		if (naturalKey != 0) {
 			stringBuffer.append(format(naturalKey));
 		}
 
@@ -140,12 +147,15 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	protected abstract String getKeyStrokeDelimiter();
 
 	/**
-	 * An accessor for the comparator to use for sorting modifier keys. This is
-	 * used by the default format implementations to sort the modifier keys
-	 * before formatting them into a string.
+	 * Separates the modifier keys from each other, and then places them in an
+	 * array in some sorted order. The sort order is dependent on the type of
+	 * formatter.
 	 * 
-	 * @return The comparator to use to sort modifier keys; must not be
-	 *         <code>null</code>.
+	 * @param modifierKeys
+	 *            The modifier keys from the key stroke.
+	 * @return An array of modifier key values -- separated and sorted in some
+	 *         order. Any values in this array that are
+	 *         <code>KeyStroke.NO_KEY</code> should be ignored.
 	 */
-	protected abstract Comparator getModifierKeyComparator();
+	protected abstract int[] sortModifierKeys(final int modifierKeys);
 }

@@ -24,7 +24,8 @@ package org.eclipse.ui.keys;
  * extend this class.
  * </p>
  * 
- * @deprecated Please use org.eclipse.jface.bindings.keys.NaturalKey
+ * @deprecated Please use org.eclipse.jface.bindings.keys.KeyStroke and
+ *             org.eclipse.jface.bindings.keys.KeyLookupFactory
  * @since 3.0
  */
 public abstract class NaturalKey extends Key {
@@ -33,9 +34,9 @@ public abstract class NaturalKey extends Key {
 	 * Constructs an instance of <code>NaturalKey</code> given a name.
 	 * 
 	 * @param key
-	 *            The key to be wrapped; must not be <code>null</code>.
+	 *            The key to be wrapped.
 	 */
-	NaturalKey(org.eclipse.jface.bindings.keys.NaturalKey key) {
+	NaturalKey(final int key) {
 		super(key);
 	}
 }

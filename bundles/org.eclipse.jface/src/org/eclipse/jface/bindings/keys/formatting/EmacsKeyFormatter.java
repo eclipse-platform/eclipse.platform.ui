@@ -11,13 +11,12 @@
 
 package org.eclipse.jface.bindings.keys.formatting;
 
-import java.util.Comparator;
 import java.util.ResourceBundle;
 
-import org.eclipse.jface.bindings.keys.Key;
+import org.eclipse.jface.bindings.keys.IKeyLookup;
+import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.bindings.keys.ModifierKey;
 import org.eclipse.jface.util.Util;
 
 /**
@@ -36,12 +35,6 @@ import org.eclipse.jface.util.Util;
 public final class EmacsKeyFormatter extends AbstractKeyFormatter {
 
 	/**
-	 * A comparator that guarantees that modifier keys will be sorted the same
-	 * across different platforms.
-	 */
-	private static final Comparator EMACS_MODIFIER_KEY_COMPARATOR = new AlphabeticModifierKeyComparator();
-
-	/**
 	 * The resource bundle used by <code>format()</code> to translate formal
 	 * string representations by locale.
 	 */
@@ -56,10 +49,11 @@ public final class EmacsKeyFormatter extends AbstractKeyFormatter {
 	 *            The key to format; must not be <code>null</code>.
 	 * @return The key formatted as a string; should not be <code>null</code>.
 	 */
-	public String format(Key key) {
-		if (key instanceof ModifierKey) {
-			String formattedName = Util.translateString(RESOURCE_BUNDLE, key
-					.toString(), null);
+	public String format(final int key) {
+		final IKeyLookup lookup = KeyLookupFactory.getDefault();
+		if (lookup.isModifierKey(key)) {
+			String formattedName = Util.translateString(RESOURCE_BUNDLE, lookup
+					.formalNameLookup(key), null);
 			if (formattedName != null) {
 				return formattedName;
 			}
@@ -88,12 +82,24 @@ public final class EmacsKeyFormatter extends AbstractKeyFormatter {
 				KeySequence.KEY_STROKE_DELIMITER);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.keys.AbstractKeyFormatter#getModifierKeyComparator()
-	 */
-	protected Comparator getModifierKeyComparator() {
-		return EMACS_MODIFIER_KEY_COMPARATOR;
+	protected int[] sortModifierKeys(int modifierKeys) {
+		final IKeyLookup lookup = KeyLookupFactory.getDefault();
+		final int[] sortedKeys = new int[4];
+		int index = 0;
+
+		if ((modifierKeys & lookup.getAlt()) != 0) {
+			sortedKeys[index++] = lookup.getAlt();
+		}
+		if ((modifierKeys & lookup.getCommand()) != 0) {
+			sortedKeys[index++] = lookup.getCommand();
+		}
+		if ((modifierKeys & lookup.getCtrl()) != 0) {
+			sortedKeys[index++] = lookup.getCtrl();
+		}
+		if ((modifierKeys & lookup.getShift()) != 0) {
+			sortedKeys[index++] = lookup.getShift();
+		}
+
+		return sortedKeys;
 	}
 }
