@@ -57,6 +57,7 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 	private static final String RUNTIME_PLUGIN_ID = "org.eclipse.core.runtime";
 	private static final String XML_PLUGIN_ID = "org.apache.xerces";
 
+	private static final String ECLIPSE = "eclipse";
 	private static final String PLUGINS = "plugins";
 	private static final String FEATURES = "features";
 	private static final String CONFIG_DIR = ".config";
@@ -1568,7 +1569,9 @@ public class PlatformConfiguration implements IPlatformConfiguration {
 		
 		// 	make sure we have a valid link specification
 		try {
-			File target = new File(link);
+			if (!link.endsWith(File.separator))
+				link += File.separator;
+			File target = new File(link + ECLIPSE);
 			link = "file:" + target.getAbsolutePath().replace(File.separatorChar,'/');
 			if (!link.endsWith("/"))
 				link += "/"; // sites must be directories
