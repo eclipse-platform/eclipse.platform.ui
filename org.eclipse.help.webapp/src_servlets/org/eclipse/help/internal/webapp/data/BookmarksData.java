@@ -48,6 +48,9 @@ public class BookmarksData extends RequestData {
 			&& bookmarkURL.length() > 0
 			&& !bookmarkURL.equals("about:blank")) {
 			String title = request.getParameter("title");
+			if(title==null){
+				return;
+			}
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
 
@@ -69,6 +72,9 @@ public class BookmarksData extends RequestData {
 			&& bookmarkURL.length() > 0
 			&& !bookmarkURL.equals("about:blank")) {
 			String title = request.getParameter("title");
+			if(title==null){
+				return;
+			}
 			Preferences prefs = HelpPlugin.getDefault().getPluginPreferences();
 			String bookmarks = prefs.getString(HelpSystem.BOOKMARKS);
 			String removeString =
