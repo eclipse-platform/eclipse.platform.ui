@@ -733,7 +733,7 @@ class FindReplaceDialog extends Dialog {
 			if (wrapSearch) {
 				int index= findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
 				if (index == -1) {
-					if (okToUse(getShell()))
+					if (okToUse(getShell()) && !isIncrementalSearch())
 						getShell().getDisplay().beep();
 					index= findAndSelect(-1, findString, true, caseSensitive, wholeWord, regExSearch);
 				}
@@ -746,7 +746,7 @@ class FindReplaceDialog extends Dialog {
 		if (wrapSearch) {
 			int index= findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
 			if (index == -1) {
-				if (okToUse(getShell()))
+				if (okToUse(getShell()) && !isIncrementalSearch())
 					getShell().getDisplay().beep();
 				index= findAndSelect(-1, findString, false, caseSensitive, wholeWord, regExSearch);
 			}
