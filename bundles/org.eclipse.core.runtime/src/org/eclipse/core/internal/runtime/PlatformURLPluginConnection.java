@@ -50,10 +50,11 @@ public class PlatformURLPluginConnection extends PlatformURLConnection {
 		target = InternalPlatform.getDefault().getBundle(id);
 		if (target == null)
 			throw new IOException(Policy.bind("url.resolvePlugin", url.toString())); //$NON-NLS-1$
+		URL result = target.getEntry("");
 		if (ix == -1 || (ix + 1) >= spec.length())
-			return target.getEntry("");
+			return result;
 		else
-			return target.getEntry(spec.substring(ix + 1));
+			return new URL(result, spec.substring(ix + 1));
 	}
 	public static void startup() {
 		// register connection type for platform:/plugin handling
