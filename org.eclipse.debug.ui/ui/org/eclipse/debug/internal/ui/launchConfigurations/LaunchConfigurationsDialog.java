@@ -1046,7 +1046,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  	 * @return the current tab group, or <code>null</code> if none
  	 */
  	public ILaunchConfigurationTabGroup getTabGroup() {
- 		return getTabViewer().getTabGroup();
+ 		if (getTabViewer() != null) {
+ 			return getTabViewer().getTabGroup();
+ 		}
+ 		return null;
  	}
  	
  	/**
