@@ -557,7 +557,7 @@ public IStatus validateNatureSet(String[] natureIds) {
 			if (!natures.contains(required[j]))
 				result.add(failure(Policy.bind("natures.missingPrerequisite", natureIds[i], required[j]))); //$NON-NLS-1$
 	}
-	//multistatus will be OK if no child statuses have been added
-	return result;
+	//if there are no problems we must return a status whose code is OK
+	return result.isOK() ? ResourceStatus.OK_STATUS : (IStatus)result;
 }
 }
