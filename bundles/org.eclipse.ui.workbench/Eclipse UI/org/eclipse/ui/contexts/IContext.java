@@ -33,6 +33,7 @@ package org.eclipse.ui.contexts;
  * 
  * @since 3.0
  * @see org.eclipse.ui.contexts.IContextManager
+ * @see org.eclipse.core.commands.contexts.Context
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
  */
 public interface IContext extends Comparable {

@@ -22,6 +22,7 @@ package org.eclipse.ui.contexts;
  * @see IContextManager#addContextManagerListener(IContextManagerListener)
  * @see IContextManager#removeContextManagerListener(IContextManagerListener)
  * @deprecated Please use the "org.eclipse.core.commands" plug-in instead.
+ * @see org.eclipse.core.commands.contexts.IContextManagerListener
  */
 public interface IContextManagerListener {
 
