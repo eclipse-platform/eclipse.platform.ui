@@ -668,7 +668,7 @@ public class DebugPlugin extends Plugin {
      * of logical structure type is applicable for a value, the default logical structure
      * type is used to display a value.
      * 
-     * @param structures a combination of structures applicable to a value
+     * @param types a combination of structures applicable to a value
      * @return the default structure that should be used to display the value
      * or <code>null</code> if none
      *  
