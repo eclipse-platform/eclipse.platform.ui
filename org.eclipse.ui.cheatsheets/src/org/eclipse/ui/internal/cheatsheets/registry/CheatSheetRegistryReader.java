@@ -15,11 +15,11 @@ import java.text.Collator;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
-import org.eclipse.ui.internal.registry.Category;
-
 import org.eclipse.ui.internal.cheatsheets.*;
+import org.eclipse.ui.internal.registry.Category;
+import org.eclipse.ui.model.AdaptableList;
+import org.osgi.framework.Bundle;
 
 /**
  *  Instances access the registry that is provided at creation time
@@ -418,11 +418,11 @@ public class CheatSheetRegistryReader extends RegistryReader {
 	 * </p>
 	 */
 	protected void readCheatSheets() {
-		IPluginRegistry pregistry = Platform.getPluginRegistry();
+		IExtensionRegistry xregistry = Platform.getExtensionRegistry();
 
 		if (cheatsheets == null) {
 			cheatsheets = createEmptyCheatSheetCollection();
-			readRegistry(pregistry, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, pluginPoint);
+			readRegistry(xregistry, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, pluginPoint);
 		}
 
 		finishCategories();
@@ -437,9 +437,9 @@ public class CheatSheetRegistryReader extends RegistryReader {
 	public ArrayList readItemExtensions() {
 		cheatsheetItemExtensions = new ArrayList();
 
-		IPluginRegistry pregistry = Platform.getPluginRegistry();
+		IExtensionRegistry xregistry = Platform.getExtensionRegistry();
 		//Now read the cheat sheet extensions.
-		readRegistry(pregistry, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, csItemExtension);
+		readRegistry(xregistry, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, csItemExtension);
 
 		return cheatsheetItemExtensions;
 	}
@@ -452,10 +452,11 @@ public class CheatSheetRegistryReader extends RegistryReader {
 
 		Class extClass = null;
 		AbstractItemExtensionElement extElement = null;
-		IPluginDescriptor desc = element.getDeclaringExtension().getDeclaringPluginDescriptor();
+		String pluginId = element.getDeclaringExtension().getNamespace();
 
 		try {
-			extClass = desc.getPluginClassLoader().loadClass(className);
+			Bundle bundle = Platform.getBundle(pluginId);
+			extClass = bundle.loadClass(className);
 		} catch (Exception e) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);

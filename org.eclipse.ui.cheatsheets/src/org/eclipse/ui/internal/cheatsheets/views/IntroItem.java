@@ -12,16 +12,13 @@ package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.net.URL;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
 
@@ -43,15 +40,14 @@ public class IntroItem extends ViewItem {
 
 	protected void init() {
 		super.init();
-		IPluginDescriptor mydesc = CheatSheetPlugin.getPlugin().getDescriptor();
 
 		String imageFileName = "icons/full/clcl16/start_cheatsheet.gif"; //$NON-NLS-1$
-		URL imageURL = mydesc.find(new Path(imageFileName));
+		URL imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		startButtonImage = imageDescriptor.createImage();
 
 		imageFileName = "icons/full/clcl16/restart_cheatsheet.gif"; //$NON-NLS-1$
-		imageURL = mydesc.find(new Path(imageFileName));
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		restartButtonImage = imageDescriptor.createImage();
 	}

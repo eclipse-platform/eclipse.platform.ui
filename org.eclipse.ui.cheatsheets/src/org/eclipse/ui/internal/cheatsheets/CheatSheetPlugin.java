@@ -22,6 +22,7 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.cheatsheets.actions.CheatSheetMenu;
 import org.eclipse.ui.internal.cheatsheets.registry.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.BundleContext;
 
 /**
  * The main plugin class for cheat sheets.
@@ -33,8 +34,9 @@ public class CheatSheetPlugin extends AbstractUIPlugin implements IStartup, IChe
 	private static CheatSheetPlugin plugin;
 
 	//Resource bundle.
+	private boolean resourceBundleInitialized = false;
 	private ResourceBundle resourceBundle;
-	private CheatSheetHistory history;
+	private CheatSheetHistory history = null;
 
 	private static final String DEFAULT_CHEATSHEET_STATE_FILENAME = "cheatsheet.xml"; //$NON-NLS-1$
 	private static final String MEMENTO_TAG_CHEATSHEET = "cheatsheet"; //$NON-NLS-1$
@@ -42,28 +44,11 @@ public class CheatSheetPlugin extends AbstractUIPlugin implements IStartup, IChe
 	private static final String VERSION_STRING[] = { "0.0", "3.0.0" }; //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String MEMENTO_TAG_CHEATSHEET_HISTORY = "cheatsheetHistory"; //$NON-NLS-1$	
 
-/*
-	public CheatSheetPlugin() {
-		System.out.println("Here"); //$NON-NLS-1$
-	}
-	
-*/
-	
 	/**
 	 * The constructor.
 	 */
-	public CheatSheetPlugin(IPluginDescriptor descriptor) {
-		super(descriptor);
-		plugin = this;
-
-		//we have this in the code, but resourceBundle is never used.
-		//we are leaving it in for the future in case it is needed.
-		try {
-			resourceBundle = ResourceBundle.getBundle(ICheatSheetResource.CHEAT_SHEET_RESOURCE_ID);
-		} catch (MissingResourceException x) {
-			resourceBundle = null;
-		}
-
+	public CheatSheetPlugin() {
+		super();
 	}
 
 	/**
@@ -139,7 +124,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin implements IStartup, IChe
 	public static String getResourceString(String key) {
 		try {
 			if(plugin != null) {
-				return plugin.getDescriptor().getResourceString(key);
+				return Platform.getResourceString(plugin.getBundle(), key);
 			}
 		} catch (MissingResourceException e) {
 		}
@@ -169,6 +154,17 @@ public class CheatSheetPlugin extends AbstractUIPlugin implements IStartup, IChe
 	 * Returns the plugin's resource bundle,
 	 */
 	public ResourceBundle getResourceBundle() {
+		//we have this in the code, but resourceBundle is never used.
+		//we are leaving it in for the future in case it is needed.
+		if (!resourceBundleInitialized) {
+			// only try to initialize once 
+			resourceBundleInitialized = true;
+			try {
+				resourceBundle = ResourceBundle.getBundle(ICheatSheetResource.CHEAT_SHEET_RESOURCE_ID);
+			} catch (MissingResourceException x) {
+				resourceBundle = null;
+			}
+		}
 		return resourceBundle;
 	}
 
@@ -283,52 +279,28 @@ public class CheatSheetPlugin extends AbstractUIPlugin implements IStartup, IChe
 		});
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.Plugin#startup()
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
-	public void startup() throws CoreException {
-		// initialize the MRU history
-		getCheatSheetHistory();
+	public void start(BundleContext context) throws Exception {
+		super.start(context);
+
+		plugin = this;
+		
+		// allow the MRU history to be lazily initialized by getCheatSheetHistory
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.Plugin#shutdown()
+	/* (non-Javadoc)
+	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
-	public void shutdown() throws CoreException {
-		// save the MRU history
-		saveCheatSheetHistory();
-	}
-
-	private Class loadClass(String className, String classPluginId) {
-		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor(classPluginId);
-		if (desc == null) {
-			return null;
+	public void stop(BundleContext context) throws Exception {
+		super.stop(context);
+		
+		// save the MRU history if necessary
+		// if we never restored history, let existing memento stand
+		if (history != null) {
+			saveCheatSheetHistory();
 		}
-		Class aClass = null;
-		try {
-			aClass = desc.getPluginClassLoader().loadClass(className);
-		} catch (Exception e) {
-			return null;
-		}
-		return aClass;
 	}
-
-//	/* (non-Javadoc)
-//	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-//	 */
-//	public void start(BundleContext context) throws Exception {
-//		super.start(context);
-//
-//		plugin = this;
-//		startup();
-//	}
-//
-//	/* (non-Javadoc)
-//	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-//	 */
-//	public void stop(BundleContext context) throws Exception {
-//		super.stop(context);
-//		shutdown();
-//	}
 
 }

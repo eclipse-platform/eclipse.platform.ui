@@ -11,7 +11,6 @@
 package org.eclipse.ui.internal.cheatsheets.registry;
 
 import org.eclipse.core.runtime.*;
-
 import org.eclipse.ui.internal.cheatsheets.*;
 
 /**
@@ -57,9 +56,8 @@ public abstract class RegistryReader {
 	 */
 	private void logError(IConfigurationElement element, String text) {
 		IExtension extension = element.getDeclaringExtension();
-		IPluginDescriptor descriptor = extension.getDeclaringPluginDescriptor();
 		StringBuffer buf = new StringBuffer();
-		buf.append("Plugin " + descriptor.getUniqueIdentifier() + ", extension " + extension.getExtensionPointUniqueIdentifier()); //$NON-NLS-2$//$NON-NLS-1$
+		buf.append("Plugin " + extension.getNamespace() + ", extension " + extension.getExtensionPointUniqueIdentifier()); //$NON-NLS-2$//$NON-NLS-1$
 		buf.append("\n" + text); //$NON-NLS-1$
 
 		IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, buf.toString(), null);
@@ -92,8 +90,8 @@ public abstract class RegistryReader {
 		// dependent in the order listed in the XML file.
 		Sorter sorter = new Sorter() {
 			public boolean compare(Object extension1, Object extension2) {
-				String s1 = ((IExtension) extension1).getDeclaringPluginDescriptor().getUniqueIdentifier().toUpperCase();
-				String s2 = ((IExtension) extension2).getDeclaringPluginDescriptor().getUniqueIdentifier().toUpperCase();
+				String s1 = ((IExtension) extension1).getNamespace().toUpperCase();
+				String s2 = ((IExtension) extension2).getNamespace().toUpperCase();
 				//Return true if elementTwo is 'greater than' elementOne
 				return s2.compareTo(s1) > 0;
 			}
@@ -150,7 +148,7 @@ public abstract class RegistryReader {
 	 *	Start the registry reading process using the
 	 * supplied plugin ID and extension point.
 	 */
-	/*package*/ void readRegistry(IPluginRegistry registry, String pluginId, String extensionPoint) {
+	/*package*/ void readRegistry(IExtensionRegistry registry, String pluginId, String extensionPoint) {
 		IExtensionPoint point = registry.getExtensionPoint(pluginId, extensionPoint);
 		if (point != null) {
 			IExtension[] extensions = point.getExtensions();

@@ -233,25 +233,23 @@ public class CoreItem extends ViewItem {
 	protected void init() {
 		super.init();
 
-		IPluginDescriptor mydesc = CheatSheetPlugin.getPlugin().getDescriptor();
-
 		String imageFileName = "icons/full/clcl16/start_task.gif"; //$NON-NLS-1$
-		URL imageURL = mydesc.find(new Path(imageFileName));
+		URL imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		startImage = imageDescriptor.createImage();
 
 		imageFileName = "icons/full/clcl16/skip_task.gif"; //$NON-NLS-1$
-		imageURL = mydesc.find(new Path(imageFileName));
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		skipImage = imageDescriptor.createImage();
 
 		imageFileName = "icons/full/clcl16/complete_task.gif"; //$NON-NLS-1$
-		imageURL = mydesc.find(new Path(imageFileName));
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		completeImage = imageDescriptor.createImage();
 
 		imageFileName = "icons/full/clcl16/restart_task.gif"; //$NON-NLS-1$
-		imageURL = mydesc.find(new Path(imageFileName));
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		restartImage = imageDescriptor.createImage();
 	}

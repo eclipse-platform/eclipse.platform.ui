@@ -20,18 +20,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.cheatsheets.*;
 import org.eclipse.ui.forms.events.*;
-import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.internal.widgets.FormUtil;
 import org.eclipse.ui.forms.widgets.*;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.help.WorkbenchHelp;
-
 import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
-import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
-import org.eclipse.ui.cheatsheets.ICheatSheetAction;
+import org.osgi.framework.Bundle;
 
 public abstract class ViewItem {
 
@@ -90,20 +87,18 @@ public abstract class ViewItem {
 		// Initialize the item...
 		init();
 
-		IPluginDescriptor mydesc = CheatSheetPlugin.getPlugin().getDescriptor();
-
 		String imageFileName = "icons/full/obj16/skip_status.gif"; //$NON-NLS-1$
-		URL imageURL = mydesc.find(new Path(imageFileName));
+		URL imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		skipImage = imageDescriptor.createImage();
 
 		imageFileName = "icons/full/obj16/complete_status.gif"; //$NON-NLS-1$
-		imageURL = mydesc.find(new Path(imageFileName));
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		completeImage = imageDescriptor.createImage();
 
 		imageFileName = "icons/full/clcl16/linkto_help.gif"; //$NON-NLS-1$
-		imageURL = mydesc.find(new Path(imageFileName));
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
 		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
 		helpImage = imageDescriptor.createImage();
 
@@ -354,8 +349,8 @@ public abstract class ViewItem {
 	 */
 	/*package*/
 	byte runAction(String pluginId, String className, String[] params, CheatSheetManager csm) {
-		IPluginDescriptor desc = Platform.getPluginRegistry().getPluginDescriptor(pluginId);
-		if (desc == null) {
+		Bundle bundle = Platform.getBundle(pluginId);
+		if (bundle == null) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null);
 			CheatSheetPlugin.getPlugin().getLog().log(status);
 			org.eclipse.jface.dialogs.ErrorDialog.openError(theview.getSite().getShell(), CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_FINDING_PLUGIN_FOR_ACTION), null, status);
@@ -364,7 +359,7 @@ public abstract class ViewItem {
 		Class actionClass;
 		IAction action;
 		try {
-			actionClass = desc.getPluginClassLoader().loadClass(className);
+			actionClass = bundle.loadClass(className);
 		} catch (Exception e) {
 			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_LOADING_CLASS_FOR_ACTION), e);
 			CheatSheetPlugin.getPlugin().getLog().log(status);

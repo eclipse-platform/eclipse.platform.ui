@@ -30,6 +30,7 @@ import org.eclipse.ui.internal.cheatsheets.actions.CheatSheetMenu;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
+import org.osgi.framework.Bundle;
 
 /**
  * View for displaying a cheatsheet.
@@ -582,9 +583,8 @@ public class CheatSheetView extends ViewPart {
 		IToolBarManager tbmanager = bars.getToolBarManager();
 
 		// fields
-		IPluginDescriptor mydesc = CheatSheetPlugin.getPlugin().getDescriptor();
 		String skipfileName = "icons/full/elcl16/collapse_expand_all.gif"; //$NON-NLS-1$
-		URL skipurl = mydesc.find(new Path(skipfileName));
+		URL skipurl = CheatSheetPlugin.getPlugin().find(new Path(skipfileName));
 		ImageDescriptor skipTask = ImageDescriptor.createFromURL(skipurl);
 
 		hideFields = new CheatSheetExpandRestoreAction(CheatSheetPlugin.getResourceString(ICheatSheetResource.COLLAPSE_ALL_BUT_CURRENT_TOOLTIP), false, this);
@@ -984,14 +984,17 @@ public class CheatSheetView extends ViewPart {
 
 		//		System.out.println("The cheatsheet id loaded is: " + currentID); //$NON-NLS-1$
 
-		IPluginDescriptor desc = null;
+		Bundle bundle = null;
 		if(element != null)
 			try{
-			desc = element.getConfigurationElement().getDeclaringExtension().getDeclaringPluginDescriptor();
-			}catch(Exception e){}
-
-		if(desc != null)
-		this.contentURL = desc.find(new Path("$nl$").append(element.getContentFile())); //$NON-NLS-1$		
+				String pluginId = element.getConfigurationElement().getDeclaringExtension().getNamespace();
+				bundle = Platform.getBundle(pluginId);
+			} catch (Exception e) {
+				// do nothing
+			}
+		if (bundle != null) {
+			this.contentURL = Platform.find(bundle, new Path("$nl$").append(element.getContentFile())); //$NON-NLS-1$
+		}
 
 		if (contentURL == null) {
 			URL checker;
