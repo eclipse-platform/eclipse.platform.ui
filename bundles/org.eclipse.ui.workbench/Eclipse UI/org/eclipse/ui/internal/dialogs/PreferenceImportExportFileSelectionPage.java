@@ -296,24 +296,27 @@ class PreferenceImportExportFileSelectionPage extends AbstractPreferenceImportEx
 	 * otherwise.
 	 */
 	boolean validate() {
-		final File currentFile = new File(fileText.getText());
-		if (export) {
-			if (!currentFile.getParentFile().exists()) {
-				setErrorMessage(WorkbenchMessages.getString("ImportExportPages.errorDirectoryDoesNotExist")); //$NON-NLS-1$
-				return false;
-			}
-		} else {
-			if(currentFile.getName().equals(Util.ZERO_LENGTH_STRING)) //$NON-NLS-1$
-				return false;
-			
-			if (!currentFile.exists()) {
-				setErrorMessage(WorkbenchMessages.getString("ImportExportPages.errorImportFileDoesNotExist")); //$NON-NLS-1$
-				return false;
-			}
-		}
-		
-		setErrorMessage(null);
-		return true;
+		final String fileName = fileText.getText();
+        if (fileName.equals(Util.ZERO_LENGTH_STRING)) return false;
+
+        final File currentFile = new File(fileName);
+        if (export) {
+            final File parentFile = currentFile.getParentFile();
+            if (parentFile == null || !parentFile.exists()) {
+                setErrorMessage(WorkbenchMessages
+                        .getString("ImportExportPages.errorDirectoryDoesNotExist")); //$NON-NLS-1$
+                return false;
+            }
+        } else {
+            if (!currentFile.exists()) {
+                setErrorMessage(WorkbenchMessages
+                        .getString("ImportExportPages.errorImportFileDoesNotExist")); //$NON-NLS-1$
+                return false;
+            }
+        }
+
+        setErrorMessage(null);
+        return true;
 	}
 
 	/**
