@@ -133,14 +133,12 @@ public class AntModel {
 	}
 	
 	public void dispose() {		
-
-		if (fDocument != null) {
-			fDocument.removeDocumentListener(fListener);
-		}
-
 		synchronized (this) {
-			if (fDocument instanceof PartiallySynchronizedDocument) {
-				((PartiallySynchronizedDocument)fDocument).setAntModel(null);
+			if (fDocument != null) {
+				fDocument.removeDocumentListener(fListener);
+				if (fDocument instanceof PartiallySynchronizedDocument) {
+					((PartiallySynchronizedDocument)fDocument).setAntModel(null);
+				}
 			}
 			fDocument= null;
 			fCore= null;
