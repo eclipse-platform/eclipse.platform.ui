@@ -12,6 +12,7 @@ package org.eclipse.debug.internal.core;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugEvent;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IDebugElement;
@@ -80,7 +81,28 @@ public class WatchExpression implements IWatchExpression {
 		};
 		setPending(true);
 		IWatchExpressionDelegate delegate= ((ExpressionManager)DebugPlugin.getDefault().getExpressionManager()).newWatchExpressionDelegate(context.getModelIdentifier());
-		delegate.evaluateExpression(getExpressionText(), context, listener);
+		if (delegate != null) {
+			delegate.evaluateExpression(getExpressionText(), context, listener);
+		} else {
+			// No delegate provided
+			listener.watchEvaluationFinished(new IWatchExpressionResult() {
+				public IValue getValue() {
+					return null;
+				}
+				public boolean hasErrors() {
+					return true;
+				}
+				public String[] getErrorMessages() {
+					return new String[] { DebugCoreMessages.getString("WatchExpression.0") }; //$NON-NLS-1$
+				}
+				public String getExpressionText() {
+					return WatchExpression.this.getExpressionText();
+				}
+				public DebugException getException() {
+					return null;
+				}
+			});
+		}
 	}
 
 	/* (non-Javadoc)
