@@ -19,6 +19,7 @@ import org.eclipse.compare.IContentChangeListener;
 import org.eclipse.compare.IContentChangeNotifier;
 import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
+import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -64,11 +65,20 @@ import org.eclipse.ui.progress.UIJob;
  */
 public final class SyncInfoCompareInput extends CompareEditorInput implements IResourceChangeListener {
 
-	private SyncInfoModelElement node;
+	private MyDiffNode node;
 	private String description;
 	private IResource resource;
 	private IEditorPart editor;
 
+	private static class MyDiffNode extends SyncInfoModelElement {
+		public MyDiffNode(IDiffContainer parent, SyncInfo info) {
+			super(parent, info);
+		}
+		public void fireChange() {
+			super.fireChange();
+		}
+	}
+	
 	/**
 	 * Creates a compare editor input based on an existing <code>SyncInfo</code>.
 	 * 
@@ -82,7 +92,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		Assert.isNotNull(description);
 		this.description = description;
 		this.resource = sync.getLocal();
-		this.node = new SyncInfoModelElement(null, sync);
+		this.node = new MyDiffNode(null, sync);
 		initializeContentChangeListeners();
 		initializeResourceChangeListeners();
 	}
@@ -110,17 +120,15 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 		if (delta != null) {
 			IResourceDelta resourceDelta = delta.findMember(resource.getFullPath());
 			if (resourceDelta != null) {
-				if (resourceDelta.getKind() == IResourceDelta.CHANGED) {
-					if (editor != null && editor instanceof IReusableEditor) {
-						UIJob job = new UIJob("") {
-							public IStatus runInUIThread(IProgressMonitor monitor) {
-								CompareUI.reuseCompareEditor(SyncInfoCompareInput.this, (IReusableEditor) editor);
-								return Status.OK_STATUS;
-							}
-						};
-						job.setSystem(true);
-						job.schedule();						
-					}
+				if (editor != null && editor instanceof IReusableEditor) {
+					UIJob job = new UIJob("") {
+						public IStatus runInUIThread(IProgressMonitor monitor) {
+							node.update(node.getSyncInfo());
+							return Status.OK_STATUS;
+						}
+					};
+					job.setSystem(true);
+					job.schedule();						
 				}
 			}
 		}
@@ -232,6 +240,7 @@ public final class SyncInfoCompareInput extends CompareEditorInput implements IR
 			try {
 				commit(pm, node);
 			} finally {
+				node.fireChange();
 				setDirty(false);
 			}
 		}

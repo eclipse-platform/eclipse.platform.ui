@@ -67,6 +67,7 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 		setRight(createRemoteTypeElement(info));
 		// base
 		setAncestor(createBaseTypeElement(info));
+		fireChange();
 	}
 	
 	/* (non-Javadoc)
@@ -207,25 +208,25 @@ public class SyncInfoModelElement extends SynchronizeModelElement {
 	 * Create an ITypedElement for the given remote resource. The contents for the remote resource
 	 * will be retrieved from the given IStorage which is a local cache used to buffer the remote contents
 	 */
-	private static ITypedElement createTypeElement(IResourceVariant remoteResource) {
+	protected static ITypedElement createTypeElement(IResourceVariant remoteResource) {
 		return new RemoteResourceTypedElement(remoteResource);
 	}
 
-	private static ITypedElement createRemoteTypeElement(SyncInfo info) {
+	protected static ITypedElement createRemoteTypeElement(SyncInfo info) {
 		if(info != null && info.getRemote() != null) {
 			return createTypeElement(info.getRemote());
 		}
 		return null;
 	}
 
-	private static ITypedElement createLocalTypeElement(SyncInfo info) {
+	protected static ITypedElement createLocalTypeElement(SyncInfo info) {
 		if(info != null && info.getLocal() != null) {
 			return createTypeElement(info.getLocal(), info.getKind());
 		}
 		return null;
 	}
 
-	private static ITypedElement createBaseTypeElement(SyncInfo info) {
+	protected static ITypedElement createBaseTypeElement(SyncInfo info) {
 		if(info != null && info.getBase() != null) {
 			return createTypeElement(info.getBase());
 		}
