@@ -210,7 +210,7 @@ public class ExternalToolMainGroup extends ExternalToolGroup {
 			containerDialog.open();
 			Object[] resource = containerDialog.getResult();
 			if (resource != null && resource.length > 0) {
-				text= ToolUtil.buildVariableTag(IExternalToolConstants.VAR_WORKSPACE_LOC, ((IPath)resource[0]).toString());
+				text= ToolUtil.buildVariableTag(IExternalToolConstants.VAR_RESOURCE_LOC, ((IPath)resource[0]).toString());
 			}
 			field= workDirectoryField;
 		}

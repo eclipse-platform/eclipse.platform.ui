@@ -114,7 +114,7 @@ public class AntExternalToolNewWizard extends ExternalToolNewWizard {
 		String fileLocation= null;
 		if (xmlFile != null) {
 			StringBuffer buffer = new StringBuffer();
-			ToolUtil.buildVariableTag(IExternalToolConstants.VAR_WORKSPACE_LOC, xmlFile.getFullPath().toString(), buffer);
+			ToolUtil.buildVariableTag(IExternalToolConstants.VAR_RESOURCE_LOC, xmlFile.getFullPath().toString(), buffer);
 			fileLocation= buffer.toString();
 			String baseName= xmlFile.getName() + " [" + xmlFile.getProject().getName() + "]" ;
 			String name= baseName;
