@@ -223,7 +223,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			}
 		});
 		addButton.setEnabled(false);
-		addButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
+		addButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(addButton);
 		
 		deleteButton = new Button(buttonContainer, SWT.PUSH);
@@ -239,7 +239,7 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 			}
 		});
 		deleteButton.setEnabled(false);
-		deleteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
+		deleteButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		SWTUtil.setButtonDimensionHint(deleteButton);		
 		
 				
