@@ -15,6 +15,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 
@@ -122,11 +123,18 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 			IDocument document= fRewriteTarget.getDocument();
 			final int lineCount= document.getNumberOfLines();
 			monitor.beginTask(EditorMessages.getString("Editor.ConvertLineDelimiter.title"), lineCount); //$NON-NLS-1$
-			
+						
 			fRewriteTarget.setRedraw(false);
 			fRewriteTarget.beginCompoundChange();
+
 			if (document instanceof IDocumentExtension)
 				((IDocumentExtension) document).startSequentialRewrite(true);
+
+			IDocumentPartitioner partitioner= document.getDocumentPartitioner();
+			if (partitioner != null) {
+				document.setDocumentPartitioner(null);
+				partitioner.disconnect();
+			}
 			
 			try {
 				for (int i= 0; i < lineCount; i++) {
@@ -146,9 +154,15 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 				throw new InvocationTargetException(e);
 
 			} finally {
-				
+
+				if (partitioner != null) {
+					document.setDocumentPartitioner(partitioner);
+					partitioner.connect(document);
+				}
+									
 				if (document instanceof IDocumentExtension)
-					((IDocumentExtension) document).stopSequentialRewrite();	
+					((IDocumentExtension) document).stopSequentialRewrite();
+
 				fRewriteTarget.endCompoundChange();
 				fRewriteTarget.setRedraw(true);
 				

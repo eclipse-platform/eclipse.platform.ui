@@ -2568,14 +2568,17 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 			
 		setRedraw(false);
 		startSequentialRewriteMode(true);
+
+		IDocument d= getDocument();
+		IDocumentPartitioner partitioner= null;
 		
 		try {
 			
 			Point selection= getSelectedRange();
 			IRegion block= getTextBlockFromSelection(selection);
-			IDocument d= getDocument();
 			ITypedRegion[] regions= d.computePartitioning(block.getOffset(), block.getLength());
-			
+
+			int lineCount= 0;			
 			int[] lines= new int[regions.length * 2]; // [startline, endline, startline, endline, ...]
 			for (int i= 0, j= 0; i < regions.length; i++, j+= 2) {
 				// start line of region
@@ -2583,6 +2586,15 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 				// end line of region
 				int offset= regions[i].getOffset() + regions[i].getLength() - 1;
 				lines[j + 1]= (lines[j] == -1 ? -1 : d.getLineOfOffset(offset));
+				lineCount += lines[j + 1] - lines[j] + 1;
+			}
+			
+			if (lineCount >= 20) {
+				partitioner= d.getDocumentPartitioner();
+				if (partitioner != null) {
+					d.setDocumentPartitioner(null);
+					partitioner.disconnect();
+				}
 			}
 			
 			// Remember the selection range.
@@ -2623,6 +2635,11 @@ public class TextViewer extends Viewer implements ITextViewer, ITextViewerExtens
 				System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.shift_1")); //$NON-NLS-1$
 		
 		} finally {
+
+			if (partitioner != null) {
+				d.setDocumentPartitioner(partitioner);
+				partitioner.connect(d);
+			}
 			
 			stopSequentialRewriteMode();
 			setRedraw(true);
