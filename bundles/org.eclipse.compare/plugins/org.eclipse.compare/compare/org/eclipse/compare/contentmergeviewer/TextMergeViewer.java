@@ -2090,9 +2090,18 @@ public class TextMergeViewer extends ContentMergeViewer  {
 						ancestorDoc, null, ancestorStart2, ancestorEnd2,
 						leftDoc, null, leftStart2, leftEnd2,
 						rightDoc, null, rightStart2, rightEnd2);
-				diff.fIsToken= true;
-				// add to base Diff
-				baseDiff.add(diff);
+				
+				// ensure that token diff is smaller than basediff
+				int leftS= baseDiff.fLeftPos.offset;
+				int leftE= baseDiff.fLeftPos.offset+baseDiff.fLeftPos.length;
+				int rightS= baseDiff.fRightPos.offset;
+				int rightE= baseDiff.fRightPos.offset+baseDiff.fRightPos.length;
+				if (leftS != leftStart2 || leftE != leftEnd2 ||
+							rightS != rightStart2 || rightE != rightEnd2) {
+					diff.fIsToken= true;
+					// add to base Diff
+					baseDiff.add(diff);
+				}
 			}
 		}
 	}
