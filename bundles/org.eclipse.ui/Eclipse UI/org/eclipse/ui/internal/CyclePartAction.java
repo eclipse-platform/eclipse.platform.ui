@@ -37,9 +37,11 @@ protected void setText() {
 	if (forward) {
 		setText(WorkbenchMessages.getString("CyclePartAction.next.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("CyclePartAction.next.toolTip")); //$NON-NLS-1$
+		setAccelerator(SWT.CTRL | SWT.F7);
 	} else {
 		setText(WorkbenchMessages.getString("CyclePartAction.prev.text")); //$NON-NLS-1$
 		setToolTipText(WorkbenchMessages.getString("CyclePartAction.prev.toolTip")); //$NON-NLS-1$
+		setAccelerator(SWT.CTRL | SWT.SHIFT | SWT.F7);
 	}
 }
 /**
