@@ -57,7 +57,7 @@ import org.eclipse.ui.texteditor.StatusTextEditor;
 /**
  * The standard text editor for file resources (<code>IFile</code>).
  * <p>
- * This editor has id <code>"com.ibm.eclipse.ui.DefaultTextEditor"</code>.
+ * This editor has id <code>"org.eclipse.ui.DefaultTextEditor"</code>.
  * The editor's context menu has id <code>#TextEditorContext</code>.
  * The editor's ruler context menu has id <code>#TextRulerContext</code>.
  * </p>
@@ -119,19 +119,20 @@ public class TextEditor extends StatusTextEditor {
 	protected void performSaveAs(IProgressMonitor progressMonitor) {
 		
 		Shell shell= getSite().getShell();
+		IEditorInput input = getEditorInput();
 		
 		SaveAsDialog dialog= new SaveAsDialog(shell);
-		dialog.create();
-		
-		IEditorInput input = getEditorInput();
 		
 		IFile original= (input instanceof IFileEditorInput) ? ((IFileEditorInput) input).getFile() : null;
 		if (original != null)
 			dialog.setOriginalFile(original);
+		
+		dialog.create();
 			
 		IDocumentProvider provider= getDocumentProvider();
 		if (provider.isDeleted(input) && original != null) {
 			String message= MessageFormat.format(TextEditorMessages.getString("Editor.warning.save.delete"), new Object[] { original.getName() });
+			dialog.setErrorMessage(null);
 			dialog.setMessage(message, IMessageProvider.WARNING);
 		}
 		
