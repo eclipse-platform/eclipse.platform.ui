@@ -73,10 +73,8 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -85,6 +83,7 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
+import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
@@ -477,23 +476,6 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		
 		return variablesViewer;
 	}
-		
-	protected void addVerifyKeyListener() {
-		getDetailViewer().getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
-			public void verifyKey(VerifyEvent event) {
-				//do code assist for CTRL-SPACE
-				if (event.stateMask == SWT.CTRL && event.keyCode == 0) {
-					if (event.character == 0x20) {
-						IAction action= getAction("ContentAssist"); //$NON-NLS-1$
-						if(action != null && action.isEnabled()) {
-							action.run();
-							event.doit= false;
-						}
-					}
-				}
-			}
-		});
-	}
 	
 	/**
 	 * Creates this view's content provider.
@@ -646,18 +628,13 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 		//detail specific actions
 		
 		TextViewerAction textAction= new TextViewerAction(getDetailViewer(), ISourceViewer.CONTENTASSIST_PROPOSALS);
-		textAction.setActionDefinitionId("org.eclipse.jdt.ui.edit.text.java.content.assist.proposals"); //$NON-NLS-1$
+		textAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Co&ntent_Assist_3"), "",""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		textAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ELCL_CONTENT_ASSIST));
 		textAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
 		textAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
 		setAction("ContentAssist", textAction); //$NON-NLS-1$
-		
-		// XXX: hook the "Java" content assist action - this is a hack to get content
-		// assist to work with the retargetable content assist action in the java UI
 		getSite().getKeyBindingService().registerAction(textAction);
-		// Also hook CTRL-Space in case the java UI is not loaded/available
-		addVerifyKeyListener();
 		
 		textAction= new TextViewerAction(getDetailViewer(), ITextOperationTarget.SELECT_ALL);
 		textAction.configureAction(DebugUIViewsMessages.getString("VariablesView.Select_&All_5"), "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
