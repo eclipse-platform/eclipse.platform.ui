@@ -220,13 +220,7 @@ protected float getDockingRatio(LayoutPart dragged, LayoutPart target) {
  * @see org.eclipse.ui.internal.PartSashContainer#isStackType(org.eclipse.ui.internal.LayoutPart)
  */
 public boolean isStackType(LayoutPart toTest) {
-	if (!(toTest instanceof ViewStack)) { 
-		return false;
-	}
-	
-	ViewStack folder = (ViewStack)toTest;
-	
-	return folder.getParent() == getParent();  
+	return (toTest instanceof ViewStack);	
 }
 /* (non-Javadoc)
  * @see org.eclipse.ui.internal.PartSashContainer#isPaneType(org.eclipse.ui.internal.LayoutPart)
@@ -237,9 +231,8 @@ public boolean isPaneType(LayoutPart toTest) {
 /* (non-Javadoc)
  * @see org.eclipse.ui.internal.PartSashContainer#createStack(org.eclipse.ui.internal.LayoutPart)
  */
-protected LayoutPart createStack(LayoutPart sourcePart) {
+protected PartStack createStack() {
 	ViewStack result = new ViewStack(page);
-	result.add(sourcePart);
 	return result;
 }
 

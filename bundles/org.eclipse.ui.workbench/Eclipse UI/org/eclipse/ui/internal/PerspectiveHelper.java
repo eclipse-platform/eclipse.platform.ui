@@ -201,8 +201,8 @@ public class PerspectiveHelper {
 		if (placeholder == null) {
 			part.reparent(mainLayout.getParent());
 			LayoutPart relative = mainLayout.findBottomRight();
-			if (relative != null && !(relative instanceof EditorSashContainer)) {
-				mainLayout.stack(part, relative);
+			if (relative != null && relative instanceof PartStack) {
+				mainLayout.stack(part, (PartStack)relative);
 			} else {
 				mainLayout.add(part);
 			}

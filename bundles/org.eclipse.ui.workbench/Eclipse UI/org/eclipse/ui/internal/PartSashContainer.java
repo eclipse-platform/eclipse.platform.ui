@@ -101,7 +101,13 @@ public abstract class PartSashContainer extends LayoutPart implements ILayoutCon
 
 		public void drop() {
 			if (side != SWT.NONE) {
-				dropObject(sourcePart, targetPart, side);
+				LayoutPart visiblePart = sourcePart;
+				
+				if (sourcePart instanceof PartStack) {
+					visiblePart = getVisiblePart((PartStack)sourcePart);
+				}
+				
+				dropObject(getVisibleParts(sourcePart), visiblePart, targetPart, side);
 			}
 		}
 
@@ -138,6 +144,35 @@ public PartSashContainer(String id,final WorkbenchPage page) {
 		}
 	};
 }
+
+/**
+ * Given an object associated with a drag (a PartPane or PartStack), this returns
+ * the actual PartPanes being dragged.
+ * 
+ * @param pane
+ * @return
+ */
+private PartPane[] getVisibleParts(LayoutPart pane) {
+	if (pane instanceof PartPane) {
+		return new PartPane[] {(PartPane)pane};
+	} else if (pane instanceof PartStack) {
+		PartStack stack = (PartStack)pane;
+		
+		LayoutPart[] children = stack.getChildren();
+		ArrayList result = new ArrayList(children.length);
+		for (int idx = 0; idx < children.length; idx++) {
+			LayoutPart next = children[idx];
+			if (next instanceof PartPane) {
+				result.add(next);
+			}
+		}
+		
+		return (PartPane[]) result.toArray(new PartPane[result.size()]);
+	}
+	
+	return new PartPane[0];
+}
+
 /**
  * Find the sashs around the specified part.
  */
@@ -652,10 +687,6 @@ public IDropTarget drag(Control currentControl, Object draggedObject,
 		return null;
 	}
 	
-	if (isStackType(sourcePart) && !(sourcePart.getContainer() == this)) {
-		return null;
-	}
-	
 	if (sourcePart.getWorkbenchWindow() != getWorkbenchWindow()) {
 		return null;
 	}
@@ -745,69 +776,52 @@ public abstract boolean isPaneType(LayoutPart toTest);
 /* (non-Javadoc)
  * @see org.eclipse.ui.internal.PartSashContainer#dropObject(org.eclipse.ui.internal.LayoutPart, org.eclipse.ui.internal.LayoutPart, int)
  */
-protected void dropObject(LayoutPart sourcePart, LayoutPart targetPart, int side) {
+protected void dropObject(PartPane[] toDrop, LayoutPart visiblePart, LayoutPart targetPart, int side) {
+	getControl().setRedraw(false);	
 	
-	if (side == SWT.CENTER) {	    	    
-	    ILayoutContainer container = (ILayoutContainer)targetPart;
-	    ILayoutContainer sourceContainer = null;
-	    LayoutPart visiblePart = null;
-	    if (isStackType(sourcePart)) {
-	        sourceContainer = (ILayoutContainer)sourcePart;
-	        visiblePart = getVisiblePart(sourceContainer);
-	    }
+	if (side == SWT.CENTER) {
+		if (isStackType(targetPart)) {
+			PartStack stack = (PartStack)targetPart;
+			for (int idx = 0; idx < toDrop.length; idx++) {
+				PartPane next = toDrop[idx];
 
-		stack(sourcePart, targetPart);
-		
-		if (sourceContainer != null) {	        	
-			if (visiblePart != null) {
-				setVisiblePart(container, visiblePart);
-				visiblePart.setFocus();
-			}	    
-	    }
-		else if (isPaneType(sourcePart)) {
-			setVisiblePart(container, sourcePart);
-			sourcePart.setFocus();
+				stack(next, stack);
+			}
 		}
 	} else {
-
-		if (isStackType(sourcePart)) {
-			// Remove the part from old container.
-			derefPart(sourcePart);
-			addEnhanced(sourcePart, side, getDockingRatio(sourcePart, targetPart), targetPart);
-		} else {
-			
-			derefPart(sourcePart);
-			LayoutPart newPart = createStack(sourcePart);
-			
-			addEnhanced(newPart, side, getDockingRatio(sourcePart, targetPart), targetPart);
-		}
+		PartStack newPart = createStack();
 		
-		sourcePart.setFocus();
+		for (int idx = 0; idx < toDrop.length; idx++) {
+			PartPane next = toDrop[idx]; 
+			stack(next, newPart);
+		}
+					
+		addEnhanced(newPart, side, getDockingRatio(newPart, targetPart), targetPart);
 	}
+	
+	setVisiblePart(visiblePart.getContainer(), visiblePart);
+	
+	getControl().setRedraw(true);	
+	
+	visiblePart.setFocus();
 }
 
 /**
  * @param sourcePart
  * @return
  */
-protected abstract LayoutPart createStack(LayoutPart sourcePart);
+protected abstract PartStack createStack();
 
-public void stack(LayoutPart newPart, LayoutPart relPos) {
-	
-	ILayoutContainer container = (ILayoutContainer)relPos;
+public void stack(LayoutPart newPart, PartStack container) {
 	
 	getControl().setRedraw(false);
-	if (isStackType(newPart)) {
-		ILayoutContainer sourceContainer = (ILayoutContainer)newPart;
-		LayoutPart[] children = sourceContainer.getChildren();
-		for (int i = 0; i < children.length; i++)
-			stackPane(children[i], container);
-	}
-	else if (isPaneType(newPart)) {
-		stackPane(newPart, container);
-	}
-	
+	// Remove the part from old container.
+	derefPart(newPart);
+	// Reparent part and add it to the workbook
+	newPart.reparent(getParent());
+	container.add(newPart);
 	getControl().setRedraw(true);
+	
 }
 
 /**
@@ -821,14 +835,6 @@ protected abstract void setVisiblePart(ILayoutContainer container, LayoutPart vi
  * @return
  */
 protected abstract LayoutPart getVisiblePart(ILayoutContainer container);
-
-private void stackPane(LayoutPart newPart, ILayoutContainer refPart) {
-	// Remove the part from old container.
-	derefPart(newPart);
-	// Reparent part and add it to the workbook
-	newPart.reparent(getParent());
-	refPart.add(newPart);
-}
 
 /**
  * @param sourcePart

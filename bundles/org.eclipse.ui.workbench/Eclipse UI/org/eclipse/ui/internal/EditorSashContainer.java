@@ -390,10 +390,8 @@ public void updateTabList() {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.internal.PartSashContainer#createStack(org.eclipse.ui.internal.LayoutPart)
 	 */
-	protected LayoutPart createStack(LayoutPart sourcePart) {
+	protected PartStack createStack() {
 		EditorStack newWorkbook = EditorStack.newEditorWorkbook(this, page);
-		newWorkbook.add((EditorPane)sourcePart);
-		newWorkbook.setVisibleEditor((EditorPane)sourcePart);
 		
 		return newWorkbook;
 	}
