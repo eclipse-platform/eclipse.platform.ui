@@ -70,9 +70,6 @@ public class BatchInstallOperation
 			if (listener != null)
 				listener.beforeExecute(this, null);
 			
-			UpdateUtils.makeConfigurationCurrent(
-				config,
-				null);
 			monitor.beginTask(
 				UpdateUtils.getString(KEY_INSTALLING),
 				operations.length);

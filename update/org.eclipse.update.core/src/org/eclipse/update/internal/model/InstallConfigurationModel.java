@@ -283,4 +283,8 @@ public class InstallConfigurationModel extends ModelObject {
 		} catch (MalformedURLException e){}
 		
 	}
+	
+	public void resetActivities() {
+		activities = null;
+	}
 }

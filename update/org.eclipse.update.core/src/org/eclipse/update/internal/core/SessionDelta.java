@@ -124,11 +124,11 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 		return process;
 	}
 
-	private void createInstallConfiguration() throws CoreException {
-		ILocalSite localSite = SiteManager.getLocalSite();
-		IInstallConfiguration config = UpdateUtils.createInstallConfiguration();
-		localSite.addConfiguration(config);
-	}
+//	private void createInstallConfiguration() throws CoreException {
+//		ILocalSite localSite = SiteManager.getLocalSite();
+//		IInstallConfiguration config = UpdateUtils.createInstallConfiguration();
+//		localSite.addConfiguration(config);
+//	}
 
 
 	/*
@@ -224,7 +224,7 @@ public class SessionDelta extends ModelObject implements ISessionDelta {
 	 */
 	public void process(IFeatureReference[] selected, IProgressMonitor pm) throws CoreException {
 
-		createInstallConfiguration();
+//		createInstallConfiguration();
 		if (pm == null)
 			pm = new NullProgressMonitor();
 

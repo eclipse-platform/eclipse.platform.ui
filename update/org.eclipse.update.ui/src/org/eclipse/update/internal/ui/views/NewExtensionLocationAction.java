@@ -67,11 +67,9 @@ public class NewExtensionLocationAction extends Action {
 
 	private boolean addExtensionLocation(File dir) {
 		try {
-			IInstallConfiguration config =
-			UpdateUtils.createInstallConfiguration();
+			IInstallConfiguration config = SiteManager.getLocalSite().getCurrentConfiguration();
 			IConfiguredSite csite = config.createLinkedConfiguredSite(dir);
 			config.addConfiguredSite(csite);
-			UpdateUtils.makeConfigurationCurrent(config, null);
 			boolean restartNeeded = SiteManager.getLocalSite().save();
 			if (restartNeeded)
 				UpdateUI.requestRestart();

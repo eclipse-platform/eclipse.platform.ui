@@ -378,20 +378,20 @@ public class UpdateUtils {
 		}
 	}
 
-
-	public static IInstallConfiguration createInstallConfiguration() throws CoreException{
-		try {
-			ILocalSite localSite = SiteManager.getLocalSite();
-			IInstallConfiguration config =
-				localSite.cloneCurrentConfiguration();
-			config.setLabel(Utilities.format(config.getCreationDate()));
-			return config;
-		} catch (CoreException e) {
-			// Let callers handle logging
-			//logException(e);
-			throw e;
-		}
-	}
+//
+//	public static IInstallConfiguration createInstallConfiguration() throws CoreException{
+//		try {
+//			ILocalSite localSite = SiteManager.getLocalSite();
+//			IInstallConfiguration config =
+//				localSite.cloneCurrentConfiguration();
+//			config.setLabel(Utilities.format(config.getCreationDate()));
+//			return config;
+//		} catch (CoreException e) {
+//			// Let callers handle logging
+//			//logException(e);
+//			throw e;
+//		}
+//	}
 	
 	public static UpdateSearchRequest createNewUpdatesRequest(IFeature [] features) {
 		UpdateSearchScope scope = new UpdateSearchScope();
@@ -402,28 +402,6 @@ public class UpdateUtils {
 		UpdateSearchRequest searchRequest = new UpdateSearchRequest(category, scope);
 		searchRequest.addFilter(new EnvironmentFilter());
 		return searchRequest;
-	}
-
-	public static void makeConfigurationCurrent(
-		IInstallConfiguration config,
-		IInstallFeatureOperation job)
-		throws CoreException {
-		ILocalSite localSite = SiteManager.getLocalSite();
-		if (job != null && job.getFeature().isPatch()) {
-			// Installing a patch - preserve the current configuration
-			IInstallConfiguration cconfig =
-				localSite.getCurrentConfiguration();
-			IInstallConfiguration savedConfig =
-				localSite.addToPreservedConfigurations(cconfig);
-			VersionedIdentifier vid =
-				job.getFeature().getVersionedIdentifier();
-			String key = "@" + vid.getIdentifier() + "_" + vid.getVersion();
-			String newLabel =
-				getFormattedMessage(KEY_SAVED_CONFIG, key);
-			savedConfig.setLabel(newLabel);
-			OperationsManager.fireObjectChanged(savedConfig, null);
-		}
-		localSite.addConfiguration(config);
 	}
 
 	public static boolean isNestedChild(IInstallConfiguration config, IFeature feature) {

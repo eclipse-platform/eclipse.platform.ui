@@ -440,4 +440,12 @@ public class TargetPage extends BannerPage implements IDynamicPage {
 		}
 		return sites;
 	}
+	
+	void removeAddedSites() {
+		if (added != null) {
+			for (Iterator it = added.iterator(); it.hasNext(); ) 
+				config.removeConfiguredSite((IConfiguredSite) it.next());
+		}
+			
+	}
 }

@@ -205,51 +205,53 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 		// and set runtim info for next startup
 		return ((InstallConfiguration) getCurrentConfiguration()).save(isTransient());
 	}
-	/**
-	 * Method createNewInstallConfiguration.
-	 * @return IInstallConfiguration
-	 */
-	public IInstallConfiguration createNewInstallConfiguration() throws CoreException {
-		InstallConfiguration newInstallConfig = createConfigurationSite(null);
-		newInstallConfig.setTimeline(newInstallConfig.getCreationDate().getTime());
-		return newInstallConfig;
-	}
-
-	/*
-	 *	creates a new InstallConfiguration or clone an installConfiguration 
-	 * @since 2.0
-	 */
-	private InstallConfiguration createConfigurationSite(IInstallConfiguration installConfig) throws CoreException {
-
-//		// save previous current configuration
-//		if (getCurrentConfiguration() != null)
-//			 ((InstallConfiguration) getCurrentConfiguration()).saveConfigurationFile(isTransient());
-
-		InstallConfiguration result = null;
-		Date currentDate = new Date();
-		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(CONFIG_FILE, currentDate);
-		try {
-			URL newFile = UpdateManagerUtils.getURL(getLocationURL(), newFileName, null);
-			// pass the date onto the name
-			String name = Utilities.format(currentDate);
-			result = new InstallConfiguration(installConfig, newFile, name);
-			// set the same date in the installConfig
-			result.setCreationDate(currentDate);
-		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName, e);
-			//$NON-NLS-1$
-		}
-		return result;
-	}
+//	/**
+//	 * Method createNewInstallConfiguration.
+//	 * @return IInstallConfiguration
+//	 */
+//	public IInstallConfiguration createNewInstallConfiguration() throws CoreException {
+//		InstallConfiguration newInstallConfig = createConfigurationSite(null);
+//		newInstallConfig.setTimeline(newInstallConfig.getCreationDate().getTime());
+//		return newInstallConfig;
+//	}
+//
+//	/*
+//	 *	creates a new InstallConfiguration or clone an installConfiguration 
+//	 * @since 2.0
+//	 */
+//	private InstallConfiguration createConfigurationSite(IInstallConfiguration installConfig) throws CoreException {
+//
+////		// save previous current configuration
+////		if (getCurrentConfiguration() != null)
+////			 ((InstallConfiguration) getCurrentConfiguration()).saveConfigurationFile(isTransient());
+//
+//		InstallConfiguration result = null;
+//		Date currentDate = new Date();
+//		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(CONFIG_FILE, currentDate);
+//		try {
+//			URL newFile = UpdateManagerUtils.getURL(getLocationURL(), newFileName, null);
+//			// pass the date onto the name
+//			String name = Utilities.format(currentDate);
+//			result = new InstallConfiguration(installConfig, newFile, name);
+//			// set the same date in the installConfig
+//			result.setCreationDate(currentDate);
+//		} catch (MalformedURLException e) {
+//			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName, e);
+//			//$NON-NLS-1$
+//		}
+//		return result;
+//	}
 
 	/**
 	 * @since 2.0
 	 */
 	public IInstallConfiguration cloneCurrentConfiguration() throws CoreException {
-		IInstallConfiguration currentConfiguration = getCurrentConfiguration();
-		InstallConfiguration clonedConfiguration = createConfigurationSite(currentConfiguration);
-		clonedConfiguration.setTimeline(currentConfiguration.getTimeline());
-		return clonedConfiguration;
+		// This method should be deprecated
+		return getCurrentConfiguration();
+//		IInstallConfiguration currentConfiguration = getCurrentConfiguration();
+//		InstallConfiguration clonedConfiguration = createConfigurationSite(currentConfiguration);
+//		clonedConfiguration.setTimeline(currentConfiguration.getTimeline());
+//		return clonedConfiguration;
 	}
 
 	/**

@@ -70,6 +70,8 @@ public class InstallWizard
 
 	public boolean performCancel() {
 		isRunning = false;
+		if (targetPage != null)
+			targetPage.removeAddedSites();
 		return super.performCancel();
 	}
 	/**
@@ -196,7 +198,8 @@ public class InstallWizard
 		addPage(reviewPage);
 
 		try {
-			config = UpdateUtils.createInstallConfiguration();
+//			config = UpdateUtils.createInstallConfiguration();
+			config = SiteManager.getLocalSite().getCurrentConfiguration();
 		} catch (CoreException e) {
 			UpdateUI.logException(e);
 		}

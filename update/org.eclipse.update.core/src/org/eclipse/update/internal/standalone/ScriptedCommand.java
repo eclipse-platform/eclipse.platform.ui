@@ -61,10 +61,10 @@ public abstract class ScriptedCommand implements IOperationListener {
 			try {
 				ILocalSite localSite = SiteManager.getLocalSite();
 				config = localSite.getCurrentConfiguration();
-				if (!isVerifyOnly()) {
-					config = UpdateUtils.createInstallConfiguration();
-					UpdateUtils.makeConfigurationCurrent(config, null);
-				}
+//				if (!isVerifyOnly()) {
+//					config = UpdateUtils.createInstallConfiguration();
+//					UpdateUtils.makeConfigurationCurrent(config, null);
+//				}
 			} catch (CoreException e) {
 				StandaloneUpdateApplication.exceptionLogged();
 				UpdateCore.log(e);
