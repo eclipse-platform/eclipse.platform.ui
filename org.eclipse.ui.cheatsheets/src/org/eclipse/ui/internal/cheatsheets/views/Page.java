@@ -19,6 +19,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.internal.cheatsheets.CheatSheetStopWatch;
 
 public abstract class Page {
 	protected Composite cheatSheetComposite;
@@ -47,6 +48,7 @@ public abstract class Page {
 		init(parent.getDisplay());
 
 		cheatSheetComposite = new Composite(parent, SWT.NONE);
+		cheatSheetComposite.setRedraw(false);
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -58,6 +60,7 @@ public abstract class Page {
 		cheatSheetComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		createTitleArea(cheatSheetComposite);
 		createInfoArea(cheatSheetComposite);
+		cheatSheetComposite.setRedraw(true);
 	}
 	
 	/**
@@ -67,14 +70,20 @@ public abstract class Page {
 	 * @return the created info area composite
 	 */
 	protected void createInfoArea(Composite parent) {
+		CheatSheetStopWatch.startStopWatch("Page.createInfoArea()"); //$NON-NLS-1$
 		toolkit = new FormToolkit(parent.getDisplay());
+		CheatSheetStopWatch.printLapTime("Page.createInfoArea()", "Time in Page.createInfoArea() after new FormToolkit(): "); //$NON-NLS-1$ //$NON-NLS-2$
 		form = toolkit.createScrolledForm(parent);
+		CheatSheetStopWatch.printLapTime("Page.createInfoArea()", "Time in Page.createInfoArea() after createScrolledForm(): "); //$NON-NLS-1$ //$NON-NLS-2$
 		form.setLayoutData(new GridData(GridData.FILL_BOTH));
+		CheatSheetStopWatch.printLapTime("Page.createInfoArea()", "Time in Page.createInfoArea() after setLayoutData(): "); //$NON-NLS-1$ //$NON-NLS-2$
 		TableWrapLayout layout = new TableWrapLayout();
+		CheatSheetStopWatch.printLapTime("Page.createInfoArea()", "Time in Page.createInfoArea() after new FormTableWrapLayout(): "); //$NON-NLS-1$ //$NON-NLS-2$
 		layout.numColumns = 2;
 		layout.verticalSpacing = 3;
 		form.getBody().setLayout(layout);
 
+		CheatSheetStopWatch.printLapTime("Page.createInfoArea()", "Time in Page.createInfoArea() end of method: "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

@@ -10,10 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
+import java.util.*;
 import java.util.ArrayList;
 
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.data.*;
 
@@ -48,14 +50,18 @@ public class CheatSheetPage extends Page {
 	 * @return the created info area composite
 	 */
 	protected void createInfoArea(Composite parent) {
+		CheatSheetStopWatch.startStopWatch("CheatSheetPage.createInfoArea()"); //$NON-NLS-1$
 		super.createInfoArea(parent);
+		CheatSheetStopWatch.printLapTime("CheatSheetPage.createInfoArea()", "Time in CheatSheetPage.createInfoArea() after super.createInfoArea(): "); //$NON-NLS-1$ //$NON-NLS-2$
 	
 		IntroItem intro = new IntroItem(toolkit, form, cheatSheet.getIntroItem(), activeColor, viewer);
+		CheatSheetStopWatch.printLapTime("CheatSheetPage.createInfoArea()", "Time in CheatSheetPage.createInfoArea() after new IntroItem(): "); //$NON-NLS-1$ //$NON-NLS-2$
 	
 		intro.setItemColor(intro.alternateColor);
 		intro.setBold(true);
 		viewItemList.add(intro);
 			
+		CheatSheetStopWatch.printLapTime("CheatSheetPage.createInfoArea()", "Time in CheatSheetPage.createInfoArea() before add loop: "); //$NON-NLS-1$ //$NON-NLS-2$
 		//Get the content info from the parser.  This makes up all items except the intro item.
 		ArrayList items = cheatSheet.getItems();
 		for (int i = 0; i < items.size(); i++) {
@@ -64,6 +70,7 @@ public class CheatSheetPage extends Page {
 			CoreItem coreItem = new CoreItem(toolkit, form, (org.eclipse.ui.internal.cheatsheets.data.Item)items.get(i), color, viewer);
 			viewItemList.add(coreItem);
 		}
+		CheatSheetStopWatch.printLapTime("CheatSheetPage.createInfoArea()", "Time in CheatSheetPage.createInfoArea(): "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -94,5 +101,12 @@ public class CheatSheetPage extends Page {
 
 		activeColor = new Color(display, activeRGB);
 		alternateColor = new Color(display, alternateRGB);
+	}
+	
+	public void initialized() {
+		for (Iterator iter = viewItemList.iterator(); iter.hasNext();) {
+			ViewItem item = (ViewItem) iter.next();
+			item.initialized();
+		}
 	}
 }

@@ -2,6 +2,7 @@ package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.net.*;
 import java.net.URL;
+
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -63,6 +64,8 @@ public class CheatSheetView extends ViewPart {
 	 * @param parent the parent control
 	 */
 	public void createPartControl(Composite parent) {
+		CheatSheetStopWatch.startStopWatch("CheatSheetView.createPartControl"); //$NON-NLS-1$
+
 		viewer = new CheatSheetViewer();
 		viewer.createPartControl(parent);
 	
@@ -70,9 +73,12 @@ public class CheatSheetView extends ViewPart {
 			contributeToActionBars();
 			actionBarContributed = true;
 		}
+		CheatSheetStopWatch.printLapTime("CheatSheetView.createPartControl", "Time in CheatSheetView.createPartControl() before restoreState: "); //$NON-NLS-1$ //$NON-NLS-2$
 		if (memento != null) {
 			restoreState(memento);
 		}
+
+		CheatSheetStopWatch.printTotalTime("CheatSheetView.createPartControl", "Time in CheatSheetView.createPartControl(): "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
@@ -174,9 +180,13 @@ public class CheatSheetView extends ViewPart {
 	}
 	
 	public void setInput(String id) {
+		CheatSheetStopWatch.startStopWatch("CheatSheetView.setInput"); //$NON-NLS-1$
+
 		if(viewer != null) {
 			viewer.setInput(id);
 		}
+
+		CheatSheetStopWatch.printTotalTime("CheatSheetView.setInput", "Time in CheatSheetView.setInput(String id): "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public void setInput(String id, String name, URL url) {

@@ -56,11 +56,7 @@ public class CheatSheetParser {
 	 */
 	public CheatSheetParser() {
 		super();
-		try {
-			documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		} catch (Exception e) {
-			logMessage(IStatus.ERROR, false, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_DOCUMENT_BUILDER), null, e);
-		}
+		documentBuilder = CheatSheetPlugin.getPlugin().getDocumentBuilder();
 	}
 
 	/**
@@ -856,5 +852,36 @@ public class CheatSheetParser {
 		} else {
 			throw new CheatSheetParserException(CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_PARSING_CHEATSHEET_CONTENTS));
 		}
+	}
+
+	private String getNormalizedText(String text) {
+		int [] spaceCounter = new int[1];
+		StringBuffer buf = new StringBuffer();
+		
+		if (text==null) return null;
+
+
+		for (int j=0; j<text.length(); j++) {
+			char c = text.charAt(j);
+			if (c==' ' || c=='\t') {
+				// space
+				if (++spaceCounter[0] == 1) {
+					buf.append(c);
+				}
+			}
+			else if (c=='\n' || c=='\r' || c=='\f') {
+				// new line
+				if (++spaceCounter[0]==1) {
+					buf.append(' ');
+				}
+			}
+			else {
+				// other characters
+				spaceCounter[0]=0;
+				buf.append(c);
+			}
+		}
+
+		return buf.toString();
 	}
 }

@@ -233,7 +233,7 @@ public class CheatSheetSaveHelper {
 			return null;
 
 		try {
-			DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder documentBuilder = CheatSheetPlugin.getPlugin().getDocumentBuilder();
 			return documentBuilder.parse(source);
 		} catch (Exception e) {
 		} finally {

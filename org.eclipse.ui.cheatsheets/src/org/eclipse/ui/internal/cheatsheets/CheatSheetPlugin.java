@@ -11,10 +11,18 @@
 package org.eclipse.ui.internal.cheatsheets;
 
 import java.io.*;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.*;
+
+import javax.xml.parsers.*;
+import javax.xml.parsers.DocumentBuilder;
+
 import org.eclipse.core.runtime.*;
+import org.eclipse.jface.resource.*;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -33,7 +41,8 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	private boolean resourceBundleInitialized = false;
 	private ResourceBundle resourceBundle;
 	private CheatSheetHistory history = null;
-
+	private DocumentBuilder documentBuilder = null;
+	
 	private static final String DEFAULT_CHEATSHEET_STATE_FILENAME = "cheatsheet.xml"; //$NON-NLS-1$
 	private static final String MEMENTO_TAG_CHEATSHEET = "cheatsheet"; //$NON-NLS-1$
 	private static final String MEMENTO_TAG_VERSION = "version"; //$NON-NLS-1$
@@ -81,6 +90,22 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	}
 
 	/**
+	 * Returns the image in Cheat Sheet's image registry with the given key, 
+	 * or <code>null</code> if none.
+	 * Convenience method equivalent to
+	 * <pre>
+	 * CheatSheetPlugin.getImageRegistry().get(key)
+	 * </pre>
+	 *
+	 * @param key the key
+	 * @return the image, or <code>null</code> if none
+	 */
+	public Image getImage(String key) {
+		Image image = getImageRegistry().get(key);
+		return image;
+	}
+
+	/**
 	 * Returns the plugin's resource bundle,
 	 */
 	public ResourceBundle getResourceBundle() {
@@ -99,7 +124,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the CheatSheetHistory,
+	 * Returns the CheatSheetHistory
 	 */
 	public CheatSheetHistory getCheatSheetHistory() {
 		if (history == null) {
@@ -116,6 +141,68 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 		IPath path = CheatSheetPlugin.getPlugin().getStateLocation();
 		path = path.append(DEFAULT_CHEATSHEET_STATE_FILENAME);
 		return path.toFile();
+	}
+
+	/**
+	 * Returns the DocumentBuilder to be used by the cheat sheets.
+	 */
+	public DocumentBuilder getDocumentBuilder() {
+		if(documentBuilder == null) {
+			try {
+				documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			} catch (Exception e) {
+				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, CheatSheetPlugin.getResourceString(ICheatSheetResource.ERROR_CREATING_DOCUMENT_BUILDER), e);
+				CheatSheetPlugin.getPlugin().getLog().log(status);
+			}
+		}
+		return documentBuilder;
+	}
+
+	protected void initializeImageRegistry(ImageRegistry reg) {
+		String imageFileName = "icons/full/obj16/skip_status.gif"; //$NON-NLS-1$
+		URL imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
+		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(imageURL);
+		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_SKIP, imageDescriptor);
+
+		imageFileName = "icons/full/obj16/complete_status.gif"; //$NON-NLS-1$
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
+		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
+		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_COMPLETE, imageDescriptor);
+
+		imageFileName = "icons/full/clcl16/linkto_help.gif"; //$NON-NLS-1$
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
+		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
+		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_HELP, imageDescriptor);
+
+		imageFileName = "icons/full/clcl16/start_cheatsheet.gif"; //$NON-NLS-1$
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
+		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
+		reg.put(ICheatSheetResource.CHEATSHEET_START, imageDescriptor);
+
+		imageFileName = "icons/full/clcl16/restart_cheatsheet.gif"; //$NON-NLS-1$
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
+		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
+		reg.put(ICheatSheetResource.CHEATSHEET_RESTART, imageDescriptor);
+
+		imageFileName = "icons/full/clcl16/start_task.gif"; //$NON-NLS-1$
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
+		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
+		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START, imageDescriptor);
+
+		imageFileName = "icons/full/clcl16/skip_task.gif"; //$NON-NLS-1$
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
+		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
+		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_SKIP, imageDescriptor);
+
+		imageFileName = "icons/full/clcl16/complete_task.gif"; //$NON-NLS-1$
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
+		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
+		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE, imageDescriptor);
+
+		imageFileName = "icons/full/clcl16/restart_task.gif"; //$NON-NLS-1$
+		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
+		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
+		reg.put(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART, imageDescriptor);
 	}
 
 	/**

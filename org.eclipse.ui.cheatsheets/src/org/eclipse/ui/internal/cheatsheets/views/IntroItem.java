@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
-import java.net.URL;
-
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -23,9 +19,6 @@ import org.eclipse.ui.internal.cheatsheets.*;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
 
 public class IntroItem extends ViewItem {
-	private Image startButtonImage;
-	private Image restartButtonImage;
-
 	private ImageHyperlink startButton;
 
 	/**
@@ -35,31 +28,17 @@ public class IntroItem extends ViewItem {
 	 */
 	public IntroItem(FormToolkit toolkit, ScrolledForm form, Item contentItem, Color itemColor, CheatSheetViewer viewer) {
 		super(toolkit, form, contentItem, itemColor, viewer);
-
 	}
 
-	protected void init() {
-		super.init();
-
-		String imageFileName = "icons/full/clcl16/start_cheatsheet.gif"; //$NON-NLS-1$
-		URL imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
-		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(imageURL);
-		startButtonImage = imageDescriptor.createImage();
-
-		imageFileName = "icons/full/clcl16/restart_cheatsheet.gif"; //$NON-NLS-1$
-		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
-		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
-		restartButtonImage = imageDescriptor.createImage();
-	}
 
 	/*package*/ void setStartImage() {
-		startButton.setImage(startButtonImage);
+		startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_START));
 		startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.START_CHEATSHEET_TOOLTIP));
 //		startButton.setFAccessibleName(startButton.getToolTipText());
 	}
 
 	/*package*/ void setRestartImage() {
-		startButton.setImage(restartButtonImage);
+		startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_RESTART));
 		startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTART_CHEATSHEET_TOOLTIP));
 //		startButton.setFAccessibleName(startButton.getToolTipText());
 	}
@@ -85,24 +64,13 @@ public class IntroItem extends ViewItem {
 		filldata.widthHint = 16;
 		filllabel.setLayoutData(filldata);
 
-		startButton = createButton(buttonComposite, startButtonImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.START_CHEATSHEET_TOOLTIP));
+		startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_START), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.START_CHEATSHEET_TOOLTIP));
 		toolkit.adapt(startButton, true, true);
 		startButton.addHyperlinkListener(new HyperlinkAdapter() {
 			public void linkActivated(HyperlinkEvent e) {
 				viewer.advanceIntroItem();
 			}
 		});
-	}
-
-	/**
-	 * @see org.eclipse.ui.internal.cheatsheets.views.ViewItem#disposeOfStuff()
-	 */
-	public void dispose() {
-		super.dispose();
-		if (startButtonImage != null)
-			startButtonImage.dispose();
-		if (restartButtonImage != null)
-			restartButtonImage.dispose();
 	}
 
 }

@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
-import java.net.URL;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -31,11 +29,6 @@ import org.osgi.framework.Bundle;
 
 public class CoreItem extends ViewItem {
 	protected boolean buttonsHandled = false;
-
-	protected Image completeImage;
-	protected Image restartImage;
-	protected Image skipImage;
-	protected Image startImage;
 
 	private ArrayList listOfSubItemCompositeHolders;
 
@@ -70,7 +63,7 @@ public class CoreItem extends ViewItem {
 
 	private void createButtons(Action action) {
 		if (action != null ) {
-			final ImageHyperlink startButton = createButton(buttonComposite, startImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
+			final ImageHyperlink startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
 			toolkit.adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -79,7 +72,7 @@ public class CoreItem extends ViewItem {
 			});
 		}
 		if (item.isSkip()) {
-			final ImageHyperlink skipButton = createButton(buttonComposite, skipImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
+			final ImageHyperlink skipButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_SKIP), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
 			toolkit.adapt(skipButton, true, true);
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -88,7 +81,7 @@ public class CoreItem extends ViewItem {
 			});
 		}
 		if (action == null || action.isConfirm()) {
-			final ImageHyperlink completeButton = createButton(buttonComposite, completeImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
+			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
 			toolkit.adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -146,7 +139,7 @@ public class CoreItem extends ViewItem {
 		ImageHyperlink startButton = null;
 		if (subAction != null) {
 			added++;
-			startButton = createButton(buttonComposite, startImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
+			startButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
 			final ImageHyperlink finalStartButton = startButton;
 			toolkit.adapt(startButton, true, true);
 			startButton.addHyperlinkListener(new HyperlinkAdapter() {
@@ -157,7 +150,7 @@ public class CoreItem extends ViewItem {
 		}
 		if (sub.isSkip()) {
 			added++;
-			final ImageHyperlink skipButton = createButton(buttonComposite, skipImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
+			final ImageHyperlink skipButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_SKIP), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.SKIP_TASK_TOOLTIP));
 			toolkit.adapt(skipButton, true, true);
 			skipButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -167,7 +160,7 @@ public class CoreItem extends ViewItem {
 		}
 		if (subAction == null || subAction.isConfirm()) {
 			added++;
-			final ImageHyperlink completeButton = createButton(buttonComposite, completeImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
+			final ImageHyperlink completeButton = createButton(buttonComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_COMPLETE), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.COMPLETE_TASK_TOOLTIP));
 			toolkit.adapt(completeButton, true, true);
 			completeButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -183,22 +176,6 @@ public class CoreItem extends ViewItem {
 			added++;
 		}
 		listOfSubItemCompositeHolders.add(new SubItemCompositeHolder(checkDoneLabel, startButton, thisValue, sub));
-	}
-
-	/**
-	 * @see org.eclipse.ui.internal.cheatsheets.views.ViewItem#disposeOfStuff()
-	 */
-	public void dispose() {
-		super.dispose();
-
-		if (startImage != null)
-			startImage.dispose();
-		if (skipImage != null)
-			skipImage.dispose();
-		if (completeImage != null)
-			completeImage.dispose();
-		if (restartImage != null)
-			restartImage.dispose();
 	}
 
 	public ArrayList getListOfSubItemCompositeHolders() {
@@ -321,6 +298,8 @@ public class CoreItem extends ViewItem {
 
 		if(refreshRequired) {
 			buttonComposite.layout();
+			getMainItemComposite().layout();
+			form.reflow(true);
 		}
 	}
 
@@ -348,6 +327,8 @@ public class CoreItem extends ViewItem {
 		
 		if(refreshRequired) {
 			buttonComposite.layout();
+			getMainItemComposite().layout();
+			form.reflow(true);
 		}
 	}
 
@@ -370,30 +351,6 @@ public class CoreItem extends ViewItem {
 			createSubItemButtons((SubItem)sublist.get(i), null, i);
 		}
 		buttonsHandled = true;
-	}
-
-	protected void init() {
-		super.init();
-
-		String imageFileName = "icons/full/clcl16/start_task.gif"; //$NON-NLS-1$
-		URL imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
-		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(imageURL);
-		startImage = imageDescriptor.createImage();
-
-		imageFileName = "icons/full/clcl16/skip_task.gif"; //$NON-NLS-1$
-		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
-		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
-		skipImage = imageDescriptor.createImage();
-
-		imageFileName = "icons/full/clcl16/complete_task.gif"; //$NON-NLS-1$
-		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
-		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
-		completeImage = imageDescriptor.createImage();
-
-		imageFileName = "icons/full/clcl16/restart_task.gif"; //$NON-NLS-1$
-		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
-		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
-		restartImage = imageDescriptor.createImage();
 	}
 
 	public String performLineSubstitution(String line, String variable, String value) {
@@ -556,7 +513,7 @@ public class CoreItem extends ViewItem {
 				if(s.isCompleted() || s.isSkipped())
 					s.getIconLabel().setImage(null);
 				if(s.startButton != null)
-					s.getStartButton().setImage(startImage);	
+					s.getStartButton().setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START));	
 					
 			}					
 		}	
@@ -565,7 +522,7 @@ public class CoreItem extends ViewItem {
 	/*package*/ void setRestartImage() {
 		ImageHyperlink startButton = getStartButton();
 		if (startButton != null) {
-			startButton.setImage(restartImage);
+			startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_RESTART));
 			startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.RESTART_TASK_TOOLTIP));
 		}
 	}
@@ -573,7 +530,7 @@ public class CoreItem extends ViewItem {
 	/*package*/ void setStartImage() {
 		ImageHyperlink startButton = getStartButton();
 		if (startButton != null) {
-			startButton.setImage(startImage);
+			startButton.setImage(CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_BUTTON_START));
 			startButton.setToolTipText(CheatSheetPlugin.getResourceString(ICheatSheetResource.PERFORM_TASK_TOOLTIP));
 		}
 	}

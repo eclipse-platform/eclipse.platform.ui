@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
-import java.net.URL;
 import java.util.ArrayList;
-import org.eclipse.core.runtime.*;
 import org.eclipse.help.*;
 import org.eclipse.jface.resource.*;
 import org.eclipse.swt.SWT;
@@ -24,7 +22,7 @@ import org.eclipse.ui.forms.events.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.cheatsheets.*;
-import org.eclipse.ui.internal.cheatsheets.data.*;
+import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.data.Item;
 
 public abstract class ViewItem {
@@ -34,6 +32,7 @@ public abstract class ViewItem {
 	private Composite bodyComp;
 
 	protected FormText bodyText;
+//	protected Label bodyText;
 	protected Composite bodyWrapperComposite;
 	protected Composite buttonComposite;
 
@@ -41,7 +40,6 @@ public abstract class ViewItem {
 	private Label checkDoneLabel;
 	private boolean completed = false;
 
-	private Image completeImage;
 	protected Item item;
 
 	// Colors
@@ -55,12 +53,10 @@ public abstract class ViewItem {
 	protected Color itemColor;
 	protected Color white;
 
-	private Image helpImage;
 	private boolean isSkipped = false;
 	private ExpandableComposite mainItemComposite;
 
 	private Composite parent;
-	private Image skipImage;
 	protected CheatSheetViewer viewer;
 	private Composite titleComposite;
 	protected FormToolkit toolkit;
@@ -69,12 +65,14 @@ public abstract class ViewItem {
 	private boolean bold = true;
 	private Font boldFont;
 	private Font regularFont;
+	private boolean initialized = false;
 
 	/**
 	 * Constructor for ViewItem.
 	 */
 	public ViewItem(FormToolkit toolkit, ScrolledForm form, Item item, Color itemColor, CheatSheetViewer viewer) {
 		super();
+
 		this.toolkit = toolkit;
 		this.form = form;
 		this.parent = form.getBody();
@@ -84,37 +82,22 @@ public abstract class ViewItem {
 		activeColor = new Color(parent.getDisplay(), activeRGB);
 		alternateColor = new Color(parent.getDisplay(), alternateRGB);
 
-		// Initialize the item...
-		init();
-
-		String imageFileName = "icons/full/obj16/skip_status.gif"; //$NON-NLS-1$
-		URL imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
-		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(imageURL);
-		skipImage = imageDescriptor.createImage();
-
-		imageFileName = "icons/full/obj16/complete_status.gif"; //$NON-NLS-1$
-		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
-		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
-		completeImage = imageDescriptor.createImage();
-
-		imageFileName = "icons/full/clcl16/linkto_help.gif"; //$NON-NLS-1$
-		imageURL = CheatSheetPlugin.getPlugin().find(new Path(imageFileName));
-		imageDescriptor = ImageDescriptor.createFromURL(imageURL);
-		helpImage = imageDescriptor.createImage();
-
 		addItem();
 	}
 
 	//Adds the item to the main composite.
 	private void addItem() {
+		CheatSheetStopWatch.startStopWatch("ViewItem.addItem()"); //$NON-NLS-1$
 
 		Display display = parent.getDisplay();
 		Color bg = JFaceColors.getBannerBackground(display);
 		white = bg;
+		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after getBannerBackground: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		//		Set up the main composite for the item.******************************************
 		checkDoneLabel = toolkit.createLabel(parent, " "); //$NON-NLS-1$
 		checkDoneLabel.setBackground(white);
+		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after create checkDoneLabel: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		mainItemComposite = toolkit.createExpandableComposite(parent, ExpandableComposite.TREE_NODE);
 		mainItemComposite.setBackground(itemColor);
@@ -123,6 +106,7 @@ public abstract class ViewItem {
 		if (title != null) {
 			mainItemComposite.setText(title);
 		}
+		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after create mainItemComposite: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		
 		mainItemComposite.addExpansionListener(new ExpansionAdapter() {
@@ -130,6 +114,7 @@ public abstract class ViewItem {
 				form.reflow(true);
 			}
 		});
+		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after addExpansionListener: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// handle item extensions here
 		// check number of extensions for this item and adjust layout accordingly
@@ -140,7 +125,6 @@ public abstract class ViewItem {
 			// Set up the title composite for the item.
 			titleComposite = toolkit.createComposite(mainItemComposite);
 			titleComposite.setBackground(itemColor);
-			mainItemComposite.layout();
 		}
 
 		if(itemExts != null) {
@@ -152,12 +136,13 @@ public abstract class ViewItem {
 				}
 			}
 		}
+		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after create item extensions: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// don't add the help icon unless there is a context id or help link
 		if(item.getContextId() != null || item.getHref() != null) {
 			// adjust the layout count
 			number++;
-			ImageHyperlink helpButton = createButton(titleComposite, helpImage, this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.HELP_BUTTON_TOOLTIP));
+			ImageHyperlink helpButton = createButton(titleComposite, CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_HELP), this, itemColor, CheatSheetPlugin.getResourceString(ICheatSheetResource.HELP_BUTTON_TOOLTIP));
 			toolkit.adapt(helpButton, true, true);
 			helpButton.addHyperlinkListener(new HyperlinkAdapter() {
 				public void linkActivated(HyperlinkEvent e) {
@@ -171,6 +156,7 @@ public abstract class ViewItem {
 				}
 			});
 		}
+		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after create help button: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		if(number > 0) {
 			mainItemComposite.setTextClient(titleComposite);
@@ -183,6 +169,7 @@ public abstract class ViewItem {
 			layout.marginHeight = 0;
 			layout.verticalSpacing = 0;
 		}
+		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after setTextClient: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		//Body wrapper here.   this composite will be hidden and shown as appropriate.
 		bodyWrapperComposite = toolkit.createComposite(mainItemComposite);
@@ -190,13 +177,16 @@ public abstract class ViewItem {
 		TableWrapLayout wrapperLayout = new TableWrapLayout();
 		bodyWrapperComposite.setLayout(wrapperLayout);
 		bodyWrapperComposite.setBackground(itemColor);
+		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after create bodyWrapperComposite: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		bodyText = toolkit.createFormText(bodyWrapperComposite, false);
+//		bodyText = toolkit.createLabel(bodyWrapperComposite, item.getDescription(), SWT.WRAP);
 		bodyText.setText(item.getDescription(), item.getDescription().startsWith(IParserTags.FORM_START_TAG), false);
 
 		//Set up the body text portion here.		
 		bodyText.setBackground(itemColor);
 		bodyText.setLayoutData(new TableWrapData(TableWrapData.FILL_GRAB));
+		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after create FormText: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		//Handle the sub-steps and regular buttons here.
 		//First Check to see if there is sub steps.  If there is, don't create the button comp,
@@ -206,9 +196,11 @@ public abstract class ViewItem {
 		if(!item.isDynamic()) {
 			handleButtons();
 		}
+		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after handleButtons(): "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		setButtonsCollapsed();
 		setCollapsed();
+		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after setting buttons and item collapsed: "); //$NON-NLS-1$ //$NON-NLS-2$
 
 		boldFont = mainItemComposite.getFont();
 		FontData[] fontDatas = boldFont.getFontData();
@@ -216,8 +208,10 @@ public abstract class ViewItem {
 			fontDatas[i].setStyle(fontDatas[i].getStyle() ^ SWT.BOLD);
 		}
 		regularFont = new Font(mainItemComposite.getDisplay(), fontDatas);
+		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after font initlization: "); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		setBold(false);
+		CheatSheetStopWatch.printLapTime("ViewItem.addItem()", "Time in addItem() after setBold: "); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	protected ImageHyperlink createButton(Composite parent, Image image, ViewItem item, Color color, String toolTipText) {
@@ -250,12 +244,6 @@ public abstract class ViewItem {
 			bodyWrapperComposite.dispose();
 		if (mainItemComposite != null)
 			mainItemComposite.dispose();
-		if (completeImage != null)
-			completeImage.dispose();
-		if (helpImage != null)
-			helpImage.dispose();
-		if (skipImage != null)
-			skipImage.dispose();
 		if (white != null)
 			white.dispose();
 		if (titleComposite != null)
@@ -279,7 +267,7 @@ public abstract class ViewItem {
 	 */
 	/*package*/
 	Image getCompleteImage() {
-		return completeImage;
+		return CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_COMPLETE);
 	}
 
 	/**
@@ -303,16 +291,12 @@ public abstract class ViewItem {
 	 */
 	/*package*/
 	Image getSkipImage() {
-		return skipImage;
+		return CheatSheetPlugin.getPlugin().getImage(ICheatSheetResource.CHEATSHEET_ITEM_SKIP);
 	}
 
 	//Adds the buttons to the buttonComposite.
 	/*package*/
 	abstract void handleButtons();
-
-	protected void init() {
-
-	}
 
 	/*package*/
 	boolean isBold() {
@@ -415,12 +399,12 @@ public abstract class ViewItem {
 	void setBold(boolean value) {
 		if(value) {
 			mainItemComposite.setFont(boldFont);
-			mainItemComposite.layout();
-			parent.layout();
+			if(initialized)
+				mainItemComposite.layout();
 		} else {
 			mainItemComposite.setFont(regularFont);
-			mainItemComposite.layout();
-			parent.layout();
+			if(initialized)
+				mainItemComposite.layout();
 		}
 		bold = value;
 	}
@@ -434,10 +418,6 @@ public abstract class ViewItem {
 				buttonComposite.setVisible(false);
 
 				buttonExpanded = false;
-				parent.getParent().layout(true);
-				parent.layout(true);
-				mainItemComposite.layout(true);
-				bodyWrapperComposite.layout(true);
 			}
 
 	}
@@ -451,11 +431,9 @@ public abstract class ViewItem {
 
 			buttonExpanded = true;
 
-			parent.getParent().layout(true);
-			parent.layout(true);
-			mainItemComposite.layout(true);
-			bodyWrapperComposite.layout(true);
-			FormToolkit.ensureVisible(getMainItemComposite());
+			if(initialized) {
+				FormToolkit.ensureVisible(getMainItemComposite());
+			}
 		}
 	}
 
@@ -464,13 +442,10 @@ public abstract class ViewItem {
 	void setCollapsed() {
 		if (mainItemComposite.isExpanded()) {
 			mainItemComposite.setExpanded(false);
-			form.reflow(true);
-
-			parent.getParent().layout(true);
-			mainItemComposite.layout(true);
-			bodyWrapperComposite.layout(true);
-
-			FormToolkit.ensureVisible(getMainItemComposite());
+			if(initialized) {
+				form.reflow(true);
+				FormToolkit.ensureVisible(getMainItemComposite());
+			}
 		}
 	}
 
@@ -488,8 +463,11 @@ public abstract class ViewItem {
 	/*package*/
 	void setComplete() {
 		completed = true;
-		checkDoneLabel.setImage(completeImage);
+		checkDoneLabel.setImage(getCompleteImage());
 
+		if(initialized) {
+			checkDoneLabel.getParent().layout();
+		}
 	}
 
 	//expands the item
@@ -497,12 +475,10 @@ public abstract class ViewItem {
 	void setExpanded() {
 		if (!mainItemComposite.isExpanded()) {
 			mainItemComposite.setExpanded(true);
-			form.reflow(true);
-
-			parent.getParent().layout(true);
-			mainItemComposite.layout(true);
-			bodyWrapperComposite.layout(true);
-			FormToolkit.ensureVisible(getMainItemComposite());
+			if(initialized) {
+				form.reflow(true);
+				FormToolkit.ensureVisible(getMainItemComposite());
+			}
 		}
 	}
 
@@ -526,6 +502,7 @@ public abstract class ViewItem {
 	void setOriginalColor() {
 		setTitleColor(itemColor);
 		setBodyColor(itemColor);
+		setBold(false);
 	}
 
 	/*package*/
@@ -533,11 +510,11 @@ public abstract class ViewItem {
 
 	/*package*/
 	void setSkipped() {
-		try {
-			isSkipped = true;
-			checkDoneLabel.setImage(skipImage);
-		} catch (Exception e) {
+		isSkipped = true;
+		checkDoneLabel.setImage(getSkipImage());
 
+		if(initialized) {
+			checkDoneLabel.getParent().layout();
 		}
 	}
 	/*package*/
@@ -552,5 +529,9 @@ public abstract class ViewItem {
 				titlechildren[i].setBackground(color);
 			}
 		}
+	}
+
+	public void initialized() {
+		initialized = true;
 	}
 }

@@ -29,6 +29,21 @@ public interface ICheatSheetResource {
 	public static final String MEMENTO_NAME = "name"; //$NON-NLS-1$
 	public static final String MEMENTO_URL = "url"; //$NON-NLS-1$
 
+
+	//
+	// Constants used to retrieve images from the cheatsheet image registry.
+	//
+	public static final String CHEATSHEET_ITEM_SKIP = "CHEATSHEET_ITEM_SKIP"; //$NON-NLS-1$
+	public static final String CHEATSHEET_ITEM_COMPLETE = "CHEATSHEET_ITEM_COMPLETE"; //$NON-NLS-1$
+	public static final String CHEATSHEET_ITEM_HELP = "CHEATSHEET_ITEM_HELP"; //$NON-NLS-1$
+	public static final String CHEATSHEET_START = "CHEATSHEET_START"; //$NON-NLS-1$
+	public static final String CHEATSHEET_RESTART = "CHEATSHEET_RESTART"; //$NON-NLS-1$
+	public static final String CHEATSHEET_ITEM_BUTTON_START = "CHEATSHEET_ITEM_BUTTON_START"; //$NON-NLS-1$
+	public static final String CHEATSHEET_ITEM_BUTTON_SKIP = "CHEATSHEET_ITEM_BUTTON_SKIP"; //$NON-NLS-1$
+	public static final String CHEATSHEET_ITEM_BUTTON_COMPLETE = "CHEATSHEET_ITEM_BUTTON_COMPLETE"; //$NON-NLS-1$
+	public static final String CHEATSHEET_ITEM_BUTTON_RESTART = "CHEATSHEET_ITEM_BUTTON_RESTART"; //$NON-NLS-1$
+
+	
 	//
 	// Constants used to retrieve strings from the cheatsheet resource bundle.
 	//
