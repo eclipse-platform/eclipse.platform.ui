@@ -67,6 +67,30 @@ function highlightHandler()
 // register handler
 _highlightHandler = highlightHandler;
 
+function onloadHandler() {
+	sizeButtons();
+	enableButtons();
+}
+
+function sizeButtons() {
+	var minWidth=50;
+	if(document.getElementById("ok").width < minWidth){
+		document.getElementById("ok").width = minWidth;
+	}
+	if(document.getElementById("cancel").width < minWidth){
+		document.getElementById("cancel").width = minWidth;
+	}
+	if(document.getElementById("edit").width < minWidth){
+		document.getElementById("edit").width = minWidth;
+	}
+	if(document.getElementById("remove").width < minWidth){
+		document.getElementById("remove").width = minWidth;
+	}
+	if(document.getElementById("new").width < minWidth){
+		document.getElementById("new").width = minWidth;
+	}
+}
+
 function enableButtons() {
 	if (document.getElementById('selectws').checked){
 		document.getElementById("edit").disabled = (active == null);
@@ -151,7 +175,7 @@ function closeWorkingSetDialog()
 
 </head>
 
-<body onload="enableButtons()" onunload="closeWorkingSetDialog()">
+<body onload="onloadHandler()" onunload="closeWorkingSetDialog()">
 <form>
 <div style="overflow:auto;height:250px;width:100%;">
   	<table id="filterTable" cellspacing=0 cellpading=0 border=0 align=center  style="background:<%=prefs.getToolbarBackground()%>;margin-top:5px;width:100%;">
@@ -193,7 +217,7 @@ for (int i=0; i<wsets.length; i++)
 			</div>
 		</td></tr>
 		<tr id="actionsTable" valign="bottom"><td>
-  			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
+  			<table cellspacing=10 cellpading=0 border=0 style="background:transparent;">
 				<tr>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
 						<input class='button'  type="button" onclick="newWorkingSet()" value='<%=ServletResources.getString("NewWorkingSetButton", request)%>...'  id="new" alt='<%=ServletResources.getString("NewWorkingSetButton", request)%>'>
@@ -215,10 +239,10 @@ for (int i=0; i<wsets.length; i++)
   			<table cellspacing=10 cellpading=0 border=0 align=right  style="background:transparent;">
 				<tr>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-						<input class='button'  type="button" onclick="selectWorkingSet()" value='<%=ServletResources.getString("OK", request)%>'  id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
+						<input class='button' type="button" onclick="selectWorkingSet()" value='<%=ServletResources.getString("OK", request)%>' id="ok" alt='<%=ServletResources.getString("OK", request)%>'>
 					</td>
 					<td style="border:1px solid WindowText; padding:0px; margin:0px;">
-					  	<input class='button' type="button" onclick="window.close()"  value='<%=ServletResources.getString("Cancel", request)%>'  id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
+					  	<input class='button' type="button" onclick="window.close()" value='<%=ServletResources.getString("Cancel", request)%>' id="cancel" alt='<%=ServletResources.getString("Cancel", request)%>'>
 					</td>
 				</tr>
   			</table>

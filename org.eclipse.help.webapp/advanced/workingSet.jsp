@@ -123,6 +123,20 @@ plus.src = "<%=prefs.getImagesDirectory()%>"+"/plus.gif";
 
 var oldName = '<%=data.isEditMode()?data.getWorkingSetName():""%>';
 
+function onloadHandler() {
+	sizeButtons();
+}
+
+function sizeButtons() {
+	var minWidth=50;
+	if(document.getElementById("ok").width < minWidth){
+		document.getElementById("ok").width = minWidth;
+	}
+	if(document.getElementById("cancel").width < minWidth){
+		document.getElementById("cancel").width = minWidth;
+	}
+}
+
 function doSubmit()
 {
 	try
@@ -297,7 +311,7 @@ function keyDownHandler(folderId, key, target)
 
 </head>
 
-<body>
+<body onload="onloadHandler()">
 
 	<table id="wsTable" width="100%" cellspacing=0 cellpading=0 border=0 align=center >
 		<tr><td style="padding:5px 10px 0px 10px;"><%=ServletResources.getString("WorkingSetName", request)%>:
