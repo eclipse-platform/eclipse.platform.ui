@@ -19,7 +19,6 @@ import org.eclipse.debug.internal.ui.views.IRemoteTreeViewerUpdateListener;
 import org.eclipse.debug.internal.ui.views.RemoteTreeViewer;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
@@ -32,8 +31,6 @@ import org.eclipse.swt.widgets.Widget;
  * we ensure that newly added varibles are visible.
  */
 public class VariablesViewer extends RemoteTreeViewer {
-
-	private Item fNewItem;
     
     private ArrayList fUpdateListeners = new ArrayList();
 	
@@ -63,51 +60,15 @@ public class VariablesViewer extends RemoteTreeViewer {
 	}
 	
 	/**
-	 * Refresh the view, and then do another pass to
-	 * update the foreground color for values that have changed
-	 * since the last refresh. Values that have not
-	 * changed are drawn with the default system foreground color.
-	 * If the viewer has no selection, ensure that new items
-	 * are visible.
-	 * 
-	 * @see Viewer#refresh()
-	 */
-	public void refresh() {
-		super.refresh();
-		
-		ISelection selection = getSelection();
-        if (selection.isEmpty()) {
-		    if (getNewItem() != null) {
-				if (!getNewItem().isDisposed()) {
-					//ensure that new items are visible
-					showItem(getNewItem());
-				}
-				setNewItem(null);
-		    }
-		} else {
-		    // Force a selection change to update the details pane
-		    setSelection(selection);
-		}
-	}
-	
-	/**
 	 * @see AbstractTreeViewer#newItem(Widget, int, int)
 	 */
 	protected Item newItem(Widget parent, int style, int index) {
-		if (index != -1) {
+		Item item = super.newItem(parent, style, index);
+		if (index != -1 && getSelection(getControl()).length == 0) {
 			//ignore the dummy items
-			setNewItem(super.newItem(parent, style, index));
-			return getNewItem();
+			showItem(item);
 		} 
-		return	super.newItem(parent, style, index);
-	}
-	
-	protected Item getNewItem() {
-		return fNewItem;
-	}
-
-	protected void setNewItem(Item newItem) {
-		fNewItem = newItem;
+		return item;
 	}
 	
 	/**
