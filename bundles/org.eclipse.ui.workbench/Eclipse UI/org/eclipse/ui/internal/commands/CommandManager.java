@@ -31,6 +31,7 @@ import org.eclipse.ui.commands.ICommandManagerListener;
 import org.eclipse.ui.commands.ICommandRegistry;
 import org.eclipse.ui.commands.ICommandRegistryEvent;
 import org.eclipse.ui.commands.ICommandRegistryListener;
+import org.eclipse.ui.internal.commands.registry.CommandRegistry;
 import org.eclipse.ui.internal.util.Util;
 
 public final class CommandManager implements ICommandManager {

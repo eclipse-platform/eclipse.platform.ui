@@ -85,14 +85,15 @@ public final class KeyBindingMachine {
 			while (id != null) {	
 				if (strings.contains(id))
 					return null;
-							
-				KeyConfigurationDefinition keyConfiguration = (KeyConfigurationDefinition) keyConfigurationMap.get(id);
 				
-				if (keyConfiguration == null)
+				// TODO high priority		
+				//KeyConfigurationDefinition keyConfiguration = (KeyConfigurationDefinition) keyConfigurationMap.get(id);
+				
+				//if (keyConfiguration == null)
 					return null;
 							
-				strings.add(0, id);
-				id = keyConfiguration.getParentId();
+				//strings.add(0, id);
+				//id = keyConfiguration.getParentId();
 			}
 		
 			path = Path.getInstance(strings);

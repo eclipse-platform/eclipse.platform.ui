@@ -80,6 +80,10 @@ final class Command implements Comparable, ICommand {
 	private String name;
 	private String pluginId;
 	
+	private transient int hashCode;
+	private transient boolean hashCodeComputed;
+	private transient String string;
+	
 	Command(boolean active, String categoryId, String description, String id, String name, String pluginId) {
 		super();
 		
@@ -149,14 +153,18 @@ final class Command implements Comparable, ICommand {
 	}
 
 	public int hashCode() {
-		int result = HASH_INITIAL;
-		result = result * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());
-		result = result * HASH_FACTOR + Util.hashCode(categoryId);
-		result = result * HASH_FACTOR + Util.hashCode(description);
-		result = result * HASH_FACTOR + id.hashCode();
-		result = result * HASH_FACTOR + name.hashCode();
-		result = result * HASH_FACTOR + Util.hashCode(pluginId);
-		return result;
+		if (!hashCodeComputed) {
+			hashCode = HASH_INITIAL;
+			hashCode = hashCode * HASH_FACTOR + (active ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode());
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(categoryId);
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(description);
+			hashCode = hashCode * HASH_FACTOR + id.hashCode();
+			hashCode = hashCode * HASH_FACTOR + name.hashCode();
+			hashCode = hashCode * HASH_FACTOR + Util.hashCode(pluginId);
+			hashCodeComputed = true;
+		}
+			
+		return hashCode;
 	}
 
 	public boolean isActive() {
@@ -164,20 +172,24 @@ final class Command implements Comparable, ICommand {
 	}
 
 	public String toString() {
-		final StringBuffer stringBuffer = new StringBuffer();
-		stringBuffer.append('[');
-		stringBuffer.append(active);
-		stringBuffer.append(',');
-		stringBuffer.append(id);
-		stringBuffer.append(',');
-		stringBuffer.append(name);
-		stringBuffer.append(',');
-		stringBuffer.append(categoryId);
-		stringBuffer.append(',');
-		stringBuffer.append(description);
-		stringBuffer.append(',');
-		stringBuffer.append(pluginId);
-		stringBuffer.append(']');
-		return stringBuffer.toString();
+		if (string == null) {
+			final StringBuffer stringBuffer = new StringBuffer();
+			stringBuffer.append('[');
+			stringBuffer.append(active);
+			stringBuffer.append(',');
+			stringBuffer.append(id);
+			stringBuffer.append(',');
+			stringBuffer.append(name);
+			stringBuffer.append(',');
+			stringBuffer.append(categoryId);
+			stringBuffer.append(',');
+			stringBuffer.append(description);
+			stringBuffer.append(',');
+			stringBuffer.append(pluginId);
+			stringBuffer.append(']');
+			string = stringBuffer.toString();
+		}
+	
+		return string;
 	}
 }

@@ -30,6 +30,7 @@ import org.eclipse.ui.contexts.IContextManagerListener;
 import org.eclipse.ui.contexts.IContextRegistry;
 import org.eclipse.ui.contexts.IContextRegistryEvent;
 import org.eclipse.ui.contexts.IContextRegistryListener;
+import org.eclipse.ui.internal.contexts.registry.ContextRegistry;
 import org.eclipse.ui.internal.util.Util;
 
 public final class ContextManager implements IContextManager {
