@@ -10,12 +10,9 @@
  ******************************************************************************/
 package org.eclipse.team.internal.ui.target;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
@@ -24,9 +21,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ColumnLayoutData;
-import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -37,12 +32,20 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
@@ -76,137 +79,276 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 
 	public static final String VIEW_ID = "org.eclipse.team.ui.target.SiteExplorerView"; //$NON-NLS-1$
 
-	// The tree viewer
-	private TableViewer tableViewer;
-	private TreeViewer treeViewer;
+	// The tree viewer showing the folders and sites
+	private TreeViewer folderTree;
+	
+	// The table view that shows the resources in the currently selected folder
+	// from the folders tree.
+	private TableViewer folderContentsTable;
 	
 	// The root
 	private SiteRootsElement root;
+	
+	// Embedded progress monitor part used to display progress when contacting the server
+	// Note: this feature is not enabled yet and is still under construction
+	private IProgressMonitor progressMonitorPart;
 	
 	// The view's actions
 	private Action addSiteAction;
 	private Action newFolderAction;
 	private Action deleteAction;
-
 	
-	
+	/**
+	 * Sorter for the folderContents table
+	 */
+	class FolderListingSorter extends ViewerSorter {
+		private boolean reversed = false;
+		private int columnNumber;
+		
+		public static final int NAME = 0;
+		public static final int SIZE = 1;
+		public static final int MODIFIED = 2;
+				
+		// column headings:	"Name" "Size" "Modified"
+		private int[][] SORT_ORDERS_BY_COLUMN = {
+			{NAME, SIZE, MODIFIED},	/* name */ 
+			{SIZE, NAME, MODIFIED},	/* size */
+			{MODIFIED, NAME, SIZE},	/* modified */
+		};
+		
+		public FolderListingSorter(int columnNumber) {
+			this.columnNumber = columnNumber;
+		}
+		
+		public int compare(Viewer viewer, Object o1, Object o2) {
+			RemoteResourceElement e1 = (RemoteResourceElement)o1;
+			RemoteResourceElement e2 = (RemoteResourceElement)o2;
+			int[] columnSortOrder = SORT_ORDERS_BY_COLUMN[columnNumber];
+			int result = 0;
+			for (int i = 0; i < columnSortOrder.length; ++i) {
+				result = compareColumnValue(columnSortOrder[i], e1, e2);
+				if (result != 0)
+					break;
+			}
+			if (reversed)
+				result = -result;
+			return result;
+		}
+		
+		int compareColumnValue(int columnNumber, RemoteResourceElement e1, RemoteResourceElement e2) {
+			IRemoteTargetResource r1 = e1.getRemoteResource();
+			IRemoteTargetResource r2 = e2.getRemoteResource();
+			switch (columnNumber) {
+				case NAME:
+					if (r1.isContainer() && r2.isContainer())
+						return compareNames(r1, r2);
+					else if (r1.isContainer())
+						return -1;
+					else if (r2.isContainer())
+						return 1;
+					return compareNames(r1, r2);
+				case SIZE:
+					try {
+						return new Integer(r1.getSize(null)).compareTo(new Integer(r2.getSize(null)));
+					} catch (TeamException e) {
+						return 0;
+					}
+				case MODIFIED:
+					try {
+						return getCollator().compare(r1.getLastModified(null), r2.getLastModified(null));
+					} catch (TeamException e) {
+						return 0;
+					}
+				default:
+					return 0;
+			}
+		}
+		
+		protected int compareNames(IRemoteTargetResource resource1, IRemoteTargetResource resource2) {
+			return collator.compare(resource1.getName(), resource2.getName());
+		}
+		
+		/**
+		 * Returns the number of the column by which this is sorting.
+		 */
+		public int getColumnNumber() {
+			return columnNumber;
+		}
+		
+		/**
+		 * Returns true for descending, or false
+		 * for ascending sorting order.
+		 */
+		public boolean isReversed() {
+			return reversed;
+		}
+		
+		/**
+		 * Sets the sorting order.
+		 */
+		public void setReversed(boolean newReversed) {
+			reversed = newReversed;
+		}
+	}
+		
 	/**
 	 * @see IWorkbenchPart#createPartControl(Composite)
 	 */
-	public void createPartControl(Composite p) {
-		SashForm sash = new SashForm(p, SWT.HORIZONTAL);
-		sash.setLayoutData(new GridData(GridData.FILL_BOTH));
-	
-		root = new SiteRootsElement(TargetManager.getSites(), RemoteResourceElement.SHOW_FOLDERS);
+	public void createPartControl(Composite top) {
+		Composite p = new Composite(top, SWT.NULL);
+		GridData data = new GridData (GridData.FILL_BOTH);		
+		p.setLayoutData(data);
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.numColumns = 3;
+		gridLayout.marginHeight = 0;
+		gridLayout.marginWidth = 0;
+		p.setLayout (gridLayout);
 		
-		treeViewer = new TreeViewer(sash, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-		treeViewer.setContentProvider(new SiteLazyContentProvider());
-		treeViewer.setLabelProvider(new WorkbenchLabelProvider());
+		SashForm sash = new SashForm(p, SWT.HORIZONTAL);
+		data = new GridData(GridData.FILL_BOTH);
+		data.horizontalSpan = 3;
+		sash.setLayoutData(data);
+		
+		folderTree = new TreeViewer(sash, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		folderTree.setContentProvider(new SiteLazyContentProvider());
+		folderTree.setLabelProvider(new WorkbenchLabelProvider());
 
-		treeViewer.setSorter(new SiteViewSorter());
-		treeViewer.getControl().addKeyListener(new KeyAdapter() {
+		folderTree.setSorter(new SiteViewSorter());
+		folderTree.getControl().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent event) {
 				if (event.keyCode == SWT.F5) {
-					refresh();
+					RemoteResourceElement[] selectedFolders = getSelectedRemoteFolder((IStructuredSelection)folderTree.getSelection());
+					if(selectedFolders.length == 1) {
+						selectedFolders[0].setCachedChildren(null);
+						folderTree.refresh(selectedFolders[0]);
+						updateFileTable(selectedFolders[0]);
+					}
 				}
 			}
 		});
 		
-		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+		folderTree.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
-				final IRemoteTargetResource[] remoteFolders = getSelectedRemoteFolder(selection);
+				IStructuredSelection selection = (IStructuredSelection)folderTree.getSelection();
+				final RemoteResourceElement[] remoteFolders = getSelectedRemoteFolder(selection);
 				if(remoteFolders.length == 1) {
 					updateFileTable(remoteFolders[0]);
 				}
 			}
 		});
 		
-		treeViewer.addDoubleClickListener(new IDoubleClickListener() {
+		folderTree.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent e) {
-				IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
+				IStructuredSelection selection = (IStructuredSelection)folderTree.getSelection();
 				if(selection.size() == 1) {
 					expandInTreeCurrentSelection(selection, true /*toggle expanded*/);
 				}
 			}
 		});
 		
-		treeViewer.setInput(root);
-
-		Table table = new Table(sash, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
-		TableLayout layout = new TableLayout();
-		
-		TableColumn tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText(Policy.bind("SiteExplorerView.Name_1")); //$NON-NLS-1$
-		layout.addColumnData(new ColumnWeightData(30, true));
-		tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText(Policy.bind("SiteExplorerView.Size_2")); //$NON-NLS-1$
-		tableColumn.setAlignment(SWT.RIGHT);
-		layout.addColumnData(new ColumnWeightData(20, true));
-		tableColumn = new TableColumn(table, SWT.NULL);
-		tableColumn.setText(Policy.bind("SiteExplorerView.Modified_3")); //$NON-NLS-1$
-		tableColumn = new TableColumn(table, SWT.NULL);
-		layout.addColumnData(new ColumnWeightData(20, true));
-		tableColumn.setText(Policy.bind("SiteExplorerView.URL_4")); //$NON-NLS-1$
-		ColumnLayoutData cLayout = new ColumnPixelData(21);
-		table.setLayout(layout);
-		table.setHeaderVisible(true);
-
-		tableViewer = new TableViewer(table);
-		tableViewer.setContentProvider(new SiteLazyContentProvider());
-		tableViewer.setLabelProvider(new SiteExplorerViewLabelProvider());
-		
-		tableViewer.getControl().addKeyListener(new KeyAdapter() {
-			public void keyPressed(KeyEvent event) {
-				if (event.keyCode == SWT.F5) {
-					refresh();
+		folderTree.setSorter(new ViewerSorter() {
+			public int compare(Viewer viewer, Object e1, Object e2) {
+				String name1 = "";
+				String name2 = "";
+				if(e1 instanceof RemoteResourceElement) {
+					name1 = ((RemoteResourceElement)e1).getRemoteResource().getName();
+				} else if(e1 instanceof SiteElement) {
+					name1 = ((SiteElement)e1).getSite().getURL().toExternalForm();
 				}
+				if(e2 instanceof RemoteResourceElement) {
+					name2 = ((RemoteResourceElement)e2).getRemoteResource().getName();
+				} else if(e2 instanceof SiteElement) {
+					name2 = ((SiteElement)e2).getSite().getURL().toExternalForm();
+				}
+				
+				return getCollator().compare(name1, name2);
 			}
 		});
 		
-		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent e) {
-				IStructuredSelection selection = (IStructuredSelection)tableViewer.getSelection();
-				if(selection.size() == 1) {
-					final IRemoteTargetResource[] remoteFolders = getSelectedRemoteFolder(selection);
-					if(remoteFolders.length == 1) {
-						IStructuredSelection treeSelection = (IStructuredSelection)treeViewer.getSelection();
-						expandInTreeCurrentSelection(treeSelection, false /*don't toggle*/);
-						treeViewer.setSelection(new StructuredSelection(new RemoteResourceElement(remoteFolders[0])));
+		Table table = new Table(sash, SWT.FULL_SELECTION | SWT.H_SCROLL | SWT.V_SCROLL);
+		
+		TableColumn tableColumn = new TableColumn(table, SWT.NULL);
+		tableColumn.setText(Policy.bind("SiteExplorerView.Name_1")); //$NON-NLS-1$
+		tableColumn.addSelectionListener(getColumnListener());
+
+		tableColumn = new TableColumn(table, SWT.NULL);
+		tableColumn.setText(Policy.bind("SiteExplorerView.Size_2")); //$NON-NLS-1$
+		tableColumn.setAlignment(SWT.RIGHT);
+		tableColumn.addSelectionListener(getColumnListener());
+
+		tableColumn = new TableColumn(table, SWT.NULL);
+		tableColumn.setText(Policy.bind("SiteExplorerView.Modified_3")); //$NON-NLS-1$
+		tableColumn.addSelectionListener(getColumnListener());
+
+		tableColumn = new TableColumn(table, SWT.NULL);
+		tableColumn.setText(Policy.bind("SiteExplorerView.URL_4")); //$NON-NLS-1$
+
+		TableLayout layout = new TableLayout();
+		layout.addColumnData(new ColumnWeightData(30, true));
+		layout.addColumnData(new ColumnWeightData(10, true));
+		layout.addColumnData(new ColumnWeightData(30, true));
+		layout.addColumnData(new ColumnWeightData(30, true));
+
+		table.setLayout(layout);
+		table.setHeaderVisible(true);
+
+		folderContentsTable = new TableViewer(table);
+		folderContentsTable.setContentProvider(new SiteLazyContentProvider());
+		folderContentsTable.setLabelProvider(new SiteExplorerViewLabelProvider());
+		
+		folderContentsTable.getControl().addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent event) {
+				if (event.keyCode == SWT.F5) {
+					RemoteResourceElement folder = (RemoteResourceElement)folderContentsTable.getInput();
+					if(folder != null) {
+						folder.setCachedChildren(null);
+						folderContentsTable.refresh();
 					}
 				}
 			}
 		});
+		
+		folderContentsTable.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent e) {
+				IStructuredSelection selection = (IStructuredSelection)folderContentsTable.getSelection();
+				if(selection.size() == 1) {
+					final RemoteResourceElement[] remoteFolders = getSelectedRemoteFolder(selection);
+					if(remoteFolders.length == 1) {
+						IStructuredSelection treeSelection = (IStructuredSelection)folderTree.getSelection();
+						expandInTreeCurrentSelection(treeSelection, false /*don't toggle*/);
+						folderTree.setSelection(new StructuredSelection(remoteFolders[0]));
+					}
+				}
+			}
+		});
+		FolderListingSorter sorter = new FolderListingSorter(FolderListingSorter.NAME);
+		sorter.setReversed(false);
+		folderContentsTable.setSorter(sorter);
 
 		sash.setWeights(new int[] {33, 67});
 		
 		TargetManager.addSiteListener(this);
+		initializeTreeInput();
 		initalizeActions();
 	}
 
 	private Shell getShell() {
-		return treeViewer.getTree().getShell();
+		return folderTree.getTree().getShell();
 	}
 
-	private IRemoteTargetResource[] getSelectedRemoteFolder(IStructuredSelection selection) {		
+	private RemoteResourceElement[] getSelectedRemoteFolder(IStructuredSelection selection) {		
 		if (!selection.isEmpty()) {
 			final List folders = new ArrayList();
 			Iterator it = selection.iterator();
 			while(it.hasNext()) {
 				Object o = it.next();
 				if(o instanceof RemoteResourceElement) {
-					folders.add(((RemoteResourceElement)o).getRemoteResource());
-				} else if(o instanceof SiteElement) {
-					try {
-						folders.add(((SiteElement)o).getSite().getRemoteResource());
-					} catch (TeamException e) {
-						return new IRemoteTargetResource[0];
-					}
+					folders.add(o);
 				}
 			}
-			return (IRemoteTargetResource[]) folders.toArray(new IRemoteTargetResource[folders.size()]);
+			return (RemoteResourceElement[]) folders.toArray(new RemoteResourceElement[folders.size()]);
 		}
-		return new IRemoteTargetResource[0];
+		return new RemoteResourceElement[0];
 	}
 	
 	private void expandInTreeCurrentSelection(IStructuredSelection selection, boolean toggle) {
@@ -215,9 +357,9 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 			while(it.hasNext()) {
 				Object element = it.next();
 				if(toggle) {
-					treeViewer.setExpandedState(element, !treeViewer.getExpandedState(element));
+					folderTree.setExpandedState(element, !folderTree.getExpandedState(element));
 				} else {
-					treeViewer.setExpandedState(element, true);
+					folderTree.setExpandedState(element, true);
 				}
 			}
 		}
@@ -226,16 +368,20 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 	/**
 	 * Method updateFileTable.
 	 */
-	private void updateFileTable(IRemoteTargetResource remoteFolder) {
-		final Set tags = new HashSet();
-		if(remoteFolder != null) {
-			RemoteResourceElement folderElement = new RemoteResourceElement(remoteFolder);
-			tableViewer.setInput(folderElement);
+	private void updateFileTable(RemoteResourceElement remoteFolder) {
+		if(remoteFolder != null && !remoteFolder.equals(folderContentsTable.getInput())) {
+			RemoteResourceElement tableFolder = new RemoteResourceElement(
+					remoteFolder.getRemoteResource(),
+					remoteFolder.SHOW_FILES | remoteFolder.SHOW_FOLDERS);
+			tableFolder.setCachedChildren(remoteFolder.getCachedChildren());
+			tableFolder.setShell(remoteFolder.getShell());
+			tableFolder.setProgressMonitor(remoteFolder.getProgressMonitor());
+			folderContentsTable.setInput(tableFolder);
 		}
 	}
 
 	private void initalizeActions() {
-		final Shell shell = tableViewer.getTable().getShell();
+		final Shell shell = folderContentsTable.getTable().getShell();
 		// Create actions
 		
 		// Refresh (toolbar)
@@ -251,32 +397,32 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		
 		newFolderAction = new Action(Policy.bind("SiteExplorerView.newFolderAction"), WorkbenchImages.getImageDescriptor(org.eclipse.ui.ISharedImages.IMG_OBJ_FOLDER)) { //$NON-NLS-1$
 			public void run() {
-				final Shell shell = treeViewer.getTree().getShell();
+				final Shell shell = folderTree.getTree().getShell();
 				try {
 					// assume that only one folder is selected in the folder tree, this
 					// is enforced by isEnable() method for this action
-					IStructuredSelection selection = (IStructuredSelection)treeViewer.getSelection();
+					IStructuredSelection selection = (IStructuredSelection)folderTree.getSelection();
 					Object currentSelection = selection.getFirstElement();
 					
-					final IRemoteTargetResource selectedFolder = getSelectedRemoteFolder(selection)[0];
+					final RemoteResourceElement selectedFolder = getSelectedRemoteFolder(selection)[0];
 					
-					IRemoteTargetResource newFolder = CreateNewFolderAction.createDir(shell, selectedFolder, Policy.bind("CreateNewFolderAction.newFolderName"));
+					IRemoteTargetResource newFolder = CreateNewFolderAction.createDir(shell, selectedFolder.getRemoteResource(), Policy.bind("CreateNewFolderAction.newFolderName"));
 					if (newFolder == null)
 						return;
-						
+					selectedFolder.setCachedChildren(null);
 					RemoteResourceElement newFolderUIElement = new RemoteResourceElement(newFolder);
 
-					treeViewer.refresh(currentSelection);
+					folderTree.refresh(currentSelection);
 					expandInTreeCurrentSelection(new StructuredSelection(currentSelection), false);
-					treeViewer.setSelection(new StructuredSelection(newFolderUIElement));
+					folderTree.setSelection(new StructuredSelection(newFolderUIElement));
 				} catch (TeamException e) {
 					TeamUIPlugin.handle(e);
 					return;
 				}
 			}
 			public boolean isEnabled() {
-				return getSelectedRemoteFolder((IStructuredSelection)treeViewer.getSelection()).length == 1 ||
-		 				  getSelectedRemoteFolder((IStructuredSelection)tableViewer.getSelection()).length == 1;
+				return getSelectedRemoteFolder((IStructuredSelection)folderTree.getSelection()).length == 1 ||
+		 				  getSelectedRemoteFolder((IStructuredSelection)folderContentsTable.getSelection()).length == 1;
 			}				
 		};
 
@@ -288,8 +434,8 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		
 		MenuManager treeMgr = new MenuManager();
 		MenuManager tableMgr = new MenuManager();
-		Tree tree = treeViewer.getTree();
-		Table table = tableViewer.getTable();
+		Tree tree = folderTree.getTree();
+		Table table = folderContentsTable.getTable();
 		Menu treeMenu = treeMgr.createContextMenu(tree);
 		Menu tableMenu = tableMgr.createContextMenu(table);
 		IMenuListener menuListener = new IMenuListener() {
@@ -309,43 +455,77 @@ public class SiteExplorerView extends ViewPart implements ISiteListener {
 		tableMgr.setRemoveAllWhenShown(true);
 		tree.setMenu(treeMenu);
 		table.setMenu(tableMenu);
-		getSite().registerContextMenu(tableMgr, tableViewer);
-		getSite().registerContextMenu(treeMgr, treeViewer);
-	}
-	
-	/**
-	 * @see IWorkbenchPart#setFocus()
-	 */
-	public void setFocus() {
+		getSite().registerContextMenu(tableMgr, folderContentsTable);
+		getSite().registerContextMenu(treeMgr, folderTree);
 	}
 	
 	/**
 	 * @see ISiteListener#siteAdded(Site)
 	 */
 	public void siteAdded(Site site) {
-		refresh();
+		initializeTreeInput();
 	}
 
 	/**
 	 * @see ISiteListener#siteRemoved(Site)
 	 */
 	public void siteRemoved(Site site) {
-		treeViewer.remove(new SiteElement(site));	
+		folderTree.remove(new SiteElement(site));	
 		selectNextObjectInTreeViewer();	
 	}
 	
 	private void selectNextObjectInTreeViewer() {
-		Object[] items = treeViewer.getVisibleExpandedElements();
+		Object[] items = folderTree.getVisibleExpandedElements();
 		if(items.length > 0) {
-			treeViewer.setSelection(new StructuredSelection(items[0]));
+			folderTree.setSelection(new StructuredSelection(items[0]));
 		} else {
-			tableViewer.setInput(null);
+			folderContentsTable.setInput(null);
 		}
 	}
-	
-	protected void refresh() {
+
+	private void initializeTreeInput() {
 		root = new SiteRootsElement(TargetManager.getSites(), RemoteResourceElement.SHOW_FOLDERS);
-		treeViewer.setInput(root);
-		treeViewer.refresh();
+		folderTree.setInput(root);
+	}
+	
+	/**
+	 * Adds the listener that sets the sorter.
+	 */
+	private SelectionListener getColumnListener() {
+		/**
+	 	 * This class handles selections of the column headers.
+		 * Selection of the column header will cause resorting
+		 * of the shown tasks using that column's sorter.
+		 * Repeated selection of the header will toggle
+		 * sorting order (ascending versus descending).
+		 */
+		return new SelectionAdapter() {
+			/**
+			 * Handles the case of user selecting the
+			 * header area.
+			 * <p>If the column has not been selected previously,
+			 * it will set the sorter of that column to be
+			 * the current tasklist sorter. Repeated
+			 * presses on the same column header will
+			 * toggle sorting order (ascending/descending).
+			 */
+			public void widgetSelected(SelectionEvent e) {
+				// column selected - need to sort
+				int column = folderContentsTable.getTable().indexOf((TableColumn) e.widget);
+				FolderListingSorter oldSorter = (FolderListingSorter)folderContentsTable.getSorter();
+				if (oldSorter != null && column == oldSorter.getColumnNumber()) {
+					oldSorter.setReversed(!oldSorter.isReversed());
+					folderContentsTable.refresh();
+				} else {
+					folderContentsTable.setSorter(new FolderListingSorter(column));
+				}
+			}
+		};
+	}
+
+	/**
+	 * @see IWorkbenchPart#setFocus()
+	 */
+	public void setFocus() {
 	}
 }

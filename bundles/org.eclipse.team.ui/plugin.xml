@@ -134,14 +134,14 @@
             objectClass="org.eclipse.team.internal.ui.target.RemoteResourceElement"
             id="org.eclipse.team.internal.ui.target.RemoteResourceElement">
          <action
-               label="Get As..."
-               tooltip="Get As..."
+               label="%SiteExplorerGetAs.label"
+               tooltip="%SiteExplorerGetAs.tooltip"
                class="org.eclipse.team.internal.ui.target.GetAsAction"
                id="org.eclipse.team.internal.ui.target.GetAsAction">
          </action>
          <action
-               label="Get As Project"
-               tooltip="Get As Project"
+               label="%SiteExplorerGetAsProject.label"
+               tooltip="%SiteExplorerGetAsProject.tooltip"
                class="org.eclipse.team.internal.ui.target.GetAsProjectAction"
                id="org.eclipse.team.internal.ui.target.GetAsProjectAction">
          </action>
@@ -151,22 +151,10 @@
             objectClass="org.eclipse.team.internal.ui.target.SiteElement"
             id="org.eclipse.team.internal.ui.target.SiteElement">
          <action
-               label="Discard Site"
-               tooltip="Discard this Site"
+               label="%SiteExplorerDiscardSite.label"
+               tooltip="%SiteExplorerDiscardSite.tooltip"
                class="org.eclipse.team.internal.ui.target.DiscardSiteAction"
                id="org.eclipse.team.internal.ui.target.DiscardSiteAction">
-         </action>        
-         <action
-               label="Get As..."
-               tooltip="Get As..."
-               class="org.eclipse.team.internal.ui.target.GetAsAction"
-               id="org.eclipse.team.internal.ui.target.GetAsAction">
-         </action>
-         <action
-               label="Get As Project"
-               tooltip="Get As Project"
-               class="org.eclipse.team.internal.ui.target.GetAsProjectAction"
-               id="org.eclipse.team.internal.ui.target.GetAsProjectAction">
          </action>
    </objectContribution>
 </extension>

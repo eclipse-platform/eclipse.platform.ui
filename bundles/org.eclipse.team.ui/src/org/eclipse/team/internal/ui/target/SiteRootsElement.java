@@ -11,14 +11,21 @@
 package org.eclipse.team.internal.ui.target;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.target.Site;
 import org.eclipse.team.core.target.TargetManager;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
+/**
+ * Used to show all Sites defined in the workbench.
+ */
 public class SiteRootsElement implements IWorkbenchAdapter, IAdaptable {
 	private Site[] sites = null;
 	private int showMask = RemoteResourceElement.SHOW_FILES | RemoteResourceElement.SHOW_FOLDERS;
+	private IProgressMonitor monitor;
+	private Shell shell;
 
 	public SiteRootsElement(Site[] sites, int showMask) {
 		this.sites = sites;
@@ -43,8 +50,18 @@ public class SiteRootsElement implements IWorkbenchAdapter, IAdaptable {
 		SiteElement[] siteElements = new SiteElement[childSites.length];
 		for (int i = 0; i < childSites.length; i++) {
 			siteElements[i] = new SiteElement(childSites[i], showMask);
+			siteElements[i].setShell(shell);
+			siteElements[i].setProgressMonitor(monitor);
 		}
 		return siteElements;
+	}
+	
+	public void setProgressMonitor(IProgressMonitor monitor) {
+		this.monitor = monitor;
+	}
+	
+	public void setShell(Shell shell) {
+		this.shell = shell;
 	}
 
 	public String getLabel(Object o) {

@@ -97,7 +97,7 @@ public class MappingSelectionPage extends TargetWizardPage {
 
 					RemoteResourceElement newFolderUIElement = new RemoteResourceElement(newFolder);
 
-					viewer.refresh(currentSelection);
+					setViewerInput();
 					viewer.setExpandedState(currentSelection, true);
 					viewer.setSelection(new StructuredSelection(newFolderUIElement));
 				} catch (TeamException e) {

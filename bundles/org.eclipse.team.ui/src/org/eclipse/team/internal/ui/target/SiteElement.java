@@ -19,45 +19,38 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.target.IRemoteTargetResource;
 import org.eclipse.team.core.target.Site;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
 import org.eclipse.team.ui.ISharedImages;
 import org.eclipse.team.ui.TeamImages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
-public class SiteElement implements IWorkbenchAdapter, IAdaptable {
+/**
+ * Used to show Site instances in the UI. Sites are really just remote
+ * resources but are shown with a different icon and label.
+ * 
+ * @see RemoteResourceElement
+ */
+public class SiteElement extends RemoteResourceElement {
 	private Site site;
-	private int showMask = RemoteResourceElement.SHOW_FILES | RemoteResourceElement.SHOW_FOLDERS;
 	
 	public SiteElement(Site site) {
+		super(null);
 		this.site = site;
 	}
 	
 	public SiteElement(Site site, int showMask) {
+		super(null, showMask);
 		this.site = site;
-		this.showMask = showMask;
 	}
 
 	public Site getSite() {
 		return site;
 	}
-	
-	public Object getAdapter(Class adapter) {
-		if (adapter == IWorkbenchAdapter.class) return this;
-		return null;
-	}
 
 	public int hashCode() {
 		return site.hashCode();
-	}
-
-	public Object[] getChildren(Object o) {
-		try {
-			return new RemoteResourceElement(site.getRemoteResource(), showMask).getChildren(this);
-		} catch (TeamException e) {
-			TeamUIPlugin.handle(e);
-			return new Object[0];
-		}
 	}
 	
 	public ImageDescriptor getImageDescriptor(Object object) {
@@ -79,5 +72,28 @@ public class SiteElement implements IWorkbenchAdapter, IAdaptable {
 			return false;
 		Site otherSite = ((SiteElement)obj).getSite();
 		return getSite().equals(otherSite);
+	}
+	/**
+	 * @see IWorkbenchAdapter#getChildren(Object)
+	 */
+	public Object[] getChildren(Object o) {
+		try {
+			setRemoteResource(site.getRemoteResource());
+		} catch (TeamException e) {
+			TeamUIPlugin.handle(e);
+			return new Object[0];
+		}
+		return super.getChildren(this);
+	}
+	/**
+	 * @see RemoteResourceElement#getRemoteResource()
+	 */
+	public IRemoteTargetResource getRemoteResource() {
+		try {
+			return site.getRemoteResource();
+		} catch (TeamException e) {
+			TeamUIPlugin.handle(e);
+			return null;
+		}
 	}
 }
