@@ -199,13 +199,17 @@ public class SharingWizardSyncPage extends CVSWizardPage implements ISyncInfoSet
 	}
 
 	private void updatePage() {
-		if (infos.getErrors().length > 0) {
-			pageBook.showPage(errorPage);
-		} else if (infos.isEmpty()) {
-			pageBook.showPage(noChangesPage);
-		} else {
-			pageBook.showPage(syncPage);
-		}
+		Display.getDefault().syncExec(new Runnable() {
+			public void run() {
+				if (infos.getErrors().length > 0) {
+					pageBook.showPage(errorPage);
+				} else if (infos.isEmpty()) {
+					pageBook.showPage(noChangesPage);
+				} else {
+					pageBook.showPage(syncPage);
+				}
+			}
+		});
 	}
 
 	public void showError(TeamStatus status) {
