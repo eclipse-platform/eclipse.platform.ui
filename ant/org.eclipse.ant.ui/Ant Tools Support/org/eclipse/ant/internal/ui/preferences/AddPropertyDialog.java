@@ -92,7 +92,6 @@ public class AddPropertyDialog extends Dialog {
 		variablesButton.setText(AntPreferencesMessages.getString("AddPropertyDialog.2")); //$NON-NLS-1$
 		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
 		gd.horizontalSpan = 2;
-		gd.heightHint = convertVerticalDLUsToPixels(IDialogConstants.BUTTON_HEIGHT);
 		int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		gd.widthHint = Math.max(widthHint, variablesButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x);
 		variablesButton.setLayoutData(gd);
