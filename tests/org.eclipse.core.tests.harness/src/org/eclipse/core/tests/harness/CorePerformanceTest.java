@@ -1,16 +1,14 @@
 /**********************************************************************
- * Copyright (c) 2000, 2002 IBM Corporation and others.
+ * Copyright (c) 2000, 2003 IBM Corporation and others.
  * All rights reserved.   This program and the accompanying materials
- * are made available under the terms of the Common Public License v0.5
+ * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/cpl-v05.html
+ * http://www.eclipse.org/legal/cpl-v10.html
  * 
  * Contributors: 
  * IBM - Initial API and implementation
  **********************************************************************/
 package org.eclipse.core.tests.harness;
-
-import java.io.File;
 
 import junit.framework.TestResult;
 
@@ -45,19 +43,15 @@ import junit.framework.TestResult;
  * of a logging test result, all log events are written to the standard output.
  */
 public abstract class CorePerformanceTest extends EclipseWorkspaceTest {
-	public static String fLogFile;
-
-	protected LoggingPerformanceTestResult fLogger = null;
-	protected PerformanceTestResult fResult = null;
-	protected File fTempDir;
-	protected File fDir;
-
 	protected long benchStart;
-public CorePerformanceTest() {
-}
-public CorePerformanceTest(String name) {
-	super(name);
-}
+	protected LoggingPerformanceTestResult logger = null;
+	protected PerformanceTestResult result = null;
+
+	public CorePerformanceTest() {
+	}
+	public CorePerformanceTest(String name) {
+		super(name);
+	}
 	protected PerformanceTestResult defaultTest() {
 		return new PerformanceTestResult();
 	}
@@ -65,8 +59,8 @@ public CorePerformanceTest(String name) {
 	 * Logs or writes string to console.
 	 */
 	public void perfLog(String s) {
-		if (fLogger != null) {
-			fLogger.log(s);
+		if (logger != null) {
+			logger.log(s);
 		} else {
 			System.out.println(s);
 		}
@@ -88,46 +82,46 @@ public CorePerformanceTest(String name) {
 	 * for running a test case.
 	 */
 	public void run(PerformanceTestResult test) {
-		fResult = test;
+		result = test;
 
 		if (test instanceof LoggingPerformanceTestResult) {
-			fLogger = (LoggingPerformanceTestResult)test;
+			logger = (LoggingPerformanceTestResult) test;
 		}
 
 		super.run(test);
 	}
-protected void startBench() {
-	for (int i = 0; i < 20; ++i) {
-		System.gc();
+	protected void startBench() {
+		for (int i = 0; i < 20; ++i) {
+			System.gc();
+		}
+		benchStart = System.currentTimeMillis();
 	}
-	benchStart = System.currentTimeMillis();
-}
-/**
- * Tell the result to start a timer with the given name.
- * If no timer exists with that name, result creates a new timer
- * and starts it running.
- */ 
-protected void startTimer(String timerName) {
-	fResult.startTimer(timerName);
-}
-protected void stopBench(String benchName, int numOperations) {
-	long duration = System.currentTimeMillis() - benchStart;
-	double perOp = (double) duration / (double) numOperations;
+	/**
+	 * Tell the result to start a timer with the given name.
+	 * If no timer exists with that name, result creates a new timer
+	 * and starts it running.
+	 */
+	protected void startTimer(String timerName) {
+		result.startTimer(timerName);
+	}
+	protected void stopBench(String benchName, int numOperations) {
+		long duration = System.currentTimeMillis() - benchStart;
+		double perOp = (double) duration / (double) numOperations;
 
-	String opString;
-	if (perOp > 100.0) {
-		opString = "(" + perOp + "ms per operation)";
-	} else {
-		//Note us == microseconds
-		opString = "(" + (perOp * 1000.0) + "us per operation)";
+		String opString;
+		if (perOp > 100.0) {
+			opString = "(" + perOp + "ms per operation)";
+		} else {
+			//Note us == microseconds
+			opString = "(" + (perOp * 1000.0) + "us per operation)";
+		}
+
+		System.out.println(benchName + " took " + duration + "ms " + opString);
 	}
-		
-	System.out.println(benchName + " took " + duration + "ms " + opString);
-}
-/**
- * Tell the result to stop the timer with the given name.
- */ 
-protected void stopTimer(String timerName) {
-	fResult.stopTimer(timerName);
-}
+	/**
+	 * Tell the result to stop the timer with the given name.
+	 */
+	protected void stopTimer(String timerName) {
+		result.stopTimer(timerName);
+	}
 }
