@@ -25,6 +25,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 	private ListenersList listeners = new ListenersList();
 	private String label;
 	private URL location;
+	private int history = ILocalSite.DEFAULT_HISTORY;
 	public static final String SITE_LOCAL_FILE = "LocalSite.xml";
 	public static final String DEFAULT_CONFIG_LABEL = "Default configuration";
 	public static final String DEFAULT_CONFIG_FILE = "DefaultConfig.xml";
@@ -69,7 +70,27 @@ public class SiteLocal implements ILocalSite, IWritable {
 			if (configurations == null)
 				configurations = new ArrayList(0);
 			configurations.add(config);
-			// FIXME: check if we have to remove a configuration
+			
+			// check if we have to remove a configuration
+			// the first added is #0
+			while (configurations.size()>getMaximumHistory()){
+				IInstallConfiguration removedConfig = (IInstallConfiguration)configurations.get(0);
+				configurations.remove(0);	
+				
+				// DEBUG:
+				if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_CONFIGURATION) {
+					UpdateManagerPlugin.getPlugin().debug("Removed configuration :" + removedConfig.getLabel());
+				}				
+			
+				// notify listeners
+				Object[] siteLocalListeners = listeners.getListeners();
+				for (int i = 0; i < siteLocalListeners.length; i++) {
+					((ILocalSiteChangedListener) siteLocalListeners[i]).installConfigurationRemoved(removedConfig);
+				}
+			
+				// FIXME: remove file ? Can be shared or remote !!!
+			}
+		
 
 			// set configuration as current		
 			if (currentConfiguration != null)
@@ -99,7 +120,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 			location = platformConfig.getConfigurationLocation();
 			configXml = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
 			//if the file exists, parse it			
-			SiteLocalParser parser = new SiteLocalParser(configXml.openStream(), this);
+			new SiteLocalParser(configXml.openStream(), this);
 		} catch (FileNotFoundException exception) {
 			// file doesn't exist, ok, log it and continue 
 			// log no config
@@ -249,8 +270,9 @@ public class SiteLocal implements ILocalSite, IWritable {
 
 		w.print(gap + "<" + SiteLocalParser.SITE + " ");
 		if (getLabel() != null) {
-			w.print("label=\"" + Writer.xmlSafe(getLabel()) + "\"");
+			w.print("label=\"" + Writer.xmlSafe(getLabel()) + "\" ");
 		}
+		w.print("history=\"" + getMaximumHistory() + "\" ");		
 		w.println(">");
 		w.println("");
 
@@ -315,7 +337,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 	/*
 	 * @see ILocalSite#revertTo(IInstallConfiguration)
 	 */
-	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor,IProblemHandler handler) throws CoreException {
 
 		// create the activity 
 		//Start UOW ?
@@ -335,7 +357,7 @@ public class SiteLocal implements ILocalSite, IWritable {
 			// process delta
 			// the Configured featuresConfigured are the same as the old configuration
 			// the unconfigured featuresConfigured are the rest...
-			 ((InstallConfiguration) newConfiguration).revertTo(configuration, monitor);
+			 ((InstallConfiguration) newConfiguration).revertTo(configuration, monitor, handler);
 			
 			// everything done ok
 			activity.setStatus(IActivity.STATUS_OK);
@@ -349,4 +371,18 @@ public class SiteLocal implements ILocalSite, IWritable {
 
 
 	}
+	/*
+	 * @see ILocalSite#getMaximumHistory()
+	 */
+	public int getMaximumHistory() {
+		return history;
+	}
+
+	/*
+	 * @see ILocalSite#setMaximumHistory()
+	 */
+	public void setMaximumHistory(int history) {
+		this.history = history;
+	}
+
 }

@@ -735,7 +735,6 @@ public abstract class Feature implements IFeature {
 
 		URL sourceURL;
 		// any other data
-		InputStream inStream = null;
 		IDataEntry[] entries = getDataEntries();
 		if (entries != null) {
 			if (monitor != null) {

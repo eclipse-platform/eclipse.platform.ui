@@ -59,9 +59,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	private void initialize() throws CoreException {
 
 		try {
-			//URL configXml = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
-			InstallConfigurationParser parser = new InstallConfigurationParser(location.openStream(), this);
-
+			new InstallConfigurationParser(location.openStream(), this);
 		} catch (FileNotFoundException exception) {
 			// file doesn't exist, ok, log it and continue 
 			// log no config
@@ -354,7 +352,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 	 * for all the sites left in the current state, calculate the revert
 	 * 
 	 */
-	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor) throws CoreException {
+	public void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor,IProblemHandler handler) throws CoreException {
 
 		IConfigurationSite[] oldConfigSites = configuration.getConfigurationSites();
 
@@ -378,7 +376,7 @@ public class InstallConfiguration implements IInstallConfiguration, IWritable {
 				key = element.getSite().getURL().toExternalForm();
 				IConfigurationSite oldSite = (IConfigurationSite) oldSitesMap.get(key);
 				if (oldSite != null) {
-					((ConfigurationSite) oldSite).deltaWith(element, monitor);
+					((ConfigurationSite) oldSite).deltaWith(element, monitor,handler);
 				}
 
 			}

@@ -121,6 +121,16 @@ public class SiteLocalParser extends DefaultHandler {
 		String info = attributes.getValue("label");
 		info = UpdateManagerUtils.getResourceString(info, bundle);
 		site.setLabel(info);
+		
+		// history
+		String historyString = attributes.getValue("history");
+		int history;
+		if (historyString==null || historyString.equals("")){
+			history = ILocalSite.DEFAULT_HISTORY;
+		} else {
+			history = Integer.parseInt(historyString);
+		}
+		site.setMaximumHistory(history);
 
 		// DEBUG:		
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {

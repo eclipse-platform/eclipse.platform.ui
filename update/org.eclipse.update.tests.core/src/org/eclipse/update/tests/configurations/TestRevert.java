@@ -54,7 +54,7 @@ public class TestRevert extends UpdateManagerTestCase {
 		anotherConfigSite.install(feature2,null);
 		site.save();
 
-		site.revertTo(old,null);
+		site.revertTo(old,null,null);
 		site.save();
 		
 		// check

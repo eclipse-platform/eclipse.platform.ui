@@ -100,7 +100,6 @@ public class FeatureExecutable extends Feature {
 	 * return the path for a pluginEntry
 	 */
 	private String getPath(IPluginEntry pluginEntry) throws Exception {
-		URL siteURL = getSite().getURL();
 		String result = null;
 				
  		// get the URL of the Archive file that contains the plugin entry

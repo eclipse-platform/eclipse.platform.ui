@@ -25,6 +25,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */ 
 public interface ILocalSite {
 	
+	public static final int DEFAULT_HISTORY = 5;
+	
 	
 	/**
 	 * return the label of the local site
@@ -60,7 +62,7 @@ public interface ILocalSite {
 	 * 
 	 * @param IInstallConfiguration the configuration to use
 	 */
-	void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor) throws CoreException;
+	void revertTo(IInstallConfiguration configuration, IProgressMonitor monitor,IProblemHandler handler) throws CoreException;
 	
 	/**
 	 * Creates a configuration from a URL.
@@ -98,6 +100,16 @@ public interface ILocalSite {
 	 * Saves and persists the localSite. Also saves and persists the current Configuration
 	 */
 	void save() throws CoreException;
+	
+	/**
+	 * returns the maximum number of InstallConfiguration in teh history
+	 */
+	int getMaximumHistory();
+	
+	/**
+	 * sets the maximum InstallConfiguration of the history
+	 */
+	void setMaximumHistory(int history);
 	
 	
 	void addLocalSiteChangedListener(ILocalSiteChangedListener listener);

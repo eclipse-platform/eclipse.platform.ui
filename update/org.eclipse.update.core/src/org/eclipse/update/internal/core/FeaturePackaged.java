@@ -103,7 +103,6 @@ public class FeaturePackaged extends Feature {
 	 * @see AbstractFeature#getInputStreamFor(IPluginEntry,String)
 	 */
 	public InputStream getInputStreamFor(IPluginEntry pluginEntry, String name) throws CoreException {
-		URL siteURL = getSite().getURL();
 		InputStream result = null;
 
 		try {
@@ -190,7 +189,6 @@ public class FeaturePackaged extends Feature {
 	 * @see AbstractFeature#getInputStreamFor(String)
 	 */
 	protected InputStream getInputStreamFor(String name) throws CoreException, IOException {
-		URL siteURL = getSite().getURL();
 		InputStream result = null;
 		try {
 			// ensure the file is local

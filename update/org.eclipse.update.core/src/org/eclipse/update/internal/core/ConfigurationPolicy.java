@@ -99,7 +99,6 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 
 		// return true if the feature is part of the configured list
 		Iterator iter = configuredFeatureReferences.iterator();
-		boolean found = false;
 		String featureURLString = feature.getURL().toExternalForm();
 		while (iter.hasNext() && !result) {
 			IFeatureReference element = (IFeatureReference) iter.next();
@@ -115,8 +114,6 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	 */
 	/*package*/
 	void configure(IFeatureReference feature) throws CoreException {
-		if (configuredFeatureReferences == null)
-			configuredFeatureReferences = new ArrayList(0);
 
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_CONFIGURE);
@@ -135,8 +132,6 @@ public class ConfigurationPolicy implements IConfigurationPolicy {
 	 */
 	/*package*/
 	void unconfigure(IFeatureReference feature) throws CoreException {
-		if (unconfiguredFeatureReferences == null)
-			unconfiguredFeatureReferences = new ArrayList(0);
 
 		//Start UOW ?
 		ConfigurationActivity activity = new ConfigurationActivity(IActivity.ACTION_UNCONFIGURE);

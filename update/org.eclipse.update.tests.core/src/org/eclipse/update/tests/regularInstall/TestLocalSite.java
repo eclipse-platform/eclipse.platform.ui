@@ -12,6 +12,7 @@ import org.eclipse.update.internal.core.ConfigurationPolicy;
 import org.eclipse.update.internal.core.InternalSiteManager;
 import org.eclipse.update.internal.core.SiteLocal;
 import org.eclipse.update.internal.core.UpdateManagerUtils;
+import org.eclipse.update.internal.core.*;
 import org.eclipse.update.tests.UpdateManagerTestCase;
 
 public class TestLocalSite extends UpdateManagerTestCase {
@@ -132,7 +133,11 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);				
+		UpdateManagerUtils.removeFromFileSystem(localFile);	
+		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),Site.DEFAULT_FEATURE_PATH+File.separator+feature.getIdentifier().toString()).getFile());		
+		UpdateManagerUtils.removeFromFileSystem(localFile);	
+		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),Site.DEFAULT_FEATURE_PATH+File.separator+feature2.getIdentifier().toString()).getFile());		
+		UpdateManagerUtils.removeFromFileSystem(localFile);	
 		UpdateManagerUtils.removeFromFileSystem(file);		
 		localFile = new File(feature2.getURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);
@@ -197,7 +202,10 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);				
+		UpdateManagerUtils.removeFromFileSystem(localFile);			
+		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),Site.DEFAULT_FEATURE_PATH+File.separator+feature.getIdentifier().toString()).getFile());		
+		UpdateManagerUtils.removeFromFileSystem(localFile);	
+			
 		UpdateManagerUtils.removeFromFileSystem(file);		
 	}
 
@@ -235,7 +243,6 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		// teh current one points to a real fature
 		// does not throw error.
 		IConfigurationSite configSite2 = site.getCurrentConfiguration().getConfigurationSites()[0];
-		//FIXME: broken (Dec 4th 2001)
 		IFeatureReference ref = configSite2.getConfiguredFeatures()[0];
 		IFeature feature2 = ref.getFeature();
 		String configuredFeature = feature2.getLabel();
@@ -259,7 +266,10 @@ public class TestLocalSite extends UpdateManagerTestCase {
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.SITE_LOCAL_FILE).getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);		
 		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),SiteLocal.DEFAULT_CONFIG_FILE).getFile());
-		UpdateManagerUtils.removeFromFileSystem(localFile);				
+		UpdateManagerUtils.removeFromFileSystem(localFile);	
+		localFile = new File(new URL(((SiteLocal)SiteManager.getLocalSite()).getLocation(),Site.DEFAULT_FEATURE_PATH+File.separator+feature.getIdentifier().toString()).getFile());		
+		UpdateManagerUtils.removeFromFileSystem(localFile);	
+					
 		UpdateManagerUtils.removeFromFileSystem(file);		
 		localFile = new File(feature2.getURL().getFile());
 		UpdateManagerUtils.removeFromFileSystem(localFile);

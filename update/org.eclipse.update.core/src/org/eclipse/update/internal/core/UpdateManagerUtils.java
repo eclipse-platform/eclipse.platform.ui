@@ -61,9 +61,6 @@ public class UpdateManagerUtils {
 		} catch (MalformedURLException e) {
 			// the url is not an absolute URL
 			// try relative
-			String path = UpdateManagerUtils.getPath(rootURL);
-			//path = path + ((path.endsWith("/")|| path.endsWith(File.separator))?"":"/");			
-			//url = new URL(rootURL.getProtocol(), rootURL.getHost(), path + urlString);
 			url = new URL(rootURL,urlString);
 		}
 		return url;
