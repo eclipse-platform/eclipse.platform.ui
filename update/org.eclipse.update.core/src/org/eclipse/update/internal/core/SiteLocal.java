@@ -30,8 +30,6 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 	private SiteStatusAnalyzer siteStatusAnalyzer;
 	private boolean isTransient = false;
 
-	private static final String UPDATE_STATE_SUFFIX = ".metadata";
-
 	/*
 	 * Have new features been found during reconciliation
 	 */
@@ -57,17 +55,6 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 		localSite.isTransient(currentPlatformConfiguration.isTransient());
 	
 		try {
-			// obtain LocalSite.xml location
-//			URL location = currentPlatformConfiguration.getConfigurationLocation();
-//			try {
-//				location = getUpdateStateLocation(currentPlatformConfiguration);
-//			} catch (IOException exception) {
-//				throw Utilities.newCoreException(Policy.bind(Policy.bind("SiteLocal.UnableToRetrieveRWArea")),
-//				//$NON-NLS-1$
-//				exception);
-//			}
-
-//			URL configXML = UpdateManagerUtils.getURL(location, SITE_LOCAL_FILE, null);
 			URL configXML = currentPlatformConfiguration.getConfigurationLocation();
 			localSite.setLocationURLString(configXML.toExternalForm());
 			localSite.resolve(configXML, null);
@@ -75,22 +62,7 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 			// Attempt to read previous state
 			// if reconcile or recover happens (erro reading state), it returns false
 			boolean hasRecoveredState = parseLocalSiteFile(currentPlatformConfiguration, localSite);
-	
-//			if (hasRecoveredState) {
-//				// check if we have to reconcile, if the timestamp has changed
-//				long bootStamp = currentPlatformConfiguration.getChangeStamp();
-//				if (localSite.getStamp() != bootStamp) {
-//					UpdateCore.warn("Reconcile platform stamp:" + bootStamp + " is different from LocalSite stamp:" + localSite.getStamp()); //$NON-NLS-1$ //$NON-NLS-2$
-//					newFeaturesFound = localSite.reconcile(isOptimistic);
-//				} else {
-//					// no reconciliation, preserve the list of plugins from the platform anyway
-//					localSite.preserveRuntimePluginPath();
-//				}
-//			} else {
-//				// If we are coming up without any state
-//				// force optimistic reconciliation to recover working state
-//				newFeaturesFound = localSite.reconcile(true);
-//			}
+
 		} catch (MalformedURLException exception) {
 			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor", localSite.getLocationURLString() + " & " + CONFIG_FILE), exception); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -205,53 +177,14 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 		// and set runtim info for next startup
 		return ((InstallConfiguration) getCurrentConfiguration()).save(isTransient());
 	}
-//	/**
-//	 * Method createNewInstallConfiguration.
-//	 * @return IInstallConfiguration
-//	 */
-//	public IInstallConfiguration createNewInstallConfiguration() throws CoreException {
-//		InstallConfiguration newInstallConfig = createConfigurationSite(null);
-//		newInstallConfig.setTimeline(newInstallConfig.getCreationDate().getTime());
-//		return newInstallConfig;
-//	}
-//
-//	/*
-//	 *	creates a new InstallConfiguration or clone an installConfiguration 
-//	 * @since 2.0
-//	 */
-//	private InstallConfiguration createConfigurationSite(IInstallConfiguration installConfig) throws CoreException {
-//
-////		// save previous current configuration
-////		if (getCurrentConfiguration() != null)
-////			 ((InstallConfiguration) getCurrentConfiguration()).saveConfigurationFile(isTransient());
-//
-//		InstallConfiguration result = null;
-//		Date currentDate = new Date();
-//		String newFileName = UpdateManagerUtils.getLocalRandomIdentifier(CONFIG_FILE, currentDate);
-//		try {
-//			URL newFile = UpdateManagerUtils.getURL(getLocationURL(), newFileName, null);
-//			// pass the date onto the name
-//			String name = Utilities.format(currentDate);
-//			result = new InstallConfiguration(installConfig, newFile, name);
-//			// set the same date in the installConfig
-//			result.setCreationDate(currentDate);
-//		} catch (MalformedURLException e) {
-//			throw Utilities.newCoreException(Policy.bind("SiteLocal.UnableToCreateURLFor") + newFileName, e);
-//			//$NON-NLS-1$
-//		}
-//		return result;
-//	}
 
 	/**
 	 * @since 2.0
+	 * @deprecated This method should not be used. The current install configuration is to be used.
 	 */
 	public IInstallConfiguration cloneCurrentConfiguration() throws CoreException {
 		// This method should be deprecated
 		return getCurrentConfiguration();
-//		IInstallConfiguration currentConfiguration = getCurrentConfiguration();
-//		InstallConfiguration clonedConfiguration = createConfigurationSite(currentConfiguration);
-//		clonedConfiguration.setTimeline(currentConfiguration.getTimeline());
-//		return clonedConfiguration;
 	}
 
 	/**
@@ -444,41 +377,6 @@ public class SiteLocal extends SiteLocalModel implements ILocalSite{
 			reconciler = new SiteReconciler(this);
 		return reconciler;
 	}
-	/*
-	 * Get update state location relative to platform configuration
-	 */
-//	private static URL getUpdateStateLocation(IPlatformConfiguration config) throws IOException {
-//		// Create a directory location for update state files. This
-//		// directory name is constructed by adding a well-known suffix
-//		// to the name of the corresponding platform  configuration. This
-//		// way, we can have multiple platform configuration files in
-//		// the same directory without ending up with update state conflicts.
-//		// For example: platform configuration file:C:/platform.cfg results
-//		// in update state location file:C:/platform.cfg.update/
-//		URL configLocation = Platform.resolve(config.getConfigurationLocation());
-//		String temp = configLocation.toExternalForm();
-//		temp += UPDATE_STATE_SUFFIX + "/";
-//		URL updateLocation = new URL(temp);
-//		if ("file".equalsIgnoreCase(updateLocation.getProtocol())) {
-//			// ensure path exists. Handle transient configurations
-//			ArrayList list = new ArrayList();
-//			File path = new File(updateLocation.getFile());
-//			while (path != null) { // walk up to first dir that exists
-//				if (!path.exists()) {
-//					list.add(path);
-//					path = path.getParentFile();
-//				} else
-//					path = null;
-//			}
-//			for (int i = list.size() - 1; i >= 0; i--) { // walk down to create missing dirs
-//				path = (File) list.get(i);
-//				path.mkdir();
-//				if (config.isTransient())
-//					path.deleteOnExit();
-//			}
-//		}
-//		return updateLocation;
-//	}
 
 	/**
 	 * Gets the isTransient.
