@@ -241,10 +241,10 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		Iterator nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER).iterator();
 		while (nodes.hasNext()) {
 			final IPreferenceNode node = (IPreferenceNode) nodes.next();
-			if (node.getPage() != null) {
+			if (getPage(node) != null) {
 				Platform.run(new SafeRunnable() {
 					public void run() {
-						if (!node.getPage().performCancel())
+						if (!getPage(node).performCancel())
 							return;
 					}
 				});
@@ -1084,7 +1084,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 			node.createPage();
 		if (node.getPage() == null)
 			return false;
-		IPreferencePage newPage = node.getPage();
+		IPreferencePage newPage = getPage(node);
 		if (newPage == currentPage)
 			return true;
 		if (currentPage != null) {
@@ -1105,7 +1105,7 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 				}
 
 				public void run() {
-					currentPage.createControl(pageContainer);
+					createPageControl(currentPage, pageContainer);
 				}
 			});
 			if (failed[0])
@@ -1173,6 +1173,15 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 		// update the dialog controls
 		update();
 		return true;
+	}
+
+	/**
+	 * Get the page for the node.
+	 * @param node
+	 * @return IPreferencePage
+	 */
+	protected IPreferencePage getPage(IPreferenceNode node) {
+		return node.getPage();
 	}
 
 	/**
@@ -1346,24 +1355,10 @@ public class PreferenceDialog extends Dialog implements IPreferencePageContainer
 	protected void setPageContainer(Composite pageContainer) {
 		this.pageContainer = pageContainer;
 	}
-
 	/**
-	 * Get the messageArea
-	 *  <strong>This API is experimental and may be deleted in
-	 * the 3.1 timeframe</strong>.
-	 * @return DialogMessageArea
+	 * Create the page control for the supplied page.
 	 */
-	protected DialogMessageArea getMessageArea() {
-		return this.messageArea;
-	}
-
-	/**
-	 * Set the message area.
-	 * <strong>This API is experimental and may be deleted in
-	 * the 3.1 timeframe</strong>.
-	 * @param messageArea DialogMessageArea
-	 */
-	protected void setMessageArea(DialogMessageArea messageArea) {
-		this.messageArea = messageArea;
+	protected void createPageControl(IPreferencePage page, Composite parent) {
+		page.createControl(parent);
 	}
 }

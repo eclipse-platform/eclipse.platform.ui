@@ -32,9 +32,11 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
+import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceLabelProvider;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -81,6 +83,8 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	GroupedPreferenceLabelProvider groupedLabelProvider;
 
 	private WorkbenchPreferenceGroup currentGroup;
+	
+	private CTabItem tab;
 
 	static {
 		ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
@@ -218,6 +222,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 		GridData textData = new GridData(GridData.GRAB_HORIZONTAL | GridData.FILL_HORIZONTAL
 				| GridData.FILL_VERTICAL);
+		textData.verticalIndent = IDialogConstants.VERTICAL_MARGIN / 2;
 		searchText.setLayoutData(textData);
 		searchText.addKeyListener(new KeyListener() {
 			public void keyPressed(KeyEvent e) {
@@ -296,29 +301,27 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 
 		CTabFolder parentFolder = new CTabFolder(parent, SWT.BORDER);
 
-		CTabItem pageArea = new CTabItem(parentFolder, SWT.BORDER);
+		tab = new CTabItem(parentFolder, SWT.BORDER);
 
-		parentFolder.setSelectionForeground(parent.getDisplay().getSystemColor(SWT.COLOR_BLUE));
+		parentFolder.setSelectionForeground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
 		parentFolder.setSelectionBackground(parent.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 		parentFolder.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
 
-		pageArea.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
+		tab.setFont(JFaceResources.getFontRegistry().get(JFaceResources.BANNER_FONT));
 
 		parentFolder.setTopRight(getContainerToolBar(parentFolder), SWT.RIGHT);
 		parentFolder.setLayoutData(new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL
 				| GridData.GRAB_VERTICAL));
 		parentFolder.setSimple(false);
-		// 	Message label
-		setMessageArea(new TabbedDialogMessageArea(pageArea));
-
+	
 		Control historyBar = history.createHistoryControls(parentFolder);
 		parentFolder.setTopRight(historyBar, SWT.RIGHT);
 		historyBar.setBackground(background);
 
 		Composite result = new Composite(parentFolder, SWT.NULL);
 		result.setLayout(getPageLayout());
-		pageArea.setControl(result);
+		tab.setControl(result);
 		parentFolder.setSelection(0);
 		return result;
 	}
@@ -632,7 +635,15 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 * @see org.eclipse.jface.preference.PreferenceDialog#updateMessage()
 	 */
 	public void updateMessage() {
-		//Do nothing for now
+		//Do nothing as this is done by the page now
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#updateTitle()
+	 */
+	public void updateTitle() {
+		tab.setText(getCurrentPage().getTitle());
+		tab.setImage(getCurrentPage().getImage());
 	}
 
 	/**
@@ -641,5 +652,15 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog {
 	 */
 	protected PreferencePageHistory getHistory() {
 		return this.history;
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.preference.PreferenceDialog#createPageControl(org.eclipse.jface.preference.IPreferencePage, org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createPageControl(IPreferencePage page, Composite parent) {
+		if(page instanceof PreferencePage)
+			((PreferencePage) page).createControl(parent,true);
+		else
+			super.createPageControl(page, parent);
 	}
 }
