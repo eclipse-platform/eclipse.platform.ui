@@ -412,4 +412,11 @@ public class MissingFeature implements IFeature {
 		return getPluginEntries();
 	}
 
+	/**
+	 * @see org.eclipse.update.core.IFeature#getPrimaryPluginID()
+	 */
+	public String getPrimaryPluginID() {
+		return null;
+	}
+
 }

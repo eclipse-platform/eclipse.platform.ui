@@ -213,6 +213,18 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	public IImport[] getImports();
 
 	/**
+	 * Return the identifier of the primary plugin associated to this feature
+	 * or <code>null</code> if the feature is not a primary feature.
+	 * If the primary plugin id is not specified and the feature is a primary
+	 * feature, returns the feature identifier.
+	 * 
+	 * @return the identifier of the associated primary plugin or <code>null</code>
+	 * @since 2.1 
+	 */
+	public String getPrimaryPluginID();
+
+
+	/**
 	 * Install the contents of this feature into the specified target feature.
 	 * All optional features will be installed
 	 * 

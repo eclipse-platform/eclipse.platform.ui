@@ -975,6 +975,10 @@ public class DefaultFeatureParser extends DefaultHandler {
 			// affinity
 			String affinity = attributes.getValue("colocation-affinity"); //$NON-NLS-1$
 			feature.setAffinityFeature(affinity);
+			
+			// praimery plugin
+			String plugin = attributes.getValue("plugin");
+			feature.setPrimaryPluginID(plugin);
 
 			objectStack.push(feature);
 
@@ -1096,6 +1100,8 @@ public class DefaultFeatureParser extends DefaultHandler {
 		if (UpdateManagerPlugin.DEBUG && UpdateManagerPlugin.DEBUG_SHOW_PARSING) {
 			debug("End process Includes tag: id:" //$NON-NLS-1$
 			+id + " ver:" +ver);//$NON-NLS-1$
+			debug ("name ="+name+" optional="+optional+" match="+ruleName+" search-location="+locationName);
+			debug ("os="+os+" ws="+ws+" arch="+arch);
 		}
 	}
 			

@@ -57,6 +57,9 @@ public class IncludedFeatureReferenceModel extends FeatureReference {
 		setName(includedFeatureRef.getName());
 		setMatchingRule(includedFeatureRef.getMatch());
 		setSearchLocation(includedFeatureRef.getSearchLocation());
+		setArch(includedFeatureRef.getOSArch());
+		setWS(includedFeatureRef.getWS());
+		setOS(includedFeatureRef.getOS());
 	}
 
 	/**

@@ -36,6 +36,7 @@ public class FeatureModel extends ModelObject {
 	private String nl;
 	private String arch;
 	private boolean isPrimary = false;
+	private String primaryPluginID;
 	private String application;
 	private String affinity;
 	private InstallHandlerEntryModel installHandler;
@@ -839,4 +840,23 @@ public class FeatureModel extends ModelObject {
 		resolveListReference(getPluginEntryModels(), base, bundle);
 		resolveListReference(getNonPluginEntryModels(), base, bundle);
 	}
+	
+	/**
+	 * Method setPrimaryPlugin.
+	 * @param plugin
+	 */
+	public void setPrimaryPluginID(String plugin) {
+		if (isPrimary && primaryPluginID==null){
+			primaryPluginID = featureId;
+		}
+		primaryPluginID= plugin;
+	}
+	/**
+	 * Returns the primaryPluginID.
+	 * @return String
+	 */
+	public String getPrimaryPluginID() {
+		return primaryPluginID;
+	}
+
 }
