@@ -181,13 +181,6 @@ public class SharedLabelProvider
 		return getImage(obj);
 	}
 
-	public Image getImageFromPlugin(
-		IPluginDescriptor pluginDescriptor,
-		String subdirectoryAndFilename) {
-		URL installURL = pluginDescriptor.getInstallURL();
-		return getImageFromURL(installURL, subdirectoryAndFilename);
-	}
-
 	public Image getImageFromURL(
 		URL installURL,
 		String subdirectoryAndFilename) {

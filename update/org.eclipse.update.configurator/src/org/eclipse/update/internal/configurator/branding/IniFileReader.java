@@ -16,6 +16,7 @@ import java.text.*;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
+import org.osgi.framework.*;
 
 /**
  * Reads the information found in an "INI" file. This file must be in a
@@ -39,7 +40,7 @@ public class IniFileReader {
 	private Properties ini = null;
 	private PropertyResourceBundle properties = null;
 	private String[] mappings = null;
-	private IPluginDescriptor pluginDescriptor = null;
+	private Bundle bundle;
 
 	/**
 	 * Creates an INI file reader that can parse the contents into key,value pairs.
@@ -76,9 +77,9 @@ public class IniFileReader {
 			return OK_STATUS;
 			
 		// attempt to locate the corresponding plugin
-		IPluginRegistry reg = Platform.getPluginRegistry();
-		pluginDescriptor = reg.getPluginDescriptor(pluginId);
-		if (pluginDescriptor  == null) {
+		bundle = Platform.getBundle(pluginId);
+		if (bundle == null || bundle.getState() == Bundle.UNINSTALLED || bundle.getState() == Bundle.INSTALLED) {
+			bundle = null; // make it null for other test down the road
 			String message = "IniFileReader.MissingDesc for " + featureId; 
 			return new Status(IStatus.ERROR, PID, 0, message, null);
 		}
@@ -87,7 +88,7 @@ public class IniFileReader {
 		URL iniURL = null;
 		IOException ioe = null;
 		try {
-			iniURL = pluginDescriptor.find(new Path(NLS_TAG).append(iniFilename));
+			iniURL = Platform.find(bundle, new Path(NLS_TAG).append(iniFilename));
 			if (iniURL != null)
 				iniURL = Platform.resolve(iniURL);
 		} catch (IOException e) {
@@ -102,7 +103,7 @@ public class IniFileReader {
 		URL propertiesURL = null;
 		if (propertiesFilename != null & propertiesFilename.length() > 0) {
 			try {
-				propertiesURL = pluginDescriptor.find(new Path(NLS_TAG).append(propertiesFilename));
+				propertiesURL = Platform.find(bundle, new Path(NLS_TAG).append(propertiesFilename));
 				if (propertiesURL != null)
 					propertiesURL = Platform.resolve(propertiesURL);
 			} catch (IOException e) {
@@ -115,7 +116,7 @@ public class IniFileReader {
 		URL mappingsURL = null;
 		if (mappingsFilename != null && mappingsFilename.length() > 0) {
 			try {
-				mappingsURL = pluginDescriptor.find(new Path(NLS_TAG).append(mappingsFilename));
+				mappingsURL = Platform.find(bundle, new Path(NLS_TAG).append(mappingsFilename));
 				if (mappingsURL != null)
 					mappingsURL = Platform.resolve(mappingsURL);
 			} catch (IOException e) {
@@ -156,9 +157,9 @@ public class IniFileReader {
 		URL url = null;
 		String fileName = ini.getProperty(key);
 		if (fileName != null) {
-			if (pluginDescriptor == null)
+			if (bundle == null)
 				return null;
-			url = pluginDescriptor.find(new Path(fileName));
+			url = Platform.find(bundle, new Path(fileName));
 		}
 		return url;
 	}
@@ -173,7 +174,7 @@ public class IniFileReader {
 	 * @since 3.0
 	 */
 	public URL[] getURLs(String key) {
-		if (ini == null || pluginDescriptor == null)
+		if (ini == null || bundle == null)
 			return null;
 
 		String value = ini.getProperty(key);
@@ -184,7 +185,7 @@ public class IniFileReader {
 		ArrayList array = new ArrayList(10);
 		while (tokens.hasMoreTokens()) {
 			String str = tokens.nextToken().trim();
-			array.add(pluginDescriptor.find(new Path(str)));
+			array.add(Platform.find(bundle, new Path(str)));
 		}
 
 		URL[] urls = new URL[array.size()];
@@ -198,10 +199,10 @@ public class IniFileReader {
 	 * @return the feature plugin lable, or <code>null</code> if none.
 	 */
 	public String getFeaturePluginLabel() {
-		if (pluginDescriptor == null)
+		if (bundle == null)
 			return null;
 		else
-			return pluginDescriptor.getLabel();
+			return (String)bundle.getHeaders().get(Constants.BUNDLE_NAME);
 	}
 	
 	/**
@@ -210,10 +211,10 @@ public class IniFileReader {
 	 * @return the provider name for this feature, or <code>null</code>
 	 */
 	public String getProviderName() {
-		if (pluginDescriptor == null)
+		if (bundle == null)
 			return null;
 		else
-			return pluginDescriptor.getProviderName();
+			return (String)bundle.getHeaders().get(Constants.BUNDLE_VENDOR);
 	}
 	
 	/*

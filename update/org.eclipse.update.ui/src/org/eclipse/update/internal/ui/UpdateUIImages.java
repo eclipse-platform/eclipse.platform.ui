@@ -12,9 +12,7 @@ package org.eclipse.update.internal.ui;
 
 import java.net.*;
 
-import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.*;
-import org.eclipse.swt.graphics.*;
 
 /**
  * Bundle of all images used by the PDE plugin.
@@ -25,9 +23,6 @@ public class UpdateUIImages {
 	private static final String NAME_PREFIX= UpdateUI.getPluginId()+"."; //$NON-NLS-1$
 
 	private final static URL BASE_URL = UpdateUI.getDefault().getDescriptor().getInstallURL();
-
-
-	private static ImageRegistry PLUGIN_REGISTRY;
 	
 	public final static String ICONS_PATH = "icons/full/"; //$NON-NLS-1$
 
@@ -48,9 +43,6 @@ public class UpdateUIImages {
 	/**
 	 * Frequently used images
 	 */
-	public static final String IMG_FORM_BANNER = NAME_PREFIX+"FORM_BANNER"; //$NON-NLS-1$
-	public static final String IMG_FORM_BANNER_SHORT = NAME_PREFIX+"FORM_BANNER_SHORT"; //$NON-NLS-1$
-	public static final String IMG_FORM_UNDERLINE = NAME_PREFIX + "FORM_UNDERLINE"; //$NON-NLS-1$
 
 	/**
 	 * OBJ16
@@ -142,9 +134,6 @@ public class UpdateUIImages {
 	public static final ImageDescriptor DESC_CONFIG_WIZ  = create(PATH_WIZBAN, "config_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_UNINSTALL_WIZ  = create(PATH_WIZBAN, "uninstall_wiz.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_INSTALL_BANNER  = create(PATH_WIZBAN, "def_wizban.jpg"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FORM_BANNER  = create(PATH_FORMS, "form_banner.jpg"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FORM_BANNER_SHORT  = create(PATH_FORMS, "form_banner.gif"); //$NON-NLS-1$
-	public static final ImageDescriptor DESC_FORM_UNDERLINE  = create(PATH_FORMS, "form_underline.jpg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_PROVIDER = create(PATH_FORMS, "def_provider.jpg"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_ITEM = create(PATH_FORMS, "topic.gif"); //$NON-NLS-1$
 	public static final ImageDescriptor DESC_NEW_BOOKMARK  = create(PATH_WIZBAN, "new_bookmark_wiz.gif"); //$NON-NLS-1$
@@ -156,71 +145,16 @@ public class UpdateUIImages {
 	}
 
 
-	public static Image get(String key) {
-		if (PLUGIN_REGISTRY==null) initialize();
-		return PLUGIN_REGISTRY.get(key);
-	}
-
-
-public static ImageDescriptor getImageDescriptorFromPlugin(
-	IPluginDescriptor pluginDescriptor, 
-	String subdirectoryAndFilename) {
-	URL installURL = pluginDescriptor.getInstallURL();
-	try {
-		URL newURL = new URL(installURL, subdirectoryAndFilename);
-		return ImageDescriptor.createFromURL(newURL);
-	}
-	catch (MalformedURLException e) {
-	}
-	return null;
-}
-
-
-public static Image getImageFromPlugin(
-	IPluginDescriptor pluginDescriptor,
-	String subdirectoryAndFilename) {
-	URL installURL = pluginDescriptor.getInstallURL();
-	Image image = null;
-	try {
-		URL newURL = new URL(installURL, subdirectoryAndFilename);
-		String key = newURL.toString();
-		if (PLUGIN_REGISTRY==null) initialize();
-		image = PLUGIN_REGISTRY.get(key);
-		if (image==null) {
-			ImageDescriptor desc = ImageDescriptor.createFromURL(newURL);
-			image = desc.createImage();
-			PLUGIN_REGISTRY.put(key, image);
+	private static URL makeImageURL(String prefix, String name) {
+		String path = prefix + name;
+		URL url = null;
+		try {
+			url = new URL(BASE_URL, path);
 		}
+		catch (MalformedURLException e) {
+			return null;
+		}
+		return url;
 	}
-	catch (MalformedURLException e) {
-	}
-	return image;
-}
-/* package */
-private static final void initialize() {
-	PLUGIN_REGISTRY = new ImageRegistry();
-	manage(IMG_FORM_BANNER_SHORT, DESC_FORM_BANNER_SHORT);
-	manage(IMG_FORM_BANNER, DESC_FORM_BANNER);
-	manage(IMG_FORM_UNDERLINE, DESC_FORM_UNDERLINE);
-}
-
-
-private static URL makeImageURL(String prefix, String name) {
-	String path = prefix + name;
-	URL url = null;
-	try {
-		url = new URL(BASE_URL, path);
-	}
-	catch (MalformedURLException e) {
-		return null;
-	}
-	return url;
-}
-
-public static Image manage(String key, ImageDescriptor desc) {
-	Image image = desc.createImage();
-	PLUGIN_REGISTRY.put(key, image);
-	return image;
-}
 
 }
