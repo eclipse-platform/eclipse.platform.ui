@@ -10,8 +10,7 @@
  **********************************************************************/
 package org.eclipse.core.tools.resources;
 
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import org.eclipse.core.internal.events.BuildManager;
 import org.eclipse.core.internal.events.BuilderPersistentInfo;
 import org.eclipse.core.internal.resources.Workspace;
@@ -90,7 +89,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 		// project's builder spec
 		Workspace workspace = (Workspace) ResourcesPlugin.getWorkspace();
 		BuildManager manager = workspace.getBuildManager();
-		Map allPersistInfo = null;
+		ArrayList allPersistInfo = null;
 		try {
 			allPersistInfo = manager.getBuildersPersistentInfo(project);
 		} catch (CoreException ce) {
@@ -110,8 +109,16 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 			extractBuilderArguments(builderNode, commands[i].getArguments());
 
 			// extracts information from persistent info (if available) 
-			if (allPersistInfo != null)
-				extractBuilderPersistentInfo(builderNode, (BuilderPersistentInfo) allPersistInfo.get(builderName));
+			if (allPersistInfo != null) {
+				//find persistent info for this builder
+				for (Iterator it = allPersistInfo.iterator(); it.hasNext();) {
+					BuilderPersistentInfo info = (BuilderPersistentInfo) it.next();
+					if (info.getBuilderName().equals(builderName)) {
+						extractBuilderPersistentInfo(builderNode, info);
+						break;
+					}
+				}
+			}
 		}
 	}
 
