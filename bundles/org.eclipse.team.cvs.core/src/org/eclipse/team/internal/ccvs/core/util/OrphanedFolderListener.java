@@ -11,7 +11,9 @@ import org.eclipse.team.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.resources.ICVSFile;
 import org.eclipse.team.internal.ccvs.core.resources.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 
 /**
  * Listen for the addition of orphaned subtrees as a result of a copy or move.
@@ -34,7 +36,26 @@ public class OrphanedFolderListener extends ResourceDeltaVisitor {
 			}
 		}
 	}
-		
+	
+	private void handleDeletedResource(IResource resource) {
+		if (resource.getType() == IResource.FILE) {
+			try {
+				ICVSFile mFile = (ICVSFile)Session.getManagedResource(resource);
+				if (mFile.isManaged()) {
+					ResourceSyncInfo info = mFile.getSyncInfo();
+					if (info.isAdded()) {
+						mFile.unmanage();
+					} else {
+						mFile.setSyncInfo(new ResourceSyncInfo(info.getName(), info.DELETED_PREFIX + info.getRevision(), info.getTimeStamp(), info.getKeywordMode(), info.getTag(), info.getPermissions()));
+					}
+					CVSProviderPlugin.getSynchronizer().reload(resource.getLocation().toFile(), Policy.monitorFor(null));
+				}
+			} catch (CVSException e) {
+				CVSProviderPlugin.log(e);
+			}
+		}
+	}
+	
 	/*
 	 * @see ResourceDeltaVisitor#handleAdded(IResource[])
 	 */
@@ -48,6 +69,9 @@ public class OrphanedFolderListener extends ResourceDeltaVisitor {
 	 * @see ResourceDeltaVisitor#handleRemoved(IResource[])
 	 */
 	protected void handleRemoved(IResource[] resources) {
+		for (int i = 0; i < resources.length; i++) {
+			handleDeletedResource(resources[i]);
+		}
 	}
 
 	/*
