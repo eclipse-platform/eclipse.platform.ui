@@ -121,7 +121,7 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
      * @param aColumnOfCursorPosition the startingColumn where the cursor is located in
      * the document. The first startingColumn is refered to with an index of '0'.
      */
-    public AntEditorSaxDefaultHandler(File mainFileContainer, int aRowOfCursorPosition, int aColumnOfCursorPosition) throws ParserConfigurationException {
+    public AntEditorSaxDefaultHandler(File fileContainer, int aRowOfCursorPosition, int aColumnOfCursorPosition) throws ParserConfigurationException {
         super();
 		if (AntUIPlugin.getDefault() != null && AntUIPlugin.getDefault().isDebugging()) {
 			AntUIPlugin.log("AntEditorSaxDefaultHandler(" +aRowOfCursorPosition+ ", "+aColumnOfCursorPosition+ ")", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -131,7 +131,7 @@ public class AntEditorSaxDefaultHandler extends DefaultHandler {
         }
         rowOfCursorPosition = aRowOfCursorPosition;
         columnOfCursorPosition = aColumnOfCursorPosition;
-        this.mainFileContainer= mainFileContainer;
+        this.mainFileContainer= fileContainer;
         initialize();
     }
 
