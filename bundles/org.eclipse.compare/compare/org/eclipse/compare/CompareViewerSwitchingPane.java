@@ -59,8 +59,6 @@ public abstract class CompareViewerSwitchingPane extends CompareViewerPane
 		
 		setViewer(new NullViewer(this));
 		
-		CompareNavigator.hookNavigation(this);
-
 		addDisposeListener(
 			new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {

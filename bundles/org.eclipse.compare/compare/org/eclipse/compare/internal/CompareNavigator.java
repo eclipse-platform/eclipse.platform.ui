@@ -93,26 +93,6 @@ public class CompareNavigator {
 		return null;
 	}
 	
-	public static void hookNavigation(final Control c) {
-		c.addKeyListener(
-			new KeyAdapter() {
-				public void keyPressed(KeyEvent e) {
-					handleNavigationKeys(e);
-				}
-			}
-		);
-	}
-	
-	public static void handleNavigationKeys(KeyEvent e) {
-		if (e.character == ('E'-0x40)) {
-			if (e.widget instanceof Control) {
-				CompareNavigator nav= findNavigator((Control)e.widget);
-				if (nav != null)
-					nav.selectChange((e.stateMask & SWT.SHIFT) == 0);
-			}
-		}
-	}
-	
 	private static CompareNavigator findNavigator(Control c) {
 		while (c != null && !c.isDisposed()) {	// PR 1GEUVV2
 			Object data= c.getData();

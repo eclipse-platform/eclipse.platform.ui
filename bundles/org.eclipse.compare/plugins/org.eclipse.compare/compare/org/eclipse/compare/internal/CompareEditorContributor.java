@@ -39,6 +39,12 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 		tbm.add(fPrevious);
 	}
 	
+	/*
+	 * @see EditorActionBarContributor#contributeToMenu(IMenuManager)
+	 */
+	public void contributeToMenu(IMenuManager menuManager) {
+	}
+
 	public void setActiveEditor(IEditorPart targetEditor) {
 				
 		if (fActiveEditorPart == targetEditor)
@@ -56,11 +62,16 @@ public class CompareEditorContributor extends EditorActionBarContributor {
 		}
 			
 		if (targetEditor instanceof CompareEditor) {
-			CompareEditor editor= (CompareEditor) targetEditor;
-			editor.setActionBars(getActionBars());
+			IActionBars actionBars= getActionBars();
 		
+			CompareEditor editor= (CompareEditor) targetEditor;
+			editor.setActionBars(actionBars);
+		
+			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.NEXT, fNext);
+			actionBars.setGlobalActionHandler(IWorkbenchActionConstants.PREVIOUS, fPrevious);
+
 			CompareConfiguration cc= editor.getCompareConfiguration();
 			fIgnoreWhitespace.setCompareConfiguration(cc);
-		}
+		}		
 	}
 }

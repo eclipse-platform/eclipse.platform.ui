@@ -38,7 +38,6 @@ public class BinaryCompareViewer extends AbstractViewer {
 		fControl= new Text(parent, SWT.NONE);
 		fControl.setEditable(false);
 		fControl.setData(CompareUI.COMPARE_VIEWER_TITLE, Utilities.getString(fBundle, "title")); //$NON-NLS-1$
-		CompareNavigator.hookNavigation(fControl);
 		
 		fLeftIsLocal= Utilities.getBoolean(cc, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
 	}

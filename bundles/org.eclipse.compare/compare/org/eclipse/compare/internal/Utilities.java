@@ -321,4 +321,48 @@ public class Utilities {
 		return dfltValue;
 	}
 
+	/**
+	 * Answers <code>true</code> if the given selection contains resources that don't
+	 * have overlapping paths and <code>false</code> otherwise. 
+	 */
+	/*
+	public static boolean isSelectionNonOverlapping() throws TeamException {
+		IResource[] resources = getSelectedResources();
+		// allow operation for non-overlapping resource selections
+		if(resources.length>0) {
+			List validPaths = new ArrayList(2);
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				
+				// only allow cvs resources to be selected
+				if(RepositoryProvider.getProvider(resource.getProject(), CVSProviderPlugin.getTypeId()) == null) {
+					return false;
+				}
+				
+				// check if this resource overlaps other selections		
+				IPath resourceFullPath = resource.getFullPath();
+				if(!validPaths.isEmpty()) {
+					for (Iterator it = validPaths.iterator(); it.hasNext();) {
+						IPath path = (IPath) it.next();
+						if(path.isPrefixOf(resourceFullPath) || 
+					       resourceFullPath.isPrefixOf(path)) {
+							return false;
+						}
+					}
+				}
+				validPaths.add(resourceFullPath);
+				
+				// ensure that resources are managed
+				ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
+				if(cvsResource.isFolder()) {
+					if( ! ((ICVSFolder)cvsResource).isCVSFolder()) return false;
+				} else {
+					if( ! cvsResource.isManaged()) return false;
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	*/
 }

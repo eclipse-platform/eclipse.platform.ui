@@ -173,8 +173,6 @@ public class DiffTreeViewer extends TreeViewer {
 		
 		Control tree= getControl();
 		
-		CompareNavigator.hookNavigation(tree);
-
 		INavigatable nav= new INavigatable() {
 			public boolean gotoDifference(boolean next) {
 				return internalNavigate(next);

@@ -1005,7 +1005,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 					paintCenter(this, gc);
 				}
 			};
-			CompareNavigator.hookNavigation(canvas);
 			new Resizer(canvas, HORIZONTAL);
 			return canvas;
 		}
@@ -1044,7 +1043,6 @@ public class TextMergeViewer extends ContentMergeViewer  {
 			new KeyAdapter() {
 				public void keyPressed(KeyEvent e) {
 					handleSelectionChanged(part);
-					CompareNavigator.handleNavigationKeys(e);
 				}
 			}
 		);
