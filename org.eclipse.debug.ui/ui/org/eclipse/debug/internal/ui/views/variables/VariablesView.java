@@ -362,7 +362,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 
 		if (current != null) {
 			// save state
-			fLastState = new ViewerState(getVariablesViewer());
+			fLastState = getVariablesViewer().saveState();
 			fSelectionStates.put(current, fLastState);
 		}		
 		
@@ -380,7 +380,7 @@ public class VariablesView extends AbstractDebugEventHandlerView implements ISel
 				state = fLastState;
 			} 
 			if (state != null) {
-				state.restoreState(getVariablesViewer());
+				getVariablesViewer().restoreState(state);
 			}
 		}
 	}
