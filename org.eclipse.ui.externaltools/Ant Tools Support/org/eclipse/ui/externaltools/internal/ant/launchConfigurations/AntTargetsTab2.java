@@ -50,11 +50,11 @@ import org.eclipse.ui.help.WorkbenchHelp;
 
 public class AntTargetsTab2 extends AbstractLaunchConfigurationTab {
 	
-	private TargetInfo defaultTarget = null;
-	private TargetInfo[] allTargets= null;
+	private TargetInfo fDefaultTarget = null;
+	private TargetInfo[] fAllTargets= null;
 	private List fOrderdTargets = null;
 	
-	private String location= null;
+	private String fLocation= null;
 	
 	private CheckboxTableViewer fTableViewer = null;
 	private Label fSelectionCountLabel = null;
@@ -165,7 +165,7 @@ public class AntTargetsTab2 extends AbstractLaunchConfigurationTab {
 			public void widgetSelected(SelectionEvent e) {
 				TableItem item = (TableItem)e.item;
 				int index = fTableViewer.getTable().indexOf(item);
-				Object element = allTargets[index];
+				Object element = fAllTargets[index];
 				if (fTableViewer.getChecked(element)) {
 					if (!fOrderdTargets.contains(element)) {
 						fOrderdTargets.add(element);
@@ -183,8 +183,8 @@ public class AntTargetsTab2 extends AbstractLaunchConfigurationTab {
 		Object[] checked = fTableViewer.getCheckedElements();
 		String numSelected = Integer.toString(checked.length);
 		int length= 0;
-		if (allTargets != null) {
-			length= allTargets.length;
+		if (fAllTargets != null) {
+			length= fAllTargets.length;
 		}
 		String total = Integer.toString(length);
 		fSelectionCountLabel.setText(MessageFormat.format(AntLaunchConfigurationMessages.getString("AntTargetsTab2.{0}_out_of_{1}_selected_7"), new String[]{numSelected, total})); //$NON-NLS-1$
@@ -205,28 +205,28 @@ public class AntTargetsTab2 extends AbstractLaunchConfigurationTab {
 	}
 	
 	private TargetInfo[] getTargets() {
-		if (allTargets == null) {
+		if (fAllTargets == null) {
 			setErrorMessage(null);
 			MultiStatus status = new MultiStatus(IExternalToolConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
-			String expandedLocation = ToolUtil.expandFileLocation(location, ExpandVariableContext.EMPTY_CONTEXT, status);
+			String expandedLocation = ToolUtil.expandFileLocation(fLocation, ExpandVariableContext.EMPTY_CONTEXT, status);
 			if (expandedLocation != null && status.isOK()) {
 				try {
-					allTargets = AntUtil.getTargets(expandedLocation);
+					fAllTargets = AntUtil.getTargets(expandedLocation);
 				} catch (CoreException ce) {
 					setErrorMessage(ce.getMessage());
-					allTargets= null;
-					return allTargets;
+					fAllTargets= null;
+					return fAllTargets;
 				}
-				for (int i=0; i < allTargets.length; i++) {
-					if (allTargets[i].isDefault()) {
-						defaultTarget = allTargets[i];
+				for (int i=0; i < fAllTargets.length; i++) {
+					if (fAllTargets[i].isDefault()) {
+						fDefaultTarget = fAllTargets[i];
 						break;
 					}
 				}
 			}
 				
-			if (allTargets != null) {
-				Arrays.sort(allTargets, new Comparator() {
+			if (fAllTargets != null) {
+				Arrays.sort(fAllTargets, new Comparator() {
 					public int compare(Object o1, Object o2) {
 						TargetInfo t1= (TargetInfo)o1;
 						TargetInfo t2= (TargetInfo)o2;
@@ -238,7 +238,7 @@ public class AntTargetsTab2 extends AbstractLaunchConfigurationTab {
 				});
 			}
 		}
-		return allTargets;
+		return fAllTargets;
 	}
 	
 	/**
@@ -264,16 +264,16 @@ public class AntTargetsTab2 extends AbstractLaunchConfigurationTab {
 		}
 		
 		if (newLocation == null) {
-			allTargets= null;
-			location= newLocation;
+			fAllTargets= null;
+			fLocation= newLocation;
 			setExecuteInput(new TargetInfo[0]);
 			fTableViewer.setInput(new TargetInfo[0]);
 			return; 
 		}
 		
-		if (!newLocation.equals(location)) {
-			allTargets= null;
-			location= newLocation;
+		if (!newLocation.equals(fLocation)) {
+			fAllTargets= null;
+			fLocation= newLocation;
 		}
 		
 		TargetInfo[] allInfos= getTargets();
@@ -285,22 +285,23 @@ public class AntTargetsTab2 extends AbstractLaunchConfigurationTab {
 		
 		String[] targetNames= AntUtil.parseRunTargets(configTargets);
 		if (targetNames.length == 0) {
-			fOrderdTargets.add(defaultTarget);
+			fOrderdTargets.add(fDefaultTarget);
 			fTableViewer.setAllChecked(false);
 			setExecuteInput(allInfos);
-			if (defaultTarget != null) {
-				fTableViewer.setChecked(defaultTarget, true);
+			if (fDefaultTarget != null) {
+				fTableViewer.setChecked(fDefaultTarget, true);
 			}
 			updateSelectionCount();
 			return;
 		}
 		
 		setExecuteInput(allInfos);
+		fTableViewer.setAllChecked(false);
 		for (int i = 0; i < targetNames.length; i++) {
-			for (int j = 0; j < allTargets.length; j++) {
-				if (targetNames[i].equals(allTargets[j].getName())) {
-					fOrderdTargets.add(allTargets[j]);
-					fTableViewer.setChecked(allTargets[j], true);
+			for (int j = 0; j < fAllTargets.length; j++) {
+				if (targetNames[i].equals(fAllTargets[j].getName())) {
+					fOrderdTargets.add(fAllTargets[j]);
+					fTableViewer.setChecked(fAllTargets[j], true);
 				}
 			}
 		}
@@ -384,14 +385,14 @@ public class AntTargetsTab2 extends AbstractLaunchConfigurationTab {
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public boolean isValid(ILaunchConfiguration launchConfig) {
-		if (allTargets == null && getErrorMessage() != null) {
+		if (fAllTargets == null && getErrorMessage() != null) {
 			//error in parsing;
 			return false;
 		}
 		setErrorMessage(null);
 		setMessage(null);
 		
-		if (allTargets != null && fTableViewer.getCheckedElements().length == 0) {
+		if (fAllTargets != null && fTableViewer.getCheckedElements().length == 0) {
 			setErrorMessage(AntLaunchConfigurationMessages.getString("AntTargetsTab.No_targets")); //$NON-NLS-1$
 			return false;
 		}
