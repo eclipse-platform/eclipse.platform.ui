@@ -49,14 +49,14 @@ public class ElementLabelProvider extends LabelProvider {
 	}
 	public Image getImage(Object element) {
 		Topic topic = (Topic) element;
-		Iterator children = topic.getChildren();
-		if (children == null || !children.hasNext())
-			return imgRegistry.get(IMAGE_TOPIC);
-		else
-			if (("".equals(topic.getHref())) || (null == topic.getHref()))
+		if (("".equals(topic.getHref())) || (null == topic.getHref()))
 				return imgRegistry.get(IMAGE_TOPIC_FOLDER);
-			else
-				return imgRegistry.get(IMAGE_TOPIC_AND_FOLDER);
+		else{
+			Iterator children = topic.getChildren();
+			if (children == null || !children.hasNext())
+				return imgRegistry.get(IMAGE_TOPIC);
+		}
+		return imgRegistry.get(IMAGE_TOPIC_AND_FOLDER);
 	}
 	public String getText(Object element) {
 		return ((Contribution) element).getLabel();
