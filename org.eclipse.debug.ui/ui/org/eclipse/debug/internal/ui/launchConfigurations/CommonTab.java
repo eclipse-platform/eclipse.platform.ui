@@ -89,6 +89,10 @@ public class CommonTab implements ILaunchConfigurationTab {
 	// The launch configuration dialog that owns this tab
 	private ILaunchConfigurationDialog fLaunchConfigurationDialog;
 	
+	// messages
+	private String fErrorMessage;
+	private String fMessage;
+	
 	/**
 	 * @see ILaunchConfigurationTab#setLaunchConfigurationDialog(ILaunchConfigurationDialog)
 	 */
@@ -574,24 +578,51 @@ public class CommonTab implements ILaunchConfigurationTab {
 		fControl = control;
 	}
 
-	/*
+	/**
 	 * @see ILaunchConfigurationTab#getErrorMessage()
 	 */
 	public String getErrorMessage() {
-		return null;
+		return fErrorMessage;
 	}
 
-	/*
+	/**
 	 * @see ILaunchConfigurationTab#getMessage()
 	 */
 	public String getMessage() {
-		return null;
+		return fMessage;
 	}
 
-	/*
+
+	/**
+	 * Sets this page's message.
+	 */
+	protected void setMessage(String message) {
+		fMessage = message;
+	}
+	
+	/**
+	 * Sets this page's error message.
+	 */
+	protected void setErrorMessage(String message) {
+		fErrorMessage = message;
+	}	
+	
+	/**
 	 * @see ILaunchConfigurationTab#isPageComplete()
 	 */
 	public boolean isValid() {
+		setMessage(null);
+		setErrorMessage(null);
+		
+		if (isShared()) {
+			String path = fSharedLocationText.getText().trim();
+			IContainer container = getContainer(path);
+			if (container == null || container.equals(ResourcesPlugin.getWorkspace().getRoot())) {
+				setErrorMessage("Invalid location.");
+				return false;
+			}
+		}
+		
 		return true;
 	}
 

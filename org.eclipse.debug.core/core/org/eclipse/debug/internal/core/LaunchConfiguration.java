@@ -264,8 +264,10 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		try {
 			if (object instanceof LaunchConfiguration) {
 				LaunchConfiguration otherConfig = (LaunchConfiguration) object;
-				return getInfo().equals(otherConfig.getInfo()) &&
-						getName().equals(otherConfig.getName());				
+				return getName().equals(otherConfig.getName())
+				 	 && getType().equals(otherConfig.getType())
+				 	 && getLocation().equals(otherConfig.getLocation())
+					 && getInfo().equals(otherConfig.getInfo());
 			}
 			return false;
 		} catch (CoreException ce) {
