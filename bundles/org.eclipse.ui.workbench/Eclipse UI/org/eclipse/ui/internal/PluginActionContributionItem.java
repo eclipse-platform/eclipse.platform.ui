@@ -19,6 +19,7 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IObjectActivityManager;
 import org.eclipse.ui.activities.IObjectContributionRecord;
+import org.eclipse.ui.internal.roles.RoleManager;
 
 /**
  * Contribution item for actions provided by plugins via workbench
@@ -37,13 +38,15 @@ public class PluginActionContributionItem extends ActionContributionItem {
 		super(action);
         
         IObjectActivityManager objectManager = PlatformUI.getWorkbench().getActivityManager(PLUGIN_CONTRIBUTION_ITEM, true);
-        Object activityObject = getActivityObject(action);
-        if (activityObject != null) {
-            IObjectContributionRecord record = objectManager.addObject(
-                action.getConfigElement().getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), 
-                action.getId(), 
-                activityObject);
-            objectManager.applyPatternBindings(record);
+        if(objectManager != null){
+	        Object activityObject = getActivityObject(action);
+	        if (activityObject != null) {
+	            IObjectContributionRecord record = objectManager.addObject(
+	                action.getConfigElement().getDeclaringExtension().getDeclaringPluginDescriptor().getUniqueIdentifier(), 
+	                action.getId(), 
+	                activityObject);
+	            objectManager.applyPatternBindings(record);
+	        }
         }
 	}
 
@@ -89,14 +92,18 @@ public class PluginActionContributionItem extends ActionContributionItem {
 	 * @see org.eclipse.jface.action.ActionContributionItem#isVisible()
 	 */
 	public boolean isVisible() {
+	
         IObjectActivityManager objectManager = PlatformUI.getWorkbench().getActivityManager(PLUGIN_CONTRIBUTION_ITEM, false);
+		// if there was no manager return isVisible().
+		if (objectManager == null) 
+			return super.isVisible();
+		
         Object activityObject = getActivityObject((PluginAction) getAction());
 
-        // if there was no manager or if an object for this contribution could 
+        // if there is an object for this contribution could 
         // not be created, return isVisible().
-        if (objectManager == null || activityObject == null) {
+        if (activityObject == null) 
             return super.isVisible();
-        }
 
         Collection activeObjects = objectManager.getActiveObjects();
         // check for visibility only if the active objects contains this object.
