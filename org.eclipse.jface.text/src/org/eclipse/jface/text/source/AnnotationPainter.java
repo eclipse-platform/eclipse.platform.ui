@@ -55,11 +55,16 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private static class Decoration {
 		/** The position of this decoration */
-		Position fPosition;
+		private Position fPosition;
 		/** The color of this decoration */
-		Color fColor;
+		private Color fColor;
 		/** Indicates whether this decoration might span multiple lines */
-		boolean fMultiLine;
+		private	boolean fMultiLine;
+		/**
+		 * The annotation's layer
+		 * @since 3.0
+		 */
+		private int fLayer;
 	}
 	
 	/** Indicates whether this painter is active */
@@ -98,8 +103,6 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 	 */
 	private ArrayList fStyleRanges= new ArrayList();
 
-//	private int fBgRepairOffset= -1;
-//	private int fBgRepairLength= -1;
 	
 	/**
 	 * Creates a new annotation painter for the given source viewer and with the given
@@ -206,6 +209,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 						pp.fPosition= position;
 						pp.fColor= color;
 						pp.fMultiLine= fAnnotationAccess.isMultiLine(annotation);
+						pp.fLayer= annotation.getLayer();
 						
 						if (isDrawingSquiggles)
 							fDecorations.add(pp);
@@ -226,7 +230,7 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		// remove background from style ranges
 		applyBackground(false); // faster than invalidateTextPresentation();
 		
-		catchupWithModel();							
+		catchupWithModel();
 		
 		// add background to style ranges
 		applyBackground(true);
@@ -276,23 +280,6 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		}
 	}
 	
-	/*
-	 * @see org.eclipse.jface.text.ITextViewer#invalidateTextPresentation()
-	 */
-//	private void invalidateTextPresentation() {
-//		if (fBgRepairOffset == Integer.MAX_VALUE)
-//			return;
-//		
-//		if (fSourceViewer instanceof ITextViewerExtension2 && fBgRepairOffset > -1 && fBgRepairLength > -1) {
-//			System.out.println("invalidating: " + fBgRepairOffset + ", " + fBgRepairLength);
-//			((ITextViewerExtension2)fSourceViewer).invalidateTextPresentation(fBgRepairOffset, fBgRepairLength);
-//		} else
-//			fSourceViewer.invalidateTextPresentation();
-//
-//		fBgRepairOffset= Integer.MAX_VALUE;
-//		fBgRepairLength= -1;
-//	}
-
 	/*
 	 * @see IAnnotationModelListener#modelChanged(IAnnotationModel)
 	 */
@@ -465,39 +452,48 @@ public class AnnotationPainter implements IPainter, PaintListener, IAnnotationMo
 		// http://bugs.eclipse.org/bugs/show_bug.cgi?id=17147
 		int vLength= fSourceViewer.getBottomIndexEndOffset() + 1;		
 		
-		for (Iterator e = fDecorations.iterator(); e.hasNext();) {
-			Decoration pp = (Decoration) e.next();
-			Position p= pp.fPosition;
-			if (p.overlapsWith(vOffset, vLength)) {
-								
-				if (!pp.fMultiLine) {
-					
-					IRegion widgetRange= getWidgetRange(p);
-					if (widgetRange != null)
-						draw(gc, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
+		for (int layer= 0, maxLayer= 1;	layer < maxLayer; layer++) {
+			
+			for (Iterator e = fDecorations.iterator(); e.hasNext();) {
 				
-				} else {
-					
-					IDocument document= fSourceViewer.getDocument();
-					try {
-												
-						int startLine= document.getLineOfOffset(p.getOffset()); 
-						int lastInclusive= Math.max(p.getOffset(), p.getOffset() + p.getLength() - 1);
-						int endLine= document.getLineOfOffset(lastInclusive);
+				Decoration pp = (Decoration) e.next();
+	
+				maxLayer= Math.max(maxLayer, pp.fLayer + 1);	// dynamically update layer maximum
+				if (pp.fLayer != layer)	// wrong layer: skip annotation
+					continue;
+				
+				Position p= pp.fPosition;
+				if (p.overlapsWith(vOffset, vLength)) {
+									
+					if (!pp.fMultiLine) {
 						
-						for (int i= startLine; i <= endLine; i++) {
-							IRegion line= document.getLineInformation(i);
-							int paintStart= Math.max(line.getOffset(), p.getOffset());
-							int paintEnd= Math.min(line.getOffset() + line.getLength(), p.getOffset() + p.getLength());
-							if (paintEnd > paintStart) {
-								// otherwise inside a line delimiter
-								IRegion widgetRange= getWidgetRange(new Position(paintStart, paintEnd - paintStart));
-								if (widgetRange != null)
-									draw(gc, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
-							}
-						}
+						IRegion widgetRange= getWidgetRange(p);
+						if (widgetRange != null)
+							draw(gc, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
 					
-					} catch (BadLocationException x) {
+					} else {
+						
+						IDocument document= fSourceViewer.getDocument();
+						try {
+													
+							int startLine= document.getLineOfOffset(p.getOffset()); 
+							int lastInclusive= Math.max(p.getOffset(), p.getOffset() + p.getLength() - 1);
+							int endLine= document.getLineOfOffset(lastInclusive);
+							
+							for (int i= startLine; i <= endLine; i++) {
+								IRegion line= document.getLineInformation(i);
+								int paintStart= Math.max(line.getOffset(), p.getOffset());
+								int paintEnd= Math.min(line.getOffset() + line.getLength(), p.getOffset() + p.getLength());
+								if (paintEnd > paintStart) {
+									// otherwise inside a line delimiter
+									IRegion widgetRange= getWidgetRange(new Position(paintStart, paintEnd - paintStart));
+									if (widgetRange != null)
+										draw(gc, widgetRange.getOffset(), widgetRange.getLength(), pp.fColor);
+								}
+							}
+						
+						} catch (BadLocationException x) {
+						}
 					}
 				}
 			}
