@@ -94,7 +94,7 @@ public class TextSearchScope extends SearchScope {
 	 * Adds an extension to the scope.
 	 */
 	public void addExtension(String extension) {
-		fExtensions.add(new StringMatcher(extension, false, false));
+		fExtensions.add(new StringMatcher(extension, true, false));
 	}
 	/**
 	 * Adds all string patterns contained in <code>extensions</code> to this
