@@ -10,9 +10,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.update.core.*;
 import org.eclipse.update.ui.internal.model.*;
+import org.eclipse.swt.custom.BusyIndicator;
+import java.net.URL;
+import org.eclipse.core.runtime.CoreException;
 
 public class SiteForm extends UpdateWebForm {
 	private Label url;
+	private SiteBookmark currentBookmark;
 	
 public SiteForm(UpdateFormPage page) {
 	super(page);
@@ -50,6 +54,28 @@ protected void createContents(Composite parent) {
 
 	listener = new HyperlinkAdapter() {
 		public void linkActivated(Control link) {
+			if (currentBookmark==null) return;
+			BusyIndicator.showWhile(getControl().getDisplay(),
+			new Runnable() {
+				public void run() {
+					try {
+						if (!currentBookmark.isSiteConnected()) {
+							currentBookmark.connect();
+						}
+						ISite site = currentBookmark.getSite();
+						if (site!=null) {
+							URL infoURL = site.getInfoURL();
+							if (infoURL!=null) {
+								DetailsView dv = (DetailsView)getPage().getView();
+								dv.showURL(infoURL.toString());
+							}
+						}
+					}
+					catch (CoreException e) {
+						System.out.println(e);
+					}
+				}
+			});
 		}
 	};
 	link = factory.createLabel(parent, null);
@@ -69,6 +95,7 @@ private void inputChanged(SiteBookmark site) {
 	url.getParent().layout();
 	((Composite)getControl()).layout();
 	getControl().redraw();
+	currentBookmark = site;
 }
 
 }

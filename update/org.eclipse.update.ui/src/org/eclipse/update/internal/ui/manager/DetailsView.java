@@ -22,7 +22,6 @@ public static final String HOME_PAGE = "Home";
 public static final String SITE_PAGE = "Site";
 public static final String DETAILS_PAGE = "Details";
 public static final String BROWSER_PAGE = "Browser";
-public static final String HOME_URL = "update://index.html";
 
 private Action homeAction;
 private UpdateAction backAction;
@@ -62,7 +61,7 @@ private void addWebBrowser() {
 	BrowserPage browser = new BrowserPage(this);
 	browser.setBrowserListener(new IBrowserListener () {
 		public void downloadComplete(String url) {
-			System.out.println("Complete: inHistory="+inHistory+", url="+url);
+			//System.out.println("Complete: inHistory="+inHistory+", url="+url);
 			if (inHistory)
 				inHistory = false;
 			else

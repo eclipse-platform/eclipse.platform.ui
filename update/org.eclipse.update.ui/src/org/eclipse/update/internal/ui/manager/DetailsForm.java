@@ -15,12 +15,16 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
-import org.eclipse.jface.wizard.*;
+import org.eclipse.jface.wizard.*;
+import java.util.*;
 public class DetailsForm extends UpdateWebForm {
 private Label imageLabel;
 private Label providerLabel;
 private Label versionLabel;
 private Label sizeLabel;
+private Label osLabel;
+private Label wsLabel;
+private Label nlLabel;
 private Label descriptionText;
 private Composite control;
 private Label infoLinkLabel;
@@ -33,7 +37,6 @@ private Image providerImage;
 private Button doButton;
 private IFeature currentFeature;
 private ModelListener modelListener;
-
 
 class ModelListener implements IUpdateModelChangedListener {
 	/**
@@ -124,17 +127,17 @@ public void createContents(Composite container) {
 	glayout.marginWidth = glayout.marginHeight = 0;
 	glayout.verticalSpacing = 0;
 
-	createHeading(properties, "Provider");
-	providerLabel = factory.createLabel(properties, null, SWT.WRAP);
-	createHeading(properties, "\nVersion");
-	versionLabel = factory.createLabel(properties, null, SWT.WRAP);
-	createHeading(properties, "\nDownload Size");
-	sizeLabel = factory.createLabel(properties, null, SWT.WRAP);
+	providerLabel = createProperty(properties, "Provider");
+	versionLabel = createProperty(properties,"\nVersion" );
+	sizeLabel = createProperty(properties, "\nDownload Size");
+	osLabel = createProperty(properties, "\nOperating System");
+	wsLabel = createProperty(properties, "\nWindowing System");
+	nlLabel = createProperty(properties, "\nSupported Languages");
 
 	imageLabel = factory.createLabel(container, null);
 	TableData td = new TableData();
 	td.align = TableData.CENTER;
-	td.valign = TableData.MIDDLE;
+	//td.valign = TableData.MIDDLE;
 	imageLabel.setLayoutData(td);
 	
 	Label label = createHeading(container, "\nDescription");
@@ -144,11 +147,13 @@ public void createContents(Composite container) {
 	descriptionText = factory.createLabel(container, null, SWT.WRAP);
 	td = new TableData();
 	td.colspan = 2;
+	td.grabHorizontal = true;
 	descriptionText.setLayoutData(td);
 	
 	glayout = new GridLayout();
 	glayout.numColumns = 4;
 	glayout.horizontalSpacing = 20;
+	glayout.marginWidth = 10;
 	Composite footer = factory.createComposite(container);
 	td = new TableData();
 	td.colspan = 2;
@@ -184,6 +189,16 @@ public void createContents(Composite container) {
   	doButton.setLayoutData(gd);
 }
 
+
+private Label createProperty(Composite parent, String name) {
+	createHeading(parent, name);
+	Label label = factory.createLabel(parent, null);
+	GridData gd = new GridData();
+	gd.horizontalIndent = 10;
+	label.setLayoutData(gd);
+	return label;
+}
+
 Label createHeading(Composite parent, String text) {
 	Color hc = factory.getColor(factory.COLOR_COMPOSITE_SEPARATOR);	
 	Label l = factory.createHeadingLabel(parent, text);
@@ -202,6 +217,7 @@ public void expandTo(Object obj) {
 }
 
 private void inputChanged(IFeature feature) {
+/*
 	if (feature==null) {
 		providerLabel.setText("");
 		versionLabel.setText("");
@@ -213,14 +229,18 @@ private void inputChanged(IFeature feature) {
 		currentFeature = null;
 		return;
 	}
+*/
+	if (feature==null) feature = currentFeature;
+	if (feature==null) return;
 	
 	setHeadingText(feature.getLabel());
 	providerLabel.setText(feature.getProvider());
 	versionLabel.setText(feature.getIdentifier().getVersion().toString());
 	sizeLabel.setText("0 KB");
 	descriptionText.setText(feature.getDescription().getText());
-	if (imageLabel.getImage()==null ||
+	/* if (imageLabel.getImage()==null ||
 		!imageLabel.getImage().equals(providerImage))
+		*/
 	imageLabel.setImage(providerImage);
 	infoLinkURL = feature.getDescription().getURL();
 	infoLinkLabel.setVisible(infoLinkURL!=null);
@@ -230,7 +250,11 @@ private void inputChanged(IFeature feature) {
 	else {
 		doButton.setText("Install");
 	}
+	setOS(feature.getOS());
+	setWS(feature.getWS());
+	setNL(feature.getNL());
 	doButton.getParent().layout(true);
+	imageLabel.getParent().layout(true);
 	((Composite)getControl()).layout(true);
 	((Composite)getControl()).redraw();
 
@@ -238,6 +262,87 @@ private void inputChanged(IFeature feature) {
 	doButton.setEnabled(!model.checklistContains(feature));
 	doButton.setVisible(true);
 	currentFeature = feature;
+}
+
+private void setOS(String os) {
+	if (os==null) osLabel.setText("");
+	else {
+		String [] array = getTokens(os);
+		StringBuffer buf = new StringBuffer();
+		for (int i=0; i<array.length; i++) {
+			if (i>0) buf.append("\n");
+			buf.append(mapOS(array[i]));
+		}
+		osLabel.setText(buf.toString());
+	}
+}
+
+private String mapOS(String key) {
+	if (key.equals("OS_WIN32"))
+	   return "Windows";
+	if (key.equals("OS_LINUX"))
+	   return "Linux";
+	return key;
+}
+
+private String mapWS(String key) {
+	if (key.equals("WS_WIN32"))
+	   return "Windows";
+	if (key.equals("WS_MOTIF"))
+	   return "Motif";
+	if (key.equals("WS_GTK"))
+	   return "GTK";
+	return key;
+}
+
+private String mapNL(String nl) {
+	String language, country;
+	
+	int loc = nl.indexOf('_');
+	if (loc != -1) {
+		language = nl.substring(0, loc);
+		country = nl.substring(loc+1);
+	}
+	else {
+		language = nl;
+		country = "";
+	}
+	Locale locale = new Locale(language, country);
+	return locale.getDisplayName();
+}
+
+private void setWS(String ws) {
+	if (ws==null) wsLabel.setText("");
+	else {
+		String [] array = getTokens(ws);
+		StringBuffer buf = new StringBuffer();
+		for (int i=0; i<array.length; i++) {
+			buf.append(mapWS(array[i])+"\n");
+		}
+		wsLabel.setText(buf.toString());
+	}
+}
+
+private void setNL(String nl) {
+	if (nl==null) nlLabel.setText("");
+	else {
+		String [] array = getTokens(nl);
+		StringBuffer buf = new StringBuffer();
+		for (int i=0; i<array.length; i++) {
+			buf.append(mapNL(array[i])+"\n");
+		}
+		nlLabel.setText(buf.toString());
+	}
+}
+
+private String [] getTokens(String source) {
+	Vector result = new Vector();
+	StringTokenizer stok = new StringTokenizer(source, ",");
+	while (stok.hasMoreTokens()) {
+		String tok = stok.nextToken();
+		result.add(tok);
+	}
+	return (String [])result.toArray(new String[result.size()]);
 }
 
 private void openURL(final String url) {

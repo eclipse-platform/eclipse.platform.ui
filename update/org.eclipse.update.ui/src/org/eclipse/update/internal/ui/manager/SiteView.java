@@ -4,6 +4,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.*;
 import org.eclipse.update.internal.ui.parts.*;
@@ -26,6 +27,15 @@ public class SiteView extends BaseTreeView implements IUpdateModelChangedListene
 	private Action newAction;
 	private Action deleteAction;
 	private Image siteImage;
+	private Image featureImage;
+	private Action refreshAction;
+	private SelectionChangedListener selectionListener;
+	
+class SelectionChangedListener implements ISelectionChangedListener {
+	public void selectionChanged(SelectionChangedEvent event) {
+		updateForSelection((IStructuredSelection)event.getSelection());
+	}
+}
 	
 class SiteProvider extends DefaultContentProvider
 					implements ITreeContentProvider {
@@ -55,9 +65,19 @@ class SiteProvider extends DefaultContentProvider
 }	
 
 class SiteLabelProvider extends LabelProvider {
+	public String getText(Object obj) {
+		if (obj instanceof IFeature) {
+			IFeature feature = (IFeature)obj;
+			return feature.getLabel();
+		}
+		return super.getText(obj);
+	}
 	public Image getImage(Object obj) {
 		if (obj instanceof SiteBookmark) {
 			return siteImage;
+		}
+		if (obj instanceof IFeature) {
+			return featureImage;
 		}
 		return super.getImage(obj);
 	}
@@ -70,12 +90,15 @@ public SiteView() {
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 	model.addUpdateModelChangedListener(this);
 	siteImage = UpdateUIPluginImages.DESC_SITE_OBJ.createImage();
+	featureImage = UpdateUIPluginImages.DESC_FEATURE_OBJ.createImage();
+	selectionListener = new SelectionChangedListener();
 }
 
 public void dispose() {
 	UpdateModel model = UpdateUIPlugin.getDefault().getUpdateModel();
 	model.removeUpdateModelChangedListener(this);	
 	siteImage.dispose();
+	featureImage.dispose();
 	super.dispose();
 }
 
@@ -99,6 +122,18 @@ public void makeActions() {
 		}
 	};
 	deleteAction.setText("Delete");
+	
+	refreshAction = new Action() {
+		public void run() {
+			performRefresh();
+		}
+	};
+	refreshAction.setText("Refresh");
+	viewer.addSelectionChangedListener(selectionListener);
+}
+
+private void updateForSelection(IStructuredSelection selection) {
+	refreshAction.setEnabled(selection.size()==1);
 }
 
 public void fillActionBars() {
@@ -106,12 +141,15 @@ public void fillActionBars() {
 }
 
 public void fillContextMenu(IMenuManager manager) {
+	IStructuredSelection sel = (IStructuredSelection)viewer.getSelection();
+	Object obj = sel.getFirstElement();
 	manager.add(newAction);
-	manager.add(deleteAction);
+	if (obj instanceof SiteBookmark) {
+		manager.add(refreshAction);
+		manager.add(deleteAction);
+	}
 	manager.add(new Separator());
 	manager.add(propertiesAction);
-	ISelection selection = viewer.getSelection();
-	deleteAction.setEnabled(!selection.isEmpty());
 }
 
 private void performNew() {
@@ -140,17 +178,43 @@ private void performDelete() {
 	}
 }
 
-private IFeature [] getSiteFeatures(final SiteBookmark bookmark) {
-	if (!bookmark.isSiteConnected()) {
+private void performRefresh() {
+	IStructuredSelection sel = (IStructuredSelection)viewer.getSelection();
+	Object obj = sel.getFirstElement();
+	if (obj!=null && obj instanceof SiteBookmark) {
+		final SiteBookmark bookmark = (SiteBookmark)obj;
 		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
 			public void run() {
 				try {
-					bookmark.connect(null);
+					bookmark.connect();
+					viewer.refresh(bookmark);
+				}
+				catch (CoreException e) {
+					System.out.println(e);
+				}
+			}
+		});
+	}
+}
+
+class FeatureBag {
+	IFeature [] features;
+}
+
+private IFeature [] getSiteFeatures(final SiteBookmark bookmark) {
+	if (!bookmark.isSiteConnected()) {
+		final FeatureBag bag = new FeatureBag();
+		BusyIndicator.showWhile(viewer.getTree().getDisplay(), new Runnable() {
+			public void run() {
+				try {
+					bookmark.connect();
+					bag.features = bookmark.getSite().getFeatures();
 				}
 				catch (CoreException e) {
 				}
 			}
 		});
+		if (bag.features!=null) return bag.features;
 	}
 	if (bookmark.getSite()!=null) {
 		return bookmark.getSite().getFeatures();

@@ -53,6 +53,7 @@ public class HTMLTableLayout extends Layout {
 	private Vector grid = null;
 	private int [] minColumnWidths, maxColumnWidths;
 	private int widestColumnWidth;
+	private int [] growingColumns;
 	
 	public int getMinimumWidth(Composite parent, boolean changed) {
 		changed = true;
@@ -132,8 +133,24 @@ public class HTMLTableLayout extends Layout {
 		      columnWidths = minColumnWidths;
 		}
 		else if (parentWidth > maxWidth) {
-		   tableWidth = maxWidth;
-		   columnWidths = maxColumnWidths;
+			if (growingColumns.length==0) {
+		   		tableWidth = maxWidth;
+		   		columnWidths = maxColumnWidths;
+			}
+			else {
+				columnWidths = new int [numColumns];
+				int colSpace = tableWidth - leftMargin - rightMargin;
+				colSpace -= (numColumns-1)*horizontalSpacing;
+				int extra = parentWidth - maxWidth;
+				int colExtra = extra / growingColumns.length;
+				for (int i=0; i<numColumns; i++) {
+					columnWidths[i] = maxColumnWidths[i];
+				
+					if (isGrowingColumn(i)) {
+						columnWidths[i] += colExtra;
+					}
+				}
+			}
 		}
 		else {
 			columnWidths = new int [numColumns];
@@ -192,6 +209,14 @@ public class HTMLTableLayout extends Layout {
 		}
 	}
 	
+boolean isGrowingColumn(int col) {
+	if (growingColumns==null) return false;
+	for (int i=0; i<growingColumns.length; i++) {
+		if (col == growingColumns[i]) return true;
+	}
+	return false;
+}	
+	
 int [] calculateExtraSpace(int tableWidth, int maxWidth, int minWidth) {
 	int fixedPart = leftMargin + rightMargin + (numColumns-1)*horizontalSpacing;
 	int D = maxWidth - minWidth;
@@ -225,11 +250,12 @@ Point computeSize(Control child, int width, boolean changed) {
 }
 
 void placeControl(Control control, TableData td, int x, int y, int rowHeight) {
-	int xloc = x;
+	int xloc = x + td.indent;
 	int yloc = y;
 	int width = td.compSize.x;
 	int height = td.compSize.y;
 	int colWidth = td.compWidth;
+	
 	// align horizontally
 	if (td.align==TableData.CENTER) {
 		xloc = x + colWidth/2 - width/2;
@@ -258,6 +284,7 @@ void createGrid(Composite composite) {
 	Vector rows;
 	Control[] children;
 	TableData spacerSpec;
+	Vector growingCols = new Vector();
 
 	// 
 	children = composite.getChildren();
@@ -303,6 +330,10 @@ void createGrid(Composite composite) {
 		// composite are maintained in the order in which they are created and added to the composite.
 		((TableData[]) grid.elementAt(row))[column] = spec;
 		spec.childIndex = i;
+		
+		if (spec.grabHorizontal) {
+			updateGrowingColumns(growingCols, spec, column);
+		}
 
 		// Put spacers in the grid to account for the item's vertical and horizontal
 		// span.
@@ -336,6 +367,20 @@ void createGrid(Composite composite) {
 		spacerSpec.isItemData = false;
 		((TableData[]) grid.elementAt(k))[column] = spacerSpec;
 	}
+	growingColumns = new int [growingCols.size()];
+	for (int i=0; i<growingCols.size(); i++) {
+		growingColumns[i] = ((Integer)growingCols.get(i)).intValue();
+	}
+}
+
+private void updateGrowingColumns(Vector growingColumns, TableData spec, int column) {
+	int affectedColumn = column + spec.colspan -1;
+	for (int i=0; i<growingColumns.size(); i++) {
+		Integer col = (Integer)growingColumns.get(i);
+		if (col.intValue()==affectedColumn)
+		   return;
+	}
+	growingColumns.add(new Integer(affectedColumn));
 }
 
 private TableData [] createEmptyRow() {
@@ -512,6 +557,7 @@ private TableData [] createEmptyRow() {
 					   minWidth = size.x;
 					}
 				}
+				minWidth += td.indent;
 				minColumnWidths[j] = Math.max(minColumnWidths[j], minWidth);
 			}
 		}
@@ -548,6 +594,7 @@ private TableData [] createEmptyRow() {
 					Point size = child.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 					maxWidth = size.x;
 				}
+				maxWidth += td.indent;
 				if (td.colspan==1)
 				   maxColumnWidths[j] = Math.max(maxColumnWidths[j], maxWidth);
 				else {
