@@ -25,9 +25,11 @@ import org.eclipse.jface.viewers.ISelectionProvider;
  * abstract base class <code>ContentOutlinePage</code>.
  * </p>
  * <p> 
- * Note that this interface extents ISelectionProvider. Theoretically this is 
- * not longer required since IPage is now passed an IPageSite during its 
- * initialization and this site can be configured with a selection provider. 
+ * Note that this interface extents <code>ISelectionProvider</code>.
+ * This is no longer required in the case of implementors who also 
+ * implement <code>IPageBookViewPage</code> (or extend <code>Page</code>)
+ * as they are now passed an <code>IPageSite</code> during their initialization 
+ * and this site can be configured with a selection provider. 
  * However to avoid a breaking change 
  *  1) this interface will continue to extend ISelectionProvider 
  *  2) if an IContentOutlinePage does not set a selection provider for its 
