@@ -52,7 +52,6 @@ public class TestMinCostBipartiteMatching extends TestCase {
 				0, 8, 4, 7, 4, 8, 0 }
 		};
 		fC= new int[6];
-		;
 
 		fT2= 15;
 		//optimal matching: {(1,3), (2,5), (3,1), (4,4), (5,2)}

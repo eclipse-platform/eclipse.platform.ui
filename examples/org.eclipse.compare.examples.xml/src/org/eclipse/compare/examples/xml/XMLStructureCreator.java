@@ -457,7 +457,7 @@ public class XMLStructureCreator implements IStructureCreator {
 
     } // getLocationString(SAXParseException):String
 
-    };
+    }
 		
 	public XMLStructureCreator() {
 		//set default idmap
