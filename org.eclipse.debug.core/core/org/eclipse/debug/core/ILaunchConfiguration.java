@@ -303,7 +303,9 @@ public interface ILaunchConfiguration extends IAdaptable {
 	
 	/**
 	 * Returns whether this launch configuration is a working
-	 * copy.
+	 * copy. Launch configurations which return <code>true</code>
+	 * to this method can be safely cast to 
+	 * <code>org.eclipse.debug.core.ILaunchConfigurationWorkingCopy</code>
 	 * 
 	 * @return whether this launch configuration is a working
 	 *  copy
