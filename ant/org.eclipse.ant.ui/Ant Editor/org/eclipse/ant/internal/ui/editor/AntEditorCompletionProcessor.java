@@ -1137,7 +1137,11 @@ public class AntEditorCompletionProcessor implements IContentAssistProcessor {
        }
        AntElementNode node= project.getNode(offset);
        if (node instanceof AntTaskNode) {
-       		node= (AntTargetNode)node.getParentNode();
+       		node= node.getParentNode();
+       		if (!(node instanceof AntTargetNode)) {
+       			//top level task
+       			node= null;
+       		}
        } else if (node instanceof AntProjectNode) {
        		node= null;
        }
