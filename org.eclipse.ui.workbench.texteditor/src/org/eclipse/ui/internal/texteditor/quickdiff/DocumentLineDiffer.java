@@ -117,6 +117,11 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	private int fNLines;
 	/** The most recent range difference returned in a getLineInfo call, so it can be recyled. */
 	private RangeDifference fLastDifference;
+	/**
+	 * <code>true</code> if incoming document events should be ignored,
+	 * <code>false</code> if not.
+	 */
+	private boolean fIgnoreDocumentEvents= true;
 
 	/**
 	 * Creates a new differ.
@@ -325,7 +330,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 			return;
 		
 		// there is no point in receiving updates before the job we get a new copy of the document for diffing
-		fRightDocument.removeDocumentListener(this);
+		fIgnoreDocumentEvents= true;
 		
 		if (fLeftDocument != null) {
 			fLeftDocument.removeDocumentListener(this);
@@ -413,9 +418,12 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					
 					// set the reference document
 					fLeftDocument= left;
+					// start listening to document events.
+					fIgnoreDocumentEvents= false;
 				}
-					
-				right.addDocumentListener(DocumentLineDiffer.this);
+
+				// accessing the reference docuent offline - reference provider need
+				// to be able to deal with this.
 				left.addDocumentListener(DocumentLineDiffer.this);
 				
 				int i= 0;
@@ -489,7 +497,6 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 					
 				} catch (BadLocationException e) {
 					left.removeDocumentListener(DocumentLineDiffer.this);
-					right.removeDocumentListener(DocumentLineDiffer.this);
 					clearModel();
 					initialize();
 					return Status.CANCEL_STATUS;
@@ -546,6 +553,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
 	public synchronized void documentAboutToBeChanged(DocumentEvent event) {
+		if (fIgnoreDocumentEvents)
+			return;
+		
 		// if a initialization is going on, we just store the events in the meantime
 		if (!isInitialized() && fInitializationJob != null) {
 			fStoredEvents.add(event);
@@ -593,6 +603,9 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
 	 */
 	public synchronized void documentChanged(DocumentEvent event) {
+		if (fIgnoreDocumentEvents)
+			return;
+		
 		if (!isInitialized())
 			return;
 		
@@ -1142,6 +1155,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 		++fOpenConnections;
 		if (fOpenConnections == 1) {
 			fRightDocument= document;
+			fRightDocument.addDocumentListener(this);
 			initialize();
 		}
 	}
@@ -1164,6 +1178,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	private void uninstall() {
 		synchronized (this) {
 			fIsSynchronized= false;
+			fIgnoreDocumentEvents= true;
 			if (fInitializationJob != null)
 				fInitializationJob.cancel();
 			fInitializationJob= null;
