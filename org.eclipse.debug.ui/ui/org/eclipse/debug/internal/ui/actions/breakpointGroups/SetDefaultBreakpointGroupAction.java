@@ -22,7 +22,6 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 
 /**
  * Action which prompts the user to set a default breakpoint group.
- * @see org.eclipse.debug.core.IBreakpointManager#setAutoGroup(String)
  */
 public class SetDefaultBreakpointGroupAction extends AbstractBreakpointsViewAction {
     
