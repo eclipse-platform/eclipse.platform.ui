@@ -882,11 +882,17 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			} catch (BadLocationException ex) {
 				return;
 			}
-			int lineEndOffset= lineOffset + lineLength;	
+			int lineEndOffset= lineOffset + lineLength;
+			
+			int delta= lineEndOffset - st.getCharCount();
+			if (delta > 0) {
+				lineEndOffset -= delta;
+				lineLength -= delta;
+			}
 			
 			String line= ""; //$NON-NLS-1$
 			if (lineLength > 0)
-				line= st.getText(lineOffset, lineOffset + lineLength - 1);
+				line= st.getText(lineOffset, lineEndOffset - 1);
 			int i= lineLength - 1;
 			while (i > -1 && Character.isWhitespace(line.charAt(i))) {
 				i--;
@@ -988,8 +994,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			}
 			
 			String line= ""; //$NON-NLS-1$
-			if (lineLength > 0)
-				line= st.getText(lineOffset, lineOffset + lineLength - 1);
+			if (lineLength > 0) {
+				int end= lineOffset + lineLength - 1;
+				end= Math.min(end, st.getCharCount() -1);
+				line= st.getText(lineOffset, end);
+			}
 			int i= 0;
 			while (i < lineLength && Character.isWhitespace(line.charAt(i)))
 				i++;
