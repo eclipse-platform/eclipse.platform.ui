@@ -310,6 +310,7 @@ private void createResourceArea(Composite parent) {
 private void updateDialogFromMarker() {
 	if (marker == null) {
 		updateDialogForNewMarker();
+		return;
 	}
 	descriptionText.setText(MarkerUtil.getMessage(marker));
 	if (isTask()) {
