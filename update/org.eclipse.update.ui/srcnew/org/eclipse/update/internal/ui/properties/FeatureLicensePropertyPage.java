@@ -43,6 +43,7 @@ public class FeatureLicensePropertyPage extends PropertyPage implements IWorkben
 				gd.widthHint = 350;
 				text.setLayoutData(gd);
 				text.setText(annotation);
+				text.setEditable(false);
 				final URL url = license.getURL();
 				if (url.getFile().endsWith(".htm") || url.getFile().endsWith(".html")) {
 					Button button = new Button(composite, SWT.PUSH);

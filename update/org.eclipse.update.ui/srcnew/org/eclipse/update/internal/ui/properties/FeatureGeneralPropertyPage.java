@@ -103,6 +103,8 @@ public class FeatureGeneralPropertyPage
 						new Text(
 							parent,
 							SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+					gd.heightHint = 300;
+					gd.widthHint = 350;
 					text.setEditable(false);
 					text.setText(annotation);
 					text.setLayoutData(gd);
