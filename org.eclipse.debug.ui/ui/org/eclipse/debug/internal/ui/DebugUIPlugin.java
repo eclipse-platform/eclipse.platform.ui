@@ -992,8 +992,8 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
                         addJobChangeListener(listener);
 
 						try {
-							jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
 							jobManager.join(ResourcesPlugin.FAMILY_MANUAL_BUILD, monitor);
+							jobManager.join(ResourcesPlugin.FAMILY_AUTO_BUILD, monitor);
 						} catch (InterruptedException e) {
 							// just continue.
 						}
