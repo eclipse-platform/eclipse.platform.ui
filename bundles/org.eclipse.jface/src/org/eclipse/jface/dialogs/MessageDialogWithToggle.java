@@ -399,13 +399,18 @@ public class MessageDialogWithToggle extends MessageDialog {
 
         if (buttonId != IDialogConstants.CANCEL_ID && toggleState
                 && prefStore != null && prefKey != null) {
-            if (buttonId == IDialogConstants.YES_ID) {
-                prefStore.setValue(prefKey, ALWAYS);
-            } else if (buttonId == IDialogConstants.NO_ID) {
-                prefStore.setValue(prefKey, NEVER);
-            } else if (buttonId == IDialogConstants.OK_ID) {
-                prefStore.setValue(prefKey, ALWAYS);
-            }
+        		switch (buttonId) {
+        			case IDialogConstants.YES_ID:
+        			case IDialogConstants.YES_TO_ALL_ID:
+        			case IDialogConstants.PROCEED_ID:
+        			case IDialogConstants.OK_ID:
+        				prefStore.setValue(prefKey, ALWAYS);
+        				break;
+        			case IDialogConstants.NO_ID:
+        			case IDialogConstants.NO_TO_ALL_ID:
+        				prefStore.setValue(prefKey, NEVER);
+        				break;
+        		}
         }
     }
 
@@ -428,7 +433,43 @@ public class MessageDialogWithToggle extends MessageDialog {
                 id = IDialogConstants.NO_ID;
             } else if (IDialogConstants.CANCEL_LABEL.equals(label)) {
                 id = IDialogConstants.CANCEL_ID;
-            }
+            } else if (IDialogConstants.YES_TO_ALL_LABEL.equals(label)) {
+                id = IDialogConstants.YES_TO_ALL_ID;
+            } else if (IDialogConstants.SKIP_LABEL.equals(label)) {
+                id = IDialogConstants.SKIP_ID;
+            } else if (IDialogConstants.STOP_LABEL.equals(label)) {
+                id = IDialogConstants.STOP_ID;
+            } else if (IDialogConstants.ABORT_LABEL.equals(label)) {
+                id = IDialogConstants.ABORT_ID;
+            } else if (IDialogConstants.RETRY_LABEL.equals(label)) {
+                id = IDialogConstants.RETRY_ID;
+            } else if (IDialogConstants.IGNORE_LABEL.equals(label)) {
+                id = IDialogConstants.IGNORE_ID;
+            } else if (IDialogConstants.PROCEED_LABEL.equals(label)) {
+                id = IDialogConstants.PROCEED_ID;
+            } else if (IDialogConstants.OPEN_LABEL.equals(label)) {
+                id = IDialogConstants.OPEN_ID;
+            } else if (IDialogConstants.CLOSE_LABEL.equals(label)) {
+                id = IDialogConstants.CLOSE_ID;
+            } else if (IDialogConstants.BACK_LABEL.equals(label)) {
+                id = IDialogConstants.BACK_ID;
+            } else if (IDialogConstants.NEXT_LABEL.equals(label)) {
+                id = IDialogConstants.NEXT_ID;
+            } else if (IDialogConstants.FINISH_LABEL.equals(label)) {
+                id = IDialogConstants.FINISH_ID;
+            } else if (IDialogConstants.HELP_LABEL.equals(label)) {
+                id = IDialogConstants.HELP_ID;
+            } else if (IDialogConstants.NO_TO_ALL_LABEL.equals(label)) {
+                id = IDialogConstants.NO_TO_ALL_ID;
+            } 
+            
+//          No XXX_LABEL in IDialogConstants for these. Unlikely
+//            they would be used in a message dialog though.
+//        	public int DETAILS_ID = 13;
+//        	public int SELECT_ALL_ID = 18;
+//        	public int DESELECT_ALL_ID = 19;
+//        	public int SELECT_TYPES_ID = 20;
+
             Button button = createButton(parent, id, label,
                     defaultButtonIndex == i);
             buttons[i] = button;
