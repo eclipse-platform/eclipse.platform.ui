@@ -522,7 +522,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		containerDialog.open();
 		Object[] resource = containerDialog.getResult();
 		String text= null;
-		if (resource != null && resource.length > 0 && resource[0] != null) {
+		if (resource != null && resource.length > 0) {
 			text= ToolUtil.buildVariableTag(IExternalToolConstants.VAR_WORKSPACE_LOC, ((IPath)resource[0]).toString());
 		}
 		if (text != null) {
