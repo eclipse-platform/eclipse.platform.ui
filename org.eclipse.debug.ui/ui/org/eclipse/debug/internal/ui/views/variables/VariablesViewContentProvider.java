@@ -103,7 +103,11 @@ public class VariablesViewContentProvider implements ITreeContentProvider,
 	
 	protected IVariable[] getModelSpecificVariableChildren(IVariable parent) throws DebugException {
 		IObjectBrowser objectBrowser = getObjectBrowser(getDebugModelId(parent));
-		return objectBrowser.getChildren(getDebugView(), parent.getValue());
+		IValue value = parent.getValue();
+		if (value== null) {
+			return new IVariable[0];
+		}
+		return objectBrowser.getChildren(getDebugView(), value);
 	}
 	
 	/**

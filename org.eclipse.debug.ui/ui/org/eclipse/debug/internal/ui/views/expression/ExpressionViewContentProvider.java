@@ -57,7 +57,11 @@ public class ExpressionViewContentProvider extends VariablesViewContentProvider 
 	
 	protected IVariable[] getModelSpecificExpressionChildren(IExpression parent) throws DebugException {
 		IObjectBrowser contentProvider = getObjectBrowser(getDebugModelId(parent));
-		return contentProvider.getChildren(getDebugView(), parent.getValue());
+		IValue value = parent.getValue();
+		if (value == null) {
+			return new IVariable[0];	
+		}
+		return contentProvider.getChildren(getDebugView(), value);
 	}
 	
 	/**
