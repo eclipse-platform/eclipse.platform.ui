@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     hiroyuki.inaba@jp.fujitsu.com (Hiroyuki Inaba) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=82224
  *******************************************************************************/
 
 package org.eclipse.ui.internal.editors.text;
@@ -140,7 +141,18 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		for (Iterator it= descriptors.iterator(); it.hasNext();) {
 			ReferenceProviderDescriptor descriptor= (ReferenceProviderDescriptor) it.next();
 			String label= descriptor.getLabel();
-			int i= label.indexOf('&');
+			int i, j=-1;
+			i= label.indexOf("(&"); //$NON-NLS-1$
+			if (i >= 0)
+				j = label.indexOf(')',i);
+			while (i >= 0 && j >= 0) {
+				label= label.substring(0, i) + label.substring(j+1);
+				i= label.indexOf("(&"); //$NON-NLS-1$
+				if(i >= 0)
+					j = label.indexOf(')',i);
+			}		
+			
+			i= label.indexOf('&');
 			while (i >= 0) {
 				if (i < label.length())
 					label= label.substring(0, i) + label.substring(i+1);
