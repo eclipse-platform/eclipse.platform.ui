@@ -22,6 +22,21 @@
         <servlet-class>org.eclipse.help.servlet.LiveHelpServlet</servlet-class>
     </servlet>
         
+	<servlet-mapping>
+		<servlet-name>content</servlet-name>
+		<url-pattern>/servlet/org.eclipse.help.servlet.ContentServlet</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>init</servlet-name>
+		<url-pattern>/servlet/org.eclipse.help.servlet.InitServlet</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>livehelp</servlet-name>
+		<url-pattern>/servlet/org.eclipse.help.servlet.LiveHelpServlet</url-pattern>
+	</servlet-mapping>
+	
     <servlet-mapping>
         <servlet-name>content</servlet-name>
         <url-pattern>/content/*</url-pattern>
