@@ -50,8 +50,8 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 		Iterator enum= selection.iterator();
 		IBreakpoint breakpoint= (IBreakpoint)enum.next();
 		IEditorInput input= fgPresentation.getEditorInput(breakpoint);
-		String editorId= fgPresentation.getEditorId(input, breakpoint);
 		if (input != null) {
+			String editorId = fgPresentation.getEditorId(input, breakpoint);
 			try {
 				part= page.openEditor(input, editorId);
 			} catch (PartInitException e) {
