@@ -487,6 +487,25 @@ public ISynchronizer getSynchronizer();
 public boolean isAutoBuilding();
 
 /**
+ * Reads the project description file (".project") from the given location
+ * in the local file system. This object is useful for discovering the 
+ * correct name for a project before importing it into the workspace.
+ * <p>
+ * The returned value is writeable.
+ * </p>
+ *
+ * @param projectDescriptionFile the path in the local file system of an
+ *   existing project description file
+ * @return a new project description
+ * @exception CoreException if the operation failed, either because the
+ *   project description file does not exist, or cannot be opened, or
+ *   cannot be parsed as a legal project description file
+ * @see #newProjectDescription
+ * @see IProject#getDescription
+ * @since 2.0
+ */
+public IProjectDescription loadProjectDescription(IPath projectDescriptionFile) throws CoreException; 
+/**
  * Moves the given sibling resources so that they are located 
  * as members of the resource at the given path; the names of
  * the new members are the same.
