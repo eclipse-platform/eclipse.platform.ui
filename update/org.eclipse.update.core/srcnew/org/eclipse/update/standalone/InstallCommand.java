@@ -72,6 +72,7 @@ public class InstallCommand extends ScriptedCommand {
 				new UpdateSearchRequest(
 					new UnifiedSiteSearchCategory(),
 					searchScope);
+			searchRequest.addFilter(new InstallFilter());
 			searchRequest.addFilter(new EnvironmentFilter());
 			searchRequest.addFilter(new BackLevelFilter());
 
@@ -149,6 +150,20 @@ public class InstallCommand extends ScriptedCommand {
 		return true;
 	}
 
+	class InstallFilter extends BaseFilter {
+		public boolean accept(IFeatureReference featureRef) {
+			try {
+				return (featureRef
+					.getVersionedIdentifier()
+					.getIdentifier()
+					.equals(featureId)
+					&& featureRef.getVersionedIdentifier().getVersion().toString().equals(
+						version));
+			} catch (CoreException e) {
+				return false;
+			}
+		}
+	}
 	class UpdateSearchResultCollector implements IUpdateSearchResultCollector {
 		private ArrayList operations = new ArrayList();
 
