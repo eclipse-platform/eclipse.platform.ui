@@ -88,6 +88,18 @@ public interface IWorkbenchPreferences {
 	 * </p>
 	 */
 	public static String SHOW_MULTIPLE_EDITOR_TABS = "wb.show.multiple.editor.tabs"; //$NON-NLS-1$	
+
+	/**
+	 * Workbench preference id for whether the workbench should show text 
+	 * on the perspective bar. 
+	 * 
+	 * Boolean-valued: <code>true</code>, if editors should show text on the perspective bar,
+	 * <code>false</code> otherwise.
+	 * <p>
+	 * The default value for this preference is: <code>true</code> (show text on the perspective bar)
+	 * </p>
+	 */
+	public static String SHOW_TEXT_ON_PERSPECTIVE_BAR = "wb.show.text.on.perspective.bar"; //$NON-NLS-1$	
 	
 	/**
 	 * Workbench preference id for whether the workbench should attempt to close

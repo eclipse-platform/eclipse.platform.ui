@@ -11,6 +11,15 @@
 
 package org.eclipse.ui.internal.dialogs;
 
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.resource.JFaceColors;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -18,17 +27,23 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-
-import org.eclipse.jface.preference.*;
-import org.eclipse.jface.resource.JFaceColors;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.application.IWorkbenchPreferences;
 import org.eclipse.ui.help.WorkbenchHelp;
-import org.eclipse.ui.internal.*;
+import org.eclipse.ui.internal.IHelpContextIds;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * The ViewsPreferencePage is the page used to set preferences for the look of the
@@ -42,6 +57,7 @@ public class ViewsPreferencePage
 	private Button editorBottomButton;
 	private Button viewTopButton;
 	private Button viewBottomButton;
+	private Button showTextOnPerspectiveBar;
 
 	/*
 	 * Editors for working with colors in the Views/Appearance preference page 
@@ -149,6 +165,7 @@ public class ViewsPreferencePage
 
 		createEditorTabButtonGroup(composite);
 		createViewTabButtonGroup(composite);
+		createShowTextOnPerspectiveBarPref(composite);
 
 		createNoteComposite(font, composite, NOTE_LABEL, APPLY_MESSAGE);
 
@@ -376,6 +393,14 @@ public class ViewsPreferencePage
 
 	}
 
+	protected void createShowTextOnPerspectiveBarPref(Composite composite) {
+		showTextOnPerspectiveBar = new Button(composite, SWT.CHECK);
+		showTextOnPerspectiveBar.setText(WorkbenchMessages.getString("WorkbenchPreference.showTextOnPerspectiveBar")); //$NON-NLS-1$
+		showTextOnPerspectiveBar.setFont(composite.getFont());
+		showTextOnPerspectiveBar.setSelection(getPreferenceStore().getBoolean(IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR));
+		setButtonLayoutData(showTextOnPerspectiveBar);
+	}
+	
 	/**
 	 * Set the two supplied controls to be beside each other.
 	 */
@@ -429,6 +454,8 @@ public class ViewsPreferencePage
 		viewBottomButton.setSelection(viewTopValue == SWT.BOTTOM);
 		viewAlignment = viewTopValue;
 
+		showTextOnPerspectiveBar.setSelection(store.getDefaultBoolean(IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR));
+		
 		colorIconsEditor.loadDefault();
 		errorColorEditor.loadDefault();
 		hyperlinkColorEditor.loadDefault();
@@ -462,6 +489,8 @@ public class ViewsPreferencePage
 		// store the view tab value to setting
 		store.setValue(IPreferenceConstants.VIEW_TAB_POSITION, viewAlignment);
 
+		store.setValue(IWorkbenchPreferences.SHOW_TEXT_ON_PERSPECTIVE_BAR, showTextOnPerspectiveBar.getSelection());
+		
 		colorIconsEditor.store();
 		errorColorEditor.store();
 		hyperlinkColorEditor.store();
