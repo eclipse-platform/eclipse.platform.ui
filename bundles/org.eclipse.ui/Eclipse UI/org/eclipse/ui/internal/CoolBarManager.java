@@ -271,24 +271,6 @@ coolBar.setRedraw(true);
 	 */
 	private void dispose(CoolItem coolItem) {
 		if ((coolItem != null) && !coolItem.isDisposed()) {
-// workaround for 22448
-boolean redraw = false;
-if (coolBar != null) {
-	int[] wraps = coolBar.getWrapIndices();
-	int index = coolBar.indexOf(coolItem);
-	if (index != -1) {
-		if (index == 0) redraw = true; 
-		else {
-			for (int i=0; i<wraps.length; i++) {
-				if (wraps[i] == index) {
-					redraw = true;
-					break;
-				}
-			}
-		}
-	}
-}
-if (redraw) coolBar.setRedraw(false);
 			CoolBarContributionItem cbItem = (CoolBarContributionItem)coolItem.getData();
 			if (cbItem != null && rememberPositions) rememberPositionFor(cbItem.getId(), getLayout());
 			coolItem.setData(null);
@@ -300,7 +282,6 @@ if (redraw) coolBar.setRedraw(false);
 				coolItem.setControl(null);
 			}
 			coolItem.dispose();
-if (redraw) coolBar.setRedraw(true);
 		}
 	}		
 	/**
@@ -1026,7 +1007,32 @@ if (redraw) coolBar.setRedraw(true);
 					useRedraw = true;
 					coolBar.setRedraw(false);
 				}
-				
+				// set redraw off if we are deleting an item from a row where it is the only item,
+				// doing so will handle jumpy coolbar behavior when the item is deleted but another
+				// item is put back in its place
+				if (!useRedraw) {
+					CoolBarLayout layout = getLayout();
+					ArrayList allCoolItemsToRemove = new ArrayList();
+					allCoolItemsToRemove.addAll(coolItemsToRemove);
+					for (int i=0; i<cbItemsToRemove.size(); i++) {
+						CoolBarContributionItem item = (CoolBarContributionItem)cbItemsToRemove.get(i);
+						CoolItem coolItem = findCoolItem(item);
+						if (item != null) allCoolItemsToRemove.add(coolItem);
+					}
+					for (int i=0; i<allCoolItemsToRemove.size(); i++) {
+						CoolItem coolItem = (CoolItem)allCoolItemsToRemove.get(i);
+						int itemIndex = coolBar.indexOf(coolItem);
+						int row = layout.getRowOfIndex(itemIndex);
+						int rowStart = layout.getStartIndexOfRow(row);
+						int nextRowStart = layout.getStartIndexOfRow(row + 1);
+						if (nextRowStart == -1) nextRowStart = rowStart;
+						if ((rowStart == itemIndex) && (nextRowStart - rowStart <= 1)) {
+							useRedraw = true;
+							coolBar.setRedraw(false);
+							break;
+						}
+					}
+				}
 				for (Iterator e = cbItemsToRemove.iterator(); e.hasNext();) {
 					CoolBarContributionItem cbItem = (CoolBarContributionItem) e.next();
 					dispose(cbItem);
