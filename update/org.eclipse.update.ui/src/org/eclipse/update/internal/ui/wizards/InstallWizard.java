@@ -374,8 +374,10 @@ public class InstallWizard
 		// The job listener will then install the feature when download is finished.
 		
 		// TODO: should we cancel existing jobs?
-		Platform.getJobManager().removeJobChangeListener(jobListener);
-		Platform.getJobManager().cancel(job);
+		if (jobListener != null)
+			Platform.getJobManager().removeJobChangeListener(jobListener);
+		if (job != null)
+			Platform.getJobManager().cancel(job);
 		jobListener = new UpdateJobChangeListener();
 		Platform.getJobManager().addJobChangeListener(jobListener);
 		
