@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.link.LinkedEnvironment;
+import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 
@@ -49,7 +49,7 @@ public class LinkedPositionGroupTest extends TestCase {
 
 	public void testAddIllegalState() throws BadLocationException {
 		LinkedPositionGroup group= new LinkedPositionGroup();
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		env.addGroup(group);
 		
 		LinkedPosition p= new LinkedPosition(new Document(), 0, 0);

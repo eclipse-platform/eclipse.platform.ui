@@ -22,13 +22,13 @@ import junit.framework.TestCase;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.link.ILinkedListener;
-import org.eclipse.jface.text.link.LinkedEnvironment;
+import org.eclipse.jface.text.link.ILinkedModeListener;
+import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 
 
-public class LinkedEnvironmentTest extends TestCase {
+public class LinkedModeModelTest extends TestCase {
 	
 	private List fPositions= new LinkedList();
 
@@ -40,7 +40,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		// set up linked mode
 		LinkedPositionGroup group1= new LinkedPositionGroup();
 		createLinkedPositions(group1, doc1, "MARGARETE");
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		env.addGroup(group1);
 		env.forceInstall();
 		
@@ -61,7 +61,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		LinkedPositionGroup group2= new LinkedPositionGroup();
 		createLinkedPositions(group2, doc1, "FAUST");
 		
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		env.addGroup(group1);
 		env.addGroup(group2);
 		
@@ -86,7 +86,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		LinkedPositionGroup group2= new LinkedPositionGroup();
 		createLinkedPositions(group2, doc1, "FAUST");
 		
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		env.addGroup(group1);
 		env.addGroup(group2);
 		
@@ -116,7 +116,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		createLinkedPositions(group2, doc1, "FAUST");
 		createLinkedPositions(group2, doc2, "FAUST");
 		
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		env.addGroup(group1);
 		env.addGroup(group2);
 		
@@ -144,7 +144,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		LinkedPositionGroup group2= new LinkedPositionGroup();
 		createLinkedPositions(group2, doc1, "FAUST");
 		
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		try {
 			env.addGroup(group1);
 			env.addGroup(group2);
@@ -165,7 +165,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		LinkedPositionGroup group2= new LinkedPositionGroup();
 		createLinkedPositions(group2, doc1, "MARGA");
 		
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		try {
 			env.addGroup(group1);
 			env.addGroup(group2);
@@ -176,7 +176,7 @@ public class LinkedEnvironmentTest extends TestCase {
 	}
 	
 	public void testAddNullGroup() throws BadLocationException {
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		try {
 			env.addGroup(null);
 		} catch (IllegalArgumentException e) {
@@ -192,7 +192,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		// set up linked mode
 		LinkedPositionGroup group1= new LinkedPositionGroup();
 		createLinkedPositions(group1, doc1, "MARGARETE");
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		env.addGroup(group1);
 		env.forceInstall();
 
@@ -213,7 +213,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		// set up linked mode
 		LinkedPositionGroup group1= new LinkedPositionGroup();
 		createLinkedPositions(group1, doc1, "MARGARETE");
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		env.addGroup(group1);
 		
 		env.forceInstall();
@@ -228,7 +228,7 @@ public class LinkedEnvironmentTest extends TestCase {
 	}
 	
 	public void testEmptyInstall() throws BadLocationException {
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		
 		try {
 			env.forceInstall();
@@ -249,7 +249,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		LinkedPositionGroup group2= new LinkedPositionGroup();
 		createLinkedPositions(group2, doc1, "FAUST");
 		
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		env.addGroup(group1);
 		env.addGroup(group2);
 		
@@ -261,7 +261,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		group1_2.addPosition(new LinkedPosition(doc1, 7, 3, LinkedPositionGroup.NO_STOP));
 		
 		
-		LinkedEnvironment childEnv= new LinkedEnvironment();
+		LinkedModeModel childEnv= new LinkedModeModel();
 		childEnv.addGroup(group1_2);
 		childEnv.forceInstall();
 		
@@ -288,13 +288,13 @@ public class LinkedEnvironmentTest extends TestCase {
 		LinkedPositionGroup group2= new LinkedPositionGroup();
 		createLinkedPositions(group2, doc1, "FAUST");
 		
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		env.addGroup(group1);
 		env.addGroup(group2);
 		
 		final boolean[] isExit= { false } ;
-		env.addLinkedListener(new LinkedAdapter() {
-			public void left(LinkedEnvironment environment, int flags) {
+		env.addLinkingListener(new LinkedAdapter() {
+			public void left(LinkedModeModel environment, int flags) {
 				isExit[0]= true;
 			}
 		});
@@ -308,7 +308,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		
 		group1_2.addPosition(new LinkedPosition(doc1, 12, 3, LinkedPositionGroup.NO_STOP));
 		
-		LinkedEnvironment childEnv= new LinkedEnvironment();
+		LinkedModeModel childEnv= new LinkedModeModel();
 		childEnv.addGroup(group1_2);
 		childEnv.forceInstall();
 		
@@ -332,7 +332,7 @@ public class LinkedEnvironmentTest extends TestCase {
 		LinkedPositionGroup group2= new LinkedPositionGroup();
 		createLinkedPositions(group2, doc1, "FAUST");
 		
-		LinkedEnvironment env= new LinkedEnvironment();
+		LinkedModeModel env= new LinkedModeModel();
 		env.addGroup(group1);
 		env.addGroup(group2);
 		env.forceInstall();
@@ -343,12 +343,12 @@ public class LinkedEnvironmentTest extends TestCase {
 		LinkedPositionGroup group1_2= new LinkedPositionGroup();
 		group1_2.addPosition(new LinkedPosition(doc1, 12, 3, LinkedPositionGroup.NO_STOP));
 		
-		LinkedEnvironment childEnv= new LinkedEnvironment();
+		LinkedModeModel childEnv= new LinkedModeModel();
 		childEnv.addGroup(group1_2);
 		
 		final boolean[] isExit= { false } ;
-		env.addLinkedListener(new LinkedAdapter() {
-			public void left(LinkedEnvironment environment, int flags) {
+		env.addLinkingListener(new LinkedAdapter() {
+			public void left(LinkedModeModel environment, int flags) {
 				isExit[0]= true;
 			}
 		});
@@ -643,10 +643,10 @@ public class LinkedEnvironmentTest extends TestCase {
 		"	Ich habe schon so viel für dich getan,\n" + 
 		"	Daß mir zu tun fast nichts mehr übrigbleibt.";
 
-	private class LinkedAdapter implements ILinkedListener {
-		public void left(LinkedEnvironment environment, int flags) {}
-		public void suspend(LinkedEnvironment environment) {}
-		public void resume(LinkedEnvironment environment, int flags) {}
+	private class LinkedAdapter implements ILinkedModeListener {
+		public void left(LinkedModeModel environment, int flags) {}
+		public void suspend(LinkedModeModel environment) {}
+		public void resume(LinkedModeModel environment, int flags) {}
 	}
 
 	public class PositionComparator implements Comparator {

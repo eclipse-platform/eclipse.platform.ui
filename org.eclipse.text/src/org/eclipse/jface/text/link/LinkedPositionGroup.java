@@ -79,15 +79,15 @@ public class LinkedPositionGroup {
 	 * may not be updated or modified thereafter.
 	 * </p>
 	 * <p>
-	 * Once a group has been added to a <code>LinkedEnvironment</code>, it
+	 * Once a group has been added to a <code>LinkedModeModel</code>, it
 	 * becomes <em>sealed</em> and no positions may be added any more.
 	 * </p>
 	 * 
 	 * @param position the position to add
 	 * @throws BadLocationException if the position is invalid or conflicts with
 	 *         other positions in the group
-	 * @throws IllegalStateException if the group has already been added to an
-	 *         environment
+	 * @throws IllegalStateException if the group has already been added to a
+	 *         model
 	 */
 	public void addPosition(LinkedPosition position) throws BadLocationException {
 		/*
@@ -96,7 +96,7 @@ public class LinkedPositionGroup {
 		 */
 		Assert.isNotNull(position);
 		if (fIsSealed)
-			throw new IllegalStateException("cannot add positions after the group is added to an environment"); //$NON-NLS-1$
+			throw new IllegalStateException("cannot add positions after the group is added to an model"); //$NON-NLS-1$
 
 		if (!fPositions.contains(position)) {
 			enforceDisjoint(position);
@@ -218,8 +218,8 @@ public class LinkedPositionGroup {
 	}
 
 	/**
-	 * Sets the environment of this group. Once an environment has been set, no
-	 * more positions can be added and the environment cannot be changed.
+	 * Sets the model of this group. Once a model has been set, no
+	 * more positions can be added and the model cannot be changed.
 	 */
 	void seal() {
 		Assert.isTrue(!fIsSealed);
@@ -240,10 +240,10 @@ public class LinkedPositionGroup {
 		return docs;
 	}
 	
-	void register(LinkedEnvironment environment) throws BadLocationException {
+	void register(LinkedModeModel model) throws BadLocationException {
 		for (Iterator it= fPositions.iterator(); it.hasNext(); ) {
             LinkedPosition pos= (LinkedPosition) it.next();
-            environment.register(pos);
+            model.register(pos);
         }
 	}
 

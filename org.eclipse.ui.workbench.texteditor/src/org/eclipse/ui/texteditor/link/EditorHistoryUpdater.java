@@ -11,8 +11,8 @@
 package org.eclipse.ui.texteditor.link;
 
 import org.eclipse.jface.text.link.LinkedPosition;
-import org.eclipse.jface.text.link.LinkedUIControl.ILinkedFocusListener;
-import org.eclipse.jface.text.link.LinkedUIControl.LinkedUITarget;
+import org.eclipse.jface.text.link.LinkedModeUI.ILinkedModeUIFocusListener;
+import org.eclipse.jface.text.link.LinkedModeUI.LinkedModeUITarget;
 
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -26,12 +26,12 @@ import org.eclipse.ui.PlatformUI;
  * 
  * @since 3.0 
  */
-public class EditorHistoryUpdater implements ILinkedFocusListener {
+public class EditorHistoryUpdater implements ILinkedModeUIFocusListener {
 
 	/*
-	 * @see org.eclipse.jface.text.link.LinkedUIControl.ILinkedFocusListener#linkedFocusLost(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedUIControl.LinkedUITarget)
+	 * @see org.eclipse.jface.text.link.LinkedModeUI.ILinkedModeUIFocusListener#linkedFocusLost(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedModeUI.LinkedModeUITarget)
 	 */
-	public void linkedFocusLost(LinkedPosition position, LinkedUITarget target) {
+	public void linkingFocusLost(LinkedPosition position, LinkedModeUITarget target) {
 		// mark navigation history
 		IWorkbenchWindow win= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (win != null) {
@@ -44,9 +44,9 @@ public class EditorHistoryUpdater implements ILinkedFocusListener {
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.link.LinkedUIControl.ILinkedFocusListener#linkedFocusGained(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedUIControl.LinkedUITarget)
+	 * @see org.eclipse.jface.text.link.LinkedModeUI.ILinkedModeUIFocusListener#linkedFocusGained(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedModeUI.LinkedModeUITarget)
 	 */
-	public void linkedFocusGained(LinkedPosition position, LinkedUITarget target) {
+	public void linkingFocusGained(LinkedPosition position, LinkedModeUITarget target) {
 		// does nothing
 	}
 }

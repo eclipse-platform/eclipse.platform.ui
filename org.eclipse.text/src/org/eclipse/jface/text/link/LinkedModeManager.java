@@ -22,38 +22,38 @@ import org.eclipse.jface.text.IDocument;
 
 
 /**
- * A linked manager ensures exclusive access of linked position infrastructures to documents. There
- * is at most one <code>LinkedManager</code> installed on the same document. The <code>getManager</code>
+ * A linked mode manager ensures exclusive access of linked position infrastructures to documents. There
+ * is at most one <code>LinkedModeManager</code> installed on the same document. The <code>getManager</code>
  * methods will return the existing instance if any of the specified documents already have an installed
  * manager.
  * 
  * @since 3.0
  */
-class LinkedManager {
+class LinkedModeManager {
 
 	/**
-	 * Our implementation of <code>ILinkedListener</code>.
+	 * Our implementation of <code>ILinkedModeListener</code>.
 	 */
-	private class Listener implements ILinkedListener {
+	private class Listener implements ILinkedModeListener {
 
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedEnvironment.ILinkedListener#left(org.eclipse.jdt.internal.ui.text.link2.LinkedEnvironment, int)
+		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedModeModel.ILinkedModeListener#left(org.eclipse.jdt.internal.ui.text.link2.LinkedModeModel, int)
 		 */
-		public void left(LinkedEnvironment environment, int flags) {
-			LinkedManager.this.left(environment, flags);
+		public void left(LinkedModeModel model, int flags) {
+			LinkedModeManager.this.left(model, flags);
 		}
 
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedEnvironment.ILinkedListener#suspend(org.eclipse.jdt.internal.ui.text.link2.LinkedEnvironment)
+		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedModeModel.ILinkedModeListener#suspend(org.eclipse.jdt.internal.ui.text.link2.LinkedModeModel)
 		 */
-		public void suspend(LinkedEnvironment environment) {
+		public void suspend(LinkedModeModel model) {
 			// not interested
 		}
 
 		/*
-		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedEnvironment.ILinkedListener#resume(org.eclipse.jdt.internal.ui.text.link2.LinkedEnvironment, int)
+		 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedModeModel.ILinkedModeListener#resume(org.eclipse.jdt.internal.ui.text.link2.LinkedModeModel, int)
 		 */
-		public void resume(LinkedEnvironment environment, int flags) {
+		public void resume(LinkedModeModel model, int flags) {
 			// not interested
 		}
 		
@@ -63,20 +63,20 @@ class LinkedManager {
 	private static Map fManagers= new HashMap();
 
 	/**
-	 * Returns whether there exists a <code>LinkedManager</code> on <code>document</code>.
+	 * Returns whether there exists a <code>LinkedModeManager</code> on <code>document</code>.
 	 * 
 	 * @param document the document of interest
-	 * @return <code>true</code> if there exists a <code>LinkedManager</code> on <code>document</code>, <code>false</code> otherwise
+	 * @return <code>true</code> if there exists a <code>LinkedModeManager</code> on <code>document</code>, <code>false</code> otherwise
 	 */
 	public static boolean hasManager(IDocument document) {
 		return fManagers.get(document) != null;
 	}
 	
 	/**
-	 * Returns whether there exists a <code>LinkedManager</code> on any of the <code>documents</code>.
+	 * Returns whether there exists a <code>LinkedModeManager</code> on any of the <code>documents</code>.
 	 * 
 	 * @param documents the documents of interest
-	 * @return <code>true</code> if there exists a <code>LinkedManager</code> on any of the <code>documents</code>, <code>false</code> otherwise
+	 * @return <code>true</code> if there exists a <code>LinkedModeManager</code> on any of the <code>documents</code>, <code>false</code> otherwise
 	 */
 	public static boolean hasManager(IDocument[] documents) {
 		for (int i= 0; i < documents.length; i++) {
@@ -95,21 +95,21 @@ class LinkedManager {
 	 * @param force whether to kill any conflicting managers
 	 * @return a manager able to cover the requested documents, or <code>null</code> if there is a conflict and <code>force</code> was set to <code>false</code>
 	 */
-	public static LinkedManager getLinkedManager(IDocument[] documents, boolean force) {
+	public static LinkedModeManager getLinkedManager(IDocument[] documents, boolean force) {
 		if (documents == null || documents.length == 0)
 			return null;
 		
 		Set mgrs= new HashSet();
-		LinkedManager mgr= null;
+		LinkedModeManager mgr= null;
 		for (int i= 0; i < documents.length; i++) {
-			mgr= (LinkedManager) fManagers.get(documents[i]);
+			mgr= (LinkedModeManager) fManagers.get(documents[i]);
 			if (mgr != null)
 				mgrs.add(mgr);
 		}
 		if (mgrs.size() > 1)
 			if (force) {
 				for (Iterator it= mgrs.iterator(); it.hasNext(); ) {
-					LinkedManager m= (LinkedManager) it.next();
+					LinkedModeManager m= (LinkedModeManager) it.next();
 					m.closeAllEnvironments();
 				}
 			} else {
@@ -117,7 +117,7 @@ class LinkedManager {
 			}
 		
 		if (mgrs.size() == 0)
-			mgr= new LinkedManager();
+			mgr= new LinkedModeManager();
 		
 		for (int i= 0; i < documents.length; i++)
 			fManagers.put(documents[i], mgr);
@@ -126,12 +126,12 @@ class LinkedManager {
 	}
 	
 	/**
-	 * Cancels any linked manager for the specified document.
+	 * Cancels any linked mode manager for the specified document.
 	 * 
-	 * @param document the document whose <code>LinkedManager</code> should be cancelled
+	 * @param document the document whose <code>LinkedModeManager</code> should be cancelled
 	 */
 	public static void cancelManager(IDocument document) {
-		LinkedManager mgr= (LinkedManager) fManagers.get(document);
+		LinkedModeManager mgr= (LinkedModeManager) fManagers.get(document);
 		if (mgr != null)
 			mgr.closeAllEnvironments();
 	}
@@ -141,21 +141,21 @@ class LinkedManager {
 	private Listener fListener= new Listener();
 
 	/**
-	 * Notify the manager about a leaving environment.
+	 * Notify the manager about a leaving model.
 	 * 
-	 * @param environment
+	 * @param model
 	 * @param flags
 	 */
-	private void left(LinkedEnvironment environment, int flags) {
-		if (!fEnvironments.contains(environment))
+	private void left(LinkedModeModel model, int flags) {
+		if (!fEnvironments.contains(model))
 			return;
 		
 		while (!fEnvironments.isEmpty()) {
-			LinkedEnvironment env= (LinkedEnvironment) fEnvironments.pop();
-			if (env == environment)
+			LinkedModeModel env= (LinkedModeModel) fEnvironments.pop();
+			if (env == model)
 				break;
 			else
-				env.exit(ILinkedListener.NONE);
+				env.exit(ILinkedModeListener.NONE);
 		}
 		
 		if (fEnvironments.isEmpty()) {
@@ -165,8 +165,8 @@ class LinkedManager {
 	
 	private void closeAllEnvironments() {
 		while (!fEnvironments.isEmpty()) {
-			LinkedEnvironment env= (LinkedEnvironment) fEnvironments.pop();
-			env.exit(ILinkedListener.NONE);
+			LinkedModeModel env= (LinkedModeModel) fEnvironments.pop();
+			env.exit(ILinkedModeListener.NONE);
 		}
 	
 		removeManager();
@@ -181,36 +181,36 @@ class LinkedManager {
 	}
 	
     /**
-     * Tries to nest the given <code>LinkedEnvironment</code> onto the top of 
+     * Tries to nest the given <code>LinkedModeModel</code> onto the top of 
      * the stack of environments managed by the receiver. If <code>force</code>
      * is <code>true</code>, any environments on the stack that create a conflict
      * are killed.
      *  
-     * @param environment the environment to nest
-     * @param force whether to force the addition of the environment
+     * @param model the model to nest
+     * @param force whether to force the addition of the model
      * @return <code>true</code> if nesting was successful, <code>false</code> otherwise (only possible if <code>force</code> is <code>false</code>
      */
-    public boolean nestEnvironment(LinkedEnvironment environment, boolean force) {
-    	Assert.isNotNull(environment);
+    public boolean nestEnvironment(LinkedModeModel model, boolean force) {
+    	Assert.isNotNull(model);
 
     	try {
     		while (true) {
     			if (fEnvironments.isEmpty()) {
-    				environment.addLinkedListener(fListener);
-    				fEnvironments.push(environment);
+    				model.addLinkingListener(fListener);
+    				fEnvironments.push(model);
     				return true;
     			}
     			
-    			LinkedEnvironment top= (LinkedEnvironment) fEnvironments.peek();
-    			if (environment.canNestInto(top)) {
-    				environment.addLinkedListener(fListener);
-    				fEnvironments.push(environment);
+    			LinkedModeModel top= (LinkedModeModel) fEnvironments.peek();
+    			if (model.canNestInto(top)) {
+    				model.addLinkingListener(fListener);
+    				fEnvironments.push(model);
     				return true;
     			} else if (!force) {
     				return false;
     			} else { // force
     				fEnvironments.pop();
-    				top.exit(ILinkedListener.NONE);
+    				top.exit(ILinkedModeListener.NONE);
     				// continue;
     			}
     		}
@@ -223,10 +223,10 @@ class LinkedManager {
 	/**
 	 * @return
 	 */
-	public LinkedEnvironment getTopEnvironment() {
+	public LinkedModeModel getTopEnvironment() {
 		if (fEnvironments.isEmpty())
 			return null;
 		else
-			return (LinkedEnvironment) fEnvironments.peek();
+			return (LinkedModeModel) fEnvironments.peek();
 	}
 }

@@ -21,7 +21,7 @@ import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.link.LinkedEnvironment;
+import org.eclipse.jface.text.link.LinkedModeModel;
 import org.eclipse.jface.text.link.LinkedPosition;
 import org.eclipse.jface.text.link.LinkedPositionGroup;
 import org.eclipse.jface.text.source.Annotation;
@@ -155,14 +155,14 @@ final class LinkedPositionAnnotations extends AnnotationModel {
 	
 	/**
 	 * Switches the focus position to <code>position</code> given the
-	 * <code>LinkedEnvironment env</code>. The slave positions for <code>position</code>
+	 * <code>LinkedModeModel env</code>. The slave positions for <code>position</code>
 	 * is extracted from the environment and set accordingly, the target positions
 	 * are updated as well.
 	 *  
 	 * @param env
 	 * @param position
 	 */
-	public void switchToPosition(LinkedEnvironment env, LinkedPosition position) {
+	public void switchToPosition(LinkedModeModel env, LinkedPosition position) {
 		if (fDocument == null || 
 				(position != null && getPosition(fFocusAnnotation) == position) ||
 				(position == null && fFocusAnnotation == null))

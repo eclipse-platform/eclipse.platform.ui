@@ -13,7 +13,7 @@ package org.eclipse.ui.texteditor.link;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.link.LinkedPosition;
-import org.eclipse.jface.text.link.LinkedUIControl.LinkedUITarget;
+import org.eclipse.jface.text.link.LinkedModeUI.LinkedModeUITarget;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.texteditor.ITextEditor;
@@ -26,7 +26,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * 
  * @since 3.0
  */
-public class EditorTarget extends LinkedUITarget {
+public class EditorTarget extends LinkedModeUITarget {
 
 	/** The text viewer. */
 	protected final ITextViewer fTextViewer;
@@ -47,16 +47,16 @@ public class EditorTarget extends LinkedUITarget {
 	}
 
 	/*
-	 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedUIControl.ILinkedUITarget#getViewer()
+	 * @see org.eclipse.jdt.internal.ui.text.link2.LinkedModeUI.ILinkedUITarget#getViewer()
 	 */
 	public ITextViewer getViewer() {
 		return fTextViewer;
 	}
 
 	/*
-	 * @see org.eclipse.jface.text.link.LinkedUIControl.ILinkedFocusListener#linkedFocusGained(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedUIControl.LinkedUITarget)
+	 * @see org.eclipse.jface.text.link.LinkedModeUI.ILinkedModeUIFocusListener#linkedFocusGained(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedModeUI.LinkedModeUITarget)
 	 */
-	public void linkedFocusGained(LinkedPosition position, LinkedUITarget target) {
+	public void linkingFocusGained(LinkedPosition position, LinkedModeUITarget target) {
 		IWorkbenchPage page= fTextEditor.getEditorSite().getPage();
 		if (page != null) {
 			page.bringToTop(fTextEditor);
@@ -65,9 +65,9 @@ public class EditorTarget extends LinkedUITarget {
 	}
 	
 	/*
-	 * @see org.eclipse.jface.text.link.LinkedUIControl.ILinkedFocusListener#linkedFocusLost(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedUIControl.LinkedUITarget)
+	 * @see org.eclipse.jface.text.link.LinkedModeUI.ILinkedModeUIFocusListener#linkedFocusLost(org.eclipse.jface.text.link.LinkedPosition, org.eclipse.jface.text.link.LinkedModeUI.LinkedModeUITarget)
 	 */
-	public void linkedFocusLost(LinkedPosition position, LinkedUITarget target) {
+	public void linkingFocusLost(LinkedPosition position, LinkedModeUITarget target) {
 	}
 	
 }

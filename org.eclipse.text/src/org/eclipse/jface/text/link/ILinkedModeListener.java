@@ -12,13 +12,13 @@ package org.eclipse.jface.text.link;
 
 
 /**
- * Protocol used by <code>LinkedEnvironment</code>s to communicate state changes, such
+ * Protocol used by <code>LinkedModeModel</code>s to communicate state changes, such
  * as leaving the environment, suspending it due to a child environment coming up, and resuming
  * after a child environment has left.
  * 
  * @since 3.0
  */
-public interface ILinkedListener {
+public interface ILinkedModeListener {
 	/** Flag to <code>leave</code> specifying no special action. */
 	int NONE= 0;
 	/** Flag to <code>leave</code> specifying that all nested environments should exit. */
@@ -35,18 +35,18 @@ public interface ILinkedListener {
 	 * @param environment the leaving environment
 	 * @param flags the reason and commands for leaving linked mode
 	 */
-	void left(LinkedEnvironment environment, int flags);
+	void left(LinkedModeModel environment, int flags);
 	/**
 	 * The suspend event occurs when a nested linked environment is installed on this environment.
 	 * 
 	 * @param environment the environment being suspended due to a nested environment being installed
 	 */
-	void suspend(LinkedEnvironment environment);
+	void suspend(LinkedModeModel environment);
 	/**
 	 * The resume event occurs when a nested linked environment exits.
 	 * 
 	 * @param environment the environment being resumed due to a nested environment exiting
 	 * @param flags the commands to execute when resuming after suspend
 	 */
-	void resume(LinkedEnvironment environment, int flags);
+	void resume(LinkedModeModel environment, int flags);
 }
