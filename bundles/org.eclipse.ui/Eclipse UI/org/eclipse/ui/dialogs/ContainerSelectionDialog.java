@@ -57,12 +57,10 @@ public class ContainerSelectionDialog extends SelectionDialog {
 	private static final int	SIZING_SELECTION_PANE_WIDTH = 300;
 /**
  * Creates a resource container selection dialog rooted at the given resource.
- * All selections are considered valid. Equivalent to
- * <code>new ContainerSelectionDialog(initialRoot,allowNewContainerName,message,null)</code>.
+ * All selections are considered valid. 
  *
  * @param parentShell the parent shell
- * @param initialRoot the root resource to populate the resource viewer
- *  with
+ * @param initialRoot the initial selection in the tree
  * @param allowNewContainerName <code>true</code> to enable the user to type in
  *  a new container name, and <code>false</code> to restrict the user to just
  *  selecting from existing ones
