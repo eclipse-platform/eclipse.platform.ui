@@ -14,6 +14,7 @@ package org.eclipse.jface.text.contentassist;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 
@@ -22,6 +23,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IEventConsumer;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.contentassist.ContextInformationPopup.ContextFrame;
 
 /**
  * This content assist adapter delegates the calles either to
@@ -257,5 +259,148 @@ final class ContentAssistRequestorAdapter implements IContentAssistRequestor {
 			return fContentAssistRequestor.supportsVerifyKeyListener();
 		else
 			return true;
+	}
+	/**
+	 * Returns the characters which when typed by the user should automatically
+	 * initiate proposing completions. The position is used to determine the 
+	 * appropriate content assist processor to invoke.
+	 *
+	 * @param contentAssistant the content assistant
+	 * @param offset a document offset
+	 * @return the auto activation characters
+	 * @see IContentAssistProcessor#getCompletionProposalAutoActivationCharacters
+	 */
+	public char[] getCompletionProposalAutoActivationCharacters(ContentAssistant contentAssistant, int offset) {
+		if (fContentAssistRequestor != null)
+			return contentAssistant.getCompletionProposalAutoActivationCharacters(fContentAssistRequestor, offset);
+		else
+			return contentAssistant.getCompletionProposalAutoActivationCharacters(fViewer, offset);
+	}
+	
+	/**
+	 * Returns the characters which when typed by the user should automatically
+	 * initiate the presentation of context information. The position is used
+	 * to determine the appropriate content assist processor to invoke.
+	 *
+	 * @param contentAssistant the content assistant
+	 * @param offset a document offset
+	 * @return the auto activation characters
+	 *
+	 * @see IContentAssistProcessor#getContextInformationAutoActivationCharacters
+	 */
+	char[] getContextInformationAutoActivationCharacters(ContentAssistant contentAssistant, int offset) {
+		if (fContentAssistRequestor != null)
+			return contentAssistant.getContextInformationAutoActivationCharacters(fContentAssistRequestor, offset);
+		else
+			return contentAssistant.getContextInformationAutoActivationCharacters(fViewer, offset);
+	}
+
+	/**
+	* Creates and returns a completion proposal popup for the given content assistant.
+	* 
+	* @param contentAssistant the content assistant
+	* @param controller the additional info controller
+	* @return the completion proposal popup
+	*/
+	CompletionProposalPopup createCompletionProposalPopup(ContentAssistant contentAssistant, AdditionalInfoController controller) {
+		if (fContentAssistRequestor != null)
+			return new CompletionProposalPopup(contentAssistant, fContentAssistRequestor, controller);
+		else
+			return new CompletionProposalPopup(contentAssistant, fViewer, controller);
+		
+	}
+
+	/**
+	 * Creates and returns a context info popup for the given content assistant.
+	 * 
+	 * @param contentAssistant the content assistant
+	 * @return the context info popup or <code>null</code>
+	 */
+	ContextInformationPopup createContextInfoPopup(ContentAssistant contentAssistant) {
+		if (fContentAssistRequestor != null)
+			return new ContextInformationPopup(contentAssistant, fContentAssistRequestor);
+		else
+			return new ContextInformationPopup(contentAssistant, fViewer);
+		
+	}
+
+	/**
+	 * @param contentAssistant
+	 * @param offset
+	 * @return
+	 */
+	public IContextInformationValidator getContextInformationValidator(ContentAssistant contentAssistant, int offset) {
+		if (fContentAssistRequestor != null)
+			return contentAssistant.getContextInformationValidator(fContentAssistRequestor, offset);
+		else
+			return contentAssistant.getContextInformationValidator(fViewer, offset);
+	}
+
+	/**
+	 * @param contentAssistant
+	 * @param offset
+	 * @return
+	 */
+	public IContextInformationPresenter getContextInformationPresenter(ContentAssistant contentAssistant, int offset) {
+		if (fContentAssistRequestor != null)
+			return contentAssistant.getContextInformationPresenter(fContentAssistRequestor, offset);
+		else
+			return contentAssistant.getContextInformationPresenter(fViewer, offset);
+	}
+
+	/**
+	 * @param frame
+	 */
+	public void installValidator(ContextFrame frame) {
+		if (fContentAssistRequestor != null) {
+			if (frame.fValidator instanceof IContextInformationValidatorExtension)
+				((IContextInformationValidatorExtension)frame.fValidator).install(frame.fInformation, fContentAssistRequestor, frame.fOffset);
+		} else
+			frame.fValidator.install(frame.fInformation, fViewer, frame.fOffset);
+	}
+
+	/**
+	 * @param frame
+	 */
+	public void installContextInformationPresenter(ContextFrame frame) {
+		if (fContentAssistRequestor != null) {
+			if (frame.fPresenter instanceof IContextInformationPresenterExtension)
+				((IContextInformationPresenterExtension)frame.fValidator).install(frame.fInformation, fContentAssistRequestor, frame.fBeginOffset);
+		} else
+			frame.fPresenter.install(frame.fInformation, fViewer, frame.fBeginOffset);
+	}
+
+	/**
+	 * @param contentAssistant
+	 * @param position
+	 * @return
+	 */
+	public IContextInformation[] computeContextInformation(ContentAssistant contentAssistant, int position) {
+		if (fContentAssistRequestor != null)
+			return contentAssistant.computeContextInformation(fContentAssistRequestor, position);
+		else
+			return contentAssistant.computeContextInformation(fViewer, position);
+	}
+
+	/*
+	 * @see IContentAssistRequestor#addSelectionListener(SelectionListener)
+	 */
+	public boolean addSelectionListener(SelectionListener selectionListener) {
+		if (fContentAssistRequestor != null)
+			return fContentAssistRequestor.addSelectionListener(selectionListener);
+		else {
+			fViewer.getTextWidget().addSelectionListener(selectionListener);
+			return true;
+		}
+	}
+
+	/*
+	 * @see IContentAssistRequestor#removeSelectionListener(SelectionListener)
+	 */
+	public void removeSelectionListener(SelectionListener selectionListener) {
+		if (fContentAssistRequestor != null)
+			fContentAssistRequestor.removeSelectionListener(selectionListener);
+		else
+			fViewer.getTextWidget().removeSelectionListener(selectionListener);
 	}
 }

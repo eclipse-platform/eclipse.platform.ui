@@ -22,7 +22,7 @@ import org.eclipse.jface.text.ITextViewer;
  * currently displayed information is in the result set, the context information is 
  * considered valid.
  */
-public final class ContextInformationValidator implements IContextInformationValidator {
+public final class ContextInformationValidator implements IContextInformationValidator, IContextInformationValidatorExtension {
 	
 	/** The content assist processor */
 	private IContentAssistProcessor fProcessor;
@@ -30,6 +30,12 @@ public final class ContextInformationValidator implements IContextInformationVal
 	private IContextInformation fContextInformation;
 	/** The associated text viewer */
 	private ITextViewer fViewer;
+	/**
+	 * The content assist requestor.
+	 * 
+	 * @since 3.0
+	 */
+	private IContentAssistRequestor fContentAssistRequestor;
 
 	/**
 	 * Creates a new context information validator which is ready to be installed on
@@ -49,11 +55,21 @@ public final class ContextInformationValidator implements IContextInformationVal
 		fViewer= viewer;
 	}
 
+	public void install(IContextInformation contextInformation, IContentAssistRequestor contentAssistRequestor, int position) {
+		fContextInformation= contextInformation;
+		fContentAssistRequestor= contentAssistRequestor;
+	}
+
 	/*
 	 * @see IContentAssistTipCloser#isContextInformationValid(int)
 	 */
 	public boolean isContextInformationValid(int position) {
-		IContextInformation[] infos= fProcessor.computeContextInformation(fViewer, position);
+		IContextInformation[] infos= null;
+		if (fContentAssistRequestor != null) {
+			if (fProcessor instanceof IContentAssistProcessorExtension)
+			infos= ((IContentAssistProcessorExtension)fProcessor).computeContextInformation(fContentAssistRequestor, position);
+		} else
+			infos= fProcessor.computeContextInformation(fViewer, position);
 		if (infos != null && infos.length > 0) {
 			for (int i= 0; i < infos.length; i++)
 				if (fContextInformation.equals(infos[i]))

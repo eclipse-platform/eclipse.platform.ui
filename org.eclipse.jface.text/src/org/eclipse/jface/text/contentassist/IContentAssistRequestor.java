@@ -13,6 +13,7 @@ package org.eclipse.jface.text.contentassist;
 
 import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.KeyListener;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 
@@ -157,7 +158,7 @@ public interface IContentAssistRequestor {
 	IDocument getDocument();
 
 	/**
-	 * Appends a verify key listener to the viewer's list of verify key
+	 * If supported, appends a verify key listener to the viewer's list of verify key
 	 * listeners. If the listener is already registered with the viewer this
 	 * call moves the listener to the end of the list.
 	 * <p>
@@ -174,7 +175,7 @@ public interface IContentAssistRequestor {
 	boolean appendVerifyKeyListener(VerifyKeyListener verifyKeyListener);
 
 	/**
-	 * Inserts the verify key listener at the beginning of this content assist
+	 * If supported, inserts the verify key listener at the beginning of this content assist
 	 * requestor's list of verify key listeners. If the listener is already
 	 * registered with the viewer this call moves the listener to the beginnng
 	 * of the list.
@@ -261,4 +262,36 @@ public interface IContentAssistRequestor {
 	 *           is a valid argument.
 	 */
 	void setEventConsumer(IEventConsumer eventConsumer);
+
+	/**
+	 * Removes the specified selection listener.
+	 * <p>
+	 *
+	 * @param selectionListener the listener
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT when listener is null</li>
+	 * </ul>
+	 */
+	void removeSelectionListener(SelectionListener selectionListener);
+
+	/**	 
+	 * If supported, adds a selection listener. A Selection event is sent by the widget when the 
+	 * selection has changed.
+	 * <p>
+	 *
+	 * @param selectionListener the listener
+	 * @return <code>true</code> if adding a selection listener is supported
+	 * @exception SWTException <ul>
+	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
+	 * </ul>
+	 * @exception IllegalArgumentException <ul>
+	 *    <li>ERROR_NULL_ARGUMENT when listener is null</li>
+	 * </ul>
+	 */
+	boolean addSelectionListener(SelectionListener selectionListener);
 }
