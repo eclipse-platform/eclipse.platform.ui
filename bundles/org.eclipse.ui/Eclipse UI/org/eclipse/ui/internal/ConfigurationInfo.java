@@ -1,5 +1,6 @@
 package org.eclipse.ui.internal;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -10,11 +11,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IPluginRegistry;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.internal.misc.PluginFileFinder;
-
+
 /**
  * Configuation info class;
  * <p>
@@ -80,13 +81,33 @@ public abstract class ConfigurationInfo {
 		this.baseURL = desc.getInstallURL();
 
 		// load the platform.ini and platform.properties file	
-		URL iniURL = PluginFileFinder.getResource(this.desc, iniFilename);
-		URL propertiesURL =
-			PluginFileFinder.getResource(this.desc, propertiesFilename);
-		if (iniURL == null)
-			reportINIFailure(null, "Plugin file not found: " + iniFilename); //$NON-NLS-1$
-		else
-			readINIFile(iniURL, propertiesURL);
+		URL iniURL = null;
+		try {
+			iniURL = desc.getPlugin().find(new Path(iniFilename));
+			if (iniURL != null)
+				iniURL = Platform.resolve(iniURL);
+		} catch (CoreException e) {
+			// null check below
+		} catch (IOException e) {
+			// null check below
+		}
+		if (iniURL == null) {
+			reportINIFailure(null, "Unable to load plugin file: " + iniFilename); //$NON-NLS-1$
+			return;
+		}
+		
+		URL propertiesURL = null;
+		try {
+			propertiesURL = desc.getPlugin().find(new Path(propertiesFilename));
+			if (propertiesURL != null)
+				propertiesURL = Platform.resolve(propertiesURL);
+		} catch (CoreException e) {
+			reportINIFailure(null, "Unable to load plugin file: " + propertiesFilename); //$NON-NLS-1$
+		} catch (IOException e) {
+			reportINIFailure(null, "Unable to load plugin file: " + propertiesFilename); //$NON-NLS-1$
+		}
+		// OK to pass null properties file
+		readINIFile(iniURL, propertiesURL);
 	}
 		
 	/**

@@ -6,7 +6,6 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.boot.*;
-import org.eclipse.ui.internal.misc.PluginFileFinder;
 import org.eclipse.ui.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;

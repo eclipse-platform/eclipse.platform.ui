@@ -6,7 +6,6 @@ package org.eclipse.ui.internal;
  */
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.boot.*;
-import org.eclipse.ui.internal.misc.PluginFileFinder;
 import org.eclipse.ui.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -349,32 +348,64 @@ protected void readINIFile(URL iniURL, URL propertiesURL) throws CoreException {
 		appName = getResourceString(appName, bundle);
 	}
 
-	String welcomePageFileName = (String) ini.get("welcomePage");//$NON-NLS-1$
+	String welcomePageFileName = (String) ini.get("welcomePage"); //$NON-NLS-1$
 	if (welcomePageFileName != null) {
-		welcomePageURL = PluginFileFinder.getResource(getDescriptor(), welcomePageFileName);
-		if (welcomePageURL == null) 
-			reportINIFailure(null, "Cannot access welcome page " + welcomePageFileName);//$NON-NLS-1$
+		welcomePageURL = null;
+		try {
+			welcomePageURL = getDescriptor().getPlugin().find(new Path(welcomePageFileName));
+			if (welcomePageURL != null)
+				welcomePageURL = Platform.resolve(welcomePageURL);
+		} catch (CoreException e) {
+			// null check below
+		} catch (IOException e) {
+			// null check below
+		}
+		if (welcomePageURL == null) {
+			reportINIFailure(null, "Cannot access welcome page " + welcomePageFileName); //$NON-NLS-1$
+		}
 	}
 		
-	String fileName;
-	URL url;
-		
-	fileName = (String) ini.get("image");//$NON-NLS-1$
+	URL url = null;
+	String fileName = (String) ini.get("image");//$NON-NLS-1$
 	if (fileName != null) {
-		url = PluginFileFinder.getResource(getDescriptor(), fileName);
+		try {
+			url = getDescriptor().getPlugin().find(new Path(fileName));
+			if (url != null)
+				url = Platform.resolve(url);
+		} catch (CoreException e) {
+			reportINIFailure(null, "Cannot access image " + fileName); //$NON-NLS-1$
+		} catch (IOException e) {
+			reportINIFailure(null, "Cannot access image " + fileName); //$NON-NLS-1$
+		}
 		if (url != null)
 			productImage = ImageDescriptor.createFromURL(url);
 	}
 
 	fileName = (String) ini.get("aboutImage");//$NON-NLS-1$
 	if (fileName != null) {
-		url = PluginFileFinder.getResource(getDescriptor(), fileName);
+		try {
+			url = getDescriptor().getPlugin().find(new Path(fileName));
+			if (url != null)
+				url = Platform.resolve(url);
+		} catch (CoreException e) {
+			reportINIFailure(null, "Cannot access about image " + fileName); //$NON-NLS-1$
+		} catch (IOException e) {
+			reportINIFailure(null, "Cannot access about image " + fileName); //$NON-NLS-1$
+		}
 		if (url != null)
 			aboutImage = ImageDescriptor.createFromURL(url);
 	}
 
 	if ((fileName = (String) ini.get("splashImage") ) != null) {//$NON-NLS-1$
-		url = PluginFileFinder.getResource(getDescriptor(), fileName);
+		try {
+			url = getDescriptor().getPlugin().find(new Path(fileName));
+			if (url != null)
+				url = Platform.resolve(url);
+		} catch (CoreException e) {
+			reportINIFailure(null, "Cannot access splash image " + fileName); //$NON-NLS-1$
+		} catch (IOException e) {
+			reportINIFailure(null, "Cannot access splash image " + fileName); //$NON-NLS-1$
+		}
 		if (url != null)
 			splashImage = ImageDescriptor.createFromURL(url);
 	}

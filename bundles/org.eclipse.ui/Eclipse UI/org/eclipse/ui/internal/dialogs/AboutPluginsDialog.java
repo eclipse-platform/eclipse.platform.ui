@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.*;
-import org.eclipse.ui.internal.misc.PluginFileFinder;
 
 /**
  * Displays information about the product plugins.
@@ -224,7 +223,25 @@ public class AboutPluginsDialog extends Dialog {
 				return false;
 			int i = vendorInfo.getSelectionIndex();
 			IPluginDescriptor desc = info[i];
-			return PluginFileFinder.getResource(desc, PLUGININFO) != null;
+			URL infoURL = null;
+			try {
+				infoURL = desc.getPlugin().find(new Path(PLUGININFO));
+				if (infoURL != null)
+					infoURL = Platform.resolve(infoURL);
+			} catch (CoreException e) {
+				WorkbenchPlugin.log("Problem reading plugin info for: " + desc.getLabel(), e.getStatus()); //$NON-NLS-1$
+				return false;
+			} catch (IOException e) {
+				IStatus iniStatus = new Status(
+					IStatus.ERROR, 
+					WorkbenchPlugin.getDefault().getDescriptor().getUniqueIdentifier(),
+					0,
+					"Problem reading plugin info", 
+					e);
+				WorkbenchPlugin.log("Problem reading plugin info for: " + desc.getLabel(), iniStatus); //$NON-NLS-1$
+				return false;
+			}
+			return infoURL != null;
 	}
 
 	/**
@@ -257,10 +274,25 @@ public class AboutPluginsDialog extends Dialog {
 	 * 
 	 */
 	private void openMoreInfo(IPluginDescriptor desc) {
-		final URL url = PluginFileFinder.getResource(desc, PLUGININFO);
-		if (url == null)
+		URL infoURL = null;
+		try {
+			infoURL = desc.getPlugin().find(new Path(PLUGININFO));
+			if (infoURL != null)
+				infoURL = Platform.resolve(infoURL);
+		} catch (CoreException e) {
+			// null check below
+		} catch (IOException e) {
+			// null check below
+		}
+		if (infoURL == null) {
+			MessageDialog.openError(
+				getShell(), 
+				WorkbenchMessages.getString("AboutPluginsDialog.errorTitle"), //$NON-NLS-1$
+				WorkbenchMessages.format("AboutPluginsDialog.unableToOpenFile", new Object[] {PLUGININFO, desc.getLabel()})); //$NON-NLS-1$
 			return;
+		}
 
+		final URL url = infoURL;
 		if (SWT.getPlatform().equals("win32")) {	//$NON-NLS-1$
 			Program.launch(url.toString());
 		} else {
