@@ -290,9 +290,9 @@ public class UpdatesView
 		}
 		public Image getImage(Object obj) {
 			UpdateLabelProvider provider = UpdateUIPlugin.getDefault().getLabelProvider();
-			if (obj instanceof SiteBookmark
-				|| obj instanceof SearchResultSite) {
-				return provider.get(UpdateUIPluginImages.DESC_SITE_OBJ);
+			if (obj instanceof SiteBookmark) {
+				SiteBookmark bookmark = (SiteBookmark)obj;
+				return provider.get(bookmark.isWebBookmark()?UpdateUIPluginImages.DESC_WEB_SITE_OBJ:UpdateUIPluginImages.DESC_SITE_OBJ);
 			}
 			if (obj instanceof MyComputer) {
 				return provider.get(UpdateUIPluginImages.DESC_COMPUTER_OBJ);
@@ -658,6 +658,11 @@ public class UpdatesView
 
 	public void fillContextMenu(IMenuManager manager) {
 		Object obj = getSelectedObject();
+		if (obj instanceof SiteBookmark) {
+			SiteBookmark site = (SiteBookmark) obj;
+			if (site.isWebBookmark())
+				manager.add(openWebAction);
+		}
 		manager.add(refreshAction);
 		manager.add(new Separator());
 		MenuManager newMenu =
@@ -670,8 +675,6 @@ public class UpdatesView
 			SiteBookmark site = (SiteBookmark) obj;
 			if (site.getType() == SiteBookmark.LOCAL)
 				manager.add(newLocalAction);
-			if (site.isWebBookmark())
-				manager.add(openWebAction);
 		}
 		if (obj instanceof ExtensionRoot) {
 			manager.add(linkExtensionAction);
@@ -845,6 +848,18 @@ public class UpdatesView
 		if (url != null) {
 			DetailsView.showURL(url.toString());
 		}
+	}
+	
+	protected void handleDoubleClick(DoubleClickEvent e) {
+		Object obj = getSelectedObject();
+		if (obj!=null && obj instanceof SiteBookmark) {
+			SiteBookmark bookmark = (SiteBookmark)obj;
+			if (bookmark.isWebBookmark()) {
+				performOpenWeb();
+				return;
+			}
+		}
+		super.handleDoubleClick(e);
 	}
 
 	private void performCut() {
