@@ -75,13 +75,25 @@ public class PreferencesExportDialog extends Dialog {
 	public PreferencesExportDialog(Shell parentShell) {
 		super(parentShell);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-		newShell.setText(WorkbenchMessages.getString("PreferencesExportDialog.SelectMessage")); //$NON-NLS-1$
+		newShell.setText(WorkbenchMessages
+				.getString("PreferencesExportDialog.SelectMessage")); //$NON-NLS-1$
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.window.Window#getShellStyle()
+	 */
+	protected int getShellStyle() {
+		return super.getShellStyle() | SWT.RESIZE;
 	}
 
 	/*
@@ -181,8 +193,11 @@ public class PreferencesExportDialog extends Dialog {
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
-				dialog.setText(WorkbenchMessages.getString("PreferencesExportDialog.ExportDialogTitle")); //$NON-NLS-1$
-				dialog.setFilterExtensions(PreferenceImportExportFileSelectionPage.DIALOG_PREFERENCE_EXTENSIONS);
+				dialog
+						.setText(WorkbenchMessages
+								.getString("PreferencesExportDialog.ExportDialogTitle")); //$NON-NLS-1$
+				dialog
+						.setFilterExtensions(PreferenceImportExportFileSelectionPage.DIALOG_PREFERENCE_EXTENSIONS);
 				String selectedDirectoryName = dialog.open();
 
 				if (selectedDirectoryName != null) {
@@ -246,12 +261,12 @@ public class PreferencesExportDialog extends Dialog {
 	}
 
 	/**
-	 * Get the file name to use. Add the .epf extension if it is
-	 * not there.
+	 * Get the file name to use. Add the .epf extension if it is not there.
+	 * 
 	 * @return String
 	 */
 	private String getOutputFileName() {
-		
+
 		String fileName = new File(outputLocationCombo.getText()).getPath();
 		if (fileName.lastIndexOf(".") == -1) { //$NON-NLS-1$
 			fileName += AbstractPreferenceImportExportPage.PREFERENCE_EXT;
@@ -267,12 +282,12 @@ public class PreferencesExportDialog extends Dialog {
 	 */
 	private void exportPreferences(IPath path, IEclipsePreferences[] preferences) {
 		File file = path.toFile();
-		
+
 		if (file.exists())
 			file.delete();
-		
+
 		File parent = file.getParentFile();
-		if(parent != null)
+		if (parent != null)
 			file.getParentFile().mkdirs();
 		IPreferencesService service = Platform.getPreferencesService();
 		OutputStream output = null;
@@ -305,8 +320,13 @@ public class PreferencesExportDialog extends Dialog {
 	 * @param status
 	 */
 	private void openErrorDialog(IStatus status) {
-		ErrorDialog.openError(getShell(), WorkbenchMessages.getString("PreferencesExportDialog.ErrorDialogTitle"), //$NON-NLS-1$
-				WorkbenchMessages.getString("PreferencesExportDialog.ErrorDialogMessage"), status); //$NON-NLS-1$
+		ErrorDialog
+				.openError(
+						getShell(),
+						WorkbenchMessages
+								.getString("PreferencesExportDialog.ErrorDialogTitle"), //$NON-NLS-1$
+						WorkbenchMessages
+								.getString("PreferencesExportDialog.ErrorDialogMessage"), status); //$NON-NLS-1$
 	}
 
 }
