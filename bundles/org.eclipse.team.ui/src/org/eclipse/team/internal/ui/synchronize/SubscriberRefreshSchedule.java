@@ -82,7 +82,7 @@ public class SubscriberRefreshSchedule {
 	}
 	
 	/**
-	 * @return Returns the refreshInterval.
+	 * @return Returns the refreshInterval in seconds.
 	 */
 	public long getRefreshInterval() {
 		return refreshInterval;
@@ -112,7 +112,7 @@ public class SubscriberRefreshSchedule {
 		}
 		if(job == null) {
 			SubscriberParticipant participant = getParticipant();
-			job = new RefreshSubscriberJob(participant, Policy.bind("RefreshSchedule.14"), Policy.bind("RefreshSchedule.15", participant.getName(), getRefreshIntervalAsString()), participant.getResources(), new RefreshUserNotificationPolicy(getParticipant())); //$NON-NLS-1$
+			job = new RefreshSubscriberJob(participant, Policy.bind("RefreshSchedule.14"), Policy.bind("RefreshSchedule.15", participant.getName(), getRefreshIntervalAsString()), participant.getResources(), new RefreshUserNotificationPolicy(getParticipant())); //$NON-NLS-1$ //$NON-NLS-2$
 			job.setUser(false);
 		} else if(job.getState() != Job.NONE){
 			stopJob();
@@ -120,7 +120,8 @@ public class SubscriberRefreshSchedule {
 		job.setRefreshInterval(getRefreshInterval());
 		job.setRestartOnCancel(true);
 		job.setReschedule(true);
-		job.schedule(getRefreshInterval());			
+		// Schedule delay is in mills.
+		job.schedule(getRefreshInterval() * 1000);		
 	}
 	
 	protected void stopJob() {
