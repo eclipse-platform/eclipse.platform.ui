@@ -13,19 +13,12 @@ package org.eclipse.team.internal.ccvs.ui.operations;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Commit;
-import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.core.runtime.*;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
@@ -86,22 +79,6 @@ public class CommitOperation extends SingleCommandOperation {
 				resources, 
 				null,
 				monitor);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ccvs.ui.operations.CVSOperation#handleErrors(org.eclipse.core.runtime.IStatus[])
-	 */
-	protected void handleErrors(IStatus[] errors) throws CVSException {
-		// We are only concerned with server errors
-		List serverErrors = new ArrayList();
-		for (int i = 0; i < errors.length; i++) {
-			IStatus status = errors[i];
-			if (status.getCode() == CVSStatus.SERVER_ERROR) {
-				serverErrors.add(status);
-			}
-		}
-		if (serverErrors.isEmpty()) return;
-		super.handleErrors((IStatus[]) serverErrors.toArray(new IStatus[serverErrors.size()]));
 	}
 	
 	/* (non-Javadoc)

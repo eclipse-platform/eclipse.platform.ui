@@ -151,7 +151,12 @@ public abstract class CVSOperation extends TeamOperation {
 		return (errors.size() > 0 && getLastError() == status);
 	}
 	
-	protected void handleErrors(IStatus[] errors) throws CVSException {
+	/**
+	 * Throw an exception that contains the given error status
+	 * @param errors the errors that occurred during the operation
+	 * @throws CVSException an exception that wraps the errors
+	 */
+	protected void asException(IStatus[] errors) throws CVSException {
 		if (errors.length == 0) return;
 		if (errors.length == 1 && statusCount == 1)  {
 			throw new CVSException(errors[0]);
@@ -169,6 +174,47 @@ public abstract class CVSOperation extends TeamOperation {
 		throw new CVSException(result);
 	}
 
+	/**
+	 * Handle the errors that occured during an operation.
+	 * The default is to throw an exception containing an status
+	 * that are reportable (determined using <code>isReportableError</code>).
+	 * @param errors the errors that occurred during the operation.
+	 * Subclasses may override.
+	 * @throws CVSException an exception if appropriate
+	 */
+	protected void handleErrors(IStatus[] errors) throws CVSException {
+		// We are only concerned with reportable errors.
+	    // Others will appear in the console
+		List serverErrors = new ArrayList();
+		for (int i = 0; i < errors.length; i++) {
+			IStatus status = errors[i];
+			if (isReportableError(status)) {
+				serverErrors.add(status);
+			} else if (status.isMultiStatus()) {
+				IStatus[] children = status.getChildren();
+				for (int j = 0; j < children.length; j++) {
+					IStatus child = children[j];
+					if (isReportableError(child)) {
+						serverErrors.add(status);
+						break;
+					}
+				}
+			}
+		}
+		if (!serverErrors.isEmpty())
+		    asException((IStatus[]) serverErrors.toArray(new IStatus[serverErrors.size()]));
+	}
+
+	/**
+	 * Return whether the given status is reportable. By default,
+	 * only server errors are reportable. Subclasses may override.
+	 * @param status an error status
+	 * @return whether the status is reportable or should be ignored
+	 */
+    protected boolean isReportableError(IStatus status) {
+        return status.getCode() == CVSStatus.SERVER_ERROR;
+    }
+    
 	protected String getErrorMessage(IStatus[] failures, int totalOperations) {
 		return Policy.bind("CVSOperation.0", String.valueOf(failures.length),  String.valueOf(totalOperations)); //$NON-NLS-1$
 	}
