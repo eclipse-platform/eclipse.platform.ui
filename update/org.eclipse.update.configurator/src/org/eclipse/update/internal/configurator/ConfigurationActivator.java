@@ -70,15 +70,10 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		initialize();
 		
 		//Short cut, if the configuration has not changed
-		String application = configuration.getApplicationIdentifier();
 		String product = configuration.getPrimaryFeatureIdentifier();
 		
 		if (canRunWithCachedData()) {		
 			Utils.debug("Same last time stamp *****"); //$NON-NLS-1$
-			if (System.getProperty(ECLIPSE_APPLICATION) == null && application != null) {
-				Utils.debug("no eclipse.application, setting it and returning"); //$NON-NLS-1$
-				System.setProperty(ECLIPSE_APPLICATION, application);
-			}
 			if (System.getProperty(ECLIPSE_PRODUCT) == null && product != null) {
 				Utils.debug("no eclipse.product, setting it and returning"); //$NON-NLS-1$
 				System.setProperty(ECLIPSE_PRODUCT, product);
@@ -210,8 +205,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			context.ungetService(reference);
 			refreshPackages((Bundle[]) toRefresh.toArray(new Bundle[toRefresh.size()]));
 			
-			if (System.getProperty(ECLIPSE_APPLICATION) == null && configuration.getApplicationIdentifier() != null)
-				System.setProperty(ECLIPSE_APPLICATION, configuration.getApplicationIdentifier());
 			if (System.getProperty(ECLIPSE_PRODUCT) == null && configuration.getPrimaryFeatureIdentifier() != null)
 				System.setProperty(ECLIPSE_PRODUCT, configuration.getPrimaryFeatureIdentifier());
 			
