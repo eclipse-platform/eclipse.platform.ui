@@ -42,6 +42,8 @@ import org.eclipse.team.ui.sync.SyncInfoSet;
  */
 public class MergeUpdateAction extends SafeUpdateAction {
 	
+	TeamSubscriber currentSubcriber = null;
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.team.internal.ccvs.ui.subscriber.SafeUpdateAction#getOverwriteLocalChanges()
 	 */
@@ -62,7 +64,9 @@ public class MergeUpdateAction extends SafeUpdateAction {
 	
 	protected void updated(IResource[] resources) throws TeamException {
 		// Mark all succesfully updated resources as merged
-		((CVSMergeSubscriber)getSubscriber()).merged(resources);
+		if(resources.length > 0 && currentSubcriber != null) {
+			((CVSMergeSubscriber)currentSubcriber).merged(resources);
+		}
 	}
 	
 	/* (non-Javadoc)
@@ -92,12 +96,13 @@ public class MergeUpdateAction extends SafeUpdateAction {
 	 */
 	protected void runSafeUpdate(SyncInfo[] nodes, IProgressMonitor monitor) throws TeamException {
 		if(nodes.length > 0) {
-			TeamSubscriber subscriber = nodes[0].getSubscriber();
-			if (!(subscriber instanceof CVSMergeSubscriber)) {
-				throw new CVSException(Policy.bind("MergeUpdateAction.invalidSubscriber", subscriber.getId().toString())); //$NON-NLS-1$
+			// Assumption that all nodes are from the same subscriber.
+			currentSubcriber = nodes[0].getSubscriber();
+			if (!(currentSubcriber instanceof CVSMergeSubscriber)) {
+				throw new CVSException(Policy.bind("MergeUpdateAction.invalidSubscriber", currentSubcriber.getId().toString())); //$NON-NLS-1$
 			}
-			CVSTag startTag = ((CVSMergeSubscriber)subscriber).getStartTag();
-			CVSTag endTag = ((CVSMergeSubscriber)subscriber).getEndTag();
+			CVSTag startTag = ((CVSMergeSubscriber)currentSubcriber).getStartTag();
+			CVSTag endTag = ((CVSMergeSubscriber)currentSubcriber).getEndTag();
 
 			// Incoming additions require different handling then incoming changes and deletions
 			List additions = new ArrayList();

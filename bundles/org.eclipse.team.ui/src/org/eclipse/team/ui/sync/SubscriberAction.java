@@ -19,7 +19,6 @@ import java.util.Set;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.subscribers.SyncInfo;
-import org.eclipse.team.core.subscribers.TeamSubscriber;
 import org.eclipse.team.internal.ui.actions.TeamAction;
 
 /**
@@ -27,8 +26,6 @@ import org.eclipse.team.internal.ui.actions.TeamAction;
  * It is not necessary that subscriber actions be subclasses of this class.
  */
 public abstract class SubscriberAction extends TeamAction {
-	
-	private TeamSubscriber subscriber;
 	
 	/**
 	 * This method returns all instances of SynchronizeViewNode that are in the current
@@ -91,28 +88,12 @@ public abstract class SubscriberAction extends TeamAction {
 		List filtered = new ArrayList();
 		for (int i = 0; i < infos.length; i++) {
 			SyncInfo info = infos[i];
-			if(subscriber == null) {
-				subscriber = info.getSubscriber();
-			}
+//			if(subscriber == null) {
+//				subscriber = info.getSubscriber();
+//}
 			if (select(info))
 				filtered.add(info);
 		}
 		return (SyncInfo[]) filtered.toArray(new SyncInfo[filtered.size()]);
-	}
-	
-	/**
-	 * Returns the TeamSubscriber for this action. 
-	 * @return TeamSubscriber
-	 */
-	public TeamSubscriber getSubscriber() {
-		return subscriber;
-	}
-	
-	/**
-	 * Sets the the TeamSubscriber for this action. 
-	 * @return TeamSubscriber
-	 */
-	public void setSubscriber(TeamSubscriber subscriber) {
-		this.subscriber = subscriber;
 	}
 }
