@@ -164,7 +164,7 @@ public class UpdateSearchRequest {
 		IUpdateSearchQuery[] queries = category.getQueries();
 		IUpdateSearchSite[] candidates = scope.getSearchSites();
 		URL updateMapURL = scope.getUpdateMapURL();
-		boolean searchFeatureProvidedSites = scope.isFeatureProvidedSiteEnabled();
+		boolean searchFeatureProvidedSites = scope.isFeatureProvidedSitesEnabled();
 
 		if (!monitor.isCanceled()) {
 			int nsearchsites = 0;
