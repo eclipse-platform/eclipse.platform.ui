@@ -16,6 +16,7 @@ import org.eclipse.jface.wizard.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.wizards.*;
+import org.eclipse.update.search.*;
 
 /**
  * Entry point into update manager UI.
@@ -46,7 +47,7 @@ public class UpdateManagerUI {
 			MessageDialog.openInformation(shell, UpdateUI.getString("InstallWizard.isRunningTitle"), UpdateUI.getString("InstallWizard.isRunningInfo"));
 			return;
 		}
-		InstallWizard wizard = new InstallWizard();
+		InstallWizard wizard = new InstallWizard((UpdateSearchRequest) null);
 		WizardDialog dialog = new ResizableInstallWizardDialog(shell, wizard, UpdateUI.getString("InstallWizardAction.title")); //$NON-NLS-1$
 		dialog.create();
 		dialog.open();

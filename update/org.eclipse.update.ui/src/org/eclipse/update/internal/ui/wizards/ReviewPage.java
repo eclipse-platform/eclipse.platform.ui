@@ -60,12 +60,14 @@ public class ReviewPage
 	private Button filterOlderVersionCheck;
 	private ContainmentFilter filter = new ContainmentFilter();
 	private LatestVersionFilter olderVersionFilter = new LatestVersionFilter();
-	private SearchRunner searchRunner;
+	private UpdateSearchRequest searchRequest;
 	private int LABEL_ORDER = 1;
 	private int VERSION_ORDER = 1;
 	private int PROVIDER_ORDER = 1;
     private ContainerCheckedTreeViewer treeViewer;
     private HashMap mirrors = new HashMap(0);
+    private boolean initialized;
+    private boolean isUpdateSearch;
     
     class TreeContentProvider extends DefaultContentProvider implements
             ITreeContentProvider {
@@ -138,13 +140,10 @@ public class ReviewPage
         }
 
         private SiteBookmark[] getSites() {
-            if (searchRunner == null)
+            if (searchRequest == null)
                 return new SiteBookmark[0];
-            if (searchRunner.getSearchProvider() == null
-                    || searchRunner.getSearchProvider().getSearchRequest()
-                            .getScope().getSearchSites() == null
-                    || searchRunner.getSearchProvider().getSearchRequest()
-                            .getScope().getSearchSites().length == 0) {
+            else if (searchRequest.getScope().getSearchSites() == null ||
+                searchRequest.getScope().getSearchSites().length == 0) {
                 // this is an update search, so see if there are any jobs first,
                 // and get their sites
                 if (jobs != null) {
@@ -181,8 +180,7 @@ public class ReviewPage
                 return new SiteBookmark[0];
             } else {
                 // search for features
-                IUpdateSearchSite[] sites = searchRunner.getSearchProvider()
-                        .getSearchRequest().getScope().getSearchSites();
+                IUpdateSearchSite[] sites = searchRequest.getScope().getSearchSites();
                 SiteBookmark[] siteBookmarks = new SiteBookmark[sites.length];
                 for (int i = 0; i < sites.length; i++)
                     siteBookmarks[i] = new SiteBookmark(sites[i].getLabel(),
@@ -358,15 +356,17 @@ public class ReviewPage
 	/**
 	 * Constructor for ReviewPage2
 	 */
-	public ReviewPage(SearchRunner searchRunner, ArrayList jobs) {
+	public ReviewPage(boolean isUpdateSearch, UpdateSearchRequest searchRequest, ArrayList jobs) {
 		super("Review"); //$NON-NLS-1$
+        this.isUpdateSearch = isUpdateSearch;
+        this.jobs = jobs;
+        if (this.jobs==null) this.jobs = new ArrayList();
+        this.searchRequest = searchRequest;
+        
 		setTitle(UpdateUI.getString("InstallWizard.ReviewPage.title")); //$NON-NLS-1$
 		setDescription(UpdateUI.getString("InstallWizard.ReviewPage.desc")); //$NON-NLS-1$
 		UpdateUI.getDefault().getLabelProvider().connect(this);
-		this.searchRunner = searchRunner;
 		setBannerVisible(false);
-		this.jobs = jobs;
-		if (this.jobs==null) this.jobs = new ArrayList();
 	}
 
 	public void dispose() {
@@ -382,21 +382,22 @@ public class ReviewPage
 		String filterText = filterCheck.getText();
 		String filterFeatures = UpdateUI.getString("InstallWizard.ReviewPage.filterFeatures"); //$NON-NLS-1$
 		String filterPatches = UpdateUI.getString("InstallWizard.ReviewPage.filterPatches"); //$NON-NLS-1$
-		boolean isUpdateSearch = searchRunner.getSearchProvider() instanceof ModeSelectionPage;
+
 		if (isUpdateSearch && filterText.equals(filterFeatures))
 			filterCheck.setText(filterPatches);
 		else if ( !isUpdateSearch && filterText.equals(filterPatches))
 			filterCheck.setText(filterFeatures);
 		
-		if (visible && searchRunner.isNewSearchNeeded()) {
-			jobs.clear();
+		if (visible && !initialized) {
+            initialized = true;
+//			jobs.clear();
 
-			setDescription(UpdateUI.getString("InstallWizard.ReviewPage.searching")); //$NON-NLS-1$;
-			label.setText(UpdateUI.getString("")); //$NON-NLS-1$
+//			setDescription(UpdateUI.getString("InstallWizard.ReviewPage.searching")); //$NON-NLS-1$;
+//			label.setText(UpdateUI.getString("")); //$NON-NLS-1$
 
 			getShell().getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					searchRunner.runSearch();
+//					searchRunner.runSearch();
 					performPostSearchProcessing();
 				}
 			});
@@ -407,9 +408,9 @@ public class ReviewPage
 		BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
 			public void run() {
 				if (treeViewer != null) {
-                    treeViewer.refresh();
-                    treeViewer.getTree().layout(true);
-					if (searchRunner.getSearchProvider() instanceof ModeSelectionPage) {
+//                    treeViewer.refresh();
+//                    treeViewer.getTree().layout(true);
+					if (isUpdateSearch) {
 						selectTrueUpdates();
 					}
 				}
@@ -420,7 +421,6 @@ public class ReviewPage
 					setDescription(UpdateUI.getString("InstallWizard.ReviewPage.desc")); //$NON-NLS-1$;
 					label.setText(UpdateUI.getString("InstallWizard.ReviewPage.label")); //$NON-NLS-1$
 				} else {
-					boolean isUpdateSearch = searchRunner.getSearchProvider() instanceof ModeSelectionPage;
 					if (isUpdateSearch)
 						setDescription(UpdateUI.getString("InstallWizard.ReviewPage.zeroUpdates")); //$NON-NLS-1$
 					else

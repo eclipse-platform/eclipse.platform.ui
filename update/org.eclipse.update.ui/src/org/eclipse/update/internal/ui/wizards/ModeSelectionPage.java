@@ -14,13 +14,12 @@ import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.help.WorkbenchHelp;
+import org.eclipse.ui.*;
 import org.eclipse.update.internal.operations.UpdateUtils;
 import org.eclipse.update.internal.ui.UpdateUI;
-import org.eclipse.update.search.UpdateSearchRequest;
+import org.eclipse.update.search.*;
 
 /**
  */
@@ -29,15 +28,14 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 	private Button updatesButton;
 	private Button newFeaturesButton;
 	private UpdateSearchRequest searchRequest;
-	private SearchRunner searchRunner;
 	private static final String SECTION_ID = "ModeSelectionPage"; //$NON-NLS-1$
 	private static final String P_NEW_FEATURES_MODE = "new-features-mode"; //$NON-NLS-1$
 	
-	public ModeSelectionPage(SearchRunner searchRunner) {
+	public ModeSelectionPage(UpdateSearchRequest searchRequest) {
 		super("modeSelection"); //$NON-NLS-1$
 		setTitle(UpdateUI.getString("ModeSelectionPage.title")); //$NON-NLS-1$
 		setDescription(UpdateUI.getString("ModeSelectionPage.desc")); //$NON-NLS-1$
-		this.searchRunner = searchRunner;
+		this.searchRequest = searchRequest;
 	}
 	
 	public UpdateSearchRequest getSearchRequest() {
@@ -67,8 +65,8 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 		composite.setLayout(layout);
 		updatesButton = new Button(composite, SWT.RADIO);
 		updatesButton.setText(UpdateUI.getString("ModeSelectionPage.updates")); //$NON-NLS-1$
-		boolean newFeaturesMode = getSettings().getBoolean(P_NEW_FEATURES_MODE);
-		updatesButton.setSelection(!newFeaturesMode);
+		updateMode = !getSettings().getBoolean(P_NEW_FEATURES_MODE);
+		updatesButton.setSelection(updateMode);
 		
 		final Label updatesText = new Label(composite, SWT.WRAP);
 		updatesText.setText(UpdateUI.getString("ModeSelectionPage.updatesText"));
@@ -78,19 +76,22 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 		
 		updatesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				switchMode();
+				updateMode = true;
+                getWizard().getContainer().updateButtons();
 			}
 		});
 		// spacer
 		new Label(composite, SWT.NULL);
 		newFeaturesButton = new Button(composite, SWT.RADIO);
-		newFeaturesButton.setSelection(newFeaturesMode);
+		newFeaturesButton.setSelection(!updateMode);
 		newFeaturesButton.setText(UpdateUI.getString("ModeSelectionPage.newFeatures")); //$NON-NLS-1$
 		newFeaturesButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				switchMode();
+				updateMode = false;
+                getWizard().getContainer().updateButtons();
 			}
-		});
+		});		
+
 		final Label newFeaturesText = new Label(composite, SWT.WRAP);
 		newFeaturesText.setText(UpdateUI.getString("ModeSelectionPage.newFeaturesText"));
 		gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -109,11 +110,10 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 			}
 		});
 		*/
-		switchMode();
 		
 		Dialog.applyDialogFont(parent);
 		
-		WorkbenchHelp.setHelp(composite, "org.eclipse.update.ui.ModeSelectionPage"); //$NON-NLS-1$
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, "org.eclipse.update.ui.ModeSelectionPage"); //$NON-NLS-1$
 
 		return composite;
 	}
@@ -123,13 +123,8 @@ public class ModeSelectionPage extends BannerPage implements ISearchProvider {
 		getSettings().put(P_NEW_FEATURES_MODE, !updateMode);
 	}
 	
-	private void switchMode() {
-		updateMode = updatesButton.getSelection();
-		if (updateMode)
-			searchRunner.setSearchProvider(this);
-	}
-	
 	public boolean isUpdateMode() {
 		return updateMode;
 	}
+    
 }

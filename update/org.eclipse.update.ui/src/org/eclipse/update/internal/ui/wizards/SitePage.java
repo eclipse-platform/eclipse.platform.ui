@@ -25,7 +25,6 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.forms.*;
 import org.eclipse.ui.forms.widgets.*;
 import org.eclipse.update.internal.core.*;
-import org.eclipse.update.internal.search.*;
 import org.eclipse.update.internal.ui.*;
 import org.eclipse.update.internal.ui.model.*;
 import org.eclipse.update.internal.ui.parts.*;
@@ -123,24 +122,18 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	private Button exportButton;
 	private Button importButton;
 	private Button envFilterCheck;
-	private SearchRunner searchRunner;
 	private EnvironmentFilter envFilter;
 	private UpdateSearchRequest searchRequest;
 	private ModelListener modelListener;
 
-
-	public SitePage(SearchRunner searchRunner) {
+	public SitePage(UpdateSearchRequest searchRequest) {
 		super("SitePage"); //$NON-NLS-1$
+        this.searchRequest = searchRequest;
 		setTitle(UpdateUI.getString("SitePage.title")); //$NON-NLS-1$
 		setDescription(UpdateUI.getString("SitePage.desc")); //$NON-NLS-1$
 		UpdateUI.getDefault().getLabelProvider().connect(this);
-		searchRequest =
-			new UpdateSearchRequest(
-				new SiteSearchCategory(),
-				new UpdateSearchScope());
-		searchRequest.addFilter(new BackLevelFilter());
-		envFilter = new EnvironmentFilter();
-		this.searchRunner = searchRunner;
+    	envFilter = new EnvironmentFilter();
+
 		modelListener = new ModelListener();
 		UpdateUI.getDefault().getUpdateModel().addUpdateModelChangedListener(
 			modelListener);
@@ -151,7 +144,6 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			searchRequest.addFilter(envFilter);
 		else
 			searchRequest.removeFilter(envFilter);
-		searchRunner.setNewSearchNeeded(true);
 	}
 
 	public void dispose() {
@@ -336,16 +328,6 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			}
 		});
 
-//		treeViewer.addFilter(new ViewerFilter() {
-//			public boolean select(
-//				Viewer viewer,
-//				Object parentElement,
-//				Object element) {
-//				if (element instanceof SiteBookmark)
-//					return !((SiteBookmark) element).isWebBookmark();
-//				return true;
-//			}
-//		});
 	}
 
 	private void initializeItems() {
@@ -475,91 +457,8 @@ public class SitePage extends BannerPage implements ISearchProvider {
 		}
 		
 		bookmark.setSelected(checked);
-//		if (checked)
-//			bookmark.setIgnoredCategories(new String[0]);
-//			
-//		if (checked || bookmark.isSiteConnected())
-//			treeViewer.setSubtreeChecked(bookmark, checked);
-//		// at this point, we may realize the site is not available
-//		if (bookmark.isUnavailable()) {
-//			treeViewer.setChecked(bookmark, false);
-//			return;
-//		}
-//			
-//		treeViewer.setGrayed(bookmark, false);
 		updateSearchRequest();
 	}
-
-//	private void handleSiteExpanded(SiteBookmark bookmark, Object[] cats) {
-//		if (!bookmark.isSelected()) {
-//			treeViewer.setSubtreeChecked(bookmark, false);
-//			ArrayList result = new ArrayList();
-//			for (int i = 0; i < cats.length; i++) {
-//				if (cats[i] instanceof SiteCategory) {
-//					result.add(((SiteCategory) cats[i]).getFullName());
-//				}
-//			}
-//			bookmark.setIgnoredCategories(
-//				(String[]) result.toArray(new String[result.size()]));
-//		} else {
-//			String[] ignored = bookmark.getIgnoredCategories();
-//			HashSet imap = new HashSet();
-//			for (int i = 0; i < ignored.length; i++) {
-//				imap.add(ignored[i]);
-//			}
-//
-//			for (int i = 0; i < cats.length; i++) {
-//				if (cats[i] instanceof SiteCategory) {
-//					SiteCategory category = (SiteCategory) cats[i];
-//					treeViewer.setChecked(
-//						category,
-//						!imap.contains(category.getFullName()));
-//				}
-//			}
-//			treeViewer.setGrayed(
-//				bookmark,
-//				ignored.length > 0 && ignored.length < cats.length);
-//		}
-//		searchRunner.setNewSearchNeeded(true);
-//	}
-
-//	private void handleCategoryChecked(
-//		SiteCategory category,
-//		boolean checked) {
-//		SiteBookmark bookmark = category.getBookmark();
-//		
-//		ArrayList array = new ArrayList();
-//
-//		if (bookmark.isSelected()) {
-//			String[] ignored = bookmark.getIgnoredCategories();
-//			for (int i = 0; i < ignored.length; i++) 
-//				array.add(ignored[i]);
-//		} else {
-//			Object[] categs =
-//				getSiteCatalogWithIndicator(bookmark, !bookmark.isSiteConnected());
-//			for (int i=0; i<categs.length; i++)
-//				array.add(((SiteCategory)categs[i]).getFullName());
-//		}
-//		
-//		if (checked) {
-//			array.remove(category.getFullName());
-//		} else {
-//			array.add(category.getFullName());
-//		}
-//
-//		bookmark.setIgnoredCategories(
-//			(String[]) array.toArray(new String[array.size()]));
-//		searchRunner.setNewSearchNeeded(true);
-//
-//		Object[] children = ((TreeContentProvider) treeViewer.getContentProvider())
-//					.getChildren(category.getBookmark());
-//		treeViewer.setChecked(bookmark, array.size() < children.length);
-//		bookmark.setSelected(array.size() < children.length);
-//		treeViewer.setGrayed(
-//			bookmark,
-//			array.size() > 0 && array.size() < children.length);
-//		updateSearchRequest();
-//	}
 
 
 	private void handleSelectionChanged(IStructuredSelection ssel) {
@@ -599,7 +498,6 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			}
 		}
 		searchRequest.setScope(scope);
-		searchRunner.setNewSearchNeeded(true);
 		setPageComplete(nsites > 0);
 	}
 
@@ -610,7 +508,6 @@ public class SitePage extends BannerPage implements ISearchProvider {
 	public void setVisible(boolean value) {
 		super.setVisible(value);
 		if (value) {
-			searchRunner.setSearchProvider(this);
 			// Reset all unavailable sites, so they can be tried again if the user wants it
 			SiteBookmark[] bookmarks = getAllSiteBookmarks();
 			for (int i=0; i<bookmarks.length; i++) {
@@ -619,50 +516,6 @@ public class SitePage extends BannerPage implements ISearchProvider {
 			}
 		}
 	}
-
-//	class CatalogBag {
-//		Object[] catalog;
-//	}
-//
-//	private Object[] getSiteCatalogWithIndicator(
-//		final SiteBookmark bookmark,
-//		final boolean connect) {
-//		final CatalogBag bag = new CatalogBag();
-//
-//		if (bookmark.isUnavailable())
-//			return new Object[0];
-//		
-//		IRunnableWithProgress op = new IRunnableWithProgress() {
-//			public void run(IProgressMonitor monitor)
-//				throws InvocationTargetException {
-//				try {
-//					monitor.beginTask("", 3); //$NON-NLS-1$
-//					monitor.worked(1);
-//
-//					if (connect)
-//						bookmark.connect(new SubProgressMonitor(monitor, 1));
-//					else
-//						monitor.worked(1);
-//					bag.catalog =
-//						bookmark.getCatalog(
-//							true,
-//							new SubProgressMonitor(monitor, 1));
-//				} catch (CoreException e) {
-//					throw new InvocationTargetException(e);
-//				} finally {
-//					monitor.done();
-//				}
-//			}
-//		};
-//		try {
-//			getContainer().run(true, true, op);
-//		} catch (InvocationTargetException e) {
-//			UpdateUI.logException(e);
-//		} catch (InterruptedException e) {
-//		}
-//
-//		return (bag.catalog == null) ? new Object[0] : bag.catalog;
-//	}
 	
 	private SiteBookmark[] getAllSiteBookmarks() {
 		UpdateModel model = UpdateUI.getDefault().getUpdateModel();

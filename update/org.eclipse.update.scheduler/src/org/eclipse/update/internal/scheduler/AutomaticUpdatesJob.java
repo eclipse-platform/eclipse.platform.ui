@@ -40,14 +40,6 @@ public class AutomaticUpdatesJob extends Job {
 	// job family	
 	public static final Object family = new Object();
 	private IUpdateSearchResultCollector resultCollector;
-	
-	private static final IStatus OK_STATUS =
-		new Status(
-			IStatus.OK,
-			UpdateScheduler.getPluginId(),
-			IStatus.OK,
-			"", //$NON-NLS-1$
-			null);
 	private UpdateSearchRequest searchRequest;
 	private ArrayList updates;
 
@@ -127,7 +119,7 @@ public class AutomaticUpdatesJob extends Job {
 		} catch (CoreException e) {
 			return e.getStatus();
 		}
-		return OK_STATUS;
+		return Status.OK_STATUS;
 	}
 
 	private void asyncNotifyUser() {
@@ -145,7 +137,7 @@ public class AutomaticUpdatesJob extends Job {
 			});
 		}
 		// notify the manager that the job is done
-		done(OK_STATUS);
+		done(Status.OK_STATUS);
 	}
 	
 	private void asyncNotifyDownloadUser() {
@@ -168,7 +160,7 @@ public class AutomaticUpdatesJob extends Job {
 			//Utilities.flushLocalFile();
 		}
 		// notify the manager that the job is done
-		done(OK_STATUS);
+		done(Status.OK_STATUS);
 	}
 
 	private void openInstallWizard() {
