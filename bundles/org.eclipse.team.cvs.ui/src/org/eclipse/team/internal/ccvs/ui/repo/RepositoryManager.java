@@ -820,4 +820,14 @@ public class RepositoryManager {
 		} catch (InterruptedException e) {
 		}
 	}
+	
+	/**
+	 * Purge any cahced information.
+	 */
+	public void purgeCache() {
+		for (Iterator iter = repositoryRoots.values().iterator(); iter.hasNext();) {
+			RepositoryRoot root = (RepositoryRoot) iter.next();
+			root.clearCache();
+		}
+	}
 }

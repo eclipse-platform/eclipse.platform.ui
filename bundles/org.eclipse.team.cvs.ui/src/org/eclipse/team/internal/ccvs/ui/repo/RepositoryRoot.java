@@ -37,6 +37,7 @@ import org.eclipse.team.internal.ccvs.core.ICVSResource;
 import org.eclipse.team.internal.ccvs.core.ILogEntry;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.XMLWriter;
 
@@ -110,11 +111,16 @@ public class RepositoryRoot extends PlatformObject {
 	
 	private Map getDefinedModulesCache(CVSTag tag, IProgressMonitor monitor) throws CVSException {
 		if (modulesCache == null) {
-			ICVSRemoteResource[] folders = root.members(CVSTag.DEFAULT, true, monitor);
 			modulesCache = new HashMap();
-			for (int i = 0; i < folders.length; i++) {
-				ICVSRemoteResource resource = folders[i];
-				modulesCache.put(resource.getName(), resource);
+			try {
+				ICVSRemoteResource[] folders = root.members(CVSTag.DEFAULT, true, monitor);
+				for (int i = 0; i < folders.length; i++) {
+					ICVSRemoteResource resource = folders[i];
+					modulesCache.put(resource.getName(), resource);
+				}
+			} catch (CVSException e) {
+				// we could't fetch the modules. Log the problem and continue
+				CVSUIPlugin.log(e);
 			}
 		}
 		return modulesCache;
