@@ -32,6 +32,8 @@ class WorkbenchPerformanceSuite extends TestSuite {
 	private static String RESOURCE_PERSPID = "org.eclipse.ui.resourcePerspective";
     // Note: to test perspective switching properly, we need perspectives with lots of
     // associated actions. 
+	// NOTE - do not change the order of the IDs below.  the PerspectiveSwitchTest has a 
+	// fingerprint test for performance that releys on this not changing.
     public static final String [] PERSPECTIVE_IDS = {
         EmptyPerspective.PERSP_ID2,
         UIPerformanceTestSetup.PERSPECTIVE, 
@@ -72,7 +74,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
         addPerspectiveSwitchScenarios();
         addPerspectiveOpenCloseScenarios();
         addWindowOpenCloseScenarios();
-        addWindowResizeSwitchScenarios();
+        addWindowResizeScenarios();
     }
 
     /**
@@ -106,7 +108,7 @@ class WorkbenchPerformanceSuite extends TestSuite {
     /**
      * add a single fingerprint test for window resize
      */
-    private void addWindowResizeSwitchScenarios() {
+    private void addWindowResizeScenarios() {
     	if (PERSPECTIVE_IDS.length == 0)
     		return;
     	

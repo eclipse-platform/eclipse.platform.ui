@@ -59,7 +59,6 @@ public class WindowResizeTest extends BasicPerformanceTest {
             return;
         }
             
-        // Open a file.
         IWorkbenchPage activePage = fWorkbench.getActiveWorkbenchWindow().getActivePage();
   
         // Open both perspective outside the loop so as not to include
@@ -71,8 +70,8 @@ public class WindowResizeTest extends BasicPerformanceTest {
 
         activePage.setPerspective(perspective1);
         Shell shell = activePage.getWorkbenchWindow().getShell();
-        int w1 = 117;
-        int h1 = 117;
+        int w1 = 300;
+        int h1 = 400;
         int w2 = 1000;
         int h2 = 700;
         int currentW = w1;
@@ -92,6 +91,7 @@ public class WindowResizeTest extends BasicPerformanceTest {
             startMeasuring();
             processEvents();
             shell.setSize(currentW, currentH);
+         
             processEvents();
             stopMeasuring();
         	

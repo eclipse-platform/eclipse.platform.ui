@@ -28,6 +28,9 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
     private String id1;
     private String id2;
     private String activeEditor;
+    
+    // only want to run one fingerprint test
+    private static boolean fingerPrint = false;
 
     /**
      * Constructor.
@@ -81,7 +84,10 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
         activePage.setPerspective(perspective2);
         activePage.resetPerspective();
 
-        tagAsGlobalSummary("Perspective Switch", Dimension.CPU_TIME);
+        if (!fingerPrint) {
+        	tagAsGlobalSummary("Perspective Switch", Dimension.CPU_TIME);
+        	fingerPrint = true;
+        }
         
         for (int i = 0; i < 20; i++) {
             processEvents();
