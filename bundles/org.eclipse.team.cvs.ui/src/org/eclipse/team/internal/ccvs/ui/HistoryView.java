@@ -149,7 +149,7 @@ public class HistoryView extends ViewPart {
 					getSite().getShell().getDisplay().asyncExec(new Runnable() {
 						public void run() {
 							if(entries != null && tableViewer != null && ! tableViewer.getTable().isDisposed()) {
-								tableViewer.add(entries);
+								tableViewer.refresh();
 								selectRevision(revisionId);
 							}
 						}
@@ -159,6 +159,9 @@ public class HistoryView extends ViewPart {
 			} catch (TeamException e) {
 				return e.getStatus();
 			}
+		}
+		public ICVSRemoteFile getRemoteFile() {
+			return this.remoteFile;
 		}
 	};
 	
@@ -424,23 +427,30 @@ public class HistoryView extends ViewPart {
 		
 		viewer.setContentProvider(new IStructuredContentProvider() {
 			public Object[] getElements(Object inputElement) {
-				// Short-circuit to optimize
+				
+				// The entries of already been fetch so return them
 				if (entries != null) return entries;
 				
+				// The entries need to be fetch (or are being fetched)
 				if (!(inputElement instanceof ICVSRemoteFile)) return null;
 				final ICVSRemoteFile remoteFile = (ICVSRemoteFile)inputElement;
 				if(fetchLogEntriesJob == null) {
 					fetchLogEntriesJob = new FetchLogEntriesJob();
-				}
-				if(fetchLogEntriesJob.getState() != Job.NONE) {
-					fetchLogEntriesJob.cancel();
-					try {
-						fetchLogEntriesJob.join();
-					} catch (InterruptedException e) {
-						CVSUIPlugin.log(new CVSException(Policy.bind("HistoryView.errorFetchingEntries", remoteFile.getName()), e)); //$NON-NLS-1$
+				} 
+				ICVSRemoteFile file = fetchLogEntriesJob.getRemoteFile();
+				if (file == null || !file.equals(remoteFile)) {
+					// The resource has changed so stop the currently running job
+					if(fetchLogEntriesJob.getState() != Job.NONE) {
+						fetchLogEntriesJob.cancel();
+						try {
+							fetchLogEntriesJob.join();
+						} catch (InterruptedException e) {
+							CVSUIPlugin.log(new CVSException(Policy.bind("HistoryView.errorFetchingEntries", remoteFile.getName()), e)); //$NON-NLS-1$
+						}
 					}
+					fetchLogEntriesJob.setRemoteFile(remoteFile);
 				}
-				fetchLogEntriesJob.setRemoteFile(remoteFile);
+				// Schedule the job even if it is already running
 				Utils.schedule(fetchLogEntriesJob, getViewSite());
 				return new Object[0];
 			}
