@@ -153,6 +153,18 @@ public Object createExecutableExtension(String className, Object initData, IConf
 			// user code caused exception
 			throwException(Policy.bind("policy.initObjectError", getId(), className), te); //$NON-NLS-1$
 		}
+	} else if (InternalPlatform.isDynamic() && result instanceof org.eclipse.core.runtime.registry.IExecutableExtension) {
+		try {
+			// make the call even if the initialization string is null
+			 ((org.eclipse.core.runtime.registry.IExecutableExtension) result).setInitializationData(new ConfigurationElementWrapper(cfig), propertyName, initData);
+		} catch (CoreException ce) {
+			// user code threw exception
+			logError(ce.getStatus());
+			throw new CoreException(ce.getStatus());
+		} catch (Exception te) {
+			// user code caused exception
+			throwException(Policy.bind("policy.initObjectError", getId(), className), te); //$NON-NLS-1$
+		}		
 	}
 	return result;
 }

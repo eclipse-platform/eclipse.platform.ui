@@ -20,8 +20,7 @@ public class ConfigurationElementWrapper implements IConfigurationElement {
 		this.toAdapt = toAdapt;
 	}
 	public Object createExecutableExtension(String propertyName) throws CoreException {
-		//TODO:need to implement
-		return null;
+		return toAdapt.createExecutableExtension(propertyName);
 	}
 	public String getAttribute(String name) {
 		return toAdapt.getAttribute(name);
