@@ -551,15 +551,15 @@
          </accelerator>
          
          <accelerator
-               key="Ctrl+S"
+               key=""
                id="org.eclipse.ui.edit.findNext">
          </accelerator>
          <accelerator
-               key="Ctrl+R"
+               key=""
                id="org.eclipse.ui.edit.findPrevious">
          </accelerator>
          <accelerator
-               key="Ctrl+S || Ctrl+R"
+               key="Ctrl+S"
                id="org.eclipse.ui.edit.findIncremental">
          </accelerator>
          <accelerator
