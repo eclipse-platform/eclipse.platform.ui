@@ -93,6 +93,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.dialogs.IndentedTableViewer.IIndentedTableLabelProvider;
+import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.ActionSetDescriptor;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.Category;
@@ -1349,6 +1350,8 @@ private void initializeShortcutMenuInput() {
 			if (views != null) {
 				for (int j=0; j<views.size(); j++) {
 					IViewDescriptor view = (IViewDescriptor)views.get(j);
+					if (view.getID().equals(IIntroConstants.INTRO_VIEW_ID))
+						continue;
 					if (WorkbenchActivityHelper.filterItem(view))
 					    continue;
 					viewCategory.addItem(view);

@@ -39,6 +39,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.help.WorkbenchHelp;
 import org.eclipse.ui.internal.dialogs.ShowViewDialog;
+import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.IViewDescriptor;
 import org.eclipse.ui.internal.registry.IViewRegistry;
 
@@ -73,7 +74,7 @@ public class ShowViewMenu extends ContributionItem {
 	//Maps pages to a list of opened views
 	private Map openedViews = new HashMap();
 	
-	private boolean dirty = true;
+	protected boolean dirty = true;
 	private IMenuListener menuListener = new IMenuListener() {
 		public void menuAboutToShow(IMenuManager manager) {
 			manager.markDirty();
@@ -81,7 +82,7 @@ public class ShowViewMenu extends ContributionItem {
 		}
 	};
 	
-	private static Collator collator;	
+	protected static Collator collator;	
 
 	/**
 	 * Creates a Show View menu.
@@ -129,6 +130,8 @@ public class ShowViewMenu extends ContributionItem {
 		List actions = new ArrayList(viewIds.size());
 		for (Iterator i = viewIds.iterator(); i.hasNext();) {
 			String id = (String) i.next();
+			if (id.equals(IIntroConstants.INTRO_VIEW_ID))
+				continue;
 			IAction action = getAction(id);
 			if (action != null) {
                 if (WorkbenchActivityHelper.filterItem(action))
@@ -183,7 +186,7 @@ public class ShowViewMenu extends ContributionItem {
 	/**
 	 * Opens the view selection dialog.
 	 */
-	private void showOther() {
+	protected void showOther() {
 		IWorkbenchPage page = window.getActivePage();
 		if (page == null)
 			return;
