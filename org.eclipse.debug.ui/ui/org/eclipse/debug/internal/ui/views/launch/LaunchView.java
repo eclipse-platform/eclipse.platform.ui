@@ -52,6 +52,7 @@ import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IEditorInput;
@@ -591,16 +592,22 @@ public class LaunchView extends AbstractDebugEventHandlerView implements ISelect
 		}
 	}
 	
-	protected IEditorPart openEditor(IWorkbenchPage page, IEditorInput input, String id, boolean activate) {
-		try {
-			return page.openEditor(input, id, false);
-		} catch (PartInitException e) {
-			DebugUIPlugin.errorDialog(DebugUIPlugin.getDefault().getShell(), 
-				DebugUIViewsMessages.getString("LaunchView.Error_1"),  //$NON-NLS-1$
-				DebugUIViewsMessages.getString("LaunchView.Exception_occurred_opening_editor_for_debugger._2"),  //$NON-NLS-1$
-				e);
-		}					
-		return null;
+	protected IEditorPart openEditor(final IWorkbenchPage page, final IEditorInput input, final String id, boolean activate) {
+		final IEditorPart[] editor = new IEditorPart[] {null};
+		Runnable r = new Runnable() {
+			public void run() {
+				try {
+					editor[0] = page.openEditor(input, id, false);
+				} catch (PartInitException e) {
+					DebugUIPlugin.errorDialog(DebugUIPlugin.getDefault().getShell(), 
+						DebugUIViewsMessages.getString("LaunchView.Error_1"),  //$NON-NLS-1$
+						DebugUIViewsMessages.getString("LaunchView.Exception_occurred_opening_editor_for_debugger._2"),  //$NON-NLS-1$
+						e);
+				}					
+			}
+		}; 
+		BusyIndicator.showWhile(DebugUIPlugin.getDefault().getStandardDisplay(), r);
+		return editor[0];
 	}
 
 	/**
