@@ -52,7 +52,28 @@ public class MultiRule implements ISchedulingRule {
 			return rule2;
 		MultiRule result = new MultiRule();
 		result.rules = new ISchedulingRule[] {rule1, rule2};
+		//make sure we don't end up with nested multi rules
+		if (rule1 instanceof MultiRule || rule2 instanceof MultiRule)
+			result.rules = flatten(result.rules);
 		return result;
+	}
+
+	/*
+	 * Collapses an array of rules that may contain MultiRules into an
+	 * array in which no rules are MultiRules.
+	 */
+	private static ISchedulingRule[] flatten(ISchedulingRule[] nestedRules) {
+		ArrayList myRules = new ArrayList(nestedRules.length);
+		for (int i = 0; i < nestedRules.length; i++) {
+			if (nestedRules[i] instanceof MultiRule) {
+				ISchedulingRule[] children = ((MultiRule) nestedRules[i]).getChildren();
+				for (int j = 0; j < children.length; j++)
+					myRules.add(children[j]);
+			} else {
+				myRules.add(nestedRules[i]);
+			}
+		}
+		return (ISchedulingRule[]) myRules.toArray(new ISchedulingRule[myRules.size()]);
 	}
 
 	/**
@@ -72,20 +93,6 @@ public class MultiRule implements ISchedulingRule {
 		//to be invoked only by factory methods
 	}
 
-	private ISchedulingRule[] flatten(ISchedulingRule[] nestedRules) {
-		ArrayList myRules = new ArrayList(nestedRules.length);
-		for (int i = 0; i < nestedRules.length; i++) {
-			if (nestedRules[i] instanceof MultiRule) {
-				ISchedulingRule[] children = ((MultiRule) nestedRules[i]).getChildren();
-				for (int j = 0; j < children.length; j++)
-					myRules.add(children[j]);
-			} else {
-				myRules.add(nestedRules[i]);
-			}
-		}
-		return (ISchedulingRule[]) myRules.toArray(new ISchedulingRule[myRules.size()]);
-	}
-
 	/**
 	 * Returns the child rules within this rule.
 	 * @return the child rules
@@ -93,7 +100,9 @@ public class MultiRule implements ISchedulingRule {
 	public ISchedulingRule[] getChildren() {
 		return (ISchedulingRule[]) rules.clone();
 	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
+	 */
 	public boolean contains(ISchedulingRule rule) {
 		if (this == rule)
 			return true;
@@ -114,7 +123,9 @@ public class MultiRule implements ISchedulingRule {
 				return true;
 		return false;
 	}
-
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#isConflicting(org.eclipse.core.runtime.jobs.ISchedulingRule)
+	 */
 	public boolean isConflicting(ISchedulingRule rule) {
 		if (this == rule)
 			return true;
