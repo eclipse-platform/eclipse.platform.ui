@@ -25,10 +25,6 @@ import org.eclipse.ant.internal.ui.editor.TaskDescriptionProvider;
  */
 public class TaskDescriptionProviderTest extends AbstractAntUITest {
 
-    /**
-     * Constructor for TaskDescriptionProviderTest.
-     * @param name
-     */
     public TaskDescriptionProviderTest(String name) {
         super(name);
     }
