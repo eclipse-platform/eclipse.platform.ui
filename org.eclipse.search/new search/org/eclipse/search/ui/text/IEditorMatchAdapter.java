@@ -19,8 +19,12 @@ import org.eclipse.ui.IEditorPart;
  * method in their search result subclass.
  * It is assumed that the match adapters are stateless, and no lifecycle management
  * is provided.
- * Clients may implement this interface. <p>
+ * <p>
+ * Clients may implement this interface.
+ * </p>
  * @see org.eclipse.search.ui.text.AbstractTextSearchResult
+ * 
+ * @since 3.0
  */
 public interface IEditorMatchAdapter {
 	/**

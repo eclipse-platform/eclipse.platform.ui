@@ -11,7 +11,6 @@
 package org.eclipse.search.ui;
 import org.eclipse.jface.resource.ImageDescriptor;
 /**
- * <p>
  * Implementors of this interface represent the result of a search. How the
  * results of a search are structured is up to the implementor of this
  * interface. The abstract base implementation provided with
@@ -19,13 +18,14 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * uses a flat list of matches to represent the result of a search. Subclasses
  * of <code>SearchResultEvent</code> can be used in order to notify listeners
  * of search result changes.
- * </p>
  * <p>
  * To present search results to the user implementors of this interface must
  * also provide an extension for the extension point
  * <code>org.eclipse.search.searchResultViewPage</code>.
  * </p>
+ * <p>
  * Clients may implement this interface.
+ * </p>
  * 
  * @see org.eclipse.search.ui.ISearchResultPage
  * @since 3.0
@@ -35,40 +35,38 @@ public interface ISearchResult {
 	 * Adds a <code>ISearchResultListener</code>. Has no effect when the
 	 * listener has already been added.
 	 * 
-	 * @param l
-	 *            The listener to be added
+	 * @param l the listener to be added
 	 */
 	public void addListener(ISearchResultListener l);
 	/**
 	 * Removes a <code>ISearchResultChangedListener</code>. Has no effect
 	 * when the listener hasn't previously been added.
 	 * 
-	 * @param l
-	 *            The listener to be removed.
+	 * @param l the listener to be removed
 	 */
 	public void removeListener(ISearchResultListener l);
 	/**
 	 * Returns a user readable label for this search result.
 	 * 
-	 * @return The label for this search result.
+	 * @return the label for this search result
 	 */
 	String getLabel();
 	/**
 	 * Returns a tooltip to be used when this search result is shown in the UI.
 	 * 
-	 * @return A user readable String.
+	 * @return a user readable String
 	 */
 	public String getTooltip();
 	/**
 	 * Returns an image descriptor for the given ISearchResult.
 	 * 
-	 * @return An image representing this search result or <code>null</code>.
+	 * @return an image representing this search result or <code>null</code>
 	 */
 	ImageDescriptor getImageDescriptor();
 	/**
 	 * Returns the query that produced this search result.
 	 * 
-	 * @return The query producing this result.
+	 * @return the query producing this result
 	 */
 	ISearchQuery getQuery();
 }

@@ -13,9 +13,9 @@ import org.eclipse.search.ui.SearchResultEvent;
  * An event object describing addition and removal of matches. Events of this
  * class are sent when <code>Match</code> es are added or removed from an
  * <code>AbstractTextSearchResult</code>.
- * 
+ * <p>
  * Clients may subclass this class.
- * 
+ * </p>
  * @since 3.0
  */
 public class MatchEvent extends SearchResultEvent {
@@ -39,7 +39,8 @@ public class MatchEvent extends SearchResultEvent {
 	
 	/**
 	 * Constructs a new <code>MatchEvent</code>.
-	 * @param searchResult The search result concerned
+	 * 
+	 * @param searchResult the search result concerned
 	 */
 	public MatchEvent(ISearchResult searchResult) {
 		super(searchResult);
@@ -48,7 +49,7 @@ public class MatchEvent extends SearchResultEvent {
 	/**
 	 * Tells whether this is a remove or an add.
 	 * 
-	 * @return One of <code>ADDED</code> or <code>REMOVED</code>
+	 * @return one of <code>ADDED</code> or <code>REMOVED</code>
 	 */
 	public int getKind() {
 		return fKind;
@@ -56,7 +57,7 @@ public class MatchEvent extends SearchResultEvent {
 	/**
 	 * Returns the concerned matches.
 	 * 
-	 * @return The matches this event is about.
+	 * @return the matches this event is about
 	 */
 	public Match[] getMatches() {
 		if (fMatches != null)
@@ -70,8 +71,7 @@ public class MatchEvent extends SearchResultEvent {
 	/**
 	 * Sets the kind of event this is.
 	 * 
-	 * @param kind
-	 *            The kind to set; either <code>ADDED</code> or <code>REMOVED</code>
+	 * @param kind the kind to set; either <code>ADDED</code> or <code>REMOVED</code>
 	 */
 	protected void setKind(int kind) {
 		fKind = kind;
@@ -79,8 +79,7 @@ public class MatchEvent extends SearchResultEvent {
 	/**
 	 * Sets the match for the change this event reports.
 	 * 
-	 * @param match
-	 *            The match to set
+	 * @param match the match to set
 	 */
 	protected void setMatch(Match match) {
 		fMatchContainer[0] = match;
@@ -90,8 +89,7 @@ public class MatchEvent extends SearchResultEvent {
 	/**
 	 * Sets the matches for the change this event reports.
 	 * 
-	 * @param matches
-	 *            The matches to set
+	 * @param matches the matches to set
 	 */
 	protected void setMatches(Match[] matches) {
 		fMatchContainer[0] = null;

@@ -11,7 +11,7 @@
 package org.eclipse.search.ui.text;
 import org.eclipse.core.resources.IFile;
 /**
- * This interface serves to map matches to IFile instances. Changes to those
+ * This interface serves to map matches to <code>IFile</code> instances. Changes to those
  * files are then tracked (via the platforms file buffer mechanism) and matches
  * updated when changes are saved. Clients who want their match positions
  * automatically updated should return an implementation of
@@ -19,8 +19,11 @@ import org.eclipse.core.resources.IFile;
  * method in their search result implementation. It is assumed that the match
  * adapters are stateless, and no lifecycle management is provided.
  * <p>
- * Clients may implement this interface.</p>
+ * Clients may implement this interface.
+ * </p>
  * @see org.eclipse.search.ui.text.AbstractTextSearchResult
+ * 
+ * @since 3.0
  */
 public interface IFileMatchAdapter {
 	/**
@@ -28,11 +31,10 @@ public interface IFileMatchAdapter {
 	 * given search result. If the matches are not contained within an
 	 * <code>IFile</code>, this method must return an empty array.
 	 * 
-	 * @param result
-	 *            The search result to find matches in.
-	 * @param file
-	 *            The file to find matches in.
-	 * @return An array of matches (possibly empty).
+	 * @param result the search result to find matches in
+	 * @param file the file to find matches in
+	 * 
+	 * @return an array of matches (possibly empty)
 	 */
 	public abstract Match[] computeContainedMatches(AbstractTextSearchResult result, IFile file);
 	/**
@@ -40,9 +42,9 @@ public interface IFileMatchAdapter {
 	 * element is contained in). If the element is not associated with a file,
 	 * this method should return <code>null</code>.
 	 * 
-	 * @param element
-	 *            An element associated with a match.
-	 * @return The file associated with the element or null.
+	 * @param element an element associated with a match
+	 * 
+	 * @return the file associated with the element or <code>null</code>
 	 */
 	public abstract IFile getFile(Object element);
 }

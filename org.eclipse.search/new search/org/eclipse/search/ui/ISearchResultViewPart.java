@@ -31,7 +31,7 @@ public interface ISearchResultViewPart extends IViewPart {
 	 * view contribute to their context menus.
 	 * 
 	 * @param menuManager
-	 *            the menu manager the search result view should contribute to.
+	 *            the menu manager the search result view should contribute to
 	 */
 	void fillContextMenu(IMenuManager menuManager);
 	/**

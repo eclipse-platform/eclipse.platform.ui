@@ -27,6 +27,6 @@ public class RemoveSelectedMatchesAction extends Action {
 	}
 	
 	public void run() {
-		fPage.removeSelected();
+		fPage.internalRemoveSelected();
 	}
 }

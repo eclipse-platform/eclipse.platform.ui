@@ -79,15 +79,17 @@ import org.eclipse.ui.part.PageBook;
 /**
  * An abstract base implementation for classes showing
  * <code>AbstractTextSearchResult</code> instances. This class assumes that
- * the input element is a subclass of
- * <code>{@link AbstractTextSearchViewPage#setInput(ISearchResult,Object) AbstractTextSearchResult}</code>.
- * This results page supports a tree and/or a table presentation of search
+ * the input element set via {@link AbstractTextSearchViewPage#setInput(ISearchResult,Object)}
+ * is a subclass of {@link AbstractTextSearchResult}.
+ * This result page supports a tree and/or a table presentation of search
  * results. Subclasses can determine which presentations they want to support at
- * construction time by passing the appropriate flags at construction time.
+ * construction time by passing the appropriate flags.
  * Subclasses must customize the viewers for each presentation with a label
  * provider and a content provider. <br>
  * Changes in the search result are handled by updating the viewer in the
  * <code>elementsChanged()</code> and <code>clear()</code> methods.
+ * 
+ * @since 3.0
  */
 public abstract class AbstractTextSearchViewPage extends Page implements ISearchResultPage {
 	private static final String KEY_LAYOUT = "org.eclipse.search.resultpage.layout"; //$NON-NLS-1$
@@ -115,23 +117,23 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private String fId;
 	private int fSupportedLayouts;
 	/**
-	 * Flag denoting tree layout.
+	 * Flag (<code>value 1</code>) denoting tree layout.
 	 */
 	public static final int FLAG_LAYOUT_FLAT = 1;
 	/**
-	 * Flag denoting flat list layout.
+	 * Flag (<code>value 2</code>) denoting flat list layout.
 	 */
 	public static final int FLAG_LAYOUT_TREE = 2;
 	private boolean fIsUpdatePosted;
 
 	/**
 	 * This constructor must be passed a combination of layout flags combined
-	 * with bitwise or. At least one flag musst be passed in (i.e. 0 is not a
+	 * with bitwise or. At least one flag must be passed in (i.e. 0 is not a
 	 * permitted value).
 	 * 
 	 * @param supportedLayouts
-	 *            Flags determining which layout options this page supports.
-	 *            Must not be 0.
+	 *            flags determining which layout options this page supports.
+	 *            Must not be 0
 	 * @see #FLAG_LAYOUT_FLAT
 	 * @see #FLAG_LAYOUT_TREE
 	 */
@@ -192,10 +194,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	/**
-	 * Gets a dialog settings object for this search result page. There will be
+	 * Returns a dialog settings object for this search result page. There will be
 	 * one dialog settings object per search result page id.
 	 * 
-	 * @return The dialog settings for this search result page
+	 * @return the dialog settings for this search result page
 	 * @see AbstractTextSearchViewPage#getID()
 	 */
 	protected IDialogSettings getSettings() {
@@ -227,13 +229,13 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * this method.
 	 * 
 	 * @param match
-	 *            The match to show
+	 *            the match to show
 	 * @param currentOffset
-	 *            The current start offset of the match
+	 *            the current start offset of the match
 	 * @param currentLength
-	 *            The current length of the selection
+	 *            the current length of the selection
 	 * @throws PartInitException
-	 *             If an editor can't be opened.
+	 *             if an editor can't be opened
 	 * 
 	 * @see org.eclipse.core.filebuffers.ITextFileBufferManager
 	 * @see IFileMatchAdapter
@@ -244,11 +246,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * This method is called whenever the set of matches for the given elements
 	 * changes. This method is guaranteed to be called in the UI thread. Note
 	 * that this notification is asynchronous. i.e. further changes may have
-	 * occured by the time this method is called. They will be described in a
+	 * occurred by the time this method is called. They will be described in a
 	 * future call.
 	 * 
 	 * @param objects
-	 *            Array of objects that has to be refreshed.
+	 *            array of objects that has to be refreshed
 	 */
 	protected abstract void elementsChanged(Object[] objects);
 
@@ -256,7 +258,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * This method is called whenever all elements have been removed from the
 	 * shown <code>AbstractSearchResult</code>. This method is guaranteed to
 	 * be called in the UI thread. Note that this notification is asynchronous.
-	 * i.e. further changes may have occured by the time this method is called.
+	 * i.e. further changes may have occurred by the time this method is called.
 	 * They will be described in a future call.
 	 */
 	protected abstract void clear();
@@ -266,8 +268,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * provider and a label provider. This method may be called if the page was
 	 * constructed with the flag <code>FLAG_LAYOUT_TREE</code>.
 	 * 
-	 * @param viewer
-	 *            The viewer to be configured
+	 * @param viewer the viewer to be configured
 	 */
 	protected abstract void configureTreeViewer(TreeViewer viewer);
 
@@ -276,8 +277,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * provider and a label provider. This method may be called if the page was
 	 * constructed with the flag <code>FLAG_LAYOUT_FLAT</code>.
 	 * 
-	 * @param viewer
-	 *            The viewer to be configured
+	 * @param viewer the viewer to be configured
 	 */
 	protected abstract void configureTableViewer(TableViewer viewer);
 
@@ -300,7 +300,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * Fills the context menu for this page. Subclasses may override this
 	 * method.
 	 * 
-	 * @param mgr
+	 * @param mgr the menu manager representing the context menu
 	 */
 	protected void fillContextMenu(IMenuManager mgr) {
 		mgr.appendToGroup(IContextMenuConstants.GROUP_ADDITIONS, fCopyToClipboardAction);
@@ -393,9 +393,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * Determines whether a certain layout is supported by this search result
 	 * page.
 	 * 
-	 * @param layout
-	 *            the layout to test for
-	 * @return whether the given layout is suppported.
+	 * @param layout the layout to test for
+	 * @return whether the given layout is supported or not
+	 * 
 	 * @see AbstractTextSearchViewPage#AbstractTextSearchViewPage(int)
 	 */
 	public boolean isLayoutSupported(int layout) {
@@ -404,9 +404,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	/**
 	 * Sets the layout of this search result page. The layout must be on of
-	 * <code>FLAG_LAYOUT_FLAT</code> or <code>FLAG_LAYOUT_TREE</code>.
-	 * <code>layout</code> must be one of the values passed during
-	 * construction of this search result page.
+	 * <code>FLAG_LAYOUT_FLAT</code> or <code>FLAG_LAYOUT_TREE</code> and
+	 * it must be one of the values passed during construction of this search 
+	 * result page.
 	 * 
 	 * @see AbstractTextSearchViewPage#isLayoutSupported(int)
 	 */
@@ -439,9 +439,10 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	/**
 	 * Return the layout this page is currently using.
 	 * 
+	 * @return the layout this page is currently using
+	 * 
 	 * @see #FLAG_LAYOUT_FLAT
 	 * @see #FLAG_LAYOUT_TREE
-	 * @return The layout this page is currently using.
 	 */
 	public int getLayout() {
 		return fCurrentLayout;
@@ -493,9 +494,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * Creates the tree viewer to be shown on this page. Clients may override
 	 * this method.
 	 * 
-	 * @param parent
-	 *            The parent widget
-	 * @return Returns a newly created <code>TreeViewer</code>.
+	 * @param parent the parent widget
+	 * @return returns a newly created <code>TreeViewer</code>.
 	 */
 	protected TreeViewer createTreeViewer(Composite parent) {
 		return new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -505,9 +505,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * Creates the table viewer to be shown on this page. Clients may override
 	 * this method.
 	 * 
-	 * @param parent
-	 *            The parent widget
-	 * @return Returns a newly created <code>TableViewer</code>
+	 * @param parent the parent widget
+	 * @return returns a newly created <code>TableViewer</code>
 	 */
 	protected TableViewer createTableViewer(Composite parent) {
 		return new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
@@ -569,7 +568,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	/**
 	 * Returns the viewer currently used in this page.
 	 * 
-	 * @return The currently used viewer or <code>null</code> if none has been
+	 * @return the currently used viewer or <code>null</code> if none has been
 	 *         created yet.
 	 */
 	protected StructuredViewer getViewer() {
@@ -600,7 +599,8 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	/**
 	 * Returns the currently shown result.
 	 * 
-	 * @return The previously set result or <code>null</code>
+	 * @return the previously set result or <code>null</code>
+	 * 
 	 * @see AbstractTextSearchViewPage#setInput(ISearchResult, Object)
 	 */
 	public AbstractTextSearchResult getInput() {
@@ -662,7 +662,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	/**
 	 * Returns the currently selected match.
 	 * 
-	 * @return The selected match or null if none are selected.
+	 * @return the selected match or <code>null</code> if none are selected
 	 */
 	public Match getCurrentMatch() {
 		Object element = getFirstSelectedElement();
@@ -702,7 +702,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	 * Fills the toolbar contribution for this page. Subclasses may override
 	 * this method.
 	 * 
-	 * @param tbm
+	 * @param tbm the tool bar manager representing the view's toolbar
 	 */
 	protected void fillToolbar(IToolBarManager tbm) {
 		tbm.appendToGroup(IContextMenuConstants.GROUP_SHOW, fShowNextAction); //$NON-NLS-1$
@@ -835,7 +835,15 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		}
 	}
 
-	public void removeSelected() {
+	/**
+	 * Note: this is internal API and should not be called from clients outside
+	 * of the search plug-in.
+	 * <p>
+	 * Removes the currently selected match. Does nothing if no match is
+	 * selected.
+	 * </p>
+	 */
+	public void internalRemoveSelected() {
 		AbstractTextSearchResult result = getInput();
 		if (result == null)
 			return;
@@ -851,7 +859,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		Match[] matches = new Match[set.size()];
 		set.toArray(matches);
 		result.removeMatches(matches);
-	}
+	}	
 
 	private void collectAllMatches(AbstractTextSearchResult result, HashSet set, Object[] elements) {
 		for (int j = 0; j < elements.length; j++) {

@@ -23,8 +23,10 @@ import org.eclipse.search.ui.SearchResultEvent;
 
 /**
  * An abstract base implementation for text-match based search results. This search
- * result implementation consists of a list of {@link org.eclipse.search.ui.text.Match matches}. No assumptions are made about
- * the kind of elements these matches are reported against. 
+ * result implementation consists of a list of {@link org.eclipse.search.ui.text.Match matches}. 
+ * No assumptions are made about the kind of elements these matches are reported against.
+ * 
+ * @since 3.0 
  */
 public abstract class AbstractTextSearchResult implements ISearchResult {
 	private Map fElementsToMatches;
@@ -44,8 +46,8 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Returns an array with all matches reported against the given element.
 	 * 
-	 * @param element The element to report matches for
-	 * @return All matches reported for this element
+	 * @param element the element to report matches for
+	 * @return all matches reported for this element
 	 * @see Match#getElement()
 	 */
 	public Match[] getMatches(Object element) {
@@ -62,13 +64,13 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	}
 	
 	/**
-	 * Adds a Match to this search result. This method does nothing if the
-	 * Match is already present.
+	 * Adds a <code>Match</code> to this search result. This method does nothing if the
+	 * match is already present.
 	 * <p>
 	 * Subclasses may extend this method.
 	 * </p>
 	 * 
-	 * @param match The match to add
+	 * @param match the match to add
 	 */
 	public void addMatch(Match match) {
 		boolean hasAdded= false;
@@ -213,7 +215,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Send the given <code>SearchResultEvent</code> to all registered search
 	 * result listeners.
-	 * @param e The event to be sent
+	 * 
+	 * @param e the event to be sent
+	 * 
 	 * @see ISearchResultListener
 	 */
 	protected void fireChange(SearchResultEvent e) {
@@ -229,7 +233,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Returns the total number of matches contained in this search result.
 	 * 
-	 * @return Total number of matches
+	 * @return total number of matches
 	 */
 	public int getMatchCount() {
 		int count= 0;
@@ -246,8 +250,8 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * Returns the number of matches reported against a given element. This is
 	 * equivalent to calling <code>getMatches(element).length</code>
 	 * 
-	 * @param element The element to get the match count for
-	 * @return The number of matches reported against the element
+	 * @param element the element to get the match count for
+	 * @return the number of matches reported against the element
 	 */
 	public int getMatchCount(Object element) {
 		List matches= (List) fElementsToMatches.get(element);
@@ -259,7 +263,7 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	 * Returns an array containing the set of all elements that matches are
 	 * reported against in this search result.
 	 * 
-	 * @return The set of elements in this search result
+	 * @return the set of elements in this search result
 	 */
 	public Object[] getElements() {
 		synchronized (fElementsToMatches) {
@@ -269,8 +273,9 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 
 	/**
 	 * Returns an implementation of <code>IEditorMatchAdapter</code> appropriate
-	 * for this search result. 
-	 * @return An appropriate adapter or null of none has been implemented
+	 * for this search result.
+	 *  
+	 * @return an appropriate adapter or <code>null</code> if none has been implemented
 	 * 
 	 * @see IEditorMatchAdapter
 	 */
@@ -281,13 +286,12 @@ public abstract class AbstractTextSearchResult implements ISearchResult {
 	/**
 	 * Returns an implementation of <code>IFileMatchAdapter</code> appropriate
 	 * for this search result. 
-	 * @return An appropriate adapter or null of none has been implemented
+	 * 
+	 * @return an appropriate adapter or <code>null</code> if none has been implemented
+	 * 
 	 * @see IFileMatchAdapter
 	 */
 	public IFileMatchAdapter getFileMatchAdapter() {
 		return null;
 	}
-	
-		
-
 }

@@ -24,12 +24,9 @@ public class Match {
 	/**
 	 * Constructs a new Match object.
 	 * 
-	 * @param element
-	 *            The element that contains the match
-	 * @param offset
-	 *            The offset the match starts at
-	 * @param length
-	 *            The length of the match
+	 * @param element the element that contains the match
+	 * @param offset the offset the match starts at
+	 * @param length the length of the match
 	 */
 	public Match(Object element, int offset, int length) {
 		fElement = element;
@@ -39,7 +36,7 @@ public class Match {
 	/**
 	 * Returns the offset of this match.
 	 * 
-	 * @return The offset.
+	 * @return the offset
 	 */
 	public int getOffset() {
 		return fOffset;
@@ -47,7 +44,7 @@ public class Match {
 	/**
 	 * Sets the offset of this match.
 	 * 
-	 * @param offset
+	 * @param offset the offset to set
 	 */
 	public void setOffset(int offset) {
 		fOffset = offset;
@@ -55,7 +52,7 @@ public class Match {
 	/**
 	 * Returns the length of this match.
 	 * 
-	 * @return The length
+	 * @return the length
 	 */
 	public int getLength() {
 		return fLength;
@@ -63,7 +60,7 @@ public class Match {
 	/**
 	 * Sets the length.
 	 * 
-	 * @param length
+	 * @param length the length to set
 	 */
 	public void setLength(int length) {
 		fLength = length;
@@ -71,7 +68,7 @@ public class Match {
 	/**
 	 * Returns the element that contains this match.
 	 * 
-	 * @return The element that contains this match
+	 * @return the element that contains this match
 	 */
 	public Object getElement() {
 		return fElement;

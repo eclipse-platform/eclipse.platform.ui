@@ -21,7 +21,7 @@ public class NewSearchUI {
 	 * search view is already open in the current workbench window page, it is
 	 * acivated. Otherwise a new search view is opened and activated.
 	 * 
-	 * @return The activate search result view or <code>null</code> if the
+	 * @return the activate search result view or <code>null</code> if the
 	 *         search result view couldn't be activated
 	 */
 	public static ISearchResultViewPart activateSearchResultView() {
@@ -40,7 +40,7 @@ public class NewSearchUI {
 	 * Runs the given search query. This method may run the given query in a
 	 * separate thread if <code>ISearchQuery#canRunInBackground()</code>
 	 * returns <code>true</code>. Running a query adds it to the set of known
-	 * queries and notifies any registered <code>IQueryListener</code> s about
+	 * queries and notifies any registered <code>IQueryListener</code>s about
 	 * the addition.
 	 * 
 	 * @param query
@@ -55,8 +55,8 @@ public class NewSearchUI {
 	/**
 	 * Runs the given search query. This method will execute the query in the
 	 * same thread as the caller. This method blocks until the query is
-	 * finished. Running a query adds it to the set of known queriesand notifies
-	 * any registered <code>IQueryListener</code> s about the addition.
+	 * finished. Running a query adds it to the set of known queries and notifies
+	 * any registered <code>IQueryListener</code>s about the addition.
 	 * 
 	 * @param context
 	 *            the runnable context to run the query in

@@ -8,13 +8,13 @@
  ******************************************************************************/
 package org.eclipse.search.ui;
 /**
- * <p>Listener interface for changes to an <code>ISearchResult</code>.
+ * Listener interface for changes to an <code>ISearchResult</code>.
  * Implementers of <code>ISearchResult</code> should define subclasses of 
  * <code>SearchResultEvent</code> and send those to registered listeners. Implementers of
  * <code>ISearchResultListener</code> will in general know the concrete class of search 
  * result they are listening to, and therefore the kind of events they
  * have to handle. 
- * </p><p>
+ * <p>
  * Clients may implement this interface.
  * </p>
  * @since 3.0
@@ -22,12 +22,12 @@ package org.eclipse.search.ui;
 public interface ISearchResultListener {
 	/**
 	 * Called to notify listeners of changes in a <code>ISearchResult</code>.
-	 * The event object <code>e</code> is only guarantueed to be valid for
+	 * The event object <code>e</code> is only guaranteed to be valid for
 	 * the duration of the call.
 	 * 
-	 * @param e The event object describing the change. Note that
-	 *            implementers of <code>ISearchResult</code> will be sending
-	 *            subclasses of <code>SearchResultEvent</code>
+	 * @param e the event object describing the change. Note that implementers 
+	 *  of <code>ISearchResult</code> will be sending subclasses of 
+	 *  <code>SearchResultEvent</code>
 	 */
 	void searchResultChanged(SearchResultEvent e);
 }

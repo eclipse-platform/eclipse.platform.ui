@@ -10,17 +10,15 @@ package org.eclipse.search.ui;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.part.IPageBookViewPage;
 /**
- * 
- * <p>
  * A <code>ISearchResultPage</code> is used to render the search results for a
  * particular class of <code>ISearchResult</code> (as specified in the
- * <code>targetClass</code> attribute of the extension point) in the search
+ * <code>searchResultClass</code> attribute of the extension point) in the search
  * view. <br>
- * Extensions of extension point org.eclipse.search.ui.searchResultViewPages
+ * Extensions of extension point <code>org.eclipse.search.ui.searchResultViewPages</code>
  * must implement this interface.
- * </p>
+ * <p>
  * Clients may implement this interface.
- * 
+ * </p>
  * @since 3.0
  */
 public interface ISearchResultPage extends IPageBookViewPage {
@@ -38,12 +36,10 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	 * Implementers should restore UI state (e.g. selection) from the previously
 	 * saved <code>uiState</code> object.
 	 * 
-	 * @see ISearchResultPage#getUIState()
+	 * @param search the search result to be shown
+	 * @param uiState the previously saved UI state
 	 * 
-	 * @param search
-	 *            the search result to be shown
-	 * @param uiState
-	 *            the previously saved UI state
+	 * @see ISearchResultPage#getUIState()
 	 */
 	void setInput(ISearchResult search, Object uiState);
 	/**
@@ -57,31 +53,28 @@ public interface ISearchResultPage extends IPageBookViewPage {
 	void setViewPart(ISearchResultViewPart part);
 	/**
 	 * Restores the page state. Note that this applies only to state that is
-	 * saved across sessions. For restoring state that is transient:
+	 * saved across sessions.
+	 * 
+	 * @param memento a memento to restore the page state from or <code>null</code>
+	 *  if no previous state was saved
 	 * 
 	 * @see #setInput(ISearchResult, Object)
-	 * 
-	 * @param memento
-	 *            a memento to restore the page state from or <code>null</code>
-	 *            if no previous state was saved
 	 */
 	void restoreState(IMemento memento);
 	/**
 	 * Saves the page state in a memento. Note that this applies to state that
-	 * should persist across sessions. For transient state:
+	 * should persist across sessions. 
+	 * 
+	 * @param memento a memento to receive the object state
 	 * 
 	 * @see #getUIState()
-	 * 
-	 * @param memento
-	 *            a memento to receive the object state
 	 */
 	void saveState(IMemento memento);
 	/**
 	 * Sets the id for this page. This method will be called before any other
 	 * initialization is done.
 	 * 
-	 * @param id
-	 *            the id for this page
+	 * @param id the id for this page
 	 */
 	void setID(String id);
 	/**

@@ -24,14 +24,14 @@ public interface IQueryListener {
 	/**
 	 * Called when an query has been added to the system.
 	 * 
-	 * @param query The query that has been added
+	 * @param query the query that has been added
 	 */
 	
 	void queryAdded(ISearchQuery query);
 	/**
 	 * Called when a query has been removed.
 	 * 
-	 * @param query The query that has been removed
+	 * @param query the query that has been removed
 	 */
 	void queryRemoved(ISearchQuery query);
 	

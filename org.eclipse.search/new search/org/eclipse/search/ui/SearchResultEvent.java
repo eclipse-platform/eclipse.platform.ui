@@ -20,13 +20,18 @@ import java.util.EventObject;
  * @since 3.0
  */
 public abstract class SearchResultEvent extends EventObject {
+	/**
+	 * Creates a new search result event for the given search result.
+	 * 
+	 * @param searchResult the source of the event
+	 */
 	protected SearchResultEvent(ISearchResult searchResult) {
 		super(searchResult);
 	}
 	/**
 	 * Gets the <code>ISearchResult</code> for this event.
 	 * 
-	 * @return The source of this event.
+	 * @return the source of this event
 	 */
 	public ISearchResult getSearchResult() {
 		return (ISearchResult) getSource();
