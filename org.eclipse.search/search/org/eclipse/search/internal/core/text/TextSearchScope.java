@@ -4,9 +4,9 @@
  */
 package org.eclipse.search.internal.core.text;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -34,7 +34,7 @@ public class TextSearchScope extends SearchScope {
 		}	
 	}
 	
-	private List fExtensions= new ArrayList(3);
+	private Set fExtensions= new HashSet(3);
 	
 	/**
 	 * Adds an extension to the scope.
@@ -47,7 +47,7 @@ public class TextSearchScope extends SearchScope {
 	 * Adds all extensions contained in <code>extensions</code> to this
 	 * scope.
 	 */
-	public void addExtensions(List extensions) {
+	public void addExtensions(Set extensions) {
 		if (extensions == null)
 			return;
 		Iterator iter= extensions.iterator();

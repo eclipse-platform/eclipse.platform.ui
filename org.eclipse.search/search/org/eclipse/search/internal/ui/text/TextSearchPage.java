@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Set;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -69,14 +70,14 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 	private FileTypeEditor fFileTypeEditor;
 
 	private static class SearchPatternData {
-		public SearchPatternData(String pattern, boolean ignoreCase, List extensions) {
+		public SearchPatternData(String pattern, boolean ignoreCase, Set extensions) {
 			this.ignoreCase= ignoreCase;
 			this.pattern= pattern;
 			this.extensions= extensions;
 		}
 		boolean	ignoreCase;
 		String	pattern;
-		List		extensions;
+		Set		extensions;
 	}
 	//---- Action Handling ------------------------------------------------
 	
@@ -167,8 +168,8 @@ public class TextSearchPage extends DialogPage implements ISearchPage {
 		return fPattern.getDisplay();
 	}
 	
-	private List getExtensions() {
-		List extensions= fFileTypeEditor.getFileTypes();
+	private Set getExtensions() {
+		Set extensions= fFileTypeEditor.getFileTypes();
 		String editorExtension= getExtensionFromEditor();
 		if (editorExtension != null && editorExtension.equals("")) //$NON-NLS-1$
 			extensions.add(null);

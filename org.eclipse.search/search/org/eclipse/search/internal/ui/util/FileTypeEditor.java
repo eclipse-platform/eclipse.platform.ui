@@ -5,9 +5,10 @@
 package org.eclipse.search.internal.ui.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.eclipse.swt.events.DisposeEvent;
@@ -25,7 +26,6 @@ import org.eclipse.ui.dialogs.FileEditorMappingContentProvider;
 import org.eclipse.ui.dialogs.FileEditorMappingLabelProvider;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 
-import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.internal.ui.SearchMessages;
 
 public class FileTypeEditor extends SelectionAdapter implements DisposeListener, SelectionListener {
@@ -70,8 +70,8 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	 *
 	 *	@return java.util.Vector
 	 */
-	public List getFileTypes() {
-		List result= new ArrayList();
+	public Set getFileTypes() {
+		Set result= new HashSet();
 		if (fTextField.getText().equals("*")) //$NON-NLS-1$
 			return getRegisteredFileExtensions();
 		else {
@@ -92,10 +92,10 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	 *
 	 *	@return java.util.Vector
 	 */
-	protected List getRegisteredFileExtensions() {
+	protected Set getRegisteredFileExtensions() {
 		IFileEditorMapping editorMappings[]= getEditorMappings();
 		int mappingsSize= editorMappings.length;
-		List result= new ArrayList(mappingsSize);
+		Set result= new HashSet(mappingsSize);
 		for (int i= 0; i < mappingsSize; i++) {
 			IFileEditorMapping currentMapping= editorMappings[i];
 			result.add(currentMapping.getExtension());
@@ -108,7 +108,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 	 *
 	 *	@param types java.util.Vector
 	 */
-	public void setFileTypes(List types) {
+	public void setFileTypes(Set types) {
 		StringBuffer result= new StringBuffer();
 		Iterator typesIter= types.iterator();
 
@@ -136,7 +136,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 		IFileEditorMapping editorMappings[]= getEditorMappings();
 
 		int mappingsSize= editorMappings.length;
-		List selectedTypes= getFileTypes();
+		Set selectedTypes= getFileTypes();
 		List initialSelections= new ArrayList(selectedTypes.size());
 
 		for (int i= 0; i < mappingsSize; i++) {
@@ -157,7 +157,7 @@ public class FileTypeEditor extends SelectionAdapter implements DisposeListener,
 		if (dialog.open() == dialog.OK) {
 			Object[] dialogResult= dialog.getResult();
 			int length= dialogResult.length;
-			List result= new ArrayList(length);
+			Set result= new HashSet(length);
 			for (int i= 0; i < length; i++)
 				result.add(((IFileEditorMapping)dialogResult[i]).getExtension());
 			setFileTypes(result);
