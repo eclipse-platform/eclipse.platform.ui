@@ -758,7 +758,7 @@ public final class Workbench implements IWorkbench {
 
 		workbenchActivitySupport = new WorkbenchActivitySupport();
 		workbenchCommandSupport = new WorkbenchCommandSupport(this);
-		workbenchContextSupport = new WorkbenchContextSupport();
+		workbenchContextSupport = new WorkbenchContextSupport(this);
 
 		workbenchCommandSupport.getCommandManager().addCommandManagerListener(
 			workbenchCommandsAndContexts.commandManagerListener);

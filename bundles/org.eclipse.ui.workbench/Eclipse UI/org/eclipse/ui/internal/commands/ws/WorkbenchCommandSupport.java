@@ -40,6 +40,10 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
     private IWorkbenchWindow activeWorkbenchWindow;
 
+    private String activePartId;
+
+    private String activePerspectiveId;
+
     private ICompoundCommandHandlerService compoundCommandHandlerService;
 
     private Map handlerSubmissionsByCommandId = new HashMap();
@@ -53,38 +57,38 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
     private IPageListener pageListener = new IPageListener() {
 
         public void pageActivated(IWorkbenchPage workbenchPage) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
 
         public void pageClosed(IWorkbenchPage workbenchPage) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
 
         public void pageOpened(IWorkbenchPage workbenchPage) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
     };
 
     private IPartListener partListener = new IPartListener() {
 
         public void partActivated(IWorkbenchPart workbenchPart) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
 
         public void partBroughtToTop(IWorkbenchPart workbenchPart) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
 
         public void partClosed(IWorkbenchPart workbenchPart) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
 
         public void partDeactivated(IWorkbenchPart workbenchPart) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
 
         public void partOpened(IWorkbenchPart workbenchPart) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
     };
 
@@ -92,31 +96,31 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 
         public void perspectiveActivated(IWorkbenchPage workbenchPage,
                 IPerspectiveDescriptor perspectiveDescriptor) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
 
         public void perspectiveChanged(IWorkbenchPage workbenchPage,
                 IPerspectiveDescriptor perspectiveDescriptor, String changeId) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
     };
 
     private IWindowListener windowListener = new IWindowListener() {
 
         public void windowActivated(IWorkbenchWindow window) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
 
         public void windowClosed(IWorkbenchWindow window) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
 
         public void windowDeactivated(IWorkbenchWindow window) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
 
         public void windowOpened(IWorkbenchWindow window) {
-            processHandlerSubmissionsByCommandId();
+            processHandlerSubmissionsByCommandId(false);
         }
     };
 
@@ -165,7 +169,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             handlerSubmissions2.add(handlerSubmission);
         }
 
-        processHandlerSubmissionsByCommandId();
+        processHandlerSubmissionsByCommandId(true);
     }
 
     public void deregisterFromKeyBindings(Shell shell) {
@@ -207,7 +211,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
         }
     }
 
-    private void processHandlerSubmissionsByCommandId() {
+    private void processHandlerSubmissionsByCommandId(boolean force) {
         Map handlersByCommandId = new HashMap();
         String activePartId = null;
         String activePerspectiveId = null;
@@ -258,45 +262,52 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             }
         }
 
-        for (Iterator iterator = handlerSubmissionsByCommandId.entrySet()
-                .iterator(); iterator.hasNext();) {
-            Map.Entry entry = (Map.Entry) iterator.next();
-            String commandId = (String) entry.getKey();
-            List handlerSubmissions = (List) entry.getValue();
-            SortedSet matchingHandlerSubmissions = null;
+        if (force || !Util.equals(this.activePartId, activePartId)
+                || !Util.equals(this.activePerspectiveId, activePerspectiveId)) {
+            this.activePartId = activePartId;
+            this.activePerspectiveId = activePerspectiveId;
 
-            for (Iterator iterator2 = handlerSubmissions.iterator(); iterator2
-                    .hasNext();) {
-                HandlerSubmission handlerSubmission = (HandlerSubmission) iterator2
-                        .next();
-                String activePartId2 = handlerSubmission.getActivePartId();
-                String activePerspectiveId2 = handlerSubmission
-                        .getActivePerspectiveId();
+            for (Iterator iterator = handlerSubmissionsByCommandId.entrySet()
+                    .iterator(); iterator.hasNext();) {
+                Map.Entry entry = (Map.Entry) iterator.next();
+                String commandId = (String) entry.getKey();
+                List handlerSubmissions = (List) entry.getValue();
+                SortedSet matchingHandlerSubmissions = null;
 
-                if (activePartId2 != null && activePartId2 != activePartId)
-                        continue;
+                for (Iterator iterator2 = handlerSubmissions.iterator(); iterator2
+                        .hasNext();) {
+                    HandlerSubmission handlerSubmission = (HandlerSubmission) iterator2
+                            .next();
+                    String activePartId2 = handlerSubmission.getActivePartId();
+                    String activePerspectiveId2 = handlerSubmission
+                            .getActivePerspectiveId();
 
-                if (activePerspectiveId2 != null
-                        && activePerspectiveId2 != activePerspectiveId)
-                        continue;
+                    if (activePartId2 != null && activePartId2 != activePartId)
+                            continue;
 
-                if (matchingHandlerSubmissions == null)
-                        matchingHandlerSubmissions = new TreeSet();
+                    if (activePerspectiveId2 != null
+                            && activePerspectiveId2 != activePerspectiveId)
+                            continue;
 
-                matchingHandlerSubmissions.add(handlerSubmission);
+                    if (matchingHandlerSubmissions == null)
+                            matchingHandlerSubmissions = new TreeSet();
+
+                    matchingHandlerSubmissions.add(handlerSubmission);
+                }
+
+                if (matchingHandlerSubmissions != null) {
+                    HandlerSubmission bestHandlerSubmission = (HandlerSubmission) matchingHandlerSubmissions
+                            .last();
+                    handlersByCommandId.put(commandId, bestHandlerSubmission
+                            .getHandler());
+                }
             }
 
-            if (matchingHandlerSubmissions != null) {
-                HandlerSubmission bestHandlerSubmission = (HandlerSubmission) matchingHandlerSubmissions
-                        .last();
-                handlersByCommandId.put(commandId, bestHandlerSubmission
-                        .getHandler());
-            }
+            // TODO switch to this from the old mechanism in
+            // WorkbenchCommandsAndContexts
+            //((CommandManager) mutableCommandManager)
+            //        .setHandlersByCommandId(handlersByCommandId);
         }
-
-        // TODO switch to this from the old mechanism in WorkbenchCommandsAndContexts
-        //((CommandManager) mutableCommandManager)
-        //        .setHandlersByCommandId(handlersByCommandId);
     }
 
     public void registerForKeyBindings(Shell shell, boolean dialogOnly) {
@@ -329,7 +340,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
             }
         }
 
-        processHandlerSubmissionsByCommandId();
+        processHandlerSubmissionsByCommandId(true);
     }
 
     public final void setKeyFilterEnabled(boolean keyFilterEnabled) {

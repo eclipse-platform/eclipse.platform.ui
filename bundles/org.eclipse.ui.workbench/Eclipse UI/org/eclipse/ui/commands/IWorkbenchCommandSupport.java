@@ -38,13 +38,6 @@ public interface IWorkbenchCommandSupport {
     void addHandlerSubmissions(List handlerSubmissions);
 
     /**
-     * TODO
-     * 
-     * @param handlerSubmissions
-     */
-    void removeHandlerSubmissions(List handlerSubmissions);
-
-    /**
      * Deregisters the given <code>shell</code> from the global key bindings.
      * This is not strictly necessary (as the internal storage uses a weak hash
      * map), but is good for cleanliness.
@@ -93,6 +86,13 @@ public interface IWorkbenchCommandSupport {
      *            here.
      */
     void registerForKeyBindings(Shell shell, boolean dialogOnly);
+
+    /**
+     * TODO
+     * 
+     * @param handlerSubmissions
+     */
+    void removeHandlerSubmissions(List handlerSubmissions);
 
     /**
      * Enables or disables the global key binding architecture. The
