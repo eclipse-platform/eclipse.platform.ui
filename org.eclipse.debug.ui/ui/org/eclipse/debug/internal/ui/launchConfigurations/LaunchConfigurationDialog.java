@@ -1949,6 +1949,16 @@ public class LaunchConfigurationDialog extends TitleAreaDialog
 				IStatus status = new Status(IStatus.ERROR, IDebugUIConstants.PLUGIN_ID, DebugException.INTERNAL_ERROR, LaunchConfigurationsMessages.getString("LaunchConfigurationDialog.Exception_occurred_while_launching_50"), t); //$NON-NLS-1$
 				throw new CoreException(status);
 			}
+		} finally {
+			//remove any "error" launch
+			ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
+			ILaunch[] launches= manager.getLaunches();
+			for (int i = 0; i < launches.length; i++) {
+				ILaunch iLaunch = launches[i];
+				if (!iLaunch.hasChildren()) {
+					manager.removeLaunch(iLaunch);
+				}
+			}
 		}
 		
 		
