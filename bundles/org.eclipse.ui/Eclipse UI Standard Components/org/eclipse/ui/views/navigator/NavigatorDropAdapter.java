@@ -378,6 +378,9 @@ protected IStatus performResourceDrop(IProgressMonitor monitor,Object data) {
  * Method declared on IOverWriteQuery
  */
 public String queryOverwrite(String pathString) {
+	if (alwaysOverwrite)
+		return ALL;
+		
 	final String returnCode[] = {CANCEL};
 	final String msg = ResourceNavigatorMessages.format("DropAdapter.overwriteQuery", new Object[] {pathString}); //$NON-NLS-1$
 	final String[] options = {IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL};
@@ -390,6 +393,8 @@ public String queryOverwrite(String pathString) {
 			returnCode[0] = returnVal < 0 ? CANCEL : returnCodes[returnVal];
 		}
 	});
+	if(returnCode[0] == ALL)
+		alwaysOverwrite = true;
 	return returnCode[0];
 }
 /**
