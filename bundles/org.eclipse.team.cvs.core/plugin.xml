@@ -70,4 +70,10 @@
 		<super type="org.eclipse.team.cvs.core.cvsmarker"/>
 		<persistent value="true"/>
 	</extension>
+	
+	<!-- ************ File Types *************** -->
+	<extension point="org.eclipse.team.core.fileTypes">
+		<fileTypes extension="cvsignore" type="text"/>
+	</extension>
+
 </plugin>
