@@ -32,4 +32,12 @@ public class TestingSupport {
 	public static void accept(HistoryStore store, IPath path, IHistoryStoreVisitor visitor, boolean partialMatch) {
 		store.accept(path, visitor, partialMatch);
 	}
+	
+	/**
+	 * Call HistoryStore.removeGarbage().
+	 * @since 3.0
+	 */
+	public static void removeGarbage(HistoryStore store) {
+		store.removeGarbage();
+	}
 }

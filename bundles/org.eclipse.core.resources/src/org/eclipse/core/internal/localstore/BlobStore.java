@@ -12,15 +12,18 @@ package org.eclipse.core.internal.localstore;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import org.eclipse.core.internal.resources.ResourceException;
 import org.eclipse.core.internal.utils.*;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.runtime.*;
 
-//
+/**
+ * Blob store which maps UUIDs to blobs on disk. The UUID is mapped
+ * to a file in the file-system and the blob is the file contents. For scalability,
+ * the blobs are split among 255 directories with the names 00 to FF.
+ */
 public class BlobStore {
 	protected File storeLocation;
 	protected FileSystemStore localStore;
@@ -90,14 +93,14 @@ public class BlobStore {
 	}
 
 	/**
-	 * Deletes a blobFile and if the directory becomes empty it is also
-	 * deleted. If the file does not exist, do nothing.
+	 * Deletes a blobFile. If the file does not exist, do nothing.
+	 * 
+	 * Note: This method used to delete empty dirs but this part was
+	 * removed for performance reasons.
 	 */
 	protected boolean delete(File blobFile) {
 		CoreFileSystemLibrary.setReadOnly(blobFile.getAbsolutePath(), false);
-		boolean deleted = blobFile.delete();
-		deleteEmptyDir(blobFile.getParentFile());
-		return deleted;
+		return blobFile.delete();
 	}
 
 	public void deleteAll() {
@@ -119,21 +122,19 @@ public class BlobStore {
 	}
 
 	/**
-	 * Deletes a blobFile and if the directory becomes empty it is also
-	 * deleted. Returns true if the blob was deleted.
+	 * Deletes a blobFile. Returns true if the blob was deleted.
 	 */
 	public boolean deleteBlob(UniversalUniqueIdentifier uuid) {
 		Assert.isNotNull(uuid);
 		return delete(fileFor(uuid));
 	}
 
-	protected boolean deleteEmptyDir(File dir) {
-		if (dir.exists()) {
-			String[] list = dir.list();
-			if (list != null && list.length == 0)
-				return dir.delete();
-		}
-		return false;
+	/**
+	 * Delete all of the blobs in the given set.
+	 */
+	public void deleteBlobs(Set set) {
+		for (Iterator i = set.iterator(); i.hasNext();)
+			deleteBlob((UniversalUniqueIdentifier) i.next());
 	}
 
 	public File fileFor(UniversalUniqueIdentifier uuid) {
@@ -169,24 +170,6 @@ public class BlobStore {
 						result.add(blobs[j]);
 			}
 		return result;
-	}
-
-	/**
-	 * Delete all of the blobs from disk except the ones which are
-	 * contained in the given set. 
-	 */
-	public void deleteAllExcept(Set exceptions) {
-		String[] folders = storeLocation.list();
-		if (folders == null)
-			return;
-		for (int i = 0; i < folders.length; i++) {
-			File folder = new File(storeLocation, folders[i]);
-			String[] blobs = folder.list();
-			if (blobs != null)
-				for (int j = 0; j < blobs.length; j++)
-					if (!exceptions.contains(blobs[j]))
-						delete(new File(folder, blobs[j]));
-		}
 	}
 
 	/**

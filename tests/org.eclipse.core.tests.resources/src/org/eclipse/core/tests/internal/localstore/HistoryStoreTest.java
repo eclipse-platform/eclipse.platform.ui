@@ -1759,7 +1759,7 @@ public class HistoryStoreTest extends EclipseWorkspaceTest {
 		// this does not cause the history store states to be removed.
 		store.removeAll();
 		// Now make sure all the states are really removed.
-		store.removeGarbage();
+		org.eclipse.core.internal.localstore.TestingSupport.removeGarbage(store);
 	}
 
 	/*

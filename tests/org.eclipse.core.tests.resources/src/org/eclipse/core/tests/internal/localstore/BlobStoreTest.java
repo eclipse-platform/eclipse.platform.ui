@@ -125,53 +125,6 @@ public class BlobStoreTest extends LocalStoreTest {
 		Workspace.clear(root);
 	}
 
-	/**
-	 * #deleteEmptyDir is tested indirectly here.
-	 */
-	public void testDeleteEmptyDir() {
-		/* initialize common objects */
-		IPath path = getWorkspace().getRoot().getLocation().append("blobstore");
-		File root = path.toFile();
-		root.mkdirs();
-		assertTrue("1.1", root.isDirectory());
-		// use just one directory
-		BlobStore store = new BlobStore(path, 1);
-
-		/* create 2 blobs */
-		File target = new File(root, "target");
-		File target2 = new File(root, "target2");
-		UniversalUniqueIdentifier firstUUID = null;
-		UniversalUniqueIdentifier secondUUID = null;
-		try {
-			createFile(target, "bla bla bla");
-			createFile(target2, "bla bla bla");
-			firstUUID = store.addBlob(target, true);
-			secondUUID = store.addBlob(target2, true);
-		} catch (IOException e) {
-			fail("4.0", e);
-		} catch (CoreException e) {
-			fail("4.1", e);
-		}
-
-		/* get directory name */
-		String[] list = root.list();
-		assertTrue("3.0", list != null);
-		assertTrue("3.1", list.length == 1);
-		File directory = new File(root, list[0]);
-		assertTrue("3.2", directory.isDirectory());
-
-		/* delete one, the directory should not be deleted */
-		assertTrue("4.1", store.deleteBlob(firstUUID));
-		assertTrue("4.2", directory.exists());
-
-		/* delete the other, the directory should be deleted */
-		assertTrue("5.1", store.deleteBlob(secondUUID));
-		assertTrue("5.2", !directory.exists());
-
-		/* remove trash */
-		Workspace.clear(root);
-	}
-
 	public void testGetBlob() {
 		/* initialize common objects */
 		IPath path = getWorkspace().getRoot().getLocation().append("blobstore");

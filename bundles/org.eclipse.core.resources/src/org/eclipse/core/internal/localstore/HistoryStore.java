@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2003 IBM Corporation and others.
+ * Copyright (c) 2000, 2004 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Common Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,13 @@ import org.eclipse.core.runtime.*;
 
 public class HistoryStore {
 	protected Workspace workspace;
+
 	protected BlobStore blobStore;
+
 	IndexedStoreWrapper store;
+
+	Set blobsToRemove = new HashSet();
+
 	private final static String INDEX_FILE = ".index"; //$NON-NLS-1$
 
 	public HistoryStore(Workspace workspace, IPath location, int limit) {
@@ -56,12 +61,10 @@ public class HistoryStore {
 				// visit if we have an exact match
 				if (storedKey.length - bytesToOmit == key.length) {
 					HistoryStoreEntry storedEntry = HistoryStoreEntry.create(store, cursor);
-					if (!visitor.visit(storedEntry)) {
+					if (!visitor.visit(storedEntry))
 						break;
-					} else {
-						cursor.next();
-						continue;
-					}
+					cursor.next();
+					continue;
 				}
 
 				// return if we aren't checking partial matches
@@ -99,7 +102,7 @@ public class HistoryStore {
 	 *
 	 * @param path Full workspace path to the resource being logged.
 	 * @param uuid UUID for stored file contents.
-	 * @param lastModified Timestamp for rseource being logged.
+	 * @param lastModified Timestamp for resource being logged.
 	 */
 	protected void addState(IPath path, UniversalUniqueIdentifier uuid, long lastModified) {
 		// Determine how many states already exist for this path and timestamp.
@@ -196,13 +199,15 @@ public class HistoryStore {
 	}
 
 	/**
-	 * Add an entry to the history store for the specified resource.
+	 * Add an entry to the history store for the specified resource. Return the
+	 * UUID of the blob if it was successfully added, and <code>null</code>
+	 * otherwise.
 	 *
 	 * @param key Full workspace path to resource being logged.
 	 * @param localFile Local file system file handle
 	 * @param lastModified Timestamp for resource.
 	 *
-	 * @return true if state added to history store and false otherwise.
+	 * @return the uuid of the blob or <code>null</code> otherwise
 	 */
 	public UniversalUniqueIdentifier addState(IPath key, java.io.File localFile, long lastModified, boolean moveContents) {
 		if (Policy.DEBUG_HISTORY)
@@ -238,16 +243,17 @@ public class HistoryStore {
 	 */
 	public void clean() {
 		long start = System.currentTimeMillis();
+		int entryCount = 0;
 		IWorkspaceDescription description = workspace.internalGetDescription();
 		long minimumTimestamp = System.currentTimeMillis() - description.getFileStateLongevity();
 		int max = description.getMaxFileStates();
 		IPath current = null;
 		List result = new ArrayList(Math.min(max, 1000));
-		Set blobs = new HashSet();
 		try {
 			IndexCursor cursor = store.getCursor();
 			cursor.findFirstEntry();
 			while (cursor.isSet()) {
+				entryCount++;
 				HistoryStoreEntry entry = HistoryStoreEntry.create(store, cursor);
 				// is it old?
 				if (entry.getLastModified() < minimumTimestamp) {
@@ -260,15 +266,21 @@ public class HistoryStore {
 					current = entry.getPath();
 				}
 				result.add(entry);
-				blobs.add(entry.getUUID().toString());
 				cursor.next();
 			}
 			removeOldestEntries(result, max);
 			cursor.close();
 			store.commit();
-			if (Policy.DEBUG_HISTORY)
+			if (Policy.DEBUG_HISTORY) {
 				Policy.debug("Time to apply history store policies: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
-			removeGarbage(blobs);
+				Policy.debug("Total number of history store entries: " + entryCount); //$NON-NLS-1$
+			}
+			start = System.currentTimeMillis();
+			// remove unreferenced blobs
+			blobStore.deleteBlobs(blobsToRemove);
+			if (Policy.DEBUG_HISTORY)
+				Policy.debug("Time to remove " + blobsToRemove.size() + " unreferenced blobs: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+			blobsToRemove = new HashSet();
 		} catch (Exception e) {
 			String message = Policy.bind("history.problemsCleaning"); //$NON-NLS-1$
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
@@ -277,10 +289,10 @@ public class HistoryStore {
 	}
 
 	boolean stateAlreadyExists(IPath path, final UniversalUniqueIdentifier uuid) {
-		final boolean[] rc = new boolean[] {false};
+		final boolean[] rc = new boolean[] { false };
 		IHistoryStoreVisitor visitor = new IHistoryStoreVisitor() {
 			public boolean visit(HistoryStoreEntry entry) {
-				if (uuid.equals(entry.getUUID())) {
+				if (rc[0] || uuid.equals(entry.getUUID())) {
 					rc[0] = true;
 					return false;
 				}
@@ -457,8 +469,6 @@ public class HistoryStore {
 	}
 
 	protected void remove(HistoryStoreEntry entry) throws IndexedStoreException {
-		// Do not remove the blob yet.  It may be referenced by another
-		// history store entry.
 		try {
 			Vector objectIds = store.getIndex().getObjectIdentifiersMatching(entry.getKey());
 			if (objectIds.size() == 1) {
@@ -471,11 +481,14 @@ public class HistoryStore {
 				ResourcesPlugin.getPlugin().getLog().log(status);
 			}
 		} catch (Exception e) {
-			String[] messageArgs = {entry.getPath().toString(), new Date(entry.getLastModified()).toString(), entry.getUUID().toString()};
+			String[] messageArgs = { entry.getPath().toString(), new Date(entry.getLastModified()).toString(), entry.getUUID().toString() };
 			String message = Policy.bind("history.specificProblemsCleaning", messageArgs); //$NON-NLS-1$
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
+		// Do not remove the blob yet.  It may be referenced by another
+		// history store entry.
+		blobsToRemove.add(entry.getUUID());
 		entry.remove();
 	}
 
@@ -519,35 +532,30 @@ public class HistoryStore {
 	}
 
 	/**
-	 * Checks if there are any blobs on disk that have no reference in the index store.
+	 * Go through the history store and remove all of the unreferenced blobs.
+	 * Check the instance variable which holds onto a set of UUIDs of potential 
+	 * candidates to be removed.
+	 * 
+	 * As of 3.0, this method is used for testing purposes only. Otherwise the history
+	 * store is garbage collected during the #clean method.
 	 */
-	public void removeGarbage() {
-		Set blobsToPreserv = new HashSet();
+	void removeGarbage() {
 		try {
 			IndexCursor cursor = store.getCursor();
 			cursor.findFirstEntry();
-			while (cursor.isSet()) {
+			while (!blobsToRemove.isEmpty() && cursor.isSet()) {
 				HistoryStoreEntry entry = HistoryStoreEntry.create(store, cursor);
-				blobsToPreserv.add(entry.getUUID().toString());
+				blobsToRemove.remove(entry.getUUID());
 				cursor.next();
 			}
 			cursor.close();
+			blobStore.deleteBlobs(blobsToRemove);
+			blobsToRemove = new HashSet();
 		} catch (Exception e) {
 			String message = Policy.bind("history.problemsCleaning"); //$NON-NLS-1$
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 			ResourcesPlugin.getPlugin().getLog().log(status);
 		}
-		removeGarbage(blobsToPreserv);
-	}
-
-	/**
-	 * Remove all blobs but the ones in the parameter.
-	 */
-	protected void removeGarbage(Set blobsToPreserv) {
-		long start = System.currentTimeMillis();
-		blobStore.deleteAllExcept(blobsToPreserv);
-		if (Policy.DEBUG_HISTORY)
-			Policy.debug("Time to remove history store garbage (saving " + blobsToPreserv.size() + " blobs): " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	protected void removeOldestEntries(List entries, int maxEntries) throws IndexedStoreException {
@@ -566,7 +574,7 @@ public class HistoryStore {
 	}
 
 	public void startup(IProgressMonitor monitor) {
-		// ignore
+		// do nothing
 	}
 
 	protected void resetIndexedStore() {
@@ -601,15 +609,15 @@ public class HistoryStore {
 				IPath memberPath = state.getPath();
 				boolean withinDepthRange = false;
 				switch (depth) {
-					case IResource.DEPTH_ZERO :
-						withinDepthRange = memberPath.segmentCount() == pathLength;
-						break;
-					case IResource.DEPTH_ONE :
-						withinDepthRange = memberPath.segmentCount() <= pathLength + 1;
-						break;
-					case IResource.DEPTH_INFINITE :
-						withinDepthRange = true;
-						break;
+				case IResource.DEPTH_ZERO:
+					withinDepthRange = memberPath.segmentCount() == pathLength;
+					break;
+				case IResource.DEPTH_ONE:
+					withinDepthRange = memberPath.segmentCount() <= pathLength + 1;
+					break;
+				case IResource.DEPTH_INFINITE:
+					withinDepthRange = true;
+					break;
 				}
 				if (withinDepthRange) {
 					allFiles.add(memberPath);
@@ -621,5 +629,4 @@ public class HistoryStore {
 		accept(path, new PathCollector(), true);
 		return allFiles;
 	}
-
 }
