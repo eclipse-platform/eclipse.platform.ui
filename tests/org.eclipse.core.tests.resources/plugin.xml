@@ -75,6 +75,9 @@
     <test id="resources.WorkspaceTest">
       <run class="org.eclipse.core.tests.resources.WorkspaceTest"/>
     </test>
+    <test id="resources.ResourceMappingTest">
+      <run class="org.eclipse.core.tests.resources.ResourceMappingTest"/>
+    </test>
     <test id="resources.ResourceURLTest">
       <run class="org.eclipse.core.tests.resources.ResourceURLTest"/>
     </test>
