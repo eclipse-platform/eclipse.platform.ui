@@ -481,7 +481,8 @@ public class Site extends SiteModel implements ISite {
 	}
 
 	/**
-	 * @see org.eclipse.update.core.ISite#createFeature(String, URL)
+	 * @see org.eclipse.update.core.ISite#createFeature(String, URL,
+	 * IProgressMonitor)
 	 */
 	public IFeature createFeature(String type, URL url, IProgressMonitor monitor) throws CoreException {
 
@@ -497,7 +498,7 @@ public class Site extends SiteModel implements ISite {
 		}
 
 		IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(type);
-		feature = factory.createFeature(url, this);
+		feature = factory.createFeature(url, this, monitor);
 		if (feature != null) {
 			// Add the feature to the cache
 			featureCache.put(key, feature);

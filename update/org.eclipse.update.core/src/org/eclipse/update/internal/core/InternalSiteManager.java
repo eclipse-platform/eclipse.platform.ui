@@ -29,7 +29,7 @@ public class InternalSiteManager {
 	private static final String SIMPLE_EXTENSION_ID = "deltaHandler";
 	//$NON-NLS-1$
 
-	private static Map estimates;	
+	private static Map estimates;
 
 	// cache found sites
 	private static Map sites = new HashMap();
@@ -70,7 +70,7 @@ public class InternalSiteManager {
 	/*
 	 * @see ILocalSite#getSite(URL)
 	 */
-	public static ISite getSite(URL siteURL, boolean useCache) throws CoreException {
+	public static ISite getSite(URL siteURL, boolean useCache, IProgressMonitor monitor) throws CoreException {
 		ISite site = null;
 
 		if (siteURL == null)
@@ -92,37 +92,45 @@ public class InternalSiteManager {
 		if (fileProtocol) {
 			File dir;
 			dir = new File(siteURL.getFile());
-			if (dir != null && dir.isDirectory()){
-				if (!(new File(dir,Site.SITE_XML).exists()))
-				directoryExists = true;
+			if (dir != null && dir.isDirectory()) {
+				if (!(new File(dir, Site.SITE_XML).exists()))
+					directoryExists = true;
 			}
 		}
 
 		//PERF: if file: <path>/ and directory exists then consider executable
+		if (monitor != null) {
+			monitor.beginTask(null, 8);
+		}
 		if (fileProtocol && directoryExists) {
-			site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL);
+			site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL, monitor);
+			if (monitor != null)
+				monitor.worked(4); // only one attempt
 		} else {
 			try {
-				site = attemptCreateSite(DEFAULT_SITE_TYPE, siteURL);
+				site = attemptCreateSite(DEFAULT_SITE_TYPE, siteURL, monitor);
+				if (monitor != null)
+					monitor.worked(4);
 			} catch (CoreException preservedException) {
-				// attempt a retry is the protocol is file, with executbale type
-				if (!fileProtocol)
-					throw preservedException;
+				if (monitor==null ||(monitor != null && !monitor.isCanceled())) {
+					// attempt a retry is the protocol is file, with executbale type
+					if (!fileProtocol)
+						throw preservedException;
 
-				try {
-					site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL);
-				} catch (CoreException retryException) {
-					IStatus firstStatus = preservedException.getStatus();
-					MultiStatus multi = new MultiStatus(firstStatus.getPlugin(), IStatus.OK, Policy.bind("InternalSiteManager.FailedRetryAccessingSite"), retryException); //$NON-NLS-1$
-					multi.addAll(firstStatus);
-					throw preservedException;
+					try {
+						site = attemptCreateSite(DEFAULT_EXECUTABLE_SITE_TYPE, siteURL, monitor);
+					} catch (CoreException retryException) {
+						IStatus firstStatus = preservedException.getStatus();
+						MultiStatus multi = new MultiStatus(firstStatus.getPlugin(), IStatus.OK, Policy.bind("InternalSiteManager.FailedRetryAccessingSite"), retryException); //$NON-NLS-1$
+						multi.addAll(firstStatus);
+						throw preservedException;
+					}
 				}
 			}
 		}
 
 		if (site != null)
 			sites.put(siteURL, site);
-
 
 		//flush the JarFile we may hold on to
 		// we keep the temp not to create them again
@@ -140,11 +148,13 @@ public class InternalSiteManager {
 	 * if the site guessed is not the type found,
 	 * attempt to create a type with the type found in the site.xml
 	 */
-	private static ISite attemptCreateSite(String guessedTypeSite, URL siteURL) throws CoreException {
+	private static ISite attemptCreateSite(String guessedTypeSite, URL siteURL, IProgressMonitor monitor) throws CoreException {
 		ISite site = null;
 
 		try {
-			site = createSite(guessedTypeSite, siteURL);
+			site = createSite(guessedTypeSite, siteURL, monitor);
+			if (monitor != null)
+				monitor.worked(2); // no error, teh rtry doesn't need to be executed
 		} catch (InvalidSiteTypeException e) {
 
 			// the type in the site.xml is not the one expected	
@@ -160,7 +170,7 @@ public class InternalSiteManager {
 			try {
 				if (exception.getNewType() == null)
 					throw e;
-				site = createSite(exception.getNewType(), siteURL);
+				site = createSite(exception.getNewType(), siteURL, monitor);
 			} catch (InvalidSiteTypeException e1) {
 				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateSiteWithType", e.getNewType(), siteURL.toExternalForm()), e1);
 				//$NON-NLS-1$ //$NON-NLS-2$
@@ -192,15 +202,19 @@ public class InternalSiteManager {
 	 * 
 	 * 4 open the stream	
 	 */
-	private static ISite createSite(String siteType, URL url) throws CoreException, InvalidSiteTypeException {
+	private static ISite createSite(String siteType, URL url, IProgressMonitor monitor) throws CoreException, InvalidSiteTypeException {
 		ISite site = null;
 		ISiteFactory factory = SiteTypeFactory.getInstance().getFactory(siteType);
 
 		try {
-
+			if (monitor != null)
+				monitor.worked(1);
 			site = factory.createSite(url);
 
 		} catch (CoreException e) {
+			if (monitor != null && monitor.isCanceled())
+				return null;
+
 			// if the URL is pointing to either a file 
 			// or a directory, without reference			
 			if (url.getRef() != null) {
@@ -217,6 +231,8 @@ public class InternalSiteManager {
 					//$NON-NLS-1$ //$NON-NLS-2$
 				}
 				try {
+					if (monitor != null)
+						monitor.worked(1);
 					site = factory.createSite(urlRetry);
 				} catch (CoreException e1) {
 					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);
@@ -238,6 +254,8 @@ public class InternalSiteManager {
 				}
 
 				try {
+					if (monitor != null)
+						monitor.worked(1);
 					site = factory.createSite(urlRetry);
 				} catch (CoreException e1) {
 					throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToAccessURL", url.toExternalForm()), url.toExternalForm(), urlRetry.toExternalForm(), e, e1);
@@ -260,7 +278,7 @@ public class InternalSiteManager {
 		if (siteLocation != null) {
 			try {
 				URL siteURL = siteLocation.toURL();
-				site = getSite(siteURL, false);
+				site = getSite(siteURL, false, null);
 			} catch (MalformedURLException e) {
 				throw Utilities.newCoreException(Policy.bind("InternalSiteManager.UnableToCreateURL", siteLocation.getAbsolutePath()), e);
 				//$NON-NLS-1$
@@ -377,7 +395,7 @@ public class InternalSiteManager {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Method downloaded.
 	 * @param l
@@ -385,30 +403,33 @@ public class InternalSiteManager {
 	 * @param uRL
 	 */
 	public static void downloaded(long downloadSize, long time, URL url) {
-		if (downloadSize<=0 || time<0) return;
+		if (downloadSize <= 0 || time < 0)
+			return;
 		String host = url.getHost();
-		long sizeByTime= (time==0)?0:downloadSize/time;
+		long sizeByTime = (time == 0) ? 0 : downloadSize / time;
 		Long value = new Long(sizeByTime);
-		if (estimates==null){
+		if (estimates == null) {
 			estimates = new HashMap();
 		} else {
-			Long previous = (Long)estimates.get(host);
-			if (previous!=null){
-				value = new Long((previous.longValue()+sizeByTime)/2);
+			Long previous = (Long) estimates.get(host);
+			if (previous != null) {
+				value = new Long((previous.longValue() + sizeByTime) / 2);
 			}
 		}
-		estimates.put(host,value);
-	}	
+		estimates.put(host, value);
+	}
 	/**
 	 * Method estimate.
 	 * @param string
 	 * @return long
 	 */
 	public static long estimate(String host) {
-		if (estimates==null) return 0;
-		Long value = (Long)estimates.get(host);
-		if (value==null) return 0;
+		if (estimates == null)
+			return 0;
+		Long value = (Long) estimates.get(host);
+		if (value == null)
+			return 0;
 		return value.longValue();
 	}
-	
+
 }

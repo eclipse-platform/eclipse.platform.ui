@@ -1,6 +1,7 @@
 package org.eclipse.update.core;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.configuration.IConfiguredSite;
 import org.eclipse.update.core.model.IncludedFeatureReferenceModel;
 import org.eclipse.update.internal.core.UpdateCore;
@@ -111,21 +112,30 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 	}
 	
 	/**
-	 * @see org.eclipse.update.core.IFeatureReference#getFeature(boolean)
+	 * @see org.eclipse.update.core.IFeatureReference#getFeature(boolean,
+	 * IConfiguredSite)
 	 */
 	public IFeature getFeature(boolean perfectMatch,IConfiguredSite configuredSite) throws CoreException {
+		return getFeature(perfectMatch,configuredSite,null);
+	}	
+	
+	/**
+	 * @see org.eclipse.update.core.IFeatureReference#getFeature(boolean,
+	 * IConfiguredSite,IProgressMonitor)
+	 */
+	public IFeature getFeature(boolean perfectMatch,IConfiguredSite configuredSite,IProgressMonitor monitor) throws CoreException {
 
 		// if perfect match is asked or if the feature is disabled
 		// we return the exact match 		
 		if (perfectMatch || getMatch() == IImport.RULE_PERFECT || isDisabled()) {
-			return super.getFeature();
+			return super.getFeature(monitor);
 		} else {
 			if (bestMatchFeature == null) {
 				// find best match
 				if (configuredSite==null)
 					configuredSite = getSite().getCurrentConfiguredSite();
 				IFeatureReference bestMatch = getBestMatch(configuredSite);
-				bestMatchFeature = getFeature(bestMatch);
+				bestMatchFeature = getFeature(bestMatch,monitor);
 			}
 			return bestMatchFeature;
 		}
@@ -172,6 +182,13 @@ public class IncludedFeatureReference extends IncludedFeatureReferenceModel impl
 	 * @see org.eclipse.update.core.IFeatureReference#getFeature()
 	 */
 	public IFeature getFeature() throws CoreException {
-		return getFeature(false,null);
+		return getFeature(null);
 	}
+	/**
+	 * @see org.eclipse.update.core.IFeatureReference#getFeature
+	 * (IProgressMonitor)
+	 */
+	public IFeature getFeature(IProgressMonitor monitor) throws CoreException {
+		return getFeature(false,null,monitor);
+	}	
 }

@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.URLEntryModel;
 
@@ -18,9 +19,9 @@ import org.eclipse.update.core.model.URLEntryModel;
 public class FeaturePackagedFactory extends BaseFeatureFactory {
 
 	/*
-	 * @see IFeatureFactory#createFeature(URL,ISite)
+	 * @see IFeatureFactory#createFeature(URL,ISite,IProgressMonitor)
 	 */
-	public IFeature createFeature(URL url,ISite site) throws CoreException {
+	public IFeature createFeature(URL url,ISite site, IProgressMonitor monitor) throws CoreException {
 		Feature feature = null;
 		InputStream featureStream = null;
 		

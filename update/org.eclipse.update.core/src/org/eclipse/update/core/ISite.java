@@ -293,8 +293,26 @@ public interface ISite extends IAdaptable {
 	* param url URL of the feature archive as listed in the site.
 	* return newly created feature object, or a cached value if
 	* caching is implemented by this site.
+	* @deprecated use createFeature(String,URL,IProgressMonitor) instead
+	* @since 2.0.2
 	*/
-
 	IFeature createFeature(String type, URL url) throws CoreException;
+
+	/**
+	* Creates a new feature object. The feature must exist on this site
+	* or a core exception will be thrown. Concrete implementations 
+	* may elect to cache instances, in which case subsequent calls 
+	* to create a feature with the same URL will
+	* return the same instance.
+	* param type the feature type that will be used to select the factory. If
+	* <code>null</code> is passed, default feature type will be used.
+	* param url URL of the feature archive as listed in the site.
+	* return newly created feature object, or a cached value if
+	* caching is implemented by this site.
+	* @param monitor the progress monitor
+	* @since 2.1
+	*/
+	IFeature createFeature(String type, URL url,IProgressMonitor monitor) throws CoreException;
+
 
 }

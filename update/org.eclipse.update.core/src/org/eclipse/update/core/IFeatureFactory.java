@@ -7,6 +7,7 @@ package org.eclipse.update.core;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Feature factory interface.
@@ -35,7 +36,25 @@ public interface IFeatureFactory {
 	 * @param site site to be associated with the feature
 	 * @return concrete feature object
 	 * @exception CoreException
+	 * @deprecated use createFeature(URL, ISite, IProgressMonitor) instead
 	 * @since 2.0 
 	 */
 	public IFeature createFeature(URL url, ISite site) throws CoreException;
+	
+	/**
+	 * Returns a feature defined by the supplied URL. The feature
+	 * is associated with the specified site.
+	 * <p>
+	 * The actual interpretation of the URL is feature-type specific.
+	 * In most cases the URL will point to some feature-specific
+	 * file that can be used (directly or indirectly) to construct
+	 * the feature object.
+	 * </p>
+	 * @param url URL interpreted by the feature
+	 * @param site site to be associated with the feature
+	 * @return concrete feature object
+	 * @exception CoreException
+	 * @since 2.1 
+	 */
+	public IFeature createFeature(URL url, ISite site, IProgressMonitor monitor) throws CoreException;	
 }

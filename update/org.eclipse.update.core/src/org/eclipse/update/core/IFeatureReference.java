@@ -8,6 +8,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Feature reference.
@@ -52,9 +53,21 @@ public interface IFeatureReference extends IAdaptable,IPlatformEnvironment {
 	 * This is a factory method that creates the full feature object.
 	 * 
 	 * @return the referenced feature
+	 * @deprecated use getFeature(IProgressMonitor) instead
 	 * @since 2.0 
 	 */
 	public IFeature getFeature() throws CoreException;
+
+	/**
+	 * Returns the referenced feature.
+	 * This is a factory method that creates the full feature object.
+	 * 
+	 * @param monitor the progress monitor
+	 * @return the referenced feature
+	 * @since 2.1 
+	 */
+	public IFeature getFeature(IProgressMonitor monitor) throws CoreException;
+
 
 	/**
 	 * Returns the feature identifier.

@@ -68,10 +68,18 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 *  @return the feature on the Site
 	 */
 	public IFeature getFeature() throws CoreException {
+		return getFeature(null);
+	}
+
+	/**
+	 * Returns the feature this reference points to 
+	 *  @return the feature on the Site
+	 */
+	public IFeature getFeature(IProgressMonitor monitor) throws CoreException {
 
 		if (exactFeature != null)
 			return exactFeature;
-		exactFeature = getFeature(this);
+		exactFeature = getFeature(this,monitor);
 		return exactFeature;
 	}
 
@@ -80,27 +88,27 @@ public class FeatureReference extends FeatureReferenceModel implements IFeatureR
 	 * @param the feature reference
 	 * @return the feature on the Site
 	 */
-	protected IFeature getFeature(IFeatureReference ref) throws CoreException {
+	protected IFeature getFeature(IFeatureReference ref,IProgressMonitor monitor) throws CoreException {
 
 		IFeature feature = null;
 		URL refURL = ref.getURL();
-		feature = createFeature(refURL);
+		feature = createFeature(refURL,monitor);
 		return feature;
 	}
 
 	/*
 	 * create an instance of a concrete feature corresponding to this reference
 	 */
-	private IFeature createFeature(URL url) throws CoreException {
+	private IFeature createFeature(URL url,IProgressMonitor monitor) throws CoreException {
 		String type = getType();
 		ISite site = getSite();
 		// if the site exists, use the site factory
 		if (site != null) {
-			return site.createFeature(type, url);
+			return site.createFeature(type, url, monitor);
 		}
 		
 		IFeatureFactory factory = FeatureTypeFactory.getInstance().getFactory(type);
-		return factory.createFeature(url, site);
+		return factory.createFeature(url, site, monitor);
 	}
 
 	/**

@@ -7,6 +7,7 @@ package org.eclipse.update.core;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.model.*;
 
 /**
@@ -23,19 +24,26 @@ import org.eclipse.update.core.model.*;
  * @see org.eclipse.update.core.model.FeatureModelFactory
  * @since 2.0
  */
-public abstract class BaseFeatureFactory
-	extends FeatureModelFactory
-	implements IFeatureFactory {
+public abstract class BaseFeatureFactory extends FeatureModelFactory implements IFeatureFactory {
+
+	/**
+	 * 
+	 * @deprecated implement createFeature(URL, ISite, IProgressMonitor) instead
+	 * @see IFeatureFactory#createFeature(URL,ISite)
+	 * @since 2.0
+	 */
+	public IFeature createFeature(URL url, ISite site) throws CoreException {
+		return createFeature(url, site, null);
+	}
 
 	/**
 	 * Create feature. Implementation of this method must be provided by 
 	 * subclass
 	 * 
-	 * @see IFeatureFactory#createFeature(URL,ISite)
+	 * @see IFeatureFactory#createFeature(URL,ISite,IProgressMonitor)
 	 * @since 2.0
 	 */
-	public abstract IFeature createFeature(URL url, ISite site)
-		throws CoreException;
+	public abstract IFeature createFeature(URL url, ISite site, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Create a concrete implementation of feature model.

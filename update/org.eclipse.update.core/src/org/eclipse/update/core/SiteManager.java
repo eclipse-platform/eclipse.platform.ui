@@ -8,6 +8,7 @@ import java.net.URL;
 
 import org.eclipse.core.boot.BootLoader;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.configuration.ILocalSite;
 import org.eclipse.update.internal.core.InternalSiteManager;
 import org.eclipse.update.internal.core.UpdateCore;
@@ -46,10 +47,27 @@ public class SiteManager {
 	 * @param siteURL site URL
 	 * @return site object for the url
 	 * @exception CoreException
+	 * @deprecated use getSite(URL,IPogressMonitor) instead
 	 * @since 2.0 
 	 */
 	public static ISite getSite(URL siteURL) throws CoreException {
-		return InternalSiteManager.getSite(siteURL, true);
+		return InternalSiteManager.getSite(siteURL, true,null);
+	}
+
+	/** 
+	 * Returns a site object for the site specified by the argument URL.
+	 * Typically, the URL references a site manifest file on an update 
+	 * site. An update site acts as a source of features for installation
+	 * actions.
+	 * 
+	 * @param siteURL site URL
+	 * @param monitor the progress monitor
+	 * @return site object for the url
+	 * @exception CoreException
+	 * @since 2.1 
+	 */
+	public static ISite getSite(URL siteURL, IProgressMonitor monitor) throws CoreException {
+		return InternalSiteManager.getSite(siteURL, true, monitor);
 	}
 
 	/** 
@@ -62,11 +80,30 @@ public class SiteManager {
 	 * @param usesCache <code>false</code> if the cache should be refreshed, and the site entirely reparsed, <code>false</code> otherwise.
 	 * @return site object for the url
 	 * @exception CoreException
+	 * @deprecated use getSite(URL,boolean,IPogressMonitor) instead
 	 * @since 2.0 
 	 */
 	public static ISite getSite(URL siteURL, boolean usesCache) throws CoreException {
-		return InternalSiteManager.getSite(siteURL, usesCache);
+		return InternalSiteManager.getSite(siteURL, usesCache,null);
 	}
+
+	/** 
+	 * Returns a site object for the site specified by the argument URL.
+	 * Typically, the URL references a site manifest file on an update 
+	 * site. An update site acts as a source of features for installation
+	 * actions.
+	 * 
+	 * @param siteURL site URL
+	 * @param usesCache <code>false</code> if the cache should be refreshed, and the site entirely reparsed, <code>false</code> otherwise.
+	 * @param monitor the progress monitor
+	 * @return site object for the url
+	 * @exception CoreException
+	 * @since 2.1
+	 */
+	public static ISite getSite(URL siteURL, boolean usesCache, IProgressMonitor monitor) throws CoreException {
+		return InternalSiteManager.getSite(siteURL, usesCache, monitor);
+	}
+
 
 	/**
 	 * Returns the "local site". A local site is a logical collection

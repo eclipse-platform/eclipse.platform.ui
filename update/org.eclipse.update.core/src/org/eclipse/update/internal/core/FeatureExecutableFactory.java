@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.update.core.*;
 import org.eclipse.update.core.model.FeatureModel;
 
@@ -19,9 +20,9 @@ import org.eclipse.update.core.model.FeatureModel;
 public class FeatureExecutableFactory extends BaseFeatureFactory {
 
 	/*
-	 * @see IFeatureFactory#createFeature(URL,ISite)
+	 * @see IFeatureFactory#createFeature(URL,ISite,IProgressMonitor)
 	 */
-	public IFeature createFeature(URL url, ISite site) throws CoreException {
+	public IFeature createFeature(URL url, ISite site, IProgressMonitor monitor) throws CoreException {
 	
 	
 		TargetFeature feature = null;
@@ -36,12 +37,11 @@ public class FeatureExecutableFactory extends BaseFeatureFactory {
 		try {
 			IFeatureContentProvider contentProvider =
 				new FeatureExecutableContentProvider(url);
-			// PERF: FeatureContentConsumer
+			// PERF: Do not create FeatureContentConsumer
 			//IFeatureContentConsumer contentConsumer =new FeatureExecutableContentConsumer();
 	
 			URL nonResolvedURL =
-				contentProvider.getFeatureManifestReference(null /*IProgressMonitor*/
-			).asURL(); 
+				contentProvider.getFeatureManifestReference(null /*InstallMonitor */).asURL(); 
 			URL resolvedURL = URLEncoder.encode(nonResolvedURL);
 			featureStream = UpdateCore.getPlugin().get(resolvedURL).getInputStream();
 	
