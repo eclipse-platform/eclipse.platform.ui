@@ -30,10 +30,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IProcess;
-import org.eclipse.debug.core.variables.ContextLaunchVariableRegistry;
 import org.eclipse.debug.core.variables.IContextLaunchVariableRegistry;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariableRegistry;
-import org.eclipse.debug.core.variables.RefreshScopeVariableRegistry;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.ExpressionManager;
@@ -41,6 +39,8 @@ import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.ListenerList;
 import org.eclipse.debug.internal.core.RuntimeProcess;
 import org.eclipse.debug.internal.core.SimpleVariableRegistry;
+import org.eclipse.debug.internal.core.variables.ContextLaunchVariableRegistry;
+import org.eclipse.debug.internal.core.variables.RefreshScopeVariableRegistry;
 
 /**
  * There is one instance of the debug plug-in available from

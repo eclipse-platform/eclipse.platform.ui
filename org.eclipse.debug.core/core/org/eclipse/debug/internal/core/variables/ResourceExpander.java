@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables.expanders;
+package org.eclipse.debug.internal.core.variables;
 
 
 import org.eclipse.core.resources.IResource;
@@ -17,9 +17,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.debug.core.variables.*;
+import org.eclipse.debug.core.variables.DefaultVariableExpander;
 import org.eclipse.debug.core.variables.ExpandVariableContext;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
-import org.eclipse.debug.ui.launchVariables.IVariableConstants;
 
 /**
  * Expands a resource type variable into the desired
@@ -71,7 +70,7 @@ public class ResourceExpander extends DefaultVariableExpander {
 				return resource.getLocation();
 			}
 		}
-		throwExpansionException(varTag, LaunchConfigurationsMessages.getString("ResourceExpander.No_resource_selected._1")); //$NON-NLS-1$
+		throwExpansionException(varTag, LaunchVariableMessages.getString("ResourceExpander.0")); //$NON-NLS-1$
 		return null;
 	}
 	
@@ -81,9 +80,9 @@ public class ResourceExpander extends DefaultVariableExpander {
 	 * expand to paths relative to the workspace root.
 	 */
 	private boolean isPathVariable(String varTag) {
-		return varTag.equals(IVariableConstants.VAR_CONTAINER_PATH) ||
-				varTag.equals(IVariableConstants.VAR_PROJECT_PATH) ||
-				varTag.equals(IVariableConstants.VAR_RESOURCE_PATH);
+		return varTag.equals(ILaunchVariableConstants.VAR_CONTAINER_PATH) ||
+				varTag.equals(ILaunchVariableConstants.VAR_PROJECT_PATH) ||
+				varTag.equals(ILaunchVariableConstants.VAR_RESOURCE_PATH);
 	}
 
 	/**
@@ -94,7 +93,7 @@ public class ResourceExpander extends DefaultVariableExpander {
 		if (resource != null) {
 			return new IResource[] {resource};
 		}
-		throwExpansionException(varTag, LaunchConfigurationsMessages.getString("ResourceExpander.No_resource_selected._2")); //$NON-NLS-1$
+		throwExpansionException(varTag, LaunchVariableMessages.getString("ResourceExpander.1")); //$NON-NLS-1$
 		return null;
 	}
 	
@@ -116,7 +115,7 @@ public class ResourceExpander extends DefaultVariableExpander {
 		if (path != null) {
 			return path.toOSString();
 		}
-		throwExpansionException(varTag, LaunchConfigurationsMessages.getString("ResourceExpander.No_resource_selected._3")); //$NON-NLS-1$
+		throwExpansionException(varTag, LaunchVariableMessages.getString("ResourceExpander.2")); //$NON-NLS-1$
 		return null;
 	}
 

@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.core.variables;
+package org.eclipse.debug.internal.core.variables;
 
 
 import java.util.SortedMap;
@@ -22,6 +22,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.variables.IContextLaunchVariable;
+import org.eclipse.debug.core.variables.IContextLaunchVariableRegistry;
 
 /**
  * Registry for context launch variables.

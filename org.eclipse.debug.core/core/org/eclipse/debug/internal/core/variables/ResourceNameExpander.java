@@ -8,28 +8,26 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables.expanders;
+package org.eclipse.debug.internal.core.variables;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.variables.*;
 import org.eclipse.debug.core.variables.ExpandVariableContext;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 
 /**
  * Extracts the resource name from a variable context
  */
-public class ResourceNameExpander extends DefaultVariableExpander {
+public class ResourceNameExpander extends ResourceExpander {
 
 	/**
 	 * @see IVariableExpander#getText(String, String, ExpandVariableContext)
 	 */
 	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
-		IResource resource= context.getSelectedResource();
+		IResource resource= expand(varValue, context);
 		if (resource != null) {
 			return resource.getName();
 		}
-		throwExpansionException(varTag, LaunchConfigurationsMessages.getString("ResourceNameExpander.No_resource_selected._1")); //$NON-NLS-1$
+		throwExpansionException(varTag, LaunchVariableMessages.getString("ResourceNameExpander.0")); //$NON-NLS-1$
 		return null;
 	}
 }

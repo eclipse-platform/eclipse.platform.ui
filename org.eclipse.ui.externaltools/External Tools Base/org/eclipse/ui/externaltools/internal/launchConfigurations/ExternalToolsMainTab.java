@@ -22,10 +22,10 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.variables.IContextLaunchVariableRegistry;
+import org.eclipse.debug.core.variables.ILaunchVariableConstants;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariableRegistry;
 import org.eclipse.debug.core.variables.VariableUtil;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.launchVariables.IVariableConstants;
 import org.eclipse.debug.ui.launchVariables.VariableSelectionDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -513,7 +513,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		}
 		IResource resource = (IResource)results[0];
 		StringBuffer buf = new StringBuffer();
-		VariableUtil.buildVariableTag(IVariableConstants.VAR_WORKSPACE_LOC, resource.getFullPath().toString(), buf);
+		VariableUtil.buildVariableTag(ILaunchVariableConstants.VAR_WORKSPACE_LOC, resource.getFullPath().toString(), buf);
 		String text= buf.toString();
 		if (text != null) {
 			locationField.setText(text);
@@ -536,7 +536,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		Object[] resource = containerDialog.getResult();
 		String text= null;
 		if (resource != null && resource.length > 0) {
-			text= VariableUtil.buildVariableTag(IVariableConstants.VAR_WORKSPACE_LOC, ((IPath)resource[0]).toString());
+			text= VariableUtil.buildVariableTag(ILaunchVariableConstants.VAR_WORKSPACE_LOC, ((IPath)resource[0]).toString());
 		}
 		if (text != null) {
 			workDirectoryField.setText(text);

@@ -8,22 +8,22 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables.expanders;
+package org.eclipse.debug.internal.core.variables;
 
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.variables.ExpandVariableContext;
 
 /**
- * Expands a resource's project type variable into the desired
+ * Expands a workspace variable into the desired
  * result format.
  */
-public class ProjectExpander extends ResourceExpander {
+public class WorkspaceExpander extends ResourceExpander {
 
 	/**
 	 * Create an instance
 	 */
-	public ProjectExpander() {
+	public WorkspaceExpander() {
 		super();
 	}
 
@@ -31,21 +31,6 @@ public class ProjectExpander extends ResourceExpander {
 	 * @see ResourceExpander#expandUsingContext(ExpandVariableContext)
 	 */
 	protected IResource expandUsingContext(ExpandVariableContext context) {
-		IResource resource = context.getSelectedResource();
-		if (resource != null) {
-			return resource.getProject();
-		}
-		return null;
-	}
-	
-	/**
-	 * @see ResourceExpander#expandToMember(String)
-	 */
-	protected IResource expandToMember(String varValue) {
-		IResource member = super.expandToMember(varValue);
-		if (member != null) {
-			return member.getProject();
-		}
-		return null;
+		return getWorkspaceRoot();
 	}
 }

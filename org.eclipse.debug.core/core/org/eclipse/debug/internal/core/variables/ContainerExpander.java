@@ -8,29 +8,34 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables.expanders;
+package org.eclipse.debug.internal.core.variables;
 
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.debug.core.variables.ExpandVariableContext;
 
 /**
- * Expands a workspace variable into the desired
+ * Expands a resource's container type variable into the desired
  * result format.
+ * @since 3.0
  */
-public class WorkspaceExpander extends ResourceExpander {
+public class ContainerExpander extends ResourceExpander {
 
 	/**
 	 * Create an instance
 	 */
-	public WorkspaceExpander() {
+	public ContainerExpander() {
 		super();
 	}
 
 	/**
-	 * @see ResourceExpander#expandUsingContext(ExpandVariableContext)
+	 * @see ResourceExpander#expand(String, ExpandVariableContext)
 	 */
-	protected IResource expandUsingContext(ExpandVariableContext context) {
-		return getWorkspaceRoot();
+	protected IResource expand(String varValue, ExpandVariableContext context) {
+		IResource resource = super.expand(varValue, context);
+		if (resource != null) {
+			return resource.getParent();
+		}
+		return null;
 	}
 }

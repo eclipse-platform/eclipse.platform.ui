@@ -8,33 +8,27 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.debug.ui.launchVariables.expanders;
+package org.eclipse.debug.internal.core.variables;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.variables.*;
 import org.eclipse.debug.core.variables.ExpandVariableContext;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 
 /**
  * Extracts the project name from a variable context
  */
-public class ProjectNameExpander extends DefaultVariableExpander {
+public class ProjectNameExpander extends ProjectExpander {
 
 	/**
 	 * Returns the name of the project in the given context or
 	 * <code>null</code> if there is no project in the context.
 	 */
 	public String getText(String varTag, String varValue, ExpandVariableContext context) throws CoreException {
-		IResource resource= context.getSelectedResource();
+		IResource resource= expand(varValue, context);
 		if (resource != null) {
-			IProject project= resource.getProject();
-			if (project != null) {
-				return project.getName();
-			}
+			return resource.getName();
 		}
-		throwExpansionException(varTag, LaunchConfigurationsMessages.getString("ProjectNameExpander.No_resource_selected._1")); //$NON-NLS-1$
+		throwExpansionException(varTag, LaunchVariableMessages.getString("ProjectNameExpander.0")); //$NON-NLS-1$
 		return null;
 	}
 }

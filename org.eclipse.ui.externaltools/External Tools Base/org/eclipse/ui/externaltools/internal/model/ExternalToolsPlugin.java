@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPluginDescriptor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.variables.RefreshScopeVariableRegistry;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -37,8 +36,6 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	public static final IStatus OK_STATUS = new Status(IStatus.OK, IExternalToolConstants.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
 
 	private static ExternalToolsPlugin plugin;
-
-	private RefreshScopeVariableRegistry refreshVarRegistry;
 	
 	private static final String EMPTY_STRING= ""; //$NON-NLS-1$
 
@@ -73,16 +70,6 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin {
 	 */
 	public static CoreException newError(String message, Throwable exception) {
 		return new CoreException(new Status(Status.ERROR, IExternalToolConstants.PLUGIN_ID, 0, message, exception));
-	}
-
-	/**
-	 * Returns the registry of refresh scope variables.
-	 */
-	public RefreshScopeVariableRegistry getRefreshVariableRegistry() {
-		if (refreshVarRegistry == null) {
-			refreshVarRegistry = new RefreshScopeVariableRegistry();
-		}
-		return refreshVarRegistry;
 	}
 
 	/**

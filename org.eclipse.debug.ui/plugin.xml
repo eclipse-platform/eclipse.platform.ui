@@ -1212,56 +1212,6 @@
    <extension
          point="org.eclipse.debug.core.contextLaunchVariables">
       <variable
-            name="workspace_loc"
-            expanderClass="org.eclipse.debug.ui.launchVariables.expanders.WorkspaceExpander"
-            description="%workspace_loc.description">
-      </variable>
-      <variable
-            name="project_loc"
-            expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ProjectExpander"
-            description="%project_loc.description">
-      </variable>
-      <variable
-            name="project_path"
-            expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ProjectExpander"
-            description="%project_path.description">
-      </variable>
-      <variable
-            name="project_name"
-            expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ProjectNameExpander"
-            description="%project_name.description">
-      </variable>
-      <variable
-            name="resource_loc"
-            expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ResourceExpander"
-            description="%resource_loc.description">
-      </variable>
-      <variable
-            name="resource_path"
-            expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ResourceExpander"
-            description="%resource_path.description">
-      </variable>
-      <variable
-            name="resource_name"
-            expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ResourceNameExpander"
-            description="%resource_name.description">
-      </variable>
-      <variable
-            name="container_loc"
-            expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ContainerExpander"
-            description="%container_loc.description">
-      </variable>
-      <variable
-            name="container_path"
-            expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ContainerExpander"
-            description="%container_path.description">
-      </variable>
-      <variable
-            name="container_name"
-            expanderClass="org.eclipse.debug.ui.launchVariables.expanders.ContainerNameExpander"
-            description="%container_name.description">
-      </variable>
-      <variable
             name="string_prompt"
             expanderClass="org.eclipse.debug.ui.launchVariables.expanders.StringPromptExpander"
             description="%string_prompt.description">
@@ -1282,7 +1232,7 @@
 		<variable
 			name="workspace"
 			description="%workspace.description"
-			expanderClass="org.eclipse.debug.ui.launchVariables.expanders.WorkspaceExpander">
+			expanderClass="org.eclipse.debug.internal.core.variables.WorkspaceExpander">
 		</variable>
 		<variable
 			name="project"
