@@ -83,6 +83,9 @@ protected boolean copyContents(UnifiedTreeNode node, Resource source, Resource d
 		destinationInfo.clear(ICoreConstants.M_LINK);
 		IPath destinationLocation = destination.getLocation();
 		destinationLocation.toFile().setLastModified(lastModified);
+		//update timestamps on aliases
+		//XXX: this will update aliases twice because setContents above will also do it
+		((Workspace)rootDestination.getWorkspace()).getAliasManager().updateAliases(destination, destinationLocation, new NullProgressMonitor());
 		// update file attributes
 		CoreFileSystemLibrary.copyAttributes(source.getLocation().toOSString(), destinationLocation.toOSString(), false);
 		destination.getLocalManager().getHistoryStore().copyHistory(source.getFullPath(), destination.getFullPath());
