@@ -11,9 +11,7 @@
 package org.eclipse.debug.internal.core;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,10 +22,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.xerces.dom.DocumentImpl;
-import org.apache.xml.serialize.Method;
-import org.apache.xml.serialize.OutputFormat;
-import org.apache.xml.serialize.Serializer;
-import org.apache.xml.serialize.SerializerFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -35,9 +29,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.variables.ILaunchVariableInitializer;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariable;
 import org.eclipse.debug.core.variables.ISimpleLaunchVariableRegistry;
-import org.eclipse.debug.core.variables.ILaunchVariableInitializer;
 import org.eclipse.debug.core.variables.SimpleLaunchVariable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -221,17 +215,6 @@ public class SimpleVariableRegistry implements ISimpleLaunchVariableRegistry {
 			element.setAttribute(VALUE_TAG, ((ISimpleLaunchVariable)entry.getValue()).getText());
 			rootElement.appendChild(element);
 		}
-
-		ByteArrayOutputStream s= new ByteArrayOutputStream();
-		OutputFormat format = new OutputFormat();
-		format.setIndenting(true);
-		format.setLineSeparator(System.getProperty("line.separator")); //$NON-NLS-1$
-		
-		Serializer serializer =
-			SerializerFactory.getSerializerFactory(Method.XML).makeSerializer(
-				new OutputStreamWriter(s, "UTF8"), //$NON-NLS-1$
-				format);
-		serializer.asDOMSerializer().serialize(document);
-		return s.toString("UTF8"); //$NON-NLS-1$
+		return LaunchManager.serializeDocument(document);
 	}
 }
