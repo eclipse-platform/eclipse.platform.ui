@@ -13,6 +13,7 @@ import java.util.Vector;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.IDiffContainer;
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,7 +26,10 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.core.sync.IRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSRemoteSyncElement;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.RepositoryManager;
@@ -172,6 +176,19 @@ public class CommitSyncAction extends MergeAction {
 					CVSRemoteSyncElement element = (CVSRemoteSyncElement)((ChangedTeamContainer)node).getMergeResource().getSyncElement();
 					element.makeIncoming(monitor);
 					element.getLocal().delete(true, monitor);
+				}
+			}
+			
+			// Reset the timestamps for any files that were not committed
+			// because their contents match that of the server
+			for (int i = 0; i < changedResources.length; i++) {
+				IResource resource = changedResources[i];
+				if (resource.getType() == IResource.FILE) {
+					ICVSFile cvsFile = CVSWorkspaceRoot.getCVSFileFor((IFile)resource);
+					// If the file is still modified after the commit, it probably is a pseudo change
+					if (cvsFile.isModified()) {
+						cvsFile.setTimeStamp(cvsFile.getSyncInfo().getTimeStamp());
+					}
 				}
 			}
 			
