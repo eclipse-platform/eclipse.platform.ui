@@ -66,7 +66,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * specified, a new source locator will be created automatically and
 	 * associated with the launch for this configuration.
 	 * 
-	 * @see IPersistableSourceLocator
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator
 	 */
 	public static final String ATTR_SOURCE_LOCATOR_ID = DebugPlugin.getUniqueIdentifier() + ".source_locator_id"; //$NON-NLS-1$
 	
@@ -78,7 +78,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * When not specified, but a source locator id is specified,
 	 * the source locator will be initialized to default values.
 	 * 
-	 * @see IPersistableSourceLocator 
+	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator
 	 */
 	public static final String ATTR_SOURCE_LOCATOR_MEMENTO = DebugPlugin.getUniqueIdentifier() + ".source_locator_memento"; //$NON-NLS-1$
 	

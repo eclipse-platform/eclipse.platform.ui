@@ -92,7 +92,7 @@ public interface ILaunchConfigurationDialog extends IRunnableContext {
 	 * run or debug.
 	 * 
 	 * @return one of <code>RUN_MODE</code> or <code>DEBUG_MODE</code> defined in <code>ILaunchManager</code>
-	 * @see ILaunchManager
+	 * @see org.eclipse.debug.core.ILaunchManager
 	 */
 	public String getMode();	
 	

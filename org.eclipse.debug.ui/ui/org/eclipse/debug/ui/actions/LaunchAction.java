@@ -60,7 +60,7 @@ public class LaunchAction extends Action {
 	}
 
 	/**
-	 * @see IAction
+	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	public void run() {
 		DebugUITools.launch(fConfiguration, fMode);

@@ -59,7 +59,7 @@ public class AbstractLaunchToolbarAction extends AbstractLaunchHistoryAction {
 	/**
 	 * Launch the last launch, or open the launch config dialog if none.
 	 * 
-	 * @see IActionDelegate#run(IAction)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
 		ILaunchConfiguration configuration = getLastLaunch();

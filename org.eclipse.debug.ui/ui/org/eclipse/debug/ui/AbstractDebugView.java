@@ -789,7 +789,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	}
 
 	/**
-	 * @see PageBookView#doDestroyPage(IWorkbenchPart, PageRec)
+	 * @see PageBookView#doDestroyPage(org.eclipse.ui.IWorkbenchPart, org.eclipse.ui.part.PageBookView.PageRec)
 	 */
 	protected void doDestroyPage(IWorkbenchPart part, PageRec pageRecord) {
 	}

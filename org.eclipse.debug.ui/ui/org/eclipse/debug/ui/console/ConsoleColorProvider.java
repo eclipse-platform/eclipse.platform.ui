@@ -31,7 +31,7 @@ public class ConsoleColorProvider implements IConsoleColorProvider {
 	private IConsole fConsole;
 	
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleColorProvider#connect(IProcess, IConsole)
+	 * @see IConsoleColorProvider#connect(IProcess, IConsole)
 	 */
 	public void connect(IProcess process, IConsole 	console) {
 		fProcess = process;
@@ -40,7 +40,7 @@ public class ConsoleColorProvider implements IConsoleColorProvider {
 	}
 
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleColorProvider#disconnect()
+	 * @see IConsoleColorProvider#disconnect()
 	 */
 	public void disconnect() {
 		fConsole = null;
@@ -48,14 +48,14 @@ public class ConsoleColorProvider implements IConsoleColorProvider {
 	}
 
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleColorProvider#isReadOnly()
+	 * @see IConsoleColorProvider#isReadOnly()
 	 */
 	public boolean isReadOnly() {
 		return fProcess == null || fProcess.isTerminated();
 	}
 
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleColorProvider#getForeground(java.lang.String)
+	 * @see IConsoleColorProvider#getColor(String)
 	 */
 	public Color getColor(String streamIdentifer) {
 		if (IDebugUIConstants.ID_STANDARD_OUTPUT_STREAM.equals(streamIdentifer)) {

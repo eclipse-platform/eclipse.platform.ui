@@ -182,7 +182,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	}
 
 	/**
-	 * @see IWorkbenchWindowActionDelegate#dispose()
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
 		setMenu(null);
@@ -197,7 +197,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	}
 
 	/**
-	 * @see IWorkbenchWindowPulldownDelegate#getMenu(Control)
+	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
 	 */
 	public Menu getMenu(Control parent) {
 		setMenu(new Menu(parent));
@@ -207,7 +207,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	}
 	
 	/**
-	 * @see IMenuCreator#getMenu(Menu)
+	 * @see org.eclipse.jface.action.IMenuCreator#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
 	public Menu getMenu(Menu parent) {
 		setMenu(new Menu(parent));
@@ -291,14 +291,14 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	}
 	
 	/**
-	 * @see IActionDelegate#run(IAction)
+	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
 		// do nothing - this is just a menu
 	}
 
 	/**
-	 * @see IActionDelegate#selectionChanged(IAction, ISelection)
+	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection){
 		if (fAction == null) {
@@ -307,7 +307,7 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	}
 	
 	/**
-	 * @see IWorkbenchWindowActionDelegate#init(IWorkbenchWindow)
+	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
 	 */
 	public void init(IWorkbenchWindow window){
 	}

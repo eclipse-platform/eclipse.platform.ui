@@ -61,7 +61,7 @@ public class FileLink implements IConsoleHyperlink {
 	}
 
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleHyperlink#linkActivated()
+	 * @see IConsoleHyperlink#linkActivated()
 	 */
 	public void linkActivated() {
 		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
@@ -105,13 +105,13 @@ public class FileLink implements IConsoleHyperlink {
 	}
 
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleHyperlink#linkEntered()
+	 * @see IConsoleHyperlink#linkEntered()
 	 */
 	public void linkEntered() {
 	}
 
 	/**
-	 * @see org.eclipse.debug.internal.ui.views.console.IConsoleHyperlink#linkExited()
+	 * @see IConsoleHyperlink#linkExited()
 	 */
 	public void linkExited() {
 	}
