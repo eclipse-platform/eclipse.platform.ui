@@ -58,7 +58,6 @@ public class Document extends AbstractDocument {
 		if (getStore() instanceof SequentialRewriteTextStore) {
 			SequentialRewriteTextStore srws= (SequentialRewriteTextStore) getStore();
 			ITextStore source= srws.getSourceStore();
-			source.set(srws.get(0, srws.getLength()));
 			setTextStore(source);
 			srws.dispose();
 		}
