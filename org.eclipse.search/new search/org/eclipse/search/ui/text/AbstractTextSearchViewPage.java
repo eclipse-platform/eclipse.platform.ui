@@ -922,9 +922,9 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 
 	private void addLayoutActions(IMenuManager menuManager) {
 		if (fFlatAction != null)
-			menuManager.add(fFlatAction);
+			menuManager.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fFlatAction);
 		if (fHierarchicalAction != null)
-			menuManager.add(fHierarchicalAction);
+			menuManager.appendToGroup(IContextMenuConstants.GROUP_VIEWER_SETUP, fHierarchicalAction);
 	}
 
 	/**

@@ -291,6 +291,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 	
 		createActions();
 		initializeToolBar();
+		createStandardGroups(getViewSite().getActionBars().getMenuManager());
 		InternalSearchUI.getInstance().getSearchManager().addQueryListener(this);
 	}
 
