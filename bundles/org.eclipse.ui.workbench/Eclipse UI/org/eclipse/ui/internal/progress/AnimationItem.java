@@ -211,10 +211,14 @@ public class AnimationItem {
 		if(floatingWindow != null)
 			return;
 		
+		//Don't bother if there is nothing showing yet
+		if(!window.getShell().isVisible())
+			return;
+		
 		floatingWindow =
 			new ProgressFloatingWindow(window.getShell(), imageCanvas);
 
-		UIJob floatingJob = new WorkbenchJob(ProgressMessages.getString("AnimationItem.openFloatingWindowJob")) { //$NON-NLS-1$
+		WorkbenchJob floatingJob = new WorkbenchJob(ProgressMessages.getString("AnimationItem.openFloatingWindowJob")) { //$NON-NLS-1$
 			/*
 			 * (non-Javadoc)
 			 * 
