@@ -999,6 +999,7 @@
    </extension>
    <extension
          point="org.eclipse.ui.propertyPages">
+<!--
       <page
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
@@ -1006,6 +1007,7 @@
             class="org.eclipse.ui.internal.dialogs.ProjectCapabilityEditingPropertyPage"
             id="org.eclipse.ui.propertypages.project.capability">
       </page>
+-->
       <page
             objectClass="org.eclipse.core.resources.IProject"
             adaptable="true"
