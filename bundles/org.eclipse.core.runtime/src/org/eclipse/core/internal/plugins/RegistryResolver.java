@@ -28,6 +28,10 @@ public class RegistryResolver {
 	private static final String OPTION_DEBUG_RESOLVE = "org.eclipse.core.runtime/registry/debug/resolve";
 
 	// constraint entry
+	// A constraint is made for each relationship where 'parent' requires 'prq'.
+	// ver is the version number we must try to match.  It can be null if we just
+	// want to match the latest.
+	// cEntry points to the parent ConstraintsEntry element.
 	private class Constraint {
 		private PluginDescriptorModel parent;
 		private PluginPrerequisiteModel prq;
@@ -85,31 +89,60 @@ public class RegistryResolver {
 	}
 
 	// constraint index structure
+	// Each time an IndexEntry is created, a single ContraintsEntry
+	// is created and put into the IndexEntry's concurrentList.
+	// Note that the new ConstraintsEntry will always point
+	// back to the IndexEntry it is associated with (parent).
+	// A ConstraintsEntry holds a group of constraints that can be
+	// resolved, without conflict for a particular plugin id.  The
+	// constraints are all of the form where another plugin id 
+	// requires some version of this plugin id as a prerequisite.
 	private class ConstraintsEntry {
 		private IndexEntry parent;
 		private List constraintList = new LinkedList();
+		// lastResolved doesn't seem to be used.  Is it designed to
+		// eliminate the numerous calls to find a matching plugin 
+		// descriptor?  Calls to find a matching plugin descriptor
+		// iterate through each version of this plugin and each 
+		// constraint in each ConstraintsEntry.
 		private PluginDescriptorModel lastResolved = null;
 		private boolean isResolved = false;
 		private PluginDescriptorModel bestMatch = null;
 		private boolean bestMatchEnabled = false;
 
 		private ConstraintsEntry(IndexEntry parent) {
+			// Create a new ConstraintsEntry and point 'parent'
+			// back to the associated IndexEntry
 			this.parent = parent;
 		}
 
 		private int constraintCount() {
+			// Returns the number of Constraint entries in
+			// constraintList.  Initially this will be 0.
 			return constraintList.size();
 		}
 
 		private PluginDescriptorModel addConstraint(Constraint c) {
+			// Add this Constraint to the list of constraints 
+			// for this ConstraintsEntry.  Note that while a
+			// given ConstraintsEntry can have many Constraints,
+			// any Constraint can have only one ConstraintsEntry.
+			// This method will return a single plugin descriptor which
+			// is the most recent descriptor which satisfies this 
+			// constraint.
 			constraintList.add(c);
 			c.setConstraintsEntry(this);
+			// get all of the plugin descriptors which satisfy this 
+			// constraint and all other constraints in this ConstraintsEntry
 			List constrained = getMatchingDescriptors();
 			if (constrained.size() <= 0) {
+				// looks like we have a conflict
 				constraintList.remove(c);
 				c.setConstraintsEntry(null);
 				return null;
 			} else {
+				// match will be only the latest version plugin which 
+				// satisfies these constraints
 				PluginDescriptorModel match = (PluginDescriptorModel) constrained.get(0);
 				if (!match.equals(lastResolved)) {
 					lastResolved = match;
@@ -140,6 +173,9 @@ public class RegistryResolver {
 		}
 
 		private PluginDescriptorModel getMatchingDescriptor() {
+			// We do this a lot. Can we use some mechanism to 
+			// hold the last matching descriptor and discard
+			// it if the constraints change?
 			List constrained = getMatchingDescriptors();
 			if (constrained.size() <= 0)
 				return null;
@@ -148,21 +184,42 @@ public class RegistryResolver {
 		}
 
 		private List getMatchingDescriptors() {
+			// The object of the game here is to return a list of plugin
+			// descriptors that match the list of Constraint elements
+			// hanging off this ConstraintsEntry.
+			
+			// constrained will be a list of matching plugin descriptors
 			List constrained = new LinkedList();
 
 			for (Iterator list = parent.versions().iterator(); list.hasNext();) {
+				// parent is an IndexEntry and versions is a list of all the 
+				// plugin descriptors, in version order (biggest to smallest),
+				// that have this plugin id.
 				PluginDescriptorModel pd = (PluginDescriptorModel) list.next();
 				if (pd.getEnabled())
 					constrained.add(pd);
 			}
+			// constrained now contains all of the enabled plugin descriptors for
+			// this IndexEntry.  The next step is to remove any that don't fit.
 
 			for (Iterator list = constraintList.iterator(); list.hasNext();) {
+				// For each Constraint, go through all of the versions of this plugin
+				// and remove any from 'constrained' which don't match the criteria
+				// for this Constraint.
+				
+				// constraintList is all the Constraint entries for this ConstraintsEntry.
 				Constraint c = (Constraint) list.next();
 				if (c.getMatchType() == MATCH_LATEST)
 					continue;
+				// DDW - why iterate through all the parent.versions?  Why not iterate
+				// through constrained.  That way, once a plugin has been removed from
+				// constrained, we never bother to see if it satisfies any of the other
+				// constraints in the list?  And once constrained contains 0 elements,
+				// we don't need to do anything more.
 				for (Iterator list2 = parent.versions().iterator(); list2.hasNext();) {
 					PluginDescriptorModel pd = (PluginDescriptorModel) list2.next();
 					if (!pd.getEnabled())
+						// ignore disabled plugins
 						continue;
 					if (c.getMatchType() == MATCH_EXACT) {
 						if (!getVersionIdentifier(pd).isEquivalentTo(c.getVersionIdentifier()))
@@ -173,13 +230,23 @@ public class RegistryResolver {
 					}
 				}
 			}
+			
+			// At this point, constrained will contain only those plugin descriptors which
+			// satisfy ALL of the Constraint entries.
 
 			return constrained;
 		}
 
 		private void preresolve(List roots) {
+			// All of the constraints that need to be added, have been.  Now just
+			// pick the plugin descriptor that is a best fit for all of these
+			// constraints.  Root nodes will not have any constraints (since nothing
+			// requires this plugin as a prerequisite, by definition).  For root
+			// node, just pick up the latest version.
 
 			if (constraintList.size() <= 0) {
+				// This should be a root descriptor.  So, just pick up the latest
+				// version of the root.
 				if (roots.contains(parent.getId())) {
 					bestMatch = (PluginDescriptorModel) parent.versions().get(0);
 					if (bestMatch == null) {
@@ -189,6 +256,10 @@ public class RegistryResolver {
 						bestMatchEnabled = bestMatch.getEnabled();
 				}
 			} else {
+				// If this isn't a root descriptor, get the latest version of the
+				// plugin descriptor which matches all the constraints we have.
+				// Pick the plugin that best matches all the constraints.  Any
+				// allowable conflicts will be in another ConstraintsEntry.
 				bestMatch = getMatchingDescriptor();
 				if (bestMatch == null) {
 					if (DEBUG_RESOLVE)
@@ -199,13 +270,26 @@ public class RegistryResolver {
 		}
 
 		private void resolve() {
+			// Assumptions:  All constraints that need to be added, have been.
+			//		- preresolve (above) has been called and a bestMatch (if it 
+			//		exists) has been identified
+			//		- all versions of this plugin have been disabled (so it is
+			//		up to this method to enable the plugin that is a bestMatch
+			//		for all of the constraints in this ConstraintsEntry).
 			if (bestMatch != null) {
+				// All of the versions of this plugin will have been disabled.
+				// Enable only the one which is the best match.
+				// bestMatchEnabled will be set to false if this particular plugin
+				// caused an unresolvable conflict.  Therefore, setEnabled(bestMatchEnabled)
+				// will leave this delinquent plugin disabled.
 				bestMatch.setEnabled(bestMatchEnabled);
 				if (bestMatchEnabled) {
 					if (DEBUG_RESOLVE)
 						debug("configured " + bestMatch.toString());
 					if (constraintList.size() > 0) {
 						for (int i = 0; i < constraintList.size(); i++) {
+							// Put which actual version this prerequisite resolved to in the
+							// relevant prerequisite in the registry.
 							PluginPrerequisiteModel prq = (PluginPrerequisiteModel) ((Constraint) constraintList.get(i)).getPrerequisite();
 							prq.setResolvedVersion(getVersionIdentifier(bestMatch).toString());
 						}
@@ -223,6 +307,13 @@ public class RegistryResolver {
 	}
 
 	// plugin descriptor index structure
+	// There is exactly one IndexEntry for each plugin id.
+	// The actual plugin descriptor is an element of verList.
+	// Multiple versions of this plugin id are found in verList
+	// and are ordered from the highest version number (assumed
+	// to be the most recent) to the lowest version number.
+	// concurrentList contains a list of ConstraintsEntry's which
+	// group constraints together into non-conflicting groups.
 	private class IndexEntry {
 		private String id;
 		private List verList = new LinkedList();
@@ -230,6 +321,7 @@ public class RegistryResolver {
 
 		private IndexEntry(String id) {
 			this.id = id;
+			// Create the first ConstraintsEntry with no constraints
 			concurrentList.add(new ConstraintsEntry(this));
 		}
 
@@ -238,6 +330,8 @@ public class RegistryResolver {
 		}
 
 		private ConstraintsEntry getConstraintsEntryFor(Constraint c) {
+			// Each Constraint must have exactly one ConstraintsEntry but
+			// a ConstraintsEntry may have many (non-conflicting) Constraints.
 			ConstraintsEntry ce = c.getConstraintsEntry();
 			if (ce != null)
 				return ce;
@@ -254,6 +348,9 @@ public class RegistryResolver {
 			for (Iterator list = concurrentList.iterator(); list.hasNext();) {
 				ConstraintsEntry cie = (ConstraintsEntry) list.next();
 				PluginDescriptorModel pd = cie.addConstraint(c);
+				// If pd comes back null, adding this constraint to the
+				// ConstraintsEntry cie will cause a conflict (no plugin
+				// descriptor can satisfy all the constraints).
 				if (pd != null) {
 
 					// constraint added OK and no concurrency
@@ -270,6 +367,14 @@ public class RegistryResolver {
 				}
 			}
 
+			// If we get to this point, the constraint we are trying to add
+			// gave us no matching plugins when used in conjunction with the
+			// other constraints in a particular ConstraintsEntry.  Add a
+			// new ConstraintsEntry and put this constraint in it (only if
+			// concurrency is allowed).  Concurrency is allowed only if the
+			// plugin we find which matches this constraint has no extensions
+			// or extension points.
+			
 			// attempt to create new constraints entry
 			ConstraintsEntry cie;
 			PluginDescriptorModel pd;
@@ -333,9 +438,16 @@ public class RegistryResolver {
 		}
 
 		private void resolveDependencies(List roots) {
+			// preresolved will pick out the plugin which has the highest version
+			// number and satisfies all the constraints.  This is then put in
+			// bestMatch field of the ConstraintsEntry.
 			for (Iterator list = concurrentList.iterator(); list.hasNext();)
 				 ((ConstraintsEntry) list.next()).preresolve(roots);
+			// Now all versions of this plugin are disabled.
 			disableAllDescriptors();
+			// Now, find the best match (from preresolve above) and enable it.
+			// Be sure to update any prerequisite entries with the version number
+			// of the plugin we are actually using.
 			for (Iterator list = concurrentList.iterator(); list.hasNext();)
 				 ((ConstraintsEntry) list.next()).resolve();
 		}
@@ -359,16 +471,20 @@ public class RegistryResolver {
 	// subtree resolution "cookie" (composite change list)
 	private class Cookie {
 		private boolean ok = true;
-		private List changes = new ArrayList();
+		private List changes = new ArrayList(); // a list of Constraints
 
 		private Cookie() {
 		}
 
 		private boolean addChange(Constraint c) {
+			// Keep a list of all constraints so that
+			//	- we can spot circular dependencies
+			//	- we can clean up if there is an unresolvable conflict
 			PluginPrerequisiteModel prereq = c.getPrerequisite();
 			for (Iterator list = changes.iterator(); list.hasNext();)
 				if (prereq == ((Constraint)list.next()).getPrerequisite())
-					return false; // prereq loop
+					// We have a circular dependency
+					return false;
 			changes.add(c);
 			return true;
 		}
@@ -419,10 +535,16 @@ private void add(PluginDescriptorModel pd) {
 	verList.add(i, pd);
 }
 private void addAll(Collection c) {
+	// DDW - addAll and add iterate through all pd's and
+	// add entries into idmap.  Why not
+	// - collapse this down to one method
+	// - have that one method accept the registry as a param
+	//   or use 'reg'
 	for (Iterator list = c.iterator(); list.hasNext();)
 		add((PluginDescriptorModel) list.next());
 }
 private void addExtensions(ExtensionModel[] extensions, PluginDescriptorModel plugin) {
+	// Add all the extensions (presumably from a fragment) to plugin
 	int extLength = extensions.length;
 	for (int i = 0; i < extLength; i++) {
 		extensions[i].setParentPluginDescriptor (plugin);
@@ -440,6 +562,7 @@ private void addExtensions(ExtensionModel[] extensions, PluginDescriptorModel pl
 	plugin.setDeclaredExtensions(result);
 }
 private void addExtensionPoints(ExtensionPointModel[] extensionPoints, PluginDescriptorModel plugin) {
+	// Add all the extension points (presumably from a fragment) to plugin
 	int extPtLength = extensionPoints.length;
 	for (int i = 0; i < extPtLength; i++) {
 		extensionPoints[i].setParentPluginDescriptor (plugin);
@@ -457,6 +580,7 @@ private void addExtensionPoints(ExtensionPointModel[] extensionPoints, PluginDes
 	plugin.setDeclaredExtensionPoints(result);
 }
 private void addLibraries(LibraryModel[] libraries, PluginDescriptorModel plugin) {
+	// Add all the libraries (presumably from a fragment) to plugin
 	int libLength = libraries.length;
 	LibraryModel[] list = plugin.getRuntime();
 	LibraryModel[] result = null;
@@ -471,6 +595,7 @@ private void addLibraries(LibraryModel[] libraries, PluginDescriptorModel plugin
 	plugin.setRuntime(result);
 }
 private void addPrerequisites(PluginPrerequisiteModel[] prerequisites, PluginDescriptorModel plugin) {
+	// Add all the prerequisites (presumably from a fragment) to plugin
 	int reqLength = prerequisites.length;
 	PluginPrerequisiteModel[] list = plugin.getRequires();
 	PluginPrerequisiteModel[] result = null;
@@ -525,6 +650,16 @@ private void linkFragments() {
 	 */
 	PluginFragmentModel[] fragments = reg.getFragments();
 	HashSet seen = new HashSet(5);
+	// DDW - 'seen' appears to be here to prevent us from
+	// re-processing a fragment.  But it will also prevent
+	// us from processing other versions of this fragment,
+	// even if the next version we encounter is more up-to-
+	// date than this one!!  Can we remove 'seen'?  We
+	// need a mechanism to ensure we pick up the most recent
+	// version of a fragment for a given plugin (consider
+	// the case where a single fragment id has multiple 
+	// versions, and some of these versions are used for
+	// another plugin).
 	for (int i = 0; i < fragments.length; i++) {
 		PluginFragmentModel fragment = fragments[i];
 		if (!requiredFragment(fragment)) {
@@ -595,6 +730,13 @@ private void resolve() {
 	// the resolve assumes required field exist.  
 	resolveRequiredComponents();
 
+	// DDW - At this point we have walked through the
+	// fragment list once and the plugin list 3!!! times
+	// - add plugins to the idmap
+	// - put all the fragment stuff into the plugins
+	// - make sure each plugin has all the 'required' stuff
+	// Let's try and consolidate!!!
+
 	// resolve root descriptors
 	List rd = resolveRootDescriptors();
 	if (rd.size() == 0) {
@@ -607,13 +749,21 @@ private void resolve() {
 
 	// sort roots
 	Object[] a = rd.toArray();
+	// DDW - why do we need to sort?
 	Arrays.sort(a);
 	ArrayList roots = new ArrayList(Arrays.asList(a));
+	
+	// roots is a list of those plugin ids that are not a
+	// prerequisite for any other plugin.  Note that roots
+	// contains ids only.
 	
 	// walk the dependencies and setup constraints
 	ArrayList orphans = new ArrayList();
 	for (int i = 0; i < roots.size(); i++)
 		resolveNode((String) roots.get(i), null, null, null, orphans);
+		// At this point we have set up all the Constraint and
+		// ConstraintsEntry components.  But we may not have found which
+		// plugin is the best match for a given set of constraints.
 	for (int i = 0; i < orphans.size(); i++) {
 		if (!roots.contains(orphans.get(i))) {
 			roots.add(orphans.get(i));
@@ -626,10 +776,14 @@ private void resolve() {
 	Iterator plugins = idmap.entrySet().iterator();
 	while (plugins.hasNext()) {
 		IndexEntry ix = (IndexEntry) ((Map.Entry) plugins.next()).getValue();
+		// Now go off and find the plugin that matches the
+		// constraints.  Note that root plugins will always use the 
+		// latest version.
 		ix.resolveDependencies(roots);
 	}
 
 	// walk down the registry structure and resolve links
+	// between extensions and extension points
 	resolvePluginRegistry();
 	
 	// unhook registry and index
@@ -637,13 +791,26 @@ private void resolve() {
 	reg = null;
 }
 public IStatus resolve(PluginRegistryModel registry) {
+	// This is the entry point to the registry resolver.
+	// Calling this method, with a valid registry will 
+	// cause this registry to be 'resolved'.
+	
 	status = new MultiStatus(Platform.PI_RUNTIME, IStatus.OK, "", null);
+
 	if (registry.isResolved())
+		// don't bother doing anything if it's already resolved
 		return status;
+
 	reg = registry;
 	idmap = new HashMap();
-	// Need to pick up the fragments before calling
-	// addAll.  Currently we do this in resolve().
+	// Take all the plugins and add them into idmap.  Each
+	// plugin id will have an idmap entry.  Multiple versions
+	// will have only one entry but will be sorted in version
+	// order (largestto smallest).  Don't worry about fragments
+	// as they cannot change the plugin id or the plugin
+	// version and, therefore, will not affect the ordering
+	// in idmap.
+	// DDW - Why bother with the 'Arrays.asList' part?
 	addAll(Arrays.asList(reg.getPlugins()));
 	resolve();
 	registry.markResolved();
@@ -708,6 +875,7 @@ private void resolveFragments() {
 private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPrerequisiteModel prq, Cookie cookie, List orphans) {
 	// This method is called recursively to setup dependency constraints.
 	// Top invocation is passed null parent and null prerequisite.
+	// We are trying to resolve for the plugin descriptor with id 'child'.
 
 	if (DEBUG_RESOLVE)
 		debug("PUSH> " + child);
@@ -717,6 +885,8 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 
 	// lookup child entry
 	IndexEntry ix = (IndexEntry) idmap.get(child);
+	// We should now have the IndexEntry for the plugin we 
+	// wish to resolve
 	if (ix == null) {
 		if (parent != null)
 			error(Policy.bind("parse.prereqDisabled", new String[] { parent.getId(), child }));
@@ -728,6 +898,7 @@ private Cookie resolveNode(String child, PluginDescriptorModel parent, PluginPre
 
 	// try to add new dependency constraint
 	Constraint currentConstraint = new Constraint(parent, prq);
+	// A constraint will be added for each parent which requires us.
 	PluginDescriptorModel childPd = null;
 	if (parent != null) {
 		childPd = ix.addConstraint(currentConstraint);
@@ -989,6 +1160,10 @@ private List resolveRootDescriptors() {
 	// get list of all plugin identifiers in the registry
 	List ids = new ArrayList();
 	ids.addAll(idmap.keySet());
+	
+	// ids is just a list of all the plugin id's
+	// The following while loop will remove all id's that
+	// appear in any prerequisite list.
 
 	// iterate over the list eliminating targets of <requires> entries
 	Iterator p = idmap.entrySet().iterator();
@@ -997,6 +1172,8 @@ private List resolveRootDescriptors() {
 		if (ix != null) {
 			List list = ix.versions();
 			if (list.size() > 0) {
+				// DDW - this only removes those prerequisites from the 'latest'
+				// version.  We need to remove all prerequisites.
 				PluginDescriptorModel pd = (PluginDescriptorModel) list.get(0);
 				PluginPrerequisiteModel[] prereqs = pd.getRequires();
 				for (int i = 0; prereqs != null && i < prereqs.length; i++) {
@@ -1018,9 +1195,13 @@ private List resolveRootDescriptors() {
 				for (int i = 0; i < list.size(); i++) {
 					PluginDescriptorModel pd = (PluginDescriptorModel) list.get(i);
 					if (i == 0) {
+						// Don't disable this one.  It is the
+						// one with the highest version number.
 						if (DEBUG_RESOLVE)
 							debug("root " + pd);
 					} else {
+						// Disable all versions except the one with the
+						// highest version number.
 						if (DEBUG_RESOLVE)
 							debug("     " + pd + " disabled");
 						pd.setEnabled(false);
