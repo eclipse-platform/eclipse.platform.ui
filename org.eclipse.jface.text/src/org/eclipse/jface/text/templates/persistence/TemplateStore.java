@@ -347,7 +347,7 @@ public class TemplateStore {
 					}
 				} catch (SAXException e) {
 					// someone contributed an xml template file with invalid syntax. Propagate as IOException
-					throw (IOException) new IOException("Illegal XML content: " + e.getLocalizedMessage()).fillInStackTrace(); //$NON-NLS-1$
+					throw new IOException("Illegal XML content: " + e.getLocalizedMessage()); //$NON-NLS-1$
 				}
 			}
 		}
