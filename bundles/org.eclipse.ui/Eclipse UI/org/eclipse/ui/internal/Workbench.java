@@ -1055,7 +1055,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				PluginVersionIdentifier vid = new PluginVersionIdentifier(ver);
 				AboutInfo info = new AboutInfo(id, vid);
 				aboutInfos.add(info);
-				if (oldFeatures == null || !oldFeatures.contains(versionedId))
+				if (oldFeatures != null && !oldFeatures.contains(versionedId))
+					// only report new if we have a record of the old
 					newAboutInfos.add(info);
 			}
 			catch (RuntimeException e) {
