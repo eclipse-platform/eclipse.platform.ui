@@ -22,4 +22,14 @@ public class PlatformUtil {
         String platform = SWT.getPlatform();
         return (platform.equals("motif") || platform.equals("gtk"));
     }
+    
+    /**
+     * Determine if we are running on the Mac platform.
+     * 
+     * @return true if we are runnig on the Mac platform.
+     */
+    public static boolean onMac() {
+        String platform = SWT.getPlatform();
+        return platform.equals("carbon");
+    }
 }

@@ -20,6 +20,7 @@ import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.internal.ide.WorkbenchActionBuilder;
 import org.eclipse.ui.tests.util.EmptyPerspective;
+import org.eclipse.ui.tests.util.PlatformUtil;
 
 /**
  * Workbench advisor for the parts test suite.
@@ -41,9 +42,10 @@ public class PartsWorkbenchAdvisor extends WorkbenchAdvisor {
      * @see org.eclipse.ui.application.WorkbenchAdvisor#eventLoopIdle(org.eclipse.swt.widgets.Display)
      */
     public void eventLoopIdle(Display display) {
-        super.eventLoopIdle(display);
+        if(!PlatformUtil.onMac()) {
+            super.eventLoopIdle(display);
+        }
         PlatformUI.getWorkbench().close();
-
     }
 
     /*
