@@ -333,7 +333,6 @@ public void setLinkTarget(String target) {
  * 	given file is valid.
  */
 private IStatus validateFileType(File linkTargetFile) {
-	boolean valid = true;
 	
 	if (type == IResource.FILE && linkTargetFile.isFile() == false) {
 		return createStatus(
@@ -381,7 +380,6 @@ public IStatus validateLinkLocation(IResource linkHandle) {
 	IWorkspace workspace = WorkbenchPlugin.getPluginWorkspace();
 	String linkTargetName = linkTargetField.getText();
 	IPath path = new Path(linkTargetName);
-	IPathVariableManager pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
 	
 	if (createLink == false)
 		return createStatus(IStatus.OK, "");
