@@ -65,6 +65,7 @@ public class ReviewPage
 	private int VERSION_ORDER = 1;
 	private int PROVIDER_ORDER = 1;
     private ContainerCheckedTreeViewer treeViewer;
+    private HashMap mirrors = new HashMap(0);
     
     class TreeContentProvider extends DefaultContentProvider implements
             ITreeContentProvider {
@@ -772,9 +773,11 @@ public class ReviewPage
 	 * @see org.eclipse.update.search.IUpdateSearchResultCollectorFromMirror#getMirror(org.eclipse.update.core.ISite, java.lang.String)
 	 */
 	public IURLEntry getMirror(ISiteWithMirrors site, String siteName) {
+        if (mirrors.containsKey(site))
+            return (IURLEntry)mirrors.get(site);
 		try {
-			IURLEntry[] mirrors = site.getMirrorSiteEntries();
-			if (mirrors.length == 0)
+			IURLEntry[] mirrorURLs = site.getMirrorSiteEntries();
+			if (mirrorURLs.length == 0)
 				return null;
 			else {
 				// here we need to prompt the user
@@ -785,7 +788,9 @@ public class ReviewPage
 						dialog.open();
 					}
 				});
-				return dialog.getMirror();
+				IURLEntry mirror = dialog.getMirror();
+                mirrors.put(site, mirror);
+                return mirror;
 			}
 		} catch (CoreException e) {
 			return null;
