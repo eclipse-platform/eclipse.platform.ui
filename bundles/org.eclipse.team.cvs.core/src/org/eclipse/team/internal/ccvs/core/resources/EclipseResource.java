@@ -14,6 +14,7 @@ import org.eclipse.team.core.Team;
 import org.eclipse.team.internal.ccvs.core.CVSException;
 import org.eclipse.team.internal.ccvs.core.ICVSFolder;
 import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.Policy;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
@@ -170,8 +171,12 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 	/*
 	 * @see ICVSResource#setIgnoredAs(String)
 	 */
-	public void setIgnoredAs(String pattern) throws CVSException {
-		EclipseSynchronizer.getInstance().addIgnored(resource.getParent(), pattern);	
+	public void setIgnoredAs(final String pattern) throws CVSException {
+		run(new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+				EclipseSynchronizer.getInstance().addIgnored(resource.getParent(), pattern);
+			}
+		}, null);
 	}
 
 	/*
@@ -232,9 +237,13 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 	/*
 	 * @see ICVSResource#setSyncInfo(ResourceSyncInfo)
 	 */
-	public void setSyncInfo(ResourceSyncInfo info) throws CVSException {
+	public void setSyncInfo(final ResourceSyncInfo info) throws CVSException {
 		if (getParent().isCVSFolder()) {
-			EclipseSynchronizer.getInstance().setResourceSync(resource, info);		
+			getParent().run(new ICVSRunnable() {
+				public void run(IProgressMonitor monitor) throws CVSException {
+					EclipseSynchronizer.getInstance().setResourceSync(resource, info);	
+				}
+			}, null);
 		}
 	}
 	
@@ -307,4 +316,10 @@ abstract class EclipseResource implements ICVSResource, Comparable {
 		}
 		EclipseSynchronizer.getInstance().created(getIResource());
 	}
+	
+	/*
+	 * Run method which obtains both the CVS synchronizer lock and the workspace
+	 * lock
+	 */
+	protected abstract void run(final ICVSRunnable job, IProgressMonitor monitor) throws CVSException;
 }

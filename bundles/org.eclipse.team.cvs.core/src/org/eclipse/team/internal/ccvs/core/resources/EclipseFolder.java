@@ -197,30 +197,35 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	/*
 	 * @see ICVSFolder#setFolderInfo(FolderSyncInfo)
 	 */
-	public void setFolderSyncInfo(FolderSyncInfo folderInfo) throws CVSException {
+	public void setFolderSyncInfo(final FolderSyncInfo folderInfo) throws CVSException {
 		// ignore folder sync on the root (i.e. CVSROOT/config/TopLevelAdmin=yes but we just ignore it)
 		if (resource.getType() == IResource.ROOT) return;
-		EclipseSynchronizer synchronizer = EclipseSynchronizer.getInstance();
-		FolderSyncInfo oldInfo = synchronizer.getFolderSync((IContainer)resource);
-		synchronizer.setFolderSync((IContainer)resource, folderInfo);
-		// the server won't add directories as sync info, therefore it must be done when
-		// a directory is shared with the repository.
-		setSyncInfo(new ResourceSyncInfo(getName()));
-		// if the sync info changed from null, we may need to adjust the ancestors
-		if (oldInfo == null) {
-			int count = synchronizer.getDirtyCount((IContainer)getIResource());
-			if (count == -1) {
-				// There was no cached count. Flush the ancestors so they are recalculated
-				flushWithAncestors();
-			} else {
-				// There is a count. Decrement the parent's count if the count is zero.
-				// Otherwise, the receiver and it's parents remain dirty.
-				if (count == 0) {
-					synchronizer.setDirtyIndicator(getIResource(), EclipseSynchronizer.NOT_DIRTY_INDICATOR);
-					((EclipseFolder)getParent()).adjustModifiedCount(false);
+		run(new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+				EclipseSynchronizer synchronizer = EclipseSynchronizer.getInstance();
+				FolderSyncInfo oldInfo = synchronizer.getFolderSync((IContainer)resource);
+				synchronizer.setFolderSync((IContainer)resource, folderInfo);
+				// the server won't add directories as sync info, therefore it must be done when
+				// a directory is shared with the repository.
+				setSyncInfo(new ResourceSyncInfo(getName()));
+				// if the sync info changed from null, we may need to adjust the ancestors
+				if (oldInfo == null) {
+					int count = synchronizer.getDirtyCount((IContainer)getIResource());
+					if (count == -1) {
+						// There was no cached count. Flush the ancestors so they are recalculated
+						flushWithAncestors();
+					} else {
+						// There is a count. Decrement the parent's count if the count is zero.
+						// Otherwise, the receiver and it's parents remain dirty.
+						if (count == 0) {
+							synchronizer.setDirtyIndicator(getIResource(), EclipseSynchronizer.NOT_DIRTY_INDICATOR);
+							((EclipseFolder)getParent()).adjustModifiedCount(false);
+						}
+					}
 				}
 			}
-		}
+		}, null);
+
 	}
 
 	/*
@@ -234,20 +239,16 @@ class EclipseFolder extends EclipseResource implements ICVSFolder {
 	 * @see ICVSResource#unmanage()
 	 */
 	public void unmanage(IProgressMonitor monitor) throws CVSException {
-		monitor = Policy.monitorFor(monitor);
-		try {
-			monitor.beginTask("", 100); //$NON-NLS-1$
-			run(new ICVSRunnable() {
-				public void run(IProgressMonitor monitor) throws CVSException {
-					recursiveUnmanage((IContainer) resource, monitor);				
-				}
-			}, Policy.subMonitorFor(monitor, 99));
-			// unmanaged from parent
-			super.unmanage(Policy.subMonitorFor(monitor, 1));
-			flushWithAncestors();
-		} finally {
-			monitor.done();
-		}
+		run(new ICVSRunnable() {
+			public void run(IProgressMonitor monitor) throws CVSException {
+				monitor = Policy.monitorFor(monitor);
+				monitor.beginTask(null, 100);
+				recursiveUnmanage((IContainer) resource, Policy.subMonitorFor(monitor, 99));
+				EclipseFolder.super.unmanage(Policy.subMonitorFor(monitor, 1));
+				flushWithAncestors();
+				monitor.done();	
+			}
+		}, Policy.subMonitorFor(monitor, 99));
 	}
 	
 	private static void recursiveUnmanage(IContainer container, IProgressMonitor monitor) throws CVSException {
