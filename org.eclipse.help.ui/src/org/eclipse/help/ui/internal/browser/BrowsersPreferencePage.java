@@ -12,7 +12,6 @@ package org.eclipse.help.ui.internal.browser;
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.internal.*;
 import org.eclipse.help.internal.browser.*;
-import org.eclipse.help.internal.browser.BrowserManager;
 import org.eclipse.help.ui.internal.*;
 import org.eclipse.help.ui.internal.util.*;
 import org.eclipse.jface.dialogs.*;
@@ -43,7 +42,6 @@ public class BrowsersPreferencePage
 	protected Control createContents(Composite parent) {
 		Font font = parent.getFont();
 
-		noDefaultAndApplyButton();
 		WorkbenchHelp.setHelp(parent, IHelpUIConstants.PREF_PAGE_BROWSERS);
 		Composite mainComposite = new Composite(parent, SWT.NULL);
 		GridData data = new GridData();
@@ -105,7 +103,7 @@ public class BrowsersPreferencePage
 			item.setText(aDescs[i].getLabel());
 			if (BrowserManager
 				.getInstance()
-				.getDefaultBrowserID()
+				.getCurrentBrowserID()
 				.equals(aDescs[i].getID()))
 				item.setChecked(true);
 			else
@@ -169,7 +167,7 @@ public class BrowsersPreferencePage
 				d.setText(WorkbenchResources.getString("CustomBrowserPreferencePage.Details")); //$NON-NLS-1$
 				String file = d.open();
 				if (file != null) {
-					customBrowserPath.setText("\""+file+"\" %1");
+					customBrowserPath.setText("\"" + file + "\" %1");
 				}
 			}
 		});
@@ -181,6 +179,28 @@ public class BrowsersPreferencePage
 	public void init(IWorkbench workbench) {
 	}
 	/**
+	 * Performs special processing when this page's Defaults button has been pressed.
+	 * <p>
+	 * This is a framework hook method for sublcasses to do special things when
+	 * the Defaults button has been pressed.
+	 * Subclasses may override, but should call <code>super.performDefaults</code>.
+	 * </p>
+	 */
+	protected void performDefaults() {
+		TableItem[] items = browsersTable.getItems();
+		String defaultBrowserID =
+			BrowserManager.getInstance().getDefaultBrowserID();
+		for (int i = 0; i < items.length; i++) {
+			String browserID =
+				BrowserManager.getInstance().getBrowserDescriptors()[i].getID();
+			items[i].setChecked(browserID == defaultBrowserID);
+		}
+		customBrowserPath.setText(
+			HelpPlugin.getDefault().getPluginPreferences().getDefaultString(
+				CustomBrowser.CUSTOM_BROWSER_PATH_KEY));
+		super.performDefaults();
+	}
+	/**
 	 * @see IPreferencePage
 	 */
 	public boolean performOk() {
@@ -188,14 +208,14 @@ public class BrowsersPreferencePage
 		TableItem[] items = browsersTable.getItems();
 		for (int i = 0; i < items.length; i++) {
 			if (items[i].getChecked()) {
-				// set new default browser
+				// set new current browser
 				String browserID =
 					BrowserManager
 						.getInstance()
 						.getBrowserDescriptors()[i]
 						.getID();
-				BrowserManager.getInstance().setDefaultBrowserID(browserID);
-				// save id in help ui preferences
+				BrowserManager.getInstance().setCurrentBrowserID(browserID);
+				// save id in help preferences
 				pref.setValue(BrowserManager.DEFAULT_BROWSER_ID_KEY, browserID);
 				break;
 			}

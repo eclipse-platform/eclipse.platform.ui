@@ -16,7 +16,7 @@ import org.eclipse.help.browser.IBrowser;
  * Wrapper for individual browsers
  * contributed through extension point.
  */
-public class DefaultBrowser implements IBrowser {
+public class CurrentBrowser implements IBrowser {
 	private IBrowser browserAdapter;
 	private String browserAdapterId;
 	/**
@@ -31,7 +31,7 @@ public class DefaultBrowser implements IBrowser {
 	private int width;
 	private int height;
 
-	public DefaultBrowser(IBrowser browserImpl, String browserAdapterId) {
+	public CurrentBrowser(IBrowser browserImpl, String browserAdapterId) {
 		this.browserAdapter = browserImpl;
 		this.browserAdapterId = browserAdapterId;
 	}
@@ -125,10 +125,10 @@ public class DefaultBrowser implements IBrowser {
 	 */
 	private void checkDefaultAdapter() {
 		if (browserAdapterId
-			!= BrowserManager.getInstance().getDefaultBrowserID()) {
+			!= BrowserManager.getInstance().getCurrentBrowserID()) {
 			newBrowserAdapter = BrowserManager.getInstance().createBrowser();
 			newBrowserAdapterId =
-				BrowserManager.getInstance().getDefaultBrowserID();
+				BrowserManager.getInstance().getCurrentBrowserID();
 		}
 	}
 

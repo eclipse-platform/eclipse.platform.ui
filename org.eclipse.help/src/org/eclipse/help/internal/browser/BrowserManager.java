@@ -12,10 +12,9 @@ package org.eclipse.help.internal.browser;
 import java.util.*;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.util.*;
 import org.eclipse.help.browser.*;
 import org.eclipse.help.internal.*;
-import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.util.*;
 
 /**
  * Creates browser by delegating
@@ -25,6 +24,7 @@ public class BrowserManager {
 	public static final String DEFAULT_BROWSER_ID_KEY = "default_browser";
 	private static BrowserManager instance;
 	private boolean initialized = false;
+	private BrowserDescriptor currentBrowserDesc;
 	private BrowserDescriptor defaultBrowserDesc;
 	private BrowserDescriptor[] browsersDescriptors;
 	private Collection browsers = new ArrayList();
@@ -41,12 +41,15 @@ public class BrowserManager {
 
 		// Find all available browsers
 		browsersDescriptors = createBrowserDescriptors();
+
 		// 1. set default browser from preferences
 		String defBrowserID =
-			HelpPlugin.getDefault().getPluginPreferences().getString(
+			HelpPlugin.getDefault().getPluginPreferences().getDefaultString(
 				DEFAULT_BROWSER_ID_KEY);
-		if (defBrowserID != null && (!"".equals(defBrowserID)))
+		if (defBrowserID != null && (!"".equals(defBrowserID))) {
 			setDefaultBrowserID(defBrowserID);
+		}
+
 		if (defaultBrowserDesc == null) {
 			// No default browser in properties!
 			// Set default browser to prefered implementation
@@ -114,6 +117,17 @@ public class BrowserManager {
 				}
 			});
 		}
+
+		// initialize current browser
+		String curBrowserID =
+			HelpPlugin.getDefault().getPluginPreferences().getString(
+				DEFAULT_BROWSER_ID_KEY);
+		if (curBrowserID != null && (!"".equals(curBrowserID))) {
+			setCurrentBrowserID(curBrowserID);
+		} else {
+			setCurrentBrowserID(getDefaultBrowserID());
+		}
+
 	}
 	/**
 	 * Obtains singleton instance.
@@ -174,7 +188,19 @@ public class BrowserManager {
 		return this.browsersDescriptors;
 	}
 	/**
-	 * Gets the defaultBrowserID.
+	 * Gets the currentBrowserID.
+	 * @return Returns a String or null if not set
+	 */
+	public String getCurrentBrowserID() {
+		if (!initialized) {
+			init();
+		}
+		if (currentBrowserDesc == null)
+			return null;
+		return currentBrowserDesc.getID();
+	}
+	/**
+	 * Gets the currentBrowserID.
 	 * @return Returns a String or null if not set
 	 */
 	public String getDefaultBrowserID() {
@@ -186,12 +212,29 @@ public class BrowserManager {
 		return defaultBrowserDesc.getID();
 	}
 	/**
+	 * Sets the currentBrowserID.
+	 * If browser of given ID does not exists,
+	 * the method does nothing
+	 * @param currentAdapterrID The ID of the adapter to to set as current
+	 */
+	public void setCurrentBrowserID(String currentAdapterID) {
+		if (!initialized) {
+			init();
+		}
+		for (int i = 0; i < browsersDescriptors.length; i++) {
+			if (browsersDescriptors[i].getID().equals(currentAdapterID)) {
+				currentBrowserDesc = browsersDescriptors[i];
+				return;
+			}
+		}
+	}
+	/**
 	 * Sets the defaultBrowserID.
 	 * If browser of given ID does not exists,
 	 * the method does nothing
-	 * @param defaultBrowserID The defaultAdapterID to set
+	 * @param currentAdapterrID The ID of the adapter to to set as current
 	 */
-	public void setDefaultBrowserID(String defaultAdapterID) {
+	private void setDefaultBrowserID(String defaultAdapterID) {
 		if (!initialized) {
 			init();
 		}
@@ -209,15 +252,15 @@ public class BrowserManager {
 		if (!initialized) {
 			init();
 		}
-		return new DefaultBrowser(
+		return new CurrentBrowser(
 			createBrowserAdapter(),
-			getDefaultBrowserID());
+			getCurrentBrowserID());
 	}
 	/**
 	 * Creates web browser
 	 */
 	private IBrowser createBrowserAdapter() {
-		IBrowser browser = defaultBrowserDesc.getFactory().createBrowser();
+		IBrowser browser = currentBrowserDesc.getFactory().createBrowser();
 		browsers.add(browser);
 		return browser;
 	}
