@@ -10,7 +10,7 @@ import java.util.ResourceBundle;
 
 class TextEditorMessages {
 
-	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.editors.text.TextEditorMessages";//$NON-NLS-1$
+	private static final String RESOURCE_BUNDLE= "org.eclipse.ui.internal.editors.text.TextEditorMessages";//$NON-NLS-1$
 
 	private static ResourceBundle fgResourceBundle= ResourceBundle.getBundle(RESOURCE_BUNDLE);
 
