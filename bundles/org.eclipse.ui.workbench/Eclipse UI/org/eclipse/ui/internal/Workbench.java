@@ -203,7 +203,7 @@ public final class Workbench implements IWorkbench {
 	private Workbench(Display display, WorkbenchAdvisor advisor) {
 		super();
 
-		if (instance != null) {
+		if (instance != null && instance.isRunning()) {
 			throw new IllegalStateException(WorkbenchMessages.getString("Workbench.CreatingWorkbenchTwice")); //$NON-NLS-1$
 		}
 		Assert.isNotNull(display);
