@@ -4,7 +4,15 @@ package org.eclipse.team.ccvs.core;
  * (c) Copyright IBM Corp. 2000, 2001.
  * All Rights Reserved.
  */
- 
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.Policy;
+
+/**
+ * A tag in CVS gives a label  to a collection of revisions. The labels can represent a version, a branch, 
+ * or a date.
+ */
 public class CVSTag {
 
 	public final static int HEAD = 0;
@@ -49,7 +57,22 @@ public class CVSTag {
 	}
 	
 	public int compareTo(CVSTag other) {
-		// XXX include type in comparison?
 		return getName().compareTo(other.getName());
+	}
+	
+	public static IStatus validateTagName(String tagName) {
+		if (tagName == null)
+			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.nullName"));
+		if (tagName.equals(""))
+			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.emptyName"));
+		if (!Character. isLetter(tagName.charAt(0)))
+			return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.beginName"));
+		
+		for (int i = 0; i < tagName.length(); i++) {
+			char c = tagName.charAt(i);
+			if ( Character.isSpaceChar(c) || c == '$' || c == ',' || c == '.' || c == ':' || c == ';' || c == '@' || c == '|')
+				return new CVSStatus(CVSStatus.ERROR, Policy.bind("CVSTag.badCharName"));
+		}
+		return new CVSStatus(IStatus.OK, "ok");
 	}
 }
