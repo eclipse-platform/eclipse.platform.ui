@@ -85,7 +85,7 @@ public class ConsoleViewer extends TextViewer implements IPropertyChangeListener
 			revealRange(docLength - 1, 1);
 			StyledText widget= getTextWidget();
 			widget.setCaretOffset(docLength);
-
+			widget.showSelection();
 		}
 	}
 
