@@ -446,7 +446,7 @@ protected Font getFont() {
  *
  * @return the menu bar manager, or <code>null</code> if
  *   this window does not have a menu bar
- * @see #addMenuBar
+ * @see #addMenuBar()
  */
 public MenuManager getMenuBarManager() {
 	return menuBarManager;
@@ -480,7 +480,7 @@ public String getSymbolicFontName() {
  *
  * @return the tool bar manager, or <code>null</code> if
  *   this window does not have a tool bar
- * @see #addToolBar
+ * @see #addToolBar(int)
  */
 public ToolBarManager getToolBarManager() {
 	return toolBarManager;
@@ -490,7 +490,7 @@ public ToolBarManager getToolBarManager() {
  *
  * @return the cool bar manager, or <code>null</code> if
  *   this window does not have a cool bar
- * @see #addCoolBar
+ * @see #addCoolBar(int)
  * @since 3.0
  */
 public CoolBarManager getCoolBarManager() {

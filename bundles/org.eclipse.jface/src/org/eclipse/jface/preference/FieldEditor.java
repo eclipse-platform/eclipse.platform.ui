@@ -421,7 +421,7 @@ protected void init(String name, String text) {
  * 
  * @return <code>true</code> if the field value is valid,
  *   and <code>false</code> if invalid
- * @see #refreshValidState
+ * @see #refreshValidState()
  */
 public boolean isValid() {
 	return true;
@@ -612,8 +612,8 @@ protected void setButtonLayoutData(Button button) {
 /**
  * Set whether or not the controls in the field editor
  * are enabled.
- * @param enabled. The enabled state.
- * @param parent. The parent of the controls in the group.
+ * @param enabled The enabled state.
+ * @param parent The parent of the controls in the group.
  *  Used to create the controls if required.
  */
 public void setEnabled(boolean enabled, Composite parent){

@@ -53,7 +53,7 @@ public class ColorSelector {
 	 * Create a new instance of the reciever and the button that it wrappers in
 	 * the supplied parent <code>Composite</code>.
 	 * 
-	 * @param parent.
+	 * @param parent
 	 *            The parent of the button.
 	 */
 	public ColorSelector(Composite parent) {
@@ -171,7 +171,7 @@ public class ColorSelector {
 	/**
 	 * Set the current color value and update the control.
 	 * 
-	 * @param rgb.
+	 * @param rgb
 	 *            The new color.
 	 */
 	public void setColorValue(RGB rgb) {

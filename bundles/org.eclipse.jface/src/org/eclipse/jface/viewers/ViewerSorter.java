@@ -153,7 +153,7 @@ public boolean isSorterProperty(Object element, String property) {
  * Sorts the given elements in-place, modifying the given array.
  * <p>
  * The default implementation of this method uses the 
- * {@link Arrays.sort(Object[])} algorithm on the given array, 
+ * java.util.Arrays#sort algorithm on the given array, 
  * calling <code>compare</code> to compare elements.
  * </p>
  * <p>

@@ -252,7 +252,7 @@ public class FontRegistry extends ResourceRegistry {
 	 * </pre>
 	 *
 	 * @param location the name of the resource bundle
-	 * @param the ClassLoader to use to find the resource bundle
+	 * @param loader the ClassLoader to use to find the resource bundle
 	 * @exception MissingResourceException if the resource bundle cannot be found
 	 * @since 2.1
 	 */
@@ -615,9 +615,6 @@ public class FontRegistry extends ResourceRegistry {
 	 *
 	 * @param symbolicName the symbolic font name
 	 * @param fontData an Array of FontData
-	 * @param update - fire a font mapping changed if true. False
-	 * 	if this method is called from the get method as no setting
-	 *  has changed.
 	 */
 	public void put(String symbolicName, FontData[] fontData) {
 		put(symbolicName, fontData, true);

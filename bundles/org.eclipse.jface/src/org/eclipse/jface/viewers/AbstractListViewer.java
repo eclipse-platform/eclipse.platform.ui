@@ -73,7 +73,7 @@ protected abstract int listGetItemCount();
 /**
  * Sets the underlying widget's items to be the given array of items.
  *
- * @param items the array of items
+ * @param labels the array of label text
  */
 protected abstract void listSetItems(String[] labels);
 

@@ -111,7 +111,7 @@ public class Policy {
 	}
 	/**
 	 * Return the log the receiver is using.
-	 * @return
+	 * @return ILog
 	 */
 	public static ILog getLog(){
 		if (log == null)

@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Shell;
  * This class contains static methods and fields only and cannot 
  * be instantiated.
  * </p>
- * @issue touching this class has the side effect of creating a display (static initializer).
+ * Note: touching this class has the side effect of creating a display (static initializer).
  */
 public class PreferenceConverter {
 

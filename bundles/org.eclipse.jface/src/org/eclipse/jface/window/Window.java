@@ -840,7 +840,7 @@ public void setWindowManager(WindowManager manager) {
  * <p>
  * Note that only one handler may be set. Other calls to this method will be ignored.
  * <p>
- * @param the exception handler for the application.
+ * @param handler the exception handler for the application.
  */
 public static void setExceptionHandler(IExceptionHandler handler) {
 	if(exceptionHandler instanceof DefaultExceptionHandler)

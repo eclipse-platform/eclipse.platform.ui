@@ -15,10 +15,8 @@ package org.eclipse.jface.viewers;
  * decoration available immidiately. This interface defines the methods for
  * requesting the preparation of a decorator for an object and for querying
  * if the decorator is ready. Interested parties should register an
- * ILabelProviderListener with a delyaed label decorator in order to be informed
+ * ILabelProviderListener with a delayed label decorator in order to be informed
  * when the decoration is ready.
- * @param element. The element to be decorated
- * @param originalText The text that is to be decorated
  * @since 3.0
  */
 public interface IDelayedLabelDecorator extends ILabelDecorator {

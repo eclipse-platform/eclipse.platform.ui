@@ -118,7 +118,6 @@ public boolean close() {
  * 
  * @return the number of windows
  * @since 3.0
- * @issue Why not use getWindows().length?
  */
 public int getWindowCount() {
 	return windows.size();

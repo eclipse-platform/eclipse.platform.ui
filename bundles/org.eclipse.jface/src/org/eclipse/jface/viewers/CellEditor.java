@@ -596,7 +596,7 @@ public boolean isUndoEnabled() {
  * @return <code>true</code> if the value is valid, and <code>false</code>
  *  if invalid
  *
- * @see #setValueValid
+ * @see #setValueValid(boolean)
  */
 public boolean isValueValid() {
 	return valid;

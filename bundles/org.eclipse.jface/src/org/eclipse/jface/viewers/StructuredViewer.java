@@ -282,8 +282,7 @@ public abstract class StructuredViewer extends ContentViewer
 	 * this method.
 	 * </p>
 	 * 
-	 * @param the
-	 *            element
+	 * @param element
 	 * @return the corresponding widget, or <code>null</code> if none
 	 */
 	protected abstract Widget doFindInputItem(Object element);
@@ -295,8 +294,7 @@ public abstract class StructuredViewer extends ContentViewer
 	 * this method.
 	 * </p>
 	 * 
-	 * @param the
-	 *            element
+	 * @param element
 	 * @return the corresponding widget, or <code>null</code> if none
 	 */
 	protected abstract Widget doFindItem(Object element);
@@ -314,8 +312,7 @@ public abstract class StructuredViewer extends ContentViewer
 	 * </p>
 	 * 
 	 * @param item
-	 * @param element
-	 *            the element
+	 * @param element element
 	 * @param fullMap
 	 *            <code>true</code> if mappings are added and removed, and
 	 *            <code>false</code> if only the new map gets installed
@@ -459,9 +456,8 @@ public abstract class StructuredViewer extends ContentViewer
 	/**
 	 * Returns the comparator to use for comparing elements, or
 	 * <code>null</code> if none has been set.
-	 * 
-	 * @param comparator
-	 *            the comparator to use for comparing elements or
+	 *           
+	 * @return IElementComparer  the comparator to use for comparing elements or
 	 *            <code>null</code>
 	 */
 	public IElementComparer getComparer() {
@@ -559,6 +555,7 @@ public abstract class StructuredViewer extends ContentViewer
 	 * Subclasses do not typically override this method, but implement
 	 * <code>getSelectionFromWidget(List)</code> instead.
 	 * <p>
+	 * @return ISelection
 	 */
 	public ISelection getSelection() {
 		Control control = getControl();
@@ -669,6 +666,7 @@ public abstract class StructuredViewer extends ContentViewer
 	 * event specifies that the label of a given element has changed, otherwise
 	 * it calls super. Subclasses may reimplement or extend.
 	 * </p>
+	 * @param event the event that generated this update
 	 */
 	protected void handleLabelProviderChanged(LabelProviderChangedEvent event) {
 		Object[] elements = event.getElements();
@@ -702,8 +700,7 @@ public abstract class StructuredViewer extends ContentViewer
 	 * this method.
 	 * </p>
 	 * 
-	 * @param event
-	 *            the SWT selection event
+	 * @param e the SWT selection event
 	 */
 	protected void handlePostSelect(SelectionEvent e) {
 		SelectionChangedEvent event = new SelectionChangedEvent(this,
@@ -737,6 +734,7 @@ public abstract class StructuredViewer extends ContentViewer
 	}
 	/**
 	 * Returns whether this viewer has any filters.
+	 * @return boolean
 	 */
 	protected boolean hasFilters() {
 		return filters != null && filters.size() > 0;
@@ -956,12 +954,15 @@ public abstract class StructuredViewer extends ContentViewer
 	}
 
 	/**
+	 * 
 	 * Refreshes the given TableItem with the given element. Calls
 	 * <code>doUpdateItem(..., false)</code>.
 	 * <p>
 	 * This method is internal to the framework; subclassers should not call
 	 * this method.
 	 * </p>
+	 * @param widget
+	 * @param element
 	 */
 	protected final void refreshItem(Widget widget, Object element) {
 		Platform.run(new UpdateItemSafeRunnable(widget, element, true));
@@ -1036,18 +1037,17 @@ public abstract class StructuredViewer extends ContentViewer
 	 *            the element to reveal
 	 */
 	public abstract void reveal(Object element);
-	/**
-	 * The <code>StructuredViewer</code> implementation of this method checks
-	 * to ensure that the content provider is an
-	 * <code>IStructuredContentProvider</code>.
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.ContentViewer#setContentProvider(org.eclipse.jface.viewers.IContentProvider)
 	 */
 	public void setContentProvider(IContentProvider provider) {
 		Assert.isTrue(provider instanceof IStructuredContentProvider);
 		super.setContentProvider(provider);
 	}
 	/*
-	 * (non-Javadoc) Method declared in Viewer. This implementatation
-	 * additionaly unmaps all the elements.
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.Viewer#setInput(java.lang.Object)
 	 */
 	public final void setInput(Object input) {
 
@@ -1062,25 +1062,27 @@ public abstract class StructuredViewer extends ContentViewer
 			//		fInChange= false;
 		}
 	}
-	/**
-	 * The <code>StructuredViewer</code> implementation of this method does
-	 * the following.
-	 * <p>
-	 * If the new selection differs from the current selection the hook
-	 * <code>updateSelection</code> is called.
-	 * </p>
-	 * <p>
-	 * If <code>setSelection</code> is called from within
-	 * <code>preserveSelection</code>, the call to
-	 * <code>updateSelection</code> is delayed until the end of
-	 * <code>preserveSelection</code>.
-	 * </p>
-	 * <p>
-	 * Subclasses do not typically override this method, but implement
-	 * <code>setSelectionToWidget</code> instead.
-	 * </p>
+	/*
+	 *  (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.Viewer#setSelection(org.eclipse.jface.viewers.ISelection, boolean)
 	 */
 	public void setSelection(ISelection selection, boolean reveal) {
+		/**
+		 * <p>
+		 * If the new selection differs from the current selection the hook
+		 * <code>updateSelection</code> is called.
+		 * </p>
+		 * <p>
+		 * If <code>setSelection</code> is called from within
+		 * <code>preserveSelection</code>, the call to
+		 * <code>updateSelection</code> is delayed until the end of
+		 * <code>preserveSelection</code>.
+		 * </p>
+		 * <p>
+		 * Subclasses do not typically override this method, but implement
+		 * <code>setSelectionToWidget</code> instead.
+		 * </p>
+		 */
 		Control control = getControl();
 		if (control == null || control.isDisposed()) {
 			return;
@@ -1170,7 +1172,7 @@ public abstract class StructuredViewer extends ContentViewer
 	 * to use the default <code>equals</code> and <code>hashCode</code>
 	 * methods on the elements themselves.
 	 * 
-	 * @param comparator
+	 * @param comparer
 	 *            the comparator to use for comparing elements or
 	 *            <code>null</code>
 	 */
@@ -1183,6 +1185,8 @@ public abstract class StructuredViewer extends ContentViewer
 
 	/**
 	 * Hook for testing.
+	 * @param element
+	 * @return Widget
 	 */
 	public Widget testFindItem(Object element) {
 		return findItem(element);
@@ -1227,6 +1231,7 @@ public abstract class StructuredViewer extends ContentViewer
 	 * 
 	 * @param element
 	 *            the element
+	 * @param item the item to unmap
 	 * @since 2.0
 	 */
 	protected void unmapElement(Object element, Widget item) {
