@@ -4287,10 +4287,10 @@ public class TextViewer extends Viewer implements
 	 * @since 2.0
 	 */
 	public final void setRedraw(boolean redraw) {
-		// don't use the setRedraw feature on linux
-		// to avoid skipping
+		// don't use the setRedraw feature on linux in order to avoid skipping
 		// see bug 26153
-		if (!"gtk".equals(SWT.getPlatform()))  //$NON-NLS-1$
+		// TODO do be removed
+		if ("gtk".equals(SWT.getPlatform()))  //$NON-NLS-1$
 			return;
 		
 		if (!redraw) {
