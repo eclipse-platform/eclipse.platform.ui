@@ -11,7 +11,6 @@
 package org.eclipse.core.internal.jobs;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import org.eclipse.core.internal.runtime.Assert;
 import org.eclipse.core.internal.runtime.InternalPlatform;
 import org.eclipse.core.runtime.*;
@@ -503,7 +502,6 @@ class DeadlockDetector {
 	private void reduceGraph(int row, ISchedulingRule lock) {
 		int numLocks = locks.size();
 		boolean[] emptyColumns = new boolean[numLocks];
-		Arrays.fill(emptyColumns, false);
 
 		/**
 		 * find all columns that could possibly be empty
