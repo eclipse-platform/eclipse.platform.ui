@@ -968,7 +968,8 @@ public class Workbench implements IWorkbench, IPlatformRunnable, IExecutableExte
 				aboutInfos.add(info);
 			}
 			catch (RuntimeException e) {
-				WorkbenchPlugin.log("Error parsing version \"" + ver + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()");
+				if (WorkbenchPlugin.DEBUG) // only report ini problems if the -debug command line argument is used
+					WorkbenchPlugin.log("Error parsing version \"" + ver + "\" for plugin: " + id + " in Workbench.readFeaturesInfo()");
 				// continue
 			}
 		}
