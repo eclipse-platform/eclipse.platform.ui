@@ -104,10 +104,33 @@ public void testAppend() {
 	assertEquals("5.1", new Path("/foo"), Path.ROOT.append("./foo"));
 	assertEquals("5.2", new Path("c:/foo/xyz"), new Path("c:/foo/bar").append("../xyz"));
 	assertEquals("5.3", new Path("c:/foo/bar/xyz"), new Path("c:/foo/bar").append("./xyz"));
+	
+	//append preserves device and leading separator of receiver
+	assertEquals("6.1", new Path("c:foo/bar"), new Path("c:").append("/foo/bar"));
+	assertEquals("6.2", new Path("c:foo/bar"), new Path("c:").append("foo/bar"));
+	assertEquals("6.3", new Path("c:/foo/bar"), new Path("c:/").append("/foo/bar"));
+	assertEquals("6.4", new Path("c:/foo/bar"), new Path("c:/").append("foo/bar"));
+	
+	assertEquals("6.5", new Path("c:foo/bar"), new Path("c:").append("z:/foo/bar"));
+	assertEquals("6.6", new Path("c:foo/bar"), new Path("c:").append("z:foo/bar"));
+	assertEquals("6.7", new Path("c:/foo/bar"), new Path("c:/").append("z:/foo/bar"));
+	assertEquals("6.8", new Path("c:/foo/bar"), new Path("c:/").append("z:foo/bar"));
 
-	assertEquals("6.0", new Path("/foo/bar"), new Path("/foo").append("//bar"));
-	assertEquals("6.1", new Path("/foo/bar/test"), new Path("/foo").append("bar//test"));
-	assertEquals("6.2", new Path("//foo/bar"), new Path("//foo").append("bar"));
+	assertEquals("6.9", new Path("c:foo/bar"), new Path("c:").append(new Path("/foo/bar")));
+	assertEquals("6.10", new Path("c:foo/bar"), new Path("c:").append(new Path("foo/bar")));
+	assertEquals("6.11", new Path("c:/foo/bar"), new Path("c:/").append(new Path("/foo/bar")));
+	assertEquals("6.12", new Path("c:/foo/bar"), new Path("c:/").append(new Path("foo/bar")));
+	
+	assertEquals("6.13", new Path("c:foo/bar"), new Path("c:").append(new Path("z:/foo/bar")));
+	assertEquals("6.14", new Path("c:foo/bar"), new Path("c:").append(new Path("z:foo/bar")));
+	assertEquals("6.15", new Path("c:/foo/bar"), new Path("c:/").append(new Path("z:/foo/bar")));
+	assertEquals("6.16", new Path("c:/foo/bar"), new Path("c:/").append(new Path("z:foo/bar")));
+
+
+	//append preserves isUNC of receiver
+	assertEquals("7.0", new Path("/foo/bar"), new Path("/foo").append("//bar"));
+	assertEquals("7.1", new Path("/foo/bar/test"), new Path("/foo").append("bar//test"));
+	assertEquals("7.2", new Path("//foo/bar"), new Path("//foo").append("bar"));
 }
 public void testSegmentCount() {
 
