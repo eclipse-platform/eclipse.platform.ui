@@ -12,23 +12,14 @@ package org.eclipse.team.internal.ccvs.ui.actions;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.CVSException;
-import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
-import org.eclipse.team.internal.ccvs.core.CVSStatus;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
-import org.eclipse.team.internal.ccvs.core.ICVSResource;
-import org.eclipse.team.internal.ccvs.core.client.Annotate;
-import org.eclipse.team.internal.ccvs.core.client.Command;
-import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.client.*;
 import org.eclipse.team.internal.ccvs.core.client.listeners.AnnotateListener;
 import org.eclipse.team.internal.ccvs.core.client.listeners.LogEntry;
 import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
@@ -37,10 +28,7 @@ import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.ui.AnnotateView;
 import org.eclipse.team.internal.ccvs.ui.Policy;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.*;
 
 public class ShowAnnotationAction extends WorkspaceAction {
 
@@ -156,7 +144,7 @@ public class ShowAnnotationAction extends WorkspaceAction {
 	 */
 	protected boolean isEnabled() throws TeamException {
 		ICVSResource resource = getSingleSelectedCVSResource();
-		return (resource != null && ! resource.isFolder());
+		return (resource != null && ! resource.isFolder() && resource.isManaged());
 	}
 
 	/**
@@ -184,8 +172,6 @@ public class ShowAnnotationAction extends WorkspaceAction {
 		// Selected from a Resource Navigator
 		IResource[] resources = getSelectedResources();
 		if (resources.length == 1) {
-			IContainer parent = resources[0].getParent();
-			ICVSFolder folder = CVSWorkspaceRoot.getCVSFolderFor(parent);
 			return CVSWorkspaceRoot.getCVSResourceFor(resources[0]);
 		}
 		return null;
