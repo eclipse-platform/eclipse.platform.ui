@@ -44,7 +44,6 @@ public class PartSite implements IWorkbenchPartSite {
 	private String pluginID;
 	private String extensionName;
 	private ISelectionProvider selectionProvider;
-	private List menuHandlers;
 	private SubActionBars actionBars;
 /**
  * EditorContainer constructor comment.
@@ -60,8 +59,7 @@ public PartSite(IWorkbenchPart part, IWorkbenchPage page)
  * Dispose the contributions.
  */
 public void dispose() {
-	if (menuHandlers != null)
-		menuHandlers.clear();
+	// do nothing
 }
 /**
  * Returns the action bars for the part.
@@ -148,9 +146,7 @@ public IWorkbenchWindow getWorkbenchWindow() {
  * Register a popup menu for extension.
  */
 public void registerContextMenu(String menuID, MenuManager menuMgr, ISelectionProvider selProvider) {
-	if (menuHandlers == null)
-		menuHandlers = new ArrayList(1);
-	menuHandlers.add(new PopupMenuExtender(menuID, menuMgr, selProvider, part));
+	new PopupMenuExtender(menuID, menuMgr, selProvider, part);
 }
 /**
  * Register a popup menu with the default id for extension.
